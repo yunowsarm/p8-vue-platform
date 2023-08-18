@@ -1,0 +1,35 @@
+@charset "UTF-8";
+@import "./commonStyle/common";
+// @import "mixins/mixins";
+
+:focus {
+  outline: 0;
+}
+
+.custom-drawer {
+  .el-drawer__header {
+    // margin:0;
+    // padding:0;
+    // border-bottom:0;
+
+    padding: 12px 10px;
+    margin-bottom: 0;
+    color: $drawer-header-color;
+    font-size: 14px;
+    border-bottom: 1px solid $base-line-color;
+    box-sizing: border-box;
+  }
+
+  .el-drawer__close-btn {
+    // position:fixed;
+    // top:10px;
+    // right:20px;
+    // z-index:2000;
+  }
+}
+
+.el-drawer__body {
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+}

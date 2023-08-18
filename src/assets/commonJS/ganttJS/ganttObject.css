@@ -1,0 +1,285 @@
+@import '~@/assets/commonJS/originalComponents/input/input.scss';
+@import '~@/assets/commonJS/originalComponents/select/select.scss';
+@import '~@/assets/commonJS/originalComponents/datePicker/datePicker.scss';
+#actionMenu{
+    width:150px;
+    position:fixed;
+    background-color: #9e00f9;
+    z-index:9999;
+    border:1px solid #eaeaea;
+}
+.ant-menu-vertical>.ant-menu-item,.ant-menu-vertical>.ant-menu-submenu>.ant-menu-submenu-title {
+    height: 28px;
+    line-height: 28px;
+}
+.ant-dropdown-menu-submenu-title .anticon{
+    font-size:14px;
+    margin-right:8px;
+}
+.ant-dropdown-menu-submenu-title span:not(.ant-dropdown-menu-submenu-arrow){
+    margin-right:5px;
+}
+
+.gantt_task .gantt_task_scale .gantt_scale_cell {
+}
+
+.gantt_grid_scale .gantt_grid_head_cell {
+    overflow: visible !important; /*gantt表头自定义搜索不显示问题处理*/
+}
+
+.gantt_grid_scale .gantt_grid_head_cell, .gantt_task .gantt_task_scale .gantt_scale_cell {
+    font-weight: bold;
+    font-size: 14px!important;
+    color: #ffffff !important;
+}
+
+.resource_marker{
+    text-align: center;
+}
+.resource_marker div{
+    width: 28px;
+    height: 28px;
+    line-height: 29px;
+    display: inline-block;
+
+    color: #FFF;
+    margin: 3px;
+}
+.resource_marker.workday_ok div {
+    border-radius: 15px;
+    background: #51c185;
+}
+
+.resource_marker.workday_over div{
+    border-radius: 3px;
+    background: #ff8686;
+}
+
+.resource-controls .gantt_layout_content{
+    padding: 7px;
+    overflow: hidden;
+}
+.resource-controls label{
+    margin: 0 10px;
+    vertical-align: bottom;
+    display: inline-block;
+    color: #3e3e3e;
+    padding: 2px;
+    transition: box-shadow 0.2s;
+}
+
+.resource-controls label:hover{
+    box-shadow: 0 2px rgba(84, 147, 255, 0.42);
+}
+
+.resource-controls label.active,
+.resource-controls label.active:hover
+{
+    box-shadow: 0 2px #5493ffae;
+    color: #1f1f1f;
+}
+
+.resource-controls input{
+    vertical-align: top;
+}
+
+.gantt_task_cell.week_end {
+    background-color: #e8e8e87d;
+}
+
+.gantt_task_row.gantt_selected .gantt_task_cell.week_end {
+    background-color: rgba(232, 232, 232, 0.49) !important;
+}
+
+
+.group_row,
+.group_row.odd,
+.gantt_task_row.group_row{
+    background-color: rgba(230, 247, 240, 0.82);
+}
+
+.hide_project_progress_drag .gantt_task_progress_drag {
+    visibility: hidden;
+}
+
+.gantt_task_progress {
+    text-align: left;
+    padding-left: 10px;
+    box-sizing: border-box;
+    color: white;
+    font-weight: bold;
+}
+
+.detail_div {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.detail_span{
+  display: inline-block;
+  /*height: 30px;*/
+  /*line-height: 30px;*/
+  flex-shrink: 0;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.gantt_grid_data .gantt_row.gantt_selected, .gantt_grid_data .gantt_row.odd.gantt_selected, .gantt_task_row.gantt_selected{
+    background-color: #FFE96A!important;
+}
+
+.gantt_grid_data .gantt_row.critical_task.gantt_selected, .gantt_grid_data .gantt_row.odd.critical_task.gantt_selected, .gantt_task_row.gantt_selected{
+    background-color: #FFE96A!important;
+}
+
+.gantt_grid_data .gantt_row.can_edit_color.gantt_selected, .gantt_grid_data .gantt_row.odd.can_edit_color.gantt_selected, .gantt_task_row.gantt_selected{
+    background-color: #FFE96A!important;
+}
+
+.gantt_grid_data .gantt_row:hover, .gantt_grid_data .gantt_row.odd:hover {
+    background-color: #FFF6C7;
+}
+
+.gantt_grid_data .gantt_row.can_edit_color:hover, .gantt_grid_data .gantt_row.odd.can_edit_color:hover {
+    background-color: #FFF6C7!important;
+}
+
+.gantt_grid_data .gantt_row.critical_task:hover, .gantt_grid_data .gantt_row.odd.critical_task:hover {
+    background-color: #FFF6C7!important;
+}
+
+.gantt_task_row.gantt_selected .gantt_task_cell {
+    border-right-color: #FFE96A;
+}
+
+.gantt_grid_scale, .gantt_task_scale, .gantt_task_vscroll {
+    background-color: #133B78 !important;
+}
+
+.gantt_grid_column_resize_wrap .gantt_grid_column_resize {
+    background-color: #b3b3b5a8 !important;
+}
+
+.can_edit_color {
+    background-color: rgb(252, 242, 223) !important;
+}
+
+.gantt_row {
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -moz-user-select: -moz-none;
+    background-color: rgb(250, 250, 250);
+}
+
+/*梯形进度显示*/
+/*.gantt_task_progress {*/
+/*    text-align: center;*/
+/*    z-index: 0;*/
+/*    height: 15px;*/
+/*    margin: 13px 0px 0px 0px;*/
+/*    background: #3db9d3;*/
+/*    width: 100%;*/
+/*    border-bottom: 15px solid #ed2607;*/
+/*    border-left: 13px solid transparent;*/
+/*    border-right: 13px solid transparent;*/
+/*}*/
+
+.gantt_tooltip {
+    padding: 10px;
+    position: absolute;
+    z-index: 2010;
+    white-space: nowrap;
+}
+
+/*覆盖gantt样式*/
+.gantt_layout_cell{
+    border-top:none;
+    border-color:#E1E1E1;
+}
+
+.gantt_grid_scale, .gantt_task_scale{
+    border-bottom:1px solid #133B78 !important;
+}
+
+.gantt_task .gantt_task_scale .gantt_scale_cell {
+    border-right: 1px solid #cecece;
+}
+
+.gantt_grid_editor_placeholder div input,.gantt_grid_editor_placeholder div select{
+    border:1px solid #0070C5;
+}
+
+/* gantt拖拽提高层级 */
+.gantt_drag_marker{
+    z-index:9999;
+}
+
+.red-wave::before {
+    content: '';
+    position: absolute;
+    top: 30px;
+    width: 70px;
+    height: 3px;
+    background:
+            linear-gradient(135deg, transparent, transparent 45%, #ff0000, transparent 55%, transparent 100%),
+            linear-gradient(45deg, transparent, transparent 45%, #ff0000, transparent 55%, transparent 100%);
+    background-size: 6px 6px;
+    background-repeat: repeat-x, repeat-x;
+}
+
+.critical_task {
+    background-color: rgb(251, 241, 225) !important;
+}
+.critical_link {
+    background-color: rgb(219, 231, 223) !important;
+}
+
+/*列头搜索样式*/
+.gantt_search {
+    line-height: 159%;
+    /* border-top: solid 1px #EBEEF5; */
+    width: 100%;
+    height: 50%;
+    box-sizing: border-box;
+}
+
+.gantt_search .search_item {
+    font-size: 12px;
+    height: 100%;
+    width: 100%;
+    border:none;
+    padding: 0 4px;
+    box-sizing: border-box
+}
+
+.gantt_search .cs-input .cs-input_inner{
+    border: 0px;
+    border-bottom: 1px solid #c8c8c9 !important;
+    box-shadow: none;
+}
+
+/* 更改自定义select组件样式 == start*/
+.gantt_custom_select.cs-select {
+    width: 100%;
+    min-width: auto;
+}
+
+.gantt_row{
+    background-color:#F0F2F4;
+}
+
+.gantt_row, .gantt_task_row{
+    border-bottom:1px solid #C6C6C6;
+}
+
+/* 更改自定义select组件样式 == over*/
+
+
+
+.el-button.is-disabled, .el-button.is-disabled:hover, .el-button.is-disabled:focus{
+    color:#6D6D6D;
+}

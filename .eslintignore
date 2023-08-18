@@ -1,0 +1,8 @@
+# 忽略 eslint 检查
+/build/
+/config/
+/dist/
+/test/unit/coverage/
+
+
+commitlint.config.js

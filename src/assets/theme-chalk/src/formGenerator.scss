@@ -1,0 +1,290 @@
+@charset "UTF-8";
+// @import "commonStyle/common";
+// @import "mixins/mixins";
+
+@import "./formGenerator/home";
+@import "./formGenerator/mixin";
+// FormDrawer.vue
+.FormDrawer {
+  .tab-editor {
+    position: absolute;
+    top: 33px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: 14px;
+  }
+  .left-editor {
+    position: relative;
+    height: 100%;
+    background: #1e1e1e;
+    overflow: hidden;
+  }
+  .setting {
+    position: absolute;
+    right: 15px;
+    top: 3px;
+    color: #a9f122;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 1;
+  }
+  .right-preview {
+    height: 100%;
+    .result-wrapper {
+      height: calc(100vh - 33px);
+      width: 100%;
+      overflow: auto;
+      padding: 12px;
+      box-sizing: border-box;
+    }
+  }
+  @include action-bar;
+  ::v-deep .el-drawer__header {
+    display: none;
+  }
+}
+// iconDialog.vue
+.icon-dialog {
+  ::v-deep .el-dialog {
+    border-radius: 8px;
+    margin-bottom: 0;
+    margin-top: 4vh !important;
+    display: flex;
+    flex-direction: column;
+    max-height: 92vh;
+    overflow: hidden;
+    box-sizing: border-box;
+    .el-dialog__header {
+      padding-top: 14px;
+    }
+    .el-dialog__body {
+      margin: 0 20px 20px 20px;
+      padding: 0;
+      overflow: auto;
+    }
+  }
+  .icon-ul {
+    margin: 0;
+    padding: 0;
+    font-size: 0;
+    li {
+      list-style-type: none;
+      text-align: center;
+      font-size: 14px;
+      display: inline-block;
+      width: 16.66%;
+      box-sizing: border-box;
+      height: 108px;
+      padding: 15px 6px 6px 6px;
+      cursor: pointer;
+      overflow: hidden;
+      &:hover {
+        background: #f2f2f2;
+      }
+      &.active-item {
+        background: #e1f3fb;
+        color: #7a6df0;
+      }
+      > i {
+        font-size: 30px;
+        line-height: 50px;
+      }
+    }
+  }
+}
+// JsonDrawer.vue
+.JsonDrawer {
+  ::v-deep .el-drawer__header {
+    display: none;
+  }
+  @include action-bar;
+
+  .json-editor {
+    height: calc(100vh - 33px);
+  }
+}
+// RightPanel.vue
+.right-board {
+  width: 350px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding-top: 3px;
+  .field-box {
+    position: relative;
+    height: calc(100vh - 42px);
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  .el-scrollbar {
+    height: 100%;
+  }
+  .select-item {
+    display: flex;
+    border: 1px dashed #fff;
+    box-sizing: border-box;
+    & .close-btn {
+      cursor: pointer;
+      color: #f56c6c;
+    }
+    & .el-input + .el-input {
+      margin-left: 4px;
+    }
+  }
+  .select-item + .select-item {
+    margin-top: 4px;
+  }
+  .select-item.sortable-chosen {
+    border: 1px dashed #409eff;
+  }
+  .select-line-icon {
+    line-height: 32px;
+    font-size: 22px;
+    padding: 0 4px;
+    color: #777;
+  }
+  .option-drag {
+    cursor: move;
+  }
+  .time-range {
+    .el-date-editor {
+      width: 227px;
+    }
+    ::v-deep .el-icon-time {
+      display: none;
+    }
+  }
+  .document-link {
+    position: absolute;
+    display: block;
+    width: 26px;
+    height: 26px;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+    background: #409eff;
+    z-index: 1;
+    border-radius: 0 0 6px 0;
+    text-align: center;
+    line-height: 26px;
+    color: #fff;
+    font-size: 18px;
+  }
+  .view-fields-link {
+    position: absolute;
+    display: block;
+    width: 26px;
+    height: 26px;
+    top: 3px;
+    right: 0;
+    cursor: pointer;
+    background: #409eff;
+    z-index: 1;
+    border-radius: 6px 0 0 6px;
+    text-align: center;
+    line-height: 26px;
+    color: #fff;
+    font-size: 18px;
+  }
+  .node-label {
+    font-size: 14px;
+  }
+  .node-icon {
+    color: #bebfc3;
+  }
+}
+// TreeSelect.vue
+.formGenerator.el-select-tree {
+  display: inline-block;
+  .el-input__icon {
+    cursor: pointer;
+    transition: transform 0.3s;
+    &-close {
+      display: none;
+    }
+  }
+  .el-input__inner {
+    cursor: pointer;
+    padding-right: 30px;
+  }
+  .el-input {
+    &:hover:not(.is-disabled) {
+      .el-input__inner {
+        border-color: #c0c4cc;
+      }
+      &.is-selected.is-clearable {
+        .el-input__icon {
+          &-close {
+            display: inline-block;
+          }
+          &-arrow-down {
+            display: none;
+          }
+        }
+      }
+    }
+    &.is-active {
+      .el-input__icon-arrow-down {
+        transform: rotate(-180deg);
+      }
+      .el-input__inner {
+        border-color: #409eff;
+      }
+    }
+  }
+  &__popover {
+    padding: 0 !important;
+    // extends el-select-dropdown - start
+    border: 1px solid #dcdfe6 !important;
+    border-radius: 4px !important;
+    // extends el-select-dropdown - end
+    .popper__arrow {
+      left: 35px !important;
+    }
+  }
+  &__list {
+    overflow-y: auto;
+    // scroll style - start
+    &::-webkit-scrollbar-track-piece {
+      background: #d3dce6;
+    }
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #99a9bf;
+    }
+    // scroll style - end
+  }
+  &__item {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 20px;
+    &.selected {
+      color: #409eff;
+      font-weight: bolder;
+    }
+    &.is-disabled {
+      color: #bbbbbb;
+      cursor: not-allowed;
+    }
+  }
+  &__empty {
+    padding: 40px;
+    margin: 0;
+    text-align: center;
+    color: #606266;
+    font-size: 12px;
+  }
+}
+
+//  CustomAutocomplete.vue
+.formGenerator {
+  .el-autocomplete {
+    display: block;
+  }
+}

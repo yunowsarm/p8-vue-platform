@@ -1,0 +1,14 @@
+@charset "UTF-8";
+// @import "commonStyle/common";
+// @import "mixins/mixins";
+
+.bpmn-view-con {
+  background-color: #ffffff;
+  width: 100%;
+  height: 100%;
+  .bpmn-view-canvas {
+    float: left;
+    width: 100%;
+    height: 90%;
+  }
+}

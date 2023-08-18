@@ -1,0 +1,39 @@
+/**
+ *
+ *
+ **/
+
+// base colors
+$base-dark-color: #212121;
+$base-light-color: #f2f2f2;
+$base-white-color: #fff;
+ 
+$base-red-color: #F44336;
+$base-blue-color: #03A9F4;
+$base-indigo-color: #3F51B5;
+$base-green-color: #4CAF50;
+$base-gray-color: #9E9E9E;
+
+// platform variables
+$header-height: 35px;
+$header-tag-height: 40px;
+$sidebar-min-width: 60px;
+$sidebar-max-width: $base-sidebar-width;
+
+
+:export {
+  // base colors exports
+  dark: $base-dark-color;
+  light: $base-light-color;
+  white: $base-white-color;
+  red: $base-red-color;
+  blue: $base-blue-color;
+  indigo: $base-indigo-color;
+  green: $base-green-color;
+  gray: $base-gray-color;
+  // platform variables exports
+  headerHeight: $header-height;
+  headerTagHeight: $header-tag-height;
+  sidebarMinWidth: $sidebar-min-width;
+  sidebarMaxWidth: $sidebar-max-width;
+}

@@ -1,0 +1,61 @@
+/**
+ * 覆盖样式
+*/
+
+/**
+ * System
+*/
+ /* sidebar */
+ .layout > .sidebar,
+ .layout > .sidebar > .el-menu[role=menubar]
+  {
+     /* background: #304156 !important; */
+  }
+  /* sidebar handler */
+ .layout > .sidebar > .slide-handler {
+     background: #415064 !important;
+ }
+  
+  /**
+   * ElementUI
+  */
+  .el-menu-item, .el-submenu__title {
+      height:40px !important;
+      font-size:1.1rem !important;
+      line-height:40px !important;
+  }
+  
+  .el-menu-item, .el-submenu__title > span {
+      line-height:40px !important;
+  }
+  
+  .el-submenu .el-menu-item {
+      line-height:40px !important;
+      min-width:180px !important;
+  }
+   
+  .hide-sidebar i {
+      font-size:20px !important;
+  }
+   
+  .el-menu--collapse .el-submenu .el-menu {
+      z-index:500 !important;
+  }
+  
+.sidebar .el-menu-item.is-active, .sidebar:hover .el-menu-item:hover .is-active:hover,.sidebar .el-menu-item:hover, .sidebar .vertical-menu .el-submenu__title:hover {
+  background:rgba(255, 255, 255, 0.2)!important;
+}
+.vxeTable th {
+    background-color: #f4f4f4 !important;
+    color: #292b2e !important;
+}
+.el-button--primary {
+    background-color: #1890ff;
+    border-color: #1890ff;
+}
+.el-pagination.is-background .el-pager li:not(.disabled).active {
+    background-color: #1890ff;
+}
+.tag-tabs div .tab-item.active[data-v-690bb984], .el-button--text, .common-table .el-dropdown-link,.tag-tabs div .tab-item.active > span > i[data-v-690bb984] {
+    color: #1890ff;
+}

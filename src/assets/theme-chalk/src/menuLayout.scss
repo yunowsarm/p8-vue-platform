@@ -1,0 +1,56 @@
+@charset "UTF-8";
+@import "./commonStyle/common";
+// @import "mixins/mixins";
+
+.menuLayout.el-container {
+  height: calc(100% - 20px);
+  .el-header {
+    height: 50px !important;
+    padding: 0;
+  }
+
+  .el-main {
+    padding: 0;
+    overflow: hidden;
+    background: $base-bg-color;
+    height: 100%;
+    position: relative;
+    > div:only-child {
+      height: inherit;
+      width: 100%;
+      position: absolute;
+      > div:only-child {
+        height: 100%;
+      }
+    }
+  }
+}
+
+.el-menu-demo.el-menu--horizontal {
+  border-bottom: $base-line-color;
+
+  &::before {
+    height: 1px;
+    width: 100%;
+    background: $base-line-color;
+    position: absolute;
+    top: 49px;
+    left: 0;
+  }
+
+  > .el-menu-item {
+    line-height: 50px !important;
+    height: 50px !important;
+    color: $base-menu-text-color;
+    font-weight: bold;
+
+    &.is-active {
+      color: $base-light-color;
+    }
+
+    &:hover {
+      color: $base-light-color;
+      border-bottom: 2px solid $base-light-color !important;
+    }
+  }
+}

@@ -1,0 +1,138 @@
+@charset "UTF-8";
+@import "./commonStyle/common";
+// @import "mixins/mixins";
+
+.p8-anchor {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  .p8-anchor-slider {
+    width: 150px;
+    height: 100%;
+    position: relative;
+    .p8-anchor-slider--wrap {
+      height: 100%;
+      position: relative;
+      .scroll-area {
+        padding: 50px 0;
+      }
+    }
+  }
+
+  .p8-anchor-content {
+    flex: 1;
+    height: 100%;
+    .p8-anchor-content--wrap {
+      height: 100%;
+      .scroll-area {
+        overflow-y: auto !important ;
+      }
+      .scroll-area::-webkit-scrollbar {
+        padding: 4px 0;
+        width: 6px;
+      }
+      .scroll-area::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+        opacity: 0.2;
+        background: #c1c1c1;
+      }
+      .scroll-area::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+        border-radius: 0;
+        background: #f0f0f0;
+      }
+    }
+    .p8-anchor-content--item {
+      padding: 10px 0;
+      .title {
+        padding: 8px 10px;
+        background-color: rgba(218, 218, 218, 0.4);
+        color: #323232;
+      }
+    }
+  }
+
+  .scroll-area {
+    height: 100%;
+    position: relative;
+    box-sizing: border-box;
+  }
+}
+
+// slider-menu item通用样式
+.p8-anchor-slider--item__normal {
+  height: 40px;
+  line-height: 40px;
+  cursor: pointer;
+  &:hover,
+  &.active {
+    color: $base-anchor-light-color;
+  }
+}
+
+// slider-menu 位于右侧
+.p8-anchor--row__reverse {
+  flex-flow: row-reverse;
+}
+// slider-menu 位于左侧 / 右侧 item通用部分
+.p8-anchor-slider--item__row {
+  // 锚点导航居左
+  position: relative;
+  padding-left: 36px;
+  padding-right: 16px;
+  box-sizing: border-box;
+  &::after {
+    content: "";
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    transform: translate(-50%, -50%);
+    width: 1px;
+    height: 60px;
+    background-color: $base-line-color;
+  }
+  &.active::before {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 52%;
+    left: 20px;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 20px;
+    border: 4px solid $base-anchor-light-color;
+    background-color: $base-anchor-background-color;
+  }
+}
+
+// slider-menu 位于顶部/底部
+.p8-anchor--column {
+  flex-direction: column;
+}
+// slider-menu 位于顶部/底部 通用部分
+.p8-anchor-slider--wrap__column {
+  height: 40px;
+  box-sizing: border-box;
+  border-bottom: 1px solid $base-line-color;
+  white-space: nowrap;
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+.p8-anchor-slider--item__column {
+  width: 120px;
+  text-align: center;
+  position: relative;
+  display: inline-block;
+  &.active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: 2px;
+    background-color: $base-anchor-light-color;
+  }
+}

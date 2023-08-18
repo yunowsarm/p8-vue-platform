@@ -1,0 +1,29 @@
+@charset "UTF-8";
+// @import "commonStyle/common";
+// @import "mixins/mixins";
+
+.common-select-table {
+  &.flex-table {
+    display: flex;
+    flex-direction: column;
+  }
+  .small-table {
+    width: 100%;
+    flex: 1;
+    display: inherit;
+    // thead th, tbody td { padding: 7px 0 !important; }
+  }
+  .panination {
+    padding: 9px 0;
+    display: flex;
+    flex: none;
+    justify-content: flex-end;
+  }
+}
+.normal-west {
+  .custom-tree-node {
+    > span {
+      font-size: 13px;
+    }
+  }
+}

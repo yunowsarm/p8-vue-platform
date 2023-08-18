@@ -1,0 +1,859 @@
+<template>
+  <div class="container">
+    <div class="approveContent">
+      <common-tabs class="custom-tabs"
+                   type="border-card"
+                   :active-tabs="activeTabs"
+                   :tabs-data="tabs">
+        <template #approval>
+          <component ref="approveContent"
+                     :style="{ height: tabsHeight}"
+                     :selected-approval="selectedApproval"
+                     :curr-entity-id="currEntityId"
+                     v-if="formComp != null && formComp != ''"
+                     :is="componentLoader"
+                     v-bind="formCompProp"
+                     :approval-result="formData.approvalResult"
+                     @approve-submit="approveSubmit"
+                     @selection-ids="selectionIdsByApprovalResult" />
+        </template>
+        <template #bpmn>
+          <bpm-view v-if="selectedApproval.processDefId != ''"
+                    :style="{ height: tabsHeight}"
+                    :process-obj="{
+              processDefinitionId: selectedApproval.processDefId,
+              processInstanceId: selectedApproval.processInstId
+            }"
+                    @getIsWarnApprove="getIsWarnApprove">
+          </bpm-view>
+        </template>
+        <template #history>
+          <ProcessHistoryList v-if="processInstId"
+                              :style="{ height: tabsHeight}"
+                              :table-api="historyDataApi"
+                              :columns="historyColumns"
+                              :process-inst-id="processInstId"
+                              :business-key="businessKey"
+                              :table-flex="tableFlex">
+          </ProcessHistoryList>
+        </template>
+      </common-tabs>
+      <!-- <template title="填写审批意见">
+        <div class="contentTitle">
+          <i class="p8 icon-fill-in-approval-comments"></i>
+          填写审批意见{{ signText }}
+        </div>
+        <div>
+          <form-list v-if="formValidate"
+                     ref="form"
+                     labelWidth="120px"
+                     @rendered="rendered"
+                     @saved="saved"
+                     :dataSource="dataSource"
+                     :existDefaultBtn="false"
+                     :api="saveApi"
+                     :is-custom-validate="isCustomValidate"
+                     @custom-validate="customValidate"
+                     :form="formData"
+                     @form-data-change="formDataChange">
+            <template #uploadFiles>
+              <div class="edit-outputdata-view">
+                <ul class="file-list">
+                  <li v-for="item in formData.uploadFiles"
+                      :key="item.id">
+                    <p>
+                      <span class="filename"
+                            @click="downloadOutputRequsetFile(item)">
+                        {{ item.fileName }}
+                      </span>
+                    </p>
+                  </li>
+                </ul>
+              </div>
+            </template>
+          </form-list>
+        </div>
+      </template> -->
+      <!-- <selectApproveUser v-if="isSelectApproveUserView"
+                         :isSelectApproveUserView="isSelectApproveUserView"
+                         :selectUserDataSource="selectUserDataSource"
+                         :selectUserFormData="selectUserFormData"
+                         @close-modal="closeModal"
+                         @commit="commit"></selectApproveUser> -->
+    </div>
+    <!-- <div class="approveTitle">
+      <el-row>
+        <el-col :span="24"
+                style="text-align: center">
+          <el-button style="margin: 8px 10px 0 0"
+                     type="primary"
+                     @click="handleSubmit">提交审批
+          </el-button>
+        </el-col>
+      </el-row>
+    </div> -->
+  </div>
+</template>
+
+<script>
+// import { axiosRequestSucessFunc } from '@/config/interceptors/axios'
+import { P8Form as FormList, P8ProcessApproval as BpmView, Row, Col, Button, P8TreeSelect as TreeSelect, P8Dialog as CommonDialog, P8Tabs as CommonTabs } from 'p8-components-ui'
+
+import selectApproveUser from './selectApproveUser'
+import ProcessHistoryList from './processHistoryList'
+
+export default {
+  name: 'Approval',
+  components: {
+    TreeSelect,
+    FormList,
+    BpmView,
+    'el-row': Row,
+    'el-col': Col,
+    'el-button': Button,
+    CommonDialog,
+    selectApproveUser,
+    ProcessHistoryList,
+    CommonTabs
+  },
+  props: {
+    selectedApproval: {
+      type: Object,
+      default: () => { }
+    }
+  },
+  data () {
+    return {
+      tabsHeight: document.documentElement.clientHeight - 220 + 'px',
+      saveApi: 'PersonalProcessApproval.saveResult',
+      formComp: '',
+      currEntityId: '',
+      formCompProp: {},
+      businessId: '',
+      formValidate: false,
+      isCustomValidate: true,
+      isSelectApproveUserView: false,
+      processKey: '',
+      taskId: '',
+      ar: ['domainCoordination', 'planCoordination', 'planApproveRelease'],
+      updatePlanDataSource: ['domainCoordination', 'planCoordination', 'planApproveRelease'],
+      historyDataApi: undefined,
+      historyColumns: undefined,
+      historyColumnsTemp: [
+        {
+          title: '序号',
+          type: 'index',
+          align: 'center'
+        },
+        {
+          title: '计划名称',
+          dataIndex: 'businessChildName',
+          sortable: false,
+          align: 'left'
+        },
+        {
+          title: '审批意见',
+          dataIndex: 'opinion',
+          sortable: false,
+          align: 'left'
+        },
+        {
+          title: '审批结果',
+          dataIndex: 'yesOrNo',
+          sortable: false,
+          width: '100px',
+          align: 'center'
+        },
+        {
+          title: '审批人',
+          dataIndex: 'approveUser',
+          sortable: false,
+          width: '100px',
+          align: 'center'
+        },
+        {
+          title: '审批节点',
+          dataIndex: 'processTaskName',
+          sortable: false,
+          align: 'center'
+        },
+        {
+          title: '审批时间',
+          dataIndex: 'approvalTime',
+          sortable: false,
+          width: '140px',
+          align: 'center'
+        }
+      ],
+      isWarnApprove: '',
+      taskNodeList: [],
+      planInfoArray: [],
+      approvalResultText: '操作',
+      dialogConfig: {
+        beforeClose: this.handleCancel,
+        destroyOnClose: 'true',
+        modal: false
+      },
+      saveParams: {},
+      sourceTemplate: {
+        processInstanceEl: {
+          type: 'text',
+          labelText: '审批流程',
+          fieldName: 'businessName',
+          disabled: true,
+          colLayout: 'singleCol',
+          fieldConfig: {
+            disabled: true
+          }
+        },
+        approveNode: {
+          type: 'select',
+          labelText: '审批节点',
+          fieldName: 'nextTaskNodeId',
+          options: [],
+          multiple: false,
+          disabled: true,
+          placeholder: '选择节点',
+          colLayout: 'doubleCol',
+          fieldConfig: {
+            disabled: true
+          }
+        },
+        approveNodeUsers: {
+          type: 'treeSelect',
+          labelText: '审批人',
+          fieldName: '',
+          placeholder: '选择节点审批人',
+          colLayout: 'doubleCol',
+          treeData: []
+        }
+      },
+      selectUserDataSource: [],
+      selectUserFormData: {},
+      formData: {
+        taskId: '',
+        processInstance: '',
+        approvalResult: '1',
+        processKey: '',
+        officeResult: '',
+        officeResultText: '',
+        approvalParams: '',
+        sendMsg: '',
+        businessKey: '',
+        approveData: {},
+        approvalComment: undefined,
+        uploadFiles: []
+      },
+      processInstId: '',
+      businessKey: '',
+      signText: '',
+      dataSource: [],
+      dataSourceDefault: [
+        {
+          type: 'radio', // 控件类型
+          labelText: '审批结果', // 控件显示的文本
+          fieldName: 'approvalResult',
+          colLayout: 'singleCol',
+          options: [
+            {
+              label: '通过',
+              value: '1'
+            },
+            {
+              label: '驳回',
+              value: '0'
+            }
+          ],
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ]
+        },
+        {
+          type: 'textarea',
+          labelText: '审批意见',
+          fieldName: 'approvalComment',
+          colLayout: 'singleCol',
+          placeholder: '请输入审批意见'
+        }
+      ],
+      dataSourceDefaultPlan: [
+        {
+          type: 'radio', // 控件类型
+          labelText: '审批结果', // 控件显示的文本
+          fieldName: 'approvalResult',
+          colLayout: 'singleCol',
+          options: [
+            {
+              label: '通过',
+              value: '1'
+            },
+            {
+              label: '完善计划',
+              value: '0'
+            }
+          ],
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ]
+        },
+        {
+          type: 'textarea',
+          labelText: '审批意见',
+          fieldName: 'approvalComment',
+          colLayout: 'singleCol',
+          placeholder: '请输入审批意见'
+        }
+      ],
+      dataSourceSign: [
+        {
+          type: 'radio', // 控件类型
+          labelText: '会签结果', // 控件显示的文本
+          fieldName: 'approvalResult',
+          colLayout: 'singleCol',
+          options: [
+            {
+              label: '通过',
+              value: '1'
+            },
+            {
+              label: '驳回',
+              value: '0'
+            }
+          ],
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ]
+        },
+        {
+          type: 'textarea',
+          labelText: '会签意见',
+          fieldName: 'approvalComment',
+          colLayout: 'singleCol',
+          placeholder: '请输入会签意见'
+        }
+      ],
+      dataSourceTemp: [
+        {
+          type: 'radio', // 控件类型
+          labelText: '审批结果', // 控件显示的文本
+          fieldName: 'approvalResult',
+          colLayout: 'singleCol',
+          options: [
+            {
+              label: '通过',
+              value: '1'
+            },
+            {
+              label: '完善计划',
+              value: '0'
+            }
+          ],
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ]
+        },
+        {
+          type: 'textarea',
+          labelText: '审批意见',
+          fieldName: 'approvalComment',
+          colLayout: 'singleCol',
+          placeholder: '请输入审批意见'
+        },
+        {
+          type: 'radio',
+          labelText: '所长办公会审议',
+          fieldName: 'officeResult',
+          colLayout: 'singleCol',
+          options: [
+            {
+              label: '通过',
+              value: '1'
+            },
+            {
+              label: '不通过',
+              value: '0'
+            }
+          ],
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ]
+        },
+        {
+          type: 'upload',
+          labelText: '上传附件',
+          fieldName: 'uploadFiles',
+          colLayout: 'singleCol',
+          uploadConfig: {
+            // drag: true// 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
+          },
+          listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+        }
+      ],
+      dataSourceTempView: [
+        {
+          type: 'radio', // 控件类型
+          labelText: '审批结果', // 控件显示的文本
+          fieldName: 'approvalResult',
+          colLayout: 'singleCol',
+          options: [
+            {
+              label: '通过',
+              value: '1'
+            },
+            {
+              label: '完善计划',
+              value: '0'
+            }
+          ],
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ]
+        },
+        {
+          type: 'textarea',
+          labelText: '审批意见',
+          fieldName: 'approvalComment',
+          colLayout: 'singleCol',
+          placeholder: '请输入审批意见'
+        },
+        {
+          type: 'view',
+          labelText: '所长办公会审议',
+          fieldName: 'officeResultText',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'blank',
+          labelText: '型号调度上传文件',
+          fieldName: 'uploadFiles',
+          slotName: 'uploadFiles',
+          colLayout: 'singleCol'
+        }
+      ],
+      tabs: [
+        {
+          label: '审批内容',
+          name: 'approval'
+        },
+        {
+          label: '流程跟踪视图',
+          name: 'bpmn'
+        },
+        {
+          label: '审批历史',
+          name: 'history'
+        }
+      ],
+      activeTabs: 'approval',
+      tableFlex: 315
+    }
+  },
+  computed: {
+    componentLoader () {
+      let comp = this.formComp
+      console.log('@/views/' + comp, '-----comp')
+      return () => import('@/views/' + comp)
+    }
+  },
+  watch: {
+    selectedApproval: {
+      deep: true,
+      handler: function (newV, oldV) {
+        this.formComp = ''
+        this.processInstId = newV.processInstId
+        this.businessKey = newV.businessKey
+        this.processKey = newV.processKey
+        console.log(this.processKey, 'this.processKey-watch')
+
+        this.taskId = newV.processTaskId
+
+        if (this.ar.indexOf(this.processKey) !== -1) {
+          this.historyColumns = this.historyColumnsTemp
+          this.historyDataApi = 'PersonalProcessApproval.customHistoryList'
+        } else {
+          this.historyColumns = undefined
+          this.historyDataApi = 'PersonalProcessApproval.processHistoryList'
+        }
+
+        this.approvalResultText = '操作'
+        this.loadFormKey()
+        this.loadApprovalForm()
+      }
+    }
+  },
+  created () {
+    this.loadFormKey()
+    this.loadApprovalForm()
+  },
+  mounted () {
+    this.processKey = this.selectedApproval.processKey
+    if (this.ar.indexOf(this.processKey) !== -1) {
+      this.historyDataApi = 'PersonalProcessApproval.customHistoryList'
+      this.historyColumns = this.historyColumnsTemp
+    } else {
+      this.historyDataApi = undefined
+      this.historyColumns = undefined
+    }
+    this.processInstId = this.selectedApproval.processInstId
+    this.businessKey = this.selectedApproval.businessKey
+    this.taskId = this.selectedApproval.processTaskId
+  },
+  methods: {
+    getIsWarnApprove (isWarnApprove) {
+      this.isWarnApprove = isWarnApprove
+    },
+    handleSubmit (e) {
+      // const planIssuePath = 'Product/Pm/Plan/Components/planGanttView/index'
+      // const planIssueData = this.$store.state.vData.planIssueData
+      // if (this.formComp === planIssuePath && planIssueData && planIssueData.length < 1) {
+      //   this.$message({ message: '请选择计划', type: 'warning' })
+      //   return
+      // }
+      if (!this.formData.approvalResult) {
+        this.$message({ message: '请选择审批结果', type: 'warning' })
+        return
+      }
+      if (this.formData.approvalResult === '0' && !this.formData.approvalComment) {
+        this.$message({ message: '请输入审批意见', type: 'warning' })
+        return
+      }
+      if (this.formData.approvalParams && this.formData.approvalParams === 'canEdit' && !this.formData.officeResult) {
+        this.$message({ message: '请选择所长办公会审议结果', type: 'warning' })
+        return
+      }
+
+      let msg = '确定' + this.approvalResultText + '吗？'
+
+      let this_ = this
+      console.log(this_.$refs.approveContent, '------this_.$refs.approveContent')
+      // if (this_.$refs.approveContent.approveCommitVerification instanceof Function) {
+      //   this_.$refs.approveContent.approveCommitVerification(e, msg)
+      // } else {
+      this_
+        .$confirm(msg, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          this.$refs.form.handleSubmit(e)
+        })
+        .catch(() => { })
+      // }
+    },
+    approveSubmit (e, msg) {
+      if (msg) {
+        this.$confirm(msg, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.$refs.form.handleSubmit(e)
+          })
+          .catch(() => { })
+      } else {
+        this.$refs.form.handleSubmit(e)
+      }
+    },
+    customValidate (saveParams) {
+      this.saveParams = saveParams
+      this.$refs.form.submitForm(this.saveParams, this.saveApi)
+    },
+    rendered () {
+      // this.$refs.form.setViewFields({ 'none': 'none' })
+      this.formData.approvalResult = '1'
+      this.formData.taskId = this.selectedApproval.processTaskId
+      this.formData.processInstance = this.selectedApproval.processInstId
+    },
+    saved (result) {
+      // let approveTime = result
+      let this_ = this
+      if (result && result.isComplete === false) {
+        let formCompTemp = this.formComp
+        this.formComp = null
+        this.formComp = formCompTemp
+      } else {
+        this_.$emit('approved', this_.formData.taskId)
+      }
+      /* nextApproveUser.initDataSource(approveTime, [this.saveParams.processInstance], this_).then(res1 => {
+        if (res1 === true) {
+          this_.$confirm(`检测到后一个审批任务，是否手动指定（变更）节点的审批人？`, '操作成功！', {
+            confirmButtonText: '手动指定',
+            cancelButtonText: '不指定',
+            type: 'warning'
+          }).then(() => {
+            this_.isSelectApproveUserView = true
+          }).catch(() => {
+            this_.$emit('approved', this_.formData.taskId)
+          })
+        } else {
+          this_.$emit('approved', this_.formData.taskId)
+        }
+      }) */
+    },
+    isUpdatePlanDataSource () {
+      let result = false
+      let processKey = this.selectedApproval.processKey
+      if (this.updatePlanDataSource.indexOf(processKey) !== -1) {
+        result = true
+      }
+      return result
+    },
+    loadFormKey () {
+      let this_ = this
+      if (this.isUpdatePlanDataSource()) {
+        this_.dataSource = this_.dataSourceDefaultPlan
+      } else {
+        this_.dataSource = this_.dataSourceDefault
+      }
+      this_.formData.approvalParams = ''
+      this_.formData.sendMsg = ''
+      this_.signText = ''
+      this.$api['PersonalProcessApproval.getApproveContentViewUrl']({
+        taskId: this.selectedApproval.processTaskId
+      }).then((res) => {
+        if (res && res.length > 0) {
+          let page = {}
+          let inputProp = {}
+          this.currEntityId = this.selectedApproval.businessKey
+          res.forEach((o) => {
+            if (o.variableName === 'approveContentView') {
+              page.url = o.value.url
+              console.log(o.value.url, '----------我的路径ppppppppppp')
+              this_.formComp = o.value.url
+              page.code = o.value.code
+              let canEnd = o.value.canEnd
+              let canEdit = o.value.canEdit
+              let canView = o.value.canView
+              let sendMsg = o.value.sendMsg
+              let sign = o.value.sign
+              this_.formData.sendMsg = sendMsg
+              if (canEnd && canEnd === 'canEnd') {
+                this_.formData.approvalParams = canEnd
+              }
+              if (canEdit && canEdit === 'canEdit') {
+                this_.dataSource = this_.dataSourceTemp
+                this_.formData.approvalParams = canEdit
+              }
+              if (canView && canView === 'canView') {
+                this_.dataSource = this_.dataSourceTempView
+                this_.formData.approvalParams = canView
+              }
+              if (sign && sign === 'sign') {
+                this_.dataSource = this_.dataSourceSign
+                this_.signText = '(会签)'
+              }
+              this_.loadApprovalFormData()
+              inputProp = { ...inputProp, ...o.value }
+            }
+            inputProp[o.variableName] = o.value
+          })
+
+          this_.formCompProp = {
+            ...inputProp,
+            ...page,
+            ...{
+              taskId: this_.taskId,
+              tableFlex: this.tableFlex,
+              headerVisible: false,
+              pageType: 'view'
+            }
+          }
+        }
+        this_.formValidate = true
+      })
+    },
+    loadApprovalForm () {
+      this.formData.approvalComment = undefined
+      this.formData.approvalResult = this.dataSource[0].options.length === 1 ? '1' : ''
+      this.formData.taskId = this.selectedApproval.processTaskId
+      this.formData.processInstance = this.selectedApproval.processInstId
+      this.formData.processKey = this.selectedApproval.processKey
+      this.formData.businessKey = this.selectedApproval.businessKey
+      this.formData.approvalResult = '1'
+      this.formData.approvalComment = '同意'
+    },
+    loadApprovalFormData () {
+      let this_ = this
+      if (this_.formData.approvalParams && (this_.formData.approvalParams === 'canView' || this_.formData.approvalParams === 'canEdit')) {
+        this_.$api['ProjectApply.getWholeCopyClearly']({
+          wholeDescribeId: this_.selectedApproval.businessKey
+        }).then((res) => {
+          if (res) {
+            this_.formData.officeResult = res.officeResult
+            this_.formData.officeResultText = res.officeResultText
+            this_.formData.uploadFiles = res.uploadFiles
+          }
+        })
+      } else {
+        this_.formData.officeResult = ''
+        this_.formData.officeResultText = ''
+        this_.formData.uploadFiles = []
+      }
+    },
+    downloadOutputRequsetFile (item) {
+      // 输出要求-文件下载
+      if (item.id) {
+        this.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' })
+          .then((backJson) => {
+            let link = document.createElement('a')
+            link.href = window.URL.createObjectURL(new Blob([backJson.data]))
+            link.download = item.fileName
+            document.body.appendChild(link)
+
+            link.click()
+            window.URL.revokeObjectURL(link.href)
+            document.body.removeChild(link)
+          })
+          .finally(() => {
+            // this.search.exportLoading = false
+          })
+      }
+    },
+    closeModal (e) {
+      this.isSelectApproveUserView = false
+      this.$emit('approved', this.formData.taskId)
+    },
+    commit (fullParams) {
+      this.$refs.form.submitForm(fullParams, this.saveApi)
+      this.closeModal()
+    },
+    formDataChange (formSub) {
+      if (formSub.formData.approvalResult === '1') {
+        this.approvalResultText = '通过'
+      }
+      if (formSub.formData.approvalResult === '0') {
+        if (this.isUpdatePlanDataSource()) {
+          this.approvalResultText = '完善计划'
+        } else {
+          this.approvalResultText = '驳回'
+        }
+      }
+      if (formSub.formData.approvalResult === '0' && (this.formData.approvalComment === undefined || this.formData.approvalComment === this.$store.state.project.baseConfig.defaultCommentYes)) {
+        this.formData.approvalComment = ''
+        // this.formData = Object.assign({}, this.formData, {
+        //   approvalComment:
+        //     this.$store.state.project.baseConfig.defaultCommentNo,
+        // });
+      }
+      if (formSub.formData.approvalResult === '1' && (this.formData.approvalComment === undefined || this.formData.approvalComment === this.$store.state.project.baseConfig.defaultCommentNo)) {
+        // this.formData.approvalComment = this.$store.state.project.baseConfig.defaultCommentYes
+        this.formData = Object.assign({}, this.formData, {
+          approvalComment: this.$store.state.project.baseConfig.defaultCommentYes
+        })
+      }
+    },
+    selectionIdsByApprovalResult (approveData) {
+      this.formData.approveData = approveData
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+$titleHeight: 80px;
+$paddingLeft: 10px;
+.container {
+  height: 100%;
+  .approveTitle {
+    padding-left: $paddingLeft;
+    height: $titleHeight;
+    line-height: $titleHeight;
+    border-bottom: 1px solid #eeeef0;
+  }
+  // .el-tab-pane {
+  //   overflow: auto !important;
+  // }
+  .approveContent {
+    height: calc(100% - 20px);
+    overflow: hidden;
+
+    .contentTitle {
+      border-bottom: 1px solid #efefef;
+      padding-left: $paddingLeft;
+      height: 40px;
+      width: 100%;
+      background: #e9edf6;
+      line-height: 40px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .bpmnDiagram {
+      height: 500px;
+    }
+
+    .contentBody {
+      height: 100%;
+    }
+  }
+}
+// /deep/ .custom-tabs {
+//   overflow: auto !important;
+// }
+.custom-tabs.el-tabs--top {
+  height: 100%;
+  border: 0px;
+  box-sizing: border-box;
+
+  /deep/ .el-tabs__nav-wrap {
+    margin-bottom: 0;
+  }
+
+  /deep/ .el-tabs__nav.is-top {
+    background: #f5f7fa;
+  }
+
+  /deep/ .el-row.formBtn {
+    border-top: 0px;
+  }
+}
+
+.edit-outputdata-view {
+  background-color: rgba(239, 239, 239, 0.5);
+  position: relative;
+  min-height: 40px;
+
+  .file-list {
+    li {
+      box-sizing: border-box;
+      list-style: decimal;
+      padding: 0 10px;
+      margin-left: 20px;
+
+      p {
+        margin: 0;
+        padding: 0;
+      }
+
+      p span.filename {
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+  }
+}
+// /deep/.el-tabs__content .el-tab-pane {
+//   overflow-y: auto !important;
+//   height: calc(100% - 20px);
+// }
+</style>

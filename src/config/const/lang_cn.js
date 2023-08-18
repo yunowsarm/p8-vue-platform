@@ -1,0 +1,28 @@
+const lang = {
+  thirdMenu: '#',
+  indexNum: '序号',
+  identification: '标识',
+  projectName: '项目名称',
+  pjcode: '项目编号',
+  taskName: '任务名称',
+  modelCode: '型号代号',
+  projectAndTask: '项目/任务',
+  projectAndPlan: '项目/计划',
+  progress: '完成度',
+  completionStatus: '完成情况',
+  overdueRemainingDays: '超期/剩余天数',
+  personLiable: '责任人',
+  role: '角色',
+  department: '部门',
+  planStartDate: '计划开始时间',
+  planEndDate: '计划完成时间',
+  actualStartDate: '实际开始时间',
+  actualEndDate: '实际完成时间',
+  forecastStartDate: '预测开始时间',
+  forecastEndDate: '预测完成时间',
+  durationOfPro: '工期',
+  finishedPercent: '完成百分比',
+  taskStatus: '进度',
+  status: '状态'
+}
+export default lang

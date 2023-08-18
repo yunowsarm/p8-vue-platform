@@ -1,0 +1,92 @@
+.cs-tree-select {
+  display: inline-block;
+  width: auto;
+  min-width: 100px;
+  box-sizing: border-box;
+  vertical-align: middle;
+  color: #515a6e;
+  font-size: 14px;
+  line-height: normal;
+  position: relative;
+}
+
+.cs-dropdown {
+  width: auto;
+  min-width: 100px;
+  max-height: 300px;
+  overflow: auto;
+  margin: 5px 0;
+  padding: 5px 0;
+  background-color: #fff;
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .2);
+  position: absolute;
+  z-index: 2;
+  transform-origin: center top 0px;
+  transition: all 0.3s;
+  will-change: top, left;
+  top: 30px;
+  left: 0;
+  transform: scale(1, 0);
+  opacity: 0;
+  text-align: left;
+}
+
+.cs-tree .cs-tree-node{
+  white-space: nowrap;
+  outline: none;
+}
+
+.cs-tree-node .cs-tree-node__content {
+  display: flex;
+  align-items: center;
+  height: 26px;
+  cursor: pointer;
+  padding: 0 2px;
+  color: #515a6e;
+}
+
+.cs-tree-node__content:hover {
+  background-color: #f3f3f3;
+}
+
+.cs-tree-node__icon {
+  font-family: 'element-icons';
+  cursor: pointer;
+  color: #c0c4cc;
+  font-size: 12px;
+  transform: rotate(0deg);
+  transition: transform .14s ease-in-out
+}
+
+.cs-tree-node__icon::before{
+  content: '\e791'
+}
+
+.cs-tree-node__icon.is-open {
+  transform: rotate(90deg);
+}
+
+.cs-tree-node__icon.not-children {
+  color: transparent;
+  cursor: default;
+}
+
+.cs-tree-node__label {
+  font-size: 12px;
+  flex: 1;
+  height: 26px;
+  line-height: 26px;
+}
+
+.cs-tree-node__label.is-selected {
+  color: #2d8cf0;
+  font-weight: 600;
+}
+
+.cs-tree-node__children {
+  transition: all .14s ease-in-out;
+  opacity: 0;
+  display: none;
+}

@@ -1,0 +1,408 @@
+/**
+ * COMMON SCSS STYLE
+ *
+**/
+$lte11: false !default;
+$font-path: "fonts" !default;
+$base-dark-color: #212121 !default;
+$base-light-color: #133b78 !default;
+$base-white-color: #fff !default;
+$base-active-color: #e5f0f9 !default;
+$base-disabled-color: #c0c4cc !default;
+$base-bg-color: #f7f8fc !default;
+$base-bg-shadow: rgba(99, 99, 99, 0.1) !default;
+$base-text-color: #858585 !default;
+
+/**
+ * table
+**/
+$base-table-thead-color: #ffffff !default;
+$base-tableHeader-padding: 8px !default;
+$base-tableSetting-height: 38px !default;
+$base-table-thead-background: #e9e9e9 !default;
+$base-table-border-color: #c6c6c6 !default;
+
+$base-table-current-background: #F0F8FF !default;
+$base-table-hover-background: #f0f8ff !default;
+$base-table-striped-background: #f0f2f4 !default;
+/**
+ * button
+**/
+$button-disabled-color: #ffffff !default;
+$button-disabled-background-color: #a0afc5 !default;
+$button-disabled-border-color: #a0afc5 !default;
+/**
+ * dialog
+**/
+$dialog-title-color: #606266 !default;
+$dialog-icons-color: #909399 !default;
+$dialog-footer-background: #fff !default;
+/**
+ * drawer
+**/
+$drawer-header-color: #d8d8d8 !default;
+/**
+ * editTable
+**/
+$editTable-disabled-color: #999 !default;
+$editTable-disabled-hover-color: #999 !default;
+$editTable-disabled-hover-border-color: #e1e1e1 !default;
+/**
+ * listLayout
+**/
+$listLayout-background: #ffffff !default;
+$listLayout-header-background: #e9ecef !default;
+$listLayout-header-border-color: #e1e1e1 !default;
+/**
+ * Layout
+**/
+$layout-header-background: #ffffff !default;
+
+$base-red-color: #f44336 !default;
+$base-blue-color: #03a9f4 !default;
+$base-indigo-color: #3f51b5 !default;
+$base-green-color: #4caf50 !default;
+$base-gray-color: #9e9e9e !default;
+
+$base-line-color: #e1e1e1 !default;
+$base-row-active: #e8f4ff !default;
+$base-row-hover: #f5f7fa !default;
+
+$base-sidebar-width: 180px !default;
+
+$base-menu-text-color: #333333 !default;
+
+$base-pagination-bg-color: #e9edf6 !default;
+$base-pagination-text-color: #9b9b9b !default;
+
+$base-download-blue-color: #4a8dff !default;
+$base-download-orange-color: #fb4c2f !default;
+$base-download-green-color: #63a45c !default;
+
+$base-anchor-light-color: #138dff !default;
+$base-anchor-background-color: #ffffff !default;
+
+// $font-size-large: 18px;
+// $font-size-medium: 16px;
+// $font-size-small: 14px;
+// $font-size-mini: 12px;
+$base-font-size: 12px !default;
+$font-size-large: 1.5rem !default;
+$font-size-medium: 1.333333333rem !default;
+$font-size-small: 1.166666666rem !default;
+$font-size-mini: 1rem !default;
+$layout-padding: 20px;
+$layout-margin: 14px;
+// elementUI的MessageBox弹出框时页面右侧缩小17px
+body {
+  padding-right: 0 !important;
+}
+
+@mixin flexCenter {
+  align-items: center;
+  justify-content: center;
+}
+
+/**
+  pxTorem(): px转rem[参数$px需带上px单位]
+    使用: font-size: pxTorem(16px); height: pxTorem(50px)
+*/
+@function pxTorem($px) {
+  @return $px / $base-font-size * 1rem;
+}
+
+/**
+  remCalc(): 也是 px转rem[参数$values需带上px单位], 这里和 pxTorem()可以互换
+    如: padding: 1px 10px --> @include remCalc(padding, 1px, 10px) / padding: pxTorem(1px) pxTorem(10px)
+        margin: 0 10px 6px 10px --> @include remCalc(margin, 0px, 10px, 6px, 10px) / margin: pxTorem(0px) pxTorem(10px) pxTorem(6px) pxTorem(10px)
+*/
+@mixin remCalc($property, $values...) {
+  $remValues: "";
+  @each $value in $values {
+    $remValues: #{$remValues + " " + pxTorem($value)};
+  }
+  #{$property}: $remValues;
+}
+
+// 配置居右显示
+.flex-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+// 覆盖原有自定义滚动条样式,保证滚动条始终的层级始终在顶部
+.ps-container {
+  height: 100%;
+}
+
+.ps__scrollbar-y-rail {
+  z-index: 500;
+}
+
+// 覆盖sidebar navigation 样式
+.el-menu-item,
+.el-submenu__title {
+  height: 40px;
+  font-size: 1.1rem;
+  line-height: 40px;
+
+  i.zvpfont {
+    display: inline-block;
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+    margin-right: 5px;
+  }
+
+  span {
+    line-height: 40px;
+  }
+}
+
+.el-submenu .el-menu-item {
+  line-height: 40px;
+  min-width: $base-sidebar-width;
+}
+
+.hide-sidebar i {
+  font-size: 20px !important;
+}
+
+.el-menu--collapse .el-submenu .el-menu {
+  z-index: 500;
+}
+
+// 不显示百度地图的版权信息
+.BMap_cpyCtrl,
+.anchorBL {
+  display: none;
+}
+
+/**
+ * 自定义 Vue Transition Animation
+ * 
+ */
+.scale-left-enter-active {
+  animation: scaleLeft 0.3s;
+}
+.scale-left-leave-active {
+  animation: scaleLeft 0.3s reverse;
+}
+
+@keyframes scaleLeft {
+  0% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  100% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+// element ui dialog样式覆盖
+.el-dialog {
+  -moz-box-shadow: 0 1px 10px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 1px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.3);
+
+  .el-dialog__header {
+    padding: 12px 10px;
+    margin-bottom: 0;
+    border-bottom: 1px solid $base-line-color;
+    box-sizing: border-box;
+
+    .el-dialog__title {
+      font-size: 14px;
+      color: #333333;
+    }
+
+    .el-dialog__headerbtn {
+      top: 17px;
+    }
+  }
+}
+
+.el-dialog__body {
+  padding: 0;
+}
+
+.el-drawer__header {
+  padding: 12px 10px;
+  margin-bottom: 0;
+  color: #333333;
+  font-size: 14px;
+  border-bottom: 1px solid $base-line-color;
+  box-sizing: border-box;
+}
+
+.el-drawer__body {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/**
+ * 上传附件按钮与拖拽样式
+ * 
+ */
+.el-upload.customUpload{
+  display: inline-block;
+}
+.el-upload .el-button {
+  float: left;
+}
+.el-upload-dragger {
+  width: 100%;
+}
+/**
+    上传附件 - element自带文件列表样式调整
+  */
+.el-upload-list__item:first-child {
+  margin-top: 0;
+}
+.el-upload-list__item {
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+.el-upload-list--picture-card {
+  margin-left: 0;
+}
+
+// element ui tree样式覆盖
+.el-tree {
+  color: #000000;
+  font-size: 13px;
+}
+
+.el-tree-node {
+  .el-tree-node__content {
+    height: 30px;
+
+    i {
+      font-size: 16px;
+
+      &::before {
+        margin-right: 5px;
+      }
+    }
+  }
+}
+
+//element ui table样式覆盖
+.el-table {
+  color: #000000;
+  font-size: 13px;
+}
+
+.el-table--small th {
+  padding: 13px 0;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped td {
+  background: $base-table-striped-background;
+}
+
+// .el-table--border th.el-table__cell,
+// .el-table--border td.el-table__cell {
+//   border-right: 1px solid #f3ebeb;
+// }
+
+// .el-table td.el-table__cell {
+//   border-bottom: 1px solid #f4f4f4;
+// }
+
+// .el-table th.el-table__cell.is-leaf {
+//   border-bottom: 2px solid #f4f4f4;
+// }
+
+.el-table thead,
+.el-table thead.is-group {
+  color: #292b2e !important;
+  th.el-table__cell {
+    background: #f4f4f4
+  }
+  th {
+    background: #f4f4f4;
+  }
+}
+
+// 选中
+.el-table--striped .el-table__body tr.el-table__row--striped.current-row td,
+.el-table__body tr.current-row > td {
+  background-color: $base-table-current-background !important;
+}
+
+// hover
+.el-table__body tr.hover-row.current-row > td,
+.el-table__body tr.hover-row.el-table__row--striped.current-row > td,
+.el-table__body tr.hover-row.el-table__row--striped > td,
+.el-table__body tr.hover-row > td,
+.el-table--enable-row-transition .el-table__body tr:hover td {
+  background-color: $base-table-hover-background !important;
+}
+
+// element ui table--列固定时, 层级处理
+.el-table__fixed,
+.el-table__fixed-right {
+  z-index: 1;
+}
+
+//element ui tabs样式覆盖
+.el-tabs__header {
+  margin: 0;
+}
+
+// 内容超出显示省略号
+.overHiding {
+  overflow: hidden; /*内容超出后隐藏*/
+  text-overflow: ellipsis; /* 超出内容显示为省略号*/
+  white-space: nowrap; /*文本不进行换行*/
+}
+
+// select-回显图标的样式
+.el-input__prefix--custom {
+  box-sizing: border-box;
+  position: absolute;
+  left: 1px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: calc(100% - 30px);
+  height: calc(100% - 2px);
+  line-height: 28px;
+  text-align: left;
+  color: $base-blue-color;
+  background-color: #ffffff;
+  padding-left: 16px;
+  border-radius: 4px;
+}
+
+// 表单设计器中单行文本设置为隐藏时增加“formDesignHiddenTrue”类名
+.formDesignHiddenTrue {
+  display: none;
+}
+
+// 列表可钻取列添加'underline'类名
+.underline {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+// element-ui Notification 通知覆盖样式
+.el-notification__group {
+  width: calc(100% - 30px);
+}
+
+// element-ui tooltip 背景色调整
+.el-tooltip__popper.is-dark {
+  background: rgba(70, 76, 91, 0.9);
+}
+
+// textarea字体修改
+.el-textarea__inner {
+  font-family: "Source Han Sans CN-Normal", "Helvetica Neue", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft Yahei", "STXihei", Arial;
+}
+
+.el-table__header {
+  font-size: 13px;
+}
