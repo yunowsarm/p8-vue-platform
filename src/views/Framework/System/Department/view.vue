@@ -112,17 +112,6 @@ export default {
           fieldConfig: {
             disabled: true
           }
-        },
-        {
-          type: 'select',
-          labelText: '部门类别',
-          fieldName: 'deptCategory',
-          placeholder: '',
-          optionUrl: { api: 'thirdPartInterface.getDic', params: { dicType: 'DEPARTMENT_CATEGORY' } },
-          options: [],
-          fieldConfig: {
-            disabled: true
-          }
         }
       ]
     }

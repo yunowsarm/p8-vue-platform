@@ -169,17 +169,6 @@ export default {
               }
             }
           ]
-        },
-        {
-          type: 'select',
-          labelText: '部门类别',
-          fieldName: 'deptCategory',
-          defaultValue: '',
-          optionUrl: { api: 'thirdPartInterface.getDic', params: { dicType: 'DEPARTMENT_CATEGORY' } },
-          options: [],
-          fieldConfig: {
-            disabled: false
-          }
         }
       ]
     }
