@@ -2,12 +2,12 @@
   <list-layout>
     <template #north>
       <common-button :comp="comp"
-                     buttonType="primary"></common-button>
+                     button-type="primary"></common-button>
     </template>
     <template #center>
       <common-table ref="table"
                     :comp="comp"
-                    :tableBorder="false"
+                    :table-border="false"
                     :columns="columns"
                     :table-config="tableConfig"
                     :table-refresh="tableRefresh"
@@ -22,14 +22,21 @@
         <template #drawer>
           <template v-if="drawerContentView === 'edit'">
             <department-edit-view @saveSuccess="saveCallback"
-                                  @cancel='drawerVisible = false'
+                                  @cancel="drawerVisible = false"
                                   :record-id="recordId"
                                   :parent-id="parentId"
                                   :no="no"></department-edit-view>
           </template>
+          <template v-if="drawerContentView === 'view'">
+            <department-view @saveSuccess="saveCallback"
+                             @cancel="drawerVisible = false"
+                             :record-id="recordId"
+                             :parent-id="parentId"
+                             :no="no"></department-view>
+          </template>
           <template v-if="drawerContentView === 'moveuser'">
             <department-move-user-view @saveSuccess="saveCallback"
-                                       @cancel='drawerVisible = false'
+                                       @cancel="drawerVisible = false"
                                        :record-id="recordId"></department-move-user-view>
           </template>
         </template>
@@ -42,10 +49,11 @@
 import { P8ListLayout as ListLayout, P8Button as CommonButton, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
 
 import departmentEditView from './edit'
+import departmentView from './view'
 import departmentMoveUserView from './moveUser'
 
 export default {
-  name: 'Department',
+  name: 'DepartmentIndex',
   data () {
     return {
       columns: [
@@ -112,11 +120,20 @@ export default {
       this.parentId = record.parentId
       this.no = record.no
     },
+    viewDepartment (record) {
+      // 查看
+      this.drawerTitle = '查看部门'
+      this.drawerVisible = true
+      this.drawerContentView = 'view'
+      this.recordId = record.id
+      this.parentId = record.parentId
+      this.no = record.no
+    },
     removeDepartment (record) {
       // 删除
       console.log('removeDepartment', record)
-      let that = this
-      let child = record.child
+      const that = this
+      const child = record.child
       // let allUser = record.allUser
       // let parentId = record.parentId
       // let isCanDel = true
@@ -187,7 +204,8 @@ export default {
     CommonTable,
     CommonDrawer,
     departmentEditView,
-    departmentMoveUserView
+    departmentMoveUserView,
+    departmentView
   }
 }
 </script>
