@@ -13,6 +13,7 @@
         :permission-vo="componentsConfig.permissionVo"
         :layout-config="componentsConfig"
         :kanban-config="componentsConfig"
+        :west-tree-param="provideParams.searchParams"
         ref="components"
       ></component>
       <span v-else class="span-bg"></span>
@@ -95,9 +96,9 @@ export default {
   },
   methods: {
     async init() {
-      let code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
-      let version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
-      let res = await this.$api['desLayout.getLayoutJson']({ layoutCode: code, version: version })
+      const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
+      const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
+      const res = await this.$api['desLayout.getLayoutJson']({ layoutCode: code, version: version })
       this.previewParmars = JSON.parse(res)
       const { treeSettingsParmars, treeData, defaultComponents } = this.previewParmars
       // 获取tree数据
@@ -115,8 +116,8 @@ export default {
       }
       this.asyncComponents = defaultComponents.url ? defaultComponents.url : ''
       if (!this.asyncComponents) {
-        let that = this
-        let resault = this.getFirstChild(this.treeData)
+        const that = this
+        const resault = this.getFirstChild(this.treeData)
         this.$nextTick(() => {
           that.$refs.commonTree.$refs.tree.setCurrentKey(resault.id, true)
           if (resault.componentsConfig) {
@@ -152,8 +153,8 @@ export default {
       // 数据类型为静态数据
       if (treeSettingsParmars.dataType === '1') {
         // let paramsList = this.getParams(obj)
-        let paramsObj = {}
-        let paramsFilterList = this.getParams(obj)
+        const paramsObj = {}
+        const paramsFilterList = this.getParams(obj)
         let paramsList = []
         if (paramsFilterList && paramsFilterList.length) {
           paramsList = paramsFilterList.filter((el) => {
@@ -165,12 +166,12 @@ export default {
             paramsObj[el.after] = obj[el.before]
           })
         }
-        let otherParmarsMap = obj.otherParmarsMap ? JSON.parse(obj.otherParmarsMap) : ''
+        const otherParmarsMap = obj.otherParmarsMap ? JSON.parse(obj.otherParmarsMap) : ''
         this.provideParams.searchParams = { ...paramsObj, ...otherParmarsMap }
       } else {
         // 动态数据
-        let paramsObj = {}
-        let prmarsList = dynamicParameter.filter((el) => {
+        const paramsObj = {}
+        const prmarsList = dynamicParameter.filter((el) => {
           return el.after !== ''
         })
         if (prmarsList && prmarsList.length > 0) {
@@ -230,10 +231,10 @@ export default {
     },
     async getTreeData(treeSettingsParmars) {
       let data
-      let res = await this.$api['desLayout.execute']({ id: treeSettingsParmars.reportSqlId })
-      let config = { labelCol: treeSettingsParmars.optionLabelCol, valueCol: treeSettingsParmars.optionValueCol, pidCol: treeSettingsParmars.optionPidCol }
+      const res = await this.$api['desLayout.execute']({ id: treeSettingsParmars.reportSqlId })
+      const config = { labelCol: treeSettingsParmars.optionLabelCol, valueCol: treeSettingsParmars.optionValueCol, pidCol: treeSettingsParmars.optionPidCol }
       // 获取动态数据的参数映射所有列
-      let treeArr = selectGenerateTree(res, JSON.stringify(config))
+      const treeArr = selectGenerateTree(res, JSON.stringify(config))
       // 是否显示根节点 1为是
       if (treeSettingsParmars.isShow === '1') {
         data = [
@@ -261,7 +262,7 @@ export default {
     },
     // 获取默认展开数据key
     getDefaultExpandedKeys(level, treeList) {
-      let arr = []
+      const arr = []
       let count = 0
       function getData(data) {
         count++

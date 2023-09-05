@@ -10,8 +10,7 @@ import promise from './promise'
 import '@/styles/element-variables.scss'
 // global extends styles
 import '@/styles/index.scss'
-//
-import '@/assets/iconfont/iconfont.css'
+
 // beauti context
 import BeautiContext from 'vue-beauti-context'
 // nextPage
@@ -50,7 +49,7 @@ function apiProxy(obj) {
   return p
 }
 
-function createErd (options = {}) {
+function createErd(options = {}) {
   return erd(options)
 }
 
@@ -94,7 +93,7 @@ export default {
         if (binding.value) {
           const iconDom = document.createElement('span')
           iconDom.setAttribute('class', 'el-input__prefix--custom')
-          let classValue = binding.arg.filter((item) => item.value === binding.value)[0].label
+          const classValue = binding.arg.filter((item) => item.value === binding.value)[0].label
           iconDom.innerHTML = `<i class="${classValue}"></i>`
           el.children[0].appendChild(iconDom)
           const inputDom = el.children[0].children[0]
@@ -118,13 +117,13 @@ export default {
           if (binding.oldValue && icon) {
             // 旧值存在(表示change)且icon元素也存在: 此时更新icon的class类名
             const icon = el.children[0].children[0].children[0]
-            let classValue = binding.arg.filter((item) => item.value === binding.value)[0].label
+            const classValue = binding.arg.filter((item) => item.value === binding.value)[0].label
             icon.setAttribute('class', classValue)
           } else {
             // 创建icon回显的元素并绑定class类名,并插入input框的前面[添加到父节点(第二层div)]
             const iconDom = document.createElement('span')
             iconDom.setAttribute('class', 'el-input__prefix--custom')
-            let classValue = binding.arg.filter((item) => item.value === binding.value)[0].label
+            const classValue = binding.arg.filter((item) => item.value === binding.value)[0].label
             iconDom.innerHTML = `<i class="${classValue}"></i>`
             el.children[0].appendChild(iconDom)
             const inputDom = el.children[0].children[0]
@@ -137,7 +136,7 @@ export default {
            *  2. 当前select存在的页面初始加载时(v-if控制), 也会被触发, 此时不需要清空
            */
           const removeDom = el.children[0].children[0]
-          let removeClass = removeDom.getAttribute('class')
+          const removeClass = removeDom.getAttribute('class')
           if (removeClass.indexOf('el-input__inner') === -1) {
             el.children[0].removeChild(removeDom)
           }
@@ -165,15 +164,15 @@ export default {
        *    expression: 字符串形式的指令表达式.
        *    modifiers: 包含修饰符的对象 如: {stop: true}
        */
-      bind (el, binding) {
-      },
-      unbind (el, binding) {
+      bind(el, binding) {},
+      unbind(el, binding) {
         // console.log(el, binding, '自定义指令-unbind')
       },
-      inserted (el, binding) {
+      inserted(el, binding) {
         const selfDom = el
         const selfDomParentDom = selfDom.parentNode || selfDom.parentElement
-        let time = setTimeout(function () { // 兼容谷歌49
+        const time = setTimeout(function () {
+          // 兼容谷歌49
           if (selfDomParentDom.offsetHeight !== selfDom.offsetHeight) {
             selfDom.style.height = selfDomParentDom.offsetHeight + 'px'
           } else {
@@ -182,12 +181,10 @@ export default {
           clearTimeout(time)
         }, 10)
       },
-      undate (el, binding) {
+      undate(el, binding) {
         //  console.log(el, binding, '自定义指令-undate')
       },
-      componentUpdated (el, binding) {
-
-      }
+      componentUpdated(el, binding) {}
     })
   }
 }

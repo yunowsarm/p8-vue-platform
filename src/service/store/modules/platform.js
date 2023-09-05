@@ -3,9 +3,9 @@ import { setLocalStorage, getLocalStorage } from '@/service/expands/session'
 import { Message } from 'p8-components-ui'
 import GLOBAL_CONST from '@/config/const'
 //
-import variables from '@/styles/element-variables.scss'
+import themeVariables from '@/styles/theme.module.scss'
 //
-import plateformVariables from '@/styles/variables.scss'
+import plateformVariables from '@/styles/variables.module.scss'
 
 // 侧边栏隐藏状态
 const SIDEBAR_HIDDEN_STATE_KEY = GLOBAL_CONST.sidebar.isHiddenSideBarKey
@@ -109,7 +109,7 @@ const platform = {
       width: SIDEBAR_HIDDEN_STATE === 'true' ? '0px' : SIDEBAR_OPEN_STATE === 'true' ? plateformVariables.sidebarMaxWidth : plateformVariables.sidebarMinWidth // 边栏宽度,elementUI 折叠变量为64px
     },
     // systemTheme: Cookie.get(SYSTEM_THEME_KEY) || 'chalk',
-    theme: Cookie.get(SYSTEM_THEME_KEY) || variables.theme,
+    theme: Cookie.get(SYSTEM_THEME_KEY) || themeVariables.theme,
     shortcutMenu: [], // 自定义菜单项,由用户自定义出的菜单项
     systemName: Cookie.get(SYSTEM_NAME) || '',
     headerHeight: plateformVariables.headerHeight, // 头部(header)高度

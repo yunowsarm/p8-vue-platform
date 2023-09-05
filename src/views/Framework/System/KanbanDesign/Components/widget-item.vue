@@ -62,7 +62,7 @@ export default {
       (newValue, oldValue) => {
         // console.log('widget.style watch', newValue)
         if (!newValue) return
-        for (let key in newValue) {
+        for (const key in newValue) {
           this.$refs.widget.$parent.$parent.$el.style[key.replace(/[A-Z]/g, '-$&').toLowerCase()] = newValue[key]
         }
       },
@@ -74,14 +74,14 @@ export default {
     this.mountEvent()
   },
   beforDestroyed() {
-    let dom = this.$el
+    const dom = this.$el
     this.$erd.removeAllListeners(dom)
   },
   methods: {
     mountEvent() {
       // let delay = this.isDesign ? 50 : 50
-      let delay = 0
-      let dom = this.$el
+      const delay = 0
+      const dom = this.$el
       // console.log('dom', dom.style)
       this.$erd.listenTo(
         dom,
@@ -119,11 +119,11 @@ export default {
 </script>
 <style lang="scss" scoped>
 // 解决smartwidget在添加元素宽度变化监听的时候 加了行内样式影响全屏功能
-.smartwidget.smartwidget-fullscreen /deep/ {
+.smartwidget.smartwidget-fullscreen ::v-deep {
   position: fixed !important;
 }
 // 解决容器内容高度超过夫容器高度问题
-.smartwidget /deep/ .widget-body__content {
+.smartwidget ::v-deep .widget-body__content {
   height: 100%;
   box-sizing: border-box;
 }

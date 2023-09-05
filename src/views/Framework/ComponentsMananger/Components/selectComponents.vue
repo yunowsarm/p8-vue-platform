@@ -40,7 +40,7 @@
   </common-dialog>
 </template>
 <style lang="scss" scoped>
-/deep/ .el-dialog__body {
+::v-deep .el-dialog__body {
   padding: 0 !important;
 }
 </style>
@@ -48,7 +48,7 @@
 import { Button } from 'element-ui'
 import { P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Dialog as CommonDialog, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
 import TableRender from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
-let componentData = {
+const componentData = {
   table: {
     url: 'Framework/ComponentsMananger/Grid/Components/tableRender',
     columns: [
@@ -408,7 +408,7 @@ export default {
       this.$emit('handleOk', params)
     },
     onSelect(obj) {
-      let that = this
+      const that = this
       this.columns = componentData[obj.id].columns
       this.tableApi = componentData[obj.id].api
       this.type = obj.id

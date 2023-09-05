@@ -81,7 +81,7 @@ export default {
   },
   computed: {
     componentLoader() {
-      let comp = this.formComp
+      const comp = this.formComp
       return () => import('@/views/' + comp)
     }
   },
@@ -103,8 +103,8 @@ export default {
   },
   methods: {
     handleSubmit(e) {
-      let this_ = this
-      let setApproveUser = { approveUserSet: [{ taskId: this.selectedApproval.processTaskId, userId: ['currentUserId'] }] }
+      const this_ = this
+      const setApproveUser = { approveUserSet: [{ taskId: this.selectedApproval.processTaskId, userId: ['currentUserId'] }] }
 
       this.$confirm('认领后可在‘待审批’中进行审批操作，其它人则无法再认领。', '提示', {
         confirmButtonText: '确定认领',
@@ -119,9 +119,9 @@ export default {
         .catch(() => {})
     },
     loadFormKey() {
-      let this_ = this
+      const this_ = this
       this.$api['PersonalProcessApproval.getApproveContentViewUrl']({ taskId: this.selectedApproval.processTaskId }).then((res) => {
-        let { url } = res
+        const { url } = res
         if (url) {
           this_.formComp = url
         }
@@ -172,13 +172,13 @@ $paddingLeft: 10px;
   height: calc(100% - 93px) !important;
   border-top: 1px solid #dcdfe6;
   box-sizing: border-box;
-  /deep/ .el-tabs__content {
+  ::v-deep .el-tabs__content {
     padding: 0;
   }
-  /deep/ .el-tabs__nav-wrap {
+  ::v-deep .el-tabs__nav-wrap {
     margin-bottom: 0;
   }
-  /deep/ .el-tabs__nav.is-top {
+  ::v-deep .el-tabs__nav.is-top {
     background: #f5f7fa;
   }
 }

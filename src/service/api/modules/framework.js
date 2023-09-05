@@ -1553,6 +1553,13 @@ export const formGeneratorApi = {
       desc: '报表管理-报表列表-根据报表编码获取报表数据'
     },
     {
+      name: 'updateFormInfo',
+      method: 'POST',
+      path: '/framework/report/updateFormInfo',
+      mockPath: '/framework/report/updateFormInfo',
+      desc: '报表管理-报表列表-更新排序'
+    },
+    {
       name: 'deleteFormInfo',
       method: 'POST',
       path: '/framework/report/deleteFormInfo',

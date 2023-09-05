@@ -110,26 +110,26 @@ export default {
     this.$api['selection.list']({ selectionType: 2, page: { current: 1, size: -1, orders: [] } }).then((res) => {
       this.treeData = res.records
     })
-    let that = this
+    const that = this
     this.$nextTick(() => {
       that.editTableData = that.editData
     })
   },
   methods: {
     saveTableData(data) {
-      this.reportParams['tableData'] = data
+      this.reportParams.tableData = data
     },
     handleCancel() {
       this.$emit('close')
     },
     componentsHandleOk() {
-      this.$emit('handleOk', this.reportParams['tableData'])
+      this.$emit('handleOk', this.reportParams.tableData)
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-/deep/.el-dialog__body {
+::v-deep.el-dialog__body {
   padding: 0;
 }
 </style>

@@ -2,11 +2,51 @@
  * GLOBAL VUE CLI CONFIGURATIONS
  */
 const webpack = require('webpack')
+const { defineConfig } = require('@vue/cli-service')
+const SplitChunksPlugin = require('webpack').optimize.SplitChunksPlugin
 
-module.exports = {
+module.exports = defineConfig({
   runtimeCompiler: true,
+  lintOnSave: false,
+  productionSourceMap: false,
+  // 取消接口报错后的webpack弹框
+  devServer: {
+    client: {
+      overlay: false
+    }
+  },
   configureWebpack: {
-    plugins: [new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn|en/)]
+    // 开启缓存
+    // cache: false,
+    cache: {
+      type: 'filesystem',
+      allowCollectingMemory: true
+    },
+    // 分割打包文件大小
+    optimization: {
+      splitChunks: {
+        chunks: 'all',
+        minSize: 20000,
+        maxSize: 0,
+        minChunks: 2,
+        maxAsyncRequests: 30,
+        maxInitialRequests: 30,
+        automaticNameDelimiter: '~',
+        cacheGroups: {
+          defaultVendors: {
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            reuseExistingChunk: true
+          },
+          default: {
+            minChunks: 2,
+            priority: -20,
+            reuseExistingChunk: true
+          }
+        }
+      }
+    },
+    plugins: [new SplitChunksPlugin(), new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn|en/)]
   },
   pluginOptions: {
     webpackBundleAnalyzer: {
@@ -14,21 +54,15 @@ module.exports = {
       openAnalyzer: false
     }
   },
-  chainWebpack: (config) => {
-    // config.module.rule('scss')
-    //   .use('style-resource')
-    //   .loader('style-resources-loader')
-    //   .options({
-    //     patterns: [
-    //       path.resolve(__dirname, './src/assets/commonStyle/common.scss')
-    //     ]
-    //   })
-  },
   css: {
     loaderOptions: {
-      sass: {
-        data: '@import "@/assets/commonStyle/common.scss";'
+      scss: {
+        additionalData: '@import "@/assets/commonStyle/common.scss";',
+        sassOptions: {
+          // 取消dart scss关于计算替换的提示信息
+          quietDeps: true
+        }
       }
     }
   }
-}
+})

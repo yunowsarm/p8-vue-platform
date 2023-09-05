@@ -7,7 +7,7 @@
         </el-col>
         <el-col :span="12">
           <div style="text-align: right">
-            <el-button type="primary" size="mini" @click="addWidget"><i style="position: relative; top: 2px" class="P8 icon-zujianku"></i> 组件库</el-button>
+            <el-button type="primary" size="mini" @click="addWidget"><i style="position: relative; top: 2px" class="p8 icon-zujianku"></i> 组件库</el-button>
           </div>
         </el-col>
       </el-row>
@@ -149,7 +149,7 @@ import { P8Table as CommonTable, P8Dialog as CommonDialog } from 'p8-components-
 import _cloneDeep from 'lodash/cloneDeep'
 import widgetItem from './widget-item.vue'
 import dynamicLink from './dynamic-link.vue'
-import renderView from '/src/views/Framework/ComponentsMananger/Kanban/Components/renderView'
+import renderView from "../../../../src/views/Framework/ComponentsMananger/Kanban/Components/renderView"
 import tableRenderVue from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
 export default {
   name: 'Widgetgrid',
@@ -259,8 +259,8 @@ export default {
     onLayoutUpdated(newLayout) {},
     onLayoutReady(newLayout) {
       // let delay = this.isDesign ? 1500 : 200
-      let delay = 260
-      let that = this
+      const delay = 260
+      const that = this
       setTimeout(() => {
         that.isLayoutReady = true
       }, delay)
@@ -287,7 +287,7 @@ export default {
     },
     // 删除
     deleteWidget(data) {
-      let widgetList = JSON.parse(JSON.stringify(this.widget))
+      const widgetList = JSON.parse(JSON.stringify(this.widget))
       widgetList.splice(data.index, 1)
       this.getSearchCofnfig(widgetList)
       this.$emit('update:widget', widgetList)
@@ -315,14 +315,14 @@ export default {
     },
     // 编辑保存组件设置
     saveWidget() {
-      let widget = this.widget.find((item) => {
+      const widget = this.widget.find((item) => {
         return item.slot === this.WidgetForm.slot
       })
-      let widgetIndex = this.widget.findIndex((item) => {
+      const widgetIndex = this.widget.findIndex((item) => {
         return item.slot === this.WidgetForm.slot
       })
-      let widgetList = this.widget.map((i) => i)
-      for (let key in this.WidgetForm) {
+      const widgetList = this.widget.map((i) => i)
+      for (const key in this.WidgetForm) {
         widget[key] = this.WidgetForm[key]
       }
       widgetList.splice(widgetIndex, 1, widget)
@@ -360,7 +360,7 @@ export default {
     getSearchCofnfig(list) {
       list.forEach((el) => {
         if (el.component.searchConfigValue && el.component.functionalCategory && el.component.functionalCategory !== '3') {
-          let item = JSON.parse(el.component.searchConfigValue)
+          const item = JSON.parse(el.component.searchConfigValue)
           if (item && item.length) {
             item.forEach((val) => {
               this.searchList.push({
@@ -380,7 +380,7 @@ export default {
     changeSearchConfig() {
       if (this.searchList && this.tableSearchList) {
         let list = this.searchList.concat(this.tableSearchList)
-        let newobj = {}
+        const newobj = {}
         list = list.reduce((preVal, curVal) => {
           newobj[curVal.fieldName] ? '' : (newobj[curVal.fieldName] = preVal.push(curVal))
           return preVal
@@ -389,12 +389,12 @@ export default {
       }
     },
     getSearchList(addArr) {
-      let list = []
+      const list = []
       const soltArr = this.widget.map((item) => {
         return item.layout.i
       })
       const maxSolt = soltArr.length ? Math.max.apply(null, soltArr) : 0
-      let item = addArr.component
+      const item = addArr.component
       list.push({
         slot: maxSolt + this.widgetList.length + 1,
         fullscreen: true,
@@ -424,7 +424,7 @@ export default {
   padding: 10px;
 }
 .gridItem {
-  /deep/.widget-header {
+  ::v-deep.widget-header {
     background: #f9f9f9;
     .ellis {
       font-size: 14px;

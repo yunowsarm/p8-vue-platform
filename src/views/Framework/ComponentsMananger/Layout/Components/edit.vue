@@ -128,16 +128,16 @@ export default {
     },
     rendered() {},
     handleSubmit() {
-      let _this = this
+      const _this = this
       this.$refs.rightForm.getSubmitData().then((submitData) => {
-        let obj = this.$refs.components.getJSONdata()
+        const obj = this.$refs.components.getJSONdata()
         obj.formData = this.$refs.rightForm.getFormData()
         submitData.layoutJson = JSON.stringify(obj)
         this.$refs.rightForm.doSubmit(submitData, _this.saveApi)
       })
     },
     handleViews() {
-      let obj = this.$refs.components.getJSONdata()
+      const obj = this.$refs.components.getJSONdata()
       obj.formData = this.$refs.rightForm.getFormData()
       console.log(obj, '---obj')
       this.previewParmars = obj
@@ -214,7 +214,7 @@ export default {
     margin: 5px 5px;
   }
 }
-/deep/.normal-layout .normal-header {
+::v-deep.normal-layout .normal-header {
   background: #fff;
 }
 </style>

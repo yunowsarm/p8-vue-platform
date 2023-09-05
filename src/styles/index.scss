@@ -1,8 +1,7 @@
-@import './variables.scss';
+@import './variables.module.scss';
 @import './mixins.scss';
 @import './element-ui-custom.scss';
 @import './transitions.scss';
-@import './font/iconfont.css';
 @import './adapter.scss';
 
 html,body {

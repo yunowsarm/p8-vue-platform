@@ -20,10 +20,10 @@
 }
 .icon-tabs-wrap.el-tabs.el-tabs--top {
   height: 100%;
-  /deep/ .el-tabs__nav-wrap.is-top {
+  ::v-deep .el-tabs__nav-wrap.is-top {
     padding: 0 6px;
   }
-  /deep/ .el-tabs__content {
+  ::v-deep .el-tabs__content {
     height: calc(100% - 40px);
     .el-tab-pane {
       height: 100%;

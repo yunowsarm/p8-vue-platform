@@ -1,92 +1,69 @@
 <template>
   <div>
-    <form-list ref="form"
-               @rendered="rendered"
-               @saved="saved"
-               :data-source="dataSource"
-               :api="saveApi"
-               :form="formData">
+    <form-list
+ref="form" @rendered="rendered" @saved="saved" :data-source="dataSource" :api="saveApi" :form="formData">
       <template slot="btn">
         <el-button @click="cancel">取 消</el-button>
       </template>
     </form-list>
     <template>
-      <el-tabs type="border-card"
-               class="w_tabs"
-               v-model="activePane">
-        <el-tab-pane label="设置权限"
-                     name="setLimit"
-                     key="1">
-          <select-btn ref="selectBtn"
-                      @btn-select-change="btnSelectChange"
-                      :button-selected="selectedData.resourceList"></select-btn>
+      <el-tabs
+type="border-card" class="w_tabs" v-model="activePane">
+        <el-tab-pane
+label="设置权限" name="setLimit" key="1">
+          <select-btn
+ref="selectBtn" @btn-select-change="btnSelectChange" :button-selected="selectedData.resourceList"></select-btn>
         </el-tab-pane>
-        <el-tab-pane label="设置人员"
-                     name="setUser"
-                     key="2">
+        <el-tab-pane
+label="设置人员" name="setUser" key="2">
           <div :style="{ height: setUserHeight, overflowY: 'auto' }">
             <el-main>
               <ul class="userList">
                 <li>
-                  <el-button class="selectedBtn"
-                             type="link"
-                             size="small"
-                             icon="user-add"
-                             @click="showModal">选择人员</el-button>
+                  <el-button
+class="selectedBtn" type="link" size="small" icon="user-add" @click="showModal">选择人员</el-button>
                 </li>
-                <li v-for="item in selectedData.userList"
-                    :key="item.id">
+                <li
+v-for="item in selectedData.userList" :key="item.id">
                   <span>{{ item.realName }} [ {{ item.departmentName }} ]</span>
-                  <i class="el-icon-circle-close"
-                     @click="deleteUser(item.id)"></i>
+                  <i
+class="el-icon-circle-close" @click="deleteUser(item.id)"></i>
                 </li>
               </ul>
             </el-main>
-            <select-user v-if="visible"
-                         :visible="visible"
-                         @close-dialog="closeModal"
-                         :disabled-row="formData.sysuserIds"></select-user>
+            <select-user
+v-if="visible" :visible="visible" @close-dialog="closeModal" :disabled-row="formData.sysuserIds"></select-user>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="设置应用"
-                     name="setApp"
-                     key="3">
-          <el-col :style="{ height: flexHeight }"
-                  style="overflow: auto">
-            <div class="nav-display"
-                 :key="formData.appIds.length">
-              <div class="nav-ul"
-                   v-for="(item, index) in adhibitionList"
-                   :key="index"
-                   @click="handleAdhibitionClick(item)">
-                <div class="nav-span"
-                     :class="{ active: item.isActive }">
-                  <span class="nav-text"
-                        v-text="item.name"></span>
+        <el-tab-pane
+label="设置应用" name="setApp" key="3">
+          <el-col
+:style="{ height: flexHeight }" style="overflow: auto">
+            <div
+class="nav-display" :key="formData.appIds.length">
+              <div
+class="nav-ul" v-for="(item, index) in adhibitionList" :key="index" @click="handleAdhibitionClick(item)">
+                <div
+class="nav-span" :class="{ active: item.isActive }">
+                  <span
+class="nav-text" v-text="item.name"></span>
                 </div>
               </div>
             </div>
           </el-col>
         </el-tab-pane>
-        <el-tab-pane label="设置项目"
-                     name="setProject"
-                     key="4">
-          <el-col :style="{ height: flexHeight }"
-                  style="overflow: auto">
-            <form-list ref="form1"
-                       :data-source="projectDataSource"
-                       :form="formData"
-                       :exist-default-btn="false"></form-list>
+        <el-tab-pane
+label="设置项目" name="setProject" key="4">
+          <el-col
+:style="{ height: flexHeight }" style="overflow: auto">
+            <form-list
+ref="form1" :data-source="projectDataSource" :form="formData" :exist-default-btn="false"></form-list>
           </el-col>
         </el-tab-pane>
       </el-tabs>
     </template>
-    <el-dropdown v-if="activePane === 'setLimit'"
-                 size="mini"
-                 split-button
-                 type="primary"
-                 trigger="click"
-                 style="margin-top: 10px; margin-left: 10px">
+    <el-dropdown
+v-if="activePane === 'setLimit'" size="mini" split-button type="primary" trigger="click" style="margin-top: 10px; margin-left: 10px">
       关联操作
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item @click.native="allSelect()">全部勾选</el-dropdown-item>
@@ -118,7 +95,7 @@
   border: 1px dashed #1890ff;
   height: 29px;
 }
-/deep/ .el-tabs__nav-wrap {
+::v-deep .el-tabs__nav-wrap {
   margin-bottom: 0;
 }
 .nav-display {
@@ -201,7 +178,7 @@ export default {
       default: 0
     }
   },
-  data () {
+  data() {
     return {
       setUserHeight: document.documentElement.clientHeight - 318 + 'px',
       saveApi: 'role.save',
@@ -233,7 +210,7 @@ export default {
             },
             {
               validator: (rule, value, callback) => {
-                let that = this
+                const that = this
                 this.$api['role.repeatedCheck']({ id: that.formData.id, name: value }).then((response) => {
                   if (response.result) {
                     callback(new Error('角色名称已被使用！'))
@@ -298,8 +275,8 @@ export default {
       flexHeight: document.documentElement.clientHeight - 318 + 'px'
     }
   },
-  async created () {
-    let that = this
+  async created() {
+    const that = this
     await this.$api['kanbanComponent.getNoPage']({ availableEndUsers: 1 }).then((res) => {
       if (res && res.length) {
         res.forEach((el) => {
@@ -314,21 +291,21 @@ export default {
       this.formData.indexNo = this.dateNumber
     }
   },
-  mounted () {
+  mounted() {
     window.addEventListener('resize', () => {
       this.setUserHeight = document.documentElement.clientHeight - 267 + 'px'
     })
   },
   methods: {
-    rendered () { },
-    cancel () {
+    rendered() {},
+    cancel() {
       this.$emit('cancel')
     },
-    clickEvent () {
+    clickEvent() {
       console.log('click')
     },
-    getRoleData (roleId) {
-      let that = this
+    getRoleData(roleId) {
+      const that = this
       this.$api['role.getAllRole']({ id: roleId })
         .then(function (res) {
           if (res.appList && res.appList.length)
@@ -340,10 +317,10 @@ export default {
                 }
               })
             })
-          let { id, name, indexNo, isApprove, authorityTypes, userList = [], resourceList = [], appList = [] } = res
+          const { id, name, indexNo, isApprove, authorityTypes, userList = [], resourceList = [], appList = [] } = res
           that.formData = { ...that.formData, id, name, indexNo, isApprove }
 
-          let selectedUserIds = userList.map((u) => u.id)
+          const selectedUserIds = userList.map((u) => u.id)
           that.formData.sysuserIds = selectedUserIds
           that.formData.resourceIds = resourceList
           that.formData.authorityTypes = authorityTypes
@@ -353,26 +330,26 @@ export default {
           console.log(error)
         })
     },
-    saved (res) {
+    saved(res) {
       this.$emit('saveSuccess', res)
     },
-    handleChange (info) {
+    handleChange(info) {
       console.log(info, 'info')
     },
-    showModal () {
+    showModal() {
       this.visible = true
     },
-    closeModal (selectedRows) {
+    closeModal(selectedRows) {
       this.visible = false
       this.selectedData.userList.push(...selectedRows)
       // this.selectedRows.push(...selectedRows)
-      let idArr = selectedRows.map((v) => {
+      const idArr = selectedRows.map((v) => {
         return v.id
       })
       this.formData.sysuserIds.push(...idArr)
       // this.otherParam.sysuserIds.push(...idArr)
     },
-    deleteUser (id) {
+    deleteUser(id) {
       this.formData.sysuserIds.splice(
         this.formData.sysuserIds.findIndex((v) => v === id),
         1
@@ -384,23 +361,23 @@ export default {
       )
       // this.selectedRows.splice（(this.selectedRows.findIndex(v => v.id === id), 1)
     },
-    btnSelectChange (selectedRes) {
+    btnSelectChange(selectedRes) {
       this.$set(this.formData, 'resourceIds', selectedRes)
       // this.formData.resourceIds = selectedRes
     },
-    unAllSelect () {
+    unAllSelect() {
       this.$refs.selectBtn.unCheckAll()
     },
-    allSelect () {
+    allSelect() {
       this.$refs.selectBtn.checkAll()
     },
-    relate () {
+    relate() {
       this.$refs.selectBtn.relate()
     },
-    unRelate () {
+    unRelate() {
       this.$refs.selectBtn.unRelate()
     },
-    handleAdhibitionClick (row) {
+    handleAdhibitionClick(row) {
       row.isActive = !row.isActive
       if (row.isActive) {
         this.formData.appIds.push(row.id)

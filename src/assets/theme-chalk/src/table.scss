@@ -4,12 +4,16 @@
 .common-table::before{
   width: 0;
 }
+.radioButton {
+  position: absolute;
+  left: 75px;
+}
 .common-table {
    /* 表格最外边框 */
 .el-table--border, .el-table--group{
   border: none;
 }
- 
+
 /* 表格最外层边框-底部边框 */
 .el-table--border::after, .el-table--group::after{
   width: 0;

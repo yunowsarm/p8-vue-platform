@@ -4,29 +4,29 @@
       <el-row type="flex" style="text-align: left; height: 22px; line-height: 22px">
         <el-col :span="20">
           <span class="left-span">
-            <i class="p8 icon-message" style="color: #1890FF;"></i>
+            <i class="p8 icon-message" style="color: #1890ff"></i>
           </span>
           <span class="title-span">
             {{ messageData.msgTitle }}
           </span>
           <span>
             <el-tag v-if="messageData.uploadFiles != null && messageData.uploadFiles.length > 0" size="mini" effect="plain" class="message-tag">
-              <i class="p8 icon-attachment"></i>
+              <i class="p8 icon-jianhao"></i>
               <span class="tag-num">{{ messageData.uploadFiles.length }}</span>
             </el-tag>
             <el-tag v-if="messageData.msgLink != null && messageData.msgLink != ''" size="mini" effect="plain" class="message-tag">
-              <i class="p8 icon-quote"></i>
+              <i class="p8 icon-fenzu"></i>
             </el-tag>
           </span>
         </el-col>
         <el-col :span="4" style="text-align: right; padding-right: 5px">
           <span class="operate-span">
-            <el-link :underline="false" @click="toggleStatus(messageData.id)"><i class="p8" :class="statusIcon"  style="color: #1890FF;"></i></el-link>
-            <el-link :underline="false" @click="deleteMsg(messageData.id)"><i class="p8 icon-delete" style="color: #1890FF;"></i></el-link>
+            <el-link :underline="false" @click="toggleStatus(messageData.id)"><i class="p8" :class="statusIcon" style="color: #1890ff"></i></el-link>
+            <el-link :underline="false" @click="deleteMsg(messageData.id)"><i class="p8 icon-delete" style="color: #1890ff"></i></el-link>
           </span>
         </el-col>
       </el-row>
-       <el-row type="flex" style="text-align: left; padding: 5px 0;">
+      <el-row type="flex" style="text-align: left; padding: 5px 0">
         <el-col :span="24">
           <span class="msg-user">{{ messageData.senderName }}</span>
           <span class="msg-time">{{ messageData.sendDate }}</span>
@@ -188,7 +188,7 @@ $paddingLeft: 10px;
     font-size: 14px;
 
     .contentBody {
-        padding: 15px 25px 15px 35px;
+      padding: 15px 25px 15px 35px;
     }
 
     .border-bottom {

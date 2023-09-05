@@ -7,21 +7,16 @@
           审批意见
         </div>
         <div>
-          <form-list v-if="formValidate"
-                     ref="form"
-                     label-width="120px"
-                     :data-source="dataSource"
-                     :exist-default-btn="false"
-                     :api="saveApi"
-                     :form="formData">
+          <form-list
+v-if="formValidate" ref="form" label-width="120px" :data-source="dataSource" :exist-default-btn="false" :api="saveApi" :form="formData">
             <template #uploadFiles>
               <div class="edit-outputdata-view">
                 <ul class="file-list">
-                  <li v-for="item in formData.uploadFiles"
-                      :key="item.id">
+                  <li
+v-for="item in formData.uploadFiles" :key="item.id">
                     <p>
-                      <span class="filename"
-                            @click="downloadOutputRequsetFile(item)">
+                      <span
+class="filename" @click="downloadOutputRequsetFile(item)">
                         {{ item.fileName }}
                       </span>
                     </p>
@@ -31,34 +26,39 @@
             </template>
           </form-list>
         </div>
-        <common-tabs class="custom-tabs"
-                     type="border-card"
-                     :active-tabs="activeTabs"
-                     :tabs-data="tabs">
+        <common-tabs
+class="custom-tabs" type="border-card" :active-tabs="activeTabs" :tabs-data="tabs">
           <template #approval>
-            <component :style="{ height: tabsHeight}"
-                       :selected-approval="selectedApproval"
-                       :curr-entity-id="currEntityId"
-                       v-if="formComp != null && formComp != ''"
-                       :is="componentLoader"
-                       v-bind="formCompProp" />
+            <component
+:style="{ height: tabsHeight}"
+              :selected-approval="selectedApproval"
+              :curr-entity-id="currEntityId"
+              v-if="formComp != null && formComp != ''"
+              :is="componentLoader"
+              v-bind="formCompProp"
+            />
           </template>
           <template #bpmn>
-            <bpm-view :style="{ height: tabsHeight}"
-                      v-if="selectedApproval.processDefId != ''"
-                      :process-obj="{
+            <bpm-view
+:style="{ height: tabsHeight}"
+              v-if="selectedApproval.processDefId != ''"
+              :process-obj="{
                 processDefinitionId: selectedApproval.processDefId,
                 processInstanceId: selectedApproval.processInstId
-              }"></bpm-view>
+              }"
+            ></bpm-view>
           </template>
           <template #history>
-            <ProcessHistoryList v-if="processInstId"
-                                :style="{ height: tabsHeight}"
-                                :table-api="historyDataApi"
-                                :columns="historyColumns"
-                                :process-inst-id="processInstId"
-                                :business-key="businessKey"
-                                :table-flex="tableFlex"></ProcessHistoryList>
+            <ProcessHistoryList
+             
+v-if="processInstId"
+              :style="{ height: tabsHeight }"
+              :table-api="historyDataApi"
+              :columns="historyColumns"
+              :process-inst-id="processInstId"
+              :business-key="businessKey"
+              :table-flex="tableFlex"
+            ></ProcessHistoryList>
           </template>
         </common-tabs>
       </vue-perfect-scroll>
@@ -89,10 +89,10 @@ export default {
   props: {
     selectedApproval: {
       type: Object,
-      default: () => { }
+      default: () => {}
     }
   },
-  data () {
+  data() {
     return {
       tabsHeight: document.documentElement.clientHeight - 270 + 'px',
       businessId: '',
@@ -231,8 +231,8 @@ export default {
     }
   },
   computed: {
-    componentLoader () {
-      let comp = this.formComp
+    componentLoader() {
+      const comp = this.formComp
       return () => import('@/views/' + comp)
     }
   },
@@ -260,13 +260,13 @@ export default {
       }
     },
     approveContentTitle: {
-      handler (val) {
+      handler(val) {
         this.tabs[0].label = val
       },
       immediate: true
     }
   },
-  created () {
+  created() {
     this.processKey = this.selectedApproval.processKey
     if (this.ar.indexOf(this.processKey) !== -1) {
       this.historyDataApi = 'PersonalProcessApproval.customHistoryList'
@@ -282,19 +282,19 @@ export default {
     this.getBpmnSnapshootAndLoadData()
   },
   methods: {
-    getBpmnSnapshootAndLoadData () {
-      let this_ = this
+    getBpmnSnapshootAndLoadData() {
+      const this_ = this
       this.$api['PersonalProcessApproval.getBpmnSnapshoot']({ processInstanceId: this.processInstId }).then((res) => {
         this_.bpmnSnapshoot = res
         this.loadFormKey()
       })
     },
-    loadFormKey () {
-      let this_ = this
+    loadFormKey() {
+      const this_ = this
       this_.dataSource = this_.dataSourceDefault
       this_.$api['PersonalProcessApproval.getApproveContentViewUrl']({ taskId: this.selectedApproval.processTaskId }).then((res) => {
         if (res && res.length > 0) {
-          let page = {}
+          const page = {}
           let inputProp = {}
           this.currEntityId = this.selectedApproval.businessKey
           res.forEach((o) => {
@@ -303,8 +303,8 @@ export default {
               page.url = o.value.url
               this_.formComp = o.value.url
               page.code = o.value.code
-              let canEdit = o.value.canEdit
-              let canView = o.value.canView
+              const canEdit = o.value.canEdit
+              const canView = o.value.canView
 
               if (canEdit && canEdit === 'canEdit') {
                 this_.dataSource = this_.dataSourceTempView
@@ -325,8 +325,8 @@ export default {
         this_.formValidate = true
       })
     },
-    loadApprovalFormData () {
-      let this_ = this
+    loadApprovalFormData() {
+      const this_ = this
       if (this_.formData.approvalParams && (this_.formData.approvalParams === 'canView' || this_.formData.approvalParams === 'canEdit')) {
         this_.$api['ProjectApply.getWholeCopyClearly']({ wholeDescribeId: this_.selectedApproval.businessKey }).then((res) => {
           if (res) {
@@ -342,12 +342,12 @@ export default {
       }
       console.log(this_.formData, 'this_.formData')
     },
-    downloadOutputRequsetFile (item) {
+    downloadOutputRequsetFile(item) {
       // 输出要求-文件下载
       if (item.id) {
         this.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' })
           .then((backJson) => {
-            let link = document.createElement('a')
+            const link = document.createElement('a')
             link.href = window.URL.createObjectURL(new Blob([backJson.data]))
             link.download = item.fileName
             document.body.appendChild(link)
@@ -392,7 +392,7 @@ $paddingLeft: 10px;
       padding-left: $paddingLeft;
       height: 40px;
       width: 100%;
-      background: #F4F9FF;
+      background: #f4f9ff;
       line-height: 40px;
       font-size: 14px;
       box-sizing: border-box;
@@ -411,8 +411,8 @@ $paddingLeft: 10px;
     }
   }
 }
-.custom-tabs{
-  /deep/.el-tabs{
+.custom-tabs {
+  ::v-deep.el-tabs {
     border: none;
   }
   height: calc(100% - 145px);
@@ -421,13 +421,13 @@ $paddingLeft: 10px;
   height: calc(100% - 93px) !important;
   border-top: 1px solid #dcdfe6;
   box-sizing: border-box;
-  /deep/ .el-tabs__content {
+  ::v-deep .el-tabs__content {
     padding: 0;
   }
-  /deep/ .el-tabs__nav-wrap {
+  ::v-deep .el-tabs__nav-wrap {
     margin-bottom: 0;
   }
-  /deep/ .el-tabs__nav.is-top {
+  ::v-deep .el-tabs__nav.is-top {
     background: #f5f7fa;
   }
 }

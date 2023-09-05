@@ -93,6 +93,9 @@
               <el-option label="文本框" value="text"></el-option>
               <el-option label="目录组件" value="select"></el-option>
               <el-option label="树组件" value="treeSelect"></el-option>
+              <el-option label="复选" value="multiple"></el-option>
+              <el-option label="数字" value="number"></el-option>
+              <el-option label="单选按钮" value="radioButton"></el-option>
               <el-option label="弹出组件" value="popUpSelect"></el-option>
               <el-option label="日期" value="datetime"></el-option>
               <el-option label="时间范围" value="datetimeRange"></el-option>
@@ -126,8 +129,8 @@
             <div v-if="scope.row.searchMode === 'text'">
               <el-input clearable :disabled="!!scope.row.isCustomColumn" v-model="scope.row.dictCode"></el-input>
             </div>
-            <!-- 目录组件 -->
-            <div v-if="scope.row.searchMode === 'select'">
+            <!-- 目录组件 复选组件-->
+            <div v-if="scope.row.searchMode === 'select' || scope.row.searchMode === 'multiple' || scope.row.searchMode === 'radioButton'">
               <el-select v-model="scope.row.dictCode" style="width: 100%" clearable :disabled="!!scope.row.isCustomColumn" filterable @change="saveTableData(data)">
                 <el-option v-for="item in renderData" :key="item.selectionCode" :label="item.selectionName + '(' + item.selectionCode + ')'" :value="item.selectionCode"> </el-option>
               </el-select>
@@ -172,6 +175,10 @@
                 end-placeholder="结束日期"
               >
               </el-date-picker>
+            </div>
+            <!-- 数字 -->
+            <div v-if="scope.row.searchMode === 'number'">
+              <el-input clearable :disabled="!!scope.row.isCustomColumn" v-model="scope.row.dictCode" type="number" size="medium"></el-input>
             </div>
           </template>
           <template #fieldHrefHeader="{}">
@@ -228,7 +235,7 @@
           <template #image="{ scope }">
             <i
               v-if="!scope.row.image"
-              class="p8 icon-front-and-rear3"
+              class="p8 icon-tupian"
               slot="suffix"
               type="link"
               :style="{ cursor: 'pointer', fontSize: '40px', color: '#c0c4cc', marginTop: '8px' }"
@@ -355,7 +362,7 @@
             <form-list ref="formParams" label-width="100px" :data-source="paramsSource" :form="paramsFormData" :exist-default-btn="false">
               <div v-if="des" style="margin-left: 100px"><i class="el-icon-info"></i> {{ des }}</div>
               <template #paramsText>
-                <ace-edit :value.sync="paramsFormData.paramsText" width="100%" height="200px"></ace-edit>
+                <ace-edit :value.sync="paramsFormData.paramsText" :config="aceConfig" width="100%" height="200px"></ace-edit>
               </template>
             </form-list>
           </template>
@@ -475,7 +482,7 @@
               <el-option label="文本框" value="text"></el-option>
               <el-option label="数值" value="number"></el-option>
               <el-option label="日期" value="date"></el-option>
-              <el-option label="日期范围" value="daterange"></el-option>
+              <!-- <el-option label="日期范围" value="daterange"></el-option> -->
             </el-select>
           </template>
           <template #sourceTableFiled="{ scope, data }">
@@ -571,7 +578,7 @@ export default {
     }
   },
   data() {
-    const height = document.documentElement.clientHeight - 580
+    const height = document.documentElement.clientHeight - 608
     return {
       selectModuleIndex: null,
       helpVisible: false,
@@ -670,6 +677,10 @@ export default {
             {
               label: '表头',
               value: 1
+            },
+            {
+              label: '首行',
+              value: 2
             }
           ],
           rules: [
@@ -1371,6 +1382,7 @@ export default {
       countVisible: false,
       dataList: [],
       index: null,
+      aceConfig: {},
       iconShow: true,
       eaitHeight: '100%',
       paramsVisible: false,
@@ -1487,6 +1499,15 @@ export default {
             params: {}
           }
         }
+      ],
+      funSource: [
+        {
+          type: 'blank',
+          labelText: '自定义参数',
+          fieldName: 'paramsText',
+          slotName: 'paramsText',
+          colLayout: 'singleCol'
+        }
       ]
     }
   },
@@ -1494,7 +1515,7 @@ export default {
     // this.treeData = generateTree(this.treeData)
     this.dataSource = this.dataSourceCapy
     window.addEventListener('resize', this._initTableSize)
-    let param = {
+    const param = {
       page: {
         current: -1,
         size: -1,
@@ -1646,9 +1667,19 @@ export default {
           this.paramsSource = this.editTableSource
           this.des = '该事件为打开编辑子表事件，需选择已配置的编辑表格'
           break
+        case 'customerFun':
+          this.paramsSource = this.funSource
+          this.des = '该事件为用户自定义事件执行'
+          this.aceConfig = {
+            lang: 'javascript'
+          }
+          break
         default:
           this.paramsSource = this.defaultSource
           this.des = ''
+          this.aceConfig = {
+            lang: 'json'
+          }
           break
       }
       if (api !== '') {
@@ -1658,7 +1689,7 @@ export default {
       this.paramsVisible = true
       this.paramsFormData.paramsChange = scope.row.eventHandle
       this.paramsFormData.formCode = ''
-      this.paramsFormData['infoList'] = data
+      this.paramsFormData.infoList = data
     },
     handleClose() {
       this.paramsVisible = false
@@ -1719,6 +1750,12 @@ export default {
             code: this.paramsFormData.editTable
           }
           break
+        case 'customerFun':
+          obj = {
+            module: '编辑表格',
+            code: this.paramsFormData.paramsText
+          }
+          break
         default:
           obj = {
             module: '自定义',
@@ -1741,8 +1778,8 @@ export default {
     },
     isTreeTable(val) {
       if (val === 1) {
-        this.dataSource[4].fieldConfig.disabled = true
-        this.formData.enableEdit = 0
+        // this.dataSource[4].fieldConfig.disabled = true
+        // this.formData.enableEdit = 0
         this.dataSource[9].type = 'checkboxGroup'
         this.columns.splice(
           4,
@@ -1777,13 +1814,13 @@ export default {
     showDialog(scope, data) {
       this.moduleVisible = true
       this.scopeValue = scope
-      this.reportParams['infoList'] = data
+      this.reportParams.infoList = data
     },
     handleSelectionChange(val) {
       if (val.length >= 2) {
         // 删除索引为0的
         // console.log(val.splice(0,val.length-1),'被删除的')
-        let arrays = val.splice(0, val.length - 1)
+        const arrays = val.splice(0, val.length - 1)
         arrays.forEach((row) => {
           this.$refs.table.$refs.table.toggleRowSelection(row) // 除了当前点击的，其他的全部取消选中
         })
@@ -1799,7 +1836,7 @@ export default {
       this.dialogVisible = true
       this.scopeValue = scope
       this.selectModuleIndex = scope.$index
-      this.reportParams['infoList'] = data
+      this.reportParams.infoList = data
     },
     handleOk(val) {
       this.dialogVisible = false
@@ -1837,11 +1874,11 @@ export default {
       this.$api['formGenerator.reportConfig']({ reportId: this.record.id }).then((res) => {
         this.editableData = res
       })
-      let res = await this.$api['formGenerator.reportEditDispose']({ reportId: this.record.id })
+      const res = await this.$api['formGenerator.reportEditDispose']({ reportId: this.record.id })
       if (res && res.length > 0) {
         for (let i = 0; i < res.length; i++) {
           if (res[i].sourceTableFiled) {
-            let data = await this.$api['formGenerator.getFormFields']({ id: res[i].sourceTableFiled })
+            const data = await this.$api['formGenerator.getFormFields']({ id: res[i].sourceTableFiled })
             this.$set(res[i], 'FormFieldsList', data)
           }
         }
@@ -1861,10 +1898,10 @@ export default {
         data[scope.$index].dictCode = ''
       }
       if (changeFlag === 'change') {
-        this.reportParams['reportItem'] = this.mergeTableData(data)
+        this.reportParams.reportItem = this.mergeTableData(data)
         this.changeTableData = this.mergeTableData(data)
       } else {
-        this.reportParams['reportItem'] = data
+        this.reportParams.reportItem = data
       }
       if (changeFlag === 'isSearch') {
         if (scope.row.isSearch && !scope.row.searchMode) {
@@ -1886,21 +1923,21 @@ export default {
       }
     },
     saveParamData(data) {
-      this.reportParams['reportParam'] = data
+      this.reportParams.reportParam = data
     },
     saveButtonData(data, scope) {
       if (scope) {
         data[scope.$index].eventParams = ''
       }
-      this.reportParams['reportButton'] = data
+      this.reportParams.reportButton = data
     },
     // 合并报表配置明细数据
     mergeTableData(newData) {
-      let _this = this
-      let mergeData = []
-      let mergeFieldName = []
-      let changeData = []
-      let newFieldNameArr = []
+      const _this = this
+      const mergeData = []
+      const mergeFieldName = []
+      const changeData = []
+      const newFieldNameArr = []
       if (newData.length) {
         newData.map((item) => {
           newFieldNameArr.push(item.fieldName)
@@ -1924,11 +1961,11 @@ export default {
     },
     // 重新加载sqlId
     reloadSqlId() {
-      this.oldTableData = this.reportParams['reportItem']
+      this.oldTableData = this.reportParams.reportItem
       this.isMerge = true
     },
     customValidate(saveParams) {
-      let params = JSON.parse(JSON.stringify({ ...saveParams, ...this.reportParams }))
+      const params = JSON.parse(JSON.stringify({ ...saveParams, ...this.reportParams }))
       if (params.reportConfig && params.reportConfig.length > 0) {
         params.reportConfig.forEach((el) => {
           // 保存时处理列设置json
@@ -1986,8 +2023,8 @@ export default {
     },
     // eventHandle输入框加建议下拉框
     querySearch(queryString, cb) {
-      let eventHandleArr = this.eventHandleArraly
-      let results = queryString
+      const eventHandleArr = this.eventHandleArraly
+      const results = queryString
         ? eventHandleArr.filter(this.createFilter(queryString)).map((i) => {
             return { value: i }
           })
@@ -2005,7 +2042,7 @@ export default {
     configParamData(data, scope) {
       // 字段类型是否为number、float、long或自定义列类型为计算
       if (scope) {
-        let typeList = ['NUMBER', 'FLOAT', 'LONG']
+        const typeList = ['NUMBER', 'FLOAT', 'LONG']
         if (!typeList.includes(scope.row.fieldType) && scope.row.customColumnType !== 'count') {
           scope.row.isTableTotal = '0'
           scope.row.isFatherTotal = '0'
@@ -2025,21 +2062,21 @@ export default {
           } else {
             el.columnConfig = { iconConfig: [], countArr: [], countStr: '', slotName: '' }
           }
-          if (el.isCustomColumn && typeof el.isCustomColumn == 'string') {
+          if (el.isCustomColumn && typeof el.isCustomColumn === 'string') {
             el.isCustomColumn = el.isCustomColumn.trim()
           }
         })
       }
-      this.reportParams['reportConfig'] = data
+      this.reportParams.reportConfig = data
     },
     tabClick(target) {
       if (target.name === 'configColumnDetails') {
-        this.reportParams['reportItem'].map((val) => {
+        this.reportParams.reportItem.map((val) => {
           if (!val.fieldName && val.isCustomColumn) {
             val.fieldName = '_RANDOM_' + String.fromCharCode(97 + Math.floor(Math.random() * 26)).toUpperCase() + Math.floor(Math.random() * 100 + 10)
           }
         })
-        let arr = JSON.parse(JSON.stringify(this.reportParams['reportItem'].filter((el) => el.isListShow || el.isCustomColumn)))
+        const arr = JSON.parse(JSON.stringify(this.reportParams.reportItem.filter((el) => el.isListShow || el.isCustomColumn)))
         this.editableData.forEach((el) => {
           if (el.columnConfig) {
             if (typeof el.columnConfig === 'string') {
@@ -2050,7 +2087,7 @@ export default {
           }
         })
         const editableData = JSON.parse(JSON.stringify(this.editableData))
-        let newArr = []
+        const newArr = []
         arr.map((val) => {
           const find = editableData.find((el) => el.fieldName == val.fieldName)
           if (find && val.isCustomColumn && find.isCustomColumn) {
@@ -2067,9 +2104,9 @@ export default {
       if (target.name === 'editConfig') {
         // 当表格配置内无ID时
         this.alertMessage()
-        let arr = JSON.parse(JSON.stringify(this.reportParams['reportItem'].filter((el) => el.isListShow || el.isCustomColumn)))
+        const arr = JSON.parse(JSON.stringify(this.reportParams.reportItem.filter((el) => el.isListShow || el.isCustomColumn)))
         const editConfigData = JSON.parse(JSON.stringify(this.editConfigData))
-        let newArr = []
+        const newArr = []
         arr.map((val) => {
           const find = editConfigData.find((el) => el.fieldTxt == val.fieldTxt)
           if (find && !val.isCustomColumn) {
@@ -2084,7 +2121,7 @@ export default {
     // 判断报表配置明细配置内有无ID字段
     alertMessage() {
       let flag = true
-      this.reportParams['reportItem'].filter((el) => {
+      this.reportParams.reportItem.filter((el) => {
         if (el.fieldName === 'ID') {
           flag = false
         }
@@ -2098,7 +2135,7 @@ export default {
     isCalculate(scope) {
       // 是自定义列
       if (scope.row.isCustomColumn == '1') {
-        let typeList = ['NUMBER', 'FLOAT', 'LONG']
+        const typeList = ['NUMBER', 'FLOAT', 'LONG']
         // 字段类型是否为number、float、long或自定义列类型为计算
         if (typeList.includes(scope.row.fieldType) || scope.row.customColumnType === 'count') {
           return true
@@ -2112,31 +2149,31 @@ export default {
       // 序号 index
       // 计算 count
       // 图标 icon
-      let row = scope.row
+      const row = scope.row
       this.index = scope.$index
       if (row.customColumnType === 'count') {
-        this.dataList = this.reportParams['reportItem'].map((el) => {
+        this.dataList = this.reportParams.reportItem.map((el) => {
           return { name: el.fieldTxt, id: el.fieldName }
         })
         this.countVisible = true
       } else if (row.customColumnType === 'icon') {
         this.modifyRecord = null
-        this.dataList = this.reportParams['reportItem'].map((el) => {
+        this.dataList = this.reportParams.reportItem.map((el) => {
           return { label: el.fieldTxt, value: el.fieldName }
         })
         this.iconVisible = true
       }
     },
     formulaHandleOk(str, arr) {
-      let obj = this.editableData[this.index].columnConfig ? this.editableData[this.index].columnConfig : {}
+      const obj = this.editableData[this.index].columnConfig ? this.editableData[this.index].columnConfig : {}
       obj.countStr = str
       obj.countArr = arr
       this.$set(this.editableData[this.index], 'columnConfig', obj)
       this.countVisible = false
     },
     iconConfigOk(data) {
-      let arr = this.editableData[this.index].columnConfig && this.editableData[this.index].columnConfig.iconConfig ? this.editableData[this.index].columnConfig.iconConfig : []
-      let obj = this.editableData[this.index].columnConfig ? this.editableData[this.index].columnConfig : {}
+      const arr = this.editableData[this.index].columnConfig && this.editableData[this.index].columnConfig.iconConfig ? this.editableData[this.index].columnConfig.iconConfig : []
+      const obj = this.editableData[this.index].columnConfig ? this.editableData[this.index].columnConfig : {}
       if (this.modifyRecord) {
         arr.splice(this.modifyIndex, 1, data)
       } else {
@@ -2151,16 +2188,16 @@ export default {
       // if (typeof this.editableData[scope.$index].iconConfig === 'string') {
       //   this.editableData[scope.$index].iconConfig = JSON.parse(this.editableData[scope.$index].iconConfig)
       // }
-      let arr = this.editableData[this.index].columnConfig.iconConfig
+      const arr = this.editableData[this.index].columnConfig.iconConfig
       arr.splice(index, 1)
-      let obj = this.editableData[this.index].columnConfig ? this.editableData[this.index].columnConfig : {}
+      const obj = this.editableData[this.index].columnConfig ? this.editableData[this.index].columnConfig : {}
       obj.iconConfig = arr
       this.$set(this.editableData[this.index], 'columnConfig', obj)
     },
     modify(row, index, scope) {
       this.index = scope.$index
       this.modifyIndex = index
-      this.dataList = this.reportParams['reportItem'].map((el) => {
+      this.dataList = this.reportParams.reportItem.map((el) => {
         return { label: el.fieldTxt, value: el.fieldName }
       })
       this.modifyRecord = row
@@ -2174,7 +2211,7 @@ export default {
           })
         }
       }
-      this.reportParams['reportEditDispose'] = data
+      this.reportParams.reportEditDispose = data
     },
     getChildTableData(val) {
       this.$api['formGenerator.getChildTable']({ id: val }).then((res) => {
@@ -2206,13 +2243,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/.editTable {
+::v-deep.editTable {
   height: calc(100% - 20px) !important;
 }
-/deep/ .el-col-12 {
+::v-deep .el-col-12 {
   height: 50px !important;
 }
-/deep/ .existBtn > :last-child {
+::v-deep .existBtn > :last-child {
   height: 100px !important;
 }
 .wrap {
@@ -2242,14 +2279,14 @@ export default {
 .formList.el-form > .el-row.formBtn {
   z-index: 9999;
 }
-// .editTable /deep/ .el-table__body-wrapper {
+// .editTable ::v-deep .el-table__body-wrapper {
 //   height: calc(100% - 50px) !important;
 // }
 .editConfig {
   height: calc(100% - 120px) !important;
 }
 .el_tabs {
-  /deep/.el-tabs__content {
+  ::v-deep.el-tabs__content {
     padding: 0 !important;
   }
 }

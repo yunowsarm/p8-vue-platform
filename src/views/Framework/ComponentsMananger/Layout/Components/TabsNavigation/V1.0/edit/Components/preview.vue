@@ -8,6 +8,7 @@
               <span slot="label"> <i v-if="item.icon" :class="['iconStyle', item.icon]" :style="{ color: item.color }"></i>{{ item.name }} </span>
               <!-- <component :is="componentUrl" :code="code" ref="components" class="aa"></component> -->
               <component
+                v-if="activeName == item.name"
                 :is="componentUrl"
                 :code="componentsConfig.code"
                 :data-view-id="componentsConfig.dataViewId"
@@ -28,7 +29,7 @@
 .el-tabs.el-tabs--top,
 .el-tabs.el-tabs--bottom {
   height: 100% !important;
-  /deep/ .el-tabs__content {
+  ::v-deep .el-tabs__content {
     height: calc(100% - 51px) !important;
     > div {
       height: 100%;
@@ -45,7 +46,7 @@
 .el-tabs.el-tabs--left,
 .el-tabs.el-tabs--right {
   height: 100% !important;
-  /deep/ .el-tabs__content {
+  ::v-deep .el-tabs__content {
     height: calc(100% - 10px) !important;
     > div {
       height: 100%;
@@ -69,62 +70,62 @@
   font-size: 16px;
   margin: 0 5px;
 }
-.preview /deep/ .normal-layout {
+.preview ::v-deep .normal-layout {
   margin: 0;
 }
-.preview /deep/ .el-tabs--border-card > .el-tabs__content {
+.preview ::v-deep .el-tabs--border-card > .el-tabs__content {
   padding: 0;
 }
-/deep/ .el-tabs--border-card > .el-tabs__content {
+::v-deep .el-tabs--border-card > .el-tabs__content {
   padding: 0;
 }
-/deep/ .el-tabs__item.is-active {
+::v-deep .el-tabs__item.is-active {
   color: #1890ff;
 }
-/deep/ .list-layout .list-main {
+::v-deep .list-layout .list-main {
   padding: 0;
 }
-/deep/.el-tabs.el-tabs--left .el-tabs__item {
+::v-deep.el-tabs.el-tabs--left .el-tabs__item {
   padding: 10px 0;
   padding: 10px 20px !important;
   border-right: 1px solid #e4e7ed;
 }
-/deep/ .el-tabs.el-tabs--right .el-tabs__item {
+::v-deep .el-tabs.el-tabs--right .el-tabs__item {
   padding: 10px 20px !important;
   margin: 0;
   border-left: 1px solid #e4e7ed;
 }
-/deep/ .el-tabs--left .el-tabs__item.is-left,
-/deep/ .el-tabs--right .el-tabs__item.is-right {
+::v-deep .el-tabs--left .el-tabs__item.is-left,
+::v-deep .el-tabs--right .el-tabs__item.is-right {
   text-align: unset;
 }
-/deep/ .el-tabs--left .el-tabs__nav-wrap.is-left::after,
-/deep/ .el-tabs--right .el-tabs__nav-wrap.is-right::after {
+::v-deep .el-tabs--left .el-tabs__nav-wrap.is-left::after,
+::v-deep .el-tabs--right .el-tabs__nav-wrap.is-right::after {
   width: 1px;
 }
-/deep/ .el-tabs__nav-wrap::after {
+::v-deep .el-tabs__nav-wrap::after {
   height: 0;
 }
 // 默认四个方向
-/deep/ .el-tabs.el-tabs--top > .el-tabs__header {
+::v-deep .el-tabs.el-tabs--top > .el-tabs__header {
   border-bottom: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
     border-bottom: 2px solid #1890ff;
   }
 }
-/deep/ .el-tabs.el-tabs--left > .el-tabs__header {
+::v-deep .el-tabs.el-tabs--left > .el-tabs__header {
   border-right: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
     border-right: 2px solid #1890ff;
   }
 }
-/deep/ .el-tabs.el-tabs--bottom > .el-tabs__header {
+::v-deep .el-tabs.el-tabs--bottom > .el-tabs__header {
   border-top: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
     border-top: 2px solid #1890ff;
   }
 }
-/deep/ .el-tabs.el-tabs--right > .el-tabs__header {
+::v-deep .el-tabs.el-tabs--right > .el-tabs__header {
   border-left: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
     border-left: 2px solid #1890ff;
@@ -132,12 +133,12 @@
 }
 
 // 选项卡 四个方向
-/deep/ .el-tabs--card > .el-tabs__header {
+::v-deep .el-tabs--card > .el-tabs__header {
   border-top: none;
   border-bottom: none;
 }
 // 上
-/deep/ .el-tabs--card.el-tabs--top > .el-tabs__header {
+::v-deep .el-tabs--card.el-tabs--top > .el-tabs__header {
   border-bottom: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
     border-bottom: 1px solid;
@@ -156,7 +157,7 @@
   }
 }
 // 左
-/deep/ .el-tabs--card.el-tabs--left > .el-tabs__header {
+::v-deep .el-tabs--card.el-tabs--left > .el-tabs__header {
   border-right: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
     border-right: 2px solid #ffffff !important;
@@ -175,7 +176,7 @@
   }
 }
 // 下
-/deep/ .el-tabs--card.el-tabs--bottom > .el-tabs__header {
+::v-deep .el-tabs--card.el-tabs--bottom > .el-tabs__header {
   margin-top: 0;
   border-top: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
@@ -203,7 +204,7 @@
   }
 }
 // 右
-/deep/ .el-tabs--card.el-tabs--right > .el-tabs__header {
+::v-deep .el-tabs--card.el-tabs--right > .el-tabs__header {
   border-left: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
     border-left: 2px solid #ffffff !important;
@@ -224,7 +225,7 @@
 
 // 卡片四个方向
 // 上
-/deep/ .el-tabs--border-card.el-tabs--top > {
+::v-deep .el-tabs--border-card.el-tabs--top > {
   .el-tabs__content {
     padding: 0;
   }
@@ -238,7 +239,7 @@
   }
 }
 // 左
-/deep/ .el-tabs--border-card.el-tabs--left > {
+::v-deep .el-tabs--border-card.el-tabs--left > {
   .el-tabs__content {
     padding: 0;
   }
@@ -252,7 +253,7 @@
   }
 }
 // 下
-/deep/ .el-tabs--border-card.el-tabs--bottom > {
+::v-deep .el-tabs--border-card.el-tabs--bottom > {
   .el-tabs__content {
     padding: 0;
   }
@@ -266,7 +267,7 @@
   }
 }
 // 右
-/deep/ .el-tabs--border-card.el-tabs--right > {
+::v-deep .el-tabs--border-card.el-tabs--right > {
   .el-tabs__content {
     padding: 0;
   }
@@ -279,7 +280,7 @@
     border-left: 2px solid #fff;
   }
 }
-/deep/ .el-tabs__item {
+::v-deep .el-tabs__item {
   padding: 0 20px !important;
   height: unset;
   box-sizing: border-box;
@@ -350,9 +351,9 @@ export default {
         this.asyncComponents = defaultComponents.url
         this.componentsConfig = defaultComponents
       } else {
-        let tabObj = this.tabsData[0]
-        let paramsObj = {}
-        let parmarsList = this.parmarsMap.filter((el) => {
+        const tabObj = this.tabsData[0]
+        const paramsObj = {}
+        const parmarsList = this.parmarsMap.filter((el) => {
           return el.after !== ''
         })
         if (parmarsList && parmarsList.length > 0) {
@@ -378,11 +379,11 @@ export default {
       this.activeName = this.tabsData[0].name
     },
     tabClick(target) {
-      let tabs = this.tabsData.filter((el) => {
+      const tabs = this.tabsData.filter((el) => {
         return el.name === target.name
       })
-      let paramsObj = {}
-      let parmarsList = this.parmarsMap.filter((el) => {
+      const paramsObj = {}
+      const parmarsList = this.parmarsMap.filter((el) => {
         return el.after !== ''
       })
       if (parmarsList && parmarsList.length > 0) {

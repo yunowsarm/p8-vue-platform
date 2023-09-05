@@ -4,7 +4,7 @@
     <!-- <span class="sysName">{{ systemName }}</span> -->
     <div class="slide-bar" @click="slideSidebar">
       <!-- v-show="$route.path !== '/dash'" -->
-      <div class="slider p8" :class="{ 'icon-fold-right': !this.sidebarState.isOpen, 'icon-fold-left': this.sidebarState.isOpen }"></div>
+      <div class="slider p8" :class="{ 'icon-youzhedie1': !this.sidebarState.isOpen, 'icon-zuozhedie1': this.sidebarState.isOpen }"></div>
     </div>
     <div class="center">
       <header-subsystem />
@@ -156,7 +156,7 @@ export default {
   mounted() {
     console.log(this.systemName, '=========================systemName')
     this.dayTime = getGreetingTime()
-    let this_ = this
+    const this_ = this
     this_.approvalTotal()
     this_.approvalMsg()
     this_.noticeMsg()
@@ -172,7 +172,7 @@ export default {
   },
   watch: {
     messageNum(val, oldVal) {
-      let _this = this
+      const _this = this
       if (val.length) {
         val.map((item) => {
           if (item.id === '18') {
@@ -202,10 +202,10 @@ export default {
       })
     },
     approvalMsg() {
-      let that = this
+      const that = this
       this.$api['PersonalProcessApproval.findMessageInfo']({ id: null }).then((res) => {
         if (res) {
-          let msg = '审批消息'
+          const msg = '审批消息'
           Notification.success({
             title: msg,
             message: '您有新的' + msg + '！',
@@ -219,10 +219,10 @@ export default {
       })
     },
     noticeMsg() {
-      let that = this
+      const that = this
       this.$api['PersonalProcessApproval.checkNoticeMsg']({ id: null }).then((res) => {
         if (res) {
-          let msg = '通知消息'
+          const msg = '通知消息'
           Notification.success({
             title: msg,
             message: '您有新的' + msg + '！',
@@ -268,15 +268,15 @@ export default {
         .catch(() => {})
     },
     fromHex(color) {
-      var t = {},
-        bits = color.length == 4 ? 4 : 8, //假设是shorthand。 #fff, 那么bits为4位, 每一位代表的个属性, 其他的为8位 每两位代表一个属性 #ffffff00
-        mask = (1 << bits) - 1 //表示字节占位符。 向左移4位或8位，var a = (1 << 4 ) - 1 -> 10000 - 1,  a.toString(2); // 1111。或者 8位的 1111 1111
-      color = Number('0x' + color.substr(1)) //#ff0000 转变为16进制0xff0000;
+      const t = {}
+      const bits = color.length == 4 ? 4 : 8 // 假设是shorthand。 #fff, 那么bits为4位, 每一位代表的个属性, 其他的为8位 每两位代表一个属性 #ffffff00
+      const mask = (1 << bits) - 1 // 表示字节占位符。 向左移4位或8位，var a = (1 << 4 ) - 1 -> 10000 - 1,  a.toString(2); // 1111。或者 8位的 1111 1111
+      color = Number('0x' + color.substr(1)) // #ff0000 转变为16进制0xff0000;
       if (isNaN(color)) {
         return null // Color
       }
       ;['b', 'g', 'r'].forEach(function (x) {
-        var c = color & mask
+        const c = color & mask
         color >>= bits
         t[x] = bits == 4 ? 17 * c : c // 0xfff ， 一个f应该代表 255, 应该当[0-255]，按15等份划分，每一等份间隔 17。
       })
@@ -479,7 +479,7 @@ div.header_userInfo {
   }
 
   .settings {
-    /deep/ .el-badge__content {
+    ::v-deep .el-badge__content {
       font-size: $font-size-mini;
       height: pxTorem(18px);
       line-height: pxTorem(18px);

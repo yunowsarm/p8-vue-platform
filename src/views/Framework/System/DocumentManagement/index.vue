@@ -1,92 +1,74 @@
 <template>
   <normal-layout>
-    <template #north
-              v-if="viewType === 'table'">
-      <common-button :comp="comp"
-                     :button-type="'round'"
-                     :button-config="buttonConfig"></common-button>
+    <template
+#north v-if="viewType === 'table'">
+      <common-button
+:comp="comp" :button-type="'round'" :button-config="buttonConfig"></common-button>
       <div class="upload-box">
-        <common-upload :files="files"
-                       @upload="handleUpload"
-                       @remove="handleRemove"></common-upload>
+        <common-upload
+:files="files" @upload="handleUpload" @remove="handleRemove"></common-upload>
       </div>
     </template>
     <template #west>
       <div style="padding: 10px">
-        <search-form-list ref="search"
-                          search-width="90%"
-                          search-contain-width="100%"
-                          label-width="70px"
-                          :data-source="searchData"
-                          @search="search"
-                          @re-set="reSet"></search-form-list>
+        <search-form-list
+ref="search" search-width="90%" search-contain-width="100%" label-width="70px" :data-source="searchData" @search="search" @re-set="reSet"></search-form-list>
       </div>
       <div class="treeContain">
-        <common-tree :tree-api="treeDataApi"
-                     :tree-param="treeParam"
-                     @select="onSelect"></common-tree>
+        <common-tree
+:tree-api="treeDataApi" :tree-param="treeParam" @select="onSelect"></common-tree>
       </div>
     </template>
     <template #center>
       <div v-if="viewType === 'table'">
-        <common-table ref="table"
-                      :comp="comp"
-                      :style="{ height: tableHeight}"
-                      :columns="columns"
-                      :params="queryParam"
-                      :api="tableApi"
-                      :table-refresh="tableRefresh"
-                      @select="recordSelected"
-                      :pagination="true"></common-table>
+        <common-table
+         
+ref="table"
+          :comp="comp"
+          :style="{ height: tableHeight }"
+          :columns="columns"
+          :params="queryParam"
+          :api="tableApi"
+          :table-refresh="tableRefresh"
+          @select="recordSelected"
+          :pagination="true"
+        ></common-table>
       </div>
       <div v-if="cardData.length > 0">
         <el-row>
-          <el-col :span="5"
-                  v-for="r in cardData"
-                  :key="r.id"
-                  :offset="cardData.length > 0 ? 1 : 0">
+          <el-col
+:span="5" v-for="r in cardData" :key="r.id" :offset="cardData.length > 0 ? 1 : 0">
             <el-card :body-style="{ padding: '0px' }">
-              <img src=""
-                   class="image" />
+              <img
+src="" class="image" />
               <div style="padding: 14px">
                 <span>{{ r.name }}</span>
                 <div class="bottom clearfix">
                   <time class="time">{{ r.itemCreateTime }}</time>
-                  <el-button type="text"
-                             @click="download(r)"
-                             class="button">下载</el-button>
+                  <el-button
+type="text" @click="download(r)" class="button">下载</el-button>
                 </div>
               </div>
             </el-card>
           </el-col>
         </el-row>
       </div>
-      <span v-else
-            class="span-bg"></span>
+      <span
+v-else class="span-bg"></span>
     </template>
     <template #drawer-panel>
-      <common-drawer v-if="isVisibleDocumentViewDrawer"
-                     :title="documentViewDrawerTitle"
-                     :visible="isVisibleDocumentViewDrawer"
-                     placement="top"
-                     size="50%"
-                     @close="documentViewDrawerClose">
+      <common-drawer
+v-if="isVisibleDocumentViewDrawer" :title="documentViewDrawerTitle" :visible="isVisibleDocumentViewDrawer" placement="top" size="50%" @close="documentViewDrawerClose">
         <template #drawer>
-          <DocumentView :record="selectedRecord"
-                        @cancel="isVisibleDocumentViewDrawer = false"
-                        @close="documentViewDrawerClose"></DocumentView>
+          <DocumentView
+:record="selectedRecord" @cancel="isVisibleDocumentViewDrawer = false" @close="documentViewDrawerClose"></DocumentView>
         </template>
       </common-drawer>
-      <common-drawer v-if="isVisibleDocumentEditDrawer"
-                     :title="documentEditDrawerTitle"
-                     :visible="isVisibleDocumentEditDrawer"
-                     placement="top"
-                     size="50%"
-                     @close="documentEditDrawerClose">
+      <common-drawer
+v-if="isVisibleDocumentEditDrawer" :title="documentEditDrawerTitle" :visible="isVisibleDocumentEditDrawer" placement="top" size="50%" @close="documentEditDrawerClose">
         <template #drawer>
-          <DocumentEdit :record="selectedRecord"
-                        @cancel="isVisibleDocumentEditDrawer = false"
-                        @close="documentEditDrawerClose"></DocumentEdit>
+          <DocumentEdit
+:record="selectedRecord" @cancel="isVisibleDocumentEditDrawer = false" @close="documentEditDrawerClose"></DocumentEdit>
         </template>
       </common-drawer>
     </template>
@@ -220,14 +202,14 @@ export default {
       ]
     }
   },
-  mounted () {
+  mounted() {
     this.isTreeSelectView = true
     if (this.viewType !== 'table') {
       this.queryData()
     }
   },
   methods: {
-    tableRefresh (param) {
+    tableRefresh(param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')
@@ -236,12 +218,12 @@ export default {
           console.log('异步失败的操作')
         })
     },
-    onSelect (node) {
+    onSelect(node) {
       this.queryParam.classify = node.id
       this.queryData()
     },
-    save () {
-      let this_ = this
+    save() {
+      const this_ = this
       this.$api['documentManagement.save']({ uploadFiles: this.uploadFiles, classify: this.queryParam.classify ? this.queryParam.classify : 'dc_zff_01' }).then((res) => {
         this_.$message({
           message: '操作成功',
@@ -251,8 +233,8 @@ export default {
         this_.uploadFiles = []
       })
     },
-    queryData (params) {
-      let this_ = this
+    queryData(params) {
+      const this_ = this
       this.queryParam = { ...this.queryParam, ...params }
       if (this_.viewType === 'table') {
         Vue.nextTick(function () {
@@ -264,40 +246,40 @@ export default {
         })
       }
     },
-    documentViewDrawerClose () {
+    documentViewDrawerClose() {
       this.isVisibleDocumentViewDrawer = false
     },
-    documentEditDrawerClose () {
+    documentEditDrawerClose() {
       this.isVisibleDocumentEditDrawer = false
     },
-    recordSelected (record) {
+    recordSelected(record) {
       this.selectedRecord = record
     },
-    view (record) {
+    view(record) {
       this.selectedRecord = record
       this.isVisibleDocumentViewDrawer = true
     },
-    edit (record) {
+    edit(record) {
       this.selectedRecord = record
       this.isVisibleDocumentEditDrawer = true
     },
-    delete (record) {
-      let this_ = this
+    delete(record) {
+      const this_ = this
       this.selectedRecord = record
       this.$api['documentManagement.delete']({ id: record.id }).then((res) => {
         this_.queryData()
       })
     },
-    handleUpload (file) {
+    handleUpload(file) {
       this.uploadFiles.push(file)
       this.save()
     },
-    handleRemove (file) {
-      let removeIndex = this.uploadFiles.findIndex((fileItem) => fileItem.filePath === file.filePath)
+    handleRemove(file) {
+      const removeIndex = this.uploadFiles.findIndex((fileItem) => fileItem.filePath === file.filePath)
       this.uploadFiles.splice(removeIndex, 1)
       this.save()
     },
-    download (r) {
+    download(r) {
       if (!r.attachmentId) {
         this.$message({
           type: 'error',
@@ -307,7 +289,7 @@ export default {
       }
       this.$api['documentManagement.download']({ attachmentId: r.attachmentId }, { responseType: 'blob' })
         .then((backJson) => {
-          let link = document.createElement('a')
+          const link = document.createElement('a')
           link.href = window.URL.createObjectURL(new Blob([backJson.data]))
           link.download = r.name
           document.body.appendChild(link)
@@ -316,10 +298,10 @@ export default {
           window.URL.revokeObjectURL(link.href)
           document.body.removeChild(link)
         })
-        .finally(() => { })
+        .finally(() => {})
     },
-    reSet () {
-      let this_ = this
+    reSet() {
+      const this_ = this
       Object.keys(this_.queryParam).forEach((key) => {
         this_.queryParam[key] = null
       })
@@ -327,13 +309,13 @@ export default {
         this_.$refs.table.searchData()
       })
     },
-    search (searchData) {
+    search(searchData) {
       this.queryData(searchData)
     }
   }
 }
 </script>
-<style lang='scss' scoped >
+<style lang="scss" scoped>
 .time {
   font-size: 13px;
   color: #999;
@@ -383,7 +365,7 @@ export default {
   background-position: center;
   margin-top: 25px;
 }
-.normalUpload /deep/ {
+.normalUpload ::v-deep {
   .normal-header {
     height: 60px;
   }
@@ -391,7 +373,7 @@ export default {
     height: calc(100% - 60px);
   }
 }
-/deep/.normal-header {
+::v-deep.normal-header {
   height: 55px !important;
 }
 </style>

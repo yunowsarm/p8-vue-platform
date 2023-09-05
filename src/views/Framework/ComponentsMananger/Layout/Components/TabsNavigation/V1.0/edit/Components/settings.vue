@@ -90,13 +90,13 @@
   </common-dialog>
 </template>
 <style lang="scss" scoped>
-.formList /deep/ .el-col-12 {
+.formList ::v-deep .el-col-12 {
   height: 50px;
 }
-.formList /deep/ .el-row {
+.formList ::v-deep .el-row {
   height: 100%;
 }
-/deep/ .el-tabs {
+::v-deep .el-tabs {
   height: 320px !important;
   .list-header button {
     margin-top: 9px;
@@ -114,7 +114,7 @@
   color: #2196f3;
   margin: auto;
 }
-/deep/ .el-table__body-wrapper {
+::v-deep .el-table__body-wrapper {
   height: calc(100% - 40px) !important;
 }
 </style>
@@ -410,7 +410,7 @@ export default {
   },
   mounted() {
     this.formData = { ...this.formData, ...this.tabsParmar }
-    let _this = this
+    const _this = this
     this.$api['selection.getAllSqlview']().then(function (res) {
       _this.SqlViewData = res
     })
@@ -436,11 +436,11 @@ export default {
       this.$emit('close')
     },
     handleOk() {
-      let that = this
+      const that = this
       this.$refs.form.validate().then((submitData) => {
-        let tabsData = that.reportParams ? that.reportParams : that.editableData
+        const tabsData = that.reportParams ? that.reportParams : that.editableData
         tabsData.sort((a, b) => a.indexNo - b.indexNo)
-        let settingsParmars = {
+        const settingsParmars = {
           tabsParmar: that.formData,
           tabsData: tabsData,
           parmarsMap: that.noApiTableData
@@ -450,7 +450,7 @@ export default {
     },
     customValidate() {},
     onSqlIdChange(item) {
-      let _this = this
+      const _this = this
       this.$api['selection.getSqlViewAllColumn']({ id: item }).then(function (res) {
         _this.sqlViewCols = res
         _this.getParmarsMap(res)
@@ -471,8 +471,8 @@ export default {
     },
     getParmarsMap(res) {
       if (res && res.length) {
-        let arr = res.map((el) => el.value)
-        let parmarsMap = []
+        const arr = res.map((el) => el.value)
+        const parmarsMap = []
         if (this.parmarsMap && this.parmarsMap.length > 1) {
           return
         }

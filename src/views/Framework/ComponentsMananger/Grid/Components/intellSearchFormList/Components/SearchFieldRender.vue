@@ -1,152 +1,130 @@
 <template>
   <el-row :gutter="2">
     <el-col :span="18">
-      <el-form-item v-show="fields.fieldName && fields.type !== 'hidden'"
-                    :label="fields.labelText"
-                    :prop="fields.fieldName"
-                    :rules="validator(fields.rules)">
-        <el-input v-if="fields.fieldName && fields.type === 'text'"
-                  v-model="formData[fields.fieldName]"
-                  v-bind="fields.fieldConfig"
-                  :placeholder="fields.placeholder"
-                  clearable></el-input>
-        <el-input v-else-if="fields.fieldName && fields.type === 'textarea'"
-                  type="textarea"
-                  v-model="formData[fields.fieldName]"
-                  v-bind="fields.fieldConfig"
-                  :placeholder="fields.placeholder"
-                  clearable></el-input>
-        <el-select v-else-if="fields.fieldName && fields.type === 'select'"
-                   v-model="formData[fields.fieldName]"
-                   v-bind="fields.fieldConfig"
-                   :placeholder="fields.placeholder"
-                   style="width: 100%"
-                   clearable>
-          <el-option v-for="item in fields.options && fields.options.length ? fields.options : options"
-                     :key="item.value"
-                     :label="item.label"
-                     :value="item.value"></el-option>
+      <el-form-item v-show="fields.fieldName && fields.type !== 'hidden'" :label="fields.labelText" :prop="fields.fieldName" :rules="validator(fields.rules)">
+        <el-input v-if="fields.fieldName && fields.type === 'text'" v-model="formData[fields.fieldName]" v-bind="fields.fieldConfig" :placeholder="fields.placeholder" clearable></el-input>
+        <el-input
+          v-else-if="fields.fieldName && fields.type === 'textarea'"
+          type="textarea"
+          v-model="formData[fields.fieldName]"
+          v-bind="fields.fieldConfig"
+          :placeholder="fields.placeholder"
+          clearable
+        ></el-input>
+        <el-select
+          v-else-if="fields.fieldName && fields.type === 'select'"
+          v-model="formData[fields.fieldName]"
+          v-bind="fields.fieldConfig"
+          :placeholder="fields.placeholder"
+          style="width: 100%"
+          clearable
+        >
+          <el-option v-for="item in fields.options && fields.options.length ? fields.options : options" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
-        <el-select v-else-if="fields.fieldName && fields.type === 'multiple'"
-                   v-model="formData[fields.fieldName]"
-                   multiple
-                   clearable
-                   v-bind="fields.fieldConfig"
-                   :placeholder="fields.placeholder"
-                   style="width: 100%">
-          <el-option v-for="item in fields.options && fields.options.length ? fields.options : options"
-                     :key="item.value"
-                     :label="item.label"
-                     :value="item.value"></el-option>
+        <el-select
+          v-else-if="fields.fieldName && fields.type === 'multiple'"
+          v-model="formData[fields.fieldName]"
+          multiple
+          clearable
+          v-bind="fields.fieldConfig"
+          :placeholder="fields.placeholder"
+          style="width: 100%"
+        >
+          <el-option v-for="item in fields.options && fields.options.length ? fields.options : options" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
-        <tree-select v-else-if="fields.fieldName && fields.type === 'treeSelect'"
-                     :default-expand-all="fields.defaultExpandAll"
-                     :default-expanded-keys="fields.defaultExpandedKeys"
-                     :multiple="fields.multiple"
-                     :placeholder="fields.placeholder"
-                     :disabled="fields.disabled"
-                     :data="fields.treeData && fields.treeData.length ? fields.treeData : options"
-                     :props="fields.treeProps"
-                     :disabled-values="fields.disabledValues"
-                     :check-strictly="fields.checkStrictly"
-                     :clearable="fields.clearable"
-                     :reset="fields.reset"
-                     v-model="formData[fields.fieldName]"
-                     style="width: 100%"></tree-select>
-        <el-input-number v-else-if="fields.fieldName && fields.type === 'number'"
-                         :min="fields.min || fields.min === 0 ? fields.min : 1"
-                         :max="fields.max"
-                         v-model="formData[fields.fieldName]"
-                         v-bind="fields.fieldConfig"
-                         :placeholder="fields.placeholder"
-                         style="width: 100%"></el-input-number>
-        <el-radio-group v-else-if="fields.fieldName && fields.type === 'radio' && Array.isArray(fields.options)"
-                        v-model="formData[fields.fieldName]"
-                        v-bind="fields.fieldConfig"
-                        :placeholder="fields.placeholder">
-          <el-radio v-for="item in fields.options && fields.options.length ? fields.options : options"
-                    :key="item.value"
-                    :label="item.value"
-                    :value="item.value">{{ item.label }}</el-radio>
+        <tree-select
+          v-else-if="fields.fieldName && fields.type === 'treeSelect'"
+          :default-expand-all="fields.defaultExpandAll"
+          :default-expanded-keys="fields.defaultExpandedKeys"
+          :multiple="fields.multiple"
+          :placeholder="fields.placeholder"
+          :disabled="fields.disabled"
+          :data="fields.treeData && fields.treeData.length ? fields.treeData : options"
+          :props="fields.treeProps"
+          :disabled-values="fields.disabledValues"
+          :check-strictly="fields.checkStrictly"
+          :clearable="fields.clearable"
+          :reset="fields.reset"
+          v-model="formData[fields.fieldName]"
+          style="width: 100%"
+        ></tree-select>
+        <el-input-number
+          v-else-if="fields.fieldName && fields.type === 'number'"
+          :min="fields.min || fields.min === 0 ? fields.min : 1"
+          :max="fields.max"
+          v-model="formData[fields.fieldName]"
+          v-bind="fields.fieldConfig"
+          :placeholder="fields.placeholder"
+          style="width: 100%"
+        ></el-input-number>
+        <el-radio-group
+          v-else-if="fields.fieldName && fields.type === 'radio' && Array.isArray(fields.options)"
+          v-model="formData[fields.fieldName]"
+          v-bind="fields.fieldConfig"
+          :placeholder="fields.placeholder"
+        >
+          <el-radio v-for="item in fields.options && fields.options.length ? fields.options : options" :key="item.value" :label="item.value" :value="item.value">{{ item.label }}</el-radio>
         </el-radio-group>
-        <el-radio-group v-else-if="fields.fieldName && fields.type === 'radioButton' && Array.isArray(fields.options)"
-                        v-model="formData[fields.fieldName]"
-                        v-bind="fields.fieldConfig">
-          <el-radio-button v-for="item in fields.options && fields.options.length ? fields.options : options"
-                           :key="item.value"
-                           :label="item.value"
-                           :value="item.value">{{
+        <el-radio-group v-else-if="fields.fieldName && fields.type === 'radioButton'" v-model="formData[fields.fieldName]" v-bind="fields.fieldConfig">
+          <el-radio-button v-for="item in fields.options && fields.options.length ? fields.options : options" :key="item.value" :label="item.value" :value="item.value">{{
             item.label
           }}</el-radio-button>
         </el-radio-group>
-        <el-checkbox v-else-if="fields.fieldName && fields.type === 'checkbox'"
-                     v-model="formData[fields.fieldName]"
-                     v-bind="fields.fieldConfig"
-                     :placeholder="fields.placeholder">{{
+        <el-checkbox v-else-if="fields.fieldName && fields.type === 'checkbox'" v-model="formData[fields.fieldName]" v-bind="fields.fieldConfig" :placeholder="fields.placeholder">{{
           fields.label
         }}</el-checkbox>
-        <el-checkbox-group v-else-if="fields.fieldName && fields.type === 'checkboxGroup' && Array.isArray(fields.options)"
-                           v-model="formData[fields.fieldName]"
-                           v-bind="fields.fieldConfig"
-                           :placeholder="fields.placeholder">
-          <el-checkbox v-for="item in fields.options && fields.options.length ? fields.options : options"
-                       :key="item.value"
-                       :label="item.value"
-                       :value="item.value">{{ item.label }}</el-checkbox>
+        <el-checkbox-group
+          v-else-if="fields.fieldName && fields.type === 'checkboxGroup' && Array.isArray(fields.options)"
+          v-model="formData[fields.fieldName]"
+          v-bind="fields.fieldConfig"
+          :placeholder="fields.placeholder"
+        >
+          <el-checkbox v-for="item in fields.options && fields.options.length ? fields.options : options" :key="item.value" :label="item.value" :value="item.value">{{ item.label }}</el-checkbox>
         </el-checkbox-group>
-        <el-date-picker v-else-if="fields.fieldName && fields.type === 'datetime'"
-                        v-model="formData[fields.fieldName]"
-                        type="date"
-                        v-bind="fields.fieldConfig"
-                        :placeholder="fields.placeholder"
-                        style="width: 100%"
-                        clearable></el-date-picker>
-        <el-date-picker v-else-if="fields.fieldName && fields.type === 'datetimeRange'"
-                        v-model="formData[fields.fieldName]"
-                        v-bind="fields.fieldConfig"
-                        type="daterange"
-                        range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        style="width: 100%"
-                        unlink-panels
-                        clearable></el-date-picker>
-        <el-switch v-else-if="fields.fieldName && fields.type === 'switch'"
-                   v-model="formData[fields.fieldName]"
-                   active-color="#13ce66"
-                   inactive-color="#ff4949"
-                   v-bind="fields.fieldConfig"
-                   :placeholder="fields.placeholder"></el-switch>
+        <el-date-picker
+          v-else-if="fields.fieldName && fields.type === 'datetime'"
+          v-model="formData[fields.fieldName]"
+          type="date"
+          v-bind="fields.fieldConfig"
+          :placeholder="fields.placeholder"
+          style="width: 100%"
+          clearable
+        ></el-date-picker>
+        <el-date-picker
+          v-else-if="fields.fieldName && fields.type === 'datetimeRange'"
+          v-model="formData[fields.fieldName]"
+          v-bind="fields.fieldConfig"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          style="width: 100%"
+          unlink-panels
+          clearable
+        ></el-date-picker>
+        <el-switch
+          v-else-if="fields.fieldName && fields.type === 'switch'"
+          v-model="formData[fields.fieldName]"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          v-bind="fields.fieldConfig"
+          :placeholder="fields.placeholder"
+        ></el-switch>
         <div v-else-if="fields.fieldName && fields.type === 'popUpSelect'">
-          <el-input v-model="popLabel"
-                    readonly>
+          <el-input v-model="popLabel" readonly>
             <template slot="suffix">
-              <i v-if="formData[fields.fieldName]"
-                 class="el-icon-circle-close"
-                 @click="resetPop"></i>
-              <i v-if="!formData[fields.fieldName]"
-                 class="el-icon-link"
-                 @click="showDialog"></i>
+              <i v-if="formData[fields.fieldName]" class="el-icon-circle-close" @click="resetPop"></i>
+              <i v-if="!formData[fields.fieldName]" class="el-icon-link" @click="showDialog"></i>
             </template>
           </el-input>
-          <el-input v-show="false"
-                    v-model="formData[fields.fieldName]"></el-input>
-          <pop-up-table :visible="popUpVisible"
-                        v-if="popUpVisible"
-                        :select-code="fields.selectCode"
-                        @fillBack="fillBack"
-                        @close="onPopupClose"></pop-up-table>
+          <el-input v-show="false" v-model="formData[fields.fieldName]"></el-input>
+          <pop-up-table :visible="popUpVisible" v-if="popUpVisible" :select-code="fields.selectCode" @fillBack="fillBack" @close="onPopupClose"></pop-up-table>
         </div>
       </el-form-item>
     </el-col>
     <el-col :span="6">
-      <el-select v-model="mode"
-                 @change="changeMode"
-                 style="height: 32px; line-height: 32px">
-        <el-option v-for="items in modeSelect"
-                   :key="items.value"
-                   :label="items.label"
-                   :value="items.value"></el-option>
+      <el-select v-model="mode" @change="changeMode" style="height: 32px; line-height: 32px">
+        <el-option v-for="items in modeSelect" :key="items.value" :label="items.label" :value="items.value"></el-option>
       </el-select>
     </el-col>
   </el-row>
@@ -226,12 +204,12 @@ export default {
       options: [],
       mode: '=',
       modeData: {},
-      modeSelect: modeSelect,
+      modeSelect: this.fields.type == 'radioButton' || this.fields.type == 'multiple' ? [{label: '等于',value: '='}] : modeSelect,
       popUpVisible: false, // 弹出选择默认隐藏
       popLabel: '' // 弹出选择回填label
     }
   },
-  async mounted () {
+  async mounted() {
     let that = this
     let needHandleTags = ['treeSelect', 'select']
     let needHandleIndex = needHandleTags.indexOf(this.fields.type)
@@ -310,7 +288,7 @@ export default {
     this.$emit('setMode', { [this.fields.fieldName]: this.mode })
   },
   watch: {
-    resetFlag (val) {
+    resetFlag(val) {
       if (val) {
         this.mode = '='
         this.popLabel = ''
@@ -318,7 +296,7 @@ export default {
     }
   },
   methods: {
-    treeDataHandle (treeData, props = { label: '', value: '' }) {
+    treeDataHandle(treeData, props = { label: '', value: '' }) {
       treeData.forEach((node) => {
         if (props.label) {
           node.label = node[props.label]
@@ -332,15 +310,15 @@ export default {
       })
       return treeData
     },
-    changeMode (val) {
+    changeMode(val) {
       this.$emit('setMode', { [this.fields.fieldName]: this.mode })
     },
     // 弹出选择-弹出表格
-    showDialog () {
+    showDialog() {
       this.popUpVisible = true
     },
     // 弹出选择，回填数据
-    fillBack (data) {
+    fillBack(data) {
       console.log('fillBack', data)
       this.popUpVisible = false
       if (Object.keys(data).length) {
@@ -349,10 +327,10 @@ export default {
         this.$emit('setParentFormData', this.formData)
       }
     },
-    onPopupClose () {
+    onPopupClose() {
       this.popUpVisible = false
     },
-    resetPop () {
+    resetPop() {
       this.popLabel = ''
       this.formData[this.fields.fieldName] = ''
     }

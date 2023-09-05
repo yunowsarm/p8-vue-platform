@@ -41,13 +41,13 @@
   </list-layout>
 </template>
 <style lang="scss" scoped>
-/deep/ .list-header {
+::v-deep .list-header {
   padding: 0;
 }
 .el-tabs.el-tabs--top,
 .el-tabs.el-tabs--bottom {
   height: 100% !important;
-  /deep/ .el-tabs__content {
+  ::v-deep .el-tabs__content {
     height: calc(100% - 51px) !important;
     > div {
       height: 100%;
@@ -64,7 +64,7 @@
 .el-tabs.el-tabs--left,
 .el-tabs.el-tabs--right {
   height: 100% !important;
-  /deep/ .el-tabs__content {
+  ::v-deep .el-tabs__content {
     height: calc(100% - 10px) !important;
     > div {
       height: 100%;
@@ -126,52 +126,52 @@
   font-size: 16px;
   margin: 0 5px;
 }
-/deep/ .el-tabs__item.is-active {
+::v-deep .el-tabs__item.is-active {
   color: #1890ff;
 }
-/deep/ .list-layout .list-main {
+::v-deep .list-layout .list-main {
   padding: 0;
 }
-/deep/.el-tabs.el-tabs--left .el-tabs__item {
+::v-deep.el-tabs.el-tabs--left .el-tabs__item {
   padding: 10px 0;
   padding: 10px 20px !important;
   border-right: 1px solid #e4e7ed;
 }
-/deep/ .el-tabs.el-tabs--right .el-tabs__item {
+::v-deep .el-tabs.el-tabs--right .el-tabs__item {
   padding: 10px 20px !important;
   border-left: 1px solid #e4e7ed;
 }
-/deep/ .el-tabs--left .el-tabs__item.is-left,
-/deep/ .el-tabs--right .el-tabs__item.is-right {
+::v-deep .el-tabs--left .el-tabs__item.is-left,
+::v-deep .el-tabs--right .el-tabs__item.is-right {
   text-align: unset;
 }
-/deep/ .el-tabs--left .el-tabs__nav-wrap.is-left::after,
-/deep/ .el-tabs--right .el-tabs__nav-wrap.is-right::after {
+::v-deep .el-tabs--left .el-tabs__nav-wrap.is-left::after,
+::v-deep .el-tabs--right .el-tabs__nav-wrap.is-right::after {
   width: 1px;
 }
-/deep/ .el-tabs__nav-wrap::after {
+::v-deep .el-tabs__nav-wrap::after {
   height: 0;
 }
 // 默认四个方向
-/deep/ .el-tabs.el-tabs--top > .el-tabs__header {
+::v-deep .el-tabs.el-tabs--top > .el-tabs__header {
   border-bottom: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
     border-bottom: 2px solid #1890ff;
   }
 }
-/deep/ .el-tabs.el-tabs--left > .el-tabs__header {
+::v-deep .el-tabs.el-tabs--left > .el-tabs__header {
   border-right: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
     border-right: 2px solid #1890ff;
   }
 }
-/deep/ .el-tabs.el-tabs--bottom > .el-tabs__header {
+::v-deep .el-tabs.el-tabs--bottom > .el-tabs__header {
   border-top: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
     border-top: 2px solid #1890ff;
   }
 }
-/deep/ .el-tabs.el-tabs--right > .el-tabs__header {
+::v-deep .el-tabs.el-tabs--right > .el-tabs__header {
   border-left: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
     border-left: 2px solid #1890ff;
@@ -179,12 +179,12 @@
 }
 
 // 选项卡 四个方向
-/deep/ .el-tabs--card > .el-tabs__header {
+::v-deep .el-tabs--card > .el-tabs__header {
   border-top: none;
   border-bottom: none;
 }
 // 上
-/deep/ .el-tabs--card.el-tabs--top > .el-tabs__header {
+::v-deep .el-tabs--card.el-tabs--top > .el-tabs__header {
   border-bottom: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
     border-bottom: 1px solid;
@@ -203,7 +203,7 @@
   }
 }
 // 左
-/deep/ .el-tabs--card.el-tabs--left > .el-tabs__header {
+::v-deep .el-tabs--card.el-tabs--left > .el-tabs__header {
   border-right: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
     border-right: 2px solid #ffffff !important;
@@ -222,7 +222,7 @@
   }
 }
 // 下
-/deep/ .el-tabs--card.el-tabs--bottom > .el-tabs__header {
+::v-deep .el-tabs--card.el-tabs--bottom > .el-tabs__header {
   margin-top: 0;
   border-top: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
@@ -250,7 +250,7 @@
   }
 }
 // 右
-/deep/ .el-tabs--card.el-tabs--right > .el-tabs__header {
+::v-deep .el-tabs--card.el-tabs--right > .el-tabs__header {
   border-left: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
     border-left: 2px solid #ffffff !important;
@@ -271,7 +271,7 @@
 
 // 卡片四个方向
 // 上
-/deep/ .el-tabs--border-card.el-tabs--top > {
+::v-deep .el-tabs--border-card.el-tabs--top > {
   .el-tabs__content {
     padding: 0;
   }
@@ -285,7 +285,7 @@
   }
 }
 // 左
-/deep/ .el-tabs--border-card.el-tabs--left > {
+::v-deep .el-tabs--border-card.el-tabs--left > {
   .el-tabs__content {
     padding: 0;
   }
@@ -299,7 +299,7 @@
   }
 }
 // 下
-/deep/ .el-tabs--border-card.el-tabs--bottom > {
+::v-deep .el-tabs--border-card.el-tabs--bottom > {
   .el-tabs__content {
     padding: 0;
   }
@@ -313,7 +313,7 @@
   }
 }
 // 右
-/deep/ .el-tabs--border-card.el-tabs--right > {
+::v-deep .el-tabs--border-card.el-tabs--right > {
   .el-tabs__content {
     padding: 0;
   }
@@ -326,7 +326,7 @@
     border-left: 2px solid #fff;
   }
 }
-/deep/ .el-tabs__item {
+::v-deep .el-tabs__item {
   padding: 0 20px !important;
   height: unset;
   box-sizing: border-box;
@@ -397,7 +397,7 @@ export default {
   created() {
     if (this.recordId) {
       this.$api['desLayout.view']({ id: this.recordId }).then((res) => {
-        let data = JSON.parse(res.layoutJson)
+        const data = JSON.parse(res.layoutJson)
         this.code = data.defaultComponents.code
         this.asyncComponents = data.defaultComponents.url
         this.componentsConfig = data.defaultComponents
@@ -410,7 +410,7 @@ export default {
       this.settingVisible = true
     },
     async handleOk(saveParmars) {
-      var dom = document.getElementById('table-contain')
+      let dom = document.getElementById('table-contain')
       if (dom) {
         dom.style.height = '100%'
       }
@@ -433,8 +433,8 @@ export default {
       this.parmarsMap = saveParmars.parmarsMap
       this.settingVisible = false
       if (this.tabsParmar.dataType == '1' && this.tabsParmar.reportSqlId) {
-        let res = await this.$api['desLayout.execute']({ id: this.tabsParmar.reportSqlId })
-        let data = []
+        const res = await this.$api['desLayout.execute']({ id: this.tabsParmar.reportSqlId })
+        const data = []
         res.forEach((el) => {
           data.push({ name: el[this.tabsParmar.optionLabelCol], targetUrl: el[this.tabsParmar.optionUrl], id: el.ID, icon: el[this.tabsParmar.icon], color: el[this.tabsParmar.color], ...el })
         })
@@ -445,11 +445,11 @@ export default {
       }
     },
     tabClick(target) {
-      let tabs = this.tabsData.filter((el) => {
+      const tabs = this.tabsData.filter((el) => {
         return el.name === target.name
       })
-      let paramsObj = {}
-      let parmarsList = this.parmarsMap.filter((el) => {
+      const paramsObj = {}
+      const parmarsList = this.parmarsMap.filter((el) => {
         return el.after !== ''
       })
       if (parmarsList && parmarsList.length > 0) {

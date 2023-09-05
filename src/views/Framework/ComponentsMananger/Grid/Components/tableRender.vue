@@ -1,23 +1,25 @@
 <template>
-  <normal-layout class="grid-table-render"
-                 :header-visible="headerVisible"
-                 :normal-layout="normalLayout">
+  <normal-layout class="grid-table-render" :header-visible="headerVisible" :normal-layout="normalLayout">
     <template #north>
-      <common-button v-if="tableInfo.useSystemConfigButton === 1 || (tableInfo.useSystemConfigButton === 0 && buttonData.length > 0)"
-                     :comp="renderComp"
-                     :button-type="'round'"
-                     :permission-vo="permissionVo"
-                     :select-records="selectRecords"
-                     :use-system-config-button="tableInfo.useSystemConfigButton"
-                     :custom-button-data="buttonData"></common-button>
-      <search-form-list ref="search"
-                        v-if="searchData.length"
-                        :data-source="searchData"
-                        @search="search"
-                        @re-set="reSet"
-                        :search-width="searchWidth"
-                        :permission-vo="permissionVo"
-                        :search-contain-width="searchContainWidth"></search-form-list>
+      <common-button
+        v-if="tableInfo.useSystemConfigButton === 1 || (tableInfo.useSystemConfigButton === 0 && buttonData.length > 0)"
+        :comp="renderComp"
+        :button-type="'round'"
+        :permission-vo="permissionVo"
+        :select-records="selectRecords"
+        :use-system-config-button="tableInfo.useSystemConfigButton"
+        :custom-button-data="buttonData"
+      ></common-button>
+      <search-form-list
+        ref="search"
+        v-if="searchData.length"
+        :data-source="searchData"
+        @search="search"
+        @re-set="reSet"
+        :search-width="searchWidth"
+        :permission-vo="permissionVo"
+        :search-contain-width="searchContainWidth"
+      ></search-form-list>
     </template>
     <template #west>
       <slot name="westSlot"></slot>
@@ -25,59 +27,87 @@
     <template #center>
       <template v-if="columns.length">
         <template v-if="enableEdit == 1">
-          <vxetable-table ref="vxeTable"
-                          :comp="comp"
-                          :custom-c-s-s="customCSS"
-                          :columns="columns"
-                          api="formGenerator.tableApply"
-                          :params="tableParam"
-                          :custom-button-data="buttonData"
-                          :custom-button-config="buttonConfig"
-                          :is-edit-table="true"
-                          :checkbox-config="{}"
-                          :row-config="rowConfig"
-                          :radio-config="{}"
-                          :seach-type="seachType"
-                          :show-search-row="showSearchRow"
-                          :is-smart-form="true"
-                          :pagination="false"
-                          :edit-parmars="editParmars"
-                          :use-system-config-button="tableInfo.useSystemConfigButton"
-                          @row-click="rowVxeClick"
-                          @selection-change="handleSelectionChange"></vxetable-table>
+          <vxetable-table
+            v-if="tableType == 0"
+            ref="vxeTable"
+            :comp="comp"
+            :custom-c-s-s="customCSS"
+            :columns="columns"
+            api="formGenerator.tableApply"
+            :params="tableParam"
+            :custom-button-data="buttonData"
+            :custom-button-config="buttonConfig"
+            :is-edit-table="true"
+            :checkbox-config="{}"
+            :row-config="rowConfig"
+            :radio-config="{}"
+            :seach-type="seachType"
+            :show-search-row="showSearchRow"
+            :is-smart-form="true"
+            :pagination="false"
+            :edit-parmars="editParmars"
+            :use-system-config-button="tableInfo.useSystemConfigButton"
+            @row-click="rowVxeClick"
+            @selection-change="handleSelectionChange"
+          ></vxetable-table>
+          <vxetable-table
+            v-else
+            ref="vxeTable"
+            class="vxeTreeTable"
+            :comp="renderComp"
+            :intelligence-comp="renderComp"
+            :custom-c-s-s="customCSS"
+            :columns="columns"
+            api="formGenerator.tableApply"
+            :params="tableParam"
+            :custom-button-data="buttonData"
+            :custom-button-config="buttonConfig"
+            :is-edit-table="true"
+            :tree-config="treeConfig"
+            :checkbox-config="{}"
+            :row-config="rowConfig"
+            :radio-config="{}"
+            :seach-type="seachType"
+            :show-search-row="showSearchRow"
+            :is-smart-form="true"
+            :pagination="false"
+            :edit-parmars="editParmars"
+            :use-system-config-button="tableInfo.useSystemConfigButton"
+            @row-click="rowVxeClick"
+            @selection-change="handleSelectionChange">
+          </vxetable-table>
         </template>
         <template v-else>
-          <common-table ref="table"
-                        :comp="comp"
-                        :custom-c-s-s="customCSS"
-                        :intelligence-comp="intelligenceComp"
-                        v-if="columns.length && tableType === 0"
-                        :columns="columns"
-                        :params="tableParam"
-                        :flex="flex"
-                        row-key="ID"
-                        :seach-type="seachType"
-                        :show-search-row="showSearchRow"
-                        :is-smart-form="true"
-                        :table-config="tableConfig"
-                        :custom-height="customHeight"
-                        api="formGenerator.tableApply"
-                        :table-refresh="tableRefresh"
-                        :custom-button-data="buttonData"
-                        :custom-button-config="buttonConfig"
-                        @selection-change="handleSelectionChange"
-                        @row-click="rowClick"
-                        @column-fiter="columnFiter"
-                        :show-summary="showSummary"
-                        :summary-method="summaryMethod"
-                        :permission-vo="permissionVo"
-                        :use-system-config-button="tableInfo.useSystemConfigButton"
-                        :is-radio-select="isRadioSelect">
-            <template :slot="item"
-                      v-for="item in customColumn"
-                      slot-scope="{ scope }">
-              <slot :name="item"
-                    :scope="scope"></slot>
+          <common-table
+            ref="table"
+            :comp="comp"
+            :custom-c-s-s="customCSS"
+            :intelligence-comp="intelligenceComp"
+            v-if="columns.length && tableType === 0"
+            :columns="columns"
+            :params="tableParam"
+            :flex="flex"
+            row-key="ID"
+            :seach-type="seachType"
+            :show-search-row="showSearchRow"
+            :is-smart-form="true"
+            :table-config="tableConfig"
+            :custom-height="customHeight"
+            api="formGenerator.tableApply"
+            :table-refresh="tableRefresh"
+            :custom-button-data="buttonData"
+            :custom-button-config="buttonConfig"
+            @selection-change="handleSelectionChange"
+            @row-click="rowClick"
+            @column-fiter="columnFiter"
+            :show-summary="showSummary"
+            :summary-method="summaryMethod"
+            :permission-vo="permissionVo"
+            :use-system-config-button="tableInfo.useSystemConfigButton"
+            :is-radio-select="isRadioSelect"
+          >
+            <template :slot="item" v-for="item in customColumn" slot-scope="{ scope }">
+              <slot :name="item" :scope="scope"></slot>
             </template>
           </common-table>
           <!-- <vxe-table ref="xTable"
@@ -103,139 +133,120 @@
                 :scope="scope"></slot>
         </template>
       </vxe-table> -->
-          <vxetable-table ref="xTable"
-                          :custom-c-s-s="customCSS"
-                          v-if="columns.length && tableType === 1"
-                          :comp="comp"
-                          :columns="columns"
-                          :params="tableParam"
-                          :row-config="rowConfig"
-                          :tree-config="treeConfig"
-                          :checkbox-config="checkboxConfig"
-                          :radio-config="radioConfig"
-                          :custom-button-data="buttonData"
-                          :custom-button-config="buttonConfig"
-                          :seach-type="seachType"
-                          :show-search-row="showSearchRow"
-                          :is-smart-form="true"
-                          :pagination="false"
-                          api="formGenerator.tableApply"
-                          :use-system-config-button="tableInfo.useSystemConfigButton"
-                          @row-click="rowVxeClick"
-                          @selection-change="handleSelectionChange">
-            <template :slot="item"
-                      v-for="item in customColumn"
-                      slot-scope="{ scope }">
-              <slot :name="item"
-                    :scope="scope"></slot>
+          <vxetable-table
+            ref="xTable"
+            :custom-c-s-s="customCSS"
+            v-if="columns.length && tableType === 1"
+            :comp="comp"
+            :columns="columns"
+            :params="tableParam"
+            :row-config="rowConfig"
+            :tree-config="treeConfig"
+            :checkbox-config="checkboxConfig"
+            :radio-config="radioConfig"
+            :custom-button-data="buttonData"
+            :custom-button-config="buttonConfig"
+            :seach-type="seachType"
+            :show-search-row="showSearchRow"
+            :is-smart-form="true"
+            :pagination="false"
+            api="formGenerator.tableApply"
+            :use-system-config-button="tableInfo.useSystemConfigButton"
+            @row-click="rowVxeClick"
+            @selection-change="handleSelectionChange"
+          >
+            <template :slot="item" v-for="item in customColumn" slot-scope="{ scope }">
+              <slot :name="item" :scope="scope"></slot>
             </template>
           </vxetable-table>
         </template>
       </template>
     </template>
     <template #drawer-panel>
-      <common-drawer title="表单页面"
-                     :visible="formVisible"
-                     size="50%"
-                     :drawer-config="drawerConfig"
-                     @close="formClose">
+      <common-drawer title="表单页面" :visible="formVisible" size="50%" :drawer-config="drawerConfig" @close="formClose">
         <template #drawer>
-          <form-render :data-view-id="dataViewId"
-                       :record="{ desformCode: codeForm }"
-                       :prop-param="propParam"
-                       :permission-vo="permissionVo"
-                       @save-success="formClose"></form-render>
+          <form-render :data-view-id="dataViewId" :record="{ desformCode: codeForm }" :prop-param="propParam" :permission-vo="permissionVo" @save-success="formClose"></form-render>
         </template>
       </common-drawer>
-      <common-drawer title="查看页面"
-                     :visible="viewVisible"
-                     size="50%"
-                     :drawer-config="drawerConfig"
-                     @close="viewClose">
+      <common-drawer title="查看页面" :visible="viewVisible" size="50%" :drawer-config="drawerConfig" @close="viewClose">
         <template #drawer>
           <!-- <view-render :code="code"
                        :record="viewRecord"></view-render> -->
-          <form-render page-type="view"
-                       :data-view-id="dataViewId"
-                       :permission-vo="permissionVo"
-                       :view-relation="viewRelation"
-                       :record="{ desformCode: codeForm }"></form-render>
+          <form-render page-type="view" :data-view-id="dataViewId" :permission-vo="permissionVo" :view-relation="viewRelation" :record="{ desformCode: codeForm }"></form-render>
         </template>
       </common-drawer>
-      <common-drawer title="查看页面"
-                     :visible="rowViewVisible"
-                     size="50%"
-                     :drawer-config="drawerConfig"
-                     @close="viewClose">
+      <common-drawer title="查看页面" :visible="rowViewVisible" size="50%" :drawer-config="drawerConfig" @close="viewClose">
         <template #drawer>
-          <view-render :code="code"
-                       :record="viewRecord"></view-render>
+          <view-render :code="code" :record="viewRecord"></view-render>
         </template>
       </common-drawer>
-      <common-drawer :visible="customVisible"
-                     size="50%"
-                     :drawer-config="drawerConfig"
-                     @close="customClose">
+      <common-drawer v-if="customComponentParams.type === 'drawer'" :visible="customVisible" :size="customComponentParams.width" :drawer-config="drawerConfig" @close="customClose">
         <template #drawer>
-          <component :is="componentLoader"
-                     :permission-vo="permissionVo"
-                     :row="scopeRow"></component>
+          <component :is="componentLoader" :permission-vo="permissionVo" :row="scopeRow" @close="customClose"></component>
         </template>
       </common-drawer>
-      <common-drawer title="查看流程图"
-                     :visible="visibleModelPicture"
-                     size="50%"
-                     :drawer-config="drawerConfig"
-                     @close="onModelPictureClose">
+      <common-dialog
+        v-if="customComponentParams.type === 'dialog'"
+        :visible="customVisible"
+        destroy-on-close
+        :width="customComponentParams.width"
+        @close="customClose"
+        :show-handle-btn="false"
+        :dialog-config="{
+          modal: true,
+          appendToBody: true,
+          modalAppendToBody: true
+        }"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+      >
+        <template #dialog>
+          <component :is="componentLoader" :permission-vo="permissionVo" :row="scopeRow" @close="customClose"></component>
+        </template>
+      </common-dialog>
+      <common-drawer title="查看流程图" :visible="visibleModelPicture" size="50%" :drawer-config="drawerConfig" @close="onModelPictureClose">
         <template #drawer>
           <!-- <model-view :process-definition-id="modelId"></model-view> -->
-          <process-approval-view v-inherited-father-height
-                                 :business-obj="{
+          <process-approval-view
+            v-inherited-father-height
+            :business-obj="{
               businessId: modelId,
               processDefinitionKey: processDefinationTwoKey
-            }">
+            }"
+          >
           </process-approval-view>
         </template>
       </common-drawer>
-      <common-drawer title="下钻详情"
-                     :visible="runInHoleVisible"
-                     size="100%"
-                     :drawer-config="drawerConfig"
-                     @close="runInHoleClose">
+      <common-drawer title="下钻详情" :visible="runInHoleVisible" size="100%" :drawer-config="drawerConfig" @close="runInHoleClose">
         <template #drawer>
           <!-- <table-render :code="runInHoleCode"
                         :report-param="runInHoleParam"></table-render> -->
-          <component :is="componentUrl"
-                     :code="componentsConfig.code"
-                     :data-view-id="componentsConfig.dataViewId"
-                     :record="{ desformCode: componentsConfig.codeForm }"
-                     :permission-vo="componentsConfig.permissionVo"
-                     :layout-config="componentsConfig"
-                     :kanban-config="componentsConfig"
-                     :report-param="runInHoleParam"
-                     ref="components"></component>
+          <component
+            :is="componentUrl"
+            :code="componentsConfig.code"
+            :data-view-id="componentsConfig.dataViewId"
+            :record="{ desformCode: componentsConfig.codeForm }"
+            :permission-vo="componentsConfig.permissionVo"
+            :layout-config="componentsConfig"
+            :kanban-config="componentsConfig"
+            :report-param="runInHoleParam"
+            ref="components"
+          ></component>
         </template>
       </common-drawer>
       <!-- 启动流程 -->
-      <selectApproveUserBeforehand v-if="isSelectApproveUserBeforehandView"
-                                   :is-select-approve-user-beforehand-view="isSelectApproveUserBeforehandView"
-                                   :select-user-beforehand-data-source="selectUserBeforehandDataSource"
-                                   :select-user-beforehand-form-data="selectUserBeforehandFormData"
-                                   @close-modal="closeSelectApproveUserBeforehand"
-                                   @commit="commitSelectApproveUserBeforehand"></selectApproveUserBeforehand>
+      <selectApproveUserBeforehand
+        v-if="isSelectApproveUserBeforehandView"
+        :is-select-approve-user-beforehand-view="isSelectApproveUserBeforehandView"
+        :select-user-beforehand-data-source="selectUserBeforehandDataSource"
+        :select-user-beforehand-form-data="selectUserBeforehandFormData"
+        @close-modal="closeSelectApproveUserBeforehand"
+        @commit="commitSelectApproveUserBeforehand"
+      ></selectApproveUserBeforehand>
       <!-- 弹出编辑 -->
-      <common-drawer title="弹出编辑"
-                     :visible="editVisible"
-                     size="100%"
-                     :drawer-config="drawerConfig"
-                     @close="editVisible = false">
+      <common-drawer title="弹出编辑" :visible="editVisible" size="100%" :drawer-config="drawerConfig" @close="editVisible = false">
         <template #drawer>
-          <component :is="editComponentUrl"
-                     :code="editConfig.code"
-                     :record="editConfig.record"
-                     :is-edit-child="editConfig.isEditChild"
-                     :permission-vo="permissionVo"
-                     ref="components"></component>
+          <component :is="editComponentUrl" :code="editConfig.code" :record="editConfig.record" :is-edit-child="editConfig.isEditChild" :permission-vo="permissionVo" ref="components"></component>
         </template>
       </common-drawer>
     </template>
@@ -250,6 +261,7 @@ import {
   P8Table as CommonTable,
   P8Button as CommonButton,
   P8Drawer as CommonDrawer,
+  P8Dialog as CommonDialog,
   Notification,
   P8VxeTable as VxetableTable
 } from 'p8-components-ui'
@@ -268,6 +280,7 @@ export default {
     SearchFormList,
     CommonButton,
     CommonDrawer,
+    CommonDialog,
     FormRender,
     ViewRender,
     VxetableTable,
@@ -366,7 +379,7 @@ export default {
       default: {}
     }
   },
-  data () {
+  data() {
     return {
       runInHoleCode: '',
       comp: this,
@@ -410,6 +423,7 @@ export default {
         }
       },
       customVisible: false, // 自定义抽屉visible
+      customComponentParams: {},
       componentPath: '', // 操作按钮弹出框 component 路径
       scopeRow: '', // 表格行记录
       propParam: Object.assign({}, this.westTreeParam), // 将树参数传至表单
@@ -466,11 +480,11 @@ export default {
       editComponents: '',
       editVisible: false,
       editConfig: {},
-      customCSS: '',
+      customCSS: {},
       sysParams: Object.assign({ $SYSTEM_PARAMS_SELECT: _cloneDeep(this.$store.state.user.userInfo) }) // 系统级参数
     }
   },
-  created () {
+  created() {
     this.$watch(
       'provideParams.searchParams',
       (newValue, oldValue) => {
@@ -481,8 +495,8 @@ export default {
       }
     )
   },
-  mounted () {
-    if (this.code && this.code != '') {
+  mounted() {
+    if (this.code && this.code !== '') {
       this.getTableInfo(this.code)
     }
     if (!this.showWestTree) {
@@ -508,23 +522,23 @@ export default {
     })
   },
   computed: {
-    componentLoader () {
+    componentLoader() {
       return () => import(`@/${this.componentPath}.vue`)
     },
-    renderComp () {
+    renderComp() {
       return Object.keys(this.intelligenceComp).length ? this.intelligenceComp : this.comp
     },
-    isRadioSelect () {
+    isRadioSelect() {
       return this.selectType === 'single'
     },
-    componentUrl () {
+    componentUrl() {
       if (this.asyncComponents) {
         return () => import(`@/views/${this.asyncComponents}.vue`)
       } else {
         return ''
       }
     },
-    editComponentUrl () {
+    editComponentUrl() {
       if (this.editComponents) {
         return () => import(`@/views/${this.editComponents}.vue`)
       } else {
@@ -533,17 +547,17 @@ export default {
     }
   },
   watch: {
-    reportParam (val, oldVal) {
+    reportParam(val, oldVal) {
       if (this.code && this.tableInfo) {
         this.rebuildParam(val)
       }
     },
-    code (val, oldVal) {
+    code(val, oldVal) {
       this.getTableInfo(val)
     },
-    westTreeParam (val, oldVal) {
-      let obj = {}
-      Object.keys(val).map((item) => {
+    westTreeParam(val, oldVal) {
+      const obj = {}
+      Object.keys(val).forEach((item) => {
         obj[item] = {
           value: val[item],
           mode: '=',
@@ -562,20 +576,20 @@ export default {
     // }
   },
   methods: {
-    fiflterParams (newValue) {
-      let obj = {}
-      let searchKeys = this.searchList.map((el) => {
+    fiflterParams(newValue) {
+      const obj = {}
+      const searchKeys = this.searchList.map((el) => {
         return el.replaceSearch ? el.replaceSearch : el.fieldName
       })
-      Object.keys({ ...newValue }).map((item) => {
+      Object.keys({ ...newValue }).forEach((item) => {
         if (searchKeys.includes(item)) {
-          if (typeof newValue[item] == 'string') {
+          if (typeof newValue[item] === 'string') {
             obj[item] = {
               value: newValue[item],
               mode: '=',
               relation: 'and'
             }
-          } else if (typeof newValue[item] == 'object') {
+          } else if (typeof newValue[item] === 'object') {
             obj[item] = newValue[item]
           }
         }
@@ -584,8 +598,8 @@ export default {
       this.tableParam.permissionVo = { router: this.$route.name, resourceId: '' }
       this.propParam = Object.assign(this.propParam, newValue)
     },
-    getTableInfo (code) {
-      let that = this
+    getTableInfo(code) {
+      const that = this
       this.searchData = []
       this.buttonData = []
       this.columns = []
@@ -598,11 +612,11 @@ export default {
         }
         that.tableType = res.tableType
         that.selectionRange = res.selectionRange
-        let columnData = []
+        const columnData = []
         // 报表列信息
         if (res.reportItems && res.reportItems.length) {
           this.searchList = []
-          res.reportItems.map((item, index) => {
+          res.reportItems.forEach((item, index) => {
             if (item.isViewShow) {
               that.$set(that.viewKeys, item.fieldName, item.fieldTxt)
             }
@@ -615,7 +629,7 @@ export default {
               if (item.isSearch) {
                 if (this.tableInfo.searchPos === 1) {
                   this.showSearchRow = false
-                  let filter = this.getHeadSelectByType(item.searchMode, item)
+                  const filter = this.getHeadSelectByType(item.searchMode, item)
                   // 查询放置表头
                   columnData.push({
                     title: item.fieldTxt,
@@ -630,7 +644,7 @@ export default {
                   })
                 } else if (this.tableInfo.searchPos === 2) {
                   this.showSearchRow = true
-                  let filter = this.getHeadSelectByType(item.searchMode, item)
+                  const filter = this.getHeadSelectByType(item.searchMode, item)
                   // 查询放置表头
                   columnData.push({
                     title: item.fieldTxt,
@@ -699,14 +713,16 @@ export default {
                 })
               }
             }
-            this.searchList.push({
-              type: item.searchMode, // 控件类型
-              labelText: item.fieldTxt, // 控件显示的文本
-              fieldName: item.fieldName,
-              mode: '=',
-              selectCode: item.dictCode,
-              replaceSearch: item.replaceVal
-            })
+            if (item.isSearch) {
+              this.searchList.push({
+                type: item.searchMode, // 控件类型
+                labelText: item.fieldTxt, // 控件显示的文本
+                fieldName: item.fieldName,
+                mode: '=',
+                selectCode: item.dictCode,
+                replaceSearch: item.replaceVal
+              })
+            }
           })
           this.$emit('searchData', this.searchList)
           // 报表按钮参数
@@ -721,9 +737,9 @@ export default {
             })
           } else if (res.reportResources.length && this.tableInfo.useSystemConfigButton === 0) {
             this.buttonData = res.reportResources
-            this.buttonData.map((btn) => {
+            this.buttonData.forEach((btn) => {
               if (btn.permission) {
-                let permission = JSON.parse(btn.permission)
+                const permission = JSON.parse(btn.permission)
                 this.buttonConfig.push({
                   ...{ id: btn.id },
                   ...permission
@@ -805,14 +821,14 @@ export default {
         }
         // 报表参数
         if (res.reportParams && res.reportParams.length) {
-          res.reportParams.map((item) => {
+          res.reportParams.forEach((item) => {
             this.defaultReportParam[item.paramName] = this.getDefaultValue(item.paramValue)
           })
         }
 
         // SQL参数
         if (res.reportSqlParams && res.reportSqlParams.length) {
-          res.reportSqlParams.map((item) => {
+          res.reportSqlParams.forEach((item) => {
             this.sqlParam[item.paramName] = item.paramValue
           })
         }
@@ -823,7 +839,7 @@ export default {
         }
       })
     },
-    tableRefresh (param) {
+    tableRefresh(param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')
@@ -832,20 +848,20 @@ export default {
           console.log('异步失败的操作')
         })
     },
-    search (param) {
+    search(param) {
       this.tableParam.param = param
     },
-    reSet () {
+    reSet() {
       // this.tableParam.param = {}
       // this.$refs.table.searchData()
     },
-    rebuildParam (val) {
-      let reportParam = {}
-      let defaultReportParamArr = Object.keys(this.defaultReportParam)
-      let sqlParamArr = Object.keys(this.sqlParam)
-      let valArr = Object.keys(val)
+    rebuildParam(val) {
+      const reportParam = {}
+      const defaultReportParamArr = Object.keys(this.defaultReportParam)
+      const sqlParamArr = Object.keys(this.sqlParam)
+      const valArr = Object.keys(val)
       if (valArr.length) {
-        valArr.map((item) => {
+        valArr.forEach((item) => {
           if (defaultReportParamArr.indexOf(item) !== -1 || sqlParamArr.indexOf(item) !== -1) {
             reportParam[item] = val[item]
           }
@@ -860,7 +876,7 @@ export default {
         permissionVo: { router: this.$route.name, resourceId: '' }
       }
     },
-    handleSelectionChange (val) {
+    handleSelectionChange(val) {
       // if (this.selectType === 'single') {
       //   if (val.length >= 2) {
       //     // 删除索引为0的
@@ -874,7 +890,7 @@ export default {
       this.selectRecords = val
       this.$emit('selection-change', val)
     },
-    rowClick (row, column) {
+    rowClick(row, column) {
       if (this.tableInfo.enableClick === 1) {
         this.$emit('row-click', row)
         if (this.tableInfo.enableClick === 1) {
@@ -892,7 +908,7 @@ export default {
       }
     },
     // 单元格点击事件
-    rowVxeClick (row, column, $event) {
+    rowVxeClick(row, column, $event) {
       if (this.tableInfo.enableClick === 1) {
         this.runInHoleParam = row
         this.reportItems.forEach((item) => {
@@ -907,14 +923,14 @@ export default {
         })
       }
     },
-    runInHoleClose () {
+    runInHoleClose() {
       this.runInHoleVisible = false
     },
-    columnFiter (val) {
+    columnFiter(val) {
       // this.tableParam.param = { ...val }
     },
     // 新建表单
-    async createForm (btn) {
+    async createForm(btn) {
       let createFormParams = {}
       if (btn && btn.eventParams) {
         this.permissionVo.resourceId = btn.id
@@ -926,7 +942,7 @@ export default {
       } else {
         console.log('该请求缺失参数{desformCode:""}')
       }
-      let drawingListData = await this.getDrawingList(createFormParams)
+      const drawingListData = await this.getDrawingList(createFormParams)
       if (drawingListData.desformStatus === '1') {
         // this.codeForm = btn.belongTo
         this.codeForm = createFormParams.desformCode
@@ -941,7 +957,7 @@ export default {
       }
     },
     // 表单新建/修改关闭抽屉
-    formClose () {
+    formClose() {
       this.formVisible = false
       if (this.tableType === 0) {
         this.$refs.table.searchData()
@@ -950,8 +966,8 @@ export default {
       }
     },
     // 修改表单
-    async modifyForm (row, btn) {
-      let rowBtnData = this.getRowBtnData(row, btn, true)
+    async modifyForm(row, btn) {
+      const rowBtnData = this.getRowBtnData(row, btn, true)
       row = rowBtnData.row
       btn = rowBtnData.btn
       if (!row) {
@@ -969,14 +985,14 @@ export default {
         console.log('该请求缺失参数{desformCode:""}')
       }
 
-      let drawingListData = await this.getDrawingList(createFormParams)
+      const drawingListData = await this.getDrawingList(createFormParams)
       if (drawingListData.desformStatus === '1') {
         // this.codeForm = btn.belongTo
         this.codeForm = createFormParams.desformCode
         this.dataViewId = row.ID
-        let oldPropParam = {}
+        const oldPropParam = {}
         if (Object.keys(this.propParam).length) {
-          Object.keys(this.propParam).map((item) => {
+          Object.keys(this.propParam).forEach((item) => {
             oldPropParam[item] = row[item]
           })
         }
@@ -990,17 +1006,17 @@ export default {
       }
     },
     // 删除表单
-    deleteForm (row, btn) {
-      let rowBtnData = this.getRowBtnData(row, btn)
+    deleteForm(row, btn) {
+      const rowBtnData = this.getRowBtnData(row, btn)
       row = rowBtnData.row
       btn = rowBtnData.btn
       if (!row) {
         return
       }
-      let rowIds = row.map((el) => {
+      const rowIds = row.map((el) => {
         return el.ID
       })
-      let that = this
+      const that = this
       let createFormParams = {}
       if (btn && btn.eventParams) {
         createFormParams = eval('(' + btn.eventParams + ')')
@@ -1012,7 +1028,7 @@ export default {
       } else {
         console.log('该请求缺失参数{desformCode:""}')
       }
-      let params = {
+      const params = {
         ...createFormParams.customJson,
         desformCode: createFormParams.desformCode,
         dataIds: rowIds,
@@ -1046,8 +1062,8 @@ export default {
       })
     },
     // 查看表单
-    viewForm (row, btn) {
-      let rowBtnData = this.getRowBtnData(row, btn, true)
+    viewForm(row, btn) {
+      const rowBtnData = this.getRowBtnData(row, btn, true)
       row = rowBtnData.row
       btn = rowBtnData.btn
       if (!row) {
@@ -1066,16 +1082,16 @@ export default {
       // this.viewVisible = true
       // this.codeForm = btn.belongTo
       this.dataViewId = row.ID
-      let oldPropParam = {}
+      const oldPropParam = {}
       if (Object.keys(this.propParam).length) {
-        Object.keys(this.propParam).map((item) => {
+        Object.keys(this.propParam).forEach((item) => {
           oldPropParam[item] = row[item]
         })
       }
       this.propParam = oldPropParam
       this.viewVisible = true
     },
-    viewTableRow (row, btn) {
+    viewTableRow(row, btn) {
       this.viewRelation = []
       for (const key in this.viewKeys) {
         this.viewRelation.push({
@@ -1087,12 +1103,12 @@ export default {
       this.rowViewVisible = true
     },
     // 查看抽屉关闭
-    viewClose () {
+    viewClose() {
       this.viewVisible = false
       this.rowViewVisible = false
     },
     // 自定义抽屉
-    openComponent (row, btn) {
+    openComponent(row, btn) {
       let createFormParams = {}
       if (btn && btn.eventParams) {
         createFormParams = eval('(' + btn.eventParams + ')')
@@ -1102,12 +1118,21 @@ export default {
       } else {
         console.log('该请求缺失参数{desformCode:""}')
       }
+      this.customComponentParams = {
+        type: createFormParams.type ? createFormParams.type : 'drawer',
+        width: createFormParams.width ? createFormParams.width : '50%'
+      }
       this.scopeRow = row
       this.customVisible = true
     },
+    customerFun(row, btn) {
+      const funCode = JSON.parse(btn.eventParams).code
+      const func = new Function(`return function (row){${funCode}}`)()
+      func.call(this, row)
+    },
     // 打开子表编辑表格
-    openEditTable (row, btn) {
-      let rowBtnData = this.getRowBtnData(row, btn, true)
+    openEditTable(row, btn) {
+      const rowBtnData = this.getRowBtnData(row, btn, true)
       row = rowBtnData.row
       btn = rowBtnData.btn
       if (btn && btn.eventParams) {
@@ -1121,12 +1146,12 @@ export default {
       this.editVisible = true
     },
     // 关闭自定义抽屉
-    customClose () {
+    customClose() {
       this.customVisible = false
     },
     // 查看流程图
-    viewProcess (row, btn) {
-      let rowBtnData = this.getRowBtnData(row, btn, true)
+    viewProcess(row, btn) {
+      const rowBtnData = this.getRowBtnData(row, btn, true)
       row = rowBtnData.row
       btn = rowBtnData.btn
       if (!row) {
@@ -1137,21 +1162,21 @@ export default {
       this.visibleModelPicture = true
     },
     // 关闭流程图
-    onModelPictureClose () {
+    onModelPictureClose() {
       this.visibleModelPicture = false
     },
     // 撤销流程图
-    cancelProcess (row, btn) {
-      let rowBtnData = this.getRowBtnData(row, btn)
+    cancelProcess(row, btn) {
+      const rowBtnData = this.getRowBtnData(row, btn)
       row = rowBtnData.row
       if (!row) {
         return
       }
-      let withdrawList = []
+      const withdrawList = []
       row.forEach((el) => {
         withdrawList.push({ businessKey: el.ID, processDefinitionKey: el.PROCESSDEFINITIONKEY })
       })
-      let params = {
+      const params = {
         withdrawList: withdrawList
       }
       this.$confirm('是否要撤销该流程？', '提示', {
@@ -1159,7 +1184,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        let that = this
+        const that = this
         this.$api['baseData.withdraw'](params)
           .then(function (res) {
             if (res.result) {
@@ -1192,21 +1217,21 @@ export default {
       })
     },
     // 启动流程
-    startProcess (row, btn) {
-      let rowBtnData = this.getRowBtnData(row, btn)
+    startProcess(row, btn) {
+      const rowBtnData = this.getRowBtnData(row, btn)
       row = rowBtnData.row
       btn = rowBtnData.btn
       if (!row) {
         return
       }
       // this.remark = btn.remark
-      let obj = JSON.parse(btn.eventParams)
+      const obj = JSON.parse(btn.eventParams)
       this.selsctRow = row
       this.processDefinationTwoKey = obj.code
       this.nextApproveUserBeforehand(obj.code)
     },
-    nextApproveUserBeforehand (processDefinationTwoKey) {
-      let that = this
+    nextApproveUserBeforehand(processDefinationTwoKey) {
+      const that = this
       nextApproveUserBeforehand.initDataSource(processDefinationTwoKey, that).then((res1) => {
         if (res1 === true) {
           that.isSelectApproveUserBeforehandView = true
@@ -1214,14 +1239,14 @@ export default {
       })
     },
     // 关闭流程
-    closeSelectApproveUserBeforehand () {
+    closeSelectApproveUserBeforehand() {
       this.isSelectApproveUserBeforehandView = false
     },
     // 提交审批
-    commitSelectApproveUserBeforehand (fullParams) {
-      let that = this
+    commitSelectApproveUserBeforehand(fullParams) {
+      const that = this
       this.releaseMenuParams.beforehandParams = { ...fullParams }
-      let rowIds = this.selsctRow.map((el) => {
+      const rowIds = this.selsctRow.map((el) => {
         return el.ID
       })
       this.releaseMenuParams.businessId = rowIds
@@ -1247,8 +1272,8 @@ export default {
       that.isSelectApproveUserBeforehandView = false
     },
     // 动态api
-    dynamicAPI (row, btn) {
-      let obj = JSON.parse(btn.eventParams)
+    dynamicAPI(row, btn) {
+      const obj = JSON.parse(btn.eventParams)
       if (obj.openDia) {
         this.$confirm(obj.warningMsg, '提示', {
           confirmButtonText: '确定',
@@ -1261,13 +1286,13 @@ export default {
         this.getDyApi(obj, row)
       }
     },
-    getDyApi (obj, row) {
-      let rowBtnData = this.getRowBtnData(row, null)
+    getDyApi(obj, row) {
+      const rowBtnData = this.getRowBtnData(row, null)
       row = rowBtnData.row
       if (!row) {
         return
       }
-      let rowIds = row.map((el) => {
+      const rowIds = row.map((el) => {
         return el.ID
       })
       this.$api[obj.code]({ ID: rowIds })
@@ -1284,14 +1309,22 @@ export default {
             })
           }
         })
-        .catch(() => { })
+        .catch(() => {})
     },
-    async getDrawingList (params) {
+    async getDrawingList(params) {
       let res = {}
       res = await this.$api['formGenerator.designerDetails'](params)
       return res
     },
-    getHeadSelectByType (type = 'text', field) {
+    getHeadSelectByType(type = 'text', field) {
+      if (type === 'number') {
+        return {
+          val: '',
+          type: 'number',
+          visible: false,
+          alias: field.replaceVal ? field.replaceVal : ''
+        }
+      }
       if (type === 'text') {
         return {
           val: '',
@@ -1304,6 +1337,18 @@ export default {
         return {
           val: '',
           type: 'select',
+          visible: false,
+          optionUrl: {
+            api: 'formGenerator.getSelectionDataDic',
+            params: { selectCode: field.dictCode, type: field.dictCode }
+          },
+          alias: field.replaceVal ? field.replaceVal : ''
+        }
+      }
+      if (type === 'radioButton') {
+        return {
+          val: '',
+          type: 'radioButton',
           visible: false,
           optionUrl: {
             api: 'formGenerator.getSelectionDataDic',
@@ -1330,7 +1375,8 @@ export default {
           optionUrl: {
             api: 'formGenerator.getSelectionDataDic',
             params: { selectCode: field.dictCode, type: field.dictCode }
-          }
+          },
+          alias: field.replaceVal ? field.replaceVal : ''
         }
       }
       if (type === 'datetimeRange') {
@@ -1365,11 +1411,11 @@ export default {
         }
       }
     },
-    checCheckboxkMethod ({ row }) {
+    checCheckboxkMethod({ row }) {
       return true
     },
     // 复选框是否展示
-    checkboxkvisibleMethod ({ row }) {
+    checkboxkvisibleMethod({ row }) {
       let selectionRange = false
       // let selections = ['1', '2']
       if (this.selectionRange) {
@@ -1392,8 +1438,8 @@ export default {
       }
     },
     // 新增首行
-    addFirstRow () {
-      let newRecord = {}
+    addFirstRow() {
+      const newRecord = {}
       if (this.isEditChild && this.columns && this.columns.length) {
         this.columns.forEach((el) => {
           if (el.defaultValue) {
@@ -1404,8 +1450,8 @@ export default {
       this.$refs.vxeTable.addFirstRow(newRecord)
     },
     // 新增尾行
-    addLastRow () {
-      let newRecord = {}
+    addLastRow() {
+      const newRecord = {}
       if (this.isEditChild && this.columns && this.columns.length) {
         this.columns.forEach((el) => {
           if (el.defaultValue) {
@@ -1416,27 +1462,27 @@ export default {
       this.$refs.vxeTable.addLastRow(newRecord)
     },
     // 插入
-    insertRow (row, btn) {
+    insertRow(row, btn) {
       this.$refs.vxeTable.insertRow(row, btn)
     },
-    getDefaultValue (defaultVal) {
+    getDefaultValue(defaultVal) {
       if (defaultVal && defaultVal.startsWith('$')) {
         // 处理系统参数变量
         const paramArr = defaultVal.trim().split('.')
         if (this.sysParams[paramArr[0]]) {
-          let defaultValue = this.sysParams[paramArr[0]][paramArr[1]]
+          const defaultValue = this.sysParams[paramArr[0]][paramArr[1]]
           return defaultValue
         }
       } else if (defaultVal && defaultVal.startsWith('#')) {
         // 处理系统方法变量
         const variableFunName = defaultVal.trim().slice(1)
-        let defaultValue = this.$store.state.user.sysVars.methods[variableFunName]()
+        const defaultValue = this.$store.state.user.sysVars.methods[variableFunName]()
         return defaultValue
       } else if (defaultVal && defaultVal.startsWith('__')) {
         // 处理系统方法变量
         const paramArr = defaultVal.trim().split('.')
         if (this.record[paramArr[1]]) {
-          let defaultValue = this.record[paramArr[1]]
+          const defaultValue = this.record[paramArr[1]]
           return defaultValue
         }
       } else {
@@ -1444,20 +1490,20 @@ export default {
       }
     },
     // 保存
-    saveEditData () {
+    saveEditData() {
       this.$refs.vxeTable.saveEditData()
     },
     // 修改
-    editRowEvent (row, btn) {
+    editRowEvent(row, btn) {
       this.$refs.vxeTable.editRowEvent(row, btn)
     },
     // 删除
-    deleteRowEvent (row, btn) {
+    deleteRowEvent(row, btn) {
       this.$refs.vxeTable.deleteRowEvent(row, btn)
     },
     // 导出
-    exportExcel (row, btn) {
-      let exportObj = {
+    exportExcel(row, btn) {
+      const exportObj = {
         fileName: this.$route.meta.title, // 导出的名称
         columnConfigs: this.columns // 导出的列
       }
@@ -1467,8 +1513,8 @@ export default {
         this.$refs.xTable.exportTable(exportObj)
       }
     },
-    initClomuns () {
-      let that = this
+    initClomuns() {
+      const that = this
       this.columns.forEach((item) => {
         // 自定义列设置
         if (that.tableInfo.reportConfig && that.tableInfo.reportConfig.length > 0) {
@@ -1500,7 +1546,7 @@ export default {
               // 编辑组件类型
               item.editType = el.editComponentType
               item.defaultValue = el.defaultValue
-              item.isshow = el.editDisplay == '1' ? false : true
+              item.isshow = el.editDisplay != '1'
               // 存储表
               // item.storageList = this.tableInfo.tableId ? this.tableInfo.tableId : el.sourceTableFiled
               // 存储字段
@@ -1514,9 +1560,9 @@ export default {
         saveMode: this.tableInfo.saveMode
       }
     },
-    getRowBtnData (row, btn, selectOne) {
-      let record,
-        button = null
+    getRowBtnData(row, btn, selectOne) {
+      let record
+      let button = null
       if (!btn) {
         button = row
         if (this.selectRecords.length) {
@@ -1541,17 +1587,17 @@ export default {
       }
     },
     // 修改合同信息发布状态表单 CONTRACT_STATUS
-    async modifyContractStatusForm (row, btn) {
-      let rowBtnData = this.getRowBtnData(row, btn)
+    async modifyContractStatusForm(row, btn) {
+      const rowBtnData = this.getRowBtnData(row, btn)
       row = rowBtnData.row
       btn = rowBtnData.btn
       if (!row) {
         return
       }
-      let rowIds = row.map((el) => {
+      const rowIds = row.map((el) => {
         return el.ID
       })
-      let that = this
+      const that = this
       let createFormParams = {}
       if (btn && btn.eventParams) {
         createFormParams = eval('(' + btn.eventParams + ')')
@@ -1563,7 +1609,7 @@ export default {
       } else {
         console.log('该请求缺失参数{desformCode:""}')
       }
-      let params = {
+      const params = {
         ...createFormParams.customJson,
         desformCode: createFormParams.desformCode,
         dataIds: rowIds,
@@ -1590,18 +1636,18 @@ export default {
         }
       })
     },
-    //加锁解锁
-    editPlanExecuteStatus (row, btn) {
-      let rowBtnData = this.getRowBtnData(row, btn)
+    // 加锁解锁
+    editPlanExecuteStatus(row, btn) {
+      const rowBtnData = this.getRowBtnData(row, btn)
       row = rowBtnData.row
       btn = rowBtnData.btn
       if (!row) {
         return
       }
-      let rowIds = row.map((el) => {
+      const rowIds = row.map((el) => {
         return el.ID
       })
-      let that = this
+      const that = this
       let createFormParams = {}
       if (btn && btn.eventParams) {
         createFormParams = eval('(' + btn.eventParams + ')')
@@ -1613,7 +1659,7 @@ export default {
       } else {
         console.log('该请求缺失参数{desformCode:""}')
       }
-      let params = {
+      const params = {
         ...createFormParams.customJson,
         desformCode: createFormParams.desformCode,
         dataIds: rowIds,
@@ -1641,11 +1687,11 @@ export default {
       })
     },
     // 导出word
-    exportWord (row, btn) {
+    exportWord(row, btn) {
       // console.log(row, btn)
       this.$api['formGenerator.exportWord'](row)
         .then((res) => {
-          let link = document.createElement('a')
+          const link = document.createElement('a')
           link.href = window.URL.createObjectURL(new Blob([res.data], { type: 'application/word' }))
           link.download = '周例会.doc'
           document.body.appendChild(link)

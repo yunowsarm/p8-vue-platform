@@ -235,11 +235,11 @@
 .vxe-table--render-default .vxe-cell {
   padding: 0 !important;
 }
-// /deep/ .vxe-body--column {
+// ::v-deep .vxe-body--column {
 //   border-left: 1px solid #c6c6c6 !important;
 //   border-bottom: 1px solid #c6c6c6 !important;
 // }
-// /deep/ th.vxe-header--column {
+// ::v-deep th.vxe-header--column {
 //   border-left: 1px solid #c6c6c6 !important;
 //   border-bottom: 1px solid #c6c6c6 !important;
 // }
@@ -292,6 +292,6 @@
     }
   }
 }
-/deep/ .el-radio-button--mini .el-radio-button__inner {
+::v-deep .el-radio-button--mini .el-radio-button__inner {
   padding: 6px 10px;
 }

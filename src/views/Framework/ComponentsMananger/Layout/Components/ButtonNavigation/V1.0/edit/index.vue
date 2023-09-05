@@ -58,7 +58,7 @@
   </normal-layout>
 </template>
 <style lang="scss" scoped>
-/deep/ .normal-main .splitBtn {
+::v-deep .normal-main .splitBtn {
   display: none;
 }
 #table-contain {
@@ -99,11 +99,11 @@
 .iconOperation i:hover {
   color: #0050b3;
 }
-/deep/.commonTree .el-tree-node__content:hover {
+::v-deep.commonTree .el-tree-node__content:hover {
   color: #000000;
   font-weight: unset;
 }
-/deep/.commonTree.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+::v-deep.commonTree.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
   color: #000000;
   .labelShow {
     color: #0050b3;
@@ -118,7 +118,7 @@
   top: 0;
   z-index: 200;
 }
-/deep/ .parser-container {
+::v-deep .parser-container {
   height: 100%;
   .formContainer {
     height: 100% !important;
@@ -191,7 +191,7 @@ export default {
   created() {
     if (this.recordId) {
       this.$api['desLayout.view']({ id: this.recordId }).then((res) => {
-        let data = JSON.parse(res.layoutJson)
+        const data = JSON.parse(res.layoutJson)
         this.treeSettingsParmars = data.treeSettingsParmars
         this.asyncComponents = data.defaultComponents.url
         this.dynamicParameter = data.dynamicParameter
@@ -285,12 +285,12 @@ export default {
         this.treeSettingsParmars = data
         if (data && data.dataType === '0') {
           this.$api['desLayout.execute']({ id: data.reportSqlId }).then((res) => {
-            let config = { labelCol: data.optionLabelCol, valueCol: data.optionValueCol, pidCol: data.optionPidCol }
+            const config = { labelCol: data.optionLabelCol, valueCol: data.optionValueCol, pidCol: data.optionPidCol }
             // 获取动态数据的参数映射所有列
             if (!this.recordId) {
               this.getParmarsMap(res)
             }
-            let treeArr = selectGenerateTree(res, JSON.stringify(config))
+            const treeArr = selectGenerateTree(res, JSON.stringify(config))
             this.treeData = [
               {
                 id: '0',
@@ -309,15 +309,15 @@ export default {
     },
     // 获取动态数据的参数映射所有列
     getParmarsMap(res) {
-      let arr = Object.keys(res[0])
-      let parmarsMap = []
+      const arr = Object.keys(res[0])
+      const parmarsMap = []
       arr.forEach((el) => {
         parmarsMap.push({ before: el, after: '' })
       })
       this.dynamicParameter = parmarsMap
     },
     ChildNodeSettingsHandleOk(data) {
-      let that = this
+      const that = this
       function getNode(treeData) {
         treeData.forEach((el, index) => {
           if (el.id == data.id) {
@@ -336,14 +336,14 @@ export default {
         this.$refs.commonTree.$refs.tree.append(data, data.parentId)
         // 修改当前节点
       } else {
-        let arr = [...this.treeData]
+        const arr = [...this.treeData]
         getNode(arr)
         this.treeData = arr
       }
     },
     ParamshandleOk(parmas) {
-      let that = this
-      let arr = [...this.treeData]
+      const that = this
+      const arr = [...this.treeData]
       function getNode(treeData) {
         treeData.forEach((el) => {
           if (el.id == that.nodeId) {

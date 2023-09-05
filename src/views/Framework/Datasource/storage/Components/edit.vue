@@ -1,123 +1,106 @@
 <template>
   <div>
-    <form-list ref="form"
-               :data-source="dataSource"
-               :form="formData"
-               :api="saveApi"
-               @saved="saved"
-               label-width="95px"
-               :is-custom-validate="true"
-               @custom-validate="customValidate"
-               @rendered="rendered">
+    <form-list
+ref="form" :data-source="dataSource" :form="formData" :api="saveApi" @saved="saved" label-width="95px" :is-custom-validate="true" @custom-validate="customValidate" @rendered="rendered">
       <template #tableName>
-        <el-input v-model="formData.tableName"
-                  :disabled="modifyDisable({}, 'main') || keyIsDbSynch"
-                  placeholder="请输入表名">
-          <template v-if="!(record && record.id)"
-                    slot="prepend">CGTABLE_</template>
+        <el-input
+v-model="formData.tableName" :disabled="modifyDisable({}, 'main') || keyIsDbSynch" placeholder="请输入表名">
+          <template
+v-if="!(record && record.id)" slot="prepend">CGTABLE_</template>
         </el-input>
       </template>
       <template slot="btn">
         <el-button @click="cancel">取 消</el-button>
       </template>
     </form-list>
-    <common-tabs :tabs-data="tabsData"
-                 :height="height"
-                 type="border-card"
-                 class="el_tabs"
-                 :active-tabs="activeTabs">
+    <common-tabs
+:tabs-data="tabsData" :height="height" type="border-card" class="el_tabs" :active-tabs="activeTabs">
       <template #databaseProp>
-        <editable-table :columns="databasePropColumns"
-                        :add-row="true"
-                        :disabled="modifyDisable({}, 'main')"
-                        api="formGenerator.getDefaultProp"
-                        :data="databasePropData"
-                        @save-param-data="saveParamData">
+        <editable-table
+
+:columns="databasePropColumns"
+          :add-row="true"
+          :disabled="modifyDisable({}, 'main')"
+          api="formGenerator.getDefaultProp"
+          :data="databasePropData"
+          @save-param-data="saveParamData"
+        >
           <template #fieldName="{ scope, data }">
-            <el-input v-model="scope.row.fieldName"
-                      @blur="saveParamData(data)"
-                      :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input>
+            <el-input
+v-model="scope.row.fieldName" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input>
           </template>
           <template #fieldDisplay="{ scope, data }">
-            <el-input v-model="scope.row.fieldDisplay"
-                      @blur="saveParamData(data)"
-                      :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input>
+            <el-input
+v-model="scope.row.fieldDisplay" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input>
           </template>
           <template #fieldIsPrimaryKey="{ scope, data }">
-            <el-checkbox v-model="scope.row.fieldIsPrimaryKey"
-                         true-label="1"
-                         false-label="0"
-                         @change="saveParamData(data)"
-                         :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-checkbox>
+            <el-checkbox
+
+v-model="scope.row.fieldIsPrimaryKey"
+              true-label="1"
+              false-label="0"
+              @change="saveParamData(data)"
+              :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"
+            ></el-checkbox>
           </template>
           <template #fieldIsNull="{ scope, data }">
-            <el-checkbox v-model="scope.row.fieldIsNull"
-                         true-label="1"
-                         false-label="0"
-                         @change="saveParamData(data)"
-                         :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-checkbox>
+            <el-checkbox
+
+v-model="scope.row.fieldIsNull"
+              true-label="1"
+              false-label="0"
+              @change="saveParamData(data)"
+              :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"
+            ></el-checkbox>
           </template>
           <template #fieldType="{ scope, data }">
-            <el-select v-model="scope.row.fieldType"
-                       clearable
-                       @blur="saveParamData(data)"
-                       :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)">
+            <el-select
+v-model="scope.row.fieldType" clearable @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)">
               <template v-for="(item, index) in fieldTypeOption">
-                <el-option :label="item.label"
-                           :value="item.label"
-                           :key="index"></el-option>
+                <el-option
+:label="item.label" :value="item.label" :key="index"></el-option>
               </template>
             </el-select>
           </template>
           <template #fieldLength="{ scope, data }">
-            <el-input-number v-model="scope.row.fieldLength"
-                             @blur="saveParamData(data)"
-                             :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input-number>
+            <el-input-number
+v-model="scope.row.fieldLength" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input-number>
           </template>
           <template #fieldPrecision="{ scope, data }">
-            <el-input-number v-model="scope.row.fieldPrecision"
-                             @blur="saveParamData(data)"
-                             :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input-number>
+            <el-input-number
+v-model="scope.row.fieldPrecision" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input-number>
           </template>
           <template #fieldDefaultValue="{ scope, data }">
-            <el-input v-model="scope.row.fieldDefaultValue"
-                      @blur="saveParamData(data)"
-                      :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input>
+            <el-input
+v-model="scope.row.fieldDefaultValue" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input>
           </template>
           <!-- <template #dictField="{scope, data}">
             <el-input v-model="scope.row.dictField" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable()"></el-input>
           </template> -->
           <template #orderNumber="{ scope, data }">
-            <el-input-number v-model="scope.row.orderNumber"
-                             @blur="saveParamData(data)"
-                             :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input-number>
+            <el-input-number
+v-model="scope.row.orderNumber" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input-number>
           </template>
         </editable-table>
       </template>
       <template #foreignKey>
-        <editable-table :columns="foreignKeyColumns"
-                        api="formGenerator.getDefaultProp"
-                        :data="forengnKeyData"
-                        @save-param-data="saveKeyData">
+        <editable-table
+:columns="foreignKeyColumns" api="formGenerator.getDefaultProp" :data="forengnKeyData" @save-param-data="saveKeyData">
           <template #fieldName="{ scope, data }">
-            <el-input v-model="scope.row.fieldName"
-                      disabled
-                      @blur="saveKeyData(data)"></el-input>
+            <el-input
+v-model="scope.row.fieldName" disabled @blur="saveKeyData(data)"></el-input>
           </template>
           <template #fieldDisplay="{ scope, data }">
-            <el-input v-model="scope.row.fieldDisplay"
-                      disabled
-                      @blur="saveKeyData(data)"></el-input>
+            <el-input
+v-model="scope.row.fieldDisplay" disabled @blur="saveKeyData(data)"></el-input>
           </template>
           <template #foreignTable="{ scope, data }">
-            <el-input v-model="scope.row.foreignTable"
-                      @blur="saveKeyData(data)"
-                      :disabled="tableCellCommonDisable(scope.row)"></el-input>
+            <el-input
+v-model="scope.row.foreignTable" @blur="saveKeyData(data)" :disabled="tableCellCommonDisable(scope.row)"></el-input>
           </template>
           <template #foreignField="{ scope, data }">
-            <el-input v-model="scope.row.foreignField"
-                      @blur="saveKeyData(data)"
-                      :disabled="tableCellCommonDisable(scope.row)"></el-input>
+            <el-input
+v-model="scope.row.foreignField" @blur="saveKeyData(data)" :disabled="tableCellCommonDisable(scope.row)"></el-input>
           </template>
         </editable-table>
       </template>
@@ -147,8 +130,8 @@ export default {
       }
     }
   },
-  data () {
-    const tabHeight = document.documentElement.clientHeight - 300
+  data() {
+    const tabHeight = document.documentElement.clientHeight - 330
     return {
       saveApi: 'formGenerator.dataSourceSave',
       viewApi: 'formGenerator.dataSourceFormView',
@@ -358,7 +341,7 @@ export default {
       keyIsDbSynch: false // 数据源属性ID是否已同步
     }
   },
-  mounted () {
+  mounted() {
     this.$api['formGenerator.getFieldList']().then((res) => {
       if (res) {
         this.fieldTypeOption = res
@@ -366,7 +349,7 @@ export default {
     })
   },
   methods: {
-    rendered () {
+    rendered() {
       // 所有表单元素渲染后调用rendered
       if (this.record.id) {
         this.getFormData()
@@ -376,13 +359,13 @@ export default {
     cancel() {
       this.$emit('cancel')
     },
-    getFormData () {
+    getFormData() {
       console.log(this.record, 'this.record')
       this.formData = Object.assign({}, this.record)
     },
-    getViewData () {
+    getViewData() {
       const _this = this
-      let timer = setTimeout(() => {
+      const timer = setTimeout(() => {
         this.$api[this.viewApi]({
           id: _this.record.id,
           permissionVo: { router: this.$route.name, resourceId: '' }
@@ -405,26 +388,26 @@ export default {
         clearTimeout(timer)
       }, 100)
     },
-    saved (res) {
+    saved(res) {
       console.log('修改页面关闭时的回调方法')
       this.$emit('saveSuccess', res)
     },
-    saveParamData (data) {
+    saveParamData(data) {
       console.log(data)
-      this.fieldParams['fields'] = data
+      this.fieldParams.fields = data
       this.forengnKeyData = data
     },
-    tableCellCommonDisable (row) {
+    tableCellCommonDisable(row) {
       if (row.fieldName === 'ID' && row.fieldSyncType === '1') {
         this.keyIsDbSynch = true
       }
       /**
        * 表格单元格 通用禁用
        */
-      const normalDis = ['ID', 'CREATE_BY', 'UPDATE_BY', 'CREATE_TIME', 'UPDATE_TIME', 'SECRET_LEVEL']
+      const normalDis = ['ID', 'CREATE_BY', 'UPDATE_BY', 'CREATE_TIME', 'UPDATE_TIME', 'SECRET_LEVEL', 'INDEX_NO']
       return normalDis.indexOf(row.fieldName) > -1
     },
-    modifyDisable (row, pos) {
+    modifyDisable(row, pos) {
       /**
        * 修改时, isDbSynch === '1'(已同步)
        *    表单: 表名 / 是否同步 禁止修改
@@ -436,11 +419,11 @@ export default {
         return Object.keys(this.record).length && row.fieldSyncType === '1'
       }
     },
-    saveKeyData (data) {
-      let saveForeignKeyData = []
+    saveKeyData(data) {
+      const saveForeignKeyData = []
       data.map((item) => {
         if (item.foreignTable && item.foreignField) {
-          let saveItem = {
+          const saveItem = {
             fieldName: item.fieldName,
             fieldDisplay: item.fieldDisplay,
             foreignTable: item.foreignTable,
@@ -449,12 +432,12 @@ export default {
           saveForeignKeyData.push(saveItem)
         }
       })
-      this.fieldParams['foreignKey'] = saveForeignKeyData
+      this.fieldParams.foreignKey = saveForeignKeyData
     },
     // 保存前自定义校验，进行数据库属性的非空校验与重复性校验
-    customValidate (saveParams) {
-      let _this = this
-      let fieldNameArr = []
+    customValidate(saveParams) {
+      const _this = this
+      const fieldNameArr = []
       if (this.fieldParams.fields.length) {
         this.fieldParams.fields.map((item) => {
           item.fieldName = item.fieldName.trim()
@@ -470,7 +453,7 @@ export default {
           saveParams.tableName = 'CGTABLE_' + saveParams.tableName
         } else {
           if (saveParams.tableName.length > 8) {
-            let str = saveParams.tableName.slice(0, 7)
+            const str = saveParams.tableName.slice(0, 7)
             if (str !== 'CGTABLE') {
               saveParams.tableName = 'CGTABLE_' + saveParams.tableName
             }
@@ -485,13 +468,13 @@ export default {
             type: 'warning',
             callback: (action) => {
               if (action === 'confirm') {
-                let params = { ...saveParams, ..._this.fieldParams }
+                const params = { ...saveParams, ..._this.fieldParams }
                 _this.$refs.form.submitForm(params, _this.saveApi)
               }
             }
           })
         } else {
-          let params = { ...saveParams, ...this.fieldParams }
+          const params = { ...saveParams, ...this.fieldParams }
           this.$refs.form.submitForm(params, this.saveApi)
         }
       } else {
@@ -506,7 +489,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .el_tabs {
-  /deep/.el-tabs__content {
+  ::v-deep.el-tabs__content {
     padding: 0 !important;
   }
 }

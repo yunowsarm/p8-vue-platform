@@ -187,7 +187,7 @@ export default {
           .then((res) => {
             // this.getCode && this.$api['kanbanView.list']({ code: this.getCode, page: {} }).then(res => {
             if (res.records.length) {
-              let record = res.records[0]
+              const record = res.records[0]
               !record.widgets && (record.widgets = [])
               !record.style && (record.style = '')
               !record.queryConfig && (record.queryConfig = '')
@@ -221,12 +221,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .custom-tabs.el-tabs--top {
-  /deep/ .el-tabs__content {
+  ::v-deep .el-tabs__content {
     padding: 0;
   }
 
   padding: 0 !important;
 }
-.normalLayout /deep/ .normal-header {
+.normalLayout ::v-deep .normal-header {
 }
 </style>

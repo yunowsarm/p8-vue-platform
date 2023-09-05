@@ -1,35 +1,26 @@
 <template>
   <list-layout>
     <template #north>
-      <common-button :comp="comp"
-                     :button-config="buttonConfig"
-                     :special-rote-name="roteName"
-                     :button-type="'round'"></common-button>
+      <common-button
+:comp="comp" :button-config="buttonConfig" :special-rote-name="roteName" :button-type="'round'"></common-button>
     </template>
     <template #center>
-      <common-table ref="table"
-                    :comp="comp"
-                    :flex="200"
-                    :columns="columns"
-                    :params="queryParams"
-                    :api="tableApi"
-                    :special-rote-name="roteName"></common-table>
+      <common-table
+ref="table" :comp="comp" :flex="200" :columns="columns" :params="queryParams" :api="tableApi" :special-rote-name="roteName"></common-table>
     </template>
     <template #drawer-panel>
-      <common-drawer :title="drawerTitle"
-                     :visible="visibleEdit"
-                     size="50%"
-                     @close="onEditClose">
+      <common-drawer
+:title="drawerTitle" :visible="visibleEdit" size="50%" @close="onEditClose">
         <template #drawer>
-          <edit :record="record"
-                @save-success="saveSuccess"></edit>
+          <edit
+:record="record" @save-success="saveSuccess"></edit>
         </template>
       </common-drawer>
     </template>
   </list-layout>
 </template>
 <style lang="scss" scoped>
-/deep/.el-table__fixed-body-wrapper {
+::v-deep.el-table__fixed-body-wrapper {
   top: 41px !important;
 }
 </style>
@@ -38,7 +29,7 @@ import { P8ListLayout as ListLayout, P8Table as CommonTable, P8Button as CommonB
 import edit from './Components/edit.vue'
 export default {
   name: 'LogConfig',
-  data () {
+  data() {
     const columns = [
       {
         title: '序号',
@@ -102,7 +93,7 @@ export default {
         minWidth: '180',
         align: 'left',
         headerAlign: 'left',
-        formatter (row, column, cellValue) {
+        formatter(row, column, cellValue) {
           let v = ''
           switch (cellValue) {
             case '1':
@@ -162,27 +153,27 @@ export default {
   },
   methods: {
     // 新建
-    create () {
+    create() {
       this.drawerTitle = '新建'
       this.record = {}
       this.visibleEdit = true
     },
     // 修改
-    update (record) {
+    update(record) {
       this.drawerTitle = '修改'
       this.record = record
       this.visibleEdit = true
     },
-    onEditClose () {
+    onEditClose() {
       this.visibleEdit = false
     },
-    saveSuccess () {
+    saveSuccess() {
       this.$refs.table.searchData()
       this.onEditClose()
     },
-    delete (record) {
+    delete(record) {
       console.log(record, 111)
-      let that = this
+      const that = this
       this.$confirm('是否确定要删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

@@ -136,7 +136,7 @@ export default {
   mounted() {
     this.formData = { ...this.treeSettingsParmars }
     // 目录类或树形类
-    let _this = this
+    const _this = this
     this.$api['selection.getAllSqlview']().then(function (res) {
       _this.SqlViewData = res
     })
@@ -153,7 +153,7 @@ export default {
       this.$emit('close-modal')
     },
     onSqlIdChange(item) {
-      let _this = this
+      const _this = this
       this.$api['selection.getSqlViewAllColumn']({ id: item }).then(function (res) {
         _this.sqlViewCols = res
       })
@@ -163,7 +163,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/ .formList.el-form > .el-row.existBtn:first-child {
+::v-deep .formList.el-form > .el-row.existBtn:first-child {
   height: calc(100% - 67px);
 }
 .helpIcon {

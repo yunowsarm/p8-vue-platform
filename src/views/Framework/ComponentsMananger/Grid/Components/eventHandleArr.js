@@ -15,7 +15,8 @@ export const eventHandleArr = [
   'editRowEvent',
   'deleteRowEvent',
   'exportExcel',
-  'openEditTable'
+  'openEditTable',
+  'customerFun'
   // {
   //   value: 'createForm',
   //   label: '新建'

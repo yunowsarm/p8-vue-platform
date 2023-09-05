@@ -214,7 +214,7 @@ export default {
   },
   computed: {
     componentLoader() {
-      let comp = this.formComp
+      const comp = this.formComp
       return () => import('@/views/' + comp)
     }
   },
@@ -265,18 +265,18 @@ export default {
   },
   methods: {
     getBpmnSnapshootAndLoadData() {
-      let this_ = this
+      const this_ = this
       this.$api['PersonalProcessApproval.getBpmnSnapshoot']({ processInstanceId: this.processInstId }).then((res) => {
         this_.bpmnSnapshoot = res
         this.loadFormKey()
       })
     },
     loadFormKey() {
-      let this_ = this
+      const this_ = this
       this_.dataSource = this_.dataSourceDefault
       this_.$api['PersonalProcessApproval.getApproveContentViewUrl']({ taskId: this.selectedApproval.processTaskId }).then((res) => {
         if (res && res.length > 0) {
-          let page = {}
+          const page = {}
           let inputProp = {}
           this.currEntityId = this.selectedApproval.businessKey
           res.forEach((o) => {
@@ -285,8 +285,8 @@ export default {
               page.url = o.value.url
               this_.formComp = o.value.url
               page.code = o.value.code
-              let canEdit = o.value.canEdit
-              let canView = o.value.canView
+              const canEdit = o.value.canEdit
+              const canView = o.value.canView
 
               if (canEdit && canEdit === 'canEdit') {
                 this_.dataSource = this_.dataSourceTempView
@@ -308,7 +308,7 @@ export default {
       })
     },
     loadApprovalFormData() {
-      let this_ = this
+      const this_ = this
       if (this_.formData.approvalParams && (this_.formData.approvalParams === 'canView' || this_.formData.approvalParams === 'canEdit')) {
         this_.$api['ProjectApply.getWholeCopyClearly']({ wholeDescribeId: this_.selectedApproval.businessKey }).then((res) => {
           if (res) {
@@ -329,7 +329,7 @@ export default {
       if (item.id) {
         this.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' })
           .then((backJson) => {
-            let link = document.createElement('a')
+            const link = document.createElement('a')
             link.href = window.URL.createObjectURL(new Blob([backJson.data]))
             link.download = item.fileName
             document.body.appendChild(link)
@@ -397,13 +397,13 @@ $paddingLeft: 10px;
   height: calc(100% - 93px) !important;
   border-top: 1px solid #dcdfe6;
   box-sizing: border-box;
-  /deep/ .el-tabs__content {
+  ::v-deep .el-tabs__content {
     padding: 0;
   }
-  /deep/ .el-tabs__nav-wrap {
+  ::v-deep .el-tabs__nav-wrap {
     margin-bottom: 0;
   }
-  /deep/ .el-tabs__nav.is-top {
+  ::v-deep .el-tabs__nav.is-top {
     background: #f5f7fa;
   }
 }

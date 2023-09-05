@@ -134,14 +134,14 @@ export default {
     },
     pageData: {
       handler(val, oldVal) {
-        let _this = this
+        const _this = this
         // 下拉级联时，前置改变后将后置清空
         if (val && oldVal && Object.keys(val).length && Object.keys(oldVal).length) {
-          Object.keys(val).map((valItem) => {
+          Object.keys(val).forEach((valItem) => {
             if (val[valItem] !== oldVal[valItem]) {
-              _this.formConf.fields.map((item) => {
+              _this.formConf.fields.forEach((item) => {
                 if (item.__config__.selectParam && item.__config__.selectParam.sqlParam && Object.keys(item.__config__.selectParam.sqlParam).length) {
-                  Object.keys(item.__config__.selectParam.sqlParam).map((sqlItem) => {
+                  Object.keys(item.__config__.selectParam.sqlParam).forEach((sqlItem) => {
                     if (valItem === item.__config__.selectParam.sqlParam[sqlItem].slice(1)) {
                       item.__config__.defaultValue = ''
                     }
@@ -152,11 +152,11 @@ export default {
           })
         }
 
-        let needComputedTags = ['el-input']
+        const needComputedTags = ['el-input']
         if (Object.keys(this.dynamicParamObj).length) {
-          Object.keys(this.dynamicParamObj).map((item) => {
+          Object.keys(this.dynamicParamObj).forEach((item) => {
             _this.dynamicParamObj[item].forEach((i) => {
-              let dynamicParamObjPath = i.path.split('.')
+              const dynamicParamObjPath = i.path.split('.')
               _this.dynamicDataObj[i.dynamicCompId][dynamicParamObjPath[0]][dynamicParamObjPath[1]] = val[item]
             })
           })
@@ -177,7 +177,7 @@ export default {
               _this.watchLinkData(item)
               if (item.__config__.children && item.__config__.children.length) {
                 item.__config__.children.map(async (childItem) => {
-                  if (item.__config__.layout == 'rowFormItem') {
+                  if (item.__config__.layout === 'rowFormItem') {
                     _this.setComputedItem(childItem, needComputedTags)
                   }
                   _this.watchLinkData(childItem)
@@ -214,67 +214,67 @@ export default {
       return res
     },
     async init() {
-      let drawingListData = await this.getDrawingList({ desformCode: this.record.desformCode ? this.record.desformCode : this.desformCode })
+      const drawingListData = await this.getDrawingList({ desformCode: this.record.desformCode ? this.record.desformCode : this.desformCode })
       this.formConf = JSON.parse(drawingListData.designJson)
       this.handlerEvents(this.formConf.fields)
       await this.handlerCustomFn(this.formConf)
       this.containerLayout = drawingListData.containerLayout
-      let _this = this
+      const _this = this
       if (this.dataId) {
-        let params = {
+        const params = {
           desformCode: this.record.desformCode ? this.record.desformCode : this.desformCode,
           dataId: this.dataId,
           permissionVo: this.permissionVo
         }
-        let res = await this.$api['formGenerator.formCallDataDetails'](params)
+        const res = await this.$api['formGenerator.formCallDataDetails'](params)
         this.modifyRes = res
-        let uploadFiles = res.primary.uploadFiles
-        this.formConf.fields.map((item) => {
+        const uploadFiles = res.primary.uploadFiles
+        this.formConf.fields.forEach((item) => {
           if (multiSelectedLayout.includes(item.__config__.layout)) {
             if (res.children.length) {
               item.__config__.defaultValue = this.extractDefaultValue(item.__config__.layout, item.__config__.children, res.children)
             }
-          } else if (item.__config__.layout == 'rowFormItem') {
+          } else if (item.__config__.layout === 'rowFormItem') {
             item.__config__.children.forEach((rowItem) => {
               // 特殊数据回填
-              if (rowItem.__config__.tag == 'el-date-picker' && rowItem.type == 'daterange') {
-                let strs = rowItem.__config__.formFields
+              if (rowItem.__config__.tag === 'el-date-picker' && rowItem.type === 'daterange') {
+                const strs = rowItem.__config__.formFields
                 rowItem.__config__.defaultValue = res.primary.table ? [res.primary.table[strs[0]], res.primary.table[strs[1]]] : []
-              } else if (rowItem.__config__.tag == 'el-time-picker' && rowItem.__config__.tagIcon == 'time-range') {
-                let strs = rowItem.__config__.formFields
+              } else if (rowItem.__config__.tag === 'el-time-picker' && rowItem.__config__.tagIcon === 'time-range') {
+                const strs = rowItem.__config__.formFields
                 rowItem.__config__.defaultValue = res.primary.table ? [res.primary.table[strs[0]], res.primary.table[strs[1]]] : ''
-              } else if (rowItem.__config__.tag == 'p8-upload') {
-                let fieldType = rowItem.__config__.fieldType
-                let filterFiles = uploadFiles.filter((ele) => ele.type === fieldType)
+              } else if (rowItem.__config__.tag === 'p8-upload') {
+                const fieldType = rowItem.__config__.fieldType
+                const filterFiles = uploadFiles.filter((ele) => ele.type === fieldType)
                 rowItem.__config__.defaultValue = filterFiles
               } else if (
                 (rowItem.__config__.tag === 'el-checkbox-group' || (rowItem.__config__.tag === 'el-select' && rowItem.multiple)) &&
                 typeof res.primary.table[rowItem.__vModel__] === 'string'
               ) {
-                rowItem.__config__.defaultValue = res.primary.table[rowItem.__vModel__].split(',')
+                rowItem.__config__.defaultValue = res.primary.table[rowItem.__vModel__] ? res.primary.table[rowItem.__vModel__].split(',') : []
               } else {
                 rowItem.__config__.defaultValue = res.primary.table[rowItem.__vModel__] || ''
               }
             })
-          } else if (item.__config__.layout == 'tabsLayout') {
+          } else if (item.__config__.layout === 'tabsLayout') {
             item.__tabs__.forEach((tab) => {
               tab.children.forEach((eleItem) => {
                 // 特殊数据回填
-                if (eleItem.__config__.tag == 'el-date-picker' && eleItem.type == 'daterange') {
-                  let strs = eleItem.__config__.formFields
+                if (eleItem.__config__.tag === 'el-date-picker' && eleItem.type === 'daterange') {
+                  const strs = eleItem.__config__.formFields
                   eleItem.__config__.defaultValue = res.primary.table ? [res.primary.table[strs[0]], res.primary.table[strs[1]]] : []
-                } else if (eleItem.__config__.tag == 'el-time-picker' && eleItem.__config__.tagIcon == 'time-range') {
-                  let strs = eleItem.__config__.formFields
+                } else if (eleItem.__config__.tag === 'el-time-picker' && eleItem.__config__.tagIcon === 'time-range') {
+                  const strs = eleItem.__config__.formFields
                   eleItem.__config__.defaultValue = res.primary.table ? [res.primary.table[strs[0]], res.primary.table[strs[1]]] : ''
-                } else if (eleItem.__config__.tag == 'p8-upload') {
-                  let fieldType = eleItem.__config__.fieldType
-                  let filterFiles = uploadFiles.filter((ele) => ele.type === fieldType)
+                } else if (eleItem.__config__.tag === 'p8-upload') {
+                  const fieldType = eleItem.__config__.fieldType
+                  const filterFiles = uploadFiles.filter((ele) => ele.type === fieldType)
                   eleItem.__config__.defaultValue = filterFiles
                 } else if (
                   (eleItem.__config__.tag === 'el-checkbox-group' || (eleItem.__config__.tag === 'el-select' && eleItem.multiple)) &&
                   typeof res.primary.table[eleItem.__vModel__] === 'string'
                 ) {
-                  eleItem.__config__.defaultValue = res.primary.table[eleItem.__vModel__].split(',')
+                  eleItem.__config__.defaultValue = res.primary.table[eleItem.__vModel__] ? res.primary.table[eleItem.__vModel__].split(',') : []
                 } else {
                   eleItem.__config__.defaultValue = res.primary.table[eleItem.__vModel__] || ''
                 }
@@ -282,18 +282,18 @@ export default {
             })
           } else {
             // 特殊数据回填
-            if (item.__config__.tag == 'el-date-picker' && item.type == 'daterange') {
-              let strs = item.__config__.formFields
+            if (item.__config__.tag === 'el-date-picker' && item.type === 'daterange') {
+              const strs = item.__config__.formFields
               item.__config__.defaultValue = res.primary.table ? [res.primary.table[strs[0]], res.primary.table[strs[1]]] : []
-            } else if (item.__config__.tag == 'el-time-picker' && item.__config__.tagIcon == 'time-range') {
-              let strs = item.__config__.formFields
+            } else if (item.__config__.tag === 'el-time-picker' && item.__config__.tagIcon === 'time-range') {
+              const strs = item.__config__.formFields
               item.__config__.defaultValue = res.primary.table ? [res.primary.table[strs[0]], res.primary.table[strs[1]]] : ''
-            } else if (item.__config__.tag == 'p8-upload') {
-              let fieldType = item.__config__.fieldType
-              let filterFiles = uploadFiles.filter((item) => item.type === fieldType)
+            } else if (item.__config__.tag === 'p8-upload') {
+              const fieldType = item.__config__.fieldType
+              const filterFiles = uploadFiles.filter((item) => item.type === fieldType)
               item.__config__.defaultValue = filterFiles
-            } else if ((item.__config__.tag == 'el-checkbox-group' || (item.__config__.tag === 'el-select' && item.multiple)) && typeof res.primary.table[item.__vModel__] === 'string') {
-              item.__config__.defaultValue = res.primary.table[item.__vModel__].split(',')
+            } else if ((item.__config__.tag === 'el-checkbox-group' || (item.__config__.tag === 'el-select' && item.multiple)) && typeof res.primary.table[item.__vModel__] === 'string') {
+              item.__config__.defaultValue = res.primary.table[item.__vModel__] ? res.primary.table[item.__vModel__].split(',') : []
             } else {
               item.__config__.defaultValue = res.primary.table ? (res.primary.table[item.__vModel__] ? res.primary.table[item.__vModel__] : '') : ''
             }
@@ -305,8 +305,8 @@ export default {
       }
       // 待表单数据，回显数据加载完后再初始化下拉等数据
       if (this.formConf.fields.length) {
-        let needHandleTags = ['tree-select', 'el-select', 'el-radio-group', 'el-checkbox-group']
-        let needComputedTags = ['el-input']
+        const needHandleTags = ['tree-select', 'el-select', 'el-radio-group', 'el-checkbox-group']
+        const needComputedTags = ['el-input']
         // 异步获取下拉\单选\多选等数据
         this.formConf.fields.map(async (item) => {
           _this.buildWatchCascadeParams(item)
@@ -316,7 +316,7 @@ export default {
           _this.setSysDefaultValue(item)
           // 单行文本--计算器
           _this.setComputedItem(item, needComputedTags)
-          if (item.__config__.layout == 'tabsLayout') {
+          if (item.__config__.layout === 'tabsLayout') {
             item.__tabs__.forEach((tab) => {
               tab.children.forEach((ele) => {
                 _this.buildWatchCascadeParams(ele)
@@ -333,7 +333,7 @@ export default {
               _this.changeSelectOption(childItem, needHandleTags)
               // 子表中设置系统默认值
               _this.setSysDefaultValue(childItem)
-              if (childItem.__config__.layout == 'tabsLayout') {
+              if (childItem.__config__.layout === 'tabsLayout') {
                 childItem.__tabs__.forEach((tab) => {
                   tab.children.forEach((ele) => {
                     _this.buildWatchCascadeParams(ele)
@@ -382,23 +382,23 @@ export default {
     fieldsRecursive(fields, result) {
       if (Array.isArray(result)) {
         const index = result.findIndex((v) => fields[0].__config__.childrenTable === v.tableId)
-        let newData = result[index].data
+        const newData = result[index].data
         let val = []
-        let data = []
+        const data = []
         newData.forEach((item) => {
           let modifyData = { ...item.table }
           fields.forEach((field) => {
-            if (field.__config__.tag == 'el-date-picker' && field.type == 'daterange') {
-              let strs = field.__config__.formFields
+            if (field.__config__.tag === 'el-date-picker' && field.type === 'daterange') {
+              const strs = field.__config__.formFields
               val = item.table ? [item.table[strs[0]], item.table[strs[1]]] : []
-            } else if (field.__config__.tag == 'el-time-picker' && field.__config__.tagIcon == 'time-range') {
-              let strs = field.__config__.formFields
+            } else if (field.__config__.tag === 'el-time-picker' && field.__config__.tagIcon === 'time-range') {
+              const strs = field.__config__.formFields
               val = item.table ? [item.table[strs[0]], item.table[strs[1]]] : ''
             } else if (field.__config__.tag === 'el-select') {
               val = field.multiple ? item.table[field.__vModel__].split(',') : item.table[field.__vModel__]
               field.__config__.defaultValue = val
             } else if (field.__config__.tag === 'el-checkbox-group') {
-              item.table[field.__vModel__] = item.table[field.__vModel__].split(',')
+              item.table[field.__vModel__] = item.table[field.__vModel__] ? item.table[field.__vModel__].split(',') : ''
               val = item.table[field.__vModel__]
               field.__config__.defaultValue = val
             } else if (field.__config__.tag === 'el-input') {
@@ -409,23 +409,23 @@ export default {
             } else if (field.__config__.tag === 'p8-autocomplete') {
               val = item.table[field.__vModel__]
               field.__config__.defaultValue = val
-            } else if (field.__config__.tag == 'p8-upload') {
+            } else if (field.__config__.tag === 'p8-upload') {
               val = item.uploadFiles.map((temp) => temp.type)
               item.table[field.__vModel__] = val
-            } else if (field.__config__.tag == 'el-tabs') {
+            } else if (field.__config__.tag === 'el-tabs') {
               field.__tabs__.forEach((tab) => {
                 tab.children.forEach((ele) => {
-                  if (ele.__config__.tag == 'el-date-picker' && ele.type == 'daterange') {
-                    let strs = ele.__config__.formFields
+                  if (ele.__config__.tag === 'el-date-picker' && ele.type === 'daterange') {
+                    const strs = ele.__config__.formFields
                     val = item.table ? [item.table[strs[0]], item.table[strs[1]]] : []
-                  } else if (ele.__config__.tag == 'el-time-picker' && ele.__config__.tagIcon == 'time-range') {
-                    let strs = ele.__config__.formFields
+                  } else if (ele.__config__.tag === 'el-time-picker' && ele.__config__.tagIcon === 'time-range') {
+                    const strs = ele.__config__.formFields
                     val = item.table ? [item.table[strs[0]], item.table[strs[1]]] : ''
                   } else if (ele.__config__.tag === 'el-select') {
                     val = ele.multiple ? item.table[ele.__vModel__].split(',') : item.table[ele.__vModel__]
                     ele.__config__.defaultValue = val
                   } else if (ele.__config__.tag === 'el-checkbox-group') {
-                    item.table[ele.__vModel__] = item.table[ele.__vModel__].split(',')
+                    item.table[ele.__vModel__] = item.table[ele.__vModel__] ? item.table[ele.__vModel__].split(',') : []
                     val = item.table[ele.__vModel__]
                     ele.__config__.defaultValue = val
                   } else if (ele.__config__.tag === 'el-input') {
@@ -436,7 +436,7 @@ export default {
                   } else if (ele.__config__.tag === 'p8-autocomplete') {
                     val = item.table[ele.__vModel__]
                     ele.__config__.defaultValue = val
-                  } else if (ele.__config__.tag == 'p8-upload') {
+                  } else if (ele.__config__.tag === 'p8-upload') {
                     val = item.uploadFiles.map((temp) => temp.type)
                     item.table[ele.__vModel__] = val
                   } else {
@@ -470,7 +470,7 @@ export default {
     fieldsRecursiveV2(field, result) {
       if (Array.isArray(result)) {
         const index = result.findIndex((v) => field.__config__.childrenTable === v.tableId)
-        let newData = result[index].data
+        const newData = result[index].data
         let modifyData = {}
         let val = []
         let data = []
@@ -503,8 +503,8 @@ export default {
     },
 
     getPropParam() {
-      let newBuildPropParam = {}
-      newBuildPropParam['$PROPPARAM'] = this.propParam
+      const newBuildPropParam = {}
+      newBuildPropParam.$PROPPARAM = this.propParam
       return newBuildPropParam
     },
     setPageData(pageData) {
@@ -514,9 +514,9 @@ export default {
     buildDynamicParamObj(item, label, value, path) {
       // console.log('重构下拉级联参数对象', value)
       // 存在一对多的前后置关系
-      let selectComp = item.__config__.selectComp
+      const selectComp = item.__config__.selectComp
       if (this.dynamicParamObj[value.slice(1)]) {
-        let hasSelectComp = this.dynamicParamObj[value.slice(1)].findIndex((i) => {
+        const hasSelectComp = this.dynamicParamObj[value.slice(1)].findIndex((i) => {
           return i.dynamicCompId === selectComp
         })
         if (hasSelectComp !== -1) {
@@ -541,14 +541,14 @@ export default {
     },
     // 构建 监听动态参数
     buildWatchCascadeParams(item) {
-      let _this = this
-      let customParam = {}
-      let sqlParam = {}
-      let reportParam = {}
+      const _this = this
+      const customParam = {}
+      const sqlParam = {}
+      const reportParam = {}
       if (item.__config__.selectParam) {
         if (Object.keys(item.__config__.selectParam).length && item.__config__.selectParam.param.length) {
-          item.__config__.selectParam.param.map((i) => {
-            if (typeof i.value == 'string' && i.value.startsWith('$')) {
+          item.__config__.selectParam.param.forEach((i) => {
+            if (typeof i.value === 'string' && i.value.startsWith('$')) {
               _this.buildDynamicParamObj(item, i.label, i.value, 'param')
               customParam[i.label] = ''
             } else {
@@ -557,8 +557,8 @@ export default {
           })
         }
         if (Object.keys(item.__config__.selectParam.sqlParam).length) {
-          Object.keys(item.__config__.selectParam.sqlParam).map((i) => {
-            if (typeof item.__config__.selectParam.sqlParam[i] == 'string' && item.__config__.selectParam.sqlParam[i].startsWith('$')) {
+          Object.keys(item.__config__.selectParam.sqlParam).forEach((i) => {
+            if (typeof item.__config__.selectParam.sqlParam[i] === 'string' && item.__config__.selectParam.sqlParam[i].startsWith('$')) {
               _this.buildDynamicParamObj(item, i, item.__config__.selectParam.sqlParam[i], 'sqlParam')
               sqlParam[i] = ''
             } else {
@@ -567,8 +567,8 @@ export default {
           })
         }
         if (Object.keys(item.__config__.selectParam.reportParam).length) {
-          Object.keys(item.__config__.selectParam.reportParam).map((i) => {
-            if (typeof item.__config__.selectParam.reportParam[i] == 'string' && item.__config__.selectParam.reportParam[i].startsWith('$')) {
+          Object.keys(item.__config__.selectParam.reportParam).forEach((i) => {
+            if (typeof item.__config__.selectParam.reportParam[i] === 'string' && item.__config__.selectParam.reportParam[i].startsWith('$')) {
               _this.buildDynamicParamObj(item, i, item.__config__.selectParam.reportParam[i], 'reportParam')
               reportParam[i] = ''
             } else {
@@ -584,17 +584,17 @@ export default {
       }
     },
     async changeSelectOption(item, needHandleTags) {
-      let needHandleIndex = needHandleTags.indexOf(item.__config__.tag)
+      const needHandleIndex = needHandleTags.indexOf(item.__config__.tag)
       if (needHandleIndex > -1) {
         if (item.__config__.dataType === 'dynamic') {
-          let param = {
+          const param = {
             id: item.__config__.selectComp,
             param: this.dynamicDataObj[item.__config__.selectComp].param,
             sqlParam: this.dynamicDataObj[item.__config__.selectComp].sqlParam,
             reportParam: this.dynamicDataObj[item.__config__.selectComp].reportParam,
             permissionVo: this.permissionVo
           }
-          let res = await this.$api['formGenerator.getSelectionData'](param)
+          const res = await this.$api['formGenerator.getSelectionData'](param)
           let options = []
           if (res) {
             if (res.config) {
@@ -615,13 +615,13 @@ export default {
     },
     async watchChangeSelectOption(item) {
       if (item.__config__.dataType === 'dynamic' && Object.keys(item.__config__.selectParam.sqlParam).length) {
-        let param = {
+        const param = {
           id: item.__config__.selectComp,
           param: this.dynamicDataObj[item.__config__.selectComp].param,
           sqlParam: this.dynamicDataObj[item.__config__.selectComp].sqlParam,
           reportParam: this.dynamicDataObj[item.__config__.selectComp].reportParam
         }
-        let res = await this.$api['formGenerator.getSelectionData'](param)
+        const res = await this.$api['formGenerator.getSelectionData'](param)
         let options = []
         if (res.config) {
           options = selectTransform(res.data, res.config)
@@ -641,15 +641,15 @@ export default {
     },
     // 计算器功能，目前只支持加法运算
     setComputedItem(item, needComputedTags) {
-      let _this = this
-      let needComputedIndex = needComputedTags.indexOf(item.__config__.tag)
+      const _this = this
+      const needComputedIndex = needComputedTags.indexOf(item.__config__.tag)
       if (needComputedIndex > -1) {
-        let variable = item.__config__.variable
+        const variable = item.__config__.variable
         if (variable && variable.indexOf('+') !== -1) {
           if (variable.indexOf('$COMPUTED') !== -1) {
-            let fieldsArr = variable.split('+')
+            const fieldsArr = variable.split('+')
             let computedResult = 0
-            fieldsArr.map((fieldsItem) => {
+            fieldsArr.forEach((fieldsItem) => {
               const paramArr = fieldsItem.trim().split('.')
               if (_this.pageData[paramArr[1]]) {
                 computedResult += _this.pageData[paramArr[1]]
@@ -661,14 +661,14 @@ export default {
             })
           } else if (variable.indexOf('$LABEL') !== -1) {
             // 计算器支持资金label合计显示，803独有功能
-            let fieldsArr = variable.split('+')
-            let labelFieldsArr = []
-            fieldsArr.map((fieldsItem) => {
+            const fieldsArr = variable.split('+')
+            const labelFieldsArr = []
+            fieldsArr.forEach((fieldsItem) => {
               const paramArr = fieldsItem.trim().split('.')
               labelFieldsArr.push(paramArr[1])
             })
             item.__config__.defaultValue = ''
-            this.formConf.fields.map((formItem) => {
+            this.formConf.fields.forEach((formItem) => {
               if (labelFieldsArr.indexOf(formItem.__config__.formFields) !== -1 && _this.pageData[formItem.__config__.formFields] > 0) {
                 item.__config__.defaultValue += formItem.__config__.label + '+'
               }
@@ -684,7 +684,7 @@ export default {
       }
     },
     save(data, childData, arr, logdata) {
-      let params = {
+      const params = {
         desformCode: this.record.desformCode,
         dataId: this.dataId,
         primary: { table: data.data, uploadFiles: data.uploadFiles },
@@ -697,7 +697,7 @@ export default {
       if (this.type && this.type === '001') {
         this.$emit('save-echarts')
       } else {
-        let that = this
+        const that = this
         this.$api['formGenerator.formCallSave'](params)
           .then(function (res) {
             if (res) {
@@ -723,13 +723,13 @@ export default {
         // 处理系统参数变量
         const paramArr = confClone.__config__.variable.trim().split('.')
         if (this.sysParams[paramArr[0]]) {
-          let defaultValue = this.sysParams[paramArr[0]][paramArr[1]]
+          const defaultValue = this.sysParams[paramArr[0]][paramArr[1]]
           confClone.__config__.defaultValue = defaultValue
         }
       } else if (confClone.__config__.variable && confClone.__config__.variable.startsWith('#')) {
         // 处理系统方法变量
         const variableFunName = confClone.__config__.variable.trim().slice(1)
-        let defaultValue = this.$store.state.user.sysVars.methods[variableFunName]()
+        const defaultValue = this.$store.state.user.sysVars.methods[variableFunName]()
         confClone.__config__.defaultValue = defaultValue
       }
     },
@@ -742,7 +742,7 @@ export default {
     setDateData(result, record) {
       record.__config__.defaultValue = []
       let arr = []
-      for (let i in result) {
+      for (const i in result) {
         if (record.__config__.formFields.includes(i)) {
           arr = [result[record.__config__.formFields[0]], result[record.__config__.formFields[1]]]
         }

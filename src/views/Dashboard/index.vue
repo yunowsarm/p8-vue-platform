@@ -72,12 +72,12 @@ export default {
     }
   },
   mounted() {
-    let that = this
+    const that = this
     this.$api['kanbanView.getHomeBoard']({}).then((res) => {
       if (res && res.length) {
         that.editableTabs = []
         res.forEach((el, index) => {
-          let deepCopyWidget = []
+          const deepCopyWidget = []
           if (el.widgets && el.widgets.length) {
             el.widgets.forEach((el) => {
               deepCopyWidget.push(JSON.parse(el.layout))
@@ -104,9 +104,9 @@ export default {
       }
       this.isLock = !this.isLock
       this.icon = this.isLock ? 'el-icon-unlock' : 'el-icon-lock'
-      let saveList = []
+      const saveList = []
       this.editableTabs.forEach((el, index) => {
-        let list = []
+        const list = []
         // if (el.deepCopyWidget && el.deepCopyWidget.length) {
         el.deepCopyWidget.forEach((val) => {
           list.push({
@@ -119,7 +119,7 @@ export default {
         saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: index })
         // }
       })
-      let saveParmars = {
+      const saveParmars = {
         boards: saveList
       }
       if (!this.isLock) {
@@ -131,12 +131,12 @@ export default {
       }
     },
     removeTab(targetName) {
-      let tabs = this.editableTabs
+      const tabs = this.editableTabs
       let activeName = this.editableTabsValue
       if (activeName === targetName) {
         tabs.forEach((tab, index) => {
           if (tab.name === targetName) {
-            let nextTab = tabs[index + 1] || tabs[index - 1]
+            const nextTab = tabs[index + 1] || tabs[index - 1]
             if (nextTab) {
               activeName = nextTab.name
             }
@@ -185,10 +185,10 @@ export default {
     font-size: 18px;
     color: black;
   }
-  /deep/ .el-tabs__content {
+  ::v-deep .el-tabs__content {
     overflow: hidden;
   }
-  /deep/ .el-tabs--top .el-tabs__content .el-tab-pane {
+  ::v-deep .el-tabs--top .el-tabs__content .el-tab-pane {
     height: calc(100% - 10px);
   }
 }

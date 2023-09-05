@@ -1,25 +1,20 @@
 <template>
   <normal-layout :header-visible="false">
     <template #west>
-      <common-tree :data="treeData"
-                   @select="onSelect"
-                   :tree-param="treeParam"></common-tree>
+      <common-tree :data="treeData" @select="onSelect" :tree-param="treeParam"></common-tree>
     </template>
     <template #center>
-      <component v-if="roteName"
-                 :is="componentLoader"
-                 :rote-name="roteName"></component>
-      <span v-else
-            class="span-bg"></span>
+      <component v-if="roteName" :is="componentLoader" :rote-name="roteName" v-bind="params"></component>
+      <span v-else class="span-bg"></span>
     </template>
   </normal-layout>
 </template>
 <style lang="scss" scoped>
-/deep/.list-layout {
+::v-deep.list-layout {
   margin: 0 !important;
   height: 100% !important;
 }
-/deep/.normal-layout .normal-main .normal-center {
+::v-deep.normal-layout .normal-main .normal-center {
   padding: 0 !important;
 }
 .span-bg {
@@ -40,7 +35,7 @@ import { P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree } from 'p8-compo
 export default {
   name: 'FunctionSetIndex',
 
-  data () {
+  data() {
     return {
       treeData: [],
       selectedKeys: [],
@@ -50,21 +45,22 @@ export default {
       roteName: '',
       componentLoader: null,
       thirdMenu: [],
+      params: {},
       availableRouter: []
     }
   },
   watch: {
-    customUrl (val, oldVal) {
-      let result = val
+    customUrl(val, oldVal) {
+      const result = val
       const resultMap = this.convertJson(result[1], '&')
       this.dicType = resultMap.dicType
       this.type = resultMap.type
     }
   },
-  mounted () {
+  mounted() {
     const currentName = this.$route.name
     const menuId = '09'
-    var rootRouter
+    let rootRouter
     this.$store.state.routers.router.map(function (item) {
       if (item.meta && item.meta.id === menuId) {
         rootRouter = item
@@ -77,12 +73,12 @@ export default {
     this.initThirMneu(rootRouter, currentName)
     this.treeData = this.toTree(this.thirdMenu)
   },
-  componentLoader () {
-    return this.componentLoader
-  },
+  // componentLoader() {
+  //   return this.componentLoader
+  // },
   methods: {
-    initThirMneu (route, currentPath) {
-      let that = this
+    initThirMneu(route, currentPath) {
+      const that = this
       if (route.children && route.children.length > 0) {
         route.children.map(function (item, index) {
           if (item.name === currentPath) {
@@ -93,18 +89,19 @@ export default {
         })
       }
     },
-    convertJson (paramStr, tag) {
-      let paramStrArr = paramStr.split(tag)
-      let resultMap = {}
+    convertJson(paramStr, tag) {
+      const paramStrArr = paramStr.split(tag)
+      const resultMap = {}
       paramStrArr.map(function (v) {
-        let me = v.split('=')
-        let meKey = me[0]
-        let meValue = me[1]
+        const me = v.split('=')
+        const meKey = me[0]
+        const meValue = me[1]
         resultMap[meKey] = meValue
       })
       return resultMap
     },
-    onSelect (node) {
+    onSelect(node) {
+      console.log('🚀 ~ file: index.vue:103 ~ onSelect ~ node:', node)
       if (node.id == '0901') {
         return false
       }
@@ -113,11 +110,12 @@ export default {
         return false
       }
       this.componentLoader = node.component
+      this.params = node.props
       if (node.name) {
         this.roteName = node.name
       }
     },
-    toTree (data) {
+    toTree(data) {
       data = {
         ...data,
         label: data.meta.title,
@@ -145,7 +143,7 @@ export default {
 
       return [data]
     },
-    cascadeTree (data, parentId) {
+    cascadeTree(data, parentId) {
       if (data && data.length) {
         data.map((item) => {
           item.label = item.meta.title

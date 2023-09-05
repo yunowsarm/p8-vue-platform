@@ -51,14 +51,14 @@
   text-overflow: ellipsis;
   overflow: hidden;
 }
-/deep/ .commonTree.el-tree > .el-tree-node {
+::v-deep .commonTree.el-tree > .el-tree-node {
   width: 100%;
   padding-right: 16px;
 }
-.normalHeight /deep/ .normal-main {
+.normalHeight ::v-deep .normal-main {
   height: calc(100% - 70px);
 }
-// /deep/ .splitBtn {
+// ::v-deep .splitBtn {
 //   display: none !important;
 // }
 .tree_icon {
@@ -185,7 +185,7 @@ export default {
     },
     // 分类删除
     classifyRemove(node) {
-      let that = this
+      const that = this
       this.$confirm(`确定要删除该分类吗？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -206,12 +206,12 @@ export default {
     },
     // 导出SQL脚本
     exportSQL() {
-      let that = this
+      const that = this
       that.$api['dictionaryManagement.exportSQL']({}, { responseType: 'blob' }).then((data) => {
-        let date = new Date()
-        let file_name = '数据字典SQL导出' + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-        let file_type = 'sql'
-        let blob = new Blob([data.data], { type: 'application/text' })
+        const date = new Date()
+        const file_name = '数据字典SQL导出' + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+        const file_type = 'sql'
+        const blob = new Blob([data.data], { type: 'application/text' })
         const url = window.URL.createObjectURL(blob)
         const link = document.createElement('a')
         link.style.display = 'none'
@@ -238,7 +238,7 @@ export default {
     },
     // 启用 选项
     openingUp(row) {
-      let that = this
+      const that = this
       this.$confirm(`确定要启用该选项吗？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -258,7 +258,7 @@ export default {
     },
     // 停用 选项
     deactivate(row) {
-      let that = this
+      const that = this
       this.$confirm(`确定要停用该选项吗？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -278,7 +278,7 @@ export default {
     },
     // 删除 选项
     remove(record) {
-      let that = this
+      const that = this
       this.$confirm(`是否确定要删除该人员？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
