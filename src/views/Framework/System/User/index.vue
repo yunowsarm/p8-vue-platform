@@ -38,10 +38,16 @@
                      @close="onEditUserClose"
                      :size="drawerSize">
         <template #drawer>
-          <user-edit @saveSuccess="saveCallback"
-                     @cancel='visibleUserEditDrawer = false'
+          <user-edit v-if="drawerTitle === '修改用户'"
+                     @saveSuccess="saveCallback"
+                     @cancel="visibleUserEditDrawer = false"
                      :user-id="currUserId"
                      :current-select-dept-id="currentSelectDeptId"></user-edit>
+          <user-view v-else
+                     @saveSuccess="saveCallback"
+                     @cancel="visibleUserEditDrawer = false"
+                     :user-id="currUserId"
+                     :current-select-dept-id="currentSelectDeptId"></user-view>
         </template>
       </common-drawer>
       <common-drawer v-if="visibleUserSafesetDrawer"
@@ -52,7 +58,7 @@
         <template #drawer>
           <user-safeset @save-Success="onUserSafesetClose"
                         :user-id="currUserId"
-                        @cancel='visibleUserSafesetDrawer = false'></user-safeset>
+                        @cancel="visibleUserSafesetDrawer = false"></user-safeset>
         </template>
       </common-drawer>
     </template>
@@ -65,6 +71,7 @@ import Vue from 'vue'
 import { P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Button as CommonButton, P8Table as CommonTable, P8Drawer as CommonDrawer, P8Search as SearchFormList } from 'p8-components-ui'
 
 import UserEdit from './edit.vue'
+import UserView from './view.vue'
 import SafeSet from './safeSet.vue'
 
 const columns = [
@@ -116,7 +123,8 @@ export default {
     CommonDrawer,
     SearchFormList,
     UserEdit,
-    'user-safeset': SafeSet
+    'user-safeset': SafeSet,
+    UserView
     // 'user-edit' : httpVueLoader(base+'/framework/system/User/create.vue'),
     // 'user-safeset' : httpVueLoader(base+'/framework/system/User/safeSet.vue')
   },
@@ -212,6 +220,11 @@ export default {
       console.log('currUserId', this.currUserId)
       this.visibleUserEditDrawer = true
     },
+    viewUser (record) {
+      this.currUserId = record.id
+      this.drawerTitle = '查看用户'
+      this.visibleUserEditDrawer = true
+    },
     onEditUserClose () {
       this.visibleUserEditDrawer = false
     },
@@ -230,7 +243,7 @@ export default {
       this.visibleUserSafesetDrawer = false
     },
     removeUser (record) {
-      let that = this
+      const that = this
       this.$confirm('是否确定要删除该人员？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -253,7 +266,7 @@ export default {
         })
     },
     unlockUser (record) {
-      let that = this
+      const that = this
       this.$confirm('是否要解锁该人员？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -291,7 +304,7 @@ export default {
       if (this.queryParam.departmentId) {
         departmentId = this.queryParam.departmentId
       }
-      let that = this
+      const that = this
       Object.keys(that.queryParam).forEach((key) => {
         that.queryParam[key] = ''
       })
