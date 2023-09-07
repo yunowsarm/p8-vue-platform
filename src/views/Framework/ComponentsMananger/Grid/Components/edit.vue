@@ -1479,6 +1479,34 @@ export default {
           labelText: '组件地址',
           fieldName: 'addressText',
           colLayout: 'singleCol'
+        },
+        {
+          type: 'select',
+          labelText: '类型',
+          fieldName: 'type',
+          options: [
+            {
+              label: '抽屉',
+              value: 'drawer'
+            },
+            {
+              label: '弹框',
+              value: 'dialog'
+            }
+          ],
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'text',
+          labelText: '标题',
+          fieldName: 'title',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'text',
+          labelText: '宽度',
+          fieldName: 'width',
+          colLayout: 'singleCol'
         }
       ],
       editTableSource: [
@@ -1731,7 +1759,10 @@ export default {
         case 'openComponent':
           obj = {
             module: '自定义抽屉组件',
-            code: this.paramsFormData.addressText
+            code: this.paramsFormData.addressText,
+            type: this.paramsFormData.type,
+            title: this.paramsFormData.title,
+            width: this.paramsFormData.width
           }
           break
         case 'dynamicAPI':

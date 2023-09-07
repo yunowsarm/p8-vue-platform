@@ -74,7 +74,8 @@
             :edit-parmars="editParmars"
             :use-system-config-button="tableInfo.useSystemConfigButton"
             @row-click="rowVxeClick"
-            @selection-change="handleSelectionChange">
+            @selection-change="handleSelectionChange"
+          >
           </vxetable-table>
         </template>
         <template v-else>
@@ -180,13 +181,21 @@
           <view-render :code="code" :record="viewRecord"></view-render>
         </template>
       </common-drawer>
-      <common-drawer v-if="customComponentParams.type === 'drawer'" :visible="customVisible" :size="customComponentParams.width" :drawer-config="drawerConfig" @close="customClose">
+      <common-drawer
+        :title="customComponentParams.title"
+        v-if="customComponentParams.type === 'drawer'"
+        :visible="customVisible"
+        :size="customComponentParams.width"
+        :drawer-config="drawerConfig"
+        @close="customClose"
+      >
         <template #drawer>
           <component :is="componentLoader" :permission-vo="permissionVo" :row="scopeRow" @close="customClose"></component>
         </template>
       </common-drawer>
       <common-dialog
         v-if="customComponentParams.type === 'dialog'"
+        :title="customComponentParams.title"
         :visible="customVisible"
         destroy-on-close
         :width="customComponentParams.width"
@@ -1109,6 +1118,9 @@ export default {
     },
     // 自定义抽屉
     openComponent(row, btn) {
+      const rowBtnData = this.getRowBtnData(row, btn)
+      row = rowBtnData.row
+      btn = rowBtnData.btn
       let createFormParams = {}
       if (btn && btn.eventParams) {
         createFormParams = eval('(' + btn.eventParams + ')')
@@ -1120,6 +1132,7 @@ export default {
       }
       this.customComponentParams = {
         type: createFormParams.type ? createFormParams.type : 'drawer',
+        title: createFormParams.title ? createFormParams.title : '',
         width: createFormParams.width ? createFormParams.width : '50%'
       }
       this.scopeRow = row
