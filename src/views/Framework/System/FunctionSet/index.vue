@@ -101,7 +101,6 @@ export default {
       return resultMap
     },
     onSelect(node) {
-      console.log('🚀 ~ file: index.vue:103 ~ onSelect ~ node:', node)
       if (node.id == '0901') {
         return false
       }

@@ -1,16 +1,556 @@
 @font-face {
-  font-family: "P8"; /* Project id 4084759 */
-  src: url('iconfont.woff2?t=1692352420701') format('woff2'),
-       url('iconfont.woff?t=1692352420701') format('woff'),
-       url('iconfont.ttf?t=1692352420701') format('truetype');
+  font-family: "p8"; /* Project id 4084759 */
+  src: url('iconfont.woff2?t=1694070371361') format('woff2'),
+       url('iconfont.woff?t=1694070371361') format('woff'),
+       url('iconfont.ttf?t=1694070371361') format('truetype');
 }
 
-.P8 {
-  font-family: "P8" !important;
+.p8 {
+  font-family: "p8" !important;
   font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-exit-fullscreen:before {
+  content: "\e796";
+}
+
+.icon-right:before {
+  content: "\e748";
+}
+
+.icon-drilling:before {
+  content: "\e782";
+}
+
+.icon-dialog-fullscreen:before {
+  content: "\e797";
+}
+
+.icon-dialog-exit-fullscreen:before {
+  content: "\e798";
+}
+
+.icon-download-document-manage:before {
+  content: "\e79b";
+}
+
+.icon-fill-in-approval-comments:before {
+  content: "\e629";
+}
+
+.icon-youzhedie1:before {
+  content: "\e6c0";
+}
+
+.icon-zuozhedie1:before {
+  content: "\e747";
+}
+
+.icon-zuozhedie:before {
+  content: "\e6c1";
+}
+
+.icon-youzhedie:before {
+  content: "\e746";
+}
+
+.icon-message:before {
+  content: "\e740";
+}
+
+.icon-modify-password:before {
+  content: "\e741";
+}
+
+.icon-down:before {
+  content: "\e742";
+}
+
+.icon-project-manage:before {
+  content: "\e743";
+}
+
+.icon-resource-manage:before {
+  content: "\e744";
+}
+
+.icon-maximize:before {
+  content: "\e74a";
+}
+
+.icon-model-information-manage:before {
+  content: "\e74b";
+}
+
+.icon-left:before {
+  content: "\e74c";
+}
+
+.icon-comprehensive-dispatching-meeting:before {
+  content: "\e74d";
+}
+
+.icon-fold-left:before {
+  content: "\e74e";
+}
+
+.icon-drag-size:before {
+  content: "\e750";
+}
+
+.icon-court-order:before {
+  content: "\e751";
+}
+
+.icon-milepost:before {
+  content: "\e752";
+}
+
+.icon-triangle:before {
+  content: "\e753";
+}
+
+.icon-hollow-circle:before {
+  content: "\e754";
+}
+
+.icon-diamond:before {
+  content: "\e755";
+}
+
+.icon-filled-circle:before {
+  content: "\e756";
+}
+
+.icon-ring:before {
+  content: "\e757";
+}
+
+.icon-team-analyze:before {
+  content: "\e758";
+}
+
+.icon-cost:before {
+  content: "\e759";
+}
+
+.icon-checkList:before {
+  content: "\e75a";
+}
+
+.icon-center-layout:before {
+  content: "\e75b";
+}
+
+.icon-settings:before {
+  content: "\e75c";
+}
+
+.icon-concerns:before {
+  content: "\e75d";
+}
+
+.icon-global-layout:before {
+  content: "\e75e";
+}
+
+.icon-other-process-import:before {
+  content: "\e75f";
+}
+
+.icon-WBS:before {
+  content: "\e760";
+}
+
+.icon-global-display:before {
+  content: "\e761";
+}
+
+.icon-entry:before {
+  content: "\e762";
+}
+
+.icon-center-display:before {
+  content: "\e763";
+}
+
+.icon-project-plan-import:before {
+  content: "\e764";
+}
+
+.icon-left-layout:before {
+  content: "\e765";
+}
+
+.icon-quality-requirement:before {
+  content: "\e766";
+}
+
+.icon-file-template:before {
+  content: "\e767";
+}
+
+.icon-right-layout:before {
+  content: "\e768";
+}
+
+.icon-mind-map:before {
+  content: "\e769";
+}
+
+.icon-help-tips:before {
+  content: "\e76a";
+}
+
+.icon-task-message:before {
+  content: "\e76b";
+}
+
+.icon-link:before {
+  content: "\e76c";
+}
+
+.icon-planning:before {
+  content: "\e76d";
+}
+
+.icon-notification-message:before {
+  content: "\e76e";
+}
+
+.icon-mail:before {
+  content: "\e76f";
+}
+
+.icon-all-news:before {
+  content: "\e770";
+}
+
+.icon-read-mail:before {
+  content: "\e771";
+}
+
+.icon-warning-threshold:before {
+  content: "\e772";
+}
+
+.icon-plan-monitoring:before {
+  content: "\e773";
+}
+
+.icon-plan-overview:before {
+  content: "\e774";
+}
+
+.icon-remove:before {
+  content: "\e7c0";
+}
+
+.icon-system-manage:before {
+  content: "\e787";
+}
+
+.icon-standard-team-definition:before {
+  content: "\e74f";
+}
+
+.icon-common-resource-manage:before {
+  content: "\e749";
+}
+
+.icon-project-planning:before {
+  content: "\e78a";
+}
+
+.icon-output-process-manage:before {
+  content: "\e78b";
+}
+
+.icon-personal-workbench:before {
+  content: "\e78c";
+}
+
+.icon-third-interface-execution-history:before {
+  content: "\e78d";
+}
+
+.icon-plan-examine:before {
+  content: "\e78e";
+}
+
+.icon-role-manage:before {
+  content: "\e78f";
+}
+
+.icon-process-resource-template:before {
+  content: "\e790";
+}
+
+.icon-task-statistics-query:before {
+  content: "\e791";
+}
+
+.icon-my-document:before {
+  content: "\e792";
+}
+
+.icon-person-manage:before {
+  content: "\e793";
+}
+
+.icon-bayuanzhongdiankaohejihua:before {
+  content: "\e680";
+}
+
+.icon-team-manage:before {
+  content: "\e79a";
+}
+
+.icon-process-tracking-view:before {
+  content: "\e745";
+}
+
+.icon-at1:before {
+  content: "\e713";
+}
+
+.icon-replace-responsible-person:before {
+  content: "\e714";
+}
+
+.icon-modify2:before {
+  content: "\e715";
+}
+
+.icon-project-information:before {
+  content: "\e716";
+}
+
+.icon-filter:before {
+  content: "\e717";
+}
+
+.icon-planning-time-information:before {
+  content: "\e718";
+}
+
+.icon-upload-success:before {
+  content: "\e719";
+}
+
+.icon-release:before {
+  content: "\e71a";
+}
+
+.icon-newAdd:before {
+  content: "\e71b";
+}
+
+.icon-view:before {
+  content: "\e71c";
+}
+
+.icon-model-related-information:before {
+  content: "\e71d";
+}
+
+.icon-base-information:before {
+  content: "\e71e";
+}
+
+.icon-project-overview:before {
+  content: "\e71f";
+}
+
+.icon-add:before {
+  content: "\e720";
+}
+
+.icon-logout:before {
+  content: "\e721";
+}
+
+.icon-dept-manage:before {
+  content: "\e722";
+}
+
+.icon-third-interface-abnormal-monitoring:before {
+  content: "\e723";
+}
+
+.icon-timing-task-manage:before {
+  content: "\e724";
+}
+
+.icon-personal-setting:before {
+  content: "\e725";
+}
+
+.icon-multi-project-manage:before {
+  content: "\e726";
+}
+
+.icon-classify:before {
+  content: "\e727";
+}
+
+.icon-close:before {
+  content: "\e728";
+}
+
+.icon-plan-manage:before {
+  content: "\e729";
+}
+
+.icon-third-interface-manage:before {
+  content: "\e72a";
+}
+
+.icon-planned-assessment:before {
+  content: "\e72b";
+}
+
+.icon-classified-manage:before {
+  content: "\e72c";
+}
+
+.icon-plan-finish-rate:before {
+  content: "\e72d";
+}
+
+.icon-base-data-manage:before {
+  content: "\e72e";
+}
+
+.icon-process-template:before {
+  content: "\e72f";
+}
+
+.icon-log-list:before {
+  content: "\e730";
+}
+
+.icon-approval:before {
+  content: "\e731";
+}
+
+.icon-up:before {
+  content: "\e732";
+}
+
+.icon-plan-type-completion:before {
+  content: "\e733";
+}
+
+.icon-log-audit:before {
+  content: "\e734";
+}
+
+.icon-function-setting:before {
+  content: "\e735";
+}
+
+.icon-drag:before {
+  content: "\e736";
+}
+
+.icon-data-information:before {
+  content: "\e737";
+}
+
+.icon-my-task:before {
+  content: "\e738";
+}
+
+.icon-lock:before {
+  content: "\e739";
+}
+
+.icon-my-work:before {
+  content: "\e73a";
+}
+
+.icon-equipment-resource-manage:before {
+  content: "\e73b";
+}
+
+.icon-refresh:before {
+  content: "\e73c";
+}
+
+.icon-system-settings:before {
+  content: "\e73d";
+}
+
+.icon-project-quality:before {
+  content: "\e73e";
+}
+
+.icon-system-log:before {
+  content: "\e73f";
+}
+
+.icon-column-settings:before {
+  content: "\e7ab";
+}
+
+.icon-menu-config:before {
+  content: "\e7ac";
+}
+
+.icon-view-output:before {
+  content: "\e7ae";
+}
+
+.icon-new-sibling:before {
+  content: "\e707";
+}
+
+.icon-new-subordinate:before {
+  content: "\e708";
+}
+
+.icon-delete:before {
+  content: "\e709";
+}
+
+.icon-bold:before {
+  content: "\e70a";
+}
+
+.icon-italic:before {
+  content: "\e70b";
+}
+
+.icon-excel-export:before {
+  content: "\e70c";
+}
+
+.icon-underline:before {
+  content: "\e70d";
+}
+
+.icon-edit-view:before {
+  content: "\e70e";
+}
+
+.icon-critical-path:before {
+  content: "\e70f";
+}
+
+.icon-excel-import:before {
+  content: "\e710";
+}
+
+.icon-gantt:before {
+  content: "\e711";
+}
+
+.icon-full-screen:before {
+  content: "\e712";
 }
 
 .icon-rizhiguanli:before {
@@ -243,14 +783,6 @@
 
 .icon-shuzurongqi:before {
   content: "\e6e4";
-}
-
-.icon-zhedie:before {
-  content: "\e6c0";
-}
-
-.icon-zhedie2:before {
-  content: "\e6c1";
 }
 
 .icon-jianhao:before {

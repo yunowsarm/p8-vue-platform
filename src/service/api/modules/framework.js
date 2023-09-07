@@ -410,6 +410,14 @@ export const system = {
       desc: '计划标识管理 列表'
     },
     {
+      name: 'getMonitorPointDataInfo',
+      method: 'POST',
+      path: '/framework/system/PlanLogo/getMonitorPointDataInfo',
+      mockPath: '/framework/system/PlanLogo/getMonitorPointDataInfo',
+      params: {},
+      desc: '计划标识管理   标识详情查询'
+    },
+    {
       name: 'savePlanLogo',
       method: 'POST',
       path: '/framework/system/PlanLogo/save',

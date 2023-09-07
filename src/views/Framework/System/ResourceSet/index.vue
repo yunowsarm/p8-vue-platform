@@ -1,27 +1,23 @@
 <template>
   <list-layout>
     <template #north>
-      <common-button :comp="comp"
-                     :button-type="'round'"
-                     :special-rote-name="roteName"></common-button>
-      <search-form-list ref="search"
-                        style="width: 350px"
-                        :data-source="searchFormConfig"
-                        @search="onSearch"
-                        @re-set="onSearchReset"></search-form-list>
+      <common-button :comp="comp" :button-type="'round'" :special-rote-name="roteName"></common-button>
+      <search-form-list ref="search" style="width: 350px" :data-source="searchFormConfig" @search="onSearch" @re-set="onSearchReset"></search-form-list>
     </template>
     <template #center>
-      <vxe-table ref="table"
-                 :special-rote-name="roteName"
-                 :comp="comp"
-                 :columns="columns"
-                 :customHeight="customHeight"
-                 :table-config="tableConfig"
-                 :row-config="{ isHover: true }"
-                 :params="queryParam"
-                 :pagination="false"
-                 :api="tableApi"
-                 :tree-config="treeConfig">
+      <vxe-table
+        ref="table"
+        :special-rote-name="roteName"
+        :comp="comp"
+        :columns="columns"
+        :custom-height="customHeight"
+        :table-config="tableConfig"
+        :row-config="{ isHover: true }"
+        :params="queryParam"
+        :pagination="false"
+        :api="tableApi"
+        :tree-config="treeConfig"
+      >
         <template #title="{ scope }">
           <i :class="typeIcon(scope.row.type)"> {{ scope.row.title }}</i>
         </template>
@@ -31,35 +27,20 @@
       </vxe-table>
     </template>
     <template #drawer-panel>
-      <el-dialog title="请选择类型"
-                 :visible="typeSelectVisible"
-                 width="400px"
-                 @close="onTypeSelClose">
+      <el-dialog title="请选择类型" :visible="typeSelectVisible" width="400px" @close="onTypeSelClose">
         <div class="restype_panel">
-          <el-radio-group v-model="resTypeSel"
-                          class="res_selector">
-            <el-radio-button :key="r.value"
-                             v-for="r in currValidResTypeDic"
-                             :label="r.value">{{ r.label }} </el-radio-button>
+          <el-radio-group v-model="resTypeSel" class="res_selector">
+            <el-radio-button :key="r.value" v-for="r in currValidResTypeDic" :label="r.value">{{ r.label }} </el-radio-button>
           </el-radio-group>
         </div>
         <template #footer>
           <el-button @click="onTypeSelClose">取 消</el-button>
-          <el-button :disabled="disabledCt"
-                     type="primary"
-                     @click="onTypeSelNext">下一步</el-button>
+          <el-button :disabled="disabledCt" type="primary" @click="onTypeSelNext">下一步</el-button>
         </template>
       </el-dialog>
-      <common-drawer v-if="drawerVisible"
-                     :title="drawerTitle"
-                     :visible="drawerVisible"
-                     size="50%"
-                     @close="onDrawerClose">
+      <common-drawer v-if="drawerVisible" :title="drawerTitle" :visible="drawerVisible" size="50%" @close="onDrawerClose">
         <template #drawer>
-          <resource-edit :record="currRecord"
-                         :res-type="resTypeSel"
-                         :parent-record="parentRecord"
-                         @saveSuccess="onSaveSuccess"></resource-edit>
+          <resource-edit :record="currRecord" :res-type="resTypeSel" :parent-record="parentRecord" @saveSuccess="onSaveSuccess"></resource-edit>
         </template>
       </common-drawer>
     </template>
@@ -88,7 +69,7 @@ export default {
       default: ''
     }
   },
-  data () {
+  data() {
     return {
       customHeight: document.documentElement.clientHeight - 160,
       comp: this,
@@ -249,16 +230,16 @@ export default {
       }
     }
   },
-  created () {
+  created() {
     this.$api['resource.getDic']({ dictType: 'RESOURCE_TYPE' }).then((data) => {
       this.resTypeDic = data
     })
   },
   computed: {
-    disabledCt () {
-      return this.resTypeSel == ''
+    disabledCt() {
+      return this.resTypeSel === ''
     },
-    typeIcon () {
+    typeIcon() {
       return function (type) {
         let icon = ''
         switch (type) {
@@ -282,19 +263,19 @@ export default {
     /*
      * row为父对象
      */
-    create (row) {
-      //清空修改操作时的临时对象
+    create(row) {
+      // 清空修改操作时的临时对象
       this.currRecord = {}
       this.currValidResTypeDic = this.getResTypeDic(row)
       this.parentRecord = row
       this.typeSelectVisible = true
     },
-    update (row) {
+    update(row) {
       this.currRecord = { ...row }
       this.drawerVisible = true
     },
-    delete (row) {
-      let _this = this
+    delete(row) {
+      const _this = this
       this.$confirm('是否确定要删除选择的行记录？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -313,14 +294,14 @@ export default {
           console.log(e)
         })
     },
-    toEnable (row) {
+    toEnable(row) {
       this.switchEnable([row.id], 1)
     },
-    toDisable (row) {
+    toDisable(row) {
       this.switchEnable([row.id], 0)
     },
-    switchEnable (idArray, state) {
-      let _this = this
+    switchEnable(idArray, state) {
+      const _this = this
       let stateStr = ''
       switch (state) {
         case 0:
@@ -348,10 +329,10 @@ export default {
           console.log(e)
         })
     },
-    exportSQL () {
+    exportSQL() {
       this.$api['resource.exportSQL']({}, { responseType: 'blob' })
         .then((backJson) => {
-          let link = document.createElement('a')
+          const link = document.createElement('a')
           link.href = window.URL.createObjectURL(new Blob([backJson.data]))
           link.download = 'Resource.sql'
           document.body.appendChild(link)
@@ -360,35 +341,35 @@ export default {
           window.URL.revokeObjectURL(link.href)
           document.body.removeChild(link)
         })
-        .finally(() => { })
+        .finally(() => {})
     },
-    onTypeSelNext () {
+    onTypeSelNext() {
       this.onTypeSelClose()
       this.drawerVisible = true
     },
-    onTypeSelClose () {
+    onTypeSelClose() {
       this.typeSelectVisible = false
     },
-    onSearch (param) {
+    onSearch(param) {
       this.queryParam = param
     },
-    onSearchReset () {
+    onSearchReset() {
       this.queryParam = {}
     },
-    onDrawerClose () {
+    onDrawerClose() {
       this.drawerVisible = false
     },
-    onSaveSuccess (res) {
+    onSaveSuccess(res) {
       this.reloadList()
       this.onDrawerClose()
     },
-    reloadList () {
+    reloadList() {
       this.$refs.table.searchData()
     },
-    getResTypeDic (row) {
+    getResTypeDic(row) {
       let resTypes = []
       if (row) {
-        let typeValues = validResTypes(row)
+        const typeValues = validResTypes(row)
         if (typeValues && typeValues.length > 0) {
           resTypes = this.resTypeDic.filter((d) => typeValues.includes(d.value))
         }

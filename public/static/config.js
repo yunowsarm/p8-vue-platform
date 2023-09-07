@@ -2,7 +2,7 @@
 // npm run install
 // eslint-disable-next-line no-unused-vars
 const CONFIG = {
-  devBaseUrl: 'http://192.168.0.205:9090', // 第一次执行参考以上备注
+  devBaseUrl: 'http://192.168.0.205:9099', // 第一次执行参考以上备注
   // devBaseUrl: 'http://localhost:9090', // 第一次执行参考以上备注
   prodBaseUrl: 'http://localhost:9090'
 }
@@ -11,7 +11,7 @@ const CONFIG = {
 const SYSTEM_NAME = 'P8V3.0-PLATFORM'
 
 // eslint-disable-next-line no-unused-vars
-//CA登录设置  为true时，CA登录
+// CA登录设置  为true时，CA登录
 // eslint-disable-next-line no-unused-vars
 const loginCa = false
 
