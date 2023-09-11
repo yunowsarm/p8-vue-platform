@@ -5,8 +5,10 @@
                @saved="saved"
                :data-source="dataSource"
                :api="saveApi"
+               :existDefaultBtn="false"
+               :existCustomBtn="true"
                :form="formData">
-      <template slot="btn">
+      <template #customBtn>
         <el-button @click="cancel">取 消</el-button>
       </template>
     </form-list>
@@ -14,41 +16,27 @@
       <el-tabs type="border-card"
                class="w_tabs"
                v-model="activePane">
-        <el-tab-pane label="设置权限"
+        <el-tab-pane label="权限详情"
                      name="setLimit"
                      key="1">
           <select-btn ref="selectBtn"
-                      @btn-select-change="btnSelectChange"
                       :button-selected="selectedData.resourceList"></select-btn>
         </el-tab-pane>
-        <el-tab-pane label="设置人员"
+        <el-tab-pane label="人员详情"
                      name="setUser"
                      key="2">
           <div :style="{ height: setUserHeight, overflowY: 'auto' }">
             <el-main>
               <ul class="userList">
-                <li>
-                  <el-button class="selectedBtn"
-                             type="link"
-                             size="small"
-                             icon="user-add"
-                             @click="showModal">选择人员</el-button>
-                </li>
                 <li v-for="item in selectedData.userList"
                     :key="item.id">
                   <span>{{ item.realName }} [ {{ item.departmentName }} ]</span>
-                  <i class="el-icon-circle-close"
-                     @click="deleteUser(item.id)"></i>
                 </li>
               </ul>
             </el-main>
-            <select-user v-if="visible"
-                         :visible="visible"
-                         @close-dialog="closeModal"
-                         :disabled-row="formData.sysuserIds"></select-user>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="设置应用"
+        <el-tab-pane label="应用详情"
                      name="setApp"
                      key="3">
           <el-tabs type="border-card"
@@ -67,8 +55,7 @@
                        :key="formData.appIds.length">
                     <div class="nav-ul"
                          v-for="(item, index) in adhibitionList"
-                         :key="index"
-                         @click="handleAdhibitionClick(item)">
+                         :key="index">
                       <div class="nav-span"
                            :class="{ active: item.isActive }">
                         <span class="nav-text"
@@ -81,7 +68,7 @@
             </template>
           </el-tabs>
         </el-tab-pane>
-        <el-tab-pane label="设置项目"
+        <el-tab-pane label="项目详情"
                      name="setProject"
                      key="4">
           <el-col :style="{ height: flexHeight }"
@@ -94,20 +81,6 @@
         </el-tab-pane>
       </el-tabs>
     </template>
-    <el-dropdown v-if="activePane === 'setLimit'"
-                 size="mini"
-                 split-button
-                 type="primary"
-                 trigger="click"
-                 style="margin-top: 10px; margin-left: 10px">
-      关联操作
-      <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item @click.native="allSelect()">全部勾选</el-dropdown-item>
-        <el-dropdown-item @click.native="unAllSelect()">取消全选</el-dropdown-item>
-        <el-dropdown-item @click.native="relate()">父子关联</el-dropdown-item>
-        <el-dropdown-item @click.native="unRelate()">取消关联</el-dropdown-item>
-      </el-dropdown-menu>
-    </el-dropdown>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -186,10 +159,10 @@
 <script>
 import { Tabs, TabPane, Main, Button, Dropdown, DropdownMenu, DropdownItem, P8Form as FormList, P8SelectUser as SelectUser } from 'p8-components-ui'
 
-import SelectBtn from './SelectButtons.vue'
+import SelectBtn from './SelectButtonsView.vue'
 
 export default {
-  name: 'RoleEdit',
+  name: 'RoleView',
   components: {
     FormList,
     'el-tabs': Tabs,
@@ -218,7 +191,6 @@ export default {
     return {
       setUserHeight: document.documentElement.clientHeight - 318 + 'px',
       saveApi: 'role.save',
-      visible: false,
       selectedRows: [],
       // selectedRowKeys:[],
       // disabledRow:[],
@@ -237,27 +209,11 @@ export default {
           type: 'text', // 控件类型
           labelText: '角色名称', // 控件显示的文本
           fieldName: 'name',
-          placeholder: '请输入角色名称', // 默认控件的空值文本
+          placeholder: '', // 默认控件的空值文本
           colLayout: 'singleCol',
-          rules: [
-            {
-              required: true,
-              maxLength: 15
-            },
-            {
-              validator: (rule, value, callback) => {
-                const that = this
-                this.$api['role.repeatedCheck']({ id: that.formData.id, name: value }).then((response) => {
-                  if (response.result) {
-                    callback(new Error('角色名称已被使用！'))
-                  } else {
-                    callback()
-                  }
-                })
-              },
-              trigger: 'blur'
-            }
-          ]
+          fieldConfig: {
+            disabled: true
+          }
         },
         {
           labelText: '参与审批',
@@ -273,14 +229,20 @@ export default {
               label: '否',
               value: '0'
             }
-          ]
+          ],
+          fieldConfig: {
+            disabled: true
+          }
         },
         {
           labelText: '排序',
           type: 'number',
           fieldName: 'indexNo',
-          placeholder: '请输入排序号',
-          colLayout: 'doubleCol'
+          placeholder: '',
+          colLayout: 'doubleCol',
+          fieldConfig: {
+            disabled: true
+          }
         }
       ],
       formData: {
@@ -303,7 +265,10 @@ export default {
             { label: '部门项目', value: '2' },
             { label: '所属人项目', value: '3' }
           ],
-          colLayout: 'singleCol'
+          colLayout: 'singleCol',
+          fieldConfig: {
+            disabled: true
+          }
         }
       ],
       activePane: 'setLimit',
@@ -394,58 +359,6 @@ export default {
     },
     saved (res) {
       this.$emit('saveSuccess', res)
-    },
-    handleChange (info) {
-      console.log(info, 'info')
-    },
-    showModal () {
-      this.visible = true
-    },
-    closeModal (selectedRows) {
-      this.visible = false
-      this.selectedData.userList.push(...selectedRows)
-      // this.selectedRows.push(...selectedRows)
-      const idArr = selectedRows.map((v) => {
-        return v.id
-      })
-      this.formData.sysuserIds.push(...idArr)
-      // this.otherParam.sysuserIds.push(...idArr)
-    },
-    deleteUser (id) {
-      this.formData.sysuserIds.splice(
-        this.formData.sysuserIds.findIndex((v) => v === id),
-        1
-      )
-      // this.otherParam.sysuserIds.splice(this.otherParam.sysuserIds.findIndex(v => v === id), 1)
-      this.selectedData.userList.splice(
-        this.selectedData.userList.findIndex((v) => v.id === id),
-        1
-      )
-      // this.selectedRows.splice（(this.selectedRows.findIndex(v => v.id === id), 1)
-    },
-    btnSelectChange (selectedRes) {
-      this.$set(this.formData, 'resourceIds', selectedRes)
-      // this.formData.resourceIds = selectedRes
-    },
-    unAllSelect () {
-      this.$refs.selectBtn.unCheckAll()
-    },
-    allSelect () {
-      this.$refs.selectBtn.checkAll()
-    },
-    relate () {
-      this.$refs.selectBtn.relate()
-    },
-    unRelate () {
-      this.$refs.selectBtn.unRelate()
-    },
-    handleAdhibitionClick (row) {
-      row.isActive = !row.isActive
-      if (row.isActive) {
-        this.formData.appIds.push(row.id)
-      } else {
-        this.formData.appIds = this.formData.appIds.filter((id) => id !== row.id)
-      }
     }
   }
 }

@@ -12,7 +12,8 @@
                :exist-default-btn="false"
                @rendered="rendered">
       <template #apiDataUrl>
-        <el-input placeholder="请输入自定义数据源" v-model="formData.apiDataUrl">
+        <el-input placeholder="请输入自定义数据源"
+                  v-model="formData.apiDataUrl">
           <template slot="prepend">POST</template>
         </el-input>
       </template>
@@ -40,40 +41,75 @@
         <el-button type="primary"
                    @click="handleSubmit">保存 </el-button>
       </template>
-      <editable-table v-if="formData.functionalCategory !== '3'" :columns="columns" :add-row="false" :data="searchData" height="100%" @save-param-data="saveTableData">
+      <editable-table v-if="formData.functionalCategory !== '3'"
+                      :columns="columns"
+                      :add-row="false"
+                      :data="searchData"
+                      height="100%"
+                      @save-param-data="saveTableData">
         <template #type="{ scope, data }">
-          <el-select v-model="scope.row.type" clearable @change="saveTableData(data, scope)">
-            <el-option label="文本框" value="text"></el-option>
-            <el-option label="目录组件" value="select"></el-option>
-            <el-option label="树组件" value="treeSelect"></el-option>
-            <el-option label="日期" value="datetime"></el-option>
-            <el-option label="时间范围" value="datetimeRange"></el-option>
+          <el-select v-model="scope.row.type"
+                     clearable
+                     @change="saveTableData(data, scope)">
+            <el-option label="文本框"
+                       value="text"></el-option>
+            <el-option label="目录组件"
+                       value="select"></el-option>
+            <el-option label="树组件"
+                       value="treeSelect"></el-option>
+            <el-option label="日期"
+                       value="datetime"></el-option>
+            <el-option label="时间范围"
+                       value="datetimeRange"></el-option>
           </el-select>
         </template>
         <template #selectCode="{ scope, data }">
           <!-- 文本框 -->
           <div v-if="scope.row.type === 'text'">
-            <el-input clearable v-model="scope.row.selectCode"></el-input>
+            <el-input clearable
+                      v-model="scope.row.selectCode"></el-input>
           </div>
           <!-- 目录组件 -->
           <div v-if="scope.row.type === 'select'">
-            <el-select v-model="scope.row.selectCode" style="width: 100%" clearable filterable @change="saveTableData(data)">
-              <el-option v-for="item in renderData" :key="item.selectionCode" :label="item.selectionName + '(' + item.selectionCode + ')'" :value="item.selectionCode"> </el-option>
+            <el-select v-model="scope.row.selectCode"
+                       style="width: 100%"
+                       clearable
+                       filterable
+                       @change="saveTableData(data)">
+              <el-option v-for="item in renderData"
+                         :key="item.selectionCode"
+                         :label="item.selectionName + '(' + item.selectionCode + ')'"
+                         :value="item.selectionCode"> </el-option>
             </el-select>
           </div>
           <!-- 树组件 -->
           <div v-if="scope.row.type === 'treeSelect'">
-            <el-select v-model="scope.row.selectCode" style="width: 100%" clearable filterable @change="saveTableData(data)">
-              <el-option v-for="item in treeData" :key="item.selectionCode" :label="item.selectionName + '(' + item.selectionCode + ')'" :value="item.selectionCode"> </el-option>
+            <el-select v-model="scope.row.selectCode"
+                       style="width: 100%"
+                       clearable
+                       filterable
+                       @change="saveTableData(data)">
+              <el-option v-for="item in treeData"
+                         :key="item.selectionCode"
+                         :label="item.selectionName + '(' + item.selectionCode + ')'"
+                         :value="item.selectionCode"> </el-option>
             </el-select>
           </div>
           <!-- 日期 -->
           <div v-if="scope.row.type === 'datetime'">
-            <el-date-picker v-model="scope.row.selectCode" type="date" clearable placeholder="选择日期"> </el-date-picker>
+            <el-date-picker v-model="scope.row.selectCode"
+                            type="date"
+                            clearable
+                            placeholder="选择日期"> </el-date-picker>
           </div>
           <!-- 时间范围 -->
           <div v-if="scope.row.type === 'datetimeRange'">
-            <el-date-picker v-model="scope.row.selectCode" type="daterange" style="width: 100%" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
+            <el-date-picker v-model="scope.row.selectCode"
+                            type="daterange"
+                            style="width: 100%"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"> </el-date-picker>
           </div>
         </template>
       </editable-table>
@@ -94,9 +130,8 @@
                      :app-config="formData"
                      :is-show="renderViewVisible"
                      ref="renderView"></render-view>
-        <tableRenderVue
-          v-if="formData.functionalCategory === '3' && renderViewVisible"
-          :code="formData.dataviewId"></tableRenderVue>
+        <tableRenderVue v-if="formData.functionalCategory === '3' && renderViewVisible"
+                        :code="formData.dataviewId"></tableRenderVue>
       </template>
     </Dialog>
     <Dialog title="帮助"
@@ -370,6 +405,23 @@ export default {
         optionUrl: {
           api: 'kanbanComponent.dataViewList'
         }
+      },
+      {
+        type: 'select',
+        labelText: '分类选择',
+        fieldName: 'classification',
+        placeholder: '请选择',
+        colLayout: 'doubleCol',
+        optionUrl: {
+          api: 'thirdPartInterface.getDic',
+          params: { dicType: 'SELECT_TYPE' }
+        },
+        rules: [
+          {
+            required: true,
+            message: '该项为必填项'
+          }
+        ]
       }
     ]
     return {
@@ -419,7 +471,8 @@ export default {
         url: '',
         dataviewId: '',
         apiDataUrl: '',
-        jsonOptions: ''
+        jsonOptions: '',
+        classification: ''
       },
       visibleDrawer: false,
       myChart: null,
@@ -444,7 +497,7 @@ export default {
       }
     },
     getFormData () {
-      if(this.formData.searchConfigValue){
+      if (this.formData.searchConfigValue) {
         this.searchData = JSON.parse(this.formData.searchConfigValue)
       }
       if (this.record.urlType !== null) {
@@ -515,6 +568,23 @@ export default {
               }
             },
             {
+              type: 'select',
+              labelText: '分类选择',
+              fieldName: 'classification',
+              placeholder: '请选择',
+              colLayout: 'doubleCol',
+              optionUrl: {
+                api: 'thirdPartInterface.getDic',
+                params: { dicType: 'SELECT_TYPE' }
+              },
+              rules: [
+                {
+                  required: true,
+                  message: '该项为必填项'
+                }
+              ]
+            },
+            {
               type: 'blank',
               labelText: 'json配置',
               slotName: 'jsonOptions',
@@ -536,17 +606,34 @@ export default {
         }).concat([
           {
             type: 'select',
-              labelText: '表格数据源',
-              fieldName: 'dataviewId',
-              placeholder: '请选择',
-              colLayout: 'doubleCol',
-              optionUrl: {
-                api: 'selection.getAllReport',
-                label: 'label',
-                value: 'code'
-              }
+            labelText: '表格数据源',
+            fieldName: 'dataviewId',
+            placeholder: '请选择',
+            colLayout: 'doubleCol',
+            optionUrl: {
+              api: 'selection.getAllReport',
+              label: 'label',
+              value: 'code'
             }
-          ])
+          },
+          {
+            type: 'select',
+            labelText: '分类选择',
+            fieldName: 'classification',
+            placeholder: '请选择',
+            colLayout: 'doubleCol',
+            optionUrl: {
+              api: 'thirdPartInterface.getDic',
+              params: { dicType: 'SELECT_TYPE' }
+            },
+            rules: [
+              {
+                required: true,
+                message: '该项为必填项'
+              }
+            ]
+          }
+        ])
       } else {
         this.formData.jsonOptions = ''
         // this.formData.desformCode = ''
@@ -556,28 +643,28 @@ export default {
     },
     'formData.dataviewId': function (newVal, oldVal) {
       let that = this
-      if(this.formData.functionalCategory == '3'){
+      if (this.formData.functionalCategory == '3') {
         return
       }
-      if(newVal){
+      if (newVal) {
         if (this.record.id) {
           if (this.flag) {
-            this.$api['formGenerator.sqlParam']({sqlId: newVal}).then(res => {
+            this.$api['formGenerator.sqlParam']({ sqlId: newVal }).then(res => {
               if (res && res.length) {
                 let arr = []
                 res.forEach(el => {
-                  arr.push({fieldName: el.paramName, labelText: el.paramTxt, paramValue: ''})
+                  arr.push({ fieldName: el.paramName, labelText: el.paramTxt, paramValue: '' })
                 })
                 that.searchData = arr
               }
             })
           }
         } else {
-          this.$api['formGenerator.sqlParam']({sqlId: newVal}).then(res => {
+          this.$api['formGenerator.sqlParam']({ sqlId: newVal }).then(res => {
             if (res && res.length) {
               let arr = []
               res.forEach(el => {
-                arr.push({fieldName: el.paramName, labelText: el.paramTxt, paramValue: ''})
+                arr.push({ fieldName: el.paramName, labelText: el.paramTxt, paramValue: '' })
               })
               that.searchData = arr
             }

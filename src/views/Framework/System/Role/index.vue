@@ -1,27 +1,42 @@
 <template>
   <list-layout>
     <template #north>
-      <common-button :comp="comp" buttonType="primary"></common-button>
-      <search-form-list ref="search" :data-source="searchData" @search="search" @re-set="reSet"></search-form-list>
+      <common-button :comp="comp"
+                     buttonType="primary"></common-button>
+      <search-form-list ref="search"
+                        :data-source="searchData"
+                        @search="search"
+                        @re-set="reSet"></search-form-list>
     </template>
     <template #center>
       <div id="table-contain">
-        <common-table
-          ref="table"
-          :comp="comp"
-          :columns="columns"
-          :params="queryParam"
-          :api="tableApi"
-          :table-refresh="tableRefresh"
-          :pagination="true"
-          @requested-table-data="getTotalNum"
-        ></common-table>
+        <common-table ref="table"
+                      :comp="comp"
+                      :columns="columns"
+                      :params="queryParam"
+                      :api="tableApi"
+                      :table-refresh="tableRefresh"
+                      :pagination="true"
+                      @requested-table-data="getTotalNum"></common-table>
       </div>
     </template>
     <template #drawer-panel>
-      <common-drawer v-if="visibleRoleEditDrawer" :title="drawerTitle" :visible="visibleRoleEditDrawer" @close="onEditRoleClose" size="70%">
+      <common-drawer v-if="visibleRoleEditDrawer"
+                     :title="drawerTitle"
+                     :visible="visibleRoleEditDrawer"
+                     @close="onEditRoleClose"
+                     size="70%">
         <template #drawer>
-          <role-edit @saveSuccess="saveCallback" @cancel="visibleRoleEditDrawer = false" :role-id="currRoleId" :date-number="dateNumber"></role-edit>
+          <role-edit v-if="drawerTitle !== '查看角色'"
+                     @saveSuccess="saveCallback"
+                     @cancel="visibleRoleEditDrawer = false"
+                     :role-id="currRoleId"
+                     :date-number="dateNumber"></role-edit>
+          <role-view v-else
+                     @saveSuccess="saveCallback"
+                     @cancel="visibleRoleEditDrawer = false"
+                     :role-id="currRoleId"
+                     :date-number="dateNumber"></role-view>
         </template>
       </common-drawer>
     </template>
@@ -33,6 +48,7 @@ import Vue from 'vue'
 import { P8ListLayout as ListLayout, P8Button as CommonButton, P8Table as CommonTable, P8Drawer as CommonDrawer, P8Search as SearchFormList } from 'p8-components-ui'
 
 import RoleEdit from './edit.vue'
+import RoleView from './view.vue'
 const columns = [
   {
     title: '序号',
@@ -44,6 +60,18 @@ const columns = [
     title: '角色名称',
     dataIndex: 'name',
     align: 'center'
+  },
+  {
+    title: '参与审批',
+    dataIndex: 'isApprove',
+    align: 'center',
+    formatter: function (row) {
+      if (row.isApprove === '1') {
+        return '是'
+      } else {
+        return '否'
+      }
+    }
   },
   {
     title: '操作',
@@ -66,9 +94,10 @@ export default {
     // 'common-buttons' : CommonButtons,
     // 'common-drawer' :EditDrawer,
     // 'search-form-list' : SearchFormList,
-    'role-edit': RoleEdit
+    'role-edit': RoleEdit,
+    RoleView
   },
-  data() {
+  data () {
     return {
       comp: this,
       drawerTitle: '',
@@ -112,7 +141,7 @@ export default {
     }
   },
   methods: {
-    tableRefresh(param) {
+    tableRefresh (param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')
@@ -121,25 +150,30 @@ export default {
           console.log('异步失败的操作')
         })
     },
-    createRole() {
+    createRole () {
       this.currRoleId = ''
       this.drawerTitle = '新建角色'
       this.dateNumber = this.dataLength + 1
       this.visibleRoleEditDrawer = true
     },
-    updateRole(record) {
+    updateRole (record) {
       this.currRoleId = record.id
       this.drawerTitle = '修改角色'
       this.visibleRoleEditDrawer = true
     },
-    onEditRoleClose() {
+    viewRole (record) {
+      this.currRoleId = record.id
+      this.drawerTitle = '查看角色'
+      this.visibleRoleEditDrawer = true
+    },
+    onEditRoleClose () {
       this.visibleRoleEditDrawer = false
     },
-    saveCallback() {
+    saveCallback () {
       this.$refs.table.searchData()
       // this.onEditRoleClose() 保存不关闭抽屉, 由操作人员手动关闭
     },
-    removeRole(record) {
+    removeRole (record) {
       let that = this
       this.$confirm('是否确定要删除该角色？', '提示', {
         confirmButtonText: '确定',
@@ -158,13 +192,13 @@ export default {
           console.log(e)
         })
     },
-    search(param) {
+    search (param) {
       let newParams = {
         ...param,
         ...(this.queryParam.roleName
           ? {
-              roleName: this.queryParam.roleName
-            }
+            roleName: this.queryParam.roleName
+          }
           : {})
       }
       this.queryParam = newParams
@@ -173,7 +207,7 @@ export default {
         that.$refs.table.searchData()
       })
     },
-    reSet() {
+    reSet () {
       let that = this
       Object.keys(that.queryParam).forEach((key) => {
         that.queryParam[key] = ''
@@ -182,7 +216,7 @@ export default {
         that.$refs.table.searchData()
       })
     },
-    getTotalNum(data) {
+    getTotalNum (data) {
       let that = this
       that.dataLength = that.$refs.table.page.total
     }
