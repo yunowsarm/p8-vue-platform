@@ -2,12 +2,25 @@
   <list-layout>
     <template #north>
       <!-- <common-button :comp="comp"></common-button> -->
-      <export-execl :table-columns="columns" :other-params="queryParams" :api="exportApi" style="float: left"></export-execl>
+      <export-execl :table-columns="columns"
+                    :other-params="queryParams"
+                    :api="exportApi"
+                    style="float: left"></export-execl>
 
-      <search-form-list ref="search" :data-source="dataSource" search-width="500px" search-contain-width="500px" @search="search" @re-set="reset"></search-form-list>
+      <search-form-list ref="search"
+                        :data-source="dataSource"
+                        search-width="500px"
+                        search-contain-width="500px"
+                        @search="search"
+                        @re-set="reset"></search-form-list>
     </template>
     <template #center>
-      <common-table ref="table" :comp="comp" :flex="200" :columns="columns" :params="queryParams" :api="tableApi"></common-table>
+      <common-table ref="table"
+                    :comp="comp"
+                    :flex="200"
+                    :columns="columns"
+                    :params="queryParams"
+                    :api="tableApi"></common-table>
     </template>
   </list-layout>
 </template>
@@ -17,7 +30,7 @@ import { P8ListLayout as ListLayout, P8Search as SearchFormList, P8Table as Comm
 import exportExecl from './Components/exportExecl'
 export default {
   name: 'LogAuditManagement',
-  data() {
+  data () {
     const dataSource = [
       {
         type: 'datetimeRange',
@@ -110,6 +123,14 @@ export default {
         asc: false,
         align: 'center',
         export: true // 当前列是否需要导出
+      },
+      {
+        title: '执行结果',
+        dataIndex: 'result',
+        defaultSort: true,
+        asc: false,
+        align: 'center',
+        export: true // 当前列是否需要导出
       }
     ]
     return {
@@ -122,7 +143,7 @@ export default {
       exportData: []
     }
   },
-  mounted() {
+  mounted () {
     if (this.$route.meta && this.$route.meta.type) {
       if (this.$route.meta.type === 'safe') {
         this.columns.map((c) => {
@@ -135,7 +156,7 @@ export default {
     }
   },
   methods: {
-    search(params) {
+    search (params) {
       this.queryParams = params
       let that = this
       this.getExportData()
@@ -143,7 +164,7 @@ export default {
         that.$refs.table.searchData()
       })
     },
-    reset() {
+    reset () {
       let that = this
       Object.keys(that.queryParams).forEach((key) => {
         return (that.queryParams[key] = null)
@@ -153,10 +174,10 @@ export default {
         that.$refs.table.searchData()
       })
     },
-    startDownload() {
+    startDownload () {
       console.log('开始下载-showLoading')
     },
-    finishDownload() {
+    finishDownload () {
       console.log('下载完成-hideLoading')
     }
   },
