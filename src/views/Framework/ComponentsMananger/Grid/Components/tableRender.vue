@@ -1303,15 +1303,13 @@ export default {
       }
     },
     getDyApi(obj, row, btn) {
-      const rowBtnData = this.getRowBtnData(row, btn)
-      row = rowBtnData.row
       if (!row) {
         return
       }
       const rowIds = row.map((el) => {
         return el.ID
       })
-      this.$api[obj.code]({ ID: rowIds })
+      this.$api[obj.code]({ ids: rowIds })
         .then((res) => {
           if (res) {
             this.$message({
