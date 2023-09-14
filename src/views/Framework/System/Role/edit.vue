@@ -273,6 +273,11 @@ export default {
               label: '否',
               value: '0'
             }
+          ],
+          rules: [
+            {
+              required: true
+            }
           ]
         },
         {
