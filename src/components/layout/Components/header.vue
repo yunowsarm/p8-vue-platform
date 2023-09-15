@@ -251,7 +251,14 @@ export default {
       this.$router.push({ name: 'PersonalSettings' })
     },
     modifyPassword() {
-      this.$router.replace({ path: '/modify-password' })
+      const that = this
+      this.$api['SystemSettings.checkBaseConfig']().then((res) => {
+        if (res) {
+          that.$router.replace({ path: '/modify-password' })
+        } else {
+          that.$message({ type: 'error', message: '当前用户信息是从外部系统集成获取,此功能已禁用' })
+        }
+      })
     },
     logout() {
       this.$confirm('是否要退出系统?', '提醒', {

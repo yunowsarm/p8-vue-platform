@@ -751,6 +751,13 @@ export const system = {
       desc: '查询系统基本设置属性'
     },
     {
+      name: 'checkBaseConfig',
+      method: 'POST',
+      path: '/framework/system/SystemSettings/checkBaseConfig',
+      mockPath: '/framework/system/SystemSettings/checkBaseConfig',
+      desc: '查询系统人员信息管理属性'
+    },
+    {
       name: 'saveBasicSetting',
       method: 'POST',
       path: '/framework/system/SystemSettings/saveBasicSetting',
