@@ -1,11 +1,6 @@
 <template>
-  <form-list ref="form"
-             :data-source="dataSource"
-             :api="saveApi"
-             :form="formData"
-             @saved="saved"
-             @rendered="rendered">
-    <template slot="btn">
+  <form-list ref="form" :data-source="dataSource" :api="saveApi" :form="formData" :exist-default-btn="false" :exist-custom-btn="true" @saved="saved" @rendered="rendered">
+    <template #customBtn>
       <el-button @click="cancel">取 消</el-button>
     </template>
   </form-list>
@@ -35,7 +30,7 @@ export default {
       default: ''
     }
   },
-  data () {
+  data() {
     return {
       saveApi: 'departmentManger.save',
       detailApi: 'departmentManger.deptInfo',
@@ -116,15 +111,15 @@ export default {
       ]
     }
   },
-  mounted () { },
+  mounted() {},
   methods: {
-    rendered () {
+    rendered() {
       this.getInfo()
     },
-    cancel () {
+    cancel() {
       this.$emit('cancel')
     },
-    getInfo () {
+    getInfo() {
       if (this.recordId) {
         this.$api[this.detailApi]({ id: this.recordId }).then((res) => {
           // console.log(res,'-------我的返回值');
