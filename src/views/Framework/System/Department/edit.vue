@@ -41,7 +41,7 @@ export default {
         parentId: '',
         deptType: '',
         no: '',
-        indexNo: '',
+        indexNo: 1,
         deptAbbreviation: '',
         statisticalKanban: '',
         deptCategory: ''

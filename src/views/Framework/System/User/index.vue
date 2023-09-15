@@ -38,7 +38,7 @@
                      @close="onEditUserClose"
                      :size="drawerSize">
         <template #drawer>
-          <user-edit v-if="drawerTitle === '修改用户'"
+          <user-edit v-if="drawerTitle === '新建用户' || drawerTitle === '修改用户'"
                      @saveSuccess="saveCallback"
                      @cancel="visibleUserEditDrawer = false"
                      :user-id="currUserId"

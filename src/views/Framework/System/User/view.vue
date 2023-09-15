@@ -1,26 +1,17 @@
 <template>
   <div>
     <div>
-      <el-alert title="初始密码为 000000，登录后请及时修改密码"
-                :closable="false"
-                type="warning"></el-alert>
+      <el-alert title="初始密码为 000000，登录后请及时修改密码" :closable="false" type="warning"></el-alert>
     </div>
-    <form-list ref="form"
-               label-width="150px"
-               @rendered="rendered"
-               @saved="saved"
-               :data-source="dataSource"
-               :api="saveApi"
-               :form="formData">
-      <template slot="btn">
+    <form-list ref="form" label-width="150px" @rendered="rendered" @saved="saved" :data-source="dataSource" :api="saveApi" :exist-default-btn="false" :exist-custom-btn="true" :form="formData">
+      <template #customBtn>
         <el-button @click="cancel">取 消</el-button>
       </template>
     </form-list>
     <template v-if="formData.roles && formData.roles.length > 0">
       <div class="role-list-title">用户角色</div>
       <ul class="role-list">
-        <li v-for="(item, index) in formData.roles"
-            :key="index">
+        <li v-for="(item, index) in formData.roles" :key="index">
           {{ item.name }}
         </li>
       </ul>
@@ -65,7 +56,7 @@ export default {
       default: ''
     }
   },
-  data () {
+  data() {
     return {
       saveApi: 'userManager.save',
       dataSource: [
@@ -236,21 +227,21 @@ export default {
       }
     }
   },
-  mounted () { },
+  mounted() {},
   methods: {
-    rendered () {
+    rendered() {
       // console.log('currentSelectDeptId', this.currentSelectDeptId)
       if (this.userId && this.userId !== '') {
         this.getUserData(this.userId)
       }
     },
-    clickEvent () {
+    clickEvent() {
       console.log('click')
     },
-    cancel () {
+    cancel() {
       this.$emit('cancel')
     },
-    getUserData (userId) {
+    getUserData(userId) {
       const that = this
       console.log('loadUserId', userId)
 
@@ -273,11 +264,11 @@ export default {
           console.log('error' + error)
         })
     },
-    saved (res) {
+    saved(res) {
       console.log('edit saved')
       this.$emit('saveSuccess', res)
     },
-    handleChange (info) {
+    handleChange(info) {
       console.log(info, 'info')
     }
   }
