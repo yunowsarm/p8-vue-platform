@@ -2,7 +2,7 @@
   <form-list ref="form" label-width="150px" @rendered="rendered" @saved="saved" :data-source="dataSource" :api="saveApi" :form="formData">
     <template #password>
       <div>
-        <el-switch v-model="formData.resetPassword" active-text="是" inactive-text="否"></el-switch>
+        <el-switch v-model="formData.resetPassword" active-text="是" inactive-text="否" :disabled="checkResetPassword"></el-switch>
         是否重置密码为：000000
       </div>
     </template>
@@ -29,6 +29,7 @@ export default {
   data() {
     return {
       saveApi: 'userManager.safeSave',
+      checkResetPassword: false,
       dataSource: [
         {
           type: 'view', // 控件类型
@@ -150,7 +151,16 @@ export default {
       }
     }
   },
-  mounted() {},
+  mounted() {
+    const that = this
+    this.$api['SystemSettings.checkBaseConfig']().then((res) => {
+      if (res) {
+        that.checkResetPassword = false
+      } else {
+        that.checkResetPassword = true
+      }
+    })
+  },
   methods: {
     rendered() {
       console.log('userId', this.userId)
@@ -159,13 +169,13 @@ export default {
       }
     },
     getUserData(userId) {
-      let that = this
+      const that = this
       this.$api['userManager.userInfo']({
         id: that.userId
       })
         .then(function (res) {
           console.log('res:', res)
-          let {
+          const {
             id,
             userName,
             pid,
@@ -206,7 +216,7 @@ export default {
             tecPost
           }
           if (res.roles && res.roles.length > 0) {
-            let roleIds = res.roles.map((item, index, arr) => {
+            const roleIds = res.roles.map((item, index, arr) => {
               return item.id
             })
             that.$set(that.formData, 'roleIds', roleIds)

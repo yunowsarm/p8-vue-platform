@@ -38,6 +38,12 @@
             <el-radio-button label="systemModel2">维护模式</el-radio-button>
           </el-radio-group>
         </template>
+        <template #sysModel>
+          <el-radio-group v-model="formData.sysModel" size="small">
+            <el-radio-button label="thisSystem">本系统内维护</el-radio-button>
+            <el-radio-button label="extSystem">外部系统集成</el-radio-button>
+          </el-radio-group>
+        </template>
       </form-list>
     </el-card>
   </div>
@@ -131,7 +137,13 @@ export default {
           labelText: '运行模式',
           type: 'blank',
           slotName: 'systemModel',
-          colLayout: 'singleCol'
+          colLayout: 'doubleCol'
+        },
+        {
+          labelText: '人员信息管理模式',
+          type: 'blank',
+          slotName: 'sysModel',
+          colLayout: 'doubleCol'
         }
       ],
       formData: {},
@@ -147,7 +159,7 @@ export default {
       console.log('click')
     },
     getSettingData() {
-      let that = this
+      const that = this
       that.$api['SystemSettings.getBasicSetting']()
         .then(function (res) {
           res.settings.forEach(function (item) {
@@ -166,7 +178,7 @@ export default {
     },
     // 获取图片流
     getFileUrl(uploadFileJson) {
-      let that = this
+      const that = this
       uploadFileJson.map((item) => {
         if (item.id) {
           that.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
@@ -179,8 +191,8 @@ export default {
       that.formData = Object.assign({}, that.modify)
     },
     customValidate(params) {
-      let saveParams = {}
-      let settings = [
+      const saveParams = {}
+      const settings = [
         {
           key: 'systemName', // 系统名称
           value: params.systemName
@@ -192,9 +204,13 @@ export default {
         {
           key: 'systemModel', // 运行模式
           value: params.systemModel
+        },
+        {
+          key: 'sysModel', // 人员信息管理模式
+          value: params.sysModel
         }
       ]
-      let uploadFileJson = params.uploadFileJson ? params.uploadFileJson : []
+      const uploadFileJson = params.uploadFileJson ? params.uploadFileJson : []
       saveParams.uploadFileJson = uploadFileJson
       if (saveParams.uploadFileJson[0]) {
         saveParams.uploadFileJson[0].confidentialite = '9001'

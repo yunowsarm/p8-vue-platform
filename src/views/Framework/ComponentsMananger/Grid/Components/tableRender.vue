@@ -1291,6 +1291,9 @@ export default {
     },
     // 动态api
     dynamicAPI(row, btn) {
+      const rowBtnData = this.getRowBtnData(row, btn)
+      row = rowBtnData.row
+      btn = rowBtnData.btn
       const obj = JSON.parse(btn.eventParams)
       if (obj.openDia) {
         this.$confirm(obj.warningMsg, '提示', {
@@ -1298,22 +1301,20 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.getDyApi(obj, row)
+          this.getDyApi(obj, row, btn)
         })
       } else {
-        this.getDyApi(obj, row)
+        this.getDyApi(obj, row, btn)
       }
     },
-    getDyApi(obj, row) {
-      const rowBtnData = this.getRowBtnData(row, null)
-      row = rowBtnData.row
+    getDyApi(obj, row, btn) {
       if (!row) {
         return
       }
       const rowIds = row.map((el) => {
         return el.ID
       })
-      this.$api[obj.code]({ ID: rowIds })
+      this.$api[obj.code]({ ids: rowIds })
         .then((res) => {
           if (res) {
             this.$message({
