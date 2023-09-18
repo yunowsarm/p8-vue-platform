@@ -1161,6 +1161,11 @@ export default {
     // 关闭自定义抽屉
     customClose() {
       this.customVisible = false
+      if (this.tableType === 0) {
+        this.$refs.table.searchData()
+      } else {
+        this.$refs.xTable.searchData()
+      }
     },
     // 查看流程图
     viewProcess(row, btn) {

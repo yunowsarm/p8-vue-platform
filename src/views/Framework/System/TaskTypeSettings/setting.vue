@@ -1,24 +1,25 @@
 <template>
-  <div>
-    <el-table :data="formData">
-      <el-table-column label="任务类型" prop="name"></el-table-column>
-      <el-table-column label="计划编辑只可标识子任务" prop="status">
+  <div class="setting_box">
+    <el-table class="setting_table" :data="formData">
+      <el-table-column label="任务类型" prop="C_MEANING"></el-table-column>
+      <el-table-column label="计划编辑只可标识子任务" prop="CUSTOM_ITEM1">
         <template slot-scope="scope">
-          <el-radio-group v-model="scope.row.status">
+          <el-radio-group v-model="scope.row.CUSTOM_ITEM1">
             <el-radio-button label="1">是</el-radio-button>
             <el-radio-button label="0">否</el-radio-button>
           </el-radio-group>
         </template>
       </el-table-column>
     </el-table>
-    <span class="dialog-footer">
-      <el-button @click="dialogVisible = false">取 消</el-button>
-      <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-    </span>
+    <div class="dialog_footer">
+      <el-button @click="close">取 消</el-button>
+      <el-button type="primary" @click="handleSubmit">确 定</el-button>
+    </div>
   </div>
 </template>
 
 <script>
+import _cloneDeep from 'lodash/cloneDeep'
 export default {
   name: 'TaskTypeSetting',
   data() {
@@ -32,18 +33,48 @@ export default {
       default: null
     }
   },
-  created() {
-    if (Array.isArray(this.row) && this.row.length > 0) {
-      this.formData = this.row.map((item) => {
+  watch: {
+    row: {
+      handler(val) {
+        if (Array.isArray(val) && val.length > 0) {
+          this.formData = _cloneDeep(val)
+        }
+      },
+      immediate: true,
+      deep: true
+    }
+  },
+  methods: {
+    handleSubmit() {
+      const data = this.formData.map((item) => {
         return {
           id: item.ID,
-          name: item.C_MEANING,
-          status: '1'
+          customItem1: item.CUSTOM_ITEM1
         }
       })
+      this.$api['documentManagement.saveTaskType']({ dictList: data }).then((res) => {
+        this.$message.success('设置成功')
+        this.close()
+      })
+    },
+    close() {
+      this.$emit('close')
     }
   }
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.setting_box {
+  height: 100%;
+  .setting_table {
+    height: calc(100% - 52px);
+    overflow: auto;
+  }
+}
+.dialog_footer {
+  height: 52px;
+  line-height: 52px;
+  text-align: right;
+}
+</style>

@@ -907,6 +907,13 @@ export const system = {
       path: '/attachment/download',
       mockPath: '/attachment/download',
       desc: '下载'
+    },
+    {
+      name: 'saveTaskType',
+      method: 'POST',
+      path: '/framework/system/PlanLogo/saveTaskType',
+      mockPath: '/framework/system/PlanLogo/saveTaskType',
+      desc: '任务类型操作设置'
     }
   ],
   extLink: [
