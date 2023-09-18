@@ -532,7 +532,7 @@ export default {
   },
   computed: {
     componentLoader() {
-      return () => import(`@/${this.componentPath}.vue`)
+      return () => import(`@/views/${this.componentPath}.vue`)
     },
     renderComp() {
       return Object.keys(this.intelligenceComp).length ? this.intelligenceComp : this.comp
@@ -741,7 +741,7 @@ export default {
               headerAlign: res.title,
               align: res.alignmentStyle,
               dataIndex: 'operation',
-              minWidth: 120,
+              minWidth: 140,
               scopedSlots: { customRender: 'operation' }
             })
           } else if (res.reportResources.length && this.tableInfo.useSystemConfigButton === 0) {
@@ -767,7 +767,7 @@ export default {
               headerAlign: res.title,
               align: res.alignmentStyle,
               dataIndex: 'operation',
-              minWidth: 120,
+              minWidth: 140,
               scopedSlots: { customRender: 'operation' }
             })
           }
