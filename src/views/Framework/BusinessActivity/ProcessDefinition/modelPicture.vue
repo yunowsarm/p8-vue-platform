@@ -1,10 +1,14 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <div style="width: 1200px">
     <el-card :body-style="{ padding: '0px' }">
       <div style="padding: 14px">
         <span>{{ modelName }} 流程Id： {{ modelId }}</span>
       </div>
-      <img :src="imagePath" class="image" />
+      <img :src="imagePath"
+           class="image" />
     </el-card>
   </div>
 </template>
@@ -38,9 +42,9 @@ export default {
   data: function () {
     return {}
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    onClosed() {
+    onClosed () {
       this.$emit('close')
     }
   }

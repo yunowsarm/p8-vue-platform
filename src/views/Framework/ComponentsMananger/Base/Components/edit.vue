@@ -1,7 +1,18 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <form-list ref="form" :data-source="dataSource" :form="formData" :api="saveApi" @saved="saved" label-width="90px" @rendered="rendered">
+  <form-list ref="form"
+             :data-source="dataSource"
+             :form="formData"
+             :api="saveApi"
+             @saved="saved"
+             label-width="90px"
+             @rendered="rendered">
     <template #jsonData>
-      <ace-edit :value.sync="formData.jsonData" width="100%" height="500px"></ace-edit>
+      <ace-edit :value.sync="formData.jsonData"
+                width="100%"
+                height="500px"></ace-edit>
     </template>
     <template slot="btn">
       <el-button @click="cancel">取 消</el-button>
@@ -21,10 +32,10 @@ export default {
   props: {
     record: {
       type: Object,
-      default: () => {}
+      default: () => { }
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'formGenerator.compSave',
       dataSource: [
@@ -133,20 +144,20 @@ export default {
     }
   },
   methods: {
-    rendered() {
+    rendered () {
       // 所有表单元素渲染后调用rendered
       if (this.record.id) {
         this.getFormData()
       }
     },
-    getFormData() {
+    getFormData () {
       this.formData = Object.assign({}, this.record)
       this.formData.jsonData = JSON.stringify(JSON.parse(this.formData.jsonData), null, 2)
     },
-    cancel() {
+    cancel () {
       this.$emit('cancel')
     },
-    saved(res) {
+    saved (res) {
       console.log('修改页面关闭时的回调方法')
       this.$emit('saveSuccess', res)
     }

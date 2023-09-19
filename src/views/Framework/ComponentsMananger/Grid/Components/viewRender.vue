@@ -1,5 +1,11 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <form-list :label-width="labelWidth" :form="formData" :data-source="dataSource" :exist-default-btn="false"></form-list>
+  <form-list :label-width="labelWidth"
+             :form="formData"
+             :data-source="dataSource"
+             :exist-default-btn="false"></form-list>
 </template>
 <script>
 import { P8Form as FormList } from 'p8-components-ui'
@@ -24,13 +30,13 @@ export default {
       default: '100px'
     }
   },
-  data() {
+  data () {
     return {
       dataSource: [],
       formData: {}
     }
   },
-  async mounted() {
+  async mounted () {
     let _this = this
     let res = await this.$api['formGenerator.tableGetInfo']({ reportCode: this.code })
     if (res.reportItems.length) {

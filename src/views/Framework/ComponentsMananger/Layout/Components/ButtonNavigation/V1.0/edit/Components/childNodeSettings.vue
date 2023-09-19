@@ -1,15 +1,37 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <common-dialog :title="childNodeSettingsTitle" :visible="visible" :show-handle-btn="false" :dialog-config="dialogConfig" width="30%" @close="handleCancel" :dialog-height="dialogHeight">
+  <common-dialog :title="childNodeSettingsTitle"
+                 :visible="visible"
+                 :show-handle-btn="false"
+                 :dialog-config="dialogConfig"
+                 width="30%"
+                 @close="handleCancel"
+                 :dialog-height="dialogHeight">
     <template #dialog>
-      <form-list ref="form" label-width="100px" :data-source="dataSource" :form="formData" :is-custom-validate="isCustomValidate" @custom-validate="customValidate">
+      <form-list ref="form"
+                 label-width="100px"
+                 :data-source="dataSource"
+                 :form="formData"
+                 :is-custom-validate="isCustomValidate"
+                 @custom-validate="customValidate">
         <template #otherParmarsMap>
-          <ace-edit :value.sync="formData.otherParmarsMap" width="100%" height="200px"></ace-edit>
+          <ace-edit :value.sync="formData.otherParmarsMap"
+                    width="100%"
+                    height="200px"></ace-edit>
         </template>
         <template #componentsUrl>
-          <el-input @click.native="visibleEditDrawer = true" :readonly="true" v-model="formData.componentsName" placeholder="请选择目标组件"></el-input>
+          <el-input @click.native="visibleEditDrawer = true"
+                    :readonly="true"
+                    v-model="formData.componentsName"
+                    placeholder="请选择目标组件"></el-input>
         </template>
       </form-list>
-      <select-components v-if="visibleEditDrawer" :visible="visibleEditDrawer" @close="visibleEditDrawer = false" @handleOk="componentsHandleOk"></select-components>
+      <select-components v-if="visibleEditDrawer"
+                         :visible="visibleEditDrawer"
+                         @close="visibleEditDrawer = false"
+                         @handleOk="componentsHandleOk"></select-components>
     </template>
   </common-dialog>
 </template>
@@ -50,7 +72,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'PersonalProcessApproval.setApproveUser',
       isCustomValidate: true,
@@ -110,7 +132,7 @@ export default {
   },
   watch: {
     'formData.componentsType': {
-      handler(newAal) {
+      handler (newAal) {
         if (newAal === '0') {
           this.dataSource.forEach((el) => {
             if (el.fieldName === 'componentsUrl') {
@@ -127,7 +149,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     if (this.childNodeSettingsTitle === '新建子节点') {
       this.formData.parentName = this.childNodeParmars.label
       this.formData.parentId = this.childNodeParmars.id
@@ -144,13 +166,13 @@ export default {
     }
   },
   methods: {
-    customValidate(saveParams) {
+    customValidate (saveParams) {
       this.$emit('handleOk', this.formData)
     },
-    handleCancel() {
+    handleCancel () {
       this.$emit('close-modal')
     },
-    componentsHandleOk(selectLayout) {
+    componentsHandleOk (selectLayout) {
       this.formData.componentsName = selectLayout.name
       this.formData.componentsConfig = selectLayout
       this.visibleEditDrawer = false

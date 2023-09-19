@@ -1,35 +1,62 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <list-layout>
     <template #north>
-      <common-button :comp="comp" :button-type="'round'" :custom-button-data="customButtonData"></common-button>
+      <common-button :comp="comp"
+                     :button-type="'round'"
+                     :custom-button-data="customButtonData"></common-button>
     </template>
     <template #center>
-      <common-table ref="table" :columns="columns" api="formGenerator.formList" :table-refresh="tableRefresh">
+      <common-table ref="table"
+                    :columns="columns"
+                    api="formGenerator.formList"
+                    :table-refresh="tableRefresh">
         <template #operation="{ scope }">
-          <el-button type="text" @click="modify(scope)">修改</el-button>
-          <el-button type="text" @click="remove(scope)">删除</el-button>
-          <el-button type="text" @click="formDesign(scope)">表单设计</el-button>
-          <el-button type="text" @click="dataView(scope)">数据查看</el-button>
-          <el-button type="text" @click="formRelease(scope)" :disabled="scope.row.desformStatus === '1'">表单发布</el-button>
-          <el-button type="text" @click="formDesignCopy(scope)">表单设计复制</el-button>
+          <el-button type="text"
+                     @click="modify(scope)">修改</el-button>
+          <el-button type="text"
+                     @click="remove(scope)">删除</el-button>
+          <el-button type="text"
+                     @click="formDesign(scope)">表单设计</el-button>
+          <el-button type="text"
+                     @click="dataView(scope)">数据查看</el-button>
+          <el-button type="text"
+                     @click="formRelease(scope)"
+                     :disabled="scope.row.desformStatus === '1'">表单发布</el-button>
+          <el-button type="text"
+                     @click="formDesignCopy(scope)">表单设计复制</el-button>
         </template>
       </common-table>
     </template>
     <template #drawer-panel>
       <!-- 表单设计器 -->
-      <common-drawer :visible="visible" direction="ttb" size="100%" @close="formDesignClose" :drawer-config="{ withHeader: false }">
+      <common-drawer :visible="visible"
+                     direction="ttb"
+                     size="100%"
+                     @close="formDesignClose"
+                     :drawer-config="{ withHeader: false }">
         <template #drawer>
           <form-generator :record="record"></form-generator>
         </template>
       </common-drawer>
       <!-- 表单新建 -->
-      <common-drawer :title="drawerTitle" :visible="editVisible" size="50%" @close="formEditClose">
+      <common-drawer :title="drawerTitle"
+                     :visible="editVisible"
+                     size="50%"
+                     @close="formEditClose">
         <template #drawer>
-          <form-list-edit @saveSuccess="saveCallback" @cancel="formEditClose" :record="record"></form-list-edit>
+          <form-list-edit @saveSuccess="saveCallback"
+                          @cancel="formEditClose"
+                          :record="record"></form-list-edit>
         </template>
       </common-drawer>
       <!-- 表单数据查看 -->
-      <common-drawer :title="dataViewTitle" :visible="dataViewVisible" size="100%" @close="dataViewClose">
+      <common-drawer :title="dataViewTitle"
+                     :visible="dataViewVisible"
+                     size="100%"
+                     @close="dataViewClose">
         <template #drawer>
           <form-data-list :record="record"></form-data-list>
         </template>
@@ -57,7 +84,7 @@ export default {
     FormDataList,
     CommonButton
   },
-  data() {
+  data () {
     const columns = [
       {
         title: '表单编码',
@@ -129,7 +156,7 @@ export default {
     }
   },
   methods: {
-    tableRefresh(param) {
+    tableRefresh (param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')
@@ -138,17 +165,17 @@ export default {
           console.log('异步失败的操作')
         })
     },
-    edit() {
+    edit () {
       this.record.id = ''
       this.drawerTitle = '新建表单'
       this.editVisible = true
     },
-    modify(scope) {
+    modify (scope) {
       this.record = Object.assign({}, scope.row)
       this.drawerTitle = '修改表单'
       this.editVisible = true
     },
-    remove(scope) {
+    remove (scope) {
       let that = this
       this.$confirm('是否确定要删除该表单？', '提示', {
         confirmButtonText: '确定',
@@ -170,7 +197,7 @@ export default {
         })
     },
     // 表单设计
-    formDesign(scope) {
+    formDesign (scope) {
       if (scope.row.desformStatus === '1') {
         this.$confirm('修改表单设计后，需要再次手动发布，是否继续？', '提示', {
           confirmButtonText: '确定',
@@ -188,21 +215,21 @@ export default {
         this.record = Object.assign({}, scope.row)
       }
     },
-    async getDrawingList(params) {
+    async getDrawingList (params) {
       let res = {}
       res = await this.$api['formGenerator.designerDetails'](params)
       return res
     },
-    async getFormDataBase(id) {
+    async getFormDataBase (id) {
       let formData = await this.$api['formGenerator.dataSourceFormView']({ id: id })
       return formData
     },
-    checkNeedField(item) {
+    checkNeedField (item) {
       //判断是否需要对config定义中的field进行判断，如果在noNeedFieldLayout或noNeedFieldTag中那么不需要field；反之(!)则需要校验
       return !(noNeedFieldLayout.indexOf(item.__config__.layout) != -1 || noNeedFieldTag.indexOf(item.__config__.tag) != -1)
     },
     // 表单发布
-    async formRelease(scope) {
+    async formRelease (scope) {
       let drawingListData = await this.getDrawingList({ desFormId: scope.row.id })
       let formConf = JSON.parse(drawingListData.designJson)
       let formDataBase = formConf.formDataBase
@@ -312,7 +339,7 @@ export default {
     /**
      * @function 表单设计存在主从表时,检查子表关系处理
      */
-    async childrenReleaseHandle(masterSlaveTableArr) {
+    async childrenReleaseHandle (masterSlaveTableArr) {
       const _this = this
       let canRelease = true
       for (let i = 0, len = masterSlaveTableArr.length; i < len; i++) {
@@ -390,12 +417,12 @@ export default {
       // console.log(canRelease, 'yk-canRelease--children')
       return canRelease
     },
-    dataView(scope) {
+    dataView (scope) {
       this.dataViewTitle = '表单数据查看列表'
       this.record = Object.assign({}, scope.row)
       this.dataViewVisible = true
     },
-    formDesignCopy(scope) {
+    formDesignCopy (scope) {
       this.$api[this.desCopyApi]({
         desFormId: scope.row.id
       }).then((res) => {
@@ -406,18 +433,18 @@ export default {
         this.$refs.table.searchData() // 刷新列表
       })
     },
-    formDesignClose() {
+    formDesignClose () {
       this.visible = false
       this.$refs.table.searchData() // 刷新列表
     },
-    formEditClose() {
+    formEditClose () {
       this.editVisible = false
     },
-    saveCallback() {
+    saveCallback () {
       this.$refs.table.searchData()
       this.formEditClose()
     },
-    dataViewClose() {
+    dataViewClose () {
       this.dataViewVisible = false
     }
   }

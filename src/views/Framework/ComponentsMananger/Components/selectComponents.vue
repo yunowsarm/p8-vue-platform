@@ -1,37 +1,45 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <common-dialog title="选择组件" :visible="visible" @handle-cancel="handleCancel" @handle-ok="handleOk" @close="handleCancel">
+  <common-dialog title="选择组件"
+                 :visible="visible"
+                 @handle-cancel="handleCancel"
+                 @handle-ok="handleOk"
+                 @close="handleCancel">
     <template #dialog>
       <normal-layout :header-visible="false">
         <template #west>
-          <common-tree
-            :data="treeData"
-            :tree-param="treeParam"
-            :tree-config="{ 'default-checked-keys': ['0'], 'default-checked-keys': ['table'] }"
-            :default-expand-all="true"
-            @select="onSelect"
-          ></common-tree>
+          <common-tree :data="treeData"
+                       :tree-param="treeParam"
+                       :tree-config="{ 'default-checked-keys': ['0'], 'default-checked-keys': ['table'] }"
+                       :default-expand-all="true"
+                       @select="onSelect"></common-tree>
         </template>
         <template #center>
-          <common-table
-            ref="table"
-            :columns="columns"
-            :params="queryParam"
-            :api="tableApi"
-            :pagination="true"
-            :table-setting="false"
-            :select-all-hidden="true"
-            @select="select"
-            @row-dblclick="rowDblClick"
-          >
+          <common-table ref="table"
+                        :columns="columns"
+                        :params="queryParam"
+                        :api="tableApi"
+                        :pagination="true"
+                        :table-setting="false"
+                        :select-all-hidden="true"
+                        @select="select"
+                        @row-dblclick="rowDblClick">
             <template #operation="{ scope }">
-              <el-button type="text" @click="preview(scope.row)">预览</el-button>
+              <el-button type="text"
+                         @click="preview(scope.row)">预览</el-button>
             </template>
           </common-table>
         </template>
         <template #drawer-panel>
-          <common-drawer title="预览" :visible="functionTestVisible" size="100%" @close="functionTestVisible = false">
+          <common-drawer title="预览"
+                         :visible="functionTestVisible"
+                         size="100%"
+                         @close="functionTestVisible = false">
             <template #drawer>
-              <table-render :code="record.code" :report-param="{}"></table-render>
+              <table-render :code="record.code"
+                            :report-param="{}"></table-render>
             </template>
           </common-drawer>
         </template>
@@ -291,7 +299,7 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     return {
       queryParam: {},
       treeParam: {},
@@ -363,10 +371,10 @@ export default {
     TableRender
   },
   methods: {
-    handleCancel() {
+    handleCancel () {
       this.$emit('close')
     },
-    handleOk(e) {
+    handleOk (e) {
       let params
       switch (this.type) {
         case 'table':
@@ -407,7 +415,7 @@ export default {
       }
       this.$emit('handleOk', params)
     },
-    onSelect(obj) {
+    onSelect (obj) {
       const that = this
       this.columns = componentData[obj.id].columns
       this.tableApi = componentData[obj.id].api
@@ -416,19 +424,19 @@ export default {
         this.$refs.table.searchData()
       })
     },
-    select(selection, row) {
+    select (selection, row) {
       this.$refs.table.clearSelection()
       this.$refs.table.toggleRowSelection(row)
       this.selectedRow = row
     },
     // 双击行，直接关闭抽屉、回填值
-    rowDblClick(row, column, event) {
+    rowDblClick (row, column, event) {
       this.$refs.table.clearSelection()
       this.$refs.table.toggleRowSelection(row)
       this.selectedRow = row
       this.handleOk()
     },
-    preview(row) {
+    preview (row) {
       this.record = Object.assign({}, row)
       this.functionTestVisible = true
     }

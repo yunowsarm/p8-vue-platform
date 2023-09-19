@@ -1,19 +1,35 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <common-drawer title="图表绘制" size="100%" :visible="visibleDrawer" :show-handle-btn="true" @close="onEditPlanLogoClose">
+  <common-drawer title="图表绘制"
+                 size="100%"
+                 :visible="visibleDrawer"
+                 :show-handle-btn="true"
+                 @close="onEditPlanLogoClose">
     <!-- <template #titleHeader>
       <span>图表绘制</span>
       <el-button style="position: absolute; right: 50px; top: 10px"
                  @click="btnSaveClick">保存</el-button>
     </template> -->
     <template #drawer>
-      <el-tabs tab-position="left" style="height: 100%" v-model="desformCode" @tab-click="tabClick">
+      <el-tabs tab-position="left"
+               style="height: 100%"
+               v-model="desformCode"
+               @tab-click="tabClick">
         <template v-for="(item, index) in echartsTabs">
-          <el-tab-pane :label="item.label" :key="index">
+          <el-tab-pane :label="item.label"
+                       :key="index">
             <el-row>
               <el-col :span="15">
-                <el-card class="box-card" :body-style="{ height: chartHeight }">
-                  <echarts-bar v-if="item.value" :key="dateKey" :echarts-id="item.value" :current-component-props="currentComponentProps"></echarts-bar>
-                  <span v-else class="span-bg"></span>
+                <el-card class="box-card"
+                         :body-style="{ height: chartHeight }">
+                  <echarts-bar v-if="item.value"
+                               :key="dateKey"
+                               :echarts-id="item.value"
+                               :current-component-props="currentComponentProps"></echarts-bar>
+                  <span v-else
+                        class="span-bg"></span>
                 </el-card>
               </el-col>
               <el-col :span="9">
@@ -21,18 +37,17 @@
                                  style="margin: 0px 10px; height: 837px; overflow: auto"
                                  :current-component-props="currentComponentProps"
                                  @onInput="onInput"></echarts-setting> -->
-                <el-card class="box-card2" :body-style="{ height: chartHeight }">
-                  <form-data-edit
-                    @save-success="saveCallback"
-                    @save-form="saveCallback"
-                    :record="record"
-                    :key="record.id"
-                    type="001"
-                    is-save="new"
-                    @save-echarts="btnSaveClick"
-                    @save-reset="saveReset"
-                    :data-view-id="dataViewId"
-                  ></form-data-edit>
+                <el-card class="box-card2"
+                         :body-style="{ height: chartHeight }">
+                  <form-data-edit @save-success="saveCallback"
+                                  @save-form="saveCallback"
+                                  :record="record"
+                                  :key="record.id"
+                                  type="001"
+                                  is-save="new"
+                                  @save-echarts="btnSaveClick"
+                                  @save-reset="saveReset"
+                                  :data-view-id="dataViewId"></form-data-edit>
                 </el-card>
               </el-col>
             </el-row>
@@ -76,7 +91,7 @@ export default {
     FormDataEdit
   },
   props: ['visible', 'code', 'desformData'],
-  data() {
+  data () {
     return {
       echartsTabs: [
         {
@@ -103,11 +118,11 @@ export default {
       dataViewId: ''
     }
   },
-  mounted() {
+  mounted () {
     this.getEchartsData()
   },
   methods: {
-    async getEchartsData() {
+    async getEchartsData () {
       // await this.$api['kanbanComponent.getDic']().then(res => {
       //   this.echartsTabs = res
       // })
@@ -120,19 +135,19 @@ export default {
       })
       this.tabClick()
     },
-    saveCallback(res, data) {
+    saveCallback (res, data) {
       this.currentComponentProps = eval('(' + res + ')')
       this.dateTime()
     },
-    onEditPlanLogoClose() {
+    onEditPlanLogoClose () {
       this.visibleDrawer = false
       this.$emit('onEditPlanLogoClose')
     },
-    dateTime() {
+    dateTime () {
       this.currentComponentProps.height = document.documentElement.clientHeight - 200 + 'px'
       this.dateKey = new Date().getTime()
     },
-    tabClick(val) {
+    tabClick (val) {
       this.record = []
       switch (this.desformCode) {
         case '0':
@@ -153,11 +168,11 @@ export default {
       this.currentComponentProps = eval('(' + defaulValue + ')')
       this.dateTime()
     },
-    onInput(obj) {
+    onInput (obj) {
       this.currentComponentProps = obj
       this.dateTime()
     },
-    btnSaveClick() {
+    btnSaveClick () {
       delete this.currentComponentProps.height
       delete this.currentComponentProps.width
       let obj = {
@@ -165,7 +180,7 @@ export default {
       }
       this.$emit('onEditPlanLogoClose', obj, this.echartsCode)
     },
-    saveReset() {
+    saveReset () {
       this.tabClick()
     }
   }

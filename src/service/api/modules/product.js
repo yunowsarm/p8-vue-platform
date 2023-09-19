@@ -48,7 +48,7 @@ export const repositoryApi = {
       path: '/product/repository/kprojectClassify/projectClassifyTree',
       mockPath: '/product/repository/kprojectClassify/projectClassifyTree',
       desc: '项目类型树'
-  },
+    },
     {
       name: 'userList',
       method: 'POST',
@@ -94,6 +94,45 @@ export const repositoryApi = {
       path: '/bpm/manage/ProcessDefinition/getProcessDefinitionByBusinessId',
       mockPath: '/bpm/manage/ProcessDefinition/getProcessDefinitionByBusinessId',
       desc: '根据业务Id获取流程定义xml'
+    }
+  ],
+  PlatGantt: [
+    {
+      name: 'getPlanGanttData',
+      method: 'POST',
+      path: '/product/pm/plan/loadPlanGanttData',
+      mockPath: '/product/pm/plan/loadPlanGanttData',
+      desc: '计划编制数据查询'
+    }
+  ],
+  taskAttribute: [
+    {
+      name: 'listData',
+      method: 'POST',
+      path: '/taskType/listData',
+      mockPath: '/taskType/listData',
+      desc: '任务属性设置-列表接口'
+    },
+    {
+      name: 'getInfo',
+      method: 'POST',
+      path: '/taskType/getInfo',
+      mockPath: '/taskType/getInfo',
+      desc: '任务属性设置-修改接口'
+    },
+    {
+      name: 'saveData',
+      method: 'POST',
+      path: '/taskType/saveData',
+      mockPath: '/taskType/saveData',
+      desc: '任务属性设置-修改接口'
+    },
+    {
+      name: 'delete',
+      method: 'POST',
+      path: '/taskType/delete',
+      mockPath: '/taskType/delete',
+      desc: '任务属性设置-删除接口'
     }
   ]
 }

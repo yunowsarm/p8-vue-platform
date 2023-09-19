@@ -1,5 +1,14 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <form-list ref="form" label-width="150px" @saved="saved" :data-source="dataSource" :api="saveApi" :form="formData" :other-param="otherParam">
+  <form-list ref="form"
+             label-width="150px"
+             @saved="saved"
+             :data-source="dataSource"
+             :api="saveApi"
+             :form="formData"
+             :other-param="otherParam">
     <template #dataSourceType>
       <el-radio-group v-model="formData.dataSourceType">
         <el-radio-button :label="1">数据字典</el-radio-button>
@@ -7,28 +16,50 @@
       </el-radio-group>
     </template>
     <template #reportSqlId>
-      <el-select v-model="formData.reportSqlId" placeholder="请选择SQL数据视图" @change="onSqlIdChange">
-        <el-option v-for="item in SqlViewData" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+      <el-select v-model="formData.reportSqlId"
+                 placeholder="请选择SQL数据视图"
+                 @change="onSqlIdChange">
+        <el-option v-for="item in SqlViewData"
+                   :key="item.value"
+                   :label="item.label"
+                   :value="item.value"> </el-option>
       </el-select>
     </template>
     <template #reportId>
-      <el-select v-model="formData.reportId" placeholder="请选择表格组件" @change="onReportIdChange">
-        <el-option v-for="item in ReportData" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+      <el-select v-model="formData.reportId"
+                 placeholder="请选择表格组件"
+                 @change="onReportIdChange">
+        <el-option v-for="item in ReportData"
+                   :key="item.value"
+                   :label="item.label"
+                   :value="item.value"> </el-option>
       </el-select>
     </template>
     <template #option.labelCol>
-      <el-select v-model="formData.option.labelCol" placeholder="请选择SQL数据列">
-        <el-option v-for="item in sqlViewCols" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+      <el-select v-model="formData.option.labelCol"
+                 placeholder="请选择SQL数据列">
+        <el-option v-for="item in sqlViewCols"
+                   :key="item.value"
+                   :label="item.label"
+                   :value="item.value"> </el-option>
       </el-select>
     </template>
     <template #option.valueCol>
-      <el-select v-model="formData.option.valueCol" placeholder="请选择SQL数据列">
-        <el-option v-for="item in sqlViewCols" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+      <el-select v-model="formData.option.valueCol"
+                 placeholder="请选择SQL数据列">
+        <el-option v-for="item in sqlViewCols"
+                   :key="item.value"
+                   :label="item.label"
+                   :value="item.value"> </el-option>
       </el-select>
     </template>
     <template #option.pidCol>
-      <el-select v-model="formData.option.pidCol" placeholder="请选择SQL数据列">
-        <el-option v-for="item in sqlViewCols" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+      <el-select v-model="formData.option.pidCol"
+                 placeholder="请选择SQL数据列">
+        <el-option v-for="item in sqlViewCols"
+                   :key="item.value"
+                   :label="item.label"
+                   :value="item.value"> </el-option>
       </el-select>
     </template>
     <template slot="btn">
@@ -60,7 +91,7 @@ export default {
     'el-select': Select,
     'el-option': Option
   },
-  data() {
+  data () {
     return {
       saveApi: 'selection.save',
       SqlViewData: [],
@@ -92,7 +123,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     console.log('formData', this.formData)
     let _this = this
     if (this.selectionTypeId !== 3) {
@@ -153,7 +184,7 @@ export default {
     }
   },
   computed: {
-    dataSource() {
+    dataSource () {
       let formDataSource
       switch (this.formData.dataSourceType) {
         // 数据字典
@@ -184,14 +215,14 @@ export default {
     }
   },
   methods: {
-    saved(res) {
+    saved (res) {
       console.log('edit saved')
       this.$emit('saveSuccess', res)
     },
-    cancel() {
+    cancel () {
       this.$emit('cancel')
     },
-    onSqlIdChange(item) {
+    onSqlIdChange (item) {
       console.log('onSqlIdChange', item)
       let _this = this
       this.$api['selection.getSqlViewAllColumn']({ id: item }).then(function (res) {
@@ -200,7 +231,7 @@ export default {
         // sqlViewCols = res.data
       })
     },
-    onReportIdChange(reportId) {
+    onReportIdChange (reportId) {
       console.log('onReportIdChange', reportId)
       let _this = this
       this.$api['selection.getColumnsByReportId']({ id: reportId }).then(function (res) {

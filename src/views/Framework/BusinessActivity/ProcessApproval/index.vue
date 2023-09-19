@@ -1,63 +1,91 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <normal-layout
-class="process-approval-layout" :header-visible="false" :full-height="true" :normal-layout="layoutConfig">
+  <normal-layout class="process-approval-layout"
+                 :header-visible="false"
+                 :full-height="true"
+                 :normal-layout="layoutConfig">
     <template #west>
-      <common-tabs
-class="custom-common-tabs" :active-tabs="activeTabs" type="border-card" :tabs-data="tabs" height="auto" @tab-click="tabClick">
+      <common-tabs class="custom-common-tabs"
+                   :active-tabs="activeTabs"
+                   type="border-card"
+                   :tabs-data="tabs"
+                   height="auto"
+                   @tab-click="tabClick">
         <template #pending_label>
           <!-- <el-badge :value="pendingTotal"
                     :max="99"
                     class="item"></el-badge> -->
         </template>
         <template #pending>
-          <pending-list
-v-if="activeTabs === 'pending'" :approved-task-id="approvedTaskId" :refresh-flag="refreshFlag" @itemClick="select" @selection="selectionChange" ref="pending"></pending-list>
+          <pending-list v-if="activeTabs === 'pending'"
+                        :approved-task-id="approvedTaskId"
+                        :refresh-flag="refreshFlag"
+                        @itemClick="select"
+                        @selection="selectionChange"
+                        ref="pending"></pending-list>
         </template>
 
         <template #claim_label>
-          <el-badge
-:value="claimTotal" :max="99" class="item" type="warning"></el-badge>
+          <el-badge :value="claimTotal"
+                    :max="99"
+                    class="item"
+                    type="warning"></el-badge>
         </template>
         <template #claim>
-          <claim-list
-:approved-task-id="approvedTaskId" @itemClick="claimSelect" ref="claim"></claim-list>
+          <claim-list :approved-task-id="approvedTaskId"
+                      @itemClick="claimSelect"
+                      ref="claim"></claim-list>
         </template>
 
         <template #history>
-          <history-list
-v-if="activeTabs === 'history'" @itemClick="historySelect" :refresh-flag="refreshFlag" ref="history"></history-list>
+          <history-list v-if="activeTabs === 'history'"
+                        @itemClick="historySelect"
+                        :refresh-flag="refreshFlag"
+                        ref="history"></history-list>
         </template>
 
         <template #initiated>
-          <initiated-list
-v-if="activeTabs === 'initiated'" @itemClick="initiatedSelected" :refresh-flag="refreshFlag" ref="initiated"></initiated-list>
+          <initiated-list v-if="activeTabs === 'initiated'"
+                          @itemClick="initiatedSelected"
+                          :refresh-flag="refreshFlag"
+                          ref="initiated"></initiated-list>
         </template>
       </common-tabs>
       <!--   批量审批弹出框   -->
-      <batch-approval
-v-if="batchApprovalVisible" :dialog-visible="batchApprovalVisible" :selection="selection" @close="batchApprovalClose" @approved="approved"></batch-approval>
+      <batch-approval v-if="batchApprovalVisible"
+                      :dialog-visible="batchApprovalVisible"
+                      :selection="selection"
+                      @close="batchApprovalClose"
+                      @approved="approved"></batch-approval>
       <!--  批量审批按钮    -->
-      <el-tooltip
-placement="top" content="没有选择行记录时不可进行批量审批操作" :disabled="selection.length !== 0">
+      <el-tooltip placement="top"
+                  content="没有选择行记录时不可进行批量审批操作"
+                  :disabled="selection.length !== 0">
         <span class="commonButton-style">
-          <el-button
-type="primary" :disabled="selection.length === 0" @click="batchApproval"> 批量审批</el-button>
+          <el-button type="primary"
+                     :disabled="selection.length === 0"
+                     @click="batchApproval"> 批量审批</el-button>
         </span>
       </el-tooltip>
-      <refresh-btn
-class="refresh-style" @refresh="refreshHandle"></refresh-btn>
+      <refresh-btn class="refresh-style"
+                   @refresh="refreshHandle"></refresh-btn>
     </template>
     <template #center>
-      <approval
-v-if="activeTabs == 'pending' && pendingSelected" :selected-approval="pendingSelected" :data-source="approveDataSource" @approved="approved" />
-      <claim
-v-else-if="activeTabs == 'claim' && claimSelected" :selected-approval="claimSelected" @approved="approved" />
-      <history
-v-else-if="activeTabs == 'history' && historySelected" :selected-approval="historySelected" />
-      <initiated
-v-else-if="activeTabs == 'initiated' && initiatedSelected" :selected-approval="initiatedSelected" />
-      <span
-v-else class="span-bg"></span>
+      <approval v-if="activeTabs == 'pending' && pendingSelected"
+                :selected-approval="pendingSelected"
+                :data-source="approveDataSource"
+                @approved="approved" />
+      <claim v-else-if="activeTabs == 'claim' && claimSelected"
+             :selected-approval="claimSelected"
+             @approved="approved" />
+      <history v-else-if="activeTabs == 'history' && historySelected"
+               :selected-approval="historySelected" />
+      <initiated v-else-if="activeTabs == 'initiated' && initiatedSelected"
+                 :selected-approval="initiatedSelected" />
+      <span v-else
+            class="span-bg"></span>
     </template>
   </normal-layout>
 </template>
@@ -94,7 +122,7 @@ export default {
     RefreshBtn,
     BatchApproval
   },
-  data() {
+  data () {
     return {
       activeTabs: 'pending',
       pendingSelected: null,
@@ -146,7 +174,7 @@ export default {
       refreshFlag: 1
     }
   },
-  mounted() {
+  mounted () {
     const this_ = this
     this_.saveRemind()
     setInterval(function () {
@@ -163,15 +191,15 @@ export default {
   },
   computed: {},
   methods: {
-    refreshHandle(flag) {
+    refreshHandle (flag) {
       this.refreshFlag = flag
       this.$refs.pending.$refs.table.clearSelection()
       this.selection = []
     },
-    saveRemind() {
-      this.$api['PersonalProcessApproval.saveApproveMsg']({ id: null }).then((res) => {})
+    saveRemind () {
+      this.$api['PersonalProcessApproval.saveApproveMsg']({ id: null }).then((res) => { })
     },
-    select(r) {
+    select (r) {
       const options = [{ label: '通过', value: '1' }]
       if (r && (r.isMultipleInstance === '0' || r.taskDefKey.indexOf('notMultiInstance') !== -1)) {
         options.push({ label: '完善计划', value: '0' })
@@ -200,34 +228,34 @@ export default {
       ]
       this.pendingSelected = r
     },
-    claimSelect(r) {
+    claimSelect (r) {
       this.claimSelected = r
     },
-    historySelect(r) {
+    historySelect (r) {
       this.historySelected = r
     },
-    initiatedSelect(r) {
+    initiatedSelect (r) {
       this.initiatedSelected = r
     },
-    approved(taskId) {
+    approved (taskId) {
       this.approvedTaskId = taskId
       this.$emit('approved')
     },
-    tabClick(target) {
+    tabClick (target) {
       this.activeTabs = target.name
       this.refreshFlag = 0
     },
-    batchApproval(record) {
+    batchApproval (record) {
       this.batchApprovalVisible = true
     },
-    batchApprovalClose() {
+    batchApprovalClose () {
       this.batchApprovalVisible = false
       this.refreshHandle(true)
     },
-    reSearchTableData() {
+    reSearchTableData () {
       this.$refs.pending.$refs.table.searchData()
     },
-    selectionChange(selection) {
+    selectionChange (selection) {
       this.selection = selection
     }
   }

@@ -1,3 +1,6 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <div :style="{ height: clientHeight, width: clientWidth }"></div>
 </template>
@@ -18,14 +21,14 @@ const defaultConfig = {
 
 export default {
   computed: {
-    editorConfig() {
+    editorConfig () {
       // 这里主要是防止 props `config` 中只配置了一部分，无法使用默认值
       return Object.assign({}, defaultConfig, this.config)
     },
-    clientWidth() {
+    clientWidth () {
       return this.width
     },
-    clientHeight() {
+    clientHeight () {
       return this.height
     }
   },
@@ -51,7 +54,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       editor: null
     }
@@ -60,7 +63,7 @@ export default {
     this.editor.destroy()
     this.editor.container.remove()
   },
-  mounted() {
+  mounted () {
     this.$nextTick(() => {
       let { lang, theme } = this.editorConfig
       let editor
@@ -93,7 +96,7 @@ export default {
     })
   },
   methods: {
-    dispatch(componentName, eventName, params) {
+    dispatch (componentName, eventName, params) {
       var parent = this.$parent || this.$root
       var name = parent.$options.componentName
 

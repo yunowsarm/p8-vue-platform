@@ -1,28 +1,51 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <list-layout>
     <template #north>
-      <common-button :comp="comp" :button-type="'round'" :custom-button-data="customButtonData"></common-button>
+      <common-button :comp="comp"
+                     :button-type="'round'"
+                     :custom-button-data="customButtonData"></common-button>
     </template>
     <template #center>
-      <common-table ref="table" :columns="columns" api="formGenerator.tableList" :table-refresh="tableRefresh">
+      <common-table ref="table"
+                    :columns="columns"
+                    api="formGenerator.tableList"
+                    :table-refresh="tableRefresh">
         <template #operation="{ scope }">
-          <el-button type="text" @click="modify(scope)">修改</el-button>
-          <el-button type="text" @click="remove(scope)">删除</el-button>
-          <el-button type="text" @click="functionTest(scope)">功能测试</el-button>
-          <el-button type="text" @click="tableAddress(scope)">表格配置地址</el-button>
+          <el-button type="text"
+                     @click="modify(scope)">修改</el-button>
+          <el-button type="text"
+                     @click="remove(scope)">删除</el-button>
+          <el-button type="text"
+                     @click="functionTest(scope)">功能测试</el-button>
+          <el-button type="text"
+                     @click="tableAddress(scope)">表格配置地址</el-button>
           <!-- <el-button type="text" @click="viewAddress(scope)">查看配置地址</el-button> -->
         </template>
       </common-table>
     </template>
     <template #drawer-panel>
-      <common-drawer :title="drawerTitle" :visible="visible" size="100%" @close="tableEditClose">
+      <common-drawer :title="drawerTitle"
+                     :visible="visible"
+                     size="100%"
+                     @close="tableEditClose">
         <template #drawer>
-          <table-list-edit :record="record" @cancel="tableEditClose" @saveSuccess="saveCallback"></table-list-edit>
+          <table-list-edit :record="record"
+                           @cancel="tableEditClose"
+                           @saveSuccess="saveCallback"></table-list-edit>
         </template>
       </common-drawer>
-      <common-drawer :title="functionTestTitle" :visible="functionTestVisible" size="100%" @close="functionTestClose">
+      <common-drawer :title="functionTestTitle"
+                     :visible="functionTestVisible"
+                     size="100%"
+                     @close="functionTestClose">
         <template #drawer>
-          <table-render :record="record" :code="record.code" @saveSuccess="saveCallback" :report-param="{}"></table-render>
+          <table-render :record="record"
+                        :code="record.code"
+                        @saveSuccess="saveCallback"
+                        :report-param="{}"></table-render>
         </template>
       </common-drawer>
     </template>
@@ -44,7 +67,7 @@ export default {
     TableRender,
     CommonButton
   },
-  data() {
+  data () {
     const columns = [
       {
         title: '表格编码',
@@ -124,7 +147,7 @@ export default {
     }
   },
   methods: {
-    tableRefresh(param) {
+    tableRefresh (param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')
@@ -133,17 +156,17 @@ export default {
           console.log('异步失败的操作')
         })
     },
-    edit() {
+    edit () {
       this.record.id = ''
       this.drawerTitle = '新建数据表格'
       this.visible = true
     },
-    modify(scope) {
+    modify (scope) {
       this.record = Object.assign({}, scope.row)
       this.drawerTitle = '修改数据表格'
       this.visible = true
     },
-    remove(scope) {
+    remove (scope) {
       let that = this
       this.$confirm('是否确定要删除该表格？', '提示', {
         confirmButtonText: '确定',
@@ -162,32 +185,32 @@ export default {
           console.log(e)
         })
     },
-    functionTest(scope) {
+    functionTest (scope) {
       this.functionTestTitle = '功能测试'
       this.record = Object.assign({}, scope.row)
       this.functionTestVisible = true
     },
-    tableAddress(scope) {
+    tableAddress (scope) {
       this.$confirm('Framework/ComponentsMananger/Grid/Components/tableRender?code=' + scope.row.code, '表格配置地址', {
         confirmButtonText: '确定',
         showCancelButton: false,
         type: 'info'
       })
     },
-    viewAddress(scope) {
+    viewAddress (scope) {
       this.$confirm('Framework/ComponentsMananger/Grid/Components/viewRender?code=XXX&record={XXX:XXX}', '查看页面配置地址', {
         confirmButtonText: '确定',
         showCancelButton: false,
         type: 'info'
       })
     },
-    tableEditClose() {
+    tableEditClose () {
       this.visible = false
     },
-    functionTestClose() {
+    functionTestClose () {
       this.functionTestVisible = false
     },
-    saveCallback() {
+    saveCallback () {
       this.$refs.table.searchData()
       this.tableEditClose()
     }

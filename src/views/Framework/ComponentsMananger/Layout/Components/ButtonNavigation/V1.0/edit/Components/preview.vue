@@ -1,22 +1,33 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <common-dialog title="预览" :visible="visible" :show-handle-btn="false" :dialog-height="dialogHeight" @handle-cancel="handleCancel" @close="handleCancel">
+  <common-dialog title="预览"
+                 :visible="visible"
+                 :show-handle-btn="false"
+                 :dialog-height="dialogHeight"
+                 @handle-cancel="handleCancel"
+                 @close="handleCancel">
     <template #dialog>
-      <normal-layout :header-visible="false" :split-layout="true">
+      <normal-layout :header-visible="false"
+                     :split-layout="true">
         <template #west>
-          <common-tree ref="commonTree" :default-expanded-keys="defaultExpandedKeys" :default-expand-all="false" :data="treeData" @select="onSelect"></common-tree>
+          <common-tree ref="commonTree"
+                       :default-expanded-keys="defaultExpandedKeys"
+                       :default-expand-all="false"
+                       :data="treeData"
+                       @select="onSelect"></common-tree>
         </template>
         <template #center>
           <!-- <component :is="componentUrl" :code="code"></component> -->
-          <component
-            :is="componentUrl"
-            :code="componentsConfig.code"
-            :data-view-id="componentsConfig.dataViewId"
-            :record="{ desformCode: componentsConfig.codeForm }"
-            :permission-vo="componentsConfig.permissionVo"
-            :layout-config="componentsConfig"
-            :kanban-config="componentsConfig"
-            ref="components"
-          ></component>
+          <component :is="componentUrl"
+                     :code="componentsConfig.code"
+                     :data-view-id="componentsConfig.dataViewId"
+                     :record="{ desformCode: componentsConfig.codeForm }"
+                     :permission-vo="componentsConfig.permissionVo"
+                     :layout-config="componentsConfig"
+                     :kanban-config="componentsConfig"
+                     ref="components"></component>
         </template>
       </normal-layout>
     </template>
@@ -41,13 +52,13 @@ export default {
       }
     }
   },
-  provide() {
+  provide () {
     return {
       provideParams: this.provideParams
     }
   },
   computed: {
-    componentUrl() {
+    componentUrl () {
       console.log(this.asyncComponents, '===this.asyncComponents')
       if (this.asyncComponents) {
         return () => import(`@/views/${this.asyncComponents}.vue`)
@@ -56,7 +67,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       dialogHeight: document.documentElement.clientHeight * 0.6,
       queryParam: {},
@@ -78,11 +89,11 @@ export default {
     CommonDialog,
     CommonTable
   },
-  created() {
+  created () {
     this.init()
   },
   methods: {
-    async init() {
+    async init () {
       const { treeSettingsParmars, treeData, defaultComponents } = this.previewParmars
       this.componentsConfig = defaultComponents
       // 获取tree数据
@@ -115,9 +126,9 @@ export default {
         this.componentsConfig = defaultComponents
       }
     },
-    getFirstChild(data) {
+    getFirstChild (data) {
       let result = ''
-      function filterData(treeData) {
+      function filterData (treeData) {
         if (treeData[0].children && treeData[0].children.length) {
           filterData(treeData[0].children)
         } else {
@@ -127,10 +138,10 @@ export default {
       filterData(data)
       return result
     },
-    handleCancel() {
+    handleCancel () {
       this.$emit('close')
     },
-    onSelect(obj) {
+    onSelect (obj) {
       if (obj.id == '0') {
         return
       }
@@ -191,7 +202,7 @@ export default {
         }
       }
     },
-    getParams(node) {
+    getParams (node) {
       const { parentId, parmarsMap } = node
       let arr = []
       if (parmarsMap) return parmarsMap
@@ -217,7 +228,7 @@ export default {
       }
       return arr
     },
-    async getTreeData(treeSettingsParmars) {
+    async getTreeData (treeSettingsParmars) {
       let data
       let res = await this.$api['desLayout.execute']({ id: treeSettingsParmars.reportSqlId })
       let config = { labelCol: treeSettingsParmars.optionLabelCol, valueCol: treeSettingsParmars.optionValueCol, pidCol: treeSettingsParmars.optionPidCol }
@@ -249,10 +260,10 @@ export default {
       return data
     },
     // 获取默认展开数据key
-    getDefaultExpandedKeys(level, treeList) {
+    getDefaultExpandedKeys (level, treeList) {
       let arr = []
       let count = 0
-      function getData(data) {
+      function getData (data) {
         count++
         if (count > level) {
           return

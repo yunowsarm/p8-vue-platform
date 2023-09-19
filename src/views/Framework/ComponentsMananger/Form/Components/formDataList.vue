@@ -1,19 +1,34 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <list-layout>
     <template #north>
-      <el-button type="primary" round @click="edit">新建</el-button>
+      <el-button type="primary"
+                 round
+                 @click="edit">新建</el-button>
     </template>
     <template #center>
-      <div class="common-table" :style="{ height: flexHeight }">
+      <div class="common-table"
+           :style="{ height: flexHeight }">
         <div class="small-table">
-          <el-table ref="table" height="100%" stripe :data="tableData" row-key="id">
+          <el-table ref="table"
+                    height="100%"
+                    stripe
+                    :data="tableData"
+                    row-key="id">
             <template v-for="(item, index) in columns">
-              <el-table-column :prop="item.dataIndex" :label="item.title" :width="item.width" :key="index"></el-table-column>
+              <el-table-column :prop="item.dataIndex"
+                               :label="item.title"
+                               :width="item.width"
+                               :key="index"></el-table-column>
             </template>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <el-button type="text" @click="modify(scope)">修改</el-button>
-                <el-button type="text" @click="remove(scope)">删除</el-button>
+                <el-button type="text"
+                           @click="modify(scope)">修改</el-button>
+                <el-button type="text"
+                           @click="remove(scope)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -22,9 +37,15 @@
     </template>
     <template #drawer-panel>
       <!-- 表单数据新建 -->
-      <common-drawer :title="drawerTitle" :visible="editVisible" size="100%" :drawer-config="drawerConfig" @close="formEditClose">
+      <common-drawer :title="drawerTitle"
+                     :visible="editVisible"
+                     size="100%"
+                     :drawer-config="drawerConfig"
+                     @close="formEditClose">
         <template #drawer>
-          <form-data-edit @save-success="saveCallback" :record="record" :data-view-id="dataViewId"></form-data-edit>
+          <form-data-edit @save-success="saveCallback"
+                          :record="record"
+                          :data-view-id="dataViewId"></form-data-edit>
         </template>
       </common-drawer>
     </template>
@@ -53,7 +74,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     const mh = document.documentElement.clientHeight - 160 + 40
     return {
       flexHeight: mh + 'px',
@@ -69,7 +90,7 @@ export default {
       tableData: []
     }
   },
-  async mounted() {
+  async mounted () {
     window.addEventListener('resize', this._initTableSize)
     let that = this
     this.$api['formGenerator.getFormFieldsList']({ id: this.record.id }).then(function (res) {
@@ -88,14 +109,14 @@ export default {
   },
   watch: {
     columns: {
-      handler(val) {
+      handler (val) {
         this.renderColumn = val
       },
       deep: true
     }
   },
   methods: {
-    _initTableSize() {
+    _initTableSize () {
       const vm = this
       let timer = null
       // 这里增加一个延迟保证不会触发频次不会太高,减少开销
@@ -106,7 +127,7 @@ export default {
         timer = null
       }, 300)
     },
-    refreshTable() {
+    refreshTable () {
       let that = this
       this.$api['formGenerator.formCallDataList']({ desFormId: this.record.id })
         .then(function (res) {
@@ -116,17 +137,17 @@ export default {
           console.log(error)
         })
     },
-    edit() {
+    edit () {
       this.dataViewId = ''
       this.drawerTitle = '新建表单'
       this.editVisible = true
     },
-    modify(scope) {
+    modify (scope) {
       this.dataViewId = scope.row.ID
       this.drawerTitle = '修改表单'
       this.editVisible = true
     },
-    remove(scope) {
+    remove (scope) {
       let that = this
       this.$confirm('是否确定要删除该条表单数据？', '提示', {
         confirmButtonText: '确定',
@@ -147,10 +168,10 @@ export default {
           console.log(e)
         })
     },
-    formEditClose() {
+    formEditClose () {
       this.editVisible = false
     },
-    saveCallback() {
+    saveCallback () {
       this.refreshTable()
       this.formEditClose()
     }

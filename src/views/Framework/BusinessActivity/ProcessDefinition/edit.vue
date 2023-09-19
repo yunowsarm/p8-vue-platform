@@ -1,8 +1,22 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <div>
-    <common-dialog :title="title" :visible="visible" @close="handleCancel" width="500px" :dialog-height="240" :show-handle-btn="false" :close-on-click-modal="false" :close-on-press-escape="false">
+    <common-dialog :title="title"
+                   :visible="visible"
+                   @close="handleCancel"
+                   width="500px"
+                   :dialog-height="240"
+                   :show-handle-btn="false"
+                   :close-on-click-modal="false"
+                   :close-on-press-escape="false">
       <template #dialog>
-        <form-list ref="form" :form="formData" @saved="saved" :data-source="dataSource" :api="saveApi">
+        <form-list ref="form"
+                   :form="formData"
+                   @saved="saved"
+                   :data-source="dataSource"
+                   :api="saveApi">
           <template slot="btn">
             <el-button @click="visible = false">取 消</el-button>
           </template>
@@ -29,7 +43,7 @@ export default {
   props: {
     record: {
       type: Object,
-      default: () => {}
+      default: () => { }
     },
     visible: {
       type: Boolean,
@@ -40,7 +54,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       confirmLoading: false,
       saveApi: 'ProcessDefinition.save',
@@ -116,21 +130,21 @@ export default {
   },
 
   methods: {
-    rendered() {},
-    showMessage(obj, message, type) {
+    rendered () { },
+    showMessage (obj, message, type) {
       obj.$message({
         message: message,
         type: type
       })
     },
-    saved(res) {
+    saved (res) {
       console.log('edit saved')
       this.$emit('save-success', res)
     },
-    handleOk(e) {
+    handleOk (e) {
       this.$emit('close-modal')
     },
-    handleCancel(e) {
+    handleCancel (e) {
       this.$emit('close-modal')
     }
   }

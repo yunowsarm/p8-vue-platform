@@ -1,9 +1,22 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <common-dialog title="参数映射" :visible="visible" @handle-cancel="handleCancel" @handle-ok="handleOk" @close="handleCancel" width="40%" :dialog-height="dialogHeight">
+  <common-dialog title="参数映射"
+                 :visible="visible"
+                 @handle-cancel="handleCancel"
+                 @handle-ok="handleOk"
+                 @close="handleCancel"
+                 width="40%"
+                 :dialog-height="dialogHeight">
     <template #dialog>
       <list-layout :header-visible="false">
         <template #center>
-          <common-table ref="table" :columns="columns" :no-api-table-data="noApiTableData" :pagination="false" :table-setting="false">
+          <common-table ref="table"
+                        :columns="columns"
+                        :no-api-table-data="noApiTableData"
+                        :pagination="false"
+                        :table-setting="false">
             <template #after="{ scope }">
               <el-input v-model="scope.row.after"></el-input>
             </template>
@@ -31,7 +44,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       dialogHeight: 320,
       columns: [
@@ -65,10 +78,10 @@ export default {
     CommonTable
   },
   methods: {
-    handleCancel() {
+    handleCancel () {
       this.$emit('close')
     },
-    handleOk(e) {
+    handleOk (e) {
       this.$emit('handleOk', this.noApiTableData)
     }
   }

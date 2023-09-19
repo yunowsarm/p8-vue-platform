@@ -1,9 +1,24 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template class="batch-approval">
-  <el-dialog title="批量审批" :visible.sync="dialogVisible" width="40%" :before-close="close" :modal="false" :close-on-click-modal="false">
-    <form-list ref="form" :data-source="dataSource" :api="saveApi" :form="formData" :exist-default-btn="false" @form-data-change="formDataChange"></form-list>
-    <div slot="footer" class="dialog-footer">
+  <el-dialog title="批量审批"
+             :visible.sync="dialogVisible"
+             width="40%"
+             :before-close="close"
+             :modal="false"
+             :close-on-click-modal="false">
+    <form-list ref="form"
+               :data-source="dataSource"
+               :api="saveApi"
+               :form="formData"
+               :exist-default-btn="false"
+               @form-data-change="formDataChange"></form-list>
+    <div slot="footer"
+         class="dialog-footer">
       <el-button @click="close">取 消</el-button>
-      <el-button type="primary" @click="commitApproval">提交审批</el-button>
+      <el-button type="primary"
+                 @click="commitApproval">提交审批</el-button>
     </div>
   </el-dialog>
 </template>
@@ -59,12 +74,12 @@ export default {
       }
     }
   },
-  created() {
+  created () {
     if (this.selection.length === 0) {
       this.close()
     }
   },
-  data() {
+  data () {
     return {
       isCustomValidate: true,
       formData: {
@@ -80,10 +95,10 @@ export default {
     }
   },
   methods: {
-    close() {
+    close () {
       this.$emit('close')
     },
-    formDataChange(formSub) {
+    formDataChange (formSub) {
       let formData = formSub.formData
       if (formData.approvalResult === '0') {
         this.msg = '驳回'
@@ -98,7 +113,7 @@ export default {
         this.formData.approvalComment = this.$store.state.project.baseConfig.defaultCommentYes
       }
     },
-    commitApproval() {
+    commitApproval () {
       let that = this
       if (!this.formData.approvalResult) {
         this.$message({ message: '请选择审批结果', type: 'warning' })
@@ -132,7 +147,7 @@ export default {
           that.close()
         })
     },
-    saveForm(params) {
+    saveForm (params) {
       let that = this
       let loading = that.$loading({
         text: '加载中...'

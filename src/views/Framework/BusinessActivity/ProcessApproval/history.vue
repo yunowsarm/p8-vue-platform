@@ -1,3 +1,6 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <div class="container">
     <div class="approveContent">
@@ -7,16 +10,21 @@
           审批意见
         </div>
         <div>
-          <form-list
-v-if="formValidate" ref="form" label-width="120px" :data-source="dataSource" :exist-default-btn="false" :api="saveApi" :form="formData">
+          <form-list v-if="formValidate"
+                     ref="form"
+                     label-width="120px"
+                     :data-source="dataSource"
+                     :exist-default-btn="false"
+                     :api="saveApi"
+                     :form="formData">
             <template #uploadFiles>
               <div class="edit-outputdata-view">
                 <ul class="file-list">
-                  <li
-v-for="item in formData.uploadFiles" :key="item.id">
+                  <li v-for="item in formData.uploadFiles"
+                      :key="item.id">
                     <p>
-                      <span
-class="filename" @click="downloadOutputRequsetFile(item)">
+                      <span class="filename"
+                            @click="downloadOutputRequsetFile(item)">
                         {{ item.fileName }}
                       </span>
                     </p>
@@ -26,39 +34,34 @@ class="filename" @click="downloadOutputRequsetFile(item)">
             </template>
           </form-list>
         </div>
-        <common-tabs
-class="custom-tabs" type="border-card" :active-tabs="activeTabs" :tabs-data="tabs">
+        <common-tabs class="custom-tabs"
+                     type="border-card"
+                     :active-tabs="activeTabs"
+                     :tabs-data="tabs">
           <template #approval>
-            <component
-:style="{ height: tabsHeight}"
-              :selected-approval="selectedApproval"
-              :curr-entity-id="currEntityId"
-              v-if="formComp != null && formComp != ''"
-              :is="componentLoader"
-              v-bind="formCompProp"
-            />
+            <component :style="{ height: tabsHeight}"
+                       :selected-approval="selectedApproval"
+                       :curr-entity-id="currEntityId"
+                       v-if="formComp != null && formComp != ''"
+                       :is="componentLoader"
+                       v-bind="formCompProp" />
           </template>
           <template #bpmn>
-            <bpm-view
-:style="{ height: tabsHeight}"
-              v-if="selectedApproval.processDefId != ''"
-              :process-obj="{
+            <bpm-view :style="{ height: tabsHeight}"
+                      v-if="selectedApproval.processDefId != ''"
+                      :process-obj="{
                 processDefinitionId: selectedApproval.processDefId,
                 processInstanceId: selectedApproval.processInstId
-              }"
-            ></bpm-view>
+              }"></bpm-view>
           </template>
           <template #history>
-            <ProcessHistoryList
-             
-v-if="processInstId"
-              :style="{ height: tabsHeight }"
-              :table-api="historyDataApi"
-              :columns="historyColumns"
-              :process-inst-id="processInstId"
-              :business-key="businessKey"
-              :table-flex="tableFlex"
-            ></ProcessHistoryList>
+            <ProcessHistoryList v-if="processInstId"
+                                :style="{ height: tabsHeight }"
+                                :table-api="historyDataApi"
+                                :columns="historyColumns"
+                                :process-inst-id="processInstId"
+                                :business-key="businessKey"
+                                :table-flex="tableFlex"></ProcessHistoryList>
           </template>
         </common-tabs>
       </vue-perfect-scroll>
@@ -89,10 +92,10 @@ export default {
   props: {
     selectedApproval: {
       type: Object,
-      default: () => {}
+      default: () => { }
     }
   },
-  data() {
+  data () {
     return {
       tabsHeight: document.documentElement.clientHeight - 270 + 'px',
       businessId: '',
@@ -231,7 +234,7 @@ export default {
     }
   },
   computed: {
-    componentLoader() {
+    componentLoader () {
       const comp = this.formComp
       return () => import('@/views/' + comp)
     }
@@ -260,13 +263,13 @@ export default {
       }
     },
     approveContentTitle: {
-      handler(val) {
+      handler (val) {
         this.tabs[0].label = val
       },
       immediate: true
     }
   },
-  created() {
+  created () {
     this.processKey = this.selectedApproval.processKey
     if (this.ar.indexOf(this.processKey) !== -1) {
       this.historyDataApi = 'PersonalProcessApproval.customHistoryList'
@@ -282,14 +285,14 @@ export default {
     this.getBpmnSnapshootAndLoadData()
   },
   methods: {
-    getBpmnSnapshootAndLoadData() {
+    getBpmnSnapshootAndLoadData () {
       const this_ = this
       this.$api['PersonalProcessApproval.getBpmnSnapshoot']({ processInstanceId: this.processInstId }).then((res) => {
         this_.bpmnSnapshoot = res
         this.loadFormKey()
       })
     },
-    loadFormKey() {
+    loadFormKey () {
       const this_ = this
       this_.dataSource = this_.dataSourceDefault
       this_.$api['PersonalProcessApproval.getApproveContentViewUrl']({ taskId: this.selectedApproval.processTaskId }).then((res) => {
@@ -325,7 +328,7 @@ export default {
         this_.formValidate = true
       })
     },
-    loadApprovalFormData() {
+    loadApprovalFormData () {
       const this_ = this
       if (this_.formData.approvalParams && (this_.formData.approvalParams === 'canView' || this_.formData.approvalParams === 'canEdit')) {
         this_.$api['ProjectApply.getWholeCopyClearly']({ wholeDescribeId: this_.selectedApproval.businessKey }).then((res) => {
@@ -342,7 +345,7 @@ export default {
       }
       console.log(this_.formData, 'this_.formData')
     },
-    downloadOutputRequsetFile(item) {
+    downloadOutputRequsetFile (item) {
       // 输出要求-文件下载
       if (item.id) {
         this.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' })

@@ -1,14 +1,25 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <div style="padding: 10px">
     <el-divider>系统参数出参</el-divider>
     <div class="tips">*单击参数key即可复制</div>
-    <el-table :data="systemParamsGinseng" style="width: 100%" stripe border>
-      <el-table-column align="center" label="参数key" prop="key">
+    <el-table :data="systemParamsGinseng"
+              style="width: 100%"
+              stripe
+              border>
+      <el-table-column align="center"
+                       label="参数key"
+                       prop="key">
         <template slot-scope="scope">
-          <span class="pointer" v-copy="scope.row.key">{{ scope.row.key }}</span>
+          <span class="pointer"
+                v-copy="scope.row.key">{{ scope.row.key }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="参数值" prop="value"></el-table-column>
+      <el-table-column align="center"
+                       label="参数值"
+                       prop="value"></el-table-column>
     </el-table>
     <el-divider>页面参数出参</el-divider>
     <span style="padding: 0 10px; user-select: text">页面参数格式编写格式为：__PAGE_PARAMS.xxxx（例：__PAGE_PARAMS.ID）</span>
@@ -37,13 +48,13 @@ export default {
     //   }
     // }
   },
-  data() {
+  data () {
     return {
       systemParamsGinseng: [], // 系统参数出参systemParamsGinseng
       pageParamsGinseng: [] // 页面参数出参pageParamsGinseng
     }
   },
-  mounted() {
+  mounted () {
     const { user } = this.$store.state
     this.systemParamsGinseng = Object.keys(user.userInfo).map((item) => {
       return {

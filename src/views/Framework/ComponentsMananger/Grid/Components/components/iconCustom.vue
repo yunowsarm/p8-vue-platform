@@ -1,22 +1,36 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <common-dialog title="设置图标" :visible="visible" @handle-cancel="handleCancel" @handle-ok="handleOk" width="60%" @close="handleCancel" :dialog-height="300">
+  <common-dialog title="设置图标"
+                 :visible="visible"
+                 @handle-cancel="handleCancel"
+                 @handle-ok="handleOk"
+                 width="60%"
+                 @close="handleCancel"
+                 :dialog-height="300">
     <template #dialog>
-      <form-list ref="form" :data-source="dataSource" :form="formData" :exist-default-btn="false" label-width="100px">
+      <form-list ref="form"
+                 :data-source="dataSource"
+                 :form="formData"
+                 :exist-default-btn="false"
+                 label-width="100px">
         <template #icon>
-          <span :class="['icon_example', imageCt]" :style="{ color: iconColor }" @click="iconPopover = true"></span>
-          <common-dialog
-            title="图标选择"
-            width="50%"
-            v-if="iconPopover"
-            :visible="iconPopover"
-            :dialog-config="dialogConfig"
-            :dialog-height="dialogHeight"
-            @close="handleClose"
-            @handle-cancel="handleClose"
-            @handle-ok="doIconSelect"
-          >
+          <span :class="['icon_example', imageCt]"
+                :style="{ color: iconColor }"
+                @click="iconPopover = true"></span>
+          <common-dialog title="图标选择"
+                         width="50%"
+                         v-if="iconPopover"
+                         :visible="iconPopover"
+                         :dialog-config="dialogConfig"
+                         :dialog-height="dialogHeight"
+                         @close="handleClose"
+                         @handle-cancel="handleClose"
+                         @handle-ok="doIconSelect">
             <template #dialog>
-              <icon-selector @icon-select="iconSelect" :color-picker="true"></icon-selector>
+              <icon-selector @icon-select="iconSelect"
+                             :color-picker="true"></icon-selector>
             </template>
           </common-dialog>
         </template>
@@ -202,7 +216,7 @@ export default {
   },
   watch: {
     'formData.isDataDic': {
-      handler(val) {
+      handler (val) {
         if (val == '1') {
           this.dataSource = this.dataSource1
           this.getTreeData()
@@ -212,14 +226,14 @@ export default {
       }
     }
   },
-  created() {
+  created () {
     console.log(this.modifyRecord, '---modifyRecord--')
     if (this.modifyRecord) {
       this.formData = Object.assign({}, this.modifyRecord)
     }
   },
   methods: {
-    handleOk() {
+    handleOk () {
       let that = this
       this.$refs.form.validate().then((queryParams) => {
         that.dataList.forEach((el) => {
@@ -237,17 +251,17 @@ export default {
         that.$emit('handleOk', that.formData)
       })
     },
-    handleCancel() {
+    handleCancel () {
       this.$emit('close')
     },
-    handleClose() {
+    handleClose () {
       this.iconTempSel = null
       this.iconPopover = false
     },
-    iconSelect(select) {
+    iconSelect (select) {
       this.iconTempSel = select
     },
-    doIconSelect() {
+    doIconSelect () {
       if (this.iconTempSel) {
         this.formData.icon = this.iconTempSel.icon
         this.formData.color = this.iconTempSel.color
@@ -255,7 +269,7 @@ export default {
       }
       this.handleClose()
     },
-    getTreeData() {
+    getTreeData () {
       this.$api['dictionaryManagement.dictCategoryTree']({}).then((res) => {
         if (res[0] && res[0].children && res[0].children.length > 0) {
           res[0].children.forEach((el) => {

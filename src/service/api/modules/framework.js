@@ -152,6 +152,29 @@ export const system = {
       mockPath: '/framework/system/ThirdPartService/getYear',
       params: {},
       desc: '第三方接口管理>接口异常单条手动处理'
+    },
+    {
+      name: 'distributionAsAWhole',
+      method: 'POST',
+      path: '/product/pm/planManager/distributionAsAWhole',
+      mockPath: '/product/pm/planManager/distributionAsAWhole',
+      params: {},
+      desc: '计划列表>分发统筹'
+    },
+    {
+      name: 'saveLockUnlockForm',
+      method: 'POST',
+      path: '/product/pm/planManager/saveLockUnlockForm',
+      mockPath: '/product/pm/planManager/saveLockUnlockForm',
+      params: {},
+      desc: '计划列表>分发统筹'
+    },
+    {
+      name: 'loadLockUnlockFormData',
+      method: 'POST',
+      path: '/product/pm/planManager/loadLockUnlockFormData',
+      mockPath: '/product/pm/planManager/loadLockUnlockFormData',
+      desc: '项目管理->计划管理->计划加解锁表单数据获取'
     }
   ],
   schedulerTask: [
@@ -914,6 +937,13 @@ export const system = {
       path: '/attachment/download',
       mockPath: '/attachment/download',
       desc: '下载'
+    },
+    {
+      name: 'saveTaskType',
+      method: 'POST',
+      path: '/framework/system/PlanLogo/saveTaskType',
+      mockPath: '/framework/system/PlanLogo/saveTaskType',
+      desc: '任务类型操作设置'
     }
   ],
   extLink: [

@@ -1,20 +1,22 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <div class="list-content">
-    <div class="infinite-list-wrapper" style="overflow: auto">
-      <common-table
-        ref="table"
-        :columns="columns"
-        :flex="110"
-        :style="{ height: tableHeight }"
-        :table-setting="false"
-        :table-config="tableConfig"
-        :no-api-table-data="infiniteList"
-        :pagination-info="pageInfo"
-        @size-change="sizeChange"
-        @selection-change="pendingSelectionChange"
-        @row-click="rowClick"
-        @change-page="changePage"
-      ></common-table>
+    <div class="infinite-list-wrapper"
+         style="overflow: auto">
+      <common-table ref="table"
+                    :columns="columns"
+                    :flex="110"
+                    :style="{ height: tableHeight }"
+                    :table-setting="false"
+                    :table-config="tableConfig"
+                    :no-api-table-data="infiniteList"
+                    :pagination-info="pageInfo"
+                    @size-change="sizeChange"
+                    @selection-change="pendingSelectionChange"
+                    @row-click="rowClick"
+                    @change-page="changePage"></common-table>
     </div>
   </div>
 </template>
@@ -28,11 +30,11 @@ export default {
   components: {
     CommonTable
   },
-  mounted() {
+  mounted () {
     this.getPageSize()
     this.load()
   },
-  data() {
+  data () {
     const columns = [
       {
         type: 'selection',
@@ -133,14 +135,14 @@ export default {
     }
   },
   computed: {
-    noMore() {
+    noMore () {
       let { current, pages } = this.pageInfo
       return current === 0 ? false : current >= pages
     },
-    disabled() {
+    disabled () {
       return this.loading || this.noMore
     },
-    itemSelected() {
+    itemSelected () {
       return function (index) {
         return this.currentItemIndex === index ? 'item-selected' : ''
       }
@@ -163,19 +165,19 @@ export default {
         this.triggerSelect()
       }
     },
-    refreshFlag(val) {
+    refreshFlag (val) {
       this.refreshList(val)
     }
   },
   methods: {
-    sizeChange(size) {
+    sizeChange (size) {
       this.pageInfo.size = size
       this.load(this.param)
     },
-    pendingSelectionChange(selection) {
+    pendingSelectionChange (selection) {
       this.$emit('selection', selection)
     },
-    getPageSize() {
+    getPageSize () {
       const rowH = 40
       const headerH = 91
       this.$nextTick(() => {
@@ -183,18 +185,18 @@ export default {
         this.pageInfo.size = Math.floor(tableBodyH / rowH)
       })
     },
-    rowClick(row, column, e) {
+    rowClick (row, column, e) {
       this.$emit('itemClick', row)
     },
-    changePage(current) {
+    changePage (current) {
       this.pageInfo.current = current
       this.load(this.param)
     },
-    search(queryParam) {
+    search (queryParam) {
       this.load(queryParam)
     },
-    reSet() {},
-    load(queryParam) {
+    reSet () { },
+    load (queryParam) {
       this.loading = true
       let that = this
       this.infiniteList = []
@@ -211,18 +213,18 @@ export default {
         this.loading = false
       })
     },
-    triggerSelect(record, index) {
+    triggerSelect (record, index) {
       this.currentItemIndex = index
       this.triggerSelectRecord = record
       this.$emit('itemClick', record)
     },
-    refreshList(flag) {
+    refreshList (flag) {
       this.sortFn(flag)
       this.infiniteList = []
       this.pageInfo.current = 1
       this.load(this.param)
     },
-    sortFn(flag) {
+    sortFn (flag) {
       if (flag === undefined) {
         this.sortFn(this.sortNum)
       } else if (flag === 0) {

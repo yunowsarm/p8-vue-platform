@@ -27,7 +27,7 @@ module.exports = defineConfig({
       splitChunks: {
         chunks: 'all',
         minSize: 20000,
-        maxSize: 0,
+        // maxSize: 0,
         minChunks: 2,
         maxAsyncRequests: 30,
         maxInitialRequests: 30,

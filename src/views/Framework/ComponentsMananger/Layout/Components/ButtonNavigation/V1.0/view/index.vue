@@ -1,22 +1,31 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <normal-layout :header-visible="false" :split-layout="true">
+  <normal-layout :header-visible="false"
+                 :split-layout="true">
     <template #west>
-      <common-tree :default-expanded-keys="defaultExpandedKeys" :default-expand-all="false" :data="treeData" ref="commonTree" @select="onSelect"></common-tree>
+      <common-tree :default-expanded-keys="defaultExpandedKeys"
+                   :default-expand-all="false"
+                   :data="treeData"
+                   ref="commonTree"
+                   @select="onSelect"></common-tree>
     </template>
     <template #center>
-      <component
-        v-if="componentUrl"
-        :is="componentUrl"
-        :code="componentsConfig.code"
-        :data-view-id="componentsConfig.dataViewId"
-        :record="{ desformCode: componentsConfig.codeForm }"
-        :permission-vo="componentsConfig.permissionVo"
-        :layout-config="componentsConfig"
-        :kanban-config="componentsConfig"
-        :west-tree-param="provideParams.searchParams"
-        ref="components"
-      ></component>
-      <span v-else class="span-bg"></span>
+      <component v-if="componentUrl"
+                 :is="componentUrl"
+                 :code="componentsConfig.code"
+                 :data-view-id="componentsConfig.dataViewId"
+                 :record="{ desformCode: componentsConfig.codeForm }"
+                 :permission-vo="componentsConfig.permissionVo"
+                 :layout-config="componentsConfig"
+                 :kanban-config="componentsConfig"
+                 :west-tree-param="provideParams.searchParams"
+                 :isLayoutButton="true"
+                 @refresh="init()"
+                 ref="components"></component>
+      <span v-else
+            class="span-bg"></span>
     </template>
   </normal-layout>
 </template>
@@ -39,7 +48,7 @@ import { selectGenerateTree } from '@/views/Framework/ComponentsMananger/Layout/
 export default {
   name: 'ButtonNavigationView',
   computed: {
-    componentUrl() {
+    componentUrl () {
       console.log(this.asyncComponents, '===this.asyncComponents')
       if (this.asyncComponents) {
         return () => import(`@/views/${this.asyncComponents}.vue`)
@@ -48,12 +57,12 @@ export default {
       }
     }
   },
-  provide() {
+  provide () {
     return {
       provideParams: this.provideParams
     }
   },
-  data() {
+  data () {
     return {
       dialogHeight: document.documentElement.clientHeight * 0.6,
       queryParam: {},
@@ -84,18 +93,18 @@ export default {
     CommonTable,
     CommonButton
   },
-  created() {
+  created () {
     this.init()
   },
   watch: {
     $route: {
-      handler(val) {
+      handler (val) {
         this.init()
       }
     }
   },
   methods: {
-    async init() {
+    async init () {
       const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
       const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
       const res = await this.$api['desLayout.getLayoutJson']({ layoutCode: code, version: version })
@@ -130,9 +139,9 @@ export default {
         this.componentsConfig = defaultComponents
       }
     },
-    getFirstChild(data) {
+    getFirstChild (data) {
       let result = ''
-      function filterData(treeData) {
+      function filterData (treeData) {
         if (treeData[0].children && treeData[0].children.length) {
           filterData(treeData[0].children)
         } else {
@@ -142,10 +151,10 @@ export default {
       filterData(data)
       return result
     },
-    handleCancel() {
+    handleCancel () {
       this.$emit('close')
     },
-    onSelect(obj) {
+    onSelect (obj) {
       if (obj.id == '0') {
         return
       }
@@ -203,7 +212,7 @@ export default {
         }
       }
     },
-    getParams(node) {
+    getParams (node) {
       const { parentId, parmarsMap } = node
       let arr = []
       if (parmarsMap) return parmarsMap
@@ -229,7 +238,7 @@ export default {
       }
       return arr
     },
-    async getTreeData(treeSettingsParmars) {
+    async getTreeData (treeSettingsParmars) {
       let data
       const res = await this.$api['desLayout.execute']({ id: treeSettingsParmars.reportSqlId })
       const config = { labelCol: treeSettingsParmars.optionLabelCol, valueCol: treeSettingsParmars.optionValueCol, pidCol: treeSettingsParmars.optionPidCol }
@@ -261,10 +270,10 @@ export default {
       return data
     },
     // 获取默认展开数据key
-    getDefaultExpandedKeys(level, treeList) {
+    getDefaultExpandedKeys (level, treeList) {
       const arr = []
       let count = 0
-      function getData(data) {
+      function getData (data) {
         count++
         if (count > level) {
           return

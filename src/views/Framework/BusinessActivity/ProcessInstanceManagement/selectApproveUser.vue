@@ -1,27 +1,26 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <common-dialog
-    title="选择节点审批人"
-    :visible="isView"
-    :show-handle-btn="false"
-    :dialog-config="dialogConfig"
-    @handle-cancel="handleCancel"
-    @handle-ok="handleOk"
-    width="60%"
-    @close="handleCancel"
-    :dialog-height="dialogHeight"
-  >
+  <common-dialog title="选择节点审批人"
+                 :visible="isView"
+                 :show-handle-btn="false"
+                 :dialog-config="dialogConfig"
+                 @handle-cancel="handleCancel"
+                 @handle-ok="handleOk"
+                 width="60%"
+                 @close="handleCancel"
+                 :dialog-height="dialogHeight">
     <template #dialog>
-      <form-list
-        ref="form"
-        label-width="200px"
-        :data-source="selectUserDataSourceCur"
-        :api="saveApi"
-        :form="selectUserFormDataCur"
-        :is-custom-validate="isCustomValidate"
-        @saved="saved"
-        @custom-validate="customValidate"
-        @form-data-change="formDataChange"
-      >
+      <form-list ref="form"
+                 label-width="200px"
+                 :data-source="selectUserDataSourceCur"
+                 :api="saveApi"
+                 :form="selectUserFormDataCur"
+                 :is-custom-validate="isCustomValidate"
+                 @saved="saved"
+                 @custom-validate="customValidate"
+                 @form-data-change="formDataChange">
       </form-list>
     </template>
   </common-dialog>
@@ -56,7 +55,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'PersonalProcessApproval.setApproveUser',
       isCustomValidate: true,
@@ -72,7 +71,7 @@ export default {
       isView: false
     }
   },
-  mounted() {
+  mounted () {
     this.selectUserFormDataCur = Object.assign({}, this.selectUserFormData)
     this.selectUserDataSourceCur = [].concat(this.selectUserDataSource)
     console.log(this.selectUserDataSource, '====selectUserDataSource')
@@ -81,11 +80,11 @@ export default {
   },
   computed: {},
   methods: {
-    saved(res) {
+    saved (res) {
       this.$emit('close-modal')
     },
-    formDataChange(formSub) {},
-    customValidate(saveParams) {
+    formDataChange (formSub) { },
+    customValidate (saveParams) {
       let approveUserSet = []
       Object.keys(saveParams).forEach((k) => {
         if (k && k.indexOf('task') !== -1) {
@@ -114,8 +113,8 @@ export default {
         this.$refs.form.submitForm({ approveUserSet: approveUserSet }, this.saveApi)
       }
     },
-    handleOk(e) {},
-    handleCancel() {
+    handleOk (e) { },
+    handleCancel () {
       this.$confirm(`不指定下一节点审批人可能导致无人审批该任务，确定要继续吗？`, '警告', {
         confirmButtonText: '不指定',
         cancelButtonText: '取消',
