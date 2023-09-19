@@ -1,47 +1,69 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <common-dialog title="设置计算公式" :visible="visible" @handle-cancel="handleCancel" @handle-ok="handleOk" width="60%" @close="handleCancel" :dialog-height="dialogHeight">
+  <common-dialog title="设置计算公式"
+                 :visible="visible"
+                 @handle-cancel="handleCancel"
+                 @handle-ok="handleOk"
+                 width="60%"
+                 @close="handleCancel"
+                 :dialog-height="dialogHeight">
     <template #dialog>
       <div id="formulaPage">
         <!-- 公式编辑区域 -->
-        <div class="formulaView" id="formulaView" ref="formulaView" @click.stop="recordPosition()">
-          <div class="content-item" v-for="(item, index) in formulaList" :key="index" @click.stop="recordPosition(index)">
-            <div class="num" v-if="item.type == 'num'">&zwj;{{ item.value }}</div>
-            <div class="plain" v-else-if="item.type == 'plain'">&zwj;{{ item.value }}</div>
-            <div class="obj" v-else-if="item.type == 'obj'">&zwj;{{ item.key }}</div>
+        <div class="formulaView"
+             id="formulaView"
+             ref="formulaView"
+             @click.stop="recordPosition()">
+          <div class="content-item"
+               v-for="(item, index) in formulaList"
+               :key="index"
+               @click.stop="recordPosition(index)">
+            <div class="num"
+                 v-if="item.type == 'num'">&zwj;{{ item.value }}</div>
+            <div class="plain"
+                 v-else-if="item.type == 'plain'">&zwj;{{ item.value }}</div>
+            <div class="obj"
+                 v-else-if="item.type == 'obj'">&zwj;{{ item.key }}</div>
             <!--光标-->
-            <div class="cursor" v-if="item.cursor"></div>
+            <div class="cursor"
+                 v-if="item.cursor"></div>
           </div>
         </div>
         <div class="tab mt_10 flex-lr">
           <div class="operation">
-            <el-select
-              @change="
+            <el-select @change="
                 (e) => {
                   addItem(e, 'obj')
                 }
               "
-              style="width: 140px"
-              v-model="dataId"
-              placeholder="选择指标"
-            >
-              <el-option v-for="item in dataList" :label="item.name" :value="item.id" :key="item.id"></el-option>
+                       style="width: 140px"
+                       v-model="dataId"
+                       placeholder="选择指标">
+              <el-option v-for="item in dataList"
+                         :label="item.name"
+                         :value="item.id"
+                         :key="item.id"></el-option>
             </el-select>
-            <el-select
-              @change="
+            <el-select @change="
                 (e) => {
                   addItem(e, 'plain')
                 }
               "
-              v-model="operatorId"
-              placeholder="选择数学运算符"
-              style="width: 140px"
-              class="ml_20"
-            >
-              <el-option v-for="item in operatorList" :label="item.name" :value="item.id" :key="item.id"> </el-option>
+                       v-model="operatorId"
+                       placeholder="选择数学运算符"
+                       style="width: 140px"
+                       class="ml_20">
+              <el-option v-for="item in operatorList"
+                         :label="item.name"
+                         :value="item.id"
+                         :key="item.id"> </el-option>
             </el-select>
           </div>
           <div class="clear">
-            <span class="mr_10 pointer theme-col" @click="clearAll()"> 清除全部</span>
+            <span class="mr_10 pointer theme-col"
+                  @click="clearAll()"> 清除全部</span>
           </div>
         </div>
       </div>
@@ -63,13 +85,13 @@ export default {
   props: {
     dataList: {
       type: Array,
-      default() {
+      default () {
         return []
       }
     },
     defaultList: {
       type: Array,
-      default() {
+      default () {
         return []
       }
     },
@@ -112,11 +134,11 @@ export default {
     }
   },
   watch: {
-    formulaList(val) {
+    formulaList (val) {
       this.$emit('change', val)
     }
   },
-  created() {
+  created () {
     //监听鼠标事件
     this.$nextTick(function () {
       document.addEventListener('keydown', this.keydown, false)
@@ -124,22 +146,22 @@ export default {
     })
   },
 
-  destroyed() {
+  destroyed () {
     //移除监听事件
     document.removeEventListener('keydown', this.keydown, false)
     document.removeEventListener('click', this.formulaBlur)
   },
   methods: {
-    handleOk() {
+    handleOk () {
       this.$emit('handleOk', this.parsingFormula(), this.formulaList)
     },
-    handleCancel() {
+    handleCancel () {
       this.$emit('close')
     },
     // 获取
-    getFormula: function () {},
+    getFormula: function () { },
     // 点选时记录光标位置
-    recordPosition(index) {
+    recordPosition (index) {
       if (this.formulaList && this.formulaList.length > 0) {
         this.formulaList = this.formulaList.map((item, itemIndex) => {
           item.cursor = false
@@ -162,7 +184,7 @@ export default {
       // this.$forceUpdate();
     },
     //失去焦点
-    formulaBlur(e) {
+    formulaBlur (e) {
       this.formulaList = this.formulaList.map((item) => {
         item.cursor = false
         return item
@@ -219,7 +241,7 @@ export default {
       }
     },
     //清除全部
-    clearAll() {
+    clearAll () {
       this.formulaList = []
       let that = this
       setTimeout(function () {
@@ -227,7 +249,7 @@ export default {
       }, 100)
     },
     //删除
-    deleteItem(type) {
+    deleteItem (type) {
       let arr = JSON.parse(JSON.stringify(this.formulaList)),
         index = null
       const length = arr.length
@@ -250,7 +272,7 @@ export default {
       }
     },
     // 键盘输入
-    keydown(e) {
+    keydown (e) {
       //禁止输入
       // 检测光标是否存在
       let index,
@@ -319,14 +341,14 @@ export default {
     /**
      * 格式效验
      * */
-    formatValidation() {
+    formatValidation () {
       let objData = null
       let arr = this.formulaList.filter((item) => {
-          if (item.type == 'obj') {
-            objData = item
-          }
-          return item.key
-        }),
+        if (item.type == 'obj') {
+          objData = item
+        }
+        return item.key
+      }),
         data = { type: true, mag: '' }
       if (!objData) {
         data.mag = '至少添加一个指标'

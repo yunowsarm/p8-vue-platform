@@ -1,25 +1,32 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <list-layout :header-visible="headerVisible">
     <template #north>
-      <common-button :comp="comp" :select-records="selectRecords" :custom-button-data="buttonData"></common-button>
-      <search-form-list ref="search" v-if="searchData.length" :data-source="searchData" @search="search" @re-set="reSet"></search-form-list>
+      <common-button :comp="comp"
+                     :select-records="selectRecords"
+                     :custom-button-data="buttonData"></common-button>
+      <search-form-list ref="search"
+                        v-if="searchData.length"
+                        :data-source="searchData"
+                        @search="search"
+                        @re-set="reSet"></search-form-list>
     </template>
     <template #center>
-      <common-table
-        ref="table"
-        :comp="comp"
-        v-if="columns.length"
-        :columns="columns"
-        :params="tableParam"
-        :flex="160"
-        :custom-height="customHeight"
-        api="formGenerator.tableApply"
-        :table-refresh="tableRefresh"
-        :custom-button-data="buttonData"
-        @selection-change="handleSelectionChange"
-        @row-click="rowClick"
-        @column-fiter="columnFiter"
-      ></common-table>
+      <common-table ref="table"
+                    :comp="comp"
+                    v-if="columns.length"
+                    :columns="columns"
+                    :params="tableParam"
+                    :flex="160"
+                    :custom-height="customHeight"
+                    api="formGenerator.tableApply"
+                    :table-refresh="tableRefresh"
+                    :custom-button-data="buttonData"
+                    @selection-change="handleSelectionChange"
+                    @row-click="rowClick"
+                    @column-fiter="columnFiter"></common-table>
     </template>
   </list-layout>
 </template>
@@ -55,7 +62,7 @@ export default {
       default: true
     }
   },
-  data() {
+  data () {
     return {
       comp: this,
       selectRecords: [],
@@ -69,19 +76,19 @@ export default {
       record: {}
     }
   },
-  mounted() {
+  mounted () {
     this.getTableInfo(this.code)
   },
   watch: {
-    reportParam(val, oldVal) {
+    reportParam (val, oldVal) {
       this.rebuildParam(val)
     },
-    code(val, oldVal) {
+    code (val, oldVal) {
       this.getTableInfo(val)
     }
   },
   methods: {
-    getTableInfo(code) {
+    getTableInfo (code) {
       let _this = this
       this.$api['formGenerator.tableGetInfo']({ reportCode: this.code }).then((res) => {
         _this.record = res
@@ -174,7 +181,7 @@ export default {
         _this.rebuildParam(_this.reportParam)
       })
     },
-    tableRefresh(param) {
+    tableRefresh (param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')
@@ -183,14 +190,14 @@ export default {
           console.log('异步失败的操作')
         })
     },
-    search(param) {
+    search (param) {
       this.tableParam.param = param
     },
-    reSet() {
+    reSet () {
       // this.tableParam.param = {}
       // this.$refs.table.searchData()
     },
-    rebuildParam(val) {
+    rebuildParam (val) {
       let reportParam = {}
       let defaultReportParamArr = Object.keys(this.defaultReportParam)
       let sqlParamArr = Object.keys(this.sqlParam)
@@ -208,7 +215,7 @@ export default {
         reportParam: { ...this.sqlParam, ...this.defaultReportParam, ...reportParam }
       }
     },
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       if (this.selectType === 'single') {
         if (val.length >= 2) {
           // 删除索引为0的
@@ -221,12 +228,12 @@ export default {
       }
       this.$emit('selection-change', val)
     },
-    rowClick(val) {
+    rowClick (val) {
       if (this.record.enableClick) {
         this.$emit('row-click', val)
       }
     },
-    columnFiter(val) {
+    columnFiter (val) {
       this.tableParam.param = { ...val }
     }
   }

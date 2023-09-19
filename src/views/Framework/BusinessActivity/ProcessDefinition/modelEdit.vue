@@ -1,8 +1,23 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <div>
-    <el-dialog class="model_dialog" width="1500px" title="流程模板设计" :visible="visible" @close="handleCancel" :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-dialog class="model_dialog"
+               width="1500px"
+               title="流程模板设计"
+               :visible="visible"
+               @close="handleCancel"
+               :close-on-click-modal="false"
+               :close-on-press-escape="false">
       <div style="height: 750px">
-        <iframe :flex="115" id="modelFrame" name="modelFrame" frameborder="0" :src="modelUrl" style="width: 100%; height: 100%" scrolling="no"></iframe>
+        <iframe :flex="115"
+                id="modelFrame"
+                name="modelFrame"
+                frameborder="0"
+                :src="modelUrl"
+                style="width: 100%; height: 100%"
+                scrolling="no"></iframe>
       </div>
     </el-dialog>
   </div>
@@ -31,7 +46,7 @@ export default {
       default: '1'
     }
   },
-  data() {
+  data () {
     return {
       confirmLoading: false,
       modelUrl: `${process.env.BASE_URL}static/modeler.html?modelId=${this.modelId}`
@@ -39,10 +54,10 @@ export default {
   },
 
   methods: {
-    handleOk(e) {
+    handleOk (e) {
       this.$emit('close-modal')
     },
-    handleCancel(e) {
+    handleCancel (e) {
       this.$emit('close-modal')
     }
   }

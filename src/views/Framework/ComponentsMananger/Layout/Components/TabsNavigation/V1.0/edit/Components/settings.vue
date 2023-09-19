@@ -1,68 +1,134 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <common-dialog title="选项页导航设置" :visible="visible" width="1000px" :dialog-height="dialogHeight" @handle-cancel="handleCancel" @handle-ok="handleOk" @close="handleCancel">
+  <common-dialog title="选项页导航设置"
+                 :visible="visible"
+                 width="1000px"
+                 :dialog-height="dialogHeight"
+                 @handle-cancel="handleCancel"
+                 @handle-ok="handleOk"
+                 @close="handleCancel">
     <template #dialog>
-      <form-list ref="form" class="formList" label-width="110px" :data-source="dataSource" :form="formData" :exist-default-btn="false" :is-custom-validate="true" @custom-validate="customValidate">
+      <form-list ref="form"
+                 class="formList"
+                 label-width="110px"
+                 :data-source="dataSource"
+                 :form="formData"
+                 :exist-default-btn="false"
+                 :is-custom-validate="true"
+                 @custom-validate="customValidate">
         <template #reportSqlId>
-          <el-select v-model="formData.reportSqlId" placeholder="请选择SQL数据视图" @change="onSqlIdChange">
-            <el-option v-for="item in SqlViewData" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          <el-select v-model="formData.reportSqlId"
+                     placeholder="请选择SQL数据视图"
+                     @change="onSqlIdChange">
+            <el-option v-for="item in SqlViewData"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value"> </el-option>
           </el-select>
         </template>
         <template #optionLabelCol>
-          <el-select v-model="formData.optionLabelCol" placeholder="请选择SQL数据列">
-            <el-option v-for="item in sqlViewCols" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          <el-select v-model="formData.optionLabelCol"
+                     placeholder="请选择SQL数据列">
+            <el-option v-for="item in sqlViewCols"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value"> </el-option>
           </el-select>
         </template>
         <template #optionUrl>
-          <el-select v-model="formData.optionUrl" placeholder="请选择SQL数据列">
-            <el-option v-for="item in sqlViewCols" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          <el-select v-model="formData.optionUrl"
+                     placeholder="请选择SQL数据列">
+            <el-option v-for="item in sqlViewCols"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value"> </el-option>
           </el-select>
         </template>
         <template #icon>
-          <el-select v-model="formData.icon" placeholder="请选择SQL数据列">
-            <el-option v-for="item in sqlViewCols" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          <el-select v-model="formData.icon"
+                     placeholder="请选择SQL数据列">
+            <el-option v-for="item in sqlViewCols"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value"> </el-option>
           </el-select>
         </template>
-        <common-tabs v-if="formData.navigation !== '2'" :tabs-data="commonTabsData" :active-tabs="activeTabs" type="card">
+        <common-tabs v-if="formData.navigation !== '2'"
+                     :tabs-data="commonTabsData"
+                     :active-tabs="activeTabs"
+                     type="card">
           <template #dataDefinition>
-            <editable-table
-              :columns="paramColumns"
-              :render-height="renderHeight"
-              :add-row="true"
-              :params="params"
-              height="200px"
-              :list-data.sync="editableData"
-              :is-list-data="true"
-              @save-param-data="saveParamData"
-            >
+            <editable-table :columns="paramColumns"
+                            :render-height="renderHeight"
+                            :add-row="true"
+                            :params="params"
+                            height="200px"
+                            :list-data.sync="editableData"
+                            :is-list-data="true"
+                            @save-param-data="saveParamData">
               <template #id="{ scope, data }">
-                <el-input v-model="scope.row.id" @blur="saveParamData(data)" placeholder="请输入"></el-input>
+                <el-input v-model="scope.row.id"
+                          @blur="saveParamData(data)"
+                          placeholder="请输入"></el-input>
               </template>
               <template #name="{ scope, data }">
-                <el-input v-model="scope.row.name" @blur="saveParamData(data)" placeholder="请输入"></el-input>
+                <el-input v-model="scope.row.name"
+                          @blur="saveParamData(data)"
+                          placeholder="请输入"></el-input>
               </template>
               <template #icon="{ scope, data }">
-                <span :class="['icon_example', scope.row.icon ? scope.row.icon : 'el-icon-picture']" :style="{ color: scope.row.color }" @click="showSelectIcon(scope, data)"></span>
+                <span :class="['icon_example', scope.row.icon ? scope.row.icon : 'el-icon-picture']"
+                      :style="{ color: scope.row.color }"
+                      @click="showSelectIcon(scope, data)"></span>
               </template>
               <template #type="{ scope, data }">
-                <el-select v-model="scope.row.type" @change="saveParamData(data)" style="width: 100%">
-                  <el-option label="内部" value="0"></el-option>
-                  <el-option label="自定义" value="1"></el-option>
+                <el-select v-model="scope.row.type"
+                           @change="saveParamData(data)"
+                           style="width: 100%">
+                  <el-option label="内部"
+                             value="0"></el-option>
+                  <el-option label="自定义"
+                             value="1"></el-option>
                 </el-select>
               </template>
               <template #targetUrl="{ scope, data }">
-                <el-input v-if="scope.row.type === '0'" @click.native="showSelectComponents(scope, data)" v-model="scope.row.targetName" @change="saveParamData(data)" placeholder="请选择"></el-input>
-                <el-input v-else v-model="scope.row.targetUrl" @blur="saveParamData(data)" placeholder="请输入"></el-input>
+                <el-input v-if="scope.row.type === '0'"
+                          @click.native="showSelectComponents(scope, data)"
+                          v-model="scope.row.targetName"
+                          @change="saveParamData(data)"
+                          placeholder="请选择"></el-input>
+                <el-input v-else
+                          v-model="scope.row.targetUrl"
+                          @blur="saveParamData(data)"
+                          placeholder="请输入"></el-input>
               </template>
               <template #indexNo="{ scope, data }">
-                <el-input-number style="120px" v-model="scope.row.indexNo" :min="1" :max="10" :step="1" @blur="saveParamData(data)" placeholder="请输入"></el-input-number>
+                <el-input-number style="120px"
+                                 v-model="scope.row.indexNo"
+                                 :min="1"
+                                 :max="10"
+                                 :step="1"
+                                 @blur="saveParamData(data)"
+                                 placeholder="请输入"></el-input-number>
               </template>
               <template #otherParmarsMap="{ scope, data }">
-                <el-input v-model="scope.row.otherParmarsMap" type="textarea" :rows="3" @blur="saveParamData(data)" placeholder="请输入"></el-input>
+                <el-input v-model="scope.row.otherParmarsMap"
+                          type="textarea"
+                          :rows="3"
+                          @blur="saveParamData(data)"
+                          placeholder="请输入"></el-input>
               </template>
             </editable-table>
           </template>
           <template #parameterMap>
-            <common-table ref="table" :columns="columns" :flex="210" :table-setting="false" :pagination="false" :no-api-table-data="noApiTableData">
+            <common-table ref="table"
+                          :columns="columns"
+                          :flex="210"
+                          :table-setting="false"
+                          :pagination="false"
+                          :no-api-table-data="noApiTableData">
               <template #after="{ scope }">
                 <el-input v-model="scope.row.after"></el-input>
               </template>
@@ -70,20 +136,22 @@
           </template>
         </common-tabs>
       </form-list>
-      <selectComponents v-if="visibleEditDrawer" :visible="visibleEditDrawer" @close="visibleEditDrawer = false" @handleOk="componentsHandleOk"></selectComponents>
-      <common-dialog
-        title="图标选择"
-        width="50%"
-        v-if="visibleIconDrawer"
-        :visible="visibleIconDrawer"
-        :dialog-config="{ modal: false }"
-        :dialog-height="400"
-        @close="handleClose"
-        @handle-cancel="handleClose"
-        @handle-ok="doIconSelect"
-      >
+      <selectComponents v-if="visibleEditDrawer"
+                        :visible="visibleEditDrawer"
+                        @close="visibleEditDrawer = false"
+                        @handleOk="componentsHandleOk"></selectComponents>
+      <common-dialog title="图标选择"
+                     width="50%"
+                     v-if="visibleIconDrawer"
+                     :visible="visibleIconDrawer"
+                     :dialog-config="{ modal: false }"
+                     :dialog-height="400"
+                     @close="handleClose"
+                     @handle-cancel="handleClose"
+                     @handle-ok="doIconSelect">
         <template #dialog>
-          <icon-selector @icon-select="iconSelect" :color-picker="true"></icon-selector>
+          <icon-selector @icon-select="iconSelect"
+                         :color-picker="true"></icon-selector>
         </template>
       </common-dialog>
     </template>
@@ -154,7 +222,7 @@ export default {
   watch: {
     // 导航模式
     'formData.navigation': {
-      handler(nVal) {
+      handler (nVal) {
         this.renderDataSource()
         if (nVal === '2') {
           this.dialogHeight = 200
@@ -271,7 +339,7 @@ export default {
     },
     // 数据类型
     'formData.dataType': {
-      handler(nVal) {
+      handler (nVal) {
         if (nVal === '0') {
           this.commonTabsData = [
             {
@@ -302,7 +370,7 @@ export default {
       immediate: true
     },
     'formData.reportSqlId': {
-      handler(nVal, oVal) {
+      handler (nVal, oVal) {
         if (nVal) {
           // this.$api['desLayout.execute']({ id: nVal }).then((res) => {
           //   console.log(res,'=====rees');
@@ -312,7 +380,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       formData: {},
       dataSource: formConfig.default,
@@ -402,13 +470,13 @@ export default {
     IconSelector
     // aceEdit
   },
-  created() {
+  created () {
     if (this.parmarsMap && this.parmarsMap.length > 0) {
       this.noApiTableData = this.parmarsMap
     }
     this.editableData = JSON.parse(JSON.stringify(this.tabsData))
   },
-  mounted() {
+  mounted () {
     this.formData = { ...this.formData, ...this.tabsParmar }
     const _this = this
     this.$api['selection.getAllSqlview']().then(function (res) {
@@ -416,7 +484,7 @@ export default {
     })
   },
   methods: {
-    renderDataSource() {
+    renderDataSource () {
       if (this.formData.navigation == '0' || this.formData.navigation == '1') {
         this.dataSource = formConfig.dicFormNavigation
         if (this.formData.dataType && this.formData.dataType == '1' && this.formData.navigation == '0') {
@@ -432,10 +500,10 @@ export default {
         this.formData.optionValueCol = ''
       }
     },
-    handleCancel() {
+    handleCancel () {
       this.$emit('close')
     },
-    handleOk() {
+    handleOk () {
       const that = this
       this.$refs.form.validate().then((submitData) => {
         const tabsData = that.reportParams ? that.reportParams : that.editableData
@@ -448,28 +516,28 @@ export default {
         that.$emit('handleOk', settingsParmars)
       })
     },
-    customValidate() {},
-    onSqlIdChange(item) {
+    customValidate () { },
+    onSqlIdChange (item) {
       const _this = this
       this.$api['selection.getSqlViewAllColumn']({ id: item }).then(function (res) {
         _this.sqlViewCols = res
         _this.getParmarsMap(res)
       })
     },
-    saveParamData(data) {
+    saveParamData (data) {
       this.editableData = data
     },
-    componentsHandleOk(selectLayout) {
+    componentsHandleOk (selectLayout) {
       this.editableData[this.index].targetName = selectLayout.name
       this.editableData[this.index].componentsConfig = selectLayout
       this.editableData[this.index].targetUrl = selectLayout.url
       this.visibleEditDrawer = false
     },
-    showSelectComponents(scope, data) {
+    showSelectComponents (scope, data) {
       this.index = scope.$index
       this.visibleEditDrawer = true
     },
-    getParmarsMap(res) {
+    getParmarsMap (res) {
       if (res && res.length) {
         const arr = res.map((el) => el.value)
         const parmarsMap = []
@@ -482,22 +550,22 @@ export default {
         this.noApiTableData = parmarsMap
       }
     },
-    showSelectIcon(scope, data) {
+    showSelectIcon (scope, data) {
       this.index = scope.$index
       this.visibleIconDrawer = true
     },
-    handleClose() {
+    handleClose () {
       this.iconTempSel = null
       this.visibleIconDrawer = false
     },
-    doIconSelect() {
+    doIconSelect () {
       if (this.iconTempSel) {
         this.$set(this.editableData[this.index], 'icon', this.iconTempSel.icon)
         this.$set(this.editableData[this.index], 'color', this.iconTempSel.color)
       }
       this.handleClose()
     },
-    iconSelect(select) {
+    iconSelect (select) {
       this.iconTempSel = select
     }
   }

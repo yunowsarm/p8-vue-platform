@@ -1,28 +1,55 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <div class="search-wrapper" :style="{ width: searchWidth }">
-    <el-form ref="inputForm" size="medium" @submit.native.prevent>
+  <div class="search-wrapper"
+       :style="{ width: searchWidth }">
+    <el-form ref="inputForm"
+             size="medium"
+             @submit.native.prevent>
       <el-form-item prop="formInput">
-        <el-input placeholder="点击下拉搜索" v-model="searchVal" readonly prefix-icon="el-icon-search" :disabled="!defaultSearch" @keyup.enter.native="enterSearch" @click.native="toggleAdvanced">
+        <el-input placeholder="点击下拉搜索"
+                  v-model="searchVal"
+                  readonly
+                  prefix-icon="el-icon-search"
+                  :disabled="!defaultSearch"
+                  @keyup.enter.native="enterSearch"
+                  @click.native="toggleAdvanced">
           <template slot="suffix">
-            <i v-if="searchVal" class="el-icon-close" @click.stop="removeSearchVal"></i>
+            <i v-if="searchVal"
+               class="el-icon-close"
+               @click.stop="removeSearchVal"></i>
             <i :class="advanced ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
           </template>
         </el-input>
       </el-form-item>
     </el-form>
     <transition name="bounce">
-      <el-form v-show="advanced" ref="searchForm" :model="formData" :label-width="labelWidth" class="search-contain" :style="{ width: searchContainWidth }">
+      <el-form v-show="advanced"
+               ref="searchForm"
+               :model="formData"
+               :label-width="labelWidth"
+               class="search-contain"
+               :style="{ width: searchContainWidth }">
         <el-row>
           <template v-for="item in renderDataSource">
-            <el-col :key="item.fieldName" :span="item.colLayout === 'doubleCol' ? 12 : 24">
-              <search-field-render :fields="item" :form-data="formField" :reset-flag="resetFlag" @setMode="setMode" @setParentFormData="setParentFormData"></search-field-render>
+            <el-col :key="item.fieldName"
+                    :span="item.colLayout === 'doubleCol' ? 12 : 24">
+              <search-field-render :fields="item"
+                                   :form-data="formField"
+                                   :reset-flag="resetFlag"
+                                   @setMode="setMode"
+                                   @setParentFormData="setParentFormData"></search-field-render>
             </el-col>
           </template>
         </el-row>
         <el-row>
-          <el-col :span="24" class="flex-right">
-            <el-button type="primary" @click="search">查询</el-button>
-            <el-button style="margin-left: 8px" @click="reSet">重置</el-button>
+          <el-col :span="24"
+                  class="flex-right">
+            <el-button type="primary"
+                       @click="search">查询</el-button>
+            <el-button style="margin-left: 8px"
+                       @click="reSet">重置</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -66,7 +93,7 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     return {
       searchVal: '',
       advanced: false,
@@ -82,7 +109,7 @@ export default {
     }
   },
   computed: {
-    renderDataSource() {
+    renderDataSource () {
       // 重组传入的数据，合并全局配置，子项的配置优先全局
       const _this = this
       this.dataSource.map((item) => {
@@ -108,7 +135,7 @@ export default {
         return item
       })
     },
-    formData() {
+    formData () {
       let formDataObj = {}
       let that = this
       this.renderDataSource.map((item) => {
@@ -130,13 +157,13 @@ export default {
   },
   methods: {
     // 弹出选择回填值后手动给formField赋值
-    setParentFormData(data) {
+    setParentFormData (data) {
       this.formField = { ...this.formField, ...data }
     },
-    setMode(obj) {
+    setMode (obj) {
       this.modeData = { ...this.modeData, ...obj }
     },
-    search() {
+    search () {
       let _this = this
       let searchParam = {}
       this.$refs.searchForm.validate((isValid) => {
@@ -200,17 +227,17 @@ export default {
         }
       })
     },
-    enterSearch() {
+    enterSearch () {
       const queryParams = {}
       queryParams[this.defaultSearch] = this.searchVal
       queryParams.current = 1
       this.$emit('search', queryParams)
     },
-    toggleAdvanced() {
+    toggleAdvanced () {
       // 切换查询条件展开与收缩按钮
       this.advanced = !this.advanced
     },
-    reSet() {
+    reSet () {
       // 查询条件重置
       let _this = this
       this.customResetHandle()
@@ -253,11 +280,11 @@ export default {
       this.resetFlag = true
       this.$emit('search', searchParam)
     },
-    removeSearchVal() {
+    removeSearchVal () {
       this.reSet()
       this.advanced = false
     },
-    customResetHandle() {
+    customResetHandle () {
       this.$refs.searchForm.resetFields()
       const _this = this
       const typeArray = ['multiple', 'treeSelect', 'checkboxGroup', 'datetimeRange']
@@ -284,7 +311,7 @@ export default {
       })
       this.formField = this.formData
     },
-    changeInputVal(queryParams, type) {
+    changeInputVal (queryParams, type) {
       let _this = this
       let inputVal = ''
       if (!type) {
@@ -317,7 +344,7 @@ export default {
       this.advanced = false
     },
     // select单选 radioGroup单选框组
-    setSelectVal(item, queryParams) {
+    setSelectVal (item, queryParams) {
       let _this = this
       let valStr = ''
       item.options.map((optionItem) => {
@@ -335,7 +362,7 @@ export default {
       return valStr
     },
     // select多选 checkboxGroup多选框组
-    setMultipleVal(item, queryParams) {
+    setMultipleVal (item, queryParams) {
       let _this = this
       let valStr = ''
       let multipleLabelArr = []
@@ -359,7 +386,7 @@ export default {
       return valStr
     },
     // treeSelect
-    setTreeSelectVal(item, queryParams) {
+    setTreeSelectVal (item, queryParams) {
       let _this = this
       let fieldLable = item.labelText
       let fieldValue = queryParams[item.fieldName]
@@ -385,7 +412,7 @@ export default {
       return valStr
     },
     // treeSelect单选递归
-    treeSingleDataHandle(nodeData, fieldLable, fieldValue, inputVal) {
+    treeSingleDataHandle (nodeData, fieldLable, fieldValue, inputVal) {
       let _this = this
       nodeData.map((item) => {
         if (item.value === fieldValue) {
@@ -397,7 +424,7 @@ export default {
       return inputVal
     },
     // treeSelect多选递归
-    treeMultipleDataHandle(nodeData, fieldValue, multipleLabelArr) {
+    treeMultipleDataHandle (nodeData, fieldValue, multipleLabelArr) {
       let _this = this
       nodeData.map((item) => {
         if (item.value === fieldValue) {
@@ -410,7 +437,7 @@ export default {
       return multipleLabelArr
     },
     // datetimeRange 选择日期
-    setDateVal(item, queryParams) {
+    setDateVal (item, queryParams) {
       let valStr = ''
       if (Array.isArray(queryParams[item.fieldName])) {
         valStr = queryParams[item.fieldName][0] + '~' + queryParams[item.fieldName][1]
@@ -420,7 +447,7 @@ export default {
       valStr = item.labelText + ':' + valStr + this.separator
       return valStr
     },
-    handleParams(obj) {
+    handleParams (obj) {
       // 判断必须为obj
       if (!(Object.prototype.toString.call(obj) === '[object Object]')) {
         return {}

@@ -1,43 +1,40 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <div class="parser-container">
-    <parser
-      ref="parser"
-      v-if="newOrModify && newOrModify === 'new' && Object.keys(formConf).length"
-      :form-conf="formConf"
-      :sys-params="sysParams"
-      :type="type"
-      :init-config="initConfig"
-      @setPageData="setPageData"
-      @submit="save"
-      @save="saveChange"
-      @resetForm="resetForm"
-      :custom-fn="customFn"
-      :container-layout="containerLayout"
-      is-save="new"
-    />
-    <parser
-      ref="parser"
-      v-else-if="newOrModify && newOrModify === 'modify' && pageType !== 'view' && Object.keys(formConf).length"
-      :form-conf="formConf"
-      :sys-params="sysParams"
-      :type="type"
-      :init-config="initConfig"
-      :modify-res="modifyRes"
-      :container-layout="modifyRes.containerLayout"
-      @setPageData="setPageData"
-      @submit="save"
-      @save="saveChange"
-      @resetForm="resetForm"
-      :custom-fn="customFn"
-      is-save="modify"
-    />
-    <parser-view
-      ref="parser"
-      v-else-if="newOrModify === 'modify' && pageType === 'view' && Object.keys(formConf).length"
-      :form-conf="formConf"
-      :sys-params="sysParams"
-      :modify-res="modifyRes"
-    ></parser-view>
+    <parser ref="parser"
+            v-if="newOrModify && newOrModify === 'new' && Object.keys(formConf).length"
+            :form-conf="formConf"
+            :sys-params="sysParams"
+            :type="type"
+            :init-config="initConfig"
+            @setPageData="setPageData"
+            @submit="save"
+            @save="saveChange"
+            @resetForm="resetForm"
+            :custom-fn="customFn"
+            :container-layout="containerLayout"
+            is-save="new" />
+    <parser ref="parser"
+            v-else-if="newOrModify && newOrModify === 'modify' && pageType !== 'view' && Object.keys(formConf).length"
+            :form-conf="formConf"
+            :sys-params="sysParams"
+            :type="type"
+            :init-config="initConfig"
+            :modify-res="modifyRes"
+            :container-layout="modifyRes.containerLayout"
+            @setPageData="setPageData"
+            @submit="save"
+            @save="saveChange"
+            @resetForm="resetForm"
+            :custom-fn="customFn"
+            is-save="modify" />
+    <parser-view ref="parser"
+                 v-else-if="newOrModify === 'modify' && pageType === 'view' && Object.keys(formConf).length"
+                 :form-conf="formConf"
+                 :sys-params="sysParams"
+                 :modify-res="modifyRes"></parser-view>
   </div>
 </template>
 
@@ -92,7 +89,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'formGenerator.formListSave',
       formConf: {},
@@ -109,16 +106,16 @@ export default {
       containerLayout: '' //  组件的layout
     }
   },
-  async mounted() {
+  async mounted () {
     this.init()
   },
   computed: {
-    dataId() {
+    dataId () {
       return this.dataViewId
     }
   },
   watch: {
-    $route(to, from) {
+    $route (to, from) {
       if (to !== from) {
         this.sysParams = Object.assign({}, to.meta)
       }
@@ -130,14 +127,14 @@ export default {
     //   deep: true
     // },
     propParam: {
-      handler(val) {
+      handler (val) {
         this.sysParams = Object.assign(this.sysParams, this.getPropParam())
         this.pageData = Object.assign(this.pageData, this.sysParams)
       },
       deep: true
     },
     pageData: {
-      handler(val, oldVal) {
+      handler (val, oldVal) {
         const _this = this
         // 下拉级联时，前置改变后将后置清空
         if (val && oldVal && Object.keys(val).length && Object.keys(oldVal).length) {
@@ -194,7 +191,7 @@ export default {
       deep: true
     },
     record: {
-      async handler(val) {
+      async handler (val) {
         await this.init()
       },
       deep: true
@@ -211,13 +208,13 @@ export default {
     // }
   },
   methods: {
-    async getDrawingList(params) {
+    async getDrawingList (params) {
       let res = {}
       params.permissionVo = this.permissionVo
       res = await this.$api['formGenerator.designerDetails'](params)
       return res
     },
-    async init(type) {
+    async init (type) {
       const drawingListData = await this.getDrawingList({ desformCode: this.record.desformCode ? this.record.desformCode : this.desformCode })
       this.formConf = JSON.parse(drawingListData.designJson)
       this.handlerEvents(this.formConf.fields)
@@ -398,7 +395,7 @@ export default {
         })
       }
     },
-    handlerEvents(list) {
+    handlerEvents (list) {
       list.forEach((ele) => {
         if (ele.event && Object.keys(ele.event).length > 0) {
           ele.on = _cloneDeep(ele.event)
@@ -408,7 +405,7 @@ export default {
         }
       })
     },
-    async handlerCustomFn(conf) {
+    async handlerCustomFn (conf) {
       this.customFn = {}
       if (conf.loadCustomFn) {
         await import('./Function').then((res) => {
@@ -417,7 +414,7 @@ export default {
       }
     },
     //  数据回填
-    extractDefaultValue(layout, fields, result) {
+    extractDefaultValue (layout, fields, result) {
       let data = []
       if (Array.isArray(fields) && layout === 'masterSlaveTable') {
         data = this.fieldsRecursive(fields, result)
@@ -429,7 +426,7 @@ export default {
       }
       return data
     },
-    fieldsRecursive(fields, result) {
+    fieldsRecursive (fields, result) {
       if (Array.isArray(result)) {
         const index = result.findIndex((v) => fields[0].__config__.childrenTable === v.tableId)
         const newData = result[index].data
@@ -517,7 +514,7 @@ export default {
         return data
       }
     },
-    fieldsRecursiveV2(field, result) {
+    fieldsRecursiveV2 (field, result) {
       if (Array.isArray(result)) {
         const index = result.findIndex((v) => field.__config__.childrenTable === v.tableId)
         const newData = result[index].data
@@ -552,16 +549,16 @@ export default {
       }
     },
 
-    getPropParam() {
+    getPropParam () {
       const newBuildPropParam = {}
       newBuildPropParam.$PROPPARAM = this.propParam
       return newBuildPropParam
     },
-    setPageData(pageData) {
+    setPageData (pageData) {
       this.pageData = pageData
     },
     // 重构下拉级联参数对象
-    buildDynamicParamObj(item, label, value, path) {
+    buildDynamicParamObj (item, label, value, path) {
       // console.log('重构下拉级联参数对象', value)
       // 存在一对多的前后置关系
       const selectComp = item.__config__.selectComp
@@ -590,7 +587,7 @@ export default {
       }
     },
     // 构建 监听动态参数
-    buildWatchCascadeParams(item) {
+    buildWatchCascadeParams (item) {
       const _this = this
       const customParam = {}
       const sqlParam = {}
@@ -633,7 +630,7 @@ export default {
         reportParam: reportParam
       }
     },
-    async changeSelectOption(item, needHandleTags) {
+    async changeSelectOption (item, needHandleTags) {
       const needHandleIndex = needHandleTags.indexOf(item.__config__.tag)
       if (needHandleIndex > -1) {
         if (item.__config__.dataType === 'dynamic') {
@@ -663,7 +660,7 @@ export default {
         }
       }
     },
-    async watchChangeSelectOption(item) {
+    async watchChangeSelectOption (item) {
       if (item.__config__.dataType === 'dynamic' && Object.keys(item.__config__.selectParam.sqlParam).length) {
         const param = {
           id: item.__config__.selectComp,
@@ -684,7 +681,7 @@ export default {
         item.__config__.selectParam.reportParam = this.dynamicDataObj[item.__config__.selectComp].reportParam
       }
     },
-    watchLinkData(item) {
+    watchLinkData (item) {
       if (item.__config__.tag === 'el-progress') {
         item.percentage = this.pageData[item.__vModel__]
       }
@@ -728,14 +725,14 @@ export default {
     //     }
     //   }
     // },
-    async resetForm() {
+    async resetForm () {
       if (this.type && this.type === '001') {
         this.$emit('save-reset')
       } else {
         this.init('reset')
       }
     },
-    save(data, childData, arr, logdata) {
+    save (data, childData, arr, logdata) {
       const params = {
         desformCode: this.record.desformCode,
         dataId: this.dataId,
@@ -770,7 +767,7 @@ export default {
           })
       }
     },
-    setSysDefaultValue(confClone) {
+    setSysDefaultValue (confClone) {
       if (confClone.__config__.variable && confClone.__config__.variable.startsWith('$')) {
         // 处理系统参数变量
         const paramArr = confClone.__config__.variable.trim().split('.')
@@ -791,7 +788,7 @@ export default {
      * @param result: 接口返回回填数据
      * @param record: 日期区间组件的jsx属性
      */
-    setDateData(result, record) {
+    setDateData (result, record) {
       record.__config__.defaultValue = []
       let arr = []
       for (const i in result) {
@@ -802,7 +799,7 @@ export default {
       Object.assign({}, record.__config__.defaultValue, arr)
       // record.__config__.defaultValue = arr
     },
-    saveChange(result) {
+    saveChange (result) {
       this.$emit('save-form', result)
     }
   }

@@ -1,31 +1,46 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <div class="list-content">
-    <el-row class="row-search-refresh" :gutter="10">
+    <el-row class="row-search-refresh"
+            :gutter="10">
       <el-col :span="16">
-        <search-form-list search-width="100%" search-contain-width="100%" label-width="70px" ref="search" :data-source="searchData" @search="search" @re-set="reSet"></search-form-list>
+        <search-form-list search-width="100%"
+                          search-contain-width="100%"
+                          label-width="70px"
+                          ref="search"
+                          :data-source="searchData"
+                          @search="search"
+                          @re-set="reSet"></search-form-list>
       </el-col>
-      <el-col class="col-refresh" :span="8">
-        <el-dropdown split-button @click="refreshList" type="primary">
+      <el-col class="col-refresh"
+              :span="8">
+        <el-dropdown split-button
+                     @click="refreshList"
+                     type="primary">
           刷新
-          <el-dropdown-menu key="refreshList" slot="dropdown">
-            <el-dropdown-item key="refreshList1" @click.native="refreshList(1)">时间正序</el-dropdown-item>
-            <el-dropdown-item key="refreshList0" @click.native="refreshList(0)">时间倒序</el-dropdown-item>
+          <el-dropdown-menu key="refreshList"
+                            slot="dropdown">
+            <el-dropdown-item key="refreshList1"
+                              @click.native="refreshList(1)">时间正序</el-dropdown-item>
+            <el-dropdown-item key="refreshList0"
+                              @click.native="refreshList(0)">时间倒序</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
     </el-row>
 
-    <div class="infinite-list-wrapper" style="overflow: auto">
-      <common-table
-        ref="table"
-        :columns="columns"
-        :flex="210"
-        :table-setting="false"
-        :table-config="tableConfig"
-        :no-api-table-data="claimListList"
-        @row-click="rowClick"
-        @change-page="changePage"
-      ></common-table>
+    <div class="infinite-list-wrapper"
+         style="overflow: auto">
+      <common-table ref="table"
+                    :columns="columns"
+                    :flex="210"
+                    :table-setting="false"
+                    :table-config="tableConfig"
+                    :no-api-table-data="claimListList"
+                    @row-click="rowClick"
+                    @change-page="changePage"></common-table>
       <!-- <ul class="infinite-list" v-infinite-scroll="load" infinite-scroll-disabled="disabled" :infinite-scroll-distance="0" :infinite-scroll-delay="500">
               <li @click="triggerSelect(r, index)" :key="r.processTaskId" v-for="(r, index) in claimListList" class="infinite-list-item" :class="itemSelected(index)">
                   <el-row type="flex" style="text-align: left; height:30px">
@@ -64,10 +79,10 @@ export default {
     'el-dropdown-menu': DropdownMenu,
     'el-dropdown-item': DropdownItem
   },
-  mounted() {
+  mounted () {
     this.load()
   },
-  data() {
+  data () {
     const columns = [
       {
         title: '序号',
@@ -162,14 +177,14 @@ export default {
     }
   },
   computed: {
-    noMore() {
+    noMore () {
       let { current, pages } = this.pageInfo
       return current === 0 ? false : current >= pages
     },
-    disabled() {
+    disabled () {
       return this.loading || this.noMore
     },
-    itemSelected() {
+    itemSelected () {
       return function (index) {
         return this.currentItemIndex === index ? 'item-selected' : ''
       }
@@ -195,22 +210,22 @@ export default {
     }
   },
   methods: {
-    setTableCurrentRow(row) {
+    setTableCurrentRow (row) {
       this.$refs.table.$refs.table.setCurrentRow(row)
     },
-    rowClick(row, column, e) {
+    rowClick (row, column, e) {
       console.log(row, column, e, 'yk-row-click')
       this.$emit('itemClick', row)
     },
-    changePage(current) {
+    changePage (current) {
       this.pageInfo.current = current
       this.load(this.param)
     },
-    search(queryParam) {
+    search (queryParam) {
       this.load(queryParam)
     },
-    reSet() {},
-    load(queryParam) {
+    reSet () { },
+    load (queryParam) {
       this.loading = true
       let that = this
 
@@ -227,18 +242,18 @@ export default {
         this.loading = false
       })
     },
-    triggerSelect(record, index) {
+    triggerSelect (record, index) {
       this.currentItemIndex = index
       this.triggerSelectRecord = record
       this.$emit('itemClick', record)
     },
-    refreshList(flag) {
+    refreshList (flag) {
       this.sortFn(flag)
       this.claimListList = []
       this.pageInfo.current = 1
       this.load(this.param)
     },
-    sortFn(flag) {
+    sortFn (flag) {
       if (flag === undefined) {
         this.sortFn(this.sortNum)
       } else if (flag === 0) {

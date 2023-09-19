@@ -1,3 +1,6 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <form-list ref="form"
              :data-source="dataSource"
@@ -6,10 +9,10 @@
              @saved="saved"
              label-width="90px"
              @rendered="rendered">
-             <template slot="btn">
-                <el-button @click="cancel">取 消</el-button>
-              </template>
-             </form-list>
+    <template slot="btn">
+      <el-button @click="cancel">取 消</el-button>
+    </template>
+  </form-list>
 </template>
 
 <script>
@@ -162,7 +165,7 @@ export default {
     getFormData () {
       this.formData = Object.assign({}, this.record)
     },
-    cancel() {
+    cancel () {
       this.$emit('cancel')
     },
     saved (res) {

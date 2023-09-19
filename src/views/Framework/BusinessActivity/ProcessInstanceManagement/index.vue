@@ -1,19 +1,29 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <normal-layout
-class="process-approval-layout" :header-visible="false" :full-height="true" :normal-layout="layoutConfig">
+  <normal-layout class="process-approval-layout"
+                 :header-visible="false"
+                 :full-height="true"
+                 :normal-layout="layoutConfig">
     <template #west>
-      <pending-list
-:approved-task-id="approvedTaskId" :refresh-flag="refreshFlag" @itemClick="select" ref="pending"></pending-list>
+      <pending-list :approved-task-id="approvedTaskId"
+                    :refresh-flag="refreshFlag"
+                    @itemClick="select"
+                    ref="pending"></pending-list>
     </template>
     <template #center>
-      <approval
-v-if="pendingSelected" :selected-approval="pendingSelected" :data-source="approveDataSource" @approved="approved" />
-      <claim
-v-else-if="claimSelected" :selected-approval="claimSelected" @approved="approved" />
-      <history
-v-else-if="historySelected" :selected-approval="historySelected" />
-      <span
-v-else class="span-bg"></span>
+      <approval v-if="pendingSelected"
+                :selected-approval="pendingSelected"
+                :data-source="approveDataSource"
+                @approved="approved" />
+      <claim v-else-if="claimSelected"
+             :selected-approval="claimSelected"
+             @approved="approved" />
+      <history v-else-if="historySelected"
+               :selected-approval="historySelected" />
+      <span v-else
+            class="span-bg"></span>
     </template>
   </normal-layout>
 </template>
@@ -34,7 +44,7 @@ export default {
     Claim,
     History
   },
-  data() {
+  data () {
     return {
       pendingSelected: null,
       approveDataSource: [],
@@ -65,7 +75,7 @@ export default {
     // refreshHandle (flag) {
     //   this.refreshFlag = flag
     // },
-    select(r) {
+    select (r) {
       // debugger
       const options = [{ label: '通过', value: '1' }]
       if (r && (r.isMultipleInstance === '0' || r.taskDefKey.indexOf('notMultiInstance') !== -1)) {
@@ -98,7 +108,7 @@ export default {
     // historySelect (r) {
     //   this.historySelected = r
     // },
-    approved(taskId) {
+    approved (taskId) {
       this.approvedTaskId = taskId
       this.$emit('approved')
     }

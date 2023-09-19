@@ -1,16 +1,21 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <el-container class="menuLayout" v-inherited-height>
+  <el-container class="menuLayout"
+                v-inherited-height>
     <el-main>
-      <el-tabs
-        v-model="activeMenu"
-        @tab-click="tabClick"
-        :type="tabsParmar.type"
-        :tab-position="tabsParmar.tabPosition"
-        :stretch="tabsParmar.stretch"
-        v-if="thirdMenuData && thirdMenuData.length > 0"
-        :router="true"
-      >
-        <el-tab-pane v-for="item in thirdMenuData" :key="item.name" :label="item.meta.title" :name="item.name">
+      <el-tabs v-model="activeMenu"
+               @tab-click="tabClick"
+               :type="tabsParmar.type"
+               :tab-position="tabsParmar.tabPosition"
+               :stretch="tabsParmar.stretch"
+               v-if="thirdMenuData && thirdMenuData.length > 0"
+               :router="true">
+        <el-tab-pane v-for="item in thirdMenuData"
+                     :key="item.name"
+                     :label="item.meta.title"
+                     :name="item.name">
           <template v-if="cache">
             <keep-alive>
               <router-view :third-menu-param="thirdMenuParam"></router-view>
@@ -65,23 +70,23 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       thirdMenuData: [],
       activeMenu: ''
     }
   },
-  destroyed() {},
-  created() {
+  destroyed () { },
+  created () {
     console.log(this.tabsParmar, '===tabsParmar')
     this.initData()
   },
-  mounted() {},
+  mounted () { },
   directives: {
     'inherited-height': {
-      bind(el, binding) {},
-      unbind(el, binding) {},
-      inserted(el, binding) {
+      bind (el, binding) { },
+      unbind (el, binding) { },
+      inserted (el, binding) {
         const selfDom = el
         const selfDomParentDom = selfDom.parentNode || selfDom.parentElement
         // eslint-disable-next-line no-unused-vars
@@ -94,13 +99,13 @@ export default {
           }
         }, 10)
       },
-      undate(el, binding) {},
-      componentUpdated(el, binding) {}
+      undate (el, binding) { },
+      componentUpdated (el, binding) { }
     }
   },
   watch: {
     $route: {
-      handler(val, oldval) {
+      handler (val, oldval) {
         if (this.thirdMenuData.length) {
           let index = this.thirdMenuData
             .map((i) => {
@@ -117,13 +122,13 @@ export default {
     }
   },
   methods: {
-    tabClick(node) {
+    tabClick (node) {
       let tabs = this.thirdMenuData.filter((el) => {
         return el.meta.title === node.label
       })
       this.$router.push(tabs[0].name)
     },
-    initData() {
+    initData () {
       const currentPath = this.$route.path
       const rootRouter = this.$store.state.routers.addRouters
       let thirdMenu = []

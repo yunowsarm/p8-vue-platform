@@ -1,24 +1,58 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <el-row style="height: 100%; overflow: hidden">
-    <el-col style="height: 100%" :xs="globalLayout.left.xs" :sm="globalLayout.left.sm" :md="globalLayout.left.md" :lg="globalLayout.left.lg" :xl="globalLayout.left.xl">
+    <el-col style="height: 100%"
+            :xs="globalLayout.left.xs"
+            :sm="globalLayout.left.sm"
+            :md="globalLayout.left.md"
+            :lg="globalLayout.left.lg"
+            :xl="globalLayout.left.xl">
       <div style="position: relative; height: 100%">
-        <component :is="componentUrl" :record-id="recordId" ref="components" v-bind="paramsConfig"></component>
-        <div class="splitBtn" @click="splitClick">
-          <i class="p8 icon-right" :class="{ rotate: !expand }"></i>
+        <component :is="componentUrl"
+                   :record-id="recordId"
+                   ref="components"
+                   v-bind="paramsConfig"></component>
+        <div class="splitBtn"
+             @click="splitClick">
+          <i class="p8 icon-right"
+             :class="{ rotate: !expand }"></i>
         </div>
       </div>
     </el-col>
-    <el-col class="right-panel" :xs="globalLayout.right.xs" :sm="globalLayout.right.sm" :md="globalLayout.right.md" :lg="globalLayout.right.lg" :xl="globalLayout.right.xl">
+    <el-col class="right-panel"
+            :xs="globalLayout.right.xs"
+            :sm="globalLayout.right.sm"
+            :md="globalLayout.right.md"
+            :lg="globalLayout.right.lg"
+            :xl="globalLayout.right.xl">
       <div class="tabs">
-        <right-panel :save-api="saveApi" ref="rightForm" :edit-form-data="formData" :record-id="recordId" @saveSuccess="saveSuccess" @changeType="changeType"></right-panel>
+        <right-panel :save-api="saveApi"
+                     ref="rightForm"
+                     :edit-form-data="formData"
+                     :record-id="recordId"
+                     @saveSuccess="saveSuccess"
+                     @changeType="changeType"></right-panel>
       </div>
       <div class="form-btn">
         <!-- <el-button type="info" class="el-btn" @click="showHelp">帮助</el-button> -->
-        <el-button type="primary" class="el-btn" @click="handleViews">预览</el-button>
-        <el-button type="primary" class="el-btn" @click="handleSubmit">保存</el-button>
+        <el-button type="primary"
+                   class="el-btn"
+                   @click="handleViews">预览</el-button>
+        <el-button type="primary"
+                   class="el-btn"
+                   @click="handleSubmit">保存</el-button>
       </div>
-      <preview v-if="kanbanViewVisible" :visible="kanbanViewVisible" :preview-parmars="previewParmars" @close="kanbanViewVisible = false"></preview>
-      <component v-if="kanbanViewVisible" :is="previewUrl" :visible="kanbanViewVisible" :preview-parmars="previewParmars" @close="kanbanViewVisible = false"></component>
+      <preview v-if="kanbanViewVisible"
+               :visible="kanbanViewVisible"
+               :preview-parmars="previewParmars"
+               @close="kanbanViewVisible = false"></preview>
+      <component v-if="kanbanViewVisible"
+                 :is="previewUrl"
+                 :visible="kanbanViewVisible"
+                 :preview-parmars="previewParmars"
+                 @close="kanbanViewVisible = false"></component>
     </el-col>
   </el-row>
 </template>
@@ -43,14 +77,14 @@ export default {
     }
   },
   computed: {
-    componentUrl() {
+    componentUrl () {
       if (this.asyncComponents) {
         return () => import(`@/views/${this.asyncComponents}.vue`)
       } else {
         return ''
       }
     },
-    previewUrl() {
+    previewUrl () {
       if (this.previewComponents) {
         return () => import(`@/views/${this.previewComponents}.vue`)
       } else {
@@ -58,7 +92,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       globalLayout: {
         left: {
@@ -87,7 +121,7 @@ export default {
     }
   },
   methods: {
-    splitClick() {
+    splitClick () {
       if (this.expand) {
         this.globalLayout = {
           left: {
@@ -126,8 +160,8 @@ export default {
 
       this.expand = !this.expand
     },
-    rendered() {},
-    handleSubmit() {
+    rendered () { },
+    handleSubmit () {
       const _this = this
       this.$refs.rightForm.getSubmitData().then((submitData) => {
         const obj = this.$refs.components.getJSONdata()
@@ -136,7 +170,7 @@ export default {
         this.$refs.rightForm.doSubmit(submitData, _this.saveApi)
       })
     },
-    handleViews() {
+    handleViews () {
       const obj = this.$refs.components.getJSONdata()
       obj.formData = this.$refs.rightForm.getFormData()
       console.log(obj, '---obj')
@@ -144,15 +178,15 @@ export default {
       this.previewComponents = obj.previewUrl
       this.kanbanViewVisible = true
     },
-    showHelp() {
+    showHelp () {
       this.helpVisible = true
     },
-    changeType(data) {
+    changeType (data) {
       if (data) {
         this.asyncComponents = data.designer
       }
     },
-    saveSuccess() {
+    saveSuccess () {
       this.$emit('saveSuccess')
     }
   }

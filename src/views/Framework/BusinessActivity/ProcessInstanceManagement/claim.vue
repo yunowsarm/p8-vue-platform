@@ -1,30 +1,42 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <div class="container">
     <div class="approveTitle">
       <el-row>
-        <el-col :span="20" class="flex-left"> {{ selectedApproval.processName }}{{ selectedApproval.startTime }} </el-col>
-        <el-col :span="4" class="flex-right">
-          <el-button type="primary" @click="handleSubmit">认领</el-button>
+        <el-col :span="20"
+                class="flex-left"> {{ selectedApproval.processName }}{{ selectedApproval.startTime }} </el-col>
+        <el-col :span="4"
+                class="flex-right">
+          <el-button type="primary"
+                     @click="handleSubmit">认领</el-button>
         </el-col>
       </el-row>
     </div>
     <div class="approveContent">
-      <common-tabs class="custom-tabs" type="border-card" :active-tabs="activeTabs" :tabs-data="tabs">
+      <common-tabs class="custom-tabs"
+                   type="border-card"
+                   :active-tabs="activeTabs"
+                   :tabs-data="tabs">
         <template #approval>
-          <component :selected-approval="selectedApproval" v-if="formComp != null && formComp != ''" :is="componentLoader" />
+          <component :selected-approval="selectedApproval"
+                     v-if="formComp != null && formComp != ''"
+                     :is="componentLoader" />
         </template>
         <template #bpmn>
-          <bpm-view
-            v-if="selectedApproval.processDefId != ''"
-            :process-obj="{
+          <bpm-view v-if="selectedApproval.processDefId != ''"
+                    :process-obj="{
               processDefinitionId: selectedApproval.processDefId,
               processInstanceId: selectedApproval.processInstId
-            }"
-          >
+            }">
           </bpm-view>
         </template>
         <template #history>
-          <ProcessHistoryList v-if="processInstId" :process-inst-id="processInstId" :business-key="businessKey" :table-flex="tableFlex"></ProcessHistoryList>
+          <ProcessHistoryList v-if="processInstId"
+                              :process-inst-id="processInstId"
+                              :business-key="businessKey"
+                              :table-flex="tableFlex"></ProcessHistoryList>
         </template>
       </common-tabs>
     </div>
@@ -52,10 +64,10 @@ export default {
   props: {
     selectedApproval: {
       type: Object,
-      default: () => {}
+      default: () => { }
     }
   },
-  data() {
+  data () {
     return {
       businessId: '',
       formComp: '',
@@ -81,7 +93,7 @@ export default {
     }
   },
   computed: {
-    componentLoader() {
+    componentLoader () {
       const comp = this.formComp
       return () => import('@/views/' + comp)
     }
@@ -97,13 +109,13 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.processInstId = this.selectedApproval.processInstId
     this.businessKey = this.selectedApproval.businessKey
     this.loadFormKey()
   },
   methods: {
-    handleSubmit(e) {
+    handleSubmit (e) {
       const this_ = this
       const setApproveUser = { approveUserSet: [{ taskId: this.selectedApproval.processTaskId, userId: ['currentUserId'] }] }
 
@@ -117,9 +129,9 @@ export default {
             this_.$emit('approved', this_.selectedApproval.processTaskId)
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
-    loadFormKey() {
+    loadFormKey () {
       const this_ = this
       this.$api['PersonalProcessApproval.getApproveContentViewUrl']({ taskId: this.selectedApproval.processTaskId }).then((res) => {
         const { url } = res

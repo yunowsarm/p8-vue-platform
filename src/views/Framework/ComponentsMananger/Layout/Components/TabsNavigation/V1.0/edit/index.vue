@@ -1,43 +1,58 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <list-layout :header-visible="false">
     <template #center>
-      <el-button class="settingsButton" @click="settingsClick"><i class="el-icon-s-tools" style="margin-right: 5px"></i>设置</el-button>
+      <el-button class="settingsButton"
+                 @click="settingsClick"><i class="el-icon-s-tools"
+           style="margin-right: 5px"></i>设置</el-button>
       <!-- <el-button class="delectButton"
                  v-if="!!asyncComponents"
                  @click="settingsDelect"><i class="el-icon-delete"
            style="margin-right: 5px"></i>删除</el-button> -->
-      <el-tabs v-model="activeName" :type="tabsParmar.type" :tab-position="tabsParmar.tabPosition" :stretch="tabsParmar.stretch" @tab-click="tabClick">
-        <el-tab-pane v-for="(item, index) in tabsData" :key="index" :label="item.name" :name="item.name">
-          <span slot="label"> <i v-if="item.icon" :class="['iconStyle', item.icon]" :style="{ color: item.color }"></i>{{ item.name }} </span>
-          <div v-if="!asyncComponents" id="table-contain" @click="centerClick">
+      <el-tabs v-model="activeName"
+               :type="tabsParmar.type"
+               :tab-position="tabsParmar.tabPosition"
+               :stretch="tabsParmar.stretch"
+               @tab-click="tabClick">
+        <el-tab-pane v-for="(item, index) in tabsData"
+                     :key="index"
+                     :label="item.name"
+                     :name="item.name">
+          <span slot="label"> <i v-if="item.icon"
+               :class="['iconStyle', item.icon]"
+               :style="{ color: item.color }"></i>{{ item.name }} </span>
+          <div v-if="!asyncComponents"
+               id="table-contain"
+               @click="centerClick">
             <div class="text centerText">点击设置默认组件</div>
           </div>
-          <component
-            v-else
-            :is="componentUrl"
-            :code="componentsConfig.code"
-            :data-view-id="componentsConfig.dataViewId"
-            :record="{ desformCode: componentsConfig.codeForm }"
-            :permission-vo="componentsConfig.permissionVo"
-            :layout-config="componentsConfig"
-            :kanban-config="componentsConfig"
-            :isLayoutButton="true"
-            ref="components"
-          ></component>
+          <component v-else
+                     :is="componentUrl"
+                     :code="componentsConfig.code"
+                     :data-view-id="componentsConfig.dataViewId"
+                     :record="{ desformCode: componentsConfig.codeForm }"
+                     :permission-vo="componentsConfig.permissionVo"
+                     :layout-config="componentsConfig"
+                     :kanban-config="componentsConfig"
+                     :isLayoutButton="true"
+                     ref="components"></component>
         </el-tab-pane>
       </el-tabs>
     </template>
     <template #drawer-panel>
-      <settings
-        v-if="settingVisible"
-        :visible="settingVisible"
-        :tabs-data="tabsData"
-        :tabs-parmar="tabsParmar"
-        :parmars-map="parmarsMap"
-        @close="settingVisible = false"
-        @handleOk="handleOk"
-      ></settings>
-      <select-components v-if="visibleEditDrawer" :visible="visibleEditDrawer" @close="visibleEditDrawer = false" @handleOk="componentsHandleOk"></select-components>
+      <settings v-if="settingVisible"
+                :visible="settingVisible"
+                :tabs-data="tabsData"
+                :tabs-parmar="tabsParmar"
+                :parmars-map="parmarsMap"
+                @close="settingVisible = false"
+                @handleOk="handleOk"></settings>
+      <select-components v-if="visibleEditDrawer"
+                         :visible="visibleEditDrawer"
+                         @close="visibleEditDrawer = false"
+                         @handleOk="componentsHandleOk"></select-components>
     </template>
   </list-layout>
 </template>
@@ -354,7 +369,7 @@ export default {
     }
   },
   computed: {
-    componentUrl() {
+    componentUrl () {
       console.log(this.asyncComponents)
       if (this.asyncComponents) {
         return () => import(`@/views/${this.asyncComponents}.vue`)
@@ -363,7 +378,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       // 设置组件动态路径
       asyncComponents: '',
@@ -395,7 +410,7 @@ export default {
       parmarsList: []
     }
   },
-  created() {
+  created () {
     if (this.recordId) {
       this.$api['desLayout.view']({ id: this.recordId }).then((res) => {
         const data = JSON.parse(res.layoutJson)
@@ -407,10 +422,10 @@ export default {
     }
   },
   methods: {
-    settingsClick() {
+    settingsClick () {
       this.settingVisible = true
     },
-    async handleOk(saveParmars) {
+    async handleOk (saveParmars) {
       let dom = document.getElementById('table-contain')
       if (dom) {
         dom.style.height = '100%'
@@ -445,7 +460,7 @@ export default {
         this.activeName = this.tabsData[0].name
       }
     },
-    tabClick(target) {
+    tabClick (target) {
       const tabs = this.tabsData.filter((el) => {
         return el.name === target.name
       })
@@ -469,17 +484,17 @@ export default {
         }
       }
     },
-    centerClick() {
+    centerClick () {
       this.drawerTitle = '组件选择'
       this.visibleEditDrawer = true
     },
     // 选择组件确定
-    componentsHandleOk(selectLayout) {
+    componentsHandleOk (selectLayout) {
       this.componentsConfig = selectLayout
       this.asyncComponents = selectLayout.url
       this.visibleEditDrawer = false
     },
-    getJSONdata() {
+    getJSONdata () {
       let obj = {}
       obj = {
         previewUrl: 'Framework/ComponentsMananger/Layout/Components/TabsNavigation/V1.0/edit/Components/preview',
@@ -490,7 +505,7 @@ export default {
       }
       return obj
     },
-    settingsDelect() {
+    settingsDelect () {
       this.asyncComponents = ''
     }
   }

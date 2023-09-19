@@ -1,6 +1,16 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <div>
-    <common-table ref="table" :comp="comp" :columns="columns" :params="queryParam" :api="tableApi" :table-refresh="tableRefresh" :flex="tableFlex" :pagination="true"> </common-table>
+    <common-table ref="table"
+                  :comp="comp"
+                  :columns="columns"
+                  :params="queryParam"
+                  :api="tableApi"
+                  :table-refresh="tableRefresh"
+                  :flex="tableFlex"
+                  :pagination="true"> </common-table>
   </div>
 </template>
 
@@ -70,7 +80,7 @@ export default {
       ]
     }
   },
-  data() {
+  data () {
     return {
       comp: this,
       queryParam: {
@@ -79,7 +89,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     console.log(this.processInstId, 'this.processInstId')
     this.queryParam.processInstId = this.processInstId
     this.queryParam.businessKey = this.businessKey
@@ -95,7 +105,7 @@ export default {
     }
   },
   methods: {
-    tableRefresh(param) {
+    tableRefresh (param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')

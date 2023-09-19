@@ -1,7 +1,24 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <common-dialog title="弹出选择" :visible="visible" v-if="visible" :dialog-config="dialogConfig" width="50%" :dialog-height="360" @handle-cancel="close" @handle-ok="fillBack" @close="close">
+  <common-dialog title="弹出选择"
+                 :visible="visible"
+                 v-if="visible"
+                 :dialog-config="dialogConfig"
+                 width="50%"
+                 :dialog-height="360"
+                 @handle-cancel="close"
+                 @handle-ok="fillBack"
+                 @close="close">
     <template #dialog>
-      <custom-table v-if="visible" :code="code" :report-param="reportParam" :custom-height="350" :show-west-tree="false" :header-visible="false" @selection-change="selectChange"></custom-table>
+      <custom-table v-if="visible"
+                    :code="code"
+                    :report-param="reportParam"
+                    :custom-height="350"
+                    :show-west-tree="false"
+                    :header-visible="false"
+                    @selection-change="selectChange"></custom-table>
     </template>
   </common-dialog>
 </template>
@@ -30,7 +47,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       dialogConfig: {
         modal: false
@@ -40,7 +57,7 @@ export default {
       selectionOption: {} // 报表回填label与value
     }
   },
-  mounted() {
+  mounted () {
     this.$api['formGenerator.getSelectionDetail']({ code: this.selectCode }).then((res) => {
       if (res) {
         this.code = res.reportCode
@@ -53,13 +70,13 @@ export default {
   },
   methods: {
     // 弹出选择选择行记录事件
-    selectChange(val) {
+    selectChange (val) {
       this.fillBackData = val
     },
-    close() {
+    close () {
       this.$emit('close')
     },
-    fillBack() {
+    fillBack () {
       let fillBackObj = {}
       if (this.fillBackData.length) {
         fillBackObj['label'] = this.fillBackData[0][this.selectionOption.labelCol]

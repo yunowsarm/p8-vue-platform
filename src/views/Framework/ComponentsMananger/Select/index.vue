@@ -1,30 +1,41 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <normal-layout>
     <template #north>
-      <common-button :comp="comp" :button-type="'round'" :custom-button-data="customButtonData"></common-button>
+      <common-button :comp="comp"
+                     :button-type="'round'"
+                     :custom-button-data="customButtonData"></common-button>
       <!--      <search-form-list ref="search" :dataSource="searchData" @search="search" @re-set="reSet"></search-form-list>-->
     </template>
     <template #west>
-      <common-tree :data="treeData" @select="onTreeNodeSelect" :tree-config="treeCfg"></common-tree>
+      <common-tree :data="treeData"
+                   @select="onTreeNodeSelect"
+                   :tree-config="treeCfg"></common-tree>
     </template>
     <template #center>
       <div id="table-contain">
-        <common-table
-          ref="table"
-          :comp="comp"
-          :columns="columns"
-          :use-system-config-button="0"
-          :custom-button-data="customButtonData"
-          :params="queryParam"
-          :api="tableApi"
-          :pagination="true"
-        ></common-table>
+        <common-table ref="table"
+                      :comp="comp"
+                      :columns="columns"
+                      :use-system-config-button="0"
+                      :custom-button-data="customButtonData"
+                      :params="queryParam"
+                      :api="tableApi"
+                      :pagination="true"></common-table>
       </div>
     </template>
     <template #drawer-panel>
-      <common-drawer v-if="visibleEditDrawer" :title="drawerTitle" :visible="visibleEditDrawer" @close="onEditSelectionClose">
+      <common-drawer v-if="visibleEditDrawer"
+                     :title="drawerTitle"
+                     :visible="visibleEditDrawer"
+                     @close="onEditSelectionClose">
         <template #drawer>
-          <selection-edit :id="recordId" @cancel="onEditSelectionClose" :selection-type-id="selectionTypeId" @saveSuccess="onSave"></selection-edit>
+          <selection-edit :id="recordId"
+                          @cancel="onEditSelectionClose"
+                          :selection-type-id="selectionTypeId"
+                          @saveSuccess="onSave"></selection-edit>
         </template>
       </common-drawer>
     </template>
@@ -75,7 +86,7 @@ export default {
     // ,
     // SearchFormList
   },
-  data() {
+  data () {
     return {
       comp: this,
       customButtonData: [
@@ -151,7 +162,7 @@ export default {
           dataIndex: 'selectionType',
           align: 'left',
           headerAlign: 'left',
-          formatter(row, column, cellValue, index) {
+          formatter (row, column, cellValue, index) {
             let v = ''
             switch (cellValue) {
               case 1:
@@ -172,7 +183,7 @@ export default {
           dataIndex: 'dataSourceType',
           align: 'left',
           headerAlign: 'left',
-          formatter(row, column, cellValue, index) {
+          formatter (row, column, cellValue, index) {
             let v = ''
             switch (cellValue) {
               case 1:
@@ -247,7 +258,7 @@ export default {
   //   }
   // },
   methods: {
-    onCreate() {
+    onCreate () {
       this.recordId = ''
       if (this.selectionTypeId === 'root') {
         this.$message({ message: '请选择具体的子类别！', type: 'warning' })
@@ -256,28 +267,28 @@ export default {
       this.visibleEditDrawer = true
       this.drawerTitle = '新建'
     },
-    onUpdate(record) {
+    onUpdate (record) {
       this.recordId = record.id
       this.selectionTypeId = record.selectionType
       this.visibleEditDrawer = true
       this.drawerTitle = '修改'
     },
-    onEditSelectionClose() {
+    onEditSelectionClose () {
       this.selectionTypeId = this.queryParam.selectionType
       this.visibleEditDrawer = false
     },
-    onTreeNodeSelect(node) {
+    onTreeNodeSelect (node) {
       console.log('node', node)
       this.selectionTypeId = node.id
       this.queryParam.selectionType = node.id
       // this.$refs.table.searchData()
     },
-    onSave(res) {
+    onSave (res) {
       console.log('修改页面关闭时的回调方法')
       this.$refs.table.searchData()
       this.onEditSelectionClose()
     },
-    onDelete(record) {
+    onDelete (record) {
       const that = this
       this.$confirm('是否确定要删除该选项？', '提示', {
         confirmButtonText: '确定',
@@ -296,7 +307,7 @@ export default {
           console.log(e)
         })
     },
-    onView(record) {
+    onView (record) {
       this.$message.warning('预览功能暂未开发！')
     }
   }

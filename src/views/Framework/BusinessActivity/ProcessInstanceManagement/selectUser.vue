@@ -1,48 +1,56 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <common-dialog
-    title="选择人员"
-    :visible="visible"
-    :dialog-config="dialogConfig"
-    :dialog-height="dialogHeight"
-    @isfullscreen="handleFullscreen"
-    @handle-cancel="handleCancel"
-    @handle-ok="handleOk"
-    @close="handleCancel"
-  >
+  <common-dialog title="选择人员"
+                 :visible="visible"
+                 :dialog-config="dialogConfig"
+                 :dialog-height="dialogHeight"
+                 @isfullscreen="handleFullscreen"
+                 @handle-cancel="handleCancel"
+                 @handle-ok="handleOk"
+                 @close="handleCancel">
     <template #dialog>
-      <normal-layout :normal-layout="normalLayout" :split-default-left-width="35" v-bind="normalLayoutConfig">
+      <normal-layout :normal-layout="normalLayout"
+                     :split-default-left-width="35"
+                     v-bind="normalLayoutConfig">
         <template #north>
-          <el-input placeholder="请输入人员姓名进行搜索" size="mini" v-model="userParam.userName" style="width: 250px"></el-input>
-          <el-button style="margin-left: 8px" icon="search" size="mini" type="primary" @click="search">搜索</el-button>
-          <el-button style="margin-left: 8px" size="mini" @click="reSet">重置</el-button>
+          <el-input placeholder="请输入人员姓名进行搜索"
+                    size="mini"
+                    v-model="userParam.userName"
+                    style="width: 250px"></el-input>
+          <el-button style="margin-left: 8px"
+                     icon="search"
+                     size="mini"
+                     type="primary"
+                     @click="search">搜索</el-button>
+          <el-button style="margin-left: 8px"
+                     size="mini"
+                     @click="reSet">重置</el-button>
         </template>
         <template #west>
-          <common-tree
-            :tree-api="treeOptions.treeApi"
-            :tree-param="treeOptions.treeParam"
-            :disabled-row="treeOptions.disabledRow"
-            :default-expand-all="treeOptions.defaultExpandAll"
-            :default-expanded-keys="treeOptions.defaultExpandedKeys"
-            @initTreeData="initTreeData"
-            @select="onSelect"
-            :tree-config="treeOptions.treeConfig"
-          ></common-tree>
+          <common-tree :tree-api="treeOptions.treeApi"
+                       :tree-param="treeOptions.treeParam"
+                       :disabled-row="treeOptions.disabledRow"
+                       :default-expand-all="treeOptions.defaultExpandAll"
+                       :default-expanded-keys="treeOptions.defaultExpandedKeys"
+                       @initTreeData="initTreeData"
+                       @select="onSelect"
+                       :tree-config="treeOptions.treeConfig"></common-tree>
         </template>
         <template #center>
-          <common-table
-            ref="table"
-            :table-config="tableConfig"
-            :columns="columns"
-            :params="queryParam"
-            :api="tableApi"
-            :pagination="true"
-            :is-radio-select="getRadioSelect"
-            @requested-table-data="handleRequested"
-            @select="select"
-            @select-all="selectAll"
-            @row-click="rowClick"
-            @row-dblclick="rowDblClick"
-          ></common-table>
+          <common-table ref="table"
+                        :table-config="tableConfig"
+                        :columns="columns"
+                        :params="queryParam"
+                        :api="tableApi"
+                        :pagination="true"
+                        :is-radio-select="getRadioSelect"
+                        @requested-table-data="handleRequested"
+                        @select="select"
+                        @select-all="selectAll"
+                        @row-click="rowClick"
+                        @row-dblclick="rowDblClick"></common-table>
         </template>
       </normal-layout>
     </template>
@@ -139,7 +147,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       flexHeight: '350px',
       queryParam: {
@@ -200,7 +208,7 @@ export default {
     CommonTable
   },
   computed: {
-    getRadioSelect() {
+    getRadioSelect () {
       if (this.selectType === '0') {
         return false
       } else {
@@ -208,33 +216,33 @@ export default {
       }
     }
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    handleFullscreen() {},
-    handleCancel() {
+    handleFullscreen () { },
+    handleCancel () {
       this.$refs.table.clearSelection()
       this.selectedRow = null
       this.selectedRows = []
       this.$emit('close-dialog', this.selectedRows, this.otherParam)
     },
-    handleOk(e) {
+    handleOk (e) {
       this.$emit('close-dialog', this.selectedRows, this.otherParam)
     },
-    initTreeData(data) {
+    initTreeData (data) {
       this.$emit('initTreeData', data)
     },
-    onSelect(obj) {
+    onSelect (obj) {
       this.queryParam.departmentId = obj.id
     },
-    select(selection, row) {
+    select (selection, row) {
       this.selectedRow = row
       this.selectedRows = selection
     },
-    selectAll(selection) {
+    selectAll (selection) {
       this.selectedRows = selection
     },
     // 单击选中行
-    rowClick(row, column, event) {
+    rowClick (row, column, event) {
       let check = this.isCheck(this.disabledRow, row)
       if (check) {
         if (this.getRadioSelect) {
@@ -257,7 +265,7 @@ export default {
       }
     },
     // 双击行，直接关闭抽屉、回填值
-    rowDblClick(row, column, event) {
+    rowDblClick (row, column, event) {
       let check = this.isCheck(this.disabledRow, row)
       if (check) {
         this.$refs.table.clearSelection()
@@ -266,14 +274,14 @@ export default {
         this.handleOk()
       }
     },
-    checkSelect(row, index) {
+    checkSelect (row, index) {
       if (this.disabledRow.includes(row.id)) {
         return false
       } else {
         return true
       }
     },
-    handleRequested(data) {
+    handleRequested (data) {
       let selectRows = this.selectRows
       data.forEach((item, idx) => {
         selectRows.forEach((el) => {
@@ -288,14 +296,14 @@ export default {
         })
       })
     },
-    search() {
+    search () {
       this.queryParam.userName = this.userParam.userName
     },
-    reSet() {
+    reSet () {
       this.queryParam.userName = ''
       this.userParam.userName = ''
     },
-    isCheck(disabledRow, row) {
+    isCheck (disabledRow, row) {
       if (disabledRow.includes(row.id)) {
         return false
       } else {

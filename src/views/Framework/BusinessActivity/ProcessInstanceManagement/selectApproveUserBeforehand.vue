@@ -1,27 +1,26 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <common-dialog
-    title="预先设置审批人"
-    :visible="isView"
-    :show-handle-btn="false"
-    :dialog-config="dialogConfig"
-    @handle-cancel="handleCancel"
-    @close="handleCancel"
-    @handle-ok="handleOk"
-    width="700px"
-    :dialog-height="dialogHeight"
-  >
+  <common-dialog title="预先设置审批人"
+                 :visible="isView"
+                 :show-handle-btn="false"
+                 :dialog-config="dialogConfig"
+                 @handle-cancel="handleCancel"
+                 @close="handleCancel"
+                 @handle-ok="handleOk"
+                 width="700px"
+                 :dialog-height="dialogHeight">
     <template #dialog>
-      <form-list
-        ref="form"
-        label-width="210px"
-        :data-source="selectUserBeforehandDataSourceCur"
-        :api="saveApi"
-        :form="selectUserBeforehandFormDataCur"
-        :is-custom-validate="isCustomValidate"
-        @saved="saved"
-        @custom-validate="customValidate"
-        @form-data-change="formDataChange"
-      >
+      <form-list ref="form"
+                 label-width="210px"
+                 :data-source="selectUserBeforehandDataSourceCur"
+                 :api="saveApi"
+                 :form="selectUserBeforehandFormDataCur"
+                 :is-custom-validate="isCustomValidate"
+                 @saved="saved"
+                 @custom-validate="customValidate"
+                 @form-data-change="formDataChange">
       </form-list>
     </template>
   </common-dialog>
@@ -56,7 +55,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'PersonalProcessApproval.setApproveUser',
       isCustomValidate: true,
@@ -72,7 +71,7 @@ export default {
       isView: false
     }
   },
-  mounted() {
+  mounted () {
     // console.log(this.selectUserBeforehandDataSourceCur, this.selectUserBeforehandFormDataCur, 'selectUserBeforehandFormDataCurselectUserBeforehandFormDataCur')
     this.selectUserBeforehandFormDataCur = Object.assign({}, this.selectUserBeforehandFormData)
     this.selectUserBeforehandDataSourceCur = [].concat(this.selectUserBeforehandDataSource)
@@ -82,23 +81,23 @@ export default {
   },
   computed: {},
   methods: {
-    saved(res) {
+    saved (res) {
       this.isView = false
       this.$emit('saveSuccess')
       this.$emit('close-modal')
     },
-    formDataChange(formSub) {},
-    customValidate(saveParams) {
+    formDataChange (formSub) { },
+    customValidate (saveParams) {
       this.isView = false
       this.$emit('commit', saveParams)
       this.$emit('saveSuccess')
       this.$emit('close-modal')
     },
-    handleOk(e) {
+    handleOk (e) {
       this.isView = false
       this.$emit('close-modal')
     },
-    handleCancel(e) {
+    handleCancel (e) {
       this.isView = false
       this.$emit('close-modal')
     }

@@ -1,22 +1,29 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <div style="height: 100%; border-left: 1px solid #e4e7ed">
     <el-tabs value="first">
-      <el-tab-pane label="基本配置" name="first">
+      <el-tab-pane label="基本配置"
+                   name="first">
         <VuePerfectScrollbar class="scroll-area">
-          <form-list
-            :api="saveApi"
-            ref="baseForm"
-            label-position="top"
-            :data-source="baseSource"
-            :form="formData"
-            label-width="90px"
-            @saved="saved"
-            :exist-default-btn="false"
-            :exist-custom-btn="false"
-          >
+          <form-list :api="saveApi"
+                     ref="baseForm"
+                     label-position="top"
+                     :data-source="baseSource"
+                     :form="formData"
+                     label-width="90px"
+                     @saved="saved"
+                     :exist-default-btn="false"
+                     :exist-custom-btn="false">
             <template #renderer>
-              <el-select v-model="formData.renderer" placeholder="请选择布局渲染器" style="width: 100%">
-                <el-option v-for="item in rendererData" :key="item.id" :label="item.name + item.version" :value="item.id"> </el-option>
+              <el-select v-model="formData.renderer"
+                         placeholder="请选择布局渲染器"
+                         style="width: 100%">
+                <el-option v-for="item in rendererData"
+                           :key="item.id"
+                           :label="item.name + item.version"
+                           :value="item.id"> </el-option>
               </el-select>
             </template>
           </form-list>
@@ -39,7 +46,7 @@ export default {
   props: {
     editFormData: {
       type: Object,
-      default: () => {}
+      default: () => { }
     },
     saveApi: {
       type: String,
@@ -76,7 +83,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       baseSource: [
         {
@@ -197,29 +204,29 @@ export default {
       rendererData: []
     }
   },
-  mounted() {
+  mounted () {
     if (this.recordId) {
       this.rendererDorm(this.recordId)
     }
   },
   methods: {
-    async getSubmitData() {
+    async getSubmitData () {
       let allFormData
       await this.$refs.baseForm.validate().then((baseParams) => {
         allFormData = { ...baseParams }
       })
       return allFormData
     },
-    doSubmit(data) {
+    doSubmit (data) {
       this.$refs.baseForm.submitForm(data, this.saveApi)
     },
-    getFormData() {
+    getFormData () {
       return this.formData
     },
-    saved() {
+    saved () {
       this.$emit('saveSuccess')
     },
-    async rendererDorm(id) {
+    async rendererDorm (id) {
       let that = this
       await this.$api['desLayout.view']({ id: this.recordId }).then((res) => {
         that.$api['desLayout.rendererList']({ layoutType: res.layoutType }).then(function (result) {

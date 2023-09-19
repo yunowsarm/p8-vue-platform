@@ -1,5 +1,12 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <common-table :columns="columns" :params="params" :api="api" :pagination="true" :table-setting="false"> </common-table>
+  <common-table :columns="columns"
+                :params="params"
+                :api="api"
+                :pagination="true"
+                :table-setting="false"> </common-table>
 </template>
 
 <script>
@@ -13,7 +20,7 @@ export default {
       type: String
     }
   },
-  data() {
+  data () {
     return {
       api: 'planInfoManager.getTaskListByProcessKey',
       columns: [

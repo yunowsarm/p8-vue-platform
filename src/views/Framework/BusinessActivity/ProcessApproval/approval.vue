@@ -1,71 +1,62 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
+
 <template>
   <div class="container">
     <div class="approveContent">
-      <common-tabs
-class="custom-tabs" type="border-card" :active-tabs="activeTabs" :tabs-data="tabs">
+      <common-tabs class="custom-tabs"
+                   type="border-card"
+                   :active-tabs="activeTabs"
+                   :tabs-data="tabs">
         <template #approval>
-          <component
-           
-ref="approveContent"
-            :style="{ height: tabsHeight }"
-            :is="componentUrl"
-            v-if="formComp != null && formComp != '' && componentsParams"
-            :code="componentsParams.code"
-            :data-view-id="componentsParams.dataViewId"
-            :record="{ desformCode: componentsParams.codeForm }"
-            :permission-vo="componentsParams.permissionVo"
-            :layout-config="componentsParams"
-            v-bind="formCompProp"
-            :kanban-config="componentsParams"
-          />
-          <component
-           
-ref="approveContent"
-            :style="{ height: tabsHeight }"
-            :selected-approval="selectedApproval"
-            :curr-entity-id="currEntityId"
-            v-else-if="formComp != null && formComp != ''"
-            :is="componentLoader"
-            v-bind="formCompProp"
-            :approval-result="formData.approvalResult"
-            @approve-submit="approveSubmit"
-            @selection-ids="selectionIdsByApprovalResult"
-          />
+          <component ref="approveContent"
+                     :style="{ height: tabsHeight }"
+                     :is="componentUrl"
+                     v-if="formComp != null && formComp != '' && componentsParams"
+                     :code="componentsParams.code"
+                     :data-view-id="componentsParams.dataViewId"
+                     :record="{ desformCode: componentsParams.codeForm }"
+                     :permission-vo="componentsParams.permissionVo"
+                     :layout-config="componentsParams"
+                     v-bind="formCompProp"
+                     :kanban-config="componentsParams" />
+          <component ref="approveContent"
+                     :style="{ height: tabsHeight }"
+                     :selected-approval="selectedApproval"
+                     :curr-entity-id="currEntityId"
+                     v-else-if="formComp != null && formComp != ''"
+                     :is="componentLoader"
+                     v-bind="formCompProp"
+                     :approval-result="formData.approvalResult"
+                     @approve-submit="approveSubmit"
+                     @selection-ids="selectionIdsByApprovalResult" />
         </template>
         <template #bpmn>
-          <bpm-view
-           
-v-if="selectedApproval.processDefId != ''"
-            :style="{ height: tabsHeight }"
-            :process-obj="{
+          <bpm-view v-if="selectedApproval.processDefId != ''"
+                    :style="{ height: tabsHeight }"
+                    :process-obj="{
               processDefinitionId: selectedApproval.processDefId,
               processInstanceId: selectedApproval.processInstId
             }"
-            @getIsWarnApprove="getIsWarnApprove"
-          ></bpm-view>
+                    @getIsWarnApprove="getIsWarnApprove"></bpm-view>
         </template>
         <template #history>
-          <ProcessHistoryList
-           
-v-if="processInstId"
-            :style="{ height: tabsHeight }"
-            :table-api="historyDataApi"
-            :columns="historyColumns"
-            :process-inst-id="processInstId"
-            :business-key="businessKey"
-            :table-flex="tableFlex"
-          ></ProcessHistoryList>
+          <ProcessHistoryList v-if="processInstId"
+                              :style="{ height: tabsHeight }"
+                              :table-api="historyDataApi"
+                              :columns="historyColumns"
+                              :process-inst-id="processInstId"
+                              :business-key="businessKey"
+                              :table-flex="tableFlex"></ProcessHistoryList>
         </template>
       </common-tabs>
-      <selectApproveUser
-       
-v-if="isSelectApproveUserView"
-        :is-select-approve-user-view="isSelectApproveUserView"
-        :select-user-data-source="selectUserDataSource"
-        :select-user-form-data="selectUserFormData"
-        @close-modal="closeModal"
-        @commit="commit"
-      ></selectApproveUser>
+      <selectApproveUser v-if="isSelectApproveUserView"
+                         :is-select-approve-user-view="isSelectApproveUserView"
+                         :select-user-data-source="selectUserDataSource"
+                         :select-user-form-data="selectUserFormData"
+                         @close-modal="closeModal"
+                         @commit="commit"></selectApproveUser>
     </div>
     <div class="approveTitle">
       <template title="填写审批意见">
@@ -74,29 +65,26 @@ v-if="isSelectApproveUserView"
           填写审批意见{{ signText }}
         </div>
         <div>
-          <form-list
-           
-v-if="formValidate"
-            ref="form"
-            label-width="120px"
-            @rendered="rendered"
-            @saved="saved"
-            :data-source="dataSource"
-            :exist-default-btn="false"
-            :api="saveApi"
-            :is-custom-validate="isCustomValidate"
-            @custom-validate="customValidate"
-            :form="formData"
-            @form-data-change="formDataChange"
-          >
+          <form-list v-if="formValidate"
+                     ref="form"
+                     label-width="120px"
+                     @rendered="rendered"
+                     @saved="saved"
+                     :data-source="dataSource"
+                     :exist-default-btn="false"
+                     :api="saveApi"
+                     :is-custom-validate="isCustomValidate"
+                     @custom-validate="customValidate"
+                     :form="formData"
+                     @form-data-change="formDataChange">
             <template #uploadFiles>
               <div class="edit-outputdata-view">
                 <ul class="file-list">
-                  <li
-v-for="item in formData.uploadFiles" :key="item.id">
+                  <li v-for="item in formData.uploadFiles"
+                      :key="item.id">
                     <p>
-                      <span
-class="filename" @click="downloadOutputRequsetFile(item)">
+                      <span class="filename"
+                            @click="downloadOutputRequsetFile(item)">
                         {{ item.fileName }}
                       </span>
                     </p>
@@ -111,10 +99,11 @@ class="filename" @click="downloadOutputRequsetFile(item)">
         <!-- <el-col :span="20" class="flex-left">
                   {{selectedApproval.processName}}{{selectedApproval.startTime}}
               </el-col> -->
-        <el-col
-:span="24" style="text-align: right">
-          <el-button
-style="margin: 8px 10px 0 0" type="primary" @click="handleSubmit">提交审批</el-button>
+        <el-col :span="24"
+                style="text-align: right">
+          <el-button style="margin: 8px 10px 0 0"
+                     type="primary"
+                     @click="handleSubmit">提交审批</el-button>
         </el-col>
       </el-row>
     </div>
@@ -143,10 +132,10 @@ export default {
   props: {
     selectedApproval: {
       type: Object,
-      default: () => {}
+      default: () => { }
     }
   },
-  data() {
+  data () {
     return {
       tabsHeight: document.documentElement.clientHeight - 380 + 'px',
       saveApi: 'PersonalProcessApproval.saveResult',
@@ -492,12 +481,12 @@ export default {
     }
   },
   computed: {
-    componentLoader() {
+    componentLoader () {
       const comp = this.formComp
 
       return () => import('@/views/' + comp)
     },
-    componentUrl() {
+    componentUrl () {
       if (this.asyncComponents) {
         return () => import(`@/views/${this.asyncComponents}.vue`)
       }
@@ -527,11 +516,11 @@ export default {
       }
     }
   },
-  created() {
+  created () {
     this.loadFormKey()
     this.loadApprovalForm()
   },
-  mounted() {
+  mounted () {
     this.processKey = this.selectedApproval.processKey
     if (this.ar.indexOf(this.processKey) !== -1) {
       this.historyDataApi = 'PersonalProcessApproval.customHistoryList'
@@ -545,10 +534,10 @@ export default {
     this.taskId = this.selectedApproval.processTaskId
   },
   methods: {
-    getIsWarnApprove(isWarnApprove) {
+    getIsWarnApprove (isWarnApprove) {
       this.isWarnApprove = isWarnApprove
     },
-    handleSubmit(e) {
+    handleSubmit (e) {
       if (!this.formData.approvalResult) {
         this.$message({ message: '请选择审批结果', type: 'warning' })
         return
@@ -575,10 +564,10 @@ export default {
           .then(() => {
             this.$refs.form.handleSubmit(e)
           })
-          .catch(() => {})
+          .catch(() => { })
       }
     },
-    approveSubmit(e, msg) {
+    approveSubmit (e, msg) {
       if (msg) {
         this.$confirm(msg, '提示', {
           confirmButtonText: '确定',
@@ -588,21 +577,21 @@ export default {
           .then(() => {
             this.$refs.form.handleSubmit(e)
           })
-          .catch(() => {})
+          .catch(() => { })
       } else {
         this.$refs.form.handleSubmit(e)
       }
     },
-    customValidate(saveParams) {
+    customValidate (saveParams) {
       this.saveParams = saveParams
       this.$refs.form.submitForm(this.saveParams, this.saveApi)
     },
-    rendered() {
+    rendered () {
       // this.$refs.form.setViewFields({ 'none': 'none' })
       this.formData.taskId = this.selectedApproval.processTaskId
       this.formData.processInstance = this.selectedApproval.processInstId
     },
-    saved(result) {
+    saved (result) {
       // let approveTime = result
       const this_ = this
       if (result && result.isComplete === false) {
@@ -628,7 +617,7 @@ export default {
         }
       }) */
     },
-    isUpdatePlanDataSource() {
+    isUpdatePlanDataSource () {
       let result = false
       const processKey = this.selectedApproval.processKey
       if (this.updatePlanDataSource.indexOf(processKey) !== -1) {
@@ -636,7 +625,7 @@ export default {
       }
       return result
     },
-    loadFormKey() {
+    loadFormKey () {
       const this_ = this
       if (this.isUpdatePlanDataSource()) {
         this_.dataSource = this_.dataSourceDefaultPlan
@@ -697,7 +686,7 @@ export default {
         this_.formValidate = true
       })
     },
-    loadApprovalForm() {
+    loadApprovalForm () {
       this.formData.approvalComment = undefined
       this.formData.approvalResult = this.dataSource[0].options.length === 1 ? '1' : ''
       this.formData.taskId = this.selectedApproval.processTaskId
@@ -705,7 +694,7 @@ export default {
       this.formData.processKey = this.selectedApproval.processKey
       this.formData.businessKey = this.selectedApproval.businessKey
     },
-    loadApprovalFormData() {
+    loadApprovalFormData () {
       const this_ = this
       if (this_.formData.approvalParams && (this_.formData.approvalParams === 'canView' || this_.formData.approvalParams === 'canEdit')) {
         this_.$api['ProjectApply.getWholeCopyClearly']({ wholeDescribeId: this_.selectedApproval.businessKey }).then((res) => {
@@ -721,7 +710,7 @@ export default {
         this_.formData.uploadFiles = []
       }
     },
-    downloadOutputRequsetFile(item) {
+    downloadOutputRequsetFile (item) {
       // 输出要求-文件下载
       if (item.id) {
         this.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' })
@@ -740,15 +729,15 @@ export default {
           })
       }
     },
-    closeModal(e) {
+    closeModal (e) {
       this.isSelectApproveUserView = false
       this.$emit('approved', this.formData.taskId)
     },
-    commit(fullParams) {
+    commit (fullParams) {
       this.$refs.form.submitForm(fullParams, this.saveApi)
       this.closeModal()
     },
-    formDataChange(formSub) {
+    formDataChange (formSub) {
       if (formSub.formData.approvalResult === '1') {
         this.approvalResultText = '通过'
       }
@@ -768,7 +757,7 @@ export default {
         this.formData = Object.assign({}, this.formData, { approvalComment: this.$store.state.project.baseConfig.defaultCommentYes })
       }
     },
-    selectionIdsByApprovalResult(approveData) {
+    selectionIdsByApprovalResult (approveData) {
       this.formData.approveData = approveData
     }
   }

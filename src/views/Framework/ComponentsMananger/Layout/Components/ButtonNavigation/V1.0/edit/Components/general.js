@@ -1,3 +1,7 @@
+// 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。
+
+
+
 // 树形下拉数据根据对应关系进行处理
 export const selectGenerateTree = (data, config) => {
   const configParams = JSON.parse(config)

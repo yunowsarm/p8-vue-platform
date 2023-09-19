@@ -1,25 +1,32 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <div>
-    <form-list
-      ref="form"
-      :data-source="dataSource"
-      :form="formData"
-      :api="saveApi"
-      @saved="saved"
-      label-width="100px"
-      :is-custom-validate="true"
-      @custom-validate="customValidate"
-      @rendered="rendered"
-    >
+    <form-list ref="form"
+               :data-source="dataSource"
+               :form="formData"
+               :api="saveApi"
+               @saved="saved"
+               label-width="100px"
+               :is-custom-validate="true"
+               @custom-validate="customValidate"
+               @rendered="rendered">
       <template #sqlid>
-        <el-select v-model="formData.sqlid" @change="changeSql" style="width: 100%">
+        <el-select v-model="formData.sqlid"
+                   @change="changeSql"
+                   style="width: 100%">
           <template v-for="(item, index) in sqlIdOption">
-            <el-option :label="item.name" :value="item.id" :key="index"></el-option>
+            <el-option :label="item.name"
+                       :value="item.id"
+                       :key="index"></el-option>
           </template>
         </el-select>
       </template>
       <template #styleRendering>
-        <ace-edit :value.sync="formData.styleRendering" width="400px" height="150px"></ace-edit>
+        <ace-edit :value.sync="formData.styleRendering"
+                  width="400px"
+                  height="150px"></ace-edit>
       </template>
       <template slot="btn">
         <el-button @click="cancel">取 消</el-button>
@@ -27,118 +34,201 @@
     </form-list>
     <!-- <i v-show="iconShow" id="icon-style" class="el-icon-full-screen" @click="iconClick"></i>
     <i v-show="!iconShow" id="icon-style" class="el-icon-copy-document" @click="iconClick"></i> -->
-    <common-tabs :tabs-data="tabsData" :height="height" style="z-index: 1000" :active-tabs="activeTabs" @tab-click="tabClick" type="border-card" class="el_tabs" :has-full-screen="true">
+    <common-tabs :tabs-data="tabsData"
+                 :height="height"
+                 style="z-index: 1000"
+                 :active-tabs="activeTabs"
+                 @tab-click="tabClick"
+                 type="border-card"
+                 class="el_tabs"
+                 :has-full-screen="true">
       <template #tableConfigDetails>
-        <editable-table
-          ref="editTable"
-          class="editTable"
-          :columns="columns"
-          :add-row="true"
-          :height="eaitHeight"
-          :need-params="true"
-          :params="tableParams"
-          :change-table-data="changeTableData"
-          :is-merge="isMerge"
-          :api="tableConfigDetailsApi"
-          @save-param-data="saveTableData"
-        >
+        <editable-table ref="editTable"
+                        class="editTable"
+                        :columns="columns"
+                        :add-row="true"
+                        :height="eaitHeight"
+                        :need-params="true"
+                        :params="tableParams"
+                        :change-table-data="changeTableData"
+                        :is-merge="isMerge"
+                        :api="tableConfigDetailsApi"
+                        @save-param-data="saveTableData">
           <template #isParent="{ scope, data }">
-            <el-checkbox v-model="scope.row.isParent" :true-label="1" :false-label="0" @change="saveTableData(data)"></el-checkbox>
+            <el-checkbox v-model="scope.row.isParent"
+                         :true-label="1"
+                         :false-label="0"
+                         @change="saveTableData(data)"></el-checkbox>
           </template>
           <template #treeNode="{ scope, data }">
-            <el-checkbox v-model="scope.row.treeNode" true-label="1" false-label="0" @change="saveTableData(data)"></el-checkbox>
+            <el-checkbox v-model="scope.row.treeNode"
+                         true-label="1"
+                         false-label="0"
+                         @change="saveTableData(data)"></el-checkbox>
           </template>
           <template #fieldName="{ scope, data }">
-            <el-input v-model="scope.row.fieldName" :disabled="!!scope.row.isCustomColumn" @blur="saveTableData(data)"></el-input>
+            <el-input v-model="scope.row.fieldName"
+                      :disabled="!!scope.row.isCustomColumn"
+                      @blur="saveTableData(data)"></el-input>
           </template>
           <template #fieldType="{ scope, data }">
-            <el-input v-model="scope.row.fieldType" :disabled="!!scope.row.isCustomColumn" @blur="saveTableData(data)"></el-input>
+            <el-input v-model="scope.row.fieldType"
+                      :disabled="!!scope.row.isCustomColumn"
+                      @blur="saveTableData(data)"></el-input>
           </template>
           <template #fieldTxt="{ scope, data }">
-            <el-input v-model="scope.row.fieldTxt" @blur="saveTableData(data)"></el-input>
+            <el-input v-model="scope.row.fieldTxt"
+                      @blur="saveTableData(data)"></el-input>
           </template>
           <template #fieldWidth="{ scope, data }">
-            <el-input-number v-model="scope.row.fieldWidth" @blur="saveTableData(data)"></el-input-number>
+            <el-input-number v-model="scope.row.fieldWidth"
+                             @blur="saveTableData(data)"></el-input-number>
           </template>
           <template #isListShow="{ scope, data }">
-            <el-checkbox v-model="scope.row.isListShow" :true-label="1" :false-label="0" @change="saveTableData(data)"></el-checkbox>
+            <el-checkbox v-model="scope.row.isListShow"
+                         :true-label="1"
+                         :false-label="0"
+                         @change="saveTableData(data)"></el-checkbox>
           </template>
           <template #isViewShow="{ scope, data }">
-            <el-checkbox v-model="scope.row.isViewShow" :true-label="1" :false-label="0" :disabled="!!scope.row.isCustomColumn" @change="saveTableData(data)"></el-checkbox>
+            <el-checkbox v-model="scope.row.isViewShow"
+                         :true-label="1"
+                         :false-label="0"
+                         :disabled="!!scope.row.isCustomColumn"
+                         @change="saveTableData(data)"></el-checkbox>
           </template>
           <template #isOrder="{ scope, data }">
-            <el-checkbox v-model="scope.row.isOrder" :true-label="1" :false-label="0" @change="saveTableData(data)"></el-checkbox>
+            <el-checkbox v-model="scope.row.isOrder"
+                         :true-label="1"
+                         :false-label="0"
+                         @change="saveTableData(data)"></el-checkbox>
           </template>
           <template #isSearch="{ scope, data }">
-            <el-checkbox v-model="scope.row.isSearch" :true-label="1" :false-label="0" :disabled="!!scope.row.isCustomColumn" @change="saveTableData(data, 'isSearch', scope)"></el-checkbox>
+            <el-checkbox v-model="scope.row.isSearch"
+                         :true-label="1"
+                         :false-label="0"
+                         :disabled="!!scope.row.isCustomColumn"
+                         @change="saveTableData(data, 'isSearch', scope)"></el-checkbox>
           </template>
           <template #isCustomColumnHeader="{}">
             是否自定义列
-            <el-tooltip class="item" effect="dark" popper-class="testtooltip" placement="top">
+            <el-tooltip class="item"
+                        effect="dark"
+                        popper-class="testtooltip"
+                        placement="top">
               <div slot="content">
                 <p>自定义列能够实现如序号列生成、预留插槽进行图标渲染等功能，可在自定义列配置选项页中管理。</p>
               </div>
-              <i style="font-size: 20px" class="el-icon-question"></i>
+              <i style="font-size: 20px"
+                 class="el-icon-question"></i>
             </el-tooltip>
           </template>
           <template #isCustomColumn="{ scope, data }">
-            <el-checkbox v-model="scope.row.isCustomColumn" :true-label="1" :false-label="0" @change="saveTableData(data, 'isCustomColumn', scope)"></el-checkbox>
+            <el-checkbox v-model="scope.row.isCustomColumn"
+                         :true-label="1"
+                         :false-label="0"
+                         @change="saveTableData(data, 'isCustomColumn', scope)"></el-checkbox>
           </template>
           <template #searchMode="{ scope, data }">
             <!-- <el-select v-model="scope.row.searchMode" clearable @change="saveTableData(data)">
               <el-option label="单条件查询" value="singleSearch"></el-option>
               <el-option label="范围查询" value="rangeSearch"></el-option>
             </el-select> -->
-            <el-select v-model="scope.row.searchMode" clearable :disabled="!!scope.row.isCustomColumn" @change="saveTableData(data, null, scope)">
-              <el-option label="文本框" value="text"></el-option>
-              <el-option label="目录组件" value="select"></el-option>
-              <el-option label="树组件" value="treeSelect"></el-option>
-              <el-option label="复选" value="multiple"></el-option>
-              <el-option label="数字" value="number"></el-option>
-              <el-option label="单选按钮" value="radioButton"></el-option>
-              <el-option label="弹出组件" value="popUpSelect"></el-option>
-              <el-option label="日期" value="datetime"></el-option>
-              <el-option label="时间范围" value="datetimeRange"></el-option>
+            <el-select v-model="scope.row.searchMode"
+                       clearable
+                       :disabled="!!scope.row.isCustomColumn"
+                       @change="saveTableData(data, null, scope)">
+              <el-option label="文本框"
+                         value="text"></el-option>
+              <el-option label="目录组件"
+                         value="select"></el-option>
+              <el-option label="树组件"
+                         value="treeSelect"></el-option>
+              <el-option label="复选"
+                         value="multiple"></el-option>
+              <el-option label="数字"
+                         value="number"></el-option>
+              <el-option label="单选按钮"
+                         value="radioButton"></el-option>
+              <el-option label="弹出组件"
+                         value="popUpSelect"></el-option>
+              <el-option label="日期"
+                         value="datetime"></el-option>
+              <el-option label="时间范围"
+                         value="datetimeRange"></el-option>
             </el-select>
           </template>
           <template #replaceValHeader="{}">
             查询目标字段
-            <el-tooltip class="item" effect="dark" popper-class="testtooltip" placement="top">
+            <el-tooltip class="item"
+                        effect="dark"
+                        popper-class="testtooltip"
+                        placement="top">
               <div slot="content">
                 <p>通过该值对目标字段进行查询筛选，例如：显示名称的字段通过目录组件选择后对ID列进行查询。</p>
               </div>
-              <i style="font-size: 20px" class="el-icon-question"></i>
+              <i style="font-size: 20px"
+                 class="el-icon-question"></i>
             </el-tooltip>
           </template>
           <template #replaceVal="{ scope, data }">
-            <el-select v-model="scope.row.replaceVal" style="width: 100%" clearable :disabled="!!scope.row.isCustomColumn" @change="saveTableData(data)">
-              <el-option v-for="item in replaceData" :key="item.value" :label="item.value" :value="item.value"></el-option>
+            <el-select v-model="scope.row.replaceVal"
+                       style="width: 100%"
+                       clearable
+                       :disabled="!!scope.row.isCustomColumn"
+                       @change="saveTableData(data)">
+              <el-option v-for="item in replaceData"
+                         :key="item.value"
+                         :label="item.value"
+                         :value="item.value"></el-option>
             </el-select>
           </template>
           <template #dictCodeHeader="{}">
             选项组件
-            <el-tooltip class="item" effect="dark" popper-class="testtooltip" placement="top">
+            <el-tooltip class="item"
+                        effect="dark"
+                        popper-class="testtooltip"
+                        placement="top">
               <div slot="content">
                 <p>查询模式为目录组件、树组件、弹出组件时，可选择选项组件管理中创建的选项组件，在查询时约束取值范围。</p>
               </div>
-              <i style="font-size: 20px" class="el-icon-question"></i>
+              <i style="font-size: 20px"
+                 class="el-icon-question"></i>
             </el-tooltip>
           </template>
           <template #dictCode="{ scope, data }">
             <!-- 文本框 -->
             <div v-if="scope.row.searchMode === 'text'">
-              <el-input clearable :disabled="!!scope.row.isCustomColumn" v-model="scope.row.dictCode"></el-input>
+              <el-input clearable
+                        :disabled="!!scope.row.isCustomColumn"
+                        v-model="scope.row.dictCode"></el-input>
             </div>
             <!-- 目录组件 复选组件-->
             <div v-if="scope.row.searchMode === 'select' || scope.row.searchMode === 'multiple' || scope.row.searchMode === 'radioButton'">
-              <el-select v-model="scope.row.dictCode" style="width: 100%" clearable :disabled="!!scope.row.isCustomColumn" filterable @change="saveTableData(data)">
-                <el-option v-for="item in renderData" :key="item.selectionCode" :label="item.selectionName + '(' + item.selectionCode + ')'" :value="item.selectionCode"> </el-option>
+              <el-select v-model="scope.row.dictCode"
+                         style="width: 100%"
+                         clearable
+                         :disabled="!!scope.row.isCustomColumn"
+                         filterable
+                         @change="saveTableData(data)">
+                <el-option v-for="item in renderData"
+                           :key="item.selectionCode"
+                           :label="item.selectionName + '(' + item.selectionCode + ')'"
+                           :value="item.selectionCode"> </el-option>
               </el-select>
             </div>
             <!-- 树组件 -->
             <div v-if="scope.row.searchMode === 'treeSelect'">
-              <el-select v-model="scope.row.dictCode" style="width: 100%" clearable :disabled="!!scope.row.isCustomColumn" filterable @change="saveTableData(data)">
-                <el-option v-for="item in treeData" :key="item.selectionCode" :label="item.selectionName + '(' + item.selectionCode + ')'" :value="item.selectionCode"> </el-option>
+              <el-select v-model="scope.row.dictCode"
+                         style="width: 100%"
+                         clearable
+                         :disabled="!!scope.row.isCustomColumn"
+                         filterable
+                         @change="saveTableData(data)">
+                <el-option v-for="item in treeData"
+                           :key="item.selectionCode"
+                           :label="item.selectionName + '(' + item.selectionCode + ')'"
+                           :value="item.selectionCode"> </el-option>
               </el-select>
               <!-- <tree-select :multiple="true"
                            :data="treeData"
@@ -150,81 +240,137 @@
             </div>
             <!-- 弹出组件 -->
             <div v-if="scope.row.searchMode === 'popUpSelect'">
-              <el-input v-model="scope.row.dictCode" readonly autosize :disabled="!!scope.row.isCustomColumn" @click.native="showDialog(scope, data)">
-                <i class="el-icon-link" slot="suffix" type="link" :style="{ cursor: 'pointer', fontSize: '16px', color: '#08c' }"></i>
+              <el-input v-model="scope.row.dictCode"
+                        readonly
+                        autosize
+                        :disabled="!!scope.row.isCustomColumn"
+                        @click.native="showDialog(scope, data)">
+                <i class="el-icon-link"
+                   slot="suffix"
+                   type="link"
+                   :style="{ cursor: 'pointer', fontSize: '16px', color: '#08c' }"></i>
               </el-input>
-              <common-dialog title="表格组件" :visible="moduleVisible" @handle-cancel="handleCancel" @handle-ok="componentsHandleOk" @close="handleCancel" width="60%">
+              <common-dialog title="表格组件"
+                             :visible="moduleVisible"
+                             @handle-cancel="handleCancel"
+                             @handle-ok="componentsHandleOk"
+                             @close="handleCancel"
+                             width="60%">
                 <template #dialog>
-                  <common-table ref="table" :comp="comp" :columns="tableColumns" :params="queryParam" :api="tableApi" @selection-change="handleSelectionChange"> </common-table>
+                  <common-table ref="table"
+                                :comp="comp"
+                                :columns="tableColumns"
+                                :params="queryParam"
+                                :api="tableApi"
+                                @selection-change="handleSelectionChange"> </common-table>
                 </template>
               </common-dialog>
             </div>
             <!-- 日期 -->
             <div v-if="scope.row.searchMode === 'datetime'">
-              <el-date-picker v-model="scope.row.dictCode" type="date" clearable :disabled="!!scope.row.isCustomColumn" placeholder="选择日期"> </el-date-picker>
+              <el-date-picker v-model="scope.row.dictCode"
+                              type="date"
+                              clearable
+                              :disabled="!!scope.row.isCustomColumn"
+                              placeholder="选择日期"> </el-date-picker>
             </div>
             <!-- 时间范围 -->
             <div v-if="scope.row.searchMode === 'datetimeRange'">
-              <el-date-picker
-                v-model="scope.row.dictCode"
-                type="daterange"
-                style="width: 100%"
-                :disabled="!!scope.row.isCustomColumn"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-              >
+              <el-date-picker v-model="scope.row.dictCode"
+                              type="daterange"
+                              style="width: 100%"
+                              :disabled="!!scope.row.isCustomColumn"
+                              range-separator="至"
+                              start-placeholder="开始日期"
+                              end-placeholder="结束日期">
               </el-date-picker>
             </div>
             <!-- 数字 -->
             <div v-if="scope.row.searchMode === 'number'">
-              <el-input clearable :disabled="!!scope.row.isCustomColumn" v-model="scope.row.dictCode" type="number" size="medium"></el-input>
+              <el-input clearable
+                        :disabled="!!scope.row.isCustomColumn"
+                        v-model="scope.row.dictCode"
+                        type="number"
+                        size="medium"></el-input>
             </div>
           </template>
           <template #fieldHrefHeader="{}">
             单击事件
-            <el-tooltip class="item" effect="dark" popper-class="testtooltip" placement="top">
+            <el-tooltip class="item"
+                        effect="dark"
+                        popper-class="testtooltip"
+                        placement="top">
               <div slot="content">
                 <p>表格中该列数据点击后通过弹窗方式进入其他组件，可将该值数据作为参数传递给弹出组件中进行控制。</p>
               </div>
-              <i style="font-size: 20px" class="el-icon-question"></i>
+              <i style="font-size: 20px"
+                 class="el-icon-question"></i>
             </el-tooltip>
           </template>
           <template #fieldHref="{ scope, data }">
-            <el-input v-model="scope.row.tenantId" clearable autosize :disabled="!!scope.row.isCustomColumn">
-              <i class="el-icon-link" slot="suffix" type="link" :style="{ cursor: 'pointer', fontSize: '16px', color: '#08c', marginTop: '8px' }" @click="showModal(scope, data)"></i>
+            <el-input v-model="scope.row.tenantId"
+                      clearable
+                      autosize
+                      :disabled="!!scope.row.isCustomColumn">
+              <i class="el-icon-link"
+                 slot="suffix"
+                 type="link"
+                 :style="{ cursor: 'pointer', fontSize: '16px', color: '#08c', marginTop: '8px' }"
+                 @click="showModal(scope, data)"></i>
             </el-input>
-            <select-module v-if="dialogVisible && selectModuleIndex == scope.$index" :visible="dialogVisible" @close="dialogVisible = false" @handleOk="handleOk"></select-module>
+            <select-module v-if="dialogVisible && selectModuleIndex == scope.$index"
+                           :visible="dialogVisible"
+                           @close="dialogVisible = false"
+                           @handleOk="handleOk"></select-module>
           </template>
           <template #orderNum="{ scope, data }">
-            <el-input-number v-model="scope.row.orderNum" :disabled="!!scope.row.isCustomColumn" @blur="saveTableData(data)"></el-input-number>
+            <el-input-number v-model="scope.row.orderNum"
+                             :disabled="!!scope.row.isCustomColumn"
+                             @blur="saveTableData(data)"></el-input-number>
           </template>
         </editable-table>
       </template>
       <template #tableParam>
-        <editable-table :columns="paramColumns" :add-row="true" :need-params="true" :params="paramParams" api="formGenerator.tableParam" @save-param-data="saveParamData">
+        <editable-table :columns="paramColumns"
+                        :add-row="true"
+                        :need-params="true"
+                        :params="paramParams"
+                        api="formGenerator.tableParam"
+                        @save-param-data="saveParamData">
           <template #paramName="{ scope, data }">
-            <el-input v-model="scope.row.paramName" @blur="saveParamData(data)"></el-input>
+            <el-input v-model="scope.row.paramName"
+                      @blur="saveParamData(data)"></el-input>
           </template>
           <template #paramTxt="{ scope, data }">
-            <el-input v-model="scope.row.paramTxt" @blur="saveParamData(data)"></el-input>
+            <el-input v-model="scope.row.paramTxt"
+                      @blur="saveParamData(data)"></el-input>
           </template>
           <template #paramValueHeader="{}">
             参数默认值
-            <i style="font-size: 20px; cursor: pointer" class="el-icon-question" @click="openHelp"></i>
+            <i style="font-size: 20px; cursor: pointer"
+               class="el-icon-question"
+               @click="openHelp"></i>
           </template>
           <template #paramValue="{ scope, data }">
-            <el-input v-model="scope.row.paramValue" @blur="saveParamData(data)"></el-input>
+            <el-input v-model="scope.row.paramValue"
+                      @blur="saveParamData(data)"></el-input>
           </template>
           <template #orderNum="{ scope, data }">
-            <el-input-number v-model="scope.row.orderNum" @blur="saveParamData(data)"></el-input-number>
+            <el-input-number v-model="scope.row.orderNum"
+                             @blur="saveParamData(data)"></el-input-number>
           </template>
         </editable-table>
       </template>
       <template #tableButton>
-        <editable-table :columns="buttonColumns" :add-row="true" :need-params="true" :params="buttonParams" api="formGenerator.tableButton" @save-param-data="saveButtonData">
+        <editable-table :columns="buttonColumns"
+                        :add-row="true"
+                        :need-params="true"
+                        :params="buttonParams"
+                        api="formGenerator.tableButton"
+                        @save-param-data="saveButtonData">
           <template #title="{ scope, data }">
-            <el-input v-model="scope.row.title" @blur="saveButtonData(data)"></el-input>
+            <el-input v-model="scope.row.title"
+                      @blur="saveButtonData(data)"></el-input>
           </template>
           <!-- <template #id="{scope, data}">
             <el-input v-model="scope.row.id" @blur="saveButtonData(data)"></el-input>
@@ -233,28 +379,27 @@
             <el-input v-model="scope.row.parentId" @blur="saveButtonData(data)"></el-input>
           </template> -->
           <template #image="{ scope }">
-            <i
-              v-if="!scope.row.image"
-              class="p8 icon-tupian"
-              slot="suffix"
-              type="link"
-              :style="{ cursor: 'pointer', fontSize: '40px', color: '#c0c4cc', marginTop: '8px' }"
-              @click="iconClick(scope)"
-            ></i>
-            <i v-else :class="scope.row.image" @click="iconClick(scope)"></i>
-            <common-dialog
-              title="图标选择"
-              width="50%"
-              v-if="iconPopover"
-              :visible="iconPopover"
-              :dialog-config="{ modal: false }"
-              :dialog-height="400"
-              @close="ionClose"
-              @handle-cancel="ionClose"
-              @handle-ok="doIconSelect"
-            >
+            <i v-if="!scope.row.image"
+               class="p8 icon-tupian"
+               slot="suffix"
+               type="link"
+               :style="{ cursor: 'pointer', fontSize: '40px', color: '#c0c4cc', marginTop: '8px' }"
+               @click="iconClick(scope)"></i>
+            <i v-else
+               :class="scope.row.image"
+               @click="iconClick(scope)"></i>
+            <common-dialog title="图标选择"
+                           width="50%"
+                           v-if="iconPopover"
+                           :visible="iconPopover"
+                           :dialog-config="{ modal: false }"
+                           :dialog-height="400"
+                           @close="ionClose"
+                           @handle-cancel="ionClose"
+                           @handle-ok="doIconSelect">
               <template #dialog>
-                <icon-selector @icon-select="iconSelect" :color-picker="false"></icon-selector>
+                <icon-selector @icon-select="iconSelect"
+                               :color-picker="false"></icon-selector>
               </template>
             </common-dialog>
           </template>
@@ -265,14 +410,20 @@
             <el-checkbox v-model="scope.row.isDisabled" @change="saveButtonData(data)"></el-checkbox>
           </template> -->
           <template #location="{ scope, data }">
-            <el-select v-model="scope.row.location" @change="saveButtonData(data)">
-              <el-option label="行内" value="row"></el-option>
-              <el-option label="顶部" value="head"></el-option>
+            <el-select v-model="scope.row.location"
+                       @change="saveButtonData(data)">
+              <el-option label="行内"
+                         value="row"></el-option>
+              <el-option label="顶部"
+                         value="head"></el-option>
             </el-select>
           </template>
           <template #eventHandleHeader="{}">
             事件
-            <el-tooltip class="item" effect="dark" popper-class="testtooltip" placement="top">
+            <el-tooltip class="item"
+                        effect="dark"
+                        popper-class="testtooltip"
+                        placement="top">
               <div slot="content">
                 <p>
                   按钮事件定义，可使用平台内置事件，也可使用输入名称使用自定义事件 ，自定义事件需嵌入渲染器二次开发实现。内置事件如下：<br />
@@ -288,32 +439,49 @@
                   导入Excel：弹出弹框导入附件<br />
                 </p>
               </div>
-              <i style="font-size: 20px" class="el-icon-question"></i>
+              <i style="font-size: 20px"
+                 class="el-icon-question"></i>
             </el-tooltip>
           </template>
           <template #eventHandle="{ scope, data }">
-            <el-autocomplete v-model="scope.row.eventHandle" :fetch-suggestions="querySearch" @blur="saveButtonData(data, scope)">
+            <el-autocomplete v-model="scope.row.eventHandle"
+                             :fetch-suggestions="querySearch"
+                             @blur="saveButtonData(data, scope)">
               <template slot-scope="{ item }">
                 <div class="name">{{ item.value }}</div>
               </template>
             </el-autocomplete>
           </template>
           <template #belongTo="{ scope, data }">
-            <el-input v-model="scope.row.belongTo" @blur="saveButtonData(data)"></el-input>
+            <el-input v-model="scope.row.belongTo"
+                      @blur="saveButtonData(data)"></el-input>
           </template>
           <template #eventParamsHeader="{}">
             事件参数
-            <el-tooltip class="item" effect="dark" popper-class="testtooltip" content="事件参数主要由所选事件决定，自定义参数由开发者自行填写，行内按钮事件会接收该行记录对象。" placement="top">
-              <i style="font-size: 20px" class="el-icon-question"></i>
+            <el-tooltip class="item"
+                        effect="dark"
+                        popper-class="testtooltip"
+                        content="事件参数主要由所选事件决定，自定义参数由开发者自行填写，行内按钮事件会接收该行记录对象。"
+                        placement="top">
+              <i style="font-size: 20px"
+                 class="el-icon-question"></i>
             </el-tooltip>
           </template>
           <template #eventParams="{ scope, data }">
-            <el-button v-if="!scope.row.eventParams" type="primary" style="padding: 10px" @click="focusParams(scope, data)">单击设置事件参数</el-button>
-            <el-input v-if="scope.row.eventParams" type="textarea" v-model="scope.row.eventParams"></el-input>
+            <el-button v-if="!scope.row.eventParams"
+                       type="primary"
+                       style="padding: 10px"
+                       @click="focusParams(scope, data)">单击设置事件参数</el-button>
+            <el-input v-if="scope.row.eventParams"
+                      type="textarea"
+                      v-model="scope.row.eventParams"></el-input>
           </template>
           <template #permissionHeader="{}">
             禁用规则
-            <el-tooltip class="item" effect="dark" popper-class="testtooltip testtooltipLoong" placement="top">
+            <el-tooltip class="item"
+                        effect="dark"
+                        popper-class="testtooltip testtooltipLoong"
+                        placement="top">
               <div slot="content">
                 <p>
                   以Json数据格式配置该按钮禁用规则。模板如下：<br />
@@ -341,165 +509,277 @@
                   }<br />
                 </p>
               </div>
-              <i style="font-size: 20px" class="el-icon-question"></i>
+              <i style="font-size: 20px"
+                 class="el-icon-question"></i>
             </el-tooltip>
           </template>
           <template #permission="{ scope, data }">
-            <el-input type="textarea" v-model="scope.row.permission" @change="saveButtonData(data)"></el-input>
+            <el-input type="textarea"
+                      v-model="scope.row.permission"
+                      @change="saveButtonData(data)"></el-input>
           </template>
           <template #component="{ scope, data }">
-            <el-input type="textarea" v-model="scope.row.component" @change="saveButtonData(data)"></el-input>
+            <el-input type="textarea"
+                      v-model="scope.row.component"
+                      @change="saveButtonData(data)"></el-input>
           </template>
           <template #remark="{ scope, data }">
-            <el-input type="textarea" v-model="scope.row.remark" @change="saveButtonData(data)"></el-input>
+            <el-input type="textarea"
+                      v-model="scope.row.remark"
+                      @change="saveButtonData(data)"></el-input>
           </template>
           <template #rdesc="{ scope, data }">
-            <el-input type="textarea" v-model="scope.row.rdesc" @blur="saveButtonData(data)"></el-input>
+            <el-input type="textarea"
+                      v-model="scope.row.rdesc"
+                      @blur="saveButtonData(data)"></el-input>
           </template>
         </editable-table>
-        <common-dialog title="设置事件参数" :visible="paramsVisible" @handle-cancel="handleClose" @handle-ok="handleParamsOk" width="30%" @close="handleClose">
+        <common-dialog title="设置事件参数"
+                       :visible="paramsVisible"
+                       @handle-cancel="handleClose"
+                       @handle-ok="handleParamsOk"
+                       width="30%"
+                       @close="handleClose">
           <template #dialog>
-            <form-list ref="formParams" label-width="100px" :data-source="paramsSource" :form="paramsFormData" :exist-default-btn="false">
-              <div v-if="des" style="margin-left: 100px"><i class="el-icon-info"></i> {{ des }}</div>
+            <form-list ref="formParams"
+                       label-width="100px"
+                       :data-source="paramsSource"
+                       :form="paramsFormData"
+                       :exist-default-btn="false">
+              <div v-if="des"
+                   style="margin-left: 100px"><i class="el-icon-info"></i> {{ des }}</div>
               <template #paramsText>
-                <ace-edit :value.sync="paramsFormData.paramsText" :config="aceConfig" width="100%" height="200px"></ace-edit>
+                <ace-edit :value.sync="paramsFormData.paramsText"
+                          :config="aceConfig"
+                          width="100%"
+                          height="200px"></ace-edit>
               </template>
             </form-list>
           </template>
         </common-dialog>
       </template>
       <template #configColumnDetails>
-        <editable-table :columns="configColumn" :add-row="false" :params="configParams" :data="editableData" @save-param-data="configParamData">
+        <editable-table :columns="configColumn"
+                        :add-row="false"
+                        :params="configParams"
+                        :data="editableData"
+                        @save-param-data="configParamData">
           <template #isCustomColumn="{ scope }">
             <span>{{ scope.row.isCustomColumn ? '是' : '否' }}</span>
           </template>
           <template #isTableTotal="{ scope, data }">
-            <el-checkbox v-if="isCalculate(scope)" v-model="scope.row.isTableTotal" :true-label="'1'" :false-label="'0'" @change="configParamData(data)"></el-checkbox>
+            <el-checkbox v-if="isCalculate(scope)"
+                         v-model="scope.row.isTableTotal"
+                         :true-label="'1'"
+                         :false-label="'0'"
+                         @change="configParamData(data)"></el-checkbox>
             <span v-else></span>
           </template>
           <template #isFatherTotal="{ scope, data }">
-            <el-checkbox v-if="isCalculate(scope)" v-model="scope.row.isFatherTotal" :true-label="'1'" :false-label="'0'" @change="configParamData(data)"></el-checkbox>
+            <el-checkbox v-if="isCalculate(scope)"
+                         v-model="scope.row.isFatherTotal"
+                         :true-label="'1'"
+                         :false-label="'0'"
+                         @change="configParamData(data)"></el-checkbox>
             <span v-else></span>
           </template>
           <template #customColumnType="{ scope, data }">
-            <el-select v-if="scope.row.isCustomColumn == '1'" v-model="scope.row.customColumnType" clearable @change="configParamData(data, scope)">
-              <el-option label="序号" value="index"></el-option>
-              <el-option label="计算" value="count"></el-option>
-              <el-option label="图标" value="icon"></el-option>
-              <el-option label="插槽" value="slot"></el-option>
+            <el-select v-if="scope.row.isCustomColumn == '1'"
+                       v-model="scope.row.customColumnType"
+                       clearable
+                       @change="configParamData(data, scope)">
+              <el-option label="序号"
+                         value="index"></el-option>
+              <el-option label="计算"
+                         value="count"></el-option>
+              <el-option label="图标"
+                         value="icon"></el-option>
+              <el-option label="插槽"
+                         value="slot"></el-option>
             </el-select>
             <span v-else></span>
           </template>
           <template #customColumnTypeHeader="{}">
             自定义列类型
-            <el-tooltip class="item" effect="dark" popper-class="testtooltip" content="自定义列类型能够实现生成序号、生成图标、公式计算等功能，可在列设置中配置图标和计算的生成规则" placement="top">
-              <i style="font-size: 20px" class="el-icon-question"></i>
+            <el-tooltip class="item"
+                        effect="dark"
+                        popper-class="testtooltip"
+                        content="自定义列类型能够实现生成序号、生成图标、公式计算等功能，可在列设置中配置图标和计算的生成规则"
+                        placement="top">
+              <i style="font-size: 20px"
+                 class="el-icon-question"></i>
             </el-tooltip>
           </template>
           <template #columnConfigHeader="{}">
             列设置
-            <el-tooltip class="item" effect="dark" popper-class="testtooltip" content="自定义列类型设置为计算或图标时，可通过该列配置图标生成规则和计算规则" placement="top">
-              <i style="font-size: 20px" class="el-icon-question"></i>
+            <el-tooltip class="item"
+                        effect="dark"
+                        popper-class="testtooltip"
+                        content="自定义列类型设置为计算或图标时，可通过该列配置图标生成规则和计算规则"
+                        placement="top">
+              <i style="font-size: 20px"
+                 class="el-icon-question"></i>
             </el-tooltip>
           </template>
           <template #columnConfig="{ scope, data }">
-            <el-input
-              v-if="scope.row.isCustomColumn == '1' && scope.row.customColumnType == 'count'"
-              type="textarea"
-              :rows="1"
-              v-model="scope.row.columnConfig.countStr"
-              @click.native="showComfigDialog(scope)"
-              @blur="configParamData(data)"
-            ></el-input>
-            <div v-else-if="scope.row.isCustomColumn == '1' && scope.row.customColumnType == 'icon'" style="text-align: left">
-              <el-button type="text" @click="showComfigDialog(scope)" style="margin-right: 5px">添加</el-button>
-              <span v-for="(item, index) in scope.row.columnConfig.iconConfig" :key="index" class="wrap" @click="modify(item, index, scope)">
+            <el-input v-if="scope.row.isCustomColumn == '1' && scope.row.customColumnType == 'count'"
+                      type="textarea"
+                      :rows="1"
+                      v-model="scope.row.columnConfig.countStr"
+                      @click.native="showComfigDialog(scope)"
+                      @blur="configParamData(data)"></el-input>
+            <div v-else-if="scope.row.isCustomColumn == '1' && scope.row.customColumnType == 'icon'"
+                 style="text-align: left">
+              <el-button type="text"
+                         @click="showComfigDialog(scope)"
+                         style="margin-right: 5px">添加</el-button>
+              <span v-for="(item, index) in scope.row.columnConfig.iconConfig"
+                    :key="index"
+                    class="wrap"
+                    @click="modify(item, index, scope)">
                 <span v-if="item.isDataDic == '1'"> 数据字典：{{ item.dataDicDisplay }} </span>
                 <span v-else>
-                  <span :class="item.icon" :style="{ color: item.color }" style="margin-right: 3px"></span>
+                  <span :class="item.icon"
+                        :style="{ color: item.color }"
+                        style="margin-right: 3px"></span>
                   <span>{{ item.columnsName }}</span>
                   <span>[{{ item.condition }}]</span>
                 </span>
-                <span class="el-icon-circle-close iconClose" @click.stop="delectIconList(index, scope)"></span>
+                <span class="el-icon-circle-close iconClose"
+                      @click.stop="delectIconList(index, scope)"></span>
               </span>
             </div>
-            <el-input
-              v-else-if="scope.row.isCustomColumn == '1' && scope.row.customColumnType == 'slot'"
-              placeholder="插槽名"
-              v-model="scope.row.columnConfig.slotName"
-              @blur="configParamData(data)"
-            ></el-input>
+            <el-input v-else-if="scope.row.isCustomColumn == '1' && scope.row.customColumnType == 'slot'"
+                      placeholder="插槽名"
+                      v-model="scope.row.columnConfig.slotName"
+                      @blur="configParamData(data)"></el-input>
             <span v-else></span>
-            <formula
-              v-if="countVisible && scope.$index === index"
-              :visible="countVisible"
-              :data-list="dataList"
-              :default-list="scope.row.columnConfig.countArr"
-              @close="countVisible = false"
-              @handleOk="formulaHandleOk"
-            ></formula>
-            <icon-custom
-              v-if="iconVisible && scope.$index === index"
-              :visible="iconVisible"
-              @close="iconVisible = false"
-              @handleOk="iconConfigOk"
-              :data-list="dataList"
-              :modify-record="modifyRecord"
-            ></icon-custom>
+            <formula v-if="countVisible && scope.$index === index"
+                     :visible="countVisible"
+                     :data-list="dataList"
+                     :default-list="scope.row.columnConfig.countArr"
+                     @close="countVisible = false"
+                     @handleOk="formulaHandleOk"></formula>
+            <icon-custom v-if="iconVisible && scope.$index === index"
+                         :visible="iconVisible"
+                         @close="iconVisible = false"
+                         @handleOk="iconConfigOk"
+                         :data-list="dataList"
+                         :modify-record="modifyRecord"></icon-custom>
           </template>
         </editable-table>
       </template>
       <template #editConfig>
-        <form-list ref="editConfigForm" :data-source="editDataSource" :form="formData" :exist-default-btn="false" style="height: 110px" label-width="120px">
+        <form-list ref="editConfigForm"
+                   :data-source="editDataSource"
+                   :form="formData"
+                   :exist-default-btn="false"
+                   style="height: 110px"
+                   label-width="120px">
           <template #tableId>
-            <el-select v-model="formData.tableId" placeholder="请选择数据源">
-              <el-popover placement="left" width="200" trigger="hover" v-for="item in dataBaseOption" :key="item.value">
-                <el-descriptions title="数据源信息" border direction="vertical" :column="1">
+            <el-select v-model="formData.tableId"
+                       placeholder="请选择数据源">
+              <el-popover placement="left"
+                          width="200"
+                          trigger="hover"
+                          v-for="item in dataBaseOption"
+                          :key="item.value">
+                <el-descriptions title="数据源信息"
+                                 border
+                                 direction="vertical"
+                                 :column="1">
                   <el-descriptions-item label="表名称">{{ item.tableName }}</el-descriptions-item>
                   <el-descriptions-item label="表描述">{{ item.tableDesc }}</el-descriptions-item>
                 </el-descriptions>
-                <el-option slot="reference" :label="item.tableName" :value="item.id"></el-option>
+                <el-option slot="reference"
+                           :label="item.tableName"
+                           :value="item.id"></el-option>
               </el-popover>
             </el-select>
           </template>
         </form-list>
-        <editable-table class="editConfig" :columns="editColumn" :add-row="false" :change-table-data="editConfigData" @save-param-data="editParamData">
+        <editable-table class="editConfig"
+                        :columns="editColumn"
+                        :add-row="false"
+                        :change-table-data="editConfigData"
+                        @save-param-data="editParamData">
           <template #isRequired="{ scope, data }">
-            <el-checkbox :disabled="!!scope.row.isCustomColumn" v-model="scope.row.isRequired" :true-label="1" :false-label="0" @change="editParamData(data)"></el-checkbox>
+            <el-checkbox :disabled="!!scope.row.isCustomColumn"
+                         v-model="scope.row.isRequired"
+                         :true-label="1"
+                         :false-label="0"
+                         @change="editParamData(data)"></el-checkbox>
           </template>
           <template #editDisplay="{ scope, data }">
-            <el-checkbox :disabled="!!scope.row.isCustomColumn" v-model="scope.row.editDisplay" :true-label="'1'" :false-label="'0'" @change="editParamData(data)"></el-checkbox>
+            <el-checkbox :disabled="!!scope.row.isCustomColumn"
+                         v-model="scope.row.editDisplay"
+                         :true-label="'1'"
+                         :false-label="'0'"
+                         @change="editParamData(data)"></el-checkbox>
           </template>
           <template #defaultValue="{ scope, data }">
-            <el-input v-model="scope.row.defaultValue" @blur="editParamData(data)"></el-input>
+            <el-input v-model="scope.row.defaultValue"
+                      @blur="editParamData(data)"></el-input>
           </template>
           <template #defaultValueHeader="{}">
             默认值
-            <i style="font-size: 20px; cursor: pointer" class="el-icon-question" @click="openHelp"></i>
+            <i style="font-size: 20px; cursor: pointer"
+               class="el-icon-question"
+               @click="openHelp"></i>
           </template>
           <template #editComponentType="{ scope, data }">
-            <el-select :disabled="!!scope.row.isCustomColumn" v-model="scope.row.editComponentType" clearable @change="editParamData(data)">
-              <el-option label="文本框" value="text"></el-option>
-              <el-option label="数值" value="number"></el-option>
-              <el-option label="日期" value="date"></el-option>
+            <el-select :disabled="!!scope.row.isCustomColumn"
+                       v-model="scope.row.editComponentType"
+                       clearable
+                       @change="editParamData(data)">
+              <el-option label="文本框"
+                         value="text"></el-option>
+              <el-option label="数值"
+                         value="number"></el-option>
+              <el-option label="日期"
+                         value="date"></el-option>
               <!-- <el-option label="日期范围" value="daterange"></el-option> -->
             </el-select>
           </template>
           <template #sourceTableFiled="{ scope, data }">
-            <el-select :disabled="!!scope.row.isCustomColumn" v-model="scope.row.sourceTableFiled" clearable @change="editParamData(data, scope)">
-              <el-option v-for="item in childTableList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            <el-select :disabled="!!scope.row.isCustomColumn"
+                       v-model="scope.row.sourceTableFiled"
+                       clearable
+                       @change="editParamData(data, scope)">
+              <el-option v-for="item in childTableList"
+                         :key="item.value"
+                         :label="item.label"
+                         :value="item.value"></el-option>
             </el-select>
           </template>
           <template #tableFieldName="{ scope, data }">
-            <el-select :disabled="!!scope.row.isCustomColumn" v-if="scope.row.sourceTableFiled" clearable v-model="scope.row.tableFieldName" @change="editParamData(data)">
-              <el-option v-for="item in scope.row.FormFieldsList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            <el-select :disabled="!!scope.row.isCustomColumn"
+                       v-if="scope.row.sourceTableFiled"
+                       clearable
+                       v-model="scope.row.tableFieldName"
+                       @change="editParamData(data)">
+              <el-option v-for="item in scope.row.FormFieldsList"
+                         :key="item.value"
+                         :label="item.label"
+                         :value="item.value"></el-option>
             </el-select>
-            <el-select :disabled="!!scope.row.isCustomColumn" v-else v-model="scope.row.tableFieldName" clearable @change="editParamData(data)">
-              <el-option v-for="item in FormFields" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            <el-select :disabled="!!scope.row.isCustomColumn"
+                       v-else
+                       v-model="scope.row.tableFieldName"
+                       clearable
+                       @change="editParamData(data)">
+              <el-option v-for="item in FormFields"
+                         :key="item.value"
+                         :label="item.label"
+                         :value="item.value"></el-option>
             </el-select>
           </template>
         </editable-table>
-        <common-dialog title="默认值" v-if="helpVisible" :visible="helpVisible" :show-handle-btn="false" @close="helpVisible = false">
+        <common-dialog title="默认值"
+                       v-if="helpVisible"
+                       :visible="helpVisible"
+                       :show-handle-btn="false"
+                       @close="helpVisible = false">
           <template #dialog>
             <view-parameter></view-parameter>
           </template>
@@ -557,12 +837,12 @@ export default {
   props: {
     record: {
       type: Object,
-      default: () => {}
+      default: () => { }
     }
   },
   watch: {
     'formData.tableId': {
-      handler(val) {
+      handler (val) {
         this.getChildTableData(val)
       }
     },
@@ -577,7 +857,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     const height = document.documentElement.clientHeight - 608
     return {
       selectModuleIndex: null,
@@ -1539,7 +1819,7 @@ export default {
       ]
     }
   },
-  mounted() {
+  mounted () {
     // this.treeData = generateTree(this.treeData)
     this.dataSource = this.dataSourceCapy
     window.addEventListener('resize', this._initTableSize)
@@ -1564,7 +1844,7 @@ export default {
     // this.isTreeTable(this.formData.tableType)
   },
   methods: {
-    changeTabsData(val) {
+    changeTabsData (val) {
       if (val) {
         this.tabsData = [
           {
@@ -1618,7 +1898,7 @@ export default {
         ]
       }
     },
-    paramsOptions(api) {
+    paramsOptions (api) {
       this.$api[api]({ page: { current: 1, size: 999999, orders: [] } }).then((res) => {
         this.paramsSource[1].options = res.records.map((item) => {
           // 表单回填
@@ -1645,7 +1925,7 @@ export default {
         })
       })
     },
-    focusParams(scope, data) {
+    focusParams (scope, data) {
       if (!scope.row.eventHandle) {
         return this.$message.warning('请先选择事件！')
       }
@@ -1719,10 +1999,10 @@ export default {
       this.paramsFormData.formCode = ''
       this.paramsFormData.infoList = data
     },
-    handleClose() {
+    handleClose () {
       this.paramsVisible = false
     },
-    handleParamsOk() {
+    handleParamsOk () {
       this.paramsVisible = false
       let obj
       switch (this.scopeValue.row.eventHandle) {
@@ -1796,18 +2076,18 @@ export default {
       }
       this.paramsFormData.infoList[this.scopeValue.$index].eventParams = JSON.stringify(obj)
     },
-    getSource() {
+    getSource () {
       this.$api['formGenerator.getFormDataBase']().then((res) => {
         if (res && res.length) {
           this.dataBaseOption = res
         }
       })
     },
-    iconClick(scope) {
+    iconClick (scope) {
       this.iconselectIndex = scope.$index
       this.iconPopover = true
     },
-    isTreeTable(val) {
+    isTreeTable (val) {
       if (val === 1) {
         // this.dataSource[4].fieldConfig.disabled = true
         // this.formData.enableEdit = 0
@@ -1836,18 +2116,18 @@ export default {
         this.columns.splice(4, 2)
       }
     },
-    cancel() {
+    cancel () {
       this.$emit('cancel')
     },
-    handleCancel() {
+    handleCancel () {
       this.moduleVisible = false
     },
-    showDialog(scope, data) {
+    showDialog (scope, data) {
       this.moduleVisible = true
       this.scopeValue = scope
       this.reportParams.infoList = data
     },
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       if (val.length >= 2) {
         // 删除索引为0的
         // console.log(val.splice(0,val.length-1),'被删除的')
@@ -1858,23 +2138,23 @@ export default {
       }
       this.selectRows = val
     },
-    componentsHandleOk(val) {
+    componentsHandleOk (val) {
       this.moduleVisible = false
       // this.reportParams.infoList[this.scopeValue.$index].dictName = this.selectRows[0].selectionName + '(' + this.selectRows[0].selectionCode + ')'
       this.reportParams.infoList[this.scopeValue.$index].dictCode = this.selectRows[0].selectionCode
     },
-    showModal(scope, data) {
+    showModal (scope, data) {
       this.dialogVisible = true
       this.scopeValue = scope
       this.selectModuleIndex = scope.$index
       this.reportParams.infoList = data
     },
-    handleOk(val) {
+    handleOk (val) {
       this.dialogVisible = false
       this.reportParams.infoList[this.scopeValue.$index].fieldHref = JSON.stringify(val)
       this.reportParams.infoList[this.scopeValue.$index].tenantId = val.name
     },
-    _initTableSize() {
+    _initTableSize () {
       // const vm = this
       // let timer = null
       // // 这里增加一个延迟保证不会触发频次不会太高,减少开销
@@ -1885,14 +2165,14 @@ export default {
       //   timer = null
       // }, 300)
     },
-    rendered() {
+    rendered () {
       // 所有表单元素渲染后调用rendered
       if (this.record.id) {
         this.oldSqlId = this.record.sqlid
         this.getFormData()
       }
     },
-    getFormData() {
+    getFormData () {
       this.formData = Object.assign({}, this.record)
       if (!this.record.styleRendering) {
         this.formData.styleRendering = ''
@@ -1901,7 +2181,7 @@ export default {
       // 获取自定义列配置数据
       this.getConfigClomuns()
     },
-    async getConfigClomuns() {
+    async getConfigClomuns () {
       this.$api['formGenerator.reportConfig']({ reportId: this.record.id }).then((res) => {
         this.editableData = res
       })
@@ -1916,10 +2196,10 @@ export default {
         this.editConfigData = res
       }
     },
-    saved(res) {
+    saved (res) {
       this.$emit('saveSuccess', res)
     },
-    saveTableData(data, changeFlag, scope) {
+    saveTableData (data, changeFlag, scope) {
       if (scope && scope.length > 0) {
         this.replaceData = scope.map((item) => {
           return {
@@ -1953,17 +2233,17 @@ export default {
         }
       }
     },
-    saveParamData(data) {
+    saveParamData (data) {
       this.reportParams.reportParam = data
     },
-    saveButtonData(data, scope) {
+    saveButtonData (data, scope) {
       if (scope) {
         data[scope.$index].eventParams = ''
       }
       this.reportParams.reportButton = data
     },
     // 合并报表配置明细数据
-    mergeTableData(newData) {
+    mergeTableData (newData) {
       const _this = this
       const mergeData = []
       const mergeFieldName = []
@@ -1991,11 +2271,11 @@ export default {
       return newData
     },
     // 重新加载sqlId
-    reloadSqlId() {
+    reloadSqlId () {
       this.oldTableData = this.reportParams.reportItem
       this.isMerge = true
     },
-    customValidate(saveParams) {
+    customValidate (saveParams) {
       const params = JSON.parse(JSON.stringify({ ...saveParams, ...this.reportParams }))
       if (params.reportConfig && params.reportConfig.length > 0) {
         params.reportConfig.forEach((el) => {
@@ -2007,7 +2287,7 @@ export default {
       }
       this.$refs.form.submitForm(params, this.saveApi)
     },
-    async changeSql(val) {
+    async changeSql (val) {
       this.editableData = []
       if (this.record.id) {
         this.$confirm('切换表格SQLID会丢失表格配置信息，是否继续？', '提示', {
@@ -2034,7 +2314,7 @@ export default {
       this.getReplaceData()
     },
     // 获取查询目标字段数据
-    getReplaceData() {
+    getReplaceData () {
       this.$api[this.tableConfigDetailsApi](this.tableParams).then((res) => {
         if (res) {
           this.replaceData = res.map((item) => {
@@ -2045,7 +2325,7 @@ export default {
         }
       })
     },
-    modifyTableData(val) {
+    modifyTableData (val) {
       this.tableConfigDetailsApi = 'formGenerator.tableColumnsInfo'
       this.tableParams = { reportId: val }
       this.paramParams = { reportId: val }
@@ -2053,24 +2333,24 @@ export default {
       this.getReplaceData()
     },
     // eventHandle输入框加建议下拉框
-    querySearch(queryString, cb) {
+    querySearch (queryString, cb) {
       const eventHandleArr = this.eventHandleArraly
       const results = queryString
         ? eventHandleArr.filter(this.createFilter(queryString)).map((i) => {
-            return { value: i }
-          })
+          return { value: i }
+        })
         : eventHandleArr.map((i) => {
-            return { value: i }
-          })
+          return { value: i }
+        })
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
-    createFilter(queryString) {
+    createFilter (queryString) {
       return (eventHandle) => {
         return eventHandle.toLowerCase().indexOf(queryString.toLowerCase()) === 0
       }
     },
-    configParamData(data, scope) {
+    configParamData (data, scope) {
       // 字段类型是否为number、float、long或自定义列类型为计算
       if (scope) {
         const typeList = ['NUMBER', 'FLOAT', 'LONG']
@@ -2100,7 +2380,7 @@ export default {
       }
       this.reportParams.reportConfig = data
     },
-    tabClick(target) {
+    tabClick (target) {
       if (target.name === 'configColumnDetails') {
         this.reportParams.reportItem.map((val) => {
           if (!val.fieldName && val.isCustomColumn) {
@@ -2150,7 +2430,7 @@ export default {
       }
     },
     // 判断报表配置明细配置内有无ID字段
-    alertMessage() {
+    alertMessage () {
       let flag = true
       this.reportParams.reportItem.filter((el) => {
         if (el.fieldName === 'ID') {
@@ -2163,7 +2443,7 @@ export default {
       return false
     },
     // 判断字段类型是否为number、float、long或自定义列类型为计算
-    isCalculate(scope) {
+    isCalculate (scope) {
       // 是自定义列
       if (scope.row.isCustomColumn == '1') {
         const typeList = ['NUMBER', 'FLOAT', 'LONG']
@@ -2176,7 +2456,7 @@ export default {
         return false
       }
     },
-    showComfigDialog(scope) {
+    showComfigDialog (scope) {
       // 序号 index
       // 计算 count
       // 图标 icon
@@ -2195,14 +2475,14 @@ export default {
         this.iconVisible = true
       }
     },
-    formulaHandleOk(str, arr) {
+    formulaHandleOk (str, arr) {
       const obj = this.editableData[this.index].columnConfig ? this.editableData[this.index].columnConfig : {}
       obj.countStr = str
       obj.countArr = arr
       this.$set(this.editableData[this.index], 'columnConfig', obj)
       this.countVisible = false
     },
-    iconConfigOk(data) {
+    iconConfigOk (data) {
       const arr = this.editableData[this.index].columnConfig && this.editableData[this.index].columnConfig.iconConfig ? this.editableData[this.index].columnConfig.iconConfig : []
       const obj = this.editableData[this.index].columnConfig ? this.editableData[this.index].columnConfig : {}
       if (this.modifyRecord) {
@@ -2214,7 +2494,7 @@ export default {
       this.$set(this.editableData[this.index], 'columnConfig', obj)
       this.iconVisible = false
     },
-    delectIconList(index, scope) {
+    delectIconList (index, scope) {
       this.index = scope.$index
       // if (typeof this.editableData[scope.$index].iconConfig === 'string') {
       //   this.editableData[scope.$index].iconConfig = JSON.parse(this.editableData[scope.$index].iconConfig)
@@ -2225,7 +2505,7 @@ export default {
       obj.iconConfig = arr
       this.$set(this.editableData[this.index], 'columnConfig', obj)
     },
-    modify(row, index, scope) {
+    modify (row, index, scope) {
       this.index = scope.$index
       this.modifyIndex = index
       this.dataList = this.reportParams.reportItem.map((el) => {
@@ -2234,7 +2514,7 @@ export default {
       this.modifyRecord = row
       this.iconVisible = true
     },
-    editParamData(data, scope) {
+    editParamData (data, scope) {
       if (scope) {
         if (scope.row.sourceTableFiled) {
           this.$api['formGenerator.getFormFields']({ id: scope.row.sourceTableFiled }).then((res) => {
@@ -2244,7 +2524,7 @@ export default {
       }
       this.reportParams.reportEditDispose = data
     },
-    getChildTableData(val) {
+    getChildTableData (val) {
       this.$api['formGenerator.getChildTable']({ id: val }).then((res) => {
         this.childTableList = res
       })
@@ -2252,21 +2532,21 @@ export default {
         this.FormFields = res
       })
     },
-    iconSelect(select) {
+    iconSelect (select) {
       this.iconTempSel = select
     },
-    ionClose() {
+    ionClose () {
       this.iconTempSel = null
       this.iconPopover = false
     },
-    doIconSelect() {
+    doIconSelect () {
       if (this.iconTempSel) {
         this.reportParams.reportButton[this.iconselectIndex].image = this.iconTempSel.icon
         // this.reportParams.reportButton[this.iconselectIndex].color = this.iconTempSel.color
       }
       this.ionClose()
     },
-    openHelp() {
+    openHelp () {
       this.helpVisible = true
     }
   }

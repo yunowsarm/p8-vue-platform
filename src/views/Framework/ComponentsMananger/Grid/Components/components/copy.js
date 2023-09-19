@@ -1,3 +1,7 @@
+// 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。
+
+
+
 import { Message } from 'element-ui'
 // 注册一个全局自定义复制指令 `v-copy`
 export default {

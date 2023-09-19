@@ -1,23 +1,39 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
-  <common-dialog title="预览" :visible="visible" :show-handle-btn="false" :dialog-height="dialogHeight" @handle-cancel="handleCancel" @close="handleCancel">
+  <common-dialog title="预览"
+                 :visible="visible"
+                 :show-handle-btn="false"
+                 :dialog-height="dialogHeight"
+                 @handle-cancel="handleCancel"
+                 @close="handleCancel">
     <template #dialog>
-      <list-layout :header-visible="false" class="preview">
+      <list-layout :header-visible="false"
+                   class="preview">
         <template #center>
-          <el-tabs v-model="activeName" :type="tabsParmar.type" :tab-position="tabsParmar.tabPosition" :stretch="tabsParmar.stretch" @tab-click="tabClick">
-            <el-tab-pane v-for="(item, index) in tabsData" :key="index" :label="item.name" :name="item.name">
-              <span slot="label"> <i v-if="item.icon" :class="['iconStyle', item.icon]" :style="{ color: item.color }"></i>{{ item.name }} </span>
+          <el-tabs v-model="activeName"
+                   :type="tabsParmar.type"
+                   :tab-position="tabsParmar.tabPosition"
+                   :stretch="tabsParmar.stretch"
+                   @tab-click="tabClick">
+            <el-tab-pane v-for="(item, index) in tabsData"
+                         :key="index"
+                         :label="item.name"
+                         :name="item.name">
+              <span slot="label"> <i v-if="item.icon"
+                   :class="['iconStyle', item.icon]"
+                   :style="{ color: item.color }"></i>{{ item.name }} </span>
               <!-- <component :is="componentUrl" :code="code" ref="components" class="aa"></component> -->
-              <component
-                v-if="activeName == item.name"
-                :is="componentUrl"
-                :code="componentsConfig.code"
-                :data-view-id="componentsConfig.dataViewId"
-                :record="{ desformCode: componentsConfig.codeForm }"
-                :permission-vo="componentsConfig.permissionVo"
-                :layout-config="componentsConfig"
-                :kanban-config="componentsConfig"
-                ref="components"
-              ></component>
+              <component v-if="activeName == item.name"
+                         :is="componentUrl"
+                         :code="componentsConfig.code"
+                         :data-view-id="componentsConfig.dataViewId"
+                         :record="{ desformCode: componentsConfig.codeForm }"
+                         :permission-vo="componentsConfig.permissionVo"
+                         :layout-config="componentsConfig"
+                         :kanban-config="componentsConfig"
+                         ref="components"></component>
             </el-tab-pane>
           </el-tabs>
         </template>
@@ -304,13 +320,13 @@ export default {
       }
     }
   },
-  provide() {
+  provide () {
     return {
       provideParams: this.provideParams
     }
   },
   computed: {
-    componentUrl() {
+    componentUrl () {
       if (this.asyncComponents) {
         return () => import(`@/views/${this.asyncComponents}.vue`)
       } else {
@@ -318,7 +334,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       dialogHeight: document.documentElement.clientHeight * 0.6,
       tabsParmar: {},
@@ -337,11 +353,11 @@ export default {
     ListLayout,
     CommonDialog
   },
-  created() {
+  created () {
     this.init()
   },
   methods: {
-    async init() {
+    async init () {
       const { tabsParmar, tabsData, defaultComponents, parmarsMap } = this.previewParmars
       this.tabsParmar = tabsParmar
       this.tabsData = tabsData
@@ -378,7 +394,7 @@ export default {
       }
       this.activeName = this.tabsData[0].name
     },
-    tabClick(target) {
+    tabClick (target) {
       const tabs = this.tabsData.filter((el) => {
         return el.name === target.name
       })
@@ -405,7 +421,7 @@ export default {
         }
       }
     },
-    handleCancel() {
+    handleCancel () {
       this.$emit('close')
     }
     // async getTreeData(treeSettingsParmars){

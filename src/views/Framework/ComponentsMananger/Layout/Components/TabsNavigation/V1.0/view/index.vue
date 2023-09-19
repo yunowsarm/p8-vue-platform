@@ -1,27 +1,40 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
 <template>
   <list-layout :header-visible="false">
     <template #center>
-      <menu-layout v-if="tabsParmar.navigation === '2'" :third-menu-param="thirdMenuParam" :default-menu="defaultMenu"></menu-layout>
-      <el-tabs v-else v-model="activeName" :type="tabsParmar.type" :tab-position="tabsParmar.tabPosition" :stretch="tabsParmar.stretch" @tab-click="tabClick">
-        <el-tab-pane v-for="(item, index) in tabsData" :key="index" :label="item.name" :name="item.name">
-          <span slot="label"> <i v-if="item.icon" :class="['iconStyle', item.icon]" :style="{ color: item.color }"></i>{{ item.name }} </span>
+      <menu-layout v-if="tabsParmar.navigation === '2'"
+                   :third-menu-param="thirdMenuParam"
+                   :default-menu="defaultMenu"></menu-layout>
+      <el-tabs v-else
+               v-model="activeName"
+               :type="tabsParmar.type"
+               :tab-position="tabsParmar.tabPosition"
+               :stretch="tabsParmar.stretch"
+               @tab-click="tabClick">
+        <el-tab-pane v-for="(item, index) in tabsData"
+                     :key="index"
+                     :label="item.name"
+                     :name="item.name">
+          <span slot="label"> <i v-if="item.icon"
+               :class="['iconStyle', item.icon]"
+               :style="{ color: item.color }"></i>{{ item.name }} </span>
           <!-- <component :is="componentUrl"
                      :code="code"
                      ref="components"></component> -->
-          <component
-            v-if="activeName == item.name"
-            :is="componentUrl"
-            :code="componentsConfig.code"
-            :data-view-id="componentsConfig.dataViewId"
-            :record="{ desformCode: componentsConfig.codeForm }"
-            :permission-vo="componentsConfig.permissionVo"
-            :layout-config="componentsConfig"
-            :kanban-config="componentsConfig"
-            :west-tree-param="provideParams.searchParams"
-            :isLayoutButton="true"
-            v-bind="$attrs"
-            ref="components"
-          ></component>
+          <component v-if="activeName == item.name"
+                     :is="componentUrl"
+                     :code="componentsConfig.code"
+                     :data-view-id="componentsConfig.dataViewId"
+                     :record="{ desformCode: componentsConfig.codeForm }"
+                     :permission-vo="componentsConfig.permissionVo"
+                     :layout-config="componentsConfig"
+                     :kanban-config="componentsConfig"
+                     :west-tree-param="provideParams.searchParams"
+                     :isLayoutButton="true"
+                     v-bind="$attrs"
+                     ref="components"></component>
         </el-tab-pane>
       </el-tabs>
     </template>
@@ -290,7 +303,7 @@ import tabsLayout from '../edit/Components/tabsLayout.vue'
 export default {
   name: 'TabsNavigationPreview',
   computed: {
-    componentUrl() {
+    componentUrl () {
       if (this.asyncComponents) {
         return () => import(`@/views/${this.asyncComponents}.vue`)
       } else {
@@ -298,7 +311,7 @@ export default {
       }
     }
   },
-  provide() {
+  provide () {
     return {
       provideParams: this.provideParams
     }
@@ -311,7 +324,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       dialogHeight: document.documentElement.clientHeight * 0.6,
       tabsParmar: {},
@@ -337,16 +350,16 @@ export default {
   },
   watch: {
     $route: {
-      handler(val) {
+      handler (val) {
         this.init()
       }
     }
   },
-  created() {
+  created () {
     this.init()
   },
   methods: {
-    async init() {
+    async init () {
       const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
       const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
       const res = await this.$api['desLayout.getLayoutJson']({ layoutCode: code, version: version })
@@ -389,7 +402,7 @@ export default {
       }
       this.activeName = this.tabsData[0].name
     },
-    tabClick(target) {
+    tabClick (target) {
       const tabs = this.tabsData.filter((el) => {
         return el.name === target.name
       })
@@ -416,7 +429,7 @@ export default {
         }
       }
     },
-    handleCancel() {
+    handleCancel () {
       this.$emit('close')
     }
   }
