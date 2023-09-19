@@ -857,7 +857,7 @@ export default {
                 width: 40
               })
             } else {
-              if (res.selectType === 1) {
+              if (res.selectType == 1) {
                 columnData.unshift({
                   type: 'radio',
                   width: 50
@@ -878,7 +878,7 @@ export default {
           this.seachType = that.tableInfo.searchPos + ''
           res.reportConfig.forEach((item) => {
             item.columnConfig = JSON.parse(item.columnConfig)
-            if (item.isCustomColumn === '1' && item.customColumnType === 'slot' && item.columnConfig.slotName) {
+            if (item.isCustomColumn == '1' && item.customColumnType === 'slot' && item.columnConfig.slotName) {
               this.customColumn.push(item.columnConfig.slotName)
             }
             columnData.forEach((el, index) => {
@@ -903,7 +903,7 @@ export default {
           })
           this.columns = columnData
           // 是编辑表格
-          if (res.enableEdit === 1) {
+          if (res.enableEdit == 1) {
             this.initClomuns()
           }
         }
@@ -1644,7 +1644,7 @@ export default {
         if (that.tableInfo.reportEditDisposes && that.tableInfo.reportEditDisposes.length > 0) {
           that.tableInfo.reportEditDisposes.forEach((el) => {
             item.storageList = this.tableInfo.tableId
-            if (item.title === el.fieldTxt && (item.isCustomColumn === '0' || !item.isCustomColumn)) {
+            if (item.title === el.fieldTxt && (item.isCustomColumn == '0' || !item.isCustomColumn)) {
               // item.isEdit = true
               // 是否必填
               item.isRequired = el.isRequired
