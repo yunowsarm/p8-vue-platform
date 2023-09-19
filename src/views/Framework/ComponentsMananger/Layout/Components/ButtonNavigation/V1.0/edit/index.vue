@@ -32,6 +32,7 @@
         :permission-vo="componentsConfig.permissionVo"
         :layout-config="componentsConfig"
         :kanban-config="componentsConfig"
+        :isLayoutButton="true"
         ref="components"
       ></component>
     </template>
@@ -263,7 +264,7 @@ export default {
     deleteNode(data) {
       this.$refs.commonTree.$refs.tree.remove(data.id)
     },
-    treeSettingsHandleOk(data) {
+    treeSettingsHandleOk(data, isChange) {
       if (this.treeSettingsParmars) {
         if (data && data.dataType !== this.treeSettingsParmars.dataType && data.dataType === '1') {
           this.treeData = [
@@ -287,7 +288,7 @@ export default {
           this.$api['desLayout.execute']({ id: data.reportSqlId }).then((res) => {
             const config = { labelCol: data.optionLabelCol, valueCol: data.optionValueCol, pidCol: data.optionPidCol }
             // 获取动态数据的参数映射所有列
-            if (!this.recordId) {
+            if (isChange) {
               this.getParmarsMap(res)
             }
             const treeArr = selectGenerateTree(res, JSON.stringify(config))

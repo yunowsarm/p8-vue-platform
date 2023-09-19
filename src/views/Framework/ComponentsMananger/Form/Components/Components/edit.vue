@@ -6,6 +6,7 @@
       :form-conf="formConf"
       :sys-params="sysParams"
       :type="type"
+      :init-config="initConfig"
       @setPageData="setPageData"
       @submit="save"
       @save="saveChange"
@@ -20,6 +21,7 @@
       :form-conf="formConf"
       :sys-params="sysParams"
       :type="type"
+      :init-config="initConfig"
       :modify-res="modifyRes"
       :container-layout="modifyRes.containerLayout"
       @setPageData="setPageData"
@@ -94,7 +96,9 @@ export default {
     return {
       saveApi: 'formGenerator.formListSave',
       formConf: {},
+      initConfig: {},
       drawingList: {},
+      renderKey: new Date().getTime(),
       newOrModify: '', // 判断是新建页面还是修改页面
       modifyRes: {}, // 修改页面获取的数据
       sysParams: Object.assign(this.getPropParam(), { $SYSTEM_PARAMS_SELECT: _cloneDeep(this.$store.state.user.userInfo) }), // 系统级参数
@@ -173,13 +177,13 @@ export default {
           Array.isArray(this.formConf.fields) &&
             this.formConf.fields.map(async (item) => {
               // 单行文本--计算器
-              _this.setComputedItem(item, needComputedTags)
+              // _this.setComputedItem(item, needComputedTags)
               _this.watchLinkData(item)
               if (item.__config__.children && item.__config__.children.length) {
                 item.__config__.children.map(async (childItem) => {
-                  if (item.__config__.layout === 'rowFormItem') {
-                    _this.setComputedItem(childItem, needComputedTags)
-                  }
+                  // if (item.__config__.layout === 'rowFormItem') {
+                  //   _this.setComputedItem(childItem, needComputedTags)
+                  // }
                   _this.watchLinkData(childItem)
                 })
               }
@@ -213,11 +217,12 @@ export default {
       res = await this.$api['formGenerator.designerDetails'](params)
       return res
     },
-    async init() {
+    async init(type) {
       const drawingListData = await this.getDrawingList({ desformCode: this.record.desformCode ? this.record.desformCode : this.desformCode })
       this.formConf = JSON.parse(drawingListData.designJson)
       this.handlerEvents(this.formConf.fields)
       await this.handlerCustomFn(this.formConf)
+      this.initConfig = _cloneDeep(this.formConf)
       this.containerLayout = drawingListData.containerLayout
       const _this = this
       if (this.dataId) {
@@ -306,7 +311,7 @@ export default {
       // 待表单数据，回显数据加载完后再初始化下拉等数据
       if (this.formConf.fields.length) {
         const needHandleTags = ['tree-select', 'el-select', 'el-radio-group', 'el-checkbox-group']
-        const needComputedTags = ['el-input']
+        // const needComputedTags = ['el-input']
         // 异步获取下拉\单选\多选等数据
         this.formConf.fields.map(async (item) => {
           _this.buildWatchCascadeParams(item)
@@ -315,7 +320,52 @@ export default {
           // 主表中设置系统默认值
           _this.setSysDefaultValue(item)
           // 单行文本--计算器
-          _this.setComputedItem(item, needComputedTags)
+          // _this.setComputedItem(item, needComputedTags)
+          if (item.__config__.layout === 'tabsLayout') {
+            item.__tabs__.forEach((tab) => {
+              tab.children.forEach((ele) => {
+                _this.buildWatchCascadeParams(ele)
+                _this.changeSelectOption(ele, needHandleTags)
+                // 子表中设置系统默认值
+                _this.setSysDefaultValue(ele)
+              })
+            })
+          }
+          if (item.__config__.children && item.__config__.children.length) {
+            // 子表
+            item.__config__.children.map(async (childItem) => {
+              _this.buildWatchCascadeParams(childItem)
+              _this.changeSelectOption(childItem, needHandleTags)
+              // 子表中设置系统默认值
+              _this.setSysDefaultValue(childItem)
+              if (childItem.__config__.layout === 'tabsLayout') {
+                childItem.__tabs__.forEach((tab) => {
+                  tab.children.forEach((ele) => {
+                    _this.buildWatchCascadeParams(ele)
+                    _this.changeSelectOption(ele, needHandleTags)
+                    // 子表中设置系统默认值
+                    _this.setSysDefaultValue(ele)
+                  })
+                })
+              }
+            })
+          }
+        })
+      }
+
+      // 待表单数据，回显数据加载完后再初始化下拉等数据
+      if (this.initConfig.fields.length) {
+        const needHandleTags = ['tree-select', 'el-select', 'el-radio-group', 'el-checkbox-group']
+        // const needComputedTags = ['el-input']
+        // 异步获取下拉\单选\多选等数据
+        this.initConfig.fields.map(async (item) => {
+          _this.buildWatchCascadeParams(item)
+          // 主表
+          _this.changeSelectOption(item, needHandleTags)
+          // 主表中设置系统默认值
+          _this.setSysDefaultValue(item)
+          // 单行文本--计算器
+          // _this.setComputedItem(item, needComputedTags)
           if (item.__config__.layout === 'tabsLayout') {
             item.__tabs__.forEach((tab) => {
               tab.children.forEach((ele) => {
@@ -640,47 +690,49 @@ export default {
       }
     },
     // 计算器功能，目前只支持加法运算
-    setComputedItem(item, needComputedTags) {
-      const _this = this
-      const needComputedIndex = needComputedTags.indexOf(item.__config__.tag)
-      if (needComputedIndex > -1) {
-        const variable = item.__config__.variable
-        if (variable && variable.indexOf('+') !== -1) {
-          if (variable.indexOf('$COMPUTED') !== -1) {
-            const fieldsArr = variable.split('+')
-            let computedResult = 0
-            fieldsArr.forEach((fieldsItem) => {
-              const paramArr = fieldsItem.trim().split('.')
-              if (_this.pageData[paramArr[1]]) {
-                computedResult += _this.pageData[paramArr[1]]
-              }
-            })
-            item.__config__.defaultValue = computedResult
-            this.$nextTick(() => {
-              this.$refs.parser.updateCountModel(item.__vModel__, computedResult)
-            })
-          } else if (variable.indexOf('$LABEL') !== -1) {
-            // 计算器支持资金label合计显示，803独有功能
-            const fieldsArr = variable.split('+')
-            const labelFieldsArr = []
-            fieldsArr.forEach((fieldsItem) => {
-              const paramArr = fieldsItem.trim().split('.')
-              labelFieldsArr.push(paramArr[1])
-            })
-            item.__config__.defaultValue = ''
-            this.formConf.fields.forEach((formItem) => {
-              if (labelFieldsArr.indexOf(formItem.__config__.formFields) !== -1 && _this.pageData[formItem.__config__.formFields] > 0) {
-                item.__config__.defaultValue += formItem.__config__.label + '+'
-              }
-            })
-            item.__config__.defaultValue = item.__config__.defaultValue.slice(0, item.__config__.defaultValue.length - 1)
-          }
-        }
-      }
-    },
-    resetForm() {
+    // setComputedItem(item, needComputedTags) {
+    //   const _this = this
+    //   const needComputedIndex = needComputedTags.indexOf(item.__config__.tag)
+    //   if (needComputedIndex > -1) {
+    //     const variable = item.__config__.variable
+    //     if (variable && variable.indexOf('+') !== -1) {
+    //       if (variable.indexOf('$COMPUTED') !== -1) {
+    //         const fieldsArr = variable.split('+')
+    //         let computedResult = 0
+    //         fieldsArr.forEach((fieldsItem) => {
+    //           const paramArr = fieldsItem.trim().split('.')
+    //           if (_this.pageData[paramArr[1]]) {
+    //             computedResult += _this.pageData[paramArr[1]]
+    //           }
+    //         })
+    //         item.__config__.defaultValue = computedResult
+    //         this.$nextTick(() => {
+    //           this.$refs.parser.updateCountModel(item.__vModel__, computedResult)
+    //         })
+    //       } else if (variable.indexOf('$LABEL') !== -1) {
+    //         // 计算器支持资金label合计显示，803独有功能
+    //         const fieldsArr = variable.split('+')
+    //         const labelFieldsArr = []
+    //         fieldsArr.forEach((fieldsItem) => {
+    //           const paramArr = fieldsItem.trim().split('.')
+    //           labelFieldsArr.push(paramArr[1])
+    //         })
+    //         item.__config__.defaultValue = ''
+    //         this.formConf.fields.forEach((formItem) => {
+    //           if (labelFieldsArr.indexOf(formItem.__config__.formFields) !== -1 && _this.pageData[formItem.__config__.formFields] > 0) {
+    //             item.__config__.defaultValue += formItem.__config__.label + '+'
+    //           }
+    //         })
+    //         item.__config__.defaultValue = item.__config__.defaultValue.slice(0, item.__config__.defaultValue.length - 1)
+    //       }
+    //     }
+    //   }
+    // },
+    async resetForm() {
       if (this.type && this.type === '001') {
         this.$emit('save-reset')
+      } else {
+        this.init('reset')
       }
     },
     save(data, childData, arr, logdata) {

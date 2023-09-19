@@ -1,6 +1,6 @@
 <template>
-  <form-list ref="form" :data-source="dataSource" :api="saveApi" :form="formData" :exist-default-btn="false" :exist-custom-btn="true" @saved="saved" @rendered="rendered">
-    <template #customBtn>
+  <form-list ref="form" :data-source="dataSource" :api="saveApi" :form="formData" @saved="saved" @rendered="rendered">
+    <template slot="btn">
       <el-button @click="cancel">取 消</el-button>
     </template>
   </form-list>
@@ -104,6 +104,17 @@ export default {
           placeholder: '',
           fieldName: 'no',
           defaultValue: '',
+          fieldConfig: {
+            disabled: true
+          }
+        },
+        {
+          type: 'select',
+          labelText: '部门类别',
+          fieldName: 'deptCategory',
+          placeholder: '',
+          optionUrl: { api: 'thirdPartInterface.getDic', params: { dicType: 'DEPARTMENT_CATEGORY' } },
+          options: [],
           fieldConfig: {
             disabled: true
           }

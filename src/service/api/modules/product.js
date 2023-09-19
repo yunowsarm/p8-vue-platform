@@ -48,7 +48,7 @@ export const repositoryApi = {
       path: '/product/repository/kprojectClassify/projectClassifyTree',
       mockPath: '/product/repository/kprojectClassify/projectClassifyTree',
       desc: '项目类型树'
-  },
+    },
     {
       name: 'userList',
       method: 'POST',
@@ -94,6 +94,15 @@ export const repositoryApi = {
       path: '/bpm/manage/ProcessDefinition/getProcessDefinitionByBusinessId',
       mockPath: '/bpm/manage/ProcessDefinition/getProcessDefinitionByBusinessId',
       desc: '根据业务Id获取流程定义xml'
+    }
+  ],
+  PlatGantt: [
+    {
+      name: 'getPlanGanttData',
+      method: 'POST',
+      path: '/product/pm/plan/loadPlanGanttData',
+      mockPath: '/product/pm/plan/loadPlanGanttData',
+      desc: '计划编制数据查询'
     }
   ]
 }

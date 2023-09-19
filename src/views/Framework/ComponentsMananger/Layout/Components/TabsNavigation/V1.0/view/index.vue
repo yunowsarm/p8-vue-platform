@@ -18,6 +18,7 @@
             :layout-config="componentsConfig"
             :kanban-config="componentsConfig"
             :west-tree-param="provideParams.searchParams"
+            :isLayoutButton="true"
             v-bind="$attrs"
             ref="components"
           ></component>

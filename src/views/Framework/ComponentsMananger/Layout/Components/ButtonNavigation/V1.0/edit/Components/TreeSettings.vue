@@ -130,7 +130,8 @@ export default {
           label: '动态数据',
           value: '0'
         }
-      ]
+      ],
+      isChange: false,
     }
   },
   mounted() {
@@ -147,7 +148,7 @@ export default {
       // if (saveParams.dataType == '1') {
       //   this.$message({type: 'warning', message: '数据类型设置为静态数据后，在左侧导航树点击添加图标可新增静态数据。'})
       // }
-      this.$emit('handleOk', this.formData)
+      this.$emit('handleOk', this.formData, this.isChange)
     },
     handleCancel() {
       this.$emit('close-modal')
@@ -156,6 +157,7 @@ export default {
       const _this = this
       this.$api['selection.getSqlViewAllColumn']({ id: item }).then(function (res) {
         _this.sqlViewCols = res
+        _this.isChange = true
       })
     }
   }

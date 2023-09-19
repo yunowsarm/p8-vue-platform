@@ -8,6 +8,7 @@
         :permission-vo="permissionVo"
         :select-records="selectRecords"
         :use-system-config-button="tableInfo.useSystemConfigButton"
+        :is-layout-button="isLayoutButton"
         :custom-button-data="buttonData"
       ></common-button>
       <search-form-list
@@ -47,6 +48,7 @@
             :pagination="false"
             :edit-parmars="editParmars"
             :use-system-config-button="tableInfo.useSystemConfigButton"
+            :is-layout-button="isLayoutButton"
             @row-click="rowVxeClick"
             @selection-change="handleSelectionChange"
           ></vxetable-table>
@@ -73,6 +75,7 @@
             :pagination="false"
             :edit-parmars="editParmars"
             :use-system-config-button="tableInfo.useSystemConfigButton"
+            :is-layout-button="isLayoutButton"
             @row-click="rowVxeClick"
             @selection-change="handleSelectionChange"
           >
@@ -98,6 +101,7 @@
             :table-refresh="tableRefresh"
             :custom-button-data="buttonData"
             :custom-button-config="buttonConfig"
+            :is-layout-button="isLayoutButton"
             @selection-change="handleSelectionChange"
             @row-click="rowClick"
             @column-fiter="columnFiter"
@@ -108,7 +112,10 @@
             :is-radio-select="isRadioSelect"
           >
             <template :slot="item" v-for="item in customColumn" slot-scope="{ scope }">
-              <slot :name="item" :scope="scope"></slot>
+              <template v-if="item === 'taskTypeIcon'">
+                <span :key="item" :class="scope.row.ICON"></span>
+              </template>
+              <slot v-else :name="item" :scope="scope"></slot>
             </template>
           </common-table>
           <!-- <vxe-table ref="xTable"
@@ -153,11 +160,15 @@
             :pagination="false"
             api="formGenerator.tableApply"
             :use-system-config-button="tableInfo.useSystemConfigButton"
+            :is-layout-button="isLayoutButton"
             @row-click="rowVxeClick"
             @selection-change="handleSelectionChange"
           >
             <template :slot="item" v-for="item in customColumn" slot-scope="{ scope }">
-              <slot :name="item" :scope="scope"></slot>
+              <template v-if="item === 'taskTypeIcon'">
+                <span :key="item" :class="scope.row.ICON"></span>
+              </template>
+              <slot v-else :name="item" :scope="scope"></slot>
             </template>
           </vxetable-table>
         </template>
@@ -190,7 +201,7 @@
         @close="customClose"
       >
         <template #drawer>
-          <component :is="componentLoader" :permission-vo="permissionVo" :row="scopeRow" @close="customClose"></component>
+          <component :is="componentLoader" v-bind="customProps" :permission-vo="permissionVo" :row="scopeRow" @close="customClose"></component>
         </template>
       </common-drawer>
       <common-dialog
@@ -210,7 +221,7 @@
         :close-on-press-escape="false"
       >
         <template #dialog>
-          <component :is="componentLoader" :permission-vo="permissionVo" :row="scopeRow" @close="customClose"></component>
+          <component :is="componentLoader" v-bind="customProps" :permission-vo="permissionVo" :row="scopeRow" @close="customClose"></component>
         </template>
       </common-dialog>
       <common-drawer title="查看流程图" :visible="visibleModelPicture" size="50%" :drawer-config="drawerConfig" @close="onModelPictureClose">
@@ -380,6 +391,11 @@ export default {
     isEditChild: {
       type: Boolean,
       default: false
+    },
+    // 当在布局设计界面时 不展示权限按钮 默认为false
+    isLayoutButton: {
+      type: Boolean,
+      default: false
     }
   },
   inject: {
@@ -435,6 +451,7 @@ export default {
       customComponentParams: {},
       componentPath: '', // 操作按钮弹出框 component 路径
       scopeRow: '', // 表格行记录
+      customProps: {},
       propParam: Object.assign({}, this.westTreeParam), // 将树参数传至表单
       showSearchRow: false,
       permissionVo: {
@@ -532,7 +549,30 @@ export default {
   },
   computed: {
     componentLoader() {
-      return () => import(`@/views/${this.componentPath}.vue`)
+      if (this.componentPath) {
+        if (this.componentPath.indexOf('?') !== -1) {
+          const list = this.componentPath.split('?')
+          console.log(list)
+          const url = list[0]
+          const parmars = list[1].split('&')
+          const obj = {}
+          parmars.forEach((item) => {
+            const str = item.split('=')
+            if (str[0] === 'code') {
+              obj.layoutCode = str[1]
+            }
+            if (str[0] === 'version') {
+              obj.layoutVersion = str[1]
+            }
+          })
+          this.customProps.layoutConfig = obj
+          return () => import('@/views/' + url + '.vue')
+        } else {
+          return () => import(`@/views/${this.componentPath}.vue`)
+        }
+      } else {
+        return ''
+      }
     },
     renderComp() {
       return Object.keys(this.intelligenceComp).length ? this.intelligenceComp : this.comp
@@ -772,13 +812,13 @@ export default {
             })
           }
           if (this.tableInfo.selectType) {
-            if (res.tableType == 0 && res.enableEdit == 0) {
+            if (res.tableType === 0 && res.enableEdit === 0) {
               columnData.unshift({
                 type: 'selection',
                 width: 40
               })
             } else {
-              if (res.selectType == 1) {
+              if (res.selectType === 1) {
                 columnData.unshift({
                   type: 'radio',
                   width: 50
@@ -799,7 +839,7 @@ export default {
           this.seachType = that.tableInfo.searchPos + ''
           res.reportConfig.forEach((item) => {
             item.columnConfig = JSON.parse(item.columnConfig)
-            if (item.isCustomColumn == '1' && item.customColumnType == 'slot' && item.columnConfig.slotName) {
+            if (item.isCustomColumn === '1' && item.customColumnType === 'slot' && item.columnConfig.slotName) {
               this.customColumn.push(item.columnConfig.slotName)
             }
             columnData.forEach((el, index) => {
@@ -824,7 +864,7 @@ export default {
           })
           this.columns = columnData
           // 是编辑表格
-          if (res.enableEdit == 1) {
+          if (res.enableEdit === 1) {
             this.initClomuns()
           }
         }
@@ -970,6 +1010,7 @@ export default {
       this.formVisible = false
       if (this.tableType === 0) {
         this.$refs.table.searchData()
+        this.$emit('refresh')
       } else {
         this.$refs.xTable.searchData()
       }
@@ -1139,9 +1180,12 @@ export default {
       this.customVisible = true
     },
     customerFun(row, btn) {
+      const rowBtnData = this.getRowBtnData(row, btn)
+      row = rowBtnData.row
+      btn = rowBtnData.btn
       const funCode = JSON.parse(btn.eventParams).code
       const func = new Function(`return function (row){${funCode}}`)()
-      func.call(this, row)
+      func.call(this, row, btn)
     },
     // 打开子表编辑表格
     openEditTable(row, btn) {
@@ -1308,6 +1352,8 @@ export default {
       }
     },
     getDyApi(obj, row, btn) {
+      const rowBtnData = this.getRowBtnData(row, btn)
+      row = rowBtnData.row
       if (!row) {
         return
       }
@@ -1558,14 +1604,14 @@ export default {
         if (that.tableInfo.reportEditDisposes && that.tableInfo.reportEditDisposes.length > 0) {
           that.tableInfo.reportEditDisposes.forEach((el) => {
             item.storageList = this.tableInfo.tableId
-            if (item.title === el.fieldTxt && (item.isCustomColumn == '0' || !item.isCustomColumn)) {
+            if (item.title === el.fieldTxt && (item.isCustomColumn === '0' || !item.isCustomColumn)) {
               // item.isEdit = true
               // 是否必填
               item.isRequired = el.isRequired
               // 编辑组件类型
               item.editType = el.editComponentType
               item.defaultValue = el.defaultValue
-              item.isshow = el.editDisplay != '1'
+              item.isshow = el.editDisplay !== '1'
               // 存储表
               // item.storageList = this.tableInfo.tableId ? this.tableInfo.tableId : el.sourceTableFiled
               // 存储字段
