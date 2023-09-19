@@ -189,7 +189,6 @@ export default {
     that.$api[that.monitorApi]({ planInfoArray: that.planInfoArray }).then(res => {
       if (res && res.length) {
         that.monitorPoints = res
-        let dataSource = []
         res.forEach(function (item, idx) {
           if (item.value !== 'taskEdit') {
             let dataSourceItem = {
@@ -198,37 +197,10 @@ export default {
               fieldName: item.value,
               colLayout: 'doubleCol'
             }
-            if (item.label === '暂停' || item.label === '终止') {
-              dataSourceItem.colLayout = 'singleCol'
-            }
-            dataSource.push(dataSourceItem)
-
-            if (item.label === '责任令新增' || item.label === '责任令修改' || item.label === '责任令删除') {
-              that.$set(that.formData, item.value, item.lockStatus)
-            }
-
-            if (item.label === '月度重点计划' || item.label === '年度综合计划' || item.label === '产保计划' ||
-              item.label === '里程碑' || item.label === '专题计划') {
-              that.$set(that.formData, item.value, item.lockStatus)
-            }
+            that.dataSource.push(dataSourceItem)
+            // that.$set(that.formData, item.value, item.lockStatus)
           }
         })
-        dataSource.push(
-          {
-            type: 'textarea',
-            labelText: '锁定/解锁原因',
-            fieldName: 'cause',
-            colLayout: 'singleCol',
-            placeholder: '请输入原因',
-            rules: [
-            {
-              required: true,
-              message: '必填'
-            }
-          ]
-          }
-        )
-        that.dataSource = dataSource
         that.showMonitorPoints && that.showMonitorPoints.length && (that.dataSource = that.dataSource.filter((item) => {
           return that.showMonitorPoints.includes(item.fieldName)
         }))
