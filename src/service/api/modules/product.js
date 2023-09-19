@@ -95,5 +95,35 @@ export const repositoryApi = {
       mockPath: '/bpm/manage/ProcessDefinition/getProcessDefinitionByBusinessId',
       desc: '根据业务Id获取流程定义xml'
     }
+  ],
+  taskAttribute: [
+    {
+      name: 'listData',
+      method: 'POST',
+      path: '/taskType/listData',
+      mockPath: '/taskType/listData',
+      desc: '任务属性设置-列表接口'
+    },
+    {
+      name: 'getInfo',
+      method: 'POST',
+      path: '/taskType/getInfo',
+      mockPath: '/taskType/getInfo',
+      desc: '任务属性设置-修改接口'
+    },
+    {
+      name: 'saveData',
+      method: 'POST',
+      path: '/taskType/saveData',
+      mockPath: '/taskType/saveData',
+      desc: '任务属性设置-修改接口'
+    },
+    {
+      name: 'delete',
+      method: 'POST',
+      path: '/taskType/delete',
+      mockPath: '/taskType/delete',
+      desc: '任务属性设置-删除接口'
+    }
   ]
 }

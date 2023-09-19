@@ -1160,6 +1160,7 @@ export default {
     },
     // 关闭自定义抽屉
     customClose() {
+      this.customComponentParams = {}
       this.customVisible = false
       if (this.tableType === 0) {
         this.$refs.table.searchData()
