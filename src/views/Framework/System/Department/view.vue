@@ -1,5 +1,10 @@
 <template>
-  <form-list ref="form" :data-source="dataSource" :api="saveApi" :form="formData" @saved="saved" @rendered="rendered">
+  <form-list ref="form"
+             :data-source="dataSource"
+             :api="saveApi"
+             :form="formData"
+             @saved="saved"
+             @rendered="rendered">
     <template slot="btn">
       <el-button @click="cancel">取 消</el-button>
     </template>
@@ -30,7 +35,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'departmentManger.save',
       detailApi: 'departmentManger.deptInfo',
@@ -107,30 +112,30 @@ export default {
           fieldConfig: {
             disabled: true
           }
-        },
-        {
-          type: 'select',
-          labelText: '部门类别',
-          fieldName: 'deptCategory',
-          placeholder: '',
-          optionUrl: { api: 'thirdPartInterface.getDic', params: { dicType: 'DEPARTMENT_CATEGORY' } },
-          options: [],
-          fieldConfig: {
-            disabled: true
-          }
         }
+        // {
+        //   type: 'select',
+        //   labelText: '部门类别',
+        //   fieldName: 'deptCategory',
+        //   placeholder: '',
+        //   optionUrl: { api: 'thirdPartInterface.getDic', params: { dicType: 'DEPARTMENT_CATEGORY' } },
+        //   options: [],
+        //   fieldConfig: {
+        //     disabled: true
+        //   }
+        // }
       ]
     }
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    rendered() {
+    rendered () {
       this.getInfo()
     },
-    cancel() {
+    cancel () {
       this.$emit('cancel')
     },
-    getInfo() {
+    getInfo () {
       if (this.recordId) {
         this.$api[this.detailApi]({ id: this.recordId }).then((res) => {
           // console.log(res,'-------我的返回值');
