@@ -569,10 +569,12 @@ export default {
       editVisible: false,
       editConfig: {},
       customCSS: {},
-      sysParams: Object.assign({ $SYSTEM_PARAMS_SELECT: _cloneDeep(this.$store.state.user.userInfo) }) // 系统级参数
+      sysParams: Object.assign({ $SYSTEM_PARAMS_SELECT: _cloneDeep(this.$store.state.user.userInfo) }), // 系统级参数
+      currentRouterPath: ''
     }
   },
   created () {
+    this.currentRouterPath = this.$route.path
     this.$watch(
       'provideParams.searchParams',
       (newValue, oldValue) => {
@@ -1859,6 +1861,7 @@ export default {
       this.visibleThirdDrawer = true
     },
     onThirdMenuClose () {
+      this.$router.push({ path: this.currentRouterPath })
       this.visibleThirdDrawer = false
     }
   }
