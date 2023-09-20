@@ -312,7 +312,7 @@
                      ref="components"></component>
         </template>
       </common-drawer>
-       <common-drawer v-if="visibleThirdDrawer"
+      <common-drawer v-if="visibleThirdDrawer"
                      :visible="visibleThirdDrawer"
                      direction="ttb"
                      :title="thirdMenuTitle"
@@ -1283,8 +1283,11 @@ export default {
       if (!row) {
         return
       }
+      if (btn && btn.eventParams) {
+        let createFormParams = eval('(' + btn.eventParams + ')')
+        this.processDefinationTwoKey = createFormParams.code
+      }
       this.modelId = row.ID
-      this.processDefinationTwoKey = row.PROCESSDEFINITIONKEY
       this.visibleModelPicture = true
     },
     // 关闭流程图
@@ -1299,9 +1302,13 @@ export default {
         return
       }
       const withdrawList = []
-      row.forEach((el) => {
-        withdrawList.push({ businessKey: el.ID, processDefinitionKey: el.PROCESSDEFINITIONKEY })
-      })
+      if (btn && btn.eventParams) {
+        let createFormParams = eval('(' + btn.eventParams + ')')
+        withdrawList.push({ businessKey: row[0].ID, processDefinitionKey: createFormParams.code })
+      }
+      // row.forEach((el) => {
+      //   withdrawList.push({ businessKey: el.ID, )
+      // })
       const params = {
         withdrawList: withdrawList
       }
@@ -1838,11 +1845,11 @@ export default {
     thirdMenuClick (record, item) {
       this.defaultMenu = item
       this.thirdMenuTitle = '计划详情'
-      this.thirdMenuParam = {...record}
+      this.thirdMenuParam = { ...record }
       this.visibleThirdDrawer = true
     },
     onThirdMenuClose () {
-        this.visibleThirdDrawer = false
+      this.visibleThirdDrawer = false
     }
   }
 }
