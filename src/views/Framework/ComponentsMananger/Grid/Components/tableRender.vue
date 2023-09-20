@@ -1049,10 +1049,10 @@ export default {
       this.formVisible = false
       if (this.tableType === 0) {
         this.$refs.table.searchData()
-        this.$emit('refresh')
       } else {
         this.$refs.xTable.searchData()
       }
+      this.$emit('refresh')
     },
     // 修改表单
     async modifyForm (row, btn) {
@@ -1406,6 +1406,11 @@ export default {
               type: 'success',
               message: obj.successMsg
             })
+            if (this.tableType === 0) {
+              this.$refs.table.searchData()
+            } else {
+              this.$refs.xTable.searchData()
+            }
           } else {
             this.$message({
               type: 'error',

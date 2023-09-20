@@ -42,7 +42,7 @@
               <el-input v-model="scope.row.name" @blur="saveParamData(data)" placeholder="请输入"></el-input>
             </template>
             <template #sysRole="{ scope, data }">
-              <el-select v-model="scope.row.textType" size="mini" style="width: 100%" clearable @change="saveParamData(data)">
+              <el-select v-model="scope.row.sysRole" size="mini" style="width: 100%" clearable @change="saveParamData(data)">
                 <el-option v-for="(item,index) in rolesSelectData" :key="index" :label="item.NAME" :value="item.ID"> </el-option>
               </el-select>
             </template>
