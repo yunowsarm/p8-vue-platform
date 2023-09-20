@@ -1325,6 +1325,11 @@ export default {
                 message: '撤销成功',
                 type: 'success'
               })
+              if (that.tableType === 0) {
+                that.$refs.table.searchData()
+              } else {
+                that.$refs.xTable.searchData()
+              }
             } else {
               if (res.errorMsg) {
                 that.$message({
@@ -1396,6 +1401,11 @@ export default {
               message: '提交成功',
               type: 'success'
             })
+            if (that.tableType === 0) {
+              that.$refs.table.searchData()
+            } else {
+              that.$refs.xTable.searchData()
+            }
           }
         })
         .catch(function (error) {
@@ -1436,10 +1446,10 @@ export default {
               type: 'success',
               message: obj.successMsg
             })
-            if (this.tableType === 0) {
-              this.$refs.table.searchData()
+            if (that.tableType === 0) {
+              that.$refs.table.searchData()
             } else {
-              this.$refs.xTable.searchData()
+              that.$refs.xTable.searchData()
             }
           } else {
             this.$message({
