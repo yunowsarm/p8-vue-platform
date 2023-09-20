@@ -838,6 +838,13 @@ export const system = {
       path: '/bpm/personal/ProcessApproval/pendingList',
       mockPath: '/bpm/personal/ProcessApproval/pendingList',
       desc: '当前用户待审批列表数据'
+    },
+    {
+      name: 'getCatalog',
+      method: 'POST',
+      path: '/product/BpDictionaryNew/getDicList',
+      mockPath: '/product/BpDictionaryNew/getDicList',
+      desc: '当前用户待审批列表数据'
     }
   ],
   commonInterface: [
