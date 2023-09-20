@@ -50,6 +50,7 @@
                           :use-system-config-button="tableInfo.useSystemConfigButton"
                           :is-layout-button="isLayoutButton"
                           @row-click="rowVxeClick"
+                          @open-third-menu="thirdMenuClick"
                           @selection-change="handleSelectionChange"></vxetable-table>
           <vxetable-table v-else
                           ref="vxeTable"
@@ -75,6 +76,7 @@
                           :use-system-config-button="tableInfo.useSystemConfigButton"
                           :is-layout-button="isLayoutButton"
                           @row-click="rowVxeClick"
+                          @open-third-menu="thirdMenuClick"
                           @selection-change="handleSelectionChange">
           </vxetable-table>
         </template>
@@ -100,6 +102,7 @@
                         :is-layout-button="isLayoutButton"
                         @selection-change="handleSelectionChange"
                         @row-click="rowClick"
+                        @open-third-menu="thirdMenuClick"
                         @column-fiter="columnFiter"
                         :show-summary="showSummary"
                         :summary-method="summaryMethod"
@@ -161,6 +164,7 @@
                           :use-system-config-button="tableInfo.useSystemConfigButton"
                           :is-layout-button="isLayoutButton"
                           @row-click="rowVxeClick"
+                          @open-third-menu="thirdMenuClick"
                           @selection-change="handleSelectionChange">
             <template :slot="item"
                       v-for="item in customColumn"
@@ -308,6 +312,19 @@
                      ref="components"></component>
         </template>
       </common-drawer>
+       <common-drawer v-if="visibleThirdDrawer"
+                     :visible="visibleThirdDrawer"
+                     direction="ttb"
+                     :title="thirdMenuTitle"
+                     @close='onThirdMenuClose'
+                     size="100%">
+        <template #drawer>
+          <menu-layout :third-menu-param='thirdMenuParam'
+                       :default-menu="defaultMenu"
+                       :cache="false"
+                       exclude="PlanChange"></menu-layout>
+        </template>
+      </common-drawer>
     </template>
   </normal-layout>
 </template>
@@ -322,7 +339,8 @@ import {
   P8Drawer as CommonDrawer,
   P8Dialog as CommonDialog,
   Notification,
-  P8VxeTable as VxetableTable
+  P8VxeTable as VxetableTable,
+  P8MenuLayout as MenuLayout
 } from 'p8-components-ui'
 import SearchFormList from './intellSearchFormList'
 import FormRender from '@/views/Framework/ComponentsMananger/Form/Components/Components/edit.vue'
@@ -345,7 +363,8 @@ export default {
     VxetableTable,
     SelectApproveUserBeforehand,
     ModelView,
-    ProcessApprovalView
+    ProcessApprovalView,
+    MenuLayout
   },
   props: {
     code: {
@@ -445,6 +464,10 @@ export default {
   },
   data () {
     return {
+      defaultMenu: {},
+      thirdMenuParam: {},
+      thirdMenuTitle: '',
+      visibleThirdDrawer: false,
       runInHoleCode: '',
       comp: this,
       selectRecords: [],
@@ -1811,6 +1834,15 @@ export default {
         .catch((err) => {
           console.log(err)
         })
+    },
+    thirdMenuClick (record, item) {
+      this.defaultMenu = item
+      this.thirdMenuTitle = '计划详情'
+      this.thirdMenuParam = {...record}
+      this.visibleThirdDrawer = true
+    },
+    onThirdMenuClose () {
+        this.visibleThirdDrawer = false
     }
   }
 }
