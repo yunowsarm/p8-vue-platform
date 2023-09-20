@@ -1,69 +1,32 @@
 <template>
-  <form-list ref="form"
-             label-width="150px"
-             @rendered="rendered"
-             @saved="saved"
-             :data-source="columns"
-             :api="saveApi"
-             :form="formData">
+  <form-list ref="form" label-width="150px" @rendered="rendered" @saved="saved" :data-source="columns" :api="saveApi" :form="formData">
     <template #image>
-      <span :class="['icon_example', imageCt]"
-            @click="iconPopover = true"></span>
-      <common-dialog title="图标选择"
-                     width="50%"
-                     v-if="iconPopover"
-                     :visible="iconPopover"
-                     :dialog-height="dialogHeight"
-                     @close="handleClose"
-                     @handle-cancel="handleClose"
-                     @handle-ok="doIconSelect">
+      <span :class="['icon_example', imageCt]" @click="iconPopover = true"></span>
+      <common-dialog title="图标选择" width="50%" v-if="iconPopover" :visible="iconPopover" :dialog-height="dialogHeight" @close="handleClose" @handle-cancel="handleClose" @handle-ok="doIconSelect">
         <template #dialog>
-          <icon-selector @icon-select="iconSelect"
-                         :color-picker="true"
-                         :selected-name="formData.image"></icon-selector>
+          <icon-selector @icon-select="iconSelect" :color-picker="true" :selected-name="formData.image"></icon-selector>
         </template>
       </common-dialog>
     </template>
     <template #eventParams>
       <!-- <ace-edit :value.sync="formData.eventParams" width="100%" height="100px"></ace-edit> -->
-      <el-button v-if="!formData.eventParams"
-                 type="primary"
-                 @click="focusParams">单击设置事件参数</el-button>
-      <el-input v-else
-                type="textarea"
-                v-model="formData.eventParams"></el-input>
-      <common-dialog v-if="paramsVisible"
-                     title="设置事件参数"
-                     :visible="paramsVisible"
-                     @handle-cancel="handleParamsClose"
-                     @handle-ok="handleParamsOk"
-                     width="30%"
-                     @close="handleParamsClose">
+      <el-button v-if="!formData.eventParams" type="primary" @click="focusParams">单击设置事件参数</el-button>
+      <el-input v-else type="textarea" v-model="formData.eventParams"></el-input>
+      <common-dialog v-if="paramsVisible" title="设置事件参数" :visible="paramsVisible" @handle-cancel="handleParamsClose" @handle-ok="handleParamsOk" width="30%" @close="handleParamsClose">
         <template #dialog>
-          <form-list ref="formParams"
-                     label-width="100px"
-                     :data-source="paramsSource"
-                     :form="paramsFormData"
-                     :exist-default-btn="false">
+          <form-list ref="formParams" label-width="100px" :data-source="paramsSource" :form="paramsFormData" :exist-default-btn="false">
             <template #paramsText>
-              <ace-edit :value.sync="paramsFormData.paramsText"
-                        width="100%"
-                        height="200px"></ace-edit>
+              <ace-edit :value.sync="paramsFormData.paramsText" width="100%" height="200px"></ace-edit>
             </template>
           </form-list>
         </template>
       </common-dialog>
     </template>
     <template #controlRule>
-      <ace-edit :value.sync="formData.controlRule"
-                width="100%"
-                height="300px"></ace-edit>
+      <ace-edit :value.sync="formData.controlRule" width="100%" height="300px"></ace-edit>
     </template>
     <template #eventHandle="{ scope, data }">
-      <el-autocomplete v-model="formData.eventHandle"
-                       placeholder='请输入前端EventHandler'
-                       style="width: 100%;"
-                       :fetch-suggestions="querySearch">
+      <el-autocomplete v-model="formData.eventHandle" placeholder="请输入前端EventHandler" style="width: 100%" :fetch-suggestions="querySearch">
         <template slot-scope="{ item }">
           <div class="name">{{ item.value }}</div>
         </template>
@@ -73,7 +36,7 @@
 </template>
 
 <script>
-import { Autocomplete, P8Form as FormList, P8Dialog as CommonDialog, P8IconSelector as IconSelector } from 'p8-components-ui'
+import { P8Form as FormList, P8Dialog as CommonDialog, P8IconSelector as IconSelector } from 'p8-components-ui'
 import AceEdit from '@/views/Framework/ComponentsMananger/Base/Components/ace'
 import { getColumns } from '../res_set_utils'
 import { eventHandleArr } from '@/views/Framework/ComponentsMananger/Grid/Components/eventHandleArr'
@@ -83,13 +46,12 @@ export default {
     FormList,
     CommonDialog,
     IconSelector,
-    AceEdit,
-    Autocomplete
+    AceEdit
   },
   props: {
     record: {
       type: Object,
-      default: () => { }
+      default: () => {}
     },
     resType: {
       type: String,
@@ -97,7 +59,7 @@ export default {
     },
     parentRecord: {
       type: Object,
-      default: () => { }
+      default: () => {}
     }
   },
   computed: {
@@ -115,7 +77,7 @@ export default {
       }
     }
   },
-  data () {
+  data() {
     return {
       saveApi: 'resource.save',
       iconPopover: false,
@@ -158,9 +120,9 @@ export default {
         },
         {
           type: 'select',
-          labelText: '动态组件地址',
+          labelText: '业务流程定义',
           fieldName: 'formCode',
-          placeholder: '请选择组件',
+          placeholder: '选择业务流程定义',
           colLayout: 'singleCol',
           options: []
         }
@@ -227,15 +189,62 @@ export default {
         },
         {
           type: 'textarea',
-          labelText: '动态组件地址',
+          labelText: '组件地址',
           fieldName: 'addressText',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'select',
+          labelText: '类型',
+          fieldName: 'type',
+          options: [
+            {
+              label: '抽屉',
+              value: 'drawer'
+            },
+            {
+              label: '弹框',
+              value: 'dialog'
+            }
+          ],
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'text',
+          labelText: '标题',
+          fieldName: 'title',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'text',
+          labelText: '宽度',
+          fieldName: 'width',
           colLayout: 'singleCol'
         }
       ],
-      eventHandleArraly: eventHandleArr
+      eventHandleArraly: eventHandleArr,
+      editTableSource: [
+        {
+          type: 'view',
+          labelText: '事件',
+          fieldName: 'paramsChange',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'select',
+          labelText: '编辑表格',
+          fieldName: 'editTable',
+          placeholder: '请选择编辑表格',
+          colLayout: 'singleCol',
+          optionUrl: {
+            api: 'formGenerator.editList',
+            params: {}
+          }
+        }
+      ]
     }
   },
-  created () {
+  created() {
     if (this.record && this.record.id) {
       this.formData = { ...this.record, controlRule: this.record.controlRule || '', eventParams: this.record.eventParams || '' }
     } else {
@@ -250,32 +259,32 @@ export default {
     this.columns = getColumns(this.formData.type, this)
     console.log('this.columns', this.columns)
   },
-  mounted () { },
+  mounted() {},
   methods: {
-    rendered () { },
-    saved (res) {
+    rendered() {},
+    saved(res) {
       console.log('edit saved')
       this.$emit('saveSuccess', res)
     },
-    handleClose () {
+    handleClose() {
       this.iconTempSel = null
       this.iconPopover = false
     },
-    doIconSelect () {
+    doIconSelect() {
       if (this.iconTempSel) {
         this.formData.image = this.iconTempSel.icon
       }
       this.handleClose()
     },
-    iconSelect (select) {
+    iconSelect(select) {
       this.iconTempSel = select
     },
-    focusParams () {
+    focusParams() {
       if (!this.formData.eventHandle) {
         return this.$message.warning('请先选择事件！')
       }
       let api = ''
-      console.log(this.formData.eventHandle, '===================this.formData.eventHandle');
+      console.log(this.formData.eventHandle, '===================this.formData.eventHandle')
       switch (this.formData.eventHandle) {
         case 'createForm':
           this.paramsSource = this.formSource
@@ -313,6 +322,9 @@ export default {
         case 'dynamicAPI':
           this.paramsSource = this.apiSource
           break
+        case 'openEditTable':
+          this.paramsSource = this.editTableSource
+          break
         default:
           this.paramsSource = this.defaultSource
           break
@@ -324,7 +336,7 @@ export default {
       this.paramsFormData.formCode = null
       this.paramsFormData.paramsChange = this.formData.eventHandle
     },
-    paramsOptions (api) {
+    paramsOptions(api) {
       this.$api[api]({ page: { current: 1, size: 999999, orders: [] } }).then((res) => {
         this.paramsSource[1].options = res.records.map((item) => {
           // 表单回填
@@ -351,13 +363,10 @@ export default {
         })
       })
     },
-    handleClose () {
-      this.iconPopover = false
-    },
-    handleParamsClose () {
+    handleParamsClose() {
       this.paramsVisible = false
     },
-    handleParamsOk () {
+    handleParamsOk() {
       this.paramsVisible = false
       let obj
       switch (this.formData.eventHandle) {
@@ -406,7 +415,10 @@ export default {
         case 'openComponent':
           obj = {
             module: '自定义抽屉组件',
-            code: this.paramsFormData.addressText
+            code: this.paramsFormData.addressText,
+            type: this.paramsFormData.type,
+            title: this.paramsFormData.title,
+            width: this.paramsFormData.width
           }
           break
         case 'dynamicAPI':
@@ -428,19 +440,19 @@ export default {
       }
       this.formData.eventParams = JSON.stringify(obj)
     },
-    querySearch (queryString, cb) {
+    querySearch(queryString, cb) {
       let eventHandleArr = this.eventHandleArraly
       let results = queryString
         ? eventHandleArr.filter(this.createFilter(queryString)).map((i) => {
-          return { value: i }
-        })
+            return { value: i }
+          })
         : eventHandleArr.map((i) => {
-          return { value: i }
-        })
+            return { value: i }
+          })
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
-    createFilter (queryString) {
+    createFilter(queryString) {
       return (eventHandle) => {
         return eventHandle.toLowerCase().indexOf(queryString.toLowerCase()) === 0
       }

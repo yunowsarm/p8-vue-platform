@@ -134,5 +134,57 @@ export const repositoryApi = {
       mockPath: '/taskType/delete',
       desc: '任务属性设置-删除接口'
     }
+  ],
+  // 知识库管理
+  knowledgeManagement: [
+    {
+      name: 'save',
+      method: 'POST',
+      path: '/product/klTeams/save',
+      mockPath: '/product/klTeams/save',
+      desc: '标准团队库-保存'
+    },
+    {
+      name: 'remove',
+      method: 'POST',
+      path: '/product/klTeams/remove',
+      mockPath: '/product/klTeams/remove',
+      desc: '标准团队库-删除'
+    },
+    {
+      name: 'get',
+      method: 'POST',
+      path: '/product/klTeams/get',
+      mockPath: '/product/klTeams/get',
+      desc: '标准团队库-回显'
+    },
+    {
+      name: 'saveCheck',
+      method: 'POST',
+      path: '/product/klTeams/saveCheck',
+      mockPath: '/product/klTeams/saveCheck',
+      desc: '标准团队库-校验'
+    },
+    {
+      name: 'roleClassifyList',
+      method: 'POST',
+      path: '/product/klTeams/roleClassifyList',
+      mockPath: '/product/klTeams/roleClassifyList',
+      desc: '标准团队库-类别角色列表'
+    },
+    {
+      name: 'saveRoleClassify',
+      method: 'POST',
+      path: '/product/klTeams/saveRoleClassify',
+      mockPath: '/product/klTeams/saveRoleClassify',
+      desc: '标准团队库-类别保存/修改'
+    },
+    {
+      name: 'removeRoleClassify',
+      method: 'POST',
+      path: '/product/klTeams/removeRoleClassify',
+      mockPath: '/product/klTeams/removeRoleClassify',
+      desc: '标准团队库-类别删除'
+    },
   ]
 }

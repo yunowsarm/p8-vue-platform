@@ -16,7 +16,7 @@
                     <template #operation="{scope}">
                       <el-button type="text" round @click="updateThird(scope.row)">修改</el-button>
                       <el-divider direction="vertical"></el-divider>
-                      <el-button type="text" round @click="deleteThird(scope.row)">删除</el-button>
+                      <el-button type="text" round @click="deleteThird(scope.row)" :disabled="scope.row.type == '0'">删除</el-button>
                     </template>
                     </common-table>
     </template>

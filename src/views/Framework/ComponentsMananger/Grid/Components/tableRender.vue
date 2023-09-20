@@ -820,7 +820,7 @@ export default {
               headerAlign: res.title,
               align: res.alignmentStyle,
               dataIndex: 'operation',
-              minWidth: 140,
+              width: 140,
               scopedSlots: { customRender: 'operation' }
             })
           } else if (res.reportResources.length && this.tableInfo.useSystemConfigButton === 0) {
@@ -846,7 +846,7 @@ export default {
               headerAlign: res.title,
               align: res.alignmentStyle,
               dataIndex: 'operation',
-              minWidth: 140,
+              width: 140,
               scopedSlots: { customRender: 'operation' }
             })
           }
@@ -1198,9 +1198,10 @@ export default {
     },
     // 自定义抽屉
     openComponent (row, btn) {
-      const rowBtnData = this.getRowBtnData(row, btn)
-      row = rowBtnData.row
-      btn = rowBtnData.btn
+      if (!btn) {
+        btn = row
+        row = {}
+      }
       let createFormParams = {}
       if (btn && btn.eventParams) {
         createFormParams = eval('(' + btn.eventParams + ')')
