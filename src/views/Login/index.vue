@@ -3,7 +3,7 @@
     <div class="login-wrapper">
       <div class="login-block">
         <div class="login-contain">
-          <!-- <span class="login-logo" ref="loginLogo"></span> -->
+          <span class="login-logo" ref="loginLogo"></span>
           <h2 class="login-sysName">{{ system_name }}</h2>
           <el-form
             class="loginForm"
@@ -189,22 +189,22 @@ export default {
       let userLoginSign = true
       this.$api['SystemSettings.getLoginSetting']().then((res) => {
         if (res) {
-          // res.settings.forEach((a) => {
-          //   if (a.key === 'systemModel') {
-          //     this.flag = a.value
-          //   }
-          //   if (a.key === 'systemName') {
-          //     if (a.value) {
-          //       this.$store.dispatch('setSystemName', a.value)
-          //       this.system_name = a.value
-          //     } else {
-          //       // eslint-disable-next-line no-undef
-          //       this.$store.dispatch('setSystemName', this.systemNames)
-          //       // eslint-disable-next-line no-undef
-          //       this.system_name = this.systemNames
-          //     }
-          //   }
-          // })
+          res.settings.forEach((a) => {
+            if (a.key === 'systemModel') {
+              this.flag = a.value
+            }
+            if (a.key === 'systemName') {
+              if (a.value) {
+                this.$store.dispatch('setSystemName', a.value)
+                this.system_name = a.value
+              } else {
+                // eslint-disable-next-line no-undef
+                this.$store.dispatch('setSystemName', this.systemNames)
+                // eslint-disable-next-line no-undef
+                this.system_name = this.systemNames
+              }
+            }
+          })
           this.$store.dispatch('setSystemName', this.system_name)
           uploadFileJson = res.uploadFileJson
           if (uploadFileJson && uploadFileJson[0]) {
@@ -260,19 +260,19 @@ export default {
     loginCheck() {
       this.$api['SystemSettings.getLoginSetting']().then((res) => {
         if (res) {
-          // res.settings.forEach((a) => {
-          //   if (a.key === 'systemName') {
-          //     if (a.value) {
-          //       this.$store.dispatch('setSystemName', a.value)
-          //       this.system_name = a.value
-          //     } else {
-          //       // eslint-disable-next-line no-undef
-          //       this.$store.dispatch('setSystemName', this.systemNames)
-          //       // eslint-disable-next-line no-undef
-          //       this.system_name = this.systemNames
-          //     }
-          //   }
-          // })
+          res.settings.forEach((a) => {
+            if (a.key === 'systemName') {
+              if (a.value) {
+                this.$store.dispatch('setSystemName', a.value)
+                this.system_name = a.value
+              } else {
+                // eslint-disable-next-line no-undef
+                this.$store.dispatch('setSystemName', this.systemNames)
+                // eslint-disable-next-line no-undef
+                this.system_name = this.systemNames
+              }
+            }
+          })
           this.$store.dispatch('setSystemName', this.system_name)
           const uploadFileJson = res.uploadFileJson
           if (uploadFileJson && uploadFileJson[0]) {
@@ -358,10 +358,12 @@ $login-primary--login-color: #306cf7;
           height: 96px;
           display: block;
           margin: 0 auto;
-          background: url(../../assets/image/login/new_logo.png) no-repeat;
+          // background: url(../../assets/image/login/new_logo.png) no-repeat;
           background-size: contain;
           background-position: center;
           margin-top: 25px;
+          position: absolute;
+          top: -80px;
         }
 
         .login-sysName {
