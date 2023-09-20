@@ -45,6 +45,27 @@ export const system = {
       desc: '立项所属领域选择'
     },
     {
+      name: 'updateStatusSuspend',
+      method: 'POST',
+      path: '/framework/project/updateStatusSuspend',
+      mockPath: '/framework/project/updateStatusSuspend',
+      desc: '项目立项暂停'
+    },
+    {
+      name: 'updateStatusRestart',
+      method: 'POST',
+      path: '/framework/project/updateStatusRestart',
+      mockPath: '/framework/project/updateStatusRestart',
+      desc: '项目立项重启'
+    },
+    {
+      name: 'updateStatusComplete',
+      method: 'POST',
+      path: '/framework/project/updateStatusComplete',
+      mockPath: '/framework/project/updateStatusComplete',
+      desc: '项目立项完成'
+    },
+    {
       name: 'getClassifyByFiledId',
       method: 'POST',
       path: '/framework/system/BpDictionary/getClassifyByFiledId',
