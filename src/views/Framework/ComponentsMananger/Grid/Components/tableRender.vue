@@ -6,7 +6,7 @@
                  :header-visible="headerVisible"
                  :normal-layout="normalLayout">
     <template #north>
-      <common-button v-if="tableInfo.useSystemConfigButton === 1 || (tableInfo.useSystemConfigButton === 0 && buttonData.length > 0)"
+      <common-button v-if="tableInfo.useSystemConfigButton == 1 || (tableInfo.useSystemConfigButton == 0 && buttonData.length > 0)"
                      :comp="renderComp"
                      :button-type="'round'"
                      :permission-vo="permissionVo"
@@ -83,7 +83,7 @@
                         :comp="comp"
                         :custom-c-s-s="customCSS"
                         :intelligence-comp="intelligenceComp"
-                        v-if="columns.length && tableType === 0"
+                        v-if="columns.length && tableType == 0"
                         :columns="columns"
                         :params="tableParam"
                         :flex="flex"
@@ -143,7 +143,7 @@
       </vxe-table> -->
           <vxetable-table ref="xTable"
                           :custom-c-s-s="customCSS"
-                          v-if="columns.length && tableType === 1"
+                          v-if="columns.length && tableType == 1"
                           :comp="comp"
                           :columns="columns"
                           :params="tableParam"
@@ -708,14 +708,14 @@ export default {
             if (item.isViewShow) {
               that.$set(that.viewKeys, item.fieldName, item.fieldTxt)
             }
-            if (item.isParent && item.isParent === 1) {
+            if (item.isParent && item.isParent == 1) {
               that.treeConfig.parentField = item.fieldName
             }
             that.selectionRange = res.selectionRange
             that.reportItems = res.reportItems
             if (item.isListShow) {
               if (item.isSearch) {
-                if (this.tableInfo.searchPos === 1) {
+                if (this.tableInfo.searchPos == 1) {
                   this.showSearchRow = false
                   const filter = this.getHeadSelectByType(item.searchMode, item)
                   // 查询放置表头
@@ -730,7 +730,7 @@ export default {
                     iconDisplay: true,
                     filter: filter
                   })
-                } else if (this.tableInfo.searchPos === 2) {
+                } else if (this.tableInfo.searchPos == 2) {
                   this.showSearchRow = true
                   const filter = this.getHeadSelectByType(item.searchMode, item)
                   // 查询放置表头
@@ -814,7 +814,7 @@ export default {
           })
           this.$emit('searchData', this.searchList)
           // 报表按钮参数
-          if (this.tableInfo.useSystemConfigButton === 1) {
+          if (this.tableInfo.useSystemConfigButton == 1) {
             columnData.push({
               title: '操作',
               headerAlign: res.title,
@@ -823,7 +823,7 @@ export default {
               width: 140,
               scopedSlots: { customRender: 'operation' }
             })
-          } else if (res.reportResources.length && this.tableInfo.useSystemConfigButton === 0) {
+          } else if (res.reportResources.length && this.tableInfo.useSystemConfigButton == 0) {
             this.buttonData = res.reportResources
             this.buttonData.forEach((btn) => {
               if (btn.permission) {
@@ -851,7 +851,7 @@ export default {
             })
           }
           if (this.tableInfo.selectType) {
-            if (res.tableType === 0 && res.enableEdit === 0) {
+            if (res.tableType == 0 && res.enableEdit == 0) {
               columnData.unshift({
                 type: 'selection',
                 width: 40
@@ -869,7 +869,7 @@ export default {
                 })
               }
             }
-            if (this.tableInfo.selectType === 1) {
+            if (this.tableInfo.selectType == 1) {
               this.selectType = 'single'
             } else {
               this.selectType = 'multip'
@@ -1246,7 +1246,7 @@ export default {
     customClose () {
       this.customComponentParams = {}
       this.customVisible = false
-      if (this.tableType === 0) {
+      if (this.tableType == 0) {
         this.$refs.table.searchData()
       } else {
         this.$refs.xTable.searchData()
@@ -1393,8 +1393,6 @@ export default {
       }
     },
     getDyApi (obj, row, btn) {
-      const rowBtnData = this.getRowBtnData(row, btn)
-      row = rowBtnData.row
       if (!row) {
         return
       }
@@ -1613,7 +1611,7 @@ export default {
         fileName: this.$route.meta.title, // 导出的名称
         columnConfigs: this.columns // 导出的列
       }
-      if (this.tableType === 0) {
+      if (this.tableType == 0) {
         this.$refs.table.exportTable(exportObj)
       } else {
         this.$refs.xTable.exportTable(exportObj)
@@ -1728,7 +1726,7 @@ export default {
             type: 'success',
             message: '操作成功!'
           })
-          if (this.tableType === 0) {
+          if (this.tableType == 0) {
             this.$refs.table.searchData()
             this.$refs.table.clearSelection()
           } else {
@@ -1778,7 +1776,7 @@ export default {
             type: 'success',
             message: '操作成功!'
           })
-          if (this.tableType === 0) {
+          if (this.tableType == 0) {
             this.$refs.table.searchData()
             this.$refs.table.clearSelection()
           } else {
