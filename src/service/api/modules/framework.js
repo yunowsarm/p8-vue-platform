@@ -52,6 +52,20 @@ export const system = {
       desc: '项目立项暂停'
     },
     {
+      name: 'permissionSettingSave',
+      method: 'POST',
+      path: '/framework/project/permissionSettingSave',
+      mockPath: '/framework/project/permissionSettingSave',
+      desc: '项目立项权限设置保存'
+    },
+    {
+      name: 'getPermissionSetting',
+      method: 'GET',
+      path: '/framework/project/getPermissionSetting',
+      mockPath: '/framework/project/getPermissionSetting',
+      desc: '项目立项获取权限设置'
+    },
+    {
       name: 'updateStatusRestart',
       method: 'POST',
       path: '/framework/project/updateStatusRestart',
