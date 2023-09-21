@@ -4,94 +4,111 @@
       <!-- <span>项目数：</span><span style="font-size: larger; font-weight: bolder;">{{allNum.projectNum}} </span>
       <span>计划数：</span><span style="font-size: larger;font-weight: bolder;">{{allNum.planNum}} </span>
       <span>任务数：</span><span style="font-size: larger;font-weight: bolder;">{{allNum.taskNum}}</span> -->
-      <search-form-list
-:data-source="searchData" :form="searchForm" @search="search" @re-set="reset"></search-form-list>
+      <search-form-list :dataSource="searchData"
+                        :form="searchForm"
+                        @search="search"
+                        @re-set="reset"></search-form-list>
     </template>
     <template #west>
-      <common-tree
-:data="treeData" @select="onSelect" :tree-param="treeParam"></common-tree>
+      <common-tree :data="treeData"
+                   @select="onSelect"
+                   :tree-Param="treeParam"></common-tree>
     </template>
     <template #center>
-      <common-table
-       
-ref="table"
-        :api="tableApi"
-        :columns="columns"
-        :params="tableOtherParams"
-        :table-config="tableConfig"
-        :pagination="true"
-        :has-w-b-s="true"
-        :style="{ height: tableHeight }"
-        @open-third-menu="openThirdMenu"
-        @requested-table-data="requestedTableData"
-      >
+      <common-table ref="table"
+                    :api="tableApi"
+                    :columns="columns"
+                    :params="tableOtherParams"
+                    :tableConfig="tableConfig"
+                    :pagination="true"
+                    :hasWBS="true"
+                    :style="{height: tableHeight}"
+                    @open-third-menu="openThirdMenu"
+                    @requested-table-data="requestedTableData">
         <template #name="{ scope, thirdMenuData }">
-          <el-tag
-size="mini" type="danger" style="margin-right: 10px" v-if="scope.row.allChildFinish === 'true'">未分解 </el-tag>
-          <el-tooltip
-v-if="(scope.row.dataType &&
-              scope.row.dataType === 'task' &&
-              scope.row.managerStatus !== '6406' &&
-              scope.row.managerStatus !== '6409' &&
-              ((scope.row.executeState !== '1090' && scope.row.isLeaf === 0) || (scope.row.executeState !== '1090' && scope.row.isLeaf === 1 && scope.row.allChildFinish === 'true'))
-            "
-            effect="dark"
-            :content="'该任务可提交完成'"
-            placement="top"
-            class="icon-style"
-          >
+          <el-tag size="mini"
+                  type="danger"
+                  style="margin-right: 10px"
+                  v-if="scope.row.allChildFinish === 'true'">未分解
+          </el-tag>
+          <el-tooltip v-if="(scope.row.dataType &&
+                    scope.row.dataType === 'task') && scope.row.managerStatus !== '6406' && scope.row.managerStatus !== '6409' &&
+                   ((scope.row.executeState !== '1090' &&   scope.row.isLeaf === 0) ||
+                   (scope.row.executeState !== '1090' &&   scope.row.isLeaf === 1 && scope.row.allChildFinish === 'true'))
+                  "
+                      effect="dark"
+                      :content="'该任务可提交完成'"
+                      placement="top"
+                      class="icon-style">
             <i class="p8 icon-can-commit"></i>
           </el-tooltip>
-          <el-tooltip
-v-if="
-            v-if="scope.row.managerStatus === '6406' && scope.row.dataType && scope.row.dataType === 'task'"
-            effect="dark"
-            :content="`${scope.row.managerStatusDisplay},点击可撤回`"
-            placement="right"
-          >
-            <span
-class="base-custom-style-task approve" @click.stop="withdrawTaskApprove(scope.row)">审</span>
+          <el-tooltip v-if="
+              scope.row.managerStatus === '6406' &&
+              scope.row.dataType &&
+              scope.row.dataType === 'task'
+            "
+                      effect="dark"
+                      :content="`${scope.row.managerStatusDisplay},点击可撤回`"
+                      placement="right">
+            <span class="base-custom-style-task approve"
+                  @click.stop="withdrawTaskApprove(scope.row)">审</span>
           </el-tooltip>
-          <el-tooltip
-v-if="scope.row.managerStatus === '6407' && scope.row.dataType && scope.row.dataType === 'task'" effect="dark" :content="`${scope.row.managerStatusDisplay}`" placement="right">
+          <el-tooltip v-if="
+              scope.row.managerStatus === '6407' &&
+              scope.row.dataType &&
+              scope.row.dataType === 'task'
+            "
+                      effect="dark"
+                      :content="`${scope.row.managerStatusDisplay}`"
+                      placement="right">
             <span class="base-custom-style-task approves">驳</span>
           </el-tooltip>
-          <span
-v-if="scope.row.dataType === 'task'" class="underline" @click="drillCol(scope, thirdMenuData, scope.row.id)">{{ scope.row.name }} </span>
+          <span v-if="scope.row.dataType === 'task'"
+                class="underline"
+                @click="drillCol(scope, thirdMenuData, scope.row.id)">{{ scope.row.name }} </span>
           <span v-else>{{ scope.row.name }}</span>
         </template>
         <template #level="{ scope }">
-          <span
-class="underline" @click="showDialog(scope.row.id)" v-if="scope.row.parentId">{{ scope.row.level }}级</span>
+          <span class="underline"
+                @click="showDialog(scope.row.id)"
+                v-if="scope.row.parentId">{{ scope.row.level }}级</span>
           <span v-else>{{ scope.row.indexNo }}</span>
         </template>
         <template #predecessorsNumber="{ scope }">
-          <span
-class="underline" @click="showfrontToBack(scope.row.id, '前置', 'predecessors', scope.row.predecessorsNumber)"> {{ scope.row.predecessorsNumber }}</span>
+          <span class="underline"
+                @click="showfrontToBack(scope.row.id, '前置', 'predecessors', scope.row.predecessorsNumber)">
+            {{ scope.row.predecessorsNumber }}</span>
         </template>
         <template #postTaskNumber="{ scope }">
-          <span
-class="underline" @click="showfrontToBack(scope.row.id, '后置', 'postTask', scope.row.postTaskNumber)"> {{ scope.row.postTaskNumber }}</span>
+          <span class="underline"
+                @click="showfrontToBack(scope.row.id, '后置', 'postTask', scope.row.postTaskNumber)">
+            {{ scope.row.postTaskNumber }}</span>
         </template>
         <template #customIcon="{ scope }">
-          <el-tooltip
-v-if="scope.row.dataType && scope.row.managerStatus === '6407'" effect="dark" :content="`${statusData[scope.row.managerStatus].title}:${rejectInfo}`" placement="right">
-            <i
-:class="statusData[scope.row.managerStatus].icon" @mouseenter="rejectInformation(scope.row)" :style="{ color: statusData[scope.row.managerStatus].color, fontSize: '16px' }"></i>
+          <el-tooltip v-if="scope.row.dataType && scope.row.managerStatus === '6407'"
+                      effect="dark"
+                      :content="`${statusData[scope.row.managerStatus].title}:${rejectInfo}`"
+                      placement="right">
+            <i :class="statusData[scope.row.managerStatus].icon"
+               @mouseenter="rejectInformation(scope.row)"
+               :style="{color: statusData[scope.row.managerStatus].color, fontSize: '16px'}"></i>
           </el-tooltip>
-          <common-status-icon
-v-if="scope.row.dataType && scope.row.managerStatus !== '6407'" :status-name="statusName" :status-key="scope.row.managerStatus"></common-status-icon>
+          <common-status-icon v-if="scope.row.dataType && scope.row.managerStatus !== '6407'"
+                              :status-name="statusName"
+                              :status-key="scope.row.managerStatus"></common-status-icon>
         </template>
         <template #monitorpoint="{ scope }">
-          <span
-v-for="item in monitorpointIconHandle(scope.row)" :key="item.id" style="padding: 0 2px">
-            <el-tooltip
-effect="light" placement="bottom-start">
+          <span v-for="item in monitorpointIconHandle(scope.row)"
+                :key="item.id"
+                style="padding: 0 2px">
+            <el-tooltip effect="light"
+                        placement="bottom-start">
               <div slot="content">
                 <p v-html="item.title"></p>
               </div>
-              <i
-:class="item.icon" @click="iconClick(scope.row)" style="cursor: pointer"></i>
+              <i :class="item.icon"
+                 @click='iconClick(scope.row)'
+                 style=" cursor:pointer;"></i>
             </el-tooltip>
           </span>
         </template>
@@ -99,32 +116,41 @@ effect="light" placement="bottom-start">
           <div v-html="overdueTextFun(scope.row)"></div>
         </template>
         <template #forecastBeginDate="{ scope }">
-          <div v-html="setForecastDateStyle(scope.row, 'forecastBeginDate')"></div>
+          <div v-html=" setForecastDateStyle( scope.row ,'forecastBeginDate')">
+          </div>
         </template>
         <template #forecastEndDate="{ scope }">
-          <div v-html="setForecastDateStyle(scope.row, 'forecastEndDate')"></div>
+          <div v-html=" setForecastDateStyle( scope.row ,'forecastEndDate')">
+          </div>
         </template>
       </common-table>
-      <revenue-view
-v-if="revenueBudgetVisible" :visible="revenueBudgetVisible" :otherParam="revenueBudgetParam" @close-dialog="revenueBudgetClose"> </revenue-view>
+      <revenue-view v-if="revenueBudgetVisible"
+                    :visible="revenueBudgetVisible"
+                    :otherParam="revenueBudgetParam"
+                    @close-dialog="revenueBudgetClose">
+      </revenue-view>
     </template>
     <template #drawer-panel>
-      <process-decomposition
-v-if="decompositionVisible" :isView="decompositionVisible" :taskId="taskId" @close="closeDrawer"></process-decomposition>
-      <front-to-back
-       
-v-if="frontToBackVisible"
-        :is-view="frontToBackVisible"
-        :task-id="taskId"
-        :title="frontToBackTitle"
-        :front-to-back-type="frontToBackType"
-        @close="closefrontToBackDrawer"
-      ></front-to-back>
-      <common-drawer
-size="100%" :visible="visible" direction="ttb" :projectLevel="projectLevel" :title="thirdMenuTitle" :drawer-config="menuDrawerConfig">
+      <process-decomposition v-if="decompositionVisible"
+                             :isView="decompositionVisible"
+                             :taskId="taskId"
+                             @close="closeDrawer"></process-decomposition>
+      <front-to-back v-if="frontToBackVisible"
+                     :isView="frontToBackVisible"
+                     :taskId="taskId"
+                     :title="frontToBackTitle"
+                     :frontToBackType="frontToBackType"
+                     @close="closefrontToBackDrawer"></front-to-back>
+      <common-drawer size="100%"
+                     :visible="visible"
+                     direction="ttb"
+                     :projectLevel="projectLevel"
+                     :title="thirdMenuTitle"
+                     :drawerConfig="menuDrawerConfig">
         <template #drawer>
-          <menu-layout
-:third-menu-param="thirdMenuParam" :filterThirdMenu="filterThirdMenu" :default-menu="defaultMenu"></menu-layout>
+          <menu-layout :third-menu-param="thirdMenuParam"
+                       :filterThirdMenu='filterThirdMenu'
+                       :default-menu="defaultMenu"></menu-layout>
         </template>
       </common-drawer>
       <!-- <common-drawer size="100%"
@@ -178,7 +204,7 @@ export default {
     // RevenueView,
     'el-tooltip': Tooltip
   },
-  data() {
+  data () {
     const columns = [
       {
         title: '序号',
@@ -334,7 +360,7 @@ export default {
         align: 'center'
       }
     ]
-    const searchData = [
+    let searchData = [
       {
         type: 'datetimeRange',
         labelText: '计划开始时间',
@@ -426,20 +452,20 @@ export default {
       frontToBackType: ''
     }
   },
-  created() {
+  created () {
     this.$api[this.treeApi]({ dicType: 'PROJECTTYPE' }).then((res) => {
-      res.forEach((item) => {
+      res.forEach(item => {
         item.value = item.id
         item.label = item.cmeaning
       })
       this.treeData = generateTree(res, 'cparentid')
     })
   },
-  mounted() {
+  mounted () {
     this.currentRouterPath = this.$route.path
     this.getAllStatusOptions()
     this.getAllNum()
-    const _this = this
+    let _this = this
     this.$bus.$on('refresh', function () {
       Vue.nextTick(function () {
         _this.$refs.table.searchData()
@@ -447,7 +473,7 @@ export default {
     })
   },
   methods: {
-    showfrontToBack(id, title, type, num) {
+    showfrontToBack (id, title, type, num) {
       if (num !== 0) {
         this.frontToBackVisible = true
         this.taskId = id
@@ -455,27 +481,27 @@ export default {
         this.frontToBackTitle = title
       }
     },
-    closefrontToBackDrawer() {
+    closefrontToBackDrawer () {
       this.frontToBackVisible = false
     },
-    showDialog(id) {
+    showDialog (id) {
       this.taskId = id
       this.decompositionVisible = true
     },
     // 点击项目/计划列钻取进入三级菜单-计划编制页面
-    drillCol(scope, thirdMenuData) {
+    drillCol (scope, thirdMenuData) {
       this.getPlanDataTaskId = scope.row.id
       this.getPlanDataPinfoId = scope.row.planInfoId
       if (this.tableOtherParams.specialPlan !== '') {
         this.filterThirdMenu = 'planResolve'
       }
       if (thirdMenuData.length) {
-        const planManager = thirdMenuData.filter(o => o.name === 'ProblemListManagement')
+        let planManager = thirdMenuData.filter(o => o.name === 'ProblemListManagement')
         this.openThirdMenu(scope.row, planManager[0])
       }
     },
-    rejectInformation(row) {
-      const _this = this
+    rejectInformation (row) {
+      let _this = this
       _this.rejectInfo = ''
       _this.$api['taskManager.rejectInfo']({ businessId: row.id }).then(function (res) {
         if (res) {
@@ -483,74 +509,49 @@ export default {
         }
       })
     },
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       this.selectedRowKeys = []
       this.selectedRows = []
       this.multipleSelection = val
-      val.map((item) => {
+      val.map(item => {
         this.selectedRowKeys.push(item.id)
         this.selectedRows.push(item)
       })
     },
-    tableRefresh(param) {
-      param
-        .then(() => {})
-        .catch(() => {
-          console.error('异步失败的操作')
-        })
+    tableRefresh (param) {
+      param.then(() => {
+      }).catch(() => {
+        console.error('异步失败的操作')
+      })
     },
-    async handleMenuBeforClose(done) {
-      const params = {
-        createPage: 'compile',
-        dicType: 'ACTIVITY_TYPE',
-        planInfoId: this.getPlanDataPinfoId,
-        taskId: this.getPlanDataTaskId
-      }
-      const [err, res] = await this.$to(this.$api['taskManager.loadCheckTaskData'](params))
-      // await this.$confirm('计划分解页面有未设置责任人的计划，是否要关闭页面?', '提醒', {
-      //   lockScroll: false,
-      //   confirmButtonText: '确定',
-      //   cancelButtonText: '取消',
-      //   type: 'info'
-      // }).then(() => {
-      //   this.$router.push({ path: this.currentRouterPath })
-      //   this.visible = false
-      // }).catch(() => { })
-      this.$router.push({ path: this.currentRouterPath })
-      this.thirdMenuTitle = ''
+    async handleMenuBeforClose (done) {
+      // let params = {
+      //   createPage: 'compile',
+      //   dicType: 'ACTIVITY_TYPE',
+      //   planInfoId: this.getPlanDataPinfoId,
+      //   taskId: this.getPlanDataTaskId
+      // }
+      // let [err, res] = await this.$to(this.$api['taskManager.loadCheckTaskData'](params))
+      // this.$router.push({ path: this.currentRouterPath })
+      // this.thirdMenuTitle = ''
       this.visible = false
 
-      if (!err) {
-        const checkPlanData = res.tasks
-        const spliceIndex = checkPlanData.findIndex(i => i.indexNo === 0)
-        if (spliceIndex !== -1) {
-          checkPlanData.splice(spliceIndex, 1)
-        }
-        // let warningMess = checkPlanData.some(item => item.realName === null)
-        // if (warningMess) {
-        //   this.$confirm('计划分解页面有未设置责任人的计划，是否要关闭页面?', '提醒', {
-        //     lockScroll: false,
-        //     confirmButtonText: '确定',
-        //     cancelButtonText: '取消',
-        //     type: 'info'
-        //   }).then(() => {
-        //     this.$router.push({ path: this.currentRouterPath })
-        //     this.visible = false
-        //   }).catch(() => { })
-        // } else {
-        //   this.$router.push({ path: this.currentRouterPath })
-        //   this.visible = false
-        // }
-      }
+      // if (!err) {
+      //   let checkPlanData = res.tasks
+      //   let spliceIndex = checkPlanData.findIndex(i => i.indexNo === 0)
+      //   if (spliceIndex !== -1) {
+      //     checkPlanData.splice(spliceIndex, 1)
+      //   }
+      // }
     },
-    closeDrawer() {
+    closeDrawer () {
       this.$refs.table.searchData()
       this.decompositionVisible = false
       this.testDetailsVisible = false
       this.$router.push({ path: this.currentRouterPath })
     },
-    onSelect(node) {
-      const me = node
+    onSelect (node) {
+      let me = node
       // if (me.id) {
       //   this.layersParams = me.layersParams
       this.tableOtherParams.projectTypeId = me.id
@@ -560,31 +561,29 @@ export default {
       // }
       this.$refs.table.searchData()
     },
-    search(param) {
-      const newParams = { ...this.tableOtherParams, ...param }
+    search (param) {
+      let newParams = { ...this.tableOtherParams, ...param }
       // 项目类别ID
       this.tableOtherParams = newParams
     },
-    reset() {
-      const that = this
-      Object.keys(that.tableOtherParams).forEach(function (key) {
-        return (that.tableOtherParams[key] = null)
-      })
+    reset () {
+      let that = this
+      Object.keys(that.tableOtherParams).forEach(function (key) { return (that.tableOtherParams[key] = null) })
       this.tableOtherParams.activityClassifyId = this.layersParams
     },
-    requestedTableData(tableData) {
+    requestedTableData (tableData) {
       if (Object.keys(this.planInfo).length) {
         const _this = this
         let filterItem = null
-        tableData.forEach((item) => {
-          filterItem = item.children.filter((citem) => citem.id === _this.planInfo.id)
+        tableData.forEach(item => {
+          filterItem = item.children.filter(citem => citem.id === _this.planInfo.id)
         })
         if (filterItem) {
           _this.planInfo = { allStatus: this.allStatus, ...filterItem[0], progress: filterItem[0].progress * 100 }
         }
       }
     },
-    openThirdMenu(record, item) {
+    openThirdMenu (record, item) {
       this.defaultMenu = item
       this.thirdMenuParam = {
         ...record,
@@ -604,21 +603,21 @@ export default {
       this.thirdMenuTitle = '【' + record.modelName + '】型号的计划'
       this.visible = true
     },
-    getAllStatusOptions() {
-      const _this = this
-      getTaskStatusInfo({ currentStatus: 'all' }).then((data) => {
+    getAllStatusOptions () {
+      let _this = this
+      getTaskStatusInfo({ currentStatus: 'all' }).then(data => {
         _this.allStatus = data
       })
       // 加载通用gantt操作权限决策，并存入vuex
       _this.$api['planInfoManager.loadPlanStatusLimitStrategy']().then(function (res) {
         if (res) {
-          _this.$store.dispatch('setPlanStatusLockMap', res.plan)
-          _this.$store.dispatch('setTaskStatusLockMap', res.task)
+          _this.$store.dispatch('setPlanStatusLockMap', res['plan'])
+          _this.$store.dispatch('setTaskStatusLockMap', res['task'])
         }
       })
     },
-    getAllNum() {
-      const _this = this
+    getAllNum () {
+      let _this = this
       _this.$api['taskManager.getAllNum']({ taskTabType: 'normal', specialPlan: this.tableOtherParams.specialPlan }).then(function (res) {
         if (res) {
           _this.allNum.taskNum = res.taskNum
@@ -627,24 +626,24 @@ export default {
         }
       })
     },
-    monitorpointIconHandle(row) {
-      const that = this
-      const tempIcon = []
+    monitorpointIconHandle (row) {
+      let that = this
+      let tempIcon = []
       // row.monitorpointArray = 1008
       // row.monitorpointIconArray = 'p8 icon-monthly-comprehensive-plan'
       if (row.monitorpointArray && row.monitorpointIconArray) {
-        const monitorpointArray = row.monitorpointArray.split(',')
+        let monitorpointArray = row.monitorpointArray.split(',')
         monitorpointArray.forEach((item, index) => {
-          tempIcon.push({ id: item, icon: that.monitorpointDataArray[item].icon, title: that.monitorpointDataArray[item].name })
+          tempIcon.push({ 'id': item, 'icon': that.monitorpointDataArray[item].icon, 'title': that.monitorpointDataArray[item].name })
         })
       }
-      tempIcon.push({ id: '1008', icon: 'p8 icon-cost', title: '经费标识' })
+      tempIcon.push({ 'id': '1008', 'icon': 'p8 icon-cost', 'title': '经费标识' })
       if (row.revenueBudgetId) {
-        tempIcon.push({ id: row.revenueBudgetId, icon: 'p8 icon-cost', title: '经费标识' })
+        tempIcon.push({ 'id': row.revenueBudgetId, 'icon': 'p8 icon-cost', 'title': '经费标识' })
       }
       return tempIcon
     },
-    iconClick(row) {
+    iconClick (row) {
       // let that = this
       // if (row.revenueBudgetId) {
       //   getBudgetData({ revenueBudgetId: row.revenueBudgetId }).then(res => {
@@ -653,29 +652,29 @@ export default {
       //   })
       // }
     },
-    revenueBudgetClose() {
+    revenueBudgetClose () {
       this.revenueBudgetVisible = false
       this.revenueBudgetParam = Object.assign({})
     },
-    setForecastDateStyle(row, type) {
+    setForecastDateStyle (row, type) {
       if (row.forecastBeginDate || row.forecastEndDate) {
         if (type === 'forecastBeginDate') {
-          const forecastBeginDate = new Date(row.forecastBeginDate)
-          const planBeginDate = new Date(row.planBeginDate)
+          let forecastBeginDate = new Date(row.forecastBeginDate)
+          let planBeginDate = new Date(row.planBeginDate)
           if (forecastBeginDate.getTime() === planBeginDate.getTime()) {
             return moment(row.forecastBeginDate).format('YYYY-MM-DD')
           } else {
-            const currDate = moment(row.forecastBeginDate).format('YYYY-MM-DD')
+            let currDate = moment(row.forecastBeginDate).format('YYYY-MM-DD')
             return `<span style="color: #F80012">${currDate}</span>`
           }
         }
         if (type === 'forecastEndDate') {
-          const forecastEndDate = new Date(row.forecastEndDate)
-          const planEndDate = new Date(row.planEndDate)
+          let forecastEndDate = new Date(row.forecastEndDate)
+          let planEndDate = new Date(row.planEndDate)
           if (forecastEndDate.getTime() === planEndDate.getTime()) {
             return moment(row.forecastEndDate).format('YYYY-MM-DD')
           } else {
-            const currDate = moment(row.forecastEndDate).format('YYYY-MM-DD')
+            let currDate = moment(row.forecastEndDate).format('YYYY-MM-DD')
             return `<span style="color: #F80012">${currDate}</span>`
           }
         }
@@ -684,31 +683,29 @@ export default {
       return ''
     },
     // 超期/剩余天数调用公共方法
-    overdueTextFun(row) {
+    overdueTextFun (row) {
       return overdueTextHandle(row)
     },
-    withdrawTaskApprove(rowInfo) {
-      const taskId = rowInfo.taskId
+    withdrawTaskApprove (rowInfo) {
+      let taskId = rowInfo.taskId
       const url = 'taskManager.withdrawTaskApprove'
       const _this = this
-      _this
-        .$confirm('是否要撤回审批', '提示', {
-          confirmButtonText: '撤回',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-        .then(() => {
-          _this.$api[url]({ taskId: taskId }).then((res) => {
-            _this.$message({
-              type: 'success',
-              message: '审批已撤回'
-            })
-            // 注释之后页面撤回审批后才可刷新
-            // Vue.nextTick(function () {
-            _this.$refs.table.searchData()
-            // })
+      _this.$confirm('是否要撤回审批', '提示', {
+        confirmButtonText: '撤回',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        _this.$api[url]({ taskId: taskId }).then(res => {
+          _this.$message({
+            type: 'success',
+            message: '审批已撤回'
           })
+          // 注释之后页面撤回审批后才可刷新
+          // Vue.nextTick(function () {
+          _this.$refs.table.searchData()
+          // })
         })
+      })
     }
   }
 }
