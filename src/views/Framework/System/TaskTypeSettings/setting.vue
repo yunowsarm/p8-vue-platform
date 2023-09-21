@@ -75,6 +75,7 @@ export default {
 .dialog_footer {
   height: 52px;
   line-height: 52px;
+  margin-right: 16px;
   text-align: right;
 }
 </style>
