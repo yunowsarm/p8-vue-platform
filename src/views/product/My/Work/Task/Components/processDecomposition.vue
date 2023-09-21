@@ -1,50 +1,56 @@
 <template>
-  <div style="height: 100%;">
-    <common-dialog title="任务分解过程情况"
-                   :visible="isView"
-                   :showHandleBtn="false"
-                   :dialogConfig="dialogConfig"
-                   @handle-cancel="handleCancel"
-                   @handle-ok="handleOk"
-                   width="65%"
-                   @close="handleCancel"
-                   :dialogHeight="600">
+  <div style="height: 100%">
+    <common-dialog
+     
+title="任务分解过程情况"
+      :visible="isView"
+      :show-handle-btn="false"
+      :dialog-config="dialogConfig"
+      @handle-cancel="handleCancel"
+      @handle-ok="handleOk"
+      width="65%"
+      @close="handleCancel"
+      :dialogHeight="600"
+    >
       <template #dialog>
-        <common-table ref="table"
-                      :columns="columns"
-                      :pagination="false"
-                      api="TaskManager.taskDecomposition"
-                      :useTreeFormat="true"
-                      :useTreePId='useTreePId'
-                      :params="{'taskId':taskId}"
-                      :tableConfig="tableConfig"
-                      :flex="250">
+        <common-table
+         
+ref="table"
+          :columns="columns"
+          :pagination="false"
+          api="taskManager.taskDecomposition"
+          :use-tree-format="true"
+          :useTreePId="useTreePId"
+          :params="{ taskId: taskId }"
+          :table-config="tableConfig"
+          :flex="250"
+        >
         </common-table>
       </template>
     </common-dialog>
   </div>
 </template>
 <script>
-import { P8Dialog as CommonDialog, P8Table as CommonTable, P8ListLayout as ListLayout, } from 'p8-components-ui'
-
+import { P8Dialog as CommonDialog, P8Table as CommonTable, P8ListLayout as ListLayout } from 'p8-components-ui'
 
 export default {
-  name: 'processDecomposition',
+  name: 'ProcessDecomposition',
   props: {
     isView: {
       type: Boolean,
       default: false
-    }, taskId: {
+    },
+    taskId: {
       type: String,
       default: ''
     }
   },
   components: {
-    CommonDialog
-    , CommonTable,
+    CommonDialog,
+    CommonTable,
     ListLayout
   },
-  data () {
+  data() {
     const columns = [
       {
         title: '序号',
@@ -87,7 +93,7 @@ export default {
         title: '计划开始时间',
         dataIndex: 'start_date',
         width: 120,
-        formatter (row, column, cellValue, index) {
+        formatter(row, column, cellValue, index) {
           if (cellValue) {
             return cellValue.slice(0, 10)
           }
@@ -98,7 +104,7 @@ export default {
         title: '计划完成时间',
         dataIndex: 'end_date',
         width: 120,
-        formatter (row, column, cellValue, index) {
+        formatter(row, column, cellValue, index) {
           if (cellValue) {
             return cellValue.slice(0, 10)
           }
@@ -109,7 +115,7 @@ export default {
         title: '实际开始时间',
         dataIndex: 'realBeginDate',
         width: 120,
-        formatter (row, column, cellValue, index) {
+        formatter(row, column, cellValue, index) {
           if (cellValue) {
             return cellValue.slice(0, 10)
           }
@@ -120,7 +126,7 @@ export default {
         title: '实际完成时间',
         dataIndex: 'realEndDate',
         width: 120,
-        formatter (row, column, cellValue, index) {
+        formatter(row, column, cellValue, index) {
           if (cellValue) {
             return cellValue.slice(0, 10)
           }
@@ -132,7 +138,7 @@ export default {
         title: '预计开始时间',
         dataIndex: 'task_forecast_begin_dateduration',
         width: 120,
-        formatter (row, column, cellValue, index) {
+        formatter(row, column, cellValue, index) {
           if (cellValue) {
             return cellValue.slice(0, 10)
           }
@@ -143,7 +149,7 @@ export default {
         title: '预计完成时间',
         dataIndex: 'task_forecast_end_date',
         width: 120,
-        formatter (row, column, cellValue, index) {
+        formatter(row, column, cellValue, index) {
           if (cellValue) {
             return cellValue.slice(0, 10)
           }
@@ -154,21 +160,21 @@ export default {
     return {
       dialogConfig: {
         modal: false
-      }, tableConfig: {
+      },
+      tableConfig: {
         'default-expand-all': true
-      }, columns,
-      useTreePId: "parentId"
+      },
+      columns,
+      useTreePId: 'parentId'
     }
   },
   watch: {},
-  mounted () {
-
-  },
+  mounted() {},
   methods: {
-    handleCancel () {
+    handleCancel() {
       this.$emit('close')
     },
-    handleOk () {
+    handleOk() {
       this.handleCancel()
     }
   }

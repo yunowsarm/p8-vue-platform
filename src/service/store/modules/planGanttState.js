@@ -1,3 +1,5 @@
+import api from '@/plugins/api'
+
 const planGanttState = {
   state: {
     taskStyles: {}, // planGantt页面任务样式
@@ -44,6 +46,21 @@ const planGanttState = {
     },
     setButtons({ commit }, datas) {
       commit('SET_BUTTONS', datas)
+    },
+    getPlanStatusLimitStrategy({ commit }) {
+      return new Promise((resolve, reject) => {
+        api['planGanttManager.loadPlanStatusLimitStrategy']()
+          .then((res) => {
+            if (res) {
+              commit('SET_PLAN_STATUS_LOCK_MAP', res.plan)
+              commit('SET_TASK_STATUS_LOCK_MAP', res.task)
+              resolve(res)
+            }
+          })
+          .catch((err) => {
+            reject(err)
+          })
+      })
     }
   }
 }

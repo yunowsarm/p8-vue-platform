@@ -12,7 +12,7 @@
       <template #dialog>
         <common-table ref="table"
                       :columns="columns"
-                      api="TaskManager.preAndPostTaskViewing"
+                      api="taskManager.preAndPostTaskViewing"
                       :params="{'taskId':taskId, type: frontToBackType }"
                       :tableConfig="tableConfig"
                       :flex="250">

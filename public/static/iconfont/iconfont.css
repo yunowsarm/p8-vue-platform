@@ -1,8 +1,8 @@
 @font-face {
   font-family: "p8"; /* Project id 4084759 */
-  src: url('iconfont.woff2?t=1694070371361') format('woff2'),
-       url('iconfont.woff?t=1694070371361') format('woff'),
-       url('iconfont.ttf?t=1694070371361') format('truetype');
+  src: url('iconfont.woff2?t=1695282399140') format('woff2'),
+       url('iconfont.woff?t=1695282399140') format('woff'),
+       url('iconfont.ttf?t=1695282399140') format('truetype');
 }
 
 .p8 {
@@ -11,6 +11,106 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-cancel-task-type:before {
+  content: "\e785";
+}
+
+.icon-cancel-format:before {
+  content: "\e786";
+}
+
+.icon-mouse-pointer:before {
+  content: "\e788";
+}
+
+.icon-issuance-notice:before {
+  content: "\e7a6";
+}
+
+.icon-task-distribute:before {
+  content: "\e7a7";
+}
+
+.icon-zhiliang:before {
+  content: "\e784";
+}
+
+.icon-jindu:before {
+  content: "\e783";
+}
+
+.icon-termination:before {
+  content: "\e7f8";
+}
+
+.icon-contrast:before {
+  content: "\e794";
+}
+
+.icon-project-import:before {
+  content: "\e776";
+}
+
+.icon-project-export:before {
+  content: "\e777";
+}
+
+.icon-copy:before {
+  content: "\e778";
+}
+
+.icon-revoke:before {
+  content: "\e779";
+}
+
+.icon-downgrade:before {
+  content: "\e77a";
+}
+
+.icon-upgrade:before {
+  content: "\e77b";
+}
+
+.icon-my-experience-base:before {
+  content: "\e77c";
+}
+
+.icon-paste:before {
+  content: "\e77d";
+}
+
+.icon-redo:before {
+  content: "\e77e";
+}
+
+.icon-knowledge-base-import:before {
+  content: "\e77f";
+}
+
+.icon-resource-view:before {
+  content: "\e780";
+}
+
+.icon-task-details:before {
+  content: "\e781";
+}
+
+.icon-version-list:before {
+  content: "\e7a8";
+}
+
+.icon-create-version:before {
+  content: "\e7aa";
+}
+
+.icon-pause:before {
+  content: "\e842";
+}
+
+.icon-third-menu:before {
+  content: "\e775";
 }
 
 .icon-exit-fullscreen:before {

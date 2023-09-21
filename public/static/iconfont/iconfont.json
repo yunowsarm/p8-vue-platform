@@ -6,6 +6,181 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "16188113",
+      "name": "取消任务类型empty-set",
+      "font_class": "cancel-task-type",
+      "unicode": "e785",
+      "unicode_decimal": 59269
+    },
+    {
+      "icon_id": "16188114",
+      "name": "取消格式eraser",
+      "font_class": "cancel-format",
+      "unicode": "e786",
+      "unicode_decimal": 59270
+    },
+    {
+      "icon_id": "16189255",
+      "name": "取消标识格式刷mouse-pointer",
+      "font_class": "mouse-pointer",
+      "unicode": "e788",
+      "unicode_decimal": 59272
+    },
+    {
+      "icon_id": "17472874",
+      "name": "通知下发",
+      "font_class": "issuance-notice",
+      "unicode": "e7a6",
+      "unicode_decimal": 59302
+    },
+    {
+      "icon_id": "17472876",
+      "name": "任务下发",
+      "font_class": "task-distribute",
+      "unicode": "e7a7",
+      "unicode_decimal": 59303
+    },
+    {
+      "icon_id": "37457880",
+      "name": "质量",
+      "font_class": "zhiliang",
+      "unicode": "e784",
+      "unicode_decimal": 59268
+    },
+    {
+      "icon_id": "37452596",
+      "name": "进度",
+      "font_class": "jindu",
+      "unicode": "e783",
+      "unicode_decimal": 59267
+    },
+    {
+      "icon_id": "23797874",
+      "name": "终止",
+      "font_class": "termination",
+      "unicode": "e7f8",
+      "unicode_decimal": 59384
+    },
+    {
+      "icon_id": "17472909",
+      "name": "对比",
+      "font_class": "contrast",
+      "unicode": "e794",
+      "unicode_decimal": 59284
+    },
+    {
+      "icon_id": "16188096",
+      "name": "project导入",
+      "font_class": "project-import",
+      "unicode": "e776",
+      "unicode_decimal": 59254
+    },
+    {
+      "icon_id": "16188099",
+      "name": "project导出",
+      "font_class": "project-export",
+      "unicode": "e777",
+      "unicode_decimal": 59255
+    },
+    {
+      "icon_id": "16188101",
+      "name": "复制copy",
+      "font_class": "copy",
+      "unicode": "e778",
+      "unicode_decimal": 59256
+    },
+    {
+      "icon_id": "16188102",
+      "name": "撤销undo",
+      "font_class": "revoke",
+      "unicode": "e779",
+      "unicode_decimal": 59257
+    },
+    {
+      "icon_id": "16188104",
+      "name": "降级sort-size-down",
+      "font_class": "downgrade",
+      "unicode": "e77a",
+      "unicode_decimal": 59258
+    },
+    {
+      "icon_id": "16188117",
+      "name": "升级sort-size-up",
+      "font_class": "upgrade",
+      "unicode": "e77b",
+      "unicode_decimal": 59259
+    },
+    {
+      "icon_id": "16188123",
+      "name": "我的经验库",
+      "font_class": "my-experience-base",
+      "unicode": "e77c",
+      "unicode_decimal": 59260
+    },
+    {
+      "icon_id": "16188129",
+      "name": "粘贴paste",
+      "font_class": "paste",
+      "unicode": "e77d",
+      "unicode_decimal": 59261
+    },
+    {
+      "icon_id": "16188133",
+      "name": "重做redo",
+      "font_class": "redo",
+      "unicode": "e77e",
+      "unicode_decimal": 59262
+    },
+    {
+      "icon_id": "16188134",
+      "name": "知识库导入",
+      "font_class": "knowledge-base-import",
+      "unicode": "e77f",
+      "unicode_decimal": 59263
+    },
+    {
+      "icon_id": "16188135",
+      "name": "资源视图chimney",
+      "font_class": "resource-view",
+      "unicode": "e780",
+      "unicode_decimal": 59264
+    },
+    {
+      "icon_id": "16189339",
+      "name": "任务详细信息tasks",
+      "font_class": "task-details",
+      "unicode": "e781",
+      "unicode_decimal": 59265
+    },
+    {
+      "icon_id": "17472908",
+      "name": "版本列表",
+      "font_class": "version-list",
+      "unicode": "e7a8",
+      "unicode_decimal": 59304
+    },
+    {
+      "icon_id": "17472911",
+      "name": "创建版本",
+      "font_class": "create-version",
+      "unicode": "e7aa",
+      "unicode_decimal": 59306
+    },
+    {
+      "icon_id": "23797873",
+      "name": "暂停",
+      "font_class": "pause",
+      "unicode": "e842",
+      "unicode_decimal": 59458
+    },
+    {
+      "icon_id": "17472875",
+      "name": "三级菜单",
+      "font_class": "third-menu",
+      "unicode": "e775",
+      "unicode_decimal": 59253
+    },
+    {
       "icon_id": "17991840",
       "name": "退出全屏",
       "font_class": "exit-fullscreen",
