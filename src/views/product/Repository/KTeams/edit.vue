@@ -91,7 +91,7 @@ export default {
   },
   props: {
     row: {
-      type: Object
+      type: Array
     }
   },
   data () {
@@ -106,9 +106,9 @@ export default {
   },
   methods: {
     rendered () {
-      if (this.row.ID) {
+      if (this.row[0].ID) {
         let that = this
-        this.$api['knowledgeManagement.get']({ id: this.row.ID }).then(function (data) {
+        this.$api['knowledgeManagement.get']({ id: this.row[0].ID }).then(function (data) {
           that.formData = Object.assign({}, data)
         }).catch(function (error) {
           console.error(error)

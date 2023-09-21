@@ -112,12 +112,7 @@
             <template :slot="item"
                       v-for="item in customColumn"
                       slot-scope="{ scope }">
-              <template v-if="item === 'taskTypeIcon'">
-                <span :key="item"
-                      :class="scope.row.ICON"></span>
-              </template>
-              <slot v-else
-                    :name="item"
+              <slot :name="item"
                     :scope="scope"></slot>
             </template>
           </common-table>
@@ -169,12 +164,7 @@
             <template :slot="item"
                       v-for="item in customColumn"
                       slot-scope="{ scope }">
-              <template v-if="item === 'taskTypeIcon'">
-                <span :key="item"
-                      :class="scope.row.ICON"></span>
-              </template>
-              <slot v-else
-                    :name="item"
+              <slot :name="item"
                     :scope="scope"></slot>
             </template>
           </vxetable-table>

@@ -83,16 +83,11 @@ export default {
           ]
         },
         {
-          type: 'text',
+          type: 'textarea',
           labelText: '描述',
           fieldName: 'describe',
           placeholder: '请输入描述',
-          colLayout: 'singleCol',
-          rules: [
-            {
-              required: true
-            }
-          ]
+          colLayout: 'singleCol'
         }
       ],
       formData: {

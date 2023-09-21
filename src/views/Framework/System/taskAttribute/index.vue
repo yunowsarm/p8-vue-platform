@@ -89,13 +89,13 @@ export default {
     createThird () {
       this.id = ''
       this.type = ''
-      this.drawerTitle = '新建'
+      this.drawerTitle = '新建任务属性设置'
       this.visibleThirdDrawer = true
     },
     updateThird (record) {
       this.id = record.id
       this.type = record.type
-      this.drawerTitle = '修改'
+      this.drawerTitle = '修改任务属性设置'
       this.visibleThirdDrawer = true
     },
     onEditThird () {
