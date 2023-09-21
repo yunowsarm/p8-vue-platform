@@ -18,6 +18,7 @@
                         v-if="searchData.length"
                         :data-source="searchData"
                         @search="search"
+                        labelWidth="70px"
                         @re-set="reSet"
                         :search-width="searchWidth"
                         :permission-vo="permissionVo"
@@ -398,11 +399,11 @@ export default {
     },
     searchWidth: {
       type: String,
-      default: '550px'
+      default: '350px'
     },
     searchContainWidth: {
       type: String,
-      default: '550px'
+      default: '350px'
     },
     summaryMethod: {
       // 合计计算方法
