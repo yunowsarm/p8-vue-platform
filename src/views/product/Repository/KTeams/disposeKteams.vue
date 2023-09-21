@@ -113,9 +113,9 @@ export default {
   },
   props: {
     row: {
-      type: Object,
+      type: Array,
       default: () => {
-        return {}
+        return []
       }
     }
   },
@@ -214,23 +214,25 @@ export default {
       rolesList: [],
       editableData: [],
       clickIndex: null,
-      rolesSelectData: []
+      rolesSelectData: [],
+      record: {}
     }
   },
   created () {
+    this.record = this.row[0]
     this.$api['formGenerator.getSelectionData']({selectCode: 'SYSTEM_ROLE_LIST'}).then(res => {
       this.rolesSelectData = res.data
     })
   },
   methods: {
     rendered () {
-      this.$api['knowledgeManagement.roleClassifyList']({klTeamsId: this.row.ID}).then(res => {
+      this.$api['knowledgeManagement.roleClassifyList']({klTeamsId: this.record.ID}).then(res => {
         this.rolesList = res
         if (this.rolesList && this.rolesList.length) {
           this.clickIndex = 0
           this.formData = this.rolesList[0]
         }
-        this.formData.klTeamsId = this.row.ID
+        this.formData.klTeamsId = this.record.ID
       })
     },
     customValidate (saveParams) {
@@ -268,7 +270,7 @@ export default {
         .catch(() => {})
     },
     createRoles () {
-      this.formData = {klTeamsId: this.row.ID}
+      this.formData = {klTeamsId: this.record.ID}
     }
   }
 }

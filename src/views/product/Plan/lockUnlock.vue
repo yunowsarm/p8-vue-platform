@@ -31,7 +31,7 @@ export default {
     LockUnlockForm
   },
   created () {
-    this.planInfoArray = [this.row.ID]
+    this.planInfoArray = [this.row[0].ID]
   },
   data () {
     return {

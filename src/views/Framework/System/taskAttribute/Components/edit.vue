@@ -55,6 +55,10 @@ export default {
     id: {
       type: String,
       default: ''
+    },
+    type: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -200,6 +204,7 @@ export default {
         })
         if (this.id) {
             this.formData.id = this.id
+            this.formData.type = this.type
         }
     },
     saved(res) {
@@ -231,12 +236,14 @@ export default {
       })
     },
     customValidate (saveParmars) {
-        let that = this
-        this.$api['taskAttribute.saveData'](saveParmars).then(res => {
-            if (res) {
-                that.$emit('saveSuccess')
-            }
-        })
+      let that = this
+      this.$api['taskAttribute.saveData'](saveParmars).then(res => {
+          if (res) {
+            that.$emit('saveSuccess')
+          } else {
+            that.$message({type:'warning',message:'每类项目类型只可有一条设置记录!'})
+          }
+      })
     }
   }
 }

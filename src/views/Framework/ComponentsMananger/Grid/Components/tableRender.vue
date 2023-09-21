@@ -1166,6 +1166,7 @@ export default {
             } else {
               this.$refs.xTable.searchData()
             }
+            this.$emit('refresh')
           } else {
             this.$message({
               type: 'error',
@@ -1223,10 +1224,9 @@ export default {
     },
     // 自定义抽屉
     openComponent (row, btn) {
-      if (!btn) {
-        btn = row
-        row = {}
-      }
+      const rowBtnData = this.getOpenComponentData(row, btn)
+      row = rowBtnData.row
+      btn = rowBtnData.btn
       let createFormParams = {}
       if (btn && btn.eventParams) {
         createFormParams = eval('(' + btn.eventParams + ')')
@@ -1243,6 +1243,13 @@ export default {
       }
       this.scopeRow = row
       this.customVisible = true
+    },
+    getOpenComponentData (row, btn) {
+      if (!btn) {
+        return { row: this.selectRecords, btn: row }
+      } else {
+        return { row: [row], btn: btn }
+      }
     },
     customerFun (row, btn) {
       const rowBtnData = this.getRowBtnData(row, btn)
@@ -1720,6 +1727,7 @@ export default {
           if (selectOne) {
             if (this.selectRecords.length > 1) {
               this.$message({ type: 'warning', message: '只可选择一条数据' + button.title })
+              return
             } else {
               record = this.selectRecords[0]
             }
@@ -1728,6 +1736,7 @@ export default {
           }
         } else {
           this.$message({ type: 'warning', message: '请选择一条数据' })
+          return
         }
         return { row: record, btn: button }
       }

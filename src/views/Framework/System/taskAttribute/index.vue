@@ -27,7 +27,7 @@
                      size="60%"
                      @close="visibleThirdDrawer = false">
         <template #drawer>
-          <edit :id="id" @saveSuccess="onEditThird"></edit>
+          <edit :id="id" :type="type" @saveSuccess="onEditThird"></edit>
         </template>
       </common-drawer>
     </template>
@@ -82,16 +82,19 @@ export default {
       tableApi: 'taskAttribute.listData',
       columns: columns,
       id: '',
+      type: '',
     }
   },
   methods: {
     createThird () {
       this.id = ''
+      this.type = ''
       this.drawerTitle = '新建'
       this.visibleThirdDrawer = true
     },
     updateThird (record) {
       this.id = record.id
+      this.type = record.type
       this.drawerTitle = '修改'
       this.visibleThirdDrawer = true
     },
