@@ -21,7 +21,6 @@
                  :layout-config="componentsConfig"
                  :kanban-config="componentsConfig"
                  :west-tree-param="provideParams.searchParams"
-                 :isLayoutButton="true"
                  @refresh="init()"
                  ref="components"></component>
       <span v-else

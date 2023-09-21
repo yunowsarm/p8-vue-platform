@@ -27,6 +27,7 @@
                      :permission-vo="componentsConfig.permissionVo"
                      :layout-config="componentsConfig"
                      :kanban-config="componentsConfig"
+                     :isLayoutButton="true"
                      ref="components"></component>
         </template>
       </normal-layout>
