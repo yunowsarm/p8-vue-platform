@@ -186,5 +186,43 @@ export const repositoryApi = {
       mockPath: '/product/klTeams/removeRoleClassify',
       desc: '标准团队库-类别删除'
     },
+  ],
+  // 我的任务
+  TaskManager: [
+    {
+      name: 'projectTree',
+      method: 'POST',
+      path: '/product/my/work/task/projectClassifyTree',
+      mockPath: '/product/my/work/task/projectClassifyTree',
+      desc: '我的任务-项目类型树'
+    },
+    {
+      name: 'normalTaskList',
+      method: 'POST',
+      path: '/product/my/work/task/normalTaskList',
+      mockPath: '/product/my/work/task/normalTaskList',
+      desc: '我的任务-已发布列表'
+    },
+    {
+      name: 'overallTaskList',
+      method: 'POST',
+      path: '/product/my/work/task/overallTaskList',
+      mockPath: '/product/my/work/task/overallTaskList',
+      desc: '我的任务-统筹列表'
+    },
+    {
+      name: 'taskDecomposition',
+      method: 'POST',
+      path: '/product/my/work/task/taskDecomposition',
+      mockPath: '/product/my/work/task/taskDecomposition',
+      desc: '我的任务-任务层级钻取'
+    },
+    {
+      name: 'preAndPostTaskViewing',
+      method: 'POST',
+      path: '/product/my/work/task/preAndPostTaskViewing',
+      mockPath: '/product/my/work/task/preAndPostTaskViewing',
+      desc: '我的任务-前后置任务查看'
+    }
   ]
 }
