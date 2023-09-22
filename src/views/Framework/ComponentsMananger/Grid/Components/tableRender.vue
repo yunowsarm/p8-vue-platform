@@ -1271,8 +1271,10 @@ export default {
       this.customVisible = false
       if (this.tableType == 0) {
         this.$refs.table.searchData()
+        this.$refs.table.clearSelection()
       } else {
         this.$refs.xTable.searchData()
+        this.$refs.xTable.clearSelection()
       }
     },
     // 查看流程图
