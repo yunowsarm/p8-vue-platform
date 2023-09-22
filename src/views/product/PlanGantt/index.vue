@@ -40,6 +40,7 @@
         :task-id="selectTaskId"
         :secret-grade="secretGrade"
         :att-read-only="readOnly"
+        :view-type="viewType"
         :gantt-name="ganttName"
         :status="status"
         :plan-info-id="planInfoId"
@@ -109,6 +110,7 @@ export default {
       drawerConfig: {
         modal: false
       },
+      viewType: '',
       planInfoId: '',
       secretGrade: '',
       planBeginDateArray: [],
@@ -173,12 +175,14 @@ export default {
       this.advanced = !this.advanced
     },
     tabBarExtraContent() {},
-    showDetail(selectTask, ganttName) {
+    showDetail(selectTask, ganttName, viewType) {
+      console.log('🚀 ~ file: index.vue:179 ~ showDetail ~ selectTask, ganttName, viewType:', selectTask, ganttName, viewType)
       this.detailVisible = true
       this.ganttName = ganttName
       this.selectTaskId = selectTask.id
       this.status = selectTask.status
       this.detailTitle = selectTask.name
+      this.viewType = viewType
     },
     detailDrawerClosed(res) {
       this.detailVisible = false

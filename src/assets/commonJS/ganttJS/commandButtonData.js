@@ -2349,10 +2349,16 @@ export const CommandButtonData = [
     clickFun: function (btn, ganttName, tasks) {
       if (ganttName) {
         const vueThis = store.getters.vueThis
-        // todo
+        vueThis.showDetail('view')
       }
     },
-    isDisableFun: function (btn, ganttName, tasks) {}
+    isDisableFun: function (btn, ganttName, tasks) {
+      if (tasks.length > 0) {
+        return false
+      } else {
+        return true
+      }
+    }
   },
   {
     id: 'suspend-config',
@@ -2510,13 +2516,13 @@ export const CommandButtonData = [
           const vueThis = store.getters.vueThis
           api['planGanttManager.changeSwitchType']({
             pasteTaskIds: ids,
-            type: '9020'
+            type: ''
           })
             .then(function (res) {
               const ganttObject = GanttObject.getGanttObject(ganttName)
               ids.forEach(function (id) {
                 const selTask = ganttObject.getTask(id)
-                selTask.switchType = '9020'
+                selTask.switchType = ''
                 ganttObject.updateTask(id)
               })
               vueThis.$message({

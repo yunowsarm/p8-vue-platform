@@ -770,6 +770,13 @@ export const repositoryApi = {
       path: '/product/pm/plan/classifiedFiltering',
       mockPath: '/product/pm/plan/classifiedFiltering',
       desc: '项目管理->计划管理->计划编辑->保存'
+    },
+    {
+      name: 'changeSwitchType',
+      method: 'POST',
+      path: '/product/pm/planManager/changeSwitchType',
+      mockPath: '/product/pm/planManager/changeSwitchType',
+      desc: '项目管理->计划管理->修改项目状态'
     }
   ],
   planChange: [

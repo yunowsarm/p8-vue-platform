@@ -60,7 +60,7 @@ import { P8Anchor as Anchor } from 'p8-components-ui'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 export default {
   name: 'PlanAttribute',
-  props: ['taskId', 'ganttName', 'status', 'planInfoId', 'attReadOnly', 'secretGrade', 'createPage', 'currentRoute'],
+  props: ['taskId', 'ganttName', 'status', 'planInfoId', 'attReadOnly', 'secretGrade', 'createPage', 'currentRoute', 'viewType'],
   components: {
     getOutPutView,
     DescribeEdit,
@@ -82,7 +82,10 @@ export default {
     // isView为true时是修改页面，为false时是查看页面
     if (this.taskId && this.ganttName) {
       const ganttObject = GanttObject.getGanttObject(this.ganttName)
-      if (this.attReadOnly || ganttObject.config.readonly) {
+      console.log('🚀 ~ file: index.vue:86 ~ this.viewType:', this.viewType)
+      if (this.viewType === 'view') {
+        this.isView = false
+      } else if (this.attReadOnly || ganttObject.config.readonly) {
         this.isView = false
       } else {
         // 获取gannt操作限制策略
