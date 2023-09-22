@@ -1356,9 +1356,9 @@ export default {
         }
       }
     },
-    showDetail() {
+    showDetail(type) {
       if (myGantt.getGlobalTaskIndex(this.selectTaskId) !== 0) {
-        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName)
+        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, type)
       }
     },
     activityImportClosed() {

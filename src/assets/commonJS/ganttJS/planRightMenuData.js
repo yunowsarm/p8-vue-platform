@@ -46,10 +46,6 @@ const PlanRightMenuData = [
   {
     buttonId: 'activity-import',
     title: '知识库导入'
-  },
-  {
-    buttonId: 'my-experience-import',
-    title: '经验库导入'
   }
 ]
 

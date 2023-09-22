@@ -744,6 +744,21 @@ export function getGanttColumns(ganttObject, vueThis) {
       min_width: 120
     },
     {
+      name: 'secretGrade',
+      label: '密级' + canEditIcon,
+      align: 'center',
+      min_width: 130,
+      resize: true,
+      editor: editors.secretGrades,
+      template: function (task) {
+        const options = ganttObject.serverList('secretGradeList')
+        const value = options.find((item) => {
+          return item.key === task.secretGrade
+        })
+        return value ? value.label : ''
+      }
+    },
+    {
       name: 'predecessors',
       label: '前后置' + canEditIcon,
       min_width: 100,
