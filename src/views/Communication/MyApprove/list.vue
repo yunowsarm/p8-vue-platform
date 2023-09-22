@@ -5,7 +5,8 @@
                :platformVisible="true"
                :left-use-perfect-scrollbar="false">
     <template #left>
-      <div class="treeContain" style="height: 100%">
+      <div class="treeContain"
+           style="height: 100%">
         <approve-catalog :msg-count="msgCatalogCount"
                          :un-read-total="unReadTotal"
                          :search-params="searchParams"
@@ -18,6 +19,7 @@
                     @select="select"
                     :key="renderTime"
                     :distinguishIds='distinguishIds'
+                    :chargeIds='chargeIds'
                     ref='approveList'></approve-list>
     </template>
     <template #right>
@@ -54,6 +56,7 @@ export default {
   },
   data () {
     return {
+      chargeIds: ['APPROVE_TYPE_01_02', 'APPROVE_TYPE_02_02'],
       distinguishIds: ['APPROVE_TYPE_01_01', 'APPROVE_TYPE_01_02', 'APPROVE_TYPE_02_02'],
       toggleMsgStatusApi: 'userMessage.toggleStatus',
       deleteMsgApi: 'userMessage.delete',
@@ -85,7 +88,8 @@ export default {
         }
       },
       searchParams: {
-        msgCatalog: 'APPROVE_TYPE_01_01'
+        msgCatalog: 'APPROVE_TYPE_01_01',
+        startUserId: this.$store.state.user.userInfo.id
       },
       renderTime: new Date() + '',
       currentMessage: null,
@@ -143,6 +147,12 @@ export default {
     queryMsgList (nodeData) {
       this.searchParams.msgCatalog = nodeData.id
       this.renderTime = new Date() + ''
+      if (nodeData.id === 'APPROVE_TYPE_01_02' || nodeData.id === 'APPROVE_TYPE_01_01') {
+        this.searchParams.startUserId = this.$store.state.user.userInfo.id
+      } else if (nodeData.id === 'APPROVE_TYPE_02_02' || nodeData.id === 'APPROVE_TYPE_02_01') {
+        this.searchParams.assigneeUserId = this.$store.state.user.userInfo.id
+        this.searchParams.startUserId = ''
+      } 
     },
     userCatalogCount (queryParam) {
       let params = queryParam != null ? queryParam : this.searchParams

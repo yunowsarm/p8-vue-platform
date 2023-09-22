@@ -34,16 +34,15 @@
           <template #list="{ item }">
             <div style="padding: 10px">
               <el-row type="flex"
-                      style="text-align: left"
+                      style="text-align: left;align-items: center;margin-bottom: 12px"
                       class="overHiding">
                 <el-col :span="8">
-                  <span class="msg-content overHiding">{{ item.processName }}</span>
+                  <span class="msg-processName overHiding">{{ item.processName }}</span>
                 </el-col>
                 <el-col :span="16"
                         style="display: flex;align-items: center;justify-content: end">
                   <span>
-                    <i class="p8"
-                       :class="statusIcon(item.msgStatus)"></i>{{item.startUser}}
+                    <i class="el-icon-user-solid element_icon"></i>{{item.startUser}}
                   </span>
                   <span style="padding-left: 10px">{{startTimeSplice(item.startTime)}}</span>
                 </el-col>
@@ -87,6 +86,10 @@ export default {
     distinguishIds: {
       type: Array,
       default: () => []
+    },
+    chargeIds: {
+      type: Array,
+      default: () => []
     }
   },
   components: {
@@ -104,7 +107,7 @@ export default {
         {
           type: 'text',
           labelText: '流程名称',
-          fieldName: 'msgKeyWord',
+          fieldName: 'processName',
           placeholder: '请输入流程名称',
           colLayout: 'singleCol'
         },
@@ -118,7 +121,7 @@ export default {
         {
           type: 'datetimeRange',
           labelText: '提交时间',
-          fieldName: 'datetimeRange',
+          fieldName: 'startEndTime',
           colLayout: 'singleCol',
           placeholder: '选择提交时间',
           fieldConfig: {
@@ -127,7 +130,7 @@ export default {
         }
       ],
       renderTime: new Date() + '',
-      messageListApi: 'processApproval.pendingList',
+      messageListApi: 'PersonalProcessApproval.pendingApprovalList',
       currentIndex: null,
       mergeParams: {
         page: {
@@ -165,37 +168,42 @@ export default {
     }
   },
   created () {
-    if (this.distinguishIds.includes(this.searchParams.msgCatalog)) {
-      this.messageListApi = 'PersonalProcessApproval.approvalHistoryList'
+    if (this.chargeIds.includes(this.searchParams.msgCatalog)) {
+      this.messageListApi = 'PersonalProcessApproval.historyApprovalList'
       this.mergeParams.page.orders = [{ column: 't.end_time_', asc: false }]
     }
   },
   mounted () {
   },
   watch: {
-    // searchParams: {
-    //   deep: true,
-    //   handler: function (newVal, oldVal) {
-    //     this.mergeParams = Object.assign(this.mergeParams, newVal)
-    //   },
-    //   immediate: true
-    // }
+    searchParams: {
+      deep: true,
+      handler: function (newVal, oldVal) {
+        this.mergeParams = Object.assign(this.mergeParams, newVal)
+      },
+      immediate: true
+    }
   },
   methods: {
-    reSet () { },
+    reSet () {
+      let that = this
+      that.mergeParams.processName = ''
+      that.mergeParams.senderName = ''
+      that.mergeParams.startEndTime = []
+      that.renderTime = new Date() + ''
+    },
     ascendingTime () { // 时间升序
       if (this.distinguishIds.includes(this.searchParams.msgCatalog)) {
         this.mergeParams.page.orders = [{ column: 't.end_time_', asc: false }]
-      }else{
+      } else {
         this.mergeParams.page.orders = [{ column: 't.create_time_', asc: false }]
       }
-      console.log(this.mergeParams, 'this.mergeParams');
       this.renderTime = new Date() + ''
     },
     descendingOrderTime () { // 时间降序
       if (this.distinguishIds.includes(this.searchParams.msgCatalog)) {
         this.mergeParams.page.orders = [{ column: 't.end_time_', asc: true }]
-      }else{
+      } else {
         this.mergeParams.page.orders = [{ column: 't.create_time_', asc: true }]
       }
       this.renderTime = new Date() + ''
@@ -204,7 +212,6 @@ export default {
       this.renderTime = new Date() + ''
     },
     search (queryParam) {
-      console.log('queryParam', queryParam)
       this.mergeParams = Object.assign(this.mergeParams, queryParam)
       this.renderTime = new Date() + ''
     },
@@ -265,10 +272,15 @@ $icon-span-width: 20px;
         margin-bottom: 0;
       }
     }
+    .msg-processName {
+      // display: inline-block;
+      // padding-left: $icon-span-width;
+      // margin: 5px 0px;
+      font-weight: 600;
+    }
     .msg-content {
-      display: inline-block;
-      padding-left: $icon-span-width;
       margin: 5px 0px;
+      display: inline-block;
     }
     .msg-user {
       padding-right: 10px;
