@@ -145,7 +145,7 @@
                      :visible="visible"
                      direction="ttb"
                      :projectLevel="projectLevel"
-                     :title="thirdMenuTitle"
+                     :drawer-config="{ withHeader: false }"
                      :drawerConfig="menuDrawerConfig">
         <template #drawer>
           <menu-layout :third-menu-param="thirdMenuParam"
@@ -232,9 +232,7 @@ export default {
         align: 'center',
         formatter: function (row) {
           // 控制三级菜单是否显示
-          if (row.dataType !== 'task') {
-            return false
-          }
+
           return true
         }
       },
@@ -600,7 +598,7 @@ export default {
         getProjectLevel: record.level
       }
       this.projectLevel = record.level
-      this.thirdMenuTitle = '【' + record.modelName + '】型号的计划'
+      // this.thirdMenuTitle = '【' + record.modelName + '】型号的计划'
       this.visible = true
     },
     getAllStatusOptions () {

@@ -1433,6 +1433,7 @@ export default {
       }
     },
     getDyApi (obj, row, btn) {
+      let that = this
       if (!row) {
         return
       }
@@ -1442,7 +1443,7 @@ export default {
       this.$api[obj.code]({ ids: rowIds })
         .then((res) => {
           if (res) {
-            this.$message({
+            that.$message({
               type: 'success',
               message: obj.successMsg
             })
