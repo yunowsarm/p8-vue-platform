@@ -1,6 +1,3 @@
-<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
-
-
 <template>
   <normal-layout class="grid-table-render"
                  :header-visible="headerVisible"
@@ -18,7 +15,7 @@
                         v-if="searchData.length"
                         :data-source="searchData"
                         @search="search"
-                        labelWidth="70px"
+labelWidth="70px"
                         @re-set="reSet"
                         :search-width="searchWidth"
                         :permission-vo="permissionVo"
@@ -173,7 +170,7 @@
       </template>
     </template>
     <template #drawer-panel>
-      <common-drawer title="表单页面"
+      <common-drawer :title="formTitle"
                      :visible="formVisible"
                      size="50%"
                      :drawer-config="drawerConfig"
@@ -186,7 +183,7 @@
                        @save-success="formClose"></form-render>
         </template>
       </common-drawer>
-      <common-drawer title="查看页面"
+      <common-drawer :title="formTitle"
                      :visible="viewVisible"
                      size="50%"
                      :drawer-config="drawerConfig"
@@ -505,6 +502,7 @@ export default {
       componentPath: '', // 操作按钮弹出框 component 路径
       scopeRow: '', // 表格行记录
       customProps: {},
+      formTitle: '表单页面',
       propParam: Object.assign({}, this.westTreeParam), // 将树参数传至表单
       showSearchRow: false,
       permissionVo: {
@@ -1051,6 +1049,7 @@ export default {
         // this.codeForm = btn.belongTo
         this.codeForm = createFormParams.desformCode
         this.dataViewId = ''
+        this.formTitle = drawingListData.desformName
         this.propParam = Object.assign(this.propParam, this.westTreeParam)
         this.formVisible = true
       } else {
@@ -1095,6 +1094,7 @@ export default {
         // this.codeForm = btn.belongTo
         this.codeForm = createFormParams.desformCode
         this.dataViewId = row.ID
+        this.formTitle = drawingListData.desformName
         const oldPropParam = {}
         if (Object.keys(this.propParam).length) {
           Object.keys(this.propParam).forEach((item) => {
@@ -1435,7 +1435,7 @@ export default {
       }
     },
     getDyApi (obj, row, btn) {
-      let that = this
+let that = this
       if (!row) {
         return
       }

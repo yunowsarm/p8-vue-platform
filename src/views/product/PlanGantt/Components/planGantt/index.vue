@@ -367,6 +367,21 @@
         <command-search :gantt-name="ganttName" :plan-info-id="planInfoId"></command-search>
       </template>
     </common-dialog>
+    <common-dialog
+      title="统计信息"
+      width="50%"
+      v-if="ganttStatisticVisible"
+      :visible="ganttStatisticVisible"
+      :show-handle-btn="false"
+      @isfullscreen="isfullscreen"
+      @close="closeStatistic"
+      :is-view-cs-footer="false"
+      :dialog-height="260"
+    >
+      <template #dialog>
+        <command-statistic :gantt-name="ganttName" :plan-info-id="planInfoId"></command-statistic>
+      </template>
+    </common-dialog>
     <common-button-bar-setting
       v-if="rightMenuConfigVisible"
       :visible="rightMenuConfigVisible"
@@ -492,6 +507,7 @@ import GridSetting from '@/components/gantt/Components/CommandGridSetting/gridSe
 import SaveProduct from '../saveProduct/saveProduct'
 import Detail from './detail'
 import CommandSearch from '@/components/gantt/Components/CommandSearch'
+import CommandStatistic from '@/components/gantt/Components/CommandStatistic'
 import { requestUrl } from '@/utils/common.js'
 import CommonButtonBarSetting from '@/components/gantt/Components/CommonButtonBarSetting'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
@@ -633,6 +649,7 @@ export default {
     // Flight,
     // Large,
     CommandSearch,
+    CommandStatistic,
     CommonButtonBarSetting,
     VuePerfectScrollbar
   },
@@ -858,6 +875,7 @@ export default {
       dynamicDisplayCritical: false, // 控制是否动态显示关键路径
       viewType: 'grid', // 视图类型，默认只显示列表
       ganttSearchVisible: false, // gantt查询弹出框
+      ganttStatisticVisible: false,
       rightMenuConfigVisible: false, // 右键菜单配置弹出框
       yTask: null,
       getSelectTasks: []
@@ -1596,6 +1614,9 @@ export default {
     },
     closeSearch() {
       this.ganttSearchVisible = false
+    },
+    closeStatistic() {
+      this.ganttStatisticVisible = false
     },
     closeMenuConfig() {
       this.rightMenuConfigVisible = false

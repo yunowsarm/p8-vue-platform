@@ -291,78 +291,13 @@ export default {
       // “非所级项目”计划变更流程为：责任人-部门领导 key3 planChangeApproveNonFactory
       const that = this
       let processDefinitionKey = ''
-      if (projectClassification === 'PROJECT_CLASSIFICATION_0_01') {
-        if (projectCategory === '1') {
-          // 科研生产所级项目
-          if (monitorPoints.indexOf('1008') >= 0) {
-            // 月度重点标识的任务
-            processDefinitionKey = 'planChangeApproveSpecialPlan'
-            this.saveParams.processDefinitionKey = processDefinitionKey
-            nextApproveUserBeforehandPlanChange.initDataSource(processDefinitionKey, that).then((res) => {
-              if (res === true) {
-                that.isSelectApproveUserBeforehandView = true
-              }
-            })
-          } else {
-            // 非月度重点任务
-            processDefinitionKey = 'planChangeApproveSpecialPlan'
-            this.saveParams.processDefinitionKey = processDefinitionKey
-            nextApproveUserBeforehandPlanChange.initDataSource(processDefinitionKey, that).then((res) => {
-              if (res === true) {
-                that.isSelectApproveUserBeforehandView = true
-              }
-            })
-          }
-        } else {
-          // 科研生产非所级项目
-          processDefinitionKey = 'planChangeApproveNonFactory'
-          this.saveParams.processDefinitionKey = processDefinitionKey
-          nextApproveUserBeforehandPlanChange.initDataSource(processDefinitionKey, that).then((res) => {
-            if (res === true) {
-              that.isSelectApproveUserBeforehandView = true
-            }
-          })
+      processDefinitionKey = 'planChangeApprove'
+      this.saveParams.processDefinitionKey = processDefinitionKey
+      nextApproveUserBeforehandPlanChange.initDataSource(processDefinitionKey, that).then((res) => {
+        if (res === true) {
+          that.isSelectApproveUserBeforehandView = true
         }
-      } else if (projectClassification === 'PROJECT_CLASSIFICATION_0_02') {
-        // 专题计划
-        processDefinitionKey = 'planChangeApproveSpecialPlan'
-        this.saveParams.processDefinitionKey = processDefinitionKey
-        nextApproveUserBeforehandPlanChange.initDataSource(processDefinitionKey, that).then((res) => {
-          if (res === true) {
-            that.isSelectApproveUserBeforehandView = true
-          }
-        })
-      } else {
-        // 专题计划
-        processDefinitionKey = 'planChangeApprove'
-        this.saveParams.processDefinitionKey = processDefinitionKey
-        that.initDataSourceDept(processDefinitionKey, that)
-      }
-      // let that = this
-      // let processDefinitionKey = ''
-      // if (this.createPage === 'planChange') {
-      //   processDefinitionKey = 'planChangeApprove'
-      //   this.saveParams.processDefinitionKey = 'planChangeApprove'
-      // } else if (this.createPage === 'userChange') {
-      //   processDefinitionKey = 'planChangeApprove'
-      //   this.saveParams.processDefinitionKey = 'planChangeApprove'
-      // } else {
-      //   this.$message({
-      //     message: '操作失败！参数异常',
-      //     type: 'warning'
-      //   })
-      // }
-      // if (this.createPage === 'planChange') {
-      //   // 计划管理--计划变更：责任人所在部门领导审批，单独构造审批人列表
-      //   that.initDataSourceDept(processDefinitionKey, that)
-      // } else {
-      //   // nextApproveUserBeforehand.initDataSource(processDefinitionKey, that).then(res1 => {
-      //   //   if (res1 === true) {
-      //   //     that.isSelectApproveUserBeforehandView = true
-      //   //   }
-      //   // })
-      //   that.initDataSourceDept(processDefinitionKey, that)
-      // }
+      })
     },
     closeSelectApproveUserBeforehand() {
       this.isSelectApproveUserBeforehandView = false

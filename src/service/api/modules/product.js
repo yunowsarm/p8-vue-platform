@@ -777,6 +777,13 @@ export const repositoryApi = {
       path: '/product/pm/planManager/changeSwitchType',
       mockPath: '/product/pm/planManager/changeSwitchType',
       desc: '项目管理->计划管理->修改项目状态'
+    },
+    {
+      name: 'getPlanStatisticData',
+      method: 'POST',
+      path: '/product/pm/plan/loadMonitorTask',
+      mockPath: '/product/pm/plan/loadMonitorTask',
+      desc: '项目管理->计划管理->gantt->获取计划统计信息'
     }
   ],
   planChange: [

@@ -430,7 +430,6 @@ export default {
     clickFun() {
       const that = this
       return function (btn, ganttName, tasks) {
-        debugger
         if (btn != null && ganttName) {
           const thisGantt = that.ganttObjectData.getGanttObject(ganttName)
           // 标识id

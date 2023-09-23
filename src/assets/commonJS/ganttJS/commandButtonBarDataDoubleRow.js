@@ -202,7 +202,7 @@ const CommandButtonBarDataDoubleRow = [
         groupName: '统计信息',
         buttonConfigs: [
           {
-            buttonId: 'search-list',
+            buttonId: 'statistic-list',
             size: 'small',
             position: ['top']
           }
