@@ -8,7 +8,6 @@
              :api="saveApi"
              :is-custom-validate="isCustomValidate"
              @custom-validate="customValidate"
-             :other-param="otherParam"
              :exist-default-btn="existDefaultBtn"
              :exist-custom-btn="existCustomBtn"
              :form="formData">
@@ -17,6 +16,19 @@
                    :stroke-width="16"
                    :percentage="formData.progress ? formData.progress : 0"
                    style="margin-top: 7px"></el-progress>
+    </template>
+    <template #realName>
+      <div style="display: flex;align-items: center">
+        <i style="margin-left: 10px;margin-right: 5px"
+           v-if="formData.userName"
+           class="el-icon-user element_icon"></i>{{formData.userName || ''}}
+        <i style="margin-left: 10px;margin-right: 5px"
+           v-if="formData.roleName"
+           class="icon-guolvfuwu p8"></i>{{formData.roleName || ''}}
+        <i style="margin-left: 10px;margin-right: 5px"
+           v-if="formData.deptName"
+           class="icon-liuchenggenzongshitu p8"></i>{{formData.deptName || ''}}
+      </div>
     </template>
   </form-list>
 </template>
@@ -46,75 +58,50 @@ export default {
     ganttName: {
       type: String,
       default: null
-    }
+    },
+    record: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
   },
   data () {
     return {
       saveApi: 'planGanttManager.describeSave',
       isCustomValidate: true,
-      ownerDataOptions: [],
       existDefaultBtn: false,
       existCustomBtn: true,
       dataSource: [
         {
           type: 'view',
           labelText: '计划开始时间',
-          fieldName: 'start_date',
-          colLayout: 'doubleCol',
-          placeholder: '选择计划开始时间',
-          rules: [
-            {
-              required: true,
-              message: '必填'
-            }
-          ]
+          fieldName: 'planBeginDate',
+          colLayout: 'doubleCol'
         },
         {
           type: 'view',
           labelText: '计划完成时间',
-          fieldName: 'end_date',
-          colLayout: 'doubleCol',
-          placeholder: '选择计划完成时间',
-          rules: [
-            {
-              required: true,
-              message: '必填'
-            }
-          ]
+          fieldName: 'planEndDate',
+          colLayout: 'doubleCol'
         },
         {
           type: 'view',
           labelText: '排程类型',
           fieldName: 'autoScheduling',
-          colLayout: 'doubleCol',
-          placeholder: '选择排程类型',
-          options: [
-            { 'label': '自动', 'value': '1' },
-            { 'label': '手动', 'value': '2' }
-          ]
+          colLayout: 'doubleCol'
         },
         {
           type: 'view',
           labelText: '工期',
           fieldName: 'duration',
-          colLayout: 'doubleCol',
-          placeholder: '选择填写工期',
-          min: 0,
-          max: 99999
+          colLayout: 'doubleCol'
         },
         {
           type: 'view',
           labelText: '任务类型',
-          fieldName: 'planType',
-          colLayout: 'doubleCol',
-          placeholder: '选择任务类型',
-          optionUrl: {
-            api: 'thirdPartInterface.getDic',
-            params: { dicType: 'ACTIVITY_TYPE' },
-            label: 'label',
-            value: 'value'
-          },
-          options: []
+          fieldName: 'planTypeDisplay',
+          colLayout: 'doubleCol'
         },
         {
           type: 'blank',
@@ -123,15 +110,10 @@ export default {
           colLayout: 'doubleCol'
         },
         {
-          type: 'view',
+          type: 'blank',
           labelText: '责任人',
-          fieldName: 'owner_id',
-          // colLayout: 'doubleCol',
-          placeholder: '选择责任人',
-          fieldConfig: {
-            filterable: true
-          },
-          options: []
+          slotName: 'realName',
+          fieldName: 'realName'
         },
         {
           labelText: '预计开始时间',
@@ -168,27 +150,27 @@ export default {
           }
         }
       ],
-      formData: {},
-      otherParam: {
-        activityInfoId: ''
-      },
-      describes: '',
-      oldFormData: {}
+      formData: {
+        deptName: null,
+        roleName: null,
+        userName: null,
+        autoScheduling: null,
+        duration: null,
+        forecastBeginDate: null,
+        forecastEndDate: null,
+        planBeginDate: null,
+        describes: null,
+        realEndDate: null,
+        realBeginDate: null,
+        planEndDate: null,
+        planTypeDisplay: null,
+        progress: null
+      }
     }
   },
   watch: {
     taskId (val) {
       this.rendered()
-    },
-    ownerDataOptions (newValue) {
-      if (newValue) {
-        const options = []
-        newValue.forEach(function (item) {
-          options.push({ value: item.id, label: '[' + item.deptName + ']' + item.name + '-' + item.roleName })
-        })
-        const select = this.dataSource.filter((item) => item.fieldName === 'owner_id')
-        select[0].options = options
-      }
     }
   },
   computed: {
@@ -202,51 +184,7 @@ export default {
       }
     },
     getDescribeData (taskId) {
-      const that = this
-      const ganttObject = GanttObject.getGanttObject(that.ganttName)
-      that.ownerDataOptions = ganttObject.serverList('resourceDatas')
-      const task = ganttObject.getTask(taskId)
-
-      that.formData.start_date = moment(task.start_date).format('YYYY-MM-DD')
-      that.formData.end_date = moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD')
-      if (that.ownerDataOptions && that.ownerDataOptions.length > 0) {
-        that.ownerDataOptions.some(function (item) {
-          if (item.id === task.owner_id) {
-            that.formData.owner_id = item.name
-          }
-        })
-      }
-      that.formData.autoScheduling = task.autoScheduling
-      that.formData.duration = task.duration
-      that.formData.planType = task.planType
-      that.formData.forecastBeginDate = moment(task.forecastBeginDate).format('YYYY-MM-DD')
-      that.formData.forecastEndDate = moment(task.forecastEndDate).format('YYYY-MM-DD')
-      if (task.realBeginDate) that.formData.realBeginDate = moment(task.realBeginDate).format('YYYY-MM-DD')
-      if (task.realEndDate) that.formData.realEndDate = moment(task.realEndDate).format('YYYY-MM-DD')
-      // 获取描述信息
-      that.$api['planGanttManager.getActivityInfoByTaskId']({ taskId: taskId })
-        .then(function (res) {
-          if (res) {
-            that.formData.describes = res.describes
-            that.describes = that.formData.describes
-            that.otherParam.activityInfoId = res.activityInfoId
-          }
-          // 变更进入时先查看newTaskMap中是否存在对应值若存在，显示，否则加载任务描述数据
-          if (
-            (that.ganttName === 'changeGantt' || that.ganttName === 'analysisGantt') &&
-            that.vueThis.newTaskMap &&
-            Object.keys(that.vueThis.newTaskMap).length > 0 &&
-            that.vueThis.newTaskMap[taskId] &&
-            that.vueThis.newTaskMap[taskId].updateInfo.indexOf('describes') !== -1
-          ) {
-            that.formData.describes = that.vueThis.newTaskMap[taskId].describes
-          }
-          that.oldFormData = that.formData
-          that.formData = Object.assign({}, that.formData)
-        })
-        .catch(function (error) {
-          console.error('error' + error)
-        })
+      this.formData = Object.assign(this.formData, this.record)
     },
     saved (res) { },
     customValidate (saveParams) { }
