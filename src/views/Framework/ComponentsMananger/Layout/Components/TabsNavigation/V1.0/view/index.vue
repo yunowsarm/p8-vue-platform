@@ -5,7 +5,9 @@
   <list-layout :header-visible="false">
     <template #center>
       <menu-layout v-if="tabsParmar.navigation === '2'"
+                   ref="menuLayout"
                    :third-menu-param="thirdMenuParam"
+                   :cache="false"
                    :default-menu="defaultMenu"></menu-layout>
       <el-tabs v-else
                v-model="activeName"
@@ -32,7 +34,9 @@
                      :layout-config="componentsConfig"
                      :kanban-config="componentsConfig"
                      :west-tree-param="provideParams.searchParams"
+                     :configParmars="configParmars"
                      v-bind="$attrs"
+                     @save-success="saveSuccess"
                      ref="components"></component>
         </el-tab-pane>
       </el-tabs>
@@ -336,7 +340,8 @@ export default {
       provideParams: {
         searchParams: {}
       },
-      componentsConfig: {}
+      componentsConfig: {},
+      configParmars: {}
     }
   },
   components: {
@@ -368,6 +373,30 @@ export default {
       this.tabsData = tabsData
       this.parmarsMap = parmarsMap
       if (this.tabsParmar.navigation === '2') {
+        const currentPath = this.$route.path;
+        const rootRouter = this.$store.state.routers.addRouters;
+        let thirdMenu = [];
+        if (rootRouter && rootRouter.length > 0) {
+          const querySubRoute = (rootRouter) => {
+            rootRouter.some(function (item, index) {
+              if (item.path === currentPath) {
+                thirdMenu = item;
+                return true;
+              } else {
+                item.children &&
+                  item.children.length > 0 &&
+                  querySubRoute(item.children);
+              }
+            });
+          };
+          querySubRoute(rootRouter);
+        }
+        if (thirdMenu.children && thirdMenu.children.length) {
+          this.defaultMenu = thirdMenu.children[0]
+          if (!this.$refs.menuLayout.activeMenu) {
+            this.$router.replace({ path: this.defaultMenu.path });
+          }
+        }
         return
       }
       // 默认组件存在则显示默认组件，不存在默认选中第一个选项页
@@ -430,6 +459,10 @@ export default {
     },
     handleCancel () {
       this.$emit('close')
+    },
+    saveSuccess (res) {
+      console.log(res,'---res布局');
+      this.configParmars.id = res
     }
   }
 }
