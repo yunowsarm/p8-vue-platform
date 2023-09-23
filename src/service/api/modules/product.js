@@ -983,5 +983,71 @@ export const repositoryApi = {
       mockPath: '/product/repository/MyExperienceBase/importTaskEx',
       desc: '我的经验库-右侧列表'
     }
+  ],
+  // 团队管理
+  teamManager: [
+    {
+      name: 'get',
+      method: 'POST',
+      path: '/product/projectTeam/get',
+      mockPath: '/product/projectTeam/get',
+      desc: '团队管理-获取团队数据'
+    },
+    {
+      name: 'save',
+      method: 'POST',
+      path: '/product/projectTeam/save',
+      mockPath: '/product/projectTeam/save',
+      desc: '团队管理-获取团队数据'
+    },
+    {
+      name: 'roleUserList',
+      method: 'POST',
+      path: '/product/projectTeam/roleUserList',
+      mockPath: '/product/projectTeam/roleUserList',
+      desc: '团队管理-选择人员列表'
+    },
+    {
+      name: 'myWholeDescribeList',
+      method: 'POST',
+      path: '/product/projectTeam/myWholeDescribeList',
+      mockPath: '/product/projectTeam/myWholeDescribeList',
+      desc: '团队管理-我的经验团队-项目列表'
+    },
+    {
+      name: 'myRoleList',
+      method: 'POST',
+      path: '/product/projectTeam/myRoleList',
+      mockPath: '/product/projectTeam/myRoleList',
+      desc: '团队管理-我的经验团队-项目团队角色列表'
+    },
+    {
+      name: 'list',
+      method: 'POST',
+      path: '/product/klTeams/list',
+      mockPath: '/product/klTeams/list',
+      desc: '标准团队列表'
+    },
+    {
+      name: 'lgetResponsibleist',
+      method: 'POST',
+      path: '/product/projectTeam/getResponsible',
+      mockPath: '/product/projectTeam/getResponsible',
+      desc: '替换责任人-查询责任人'
+    },
+    {
+      name: 'replaceResponsible',
+      method: 'POST',
+      path: '/product/projectTeam/replaceResponsible',
+      mockPath: '/product/projectTeam/replaceResponsible',
+      desc: '替换责任人-保存'
+    },
+    {
+      name: 'wholeDescribeInfo',
+      method: 'POST',
+      path: '/product/projectTeam/wholeDescribeInfo',
+      mockPath: '/product/projectTeam/wholeDescribeInfo',
+      desc: '团队管理-项目信息'
+    }
   ]
 }
