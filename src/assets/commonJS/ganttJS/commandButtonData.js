@@ -2056,11 +2056,11 @@ export const CommandButtonData = [
     title: '我的经验库',
     help: '我的经验库',
     clickFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
-      vueThis.myExperienceType = 'children'
-      vueThis.experienceLibrarySecretGradeDisplay = tasks[0].secretGradeDisplay
-      vueThis.myExperienceVisible = true
-      vueThis.queryParam.planId = vueThis.planInfoId
+      // const vueThis = store.getters.vueThis
+      // vueThis.myExperienceType = 'children'
+      // vueThis.experienceLibrarySecretGradeDisplay = tasks[0].secretGradeDisplay
+      // vueThis.myExperienceVisible = true
+      // vueThis.queryParam.planId = vueThis.planInfoId
     },
     isDisableFun: function (btn, ganttName, tasks) {
       if (checkSwitchType(tasks)) {
@@ -2076,10 +2076,11 @@ export const CommandButtonData = [
         help: '创建',
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
-          vueThis.myExperienceType = 'children'
-          vueThis.experienceLibrarySecretGradeDisplay = tasks[0].secretGradeDisplay
-          vueThis.myExperienceVisible = true
-          vueThis.queryParam.planId = vueThis.planInfoId
+          vueThis.createVisible = true
+          // vueThis.myExperienceType = 'children'
+          // vueThis.experienceLibrarySecretGradeDisplay = tasks[0].secretGradeDisplay
+          // vueThis.myExperienceVisible = true
+          // vueThis.queryParam.planId = vueThis.planInfoId
         },
         isDisableFun: function (btn, ganttName, tasks) {
           if (checkSwitchType(tasks)) {
@@ -2095,9 +2096,11 @@ export const CommandButtonData = [
         help: '导入同级',
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
-          vueThis.myExperienceType = 'children'
-          vueThis.experienceSecretGradeDisplay = tasks[0].secretGradeDisplay
-          vueThis.myExperienceImportVisible = true
+          vueThis.experienceBaseVisible = true
+          vueThis.exportExperienceType = 'after'
+          // vueThis.myExperienceType = 'children'
+          // vueThis.experienceSecretGradeDisplay = tasks[0].secretGradeDisplay
+          // vueThis.myExperienceImportVisible = true
           // vueThis.queryParam.planId = vueThis.planInfoId
         },
         isDisableFun: function (btn, ganttName, tasks) {
@@ -2130,9 +2133,8 @@ export const CommandButtonData = [
         help: '导入下级',
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
-          vueThis.myExperienceType = 'children'
-          vueThis.experienceSecretGradeDisplay = tasks[0].secretGradeDisplay
-          vueThis.myExperienceImportVisible = true
+          vueThis.experienceBaseVisible = true
+          vueThis.exportExperienceType = 'children'
           // vueThis.queryParam.planId = vueThis.planInfoId
         },
         isDisableFun: function (btn, ganttName, tasks) {
@@ -2165,10 +2167,8 @@ export const CommandButtonData = [
         help: '管理',
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
-          vueThis.myExperienceType = 'children'
-          vueThis.experienceLibrarySecretGradeDisplay = tasks[0].secretGradeDisplay
-          vueThis.myExperienceVisible = true
-          vueThis.queryParam.planId = vueThis.planInfoId
+          vueThis.isManage = true
+          vueThis.experienceBaseVisible = true
         },
         isDisableFun: function (btn, ganttName, tasks) {
           if (checkSwitchType(tasks)) {

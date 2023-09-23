@@ -202,6 +202,20 @@ export const workflowApi = {
       desc: '获取审批历史'
     },
     {
+      name: 'pendingApprovalList',
+      method: 'POST',
+      path: '/product/pm/appeal/pendingApprovalList',
+      mockPath: '/product/pm/appeal/pendingApprovalList',
+      desc: '获取待处理/审批中'
+    },
+    {
+      name: 'historyApprovalList',
+      method: 'POST',
+      path: '/product/pm/appeal/historyApprovalList',
+      mockPath: '/product/pm/appeal/historyApprovalList',
+      desc: '获取已处理/已审批'
+    },
+    {
       name: 'getApproveContentViewUrl',
       method: 'POST',
       path: '/bpm/personal/ProcessApproval/getApproveContentViewUrl',

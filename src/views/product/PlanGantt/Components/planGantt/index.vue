@@ -406,6 +406,21 @@
       @closed="ClassificationSelectclosed"
       @ClassificationSelect="ClassificationSelect"
     ></ClassificationSelection>
+    <Edit v-if="createVisible"
+          :visible='createVisible'
+          :selectedTask='selectedTasks'
+          title='我的经验库'
+          :gantt-name="ganttName"
+          @handleCancel='closeCreate' />
+    <my-experience-base v-if="experienceBaseVisible"
+                        :visible='experienceBaseVisible'
+                        :isManage='isManage'
+                        :gantt-name="ganttName"
+                        :create-page="createPage"
+                        :plan-info-id="planInfoId"
+                        :selectedTask='selectedTasks'
+                        :exportExperienceType='exportExperienceType'
+                        @handleCancel='closExperienceBase'></my-experience-base>
   </div>
 </template>
 <style lang="scss">
@@ -473,6 +488,8 @@ import {
   P8Drawer as CommonDrawer,
   P8ListLayout as ListLayout
 } from 'p8-components-ui'
+import Edit from '@/views/product/MyExperienceBase/edit.vue'
+import MyExperienceBase from '@/views/product/MyExperienceBase/myExperienceBase.vue'
 import { CommandButtonData } from '@/assets/commonJS/ganttJS/commandButtonData'
 import { PlanRightMenuData } from '@/assets/commonJS/ganttJS/planRightMenuData'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
@@ -605,6 +622,8 @@ export default {
     }
   },
   components: {
+    Edit,
+    'my-experience-base': MyExperienceBase,
     ClassificationSelection,
     SaveProduct,
     Detail,
@@ -656,6 +675,10 @@ export default {
   data() {
     const mh = document.documentElement.clientHeight - 300
     return {
+      createVisible: false,
+      exportExperienceType: '',
+      experienceBaseVisible: false,
+      isManage: false,
       activitySecretGradeDisplay: '', // 知识库导入 弹框需要展示的密级
       experienceSecretGradeDisplay: '', // 经验库导入 弹框需要展示的密级
       experienceLibrarySecretGradeDisplay: '', // 创建我的经验库导入 弹框需要展示的密级
@@ -962,6 +985,17 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll'])
   },
   methods: {
+    closExperienceBase (res) {
+      this.isManage = false
+      this.experienceBaseVisible = false
+      console.log(res, 'res');
+      if(res === 'true'){
+        this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
+      }
+    },
+    closeCreate () {
+      this.createVisible = false
+    },
     closeDetailDrawer() {
       this.detailVisible = false
     },

@@ -2,6 +2,7 @@
   <form-list ref="form"
               @rendered="rendered"
               :form="formData"
+              :existDefaultBtn="false"
               :dataSource="dataSource">
   </form-list>
 </template>

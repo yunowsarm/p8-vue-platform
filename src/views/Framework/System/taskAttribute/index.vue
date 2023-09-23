@@ -1,10 +1,12 @@
 <template>
   <list-layout>
     <template #north>
-      <common-button :comp="comp"></common-button>
       <el-button type="primary"
-                 round
                  @click="createThird">新建</el-button>
+      <search-form-list ref="search" 
+                        :data-source="searchDatasource" 
+                        @search="search" 
+                        @re-set="reset"></search-form-list>
     </template>
     <template #center>
       <common-table ref="table"
@@ -35,7 +37,7 @@
 </template>
 <style></style>
 <script>
-import { P8ListLayout as ListLayout, P8Table as CommonTable, P8Button as CommonButton, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import { P8ListLayout as ListLayout, P8Table as CommonTable, P8Button as CommonButton, P8Drawer as CommonDrawer, P8Search as SearchFormList } from 'p8-components-ui'
 import edit from './Components/edit.vue'
 const columns = [
   {
@@ -71,7 +73,8 @@ export default {
     CommonTable,
     CommonButton,
     CommonDrawer,
-    edit
+    edit,
+    SearchFormList
   },
   data () {
     return {
@@ -83,6 +86,14 @@ export default {
       columns: columns,
       id: '',
       type: '',
+      searchDatasource: [
+        {
+          type: 'text',
+          labelText: '项目类型',
+          fieldName: 'projectTypeDisplay',
+          placeholder: '请输入项目类型'
+        }
+      ]
     }
   },
   methods: {
@@ -108,7 +119,13 @@ export default {
           this.$refs.table.searchData()
         }
       })
-    }
+    },
+    search (param) {
+      this.queryParam = param
+    },
+    reset () {
+      this.queryParam = {}
+    },
   }
 }
 </script>

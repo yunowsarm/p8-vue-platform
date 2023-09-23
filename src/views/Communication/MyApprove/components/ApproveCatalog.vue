@@ -54,7 +54,8 @@ export default {
       catalogData: [],
       treeCfg: {
         indent: 48,
-        'highlight-current': true
+        'highlight-current': true,
+        'current-node-key': this.searchParams.msgCatalog
       }
     }
   },
@@ -68,13 +69,13 @@ export default {
           })
         }
       }
-    },
-    selectNodeId (val, oldVal) {
-      const _this = this
-      setTimeout(() => {
-        _this.selectNode({ id: val })
-      }, 300)
     }
+    // selectNodeId (val, oldVal) {
+    //   const _this = this
+    //   setTimeout(() => {
+    //     _this.selectNode({ id: val })
+    //   }, 300)
+    // }
   },
   computed: {
     treeData () {

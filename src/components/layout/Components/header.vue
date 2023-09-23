@@ -128,7 +128,7 @@ import HeaderShortcut from './HeaderShortcut'
 import { getGreetingTime } from '@/utils/common'
 // import { PLATFORM_PREFIX_NAME } from '@/config/settings'
 import HeaderSubsystem from './HeaderSubsystem'
-import ProcessApprovalIndex from '@/views/Framework/BusinessActivity/ProcessApproval/index.vue'
+import ProcessApprovalIndex from '@/views/Communication/MyApprove/list.vue'
 import DocumentManagement from '@/views/Framework/System/DocumentManagement/index.vue'
 import Message from '@/views/Framework/Message'
 

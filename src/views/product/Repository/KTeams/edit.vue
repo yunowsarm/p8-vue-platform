@@ -106,7 +106,7 @@ export default {
   },
   methods: {
     rendered () {
-      if (this.row[0].ID) {
+      if (this.row && this.row.length) {
         let that = this
         this.$api['knowledgeManagement.get']({ id: this.row[0].ID }).then(function (data) {
           that.formData = Object.assign({}, data)
