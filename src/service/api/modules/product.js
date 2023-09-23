@@ -939,5 +939,49 @@ export const repositoryApi = {
       mockPath: '/product/klTeams/removeRoleClassify',
       desc: '标准团队库-类别删除'
     }
+  ],
+  MyExperience: [
+    {
+      name: 'experienceClassifyTreeList',
+      method: 'POST',
+      path: '/product/repository/MyExperienceBase/experienceClassifyTreeList',
+      mockPath: '/product/repository/MyExperienceBase/experienceClassifyTreeList ',
+      desc: '我的经验库-左侧树'
+    },
+    {
+      name: 'experienceClassifyCreate',
+      method: 'POST',
+      path: '/product/repository/MyExperienceBase/experienceClassifyCreate',
+      mockPath: '/product/repository/MyExperienceBase/experienceClassifyCreate',
+      desc: '我的经验库-左侧树-新建子级'
+    },
+    {
+      name: 'saveExperienceInfo',
+      method: 'POST',
+      path: '/product/repository/MyExperienceBase/saveExperienceInfo',
+      mockPath: '/product/repository/MyExperienceBase/saveExperienceInfo',
+      desc: '我的经验库-创建模板'
+    },
+    {
+      name: 'removeExperienceClassify',
+      method: 'POST',
+      path: '/product/repository/MyExperienceBase/removeExperienceClassify',
+      mockPath: '/product/repository/MyExperienceBase/removeExperienceClassify',
+      desc: '我的经验库-左侧树-删除'
+    },
+    {
+      name: 'myBaseExperienceList',
+      method: 'POST',
+      path: '/product/repository/MyExperienceBase/myBaseExperienceList',
+      mockPath: '/product/repository/MyExperienceBase/myBaseExperienceList',
+      desc: '我的经验库-右侧列表'
+    },
+    {
+      name: 'importTaskEx',
+      method: 'POST',
+      path: '/product/repository/MyExperienceBase/importTaskEx',
+      mockPath: '/product/repository/MyExperienceBase/importTaskEx',
+      desc: '我的经验库-右侧列表'
+    }
   ]
 }
