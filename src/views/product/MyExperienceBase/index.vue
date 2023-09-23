@@ -12,6 +12,7 @@
           :visible='createVisible'
           :selectedTask='selectedTask'
           :title='experienceBankTitle'
+          @openExperienceBase='openExperienceBase'
           @handleCancel='closeCreate' />
     <my-experience-base v-if="experienceBaseVisible"
                         :visible='experienceBaseVisible'
@@ -32,7 +33,7 @@ export default {
       createVisible: false,
       experienceBaseVisible: false,
       isManage: false,
-      selectedTask: {},
+      selectedTask: [],
       experienceBankTitle: '我的经验库'
     }
   },
@@ -58,6 +59,10 @@ export default {
       this.experienceBaseVisible = true
     },
     exportChild () {
+      this.experienceBaseVisible = true
+    },
+    openExperienceBase () {
+      this.createVisible = false
       this.experienceBaseVisible = true
     },
     manageExperienceBank () {
