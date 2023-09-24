@@ -863,6 +863,13 @@ export const repositoryApi = {
       path: '/product/pm/planChange/getTaskDefinition',
       mockPath: '/product/pm/planChange/getTaskDefinition',
       desc: '计划管理->计划变更->获取审批人'
+    },
+    {
+      name: 'planOverviewBulletinBoard',
+      method: 'POST',
+      path: '/product/pm/planOverview/planOverviewBulletinBoard',
+      mockPath: '/product/pm/planOverview/planOverviewBulletinBoard',
+      desc: '计划管理->计划概况'
     }
   ],
   taskAttribute: [
