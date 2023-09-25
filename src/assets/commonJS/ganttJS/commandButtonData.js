@@ -2083,6 +2083,9 @@ export const CommandButtonData = [
           // vueThis.queryParam.planId = vueThis.planInfoId
         },
         isDisableFun: function (btn, ganttName, tasks) {
+          if (!tasks.length) {
+            return true
+          }
           if (checkSwitchType(tasks)) {
             return true
           }
@@ -2121,6 +2124,18 @@ export const CommandButtonData = [
             result = true
           }
           if (checkHasProductTask(tasks)) {
+            result = true
+          }
+
+          const ganttObject = GanttObject.getGanttObject(ganttName)
+          if (ganttObject && tasks) {
+            ganttObject.eachSelectedTask(function (taskId) {
+              if (ganttObject.getGlobalTaskIndex(taskId) === 0 && !result) {
+                result = true
+              }
+            })
+          }
+          if (checkSwitchType(tasks)) {
             result = true
           }
           return result
@@ -2320,23 +2335,6 @@ export const CommandButtonData = [
       if (ganttName) {
         const vueThis = store.getters.vueThis
         vueThis.ganttSearchVisible = true
-      }
-    },
-    isDisableFun: function (btn, ganttName, tasks) {
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-    }
-  },
-  {
-    id: 'statistic-list',
-    icon: 'p8 icon-shujushitu',
-    title: '统计信息',
-    help: '统计信息',
-    clickFun: function (btn, ganttName, tasks) {
-      if (ganttName) {
-        const vueThis = store.getters.vueThis
-        vueThis.ganttStatisticVisible = true
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
