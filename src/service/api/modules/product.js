@@ -1063,5 +1063,217 @@ export const repositoryApi = {
       mockPath: '/product/projectTeam/wholeDescribeInfo',
       desc: '团队管理-项目信息'
     }
+  ],
+  OutputFlow: [
+    {
+      name: 'indexList',
+      method: 'POST',
+      path: '/product/klActivity/listData',
+      mockPath: '/product/klActivity/listData',
+      desc: '知识库管理->产出流程管理->列表数据'
+    },
+    {
+      name: 'getByActivityClassifyId',
+      method: 'POST',
+      path: '/product/klActivity/getByActivityClassifyId',
+      mockPath: '/product/klActivity/getByActivityClassifyId',
+      desc: '知识库管理->产出流程管理->根据项目类别获取'
+    },
+    {
+      name: 'editGetInfo',
+      method: 'POST',
+      path: '/product/klActivity/activityInfo',
+      mockPath: '/product/klActivity/activityInfo',
+      desc: '知识库管理->产出流程管理->流程详情数据查询'
+    },
+    {
+      name: 'editGetKTeamData',
+      method: 'POST',
+      path: '/product/klActivity/getKTeamData',
+      mockPath: '/product/klActivity/getKTeamData',
+      desc: '知识库管理->产出流程管理->获取企业标准团队'
+    },
+    {
+      name: 'editRepeatedNameCheck',
+      method: 'POST',
+      path: '/product/klActivity/repeatedNameCheck',
+      mockPath: '/product/klActivity/repeatedNameCheck',
+      desc: '知识库管理->产出流程管理-> 流程名称重复校验'
+    },
+    {
+      name: 'indexRemove',
+      method: 'POST',
+      path: '/product/klActivity/removeActivityInfo',
+      mockPath: '/product/klActivity/removeActivityInfo',
+      desc: '知识库管理->产出流程管理-> 流程删除'
+    },
+    {
+      name: 'saveActivityInfo',
+      method: 'POST',
+      path: '/product/klActivity/saveActivityInfo',
+      mockPath: '/product/klActivity/saveActivityInfo',
+      desc: '知识库管理->产出流程管理-> 流程保存'
+    },
+    {
+      name: 'copyKActivityInfo',
+      method: 'POST',
+      path: '/product/klActivity/copyActivityInfo',
+      mockPath: '/product/klActivity/copyActivityInfo',
+      desc: '知识库管理->产出流程管理-> 流程复制'
+    },
+    {
+      name: 'loadAcivityData',
+      method: 'POST',
+      path: '/product/klActivity/activityInfoTreeData',
+      mockPath: '/product/klActivity/activityInfoTreeData',
+      desc: '知识库管理->产出流程管理-> 活动树加载'
+    },
+    {
+      name: 'updateActivityInfos',
+      method: 'POST',
+      path: '/product/klActivity/updateActivityInfos',
+      mockPath: '/product/klActivity/updateActivityInfos',
+      desc: '知识库管理->产出流程管理-> 活动拖动、升降级更新'
+    },
+    {
+      name: 'saveNode',
+      method: 'POST',
+      path: '/product/klActivity/saveNode',
+      mockPath: '/product/klActivity/saveNode',
+      desc: '知识库管理->产出流程管理-> 新建活动保存'
+    },
+    {
+      name: 'GMloadModeData',
+      method: 'POST',
+      path: '/product/klActivity/loadModeData',
+      mockPath: '/product/klActivity/loadModeData',
+      desc: '知识库管理->产出流程管理-> [图形]数据加载'
+    },
+    {
+      name: 'GMdragNodeSave',
+      method: 'POST',
+      path: '/product/klActivity/dragNodeSave',
+      mockPath: '/product/klActivity/dragNodeSave',
+      desc: '知识库管理->产出流程管理-> [图形]拖动保存节点'
+    },
+    {
+      name: 'GMpredecessorsCreateOrUpdate',
+      method: 'POST',
+      path: '/product/klActivity/predecessorsCreateOrUpdate',
+      mockPath: '/product/klActivity/predecessorsCreateOrUpdate',
+      desc: '知识库管理->产出流程管理-> [图形]前后置连线创建和更新'
+    },
+    {
+      name: 'GMremovePredecessors',
+      method: 'POST',
+      path: '/product/klActivity/removePredecessors',
+      mockPath: '/product/klActivity/removePredecessors',
+      desc: '知识库管理->产出流程管理-> [图形] 删除前后置连线'
+    },
+    {
+      name: 'GMPredecessors',
+      method: 'POST',
+      path: '/product/klActivity/gmPredecessors',
+      mockPath: '/product/klActivity/gmPredecessors',
+      desc: '知识库管理->产出流程管理-> [图形]  获取前后置信息'
+    },
+    {
+      name: 'removeNodes',
+      method: 'POST',
+      path: '/product/klActivity/removeNodes',
+      mockPath: '/product/klActivity/removeNodes',
+      desc: '知识库管理->产出流程管理->删除活动，连同子删除'
+    },
+    {
+      name: 'activityInfo',
+      method: 'POST',
+      path: '/product/klActivity/activityInfo',
+      mockPath: '/product/klActivity/activityInfo',
+      desc: '知识库管理->产出流程管理->流程详情/活动描述详情数据查询'
+    },
+    {
+      name: 'describeSave',
+      method: 'POST',
+      path: '/product/klActivity/describeSave',
+      mockPath: '/product/klActivity/describeSave',
+      desc: '知识库管理->产出流程管理->活动描述保存'
+    },
+    {
+      name: 'OFrepeatedCodeCheck',
+      method: 'POST',
+      path: '/product/klActivity/repeatedCodeCheck',
+      mockPath: '/product/klActivity/repeatedCodeCheck',
+      desc: '知识库管理->产出流程管理->活动编号重复校验'
+    },
+    {
+      name: 'roleClassifyTree',
+      method: 'POST',
+      path: '/product/klActivity/roleClassifyTree',
+      mockPath: '/product/klActivity/roleClassifyTree',
+      desc: '知识库管理->产出流程管理->根据流程团队id获取团队角色信息'
+    },
+    {
+      name: 'inputInfo',
+      method: 'POST',
+      path: '/product/klActivity/inputInfo',
+      mockPath: '/product/klActivity/inputInfo',
+      desc: '知识库管理->产出流程管理->输入详情'
+    },
+    {
+      name: 'customInputInfo',
+      method: 'POST',
+      path: '/product/klActivity/customInputInfo',
+      mockPath: '/product/klActivity/customInputInfo',
+      desc: '知识库管理->产出流程管理->自定义的输入详情'
+    },
+    {
+      name: 'inputSave',
+      method: 'POST',
+      path: '/product/klActivity/inputSave',
+      mockPath: '/product/klActivity/inputSave',
+      desc: '知识库管理->产出流程管理->输入保存'
+    },
+    {
+      name: 'outputSave',
+      method: 'POST',
+      path: '/product/klActivity/outputSave',
+      mockPath: '/product/klActivity/outputSave',
+      desc: '知识库管理->产出流程管理->输出保存'
+    },
+    {
+      name: 'outputInfo',
+      method: 'POST',
+      path: '/product/klActivity/outputInfo',
+      mockPath: '/product/klActivity/outputInfo',
+      desc: '知识库管理->产出流程管理->输出详情'
+    },
+    {
+      name: 'specialSave',
+      method: 'POST',
+      path: '/product/klActivity/specialSave',
+      mockPath: '/product/klActivity/specialSave',
+      desc: '知识库管理->产出流程管理->活动特别说明保存'
+    },
+    {
+      name: 'specialInfo',
+      method: 'POST',
+      path: '/product/klActivity/specialInfo',
+      mockPath: '/product/klActivity/specialInfo',
+      desc: '知识库管理->产出流程管理->特别说明详情'
+    },
+    {
+      name: 'predecessorsTree',
+      method: 'POST',
+      path: '/product/klActivity/predecessorsTree',
+      mockPath: '/product/klActivity/predecessorsTree',
+      desc: '知识库管理->产出流程管理->前后置关系树数据源'
+    },
+    {
+      name: 'importExcel',
+      method: 'POST',
+      path: '/product/klActivity/importExcel',
+      mockPath: '/product/klActivity/importExcel',
+      desc: '知识库管理->产出流程管理->excel导入'
+    }
   ]
 }
