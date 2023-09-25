@@ -746,10 +746,11 @@ $paddingLeft: 10px;
   }
 }
 .custom-tabs {
-  ::v-deep.el-tabs {
-    border: none;
-  }
   height: calc(100% - 40px);
+  ::v-deep .el-tabs {
+    border: none;
+    height: 100% !important;
+  }
 }
 .custom-tabs.el-tabs--top {
   height: calc(100% - 128px) !important;
