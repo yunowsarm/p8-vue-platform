@@ -36,6 +36,7 @@
                      :west-tree-param="provideParams.searchParams"
                      :configParmars="configParmars"
                      v-bind="$attrs"
+                     v-on="$listeners"
                      @save-success="saveSuccess"
                      ref="components"></component>
         </el-tab-pane>

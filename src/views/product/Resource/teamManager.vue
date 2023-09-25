@@ -169,11 +169,11 @@
                      :loading="submitLoading"
                      @click="submit">保 存
           </el-button>
-          <!-- <el-button size="mini"
+          <el-button size="mini"
                      type="primary"
                      :loading="submitLoading"
                      @click="saveAndRelease">发 布
-          </el-button> -->
+          </el-button>
         </p>
       </div>
       <dialog-tabs-roles :visibleDialogRoles="visibleDialogRoles"
@@ -195,6 +195,13 @@
                         @custom-search="userTaskCustomSearch"
                         @custom-reset="userTaskCustomReset">
       </dialog-user-task>
+      <!-- 启动流程 -->
+      <selectApproveUserBeforehand v-if="isSelectApproveUserBeforehandView"
+                                   :is-select-approve-user-beforehand-view="isSelectApproveUserBeforehandView"
+                                   :select-user-beforehand-data-source="selectUserBeforehandDataSource"
+                                   :select-user-beforehand-form-data="selectUserBeforehandFormData"
+                                   @close-modal="closeSelectApproveUserBeforehand"
+                                   @commit="commitSelectApproveUserBeforehand"></selectApproveUserBeforehand>
     </div>
     <div v-if="viewVisible"
          class="viewVisible">
@@ -221,7 +228,8 @@ import DialogTabsRoles from './Components/DialogTabsRoles'
 import DialogUserTask from './Components/DialogUserTask'
 import _ from 'lodash'
 import moment from 'moment'
-
+import SelectApproveUserBeforehand from '@/views/Framework/BusinessActivity/ProcessApproval/selectApproveUserBeforehand'
+import { nextApproveUserBeforehand } from '@/assets/commonJS/BusinessActivity/nextApproveUserBeforehand'
 export default {
   name: 'teamManager',
   props: {
@@ -395,7 +403,13 @@ export default {
       loadingUserDeptStrategy: '',
       options: [],
       memberFormComp: null,
-      uploadView: false
+      uploadView: false,
+      releaseMenuParams: {
+        beforehandParams: {}
+      },
+      isSelectApproveUserBeforehandView: false,
+      selectUserBeforehandFormData: {},
+      selectUserBeforehandDataSource: [],
     }
   },
   created () {
@@ -824,18 +838,16 @@ export default {
       return result
     },
     async saveAndRelease () {
-      this.submitLoading = true
+      this.releaseFlag = false
       await this.submit()
-      if (!this.submitLoading) {
-        this.$message({type: 'success',message: '发布'})
-      } else {
-        this.$message({type: 'warning',message: '不可发布'})
+      if (this.releaseFlag) {
+        this.nextApproveUserBeforehand('projectReadyApproveRelease')
       }
       this.submitLoading = false
     },
-    submit () {
+    async submit () {
       let _this = this
-      this.submitParamsHandle().then(params => {
+      await this.submitParamsHandle().then(params => {
         let verifyResult = this.submitVerifyHandle()
         if (!verifyResult) {
           return false
@@ -855,6 +867,7 @@ export default {
           return
         }
         _this.submitLoading = true
+        _this.releaseFlag = true
         this.$api['teamManager.save'](params).then(res => {
           _this.submitLoading = false
           if (res !== undefined) {
@@ -978,6 +991,44 @@ export default {
     removedFile (file, field) {
       this.namedFiles = []
     },
+    nextApproveUserBeforehand (processDefinationTwoKey) {
+      const that = this
+      nextApproveUserBeforehand.initDataSource(processDefinationTwoKey, this).then((res1) => {
+        if (res1 === true) {
+          that.isSelectApproveUserBeforehandView = true
+        }
+      })
+    },
+    // 提交审批
+    commitSelectApproveUserBeforehand (fullParams) {
+      const that = this
+      this.releaseMenuParams.beforehandParams = { ...fullParams }
+      const rowIds = [this.id]
+      this.releaseMenuParams.businessId = rowIds
+      this.releaseMenuParams.processDefinitionKey = 'projectReadyApproveRelease'
+      this.$api['baseData.commitApprove'](this.releaseMenuParams)
+        .then(function (res) {
+          if (res.result && res.result === 'false') {
+            that.$message({
+              type: 'error',
+              message: res.message
+            })
+          } else {
+            that.$message({
+              message: '提交成功',
+              type: 'success'
+            })
+            that.$emit('close')
+          }
+        })
+        .catch(function (error) {
+          console.error(error)
+        })
+      that.isSelectApproveUserBeforehandView = false
+    },
+    closeSelectApproveUserBeforehand () {
+      that.isSelectApproveUserBeforehandView = false
+    }
     // isShowRole (row) {
     //   return row.isRequired === '1'
     // }
@@ -997,7 +1048,8 @@ export default {
     'el-popconfirm': Popconfirm,
     'el-link': Link,
     CommonFileView,
-    CommonUpload
+    CommonUpload,
+    SelectApproveUserBeforehand
   }
 }
 </script>
@@ -1096,7 +1148,7 @@ export default {
   }
 
   .role-list {
-    height: calc(100% - 40px);
+    height: 100%;
     // border-bottom: 1px dashed #cccccc;
     background-color: #ffffff;
     box-sizing: border-box;

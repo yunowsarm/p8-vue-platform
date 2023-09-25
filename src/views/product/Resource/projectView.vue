@@ -3,24 +3,24 @@
   <div style="height: calc(100% - 20px)">
     <div style="height: 100%"
          class="team-manager-wrap">
-      <div class="teamFile">
-        <span style="font-size:14px; padding:0 20px;font-weight:bold;">人员任命文件</span>
-        <!-- <common-upload  ref="commonupload"
-                        v-if="!uploadView"
-                        :num="'1'"
-                        :maxLimit="1"
-                        @upload="(file) => {uploadFile(file);}"
-                        @remove="(file) => {removedFile(file);}">
-        </common-upload> -->
-        <common-file-view :uploadFiles="namedFiles"
-                          filesLayout="row"></common-file-view>
-      </div>
       <nlcr-layout class="custom-nlcr"
                    :headerVisible="false"
                    :platformVisible="true"
                    :leftUsePerfectScrollbar="false">
         <template #left>
           <div class="role-con">
+            <div class="teamFile">
+              <span style="font-size:14px; padding:0 20px;font-weight:bold;">人员任命文件</span>
+              <!-- <common-upload  ref="commonupload"
+                              v-if="!uploadView"
+                              :num="'1'"
+                              :maxLimit="1"
+                              @upload="(file) => {uploadFile(file);}"
+                              @remove="(file) => {removedFile(file);}">
+              </common-upload> -->
+              <common-file-view :uploadFiles="namedFiles"
+                                filesLayout="row"></common-file-view>
+            </div>
             <!-- <el-button type="primary" plain style="margin: 5px;width:90%;"  @click="addRolesHandle"><i class="el-icon-plus" type="primary"></i>新建角色类别</el-button> -->
             <vue-perfect-scrollbar class="role-list">
               <li style="padding-left: 26px;color:#323232;font-size:12px;" :class="[{ 'active': rolesSelectedIndex === -1 }]" @click="refreshHandle">所有人员</li>
@@ -48,6 +48,7 @@
           </div>
         </template>
         <template #center>
+          <div class="teamFile"></div>
           <div class="table-con">
             <div class="add-member">
               <div>
@@ -202,7 +203,6 @@
 </template>
 <script>
 import {
-  P8NlcrLayout as NlcrLayout,
   P8Table as CommonTable,
   P8Search as SearchFormList,
   Button,
@@ -220,7 +220,7 @@ import DialogTabsRoles from './Components/DialogTabsRoles'
 import DialogUserTask from './Components/DialogUserTask'
 import _ from 'lodash'
 import moment from 'moment'
-
+import NlcrLayout from './Components/nlcrLayout.vue'
 export default {
   name: 'teamManager',
   props: {
@@ -1007,6 +1007,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  border-bottom: 1px solid #f2f2f2;
+  background: #fff;
 }
 .viewVisible {
   position: absolute;
@@ -1028,7 +1030,7 @@ export default {
 
 /**调整 左中右布局样式 */
  ::v-deep  .normal-nlcr-layout.custom-nlcr {
-  height: calc(100% - 110px);
+  height: calc(100% - 50px);
 
   .normal-nlcr-main {
     .el-row,
@@ -1048,7 +1050,7 @@ export default {
   position: relative;
   height: 100%;
   overflow-y: hidden;
-  padding: 0 10px 0 0;
+  // padding: 0 10px 0 0;
 
   .add-role {
     box-sizing: border-box;

@@ -21,6 +21,8 @@
                  :layout-config="componentsConfig"
                  :kanban-config="componentsConfig"
                  :west-tree-param="provideParams.searchParams"
+                 v-bind="$attrs"
+                 v-on="$listeners"
                  @refresh="init()"
                  ref="components"></component>
       <span v-else

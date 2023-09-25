@@ -122,6 +122,7 @@ export default {
     padding-left: 6px;
     border-bottom: 1px solid #f2f2f2;
     box-sizing: border-box;
+    font-weight: bold;
   }
   box-sizing: border-box;
   overflow-y: auto;

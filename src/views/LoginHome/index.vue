@@ -539,7 +539,7 @@ export default {
       })
     },
     noticeMsg () {
-      console.log(22222);
+      
       const that = this
       this.$api['PersonalProcessApproval.checkNoticeMsg']({ id: null }).then((res) => {
         if (res) {

@@ -322,7 +322,7 @@ export default {
     margin-left: 10px;
   }
   .search-btn {
-    float: right;
+    // float: right;
     height: 30px;
   }
 }
