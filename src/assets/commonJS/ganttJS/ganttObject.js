@@ -1812,22 +1812,13 @@ function searchFilter(parent, searchForm, ganttObject) {
     if (managerStatus && managerStatus.length > 0 && managerStatus.indexOf(task.managerStatus) === -1) {
       managerStatusCheck = false
     }
-    // let monitors = searchForm.monitors // 标识
-    // let monitorsCheck = true
-    // if (
-    //   monitors &&
-    //   monitors.length > 0 &&
-    //   !GanttObject.calculateArrayContain(task.monitorPoints, monitors)
-    // ) {
-    //   monitorsCheck = false
-    // }
     const monitorPoints = searchForm.monitorPoints // 标识--列头
     let monitorsCheck = true
-    let monitorPointsArr = []
-    if (monitorPoints && task.monitorPoints) {
-      monitorPointsArr = task.monitorPoints.split(',')
-    }
-    if (monitorPoints && task.monitorPoints && monitorPointsArr.indexOf(monitorPoints) == -1) {
+    // let monitorPointsArr = []
+    // if (monitorPoints && task.monitorPoints) {
+    //   monitorPointsArr = task.monitorPoints.split(',')
+    // }
+    if (monitorPoints && task.monitorPoints && task.monitorPoints.indexOf(monitorPoints) == -1) {
       monitorsCheck = false
     }
     if (monitorPoints && !task.monitorPoints) {

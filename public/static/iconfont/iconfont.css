@@ -1,8 +1,8 @@
 @font-face {
   font-family: "p8"; /* Project id 4084759 */
-  src: url('iconfont.woff2?t=1695282399140') format('woff2'),
-       url('iconfont.woff?t=1695282399140') format('woff'),
-       url('iconfont.ttf?t=1695282399140') format('truetype');
+  src: url('iconfont.woff2?t=1695630104119') format('woff2'),
+       url('iconfont.woff?t=1695630104119') format('woff'),
+       url('iconfont.ttf?t=1695630104119') format('truetype');
 }
 
 .p8 {
@@ -11,6 +11,46 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-wanchengzhikaishi:before {
+  content: "\e79e";
+}
+
+.icon-kaishizhiwancheng:before {
+  content: "\e79f";
+}
+
+.icon-wanchengzhiwancheng:before {
+  content: "\e7a0";
+}
+
+.icon-kaishizhikaishi:before {
+  content: "\e7a1";
+}
+
+.icon-train1:before {
+  content: "\e687";
+}
+
+.icon-guanlianrenwu:before {
+  content: "\e789";
+}
+
+.icon-renwuxiangxixinxi:before {
+  content: "\e795";
+}
+
+.icon-guanliyaosu:before {
+  content: "\e799";
+}
+
+.icon-zuoshoujin:before {
+  content: "\e79c";
+}
+
+.icon-youshoujin:before {
+  content: "\e79d";
 }
 
 .icon-cancel-task-type:before {

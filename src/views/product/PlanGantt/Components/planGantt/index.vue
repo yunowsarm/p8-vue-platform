@@ -406,18 +406,16 @@
       @closed="ClassificationSelectclosed"
       @ClassificationSelect="ClassificationSelect"
     ></ClassificationSelection>
-    <Edit
-v-if="createVisible" :visible="createVisible" :selectedTask="selectedTasks" title="我的经验库" :gantt-name="ganttName" @handleCancel="closeCreate" />
+    <Edit v-if="createVisible" :visible="createVisible" :selected-task="selectedTasks" title="我的经验库" :gantt-name="ganttName" @handleCancel="closeCreate" />
     <my-experience-base
-     
-v-if="experienceBaseVisible"
+      v-if="experienceBaseVisible"
       :visible="experienceBaseVisible"
-      :isManage="isManage"
+      :is-manage="isManage"
       :gantt-name="ganttName"
       :create-page="createPage"
       :plan-info-id="planInfoId"
-      :selectedTask="selectedTasks"
-      :exportExperienceType="exportExperienceType"
+      :selected-task="selectedTasks"
+      :export-experience-type="exportExperienceType"
       @handleCancel="closExperienceBase"
     ></my-experience-base>
   </div>
@@ -801,7 +799,7 @@ export default {
           attId: '1',
           attFilePath: 'Excel导入模板.xlsx',
           attFileName: 'Excel导入模板',
-          path: '8YAccessory.xlsx',
+          path: 'Accessory.xlsx',
           descriptionStr: '按照大纲级别，将文档中的任务导入为选中任务的下级任务。'
         }
       ],
@@ -810,7 +808,7 @@ export default {
           attId: '3',
           attFilePath: 'Project导入模板.mpp',
           attFileName: 'Project导入模板',
-          path: '8YProjectAccessory.mpp',
+          path: 'ProjectAccessory.mpp',
           descriptionStr: '按照大纲级别，将文档中的任务导入为选中任务的下级任务。'
         }
       ],
@@ -1339,7 +1337,7 @@ export default {
         planInfoId: planInfoId,
         dicType: 'ACTIVITY_TYPE',
         taskId: taskId,
-        createPage: 'compile',
+        createPage: createPage,
         planBeginDateArray: vueThis.planBeginDateArray,
         planEndDateArray: vueThis.planEndDateArray
       })

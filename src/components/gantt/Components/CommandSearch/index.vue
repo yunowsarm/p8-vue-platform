@@ -11,7 +11,7 @@
     </el-form-item>
 
     <el-form-item label="角色" v-if="isInput" prop="roleName">
-      <el-select v-model="searchForm.roleIds" filterable multiple collapse-tags class="field" style="width: 100%">
+      <el-select v-model="searchForm.roleIds" filterable collapse-tags class="field" style="width: 100%">
         <el-option v-for="item in roleOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
       </el-select>
     </el-form-item>
@@ -20,7 +20,7 @@
     </el-form-item>
 
     <el-form-item label="责任人" v-if="isInput" prop="ownerName">
-      <el-select v-model="searchForm.ownerIds" filterable multiple collapse-tags class="field" style="width: 100%">
+      <el-select v-model="searchForm.ownerIds" filterable collapse-tags class="field" style="width: 100%">
         <el-option v-for="item in userOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
       </el-select>
     </el-form-item>
@@ -29,7 +29,7 @@
     </el-form-item>
 
     <el-form-item label="部门" v-if="isInput" prop="deptName">
-      <el-select v-model="searchForm.deptIds" filterable multiple collapse-tags class="field" style="width: 100%">
+      <el-select v-model="searchForm.deptIds" filterable collapse-tags class="field" style="width: 100%">
         <el-option v-for="item in deptOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
       </el-select>
     </el-form-item>
@@ -38,19 +38,19 @@
     </el-form-item>
 
     <el-form-item label="任务类型" prop="planType">
-      <el-select v-model="searchForm.planTypes" multiple collapse-tags class="field" style="width: 100%">
+      <el-select v-model="searchForm.planTypes" collapse-tags class="field" style="width: 100%">
         <el-option v-for="item in vueThis.taskClassifyDatas" :key="item.id" :label="item.title" :value="item.id"> </el-option>
       </el-select>
     </el-form-item>
 
     <el-form-item label="任务状态" prop="managerStatus">
-      <el-select v-model="searchForm.managerStatus" multiple collapse-tags class="field" style="width: 100%">
+      <el-select v-model="searchForm.managerStatus" collapse-tags class="field" style="width: 100%">
         <el-option v-for="item in vueThis.managerStatusMap" :key="item.cminorcode" :label="item.cmeaning" :value="item.cminorcode"> </el-option>
       </el-select>
     </el-form-item>
 
     <el-form-item label="标识" prop="monitors">
-      <el-select v-model="searchForm.monitors" multiple collapse-tags class="field" style="width: 100%">
+      <el-select v-model="searchForm.monitorPoints" collapse-tags class="field" style="width: 100%">
         <el-option v-for="item in vueThis.monitorPointDatas" :key="item.id" :label="item.title" :value="item.id"> </el-option>
       </el-select>
     </el-form-item>

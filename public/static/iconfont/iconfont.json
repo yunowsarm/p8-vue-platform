@@ -6,6 +6,76 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "37508078",
+      "name": "完成至开始",
+      "font_class": "wanchengzhikaishi",
+      "unicode": "e79e",
+      "unicode_decimal": 59294
+    },
+    {
+      "icon_id": "37508077",
+      "name": "开始至完成",
+      "font_class": "kaishizhiwancheng",
+      "unicode": "e79f",
+      "unicode_decimal": 59295
+    },
+    {
+      "icon_id": "37508076",
+      "name": "完成至完成",
+      "font_class": "wanchengzhiwancheng",
+      "unicode": "e7a0",
+      "unicode_decimal": 59296
+    },
+    {
+      "icon_id": "37508075",
+      "name": "开始至开始",
+      "font_class": "kaishizhikaishi",
+      "unicode": "e7a1",
+      "unicode_decimal": 59297
+    },
+    {
+      "icon_id": "22427222",
+      "name": "国铁项目",
+      "font_class": "train1",
+      "unicode": "e687",
+      "unicode_decimal": 59015
+    },
+    {
+      "icon_id": "37481286",
+      "name": "关联任务",
+      "font_class": "guanlianrenwu",
+      "unicode": "e789",
+      "unicode_decimal": 59273
+    },
+    {
+      "icon_id": "37481285",
+      "name": "任务详细信息",
+      "font_class": "renwuxiangxixinxi",
+      "unicode": "e795",
+      "unicode_decimal": 59285
+    },
+    {
+      "icon_id": "37481284",
+      "name": "管理要素",
+      "font_class": "guanliyaosu",
+      "unicode": "e799",
+      "unicode_decimal": 59289
+    },
+    {
+      "icon_id": "37481283",
+      "name": "左收进",
+      "font_class": "zuoshoujin",
+      "unicode": "e79c",
+      "unicode_decimal": 59292
+    },
+    {
+      "icon_id": "37481282",
+      "name": "右收进",
+      "font_class": "youshoujin",
+      "unicode": "e79d",
+      "unicode_decimal": 59293
+    },
+    {
       "icon_id": "16188113",
       "name": "取消任务类型empty-set",
       "font_class": "cancel-task-type",

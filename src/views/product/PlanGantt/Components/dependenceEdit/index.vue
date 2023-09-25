@@ -155,10 +155,10 @@ export default {
       },
       uploadFiles: [],
       tempOptions: [
-        { icon: 'p8 icon-front-and-rear1', type: '0', describe: '完成-开始' },
-        { icon: 'p8 icon-front-and-rear2', type: '1', describe: '开始-开始' },
-        { icon: 'p8 icon-front-and-rear3', type: '2', describe: '完成-完成' },
-        { icon: 'p8 icon-front-and-rear4', type: '3', describe: '开始-完成' }
+        { icon: 'p8 icon-wanchengzhikaishi', type: '0', describe: '完成-开始' },
+        { icon: 'p8 icon-kaishizhikaishi', type: '1', describe: '开始-开始' },
+        { icon: 'p8 icon-wanchengzhiwancheng', type: '2', describe: '完成-完成' },
+        { icon: 'p8 icon-kaishizhiwancheng', type: '3', describe: '开始-完成' }
       ]
     }
   },

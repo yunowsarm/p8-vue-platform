@@ -9,7 +9,7 @@
       </div>
       <div class="monitor_list">
         <div class="monitor_item" v-for="(item, index) in list" :key="index">
-          <span class="p8 icon-copy"></span>
+          <span :class="item.icon"></span>
           <span class="text">{{ item.value }}</span>
         </div>
       </div>
@@ -46,11 +46,11 @@ export default {
       const that = this
       this.totalNum = 0
       this.$api['planGanttManager.getPlanStatisticData']({ planInfoId: this.planInfoId }).then((res) => {
-        console.log('🚀 ~ file: index.vue:25 ~ getData ~ res:', res)
         if (res) {
           this.list = res.map((ele) => {
-            this.totalNum += ele.taskCount || 0
+            this.totalNum = ele.totalCount || 0
             return {
+              icon: ele.icon,
               name: ele.name,
               value: ele.taskCount
             }
