@@ -66,7 +66,8 @@
           <span v-if="scope.row.dataType === 'task'"
                 class="underline"
                 @click="drillCol(scope, thirdMenuData, scope.row.id)">{{ scope.row.name }} </span>
-          <span v-else>{{ scope.row.name }}</span>
+          <span v-else
+                @click="drillCol(scope, thirdMenuData, scope.row.id)">{{ scope.row.name }}</span>
         </template>
         <template #level="{ scope }">
           <span class="underline"
@@ -76,12 +77,12 @@
         </template>
         <template #predecessorsNumber="{ scope }">
           <span class="underline"
-                @click="showfrontToBack(scope.row.id, '前置', 'predecessors', scope.row.predecessorsNumber)">
+                @click="showfrontToBack(scope.row.id, '前置任务查看', 'predecessors', scope.row.predecessorsNumber)">
             {{ scope.row.predecessorsNumber }}</span>
         </template>
         <template #postTaskNumber="{ scope }">
           <span class="underline"
-                @click="showfrontToBack(scope.row.id, '后置', 'postTask', scope.row.postTaskNumber)">
+                @click="showfrontToBack(scope.row.id, '后置任务查看', 'postTask', scope.row.postTaskNumber)">
             {{ scope.row.postTaskNumber }}</span>
         </template>
         <template #customIcon="{ scope }">
