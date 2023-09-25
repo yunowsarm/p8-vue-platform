@@ -45,6 +45,21 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/homeDash',
+    redirect: '/LoginHome',
+    hidden:  true,
+    component: _import_('LoginHome/index'),
+    meta: { title: '登录主页', icon: 'icon-base-data-manage', noCache: false },
+    children: [
+      {
+        path: '/LoginHome',
+        name: 'LoginHome',
+        component: _import_('LoginHome/index'),
+        meta: { title: '登录主页', icon: 'icon-base-data-manage', noCache: false }
+      }
+    ]
+  },
+  {
     path: '/signIn',
     name: 'signIn',
     component: _import_('Dashboard/signIn'),
