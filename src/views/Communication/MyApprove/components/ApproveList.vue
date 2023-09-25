@@ -11,18 +11,26 @@
                             @search="search"
                             @re-set="reSet"></search-form-list>
           <div class="btn_list">
-            <el-button type="primary"
-                       size="mini"
-                       @click="refreshList"
-                       icon="el-icon-refresh-right"></el-button>
-            <el-button type="primary"
-                       size="mini"
-                       @click="ascendingTime"
-                       icon="el-icon-caret-bottom"></el-button>
-            <el-button type="primary"
-                       size="mini"
-                       @click="descendingOrderTime"
-                       icon="el-icon-caret-top"></el-button>
+            <el-tooltip content="刷新">
+              <el-button type="primary"
+                         size="mini"
+                         @click="refreshList"
+                         icon="el-icon-refresh-right"></el-button>
+            </el-tooltip>
+
+            <el-tooltip content="时间正序">
+              <el-button type="primary"
+                         size="mini"
+                         @click="ascendingTime"
+                         icon="el-icon-caret-bottom"></el-button>
+            </el-tooltip>
+
+            <el-tooltip content="时间倒序">
+              <el-button type="primary"
+                         size="mini"
+                         @click="descendingOrderTime"
+                         icon="el-icon-caret-top"></el-button>
+            </el-tooltip>
           </div>
         </div>
         <infinite-list :list-api="messageListApi"
@@ -74,7 +82,7 @@
 </template>
 
 <script>
-import { Row, Col, RadioGroup, RadioButton, P8InfiniteScroll as InfiniteList, P8Tabs as CommonTabs, P8Search as SearchFormList } from 'p8-components-ui'
+import { Row, Col, RadioGroup, Tooltip, RadioButton, P8InfiniteScroll as InfiniteList, P8Tabs as CommonTabs, P8Search as SearchFormList } from 'p8-components-ui'
 
 export default {
   name: 'ApproveList',
@@ -98,6 +106,7 @@ export default {
     'el-radio-group': RadioGroup,
     'search-form-list': SearchFormList,
     'el-radio-button': RadioButton,
+    'el-tooltip': Tooltip,
     'infinite-list': InfiniteList,
     CommonTabs
   },

@@ -39,7 +39,6 @@
         </template>
         <template #history>
           <ProcessHistoryList v-if="processInstId"
-                              :style="{ height: tabsHeight }"
                               :table-api="historyDataApi"
                               :columns="historyColumns"
                               :process-inst-id="processInstId"
