@@ -156,7 +156,7 @@ export default {
   created() {},
   mounted() {
     if (this.thirdMenuParam.createPage === 'decompose') {
-      this.planInfoId = this.thirdMenuParam.id
+      this.planInfoId = this.thirdMenuParam.planInfoId
       this.secretGrade = this.thirdMenuParam.secretGrade || ''
       this.planInfoStatus = this.thirdMenuParam.executeState
       this.taskId = this.thirdMenuParam.taskId || ''

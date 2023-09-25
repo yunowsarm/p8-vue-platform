@@ -1,13 +1,15 @@
 /* eslint-disable vue/no-unused-components */
 <template>
   <common-tabs :tabsData="tabsData"
-               height="auto"
+               height="100%"
                :activeTabs="activeTabs"
                @tab-click="onSelect">
+    <!-- 已发布 -->
     <template #normal>
       <normal v-if="activeTabs === 'normal'"
               :isthematicPlan='false'></normal>
     </template>
+    <!-- 统筹中 -->
     <template #overallPlanning>
       <overall-planning v-if="activeTabs === 'overallPlanning'"
                         :isthematicPlan='false'></overall-planning>

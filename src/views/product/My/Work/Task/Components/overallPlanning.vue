@@ -464,7 +464,7 @@ export default {
   mounted () {
     this.currentRouterPath = this.$route.path
     this.getAllStatusOptions()
-    this.getAllNum()
+    // this.getAllNum()
     let _this = this
     this.$bus.$on('refresh', function () {
       Vue.nextTick(function () {
@@ -607,13 +607,6 @@ export default {
       let _this = this
       getTaskStatusInfo({ currentStatus: 'all' }).then(data => {
         _this.allStatus = data
-      })
-      // 加载通用gantt操作权限决策，并存入vuex
-      _this.$api['planInfoManager.loadPlanStatusLimitStrategy']().then(function (res) {
-        if (res) {
-          _this.$store.dispatch('setPlanStatusLockMap', res['plan'])
-          _this.$store.dispatch('setTaskStatusLockMap', res['task'])
-        }
       })
     },
     getAllNum () {
