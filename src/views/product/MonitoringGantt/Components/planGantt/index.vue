@@ -35,48 +35,6 @@
         </el-menu>
       </VuePerfectScrollbar>
     </div>
-    <add-revenue v-if="addRevenueVisible" :visible="addRevenueVisible" :other-param="otherParam" @close-dialog="addRevenueClose"> </add-revenue>
-    <add-revenue-view v-if="addRevenueViewVisible" :visible="addRevenueViewVisible" :other-param="revenueParam" @close-dialog="fundMouseout"> </add-revenue-view>
-    <out-put-view
-      v-if="outPutViewVisible"
-      :visible="outPutViewVisible"
-      :plan-info-id="planInfoId"
-      :task-id="taskId"
-      :create-page="createPage"
-      :gantt-name="ganttName"
-      :plan-type-datas="planTypeDatas"
-      @close-dialog="outPutViewClose"
-    >
-    </out-put-view>
-    <product-task-view
-      v-if="productTaskViewVisible"
-      :visible="productTaskViewVisible"
-      :plan-info-id="planInfoId"
-      :task-id="taskId"
-      :gantt-name="ganttName"
-      :plan-type-datas="planTypeDatas"
-      @close-dialog="productTaskViewClose"
-    >
-    </product-task-view>
-    <product-task
-      v-if="productTaskVisible"
-      :visible="productTaskVisible"
-      :plan-info-id="planInfoId"
-      :task-id="taskId"
-      :gantt-name="ganttName"
-      :plan-type-datas="planTypeDatas"
-      @close-dialog="productTaskClose"
-    >
-    </product-task>
-    <product-task-edit
-      v-if="productTaskEditVisible"
-      :visible="productTaskEditVisible"
-      :plan-info-id="planInfoId"
-      :task-id="selectTaskId"
-      :task-name="selectTaskName"
-      @close-dialog="productTaskEditClose"
-    >
-    </product-task-edit>
     <div ref="myGantt" style="width: 100%; height: calc(100% - 40px) !important" @mousemove="mouseMove"></div>
     <div class="detail_div">
       <div style="width: 50%">
@@ -88,37 +46,6 @@
         <span style="float: right; margin-right: 40px">已选中 {{ selectTaskCount }} 条</span>
       </div>
     </div>
-    <el-drawer :title="activityImportTitle" :append-to-body="true" size="50%" :destroy-on-close="true" :wrapper-closable="false" @closed="activityImportClosed" :visible.sync="activityImportVisible">
-      <activity-import
-        @save-success="activityImportClosed"
-        :task-id="selectTaskId"
-        :activity-secret-grade-display="activitySecretGradeDisplay"
-        :create-page="createPage"
-        :activity-import-type="activityImportType"
-        :auto-scheduling="autoParentDate"
-      ></activity-import>
-    </el-drawer>
-    <monitor-time-manger
-      v-if="controlTimeVisible"
-      :visible="controlTimeVisible"
-      :monitor-id="monitorId"
-      :task-id="selectTaskId"
-      :monitor-name="monitorName"
-      :task-name="selectTaskName"
-      @save-success="monitorManagerSave"
-    >
-    </monitor-time-manger>
-    <resource-select
-      v-if="resourceSelectVisible"
-      :visible="resourceSelectVisible"
-      :start-task-id="startTaskId"
-      :end-task-id="endTaskId"
-      :plan-info-id="planInfoId"
-      :select-task-owner-id="selectTaskOwnerId"
-      @closed="resourceSelectclosed"
-      @resource-selected="resourceSelected"
-    >
-    </resource-select>
     <grid-setting
       v-if="selectGridVisible"
       :visible="selectGridVisible"
@@ -192,176 +119,12 @@
         </span>
       </template>
     </common-dialog>
-    <!-- <common-dialog title="请选择分类" :visible="innerVisible" :show-handle-btn="false" @isfullscreen="isfullscreen" @close="innerVisible = false" :is-view-cs-footer="true">
-      <template #dialog>
-        <list-layout :header-visible="false">
-          <template #center>
-            <myExperience-classify
-              ref="experience"
-              :normal-layout="normalLayout"
-              @saveSuccess="saveCallback"
-              :select-experience-ids="selectedRowKeys"
-              :selected-rows="selectedRows"
-            ></myExperience-classify>
-          </template>
-          <template #drawer-panel> </template>
-        </list-layout>
-      </template>
-      <template #cs-footer>
-        <span class="dialog-footer">
-          <el-button @click="innerVisible = false">返回上一步</el-button>
-          <el-button type="primary" @click="saveExperience">保存到我的经验库</el-button>
-        </span>
-      </template>
-    </common-dialog> -->
-    <!-- <el-drawer :title="experienceImportTitle" :append-to-body="true" size="50%" :destroy-on-close="true" :wrapper-closable="false" @closed="closePop" :visible.sync="myExperienceImportVisible">
-      <experience-import
-        v-if="myExperienceImportVisible"
-        :plan-info-id="planInfoId"
-        :experience-secret-grade-display="experienceSecretGradeDisplay"
-        :parent-task-id="selectTaskId"
-        :create-page="createPage"
-        @closePop="closePop"
-        @save-success="experienceImportClosed"
-      >
-      </experience-import>
-    </el-drawer> -->
-    <!--    <common-drawer-->
-    <!--      v-if="myExperienceClassifyVisible"-->
-    <!--      :drawerConfig="drawerConfig"-->
-    <!--      size="30%"-->
-    <!--      :visible="myExperienceClassifyVisible"-->
-    <!--      @close="onEditModelClose"-->
-    <!--    >-->
-    <!--      <template #drawer>-->
-    <!--        <myExperience-classify-->
-    <!--          :normalLayout="normalLayout"-->
-    <!--          @saveSuccess="saveCallback"-->
-    <!--          :selectExperienceIds="selectedRowKeys"-->
-    <!--        ></myExperience-classify>-->
-    <!--      </template>-->
-    <!--    </common-drawer>-->
-    <el-drawer
-      title="院MPM任务关联"
-      :append-to-body="true"
-      size="100%"
-      :wrapper-closable="false"
-      :destroy-on-close="true"
-      @closed="researchTaskRelevanceShow = false"
-      :visible.sync="researchTaskRelevanceShow"
-    >
-      <researchTaskRelevance :tasks="selectedTasks" @close="researchTaskRelevanceClose" />
-    </el-drawer>
-    <el-drawer
-      title="院任务导入"
-      :append-to-body="true"
-      size="100%"
-      :wrapper-closable="false"
-      :destroy-on-close="true"
-      @closed="researchTaskRelevanceShowMore = false"
-      :visible.sync="researchTaskRelevanceShowMore"
-    >
-      <researchTaskRelevanceMore :tasks="selectedTasks" :courtyard-secret-grade-display="courtyardSecretGradeDisplay" :create-page="createPage" @close="contryYardMoreClose" />
-    </el-drawer>
-    <el-drawer
-      title="已关联院MPM任务查看"
-      :append-to-body="true"
-      size="100%"
-      :wrapper-closable="false"
-      :destroy-on-close="true"
-      @closed="researchTaskRelevanceLookShow = false"
-      :visible.sync="researchTaskRelevanceLookShow"
-    >
-      <researchTaskRelevanceLook :tasks="yTask" @close="researchTaskRelevanceLookShow = false" />
-    </el-drawer>
-    <el-drawer :title="importExcelTitle" :append-to-body="true" size="50%" :wrapper-closable="false" :destroy-on-close="true" @closed="importExcelClosed" :visible.sync="importExcel">
-      <import-excel
-        @save-success="importExcelClosed"
-        :excel-secret-grade-display="excelSecretGradeDisplay"
-        :excel-secret-grade="excelSecretGrade"
-        :task-id="selectTaskId"
-        :output-request="excelImportData"
-      ></import-excel>
-    </el-drawer>
-    <el-drawer :title="importProjectTitle" :append-to-body="true" size="50%" :wrapper-closable="false" :destroy-on-close="true" @closed="resourceSettingClosed" :visible.sync="importProject">
-      <import-project
-        @save-success="importProjectClosed"
-        :project-secret-grade-display="projectSecretGradeDisplay"
-        :project-secret-grade="projectSecretGrade"
-        :task-id="selectTaskId"
-        :output-request="projectImportData"
-      ></import-project>
-    </el-drawer>
-    <!--    团队成员编辑-->
-    <el-drawer
-      class="resource-group-drawer"
-      :title="resourceGroup"
-      :append-to-body="true"
-      :before-close="isSaveCheckHandle"
-      size="100%"
-      :destroy-on-close="true"
-      @closed="importProjectClosed"
-      :visible.sync="ganttGroupSetting"
-    >
-      <keep-alive>
-        <!-- <team-manager ref="team" :third-menu-param="thirdMenuParam" :group_type="group_type"></team-manager> -->
-      </keep-alive>
-    </el-drawer>
-    <common-drawer
-      v-if="planTypeViewVisible"
-      :visible.sync="planTypeViewVisible"
-      size="100%"
-      placement="top"
-      :drawer-config="drawerConfig"
-      :title="planTypeParam.taskName + '(明细)'"
-      @close="planTypeViewVisibleClosed"
-    >
-      <template #drawer>
-        <erp-list :plan-type-param="planTypeParam" @save-success="onPlanTypeViewClose"> </erp-list>
-      </template>
-    </common-drawer>
     <!-- 点击所查看院任务 -->
     <common-drawer size="100%" v-if="detailVisible" :title="detailTitle" :visible="detailVisible" @close="closeDetailDrawer">
       <template #drawer>
         <detail :av-task-id="avTaskId"></detail>
       </template>
     </common-drawer>
-
-    <!-- <common-dialog title="飞行试验" :visible="myFlyExperienceVisible" :show-handle-btn="false" @isfullscreen="isfullscreen" @close="closeMyFlyExperience" :is-view-cs-footer="false">
-      <template #dialog>
-        <flight ref="flight" :plan-type-param="planTypeParam" @saveSuccess="saveCallback" v-if="myFlyExperienceVisible"></flight>
-      </template>
-    </common-dialog> -->
-    <!-- <common-dialog title="SDM链接"
-                   style="top: 120px;"
-                   :SDMParam="SDMParam"
-                   :visible="SDMlinkVisible"
-                   :dialogHeight="200"
-                   @close="closeSDMlinkVisible"
-                   @handle-cancel="closeSDMlinkVisible"
-                   @handle-ok="SDMhandleOk"
-                   :isViewCsFooter="false">
-                   <template #dialog>
-                    <div class="SDMlink">
-                      SDM链接:<el-input v-model="SDMlink" style="width: 80%;margin-left: 5px;"></el-input>
-                    </div>
-                   </template>
-    </common-dialog> -->
-    <save-product :visible="productTaskSaveVisible" :record="selectTaskDate" @close-modal="closeProductTaskSave" @save-success="productTaskSaveCallback" v-if="productTaskSaveVisible"></save-product>
-
-    <!-- <common-dialog
-      title="大型试验填报"
-      :visible="myBigExperienceVisible"
-      :show-handle-btn="false"
-      @isfullscreen="isfullscreen"
-      @close="closeMyBigExperience"
-      :is-view-cs-footer="false"
-      :dialog-height="360"
-    >
-      <template #dialog>
-        <large ref="large" :plan-type-param="planTypeParam" @saveSuccess="saveCallback" v-if="myBigExperienceVisible"></large>
-      </template>
-    </common-dialog> -->
     <common-dialog title="查询" width="90%" :visible="ganttSearchVisible" :show-handle-btn="false" @isfullscreen="isfullscreen" @close="closeSearch" :is-view-cs-footer="false" :dialog-height="360">
       <template #dialog>
         <command-search :gantt-name="ganttName" :plan-info-id="planInfoId"></command-search>
@@ -376,21 +139,6 @@
       @hidden="rightMenuConfigVisible = false"
     >
     </common-button-bar-setting>
-    <SubjectNumberSelect
-      v-if="showSubjectNumberSelect"
-      :visible="showSubjectNumberSelect"
-      :select-taskwbs-main-data-id="selectTaskwbsMainDataId"
-      @closed="closeSubjectNumberSelect"
-      @subjectNumberClose="subjectNumberClose"
-    />
-    <ProductionDialog v-if="showProductionDialog" :select-task-id="selectTaskId" :visible="showProductionDialog" @closed="closeProductionDialog" />
-    <!-- 批量设置任务密级 -->
-    <ClassificationSelection
-      v-if="ClassificationSelectVisible"
-      :visible="ClassificationSelectVisible"
-      @closed="ClassificationSelectclosed"
-      @ClassificationSelect="ClassificationSelect"
-    ></ClassificationSelection>
   </div>
 </template>
 <style lang="scss">
@@ -462,34 +210,8 @@ import { CommandButtonData } from '@/assets/commonJS/ganttJS/commandButtonData'
 import { PlanRightMenuData } from '@/assets/commonJS/ganttJS/planRightMenuData'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import { planGantt } from '@/assets/commonJS/ganttJS/planGanttObject'
-import ActivityImport from '../activityImport'
-import ImportExcel from '../importExcel'
-import ImportProject from '../importProject'
-import researchTaskRelevanceLook from '../researchTaskRelevance/look'
-import researchTaskRelevance from '../researchTaskRelevance'
-import researchTaskRelevanceMore from '../researchTaskRelevance/indexMore.vue'
 import { mapGetters } from 'vuex'
-import MonitorTimeManger from '../monitorTimeManager'
-import ResourceSelect from '../resourceSelect'
-import ClassificationSelection from '../ClassificationSelection'
-import AddRevenue from '../addRevenue'
-import SubjectNumberSelect from '../subjectNumberSelect'
-import ProductionDialog from '../ProductionDialog'
-import AddRevenueView from '../addRevenueView'
-import OutPutView from '../outPutView'
-import ProductTaskView from '../productTaskView'
-import ProductTask from '../productTaskView/ProjectTask'
-import ErpList from '../erpList'
-import ProductTaskEdit from '../productTaskView/productTaskEdit'
-// import MyExperienceClassify from '@/views/Product/Repository/MyExperienceBase/myExperienceClassify'
-
-// import ExperienceImport from '@/views/Product/Repository/MyExperienceBase/experienceImport'
 import GridSetting from '@/components/gantt/Components/CommandGridSetting/gridSetting'
-// import TeamManager from '@/views/Product/Pm/Resource/teamManager'
-
-// import Flight from '@/views/Product/Pm/Flight/Flight'
-// import Large from '@/views/Product/Pm/Flight/Large'
-import SaveProduct from '../saveProduct/saveProduct'
 import Detail from './detail'
 import CommandSearch from '@/components/gantt/Components/CommandSearch'
 import { requestUrl } from '@/utils/common.js'
@@ -589,11 +311,7 @@ export default {
     }
   },
   components: {
-    ClassificationSelection,
-    SaveProduct,
     Detail,
-    SubjectNumberSelect,
-    ProductionDialog,
     'el-menu': Menu,
     'el-submenu': Submenu,
     'el-drawer': Drawer,
@@ -610,25 +328,9 @@ export default {
     // 'myExperience-classify': MyExperienceClassify,
     CommonTable,
     GridSetting,
-    // ExperienceImport,
-    ActivityImport,
-    MonitorTimeManger,
-    ResourceSelect,
-    AddRevenue,
-    AddRevenueView,
-    researchTaskRelevance,
-    researchTaskRelevanceMore,
-    researchTaskRelevanceLook,
-    OutPutView,
-    ProductTaskView,
-    ProductTask,
-    ProductTaskEdit,
-    ImportExcel,
-    ImportProject,
     // TeamManager,
     CommonDialog,
     CommonDrawer,
-    ErpList,
     ListLayout,
     // Flight,
     // Large,
@@ -639,14 +341,7 @@ export default {
   data() {
     const mh = document.documentElement.clientHeight - 300
     return {
-      activitySecretGradeDisplay: '', // 知识库导入 弹框需要展示的密级
-      experienceSecretGradeDisplay: '', // 经验库导入 弹框需要展示的密级
       experienceLibrarySecretGradeDisplay: '', // 创建我的经验库导入 弹框需要展示的密级
-      courtyardSecretGradeDisplay: '', // 院任务导入 弹框需要展示的密级
-      excelSecretGradeDisplay: '', // Excel文件导入 弹框需要展示的密级
-      excelSecretGrade: '', // Excel文件导入 弹框需要展示的密级
-      projectSecretGradeDisplay: '', // project文件导入 弹框需要展示的密级
-      projectSecretGrade: '', // project文件导入 弹框需要展示的密级
       isPlan: true,
       detailVisible: false,
       detailTitle: '查看院任务',
@@ -663,38 +358,6 @@ export default {
       ganttName: 'planGantt',
       createNum: 1,
       menuVisible: false,
-      treeDataEditorConfig: {
-        useTreeFormat: true,
-        useTreePId: '',
-        defaultValue: [],
-        disabledValues: ['1'],
-        defaultExpandAll: true,
-        defaultExpandedKeys: ['1'],
-        placeholder: '',
-        clearable: true,
-        multiple: true,
-        checkStrictly: false,
-        optionUrl: {
-          api: 'ProjectApply.deptTree',
-          params: {}
-        }
-      },
-      treeDataEditorConfig1: {
-        useTreeFormat: true,
-        useTreePId: '',
-        defaultValue: [],
-        // disabledValues: ['1'],
-        defaultExpandAll: true,
-        defaultExpandedKeys: ['1'],
-        placeholder: '',
-        clearable: true,
-        multiple: false,
-        checkStrictly: false,
-        optionUrl: {
-          api: 'ProjectApply.deptTree',
-          params: {}
-        }
-      },
       menuData: PlanRightMenuData,
       dropTop: '0px',
       dropLeft: '0px',
@@ -757,24 +420,6 @@ export default {
       thirdMenuParam: {},
       dialogMaxHeight: mh + 'px',
       defaultExpandAll: false,
-      excelImportData: [
-        {
-          attId: '1',
-          attFilePath: 'Excel导入模板.xlsx',
-          attFileName: 'Excel导入模板',
-          path: '8YAccessory.xlsx',
-          descriptionStr: '按照大纲级别，将文档中的任务导入为选中任务的下级任务。'
-        }
-      ],
-      projectImportData: [
-        {
-          attId: '3',
-          attFilePath: 'Project导入模板.mpp',
-          attFileName: 'Project导入模板',
-          path: '8YProjectAccessory.mpp',
-          descriptionStr: '按照大纲级别，将文档中的任务导入为选中任务的下级任务。'
-        }
-      ],
       queryParam: {
         planId: this.planInfoId
       },
@@ -947,114 +592,11 @@ export default {
     closeDetailDrawer() {
       this.detailVisible = false
     },
-    subjectNumberClose(id, row) {
-      const that = this
-      if (that.selectedTasks && that.selectedTasks.length > 0) {
-        myGantt.batchUpdate(function () {
-          that.selectedTasks.forEach((task) => {
-            myGantt.getTask(task.id).wbsMainDataId = id
-            myGantt.getTask(task.id).posid = row.posid
-            myGantt.updateTask(task.id)
-          })
-        })
-      }
-      this.showSubjectNumberSelect = false
-    },
-    closeSubjectNumberSelect() {
-      this.showSubjectNumberSelect = false
-    },
-    closeProductionDialog() {
-      this.showProductionDialog = false
-    },
     movement() {
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
     },
     updateRootProgress(id, progress) {
       this.$api['planGanttManager.updateRootProgress']({ taskId: id, progress: progress }).then((res) => {})
-    },
-    researchTaskRelevanceClose() {
-      this.researchTaskRelevanceShow = false
-      myGantt.eachSelectedTask(function (id) {
-        if (myGantt.isTaskExists(id)) {
-          myGantt.unselectTask(id)
-        }
-      })
-      this.callParentSelectTasks()
-      this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-    },
-    contryYardMoreClose() {
-      this.researchTaskRelevanceShowMore = false
-      myGantt.eachSelectedTask(function (id) {
-        if (myGantt.isTaskExists(id)) {
-          myGantt.unselectTask(id)
-        }
-      })
-      this.callParentSelectTasks()
-      this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-    },
-    // 取消院任务关联
-    researchTaskRelevanceCancel(tasks) {
-      if (tasks && tasks[0]) {
-        this.$api['myExperience.cancelConnectTask']({
-          taskId: tasks[0].id,
-          avTaskId: tasks[0].avTaskId
-        }).then((res) => {
-          if (res) {
-            myGantt.eachSelectedTask(function (id) {
-              if (myGantt.isTaskExists(id)) {
-                myGantt.unselectTask(id)
-              }
-            })
-            this.callParentSelectTasks()
-            this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-            this.$message.success('取消成功')
-            // this.$notify({
-            //   title: '提示',
-            //   message: res.message,
-            //   type: 'success'
-            // })
-          } else {
-            this.$message.warning('取消失败')
-            // this.$notify.info({
-            //   title: '提示',
-            //   message: res.message
-            // })
-          }
-        })
-      } else {
-        this.$notify.info({
-          title: '提示',
-          message: '数据错误'
-        })
-      }
-    },
-    isSaveCheckHandle(done) {
-      const that = this
-      if (!that.$refs.team.changeCheak()) {
-        done()
-      } else {
-        this.$confirm('有修改项未保存，是否保存？', '提示', {
-          confirmButtonText: '是',
-          cancelButtonText: '否',
-          type: 'warning',
-          closeOnClickModal: false,
-          closeOnPressEscape: false,
-          closeOnHashChange: false,
-          distinguishCancelAndClose: true
-        })
-          .then(() => {
-            if (that.$refs.team.submit()) {
-              done()
-            }
-            // this.$refs.teamManager.submit()
-          })
-          .catch((e) => {
-            // if (e === 'cancel') {
-            //     this.teamManagerDrawer = false
-            // }
-            done()
-          })
-      }
     },
     selectAll(tableData) {
       this.selectAllChecked = !this.selectAllChecked
@@ -1087,14 +629,6 @@ export default {
         this.customHeight = 300
       }
     },
-    closePop() {
-      this.myExperienceImportVisible = false
-    },
-    successPop() {
-      // this.myExperienceImportVisible = false
-      this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-      this.myExperienceImportVisible = false
-    },
     onTableSelect(select, row) {
       // eslint-disable-next-line no-unused-vars
       const childrens = row.children
@@ -1109,30 +643,12 @@ export default {
         if (select == 1) {
           this.$refs.table.$refs.table.toggleRowSelection(row, false)
         }
-        this.clearRow(checkrow)
       } else {
         // eslint-disable-next-line eqeqeq
         if (select == 1) {
           this.$refs.table.$refs.table.toggleRowSelection(row, true)
         }
-        this.checkRow(checkrow)
       }
-    },
-    // 取消选中递归
-    clearRow(data) {
-      Array.from(data).forEach((row) => {
-        row.isCheck = false // 给这行数据设置一个选中字段为false
-        this.$refs.table.$refs.table.toggleRowSelection(row, false)
-        if (row.children) this.clearRow(row.children) // 有子集就递归  没子集了就不循环了
-      })
-    },
-    // 选中递归
-    checkRow(data) {
-      Array.from(data).forEach((row) => {
-        row.isCheck = true // 选中是字段值为true
-        this.$refs.table.$refs.table.toggleRowSelection(row, true)
-        if (row.children) this.checkRow(row.children)
-      })
     },
     saveMyExperience() {
       const that = this
@@ -1147,39 +663,6 @@ export default {
     },
     closeMyExperience() {
       this.selectedRowKeys = []
-      this.myExperienceVisible = false
-    },
-    closeMyFlyExperience() {
-      this.selectedRowKeys = []
-      this.myFlyExperienceVisible = false
-    },
-    closeMyBigExperience() {
-      this.selectedRowKeys = []
-      this.myBigExperienceVisible = false
-    },
-    closeProductTaskSave() {
-      this.selectTaskDate = null
-      this.productTaskSaveVisible = false
-    },
-    productTaskSaveCallback() {
-      this.productTaskSaveVisible = false
-    },
-    saveCallback() {
-      this.onEditModelClose()
-      this.onDrawerClose()
-      this.myFlyExperienceVisibleClose()
-    },
-    onDrawerClose() {
-      this.myBigExperienceVisible = false
-      this.record = {}
-    },
-    myFlyExperienceVisibleClose() {
-      this.myFlyExperienceVisible = false
-      this.record = {}
-    },
-    onEditModelClose() {
-      this.selectedRowKeys = []
-      this.innerVisible = false
       this.myExperienceVisible = false
     },
     handleSelectionChange(val) {
@@ -1361,92 +844,11 @@ export default {
         this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName)
       }
     },
-    activityImportClosed() {
-      this.activityImportVisible = false
-      myGantt.eachSelectedTask(function (id) {
-        if (myGantt.isTaskExists(id)) {
-          myGantt.unselectTask(id)
-        }
-      })
-      this.callParentSelectTasks()
-      this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-    },
-    experienceImportClosed() {
-      this.myExperienceImportVisible = false
-      myGantt.eachSelectedTask(function (id) {
-        if (myGantt.isTaskExists(id)) {
-          myGantt.unselectTask(id)
-        }
-      })
-      this.initGantt(this.planInfoId, this.viewType)
-      this.callParentSelectTasks()
-      // cell编辑器打开前逻辑设置
-      GanttObject.setOnBeforeEditStart(myGantt, this)
-      // 设置保存时机
-      // GanttObject.setCellSaveConfig(myGantt)
-      // 编辑器保存前校验
-      GanttObject.checkoutBeforeCellSave(myGantt, this)
-      // 编辑器保存后逻辑
-      GanttObject.onSaveCellEven(myGantt, this)
-    },
-    monitorManagerSave(obj) {
-      this.controlTimeVisible = false
-    },
-    importExcelClosed() {
-      this.importExcel = false
-      myGantt.eachSelectedTask(function (id) {
-        if (myGantt.isTaskExists(id)) {
-          myGantt.unselectTask(id)
-        }
-      })
-      this.callParentSelectTasks()
-      this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-    },
-    resourceRelationClosed() {
-      this.resourceRelation = false
-      this.callParentSelectTasks()
-      this.loadGanttData(this.planInfoId, this.taskId)
-    },
-    importProjectClosed() {
-      this.importProject = false
-      myGantt.eachSelectedTask(function (id) {
-        if (myGantt.isTaskExists(id)) {
-          myGantt.unselectTask(id)
-        }
-      })
-      this.callParentSelectTasks()
-      this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-    },
-    resourceSettingClosed() {
-      this.importProject = false
-    },
-    planTypeViewVisibleClosed() {
-      this.planTypeParam = Object.assign({}, {})
-      this.planTypeViewVisible = false
-    },
-    onPlanTypeViewClose(res) {
-      const taskId = this.planTypeParam.taskId
-      const ganttObject = GanttObject.getGanttObject(this.ganttName)
-      const task = ganttObject.getTask(taskId)
-      task.attentionTaskNum = res
-      this.loadGanttData(this.planInfoId, taskId, this.createPage)
-      this.planTypeParam = Object.assign({}, {})
-      this.planTypeViewVisible = false
-    },
     comResTypesListData() {
       const _this = this
       _this.$api['baseData.getPublicResourceTypes']().then(function (res) {
         _this.comResTypesOption = res
       })
-    },
-    importTaskExFresh() {
-      myGantt.eachSelectedTask(function (id) {
-        if (myGantt.isTaskExists(id)) {
-          myGantt.unselectTask(id)
-        }
-      })
-      this.callParentSelectTasks()
-      this.loadGanttData(this.planInfoId, this.taskId)
     },
     comResSubmit() {
       const _this = this
@@ -1472,19 +874,6 @@ export default {
         })
       }
     },
-    unComResSubmit(taskId) {
-      const ganttObject = GanttObject.getGanttObject(this.ganttName)
-      const task = ganttObject.getTask(this.comResForm.projectTaskId)
-      this.$api['planGanttManager.unComResourceTaskSave']({ taskId: taskId }).then((res) => {
-        // 成功之后的回调
-        this.$message({
-          message: '取消成功',
-          type: 'success'
-        })
-        task.commonResourceTypesId = ''
-        this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-      })
-    },
     closeDialog() {
       this.comResForm.projectTaskId = ''
       this.comResForm.comResName = ''
@@ -1494,77 +883,6 @@ export default {
       this.comResForm.contact = ''
       this.comResForm.tel = ''
       this.comResTaskSaveVisible = false
-    },
-    addRevenueClose(selectedRows, param) {
-      this.addRevenueVisible = false
-      this.loadGanttData(this.planInfoId, '', this.createPage)
-    },
-    batchSyncTaskCallBack() {
-      this.loadGanttData(this.planInfoId, '', this.createPage)
-    },
-    fundMouseout() {
-      this.addRevenueViewVisible = false
-    },
-    outPutViewClose() {
-      this.outPutViewVisible = false
-    },
-    productTaskViewClose() {
-      this.productTaskViewVisible = false
-      // this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-      myGantt.eachSelectedTask(function (id) {
-        if (myGantt.isTaskExists(id)) {
-          myGantt.unselectTask(id)
-        }
-      })
-      this.callParentSelectTasks()
-      this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-    },
-    productTaskClose() {
-      this.productTaskVisible = false
-      // this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-      myGantt.eachSelectedTask(function (id) {
-        if (myGantt.isTaskExists(id)) {
-          myGantt.unselectTask(id)
-        }
-      })
-      // this.callParentSelectTasks()
-      this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-    },
-    productTaskEditClose() {
-      this.productTaskEditVisible = false
-    },
-    resourceSelected(ownerId, row) {
-      const that = this
-      if (that.selectedTasks && that.selectedTasks.length > 0) {
-        myGantt.batchUpdate(function () {
-          that.selectedTasks.forEach((task) => {
-            myGantt.getTask(task.id).owner_id = ownerId
-            myGantt.getTask(task.id).specialDutyUserId = ownerId
-            myGantt.getTask(task.id).dutyDeptName = row.deptName
-            myGantt.updateTask(task.id)
-          })
-        })
-      }
-      this.resourceSelectVisible = false
-    },
-    ClassificationSelect(ownerId, row) {
-      const that = this
-      myGantt.batchUpdate(function () {
-        that.selectedTasks.forEach((task) => {
-          myGantt.getTask(task.id).secretGrade = ownerId.secretGrade
-          myGantt.updateTask(task.id)
-        })
-      })
-      this.ClassificationSelectVisible = false
-    },
-    resourceSelectclosed() {
-      this.resourceSelectVisible = false
-    },
-    ClassificationSelectclosed() {
-      this.ClassificationSelectVisible = false
-    },
-    saveExperience() {
-      this.$refs.experience.confirmExperiece()
     },
     selectGridlosed() {
       this.selectGridVisible = false
@@ -1597,9 +915,6 @@ export default {
     closeSearch() {
       this.ganttSearchVisible = false
     },
-    closeMenuConfig() {
-      this.rightMenuConfigVisible = false
-    },
     submitButtonBarSetting(updateValues, requestOtherParams) {
       const _this = this
       const params = [
@@ -1627,19 +942,6 @@ export default {
         })
       this.rightMenuConfigVisible = false
     }
-    // closeSDMlinkVisible () {
-    //   this.SDMlinkVisible = false
-    // },
-    // SDMhandleOk () {
-    //   this.$api['planInfoManager.updateLinkUrl']({ linkUrl: this.SDMlink, taskId: this.SDMParam }).then(res => {
-    //     this.$message({
-    //       message: '保存成功',
-    //       type: 'success'
-    //     })
-    //     this.SDMlink = ''
-    //   })
-    //   this.SDMlinkVisible = false
-    // }
   }
 }
 </script>

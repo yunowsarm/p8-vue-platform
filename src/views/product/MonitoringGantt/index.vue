@@ -33,18 +33,6 @@
         ></plan-gantt>
       </div>
     </div>
-    <el-drawer :title="detailTitle" :append-to-body="true" size="50%" :destroy-on-close="true" :wrapper-closable="false" @closed="detailDrawerClosed" :visible.sync="detailVisible">
-      <plan-attribute
-        @save-success="detailDrawerClosed"
-        :create-page="createPage"
-        :task-id="selectTaskId"
-        :secret-grade="secretGrade"
-        :att-read-only="readOnly"
-        :gantt-name="ganttName"
-        :status="status"
-        :plan-info-id="planInfoId"
-      ></plan-attribute>
-    </el-drawer>
   </div>
 </template>
 
@@ -94,7 +82,6 @@ import { ThematicCommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS
 import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataDoubleRow'
 import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataSingleRow'
 import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
-import PlanAttribute from './Components/planAttribute'
 export default {
   name: 'PlanGanttManage',
   data() {
@@ -146,7 +133,6 @@ export default {
   components: {
     'el-drawer': Drawer,
     PlanGantt,
-    PlanAttribute,
     CommandButtonBar
   },
   beforeMount() {},
