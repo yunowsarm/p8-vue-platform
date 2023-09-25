@@ -146,10 +146,10 @@ export default {
       },
       uploadFiles: [],
       tempOptions: [
-        { icon: 'p8 icon-front-and-rear1', type: '0' },
-        { icon: 'p8 icon-front-and-rear2', type: '1' },
-        { icon: 'p8 icon-front-and-rear3', type: '2' },
-        { icon: 'p8 icon-front-and-rear4', type: '3' }
+        { icon: 'p8 icon-wanchengzhikaishi', type: '0' },
+        { icon: 'p8 icon-kaishizhikaishi', type: '1' },
+        { icon: 'p8 icon-wanchengzhiwancheng', type: '2' },
+        { icon: 'p8 icon-kaishizhiwancheng', type: '3' }
       ],
       statusStyle: [
         { status: '6020', text: '未开始', color: '#f85359' },

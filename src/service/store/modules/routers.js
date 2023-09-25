@@ -157,8 +157,8 @@ const routers = {
       state.homepage = homePageRoute.length
         ? homePageRoute[0]
         : {
-            name: 'Dashboard',
-            path: 'dashboard'
+            name: 'LoginHome',
+            path: 'LoginHome'
           }
     },
     RESET_ROUTERS: (state, router) => {

@@ -722,16 +722,9 @@ export function getGanttColumns(ganttObject, vueThis) {
       min_width: 90
     },
     {
-      name: 'wbs',
+      name: 'taskCode',
       label: '任务编号',
       align: 'left',
-      template: function (task) {
-        const code = ganttObject.getWBSCode(task)
-        if (code.split('.').length > vueThis.deep) {
-          vueThis.deep = code.split('.').length
-        }
-        return code
-      },
       resize: true,
       min_width: 90
     },
