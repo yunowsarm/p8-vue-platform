@@ -105,7 +105,7 @@ export default {
   methods: {
     approved (taskId) {
       this.approvedTaskId = taskId
-      this.$refs.ApproveList.refreshList()
+      this.$refs.approveList.refreshList()
     },
     selectMessage (messageData) {
       this.currentMessage = null
