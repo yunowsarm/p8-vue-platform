@@ -25,7 +25,7 @@
                               range-separator="至"
                               start-placeholder="开始日期"
                               end-placeholder="结束日期"
-                              @change="datePickerChange"></el-date-picker>
+                              clearable></el-date-picker>
             </div>
             <div class="input-con"
                  :style="{width: '250px'}">
@@ -33,15 +33,16 @@
               <el-input :style="{width: 'calc(100% - 80px)'}"
                         class="input-name"
                         placeholder="请输入人员姓名进行搜索"
-                        v-model="queryParam.realName"
+                        clearable
+                        v-model="realName"
                         size="mini"></el-input>
             </div>
-            <!-- <div class="search-btn">
+            <div class="search-btn">
               <el-button icon="search"
                          size="mini"
                          type="primary"
                          @click="search">搜索</el-button>
-            </div> -->
+            </div>
           </div>
         </template>
         <template #west>
@@ -180,6 +181,7 @@ export default {
       columns,
       treeApi: 'userManager.deptTreeByUserDepartment',
       tableApi: 'teamManager.roleUserList',
+      realName: '',
       utilizationTimeRange: [moment().format('YYYY-MM-DD'), moment(new Date()).add(1, 'months').format('YYYY-MM-DD')],
       queryParam: {
         deptId: '',
@@ -259,11 +261,13 @@ export default {
       }
     },
     search () {
+      this.queryParam.realName = this.realName
+      this.queryParam.utilizationTimeRange = this.utilizationTimeRange
       // 搜索
-      this.$refs.table.searchData()
+      // this.$refs.table.searchData()
     },
     datePickerChange (utilizationTimeRange) {
-      this.queryParam.utilizationTimeRange = utilizationTimeRange
+      
       // this.queryParam.startDate = moment(utilizationTimeRange[0]).format('YYYY-MM-DD HH:mm:ss')
       // this.queryParam.endDate = moment(utilizationTimeRange[1]).format('YYYY-MM-DD HH:mm:ss')
     },

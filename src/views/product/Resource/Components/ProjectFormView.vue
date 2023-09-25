@@ -79,6 +79,7 @@ export default {
       {
         type: 'uploadView',
         labelText: '项目文档',
+        filesLayout: 'row',
         fieldName: 'uploadFiles',
         colLayout: ''
       }

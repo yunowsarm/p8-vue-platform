@@ -205,23 +205,23 @@ export default {
               spinner: 'el-icon-loading',
               background: 'rgba(0, 0, 0, 0.3)'
             })
-            // this.$api['teamManager.replaceResponsible'](params).then(res => {
-              // if (res === 'ok') {
+            this.$api['teamManager.replaceResponsible'](params).then(res => {
+              if (res) {
                 this.$message({
                   message: '替换成功！',
                   type: 'success'
                 })
-              // } else {
+              } else {
                 this.$message({
                   message: '替换失败！',
                   type: 'warning'
                 })
-              // }
+              }
               loading.close()
-            // }).catch(error => {
-            //   loading.close()
-            //   console.error(error, 'error')
-            // })
+            }).catch(error => {
+              loading.close()
+              console.error(error, 'error')
+            })
           })
           .catch(() => { })
       })
