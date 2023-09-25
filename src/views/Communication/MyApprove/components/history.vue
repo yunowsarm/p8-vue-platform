@@ -39,9 +39,15 @@
             <component :style="{ height: tabsHeight}"
                        :selected-approval="selectedApproval"
                        :curr-entity-id="currEntityId"
-                       v-if="formComp != null && formComp != ''"
+                       v-if="formComp != null && formComp != '' && componentsParams"
+                       :code="componentsParams.code"
+                       :data-view-id="componentsParams.dataViewId"
+                       :record="{ desformCode: componentsParams.codeForm }"
+                       :permission-vo="componentsParams.permissionVo"
+                       :layout-config="componentsParams"
                        :is="componentLoader"
-                       v-bind="formCompProp" />
+                       v-bind="formCompProp"
+                       :kanban-config="componentsParams" />
           </template>
           <template #bpmn>
             <bpm-view :style="{ height: tabsHeight}"
@@ -101,6 +107,7 @@ export default {
       formValidate: false,
       approveContentTitle: '审批内容',
       processKey: '',
+      componentsParams: null,
       ar: ['domainCoordination', 'planCoordination', 'planApproveRelease'],
       historyDataApi: undefined,
       historyColumns: undefined,
@@ -321,6 +328,13 @@ export default {
           })
 
           this_.formCompProp = { ...this_.formCompProp, ...inputProp, ...page, ...{ tableFlex: 240, headerVisible: false } }
+          if (this_.formCompProp.approveContentView) {
+            this_.componentsParams = this_.formCompProp.approveContentView.formSelector ? JSON.parse(this_.formCompProp.approveContentView.formSelector) : null
+            if (this_.componentsParams) {
+              this_.componentsParams.dataViewId = this_.formCompProp.customBusinessKey ? this_.formCompProp.customBusinessKey : this_.formCompProp.businessKey
+              this_.asyncComponents = this_.componentsParams.url
+            }
+          }
         }
         this_.formValidate = true
       })
