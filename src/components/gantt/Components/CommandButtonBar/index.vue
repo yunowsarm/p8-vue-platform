@@ -111,6 +111,7 @@ import { CommandResolveButtonData } from '@/assets/commonJS/ganttJS/resolve/comm
 import CommandClassify from '@/components/gantt/Components/CommandClassify'
 import CommandMonitor from '@/components/gantt/Components/CommandMonitor'
 import CommandSearch from '@/components/gantt/Components/CommandSearch'
+import CommandStatistic from '@/components/gantt/Components/CommandStatistic'
 export default {
   name: 'CommandButtonBar',
   components: {
@@ -119,7 +120,8 @@ export default {
     CommandButton,
     CommandClassify,
     CommandMonitor,
-    CommandSearch
+    CommandSearch,
+    CommandStatistic
   },
   props: {
     planInfoId: {

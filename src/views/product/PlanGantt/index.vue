@@ -94,6 +94,7 @@ import { ThematicCommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS
 import { ThematicCommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/ThematicPlanGantt/commandButtonBarDataSingleRow'
 import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataDoubleRow'
 import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataSingleRow'
+import { commandButtonBarData } from '@/assets/commonJS/ganttJS/commandButtonBarData'
 import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
 import PlanAttribute from './Components/planAttribute'
 export default {
@@ -176,7 +177,6 @@ export default {
     },
     tabBarExtraContent() {},
     showDetail(selectTask, ganttName, viewType) {
-      console.log('🚀 ~ file: index.vue:179 ~ showDetail ~ selectTask, ganttName, viewType:', selectTask, ganttName, viewType)
       this.detailVisible = true
       this.ganttName = ganttName
       this.selectTaskId = selectTask.id

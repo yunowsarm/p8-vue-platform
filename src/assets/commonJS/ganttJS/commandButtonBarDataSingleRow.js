@@ -17,10 +17,6 @@ const CommandButtonBarDataSingleRow = [
             size: 'small',
             position: ['top', 'right']
           },
-          // {
-          //   buttonId: 'common-resources',
-          //   size: 'small'
-          // },
           {
             buttonId: 'outdent-task',
             size: 'small',
@@ -31,14 +27,6 @@ const CommandButtonBarDataSingleRow = [
             size: 'small',
             position: ['top', 'right']
           },
-          // {
-          //   buttonId: 'undo-tasks',
-          //   size: 'small'
-          // },
-          // {
-          //   buttonId: 'redo-tasks',
-          //   size: 'small'
-          // },
           {
             buttonId: 'copy-tasks',
             size: 'small',
@@ -49,42 +37,13 @@ const CommandButtonBarDataSingleRow = [
             size: 'small',
             position: ['top', 'right']
           },
-          // {
-          //   buttonId: 'hierarchy-filter',
-          //   size: 'small',
-          //   position: ['top']
-          // },
-          // {
-          //   buttonId: 'plan-scheduling',
-          //   size: 'small'
-          // },
           {
-            buttonId: 'batch-owner',
+            buttonId: 'redo-tasks',
             size: 'small',
             position: ['top']
           },
           {
-            buttonId: 'batch-lock',
-            size: 'small',
-            position: ['top']
-          },
-          {
-            buttonId: 'batch-sync',
-            size: 'small',
-            position: ['top']
-          },
-          // {
-          //   buttonId: 'product-message',
-          //   size: 'small',
-          //   position: ['top', 'right']
-          // },
-          {
-            buttonId: 'product-task-view',
-            size: 'small',
-            position: ['top']
-          },
-          {
-            buttonId: 'out-put-view',
+            buttonId: 'undo-tasks',
             size: 'small',
             position: ['top']
           },
@@ -94,19 +53,9 @@ const CommandButtonBarDataSingleRow = [
             position: ['top', 'right']
           },
           {
-            buttonId: 'remove-taskss',
+            buttonId: 'detail-info',
             size: 'small',
             position: ['top', 'right']
-          },
-          {
-            buttonId: 'task-sync',
-            size: 'small',
-            position: ['right']
-          },
-          {
-            buttonId: 'unSuspend-config',
-            size: 'small',
-            position: ['top']
           },
           {
             buttonId: 'suspend-config',
@@ -225,36 +174,6 @@ const CommandButtonBarDataSingleRow = [
         ]
       },
       {
-        groupName: '数据推送',
-        buttonConfigs: [
-          {
-            buttonId: 'erp-pull',
-            size: 'small',
-            position: ['top']
-          },
-          {
-            buttonId: 'pdm-pull',
-            size: 'small',
-            position: ['top']
-          },
-          {
-            buttonId: 'master-pull',
-            size: 'small',
-            position: ['top']
-          },
-          {
-            buttonId: 'erp-single-pull',
-            size: 'small',
-            position: ['top']
-          },
-          {
-            buttonId: 'erp-many-pull',
-            size: 'small',
-            position: ['top']
-          }
-        ]
-      },
-      {
         groupName: '知识库',
         buttonConfigs: [
           {
@@ -270,11 +189,45 @@ const CommandButtonBarDataSingleRow = [
         ]
       },
       {
-        groupName: '团队管理',
-        // groupName: '人力资源',
+        groupName: '查询',
         buttonConfigs: [
           {
-            buttonId: 'resource-group-setting',
+            buttonId: 'search-list',
+            size: 'small',
+            position: ['top']
+          }
+        ]
+      },
+      {
+        groupName: '统计信息',
+        buttonConfigs: [
+          {
+            buttonId: 'statistic-list',
+            size: 'small',
+            position: ['top']
+          }
+        ]
+      },
+      {
+        groupName: '版本编辑',
+        buttonConfigs: [
+          {
+            buttonId: 'create-version',
+            size: 'small',
+            position: ['top']
+          },
+          {
+            buttonId: 'version-compare',
+            size: 'small',
+            position: ['top']
+          }
+        ]
+      },
+      {
+        groupName: '版本管理',
+        buttonConfigs: [
+          {
+            buttonId: 'version-list',
             size: 'small',
             position: ['top']
           }
@@ -325,41 +278,6 @@ const CommandButtonBarDataSingleRow = [
           }
         ]
       },
-      {
-        groupName: '版本编辑',
-        buttonConfigs: [
-          {
-            buttonId: 'create-version',
-            size: 'small',
-            position: ['top']
-          },
-          {
-            buttonId: 'version-compare',
-            size: 'small',
-            position: ['top']
-          }
-        ]
-      },
-      {
-        groupName: '版本管理',
-        buttonConfigs: [
-          {
-            buttonId: 'version-list',
-            size: 'small',
-            position: ['top']
-          }
-        ]
-      },
-      // {
-      //   groupName: '查询',
-      //   buttonConfigs: [
-      //     {
-      //       buttonId: 'search-list',
-      //       size: 'small',
-      //       position: ['top']
-      //     }
-      //   ]
-      // },
       {
         groupName: '设置',
         buttonConfigs: [

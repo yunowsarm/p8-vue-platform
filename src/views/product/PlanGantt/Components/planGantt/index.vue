@@ -406,21 +406,20 @@
       @closed="ClassificationSelectclosed"
       @ClassificationSelect="ClassificationSelect"
     ></ClassificationSelection>
-    <Edit v-if="createVisible"
-          :visible='createVisible'
-          :selectedTask='selectedTasks'
-          title='我的经验库'
-          :gantt-name="ganttName"
-          @handleCancel='closeCreate' />
-    <my-experience-base v-if="experienceBaseVisible"
-                        :visible='experienceBaseVisible'
-                        :isManage='isManage'
-                        :gantt-name="ganttName"
-                        :create-page="createPage"
-                        :plan-info-id="planInfoId"
-                        :selectedTask='selectedTasks'
-                        :exportExperienceType='exportExperienceType'
-                        @handleCancel='closExperienceBase'></my-experience-base>
+    <Edit
+v-if="createVisible" :visible="createVisible" :selectedTask="selectedTasks" title="我的经验库" :gantt-name="ganttName" @handleCancel="closeCreate" />
+    <my-experience-base
+     
+v-if="experienceBaseVisible"
+      :visible="experienceBaseVisible"
+      :isManage="isManage"
+      :gantt-name="ganttName"
+      :create-page="createPage"
+      :plan-info-id="planInfoId"
+      :selectedTask="selectedTasks"
+      :exportExperienceType="exportExperienceType"
+      @handleCancel="closExperienceBase"
+    ></my-experience-base>
   </div>
 </template>
 <style lang="scss">
@@ -985,15 +984,15 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll'])
   },
   methods: {
-    closExperienceBase (res) {
+    closExperienceBase(res) {
       this.isManage = false
       this.experienceBaseVisible = false
-      console.log(res, 'res');
-      if(res === 'true'){
+      console.log(res, 'res')
+      if (res === 'true') {
         this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
       }
     },
-    closeCreate () {
+    closeCreate() {
       this.createVisible = false
     },
     closeDetailDrawer() {
@@ -1408,9 +1407,9 @@ export default {
         }
       }
     },
-    showDetail(type) {
+    showDetail() {
       if (myGantt.getGlobalTaskIndex(this.selectTaskId) !== 0) {
-        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, type)
+        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName)
       }
     },
     activityImportClosed() {

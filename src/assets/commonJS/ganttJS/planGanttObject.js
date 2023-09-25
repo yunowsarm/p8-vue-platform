@@ -644,8 +644,86 @@ export function getGanttColumns(ganttObject, vueThis) {
       }
     },
     {
+      name: 'planType',
+      label: '任务类型',
+      align: 'center',
+      width: 70,
+      resize: true,
+      template: function (task) {
+        // 任务类型展示   设计31112  生产31113
+        let html = ''
+        const taskClassifyDatas = ganttObject.serverList(ganttObject.config.plan_type)
+        const planType = task[ganttObject.config.plan_type]
+
+        const attentionTaskNum = task.attentionTaskNum || 0
+        if (planType && taskClassifyDatas) {
+          // console.log(planType, 'planTypeplanType')
+          taskClassifyDatas.some((point, index) => {
+            let title = ''
+            let color = ''
+            if (point.id === planType) {
+              if (point.id === '3112' || point.id === '31112') {
+                if (task.pushStatusNew === 'E') {
+                  title = '推送失败'
+                  color = 'red'
+                }
+                if (task.pushStatusNew === 'S') {
+                  title = '推送成功'
+                  color = 'green'
+                }
+                if (!task.pushStatusNew) {
+                  title = '未推送'
+                  color = '#919293'
+                  // color = 'yellow'
+                }
+              } else {
+                title = point.title
+              }
+              const icon = point.icon
+              html +=
+                "<i onclick = Gantt.planTypeClick('" +
+                point.id +
+                "','" +
+                task.id +
+                "','" +
+                task.name +
+                "','" +
+                task.parent +
+                '\') class=" ' +
+                icon +
+                '" title="' +
+                title +
+                '"  ' +
+                'style=color:' +
+                color +
+                '></i>'
+              return true
+            }
+          })
+        }
+        if (attentionTaskNum > 0) {
+          html += "<i onclick = Gantt.attentionTaskView( '" + task.id + '\' ) class="el-icon-star-on" style="color:#FF5809" title="关注' + attentionTaskNum + '条"></i>'
+        }
+        return html
+      }
+    },
+    {
       name: 'wbs',
       label: '大纲',
+      align: 'left',
+      template: function (task) {
+        const code = ganttObject.getWBSCode(task)
+        if (code.split('.').length > vueThis.deep) {
+          vueThis.deep = code.split('.').length
+        }
+        return code
+      },
+      resize: true,
+      min_width: 90
+    },
+    {
+      name: 'wbs',
+      label: '任务编号',
       align: 'left',
       template: function (task) {
         const code = ganttObject.getWBSCode(task)
@@ -824,6 +902,21 @@ export function getGanttColumns(ganttObject, vueThis) {
           }
         }
         return html
+      }
+    },
+    {
+      name: 'weatherControl',
+      label: '是否管控任务',
+      align: 'center',
+      resize: true,
+      width: 70,
+      template: function (task) {
+        const weatherControl = task.weatherControl
+        if (weatherControl === '1') {
+          return '是'
+        } else {
+          return '否'
+        }
       }
     },
     {

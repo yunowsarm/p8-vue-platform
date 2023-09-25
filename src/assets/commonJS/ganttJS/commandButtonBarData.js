@@ -14,10 +14,6 @@ const CommandButtonBarData = [
             buttonId: 'create-equative',
             size: 'large'
           },
-          // {
-          //   buttonId: 'common-resources',
-          //   size: 'small'
-          // },
           {
             buttonId: 'outdent-task',
             size: 'small'
@@ -26,14 +22,6 @@ const CommandButtonBarData = [
             buttonId: 'indent-task',
             size: 'small'
           },
-          // {
-          //   buttonId: 'undo-tasks',
-          //   size: 'small'
-          // },
-          // {
-          //   buttonId: 'redo-tasks',
-          //   size: 'small'
-          // },
           {
             buttonId: 'copy-tasks',
             size: 'small'
@@ -43,52 +31,33 @@ const CommandButtonBarData = [
             size: 'small'
           },
           {
-            buttonId: 'hierarchy-filter',
-            size: 'small'
-          },
-          // {
-          //   buttonId: 'plan-scheduling',
-          //   size: 'small'
-          // },
-          {
-            buttonId: 'batch-owner',
-            size: 'small'
+            buttonId: 'redo-tasks',
+            size: 'small',
+            position: ['top']
           },
           {
-            buttonId: 'batch-sync',
-            size: 'small'
-          },
-          // {
-          //   buttonId: 'product-message',
-          //   size: 'small'
-          // },
-          {
-            buttonId: 'product-task-view',
-            size: 'small'
-          },
-          {
-            buttonId: 'out-put-view',
-            size: 'small'
+            buttonId: 'undo-tasks',
+            size: 'small',
+            position: ['top']
           },
           {
             buttonId: 'remove-tasks',
             size: 'large'
           },
           {
-            buttonId: 'product-task',
-            size: 'small'
-          },
-          {
-            buttonId: 'unSuspend-config',
-            size: 'small'
+            buttonId: 'detail-info',
+            size: 'large',
+            position: ['top', 'right']
           },
           {
             buttonId: 'suspend-config',
-            size: 'small'
+            size: 'small',
+            position: ['top']
           },
           {
             buttonId: 'forbid-config',
-            size: 'small'
+            size: 'small',
+            position: ['top']
           }
         ]
       },
@@ -180,23 +149,6 @@ const CommandButtonBarData = [
             size: 'large'
           }
         ]
-      },
-      {
-        groupName: '数据推送',
-        buttonConfigs: [
-          {
-            buttonId: 'erp-pull',
-            size: 'large'
-          },
-          {
-            buttonId: 'pdm-pull',
-            size: 'large'
-          },
-          {
-            buttonId: 'master-pull',
-            size: 'large'
-          }
-        ]
       }
     ]
   },
@@ -219,28 +171,39 @@ const CommandButtonBarData = [
     ]
   },
   {
-    panelName: '资源',
-    groups: [
-      // 组件名称
-      {
-        groupName: '团队管理',
-        // groupName: '人力资源',
-        buttonConfigs: [
-          {
-            buttonId: 'resource-group-setting',
-            size: 'large'
-          }
-        ]
-      }
-    ]
-  },
-  {
     panelName: '查询',
     groups: 'command-search' // 组件名称
   },
   {
     panelName: '统计信息',
-    groups: '' // 组件名称
+    groups: 'command-statistic' // 组件名称
+  },
+  {
+    panelName: '版本',
+    groups: [
+      {
+        groupName: '编辑',
+        buttonConfigs: [
+          {
+            buttonId: 'create-version',
+            size: 'large'
+          },
+          {
+            buttonId: 'version-compare',
+            size: 'large'
+          }
+        ]
+      },
+      {
+        groupName: '管理',
+        buttonConfigs: [
+          {
+            buttonId: 'version-list',
+            size: 'large'
+          }
+        ]
+      }
+    ]
   },
   {
     panelName: '视图',
@@ -275,33 +238,6 @@ const CommandButtonBarData = [
           },
           {
             buttonId: 'grid-setting',
-            size: 'large'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    panelName: '版本',
-    groups: [
-      {
-        groupName: '编辑',
-        buttonConfigs: [
-          {
-            buttonId: 'create-version',
-            size: 'large'
-          },
-          {
-            buttonId: 'version-compare',
-            size: 'large'
-          }
-        ]
-      },
-      {
-        groupName: '管理',
-        buttonConfigs: [
-          {
-            buttonId: 'version-list',
             size: 'large'
           }
         ]

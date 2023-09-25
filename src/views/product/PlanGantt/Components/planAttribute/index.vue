@@ -139,8 +139,8 @@ export default {
         { label: '任务描述', value: 'describeKey' },
         { label: '任务标识', value: 'monitorKey' },
         { label: '前置任务', value: 'dependenceKey' },
-        { label: '输入', value: 'inputKey' },
-        { label: '输出', value: 'outputKey' },
+        { label: '输入要求', value: 'inputKey' },
+        { label: '输出要求', value: 'outputKey' },
         { label: '输出物查看', value: 'getOutputKey' },
         { label: '特别说明', value: 'specialKey' }
       ]

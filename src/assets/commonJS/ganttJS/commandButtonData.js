@@ -2344,6 +2344,23 @@ export const CommandButtonData = [
     }
   },
   {
+    id: 'statistic-list',
+    icon: 'p8 icon-shujushitu',
+    title: '统计信息',
+    help: '统计信息',
+    clickFun: function (btn, ganttName, tasks) {
+      if (ganttName) {
+        const vueThis = store.getters.vueThis
+        vueThis.ganttStatisticVisible = true
+      }
+    },
+    isDisableFun: function (btn, ganttName, tasks) {
+      if (checkSwitchType(tasks)) {
+        return true
+      }
+    }
+  },
+  {
     id: 'menu-config',
     icon: 'p8 icon-menu-config',
     title: '菜单配置',
