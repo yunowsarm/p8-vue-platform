@@ -33,6 +33,19 @@
         ></plan-gantt>
       </div>
     </div>
+    <el-drawer :title="detailTitle" :append-to-body="true" size="50%" :destroy-on-close="true" :wrapper-closable="false" @closed="detailDrawerClosed" :visible.sync="detailVisible">
+      <plan-attribute
+        @save-success="detailDrawerClosed"
+        :create-page="createPage"
+        :task-id="selectTaskId"
+        :secret-grade="secretGrade"
+        :att-read-only="readOnly"
+        :view-type="viewType"
+        :gantt-name="ganttName"
+        :status="status"
+        :plan-info-id="planInfoId"
+      ></plan-attribute>
+    </el-drawer>
   </div>
 </template>
 
@@ -82,10 +95,12 @@ import { ThematicCommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS
 import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataDoubleRow'
 import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataSingleRow'
 import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
+import planAttribute from '../PlanGantt/Components/planAttribute'
 export default {
   name: 'PlanGanttManage',
   data() {
     return {
+      viewType: '',
       defaultKey: '1',
       advanced: false,
       selectedTasks: [],
@@ -132,6 +147,7 @@ export default {
   },
   components: {
     'el-drawer': Drawer,
+    planAttribute,
     PlanGantt,
     CommandButtonBar
   },
@@ -159,12 +175,14 @@ export default {
       this.advanced = !this.advanced
     },
     tabBarExtraContent() {},
-    showDetail(selectTask, ganttName) {
+    showDetail(selectTask, ganttName, viewType) {
+      console.log('🚀 ~ file: index.vue:179 ~ showDetail ~ selectTask, ganttName, viewType:', selectTask, ganttName, viewType)
       this.detailVisible = true
       this.ganttName = ganttName
       this.selectTaskId = selectTask.id
       this.status = selectTask.status
       this.detailTitle = selectTask.name
+      this.viewType = viewType
     },
     detailDrawerClosed(res) {
       this.detailVisible = false

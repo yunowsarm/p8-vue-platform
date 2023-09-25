@@ -124,17 +124,27 @@ export default {
   name: 'CompList',
   components: {
   },
+  props: {
+    thirdMenuParam: {
+      type: Object,
+      default: function () {
+        return {}
+      }
+    }
+  },
   data () {
     return {
-      formData: {}
+      formData: {},
+      planInfoId: ''
     }
   },
   mounted () {
+    this.planInfoId = this.thirdMenuParam.ID || ''
     this.getPlanOver()
   },
   methods: {
     getPlanOver (param) {
-      this.$api['planChange.planOverviewBulletinBoard']().then(res => {
+      this.$api['planChange.planOverviewBulletinBoard']({ planInfoId: this.planInfoId }).then(res => {
         this.formData = res.monthlyPlanCompletionRate ? res.monthlyPlanCompletionRate : 0
         this.formData = res.milestoneCompletionStatus ? res.milestoneCompletionStatus : 0
         this.formData = res.expectedOverdueTaskAnalysis ? res.expectedOverdueTaskAnalysis : 0
