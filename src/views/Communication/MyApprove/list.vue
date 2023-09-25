@@ -146,12 +146,13 @@ export default {
     },
     queryMsgList (nodeData) {
       this.searchParams.msgCatalog = nodeData.id
+      this.searchParams.assigneeUserId  = ''
+      this.searchParams.startUserId = ''
       this.renderTime = new Date() + ''
       if (nodeData.id === 'APPROVE_TYPE_01_02' || nodeData.id === 'APPROVE_TYPE_01_01') {
         this.searchParams.startUserId = this.$store.state.user.userInfo.id
       } else if (nodeData.id === 'APPROVE_TYPE_02_02' || nodeData.id === 'APPROVE_TYPE_02_01') {
         this.searchParams.assigneeUserId = this.$store.state.user.userInfo.id
-        this.searchParams.startUserId = ''
       } 
     },
     userCatalogCount (queryParam) {
