@@ -51,8 +51,8 @@ export default {
   },
   props: {
     row: {
-      type: Object,
-      default: () => {}
+      type: Array,
+      default: () => []
     },
     isPermissionSettingView: {
       type: Boolean,
@@ -104,7 +104,7 @@ export default {
   },
   mounted() {
     this.isView = this.isPermissionSettingView
-    this.formData.dataId = this.row.ID
+    this.formData.dataId = this.row[0].ID
     this.alertTitle = '正在为【' + (this.row.name != null ? this.row.name : '此项目') + '】设置人员权限'
     this.rendered()
   },
@@ -139,6 +139,7 @@ export default {
     },
     saved(res) {
       this.$emit('saveSuccess', res)
+      this.$emit('close')
       this.handleCancel()
     },
     handleChange(info) {},
@@ -149,7 +150,7 @@ export default {
       this.visible = false
       this.userList.push(...selectedRows)
       const idArr = selectedRows.map((v) => {
-        return v.ID
+        return v.id
       })
       this.formData.toUserIds.push(...idArr)
     },
