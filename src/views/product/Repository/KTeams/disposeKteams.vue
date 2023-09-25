@@ -8,8 +8,8 @@
           <i class="el-icon-s-custom" style="padding-right:10px;"></i>
           <span class="name">{{el.name}}</span>
           <span style="float: right;">
-            <i style="color:blue;" class="el-icon-edit"></i>
-            <i class="el-icon-delete" @click.stop="deleteRoles(el)" style="padding-left: 5px;color:blue;"></i>
+            <i style="color:#1890ff;" class="el-icon-edit"></i>
+            <i class="el-icon-delete" @click.stop="deleteRoles(el)" style="padding-left: 5px;color:#1890ff;"></i>
           </span>
         </li>
       </ul>

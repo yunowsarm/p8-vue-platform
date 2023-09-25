@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     handleCancel (e) {
-      this.$emit('close-lock-unlock', {})
+      this.$emit('close')
     }
   }
 }
