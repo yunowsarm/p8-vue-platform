@@ -341,7 +341,14 @@ export default {
   data() {
     const mh = document.documentElement.clientHeight - 300
     return {
+      activitySecretGradeDisplay: '', // 知识库导入 弹框需要展示的密级
+      experienceSecretGradeDisplay: '', // 经验库导入 弹框需要展示的密级
       experienceLibrarySecretGradeDisplay: '', // 创建我的经验库导入 弹框需要展示的密级
+      courtyardSecretGradeDisplay: '', // 院任务导入 弹框需要展示的密级
+      excelSecretGradeDisplay: '', // Excel文件导入 弹框需要展示的密级
+      excelSecretGrade: '', // Excel文件导入 弹框需要展示的密级
+      projectSecretGradeDisplay: '', // project文件导入 弹框需要展示的密级
+      projectSecretGrade: '', // project文件导入 弹框需要展示的密级
       isPlan: true,
       detailVisible: false,
       detailTitle: '查看院任务',
@@ -358,6 +365,38 @@ export default {
       ganttName: 'planGantt',
       createNum: 1,
       menuVisible: false,
+      treeDataEditorConfig: {
+        useTreeFormat: true,
+        useTreePId: '',
+        defaultValue: [],
+        disabledValues: ['1'],
+        defaultExpandAll: true,
+        defaultExpandedKeys: ['1'],
+        placeholder: '',
+        clearable: true,
+        multiple: true,
+        checkStrictly: false,
+        optionUrl: {
+          api: 'ProjectApply.deptTree',
+          params: {}
+        }
+      },
+      treeDataEditorConfig1: {
+        useTreeFormat: true,
+        useTreePId: '',
+        defaultValue: [],
+        // disabledValues: ['1'],
+        defaultExpandAll: true,
+        defaultExpandedKeys: ['1'],
+        placeholder: '',
+        clearable: true,
+        multiple: false,
+        checkStrictly: false,
+        optionUrl: {
+          api: 'ProjectApply.deptTree',
+          params: {}
+        }
+      },
       menuData: PlanRightMenuData,
       dropTop: '0px',
       dropLeft: '0px',
@@ -841,7 +880,7 @@ export default {
     },
     showDetail() {
       if (myGantt.getGlobalTaskIndex(this.selectTaskId) !== 0) {
-        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName)
+        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, 'view')
       }
     },
     comResTypesListData() {
