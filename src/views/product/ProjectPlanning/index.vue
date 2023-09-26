@@ -1,7 +1,7 @@
 <template>
   <list-layout>
     <template #north>
-      <el-button v-if="row[0].STATUS === '1004'" type="primary" @click="saveMyExperience()">提交变更</el-button>
+      <el-button v-if="row[0].STATUS === '1004' || row[0].STATUS === '1006'" type="primary" @click="saveMyExperience()">提交变更</el-button>
     </template>
     <template #center>
       <tabs-navigation-preview :layout-config="layoutConfig" :data-view-id="dataViewId" @tabClick="tabClick" :prop-param="propParam"></tabs-navigation-preview>

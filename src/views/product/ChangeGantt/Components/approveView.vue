@@ -4,9 +4,10 @@
       <div class="top" :style="{ height: changeInfoHeight }">
         <form-list
           ref="form"
+          class="approve_view"
           @rendered="rendered"
           :form="formData"
-          :data-source="flag ? dataSource1 : dataSource"
+          :data-source="dataSource"
           :api="saveApi"
           :exist-default-btn="existDefaultBtn"
           :exist-custom-btn="existCustomBtn"
@@ -58,6 +59,9 @@
   box-shadow: 5px 5px 13px $base-bg-shadow;
   background: $base-white-color;
   overflow: hidden;
+}
+.approve_view .el-col {
+  height: auto !important;
 }
 </style>
 <script>
@@ -113,7 +117,7 @@ export default {
         },
         {
           type: 'view',
-          labelText: '变更原因',
+          labelText: '变更分类',
           fieldName: 'reasonChangeDisp',
           colLayout: 'singleCol'
         },
@@ -124,78 +128,7 @@ export default {
           colLayout: 'singleCol'
         },
         {
-          labelText: '原因描述',
-          type: 'view',
-          fieldName: 'reason',
-          placeholder: '请输入活动描述',
-          colLayout: 'singleCol',
-          fieldConfig: {
-            rows: '6'
-          },
-          rules: [
-            {
-              required: true,
-              message: '必填'
-            }
-          ]
-        },
-        {
-          type: 'uploadView',
-          labelText: '附件', // 控件显示的文本
-          fieldName: 'uploadFiles',
-          defaultValue: [],
-          colLayout: 'singleCol',
-          uploadConfig: {
-            // , // 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
-            // limit: 1
-          },
-          listType: 'secret' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
-        },
-        {
-          labelText: '影响分析',
-          type: 'view',
-          fieldName: 'measure',
-          placeholder: '请输入活动描述',
-          colLayout: 'singleCol',
-          fieldConfig: {
-            rows: '6'
-          }
-        },
-        {
-          labelText: '产生变更记录',
-          type: 'blank',
-          slotName: 'weatherChange',
-          colLayout: 'singleCol'
-        }
-      ],
-      dataSource1: [
-        {
-          type: 'view',
-          labelText: '计划名称',
-          fieldName: 'planInfoName',
-          colLayout: 'singleCol'
-        },
-        {
-          type: 'view',
           labelText: '变更原因',
-          fieldName: 'reasonChangeDisp',
-          colLayout: 'singleCol'
-        },
-        {
-          type: 'view',
-          labelText: '项目名称',
-          fieldName: 'projectName',
-          colLayout: 'singleCol',
-          slotName: 'projectName'
-        },
-        {
-          type: 'view',
-          labelText: '变更原因分类',
-          fieldName: 'changeTypeDisp',
-          colLayout: 'singleCol'
-        },
-        {
-          labelText: '原因描述',
           type: 'view',
           fieldName: 'reason',
           placeholder: '请输入活动描述',
@@ -243,19 +176,13 @@ export default {
       otherParam: {
         id: ''
       },
-      formData: {},
-      flag: false // 当项目类型为专题计划时，采用dataSource1
+      formData: {}
     }
   },
   watch: {
     planInfoId: function (newVal) {
       if (newVal) {
         this.hasPlanInfoId = true
-      }
-    },
-    formData: function (newVal) {
-      if (newVal.projectClassification === 'PROJECT_CLASSIFICATION_0_02') {
-        this.flag = true
       }
     },
     deep: true,

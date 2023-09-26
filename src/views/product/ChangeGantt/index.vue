@@ -293,6 +293,7 @@ export default {
         {
           title: '是否产生变更记录',
           dataIndex: 'weatherChange',
+          width: 150,
           formatter: function (row) {
             if (row.weatherChange === '0') {
               return '是'
@@ -303,18 +304,20 @@ export default {
         },
         {
           title: '变更计划数',
+          width: 90,
           dataIndex: 'changeCount'
         },
         {
           title: '变更原因分类',
+          width: 100,
           dataIndex: 'changeTypeDisp'
         },
         {
-          title: '原因描述',
+          title: '变更原因',
           dataIndex: 'reason'
         },
         {
-          title: '变更原因',
+          title: '变更类型',
           dataIndex: 'reasonChangeDisp'
         },
         {

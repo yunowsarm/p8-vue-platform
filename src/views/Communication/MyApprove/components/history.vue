@@ -48,6 +48,13 @@
                        :is="componentLoader"
                        v-bind="formCompProp"
                        :kanban-config="componentsParams" />
+          <component
+                        :style="{ height: tabsHeight }"
+                        :selected-approval="selectedApproval"
+                        :curr-entity-id="currEntityId"
+                        v-else-if="formComp != null && formComp != ''"
+                        :is="componentLoader"
+                        v-bind="formCompProp"/>
           </template>
           <template #bpmn>
             <bpm-view :style="{ height: tabsHeight}"
