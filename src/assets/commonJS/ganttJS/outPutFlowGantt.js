@@ -106,7 +106,7 @@ export function outPutFlowGantt (ganttName, vueThis) {
       },
       update: function (data, id) {
         data.indexNo = ganttObject.getGlobalTaskIndex(id)
-        api['OutputFlow.updateActivityInfos']({ ganttTaskRequest: data }).then(res => {
+        api['OutputFlow.updateActivityInfos']({ activityTaskRequest: data }).then(res => {
           if (res && res === 'true') {
             GanttObject.showMessage(vueThis, data.name + '-更新成功！', 'success')
             return { 'action': 'ok' }
