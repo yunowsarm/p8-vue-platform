@@ -18,7 +18,8 @@
         <el-tab-pane v-for="(item, index) in tabsData"
                      :key="index"
                      :label="item.name"
-                     :name="item.name">
+                     :name="item.name"
+                     @tab-click="tabClick">
           <span slot="label"> <i v-if="item.icon"
                :class="['iconStyle', item.icon]"
                :style="{ color: item.color }"></i>{{ item.name }} </span>
@@ -28,7 +29,6 @@
           <component v-if="activeName == item.name"
                      :is="componentUrl"
                      :code="componentsConfig.code"
-                     :data-view-id="componentsConfig.dataViewId"
                      :record="{ desformCode: componentsConfig.codeForm }"
                      :permission-vo="componentsConfig.permissionVo"
                      :layout-config="componentsConfig"
@@ -457,6 +457,7 @@ export default {
           this.asyncComponents = tabs[0].targetUrl
         }
       }
+      this.$emit('tabClick', target)
     },
     handleCancel () {
       this.$emit('close')

@@ -15,7 +15,6 @@
       <component v-if="componentUrl"
                  :is="componentUrl"
                  :code="componentsConfig.code"
-                 :data-view-id="componentsConfig.dataViewId"
                  :record="{ desformCode: componentsConfig.codeForm }"
                  :permission-vo="componentsConfig.permissionVo"
                  :layout-config="componentsConfig"
