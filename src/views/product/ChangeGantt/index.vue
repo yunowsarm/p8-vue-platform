@@ -313,11 +313,11 @@ export default {
           dataIndex: 'changeTypeDisp'
         },
         {
-          title: '原因描述',
+          title: '变更原因',
           dataIndex: 'reason'
         },
         {
-          title: '变更原因',
+          title: '变更类型',
           dataIndex: 'reasonChangeDisp'
         },
         {

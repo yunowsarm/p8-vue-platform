@@ -94,6 +94,26 @@ export default {
       dataSource: [
         {
           type: 'select',
+          labelText: '变更类型',
+          fieldName: 'reasonChange',
+          colLayout: 'singleCol',
+          placeholder: '选择变更类型',
+          optionUrl: {
+            api: 'thirdPartInterface.getDic',
+            params: { dicType: 'CHANGE_TYPE' },
+            label: 'label',
+            value: 'value'
+          },
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ],
+          options: []
+        },
+        {
+          type: 'select',
           labelText: '变更原因分类',
           fieldName: 'changeType',
           colLayout: 'singleCol',
@@ -113,10 +133,10 @@ export default {
           options: []
         },
         {
-          labelText: '原因描述',
+          labelText: '变更原因',
           type: 'textarea',
           fieldName: 'reason',
-          placeholder: '请输入活动描述',
+          placeholder: '请输入变更原因',
           colLayout: 'singleCol',
           fieldConfig: {
             rows: '6'
@@ -128,18 +148,18 @@ export default {
             }
           ]
         },
-        {
-          type: 'select',
-          labelText: '变更原因',
-          fieldName: 'reasonChange',
-          colLayout: 'singleCol',
-          placeholder: '选择变更原因',
-          optionUrl: {
-            api: 'thirdPartInterface.getDic',
-            params: { dicType: 'CHANGE_REASON_MANAGEMENT' }
-          },
-          options: []
-        },
+        // {
+        //   type: 'select',
+        //   labelText: '变更原因',
+        //   fieldName: 'reasonChange',
+        //   colLayout: 'singleCol',
+        //   placeholder: '选择变更原因',
+        //   optionUrl: {
+        //     api: 'thirdPartInterface.getDic',
+        //     params: { dicType: 'CHANGE_REASON_MANAGEMENT' }
+        //   },
+        //   options: []
+        // },
         {
           type: 'upload',
           labelText: '附件', // 控件显示的文本
