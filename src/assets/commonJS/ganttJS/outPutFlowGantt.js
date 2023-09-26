@@ -46,10 +46,41 @@ export function outPutFlowGantt (ganttName, vueThis) {
       template: ganttObject.getWBSCode
     },
     {
+      name: 'planType',
+      label: '类型',
+      min_width: 100,
+      resize: true,
+      align: 'left',
+    },
+    {
+      name: 'isMilestoneDisplay',
+      label: '里程碑',
+      min_width: 100,
+      resize: true,
+      align: 'left',
+      template: function (task) {
+        // console.log(task,'----task');
+      }
+    },
+    {
       name: 'name',
       label: '活动名称',
       min_width: 270,
       tree: true,
+      resize: true,
+      align: 'left'
+    },
+    {
+      name: 'duration',
+      label: '时限',
+      min_width: 100,
+      resize: true,
+      align: 'left'
+    },
+    {
+      name: 'roleName',
+      label: '角色',
+      min_width: 100,
       resize: true,
       align: 'left'
     }
@@ -70,6 +101,16 @@ export function outPutFlowGantt (ganttName, vueThis) {
       vueThis.$emit('taskSelected', id)
     } else {
       ganttObject.unselectTask()
+    }
+  })
+  ganttObject.attachEvent('onTaskMultiSelect', function (id, state, e) {
+    if (state) {
+      vueThis.selectedTasks.push(ganttObject.getTask(id))
+    } else {
+      vueThis.selectedTasks.splice(
+        vueThis.selectedTasks.indexOf(ganttObject.getTask(id)),
+        1
+      )
     }
   })
   // 升降级

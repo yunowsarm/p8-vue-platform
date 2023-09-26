@@ -1,5 +1,10 @@
 <template>
   <div style="height: 100%; position: relative;">
+    <div class="activityButton">
+      <span class="button" v-for="(item, index) in buttonList" :key="index" :disabled="item.isDisableFun(selectedTasks)">
+        <i :class="item.icon" @click="buttonClick(item)"></i>{{item.title}}
+      </span>
+    </div>
     <div id='actionMenu'
          v-if='menuVisible'
          ref='actionMenu'
@@ -73,10 +78,16 @@
           <i class="p8 icon-excel-import"></i>
           <span>&nbsp;导入</span>
         </el-menu-item>
+        <el-menu-item v-if="menuIsView(7)"
+                      @click="exportTask"
+                      index="6">
+          <i class="p8 icon-excel-import"></i>
+          <span>&nbsp;导出</span>
+        </el-menu-item>
       </el-menu>
     </div>
     <div ref='myGantt'
-         style='width:100%; height: 100%;'></div>
+         style='width:100%; height:calc(100% - 60px);' class="myActivityGantt"></div>
   </div>
 </template>
 <style>
@@ -116,6 +127,12 @@
     line-height: 36px;
   }
 }
+.activityButton {
+  height: 50px;
+}
+.myActivityGantt{
+
+}
 </style>
 <script>
 import { Menu, Submenu, MenuItem } from 'p8-components-ui'
@@ -123,7 +140,7 @@ import { CommandButtonData } from '@/assets/commonJS/ganttJS/commandButtonData'
 import { PlanRightMenuData } from '@/assets/commonJS/ganttJS/planRightMenuData'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import { outPutFlowGantt } from '@/assets/commonJS/ganttJS/outPutFlowGantt'
-
+import { activityButtonData } from './activityButton'
 let myGantt
 const ganttName = 'activityGantt'
 export default {
@@ -155,7 +172,9 @@ export default {
       planInfoStatus: '',
       detailVisible: false,
       mouseX: '',
-      mouseY: ''
+      mouseY: '',
+      buttonList: activityButtonData,
+      copyList: []
     }
   },
   watch: {
@@ -208,6 +227,9 @@ export default {
     }
   },
   methods: {
+    buttonClick (btn) {
+      btn.clickFun(this.selectedTasks, this)
+    },
     hideMenu () {
       this.menuVisible = false
     },
@@ -218,9 +240,7 @@ export default {
       }
       let vueThis = this
       // 初始化对象
-      console.log(ganttName,'====ganttName');
       myGantt = outPutFlowGantt(ganttName, vueThis)
-      console.log(myGantt,'===myGantt');
       // 渲染对象
       myGantt.init(this.$refs.myGantt)
       // 加载数据
@@ -384,6 +404,25 @@ export default {
     },
     importTask () {
       this.callExcelImportTasks()
+    },
+    exportTask () {
+      this.$api['OutputFlow.exportExcel']({"activityInfoId": this.activityInfoId}, { responseType: 'blob' })
+          .then((data) => {
+           const date = new Date()
+            const file_name = '活动管理' + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+            const file_type = 'xls'
+            const blob = new Blob([data.data], { type: 'application/vnd.ms-excel' })
+            const url = window.URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.style.display = 'none'
+            link.href = url
+            link.download = `${file_name}.${file_type}`
+            document.body.appendChild(link)
+            link.click()
+          })
+          .finally(() => {
+            // this.search.exportLoading = false
+          })
     },
     // 活动描述名称修改保存后联动修改数据对应名称
     updateTaskName (obj) {

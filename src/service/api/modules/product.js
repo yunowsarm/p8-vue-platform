@@ -1274,6 +1274,20 @@ export const repositoryApi = {
       path: '/product/klActivity/importExcel',
       mockPath: '/product/klActivity/importExcel',
       desc: '知识库管理->产出流程管理->excel导入'
+    },
+    {
+      name: 'exportExcel',
+      method: 'POST',
+      path: '/product/klActivity/exportExcel',
+      mockPath: '/product/klActivity/exportExcel',
+      desc: '知识库管理->产出流程管理->excel导入'
+    },
+    {
+      name: 'pasteNode',
+      method: 'POST',
+      path: '/product/klActivity/pasteNode',
+      mockPath: '/product/klActivity/pasteNode',
+      desc: '知识库管理->产出流程管理->excel导入'
     }
   ]
 }

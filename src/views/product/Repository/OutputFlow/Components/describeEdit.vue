@@ -100,7 +100,7 @@ export default {
         {
           type: 'select',
           labelText: '活动类型',
-          fieldName: 'type',
+          fieldName: 'planType',
           placeholder: '请选择活动类型',
           colLayout: this.colLayoutClassify,
           optionUrl: {
