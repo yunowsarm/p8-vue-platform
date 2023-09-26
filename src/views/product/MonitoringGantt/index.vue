@@ -90,10 +90,10 @@ import { mapGetters } from 'vuex'
 import PlanGantt from './Components/planGantt'
 import { Drawer } from 'p8-components-ui'
 // import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/commandButtonBarData'
-import { ThematicCommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/ThematicPlanGantt/commandButtonBarDataDoubleRow'
-import { ThematicCommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/ThematicPlanGantt/commandButtonBarDataSingleRow'
-import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataDoubleRow'
-import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataSingleRow'
+// import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/PlanMonitoringGantt/commandButtonBarDataDoubleRow'
+// import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/PlanMonitoringGantt/commandButtonBarDataSingleRow'
+import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/PlanMonitoringGantt/commandButtonBarDataDoubleRow'
+import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/PlanMonitoringGantt/commandButtonBarDataSingleRow'
 import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
 import planAttribute from '../PlanGantt/Components/planAttribute'
 export default {
@@ -121,7 +121,7 @@ export default {
       createPage: '',
       ganttName: '',
       barData: this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow,
-      thematicBarData: this.ganttButtonMode === 'double' ? ThematicCommandButtonBarDataDoubleRow : ThematicCommandButtonBarDataSingleRow,
+      thematicBarData: this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow,
       taskStatus: {},
       status: '',
       commandButtonBarHeight: this.ganttButtonMode === 'double' ? '72px' : '58px'
@@ -139,7 +139,7 @@ export default {
     ganttButtonMode: {
       handler(val) {
         this.barData = val === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
-        this.thematicBarData = val === 'double' ? ThematicCommandButtonBarDataDoubleRow : ThematicCommandButtonBarDataSingleRow
+        this.thematicBarData = val === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
         this.commandButtonBarHeight = val === 'double' ? '72px' : '58px'
       },
       immediate: true
