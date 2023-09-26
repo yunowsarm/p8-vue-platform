@@ -118,7 +118,10 @@
           </div>
         </div>
       </div>
-      <div class="component_custom"></div>
+      <div class="component_custom">
+        <div class="kanban_title">项目进展</div>
+        <kanban-view :kanbanConfig='kanbanConfig'></kanban-view>
+      </div>
     </div>
     <common-drawer v-if="visibleMsgDrawer"
                    :visible="visibleMsgDrawer"
@@ -302,6 +305,7 @@ div.header_userInfo {
   .home_content {
     width: 100%;
     height: calc(100% - 51px);
+    display: flex;
     .my_work {
       width: 20%;
       background: #fafafa;
@@ -328,8 +332,27 @@ div.header_userInfo {
         }
       }
     }
-  }
-  .component_custom {
+    .component_custom {
+      height: 100%;
+      width: 100%;
+      background: #f9f9f9;
+      .kanban_title{
+        width: 98%;
+        margin: 0 auto;
+        text-indent: 15px;
+        line-height: 36px;
+        background-color: white;
+      }
+      ::v-deep .splitter-pane{
+        box-shadow: 5px 2px 9px gray;
+      }
+      ::v-deep .normal-header {
+        background-color: #f3f3f3 !important;
+      }
+      ::v-deep .normal-center{
+        height: calc(100% - 48px) !important;
+      }
+    }
   }
   .header {
     // height: pxTorem(70px);
@@ -372,13 +395,17 @@ div.header_userInfo {
 import { mapGetters } from 'vuex'
 import Message from '@/views/Framework/Message'
 import { getGreetingTime } from '@/utils/common'
+import kanbanView from '@/views/Framework/System/KanbanDesign/kanbanView.vue'
 import ProcessApprovalIndex from '@/views/Communication/MyApprove/list.vue'
 import { Dropdown, DropdownMenu, DropdownItem, Badge, Tooltip, P8Drawer as CommonDrawer, P8ListLayout as ListLayout, Notification } from 'p8-components-ui'
+import kanbanViewVue from '../Dashboard/kanbanView.vue'
+import { format } from 'echarts'
 export default {
   name: 'MyExperienceBase',
   components: {
     ListLayout,
     CommonDrawer,
+    kanbanView,
     message: Message,
     'el-badge': Badge,
     'el-tooltip': Tooltip,
@@ -391,6 +418,10 @@ export default {
   data () {
     return {
       dayTime: '',
+      kanbanConfig: {
+        id: 'afe8df4ad6c694dc66d83a97eab62cf4',
+        code: 'homePageProjectRate'
+      },
       shortcutMenuData: [
         {
           name: '我的工作',
@@ -539,7 +570,7 @@ export default {
       })
     },
     noticeMsg () {
-      
+
       const that = this
       this.$api['PersonalProcessApproval.checkNoticeMsg']({ id: null }).then((res) => {
         if (res) {
