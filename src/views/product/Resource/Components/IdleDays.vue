@@ -1,7 +1,7 @@
 <template>
   <el-popover
     placement="top-start"
-    width="240"
+    width="220"
     trigger="hover"
     :disabled="row.idleDaysList && row.idleDaysList.length < 1">
     <!-- <template #content> -->

@@ -23,7 +23,7 @@
           <div class="role-con">
             <el-button type="primary" plain style="margin: 5px;width:90%;"  @click="addRolesHandle"><i class="el-icon-plus" type="primary"></i>新建角色类别</el-button>
             <vue-perfect-scrollbar class="role-list">
-              <li style="padding-left: 26px;color:#323232;font-size:12px;" :class="[{ 'active': rolesSelectedIndex === -1 }]" @click="refreshHandle">所有人员</li>
+              <li style="padding-left: 26px;color:#323232;font-size:12px;" :class="[{ 'active': rolesSelectedIndex === -1 }]" @click="refreshHandle">所有人员<span>({{getTotalCount}})</span></li>
               <li :class="[
                   { 'active': index === rolesSelectedIndex },
                   { 'fixed-role': item.roleType === 'fixed' },
@@ -239,11 +239,9 @@ export default {
         return []
       }
     },
-    configParmars: {
-      type: Object,
-      default: () => {
-        return {}
-      }
+    dataViewId: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -412,11 +410,22 @@ export default {
       selectUserBeforehandDataSource: [],
     }
   },
+  computed: {
+    getTotalCount () {
+      let count = 0
+      this.rolesData.forEach(el => {
+        if (el.projectTeamRoleUsers && el.projectTeamRoleUsers.length) {
+          count += el.projectTeamRoleUsers.length
+        }
+      })
+      return count
+    }
+  },
   created () {
     if (this.row && this.row.length) {
       this.id = this.row[0].ID
     } else {
-      this.id = this.configParmars.id
+      this.id = this.dataViewId
       if (!this.id) {
         this.viewVisible = true
         this.$message({

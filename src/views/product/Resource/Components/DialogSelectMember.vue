@@ -30,7 +30,7 @@
             <div class="input-con"
                  :style="{width: '250px'}">
               人员姓名:
-              <el-input :style="{width: 'calc(100% - 80px)'}"
+              <el-input :style="{width: 'calc(100% - 70px)'}"
                         class="input-name"
                         placeholder="请输入人员姓名进行搜索"
                         clearable
