@@ -45,41 +45,6 @@ export const system = {
       desc: '立项所属领域选择'
     },
     {
-      name: 'updateStatusSuspend',
-      method: 'POST',
-      path: '/framework/project/updateStatusSuspend',
-      mockPath: '/framework/project/updateStatusSuspend',
-      desc: '项目立项暂停'
-    },
-    {
-      name: 'permissionSettingSave',
-      method: 'POST',
-      path: '/framework/project/permissionSettingSave',
-      mockPath: '/framework/project/permissionSettingSave',
-      desc: '项目立项权限设置保存'
-    },
-    {
-      name: 'getPermissionSetting',
-      method: 'GET',
-      path: '/framework/project/getPermissionSetting',
-      mockPath: '/framework/project/getPermissionSetting',
-      desc: '项目立项获取权限设置'
-    },
-    {
-      name: 'updateStatusRestart',
-      method: 'POST',
-      path: '/framework/project/updateStatusRestart',
-      mockPath: '/framework/project/updateStatusRestart',
-      desc: '项目立项重启'
-    },
-    {
-      name: 'updateStatusComplete',
-      method: 'POST',
-      path: '/framework/project/updateStatusComplete',
-      mockPath: '/framework/project/updateStatusComplete',
-      desc: '项目立项完成'
-    },
-    {
       name: 'getClassifyByFiledId',
       method: 'POST',
       path: '/framework/system/BpDictionary/getClassifyByFiledId',
@@ -1348,20 +1313,6 @@ export const formGeneratorApi = {
       path: '/framework/cgForm/getFormData',
       mockPath: '/framework/cgForm/getFormData',
       desc: '表单设计器-表单调用-表单数据详情'
-    },
-    {
-      name: 'getFormData',
-      method: 'POST',
-      path: '/product/projectPlanning/getFormData',
-      mockPath: '/product/projectPlanning/getFormData',
-      desc: '表单设计器-表单调用-表单数据详情'
-    },
-    {
-      name: 'commitApprove',
-      method: 'POST',
-      path: '/product/projectPlanning/commitApprove',
-      mockPath: '/product/projectPlanning/commitApprove',
-      desc: '项目策划-表单调用-策划变更审批'
     },
     {
       name: 'formCallDataList',

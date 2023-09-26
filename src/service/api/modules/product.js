@@ -329,6 +329,50 @@ export const repositoryApi = {
       desc: '我的任务->列表->获取任务分解详情'
     }
   ],
+  ProjectInitiationManagement: [
+    {
+      name: 'commitApprove',
+      method: 'POST',
+      path: '/product/projectPlanning/commitApprove',
+      mockPath: '/product/projectPlanning/commitApprove',
+      desc: '立项管理->项目策划-表单调用-策划变更审批'
+    },
+    {
+      name: 'permissionSettingSave',
+      method: 'POST',
+      path: '/framework/project/permissionSettingSave',
+      mockPath: '/framework/project/permissionSettingSave',
+      desc: '立项管理->项目立项->权限设置保存'
+    },
+    {
+      name: 'updateStatusRestart',
+      method: 'POST',
+      path: '/framework/project/updateStatusRestart',
+      mockPath: '/framework/project/updateStatusRestart',
+      desc: '立项管理->项目立项->重启'
+    },
+    {
+      name: 'updateStatusComplete',
+      method: 'POST',
+      path: '/framework/project/updateStatusComplete',
+      mockPath: '/framework/project/updateStatusComplete',
+      desc: '立项管理->项目立项->完成'
+    },
+    {
+      name: 'updateStatusSuspend',
+      method: 'POST',
+      path: '/framework/project/updateStatusSuspend',
+      mockPath: '/framework/project/updateStatusSuspend',
+      desc: '立项管理->项目立项->暂停'
+    },
+    {
+      name: 'getPermissionSetting',
+      method: 'GET',
+      path: '/framework/project/getPermissionSetting',
+      mockPath: '/framework/project/getPermissionSetting',
+      desc: '立项管理->项目立项->获取权限设置'
+    }
+  ],
   planGanttManager: [
     {
       name: 'async',

@@ -1,8 +1,5 @@
 <template>
-  <list-layout>
-    <template #north>
-      <el-button v-if="row[0].STATUS === '1004' || row[0].STATUS === '1006'" type="primary" @click="saveMyExperience()">提交变更</el-button>
-    </template>
+  <list-layout :header-visible="false">
     <template #center>
       <tabs-navigation-preview :layout-config="layoutConfig" :data-view-id="dataViewId" @tabClick="tabClick" :prop-param="propParam"></tabs-navigation-preview>
     </template>
@@ -86,7 +83,7 @@ export default {
       this.releaseMenuParams.beforehandParams = { ...fullParams }
       this.releaseMenuParams.businessId = [this.row[0].ID]
       this.releaseMenuParams.processDefinitionKey = 'projectPlanningApproveChanges'
-      this.$api['formGenerator.commitApprove'](this.releaseMenuParams)
+      this.$api['ProjectInitiationManagement.commitApprove'](this.releaseMenuParams)
         .then(function (res) {
           if (res.result && res.result === 'false') {
             that.$message({
