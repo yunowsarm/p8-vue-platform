@@ -1334,6 +1334,20 @@ export const formGeneratorApi = {
       desc: '表单设计器-表单调用-表单数据详情'
     },
     {
+      name: 'getFormData',
+      method: 'POST',
+      path: '/product/projectPlanning/getFormData',
+      mockPath: '/product/projectPlanning/getFormData',
+      desc: '表单设计器-表单调用-表单数据详情'
+    },
+    {
+      name: 'commitApprove',
+      method: 'POST',
+      path: '/product/projectPlanning/commitApprove',
+      mockPath: '/product/projectPlanning/commitApprove',
+      desc: '项目策划-表单调用-策划变更审批'
+    },
+    {
       name: 'formCallDataList',
       method: 'POST',
       path: '/framework/cgForm/dataList',

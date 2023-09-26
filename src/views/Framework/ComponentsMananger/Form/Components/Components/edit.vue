@@ -234,7 +234,7 @@ export default {
           dataId: this.dataId,
           permissionVo: this.permissionVo
         }
-        const res = await this.$api['formGenerator.formCallDataDetails'](params)
+        const res = await this.$api['formGenerator.getFormData'](params)
         this.modifyRes = res
         const uploadFiles = res.primary.uploadFiles
         this.formConf.fields.forEach((item) => {
