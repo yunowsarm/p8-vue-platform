@@ -2857,7 +2857,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
   initColumns.forEach((initItem, initIndex) => {
     const name = initItem.name
     let type = columnsTypeMap[name]
-    if (vueThis.isPlan && (name === 'planType' || name === 'managerStatus' || name === 'monitorPoints' || name === 'specialDutyDeptId' || name === 'tasksCooperateDept')) {
+    if (vueThis.isPlan && (name === 'specialDutyDeptId' || name === 'tasksCooperateDept')) {
       type = ''
     }
     let dataIndex
