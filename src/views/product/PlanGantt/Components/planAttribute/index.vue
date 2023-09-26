@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%">
-    <anchor placement="left" :menu="anchorMenu" :menu-key="{ label: 'label', value: 'value' }">
+    <anchor placement="left" :menu="anchorMenu" style-sheet="tabs">
       <template #describeKey>
         <describe-edit
           v-if="isView"
@@ -26,11 +26,19 @@
         <input-view v-if="!isView" :task-id="taskId" :gantt-name="ganttName"></input-view>
       </template>
       <template #outputKey>
-        <output-edit v-if="isView" :secret-grade="secretGrade" @saveSuccess="saveCallback" :task-id="taskId" :gantt-name="ganttName"></output-edit>
-        <output-view v-if="!isView" :task-id="taskId" :gantt-name="ganttName"></output-view>
+        <el-tabs v-model="activeOutput" type="border-card">
+          <el-tab-pane label="输出要求" name="outputKey">
+            <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 输出要求</span>
+            <output-edit v-if="isView" :secret-grade="secretGrade" @saveSuccess="saveCallback" :task-id="taskId" :gantt-name="ganttName"></output-edit>
+            <output-view v-if="!isView" :task-id="taskId" :gantt-name="ganttName"></output-view>
+          </el-tab-pane>
+          <el-tab-pane label="已提交输出物" name="getOutputKey">
+            <span slot="label"><i class="p8 icon-yitijiaoshuchuwu"></i> 已提交输出物</span>
+            <getOutPutView @saveSuccess="saveCallback" :task-id="taskId" :gantt-name="ganttName"></getOutPutView>
+          </el-tab-pane>
+        </el-tabs>
       </template>
       <template #getOutputKey>
-        <getOutPutView @saveSuccess="saveCallback" :task-id="taskId" :gantt-name="ganttName"></getOutPutView>
         <!-- <output-view v-if="!isView" :task-id="taskId" :gantt-name="ganttName"></output-view> -->
       </template>
       <template #specialKey>
@@ -135,14 +143,14 @@ export default {
       headerVisible: false,
       isView: true,
       isEdit: true,
+      activeOutput: 'outputKey',
       anchorMenu: [
-        { label: '任务描述', value: 'describeKey' },
-        { label: '任务标识', value: 'monitorKey' },
-        { label: '前置任务', value: 'dependenceKey' },
-        { label: '输入要求', value: 'inputKey' },
-        { label: '输出要求', value: 'outputKey' },
-        { label: '输出物查看', value: 'getOutputKey' },
-        { label: '特别说明', value: 'specialKey' }
+        { label: '任务描述', value: 'describeKey', icon: 'p8 icon-jindu' },
+        { label: '任务标识', value: 'monitorKey', icon: 'p8 icon-rizhiliebiao1' },
+        { label: '前置任务', value: 'dependenceKey', icon: 'p8 icon-xuanxiang1' },
+        { label: '输入要求', value: 'inputKey', icon: 'p8 icon-shuruyaoqiu', hideLabel: true },
+        { label: '输出要求', value: 'outputKey', icon: 'p8 icon-shuchuyaoqiu', hideLabel: true },
+        { label: '特别说明', value: 'specialKey', icon: 'p8 el-icon-warning-outline' }
       ]
     }
   },

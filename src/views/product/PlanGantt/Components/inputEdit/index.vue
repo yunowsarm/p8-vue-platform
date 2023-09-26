@@ -1,25 +1,29 @@
 <template>
   <div>
-    <el-tag type="info">前置输出物</el-tag>
-    <div>
-      <form-list ref="form1" @rendered="preRendered" @saved="preSaved" :data-source="preDataSource" :exist-default-btn="existDefaultBtn" :api="preSaveApi" :form="preFormData"> </form-list>
-    </div>
-    <el-tag>增加输入物</el-tag>
-    <div style="position: relative; padding-bottom: 50px">
-      <form-list
-        ref="form"
-        @rendered="rendered"
-        form-layout="vertical"
-        @saved="saved"
-        :data-source="dataSource"
-        :api="saveApi"
-        :form="formData"
-        :is-custom-validate="isCustomValidate"
-        :other-param="otherParam"
-        @custom-validate="customValidate"
-      >
-      </form-list>
-    </div>
+    <el-tabs v-model="activeOutput" type="border-card">
+      <el-tab-pane label="输入要求" name="inputKey">
+        <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 输入要求</span>
+        <div style="position: relative; padding-bottom: 50px">
+          <form-list
+            ref="form"
+            @rendered="rendered"
+            form-layout="vertical"
+            @saved="saved"
+            :data-source="dataSource"
+            :api="saveApi"
+            :form="formData"
+            :is-custom-validate="isCustomValidate"
+            :other-param="otherParam"
+            @custom-validate="customValidate"
+          >
+          </form-list>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="前置任务输出物" name="getPreOutputKey">
+        <span slot="label"><i class="p8 icon-xuanxiang1"></i> 前置任务输出物</span>
+        <form-list ref="form1" @rendered="preRendered" @saved="preSaved" :data-source="preDataSource" :exist-default-btn="existDefaultBtn" :api="preSaveApi" :form="preFormData"> </form-list>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -64,6 +68,7 @@ export default {
   },
   data() {
     return {
+      activeOutput: 'inputKey',
       data: [],
       saveApi: 'planGanttManager.inputSave',
       isCustomValidate: true,
