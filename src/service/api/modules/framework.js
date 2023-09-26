@@ -612,6 +612,22 @@ export const system = {
       mockPath: '/framework/system/Role/getAllRole',
       params: {},
       desc: '获取所有角色'
+    },
+    {
+      name: 'getApproveRoles',
+      method: 'POST',
+      path: '/framework/system/Role/getApproveRoles',
+      mockPath: '/framework/system/Role/getApproveRoles',
+      params: {},
+      desc: '获取处理用户'
+    },
+    {
+      name: 'getCandidateUsers',
+      method: 'POST',
+      path: '/framework/system/Role/getCandidateUsers',
+      mockPath: '/framework/system/Role/getCandidateUsers',
+      params: {},
+      desc: '获取候选用户'
     }
   ],
   resource: [
