@@ -120,8 +120,8 @@ export default {
       return style
     },
     rendered() {
-      if (this.row.ID && this.row.ID !== '') {
-        this.getPermissionSetting(this.row.ID)
+      if (this.row[0].ID && this.row[0].ID !== '') {
+        this.getPermissionSetting(this.row[0].ID)
       }
     },
     clickEvent() {},
