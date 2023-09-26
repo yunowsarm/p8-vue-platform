@@ -504,7 +504,26 @@ export default {
               let monitorPointsId = btn.id
               if (btn.id.startsWith('format-')) {
                 monitorPointsId = monitorPointsId.replace('format-', '')
+                // 防止格式化的互斥标识
+                const currentMonitor = that.monitorData.find((item) => {
+                  return item.id === monitorPointsId
+                })
+                let status = false
+                tasks.forEach((task) => {
+                  let arr = []
+                  if (task.monitorPoints) {
+                    arr = task.monitorPoints.split(',')
+                  }
+                  if (arr.includes(currentMonitor.mutexIds)) {
+                    status = true
+                  }
+                })
+                if (status) {
+                  that.$message.error(`选中的任务中，包含${currentMonitor.title}所互斥的标识`)
+                  return
+                }
               }
+
               thisGantt.batchUpdate(function () {
                 tasks.forEach(function (task) {
                   // 任务属性readonly为ture  并且不是责任令的不可添加标识
