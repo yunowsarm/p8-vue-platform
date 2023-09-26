@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width: 100%">
     <el-tabs v-model="activeOutput" type="border-card">
       <el-tab-pane label="增加的输入物" name="inputKey">
         <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 增加的输入物</span>
