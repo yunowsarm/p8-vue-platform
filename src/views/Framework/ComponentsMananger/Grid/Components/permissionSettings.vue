@@ -70,7 +70,7 @@ export default {
         modal: false
       },
       isView: false,
-      saveApi: 'thirdPartInterface.permissionSettingSave',
+      saveApi: 'ProjectInitiationManagement.permissionSettingSave',
       visible: false,
       selectedRows: [],
       otherParam: {},
@@ -127,7 +127,7 @@ export default {
     clickEvent() {},
     getPermissionSetting(ID) {
       const that = this
-      this.$api['thirdPartInterface.getPermissionSetting']({ dataId: ID })
+      this.$api['ProjectInitiationManagement.getPermissionSetting']({ dataId: ID })
         .then(function (res) {
           that.userList = res
           const selectedUserIds = res.map((u) => u.userId)

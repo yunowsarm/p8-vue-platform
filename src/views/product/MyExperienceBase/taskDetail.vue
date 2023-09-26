@@ -24,13 +24,27 @@
                        :gantt-name="ganttName"></dependence-view>
     </div>
     <div class="task_detail_item">
-
+      <input-view :task-id="taskId"
+                  :gantt-name="ganttName"></input-view>
     </div>
     <div class="task_detail_item">
-
-    </div>
-    <div class="task_detail_item">
-
+      <el-tabs style="width:100%"
+               v-model="activeOutput"
+               type="border-card">
+        <el-tab-pane label="输出要求"
+                     name="outputKey">
+          <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 输出要求</span>
+          <output-view :task-id="taskId"
+                       :gantt-name="ganttName"></output-view>
+        </el-tab-pane>
+        <el-tab-pane label="已提交输出物"
+                     name="getOutputKey">
+          <span slot="label"><i class="p8 icon-yitijiaoshuchuwu"></i> 已提交输出物</span>
+          <getOutPutView @saveSuccess="saveCallback"
+                         :task-id="taskId"
+                         :gantt-name="ganttName"></getOutPutView>
+        </el-tab-pane>
+      </el-tabs>
     </div>
   </div>
 </template>
@@ -67,14 +81,7 @@ export default {
     return {
       headerVisible: false,
       isEdit: true,
-      anchorMenu: [
-        { label: '任务描述', value: 'describeKey' },
-        { label: '任务标识', value: 'monitorKey' },
-        { label: '前置任务', value: 'dependenceKey' },
-        { label: '输入', value: 'inputKey' },
-        { label: '输出', value: 'outputKey' },
-        { label: '输出物查看', value: 'getOutputKey' }
-      ]
+      activeOutput: 'outputKey'
     }
   },
   methods: {
