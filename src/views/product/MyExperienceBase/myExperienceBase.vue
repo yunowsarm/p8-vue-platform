@@ -70,6 +70,14 @@
                         :table-refresh="tableRefresh"
                         @select="onTableSelect"
                         @selection-change="handleSelectionChange">
+            <template #monitorPoints="{scope}">
+              <span v-if="scope.row.monitorPointArray">
+                <i v-for="item in handleRowMointor(scope.row)"
+                   :key="item.id"
+                   :class="`${item.icon}`"
+                   :title="item.name"></i>
+              </span>
+            </template>
             <template #operation="{ scope }">
               <el-button type="text"
                          @click="showDetail(scope.row)">查看详情</el-button>
@@ -201,14 +209,18 @@ export default {
         },
         {
           title: '标识',
-          dataIndex: 'monitors',
-          align: 'left'
+          dataIndex: 'monitorPoints',
+          type: '',
+          minWidth: 100,
+          scopedSlots: { customRender: 'custom' },
+          align: 'center'
         },
         {
           title: '大纲',
-          type: 'index',
-          width: '60',
-          align: 'center'
+          type: '',
+          dataIndex: 'WBS',
+          minWidth: 60,
+          align: 'left'
         },
         {
           title: '任务名称',
@@ -269,6 +281,23 @@ export default {
     },
   },
   methods: {
+    handleRowMointor (row) {
+      if (row && row.monitorPointArray) {
+        let monitorPointArray = row.monitorPointArray.split(',')
+        let monitorPointIconArray = row.monitorPointIconArray.split(',')
+        let monitorPointDisplayArray = row.monitorPointDisplayArray.split(',')
+        let mointIcon = []
+        let monitorLength = monitorPointArray.length
+        for (var i = 0; i < monitorLength; i++) {
+          mointIcon.push({
+            id: monitorPointArray[i],
+            icon: monitorPointIconArray[i],
+            name: monitorPointDisplayArray[i],
+          })
+        }
+        return mointIcon
+      }
+    },
     detailClose () {
       this.detailVisible = false
     },
