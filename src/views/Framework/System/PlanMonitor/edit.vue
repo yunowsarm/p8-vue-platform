@@ -164,6 +164,7 @@ export default {
           fieldName: 'monitorPointClassifyIds',
           colLayout: 'singleCol',
           defaultValue: [],
+          clearable: true,
           placeholder: '请选择项目类型',
           optionUrl: {
             // api: 'ProjectApply.projectClassifyTree',
