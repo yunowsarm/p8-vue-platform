@@ -103,6 +103,9 @@
 </template>
 
 <style lang="scss" scope>
+.flowTopTabs ::v-deep .normal-center{
+  position: relative;
+}
 .secret_level {
   position: absolute;
   right: 20px;
@@ -232,10 +235,10 @@ export default {
       ],
       normalLayout: {
         west: {
-          xs: 9, sm: 8, md: 7, lg: 8, xl: 10
+          xs: 10, sm: 10, md: 10, lg: 10, xl: 10
         },
         center: {
-          xs: 15, sm: 16, md: 17, lg: 16, xl: 14
+          xs: 14, sm: 14, md: 14, lg: 14, xl: 14
         }
       },
       drawerConfig: { /// z-index
@@ -248,7 +251,7 @@ export default {
   },
   created () {
     if (this.row.length && this.row.length > 0) {
-      this.teamId = ''
+      this.teamId = this.row[0].KTEAMSID
       this.activityInfoId = this.row[0].ID
     }
   },

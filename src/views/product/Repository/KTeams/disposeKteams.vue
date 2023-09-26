@@ -60,7 +60,7 @@
               </el-radio-group>
             </template>
             <template #indexNo="{ scope, data }">
-              <el-input-number v-model="scope.row.indexNo" style="width:100%;" size="mini" @change="saveParamData(data)" placeholder="请输入"></el-input-number>
+              <el-input-number v-model="scope.row.indexNo" :min="0" :step="1" :precision="0" style="width:100%;" size="mini" @change="saveParamData(data)" placeholder="请输入"></el-input-number>
             </template>
           </editable-table>
         </div>
