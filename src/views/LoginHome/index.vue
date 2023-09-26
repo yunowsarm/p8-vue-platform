@@ -401,7 +401,7 @@ import { Dropdown, DropdownMenu, DropdownItem, Badge, Tooltip, P8Drawer as Commo
 import kanbanViewVue from '../Dashboard/kanbanView.vue'
 import { format } from 'echarts'
 export default {
-  name: 'MyExperienceBase',
+  name: 'LoginHome',
   components: {
     ListLayout,
     CommonDrawer,
