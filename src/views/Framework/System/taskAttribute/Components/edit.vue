@@ -1,6 +1,22 @@
 <template>
   <div style="overflow:hidden;">
-    <form-list ref="form" :data-source="dataSource" :form="formData" :api="saveApi" @saved="saved" label-width="90px" @rendered="rendered" :is-custom-validate="true"  @custom-validate="customValidate">
+    <form-list ref="form" 
+              :data-source="dataSource" 
+              :form="formData" 
+              :api="saveApi" 
+              @saved="saved" 
+              label-width="90px" 
+              @rendered="rendered" 
+              :is-custom-validate="true" 
+              :existDefaultBtn="false" 
+              :existCustomBtn="true"  
+              @custom-validate="customValidate">
+            <template #customBtn>
+               <el-button type="primary"
+                   @click="$emit('saveSuccess')">取消</el-button>
+               <el-button type="primary"
+                   @click="$refs.form.handleSubmit($event)">保存</el-button>
+            </template>
     </form-list>
     <common-tabs :tabs-data="tabsData" type="border-card" :height="renderHeight" :active-tabs="activeTabs" @tab-click="tabClick" :has-full-screen="true">
       <template #attributeSettings>

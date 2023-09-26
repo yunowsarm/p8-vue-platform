@@ -170,6 +170,7 @@
                      @click="submit">保 存
           </el-button>
           <el-button size="mini"
+                     v-if="!row.length"
                      type="primary"
                      :loading="submitLoading"
                      @click="saveAndRelease">发 布
@@ -239,9 +240,11 @@ export default {
         return []
       }
     },
-    dataViewId: {
-      type: String,
-      default: ''
+    configParmars: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data () {
@@ -425,7 +428,7 @@ export default {
     if (this.row && this.row.length) {
       this.id = this.row[0].ID
     } else {
-      this.id = this.dataViewId
+      this.id = this.configParmars.id
       if (!this.id) {
         this.viewVisible = true
         this.$message({
