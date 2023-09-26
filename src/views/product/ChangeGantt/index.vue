@@ -334,18 +334,25 @@ export default {
     }
   },
   mounted() {
-    console.log('🚀 ~ file: index.vue:339 ~ mounted ~ 12318:', this.thirdMenuParam)
-    this.projectCategory = this.thirdMenuParam.projectCategory
-    this.secretLevel = this.thirdMenuParam.SECRETLEVEL
-    this.planInfoId = this.thirdMenuParam.ID
-    this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
-    this.taskId = this.thirdMenuParam.taskId
-    this.secretGrade = this.thirdMenuParam.secretGrade
-    this.selectRecord = this.thirdMenuParam.selectRecord
-    this.currentRoute = this.thirdMenuParam.currentRoute
     if (this.thirdMenuParam.createPage === 'compile') {
+      this.projectCategory = this.thirdMenuParam.projectCategory
+      this.secretLevel = this.thirdMenuParam.SECRETLEVEL
+      this.planInfoId = this.thirdMenuParam.ID
+      this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
+      this.taskId = this.thirdMenuParam.taskId
+      this.secretGrade = this.thirdMenuParam.secretGrade
+      this.selectRecord = this.thirdMenuParam.selectRecord
+      this.currentRoute = this.thirdMenuParam.currentRoute
       this.createPage = 'planChange'
     } else if (this.thirdMenuParam.createPage === 'decompose') {
+      this.projectCategory = this.thirdMenuParam.projectCategory
+      this.secretLevel = this.thirdMenuParam.secretGrade
+      this.planInfoId = this.thirdMenuParam.planInfoId
+      this.planInfoStatus = this.thirdMenuParam.executeState
+      this.taskId = this.thirdMenuParam.taskId
+      this.secretGrade = this.thirdMenuParam.secretGrade
+      this.selectRecord = this.thirdMenuParam.selectRecord
+      this.currentRoute = this.thirdMenuParam.currentRoute
       this.createPage = 'userChange'
     } else {
       this.createPage = 'planChange'
