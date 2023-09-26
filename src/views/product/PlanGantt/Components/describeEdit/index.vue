@@ -210,7 +210,7 @@ export default {
           labelText: '任务描述',
           type: 'textarea',
           fieldName: 'describes',
-          placeholder: '请输入活动描述',
+          placeholder: '请输入任务描述',
           colLayout: 'singleCol',
           fieldConfig: {
             rows: '6'

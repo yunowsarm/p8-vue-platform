@@ -576,7 +576,7 @@ export function getGanttColumns(ganttObject, vueThis) {
     },
     {
       name: 'monitorPoints',
-      label: '标记',
+      label: '标识',
       align: 'left',
       min_width: 100,
       resize: true,
@@ -650,45 +650,24 @@ export function getGanttColumns(ganttObject, vueThis) {
       width: 70,
       resize: true,
       template: function (task) {
-        // 任务类型展示   设计31112  生产31113
+        // 任务类型展示
         let html = ''
         const taskClassifyDatas = ganttObject.serverList(ganttObject.config.plan_type)
         const planType = task[ganttObject.config.plan_type]
-
         const attentionTaskNum = task.attentionTaskNum || 0
         if (planType && taskClassifyDatas) {
-          // console.log(planType, 'planTypeplanType')
-          taskClassifyDatas.forEach((point, index) => {
-            let title = ''
-            const color = ''
+          taskClassifyDatas.some((point, index) => {
             if (point.id === planType) {
-              // if (point.id === '3112' || point.id === '31112') {
-              //   if (task.pushStatusNew === 'E') {
-              //     title = '推送失败'
-              //     color = 'red'
-              //   }
-              //   if (task.pushStatusNew === 'S') {
-              //     title = '推送成功'
-              //     color = 'green'
-              //   }
-              //   if (!task.pushStatusNew) {
-              //     title = '未推送'
-              //     color = '#919293'
-              //     // color = 'yellow'
-              //   }
-              // } else {
-              //   title = point.title
-              // }
-              title = point.title
               const icon = point.icon
-              html += '<i class=' + icon + '" title="' + title + '"  ' + 'style=color:' + color + '></i>'
+              html += "<i onclick = Gantt.planTypeClick('" + point.id + "','" + task.id + "','" + task.parent + '\') class="' + icon + '" style="cursor:pointer;" title="' + point.title + '"></i>'
+              // html += '<i  class="' + icon + '" title="' + point.title + '"></i>'
               return true
             }
           })
         }
-        // if (attentionTaskNum > 0) {
-        //   html += "<i onclick = Gantt.attentionTaskView( '" + task.id + '\' ) class="el-icon-star-on" style="color:#FF5809" title="关注' + attentionTaskNum + '条"></i>'
-        // }
+        if (attentionTaskNum > 0) {
+          html += "<i onclick = Gantt.attentionTaskView('" + task.id + '\') class="el-icon-star-on" style="cursor:pointer;color:#FF5809" title="关注' + attentionTaskNum + '条"></i>'
+        }
         return html
       }
     },
