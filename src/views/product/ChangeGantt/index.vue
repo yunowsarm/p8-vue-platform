@@ -334,17 +334,7 @@ export default {
     }
   },
   mounted() {
-    if (this.thirdMenuParam.createPage === 'compile') {
-      this.projectCategory = this.thirdMenuParam.projectCategory
-      this.secretLevel = this.thirdMenuParam.SECRETLEVEL
-      this.planInfoId = this.thirdMenuParam.ID
-      this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
-      this.taskId = this.thirdMenuParam.taskId
-      this.secretGrade = this.thirdMenuParam.secretGrade
-      this.selectRecord = this.thirdMenuParam.selectRecord
-      this.currentRoute = this.thirdMenuParam.currentRoute
-      this.createPage = 'planChange'
-    } else if (this.thirdMenuParam.createPage === 'decompose') {
+    if (this.thirdMenuParam.createPage === 'decompose') {
       this.projectCategory = this.thirdMenuParam.projectCategory
       this.secretLevel = this.thirdMenuParam.secretGrade
       this.planInfoId = this.thirdMenuParam.planInfoId
@@ -355,6 +345,14 @@ export default {
       this.currentRoute = this.thirdMenuParam.currentRoute
       this.createPage = 'userChange'
     } else {
+      this.projectCategory = this.thirdMenuParam.projectCategory
+      this.secretLevel = this.thirdMenuParam.SECRETLEVEL
+      this.planInfoId = this.thirdMenuParam.ID
+      this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
+      this.taskId = this.thirdMenuParam.taskId
+      this.secretGrade = this.thirdMenuParam.secretGrade
+      this.selectRecord = this.thirdMenuParam.selectRecord
+      this.currentRoute = this.thirdMenuParam.currentRoute
       this.createPage = 'planChange'
     }
     if (this.planInfoId && this.createPage) {
