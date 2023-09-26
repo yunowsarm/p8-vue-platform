@@ -16,15 +16,27 @@ export default {
       default: function () {
         return []
       }
+    },
+    businessKey: {
+      type: String,
+      default: function () {
+        return undefined
+      }
+    },
+    projectId: {
+      type: String,
+      default: function () {
+        return undefined
+      }
     }
   },
   data() {
     return {
       propParam: {
-        ID: this.row[0].ID,
-        PROJECTID: this.row[0].PROJECTID
+        ID: this.businessKey ? this.businessKey : this.row[0].ID,
+        PROJECTID: this.projectId ? this.projectId : this.row[0].PROJECTID
       },
-      dataViewId: this.row[0].PROJECTID,
+      dataViewId: this.projectId ? this.projectId : this.row[0].PROJECTID,
       layoutConfig: {
         layoutCode: 'planningLayoutView',
         layoutVersion: 'latest'
@@ -35,18 +47,13 @@ export default {
     TabsNavigationPreview,
     ListLayout
   },
-  created() {
-    console.log(this.dataViewId, 'dataViewId=============')
-  },
+  created() {},
   methods: {
     tabClick(tabs) {
-      console.log(tabs.index, 'wwwwwwwwwwwwwwww')
       if (tabs.index === '0') {
-        console.log(this.dataViewId, '================================')
-        this.dataViewId = this.row[0].PROJECTID
+        this.dataViewId = this.projectId ? this.projectId : this.row[0].PROJECTID
       } else {
-        console.log(this.dataViewId, '================================')
-        this.dataViewId = this.row[0].ID
+        this.dataViewId = this.businessKey ? this.businessKey : this.row[0].ID
       }
     }
   }
