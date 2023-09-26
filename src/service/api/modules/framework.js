@@ -468,6 +468,22 @@ export const system = {
       desc: '计划标识管理 列表'
     },
     {
+      name: 'startStatus',
+      method: 'POST',
+      path: '/framework/system/PlanLogo/startStatus',
+      mockPath: '/framework/system/PlanLogo/startStatus',
+      params: {},
+      desc: '基础数据 启用'
+    },
+    {
+      name: 'stopStatus',
+      method: 'POST',
+      path: '/framework/system/PlanLogo/stopStatus',
+      mockPath: '/framework/system/PlanLogo/stopStatus',
+      params: {},
+      desc: '基础数据 停用'
+    },
+    {
       name: 'getMonitorPointDataInfo',
       method: 'POST',
       path: '/framework/system/PlanLogo/getMonitorPointDataInfo',
