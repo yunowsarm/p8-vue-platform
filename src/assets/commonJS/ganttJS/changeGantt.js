@@ -5,7 +5,23 @@ import moment from 'moment'
  * 任务equals时比对属性
  * @type {string[]}
  */
-export const checkKeys = ['name', 'oldName', 'start_date', 'end_date', 'parent', 'indexNo', 'duration', 'planType', 'owner_id', 'forecastBeginDate', 'forecastEndDate', 'describes', 'weatherControl']
+export const checkKeys = [
+  'name',
+  'oldName',
+  'start_date',
+  'end_date',
+  'parent',
+  'indexNo',
+  'duration',
+  'planType',
+  'owner_id',
+  'forecastBeginDate',
+  'roleName',
+  'dutyDeptName',
+  'forecastEndDate',
+  'describes',
+  'weatherControl'
+]
 /**
  * 变更颜色定义
  * @type {string}
@@ -20,7 +36,7 @@ export const affectColor = '#0070C5;'
  * 计划变更缓存对象定义
  */
 export class ChangeTask {
-  constructor () {
+  constructor() {
     this.describes = ''
     this.monitors = []
     this.links = []
@@ -38,26 +54,31 @@ export class ChangeTask {
  * @param vueThis
  * @param taskId
  */
-export function updateNewTaskMap (ganttObject, updatedTasks, vueThis, taskId) {
-  let task = ganttObject.getTask(taskId)
+export function updateNewTaskMap(ganttObject, updatedTasks, vueThis, taskId) {
+  const task = ganttObject.getTask(taskId)
   let affectTasks = []
-  let affecTaskIds = []
-  if (vueThis.newTaskMap && vueThis.newTaskMap[taskId] && Object.keys(vueThis.newTaskMap[taskId]).length > 0 &&
-    vueThis.newTaskMap[taskId].affectTasks && vueThis.newTaskMap[taskId].affectTasks.length > 0) {
+  const affecTaskIds = []
+  if (
+    vueThis.newTaskMap &&
+    vueThis.newTaskMap[taskId] &&
+    Object.keys(vueThis.newTaskMap[taskId]).length > 0 &&
+    vueThis.newTaskMap[taskId].affectTasks &&
+    vueThis.newTaskMap[taskId].affectTasks.length > 0
+  ) {
     affectTasks = vueThis.newTaskMap[taskId].affectTasks
   }
   if (updatedTasks && updatedTasks.length > 0) {
     ganttObject.batchUpdate(function () {
       updatedTasks.forEach(function (id) {
         if (id !== taskId && ganttObject.getGlobalTaskIndex(id) !== 0) {
-          let uTask = ganttObject.getTask(id)
+          const uTask = ganttObject.getTask(id)
           if (!uTask.style) {
             uTask.style = affectColor
           }
           ganttObject.updateTask(id)
           if (affecTaskIds.indexOf(id) === -1 && vueThis.oldTaskMap && vueThis.oldTaskMap[id] && Object.keys(vueThis.oldTaskMap[id]).length > 0) {
             affecTaskIds.push(id)
-            let weatherControl = vueThis.oldTaskMap[id].weatherControl
+            const weatherControl = vueThis.oldTaskMap[id].weatherControl
             affectTasks.push({ id: id, weatherControl: weatherControl })
           }
         }
@@ -79,13 +100,12 @@ export function updateNewTaskMap (ganttObject, updatedTasks, vueThis, taskId) {
  * @param obj  task、describes、monitorPoints、links、output、special
  * @param type  task、describes、monitorPoints、links、output、special
  */
-export function setNewTaskMap (vueThis, newTask, obj, type) {
+export function setNewTaskMap(vueThis, newTask, obj, type) {
   if (vueThis.ganttName && vueThis.ganttName === 'changeGantt') {
     // 历史数据为空时，保存历史数据
     let newT = new ChangeTask()
-    if (vueThis.newTaskMap && Object.keys(vueThis.newTaskMap).length > 0 &&
-      vueThis.newTaskMap[newTask.id] && Object.keys(vueThis.newTaskMap[newTask.id]).length > 0) {
-      let oldT = vueThis.newTaskMap[newTask.id]
+    if (vueThis.newTaskMap && Object.keys(vueThis.newTaskMap).length > 0 && vueThis.newTaskMap[newTask.id] && Object.keys(vueThis.newTaskMap[newTask.id]).length > 0) {
+      const oldT = vueThis.newTaskMap[newTask.id]
       let aff = []
       if (oldT.affectTasks && oldT.affectTasks.length > 0) {
         aff = oldT.affectTasks
@@ -132,7 +152,7 @@ export function setNewTaskMap (vueThis, newTask, obj, type) {
         newT.updateInfo.push(type)
       }
     } else {
-      let updateInfo = []
+      const updateInfo = []
       updateInfo.push(type)
       newT.updateInfo = updateInfo
     }
@@ -148,13 +168,13 @@ export function setNewTaskMap (vueThis, newTask, obj, type) {
  * @param taskId
  * @param ganttObject
  */
-export function taskDescribesEditCheck (newObj, oldObj, vueThis, taskId, ganttObject) {
-  let task = ganttObject.getTask(taskId)
+export function taskDescribesEditCheck(newObj, oldObj, vueThis, taskId, ganttObject) {
+  const task = ganttObject.getTask(taskId)
   // 日期处理
-  let oldS = moment(oldObj.start_date).format('YYYY-MM-DD')
-  let oldE = moment(oldObj.end_date).format('YYYY-MM-DD')
-  let newS = moment(newObj.start_date).format('YYYY-MM-DD')
-  let newE = moment(newObj.end_date).format('YYYY-MM-DD')
+  const oldS = moment(oldObj.start_date).format('YYYY-MM-DD')
+  const oldE = moment(oldObj.end_date).format('YYYY-MM-DD')
+  const newS = moment(newObj.start_date).format('YYYY-MM-DD')
+  const newE = moment(newObj.end_date).format('YYYY-MM-DD')
   let describesEdit = false
   let changeDate = false
   let hasEdit = false
@@ -213,12 +233,12 @@ export function taskDescribesEditCheck (newObj, oldObj, vueThis, taskId, ganttOb
  * @param task
  * @param ganttObject
  */
-export function monitorPointsEditCheck (oldObj, newObj, vueThis, task, ganttObject) {
+export function monitorPointsEditCheck(oldObj, newObj, vueThis, task, ganttObject) {
   // 新标识数据处理
   let monitorIds = ''
   let addMonitor = false // 是否添加标识
   let editMonitor = false // 是否修改标识
-  let newMonitorMap = {}
+  const newMonitorMap = {}
   // 判断是否新增标识
   if (newObj && newObj.length > 0) {
     newObj.forEach(function (item) {
@@ -238,7 +258,7 @@ export function monitorPointsEditCheck (oldObj, newObj, vueThis, task, ganttObje
   if (!addMonitor && oldObj && oldObj.length > 0) {
     if (newObj && newObj.length > 0) {
       oldObj.forEach(function (m) {
-        let newT = newMonitorMap[m.monitorId]
+        const newT = newMonitorMap[m.monitorId]
         // 标识删除或未删除但修改了时间时
         if (m.controlTimeType === '0' && !(newT && Object.keys(newT).length > 0 && newT.logBeginTime === m.logBeginTime && newT.logEndTime === m.logEndTime)) {
           editMonitor = true
@@ -269,9 +289,9 @@ export function monitorPointsEditCheck (oldObj, newObj, vueThis, task, ganttObje
  * @param vueThis
  * @param task
  */
-export function linksEditCheck (oldObj, newObj, vueThis, task, ganttObject) {
+export function linksEditCheck(oldObj, newObj, vueThis, task, ganttObject) {
   // 判断是否存在新增
-  let newLinksMap = {}
+  const newLinksMap = {}
   // 判断变更及修改
   let editL = false
   if (oldObj && oldObj.length > 0) {
@@ -281,7 +301,7 @@ export function linksEditCheck (oldObj, newObj, vueThis, task, ganttObject) {
           newLinksMap[m.source] = m
         })
         oldObj.forEach(function (m) {
-          let newT = newLinksMap[m.source]
+          const newT = newLinksMap[m.source]
           // 标识删除或未删除但修改了时间时
           if (!(newT && Object.keys(newT).length > 0 && newT.type === m.type && newT.lag === m.lag)) {
             editL = true
@@ -314,7 +334,7 @@ export function linksEditCheck (oldObj, newObj, vueThis, task, ganttObject) {
     if (newObj && newObj.length > 0) {
       newObj.forEach(function (link) {
         if (ganttObject.isTaskExists(link.source)) {
-          let t = ganttObject.getTask(link.source)
+          const t = ganttObject.getTask(link.source)
           t.predecessor = link.target
           ganttObject.updateTask(link.source)
           ganttObject.addLink(link)
@@ -334,13 +354,13 @@ export function linksEditCheck (oldObj, newObj, vueThis, task, ganttObject) {
  * 输出、特别说明修改校验
  * @param oldObj
  */
-export function otherEditCheck (oldObj, newObj, ganttObject, vueThis, taskId, type) {
-  let task = ganttObject.getTask(taskId)
+export function otherEditCheck(oldObj, newObj, ganttObject, vueThis, taskId, type) {
+  const task = ganttObject.getTask(taskId)
   // 变更逻辑处理
   let editO = false
   if (oldObj && oldObj.length > 0) {
     if (newObj && newObj.length > 0) {
-      let newMap = {}
+      const newMap = {}
       newObj.forEach(function (s) {
         if (!s.id) {
           editO = true
@@ -399,12 +419,12 @@ export function otherEditCheck (oldObj, newObj, ganttObject, vueThis, taskId, ty
  * @param selectedTaskIds
  * @param vueThis
  */
-export function changeGanttRemove (ganttObject, selectedTaskIds, vueThis) {
+export function changeGanttRemove(ganttObject, selectedTaskIds, vueThis) {
   ganttObject.batchUpdate(function () {
     let result = true
     selectedTaskIds.some(function (id) {
       if (ganttObject.isTaskExists(id)) {
-        let t = ganttObject.getTask(id)
+        const t = ganttObject.getTask(id)
         if (t.infoType === 'create') {
           result = false
         }
@@ -422,16 +442,16 @@ export function changeGanttRemove (ganttObject, selectedTaskIds, vueThis) {
     if (result) {
       selectedTaskIds.forEach(function (id) {
         if (ganttObject.isTaskExists(id)) {
-          let t = ganttObject.getTask(id)
+          const t = ganttObject.getTask(id)
           // 变更逻辑处理
           t.infoType = 'delete'
           t.style = changeColor
-          let affectTasks = []
+          const affectTasks = []
           ganttObject.eachTask(function (task) {
             task.infoType = 'delete'
             task.style = changeColor
             if (vueThis.oldTaskMap && vueThis.oldTaskMap[id] && Object.keys(vueThis.oldTaskMap[id]).length > 0) {
-              let weatherControl = vueThis.oldTaskMap[id].weatherControl
+              const weatherControl = vueThis.oldTaskMap[id].weatherControl
               affectTasks.push({ id: id, weatherControl: weatherControl })
             }
             ganttObject.updateTask(task.id)
@@ -440,11 +460,12 @@ export function changeGanttRemove (ganttObject, selectedTaskIds, vueThis) {
           setNewTaskMap(vueThis, t, null, 'task')
         }
       })
-    } else { // 直接删除
+    } else {
+      // 直接删除
       selectedTaskIds.forEach(function (id) {
         if (ganttObject.isTaskExists(id)) {
           // 删除任务后，自动父工期变为1天修改
-          let parentTaskId = ganttObject.getTask(id).parent
+          const parentTaskId = ganttObject.getTask(id).parent
           if (parentTaskId && ganttObject.isTaskExists(parentTaskId)) {
             // 删除缓存数据
             ganttObject.eachTask(function (task) {
@@ -452,7 +473,7 @@ export function changeGanttRemove (ganttObject, selectedTaskIds, vueThis) {
                 vueThis.newTaskMap.delete(task.id)
               }
             }, parentTaskId)
-            let childIds = ganttObject.getChildren(parentTaskId)
+            const childIds = ganttObject.getChildren(parentTaskId)
             if (childIds && childIds.length === 1 && ganttObject.getTask(parentTaskId).type === 'project') {
               ganttObject.getTask(parentTaskId).type = 'task'
               ganttObject.updateTask(parentTaskId)
@@ -472,9 +493,9 @@ export function changeGanttRemove (ganttObject, selectedTaskIds, vueThis) {
  * @param ganttName
  * @param taskId
  */
-export function beforeUpdateTask (ganttObject, ganttName, taskId) {
+export function beforeUpdateTask(ganttObject, ganttName, taskId) {
   if (ganttName && ganttName === 'changeGantt') {
-    let task = ganttObject.getTask(taskId)
+    const task = ganttObject.getTask(taskId)
     if (!task.infoType) {
       task.infoType = 'update'
     }
@@ -492,10 +513,10 @@ export function beforeUpdateTask (ganttObject, ganttName, taskId) {
  * @param flag
  * @param thisGantt
  */
-export function updateMonitor (taskMonitorMap, task, vueThis, monitorPointsMap, mId, flag, thisGantt) {
+export function updateMonitor(taskMonitorMap, task, vueThis, monitorPointsMap, mId, flag, thisGantt) {
   let newM = []
   if (flag === 'add') {
-    let mon = {
+    const mon = {
       monitorId: mId,
       taskId: task.id,
       logBeginTime: '',
@@ -506,21 +527,22 @@ export function updateMonitor (taskMonitorMap, task, vueThis, monitorPointsMap, 
       mon.logEndTime = thisGantt.date.add(task.end_date, -1, 'day')
     }
     if (JSON.stringify(vueThis.newTaskMap) !== '{}' && vueThis.newTaskMap[task.id] && vueThis.newTaskMap[task.id].updateInfo.indexOf('monitors') !== -1) {
-      let monitors = vueThis.newTaskMap[task.id].monitors
+      const monitors = vueThis.newTaskMap[task.id].monitors
       monitors.push(mon)
       newM = monitors
     } else {
       if (vueThis.taskMonitorMap[task.id] && vueThis.taskMonitorMap[task.id].length > 0) {
-        let newAdd = vueThis.taskMonitorMap[task.id]
+        const newAdd = vueThis.taskMonitorMap[task.id]
         newAdd.push(mon)
         newM = newAdd
       } else {
         newM.push(mon)
       }
     }
-  } else { // 删除标识
+  } else {
+    // 删除标识
     if (JSON.stringify(vueThis.newTaskMap) !== '{}' && vueThis.newTaskMap[task.id] && vueThis.newTaskMap[task.id].updateInfo.indexOf('monitors') !== -1) {
-      let monitors = vueThis.newTaskMap[task.id].monitors
+      const monitors = vueThis.newTaskMap[task.id].monitors
       if (monitors && monitors.length > 0) {
         let index = 0
         let isHas = false
@@ -568,13 +590,13 @@ export function updateMonitor (taskMonitorMap, task, vueThis, monitorPointsMap, 
  * @param vueThis
  * @param monitorLockMap
  */
-export function checkTaskChangeStatus (task, ganttObject, vueThis, monitorLockMap) {
+export function checkTaskChangeStatus(task, ganttObject, vueThis, monitorLockMap) {
   // 获取任务层级
-  let taskLevel = Number(ganttObject.calculateTaskLevel(task))
+  const taskLevel = Number(ganttObject.calculateTaskLevel(task))
   let result = false
-  let monitorIds = task.monitorPoints
+  const monitorIds = task.monitorPoints
   // 锁定层级删除或包含锁定标识任务删除
-  if (monitorLockMap['taskEdit'] === '1' && taskLevel < Number(vueThis.lockLevel)) {
+  if (monitorLockMap.taskEdit === '1' && taskLevel < Number(vueThis.lockLevel)) {
     result = true
   }
   if (monitorIds && monitorIds.split(',').length > 0) {
@@ -597,14 +619,14 @@ export function checkTaskChangeStatus (task, ganttObject, vueThis, monitorLockMa
  * @param id 拖动任务
  * @param parentId 新父id
  */
-export function taskMoveChange (ganttObject, id, parentId, vueThis) {
-  let task = ganttObject.getTask(id)
+export function taskMoveChange(ganttObject, id, parentId, vueThis) {
+  const task = ganttObject.getTask(id)
   // 变更页面修改添加标记
   if (!task.infoType) {
     task.infoType = 'update'
   }
   task.style = changeColor
-  let parTasksIds = []
+  const parTasksIds = []
   parTasksIds.push(parentId)
   getTaskParent(ganttObject, parentId, parTasksIds)
   getTaskParent(ganttObject, id, parTasksIds)
@@ -620,27 +642,27 @@ export function taskMoveChange (ganttObject, id, parentId, vueThis) {
  * @param vueThis
  * @param task
  */
-export function checkInputData (ganttObject, vueThis, task, searchDatas) {
-  let result = []
-  let oldMap = {}
+export function checkInputData(ganttObject, vueThis, task, searchDatas) {
+  const result = []
+  const oldMap = {}
   if (searchDatas && searchDatas.length > 0) {
     searchDatas.forEach(function (item) {
       oldMap[item.taskId] = item
     })
   }
   task.$target.forEach(function (id) {
-    let link = ganttObject.getLink(id)
-    let old = oldMap[link.source]
-    let changeTask = vueThis.newTaskMap[link.source]
+    const link = ganttObject.getLink(id)
+    const old = oldMap[link.source]
+    const changeTask = vueThis.newTaskMap[link.source]
     if (Object.keys(changeTask).length > 0) {
-      let task = ganttObject.getTask(link.source)
-      let updateInfo = vueThis.newTaskMap[link.source].updateInfo
-      let output = vueThis.newTaskMap[link.source].output
+      const task = ganttObject.getTask(link.source)
+      const updateInfo = vueThis.newTaskMap[link.source].updateInfo
+      const output = vueThis.newTaskMap[link.source].output
       // 未删除任务
       if (task.infoType !== 'delete') {
         // 输出修改后
         if (updateInfo.indexOf('output') !== -1 && output && output.length > 0) {
-          let newO = {
+          const newO = {
             taskId: link.source,
             taskName: task.name,
             inputDatas: output
@@ -660,14 +682,14 @@ export function checkInputData (ganttObject, vueThis, task, searchDatas) {
 /**
  * 计算gantt变更数量
  */
-export function calculateChangeCount (ganttObject, vueThis) {
+export function calculateChangeCount(ganttObject, vueThis) {
   let addCount = 0
   let deleteCount = 0
   let modifyCount = 0
   if (vueThis.newTaskMap && Object.keys(vueThis.newTaskMap).length > 0) {
-    let obj = vueThis.newTaskMap
-    for (let key in obj) {
-      let task = obj[key]
+    const obj = vueThis.newTaskMap
+    for (const key in obj) {
+      const task = obj[key]
       if (task.infoType && task.infoType === 'create') {
         addCount += 1
       } else if (task.infoType && task.infoType === 'delete') {
@@ -688,13 +710,13 @@ export function calculateChangeCount (ganttObject, vueThis) {
  * @param vueThis
  * @param ganttObject
  */
-export function backfillChangeDatas (vueThis, ganttObject) {
+export function backfillChangeDatas(vueThis, ganttObject) {
   // 先添加，再更新，后删除
-  let creTask = []
-  let upTask = []
-  let delTaskIds = []
-  for (let key in vueThis.changeTaskInfo) {
-    let changeTask = vueThis.changeTaskInfo[key]
+  const creTask = []
+  const upTask = []
+  const delTaskIds = []
+  for (const key in vueThis.changeTaskInfo) {
+    const changeTask = vueThis.changeTaskInfo[key]
     if (changeTask.infoType === 'create') {
       creTask.push(changeTask)
     } else if (changeTask.infoType === 'update') {
@@ -730,7 +752,7 @@ export function backfillChangeDatas (vueThis, ganttObject) {
     if (upTask != null && upTask.length > 0) {
       upTask.forEach(function (changeTask) {
         if (ganttObject.isTaskExists(changeTask.id) && !ganttObject.getTask(changeTask.id).readonly) {
-          let oldTask = ganttObject.getTask(changeTask.id)
+          const oldTask = ganttObject.getTask(changeTask.id)
           // 工期处理
           vueThis.newTaskMap[changeTask.id] = changeTask
           changeTask.start_date = moment(changeTask.start_date).toDate()
@@ -756,7 +778,7 @@ export function backfillChangeDatas (vueThis, ganttObject) {
  * 附件回填时间修改
  * @param datas
  */
-function changeAttItemDate (datas) {
+function changeAttItemDate(datas) {
   datas.forEach(function (att) {
     if (att.uploadFiles && att.uploadFiles.length > 0) {
       att.uploadFiles.forEach(function (t) {
@@ -766,10 +788,10 @@ function changeAttItemDate (datas) {
   })
 }
 
-function linckCheck (changeTask, vueThis, ganttObject, oldTask) {
+function linckCheck(changeTask, vueThis, ganttObject, oldTask) {
   // 添加依赖关系
   if (changeTask.updateInfo && changeTask.updateInfo.length > 0 && changeTask.updateInfo.indexOf('links') !== -1) {
-    let links = []
+    const links = []
     if (changeTask.links && changeTask.links.length > 0) {
       changeTask.links.forEach(function (link) {
         if (ganttObject.isLinkExists(link.source)) {
@@ -777,8 +799,8 @@ function linckCheck (changeTask, vueThis, ganttObject, oldTask) {
         }
       })
     }
-    let old = oldTask ? oldTask.$target : null
-    let oldLink = []
+    const old = oldTask ? oldTask.$target : null
+    const oldLink = []
     if (old && old.length > 0) {
       old.forEach(function (l) {
         if (ganttObject.isLinkExists(l)) {
@@ -790,7 +812,7 @@ function linckCheck (changeTask, vueThis, ganttObject, oldTask) {
   }
 }
 
-function monitorCheck (changeTask, vueThis, ganttObject, oldTask) {
+function monitorCheck(changeTask, vueThis, ganttObject, oldTask) {
   // 添加依赖关系
   if (changeTask.updateInfo && changeTask.updateInfo.length > 0 && changeTask.updateInfo.indexOf('monitors') !== -1) {
     monitorPointsEditCheck(null, changeTask.monitors, vueThis, ganttObject.getTask(changeTask.id), ganttObject)
@@ -801,15 +823,15 @@ function monitorCheck (changeTask, vueThis, ganttObject, oldTask) {
  * 变更中，修改任务时间、工期时，若父任务为手动默认，手动修改父任务完成时间和工期，实现类似project模式
  *
  */
-export function calculateParentEndDateAndDuration (ganttObject, taskId, vueThis) {
+export function calculateParentEndDateAndDuration(ganttObject, taskId, vueThis) {
   if (ganttObject && Object.keys(ganttObject).length > 0 && taskId) {
-    let task = ganttObject.getTask(taskId)
+    const task = ganttObject.getTask(taskId)
     if (!task.affecTaskIds || task.affecTaskIds.length === 0) {
       task.affecTaskIds = []
     }
     ganttObject.batchUpdate(function () {
       ganttObject.eachParent(function (t) {
-        let oldTask = vueThis.oldTaskMap[t.id]
+        const oldTask = vueThis.oldTaskMap[t.id]
         // 为手动时，若计划完成时间小于当前操作任务的计划完成时间，修改父为操作任务完成时间
         if (t.type === 'task') {
           if (oldTask.end_date < task.end_date) {
