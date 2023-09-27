@@ -58,19 +58,19 @@
               <el-row type="flex"
                       style="text-align: left">
                 <el-col :span="24">
-                  <span class="msg-content overHiding">项目名称：{{ item.processName }}</span>
+                  <span class="msg-content overHiding">项目名称：{{ item.projectInfoApproval && (item.projectInfoApproval.projectName || '') }}</span>
                 </el-col>
               </el-row>
               <el-row type="flex"
                       style="text-align: left">
                 <el-col :span="24">
-                  <span class="msg-content overHiding">项目类型：{{ item.processName }}</span>
+                  <span class="msg-content overHiding">项目类型：{{ item.projectInfoApproval && (item.projectInfoApproval.projectType || '') }}</span>
                 </el-col>
               </el-row>
               <el-row type="flex"
                       style="text-align: left">
                 <el-col :span="24">
-                  <span class="msg-content overHiding">型号代号：{{ item.processName }}</span>
+                  <span class="msg-content overHiding">型号代号：{{ item.projectInfoApproval && (item.projectInfoApproval.modelCode || '') }}</span>
                 </el-col>
               </el-row>
             </div>
