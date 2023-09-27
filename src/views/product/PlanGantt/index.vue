@@ -3,7 +3,7 @@
     <div class="couerDivClass" id="couerDiv">
       <div class="top" :style="{ height: ganttButtonMode === 'double' ? '72px' : '58px' }">
         <command-button-bar
-          :panel-data="thirdMenuParam.specialPlan && thirdMenuParam.specialPlan.includes('SPECIAL_PLAN') ? thematicBarData : barData"
+          :panel-data="btnData"
           :selected-tasks="selectedTasks"
           :gantt-name="ganttName"
           :plan-info-id="planInfoId"
@@ -25,7 +25,7 @@
           :flag="thirdMenuParam.specialPlan"
           :project-category="thirdMenuParam.projectCategory"
           :select-record="thirdMenuParam.selectRecord"
-          :panel-data="thirdMenuParam.specialPlan && thirdMenuParam.specialPlan.includes('SPECIAL_PLAN') ? thematicBarData : barData"
+          :panel-data="btnData"
           @select-task="selectTask"
           @show-detail="showDetail"
           @save-success="detailDrawerClosed"
@@ -90,13 +90,12 @@ import { mapGetters } from 'vuex'
 import PlanGantt from './Components/planGantt'
 import { Drawer } from 'p8-components-ui'
 // import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/commandButtonBarData'
-import { ThematicCommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/ThematicPlanGantt/commandButtonBarDataDoubleRow'
-import { ThematicCommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/ThematicPlanGantt/commandButtonBarDataSingleRow'
 import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataDoubleRow'
 import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataSingleRow'
 import { commandButtonBarData } from '@/assets/commonJS/ganttJS/commandButtonBarData'
 import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
 import PlanAttribute from './Components/planAttribute'
+import { deepClone } from '@/utils/common'
 export default {
   name: 'PlanGanttManage',
   data() {
@@ -121,8 +120,6 @@ export default {
       taskId: null,
       createPage: '',
       ganttName: '',
-      barData: this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow,
-      thematicBarData: this.ganttButtonMode === 'double' ? ThematicCommandButtonBarDataDoubleRow : ThematicCommandButtonBarDataSingleRow,
       taskStatus: {},
       status: '',
       commandButtonBarHeight: this.ganttButtonMode === 'double' ? '72px' : '58px'
@@ -139,8 +136,6 @@ export default {
   watch: {
     ganttButtonMode: {
       handler(val) {
-        this.barData = val === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
-        this.thematicBarData = val === 'double' ? ThematicCommandButtonBarDataDoubleRow : ThematicCommandButtonBarDataSingleRow
         this.commandButtonBarHeight = val === 'double' ? '72px' : '58px'
       },
       immediate: true
@@ -176,6 +171,29 @@ export default {
     }
   },
   computed: {
+    btnData() {
+      if (this.$route.path === '/TaskDecomposition') {
+        const NewCommandButtonBarDataDoubleRow = deepClone(CommandButtonBarDataDoubleRow)
+        const doubleRow = NewCommandButtonBarDataDoubleRow.map((item) => {
+          const arr = item.groups.filter((ele) => {
+            return ele.groupName !== '统计信息' && ele.groupName !== '版本编辑' && ele.groupName !== '版本管理'
+          })
+          item.groups = arr
+          return item
+        })
+        const NewCommandButtonBarDataSingleRow = deepClone(CommandButtonBarDataSingleRow)
+        const singleRow = NewCommandButtonBarDataSingleRow.map((item) => {
+          const arr = item.groups.filter((ele) => {
+            return ele.groupName !== '统计信息' && ele.groupName !== '版本编辑' && ele.groupName !== '版本管理'
+          })
+          item.groups = arr
+          return item
+        })
+        return this.ganttButtonMode === 'double' ? doubleRow : singleRow
+      } else {
+        return this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
+      }
+    },
     ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
   },
   methods: {

@@ -441,7 +441,7 @@ export default {
       }
     },
     showDetail() {
-      if (this.currentRoute == '/myTask') {
+      if (this.$route.path === '/TaskChange') {
         this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, this.createPage)
       } else {
         if (myGantt.getGlobalTaskIndex(this.selectTaskId) !== 0) {
