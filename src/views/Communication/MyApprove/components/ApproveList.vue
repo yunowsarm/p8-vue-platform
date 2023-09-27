@@ -42,13 +42,13 @@
           <template #list="{ item }">
             <div style="padding: 10px">
               <el-row type="flex"
-                      style="text-align: left;align-items: center;margin-bottom: 12px"
+                      style="text-align: left;align-items: center;margin-bottom: 12px;justify-content: space-between;"
                       class="overHiding">
                 <el-col :span="8">
                   <span class="msg-processName overHiding">{{ item.processName }}</span>
                 </el-col>
                 <el-col :span="16"
-                        style="display: flex;align-items: center;justify-content: end">
+                        style="display: flex;align-items: center;justify-content: end;width: 148px">
                   <span>
                     <i class="el-icon-user-solid element_icon"></i>{{item.startUser}}
                   </span>
