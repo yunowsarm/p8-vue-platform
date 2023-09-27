@@ -45,12 +45,6 @@ export const CommandButtonData = [
       if (checkHasProductTask(tasks)) {
         result = true
       }
-      if (tasks[0].planType === '3112') {
-        result = true
-      }
-      if (tasks[0].planType === '3113') {
-        result = true
-      }
       return result
     },
     children: [
@@ -91,12 +85,6 @@ export const CommandButtonData = [
             result = true
           }
           if (checkHasProductTask(tasks)) {
-            result = true
-          }
-          if (tasks[0].planType === '3112') {
-            result = true
-          }
-          if (tasks[0].planType === '3113') {
             result = true
           }
           return result
@@ -141,12 +129,6 @@ export const CommandButtonData = [
           if (checkHasProductTask(tasks)) {
             result = true
           }
-          if (tasks[0].planType === '3112') {
-            result = true
-          }
-          if (tasks[0].planType === '3113') {
-            result = true
-          }
           return result
         }
       },
@@ -189,12 +171,6 @@ export const CommandButtonData = [
           if (checkHasProductTask(tasks)) {
             result = true
           }
-          if (tasks[0].planType === '3112') {
-            result = true
-          }
-          if (tasks[0].planType === '3113') {
-            result = true
-          }
           return result
         }
       },
@@ -235,12 +211,6 @@ export const CommandButtonData = [
             result = true
           }
           if (checkHasProductTask(tasks)) {
-            result = true
-          }
-          if (tasks[0].planType === '3112') {
-            result = true
-          }
-          if (tasks[0].planType === '3113') {
             result = true
           }
           return result
@@ -785,9 +755,6 @@ export const CommandButtonData = [
         } else {
           return false
         }
-      }
-      if (tasks[0].planType === '3112' && tasks[0].managerStatus !== '6409') {
-        return false
       }
       return result
     }
