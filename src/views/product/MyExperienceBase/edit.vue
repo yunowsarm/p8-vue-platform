@@ -64,7 +64,7 @@ export default {
           labelText: '经验库分类',
           defaultValue: [],
           fieldName: 'classifyId',
-          placeholder: '请选择项目类型',
+          placeholder: '请选择',
           colLayout: 'singleCol',
           defaultExpandAll: true,
           optionUrl: {
@@ -79,6 +79,7 @@ export default {
           type: 'text',
           labelText: '计划模板名称',
           fieldName: 'label',
+          placeholder: '请输入',
           colLayout: 'singleCol'
         }
       ]
