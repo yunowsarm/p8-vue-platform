@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width: 100%">
     <form2
       ref="form"
       :comp="comp"

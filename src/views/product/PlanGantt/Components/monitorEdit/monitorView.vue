@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative; overflow-y: auto; overflow-x: hidden">
+  <div style="position: relative; overflow-y: auto; overflow-x: hidden;width: 100%">
     <form2
       :comp="comp"
       :is-view="true"
