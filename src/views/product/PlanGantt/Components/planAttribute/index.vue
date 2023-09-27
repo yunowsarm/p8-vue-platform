@@ -108,7 +108,7 @@ export default {
         if (task.readonly) {
           this.isView = false
         }
-        if (this.currentRoute == '/myTask') {
+        if (this.$route.path === '/TaskChange') {
           this.isView = true
         }
         if (task.managerStatus === '6404') {
