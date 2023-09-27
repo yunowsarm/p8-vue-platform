@@ -66,8 +66,7 @@
           <span v-if="scope.row.dataType === 'task'"
                 class="underline"
                 @click="drillCol(scope, thirdMenuData, scope.row.id)">{{ scope.row.name }} </span>
-          <span v-else
-                @click="drillCol(scope, thirdMenuData, scope.row.id)">{{ scope.row.name }}</span>
+          <span v-else>{{ scope.row.name }}</span>
         </template>
         <template #level="{ scope }">
           <span class="underline"
@@ -180,11 +179,8 @@ import {
 
 import { getTaskStatusInfo } from '@/utils/commonBusiness'
 import { overdueTextHandle } from '@/utils/common'
-// import testDetails from './testDetail'
 import processDecomposition from './processDecomposition'
 import frontToBack from './frontToBack'
-// import { getMonitorData, getBudgetData } from '@/components/workLayout/Components/projectProgress/Components/layoutData'
-// import RevenueView from '@/components/workLayout/Components/projectProgress/Components/taskProgressInformation/Components/revenueView'
 import { generateTree } from '@/utils/generateTree'
 import moment from 'moment'
 import Vue from 'vue'
@@ -200,9 +196,7 @@ export default {
     CommonTree,
     CommonTable,
     SearchFormList,
-    // testDetails,
     MenuLayout,
-    // RevenueView,
     'el-tooltip': Tooltip
   },
   data () {
@@ -211,7 +205,7 @@ export default {
         title: '序号',
         type: '',
         dataIndex: 'WBS',
-        minWidth: 60,
+        minWidth: 80,
         align: 'left'
       },
       {
@@ -524,24 +518,8 @@ export default {
       })
     },
     async handleMenuBeforClose (done) {
-      // let params = {
-      //   createPage: 'compile',
-      //   dicType: 'ACTIVITY_TYPE',
-      //   planInfoId: this.getPlanDataPinfoId,
-      //   taskId: this.getPlanDataTaskId
-      // }
-      // let [err, res] = await this.$to(this.$api['taskManager.loadCheckTaskData'](params))
-      // this.$router.push({ path: this.currentRouterPath })
-      // this.thirdMenuTitle = ''
+      this.$router.push({ path: this.currentRouterPath })
       this.visible = false
-
-      // if (!err) {
-      //   let checkPlanData = res.tasks
-      //   let spliceIndex = checkPlanData.findIndex(i => i.indexNo === 0)
-      //   if (spliceIndex !== -1) {
-      //     checkPlanData.splice(spliceIndex, 1)
-      //   }
-      // }
     },
     closeDrawer () {
       this.$refs.table.searchData()
@@ -551,13 +529,8 @@ export default {
     },
     onSelect (node) {
       let me = node
-      // if (me.id) {
-      //   this.layersParams = me.layersParams
       this.tableOtherParams.projectTypeId = me.id
       this.layersParams = me.id
-      // } else {
-      //   this.layersParams = {}
-      // }
       this.$refs.table.searchData()
     },
     search (param) {
@@ -599,7 +572,6 @@ export default {
         getProjectLevel: record.level
       }
       this.projectLevel = record.level
-      // this.thirdMenuTitle = '【' + record.modelName + '】型号的计划'
       this.visible = true
     },
     getAllStatusOptions () {
@@ -621,8 +593,6 @@ export default {
     monitorpointIconHandle (row) {
       let that = this
       let tempIcon = []
-      // row.monitorpointArray = 1008
-      // row.monitorpointIconArray = 'p8 icon-monthly-comprehensive-plan'
       if (row.monitorpointArray && row.monitorpointIconArray) {
         let monitorpointArray = row.monitorpointArray.split(',')
         monitorpointArray.forEach((item, index) => {
@@ -709,12 +679,10 @@ export default {
   right: 470px;
   top: 15px;
   font-weight: bolder;
-  // top: 50%;
-  // transform: translateY(-50%);
   color: red;
   font-size: larger;
 }
-::deep .normal-header {
+::v-deep .normal-header {
   position: relative;
 }
 .icon-style {
@@ -736,7 +704,6 @@ export default {
   }
   &.approves {
     background-color: $base-red-color;
-    // margin-left: -15px;
   }
   &.leaf {
     background-color: $base-green-color;
@@ -745,5 +712,9 @@ export default {
     background-color: $base-green-color;
     margin-left: -15px;
   }
+}
+.underline {
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>
