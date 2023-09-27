@@ -36,6 +36,9 @@ export const CommandButtonData = [
           result = true
         }
       }
+      if (tasks.length === 1 && tasks[0].managerStatus === '6402') {
+        result = false
+      }
       if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
         result = true
       }
@@ -80,6 +83,9 @@ export const CommandButtonData = [
             } else {
               result = true
             }
+          }
+          if (tasks.length === 1 && tasks[0].managerStatus === '6402') {
+            result = false
           }
           if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
             result = true
@@ -126,6 +132,9 @@ export const CommandButtonData = [
               result = true
             }
           }
+          if (tasks.length === 1 && tasks[0].managerStatus === '6402') {
+            result = false
+          }
           if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
             result = true
           }
@@ -171,6 +180,9 @@ export const CommandButtonData = [
               result = true
             }
           }
+          if (tasks.length === 1 && tasks[0].managerStatus === '6402') {
+            result = false
+          }
           if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
             result = true
           }
@@ -215,6 +227,9 @@ export const CommandButtonData = [
             } else {
               result = true
             }
+          }
+          if (tasks.length === 1 && tasks[0].managerStatus === '6402') {
+            result = false
           }
           if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
             result = true
@@ -1088,20 +1103,22 @@ export const CommandButtonData = [
     title: '通知下发',
     help: '通知下发',
     clickFun: function (btn, ganttName, tasks) {
-      const thisGantt = GanttObject.getGanttObject(ganttName)
-      const thisDp = GanttObject.getDpObject(ganttName)
-      if (thisGantt && thisDp) {
-        thisGantt.confirm({
-          text: '下发时，将连同所选任务的子任务及关联父任务一同下发，任务下发后责任人可见，是否确认下发选中任务?',
-          ok: '确认',
-          cancel: '取消',
-          callback: function (result) {
-            if (result) {
-              issueTask(thisGantt, thisDp)
-            }
-          }
-        })
-      }
+      const vueThis = store.getters.vueThis
+      vueThis.noticeShow()
+      // const thisGantt = GanttObject.getGanttObject(ganttName)
+      // const thisDp = GanttObject.getDpObject(ganttName)
+      // if (thisGantt && thisDp) {
+      //   thisGantt.confirm({
+      //     text: '下发时，将连同所选任务的子任务及关联父任务一同下发，任务下发后责任人可见，是否确认下发选中任务?',
+      //     ok: '确认',
+      //     cancel: '取消',
+      //     callback: function (result) {
+      //       if (result) {
+      //         issueTask(thisGantt, thisDp)
+      //       }
+      //     }
+      //   })
+      // }
     },
     isDisableFun: function (btn, ganttName, tasks) {
       let result
