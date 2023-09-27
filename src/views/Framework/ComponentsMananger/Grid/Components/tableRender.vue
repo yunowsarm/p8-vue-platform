@@ -209,7 +209,7 @@ labelWidth="70px"
         </template>
       </common-drawer>
       <common-drawer :title="customComponentParams.title"
-                     v-if="customComponentParams.type === 'drawer'"
+                     v-if="customComponentParams.type === 'drawer' && customVisible"
                      :visible="customVisible"
                      :size="customComponentParams.width"
                      :drawer-config="drawerConfig"
@@ -222,7 +222,7 @@ labelWidth="70px"
                      @close="customClose"></component>
         </template>
       </common-drawer>
-      <common-dialog v-if="customComponentParams.type === 'dialog'"
+      <common-dialog v-if="customComponentParams.type === 'dialog' && customVisible"
                      :title="customComponentParams.title"
                      :visible="customVisible"
                      destroy-on-close

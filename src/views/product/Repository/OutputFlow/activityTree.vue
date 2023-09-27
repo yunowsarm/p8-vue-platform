@@ -1,90 +1,20 @@
 <template>
   <div style="height: 100%; position: relative;">
-    <div class="activityButton">
-      <span class="button" v-for="(item, index) in buttonList" :key="index" :disabled="item.isDisableFun(selectedTasks)">
-        <i :class="item.icon" @click="buttonClick(item)"></i>{{item.title}}
-      </span>
-    </div>
-    <div id='actionMenu'
-         v-if='menuVisible'
-         ref='actionMenu'
-         :style='{top:dropdownTop,left:dropdownLeft}'
-         class="actionMenu">
-      <el-menu mode="vertical"
-               :collapse="true">
-        <el-submenu v-if="menuIsView(1)"
-                    index="1">
-          <span slot="title">
-            <span @click="addTask(1,'Child')">
-              <i class="p8 icon-new-subordinate"></i>
-              <span>&nbsp;新建下级</span>
-            </span>
-          </span>
-          <el-menu-item index="1-1">
-            <div @click.stop="addTask(2,'Child')">2条</div>
-          </el-menu-item>
-          <el-menu-item index="1-2">
-            <div @click.stop="addTask(4,'Child')">4条</div>
-          </el-menu-item>
-          <el-menu-item index="1-3">
-            <div @click.stop="addTask(6,'Child')">6条</div>
-          </el-menu-item>
-          <el-menu-item index="1-4">
-            <div @click.stop="addTask(8,'Child')">8条</div>
-          </el-menu-item>
-        </el-submenu>
-        <el-submenu v-if="menuIsView(2)"
-                    index="2">
-          <span slot="title">
-            <span @click="addTask(1,'After')">
-              <i class="p8 icon-new-sibling"></i>
-              <span>&nbsp;新建同级插入</span>
-            </span>
-          </span>
-          <el-menu-item index="2-1">
-            <div @click="addTask(2,'After')">2条</div>
-          </el-menu-item>
-          <el-menu-item index="2-2">
-            <div @click="addTask(4,'After')">4条</div>
-          </el-menu-item>
-          <el-menu-item index="2-3">
-            <div @click="addTask(6,'After')">6条</div>
-          </el-menu-item>
-          <el-menu-item index="2-4">
-            <div @click="addTask(8,'After')">8条</div>
-          </el-menu-item>
-        </el-submenu>
-        <el-menu-item v-if="menuIsView(3)"
-                      @click="outdent()"
-                      index="3">
-          <i class="p8 icon-upgrade"></i>
-          <span>&nbsp;升级</span>
-        </el-menu-item>
-        <el-menu-item v-if="menuIsView(4)"
-                      @click="indent()"
-                      index="4">
-          <i class="p8 icon-downgrade"></i>
-          <span>&nbsp;降级</span>
-        </el-menu-item>
-        <el-menu-item v-if="menuIsView(5)"
-                      @click="removeTask"
-                      index="5">
-          <i class="p8 icon-delete"></i>
-          <span>&nbsp;删除</span>
-        </el-menu-item>
-        <el-menu-item v-if="menuIsView(6)"
-                      @click="importTask"
-                      index="6">
-          <i class="p8 icon-excel-import"></i>
-          <span>&nbsp;导入</span>
-        </el-menu-item>
-        <el-menu-item v-if="menuIsView(7)"
-                      @click="exportTask"
-                      index="6">
-          <i class="p8 icon-excel-import"></i>
-          <span>&nbsp;导出</span>
-        </el-menu-item>
-      </el-menu>
+    <div class="header">
+      <div class="activityButton">
+        <div class="button" v-for="(item, index) in buttonList" :key="item.id" :class="{'is-disabled': isDisableFun(item)}">
+          <el-tooltip effect="dark" :content="item.title" placement="top" :key="index">
+            <i :class="item.icon" @click="buttonClick(item)"></i>
+          </el-tooltip>
+        </div>
+      </div>
+      <!-- <search-form-list ref="search"
+                        searchWidth="220px"
+                        style="display: inline-block;vertical-align: middle;"
+                        :dataSource="dataSource"
+                        @search="search"
+                        @re-set="reset">
+      </search-form-list> -->
     </div>
     <div ref='myGantt'
          style='width:100%; height:calc(100% - 60px);' class="myActivityGantt"></div>
@@ -106,7 +36,7 @@
     transform: rotateZ(0deg);
   } */
 </style>
-<style lang="scss">
+<style lang="scss" scoped>
 #actionMenu {
   .el-menu--collapse {
     width: 164px;
@@ -127,20 +57,62 @@
     line-height: 36px;
   }
 }
-.activityButton {
+.header {
   height: 50px;
+  border-bottom: 1px solid #c6c6c6;
+  margin-bottom: 10px;
 }
-.myActivityGantt{
-
+.activityButton {
+  width: 530px;
+  line-height: 50px;
+  display: inline-block;
+  .button {
+    display: inline-block;
+    width: 25px;
+    margin: 0 5px;
+    i{
+      font-size: 25px;
+      color: #1890ff;
+    }
+  }
+}
+.search-wrapper{
+  right: 15px;
+  top: 5px;
+}
+.myActivityGantt ::v-deep{
+  .gantt_grid_scale {
+    border-bottom: 1px solid #c6c6c6 !important;
+    background: #f0f2f4!important;
+    .gantt_grid_head_cell{
+      background: #f0f2f4 !important;
+      color: #000000 !important;
+    }
+  }
+  .gantt_row {
+    background-color: #fff;
+  }
+  .gantt_row.odd {
+    background-color: #f0f2f4;
+  }
+}
+.is-disabled {
+  cursor: not-allowed;
+  i {
+    color: #9ba0aa !important;
+    pointer-events: none;
+  }
 }
 </style>
 <script>
 import { Menu, Submenu, MenuItem } from 'p8-components-ui'
-import { CommandButtonData } from '@/assets/commonJS/ganttJS/commandButtonData'
+// import { CommandButtonData } from '@/assets/commonJS/ganttJS/commandButtonData'
 import { PlanRightMenuData } from '@/assets/commonJS/ganttJS/planRightMenuData'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import { outPutFlowGantt } from '@/assets/commonJS/ganttJS/outPutFlowGantt'
 import { activityButtonData } from './activityButton'
+import _ from 'lodash'
+// import { P8Search as SearchFormList } from 'p8-components-ui'
 let myGantt
 const ganttName = 'activityGantt'
 export default {
@@ -154,7 +126,8 @@ export default {
   components: {
     'el-menu': Menu,
     'el-submenu': Submenu,
-    'el-menu-item': MenuItem
+    'el-menu-item': MenuItem,
+    // SearchFormList
   },
   data () {
     return {
@@ -164,7 +137,7 @@ export default {
       dropTop: '0px',
       dropLeft: '0px',
       selectedTasks: [],
-      buttonDatas: CommandButtonData,
+      // buttonDatas: CommandButtonData,
       resourceConfig: {},
       resourceTemplates: {},
       selectTaskId: '',
@@ -173,8 +146,17 @@ export default {
       detailVisible: false,
       mouseX: '',
       mouseY: '',
-      buttonList: activityButtonData,
-      copyList: []
+      buttonList:  _.cloneDeep(activityButtonData),
+      copyList: [],
+      dataSource: [
+        {
+          type: 'text',
+          labelText: '任务名称',
+          fieldName: 'taskName',
+          placeholder: '请输入任务名称'
+        }
+      ],
+      logoList: []
     }
   },
   watch: {
@@ -184,7 +166,6 @@ export default {
       }
     },
     menuVisible: function (newVal, oldVal) {
-      // alert(111)
       if (newVal) {
         setTimeout(() => {
           document.addEventListener('click', this.hideMenu)
@@ -200,19 +181,34 @@ export default {
       this.callParentSelectTasks()
     }
   },
-  computed: {
-    isDisable () {
-      let that = this
-      return function (btnConfig) {
-        let btnData = that.buttonDatas.filter(btn => btn.id === btnConfig.buttonId)
-        return btnData[0].isDisableFun(null, ganttName, this.selectedTasks)
+  async created () {
+    let that = this
+    await this.$api['dictionaryManagement.list']({dicType: "ACTIVITY_TYPE"}).then(res => {
+      that.logoList = res
+      let list = []
+      if (res && res.length) {
+        res.forEach(el => {
+          list.push({
+            id: el.id,
+            icon: el.icon,
+            title: el.meaning,
+            clickFun: function () {
+              that.btnClick(el)
+            },
+            isDisableFun: function (tasks) {
+              return that.isDisableFunCheck(tasks)
+            }
+          })
+        })
       }
-    },
-    buttonData () {
+      that.buttonList.splice(7, 0, ...list)
+    })
+  },
+  computed: {
+    isDisableFun(item){
       let that = this
-      return function (btnConfig) {
-        let btnData = that.buttonDatas.filter(btn => btn.id === btnConfig.buttonId)
-        return btnData[0]
+      return function (item) {
+        return item.isDisableFun(that.selectedTasks, that)
       }
     },
     menuIsView (menuKey) {
@@ -228,13 +224,14 @@ export default {
   },
   methods: {
     buttonClick (btn) {
-      btn.clickFun(this.selectedTasks, this)
+      btn.clickFun(this.selectedTasks, this, myGantt)
     },
     hideMenu () {
       this.menuVisible = false
     },
     initGantt (activityInfoId) {
       // 清空原有数据
+      this.selectedTasks = []
       if (myGantt) {
         GanttObject.setGanttObject(ganttName, {})
       }
@@ -256,9 +253,17 @@ export default {
         console.error('error' + error)
       })
     },
-    btnClick (btn) {
-      this.menuVisible = false
-      btn.clickFun(null, ganttName, this.selectedTasks)
+    btnClick (item) {
+      if (this.selectedTasks && this.selectedTasks.length) {
+        let that = this
+        that.selectedTasks.forEach(el => {
+          let task = myGantt.getTask(el.id)
+          if (task) {
+            task.type = item.id
+            myGantt.updateTask(el.id)
+          }
+        })
+      }
     },
     callParentSelectTasks () {
       this.$emit('select-task', this.selectedTasks, ganttName)
@@ -277,7 +282,7 @@ export default {
     addTask (num, pos) {
       let that = this
       // 模拟添加
-      let taskId = this.taskId
+      let taskId = this.selectedTasks.map(el => el.id)[0]
       let task = myGantt.getTask(taskId)
       let parent = task.parent
       switch (pos) {
@@ -395,7 +400,7 @@ export default {
     },
     // 删除
     removeTask () {
-      let taskId = this.taskId
+      let taskId = this.selectedTasks.map(el => el.id)[0]
       myGantt.batchUpdate(function () {
         myGantt.deleteTask(taskId)
       })
@@ -441,7 +446,33 @@ export default {
     refreshData () {
       this.isFilter = true
       myGantt.refreshData()
+    },
+    search () {
+
+    },
+    reset () {
+
+    },
+    isDisableFunCheck() {
+      let tasks = this.selectedTasks
+      let result = false
+      if (tasks && tasks.length) {
+        tasks.forEach(el => {
+          if (el.type) {
+            result = true
+          }
+        })
+      } else {
+        result = true
+      }
+      return result
     }
+  },
+  beforeDestroy () {
+    myGantt.unselectTask()
+    this.selectedTasks = []
+    this.buttonList = []
+    myGantt = null
   }
 }
 </script>

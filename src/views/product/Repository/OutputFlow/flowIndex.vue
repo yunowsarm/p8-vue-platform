@@ -19,38 +19,39 @@
           </template>
           <template #center>
             <el-tabs v-model="describeKey"
-                     type="card"
                      ref="tab"
+                     tab-position="left"
                      class="flowTabs"
                      style="height: 100%;"
                      @tab-click="onSelect"
                      v-if="triggerVal">
               <el-tab-pane name="describeKey">
                 <span slot="label">
-                  <div style="display: flex; align-items: center"><i class="p8 icon-task-details"></i><span style="margin-left: 4px">活动描述</span></div>
+                  <div style="display: flex; align-items: center"><i class="p8 icon-jindu"></i><span style="margin-left: 4px">活动描述</span></div>
                 </span>
 
               </el-tab-pane>
               <el-tab-pane name="inputKey">
                 <span slot="label">
-                  <div style="display: flex; align-items: center"><i class="el-icon-sort-down"></i><span style="margin-left: 4px">输入</span></div>
+                  <div style="display: flex; align-items: center"><i class="p8 icon-shuruyaoqiu"></i><span style="margin-left: 4px">输入</span></div>
                 </span>
 
               </el-tab-pane>
               <el-tab-pane name="outputKey">
                 <span slot="label">
-                  <div style="display: flex; align-items: center"><i class="p8 icon-output"></i><span style="margin-left: 4px">输出</span></div>
+                  <div style="display: flex; align-items: center"><i class="p8 icon-shuchuyaoqiu"></i><span style="margin-left: 4px">输出</span></div>
                 </span>
 
               </el-tab-pane>
               <el-tab-pane name="specialKey">
                 <span slot="label">
-                  <div style="display: flex; align-items: center"><i class="p8 icon-special-instructions"></i><span style="margin-left: 4px">特别说明</span></div>
+                  <div style="display: flex; align-items: center"><i class="p8 icon-tebieshuoming"></i><span style="margin-left: 4px">特别说明</span></div>
                 </span>
 
               </el-tab-pane>
             </el-tabs>
-            <keep-alive>
+            <div class="formEdit">
+               <keep-alive>
               <describe-edit @saveSuccess="saveCallback"
                              @saveAll="saveAll"
                              ref="describeEdit"
@@ -81,6 +82,7 @@
                             :activityInfoId="activityId"
                             v-show="'specialKey' == activeKey && activityId"></special-edit>
             </keep-alive>
+            </div>
           </template>
         </normal-layout>
       </el-tab-pane>
@@ -153,7 +155,15 @@
 }
 
 .flowTabs {
-  height: 50px !important;
+  width:120px !important;
+  display: inline-block;
+  vertical-align: top;
+  .el-tabs__item.is-active{
+    color: #1890ff;
+  }
+  .el-tabs__active-bar{
+    background: #1890ff;
+  }
   > .el-tabs__header.is-top {
     height: 42px;
   }
@@ -167,6 +177,13 @@
       height: 100%;
     }
   }
+}
+.formEdit {
+  width: calc(100% - 125px);
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
 }
 </style>
 <script>
@@ -235,10 +252,10 @@ export default {
       ],
       normalLayout: {
         west: {
-          xs: 10, sm: 10, md: 10, lg: 10, xl: 10
+          xs: 12, sm: 12, md: 12, lg: 12, xl: 12
         },
         center: {
-          xs: 14, sm: 14, md: 14, lg: 14, xl: 14
+          xs: 12, sm: 12, md: 12, lg: 12, xl: 12
         }
       },
       drawerConfig: { /// z-index
