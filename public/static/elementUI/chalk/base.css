@@ -56,6 +56,3 @@
 .el-pagination.is-background .el-pager li:not(.disabled).active {
     background-color: #1890ff;
 }
-.tag-tabs div .tab-item.active[data-v-690bb984], .el-button--text, .common-table .el-dropdown-link,.tag-tabs div .tab-item.active > span > i[data-v-690bb984] {
-    color: #1890ff;
-}
