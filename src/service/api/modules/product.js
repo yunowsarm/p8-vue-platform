@@ -387,6 +387,15 @@ export const repositoryApi = {
       desc: '立项管理->项目立项->获取权限设置'
     }
   ],
+  planInfoManager: [
+    {
+      name: 'getPlanInfo',
+      method: 'POST',
+      path: '/product/pm/planManager/getPlanInfo',
+      mockPath: '/product/pm/planManager/getPlanInfo',
+      desc: '项目管理->计划管理->获取计划详情'
+    }
+  ],
   planGanttManager: [
     {
       name: 'async',

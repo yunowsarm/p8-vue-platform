@@ -145,7 +145,6 @@
                      :visible="visible"
                      direction="ttb"
                      :projectLevel="projectLevel"
-                     :drawer-config="{ withHeader: false }"
                      :drawerConfig="menuDrawerConfig">
         <template #drawer>
           <menu-layout :third-menu-param="thirdMenuParam"
@@ -434,6 +433,7 @@ export default {
       },
       menuDrawerConfig: {
         modal: false,
+        withHeader: false,
         beforeClose: this.handleMenuBeforClose
       },
       allStatus: [],
