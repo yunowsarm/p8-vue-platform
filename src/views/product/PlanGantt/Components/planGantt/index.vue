@@ -98,6 +98,21 @@
         :auto-scheduling="autoParentDate"
       ></activity-import>
     </el-drawer>
+    <common-dialog
+      title="通知下发"
+      width="70%"
+      v-if="noticeVisible"
+      :visible="noticeVisible"
+      :show-handle-btn="false"
+      @isfullscreen="isfullscreen"
+      @close="closeNotice"
+      :is-view-cs-footer="false"
+      :dialog-height="460"
+    >
+      <template #dialog>
+        <Notice :task-id="selectTaskId" @close="closeNotice" />
+      </template>
+    </common-dialog>
     <monitor-time-manger
       v-if="controlTimeVisible"
       :visible="controlTimeVisible"
@@ -362,7 +377,17 @@
         <large ref="large" :plan-type-param="planTypeParam" @saveSuccess="saveCallback" v-if="myBigExperienceVisible"></large>
       </template>
     </common-dialog> -->
-    <common-dialog title="查询" width="90%" :visible="ganttSearchVisible" :show-handle-btn="false" @isfullscreen="isfullscreen" @close="closeSearch" :is-view-cs-footer="false" :dialog-height="360">
+    <common-dialog
+      title="查询"
+      width="90%"
+      v-if="ganttSearchVisible"
+      :visible="ganttSearchVisible"
+      :show-handle-btn="false"
+      @isfullscreen="isfullscreen"
+      @close="closeSearch"
+      :is-view-cs-footer="false"
+      :dialog-height="360"
+    >
       <template #dialog>
         <command-search :gantt-name="ganttName" :plan-info-id="planInfoId"></command-search>
       </template>
@@ -509,6 +534,7 @@ import OutPutView from '../outPutView'
 import ProductTaskView from '../productTaskView'
 import ProductTask from '../productTaskView/ProjectTask'
 import ErpList from '../erpList'
+import Notice from '../notice'
 import ProductTaskEdit from '../productTaskView/productTaskEdit'
 // import MyExperienceClassify from '@/views/Product/Repository/MyExperienceBase/myExperienceClassify'
 
@@ -662,6 +688,7 @@ export default {
     CommonDrawer,
     ErpList,
     ListLayout,
+    Notice,
     // Flight,
     // Large,
     CommandSearch,
@@ -699,6 +726,7 @@ export default {
       customHeight: 300,
       ganttName: 'planGantt',
       createNum: 1,
+      noticeVisible: false,
       menuVisible: false,
       treeDataEditorConfig: {
         useTreeFormat: true,
@@ -1352,6 +1380,9 @@ export default {
             if (res.projectStatus === '2205') {
               myGantt.config.readonly = true
             }
+            if (res.monitorLock && res.monitorLock['1010'] && res.monitorLock['1010'] === '1') {
+              myGantt.config.readonly = true
+            }
             if (res.trainingModeList) {
               const trainingModeListArr = []
               res.trainingModeList.map((item) => {
@@ -1589,6 +1620,7 @@ export default {
           that.selectedTasks.forEach((task) => {
             myGantt.getTask(task.id).owner_id = ownerId
             myGantt.getTask(task.id).specialDutyUserId = ownerId
+            console.log('🚀 ~ file: index.vue:1611 ~ that.selectedTasks.forEach ~ row.deptName:', row.deptName)
             myGantt.getTask(task.id).dutyDeptName = row.deptName
             myGantt.updateTask(task.id)
           })
@@ -1651,6 +1683,12 @@ export default {
     },
     closeMenuConfig() {
       this.rightMenuConfigVisible = false
+    },
+    noticeShow() {
+      this.noticeVisible = true
+    },
+    closeNotice() {
+      this.noticeVisible = false
     },
     submitButtonBarSetting(updateValues, requestOtherParams) {
       const _this = this

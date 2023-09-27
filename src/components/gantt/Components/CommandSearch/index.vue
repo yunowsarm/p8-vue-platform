@@ -120,8 +120,11 @@
           },
           deep: true
         },
-        planInfoId: function (newVal, oldVal) {
-          this.loadSelectOptionData(newVal)
+        planInfoId:  {
+          handler (newVal, oldVal) {
+            if (newVal) this.loadSelectOptionData(newVal)
+          },
+          immediate: true
         }
       },
       computed: {

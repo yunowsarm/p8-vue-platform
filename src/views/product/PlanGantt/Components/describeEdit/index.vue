@@ -170,7 +170,10 @@ export default {
           fieldConfig: {
             filterable: true
           },
-          options: []
+          options: [],
+          eventHandle: {
+            change: 'ownerChangeHandle'
+          }
         },
         {
           type: 'text',
@@ -677,6 +680,18 @@ export default {
         startDate[0].fieldConfig.disabled = valueObj[autoSchedulingValue]
         endDate[0].fieldConfig.disabled = valueObj[autoSchedulingValue]
         duration[0].fieldConfig.disabled = valueObj[autoSchedulingValue]
+      }
+    },
+    ownerChangeHandle(val) {
+      if (!val) {
+        this.formData.roleName = ''
+        this.formData.dutyDeptName = ''
+      } else {
+        const user = this.ownerDataOptions.find((item) => {
+          return item.id === val
+        })
+        this.formData.roleName = user.roleName
+        this.formData.dutyDeptName = user.deptName
       }
     }
   }
