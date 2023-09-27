@@ -183,6 +183,7 @@ import frontToBack from './frontToBack'
 import { generateTree } from '@/utils/generateTree'
 import moment from 'moment'
 import Vue from 'vue'
+import { getMonitorData, getBudgetData } from '@/components/workLayout/Components/projectProgress/Components/layoutData'
 
 export default {
   name: 'Normal',
@@ -446,6 +447,12 @@ export default {
     }
   },
   created () {
+    console.log('111111111111111111111111111');
+    let that = this
+    getMonitorData({ monitorId: [] }).then(res => {
+      that.monitorpointDataArray = res
+    })
+    console.log('22222222222222222222222');
     this.$api[this.treeApi]({ dicType: 'PROJECTTYPE' }).then((res) => {
       res.forEach(item => {
         item.value = item.id
@@ -606,13 +613,13 @@ export default {
       return tempIcon
     },
     iconClick (row) {
-      // let that = this
-      // if (row.revenueBudgetId) {
-      //   getBudgetData({ revenueBudgetId: row.revenueBudgetId }).then(res => {
-      //     that.revenueBudgetParam = res
-      //     that.revenueBudgetVisible = true
-      //   })
-      // }
+      let that = this
+      if (row.revenueBudgetId) {
+        getBudgetData({ revenueBudgetId: row.revenueBudgetId }).then(res => {
+          that.revenueBudgetParam = res
+          that.revenueBudgetVisible = true
+        })
+      }
     },
     revenueBudgetClose () {
       this.revenueBudgetVisible = false
