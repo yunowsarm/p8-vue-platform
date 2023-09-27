@@ -4,13 +4,13 @@
       <li v-for="(item,index) in versionData"
           :key="item.attId"
           :class="{ 'not-last': index < versionData.length -1 }">
-        <p>特别说明&nbsp;&nbsp;&nbsp;&nbsp; <span class="filename">y</span>{{item.aoDescribes}}</p>
+        <p>特别说明&nbsp;&nbsp;&nbsp;&nbsp; <span class="filename"></span>{{item.aoDescribes}}</p>
         <p>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件&nbsp;&nbsp;&nbsp;&nbsp;
           <span class="filename"
                 @click="downloadOutputRequsetFile(item)">{{item.attFileName}}</span>
           <span style="margin-left: 160px;">
-            密级 &nbsp;&nbsp;&nbsp;&nbsp;<span class="filename">{{item.attFileName}}</span>
+            密级 &nbsp;&nbsp;&nbsp;&nbsp;<span class="filename">{{item.attConfidentialiteDisplay}}</span>
           </span>
         </p>
       </li>
