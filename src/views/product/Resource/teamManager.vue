@@ -105,7 +105,7 @@
                       <el-popconfirm title="确认要将该人退出项目组吗?"
                                      confirmButtonText="确认"
                                      cancelButtonText="取消"
-                                     @onConfirm="deleteUserHandle(scope, scope.$index)">
+                                     @confirm="deleteUserHandle(scope, scope.$index)">
                         <el-button slot="reference"
                                    size="mini"
                                    type="text"
