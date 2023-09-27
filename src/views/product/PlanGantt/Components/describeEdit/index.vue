@@ -170,7 +170,10 @@ export default {
           fieldConfig: {
             filterable: true
           },
-          options: []
+          options: [],
+          eventHandle: {
+            change: 'ownerChangeHandle'
+          }
         },
         {
           type: 'text',
@@ -293,7 +296,7 @@ export default {
     this.$api['planGanttManager.classifiedFiltering']({ secretGrade: task.secretGrade }).then((res) => {
       this.falg = res
     })
-    if (this.currentRoute == '/myTask') {
+    if (this.$route.path === '/TaskChange') {
       this.getPlanInfo(task)
     }
   },
@@ -373,7 +376,7 @@ export default {
     getPlanInfo(task) {
       if (!task.planInfoId) return
       const that = this
-      this.$api['planInfoManager.getPlanInfo']({ planInfoId: task.planInfoId })
+      this.$api['planInfoManager.getPlanInfo']({ id: task.planInfoId })
         .then(function (res) {
           if (res) {
             that.planInfo = res
@@ -677,6 +680,18 @@ export default {
         startDate[0].fieldConfig.disabled = valueObj[autoSchedulingValue]
         endDate[0].fieldConfig.disabled = valueObj[autoSchedulingValue]
         duration[0].fieldConfig.disabled = valueObj[autoSchedulingValue]
+      }
+    },
+    ownerChangeHandle(val) {
+      if (!val) {
+        this.formData.roleName = ''
+        this.formData.dutyDeptName = ''
+      } else {
+        const user = this.ownerDataOptions.find((item) => {
+          return item.id === val
+        })
+        this.formData.roleName = user.roleName
+        this.formData.dutyDeptName = user.deptName
       }
     }
   }
