@@ -460,17 +460,9 @@ export default {
       }
       this.projectClassification = record.projectClassification
       if (this.createPage === 'planChange') {
-        if (record.projectClassification === 'PROJECT_CLASSIFICATION_0_01') {
-          teamRoleValidatorParams.processDefinitionKey = 'planChangeApproveSpecialPlan'
-        }
-        if (record.projectClassification === 'PROJECT_CLASSIFICATION_0_02') {
-          teamRoleValidatorParams.processDefinitionKey = 'planChangeApproveSpecialPlan'
-        }
+        teamRoleValidatorParams.processDefinitionKey = 'planChangeApproveSpecialPlan'
       } else if (this.createPage === 'userChange') {
         teamRoleValidatorParams.processDefinitionKey = 'planChangeApproveTask'
-        if (record.projectClassification === 'PROJECT_CLASSIFICATION_0_02') {
-          teamRoleValidatorParams.processDefinitionKey = 'planChangeApproveSpecialPlan'
-        }
       } else {
         this.$message({
           message: '操作失败！参数异常',
