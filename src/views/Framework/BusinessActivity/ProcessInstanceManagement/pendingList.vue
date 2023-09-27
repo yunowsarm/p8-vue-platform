@@ -7,7 +7,7 @@
       <common-table ref="table"
                     :columns="columns"
                     :flex="110"
-                    :parmas="queryParam"
+                    :params="queryParam"
                     :table-setting="false"
                     :show-search-row="true"
                     :table-config="tableConfig"

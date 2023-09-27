@@ -327,6 +327,20 @@ export const repositoryApi = {
       path: '/product/my/work/task/taskDecomposition',
       mockPath: '/product/my/work/task/taskDecomposition',
       desc: '我的任务->列表->获取任务分解详情'
+    },
+    {
+      name: 'getTaskDependence',
+      method: 'POST',
+      path: '/product/my/work/task/getTaskDependence',
+      mockPath: '/product/my/work/task/getTaskDependence',
+      desc: '我的任务->列表->获取前后置任务'
+    },
+    {
+      name: 'getTaskHierarchy',
+      method: 'POST',
+      path: '/product/my/work/task/getTaskHierarchy',
+      mockPath: '/product/my/work/task/getTaskHierarchy',
+      desc: '我的任务->列表->获取层级'
     }
   ],
   ProjectInitiationManagement: [

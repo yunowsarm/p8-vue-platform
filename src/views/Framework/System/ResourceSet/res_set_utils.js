@@ -89,16 +89,20 @@ let editColumns = [
       },
       {
         validator: (rule, value, callback) => {
-          let that = thisComponent
+          const that = thisComponent
           // console.log(thisComponent)
-          that.$api['resource.checkRepeated']({ id: that.record.id, name: value }).then((response) => {
-            // console.log(response)
-            if (response.result) {
-              callback(new Error(response.resultMsg))
-            } else {
-              callback()
-            }
-          })
+          if (!that.record || (that.record && that.record.name !== value)) {
+            that.$api['resource.checkRepeated']({ id: that.record.id, name: value }).then((response) => {
+              // console.log(response)
+              if (response.result) {
+                callback(new Error(response.resultMsg))
+              } else {
+                callback()
+              }
+            })
+          } else {
+            callback()
+          }
         },
         trigger: 'blur'
       }
