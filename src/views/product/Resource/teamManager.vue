@@ -80,7 +80,10 @@
                 <template #taskCount="{ scope }">
                   <div class="task-count">
                     <template v-if="scope.row.taskCount">
-                      <el-link @click.stop="opentDialogUserTask(scope.row)">{{
+                      <!-- <el-link @click.stop="opentDialogUserTask(scope.row)">{{
+                      scope.row.taskCount
+                      }}<i class="el-icon-view el-icon--right"></i></el-link> -->
+                      <el-link>{{
                       scope.row.taskCount
                       }}<i class="el-icon-view el-icon--right"></i></el-link>
                     </template>

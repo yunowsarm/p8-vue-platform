@@ -16,16 +16,16 @@ export function outPutFlowGantt (ganttName, vueThis) {
   ganttObject.config.layout = GanttObject.layout2
   // 定义列
   ganttObject.config.columns = [
-    {
-      name: 'flag',
-      label: '操作',
-      resize: true,
-      width: 45,
-      align: 'center',
-      template: function (task) {
-        return "<span onclick=Gantt.taskOperations(event,'" + task.id + "','" + task.parent + "')><i class='p8 icon-personal-setting'></i></span>"
-      }
-    },
+    // {
+    //   name: 'flag',
+    //   label: '操作',
+    //   resize: true,
+    //   width: 45,
+    //   align: 'center',
+    //   template: function (task) {
+    //     return "<span onclick=Gantt.taskOperations(event,'" + task.id + "','" + task.parent + "')><i class='p8 icon-personal-setting'></i></span>"
+    //   }
+    // },
     {
       name: 'id',
       hide: true
@@ -46,21 +46,29 @@ export function outPutFlowGantt (ganttName, vueThis) {
       template: ganttObject.getWBSCode
     },
     {
-      name: 'planType',
+      name: 'typeDisplay',
       label: '类型',
       min_width: 100,
       resize: true,
       align: 'left',
+      template: function (task){
+        let str = ''
+        if (task.type) {
+          vueThis.logoList.forEach(el => {
+            if (el.id == task.type) {
+              str += '<i class="'+ el.icon +'" title="'+ el.meaning +'"></i>'
+            }
+          })
+        }
+        return str
+      }
     },
     {
       name: 'isMilestoneDisplay',
       label: '里程碑',
       min_width: 100,
       resize: true,
-      align: 'left',
-      template: function (task) {
-        // console.log(task,'----task');
-      }
+      align: 'left'
     },
     {
       name: 'name',
@@ -78,7 +86,7 @@ export function outPutFlowGantt (ganttName, vueThis) {
       align: 'left'
     },
     {
-      name: 'roleName',
+      name: 'teamRoleName',
       label: '角色',
       min_width: 100,
       resize: true,
@@ -148,14 +156,14 @@ export function outPutFlowGantt (ganttName, vueThis) {
       update: function (data, id) {
         data.indexNo = ganttObject.getGlobalTaskIndex(id)
         api['OutputFlow.updateActivityInfos']({ activityTaskRequest: data }).then(res => {
-          if (res && res === 'true') {
-            GanttObject.showMessage(vueThis, data.name + '-更新成功！', 'success')
-            return { 'action': 'ok' }
-          } else {
-            ganttObject.undo()
-            GanttObject.showMessage(vueThis, '更新失败！', 'error')
-            return { 'action': 'error' }
-          }
+          // if (res && res === 'true') {
+          //   // GanttObject.showMessage(vueThis, data.name + '-更新成功！', 'success')
+          //   return { 'action': 'ok' }
+          // } else {
+          //   ganttObject.undo()
+          //   // GanttObject.showMessage(vueThis, '更新失败！', 'error')
+          //   return { 'action': 'error' }
+          // }
         }).catch(() => {
           ganttObject.undo()
           GanttObject.showMessage(vueThis, '更新失败！', 'error')
