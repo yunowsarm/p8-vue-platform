@@ -8,9 +8,9 @@ import store from '@/plugins/store'
  * @author fukai
  * @date 2020/5/22 12:00
  */
-export function getChangeGantt (ganttName, vueThis) {
+export function getChangeGantt(ganttName, vueThis) {
   // 获取gantt对象
-  let ganttObject = GanttObject.getGanttObject(ganttName)
+  const ganttObject = GanttObject.getGanttObject(ganttName)
   ganttObject.config.order_branch = false
   ganttObject.config.order_branch_free = false
   // 加载排程类型
@@ -45,20 +45,20 @@ export function getChangeGantt (ganttName, vueThis) {
       template: function (task) {
         let html = ''
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0 || vueThis.createPage === 'userChange') {
-          let infoType = task.infoType
-          let weatherChange = task.weatherChange
+          const infoType = task.infoType
+          const weatherChange = task.weatherChange
           if (vueThis.ganttName && vueThis.ganttName === 'changeGantt' && weatherChange && weatherChange === '1') {
             html = `<i class="gantt-tip p8 icon-change-item" style="color: #0d6bec;" title = "变更项"></i>`
           }
           if (infoType) {
             switch (infoType) {
-              case 'create' :
+              case 'create':
                 html = `<i class="gantt-tip p8 icon-make-increase" style="color: #0d6bec;" title="调增"></i>`
                 break
-              case 'update' :
+              case 'update':
                 html = `<i class="gantt-tip p8 icon-content-adjustment" style="color: #0d6bec;" title = "内容调整"></i>`
                 break
-              case 'delete' :
+              case 'delete':
                 html = `<i class="gantt-tip p8 icon-make-reductions" style="color: #0d6bec;" title = "调减"></i>`
                 break
             }
@@ -76,12 +76,12 @@ export function getChangeGantt (ganttName, vueThis) {
       template: function (task) {
         // 任务图标，排除根节点
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0 || vueThis.createPage === 'userChange') {
-          let status = task.status
+          const status = task.status
           if (status && vueThis.taskStatus) {
-            let taskStatusMap = store.state.project.dicConfig.taskStatus
+            const taskStatusMap = store.state.project.dicConfig.taskStatus
             if (taskStatusMap && Object.keys(taskStatusMap).length > 0) {
-              let item = taskStatusMap[status]
-              let html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.title}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
+              const item = taskStatusMap[status]
+              const html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.title}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
               return html
             }
           }
@@ -98,9 +98,9 @@ export function getChangeGantt (ganttName, vueThis) {
       template: function (task) {
         // 任务图标，排除根节点
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0 || vueThis.createPage === 'userChange') {
-          let managerStatus = task.managerStatus
+          const managerStatus = task.managerStatus
           if (managerStatus && vueThis.managerStatusMap) {
-            let item = vueThis.managerStatusMap[managerStatus]
+            const item = vueThis.managerStatusMap[managerStatus]
             if (item) {
               return item.cmeaning
             }
@@ -117,8 +117,8 @@ export function getChangeGantt (ganttName, vueThis) {
       resize: true,
       template: function (task) {
         // 标识展示
-        let monitorPointDatas = ganttObject.serverList(ganttObject.config.monitor_point)
-        let monitorPoints = task[ganttObject.config.monitor_point]
+        const monitorPointDatas = ganttObject.serverList(ganttObject.config.monitor_point)
+        const monitorPoints = task[ganttObject.config.monitor_point]
         let html = ''
         if (monitorPoints && monitorPointDatas) {
           let index = 0
@@ -127,7 +127,7 @@ export function getChangeGantt (ganttName, vueThis) {
             if (index < 5) {
               monitorPointDatas.some((point, index) => {
                 if (point.id === id) {
-                  let icon = point.icon
+                  const icon = point.icon
                   html += '<i class="p8 ' + icon + '" title="' + point.title + '"></i>'
                   return true
                 }
@@ -148,12 +148,12 @@ export function getChangeGantt (ganttName, vueThis) {
       template: function (task) {
         // 任务类型展示
         let html = ''
-        let taskClassifyDatas = ganttObject.serverList(ganttObject.config.plan_type)
-        let planType = task[ganttObject.config.plan_type]
+        const taskClassifyDatas = ganttObject.serverList(ganttObject.config.plan_type)
+        const planType = task[ganttObject.config.plan_type]
         if (planType && taskClassifyDatas) {
           taskClassifyDatas.some((point, index) => {
             if (point.id === planType) {
-              let icon = point.icon
+              const icon = point.icon
               html += '<i class="' + icon + '" title="' + point.title + '"></i>'
               return true
             }
@@ -167,7 +167,7 @@ export function getChangeGantt (ganttName, vueThis) {
       label: '大纲',
       align: 'left',
       template: function (task) {
-        let code = ganttObject.getWBSCode(task)
+        const code = ganttObject.getWBSCode(task)
         if (code.split('.').length > vueThis.deep) {
           vueThis.deep = code.split('.').length
         }
@@ -207,8 +207,8 @@ export function getChangeGantt (ganttName, vueThis) {
       width: 80,
       resize: true,
       template: function (task) {
-        let resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
-        let owner = task[ganttObject.config.resource_property]
+        const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
+        const owner = task[ganttObject.config.resource_property]
         if (owner) {
           return resourceDatas.getItem(owner) ? resourceDatas.getItem(owner).name : ''
         } else {
@@ -223,8 +223,8 @@ export function getChangeGantt (ganttName, vueThis) {
       resize: true,
       min_width: 120,
       template: function (task) {
-        let resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
-        let owner = task[ganttObject.config.resource_property]
+        const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
+        const owner = task[ganttObject.config.resource_property]
         if (owner) {
           return resourceDatas.getItem(owner) ? resourceDatas.getItem(owner).roleName : ''
         } else {
@@ -239,8 +239,8 @@ export function getChangeGantt (ganttName, vueThis) {
       resize: true,
       min_width: 120,
       template: function (task) {
-        let resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
-        let owner = task[ganttObject.config.resource_property]
+        const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
+        const owner = task[ganttObject.config.resource_property]
         if (owner) {
           return resourceDatas.getItem(owner) ? resourceDatas.getItem(owner).deptName : ''
         } else {
@@ -255,7 +255,7 @@ export function getChangeGantt (ganttName, vueThis) {
       resize: true,
       width: 70,
       template: function (task) {
-        let weatherControl = task.weatherControl
+        const weatherControl = task.weatherControl
         if (weatherControl === '1') {
           return '是'
         } else {
@@ -270,16 +270,17 @@ export function getChangeGantt (ganttName, vueThis) {
       resize: true,
       align: 'left',
       template: function (task) {
-        let links = task.$target
-        let labels = []
+        const links = task.$target
+        const labels = []
         for (let i = 0; i < links.length; i++) {
-          let link = ganttObject.getLink(links[i])
+          const link = ganttObject.getLink(links[i])
           labels.push(linksFormatter.format(link))
         }
         return labels.join(',')
       }
     },
-    { name: 'progress',
+    {
+      name: 'progress',
       label: '完成度',
       align: 'center',
       width: 60,
@@ -302,7 +303,8 @@ export function getChangeGantt (ganttName, vueThis) {
     //     return task.autoScheduling === '1' ? '自动' : '手动'
     //   }
     // },
-    { name: 'start_date',
+    {
+      name: 'start_date',
       label: '计划开始时间',
       align: 'center',
       min_width: 100,
@@ -314,15 +316,16 @@ export function getChangeGantt (ganttName, vueThis) {
         return task.start_date
       }
     },
-    { name: 'end_date',
+    {
+      name: 'end_date',
       label: '计划完成时间',
       align: 'center',
       min_width: 100,
       resize: true,
       template: function (task) {
         if (task.parent && ganttObject.isTaskExists(task.parent) && task.end_date && ganttObject.getTask(task.parent).end_date) {
-          let pEndDate = GanttObject.strToDate(GanttObject.dateToStr(ganttObject.getTask(task.parent).end_date, null, ganttObject), null, ganttObject)
-          let tEndDate = GanttObject.strToDate(GanttObject.dateToStr(task.end_date, null, ganttObject), null, ganttObject)
+          const pEndDate = GanttObject.strToDate(GanttObject.dateToStr(ganttObject.getTask(task.parent).end_date, null, ganttObject), null, ganttObject)
+          const tEndDate = GanttObject.strToDate(GanttObject.dateToStr(task.end_date, null, ganttObject), null, ganttObject)
           if (pEndDate < tEndDate) {
             return '<span class="red-wave">' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
           }
@@ -330,7 +333,8 @@ export function getChangeGantt (ganttName, vueThis) {
         return ganttObject.date.add(task.end_date, -1, 'day')
       }
     },
-    { name: 'duration',
+    {
+      name: 'duration',
       label: '工期',
       align: 'center',
       min_width: 60,
@@ -354,8 +358,8 @@ export function getChangeGantt (ganttName, vueThis) {
       resize: true,
       template: function (task) {
         if (task.end_date && task.forecastEndDate) {
-          let ed = moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD')
-          let fe = task.forecastEndDate
+          const ed = moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD')
+          const fe = task.forecastEndDate
           if (ed !== fe) {
             return '<div style="color:' + GanttObject.forecastColor + '">' + fe + '</div>'
           } else {
@@ -384,11 +388,12 @@ export function getChangeGantt (ganttName, vueThis) {
   // 只读校验
   if (vueThis.readonly) {
     ganttObject.config.readonly = true
-  } else { // 可操作
+  } else {
+    // 可操作
     // 前后置删除提示文本定义
     GanttObject.linkDescription(ganttObject)
     // 升降级
-    let actions = GanttObject.getActions(ganttObject)
+    const actions = GanttObject.getActions(ganttObject)
     ganttObject.performAction = GanttObject.performAction(actions, ganttObject)
     // 查询监听及定义
     GanttObject.setSearchConfig(ganttObject, vueThis)
