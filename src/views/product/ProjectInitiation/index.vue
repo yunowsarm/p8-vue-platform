@@ -41,6 +41,7 @@ export default {
         this.dataViewId = this.$refs.tabsNavigation.configParmars.id
       } else {
         this.dataViewId = this.row[0].ID
+        this.$refs.tabsNavigation.configParmars.id = this.dataViewId
       }
     }
   }
