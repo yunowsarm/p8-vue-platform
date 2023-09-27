@@ -302,7 +302,7 @@ export default {
         let type = item.type
         let fieldName = item.fieldName
         if (typeArray.indexOf(type) !== -1 || (type === 'select' && item.fieldConfig.multiple)) {
-          _this.formData[fieldName] = []
+          _this.formData[fieldName] = undefined
         } else if (typeBoolean.indexOf(type) !== -1) {
           _this.formData[fieldName] = false
         } else {

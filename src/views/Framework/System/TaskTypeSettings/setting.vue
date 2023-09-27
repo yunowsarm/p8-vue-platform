@@ -2,9 +2,9 @@
   <div class="setting_box">
     <el-table class="setting_table" :data="formData">
       <el-table-column label="任务类型" prop="C_MEANING"></el-table-column>
-      <el-table-column label="计划编辑只可标识子任务" prop="CUSTOM_ITEM1">
+      <el-table-column label="计划编辑只可标识子任务" prop="EDIT_MARK">
         <template slot-scope="scope">
-          <el-radio-group v-model="scope.row.CUSTOM_ITEM1">
+          <el-radio-group v-model="scope.row.EDIT_MARK">
             <el-radio-button label="1">是</el-radio-button>
             <el-radio-button label="0">否</el-radio-button>
           </el-radio-group>
@@ -49,7 +49,7 @@ export default {
       const data = this.formData.map((item) => {
         return {
           id: item.ID,
-          customItem1: item.CUSTOM_ITEM1
+          editMark: item.EDIT_MARK
         }
       })
       this.$api['documentManagement.saveTaskType']({ dictList: data }).then((res) => {
@@ -75,6 +75,7 @@ export default {
 .dialog_footer {
   height: 52px;
   line-height: 52px;
+  margin-right: 16px;
   text-align: right;
 }
 </style>

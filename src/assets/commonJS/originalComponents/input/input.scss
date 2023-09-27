@@ -1,0 +1,58 @@
+.cs-input {
+  display: block;
+  box-sizing: border-box;
+  outline: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: relative;
+  background-color: #fff;
+  transition: all .2s ease-in-out;
+  border-radius: 2px;
+  font-size: 12px;
+}
+.cs-input_inner {
+  -webkit-appearance: none;
+  background-color: #FFFFFF;
+  background-image: none;
+  border-radius: 2px;
+  border: 1px solid#dcdee2;
+  box-sizing: border-box;
+  color: #606266;
+  display: inline-block;
+  font-size: inherit;
+  height: 24px;
+  line-height: 24px;
+  outline: none;
+  padding: 0 25px 0 8px;
+  transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  cursor: pointer;
+  width: 100%;
+}
+.cs-input.cs-input-focus .cs-input_inner{
+  border-color: #57a3f3;
+  box-shadow: 0 0 0 1px rgba(45, 140, 240, .2);
+}
+
+/*选择框尾部图标*/
+.cs-input__suffix {
+  position: absolute;
+  top: 0;
+  right: 5px;
+  height: 100%;
+  text-align: center;
+  cursor: pointer;
+  pointer-events: none;
+}
+.cs-input__suffix .cs-input-icon {
+  width: 20px;
+  height: 26px;
+  line-height: 26px;
+  color: #C0C4CC;
+  pointer-events: all;
+  transition: all .2s ease-in-out;
+}
+.cs-input__suffix .cs-input-icon.is-reverse {
+  transform: rotateZ(-180deg);
+}

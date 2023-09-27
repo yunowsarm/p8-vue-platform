@@ -17,12 +17,14 @@
                class="w_tabs"
                v-model="activePane">
         <el-tab-pane label="权限详情"
+                     :style="{height: tabPaneHeight}"
                      name="setLimit"
                      key="1">
           <select-btn ref="selectBtn"
                       :button-selected="selectedData.resourceList"></select-btn>
         </el-tab-pane>
         <el-tab-pane label="人员详情"
+                     :style="{height: tabPaneHeight}"
                      name="setUser"
                      key="2">
           <div :style="{ height: setUserHeight, overflowY: 'auto' }">
@@ -37,28 +39,35 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="应用详情"
+                     :style="{height: tabPaneHeight}"
                      name="setApp"
                      key="3">
-          <el-tabs type="border-card"
-                   :key="dateTime"
+          <el-tabs :key="dateTime"
                    :style="{ height: flexHeight }"
                    tab-position="left"
                    @tab-click="tabClick"
                    v-model="activeType">
             <template v-for="(item, index) in activeTabs">
-              <el-tab-pane :label="item.label"
-                           :name="item.value"
-                           :key="index">
-                <el-col :style="{ height: flexHeight }"
+              <el-tab-pane :key="index">
+                <span slot="label"><i :class="item.icon"></i> {{ item.meaning }}</span>
+                <el-col :style="{ height: tabPaneHeight }"
                         style="overflow: auto">
                   <div class="nav-display"
                        :key="formData.appIds.length">
                     <div class="nav-ul"
                          v-for="(item, index) in adhibitionList"
-                         :key="index">
+                         :key="index"
+                         @click="handleAdhibitionClick(item)">
                       <div class="nav-span"
+                           style="height: 100%;"
                            :class="{ active: item.isActive }">
-                        <span class="nav-text"
+                        <div style="height: 40%;">
+                          <el-image style="width: 60px; height: 60px"
+                                    :src="imgUrl"
+                                    fit="cover"></el-image>
+                        </div>
+                        <span style="height: 60%;"
+                              class="nav-text"
                               v-text="item.name"></span>
                       </div>
                     </div>
@@ -69,6 +78,7 @@
           </el-tabs>
         </el-tab-pane>
         <el-tab-pane label="项目详情"
+                     :style="{height: tabPaneHeight}"
                      name="setProject"
                      key="4">
           <el-col :style="{ height: flexHeight }"
@@ -111,22 +121,22 @@
   display: flex;
   flex-direction: row;
   flex-flow: wrap;
-  margin-left: 10px;
   justify-content: flex-start;
+  align-items: center;
 }
 .nav-ul {
-  width: 18%;
-  margin: 20px 7px;
+  width: 20%;
+  margin: 15px 17px;
 }
 .nav-span {
   width: 100%;
   border: 1px solid #ccc;
   display: flex;
   flex-direction: row;
-  justify-content: center;
   align-items: center;
-  border-radius: 10px;
+  border-radius: 5px;
   cursor: pointer;
+  padding: 10px;
 }
 .active {
   border: 1px solid #1bbf9e;
@@ -150,10 +160,20 @@
 }
 .nav-text {
   font-size: pxTorem(16px);
-  line-height: 50px;
+  margin-left: 10px;
+  // line-height: 50px;
 }
 .w_tabs {
   margin: 16px;
+}
+::v-deep .el-tabs--border-card > .el-tabs__content {
+  padding: 0;
+}
+::v-deep .el-tabs--border-card .el-tabs__nav-scroll {
+  background: #ffffff;
+}
+::v-deep .el-form-item__content > .view {
+  background: #f5f8fb;
 }
 </style>
 <script>
@@ -189,7 +209,9 @@ export default {
   },
   data () {
     return {
+      imgUrl: require('@/assets/image/common/Group.png'),
       setUserHeight: document.documentElement.clientHeight - 318 + 'px',
+      tabPaneHeight: document.documentElement.clientHeight - 290 + 'px',
       saveApi: 'role.save',
       selectedRows: [],
       // selectedRowKeys:[],
@@ -206,43 +228,24 @@ export default {
       },
       dataSource: [
         {
-          type: 'text', // 控件类型
+          type: 'view', // 控件类型
           labelText: '角色名称', // 控件显示的文本
           fieldName: 'name',
           placeholder: '', // 默认控件的空值文本
-          colLayout: 'singleCol',
-          fieldConfig: {
-            disabled: true
-          }
+          colLayout: 'singleCol'
         },
         {
           labelText: '参与审批',
-          type: 'radioButton',
+          type: 'view',
           fieldName: 'isApprove',
-          colLayout: 'doubleCol',
-          options: [
-            {
-              label: '是',
-              value: '1'
-            },
-            {
-              label: '否',
-              value: '0'
-            }
-          ],
-          fieldConfig: {
-            disabled: true
-          }
+          colLayout: 'doubleCol'
         },
         {
           labelText: '排序',
-          type: 'number',
+          type: 'view',
           fieldName: 'indexNo',
           placeholder: '',
-          colLayout: 'doubleCol',
-          fieldConfig: {
-            disabled: true
-          }
+          colLayout: 'doubleCol'
         }
       ],
       formData: {
@@ -281,13 +284,14 @@ export default {
   },
   async created () {
     const that = this
-    await this.$api['thirdPartInterface.getDic']({ dicType: 'SELECT_TYPE' }).then((res) => {
+    await this.$api['dictionaryManagement.list']({ dicType: 'SELECT_TYPE' }).then((res) => {
       if (res && res.length) {
         that.activeTabs = res
         that.activeTabs.unshift(
           {
-            label: '全部',
-            value: null
+            meaning: '全部',
+            value: null,
+            icon: 'el-icon-house'
           }
         )
       }
@@ -303,8 +307,10 @@ export default {
     tabClick () {
       if (this.activeType === '0') {
         this.activeType = null
+        this.getType(this.activeType)
+      } else {
+        this.getType(this.activeTabs[this.activeType].id)
       }
-      this.getType(this.activeType)
     },
     async getType (val) {
       const that = this
@@ -346,6 +352,11 @@ export default {
             })
           const { id, name, indexNo, isApprove, authorityTypes, userList = [], resourceList = [], appList = [] } = res
           that.formData = { ...that.formData, id, name, indexNo, isApprove }
+          if (that.formData.isApprove === '0') {
+            that.formData.isApprove = '否'
+          } else {
+            that.formData.isApprove = '是'
+          }
 
           const selectedUserIds = userList.map((u) => u.id)
           that.formData.sysuserIds = selectedUserIds

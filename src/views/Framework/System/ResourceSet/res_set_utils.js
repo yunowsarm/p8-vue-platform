@@ -109,11 +109,11 @@ let editColumns = [
     labelText: '前端组件路径',
     fieldName: 'component',
     placeholder: '请输入前端组件路径',
-    maxlength: 256,
+    maxlength: 512,
     rules: [
       {
         required: false,
-        maxLength: 256
+        maxLength: 512
       }
     ]
   },

@@ -594,6 +594,8 @@
                          value="count"></el-option>
               <el-option label="图标"
                          value="icon"></el-option>
+              <el-option label="三级菜单"
+                         value="thirdMenu"></el-option>
               <el-option label="插槽"
                          value="slot"></el-option>
             </el-select>

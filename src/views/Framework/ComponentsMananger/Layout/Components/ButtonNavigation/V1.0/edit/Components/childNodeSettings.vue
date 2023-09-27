@@ -114,7 +114,7 @@ export default {
           ]
         },
         {
-          type: 'text',
+          type: 'textarea',
           labelText: '目标组件',
           fieldName: 'componentsUrl',
           slotName: 'componentsUrl',
@@ -136,7 +136,7 @@ export default {
         if (newAal === '0') {
           this.dataSource.forEach((el) => {
             if (el.fieldName === 'componentsUrl') {
-              el.type = 'text'
+              el.type = 'textarea'
             }
           })
         } else {

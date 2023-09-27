@@ -1,0 +1,452 @@
+<template>
+  <common-dialog title="我的经验库"
+                 :visible="visible"
+                 width="80%"
+                 class="experience_dialog"
+                 @close="handleCancel"
+                 :show-handle-btn="false"
+                 :dialog-height="450">
+    <template #dialog>
+      <normal-layout :header-visible='false'
+                     :splitDefaultLeftWidth='26'>
+        <template #north>
+        </template>
+        <template #west>
+          <tree class="customTree"
+                :data="treeData"
+                :node-slot="true"
+                ref="tree"
+                @select="selectNode"
+                :tree-config="treeCfg">
+            <template #tree="{ node }">
+              <div class="node-span"
+                   :class="{ 'node-left': !node.childNodes.length}">
+                <div>
+                  <span style="display: inline-block; width: 20px">
+                    <i class="p8"
+                       :class="node.data.icon ? node.data.icon : 'icon-fenzu'"></i>
+                  </span>
+                  <el-input v-if='parentId === node.data.parentId && !node.data.type'
+                            class="node-label"
+                            v-model="node.data.name"
+                            size="mini"
+                            @blur="val => addClass(node.data,'blur',val)"></el-input>
+                  <span v-else
+                        class="node-label"
+                        :title="node.data.name">{{ node.data.name }}</span>
+                </div>
+                <div>
+                  <el-button type="text"
+                             icon="el-icon-plus"
+                             :disabled='!!node.data.type'
+                             @click="addClass(node.data, 'add')"></el-button>
+                  <el-button type="text"
+                             icon="el-icon-minus"
+                             :disabled='!node.data.parentId'
+                             @click="deleteClass(node.data)"></el-button>
+                </div>
+              </div>
+            </template>
+          </tree>
+        </template>
+        <template #center>
+          <div style='padding: 10px'>
+            <el-button type="primary"
+                       :disabled='isManage'
+                       @click="exportExperience">导入</el-button>
+            <el-button type="primary"
+                       :disabled='true'
+                       @click="copyExperience">复制到粘贴板</el-button>
+          </div>
+          <common-table ref="table"
+                        :comp="comp"
+                        :columns="columns"
+                        :params="tableParam"
+                        :api="tableApi"
+                        :pagination='false'
+                        :useTreeFormat='true'
+                        :table-config="tableConfig"
+                        useTreePId='parentId'
+                        :table-refresh="tableRefresh"
+                        @select="onTableSelect"
+                        @selection-change="handleSelectionChange">
+            <template #monitorPoints="{scope}">
+              <span v-if="scope.row.monitorPointArray">
+                <i v-for="item in handleRowMointor(scope.row)"
+                   :key="item.id"
+                   :class="`${item.icon}`"
+                   :title="item.name"></i>
+              </span>
+            </template>
+            <template #operation="{ scope }">
+              <el-button type="text"
+                         @click="showDetail(scope.row)">查看详情</el-button>
+            </template></common-table>
+        </template>
+        <template #drawer-panel>
+          <common-drawer :title="detailTitle"
+                         v-if="detailVisible"
+                         :visible="detailVisible"
+                         size="50%"
+                         @close="detailClose">
+            <template #drawer>
+              <Detail :task-id="taskId"
+                      :record='record'
+                      :gantt-name="ganttName"></Detail>
+            </template>
+          </common-drawer>
+        </template>
+      </normal-layout>
+    </template>
+  </common-dialog>
+</template>
+<style lang="scss" scoped>
+.experience_dialog ::v-deep {
+  .el-dialog {
+    .el-dialog__body {
+      padding: 0px !important;
+      .dialogBody {
+        .normal-layout {
+          padding-left: 0px !important;
+          margin: 6px;
+        }
+      }
+    }
+  }
+}
+.common-table ::v-deep {
+  height: calc(100% - 60px) !important;
+  padding: 10px;
+}
+.node-span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-right: 10px;
+  // .node-label {
+  //   display: inline-block;
+  //   width: 120px;
+  //   overflow: hidden;
+  //   text-overflow: ellipsis;
+  // }
+}
+.node-left {
+  padding-left: 26px;
+}
+</style>
+<script>
+import { P8NormalLayoutV1 as NormalLayout, P8Drawer as CommonDrawer, P8Table as CommonTable, P8Tree as commonTree, P8Form as FormList, P8Dialog as CommonDialog } from 'p8-components-ui'
+import DescribeView from '@/views/product/PlanGantt/Components/describeEdit/describeView.vue'
+import Detail from './taskDetail.vue'
+export default {
+  name: 'MyExperienceBase',
+  components: {
+    Detail,
+    DescribeView,
+    tree: commonTree,
+    NormalLayout,
+    FormList,
+    CommonTable,
+    CommonDrawer,
+    CommonDialog
+  },
+  props: {
+    visible: {
+      type: Boolean,
+      default: () => {
+        return false
+      }
+    },
+    selectedTask: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
+    isManage: {
+      type: Boolean,
+      default: () => {
+        return false
+      }
+    },
+    ganttName: {
+      type: String,
+      default: ''
+    },
+    createPage: {
+      type: String,
+      default: ''
+    },
+    planInfoId: {
+      type: String,
+      default: ''
+    },
+    exportExperienceType: {
+      type: String,
+      default: ''
+    }
+  },
+  data () {
+    return {
+      record: {},
+      detailTitle: '任务属性',
+      tableConfig: {
+        'default-expand-all': true,
+        'highlight-current-row': true
+      },
+      selectedRows: [],
+      detailVisible: false,
+      tableApi: 'MyExperience.myBaseExperienceList',
+      selectedTreeId: '',
+      messageCatalogApi: 'MyExperience.experienceClassifyTreeList',
+      catalogData: [],
+      columns: [
+        {
+          title: '',
+          width: 35,
+          type: 'selection'
+        },
+        {
+          title: '标识',
+          dataIndex: 'monitorPoints',
+          type: '',
+          minWidth: 100,
+          scopedSlots: { customRender: 'custom' },
+          align: 'center'
+        },
+        {
+          title: '大纲',
+          type: '',
+          dataIndex: 'WBS',
+          minWidth: 60,
+          align: 'left'
+        },
+        {
+          title: '任务名称',
+          dataIndex: 'taskName',
+          align: 'left'
+        },
+        {
+          title: '前后置',
+          dataIndex: 'backAndForth',
+          align: 'left'
+        },
+        {
+          title: '工期',
+          dataIndex: 'durations',
+          align: 'center'
+        },
+        {
+          title: '操作',
+          dataIndex: 'operation',
+          width: '150',
+          scopedSlots: {
+            customRender: 'custom'
+          },
+          align: 'center'
+        }
+      ],
+      taskId: '',
+      tableParam: {
+        classifyId: ''
+      },
+      parentId: '',
+      comp: this,
+      treeCfg: {
+        'indent': 48,
+        'highlight-current': true
+      }
+    }
+  },
+  watch: {
+    selectedTreeId: function (newV, oldV) {
+      if (newV) {
+        this.tableParam.classifyId = newV
+        // this.$refs.table.searchData()
+      }
+    }
+  },
+  created () {
+    this.loadCatalog()
+  },
+  computed: {
+    treeData () {
+      this.catalogData.map((el) => {
+        el.icon ? el.icon : 'icon-fenzu'
+      })
+      const resultData = this.catalogData
+      return resultData
+      // }
+    },
+  },
+  methods: {
+    handleRowMointor (row) {
+      if (row && row.monitorPointArray) {
+        let monitorPointArray = row.monitorPointArray.split(',')
+        let monitorPointIconArray = row.monitorPointIconArray.split(',')
+        let monitorPointDisplayArray = row.monitorPointDisplayArray.split(',')
+        let mointIcon = []
+        let monitorLength = monitorPointArray.length
+        for (var i = 0; i < monitorLength; i++) {
+          mointIcon.push({
+            id: monitorPointArray[i],
+            icon: monitorPointIconArray[i],
+            name: monitorPointDisplayArray[i],
+          })
+        }
+        return mointIcon
+      }
+    },
+    detailClose () {
+      this.detailVisible = false
+    },
+    showDetail (row) {
+      this.record = row
+      this.taskId = row.planId
+      this.detailVisible = true
+    },
+    onTableSelect (select, row) {
+      this.selectedRows = this.$refs.table.$refs.table.selection // 获取表格中所有选中的数据
+      let checkrow = []
+      checkrow.push(row)
+      if (row.isCheck === true) {
+        if (select === 1) {
+          this.$refs.table.$refs.table.toggleRowSelection(row, false)
+        }
+        this.clearRow(checkrow)
+      } else {
+        if (select === 1) {
+          this.$refs.table.$refs.table.toggleRowSelection(row, true)
+        }
+        this.checkRow(checkrow)
+      }
+    },
+    // 取消选中递归
+    clearRow (data) {
+      Array.from(data).forEach(row => {
+        row.isCheck = false // 给这行数据设置一个选中字段为false
+        this.$refs.table.$refs.table.toggleRowSelection(row, false)
+        if (row.children) this.clearRow(row.children) // 有子集就递归  没子集了就不循环了
+      })
+    },
+    // 选中递归
+    checkRow (data) {
+      Array.from(data).forEach(row => {
+        row.isCheck = true // 选中是字段值为true
+        this.$refs.table.$refs.table.toggleRowSelection(row, true)
+        if (row.children) this.checkRow(row.children)
+      })
+    },
+    exportExperience () {
+      let that = this
+      if (that.selectedRows.length > 0) {
+        let experienceInfoIds = that.selectedRows.map(item => item.id)
+        let params = {
+          createPage: that.createPage,
+          experienceInfoIds,
+          parentTaskId: that.selectedTask[0].id,
+          planInfoId: that.planInfoId,
+          type: that.exportExperienceType
+        }
+        that.$api['MyExperience.importTaskEx'](params).then(res => {
+          if (res === 'true') {
+            that.$emit('handleCancel', res)
+            that.$message.success('导入成功')
+          } else {
+            that.$message.error('导入失败')
+          }
+        }).then(err => {
+          console.error(err + '错误信息')
+        })
+      } else {
+        that.$message.warning('请选择需要导入的数据')
+      }
+    },
+    copyExperience () {
+      console.log("This is copy")
+    },
+    addClass (node, type, e) {
+      let that = this
+      let { id } = node
+      if (type === 'add') {
+        this.parentId = id
+        that.$api['MyExperience.experienceClassifyCreate']({ parentId: id }).then(res => {
+          if (res === 'true') {
+            that.loadCatalog()
+            // that.$message.success('创建成功')
+          } else {
+            that.$message.error('创建失败')
+          }
+        }).then(err => {
+          console.error(err + '错误信息')
+        })
+      }
+      if (type == 'blur') {
+        if (!e.target.value) {
+          this.$message.warning('请填写分类名称')
+          return
+        }
+        that.$api['MyExperience.experienceClassifyCreate']({ id, label: e.target.value }).then(res => {
+          if (res === 'true') {
+            this.parentId = ''
+            that.loadCatalog()
+            that.$message.success('创建成功')
+          } else {
+            that.$message.error('创建失败')
+          }
+        }).then(err => {
+          console.error(err + '错误信息')
+        })
+      }
+    },
+    deleteClass (node) {
+      let that = this
+      let { id } = node
+      that.$confirm('确定要删除该分类吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.$api['MyExperience.removeExperienceClassify']({ id }).then(res => {
+          if (res === 'true') {
+            that.loadCatalog()
+            that.$message.success('删除成功')
+          } else {
+            that.$message.error('删除失败')
+          }
+        }).then(err => {
+          console.error(err + '错误信息')
+        })
+      }).catch(() => { })
+    },
+    loadCatalog () {
+      const _this = this
+      this.$api[this.messageCatalogApi]({ isDisplay: '' }).then((res) => {
+        _this.catalogData = res
+      })
+    },
+    selectNode (nodeData) {
+      this.treeCfg['current-node-key'] = nodeData.id
+      this.selectedTreeId = nodeData.id
+    },
+    tableRefresh (param) {
+      param
+        .then(() => {
+          console.log('异步成功后端做的操作')
+        })
+        .catch(() => {
+          console.log('异步失败的操作')
+        })
+    },
+    handleSelectionChange (val) {
+    },
+    handleCancel () {
+      this.$emit('handleCancel')
+    },
+    customValidate (saveParams) {
+      this.$emit('handleOk', saveParams.name)
+    }
+  }
+}
+</script>

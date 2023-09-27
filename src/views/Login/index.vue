@@ -4,7 +4,7 @@
       <div class="login-block">
         <div class="login-contain">
           <span class="login-logo" ref="loginLogo"></span>
-          <h4 class="login-sysName">{{ system_name }}</h4>
+          <h2 class="login-sysName">{{ system_name }}</h2>
           <el-form
             class="loginForm"
             ref="loginForm"
@@ -17,11 +17,11 @@
             element-loading-custom-class="customClass"
           >
             <template v-if="!loading">
-              <div style="margin-bottom: 6px"><i class="p8 icon-yonghuming" style="color: #094deb"></i>用户名</div>
+              <div style="margin-bottom: 6px"><i class="p8 icon-yonghuming" style="color: #d7000f"></i>用户名</div>
               <el-form-item prop="userAccount">
                 <el-input class="login-input" type="text" v-model="loginForm.userAccount" placeholder="请输入用户名、身份证"></el-input>
               </el-form-item>
-              <div style="margin-bottom: 6px"><i class="p8 icon-mima" style="color: #094deb"></i>密码</div>
+              <div style="margin-bottom: 6px"><i class="p8 icon-mima" style="color: #d7000f"></i>密码</div>
               <el-form-item prop="userPassword" class="userPassword">
                 <el-input class="login-input" type="password" v-model="loginForm.userPassword" @keyup.enter.native="login('loginForm')" placeholder="请输入密码"></el-input>
               </el-form-item>
@@ -82,7 +82,7 @@ export default {
         userPassword: [{ required: true, message: '请输入密码', trigger: 'blur' }]
       },
       dayTime: '',
-      system_name: 'PLATFORM_PREFIX_NAME',
+      system_name: '中车永济电机项目管理系统',
       systemNames: PLATFORM_PREFIX_NAME,
       flag: 'systemModel1',
       loginCa: CA_LOGIN
@@ -205,6 +205,7 @@ export default {
               }
             }
           })
+          this.$store.dispatch('setSystemName', this.system_name)
           uploadFileJson = res.uploadFileJson
           if (uploadFileJson && uploadFileJson[0]) {
             const that = this
@@ -272,6 +273,7 @@ export default {
               }
             }
           })
+          this.$store.dispatch('setSystemName', this.system_name)
           const uploadFileJson = res.uploadFileJson
           if (uploadFileJson && uploadFileJson[0]) {
             const that = this
@@ -330,7 +332,7 @@ $login-primary--login-color: #306cf7;
     background-repeat: no-repeat;
     background-size: cover;
     // transition: opacity .5s ease-in-out;
-    background-image: url(../../assets/image/login/new_login_bic.png);
+    background-image: url(../../assets/image/login/bg_ChinaRailway.png);
     // opacity: 1;
 
     .login-block {
@@ -350,29 +352,34 @@ $login-primary--login-color: #306cf7;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
+        align-items: center;
         .login-logo {
           width: 150px;
           height: 96px;
           display: block;
           margin: 0 auto;
-          background: url(../../assets/image/login/new_logo.png) no-repeat;
+          // background: url(../../assets/image/login/new_logo.png) no-repeat;
           background-size: contain;
           background-position: center;
           margin-top: 25px;
+          position: absolute;
+          top: -80px;
         }
 
         .login-sysName {
-          font-size: 34px;
+          font-size: 42px;
           font-family: Source Han Sans CN;
-          color: #1f1f1f;
+          color: #1f1f1f !important;
           text-align: center;
           margin-top: 5px;
+          white-space: nowrap;
           margin-bottom: 30px;
         }
 
         .loginForm {
           margin: 0 auto;
-          width: 86%;
+          margin-top: -90px;
+          width: 100%;
           .el-loading-spinner {
             margin-top: 30px;
             i {
@@ -395,7 +402,7 @@ $login-primary--login-color: #306cf7;
 
         .login-button {
           width: 100%;
-          height: 40px;
+          height: 50px;
           padding: 5px 0px;
           // border: 2px solid darken($login-primary--login-color, 10%);
           border-radius: 4px;
@@ -499,7 +506,8 @@ $login-primary--login-color: #306cf7;
           }
 
           .loginForm {
-            width: 86%;
+            margin-top: -60px;
+            width: 88%;
           }
 
           // .login-input {
@@ -511,7 +519,7 @@ $login-primary--login-color: #306cf7;
           // }
 
           .login-button {
-            height: 30px;
+            height: 36px;
             // border: 2px solid darken($login-primary--login-color, 10%);
             border-radius: 4px;
             font-size: 12px;
@@ -536,12 +544,13 @@ $login-primary--login-color: #306cf7;
           }
 
           .login-sysName {
-            font-size: 26px;
+            font-size: 32px;
             margin-bottom: 20px;
           }
 
           .loginForm {
-            width: 86%;
+            margin-top: -60px;
+            width: 94%;
           }
 
           // .login-input {
@@ -553,7 +562,7 @@ $login-primary--login-color: #306cf7;
           // }
 
           .login-button {
-            height: 32px;
+            height: 38px;
             // border: 2px solid darken($login-primary--login-color, 10%);
             border-radius: 4px;
             font-size: 14px;
@@ -578,12 +587,13 @@ $login-primary--login-color: #306cf7;
           }
 
           .login-sysName {
-            font-size: 30px;
+            font-size: 36px;
             margin-bottom: 30px;
           }
 
           .loginForm {
-            width: 86%;
+            margin-top: -90px;
+            width: 100%;
           }
 
           // .login-input {
@@ -595,7 +605,7 @@ $login-primary--login-color: #306cf7;
           // }
 
           .login-button {
-            height: 36px;
+            height: 50px;
             // border: 2px solid darken($login-primary--login-color, 10%);
             border-radius: 4px;
             font-size: 14px;

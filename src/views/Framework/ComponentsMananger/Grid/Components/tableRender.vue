@@ -1,12 +1,9 @@
-<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
-
-
 <template>
   <normal-layout class="grid-table-render"
                  :header-visible="headerVisible"
                  :normal-layout="normalLayout">
     <template #north>
-      <common-button v-if="tableInfo.useSystemConfigButton === 1 || (tableInfo.useSystemConfigButton === 0 && buttonData.length > 0)"
+      <common-button v-if="tableInfo.useSystemConfigButton == 1 || (tableInfo.useSystemConfigButton == 0 && buttonData.length > 0)"
                      :comp="renderComp"
                      :button-type="'round'"
                      :permission-vo="permissionVo"
@@ -18,6 +15,7 @@
                         v-if="searchData.length"
                         :data-source="searchData"
                         @search="search"
+labelWidth="70px"
                         @re-set="reSet"
                         :search-width="searchWidth"
                         :permission-vo="permissionVo"
@@ -50,6 +48,7 @@
                           :use-system-config-button="tableInfo.useSystemConfigButton"
                           :is-layout-button="isLayoutButton"
                           @row-click="rowVxeClick"
+                          @open-third-menu="thirdMenuClick"
                           @selection-change="handleSelectionChange"></vxetable-table>
           <vxetable-table v-else
                           ref="vxeTable"
@@ -75,6 +74,7 @@
                           :use-system-config-button="tableInfo.useSystemConfigButton"
                           :is-layout-button="isLayoutButton"
                           @row-click="rowVxeClick"
+                          @open-third-menu="thirdMenuClick"
                           @selection-change="handleSelectionChange">
           </vxetable-table>
         </template>
@@ -83,7 +83,7 @@
                         :comp="comp"
                         :custom-c-s-s="customCSS"
                         :intelligence-comp="intelligenceComp"
-                        v-if="columns.length && tableType === 0"
+                        v-if="columns.length && tableType == 0"
                         :columns="columns"
                         :params="tableParam"
                         :flex="flex"
@@ -100,6 +100,7 @@
                         :is-layout-button="isLayoutButton"
                         @selection-change="handleSelectionChange"
                         @row-click="rowClick"
+                        @open-third-menu="thirdMenuClick"
                         @column-fiter="columnFiter"
                         :show-summary="showSummary"
                         :summary-method="summaryMethod"
@@ -109,12 +110,7 @@
             <template :slot="item"
                       v-for="item in customColumn"
                       slot-scope="{ scope }">
-              <template v-if="item === 'taskTypeIcon'">
-                <span :key="item"
-                      :class="scope.row.ICON"></span>
-              </template>
-              <slot v-else
-                    :name="item"
+              <slot :name="item"
                     :scope="scope"></slot>
             </template>
           </common-table>
@@ -143,7 +139,7 @@
       </vxe-table> -->
           <vxetable-table ref="xTable"
                           :custom-c-s-s="customCSS"
-                          v-if="columns.length && tableType === 1"
+                          v-if="columns.length && tableType == 1"
                           :comp="comp"
                           :columns="columns"
                           :params="tableParam"
@@ -161,16 +157,12 @@
                           :use-system-config-button="tableInfo.useSystemConfigButton"
                           :is-layout-button="isLayoutButton"
                           @row-click="rowVxeClick"
+                          @open-third-menu="thirdMenuClick"
                           @selection-change="handleSelectionChange">
             <template :slot="item"
                       v-for="item in customColumn"
                       slot-scope="{ scope }">
-              <template v-if="item === 'taskTypeIcon'">
-                <span :key="item"
-                      :class="scope.row.ICON"></span>
-              </template>
-              <slot v-else
-                    :name="item"
+              <slot :name="item"
                     :scope="scope"></slot>
             </template>
           </vxetable-table>
@@ -178,7 +170,7 @@
       </template>
     </template>
     <template #drawer-panel>
-      <common-drawer title="表单页面"
+      <common-drawer :title="formTitle"
                      :visible="formVisible"
                      size="50%"
                      :drawer-config="drawerConfig"
@@ -191,7 +183,7 @@
                        @save-success="formClose"></form-render>
         </template>
       </common-drawer>
-      <common-drawer title="查看页面"
+      <common-drawer :title="formTitle"
                      :visible="viewVisible"
                      size="50%"
                      :drawer-config="drawerConfig"
@@ -308,6 +300,19 @@
                      ref="components"></component>
         </template>
       </common-drawer>
+      <common-drawer v-if="visibleThirdDrawer"
+                     :visible="visibleThirdDrawer"
+                     direction="ttb"
+                     :title="thirdMenuTitle"
+                     @close='onThirdMenuClose'
+                     size="100%">
+        <template #drawer>
+          <menu-layout :third-menu-param='thirdMenuParam'
+                       :default-menu="defaultMenu"
+                       :cache="false"
+                       exclude="PlanChange"></menu-layout>
+        </template>
+      </common-drawer>
     </template>
   </normal-layout>
 </template>
@@ -322,7 +327,8 @@ import {
   P8Drawer as CommonDrawer,
   P8Dialog as CommonDialog,
   Notification,
-  P8VxeTable as VxetableTable
+  P8VxeTable as VxetableTable,
+  P8MenuLayout as MenuLayout
 } from 'p8-components-ui'
 import SearchFormList from './intellSearchFormList'
 import FormRender from '@/views/Framework/ComponentsMananger/Form/Components/Components/edit.vue'
@@ -345,7 +351,8 @@ export default {
     VxetableTable,
     SelectApproveUserBeforehand,
     ModelView,
-    ProcessApprovalView
+    ProcessApprovalView,
+    MenuLayout
   },
   props: {
     code: {
@@ -389,11 +396,11 @@ export default {
     },
     searchWidth: {
       type: String,
-      default: '550px'
+      default: '350px'
     },
     searchContainWidth: {
       type: String,
-      default: '550px'
+      default: '350px'
     },
     summaryMethod: {
       // 合计计算方法
@@ -445,6 +452,10 @@ export default {
   },
   data () {
     return {
+      defaultMenu: {},
+      thirdMenuParam: {},
+      thirdMenuTitle: '',
+      visibleThirdDrawer: false,
       runInHoleCode: '',
       comp: this,
       selectRecords: [],
@@ -491,6 +502,7 @@ export default {
       componentPath: '', // 操作按钮弹出框 component 路径
       scopeRow: '', // 表格行记录
       customProps: {},
+      formTitle: '表单页面',
       propParam: Object.assign({}, this.westTreeParam), // 将树参数传至表单
       showSearchRow: false,
       permissionVo: {
@@ -546,10 +558,12 @@ export default {
       editVisible: false,
       editConfig: {},
       customCSS: {},
-      sysParams: Object.assign({ $SYSTEM_PARAMS_SELECT: _cloneDeep(this.$store.state.user.userInfo) }) // 系统级参数
+      sysParams: Object.assign({ $SYSTEM_PARAMS_SELECT: _cloneDeep(this.$store.state.user.userInfo) }), // 系统级参数
+      currentRouterPath: ''
     }
   },
   created () {
+    this.currentRouterPath = this.$route.path
     this.$watch(
       'provideParams.searchParams',
       (newValue, oldValue) => {
@@ -708,14 +722,14 @@ export default {
             if (item.isViewShow) {
               that.$set(that.viewKeys, item.fieldName, item.fieldTxt)
             }
-            if (item.isParent && item.isParent === 1) {
+            if (item.isParent && item.isParent == 1) {
               that.treeConfig.parentField = item.fieldName
             }
             that.selectionRange = res.selectionRange
             that.reportItems = res.reportItems
             if (item.isListShow) {
               if (item.isSearch) {
-                if (this.tableInfo.searchPos === 1) {
+                if (this.tableInfo.searchPos == 1) {
                   this.showSearchRow = false
                   const filter = this.getHeadSelectByType(item.searchMode, item)
                   // 查询放置表头
@@ -730,7 +744,7 @@ export default {
                     iconDisplay: true,
                     filter: filter
                   })
-                } else if (this.tableInfo.searchPos === 2) {
+                } else if (this.tableInfo.searchPos == 2) {
                   this.showSearchRow = true
                   const filter = this.getHeadSelectByType(item.searchMode, item)
                   // 查询放置表头
@@ -814,16 +828,16 @@ export default {
           })
           this.$emit('searchData', this.searchList)
           // 报表按钮参数
-          if (this.tableInfo.useSystemConfigButton === 1) {
+          if (this.tableInfo.useSystemConfigButton == 1) {
             columnData.push({
               title: '操作',
               headerAlign: res.title,
               align: res.alignmentStyle,
               dataIndex: 'operation',
-              minWidth: 140,
+              width: 140,
               scopedSlots: { customRender: 'operation' }
             })
-          } else if (res.reportResources.length && this.tableInfo.useSystemConfigButton === 0) {
+          } else if (res.reportResources.length && this.tableInfo.useSystemConfigButton == 0) {
             this.buttonData = res.reportResources
             this.buttonData.forEach((btn) => {
               if (btn.permission) {
@@ -846,18 +860,18 @@ export default {
               headerAlign: res.title,
               align: res.alignmentStyle,
               dataIndex: 'operation',
-              minWidth: 140,
+              width: 140,
               scopedSlots: { customRender: 'operation' }
             })
           }
           if (this.tableInfo.selectType) {
-            if (res.tableType === 0 && res.enableEdit === 0) {
+            if (res.tableType == 0 && res.enableEdit == 0) {
               columnData.unshift({
                 type: 'selection',
                 width: 40
               })
             } else {
-              if (res.selectType === 1) {
+              if (res.selectType == 1) {
                 columnData.unshift({
                   type: 'radio',
                   width: 50
@@ -869,7 +883,7 @@ export default {
                 })
               }
             }
-            if (this.tableInfo.selectType === 1) {
+            if (this.tableInfo.selectType == 1) {
               this.selectType = 'single'
             } else {
               this.selectType = 'multip'
@@ -878,7 +892,7 @@ export default {
           this.seachType = that.tableInfo.searchPos + ''
           res.reportConfig.forEach((item) => {
             item.columnConfig = JSON.parse(item.columnConfig)
-            if (item.isCustomColumn === '1' && item.customColumnType === 'slot' && item.columnConfig.slotName) {
+            if (item.isCustomColumn == '1' && item.customColumnType === 'slot' && item.columnConfig.slotName) {
               this.customColumn.push(item.columnConfig.slotName)
             }
             columnData.forEach((el, index) => {
@@ -903,7 +917,7 @@ export default {
           })
           this.columns = columnData
           // 是编辑表格
-          if (res.enableEdit === 1) {
+          if (res.enableEdit == 1) {
             this.initClomuns()
           }
         }
@@ -1035,6 +1049,7 @@ export default {
         // this.codeForm = btn.belongTo
         this.codeForm = createFormParams.desformCode
         this.dataViewId = ''
+        this.formTitle = drawingListData.desformName
         this.propParam = Object.assign(this.propParam, this.westTreeParam)
         this.formVisible = true
       } else {
@@ -1049,10 +1064,10 @@ export default {
       this.formVisible = false
       if (this.tableType === 0) {
         this.$refs.table.searchData()
-        this.$emit('refresh')
       } else {
         this.$refs.xTable.searchData()
       }
+      this.$emit('refresh')
     },
     // 修改表单
     async modifyForm (row, btn) {
@@ -1079,6 +1094,7 @@ export default {
         // this.codeForm = btn.belongTo
         this.codeForm = createFormParams.desformCode
         this.dataViewId = row.ID
+        this.formTitle = drawingListData.desformName
         const oldPropParam = {}
         if (Object.keys(this.propParam).length) {
           Object.keys(this.propParam).forEach((item) => {
@@ -1141,6 +1157,7 @@ export default {
             } else {
               this.$refs.xTable.searchData()
             }
+            this.$emit('refresh')
           } else {
             this.$message({
               type: 'error',
@@ -1198,7 +1215,7 @@ export default {
     },
     // 自定义抽屉
     openComponent (row, btn) {
-      const rowBtnData = this.getRowBtnData(row, btn)
+      const rowBtnData = this.getOpenComponentData(row, btn)
       row = rowBtnData.row
       btn = rowBtnData.btn
       let createFormParams = {}
@@ -1217,6 +1234,13 @@ export default {
       }
       this.scopeRow = row
       this.customVisible = true
+    },
+    getOpenComponentData (row, btn) {
+      if (!btn) {
+        return { row: this.selectRecords, btn: row }
+      } else {
+        return { row: [row], btn: btn }
+      }
     },
     customerFun (row, btn) {
       const rowBtnData = this.getRowBtnData(row, btn)
@@ -1245,10 +1269,12 @@ export default {
     customClose () {
       this.customComponentParams = {}
       this.customVisible = false
-      if (this.tableType === 0) {
+      if (this.tableType == 0) {
         this.$refs.table.searchData()
+        this.$refs.table.clearSelection()
       } else {
         this.$refs.xTable.searchData()
+        this.$refs.xTable.clearSelection()
       }
     },
     // 查看流程图
@@ -1259,8 +1285,11 @@ export default {
       if (!row) {
         return
       }
+      if (btn && btn.eventParams) {
+        let createFormParams = eval('(' + btn.eventParams + ')')
+        this.processDefinationTwoKey = createFormParams.code
+      }
       this.modelId = row.ID
-      this.processDefinationTwoKey = row.PROCESSDEFINITIONKEY
       this.visibleModelPicture = true
     },
     // 关闭流程图
@@ -1275,9 +1304,13 @@ export default {
         return
       }
       const withdrawList = []
-      row.forEach((el) => {
-        withdrawList.push({ businessKey: el.ID, processDefinitionKey: el.PROCESSDEFINITIONKEY })
-      })
+      if (btn && btn.eventParams) {
+        let createFormParams = eval('(' + btn.eventParams + ')')
+        withdrawList.push({ businessKey: row[0].ID, processDefinitionKey: createFormParams.code })
+      }
+      // row.forEach((el) => {
+      //   withdrawList.push({ businessKey: el.ID, )
+      // })
       const params = {
         withdrawList: withdrawList
       }
@@ -1294,6 +1327,11 @@ export default {
                 message: '撤销成功',
                 type: 'success'
               })
+              if (that.tableType === 0) {
+                that.$refs.table.searchData()
+              } else {
+                that.$refs.xTable.searchData()
+              }
             } else {
               if (res.errorMsg) {
                 that.$message({
@@ -1365,6 +1403,11 @@ export default {
               message: '提交成功',
               type: 'success'
             })
+            if (that.tableType === 0) {
+              that.$refs.table.searchData()
+            } else {
+              that.$refs.xTable.searchData()
+            }
           }
         })
         .catch(function (error) {
@@ -1392,8 +1435,7 @@ export default {
       }
     },
     getDyApi (obj, row, btn) {
-      const rowBtnData = this.getRowBtnData(row, btn)
-      row = rowBtnData.row
+let that = this
       if (!row) {
         return
       }
@@ -1403,10 +1445,15 @@ export default {
       this.$api[obj.code]({ ids: rowIds })
         .then((res) => {
           if (res) {
-            this.$message({
+            that.$message({
               type: 'success',
               message: obj.successMsg
             })
+            if (that.tableType === 0) {
+              that.$refs.table.searchData()
+            } else {
+              that.$refs.xTable.searchData()
+            }
           } else {
             this.$message({
               type: 'error',
@@ -1612,7 +1659,7 @@ export default {
         fileName: this.$route.meta.title, // 导出的名称
         columnConfigs: this.columns // 导出的列
       }
-      if (this.tableType === 0) {
+      if (this.tableType == 0) {
         this.$refs.table.exportTable(exportObj)
       } else {
         this.$refs.xTable.exportTable(exportObj)
@@ -1644,7 +1691,7 @@ export default {
         if (that.tableInfo.reportEditDisposes && that.tableInfo.reportEditDisposes.length > 0) {
           that.tableInfo.reportEditDisposes.forEach((el) => {
             item.storageList = this.tableInfo.tableId
-            if (item.title === el.fieldTxt && (item.isCustomColumn === '0' || !item.isCustomColumn)) {
+            if (item.title === el.fieldTxt && (item.isCustomColumn == '0' || !item.isCustomColumn)) {
               // item.isEdit = true
               // 是否必填
               item.isRequired = el.isRequired
@@ -1674,6 +1721,7 @@ export default {
           if (selectOne) {
             if (this.selectRecords.length > 1) {
               this.$message({ type: 'warning', message: '只可选择一条数据' + button.title })
+              return
             } else {
               record = this.selectRecords[0]
             }
@@ -1682,6 +1730,7 @@ export default {
           }
         } else {
           this.$message({ type: 'warning', message: '请选择一条数据' })
+          return
         }
         return { row: record, btn: button }
       }
@@ -1727,7 +1776,7 @@ export default {
             type: 'success',
             message: '操作成功!'
           })
-          if (this.tableType === 0) {
+          if (this.tableType == 0) {
             this.$refs.table.searchData()
             this.$refs.table.clearSelection()
           } else {
@@ -1777,7 +1826,7 @@ export default {
             type: 'success',
             message: '操作成功!'
           })
-          if (this.tableType === 0) {
+          if (this.tableType == 0) {
             this.$refs.table.searchData()
             this.$refs.table.clearSelection()
           } else {
@@ -1807,6 +1856,16 @@ export default {
         .catch((err) => {
           console.log(err)
         })
+    },
+    thirdMenuClick (record, item) {
+      this.defaultMenu = item
+      this.thirdMenuTitle = '计划详情'
+      this.thirdMenuParam = { ...record }
+      this.visibleThirdDrawer = true
+    },
+    onThirdMenuClose () {
+      this.$router.push({ path: this.currentRouterPath })
+      this.visibleThirdDrawer = false
     }
   }
 }
