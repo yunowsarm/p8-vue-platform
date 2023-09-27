@@ -18,8 +18,7 @@
         <el-tab-pane v-for="(item, index) in tabsData"
                      :key="index"
                      :label="item.name"
-                     :name="item.name"
-                     @tab-click="tabClick">
+                     :name="item.name">
           <span slot="label"> <i v-if="item.icon"
                :class="['iconStyle', item.icon]"
                :style="{ color: item.color }"></i>{{ item.name }} </span>
@@ -447,6 +446,7 @@ export default {
       this.activeName = this.tabsData[0].name
     },
     tabClick (target) {
+      this.$emit('tabClick', target)
       const tabs = this.tabsData.filter((el) => {
         return el.name === target.name
       })
@@ -472,7 +472,6 @@ export default {
           this.asyncComponents = tabs[0].targetUrl
         }
       }
-      this.$emit('tabClick', target)
     },
     handleCancel () {
       this.$emit('close')
