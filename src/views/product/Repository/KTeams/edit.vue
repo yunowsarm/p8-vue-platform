@@ -34,7 +34,6 @@ let dataSource = [
     fieldName: 'projectClassifyId',
     placeholder: '请选择项目类型',
     colLayout: 'singleCol',
-    disabledValues: ['62f000902804491db8c1'],
     defaultExpandAll: true,
     treeData: [],
     rules: [
@@ -114,13 +113,18 @@ export default {
           console.error(error)
         })
       }
-      this.$api['formGenerator.getSelectionData']({selectCode: 'projectTypeTree1'}).then(res => {
+      this.$api['formGenerator.getSelectionData']({selectCode: 'pmKlTeamsProjTypeTree'}).then(res => {
         let treeData = []
+        let disableValues = []
         res.data.forEach(el => {
-          treeData.push({id:el.ID,value: el.ID,label:el.NAME,pId: el.PARENTID})
+          treeData.push({id:el.ID, value: el.ID, label:el.C_MEANING, pId: el.C_PARENTID})
+          if (el.C_PARENTID === '0') {
+            disableValues.push(el.ID)
+          }
         })
-        treeData = generateTree(treeData, 'pId')
+        treeData = generateTree(treeData, 'pId', '0')
         this.dataSource[1].treeData = treeData
+        this.dataSource[1].disabledValues = disableValues
       })
     },
     saved (res) {
