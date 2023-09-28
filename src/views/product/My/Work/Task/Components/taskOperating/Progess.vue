@@ -200,18 +200,18 @@ export default {
       this.formData.managerStatusDisplay = this.planInfoParams.managerStatusDisplay
       this.formData.content = this.planInfoParams.content
       this.formData.realEndDate = this.planInfoParams.realEndDate
-      let leaf = this.getPlanInfo().isLeaf
+      // let leaf = this.getPlanInfo().isLeaf
       // // eslint-disable-next-line eqeqeq
       // 只有叶子结点可以展示进度  提交任务
-      if (leaf == '0') {
-        this.formData.leaf = true
-      } else {
-        this.formData.leaf = false
-      }
+      // if (leaf == '0') {
+      //   this.formData.leaf = true
+      // } else {
+      //   this.formData.leaf = false
+      // }
       if (this.planInfoParams.managerStatusDisplay && this.planInfoParams.managerStatusDisplay == '审批撤销') {
         this.formData.realEndDate = ''
         this.formData.progress = 99
-        this.formData.leaf = true
+        // this.formData.leaf = true
       }
     },
     leafChildIsFinished () {
@@ -355,7 +355,7 @@ export default {
           message: '成功'
         })
         _this.$bus.$emit('refresh')
-        this.formData.leaf = false
+        // this.formData.leaf = false
       })
     },
     NewProgressSubmit (form, submitType, obj) {
@@ -369,7 +369,7 @@ export default {
           message: '成功'
         })
         _this.$bus.$emit('refresh')
-        this.formData.leaf = false
+        // this.formData.leaf = false
       })
     },
     submitParamsHandle (form, submitType) {
@@ -387,12 +387,13 @@ export default {
         pmTaskDeviationCauses: {        // 偏离参数
           planInfoId: _this.planInfoParams.planInfoId,
           pmProjectTasksId: _this.planInfoParams.taskId,
-          id: "", //偏离数据id
-          deviationType: "", //偏离类型
-          deviationCauses: "", //偏离原因
-          deviationImpact: "", //偏离影响
-          progress: "", //进展说明
-          solutions: "" //解决方案
+          id: form.id, //偏离数据id
+          deviationType: form.deviationType, //偏离类型
+          deviationCauses: form.deviationCauses, //偏离原因
+          deviationImpact: form.deviationImpact, //偏离影响
+          progress: form.progress, //进展说明
+          deviationProgress: form.deviationProgress, //进展情况
+          solutions: form.solutions //解决方案
         }
       }
       progress.forEach(key => {

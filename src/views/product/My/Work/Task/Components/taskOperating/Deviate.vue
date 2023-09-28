@@ -52,7 +52,7 @@ export default {
       },
       {
         title: '进展情况',
-        dataIndex: 'progress',
+        dataIndex: 'deviationProgress',
         columnConfig: { // 表格列内容过长隐藏并显示Tooltip
           'show-overflow-tooltip': true
         },
@@ -105,11 +105,7 @@ export default {
         if (res && res.length) {
           let data = res[0]
           Object.keys(_this.formData).forEach(key => {
-            if (key === 'deviationProgress') {
-              _this.formData[key] = data.progress
-            } else {
-              _this.formData[key] = data[key]
-            }
+            _this.formData[key] = data[key]
           })
         }
       })
