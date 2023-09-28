@@ -447,12 +447,11 @@ export default {
     }
   },
   created () {
-    console.log('111111111111111111111111111');
     let that = this
     getMonitorData({ monitorId: [] }).then(res => {
       that.monitorpointDataArray = res
+      console.log(that.monitorpointDataArray, '22222222222222222222222');
     })
-    console.log('22222222222222222222222');
     this.$api[this.treeApi]({ dicType: 'PROJECTTYPE' }).then((res) => {
       res.forEach(item => {
         item.value = item.id
@@ -600,15 +599,11 @@ export default {
     monitorpointIconHandle (row) {
       let that = this
       let tempIcon = []
-      if (row.monitorpointArray && row.monitorpointIconArray) {
-        let monitorpointArray = row.monitorpointArray.split(',')
+      if (row.monitorPointArray && row.monitorpointIconArray) {
+        let monitorpointArray = row.monitorPointArray.split(',')
         monitorpointArray.forEach((item, index) => {
           tempIcon.push({ 'id': item, 'icon': that.monitorpointDataArray[item].icon, 'title': that.monitorpointDataArray[item].name })
         })
-      }
-      tempIcon.push({ 'id': '1008', 'icon': 'p8 icon-cost', 'title': '经费标识' })
-      if (row.revenueBudgetId) {
-        tempIcon.push({ 'id': row.revenueBudgetId, 'icon': 'p8 icon-cost', 'title': '经费标识' })
       }
       return tempIcon
     },
