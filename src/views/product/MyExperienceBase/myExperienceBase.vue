@@ -21,7 +21,7 @@
             <template #tree="{ node }">
               <div class="node-span"
                    :class="{ 'node-left': !node.childNodes.length}">
-                <div>
+                <div style="display: flex">
                   <span style="display: inline-block; width: 20px">
                     <i class="p8"
                        :class="node.data.icon ? node.data.icon : 'icon-fenzu'"></i>
@@ -124,12 +124,12 @@
   justify-content: space-between;
   width: 100%;
   padding-right: 10px;
-  // .node-label {
-  //   display: inline-block;
-  //   width: 120px;
-  //   overflow: hidden;
-  //   text-overflow: ellipsis;
-  // }
+  .node-label {
+    width: 150px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: inline-block;
+  }
 }
 .node-left {
   padding-left: 26px;
@@ -273,7 +273,9 @@ export default {
   computed: {
     treeData () {
       this.catalogData.map((el) => {
-        el.icon ? el.icon : 'icon-fenzu'
+        if (el.id === '0') {
+          el.icon = 'icon p8 icon-zong'
+        }
       })
       const resultData = this.catalogData
       return resultData
