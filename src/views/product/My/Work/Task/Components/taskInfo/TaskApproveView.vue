@@ -106,18 +106,18 @@ export default {
           slotName: 'content',
           colLayout: 'singleCol'
         },
-        {
-          type: 'view',
-          labelText: '完成形式:',
-          fieldName: 'completeForm',
-          colLayout: 'singleCol'
-        },
-        {
-          type: 'view',
-          labelText: '完成标准:',
-          fieldName: 'completeCriteria',
-          colLayout: 'singleCol'
-        },
+        // {
+        //   type: 'view',
+        //   labelText: '完成形式:',
+        //   fieldName: 'completeForm',
+        //   colLayout: 'singleCol'
+        // },
+        // {
+        //   type: 'view',
+        //   labelText: '完成标准:',
+        //   fieldName: 'completeCriteria',
+        //   colLayout: 'singleCol'
+        // },
         {
           type: 'blank',
           labelText: '状态:',
