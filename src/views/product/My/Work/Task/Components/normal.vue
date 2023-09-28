@@ -450,7 +450,6 @@ export default {
     let that = this
     getMonitorData({ monitorId: [] }).then(res => {
       that.monitorpointDataArray = res
-      console.log(that.monitorpointDataArray, '22222222222222222222222');
     })
     this.$api[this.treeApi]({ dicType: 'PROJECTTYPE' }).then((res) => {
       res.forEach(item => {

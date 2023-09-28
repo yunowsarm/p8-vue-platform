@@ -22,7 +22,7 @@
                  :modal="false"
                  :before-close="dialogCancel">
         <div class="dialog-content"><i class="el-icon-warning"
-             style="color: #e6a23c"></i>当前任务已超期, 是否填写本次未完成原因??</div>
+             style="color: #e6a23c"></i>当前任务已超期, 是否填写本次未完成原因?</div>
         <span slot="footer"
               class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
@@ -43,7 +43,16 @@ export default {
   components: {
     FormTable
   },
-  props: ['durationDay'],
+  props: {
+    durationDay: {
+      type: Boolean,
+      default: true
+    },
+    exceedType: {
+      type: Boolean,
+      default: false
+    }
+  },
   inject: ['getPlanInfo'],
   computed: {
     planInfoParams () {
@@ -96,7 +105,6 @@ export default {
       }
     ]
     return {
-      exceedType: false,
       leafChildrenIsFinished: false,
       isHaveParentTaskParentId: false,
       formType: {
@@ -177,25 +185,6 @@ export default {
     if (!this.durationDay) {
       this.dialogVisible = true
     }
-    //   this.$confirm('当前任务已超期, 是否填写本次未完成原因?', '请填写未完成原因', {
-    //     confirmButtonText: '确定',
-    //     cancelButtonText: '取消',
-    //     type: 'warning'
-    //   }).then(() => {
-    //     this.exceedType = true
-    //     this.formType.overdue = true
-    //     let deviation = {
-    //       deviationType: '',
-    //       deviationCauses: '', // 偏离原因
-    //       deviationImpact: '', // 偏离影响
-    //       deviationProgress: '', // 进展情况
-    //       solutions: '' // 偏离备注
-    //     }
-    //     this.formData = { ...this.formData, ...deviation }
-    //     this.dateTime = new Date().getTime()
-    //   }).catch(() => { });
-    // }
-    // this.leafChildIsFinished()
   },
   mounted () {
     this.initUpdateFromData()
@@ -213,6 +202,7 @@ export default {
       this.formData.realEndDate = this.planInfoParams.realEndDate
       let leaf = this.getPlanInfo().isLeaf
       // // eslint-disable-next-line eqeqeq
+      // 只有叶子结点可以展示进度  提交任务
       if (leaf == '0') {
         this.formData.leaf = true
       } else {
@@ -223,13 +213,6 @@ export default {
         this.formData.progress = 99
         this.formData.leaf = true
       }
-      // progress-下, 判断当前任务是否超期, 超期展示弹窗提示
-      // if (!(moment().isBefore(this.planInfoParams.forecastEndDate))) {
-      //   const statusEnd = this.planInfoParams.allStatus.filter(item => item.progressRange[0] === '1') // ('6600'. '6700')
-      //   if (!(statusEnd.find((item) => item.value === this.planInfoParams.status))) {
-      //     this.dialogVisible = true
-      //   }
-      // }
     },
     leafChildIsFinished () {
       /**
@@ -270,7 +253,6 @@ export default {
     },
     dialogOk () {
       this.dialogVisible = false
-      console.log('111111111111111111111111111111');
       // 弹窗提示点击确定--表示人员要填写偏离相关的信息, 展示偏离模块(信息为必填)
       this.exceedType = true
       // this.formType.overdue = true
@@ -282,6 +264,8 @@ export default {
         solutions: '' // 偏离备注
       }
       this.formData = { ...this.formData, ...deviation }
+      // 切换页面不继续弹出超期提示框
+      this.$emit('dialogOk', true)
     },
     progressDateChange (date) {
       let endTime = date.maxDate
@@ -308,13 +292,13 @@ export default {
 
       let rst = this.progressToShowRealDate(val)
       this.formType.progressRealBegin = rst.realBeginDate
-      this.formRules.realBeginDate[0].required = !rst.realBeginDate
+      // this.formRules.realBeginDate[0].required = !rst.realBeginDate
       this.formType.progressRealEnd = rst.realEndDate
       // this.formRules.realEndDate[0].required = false // 点击保存或提交审批时再校验是否选填了实际完成时间
       this.formType.progressForecastBegin = rst.forecastBeginDate
-      this.formRules.forecastBeginDate[0].required = !rst.forecastBeginDate
+      // this.formRules.forecastBeginDate[0].required = !rst.forecastBeginDate
       this.formType.progressForecastEnd = rst.forecastEndDate
-      this.formRules.forecastEndDate[0].required = !rst.forecastEndDate
+      // this.formRules.forecastEndDate[0].required = !rst.forecastEndDate
     },
     progressToShowRealDate (newProgress) {
       let key = ''
@@ -459,16 +443,9 @@ export default {
         if (normalStatus === '6020') {
           status = '6020'
         }
-        // if (normalStatus === '6100' || normalStatus === '6200') {
-        //   status = '6200'
-        // }
       } else {
         status = '6050' // 6500
       }
-      // else if (progress === 100) {
-      //   status = submitType === 'progress' ? '6500' : '6600'
-      // }
-
       return status
     }
   }
@@ -482,19 +459,12 @@ export default {
     width: 30% !important;
     height: 160px;
     min-width: 200px;
-    div.el-dialog__body {
-      height: 60px;
-    }
-    div.dialog-content {
-      padding: 8px 20px;
-    }
   }
 }
 ::v-deep .el-dialog__body {
-  height: 40px;
+  height: 20px;
 }
 .dialog-content {
   margin-left: 25px;
-  margin-top: 15px;
 }
 </style>

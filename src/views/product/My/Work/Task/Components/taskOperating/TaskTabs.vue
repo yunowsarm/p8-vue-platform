@@ -12,7 +12,9 @@
         <!-- <progess ref="progess"></progess> -->
         <progess v-if="progessType !== 'progessTable'"
                  ref="progess"
-                 :durationDay="durationDay"></progess>
+                 :durationDay="durationDay"
+                 :exceedType="exceedType"
+                 @dialogOk="dialogOk"></progess>
         <progess-table v-else
                        ref="progessTable"></progess-table>
       </template>
@@ -61,16 +63,19 @@ export default {
         { label: '未完成原因', name: 'unfinishedCause' }
       ],
       tabsActiveName: '',
-      durationDay: null
+      durationDay: false,
+      exceedType: false
     }
   },
   mounted () {
     // 超期
-    if (moment(moment().format('YYYY-MM-DD')).isAfter(moment(this.getPlanInfo().planEndDate))) {
-      this.durationDay = false
-      // 未超期
-    } else {
-      this.durationDay = true
+    if (!this.durationDay) {
+      if (moment(moment().format('YYYY-MM-DD')).isAfter(moment(this.getPlanInfo().planEndDate))) {
+        this.durationDay = false
+        // 未超期
+      } else {
+        this.durationDay = true
+      }
     }
     let taskTabs = []
     // 已下发
@@ -105,6 +110,11 @@ export default {
   },
   methods: {
     tabsClick () {
+    },
+    // 切换页面不继续弹出超期提示框
+    dialogOk (val) {
+      this.durationDay = val
+      this.exceedType = val
     }
   }
 }

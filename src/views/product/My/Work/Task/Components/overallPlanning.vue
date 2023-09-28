@@ -453,6 +453,10 @@ export default {
     }
   },
   created () {
+    let that = this
+    getMonitorData({ monitorId: [] }).then(res => {
+      that.monitorpointDataArray = res
+    })
     this.$api[this.treeApi]({ dicType: 'PROJECTTYPE' }).then((res) => {
       res.forEach(item => {
         item.value = item.id
@@ -526,6 +530,7 @@ export default {
     },
     async handleMenuBeforClose (done) {
       this.visible = false
+      this.$router.push({ path: this.currentRouterPath })
     },
     closeDrawer () {
       this.$refs.table.searchData()

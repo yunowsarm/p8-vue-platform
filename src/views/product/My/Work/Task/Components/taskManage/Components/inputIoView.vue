@@ -20,23 +20,23 @@
             :class="{ 'not-last': index < inputIoData.length -1 }">
           <p class="">
             <span class="label">任务名称</span>
-            <span>{{item.taskName}}</span>
-          </p>
-          <p>
-            <span class="label">计划开始时间</span>
             <span>{{item.aorName}}</span>
           </p>
           <p>
+            <span class="label">计划开始时间</span>
+            <span>{{item.planBeginDate}}</span>
+          </p>
+          <p>
             <span class="label">计划完成时间</span>
-            <span>{{item.aorDetail}}</span>
+            <span>{{item.planEndDate}}</span>
           </p>
           <p>
             <span class="label">排程类型</span>
-            <span>{{item.aorDetail}}</span>
+            <span>{{item.autoSchedulingDisplay}}</span>
           </p>
           <p>
             <span class="label">工期</span>
-            <span>{{item.aorDetail}}</span>
+            <span>{{item.duration}}</span>
           </p>
         </li>
       </ul>
