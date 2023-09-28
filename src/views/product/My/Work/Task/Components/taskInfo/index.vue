@@ -88,7 +88,7 @@ export default {
       },
       {
         type: 'view',
-        labelText: '实际际期',
+        labelText: '实际周期',
         fieldName: 'realDate',
         colLayout: 'singleCol'
       },
