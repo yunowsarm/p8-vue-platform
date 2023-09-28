@@ -406,7 +406,7 @@ export default {
               })
             }
             myGantt.$resourcesStore.parse(res.resources)
-            myGantt.serverList(myGantt.config.monitor_point, res.allMonitors)
+            myGantt.serverList(myGantt.config.monitor_point, res.monitorPointDatas)
             myGantt.serverList(myGantt.config.plan_type, res.taskClassifys)
             vueThis.createTaskStatus = res.createTaskStatus
             vueThis.managerStatus = res.managerStatus
