@@ -173,7 +173,7 @@
                   <el-input-number v-if="formData.leaf"
                                    size="mini"
                                    v-model="formData.progress"
-                                   :min="0"
+                                   :min="minNum"
                                    :max="100"
                                    :step="1"
                                    @change="progressChange"></el-input-number>
@@ -420,14 +420,20 @@ export default {
       unfinishOption: [],// 未完成原因分类
       adjustOption: [],
       newFormData: {},
-      managerStatus: '' // 管理状态
+      managerStatus: '', // 管理状态
+      minNum: 0
     }
   },
   mounted () {
+    //  进行中的任务不能减进度条
+    if (this.getPlanInfo().status === '6050') {
+      this.minNum = this.getPlanInfo().progress
+    }
     realBeginDate = this.formData.realBeginDate
     this.getOptions()
     let nullity = this.getPlanInfo().nullity
     this.secretGrade = this.getPlanInfo().secretGradeDisplay
+    // 提交进度按钮是否置灰
     if (nullity === 1) {
       this.buttonDisabled = true
     } else {
