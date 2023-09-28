@@ -394,14 +394,14 @@
     </common-dialog>
     <common-dialog
       title="统计信息"
-      width="50%"
+      width="60%"
       v-if="ganttStatisticVisible"
       :visible="ganttStatisticVisible"
       :show-handle-btn="false"
       @isfullscreen="isfullscreen"
       @close="closeStatistic"
       :is-view-cs-footer="false"
-      :dialog-height="260"
+      :dialog-height="460"
     >
       <template #dialog>
         <command-statistic :gantt-name="ganttName" :plan-info-id="planInfoId"></command-statistic>
@@ -714,6 +714,7 @@ export default {
       isPlan: true,
       detailVisible: false,
       detailTitle: '查看院任务',
+      planEditLock: false,
       fullscreenLoading: '',
       avTaskId: '',
       selectTaskwbsMainDataId: '',
@@ -1381,7 +1382,10 @@ export default {
               myGantt.config.readonly = true
             }
             if (res.monitorLock && res.monitorLock['1010'] && res.monitorLock['1010'] === '1') {
-              myGantt.config.readonly = true
+              if (createPage === 'compile') {
+                vueThis.planEditLock = true
+                myGantt.config.readonly = true
+              }
             }
             if (res.trainingModeList) {
               const trainingModeListArr = []
