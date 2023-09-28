@@ -114,9 +114,11 @@ const platform = {
     systemName: Cookie.get(SYSTEM_NAME) || '',
     headerHeight: plateformVariables.headerHeight, // 头部(header)高度
     tagTabHeight: plateformVariables.headerTagHeight, //  标签页(tagTabs)高度
-    imageUrl: Cookie.get(SYSTEM_IMAGE_KEY) || ''
+    imageUrl: Cookie.get(SYSTEM_IMAGE_KEY) || '',
     // mainScrollHeight: 0, // main部分的实时滚动高度scrollTop
     // ctrlKeyState: false // 判断是否全局按了ctrl按键
+    // todo 配置低代码表单的title的新建、修改、删除在前还是在后
+    formTitlePosition: 'left'
   },
 
   mutations: {
