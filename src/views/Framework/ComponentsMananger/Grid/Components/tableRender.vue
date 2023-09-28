@@ -183,7 +183,7 @@ labelWidth="70px"
                        @save-success="formClose"></form-render>
         </template>
       </common-drawer>
-      <common-drawer :title="formTitle"
+      <common-drawer title="查看详情"
                      :visible="viewVisible"
                      size="50%"
                      :drawer-config="drawerConfig"
@@ -1049,7 +1049,7 @@ export default {
         // this.codeForm = btn.belongTo
         this.codeForm = createFormParams.desformCode
         this.dataViewId = ''
-        this.formTitle = drawingListData.desformName
+        this.$store.getters.formTitlePosition == 'left' ? this.formTitle = '新建' + drawingListData.desformName : this.formTitle = drawingListData.desformName + '新建'
         this.propParam = Object.assign(this.propParam, this.westTreeParam)
         this.formVisible = true
       } else {
@@ -1094,7 +1094,7 @@ export default {
         // this.codeForm = btn.belongTo
         this.codeForm = createFormParams.desformCode
         this.dataViewId = row.ID
-        this.formTitle = drawingListData.desformName
+        this.$store.getters.formTitlePosition == 'left' ? this.formTitle = '修改' + drawingListData.desformName : this.formTitle = drawingListData.desformName + '修改'
         const oldPropParam = {}
         if (Object.keys(this.propParam).length) {
           Object.keys(this.propParam).forEach((item) => {
