@@ -147,8 +147,12 @@ export default {
       }
     },
     isDisableFun() {
+      const that = this
       // 标识逻辑
       return (btn, ganttName, tasks) => {
+        if (window.createPage === 'compile' && that.vueThis.planEditLock) {
+          return true
+        }
         if (window.createPage === 'decompose') {
           if (btn && btn.id === '3112') {
             return true
