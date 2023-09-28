@@ -562,12 +562,12 @@ export function getGanttColumns(ganttObject, vueThis) {
       resize: true,
       template: function (task) {
         // 任务图标，排除根节点
-        if (!(ganttObject.getGlobalTaskIndex(task.id) === 0 && vueThis.createPage === 'compile')) {
+        if (!(ganttObject.getGlobalTaskIndex(task.id) === 0)) {
           const managerStatus = task.managerStatus
           if (managerStatus && vueThis.managerStatusMap) {
             const item = vueThis.managerStatusMap[managerStatus]
             if (item) {
-              return item.cmeaning
+              return `<i class="${item.icon}" style="color: ${item.color}" title="${item.cmeaning}"></i>`
             }
           }
         }
