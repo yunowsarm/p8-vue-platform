@@ -52,7 +52,7 @@ export default {
       },
       {
         title: '进展情况',
-        dataIndex: 'progress',
+        dataIndex: 'deviationProgress',
         columnConfig: { // 表格列内容过长隐藏并显示Tooltip
           'show-overflow-tooltip': true
         },
