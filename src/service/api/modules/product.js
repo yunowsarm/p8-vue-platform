@@ -100,9 +100,9 @@ export const repositoryApi = {
     {
       name: 'loadMonitorData',
       method: 'POST',
-      path: '/product/common/P8Task/loadMonitorData',
-      mockPath: '/product/common/P8Task/loadMonitorData',
-      desc: '个人工作台->任务看板->获取计划标识明细数据'
+      path: '/product/my/work/task/loadMonitorData',
+      mockPath: '/product/my/work/task/loadMonitorData',
+      desc: '我的任务->获取计划标识明细数据'
     }
   ],
   taskManager: [
