@@ -279,6 +279,7 @@ export default {
             const ganttObject = GanttObject.getGanttObject(that.ganttName)
             otherEditCheck(that.oldInput, that.formData.inputRequests, ganttObject, that.vueThis, that.taskId, 'input')
             that.vueThis.hasSave = true
+            that.$message.success('保存成功！')
           }
         }
       } else {
