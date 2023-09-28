@@ -170,8 +170,7 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label-width="30px">
-                  <el-input-number v-if="formData.leaf"
-                                   size="mini"
+                  <el-input-number size="mini"
                                    v-model="formData.progress"
                                    :min="minNum"
                                    :max="100"
@@ -263,21 +262,11 @@
                       :tableSetting="false"></common-table>
       </template>
     </common-drawer>
-    <!-- 预先设置审批人-->
-    <selectApproveUserBeforehand v-if="dialogVisible"
-                                 :isSelectApproveUserBeforehandView="dialogVisible"
-                                 :selectUserBeforehandDataSource="selectUserBeforehandDataSource"
-                                 :selectUserBeforehandFormData="selectUserBeforehandFormData"
-                                 @close-modal="dialogVisible = false"
-                                 @commit="commitSelectApproveUserBeforehand"></selectApproveUserBeforehand>
   </div>
 
 </template>
 <script>
 import { Form, FormItem, Progress, Input, InputNumber, DatePicker, Select, Option, Row, Col, Button, Slider, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
-import { nextApproveUserBeforehand } from './components/approveUserBeforehand'
-import SelectApproveUserBeforehand
-  from '@/views/Framework/BusinessActivity/ProcessApproval/selectApproveUserBeforehand'
 import moment from 'moment'
 const mh = document.documentElement.clientHeight - 43
 let realBeginDate
@@ -314,8 +303,7 @@ export default {
     'el-input': Input,
     'el-slider': Slider,
     CommonDrawer,
-    CommonTable,
-    SelectApproveUserBeforehand
+    CommonTable
   },
   props: {
     formData: {
@@ -371,11 +359,8 @@ export default {
   },
   data () {
     return {
-      // exceedType1: false,
       dateTime: null,
       releaseMenuParams: {},
-      dialogVisible: false,
-      selectUserBeforehandDataSource: [],
       selectUserBeforehandFormData: {
         SYS_USER: ''
       },
@@ -441,19 +426,6 @@ export default {
     }
   },
   methods: {
-    commitSelectApproveUserBeforehand (fullParams) {
-      let that = this
-      that.releaseMenuParams.beforehandParams = { ...fullParams }
-      let obj = {
-        beforehandParams: that.releaseMenuParams.beforehandParams,
-        processDefinitionKey: that.releaseMenuParams.processDefinitionKey,
-        description: that.description,
-        needDescriptionName: that.needDescriptionName
-      }
-      this.getPlanInfo().managerStatus = '6406'
-      this.$emit('NewSubmit', that.formData, 'submit', obj)
-      that.dialogVisible = false
-    },
     getOptions () {
       this.$api['thirdPartInterface.getDic']({ dicType: 'DEVIATION_ClASSIFY' }).then(res => {
         this.unfinishOption = res
