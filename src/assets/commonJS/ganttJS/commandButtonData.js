@@ -1024,7 +1024,7 @@ export const CommandButtonData = [
       if (checkSwitchType(tasks)) {
         return true
       }
-      if (tasks[0].planTypeDic === undefined || tasks[0].planTypeDic === '') {
+      if (tasks[0].planType === undefined || tasks[0].planType === '') {
         return true
       }
       if (tasks[0].managerStatus === '6401' && tasks[0].specialDutyDeptId) {
@@ -1035,10 +1035,7 @@ export const CommandButtonData = [
         result = true
       } else if (tasks[0].managerStatus === '6403' && tasks[0].dutyDeptName) {
         // 待下发状态责任部门（科研）不为空，可以下发
-        // 专题计划可以不填任务类型下发
-        if (rootTask.projectClassification === 'PROJECT_CLASSIFICATION_0_02') {
-          result = false
-        } else if (tasks[0].planTypeDic === undefined || tasks[0].planType === undefined || tasks[0].planType === '') {
+        if (tasks[0].planType === undefined || tasks[0].planType === undefined || tasks[0].planType === '') {
           // 当任务类型和计划类型为空时，不能下发
           result = true
         } else {
@@ -1049,7 +1046,7 @@ export const CommandButtonData = [
         result = true
       } else if (tasks[0].managerStatus === '6403' && tasks[0].specialDutyDeptId) {
         // 待下发状态并且主责部门（专题）不为空，能下发
-        if (tasks[0].planTypeDic === undefined || tasks[0].planTypeDic === '') {
+        if (tasks[0].planType === undefined || tasks[0].planType === '') {
           // 当任务类型和计划类型为空时，不能下发
           result = true
         } else {

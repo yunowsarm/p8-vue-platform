@@ -46,7 +46,7 @@
                      :percentage="formData.documentCompletionStatus"></el-progress>
       </el-card>
     </div>
-    <div class="flex-steps">
+    <!-- <div class="flex-steps">
       <el-card class="box-card">
         <div slot="header"
              class="clearfix">
@@ -91,7 +91,7 @@
           </el-col>
         </el-row>
       </el-card>
-    </div>
+    </div> -->
   </div>
 </template>
 <style scoped>
@@ -107,7 +107,7 @@
 }
 .box-card {
   width: 98.5%;
-  height: 95%;
+  height: 35%;
   margin: 10px;
 }
 .progress {
@@ -124,21 +124,31 @@ export default {
   name: 'CompList',
   components: {
   },
+  props: {
+    thirdMenuParam: {
+      type: Object,
+      default: function () {
+        return {}
+      }
+    }
+  },
   data () {
     return {
-      formData: {}
+      formData: {},
+      planInfoId: ''
     }
   },
   mounted () {
+    this.planInfoId = this.thirdMenuParam.ID || ''
     this.getPlanOver()
   },
   methods: {
     getPlanOver (param) {
-      this.$api['planChange.planOverviewBulletinBoard']().then(res => {
-        this.formData = res.monthlyPlanCompletionRate ? res.monthlyPlanCompletionRate : 0
-        this.formData = res.milestoneCompletionStatus ? res.milestoneCompletionStatus : 0
-        this.formData = res.expectedOverdueTaskAnalysis ? res.expectedOverdueTaskAnalysis : 0
-        this.formData = res.documentCompletionStatus ? res.documentCompletionStatus : 0
+      this.$api['planChange.planOverviewBulletinBoard']({ planInfoId: this.planInfoId }).then(res => {
+        this.$set(this.formData, 'monthlyPlanCompletionRate', res.monthlyPlanCompletionRate ? res.monthlyPlanCompletionRate : 0)
+        this.$set(this.formData, 'milestoneCompletionStatus', res.milestoneCompletionStatus ? res.milestoneCompletionStatus : 0)
+        this.$set(this.formData, 'expectedOverdueTaskAnalysis', res.expectedOverdueTaskAnalysis ? res.expectedOverdueTaskAnalysis : 0)
+        this.$set(this.formData, 'documentCompletionStatus', res.documentCompletionStatus ? res.documentCompletionStatus : 0)
       })
     }
   }
