@@ -467,35 +467,13 @@ export default {
           this.getPlanInfo().progress = this.formData.progress
           if (submitType === 'submit') {
             _this.$api['taskManager.progressFeedbackCheck']({ taskId: _this.getPlanInfo().taskId, parent: _this.getPlanInfo().parentId, hierarchy: _this.getPlanInfo().getProjectLevel }).then(res => {
-              if (res.processDefinitionKey) {
-                if (res.data.candidateUserMap['SYS_USER']) {
-                  this.selectUserBeforehandFormData.SYS_USER = res.data.candidateUserMap['SYS_USER'][0].value
-                }
-                nextApproveUserBeforehand.initDataSource(res.processDefinitionKey, _this, res.data).then((res) => {
-                  if (res) {
-                    _this.dialogVisible = true
-                  }
-                })
-              } else if (res.message === '子任务在提交审批中，父任务不能提交完成！') {
-
-                _this.$message({
-                  message: '子任务在提交审批中，父任务不能提交完成！',
-                  type: 'warning'
-                })
-              }
-              else if (res && res.message) {
-                _this.$confirm(res.message, '提示', {
-                  confirmButtonText: '确定',
-                  cancelButtonText: '取消',
-                  type: 'warning'
-                }).then(() => {
-                  _this.getPlanInfo().managerStatus = '6406'
-                  _this.$emit('submit', _this.formData, submitType)
-                }).catch(() => { })
+              if (res && res.success) {
+                _this.getPlanInfo().managerStatus = '6406'
+                _this.$emit('submit', _this.formData, submitType)
               } else {
                 _this.$message({
-                  message: '提交失败！',
-                  type: 'warning'
+                  message: res.message,
+                  type: 'error'
                 })
               }
             })
