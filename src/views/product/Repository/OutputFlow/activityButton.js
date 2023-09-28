@@ -17,8 +17,15 @@ export const activityButtonData = [
       clickFun: function (tasks, _this) {
         _this.addTask(1, 'After')
       },
-      isDisableFun: function (tasks) {
-        return isDisableFunCheck(tasks)
+      isDisableFun: function (tasks, _this, myGantt) {
+        let result = false
+        result = isDisableFunCheck(tasks)
+        tasks.forEach(el => {
+          if (el.parent == 0) {
+            result = true
+          }
+        })
+        return result
       }
     },
     {
@@ -30,7 +37,14 @@ export const activityButtonData = [
         _this.copyList = taskId
       },
       isDisableFun: function (tasks) {
-        return isDisableFunCheck(tasks)
+        let result = false
+        result = isDisableFunCheck(tasks)
+        tasks.forEach(el => {
+          if (el.parent == 0) {
+            result = true
+          }
+        })
+        return result
       }
     },
     {
@@ -59,7 +73,14 @@ export const activityButtonData = [
         _this.outdent()
       },
       isDisableFun: function (tasks) {
-        return isDisableFunCheck(tasks)
+        let result = false
+        result = isDisableFunCheck(tasks)
+        tasks.forEach(el => {
+          if (el.parent == 0) {
+            result = true
+          }
+        })
+        return result
       }
     },
     {
@@ -70,7 +91,14 @@ export const activityButtonData = [
         _this.indent()
       },
       isDisableFun: function (tasks) {
-        return isDisableFunCheck(tasks)
+        let result = false
+        result = isDisableFunCheck(tasks)
+        tasks.forEach(el => {
+          if (el.parent == 0) {
+            result = true
+          }
+        })
+        return result
       }
     },
     {
@@ -81,7 +109,14 @@ export const activityButtonData = [
         _this.removeTask()
       },
       isDisableFun: function (tasks) {
-        return isDisableFunCheck(tasks)
+        let result = false
+        result = isDisableFunCheck(tasks)
+        tasks.forEach(el => {
+          if (el.parent == 0) {
+            result = true
+          }
+        })
+        return result
       }
     },
     // {
@@ -160,7 +195,13 @@ export const activityButtonData = [
         _this.importTask()
       },
       isDisableFun: function (tasks) {
-        return isDisableFunCheck(tasks)
+        let result = false
+        if (tasks && tasks.length == 1) {
+          result = false
+        } else {
+          result = true
+        }
+        return result
       }
     },
     {
