@@ -107,10 +107,10 @@
       @isfullscreen="isfullscreen"
       @close="closeNotice"
       :is-view-cs-footer="false"
-      :dialog-height="460"
+      :dialog-height="650"
     >
       <template #dialog>
-        <Notice :task-id="selectTaskId" @close="closeNotice" />
+        <Notice :task-id="selectTaskId" :gantt-name="ganttName" :plan-info-id="planInfoId" @close="closeNotice" />
       </template>
     </common-dialog>
     <monitor-time-manger

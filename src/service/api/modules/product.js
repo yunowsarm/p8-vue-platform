@@ -435,6 +435,13 @@ export const repositoryApi = {
       desc: '项目管理->计划管理->计划编辑 -> gantt数据加载'
     },
     {
+      name: 'pushPlanMssage',
+      method: 'POST',
+      path: '/product/pm/plan/planIssuanceMessage',
+      mockPath: '/product/pm/plan/planIssuanceMessage',
+      desc: '项目管理->计划管理->计划编辑 -> 通知下发'
+    },
+    {
       name: 'loadPlanStatusLimitStrategy',
       method: 'POST',
       path: '/product/pm/planManager/loadPlanStatusLimitStrategy',
@@ -860,6 +867,20 @@ export const repositoryApi = {
       path: '/product/pm/plan/loadMonitorTask',
       mockPath: '/product/pm/plan/loadMonitorTask',
       desc: '项目管理->计划管理->gantt->获取计划统计信息'
+    },
+    {
+      name: 'getPlanStatusData',
+      method: 'POST',
+      path: '/product/pm/plan/loadStatusTask',
+      mockPath: '/product/pm/plan/loadStatusTask',
+      desc: '项目管理->计划管理->gantt->状态饼图'
+    },
+    {
+      name: 'getPlanTaskTypeData',
+      method: 'POST',
+      path: '/product/pm/plan/loadTaskTypeTask',
+      mockPath: '/product/pm/plan/loadTaskTypeTask',
+      desc: '项目管理->计划管理->gantt->任务类型饼状图'
     }
   ],
   planChange: [
