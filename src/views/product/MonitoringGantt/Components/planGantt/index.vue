@@ -130,6 +130,36 @@
         <command-search :gantt-name="ganttName" :plan-info-id="planInfoId"></command-search>
       </template>
     </common-dialog>
+    <common-dialog
+      title="统计信息"
+      width="60%"
+      v-if="ganttStatisticVisible"
+      :visible="ganttStatisticVisible"
+      :show-handle-btn="false"
+      @isfullscreen="isfullscreen"
+      @close="closeStatistic"
+      :is-view-cs-footer="false"
+      :dialog-height="460"
+    >
+      <template #dialog>
+        <command-statistic :gantt-name="ganttName" :plan-info-id="planInfoId"></command-statistic>
+      </template>
+    </common-dialog>
+    <common-dialog
+      title="通知下发"
+      width="70%"
+      v-if="noticeVisible"
+      :visible="noticeVisible"
+      :show-handle-btn="false"
+      @isfullscreen="isfullscreen"
+      @close="closeNotice"
+      :is-view-cs-footer="false"
+      :dialog-height="650"
+    >
+      <template #dialog>
+        <Notice :task-id="selectTaskId" :gantt-name="ganttName" :plan-info-id="planInfoId" @close="closeNotice" />
+      </template>
+    </common-dialog>
     <common-button-bar-setting
       v-if="rightMenuConfigVisible"
       :visible="rightMenuConfigVisible"
@@ -217,6 +247,8 @@ import CommandSearch from '@/components/gantt/Components/CommandSearch'
 import { requestUrl } from '@/utils/common.js'
 import CommonButtonBarSetting from '@/components/gantt/Components/CommonButtonBarSetting'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
+import Notice from '../notice'
+import CommandStatistic from '@/components/gantt/Components/CommandStatistic'
 import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
 const Mycolumns = [
   {
@@ -312,6 +344,7 @@ export default {
   },
   components: {
     Detail,
+    Notice,
     'el-menu': Menu,
     'el-submenu': Submenu,
     'el-drawer': Drawer,
@@ -335,12 +368,15 @@ export default {
     // Flight,
     // Large,
     CommandSearch,
+    CommandStatistic,
     CommonButtonBarSetting,
     VuePerfectScrollbar
   },
   data() {
     const mh = document.documentElement.clientHeight - 300
     return {
+      noticeVisible: false,
+      ganttStatisticVisible: false,
       activitySecretGradeDisplay: '', // 知识库导入 弹框需要展示的密级
       experienceSecretGradeDisplay: '', // 经验库导入 弹框需要展示的密级
       experienceLibrarySecretGradeDisplay: '', // 创建我的经验库导入 弹框需要展示的密级
@@ -667,6 +703,15 @@ export default {
       } else {
         this.customHeight = 300
       }
+    },
+    noticeShow() {
+      this.noticeVisible = true
+    },
+    closeNotice() {
+      this.noticeVisible = false
+    },
+    closeStatistic() {
+      this.ganttStatisticVisible = false
     },
     onTableSelect(select, row) {
       // eslint-disable-next-line no-unused-vars
