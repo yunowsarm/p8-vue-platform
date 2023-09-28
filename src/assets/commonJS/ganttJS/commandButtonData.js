@@ -22,6 +22,9 @@ export const CommandButtonData = [
       let result
       const vueThis = store.getters.vueThis
       const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
@@ -64,6 +67,9 @@ export const CommandButtonData = [
           let result
           const vueThis = store.getters.vueThis
           const createPage = vueThis.createPage
+          if (createPage === 'compile' && vueThis.planEditLock) {
+            return true
+          }
           if (checkSwitchType(tasks)) {
             return true
           }
@@ -106,6 +112,9 @@ export const CommandButtonData = [
           let result
           const vueThis = store.getters.vueThis
           const createPage = vueThis.createPage
+          if (createPage === 'compile' && vueThis.planEditLock) {
+            return true
+          }
           if (checkSwitchType(tasks)) {
             return true
           }
@@ -148,6 +157,9 @@ export const CommandButtonData = [
           let result
           const vueThis = store.getters.vueThis
           const createPage = vueThis.createPage
+          if (createPage === 'compile' && vueThis.planEditLock) {
+            return true
+          }
           if (checkSwitchType(tasks)) {
             return true
           }
@@ -190,6 +202,9 @@ export const CommandButtonData = [
           let result
           const vueThis = store.getters.vueThis
           const createPage = vueThis.createPage
+          if (createPage === 'compile' && vueThis.planEditLock) {
+            return true
+          }
           if (checkSwitchType(tasks)) {
             return true
           }
@@ -233,6 +248,11 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           let result
+          const vueThis = store.getters.vueThis
+          const createPage = vueThis.createPage
+          if (createPage === 'compile' && vueThis.planEditLock) {
+            return true
+          }
           if (checkSwitchType(tasks)) {
             return true
           }
@@ -267,6 +287,11 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       let result
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
@@ -295,6 +320,11 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           let result
+          const vueThis = store.getters.vueThis
+          const createPage = vueThis.createPage
+          if (createPage === 'compile' && vueThis.planEditLock) {
+            return true
+          }
           if (checkSwitchType(tasks)) {
             return true
           }
@@ -323,6 +353,11 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           let result
+          const vueThis = store.getters.vueThis
+          const createPage = vueThis.createPage
+          if (createPage === 'compile' && vueThis.planEditLock) {
+            return true
+          }
           if (checkSwitchType(tasks)) {
             return true
           }
@@ -351,6 +386,11 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           let result
+          const vueThis = store.getters.vueThis
+          const createPage = vueThis.createPage
+          if (createPage === 'compile' && vueThis.planEditLock) {
+            return true
+          }
           if (checkSwitchType(tasks)) {
             return true
           }
@@ -379,6 +419,11 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           let result
+          const vueThis = store.getters.vueThis
+          const createPage = vueThis.createPage
+          if (createPage === 'compile' && vueThis.planEditLock) {
+            return true
+          }
           if (checkSwitchType(tasks)) {
             return true
           }
@@ -603,6 +648,11 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       let result
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
@@ -680,6 +730,11 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       let result
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
@@ -688,8 +743,6 @@ export const CommandButtonData = [
       } else {
         result = true
       }
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
       if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
         result = true
       }
@@ -729,10 +782,14 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       let result
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
-      const vueThis = store.getters.vueThis
       if (tasks && tasks.length > 0 && canDeleteCheck(ganttName, tasks, vueThis)) {
         result = false
       } else {
@@ -741,7 +798,6 @@ export const CommandButtonData = [
       if (checkHasApproveTask(ganttName, tasks)) {
         result = true
       }
-      const createPage = vueThis.createPage
       if (createPage === 'decompose' && tasks.length >= 1) {
         tasks.forEach(function (task, index) {
           // if (task.managerStatus === '6403') {
@@ -1012,8 +1068,12 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
       let result
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       const ganttObject = GanttObject.getGanttObject(ganttName)
       let rootTask = {}
       ganttObject.eachTask(function (task) {
@@ -1086,6 +1146,11 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       let result
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
@@ -1111,11 +1176,15 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       let result
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
       const thisGantt = GanttObject.getGanttObject(ganttName)
-      const vueThis = store.getters.vueThis
       if (thisGantt && !checkReadOnly(ganttName) && thisGantt.getUndoStack() && thisGantt.getUndoStack().length > 0 && !checkTaskReadonly(ganttName, tasks) && !vueThis.readOnly) {
         result = false
       } else {
@@ -1137,11 +1206,15 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       let result
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
       const thisGantt = GanttObject.getGanttObject(ganttName)
-      const vueThis = store.getters.vueThis
       if (thisGantt && !checkReadOnly(ganttName) && thisGantt.getRedoStack() && thisGantt.getRedoStack().length > 0 && !checkTaskReadonly(ganttName, tasks) && !vueThis.readOnly) {
         result = false
       } else {
@@ -1168,6 +1241,11 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
@@ -1196,11 +1274,15 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const result = true
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
       const thisGantt = GanttObject.getGanttObject(ganttName)
-      const vueThis = store.getters.vueThis
       if (tasks && tasks.length === 1 && tasks[0].parent && thisGantt.isTaskExists(tasks[0].parent)) {
         const parentTask = thisGantt.getTask(tasks[0].parent)
         // 获取gannt操作限制策略
@@ -1556,6 +1638,11 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       let result
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
@@ -1566,8 +1653,6 @@ export const CommandButtonData = [
       } else {
         result = true
       }
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
       // if (
       //   createPage === 'decompose' &&
       //   tasks.length === 1 &&
@@ -1594,6 +1679,11 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       let result
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
@@ -1604,8 +1694,6 @@ export const CommandButtonData = [
       } else {
         result = true
       }
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
       // if (
       //   createPage === 'decompose' &&
       //   tasks.length === 1 &&
@@ -1958,6 +2046,11 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       let result
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
@@ -1968,8 +2061,6 @@ export const CommandButtonData = [
       } else {
         result = true
       }
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
       if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
         result = true
       }
@@ -1991,6 +2082,11 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           let result
+          const vueThis = store.getters.vueThis
+          const createPage = vueThis.createPage
+          if (createPage === 'compile' && vueThis.planEditLock) {
+            return true
+          }
           if (checkSwitchType(tasks)) {
             return true
           }
@@ -2016,6 +2112,11 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           let result
+          const vueThis = store.getters.vueThis
+          const createPage = vueThis.createPage
+          if (createPage === 'compile' && vueThis.planEditLock) {
+            return true
+          }
           if (checkSwitchType(tasks)) {
             return true
           }
@@ -2044,6 +2145,11 @@ export const CommandButtonData = [
       // vueThis.queryParam.planId = vueThis.planInfoId
     },
     isDisableFun: function (btn, ganttName, tasks) {
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
@@ -2064,6 +2170,11 @@ export const CommandButtonData = [
           // vueThis.queryParam.planId = vueThis.planInfoId
         },
         isDisableFun: function (btn, ganttName, tasks) {
+          const vueThis = store.getters.vueThis
+          const createPage = vueThis.createPage
+          if (createPage === 'compile' && vueThis.planEditLock) {
+            return true
+          }
           if (!tasks.length) {
             return true
           }
@@ -2089,6 +2200,11 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           let result
+          const vueThis = store.getters.vueThis
+          const createPage = vueThis.createPage
+          if (createPage === 'compile' && vueThis.planEditLock) {
+            return true
+          }
           if (checkSwitchType(tasks)) {
             return true
           }
@@ -2099,8 +2215,6 @@ export const CommandButtonData = [
           } else {
             result = true
           }
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
           if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
             result = true
           }
@@ -2135,6 +2249,11 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           let result
+          const vueThis = store.getters.vueThis
+          const createPage = vueThis.createPage
+          if (createPage === 'compile' && vueThis.planEditLock) {
+            return true
+          }
           if (checkSwitchType(tasks)) {
             return true
           }
@@ -2145,8 +2264,6 @@ export const CommandButtonData = [
           } else {
             result = true
           }
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
           if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
             result = true
           }
@@ -2167,6 +2284,11 @@ export const CommandButtonData = [
           vueThis.experienceBaseVisible = true
         },
         isDisableFun: function (btn, ganttName, tasks) {
+          const vueThis = store.getters.vueThis
+          const createPage = vueThis.createPage
+          if (createPage === 'compile' && vueThis.planEditLock) {
+            return true
+          }
           if (checkSwitchType(tasks)) {
             return true
           }
@@ -2182,6 +2304,11 @@ export const CommandButtonData = [
     help: '创建版本',
     clickFun: function (btn, ganttName, tasks) {},
     isDisableFun: function (btn, ganttName, tasks) {
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
@@ -2196,11 +2323,15 @@ export const CommandButtonData = [
     help: '比较',
     clickFun: function (btn, ganttName, tasks) {},
     isDisableFun: function (btn, ganttName, tasks) {
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
       if (checkSwitchType(tasks)) {
         return true
       }
-      const result = true
-      return result
+      return false
     }
   },
   {
@@ -2210,8 +2341,15 @@ export const CommandButtonData = [
     help: '版本列表',
     clickFun: function (btn, ganttName, tasks) {},
     isDisableFun: function (btn, ganttName, tasks) {
-      const result = true
-      return result
+      const vueThis = store.getters.vueThis
+      const createPage = vueThis.createPage
+      if (createPage === 'compile' && vueThis.planEditLock) {
+        return true
+      }
+      if (checkSwitchType(tasks)) {
+        return true
+      }
+      return false
     }
   },
   {

@@ -201,6 +201,9 @@ export default {
       return function (btn, ganttName, tasks) {
         // 我的工作--我的任务-计划分解--计划分解页面不可标记责任令和月度计划。
         const createPage = that.vueThis.createPage || ''
+        if (createPage === 'compile' && that.vueThis.planEditLock) {
+          return true
+        }
         if (createPage === 'decompose') {
           if (mIdArr.includes(btn.id)) {
             return true
