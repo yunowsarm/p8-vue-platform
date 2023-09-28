@@ -3,9 +3,8 @@
     <div class="edit-outputdata-view">
       <span type="info">输入要求</span>
       <ul class="file-list">
-        <li v-for="(item,index) in inputRequest"
-            :key="item.attId"
-            :class="{ 'not-last': index < inputRequest.length -1 }">
+        <li v-for="(item) in inputRequest"
+            :key="item.attId">
           <p>
             <span>{{item.descriptionStr}}</span>
           </p>
@@ -14,44 +13,24 @@
     </div>
     <div class="edit-outputdata-view">
       <span type="info">前置输出物</span>
-      <ul class="file-list">
-        <li v-for="(item,index) in inputIoData"
-            :key="item.attId"
-            :class="{ 'not-last': index < inputIoData.length -1 }">
-          <p class="">
-            <span class="label">任务名称</span>
-            <span>{{item.aorName}}</span>
-          </p>
-          <p>
-            <span class="label">计划开始时间</span>
-            <span>{{item.planBeginDate}}</span>
-          </p>
-          <p>
-            <span class="label">计划完成时间</span>
-            <span>{{item.planEndDate}}</span>
-          </p>
-          <p>
-            <span class="label">排程类型</span>
-            <span>{{item.autoSchedulingDisplay}}</span>
-          </p>
-          <p>
-            <span class="label">工期</span>
-            <span>{{item.duration}}</span>
-          </p>
-        </li>
-      </ul>
+      <form-list ref="form"
+                 :data-source="dataSource"
+                 :form="formData"
+                 :exist-default-btn="false">
+      </form-list>
     </div>
 
   </div>
 </template>
 <script>
-import { Tag, Link } from 'p8-components-ui'
+import { P8Form as FormList, Tag, Link } from 'p8-components-ui'
 export default {
   name: 'InputIo',
   inject: ['getPlanInfo'],
   components: {
     'el-tag': Tag,
-    'el-link': Link
+    'el-link': Link,
+    FormList
   },
   props: {
     inputIoData: {
@@ -63,11 +42,43 @@ export default {
   },
   data () {
     return {
-      secretGrade: ''
+      formData: {},
+      dataSource: [
+        {
+          type: 'view',
+          labelText: '任务名称',
+          fieldName: 'aorName',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'view',
+          labelText: '计划开始时间',
+          fieldName: 'planBeginDate',
+          colLayout: 'doubleCol'
+        },
+        {
+          type: 'view',
+          labelText: '计划完成时间',
+          fieldName: 'planEndDate',
+          colLayout: 'doubleCol'
+        },
+        {
+          type: 'view',
+          labelText: '排程类型',
+          fieldName: 'autoSchedulingDisplay',
+          colLayout: 'doubleCol'
+        },
+        {
+          type: 'view',
+          labelText: '工期',
+          fieldName: 'duration',
+          colLayout: 'doubleCol'
+        }
+      ]
     }
   },
   mounted () {
-    this.secretGrade = this.getPlanInfo().secretGradeDisplay
+    this.formData = this.inputIoData[0]
   },
   methods: {
     downloadOutputRequsetFile (item) {
@@ -152,5 +163,8 @@ export default {
 }
 .edit-outputdata-view > span {
   font-weight: bold;
+}
+::v-deep .el-form-item__content > .view {
+  background: #f5f8fb;
 }
 </style>

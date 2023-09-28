@@ -13,10 +13,9 @@
         <div class="edit-outputdata-view">
           <div class="title">&nbsp;&nbsp;输出要求 </div>
           <ul class="file-list">
-            <li v-for="(item,index) in outputRequest"
-                :key="item.descriptionId"
-                :class="{ 'not-last': index < outputRequest.length -1 }">
-              <p>{{item.attFileName}}</p>
+            <li v-for="(item) in outputRequest"
+                :key="item.descriptionId">
+              <p>{{item.descriptionStr}}</p>
             </li>
           </ul>
         </div>
