@@ -269,7 +269,7 @@ export default {
       this.$emit('select-task', this.selectedTasks, ganttName)
     },
     callExcelImportTasks () {
-      let taskId = this.taskId
+      let taskId = this.selectedTasks[0].id
       this.$emit('importExcel', taskId, ganttName)
     },
     mouseMove (e) {
@@ -461,6 +461,9 @@ export default {
           if (el.type) {
             result = true
           }
+          if (el.parent == 0) {
+            result = true
+          }
         })
       } else {
         result = true
@@ -470,6 +473,7 @@ export default {
   },
   beforeDestroy () {
     myGantt.unselectTask()
+    myGantt.parse([])
     this.selectedTasks = []
     this.buttonList = []
     myGantt = null
