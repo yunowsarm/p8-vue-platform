@@ -78,19 +78,19 @@
                             :tableSetting="false"
                             :noApiTableData="tableData">
                 <template #taskCount="{ scope }">
-                  <div class="task-count">
+                  <!-- <div class="task-count">
                     <template v-if="scope.row.taskCount">
-                      <!-- <el-link @click.stop="opentDialogUserTask(scope.row)">{{
+                      <el-link @click.stop="opentDialogUserTask(scope.row)">{{
                       scope.row.taskCount
-                      }}<i class="el-icon-view el-icon--right"></i></el-link> -->
+                      }}<i class="el-icon-view el-icon--right"></i></el-link>
                       <el-link>{{
                       scope.row.taskCount
                       }}<i class="el-icon-view el-icon--right"></i></el-link>
                     </template>
-                    <template v-else>
+                    <template v-else> -->
                       <span>{{ scope.row.taskCount }}</span>
-                    </template>
-                  </div>
+                    <!-- </template>
+                  </div> -->
                 </template>
                 <template #userState="{ scope }">
                   <div class="userState">
