@@ -107,8 +107,6 @@ export function outPutFlowGantt (ganttName, vueThis) {
   ganttObject.attachEvent('onTaskSelected', (id) => {
     if (ganttObject.getGlobalTaskIndex(id) !== 0) {
       vueThis.$emit('taskSelected', id)
-    } else {
-      ganttObject.unselectTask()
     }
   })
   ganttObject.attachEvent('onTaskMultiSelect', function (id, state, e) {
@@ -143,10 +141,6 @@ export function outPutFlowGantt (ganttName, vueThis) {
           if (res && res === 'true') {
             GanttObject.showMessage(vueThis, '删除成功！', 'success')
             return { 'action': 'ok' }
-          } else {
-            ganttObject.undo()
-            GanttObject.showMessage(vueThis, '删除失败！', 'error')
-            return { 'action': 'error' }
           }
         }).catch(() => {
           GanttObject.showMessage(vueThis, '删除失败！', 'error')
