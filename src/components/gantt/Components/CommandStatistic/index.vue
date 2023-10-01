@@ -38,7 +38,7 @@
       <div class="detail_box">
         <div>
           <div class="total_num">{{ totalTypeNum }}</div>
-          <div class="tital_text">任务状态总数</div>
+          <div class="tital_text">任务类型总数</div>
         </div>
         <div class="monitor_list">
           <div class="monitor_item" v-for="(item, index) in list3" :key="index">
