@@ -515,7 +515,9 @@ export default {
         trigger: 'default',
         rowField: 'ID',
         parentField: 'PARENT_ID',
-        indent: 40
+        indent: 40,
+        iconOpen: 'el-icon-arrow-down', 
+        iconClose: 'el-icon-arrow-right'
       },
       rowConfig: {
         isHover: true,
