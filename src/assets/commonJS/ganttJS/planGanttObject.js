@@ -563,6 +563,12 @@ export function getGanttColumns(ganttObject, vueThis) {
       template: function (task) {
         // 任务图标，排除根节点
         if (!(ganttObject.getGlobalTaskIndex(task.id) === 0)) {
+          if (task.outputResult > 0) {
+            return `<i class="el-icon-star-on" style="color: #4bcafe;font-size: 23px" title="有提交物的"></i>`
+          }
+          if (task.outputAsk > 0) {
+            return `<i class="el-icon-star-on" style="color: #faa010;font-size: 23px" title="有输出要求的"></i>`
+          }
           const managerStatus = task.managerStatus
           if (managerStatus && vueThis.managerStatusMap) {
             const item = vueThis.managerStatusMap[managerStatus]
