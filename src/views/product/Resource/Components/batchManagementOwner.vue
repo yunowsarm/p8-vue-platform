@@ -145,7 +145,7 @@ export default {
         },
         {
           title: '角色',
-          dataIndex: 'name',
+          dataIndex: 'projectTeamRoleName',
           align: 'center',
           minWidth: 80
         },
@@ -181,8 +181,7 @@ export default {
             replaceDetails.push({
               replaceManId: el.replaceManId,
               replaceMan: el.replaceMan,
-              roleId: el.id,
-              roleName: el.name
+              projectTeamRoleUserId: el.id
             })
           }
         })
@@ -261,7 +260,7 @@ export default {
       this.selectDutyUserVisible = true
     },
     selectRuleOutSelfUser (scope, data) {
-      this.tableDataIndex = data.findIndex(i => i.roleName === scope.row.roleName)
+      this.tableDataIndex = scope.$index
       this.userId = this.formData.dutyUserId
       this.ruleOutSelf = true
       this.selectDutyUserVisible = true

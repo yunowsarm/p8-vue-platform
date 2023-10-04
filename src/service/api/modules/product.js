@@ -1147,6 +1147,13 @@ export const repositoryApi = {
       desc: '替换责任人-查询责任人'
     },
     {
+      name: 'getProjectTeamUser',
+      method: 'POST',
+      path: '/product/projectTeam/getProjectTeamUser',
+      mockPath: '/product/projectTeam/getProjectTeamUser',
+      desc: '替换责任人-获取项目团队人员'
+    },
+    {
       name: 'replaceResponsible',
       method: 'POST',
       path: '/product/projectTeam/replaceResponsible',
