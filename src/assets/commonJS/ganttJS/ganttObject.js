@@ -2015,6 +2015,13 @@ GanttObject.setOnBeforeEditStart = function (ganttObject, vueThis) {
     if (ganttObject.config.readonly) {
       return false
     }
+    // 如果是任务分解，且角色为计划员，只能编辑责任人
+    const roles = store.getters.userInfo.userRoles.map((role) => {
+      return role.roleId
+    })
+    if (vueThis.createPage === 'decompose' && roles.includes('SYS_ROLE077')) {
+      return false
+    }
     const userMaxSecret = vueThis.$store.state.user.userInfo.confidentialiteList[vueThis.$store.state.user.userInfo.confidentialiteList.length - 1].id
     if (task.secretGrade > userMaxSecret) {
       vueThis.$message.warning('低密人员不允许修改高密数据')
