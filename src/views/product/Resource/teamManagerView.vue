@@ -1264,6 +1264,7 @@ export default {
 .files-view-wrap {
   position: relative;
   top: 5px;
+  right: 15px;
   ::v-deep i{
     display: none;
   }

@@ -4,11 +4,10 @@
     <div style="height: 100%"
          class="team-manager-wrap">
       <div class="teamFile">
-        <span style="font-size:14px; padding:0 20px;font-weight:bold;">人员任命文件</span>
+        <span style="font-size:14px; padding:0 20px;font-weight:bold;">人员任命文件：</span>
         <common-upload  ref="commonupload"
                         v-if="!uploadView"
-                        :num="'1'"
-                        :maxLimit="1"
+                        :uploadConfig="{limit: 1,multiple:false}"
                         @upload="(file) => {uploadFile(file);}"
                         @remove="(file) => {removedFile(file);}">
         </common-upload>
@@ -1306,8 +1305,23 @@ export default {
   height: 100%;
   background-color: #fff;
   margin-left: 8px;
+  ::v-deep .files-view-wrap {
+    .files-item--row{
+      padding: 0;
+    }
+    i{
+      display: none;
+    }
+  }
 }
 .tableMember ::v-deep .bottom-flex {
   display: none;
 } 
+.files-view-wrap {
+  position: relative;
+  top: 5px;
+  ::v-deep i{
+    display: none;
+  }
+}
 </style>
