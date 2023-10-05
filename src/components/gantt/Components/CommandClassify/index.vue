@@ -153,6 +153,13 @@ export default {
         if (window.createPage === 'compile' && that.vueThis.planEditLock) {
           return true
         }
+        // 如果是任务分解，且角色为计划员，只能编辑责任人
+        const roles = that.$store.getters.userInfo.userRoles.map((role) => {
+          return role.roleId
+        })
+        if (window.createPage === 'decompose' && roles.includes('SYS_ROLE077')) {
+          return true
+        }
         if (window.createPage === 'decompose') {
           if (btn && btn.id === '3112') {
             return true
