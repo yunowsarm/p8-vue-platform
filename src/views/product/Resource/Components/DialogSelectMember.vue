@@ -25,6 +25,7 @@
                               range-separator="至"
                               start-placeholder="开始日期"
                               end-placeholder="结束日期"
+                              value-format="yyyy-MM-dd"
                               clearable></el-date-picker>
             </div>
             <div class="input-con"
@@ -267,7 +268,7 @@ export default {
       // this.$refs.table.searchData()
     },
     datePickerChange (utilizationTimeRange) {
-      
+
       // this.queryParam.startDate = moment(utilizationTimeRange[0]).format('YYYY-MM-DD HH:mm:ss')
       // this.queryParam.endDate = moment(utilizationTimeRange[1]).format('YYYY-MM-DD HH:mm:ss')
     },
