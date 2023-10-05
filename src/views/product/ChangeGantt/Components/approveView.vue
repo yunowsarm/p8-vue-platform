@@ -143,18 +143,18 @@ export default {
             }
           ]
         },
-        {
-          type: 'uploadView',
-          labelText: '附件', // 控件显示的文本
-          fieldName: 'uploadFiles',
-          defaultValue: [],
-          colLayout: 'singleCol',
-          uploadConfig: {
-            // , // 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
-            // limit: 1
-          },
-          listType: 'secret' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
-        },
+        // {
+        //   type: 'uploadView',
+        //   labelText: '附件', // 控件显示的文本
+        //   fieldName: 'uploadFiles',
+        //   defaultValue: [],
+        //   colLayout: 'singleCol',
+        //   uploadConfig: {
+        //     // , // 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
+        //     // limit: 1
+        //   },
+        //   listType: 'secret' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+        // },
         {
           labelText: '影响分析',
           type: 'view',
