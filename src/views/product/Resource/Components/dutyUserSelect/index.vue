@@ -27,7 +27,7 @@
             <common-table ref='tableCom'
                           :columns='ruleOutSelf ? queryColumns : columns'
                           :params='ruleOutSelf ? queryParam : params'
-                          :api='tableApi'
+                          :api='ruleOutSelf ? queryTableApi : tableApi'
                           :style="{height: customHeight + 'px'}"
                           :table-Refresh='tableRefresh'
                           :table-config='tableConfig'
@@ -120,6 +120,7 @@ export default {
         modal: false
       },
       tableApi: 'teamManager.lgetResponsibleist',
+      queryTableApi: 'teamManager.getProjectTeamUser',
       params: {
         wholeDescribeId: this.id
       },
