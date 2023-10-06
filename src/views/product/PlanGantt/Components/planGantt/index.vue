@@ -1441,7 +1441,13 @@ export default {
       }
     },
     showDetail() {
-      if (myGantt.getGlobalTaskIndex(this.selectTaskId) !== 0) {
+      if (myGantt.getGlobalTaskIndex(this.selectTaskId) === 0) return
+      const roles = this.$store.getters.userInfo.userRoles.map((role) => {
+        return role.roleId
+      })
+      if (this.createPage === 'decompose' && roles.includes('SYS_ROLE077')) {
+        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, 'view')
+      } else {
         this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName)
       }
     },

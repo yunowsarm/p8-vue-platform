@@ -164,11 +164,11 @@
   border-right-color: #ffe96a;
 }
 
-.gantt_grid_scale,
+/* .gantt_grid_scale,
 .gantt_task_scale,
 .gantt_task_vscroll {
   background-color: #133b78 !important;
-}
+} */
 
 .gantt_grid_column_resize_wrap .gantt_grid_column_resize {
   background-color: #b3b3b5a8 !important;
