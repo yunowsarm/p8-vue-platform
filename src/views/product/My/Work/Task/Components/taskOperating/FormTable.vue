@@ -398,7 +398,8 @@ export default {
       },
       endRealPickerOptions: {
         disabledDate: (time) => {
-          return time.getTime() < new Date(this.formData.realBeginDate).getTime()
+          let timeSpace = moment(time).format('YYYY-MM-DD') < moment(this.formData.realBeginDate).format('YYYY-MM-DD')
+          return timeSpace
         }
       },
       secretGrade: '',
