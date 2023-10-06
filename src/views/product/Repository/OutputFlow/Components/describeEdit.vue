@@ -143,7 +143,7 @@ export default {
           fieldName: 'teamRoleId',
           placeholder: '请选择角色',
           multiple: false,
-          defaultExpandedKeys: ['0'],
+          // defaultExpandedKeys: ['0'],
           colLayout: this.colLayoutClassify,
           optionUrl: {
             api: 'OutputFlow.roleClassifyTree',
@@ -151,7 +151,7 @@ export default {
 
           },
           clearable: true,
-          // defaultExpandAll: true,
+          defaultExpandAll: true,
           disabled: false,
           // checkStrictly: false,
           treeData: [],

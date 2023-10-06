@@ -431,14 +431,15 @@ export default {
     },
     // 活动描述名称修改保存后联动修改数据对应名称
     updateTaskName (obj) {
-      if (obj) {
-        let task = myGantt.getTask(obj.id)
-        if (task) {
-          task.name = obj.name
-          task.code = obj.code
-          myGantt.refreshTask(obj.id)
-        }
-      }
+      // if (obj) {
+        // let task = myGantt.getTask(obj.id)
+        // if (task) {
+        //   task.name = obj.name
+        //   task.code = obj.code
+        //   myGantt.refreshTask(obj.id)
+        // }
+        this.initGantt(this.activityInfoId)
+      // }
     },
     saveData: function () {
       this.dataProcessor.sendData()
