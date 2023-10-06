@@ -16,7 +16,7 @@
         <template #dialog>
           <form-list ref="formParams" label-width="100px" :data-source="paramsSource" :form="paramsFormData" :exist-default-btn="false">
             <template #paramsText>
-              <ace-edit :value.sync="paramsFormData.paramsText" width="100%" height="200px"></ace-edit>
+              <ace-edit :value.sync="paramsFormData.paramsText" width="100%" height="200px" :config="aceConfig"></ace-edit>
             </template>
           </form-list>
         </template>
@@ -79,6 +79,7 @@ export default {
   },
   data() {
     return {
+      aceConfig: {},
       saveApi: 'resource.save',
       iconPopover: false,
       dialogHeight: document.documentElement.clientHeight * 0.4,
@@ -241,6 +242,15 @@ export default {
             params: {}
           }
         }
+      ],
+      funSource: [
+        {
+          type: 'blank',
+          labelText: '自定义参数',
+          fieldName: 'paramsText',
+          slotName: 'paramsText',
+          colLayout: 'singleCol'
+        }
       ]
     }
   },
@@ -325,8 +335,19 @@ export default {
         case 'openEditTable':
           this.paramsSource = this.editTableSource
           break
+       case 'customerFun':
+          this.paramsSource = this.funSource
+          this.des = '该事件为用户自定义事件执行'
+          this.aceConfig = {
+            lang: 'javascript'
+          }
+          break
         default:
           this.paramsSource = this.defaultSource
+          this.des = ''
+          this.aceConfig = {
+            lang: 'json'
+          }
           break
       }
       if (api !== '') {
@@ -429,6 +450,18 @@ export default {
             warningMsg: this.paramsFormData.warningMsg,
             successMsg: this.paramsFormData.successMsg,
             errorMsg: this.paramsFormData.errorMsg
+          }
+          break
+        case 'openEditTable':
+          obj = {
+            module: '编辑表格',
+            code: this.paramsFormData.editTable
+          }
+          break
+        case 'customerFun':
+          obj = {
+            module: '编辑表格',
+            code: this.paramsFormData.paramsText
           }
           break
         default:
