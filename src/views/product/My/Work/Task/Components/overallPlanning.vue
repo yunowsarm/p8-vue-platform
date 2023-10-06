@@ -1,9 +1,6 @@
 <template>
   <normal-layout>
     <template #north>
-      <!-- <span>项目数：</span><span style="font-size: larger; font-weight: bolder;">{{allNum.projectNum}} </span>
-      <span>计划数：</span><span style="font-size: larger;font-weight: bolder;">{{allNum.planNum}} </span>
-      <span>任务数：</span><span style="font-size: larger;font-weight: bolder;">{{allNum.taskNum}}</span> -->
       <search-form-list :dataSource="searchData"
                         :form="searchForm"
                         @search="search"
@@ -153,15 +150,6 @@
                        :default-menu="defaultMenu"></menu-layout>
         </template>
       </common-drawer>
-      <!-- <common-drawer size="100%"
-                     :visible="testDetailsVisible"
-                     direction="ttb"
-                     :drawerConfig="drawerConfig"
-                     @close="closeDrawer">
-        <template #drawer>
-          <test-details :taskId="taskId"></test-details>
-        </template>
-      </common-drawer> -->
     </template>
   </normal-layout>
 </template>
@@ -179,11 +167,9 @@ import {
 
 import { getTaskStatusInfo } from '@/utils/commonBusiness'
 import { overdueTextHandle } from '@/utils/common'
-// import testDetails from './testDetail'
 import processDecomposition from './processDecomposition'
 import frontToBack from './frontToBack'
-// import { getMonitorData, getBudgetData } from '@/components/workLayout/Components/projectProgress/Components/layoutData'
-// import RevenueView from '@/components/workLayout/Components/projectProgress/Components/taskProgressInformation/Components/revenueView'
+import { getMonitorData, getBudgetData } from '@/components/workLayout/Components/projectProgress/Components/layoutData'
 import { generateTree } from '@/utils/generateTree'
 import moment from 'moment'
 import Vue from 'vue'
@@ -199,9 +185,7 @@ export default {
     CommonTree,
     CommonTable,
     SearchFormList,
-    // testDetails,
     MenuLayout,
-    // RevenueView,
     'el-tooltip': Tooltip
   },
   data () {
@@ -617,13 +601,13 @@ export default {
       return tempIcon
     },
     iconClick (row) {
-      // let that = this
-      // if (row.revenueBudgetId) {
-      //   getBudgetData({ revenueBudgetId: row.revenueBudgetId }).then(res => {
-      //     that.revenueBudgetParam = res
-      //     that.revenueBudgetVisible = true
-      //   })
-      // }
+      let that = this
+      if (row.revenueBudgetId) {
+        getBudgetData({ revenueBudgetId: row.revenueBudgetId }).then(res => {
+          that.revenueBudgetParam = res
+          that.revenueBudgetVisible = true
+        })
+      }
     },
     revenueBudgetClose () {
       this.revenueBudgetVisible = false
