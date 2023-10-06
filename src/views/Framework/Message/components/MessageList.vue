@@ -36,7 +36,8 @@
                   </el-row>
                   <el-row type="flex" style="text-align: left">
                     <el-col :span="24">
-                      <span class="msg-content overHiding">{{ item.msgContent }}</span>
+                      <span class="msg-content overHiding msg_content_height" v-if="hasHtmlTag(item.msgContent)" v-html="item.msgContent"></span>
+                      <span class="msg-content overHiding" v-else>{{ item.msgContent }}</span>
                     </el-col>
                   </el-row>
                   <el-row type="flex" style="text-align: left">
@@ -78,7 +79,8 @@
                   </el-row>
                   <el-row type="flex" style="text-align: left">
                     <el-col :span="24">
-                      <span style="white-space: pre-wrap" class="msg-content overHiding">{{ item.msgContent }}</span>
+                      <span style="white-space: pre-wrap" class="msg-content overHiding msg_content_height" v-if="hasHtmlTag(item.msgContent)" v-html="item.msgContent"></span>
+                      <span style="white-space: pre-wrap" class="msg-content overHiding" v-else>{{ item.msgContent }}</span>
                     </el-col>
                   </el-row>
                   <el-row type="flex" style="text-align: left">
@@ -120,7 +122,8 @@
                   </el-row>
                   <el-row type="flex" style="text-align: left">
                     <el-col :span="24">
-                      <span class="msg-content overHiding">{{ item.msgContent }}</span>
+                      <span class="msg-content overHiding msg_content_height" v-if="hasHtmlTag(item.msgContent)" v-html="item.msgContent"></span>
+                      <span class="msg-content overHiding" v-else>{{ item.msgContent }}</span>
                     </el-col>
                   </el-row>
                   <el-row type="flex" style="text-align: left">
@@ -220,6 +223,9 @@ export default {
       if (data && current && current === 1) {
         this.currentIndex = 0
       }
+    },
+    hasHtmlTag(str) {
+      return /<[^>]*>/i.test(str)
     }
   }
 }
@@ -238,7 +244,10 @@ $icon-span-width: 20px;
       width: 100%;
     }
   }
-
+  .msg_content_height {
+    display: inline-block;
+    height: 50px;
+  }
   .listContainer {
     font-size: 14px;
     height: calc(100% - 54px);
