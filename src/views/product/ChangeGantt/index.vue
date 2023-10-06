@@ -462,7 +462,7 @@ export default {
       if (this.createPage === 'planChange') {
         teamRoleValidatorParams.processDefinitionKey = 'planChangeApproveSpecialPlan'
       } else if (this.createPage === 'userChange') {
-        teamRoleValidatorParams.processDefinitionKey = 'planChangeApproveTask'
+        teamRoleValidatorParams.processDefinitionKey = 'planChangeApprove'
       } else {
         this.$message({
           message: '操作失败！参数异常',

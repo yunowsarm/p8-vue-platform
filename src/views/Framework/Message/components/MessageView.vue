@@ -34,9 +34,8 @@
       </el-row>
     </div>
     <VuePerfectScrollbar class="messageContent" style="overflow: auto">
-      <div class="contentBody border-bottom">
-        {{ messageData.msgContent }}
-      </div>
+      <div class="contentBody border-bottom" v-if="hasHtmlTag(messageData.msgContent)" v-html="messageData.msgContent"></div>
+      <div class="contentBody border-bottom" v-else>{{ messageData.msgContent }}</div>
       <div v-if="messageData.uploadFiles != null && messageData.uploadFiles.length > 0" class="contentBody border-bottom">
         <div>{{ messageData.uploadFiles.length }} 个附件</div>
         {{ messageData.uploadFiles }}
@@ -115,6 +114,9 @@ export default {
         .catch((e) => {
           console.log(e)
         })
+    },
+    hasHtmlTag(str) {
+      return /<[^>]*>/i.test(str)
     }
   }
 }
