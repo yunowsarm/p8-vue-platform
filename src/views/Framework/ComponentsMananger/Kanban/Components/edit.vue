@@ -518,7 +518,11 @@ export default {
     handleSubmit () {
       this.$refs.form.validate().then((queryParams) => {
         queryParams.urlType = queryParams.urlType.toString()
-        queryParams.searchConfigValue = JSON.stringify(this.formData.searchConfigValue)
+        if (this.formData.searchConfigValue && this.formData.searchConfigValue.indexOf('null') !== -1) {
+          queryParams.searchConfigValue = ''
+        } else {
+          queryParams.searchConfigValue = JSON.stringify(this.formData.searchConfigValue)
+        }
         this.$refs.form.submitForm(queryParams, this.saveApi)
       })
     },

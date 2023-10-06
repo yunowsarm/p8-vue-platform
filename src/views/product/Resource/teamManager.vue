@@ -174,7 +174,6 @@
           <el-button size="mini"
                      v-if="!row.length"
                      type="primary"
-                     :loading="submitLoading"
                      @click="saveAndRelease">发 布
           </el-button>
         </p>
@@ -1041,7 +1040,7 @@ export default {
       that.isSelectApproveUserBeforehandView = false
     },
     closeSelectApproveUserBeforehand () {
-      that.isSelectApproveUserBeforehandView = false
+      this.isSelectApproveUserBeforehandView = false
     }
     // isShowRole (row) {
     //   return row.isRequired === '1'
