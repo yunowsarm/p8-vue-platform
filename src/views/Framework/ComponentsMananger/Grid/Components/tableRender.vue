@@ -114,29 +114,6 @@
                     :scope="scope"></slot>
             </template>
           </common-table>
-          <!-- <vxe-table ref="xTable"
-                 :comp="comp"
-                 :intelligence-comp="intelligenceComp"
-                 v-if="columns.length && tableType === 0"
-                 :flex="flex"
-                 row-key="ID"
-                 :columns='columns'
-                 :custom-height="customHeight"
-                 :params='tableParam'
-                 :table-config="tableConfig"
-                 :checkbox-config="checkboxConfig"
-                 :page-size="15"
-                 seach-type='1'
-                 :no-api-table-data="noApiTableData"
-                 @row-click="rowVxeClick"
-                 @selection-change="handleSelectionChange">
-        <template :slot="item"
-                  v-for="item in customColumn"
-                  slot-scope="{ scope }">
-          <slot :name="item"
-                :scope="scope"></slot>
-        </template>
-      </vxe-table> -->
           <vxetable-table ref="xTable"
                           :custom-c-s-s="customCSS"
                           v-if="columns.length && tableType == 1"
@@ -250,7 +227,6 @@
                      :drawer-config="drawerConfig"
                      @close="onModelPictureClose">
         <template #drawer>
-          <!-- <model-view :process-definition-id="modelId"></model-view> -->
           <process-approval-view v-inherited-father-height
                                  :business-obj="{
               businessId: modelId,
@@ -260,13 +236,12 @@
         </template>
       </common-drawer>
       <common-drawer title="下钻详情"
+                     v-if="runInHoleVisible"
                      :visible="runInHoleVisible"
                      size="100%"
                      :drawer-config="drawerConfig"
                      @close="runInHoleClose">
         <template #drawer>
-          <!-- <table-render :code="runInHoleCode"
-                        :report-param="runInHoleParam"></table-render> -->
           <component :is="componentUrl"
                      :code="componentsConfig.code"
                      :data-view-id="componentsConfig.dataViewId"
@@ -977,7 +952,8 @@ export default {
         reportParam: { ...this.sqlParam, ...this.defaultReportParam, ...reportParam },
         router: this.$route.name,
         code: this.code,
-        permissionVo: { router: this.$route.name, resourceId: '' }
+        permissionVo: { router: this.$route.name, resourceId: '' },
+        columnType: val.property
       }
     },
     handleSelectionChange (val) {
@@ -999,6 +975,7 @@ export default {
         this.$emit('row-click', row)
         if (this.tableInfo.enableClick === 1) {
           this.runInHoleParam = row
+          this.runInHoleParam.property = column.property
           this.reportItems.forEach((item) => {
             if (column.property === item.fieldName) {
               if (item.fieldHref && item.fieldHref !== '') {
