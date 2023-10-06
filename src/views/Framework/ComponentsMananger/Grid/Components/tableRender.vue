@@ -15,7 +15,7 @@
                         v-if="searchData.length"
                         :data-source="searchData"
                         @search="search"
-labelWidth="70px"
+                        labelWidth="70px"
                         @re-set="reSet"
                         :search-width="searchWidth"
                         :permission-vo="permissionVo"
@@ -516,7 +516,7 @@ export default {
         rowField: 'ID',
         parentField: 'PARENT_ID',
         indent: 40,
-        iconOpen: 'el-icon-arrow-down', 
+        iconOpen: 'el-icon-arrow-down',
         iconClose: 'el-icon-arrow-right'
       },
       rowConfig: {
@@ -544,7 +544,7 @@ export default {
       tableType: null,
       selectionRange: null,
       processDefinationTwoKey: null,
-      selsctRow: {},
+      selsctRow: [],
       releaseMenuParams: {
         beforehandParams: {}
       },
@@ -1393,6 +1393,11 @@ export default {
       })
       this.releaseMenuParams.businessId = rowIds
       this.releaseMenuParams.processDefinitionKey = this.processDefinationTwoKey
+      this.releaseMenuParams.projectInfo = {
+        projectName: this.selsctRow[0].PRJECTNAME,
+        projectType: this.selsctRow[0].PRJECTTYPE,
+        modelCode: this.selsctRow[0].MODELCODE
+      }
       this.$api['baseData.commitApprove'](this.releaseMenuParams)
         .then(function (res) {
           if (res.result && res.result === 'false') {
@@ -1437,7 +1442,7 @@ export default {
       }
     },
     getDyApi (obj, row, btn) {
-let that = this
+      let that = this
       if (!row) {
         return
       }
