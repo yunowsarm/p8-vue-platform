@@ -360,8 +360,13 @@ export default {
     getSearchCofnfig(list) {
       list.forEach((el) => {
         if (el.component.searchConfigValue && el.component.functionalCategory && el.component.functionalCategory !== '3') {
-          const item = JSON.parse(el.component.searchConfigValue)
-          if (item && item.length) {
+          let item
+          if (el.component.searchConfigValue && el.component.searchConfigValue.indexOf('null') !== -1) {
+            item = ''
+          } else {
+            item = JSON.parse(el.component.searchConfigValue)
+          }
+          if(item && item.length && item !== 'null') {
             item.forEach((val) => {
               this.searchList.push({
                 type: val.type, // 控件类型
