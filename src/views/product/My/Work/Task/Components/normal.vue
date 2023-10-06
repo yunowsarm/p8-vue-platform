@@ -1,9 +1,6 @@
 <template>
   <normal-layout>
     <template #north>
-      <!-- <span>项目数：</span><span style="font-size: larger; font-weight: bolder;">{{allNum.projectNum}} </span>
-      <span>计划数：</span><span style="font-size: larger;font-weight: bolder;">{{allNum.planNum}} </span>
-      <span>任务数：</span><span style="font-size: larger;font-weight: bolder;">{{allNum.taskNum}}</span> -->
       <search-form-list :dataSource="searchData"
                         :form="searchForm"
                         @search="search"
@@ -152,15 +149,6 @@
                        :default-menu="defaultMenu"></menu-layout>
         </template>
       </common-drawer>
-      <!-- <common-drawer size="100%"
-                     :visible="testDetailsVisible"
-                     direction="ttb"
-                     :drawerConfig="drawerConfig"
-                     @close="closeDrawer">
-        <template #drawer>
-          <test-details :taskId="taskId"></test-details>
-        </template>
-      </common-drawer> -->
     </template>
   </normal-layout>
 </template>

@@ -62,7 +62,7 @@ export default {
   },
   data () {
     return {
-      isRouterShow: true,
+      isRouterShow: false,
       secretLevel: '机密',
       thirdMenuParamTemp: this.thirdMenuParam
     }
@@ -70,16 +70,11 @@ export default {
   created () {
   },
   mounted () {
-    // this.reload()
+    this.reload()
   },
   methods: {
-    async reload () {
-      this.isRouterShow = false
-      await this.getTaskInfo()
-    },
-    async getTaskInfo () {
-      let _this = this
-
+    reload () {
+      this.isRouterShow = true
     }
   },
   components: {
