@@ -482,7 +482,7 @@ export default {
         this.filterThirdMenu = 'planResolve'
       }
       if (thirdMenuData.length) {
-        let planManager = thirdMenuData.filter(o => o.name === 'ProblemListManagement')
+        let planManager = thirdMenuData.filter(o => o.name === 'TaskExecution')
         this.openThirdMenu(scope.row, planManager[0])
       }
     },
