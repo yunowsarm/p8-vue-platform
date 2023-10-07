@@ -949,11 +949,13 @@ export default {
       this.tableParam = {
         reportId: this.tableInfo.id,
         param: {},
-        reportParam: { ...this.sqlParam, ...this.defaultReportParam, ...reportParam },
+        reportParam: {
+          ...this.sqlParam, ...this.defaultReportParam, ...reportParam,
+          columnType: val.property
+        },
         router: this.$route.name,
         code: this.code,
-        permissionVo: { router: this.$route.name, resourceId: '' },
-        columnType: val.property
+        permissionVo: { router: this.$route.name, resourceId: '' }
       }
     },
     handleSelectionChange (val) {
