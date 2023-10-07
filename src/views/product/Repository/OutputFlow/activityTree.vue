@@ -309,6 +309,7 @@ export default {
                   })
                 })
                 myGantt.refreshData()
+                that.$emit('refrshDes')
               }
             }).catch(function (error) {
               console.error('error' + error)
@@ -347,6 +348,7 @@ export default {
                   })
                 })
                 myGantt.refreshData()
+                that.$emit('refrshDes')
               }
             }).catch(function (error) {
               console.error('error' + error)
@@ -382,6 +384,7 @@ export default {
                 })
               })
               myGantt.refreshData()
+              that.$emit('refrshDes')
             }
           }).catch(function (error) {
             console.error('error' + error)

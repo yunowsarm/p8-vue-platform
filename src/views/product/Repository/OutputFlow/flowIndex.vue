@@ -14,6 +14,7 @@
                           v-if="triggerVal"
                           @taskSelected="selectTask"
                           @importExcel="importTask"
+                          @refrshDes="refrshDes"
                           @remove-task="removeTask">
             </activityTree>
           </template>
@@ -50,7 +51,7 @@
 
               </el-tab-pane>
             </el-tabs>
-            <div class="formEdit">
+            <div class="formEdit" :key="describeRefrshKey">
                <keep-alive>
               <describe-edit @saveSuccess="saveCallback"
                              @saveAll="saveAll"
@@ -263,7 +264,8 @@ export default {
         modal: false,
         appendToBody: true,
         wrapperClosable: true
-      }
+      },
+      describeRefrshKey: new Date().getTime()
     }
   },
   created () {
@@ -273,6 +275,9 @@ export default {
     }
   },
   methods: {
+    refrshDes () {
+      this.describeRefrshKey = new Date().getTime()
+    },
     async saveAll (e) {
       if (this.activityId) {
         await this.saveParams()
@@ -305,6 +310,7 @@ export default {
         let saveParams = { ...queryParams, ...that.$refs.specialEdit.$refs.form.otherParam }
         that.$api[that.$refs.specialEdit.saveApi](saveParams)
       })
+      this.describeRefrshKey = new Date().getTime()
     },
     destructorDp () {
       // this.$refs.activityTree.destructorDp()
