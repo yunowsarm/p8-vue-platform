@@ -9,10 +9,10 @@
                :isCustomValidate="true">
       <template #dutyUserId>
         <el-input v-model='formData["dutyUserName"]'
-                  @focus='selectDutyUser'
                   readonly
                   autosize
                   placeholder="请选择责任人">
+                  <el-button icon="el-icon-link"  slot="append" @click="selectDutyUser"></el-button>
         </el-input>
       </template>
 

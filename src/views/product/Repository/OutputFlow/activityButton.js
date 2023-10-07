@@ -116,6 +116,9 @@ export const activityButtonData = [
             result = true
           }
         })
+        if (tasks.length && tasks.length !== 1) {
+          result = true
+        }
         return result
       }
     },
