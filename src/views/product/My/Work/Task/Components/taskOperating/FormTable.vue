@@ -551,18 +551,14 @@ export default {
         display = false
       } else {
         if (isTwoLvTask) {
-          if (isLeafNode === 0) {
+          if (isLeafNode !== null) {
             if (this.formData.progress === 100 && this.checkManagerStatus(managerStatus)) {
               display = true
             }
             if ((managerStatus === '6408' || managerStatus === '6407') && this.formData.progress === 100) {
               display = true
             }
-          } else {
             if (leafChildrenIsFinished && this.formData.progress === 100 && this.checkManagerStatus(managerStatus)) {
-              display = true
-            }
-            if ((managerStatus === '6408' || managerStatus === '6407') && this.formData.progress === 100) {
               display = true
             }
           }

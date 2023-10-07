@@ -460,7 +460,7 @@ export default {
       }
       this.projectClassification = record.projectClassification
       if (this.createPage === 'planChange') {
-        teamRoleValidatorParams.processDefinitionKey = 'planChangeApproveSpecialPlan'
+        teamRoleValidatorParams.processDefinitionKey = 'planChangeApprove'
       } else if (this.createPage === 'userChange') {
         teamRoleValidatorParams.processDefinitionKey = 'planChangeApprove'
       } else {

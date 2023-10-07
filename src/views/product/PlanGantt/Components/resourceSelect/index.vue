@@ -276,14 +276,14 @@ export default {
           dataIndex: 'roleName',
           align: 'center',
           minWidth: 130
-        },
-        {
-          title: '负载',
-          dataIndex: 'taskCount',
-          align: 'center',
-          width: 60,
-          scopedSlots: { customRender: 'custom' }
         }
+        // {
+        //   title: '负载',
+        //   dataIndex: 'taskCount',
+        //   align: 'center',
+        //   width: 60,
+        //   scopedSlots: { customRender: 'custom' }
+        // }
       ]
     }
   },
