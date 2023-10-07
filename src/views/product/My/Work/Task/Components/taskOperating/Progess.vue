@@ -124,10 +124,11 @@ export default {
         realBeginDate: '',
         realEndDate: '',
         content: ''
-        // deviationType: '',
+        // deviationType: '', // 未完成原因
         // deviationCauses: '', // 偏离原因
+        // deviationProgress: '', // 进展情况
         // deviationImpact: '', // 偏离影响
-        // deviationSolutions: '' // 偏离备注
+        // solutions: '' // 解决方案
       },
       formRules: {
         deviationType: [
@@ -185,6 +186,7 @@ export default {
     if (!this.durationDay) {
       this.dialogVisible = true
     }
+    this.getDeviatuon()
   },
   mounted () {
     this.initUpdateFromData()
@@ -199,7 +201,6 @@ export default {
       this.formData.realBeginDate = this.planInfoParams.realBeginDate
       this.formData.managerStatusDisplay = this.planInfoParams.managerStatusDisplay
       this.formData.content = this.planInfoParams.content
-      this.formData.realEndDate = this.planInfoParams.realEndDate
       // let leaf = this.getPlanInfo().isLeaf
       // // eslint-disable-next-line eqeqeq
       // 只有叶子结点可以展示进度  提交任务
@@ -255,7 +256,11 @@ export default {
       this.dialogVisible = false
       // 弹窗提示点击确定--表示人员要填写偏离相关的信息, 展示偏离模块(信息为必填)
       this.exceedType = true
-      // this.formType.overdue = true
+      // 切换页面不继续弹出超期提示框
+      this.$emit('dialogOk', true)
+    },
+    getDeviatuon () {
+      const _this = this
       let deviation = {
         deviationType: '',
         deviationCauses: '', // 偏离原因
@@ -264,8 +269,17 @@ export default {
         solutions: '' // 偏离备注
       }
       this.formData = { ...this.formData, ...deviation }
-      // 切换页面不继续弹出超期提示框
-      this.$emit('dialogOk', true)
+      this.$api['taskManager.deviationReasonsHistory']({
+        taskId: _this.getPlanInfo().taskId
+      }).then(res => {
+        if (res && res.length) {
+          this.formData.deviationType = res[0].deviationType
+          this.formData.deviationCauses = res[0].deviationCauses
+          this.formData.deviationProgress = res[0].deviationProgress
+          this.formData.deviationImpact = res[0].deviationImpact
+          this.formData.solutions = res[0].solutions
+        }
+      })
     },
     progressDateChange (date) {
       let endTime = date.maxDate
