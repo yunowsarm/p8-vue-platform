@@ -330,13 +330,13 @@ export default {
       },
       {
         title: '实际开始时间',
-        dataIndex: 'actualStartDate',
+        dataIndex: 'realBeginDate',
         width: 120,
         align: 'center'
       },
       {
         title: '实际完成时间',
-        dataIndex: 'actualEndDate',
+        dataIndex: 'realEndDate',
         width: 120,
         align: 'center'
       }
