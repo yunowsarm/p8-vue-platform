@@ -2206,11 +2206,11 @@ GanttObject.onSaveCellEven = function (ganttObject, vueThis) {
     const vueThis = store.getters.vueThis
     // 当修改计划开始、计划完成、工期时，标记任务，用于更新父
     if (colName === 'end_date' || colName === 'duration' || colName === 'start_date' || colName === 'predecessors') {
-      if (colName === 'end_date') {
-        vueThis.$nextTick(() => {
-          vueThis.initGantt(vueThis.planInfoId, vueThis.viewType)
-        })
-      }
+      // if (colName === 'end_date') {
+      //   vueThis.$nextTick(() => {
+      //     vueThis.initGantt(vueThis.planInfoId, vueThis.viewType)
+      //   })
+      // }
       GanttObject.updateTaskNew(ganttObject, taskId, vueThis)
     }
     // console.log(ganttObject,'ganttObject');
