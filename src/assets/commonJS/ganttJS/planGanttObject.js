@@ -801,11 +801,12 @@ export function getGanttColumns(ganttObject, vueThis) {
     },
     {
       name: 'predecessors',
-      label: '前后置',
+      label: '前后置' + canEditIcon,
       min_width: 100,
       resize: true,
       align: 'left',
       monitorLockLimit: true, // 标识锁定后不可操作的列声明
+      editor: editors.predecessors,
       template: function (task) {
         const links = task.$target
         const labels = []
