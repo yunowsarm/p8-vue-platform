@@ -51,6 +51,7 @@ export function routerBeforeEachFunc(to, from, next) {
           store.dispatch('getMessageInfo') // 获取消息信息
           store.dispatch('getMessageNum') // 获取消息信息已读未读条数
           store.dispatch('getSystemSecret') // 获取系统密级
+          store.dispatch('getPlanStatusLimitStrategy') // 获取gantt操作权限
         })
 
         // 未刷新页面,在系统中跳转路由

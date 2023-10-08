@@ -89,16 +89,20 @@ let editColumns = [
       },
       {
         validator: (rule, value, callback) => {
-          let that = thisComponent
+          const that = thisComponent
           // console.log(thisComponent)
-          that.$api['resource.checkRepeated']({ id: that.record.id, name: value }).then((response) => {
-            // console.log(response)
-            if (response.result) {
-              callback(new Error(response.resultMsg))
-            } else {
-              callback()
-            }
-          })
+          if (!that.record || (that.record && that.record.name !== value)) {
+            that.$api['resource.checkRepeated']({ id: that.record.id, name: value }).then((response) => {
+              // console.log(response)
+              if (response.result) {
+                callback(new Error(response.resultMsg))
+              } else {
+                callback()
+              }
+            })
+          } else {
+            callback()
+          }
         },
         trigger: 'blur'
       }
@@ -109,11 +113,11 @@ let editColumns = [
     labelText: '前端组件路径',
     fieldName: 'component',
     placeholder: '请输入前端组件路径',
-    maxlength: 256,
+    maxlength: 512,
     rules: [
       {
         required: false,
-        maxLength: 256
+        maxLength: 512
       }
     ]
   },

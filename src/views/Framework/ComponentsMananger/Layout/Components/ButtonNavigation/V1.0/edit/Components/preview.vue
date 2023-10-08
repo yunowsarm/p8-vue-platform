@@ -27,6 +27,7 @@
                      :permission-vo="componentsConfig.permissionVo"
                      :layout-config="componentsConfig"
                      :kanban-config="componentsConfig"
+                     :isLayoutButton="true"
                      ref="components"></component>
         </template>
       </normal-layout>
@@ -61,7 +62,22 @@ export default {
     componentUrl () {
       console.log(this.asyncComponents, '===this.asyncComponents')
       if (this.asyncComponents) {
-        return () => import(`@/views/${this.asyncComponents}.vue`)
+         if (this.asyncComponents.indexOf('?') !== -1) {
+          const list = this.asyncComponents.split('?')
+          const url = list[0]
+          const parmars = list[1].split('&')
+          const obj = {}
+          parmars.forEach((item) => {
+            const str = item.split('=')
+            if (str[0] === 'code') {
+              obj.code = str[1]
+            }
+          })
+          this.componentsConfig = obj
+          return () => import('@/views/' + url + '.vue')
+        } else {
+          return () => import(`@/views/${this.asyncComponents}.vue`)
+        }
       } else {
         return ''
       }

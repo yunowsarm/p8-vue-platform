@@ -2,7 +2,7 @@
 
 
 <template>
-  <div>
+  <div class="history" style="height: 100%">
     <common-table ref="table"
                   :comp="comp"
                   :columns="columns"

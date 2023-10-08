@@ -334,7 +334,6 @@ export default {
         message: '保存成功！',
         type: 'success'
       })
-      this.$emit('save-success', res)
       this.$emit('close-lock-unlock', res)
     }
   }

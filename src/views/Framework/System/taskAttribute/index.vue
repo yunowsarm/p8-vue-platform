@@ -1,10 +1,12 @@
 <template>
   <list-layout>
     <template #north>
-      <common-button :comp="comp"></common-button>
       <el-button type="primary"
-                 round
                  @click="createThird">新建</el-button>
+      <search-form-list ref="search" 
+                        :data-source="searchDatasource" 
+                        @search="search" 
+                        @re-set="reset"></search-form-list>
     </template>
     <template #center>
       <common-table ref="table"
@@ -16,7 +18,7 @@
                     <template #operation="{scope}">
                       <el-button type="text" round @click="updateThird(scope.row)">修改</el-button>
                       <el-divider direction="vertical"></el-divider>
-                      <el-button type="text" round @click="deleteThird(scope.row)">删除</el-button>
+                      <el-button type="text" round @click="deleteThird(scope.row)" :disabled="scope.row.type == '0'">删除</el-button>
                     </template>
                     </common-table>
     </template>
@@ -27,7 +29,7 @@
                      size="60%"
                      @close="visibleThirdDrawer = false">
         <template #drawer>
-          <edit :id="id" @saveSuccess="onEditThird"></edit>
+          <edit :id="id" :type="type" @saveSuccess="onEditThird"></edit>
         </template>
       </common-drawer>
     </template>
@@ -35,7 +37,7 @@
 </template>
 <style></style>
 <script>
-import { P8ListLayout as ListLayout, P8Table as CommonTable, P8Button as CommonButton, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import { P8ListLayout as ListLayout, P8Table as CommonTable, P8Button as CommonButton, P8Drawer as CommonDrawer, P8Search as SearchFormList } from 'p8-components-ui'
 import edit from './Components/edit.vue'
 const columns = [
   {
@@ -71,7 +73,8 @@ export default {
     CommonTable,
     CommonButton,
     CommonDrawer,
-    edit
+    edit,
+    SearchFormList
   },
   data () {
     return {
@@ -82,17 +85,28 @@ export default {
       tableApi: 'taskAttribute.listData',
       columns: columns,
       id: '',
+      type: '',
+      searchDatasource: [
+        {
+          type: 'text',
+          labelText: '项目类型',
+          fieldName: 'projectTypeDisplay',
+          placeholder: '请输入项目类型'
+        }
+      ]
     }
   },
   methods: {
     createThird () {
       this.id = ''
-      this.drawerTitle = '新建'
+      this.type = ''
+      this.drawerTitle = '新建任务属性设置'
       this.visibleThirdDrawer = true
     },
     updateThird (record) {
       this.id = record.id
-      this.drawerTitle = '修改'
+      this.type = record.type
+      this.drawerTitle = '修改任务属性设置'
       this.visibleThirdDrawer = true
     },
     onEditThird () {
@@ -105,7 +119,13 @@ export default {
           this.$refs.table.searchData()
         }
       })
-    }
+    },
+    search (param) {
+      this.queryParam = param
+    },
+    reset () {
+      this.queryParam = {}
+    },
   }
 }
 </script>

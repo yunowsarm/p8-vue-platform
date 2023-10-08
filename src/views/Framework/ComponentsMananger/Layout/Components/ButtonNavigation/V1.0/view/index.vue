@@ -15,13 +15,13 @@
       <component v-if="componentUrl"
                  :is="componentUrl"
                  :code="componentsConfig.code"
-                 :data-view-id="componentsConfig.dataViewId"
                  :record="{ desformCode: componentsConfig.codeForm }"
                  :permission-vo="componentsConfig.permissionVo"
                  :layout-config="componentsConfig"
                  :kanban-config="componentsConfig"
                  :west-tree-param="provideParams.searchParams"
-                 :isLayoutButton="true"
+                 v-bind="$attrs"
+                 v-on="$listeners"
                  @refresh="init()"
                  ref="components"></component>
       <span v-else
@@ -51,7 +51,22 @@ export default {
     componentUrl () {
       console.log(this.asyncComponents, '===this.asyncComponents')
       if (this.asyncComponents) {
-        return () => import(`@/views/${this.asyncComponents}.vue`)
+         if (this.asyncComponents.indexOf('?') !== -1) {
+          const list = this.asyncComponents.split('?')
+          const url = list[0]
+          const parmars = list[1].split('&')
+          const obj = {}
+          parmars.forEach((item) => {
+            const str = item.split('=')
+            if (str[0] === 'code') {
+              obj.code = str[1]
+            }
+          })
+          this.componentsConfig = obj
+          return () => import('@/views/' + url + '.vue')
+        } else {
+          return () => import(`@/views/${this.asyncComponents}.vue`)
+        }
       } else {
         return ''
       }

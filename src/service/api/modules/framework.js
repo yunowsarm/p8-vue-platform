@@ -433,6 +433,22 @@ export const system = {
       desc: '计划标识管理 列表'
     },
     {
+      name: 'startStatus',
+      method: 'POST',
+      path: '/framework/system/PlanLogo/startStatus',
+      mockPath: '/framework/system/PlanLogo/startStatus',
+      params: {},
+      desc: '基础数据 启用'
+    },
+    {
+      name: 'stopStatus',
+      method: 'POST',
+      path: '/framework/system/PlanLogo/stopStatus',
+      mockPath: '/framework/system/PlanLogo/stopStatus',
+      params: {},
+      desc: '基础数据 停用'
+    },
+    {
       name: 'getMonitorPointDataInfo',
       method: 'POST',
       path: '/framework/system/PlanLogo/getMonitorPointDataInfo',
@@ -561,6 +577,22 @@ export const system = {
       mockPath: '/framework/system/Role/getAllRole',
       params: {},
       desc: '获取所有角色'
+    },
+    {
+      name: 'getApproveRoles',
+      method: 'POST',
+      path: '/framework/system/Role/getApproveRoles',
+      mockPath: '/framework/system/Role/getApproveRoles',
+      params: {},
+      desc: '获取处理用户'
+    },
+    {
+      name: 'getCandidateUsers',
+      method: 'POST',
+      path: '/framework/system/Role/getCandidateUsers',
+      mockPath: '/framework/system/Role/getCandidateUsers',
+      params: {},
+      desc: '获取候选用户'
     }
   ],
   resource: [
@@ -837,6 +869,13 @@ export const system = {
       method: 'POST',
       path: '/bpm/personal/ProcessApproval/pendingList',
       mockPath: '/bpm/personal/ProcessApproval/pendingList',
+      desc: '当前用户待审批列表数据'
+    },
+    {
+      name: 'getCatalog',
+      method: 'POST',
+      path: '/product/BpDictionaryNew/getDicList',
+      mockPath: '/product/BpDictionaryNew/getDicList',
       desc: '当前用户待审批列表数据'
     }
   ],

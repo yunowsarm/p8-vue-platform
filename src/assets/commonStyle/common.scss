@@ -180,6 +180,13 @@ body {
   background-color: #ebeef5;
 }
 
+.gantt_grid_scale,
+.gantt_task_scale,
+.gantt_task_vscroll,
+.gantt_grid_scale .gantt_grid_head_cell {
+  background-color: $base-light-color;
+}
+
 .el-loading-mask {
   z-index: 12000 !important;
   background-color: hsla(0, 0%, 100%, 0.3);

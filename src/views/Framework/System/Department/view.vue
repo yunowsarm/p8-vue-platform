@@ -1,10 +1,19 @@
 <template>
-  <form-list ref="form" :data-source="dataSource" :api="saveApi" :form="formData" @saved="saved" @rendered="rendered">
+  <form-list ref="form"
+             :data-source="dataSource"
+             :api="saveApi"
+             :form="formData"
+             @rendered="rendered">
     <template slot="btn">
       <el-button @click="cancel">取 消</el-button>
     </template>
   </form-list>
 </template>
+<style lang="scss" scoped>
+::v-deep .el-form-item__content > .view {
+  background: #f5f8fb;
+}
+</style>
 <script>
 import { P8Form as FormList } from 'p8-components-ui'
 export default {
@@ -30,7 +39,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'departmentManger.save',
       detailApi: 'departmentManger.deptInfo',
@@ -47,90 +56,55 @@ export default {
       },
       dataSource: [
         {
-          type: 'text',
+          type: 'view',
           labelText: '部门名称',
           fieldName: 'name',
-          placeholder: '',
-          fieldConfig: {
-            disabled: true
-          }
+          placeholder: ''
         },
         {
-          type: 'text',
+          type: 'view',
           labelText: '部门简称',
           fieldName: 'deptAbbreviation',
-          placeholder: '',
-          fieldConfig: {
-            disabled: true
-          }
+          placeholder: ''
         },
         {
-          type: 'number',
+          type: 'view',
           labelText: '部门排序',
           fieldName: 'indexNo',
           // colLayout: 'doubleCol',
-          placeholder: '',
-          fieldConfig: {
-            disabled: true
-          }
+          placeholder: ''
         },
         {
-          type: 'treeSelect',
+          type: 'view',
           labelText: '所属部门',
           fieldName: 'parentId',
-          placeholder: '',
-          optionUrl: { api: 'departmentManger.deptTree', params: { deptId: this.recordId } },
-          clearable: true,
-          defaultExpandAll: true,
-          multiple: false,
-          disabled: true,
-          checkStrictly: true,
-          treeData: []
+          placeholder: ''
         },
         {
-          type: 'select',
+          type: 'view',
           labelText: '部门类型',
-          fieldName: 'deptType',
-          placeholder: '',
-          optionUrl: { api: 'thirdPartInterface.getDic', params: { dicType: 'DEPARTMENT_TYPE' } },
-          options: [],
-          fieldConfig: {
-            disabled: true
-          }
+          fieldName: 'deptTypeDisplay',
+          placeholder: ''
         },
         {
-          type: 'text',
+          type: 'view',
           labelText: '部门编码',
           placeholder: '',
           fieldName: 'no',
-          defaultValue: '',
-          fieldConfig: {
-            disabled: true
-          }
-        },
-        {
-          type: 'select',
-          labelText: '部门类别',
-          fieldName: 'deptCategory',
-          placeholder: '',
-          optionUrl: { api: 'thirdPartInterface.getDic', params: { dicType: 'DEPARTMENT_CATEGORY' } },
-          options: [],
-          fieldConfig: {
-            disabled: true
-          }
+          defaultValue: ''
         }
       ]
     }
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    rendered() {
+    rendered () {
       this.getInfo()
     },
-    cancel() {
+    cancel () {
       this.$emit('cancel')
     },
-    getInfo() {
+    getInfo () {
       if (this.recordId) {
         this.$api[this.detailApi]({ id: this.recordId }).then((res) => {
           // console.log(res,'-------我的返回值');
