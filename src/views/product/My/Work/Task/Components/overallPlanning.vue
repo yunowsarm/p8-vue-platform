@@ -45,10 +45,21 @@
               scope.row.dataType === 'task'
             "
                       effect="dark"
-                      :content="`${scope.row.managerStatusDisplay},点击可撤回`"
+                      :content="`${scope.row.approverName}`"
                       placement="right">
             <span class="base-custom-style-task approve"
-                  @click.stop="withdrawTaskApprove(scope.row)">审</span>
+                  @click.stop="viewTaskApprove(scope.row)">审</span>
+          </el-tooltip>
+          <el-tooltip v-if="
+              scope.row.managerStatus === '6406' &&
+              scope.row.dataType &&
+              scope.row.dataType === 'task'
+            "
+                      effect="dark"
+                      :content="`${scope.row.managerStatusDisplay},点击可撤回`"
+                      placement="right">
+            <span class="base-custom-style-task approves"
+                  @click.stop="withdrawTaskApprove(scope.row)">撤</span>
           </el-tooltip>
           <el-tooltip v-if="
               scope.row.managerStatus === '6407' &&
@@ -150,6 +161,20 @@
                        :default-menu="defaultMenu"></menu-layout>
         </template>
       </common-drawer>
+      <common-drawer title="查看流程图"
+                     :visible="visibleModelPicture"
+                     :show-handle-btn="false"
+                     size="50%"
+                     @close="onModelPictureClose">
+        <template #drawer>
+          <process-approval-view v-inherited-father-height
+                                 :business-obj="{
+              businessId: modelId,
+              processDefinitionKey: processDefinationTwoKey
+            }">
+          </process-approval-view>
+        </template>
+      </common-drawer>
     </template>
   </normal-layout>
 </template>
@@ -160,6 +185,7 @@ import {
   P8Table as CommonTable,
   P8StatusIcon as CommonStatusIcon,
   P8Drawer as CommonDrawer,
+  P8ProcessApproval as ProcessApprovalView,
   P8MenuLayout as MenuLayout,
   P8Search as SearchFormList,
   Tooltip
@@ -186,6 +212,7 @@ export default {
     CommonTable,
     SearchFormList,
     MenuLayout,
+    ProcessApprovalView,
     'el-tooltip': Tooltip
   },
   data () {
@@ -386,19 +413,18 @@ export default {
       }
     ]
     return {
+      processDefinationTwoKey: 'taskFinishApprove',
       frontToBackTitle: '前置',
       frontToBackVisible: false,
       treeData: [],
       tableHeight: document.documentElement.clientHeight - 200 + 'px',
       projectLevel: null,
       visible: false,
-      thirdMenuTitle: '',
       filterThirdMenu: '',
       rejectInfo: '',
       treeParam: {
         dataRange: 'select-all'
       },
-      secretLevel: '机密',
       statusData: this.$store.state.project.dicConfig.managerStatus || {},
       treeApi: 'processApproval.getCatalog',
       tableApi: 'taskManager.overallTaskList',
@@ -433,7 +459,9 @@ export default {
       defaultMenu: {},
       thirdMenuParam: {},
       searchForm: {},
-      frontToBackType: ''
+      frontToBackType: '',
+      visibleModelPicture: false,
+      modelId: ''
     }
   },
   created () {
@@ -642,6 +670,13 @@ export default {
     // 超期/剩余天数调用公共方法
     overdueTextFun (row) {
       return overdueTextHandle(row)
+    },
+    viewTaskApprove (rowInfo) {
+      this.modelId = rowInfo.id
+      this.visibleModelPicture = true
+    },
+    onModelPictureClose () {
+      this.visibleModelPicture = false
     },
     withdrawTaskApprove (rowInfo) {
       let taskId = rowInfo.taskId

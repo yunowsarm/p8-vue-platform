@@ -233,28 +233,28 @@ export default {
           }
         ]
       },
-      {
-        type: 'select',
-        labelText: '业务分类',
-        fieldName: 'businessClassify',
-        placeholder: '请选择',
-        colLayout: 'doubleCol',
-        options: [
-          {
-            label: '业务一',
-            value: '0'
-          },
-          {
-            label: '业务二',
-            value: '1'
-          }
-        ],
-        rules: [
-          {
-            required: true
-          }
-        ]
-      },
+      // {
+      //   type: 'select',
+      //   labelText: '业务分类',
+      //   fieldName: 'businessClassify',
+      //   placeholder: '请选择',
+      //   colLayout: 'doubleCol',
+      //   options: [
+      //     {
+      //       label: '业务一',
+      //       value: '0'
+      //     },
+      //     {
+      //       label: '业务二',
+      //       value: '1'
+      //     }
+      //   ],
+      //   rules: [
+      //     {
+      //       required: true
+      //     }
+      //   ]
+      // },
       {
         type: 'text',
         labelText: '组件地址',
@@ -411,7 +411,7 @@ export default {
       },
       {
         type: 'select',
-        labelText: '分类选择',
+        labelText: '业务分类',
         fieldName: 'classification',
         placeholder: '请选择',
         colLayout: 'doubleCol',
@@ -561,7 +561,7 @@ export default {
         this.formData.url = ''
         this.dataSource = this.dataSource
           .filter((item) => {
-            return item.fieldName !== 'url' && item.fieldName !== 'dataviewId'
+            return item.fieldName !== 'url' && item.fieldName !== 'dataviewId' && item.fieldName !== 'urlType'
           })
           .concat([
             {
@@ -573,23 +573,6 @@ export default {
               optionUrl: {
                 api: 'kanbanComponent.dataViewList'
               }
-            },
-            {
-              type: 'select',
-              labelText: '分类选择',
-              fieldName: 'classification',
-              placeholder: '请选择',
-              colLayout: 'doubleCol',
-              optionUrl: {
-                api: 'thirdPartInterface.getDic',
-                params: { dicType: 'SELECT_TYPE' }
-              },
-              rules: [
-                {
-                  required: true,
-                  message: '该项为必填项'
-                }
-              ]
             },
             {
               type: 'blank',
@@ -609,7 +592,7 @@ export default {
         this.formData.url = ''
         this.formData.jsonOptions = ''
         this.dataSource = this.dataSource.filter((item) => {
-          return item.fieldName !== 'url' && item.fieldName !== 'dataviewId' && item.fieldName !== 'jsonOptions'
+          return item.fieldName !== 'url' && item.fieldName !== 'dataviewId' && item.fieldName !== 'jsonOptions' && item.fieldName !== 'urlType'
         }).concat([
           {
             type: 'select',
@@ -622,23 +605,6 @@ export default {
               label: 'label',
               value: 'code'
             }
-          },
-          {
-            type: 'select',
-            labelText: '分类选择',
-            fieldName: 'classification',
-            placeholder: '请选择',
-            colLayout: 'doubleCol',
-            optionUrl: {
-              api: 'thirdPartInterface.getDic',
-              params: { dicType: 'SELECT_TYPE' }
-            },
-            rules: [
-              {
-                required: true,
-                message: '该项为必填项'
-              }
-            ]
           }
         ])
       } else {
