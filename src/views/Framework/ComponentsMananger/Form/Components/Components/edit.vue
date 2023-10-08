@@ -739,6 +739,9 @@ export default {
       }
     },
     save(data, childData, arr, logdata) {
+      if (this.dataId) {
+        data.data.ID = this.dataId
+      }
       const params = {
         desformCode: this.record.desformCode,
         dataId: this.dataId,
@@ -761,6 +764,9 @@ export default {
                 message: '保存成功!'
               })
               that.$emit('save-success', res)
+              that.$nextTick(() => {
+                that.dataViewId = res
+              })
             } else {
               that.$message({
                 type: 'error',
