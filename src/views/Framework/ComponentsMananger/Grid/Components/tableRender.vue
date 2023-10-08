@@ -521,6 +521,7 @@ export default {
       selectionRange: null,
       processDefinationTwoKey: null,
       selsctRow: [],
+      eventParams: {},
       releaseMenuParams: {
         beforehandParams: {}
       },
@@ -956,12 +957,13 @@ export default {
           }
         })
       }
+      this.sqlParam.columnType = val.property
       this.tableParam = {
+        sqlParam: this.sqlParam,
         reportId: this.tableInfo.id,
         param: {},
         reportParam: {
-          ...this.sqlParam, ...this.defaultReportParam, ...reportParam,
-          columnType: val.property
+          ...this.sqlParam, ...this.defaultReportParam, ...reportParam
         },
         router: this.$route.name,
         code: this.code,
@@ -1349,6 +1351,7 @@ export default {
       // this.remark = btn.remark
       const obj = JSON.parse(btn.eventParams)
       this.selsctRow = row
+      this.eventParams = obj
       this.processDefinationTwoKey = obj.code
       this.nextApproveUserBeforehand(obj.code)
     },
@@ -1367,7 +1370,7 @@ export default {
     // 提交审批
     commitSelectApproveUserBeforehand (fullParams) {
       const that = this
-      this.releaseMenuParams.beforehandParams = { ...fullParams }
+      this.releaseMenuParams.beforehandParams = { ...fullParams, ...this.selsctRow[0], ...this.eventParams }
       const rowIds = this.selsctRow.map((el) => {
         return el.ID
       })
