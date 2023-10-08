@@ -7,6 +7,7 @@
         <span style="font-size:14px; padding:0 20px;font-weight:bold;">人员任命文件：</span>
         <common-upload  ref="commonupload"
                         v-if="!uploadView"
+                        :files="namedFiles"
                         :uploadConfig="{limit: 1,multiple:false}"
                         @upload="(file) => {uploadFile(file);}"
                         @remove="(file) => {removedFile(file);}">
@@ -1073,6 +1074,9 @@ export default {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  ::v-deep .upload__secret-file-list {
+    display: none;
+  }
 }
 .viewVisible {
   position: absolute;

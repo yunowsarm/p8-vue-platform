@@ -1228,7 +1228,7 @@ export default {
       row = rowBtnData.row
       btn = rowBtnData.btn
       const funCode = JSON.parse(btn.eventParams).code
-      const func = new Function(`return function (row){${funCode}}`)()
+      const func = new Function(`return function (row, btn){${funCode}}`)()
       func.call(this, row, btn)
     },
     // 打开子表编辑表格
@@ -1257,6 +1257,7 @@ export default {
         this.$refs.xTable.searchData()
         this.$refs.xTable.clearSelection()
       }
+      this.selectRecords = []
     },
     // 查看流程图
     viewProcess (row, btn) {
