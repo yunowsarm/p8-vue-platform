@@ -225,7 +225,6 @@ export default {
       this.formConf = JSON.parse(drawingListData.designJson)
       this.handlerEvents(this.formConf.fields)
       await this.handlerCustomFn(this.formConf)
-      this.initConfig = _cloneDeep(this.formConf)
       this.containerLayout = drawingListData.containerLayout
       const _this = this
       if (this.dataId) {
@@ -311,6 +310,7 @@ export default {
       } else {
         this.newOrModify = 'new'
       }
+      this.initConfig = _cloneDeep(this.formConf)
       // 待表单数据，回显数据加载完后再初始化下拉等数据
       if (this.formConf.fields.length) {
         const needHandleTags = ['tree-select', 'el-select', 'el-radio-group', 'el-checkbox-group']
@@ -689,7 +689,7 @@ export default {
     },
     watchLinkData(item) {
       if (item.__config__.tag === 'el-progress') {
-        item.percentage = this.pageData[item.__vModel__]
+        item.percentage = Number(this.pageData[item.__vModel__])
       }
     },
     // 计算器功能，目前只支持加法运算
