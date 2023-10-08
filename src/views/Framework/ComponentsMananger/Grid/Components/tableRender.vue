@@ -963,7 +963,7 @@ export default {
         reportId: this.tableInfo.id,
         param: {},
         reportParam: {
-          ...this.sqlParam, ...this.defaultReportParam, ...reportParam
+          ...this.defaultReportParam, ...reportParam
         },
         router: this.$route.name,
         code: this.code,
@@ -1370,7 +1370,13 @@ export default {
     // 提交审批
     commitSelectApproveUserBeforehand (fullParams) {
       const that = this
-      this.releaseMenuParams.beforehandParams = { ...fullParams, ...this.selsctRow[0], ...this.eventParams }
+      let paramsKey = Object.keys(this.eventParams)
+      paramsKey.forEach(item => {
+        if (this.selsctRow[0][item]) {
+          this.eventParams[item] = this.selsctRow[0][item]
+        }
+      })
+      this.releaseMenuParams.beforehandParams = { ...fullParams, ...this.eventParams }
       const rowIds = this.selsctRow.map((el) => {
         return el.ID
       })
