@@ -235,7 +235,7 @@
           </process-approval-view>
         </template>
       </common-drawer>
-      <common-drawer title="下钻详情"
+      <common-drawer :title="runInHoleTitle"
                      v-if="runInHoleVisible"
                      :visible="runInHoleVisible"
                      size="100%"
@@ -427,6 +427,7 @@ export default {
   },
   data () {
     return {
+      runInHoleTitle: '下钻详情',
       defaultMenu: {},
       thirdMenuParam: {},
       thirdMenuTitle: '',
@@ -682,7 +683,7 @@ export default {
     cellClassName ({ row, column, rowIndex, columnIndex }) {
       let columnName = ''
       this.columns.forEach(item => {
-        if (item.tenantId && item.dataIndex === column.property) {
+        if (this.tableInfo.enableClick === 1 && item.tenantId && item.dataIndex === column.property) {
           columnName = 'columnStyle'
         }
       })
@@ -759,6 +760,9 @@ export default {
                     minWidth: item.fieldWidth,
                     sortable: item.isOrder ? item.isOrder : false
                   })
+                  if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
+                    item.defaultValueData = item.defaultValueData.split(',')
+                  }
                   this.searchData.push({
                     // type: 'text', // 控件类型
                     // labelText: item.fieldTxt, // 控件显示的文本
@@ -768,7 +772,8 @@ export default {
                     fieldName: item.fieldName,
                     mode: '=',
                     selectCode: item.dictCode,
-                    replaceSearch: item.replaceVal
+                    replaceSearch: item.replaceVal,
+                    defaultValue: item.defaultValueData
                   })
                 }
               } else if (item.isCustomColumn) {
@@ -805,13 +810,18 @@ export default {
               }
             }
             if (item.isSearch) {
+              // 查询时间返回格式转换
+              if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
+                item.defaultValueData = item.defaultValueData.split(',')
+              }
               this.searchList.push({
                 type: item.searchMode, // 控件类型
                 labelText: item.fieldTxt, // 控件显示的文本
                 fieldName: item.fieldName,
                 mode: '=',
                 selectCode: item.dictCode,
-                replaceSearch: item.replaceVal
+                replaceSearch: item.replaceVal,
+                defaultValue: item.defaultValueData
               })
             }
           })
@@ -857,18 +867,21 @@ export default {
             if (res.tableType == 0 && res.enableEdit == 0) {
               columnData.unshift({
                 type: 'selection',
-                width: 40
+                width: 50,
+                align: 'center'
               })
             } else {
               if (res.selectType == 1) {
                 columnData.unshift({
                   type: 'radio',
-                  width: 50
+                  width: 50,
+                  align: 'center'
                 })
               } else {
                 columnData.unshift({
                   type: 'checkbox',
-                  width: 50
+                  width: 50,
+                  align: 'center'
                 })
               }
             }
@@ -897,6 +910,15 @@ export default {
                 if (el.dataIndex === item.fieldName) {
                   el.treeNode = true
                   el.align = 'left'
+                  el.tenantId = item.tenantId
+                  el.drillName = item.drillName
+                }
+              })
+            } else {
+              columnData.forEach((el) => {
+                if (el.dataIndex === item.fieldName) {
+                  el.tenantId = item.tenantId
+                  el.drillName = item.drillName
                 }
               })
             }
@@ -976,21 +998,25 @@ export default {
       this.$emit('selection-change', val)
     },
     rowClick (row, column) {
+      this.columns.forEach(el => {
+        if (el.fieldName === column.property) {
+          column.drillName = el.drillName
+        }
+      })
       if (this.tableInfo.enableClick === 1) {
         this.$emit('row-click', row)
-        if (this.tableInfo.enableClick === 1) {
-          this.runInHoleParam = row
-          this.runInHoleParam.property = column.property
-          this.reportItems.forEach((item) => {
-            if (column.property === item.fieldName) {
-              if (item.fieldHref && item.fieldHref !== '') {
-                this.componentsConfig = JSON.parse(item.fieldHref)
-                this.runInHoleVisible = true
-                this.asyncComponents = this.componentsConfig.url
-              }
+        this.runInHoleParam = row
+        this.runInHoleParam.property = column.property
+        this.reportItems.forEach((item) => {
+          if (column.property === item.fieldName) {
+            if (item.fieldHref && item.fieldHref !== '') {
+              this.componentsConfig = JSON.parse(item.fieldHref)
+              this.asyncComponents = this.componentsConfig.url
             }
-          })
-        }
+            this.runInHoleTitle = column.drillName
+            this.runInHoleVisible = true
+          }
+        })
       }
     },
     // 单元格点击事件
@@ -1652,8 +1678,9 @@ export default {
     },
     // 导出
     exportExcel (row, btn) {
+      const obj = JSON.parse(row.eventParams)
       const exportObj = {
-        fileName: this.$route.meta.title, // 导出的名称
+        fileName: obj ? obj.customJson.NAME : this.$route.meta.title, // 导出的名称
         columnConfigs: this.columns // 导出的列
       }
       if (this.tableType == 0) {
@@ -1879,7 +1906,7 @@ export default {
   text-decoration: underline;
   cursor: pointer;
 }
-::v-deep .row--level-0 :nth-child(3) .el-dropdown{
+::v-deep .row--level-0 :nth-child(3) .el-dropdown {
   display: none;
 }
 </style>
