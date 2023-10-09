@@ -194,14 +194,16 @@ export default {
   },
   methods: {
     initUpdateFromData () {
-      this.formData.progress = this.planInfoParams.progress
-      this.formData.forecastDateRange = [this.planInfoParams.forecastBeginDate, this.planInfoParams.forecastEndDate]
-      this.formData.forecastBeginDate = this.planInfoParams.forecastBeginDate
-      this.formData.forecastEndDate = this.planInfoParams.forecastEndDate
-      this.formData.realBeginDate = this.planInfoParams.realBeginDate
-      this.formData.realEndDate = this.planInfoParams.realEndDate
-      this.formData.managerStatusDisplay = this.planInfoParams.managerStatusDisplay
-      this.formData.content = this.planInfoParams.content
+      this.$api['taskManager.taskInfo']({ taskId: this.planInfoParams.taskId }).then(res => {
+        this.formData.content = res.content
+        this.formData.realBeginDate = res.realBeginDate
+        this.formData.realEndDate = res.realEndDate
+        this.formData.progress = Math.round(res.progress * 100)
+        this.formData.forecastDateRange = [res.forecastBeginDate, res.forecastEndDate]
+        this.formData.forecastBeginDate = res.forecastBeginDate
+        this.formData.forecastEndDate = res.forecastEndDate
+        this.formData.managerStatusDisplay = res.managerStatusDisplay
+      })
       // let leaf = this.getPlanInfo().isLeaf
       // // eslint-disable-next-line eqeqeq
       // 只有叶子结点可以展示进度  提交任务

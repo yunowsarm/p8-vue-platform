@@ -49,10 +49,9 @@
                         :add-row="true"
                         :height="eaitHeight"
                         :need-params="true"
-                        :params="tableParams"
+                        :data="noApiTableData"
                         :change-table-data="changeTableData"
                         :is-merge="isMerge"
-                        :api="tableConfigDetailsApi"
                         @save-param-data="saveTableData">
           <template #isParent="{ scope, data }">
             <el-checkbox v-model="scope.row.isParent"
@@ -137,7 +136,7 @@
             <el-select v-model="scope.row.searchMode"
                        clearable
                        :disabled="!!scope.row.isCustomColumn"
-                       @change="saveTableData(data, null, scope)">
+                       @change="saveTableData(data, scope.row.searchMode, scope)">
               <el-option label="文本框"
                          value="text"></el-option>
               <el-option label="目录组件"
@@ -197,12 +196,6 @@
             </el-tooltip>
           </template>
           <template #dictCode="{ scope, data }">
-            <!-- 文本框 -->
-            <div v-if="scope.row.searchMode === 'text'">
-              <el-input clearable
-                        :disabled="!!scope.row.isCustomColumn"
-                        v-model="scope.row.dictCode"></el-input>
-            </div>
             <!-- 目录组件 复选组件-->
             <div v-if="scope.row.searchMode === 'select' || scope.row.searchMode === 'multiple' || scope.row.searchMode === 'radioButton'">
               <el-select v-model="scope.row.dictCode"
@@ -210,11 +203,11 @@
                          clearable
                          :disabled="!!scope.row.isCustomColumn"
                          filterable
-                         @change="saveTableData(data)">
+                         @change="saveTableData(data, 'url', scope)">
                 <el-option v-for="item in renderData"
                            :key="item.selectionCode"
                            :label="item.selectionName + '(' + item.selectionCode + ')'"
-                           :value="item.selectionCode"> </el-option>
+                           :value="item.id"> </el-option>
               </el-select>
             </div>
             <!-- 树组件 -->
@@ -224,19 +217,12 @@
                          clearable
                          :disabled="!!scope.row.isCustomColumn"
                          filterable
-                         @change="saveTableData(data)">
+                         @change="saveTableData(data, 'saveTableData', scope)">
                 <el-option v-for="item in treeData"
                            :key="item.selectionCode"
                            :label="item.selectionName + '(' + item.selectionCode + ')'"
-                           :value="item.selectionCode"> </el-option>
+                           :value="item.id"> </el-option>
               </el-select>
-              <!-- <tree-select :multiple="true"
-                           :data="treeData"
-                           clearable
-                           :disabled="!!scope.row.isCustomColumn"
-                           v-model="scope.row.dictCode"
-                           size="medium"
-                           style="width: 100%"></tree-select> -->
             </div>
             <!-- 弹出组件 -->
             <div v-if="scope.row.searchMode === 'popUpSelect'">
@@ -266,30 +252,96 @@
                 </template>
               </common-dialog>
             </div>
+          </template>
+          <template #defaultValueData="{ scope, data }">
+            <!-- 文本框 -->
+            <div v-if="scope.row.searchMode === 'text'">
+              <el-input clearable
+                        placeholder="请输入"
+                        :disabled="!!scope.row.isCustomColumn"
+                        v-model="scope.row.defaultValueData"></el-input>
+            </div>
+            <!-- 目录组件 复选组件-->
+            <!-- <div v-if="scope.row.searchMode === 'select' || scope.row.searchMode === 'multiple' || scope.row.searchMode === 'radioButton'">
+              <el-select v-model="scope.row.defaultValueData"
+                         style="width: 100%"
+                         clearable
+                         :disabled="!!scope.row.isCustomColumn"
+                         filterable>
+                <el-option v-for="item in reportParams.infoList[scope.$index].renderDataVal"
+                           :key="item.id"
+                           :label="item.cmeaning"
+                           :value="item.id"> </el-option>
+              </el-select>
+            </div> -->
+            <!-- 树组件 -->
+            <!-- <div v-if="scope.row.searchMode === 'treeSelect'">
+              <el-select v-model="scope.row.defaultValueData"
+                         style="width: 100%"
+                         clearable
+                         :disabled="!!scope.row.isCustomColumn"
+                         filterable>
+                <el-option v-for="item in treeData"
+                           :key="item.selectionCode"
+                           :label="item.selectionName + '(' + item.selectionCode + ')'"
+                           :value="item.selectionCode"> </el-option>
+              </el-select>
+            </div> -->
+            <!-- 弹出组件 -->
+            <!-- <div v-if="scope.row.searchMode === 'popUpSelect'">
+              <el-input v-model="scope.row.defaultValueData"
+                        readonly
+                        autosize
+                        :disabled="!!scope.row.isCustomColumn"
+                        @click.native="showDialog(scope, data)">
+                <i class="el-icon-link"
+                   slot="suffix"
+                   type="link"
+                   :style="{ cursor: 'pointer', fontSize: '16px', color: '#08c' }"></i>
+              </el-input>
+              <common-dialog title="表格组件"
+                             :visible="moduleVisible"
+                             @handle-cancel="handleCancel"
+                             @handle-ok="componentsHandleOk"
+                             @close="handleCancel"
+                             width="60%">
+                <template #dialog>
+                  <common-table ref="table"
+                                :comp="comp"
+                                :columns="tableColumns"
+                                :params="queryParam"
+                                :api="tableApi"
+                                @selection-change="handleSelectionChange"> </common-table>
+                </template>
+              </common-dialog>
+            </div> -->
             <!-- 日期 -->
             <div v-if="scope.row.searchMode === 'datetime'">
-              <el-date-picker v-model="scope.row.dictCode"
+              <el-date-picker v-model="scope.row.defaultValueData"
                               type="date"
                               clearable
+                              valueFormat='yyyy-MM-dd'
                               :disabled="!!scope.row.isCustomColumn"
                               placeholder="选择日期"> </el-date-picker>
             </div>
             <!-- 时间范围 -->
             <div v-if="scope.row.searchMode === 'datetimeRange'">
-              <el-date-picker v-model="scope.row.dictCode"
+              <el-date-picker v-model="scope.row.defaultValueDatas"
                               type="daterange"
                               style="width: 100%"
                               :disabled="!!scope.row.isCustomColumn"
                               range-separator="至"
                               start-placeholder="开始日期"
-                              end-placeholder="结束日期">
+                              end-placeholder="结束日期"
+                              valueFormat='yyyy-MM-dd'
+                              @change="dateChange(scope)">
               </el-date-picker>
             </div>
             <!-- 数字 -->
             <div v-if="scope.row.searchMode === 'number'">
               <el-input clearable
                         :disabled="!!scope.row.isCustomColumn"
-                        v-model="scope.row.dictCode"
+                        v-model="scope.row.defaultValueData"
                         type="number"
                         size="medium"></el-input>
             </div>
@@ -327,6 +379,10 @@
             <el-input-number v-model="scope.row.orderNum"
                              :disabled="!!scope.row.isCustomColumn"
                              @blur="saveTableData(data)"></el-input-number>
+          </template>
+          <template #drillName="{ scope }">
+            <el-input v-model="scope.row.drillName"
+                      :disabled="!!scope.row.isCustomColumn"></el-input>
           </template>
         </editable-table>
       </template>
@@ -862,6 +918,7 @@ export default {
   data () {
     const height = document.documentElement.clientHeight - 608
     return {
+      noApiTableData: [],
       selectModuleIndex: null,
       helpVisible: false,
       iconPopover: false,
@@ -1237,8 +1294,20 @@ export default {
           scopedSlots: { customRender: 'custom' }
         },
         {
+          title: '默认值',
+          dataIndex: 'defaultValueData',
+          width: 240,
+          scopedSlots: { customRender: 'custom' }
+        },
+        {
           title: '单击事件',
           dataIndex: 'fieldHref',
+          width: 180,
+          scopedSlots: { customRender: 'custom' }
+        },
+        {
+          title: '单击事件页面名称',
+          dataIndex: 'drillName',
           width: 180,
           scopedSlots: { customRender: 'custom' }
         },
@@ -1563,7 +1632,8 @@ export default {
         reportItem: [],
         reportParam: [],
         reportButton: [],
-        reportConfig: []
+        reportConfig: [],
+        renderDataVal: []
       },
       tableConfigDetailsApi: '', // 报表配置列表的api，可切换
       oldSqlId: '',
@@ -1575,6 +1645,7 @@ export default {
       dialogVisible: false,
       replaceData: [],
       renderData: [],
+      renderDataVal: [],
       treeData: [],
       scopeValue: {},
       sqlParams: {},
@@ -2154,7 +2225,9 @@ export default {
     handleOk (val) {
       this.dialogVisible = false
       this.reportParams.infoList[this.scopeValue.$index].fieldHref = JSON.stringify(val)
+      console.log(val, '==================111');
       this.reportParams.infoList[this.scopeValue.$index].tenantId = val.name
+      console.log(this.reportParams.infoList, '=============================222');
     },
     _initTableSize () {
       // const vm = this
@@ -2225,7 +2298,6 @@ export default {
           scope.row.replaceVal = ''
           scope.row.dictCode = ''
         }
-        // scope.row.replaceVal = data[scope.$index].fieldName
       }
       if (changeFlag == 'isCustomColumn') {
         if (!scope.row.isCustomColumn) {
@@ -2233,6 +2305,24 @@ export default {
             scope.row.fieldName = ''
           }
         }
+      }
+      // 获取默认值下拉数据
+      // if (changeFlag === 'url') {
+      //   this.scopeValue = scope
+      //   this.$api['formGenerator.getSelectionData']({
+      //     id: scope.row.dictCode
+      //   }).then(res => {
+      //     // this.renderDataVal = res.data
+      //     console.log(this.reportParams, '===============this.reportParams');
+      //     this.reportParams.infoList[this.scopeValue.$index].renderDataVal = res.data
+      //   })
+      // }
+    },
+    dateChange (scope) {
+      if (scope.row.defaultValueDatas) {
+        scope.row.defaultValueData = scope.row.defaultValueDatas.toString()
+      } else {
+        scope.row.defaultValueData = ''
       }
     },
     saveParamData (data) {
@@ -2287,6 +2377,10 @@ export default {
           }
         })
       }
+      // params.reportItem.forEach((el) => {
+
+      //   el.tenantId = ''
+      // })
       this.$refs.form.submitForm(params, this.saveApi)
     },
     async changeSql (val) {
@@ -2333,6 +2427,14 @@ export default {
       this.paramParams = { reportId: val }
       this.buttonParams = { reportId: val }
       this.getReplaceData()
+      this.$api[this.tableConfigDetailsApi](this.tableParams).then(res => {
+        res.forEach(item => {
+          if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
+            item.defaultValueDatas = item.defaultValueData.split(',')
+          }
+        })
+        this.noApiTableData = res
+      })
     },
     // eventHandle输入框加建议下拉框
     querySearch (queryString, cb) {
