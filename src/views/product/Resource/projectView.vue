@@ -23,7 +23,7 @@
             </div>
             <!-- <el-button type="primary" plain style="margin: 5px;width:90%;"  @click="addRolesHandle"><i class="el-icon-plus" type="primary"></i>新建角色类别</el-button> -->
             <vue-perfect-scrollbar class="role-list">
-              <li style="padding-left: 26px;color:#323232;font-size:12px;" :class="[{ 'active': rolesSelectedIndex === -1 }]" @click="refreshHandle">所有人员</li>
+              <li style="padding-left: 26px;color:#323232;font-size:12px;" :class="[{ 'active': rolesSelectedIndex === -1 }]" @click="refreshHandle">所有人员<span>({{getTotalCount}})</span></li>
               <li :class="[
                   { 'active': index === rolesSelectedIndex },
                   { 'fixed-role': item.roleType === 'fixed' },
@@ -48,7 +48,6 @@
           </div>
         </template>
         <template #center>
-          <div class="teamFile"></div>
           <div class="table-con">
             <div class="add-member">
               <div>
@@ -79,16 +78,16 @@
                             :tableSetting="false"
                             :noApiTableData="tableData">
                 <template #taskCount="{ scope }">
-                  <div class="task-count">
+                  <!-- <div class="task-count">
                     <template v-if="scope.row.taskCount">
                       <el-link @click.stop="opentDialogUserTask(scope.row)">{{
                       scope.row.taskCount
                       }}<i class="el-icon-view el-icon--right"></i></el-link>
                     </template>
-                    <template v-else>
+                    <template v-else> -->
                       <span>{{ scope.row.taskCount }}</span>
-                    </template>
-                  </div>
+                    <!-- </template>
+                  </div> -->
                 </template>
                 <template #userState="{ scope }">
                   <div class="userState">
@@ -395,6 +394,17 @@ export default {
       options: [],
       memberFormComp: null,
       uploadView: false
+    }
+  },
+  computed: {
+    getTotalCount () {
+      let count = 0
+      this.rolesData.forEach(el => {
+        if (el.projectTeamRoleUsers && el.projectTeamRoleUsers.length) {
+          count += el.projectTeamRoleUsers.length
+        }
+      })
+      return count
     }
   },
   created () {
@@ -1003,12 +1013,18 @@ export default {
 
 <style lang="scss" scoped>
 .teamFile {
+  width: 1000px;
   height: 50px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   border-bottom: 1px solid #f2f2f2;
   background: #fff;
+  ::v-deep .files-view-wrap {
+    .files-item--row{
+      padding: 0;
+    }
+  }
 }
 .viewVisible {
   position: absolute;
@@ -1047,9 +1063,9 @@ export default {
 }
 
 .role-con {
-  position: relative;
+  // position: relative;
   height: 100%;
-  overflow-y: hidden;
+  // overflow-y: hidden;
   // padding: 0 10px 0 0;
 
   .add-role {

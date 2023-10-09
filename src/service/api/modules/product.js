@@ -862,6 +862,13 @@ export const repositoryApi = {
       desc: '项目管理->计划管理->修改项目状态'
     },
     {
+      name: 'submitReleaseCheck',
+      method: 'POST',
+      path: '/product/pm/planManager/submitReleaseCheck',
+      mockPath: '/product/pm/planManager/submitReleaseCheck',
+      desc: '项目管理->计划管理->校验计划责任人'
+    },
+    {
       name: 'getPlanStatisticData',
       method: 'POST',
       path: '/product/pm/plan/loadMonitorTask',
