@@ -1068,6 +1068,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
+      if (!ganttName || tasks.length === 0) {
+        return true
+      }
       let result
       const vueThis = store.getters.vueThis
       const createPage = vueThis.createPage
@@ -2787,6 +2790,9 @@ function checkReadOnly(ganttName) {
  * @date 2020/5/13 11:33
  */
 function checkContentRoot(ganttName, tasks) {
+  if (tasks.length === 0) {
+    return true
+  }
   let result = false
   const ganttObject = GanttObject.getGanttObject(ganttName)
   if (ganttObject && tasks) {
@@ -4204,6 +4210,9 @@ function changePlanScheduling(value, ganttName, tasks) {
 
 // 检测任务是否包含（备料/齐套/生产）/设计标识，则无法新建下级
 function checkHasProductTask(tasks) {
+  if (tasks.length === 0) {
+    return true
+  }
   const planType = tasks[0] ? tasks[0].planType : ''
   if (planType) {
     if (planType === '3101' || (planType.indexOf('3103') !== -1 && planType !== '3103')) {
@@ -4213,6 +4222,9 @@ function checkHasProductTask(tasks) {
 }
 // 检测是否为暂停或者禁止
 function checkSwitchType(tasks) {
+  if (tasks.length === 0) {
+    return true
+  }
   const switchType = tasks[0] ? tasks[0].switchType : ''
   if (switchType) {
     if (switchType === '9010' || switchType === '9020') {
