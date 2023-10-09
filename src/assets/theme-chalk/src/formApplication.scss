@@ -5,6 +5,21 @@
 .formContainer {
   .smartForm {
     height: 100%;
+    .eject_style {
+      .el-input-group__append {
+        padding: 0 10px;
+        i {
+          color: #1890ff;
+          font-size: 16px;
+        }
+      }
+    }
+    .customUpload .el-upload-- button {
+      border: 1px solid #1890ff;
+      i,span {
+        color: #1890ff;
+      }
+    }
   }
   .formElement {
     height: calc(100% - 50px);
