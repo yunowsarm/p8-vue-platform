@@ -682,6 +682,7 @@ export default {
       this.searchData = []
       this.buttonData = []
       this.columns = []
+      this.customColumn = []
       this.viewKeys = {}
       this.permissionVo = { router: this.$route.name, resourceId: '' }
       this.$api['formGenerator.tableGetInfo']({ reportCode: this.code, permissionVo: this.permissionVo }).then((res) => {
