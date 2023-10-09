@@ -199,6 +199,7 @@ export default {
       this.formData.forecastBeginDate = this.planInfoParams.forecastBeginDate
       this.formData.forecastEndDate = this.planInfoParams.forecastEndDate
       this.formData.realBeginDate = this.planInfoParams.realBeginDate
+      this.formData.realEndDate = this.planInfoParams.realEndDate
       this.formData.managerStatusDisplay = this.planInfoParams.managerStatusDisplay
       this.formData.content = this.planInfoParams.content
       // let leaf = this.getPlanInfo().isLeaf

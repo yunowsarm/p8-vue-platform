@@ -191,8 +191,8 @@ export default {
     this.dayTime = getGreetingTime()
     const this_ = this
     this_.approvalTotal()
-    this_.approvalMsg()
-    this_.noticeMsg()
+    // this_.approvalMsg()
+    // this_.noticeMsg()
     this.$store.dispatch('getMessageNum')
   },
   watch: {

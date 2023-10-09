@@ -681,7 +681,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        _this.$api[url]({ taskId: taskId }).then(res => {
+        _this.$api[url]({ businessId: taskId, businessKey: 'taskFinishApprove' }).then(res => {
           _this.$message({
             type: 'success',
             message: '审批已撤回'
