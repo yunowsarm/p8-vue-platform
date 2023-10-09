@@ -98,19 +98,9 @@
         :auto-scheduling="autoParentDate"
       ></activity-import>
     </el-drawer>
-    <common-dialog
-      title="通知下发"
-      width="70%"
-      v-if="noticeVisible"
-      :visible="noticeVisible"
-      :show-handle-btn="false"
-      @isfullscreen="isfullscreen"
-      @close="closeNotice"
-      :is-view-cs-footer="false"
-      :dialog-height="650"
-    >
+    <common-dialog title="通知下发" width="70%" :visible="noticeVisible" :show-handle-btn="false" @isfullscreen="isfullscreen" @close="closeNotice" :is-view-cs-footer="false" :dialog-height="650">
       <template #dialog>
-        <Notice :task-id="selectTaskId" :gantt-name="ganttName" :plan-info-id="planInfoId" @close="closeNotice" />
+        <Notice v-if="noticeVisible" :task-id="selectTaskId" :gantt-name="ganttName" :plan-info-id="planInfoId" @close="closeNotice" />
       </template>
     </common-dialog>
     <monitor-time-manger

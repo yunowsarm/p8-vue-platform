@@ -693,6 +693,7 @@ export default {
       this.searchData = []
       this.buttonData = []
       this.columns = []
+      this.customColumn = []
       this.viewKeys = {}
       this.permissionVo = { router: this.$route.name, resourceId: '' }
       this.$api['formGenerator.tableGetInfo']({ reportCode: this.code, permissionVo: this.permissionVo }).then((res) => {
@@ -1877,5 +1878,8 @@ export default {
 ::v-deep .columnStyle {
   text-decoration: underline;
   cursor: pointer;
+}
+::v-deep .row--level-0 :nth-child(3) .el-dropdown{
+  display: none;
 }
 </style>
