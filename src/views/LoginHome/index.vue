@@ -336,20 +336,20 @@ div.header_userInfo {
       height: 100%;
       width: 100%;
       background: #f9f9f9;
-      .kanban_title{
+      .kanban_title {
         width: 98%;
         margin: 0 auto;
         text-indent: 15px;
         line-height: 36px;
         background-color: white;
       }
-      ::v-deep .splitter-pane{
+      ::v-deep .splitter-pane {
         box-shadow: 5px 2px 9px gray;
       }
       ::v-deep .normal-header {
         background-color: #f3f3f3 !important;
       }
-      ::v-deep .normal-center{
+      ::v-deep .normal-center {
         height: calc(100% - 48px) !important;
       }
     }
@@ -491,14 +491,6 @@ export default {
     this_.noticeMsg()
     this_.approvalMsg()
     this.$store.dispatch('getMessageNum')
-    setInterval(function () {
-      this_.approvalTotal()
-      // this_.approvalMsg()
-      this_.noticeMsg()
-    }, 60000)
-    setInterval(function () {
-      this_.$store.dispatch('getMessageNum') // 获取消息信息已读未读条数
-    }, 60000)
     this.getColor()
   },
   methods: {

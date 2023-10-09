@@ -445,7 +445,8 @@ export default {
       selectType: 0, // 是否展示复选框，0是不显示复选框，1是单选，2是复选
       tableInfo: {},
       tableConfig: {
-        'highlight-current-row': true
+        'highlight-current-row': true,
+        'cell-class-name': this.cellClassName
       },
       formVisible: false, // 新建抽屉visible
       codeForm: '', // 新建/修改表单code
@@ -520,6 +521,7 @@ export default {
       selectionRange: null,
       processDefinationTwoKey: null,
       selsctRow: [],
+      eventParams: {},
       releaseMenuParams: {
         beforehandParams: {}
       },
@@ -677,6 +679,15 @@ export default {
       this.tableParam.permissionVo = { router: this.$route.name, resourceId: '' }
       this.propParam = Object.assign(this.propParam, newValue)
     },
+    cellClassName ({ row, column, rowIndex, columnIndex }) {
+      let columnName = ''
+      this.columns.forEach(item => {
+        if (item.tenantId && item.dataIndex === column.property) {
+          columnName = 'columnStyle'
+        }
+      })
+      return columnName
+    },
     getTableInfo (code) {
       const that = this
       this.searchData = []
@@ -696,6 +707,7 @@ export default {
         // 报表列信息
         if (res.reportItems && res.reportItems.length) {
           this.searchList = []
+          that.reportItems = res.reportItems
           res.reportItems.forEach((item, index) => {
             if (item.isViewShow) {
               that.$set(that.viewKeys, item.fieldName, item.fieldTxt)
@@ -704,7 +716,6 @@ export default {
               that.treeConfig.parentField = item.fieldName
             }
             that.selectionRange = res.selectionRange
-            that.reportItems = res.reportItems
             if (item.isListShow) {
               if (item.isSearch) {
                 if (this.tableInfo.searchPos == 1) {
@@ -947,12 +958,13 @@ export default {
           }
         })
       }
+      this.sqlParam.columnType = val.property
       this.tableParam = {
+        sqlParam: this.sqlParam,
         reportId: this.tableInfo.id,
         param: {},
         reportParam: {
-          ...this.sqlParam, ...this.defaultReportParam, ...reportParam,
-          columnType: val.property
+          ...this.defaultReportParam, ...reportParam
         },
         router: this.$route.name,
         code: this.code,
@@ -960,16 +972,6 @@ export default {
       }
     },
     handleSelectionChange (val) {
-      // if (this.selectType === 'single') {
-      //   if (val.length >= 2) {
-      //     // 删除索引为0的
-      //     // console.log(val.splice(0,val.length-1),'被删除的')
-      //     let arrays = val.splice(0, val.length - 1)
-      //     arrays.forEach((row) => {
-      //       this.$refs.table.$refs.table.toggleRowSelection(row) // 除了当前点击的，其他的全部取消选中
-      //     })
-      //   }
-      // }
       this.selectRecords = val
       this.$emit('selection-change', val)
     },
@@ -1350,6 +1352,7 @@ export default {
       // this.remark = btn.remark
       const obj = JSON.parse(btn.eventParams)
       this.selsctRow = row
+      this.eventParams = obj
       this.processDefinationTwoKey = obj.code
       this.nextApproveUserBeforehand(obj.code)
     },
@@ -1368,7 +1371,13 @@ export default {
     // 提交审批
     commitSelectApproveUserBeforehand (fullParams) {
       const that = this
-      this.releaseMenuParams.beforehandParams = { ...fullParams }
+      let paramsKey = Object.keys(this.eventParams)
+      paramsKey.forEach(item => {
+        if (this.selsctRow[0][item]) {
+          this.eventParams[item] = this.selsctRow[0][item]
+        }
+      })
+      this.releaseMenuParams.beforehandParams = { ...fullParams, ...this.eventParams }
       const rowIds = this.selsctRow.map((el) => {
         return el.ID
       })
@@ -1865,5 +1874,9 @@ export default {
     padding: 10px;
     margin: 0;
   }
+}
+::v-deep .columnStyle {
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>
