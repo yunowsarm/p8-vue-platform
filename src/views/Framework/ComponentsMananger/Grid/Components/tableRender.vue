@@ -1879,4 +1879,7 @@ export default {
   text-decoration: underline;
   cursor: pointer;
 }
+::v-deep .row--level-0 :nth-child(3) .el-dropdown{
+  display: none;
+}
 </style>
