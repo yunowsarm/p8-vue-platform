@@ -1383,8 +1383,8 @@ export default {
       this.releaseMenuParams.businessId = rowIds
       this.releaseMenuParams.processDefinitionKey = this.processDefinationTwoKey
       this.releaseMenuParams.projectInfo = {
-        projectName: this.selsctRow[0].PRJECTNAME,
-        projectType: this.selsctRow[0].PRJECTTYPE,
+        projectName: this.selsctRow[0].PROJECTNAME,
+        projectType: this.selsctRow[0].PROJECTTYPE,
         modelCode: this.selsctRow[0].MODELCODE
       }
       this.$api['baseData.commitApprove'](this.releaseMenuParams)
