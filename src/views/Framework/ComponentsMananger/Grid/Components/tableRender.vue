@@ -867,21 +867,18 @@ export default {
             if (res.tableType == 0 && res.enableEdit == 0) {
               columnData.unshift({
                 type: 'selection',
-                width: 50,
-                align: 'center'
+                width: 50
               })
             } else {
               if (res.selectType == 1) {
                 columnData.unshift({
                   type: 'radio',
-                  width: 50,
-                  align: 'center'
+                  width: 50
                 })
               } else {
                 columnData.unshift({
                   type: 'checkbox',
-                  width: 50,
-                  align: 'center'
+                  width: 50
                 })
               }
             }
@@ -998,23 +995,33 @@ export default {
       this.$emit('selection-change', val)
     },
     rowClick (row, column) {
+      //0 没有数据不能下钻
+      if (row[column.property] === 0) {
+        return false
+      }
       this.columns.forEach(el => {
-        if (el.fieldName === column.property) {
+        if (el.fieldName === column.property || el.dataIndex === column.property) {
           column.drillName = el.drillName
         }
       })
+      // 是否开启了行点击
       if (this.tableInfo.enableClick === 1) {
         this.$emit('row-click', row)
         this.runInHoleParam = row
         this.runInHoleParam.property = column.property
         this.reportItems.forEach((item) => {
           if (column.property === item.fieldName) {
+            // 是否配置了下钻
             if (item.fieldHref && item.fieldHref !== '') {
+              if (column.drillName) {
+                this.runInHoleTitle = column.drillName
+              } else {
+                this.runInHoleTitle = '下钻详情'
+              }
               this.componentsConfig = JSON.parse(item.fieldHref)
+              this.runInHoleVisible = true
               this.asyncComponents = this.componentsConfig.url
             }
-            this.runInHoleTitle = column.drillName
-            this.runInHoleVisible = true
           }
         })
       }
