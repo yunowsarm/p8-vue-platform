@@ -316,7 +316,7 @@ export default {
       return str
     },
     thirdMenuClick (record) {
-      let item
+      let item = {}
       const currentPath = this.$route.path
       const rootRouter = this.$store.state.routers.addRouters
       let thirdMenu = []
@@ -332,7 +332,11 @@ export default {
         })
       }
       if (thirdMenu.children) {
-        item = thirdMenu.children[2] ? thirdMenu.children[2] : {}
+        thirdMenu.children.forEach(el => {
+          if(el.meta.title == '计划编制') {
+            item = el
+          }
+        })
       }
       this.$refs.tableRender.thirdMenuClick(record, item)
     },
