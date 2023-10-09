@@ -1,49 +1,39 @@
 <template>
-  <div style="height: 100%; position: relative">
-    <!--    <div id='actionMenu'-->
-    <!--         v-if='menuVisible'-->
-    <!--         ref='actionMenu'-->
-    <!--         :style='{top:dropTop,left:dropLeft}'>-->
-    <!--      <el-menu mode="horizontal">-->
-    <!--        <template v-for='(menu, index) in menuData'>-->
-    <!--          <el-submenu v-if='buttonData(menu).children'-->
-    <!--                      :disabled='isDisable(menu)'-->
-    <!--                      :key="menu.id"-->
-    <!--                      :index="index+'m'">-->
-    <!--            <template slot="title">-->
-    <!--              <span @click='btnClick(buttonData(menu))'>-->
-    <!--                <i class="el-icon-setting"></i>-->
-    <!--                <span>{{menu.title}}</span>-->
-    <!--              </span>-->
-    <!--            </template>-->
-    <!--            <template v-for='(btn,index) in buttonData(menu).children'>-->
-    <!--              <el-menu-item v-if="btn.id !== 'createByNum'" :key='index'-->
-    <!--                            @click='btnClick(btn)'-->
-    <!--                            :index="btn.id">-->
-    <!--                <i class="el-icon-setting"></i>-->
-    <!--                <span>{{btn.title}}</span>-->
-    <!--              </el-menu-item>-->
-    <!--              <el-submenu v-if="btn.id === 'createByNum'" :key="index+'c'" :index="index+'b'">-->
-    <!--                <template slot="title">-->
-    <!--                  <i class="el-icon-setting"></i>-->
-    <!--                  <span>{{btn.title}}</span>-->
-    <!--                </template>-->
-    <!--                <el-input-number size="mini" v-model="createNum" :max="50" :min="1" :step-strictly="true" :step="1"></el-input-number>-->
-    <!--                <el-button size="mini" @click="btn.clickFun(btn,ganttName,null)">确定</el-button>-->
-    <!--              </el-submenu>-->
-    <!--            </template>-->
-    <!--          </el-submenu>-->
-    <!--          <el-menu-item v-else-->
-    <!--                        @click='btnClick(buttonData(menu))'-->
-    <!--                        :disabled='isDisable(menu)'-->
-    <!--                        :key="menu.id"-->
-    <!--                        :index="menu.id+'m'">-->
-    <!--            <i class="el-icon-setting"></i>-->
-    <!--            <span>{{menu.title}}</span>-->
-    <!--          </el-menu-item>-->
-    <!--        </template>-->
-    <!--      </el-menu>-->
-    <!--    </div>-->
+  <div style="height: 100%; position: relative" class="planGantt">
+    <!-- <div id="actionMenu" v-if="menuVisible" ref="actionMenu" :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
+      <VuePerfectScrollbar class="scroll-area" :style="{ maxHeight: maxHeight, height: scrollBarHeight }">
+        <el-menu mode="vertical" :collapse="true">
+          <template v-for="(menu, index) in menuData">
+            <el-submenu v-if="buttonData(menu).children" :disabled="isDisable(menu)" :key="menu.id" :index="index + 'm'">
+              <span slot="title">
+                <span @click="btnClick(buttonData(menu), isDisable(menu))">
+                  <i :class="buttonData(menu).icon"></i>
+                  <span>{{ menu.title }}</span>
+                </span>
+              </span>
+              <template v-for="(btn, index) in buttonData(menu).children">
+                <el-menu-item v-if="btn.id !== 'createByNum'" :key="index" @click="btnClick(btn, btn.isDisableFun(null, ganttName, selectedTasks))" :index="btn.id">
+                  <i :class="btn.icon"></i>
+                  <span> {{ btn.title }}</span>
+                </el-menu-item>
+                <el-submenu v-if="btn.id === 'createByNum'" :key="index + 'c'" :index="index + 'b'">
+                  <span slot="title">
+                    <i :class="btn.icon"></i>
+                    <span> {{ btn.title }}</span>
+                  </span>
+                  <el-input-number size="mini" v-model="createNum" :max="1000" :min="1" :step-strictly="true" :step="1"></el-input-number>
+                  <el-button size="mini" @click="btn.clickFun(btn, ganttName, null)">确定 </el-button>
+                </el-submenu>
+              </template>
+            </el-submenu>
+            <el-menu-item v-else @click="btnClick(buttonData(menu), isDisable(menu))" :disabled="isDisable(menu)" :key="menu.id" :index="menu.id + 'm'">
+              <i :class="buttonData(menu).icon"></i>
+              <span> {{ menu.title }}</span>
+            </el-menu-item>
+          </template>
+        </el-menu>
+      </VuePerfectScrollbar>
+    </div> -->
     <div ref="myGantt" style="width: 100%; height: calc(100% - 40px) !important" @mousemove="mouseMove"></div>
     <div class="detail_div">
       <div style="width: 50%">
@@ -103,9 +93,49 @@
     </common-dialog>
   </div>
 </template>
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~p8-dhtmlx-gantt/codebase/dhtmlxgantt.css';
 @import '@/assets/commonJS/ganttJS/ganttObject.css';
+
+#actionMenu {
+  user-select: none;
+  width: 165px;
+  background-color: $base-white-color;
+
+  .el-menu--collapse {
+    width: 164px;
+  }
+
+  .el-menu--collapse > .el-menu-item .el-submenu__icon-arrow,
+  .el-menu--collapse > .el-submenu > .el-submenu__title .el-submenu__icon-arrow {
+    display: block;
+    margin-top: -5px;
+  }
+
+  .el-menu--collapse > .el-menu-item span,
+  .el-menu--collapse > .el-submenu > .el-submenu__title span {
+    height: 100%;
+    width: 100%;
+    visibility: visible;
+    line-height: 36px;
+  }
+
+  .el-menu-item.is-active {
+    color: #303133;
+  }
+
+  .scroll-area {
+    width: 100%;
+    position: relative;
+    box-sizing: border-box;
+  }
+}
+
+.planGantt ::v-deep {
+  .gantt_row:not([aria-expanded]).updColor {
+    background-color: #9bffed;
+  }
+}
 </style>
 <style type="text/css" media="screen">
 html,
@@ -132,7 +162,9 @@ import moment from 'moment'
 import submitChange from './submitChange'
 import SelectApproveUser from '@/views/Framework/BusinessActivity/ProcessApproval/selectApproveUser'
 import CommandSearch from '@/components/gantt/Components/CommandSearch'
+import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 
+const mh = document.documentElement.clientHeight - 300
 let myGantt
 export default {
   name: 'ChangeGantt',
@@ -191,6 +223,7 @@ export default {
     submitChange,
     SelectApproveUser,
     CommonDialog,
+    VuePerfectScrollbar,
     CommandSearch
   },
   data() {
@@ -198,6 +231,7 @@ export default {
       sendDataList: '',
       projectCategory: '',
       monitorPoints: '',
+      maxHeight: (mh + 300) / 2 + 'px',
       projectClassification: '',
       projectTaskId: '',
       ganttName: 'changeGantt',
@@ -246,6 +280,7 @@ export default {
       taskMonitorMap: {}, // 变更前任务标识信息
       changeTaskInfo: {},
       changeRecordId: '',
+      scrollBarHeight: '0px',
       submitChangeValidate: false,
       isSelectApproveUserView: false,
       managerStatusMap: {}, // 管理状态全部数据
@@ -320,6 +355,7 @@ export default {
     }
   },
   mounted() {
+    this.scrollBarHeight = 40 * this.menuData.length + 1 + 'px'
     this.changeRecordId = this.changeId
     this.initGantt(this.planInfoId, this.changeRecordId, this.viewType)
     this.callParentSelectTasks()
