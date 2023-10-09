@@ -29,6 +29,18 @@ export function getChangeGantt(ganttName, vueThis) {
   ganttObject.attachEvent('onLinkDblClick', function (id, item) {
     return false
   })
+
+  // 网格行的背景颜色
+  ganttObject.templates.grid_row_class = function (start, end, task) {
+    if (ganttObject.getGlobalTaskIndex(task.id) !== 0 || vueThis.createPage === 'userChange') {
+      const managerStatus = task.managerStatus
+      const status = task.status
+      if (managerStatus !== '6405' && (status !== '6050' || status !== '6070')) {
+        return 'updColor'
+      }
+    }
+  }
+
   // ganttObject.attachEvent('onBeforeTaskMove', function (id, parent, tindex) {
   //   let task = ganttObject.getTask(id)
   //   if (task.parent !== parent) { return false }

@@ -90,7 +90,6 @@ export default {
     // isView为true时是修改页面，为false时是查看页面
     if (this.taskId && this.ganttName) {
       const ganttObject = GanttObject.getGanttObject(this.ganttName)
-      console.log('🚀 ~ file: index.vue:86 ~ this.viewType:', this.viewType)
       if (this.viewType === 'view') {
         this.isView = false
       } else if (this.attReadOnly || ganttObject.config.readonly) {
