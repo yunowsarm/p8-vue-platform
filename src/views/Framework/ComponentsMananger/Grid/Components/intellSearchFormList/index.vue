@@ -155,6 +155,9 @@ export default {
       return { ...formDataObj, ...this.formField }
     }
   },
+  mounted () {
+    this.search()
+  },
   methods: {
     // 弹出选择回填值后手动给formField赋值
     setParentFormData (data) {
