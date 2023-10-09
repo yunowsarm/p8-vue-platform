@@ -157,9 +157,9 @@ export const repositoryApi = {
     },
     {
       name: 'withdrawTaskApprove',
-      method: 'GET',
-      path: '/product/my/work/task/withdrawTaskApprove',
-      mockPath: '/product/my/work/task/withdrawTaskApprove',
+      method: 'POST',
+      path: '/product/my/work/task/withdraw',
+      mockPath: '/product/my/work/task/withdraw',
       desc: '我的任务->列表->审批撤回'
     },
     {
