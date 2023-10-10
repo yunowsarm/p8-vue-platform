@@ -297,16 +297,16 @@ export default {
         title: '退出时间',
         dataIndex: 'departureTime',
         align: 'center'
-      },
-      {
-        title: '操作',
-        dataIndex: 'operation',
-        width: 80,
-        scopedSlots: {
-          customRender: 'custom'
-        },
-        align: 'center'
       }
+      // {
+      //   title: '操作',
+      //   dataIndex: 'operation',
+      //   width: 80,
+      //   scopedSlots: {
+      //     customRender: 'custom'
+      //   },
+      //   align: 'center'
+      // }
     ]
     const dataSource = [
       {
