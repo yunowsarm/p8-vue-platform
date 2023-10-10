@@ -98,6 +98,14 @@
   background-color: rgba(230, 247, 240, 0.82);
 }
 
+.gantt_grid_scale,
+.gantt_task_scale,
+.gantt_task_vscroll,
+.gantt_grid_scale .gantt_grid_head_cell {
+  background-color: #f4f4f4 !important;
+  color: #292b2e !important
+}
+
 .hide_project_progress_drag .gantt_task_progress_drag {
   visibility: hidden;
 }
