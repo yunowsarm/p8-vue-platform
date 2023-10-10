@@ -128,7 +128,7 @@ export default {
       saveApi: 'JsjclProjectApply.replaceResponsible',
       comprehensivePlanId: '',
       queryParam: { taskId: '' },
-      customHeight: document.documentElement.clientHeight - 50,
+      customHeight: document.documentElement.clientHeight - 200,
       selectedRow: {},
       formData: {
         // taskId: 'this.selectedRow.id',

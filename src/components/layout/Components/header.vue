@@ -1,10 +1,13 @@
 <template>
-  <header class="header" :height="headerHeight">
+  <header class="header"
+          :height="headerHeight">
     <!-- :style="{ 'background-color': theme, 'margin-bottom': '1px' }"> -->
     <!-- <span class="sysName">{{ systemName }}</span> -->
-    <div class="slide-bar" @click="slideSidebar">
+    <div class="slide-bar"
+         @click="slideSidebar">
       <!-- v-show="$route.path !== '/dash'" -->
-      <div class="slider p8" :class="{ 'icon-youzhedie1': !this.sidebarState.isOpen, 'icon-zuozhedie1': this.sidebarState.isOpen }"></div>
+      <div class="slider p8"
+           :class="{ 'icon-youzhedie1': !this.sidebarState.isOpen, 'icon-zuozhedie1': this.sidebarState.isOpen }"></div>
     </div>
     <div class="center">
       <header-subsystem />
@@ -18,20 +21,25 @@
           <span>
             <!-- <i class="p8 icon-work-home" @click="$router.push({name:'Dashboard'})"> -->
             <el-tooltip content="工作首页">
-              <i class="el-icon-s-home" @click="$router.push({ name: 'Dashboard' })"></i>
+              <i class="el-icon-s-home"
+                 @click="$router.push({ name: 'Dashboard' })"></i>
             </el-tooltip>
           </span>
         </li>
         <!-- $route.path !== '/dash' && -->
         <li v-show="adminUserIdArr.indexOf($store.state.user.userId) === -1">
           <span @click="visibleMsgDrawer = true">
-            <el-badge v-if="messageNumTotal > 0" :value="messageNumTotal" :max="99" class="itemNum">
+            <el-badge v-if="messageNumTotal > 0"
+                      :value="messageNumTotal"
+                      :max="99"
+                      class="itemNum">
               <el-tooltip content="我的消息">
                 <i class="p8 icon-message"></i>
               </el-tooltip>
             </el-badge>
 
-            <el-tooltip content="我的消息" v-else>
+            <el-tooltip content="我的消息"
+                        v-else>
               <i class="p8 icon-message"></i>
             </el-tooltip>
           </span>
@@ -39,12 +47,16 @@
         <!-- $route.path !== '/dash' &&  -->
         <li v-show="adminUserIdArr.indexOf($store.state.user.userId) === -1">
           <span @click="visibleProcessDrawer = true">
-            <el-badge v-if="approvalPendingTotal > 0" :value="approvalPendingTotal" :max="99" class="itemNum">
+            <el-badge v-if="approvalPendingTotal > 0"
+                      :value="approvalPendingTotal"
+                      :max="99"
+                      class="itemNum">
               <el-tooltip content="我的审批">
                 <i class="p8 icon-approval"></i>
               </el-tooltip>
             </el-badge>
-            <el-tooltip content="我的审批" v-else>
+            <el-tooltip content="我的审批"
+                        v-else>
               <i class="p8 icon-approval"></i>
             </el-tooltip>
           </span>
@@ -61,7 +73,8 @@
           <el-dropdown size="small">
             <span>
               <span class="name">{{ dayTime }}好！{{ userName }}</span>
-              <i class="el-icon-arrow-down" style="margin: 0 5px"></i>
+              <i class="el-icon-arrow-down"
+                 style="margin: 0 5px"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="modifyPassword">
@@ -86,15 +99,20 @@
       <el-dropdown size="small">
         <span class="avatar">{{ userName.slice(-1) }}</span>
         <el-dropdown-menu slot="dropdown">
-          <div class="header_userInfo" v-if="userInfo.departmentName">
+          <div class="header_userInfo"
+               v-if="userInfo.departmentName">
             <span class="title">部门：</span>
-            <span class="content" v-if="userInfo.parentDept">{{ userInfo.parentDept }}-</span>
+            <span class="content"
+                  v-if="userInfo.parentDept">{{ userInfo.parentDept }}-</span>
             <span class="content">{{ userInfo.departmentName }}</span>
           </div>
           <div class="header_userInfo">
-            <span class="title" style="float: left; width: 36px">角色：</span>
+            <span class="title"
+                  style="float: left; width: 36px">角色：</span>
             <div style="float: left; width: 114px">
-              <span class="content" v-for="item in userInfo.userRoles" :key="item.roleId">
+              <span class="content"
+                    v-for="item in userInfo.userRoles"
+                    :key="item.roleId">
                 {{ item.roleName.trim() }}
                 <span style="margin-left: 1px">;</span>
               </span>
@@ -103,17 +121,32 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <common-drawer v-if="visibleProcessDrawer" :visible="visibleProcessDrawer" title="我的审批" @close="visibleProcessDrawer = false" direction="ttb" size="100%">
+    <common-drawer v-if="visibleProcessDrawer"
+                   :visible="visibleProcessDrawer"
+                   title="我的审批"
+                   @close="visibleProcessDrawer = false"
+                   direction="ttb"
+                   size="100%">
       <template #drawer>
         <process-approval @approved="approved"></process-approval>
       </template>
     </common-drawer>
-    <common-drawer v-if="visibleMsgDrawer" :visible="visibleMsgDrawer" title="我的消息" @close="visibleMsgDrawer = false" direction="ttb" size="100%">
+    <common-drawer v-if="visibleMsgDrawer"
+                   :visible="visibleMsgDrawer"
+                   title="我的消息"
+                   @close="visibleMsgDrawer = false"
+                   direction="ttb"
+                   size="100%">
       <template #drawer>
         <message ref="message"></message>
       </template>
     </common-drawer>
-    <common-drawer v-if="visibleDownloadDrawer" :visible="visibleDownloadDrawer" title="我的下载" @close="visibleDownloadDrawer = false" direction="ttb" size="100%">
+    <common-drawer v-if="visibleDownloadDrawer"
+                   :visible="visibleDownloadDrawer"
+                   title="我的下载"
+                   @close="visibleDownloadDrawer = false"
+                   direction="ttb"
+                   size="100%">
       <template #drawer>
         <DocumentManagement view-type="card"></DocumentManagement>
       </template>
@@ -134,7 +167,7 @@ import Message from '@/views/Framework/Message'
 
 export default {
   name: 'Headers',
-  data() {
+  data () {
     return {
       dayTime: '',
       commonDialog: null,
@@ -153,25 +186,17 @@ export default {
   computed: {
     ...mapGetters(['token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl'])
   },
-  mounted() {
+  mounted () {
     console.log(this.systemName, '=========================systemName')
     this.dayTime = getGreetingTime()
     const this_ = this
     this_.approvalTotal()
-    this_.approvalMsg()
-    this_.noticeMsg()
+    // this_.approvalMsg()
+    // this_.noticeMsg()
     this.$store.dispatch('getMessageNum')
-    setInterval(function () {
-      this_.approvalTotal()
-      // this_.approvalMsg()
-      this_.noticeMsg()
-    }, 60000)
-    setInterval(function () {
-      this_.$store.dispatch('getMessageNum') // 获取消息信息已读未读条数
-    }, 60000)
   },
   watch: {
-    messageNum(val, oldVal) {
+    messageNum (val, oldVal) {
       const _this = this
       if (val.length) {
         val.map((item) => {
@@ -196,12 +221,12 @@ export default {
     // }
   },
   methods: {
-    approvalTotal() {
+    approvalTotal () {
       this.$api['PersonalProcessApproval.approvalPendingTotal']().then((res) => {
         this.approvalPendingTotal = res
       })
     },
-    approvalMsg() {
+    approvalMsg () {
       const that = this
       this.$api['PersonalProcessApproval.findMessageInfo']({ id: null }).then((res) => {
         if (res) {
@@ -211,14 +236,14 @@ export default {
             message: '您有新的' + msg + '！',
             type: 'success',
             position: 'bottom-right',
-            onClick() {
+            onClick () {
               that.visibleProcessDrawer = true
             }
           })
         }
       })
     },
-    noticeMsg() {
+    noticeMsg () {
       const that = this
       this.$api['PersonalProcessApproval.checkNoticeMsg']({ id: null }).then((res) => {
         if (res) {
@@ -228,14 +253,14 @@ export default {
             message: '您有新的' + msg + '！',
             type: 'success',
             position: 'bottom-right',
-            onClick() {
+            onClick () {
               that.visibleMsgDrawer = true
             }
           })
         }
       })
     },
-    approved() {
+    approved () {
       this.approvalTotal()
       this.$emit('approved')
     },
@@ -244,13 +269,13 @@ export default {
     //     this.messageNumTotal = res
     //   })
     // },
-    slideSidebar() {
+    slideSidebar () {
       this.$store.dispatch('collapseSidebar', !this.sidebarState.isOpen)
     },
-    settingPersonal() {
+    settingPersonal () {
       this.$router.push({ name: 'PersonalSettings' })
     },
-    modifyPassword() {
+    modifyPassword () {
       const that = this
       this.$api['SystemSettings.checkBaseConfig']().then((res) => {
         if (res) {
@@ -260,7 +285,7 @@ export default {
         }
       })
     },
-    logout() {
+    logout () {
       this.$confirm('是否要退出系统?', '提醒', {
         lockScroll: false,
         confirmButtonText: '确定',
@@ -272,9 +297,9 @@ export default {
             location.reload()
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
-    fromHex(color) {
+    fromHex (color) {
       const t = {}
       const bits = color.length == 4 ? 4 : 8 // 假设是shorthand。 #fff, 那么bits为4位, 每一位代表的个属性, 其他的为8位 每两位代表一个属性 #ffffff00
       const mask = (1 << bits) - 1 // 表示字节占位符。 向左移4位或8位，var a = (1 << 4 ) - 1 -> 10000 - 1,  a.toString(2); // 1111。或者 8位的 1111 1111
@@ -456,6 +481,9 @@ div.header_userInfo {
   line-height: 25px;
   padding: 0 15px;
   color: #606266;
+}
+::v-deep .el-drawer__body {
+  background-color: #fcfcfc;
 }
 </style>
 

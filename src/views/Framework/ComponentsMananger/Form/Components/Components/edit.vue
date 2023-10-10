@@ -557,7 +557,13 @@ export default {
 
     getPropParam() {
       const newBuildPropParam = {}
-      newBuildPropParam.$PROPPARAM = this.propParam
+      const params = _cloneDeep(this.propParam)
+      for (const key in params) {
+        if (Array.isArray(this.propParam[key])) {
+          params[key] = this.propParam[key][0]
+        }
+      }
+      newBuildPropParam.$PROPPARAM = params
       return newBuildPropParam
     },
     setPageData(pageData) {
