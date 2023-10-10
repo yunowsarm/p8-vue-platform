@@ -240,18 +240,21 @@ export default {
     const columns = [
       {
         title: '姓名',
-        dataIndex: 'realName'
+        dataIndex: 'realName',
+        align: 'center'
       },
       {
         title: '部门',
-        dataIndex: 'deptName'
+        dataIndex: 'deptName',
+        align: 'center'
       },
       {
         title: '承担任务总数',
         dataIndex: 'taskCount',
         scopedSlots: {
           customRender: 'custom'
-        }
+        },
+        align: 'center'
       },
       // {
       //   title: '承担责任令数',
@@ -272,7 +275,8 @@ export default {
         dataIndex: 'userState',
         scopedSlots: {
           customRender: 'custom'
-        }
+        },
+        align: 'center'
       },
       // {
       //   title: '标识',
@@ -284,11 +288,13 @@ export default {
       // },
       {
         title: '进入时间',
-        dataIndex: 'entryTime'
+        dataIndex: 'entryTime',
+        align: 'center'
       },
       {
         title: '退出时间',
-        dataIndex: 'departureTime'
+        dataIndex: 'departureTime',
+        align: 'center'
       },
       {
         title: '操作',
@@ -296,7 +302,8 @@ export default {
         width: 80,
         scopedSlots: {
           customRender: 'custom'
-        }
+        },
+        align: 'center'
       }
     ]
     const dataSource = [
