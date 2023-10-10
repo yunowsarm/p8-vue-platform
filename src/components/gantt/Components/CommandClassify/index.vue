@@ -150,6 +150,9 @@ export default {
       const that = this
       // 标识逻辑
       return (btn, ganttName, tasks) => {
+        if (tasks.length === 0) {
+          return true
+        }
         if (window.createPage === 'compile' && that.vueThis.planEditLock) {
           return true
         }

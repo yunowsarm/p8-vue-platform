@@ -648,14 +648,12 @@ export default {
       })
       this.tableParam.param = { ...obj }
       this.propParam = Object.assign(this.propParam, val)
+    },
+    $route: {
+      handler (val) {
+        console.log(val.path);
+      }
     }
-    // watch: {
-    //   $route: {
-    //     handler (val) {
-    //       this.getTableInfo()
-    //     }
-    //   }
-    // }
   },
   methods: {
     fiflterParams (newValue) {
@@ -867,21 +865,18 @@ export default {
             if (res.tableType == 0 && res.enableEdit == 0) {
               columnData.unshift({
                 type: 'selection',
-                width: 50,
-                align: 'center'
+                width: 50
               })
             } else {
               if (res.selectType == 1) {
                 columnData.unshift({
                   type: 'radio',
-                  width: 50,
-                  align: 'center'
+                  width: 50
                 })
               } else {
                 columnData.unshift({
                   type: 'checkbox',
-                  width: 50,
-                  align: 'center'
+                  width: 50
                 })
               }
             }
@@ -998,23 +993,33 @@ export default {
       this.$emit('selection-change', val)
     },
     rowClick (row, column) {
+      //0 没有数据不能下钻
+      if (row[column.property] === 0) {
+        return false
+      }
       this.columns.forEach(el => {
-        if (el.fieldName === column.property) {
+        if (el.fieldName === column.property || el.dataIndex === column.property) {
           column.drillName = el.drillName
         }
       })
+      // 是否开启了行点击
       if (this.tableInfo.enableClick === 1) {
         this.$emit('row-click', row)
         this.runInHoleParam = row
         this.runInHoleParam.property = column.property
         this.reportItems.forEach((item) => {
           if (column.property === item.fieldName) {
+            // 是否配置了下钻
             if (item.fieldHref && item.fieldHref !== '') {
+              if (column.drillName) {
+                this.runInHoleTitle = column.drillName
+              } else {
+                this.runInHoleTitle = '下钻详情'
+              }
               this.componentsConfig = JSON.parse(item.fieldHref)
+              this.runInHoleVisible = true
               this.asyncComponents = this.componentsConfig.url
             }
-            this.runInHoleTitle = column.drillName
-            this.runInHoleVisible = true
           }
         })
       }
@@ -1905,6 +1910,9 @@ export default {
 ::v-deep .columnStyle {
   text-decoration: underline;
   cursor: pointer;
+}
+::v-deep .splitter-pane-resizer.vertical{
+  display: none;
 }
 ::v-deep .row--level-0 :nth-child(3) .el-dropdown {
   display: none;

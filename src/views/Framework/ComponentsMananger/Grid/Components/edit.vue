@@ -652,6 +652,8 @@
                          value="icon"></el-option>
               <el-option label="三级菜单"
                          value="thirdMenu"></el-option>
+              <el-option label="任务标识"
+                         value="taskIcon"></el-option>
               <el-option label="插槽"
                          value="slot"></el-option>
             </el-select>

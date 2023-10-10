@@ -130,7 +130,7 @@ export default {
   .form-con {
     height: calc(100% - 50px);
      ::v-deep  .el-form-item__label {
-      text-align: left;
+      text-align: right;
     }
   }
 }

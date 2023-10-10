@@ -198,7 +198,7 @@ export default {
               colLayout: 'doubleCol'
             }
             that.dataSource.push(dataSourceItem)
-            // that.$set(that.formData, item.value, item.lockStatus)
+            that.$set(that.formData, item.value, item.lockStatus)
           }
         })
         that.showMonitorPoints && that.showMonitorPoints.length && (that.dataSource = that.dataSource.filter((item) => {
