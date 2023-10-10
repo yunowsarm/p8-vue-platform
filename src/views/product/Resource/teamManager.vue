@@ -822,6 +822,7 @@ export default {
           } else {
             let index = this.tableData.findIndex(titem => titem.sysuserId === item.id)
             this.tableData[index].departureTime = ''
+            this.tableData[index].entryTime = ''
           }
         })
         this.tableData.push(...tempSelectData)
