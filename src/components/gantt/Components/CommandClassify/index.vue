@@ -163,34 +163,10 @@ export default {
         if (window.createPage === 'decompose' && roles.includes('SYS_ROLE077')) {
           return true
         }
-        if (window.createPage === 'decompose') {
-          if (btn && btn.id === '3112') {
-            return true
-          }
-        }
         const switchType = tasks[0] ? tasks[0].switchType : ''
-        const managerStatus = tasks[0] ? tasks[0].managerStatus : ''
         if (switchType) {
           if (switchType === '9010' || switchType === '9020') {
             return true
-          }
-        }
-        if (btn && btn.id === '3112') {
-          const thisGantt = this.ganttObjectData.getGanttObject(ganttName)
-          if (thisGantt.hasChild(tasks.length && tasks[0].id)) {
-            return true
-          } else {
-            if (managerStatus) {
-              if (tasks[0].planType !== '3112') {
-                if (managerStatus === '6405' || managerStatus === '6409' || managerStatus === '6406') {
-                  return true
-                } else {
-                  return false
-                }
-              } else {
-                return true
-              }
-            }
           }
         }
         if (btn.id === 'cancelSelClassify') {
