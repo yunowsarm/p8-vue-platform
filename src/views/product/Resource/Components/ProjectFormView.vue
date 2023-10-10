@@ -36,7 +36,7 @@ export default {
       },
       {
         type: 'view',
-        labelText: '型号代号',
+        labelText: '型号信息',
         fieldName: 'modelCode',
         colLayout: ''
       },
