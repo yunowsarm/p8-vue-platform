@@ -60,8 +60,20 @@ export default {
       },
       {
         type: 'view',
+        labelText: '项目密级',
+        fieldName: 'secretGradeDisplay',
+        colLayout: ''
+      },
+      {
+        type: 'view',
         labelText: '项目周期',
         fieldName: 'projectScyle',
+        colLayout: ''
+      },
+      {
+        type: 'view',
+        labelText: '经费来源',
+        fieldName: 'fundsSourceDisplay',
         colLayout: ''
       },
       {
