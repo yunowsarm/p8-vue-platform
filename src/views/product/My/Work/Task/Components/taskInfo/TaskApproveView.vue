@@ -84,7 +84,7 @@ export default {
       dataSource: [
         {
           type: 'view',
-          labelText: '项目:',
+          labelText: '计划名称:',
           fieldName: 'planName', // taskName
           colLayout: 'singleCol'
         },
@@ -167,7 +167,7 @@ export default {
       dataSource1: [
         {
           type: 'view',
-          labelText: '项目:',
+          labelText: '计划名称:',
           fieldName: 'planName', // taskName
           colLayout: 'doubleCol'
         },
