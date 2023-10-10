@@ -1016,7 +1016,7 @@ export default {
                 projectTemp.id = projectItem.id && projectItem.id.length === 32 ? projectItem.id : '' // projectItem.id ? projectItem.id :
                 projectTemp.sysuserId = projectItem.sysuserId ? projectItem.sysuserId : ''
                 projectTemp.entryTime = projectItem.entryTime ? projectItem.entryTime : ''
-                projectTemp.departureTime = projectItem.departureTime ? projectItem.entryTime : ''
+                projectTemp.departureTime = projectItem.departureTime ? projectItem.departureTime : ''
                 temp[key].push(projectTemp)
               })
             } else {
