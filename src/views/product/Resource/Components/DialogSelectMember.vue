@@ -10,7 +10,7 @@
                  @close="dialogMemberCancel"
                  @isfullscreen="isfullscreen">
     <template #dialog>
-      <normal-layout :normalLayout="normalLayout">
+      <normal-layout :normalLayout="normalLayout" class="userSelect">
         <template #north>
           <div class="search-con">
             <div class="date-range-con"
@@ -314,6 +314,7 @@ export default {
 </script>
 <style lang="scss" scpoed>
 .search-con {
+  padding-left: 15px;
   .date-range-con,
   .input-con {
     float: left;
@@ -335,5 +336,13 @@ export default {
 // }
 .table-con .small-table {
   overflow-y: auto;
+}
+.userSelect {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  .normal-header{
+    border-bottom: 1px solid #e1e1e1;
+  }
 }
 </style>
