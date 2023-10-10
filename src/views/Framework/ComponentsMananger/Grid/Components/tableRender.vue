@@ -585,7 +585,6 @@ export default {
       if (this.componentPath) {
         if (this.componentPath.indexOf('?') !== -1) {
           const list = this.componentPath.split('?')
-          console.log(list)
           const url = list[0]
           const parmars = list[1].split('&')
           const obj = {}
@@ -668,6 +667,12 @@ export default {
               value: newValue[item],
               mode: '=',
               relation: 'and'
+            }
+          } else if (newValue[item] instanceof Array) {
+            obj[item] = {
+              value: newValue[item],
+              mode: 'in',
+              relation: 'multiple'
             }
           } else if (typeof newValue[item] === 'object') {
             obj[item] = newValue[item]
