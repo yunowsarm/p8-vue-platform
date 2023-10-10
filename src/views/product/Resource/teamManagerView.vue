@@ -1260,7 +1260,7 @@ export default {
   box-shadow: 4px -4px 8px #bfbdbd54;
   display: flex;
   align-items: center;
-  justify-content: end;
+  justify-content: flex-end;
   div.tip {
     font-size: 16px;
     color: #323232;

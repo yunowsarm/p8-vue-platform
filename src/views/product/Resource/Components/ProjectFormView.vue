@@ -128,6 +128,7 @@ export default {
   overflow-y: auto;
   padding: 0;
   .form-con {
+    overflow: auto;
     height: calc(100% - 50px);
     ::v-deep .el-form-item__label {
       text-align: right;
