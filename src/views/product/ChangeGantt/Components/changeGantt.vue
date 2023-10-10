@@ -550,7 +550,8 @@ export default {
             if (res) {
               that.sendDataList = sendDatas
               that.changeRecordId = res
-              that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
+              // that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
+              that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)
               that.hasSave = false
             }
           })
