@@ -14,7 +14,7 @@
         <template #north>
           <div class="search-con">
             <div class="date-range-con"
-                 :style="{width: '315px'}">
+                 :style="{width: 'calc(55% - 31px)'}">
               负荷分析时段:
               <el-date-picker :style="{width: 'calc(100% - 100px)'}"
                               class="date-range"
@@ -29,7 +29,7 @@
                               clearable></el-date-picker>
             </div>
             <div class="input-con"
-                 :style="{width: '250px'}">
+                 :style="{width: 'calc(45% - 31px)'}">
               人员姓名:
               <el-input :style="{width: 'calc(100% - 70px)'}"
                         class="input-name"
@@ -134,7 +134,7 @@ export default {
         selectable: (row, index) => {
           if (this.existsData && this.existsData.length) {
             let data = this.existsData.filter(item => item.sysuserId === row.id)
-            if (data && data.length) {
+            if (data && data.length && !data[0].departureTime) {
               return false
             } else {
               return true
@@ -200,7 +200,7 @@ export default {
         loadingUserDeptStrategy: ''
       },
       tableSelectValue: [],
-      dialogWidth: '60%',
+      dialogWidth: '50%',
       dialogHeight: 300,
       customHeight: 435,
       // 默认展开树节点
@@ -248,7 +248,7 @@ export default {
         const ch = document.documentElement.clientHeight
         const cw = document.documentElement.clientWidth
         vm.dialogHeight = ch * 0.6 + 120
-        vm.dialogWidth = cw * 0.6
+        vm.dialogWidth = cw * 0.5
         vm.customHeight = vm.fullscreen ? ch - 175 : vm.dialogHeight - 120
         timer = null
       }, 300)
@@ -314,6 +314,8 @@ export default {
 </script>
 <style lang="scss" scpoed>
 .search-con {
+  display: flex;
+  justify-content: space-between;
   padding-left: 15px;
   .date-range-con,
   .input-con {
@@ -325,6 +327,7 @@ export default {
   }
   .search-btn {
     // float: right;
+    width: 60px;
     height: 30px;
   }
 }
@@ -338,8 +341,9 @@ export default {
   overflow-y: auto;
 }
 .userSelect {
+  box-sizing: border-box;
   height: 100%;
-  padding: 0;
+  padding: 10px;
   margin: 0;
   .normal-header{
     border-bottom: 1px solid #e1e1e1;
