@@ -826,5 +826,7 @@ export default {
 <style lang="scss" scoped>
 .parser-container {
   height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 </style>
