@@ -394,7 +394,10 @@ export function getChangeGantt(ganttName, vueThis) {
     if (state) {
       vueThis.selectedTasks.push(ganttObject.getTask(id))
     } else {
-      vueThis.selectedTasks.splice(vueThis.selectedTasks.indexOf(ganttObject.getTask(id)), 1)
+      const index = vueThis.selectedTasks.findIndex((item) => {
+        return item.id === id
+      })
+      vueThis.selectedTasks.splice(index, 1)
     }
   })
   // 只读校验
