@@ -14,6 +14,7 @@
         </common-upload>
         <common-file-view :uploadFiles="namedFiles"
                           filesLayout="row"></common-file-view>
+        <i v-if="namedFiles.length" class="el-icon-close" style="cursor: pointer;" @click="namedFiles = []"></i>
       </div>
       <nlcr-layout class="custom-nlcr"
                    :headerVisible="false"
