@@ -122,6 +122,9 @@ export default {
       const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
       const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
       const res = await this.$api['desLayout.getLayoutJson']({ layoutCode: code, version: version })
+      if(!res){
+        return
+      }
       this.previewParmars = JSON.parse(res)
       const { treeSettingsParmars, treeData, defaultComponents } = this.previewParmars
       // 获取tree数据

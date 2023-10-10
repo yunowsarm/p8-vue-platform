@@ -121,7 +121,7 @@
   }
 
   .disabled-check-all > .cell {
-    display: none !important;
+    display: none;
   }
 
   .showSearchRow {
@@ -225,6 +225,7 @@
   color: $base-white-color;
 }
 .vxeTable {
+  width: 100%;
   .vxe-header--column:not(.col--ellipsis) {
     padding: 2px 0 !important;
     // border: 1px solid #c6c6c6;
