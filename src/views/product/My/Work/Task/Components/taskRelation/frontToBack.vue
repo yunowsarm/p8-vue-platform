@@ -3,7 +3,7 @@
            type="border-card"
            style="height: 88%;"
            @tab-click="tabsClick">
-    <el-tab-pane label="前置">
+    <el-tab-pane label="前后置">
       <common-table ref="table"
                     :columns="columns"
                     :params="queryParam"
