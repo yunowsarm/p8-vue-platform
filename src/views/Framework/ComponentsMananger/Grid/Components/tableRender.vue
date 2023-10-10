@@ -999,9 +999,9 @@ export default {
     },
     rowClick (row, column) {
       //0 没有数据不能下钻
-      if (row[column.property] === 0) {
-        return false
-      }
+      // if (row[column.property] === 0) {
+      //   return false
+      // }
       this.columns.forEach(el => {
         if (el.fieldName === column.property || el.dataIndex === column.property) {
           column.drillName = el.drillName
@@ -1419,7 +1419,7 @@ export default {
       })
       this.releaseMenuParams.businessId = rowIds
       this.releaseMenuParams.processDefinitionKey = this.processDefinationTwoKey
-      this.releaseMenuParams.projectInfo = {
+      this.releaseMenuParams.beforehandParams.projectInfo = {
         projectName: this.selsctRow[0].PROJECTNAME,
         projectType: this.selsctRow[0].PROJECTTYPE,
         modelCode: this.selsctRow[0].MODELCODE
@@ -1916,10 +1916,13 @@ export default {
   text-decoration: underline;
   cursor: pointer;
 }
-::v-deep .splitter-pane-resizer.vertical{
+::v-deep .splitter-pane-resizer.vertical {
   display: none;
 }
 ::v-deep .row--level-0 :nth-child(3) .el-dropdown {
   display: none;
+}
+::v-deep .el-table--border .el-table__cell:first-child .cell {
+  padding-left: 15px !important;
 }
 </style>
