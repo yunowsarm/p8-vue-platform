@@ -89,7 +89,7 @@ export default {
       },
       searchParams: {
         msgCatalog: 'APPROVE_TYPE_02_01',
-        startUserId: this.$store.state.user.userInfo.id
+        assigneeUserId: this.$store.state.user.userInfo.id
       },
       renderTime: new Date() + '',
       currentMessage: null,
