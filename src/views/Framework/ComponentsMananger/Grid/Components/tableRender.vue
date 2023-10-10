@@ -223,7 +223,7 @@
       </common-dialog>
       <common-drawer title="查看流程图"
                      :visible="visibleModelPicture"
-                     size="50%"
+                     size="100%"
                      :drawer-config="drawerConfig"
                      @close="onModelPictureClose">
         <template #drawer>
