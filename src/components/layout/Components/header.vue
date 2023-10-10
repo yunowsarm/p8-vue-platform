@@ -124,6 +124,7 @@
     <common-drawer v-if="visibleProcessDrawer"
                    :visible="visibleProcessDrawer"
                    title="我的审批"
+                   class="my_process"
                    @close="visibleProcessDrawer = false"
                    direction="ttb"
                    size="100%">
@@ -481,6 +482,9 @@ div.header_userInfo {
   line-height: 25px;
   padding: 0 15px;
   color: #606266;
+}
+::v-deep .el-drawer__body {
+  background-color: #fcfcfc;
 }
 </style>
 
