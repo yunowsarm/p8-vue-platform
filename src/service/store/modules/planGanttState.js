@@ -23,9 +23,9 @@ const planGanttState = {
       state.taskStatusLockMap = taskStatusLockMap
     },
     SET_BUTTONS(state, datas) {
-      // if (datas.type === 'monitor') {
-      //   state.monitorBtnsByApi = datas.btns
-      // }
+      if (datas.type === 'monitor') {
+        state.monitorBtnsByApi = datas.btns
+      }
       // if (datas.type === 'classify') {
       //   state.classifyBtnsByApi = datas.btns
       // }
