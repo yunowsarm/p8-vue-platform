@@ -1,7 +1,7 @@
 <template>
   <list-layout :header-visible="false">
     <template #center>
-      <tabs-navigation-preview ref="tabsNavigation" :layout-config="layoutConfig" :data-view-id="dataViewId" @tabClick="tabClick" :prop-param="propParam" v-on="$listeners"></tabs-navigation-preview>
+      <tabs-navigation-preview ref="tabsNavigation" :layout-config="layoutConfig" :data-view-id="dataViewId" @tabClick="tabClick" :prop-param="propParam" v-on="$listeners" :row="row"></tabs-navigation-preview>
     </template>
   </list-layout>
 </template>
