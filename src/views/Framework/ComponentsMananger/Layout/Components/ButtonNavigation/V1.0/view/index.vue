@@ -203,7 +203,7 @@ export default {
         })
         if (prmarsList && prmarsList.length > 0) {
           prmarsList.forEach((el) => {
-            paramsObj[el.after] = obj[el.before]
+            paramsObj[el.after] = this.getParamsList(obj, el.before)
           })
         }
         this.provideParams.searchParams = paramsObj
@@ -229,6 +229,19 @@ export default {
           this.asyncComponents = obj[key]
         }
       }
+    },
+    getParamsList (obj,fileName) {
+      let list = []
+      function getEndList (item){
+        list.push(item[fileName])
+        if (item.children && item.children.length) {
+          item.children.forEach(el => {
+            getEndList(el)
+          })
+        }
+      }
+      getEndList(obj)
+      return list
     },
     getParams (node) {
       const { parentId, parmarsMap } = node
