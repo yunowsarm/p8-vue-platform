@@ -27,6 +27,9 @@
   </normal-layout>
 </template>
 <style lang="scss" scoped>
+.normal-layout {
+  padding: 0;
+}
 .span-bg {
   width: 100%;
   height: 85%;
