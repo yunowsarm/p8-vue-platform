@@ -289,6 +289,9 @@
   }
 }
 
+::v-deep .el-drawer__body {
+  background-color: #fcfcfc;
+}
 // 用户部门、角色信息
 div.header_userInfo {
   width: 150px;

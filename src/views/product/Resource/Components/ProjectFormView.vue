@@ -36,7 +36,7 @@ export default {
       },
       {
         type: 'view',
-        labelText: '型号代号',
+        labelText: '型号信息',
         fieldName: 'modelCode',
         colLayout: ''
       },
@@ -94,7 +94,7 @@ export default {
       this.getProjectInfo()
     }
   },
-  created(){
+  created () {
     this.getProjectInfo()
   },
   methods: {
@@ -120,16 +120,16 @@ export default {
     line-height: 50px;
     font-size: 14px;
     padding-left: 6px;
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 2px solid #f2f2f2;
     box-sizing: border-box;
     font-weight: bold;
   }
   box-sizing: border-box;
   overflow-y: auto;
-  padding: 0 8px;
+  padding: 0;
   .form-con {
     height: calc(100% - 50px);
-     ::v-deep  .el-form-item__label {
+    ::v-deep .el-form-item__label {
       text-align: right;
     }
   }
