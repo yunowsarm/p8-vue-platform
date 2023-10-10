@@ -1912,6 +1912,9 @@ export default {
     margin: 0;
   }
 }
+.grid-table-render {
+    margin: 14px !important;
+}
 ::v-deep .columnStyle {
   text-decoration: underline;
   cursor: pointer;
