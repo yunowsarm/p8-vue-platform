@@ -782,6 +782,7 @@ export default {
             name: item.name,
             klTeamRoleClassifyId: item.teamRoleClassifyId || item.klTeamRoleClassifyId,
             projectTeamRoleUsers: [],
+            roleId: item.sysRole,
             roleType: item.isFixed == '1' ? 'fixed' : 'general',
             isFixed: item.isFixed,
             isRequired: item.isRequired,
