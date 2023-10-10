@@ -421,9 +421,8 @@
       @closed="ClassificationSelectclosed"
       @ClassificationSelect="ClassificationSelect"
     ></ClassificationSelection>
-    <Edit v-if="createVisible" :visible="createVisible" :selected-task="selectedTasks" title="我的经验库" :gantt-name="ganttName" @handleCancel="closeCreate" />
+    <Edit :visible="createVisible" :selected-task="selectedTasks" title="我的经验库" :gantt-name="ganttName" @handleCancel="closeCreate" />
     <my-experience-base
-      v-if="experienceBaseVisible"
       :visible="experienceBaseVisible"
       :is-manage="isManage"
       :gantt-name="ganttName"

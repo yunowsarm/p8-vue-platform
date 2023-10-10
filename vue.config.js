@@ -60,7 +60,9 @@ module.exports = defineConfig({
         additionalData: '@import "@/assets/commonStyle/common.scss";',
         sassOptions: {
           // 取消dart scss关于计算替换的提示信息
-          quietDeps: true
+          quietDeps: true,
+          // 解决element图标乱码
+          outputStyle: 'expanded'
         }
       }
     }
