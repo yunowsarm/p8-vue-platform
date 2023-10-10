@@ -769,20 +769,41 @@ export default {
     loadRolesCommonHandle (data) {
       let tempArr = []
       data.forEach(item => {
-        let tempObj = {
-          id: item.id,
-          indexNo: item.indexNo,
-          name: item.name,
-          klTeamRoleClassifyId: item.teamRoleClassifyId || item.klTeamRoleClassifyId,
-          projectTeamRoleUsers: [],
-          roleType: item.roleType
+        let flag = true
+        this.rolesData.forEach(el => {
+          if (el.name == item.name) {
+            flag = false
+          }
+        })
+        if(flag){
+          let tempObj = {
+            id: item.id,
+            indexNo: item.indexNo,
+            name: item.name,
+            klTeamRoleClassifyId: item.teamRoleClassifyId || item.klTeamRoleClassifyId,
+            projectTeamRoleUsers: [],
+            roleType: item.isFixed == '1' ? 'fixed' : 'general',
+            isFixed: item.isFixed,
+            isRequired: item.isRequired,
+            projectTeamRoleUsers: [],
+          }
+          tempArr.push(tempObj)
         }
-        tempArr.push(tempObj)
       })
-      this.generalRoles.push(...tempArr)
-      this.generalRoles = _.uniqWith(this.generalRoles, _.isEqual)
+      if (tempArr && tempArr.length) {
+        tempArr.forEach(el => {
+          if (el.roleType == 'fixed') {
+            this.fixedRoles.push(el)
+          } else {
+            this.generalRoles.push(el)
+          }
+        })
+      }
       this.rolesData.push(...tempArr)
       this.rolesData = _.uniqWith(this.rolesData, _.isEqual)
+      this.rolesData.sort(function (a,b){
+        return b.isFixed - a.isFixed
+      })
     },
     memberCloseHandle (tableSelectValue) {
       // 添加人员-面板关闭
