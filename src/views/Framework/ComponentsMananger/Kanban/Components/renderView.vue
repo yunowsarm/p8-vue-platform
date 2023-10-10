@@ -1,15 +1,9 @@
 <!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
 
-
 <template>
   <div style="width: 100%; height: 100%">
-    <div :id="chartId"
-         :style="chartDivStyle"></div>
-    <drill :dialog-visible="drillVisiable"
-           v-if="drillVisiable"
-           :event-config="eventOption.eventConfig"
-           :event-param="eventParam"
-           @close="onDrillClose()"></drill>
+    <div :id="chartId" :style="chartDivStyle"></div>
+    <drill :dialog-visible="drillVisiable" v-if="drillVisiable" :event-config="eventOption.eventConfig" :event-param="eventParam" @close="onDrillClose()"></drill>
   </div>
 </template>
 
@@ -45,7 +39,7 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       myChart: null,
       chartId: this.genId(),
@@ -67,7 +61,7 @@ export default {
     drill
   },
   computed: {
-    chartOption () {
+    chartOption() {
       let data = this.option
       // console.log('option', this.option)
       let chartConfig = ''
@@ -86,7 +80,7 @@ export default {
       // console.log('chartConfig', chartConfig)
       return chartConfig
     },
-    eventOption () {
+    eventOption() {
       let data = this.option
       let eventOption = {}
       // console.log('data', data)
@@ -111,7 +105,7 @@ export default {
   watch: {
     myChart: {
       handler: function (chart) {
-        let _this = this
+        const _this = this
         if (chart && _this.remoteData) {
           chart.setOption({
             dataset: {
@@ -124,12 +118,24 @@ export default {
     remoteData: {
       handler: function (val, oldVal) {
         if (val && this.myChart) {
-          let _this = this
-          this.myChart.setOption({
-            dataset: {
-              source: _this.remoteData
-            }
-          })
+          const _this = this
+          if (_this.remoteData[0].NAME) {
+            this.myChart.setOption({
+              title: {
+                text: _this.remoteData[0].NAME,
+                left: 'center'
+              },
+              dataset: {
+                source: _this.remoteData
+              }
+            })
+          } else {
+            this.myChart.setOption({
+              dataset: {
+                source: _this.remoteData
+              }
+            })
+          }
         }
       }
     },
@@ -151,28 +157,28 @@ export default {
       deep: true
     }
   },
-  created () {
-    let { devBaseUrl, prodBaseUrl, isDevMode } = this.$sysConfig.API_DEFAULT_CONFIG
+  created() {
+    const { devBaseUrl, prodBaseUrl, isDevMode } = this.$sysConfig.API_DEFAULT_CONFIG
     this.urlPrefix = isDevMode ? `${devBaseUrl}` : `${prodBaseUrl}`
     if (this.appConfig && this.appConfig.dataviewId) {
-      let _this = this
+      const _this = this
       this.$api['kanbanComponent.getSqlParams']({ sqlId: this.appConfig.dataviewId, permissionVo: { router: this.$route.name, resourceId: '' } }).then((res) => {
         if (res) {
           _this.sqlParamsList = res
         }
-        //动态绑定对父组件参数的监听
+        // 动态绑定对父组件参数的监听
         this.$watch(
           'provideParams.searchParams',
           (newValue, oldValue) => {
             // console.log('searchParams watch', newValue, this.appConfig)
             if (newValue) {
               // console.log('newValue $watch:', newValue)
-              let tempParams = {}
-              //使用数据视图SQL中定义的参数来将父组件中传递的参数进行装配，如果父组件中参数值不存在或为空，使用SQL定义中的参数默认值进行赋值
+              const tempParams = {}
+              // 使用数据视图SQL中定义的参数来将父组件中传递的参数进行装配，如果父组件中参数值不存在或为空，使用SQL定义中的参数默认值进行赋值
               if (this.sqlParamsList && this.sqlParamsList.length > 0) {
                 this.sqlParamsList.forEach((param) => {
                   console.log('SQLParam:', param)
-                  let defaultValue = {
+                  const defaultValue = {
                     value: param.paramValue || '',
                     mode: '=',
                     relation: 'and'
@@ -195,8 +201,8 @@ export default {
       this.doDataview()
     }
   },
-  beforeMount () { },
-  mounted () {
+  beforeMount() {},
+  mounted() {
     // 不能在watch里编写的原因是，一开始就触发时，this.$el 组件还不存在，会造成无法渲染
     this.$watch(
       'isShow',
@@ -213,28 +219,33 @@ export default {
     )
     window.addEventListener('resize', this.resizeChart)
   },
-  destroyed () {
+  destroyed() {
     window.removeEventListener('resize', this.resizeChart)
   },
   methods: {
-    doDataview () {
-      let _this = this
+    doDataview() {
+      const _this = this
       if (this.appConfig.apiDataUrl) {
-        let url = this.appConfig.apiDataUrl.indexOf('http') !== -1 ? this.appConfig.apiDataUrl : `${this.urlPrefix}${this.appConfig.apiDataUrl}`
+        const url = this.appConfig.apiDataUrl.indexOf('http') !== -1 ? this.appConfig.apiDataUrl : `${this.urlPrefix}${this.appConfig.apiDataUrl}`
         if (this.appConfig.apiDataUrl.indexOf('http') !== -1) {
-          axios.post(url, this.searchParams, {
-            headers: { Authorization: '' }
-          }).then(function (res) {
-            _this.remoteData = res.data
-          }).catch(err => {
-            this.$message.error('数据异常！')
-          })
+          axios
+            .post(url, this.searchParams, {
+              headers: { Authorization: '' }
+            })
+            .then(function (res) {
+              _this.remoteData = res.data
+            })
+            .catch((err) => {
+              this.$message.error('数据异常！')
+            })
         } else {
-          this.$ajax.post(url, this.searchParams, {
-            headers: { Authorization: this.$store.getters.token }
-          }).then(function (res) {
-            _this.remoteData = res
-          })
+          this.$ajax
+            .post(url, this.searchParams, {
+              headers: { Authorization: this.$store.getters.token }
+            })
+            .then(function (res) {
+              _this.remoteData = res
+            })
         }
       } else {
         this.$api['kanbanComponent.getViewData']({ sqlId: this.appConfig.dataviewId, param: this.searchParams, permissionVo: { router: this.$route.name, resourceId: '' } }).then((res) => {
@@ -246,11 +257,11 @@ export default {
         })
       }
     },
-    resizeChart () {
+    resizeChart() {
       // console.log('chart-resize')
       this.myChart.resize()
     },
-    initEchart () {
+    initEchart() {
       try {
         if (!document.getElementById(this.chartId)) {
           return
@@ -263,7 +274,7 @@ export default {
       this.bindChartEvent()
       return this.myChart
     },
-    setChartOption () {
+    setChartOption() {
       try {
         // console.log('this.chartOption', this.chartOption)
         this.myChart.setOption(this.chartOption, {
@@ -274,18 +285,18 @@ export default {
       }
       return this.myChart
     },
-    genId () {
-      let uid = 'TestDataset' + new Date().getTime()
-      let roundStr = Math.round(Math.random() * 100000)
+    genId() {
+      const uid = 'TestDataset' + new Date().getTime()
+      const roundStr = Math.round(Math.random() * 100000)
       return uid + roundStr
     },
-    bindChartEvent () {
+    bindChartEvent() {
       // console.log('bindChartEvent', this.eventOption)
       if (this.myChart && this.eventOption.eventName) {
-        let _this = this
+        const _this = this
         this.myChart.on(this.eventOption.eventName, (params) => {
-          let chartData = params.data
-          let drillParams = this.eventOption.drillParams
+          const chartData = params.data
+          const drillParams = this.eventOption.drillParams
           for (const key in drillParams) {
             if (chartData[drillParams[key]]) {
               _this.eventParam[key] = {
@@ -301,7 +312,7 @@ export default {
         })
       }
     },
-    onDrillClose () {
+    onDrillClose() {
       this.drillVisiable = false
     }
   }
