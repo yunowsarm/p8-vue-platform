@@ -31,7 +31,7 @@
         </template>
         <template #bpmn>
           <bpm-view v-if="selectedApproval.processDefId !== '' && activeTabs==='bpmn'"
-                    :style="{ height: tabsHeight }"
+                    :style="{ height: tabsHeight, margin: '0px 0px 2px -333px !important;'}"
                     :process-obj="{
               processDefinitionId: selectedApproval.processDefId,
               processInstanceId: selectedApproval.processInstId
