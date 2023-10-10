@@ -60,8 +60,20 @@ export default {
       },
       {
         type: 'view',
+        labelText: '项目密级',
+        fieldName: 'secretGradeDisplay',
+        colLayout: ''
+      },
+      {
+        type: 'view',
         labelText: '项目周期',
         fieldName: 'projectScyle',
+        colLayout: ''
+      },
+      {
+        type: 'view',
+        labelText: '经费来源',
+        fieldName: 'fundsSourceDisplay',
         colLayout: ''
       },
       {
@@ -128,6 +140,7 @@ export default {
   overflow-y: auto;
   padding: 0;
   .form-con {
+    overflow: auto;
     height: calc(100% - 50px);
     ::v-deep .el-form-item__label {
       text-align: right;
