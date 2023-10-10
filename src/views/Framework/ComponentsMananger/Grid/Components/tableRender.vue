@@ -648,14 +648,12 @@ export default {
       })
       this.tableParam.param = { ...obj }
       this.propParam = Object.assign(this.propParam, val)
+    },
+    $route: {
+      handler (val) {
+        console.log(val.path);
+      }
     }
-    // watch: {
-    //   $route: {
-    //     handler (val) {
-    //       this.getTableInfo()
-    //     }
-    //   }
-    // }
   },
   methods: {
     fiflterParams (newValue) {
@@ -1912,6 +1910,9 @@ export default {
 ::v-deep .columnStyle {
   text-decoration: underline;
   cursor: pointer;
+}
+::v-deep .splitter-pane-resizer.vertical{
+  display: none;
 }
 ::v-deep .row--level-0 :nth-child(3) .el-dropdown {
   display: none;

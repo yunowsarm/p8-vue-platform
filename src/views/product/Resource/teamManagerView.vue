@@ -1040,7 +1040,9 @@ export default {
 /**调整 左中右布局样式 */
  ::v-deep  .normal-nlcr-layout.custom-nlcr {
   height: calc(100% - 110px);
-
+  .icon-zuozhedie {
+    display: none;
+  }
   .normal-nlcr-main {
     .el-row,
     .el-col {
