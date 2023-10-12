@@ -10,7 +10,6 @@
 
 <script>
 import { P8Form } from 'p8-components-ui'
-import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
@@ -41,7 +40,6 @@ export default {
       },
       saveApi: 'planGanttManager.pushPlanMssage',
       isCustomValidate: true,
-      taskSecretLevel: '',
       formData: {
         planInfoId: this.planInfoId,
         type: '',
@@ -71,20 +69,6 @@ export default {
           ]
         },
         {
-          type: 'select',
-          labelText: '密级',
-          fieldName: 'secretLevel',
-          colLayout: 'doubleCol',
-          optionUrl: {
-            api: 'thirdPartInterface.getDic',
-            params: { dicType: 'SECRET_LEVEL' }
-          },
-          options: [],
-          eventHandle: {
-            change: 'secretLevelChangeHandle'
-          }
-        },
-        {
           type: 'blank',
           labelText: '',
           fieldName: 'message',
@@ -94,21 +78,8 @@ export default {
       ]
     }
   },
-  created() {
-    const ganttObject = GanttObject.getGanttObject(this.ganttName)
-    const task = ganttObject.getTask(this.taskId)
-    this.taskSecretLevel = task.secretGrade
-  },
+  created() {},
   methods: {
-    secretLevelChangeHandle(val) {
-      if (val > this.taskSecretLevel) {
-        this.$message({
-          type: 'warning',
-          message: '密级不可高于任务密级！'
-        })
-        this.formData.secretLevel = ''
-      }
-    },
     saved(params) {
       if (params) {
         this.$emit('close')

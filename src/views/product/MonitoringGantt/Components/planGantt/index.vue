@@ -83,12 +83,7 @@
 
     <common-dialog title="请选择需要保存的任务" :visible="myExperienceVisible" :show-handle-btn="false" @isfullscreen="isfullscreen" @close="closeMyExperience" :is-view-cs-footer="true">
       <template #dialog>
-        <list-layout>
-          <template #north>
-            <span style="color: red; font-size: 14px; font-weight: bolder; float: right; line-height: 30px; display: inline-block; margin-right: 10px"
-              >密级：{{ experienceLibrarySecretGradeDisplay }}</span
-            >
-          </template>
+        <list-layout :header-visible="false">
           <template #center>
             <common-table
               ref="table"
@@ -287,9 +282,6 @@ export default {
     planInfoId: {
       type: String,
       default: null
-    },
-    secretGrade: {
-      type: String
     },
     wholeDescribeId: {
       type: String,
@@ -837,7 +829,6 @@ export default {
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
       // 配置团队成员编辑配置文件
       this.thirdMenuParam.planInfoId = this.planInfoId
-      this.thirdMenuParam.secretGrade = this.secretGrade
       this.thirdMenuParam.status = '2210'
       this.thirdMenuParam.id = this.wholeDescribeId
       this.thirdMenuParam.projectCategory = this.projectCategory
@@ -881,7 +872,6 @@ export default {
               myGantt.serverList(myGantt.config.training_mode_list, trainingModeListArr)
             }
             myGantt.$resourcesStore.parse(res.resources)
-            myGantt.serverList('secretGrades', res.secretGradeList)
             myGantt.serverList('userList', res.userResourceList)
             myGantt.serverList(myGantt.config.monitor_point, res.monitorPointDatas)
             myGantt.serverList(myGantt.config.plan_type, res.taskClassifys)
