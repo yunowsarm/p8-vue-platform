@@ -1913,7 +1913,8 @@ export default {
   }
 }
 .grid-table-render {
-    margin: 14px !important;
+    padding: 0 10px !important;
+    margin: 0;
 }
 ::v-deep .columnStyle {
   text-decoration: underline;
