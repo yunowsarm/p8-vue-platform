@@ -101,6 +101,7 @@ function generateNewRoutes(remoteRoutes) {
           path: route.path ? (route.path.startsWith('/') ? route.path : '/' + route.path) : '',
           name: route.name,
           props: pathQuery,
+          isDisabled: route.isDisabled,
           component: _import_(componentPath),
           meta: { ...route.meta, ...pathQuery }
         }
@@ -108,6 +109,7 @@ function generateNewRoutes(remoteRoutes) {
         addChildRoute = {
           path: route.path ? (route.path.startsWith('/') ? route.path : '/' + route.path) : '',
           name: route.name,
+          isDisabled: route.isDisabled,
           component: _import_(route.component),
           meta: { ...route.meta }
         }

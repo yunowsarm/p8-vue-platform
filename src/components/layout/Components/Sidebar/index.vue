@@ -50,6 +50,7 @@
                         </sidebar-menu-item>
                         <template v-else> -->
                     <el-menu-item :index="child.path"
+                                  :disabled="!!child.isDisabled"
                                   :key="child.name">
                       <el-tooltip placement="right"
                                   :disabled="child.meta.title.length < 8"
