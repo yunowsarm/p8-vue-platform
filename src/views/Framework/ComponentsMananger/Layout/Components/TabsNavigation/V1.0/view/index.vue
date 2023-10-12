@@ -44,6 +44,9 @@
   </list-layout>
 </template>
 <style lang="scss" scoped>
+::v-deep .el-tabs.el-tabs__header {
+  margin: 0;
+}
 .el-tabs.el-tabs--top,
 .el-tabs.el-tabs--bottom {
   height: 100% !important;
@@ -121,6 +124,7 @@
 // 默认四个方向
 ::v-deep .el-tabs.el-tabs--top > .el-tabs__header {
   border-bottom: 1px solid #e4e7ed;
+  margin: 0;
   .el-tabs__item.is-active {
     border-bottom: 2px solid #1890ff;
   }
@@ -146,6 +150,7 @@
 
 // 选项卡 四个方向
 ::v-deep .el-tabs--card > .el-tabs__header {
+  margin: 0;
   border-top: none;
   border-bottom: none;
 }
@@ -243,6 +248,7 @@
     padding: 0;
   }
   .el-tabs__header {
+    margin: 0;
     border-bottom: none;
     .el-tabs__item.is-active {
       border-color: #fff;
