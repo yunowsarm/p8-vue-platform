@@ -4,6 +4,7 @@
       <common-tabs class="custom-tabs"
                    type="border-card"
                    :active-tabs="activeTabs"
+                   @tab-click="tabsClick"
                    :tabs-data="tabs">
         <template #approval>
           <component ref="approveContent"
@@ -29,8 +30,8 @@
                      @selection-ids="selectionIdsByApprovalResult" />
         </template>
         <template #bpmn>
-          <bpm-view v-if="selectedApproval.processDefId != ''"
-                    :style="{ height: tabsHeight }"
+          <bpm-view v-if="selectedApproval.processDefId !== '' && activeTabs==='bpmn'"
+                    :style="{ height: tabsHeight, margin: '0px 0px 2px -333px !important;'}"
                     :process-obj="{
               processDefinitionId: selectedApproval.processDefId,
               processInstanceId: selectedApproval.processInstId
@@ -518,6 +519,9 @@ export default {
     this.taskId = this.selectedApproval.processTaskId
   },
   methods: {
+    tabsClick (val) {
+      this.activeTabs = val.name
+    },
     getIsWarnApprove (isWarnApprove) {
       this.isWarnApprove = isWarnApprove
     },

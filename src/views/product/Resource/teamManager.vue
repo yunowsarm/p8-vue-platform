@@ -23,11 +23,9 @@
           </div>
           <div class="left_bottom_content">
             <div class="role-con">
-              <el-button type="primary"
-                         plain
+              <el-button type="plan"
                          style="margin: 5px;width:90%;"
-                         @click="addRolesHandle"><i class="el-icon-plus"
-                   type="primary"></i>新建角色类别</el-button>
+                         @click="addRolesHandle"><i class="el-icon-plus"></i> 新建角色类别</el-button>
               <vue-perfect-scrollbar class="role-list">
                 <li style="padding-left: 26px;color:#323232;font-size:12px;"
                     :class="[{ 'active': rolesSelectedIndex === -1 }]"
@@ -161,7 +159,7 @@
           </div>
         </div>
         <div class="right-con">
-          <project-form-view :id="id"></project-form-view>
+          <project-form-view :id="id" ref="projectFormView"></project-form-view>
           <!-- <member-upload :files="namedFiles"
                            :view="!group_add_role"
                            @getFormComp="getMemberFormComp"></member-upload> -->
@@ -182,7 +180,7 @@
                      @click="submit">保 存
           </el-button>
           <el-button size="mini"
-                     v-if="!row.length"
+                     v-if="$route.name == 'ProjectInitiation'"
                      type="primary"
                      @click="saveAndRelease">发 布
           </el-button>
@@ -821,6 +819,10 @@ export default {
             item.roleId = selectRoleId
             item.userRoleId = userRoleId
             tempSelectData.push(item)
+          } else {
+            let index = this.tableData.findIndex(titem => titem.sysuserId === item.id)
+            this.tableData[index].departureTime = ''
+            this.tableData[index].entryTime = ''
           }
         })
         this.tableData.push(...tempSelectData)
@@ -1014,7 +1016,7 @@ export default {
                 projectTemp.id = projectItem.id && projectItem.id.length === 32 ? projectItem.id : '' // projectItem.id ? projectItem.id :
                 projectTemp.sysuserId = projectItem.sysuserId ? projectItem.sysuserId : ''
                 projectTemp.entryTime = projectItem.entryTime ? projectItem.entryTime : ''
-                projectTemp.departureTime = projectItem.departureTime ? projectItem.entryTime : ''
+                projectTemp.departureTime = projectItem.departureTime ? projectItem.departureTime : ''
                 temp[key].push(projectTemp)
               })
             } else {
@@ -1053,7 +1055,17 @@ export default {
     },
     // 提交审批
     commitSelectApproveUserBeforehand (fullParams) {
+      let formData = this.$refs.projectFormView.formData
       const that = this
+      if (this.row && this.row.length) {
+        fullParams.projectInfo = {
+          projectName: this.row[0].PROJECTNAME,
+          projectType: this.row[0].PROJECTTYPE,
+          modelCode: this.row[0].MODELCODE
+        }
+      } else {
+        fullParams.projectInfo = formData.projectInfo
+      }
       this.releaseMenuParams.beforehandParams = { ...fullParams }
       const rowIds = [this.id]
       this.releaseMenuParams.businessId = rowIds
@@ -1178,6 +1190,10 @@ export default {
   background-color: white;
   overflow-y: hidden;
   margin: 0 2px 0 0;
+  button {
+    border: 1px solid #1890ff;
+    color: #1890ff;
+  }
 
   .add-role {
     box-sizing: border-box;
@@ -1287,8 +1303,8 @@ export default {
     justify-content: space-between;
 
     button {
-      border: 1px solid $base-light-color;
-      color: $base-light-color;
+      border: 1px solid #1890ff;
+      color: #1890ff;
     }
   }
 

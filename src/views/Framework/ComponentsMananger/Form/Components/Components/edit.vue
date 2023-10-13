@@ -10,7 +10,7 @@
       :type="type"
       :init-config="initConfig"
       @setPageData="setPageData"
-      @submit="save"
+      @saveForm="save"
       @save="saveChange"
       @resetForm="resetForm"
       :custom-fn="customFn"
@@ -27,7 +27,7 @@
       :modify-res="modifyRes"
       :container-layout="modifyRes.containerLayout"
       @setPageData="setPageData"
-      @submit="save"
+      @saveForm="save"
       @save="saveChange"
       @resetForm="resetForm"
       :custom-fn="customFn"
@@ -435,6 +435,9 @@ export default {
     fieldsRecursive(fields, result) {
       if (Array.isArray(result)) {
         const index = result.findIndex((v) => fields[0].__config__.childrenTable === v.tableId)
+        if (index === -1) {
+          return []
+        }
         const newData = result[index].data
         let val = []
         const data = []
@@ -789,8 +792,12 @@ export default {
       if (confClone.__config__.variable && confClone.__config__.variable.startsWith('$')) {
         // 处理系统参数变量
         const paramArr = confClone.__config__.variable.trim().split('.')
+        if (paramArr[0] && paramArr[1]) {
+          this.sysParams[paramArr[0]][paramArr[1]] === undefined && console.error(`请检查,label:${confClone.__config__.label}；系统变量"${confClone.__config__.variable}"不存在!`)
+          this.sysParams[paramArr[0]][paramArr[1]] === '' && console.warning(`请检查,label:${confClone.__config__.label}；系统变量"${confClone.__config__.variable}"值为空!`)
+        }
         if (this.sysParams[paramArr[0]]) {
-          const defaultValue = this.sysParams[paramArr[0]][paramArr[1]]
+          const defaultValue = this.sysParams[paramArr[0]][paramArr[1]] || confClone.__config__.defaultValue
           confClone.__config__.defaultValue = defaultValue
         }
       } else if (confClone.__config__.variable && confClone.__config__.variable.startsWith('#')) {
