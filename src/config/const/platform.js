@@ -37,15 +37,15 @@ export default {
      *
      */
     theme: {
-      chalk: '#2196F3',
-      indigo: '#283593',
-      jade: '#26A69A',
-      lime: '#00C853',
-      spring: '#388E3C',
-      yellow: '#FFAB00',
-      belles: '#F06292',
-      autumn: '#EF6C00',
-      orange: '#DD2C00',
+      cyan: '#318B93',
+      gray: '#8C9976',
+      pink: '#F78298',
+      red: '#F54961',
+      blue: '#2095CD',
+      purple: '#686789',
+      green: '#2C5838',
+      brownneslv: '#A7343B',
+      blackish: '#1E524D',
       dark: '#212121'
     },
     systemThemeKey: `${PLATFORM_PREFIX_NAME}_SYSTEM_THEME`,
