@@ -272,7 +272,8 @@ export default {
       columns: [
         {
           title: '序号',
-          type: 'index'
+          type: 'index',
+          width: 80
         },
         {
           title: '变更人',
