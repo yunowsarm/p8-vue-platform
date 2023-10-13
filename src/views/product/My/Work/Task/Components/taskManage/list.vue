@@ -252,6 +252,9 @@ export default {
     }
   },
   mounted () {
+    if (this.getPlanInfo().status === '6070' || this.getPlanInfo().status === '6090') {
+      this.steps[2].btns = []
+    }
     this.initData()
   },
   created () {
