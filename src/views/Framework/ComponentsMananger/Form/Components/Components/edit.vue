@@ -10,7 +10,7 @@
       :type="type"
       :init-config="initConfig"
       @setPageData="setPageData"
-      @saveForm="save"
+      @saveForm="saveAction"
       @save="saveChange"
       @resetForm="resetForm"
       :custom-fn="customFn"
@@ -27,7 +27,7 @@
       :modify-res="modifyRes"
       :container-layout="modifyRes.containerLayout"
       @setPageData="setPageData"
-      @saveForm="save"
+      @saveForm="saveAction"
       @save="saveChange"
       @resetForm="resetForm"
       :custom-fn="customFn"
@@ -48,6 +48,7 @@ import _cloneDeep from 'lodash/cloneDeep'
 import { P8FormParser as Parser, P8FormParserView as ParserView } from 'p8-components-ui'
 import { selectTransform, selectGenerateTree } from '@/utils/common'
 import { generateTreeTwo } from '@/utils/generateTree'
+import { debounce } from 'throttle-debounce'
 const DEFAULT_FIELDS = ['ID', 'CREATE_BY', 'UPDATE_BY', 'CREATE_TIME', 'UPDATE_TIME', 'SECRET_LEVEL']
 const multiSelectedLayout = ['masterSlaveTable', 'multiSelected']
 export default {
@@ -107,12 +108,14 @@ export default {
       dynamicDataObj: {}, // 前置数据作为后置数据检索条件--动态数据集合
       dynamicParamObj: {}, // 动态参数集合
       customFn: '',
+      saveAction: '',
       pageData: Object.assign({}, this.sysParams),
       containerLayout: '' //  组件的layout
     }
   },
   async mounted() {
     this.init()
+    this.saveAction = debounce(500, this.save)
     console.log(this.propParam, 'propParampropParampropParam')
   },
   computed: {
