@@ -414,7 +414,7 @@ export default {
       frontToBackTitle: '前置',
       frontToBackVisible: false,
       treeData: [],
-      tableHeight: document.documentElement.clientHeight - 200 + 'px',
+      tableHeight: document.documentElement.clientHeight - 220 + 'px',
       projectLevel: null,
       visible: false,
       filterThirdMenu: '',
@@ -429,7 +429,9 @@ export default {
       statusName: 'managerStatus',
       searchData,
       decompositionVisible: false,
-      tableOtherParams: {},
+      tableOtherParams: {
+        status: ["6020"]
+      },
       allNum: {
         taskNum: '0',
         planNum: '0',

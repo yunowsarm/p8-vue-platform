@@ -1,24 +1,22 @@
 /* eslint-disable vue/no-unused-components */
 <template>
-  <common-tabs :tabsData="tabsData"
-               height="100%"
-               :activeTabs="activeTabs"
-               @tab-click="onSelect">
-    <!-- 已发布 -->
-    <template #normal>
+  <el-tabs height="100%"
+           v-model="activeTabs"
+           @tab-click="onSelect">
+    <el-tab-pane label="已发布"
+                 name="normal">
       <normal v-if="activeTabs === 'normal'"
               :isthematicPlan='false'></normal>
-    </template>
-    <!-- 统筹中 -->
-    <template #overallPlanning>
+    </el-tab-pane>
+    <el-tab-pane label="统筹中"
+                 name="overallPlanning">
       <overall-planning v-if="activeTabs === 'overallPlanning'"
                         :isthematicPlan='false'></overall-planning>
-    </template>
-  </common-tabs>
+    </el-tab-pane>
+  </el-tabs>
 </template>
 
 <script>
-import { P8Tabs as CommonTabs } from 'p8-components-ui'
 import normal from './Components/normal'
 import overallPlanning from './Components/overallPlanning'
 
@@ -26,24 +24,12 @@ export default {
   name: 'ProductionPlan',
   components: {
     normal,
-    overallPlanning,
-    CommonTabs
+    overallPlanning
 
   },
   data () {
     return {
-      activeTabs: 'normal',
-      tabsData: [
-        {
-          label: '已发布',
-          name: 'normal',
-          value: 0
-        },
-        {
-          label: '统筹中',
-          name: 'overallPlanning'
-        }
-      ]
+      activeTabs: 'normal'
     }
   },
   mounted () {
@@ -57,7 +43,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#elTabsDiv {
-  height: 100%;
+.main .scroll-area .main-router {
+  height: 99%;
 }
 </style>
