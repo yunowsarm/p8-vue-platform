@@ -565,6 +565,7 @@ export default {
       let that = this
       Object.keys(that.tableOtherParams).forEach(function (key) { return (that.tableOtherParams[key] = null) })
       this.tableOtherParams.activityClassifyId = this.layersParams
+      this.tableOtherParams.status = ["6020"]
     },
     requestedTableData (tableData) {
       if (Object.keys(this.planInfo).length) {
