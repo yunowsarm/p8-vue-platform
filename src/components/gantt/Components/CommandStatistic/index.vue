@@ -58,10 +58,21 @@ export default {
       default: ''
     }
   },
+  watch: {
+    planInfoId(val) {
+      if (val) {
+      this.getDataStatus()
+      this.getDataMonitor()
+      this.getDataTaskType()
+    }
+    }
+  },
   created() {
-    this.getDataStatus()
-    this.getDataMonitor()
-    this.getDataTaskType()
+    if (this.planInfoId) {
+      this.getDataStatus()
+      this.getDataMonitor()
+      this.getDataTaskType()
+    }
   },
   methods: {
     getDataStatus() {
@@ -110,7 +121,7 @@ export default {
                   show: true,
                   position: 'center',
                   formatter: `${this.totalNum}\n任务总数`,
-                  fontSize: '13'
+                  fontSize: '10'
                 },
                 labelLine: {
                   show: false
@@ -168,7 +179,7 @@ export default {
 .box {
   display: flex;
   align-items: center;
-  height: 140px;
+  height: 110px;
   #monitorChart {
     height: 100%;
     width: 250px;
