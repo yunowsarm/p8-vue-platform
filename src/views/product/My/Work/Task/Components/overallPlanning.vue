@@ -201,7 +201,7 @@ import moment from 'moment'
 import Vue from 'vue'
 
 export default {
-  name: 'Normal',
+  name: 'OverallPlanning',
   components: {
     NormalLayout,
     CommonDrawer,
@@ -480,7 +480,6 @@ export default {
   mounted () {
     this.currentRouterPath = this.$route.path
     this.getAllStatusOptions()
-    // this.getAllNum()
     let _this = this
     this.$bus.$on('refresh', function () {
       Vue.nextTick(function () {
@@ -592,7 +591,7 @@ export default {
         planInfoStatus: record.executeState,
         currentRoute: this.$route.path,
         createPage: 'decompose',
-        currentPage: 'normal',
+        currentPage: 'OverallPlanning',
         getProjectLevel: record.level
       }
       this.projectLevel = record.level
@@ -602,16 +601,6 @@ export default {
       let _this = this
       getTaskStatusInfo({ currentStatus: 'all' }).then(data => {
         _this.allStatus = data
-      })
-    },
-    getAllNum () {
-      let _this = this
-      _this.$api['taskManager.getAllNum']({ taskTabType: 'normal', specialPlan: this.tableOtherParams.specialPlan }).then(function (res) {
-        if (res) {
-          _this.allNum.taskNum = res.taskNum
-          _this.allNum.planNum = res.planNum
-          _this.allNum.projectNum = res.projectNum
-        }
       })
     },
     monitorpointIconHandle (row) {
