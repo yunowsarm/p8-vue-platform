@@ -121,7 +121,13 @@ export default {
           slotName: 'cron',
           fieldName: 'cron',
           defaultValue: '',
-          colLayout: 'singleCol'
+          colLayout: 'singleCol',
+          rules: [
+            {
+              required: true,
+              message: '该项为必填项'
+            }
+          ]
         },
         {
           type: 'textarea',
