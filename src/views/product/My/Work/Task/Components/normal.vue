@@ -429,9 +429,7 @@ export default {
       statusName: 'managerStatus',
       searchData,
       decompositionVisible: false,
-      tableOtherParams: {
-        status: ["6020"]
-      },
+      tableOtherParams: {},
       allNum: {
         taskNum: '0',
         planNum: '0',
@@ -543,6 +541,7 @@ export default {
     async handleMenuBeforClose (done) {
       this.$router.push({ path: this.currentRouterPath })
       this.visible = false
+      this.$refs.table.searchData()
     },
     closeDrawer () {
       this.$refs.table.searchData()
@@ -565,7 +564,6 @@ export default {
       let that = this
       Object.keys(that.tableOtherParams).forEach(function (key) { return (that.tableOtherParams[key] = null) })
       this.tableOtherParams.activityClassifyId = this.layersParams
-      this.tableOtherParams.status = ["6020"]
     },
     requestedTableData (tableData) {
       if (Object.keys(this.planInfo).length) {
