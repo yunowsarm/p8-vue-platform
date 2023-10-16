@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%">
     <div class="couerDivClass" id="couerDiv">
-      <div class="top" :style="{ height: ganttButtonMode === 'double' ? '72px' : '58px' }">
+      <div class="top" :style="{ height: commandButtonBarHeight }">
         <command-button-bar
           :panel-data="btnData"
           :selected-tasks="selectedTasks"
@@ -12,7 +12,7 @@
           @change-command-button="changeCommandButton"
         ></command-button-bar>
       </div>
-      <div class="bottom" :class="{ expandBottom: commandButtonBarHeight === '58px' }">
+      <div class="bottom" :class="expandBottom">
         <plan-gantt
           :plan-info-id="planInfoId"
           :whole-describe-id="wholeDescribeId"
@@ -71,7 +71,6 @@
   overflow: hidden;
 }
 .bottom {
-  height: calc(100% - 74px);
   position: relative;
   border: 1px solid $base-line-color;
   // border-bottom-left-radius: 6px;
@@ -80,8 +79,17 @@
   background: $base-white-color;
   overflow: hidden;
 }
-.bottom.expandBottom {
+.bottom.single {
   height: calc(100% - 60px);
+}
+.bottom.double {
+  height: calc(100% - 74px);
+}
+.bottom.tabs {
+  height: calc(100% - 148px);
+}
+.bottom.hiddenTabs {
+  height: calc(100% - 42px);
 }
 </style>
 
@@ -92,7 +100,7 @@ import { Drawer } from 'p8-components-ui'
 // import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/commandButtonBarData'
 import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataDoubleRow'
 import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataSingleRow'
-import { commandButtonBarData } from '@/assets/commonJS/ganttJS/commandButtonBarData'
+import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/commandButtonBarData'
 import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
 import PlanAttribute from './Components/planAttribute'
 import { deepClone } from '@/utils/common'
@@ -122,7 +130,8 @@ export default {
       ganttName: '',
       taskStatus: {},
       status: '',
-      commandButtonBarHeight: this.ganttButtonMode === 'double' ? '72px' : '58px'
+      advance: true,
+      commandButtonBarHeight: this.ganttButtonMode === 'tabs' ? '145px' : this.ganttButtonMode === 'double' ? '72px' : '58px'
     }
   },
   props: {
@@ -136,10 +145,67 @@ export default {
   watch: {
     ganttButtonMode: {
       handler(val) {
-        this.commandButtonBarHeight = val === 'double' ? '72px' : '58px'
+        if (val == 'tabs') {
+          this.commandButtonBarHeight = '145px'
+        }
+        if (val == 'double') {
+          this.commandButtonBarHeight = '72px'
+        }
+        if (val == 'single') {
+          this.commandButtonBarHeight = '58px'
+        }
       },
       immediate: true
     }
+  },
+  computed: {
+    btnData() {
+      if (this.$route.path === '/TaskDecomposition') {
+        const NewCommandButtonBarDataTabsRow = deepClone(CommandButtonBarData)
+        const tabsRow = NewCommandButtonBarDataTabsRow.map((item) => {
+          const arr = item.groups.filter((ele) => {
+            return ele.groupName !== '统计信息' && ele.groupName !== '版本编辑' && ele.groupName !== '版本管理'
+          })
+          item.groups = arr
+          return item
+        })
+        const NewCommandButtonBarDataDoubleRow = deepClone(CommandButtonBarDataDoubleRow)
+        const doubleRow = NewCommandButtonBarDataDoubleRow.map((item) => {
+          const arr = item.groups.filter((ele) => {
+            return ele.groupName !== '统计信息' && ele.groupName !== '版本编辑' && ele.groupName !== '版本管理'
+          })
+          item.groups = arr
+          return item
+        })
+        const NewCommandButtonBarDataSingleRow = deepClone(CommandButtonBarDataSingleRow)
+        const singleRow = NewCommandButtonBarDataSingleRow.map((item) => {
+          const arr = item.groups.filter((ele) => {
+            return ele.groupName !== '统计信息' && ele.groupName !== '版本编辑' && ele.groupName !== '版本管理'
+          })
+          item.groups = arr
+          return item
+        })
+        return this.ganttButtonMode === 'tabs' ? tabsRow : this.ganttButtonMode === 'double' ? doubleRow : singleRow
+      } else {
+        return this.ganttButtonMode === 'tabs' ? CommandButtonBarData : this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
+      }
+    },
+    expandBottom() {
+      if (this.ganttButtonMode == 'tabs' && this.advance) {
+        return 'tabs'
+      }
+      if (this.ganttButtonMode == 'tabs' && !this.advance) {
+        return 'hiddenTabs'
+      }
+      if (this.ganttButtonMode == 'double') {
+        return 'double'
+      }
+      if (this.ganttButtonMode == 'single') {
+        return 'single'
+      }
+      return ''
+    },
+    ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
   },
   components: {
     'el-drawer': Drawer,
@@ -170,32 +236,6 @@ export default {
       this.planEndDateArray = this.thirdMenuParam.planEndDateArray || []
     }
   },
-  computed: {
-    btnData() {
-      if (this.$route.path === '/TaskDecomposition') {
-        const NewCommandButtonBarDataDoubleRow = deepClone(CommandButtonBarDataDoubleRow)
-        const doubleRow = NewCommandButtonBarDataDoubleRow.map((item) => {
-          const arr = item.groups.filter((ele) => {
-            return ele.groupName !== '统计信息' && ele.groupName !== '版本编辑' && ele.groupName !== '版本管理'
-          })
-          item.groups = arr
-          return item
-        })
-        const NewCommandButtonBarDataSingleRow = deepClone(CommandButtonBarDataSingleRow)
-        const singleRow = NewCommandButtonBarDataSingleRow.map((item) => {
-          const arr = item.groups.filter((ele) => {
-            return ele.groupName !== '统计信息' && ele.groupName !== '版本编辑' && ele.groupName !== '版本管理'
-          })
-          item.groups = arr
-          return item
-        })
-        return this.ganttButtonMode === 'double' ? doubleRow : singleRow
-      } else {
-        return this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
-      }
-    },
-    ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
-  },
   methods: {
     selectTask(selectDatas, ganttName) {
       this.selectedTasks = selectDatas
@@ -219,10 +259,11 @@ export default {
       this.detailTitle = ''
     },
     changeCommandButton(advance) {
+      this.advance = advance
       if (advance) {
         this.commandButtonBarHeight = '152px'
       } else {
-        this.commandButtonBarHeight = '58px'
+        this.commandButtonBarHeight = '40px'
       }
     }
   }
