@@ -17,6 +17,7 @@
     box-sizing: border-box;
     // border-bottom: 1px solid $base-line-color;
     background: $layout-header-background;
+    padding-left: 10px;
 
     // .el-button--primary {
     //   background-color: $base-light-color;
@@ -92,6 +93,7 @@
       float: left;
       overflow: hidden;
       box-sizing: border-box;
+      padding-left: 10px;
       // padding: 0 $layout-padding;
       .scroll-area {
         width: 100%;
@@ -101,3 +103,4 @@
     }
   }
 }
+
