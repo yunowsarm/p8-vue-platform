@@ -22,7 +22,7 @@
               @change="inputChange"
               size="small"
             ></el-input>
-            <el-button style="display: inlline-block; margin-left: 15px; position: absolute; top: 12px; right: 165px" @click="search" type="primary" size="mini">搜索</el-button>
+            <el-button style="margin-left: 15px" @click="search" type="primary" size="mini">搜索</el-button>
           </div>
           <i
             class="el-icon-d-arrow-right"
@@ -71,12 +71,8 @@
 <style lang="scss" scoped>
 .date-range-con,
 .input-con {
-  float: left;
-  height: 30px;
-  width: 50%;
-}
-.input-con {
-  margin-left: 10px;
+  display: flex;
+  justify-content: flex-end;
 }
 .search-btn {
   float: right;
