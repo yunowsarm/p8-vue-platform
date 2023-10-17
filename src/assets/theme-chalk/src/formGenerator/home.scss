@@ -63,7 +63,7 @@ $lighterBlue: #409EFF;
   overflow: hidden;
 }
 .center-scrollbar {
-  height: calc(100vh - 42px);
+  height: calc(100vh - 90px);
   overflow: hidden;
   border-left: 1px solid #f1e8e8;
   border-right: 1px solid #f1e8e8;
@@ -74,6 +74,10 @@ $lighterBlue: #409EFF;
   width: auto;
   margin: 0 350px 0 260px;
   box-sizing: border-box;
+  .el-divider--horizontal {
+    margin: 0;
+    margin-bottom: 8px;
+  }
 }
 .empty-info{
   position: absolute;
@@ -131,11 +135,11 @@ $lighterBlue: #409EFF;
 }
 
 .center-board-row {
-  padding: 12px 12px 15px 12px;
+  padding: 12px;
   box-sizing: border-box;
   & > .el-form {
-    // 69 = 12+15+42
-    height: calc(100vh - 69px);
+    // 69 = 12+15+42+42
+    height: calc(100vh - 120px);
   }
 }
 .drawing-board {

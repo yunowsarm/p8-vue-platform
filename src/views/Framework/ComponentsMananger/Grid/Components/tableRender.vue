@@ -157,6 +157,7 @@
                        :record="{ desformCode: codeForm }"
                        :prop-param="propParam"
                        :permission-vo="permissionVo"
+                       @close="formClose"
                        @save-success="formClose"></form-render>
         </template>
       </common-drawer>

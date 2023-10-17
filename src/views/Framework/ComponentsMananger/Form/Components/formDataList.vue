@@ -43,9 +43,7 @@
                      :drawer-config="drawerConfig"
                      @close="formEditClose">
         <template #drawer>
-          <form-data-edit @save-success="saveCallback"
-                          :record="record"
-                          :data-view-id="dataViewId"></form-data-edit>
+          <form-data-edit @save-success="saveCallback" @close='formEditClose' :record="record" :data-view-id="dataViewId"></form-data-edit>
         </template>
       </common-drawer>
     </template>
