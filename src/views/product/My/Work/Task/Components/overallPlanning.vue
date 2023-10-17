@@ -201,7 +201,7 @@ import moment from 'moment'
 import Vue from 'vue'
 
 export default {
-  name: 'Normal',
+  name: 'OverallPlanning',
   components: {
     NormalLayout,
     CommonDrawer,
@@ -432,9 +432,7 @@ export default {
       statusName: 'managerStatus',
       searchData,
       decompositionVisible: false,
-      tableOtherParams: {
-        status: ["6020"]
-      },
+      tableOtherParams: {},
       allNum: {
         taskNum: '0',
         planNum: '0',
@@ -482,7 +480,6 @@ export default {
   mounted () {
     this.currentRouterPath = this.$route.path
     this.getAllStatusOptions()
-    // this.getAllNum()
     let _this = this
     this.$bus.$on('refresh', function () {
       Vue.nextTick(function () {
@@ -545,6 +542,7 @@ export default {
     async handleMenuBeforClose (done) {
       this.visible = false
       this.$router.push({ path: this.currentRouterPath })
+      this.$refs.table.searchData()
     },
     closeDrawer () {
       this.$refs.table.searchData()
@@ -567,7 +565,6 @@ export default {
       let that = this
       Object.keys(that.tableOtherParams).forEach(function (key) { return (that.tableOtherParams[key] = null) })
       this.tableOtherParams.activityClassifyId = this.layersParams
-      this.tableOtherParams.status = ["6020"]
     },
     requestedTableData (tableData) {
       if (Object.keys(this.planInfo).length) {
@@ -594,7 +591,7 @@ export default {
         planInfoStatus: record.executeState,
         currentRoute: this.$route.path,
         createPage: 'decompose',
-        currentPage: 'normal',
+        currentPage: 'OverallPlanning',
         getProjectLevel: record.level
       }
       this.projectLevel = record.level
@@ -604,16 +601,6 @@ export default {
       let _this = this
       getTaskStatusInfo({ currentStatus: 'all' }).then(data => {
         _this.allStatus = data
-      })
-    },
-    getAllNum () {
-      let _this = this
-      _this.$api['taskManager.getAllNum']({ taskTabType: 'normal', specialPlan: this.tableOtherParams.specialPlan }).then(function (res) {
-        if (res) {
-          _this.allNum.taskNum = res.taskNum
-          _this.allNum.planNum = res.planNum
-          _this.allNum.projectNum = res.projectNum
-        }
       })
     },
     monitorpointIconHandle (row) {

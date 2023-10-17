@@ -1514,9 +1514,6 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      if (checkSwitchType(tasks)) {
-        return true
-      }
       const vueThis = store.getters.vueThis
       if (vueThis.viewType && vueThis.viewType !== 'grid') {
         return false

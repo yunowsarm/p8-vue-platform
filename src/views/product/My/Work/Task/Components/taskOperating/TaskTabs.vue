@@ -83,11 +83,6 @@ export default {
       this.tabsActiveName = 'progess'
       taskTabs = this.taskTabsProgess
     }
-    // 统筹中
-    if (this.getPlanInfo().managerStatus === '6402') {
-      this.tabsActiveName = 'workCoordination'
-      taskTabs = this.taskTabsWork
-    }
     // 未开始
     if (this.getPlanInfo().status === '6020') {
       this.tabsActiveName = 'progess'
@@ -103,6 +98,11 @@ export default {
       this.tabsActiveName = 'progess'
       this.progessType = 'progessTable'
       taskTabs = [...this.taskTabsProgess, ...this.taskTabsUnfinished]
+    }
+    // 统筹中
+    if (this.getPlanInfo().managerStatus === '6402') {
+      this.tabsActiveName = 'workCoordination'
+      taskTabs = this.taskTabsWork
     }
     this.$nextTick(() => {
       this.taskTabs = taskTabs
