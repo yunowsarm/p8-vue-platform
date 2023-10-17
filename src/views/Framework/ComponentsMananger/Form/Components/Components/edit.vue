@@ -13,6 +13,7 @@
       @saveForm="saveAction"
       @save="saveChange"
       @resetForm="resetForm"
+      @closeForm="closeForm"
       :custom-fn="customFn"
       :container-layout="containerLayout"
       is-save="new"
@@ -30,6 +31,7 @@
       @saveForm="saveAction"
       @save="saveChange"
       @resetForm="resetForm"
+      @closeForm="closeForm"
       :custom-fn="customFn"
       is-save="modify"
     />
@@ -750,6 +752,9 @@ export default {
         this.init('reset')
       }
     },
+    closeForm() {
+      this.$emit('close')
+    },
     save(data, childData, arr, logdata) {
       if (this.dataId) {
         data.data.ID = this.dataId
@@ -834,9 +839,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.parser-container {
+.parser-container ::v-deep {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+  .el-form-item--mini {
+    margin-bottom: 18px;
+  }
 }
 </style>
