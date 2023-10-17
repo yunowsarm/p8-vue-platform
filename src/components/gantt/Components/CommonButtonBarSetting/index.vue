@@ -83,6 +83,10 @@ export default {
     return {
       radioOptions: [
         {
+          label: '标签页',
+          value: 'tabs'
+        },
+        {
           label: '多行',
           value: 'double'
         },
