@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%">
     <div class="couerDivClass" id="couerDiv">
-      <div class="top" :style="{ height: ganttButtonMode === 'double' ? '72px' : '58px' }">
+      <div class="top" :style="{ height: commandButtonBarHeight }">
         <command-button-bar
           :panel-data="thirdMenuParam.specialPlan && thirdMenuParam.specialPlan.includes('SPECIAL_PLAN') ? thematicBarData : barData"
           :selected-tasks="selectedTasks"
@@ -12,7 +12,7 @@
           @change-command-button="changeCommandButton"
         ></command-button-bar>
       </div>
-      <div class="bottom" :class="{ expandBottom: commandButtonBarHeight === '58px' }">
+      <div class="bottom" :class="expandBottom">
         <plan-gantt
           :plan-info-id="planInfoId"
           :whole-describe-id="wholeDescribeId"
@@ -71,7 +71,6 @@
   overflow: hidden;
 }
 .bottom {
-  height: calc(100% - 74px);
   position: relative;
   border: 1px solid $base-line-color;
   // border-bottom-left-radius: 6px;
@@ -80,8 +79,17 @@
   background: $base-white-color;
   overflow: hidden;
 }
-.bottom.expandBottom {
+.bottom.single {
   height: calc(100% - 60px);
+}
+.bottom.double {
+  height: calc(100% - 74px);
+}
+.bottom.tabs {
+  height: calc(100% - 148px);
+}
+.bottom.hiddenTabs {
+  height: calc(100% - 42px);
 }
 </style>
 
@@ -92,6 +100,7 @@ import { Drawer } from 'p8-components-ui'
 // import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/commandButtonBarData'
 // import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/PlanMonitoringGantt/commandButtonBarDataDoubleRow'
 // import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/PlanMonitoringGantt/commandButtonBarDataSingleRow'
+import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/PlanMonitoringGantt/commandButtonBarData'
 import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/PlanMonitoringGantt/commandButtonBarDataDoubleRow'
 import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/PlanMonitoringGantt/commandButtonBarDataSingleRow'
 import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
@@ -124,7 +133,8 @@ export default {
       thematicBarData: this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow,
       taskStatus: {},
       status: '',
-      commandButtonBarHeight: this.ganttButtonMode === 'double' ? '72px' : '58px'
+      advance: true,
+      commandButtonBarHeight: this.ganttButtonMode === 'tabs' ? '145px' : this.ganttButtonMode === 'double' ? '72px' : '58px'
     }
   },
   props: {
@@ -138,9 +148,17 @@ export default {
   watch: {
     ganttButtonMode: {
       handler(val) {
-        this.barData = val === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
+        this.barData = val === 'tabs' ? CommandButtonBarData : val === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
         this.thematicBarData = val === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
-        this.commandButtonBarHeight = val === 'double' ? '72px' : '58px'
+        if (val == 'tabs') {
+          this.commandButtonBarHeight = '145px'
+        }
+        if (val == 'double') {
+          this.commandButtonBarHeight = '72px'
+        }
+        if (val == 'single') {
+          this.commandButtonBarHeight = '58px'
+        }
       },
       immediate: true
     }
@@ -164,6 +182,21 @@ export default {
     this.planEndDateArray = this.thirdMenuParam.planEndDateArray || []
   },
   computed: {
+    expandBottom() {
+      if (this.ganttButtonMode == 'tabs' && this.advance) {
+        return 'tabs'
+      }
+      if (this.ganttButtonMode == 'tabs' && !this.advance) {
+        return 'hiddenTabs'
+      }
+      if (this.ganttButtonMode == 'double') {
+        return 'double'
+      }
+      if (this.ganttButtonMode == 'single') {
+        return 'single'
+      }
+      return ''
+    },
     ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
   },
   methods: {
@@ -190,10 +223,11 @@ export default {
       this.detailTitle = ''
     },
     changeCommandButton(advance) {
+      this.advance = advance
       if (advance) {
         this.commandButtonBarHeight = '152px'
       } else {
-        this.commandButtonBarHeight = '58px'
+        this.commandButtonBarHeight = '40px'
       }
     }
   }
