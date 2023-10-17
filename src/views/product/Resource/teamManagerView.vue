@@ -32,7 +32,7 @@
                     :key="item.id"
                     @click="rolesHandle(item, index)">
                   <el-tooltip v-if="item.roleType === 'fixed'"
-                              :content="item.name"
+                              :content="item.klTeamsRoleClassifyName"
                               placement="bottom">
                     <i class="el-icon-s-custom"
                        style="cursor:pointer;"></i>

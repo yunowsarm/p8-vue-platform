@@ -31,7 +31,7 @@
                   v-for="(item, index) in rolesData"
                   :key="item.id"
                   @click="rolesHandle(item, index)">
-                  <el-tooltip v-if="item.roleType === 'fixed'" :content="item.name" placement="bottom">
+                  <el-tooltip v-if="item.roleType === 'fixed'" :content="item.klTeamsRoleClassifyName" placement="bottom">
                     <i class="el-icon-s-custom" style="cursor:pointer;"></i>
                   </el-tooltip>
                   <i v-else class="el-icon-s-custom"></i>
