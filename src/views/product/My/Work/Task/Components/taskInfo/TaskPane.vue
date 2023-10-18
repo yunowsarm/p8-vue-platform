@@ -165,7 +165,7 @@ export default {
       let currStatus = allStatus.filter(item => item.value === value)
 
       if (currStatus && currStatus.length) {
-        return `<span class="pane-status"><span style="background-color: ${currStatus[0].color}; width: 6px;height: 6px;border-radius: 10px;margin-right: 6px;" class="pane-status-cir"></span>${currStatus[0].label}</span>`
+        return `<span class="pane-status"><span style="background-color: ${currStatus[0].color}; width: 6px;height: 6px;border-radius: 10px;margin-right: 6px;" class="pane-status-cir"></span>${this.taskInfo.statusDisplay}</span>`
       }
     },
     durationDayHandle (currStatus, systemCurrentDate, planEndDate, realEndDate) {
