@@ -154,13 +154,21 @@
     }
   }
 }
-
+.normal-center {
+  position: relative;
+}
 .flowTabs {
   width:120px !important;
   display: inline-block;
   vertical-align: top;
   .el-tabs__item.is-active{
     color: #1890ff;
+  }
+  .el-tabs__nav-wrap.is-left::after {
+    width: 0;
+  }
+  .el-tabs__nav{
+    border-right: 2px solid #E4E7ED;
   }
   .el-tabs__active-bar{
     background: #1890ff;
@@ -184,7 +192,7 @@
   height: 100%;
   display: inline-block;
   vertical-align: top;
-  position: relative;
+  // position: relative;
 }
 </style>
 <script>
