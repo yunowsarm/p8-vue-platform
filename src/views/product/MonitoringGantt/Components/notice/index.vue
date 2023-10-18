@@ -1,8 +1,24 @@
 <template>
   <div class="form">
-    <P8Form ref="form" :comp="comp" label-width="120px" :data-source="dataSource" :api="saveApi" @saved="saved" :form="formData">
+    <P8Form
+      ref="form"
+      :comp="comp"
+      label-width="120px"
+      :existDefaultBtn="false"
+      :existCustomBtn='true'
+      :data-source="dataSource"
+      :api="saveApi"
+      @saved="saved"
+      :form="formData">
       <template #message>
         <quill-editor class="quill_editor" v-model="formData.content" ref="myQuillEditor" :options="editorOption"> </quill-editor>
+      </template>
+      <template #customBtn>
+        <el-button size="mini"
+                   @click="cancel">取 消</el-button>
+        <el-button type="primary"
+                   size="mini"
+                   @click="handleSubmit">确 定</el-button>
       </template>
     </P8Form>
   </div>
@@ -84,6 +100,12 @@ export default {
       if (params) {
         this.$emit('close')
       }
+    },
+    handleSubmit(e) {
+      this.$refs.form.handleSubmit(e)
+    },
+    cancel() {
+      this.$emit('close')
     }
   }
 }
