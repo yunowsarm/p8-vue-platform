@@ -162,12 +162,8 @@ export default {
     btnData() {
       if (this.$route.path === '/TaskDecomposition') {
         const NewCommandButtonBarDataTabsRow = deepClone(CommandButtonBarData)
-        const tabsRow = NewCommandButtonBarDataTabsRow.map((item) => {
-          const arr = item.groups.filter((ele) => {
-            return ele.groupName !== '统计信息' && ele.groupName !== '版本编辑' && ele.groupName !== '版本管理'
-          })
-          item.groups = arr
-          return item
+        const tabsRow = NewCommandButtonBarDataTabsRow.filter((item) => {
+          return item.panelName !== '统计信息' && item.panelName !== '版本'
         })
         const NewCommandButtonBarDataDoubleRow = deepClone(CommandButtonBarDataDoubleRow)
         const doubleRow = NewCommandButtonBarDataDoubleRow.map((item) => {
