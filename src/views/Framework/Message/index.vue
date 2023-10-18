@@ -25,6 +25,8 @@
     <template #center>
       <message-list :search-params="searchParams"
                     @select="selectMessage"
+                    @refreshCount="userCatalogCount"
+                    @toggleStatus="toggleStatus"
                     :removed-msg="deletedMsg"></message-list>
     </template>
     <template #right>
@@ -78,9 +80,9 @@ export default {
         right: {
           xs: 8,
           sm: 10,
-          md: 12,
-          lg: 12,
-          xl: 12
+          md: 13,
+          lg: 13,
+          xl: 13
         }
       },
       searchConfig: [
