@@ -12,11 +12,11 @@
         <template #1501>
           <div class="listContainer" v-if="activeTabs == '1501'">
             <div class="messageHeader">
-              <span class="selectAll" @click="selectAll">{{flag ? '全选' : '取消全选'}}</span>
+              <span @click="selectAll" style="cursor: pointer;">{{flag ? '全选' : '取消全选'}}</span>
               <span class="other">
                 <i class="el-icon-refresh iconColor" title="重载" @click="refresh"></i>
-                <i class="p8 icon-plan-examine iconColor" title="已读" @click="getIdsSendApi('标记为已读','userMessage.toggleStatus')"></i>
-                <i class="p8 icon-message iconColor" title="未读" @click="getIdsSendApi('标记为未读','')"></i>
+                <i class="p8 icon-plan-examine iconColor" title="已读" @click="getIdsSendApi('标记为已读','userMessage.toggleStatus','1505')"></i>
+                <i class="p8 icon-message iconColor" title="未读" @click="getIdsSendApi('标记为未读','userMessage.toggleStatus','1501')"></i>
                 <i class="p8 icon-delete iconColor" title="删除" @click="getIdsSendApi('删除','userMessage.delete')"></i>
               </span>
             </div>
@@ -68,11 +68,11 @@
         <template #1505>
           <div class="listContainer" v-if="activeTabs == '1505'">
             <div class="messageHeader">
-              <span class="selectAll" @click="selectAll">{{flag ? '全选' : '取消全选'}}</span>
+              <span @click="selectAll">{{flag ? '全选' : '取消全选'}}</span>
               <span class="other">
                 <i class="el-icon-refresh iconColor" title="重载" @click="refresh"></i>
-                <i class="p8 icon-plan-examine iconColor" title="已读" @click="getIdsSendApi('标记为已读','userMessage.toggleStatus')"></i>
-                <i class="p8 icon-message iconColor" title="未读" @click="getIdsSendApi('标记为未读','')"></i>
+                <i class="p8 icon-plan-examine iconColor" title="已读" @click="getIdsSendApi('标记为已读','userMessage.toggleStatus','1505')"></i>
+                <i class="p8 icon-message iconColor" title="未读" @click="getIdsSendApi('标记为未读','userMessage.toggleStatus','1501')"></i>
                 <i class="p8 icon-delete iconColor" title="删除" @click="getIdsSendApi('删除','userMessage.delete')"></i>
               </span>
             </div>
@@ -92,7 +92,7 @@
                 <span>
                   <el-row type="flex" style="text-align: left" class="overHiding">
                     <el-col :span="16">
-                      <span style="display:inline-block;line-height: 68px;width:15px;"><el-checkbox @click.native="stopDefault($event)"></el-checkbox></span>
+                      <span style="display:inline-block;line-height: 68px;width:15px;"><el-checkbox @click.native="stopDefault($event)" v-model="item.ischeck"></el-checkbox></span>
                       <span class="left-span">
                         <i class="p8" :class="statusIcon(item.msgStatus)"></i>
                       </span>
@@ -124,11 +124,11 @@
         <template #0>
           <div class="listContainer" v-if="activeTabs == '0'">
             <div class="messageHeader">
-              <span class="selectAll" @click="selectAll">{{flag ? '全选' : '取消全选'}}</span>
+              <span @click="selectAll">{{flag ? '全选' : '取消全选'}}</span>
               <span class="other">
                 <i class="el-icon-refresh iconColor" title="重载" @click="refresh"></i>
-                <i class="p8 icon-plan-examine iconColor" title="已读" @click="getIdsSendApi('标记为已读','userMessage.toggleStatus')"></i>
-                <i class="p8 icon-message iconColor" title="未读" @click="getIdsSendApi('标记为未读','')"></i>
+                <i class="p8 icon-plan-examine iconColor" title="已读" @click="getIdsSendApi('标记为已读','userMessage.toggleStatus','1505')"></i>
+                <i class="p8 icon-message iconColor" title="未读" @click="getIdsSendApi('标记为未读','userMessage.toggleStatus','1501')"></i>
                 <i class="p8 icon-delete iconColor" title="删除" @click="getIdsSendApi('删除','userMessage.delete')"></i>
               </span>
             </div>
@@ -148,7 +148,7 @@
                 <span>
                   <el-row type="flex" style="text-align: left" class="overHiding">
                     <el-col :span="16">
-                      <span style="display:inline-block;line-height: 68px;width:15px;"><el-checkbox @click.native="stopDefault($event)"></el-checkbox></span>
+                      <span style="display:inline-block;line-height: 68px;width:15px;"><el-checkbox @click.native="stopDefault($event)" v-model="item.ischeck"></el-checkbox></span>
                       <span class="left-span">
                         <i class="p8" :class="statusIcon(item.msgStatus)"></i>
                       </span>
@@ -253,12 +253,18 @@ export default {
     tabClick(val) {
       this.flag = true
       this.mergeParams.msgStatus = val.name
+      if (val.name == '0') {
+        this.mergeParams.msgStatus = ''
+      }
       this.activeTabs = val.name
     },
     triggerSelect(item, index) {
+      if (index && index == this.currentIndex) {
+        return
+      }
       this.currentIndex = index
       this.$emit('select', item, index)
-      this.$emit('toggleStatus', item.id)
+      this.$emit('toggleStatus', item.id, '1505')
     },
     saveNotice() {
       this.$api['PersonalProcessApproval.saveNoticeMsg']({ id: null }).then((res) => {})
@@ -283,72 +289,33 @@ export default {
       this.flag = true
       this.timeKey = new Date().getTime()
     },
-    // read () {
-    //   let list = this.getIdsSendApi()
-    //   if (list) {
-    //     let that = this
-    //     this.$confirm('是否要将选中的消息未读？', '提示', {
-    //       confirmButtonText: '确定',
-    //       cancelButtonText: '取消',
-    //       type: 'warning'
-    //     }).then(() => {
-    //       that.$api['userMessage.toggleStatus']({ idList: list }).then((res) => {
-    //         that.$store.dispatch('getMessageNum')
-    //         that.$emit('refreshCount')
-    //         that.getTime = new Date().getTime()
-    //       })
-    //     })
-    //   }
-    // },
-    // unread () {
-    //   let list = this.getIdsSendApi()
-    //   if (list) {
-    //     let that = this
-    //     this.$confirm('是否要将选中的消息已读？', '提示', {
-    //       confirmButtonText: '确定',
-    //       cancelButtonText: '取消',
-    //       type: 'warning'
-    //     }).then(() => {
-    //       that.$api['userMessage.toggleStatus']({ idList: list }).then((res) => {
-    //         that.$store.dispatch('getMessageNum')
-    //         that.$emit('refreshCount')
-    //         that.getTime = new Date().getTime()
-    //       })
-    //     })
-    //   }
-    // },
-    // deleteMsg () {
-    //   let list = this.getIdsSendApi()
-    //   if (list) {
-    //     let that = this
-    //     this.$confirm('是否要将选中的消息删除？', '提示', {
-    //       confirmButtonText: '确定',
-    //       cancelButtonText: '取消',
-    //       type: 'warning'
-    //     }).then(() => {
-    //       that.$api['userMessage.delete']({ idList: list }).then((res) => {
-    //         that.$store.dispatch('getMessageNum')
-    //         that.$emit('refreshCount')
-    //         that.getTime = new Date().getTime()
-    //       })
-    //     })
-    //   }
-    // },
-    getIdsSendApi (message,api) {
-      let list = this.$refs.infList.infiniteList.filter(el => el.ischeck).map(el => el.id)
-      if (list.length) {
+    getIdsSendApi (message,api,status) {
+      let list = this.$refs.infList.infiniteList.filter(el => el.ischeck)
+      let ids = list.map(el => el.id)
+      if (ids.length) {
         let that = this
         this.$confirm('是否要将选中的消息'+message+'？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          that.$api[api]({ idList: list }).then((res) => {
-            that.$store.dispatch('getMessageNum')
+          that.$api[api]({ idList: ids, msgStatus: status }).then((res) => {
+            
+            that.flag = true
+            if (!status) {
+              that.timeKey = new Date().getTime()
+            } else {
+              list.forEach(el => {
+                el.msgStatus = status
+                el.ischeck = false
+              })
+            }
             that.$emit('refreshCount')
-            that.timeKey = new Date().getTime()
+            that.$store.dispatch('getMessageNum')
           })
         })
+      } else {
+        this.$message({type: 'warning',message: '请选择要操作的数据'})
       }
     },
     stopDefault(e) {
@@ -424,6 +391,7 @@ $icon-span-width: 20px;
     color: rgb(24, 144, 255);
     font-size: 16px;
     margin: 0 5px;
+    cursor: pointer;
   }
   .other {
     float: right;
