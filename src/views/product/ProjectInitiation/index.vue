@@ -9,6 +9,9 @@
   .projectPage {
     height: 100%;
     margin: 0;
+    ::v-deep .formElement {
+      padding-top: 25px;
+    }
     .list-main {
       padding: 0;
     }
