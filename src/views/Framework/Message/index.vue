@@ -24,6 +24,7 @@
     </template>
     <template #center>
       <message-list :search-params="searchParams"
+                    ref="messagList"
                     @select="selectMessage"
                     @refreshCount="userCatalogCount"
                     @toggleStatus="toggleStatus"
@@ -162,19 +163,15 @@ export default {
     //     }
     //   })
     // },
-    toggleStatus (msgId) {
+    toggleStatus (msgId,status) {
       let msgIdArray = [msgId]
       let _this = this
-      this.$api[this.toggleMsgStatusApi]({ idList: msgIdArray }).then((res) => {
+      this.$api[this.toggleMsgStatusApi]({ idList: msgIdArray, msgStatus: status }).then((res) => {
         if (res && res.length > 0) {
           _this.currentMessage.msgStatus = res[0].msgStatus
           _this.userCatalogCount()
           _this.$store.dispatch('getMessageNum') // 获取消息信息已读未读条数
         }
-
-        // console.log('isReload:', _this.isReload)
-        // console.log('currentMessage', this.currentMessage)
-        // console.log('toggleMsgStatusApi:', res)
       })
     },
     deleteMsg (msgId) {
