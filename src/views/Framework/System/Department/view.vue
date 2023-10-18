@@ -48,6 +48,7 @@ export default {
         id: '',
         parentId: '',
         deptType: '',
+        deptTypeDisplay: '',
         no: '',
         indexNo: '',
         deptAbbreviation: '',
