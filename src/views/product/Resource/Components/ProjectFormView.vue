@@ -1,13 +1,8 @@
 <template>
   <div class="project-con">
-    <div class="title">
-      项目信息
-    </div>
+    <div class="title">项目信息</div>
     <div class="form-con">
-      <form-list ref="form"
-                 :dataSource="dataSource"
-                 :form="formData"
-                 :existDefaultBtn="false"></form-list>
+      <form-list ref="form" :data-source="dataSource" :form="formData" :exist-default-btn="false"></form-list>
     </div>
   </div>
 </template>
@@ -20,7 +15,7 @@ export default {
       type: String
     }
   },
-  data () {
+  data() {
     const dataSource = [
       {
         type: 'view', // 控件类型
@@ -36,7 +31,7 @@ export default {
       },
       {
         type: 'view',
-        labelText: '型号信息',
+        labelText: '型号代号',
         fieldName: 'modelCode',
         colLayout: ''
       },
@@ -60,20 +55,8 @@ export default {
       },
       {
         type: 'view',
-        labelText: '项目密级',
-        fieldName: 'secretGradeDisplay',
-        colLayout: ''
-      },
-      {
-        type: 'view',
         labelText: '项目周期',
         fieldName: 'projectScyle',
-        colLayout: ''
-      },
-      {
-        type: 'view',
-        labelText: '经费来源',
-        fieldName: 'fundsSourceDisplay',
         colLayout: ''
       },
       {
@@ -102,18 +85,18 @@ export default {
     }
   },
   watch: {
-    id (val) {
+    id(val) {
       this.getProjectInfo()
     }
   },
-  created () {
+  created() {
     this.getProjectInfo()
   },
   methods: {
-    getProjectInfo () {
-      let _this = this
+    getProjectInfo() {
+      const _this = this
       if (this.id) {
-        this.$api['teamManager.wholeDescribeInfo']({ wholeDescribeId: this.id }).then(res => {
+        this.$api['teamManager.wholeDescribeInfo']({ wholeDescribeId: this.id }).then((res) => {
           _this.formData = res
         })
       }
