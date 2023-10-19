@@ -346,7 +346,10 @@ export default {
       this.planInfoStatus = this.thirdMenuParam.executeState
       this.taskId = this.thirdMenuParam.taskId
       this.secretGrade = this.thirdMenuParam.secretGrade
-      this.selectRecord = this.thirdMenuParam.selectRecord
+      this.selectRecord = [{
+        ...this.thirdMenuParam,
+        EXECUTESTATE: this.thirdMenuParam.executeState
+      }]
       this.currentRoute = this.thirdMenuParam.currentRoute
       this.createPage = 'userChange'
     } else {
@@ -356,7 +359,7 @@ export default {
       this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
       this.taskId = this.thirdMenuParam.taskId
       this.secretGrade = this.thirdMenuParam.secretGrade
-      this.selectRecord = this.thirdMenuParam.selectRecord
+      this.selectRecord = [this.thirdMenuParam]
       this.currentRoute = this.thirdMenuParam.currentRoute
       this.createPage = 'planChange'
     }
