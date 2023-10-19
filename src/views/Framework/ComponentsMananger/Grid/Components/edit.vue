@@ -2399,6 +2399,7 @@ export default {
             this.paramParams = { reportId: '' }
             this.buttonParams = { reportId: '' }
             this.getReplaceData()
+            this.getTableData()
           })
           .catch((e) => {
             this.formData.sqlid = this.oldSqlId
@@ -2408,6 +2409,7 @@ export default {
         this.tableParams = { sqlId: val }
         this.paramParams = { reportId: '' }
         this.buttonParams = { reportId: '' }
+        this.getTableData()
       }
       this.getReplaceData()
     },
@@ -2429,13 +2431,17 @@ export default {
       this.paramParams = { reportId: val }
       this.buttonParams = { reportId: val }
       this.getReplaceData()
+      this.getTableData()
+    },
+    getTableData () {
+      let that = this
       this.$api[this.tableConfigDetailsApi](this.tableParams).then(res => {
         res.forEach(item => {
           if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
             item.defaultValueDatas = item.defaultValueData.split(',')
           }
         })
-        this.noApiTableData = res
+        that.noApiTableData = res
       })
     },
     // eventHandle输入框加建议下拉框
