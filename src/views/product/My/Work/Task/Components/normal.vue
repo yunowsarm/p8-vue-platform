@@ -167,6 +167,7 @@
                      @close="onModelPictureClose">
         <template #drawer>
           <process-approval-view v-inherited-father-height
+                                 :isSmartForm="true"
                                  :business-obj="{
               businessId: modelId,
               processDefinitionKey: processDefinationTwoKey

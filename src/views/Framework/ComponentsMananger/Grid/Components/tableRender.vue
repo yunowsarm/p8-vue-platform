@@ -229,10 +229,11 @@
                      @close="onModelPictureClose">
         <template #drawer>
           <process-approval-view v-inherited-father-height
+                                 :isSmartForm="true"
                                  :business-obj="{
-              businessId: modelId,
-              processDefinitionKey: processDefinationTwoKey
-            }">
+                                  businessId: modelId,
+                                  processDefinitionKey: processDefinationTwoKey
+                                 }">
           </process-approval-view>
         </template>
       </common-drawer>
