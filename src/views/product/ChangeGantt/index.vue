@@ -63,6 +63,7 @@
           <common-drawer v-if="visibleBpmView" :visible="visibleBpmView" :drawer-config="drawerConfig" :is-need-custom-drawer-class="false" direction="ttb" size="100%" @close="onVisibleBpmViewClose">
             <template #drawer>
               <process-approval-view
+                :isSmartForm="true"
                 :business-obj="{
                   businessId: businessId,
                   processDefinitionKey: processDefinitionKey
