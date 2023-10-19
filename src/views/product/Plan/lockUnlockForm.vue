@@ -56,8 +56,10 @@
     <el-row :class="{'formBtn':true}">
       <el-col class="flex-right">
         <slot name="btn"></slot>
+        <el-button plain
+                   @click="$emit('close-lock-unlock', {})">取消</el-button>
         <el-button type="primary"
-                   @click="handleSubmit">保存</el-button>
+                   @click="handleSubmit">确定</el-button>
       </el-col>
     </el-row>
   </el-form>
