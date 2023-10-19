@@ -1,6 +1,5 @@
 <template>
   <el-tabs class="taskTabs"
-           type="border-card"
            style="height: 88%;"
            @tab-click="tabsClick">
     <el-tab-pane label="前后置">
@@ -126,3 +125,12 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.taskTabs ::v-deep .el-tabs__nav-wrap {
+  background-color: #f5f7fa;
+  padding: 0 14px;
+  &::after {
+    height: 0px;
+  }
+}
+</style>
