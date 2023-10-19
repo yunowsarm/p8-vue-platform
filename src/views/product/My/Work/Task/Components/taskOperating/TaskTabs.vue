@@ -1,7 +1,6 @@
 <template>
   <el-tabs class="progressTaskTabs"
            v-model="tabsActiveName"
-           type="border-card"
            @tab-click="tabsClick">
     <el-tab-pane v-for="item in taskTabs"
                  :key="item.name"
@@ -121,7 +120,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .progressTaskTabs.el-tabs {
-  background-color: #ffffff;
   height: 100%;
 }
 .progressTaskTabs ::v-deep .el-tabs__header {
@@ -135,7 +133,7 @@ export default {
   }
 }
 .progressTaskTabs ::v-deep .el-tabs__content {
-  padding: 0 10px;
+  // padding: 0 10px;
   height: calc(100% - 40px);
 }
 .progressTaskTabs ::v-deep .el-tab-pane {

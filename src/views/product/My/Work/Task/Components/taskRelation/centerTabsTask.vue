@@ -1,7 +1,6 @@
 <template>
   <el-tabs class="taskTabs"
            v-model="tabsActiveName"
-           type="border-card"
            @tab-click="tabsClick"
            style="height: 100%;">
     <el-tab-pane label="任务信息">
@@ -183,5 +182,12 @@ export default {
 }
 ::v-deep .el-form-item ::v-deep .el-form-item__content {
   margin-left: 0;
+}
+.taskTabs ::v-deep .el-tabs__nav-wrap {
+  background-color: #f5f7fa;
+  padding: 0 14px;
+  &::after {
+    height: 0px;
+  }
 }
 </style>
