@@ -106,11 +106,11 @@ div.task-operating-con {
   height: 100%;
   div.task-manage-table {
     width: 100%;
-    height: 30%;
+    height: 38%;
     background-color: #ffffff;
   }
   div.task-tabs-con {
-    height: 70%;
+    height: 62%;
     background-color: #ffffff;
   }
 }
