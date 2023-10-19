@@ -12,7 +12,8 @@
         <template #1501>
           <div class="listContainer" v-if="activeTabs == '1501'">
             <div class="messageHeader">
-              <span @click="selectAll" style="cursor: pointer;">{{flag ? '全选' : '取消全选'}}</span>
+              <!-- 全选目前只支持全选已加载的数据 -->
+              <!-- <span @click="selectAll" style="cursor: pointer;">{{flag ? '全选' : '取消全选'}}</span> -->
               <span class="other">
                 <i class="el-icon-refresh iconColor" title="重载" @click="refresh"></i>
                 <i class="p8 icon-plan-examine iconColor" title="已读" @click="getIdsSendApi('标记为已读','userMessage.toggleStatus','1505')"></i>
@@ -68,7 +69,8 @@
         <template #1505>
           <div class="listContainer" v-if="activeTabs == '1505'">
             <div class="messageHeader">
-              <span @click="selectAll">{{flag ? '全选' : '取消全选'}}</span>
+              <!-- 全选目前只支持全选已加载的数据 -->
+              <!-- <span @click="selectAll" style="cursor: pointer;">{{flag ? '全选' : '取消全选'}}</span> -->
               <span class="other">
                 <i class="el-icon-refresh iconColor" title="重载" @click="refresh"></i>
                 <i class="p8 icon-plan-examine iconColor" title="已读" @click="getIdsSendApi('标记为已读','userMessage.toggleStatus','1505')"></i>
@@ -124,7 +126,8 @@
         <template #0>
           <div class="listContainer" v-if="activeTabs == '0'">
             <div class="messageHeader">
-              <span @click="selectAll">{{flag ? '全选' : '取消全选'}}</span>
+              <!-- 全选目前只支持全选已加载的数据 -->
+              <!-- <span @click="selectAll" style="cursor: pointer;">{{flag ? '全选' : '取消全选'}}</span> -->
               <span class="other">
                 <i class="el-icon-refresh iconColor" title="重载" @click="refresh"></i>
                 <i class="p8 icon-plan-examine iconColor" title="已读" @click="getIdsSendApi('标记为已读','userMessage.toggleStatus','1505')"></i>
@@ -277,14 +280,13 @@ export default {
     hasHtmlTag(str) {
       return /<[^>]*>/i.test(str)
     },
-    selectAll () {
-      this.$refs.infList.infiniteList.forEach(el => {
-        el.ischeck = this.flag
-        console.log(el.ischeck,'--el.ischeck');
-      })
-      this.$refs.infList.infiniteList = Object.assign([],this.$refs.infList.infiniteList)
-      this.flag = !this.flag
-    },
+    // selectAll () {
+    //   this.$refs.infList.infiniteList.forEach(el => {
+    //     el.ischeck = this.flag
+    //   })
+    //   this.$refs.infList.infiniteList = Object.assign([],this.$refs.infList.infiniteList)
+    //   this.flag = !this.flag
+    // },
     refresh () {
       this.flag = true
       this.timeKey = new Date().getTime()
