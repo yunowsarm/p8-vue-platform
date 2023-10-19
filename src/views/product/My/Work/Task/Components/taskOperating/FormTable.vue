@@ -8,7 +8,6 @@
                  v-bind="formConfig"
                  label-position="right"
                  :rules="formRules"
-                 :key="dateTime"
                  :disabled="formDisabled">
           <div v-if="(formType.constType === 'Deviate') || (formType.constType === 'Progress' && formType.overdue)"
                class="deviate">
@@ -359,7 +358,6 @@ export default {
   },
   data () {
     return {
-      dateTime: null,
       releaseMenuParams: {},
       selectUserBeforehandFormData: {
         SYS_USER: ''

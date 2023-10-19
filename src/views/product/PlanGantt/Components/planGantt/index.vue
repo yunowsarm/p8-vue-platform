@@ -1619,7 +1619,6 @@ export default {
           that.selectedTasks.forEach((task) => {
             myGantt.getTask(task.id).owner_id = ownerId
             myGantt.getTask(task.id).specialDutyUserId = ownerId
-            console.log('🚀 ~ file: index.vue:1611 ~ that.selectedTasks.forEach ~ row.deptName:', row.deptName)
             myGantt.getTask(task.id).dutyDeptName = row.deptName
             myGantt.updateTask(task.id)
           })

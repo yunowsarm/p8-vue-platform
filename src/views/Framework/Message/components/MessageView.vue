@@ -84,7 +84,6 @@ export default {
   watch: {
     messageData: {
       handler(val) {
-        console.log(val, '监听-msgdata')
         if (val.msgLink) {
           this.componentLoader = () => import('@/views/' + val.msgLink)
         }
@@ -100,7 +99,7 @@ export default {
   },
   methods: {
     toggleStatus(id) {
-      this.$emit('onToggleStatus', id)
+      this.$emit('onToggleStatus', id, '1501')
     },
     deleteMsg(id) {
       this.$confirm('是否要删除该消息？', '提示', {

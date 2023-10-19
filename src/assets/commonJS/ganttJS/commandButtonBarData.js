@@ -8,27 +8,33 @@ const CommandButtonBarData = [
         buttonConfigs: [
           {
             buttonId: 'create-children',
-            size: 'large'
+            size: 'large',
+            position: ['top', 'right']
           },
           {
             buttonId: 'create-equative',
-            size: 'large'
+            size: 'large',
+            position: ['top', 'right']
           },
           {
             buttonId: 'outdent-task',
-            size: 'small'
+            size: 'small',
+            position: ['top', 'right']
           },
           {
             buttonId: 'indent-task',
-            size: 'small'
+            size: 'small',
+            position: ['top', 'right']
           },
           {
             buttonId: 'copy-tasks',
-            size: 'small'
+            size: 'small',
+            position: ['top', 'right']
           },
           {
             buttonId: 'paste-tasks',
-            size: 'small'
+            size: 'small',
+            position: ['top', 'right']
           },
           {
             buttonId: 'redo-tasks',
@@ -42,7 +48,8 @@ const CommandButtonBarData = [
           },
           {
             buttonId: 'remove-tasks',
-            size: 'large'
+            size: 'large',
+            position: ['top', 'right']
           },
           {
             buttonId: 'detail-info',
@@ -74,35 +81,43 @@ const CommandButtonBarData = [
         buttonConfigs: [
           {
             buttonId: 'color-red',
-            size: 'mini'
+            size: 'mini',
+            position: ['top']
           },
           {
             buttonId: 'font-bold',
-            size: 'mini'
+            size: 'mini',
+            position: ['top']
           },
           {
             buttonId: 'color-blue',
-            size: 'mini'
+            size: 'mini',
+            position: ['top']
           },
           {
             buttonId: 'font-italic',
-            size: 'mini'
+            size: 'mini',
+            position: ['top']
           },
           {
             buttonId: 'color-green',
-            size: 'mini'
+            size: 'mini',
+            position: ['top']
           },
           {
             buttonId: 'font-underline',
-            size: 'mini'
+            size: 'mini',
+            position: ['top']
           },
           {
             buttonId: 'color-purple',
-            size: 'mini'
+            size: 'mini',
+            position: ['top']
           },
           {
             buttonId: 'removeStyle',
-            size: 'large'
+            size: 'large',
+            position: ['top']
           }
         ]
       },
@@ -111,11 +126,13 @@ const CommandButtonBarData = [
         buttonConfigs: [
           {
             buttonId: 'issue-tasks',
-            size: 'large'
+            size: 'large',
+            position: ['top', 'right']
           },
           {
             buttonId: 'issue-message',
-            size: 'large'
+            size: 'large',
+            position: ['top', 'right']
           }
         ]
       }
@@ -129,11 +146,13 @@ const CommandButtonBarData = [
         buttonConfigs: [
           {
             buttonId: 'excel-import',
-            size: 'large'
+            size: 'large',
+            position: ['top', 'right']
           },
           {
             buttonId: 'project-import',
-            size: 'large'
+            size: 'large',
+            position: ['top', 'right']
           }
         ]
       },
@@ -142,11 +161,13 @@ const CommandButtonBarData = [
         buttonConfigs: [
           {
             buttonId: 'excel-export',
-            size: 'large'
+            size: 'large',
+            position: ['top', 'right']
           },
           {
             buttonId: 'project-export',
-            size: 'large'
+            size: 'large',
+            position: ['top', 'right']
           }
         ]
       }
@@ -160,11 +181,13 @@ const CommandButtonBarData = [
         buttonConfigs: [
           {
             buttonId: 'activity-import',
-            size: 'large'
+            size: 'large',
+            position: ['top', 'right']
           },
           {
             buttonId: 'my-experience',
-            size: 'large'
+            size: 'large',
+            position: ['top', 'right']
           }
         ]
       }
@@ -186,11 +209,13 @@ const CommandButtonBarData = [
         buttonConfigs: [
           {
             buttonId: 'create-version',
-            size: 'large'
+            size: 'large',
+            position: ['top']
           },
           {
             buttonId: 'version-compare',
-            size: 'large'
+            size: 'large',
+            position: ['top']
           }
         ]
       },
@@ -199,7 +224,8 @@ const CommandButtonBarData = [
         buttonConfigs: [
           {
             buttonId: 'version-list',
-            size: 'large'
+            size: 'large',
+            position: ['top']
           }
         ]
       }
@@ -213,19 +239,23 @@ const CommandButtonBarData = [
         buttonConfigs: [
           {
             buttonId: 'plan-edit-gantt',
-            size: 'large'
+            size: 'large',
+            position: ['top']
           },
           {
             buttonId: 'plan-gantt',
-            size: 'large'
+            size: 'large',
+            position: ['top']
           },
           {
             buttonId: 'plan-gantt-resource',
-            size: 'large'
+            size: 'large',
+            position: ['top']
           },
           {
             buttonId: 'critical-path',
-            size: 'large'
+            size: 'large',
+            position: ['top']
           }
         ]
       },
@@ -234,11 +264,13 @@ const CommandButtonBarData = [
         buttonConfigs: [
           {
             buttonId: 'full-screen',
-            size: 'large'
+            size: 'large',
+            position: ['top']
           },
           {
             buttonId: 'grid-setting',
-            size: 'large'
+            size: 'large',
+            position: ['top']
           }
         ]
       }

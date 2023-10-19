@@ -80,6 +80,9 @@
   right: 15px;
   top: 5px;
 }
+.myActivityGantt > div {
+  border-right: none;
+}
 .myActivityGantt ::v-deep{
   .gantt_grid_scale {
     border-bottom: 1px solid #c6c6c6 !important;
@@ -93,7 +96,7 @@
     background-color: #fff;
   }
   .gantt_row.odd {
-    background-color: #f0f2f4;
+    background-color: #f9f9f9;
   }
 }
 .is-disabled {

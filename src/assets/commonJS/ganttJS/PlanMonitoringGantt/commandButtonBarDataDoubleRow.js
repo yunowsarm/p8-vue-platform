@@ -1,11 +1,11 @@
 const CommandButtonBarDataDoubleRow = [
   {
-    panelName: '任务',
+    panelName: '工具',
     noWrap: true,
     groupNameVisible: true, // 默认不显示组名
     groups: [
       {
-        groupName: '协作',
+        groupName: '任务',
         buttonConfigs: [
           {
             buttonId: 'detail-info',
@@ -40,7 +40,7 @@ const CommandButtonBarDataDoubleRow = [
         ]
       },
       {
-        groupName: '版本管理',
+        groupName: '版本',
         buttonConfigs: [
           {
             buttonId: 'version-compare',
@@ -80,7 +80,7 @@ const CommandButtonBarDataDoubleRow = [
         ]
       },
       {
-        groupName: '缩放/列设置',
+        groupName: '自定义',
         buttonConfigs: [
           {
             buttonId: 'full-screen',
@@ -89,11 +89,6 @@ const CommandButtonBarDataDoubleRow = [
           },
           {
             buttonId: 'grid-setting',
-            size: 'small',
-            position: ['top']
-          },
-          {
-            buttonId: 'grid-cell-border-setting',
             size: 'small',
             position: ['top']
           }

@@ -741,16 +741,15 @@ export function getGanttColumns(ganttObject, vueThis) {
         const owner = task[ganttObject.config.resource_property]
         if (owner) {
           const userMessage = resourceDatas.getItem(owner)
-          if (userMessage) {
-            if (userMessage.weatherOut && userMessage.weatherOut === '1') {
-              const text = `<span style="color: #FF0000">(已退出)</span>`
-              return userMessage.name + text
-            } else {
-              return userMessage.name
+
+          const userList = ganttObject.serverList('userList');
+          let text = ''
+          userList.forEach(item => {
+            if(userMessage && item.id === userMessage.userId && item.weatherOut === '1'){
+              text += `<span style="color: #FF0000">(已退出)</span>`
             }
-          } else {
-            return ''
-          }
+          })
+          return userMessage.name += text
         } else {
           return ''
         }

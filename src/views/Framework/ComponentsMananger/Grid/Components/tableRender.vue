@@ -157,6 +157,7 @@
                        :record="{ desformCode: codeForm }"
                        :prop-param="propParam"
                        :permission-vo="permissionVo"
+                       @close="formClose"
                        @save-success="formClose"></form-render>
         </template>
       </common-drawer>
@@ -196,7 +197,7 @@
                      v-bind="customProps"
                      :permission-vo="permissionVo"
                      :row="scopeRow"
-                     @close="customClose"></component>
+                     @close="CloseAndRefresh"></component>
         </template>
       </common-drawer>
       <common-dialog v-if="customComponentParams.type === 'dialog' && customVisible"
@@ -218,7 +219,7 @@
                      v-bind="customProps"
                      :permission-vo="permissionVo"
                      :row="scopeRow"
-                     @close="customClose"></component>
+                     @close="CloseAndRefresh"></component>
         </template>
       </common-dialog>
       <common-drawer title="查看流程图"
@@ -1289,11 +1290,23 @@ export default {
     customClose () {
       this.customComponentParams = {}
       this.customVisible = false
+      // if (this.tableType == 0) {
+      //   this.$refs.table.searchData()
+      //   this.$refs.table.clearSelection()
+      // } else {
+      //   this.$refs.xTable.searchData()
+      //   this.$refs.xTable.clearSelection()
+      // }
+      // this.selectRecords = []
+    },
+    CloseAndRefresh () {
+      this.customComponentParams = {}
+      this.customVisible = false
       if (this.tableType == 0) {
-        this.$refs.table.searchData()
+        this.$refs.table.queryList()
         this.$refs.table.clearSelection()
       } else {
-        this.$refs.xTable.searchData()
+        this.$refs.xTable.queryList()
         this.$refs.xTable.clearSelection()
       }
       this.selectRecords = []

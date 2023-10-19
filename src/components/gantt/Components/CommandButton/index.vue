@@ -23,7 +23,7 @@
               <div v-if="size === 'mini' && !cbutton.icon.startsWith('p8')" class="style-div-color" :style="colorDynamicStyle(cbutton)"></div>
               <div v-else>
                 <i :class="cbutton.icon" :style="iconDynamicClass"></i>
-                <span class="button-title" v-if="size !== 'mini'" v-show="false">{{ cbutton.title }}</span>
+                <span class="button-title" v-if="size !== 'mini'" v-show="ganttButtonMode === 'tabs'">{{ cbutton.title }}</span>
               </div>
             </el-button>
           </span>
@@ -150,7 +150,7 @@ export default {
         return styleObj
       }
     },
-    ...mapGetters(['vueThis'])
+    ...mapGetters(['vueThis', 'ganttButtonMode'])
   },
   mounted() {},
   methods: {

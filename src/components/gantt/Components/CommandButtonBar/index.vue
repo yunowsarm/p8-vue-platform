@@ -1,7 +1,7 @@
 <template>
   <div class="card-container" v-if="panelData.length > 1">
     <i :class="advance ? 'el-icon-arrow-down' : 'el-icon-arrow-up'" @click="changeCommandButton"></i>
-    <i class="el-icon-setting" @click.stop="visibleCommonButtonBarSetting = true"></i>
+    <i class="el-icon-setting" @click.stop="showButtonBarSetting"></i>
     <el-tabs type="card" v-if="advance">
       <el-tab-pane
         v-for="(panel, index) in panelData"
@@ -150,7 +150,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['ganttButtonMode', 'ganttRightButtons']),
+    ...mapGetters(['vueThis', 'ganttButtonMode', 'ganttRightButtons']),
     isExecute() {
       return function (configs) {
         if (typeof configs === 'string') {
@@ -207,7 +207,7 @@ export default {
     ganttButtonMode: {
       handler(val) {
         if (!this.isGanttChange) {
-          this.rowNum = val === 'double' ? 2 : 1
+          this.rowNum = val === 'single' ? 1 : 2
         }
       },
       immediate: true
@@ -222,8 +222,7 @@ export default {
       showArrow: true, // 默认展示左右切换按钮
       leftNoAction: true,
       rightNoAction: false,
-      rowNum: this.isGanttChange ? 1 : this.ganttButtonMode === 'double' ? 2 : 1,
-      visibleCommonButtonBarSetting: false
+      rowNum: this.isGanttChange ? 1 : this.ganttButtonMode === 'single' ? 1 : 2
     }
   },
   mounted() {
@@ -288,6 +287,9 @@ export default {
           }
         }
       }
+    },
+    showButtonBarSetting() {
+      this.vueThis.rightMenuConfigVisible = true
     }
   }
 }
@@ -300,6 +302,7 @@ export default {
 
   .el-tabs--card {
     > .el-tabs__header {
+      margin: 0;
       .el-tabs__nav-wrap {
         background: transparent;
       }

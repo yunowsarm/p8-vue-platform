@@ -184,7 +184,7 @@ const CommandButtonBarDataSingleRow = [
           {
             buttonId: 'my-experience',
             size: 'small',
-            position: ['top']
+            position: ['top', 'right']
           }
         ]
       },

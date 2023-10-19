@@ -1,41 +1,21 @@
-const CommandButtonBarDataSingleRow = [
+const CommandButtonBarData = [
   {
-    panelName: '任务',
+    panelName: '工具',
     noWrap: true,
     groupNameVisible: true, // 默认不显示组名
     groups: [
       {
-        groupName: '协作',
+        groupName: '任务',
         buttonConfigs: [
           {
             buttonId: 'detail-info',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           },
           {
             buttonId: 'issue-message',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
-          }
-        ]
-      },
-      {
-        groupName: '查询',
-        buttonConfigs: [
-          {
-            buttonId: 'search-list',
-            size: 'small',
-            position: ['top']
-          }
-        ]
-      },
-      {
-        groupName: '统计信息',
-        buttonConfigs: [
-          {
-            buttonId: 'statistic-list',
-            size: 'small',
-            position: ['top']
           }
         ]
       },
@@ -44,12 +24,12 @@ const CommandButtonBarDataSingleRow = [
         buttonConfigs: [
           {
             buttonId: 'version-compare',
-            size: 'small',
+            size: 'large',
             position: ['top']
           },
           {
             buttonId: 'version-list',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
@@ -59,22 +39,22 @@ const CommandButtonBarDataSingleRow = [
         buttonConfigs: [
           {
             buttonId: 'plan-edit-gantt',
-            size: 'small',
+            size: 'large',
             position: ['top']
           },
           {
             buttonId: 'plan-gantt',
-            size: 'small',
+            size: 'large',
             position: ['top']
           },
           {
             buttonId: 'plan-gantt-resource',
-            size: 'small',
+            size: 'large',
             position: ['top']
           },
           {
             buttonId: 'critical-path',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
@@ -84,28 +64,26 @@ const CommandButtonBarDataSingleRow = [
         buttonConfigs: [
           {
             buttonId: 'full-screen',
-            size: 'small',
+            size: 'large',
             position: ['top']
           },
           {
             buttonId: 'grid-setting',
-            size: 'small',
-            position: ['top']
-          }
-        ]
-      },
-      {
-        groupName: '设置',
-        buttonConfigs: [
-          {
-            buttonId: 'menu-config',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
       }
     ]
+  },
+  {
+    panelName: '查询',
+    groups: 'command-search' // 组件名称
+  },
+  {
+    panelName: '统计信息',
+    groups: 'command-statistic' // 组件名称
   }
 ]
 
-export { CommandButtonBarDataSingleRow }
+export { CommandButtonBarData }
