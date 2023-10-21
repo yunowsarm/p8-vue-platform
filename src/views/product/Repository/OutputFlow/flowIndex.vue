@@ -88,7 +88,7 @@
             </div>
           </template>
         </normal-layout>
-          <div class="footer"><el-button plain>取消</el-button><el-button type="primary" @click="saveAll" style="margin-right: 20px;">保存</el-button></div>
+          <div class="footer"><el-button plain @click="$emit('close')">取消</el-button><el-button type="primary" @click="saveAll" style="margin-right: 20px;">保存</el-button></div>
         </div>
       </el-tab-pane>
     </el-tabs>
