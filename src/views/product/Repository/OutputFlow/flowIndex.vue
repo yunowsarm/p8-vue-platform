@@ -5,7 +5,9 @@
              @tab-click="triggerChange">
       <el-tab-pane label="默认模式"
                    name="first">
-        <normal-layout :headerVisible="false"
+        <div class="wrap">
+          <normal-layout :headerVisible="false"
+                       :splitDefaultLeftWidth="50"
                        :normalLayout="normalLayout">
           <template #west>
             <activityTree ref="activityTree"
@@ -86,6 +88,8 @@
             </div>
           </template>
         </normal-layout>
+          <div class="footer"><el-button plain>取消</el-button><el-button type="primary" @click="saveAll" style="margin-right: 20px;">保存</el-button></div>
+        </div>
       </el-tab-pane>
     </el-tabs>
 
@@ -138,12 +142,34 @@
   vertical-align: middle;
 }
 .left-container {
+  padding: 0 10px;
   overflow: hidden;
   position: relative;
   height: 100%;
 }
+.flowTopTabs .el-tabs__content{
+  background-color: rgba(243, 245, 248, 0.9);
+}
 .flowTopTabs {
+  .splitBtn {
+    display: none;
+  }
   height: 100%;
+  .normal-layout {
+    // box-shadow: 4px 4px 8px #bfbdbd54;
+    height: calc(100% - 80px);
+    padding: 0;
+  }
+  .wrap{
+    height: 100%;
+    .footer{
+      width: 100%;
+      height: 50px;
+      line-height: 50px;
+      text-align: right;
+      background: #fff;
+    }
+  }
   > .el-tabs__header.is-top {
     height: 42px;
   }
@@ -196,7 +222,7 @@
 }
 </style>
 <script>
-import { Tabs, TabPane, P8NormalLayout as NormalLayout, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import { Tabs, TabPane, P8NormalLayoutV1 as NormalLayout, P8Drawer as CommonDrawer } from 'p8-components-ui'
 
 import ActivityTree from './activityTree'
 import ImportExcel from './Components/importExcel'

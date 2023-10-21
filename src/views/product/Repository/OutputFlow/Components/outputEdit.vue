@@ -7,6 +7,7 @@
                :dataSource="dataSource"
                :api="saveApi"
                :form="formData"
+               :existDefaultBtn="false"
                :is-custom-validate="isCustomValidate"
                @custom-validate="customValidate">
     </form-list>

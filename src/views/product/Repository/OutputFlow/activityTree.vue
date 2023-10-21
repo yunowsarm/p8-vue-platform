@@ -80,10 +80,15 @@
   right: 15px;
   top: 5px;
 }
-.myActivityGantt > div {
-  border-right: none;
+.myActivityGantt {
+  > div{
+    width: 100%;
+  }
 }
 .myActivityGantt ::v-deep{
+  .gantt_layout_cell {
+    border: none !important;
+  }
   .gantt_grid_scale {
     border-bottom: 1px solid #c6c6c6 !important;
     background: #f0f2f4!important;
