@@ -5,7 +5,7 @@
   <normal-layout class="process-approval-layout"
                  :header-visible="false"
                  :full-height="true"
-                 :splitDefaultLeftWidth='35'
+                 :splitDefaultLeftWidth="40"
                  :normal-layout="layoutConfig">
     <template #west>
       <pending-list :approved-task-id="approvedTaskId"
