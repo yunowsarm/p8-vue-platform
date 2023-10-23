@@ -142,7 +142,7 @@
   vertical-align: middle;
 }
 .left-container {
-  padding: 0 10px;
+  padding-left: 10px;
   overflow: hidden;
   position: relative;
   height: 100%;
@@ -198,6 +198,9 @@
   }
   .el-tabs__active-bar{
     background: #1890ff;
+  }
+  .el-tabs__active-bar.is-left {
+    right: -2px;
   }
   > .el-tabs__header.is-top {
     height: 42px;
