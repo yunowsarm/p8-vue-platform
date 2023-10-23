@@ -14,9 +14,7 @@
           :other-param="otherParam"
         >
           <template #weatherChange>
-            <el-select v-model="formData.weatherChange" :disabled="weatherChangeDisabled" placeholder="请选择是否产生变更记录" @change="selectChange">
-              <el-option v-for="item in optionsW" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-            </el-select>
+            {{formData.weatherChange === '0' ? '是': '否'}}
           </template>
         </form-list>
       </div>
