@@ -121,6 +121,7 @@
                           :columns="columns"
                           :params="tableParam"
                           :row-config="rowConfig"
+                          :table-config="tableConfig"
                           :tree-config="treeConfig"
                           :checkbox-config="checkboxConfig"
                           :radio-config="radioConfig"
@@ -688,7 +689,8 @@ export default {
     cellClassName ({ row, column, rowIndex, columnIndex }) {
       let columnName = ''
       this.columns.forEach(item => {
-        if (this.tableInfo.enableClick === 1 && item.tenantId && item.dataIndex === column.property) {
+        // 开启了行点击，配置了下钻，并且不为null
+        if (this.tableInfo.enableClick === 1 && item.tenantId && item.dataIndex === column.property && row[column.property]) {
           columnName = 'columnStyle'
         }
       })
@@ -1035,6 +1037,7 @@ export default {
     rowVxeClick (row, column, $event) {
       if (this.tableInfo.enableClick === 1) {
         this.runInHoleParam = row
+        this.runInHoleParam.property = column.property
         this.reportItems.forEach((item) => {
           if (column.field === item.fieldName) {
             // this.runInHoleCode = item.fieldHref
@@ -1936,8 +1939,8 @@ export default {
   }
 }
 .grid-table-render {
-    padding: 0 10px !important;
-    margin: 0;
+  padding: 0 10px !important;
+  margin: 0;
 }
 ::v-deep .columnStyle {
   text-decoration: underline;
