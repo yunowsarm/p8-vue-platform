@@ -1030,7 +1030,7 @@ export default {
     width: 70%;
     height: 100%;
     margin-left: 15px;
-    box-shadow: 4px 4px 8px #bfbdbd54;
+    box-shadow: 0px 0px 10px #bfbdbd54;
     .left_bottom_content {
       display: flex;
       height: calc(100% - 50px);
@@ -1091,6 +1091,7 @@ export default {
   width: 30%;
   overflow-y: hidden;
   padding: 0 2px 0 0;
+  border: 1px solid #f2f2f2;
 
   .add-role {
     box-sizing: border-box;
@@ -1258,7 +1259,7 @@ export default {
   height: 50px !important;
   // margin-top: 8px;
   background-color: #ffffff !important;
-  box-shadow: 4px -4px 8px #bfbdbd54;
+  box-shadow: 0px 0px 10px #bfbdbd54;
   display: flex;
   align-items: center;
   justify-content: end;
@@ -1284,7 +1285,7 @@ export default {
   width: 30%;
   background-color: #fff;
   // margin-left: 16px;
-  box-shadow: 4px 4px 8px #bfbdbd54;
+  box-shadow: 0px 0px 10px #bfbdbd54;
   ::v-deep .files-view-wrap {
     .files-item--row {
       padding: 0;

@@ -114,7 +114,7 @@ export default {
     height: 50px;
     line-height: 50px;
     font-size: 14px;
-    padding-left: 6px;
+    padding-left: 20px;
     border-bottom: 2px solid #f2f2f2;
     box-sizing: border-box;
     font-weight: bold;

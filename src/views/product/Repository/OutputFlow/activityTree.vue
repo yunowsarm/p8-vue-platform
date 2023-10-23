@@ -81,6 +81,8 @@
   top: 5px;
 }
 .myActivityGantt {
+  width: unset !important;
+  padding-right: 10px;
   > div{
     width: 100%;
   }
