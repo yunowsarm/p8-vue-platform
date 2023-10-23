@@ -257,7 +257,7 @@ export default {
 .c-button-large .el-dropdown {
   display: block;
   text-align: center;
-  width: 30px;
+  // width: 30px;
 }
 
 .c-button-small {
