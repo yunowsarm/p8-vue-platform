@@ -222,7 +222,7 @@
 
 .gantt_grid_scale,
 .gantt_task_scale {
-  border-bottom: 1px solid #133b78 !important;
+  border-bottom: 1px solid #EBEEF5 !important;
 }
 
 .gantt_task .gantt_task_scale .gantt_scale_cell {
@@ -292,7 +292,7 @@
 
 .gantt_search .cs-input .cs-input_inner {
   border: 0px;
-  border-bottom: 1px solid #c8c8c9 !important;
+  /* border-bottom: 1px solid #c8c8c9 !important; */
   box-shadow: none;
 }
 
@@ -303,12 +303,18 @@
 }
 
 .gantt_row {
-  background-color: #f0f2f4;
+  background-color: #ffffff;
 }
 
+.gantt_row.odd, .gantt_task_row.odd {
+  background-color: #F9F9F9 !important;
+}
+.gantt_blank {
+  background-color: #ffffff;
+}
 .gantt_row,
 .gantt_task_row {
-  border-bottom: 1px solid #c6c6c6;
+  border-bottom: 1px solid #EBEEF5;
 }
 
 /* 更改自定义select组件样式 == over*/

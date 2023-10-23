@@ -2868,16 +2868,16 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
       type = ''
     }
     let dataIndex
-    if (type) {
-      const label = initItem.label
-      if (name === 'owner_id') {
-        dataIndex = 'userName'
-      } else {
-        dataIndex = name
-      }
-      const newLabel = searchColumnRenderer(dataIndex, label, type)
-      initItem.label = newLabel
+    // if (type) {
+    const label = initItem.label
+    if (name === 'owner_id') {
+      dataIndex = 'userName'
+    } else {
+      dataIndex = name
     }
+    const newLabel = searchColumnRenderer(dataIndex, label, type)
+    initItem.label = newLabel
+    // }
   })
   // 获取gantt列配置信息
   const ganttSetting = GanttObject.getGanttSettingGrid(vueThis.ganttName, vueThis.createPage)
@@ -3194,6 +3194,8 @@ function searchColumnRenderer(name, columnName, searchType) {
     //   '<div class="gantt_search">' +
     //   '<input id="' + name + searchType + '" type="date" class="search_item" value="" onchange="Gantt.searchColumnsChange(\'' + name + '\',this.value,\'date\')"/></div>'
     result = '<div class="gantt_search">' + columnName + '</div>' + '<div class="gantt_search gantt_datepicker_' + name + '"' + '></div>'
+  } else {
+    result = '<div class="gantt_search">' + columnName + '</div>' + '<div class="gantt_search gantt_blank"' + '></div>'
   }
   return result
 }

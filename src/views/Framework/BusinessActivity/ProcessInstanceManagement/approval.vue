@@ -34,7 +34,8 @@
         </template>
         <template #bpmn>
           <bpm-view v-if="selectedApproval.processDefId !== '' && activeTabs==='bpmn'"
-                    :style="{ height: tabsHeight, margin: '0px 0px 2px -333px !important;'}"
+                    :style="{ height: tabsHeight}"
+                    class="custom_bpmn"
                     :isSmartForm="true"
                     :process-obj="{
               processDefinitionId: selectedApproval.processDefId,
@@ -792,6 +793,9 @@ $paddingLeft: 10px;
 // ::v-deep .custom-tabs {
 //   overflow: auto !important;
 // }
+.custom_bpmn {
+  height: calc(100vh - 220px);
+}
 .custom-tabs.el-tabs--top {
   height: 100%;
   border: 0px;
