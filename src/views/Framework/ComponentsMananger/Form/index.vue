@@ -230,7 +230,7 @@ export default {
     },
     // 表单发布
     async formRelease (scope) {
-      let drawingListData = await this.getDrawingList({ desFormId: scope.row.id })
+      let drawingListData = await this.getDrawingList({ desFormId: scope.row.id ,router: this.$route.path})
       let formConf = JSON.parse(drawingListData.designJson)
       let formDataBase = formConf.formDataBase
       let canRelease = true // 是否可发布，默认可发布
