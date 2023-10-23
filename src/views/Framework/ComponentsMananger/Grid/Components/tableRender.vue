@@ -158,7 +158,7 @@
                        :prop-param="propParam"
                        :permission-vo="permissionVo"
                        @close="formClose"
-                       @save-success="formClose"></form-render>
+                       @save-success="formCloseRefresh"></form-render>
         </template>
       </common-drawer>
       <common-drawer title="查看详情"
@@ -1084,10 +1084,19 @@ export default {
     // 表单新建/修改关闭抽屉
     formClose () {
       this.formVisible = false
+      // if (this.tableType === 0) {
+      //   this.$refs.table.searchData()
+      // } else {
+      //   this.$refs.xTable.searchData()
+      // }
+      // this.$emit('refresh')
+    },
+    formCloseRefresh () {
+      this.formVisible = false
       if (this.tableType === 0) {
-        this.$refs.table.searchData()
+        this.$refs.table.queryList()
       } else {
-        this.$refs.xTable.searchData()
+        this.$refs.xTable.queryList()
       }
       this.$emit('refresh')
     },
