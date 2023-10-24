@@ -413,7 +413,7 @@ export default {
     box-sizing: border-box;
 
     .group-container {
-      height: 84px;
+      height: 75px;
       padding: 0px 12px;
       box-sizing: border-box;
     }

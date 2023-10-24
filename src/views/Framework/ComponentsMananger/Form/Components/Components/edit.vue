@@ -78,6 +78,12 @@ export default {
         return {}
       }
     },
+    otherParams: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
     pageType: {
       type: String,
       default: ''
@@ -168,8 +174,14 @@ export default {
         if (Object.keys(this.dynamicParamObj).length) {
           Object.keys(this.dynamicParamObj).forEach((item) => {
             _this.dynamicParamObj[item].forEach((i) => {
-              const dynamicParamObjPath = i.path.split('.')
-              _this.dynamicDataObj[i.dynamicCompId][dynamicParamObjPath[0]][dynamicParamObjPath[1]] = val[item]
+              if (item.indexOf('.' > 0)) {
+                const dynamicParamObjPath = i.path.split('.')
+                const paramArr = item.split('.')
+                _this.dynamicDataObj[i.dynamicCompId][dynamicParamObjPath[0]][dynamicParamObjPath[1]] = this.sysParams[`$${paramArr[0]}`][paramArr[1]]
+              } else {
+                const dynamicParamObjPath = i.path.split('.')
+                _this.dynamicDataObj[i.dynamicCompId][dynamicParamObjPath[0]][dynamicParamObjPath[1]] = val[item]
+              }
             })
           })
           // 前置数据作为后置数据的检索条件--监听前置数据的变化
@@ -571,7 +583,13 @@ export default {
           params[key] = this.propParam[key][0]
         }
       }
-      newBuildPropParam.$PROPPARAM = params
+      const otherParam = _cloneDeep(this.otherParams)
+      for (const key in otherParam) {
+        if (Array.isArray(this.otherParams[key])) {
+          otherParam[key] = this.otherParams[key][0]
+        }
+      }
+      newBuildPropParam.$PROPPARAM = {...otherParam, ...params}
       return newBuildPropParam
     },
     setPageData(pageData) {
