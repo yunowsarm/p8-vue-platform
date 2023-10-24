@@ -976,7 +976,7 @@ export function getGanttColumns(ganttObject, vueThis) {
       label: '是否管控任务',
       align: 'center',
       resize: true,
-      width: 70,
+      min_width: 150,
       template: function (task) {
         const weatherControl = task.weatherControl
         if (weatherControl === '1') {

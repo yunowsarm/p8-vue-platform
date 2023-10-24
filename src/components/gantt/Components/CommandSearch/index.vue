@@ -54,7 +54,7 @@
         <el-option v-for="item in vueThis.monitorPointDatas" :key="item.id" :label="item.title" :value="item.id"> </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="任务完成时间" prop="startEndDate" class="block">
+    <el-form-item label="完成时间" prop="startEndDate" class="block">
       <el-date-picker class="field" v-model="searchForm.startEndDate" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
     </el-form-item>
 
