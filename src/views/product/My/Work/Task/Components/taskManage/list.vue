@@ -165,7 +165,7 @@
                          @editSaveOK="editSaveOK"></input-io-view>
         </template>
         <template v-if="drawerViewVisible === 'output'">
-          <output-edit-view :taskId="getPlanInfo().taskId"
+          <output-edit-view :taskId="getPlanInfo().TASKID"
                             :thirdMenuParam="thirdMenuParam"
                             :outputRequest="outputRequestData"
                             @editSaveOK="editSaveOK"></output-edit-view>
@@ -252,19 +252,19 @@ export default {
     }
   },
   mounted () {
-    if (this.getPlanInfo().status === '6070' || this.getPlanInfo().status === '6090') {
+    if (this.getPlanInfo().STATUS === '6070' || this.getPlanInfo().STATUS === '6090') {
       this.steps[2].btns = []
     }
     this.initData()
   },
   created () {
-    let nullity = this.getPlanInfo().nullity
+    let nullity = this.getPlanInfo().NULLITY
     this.nullity = nullity
   },
   methods: {
     initData () {
       const _this = this
-      const taskId = _this.getPlanInfo().taskId
+      const taskId = _this.getPlanInfo().TASKID
       const requestApi = 'taskManager.getOutputRequire'
 
       const outputApi = 'taskManager.getOutputIo'
@@ -297,7 +297,7 @@ export default {
     getActivityDesc () { // 获取活动描述
       const _this = this
       const api = 'taskManager.getActivityDescription'
-      const taskId = _this.getPlanInfo().taskId
+      const taskId = _this.getPlanInfo().TASKID
       this.$api[api]({ taskId }).then(res => {
         _this.activityDescData = res
       })
@@ -305,7 +305,7 @@ export default {
     getOutputIo () { // 获取输出物
       const _this = this
       const api = 'taskManager.getOutputIo'
-      const taskId = _this.getPlanInfo().taskId
+      const taskId = _this.getPlanInfo().TASKID
       this.$api[api]({ taskId }).then(res => {
         _this.outputIoData = res
       })

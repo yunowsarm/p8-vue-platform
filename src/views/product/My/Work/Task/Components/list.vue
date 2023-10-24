@@ -10,20 +10,105 @@
     </template>
     <template #center>
       <table-render ref="tableRender"
+                    :key="dateTime"
                     :code="componentsConfig.code"
                     :permission-vo="componentsConfig.permissionVo"
                     :west-tree-param="provideParams.searchParams"
                     @refresh="init()">
-        <template #status="{scope}">
-          <span v-html="getIcon(scope.row)"></span>
+        <template #NAME="{ scope, thirdMenuData }">
+          <el-tag size="mini"
+                  type="danger"
+                  style="margin-right: 10px"
+                  v-if="scope.row.ALLCHILDFINISH === 'true'">未分解
+          </el-tag>
+          <el-tooltip v-if="(scope.row.dataType &&
+                    scope.row.dataType === 'task') && scope.row.MANAGERSTATUS !== '6406' && scope.row.MANAGERSTATUS !== '6409' &&
+                   ((scope.row.EXECUTESTATE !== '1090' &&   scope.row.ISLEAF === 0) ||
+                   (scope.row.EXECUTESTATE !== '1090' &&   scope.row.ISLEAF === 1 && scope.row.ALLCHILDFINISH === 'true'))
+                  "
+                      effect="dark"
+                      :content="'该任务可提交完成'"
+                      placement="top"
+                      class="icon-style">
+            <i class="p8 icon-can-commit"></i>
+          </el-tooltip>
+          <el-tooltip v-if="
+              scope.row.MANAGERSTATUS === '6406' &&
+              scope.row.dataType &&
+              scope.row.dataType === 'task'
+            "
+                      effect="dark"
+                      :content="`${scope.row.APPROVERNAME}`"
+                      placement="right">
+            <span class="base-custom-style-task approve"
+                  @click.stop="viewTaskApprove(scope.row)">审</span>
+          </el-tooltip>
+          <el-tooltip v-if="
+              scope.row.MANAGERSTATUS === '6406' &&
+              scope.row.dataType &&
+              scope.row.dataType === 'task'
+            "
+                      effect="dark"
+                      :content="`${scope.row.MANAGERSTATUSDISPLAY},点击可撤回`"
+                      placement="right">
+            <span class="base-custom-style-task approves"
+                  @click.stop="withdrawTaskApprove(scope.row)">撤</span>
+          </el-tooltip>
+          <el-tooltip v-if="
+              scope.row.MANAGERSTATUS === '6407' &&
+              scope.row.dataType &&
+              scope.row.dataType === 'task'
+            "
+                      effect="dark"
+                      :content="`${scope.row.MANAGERSTATUSDISPLAY}`"
+                      placement="right">
+            <span class="base-custom-style-task approves">驳</span>
+          </el-tooltip>
+          <span v-if="scope.row.dataType === 'task'"
+                class="underline"
+                @click="drillCol(scope, thirdMenuData)">{{ scope.row.NAME }} </span>
+          <span v-else>{{ scope.row.NAME }}</span>
         </template>
         <template #PROGRESS="{scope}">
-          <span>{{scope.row.PROGRESS * 100}}%</span>
+          <span v-if="scope.row.dataType === 'task'">{{scope.row.PROGRESS * 100}}%</span>
+        </template>
+        <template #INDEXNO="{scope}">
+          <span v-if="scope.row.dataType === 'task'">{{scope.row.INDEXNO}}</span>
+          <span v-else
+                style="display: -webkit-inline-box;">{{scope.row.INDEXNO}}</span>
         </template>
         <template #DAYSREMAINING="{scope}">
           <div v-html="overdueTextFun(scope.row)"></div>
         </template>
       </table-render>
+    </template>
+    <template #drawer-panel>
+      <common-drawer size="100%"
+                     v-if="visible"
+                     :visible="visible"
+                     direction="ttb"
+                     :projectLevel="projectLevel"
+                     :drawerConfig="menuDrawerConfig">
+        <template #drawer>
+          <menu-layout :third-menu-param="thirdMenuParam"
+                       :default-menu="defaultMenu"></menu-layout>
+        </template>
+      </common-drawer>
+      <common-drawer title="查看流程图"
+                     :visible="visibleModelPicture"
+                     :show-handle-btn="false"
+                     size="50%"
+                     @close="onModelPictureClose">
+        <template #drawer>
+          <process-approval-view v-inherited-father-height
+                                 :isSmartForm="true"
+                                 :business-obj="{
+              businessId: modelId,
+              processDefinitionKey: processDefinationTwoKey
+            }">
+          </process-approval-view>
+        </template>
+      </common-drawer>
     </template>
   </normal-layout>
 </template>
@@ -40,40 +125,43 @@
   background-position: center;
   margin-top: 25px;
 }
+.base-custom-style-task {
+  color: $base-white-color;
+  font-size: 12px;
+  border-radius: 10px;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+  cursor: pointer;
+  &.approve {
+    background-color: $base-red-color;
+    margin-left: 0px;
+  }
+  &.approves {
+    background-color: $base-red-color;
+  }
+  &.leaf {
+    background-color: $base-green-color;
+  }
+  &.canApprove {
+    background-color: $base-green-color;
+    margin-left: -15px;
+  }
+}
+.icon-style {
+  margin-left: -15px;
+}
 </style>
 <script>
 import { Input, Button } from 'element-ui'
-import { P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Dialog as CommonDialog, P8Table as CommonTable, P8Button as CommonButton } from 'p8-components-ui'
+import { P8MenuLayout as MenuLayout, P8ProcessApproval as ProcessApprovalView, P8Drawer as CommonDrawer, P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Dialog as CommonDialog, P8Table as CommonTable, P8Button as CommonButton } from 'p8-components-ui'
 import { selectGenerateTree } from '@/views/Framework/ComponentsMananger/Layout/Components/ButtonNavigation/V1.0/edit/Components/general.js'
 import tableRender from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
 import { overdueTextHandles } from '@/utils/common'
 export default {
   name: 'ButtonNavigationView',
-  computed: {
-    componentUrl () {
-      console.log(this.asyncComponents, '===this.asyncComponents')
-      if (this.asyncComponents) {
-        if (this.asyncComponents.indexOf('?') !== -1) {
-          const list = this.asyncComponents.split('?')
-          const url = list[0]
-          const parmars = list[1].split('&')
-          const obj = {}
-          parmars.forEach((item) => {
-            const str = item.split('=')
-            if (str[0] === 'code') {
-              obj.code = str[1]
-            }
-          })
-          this.componentsConfig = obj
-          return () => import('@/views/' + url + '.vue')
-        } else {
-          return () => import(`@/views/${this.asyncComponents}.vue`)
-        }
-      } else {
-        return ''
-      }
-    }
-  },
   provide () {
     return {
       provideParams: this.provideParams
@@ -81,6 +169,7 @@ export default {
   },
   data () {
     return {
+      dateTime: null,
       dialogHeight: document.documentElement.clientHeight * 0.6,
       queryParam: {},
       treeData: [],
@@ -90,7 +179,20 @@ export default {
       provideParams: {
         searchParams: {}
       },
-      componentsConfig: {}
+      componentsConfig: {},
+      visible: false,
+      thirdMenuParam: {},
+      defaultMenu: {},
+      menuDrawerConfig: {
+        modal: false,
+        withHeader: false,
+        beforeClose: this.handleMenuBeforClose
+      },
+      currentRouterPath: {},
+      projectLevel: null,
+      visibleModelPicture: false,
+      processDefinationTwoKey: 'taskFinishApprove',
+      modelId: ''
     }
   },
   props: {
@@ -109,11 +211,15 @@ export default {
     CommonDialog,
     CommonTable,
     CommonButton,
-    tableRender
+    tableRender,
+    CommonDrawer,
+    ProcessApprovalView,
+    MenuLayout
   },
   created () {
     this.init()
     this.getIconData()
+    this.currentRouterPath = this.$route.path
   },
   watch: {
     $route: {
@@ -123,9 +229,68 @@ export default {
     }
   },
   methods: {
+    viewTaskApprove (rowInfo) {
+      this.modelId = rowInfo.ID
+      this.visibleModelPicture = true
+    },
+    onModelPictureClose () {
+      this.visibleModelPicture = false
+    },
+    withdrawTaskApprove (rowInfo) {
+      let taskId = rowInfo.TASKID
+      const url = 'taskManager.withdrawTaskApprove'
+      const _this = this
+      _this.$confirm('是否要撤回审批', '提示', {
+        confirmButtonText: '撤回',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        _this.$api[url]({ businessId: taskId, businessKey: 'taskFinishApprove' }).then(res => {
+          _this.$message({
+            type: 'success',
+            message: '审批已撤回'
+          })
+          // 注释之后页面撤回审批后才可刷新
+          // Vue.nextTick(function () {
+          _this.dateTime = new Date().getTime()
+          // })
+        })
+      })
+    },
+    async handleMenuBeforClose (done) {
+      this.$router.push({ path: this.currentRouterPath })
+      this.visible = false
+      this.dateTime = new Date().getTime()
+    },
+    // 点击项目/计划列钻取进入三级菜单-计划编制页面
+    drillCol (scope, thirdMenuData) {
+      this.getPlanDataTaskId = scope.row.ID
+      this.getPlanDataPinfoId = scope.row.PLANINFOID
+      // if (thirdMenuData.length) {
+      //   let planManager = thirdMenuData.filter(o => o.name === 'TaskExecution')
+      this.openThirdMenu(scope.row)
+      // }
+    },
+    openThirdMenu (record, item) {
+      // this.defaultMenu = item
+      this.thirdMenuParam = {
+        ...record,
+        progress: Number((record.PROGRESS * 100).toFixed(0)),
+        taskId: record.TASKID,
+        secretGrade: record.SECRETGRADE,
+        planInfoId: record.PLANINFOID,
+        wholeDescribeId: record.WHOLEDESCRIBEID,
+        planInfoStatus: record.EXECUTESTATE,
+        currentRoute: this.$route.path,
+        createPage: 'decompose',
+        currentPage: 'normal',
+        getProjectLevel: record.LEVEL
+      }
+      this.projectLevel = record.LEVEL
+      this.visible = true
+    },
     // 超期/剩余天数调用公共方法
     overdueTextFun (row) {
-      console.log("🚀 ~ file: list.vue:128 ~ overdueTextFun ~ row:", row)
       return overdueTextHandles(row)
     },
     async init () {
@@ -327,19 +492,6 @@ export default {
       }
       getData(treeList)
       return arr
-    },
-    getIcon (row) {
-      let str = ''
-      let el = this.manageStatus[row.MANAGESTATUS]
-      if (row.MANAGESTATUS && el && el.icon) {
-        str = '<i class="' + el.icon + '" style="color: ' + el.color + ';" title="' + el.meaning + '"></i>'
-      } else {
-        let item = this.executeState[row.EXECUTESTATE]
-        if (item && item.icon) {
-          str = '<i class="' + item.icon + '" style="color: ' + item.color + ';" title="' + item.meaning + '"></i>'
-        }
-      }
-      return str
     },
     thirdMenuClick (record) {
       let item = {}

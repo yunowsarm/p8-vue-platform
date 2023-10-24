@@ -1036,6 +1036,11 @@ export default {
     },
     // 单元格点击事件
     rowVxeClick (row, column, $event) {
+      this.columns.forEach(el => {
+        if (el.fieldName === column.property || el.dataIndex === column.property) {
+          column.drillName = el.drillName
+        }
+      })
       if (this.tableInfo.enableClick === 1) {
         this.runInHoleParam = row
         this.runInHoleParam.property = column.property
@@ -1043,6 +1048,11 @@ export default {
           if (column.field === item.fieldName) {
             // this.runInHoleCode = item.fieldHref
             if (item.fieldHref && item.fieldHref !== '') {
+              if (column.drillName) {
+                this.runInHoleTitle = column.drillName
+              } else {
+                this.runInHoleTitle = '下钻详情'
+              }
               this.componentsConfig = JSON.parse(item.fieldHref)
               this.runInHoleVisible = true
               this.asyncComponents = this.componentsConfig.url
@@ -1927,6 +1937,11 @@ export default {
     onThirdMenuClose () {
       this.$router.push({ path: this.currentRouterPath })
       this.visibleThirdDrawer = false
+      if (this.tableType === 0) {
+        this.$refs.table.queryList()
+      } else {
+        this.$refs.xTable.queryList()
+      }
     }
   }
 }

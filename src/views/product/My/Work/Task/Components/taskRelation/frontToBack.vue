@@ -104,7 +104,7 @@ export default {
     }
   },
   created () {
-    this.queryParam.taskId = this.getPlanInfo().taskId
+    this.queryParam.taskId = this.getPlanInfo().TASKID
   },
   methods: {
     tableRefresh (param) {

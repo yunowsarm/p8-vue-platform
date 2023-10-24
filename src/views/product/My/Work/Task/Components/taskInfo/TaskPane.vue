@@ -122,7 +122,7 @@ export default {
     },
     getTaskInfo () {
       let _this = this
-      this.$api[this.api]({ taskId: _this.getPlanInfo().taskId }).then(res => {
+      this.$api[this.api]({ taskId: _this.getPlanInfo().TASKID }).then(res => {
         _this.taskInfo = res
         _this.rendFormData(res)
       })
@@ -149,6 +149,7 @@ export default {
           this.formData[key] = res[key]
         }
       })
+      console.log(this.formData, 'ppppppppppppppppppppppppppppppppppppppppppp');
     },
     statusHandle () {
       let allStatus = this.getPlanInfo().allStatus
@@ -163,12 +164,12 @@ export default {
       })
       let value = this.formData.status
       let currStatus = allStatus.filter(item => item.value === value)
-
       if (currStatus && currStatus.length) {
         return `<span class="pane-status"><span style="background-color: ${currStatus[0].color}; width: 6px;height: 6px;border-radius: 10px;margin-right: 6px;" class="pane-status-cir"></span>${this.taskInfo.statusDisplay}</span>`
       }
     },
     durationDayHandle (currStatus, systemCurrentDate, planEndDate, realEndDate) {
+      console.log("🚀 ~ file: TaskPane.vue:173 ~ durationDayHandle ~ currStatus, systemCurrentDate, planEndDate, realEndDate:", currStatus, systemCurrentDate, planEndDate, realEndDate)
       // let allStatus = this.getPlanInfo().allStatus
       if (planEndDate && currStatus) {
         // let currStatusInfo = allStatus.filter(item => item.value === currStatus)
