@@ -158,6 +158,7 @@
                        :record="{ desformCode: codeForm }"
                        :prop-param="propParam"
                        :permission-vo="permissionVo"
+                       v-bind="$attrs"
                        @close="formClose"
                        @save-success="formCloseRefresh"></form-render>
         </template>
