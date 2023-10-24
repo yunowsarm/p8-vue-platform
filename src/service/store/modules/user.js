@@ -118,7 +118,7 @@ const user = {
               reject()
             } else {
               commit('SET_TOKEN', res.token)
-              resolve()
+              resolve(res)
             }
           })
           .catch((err) => {
