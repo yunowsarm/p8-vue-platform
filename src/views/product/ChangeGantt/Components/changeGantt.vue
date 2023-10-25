@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%; position: relative" class="planGantt">
-    <!-- <div id="actionMenu" v-if="menuVisible" ref="actionMenu" :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
+    <div id="actionMenu" v-if="menuVisible" ref="actionMenu" :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
       <VuePerfectScrollbar class="scroll-area" :style="{ maxHeight: maxHeight, height: scrollBarHeight }">
         <el-menu mode="vertical" :collapse="true">
           <template v-for="(menu, index) in menuData">
@@ -33,7 +33,7 @@
           </template>
         </el-menu>
       </VuePerfectScrollbar>
-    </div> -->
+    </div>
     <div ref="myGantt" style="width: 100%; height: calc(100% - 40px) !important" @mousemove="mouseMove"></div>
     <div class="detail_div">
       <div style="width: 50%">
@@ -150,7 +150,7 @@ body {
 // import { Menu, Submenu, MenuItem, Drawer, InputNumber, Button } from 'p8-components-ui'
 import { Drawer, Button, P8Dialog as CommonDialog } from 'p8-components-ui'
 import { CommandButtonData } from '@/assets/commonJS/ganttJS/commandButtonData'
-import { PlanRightMenuData } from '@/assets/commonJS/ganttJS/planRightMenuData'
+import { ChangeRightMenuData } from '@/assets/commonJS/ganttJS/changeRightMenuData'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import { getChangeGantt } from '@/assets/commonJS/ganttJS/changeGanttObject'
 import ActivityImport from '../../PlanGantt/Components/activityImport'
@@ -238,7 +238,7 @@ export default {
       submitChangeDisabled: false,
       createNum: 1,
       menuVisible: false,
-      menuData: PlanRightMenuData,
+      menuData: ChangeRightMenuData,
       dropTop: '0px',
       dropLeft: '0px',
       selectedTasks: [],
@@ -247,6 +247,7 @@ export default {
       resourceTemplates: {},
       selectTaskId: '',
       hasSave: true,
+      resourcesData: {},
       selectTaskName: '',
       activityImportTitle: '知识库导入',
       activityImportVisible: false,
@@ -288,7 +289,9 @@ export default {
       selectUserFormData: {},
       ganttEditCheck: {}, // gantt任务编辑权限
       viewType: 'grid', // 视图类型，默认只显示列表
-      ganttSearchVisible: false // 计划变更查询弹出框
+      ganttSearchVisible: false, // 计划变更查询弹出框
+      delDataList: [],
+      newSendDatas: null
     }
   },
   watch: {
@@ -426,9 +429,26 @@ export default {
       vueThis.$api['planGanttManager.loadPlanGanttData']({ planInfoId: planInfoId, dicType: 'ACTIVITY_TYPE', taskId: taskId, createPage: createPage, changeRecordId: changeRecordId })
         .then(function (res) {
           if (res) {
+            vueThis.resourcesData = res.resources
             // 初始化数据
-            const datas = {
-              tasks: res.tasks,
+            let initData
+            initData = res.tasks.map(item => {
+              item.changeStatus = ''
+              let obj = {}
+              if (res.changeTaskInfo && res.changeTaskInfo[item.id] && res.changeTaskInfo[item.id].id) {
+                obj = {
+                  ...item,
+                  ...res.changeTaskInfo[item.id]
+                }
+              } else {
+                obj = {
+                  ...item
+                }
+              }
+              return obj
+            })
+            let datas = {
+              tasks: initData,
               links: res.links
             }
             if (res.tasks && res.changeTaskInfo && Object.keys(res.changeTaskInfo).length > 0) {
@@ -444,6 +464,7 @@ export default {
             myGantt.$resourcesStore.parse(res.resources)
             myGantt.serverList(myGantt.config.monitor_point, res.monitorPointDatas)
             myGantt.serverList(myGantt.config.plan_type, res.taskClassifys)
+            myGantt.serverList(myGantt.config.dept_list, res.deptList)
             vueThis.createTaskStatus = res.createTaskStatus
             vueThis.managerStatus = res.managerStatus
             vueThis.weatherControl = res.weatherControl
@@ -462,9 +483,11 @@ export default {
           console.error('error' + error)
         })
     },
-    btnClick(btn) {
-      this.menuVisible = false
-      btn.clickFun(null, this.ganttName, this.selectedTasks)
+    btnClick (btn, isDisable) {
+      if (!isDisable) {
+        this.menuVisible = false
+        btn.clickFun(null, this.ganttName, this.selectedTasks)
+      }
     },
     callParentSelectTasks() {
       this.$emit('select-task', this.selectedTasks, this.ganttName)
@@ -499,19 +522,23 @@ export default {
     monitorManagerSave(obj) {
       this.controlTimeVisible = false
     },
-    saveChange() {
-      const that = this
-      const obj = that.newTaskMap
-      const oldObj = that.oldTaskMap
-      const sendDatas = []
-      for (const key in obj) {
+    delSaveChange (task) {
+      if (task[0].infoType === 'create') {
+        delete this.newTaskMap[task[0].id]
+        return false
+      }
+      let that = this
+      let obj = that.newTaskMap
+      let oldObj = that.oldTaskMap
+      let sendDatas = []
+      for (let key in obj) {
         // 获取newTaskMap对象
-        const task = obj[key]
-        const oldTask = oldObj[key]
-        const updateInfo = obj[key].updateInfo
+        let task = obj[key]
+        let oldTask = oldObj[key]
+        let updateInfo = obj[key].updateInfo
         // 获取gantt中task对象
-        const nowGanttTask = myGantt.getTask(task.id)
-        const indexNo = myGantt.getGlobalTaskIndex(task.id)
+        let nowGanttTask = myGantt.getTask(task.id)
+        let indexNo = myGantt.getGlobalTaskIndex(task.id)
         // newTaskMap中数据过滤
         // 当只修改任务且最终于原始数据一致时，删除newTaskMap中对应数据
         if (!nowGanttTask.infoType && updateInfo && updateInfo.length === 1 && updateInfo.indexOf('task') !== -1) {
@@ -519,11 +546,11 @@ export default {
           break
         }
         if (oldTask && Object.keys(oldTask).length > 0) {
-          const oldIndexNo = oldObj[key].indexNo
+          let oldIndexNo = oldObj[key].indexNo
           // 任务属性未修改时，取消updateInfo中task
           if (updateInfo && updateInfo.indexOf('task') !== -1 && nowGanttTask.infoType === 'update' && oldIndexNo === indexNo && nowGanttTask.parent === oldTask.parent) {
             let check = true
-            for (const okey in oldTask) {
+            for (let okey in oldTask) {
               if (checkKeys.indexOf(okey) !== -1 && nowGanttTask[okey] !== oldTask[okey]) {
                 check = false
                 break
@@ -543,21 +570,114 @@ export default {
         that.newTaskMap[key] = nowGanttTask
         sendDatas.push(that.newTaskMap[key])
       }
-      if (sendDatas && sendDatas.length > 0) {
-        // 请求后台接口
-        that.$api['planChange.calculateChangeInfoAndSave']({ changeTasks: sendDatas, planInfoId: that.planInfoId, id: that.changeRecordId })
-          .then(function (res) {
-            if (res) {
-              that.sendDataList = sendDatas
-              that.changeRecordId = res
-              // that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
-              that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)
-              that.hasSave = false
+      let isObjectInArray1 = sendDatas.some(item1 => {
+        return task.some(item2 => item1.id === item2.id)
+      })
+      if (isObjectInArray1) {
+        this.$message.warning('不能删除已修改的数据，请重新选择')
+        return false
+      } else {
+        let isObjectInArray2 = this.delDataList.some(item1 => {
+          return task.some(item2 => item1.id === item2.id)
+        })
+        if (isObjectInArray2) {
+          this.$message.warning('不能删除已删除的数据，请重新选择')
+          return false
+        } else {
+          task[0].infoType = 'delete'
+          task[0].style = '#FF0000'
+          // task[0].end_date = moment(task[0].end_date).format('YYYY-MM-DD')
+          myGantt.updateTask(task[0].id)
+          this.delDataList.push(task[0])
+          this.newSendDatas = sendDatas.concat(this.delDataList)
+        }
+      }
+    },
+    saveChange() {
+      let that = this
+      let obj = that.newTaskMap
+      let oldObj = that.oldTaskMap
+      console.log(obj, 'obj')
+      console.log(oldObj, 'oldObjoldObj');
+      let sendDatas = []
+      for (let key in obj) {
+        // 获取newTaskMap对象
+        let task = obj[key]
+        let oldTask = oldObj[key]
+        let updateInfo = obj[key].updateInfo
+        // 获取gantt中task对象
+        let nowGanttTask = myGantt.getTask(task.id)
+        let indexNo = myGantt.getGlobalTaskIndex(task.id)
+        // newTaskMap中数据过滤
+        // 当只修改任务且最终于原始数据一致时，删除newTaskMap中对应数据
+        if (!nowGanttTask.infoType && updateInfo && updateInfo.length === 1 && updateInfo.indexOf('task') !== -1) {
+          delete that.newTaskMap[key]
+          break
+        }
+        if (oldTask && Object.keys(oldTask).length > 0) {
+          let oldIndexNo = oldObj[key].indexNo
+          // 任务属性未修改时，取消updateInfo中task
+          if (updateInfo && updateInfo.indexOf('task') !== -1 && nowGanttTask.infoType === 'update' && oldIndexNo === indexNo && nowGanttTask.parent === oldTask.parent) {
+            let check = true
+            for (let okey in oldTask) {
+              if (checkKeys.indexOf(okey) !== -1 && nowGanttTask[okey] !== oldTask[okey]) {
+                check = false
+                break
+              }
             }
-          })
-          .catch(function (error) {
-            console.error('error' + error)
-          })
+            if (check) {
+              updateInfo.splice(updateInfo.indexOf('task'), 1)
+            }
+            that.newTaskMap[key].updateInfo = updateInfo
+          }
+        }
+        that.newTaskMap[key].indexNo = indexNo
+        // 日期转换
+        nowGanttTask.start_date = moment(nowGanttTask.start_date).format('YYYY-MM-DD')
+        nowGanttTask.end_date = moment(nowGanttTask.end_date).format('YYYY-MM-DD')
+        nowGanttTask.indexNo = indexNo
+        that.newTaskMap[key] = nowGanttTask
+        sendDatas.push(that.newTaskMap[key])
+      }
+      console.log(sendDatas, 'sendDatas');
+      const mergedArray = [];
+      if (sendDatas && Array.isArray(sendDatas)) {
+        mergedArray.push(...sendDatas);
+      }
+      if (this.newSendDatas && Array.isArray(this.newSendDatas)) {
+        mergedArray.push(...this.newSendDatas);
+      }
+      const uniqueMergedArray = mergedArray.filter((item, index, self) =>
+        index === self.findIndex((t) => t && item && t.id === item.id)
+      )
+      if (uniqueMergedArray && uniqueMergedArray.length > 0) {
+        // 请求后台接口
+        for (let i in uniqueMergedArray) {
+          if (uniqueMergedArray[i].infoType === 'delete') {
+            uniqueMergedArray[i].end_date = moment(uniqueMergedArray[i].end_date).format('YYYY-MM-DD')
+            uniqueMergedArray[i].start_date = moment(uniqueMergedArray[i].start_date).format('YYYY-MM-DD')
+          }
+        }
+        for (let i in uniqueMergedArray) {
+          for (let j in this.resourcesData) {
+            if (uniqueMergedArray[i].owner_id) {
+              if (this.resourcesData[j].id === uniqueMergedArray[i].owner_id) {
+                uniqueMergedArray[i].userId = this.resourcesData[j].userId
+              }
+            }
+          }
+        }
+        that.$api['planChange.calculateChangeInfoAndSave']({ changeTasks: uniqueMergedArray, planInfoId: that.planInfoId, id: that.changeRecordId }).then(function (res) {
+          if (res) {
+            that.sendDataList = uniqueMergedArray
+            that.changeRecordId = res
+            // that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
+            that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)
+            that.hasSave = false
+          }
+        }).catch(function (error) {
+          console.error('error' + error)
+        })
       } else {
         that.$message({
           message: '未产生变更数据，请修改后再保存！',

@@ -414,7 +414,7 @@ export default {
       that.formData.duration = task.duration
       that.formData.planType = task.planType
       that.formData.owner_id = task.owner_id
-      that.formData.weatherControl = task.weatherControl
+      that.formData.weatherControl = task.weatherControl ? task.weatherControl : ''
       that.formData.forecastBeginDate = moment(task.forecastBeginDate).format('YYYY-MM-DD')
       that.formData.forecastEndDate = moment(task.forecastEndDate).format('YYYY-MM-DD')
       if (task.realBeginDate) that.formData.realBeginDate = moment(task.realBeginDate).format('YYYY-MM-DD')

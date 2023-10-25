@@ -8,9 +8,6 @@
           <span @click="showDetail" class="detail_span">{{ selectTaskName }}</span>
         </div>
         <div style="width: 50%">
-          <!--        <span style="float:right;margin-right: 20px;line-height:40px;"><i class="gantt-tip p8 icon-make-increase" style="color: #0d6bec;" task_status_disp = "调增"></i> {{addCount}}</span>-->
-          <!--        <span style="float:right;margin-right: 20px;line-height:40px;"><i class="gantt-tip p8 icon-make-reductions" style="color: #0d6bec;" task_status_disp = "调减"></i> {{deleteCount}}</span>-->
-          <!--        <span style="float:right;margin-right: 20px;line-height:40px;"><i class="gantt-tip p8 icon-content-adjustment" style="color: #0d6bec;" task_status_disp = "修改"></i> {{modifyCount}}</span>-->
           <span style="float: right; margin-right: 20px; line-height: 40px">已选中 {{ selectTaskCount }} 条</span>
           <span style="float: right; margin-right: 20px; line-height: 40px">合计 {{ taskCount }} 条</span>
         </div>
@@ -193,8 +190,24 @@ export default {
         .then(function (res) {
           if (res) {
             // 初始化数据
-            const datas = {
-              tasks: res.tasks,
+            let initData
+            initData = res.tasks.map(item => {
+              let obj = {}
+              if (res.changeTaskInfo && res.changeTaskInfo[item.id] && res.changeTaskInfo[item.id].id) {
+                obj = {
+                  ...item,
+                  // ...res.changeTaskInfo[item.id],
+                  oldName: res.changeTaskInfo[item.id].oldName
+                }
+              } else {
+                obj = {
+                  ...item
+                }
+              }
+              return obj
+            })
+            let datas = {
+              tasks: initData,
               links: res.links
             }
             myGantt.$resourcesStore.parse(res.resources)
