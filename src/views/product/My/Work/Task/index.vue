@@ -307,30 +307,6 @@ import { P8Dialog as CommonDialog, P8ListLayout as ListLayout, P8MenuLayout as M
 import List from './Components/list'
 export default {
   name: 'TabsNavigationPreview',
-  computed: {
-    componentUrl () {
-      if (this.asyncComponents) {
-        if (this.asyncComponents.indexOf('?') !== -1) {
-          const list = this.asyncComponents.split('?')
-          const url = list[0]
-          const parmars = list[1].split('&')
-          const obj = {}
-          parmars.forEach((item) => {
-            const str = item.split('=')
-            if (str[0] === 'code') {
-              obj.code = str[1]
-            }
-          })
-          this.componentsConfig = obj
-          return () => import('@/views/' + url + '.vue')
-        } else {
-          return () => import(`@/views/${this.asyncComponents}.vue`)
-        }
-      } else {
-        return ''
-      }
-    }
-  },
   provide () {
     return {
       provideParams: this.provideParams

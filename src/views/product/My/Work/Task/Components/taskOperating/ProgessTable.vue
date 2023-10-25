@@ -61,7 +61,7 @@ export default {
     ]
     return {
       tableApi: 'taskManager.progressFeedbackHistory',
-      queryParam: { taskId: this.getPlanInfo().taskId },
+      queryParam: { taskId: this.getPlanInfo().TASKID },
       columns
     }
   },

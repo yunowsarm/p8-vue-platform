@@ -158,6 +158,7 @@
                        :record="{ desformCode: codeForm }"
                        :prop-param="propParam"
                        :permission-vo="permissionVo"
+                       v-bind="$attrs"
                        @close="formClose"
                        @save-success="formCloseRefresh"></form-render>
         </template>
@@ -420,6 +421,14 @@ export default {
     isLayoutButton: {
       type: Boolean,
       default: false
+    },
+    columnType: {
+      type: String,
+      default: ''
+    },
+    taskId: {
+      type: String,
+      default: ''
     }
   },
   inject: {
@@ -984,7 +993,10 @@ export default {
           }
         })
       }
-      this.sqlParam.columnType = val.property
+      this.sqlParam.columnType = val.property ? val.property : this.columnType
+      if (this.taskId) {
+        reportParam.TASKID = this.taskId
+      }
       this.tableParam = {
         sqlParam: this.sqlParam,
         reportId: this.tableInfo.id,
@@ -1035,6 +1047,11 @@ export default {
     },
     // 单元格点击事件
     rowVxeClick (row, column, $event) {
+      this.columns.forEach(el => {
+        if (el.fieldName === column.property || el.dataIndex === column.property) {
+          column.drillName = el.drillName
+        }
+      })
       if (this.tableInfo.enableClick === 1) {
         this.runInHoleParam = row
         this.runInHoleParam.property = column.property
@@ -1042,6 +1059,11 @@ export default {
           if (column.field === item.fieldName) {
             // this.runInHoleCode = item.fieldHref
             if (item.fieldHref && item.fieldHref !== '') {
+              if (column.drillName) {
+                this.runInHoleTitle = column.drillName
+              } else {
+                this.runInHoleTitle = '下钻详情'
+              }
               this.componentsConfig = JSON.parse(item.fieldHref)
               this.runInHoleVisible = true
               this.asyncComponents = this.componentsConfig.url
@@ -1926,6 +1948,11 @@ export default {
     onThirdMenuClose () {
       this.$router.push({ path: this.currentRouterPath })
       this.visibleThirdDrawer = false
+      if (this.tableType === 0) {
+        this.$refs.table.queryList()
+      } else {
+        this.$refs.xTable.queryList()
+      }
     }
   }
 }

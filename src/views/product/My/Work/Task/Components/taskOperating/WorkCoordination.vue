@@ -63,7 +63,7 @@ export default {
   },
   mounted () {
     let _this = this
-    this.$api['taskManager.taskInfo']({ taskId: _this.planInfoParams.taskId }).then(res => {
+    this.$api['taskManager.taskInfo']({ taskId: _this.planInfoParams.TASKID }).then(res => {
       this.formData.beginEndTime = [res.forecastBeginDate, res.forecastEndDate]
       this.formData.content = res.content
     })
@@ -75,8 +75,8 @@ export default {
           forecastBeginDate: this.formData.beginEndTime[0],
           forecastEndDate: this.formData.beginEndTime[1],
           content: this.formData.content,
-          planInfoId: this.planInfoParams.planInfoId,
-          pmProjectTasksId: this.planInfoParams.taskId
+          planInfoId: this.planInfoParams.PLANINFOID,
+          pmProjectTasksId: this.planInfoParams.TASKID
         }
       }
       this.$api['taskManager.progressFeedback'](obj).then(res => {

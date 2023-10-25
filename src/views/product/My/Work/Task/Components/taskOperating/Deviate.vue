@@ -85,7 +85,7 @@ export default {
         solutions: '' // 偏离备注,
       },
       tableApi: 'taskManager.deviationReasonsHistory',
-      tableParams: { taskId: this.getPlanInfo().taskId },
+      tableParams: { taskId: this.getPlanInfo().TASKID },
       id: '',
       columns
     }
@@ -97,7 +97,7 @@ export default {
     getLastHistory () {
       const _this = this
       this.$api[this.tableApi]({
-        taskId: _this.getPlanInfo().taskId
+        taskId: _this.getPlanInfo().TASKID
       }).then(res => {
         if (res && res[0] && res[0].id) {
           _this.id = res[0].id
@@ -126,8 +126,8 @@ export default {
       let deviate = ['deviationType', 'deviationCauses', 'deviationImpact', 'deviationProgress', 'solutions']
       let params = {
         pmTaskDeviationCauses: {
-          planInfoId: _this.planInfoParams.planInfoId,
-          pmProjectTasksId: _this.planInfoParams.taskId,
+          planInfoId: _this.planInfoParams.PLANINFOID,
+          pmProjectTasksId: _this.planInfoParams.TASKID,
           id: _this.id
         }
       }
