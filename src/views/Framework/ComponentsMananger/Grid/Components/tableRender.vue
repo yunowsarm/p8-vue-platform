@@ -421,6 +421,14 @@ export default {
     isLayoutButton: {
       type: Boolean,
       default: false
+    },
+    columnType: {
+      type: String,
+      default: ''
+    },
+    taskId: {
+      type: String,
+      default: ''
     }
   },
   inject: {
@@ -985,7 +993,10 @@ export default {
           }
         })
       }
-      this.sqlParam.columnType = val.property
+      this.sqlParam.columnType = val.property ? val.property : this.columnType
+      if (this.taskId) {
+        reportParam.TASKID = this.taskId
+      }
       this.tableParam = {
         sqlParam: this.sqlParam,
         reportId: this.tableInfo.id,

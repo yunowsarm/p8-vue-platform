@@ -350,6 +350,13 @@ export const repositoryApi = {
       path: '/product/my/work/task/getTaskHierarchy',
       mockPath: '/product/my/work/task/getTaskHierarchy',
       desc: '我的任务->列表->获取层级'
+    },
+    {
+      name: 'preAndPostTaskAnnex',
+      method: 'POST',
+      path: '/product/my/work/task/preAndPostTaskAnnex',
+      mockPath: '/product/my/work/task/preAndPostTaskAnnex',
+      desc: '我的任务->前后置->获取附件'
     }
   ],
   ProjectInitiationManagement: [

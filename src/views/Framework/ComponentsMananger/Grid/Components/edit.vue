@@ -2227,9 +2227,7 @@ export default {
     handleOk (val) {
       this.dialogVisible = false
       this.reportParams.infoList[this.scopeValue.$index].fieldHref = JSON.stringify(val)
-      console.log(val, '==================111');
       this.reportParams.infoList[this.scopeValue.$index].tenantId = val.name
-      console.log(this.reportParams.infoList, '=============================222');
     },
     _initTableSize () {
       // const vm = this
@@ -2379,10 +2377,12 @@ export default {
           }
         })
       }
-      // params.reportItem.forEach((el) => {
-
-      //   el.tenantId = ''
-      // })
+      // 清除下钻页面路径
+      params.reportItem.forEach(item => {
+        if (!item.tenantId) {
+          item.fieldHref = ''
+        }
+      })
       this.$refs.form.submitForm(params, this.saveApi)
     },
     async changeSql (val) {

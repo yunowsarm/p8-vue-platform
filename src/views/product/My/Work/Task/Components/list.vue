@@ -80,6 +80,14 @@
         <template #DAYSREMAINING="{scope}">
           <div v-html="overdueTextFun(scope.row)"></div>
         </template>
+        <template #PREDECESSORSNUMBER="{scope}">
+          <span class="underline"
+                @click="frontToBackClick('前置任务查看', scope)">{{scope.row.PREDECESSORSNUMBER}}</span>
+        </template>
+        <template #POSTTASKNUMBER="{scope}">
+          <span class="underline"
+                @click="frontToBackClick('后置任务查看', scope)">{{scope.row.POSTTASKNUMBER}}</span>
+        </template>
       </table-render>
     </template>
     <template #drawer-panel>
@@ -109,6 +117,12 @@
           </process-approval-view>
         </template>
       </common-drawer>
+      <front-to-back v-if="visibleFrontToBack"
+                     :title="title"
+                     :columnType="columnType"
+                     :taskId="taskId"
+                     :visible="visibleFrontToBack"
+                     @close='close'></front-to-back>
     </template>
   </normal-layout>
 </template>
@@ -160,6 +174,7 @@ import { P8MenuLayout as MenuLayout, P8ProcessApproval as ProcessApprovalView, P
 import { selectGenerateTree } from '@/views/Framework/ComponentsMananger/Layout/Components/ButtonNavigation/V1.0/edit/Components/general.js'
 import tableRender from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
 import { overdueTextHandles } from '@/utils/common'
+import frontToBack from './frontToBack'
 export default {
   name: 'ButtonNavigationView',
   provide () {
@@ -192,7 +207,11 @@ export default {
       projectLevel: null,
       visibleModelPicture: false,
       processDefinationTwoKey: 'taskFinishApprove',
-      modelId: ''
+      modelId: '',
+      visibleFrontToBack: false,
+      title: '',
+      columnType: '',
+      taskId: ''
     }
   },
   props: {
@@ -214,7 +233,8 @@ export default {
     tableRender,
     CommonDrawer,
     ProcessApprovalView,
-    MenuLayout
+    MenuLayout,
+    frontToBack
   },
   created () {
     this.init()
@@ -229,6 +249,15 @@ export default {
     }
   },
   methods: {
+    frontToBackClick (val, scope) {
+      this.title = val
+      this.columnType = scope.column.property
+      this.taskId = scope.row.TASKID
+      this.visibleFrontToBack = true
+    },
+    close () {
+      this.visibleFrontToBack = false
+    },
     viewTaskApprove (rowInfo) {
       this.modelId = rowInfo.ID
       this.visibleModelPicture = true
