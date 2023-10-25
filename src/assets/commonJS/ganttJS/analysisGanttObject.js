@@ -8,7 +8,7 @@ import store from '@/plugins/store'
  * @author fukai
  * @date 2020/5/22 12:00
  */
-export function getAnalysisGantt (ganttName, vueThis) {
+export function getAnalysisGantt(ganttName, vueThis) {
   // 获取gantt对象
   let ganttObject = GanttObject.getGanttObject(ganttName)
   // 加载排程类型
@@ -28,7 +28,9 @@ export function getAnalysisGantt (ganttName, vueThis) {
   })
   ganttObject.attachEvent('onBeforeTaskMove', function (id, parent, tindex) {
     let task = ganttObject.getTask(id)
-    if (task.parent !== parent) { return false }
+    if (task.parent !== parent) {
+      return false
+    }
     return false
   })
   // 列定义
@@ -104,6 +106,18 @@ export function getAnalysisGantt (ganttName, vueThis) {
           }
         }
         return ''
+      }
+    },
+    {
+      name: 'changeStatusName',
+      label: '变更状态',
+      align: 'center',
+      width: 70,
+      resize: true,
+      template: function (task) {
+        if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
+          return task.changeStatusName
+        }
       }
     },
     {
@@ -292,39 +306,42 @@ export function getAnalysisGantt (ganttName, vueThis) {
     //     return task.auto_scheduling === true ? '自动' : '手动'
     //   }
     // },
-    { name: 'oldForecastBeginDate',
-    label: '原计划开始时间',
-    align: 'center',
-    min_width: 100,
-    resize: true
-    // template: function (task) {
-    //   if (task.parent && ganttObject.isTaskExists(task.parent) && task.end_date && ganttObject.getTask(task.parent).end_date) {
-    //     let pEndDate = GanttObject.strToDate(GanttObject.dateToStr(ganttObject.getTask(task.parent).end_date, null, ganttObject), null, ganttObject)
-    //     let tEndDate = GanttObject.strToDate(GanttObject.dateToStr(task.end_date, null, ganttObject), null, ganttObject)
-    //     if (pEndDate < tEndDate) {
-    //       return '<span class="red-wave">' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
-    //     }
-    //   }
-    //   return ganttObject.date.add(task.end_date, -1, 'day')
-    // }
-  },
-  { name: 'forecastBeginDate',
-  label: '计划开始时间',
-  align: 'center',
-  min_width: 100,
-  resize: true
-  // template: function (task) {
-  //   if (task.parent && ganttObject.isTaskExists(task.parent) && task.end_date && ganttObject.getTask(task.parent).end_date) {
-  //     let pEndDate = GanttObject.strToDate(GanttObject.dateToStr(ganttObject.getTask(task.parent).end_date, null, ganttObject), null, ganttObject)
-  //     let tEndDate = GanttObject.strToDate(GanttObject.dateToStr(task.end_date, null, ganttObject), null, ganttObject)
-  //     if (pEndDate < tEndDate) {
-  //       return '<span class="red-wave">' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
-  //     }
-  //   }
-  //   return ganttObject.date.add(task.end_date, -1, 'day')
-  // }
-},
-    { name: 'oldForecastEndDate',
+    {
+      name: 'oldForecastBeginDate',
+      label: '原计划开始时间',
+      align: 'center',
+      min_width: 100,
+      resize: true
+      // template: function (task) {
+      //   if (task.parent && ganttObject.isTaskExists(task.parent) && task.end_date && ganttObject.getTask(task.parent).end_date) {
+      //     let pEndDate = GanttObject.strToDate(GanttObject.dateToStr(ganttObject.getTask(task.parent).end_date, null, ganttObject), null, ganttObject)
+      //     let tEndDate = GanttObject.strToDate(GanttObject.dateToStr(task.end_date, null, ganttObject), null, ganttObject)
+      //     if (pEndDate < tEndDate) {
+      //       return '<span class="red-wave">' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
+      //     }
+      //   }
+      //   return ganttObject.date.add(task.end_date, -1, 'day')
+      // }
+    },
+    {
+      name: 'forecastBeginDate',
+      label: '计划开始时间',
+      align: 'center',
+      min_width: 100,
+      resize: true
+      // template: function (task) {
+      //   if (task.parent && ganttObject.isTaskExists(task.parent) && task.end_date && ganttObject.getTask(task.parent).end_date) {
+      //     let pEndDate = GanttObject.strToDate(GanttObject.dateToStr(ganttObject.getTask(task.parent).end_date, null, ganttObject), null, ganttObject)
+      //     let tEndDate = GanttObject.strToDate(GanttObject.dateToStr(task.end_date, null, ganttObject), null, ganttObject)
+      //     if (pEndDate < tEndDate) {
+      //       return '<span class="red-wave">' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
+      //     }
+      //   }
+      //   return ganttObject.date.add(task.end_date, -1, 'day')
+      // }
+    },
+    {
+      name: 'oldForecastEndDate',
       label: '原计划完成时间',
       align: 'center',
       min_width: 100,

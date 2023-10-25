@@ -129,6 +129,9 @@ export default {
             this.isView = false
           }
         }
+        if (task.infoType === 'delete') {
+          this.isView = false
+        }
         // 责任人变更页面，责任人只能操作当前任务及其子
         // let parent = ganttObject.getTask(task.parent)
         // if (this.ganttName === 'changeGantt' && vueThis.createPage === 'userChange' && !ganttObject.isChildOf(this.taskId, vueThis.taskId) && this.taskId !== vueThis.taskId) {
