@@ -888,6 +888,52 @@ export const repositoryApi = {
       path: '/product/pm/plan/loadTaskTypeTask',
       mockPath: '/product/pm/plan/loadTaskTypeTask',
       desc: '项目管理->计划管理->gantt->任务类型饼状图'
+    },
+    {
+      name: 'versionCreate',
+      method: 'POST',
+      path: '/product/pm/plan/createPlanVersion',
+      mockPath: '/product/pm/plan/createPlanVersion',
+      desc: '项目管理->计划管理->计划编制->创建版本'
+    },
+    {
+      name: 'loadTaskVersionData',
+      method: 'POST',
+      path: '/product/pm/plan/loadTaskVersionData',
+      mockPath: '/product/pm/plan/loadTaskVersionData',
+      desc: '项目管理->计划管理->计划编制->版本对比列表'
+    },
+    {
+      name: 'getDescribesVersionData',
+      method: 'POST',
+      path: '/product/pm/plan/getDescribesVersionData',
+      mockPath: '/product/pm/plan/getDescribesVersionData',
+      desc: '项目管理->计划管理->计划编辑->版本管理->版本任务列表->任务描述',
+      cancelLoading: true
+    },
+    {
+      name: 'getInputVersionData',
+      method: 'POST',
+      path: '/product/pm/plan/getInputVersionData',
+      mockPath: '/product/pm/plan/getInputVersionData',
+      desc: '项目管理->计划管理->计划编辑->版本管理->版本任务列表->输入',
+      cancelLoading: true
+    },
+    {
+      name: 'getOutputVersionData',
+      method: 'POST',
+      path: '/product/pm/plan/getOutputVersionData',
+      mockPath: '/product/pm/plan/getOutputVersionData',
+      desc: '项目管理->计划管理->计划编辑->版本管理->版本任务列表->输出',
+      cancelLoading: true
+    },
+    {
+      name: 'getSpecialVersionData',
+      method: 'POST',
+      path: '/product/pm/plan/getSpecialVersionData',
+      mockPath: '/product/pm/plan/getSpecialVersionData',
+      desc: '项目管理->计划管理->计划编辑->版本管理->版本任务列表->特别说明',
+      cancelLoading: true
     }
   ],
   planChange: [
