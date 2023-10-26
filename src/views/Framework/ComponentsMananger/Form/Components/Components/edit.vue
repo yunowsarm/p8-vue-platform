@@ -47,7 +47,7 @@
 
 <script>
 import _cloneDeep from 'lodash/cloneDeep'
-import { P8FormParser as Parser, P8FormParserView as ParserView } from 'p8-components-ui'
+import { P8FormParser as Parser,Notification, P8FormParserView as ParserView } from 'p8-components-ui'
 import { selectTransform, selectGenerateTree } from '@/utils/common'
 import { generateTreeTwo } from '@/utils/generateTree'
 import { debounce } from 'throttle-debounce'
@@ -239,6 +239,14 @@ export default {
     },
     async init(type) {
       const drawingListData = await this.getDrawingList({ desformCode: this.record.desformCode ? this.record.desformCode : this.desformCode })
+      console.log('drawingListData2',drawingListData)
+      if (drawingListData.desformStatus === '0') {
+        Notification.error({
+          title: '提示',
+          message: '设计的表单未发布，无法调用！'
+        })
+        return false
+      }
       this.formConf = JSON.parse(drawingListData.designJson)
       this.handlerEvents(this.formConf.fields)
       await this.handlerCustomFn(this.formConf)
