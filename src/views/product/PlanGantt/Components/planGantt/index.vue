@@ -432,6 +432,16 @@
       :export-experience-type="exportExperienceType"
       @handleCancel="closExperienceBase"
     ></my-experience-base>
+    <common-drawer v-if="versionListVisible"
+                   :visible="versionListVisible"
+                   size="70%"
+                   placement="top"
+                   title="版本列表"
+                   @close="versionListVisible = false">
+      <template #drawer>
+        <version-list :planInfoId="planInfoId"></version-list>
+      </template>
+    </common-drawer>
   </div>
 </template>
 <style lang="scss">
@@ -916,7 +926,8 @@ export default {
       ganttStatisticVisible: false,
       rightMenuConfigVisible: false, // 右键菜单配置弹出框
       yTask: null,
-      getSelectTasks: []
+      getSelectTasks: [],
+      versionListVisible: false //  版本列表显示隐藏
     }
   },
   watch: {
@@ -1714,20 +1725,25 @@ export default {
           console.error('user.setting.save--err', err)
         })
       this.rightMenuConfigVisible = false
+    },
+    //  创建版本
+    createPlanVersion () {
+      this.$api['planGanttManager.versionCreate']({
+        planInfoId: this.planInfoId
+      }).then((res) => {
+        if (res) {
+          this.$message({
+            message: '版本创建成功',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: '版本创建失败',
+            type: 'error'
+          })
+        }
+      })
     }
-    // closeSDMlinkVisible () {
-    //   this.SDMlinkVisible = false
-    // },
-    // SDMhandleOk () {
-    //   this.$api['planInfoManager.updateLinkUrl']({ linkUrl: this.SDMlink, taskId: this.SDMParam }).then(res => {
-    //     this.$message({
-    //       message: '保存成功',
-    //       type: 'success'
-    //     })
-    //     this.SDMlink = ''
-    //   })
-    //   this.SDMlinkVisible = false
-    // }
   }
 }
 </script>

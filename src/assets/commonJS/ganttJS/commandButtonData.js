@@ -2302,18 +2302,17 @@ export const CommandButtonData = [
     icon: 'p8 icon-create-version',
     title: '创建版本',
     help: '创建版本',
-    clickFun: function (btn, ganttName, tasks) {},
+    clickFun: function (btn, ganttName, tasks) {
+      let vueThis = store.getters.vueThis
+      vueThis.createPlanVersion()
+    },
     isDisableFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       const createPage = vueThis.createPage
       if (createPage === 'compile' && vueThis.planEditLock) {
         return true
       }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      const result = true
-      return result
+      return false
     }
   },
   {
@@ -2328,9 +2327,6 @@ export const CommandButtonData = [
       if (createPage === 'compile' && vueThis.planEditLock) {
         return true
       }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
       return false
     }
   },
@@ -2339,14 +2335,16 @@ export const CommandButtonData = [
     icon: 'p8 icon-version-list',
     title: '版本列表',
     help: '版本列表',
-    clickFun: function (btn, ganttName, tasks) {},
+    clickFun: function (btn, ganttName, tasks) {
+      if (ganttName) {
+        let vueThis = store.getters.vueThis
+        vueThis.versionListVisible = true
+      }
+    },
     isDisableFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       const createPage = vueThis.createPage
       if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      if (checkSwitchType(tasks)) {
         return true
       }
       return false
