@@ -1,6 +1,15 @@
 <template>
   <div style="height: 100%">
-    <div style="height: 100%; position: relative">
+    <div class="top" :style="{ height: commandButtonBarHeight }">
+      <command-button-bar
+        :panel-data="btnData"
+        :selected-tasks="selectedTasks"
+        :gantt-name="ganttName"
+        :plan-info-id="planInfoId"
+        @change-command-button="changeCommandButton"
+      ></command-button-bar>
+    </div>
+    <div class="bottom" :class="expandBottom">
       <div ref="myGantt" style="width: 100%; height: calc(100% - 40px) !important"></div>
       <div class="detail_div">
         <div style="width: 50%">
@@ -31,6 +40,28 @@
 <style lang="scss">
 @import '~p8-dhtmlx-gantt/codebase/dhtmlxgantt.css';
 @import '@/assets/commonJS/ganttJS/ganttObject.css';
+
+.bottom {
+  position: relative;
+  border: 1px solid $base-line-color;
+  // border-bottom-left-radius: 6px;
+  // border-bottom-right-radius: 6px;
+  box-shadow: 5px 5px 13px $base-bg-shadow;
+  background: $base-white-color;
+  overflow: hidden;
+}
+.bottom.single {
+  height: calc(100% - 60px);
+}
+.bottom.double {
+  height: calc(100% - 74px);
+}
+.bottom.tabs {
+  height: calc(100% - 148px);
+}
+.bottom.hiddenTabs {
+  height: calc(100% - 42px);
+}
 </style>
 <style type="text/css" media="screen">
 html,
@@ -42,10 +73,16 @@ body {
 }
 </style>
 <script>
+import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
+import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/changeGantt/commandButtonBarDataDoubleRow'
+import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/changeGantt/commandButtonBarDataSingleRow'
+import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/changeGantt/commandButtonBarData'
 import PlanAttribute from '../../PlanGantt/Components/planAttribute'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import { Drawer } from 'p8-components-ui'
+import { mapGetters } from 'vuex'
 import { getAnalysisGantt } from '@/assets/commonJS/ganttJS/analysisGanttObject'
+import { deepClone } from '@/utils/common'
 let myGantt
 export default {
   name: 'AnalysisGantt',
@@ -82,7 +119,8 @@ export default {
   },
   components: {
     'el-drawer': Drawer,
-    PlanAttribute
+    PlanAttribute,
+    CommandButtonBar
   },
   data() {
     return {
@@ -109,7 +147,9 @@ export default {
       managerStatusMap: {}, // 管理状态全部数据
       createTaskStatus: '', // 新建任务状态
       changeTaskInfo: {},
-      changeRecordId: ''
+      changeRecordId: '',
+      advance: true,
+      commandButtonBarHeight: this.ganttButtonMode === 'tabs' ? '145px' : this.ganttButtonMode === 'double' ? '72px' : '58px'
     }
   },
   watch: {
@@ -143,6 +183,20 @@ export default {
       if (newVal) {
         this.changeRecordId = newVal
       }
+    },
+    ganttButtonMode: {
+      handler(val) {
+        if (val == 'tabs') {
+          this.commandButtonBarHeight = '145px'
+        }
+        if (val == 'double') {
+          this.commandButtonBarHeight = '72px'
+        }
+        if (val == 'single') {
+          this.commandButtonBarHeight = '58px'
+        }
+      },
+      immediate: true
     }
   },
   mounted() {
@@ -163,7 +217,54 @@ export default {
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
         return btnData[0]
       }
-    }
+    },
+    btnData() {
+      if (this.$route.path === '/TaskDecomposition') {
+        const NewCommandButtonBarDataTabsRow = deepClone(CommandButtonBarData)
+        const tabsRow = NewCommandButtonBarDataTabsRow.filter((item) => {
+          return item.panelName !== '统计信息' && item.panelName !== '版本'
+        })
+        const NewCommandButtonBarDataDoubleRow = deepClone(CommandButtonBarDataDoubleRow)
+        const doubleRow = NewCommandButtonBarDataDoubleRow.map((item) => {
+          const arr = item.groups.filter((ele) => {
+            return ele.groupName !== '统计信息' && ele.groupName !== '版本编辑' && ele.groupName !== '版本管理'
+          })
+          item.groups = arr
+          return item
+        })
+        const NewCommandButtonBarDataSingleRow = deepClone(CommandButtonBarDataSingleRow)
+        const singleRow = NewCommandButtonBarDataSingleRow.map((item) => {
+          const arr = item.groups.filter((ele) => {
+            return ele.groupName !== '统计信息' && ele.groupName !== '版本编辑' && ele.groupName !== '版本管理'
+          })
+          item.groups = arr
+          return item
+        })
+        return this.ganttButtonMode === 'tabs' ? tabsRow : this.ganttButtonMode === 'double' ? doubleRow : singleRow
+      } else {
+        const NewCommandButtonBarDataTabsRow = deepClone(CommandButtonBarData)
+        const tabsRow = NewCommandButtonBarDataTabsRow.filter((item) => {
+          return item.panelName !== '查询'
+        })
+        return this.ganttButtonMode === 'tabs' ? tabsRow : this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
+      }
+    },
+    expandBottom() {
+      if (this.ganttButtonMode == 'tabs' && this.advance) {
+        return 'tabs'
+      }
+      if (this.ganttButtonMode == 'tabs' && !this.advance) {
+        return 'hiddenTabs'
+      }
+      if (this.ganttButtonMode == 'double') {
+        return 'double'
+      }
+      if (this.ganttButtonMode == 'single') {
+        return 'single'
+      }
+      return ''
+    },
+    ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
   },
   methods: {
     initGantt(planInfoId, changeRecordId) {
@@ -255,6 +356,14 @@ export default {
               console.error('error' + error)
             })
         }
+      }
+    },
+    changeCommandButton(advance) {
+      this.advance = advance
+      if (advance) {
+        this.commandButtonBarHeight = '152px'
+      } else {
+        this.commandButtonBarHeight = '40px'
       }
     }
   }
