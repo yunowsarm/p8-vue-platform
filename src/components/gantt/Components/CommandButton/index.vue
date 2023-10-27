@@ -49,6 +49,28 @@
 <script>
 import { DropdownMenu, DropdownItem, Button, Dropdown, Select, Option, Tooltip } from 'p8-components-ui'
 import { mapGetters } from 'vuex'
+const changeGanttWhiteList = [
+  'create-children',
+  'create-children-two',
+  'create-children-four',
+  'create-children-six',
+  'create-children-eight',
+  'createByNum',
+  'create-equative',
+  'create-equative-two',
+  'create-equative-four',
+  'create-equative-six',
+  'create-equative-eight',
+  'remove-tasks',
+  'issue-message',
+  'plan-edit-gantt',
+  'plan-gantt',
+  'plan-gantt-resource',
+  'critical-path',
+  'search-list',
+  'full-screen'
+]
+const analysisGanttWhiteList = ['full-screen']
 export default {
   name: 'CommandButton',
   components: {
@@ -90,6 +112,12 @@ export default {
     isDisable() {
       const that = this
       return function (btn) {
+        if (this.ganttName === 'analysisGantt' && !analysisGanttWhiteList.includes(btn.id)) {
+          return true
+        }
+        if (this.ganttName === 'changeGantt' && !changeGanttWhiteList.includes(btn.id)) {
+          return true
+        }
         let result
         if (btn.id === '1015' && this.iconState && this.iconState.zrlXz) {
           return true
@@ -113,7 +141,13 @@ export default {
     },
     selectDisable() {
       return function (btn) {
-        return btn.isDisableFun(this.ganttName, this.currentRecords)
+        if (this.ganttName === 'analysisGantt' && !analysisGanttWhiteList.includes(btn.id)) {
+          return true
+        } else if (this.ganttName === 'changeGantt' && !changeGanttWhiteList.includes(btn.id)) {
+          return true
+        } else {
+          return btn.isDisableFun(this.ganttName, this.currentRecords)
+        }
       }
     },
     expandEvents() {

@@ -1,4 +1,4 @@
-const CommandButtonBarDataSingleRow = [
+const CommandButtonBarDataDoubleRow = [
   {
     panelName: '任务',
     noWrap: true,
@@ -9,12 +9,12 @@ const CommandButtonBarDataSingleRow = [
         buttonConfigs: [
           {
             buttonId: 'create-children',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           },
           {
             buttonId: 'create-equative',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           },
           {
@@ -54,7 +54,7 @@ const CommandButtonBarDataSingleRow = [
           },
           {
             buttonId: 'detail-info',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           },
           {
@@ -131,11 +131,6 @@ const CommandButtonBarDataSingleRow = [
       {
         groupName: '协作',
         buttonConfigs: [
-          {
-            buttonId: 'issue-tasks',
-            size: 'small',
-            position: ['top', 'right']
-          },
           {
             buttonId: 'issue-message',
             size: 'small',
@@ -260,16 +255,6 @@ const CommandButtonBarDataSingleRow = [
             buttonId: 'full-screen',
             size: 'small',
             position: ['top']
-          },
-          {
-            buttonId: 'grid-setting',
-            size: 'small',
-            position: ['top']
-          },
-          {
-            buttonId: 'grid-cell-border-setting',
-            size: 'small',
-            position: ['top']
           }
         ]
       },
@@ -278,7 +263,7 @@ const CommandButtonBarDataSingleRow = [
         buttonConfigs: [
           {
             buttonId: 'menu-config',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
@@ -287,4 +272,4 @@ const CommandButtonBarDataSingleRow = [
   }
 ]
 
-export { CommandButtonBarDataSingleRow }
+export { CommandButtonBarDataDoubleRow }

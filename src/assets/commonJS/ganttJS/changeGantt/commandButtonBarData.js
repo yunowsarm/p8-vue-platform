@@ -1,20 +1,19 @@
-const CommandButtonBarDataSingleRow = [
+const CommandButtonBarData = [
   {
     panelName: '任务',
     noWrap: true,
-    groupNameVisible: true, // 默认不显示组名
     groups: [
       {
         groupName: '编辑',
         buttonConfigs: [
           {
             buttonId: 'create-children',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           },
           {
             buttonId: 'create-equative',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           },
           {
@@ -49,12 +48,12 @@ const CommandButtonBarDataSingleRow = [
           },
           {
             buttonId: 'remove-tasks',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           },
           {
             buttonId: 'detail-info',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           },
           {
@@ -71,18 +70,12 @@ const CommandButtonBarDataSingleRow = [
       },
       {
         groupName: '任务标识',
-        buttonConfigs: 'command-monitor', // 标识组件
-        position: ['top']
+        buttonConfigs: 'command-monitor' // 标识组件
       },
       {
         groupName: '任务类型',
-        buttonConfigs: 'command-classify', // 类型组件
-        position: ['top']
+        buttonConfigs: 'command-classify' // 类型组件
       },
-      // {
-      //   panelName: '查询',
-      //   buttonConfigs: 'command-search' // 组件名称
-      // },
       {
         groupName: '样式',
         buttonConfigs: [
@@ -123,7 +116,7 @@ const CommandButtonBarDataSingleRow = [
           },
           {
             buttonId: 'removeStyle',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
@@ -132,28 +125,28 @@ const CommandButtonBarDataSingleRow = [
         groupName: '协作',
         buttonConfigs: [
           {
-            buttonId: 'issue-tasks',
-            size: 'small',
-            position: ['top', 'right']
-          },
-          {
             buttonId: 'issue-message',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           }
         ]
-      },
+      }
+    ]
+  },
+  {
+    panelName: '数据',
+    groups: [
       {
         groupName: '导入',
         buttonConfigs: [
           {
             buttonId: 'excel-import',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           },
           {
             buttonId: 'project-import',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           }
         ]
@@ -163,92 +156,95 @@ const CommandButtonBarDataSingleRow = [
         buttonConfigs: [
           {
             buttonId: 'excel-export',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           },
           {
             buttonId: 'project-export',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           }
         ]
-      },
+      }
+    ]
+  },
+  {
+    panelName: '知识库',
+    groups: [
       {
         groupName: '知识库',
         buttonConfigs: [
           {
             buttonId: 'activity-import',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           },
           {
             buttonId: 'my-experience',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           }
         ]
-      },
+      }
+    ]
+  },
+  {
+    panelName: '查询',
+    groups: 'command-search' // 组件名称
+  },
+  {
+    panelName: '统计信息',
+    groups: 'command-statistic' // 组件名称
+  },
+  {
+    panelName: '版本',
+    groups: [
       {
-        groupName: '查询',
-        buttonConfigs: [
-          {
-            buttonId: 'search-list',
-            size: 'small',
-            position: ['top']
-          }
-        ]
-      },
-      {
-        groupName: '统计信息',
-        buttonConfigs: [
-          {
-            buttonId: 'statistic-list',
-            size: 'small',
-            position: ['top']
-          }
-        ]
-      },
-      {
-        groupName: '版本编辑',
+        groupName: '编辑',
         buttonConfigs: [
           {
             buttonId: 'create-version',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
       },
       {
-        groupName: '版本管理',
+        groupName: '管理',
         buttonConfigs: [
           {
             buttonId: 'version-list',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
-      },
+      }
+    ]
+  },
+  {
+    panelName: '视图',
+    groups: [
       {
         groupName: '页面布局',
         buttonConfigs: [
           {
             buttonId: 'plan-edit-gantt',
-            size: 'small',
+            size: 'large',
             position: ['top']
           },
           {
             buttonId: 'plan-gantt',
-            size: 'small',
+            size: 'large',
             position: ['top']
           },
           {
             buttonId: 'plan-gantt-resource',
-            size: 'small',
+            size: 'large',
             position: ['top']
           },
           {
             buttonId: 'critical-path',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
@@ -258,27 +254,7 @@ const CommandButtonBarDataSingleRow = [
         buttonConfigs: [
           {
             buttonId: 'full-screen',
-            size: 'small',
-            position: ['top']
-          },
-          {
-            buttonId: 'grid-setting',
-            size: 'small',
-            position: ['top']
-          },
-          {
-            buttonId: 'grid-cell-border-setting',
-            size: 'small',
-            position: ['top']
-          }
-        ]
-      },
-      {
-        groupName: '设置',
-        buttonConfigs: [
-          {
-            buttonId: 'menu-config',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
@@ -287,4 +263,4 @@ const CommandButtonBarDataSingleRow = [
   }
 ]
 
-export { CommandButtonBarDataSingleRow }
+export { CommandButtonBarData }

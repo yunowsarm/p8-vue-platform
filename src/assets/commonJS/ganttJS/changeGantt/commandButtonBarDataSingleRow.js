@@ -132,11 +132,6 @@ const CommandButtonBarDataSingleRow = [
         groupName: '协作',
         buttonConfigs: [
           {
-            buttonId: 'issue-tasks',
-            size: 'small',
-            position: ['top', 'right']
-          },
-          {
             buttonId: 'issue-message',
             size: 'small',
             position: ['top', 'right']
@@ -258,16 +253,6 @@ const CommandButtonBarDataSingleRow = [
         buttonConfigs: [
           {
             buttonId: 'full-screen',
-            size: 'small',
-            position: ['top']
-          },
-          {
-            buttonId: 'grid-setting',
-            size: 'small',
-            position: ['top']
-          },
-          {
-            buttonId: 'grid-cell-border-setting',
             size: 'small',
             position: ['top']
           }
