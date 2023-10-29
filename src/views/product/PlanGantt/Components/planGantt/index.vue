@@ -551,6 +551,7 @@ import { requestUrl } from '@/utils/common.js'
 import CommonButtonBarSetting from '@/components/gantt/Components/CommonButtonBarSetting'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
+import VersionList from '../versionList'
 const Mycolumns = [
   {
     title: '',
@@ -693,6 +694,7 @@ export default {
     CommandSearch,
     CommandStatistic,
     CommonButtonBarSetting,
+    VersionList,
     VuePerfectScrollbar
   },
   data() {

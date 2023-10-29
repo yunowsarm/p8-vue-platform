@@ -890,6 +890,13 @@ export const repositoryApi = {
       desc: '项目管理->计划管理->gantt->任务类型饼状图'
     },
     {
+      name: 'versionList',
+      method: 'POST',
+      path: '/product/pm/plan/loadPlanVersionData',
+      mockPath: '/product/pm/plan/loadPlanVersionData',
+      desc: '项目管理->计划管理->计划编制->版本列表'
+    },
+    {
       name: 'versionCreate',
       method: 'POST',
       path: '/product/pm/plan/createPlanVersion',
