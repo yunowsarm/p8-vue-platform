@@ -188,6 +188,9 @@ export default {
   ::v-deep .el-tabs__content {
     overflow: hidden;
   }
+  ::v-deep .el-tabs {
+    height: 100%;
+  }
   ::v-deep .el-tabs--top .el-tabs__content .el-tab-pane {
     height: calc(100% - 10px);
   }
