@@ -416,6 +416,7 @@
                         :need-params="true"
                         :params="paramParams"
                         :data="tableParamData"
+                        :change-table-data="changeTableParamData"
                         @save-param-data="saveParamData">
           <template #paramName="{ scope, data }">
             <el-input v-model="scope.row.paramName"
@@ -2212,6 +2213,7 @@ export default {
         }
       ],
       tableParamData: [],
+      changeTableParamData: [],
       searchData: [],
       searchDetailData: [],
       styleValue: ''
@@ -2772,6 +2774,18 @@ export default {
         this.getTableData()
       }
       this.getReplaceData()
+      this.tableParams = { sqlId: val }
+      this.$api['formGenerator.sqlParam'](this.tableParams).then((res) => {
+        if (res) {
+          res.forEach(el => {
+            if(!el.parameterSource) {
+              el.parameterSource = 'SQL参数'
+            }
+          })
+          this.searchData = res
+          this.changeTableParamData = res
+        }
+      })
     },
     // 获取查询目标字段数据
     getReplaceData () {
@@ -2784,16 +2798,6 @@ export default {
           })
         }
       })
-      this.$api['formGenerator.sqlParam'](this.tableParams).then((res) => {
-        if (res) {
-          res.forEach(el => {
-            if(!el.parameterSource) {
-              el.parameterSource = 'SQL参数'
-            }
-          })
-          this.searchData = res
-        }
-      })
     },
     modifyTableData (val) {
       this.tableConfigDetailsApi = 'formGenerator.tableColumnsInfo'
@@ -2802,6 +2806,14 @@ export default {
       this.buttonParams = { reportId: val }
       this.getReplaceData()
       this.getTableData()
+      this.$api['formGenerator.tableParam'](this.paramParams).then(res => {
+        res.forEach(item => {
+          if (item.isSearch) {
+            this.searchData.push(item)
+          }
+        })
+        this.tableParamData = res
+      })
     },
     getTableData () {
       let that = this
@@ -2815,14 +2827,6 @@ export default {
           }
         })
         that.noApiTableData = res
-      })
-      this.$api['formGenerator.tableParam'](this.paramParams).then(res => {
-        res.forEach(item => {
-          if (item.isSearch) {
-            this.searchData.push(item)
-          }
-        })
-        that.tableParamData = res
       })
     },
     // eventHandle输入框加建议下拉框
