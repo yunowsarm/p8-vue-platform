@@ -834,7 +834,7 @@ export function calculateParentEndDateAndDuration(ganttObject, taskId, vueThis) 
         const oldTask = vueThis.oldTaskMap[t.id]
         // 为手动时，若计划完成时间小于当前操作任务的计划完成时间，修改父为操作任务完成时间
         if (t.type === 'task') {
-          if (oldTask.end_date < task.end_date) {
+          if (!oldTask || oldTask.end_date < task.end_date) {
             t.end_date = task.end_date
           } else {
             t.end_date = oldTask.end_date

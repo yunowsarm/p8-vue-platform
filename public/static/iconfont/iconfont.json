@@ -6,6 +6,55 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "16835092",
+      "name": "内容调整",
+      "font_class": "content-adjustment",
+      "unicode": "e7b2",
+      "unicode_decimal": 59314
+    },
+    {
+      "icon_id": "16835093",
+      "name": "调减",
+      "font_class": "make-reductions",
+      "unicode": "e7b3",
+      "unicode_decimal": 59315
+    },
+    {
+      "icon_id": "16835095",
+      "name": "调增",
+      "font_class": "make-increase",
+      "unicode": "e7b4",
+      "unicode_decimal": 59316
+    },
+    {
+      "icon_id": "37661255",
+      "name": "已完成数",
+      "font_class": "yiwanchengshu",
+      "unicode": "e7b0",
+      "unicode_decimal": 59312
+    },
+    {
+      "icon_id": "37661254",
+      "name": "进行中数",
+      "font_class": "jinhangzhongshu",
+      "unicode": "e7b1",
+      "unicode_decimal": 59313
+    },
+    {
+      "icon_id": "37661257",
+      "name": "未完成数",
+      "font_class": "weiwanchengshu",
+      "unicode": "e7ad",
+      "unicode_decimal": 59309
+    },
+    {
+      "icon_id": "37661256",
+      "name": "任务总额",
+      "font_class": "renwuzonge",
+      "unicode": "e7af",
+      "unicode_decimal": 59311
+    },
+    {
       "icon_id": "37531692",
       "name": "放大",
       "font_class": "fangda",
