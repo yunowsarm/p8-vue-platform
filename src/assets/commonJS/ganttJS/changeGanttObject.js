@@ -122,6 +122,19 @@ export function getChangeGantt(ganttName, vueThis) {
       }
     },
     {
+      name: 'changeStatusName',
+      label: '变更状态',
+      align: 'center',
+      width: 70,
+      resize: true,
+      template: function (task) {
+        // 任务图标，排除根节点
+        if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
+          return task.changeStatusName
+        }
+      }
+    },
+    {
       name: 'text',
       label: '标识',
       align: 'left',
@@ -205,7 +218,11 @@ export function getChangeGantt(ganttName, vueThis) {
       min_width: 350,
       template: function (task) {
         if (task.style) {
-          return '<div style="color:' + task.style + '">' + task.name + '</div>'
+          if (task.infoType === 'delete') {
+            return '<div style="text-decoration:line-through;color:' + task.style + '">' + task.name + '</div>'
+          } else {
+            return '<div style="color:' + task.style + '">' + task.name + '</div>'
+          }
         } else {
           return task.name
         }

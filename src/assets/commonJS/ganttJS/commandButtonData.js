@@ -755,18 +755,24 @@ export const CommandButtonData = [
     title: '删除',
     help: '删除',
     clickFun: function (btn, ganttName, tasks) {
-      const thisGantt = GanttObject.getGanttObject(ganttName)
+      let thisGantt = GanttObject.getGanttObject(ganttName)
+      const vueThis = store.getters.vueThis
       if (ganttName === 'changeGantt') {
-        if (thisGantt) {
-          removeTasks(thisGantt, null, ganttName)
+        if (tasks[0].infoType === 'create') {
+          vueThis.delSaveChange(tasks)
+          let thisGantt = GanttObject.getGanttObject(ganttName)
+          let thisDp = GanttObject.getDpObject(ganttName)
+          removeTasks(thisGantt, thisDp, ganttName)
+        } else {
+          vueThis.delSaveChange(tasks)
         }
       } else {
-        const thisDp = GanttObject.getDpObject(ganttName)
+        let thisDp = GanttObject.getDpObject(ganttName)
         if (thisGantt && thisDp) {
-          const msg = '是否确认删除选中任务?'
-          // if (checkHasApproveTask(ganttName, tasks)) {
-          //   msg = '删除任务包含已提交审批任务，是否确认删除?'
-          // }
+          let msg = '是否确认删除选中任务?'
+          if (checkHasApproveTask(ganttName, tasks)) {
+            msg = '删除任务包含已提交审批任务，是否确认删除?'
+          }
           thisGantt.confirm({
             text: msg,
             ok: '确认',
@@ -3449,6 +3455,8 @@ function noDpCreateTask(ganttObject, num, parent, pos, taskName, indexNo, autoSc
         status: vueThis.createTaskStatus,
         planInfoId: vueThis.planInfoId,
         monitorPoints: '',
+        secretGrade: parent.secretGrade,
+        secretGradeDisplay: parent.secretGradeDisplay,
         owner_id: '',
         auto_scheduling: schedule,
         autoScheduling: autoScheduling,
