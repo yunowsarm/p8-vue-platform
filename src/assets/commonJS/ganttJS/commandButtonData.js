@@ -3191,6 +3191,7 @@ function removePlanGanttData(ganttObject, dp, ganttName, vueThis, selectedTaskId
  * @param tasks
  */
 function copyTask(ganttObject, tasks, vueThis) {
+  vueThis.copyFlag = false
   const selectTaskIds = ganttObject.getSelectedTasks()
   const planInfoId = vueThis.planInfoId
   const copyTaskIds = []
@@ -3236,48 +3237,78 @@ function copyTask(ganttObject, tasks, vueThis) {
  * @param tasks
  */
 function pasteTask(ganttObject, tasks, vueThis, type, dpObj) {
-  const copyTasks = vueThis.copyTasks
-  if (copyTasks != null) {
-    const selTask = tasks[0]
-    const parentTask = ganttObject.getTask(selTask.parent)
-    const selId = selTask.id
-    const selIndexNo = ganttObject.getTaskIndex(selId) + 1 // 分支indexNo
-    const planInfoId = vueThis.planInfoId
-    api['planGanttManager.pasteTasks']({
-      pasteData: copyTasks,
-      parentId: parentTask.id,
-      selectTaskId: selId,
-      type: type,
-      planInfoId: planInfoId,
-      createPage: vueThis.createPage
-    })
-      .then(function (res) {
-        if (res) {
-          // 刷新样式
-          if (res.styles) {
-            store.dispatch('setTaskStyles', res.styles)
+  console.log(vueThis.copyFlag,'----vueThis.copyFlag');
+  if(vueThis.copyFlag){
+    const that = this
+    if (vueThis.copyTasks.length > 0) {
+      const selTask = tasks[0]
+      const params = {
+        createPage: vueThis.createPage,
+        experienceInfoIds: vueThis.copyTasks,
+        parentTaskId: selTask.id,
+        planInfoId: vueThis.planInfoId,
+        type: 'after'
+      }
+      vueThis.$api['MyExperience.importTaskEx'](params)
+        .then((res) => {
+          if (res === 'true') {
+            vueThis.$message.success('粘贴成功')
+            vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
+          } else {
+            vueThis.$message.error('粘贴失败')
           }
-          // 刷新资源
-          if (res.resources) {
-            ganttObject.$resourcesStore.parse(res.resources)
+        })
+        .then((err) => {
+          console.error(err + '错误信息')
+        })
+    } else {
+      vueThis.$message.warning('请选择需要粘贴的数据')
+    }
+    return 
+  } else {
+    const copyTasks = vueThis.copyTasks
+    if (copyTasks != null) {
+      const selTask = tasks[0]
+      const parentTask = ganttObject.getTask(selTask.parent)
+      const selId = selTask.id
+      const selIndexNo = ganttObject.getTaskIndex(selId) + 1 // 分支indexNo
+      const planInfoId = vueThis.planInfoId
+      api['planGanttManager.pasteTasks']({
+        pasteData: copyTasks,
+        parentId: parentTask.id,
+        selectTaskId: selId,
+        type: type,
+        planInfoId: planInfoId,
+        createPage: vueThis.createPage
+      })
+        .then(function (res) {
+          if (res) {
+            // 刷新样式
+            if (res.styles) {
+              store.dispatch('setTaskStyles', res.styles)
+            }
+            // 刷新资源
+            if (res.resources) {
+              ganttObject.$resourcesStore.parse(res.resources)
+            }
+            if (res.tasks) {
+              createTaskByDatas(ganttObject, res.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
+            }
+          } else {
+            vueThis.$message({
+              message: '任务粘贴失败！',
+              type: 'error'
+            })
           }
-          if (res.tasks) {
-            createTaskByDatas(ganttObject, res.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
-          }
-        } else {
+        })
+        .catch((err) => {
+          console.error(err, 'err')
           vueThis.$message({
             message: '任务粘贴失败！',
             type: 'error'
           })
-        }
-      })
-      .catch((err) => {
-        console.error(err, 'err')
-        vueThis.$message({
-          message: '任务粘贴失败！',
-          type: 'error'
         })
-      })
+    }
   }
 }
 

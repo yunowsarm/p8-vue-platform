@@ -430,6 +430,7 @@
       :plan-info-id="planInfoId"
       :selected-task="selectedTasks"
       :export-experience-type="exportExperienceType"
+      @copy="copyExperienceBase"
       @handleCancel="closExperienceBase"
     ></my-experience-base>
     <common-drawer v-if="versionListVisible"
@@ -1013,6 +1014,10 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll'])
   },
   methods: {
+    copyExperienceBase (ids) {
+      this.copyTasks = ids
+      this.copyFlag = true
+    },
     closExperienceBase(res) {
       this.isManage = false
       this.experienceBaseVisible = false
