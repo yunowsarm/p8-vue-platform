@@ -84,7 +84,10 @@ export default {
               label: '已选择任务的责任人',
               value: '2'
             }
-          ]
+          ],
+          eventHandle: {
+            change: 'userChangeHandle'
+          }
         },
         {
           type: 'select',
@@ -112,7 +115,16 @@ export default {
   },
   created() {
     const ganttObject = GanttObject.getGanttObject(this.ganttName)
-    const task = ganttObject.getTask(this.taskId)
+    let task = null
+    if (this.taskId) {
+      task = ganttObject.getTask(this.taskId)
+    } else {
+      ganttObject.eachTask(function (item) {
+        if (ganttObject.getGlobalTaskIndex(item.id) === 0) {
+          task = item
+        }
+      })
+    }
     this.taskSecretLevel = task.secretGrade
   },
   methods: {
@@ -123,6 +135,15 @@ export default {
           message: '密级不可高于任务密级！'
         })
         this.formData.secretLevel = ''
+      }
+    },
+    userChangeHandle(val) {
+      if (val === '2' && !this.taskId) {
+        this.$message({
+          type: 'warning',
+          message: '当前无选中任务！'
+        })
+        this.formData.type = ''
       }
     },
     saved(params) {
