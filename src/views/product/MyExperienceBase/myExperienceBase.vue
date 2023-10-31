@@ -31,7 +31,7 @@
         <template #center>
           <div style="padding: 10px">
             <el-button type="primary" :disabled="isManage" @click="exportExperience">导入</el-button>
-            <el-button type="primary" :disabled="true" @click="copyExperience">复制到粘贴板</el-button>
+            <el-button type="primary" @click="copyExperience">复制到粘贴板</el-button>
           </div>
           <common-table
             ref="table"
@@ -336,7 +336,9 @@ export default {
       }
     },
     copyExperience() {
-      console.log('This is copy')
+      let ids = this.selectedRows.map(el => el.id)
+      this.$message({type:'success',message: '复制成功'})
+      this.$emit('copy',ids)
     },
     addClass(node, type, e) {
       const that = this
