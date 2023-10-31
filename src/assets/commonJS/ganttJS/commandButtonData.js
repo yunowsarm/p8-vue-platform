@@ -3052,9 +3052,9 @@ function removeTasks(ganttObject, dp, ganttName) {
   const selTaskIds = ganttObject.getSelectedTasks()
   const vueThis = store.getters.vueThis
   let datas = null
-  if (vueThis.getSelectTasks.length > 0) {
-    datas = vueThis.getSelectTasks
-    vueThis.getSelectTasks = []
+  if (vueThis.selectedTasks.length > 0) {
+    datas = vueThis.selectedTasks
+    vueThis.selectedTasks = []
   } else {
     datas = vueThis.selectedTasks
   }
@@ -3160,7 +3160,7 @@ function removePlanGanttData(ganttObject, dp, ganttName, vueThis, selectedTaskId
           })
         }
         vueThis.taskCount = ganttObject.getTaskCount()
-        vueThis.getSelectTasks = []
+        vueThis.selectedTasks = []
         vueThis.$message({
           message: '任务删除成功',
           type: 'success'

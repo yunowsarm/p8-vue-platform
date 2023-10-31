@@ -1,8 +1,8 @@
 @font-face {
   font-family: "p8"; /* Project id 4084759 */
-  src: url('iconfont.woff2?t=1695716354259') format('woff2'),
-       url('iconfont.woff?t=1695716354259') format('woff'),
-       url('iconfont.ttf?t=1695716354259') format('truetype');
+  src: url('iconfont.woff2?t=1698651500339') format('woff2'),
+       url('iconfont.woff?t=1698651500339') format('woff'),
+       url('iconfont.ttf?t=1698651500339') format('truetype');
 }
 
 .p8 {
@@ -11,6 +11,34 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-content-adjustment:before {
+  content: "\e7b2";
+}
+
+.icon-make-reductions:before {
+  content: "\e7b3";
+}
+
+.icon-make-increase:before {
+  content: "\e7b4";
+}
+
+.icon-yiwanchengshu:before {
+  content: "\e7b0";
+}
+
+.icon-jinhangzhongshu:before {
+  content: "\e7b1";
+}
+
+.icon-weiwanchengshu:before {
+  content: "\e7ad";
+}
+
+.icon-renwuzonge:before {
+  content: "\e7af";
 }
 
 .icon-fangda:before {
