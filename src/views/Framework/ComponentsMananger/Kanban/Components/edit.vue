@@ -544,7 +544,9 @@ export default {
     },
     handleSubmit () {
       this.$refs.form.validate().then((queryParams) => {
-        queryParams.urlType = queryParams.urlType.toString()
+        if (queryParams.urlType) {
+          queryParams.urlType = queryParams.urlType.toString()
+        }
         if (this.formData.searchConfigValue && this.formData.searchConfigValue.indexOf('null') !== -1) {
           queryParams.searchConfigValue = ''
         } else {
