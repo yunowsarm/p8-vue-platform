@@ -207,7 +207,7 @@
                 <el-option v-for="item in renderData"
                            :key="item.selectionCode"
                            :label="item.selectionName + '(' + item.selectionCode + ')'"
-                           :value="item.id"> </el-option>
+                           :value="item.selectionCode"> </el-option>
               </el-select>
             </div>
             <!-- 树组件 -->
@@ -221,7 +221,7 @@
                 <el-option v-for="item in treeData"
                            :key="item.selectionCode"
                            :label="item.selectionName + '(' + item.selectionCode + ')'"
-                           :value="item.id"> </el-option>
+                           :value="item.selectionCode"> </el-option>
               </el-select>
             </div>
             <!-- 弹出组件 -->
