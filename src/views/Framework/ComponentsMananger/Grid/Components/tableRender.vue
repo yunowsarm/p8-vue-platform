@@ -971,6 +971,16 @@ export default {
                 defaultValue: item.defaultValueData,
                 parameterSource: item.parameterSource
               })
+              this.searchList.push({
+                type: item.searchMode, // 控件类型
+                labelText: item.fieldTxt, // 控件显示的文本
+                fieldName: item.fieldName,
+                mode: '=',
+                selectCode: item.dictCode,
+                replaceSearch: item.replaceVal,
+                defaultValue: item.defaultValueData,
+                parameterSource: item.parameterSource
+              })
             }
           })
         }

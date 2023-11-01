@@ -427,7 +427,7 @@ export default {
       if (tabs[0].otherParmarsMap) {
         otherParmarsMap = JSON.parse(tabs[0].otherParmarsMap)
       }
-      this.provideParams.searchParams = { ...paramsObj, ...otherParmarsMap }
+      this.provideParams.searchParams = { ...paramsObj, ...otherParmarsMap, tabsName: target.name }
       if (this.tabsParmar.navigation === '1') {
         if (tabs[0].type == '0') {
           this.asyncComponents = tabs[0].componentsConfig.url
