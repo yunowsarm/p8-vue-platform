@@ -1,5 +1,6 @@
 <template>
   <div class="c-button" :class="buttonDynamicClass">
+    <!-- 层级按钮 -->
     <template v-if="cbutton.id === 'hierarchy-filter'">
       <el-tooltip :content="cbutton.title" placement="top" :offset="-15" :enterable="false" effect="dark">
         <el-select v-model="level" :placeholder="cbutton.title" class="c-select" size="mini" style="width: 70px" @change="cbutton.clickFun(level, ganttName)" :clearable="true">
@@ -31,7 +32,7 @@
         <el-dropdown v-if="cbutton.children && cbutton.children.length && size != 'mini'">
           <i class="el-icon-caret-bottom" @mouseleave="styleMouseleave(cbutton)" :class="{ disabled: dropVisible }"></i>
           <el-dropdown-menu slot="dropdown">
-            <div v-for="(btnChild, index) in cbutton.children" :key="index" :class="{ isdisable: isDisable(btnChild) }">
+            <div v-for="(btnChild, index) in cbutton.children" :key="index" class="c_btn_dropmenu" :class="{ isdisable: isDisable(btnChild) }">
               <el-dropdown-item @click.native="btnClick(btnChild)" :disabled="isDisable(btnChild)">
                 <el-button v-if="btnChild.id !== 'createByNum'" type="text" :disabled="isDisable(btnChild)">
                   <i :class="btnChild.icon"></i>
@@ -172,6 +173,8 @@ export default {
         case 'mini':
           iconSize = 'font-size: 16px;'
           break
+        default:
+          iconSize = 'font-size: 16px;'
       }
       return iconSize
     },
@@ -315,8 +318,11 @@ export default {
   background-color: #e6f7ff;
 }
 
-.c-button-disabled {
+.c-button-disabled, .c_btn_dropmenu {
   color: #e0e0e0;
+  .el-button.is-disabled, .el-button.is-disabled:hover, .el-button.is-disabled:focus {
+    color: #a0afc5;
+  }
 }
 
 .c-button-mini {
@@ -331,7 +337,7 @@ export default {
   // border: 1px solid #ccc;
 }
 .disabled {
-  color: $base-disabled-color;
+  color: #a0afc5;
 }
 .isdisable {
   cursor: no-drop;

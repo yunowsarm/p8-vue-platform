@@ -1138,38 +1138,14 @@ export const CommandButtonData = [
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       vueThis.noticeShow()
-      // const thisGantt = GanttObject.getGanttObject(ganttName)
-      // const thisDp = GanttObject.getDpObject(ganttName)
-      // if (thisGantt && thisDp) {
-      //   thisGantt.confirm({
-      //     text: '下发时，将连同所选任务的子任务及关联父任务一同下发，任务下发后责任人可见，是否确认下发选中任务?',
-      //     ok: '确认',
-      //     cancel: '取消',
-      //     callback: function (result) {
-      //       if (result) {
-      //         issueTask(thisGantt, thisDp)
-      //       }
-      //     }
-      //   })
-      // }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
       const vueThis = store.getters.vueThis
       const createPage = vueThis.createPage
       if (createPage === 'compile' && vueThis.planEditLock) {
         return true
       }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      // 计划编辑页面才可下发
-      if (checkCanIssue(ganttName, tasks)) {
-        result = false
-      } else {
-        result = true
-      }
-      return result
+      return false
     }
   },
   {
@@ -2478,9 +2454,7 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      if (checkSwitchType(tasks)) {
-        return true
-      }
+      return false
     }
   },
   {

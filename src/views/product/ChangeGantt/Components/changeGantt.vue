@@ -91,6 +91,21 @@
         <command-search :gantt-name="ganttName" :is-input="false" :plan-info-id="planInfoId"></command-search>
       </template>
     </common-dialog>
+    <common-dialog
+      title="通知下发"
+      width="70%"
+      v-if="noticeVisible"
+      :visible="noticeVisible"
+      :show-handle-btn="false"
+      @isfullscreen="isfullscreen"
+      @close="closeNotice"
+      :is-view-cs-footer="false"
+      :dialog-height="650"
+    >
+      <template #dialog>
+        <Notice :task-id="selectTaskId" :gantt-name="ganttName" :plan-info-id="planInfoId" @close="closeNotice" />
+      </template>
+    </common-dialog>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -163,6 +178,7 @@ import submitChange from './submitChange'
 import SelectApproveUser from '@/views/Framework/BusinessActivity/ProcessApproval/selectApproveUser'
 import CommandSearch from '@/components/gantt/Components/CommandSearch'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
+import Notice from '../../PlanGantt/Components/notice'
 
 const mh = document.documentElement.clientHeight - 300
 let myGantt
@@ -224,6 +240,7 @@ export default {
     SelectApproveUser,
     CommonDialog,
     VuePerfectScrollbar,
+    Notice,
     CommandSearch
   },
   data() {
@@ -291,6 +308,7 @@ export default {
       viewType: 'grid', // 视图类型，默认只显示列表
       ganttSearchVisible: false, // 计划变更查询弹出框
       delDataList: [],
+      noticeVisible: false,
       newSendDatas: null
     }
   },
@@ -754,7 +772,13 @@ export default {
     },
     closeSearch() {
       this.ganttSearchVisible = false
-    }
+    },
+    noticeShow() {
+      this.noticeVisible = true
+    },
+    closeNotice() {
+      this.noticeVisible = false
+    },
   }
 }
 </script>
