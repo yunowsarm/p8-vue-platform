@@ -99,7 +99,7 @@ export default {
       advanced: false,
       loadingVisible: false,
       separator: ';',
-      formField: this.form,
+      formField: {...this.form},
       defaultSearch: '',
       setInputDefault: false, // 设置查询条件中的第一个输入框default: true
       dateDataIndex: [], // 日期fieldName集合
