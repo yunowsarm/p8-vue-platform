@@ -714,8 +714,8 @@ export default {
           sqlParmars[item] = newValue[item]
         }
       })
-      this.tableParam.param = { ...obj,...this.tableParam.param }
-      this.tableParam.reportParam = { ...reportParmars,...this.tableParam.reportParam }
+      this.tableParam.param = {...this.tableParam.param, ...obj }
+      this.tableParam.reportParam = { ...this.tableParam.reportParam,...reportParmars }
       this.tableParam.sqlParam = { ...sqlParmars,...this.sqlParam,...this.tableParam.sqlParam }
       this.tableParam.permissionVo = { router: this.$route.name, resourceId: '' }
       this.propParam = Object.assign(this.propParam, newValue)
