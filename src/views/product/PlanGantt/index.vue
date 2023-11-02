@@ -16,6 +16,7 @@
         <plan-gantt
           :plan-info-id="planInfoId"
           :whole-describe-id="wholeDescribeId"
+          :project-type-id="projectTypeId"
           :plan-info-status="planInfoStatus"
           :task-id="taskId"
           :plan-end-date-array="planEndDateArray"
@@ -124,6 +125,7 @@ export default {
       planBeginDateArray: [],
       planEndDateArray: [],
       wholeDescribeId: '',
+      projectTypeId: '',
       planInfoStatus: '',
       taskId: null,
       createPage: '',
@@ -212,6 +214,7 @@ export default {
   beforeMount() {},
   created() {},
   mounted() {
+    console.log('🚀 ~ file: index.vue:219 ~ mounted ~ this.thirdMenuParam:', this.thirdMenuParam)
     if (this.thirdMenuParam.createPage === 'decompose') {
       this.planInfoId = this.thirdMenuParam.planInfoId
       this.secretGrade = this.thirdMenuParam.secretGrade || ''
@@ -221,6 +224,7 @@ export default {
       this.wholeDescribeId = this.thirdMenuParam.wholeDescribeId
       this.planBeginDateArray = this.thirdMenuParam.planBeginDateArray || []
       this.planEndDateArray = this.thirdMenuParam.planEndDateArray || []
+      this.projectTypeId = this.thirdMenuParam.projectTypeId || ''
     } else {
       this.planInfoId = this.thirdMenuParam.ID || ''
       this.secretGrade = this.thirdMenuParam.SECRETLEVEL || ''
@@ -230,6 +234,7 @@ export default {
       this.wholeDescribeId = this.thirdMenuParam.WHOLEDESCRIBEID
       this.planBeginDateArray = this.thirdMenuParam.planBeginDateArray || []
       this.planEndDateArray = this.thirdMenuParam.planEndDateArray || []
+      this.projectTypeId = this.thirdMenuParam.PROJECTTYPEID || ''
     }
   },
   methods: {

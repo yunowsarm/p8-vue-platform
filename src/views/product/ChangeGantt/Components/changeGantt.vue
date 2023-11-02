@@ -197,6 +197,10 @@ export default {
       type: Object,
       default: null
     },
+    projectTypeId: {
+      type: String,
+      default: null
+    },
     createPage: {
       type: String,
       default: null
@@ -274,6 +278,7 @@ export default {
       deep: 0,
       mouseX: '',
       mouseY: '',
+      columnSettings: [],
       copyTasks: [], // 复制任务载体
       taskClassifyDatas: [],
       monitorPointDatas: [],
@@ -399,7 +404,10 @@ export default {
     ...mapGetters(['taskStyles'])
   },
   methods: {
-    initGantt(planInfoId, changeRecordId, viewType) {
+    async initGantt(planInfoId, changeRecordId, viewType) {
+      // 根据项目类型，获取gantt列设置
+      this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.projectTypeId })
+
       const vueThis = this
       myGantt = GanttObject.getGanttObject(vueThis.ganttName)
       // 清空原有数据
