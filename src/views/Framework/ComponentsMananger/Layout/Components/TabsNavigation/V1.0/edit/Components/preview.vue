@@ -382,6 +382,7 @@ export default {
       if (defaultComponents.url) {
         this.asyncComponents = defaultComponents.url
         this.componentsConfig = defaultComponents
+        this.provideParams.searchParams = { tabsName: this.tabsData[0].name }
       } else {
         const tabObj = this.tabsData[0]
         const paramsObj = {}
@@ -397,7 +398,7 @@ export default {
         if (tabObj.otherParmarsMap) {
           otherParmarsMap = JSON.parse(tabObj.otherParmarsMap)
         }
-        this.provideParams.searchParams = { ...paramsObj, ...otherParmarsMap }
+        this.provideParams.searchParams = { ...paramsObj, ...otherParmarsMap, tabsName: this.tabsData[0].name }
         console.log(this.tabsData, '== this.tabsData')
         if (this.tabsParmar.navigation === '1') {
           if (tabObj.type == '0') {
