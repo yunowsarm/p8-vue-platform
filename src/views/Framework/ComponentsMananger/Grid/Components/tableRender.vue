@@ -716,7 +716,7 @@ export default {
       })
       this.tableParam.param = { ...obj }
       this.tableParam.reportParam = { ...reportParmars }
-      this.tableParam.sqlParam = { ...sqlParmars }
+      this.tableParam.sqlParam = { ...sqlParmars,...this.sqlParam }
       this.tableParam.permissionVo = { router: this.$route.name, resourceId: '' }
       this.propParam = Object.assign(this.propParam, newValue)
     },
@@ -1048,7 +1048,7 @@ export default {
       })
       this.sqlParam = sqlParam
       this.tableParam.reportParam = {...reportParam,...this.tableParam.reportParam}
-      this.tableParam.sqlParam = {...sqlParam,...this.tableParam.sqlParam}
+      this.tableParam.sqlParam = {...sqlParam,...this.tableParam.sqlParam,...this.sqlParam}
       this.tableParam.param = param
     },
     reSet () {
@@ -1067,7 +1067,10 @@ export default {
           }
         })
       }
-      this.sqlParam.columnType = val.property
+      this.sqlParam.columnType = val.property ? val.property : this.columnType
+      if (this.taskId) {
+        reportParam.TASKID = this.taskId
+      }
       let sql = {}
       let report = {}
       this.serachForm = {}
