@@ -471,6 +471,7 @@ export function getChangeGantt(ganttName, vueThis) {
         GanttObject.refreshProgress(idParentBeforeDeleteTask, true, ganttObject, vueThis)
       }
     })
+    synchronizationColumns(vueThis, ganttObject)
     // 在将操作添加到撤消堆栈之前触发
     GanttObject.onBeforeUndoStack(ganttObject)
     // 在将操作添加到回退堆栈之前触发
@@ -484,4 +485,35 @@ export function getChangeGantt(ganttName, vueThis) {
     GanttObject.setGanttObject(ganttName, ganttObject)
   }
   return ganttObject
+}
+
+function synchronizationColumns(vueThis, ganttObject) {
+  const initColumns = ganttObject.config.columns
+
+  // 获取gantt列配置信息
+  if (vueThis.columnSettings.length > 0) {
+    const tempColumns = []
+    vueThis.columnSettings.forEach((item) => {
+      const initColumn = initColumns.filter((initItem) => initItem.name === item.textName)
+      if (initColumn && Object.keys(initColumn).length > 0) {
+        initColumn[0].hide = false
+        tempColumns.push(initColumn[0])
+      }
+    })
+    // 当ganttObject对象中columns数据与配置信息中数据不一致（增加或减少）时，根据ganttObject对象中columns新增列下标插入tempColumns，超出时加在末尾
+    initColumns.forEach((initItem, initIndex) => {
+      const settingItem = vueThis.columnSettings.filter((settingItem) => settingItem.name === initItem.name)
+      if (!settingItem || Object.keys(settingItem).length === 0) {
+        initItem.hide = false
+        if (tempColumns && tempColumns.length > initIndex) {
+          tempColumns.splice(initIndex, 0, initItem)
+        } else {
+          tempColumns.push(initItem)
+        }
+      }
+    })
+    ganttObject.config.columns = tempColumns
+  } else {
+    ganttObject.config.columns = initColumns
+  }
 }

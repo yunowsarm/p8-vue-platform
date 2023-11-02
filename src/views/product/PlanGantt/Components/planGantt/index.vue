@@ -598,6 +598,10 @@ export default {
       type: String,
       default: null
     },
+    projectTypeId: {
+      type: String,
+      default: null
+    },
     taskId: {
       type: String,
       default: null
@@ -811,6 +815,7 @@ export default {
       monitorPointDatas: [],
       dependentDatas: [],
       searchForm: {},
+      columnSettings: [],
       monitorLockMap: {}, // 标识锁定状态
       limitColumns: [], // 标识加锁后不可编辑列定义
       lockLevel: 3, // 编辑锁定任务层级，指定后，gantt页面对应任务不可做任何操作
@@ -1280,6 +1285,9 @@ export default {
         text: 'Loading',
         spinner: 'el-icon-loading'
       })
+      // 根据项目类型，获取gantt列设置
+      this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.projectTypeId })
+
       const vueThis = this
       // 清空原有数据
       this.selectedTasks = []
