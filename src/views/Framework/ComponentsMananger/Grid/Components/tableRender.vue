@@ -670,9 +670,20 @@ export default {
   },
   methods: {
     fiflterParams (newValue) {
-      const obj = {}
-      const searchKeys = this.searchList.map((el) => {
-        return el.replaceSearch ? el.replaceSearch : el.fieldName
+      let obj = {}
+      let reportParmars = {}
+      let sqlParmars = {}
+      let searchKeys = []
+      let reportList = []
+      let SQLList = []
+      this.searchList.map((el) => {
+        if(el.parameterSource == '报表参数'){
+          reportList.push(el.replaceSearch ? el.replaceSearch : el.fieldName)
+        } else if (el.parameterSource == 'SQL参数'){
+          SQLList.push(el.replaceSearch ? el.replaceSearch : el.fieldName)
+        } else {
+          searchKeys.push(el.replaceSearch ? el.replaceSearch : el.fieldName) 
+        }
       })
       Object.keys({ ...newValue }).forEach((item) => {
         if (searchKeys.includes(item)) {
@@ -693,7 +704,19 @@ export default {
           }
         }
       })
+      Object.keys({ ...newValue }).forEach((item) => {
+        if (reportList.includes(item)) {
+          reportParmars[item] = newValue[item]
+        }
+      })
+      Object.keys({ ...newValue }).forEach((item) => {
+        if (SQLList.includes(item)) {
+          sqlParmars[item] = newValue[item]
+        }
+      })
       this.tableParam.param = { ...obj }
+      this.tableParam.reportParam = { ...reportParmars }
+      this.tableParam.sqlParam = { ...sqlParmars }
       this.tableParam.permissionVo = { router: this.$route.name, resourceId: '' }
       this.propParam = Object.assign(this.propParam, newValue)
     },
@@ -973,8 +996,8 @@ export default {
               })
               this.searchList.push({
                 type: item.searchMode, // 控件类型
-                labelText: item.fieldTxt, // 控件显示的文本
-                fieldName: item.fieldName,
+                labelText: item.paramTxt, // 控件显示的文本
+                fieldName: item.paramName,
                 mode: '=',
                 selectCode: item.dictCode,
                 replaceSearch: item.replaceVal,
@@ -1024,8 +1047,8 @@ export default {
         }
       })
       this.sqlParam = sqlParam
-      this.tableParam.reportParam = reportParam
-      this.tableParam.sqlParam = sqlParam
+      this.tableParam.reportParam = {...reportParam,...this.tableParam.reportParam}
+      this.tableParam.sqlParam = {...sqlParam,...this.tableParam.sqlParam}
       this.tableParam.param = param
     },
     reSet () {
@@ -1063,11 +1086,11 @@ export default {
         }
       })
       this.tableParam = {
-        sqlParam: { ...this.sqlParam, ...sql},
+        sqlParam: { ...this.sqlParam, ...sql,...this.tableParam.sqlParam},
         reportId: this.tableInfo.id,
         param: {},
         reportParam: {
-          ...this.defaultReportParam, ...report
+          ...this.defaultReportParam, ...report,...this.tableParam.reportParam
         },
         router: this.$route.name,
         code: this.code,

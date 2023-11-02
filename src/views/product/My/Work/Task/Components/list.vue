@@ -177,11 +177,11 @@ import { overdueTextHandles } from '@/utils/common'
 import frontToBack from './frontToBack'
 export default {
   name: 'ButtonNavigationView',
-  provide () {
-    return {
-      provideParams: this.provideParams
-    }
-  },
+  // provide () {
+  //   return {
+  //     provideParams: this.provideParams
+  //   }
+  // },
   data () {
     return {
       dateTime: null,
