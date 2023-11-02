@@ -210,10 +210,14 @@ export default {
       font-size: 16px;
     }
     .monitor_list {
-      display: flex;
-      flex-direction: column;
-      flex-wrap: wrap;
-      justify-content: space-between;
+      // display: flex;
+      // flex-direction: column;
+      // flex-wrap: wrap;
+      // justify-content: space-between;
+      display: grid;
+      grid-auto-flow: column;
+      grid-gap: 5px;
+      grid-template-rows: 25px 25px;
       height: 56px;
     }
     .monitor_item {
