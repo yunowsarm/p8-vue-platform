@@ -714,9 +714,9 @@ export default {
           sqlParmars[item] = newValue[item]
         }
       })
-      this.tableParam.param = { ...obj }
-      this.tableParam.reportParam = { ...reportParmars }
-      this.tableParam.sqlParam = { ...sqlParmars,...this.sqlParam }
+      this.tableParam.param = { ...obj,...this.tableParam.param }
+      this.tableParam.reportParam = { ...reportParmars,...this.tableParam.reportParam }
+      this.tableParam.sqlParam = { ...sqlParmars,...this.sqlParam,...this.tableParam.sqlParam }
       this.tableParam.permissionVo = { router: this.$route.name, resourceId: '' }
       this.propParam = Object.assign(this.propParam, newValue)
     },
@@ -1078,12 +1078,12 @@ export default {
         this.serachForm[el.fieldName] = el.defaultValue ? el.defaultValue : ''
         if (el.parameterSource && el.parameterSource == 'SQL参数') {
           if (reportParam[el.fieldName]) {
-            sql[el.fieldName] = reportParam[el.fieldName].value
+            sql[el.fieldName] = reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName]
             delete reportParam[el.fieldName]
           }
         } else if (el.parameterSource && el.parameterSource == '报表参数') {
           if (reportParam[el.fieldName]) {
-            report[el.fieldName] = reportParam[el.fieldName].value
+            report[el.fieldName] = reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName]
             delete reportParam[el.fieldName]
           }
         }
@@ -1093,7 +1093,7 @@ export default {
         reportId: this.tableInfo.id,
         param: {},
         reportParam: {
-          ...this.defaultReportParam, ...report,...this.tableParam.reportParam
+          ...this.defaultReportParam,...this.tableParam.reportParam, ...report
         },
         router: this.$route.name,
         code: this.code,
