@@ -55,7 +55,7 @@ export default {
         sortable: false,
         align: 'left',
         headerAlign: 'left',
-        width: 180,
+        minWidth: 180,
         filterable: true, // 列上增加输入框搜索
         filter: {
           alias: '',
@@ -69,7 +69,7 @@ export default {
         sortable: false,
         align: 'left',
         headerAlign: 'left',
-        width: 120,
+        minWidth: 120,
         filterable: true, // 列上增加输入框搜索
         filter: {
           alias: '',
@@ -83,7 +83,7 @@ export default {
         sortable: false,
         align: 'left',
         headerAlign: 'left',
-        width: 120,
+        minWidth: 120,
         filterable: true, // 列上增加输入框搜索
         filter: {
           alias: '',
@@ -97,7 +97,7 @@ export default {
         sortable: false,
         align: 'left',
         headerAlign: 'left',
-        width: 190,
+        minWidth: 190,
         filterable: true, // 列上增加输入框搜索
         filter: {
           alias: 'startEndTime',

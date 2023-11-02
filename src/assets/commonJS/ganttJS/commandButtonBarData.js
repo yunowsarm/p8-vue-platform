@@ -211,11 +211,6 @@ const CommandButtonBarData = [
             buttonId: 'create-version',
             size: 'large',
             position: ['top']
-          },
-          {
-            buttonId: 'version-compare',
-            size: 'large',
-            position: ['top']
           }
         ]
       },

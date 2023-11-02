@@ -59,7 +59,7 @@
             <div class="table-con">
               <div class="add-member">
                 <div>
-                  <el-button icon="el-icon-circle-plus"
+                  <el-button icon="el-icon-plus"
                              v-if="group_add_member"
                              type="plan"
                              @click="addMemberHandle">添加人员

@@ -4,6 +4,7 @@
 <template>
   <div>
     <form-list ref="form"
+               style="height:330px;"
                :data-source="dataSource"
                :form="formData"
                :api="saveApi"
@@ -22,11 +23,6 @@
                        :key="index"></el-option>
           </template>
         </el-select>
-      </template>
-      <template #styleRendering>
-        <ace-edit :value.sync="formData.styleRendering"
-                  width="400px"
-                  height="150px"></ace-edit>
       </template>
       <template slot="btn">
         <el-button @click="cancel">取 消</el-button>
@@ -102,6 +98,20 @@
                          :false-label="0"
                          @change="saveTableData(data)"></el-checkbox>
           </template>
+          <template #title="{ scope, data }">
+            <el-select v-model="scope.row.title" clearable @change="saveTableData(data)">
+              <el-option label="左对齐" value="left"></el-option>
+              <el-option label="居中对齐" value="center"></el-option>
+              <el-option label="右对齐" value="right"></el-option>
+            </el-select>
+          </template>
+          <template #alignmentStyle="{ scope, data }">
+            <el-select v-model="scope.row.alignmentStyle" clearable @change="saveTableData(data)">
+              <el-option label="左对齐" value="left"></el-option>
+              <el-option label="居中对齐" value="center"></el-option>
+              <el-option label="右对齐" value="right"></el-option>
+            </el-select>
+          </template>
           <template #isSearch="{ scope, data }">
             <el-checkbox v-model="scope.row.isSearch"
                          :true-label="1"
@@ -127,6 +137,11 @@
                          :true-label="1"
                          :false-label="0"
                          @change="saveTableData(data, 'isCustomColumn', scope)"></el-checkbox>
+          </template>
+          <template #customClass="{ scope, data }">
+            <el-input v-model="scope.row.customClass"
+                      :disabled="!!scope.row.isCustomColumn"
+                      @blur="saveTableData(data)"></el-input>
           </template>
           <template #searchMode="{ scope, data }">
             <!-- <el-select v-model="scope.row.searchMode" clearable @change="saveTableData(data)">
@@ -207,7 +222,7 @@
                 <el-option v-for="item in renderData"
                            :key="item.selectionCode"
                            :label="item.selectionName + '(' + item.selectionCode + ')'"
-                           :value="item.id"> </el-option>
+                           :value="item.selectionCode"> </el-option>
               </el-select>
             </div>
             <!-- 树组件 -->
@@ -221,7 +236,7 @@
                 <el-option v-for="item in treeData"
                            :key="item.selectionCode"
                            :label="item.selectionName + '(' + item.selectionCode + ')'"
-                           :value="item.id"> </el-option>
+                           :value="item.selectionCode"> </el-option>
               </el-select>
             </div>
             <!-- 弹出组件 -->
@@ -360,8 +375,9 @@
             </el-tooltip>
           </template>
           <template #fieldHref="{ scope, data }">
-            <el-input v-model="scope.row.tenantId"
+            <!-- <el-input v-model="scope.row.tenantId"
                       clearable
+                      class="clearIcon"
                       autosize
                       :disabled="!!scope.row.isCustomColumn">
               <i class="el-icon-link"
@@ -369,6 +385,14 @@
                  type="link"
                  :style="{ cursor: 'pointer', fontSize: '16px', color: '#08c', marginTop: '8px' }"
                  @click="showModal(scope, data)"></i>
+            </el-input> -->
+            <el-input v-model="scope.row.tenantId"
+                      clearable
+                      autosize
+                      :disabled="!!scope.row.isCustomColumn">
+              <el-button slot="append"
+                        icon="el-icon-link"
+                        @click="showModal(scope, data)"></el-button>
             </el-input>
             <select-module v-if="dialogVisible && selectModuleIndex == scope.$index"
                            :visible="dialogVisible"
@@ -391,7 +415,8 @@
                         :add-row="true"
                         :need-params="true"
                         :params="paramParams"
-                        api="formGenerator.tableParam"
+                        :data="tableParamData"
+                        :change-table-data="changeTableParamData"
                         @save-param-data="saveParamData">
           <template #paramName="{ scope, data }">
             <el-input v-model="scope.row.paramName"
@@ -410,6 +435,13 @@
           <template #paramValue="{ scope, data }">
             <el-input v-model="scope.row.paramValue"
                       @blur="saveParamData(data)"></el-input>
+          </template>
+          <template #isSearch="{ scope, data }">
+            <el-checkbox v-model="scope.row.isSearch"
+                         :true-label="1"
+                         :false-label="0"
+                         :disabled="!!scope.row.isCustomColumn"
+                         @change="saveParamData(data, 'isSearch', scope)"></el-checkbox>
           </template>
           <template #orderNum="{ scope, data }">
             <el-input-number v-model="scope.row.orderNum"
@@ -835,7 +867,205 @@
             </el-select>
           </template>
         </editable-table>
-        <common-dialog title="默认值"
+      </template>
+      <template #searchDetails>
+        <editable-table ref="searchTable"
+                        class="searchTable"
+                        :columns="searchColumns"
+                        :add-row="false"
+                        :height="eaitHeight"
+                        :need-params="true"
+                        :changeTableData="searchData"
+                        @save-param-data="saveSearchData">
+          <template #fieldName="{ scope, data }">
+            <el-input v-model="scope.row.fieldName"
+                      :disabled="!!scope.row.isCustomColumn"
+                      @blur="saveSearchData(data)"></el-input>
+          </template>
+          <template #fieldType="{ scope, data }">
+            <el-input v-model="scope.row.fieldType"
+                      :disabled="!!scope.row.isCustomColumn"
+                      @blur="saveSearchData(data)"></el-input>
+          </template>
+          <template #fieldTxt="{ scope, data }">
+            <el-input v-model="scope.row.fieldTxt"
+                      @blur="saveSearchData(data)"></el-input>
+          </template>
+          <template #searchMode="{ scope, data }">
+            <el-select v-model="scope.row.searchMode"
+                       clearable
+                       :disabled="!!scope.row.isCustomColumn"
+                       @change="saveSearchData(data, scope.row.searchMode, scope)">
+              <el-option label="文本框"
+                         value="text"></el-option>
+              <el-option label="目录组件"
+                         value="select"></el-option>
+              <el-option label="树组件"
+                         value="treeSelect"></el-option>
+              <el-option label="复选"
+                         value="multiple"></el-option>
+              <el-option label="数字"
+                         value="number"></el-option>
+              <el-option label="单选按钮"
+                         value="radioButton"></el-option>
+              <el-option label="弹出组件"
+                         value="popUpSelect"></el-option>
+              <el-option label="日期"
+                         value="datetime"></el-option>
+              <el-option label="时间范围"
+                         value="datetimeRange"></el-option>
+            </el-select>
+          </template>
+          <template #queryFieldNameHeader="{}">
+            查询目标字段
+            <el-tooltip class="item"
+                        effect="dark"
+                        popper-class="testtooltip"
+                        placement="top">
+              <div slot="content">
+                <p>通过该值对目标字段进行查询筛选，例如：显示名称的字段通过目录组件选择后对ID列进行查询。</p>
+              </div>
+              <i style="font-size: 20px"
+                 class="el-icon-question"></i>
+            </el-tooltip>
+          </template>
+          <template #replaceVal="{ scope, data }">
+            <el-select v-model="scope.row.replaceVal"
+                       style="width: 100%"
+                       clearable
+                       :disabled="!!scope.row.isCustomColumn"
+                       @change="saveSearchData(data)">
+              <el-option v-for="item in replaceData"
+                         :key="item.value"
+                         :label="item.value"
+                         :value="item.value"></el-option>
+            </el-select>
+          </template>
+          <template #dictCodeHeader="{}">
+            选项组件
+            <el-tooltip class="item"
+                        effect="dark"
+                        popper-class="testtooltip"
+                        placement="top">
+              <div slot="content">
+                <p>查询模式为目录组件、树组件、弹出组件时，可选择选项组件管理中创建的选项组件，在查询时约束取值范围。</p>
+              </div>
+              <i style="font-size: 20px"
+                 class="el-icon-question"></i>
+            </el-tooltip>
+          </template>
+          <template #dictCode="{ scope, data }">
+            <!-- 目录组件 复选组件-->
+            <div v-if="scope.row.searchMode === 'select' || scope.row.searchMode === 'multiple' || scope.row.searchMode === 'radioButton'">
+              <el-select v-model="scope.row.dictCode"
+                         style="width: 100%"
+                         clearable
+                         :disabled="!!scope.row.isCustomColumn"
+                         filterable
+                         @change="saveSearchData(data,)">
+                <el-option v-for="item in renderData"
+                           :key="item.selectionCode"
+                           :label="item.selectionName + '(' + item.selectionCode + ')'"
+                           :value="item.selectionCode"> </el-option>
+              </el-select>
+            </div>
+            <!-- 树组件 -->
+            <div v-if="scope.row.searchMode === 'treeSelect'">
+              <el-select v-model="scope.row.dictCode"
+                         style="width: 100%"
+                         clearable
+                         :disabled="!!scope.row.isCustomColumn"
+                         filterable
+                         @change="saveSearchData(data)">
+                <el-option v-for="item in treeData"
+                           :key="item.selectionCode"
+                           :label="item.selectionName + '(' + item.selectionCode + ')'"
+                           :value="item.selectionCode"> </el-option>
+              </el-select>
+            </div>
+            <!-- 弹出组件 -->
+            <div v-if="scope.row.searchMode === 'popUpSelect'">
+              <el-input v-model="scope.row.dictCode"
+                        readonly
+                        autosize
+                        :disabled="!!scope.row.isCustomColumn"
+                        @click.native="showDialog(scope, data)">
+                <i class="el-icon-link"
+                   slot="suffix"
+                   type="link"
+                   :style="{ cursor: 'pointer', fontSize: '16px', color: '#08c' }"></i>
+              </el-input>
+              <common-dialog title="表格组件"
+                             :visible="moduleVisible"
+                             @handle-cancel="handleCancel"
+                             @handle-ok="componentsHandleOk"
+                             @close="handleCancel"
+                             width="60%">
+                <template #dialog>
+                  <common-table ref="table"
+                                :comp="comp"
+                                :columns="tableColumns"
+                                :params="queryParam"
+                                :api="tableApi"
+                                @selection-change="handleSelectionChange"> </common-table>
+                </template>
+              </common-dialog>
+            </div>
+          </template>
+          <template #defaultValueData="{ scope, data }">
+            <!-- 文本框 -->
+            <div v-if="scope.row.searchMode === 'text'">
+              <el-input clearable
+                        placeholder="请输入"
+                        :disabled="!!scope.row.isCustomColumn"
+                        @change="saveSearchData(data)"
+                        v-model="scope.row.defaultValueData"></el-input>
+            </div>
+            <!-- 日期 -->
+            <div v-if="scope.row.searchMode === 'datetime'">
+              <el-date-picker v-model="scope.row.defaultValueData"
+                              type="date"
+                              clearable
+                              style="width: 100%"
+                              valueFormat='yyyy-MM-dd'
+                              :disabled="!!scope.row.isCustomColumn"
+                              @change="saveSearchData(data)"
+                              placeholder="选择日期"> </el-date-picker>
+            </div>
+            <!-- 时间范围 -->
+            <div v-if="scope.row.searchMode === 'datetimeRange'">
+              <el-date-picker v-model="scope.row.defaultValueDatas"
+                              type="daterange"
+                              style="width: 100%"
+                              :disabled="!!scope.row.isCustomColumn"
+                              range-separator="至"
+                              start-placeholder="开始日期"
+                              end-placeholder="结束日期"
+                              valueFormat='yyyy-MM-dd'
+                              @change="dateChange(scope)">
+              </el-date-picker>
+            </div>
+            <!-- 数字 -->
+            <div v-if="scope.row.searchMode === 'number'">
+              <el-input clearable
+                        :disabled="!!scope.row.isCustomColumn"
+                        v-model="scope.row.defaultValueData"
+                        type="number"
+                        @change="saveSearchData(data)"
+                        size="medium"></el-input>
+            </div>
+          </template>
+        </editable-table>
+      </template>
+      <template #customCSS>
+        <ace-edit :value.sync="styleValue"
+                  width="95%"
+                  :height="aceEditHeight"
+                  :config="{lang: 'css'}"
+                  @update:value="onEditModify"></ace-edit>
+      </template>
+    </common-tabs>
+    <common-dialog title="默认值"
                        v-if="helpVisible"
                        :visible="helpVisible"
                        :show-handle-btn="false"
@@ -844,8 +1074,6 @@
             <view-parameter></view-parameter>
           </template>
         </common-dialog>
-      </template>
-    </common-tabs>
   </div>
 </template>
 
@@ -918,7 +1146,7 @@ export default {
     }
   },
   data () {
-    const height = document.documentElement.clientHeight - 608
+    const height = document.documentElement.clientHeight - 440
     return {
       noApiTableData: [],
       selectModuleIndex: null,
@@ -1108,62 +1336,62 @@ export default {
             { label: '子节点', value: '2' }
           ]
         },
-        {
-          type: 'select',
-          labelText: '表头对齐方式',
-          fieldName: 'title',
-          colLayout: 'doubleCol',
-          fieldConfig: {
-            disabled: false
-          },
-          options: [
-            {
-              label: '左对齐',
-              value: 'left'
-            },
-            {
-              label: '居中对齐',
-              value: 'center'
-            },
-            {
-              label: '右对齐',
-              value: 'right'
-            }
-          ],
-          rules: [
-            {
-              required: true
-            }
-          ]
-        },
-        {
-          type: 'select',
-          labelText: '内容对齐方式',
-          fieldName: 'alignmentStyle',
-          colLayout: 'doubleCol',
-          fieldConfig: {
-            disabled: false
-          },
-          options: [
-            {
-              label: '左对齐',
-              value: 'left'
-            },
-            {
-              label: '居中对齐',
-              value: 'center'
-            },
-            {
-              label: '右对齐',
-              value: 'right'
-            }
-          ],
-          rules: [
-            {
-              required: true
-            }
-          ]
-        },
+        // {
+        //   type: 'select',
+        //   labelText: '表头对齐方式',
+        //   fieldName: 'title',
+        //   colLayout: 'doubleCol',
+        //   fieldConfig: {
+        //     disabled: false
+        //   },
+        //   options: [
+        //     {
+        //       label: '左对齐',
+        //       value: 'left'
+        //     },
+        //     {
+        //       label: '居中对齐',
+        //       value: 'center'
+        //     },
+        //     {
+        //       label: '右对齐',
+        //       value: 'right'
+        //     }
+        //   ],
+        //   rules: [
+        //     {
+        //       required: true
+        //     }
+        //   ]
+        // },
+        // {
+        //   type: 'select',
+        //   labelText: '内容对齐方式',
+        //   fieldName: 'alignmentStyle',
+        //   colLayout: 'doubleCol',
+        //   fieldConfig: {
+        //     disabled: false
+        //   },
+        //   options: [
+        //     {
+        //       label: '左对齐',
+        //       value: 'left'
+        //     },
+        //     {
+        //       label: '居中对齐',
+        //       value: 'center'
+        //     },
+        //     {
+        //       label: '右对齐',
+        //       value: 'right'
+        //     }
+        //   ],
+        //   rules: [
+        //     {
+        //       required: true
+        //     }
+        //   ]
+        // },
         {
           type: 'textarea',
           labelText: '描述',
@@ -1176,13 +1404,13 @@ export default {
             }
           ]
         },
-        {
-          type: 'blank',
-          labelText: '自定义CSS',
-          fieldName: 'styleRendering',
-          slotName: 'styleRendering',
-          colLayout: 'doubleCol'
-        }
+        // {
+        //   type: 'blank',
+        //   labelText: '自定义CSS',
+        //   fieldName: 'styleRendering',
+        //   slotName: 'styleRendering',
+        //   colLayout: 'doubleCol'
+        // }
       ],
       dataSource: [],
       formData: {
@@ -1195,10 +1423,16 @@ export default {
       des: '',
       sqlIdOption: [],
       height: height + 'px',
+      aceEditHeight: height * 0.9 + 'px',
       tabsData: [
         {
           label: '表格配置明细',
           name: 'tableConfigDetails',
+          icon: 'icon-multi-project-manage'
+        },
+        {
+          label: '查询配置',
+          name: 'searchDetails',
           icon: 'icon-multi-project-manage'
         },
         {
@@ -1207,7 +1441,7 @@ export default {
           icon: 'icon-planning'
         },
         {
-          label: '报表参数',
+          label: '参数',
           name: 'tableParam',
           icon: 'icon-business-execution'
         },
@@ -1215,30 +1449,60 @@ export default {
           label: '表格按钮',
           name: 'tableButton',
           icon: 'icon-process-template'
+        },
+        {
+          label: '自定义CSS',
+          name: 'customCSS',
+          icon: 'icon-process-template'
         }
       ],
       columns: [
         {
           title: '字段名称',
           dataIndex: 'fieldName',
+          align: 'center',
           width: 160,
           scopedSlots: { customRender: 'custom' }
         },
         {
           title: '字段类型',
           dataIndex: 'fieldType',
+          align: 'center',
           width: 120,
           scopedSlots: { customRender: 'custom' }
         },
         {
           title: '字段文本',
           dataIndex: 'fieldTxt',
+          align: 'center',
           width: 180,
           scopedSlots: { customRender: 'custom' }
         },
         {
           title: '字段宽度',
           dataIndex: 'fieldWidth',
+          align: 'center',
+          width: 140,
+          scopedSlots: { customRender: 'custom' }
+        },
+        {
+          title: '排序',
+          dataIndex: 'orderNum',
+          align: 'center',
+          width: 140,
+          scopedSlots: { customRender: 'custom' }
+        },
+        {
+          title: '表头对齐方式',
+          dataIndex: 'title',
+          align: 'center',
+          width: 140,
+          scopedSlots: { customRender: 'custom' }
+        },
+        {
+          title: '内容对齐方式',
+          dataIndex: 'alignmentStyle',
+          align: 'center',
           width: 140,
           scopedSlots: { customRender: 'custom' }
         },
@@ -1278,45 +1542,48 @@ export default {
           scopedSlots: { customRender: 'custom' }
         },
         {
-          title: '查询模式',
-          dataIndex: 'searchMode',
-          width: 140,
+          title: '自定义类名',
+          dataIndex: 'customClass',
+          minWidth: 140,
+          align: 'center',
           scopedSlots: { customRender: 'custom' }
         },
-        {
-          title: '查询目标字段',
-          dataIndex: 'replaceVal',
-          width: 180,
-          scopedSlots: { customRender: 'custom' }
-        },
-        {
-          title: '选项组件',
-          dataIndex: 'dictCode',
-          width: 240,
-          scopedSlots: { customRender: 'custom' }
-        },
-        {
-          title: '默认值',
-          dataIndex: 'defaultValueData',
-          width: 240,
-          scopedSlots: { customRender: 'custom' }
-        },
+        // {
+        //   title: '查询模式',
+        //   dataIndex: 'searchMode',
+        //   width: 140,
+        //   scopedSlots: { customRender: 'custom' }
+        // },
+        // {
+        //   title: '查询目标字段',
+        //   dataIndex: 'replaceVal',
+        //   width: 180,
+        //   scopedSlots: { customRender: 'custom' }
+        // },
+        // {
+        //   title: '选项组件',
+        //   dataIndex: 'dictCode',
+        //   width: 240,
+        //   scopedSlots: { customRender: 'custom' }
+        // },
+        // {
+        //   title: '默认值',
+        //   dataIndex: 'defaultValueData',
+        //   width: 240,
+        //   scopedSlots: { customRender: 'custom' }
+        // },
         {
           title: '单击事件',
           dataIndex: 'fieldHref',
+          align: 'center',
           width: 180,
           scopedSlots: { customRender: 'custom' }
         },
         {
           title: '单击事件页面名称',
           dataIndex: 'drillName',
+          align: 'center',
           width: 180,
-          scopedSlots: { customRender: 'custom' }
-        },
-        {
-          title: '排序',
-          dataIndex: 'orderNum',
-          width: 140,
           scopedSlots: { customRender: 'custom' }
         }
       ],
@@ -1343,12 +1610,25 @@ export default {
           scopedSlots: { customRender: 'custom' }
         },
         {
-          title: '排序',
-          dataIndex: 'orderNum',
-          width: 140,
-          default: undefined,
+          title: '参数来源',
+          dataIndex: 'parameterSource',
+          align: 'center',
+          minWidth: 120
+        },
+        {
+          title: '是否查询',
+          dataIndex: 'isSearch',
+          minWidth: 80,
+          align: 'center',
           scopedSlots: { customRender: 'custom' }
-        }
+        },
+        // {
+        //   title: '排序',
+        //   dataIndex: 'orderNum',
+        //   width: 140,
+        //   default: undefined,
+        //   scopedSlots: { customRender: 'custom' }
+        // }
       ],
       buttonColumns: [
         {
@@ -1570,6 +1850,48 @@ export default {
           scopedSlots: { customRender: 'custom' }
         }
       ],
+      searchColumns: [
+        {
+          title: '字段名称',
+          dataIndex: 'fieldName',
+          width: 200,
+          align: 'center',
+        },
+        {
+          title: '字段文本',
+          dataIndex: 'fieldTxt',
+          width: 200,
+          align: 'center'
+        },
+        {
+          title: '查询模式',
+          dataIndex: 'searchMode',
+          minWidth: 140,
+          align: 'center',
+          scopedSlots: { customRender: 'custom' }
+        },
+        {
+          title: '查询目标字段',
+          dataIndex: 'replaceVal',
+          minWidth: 180,
+          align: 'center',
+          scopedSlots: { customRender: 'custom' }
+        },
+        {
+          title: '选项组件',
+          dataIndex: 'dictCode',
+          minWidth: 240,
+          align: 'center',
+          scopedSlots: { customRender: 'custom' }
+        },
+        {
+          title: '默认值',
+          dataIndex: 'defaultValueData',
+          minWidth: 240,
+          align: 'center',
+          scopedSlots: { customRender: 'custom' }
+        },
+      ],
       editDataSource: [
         {
           type: 'radioButton',
@@ -1697,7 +2019,6 @@ export default {
             if (cellValue && cellValue !== '') {
               date = moment(cellValue).format('YYYY-MM-DD')
             }
-            // console.log('date', date)
             return date
           },
           align: 'center'
@@ -1715,7 +2036,6 @@ export default {
             if (cellValue && cellValue !== '') {
               date = moment(cellValue).format('YYYY-MM-DD')
             }
-            // console.log('date', date)
             return date
           },
           align: 'center'
@@ -1891,7 +2211,12 @@ export default {
           slotName: 'paramsText',
           colLayout: 'singleCol'
         }
-      ]
+      ],
+      tableParamData: [],
+      changeTableParamData: [],
+      searchData: [],
+      searchDetailData: [],
+      styleValue: ''
     }
   },
   mounted () {
@@ -1928,18 +2253,28 @@ export default {
             icon: 'icon-multi-project-manage'
           },
           {
+            label: '查询配置',
+            name: 'searchDetails',
+            icon: 'icon-multi-project-manage'
+          },
+          {
             label: '自定义列配置',
             name: 'configColumnDetails',
             icon: 'icon-planning'
           },
           {
-            label: '报表参数',
+            label: '参数',
             name: 'tableParam',
             icon: 'icon-business-execution'
           },
           {
             label: '表格按钮',
             name: 'tableButton',
+            icon: 'icon-process-template'
+          },
+          {
+            label: '自定义CSS',
+            name: 'customCSS',
             icon: 'icon-process-template'
           },
           {
@@ -1956,18 +2291,28 @@ export default {
             icon: 'icon-multi-project-manage'
           },
           {
+            label: '查询配置',
+            name: 'searchDetails',
+            icon: 'icon-multi-project-manage'
+          },
+          {
             label: '自定义列配置',
             name: 'configColumnDetails',
             icon: 'icon-planning'
           },
           {
-            label: '报表参数',
+            label: '参数',
             name: 'tableParam',
             icon: 'icon-business-execution'
           },
           {
             label: '表格按钮',
             name: 'tableButton',
+            icon: 'icon-process-template'
+          },
+          {
+            label: '自定义CSS',
+            name: 'customCSS',
             icon: 'icon-process-template'
           }
         ]
@@ -2205,7 +2550,6 @@ export default {
     handleSelectionChange (val) {
       if (val.length >= 2) {
         // 删除索引为0的
-        // console.log(val.splice(0,val.length-1),'被删除的')
         const arrays = val.splice(0, val.length - 1)
         arrays.forEach((row) => {
           this.$refs.table.$refs.table.toggleRowSelection(row) // 除了当前点击的，其他的全部取消选中
@@ -2227,9 +2571,7 @@ export default {
     handleOk (val) {
       this.dialogVisible = false
       this.reportParams.infoList[this.scopeValue.$index].fieldHref = JSON.stringify(val)
-      console.log(val, '==================111');
       this.reportParams.infoList[this.scopeValue.$index].tenantId = val.name
-      console.log(this.reportParams.infoList, '=============================222');
     },
     _initTableSize () {
       // const vm = this
@@ -2254,6 +2596,7 @@ export default {
       if (!this.record.styleRendering) {
         this.formData.styleRendering = ''
       }
+      this.styleValue = this.formData.styleRendering
       this.modifyTableData(this.formData.id)
       // 获取自定义列配置数据
       this.getConfigClomuns()
@@ -2308,17 +2651,12 @@ export default {
           }
         }
       }
-      // 获取默认值下拉数据
-      // if (changeFlag === 'url') {
-      //   this.scopeValue = scope
-      //   this.$api['formGenerator.getSelectionData']({
-      //     id: scope.row.dictCode
-      //   }).then(res => {
-      //     // this.renderDataVal = res.data
-      //     console.log(this.reportParams, '===============this.reportParams');
-      //     this.reportParams.infoList[this.scopeValue.$index].renderDataVal = res.data
-      //   })
-      // }
+    },
+    saveSearchData (data, type, scope){
+      if (type) {
+        scope.row.defaultValueData = ''
+      }
+      this.searchDetailData = data
     },
     dateChange (scope) {
       if (scope.row.defaultValueDatas) {
@@ -2328,6 +2666,11 @@ export default {
       }
     },
     saveParamData (data) {
+      data.forEach(el => {
+        if (!el.parameterSource) {
+          el.parameterSource = '报表参数'
+        }
+      })
       this.reportParams.reportParam = data
     },
     saveButtonData (data, scope) {
@@ -2379,10 +2722,29 @@ export default {
           }
         })
       }
-      // params.reportItem.forEach((el) => {
-
-      //   el.tenantId = ''
-      // })
+      if (this.searchDetailData && this.searchDetailData.length) {
+        this.searchDetailData.forEach (el => {
+          if (el.parameterSource) {
+            params.reportParam.forEach(item => {
+              if (el.fieldName == item.fieldName) {
+                item.searchMode = el.searchMode
+                item.replaceVal = el.replaceVal
+                item.dictCode = el.dictCode
+                item.defaultValueData = el.defaultValueData
+              }
+            })
+          } else {
+            params.reportItem.forEach(item => {
+               if (el.fieldName == item.fieldName) {
+                item.searchMode = el.searchMode
+                item.replaceVal = el.replaceVal
+                item.dictCode = el.dictCode
+                item.defaultValueData = el.defaultValueData
+              }
+            })
+          }
+        })
+      }
       this.$refs.form.submitForm(params, this.saveApi)
     },
     async changeSql (val) {
@@ -2412,6 +2774,18 @@ export default {
         this.getTableData()
       }
       this.getReplaceData()
+      this.tableParams = { sqlId: val }
+      this.$api['formGenerator.sqlParam'](this.tableParams).then((res) => {
+        if (res) {
+          res.forEach(el => {
+            if(!el.parameterSource) {
+              el.parameterSource = 'SQL参数'
+            }
+          })
+          this.searchData = res
+          this.changeTableParamData = res
+        }
+      })
     },
     // 获取查询目标字段数据
     getReplaceData () {
@@ -2432,6 +2806,14 @@ export default {
       this.buttonParams = { reportId: val }
       this.getReplaceData()
       this.getTableData()
+      this.$api['formGenerator.tableParam'](this.paramParams).then(res => {
+        res.forEach(item => {
+          if (item.isSearch) {
+            this.searchData.push(item)
+          }
+        })
+        this.tableParamData = res
+      })
     },
     getTableData () {
       let that = this
@@ -2439,6 +2821,9 @@ export default {
         res.forEach(item => {
           if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
             item.defaultValueDatas = item.defaultValueData.split(',')
+          }
+          if (item.isSearch) {
+            this.searchData.push(item)
           }
         })
         that.noApiTableData = res
@@ -2539,6 +2924,28 @@ export default {
           }
         })
         this.editConfigData = newArr
+      }
+      if (target.name === 'searchDetails') {
+        const arr = JSON.parse(JSON.stringify(this.reportParams.reportParam.filter((el) => {
+          if (el.isSearch) {
+            el.fieldName = el.paramName
+            el.fieldTxt = el.paramTxt
+            return el
+          }
+        })))
+        const parmaArr = JSON.parse(JSON.stringify(this.reportParams.reportItem.filter((el) => el.isSearch)))
+        const oldArr = arr.concat(parmaArr)
+        const newArr = []
+        let searchDetailData = JSON.parse(JSON.stringify(this.searchData))
+        oldArr.map((val) => {
+          const find = searchDetailData.find((el) => el.fieldTxt == val.fieldTxt)
+          if (find) {
+            newArr.push(find)
+          } else {
+            newArr.push(val)
+          }
+        })
+        this.searchData = newArr
       }
     },
     // 判断报表配置明细配置内有无ID字段
@@ -2660,20 +3067,23 @@ export default {
     },
     openHelp () {
       this.helpVisible = true
-    }
+    },
+    onEditModify (v) {
+      this.formData.styleRendering = v
+    },
   }
 }
 </script>
 
 <style lang="scss" scoped>
-::v-deep.editTable {
-  height: calc(100% - 20px) !important;
-}
+// ::v-deep.editTable {
+//   height: calc(100% - 20px) !important;
+// }
 ::v-deep .el-col-12 {
   height: 50px !important;
 }
-::v-deep .existBtn > :last-child {
-  height: 100px !important;
+::v-deep .existBtn{
+  height: 100% !important;
 }
 .wrap {
   display: inline-block;
@@ -2708,9 +3118,13 @@ export default {
 .editConfig {
   height: calc(100% - 120px) !important;
 }
-.el_tabs {
-  ::v-deep.el-tabs__content {
+::v-deep .el_tabs {
+  .el-tabs__content {
     padding: 0 !important;
+    .list-layout {
+      margin: 0;
+      height: 100%;
+    }
   }
 }
 </style>
@@ -2721,5 +3135,10 @@ export default {
 }
 .testtooltipLoong {
   overflow: auto;
+}
+.clearIcon ::v-deep .el-input__clear{
+  position: 'relative'; 
+  top: '0'; 
+  left: '20px';
 }
 </style>

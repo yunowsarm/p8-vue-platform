@@ -32,13 +32,13 @@ export default {
   name: 'LogAuditManagement',
   data () {
     const dataSource = [
-      {
-        type: 'datetimeRange',
-        labelText: '计划时间',
-        fieldName: 'datetimeRange',
-        defaultValue: [],
-        placeholder: ['开始日期', '结束日期']
-      },
+      // {
+      //   type: 'datetimeRange',
+      //   labelText: '计划时间',
+      //   fieldName: 'datetimeRange',
+      //   defaultValue: [],
+      //   placeholder: ['开始日期', '结束日期']
+      // },
       {
         type: 'text',
         labelText: '操作人员',

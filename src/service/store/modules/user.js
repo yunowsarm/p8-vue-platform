@@ -24,6 +24,12 @@ const user = {
     sysVars: {
       // 用于智能表单的系统级参数
       props: {}, // 参数变量，以$开头，例如：$SYSTEM_PARAMS_SELECT.username
+      methodsDic: [
+        {
+          name: '#getFormFillingTime',
+          desc: '返回当前日期YYYY-MM-DD'
+        }
+      ],
       methods: {
         // 方法变量，以#开头，例如：#getFormFillingTime
         getFormFillingTime: function () {
@@ -118,7 +124,7 @@ const user = {
               reject()
             } else {
               commit('SET_TOKEN', res.token)
-              resolve()
+              resolve(res)
             }
           })
           .catch((err) => {

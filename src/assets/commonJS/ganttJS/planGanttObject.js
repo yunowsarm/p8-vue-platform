@@ -555,6 +555,267 @@ export function getGanttColumns(ganttObject, vueThis) {
 
   return [
     {
+      name: 'wbs',
+      label: '大纲',
+      align: 'left',
+      template: function (task) {
+        const code = ganttObject.getWBSCode(task)
+        if (code.split('.').length > vueThis.deep) {
+          vueThis.deep = code.split('.').length
+        }
+        return code
+      },
+      resize: true,
+      min_width: 90
+    },
+    {
+      name: 'taskCode',
+      label: '任务编号',
+      align: 'left',
+      resize: true,
+      min_width: 90
+    },
+    {
+      name: 'name',
+      label: '任务名称' + canEditIcon,
+      tree: true,
+      align: 'left',
+      resize: true,
+      monitorLockLimit: true, // 标识锁定后不可操作的列声明
+      min_width: 350,
+      editor: editors.text,
+      template: function (task) {
+        let result = ''
+        if (task.switchType === '9010' || task.switchType === '9020') {
+          return task.name + suspendIcon
+        }
+        if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
+          if (ganttObject.hasChild(task.id)) {
+            result = result + '<div style="' + (vueThis.taskStyles[task.id] || '') + 'font-weight:bold;">' + task.name + '</div>'
+          } else {
+            result = result + '<div style="' + (vueThis.taskStyles[task.id] || '') + '">' + task.name + '</div>'
+          }
+        } else {
+          if (ganttObject.hasChild(task.id)) {
+            result = result + '<div style="font-weight:bold;">' + task.name + '</div>'
+          } else {
+            result = task.name
+          }
+        }
+        return result
+      }
+    },
+    {
+      name: 'owner_id',
+      label: '责任人' + canEditIcon,
+      align: 'center',
+      monitorLockLimit: true, // 标识锁定后不可操作的列声明
+      width: 80,
+      resize: true,
+      // editor: editors.userEditor,
+      template: function (task) {
+        const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
+        const owner = task[ganttObject.config.resource_property]
+        if (owner) {
+          const userMessage = resourceDatas.getItem(owner)
+
+          const userList = ganttObject.serverList('userList')
+          let text = ''
+          userList.forEach((item) => {
+            if (userMessage && item.id === userMessage.userId && item.weatherOut === '1') {
+              text += `<span style="color: #FF0000">(已退出)</span>`
+            }
+          })
+          return (userMessage.name += text)
+        } else {
+          return ''
+        }
+      }
+    },
+    {
+      name: 'roleName',
+      label: '角色',
+      align: 'center',
+      resize: true,
+      min_width: 120,
+      template: function (task) {
+        const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
+        const owner = task[ganttObject.config.resource_property]
+        if (owner) {
+          const userMessage = resourceDatas.getItem(owner)
+          if (userMessage) {
+            return userMessage.roleName
+          } else {
+            return ''
+          }
+        } else {
+          return ''
+        }
+      }
+    },
+    {
+      name: 'dutyDeptName',
+      label: '部门',
+      align: 'center',
+      resize: true,
+      min_width: 120
+    },
+    {
+      name: 'start_date',
+      label: '计划开始时间' + canEditIcon,
+      align: 'center',
+      min_width: 130,
+      resize: true,
+      editor: editors.start_date,
+      template: function (task) {
+        if (ganttObject.isTaskExists(task.parent) && ganttObject.getTask(task.parent).start_date > task.start_date) {
+          if (ganttObject.hasChild(task.id)) {
+            return '<span class="red-wave" title="计划开始时间早于父任务的计划开始时间" style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+          } else {
+            return '<span class="red-wave" title="计划开始时间早于父任务的计划开始时间">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+          }
+        }
+        if (ganttObject.isTaskExists(task.parent) && ganttObject.date.add(ganttObject.getTask(task.parent).end_date, -1, 'day') < task.start_date) {
+          if (ganttObject.hasChild(task.id)) {
+            return '<span class="red-wave" title="计划开始时间晚于父任务的计划完成时间" style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+          } else {
+            return '<span class="red-wave" title="计划开始时间晚于父任务的计划完成时间">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+          }
+        }
+        if (task.start_date > ganttObject.date.add(task.end_date, -1, 'day')) {
+          if (ganttObject.hasChild(task.id)) {
+            return '<span class="red-wave" title="计划开始时间晚于计划完成时间" style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+          } else {
+            return '<span class="red-wave" title="计划开始时间晚于计划完成时间">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+          }
+        }
+        if (ganttObject.hasChild(task.id)) {
+          return '<span style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+        } else {
+          return task.start_date
+        }
+      }
+    },
+    {
+      name: 'end_date',
+      label: '计划完成时间' + canEditIcon,
+      align: 'center',
+      min_width: 130,
+      resize: true,
+      editor: editors.end_date,
+      template: function (task) {
+        if (task.parent && ganttObject.isTaskExists(task.parent) && task.end_date && ganttObject.getTask(task.parent).end_date) {
+          const pEndDate = ganttObject.getTask(task.parent).end_date
+          const tEndDate = task.end_date
+          if (pEndDate < tEndDate) {
+            if (ganttObject.hasChild(task.id)) {
+              return (
+                '<span class="red-wave" title="计划完成时间大于父任务的计划完成时间" style="font-weight:bold;">' +
+                GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) +
+                '</span>'
+              )
+            } else {
+              return '<span class="red-wave" title="计划完成时间大于父任务的计划完成时间" >' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
+            }
+          }
+        }
+        if (ganttObject.hasChild(task.id)) {
+          return '<span style="font-weight:bold;">' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
+        } else {
+          return ganttObject.date.add(task.end_date, -1, 'day')
+        }
+      }
+    },
+    {
+      name: 'duration',
+      label: '工期',
+      align: 'center',
+      min_width: 70,
+      resize: true,
+      // editor: editors.duration,
+      template: function (task) {
+        return formatter.format(task.duration)
+      }
+    },
+    {
+      name: 'autoScheduling',
+      label: '排程类型' + canEditIcon,
+      align: 'center',
+      min_width: 100,
+      resize: true,
+      editor: editors.schedule,
+      template: function (task) {
+        // if (ganttObject.getGlobalTaskIndex(task.id) === 0) {
+        //   return '手动'
+        // } else {
+        return task.autoScheduling === '1' ? '自动' : '手动'
+        // }
+      }
+    },
+    {
+      name: 'progress',
+      label: '完成度',
+      align: 'center',
+      width: 60,
+      resize: true,
+      template: function (task) {
+        if (task.progress > 0) {
+          return Math.round(task.progress * 100) + '%'
+        }
+        return 0
+      }
+    },
+    {
+      name: 'status',
+      label: '进度',
+      // align: 'center',
+      width: 60,
+      resize: true,
+      template: function (task) {
+        // 任务图标，排除根节点
+        let html = ''
+        if (!(ganttObject.getGlobalTaskIndex(task.id) === 0 && vueThis.createPage === 'compile')) {
+          const status = task.status
+          if (status && vueThis.taskStatus) {
+            const taskStatusMap = store.state.project.dicConfig.taskStatus
+            if (taskStatusMap && Object.keys(taskStatusMap).length > 0) {
+              const item = taskStatusMap[status]
+              html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.title}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
+            }
+          }
+        }
+        // 注意：该逻辑修改时，需同时修改PmProjectTasksMapper.xml中sql片段checkForecastDateInfo逻辑
+        if (task.forecastBeginDate && task.start_date && task.end_date && task.forecastEndDate) {
+          // let beginStr = moment(task.start_date).format('YYYY-MM-DD')
+          const endStr = moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD')
+          const forecastEndStr = task.forecastEndDate
+          // 父节点
+          if (ganttObject.hasChild(task.id)) {
+            // 计划完成时间和预测完成时间不一致 => 红色感叹号
+            if (endStr !== forecastEndStr) {
+              // 父修改过预计完成时间
+              if (task.adjustForecastEndDate) {
+                const afed = task.adjustForecastEndDate
+                const fed = task.forecastEndDate
+                if (afed === fed) {
+                  html = html + '<i class="p8 icon-estimated-time-modify" style="color: rgb(255, 153, 33);"></i>'
+                } else if (afed < fed) {
+                  html = html + '<i class="p8 icon-estimated-time-modify" style="color: #ff001b;"></i><i class="p8 icon-estimated-time-modify" style="color: rgb(255, 153, 33);"></i>'
+                }
+              } else {
+                // 父未修改预计完成时间
+                html = html + '<i class="p8 icon-estimated-time-modify" style="color: rgb(255, 153, 33);"></i>'
+              }
+            }
+          } else if (endStr !== forecastEndStr) {
+            // 叶子节点且计划完成时间和预测完成时间不一致 => 红色感叹号
+            html = html + '<i class="p8 icon-estimated-time-modify" style="color: #ff001b;"></i>'
+          }
+        }
+        return html
+      }
+    },
+    {
       name: 'managerStatus',
       label: '状态',
       align: 'center',
@@ -578,6 +839,24 @@ export function getGanttColumns(ganttObject, vueThis) {
           }
         }
         return ''
+      }
+    },
+    {
+      name: 'predecessors',
+      label: '前后置' + canEditIcon,
+      min_width: 100,
+      resize: true,
+      align: 'left',
+      monitorLockLimit: true, // 标识锁定后不可操作的列声明
+      editor: editors.predecessors,
+      template: function (task) {
+        const links = task.$target
+        const labels = []
+        for (let i = 0; i < links.length; i++) {
+          const link = ganttObject.getLink(links[i])
+          labels.push(linksFormatter.format(link))
+        }
+        return labels.join(',')
       }
     },
     {
@@ -678,112 +957,6 @@ export function getGanttColumns(ganttObject, vueThis) {
       }
     },
     {
-      name: 'wbs',
-      label: '大纲',
-      align: 'left',
-      template: function (task) {
-        const code = ganttObject.getWBSCode(task)
-        if (code.split('.').length > vueThis.deep) {
-          vueThis.deep = code.split('.').length
-        }
-        return code
-      },
-      resize: true,
-      min_width: 90
-    },
-    {
-      name: 'taskCode',
-      label: '任务编号',
-      align: 'left',
-      resize: true,
-      min_width: 90
-    },
-    {
-      name: 'name',
-      label: '任务名称' + canEditIcon,
-      tree: true,
-      align: 'left',
-      resize: true,
-      monitorLockLimit: true, // 标识锁定后不可操作的列声明
-      min_width: 350,
-      editor: editors.text,
-      template: function (task) {
-        let result = ''
-        if (task.switchType === '9010' || task.switchType === '9020') {
-          return task.name + suspendIcon
-        }
-        if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
-          if (ganttObject.hasChild(task.id)) {
-            result = result + '<div style="' + (vueThis.taskStyles[task.id] || '') + 'font-weight:bold;">' + task.name + '</div>'
-          } else {
-            result = result + '<div style="' + (vueThis.taskStyles[task.id] || '') + '">' + task.name + '</div>'
-          }
-        } else {
-          if (ganttObject.hasChild(task.id)) {
-            result = result + '<div style="font-weight:bold;">' + task.name + '</div>'
-          } else {
-            result = task.name
-          }
-        }
-        return result
-      }
-    },
-    {
-      name: 'owner_id',
-      label: '责任人' + canEditIcon,
-      align: 'center',
-      monitorLockLimit: true, // 标识锁定后不可操作的列声明
-      width: 80,
-      resize: true,
-      // editor: editors.userEditor,
-      template: function (task) {
-        const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
-        const owner = task[ganttObject.config.resource_property]
-        if (owner) {
-          const userMessage = resourceDatas.getItem(owner)
-
-          const userList = ganttObject.serverList('userList');
-          let text = ''
-          userList.forEach(item => {
-            if(userMessage && item.id === userMessage.userId && item.weatherOut === '1'){
-              text += `<span style="color: #FF0000">(已退出)</span>`
-            }
-          })
-          return userMessage.name += text
-        } else {
-          return ''
-        }
-      }
-    },
-    {
-      name: 'roleName',
-      label: '角色',
-      align: 'center',
-      resize: true,
-      min_width: 120,
-      template: function (task) {
-        const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
-        const owner = task[ganttObject.config.resource_property]
-        if (owner) {
-          const userMessage = resourceDatas.getItem(owner)
-          if (userMessage) {
-            return userMessage.roleName
-          } else {
-            return ''
-          }
-        } else {
-          return ''
-        }
-      }
-    },
-    {
-      name: 'dutyDeptName',
-      label: '部门',
-      align: 'center',
-      resize: true,
-      min_width: 120
-    },
-    {
       name: 'secretGrade',
       label: '密级' + canEditIcon,
       align: 'center',
@@ -799,79 +972,11 @@ export function getGanttColumns(ganttObject, vueThis) {
       }
     },
     {
-      name: 'predecessors',
-      label: '前后置' + canEditIcon,
-      min_width: 100,
-      resize: true,
-      align: 'left',
-      monitorLockLimit: true, // 标识锁定后不可操作的列声明
-      editor: editors.predecessors,
-      template: function (task) {
-        const links = task.$target
-        const labels = []
-        for (let i = 0; i < links.length; i++) {
-          const link = ganttObject.getLink(links[i])
-          labels.push(linksFormatter.format(link))
-        }
-        return labels.join(',')
-      }
-    },
-    {
-      name: 'status',
-      label: '进度',
-      // align: 'center',
-      width: 60,
-      resize: true,
-      template: function (task) {
-        // 任务图标，排除根节点
-        let html = ''
-        if (!(ganttObject.getGlobalTaskIndex(task.id) === 0 && vueThis.createPage === 'compile')) {
-          const status = task.status
-          if (status && vueThis.taskStatus) {
-            const taskStatusMap = store.state.project.dicConfig.taskStatus
-            if (taskStatusMap && Object.keys(taskStatusMap).length > 0) {
-              const item = taskStatusMap[status]
-              html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.title}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
-            }
-          }
-        }
-        // 注意：该逻辑修改时，需同时修改PmProjectTasksMapper.xml中sql片段checkForecastDateInfo逻辑
-        if (task.forecastBeginDate && task.start_date && task.end_date && task.forecastEndDate) {
-          // let beginStr = moment(task.start_date).format('YYYY-MM-DD')
-          const endStr = moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD')
-          const forecastEndStr = task.forecastEndDate
-          // 父节点
-          if (ganttObject.hasChild(task.id)) {
-            // 计划完成时间和预测完成时间不一致 => 红色感叹号
-            if (endStr !== forecastEndStr) {
-              // 父修改过预计完成时间
-              if (task.adjustForecastEndDate) {
-                const afed = task.adjustForecastEndDate
-                const fed = task.forecastEndDate
-                if (afed === fed) {
-                  html = html + '<i class="p8 icon-estimated-time-modify" style="color: rgb(255, 153, 33);"></i>'
-                } else if (afed < fed) {
-                  html = html + '<i class="p8 icon-estimated-time-modify" style="color: #ff001b;"></i><i class="p8 icon-estimated-time-modify" style="color: rgb(255, 153, 33);"></i>'
-                }
-              } else {
-                // 父未修改预计完成时间
-                html = html + '<i class="p8 icon-estimated-time-modify" style="color: rgb(255, 153, 33);"></i>'
-              }
-            }
-          } else if (endStr !== forecastEndStr) {
-            // 叶子节点且计划完成时间和预测完成时间不一致 => 红色感叹号
-            html = html + '<i class="p8 icon-estimated-time-modify" style="color: #ff001b;"></i>'
-          }
-        }
-        return html
-      }
-    },
-    {
       name: 'weatherControl',
       label: '是否管控任务',
       align: 'center',
       resize: true,
-      width: 70,
+      min_width: 150,
       template: function (task) {
         const weatherControl = task.weatherControl
         if (weatherControl === '1') {
@@ -879,111 +984,6 @@ export function getGanttColumns(ganttObject, vueThis) {
         } else {
           return '否'
         }
-      }
-    },
-    {
-      name: 'progress',
-      label: '完成度',
-      align: 'center',
-      width: 60,
-      resize: true,
-      template: function (task) {
-        if (task.progress > 0) {
-          return Math.round(task.progress * 100) + '%'
-        }
-        return 0
-      }
-    },
-    {
-      name: 'autoScheduling',
-      label: '排程类型' + canEditIcon,
-      align: 'center',
-      min_width: 100,
-      resize: true,
-      editor: editors.schedule,
-      template: function (task) {
-        // if (ganttObject.getGlobalTaskIndex(task.id) === 0) {
-        //   return '手动'
-        // } else {
-        return task.autoScheduling === '1' ? '自动' : '手动'
-        // }
-      }
-    },
-    {
-      name: 'start_date',
-      label: '计划开始时间' + canEditIcon,
-      align: 'center',
-      min_width: 130,
-      resize: true,
-      editor: editors.start_date,
-      template: function (task) {
-        if (ganttObject.isTaskExists(task.parent) && ganttObject.getTask(task.parent).start_date > task.start_date) {
-          if (ganttObject.hasChild(task.id)) {
-            return '<span class="red-wave" title="计划开始时间早于父任务的计划开始时间" style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
-          } else {
-            return '<span class="red-wave" title="计划开始时间早于父任务的计划开始时间">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
-          }
-        }
-        if (ganttObject.isTaskExists(task.parent) && ganttObject.date.add(ganttObject.getTask(task.parent).end_date, -1, 'day') < task.start_date) {
-          if (ganttObject.hasChild(task.id)) {
-            return '<span class="red-wave" title="计划开始时间晚于父任务的计划完成时间" style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
-          } else {
-            return '<span class="red-wave" title="计划开始时间晚于父任务的计划完成时间">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
-          }
-        }
-        if (task.start_date > ganttObject.date.add(task.end_date, -1, 'day')) {
-          if (ganttObject.hasChild(task.id)) {
-            return '<span class="red-wave" title="计划开始时间晚于计划完成时间" style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
-          } else {
-            return '<span class="red-wave" title="计划开始时间晚于计划完成时间">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
-          }
-        }
-        if (ganttObject.hasChild(task.id)) {
-          return '<span style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
-        } else {
-          return task.start_date
-        }
-      }
-    },
-    {
-      name: 'end_date',
-      label: '计划完成时间' + canEditIcon,
-      align: 'center',
-      min_width: 130,
-      resize: true,
-      editor: editors.end_date,
-      template: function (task) {
-        if (task.parent && ganttObject.isTaskExists(task.parent) && task.end_date && ganttObject.getTask(task.parent).end_date) {
-          const pEndDate = ganttObject.getTask(task.parent).end_date
-          const tEndDate = task.end_date
-          if (pEndDate < tEndDate) {
-            if (ganttObject.hasChild(task.id)) {
-              return (
-                '<span class="red-wave" title="计划完成时间大于父任务的计划完成时间" style="font-weight:bold;">' +
-                GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) +
-                '</span>'
-              )
-            } else {
-              return '<span class="red-wave" title="计划完成时间大于父任务的计划完成时间" >' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
-            }
-          }
-        }
-        if (ganttObject.hasChild(task.id)) {
-          return '<span style="font-weight:bold;">' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
-        } else {
-          return ganttObject.date.add(task.end_date, -1, 'day')
-        }
-      }
-    },
-    {
-      name: 'duration',
-      label: '工期',
-      align: 'center',
-      min_width: 70,
-      resize: true,
-      // editor: editors.duration,
-      template: function (task) {
-        return formatter.format(task.duration)
       }
     },
     {
@@ -1014,122 +1014,5 @@ export function getGanttColumns(ganttObject, vueThis) {
       min_width: 100,
       resize: true
     }
-
-    // {
-    //   name: 'planType',
-    //   label: '任务类型',
-    //   align: 'center',
-    //   width: 70,
-    //   resize: true,
-    //   template: function (task) {
-    //     // 任务类型展示
-    //     let html = ''
-    //     const taskClassifyDatas = ganttObject.serverList(ganttObject.config.plan_type)
-    //     const planType = task[ganttObject.config.plan_type]
-    //     const attentionTaskNum = task.attentionTaskNum || 0
-    //     if (planType && taskClassifyDatas) {
-    //       taskClassifyDatas.some((point, index) => {
-    //         let title = ''
-    //         let color = ''
-    //         if (point.id === planType) {
-    //           if (point.id === '3112') {
-    //             if (task.pushStatusNew === 'E') {
-    //               title = '推送失败'
-    //               color = 'red'
-    //             }
-    //             if (task.pushStatusNew === 'S') {
-    //               title = '推送成功'
-    //               color = 'green'
-    //             }
-    //             if (!task.pushStatusNew) {
-    //               title = '未推送'
-    //               color = '#919293'
-    //             }
-    //           } else if (point.id === '3113') {
-    //             title = task.erpPushStatus === '1' ? '已推送' : '未推送'
-    //             if (task.pushStatusNew === 'E') {
-    //               title = '推送失败'
-    //               color = 'red'
-    //             }
-    //             if (task.pushStatusNew === 'S') {
-    //               title = '推送成功'
-    //               color = 'green'
-    //             }
-    //             if (!task.pushStatusNew) {
-    //               title = '未推送'
-    //               color = '#919293'
-    //             }
-    //           } else {
-    //             title = point.title
-    //           }
-    //           const icon = point.icon
-    //           html +=
-    //             "<i onclick = Gantt.planTypeClick('" +
-    //             point.id +
-    //             "','" +
-    //             task.id +
-    //             "','" +
-    //             task.name +
-    //             "','" +
-    //             task.parent +
-    //             '\') class="' +
-    //             icon +
-    //             '" title="' +
-    //             title +
-    //             '"  ' +
-    //             'style=color:' +
-    //             color +
-    //             '></i>'
-    //           return true
-    //         }
-    //       })
-    //     }
-    //     if (attentionTaskNum > 0) {
-    //       html += "<i onclick = Gantt.attentionTaskView( '" + task.id + '\' ) class="el-icon-star-on" style="color:#FF5809" title="关注' + attentionTaskNum + '条"></i>'
-    //     }
-    //     return html
-    //   }
-    // },
-
-    // {
-    //   name: 'progress',
-    //   label: '完成度',
-    //   align: 'center',
-    //   width: 60,
-    //   resize: true,
-    //   template: function (task) {
-    //     if (task.progress > 0) {
-    //       return Math.round(task.progress * 100) + '%'
-    //     }
-    //     return 0
-    //   }
-    // },
-    // {
-    //   name: 'standardDuration',
-    //   label: '标准工期',
-    //   align: 'center',
-    //   min_width: 80,
-    //   resize: true
-    // },
-    // {
-    //   name: 'planTypeDicDisplay',
-    //   label: '计划类型' + canEditIcon,
-    //   align: 'center',
-    //   min_width: 180,
-    //   resize: true,
-    //   monitorLockLimit: true, // 标识锁定后不可操作的列声明
-    //   editor: editors.planTypeDic,
-    //   template: function (task) {
-    //     const options = [
-    //       { key: '8d806619abce467ee5a0d9bb8b790dab', label: '重要' },
-    //       { key: 'b1ea43fb96a2155607d5155d0caf94ef', label: '一般' },
-    //       { key: '11d96bf1eb38b4951c010dfd7417d2a3', label: '核心' }
-    //     ]
-    //     const value = options.find((item) => {
-    //       return item.key === task.planTypeDic
-    //     })
-    //     return value ? value.label : ''
-    //   }
-    // }
   ]
 }

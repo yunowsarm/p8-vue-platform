@@ -247,7 +247,7 @@ import CommandSearch from '@/components/gantt/Components/CommandSearch'
 import { requestUrl } from '@/utils/common.js'
 import CommonButtonBarSetting from '@/components/gantt/Components/CommonButtonBarSetting'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-import Notice from '../notice'
+import Notice from '../../../PlanGantt/Components/notice'
 import CommandStatistic from '@/components/gantt/Components/CommandStatistic'
 import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
 const Mycolumns = [

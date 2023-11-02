@@ -16,7 +16,7 @@
               <span class="other">
                 <i class="el-icon-refresh iconColor" title="重载" @click="refresh"></i>
                 <i class="p8 icon-plan-examine iconColor" title="已读" @click="getIdsSendApi('标记为已读','userMessage.toggleStatus','1505')"></i>
-                <i class="p8 icon-message iconColor" title="未读" @click="getIdsSendApi('标记为未读','userMessage.toggleStatus','1501')"></i>
+                <!-- <i class="p8 icon-message" title="未读" style="pointer-events:none; color:#ababab; cursor:not-allowed !important;" @click="getIdsSendApi('标记为未读','userMessage.toggleStatus','1501')"></i> -->
                 <i class="p8 icon-delete iconColor" title="删除" @click="getIdsSendApi('删除','userMessage.delete')"></i>
               </span>
             </div>
@@ -71,7 +71,7 @@
               <span @click="selectAll">{{flag ? '全选' : '取消全选'}}</span>
               <span class="other">
                 <i class="el-icon-refresh iconColor" title="重载" @click="refresh"></i>
-                <i class="p8 icon-plan-examine iconColor" title="已读" @click="getIdsSendApi('标记为已读','userMessage.toggleStatus','1505')"></i>
+                <!-- <i class="p8 icon-plan-examine" title="已读" style="pointer-events:none; color:#ababab; cursor:not-allowed !important;" @click="getIdsSendApi('标记为已读','userMessage.toggleStatus','1505')"></i> -->
                 <i class="p8 icon-message iconColor" title="未读" @click="getIdsSendApi('标记为未读','userMessage.toggleStatus','1501')"></i>
                 <i class="p8 icon-delete iconColor" title="删除" @click="getIdsSendApi('删除','userMessage.delete')"></i>
               </span>
@@ -302,14 +302,14 @@ export default {
           that.$api[api]({ idList: ids, msgStatus: status }).then((res) => {
             
             that.flag = true
-            if (!status) {
+            // if (!status) {
               that.timeKey = new Date().getTime()
-            } else {
-              list.forEach(el => {
-                el.msgStatus = status
-                el.ischeck = false
-              })
-            }
+            // } else {
+            //   list.forEach(el => {
+            //     el.msgStatus = status
+            //     el.ischeck = false
+            //   })
+            // }
             that.$emit('refreshCount')
             that.$store.dispatch('getMessageNum')
           })

@@ -47,7 +47,7 @@
 
 <script>
 import _cloneDeep from 'lodash/cloneDeep'
-import { P8FormParser as Parser, P8FormParserView as ParserView } from 'p8-components-ui'
+import { P8FormParser as Parser,Notification, P8FormParserView as ParserView } from 'p8-components-ui'
 import { selectTransform, selectGenerateTree } from '@/utils/common'
 import { generateTreeTwo } from '@/utils/generateTree'
 import { debounce } from 'throttle-debounce'
@@ -73,6 +73,12 @@ export default {
       default: ''
     },
     propParam: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    otherParams: {
       type: Object,
       default: () => {
         return {}
@@ -168,8 +174,14 @@ export default {
         if (Object.keys(this.dynamicParamObj).length) {
           Object.keys(this.dynamicParamObj).forEach((item) => {
             _this.dynamicParamObj[item].forEach((i) => {
-              const dynamicParamObjPath = i.path.split('.')
-              _this.dynamicDataObj[i.dynamicCompId][dynamicParamObjPath[0]][dynamicParamObjPath[1]] = val[item]
+              if (item.indexOf('.') > 0) {
+                const dynamicParamObjPath = i.path.split('.')
+                const paramArr = item.split('.')
+                _this.dynamicDataObj[i.dynamicCompId][dynamicParamObjPath[0]][dynamicParamObjPath[1]] = this.sysParams[`$${paramArr[0]}`][paramArr[1]]
+              } else {
+                const dynamicParamObjPath = i.path.split('.')
+                _this.dynamicDataObj[i.dynamicCompId][dynamicParamObjPath[0]][dynamicParamObjPath[1]] = val[item]
+              }
             })
           })
           // 前置数据作为后置数据的检索条件--监听前置数据的变化
@@ -227,6 +239,14 @@ export default {
     },
     async init(type) {
       const drawingListData = await this.getDrawingList({ desformCode: this.record.desformCode ? this.record.desformCode : this.desformCode })
+      console.log('drawingListData2',drawingListData)
+      if (drawingListData.desformStatus === '0') {
+        Notification.error({
+          title: '提示',
+          message: '设计的表单未发布，无法调用！'
+        })
+        return false
+      }
       this.formConf = JSON.parse(drawingListData.designJson)
       this.handlerEvents(this.formConf.fields)
       await this.handlerCustomFn(this.formConf)
@@ -457,19 +477,19 @@ export default {
               val = item.table ? [item.table[strs[0]], item.table[strs[1]]] : ''
             } else if (field.__config__.tag === 'el-select') {
               val = field.multiple ? item.table[field.__vModel__].split(',') : item.table[field.__vModel__]
-              field.__config__.defaultValue = val
+              // field.__config__.defaultValue = val
             } else if (field.__config__.tag === 'el-checkbox-group') {
-              item.table[field.__vModel__] = item.table[field.__vModel__] ? item.table[field.__vModel__].split(',') : ''
+              item.table[field.__vModel__] = item.table[field.__vModel__] ? item.table[field.__vModel__].split(',') : []
               val = item.table[field.__vModel__]
-              field.__config__.defaultValue = val
+              // field.__config__.defaultValue = val
             } else if (field.__config__.tag === 'el-input') {
               val = item.table[field.__vModel__]
-              field.__config__.defaultValue = val
+              // field.__config__.defaultValue = val
             } else if (field.__config__.tag === 'secret-component') {
               val = item.table[field.__vModel__]
             } else if (field.__config__.tag === 'p8-autocomplete') {
               val = item.table[field.__vModel__]
-              field.__config__.defaultValue = val
+              // field.__config__.defaultValue = val
             } else if (field.__config__.tag === 'p8-upload') {
               val = item.uploadFiles.map((temp) => temp.type)
               item.table[field.__vModel__] = val
@@ -484,19 +504,19 @@ export default {
                     val = item.table ? [item.table[strs[0]], item.table[strs[1]]] : ''
                   } else if (ele.__config__.tag === 'el-select') {
                     val = ele.multiple ? item.table[ele.__vModel__].split(',') : item.table[ele.__vModel__]
-                    ele.__config__.defaultValue = val
+                    // ele.__config__.defaultValue = val
                   } else if (ele.__config__.tag === 'el-checkbox-group') {
                     item.table[ele.__vModel__] = item.table[ele.__vModel__] ? item.table[ele.__vModel__].split(',') : []
                     val = item.table[ele.__vModel__]
-                    ele.__config__.defaultValue = val
+                    // ele.__config__.defaultValue = val
                   } else if (ele.__config__.tag === 'el-input') {
                     val = item.table[ele.__vModel__]
-                    ele.__config__.defaultValue = val
+                    // ele.__config__.defaultValue = val
                   } else if (ele.__config__.tag === 'secret-component') {
                     val = item.table[ele.__vModel__]
                   } else if (ele.__config__.tag === 'p8-autocomplete') {
                     val = item.table[ele.__vModel__]
-                    ele.__config__.defaultValue = val
+                    // ele.__config__.defaultValue = val
                   } else if (ele.__config__.tag === 'p8-upload') {
                     val = item.uploadFiles.map((temp) => temp.type)
                     item.table[ele.__vModel__] = val
@@ -571,7 +591,13 @@ export default {
           params[key] = this.propParam[key][0]
         }
       }
-      newBuildPropParam.$PROPPARAM = params
+      const otherParam = _cloneDeep(this.otherParams)
+      for (const key in otherParam) {
+        if (Array.isArray(this.otherParams[key])) {
+          otherParam[key] = this.otherParams[key][0]
+        }
+      }
+      newBuildPropParam.$PROPPARAM = {...otherParam, ...params}
       return newBuildPropParam
     },
     setPageData(pageData) {

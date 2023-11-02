@@ -1,5 +1,6 @@
 <template>
   <div class="c-button" :class="buttonDynamicClass">
+    <!-- 层级按钮 -->
     <template v-if="cbutton.id === 'hierarchy-filter'">
       <el-tooltip :content="cbutton.title" placement="top" :offset="-15" :enterable="false" effect="dark">
         <el-select v-model="level" :placeholder="cbutton.title" class="c-select" size="mini" style="width: 70px" @change="cbutton.clickFun(level, ganttName)" :clearable="true">
@@ -31,7 +32,7 @@
         <el-dropdown v-if="cbutton.children && cbutton.children.length && size != 'mini'">
           <i class="el-icon-caret-bottom" @mouseleave="styleMouseleave(cbutton)" :class="{ disabled: dropVisible }"></i>
           <el-dropdown-menu slot="dropdown">
-            <div v-for="(btnChild, index) in cbutton.children" :key="index" :class="{ isdisable: isDisable(btnChild) }">
+            <div v-for="(btnChild, index) in cbutton.children" :key="index" class="c_btn_dropmenu" :class="{ isdisable: isDisable(btnChild) }">
               <el-dropdown-item @click.native="btnClick(btnChild)" :disabled="isDisable(btnChild)">
                 <el-button v-if="btnChild.id !== 'createByNum'" type="text" :disabled="isDisable(btnChild)">
                   <i :class="btnChild.icon"></i>
@@ -49,6 +50,28 @@
 <script>
 import { DropdownMenu, DropdownItem, Button, Dropdown, Select, Option, Tooltip } from 'p8-components-ui'
 import { mapGetters } from 'vuex'
+const changeGanttWhiteList = [
+  'create-children',
+  'create-children-two',
+  'create-children-four',
+  'create-children-six',
+  'create-children-eight',
+  'createByNum',
+  'create-equative',
+  'create-equative-two',
+  'create-equative-four',
+  'create-equative-six',
+  'create-equative-eight',
+  'remove-tasks',
+  'issue-message',
+  'plan-edit-gantt',
+  'plan-gantt',
+  'plan-gantt-resource',
+  'critical-path',
+  'search-list',
+  'full-screen'
+]
+const analysisGanttWhiteList = ['full-screen']
 export default {
   name: 'CommandButton',
   components: {
@@ -90,6 +113,12 @@ export default {
     isDisable() {
       const that = this
       return function (btn) {
+        if (this.ganttName === 'analysisGantt' && !analysisGanttWhiteList.includes(btn.id)) {
+          return true
+        }
+        if (this.ganttName === 'changeGantt' && !changeGanttWhiteList.includes(btn.id)) {
+          return true
+        }
         let result
         if (btn.id === '1015' && this.iconState && this.iconState.zrlXz) {
           return true
@@ -113,7 +142,13 @@ export default {
     },
     selectDisable() {
       return function (btn) {
-        return btn.isDisableFun(this.ganttName, this.currentRecords)
+        if (this.ganttName === 'analysisGantt' && !analysisGanttWhiteList.includes(btn.id)) {
+          return true
+        } else if (this.ganttName === 'changeGantt' && !changeGanttWhiteList.includes(btn.id)) {
+          return true
+        } else {
+          return btn.isDisableFun(this.ganttName, this.currentRecords)
+        }
       }
     },
     expandEvents() {
@@ -138,6 +173,8 @@ export default {
         case 'mini':
           iconSize = 'font-size: 16px;'
           break
+        default:
+          iconSize = 'font-size: 16px;'
       }
       return iconSize
     },
@@ -257,7 +294,7 @@ export default {
 .c-button-large .el-dropdown {
   display: block;
   text-align: center;
-  width: 30px;
+  // width: 30px;
 }
 
 .c-button-small {
@@ -281,8 +318,11 @@ export default {
   background-color: #e6f7ff;
 }
 
-.c-button-disabled {
+.c-button-disabled, .c_btn_dropmenu {
   color: #e0e0e0;
+  .el-button.is-disabled, .el-button.is-disabled:hover, .el-button.is-disabled:focus {
+    color: #a0afc5;
+  }
 }
 
 .c-button-mini {
@@ -297,7 +337,7 @@ export default {
   // border: 1px solid #ccc;
 }
 .disabled {
-  color: $base-disabled-color;
+  color: #a0afc5;
 }
 .isdisable {
   cursor: no-drop;

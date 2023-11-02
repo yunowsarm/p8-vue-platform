@@ -215,11 +215,6 @@ const CommandButtonBarDataSingleRow = [
             buttonId: 'create-version',
             size: 'small',
             position: ['top']
-          },
-          {
-            buttonId: 'version-compare',
-            size: 'small',
-            position: ['top']
           }
         ]
       },
