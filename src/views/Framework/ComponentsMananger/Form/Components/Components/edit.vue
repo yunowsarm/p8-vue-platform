@@ -174,7 +174,7 @@ export default {
         if (Object.keys(this.dynamicParamObj).length) {
           Object.keys(this.dynamicParamObj).forEach((item) => {
             _this.dynamicParamObj[item].forEach((i) => {
-              if (item.indexOf('.' > 0)) {
+              if (item.indexOf('.') > 0) {
                 const dynamicParamObjPath = i.path.split('.')
                 const paramArr = item.split('.')
                 _this.dynamicDataObj[i.dynamicCompId][dynamicParamObjPath[0]][dynamicParamObjPath[1]] = this.sysParams[`$${paramArr[0]}`][paramArr[1]]
