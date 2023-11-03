@@ -598,10 +598,6 @@ export default {
       type: String,
       default: null
     },
-    projectTypeId: {
-      type: String,
-      default: null
-    },
     taskId: {
       type: String,
       default: null
@@ -1286,7 +1282,7 @@ export default {
         spinner: 'el-icon-loading'
       })
       // 根据项目类型，获取gantt列设置
-      this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.projectTypeId })
+      this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
 
       const vueThis = this
       // 清空原有数据

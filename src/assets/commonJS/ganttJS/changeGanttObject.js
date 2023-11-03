@@ -80,7 +80,7 @@ export function getChangeGantt(ganttName, vueThis) {
       }
     },
     {
-      name: 'flag',
+      name: 'status',
       label: '进度',
       align: 'center',
       width: 70,
@@ -102,7 +102,7 @@ export function getChangeGantt(ganttName, vueThis) {
       }
     },
     {
-      name: 'flag',
+      name: 'managerStatus',
       label: '状态',
       align: 'center',
       width: 70,
@@ -135,7 +135,7 @@ export function getChangeGantt(ganttName, vueThis) {
       }
     },
     {
-      name: 'text',
+      name: 'monitorPoints',
       label: '标识',
       align: 'left',
       min_width: 100,
@@ -165,7 +165,7 @@ export function getChangeGantt(ganttName, vueThis) {
       }
     },
     {
-      name: 'text',
+      name: 'planType',
       label: '任务类型',
       align: 'center',
       width: 70,
@@ -202,11 +202,18 @@ export function getChangeGantt(ganttName, vueThis) {
       min_width: 90
     },
     {
-      name: 'secretGradeDisplay',
+      name: 'secretGrade',
       label: '密级',
       align: 'center',
       resize: true,
-      min_width: 120
+      min_width: 120,
+      template: function (task) {
+        const options = vueThis.secretGrades
+        const value = options.find((item) => {
+          return item.id === task.secretGrade
+        })
+        return value ? value.title : ''
+      }
     },
     {
       name: 'name',
@@ -495,14 +502,14 @@ function synchronizationColumns(vueThis, ganttObject) {
     const tempColumns = []
     vueThis.columnSettings.forEach((item) => {
       const initColumn = initColumns.filter((initItem) => initItem.name === item.textName)
-      if (initColumn && Object.keys(initColumn).length > 0) {
-        initColumn[0].hide = false
+      if (initColumn && initColumn.length > 0) {
+        initColumn[0].hide = !item.isEnable == '1'
         tempColumns.push(initColumn[0])
       }
     })
     // 当ganttObject对象中columns数据与配置信息中数据不一致（增加或减少）时，根据ganttObject对象中columns新增列下标插入tempColumns，超出时加在末尾
     initColumns.forEach((initItem, initIndex) => {
-      const settingItem = vueThis.columnSettings.filter((settingItem) => settingItem.name === initItem.name)
+      const settingItem = vueThis.columnSettings.filter((settingItem) => settingItem.textName === initItem.name)
       if (!settingItem || Object.keys(settingItem).length === 0) {
         initItem.hide = false
         if (tempColumns && tempColumns.length > initIndex) {
