@@ -2906,6 +2906,28 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
       }
     })
     ganttObject.config.columns = tempColumns
+  } else if (vueThis.columnSettings.length > 0) {
+    const tempColumns = []
+    vueThis.columnSettings.forEach((item) => {
+      const initColumn = initColumns.filter((initItem) => initItem.name === item.textName)
+      if (initColumn && initColumn.length > 0) {
+        initColumn[0].hide = !(item.isEnable == '1')
+        tempColumns.push(initColumn[0])
+      }
+    })
+    // 当ganttObject对象中columns数据与配置信息中数据不一致（增加或减少）时，根据ganttObject对象中columns新增列下标插入tempColumns，超出时加在末尾
+    initColumns.forEach((initItem, initIndex) => {
+      const settingItem = vueThis.columnSettings.filter((settingItem) => settingItem.textName === initItem.name)
+      if (!settingItem || Object.keys(settingItem).length === 0) {
+        initItem.hide = false
+        if (tempColumns && tempColumns.length > initIndex) {
+          tempColumns.splice(initIndex, 0, initItem)
+        } else {
+          tempColumns.push(initItem)
+        }
+      }
+    })
+    ganttObject.config.columns = tempColumns
   } else {
     ganttObject.config.columns = initColumns
   }

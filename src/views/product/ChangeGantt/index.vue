@@ -28,6 +28,7 @@
               :plan-info-id="planInfoId"
               :task-id="taskId"
               :secret-grade="secretGrade"
+              :whole-describe-id="wholeDescribeId"
               :plan-info-status="planInfoStatus"
               @closed="onClose"
               :create-page="createPage"
@@ -335,6 +336,7 @@ export default {
         }
       ],
       tableConfig: {},
+      wholeDescribeId: '',
       menuStateObj: []
     }
   },
@@ -352,6 +354,7 @@ export default {
       }]
       this.currentRoute = this.thirdMenuParam.currentRoute
       this.createPage = 'userChange'
+      this.wholeDescribeId = this.thirdMenuParam.wholeDescribeId
     } else {
       this.projectCategory = this.thirdMenuParam.projectCategory
       this.secretLevel = this.thirdMenuParam.SECRETLEVEL
@@ -362,6 +365,7 @@ export default {
       this.selectRecord = [this.thirdMenuParam]
       this.currentRoute = this.thirdMenuParam.currentRoute
       this.createPage = 'planChange'
+      this.wholeDescribeId = this.thirdMenuParam.WHOLEDESCRIBEID
     }
     if (this.planInfoId && this.createPage) {
       this.queryParam.createPage = this.createPage

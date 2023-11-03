@@ -941,6 +941,14 @@ export const repositoryApi = {
       mockPath: '/product/pm/plan/getSpecialVersionData',
       desc: '项目管理->计划管理->计划编辑->版本管理->版本任务列表->特别说明',
       cancelLoading: true
+    },
+    {
+      name: 'getGanttColumnSettingByWholeId',
+      method: 'POST',
+      path: '/taskType/loadTaskDetailByWholeId',
+      mockPath: '/taskType/loadTaskDetailByWholeId',
+      desc: '项目管理->计划管理->计划编辑->gantt列配置信息',
+      cancelLoading: true
     }
   ],
   planChange: [
