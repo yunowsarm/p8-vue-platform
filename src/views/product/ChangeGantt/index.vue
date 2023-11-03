@@ -28,7 +28,7 @@
               :plan-info-id="planInfoId"
               :task-id="taskId"
               :secret-grade="secretGrade"
-              :project-type-id="projectTypeId"
+              :whole-describe-id="wholeDescribeId"
               :plan-info-status="planInfoStatus"
               @closed="onClose"
               :create-page="createPage"
@@ -336,12 +336,11 @@ export default {
         }
       ],
       tableConfig: {},
-      projectTypeId: '',
+      wholeDescribeId: '',
       menuStateObj: []
     }
   },
   mounted() {
-    console.log('🚀 ~ file: index.vue:344 ~ mounted ~ this.thirdMenuParam:', this.thirdMenuParam)
     if (this.thirdMenuParam.createPage === 'decompose') {
       this.projectCategory = this.thirdMenuParam.projectCategory
       this.secretLevel = this.thirdMenuParam.secretGrade
@@ -355,7 +354,7 @@ export default {
       }]
       this.currentRoute = this.thirdMenuParam.currentRoute
       this.createPage = 'userChange'
-      this.projectTypeId = this.thirdMenuParam.projectTypeId || ''
+      this.wholeDescribeId = this.thirdMenuParam.wholeDescribeId
     } else {
       this.projectCategory = this.thirdMenuParam.projectCategory
       this.secretLevel = this.thirdMenuParam.SECRETLEVEL
@@ -366,7 +365,7 @@ export default {
       this.selectRecord = [this.thirdMenuParam]
       this.currentRoute = this.thirdMenuParam.currentRoute
       this.createPage = 'planChange'
-      this.projectTypeId = this.thirdMenuParam.PROJECTTYPEID || ''
+      this.wholeDescribeId = this.thirdMenuParam.WHOLEDESCRIBEID
     }
     if (this.planInfoId && this.createPage) {
       this.queryParam.createPage = this.createPage
