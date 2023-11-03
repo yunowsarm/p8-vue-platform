@@ -1,46 +1,29 @@
 <template>
   <div>
-    <form-list ref="form"
-               :dataSource="dataSource"
-               :form="formData"
-               :existDefaultBtn="false"
-               labelWidth="100px"
-               @rendered="rendered">
-
+    <form-list ref="form" :data-source="dataSource" :form="formData" :exist-default-btn="false" label-width="100px" @rendered="rendered">
       <template #status>
         <div v-html="statusHandle()"></div>
       </template>
       <template #durationDay>
-        <div class="duration-days"
-             v-html="durationDayHandle(formData.status, formData.now, formData.planEndDate, formData.realEndDate)"></div>
+        <div class="duration-days" v-html="durationDayHandle(formData.status, formData.now, formData.planEndDate, formData.realEndDate)"></div>
       </template>
       <template #progress>
-        <el-progress :text-inside="true"
-                     :stroke-width="16"
-                     :percentage="formData.progress ? formData.progress : 0"
-                     style="margin-top: 7px;text-shadow: 0px 1px 0px #fafcff;"></el-progress>
+        <el-progress :text-inside="true" :stroke-width="16" :percentage="formData.progress ? formData.progress : 0" style="margin-top: 7px; text-shadow: 0px 1px 0px #fafcff"></el-progress>
       </template>
       <template #managerStatusDisplay>
-        <span>{{formData.managerStatusDisplay}}</span>
+        <span>{{ formData.managerStatusDisplay }}</span>
       </template>
       <template #content>
-        <span>{{formData.content}}</span>
+        <span>{{ formData.content }}</span>
       </template>
       <template #dateline>
         <div class="dateline-con">
           <div class="dateline-list">
-            <div class="clearfix dateline-item"
-                 v-for="item in formData.dateline"
-                 :key="item.color"
-                 :style="{color: item.color, marginLeft: item.marginLeft+'px'}">
-              <span>{{item.beginDate}}</span>
-              <span v-if="item.beginDate"
-                    class="line"
-                    :style="{width: item.lineWidth+'px', backgroundColor: item.color}"></span>
-              <span v-if="!item.endDate"
-                    class="line dashed"
-                    :style="{width: item.lineDashedWidth+'px', borderTop: `2px dashed ${item.color}`}"></span>
-              <span>{{item.endDate}}</span>
+            <div class="clearfix dateline-item" v-for="item in formData.dateline" :key="item.color" :style="{ color: item.color, marginLeft: item.marginLeft + 'px' }">
+              <span>{{ item.beginDate }}</span>
+              <span v-if="item.beginDate" class="line" :style="{ width: item.lineWidth + 'px', backgroundColor: item.color }"></span>
+              <span v-if="!item.endDate" class="line dashed" :style="{ width: item.lineDashedWidth + 'px', borderTop: `2px dashed ${item.color}` }"></span>
+              <span>{{ item.endDate }}</span>
             </div>
           </div>
           <div class="dateline-tip">
@@ -87,7 +70,7 @@ export default {
     FormList,
     'el-progress': Progress
   },
-  data () {
+  data() {
     return {
       formData: {},
       allStatus: [],
@@ -95,9 +78,9 @@ export default {
       secretGradeDisplay: null
     }
   },
-  mounted () {
+  mounted() {
     this.initFormData()
-    let _this = this
+    const _this = this
     this.$bus.$on('refresh', function () {
       Vue.nextTick(function () {
         _this.rendered()
@@ -105,30 +88,30 @@ export default {
     })
   },
   methods: {
-    rendered () {
+    rendered() {
       if (this.api) {
         this.getTaskInfo()
       }
     },
-    initFormData () {
-      let tempObj = {}
-      this.dataSource.forEach(item => {
+    initFormData() {
+      const tempObj = {}
+      this.dataSource.forEach((item) => {
         if (item.fieldName || item.slotName) {
-          let name = item.fieldName || item.slotName
+          const name = item.fieldName || item.slotName
           tempObj[name] = item.defaultValue || ''
         }
       })
       this.formData = Object.assign({}, tempObj)
     },
-    getTaskInfo () {
-      let _this = this
-      this.$api[this.api]({ taskId: _this.getPlanInfo().taskId }).then(res => {
+    getTaskInfo() {
+      const _this = this
+      this.$api[this.api]({ taskId: _this.getPlanInfo().taskId }).then((res) => {
         _this.taskInfo = res
         _this.rendFormData(res)
       })
     },
-    rendFormData (res) {
-      Object.keys(this.formData).forEach(key => {
+    rendFormData(res) {
+      Object.keys(this.formData).forEach((key) => {
         if (key === 'forecastDate') {
           this.formData.forecastDate = res.forecastBeginDate + '~' + res.forecastEndDate
           this.formData.forecastBeginDate = res.forecastBeginDate
@@ -150,32 +133,31 @@ export default {
         }
       })
     },
-    statusHandle () {
-      let allStatus = this.getPlanInfo().allStatus
+    statusHandle() {
+      const allStatus = this.getPlanInfo().allStatus
       const statusColor = {
-        '6010': '#ffd782',
-        '6020': '#1bbf9e',
-        '6050': '#ff9921',
-        '6070': '#1890ff'
+        6020: '#8c8c8c',
+        6050: '#1890ff',
+        6070: '#1bbf9e'
       }
-      allStatus.forEach(item => {
+      allStatus.forEach((item) => {
         item.color = statusColor[item.value]
       })
-      let value = this.formData.status
-      let currStatus = allStatus.filter(item => item.value === value)
+      const value = this.formData.status
+      const currStatus = allStatus.filter((item) => item.value === value)
 
       if (currStatus && currStatus.length) {
         return `<span class="pane-status"><span style="background-color: ${currStatus[0].color}; width: 6px;height: 6px;border-radius: 10px;margin-right: 6px;" class="pane-status-cir"></span>${this.taskInfo.statusDisplay}</span>`
       }
     },
-    durationDayHandle (currStatus, systemCurrentDate, planEndDate, realEndDate) {
+    durationDayHandle(currStatus, systemCurrentDate, planEndDate, realEndDate) {
       // let allStatus = this.getPlanInfo().allStatus
       if (planEndDate && currStatus) {
         // let currStatusInfo = allStatus.filter(item => item.value === currStatus)
         // if (!currStatusInfo.length) {
         //   return
         // }
-        let currDate = systemCurrentDate || moment().format('YYYY-MM-DD')
+        const currDate = systemCurrentDate || moment().format('YYYY-MM-DD')
         let diffDays = 0
         let text = ''
         if (currStatus === '6070') {
@@ -202,12 +184,12 @@ export default {
         return text
       }
     },
-    datelineHandle () {
+    datelineHandle() {
       const buleColor = '#1892FF'
       const yellowColor = '#FFC306'
       const orangeColor = '#FF5406'
-      let viewData = this.formData
-      let forecast = {
+      const viewData = this.formData
+      const forecast = {
         lineWidth: 100, // 线长度
         lineDashedWidth: 40, // 虚线长度
         color: buleColor,
@@ -215,7 +197,7 @@ export default {
         beginDate: viewData.forecastBeginDate,
         endDate: viewData.forecastEndDate
       }
-      let plan = {
+      const plan = {
         lineWidth: 100, // 线长度
         lineDashedWidth: 40, // 虚线长度
         color: yellowColor,
@@ -223,7 +205,7 @@ export default {
         beginDate: viewData.planBeginDate,
         endDate: viewData.planEndDate
       }
-      let real = {
+      const real = {
         lineWidth: 100, // 线长度
         lineDashedWidth: 40, // 虚线长度
         color: orangeColor,
