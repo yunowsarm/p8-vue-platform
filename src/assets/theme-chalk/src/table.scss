@@ -322,3 +322,13 @@
 .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
   background: #F9F9F9 !important;
 }
+.el-table .el-table__header-wrapper .el-table__header .has-gutter .headerRowClassName th .cell div {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+}
+.el-table .el-table__fixed-right .el-table__fixed-header-wrapper .el-table__header thead .headerRowClassName th .cell div {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+}
