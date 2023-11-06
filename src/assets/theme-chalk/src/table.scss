@@ -327,11 +327,8 @@
   flex-direction: row;
   align-items: baseline;
 }
-.el-table .el-table__fixed-right .el-table__fixed-header-wrapper .el-table__header .has-gutter .headerRowClassName th .cell div {
+.el-table .el-table__fixed-right .el-table__fixed-header-wrapper .el-table__header thead .headerRowClassName th .cell div {
   display: flex;
   flex-direction: row;
   align-items: baseline;
-}
-.el-table .el-table__fixed-right .el-table__fixed-header-wrapper .el-table__header thead .headerRowClassName th .cell {
-  margin-top: -25px;
 }
