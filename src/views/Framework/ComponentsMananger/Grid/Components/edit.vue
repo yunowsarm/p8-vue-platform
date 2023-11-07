@@ -99,17 +99,27 @@
                          @change="saveTableData(data)"></el-checkbox>
           </template>
           <template #title="{ scope, data }">
-            <el-select v-model="scope.row.title" clearable @change="saveTableData(data)">
-              <el-option label="左对齐" value="left"></el-option>
-              <el-option label="居中对齐" value="center"></el-option>
-              <el-option label="右对齐" value="right"></el-option>
+            <el-select v-model="scope.row.title"
+                       clearable
+                       @change="saveTableData(data)">
+              <el-option label="左对齐"
+                         value="left"></el-option>
+              <el-option label="居中对齐"
+                         value="center"></el-option>
+              <el-option label="右对齐"
+                         value="right"></el-option>
             </el-select>
           </template>
           <template #alignmentStyle="{ scope, data }">
-            <el-select v-model="scope.row.alignmentStyle" clearable @change="saveTableData(data)">
-              <el-option label="左对齐" value="left"></el-option>
-              <el-option label="居中对齐" value="center"></el-option>
-              <el-option label="右对齐" value="right"></el-option>
+            <el-select v-model="scope.row.alignmentStyle"
+                       clearable
+                       @change="saveTableData(data)">
+              <el-option label="左对齐"
+                         value="left"></el-option>
+              <el-option label="居中对齐"
+                         value="center"></el-option>
+              <el-option label="右对齐"
+                         value="right"></el-option>
             </el-select>
           </template>
           <template #isSearch="{ scope, data }">
@@ -391,8 +401,8 @@
                       autosize
                       :disabled="!!scope.row.isCustomColumn">
               <el-button slot="append"
-                        icon="el-icon-link"
-                        @click="showModal(scope, data)"></el-button>
+                         icon="el-icon-link"
+                         @click="showModal(scope, data)"></el-button>
             </el-input>
             <select-module v-if="dialogVisible && selectModuleIndex == scope.$index"
                            :visible="dialogVisible"
@@ -1066,14 +1076,14 @@
       </template>
     </common-tabs>
     <common-dialog title="默认值"
-                       v-if="helpVisible"
-                       :visible="helpVisible"
-                       :show-handle-btn="false"
-                       @close="helpVisible = false">
-          <template #dialog>
-            <view-parameter></view-parameter>
-          </template>
-        </common-dialog>
+                   v-if="helpVisible"
+                   :visible="helpVisible"
+                   :show-handle-btn="false"
+                   @close="helpVisible = false">
+      <template #dialog>
+        <view-parameter></view-parameter>
+      </template>
+    </common-dialog>
   </div>
 </template>
 
@@ -2652,7 +2662,7 @@ export default {
         }
       }
     },
-    saveSearchData (data, type, scope){
+    saveSearchData (data, type, scope) {
       if (type) {
         scope.row.defaultValueData = ''
       }
@@ -2723,7 +2733,7 @@ export default {
         })
       }
       if (this.searchDetailData && this.searchDetailData.length) {
-        this.searchDetailData.forEach (el => {
+        this.searchDetailData.forEach(el => {
           if (el.parameterSource) {
             params.reportParam.forEach(item => {
               if (el.fieldName == item.fieldName) {
@@ -2735,7 +2745,7 @@ export default {
             })
           } else {
             params.reportItem.forEach(item => {
-               if (el.fieldName == item.fieldName) {
+              if (el.fieldName == item.fieldName) {
                 item.searchMode = el.searchMode
                 item.replaceVal = el.replaceVal
                 item.dictCode = el.dictCode
@@ -2745,6 +2755,11 @@ export default {
           }
         })
       }
+      params.reportItem.forEach(item => {
+        if (item.fieldWidth === 0) {
+          item.fieldWidth = item.fieldTxt.length * 30
+        }
+      })
       this.$refs.form.submitForm(params, this.saveApi)
     },
     async changeSql (val) {
@@ -2778,7 +2793,7 @@ export default {
       this.$api['formGenerator.sqlParam'](this.tableParams).then((res) => {
         if (res) {
           res.forEach(el => {
-            if(!el.parameterSource) {
+            if (!el.parameterSource) {
               el.parameterSource = 'SQL参数'
             }
           })
@@ -3082,7 +3097,7 @@ export default {
 ::v-deep .el-col-12 {
   height: 50px !important;
 }
-::v-deep .existBtn{
+::v-deep .existBtn {
   height: 100% !important;
 }
 .wrap {
@@ -3136,9 +3151,9 @@ export default {
 .testtooltipLoong {
   overflow: auto;
 }
-.clearIcon ::v-deep .el-input__clear{
-  position: 'relative'; 
-  top: '0'; 
+.clearIcon ::v-deep .el-input__clear {
+  position: 'relative';
+  top: '0';
   left: '20px';
 }
 </style>
