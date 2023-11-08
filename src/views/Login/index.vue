@@ -341,7 +341,7 @@ $login-primary--login-color: #306cf7;
     background-repeat: no-repeat;
     background-size: cover;
     // transition: opacity .5s ease-in-out;
-    background-image: url(../../assets/image/login/bg_ChinaRailway.png);
+    background-image: url(../../assets/image/login/new_login_bic.png);
     // opacity: 1;
 
     .login-block {
