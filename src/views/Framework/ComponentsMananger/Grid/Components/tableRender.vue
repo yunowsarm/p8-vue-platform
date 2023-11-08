@@ -611,9 +611,15 @@ export default {
               obj.layoutVersion = str[1]
             }
           })
-          this.customProps.layoutConfig = obj
+          this.customProps = {
+            layoutConfig: obj,
+            ...this.$props
+          }
           return () => import('@/views/' + url + '.vue')
         } else {
+          this.customProps = {
+            ...this.$props
+          }
           return () => import(`@/views/${this.componentPath}.vue`)
         }
       } else {
