@@ -777,7 +777,7 @@ export default {
             }
             that.selectionRange = res.selectionRange
             if (item.isListShow) {
-              if (item.isSearch) {
+              if (item.isSearch && item.searchMode) {
                 if (this.tableInfo.searchPos == 1) {
                   this.showSearchRow = false
                   const filter = this.getHeadSelectByType(item.searchMode, item)
@@ -809,6 +809,15 @@ export default {
                     filter: filter
                   })
                 } else {
+                  this.searchData.push({
+                    type: item.searchMode, // 控件类型
+                    labelText: item.fieldTxt, // 控件显示的文本
+                    fieldName: item.fieldName,
+                    mode: '=',
+                    selectCode: item.dictCode,
+                    replaceSearch: item.replaceVal,
+                    defaultValue: item.defaultValueData
+                  })
                   this.showSearchRow = false
                   // 查询放置按钮区域
                   columnData.push({
@@ -861,24 +870,17 @@ export default {
               if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
                 item.defaultValueData = item.defaultValueData.split(',')
               }
-              this.searchData.push({
-                type: item.searchMode, // 控件类型
-                labelText: item.fieldTxt, // 控件显示的文本
-                fieldName: item.fieldName,
-                mode: '=',
-                selectCode: item.dictCode,
-                replaceSearch: item.replaceVal,
-                defaultValue: item.defaultValueData
-              })
-              this.searchList.push({
-                type: item.searchMode, // 控件类型
-                labelText: item.fieldTxt, // 控件显示的文本
-                fieldName: item.fieldName,
-                mode: '=',
-                selectCode: item.dictCode,
-                replaceSearch: item.replaceVal,
-                defaultValue: item.defaultValueData
-              })
+              if(item.searchMode){
+                this.searchList.push({
+                  type: item.searchMode, // 控件类型
+                  labelText: item.fieldTxt, // 控件显示的文本
+                  fieldName: item.fieldName,
+                  mode: '=',
+                  selectCode: item.dictCode,
+                  replaceSearch: item.replaceVal,
+                  defaultValue: item.defaultValueData
+                })
+              }
             }
           })
           this.$emit('searchData', this.searchList)
@@ -947,7 +949,7 @@ export default {
           this.seachType = that.tableInfo.searchPos + ''
           res.reportConfig.forEach((item) => {
             item.columnConfig = JSON.parse(item.columnConfig)
-            if (item.isCustomColumn == '1' && item.customColumnType === 'slot' && item.columnConfig.slotName) {
+            if (item.isCustomColumn == '1' && item.customColumnType === 'slot' && item.columnConfig &&  item.columnConfig.slotName) {
               this.customColumn.push(item.columnConfig.slotName)
             }
             columnData.forEach((el, index) => {
@@ -989,7 +991,7 @@ export default {
         if (res.reportParams && res.reportParams.length) {
           res.reportParams.forEach((item) => {
             this.defaultReportParam[item.paramName] = this.getDefaultValue(item.paramValue)
-            if(item.isSearch){
+            if(item.isSearch && item.searchMode){
               this.searchData.push({
                 type: item.searchMode, // 控件类型
                 labelText: item.paramTxt, // 控件显示的文本
