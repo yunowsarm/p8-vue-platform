@@ -698,6 +698,8 @@
                          value="taskIcon"></el-option>
               <el-option label="插槽"
                          value="slot"></el-option>
+              <el-option label="自定义渲染"
+                         value="funRender"></el-option>
             </el-select>
             <span v-else></span>
           </template>
@@ -755,7 +757,31 @@
                       placeholder="插槽名"
                       v-model="scope.row.columnConfig.slotName"
                       @blur="configParamData(data)"></el-input>
+            <div v-else-if="scope.row.isCustomColumn == '1' && scope.row.customColumnType == 'funRender'"
+                 style="text-align: left">
+              <el-button type="text"
+                         @click="showCustomRenderDialog(scope)"
+                         style="margin-right: 5px">渲染函数</el-button>
+            </div>
             <span v-else></span>
+            <common-dialog title="设置事件参数"
+                       :visible="customRenderVisible && scope.$index === index"
+                       @handle-cancel="customRenderDialogClose"
+                       @handle-ok="customRenderDialogOk"
+                       width="40%"
+                       @close="customRenderDialogClose">
+              <template #dialog>
+                <ace-edit :value.sync="customRenderFun"
+                          :config="aceConfig"
+                          width="100%"
+                          height="300px"></ace-edit>
+                <el-alert
+                  title="该方法默认传递的的参数为row（当前行数据）,返回一个规范的html标签或字符串"
+                  :closable="false"
+                  type="warning">
+                </el-alert>
+              </template>
+            </common-dialog>
             <formula v-if="countVisible && scope.$index === index"
                      :visible="countVisible"
                      :data-list="dataList"
@@ -1431,6 +1457,8 @@ export default {
         selectionRanges: []
       },
       des: '',
+      customRenderFun: '',
+      customRenderVisible: false,
       sqlIdOption: [],
       height: height + 'px',
       aceEditHeight: height * 0.9 + 'px',
@@ -2067,7 +2095,9 @@ export default {
       countVisible: false,
       dataList: [],
       index: null,
-      aceConfig: {},
+      aceConfig: {
+        lang: 'javascript'
+      },
       iconShow: true,
       eaitHeight: '100%',
       paramsVisible: false,
@@ -2989,6 +3019,23 @@ export default {
       } else {
         return false
       }
+    },
+    showCustomRenderDialog (scope) {
+      this.customRenderFun = ''
+      const row = scope.row
+      this.index = scope.$index
+      this.customRenderFun = row.columnConfig.renderFun || ''
+      this.customRenderVisible = true
+    },
+    customRenderDialogOk () {
+      const obj = this.editableData[this.index].columnConfig ? this.editableData[this.index].columnConfig : {}
+      obj.renderFun = this.customRenderFun
+      this.$set(this.editableData[this.index], 'columnConfig', obj)
+      this.customRenderVisible = false
+    },
+    customRenderDialogClose () {
+      this.customRenderFun = ''
+      this.customRenderVisible = false
     },
     showComfigDialog (scope) {
       // 序号 index
