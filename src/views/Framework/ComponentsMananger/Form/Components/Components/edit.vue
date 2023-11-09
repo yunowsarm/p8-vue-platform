@@ -822,6 +822,19 @@ export default {
           })
       }
     },
+    customBtnFun(fun, data, childData, logdata) {
+      const params = {
+        desformCode: this.record.desformCode,
+        dataId: this.dataId,
+        primary: { table: data.data, uploadFiles: data.uploadFiles },
+        children: childData,
+        logDetail: logdata,
+        router: this.$route.name,
+        permissionVo: this.permissionVo
+      }
+      const func = new Function(`return function (formData){${fun}}`)()
+      func.call(this, params)
+    },
     setSysDefaultValue(confClone) {
       if (confClone.__config__.variable && confClone.__config__.variable.startsWith('$')) {
         // 处理系统参数变量
