@@ -1191,7 +1191,7 @@ export default {
         this.codeForm = createFormParams.desformCode
         this.dataViewId = ''
         this.$store.getters.formTitlePosition == 'left' ? this.formTitle = '新建' + drawingListData.desformName : this.formTitle = drawingListData.desformName + '新建'
-        this.propParam = Object.assign(this.propParam, this.westTreeParam)
+        this.propParam = Object.assign(this.propParam, this.westTreeParam, this.reportParam)
         this.formVisible = true
       } else {
         Notification.error({
@@ -1252,6 +1252,7 @@ export default {
           })
         }
         this.propParam = oldPropParam
+        this.propParam = Object.assign(this.propParam, this.westTreeParam, this.reportParam)
         this.formVisible = true
       } else {
         Notification.error({
