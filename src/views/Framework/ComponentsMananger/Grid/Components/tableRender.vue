@@ -683,12 +683,12 @@ export default {
       let reportList = []
       let SQLList = []
       this.searchList.map((el) => {
-        if(el.parameterSource == '报表参数'){
+        if (el.parameterSource == '报表参数') {
           reportList.push(el.replaceSearch ? el.replaceSearch : el.fieldName)
-        } else if (el.parameterSource == 'SQL参数'){
+        } else if (el.parameterSource == 'SQL参数') {
           SQLList.push(el.replaceSearch ? el.replaceSearch : el.fieldName)
         } else {
-          searchKeys.push(el.replaceSearch ? el.replaceSearch : el.fieldName) 
+          searchKeys.push(el.replaceSearch ? el.replaceSearch : el.fieldName)
         }
       })
       Object.keys({ ...newValue }).forEach((item) => {
@@ -720,9 +720,9 @@ export default {
           sqlParmars[item] = newValue[item]
         }
       })
-      this.tableParam.param = {...this.tableParam.param, ...obj }
-      this.tableParam.reportParam = { ...this.tableParam.reportParam,...reportParmars }
-      this.tableParam.sqlParam = { ...sqlParmars,...this.sqlParam,...this.tableParam.sqlParam }
+      this.tableParam.param = { ...this.tableParam.param, ...obj }
+      this.tableParam.reportParam = { ...this.tableParam.reportParam, ...reportParmars }
+      this.tableParam.sqlParam = { ...sqlParmars, ...this.sqlParam, ...this.tableParam.sqlParam }
       this.tableParam.permissionVo = { router: this.$route.name, resourceId: '' }
       this.propParam = Object.assign(this.propParam, newValue)
     },
@@ -809,6 +809,9 @@ export default {
                     filter: filter
                   })
                 } else {
+                  if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
+                    item.defaultValueData = item.defaultValueData.split(',')
+                  }
                   this.searchData.push({
                     type: item.searchMode, // 控件类型
                     labelText: item.fieldTxt, // 控件显示的文本
@@ -828,9 +831,6 @@ export default {
                     minWidth: item.fieldWidth,
                     sortable: item.isOrder ? item.isOrder : false
                   })
-                  if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
-                    item.defaultValueData = item.defaultValueData.split(',')
-                  }
                 }
               } else if (item.isCustomColumn) {
                 if (item.fieldName === '_ROWNO') {
@@ -947,7 +947,7 @@ export default {
           this.seachType = that.tableInfo.searchPos + ''
           res.reportConfig.forEach((item) => {
             item.columnConfig = JSON.parse(item.columnConfig)
-            if (item.isCustomColumn == '1' && item.customColumnType === 'slot' && item.columnConfig &&  item.columnConfig.slotName) {
+            if (item.isCustomColumn == '1' && item.customColumnType === 'slot' && item.columnConfig && item.columnConfig.slotName) {
               this.customColumn.push(item.columnConfig.slotName)
             }
             columnData.forEach((el, index) => {
@@ -989,7 +989,7 @@ export default {
         if (res.reportParams && res.reportParams.length) {
           res.reportParams.forEach((item) => {
             this.defaultReportParam[item.paramName] = this.getDefaultValue(item.paramValue)
-            if(item.isSearch && item.searchMode){
+            if (item.isSearch && item.searchMode) {
               this.searchData.push({
                 type: item.searchMode, // 控件类型
                 labelText: item.paramTxt, // 控件显示的文本
@@ -1053,8 +1053,8 @@ export default {
         }
       })
       this.sqlParam = sqlParam
-      this.tableParam.reportParam = {...reportParam,...this.tableParam.reportParam}
-      this.tableParam.sqlParam = {...sqlParam,...this.tableParam.sqlParam}
+      this.tableParam.reportParam = { ...reportParam, ...this.tableParam.reportParam }
+      this.tableParam.sqlParam = { ...sqlParam, ...this.tableParam.sqlParam, ...this.sqlParam }
       this.tableParam.param = param
     },
     reSet () {
@@ -1092,11 +1092,11 @@ export default {
         }
       })
       this.tableParam = {
-        sqlParam: { ...this.sqlParam, ...sql,...this.tableParam.sqlParam},
+        sqlParam: { ...this.sqlParam, ...sql, ...this.tableParam.sqlParam },
         reportId: this.tableInfo.id,
         param: {},
         reportParam: {
-          ...this.defaultReportParam,...this.tableParam.reportParam, ...report
+          ...this.defaultReportParam, ...this.tableParam.reportParam, ...report
         },
         router: this.$route.name,
         code: this.code,
