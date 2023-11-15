@@ -349,7 +349,7 @@ export default {
       if (Object.keys(data).length) {
         this.popLabel = data.label
         this.formData[this.fields.fieldName] = data.value
-        this.$emit('setParentFormData', this.formData)
+        this.$emit('setParentFormData', this.formData, data.label)
       }
     },
     onPopupClose () {
