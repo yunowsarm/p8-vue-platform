@@ -136,6 +136,11 @@
             ref="renderView"
           ></render-view>
           <tableRenderVue v-if="item.component.functionalCategory === '3'" :code="item.component.dataviewId" @searchData="searchData"></tableRenderVue>
+                    <AntvView v-if="item.component.functionalCategory === '4'"
+                    :is-show="isLayoutReady"
+                    :app-config="item.component"
+                    :option="item.component.jsonOptions"
+                    :resize-time="widgetResizeStatus[item.slot]"></AntvView>
         </widget-item>
       </smart-widget-grid>
     </VuePerfectScrollbar>
@@ -151,6 +156,7 @@ import widgetItem from './widget-item.vue'
 import dynamicLink from './dynamic-link.vue'
 import renderView from "../../../../src/views/Framework/ComponentsMananger/Kanban/Components/renderView"
 import tableRenderVue from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
+import AntvView from '@/views/Framework/ComponentsMananger/Kanban/Components/AntvView'
 export default {
   name: 'Widgetgrid',
   provide() {
@@ -168,7 +174,8 @@ export default {
     renderView,
     VuePerfectScrollbar,
     dynamicLink,
-    tableRenderVue
+    tableRenderVue,
+    AntvView
   },
   props: {
     widget: {
