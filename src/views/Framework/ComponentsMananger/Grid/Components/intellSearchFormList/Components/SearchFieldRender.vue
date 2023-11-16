@@ -104,6 +104,14 @@
                         :placeholder="fields.placeholder"
                         style="width: 100%"
                         clearable></el-date-picker>
+        <el-date-picker v-else-if="fields.fieldName && fields.type === 'year'"
+                        v-model="formData[fields.fieldName]"
+                        type="year"
+                        v-bind="fields.fieldConfig"
+                        :placeholder="fields.placeholder"
+                        style="width: 100%"
+                        valueFormat='yyyy'
+                        clearable></el-date-picker>
         <el-date-picker v-else-if="fields.fieldName && fields.type === 'datetimeRange'"
                         v-model="formData[fields.fieldName]"
                         v-bind="fields.fieldConfig"
