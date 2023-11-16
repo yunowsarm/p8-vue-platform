@@ -1,6 +1,3 @@
-<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
-
-
 <template>
   <normal-layout :header-visible="false"
                  :normal-layout="normalLayout">
@@ -28,18 +25,19 @@
                     height="100%"
                     :config="sqlEditConfig"> </ace-edit>
         </el-tab-pane>
-      </el-tabs>
-    </template>
+      </el-tabs> </template>
   </normal-layout>
 </template>
-
 <script>
-import { P8NormalLayoutV1 as NormalLayout, P8Tree as tree } from 'p8-components-ui'
+import {
+  P8NormalLayoutV1 as NormalLayout,
+  P8Tree as tree
+} from 'p8-components-ui'
 import aceEdit from '@/views/Framework/ComponentsMananger/Kanban/Components/ace'
-import treeDataConfig from '@/views/Framework/ComponentsMananger/Kanban/script/help/tree-data'
+import treeDataConfig from '@/views/Framework/ComponentsMananger/Kanban/script/AntvHelp/tree-data'
 
 export default {
-  name: 'Help',
+  name: 'AntvHelp',
   components: {
     aceEdit,
     NormalLayout,
@@ -83,7 +81,6 @@ export default {
   },
   methods: {
     onSelect (node) {
-      // console.log(node)
       this.configExample = ''
       this.sqlExample = ''
       if (node && node.example) {
@@ -92,12 +89,9 @@ export default {
     },
     loadCodeTemplate (example) {
       let _this = this
-      import('../script/help/' + example).then((res) => {
-        console.log('res', res)
+      import('../script/AntvHelp/' + example).then((res) => {
         if (res && res.code) {
           let codeStr = res.code
-          // let codeStr = JSON.stringify(res.code, null, 2)
-          console.log('codeStr:', codeStr)
           _this.configExample = codeStr
           if (res.sql) {
             _this.sqlExample = res.sql
@@ -109,7 +103,6 @@ export default {
   }
 }
 </script>
-
 <style>
 .el-tabs__header {
   margin: unset;
