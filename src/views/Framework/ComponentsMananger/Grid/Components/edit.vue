@@ -765,20 +765,19 @@
             </div>
             <span v-else></span>
             <common-dialog title="设置事件参数"
-                       :visible="customRenderVisible && scope.$index === index"
-                       @handle-cancel="customRenderDialogClose"
-                       @handle-ok="customRenderDialogOk"
-                       width="40%"
-                       @close="customRenderDialogClose">
+                           :visible="customRenderVisible && scope.$index === index"
+                           @handle-cancel="customRenderDialogClose"
+                           @handle-ok="customRenderDialogOk"
+                           width="40%"
+                           @close="customRenderDialogClose">
               <template #dialog>
                 <ace-edit :value.sync="customRenderFun"
                           :config="aceConfig"
                           width="100%"
                           height="300px"></ace-edit>
-                <el-alert
-                  title="该方法默认传递的的参数为row（当前行数据）,返回一个规范的html标签或字符串"
-                  :closable="false"
-                  type="warning">
+                <el-alert title="该方法默认传递的的参数为row（当前行数据）,返回一个规范的html标签或字符串"
+                          :closable="false"
+                          type="warning">
                 </el-alert>
               </template>
             </common-dialog>
@@ -950,6 +949,8 @@
                          value="datetime"></el-option>
               <el-option label="时间范围"
                          value="datetimeRange"></el-option>
+              <el-option label="日期年"
+                         value="year"></el-option>
             </el-select>
           </template>
           <template #queryFieldNameHeader="{}">
@@ -1064,6 +1065,17 @@
                               clearable
                               style="width: 100%"
                               valueFormat='yyyy-MM-dd'
+                              :disabled="!!scope.row.isCustomColumn"
+                              @change="saveSearchData(data)"
+                              placeholder="选择日期"> </el-date-picker>
+            </div>
+            <!-- 日期年 -->
+            <div v-if="scope.row.searchMode === 'year'">
+              <el-date-picker v-model="scope.row.defaultValueData"
+                              type="year"
+                              clearable
+                              style="width: 100%"
+                              valueFormat='yyyy'
                               :disabled="!!scope.row.isCustomColumn"
                               @change="saveSearchData(data)"
                               placeholder="选择日期"> </el-date-picker>
