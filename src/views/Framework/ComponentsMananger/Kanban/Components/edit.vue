@@ -35,6 +35,10 @@
                    class="el-btn"
                    v-if="formData.functionalCategory == '2'"
                    @click="showHelp">帮助</el-button>
+        <el-button type="info"
+                   class="el-btn"
+                   v-if="formData.functionalCategory == '4'"
+                   @click="showAntvHelp">Ant帮助</el-button>
         <el-button type="primary"
                    @click="handleViews"
                    v-if="formData.functionalCategory">预览 </el-button>
@@ -121,6 +125,7 @@
             :visible="renderViewVisible"
             :show-handle-btn="false"
             :dialog-config="{}"
+            :dialogHeight="600"
             @isfullscreen="isfullscreen"
             @close="renderViewVisible = false"
             width="80%">
@@ -135,6 +140,11 @@
                      ref="renderView"></render-view>
         <tableRenderVue v-if="formData.functionalCategory === '3' && renderViewVisible"
                         :code="formData.dataviewId"></tableRenderVue>
+        <AntvView v-if="formData.functionalCategory === '4' && renderViewVisible"
+                  :option="getJsonOptions"
+                  :app-config="formData"
+                  :is-show="renderViewVisible"
+                  ref="renderView"></AntvView>
       </template>
     </Dialog>
     <Dialog title="帮助"
@@ -145,6 +155,16 @@
             :dialog-height="600">
       <template #dialog>
         <help></help>
+      </template>
+    </Dialog>
+    <Dialog title="帮助"
+            :visible="AntvHelpVisible"
+            :show-handle-btn="false"
+            @close="AntvHelpVisible = false"
+            width="80%"
+            :dialog-height="600">
+      <template #dialog>
+        <AntvHelp></AntvHelp>
       </template>
     </Dialog>
     <echarts-index v-if="visibleDrawer"
@@ -162,7 +182,8 @@ import dynamicLink from './dynamic-link'
 import help from './help'
 import echartsIndex from './index'
 import tableRenderVue from '../../Grid/Components/tableRender.vue'
-
+import AntvView from './AntvView'
+import AntvHelp from './AntvHelp1'
 export default {
   name: 'CompEdit',
   components: {
@@ -174,7 +195,9 @@ export default {
     help,
     tableRenderVue,
     echartsIndex,
-    EditableTable
+    EditableTable,
+    AntvView,
+    AntvHelp
   },
   props: {
     record: {
@@ -225,6 +248,10 @@ export default {
           {
             label: '表格渲染器',
             value: '3'
+          },
+          {
+            label: 'AntV_G2图表渲染器',
+            value: '4'
           }
         ],
         rules: [
@@ -460,6 +487,7 @@ export default {
       saveApi: 'kanbanComponent.save',
       renderViewVisible: false,
       helpVisible: false,
+      AntvHelpVisible: false,
       dataSource,
       editValue: '',
       formData: {
@@ -512,7 +540,6 @@ export default {
       }
     },
     saved (res) {
-      console.log('修改页面关闭时的回调方法')
       this.$emit('saveSuccess', res)
     },
     handleSubmit () {
@@ -535,8 +562,10 @@ export default {
     showHelp () {
       this.helpVisible = true
     },
+    showAntvHelp () {
+      this.AntvHelpVisible = true
+    },
     onEditModify (v) {
-      // console.log('onEditModify', v)
       this.formData.jsonOptions = v
     },
     handleDraw () {
@@ -557,11 +586,16 @@ export default {
   watch: {
     'formData.functionalCategory': function (newVal, oldVal) {
       // 功能类别为json自定义
-      if (newVal === '2') {
+      if (newVal && oldVal) {
+        this.editValue = ''
         this.formData.url = ''
+        // 切换清空json框
+        this.formData.jsonOptions = ''
+      }
+      if (newVal === '2') {
         this.dataSource = this.dataSource
           .filter((item) => {
-            return item.fieldName !== 'url' && item.fieldName !== 'dataviewId' && item.fieldName !== 'urlType'
+            return item.fieldName !== 'url' && item.fieldName !== 'dataviewId' && item.fieldName !== 'urlType' && item.fieldName !== 'jsonOptions'
           })
           .concat([
             {
@@ -589,8 +623,6 @@ export default {
             }
           ])
       } else if (newVal === '3') {
-        this.formData.url = ''
-        this.formData.jsonOptions = ''
         this.dataSource = this.dataSource.filter((item) => {
           return item.fieldName !== 'url' && item.fieldName !== 'dataviewId' && item.fieldName !== 'jsonOptions' && item.fieldName !== 'urlType'
         }).concat([
@@ -607,12 +639,39 @@ export default {
             }
           }
         ])
+      } else if (newVal === '4') {
+        this.dataSource = this.dataSource
+          .filter((item) => {
+            return item.fieldName !== 'url' && item.fieldName !== 'dataviewId' && item.fieldName !== 'urlType' && item.fieldName !== 'jsonOptions'
+          })
+          .concat([
+            {
+              type: 'select',
+              labelText: '数据视图数据源',
+              fieldName: 'dataviewId',
+              placeholder: '请选择',
+              colLayout: 'doubleCol',
+              optionUrl: {
+                api: 'kanbanComponent.dataViewList'
+              }
+            },
+            {
+              type: 'blank',
+              labelText: 'json配置',
+              slotName: 'jsonOptions',
+              fieldName: 'jsonOptions',
+              colLayout: '',
+              rules: [
+                {
+                  required: true,
+                  message: '该项为必填项'
+                }
+              ]
+            }
+          ])
       } else {
-        this.formData.jsonOptions = ''
-        // this.formData.desformCode = ''
         this.dataSource = this.$options.data().dataSource
       }
-      this.dateKey = new Date().getTime()
     },
     'formData.dataviewId': function (newVal, oldVal) {
       let that = this
