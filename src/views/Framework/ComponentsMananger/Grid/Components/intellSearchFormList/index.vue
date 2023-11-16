@@ -12,7 +12,6 @@
                   v-model="searchVal"
                   readonly
                   prefix-icon="el-icon-search"
-                  :disabled="!defaultSearch"
                   @keyup.enter.native="enterSearch"
                   @click.native="toggleAdvanced">
           <template slot="suffix">
