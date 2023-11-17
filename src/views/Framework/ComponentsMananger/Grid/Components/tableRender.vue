@@ -1092,7 +1092,7 @@ export default {
       let sql = {}
       let report = {}
       this.serachForm = {}
-      this.searchData.forEach(el => {
+      this.searchList.forEach(el => {
         this.serachForm[el.fieldName] = el.defaultValue ? el.defaultValue : ''
         if (el.parameterSource && el.parameterSource == 'SQL参数') {
           if (reportParam[el.fieldName]) {
