@@ -831,6 +831,9 @@ export default {
                     minWidth: item.fieldWidth,
                     sortable: item.isOrder ? item.isOrder : false
                   })
+                  if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
+                    item.defaultValueData = item.defaultValueData.split(',')
+                  }
                 }
               } else if (item.isCustomColumn) {
                 if (item.fieldName === '_ROWNO') {
@@ -870,6 +873,15 @@ export default {
               if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
                 item.defaultValueData = item.defaultValueData.split(',')
               }
+              this.searchData.push({
+                type: item.searchMode, // 控件类型
+                labelText: item.fieldTxt, // 控件显示的文本
+                fieldName: item.fieldName,
+                mode: '=',
+                selectCode: item.dictCode,
+                replaceSearch: item.replaceVal,
+                defaultValue: item.defaultValueData
+              })
               this.searchList.push({
                 type: item.searchMode, // 控件类型
                 labelText: item.fieldTxt, // 控件显示的文本
