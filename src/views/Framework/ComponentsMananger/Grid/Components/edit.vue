@@ -2503,6 +2503,8 @@ export default {
           }
           break
         case 'startProcess':
+        case 'viewProcess':
+        case 'cancelProcess':
           obj = {
             module: 'BPM流程',
             code: this.paramsFormData.formCode
