@@ -13,6 +13,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@antv/g2": "^5.1.7",
     "@babel/parser": "^7.7.4",
     "@vue/babel-plugin-transform-vue-jsx": "^1.2.1",
     "axios": "^0.19.2",
