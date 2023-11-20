@@ -1,9 +1,15 @@
 <template>
-  <div class="select-theme">
-    <div v-for="(item, index) in imageName" :key="index">
-      <el-image style="width: 100px; height: 100px; margin-left: 10px" :src="item.url" fit="cover" @click="changeSystemImage(item.url)"></el-image>
+  <div>
+    <div class="tips">
+      <div class="vertical_line"></div>
+      用户基本信息
     </div>
-    <el-button style="position: absolute; right: 10px" type="text" @click="cloneBack('')">取消背景</el-button>
+    <div class="select-theme">
+      <div v-for="(item, index) in imageName" :key="index">
+        <el-image style="width: 100px; height: 180px; margin-left: 10px" :src="item.url" fit="cover" @click="changeSystemImage(item.url)"></el-image>
+      </div>
+      <el-button style="position: absolute; right: 10px" type="text" @click="cloneBack('')">取消背景</el-button>
+    </div>
   </div>
 </template>
 <script>
@@ -58,7 +64,20 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.tips {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  margin: 8px 8px 8px 26px;
+}
+.vertical_line {
+  margin-right: 8px;
+  width: 3px;
+  height: 16px;
+  background: $theme-color;
+}
 .select-theme {
+  margin-left: 40px;
   display: flex;
 
   h4 {
