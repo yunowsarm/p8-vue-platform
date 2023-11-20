@@ -312,5 +312,6 @@ export default {
 }
 .custom-common-tabs ::v-deep .el-tabs--border-card {
   border: none;
+  box-shadow: none;
 }
 </style>

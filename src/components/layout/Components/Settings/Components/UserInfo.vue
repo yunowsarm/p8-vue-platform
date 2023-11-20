@@ -1,6 +1,10 @@
 <template>
   <div class="user-info">
-    <el-form label-width="100px">
+    <div class="tips">
+      <div class="vertical_line"></div>
+      用户基本信息
+    </div>
+    <el-form class="form_list" label-width="100px">
       <el-form-item label="用户名: ">
         {{ userAccount }}
       </el-form-item>
@@ -22,7 +26,7 @@ export default {
     ...mapGetters(['userAccount', 'userName']),
     userRoles() {
       const roles = this.$store.getters.roles
-      let roleNames = roles.map((r) => r.roleName)
+      const roleNames = roles.map((r) => r.roleName)
       return roleNames ? roleNames.join(', ') : ''
     }
   },
@@ -33,9 +37,19 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.user-info {
-  .el-form-item {
-    border-bottom: 1px solid $base-light-color;
-  }
+.tips {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  margin: 8px 8px 8px 26px;
+}
+.vertical_line {
+  margin-right: 8px;
+  width: 3px;
+  height: 16px;
+  background: $theme-color;
+}
+.form_list {
+  margin-left: 40px;
 }
 </style>

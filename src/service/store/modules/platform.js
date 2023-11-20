@@ -212,7 +212,13 @@ const platform = {
     },
     async setTheme({ commit, state }, { theme, handler = false }) {
       //  防止多次提交相同颜色
-      if (!theme || (theme === state.theme && handler)) return
+      if (!theme || (theme === state.theme && handler)) {
+        // theme 为空时为默认颜色#0050b3
+        !theme && document.getElementsByTagName('body')[0].style.setProperty('--theme-color', '#0050b3')
+        return
+      } else {
+        document.getElementsByTagName('body')[0].style.setProperty('--theme-color', theme)
+      }
       //
       const themeCluster = getClusterColor(theme.replace('#', ''))
 

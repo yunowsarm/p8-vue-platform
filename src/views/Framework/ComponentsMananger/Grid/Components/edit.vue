@@ -4,7 +4,8 @@
 <template>
   <div>
     <form-list ref="form"
-               style="height:330px;"
+               class="form_list"
+               style="height:288px;"
                :data-source="dataSource"
                :form="formData"
                :api="saveApi"
@@ -30,6 +31,10 @@
     </form-list>
     <!-- <i v-show="iconShow" id="icon-style" class="el-icon-full-screen" @click="iconClick"></i>
     <i v-show="!iconShow" id="icon-style" class="el-icon-copy-document" @click="iconClick"></i> -->
+    <div class="tips">
+      <div class="vertical_line"></div>
+      数据表格信息
+    </div>
     <common-tabs :tabs-data="tabsData"
                  :height="height"
                  style="z-index: 1000"
@@ -1194,7 +1199,7 @@ export default {
     }
   },
   data () {
-    const height = document.documentElement.clientHeight - 440
+    const height = document.documentElement.clientHeight - 472
     return {
       noApiTableData: [],
       selectModuleIndex: null,
@@ -1478,32 +1483,32 @@ export default {
         {
           label: '表格配置明细',
           name: 'tableConfigDetails',
-          icon: 'icon-multi-project-manage'
+          icon: 'icon-baobiaopeizhimingxi tabs_icon'
         },
         {
           label: '查询配置',
           name: 'searchDetails',
-          icon: 'icon-multi-project-manage'
+          icon: 'icon-chaxunpeizhi tabs_icon'
         },
         {
           label: '自定义列配置',
           name: 'configColumnDetails',
-          icon: 'icon-planning'
+          icon: 'icon-zidingyiliepeizhi tabs_icon'
         },
         {
           label: '参数',
           name: 'tableParam',
-          icon: 'icon-business-execution'
+          icon: 'icon-baobiaocanshu tabs_icon'
         },
         {
           label: '表格按钮',
           name: 'tableButton',
-          icon: 'icon-process-template'
+          icon: 'icon-biaogeanniu tabs_icon'
         },
         {
           label: '自定义CSS',
           name: 'customCSS',
-          icon: 'icon-process-template'
+          icon: 'icon-zidingyicss tabs_icon'
         }
       ],
       columns: [
@@ -2302,37 +2307,37 @@ export default {
           {
             label: '表格配置明细',
             name: 'tableConfigDetails',
-            icon: 'icon-multi-project-manage'
+            icon: 'icon-baobiaopeizhimingxi tabs_icon'
           },
           {
             label: '查询配置',
             name: 'searchDetails',
-            icon: 'icon-multi-project-manage'
+            icon: 'icon-chaxunpeizhi tabs_icon'
           },
           {
             label: '自定义列配置',
             name: 'configColumnDetails',
-            icon: 'icon-planning'
+            icon: 'icon-zidingyiliepeizhi tabs_icon'
           },
           {
             label: '参数',
             name: 'tableParam',
-            icon: 'icon-business-execution'
+            icon: 'icon-baobiaocanshu tabs_icon'
           },
           {
             label: '表格按钮',
             name: 'tableButton',
-            icon: 'icon-process-template'
+            icon: 'icon-biaogeanniu tabs_icon'
           },
           {
             label: '自定义CSS',
             name: 'customCSS',
-            icon: 'icon-process-template'
+            icon: 'icon-zidingyicss tabs_icon'
           },
           {
             label: '编辑配置',
             name: 'editConfig',
-            icon: 'icon-my-task'
+            icon: 'icon-bianjipeizhi tabs_icon'
           }
         ]
       } else {
@@ -2340,32 +2345,32 @@ export default {
           {
             label: '表格配置明细',
             name: 'tableConfigDetails',
-            icon: 'icon-multi-project-manage'
+            icon: 'icon-baobiaopeizhimingxi tabs_icon'
           },
           {
             label: '查询配置',
             name: 'searchDetails',
-            icon: 'icon-multi-project-manage'
+            icon: 'icon-chaxunpeizhi tabs_icon'
           },
           {
             label: '自定义列配置',
             name: 'configColumnDetails',
-            icon: 'icon-planning'
+            icon: 'icon-zidingyiliepeizhi tabs_icon'
           },
           {
             label: '参数',
             name: 'tableParam',
-            icon: 'icon-business-execution'
+            icon: 'icon-baobiaocanshu tabs_icon'
           },
           {
             label: '表格按钮',
             name: 'tableButton',
-            icon: 'icon-process-template'
+            icon: 'icon-biaogeanniu tabs_icon'
           },
           {
             label: '自定义CSS',
             name: 'customCSS',
-            icon: 'icon-process-template'
+            icon: 'icon-zidingyicss tabs_icon'
           }
         ]
       }
@@ -3194,13 +3199,34 @@ export default {
 .editConfig {
   height: calc(100% - 120px) !important;
 }
+.form_list {
+  margin: 0 16px 0 16px;
+}
+.tips {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  margin: 8px 8px 8px 26px;
+  color: $theme-color;
+}
+.vertical_line {
+  margin-right: 8px;
+  width: 3px;
+  height: 16px;
+  background: $theme-color;
+}
 ::v-deep .el_tabs {
+  box-sizing: border-box;
+  margin: 0 26px 60px 26px;
   .el-tabs__content {
     padding: 0 !important;
     .list-layout {
       margin: 0;
       height: 100%;
     }
+  }
+  .tabs_icon {
+    font-size: 16px;
   }
 }
 </style>
