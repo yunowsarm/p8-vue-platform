@@ -4,7 +4,7 @@
       <common-button :comp="comp" :button-type="'round'"></common-button>
     </template>
     <template #west>
-      <common-tree :tree-api="treeApi" ref="tree" :node-slot="true" @select="onSelect">
+      <common-tree :tree-api="treeApi" ref="tree" :indent="26" :node-slot="true" @select="onSelect">
         <template #tree="{ node }">
           <div style="display: flex; width: 100%">
             <i class="p8 tree_icon icon-fill-in-approval-comments"></i>
