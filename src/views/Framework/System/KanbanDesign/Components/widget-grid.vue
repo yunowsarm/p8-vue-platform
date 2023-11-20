@@ -152,6 +152,7 @@
                     :is-show="isLayoutReady"
                     :app-config="item.component"
                     :option="item.component.jsonOptions"
+                    :thirdMenuParam="thirdMenuParam"
                     :resize-time="widgetResizeStatus[item.slot]"></AntvView>
         </widget-item>
       </smart-widget-grid>
@@ -206,6 +207,12 @@ export default {
     isDesign: {
       type: Boolean,
       default: true
+    },
+    thirdMenuParam: {
+      type: Object,
+      default: function () {
+        return {}
+      }
     }
   },
   computed: {

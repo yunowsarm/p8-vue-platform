@@ -43,6 +43,12 @@ export default {
     isShow: {
       type: Boolean,
       default: false
+    },
+    thirdMenuParam: {
+      type: Object,
+      default: function () {
+        return {}
+      }
     }
   },
   data () {
@@ -107,15 +113,30 @@ export default {
       handler: function (chart) {
         const _this = this
         if (chart && _this.remoteData) {
-          this.myChart.data(_this.remoteData)
+          // transitionType为进度图，为true则转换进度title
+          if (this.myChart.children[1].value.style.transitionType) {
+            let obj = Object.assign({}, this.myChart.children[1].value.style)
+            this.myChart.children[1].value.style.text = _this.remoteData[0][this.myChart.children[1].value.style.text] * 100 + '%'
+            this.myChart.data([1, _this.remoteData[0][obj.text]])
+          } else {
+            this.myChart.data(_this.remoteData)
+          }
           this.myChart.render();
         }
       }
     },
     remoteData: {
       handler: function (val, oldVal) {
+        const _this = this
         if (val && this.myChart) {
-          this.myChart.data(val)
+          // transitionType为进度图，为true则转换进度title
+          if (this.myChart.children[1].value.style.transitionType) {
+            let obj = Object.assign({}, this.myChart.children[1].value.style)
+            this.myChart.data([1, val[0][obj.text]])
+            this.myChart.children[1].value.style.text = _this.remoteData[0][this.myChart.children[1].value.style.text] * 100 + '%'
+          } else {
+            this.myChart.data(val)
+          }
           this.myChart.render()
         }
       }
@@ -224,7 +245,7 @@ export default {
             })
         }
       } else {
-        this.$api['kanbanComponent.getViewData']({ sqlId: this.appConfig.dataviewId, param: this.searchParams, permissionVo: { router: this.$route.name, resourceId: '' } }).then((res) => {
+        this.$api['kanbanComponent.getViewData']({ sqlId: this.appConfig.dataviewId, param: this.searchParams, permissionVo: { router: this.$route.name, resourceId: '' }, sqlParam: { planInfoId: this.thirdMenuParam.ID } }).then((res) => {
           if (res) {
             _this.remoteData = res
           }
@@ -259,7 +280,6 @@ export default {
       if (this.myChart && this.eventOption.eventName) {
         const _this = this
         this.myChart.on(this.eventOption.eventName, (params) => {
-          console.log(params,'---params');
           const chartData = params.data.data
           const drillParams = this.eventOption.drillParams
           for (const key in drillParams) {
