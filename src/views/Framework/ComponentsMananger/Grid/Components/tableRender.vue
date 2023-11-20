@@ -1464,6 +1464,7 @@ export default {
     cancelProcess (row, btn) {
       const rowBtnData = this.getRowBtnData(row, btn)
       row = rowBtnData.row
+      btn = rowBtnData.btn
       if (!row) {
         return
       }
