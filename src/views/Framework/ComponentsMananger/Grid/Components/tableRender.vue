@@ -1,5 +1,6 @@
 <template>
   <normal-layout class="grid-table-render"
+                 :key="tiemKey"
                  :header-visible="headerVisible"
                  :normal-layout="normalLayout">
     <template #north>
@@ -436,6 +437,7 @@ export default {
   },
   data () {
     return {
+      tiemKey: new Date().getTime(),
       runInHoleTitle: '下钻详情',
       defaultMenu: {},
       thirdMenuParam: {},
@@ -671,6 +673,7 @@ export default {
     $route: {
       handler (val) {
         console.log(val.path);
+        this.tiemKey = new Date().getTime()
       }
     }
   },
@@ -751,6 +754,8 @@ export default {
       this.columns = []
       this.customColumn = []
       this.viewKeys = {}
+      this.tableParam = {}
+      this.defaultReportParam = {}
       this.permissionVo = { router: this.$route.name, resourceId: '' }
       this.$api['formGenerator.tableGetInfo']({ reportCode: this.code, permissionVo: this.permissionVo }).then((res) => {
         that.tableInfo = res
@@ -812,15 +817,6 @@ export default {
                   if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
                     item.defaultValueData = item.defaultValueData.split(',')
                   }
-                  this.searchData.push({
-                    type: item.searchMode, // 控件类型
-                    labelText: item.fieldTxt, // 控件显示的文本
-                    fieldName: item.fieldName,
-                    mode: '=',
-                    selectCode: item.dictCode,
-                    replaceSearch: item.replaceVal,
-                    defaultValue: item.defaultValueData
-                  })
                   this.showSearchRow = false
                   // 查询放置按钮区域
                   columnData.push({

@@ -22,6 +22,7 @@
                      @click="functionTest(scope)">功能测试</el-button>
           <el-button type="text"
                      @click="tableAddress(scope)">表格配置地址</el-button>
+          <el-button type="text" @click="tableCopy(scope)">表格复制</el-button>
           <!-- <el-button type="text" @click="viewAddress(scope)">查看配置地址</el-button> -->
         </template>
       </common-table>
@@ -119,7 +120,7 @@ export default {
       {
         title: '操作',
         dataIndex: 'operation',
-        width: 250,
+        width: 300,
         scopedSlots: { customRender: 'custom' },
         align: 'left',
         headerAlign: 'left'
@@ -189,6 +190,25 @@ export default {
       this.functionTestTitle = '功能测试'
       this.record = Object.assign({}, scope.row)
       this.functionTestVisible = true
+    },
+    tableCopy(scope) {
+      const that = this
+      this.$confirm('是否确定要复制该表格？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          that.$api['formGenerator.reportCopy']({
+            reportId: scope.row.id
+          }).then((res) => {
+            this.$message({ type: 'success', message: '复制成功' })
+            that.$refs.table.searchData()
+          })
+        })
+        .catch((e) => {
+          console.log(e)
+        })
     },
     tableAddress (scope) {
       this.$confirm('Framework/ComponentsMananger/Grid/Components/tableRender?code=' + scope.row.code, '表格配置地址', {
