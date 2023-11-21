@@ -667,7 +667,7 @@ export default {
           relation: 'and'
         }
       })
-      this.tableParam.param = { ...obj }
+      this.tableParam.param = { ...obj, ...this.tableParam.param }
       this.propParam = Object.assign(this.propParam, val)
     },
     $route: {
@@ -713,6 +713,7 @@ export default {
           }
         }
       })
+      this.westParmars = obj
       Object.keys({ ...newValue }).forEach((item) => {
         if (reportList.includes(item)) {
           reportParmars[item] = newValue[item]
@@ -869,15 +870,17 @@ export default {
               if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
                 item.defaultValueData = item.defaultValueData.split(',')
               }
-              this.searchData.push({
-                type: item.searchMode, // 控件类型
-                labelText: item.fieldTxt, // 控件显示的文本
-                fieldName: item.fieldName,
-                mode: '=',
-                selectCode: item.dictCode,
-                replaceSearch: item.replaceVal,
-                defaultValue: item.defaultValueData
-              })
+              if (item.searchMode) {
+                this.searchData.push({
+                  type: item.searchMode, // 控件类型
+                  labelText: item.fieldTxt, // 控件显示的文本
+                  fieldName: item.fieldName,
+                  mode: '=',
+                  selectCode: item.dictCode,
+                  replaceSearch: item.replaceVal,
+                  defaultValue: item.defaultValueData
+                })
+              }
               this.searchList.push({
                 type: item.searchMode, // 控件类型
                 labelText: item.fieldTxt, // 控件显示的文本
@@ -1065,7 +1068,7 @@ export default {
       this.sqlParam = sqlParam
       this.tableParam.reportParam = { ...reportParam, ...this.tableParam.reportParam }
       this.tableParam.sqlParam = { ...sqlParam, ...this.tableParam.sqlParam, ...this.sqlParam }
-      this.tableParam.param = param
+      this.tableParam.param = { ...param, ...this.westParmars }
     },
     reSet () {
       // this.tableParam.param = {}
