@@ -1017,7 +1017,9 @@ export default {
         // SQL参数
         if (res.reportSqlParams && res.reportSqlParams.length) {
           res.reportSqlParams.forEach((item) => {
-            this.sqlParam[item.paramName] = item.paramValue
+            if (item.paramValue) {
+              this.sqlParam[item.paramName] = item.paramValue
+            }
           })
         }
         that.enableEdit = res.enableEdit
