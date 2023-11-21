@@ -177,11 +177,11 @@ import { overdueTextHandles } from '@/utils/common'
 import frontToBack from './frontToBack'
 export default {
   name: 'ButtonNavigationView',
-  // provide () {
-  //   return {
-  //     provideParams: this.provideParams
-  //   }
-  // },
+  provide () {
+    return {
+      provideParams: this.provideParams
+    }
+  },
   data () {
     return {
       dateTime: null,
@@ -192,7 +192,7 @@ export default {
       defaultExpandedKeys: [],
       paramsObj: {},
       provideParams: {
-        searchParams: {}
+        searchParams: this.westTreeParam
       },
       componentsConfig: {},
       visible: false,
@@ -216,6 +216,12 @@ export default {
   },
   props: {
     layoutConfig: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    westTreeParam: {
       type: Object,
       default: () => {
         return {}
