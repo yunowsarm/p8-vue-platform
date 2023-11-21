@@ -1567,6 +1567,13 @@ export const formGeneratorApi = {
       desc: '报表管理-报表删除'
     },
     {
+      name: 'reportCopy',
+      method: 'POST',
+      path: '/framework/report/reportCopy',
+      mockPath: '/framework/report/reportCopy',
+      desc: '报表管理-报表复制'
+    },
+    {
       name: 'tableSqlParse',
       method: 'POST',
       path: '/framework/report/parse',
