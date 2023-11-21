@@ -7,11 +7,17 @@
       <common-button :comp="comp"
                      :button-type="'round'"
                      :custom-button-data="customButtonData"></common-button>
+      <search-form-list ref="search"
+                        :data-source="searchData"
+                        @search="search"
+                        labelWidth="100px"
+                        @re-set="reSet"></search-form-list>
     </template>
     <template #center>
       <common-table ref="table"
                     :flex="200"
                     :columns="columns"
+                    :params="queryParam"
                     api="formGenerator.compList"
                     :table-refresh="tableRefresh"
                     :pagination="false">
@@ -40,7 +46,7 @@
 </template>
 
 <script>
-import { P8Button as CommonButton, P8ListLayout as ListLayout, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import { P8Search as SearchFormList, P8Button as CommonButton, P8ListLayout as ListLayout, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
 
 import CompListEdit from './Components/edit'
 export default {
@@ -49,6 +55,7 @@ export default {
     ListLayout,
     CommonTable,
     CommonDrawer,
+    SearchFormList,
     CompListEdit,
     CommonButton
   },
@@ -94,6 +101,42 @@ export default {
       }
     ]
     return {
+      queryParam: {},
+      searchData: [
+        {
+          type: 'text',
+          labelText: '组件名称',
+          fieldName: 'name',
+          placeholder: '请输入组件名称'
+        },
+        {
+          type: 'text',
+          labelText: '组件标识',
+          fieldName: 'myKey',
+          placeholder: '请输入组件标识'
+        },
+        {
+          type: 'select',
+          labelText: '组件类型',
+          fieldName: 'compType',
+          placeholder: '请选择组件类型',
+          colLayout: 'singleCol',
+          options: [
+            {
+              label: '输入型组件',
+              value: '8001'
+            },
+            {
+              label: '选择型组件',
+              value: '8002'
+            },
+            {
+              label: '布局型组件',
+              value: '8003'
+            }
+          ]
+        }
+      ],
       comp: this,
       customButtonData: [
         {
@@ -113,6 +156,16 @@ export default {
     }
   },
   methods: {
+    search (param) {
+      let that = this
+      if (param) {
+        that.queryParam = param
+      }
+    },
+    reset () {
+      let that = this
+      Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = null })
+    },
     tableRefresh (param) {
       param
         .then(() => {
