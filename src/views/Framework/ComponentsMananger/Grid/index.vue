@@ -7,11 +7,17 @@
       <common-button :comp="comp"
                      :button-type="'round'"
                      :custom-button-data="customButtonData"></common-button>
+      <search-form-list ref="search"
+                        :data-source="searchData"
+                        @search="search"
+                        labelWidth="100px"
+                        @re-set="reSet"></search-form-list>
     </template>
     <template #center>
       <common-table ref="table"
                     :columns="columns"
                     api="formGenerator.tableList"
+                    :params="queryParam"
                     :table-refresh="tableRefresh">
         <template #operation="{ scope }">
           <el-button type="text"
@@ -53,7 +59,7 @@
 </template>
 
 <script>
-import { P8Button as CommonButton, P8ListLayout as ListLayout, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import { P8Search as SearchFormList, P8Button as CommonButton, P8ListLayout as ListLayout, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
 
 import TableListEdit from './Components/edit'
 import TableRender from './Components/tableRender'
@@ -65,7 +71,8 @@ export default {
     CommonDrawer,
     TableListEdit,
     TableRender,
-    CommonButton
+    CommonButton,
+    SearchFormList
   },
   data () {
     const columns = [
@@ -126,6 +133,21 @@ export default {
       }
     ]
     return {
+      queryParam: {},
+      searchData: [
+        {
+          type: 'text',
+          labelText: '表格名字',
+          fieldName: 'name',
+          placeholder: '请输入表格名字'
+        },
+        {
+          type: 'text',
+          labelText: '表格编码',
+          fieldName: 'code',
+          placeholder: '请输入表格编码'
+        }
+      ],
       comp: this,
       customButtonData: [
         {
@@ -147,6 +169,16 @@ export default {
     }
   },
   methods: {
+    search (param) {
+      let that = this
+      if (param) {
+        that.queryParam = param
+      }
+    },
+    reset () {
+      let that = this
+      Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = null })
+    },
     tableRefresh (param) {
       param
         .then(() => {

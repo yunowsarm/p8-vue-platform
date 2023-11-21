@@ -7,10 +7,16 @@
       <common-button :comp="comp"
                      :button-type="'round'"
                      :custom-button-data="customButtonData"></common-button>
+      <search-form-list ref="search"
+                        :data-source="searchData"
+                        @search="search"
+                        labelWidth="100px"
+                        @re-set="reSet"></search-form-list>
     </template>
     <template #center>
       <common-table ref="table"
                     :comp="comp"
+                    params="queryParam"
                     :columns="columns"
                     :table-config="tableConfig"
                     :table-refresh="tableRefresh"
@@ -33,12 +39,27 @@
 </template>
 
 <script>
-import { P8Button as CommonButton, P8ListLayout as ListLayout, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import { P8Search as SearchFormList, P8Button as CommonButton, P8ListLayout as ListLayout, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
 import departmentEditView from '@/views/Framework/ComponentsMananger/Layout/Components/edit.vue'
 export default {
   name: 'Department',
   data () {
     return {
+      queryParam: {},
+      searchData: [
+        {
+          type: 'text',
+          labelText: '布局名称',
+          fieldName: 'layoutName',
+          placeholder: '请输入布局名称'
+        },
+        {
+          type: 'text',
+          labelText: '布局编号',
+          fieldName: 'layoutCode',
+          placeholder: '请输入布局编号'
+        }
+      ],
       customButtonData: [
         {
           'id': 'btn-001',
@@ -137,6 +158,16 @@ export default {
     }
   },
   methods: {
+    search (param) {
+      let that = this
+      if (param) {
+        that.queryParam = param
+      }
+    },
+    reset () {
+      let that = this
+      Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = null })
+    },
     create () {
       this.drawerTitle = '新建布局'
       this.drawerVisible = true
@@ -222,7 +253,8 @@ export default {
     CommonButton,
     CommonTable,
     CommonDrawer,
-    departmentEditView
+    departmentEditView,
+    SearchFormList
   }
 }
 </script>

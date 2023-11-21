@@ -7,10 +7,16 @@
       <common-button :comp="comp"
                      :button-type="'round'"
                      :custom-button-data="customButtonData"></common-button>
+      <search-form-list ref="search"
+                        :data-source="searchData"
+                        @search="search"
+                        labelWidth="100px"
+                        @re-set="reSet"></search-form-list>
     </template>
     <template #center>
       <common-table ref="table"
                     :columns="columns"
+                    :params="queryParam"
                     api="formGenerator.formList"
                     :table-refresh="tableRefresh">
         <template #operation="{ scope }">
@@ -66,7 +72,7 @@
 </template>
 
 <script>
-import { P8Button as CommonButton, P8ListLayout as ListLayout, P8Table as CommonTable, P8Drawer as CommonDrawer, P8FormGenerator as FormGenerator, Notification } from 'p8-components-ui'
+import { P8Search as SearchFormList, P8Button as CommonButton, P8ListLayout as ListLayout, P8Table as CommonTable, P8Drawer as CommonDrawer, P8FormGenerator as FormGenerator, Notification } from 'p8-components-ui'
 
 import FormListEdit from './Components/edit'
 import FormDataList from './Components/formDataList'
@@ -82,7 +88,8 @@ export default {
     FormGenerator,
     FormListEdit,
     FormDataList,
-    CommonButton
+    CommonButton,
+    SearchFormList
   },
   data () {
     const columns = [
@@ -134,6 +141,21 @@ export default {
     ]
     return {
       comp: this,
+      queryParam: {},
+      searchData: [
+        {
+          type: 'text',
+          labelText: '表单名称',
+          fieldName: 'desformName',
+          placeholder: '请输入表单名称'
+        },
+        {
+          type: 'text',
+          labelText: '表单编码',
+          fieldName: 'desformCode',
+          placeholder: '请输入表单编码'
+        }
+      ],
       customButtonData: [
         {
           id: 'btn-001',
@@ -156,6 +178,16 @@ export default {
     }
   },
   methods: {
+    search (param) {
+      let that = this
+      if (param) {
+        that.queryParam = param
+      }
+    },
+    reset () {
+      let that = this
+      Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = null })
+    },
     tableRefresh (param) {
       param
         .then(() => {
@@ -230,7 +262,7 @@ export default {
     },
     // 表单发布
     async formRelease (scope) {
-      let drawingListData = await this.getDrawingList({ desFormId: scope.row.id ,router: this.$route.path})
+      let drawingListData = await this.getDrawingList({ desFormId: scope.row.id, router: this.$route.path })
       let formConf = JSON.parse(drawingListData.designJson)
       let formDataBase = formConf.formDataBase
       let canRelease = true // 是否可发布，默认可发布
