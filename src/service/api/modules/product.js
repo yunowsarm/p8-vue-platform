@@ -1461,5 +1461,28 @@ export const repositoryApi = {
       mockPath: '/product/klActivity/pasteNode',
       desc: '知识库管理->产出流程管理->excel导入'
     }
+  ],
+  TodoList: [
+    {
+      name: 'list',
+      method: 'POST',
+      path: '/product/backlog/list',
+      mockPath: '/product/backlog/list',
+      desc: '我的待办-我接收的-执行详情'
+    },
+    {
+      name: 'save',
+      method: 'POST',
+      path: '/product/backlog/save',
+      mockPath: '/product/backlog/save',
+      desc: '我的待办-我接收的-执行保存'
+    },
+    {
+      name: 'submit',
+      method: 'POST',
+      path: '/product/backlog/submit',
+      mockPath: '/product/backlog/submit',
+      desc: '我的待办-我接收的-执行保存并提交'
+    }
   ]
 }
