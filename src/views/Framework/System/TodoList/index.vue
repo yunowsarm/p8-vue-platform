@@ -26,7 +26,7 @@
                  :existDefaultBtn="false"
                  labelWidth="90px"
                  :existCustomBtn="true"
-                 :form="formData">
+                 :form="formDataRight">
         <template #customBtn>
           <el-button size="mini"
                      @click="$emit('close')">取消</el-button>
@@ -57,11 +57,12 @@ export default {
   },
   data () {
     return {
-      formData: {
+      formDataRight: {
         realBeginDate: '',
         realEndDate: '',
         execution: ''
       },
+      formData: {},
       dataSource: [
         {
           type: 'view',
@@ -139,9 +140,7 @@ export default {
           placeholder: '请输入',
           colLayout: 'doubleCol',
           fieldConfig: {
-            'value-format': 'yyyy-MM-dd'
-          },
-          fieldConfig: {
+            'value-format': 'yyyy-MM-dd',
             clearable: false,
             'picker-options': this.startDateOptions()
           },
@@ -153,11 +152,9 @@ export default {
           placeholder: '请输入',
           colLayout: 'doubleCol',
           fieldConfig: {
-            'value-format': 'yyyy-MM-dd'
-          },
-          fieldConfig: {
             clearable: false,
-            'picker-options': this.endDateOptions()
+            'picker-options': this.endDateOptions(),
+            'value-format': 'yyyy-MM-dd'
           },
         },
         {
@@ -165,7 +162,10 @@ export default {
           labelText: '完成情况',
           fieldName: 'execution',
           placeholder: '请输入',
-          colLayout: 'singleCol'
+          colLayout: 'singleCol',
+          fieldConfig: {
+            rows: 4
+          }
         },
       ]
     }
@@ -176,12 +176,15 @@ export default {
         let id = this.row[0].ID
         this.$api['TodoList.list']({ id: id }).then(res => {
           this.formData = res
+          this.formDataRight = { ...res }
+          this.formDataRight.realBeginDate = res.realBeginDate ? res.realBeginDate : ''
+          this.formDataRight.realEndDate = res.realEndDate ? res.realEndDate : ''
         })
       }
     },
     save () {
       let id = this.row[0].ID
-      let parmars = { id: id, ...this.formData }
+      let parmars = { id: id, ...this.formDataRight }
       this.$api['TodoList.save'](parmars).then(res => {
         if (res) {
           this.$emit('close')
@@ -190,7 +193,7 @@ export default {
     },
     handleSubmit () {
       let id = this.row[0].ID
-      let parmars = { id: id, ...this.formData }
+      let parmars = { id: id, ...this.formDataRight }
       this.$api['TodoList.save'](parmars).then(res => {
         if (res) {
           this.$api['TodoList.submit']({ businessId: [id], approveUser: this.formData.affirmUserId }).then(res => {
@@ -205,7 +208,7 @@ export default {
     startDateOptions () {
       return {
         disabledDate: (time) => {
-          let timeSpace = moment(time).format('YYYY-MM-DD') > moment(this.formData.realEndDate).format('YYYY-MM-DD')
+          let timeSpace = moment(time).format('YYYY-MM-DD') > moment(this.formDataRight.realEndDate).format('YYYY-MM-DD')
           return timeSpace
         }
       }
@@ -213,7 +216,7 @@ export default {
     endDateOptions () {
       return {
         disabledDate: (time) => {
-          let timeSpace = moment(time).format('YYYY-MM-DD') < moment(this.formData.realBeginDate).format('YYYY-MM-DD')
+          let timeSpace = moment(time).format('YYYY-MM-DD') < moment(this.formDataRight.realBeginDate).format('YYYY-MM-DD')
           return timeSpace
         }
       }
