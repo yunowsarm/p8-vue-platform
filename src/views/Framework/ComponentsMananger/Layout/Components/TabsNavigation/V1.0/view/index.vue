@@ -2,7 +2,8 @@
 
 
 <template>
-  <list-layout :header-visible="false">
+  <list-layout :header-visible="false"
+               class="tabsViewLayout">
     <template #center>
       <menu-layout v-if="tabsParmar.navigation === '2'"
                    ref="menuLayout"
@@ -34,6 +35,7 @@
                      :kanban-config="componentsConfig"
                      :west-tree-param="provideParams.searchParams"
                      :configParmars="configParmars"
+                     :headerVisible="headerVisible"
                      v-bind="$attrs"
                      v-on="$listeners"
                      @save-success="saveSuccess"
@@ -46,6 +48,12 @@
 <style lang="scss" scoped>
 ::v-deep .el-tabs.el-tabs__header {
   margin: 0;
+}
+.tabsViewLayout ::v-deep .list-main {
+  height: calc(100% - 20px) !important;
+  .normal-header {
+    padding-top: 8px;
+  }
 }
 .el-tabs.el-tabs--top,
 .el-tabs.el-tabs--bottom {
@@ -314,7 +322,7 @@ export default {
   computed: {
     componentUrl () {
       if (this.asyncComponents) {
-         if (this.asyncComponents.indexOf('?') !== -1) {
+        if (this.asyncComponents.indexOf('?') !== -1) {
           const list = this.asyncComponents.split('?')
           const url = list[0]
           const parmars = list[1].split('&')
@@ -346,10 +354,14 @@ export default {
       default: () => {
         return {}
       }
+    },
+    pageType: {
+      type: String
     }
   },
   data () {
     return {
+      headerVisible: true,
       dialogHeight: document.documentElement.clientHeight * 0.6,
       tabsParmar: {},
       tabsData: [],
@@ -381,6 +393,10 @@ export default {
     }
   },
   created () {
+    // 我的审批页面表格不展示按钮
+    if (this.pageType === 'view') {
+      this.headerVisible = false
+    }
     this.init()
   },
   methods: {
@@ -484,7 +500,7 @@ export default {
       this.$emit('close')
     },
     saveSuccess (res) {
-      console.log(res,'---res布局');
+      console.log(res, '---res布局');
       this.configParmars.id = res
     }
   }
