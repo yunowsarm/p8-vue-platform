@@ -1157,6 +1157,10 @@ export default {
     },
     // 单元格点击事件
     rowVxeClick (row, column, $event) {
+      // 父级不能下钻
+      if (!row.TYPE) {
+        return false
+      }
       this.columns.forEach(el => {
         if (el.fieldName === column.property || el.dataIndex === column.property) {
           column.drillName = el.drillName
