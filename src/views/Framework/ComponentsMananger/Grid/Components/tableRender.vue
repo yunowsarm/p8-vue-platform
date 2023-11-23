@@ -1,6 +1,5 @@
 <template>
   <normal-layout class="grid-table-render"
-                 :key="tiemKey"
                  :header-visible="headerVisible"
                  :normal-layout="normalLayout">
     <template #north>
@@ -439,7 +438,6 @@ export default {
   },
   data () {
     return {
-      tiemKey: new Date().getTime(),
       runInHoleTitle: '下钻详情',
       defaultMenu: {},
       thirdMenuParam: {},
@@ -671,12 +669,6 @@ export default {
       })
       this.tableParam.param = { ...obj, ...this.tableParam.param }
       this.propParam = Object.assign(this.propParam, val)
-    },
-    $route: {
-      handler (val) {
-        console.log(val.path);
-        this.tiemKey = new Date().getTime()
-      }
     }
   },
   methods: {
