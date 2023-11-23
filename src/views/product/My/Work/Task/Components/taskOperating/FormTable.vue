@@ -32,6 +32,8 @@
                   <el-input v-model="formData.deviationCauses"
                             type="textarea"
                             resize="none"
+                            maxlength="1000"
+                            show-word-limit
                             :autosize="{ minRows: 2, maxRows: 4}"
                             placeholder="请输入未完成原因"></el-input>
                 </el-form-item>
@@ -41,6 +43,8 @@
                   <el-input v-model="formData.deviationImpact"
                             type="textarea"
                             resize="none"
+                            maxlength="1000"
+                            show-word-limit
                             :autosize="{ minRows: 2, maxRows: 4}"
                             placeholder="请输入偏离影响"></el-input>
                 </el-form-item>
@@ -52,6 +56,8 @@
                   <el-input v-model="formData.deviationProgress"
                             type="textarea"
                             resize="none"
+                            maxlength="1000"
+                            show-word-limit
                             :autosize="{ minRows: 2, maxRows: 4}"
                             placeholder="请输入进展情况"></el-input>
                 </el-form-item>
@@ -61,6 +67,8 @@
                   <el-input v-model="formData.solutions"
                             type="textarea"
                             resize="none"
+                            maxlength="1000"
+                            show-word-limit
                             :autosize="{ minRows: 2, maxRows: 4}"
                             placeholder="请输入应对措施"></el-input>
                 </el-form-item>
@@ -102,6 +110,8 @@
                   <el-input v-model="formData.reason"
                             type="textarea"
                             resize="none"
+                            maxlength="1000"
+                            show-word-limit
                             :autosize="{ minRows: 2, maxRows: 4}"
                             placeholder="请输入备注"></el-input>
                 </el-form-item>
@@ -131,12 +141,16 @@
                 <el-form-item label="未完成原因"
                               prop="deviationCauses">
                   <el-input v-model="formData.deviationCauses"
+                            maxlength="1000"
+                            show-word-limit
                             placeholder="请输入未完成原因"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="偏离影响">
                   <el-input v-model="formData.deviationImpact"
+                            maxlength="1000"
+                            show-word-limit
                             placeholder="请输入偏离影响"></el-input>
                 </el-form-item>
               </el-col>
@@ -145,13 +159,17 @@
               <el-col :span="12">
                 <el-form-item label="进展情况">
                   <el-input v-model="formData.deviationProgress"
+                            maxlength="1000"
+                            show-word-limit
                             placeholder="请输入进展情况"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="解决方案"
                               placeholder="请输入解决方案">
-                  <el-input v-model="formData.solutions"></el-input>
+                  <el-input v-model="formData.solutions"
+                            maxlength="1000"
+                            show-word-limit></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -222,6 +240,8 @@
                   <el-input v-model="formData.content"
                             type="textarea"
                             resize="none"
+                            maxlength="1000"
+                            show-word-limit
                             :autosize="{ minRows: 4, maxRows: 4}"
                             placeholder="请输入进度说明"></el-input>
                 </el-form-item>
