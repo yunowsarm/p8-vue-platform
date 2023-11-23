@@ -339,7 +339,7 @@ export default {
         } else {
           // 限制任务完成时间
           const max1 = ganttObject.date.add(limitTask.end_date, -1, 'day')
-          const max2 = ganttObject.date.add(curTask.comResPlanEndTime, -1, 'day')
+          const max2 = ganttObject.date.add(curTask.end_date, -1, 'day')
           return max1 > max2 ? max2 : max1
         }
       } else {
@@ -349,7 +349,7 @@ export default {
           const minDate2 = curTask.start_date
           return minDate1 > minDate2 ? minDate1 : minDate2
         } else {
-          return ganttObject.date.add(curTask.comResPlanEndTime, 0, 'day')
+          return ganttObject.date.add(curTask.end_date, 0, 'day')
         }
       }
     },
