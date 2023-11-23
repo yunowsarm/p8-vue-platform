@@ -268,6 +268,7 @@ export default {
       this.isVisibleDocumentViewDrawer = false
     },
     documentEditDrawerClose () {
+      this.$refs.table.searchData()
       this.isVisibleDocumentEditDrawer = false
     },
     recordSelected (record) {
