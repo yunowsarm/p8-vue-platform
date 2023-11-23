@@ -62,6 +62,7 @@ export default {
       saveApi: 'planGanttManager.describeSave',
       isCustomValidate: true,
       ownerDataOptions: [],
+      extraList: {},
       dataSource: [
         {
           labelText: '任务名称',
@@ -292,9 +293,28 @@ export default {
   mounted() {
     const ganttObject = GanttObject.getGanttObject(this.ganttName)
     const task = ganttObject.getTask(this.taskId)
+    this.$api['planGanttManager.getGanttExtendAttr']({ taskId: task.id }).then((res) => {
+      if (res && res.taskExtend) {
+        let obj = JSON.parse(res.taskExtend)
+        this.formData = {
+          ...this.formData,
+          ...obj
+        }
+      }
+    })
     this.formData.secretGradeDisplay = task.secretGradeDisplay
     this.$api['planGanttManager.classifiedFiltering']({ secretGrade: task.secretGrade }).then((res) => {
       this.falg = res
+    })
+    this.extraList = this.vueThis.columnSettings.filter(item => item.customItem1 == '1')
+    this.extraList.forEach(extra => {
+      this.dataSource.push({
+        labelText: extra.textName,
+        type: this.ganttName === 'planGantt' ? extra.textType == '数字' ? 'number' : 'text' : 'view',
+        fieldName: extra.name,
+        placeholder: `请输入${extra.textName}`,
+        colLayout: 'doubleCol'
+      })
     })
     if (this.$route.path === '/TaskChange') {
       this.getPlanInfo(task)
@@ -498,6 +518,11 @@ export default {
         if (that.taskId) {
           if (that.ganttName === 'planGantt') {
             // 计划编辑
+            let extraData = {}
+            let keys = this.extraList.map(item => item.name)
+            keys.forEach(key => extraData[key] = saveParams[key])
+            // 保存
+            this.$api['planGanttManager.saveGanttExtendAttr']({ taskId: that.taskId, taskExtend: JSON.stringify(extraData) })
             that.$refs.form.submitForm(saveParams, that.saveApi)
           } else if (that.ganttName === 'changeGantt') {
             // 变更校验
