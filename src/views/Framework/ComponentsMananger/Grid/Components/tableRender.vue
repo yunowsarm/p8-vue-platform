@@ -197,6 +197,7 @@
                      v-bind="customProps"
                      :permission-vo="permissionVo"
                      :row="scopeRow"
+                     @save-success="omponentRefresh"
                      @close="CloseAndRefresh"></component>
         </template>
       </common-drawer>
@@ -219,6 +220,7 @@
                      v-bind="customProps"
                      :permission-vo="permissionVo"
                      :row="scopeRow"
+                     @save-success="omponentRefresh"
                      @close="CloseAndRefresh"></component>
         </template>
       </common-dialog>
@@ -1445,6 +1447,16 @@ export default {
       //   this.$refs.xTable.clearSelection()
       // }
       // this.selectRecords = []
+    },
+    omponentRefresh () {
+      if (this.tableType == 0) {
+        this.$refs.table.queryList()
+        this.$refs.table.clearSelection()
+      } else {
+        this.$refs.xTable.queryList()
+        this.$refs.xTable.clearSelection()
+      }
+      this.selectRecords = []
     },
     CloseAndRefresh () {
       this.customComponentParams = {}
