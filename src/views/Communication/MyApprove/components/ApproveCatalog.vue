@@ -8,7 +8,11 @@
     <template #tree="{ node }">
       <span class="node-span"
             :class="{ 'node-left': !node.childNodes.length }">
-        <span style="display: inline-block; width: 20px"><i class="p8"
+        <span v-if="node.data.id === 'APPROVE_TYPE01' || node.data.id === 'APPROVE_TYPE_01' || node.data.id === 'APPROVE_TYPE_02'"
+              style="display: inline-block;"><i class="p8"
+             :class="'p8 icon-zong'"></i></span>
+        <span v-else
+              style="display: inline-block;"><i class="p8"
              :class="'icon-fenzu'"></i></span>
         <span class="node-label">{{ node.data.cmeaning }}</span>
       </span>
@@ -128,9 +132,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.node-left {
-  padding-left: 20px;
-}
 .node-label {
   display: inline-block;
   width: 70px;
