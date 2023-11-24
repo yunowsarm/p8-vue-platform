@@ -1,28 +1,49 @@
 <template>
-  <common-dialog title="我的经验库" :visible="visible" width="80%" class="experience_dialog" @close="handleCancel" :show-handle-btn="false" :dialog-height="450">
+  <common-dialog title="我的经验库"
+                 :visible="visible"
+                 width="80%"
+                 class="experience_dialog"
+                 @close="handleCancel"
+                 :show-handle-btn="false"
+                 :dialog-height="450">
     <template #dialog>
-      <normal-layout v-if="visible" :header-visible="false" :split-default-left-width="26">
+      <normal-layout v-if="visible"
+                     :header-visible="false"
+                     :split-default-left-width="26">
         <template #north> </template>
         <template #west>
-          <tree class="customTree" :data="treeData" :node-slot="true" ref="tree" @select="selectNode" :tree-config="treeCfg">
+          <tree class="customTree"
+                :data="treeData"
+                :node-slot="true"
+                ref="tree"
+                @select="selectNode"
+                :tree-config="treeCfg">
             <template #tree="{ node }">
-              <div class="node-span" :class="{ 'node-left': !node.childNodes.length }">
+              <div class="node-span"
+                   :class="{ 'node-left': !node.childNodes.length }">
                 <div style="display: flex">
-                  <span style="display: inline-block; width: 20px">
-                    <i class="p8" :class="node.data.icon ? node.data.icon : 'icon-fenzu'"></i>
+                  <span style="display: inline-block;">
+                    <i class="p8"
+                       :class="node.data.icon ? node.data.icon : 'icon-fenzu'"></i>
                   </span>
-                  <el-input
-                    v-if="parentId === node.data.parentId && !node.data.type"
-                    class="node-label"
-                    v-model="node.data.name"
-                    size="mini"
-                    @blur="(val) => addClass(node.data, 'blur', val)"
-                  ></el-input>
-                  <span v-else class="node-label" :title="node.data.name">{{ node.data.name }}</span>
+                  <el-input v-if="parentId === node.data.parentId && !node.data.type"
+                            class="node-label"
+                            v-model="node.data.name"
+                            size="mini"
+                            @blur="(val) => addClass(node.data, 'blur', val)"></el-input>
+                  <span v-else
+                        class="node-label"
+                        :title="node.data.name">{{ node.data.name }}</span>
                 </div>
                 <div>
-                  <el-button type="text" icon="el-icon-plus" :disabled="!!node.data.type" @click="addClass(node.data, 'add')"></el-button>
-                  <el-button type="text" icon="el-icon-minus" :disabled="!node.data.parentId" @click="deleteClass(node.data)"></el-button>
+                  <el-button type="text"
+                             icon="el-icon-plus"
+                             :disabled="!!node.data.type"
+                             @click="addClass(node.data, 'add')"></el-button>
+                  <el-button type="text"
+                             icon="el-icon-minus"
+                             :disabled="!node.data.parentId"
+                             @click="deleteClass(node.data)"></el-button>
                 </div>
               </div>
             </template>
@@ -30,37 +51,47 @@
         </template>
         <template #center>
           <div style="padding: 10px">
-            <el-button type="primary" :disabled="isManage" @click="exportExperience">导入</el-button>
-            <el-button type="primary" @click="copyExperience">复制到粘贴板</el-button>
+            <el-button type="primary"
+                       :disabled="isManage"
+                       @click="exportExperience">导入</el-button>
+            <el-button type="primary"
+                       @click="copyExperience">复制到粘贴板</el-button>
           </div>
-          <common-table
-            ref="table"
-            :comp="comp"
-            :columns="columns"
-            :params="tableParam"
-            :api="tableApi"
-            :pagination="false"
-            :use-tree-format="true"
-            :table-config="tableConfig"
-            use-tree-p-id="parentId"
-            :table-refresh="tableRefresh"
-            @select="onTableSelect"
-            @selection-change="handleSelectionChange"
-          >
+          <common-table ref="table"
+                        :comp="comp"
+                        :columns="columns"
+                        :params="tableParam"
+                        :api="tableApi"
+                        :pagination="false"
+                        :use-tree-format="true"
+                        :table-config="tableConfig"
+                        use-tree-p-id="parentId"
+                        :table-refresh="tableRefresh"
+                        @select="onTableSelect"
+                        @selection-change="handleSelectionChange">
             <template #monitorPoints="{ scope }">
               <span v-if="scope.row.monitorPointArray">
-                <i v-for="item in handleRowMointor(scope.row)" :key="item.id" :class="`${item.icon}`" :title="item.name"></i>
+                <i v-for="item in handleRowMointor(scope.row)"
+                   :key="item.id"
+                   :class="`${item.icon}`"
+                   :title="item.name"></i>
               </span>
             </template>
             <template #operation="{ scope }">
-              <el-button type="text" @click="showDetail(scope.row)">查看详情</el-button>
-            </template></common-table
-          >
+              <el-button type="text"
+                         @click="showDetail(scope.row)">查看详情</el-button>
+            </template></common-table>
         </template>
         <template #drawer-panel>
-          <common-drawer :title="detailTitle" v-if="detailVisible" :visible="detailVisible" size="50%" @close="detailClose">
+          <common-drawer :title="detailTitle"
+                         v-if="detailVisible"
+                         :visible="detailVisible"
+                         size="50%"
+                         @close="detailClose">
             <template #drawer>
-              <Detail :task-id="taskId" :record="record" :gantt-name="ganttName"></Detail>
+              <Detail :task-id="taskId"
+                      :record="record"
+                      :gantt-name="ganttName"></Detail>
             </template>
           </common-drawer>
         </template>
@@ -98,9 +129,6 @@
     overflow: hidden;
     display: inline-block;
   }
-}
-.node-left {
-  padding-left: 26px;
 }
 </style>
 <script>
@@ -155,7 +183,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       record: {},
       detailTitle: '任务属性',
@@ -235,11 +263,11 @@ export default {
       }
     }
   },
-  created() {
+  created () {
     this.loadCatalog()
   },
   computed: {
-    treeData() {
+    treeData () {
       this.catalogData.map((el) => {
         if (el.id === '0') {
           el.icon = 'icon p8 icon-zong'
@@ -251,7 +279,7 @@ export default {
     }
   },
   methods: {
-    handleRowMointor(row) {
+    handleRowMointor (row) {
       if (row && row.monitorPointArray) {
         const monitorPointArray = row.monitorPointArray.split(',')
         const monitorPointIconArray = row.monitorPointIconArray.split(',')
@@ -268,15 +296,15 @@ export default {
         return mointIcon
       }
     },
-    detailClose() {
+    detailClose () {
       this.detailVisible = false
     },
-    showDetail(row) {
+    showDetail (row) {
       this.record = row
       this.taskId = row.planId
       this.detailVisible = true
     },
-    onTableSelect(select, row) {
+    onTableSelect (select, row) {
       this.selectedRows = this.$refs.table.$refs.table.selection // 获取表格中所有选中的数据
       const checkrow = []
       checkrow.push(row)
@@ -293,7 +321,7 @@ export default {
       }
     },
     // 取消选中递归
-    clearRow(data) {
+    clearRow (data) {
       Array.from(data).forEach((row) => {
         row.isCheck = false // 给这行数据设置一个选中字段为false
         this.$refs.table.$refs.table.toggleRowSelection(row, false)
@@ -301,14 +329,14 @@ export default {
       })
     },
     // 选中递归
-    checkRow(data) {
+    checkRow (data) {
       Array.from(data).forEach((row) => {
         row.isCheck = true // 选中是字段值为true
         this.$refs.table.$refs.table.toggleRowSelection(row, true)
         if (row.children) this.checkRow(row.children)
       })
     },
-    exportExperience() {
+    exportExperience () {
       const that = this
       if (that.selectedRows.length > 0) {
         const experienceInfoIds = that.selectedRows.map((item) => item.id)
@@ -335,12 +363,12 @@ export default {
         that.$message.warning('请选择需要导入的数据')
       }
     },
-    copyExperience() {
+    copyExperience () {
       let ids = this.selectedRows.map(el => el.id)
-      this.$message({type:'success',message: '复制成功'})
-      this.$emit('copy',ids)
+      this.$message({ type: 'success', message: '复制成功' })
+      this.$emit('copy', ids)
     },
-    addClass(node, type, e) {
+    addClass (node, type, e) {
       const that = this
       const { id } = node
       if (type === 'add') {
@@ -378,7 +406,7 @@ export default {
           })
       }
     },
-    deleteClass(node) {
+    deleteClass (node) {
       const that = this
       const { id } = node
       that
@@ -401,19 +429,19 @@ export default {
               console.error(err + '错误信息')
             })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
-    loadCatalog() {
+    loadCatalog () {
       const _this = this
       this.$api[this.messageCatalogApi]({ isDisplay: '' }).then((res) => {
         _this.catalogData = res
       })
     },
-    selectNode(nodeData) {
+    selectNode (nodeData) {
       this.treeCfg['current-node-key'] = nodeData.id
       this.selectedTreeId = nodeData.id
     },
-    tableRefresh(param) {
+    tableRefresh (param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')
@@ -422,11 +450,11 @@ export default {
           console.log('异步失败的操作')
         })
     },
-    handleSelectionChange(val) {},
-    handleCancel() {
+    handleSelectionChange (val) { },
+    handleCancel () {
       this.$emit('handleCancel')
     },
-    customValidate(saveParams) {
+    customValidate (saveParams) {
       this.$emit('handleOk', saveParams.name)
     }
   }
