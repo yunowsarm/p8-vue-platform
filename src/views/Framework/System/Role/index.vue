@@ -171,7 +171,7 @@ export default {
     },
     saveCallback () {
       this.$refs.table.searchData()
-      // this.onEditRoleClose() 保存不关闭抽屉, 由操作人员手动关闭
+      this.onEditRoleClose() // 保存不关闭抽屉, 由操作人员手动关闭
     },
     removeRole (record) {
       let that = this
