@@ -16,7 +16,7 @@
     <template #center>
       <common-table ref="table"
                     :comp="comp"
-                    params="queryParam"
+                    :params="queryParam"
                     :columns="columns"
                     :table-config="tableConfig"
                     :table-refresh="tableRefresh"
@@ -164,7 +164,7 @@ export default {
         that.queryParam = param
       }
     },
-    reset () {
+    reSet () {
       let that = this
       Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = null })
     },
