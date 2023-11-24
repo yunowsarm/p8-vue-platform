@@ -53,6 +53,7 @@ export default {
         indexNo: '',
         deptAbbreviation: '',
         statisticalKanban: '',
+        paterDepartmentDisplay: '',
         deptCategory: ''
       },
       dataSource: [
