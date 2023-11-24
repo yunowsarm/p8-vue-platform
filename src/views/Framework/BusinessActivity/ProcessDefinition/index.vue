@@ -147,7 +147,7 @@ export default {
         {
           type: 'text',
           labelText: '流程KEY',
-          fieldName: 'myKey',
+          fieldName: 'key',
           placeholder: '请输入流程KEY'
         }
       ],
@@ -201,7 +201,7 @@ export default {
         that.queryParam = param
       }
     },
-    reset () {
+    reSet () {
       let that = this
       Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = null })
     },
