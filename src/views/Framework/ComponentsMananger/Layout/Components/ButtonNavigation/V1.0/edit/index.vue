@@ -3,6 +3,7 @@
 
 <template>
   <normal-layout :split-layout="true"
+                 class="layoutComponents"
                  :header-visible="false">
     <template #north> </template>
     <template #west>
@@ -148,6 +149,10 @@
   .formContainer {
     height: 100% !important;
   }
+}
+.layoutComponents ::v-deep .el-tree-node__content .is-leaf{
+  display: inline-block !important;
+  width: 25px;
 }
 </style>
 <script>

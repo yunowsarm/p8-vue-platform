@@ -124,6 +124,9 @@ export default {
       height: 100% !important;
     }
   }
+  ::v-deep .list-main {
+    padding:0;
+  }
 }
 .refresh-style {
   position: absolute;
