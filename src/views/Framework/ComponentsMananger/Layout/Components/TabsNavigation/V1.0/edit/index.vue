@@ -210,12 +210,16 @@
     border: none;
   }
   .el-tabs__item {
+    border-top:  1px solid #e4e7ed;
     border-right: 1px solid #e4e7ed;
-    border-left: 0px;
+    border-left:1px solid #e4e7ed;
   }
   .el-tabs__item:last-child {
-    border-right: 0px;
+    border-top-right-radius: 6px;
     border-left: 0px;
+  }
+  .el-tabs__item:first-child{
+    border-top-left-radius: 6px;
   }
 }
 // 左
@@ -228,13 +232,18 @@
     border: none;
   }
   .el-tabs__item {
-    border-right: 1px solid #e4e7ed;
+    border-top: 1px solid #e4e7ed;
     border-bottom: 1px solid #e4e7ed;
-    border-top: 0px;
+    border-left:1px solid #e4e7ed;
   }
   .el-tabs__item:last-child {
-    border-bottom: 0px;
+    border-bottom-left-radius: 6px;
     border-top: 0px;
+    border-bottom: 1px solid #e4e7ed;
+  }
+  .el-tabs__item:first-child{
+    border-top: 1px solid #e4e7ed;
+    border-top-left-radius: 6px;
   }
 }
 // 下
@@ -258,11 +267,15 @@
   }
   .el-tabs__item {
     border-right: 1px solid #e4e7ed;
-    border-left: 0px;
+    border-bottom: 1px solid #e4e7ed;
+    border-left:1px solid #e4e7ed;
   }
   .el-tabs__item:last-child {
-    border-right: 0px;
+    border-bottom-right-radius: 6px;
     border-left: 0px;
+  }
+  .el-tabs__item:first-child{
+    border-bottom-left-radius: 6px;
   }
 }
 // 右
@@ -275,13 +288,18 @@
     border: none;
   }
   .el-tabs__item {
-    border-left: 1px solid #e4e7ed;
+    border-top: 1px solid #e4e7ed;
     border-bottom: 1px solid #e4e7ed;
-    border-top: 0px;
+    border-right:1px solid #e4e7ed;
   }
   .el-tabs__item:last-child {
-    border-bottom: 0px;
+    border-bottom-right-radius: 6px;
     border-top: 0px;
+    border-bottom: 1px solid #e4e7ed;
+  }
+  .el-tabs__item:first-child{
+    border-top: 1px solid #e4e7ed;
+    border-top-right-radius: 6px;
   }
 }
 
@@ -289,35 +307,50 @@
 // 上
 ::v-deep .el-tabs--border-card.el-tabs--top > {
   .el-tabs__content {
+    border-top: 1px solid #e4e7ed;
     padding: 0;
   }
   .el-tabs__header {
     border-bottom: none;
     .el-tabs__item.is-active {
-      border-color: #fff;
-      border-bottom: 2px solid;
-      border-bottom-color: #ffffff;
+      border-bottom: 1px solid;
+      border-color: #ffffff;
+      border-left: 1px solid #e4e7ed;
+      border-right: 1px solid #e4e7ed;
     }
   }
 }
 // 左
 ::v-deep .el-tabs--border-card.el-tabs--left > {
   .el-tabs__content {
+    border-left: 1px solid #e4e7ed;
     padding: 0;
+  }
+  .el-tabs__header.is-left{
+    border-right: none;
+    margin: 0;
   }
   .el-tabs__header .el-tabs__item.is-active {
     border-color: #fff;
     border-right: 2px solid;
     border-right-color: #ffffff;
+    border-top: 1px solid #e4e7ed;
+    border-bottom: 1px solid #e4e7ed;
   }
   .el-tabs__header .el-tabs__item {
-    border-right: 2px solid #fff;
+    border-right: unset;
   }
 }
 // 下
 ::v-deep .el-tabs--border-card.el-tabs--bottom > {
   .el-tabs__content {
+    height: calc(100% - 43px) !important;
+    border-bottom: 1px solid #e4e7ed;
     padding: 0;
+  }
+  .el-tabs__header.is-bottom{
+    // border-top: none;
+    margin: 0;
   }
   .el-tabs__header {
     border-top: none;
@@ -325,20 +358,30 @@
       border-color: #fff;
       border-top: 2px solid;
       border-top-color: #ffffff;
+      border-left: 1px solid #e4e7ed;
+      border-right: 1px solid #e4e7ed;
     }
   }
 }
 // 右
 ::v-deep .el-tabs--border-card.el-tabs--right > {
   .el-tabs__content {
+    border-right: 1px solid #e4e7ed;
     padding: 0;
+  }
+  .el-tabs__header.is-right{
+    border-top: none;
+    margin: 0;
   }
   .el-tabs__header .el-tabs__item.is-active {
     border-color: #fff;
     border-left: 2px solid;
     border-left-color: #ffffff;
+    border-top: 1px solid #e4e7ed;
+    border-bottom: 1px solid #e4e7ed;
   }
   .el-tabs__header .el-tabs__item {
+    border-left: unset;
     border-left: 2px solid #fff;
   }
 }

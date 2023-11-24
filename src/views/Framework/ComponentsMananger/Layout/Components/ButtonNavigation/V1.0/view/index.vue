@@ -3,6 +3,7 @@
 
 <template>
   <normal-layout :header-visible="false"
+                 class="layoutComponents"
                  :split-layout="true">
     <template #west>
       <common-tree :default-expanded-keys="defaultExpandedKeys"
@@ -42,6 +43,10 @@
   background-size: 300px;
   background-position: center;
   margin-top: 25px;
+}
+.layoutComponents ::v-deep .el-tree-node__content .is-leaf{
+  display: inline-block !important;
+  width: 25px;
 }
 </style>
 <script>

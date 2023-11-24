@@ -10,6 +10,7 @@
                  @close="handleCancel">
     <template #dialog>
       <normal-layout :header-visible="false"
+                     class="layoutComponents"
                      :split-layout="true">
         <template #west>
           <common-tree ref="commonTree"
@@ -34,6 +35,12 @@
     </template>
   </common-dialog>
 </template>
+<style lang="scss" scoped>
+.layoutComponents ::v-deep .el-tree-node__content .is-leaf{
+  display: inline-block !important;
+  width: 25px;
+}
+</style>
 <script>
 import { Input, Button } from 'element-ui'
 import { P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Dialog as CommonDialog, P8Table as CommonTable } from 'p8-components-ui'

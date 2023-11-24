@@ -2,7 +2,7 @@
 
 
 <template>
-  <normal-layout>
+  <normal-layout class="normalContain">
     <template #north>
       <common-button :comp="comp"
                      :button-type="'round'"
@@ -19,16 +19,14 @@
                    :tree-config="treeCfg"></common-tree>
     </template>
     <template #center>
-      <div id="table-contain">
-        <common-table ref="table"
-                      :comp="comp"
-                      :columns="columns"
-                      :use-system-config-button="0"
-                      :custom-button-data="customButtonData"
-                      :params="queryParam"
-                      :api="tableApi"
-                      :pagination="true"></common-table>
-      </div>
+      <common-table ref="table"
+                    :comp="comp"
+                    :columns="columns"
+                    :use-system-config-button="0"
+                    :custom-button-data="customButtonData"
+                    :params="queryParam"
+                    :api="tableApi"
+                    :pagination="true"></common-table>
     </template>
     <template #drawer-panel>
       <common-drawer v-if="visibleEditDrawer"
@@ -339,3 +337,12 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+  .normalContain ::v-deep .normal-center {
+    padding: 0 15px;
+  }
+  .normalContain ::v-deep .normal-header {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+</style>
