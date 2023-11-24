@@ -1,6 +1,5 @@
 <template>
   <normal-layout class="grid-table-render"
-                 :key="tiemKey"
                  :header-visible="headerVisible"
                  :normal-layout="normalLayout">
     <template #north>
@@ -197,6 +196,7 @@
                      v-bind="customProps"
                      :permission-vo="permissionVo"
                      :row="scopeRow"
+                     @save-success="omponentRefresh"
                      @close="CloseAndRefresh"></component>
         </template>
       </common-drawer>
@@ -219,6 +219,7 @@
                      v-bind="customProps"
                      :permission-vo="permissionVo"
                      :row="scopeRow"
+                     @save-success="omponentRefresh"
                      @close="CloseAndRefresh"></component>
         </template>
       </common-dialog>
@@ -437,7 +438,6 @@ export default {
   },
   data () {
     return {
-      tiemKey: new Date().getTime(),
       runInHoleTitle: '下钻详情',
       defaultMenu: {},
       thirdMenuParam: {},
@@ -669,12 +669,6 @@ export default {
       })
       this.tableParam.param = { ...obj, ...this.tableParam.param }
       this.propParam = Object.assign(this.propParam, val)
-    },
-    $route: {
-      handler (val) {
-        console.log(val.path);
-        this.tiemKey = new Date().getTime()
-      }
     }
   },
   methods: {
@@ -1448,6 +1442,16 @@ export default {
       //   this.$refs.xTable.clearSelection()
       // }
       // this.selectRecords = []
+    },
+    omponentRefresh () {
+      if (this.tableType == 0) {
+        this.$refs.table.queryList()
+        this.$refs.table.clearSelection()
+      } else {
+        this.$refs.xTable.queryList()
+        this.$refs.xTable.clearSelection()
+      }
+      this.selectRecords = []
     },
     CloseAndRefresh () {
       this.customComponentParams = {}

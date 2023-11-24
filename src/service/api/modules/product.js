@@ -956,6 +956,20 @@ export const repositoryApi = {
       mockPath: '/taskType/loadTaskDetailByWholeId',
       desc: '项目管理->计划管理->计划编辑->gantt列配置信息',
       cancelLoading: true
+    },
+    {
+      name: 'getGanttExtendAttr',
+      method: 'POST',
+      path: '/product/pm/plan/getTaskInfo',
+      mockPath: '/product/pm/plan/getTaskInfo',
+      desc: '项目管理->计划管理->计划编辑->gantt拓展属性查询'
+    },
+    {
+      name: 'saveGanttExtendAttr',
+      method: 'POST',
+      path: '/product/pm/plan/extendSave',
+      mockPath: '/product/pm/plan/extendSave',
+      desc: '项目管理->计划管理->计划编辑->gantt拓展属性保存'
     }
   ],
   planChange: [
