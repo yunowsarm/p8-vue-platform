@@ -156,12 +156,9 @@ export default {
       if (param) {
         this.queryParam = param
       }
-      this.$refs.table.searchData()
     },
     reSet () {
-      this.queryParam = this.$data.queryParam
-      // Object.keys(this.queryParam).forEach(key => { this.queryParam[key] = '' })
-      this.$refs.table.searchData()
+      Object.keys(this.queryParam).forEach(key => { this.queryParam[key] = '' })
     },
     tableRefresh (param) {
       param.then(() => {

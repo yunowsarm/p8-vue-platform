@@ -21,6 +21,11 @@
                     api="formGenerator.compList"
                     :table-refresh="tableRefresh"
                     :pagination="false">
+        <template #compType="{ scope }">
+          <span v-if="scope.row.compType === '8001'">输入型组件</span>
+          <span v-if="scope.row.compType === '8002'">选择型组件</span>
+          <span v-if="scope.row.compType === '8003'">布局型组件</span>
+        </template>
         <template #operation="{ scope }">
           <el-button type="text"
                      @click="modify(scope)">修改</el-button>
@@ -82,6 +87,7 @@ export default {
       {
         title: '组件类型',
         dataIndex: 'compType',
+        scopedSlots: { customRender: 'custom' },
         align: 'left',
         headerAlign: 'left'
       },
@@ -101,18 +107,21 @@ export default {
       }
     ]
     return {
-      queryParam: {},
+      queryParam: {
+        compName: '',
+        compCode: ''
+      },
       searchData: [
         {
           type: 'text',
           labelText: '组件名称',
-          fieldName: 'name',
+          fieldName: 'compName',
           placeholder: '请输入组件名称'
         },
         {
           type: 'text',
           labelText: '组件标识',
-          fieldName: 'myKey',
+          fieldName: 'compCode',
           placeholder: '请输入组件标识'
         },
         {
