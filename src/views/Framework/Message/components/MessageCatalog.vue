@@ -1,8 +1,14 @@
 <template>
-  <tree class="customTree" :data="treeData" :node-slot="true" @select="selectNode" :tree-config="treeCfg">
+  <tree class="customTree"
+        :data="treeData"
+        :node-slot="true"
+        @select="selectNode"
+        :tree-config="treeCfg">
     <template #tree="{ node }">
-      <span class="node-span" :class="{ 'node-left': !node.childNodes.length }">
-        <span style="display: inline-block; width: 20px"><i class="p8" :class="node.data.icon ? node.data.icon : 'icon-fenzu'"></i></span>
+      <span class="node-span"
+            :class="{ 'node-left': !node.childNodes.length }">
+        <span style="display: inline-block;"><i class="p8"
+             :class="node.data.icon ? node.data.icon : 'icon-fenzu'"></i></span>
         <span class="node-label">{{ node.data.cmeaning }}</span>
         <span class="node-number">({{ catalogCount(node.data.id).noread }})</span>
       </span>
@@ -24,7 +30,7 @@ export default {
   props: {
     searchParams: {
       type: Object,
-      default: () => {}
+      default: () => { }
     },
     msgCount: {
       type: Array,
@@ -42,7 +48,7 @@ export default {
   components: {
     tree: commonTree
   },
-  data() {
+  data () {
     return {
       messageCatalogApi: 'userMessage.catalog',
       catalogData: [],
@@ -67,7 +73,7 @@ export default {
         }
       }
     },
-    selectNodeId(val, oldVal) {
+    selectNodeId (val, oldVal) {
       const _this = this
       setTimeout(() => {
         _this.selectNode({ id: val })
@@ -75,7 +81,7 @@ export default {
     }
   },
   computed: {
-    treeData() {
+    treeData () {
       if (this.selectNodeId !== '18') {
         const messageData = []
         const catalogData = deepClone(this.catalogData)
@@ -100,7 +106,7 @@ export default {
         return resultData
       }
     },
-    catalogCount() {
+    catalogCount () {
       return function (catalogId) {
         let countObj
         if (catalogId === '') {
@@ -113,18 +119,18 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.loadCatalog()
   },
   methods: {
-    loadCatalog(queryParam) {
+    loadCatalog (queryParam) {
       const _this = this
       this.$api[this.messageCatalogApi](queryParam).then((res) => {
         _this.catalogData = res
       })
     },
 
-    selectNode(nodeData) {
+    selectNode (nodeData) {
       this.treeCfg['current-node-key'] = nodeData.id
       this.$emit('selectNode', nodeData)
     }
@@ -133,9 +139,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.node-left {
-  padding-left: 20px;
-}
 .node-label {
   display: inline-block;
   width: 70px;
