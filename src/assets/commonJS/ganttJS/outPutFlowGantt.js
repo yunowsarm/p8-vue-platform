@@ -111,7 +111,9 @@ export function outPutFlowGantt (ganttName, vueThis) {
   })
   ganttObject.attachEvent('onTaskMultiSelect', function (id, state, e) {
     if (state) {
-      vueThis.selectedTasks.push(ganttObject.getTask(id))
+      if(ganttObject.getTask(id)){
+        vueThis.selectedTasks.push(ganttObject.getTask(id))
+      }
     } else {
       vueThis.selectedTasks.splice(
         vueThis.selectedTasks.indexOf(ganttObject.getTask(id)),
