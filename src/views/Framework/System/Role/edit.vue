@@ -47,7 +47,8 @@
             <select-user v-if="visible"
                          :visible="visible"
                          @close-dialog="closeModal"
-                         :disabled-row="formData.sysuserIds"></select-user>
+                         :disabled-row="formData.sysuserIds"
+                         :treeOptions="treeOptions"></select-user>
           </div>
         </el-tab-pane>
         <el-tab-pane label="设置应用"
@@ -232,6 +233,17 @@ export default {
   },
   data () {
     return {
+      treeOptions: {
+        treeApi: "userManager.deptTree",
+        treeParam: {},
+        disabledRow: [],
+        defaultExpandAll: true,
+        defaultExpandedKeys: ["1"],
+        treeConfig: {
+          "expand-on-click-node": false,
+          "check-on-click-node": true,
+        },
+      },
       imgUrl: require('@/assets/image/common/Group.png'),
       setUserHeight: document.documentElement.clientHeight - 318 + 'px',
       tabPaneHeight: document.documentElement.clientHeight - 290 + 'px',

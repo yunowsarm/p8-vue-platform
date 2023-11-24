@@ -278,7 +278,7 @@ export default {
         that.queryParam = param
       }
     },
-    reset () {
+    reSet () {
       let that = this
       Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = null })
     },
@@ -338,11 +338,11 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  .normalContain ::v-deep .normal-center {
-    padding: 0 15px;
-  }
-  .normalContain ::v-deep .normal-header {
-    padding-left: 15px;
-    padding-right: 15px;
-  }
+.normalContain ::v-deep .normal-center {
+  padding: 0 15px;
+}
+.normalContain ::v-deep .normal-header {
+  padding-left: 15px;
+  padding-right: 15px;
+}
 </style>
