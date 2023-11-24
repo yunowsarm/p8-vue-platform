@@ -78,7 +78,7 @@ export default {
         {
           type: 'view',
           labelText: '所属部门',
-          fieldName: 'parentId',
+          fieldName: 'paterDepartmentDisplay',
           placeholder: ''
         },
         {

@@ -162,7 +162,7 @@ export default {
         that.queryParam = param
       }
     },
-    reset () {
+    reSet () {
       let that = this
       Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = null })
     },

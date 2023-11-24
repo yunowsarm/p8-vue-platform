@@ -28,7 +28,8 @@
                      @click="functionTest(scope)">功能测试</el-button>
           <el-button type="text"
                      @click="tableAddress(scope)">表格配置地址</el-button>
-          <el-button type="text" @click="tableCopy(scope)">表格复制</el-button>
+          <el-button type="text"
+                     @click="tableCopy(scope)">表格复制</el-button>
           <!-- <el-button type="text" @click="viewAddress(scope)">查看配置地址</el-button> -->
         </template>
       </common-table>
@@ -176,7 +177,7 @@ export default {
         that.queryParam = param
       }
     },
-    reset () {
+    reSet () {
       let that = this
       Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = null })
     },
@@ -223,7 +224,7 @@ export default {
       this.record = Object.assign({}, scope.row)
       this.functionTestVisible = true
     },
-    tableCopy(scope) {
+    tableCopy (scope) {
       const that = this
       this.$confirm('是否确定要复制该表格？', '提示', {
         confirmButtonText: '确定',
