@@ -26,7 +26,10 @@ let dataSource = [
         required: true,
         message: '必填'
       }
-    ]
+    ],
+    fieldConfig: {
+      maxlength: 64
+    }
   },
   {
     type: 'treeSelect',
@@ -78,7 +81,11 @@ let dataSource = [
     labelText: '团队描述',
     fieldName: 'describes',
     placeholder: '请输入团队描述',
-    colLayout: 'singleCol'
+    colLayout: 'singleCol',
+    fieldConfig: {
+      maxlength: 2000,
+      rows: 4
+    }
   }
 ]
 
