@@ -251,7 +251,7 @@ $icon-span-width: 20px;
     height: 30px;
     margin-left: 10px;
     .el-button {
-      margin: 0px !important;
+      margin: 0px 2px !important;
       padding: 0px 8px;
     }
   }
