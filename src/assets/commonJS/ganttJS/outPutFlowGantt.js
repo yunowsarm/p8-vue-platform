@@ -111,14 +111,18 @@ export function outPutFlowGantt (ganttName, vueThis) {
   })
   ganttObject.attachEvent('onTaskMultiSelect', function (id, state, e) {
     if (state) {
-      if(ganttObject.getTask(id)){
+      let ids = vueThis.selectedTasks.map(el => el.id)
+      if (ganttObject.getTask(id) && ids.indexOf(id) === -1) {
         vueThis.selectedTasks.push(ganttObject.getTask(id))
       }
     } else {
-      vueThis.selectedTasks.splice(
-        vueThis.selectedTasks.indexOf(ganttObject.getTask(id)),
-        1
-      )
+      let ids = vueThis.selectedTasks.map(el => el.id)
+      if (ids.indexOf(id) !== -1) {
+        vueThis.selectedTasks.splice(
+          ids.indexOf(id),
+          1
+        )
+      }
     }
   })
   // 升降级
