@@ -241,7 +241,6 @@ export default {
     },
     initGantt (activityInfoId) {
       // 清空原有数据
-      this.selectedTasks = []
       if (myGantt) {
         GanttObject.setGanttObject(ganttName, {})
       }
@@ -252,6 +251,19 @@ export default {
       myGantt.init(this.$refs.myGantt)
       // 加载数据
       this.$api['OutputFlow.loadAcivityData']({ activityInfoId: activityInfoId }).then(function (res) {
+        if (res) {
+          // 初始化数据
+          let datas = {
+            tasks: res
+          }
+          myGantt.parse(datas)
+        }
+      }).catch(function (error) {
+        console.error('error' + error)
+      })
+    },
+    loadGanttData () {
+      this.$api['OutputFlow.loadAcivityData']({ activityInfoId: this.activityInfoId }).then(function (res) {
         if (res) {
           // 初始化数据
           let datas = {
