@@ -1,10 +1,19 @@
 <template>
-  <smart-widget ref="widget" v-bind="$attrs" v-on="$listeners" :loading="loading" refresh @on-fullscreen="onFullscreen" @on-refresh="handleRefresh">
+  <smart-widget ref="widget"
+                v-bind="$attrs"
+                v-on="$listeners"
+                :loading="loading"
+                refresh
+                @on-fullscreen="onFullscreen"
+                @on-refresh="handleRefresh">
     <template slot="toolbar"> </template>
-    <a href="javascript:;" style="position: absolute; right: 5px; top: 5px" v-if="isDesign">
+    <a href="javascript:;"
+       style="position: absolute; right: 5px; top: 5px"
+       v-if="isDesign">
       <template>
         <el-dropdown trigger="click">
-          <i class="el-icon-setting" style="line-height: 24px; font-size: 16px"></i>
+          <i class="el-icon-setting"
+             style="line-height: 24px; font-size: 16px"></i>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item @click.native="setWidget(widget)">设置</el-dropdown-item>
             <el-dropdown-item @click.native="deleteWidget($attrs)">删除</el-dropdown-item>
@@ -12,7 +21,8 @@
         </el-dropdown>
       </template>
     </a>
-    <div :key="renderTime" :style="childrenStyle">
+    <div :key="renderTime"
+         :style="childrenStyle">
       <slot v-bind="$attrs" />
     </div>
   </smart-widget>
@@ -32,11 +42,11 @@ export default {
   props: {
     record: {
       type: Object,
-      default: () => {}
+      default: () => { }
     },
     widget: {
       type: Object,
-      default: () => {},
+      default: () => { },
       require: true
     },
     isDesign: {
@@ -44,7 +54,7 @@ export default {
       default: true
     }
   },
-  data() {
+  data () {
     return {
       loading: false,
       childrenStyle: {
@@ -55,7 +65,7 @@ export default {
       renderTime: new Date().getTime()
     }
   },
-  mounted() {
+  mounted () {
     console.log('widget-item mounted')
     this.$watch(
       'widget.style',
@@ -73,12 +83,12 @@ export default {
     )
     this.mountEvent()
   },
-  beforDestroyed() {
+  beforDestroyed () {
     const dom = this.$el
     this.$erd.removeAllListeners(dom)
   },
   methods: {
-    mountEvent() {
+    mountEvent () {
       // let delay = this.isDesign ? 50 : 50
       const delay = 0
       const dom = this.$el
@@ -92,21 +102,21 @@ export default {
         }, delay)
       )
     },
-    onLayoutUpdated(newLayout) {
+    onLayoutUpdated (newLayout) {
       console.log(JSON.stringify(newLayout))
     },
-    onMove(params) {
+    onMove (params) {
       console.log(params)
     },
-    onResize(i, newH, newW, newHPx, newWPx) {
+    onResize (i, newH, newW, newHPx, newWPx) {
       console.log('ddd', i, newH, newW, newHPx, newWPx)
     },
-    handleRefresh() {
+    handleRefresh () {
       // this.loading = false
       console.log('this.renderTime :')
       this.renderTime = new Date().getTime()
     },
-    onFullscreen(booleanParams) {
+    onFullscreen (booleanParams) {
       if (booleanParams) {
         this.$refs.widget.$el.style.zIndex = PopupManager.nextZIndex()
       } else {
@@ -126,5 +136,6 @@ export default {
 .smartwidget ::v-deep .widget-body__content {
   height: 100%;
   box-sizing: border-box;
+  text-align: center;
 }
 </style>
