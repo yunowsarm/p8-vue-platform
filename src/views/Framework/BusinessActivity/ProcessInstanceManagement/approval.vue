@@ -10,6 +10,9 @@
                    @tab-click="tabsClick"
                    :tabs-data="tabs">
         <template #approval>
+          <div v-if="!formComp">
+            <span class="span-bg"></span>
+          </div>
           <component ref="approveContent"
                      :style="{ height: tabsHeight }"
                      :is="componentUrl"
@@ -90,11 +93,11 @@
           </form-list>
         </div>
       </template> -->
-      <!-- <el-row> -->
-        <!-- <el-col :span="20" class="flex-left">
+    <!-- <el-row> -->
+    <!-- <el-col :span="20" class="flex-left">
                   {{selectedApproval.processName}}{{selectedApproval.startTime}}
               </el-col> -->
-        <!-- <el-col :span="24"
+    <!-- <el-col :span="24"
                 style="text-align: right">
           <el-button style="margin: 8px 10px 0 0"
                      type="primary"
@@ -837,6 +840,24 @@ $paddingLeft: 10px;
       }
     }
   }
+}
+#elTabsDiv {
+  height: 100%;
+}
+#elTabsDiv ::v-deep #elTabs {
+  height: calc(100% - 50px);
+}
+#elTabsDiv ::v-deep #elTabs .el-tab-pane > div {
+  height: calc(100% - 2px);
+}
+.span-bg {
+  width: 100%;
+  height: 85%;
+  display: block;
+  margin: 0 auto;
+  background: url(@/assets/image/common/table_bg.png) no-repeat;
+  background-size: 300px;
+  background-position: center;
 }
 // ::v-deep.el-tabs__content .el-tab-pane {
 //   overflow-y: auto !important;
