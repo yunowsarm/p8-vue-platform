@@ -81,6 +81,9 @@ export default {
     },
     completeTaskFlag: {
       type: Boolean
+    },
+    businessKey: {
+      type: String
     }
   },
   components: {
@@ -122,7 +125,7 @@ export default {
     },
     getTaskInfo () {
       let _this = this
-      this.$api[this.api]({ taskId: _this.getPlanInfo().TASKID }).then(res => {
+      this.$api[this.api]({ taskId: _this.getPlanInfo ? _this.getPlanInfo().TASKID : this.businessKey }).then(res => {
         _this.taskInfo = res
         _this.rendFormData(res)
       })
@@ -152,7 +155,7 @@ export default {
       console.log(this.formData, 'ppppppppppppppppppppppppppppppppppppppppppp');
     },
     statusHandle () {
-      let allStatus = this.getPlanInfo().allStatus
+      let allStatus = this.getPlanInfo ? this.getPlanInfo().allStatus : []
       const statusColor = {
         '6010': '#ffd782',
         '6020': '#1bbf9e',
