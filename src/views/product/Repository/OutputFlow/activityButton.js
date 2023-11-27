@@ -54,7 +54,7 @@ export const activityButtonData = [
       clickFun: function (tasks, _this) {
         _this.$api['OutputFlow.pasteNode']({"copyIds": _this.copyList,"selectId": tasks[0].id}).then(res => {
           _this.copyList = []
-          _this.initGantt(_this.activityInfoId)
+          _this.loadGanttData()
         })
       },
       isDisableFun: function (tasks, _this) {
