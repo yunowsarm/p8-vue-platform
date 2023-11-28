@@ -2,9 +2,16 @@
   <div style="height: 100%; position: relative;">
     <div class="header">
       <div class="activityButton">
-        <div class="button" v-for="(item, index) in buttonList" :key="item.id" :class="{'is-disabled': isDisableFun(item)}">
-          <el-tooltip effect="dark" :content="item.title" placement="top" :key="index">
-            <i :class="item.icon" @click="buttonClick(item)"></i>
+        <div class="button"
+             v-for="(item, index) in buttonList"
+             :key="item.id"
+             :class="{'is-disabled': isDisableFun(item)}">
+          <el-tooltip effect="dark"
+                      :content="item.title"
+                      placement="top"
+                      :key="index">
+            <i :class="item.icon"
+               @click="buttonClick(item)"></i>
           </el-tooltip>
         </div>
       </div>
@@ -17,7 +24,8 @@
       </search-form-list> -->
     </div>
     <div ref='myGantt'
-         style='width:100%; height:calc(100% - 60px);' class="myActivityGantt"></div>
+         style='width:100%; height:calc(100% - 60px);'
+         class="myActivityGantt"></div>
   </div>
 </template>
 <style>
@@ -42,10 +50,7 @@
     width: 164px;
   }
   .el-menu--collapse > .el-menu-item .el-submenu__icon-arrow,
-  .el-menu--collapse
-    > .el-submenu
-    > .el-submenu__title
-    .el-submenu__icon-arrow {
+  .el-menu--collapse > .el-submenu > .el-submenu__title .el-submenu__icon-arrow {
     display: block;
     margin-top: -5px;
   }
@@ -70,31 +75,31 @@
     display: inline-block;
     width: 25px;
     margin: 0 5px;
-    i{
+    i {
       font-size: 25px;
       color: #1890ff;
     }
   }
 }
-.search-wrapper{
+.search-wrapper {
   right: 15px;
   top: 5px;
 }
 .myActivityGantt {
   width: unset !important;
   padding-right: 10px;
-  > div{
+  > div {
     width: 100%;
   }
 }
-.myActivityGantt ::v-deep{
+.myActivityGantt ::v-deep {
   .gantt_layout_cell {
     border: none !important;
   }
   .gantt_grid_scale {
     border-bottom: 1px solid #c6c6c6 !important;
-    background: #f0f2f4!important;
-    .gantt_grid_head_cell{
+    background: #f0f2f4 !important;
+    .gantt_grid_head_cell {
       background: #f0f2f4 !important;
       color: #000000 !important;
     }
@@ -156,7 +161,7 @@ export default {
       detailVisible: false,
       mouseX: '',
       mouseY: '',
-      buttonList:  _.cloneDeep(activityButtonData),
+      buttonList: _.cloneDeep(activityButtonData),
       copyList: [],
       dataSource: [
         {
@@ -193,7 +198,7 @@ export default {
   },
   async created () {
     let that = this
-    await this.$api['dictionaryManagement.list']({dicType: "ACTIVITY_TYPE"}).then(res => {
+    await this.$api['dictionaryManagement.list']({ dicType: "ACTIVITY_TYPE" }).then(res => {
       that.logoList = res
       let list = []
       if (res && res.length) {
@@ -215,7 +220,7 @@ export default {
     })
   },
   computed: {
-    isDisableFun(item){
+    isDisableFun (item) {
       let that = this
       return function (item) {
         return item.isDisableFun(that.selectedTasks, that)
@@ -330,7 +335,7 @@ export default {
                     myGantt.addTask(task, parent, myGantt.getTaskIndex(taskId))
                   })
                 })
-                myGantt.refreshData()
+                that.loadGanttData()
                 that.$emit('refrshDes')
               }
             }).catch(function (error) {
@@ -369,7 +374,7 @@ export default {
                     myGantt.addTask(task, parent, indexNo)
                   })
                 })
-                myGantt.refreshData()
+                that.loadGanttData()
                 that.$emit('refrshDes')
               }
             }).catch(function (error) {
@@ -391,7 +396,6 @@ export default {
             insertType: 'Child'
           }).then(function (res) {
             let data = res
-
             if (data) {
               myGantt.batchUpdate(function () {
                 data.forEach(function (item) {
@@ -405,7 +409,7 @@ export default {
                   // dp.setUpdated(item.flowId, true, "created");
                 })
               })
-              myGantt.refreshData()
+              that.loadGanttData()
               that.$emit('refrshDes')
             }
           }).catch(function (error) {
@@ -430,40 +434,41 @@ export default {
         myGantt.deleteTask(taskId)
       })
       this.$emit('remove-task')
+      this.loadGanttData()
       this.menuVisible = false
     },
     importTask () {
       this.callExcelImportTasks()
     },
     exportTask () {
-      this.$api['OutputFlow.exportExcel']({"activityInfoId": this.activityInfoId}, { responseType: 'blob' })
-          .then((data) => {
-           const date = new Date()
-            const file_name = '活动管理' + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-            const file_type = 'xls'
-            const blob = new Blob([data.data], { type: 'application/vnd.ms-excel' })
-            const url = window.URL.createObjectURL(blob)
-            const link = document.createElement('a')
-            link.style.display = 'none'
-            link.href = url
-            link.download = `${file_name}.${file_type}`
-            document.body.appendChild(link)
-            link.click()
-          })
-          .finally(() => {
-            // this.search.exportLoading = false
-          })
+      this.$api['OutputFlow.exportExcel']({ "activityInfoId": this.activityInfoId }, { responseType: 'blob' })
+        .then((data) => {
+          const date = new Date()
+          const file_name = '活动管理' + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+          const file_type = 'xls'
+          const blob = new Blob([data.data], { type: 'application/vnd.ms-excel' })
+          const url = window.URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.style.display = 'none'
+          link.href = url
+          link.download = `${file_name}.${file_type}`
+          document.body.appendChild(link)
+          link.click()
+        })
+        .finally(() => {
+          // this.search.exportLoading = false
+        })
     },
     // 活动描述名称修改保存后联动修改数据对应名称
     updateTaskName (obj) {
       // if (obj) {
-        // let task = myGantt.getTask(obj.id)
-        // if (task) {
-        //   task.name = obj.name
-        //   task.code = obj.code
-        //   myGantt.refreshTask(obj.id)
-        // }
-        this.initGantt(this.activityInfoId)
+      // let task = myGantt.getTask(obj.id)
+      // if (task) {
+      //   task.name = obj.name
+      //   task.code = obj.code
+      //   myGantt.refreshTask(obj.id)
+      // }
+      this.initGantt(this.activityInfoId)
       // }
     },
     saveData: function () {
@@ -471,7 +476,7 @@ export default {
     },
     refreshData () {
       this.isFilter = true
-      myGantt.refreshData()
+      this.loadGanttData()
     },
     search () {
 
@@ -479,7 +484,7 @@ export default {
     reset () {
 
     },
-    isDisableFunCheck() {
+    isDisableFunCheck () {
       let tasks = this.selectedTasks
       let result = false
       if (tasks && tasks.length) {
