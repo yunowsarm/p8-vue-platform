@@ -44,9 +44,12 @@
   background-position: center;
   margin-top: 25px;
 }
-.layoutComponents ::v-deep .el-tree-node__content .is-leaf{
-  display: inline-block !important;
-  width: 25px;
+// .layoutComponents ::v-deep .el-tree-node__content .is-leaf{
+//   display: inline-block !important;
+//   width: 25px;
+// }
+::v-deep .search-wrapper {
+  right: 10px;
 }
 </style>
 <script>
@@ -59,7 +62,7 @@ export default {
     componentUrl () {
       console.log(this.asyncComponents, '===this.asyncComponents')
       if (this.asyncComponents) {
-         if (this.asyncComponents.indexOf('?') !== -1) {
+        if (this.asyncComponents.indexOf('?') !== -1) {
           const list = this.asyncComponents.split('?')
           const url = list[0]
           const parmars = list[1].split('&')
@@ -131,7 +134,7 @@ export default {
       const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
       const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
       const res = await this.$api['desLayout.getLayoutJson']({ layoutCode: code, version: version })
-      if(!res){
+      if (!res) {
         return
       }
       this.previewParmars = JSON.parse(res)
@@ -238,9 +241,9 @@ export default {
         }
       }
     },
-    getParamsList (obj,fileName) {
+    getParamsList (obj, fileName) {
       let list = []
-      function getEndList (item){
+      function getEndList (item) {
         list.push(item[fileName])
         if (item.children && item.children.length) {
           item.children.forEach(el => {
