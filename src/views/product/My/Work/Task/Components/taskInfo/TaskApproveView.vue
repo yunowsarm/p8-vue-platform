@@ -23,6 +23,7 @@
                                 :isShow="isShow"
                                 :completeTaskFlag="completeTaskFlag"
                                 :api="taskApi"
+                                :businessKey="businessKey"
                                 :apiParams="taskApiParams"></task-pane-view>
               </template>
             </div>
@@ -48,7 +49,10 @@ export default {
     },
     isShow: {
       type: Boolean
-    }
+    },
+    businessKey: {
+      type: String
+    },
   },
   components: {
     TaskPaneView,
