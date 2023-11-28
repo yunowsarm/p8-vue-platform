@@ -845,7 +845,10 @@ $paddingLeft: 10px;
   height: 100%;
 }
 #elTabsDiv ::v-deep #elTabs {
-  height: calc(100% - 50px);
+  height: calc(100% - 2px);
+  .el-tabs__content {
+    padding: 0;
+  }
 }
 #elTabsDiv ::v-deep #elTabs .el-tab-pane > div {
   height: calc(100% - 2px);
