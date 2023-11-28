@@ -125,6 +125,38 @@ export const overdueTextHandle = ({ managerStatus, status: currStatus, planEndDa
   }
   return text
 }
+export const overdueTextHandles = ({ MANAGERSTATUS, status: CURRSTATUS, PLANENDDATE, REALENDDATE }) => {
+  if (!CURRSTATUS) {
+    return '1'
+  }
+  let currDate = moment().format('YYYY-MM-DD')
+  let diffDays = 0
+  let text = ''
+  // eslint-disable-next-line eqeqeq
+  if (MANAGERSTATUS === '6409') {
+    // 管理状态为已完成
+    diffDays = Math.abs(moment(PLANENDDATE).diff(moment(REALENDDATE), 'days'))
+    // 已完成
+    if (moment(REALENDDATE).isAfter(moment(PLANENDDATE))) {
+      text = `<span style="color: #F80012">超期${diffDays}天完成</span>`
+    } else if (diffDays === 0) {
+      text = '<span style="color: #1BBF9E">当天完成</span>'
+    } else {
+      text = `<span style="color: #1BBF9E">提前${diffDays}天完成</span>`
+    }
+  } else {
+    diffDays = Math.abs(moment(PLANENDDATE).diff(moment(currDate), 'days'))
+    // 已完成
+    if (moment(currDate).isAfter(moment(PLANENDDATE))) {
+      text = `<span style="color: #F80012">超期${diffDays}天</span>`
+    } else if (diffDays === 0) {
+      text = '<span style="color: #48BF9F">今天</span>'
+    } else {
+      text = `<span style="color: #48BF9F">剩余${diffDays}天</span>`
+    }
+  }
+  return text
+}
 
 export const requestUrl = (url) => {
   if (!url) {
