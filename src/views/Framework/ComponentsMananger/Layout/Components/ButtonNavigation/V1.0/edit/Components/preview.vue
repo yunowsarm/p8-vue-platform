@@ -36,10 +36,10 @@
   </common-dialog>
 </template>
 <style lang="scss" scoped>
-.layoutComponents ::v-deep .el-tree-node__content .is-leaf{
-  display: inline-block !important;
-  width: 25px;
-}
+// .layoutComponents ::v-deep .el-tree-node__content .is-leaf{
+//   display: inline-block !important;
+//   width: 25px;
+// }
 </style>
 <script>
 import { Input, Button } from 'element-ui'
@@ -69,7 +69,7 @@ export default {
     componentUrl () {
       console.log(this.asyncComponents, '===this.asyncComponents')
       if (this.asyncComponents) {
-         if (this.asyncComponents.indexOf('?') !== -1) {
+        if (this.asyncComponents.indexOf('?') !== -1) {
           const list = this.asyncComponents.split('?')
           const url = list[0]
           const parmars = list[1].split('&')
@@ -225,9 +225,9 @@ export default {
         }
       }
     },
-    getParamsList (obj,fileName) {
+    getParamsList (obj, fileName) {
       let list = []
-      function getEndList (item){
+      function getEndList (item) {
         list.push(item[fileName])
         if (item.children && item.children.length) {
           item.children.forEach(el => {
