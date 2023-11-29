@@ -6,6 +6,90 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "37979559",
+      "name": "分解连接线",
+      "font_class": "fenjielianjiexian",
+      "unicode": "e7b6",
+      "unicode_decimal": 59318
+    },
+    {
+      "icon_id": "37979558",
+      "name": "天数",
+      "font_class": "tianshu",
+      "unicode": "e7c1",
+      "unicode_decimal": 59329
+    },
+    {
+      "icon_id": "37978275",
+      "name": "移动",
+      "font_class": "yidong",
+      "unicode": "e7b8",
+      "unicode_decimal": 59320
+    },
+    {
+      "icon_id": "37978276",
+      "name": "新建活动",
+      "font_class": "xinjianhuodong",
+      "unicode": "e7b9",
+      "unicode_decimal": 59321
+    },
+    {
+      "icon_id": "37978274",
+      "name": "居中显示",
+      "font_class": "juzhongxianshi",
+      "unicode": "e7ba",
+      "unicode_decimal": 59322
+    },
+    {
+      "icon_id": "37978271",
+      "name": "PERT图",
+      "font_class": "PERTtu",
+      "unicode": "e7bb",
+      "unicode_decimal": 59323
+    },
+    {
+      "icon_id": "37978273",
+      "name": "缩小",
+      "font_class": "suoxiao",
+      "unicode": "e7bc",
+      "unicode_decimal": 59324
+    },
+    {
+      "icon_id": "37978270",
+      "name": "活动信息设置",
+      "font_class": "huodongxinxishezhi",
+      "unicode": "e7bd",
+      "unicode_decimal": 59325
+    },
+    {
+      "icon_id": "37978268",
+      "name": "WBS图",
+      "font_class": "WBStu",
+      "unicode": "e7be",
+      "unicode_decimal": 59326
+    },
+    {
+      "icon_id": "37978269",
+      "name": "放大",
+      "font_class": "fangda1",
+      "unicode": "e7bf",
+      "unicode_decimal": 59327
+    },
+    {
+      "icon_id": "37978278",
+      "name": "适应屏幕",
+      "font_class": "shiyingpingmu",
+      "unicode": "e7b5",
+      "unicode_decimal": 59317
+    },
+    {
+      "icon_id": "37978272",
+      "name": "前后置连接线",
+      "font_class": "qianhouzhilianjiexian",
+      "unicode": "e7b7",
+      "unicode_decimal": 59319
+    },
+    {
       "icon_id": "16835092",
       "name": "内容调整",
       "font_class": "content-adjustment",
