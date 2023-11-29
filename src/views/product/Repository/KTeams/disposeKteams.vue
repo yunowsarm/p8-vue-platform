@@ -229,6 +229,7 @@ export default {
     rendered () {
       this.$api['knowledgeManagement.roleClassifyList']({klTeamsId: this.record.ID}).then(res => {
         this.rolesList = res
+        this.formData = {}
         if (this.rolesList && this.rolesList.length) {
           this.clickIndex = 0
           this.formData = this.rolesList[0]
