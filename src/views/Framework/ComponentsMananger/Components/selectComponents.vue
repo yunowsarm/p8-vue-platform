@@ -8,48 +8,79 @@
                  @handle-ok="handleOk"
                  @close="handleCancel">
     <template #dialog>
-      <normal-layout :header-visible="false">
-        <template #west>
-          <common-tree :data="treeData"
-                       :tree-param="treeParam"
-                       :tree-config="{ 'default-checked-keys': ['0'], 'default-checked-keys': ['table'] }"
-                       :default-expand-all="true"
-                       @select="onSelect"></common-tree>
-        </template>
-        <template #center>
-          <common-table ref="table"
-                        :columns="columns"
-                        :params="queryParam"
-                        :api="tableApi"
-                        :pagination="true"
-                        :table-setting="false"
-                        :select-all-hidden="true"
-                        @select="select"
-                        @row-dblclick="rowDblClick">
-            <template #operation="{ scope }">
-              <el-button type="text"
-                         @click="preview(scope.row)">预览</el-button>
+      <el-tabs class="tabs"
+               v-model="activeName">
+        <el-tab-pane label="选项组件"
+                     name="first">
+          <normal-layout :header-visible="false">
+            <template #west>
+              <common-tree :data="treeData"
+                           :tree-param="treeParam"
+                           :tree-config="{ 'default-checked-keys': ['0'], 'default-checked-keys': ['table'] }"
+                           :default-expand-all="true"
+                           @select="onSelect"></common-tree>
             </template>
-          </common-table>
-        </template>
-        <template #drawer-panel>
-          <common-drawer title="预览"
-                         :visible="functionTestVisible"
-                         size="100%"
-                         @close="functionTestVisible = false">
-            <template #drawer>
-              <table-render :code="record.code"
-                            :report-param="{}"></table-render>
+            <template #center>
+              <common-table ref="table"
+                            :columns="columns"
+                            :params="queryParam"
+                            :api="tableApi"
+                            :pagination="true"
+                            :table-setting="false"
+                            :select-all-hidden="true"
+                            @select="select"
+                            @row-dblclick="rowDblClick">
+                <template #operation="{ scope }">
+                  <el-button type="text"
+                             @click="preview(scope.row)">预览</el-button>
+                </template>
+              </common-table>
             </template>
-          </common-drawer>
-        </template>
-      </normal-layout>
+            <template #drawer-panel>
+              <common-drawer title="预览"
+                             :visible="functionTestVisible"
+                             size="100%"
+                             @close="functionTestVisible = false">
+                <template #drawer>
+                  <table-render :code="record.code"
+                                :report-param="{}"></table-render>
+                </template>
+              </common-drawer>
+            </template>
+          </normal-layout>
+        </el-tab-pane>
+        <el-tab-pane label="自定义组件"
+                     name="second">
+          <div class="input-flex">
+            <div>自定义组件地址&nbsp;&nbsp;&nbsp;</div>
+            <el-input class="input"
+                      v-model="inputUrl"
+                      placeholder="请输入"></el-input>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
     </template>
   </common-dialog>
 </template>
 <style lang="scss" scoped>
 ::v-deep .el-dialog__body {
   padding: 0 !important;
+}
+::v-deep .el-tabs--border-card > .el-tabs__content {
+  padding: 0;
+}
+.tabs {
+  height: 100%;
+}
+.input-flex {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+.input {
+  width: 75%;
 }
 </style>
 <script>
@@ -301,6 +332,8 @@ export default {
   },
   data () {
     return {
+      activeName: 'first',
+      inputUrl: '',
       queryParam: {},
       treeParam: {},
       selectedRow: null,
@@ -376,42 +409,48 @@ export default {
     },
     handleOk (e) {
       let params
-      switch (this.type) {
-        case 'table':
-          params = {
-            id: this.selectedRow.id,
-            name: this.selectedRow.name,
-            code: this.selectedRow.code,
-            url: 'Framework/ComponentsMananger/Grid/Components/tableRender'
-          }
-          break
-        case 'form':
-          params = {
-            id: this.selectedRow.id,
-            name: this.selectedRow.desformName,
-            dataViewId: '',
-            permissionVo: { router: this.$route.name },
-            codeForm: this.selectedRow.desformCode,
-            url: 'Framework/ComponentsMananger/Form/Components/Components/edit'
-          }
-          break
-        case 'layout':
-          params = {
-            id: this.selectedRow.id,
-            name: this.selectedRow.layoutName,
-            layoutCode: this.selectedRow.layoutCode,
-            layoutVersion: this.selectedRow.version,
-            url: this.selectedRow.rendererRendererComponent
-          }
-          break
-        case 'kanban':
-          params = {
-            id: this.selectedRow.id,
-            name: this.selectedRow.name,
-            code: this.selectedRow.code,
-            url: 'Framework/System/KanbanDesign/kanbanView'
-          }
-          break
+      if (this.activeName === 'first') {
+        switch (this.type) {
+          case 'table':
+            params = {
+              id: this.selectedRow.id,
+              name: this.selectedRow.name,
+              code: this.selectedRow.code,
+              url: 'Framework/ComponentsMananger/Grid/Components/tableRender'
+            }
+            break
+          case 'form':
+            params = {
+              id: this.selectedRow.id,
+              name: this.selectedRow.desformName,
+              dataViewId: '',
+              permissionVo: { router: this.$route.name },
+              codeForm: this.selectedRow.desformCode,
+              url: 'Framework/ComponentsMananger/Form/Components/Components/edit'
+            }
+            break
+          case 'layout':
+            params = {
+              id: this.selectedRow.id,
+              name: this.selectedRow.layoutName,
+              layoutCode: this.selectedRow.layoutCode,
+              layoutVersion: this.selectedRow.version,
+              url: this.selectedRow.rendererRendererComponent
+            }
+            break
+          case 'kanban':
+            params = {
+              id: this.selectedRow.id,
+              name: this.selectedRow.name,
+              code: this.selectedRow.code,
+              url: 'Framework/System/KanbanDesign/kanbanView'
+            }
+            break
+        }
+      } else {
+        params = {
+          url: this.inputUrl
+        }
       }
       this.$emit('handleOk', params)
     },
