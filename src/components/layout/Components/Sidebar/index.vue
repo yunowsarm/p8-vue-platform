@@ -6,9 +6,13 @@
     <VuePerfectScrollbar :settings="scrollOptions"
                          :style="{ 'background-color': objColor.themeColor }">
       <div class="border-name">
-        <div class="login-logo"
-             ref="loginLogo"></div>
-        <div class="sysName"><span v-if="sidebarState.width == '180px'">{{ systemName }}</span></div>
+        <div class="sysName">
+          <div class="login-logo"
+               ref="loginLogo"></div>
+        </div>
+        <div class="sysName">
+          <span v-if="sidebarState.width == '180px'">{{ systemName }}</span>
+        </div>
       </div>
       <el-menu mode="vertical"
                class="vertical-menu"
@@ -308,11 +312,10 @@ $menu-collapse-text-color: #303133;
   color: $base-white-color;
   // line-height: 50px;
   // letter-spacing: 1px;
-  margin: 0 5px;
 }
 .login-logo {
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   background-size: contain;
 }
 </style>
