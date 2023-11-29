@@ -1429,6 +1429,8 @@ export default {
             vueThis.taskCount = myGantt.getTaskCount()
             // 检查gantt操作权限
             // myGantt.config.readonly = editLockUnLockCheck(vueThis.planInfoStatus, vueThis.monitorLockMap)
+          } else {
+            vueThis.fullscreenLoading.close()
           }
         })
         .catch(function (error) {

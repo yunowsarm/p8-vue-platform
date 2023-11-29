@@ -3,7 +3,7 @@
     <div class="bottom" style="height: 100%">
       <list-layout>
         <template #north>
-          <common-button :select-records="selectRecord" :comp="comp"></common-button>
+          <common-button :select-records="selectRecord" buttonType="primary" :comp="comp"></common-button>
           <search-form-list ref="search" :data-source="searchData" @search="search" @re-set="reSet"></search-form-list>
         </template>
         <template #center>
@@ -343,14 +343,14 @@ export default {
   mounted() {
     if (this.thirdMenuParam.createPage === 'decompose') {
       this.projectCategory = this.thirdMenuParam.projectCategory
-      this.secretLevel = this.thirdMenuParam.secretGrade
-      this.planInfoId = this.thirdMenuParam.planInfoId
-      this.planInfoStatus = this.thirdMenuParam.executeState
-      this.taskId = this.thirdMenuParam.taskId
-      this.secretGrade = this.thirdMenuParam.secretGrade
+      this.secretLevel = this.thirdMenuParam.SECRETGRADE
+      this.planInfoId = this.thirdMenuParam.PLANINFOID
+      this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
+      this.taskId = this.thirdMenuParam.TASKID
+      this.secretGrade = this.thirdMenuParam.SECRETGRADE
       this.selectRecord = [{
         ...this.thirdMenuParam,
-        EXECUTESTATE: this.thirdMenuParam.executeState
+        EXECUTESTATE: this.thirdMenuParam.EXECUTESTATE
       }]
       this.currentRoute = this.thirdMenuParam.currentRoute
       this.createPage = 'userChange'
