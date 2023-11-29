@@ -156,6 +156,7 @@ const platform = {
           duration: 5000
         })
       }
+      menuItem.meta.icon = 'p8 ' + menuItem.meta.icon
       state.shortcutMenu.push(menuItem)
       //
       const token = this.state.user.token

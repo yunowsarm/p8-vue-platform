@@ -126,6 +126,7 @@ export default {
       transition: all 0.1s ease-in-out 0s;
       border-radius: 3px;
       animation: zoom-shortcut 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+      margin: 5px;
 
       @keyframes zoom-shortcut {
         0% {
