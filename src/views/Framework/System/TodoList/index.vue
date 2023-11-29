@@ -24,7 +24,7 @@
                  class="formRight"
                  :dataSource="dataSourceRight"
                  :existDefaultBtn="false"
-                 labelWidth="90px"
+                 labelWidth="100px"
                  :existCustomBtn="true"
                  :form="formDataRight">
         <template #customBtn>
@@ -144,6 +144,12 @@ export default {
             clearable: false,
             'picker-options': this.startDateOptions()
           },
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ]
         },
         {
           type: 'datetime',
@@ -156,6 +162,12 @@ export default {
             'picker-options': this.endDateOptions(),
             'value-format': 'yyyy-MM-dd'
           },
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ]
         },
         {
           type: 'textarea',
@@ -183,27 +195,34 @@ export default {
       }
     },
     save () {
+      let that = this
       let id = this.row[0].ID
       let parmars = { id: id, ...this.formDataRight }
-      this.$api['TodoList.save'](parmars).then(res => {
-        if (res) {
-          this.$emit('close')
-        }
+      this.$refs.formRight.validate().then(() => {
+        that.$api['TodoList.save'](parmars).then(res => {
+          if (res) {
+            that.$emit('close')
+          }
+        })
       })
     },
     handleSubmit () {
+      let that = this
       let id = this.row[0].ID
       let parmars = { id: id, ...this.formDataRight }
-      this.$api['TodoList.save'](parmars).then(res => {
-        if (res) {
-          this.$api['TodoList.submit']({ businessId: [id], approveUser: this.formData.affirmUserId }).then(res => {
-            if (res) {
-              this.$message({ type: 'success', message: '提交成功' })
-              this.$emit('close')
-            }
-          })
-        }
+      this.$refs.formRight.validate().then(() => {
+        that.$api['TodoList.save'](parmars).then(res => {
+          if (res) {
+            that.$api['TodoList.submit']({ businessId: [id], approveUser: that.formData.affirmUserId }).then(res => {
+              if (res) {
+                that.$message({ type: 'success', message: '提交成功' })
+                that.$emit('close')
+              }
+            })
+          }
+        })
       })
+
     },
     startDateOptions () {
       return {
