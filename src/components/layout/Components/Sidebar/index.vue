@@ -6,7 +6,9 @@
     <VuePerfectScrollbar :settings="scrollOptions"
                          :style="{ 'background-color': objColor.themeColor }">
       <div class="border-name">
-        <span class="sysName"><i class="icon-process-template p8"></i><span v-if="sidebarState.width == '180px'">{{ systemName }}</span></span>
+        <div class="login-logo"
+             ref="loginLogo"></div>
+        <div class="sysName"><span v-if="sidebarState.width == '180px'">{{ systemName }}</span></div>
       </div>
       <el-menu mode="vertical"
                class="vertical-menu"
@@ -117,8 +119,30 @@ export default {
   },
   mounted () {
     this.getColor()
+    this.getIcon()
   },
   methods: {
+    // 获取系统logo
+    async getIcon () {
+      let res = await this.$api['SystemSettings.getLoginSetting']()
+      if (res) {
+        let uploadFileJson = res.uploadFileJson
+        if (uploadFileJson && uploadFileJson[0]) {
+          const that = this
+          uploadFileJson.map((item) => {
+            if (item.id) {
+              this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
+                item.filePath = window.URL.createObjectURL(new Blob([res.data]))
+                that.$nextTick(() => {
+                  that.$refs.loginLogo.style.backgroundImage = `url(${item.filePath})`
+                  that.$refs.loginLogo.style.backgroundRepeat = `no-repeat`
+                })
+              })
+            }
+          })
+        }
+      }
+    },
     getColor () {
       if (this.imageUrl) {
         let color = this.fromHex(this.theme)
@@ -271,6 +295,10 @@ $menu-collapse-text-color: #303133;
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 .sysName {
   line-height: pxTorem(50px);
@@ -278,8 +306,13 @@ $menu-collapse-text-color: #303133;
   font-family: Source Han Sans CN;
   font-weight: 500;
   color: $base-white-color;
-  line-height: 50px;
-  letter-spacing: 1px;
+  // line-height: 50px;
+  // letter-spacing: 1px;
   margin: 0 5px;
+}
+.login-logo {
+  width: 30px;
+  height: 30px;
+  background-size: contain;
 }
 </style>
