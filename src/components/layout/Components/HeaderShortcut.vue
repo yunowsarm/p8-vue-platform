@@ -1,20 +1,30 @@
 <template>
   <div class="shortcut-menu-list">
-    <beauti-context ref="menu" type="contextmenu">
+    <beauti-context ref="menu"
+                    type="contextmenu">
       <beauti-contextmenu>
         <beauti-contextmenu-item @click="removeShortcut">移除快捷菜单</beauti-contextmenu-item>
       </beauti-contextmenu>
     </beauti-context>
-    <draggable v-model="shortcuts" v-bind="sortOptions">
+    <draggable v-model="shortcuts"
+               v-bind="sortOptions">
       <!-- <transition-group
       name="shake"
       tag="ul"> -->
-      <li v-for="item in shortcuts" v-beautiContext:menu="item" :key="item.name" @click="goToMenu(item)" :class="{ active: activeMenu.name === item.name }">
-        <el-tooltip :content="item.meta.title" placement="bottom-start" :enterable="false">
-          <span v-if="item.meta.icon !== ''" :class="item.meta.icon"></span>
+      <li v-for="item in shortcuts"
+          v-beautiContext:menu="item"
+          :key="item.name"
+          @click="goToMenu(item)"
+          :class="{ active: activeMenu.name === item.name }">
+        <el-tooltip :content="item.meta.title"
+                    placement="bottom-start"
+                    :enterable="false">
+          <span v-if="item.meta.icon !== ''"
+                :class="item.meta.icon"></span>
           <span v-else>{{ item.meta.title !== '' ? item.meta.title.substring(0, 2) : 'icon' }}</span>
         </el-tooltip>
-        <i class="active-dot" :style="{ background: theme }"></i>
+        <i class="active-dot"
+           :style="{ background: theme }"></i>
       </li>
       <!-- </transition-group> -->
     </draggable>
@@ -31,7 +41,7 @@ const SHORTCUT_MENU_KEY = GLOBAL_CONST.shortcut.shortcutKey
 
 export default {
   name: 'HeaderShortcut',
-  data() {
+  data () {
     return {
       activeMenu: null,
       sortOptions: {
@@ -43,27 +53,27 @@ export default {
   computed: {
     ...mapGetters(['token', 'shortcutMenu', 'theme']),
     shortcuts: {
-      get() {
+      get () {
         return this.shortcutMenu
       },
-      set(items) {
+      set (items) {
         this.$store.dispatch('dragedShortcuts', items)
       }
     }
   },
   watch: {
     $route: {
-      handler(to, from) {
+      handler (to, from) {
         this.activeMenu = to
       },
       immediate: true
     }
   },
-  mounted() {
+  mounted () {
     this.initShortcuts()
   },
   methods: {
-    initShortcuts() {
+    initShortcuts () {
       const shortcutMenus = getLocalStorage(SHORTCUT_MENU_KEY)
       if (shortcutMenus) {
         if (this.token) {
@@ -74,10 +84,10 @@ export default {
         }
       }
     },
-    goToMenu(item) {
+    goToMenu (item) {
       this.$router.push({ name: item.name })
     },
-    removeShortcut(contextmenu, event, item) {
+    removeShortcut (contextmenu, event, item) {
       this.$store.dispatch('removeShortcutMenu', item)
     }
   },
@@ -90,7 +100,7 @@ export default {
 <style lang="scss" scoped>
 .shortcut-menu-list {
   width: 100%;
-  height: 100%;
+  // height: 100%;
   padding: 3px;
   margin: 0;
   display: flex;
