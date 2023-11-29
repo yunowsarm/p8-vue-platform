@@ -51,12 +51,12 @@ export function outPutFlowGantt (ganttName, vueThis) {
       min_width: 100,
       resize: true,
       align: 'left',
-      template: function (task){
+      template: function (task) {
         let str = ''
         if (task.type) {
           vueThis.logoList.forEach(el => {
             if (el.id == task.type) {
-              str += '<i class="'+ el.icon +'" title="'+ el.meaning +'"></i>'
+              str += '<i class="' + el.icon + '" title="' + el.meaning + '"></i>'
             }
           })
         }
@@ -83,7 +83,10 @@ export function outPutFlowGantt (ganttName, vueThis) {
       label: '时限',
       min_width: 100,
       resize: true,
-      align: 'left'
+      align: 'left',
+      template: function (task) {
+        return task.duration
+      }
     },
     {
       name: 'teamRoleName',
