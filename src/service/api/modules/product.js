@@ -1481,6 +1481,13 @@ export const repositoryApi = {
       path: '/product/klActivity/pasteNode',
       mockPath: '/product/klActivity/pasteNode',
       desc: '知识库管理->产出流程管理->excel导入'
+    },
+    {
+      name: 'loadModeData',
+      method: 'POST',
+      path: '/product/klActivity/loadModeData',
+      mockPath: '/product/klActivity/loadModeData',
+      desc: '知识库管理->产出流程管理->图形模式查询接口'
     }
   ],
   TodoList: [
