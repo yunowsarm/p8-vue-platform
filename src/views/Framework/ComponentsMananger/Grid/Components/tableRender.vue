@@ -281,7 +281,6 @@
       <common-drawer v-if="visibleThirdDrawer"
                      :visible="visibleThirdDrawer"
                      direction="ttb"
-                     :title="thirdMenuTitle"
                      @close='onThirdMenuClose'
                      size="100%">
         <template #drawer>
