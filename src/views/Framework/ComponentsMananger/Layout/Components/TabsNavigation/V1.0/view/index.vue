@@ -35,7 +35,6 @@
                      :kanban-config="componentsConfig"
                      :west-tree-param="provideParams.searchParams"
                      :configParmars="configParmars"
-                     :headerVisible="headerVisible"
                      v-bind="$attrs"
                      v-on="$listeners"
                      @save-success="saveSuccess"
@@ -172,15 +171,15 @@
     border: none;
   }
   .el-tabs__item {
-    border-top:  1px solid #e4e7ed;
+    border-top: 1px solid #e4e7ed;
     border-right: 1px solid #e4e7ed;
-    border-left:1px solid #e4e7ed;
+    border-left: 1px solid #e4e7ed;
   }
   .el-tabs__item:last-child {
     border-top-right-radius: 6px;
     border-left: 0px;
   }
-  .el-tabs__item:first-child{
+  .el-tabs__item:first-child {
     border-top-left-radius: 6px;
   }
 }
@@ -196,14 +195,14 @@
   .el-tabs__item {
     border-top: 1px solid #e4e7ed;
     border-bottom: 1px solid #e4e7ed;
-    border-left:1px solid #e4e7ed;
+    border-left: 1px solid #e4e7ed;
   }
   .el-tabs__item:last-child {
     border-bottom-left-radius: 6px;
     border-top: 0px;
     border-bottom: 1px solid #e4e7ed;
   }
-  .el-tabs__item:first-child{
+  .el-tabs__item:first-child {
     border-top: 1px solid #e4e7ed;
     border-top-left-radius: 6px;
   }
@@ -230,13 +229,13 @@
   .el-tabs__item {
     border-right: 1px solid #e4e7ed;
     border-bottom: 1px solid #e4e7ed;
-    border-left:1px solid #e4e7ed;
+    border-left: 1px solid #e4e7ed;
   }
   .el-tabs__item:last-child {
     border-bottom-right-radius: 6px;
     border-left: 0px;
   }
-  .el-tabs__item:first-child{
+  .el-tabs__item:first-child {
     border-bottom-left-radius: 6px;
   }
 }
@@ -252,14 +251,14 @@
   .el-tabs__item {
     border-top: 1px solid #e4e7ed;
     border-bottom: 1px solid #e4e7ed;
-    border-right:1px solid #e4e7ed;
+    border-right: 1px solid #e4e7ed;
   }
   .el-tabs__item:last-child {
     border-bottom-right-radius: 6px;
     border-top: 0px;
     border-bottom: 1px solid #e4e7ed;
   }
-  .el-tabs__item:first-child{
+  .el-tabs__item:first-child {
     border-top: 1px solid #e4e7ed;
     border-top-right-radius: 6px;
   }
@@ -288,7 +287,7 @@
     border-left: 1px solid #e4e7ed;
     padding: 0;
   }
-  .el-tabs__header.is-left{
+  .el-tabs__header.is-left {
     border-right: none;
     margin: 0;
   }
@@ -310,7 +309,7 @@
     border-bottom: 1px solid #e4e7ed;
     padding: 0;
   }
-  .el-tabs__header.is-bottom{
+  .el-tabs__header.is-bottom {
     // border-top: none;
     margin: 0;
   }
@@ -328,11 +327,11 @@
 // 右
 ::v-deep .el-tabs--border-card.el-tabs--right > {
   .el-tabs__content {
-    border-right: 1px solid #e4e7ed;                                                                                                                                                                                          
-    
+    border-right: 1px solid #e4e7ed;
+
     padding: 0;
   }
-  .el-tabs__header.is-right{
+  .el-tabs__header.is-right {
     border-top: none;
     margin: 0;
   }
@@ -395,14 +394,10 @@ export default {
       default: () => {
         return {}
       }
-    },
-    pageType: {
-      type: String
     }
   },
   data () {
     return {
-      headerVisible: true,
       dialogHeight: document.documentElement.clientHeight * 0.6,
       tabsParmar: {},
       tabsData: [],
@@ -434,10 +429,6 @@ export default {
     }
   },
   created () {
-    // 我的审批页面表格不展示按钮
-    if (this.pageType === 'view') {
-      this.headerVisible = false
-    }
     this.init()
   },
   methods: {

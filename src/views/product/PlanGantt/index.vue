@@ -213,19 +213,19 @@ export default {
   created() {},
   mounted() {
     if (this.thirdMenuParam.createPage === 'decompose') {
-      this.planInfoId = this.thirdMenuParam.planInfoId
-      this.secretGrade = this.thirdMenuParam.secretGrade || ''
-      this.planInfoStatus = this.thirdMenuParam.executeState
-      this.taskId = this.thirdMenuParam.taskId || ''
+      this.planInfoId = this.thirdMenuParam.PLANINFOID
+      this.secretGrade = this.thirdMenuParam.SECRETGRADE || ''
+      this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
+      this.taskId = this.thirdMenuParam.TASKID || ''
       this.createPage = this.thirdMenuParam.createPage
-      this.wholeDescribeId = this.thirdMenuParam.wholeDescribeId
+      this.wholeDescribeId = this.thirdMenuParam.WHOLEDESCRIBEID
       this.planBeginDateArray = this.thirdMenuParam.planBeginDateArray || []
       this.planEndDateArray = this.thirdMenuParam.planEndDateArray || []
     } else {
       this.planInfoId = this.thirdMenuParam.ID || ''
       this.secretGrade = this.thirdMenuParam.SECRETLEVEL || ''
       this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
-      this.taskId = this.thirdMenuParam.taskId || ''
+      this.taskId = this.thirdMenuParam.TASKID || ''
       this.createPage = this.thirdMenuParam.createPage || 'compile'
       this.wholeDescribeId = this.thirdMenuParam.WHOLEDESCRIBEID
       this.planBeginDateArray = this.thirdMenuParam.planBeginDateArray || []

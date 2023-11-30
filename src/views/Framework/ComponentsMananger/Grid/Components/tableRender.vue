@@ -1,6 +1,6 @@
 <template>
   <normal-layout class="grid-table-render"
-                 :header-visible="headerVisible"
+                 :header-visible="headerVisibleType"
                  :normal-layout="normalLayout">
     <template #north>
       <common-button v-if="tableInfo.useSystemConfigButton == 1 || (tableInfo.useSystemConfigButton == 0 && buttonData.length > 0)"
@@ -427,6 +427,10 @@ export default {
     taskId: {
       type: String,
       default: ''
+    },
+    pageType: {
+      type: String,
+      default: ''
     }
   },
   inject: {
@@ -550,7 +554,8 @@ export default {
       customCSS: {},
       sysParams: Object.assign({ $SYSTEM_PARAMS_SELECT: _cloneDeep(this.$store.state.user.userInfo) }), // 系统级参数
       currentRouterPath: '',
-      serachForm: {}
+      serachForm: {},
+      headerVisibleType: this.headerVisible
     }
   },
   created () {
@@ -566,6 +571,10 @@ export default {
     )
   },
   mounted () {
+    // 我的审批页面表格不展示按钮
+    if (this.pageType === 'view') {
+      this.headerVisibleType = false
+    }
     if (this.code && this.code !== '') {
       this.getTableInfo(this.code)
     }
