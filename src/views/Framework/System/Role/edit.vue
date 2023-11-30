@@ -56,6 +56,7 @@
                      name="setApp"
                      key="3">
           <el-tabs :key="dateTime"
+                   class="leftTabs"
                    :style="{ height: flexHeight }"
                    tab-position="left"
                    @tab-click="tabClick"
@@ -196,7 +197,7 @@
 ::v-deep .el-tabs--border-card > .el-tabs__content {
   padding: 0;
 }
-::v-deep .el-tabs--border-card .el-tabs__nav-scroll {
+.leftTabs::v-deep .el-tabs__nav-scroll {
   background: #ffffff;
 }
 </style>
