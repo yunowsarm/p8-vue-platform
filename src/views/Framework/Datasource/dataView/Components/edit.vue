@@ -73,7 +73,7 @@
                    :data-source="tableParamSource"
                    :form="formData"
                    :exist-default-btn="false"
-                   style="height: 50px"
+                   style="height: 50px;margin-top:50px;"
                    label-width="100px"></form-list>
         <editable-table :columns="strategyColumns"
                         :add-row="true"
@@ -647,6 +647,9 @@ export default {
   margin: 0 26px;
   .el-tabs__content {
     padding: 0 !important;
+    .list-layout {
+      margin: 0;
+    }
   }
 }
 </style>

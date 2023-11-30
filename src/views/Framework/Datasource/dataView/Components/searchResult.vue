@@ -1,7 +1,12 @@
 <template>
-  <list-layout :header-visible="false">
+  <list-layout :header-visible="true">
     <template #center>
-      <common-table v-if="columns.length" ref="table" :params="queryParam" api="formGenerator.getSqlexecute" :columns="columns" :pagination="true"></common-table>
+      <common-table v-if="columns.length"
+                    ref="table"
+                    :params="queryParam"
+                    api="formGenerator.getSqlexecute"
+                    :columns="columns"
+                    :pagination="true"></common-table>
     </template>
   </list-layout>
 </template>
@@ -16,7 +21,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       dialogHeight: document.documentElement.clientHeight * 0.5,
       queryParam: { sql: this.sql },
@@ -27,11 +32,11 @@ export default {
     ListLayout,
     CommonTable
   },
-  created() {
+  created () {
     this.init()
   },
   methods: {
-    async init() {
+    async init () {
       this.$api['formGenerator.getSqlexecute']({ page: { current: 1, size: 1, orders: [] }, sql: this.sql }).then((res) => {
         const data = res.records
         const columns = []
