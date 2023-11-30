@@ -80,6 +80,7 @@
         </editable-table>
       </template>
       <template #foreignKey>
+        <div style="height:50px;"></div>
         <editable-table :columns="foreignKeyColumns" api="formGenerator.getDefaultProp" :data="forengnKeyData" @save-param-data="saveKeyData">
           <template #fieldName="{ scope, data }">
             <el-input v-model="scope.row.fieldName" disabled @blur="saveKeyData(data)"></el-input>
