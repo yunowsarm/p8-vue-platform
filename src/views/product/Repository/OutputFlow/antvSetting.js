@@ -288,12 +288,14 @@ export const buttonConfig = [
   {
     title: '删除活动',
     icon: 'icon-delete',
-    fun: 'handlerDel'
+    fun: 'handlerDel',
+    disabled: 'disabled'
   },
   {
     title: '活动信息设置',
     icon: 'icon-huodongxinxishezhi',
-    fun: 'activityInformation'
+    fun: 'activityInformation',
+    disabled: 'disabled'
   },
   {
     title: '居中显示',
@@ -318,11 +320,13 @@ export const buttonConfig = [
   {
     title: 'WBS图',
     icon: 'icon-WBStu',
-    fun: ''
+    fun: '',
+    disabled: 'true'
   },
   {
     title: 'PERT图',
     icon: 'icon-PERTtu',
-    fun: ''
+    fun: '',
+    disabled: 'true'
   },
 ]
