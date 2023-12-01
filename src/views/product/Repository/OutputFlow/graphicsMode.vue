@@ -7,6 +7,7 @@
               ref="antv"
               :edgeList="edgeList"
               @openActivityInfo="openActivityInfo"
+              @refresh="getData"
               @nodeClick="nodeClick"></antv>
       </template>
       <template #drawer-panel>
@@ -128,6 +129,9 @@ export default {
         this.edgeList = res.link
         this.getXY(res.node, 'parent', 'key')
         this.acivityData = res.node
+        if (this.$refs.antv) {
+          this.$refs.antv.graph.clearCells()
+        }
       })
     },
     getXY (arr, parent, key) {
@@ -160,9 +164,14 @@ export default {
     },
     nodeClick (cell) {
       this.activityId = cell.id
+      this.describeKey = 'describeKey'
+      this.activeKey = 'describeKey'
       this.visibleModel = true
     },
     openActivityInfo (type, id) {
+      this.activeKey = type
+      this.activityId = id
+      this.describeKey = type
       this.visibleModel = true
     },
     onSelect (tab, event) {
@@ -176,11 +185,7 @@ export default {
         await this.saveParams()
         this.$message({ type: 'success', message: '保存成功' })
         this.visibleModel = false
-        this.$api['OutputFlow.loadModeData']({ activityInfoId: this.activityInfoId }).then(res => {
-          this.$refs.antv.graph.clearCells()
-          this.acivityData = res.node
-          this.edgeList = res.link
-        })
+        this.getData()
       } else {
         this.$message({
           message: '请选择保存信息对应的活动！',
@@ -199,10 +204,16 @@ export default {
       })
       await that.$refs.inputEdit.$refs.form.validate().then((queryParams) => {
         let saveParams = { ...queryParams, ...that.$refs.inputEdit.$refs.form.otherParam }
+        if (!saveParams.uploadFiles.length && !saveParams.describes) {
+          return
+        }
         that.$api[that.$refs.inputEdit.saveApi](saveParams)
       })
       await that.$refs.outputEdit.$refs.form.validate().then((queryParams) => {
         let saveParams = { ...queryParams, ...that.$refs.outputEdit.$refs.form.otherParam }
+        if (!saveParams.uploadFiles.length && !saveParams.describes) {
+          return
+        }
         that.$api[that.$refs.outputEdit.saveApi](saveParams)
       })
       await that.$refs.specialEdit.$refs.form.validate().then((queryParams) => {

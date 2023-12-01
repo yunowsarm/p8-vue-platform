@@ -127,6 +127,7 @@ import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import { outPutFlowGantt } from '@/assets/commonJS/ganttJS/outPutFlowGantt'
 import { activityButtonData } from './activityButton'
 import _ from 'lodash'
+import Vue from 'vue'
 // import { P8Search as SearchFormList } from 'p8-components-ui'
 let myGantt
 const ganttName = 'activityGantt'
@@ -429,12 +430,15 @@ export default {
     },
     // 删除
     removeTask () {
+      let that = this
       let taskId = this.selectedTasks.map(el => el.id)[0]
       myGantt.batchUpdate(function () {
         myGantt.deleteTask(taskId)
       })
       this.$emit('remove-task')
-      this.loadGanttData()
+      Vue.$nextTick(() => {
+        that.loadGanttData()
+      })
       this.menuVisible = false
     },
     importTask () {

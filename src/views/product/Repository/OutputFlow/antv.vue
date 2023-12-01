@@ -5,6 +5,7 @@
         <div class="text"
              v-for="(el,index) in buttonList"
              :key="index"
+             :class="{'is-disabled': disabledFun(el)}"
              @click="clickFun(el.fun)">
           <el-tooltip effect="dark"
                       :content="el.title"
@@ -57,14 +58,35 @@ export default {
       immediate: true
     }
   },
+  computed: {
+    disabledFun () {
+      let that = this
+      return function (item) {
+        if (item.disabled) {
+          if (item.disabled == 'true') {
+            return true
+          } else {
+            if (that.cellShape == 'html') {
+              return false
+            } else {
+              return true
+            }
+          }
+        } else {
+          return false
+        }
+      }
+    },
+  },
   data () {
     return {
       graph: null,
       isChange: false,
       isPortsShow: false,
       menuItem: '',
-      selectCell: '',
-      buttonList: buttonConfig
+      selectCell: null,
+      buttonList: buttonConfig,
+      cellShape: ''
     }
   },
   created () {
@@ -80,6 +102,7 @@ export default {
     // 初始化渲染画布
     initGraph () {
       let that = this
+      that.selectCell = null
       // 连接过程中产生的新边的样式
       Graph.registerEdge(
         "dag-edge",
@@ -127,12 +150,12 @@ export default {
           },
           snap: false, // 是否自动吸附
           allowMulti: true, // 是否允许在相同的起始节点和终止之间创建多条边
-          allowNode: false, // 是否允许边链接到节点（非节点上的链接桩）
+          // allowNode: true, // 是否允许边链接到节点（非节点上的链接桩）
           allowBlank: false, // 是否允许连接到空白点
           allowLoop: false, // 是否允许创建循环连线，即边的起始节点和终止节点为同一节点，
           allowEdge: false, // 是否允许边链接到另一个边
-          highlight: true, // 拖动边时，是否高亮显示所有可用的连接桩或节点
-          connectionPoint: "boundary", // 指定连接点
+          // highlight: true, // 拖动边时，是否高亮显示所有可用的连接桩或节点
+          // connectionPoint: "boundary", // 指定连接点
           createEdge () {
             if (that.portsType == 'parent') {
               return new Shape.Edge({
@@ -160,15 +183,44 @@ export default {
           },
           validateConnection ({ targetMagnet }) {
             return !!targetMagnet
-          },
+          }
         },
       })
       graphBindKey(graph)
       graph.enablePanning()
-      //点击编辑
-      graph.on('cell:click', ({ cell }) => {
-        this.selectCell = cell
+      //节点点击事件
+      graph.on('cell:click', ({ cell, node, edge }) => {
+        that.selectCell = cell
+        that.cellShape = cell.shape
+        graph.removeTools()
+        if (node) {
+          node.addTools({
+            name: 'boundary',
+            args: {
+              attrs: {
+                stroke: '#9254de',
+                strokeWidth: 1,
+              }
+            },
+          })
+        }
+        if (edge) {
+          edge.addTools({
+            name: 'boundary',
+            args: {
+              attrs: {
+                stroke: '#9254de',
+                strokeWidth: 1,
+              },
+            },
+          })
+        }
       })
+      // 空白点击事件
+      graph.on('blank:click', ({ cell, node }) => {
+        graph.removeTools()
+      })
+      // 链接事件
       graph.on('edge:connected', ({ edge }) => {
         let source = this.acivityData.find(el => el.key == edge.source.cell)
         let target = this.acivityData.find(el => el.key == edge.target.cell)
@@ -177,22 +229,33 @@ export default {
             that.$message({ type: 'warning', message: '当前节点不可设置为子节点' })
             graph.removeEdge(edge.id); // 取消连接边的操作
           } else {
+            let parent = ''
+            if (source) {
+              parent = source.key
+            } else {
+              parent = target.key
+            }
             that.$api['OutputFlow.saveNode']({
               name: '新活动',
-              parent: source.key,
+              parent: parent,
               insertNum: 1,
               insertType: 'Child'
             }).then(res => {
-              console.log(edge.target.cell, '---edge.target.cell');
+              that.$emit('refresh')
             })
           }
         } else if (this.portsType == 'around') {
-          that.$api['OutputFlow.GMpredecessorsCreateOrUpdate']({
-            flFromId: source.key,
-            flToId: target.key,
-          }).then(res => {
-            console.log(edge.target.cell, '---edge.target.cell');
-          })
+          if (source && target) {
+            that.$api['OutputFlow.GMpredecessorsCreateOrUpdate']({
+              flFromId: source.key,
+              flToId: target.key,
+            }).then(res => {
+              that.$emit('refresh')
+            })
+          } else {
+            graph.removeEdge(edge.id); // 取消连接边的操作
+            that.$message({ type: 'warning', message: '该节点层级结构有误' })
+          }
         }
       })
       this.graph = graph
@@ -215,7 +278,7 @@ export default {
                   position: 'top',
                   attrs: {
                     circle: {
-                      r: 4,
+                      r: 5,
                       magnet: true,
                       stroke: '#5F95FF',
                       strokeWidth: 1,
@@ -230,7 +293,7 @@ export default {
                   position: 'right',
                   attrs: {
                     circle: {
-                      r: 4,
+                      r: 5,
                       magnet: true,
                       stroke: '#5F95FF',
                       strokeWidth: 1,
@@ -245,7 +308,7 @@ export default {
                   position: 'bottom',
                   attrs: {
                     circle: {
-                      r: 4,
+                      r: 5,
                       magnet: true,
                       stroke: '#5F95FF',
                       strokeWidth: 1,
@@ -260,7 +323,7 @@ export default {
                   position: 'left',
                   attrs: {
                     circle: {
-                      r: 4,
+                      r: 5,
                       magnet: true,
                       stroke: '#5F95FF',
                       strokeWidth: 1,
@@ -295,14 +358,14 @@ export default {
                     <span>${el.code ? el.code : ''}</span>
                   </div>
                   <div style="position:absolute;right:5px;top:0;">
-                    <i class="p8 icon-jindu" style="cursor:pointer" onclick="openActivityInfo('describeKey','${el.key}')"></i>
-                    <i class="p8 icon-shuruyaoqiu" style="cursor:pointer" onclick="openActivityInfo('inputKey','${el.key}')"></i>
-                    <i class="p8 icon-shuchuyaoqiu" style="cursor:pointer" onclick="openActivityInfo('outputKey','${el.key}')"></i>
-                    <i class="p8 icon-tebieshuoming" style="cursor:pointer" onclick="openActivityInfo('specialKey','${el.key}')"></i>
+                    <i class="p8 icon-jindu" style="cursor:pointer;color: ${el.activityInfo ? '#1890ff' : '#606266'};" onclick="openActivityInfo('describeKey','${el.key}')"></i>
+                    <i class="p8 icon-shuruyaoqiu" style="cursor:pointer;color: ${el.inputInfo ? '#1890ff' : '#606266'};" onclick="openActivityInfo('inputKey','${el.key}')"></i>
+                    <i class="p8 icon-shuchuyaoqiu" style="cursor:pointer;color: ${el.outputInfo ? '#1890ff' : '#606266'};" onclick="openActivityInfo('outputKey','${el.key}')"></i>
+                    <i class="p8 icon-tebieshuoming" style="cursor:pointer;color: ${el.specialInfo ? '#1890ff' : '#606266'};" onclick="openActivityInfo('specialKey','${el.key}')"></i>
                   </div>
                 </div>
                 <div style="text-align: center;height:50px;line-height:50px;">${el.name ? el.name : ''}</div>
-                <div style="text-align:right;border-top:1px solid #eee;height:20px;line-height:20px;padding-right:5px;"><i class="el-icon-time"></i>${el.suggestionDuration ? el.suggestionDuration : ''}</div>
+                <div style="text-align:right;border-top:1px solid #eee;height:20px;line-height:20px;padding-right:5px;"><i class="el-icon-time" style="display: ${el.suggestionDuration ? 'inline' : 'none'}"></i>${el.suggestionDuration ? el.suggestionDuration : ''}</div>
               </div>`
           } else {
             ports = {
@@ -311,7 +374,7 @@ export default {
                   position: 'bottom',
                   attrs: {
                     circle: {
-                      r: 4,
+                      r: 5,
                       magnet: true,
                       stroke: '#5F95FF',
                       strokeWidth: 1,
@@ -350,6 +413,7 @@ export default {
               return wrap
             },
             ports: ports,
+            data: el
           })
         })
       }
@@ -357,24 +421,27 @@ export default {
         this.edgeList.forEach((el, index) => {
           let source = this.graph.getCellById(el.from)//通过id获取边/节点
           let target = this.graph.getCellById(el.to)
-          if (el.category) {
-            this.graph.addEdge({
-              shape: 'dag-edge',
-              source,
-              target
-            })
-          } else {
-            this.graph.addEdge({
-              shape: 'arrow-edge',
-              source,
-              target
-            })
+          if (source && target) {
+            if (el.category) {
+              this.graph.addEdge({
+                shape: 'dag-edge',
+                source,
+                target
+              })
+            } else {
+              this.graph.addEdge({
+                shape: 'arrow-edge',
+                source,
+                target
+              })
+            }
           }
         })
       }
     },
-    // 链接桩的显示与隐藏，主要是照顾菱形
+    // 分解连接线
     changePortsShow () {
+      this.graph.removeTools()
       this.portsType = 'parent'
       this.isPortsShow = !this.isPortsShow
       const container = document.getElementById('wrapper')
@@ -383,7 +450,9 @@ export default {
         ports[i].style.visibility = this.isPortsShow ? 'visible' : 'hidden'
       }
     },
+    // 前后置连接线
     aroundPorts () {
+      this.graph.removeTools()
       this.portsType = 'around'
       this.isPortsShow = !this.isPortsShow
       const container = document.getElementById('wrapper')
@@ -392,7 +461,9 @@ export default {
         ports[i].style.visibility = this.isPortsShow ? 'visible' : 'hidden'
       }
     },
+    // 新建
     addActivity (data) {
+      this.graph.removeTools()
       if (data) {
         this.graph.addNode(data)
       } else {
@@ -403,22 +474,18 @@ export default {
                 <span></span>
               </div>
               <div style="position:absolute;right:5px;top:0;">
-                <i class="p8 icon-jindu" @click="openActivityInfo('describeKey','${el.key}')"></i>
-                <i class="p8 icon-shuruyaoqiu" @click="openActivityInfo('inputKey','${el.key}')"></i>
-                <i class="p8 icon-shuchuyaoqiu" @click="openActivityInfo('outputKey','${el.key}')"></i>
-                <i class="p8 icon-tebieshuoming" @click="openActivityInfo('specialKey','${el.key}')"></i>
               </div>
             </div>
             <div style="text-align: center;height:50px;line-height:50px;">新活动</div>
             <div style="text-align:right;border-top:1px solid #eee;height:20px;line-height:20px;padding-right:5px;"></div>
           </div>`
-        this.addActivity({
+        this.graph.addNode({
           id: '',
           width: 180,
           height: 80,
           shape: 'html',
-          x: 120,
-          y: 50,
+          x: 200,
+          y: 0,
           html: () => {
             const wrap = document.createElement('div')
             wrap.innerHTML = str
@@ -430,7 +497,7 @@ export default {
                 position: 'top',
                 attrs: {
                   circle: {
-                    r: 4,
+                    r: 5,
                     magnet: true,
                     stroke: '#5F95FF',
                     strokeWidth: 1,
@@ -445,7 +512,7 @@ export default {
                 position: 'right',
                 attrs: {
                   circle: {
-                    r: 4,
+                    r: 5,
                     magnet: true,
                     stroke: '#5F95FF',
                     strokeWidth: 1,
@@ -460,7 +527,7 @@ export default {
                 position: 'bottom',
                 attrs: {
                   circle: {
-                    r: 4,
+                    r: 5,
                     magnet: true,
                     stroke: '#5F95FF',
                     strokeWidth: 1,
@@ -475,7 +542,7 @@ export default {
                 position: 'left',
                 attrs: {
                   circle: {
-                    r: 4,
+                    r: 5,
                     magnet: true,
                     stroke: '#5F95FF',
                     strokeWidth: 1,
@@ -518,6 +585,7 @@ export default {
           let ids = cells.map(el => el.id)
           this.$api['OutputFlow.removeNodes']({ keys: ids }).then(res => {
             this.$message({ type: 'success', message: '删除成功!' })
+            this.$emit('refresh')
           })
         })
       } else {
@@ -548,7 +616,6 @@ export default {
       }
     },
     openActivityInfo (type, id) {
-      console.log("🚀 ~ file: antv.vue:551 ~ openActivityInfo ~ type, id:", type, id)
       this.$emit('openActivityInfo', type, id)
     },
     getX (el, index) {
@@ -608,5 +675,13 @@ export default {
 .antvLayout ::v-deep .list-header {
   padding: 0;
   padding-bottom: 10px !important;
+}
+.header .text.is-disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  i {
+    cursor: not-allowed;
+    color: #9ba0aa !important;
+  }
 }
 </style>
