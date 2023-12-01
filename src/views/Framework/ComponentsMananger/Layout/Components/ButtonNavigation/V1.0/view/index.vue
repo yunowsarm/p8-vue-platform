@@ -184,9 +184,6 @@ export default {
       this.$emit('close')
     },
     onSelect (obj) {
-      if (obj.id == '0') {
-        return
-      }
       const { treeSettingsParmars, dynamicParameter } = this.previewParmars
       // 数据类型为静态数据
       if (treeSettingsParmars.dataType === '1') {
@@ -221,6 +218,9 @@ export default {
       }
       // 组件切换
       if (treeSettingsParmars.navigationPattern === '0') {
+        if (obj.id == '0') {
+          return
+        }
         let key
         // 数据类型为静态数据时组件路径字段为componentsUrl
         if (treeSettingsParmars.dataType === '1') {
