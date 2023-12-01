@@ -3242,10 +3242,11 @@ export default {
   right: 3px;
 }
 .top-table {
-  margin-top: 10px;
+  margin-top: 50px;
   padding: 0;
 }
 .top-ace {
   margin: 15px;
+  margin-top: 50px;
 }
 </style>
