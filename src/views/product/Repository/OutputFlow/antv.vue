@@ -102,6 +102,7 @@ export default {
     // 初始化渲染画布
     initGraph () {
       let that = this
+      that.isPortsShow = false
       that.selectCell = null
       // 连接过程中产生的新边的样式
       Graph.registerEdge(
@@ -148,12 +149,12 @@ export default {
               radius: 8,
             },
           },
-          snap: false, // 是否自动吸附
+          snap: true, // 是否自动吸附
           allowMulti: true, // 是否允许在相同的起始节点和终止之间创建多条边
-          // allowNode: true, // 是否允许边链接到节点（非节点上的链接桩）
+          allowNode: false, // 是否允许边链接到节点（非节点上的链接桩）
           allowBlank: false, // 是否允许连接到空白点
-          allowLoop: false, // 是否允许创建循环连线，即边的起始节点和终止节点为同一节点，
-          allowEdge: false, // 是否允许边链接到另一个边
+          // allowLoop: false, // 是否允许创建循环连线，即边的起始节点和终止节点为同一节点，
+          // allowEdge: false, // 是否允许边链接到另一个边
           // highlight: true, // 拖动边时，是否高亮显示所有可用的连接桩或节点
           // connectionPoint: "boundary", // 指定连接点
           createEdge () {
