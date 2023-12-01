@@ -192,7 +192,9 @@ export default {
       visibleClassifyEditDrawer: false,
       visibleOptionEditDrawer: false,
       treeApi: 'dictionaryManagement.dictCategoryTree',
-      queryParam: {},
+      queryParam: {
+        dicType: ''
+      },
       tableApi: 'dictionaryManagement.list',
       columns: columns,
       rowId: '',
@@ -205,7 +207,11 @@ export default {
   computed: {},
   methods: {
     onSelect (node) {
-      this.queryParam.dicType = node.layersParams.dicType
+      if (node.layersParams) {
+        this.queryParam.dicType = node.layersParams.dicType
+      } else {
+        this.queryParam.dicType = ''
+      }
       this.treeId = node.id
       this.$refs.table.searchData()
     },
