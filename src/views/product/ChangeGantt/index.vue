@@ -90,6 +90,7 @@
   font-size: larger;
 }
 .couerDivClass {
+  padding: 14px;
   height: 100% !important;
   box-sizing: border-box;
   overflow: scroll;
@@ -107,12 +108,15 @@
 }
 .bottom {
   height: calc(100% - 192px);
+  padding-left: 5px;
   position: relative;
   border-top: none;
   background: $base-white-color;
   overflow: hidden;
 }
-
+::v-deep .list-layout {
+  margin-top: 0;
+}
 .el-row {
   &:last-child {
     margin-bottom: 0;
