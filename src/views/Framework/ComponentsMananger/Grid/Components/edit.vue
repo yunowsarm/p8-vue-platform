@@ -2777,31 +2777,37 @@ export default {
       if (this.searchDetailData && this.searchDetailData.length) {
         this.searchDetailData.forEach(el => {
           if (el.parameterSource) {
-            params.reportParam.forEach(item => {
-              if (el.fieldName == item.fieldName) {
-                item.searchMode = el.searchMode
-                item.replaceVal = el.replaceVal
-                item.dictCode = el.dictCode
-                item.defaultValueData = el.defaultValueData
-              }
-            })
+            if (params.reportParam) {
+              params.reportParam.forEach(item => {
+                if (el.fieldName == item.fieldName) {
+                  item.searchMode = el.searchMode
+                  item.replaceVal = el.replaceVal
+                  item.dictCode = el.dictCode
+                  item.defaultValueData = el.defaultValueData
+                }
+              })
+            }
           } else {
-            params.reportItem.forEach(item => {
-              if (el.fieldName == item.fieldName) {
-                item.searchMode = el.searchMode
-                item.replaceVal = el.replaceVal
-                item.dictCode = el.dictCode
-                item.defaultValueData = el.defaultValueData
-              }
-            })
+            if (params.reportItem) {
+              params.reportItem.forEach(item => {
+                if (el.fieldName == item.fieldName) {
+                  item.searchMode = el.searchMode
+                  item.replaceVal = el.replaceVal
+                  item.dictCode = el.dictCode
+                  item.defaultValueData = el.defaultValueData
+                }
+              })
+            }
           }
         })
       }
-      params.reportItem.forEach(item => {
-        if (item.fieldWidth === 0) {
-          item.fieldWidth = item.fieldTxt.length * 30
-        }
-      })
+      if (params.reportItem) {
+        params.reportItem.forEach(item => {
+          if (item.fieldWidth === 0) {
+            item.fieldWidth = item.fieldTxt.length * 30
+          }
+        })
+      }
       this.$refs.form.submitForm(params, this.saveApi)
     },
     async changeSql (val) {
