@@ -32,7 +32,7 @@
                      @close="onEditSchedulerTaskClose">
         <template #drawer>
           <scheduler-task-edit @saveSuccess="saveCallback"
-                                @cancel="schedulerTaskEditDrawer = false"
+                               @cancel="schedulerTaskEditDrawer = false"
                                :record="record"></scheduler-task-edit>
         </template>
       </common-drawer>
@@ -42,7 +42,7 @@
                      @close="onViewSchedulerTaskClose">
         <template #drawer>
           <scheduler-task-view @saveSuccess="saveCallback"
-                                @cancel="schedulerTaskViewDrawer = false"
+                               @cancel="schedulerTaskViewDrawer = false"
                                :record="record"></scheduler-task-view>
         </template>
       </common-drawer>
@@ -167,6 +167,7 @@ export default {
           {
             title: '操作',
             dataIndex: 'operation',
+            width: 120,
             scopedSlots: { customRender: 'operation' },
             align: 'left',
             headerAlign: 'left'
