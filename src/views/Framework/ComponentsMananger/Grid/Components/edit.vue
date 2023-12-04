@@ -770,7 +770,7 @@
                             :config="aceConfig"
                             width="100%"
                             height="300px"></ace-edit>
-                  <el-alert title="该方法默认传递的的参数为row（当前行数据）,返回一个规范的html标签或字符串"
+                  <el-alert title="该方法默认传递的的参数为row（当前行数据）,返回一个规范的html标签或字符串。该项展示已添加xss过滤,展示不正常时联系开发人员"
                             :closable="false"
                             type="warning">
                   </el-alert>
