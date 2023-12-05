@@ -1595,11 +1595,12 @@ export default {
       })
       this.releaseMenuParams.businessId = rowIds
       this.releaseMenuParams.processDefinitionKey = this.processDefinationTwoKey
-      this.releaseMenuParams.beforehandParams.projectInfo = {
-        projectName: this.selsctRow[0].PROJECTNAME,
-        projectType: this.selsctRow[0].PROJECTTYPE,
-        modelCode: this.selsctRow[0].MODELCODE
-      }
+      // this.releaseMenuParams.beforehandParams.projectInfo = {
+      //   projectName: this.selsctRow[0].PROJECTNAME,
+      //   projectType: this.selsctRow[0].PROJECTTYPE,
+      //   modelCode: this.selsctRow[0].MODELCODE
+      // }
+      this.releaseMenuParams.beforehandParams.approveInfoConfig = this.getApproveConfig()
       this.$api['baseData.commitApprove'](this.releaseMenuParams)
         .then(function (res) {
           if (res.result && res.result === 'false') {
@@ -2081,6 +2082,18 @@ export default {
       } else {
         this.$refs.xTable.queryList()
       }
+    },
+    // 获取我的审批展示的字段，默认列表前三列(去除复选框、序号、自定义列)
+    getApproveConfig () {
+      let columns = this.columns.filter(el => !el.type && el.isCustomColumn != '1')
+      if (columns.length) {
+        columns = columns.slice(0, 3);
+      }
+      let obj = {}
+      columns.forEach((item, ind) => {
+        obj['filed' + (ind + 1)] = { label: item.fieldTxt, value: this.selsctRow[0][item.fieldName], }
+      })
+      return obj
     }
   }
 }
