@@ -2804,7 +2804,7 @@ export default {
       if (params.reportItem) {
         params.reportItem.forEach(item => {
           if (item.fieldWidth === 0) {
-            item.fieldWidth = item.fieldTxt.length * 30
+            item.fieldWidth = item.fieldTxt ? item.fieldTxt.length * 30 : 0
           }
         })
       }
