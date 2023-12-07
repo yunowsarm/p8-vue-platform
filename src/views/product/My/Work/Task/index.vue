@@ -307,30 +307,6 @@ import { P8Dialog as CommonDialog, P8ListLayout as ListLayout, P8MenuLayout as M
 import List from './Components/list'
 export default {
   name: 'TabsNavigationPreview',
-  computed: {
-    componentUrl () {
-      if (this.asyncComponents) {
-        if (this.asyncComponents.indexOf('?') !== -1) {
-          const list = this.asyncComponents.split('?')
-          const url = list[0]
-          const parmars = list[1].split('&')
-          const obj = {}
-          parmars.forEach((item) => {
-            const str = item.split('=')
-            if (str[0] === 'code') {
-              obj.code = str[1]
-            }
-          })
-          this.componentsConfig = obj
-          return () => import('@/views/' + url + '.vue')
-        } else {
-          return () => import(`@/views/${this.asyncComponents}.vue`)
-        }
-      } else {
-        return ''
-      }
-    }
-  },
   provide () {
     return {
       provideParams: this.provideParams
@@ -420,6 +396,7 @@ export default {
       if (defaultComponents.url) {
         this.asyncComponents = defaultComponents.url ? defaultComponents.url : ''
         this.componentsConfig = defaultComponents
+        this.provideParams.searchParams = { tabsName: this.tabsData[0].name }
       } else {
         const tabObj = this.tabsData[0]
         const paramsObj = {}
@@ -435,7 +412,7 @@ export default {
         if (tabObj.otherParmarsMap) {
           otherParmarsMap = JSON.parse(tabObj.otherParmarsMap)
         }
-        this.provideParams.searchParams = { ...paramsObj, ...otherParmarsMap }
+        this.provideParams.searchParams = { ...paramsObj, ...otherParmarsMap, tabsName: this.tabsData[0].name }
         if (this.tabsParmar.navigation === '1') {
           if (tabObj.type == '0') {
             this.asyncComponents = tabObj.componentsConfig.url
@@ -465,7 +442,7 @@ export default {
       if (tabs[0].otherParmarsMap) {
         otherParmarsMap = JSON.parse(tabs[0].otherParmarsMap)
       }
-      this.provideParams.searchParams = { ...paramsObj, ...otherParmarsMap }
+      this.provideParams.searchParams = { ...paramsObj, ...otherParmarsMap, tabsName: target.name }
       if (this.tabsParmar.navigation === '1') {
         if (tabs[0].type == '0') {
           this.asyncComponents = tabs[0].componentsConfig.url
