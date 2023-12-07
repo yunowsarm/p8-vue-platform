@@ -107,9 +107,7 @@
 // RightPanel.vue
 .right-board {
   width: 350px;
-  position: absolute;
-  right: 0;
-  top: 0;
+  flex-shrink: 0;
   padding-top: 3px;
   .field-box {
     position: relative;
