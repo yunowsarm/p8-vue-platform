@@ -737,7 +737,7 @@ export default {
       let columnName = ''
       this.columns.forEach(item => {
         // 开启了行点击，配置了下钻，并且不为null
-        if (this.tableInfo.enableClick === 1 && item.tenantId && item.dataIndex === column.property && row[column.property]) {
+        if (this.tableInfo.enableClick === 1 && item.drillDownName && item.dataIndex === column.property && row[column.property]) {
           columnName = 'columnStyle'
         }
         if (classList && classList.length) {
@@ -973,14 +973,14 @@ export default {
                 if (el.dataIndex === item.fieldName) {
                   el.treeNode = true
                   el.align = 'left'
-                  el.tenantId = item.tenantId
+                  el.drillDownName = item.drillDownName
                   el.drillName = item.drillName
                 }
               })
             } else {
               columnData.forEach((el) => {
                 if (el.dataIndex === item.fieldName) {
-                  el.tenantId = item.tenantId
+                  el.drillDownName = item.drillDownName
                   el.drillName = item.drillName
                 }
               })

@@ -103,8 +103,8 @@
                          :false-label="0"
                          @change="saveTableData(data)"></el-checkbox>
           </template>
-          <template #title="{ scope, data }">
-            <el-select v-model="scope.row.title"
+          <template #tableHeaderStyle="{ scope, data }">
+            <el-select v-model="scope.row.tableHeaderStyle"
                        clearable
                        @change="saveTableData(data)">
               <el-option label="左对齐"
@@ -390,7 +390,7 @@
             </el-tooltip>
           </template>
           <template #fieldHref="{ scope, data }">
-            <el-input v-model="scope.row.tenantId"
+            <el-input v-model="scope.row.drillDownName"
                       clearable
                       autosize
                       :disabled="!!scope.row.isCustomColumn">
@@ -1542,7 +1542,7 @@ export default {
         },
         {
           title: '表头对齐方式',
-          dataIndex: 'title',
+          dataIndex: 'tableHeaderStyle',
           align: 'center',
           width: 140,
           scopedSlots: { customRender: 'custom' }
@@ -2623,7 +2623,7 @@ export default {
     handleOk (val) {
       this.dialogVisible = false
       this.reportParams.infoList[this.scopeValue.$index].fieldHref = JSON.stringify(val)
-      this.reportParams.infoList[this.scopeValue.$index].tenantId = val.name ? val.name : val.url
+      this.reportParams.infoList[this.scopeValue.$index].drillDownName = val.name ? val.name : val.url
     },
     _initTableSize () {
       // const vm = this
