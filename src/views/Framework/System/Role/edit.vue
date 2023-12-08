@@ -193,9 +193,15 @@
 }
 .w_tabs {
   margin: 16px;
+  ::v-deep .el-tabs__header {
+    border: none;
+  }
 }
 ::v-deep .el-tabs--border-card > .el-tabs__content {
   padding: 0;
+}
+.leftTabs {
+  height: 100% !important;
 }
 .leftTabs::v-deep .el-tabs__nav-scroll {
   background: #ffffff;
