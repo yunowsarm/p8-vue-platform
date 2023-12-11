@@ -80,6 +80,30 @@ export default {
       ]
     },
     {
+      type: 'blank',
+      labelText: '根节点图标',
+      fieldName: 'rootIcon',
+      slotName: 'rootIcon',
+      placeholder: '下拉选择',
+      colLayout: 'singleCol'
+    },
+    {
+      type: 'blank',
+      labelText: '父节点图标',
+      fieldName: 'parentIcon',
+      slotName: 'parentIcon',
+      placeholder: '下拉选择',
+      colLayout: 'singleCol'
+    },
+    {
+      type: 'blank',
+      labelText: '子节点图标',
+      fieldName: 'childIcon',
+      slotName: 'childIcon',
+      placeholder: '下拉选择',
+      colLayout: 'singleCol'
+    },
+    {
       type: 'radioButton',
       labelText: '导航模式',
       fieldName: 'navigationPattern',
