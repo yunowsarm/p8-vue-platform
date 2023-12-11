@@ -343,7 +343,7 @@ GanttObject.resourceTemplates = function (ganttObject) {
  */
 GanttObject.resourceConfig = function (ganttObject, vueThis) {
   return {
-    scale_height: 30,
+    scale_height: 50,
     // scales: [
     //   { unit: 'day', step: 1, date: '%m/%d' }
     //   // { unit: 'hour', step: 1, date: '%H' }
@@ -2534,7 +2534,7 @@ GanttObject.publicObject = {
     duration_unit: 'day',
     // min_column_width: 20,
     start_on_monday: true, // 设置一周从周一开始
-    row_height: 40,
+    row_height: 50,
     scales: [
       { unit: 'month', step: 1, format: '%Y年%m月' },
       { unit: 'day', step: 1, format: '%j' }
