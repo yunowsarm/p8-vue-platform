@@ -37,7 +37,6 @@
 <script>
 
 import TaskPaneView from './TaskPane'
-import { getTaskStatusInfo } from '../commonBusinessJs'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import { Tooltip, Tag } from 'p8-components-ui'
 export default {
@@ -59,11 +58,6 @@ export default {
     VuePerfectScrollbar,
     'el-tag': Tag,
     'el-tooltip': Tooltip
-  },
-  provide () {
-    return {
-      getPlanInfo: () => this.planInfo
-    }
   },
   data () {
     const header = [
@@ -168,81 +162,10 @@ export default {
           }
         }
       ],
-      dataSource1: [
-        {
-          type: 'view',
-          labelText: '计划名称:',
-          fieldName: 'planName', // taskName
-          colLayout: 'doubleCol'
-        },
-        {
-          type: 'view',
-          labelText: '任务名称:',
-          fieldName: 'name', // taskName
-          colLayout: 'doubleCol'
-        },
-        {
-          type: 'blank',
-          labelText: '进度:',
-          slotName: 'status',
-          colLayout: 'singleCol'
-        },
-        {
-          type: 'blank',
-          labelText: '进度说明:',
-          slotName: 'content',
-          colLayout: 'singleCol'
-        },
-        {
-          type: 'blank',
-          labelText: '状态:',
-          slotName: 'managerStatusDisplay',
-          colLayout: 'singleCol'
-        },
-        {
-          type: 'view',
-          labelText: '工期:',
-          fieldName: 'duration',
-          colLayout: 'doubleCol'
-        },
-        {
-          type: 'blank',
-          labelText: '超期/剩余天数:',
-          slotName: 'durationDay',
-          colLayout: 'doubleCol'
-        },
-        {
-          type: 'blank',
-          labelText: '完成百分比:',
-          slotName: 'progress',
-          colLayout: 'doubleCol'
-        },
-        {
-          type: 'view',
-          labelText: '计划起始日期:',
-          fieldName: 'planDate',
-          colLayout: 'doubleCol'
-        },
-        {
-          type: 'view',
-          labelText: '实际起始日期:',
-          fieldName: 'realDate',
-          colLayout: 'doubleCol'
-        },
-        {
-          type: 'blank',
-          labelText: '',
-          slotName: 'dateline',
-          colLayout: '',
-          formItemConfig: {
-            'label-width': '0px'
-          }
-        }
-      ],
       outputIoData: null,
       taskApi: 'taskManager.taskInfo',
       taskApiParams: {},
-      planInfo: {},
+      // planInfo: {},
       outputApi: 'taskManager.getOutputIo'
     }
   },
@@ -253,13 +176,9 @@ export default {
   methods: {
     getAllStatusOptions () {
       let _this = this
-      getTaskStatusInfo({ currentStatus: 'all' }).then(data => {
-        _this.allStatus = data
-        _this.taskApiParams.taskId = _this.selectedApproval.businessKey
-        _this.planInfo = { allStatus: _this.allStatus, ..._this.taskApiParams }
-        _this.$api[this.outputApi]({ taskId: _this.selectedApproval.businessKey }).then(res => {
-          _this.outputIoData = res
-        })
+      _this.taskApiParams.taskId = _this.selectedApproval.businessKey
+      _this.$api[this.outputApi]({ taskId: _this.selectedApproval.businessKey }).then(res => {
+        _this.outputIoData = res
       })
     },
     downloadOutputRequsetFile (item) {

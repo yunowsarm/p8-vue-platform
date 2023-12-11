@@ -69,7 +69,7 @@ export default {
   mounted () {
     // 超期
     if (!this.durationDay) {
-      if (moment(moment().format('YYYY-MM-DD')).isAfter(moment(this.getPlanInfo().planEndDate))) {
+      if (moment(moment().format('YYYY-MM-DD')).isAfter(moment(this.getPlanInfo().PLANENDDATE))) {
         this.durationDay = false
         // 未超期
       } else {
@@ -78,28 +78,28 @@ export default {
     }
     let taskTabs = []
     // 已下发
-    if (this.getPlanInfo().managerStatus === '6404') {
+    if (this.getPlanInfo().MANAGERSTATUS === '6404') {
       this.tabsActiveName = 'progess'
       taskTabs = this.taskTabsProgess
     }
     // 未开始
-    if (this.getPlanInfo().status === '6020') {
+    if (this.getPlanInfo().STATUS === '6020') {
       this.tabsActiveName = 'progess'
       taskTabs = [...this.taskTabsProgess, ...this.taskTabsUnfinished]
     }
     // 进行中
-    if (this.getPlanInfo().status === '6050') {
+    if (this.getPlanInfo().STATUS === '6050') {
       this.tabsActiveName = 'progess'
       taskTabs = [...this.taskTabsProgess, ...this.taskTabsUnfinished]
     }
     // 已完成
-    if (this.getPlanInfo().status === '6070') {
+    if (this.getPlanInfo().STATUS === '6070') {
       this.tabsActiveName = 'progess'
       this.progessType = 'progessTable'
       taskTabs = [...this.taskTabsProgess, ...this.taskTabsUnfinished]
     }
     // 统筹中
-    if (this.getPlanInfo().managerStatus === '6402') {
+    if (this.getPlanInfo().MANAGERSTATUS === '6402') {
       this.tabsActiveName = 'workCoordination'
       taskTabs = this.taskTabsWork
     }
