@@ -274,7 +274,7 @@
 
 /*列头搜索样式*/
 .gantt_search {
-  line-height: 159%;
+  line-height: 50px;
   /* border-top: solid 1px #EBEEF5; */
   width: 100%;
   height: 50%;
@@ -297,9 +297,14 @@
 }
 
 /* 更改自定义select组件样式 == start*/
-.gantt_custom_select.cs-select {
+/* .gantt_custom_select.cs-select {
+  height: 100%;
   width: 100%;
   min-width: auto;
+} */
+
+.gantt_custom_datepicker {
+  height: 100%;
 }
 
 .gantt_row {
