@@ -846,7 +846,7 @@ export default {
       vueThis.$store.dispatch('setVueThis', vueThis)
       // 初始化对象
       myGantt = planGantt(vueThis.ganttName, vueThis)
-      myGantt.config.scale_height = 50
+      myGantt.config.scale_height = 100
       // 标识锁定后不可操作的列获取
       getMonitorLimitColumns(myGantt.config.columns, vueThis)
       // gantt视图切换
