@@ -115,7 +115,7 @@
     top: 1px;
     z-index: 100;
     width: 16px;
-    height: 40px;
+    height: $base-tableRow-height;
     line-height: 50px;
     text-align: center;
     background: $base-light-color;
@@ -158,27 +158,29 @@
       padding-left: 10px;
     }
 
-    .colSearch {
-      width: 100%;
-      height: 40px;
-      overflow: hidden;
-      background: $base-white-color;
-      margin-top: 8px;
-      border-top: 1px solid #cccccc;
+    .vxe-cell {
+      .colSearch {
+        width: 100%;
+        height: $base-tableRow-height;
+        overflow: hidden;
+        background: $base-white-color;
+        margin-top: 0;
+        border-top: 1px solid #cccccc;
 
-      .el-input--medium .el-input__inner {
-        height: 40px;
-        line-height: 40px;
-        border: none;
-      }
+        .el-input--medium .el-input__inner {
+          height: $base-tableRow-height;
+          line-height: $base-tableRow-height;
+          border: none;
+        }
 
-      .el-range-editor--medium.el-input__inner {
-        height: 40px;
-        line-height: 40px;
-        border: none;
-        padding-right: 15px;
-        .el-range-separator {
-          line-height: 34px;
+        .el-range-editor--medium.el-input__inner {
+          height: $base-tableRow-height;
+          line-height: $base-tableRow-height;
+          border: none;
+          padding-right: 15px;
+          .el-range-separator {
+            line-height: 34px;
+          }
         }
       }
     }
@@ -241,25 +243,31 @@
 .vxeTable {
   width: 100%;
   .vxe-header--column:not(.col--ellipsis) {
-    padding: 2px 0 !important;
+    padding: 0 0 !important;
     // border: 1px solid #cccccc;
     border-right: 1px solid #e8eaec !important;
     // border-bottom: 1px solid #cccccc !important;
   }
 }
-.vxe-table--render-default .vxe-cell {
+.vxe-table--body .vxe-table--render-default .vxe-cell {
   padding: 0 !important;
+  padding-left: 10px;
 }
-// ::v-deep .vxe-body--column {
-//   border-left: 1px solid #cccccc !important;
-//   border-bottom: 1px solid #cccccc !important;
-// }
+.vxe-table--render-default.vxe-editable.size--small .vxe-body--column{
+  height:$base-tableRow-height !important;
+}
+.vxe-table--render-default.size--small{
+  font-size: $base-tableHeader-fontSize !important;
+}
+.vxe-table--render-default.size--small .vxe-cell{
+  font-size: $base-tableBody-fontSize !important;
+}
 // ::v-deep th.vxe-header--column {
 //   border-left: 1px solid #cccccc !important;
 //   border-bottom: 1px solid #cccccc !important;
 // }
 .common-table .vxe-cell--title {
-  line-height: 41px;
+  line-height: $base-tableRow-height;
 }
 .common-table
   .vxe-table--render-default
