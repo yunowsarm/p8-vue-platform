@@ -9,8 +9,22 @@
       <common-tree :default-expanded-keys="defaultExpandedKeys"
                    :default-expand-all="false"
                    :data="treeData"
+                   class="layoutTree"
                    ref="commonTree"
-                   @select="onSelect"></common-tree>
+                   :nodeSlot="true"
+                   @select="onSelect">
+        <template #tree="{ node }">
+          <span>
+            <i v-if="node.isLeaf"
+               :class="getIcon(node)"></i>
+            <i v-else-if="!node.isLeaf && node.expanded"
+               :class="getIcon(node)"></i>
+            <i v-else
+               :class="getIcon(node)"></i>
+            <span>{{ node.label }}</span>
+          </span>
+        </template>
+      </common-tree>
     </template>
     <template #center>
       <component v-if="componentUrl"
@@ -44,10 +58,10 @@
   background-position: center;
   margin-top: 25px;
 }
-// .layoutComponents ::v-deep .el-tree-node__content .is-leaf{
-//   display: inline-block !important;
-//   width: 25px;
-// }
+.layoutComponents .layoutTree ::v-deep .el-tree-node__content .is-leaf{
+  display: inline-block !important;
+  width: 12px;
+}
 ::v-deep .search-wrapper {
   right: 10px;
 }
@@ -329,6 +343,24 @@ export default {
       }
       getData(treeList)
       return arr
+    },
+    getIcon (node) {
+      let treeSettingsParmars = this.previewParmars.treeSettingsParmars
+      let icon = ''
+      if (!node.isLeaf && node.level == 1) {
+        console.log(node.data.label,1);
+        icon = treeSettingsParmars.rootIcon ? treeSettingsParmars.rootIcon : 'p8 icon-zong'
+      } else {
+        if (node.isLeaf) {
+          icon = treeSettingsParmars.childIcon ? treeSettingsParmars.childIcon : 'p8 icon-fenzu'
+        } else if(!node.isLeaf && node.expanded) {
+          console.log(node.data.label,2);
+          icon = treeSettingsParmars.parentIcon ? treeSettingsParmars.parentIcon : 'p8 icon-zong'
+        } else {
+          icon = treeSettingsParmars.parentIcon ? treeSettingsParmars.parentIcon : 'el-icon-folder'
+        }
+      }
+      return icon
     }
   }
 }
