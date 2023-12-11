@@ -109,7 +109,7 @@ export default {
     }
   },
   mounted () {
-    this.taskApiParams.taskId = this.getPlanInfo().taskId
+    this.taskApiParams.taskId = this.getPlanInfo().TASKID
   },
   methods: {
     arrowClickHandle () {
