@@ -4,6 +4,7 @@
 <template>
   <common-dialog title="预览"
                  :visible="visible"
+                 class="layoutDialog"
                  :show-handle-btn="false"
                  :dialog-height="dialogHeight"
                  @handle-cancel="handleCancel"
@@ -17,7 +18,20 @@
                        :default-expanded-keys="defaultExpandedKeys"
                        :default-expand-all="false"
                        :data="treeData"
-                       @select="onSelect"></common-tree>
+                       :nodeSlot="true"
+                       @select="onSelect">
+            <template #tree="{ node }">
+              <span>
+                <i v-if="node.isLeaf"
+                   :class="getIcon(node)"></i>
+                <i v-else-if="!node.isLeaf && node.expanded"
+                   :class="getIcon(node)"></i>
+                <i v-else
+                   :class="getIcon(node)"></i>
+                <span>{{ node.label }}</span>
+              </span>
+            </template>
+          </common-tree>
         </template>
         <template #center>
           <!-- <component :is="componentUrl" :code="code"></component> -->
@@ -36,10 +50,17 @@
   </common-dialog>
 </template>
 <style lang="scss" scoped>
-// .layoutComponents ::v-deep .el-tree-node__content .is-leaf{
-//   display: inline-block !important;
-//   width: 25px;
-// }
+.layoutComponents ::v-deep .el-tree-node__content .is-leaf {
+  display: inline-block !important;
+  width: 12px;
+}
+.layoutComponents {
+  padding: 0;
+  margin: 0;
+}
+.layoutDialog ::v-deep .el-dialog__body {
+  padding: 10px;
+}
 </style>
 <script>
 import { Input, Button } from 'element-ui'
@@ -313,6 +334,20 @@ export default {
       }
       getData(treeList)
       return arr
+    },
+    getIcon (node) {
+      let treeSettingsParmars = this.previewParmars.treeSettingsParmars
+      let icon = ''
+      if (!node.data.parentId) {
+        icon = treeSettingsParmars.rootIcon ? treeSettingsParmars.rootIcon : 'p8 icon-zong'
+      } else {
+        if (!node.isLeaf) {
+          icon = treeSettingsParmars.parentIcon ? treeSettingsParmars.parentIcon : 'p8 icon-zong'
+        } else {
+          icon = treeSettingsParmars.childIcon ? treeSettingsParmars.childIcon : 'el-icon-folder'
+        }
+      }
+      return icon
     }
   }
 }

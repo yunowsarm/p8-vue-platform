@@ -15,7 +15,17 @@
                    :draggable="treeSettingsParmars.dataType === '1'">
         <template #tree="{ node }">
           <div style="width: 100%">
-            <div class="labelShow">{{ node.label }}</div>
+            <div class="labelShow">
+              <span>
+                <i v-if="node.isLeaf"
+                  :class="getIcon(node)"></i>
+                <i v-else-if="!node.isLeaf && node.expanded"
+                  :class="getIcon(node)"></i>
+                <i v-else
+                  :class="getIcon(node)"></i>
+              </span>
+              {{ node.label }}
+            </div>
             <div class="iconOperation">
               <!-- dataType数据类型 0为动态数据  1为静态数据 -->
               <i class="el-icon-circle-plus"
@@ -152,7 +162,7 @@
 }
 .layoutComponents ::v-deep .el-tree-node__content .is-leaf{
   display: inline-block !important;
-  width: 25px;
+  width: 12px;
 }
 </style>
 <script>
@@ -420,6 +430,20 @@ export default {
     },
     settingsDelect () {
       this.asyncComponents = ''
+    },
+    getIcon (node) {
+      let treeSettingsParmars = this.treeSettingsParmars
+      let icon = ''
+      if (!node.data.parentId) {
+        icon = treeSettingsParmars.rootIcon ? treeSettingsParmars.rootIcon : 'p8 icon-zong'
+      } else {
+        if (!node.isLeaf) {
+          icon = treeSettingsParmars.parentIcon ? treeSettingsParmars.parentIcon : 'p8 icon-zong'
+        } else {
+          icon = treeSettingsParmars.childIcon ? treeSettingsParmars.childIcon : 'el-icon-folder'
+        }
+      }
+      return icon
     }
   }
 }
