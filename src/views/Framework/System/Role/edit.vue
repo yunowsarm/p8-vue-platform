@@ -19,6 +19,7 @@
                      name="setLimit"
                      key="1">
           <select-btn ref="selectBtn"
+                      style="padding-top:10px;"
                       @btn-select-change="btnSelectChange"
                       :button-selected="selectedData.resourceList"></select-btn>
         </el-tab-pane>
@@ -96,7 +97,7 @@
                      name="setProject"
                      key="4">
           <el-col :style="{ height: flexHeight }"
-                  style="overflow: auto">
+                  style="overflow: auto;padding-top:10px;">
             <form-list ref="form1"
                        :data-source="projectDataSource"
                        :form="formData"
@@ -192,6 +193,7 @@
   // line-height: 50px;
 }
 .w_tabs {
+  box-shadow: unset;
   margin: 16px;
   ::v-deep .el-tabs__header {
     border: none;
@@ -201,7 +203,8 @@
   padding: 0;
 }
 .leftTabs {
-  height: 100% !important;
+  padding-top: 10px;
+  height: calc(100% - 10px) !important;
 }
 .leftTabs::v-deep .el-tabs__nav-scroll {
   background: #ffffff;
