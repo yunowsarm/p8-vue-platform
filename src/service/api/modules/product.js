@@ -1488,6 +1488,13 @@ export const repositoryApi = {
       path: '/product/klActivity/loadModeData',
       mockPath: '/product/klActivity/loadModeData',
       desc: '知识库管理->产出流程管理->图形模式查询接口'
+    },
+    {
+      name: 'loadModeDataSave',
+      method: 'POST',
+      path: '/product/klActivity/loadModeDataSave',
+      mockPath: '/product/klActivity/loadModeDataSave',
+      desc: '知识库管理->产出流程管理->存储位置信息'
     }
   ],
   TodoList: [

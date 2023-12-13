@@ -3,9 +3,9 @@
     <template #north>
       <div class="header">
         <div class="text"
-             v-for="(el,index) in buttonList"
+             v-for="(el, index) in buttonList"
              :key="index"
-             :class="{'is-disabled': disabledFun(el)}"
+             :class="{ 'is-disabled': disabledFun(el) }"
              @click="clickFun(el.fun)">
           <el-tooltip effect="dark"
                       :content="el.title"
@@ -32,7 +32,7 @@ import { Graph, Shape } from '@antv/x6'
 import { configSetting, buttonConfig, configNodePorts, graphBindKey } from './antvSetting'
 import { P8ListLayout as ListLayout } from 'p8-components-ui'
 export default {
-  name: "AntV6X",
+  name: 'AntV6X',
   components: {
     ListLayout
   },
@@ -76,7 +76,7 @@ export default {
           return false
         }
       }
-    },
+    }
   },
   data () {
     return {
@@ -93,7 +93,7 @@ export default {
     window.openActivityInfo = this.openActivityInfo.bind(this)
   },
   mounted () {
-    this.initGraph()
+    // this.initGraph()
   },
   beforeDestroy () {
     this.graph.dispose()
@@ -106,37 +106,37 @@ export default {
       that.selectCell = null
       // 连接过程中产生的新边的样式
       Graph.registerEdge(
-        "dag-edge",
+        'dag-edge',
         {
-          inherit: "edge",
+          inherit: 'edge',
           router: { name: 'orth' },
           connector: { name: 'rounded' },
           attrs: {
             line: {
-              stroke: "#9DADB6",
+              stroke: '#9DADB6',
               strokeWidth: 2,
               sourceMarker: null,
-              targetMarker: null,
-            },
-          },
+              targetMarker: null
+            }
+          }
         },
         true
-      );
+      )
       Graph.registerEdge(
-        "arrow-edge",
+        'arrow-edge',
         {
-          inherit: "edge",
+          inherit: 'edge',
           router: { name: 'orth' },
           connector: { name: 'rounded' },
           attrs: {
             line: {
-              stroke: "#9DADB6",
+              stroke: '#9DADB6',
               strokeWidth: 2
-            },
-          },
+            }
+          }
         },
         true
-      );
+      )
       const graph = new Graph({
         container: document.getElementById('wrapper'),
         grid: true,
@@ -146,8 +146,8 @@ export default {
           connector: {
             name: 'rounded',
             args: {
-              radius: 8,
-            },
+              radius: 8
+            }
           },
           snap: true, // 是否自动吸附
           allowMulti: true, // 是否允许在相同的起始节点和终止之间创建多条边
@@ -165,10 +165,10 @@ export default {
                     stroke: '#333333',
                     strokeWidth: 1,
                     targetMarker: null,
-                    sourceMarker: null, // 实心箭头
+                    sourceMarker: null // 实心箭头
                   }
                 },
-                zIndex: 0,
+                zIndex: 0
               })
             } else {
               return new Shape.Edge({
@@ -178,14 +178,14 @@ export default {
                     strokeWidth: 1
                   }
                 },
-                zIndex: 0,
+                zIndex: 0
               })
             }
           },
           validateConnection ({ targetMagnet }) {
             return !!targetMagnet
           }
-        },
+        }
       })
       graphBindKey(graph)
       graph.enablePanning()
@@ -200,9 +200,9 @@ export default {
             args: {
               attrs: {
                 stroke: '#9254de',
-                strokeWidth: 1,
+                strokeWidth: 1
               }
-            },
+            }
           })
         }
         if (edge) {
@@ -211,9 +211,9 @@ export default {
             args: {
               attrs: {
                 stroke: '#9254de',
-                strokeWidth: 1,
-              },
-            },
+                strokeWidth: 1
+              }
+            }
           })
         }
       })
@@ -223,40 +223,92 @@ export default {
       })
       // 链接事件
       graph.on('edge:connected', ({ edge }) => {
-        let source = this.acivityData.find(el => el.key == edge.source.cell)
-        let target = this.acivityData.find(el => el.key == edge.target.cell)
+        let source = this.acivityData.find((el) => el.key == edge.source.cell)
+        let target = this.acivityData.find((el) => el.key == edge.target.cell)
         if (this.portsType == 'parent') {
           if (source && target && source.parent == target.parent) {
             that.$message({ type: 'warning', message: '当前节点不可设置为子节点' })
-            graph.removeEdge(edge.id); // 取消连接边的操作
+            graph.removeEdge(edge.id) // 取消连接边的操作
           } else {
-            let parent = ''
-            if (source) {
-              parent = source.key
-            } else {
-              parent = target.key
+            let parent = target.key
+            // if (source) {
+            //   parent = source.key
+            // } else {
+            // parent = target.key
+            // }
+            if (parent) {
+              that.$api['OutputFlow.saveNode']({
+                name: '新活动',
+                parent: parent,
+                insertNum: 1,
+                insertType: 'Child'
+              }).then((res) => {
+                that.graph.dispose()
+                that.$emit('refresh')
+              })
             }
-            that.$api['OutputFlow.saveNode']({
-              name: '新活动',
-              parent: parent,
-              insertNum: 1,
-              insertType: 'Child'
-            }).then(res => {
-              that.$emit('refresh')
-            })
           }
         } else if (this.portsType == 'around') {
-          if (source && target) {
-            that.$api['OutputFlow.GMpredecessorsCreateOrUpdate']({
-              flFromId: source.key,
-              flToId: target.key,
-            }).then(res => {
-              that.$emit('refresh')
-            })
+          if (source && target && target.key !== source.key) {
+            let arr = []
+            function findAllParent (list, parent) {
+              if (list && list.length) {
+                list.forEach(el => {
+                  if (el.key == parent) {
+                    arr.push(el.key)
+                    findAllParent(list, el.parent)
+                  }
+                })
+              }
+              return arr
+            }
+            function findAllChildren (list, key) {
+              if (list && list.length) {
+                list.forEach(el => {
+                  if (el.parent == key) {
+                    arr.push(el.key)
+                    findAllChildren(list, el.key)
+                  }
+                })
+              }
+              return arr
+            }
+            findAllChildren(this.acivityData, source.key)
+            findAllParent(this.acivityData, source.parent)
+            if (arr.indexOf(target.key) === -1) {
+              that.$api['OutputFlow.GMpredecessorsCreateOrUpdate']({
+                flFromId: source.key,
+                flToId: target.key
+              }).then((res) => {
+                that.graph.dispose()
+                that.$emit('refresh')
+              })
+            } else {
+              graph.removeEdge(edge.id) // 取消连接边的操作
+              that.$message({ type: 'warning', message: '链接失败' })
+            }
           } else {
-            graph.removeEdge(edge.id); // 取消连接边的操作
-            that.$message({ type: 'warning', message: '该节点层级结构有误' })
+            graph.removeEdge(edge.id) // 取消连接边的操作
+            that.$message({ type: 'warning', message: '链接失败' })
           }
+        }
+      })
+      // 空白点击事件
+      graph.on('node:moved', ({ e, x1, y1, node, view }) => {
+        let nodeData = node.store.data ? node.store.data.data : null
+        if (nodeData) {
+          var bbox = node.getBBox();
+          var x = bbox.x;
+          var y = bbox.y;
+          let parmar = {
+            id: nodeData.key,
+            nodeConfig: JSON.stringify({ x, y })
+          }
+          that.$api['OutputFlow.loadModeDataSave'](parmar).then(res => {
+            if (res) {
+              console.log(res, '====res')
+            }
+          })
         }
       })
       this.graph = graph
@@ -272,7 +324,7 @@ export default {
         this.acivityData.forEach((el, index) => {
           let str = ''
           let ports = {}
-          if (el.parent && el.parent) {
+          if (el.parent) {
             ports = {
               groups: {
                 top: {
@@ -285,10 +337,10 @@ export default {
                       strokeWidth: 1,
                       fill: '#fff',
                       style: {
-                        visibility: 'hidden',
-                      },
-                    },
-                  },
+                        visibility: 'hidden'
+                      }
+                    }
+                  }
                 },
                 right: {
                   position: 'right',
@@ -300,10 +352,10 @@ export default {
                       strokeWidth: 1,
                       fill: '#fff',
                       style: {
-                        visibility: 'hidden',
-                      },
-                    },
-                  },
+                        visibility: 'hidden'
+                      }
+                    }
+                  }
                 },
                 bottom: {
                   position: 'bottom',
@@ -315,10 +367,10 @@ export default {
                       strokeWidth: 1,
                       fill: '#fff',
                       style: {
-                        visibility: 'hidden',
-                      },
-                    },
-                  },
+                        visibility: 'hidden'
+                      }
+                    }
+                  }
                 },
                 left: {
                   position: 'left',
@@ -330,25 +382,25 @@ export default {
                       strokeWidth: 1,
                       fill: '#fff',
                       style: {
-                        visibility: 'hidden',
-                      },
-                    },
-                  },
-                },
+                        visibility: 'hidden'
+                      }
+                    }
+                  }
+                }
               },
               items: [
                 {
-                  group: 'top',
+                  group: 'top'
                 },
                 {
-                  group: 'right',
+                  group: 'right'
                 },
                 {
-                  group: 'bottom',
+                  group: 'bottom'
                 },
                 {
-                  group: 'left',
-                },
+                  group: 'left'
+                }
               ]
             }
             str = `
@@ -366,9 +418,11 @@ export default {
                   </div>
                 </div>
                 <div style="text-align: center;height:50px;line-height:50px;">${el.name ? el.name : ''}</div>
-                <div style="text-align:right;border-top:1px solid #eee;height:20px;line-height:20px;padding-right:5px;"><i class="el-icon-time" style="display: ${el.suggestionDuration ? 'inline' : 'none'}"></i>${el.suggestionDuration ? el.suggestionDuration : ''}</div>
+                <div style="text-align:right;border-top:1px solid #eee;height:20px;line-height:20px;padding-right:5px;"><i class="el-icon-time" style="display: ${el.suggestionDuration ? 'inline' : 'none'
+              }"></i>${el.suggestionDuration ? el.suggestionDuration : ''}</div>
               </div>`
           } else {
+            this.processId = el.key
             ports = {
               groups: {
                 bottom: {
@@ -381,15 +435,15 @@ export default {
                       strokeWidth: 1,
                       fill: '#fff',
                       style: {
-                        visibility: 'hidden',
-                      },
-                    },
-                  },
+                        visibility: 'hidden'
+                      }
+                    }
+                  }
                 }
               },
               items: [
                 {
-                  group: 'bottom',
+                  group: 'bottom'
                 }
               ]
             }
@@ -420,7 +474,7 @@ export default {
       }
       if (this.edgeList && this.edgeList.length) {
         this.edgeList.forEach((el, index) => {
-          let source = this.graph.getCellById(el.from)//通过id获取边/节点
+          let source = this.graph.getCellById(el.from) //通过id获取边/节点
           let target = this.graph.getCellById(el.to)
           if (source && target) {
             if (el.category) {
@@ -464,112 +518,20 @@ export default {
     },
     // 新建
     addActivity (data) {
+      let that = this
       this.graph.removeTools()
       if (data) {
         this.graph.addNode(data)
       } else {
-        let str = `
-          <div class="warp" style="height: 100%; width:100%;border:1px solid #eee;border-radios:50%;font-size:14px;background:#fff;">
-            <div class="header" style="height:20px;border-bottom:1px solid #eee;position: relative;">
-              <div style="position:absolute;left:5px;top:0;">
-                <span></span>
-              </div>
-              <div style="position:absolute;right:5px;top:0;">
-              </div>
-            </div>
-            <div style="text-align: center;height:50px;line-height:50px;">新活动</div>
-            <div style="text-align:right;border-top:1px solid #eee;height:20px;line-height:20px;padding-right:5px;"></div>
-          </div>`
-        this.graph.addNode({
-          id: '',
-          width: 180,
-          height: 80,
-          shape: 'html',
-          x: 200,
-          y: 0,
-          html: () => {
-            const wrap = document.createElement('div')
-            wrap.innerHTML = str
-            return wrap
-          },
-          ports: {
-            groups: {
-              top: {
-                position: 'top',
-                attrs: {
-                  circle: {
-                    r: 5,
-                    magnet: true,
-                    stroke: '#5F95FF',
-                    strokeWidth: 1,
-                    fill: '#fff',
-                    style: {
-                      visibility: this.isPortsShow ? 'visible' : 'hidden',
-                    },
-                  },
-                },
-              },
-              right: {
-                position: 'right',
-                attrs: {
-                  circle: {
-                    r: 5,
-                    magnet: true,
-                    stroke: '#5F95FF',
-                    strokeWidth: 1,
-                    fill: '#fff',
-                    style: {
-                      visibility: this.isPortsShow ? 'visible' : 'hidden',
-                    },
-                  },
-                },
-              },
-              bottom: {
-                position: 'bottom',
-                attrs: {
-                  circle: {
-                    r: 5,
-                    magnet: true,
-                    stroke: '#5F95FF',
-                    strokeWidth: 1,
-                    fill: '#fff',
-                    style: {
-                      visibility: this.isPortsShow ? 'visible' : 'hidden',
-                    },
-                  },
-                },
-              },
-              left: {
-                position: 'left',
-                attrs: {
-                  circle: {
-                    r: 5,
-                    magnet: true,
-                    stroke: '#5F95FF',
-                    strokeWidth: 1,
-                    fill: '#fff',
-                    style: {
-                      visibility: this.isPortsShow ? 'visible' : 'hidden',
-                    },
-                  },
-                },
-              },
-            },
-            items: [
-              {
-                group: 'top',
-              },
-              {
-                group: 'right',
-              },
-              {
-                group: 'bottom',
-              },
-              {
-                group: 'left',
-              },
-            ]
-          },
+        let parent = this.selectCell ? this.selectCell.id : this.processId
+        this.$api['OutputFlow.saveNode']({
+          name: '新活动',
+          parent: parent,
+          insertNum: 1,
+          insertType: 'Child'
+        }).then((res) => {
+          that.graph.dispose()
+          that.$emit('refresh')
         })
       }
     },
@@ -583,9 +545,10 @@ export default {
           type: 'warning'
         }).then(() => {
           this.graph.removeCells(cells)
-          let ids = cells.map(el => el.id)
-          this.$api['OutputFlow.removeNodes']({ keys: ids }).then(res => {
+          let ids = cells.map((el) => el.id)
+          this.$api['OutputFlow.removeNodes']({ keys: ids }).then((res) => {
             this.$message({ type: 'success', message: '删除成功!' })
+            this.graph.dispose()
             this.$emit('refresh')
           })
         })
@@ -620,17 +583,27 @@ export default {
       this.$emit('openActivityInfo', type, id)
     },
     getX (el, index) {
-      if (!el.parent) {
-        return 0
+      let x = 0
+      if (el.nodeConfig) {
+        x = JSON.parse(el.nodeConfig).x
       } else {
-        return el.x * (200 + 50)
+        if (!el.parent) {
+          x = 0
+        } else {
+          x = el.x * (200 + 50)
+        }
       }
+      return x
     },
     getY (el, index) {
-      if (!el.parent) {
-        return 0
+      if (el.nodeConfig) {
+        return JSON.parse(el.nodeConfig).y
       } else {
-        return Number(el.level - 1) * (95 + 60)
+        if (!el.parent) {
+          return 0
+        } else {
+          return Number(el.level - 1) * (95 + 60)
+        }
       }
     }
   }
