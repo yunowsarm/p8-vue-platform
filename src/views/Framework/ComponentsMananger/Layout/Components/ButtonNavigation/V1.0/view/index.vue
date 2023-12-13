@@ -348,13 +348,11 @@ export default {
       let treeSettingsParmars = this.previewParmars.treeSettingsParmars
       let icon = ''
       if (!node.isLeaf && node.level == 1) {
-        console.log(node.data.label,1);
         icon = treeSettingsParmars.rootIcon ? treeSettingsParmars.rootIcon : 'p8 icon-zong'
       } else {
         if (node.isLeaf) {
           icon = treeSettingsParmars.childIcon ? treeSettingsParmars.childIcon : 'p8 icon-fenzu'
         } else if(!node.isLeaf && node.expanded) {
-          console.log(node.data.label,2);
           icon = treeSettingsParmars.parentIcon ? treeSettingsParmars.parentIcon : 'p8 icon-zong'
         } else {
           icon = treeSettingsParmars.parentIcon ? treeSettingsParmars.parentIcon : 'el-icon-folder'
