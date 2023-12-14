@@ -1471,7 +1471,7 @@ export default {
       customRenderVisible: false,
       sqlIdOption: [],
       height: height + 'px',
-      aceEditHeight: height * 0.9 - 15 + 'px',
+      aceEditHeight: height * 0.9 - 65 + 'px',
       tabsData: [
         {
           label: '表格配置明细',
@@ -3248,8 +3248,9 @@ export default {
   right: 3px;
 }
 .top-table {
-  margin-top: 50px;
+  height: calc(100% - 55px);
   padding: 0;
+  padding-top: 50px;
 }
 .top-ace {
   margin: 15px;
