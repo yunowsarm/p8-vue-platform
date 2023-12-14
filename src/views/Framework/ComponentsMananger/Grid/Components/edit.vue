@@ -3192,9 +3192,9 @@ export default {
 .formList.el-form > .el-row.formBtn {
   z-index: 9999;
 }
-// .editTable ::v-deep .el-table__body-wrapper {
-//   height: calc(100% - 50px) !important;
-// }
+.editTable ::v-deep .el-table__body-wrapper {
+  height: calc(100% - 50px) !important;
+}
 .editConfig {
   height: calc(100% - 120px) !important;
 }
