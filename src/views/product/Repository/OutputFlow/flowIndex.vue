@@ -179,11 +179,12 @@
       background: #fff;
     }
   }
-  > .el-tabs__header.is-top {
-    height: 42px;
+  > ::v-deep .el-tabs__header.is-top {
+    margin: 0;
+    height: 35px;
   }
-  > .el-tabs__content {
-    height: calc(100% - 43px);
+  > ::v-deep .el-tabs__content {
+    height: calc(100% - 40px);
     > .el-tab-pane {
       height: 100%;
     }
@@ -213,9 +214,6 @@
   }
   > .el-tabs__header.is-top {
     height: 42px;
-  }
-  .el-tabs__content {
-    height: calc(100% - 43px);
   }
   .el-tab-pane {
     height: 100%;
