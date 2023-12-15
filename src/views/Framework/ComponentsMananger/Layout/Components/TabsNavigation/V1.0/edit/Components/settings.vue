@@ -8,6 +8,7 @@
                  :dialog-height="dialogHeight"
                  @handle-cancel="handleCancel"
                  @handle-ok="handleOk"
+                 @isfullscreen="isfullscreen"
                  @close="handleCancel">
     <template #dialog>
       <form-list ref="form"
@@ -163,9 +164,25 @@
 }
 .formList ::v-deep .el-row {
   height: 100%;
+  .el-col-24 {
+    height: calc(100% - 160px);
+  }
+  #elTabsDiv,
+  #elTabs {
+    height: 100%;
+    .list-layout {
+      padding: 0;
+    }
+    .common-table {
+      height: 100% !important;
+    }
+  }
+}
+::v-deep .el-dialog__body {
+  padding: 0;
 }
 ::v-deep .el-tabs {
-  height: 320px !important;
+  // height: 320px !important;
   .list-header button {
     margin-top: 9px;
     margin-left: 10px;
@@ -567,6 +584,14 @@ export default {
     },
     iconSelect (select) {
       this.iconTempSel = select
+    },
+    isfullscreen (isfullscreen) {
+      const arr = this.editableData
+      this.editableData = []
+      let that = this
+      setTimeout(() => {
+        that.editableData = [...arr]
+      }, 200)
     }
   }
 }
