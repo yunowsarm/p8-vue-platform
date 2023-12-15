@@ -16,54 +16,6 @@
                     :west-tree-param="provideParams.searchParams"
                     @refresh="init()">
         <template #NAME="{ scope, thirdMenuData }">
-          <el-tag size="mini"
-                  type="danger"
-                  style="margin-right: 10px"
-                  v-if="scope.row.ALLCHILDFINISH === 'true'">未分解
-          </el-tag>
-          <el-tooltip v-if="(scope.row.dataType &&
-                    scope.row.dataType === 'task') && scope.row.MANAGERSTATUS !== '6406' && scope.row.MANAGERSTATUS !== '6409' &&
-                   ((scope.row.EXECUTESTATE !== '1090' &&   scope.row.ISLEAF === 0) ||
-                   (scope.row.EXECUTESTATE !== '1090' &&   scope.row.ISLEAF === 1 && scope.row.ALLCHILDFINISH === 'true'))
-                  "
-                      effect="dark"
-                      :content="'该任务可提交完成'"
-                      placement="top"
-                      class="icon-style">
-            <i class="p8 icon-can-commit"></i>
-          </el-tooltip>
-          <el-tooltip v-if="
-              scope.row.MANAGERSTATUS === '6406' &&
-              scope.row.dataType &&
-              scope.row.dataType === 'task'
-            "
-                      effect="dark"
-                      :content="`${scope.row.APPROVERNAME}`"
-                      placement="right">
-            <span class="base-custom-style-task approve"
-                  @click.stop="viewTaskApprove(scope.row)">审</span>
-          </el-tooltip>
-          <el-tooltip v-if="
-              scope.row.MANAGERSTATUS === '6406' &&
-              scope.row.dataType &&
-              scope.row.dataType === 'task'
-            "
-                      effect="dark"
-                      :content="`${scope.row.MANAGERSTATUSDISPLAY},点击可撤回`"
-                      placement="right">
-            <span class="base-custom-style-task approves"
-                  @click.stop="withdrawTaskApprove(scope.row)">撤</span>
-          </el-tooltip>
-          <el-tooltip v-if="
-              scope.row.MANAGERSTATUS === '6407' &&
-              scope.row.dataType &&
-              scope.row.dataType === 'task'
-            "
-                      effect="dark"
-                      :content="`${scope.row.MANAGERSTATUSDISPLAY}`"
-                      placement="right">
-            <span class="base-custom-style-task approves">驳</span>
-          </el-tooltip>
           <span v-if="scope.row.dataType === 'task'"
                 class="underline"
                 @click="drillCol(scope, thirdMenuData)">{{ scope.row.NAME }} </span>
