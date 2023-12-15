@@ -9,6 +9,7 @@
       :sys-params="sysParams"
       :type="type"
       :init-config="initConfig"
+      :multipleData="multipleData"
       @setPageData="setPageData"
       @saveForm="saveAction"
       @save="saveChange"
@@ -25,6 +26,7 @@
       :sys-params="sysParams"
       :type="type"
       :init-config="initConfig"
+      :multipleData="multipleData"
       :modify-res="modifyRes"
       :container-layout="modifyRes.containerLayout"
       @setPageData="setPageData"
@@ -117,6 +119,7 @@ export default {
       dynamicParamObj: {}, // 动态参数集合
       customFn: '',
       saveAction: '',
+      multipleData: {},
       pageData: Object.assign({}, this.sysParams),
       containerLayout: '' //  组件的layout
     }
@@ -552,6 +555,7 @@ export default {
       if (Array.isArray(result)) {
         const index = result.findIndex((v) => field.__config__.childrenTable === v.tableId)
         const newData = result[index].data
+        this.multipleData[field.__config__.childrenTable] = newData
         let modifyData = {}
         let val = []
         let data = []
@@ -566,6 +570,9 @@ export default {
           } else if (field.__config__.tag === 'el-checkbox-group') {
             val.push(item.table[field.__vModel__])
             field.__config__.defaultValue = val
+          } else if (field.__config__.tag === 'eject-select') {
+            val.push(item.table[field.__vModel__])
+            field.__config__.defaultValue = val.join(',')
           } else if (field.__config__.tag === 'el-input') {
             val = item.table[field.__vModel__]
             field.__config__.defaultValue = val
