@@ -264,8 +264,10 @@ export default {
         this.myChart = new Chart({
           container: this.chartId
         })
-        // this.myChart.options({ ...this.chartOption })
-        // this.myChart.render();
+        if(!this.appConfig.dataviewId && !this.appConfig.apiDataUrl){
+          this.myChart.options({ ...this.chartOption })
+          this.myChart.render();
+        }
       } catch (e) {
         console.error(e)
       }

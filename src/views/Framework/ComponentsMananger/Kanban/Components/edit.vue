@@ -38,7 +38,7 @@
         <el-button type="info"
                    class="el-btn"
                    v-if="formData.functionalCategory == '4'"
-                   @click="showAntvHelp">Ant帮助</el-button>
+                   @click="showAntvHelp">AntV_G2帮助</el-button>
         <el-button type="primary"
                    @click="handleViews"
                    v-if="formData.functionalCategory">预览 </el-button>
