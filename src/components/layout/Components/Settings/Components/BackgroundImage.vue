@@ -2,13 +2,19 @@
   <div>
     <div class="tips">
       <div class="vertical_line"></div>
-      用户基本信息
+      菜单栏背景图
     </div>
     <div class="select-theme">
-      <div v-for="(item, index) in imageName" :key="index">
-        <el-image style="width: 100px; height: 180px; margin-left: 10px" :src="item.url" fit="cover" @click="changeSystemImage(item.url)"></el-image>
+      <div v-for="(item, index) in imageName"
+           :key="index">
+        <el-image style="width: 100px; height: 180px; margin-left: 10px"
+                  :src="item.url"
+                  fit="cover"
+                  @click="changeSystemImage(item.url)"></el-image>
       </div>
-      <el-button style="position: absolute; right: 10px" type="text" @click="cloneBack('')">取消背景</el-button>
+      <el-button style="position: absolute; right: 10px"
+                 type="text"
+                 @click="cloneBack('')">取消背景</el-button>
     </div>
   </div>
 </template>
@@ -17,7 +23,7 @@
 
 export default {
   name: 'BackgroundImage',
-  data() {
+  data () {
     return {
       imageName: [
         {
@@ -47,16 +53,16 @@ export default {
       ]
     }
   },
-  beforeMount() {},
-  mounted() {},
+  beforeMount () { },
+  mounted () { },
   computed: {
     // ...mapGetters(['image'])
   },
   methods: {
-    async changeSystemImage(imageUrl) {
+    async changeSystemImage (imageUrl) {
       this.$store.dispatch('setImage', imageUrl)
     },
-    cloneBack(imageUrl) {
+    cloneBack (imageUrl) {
       this.$store.dispatch('setImage', imageUrl)
     }
   },
