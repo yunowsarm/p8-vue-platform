@@ -384,40 +384,40 @@ export default {
           }
         ]
       },
-      {
-        type: 'multiple',
-        labelText: '组件类别',
-        fieldName: 'urlType',
-        colLayout: 'doubleCol',
-        options: [
-          {
-            label: '计划完成情况',
-            value: '0'
-          },
-          {
-            label: '飞行试验',
-            value: '1'
-          },
-          {
-            label: '质量问题',
-            value: '2'
-          },
-          {
-            label: '第一层',
-            value: '3'
-          },
-          {
-            label: '第二层',
-            value: '4'
-          }
-        ],
-        rules: [
-          {
-            required: true,
-            message: '必填'
-          }
-        ]
-      },
+      // {
+      //   type: 'multiple',
+      //   labelText: '组件类别',
+      //   fieldName: 'urlType',
+      //   colLayout: 'doubleCol',
+      //   options: [
+      //     {
+      //       label: '计划完成情况',
+      //       value: '0'
+      //     },
+      //     {
+      //       label: '飞行试验',
+      //       value: '1'
+      //     },
+      //     {
+      //       label: '质量问题',
+      //       value: '2'
+      //     },
+      //     {
+      //       label: '第一层',
+      //       value: '3'
+      //     },
+      //     {
+      //       label: '第二层',
+      //       value: '4'
+      //     }
+      //   ],
+      //   rules: [
+      //     {
+      //       required: true,
+      //       message: '必填'
+      //     }
+      //   ]
+      // },
       {
         type: 'blank',
         labelText: '自定义数据源',
