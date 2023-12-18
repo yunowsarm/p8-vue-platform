@@ -155,7 +155,7 @@ export default {
         .then(() => {
           that.$api['formGenerator.formCallDataRemove']({
             desFormId: that.record.id,
-            dataId: scope.row.ID,
+            dataIds: [scope.row.ID],
             router: that.$route.name
           }).then((res) => {
             console.log(res, '删除444')
