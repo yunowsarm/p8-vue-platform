@@ -911,12 +911,10 @@
                           @save-param-data="saveSearchData">
             <template #fieldName="{ scope, data }">
               <el-input v-model="scope.row.fieldName"
-                        :disabled="!!scope.row.isCustomColumn"
                         @blur="saveSearchData(data)"></el-input>
             </template>
             <template #fieldType="{ scope, data }">
               <el-input v-model="scope.row.fieldType"
-                        :disabled="!!scope.row.isCustomColumn"
                         @blur="saveSearchData(data)"></el-input>
             </template>
             <template #fieldTxt="{ scope, data }">
@@ -926,7 +924,6 @@
             <template #searchMode="{ scope, data }">
               <el-select v-model="scope.row.searchMode"
                          clearable
-                         :disabled="!!scope.row.isCustomColumn"
                          @change="saveSearchData(data, scope.row.searchMode, scope)">
                 <el-option label="文本框"
                            value="text"></el-option>
@@ -967,7 +964,6 @@
               <el-select v-model="scope.row.replaceVal"
                          style="width: 100%"
                          clearable
-                         :disabled="!!scope.row.isCustomColumn"
                          @change="saveSearchData(data)">
                 <el-option v-for="item in replaceData"
                            :key="item.value"
@@ -994,7 +990,6 @@
                 <el-select v-model="scope.row.dictCode"
                            style="width: 100%"
                            clearable
-                           :disabled="!!scope.row.isCustomColumn"
                            filterable
                            @change="saveSearchData(data,)">
                   <el-option v-for="item in renderData"
@@ -1008,7 +1003,6 @@
                 <el-select v-model="scope.row.dictCode"
                            style="width: 100%"
                            clearable
-                           :disabled="!!scope.row.isCustomColumn"
                            filterable
                            @change="saveSearchData(data)">
                   <el-option v-for="item in treeData"
@@ -1022,7 +1016,6 @@
                 <el-input v-model="scope.row.dictCode"
                           readonly
                           autosize
-                          :disabled="!!scope.row.isCustomColumn"
                           @click.native="showDialog(scope, data)">
                   <i class="el-icon-link"
                      slot="suffix"
@@ -1051,7 +1044,6 @@
               <div v-if="scope.row.searchMode === 'text'">
                 <el-input clearable
                           placeholder="请输入"
-                          :disabled="!!scope.row.isCustomColumn"
                           @change="saveSearchData(data)"
                           v-model="scope.row.defaultValueData"></el-input>
               </div>
@@ -1062,7 +1054,6 @@
                                 clearable
                                 style="width: 100%"
                                 valueFormat='yyyy-MM-dd'
-                                :disabled="!!scope.row.isCustomColumn"
                                 @change="saveSearchData(data)"
                                 placeholder="选择日期"> </el-date-picker>
               </div>
@@ -1073,7 +1064,6 @@
                                 clearable
                                 style="width: 100%"
                                 valueFormat='yyyy'
-                                :disabled="!!scope.row.isCustomColumn"
                                 @change="saveSearchData(data)"
                                 placeholder="选择日期"> </el-date-picker>
               </div>
@@ -1082,7 +1072,6 @@
                 <el-date-picker v-model="scope.row.defaultValueDatas"
                                 type="daterange"
                                 style="width: 100%"
-                                :disabled="!!scope.row.isCustomColumn"
                                 range-separator="至"
                                 start-placeholder="开始日期"
                                 end-placeholder="结束日期"
@@ -1093,7 +1082,6 @@
               <!-- 数字 -->
               <div v-if="scope.row.searchMode === 'number'">
                 <el-input clearable
-                          :disabled="!!scope.row.isCustomColumn"
                           v-model="scope.row.defaultValueData"
                           type="number"
                           @change="saveSearchData(data)"
