@@ -130,7 +130,7 @@ export default {
         const _this = this
         if (val && this.myChart) {
           // transitionType为进度图，为true则转换进度title
-          if (this.myChart.children && this.myChart.children[1] && this.myChart.children[1].value.style &&  this.myChart.children[1].value.style.transitionType) {
+          if (this.myChart.children && this.myChart.children[1] && this.myChart.children[1].value.style && this.myChart.children[1].value.style.transitionType) {
             let obj = Object.assign({}, this.myChart.children[1].value.style)
             this.myChart.data([1, val[0][obj.text]])
             this.myChart.children[1].value.style.text = Math.round(_this.remoteData[0][this.myChart.children[1].value.style.text] * 100) + '%'
@@ -159,45 +159,6 @@ export default {
     }
   },
   created () {
-    const { devBaseUrl, prodBaseUrl, isDevMode } = this.$sysConfig.API_DEFAULT_CONFIG
-    this.urlPrefix = isDevMode ? `${devBaseUrl}` : `${prodBaseUrl}`
-    if (this.appConfig && this.appConfig.dataviewId) {
-      const _this = this
-      this.$api['kanbanComponent.getSqlParams']({ sqlId: this.appConfig.dataviewId, permissionVo: { router: this.$route.name, resourceId: '' } }).then((res) => {
-        if (res) {
-          _this.sqlParamsList = res
-        }
-        // 动态绑定对父组件参数的监听
-        this.$watch(
-          'provideParams.searchParams',
-          (newValue, oldValue) => {
-            if (newValue) {
-              const tempParams = {}
-              // 使用数据视图SQL中定义的参数来将父组件中传递的参数进行装配，如果父组件中参数值不存在或为空，使用SQL定义中的参数默认值进行赋值
-              if (this.sqlParamsList && this.sqlParamsList.length > 0) {
-                this.sqlParamsList.forEach((param) => {
-                  const defaultValue = {
-                    value: param.paramValue || '',
-                    mode: '=',
-                    relation: 'and'
-                  }
-                  tempParams[param.paramName] = !_.isUndefined(newValue[param.paramName]) ? newValue[param.paramName] : defaultValue
-                })
-                this.searchParams = tempParams
-              } else {
-                this.searchParams = {}
-              }
-            }
-          },
-          {
-            deep: true
-          }
-        )
-      })
-      this.doDataview()
-    } else if (this.appConfig.apiDataUrl) {
-      this.doDataview()
-    }
   },
   beforeMount () { },
   mounted () {
@@ -264,9 +225,48 @@ export default {
         this.myChart = new Chart({
           container: this.chartId
         })
-        if(!this.appConfig.dataviewId && !this.appConfig.apiDataUrl){
+        if (!this.appConfig.dataviewId && !this.appConfig.apiDataUrl) {
           this.myChart.options({ ...this.chartOption })
           this.myChart.render();
+        }
+        const { devBaseUrl, prodBaseUrl, isDevMode } = this.$sysConfig.API_DEFAULT_CONFIG
+        this.urlPrefix = isDevMode ? `${devBaseUrl}` : `${prodBaseUrl}`
+        if (this.appConfig && this.appConfig.dataviewId) {
+          const _this = this
+          this.$api['kanbanComponent.getSqlParams']({ sqlId: this.appConfig.dataviewId, permissionVo: { router: this.$route.name, resourceId: '' } }).then((res) => {
+            if (res) {
+              _this.sqlParamsList = res
+            }
+            // 动态绑定对父组件参数的监听
+            this.$watch(
+              'provideParams.searchParams',
+              (newValue, oldValue) => {
+                if (newValue) {
+                  const tempParams = {}
+                  // 使用数据视图SQL中定义的参数来将父组件中传递的参数进行装配，如果父组件中参数值不存在或为空，使用SQL定义中的参数默8认值进行赋值
+                  if (this.sqlParamsList && this.sqlParamsList.length > 0) {
+                    this.sqlParamsList.forEach((param) => {
+                      const defaultValue = {
+                        value: param.paramValue || '',
+                        mode: '=',
+                        relation: 'and'
+                      }
+                      tempParams[param.paramName] = !_.isUndefined(newValue[param.paramName]) ? newValue[param.paramName] : defaultValue
+                    })
+                    this.searchParams = tempParams
+                  } else {
+                    this.searchParams = {}
+                  }
+                }
+              },
+              {
+                deep: true
+              }
+            )
+          })
+          this.doDataview()
+        } else if (this.appConfig.apiDataUrl) {
+          this.doDataview()
         }
       } catch (e) {
         console.error(e)
