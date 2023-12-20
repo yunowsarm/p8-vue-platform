@@ -274,4 +274,7 @@ export default {
 .el-message-box__message p {
   word-wrap: break-word;
 }
+.vxe-rightMenuClick {
+  z-index: 5000 !important;
+}
 </style>
