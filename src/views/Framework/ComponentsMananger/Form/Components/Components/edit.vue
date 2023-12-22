@@ -6,6 +6,7 @@
       ref="parser"
       v-if="newOrModify && newOrModify === 'new' && Object.keys(formConf).length"
       :form-conf="formConf"
+      :btnLoading="btnLoading"
       :sys-params="sysParams"
       :type="type"
       :init-config="initConfig"
@@ -23,6 +24,7 @@
       ref="parser"
       v-else-if="newOrModify && newOrModify === 'modify' && pageType !== 'view' && Object.keys(formConf).length"
       :form-conf="formConf"
+      :btnLoading="btnLoading"
       :sys-params="sysParams"
       :type="type"
       :init-config="initConfig"
@@ -120,6 +122,8 @@ export default {
       customFn: '',
       saveAction: '',
       multipleData: {},
+      editId: '',
+      btnLoading: false,
       pageData: Object.assign({}, this.sysParams),
       containerLayout: '' //  组件的layout
     }
@@ -131,7 +135,7 @@ export default {
   },
   computed: {
     dataId() {
-      return this.dataViewId
+      return this.dataViewId || this.editId
     }
   },
   watch: {
@@ -789,6 +793,7 @@ export default {
       this.$emit('close')
     },
     save(data, childData, arr, logdata) {
+      this.btnLoading = true
       if (this.dataId) {
         data.data.ID = this.dataId
       }
@@ -803,6 +808,7 @@ export default {
       }
       // console.log(params, '---params---')
       if (this.type && this.type === '001') {
+        this.btnLoading = false
         this.$emit('save-echarts')
       } else {
         const that = this
@@ -815,7 +821,7 @@ export default {
               })
               that.$emit('save-success', res)
               that.$nextTick(() => {
-                that.dataViewId = res
+                that.editId = res
               })
             } else {
               that.$message({
@@ -826,6 +832,9 @@ export default {
           })
           .catch(function (error) {
             console.log(error)
+          })
+          .finally(() => {
+            that.btnLoading = false
           })
       }
     },
