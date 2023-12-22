@@ -148,7 +148,7 @@
 
 .planGantt ::v-deep {
   .gantt_row:not([aria-expanded]).updColor {
-    background-color: #9bffed;
+    background-color: #f0f8ff;
   }
 }
 </style>
