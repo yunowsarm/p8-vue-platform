@@ -20,9 +20,9 @@ ref="table" :comp="comp" :flex="200" :columns="columns" :params="queryParams" :a
   </list-layout>
 </template>
 <style lang="scss" scoped>
-::v-deep.el-table__fixed-body-wrapper {
-  top: 41px !important;
-}
+// ::v-deep.el-table__fixed-body-wrapper {
+//   top: 41px !important;
+// }
 </style>
 <script>
 import { P8ListLayout as ListLayout, P8Table as CommonTable, P8Button as CommonButton, P8Drawer as CommonDrawer } from 'p8-components-ui'
