@@ -139,9 +139,9 @@
   padding: 10px 0;
   background-color: #f9fafc;
 }
-::v-deep .el-table__fixed-body-wrapper {
-  top: 41px !important;
-}
+// ::v-deep .el-table__fixed-body-wrapper {
+//   top: 41px !important;
+// }
 // /deep/ .el-table__fixed-right{
 //   height: 100% !important;
 // }
@@ -311,12 +311,12 @@ export default {
         },
         {
           title: '变更计划数',
-          width: 90,
+          width: 120,
           dataIndex: 'changeCount'
         },
         {
           title: '变更原因分类',
-          width: 100,
+          width: 120,
           dataIndex: 'changeTypeDisp'
         },
         {
