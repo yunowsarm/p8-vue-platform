@@ -69,7 +69,11 @@
   </list-layout>
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped>
+::v-deep .p8-bpmnNew {
+  height: 100% !important;
+}
+</style>
 <script>
 import {
   P8Search as SearchFormList,
