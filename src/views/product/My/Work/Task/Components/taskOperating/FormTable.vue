@@ -32,6 +32,8 @@
                   <el-input v-model="formData.deviationCauses"
                             type="textarea"
                             resize="none"
+                            maxlength="1000"
+                            show-word-limit
                             :autosize="{ minRows: 2, maxRows: 4}"
                             placeholder="请输入未完成原因"></el-input>
                 </el-form-item>
@@ -41,6 +43,8 @@
                   <el-input v-model="formData.deviationImpact"
                             type="textarea"
                             resize="none"
+                            maxlength="1000"
+                            show-word-limit
                             :autosize="{ minRows: 2, maxRows: 4}"
                             placeholder="请输入偏离影响"></el-input>
                 </el-form-item>
@@ -52,6 +56,8 @@
                   <el-input v-model="formData.deviationProgress"
                             type="textarea"
                             resize="none"
+                            maxlength="1000"
+                            show-word-limit
                             :autosize="{ minRows: 2, maxRows: 4}"
                             placeholder="请输入进展情况"></el-input>
                 </el-form-item>
@@ -61,6 +67,8 @@
                   <el-input v-model="formData.solutions"
                             type="textarea"
                             resize="none"
+                            maxlength="1000"
+                            show-word-limit
                             :autosize="{ minRows: 2, maxRows: 4}"
                             placeholder="请输入应对措施"></el-input>
                 </el-form-item>
@@ -102,6 +110,8 @@
                   <el-input v-model="formData.reason"
                             type="textarea"
                             resize="none"
+                            maxlength="1000"
+                            show-word-limit
                             :autosize="{ minRows: 2, maxRows: 4}"
                             placeholder="请输入备注"></el-input>
                 </el-form-item>
@@ -131,12 +141,16 @@
                 <el-form-item label="未完成原因"
                               prop="deviationCauses">
                   <el-input v-model="formData.deviationCauses"
+                            maxlength="1000"
+                            show-word-limit
                             placeholder="请输入未完成原因"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="偏离影响">
                   <el-input v-model="formData.deviationImpact"
+                            maxlength="1000"
+                            show-word-limit
                             placeholder="请输入偏离影响"></el-input>
                 </el-form-item>
               </el-col>
@@ -145,13 +159,17 @@
               <el-col :span="12">
                 <el-form-item label="进展情况">
                   <el-input v-model="formData.deviationProgress"
+                            maxlength="1000"
+                            show-word-limit
                             placeholder="请输入进展情况"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="解决方案"
                               placeholder="请输入解决方案">
-                  <el-input v-model="formData.solutions"></el-input>
+                  <el-input v-model="formData.solutions"
+                            maxlength="1000"
+                            show-word-limit></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -222,6 +240,8 @@
                   <el-input v-model="formData.content"
                             type="textarea"
                             resize="none"
+                            maxlength="1000"
+                            show-word-limit
                             :autosize="{ minRows: 4, maxRows: 4}"
                             placeholder="请输入进度说明"></el-input>
                 </el-form-item>
@@ -283,8 +303,8 @@ export default {
        */
       const statusEnd = this.getPlanInfo().allStatus.filter(item => item.progressRange[0] === '1')
       return (statusEnd.find((item) =>
-        item.value === this.getPlanInfo().status) ||
-        this.managerStatus.indexOf(this.getPlanInfo().managerStatus) !== -1
+        item.value === this.getPlanInfo().STATUS) ||
+        this.managerStatus.indexOf(this.getPlanInfo().MANAGERSTATUS) !== -1
       )
     }
   },
@@ -410,13 +430,13 @@ export default {
   },
   mounted () {
     //  进行中的任务不能减进度条
-    if (this.getPlanInfo().status === '6050') {
-      this.minNum = this.getPlanInfo().progress
+    if (this.getPlanInfo().STATUS === '6050') {
+      this.minNum = Number(this.getPlanInfo().PROGRESS)
     }
     realBeginDate = this.formData.realBeginDate
     this.getOptions()
-    let nullity = this.getPlanInfo().nullity
-    this.secretGrade = this.getPlanInfo().secretGradeDisplay
+    let nullity = this.getPlanInfo().NULLITY
+    this.secretGrade = this.getPlanInfo().SECRETGRADEDISPLAY
     // 提交进度按钮是否置灰
     if (nullity === 1) {
       this.buttonDisabled = true
@@ -441,11 +461,11 @@ export default {
       this.$refs.form.validate((valid) => {
         let _this = this
         if (valid) {
-          this.getPlanInfo().progress = this.formData.progress
+          this.getPlanInfo().PROGRESS = this.formData.progress
           if (submitType === 'submit') {
-            _this.$api['taskManager.progressFeedbackCheck']({ taskId: _this.getPlanInfo().taskId, parent: _this.getPlanInfo().parentId, hierarchy: _this.getPlanInfo().getProjectLevel }).then(res => {
+            _this.$api['taskManager.progressFeedbackCheck']({ taskId: _this.getPlanInfo().TASKID, parent: _this.getPlanInfo().PARENTID, hierarchy: _this.getPlanInfo().GETPROJECTLEVEL }).then(res => {
               if (res && res.success) {
-                _this.getPlanInfo().managerStatus = '6406'
+                _this.getPlanInfo().MANAGERSTATUS = '6406'
                 _this.$emit('submit', _this.formData, submitType)
               } else {
                 _this.$message({
@@ -512,9 +532,9 @@ export default {
          * 1. 责任令状态为已发布，计划非已发布
          */
       let display = false
-      let managerStatus = this.getPlanInfo().managerStatus
-      let executeState = this.getPlanInfo().executeState
-      let zrlState = this.getPlanInfo().zrlState
+      let managerStatus = this.getPlanInfo().MANAGERSTATUS
+      let executeState = this.getPlanInfo().EXECUTESTATE
+      let zrlState = this.getPlanInfo().ZRLSTATE
       if (zrlState === 'ZRLS104' && executeState !== '1070') {
         display = false
       } else {
@@ -533,14 +553,14 @@ export default {
        * 4. 或该任务的子任务全部完成并且该任务的父任务的父id为空
        * 5. 责任令状态为已发布，计划非已发布
        */
-      let isLeafNode = this.getPlanInfo().isLeaf// 叶子节点为0，父任务为1
+      let isLeafNode = this.getPlanInfo().ISLEAF// 叶子节点为0，父任务为1
       let leafChildrenIsFinished = this.leafChildrenIsFinished
       let isHaveParentTaskParentId = this.isHaveParentTaskParentId
-      let executeState = this.getPlanInfo().executeState
-      let zrlState = this.getPlanInfo().zrlState
+      let executeState = this.getPlanInfo().EXECUTESTATE
+      let zrlState = this.getPlanInfo().ZRLSTATE
       let isTwoLvTask = !isHaveParentTaskParentId
       let display = false
-      let managerStatus = this.getPlanInfo().managerStatus
+      let managerStatus = this.getPlanInfo().MANAGERSTATUS
 
       /**
        * 二级任务提交完成审批按钮隐藏与展示此按钮展示的时候时间
@@ -610,6 +630,7 @@ div.form-table-wrap {
   }
   div.form-con {
     overflow: auto;
+    margin-right: 10px;
   }
   div.table-con {
     div.title {

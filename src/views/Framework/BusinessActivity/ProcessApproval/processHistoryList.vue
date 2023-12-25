@@ -76,7 +76,7 @@ export default {
           title: '审批时间',
           dataIndex: 'approvalTime',
           sortable: false,
-          width: '140px',
+          width: '190px',
           align: 'center'
         }
       ]

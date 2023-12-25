@@ -1,6 +1,6 @@
 <template>
   <normal-layout class="grid-table-render"
-                 :header-visible="headerVisible"
+                 :header-visible="headerVisibleType"
                  :normal-layout="normalLayout">
     <template #north>
       <common-button v-if="tableInfo.useSystemConfigButton == 1 || (tableInfo.useSystemConfigButton == 0 && buttonData.length > 0)"
@@ -196,6 +196,7 @@
                      v-bind="customProps"
                      :permission-vo="permissionVo"
                      :row="scopeRow"
+                     @save-success="omponentRefresh"
                      @close="CloseAndRefresh"></component>
         </template>
       </common-drawer>
@@ -218,6 +219,7 @@
                      v-bind="customProps"
                      :permission-vo="permissionVo"
                      :row="scopeRow"
+                     @save-success="omponentRefresh"
                      @close="CloseAndRefresh"></component>
         </template>
       </common-dialog>
@@ -279,7 +281,6 @@
       <common-drawer v-if="visibleThirdDrawer"
                      :visible="visibleThirdDrawer"
                      direction="ttb"
-                     :title="thirdMenuTitle"
                      @close='onThirdMenuClose'
                      size="100%">
         <template #drawer>
@@ -426,6 +427,10 @@ export default {
     taskId: {
       type: String,
       default: ''
+    },
+    pageType: {
+      type: String,
+      default: ''
     }
   },
   inject: {
@@ -549,7 +554,8 @@ export default {
       customCSS: {},
       sysParams: Object.assign({ $SYSTEM_PARAMS_SELECT: _cloneDeep(this.$store.state.user.userInfo) }), // 系统级参数
       currentRouterPath: '',
-      serachForm: {}
+      serachForm: {},
+      headerVisibleType: this.headerVisible
     }
   },
   created () {
@@ -565,6 +571,10 @@ export default {
     )
   },
   mounted () {
+    // 我的审批页面表格不展示按钮
+    if (this.pageType === 'view') {
+      this.headerVisibleType = false
+    }
     if (this.code && this.code !== '') {
       this.getTableInfo(this.code)
     }
@@ -611,9 +621,15 @@ export default {
               obj.layoutVersion = str[1]
             }
           })
-          this.customProps.layoutConfig = obj
+          this.customProps = {
+            layoutConfig: obj,
+            ...this.$props
+          }
           return () => import('@/views/' + url + '.vue')
         } else {
+          this.customProps = {
+            ...this.$props
+          }
           return () => import(`@/views/${this.componentPath}.vue`)
         }
       } else {
@@ -659,13 +675,8 @@ export default {
           relation: 'and'
         }
       })
-      this.tableParam.param = { ...obj }
+      this.tableParam.param = { ...obj, ...this.tableParam.param }
       this.propParam = Object.assign(this.propParam, val)
-    },
-    $route: {
-      handler (val) {
-        console.log(val.path);
-      }
     }
   },
   methods: {
@@ -677,12 +688,12 @@ export default {
       let reportList = []
       let SQLList = []
       this.searchList.map((el) => {
-        if(el.parameterSource == '报表参数'){
+        if (el.parameterSource == '报表参数') {
           reportList.push(el.replaceSearch ? el.replaceSearch : el.fieldName)
-        } else if (el.parameterSource == 'SQL参数'){
+        } else if (el.parameterSource == 'SQL参数') {
           SQLList.push(el.replaceSearch ? el.replaceSearch : el.fieldName)
         } else {
-          searchKeys.push(el.replaceSearch ? el.replaceSearch : el.fieldName) 
+          searchKeys.push(el.replaceSearch ? el.replaceSearch : el.fieldName)
         }
       })
       Object.keys({ ...newValue }).forEach((item) => {
@@ -704,6 +715,7 @@ export default {
           }
         }
       })
+      this.westParmars = obj
       Object.keys({ ...newValue }).forEach((item) => {
         if (reportList.includes(item)) {
           reportParmars[item] = newValue[item]
@@ -714,9 +726,9 @@ export default {
           sqlParmars[item] = newValue[item]
         }
       })
-      this.tableParam.param = {...this.tableParam.param, ...obj }
-      this.tableParam.reportParam = { ...this.tableParam.reportParam,...reportParmars }
-      this.tableParam.sqlParam = { ...sqlParmars,...this.sqlParam,...this.tableParam.sqlParam }
+      this.tableParam.param = { ...this.tableParam.param, ...obj }
+      this.tableParam.reportParam = { ...this.tableParam.reportParam, ...reportParmars }
+      this.tableParam.sqlParam = { ...sqlParmars, ...this.sqlParam, ...this.tableParam.sqlParam }
       this.tableParam.permissionVo = { router: this.$route.name, resourceId: '' }
       this.propParam = Object.assign(this.propParam, newValue)
     },
@@ -725,7 +737,7 @@ export default {
       let columnName = ''
       this.columns.forEach(item => {
         // 开启了行点击，配置了下钻，并且不为null
-        if (this.tableInfo.enableClick === 1 && item.tenantId && item.dataIndex === column.property && row[column.property]) {
+        if (this.tableInfo.enableClick === 1 && item.drillDownName && item.dataIndex === column.property && row[column.property]) {
           columnName = 'columnStyle'
         }
         if (classList && classList.length) {
@@ -745,6 +757,8 @@ export default {
       this.columns = []
       this.customColumn = []
       this.viewKeys = {}
+      this.tableParam = {}
+      this.defaultReportParam = {}
       this.permissionVo = { router: this.$route.name, resourceId: '' }
       this.$api['formGenerator.tableGetInfo']({ reportCode: this.code, permissionVo: this.permissionVo }).then((res) => {
         that.tableInfo = res
@@ -771,7 +785,7 @@ export default {
             }
             that.selectionRange = res.selectionRange
             if (item.isListShow) {
-              if (item.isSearch) {
+              if (item.isSearch && item.searchMode) {
                 if (this.tableInfo.searchPos == 1) {
                   this.showSearchRow = false
                   const filter = this.getHeadSelectByType(item.searchMode, item)
@@ -803,6 +817,9 @@ export default {
                     filter: filter
                   })
                 } else {
+                  if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
+                    item.defaultValueData = item.defaultValueData.split(',')
+                  }
                   this.showSearchRow = false
                   // 查询放置按钮区域
                   columnData.push({
@@ -813,9 +830,6 @@ export default {
                     minWidth: item.fieldWidth,
                     sortable: item.isOrder ? item.isOrder : false
                   })
-                  if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
-                    item.defaultValueData = item.defaultValueData.split(',')
-                  }
                 }
               } else if (item.isCustomColumn) {
                 if (item.fieldName === '_ROWNO') {
@@ -855,15 +869,17 @@ export default {
               if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
                 item.defaultValueData = item.defaultValueData.split(',')
               }
-              this.searchData.push({
-                type: item.searchMode, // 控件类型
-                labelText: item.fieldTxt, // 控件显示的文本
-                fieldName: item.fieldName,
-                mode: '=',
-                selectCode: item.dictCode,
-                replaceSearch: item.replaceVal,
-                defaultValue: item.defaultValueData
-              })
+              if (item.searchMode) {
+                this.searchData.push({
+                  type: item.searchMode, // 控件类型
+                  labelText: item.fieldTxt, // 控件显示的文本
+                  fieldName: item.fieldName,
+                  mode: '=',
+                  selectCode: item.dictCode,
+                  replaceSearch: item.replaceVal,
+                  defaultValue: item.defaultValueData
+                })
+              }
               this.searchList.push({
                 type: item.searchMode, // 控件类型
                 labelText: item.fieldTxt, // 控件显示的文本
@@ -941,7 +957,7 @@ export default {
           this.seachType = that.tableInfo.searchPos + ''
           res.reportConfig.forEach((item) => {
             item.columnConfig = JSON.parse(item.columnConfig)
-            if (item.isCustomColumn == '1' && item.customColumnType === 'slot' && item.columnConfig.slotName) {
+            if (item.isCustomColumn == '1' && item.customColumnType === 'slot' && item.columnConfig && item.columnConfig.slotName) {
               this.customColumn.push(item.columnConfig.slotName)
             }
             columnData.forEach((el, index) => {
@@ -957,14 +973,14 @@ export default {
                 if (el.dataIndex === item.fieldName) {
                   el.treeNode = true
                   el.align = 'left'
-                  el.tenantId = item.tenantId
+                  el.drillDownName = item.drillDownName
                   el.drillName = item.drillName
                 }
               })
             } else {
               columnData.forEach((el) => {
                 if (el.dataIndex === item.fieldName) {
-                  el.tenantId = item.tenantId
+                  el.drillDownName = item.drillDownName
                   el.drillName = item.drillName
                 }
               })
@@ -983,7 +999,7 @@ export default {
         if (res.reportParams && res.reportParams.length) {
           res.reportParams.forEach((item) => {
             this.defaultReportParam[item.paramName] = this.getDefaultValue(item.paramValue)
-            if(item.isSearch){
+            if (item.isSearch && item.searchMode) {
               this.searchData.push({
                 type: item.searchMode, // 控件类型
                 labelText: item.paramTxt, // 控件显示的文本
@@ -994,24 +1010,26 @@ export default {
                 defaultValue: item.defaultValueData,
                 parameterSource: item.parameterSource
               })
-              this.searchList.push({
-                type: item.searchMode, // 控件类型
-                labelText: item.paramTxt, // 控件显示的文本
-                fieldName: item.paramName,
-                mode: '=',
-                selectCode: item.dictCode,
-                replaceSearch: item.replaceVal,
-                defaultValue: item.defaultValueData,
-                parameterSource: item.parameterSource
-              })
             }
+            this.searchList.push({
+              type: item.searchMode, // 控件类型
+              labelText: item.paramTxt, // 控件显示的文本
+              fieldName: item.paramName,
+              mode: '=',
+              selectCode: item.dictCode,
+              replaceSearch: item.replaceVal,
+              defaultValue: item.defaultValueData,
+              parameterSource: item.parameterSource
+            })
           })
         }
 
         // SQL参数
         if (res.reportSqlParams && res.reportSqlParams.length) {
           res.reportSqlParams.forEach((item) => {
-            this.sqlParam[item.paramName] = item.paramValue
+            if (item.paramValue) {
+              this.sqlParam[item.paramName] = item.paramValue
+            }
           })
         }
         that.enableEdit = res.enableEdit
@@ -1047,9 +1065,9 @@ export default {
         }
       })
       this.sqlParam = sqlParam
-      this.tableParam.reportParam = {...reportParam,...this.tableParam.reportParam}
-      this.tableParam.sqlParam = {...sqlParam,...this.tableParam.sqlParam}
-      this.tableParam.param = param
+      this.tableParam.reportParam = { ...reportParam, ...this.tableParam.reportParam }
+      this.tableParam.sqlParam = { ...sqlParam, ...this.tableParam.sqlParam, ...this.sqlParam }
+      this.tableParam.param = { ...param, ...this.westParmars }
     },
     reSet () {
       // this.tableParam.param = {}
@@ -1067,11 +1085,14 @@ export default {
           }
         })
       }
-      this.sqlParam.columnType = val.property
+      this.sqlParam.columnType = val.property ? val.property : this.columnType
+      if (this.taskId) {
+        reportParam.TASKID = this.taskId
+      }
       let sql = {}
       let report = {}
       this.serachForm = {}
-      this.searchData.forEach(el => {
+      this.searchList.forEach(el => {
         this.serachForm[el.fieldName] = el.defaultValue ? el.defaultValue : ''
         if (el.parameterSource && el.parameterSource == 'SQL参数') {
           if (reportParam[el.fieldName]) {
@@ -1086,11 +1107,11 @@ export default {
         }
       })
       this.tableParam = {
-        sqlParam: { ...this.sqlParam, ...sql,...this.tableParam.sqlParam},
+        sqlParam: { ...this.sqlParam, ...sql, ...this.tableParam.sqlParam },
         reportId: this.tableInfo.id,
         param: {},
         reportParam: {
-          ...this.defaultReportParam,...this.tableParam.reportParam, ...report
+          ...this.defaultReportParam, ...this.tableParam.reportParam, ...report
         },
         router: this.$route.name,
         code: this.code,
@@ -1135,6 +1156,10 @@ export default {
     },
     // 单元格点击事件
     rowVxeClick (row, column, $event) {
+      // 父级不能下钻
+      if (!row.TYPE) {
+        return false
+      }
       this.columns.forEach(el => {
         if (el.fieldName === column.property || el.dataIndex === column.property) {
           column.drillName = el.drillName
@@ -1185,7 +1210,7 @@ export default {
         this.codeForm = createFormParams.desformCode
         this.dataViewId = ''
         this.$store.getters.formTitlePosition == 'left' ? this.formTitle = '新建' + drawingListData.desformName : this.formTitle = drawingListData.desformName + '新建'
-        this.propParam = Object.assign(this.propParam, this.westTreeParam)
+        this.propParam = Object.assign(this.propParam, this.westTreeParam, this.reportParam)
         this.formVisible = true
       } else {
         Notification.error({
@@ -1246,6 +1271,7 @@ export default {
           })
         }
         this.propParam = oldPropParam
+        this.propParam = Object.assign(this.propParam, this.westTreeParam, this.reportParam)
         this.formVisible = true
       } else {
         Notification.error({
@@ -1422,6 +1448,16 @@ export default {
       // }
       // this.selectRecords = []
     },
+    omponentRefresh () {
+      if (this.tableType == 0) {
+        this.$refs.table.queryList()
+        this.$refs.table.clearSelection()
+      } else {
+        this.$refs.xTable.queryList()
+        this.$refs.xTable.clearSelection()
+      }
+      this.selectRecords = []
+    },
     CloseAndRefresh () {
       this.customComponentParams = {}
       this.customVisible = false
@@ -1457,6 +1493,7 @@ export default {
     cancelProcess (row, btn) {
       const rowBtnData = this.getRowBtnData(row, btn)
       row = rowBtnData.row
+      btn = rowBtnData.btn
       if (!row) {
         return
       }
@@ -1555,11 +1592,12 @@ export default {
       })
       this.releaseMenuParams.businessId = rowIds
       this.releaseMenuParams.processDefinitionKey = this.processDefinationTwoKey
-      this.releaseMenuParams.beforehandParams.projectInfo = {
-        projectName: this.selsctRow[0].PROJECTNAME,
-        projectType: this.selsctRow[0].PROJECTTYPE,
-        modelCode: this.selsctRow[0].MODELCODE
-      }
+      // this.releaseMenuParams.beforehandParams.projectInfo = {
+      //   projectName: this.selsctRow[0].PROJECTNAME,
+      //   projectType: this.selsctRow[0].PROJECTTYPE,
+      //   modelCode: this.selsctRow[0].MODELCODE
+      // }
+      this.releaseMenuParams.beforehandParams.approveInfoConfig = this.getApproveConfig()
       this.$api['baseData.commitApprove'](this.releaseMenuParams)
         .then(function (res) {
           if (res.result && res.result === 'false') {
@@ -2041,6 +2079,18 @@ export default {
       } else {
         this.$refs.xTable.queryList()
       }
+    },
+    // 获取我的审批展示的字段，默认列表前三列(去除复选框、序号、自定义列)
+    getApproveConfig () {
+      let columns = this.columns.filter(el => !el.type && el.isCustomColumn != '1')
+      if (columns.length) {
+        columns = columns.slice(0, 3);
+      }
+      let obj = {}
+      columns.forEach((item, ind) => {
+        obj['filed' + (ind + 1)] = { label: item.fieldTxt, value: this.selsctRow[0][item.fieldName], }
+      })
+      return obj
     }
   }
 }

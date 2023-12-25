@@ -7,11 +7,17 @@
       <common-button :comp="comp"
                      :button-type="'round'"
                      :custom-button-data="customButtonData"></common-button>
+      <search-form-list ref="search"
+                        :data-source="searchData"
+                        @search="search"
+                        labelWidth="100px"
+                        @re-set="reSet"></search-form-list>
     </template>
     <template #center>
       <common-table ref="table"
                     :columns="columns"
                     api="formGenerator.tableList"
+                    :params="queryParam"
                     :table-refresh="tableRefresh">
         <template #operation="{ scope }">
           <el-button type="text"
@@ -22,6 +28,8 @@
                      @click="functionTest(scope)">功能测试</el-button>
           <el-button type="text"
                      @click="tableAddress(scope)">表格配置地址</el-button>
+          <el-button type="text"
+                     @click="tableCopy(scope)">表格复制</el-button>
           <!-- <el-button type="text" @click="viewAddress(scope)">查看配置地址</el-button> -->
         </template>
       </common-table>
@@ -53,7 +61,7 @@
 </template>
 
 <script>
-import { P8Button as CommonButton, P8ListLayout as ListLayout, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import { P8Search as SearchFormList, P8Button as CommonButton, P8ListLayout as ListLayout, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
 
 import TableListEdit from './Components/edit'
 import TableRender from './Components/tableRender'
@@ -65,7 +73,8 @@ export default {
     CommonDrawer,
     TableListEdit,
     TableRender,
-    CommonButton
+    CommonButton,
+    SearchFormList
   },
   data () {
     const columns = [
@@ -119,13 +128,28 @@ export default {
       {
         title: '操作',
         dataIndex: 'operation',
-        width: 250,
+        width: 300,
         scopedSlots: { customRender: 'custom' },
         align: 'left',
         headerAlign: 'left'
       }
     ]
     return {
+      queryParam: {},
+      searchData: [
+        {
+          type: 'text',
+          labelText: '表格名字',
+          fieldName: 'name',
+          placeholder: '请输入表格名字'
+        },
+        {
+          type: 'text',
+          labelText: '表格编码',
+          fieldName: 'code',
+          placeholder: '请输入表格编码'
+        }
+      ],
       comp: this,
       customButtonData: [
         {
@@ -147,6 +171,16 @@ export default {
     }
   },
   methods: {
+    search (param) {
+      let that = this
+      if (param) {
+        that.queryParam = param
+      }
+    },
+    reSet () {
+      let that = this
+      Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = null })
+    },
     tableRefresh (param) {
       param
         .then(() => {
@@ -190,6 +224,25 @@ export default {
       this.record = Object.assign({}, scope.row)
       this.functionTestVisible = true
     },
+    tableCopy (scope) {
+      const that = this
+      this.$confirm('是否确定要复制该表格？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          that.$api['formGenerator.reportCopy']({
+            reportId: scope.row.id
+          }).then((res) => {
+            this.$message({ type: 'success', message: '复制成功' })
+            that.$refs.table.searchData()
+          })
+        })
+        .catch((e) => {
+          console.log(e)
+        })
+    },
     tableAddress (scope) {
       this.$confirm('Framework/ComponentsMananger/Grid/Components/tableRender?code=' + scope.row.code, '表格配置地址', {
         confirmButtonText: '确定',
@@ -220,5 +273,8 @@ export default {
 <style lang="scss">
 .el-message-box__message p {
   word-wrap: break-word;
+}
+.vxe-rightMenuClick {
+  z-index: 5000 !important;
 }
 </style>

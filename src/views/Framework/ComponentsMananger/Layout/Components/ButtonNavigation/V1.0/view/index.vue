@@ -3,13 +3,28 @@
 
 <template>
   <normal-layout :header-visible="false"
+                 class="layoutComponents"
                  :split-layout="true">
     <template #west>
       <common-tree :default-expanded-keys="defaultExpandedKeys"
                    :default-expand-all="false"
                    :data="treeData"
+                   class="layoutTree"
                    ref="commonTree"
-                   @select="onSelect"></common-tree>
+                   :nodeSlot="true"
+                   @select="onSelect">
+        <template #tree="{ node }">
+          <span>
+            <i v-if="node.isLeaf"
+               :class="getIcon(node)"></i>
+            <i v-else-if="!node.isLeaf && node.expanded"
+               :class="getIcon(node)"></i>
+            <i v-else
+               :class="getIcon(node)"></i>
+            <span>{{ node.label }}</span>
+          </span>
+        </template>
+      </common-tree>
     </template>
     <template #center>
       <component v-if="componentUrl"
@@ -43,6 +58,13 @@
   background-position: center;
   margin-top: 25px;
 }
+.layoutComponents .layoutTree ::v-deep .el-tree-node__content .is-leaf{
+  display: inline-block !important;
+  width: 12px;
+}
+::v-deep .search-wrapper {
+  right: 10px;
+}
 </style>
 <script>
 import { Input, Button } from 'element-ui'
@@ -54,7 +76,7 @@ export default {
     componentUrl () {
       console.log(this.asyncComponents, '===this.asyncComponents')
       if (this.asyncComponents) {
-         if (this.asyncComponents.indexOf('?') !== -1) {
+        if (this.asyncComponents.indexOf('?') !== -1) {
           const list = this.asyncComponents.split('?')
           const url = list[0]
           const parmars = list[1].split('&')
@@ -126,7 +148,7 @@ export default {
       const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
       const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
       const res = await this.$api['desLayout.getLayoutJson']({ layoutCode: code, version: version })
-      if(!res){
+      if (!res) {
         return
       }
       this.previewParmars = JSON.parse(res)
@@ -176,9 +198,6 @@ export default {
       this.$emit('close')
     },
     onSelect (obj) {
-      if (obj.id == '0') {
-        return
-      }
       const { treeSettingsParmars, dynamicParameter } = this.previewParmars
       // 数据类型为静态数据
       if (treeSettingsParmars.dataType === '1') {
@@ -213,6 +232,9 @@ export default {
       }
       // 组件切换
       if (treeSettingsParmars.navigationPattern === '0') {
+        if (obj.id == '0') {
+          return
+        }
         let key
         // 数据类型为静态数据时组件路径字段为componentsUrl
         if (treeSettingsParmars.dataType === '1') {
@@ -233,9 +255,9 @@ export default {
         }
       }
     },
-    getParamsList (obj,fileName) {
+    getParamsList (obj, fileName) {
       let list = []
-      function getEndList (item){
+      function getEndList (item) {
         list.push(item[fileName])
         if (item.children && item.children.length) {
           item.children.forEach(el => {
@@ -321,6 +343,22 @@ export default {
       }
       getData(treeList)
       return arr
+    },
+    getIcon (node) {
+      let treeSettingsParmars = this.previewParmars.treeSettingsParmars
+      let icon = ''
+      if (!node.isLeaf && node.level == 1) {
+        icon = treeSettingsParmars.rootIcon ? treeSettingsParmars.rootIcon : 'p8 icon-zong'
+      } else {
+        if (node.isLeaf) {
+          icon = treeSettingsParmars.childIcon ? treeSettingsParmars.childIcon : 'p8 icon-fenzu'
+        } else if(!node.isLeaf && node.expanded) {
+          icon = treeSettingsParmars.parentIcon ? treeSettingsParmars.parentIcon : 'p8 icon-zong'
+        } else {
+          icon = treeSettingsParmars.parentIcon ? treeSettingsParmars.parentIcon : 'el-icon-folder'
+        }
+      }
+      return icon
     }
   }
 }

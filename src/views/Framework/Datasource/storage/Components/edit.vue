@@ -1,24 +1,30 @@
 <template>
   <div>
     <form-list
-ref="form" :data-source="dataSource" :form="formData" :api="saveApi" @saved="saved" label-width="95px" :is-custom-validate="true" @custom-validate="customValidate" @rendered="rendered">
+      ref="form"
+      class="form_list"
+      :data-source="dataSource"
+      :form="formData"
+      :api="saveApi"
+      @saved="saved"
+      label-width="95px"
+      :is-custom-validate="true"
+      @custom-validate="customValidate"
+      @rendered="rendered"
+    >
       <template #tableName>
-        <el-input
-v-model="formData.tableName" :disabled="modifyDisable({}, 'main') || keyIsDbSynch" placeholder="请输入表名">
-          <template
-v-if="!(record && record.id)" slot="prepend">CGTABLE_</template>
+        <el-input v-model="formData.tableName" :disabled="modifyDisable({}, 'main') || keyIsDbSynch" placeholder="请输入表名">
+          <template v-if="!(record && record.id)" slot="prepend">CGTABLE_</template>
         </el-input>
       </template>
       <template slot="btn">
         <el-button @click="cancel">取 消</el-button>
       </template>
     </form-list>
-    <common-tabs
-:tabs-data="tabsData" :height="height" type="border-card" class="el_tabs" :active-tabs="activeTabs">
+    <common-tabs :tabs-data="tabsData" :height="height" type="border-card" class="el_tabs" :active-tabs="activeTabs" :has-full-screen="true">
       <template #databaseProp>
         <editable-table
-
-:columns="databasePropColumns"
+          :columns="databasePropColumns"
           :add-row="true"
           :disabled="modifyDisable({}, 'main')"
           api="formGenerator.getDefaultProp"
@@ -26,17 +32,14 @@ v-if="!(record && record.id)" slot="prepend">CGTABLE_</template>
           @save-param-data="saveParamData"
         >
           <template #fieldName="{ scope, data }">
-            <el-input
-v-model="scope.row.fieldName" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input>
+            <el-input v-model="scope.row.fieldName" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input>
           </template>
           <template #fieldDisplay="{ scope, data }">
-            <el-input
-v-model="scope.row.fieldDisplay" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input>
+            <el-input v-model="scope.row.fieldDisplay" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input>
           </template>
           <template #fieldIsPrimaryKey="{ scope, data }">
             <el-checkbox
-
-v-model="scope.row.fieldIsPrimaryKey"
+              v-model="scope.row.fieldIsPrimaryKey"
               true-label="1"
               false-label="0"
               @change="saveParamData(data)"
@@ -45,8 +48,7 @@ v-model="scope.row.fieldIsPrimaryKey"
           </template>
           <template #fieldIsNull="{ scope, data }">
             <el-checkbox
-
-v-model="scope.row.fieldIsNull"
+              v-model="scope.row.fieldIsNull"
               true-label="1"
               false-label="0"
               @change="saveParamData(data)"
@@ -54,53 +56,43 @@ v-model="scope.row.fieldIsNull"
             ></el-checkbox>
           </template>
           <template #fieldType="{ scope, data }">
-            <el-select
-v-model="scope.row.fieldType" clearable @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)">
+            <el-select v-model="scope.row.fieldType" clearable @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)">
               <template v-for="(item, index) in fieldTypeOption">
-                <el-option
-:label="item.label" :value="item.label" :key="index"></el-option>
+                <el-option :label="item.label" :value="item.label" :key="index"></el-option>
               </template>
             </el-select>
           </template>
           <template #fieldLength="{ scope, data }">
-            <el-input-number
-v-model="scope.row.fieldLength" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input-number>
+            <el-input-number v-model="scope.row.fieldLength" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input-number>
           </template>
           <template #fieldPrecision="{ scope, data }">
-            <el-input-number
-v-model="scope.row.fieldPrecision" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input-number>
+            <el-input-number v-model="scope.row.fieldPrecision" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input-number>
           </template>
           <template #fieldDefaultValue="{ scope, data }">
-            <el-input
-v-model="scope.row.fieldDefaultValue" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input>
+            <el-input v-model="scope.row.fieldDefaultValue" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input>
           </template>
           <!-- <template #dictField="{scope, data}">
             <el-input v-model="scope.row.dictField" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable()"></el-input>
           </template> -->
           <template #orderNumber="{ scope, data }">
-            <el-input-number
-v-model="scope.row.orderNumber" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input-number>
+            <el-input-number v-model="scope.row.orderNumber" @blur="saveParamData(data)" :disabled="tableCellCommonDisable(scope.row) || modifyDisable(scope.row)"></el-input-number>
           </template>
         </editable-table>
       </template>
       <template #foreignKey>
-        <editable-table
-:columns="foreignKeyColumns" api="formGenerator.getDefaultProp" :data="forengnKeyData" @save-param-data="saveKeyData">
+        <div style="height:50px;"></div>
+        <editable-table :columns="foreignKeyColumns" api="formGenerator.getDefaultProp" :data="forengnKeyData" @save-param-data="saveKeyData">
           <template #fieldName="{ scope, data }">
-            <el-input
-v-model="scope.row.fieldName" disabled @blur="saveKeyData(data)"></el-input>
+            <el-input v-model="scope.row.fieldName" disabled @blur="saveKeyData(data)"></el-input>
           </template>
           <template #fieldDisplay="{ scope, data }">
-            <el-input
-v-model="scope.row.fieldDisplay" disabled @blur="saveKeyData(data)"></el-input>
+            <el-input v-model="scope.row.fieldDisplay" disabled @blur="saveKeyData(data)"></el-input>
           </template>
           <template #foreignTable="{ scope, data }">
-            <el-input
-v-model="scope.row.foreignTable" @blur="saveKeyData(data)" :disabled="tableCellCommonDisable(scope.row)"></el-input>
+            <el-input v-model="scope.row.foreignTable" @blur="saveKeyData(data)" :disabled="tableCellCommonDisable(scope.row)"></el-input>
           </template>
           <template #foreignField="{ scope, data }">
-            <el-input
-v-model="scope.row.foreignField" @blur="saveKeyData(data)" :disabled="tableCellCommonDisable(scope.row)"></el-input>
+            <el-input v-model="scope.row.foreignField" @blur="saveKeyData(data)" :disabled="tableCellCommonDisable(scope.row)"></el-input>
           </template>
         </editable-table>
       </template>
@@ -375,11 +367,11 @@ export default {
             _this.forengnKeyData = res.fields
             if (res.foreignKey && res.foreignKey.length) {
               res.foreignKey.forEach((item) => {
-                let filterItem = _this.forengnKeyData.filter((kitem) => kitem.fieldName === item.fieldName)
+                const filterItem = _this.forengnKeyData.filter((kitem) => kitem.fieldName === item.fieldName)
                 if (filterItem.length > 0) {
                   filterItem[0] = { ...filterItem[0], ...item }
                 }
-                let filterIndex = _this.forengnKeyData.findIndex((item) => item.fieldName === filterItem[0].fieldName)
+                const filterIndex = _this.forengnKeyData.findIndex((item) => item.fieldName === filterItem[0].fieldName)
                 this.$set(_this.forengnKeyData, filterIndex, filterItem[0])
               })
             }
@@ -488,8 +480,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.el_tabs {
-  ::v-deep.el-tabs__content {
+.form_list {
+  margin: 0 16px;
+}
+.el_tabs ::v-deep{
+  margin: 0 26px;
+  .el-tabs__content {
     padding: 0 !important;
   }
 }

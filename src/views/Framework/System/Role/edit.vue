@@ -19,6 +19,7 @@
                      name="setLimit"
                      key="1">
           <select-btn ref="selectBtn"
+                      style="padding-top:10px;"
                       @btn-select-change="btnSelectChange"
                       :button-selected="selectedData.resourceList"></select-btn>
         </el-tab-pane>
@@ -47,7 +48,8 @@
             <select-user v-if="visible"
                          :visible="visible"
                          @close-dialog="closeModal"
-                         :disabled-row="formData.sysuserIds"></select-user>
+                         :disabled-row="formData.sysuserIds"
+                         :treeOptions="treeOptions"></select-user>
           </div>
         </el-tab-pane>
         <el-tab-pane label="设置应用"
@@ -55,6 +57,7 @@
                      name="setApp"
                      key="3">
           <el-tabs :key="dateTime"
+                   class="leftTabs"
                    :style="{ height: flexHeight }"
                    tab-position="left"
                    @tab-click="tabClick"
@@ -94,7 +97,7 @@
                      name="setProject"
                      key="4">
           <el-col :style="{ height: flexHeight }"
-                  style="overflow: auto">
+                  style="overflow: auto;padding-top:10px;">
             <form-list ref="form1"
                        :data-source="projectDataSource"
                        :form="formData"
@@ -190,12 +193,20 @@
   // line-height: 50px;
 }
 .w_tabs {
+  box-shadow: unset;
   margin: 16px;
+  ::v-deep .el-tabs__header {
+    border: none;
+  }
 }
 ::v-deep .el-tabs--border-card > .el-tabs__content {
   padding: 0;
 }
-::v-deep .el-tabs--border-card .el-tabs__nav-scroll {
+.leftTabs {
+  padding-top: 10px;
+  height: calc(100% - 10px) !important;
+}
+.leftTabs::v-deep .el-tabs__nav-scroll {
   background: #ffffff;
 }
 </style>
@@ -232,6 +243,17 @@ export default {
   },
   data () {
     return {
+      treeOptions: {
+        treeApi: "userManager.deptTree",
+        treeParam: {},
+        disabledRow: [],
+        defaultExpandAll: true,
+        defaultExpandedKeys: ["1"],
+        treeConfig: {
+          "expand-on-click-node": false,
+          "check-on-click-node": true,
+        },
+      },
       imgUrl: require('@/assets/image/common/Group.png'),
       setUserHeight: document.documentElement.clientHeight - 318 + 'px',
       tabPaneHeight: document.documentElement.clientHeight - 290 + 'px',

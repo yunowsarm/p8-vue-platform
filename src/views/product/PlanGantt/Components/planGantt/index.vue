@@ -423,6 +423,7 @@
     ></ClassificationSelection>
     <Edit :visible="createVisible" :selected-task="selectedTasks" title="我的经验库" :gantt-name="ganttName" @handleCancel="closeCreate" />
     <my-experience-base
+      v-if="experienceBaseVisible"
       :visible="experienceBaseVisible"
       :is-manage="isManage"
       :gantt-name="ganttName"
@@ -811,6 +812,7 @@ export default {
       monitorPointDatas: [],
       dependentDatas: [],
       searchForm: {},
+      columnSettings: [],
       monitorLockMap: {}, // 标识锁定状态
       limitColumns: [], // 标识加锁后不可编辑列定义
       lockLevel: 3, // 编辑锁定任务层级，指定后，gantt页面对应任务不可做任何操作
@@ -1280,6 +1282,9 @@ export default {
         text: 'Loading',
         spinner: 'el-icon-loading'
       })
+      // 根据项目类型，获取gantt列设置
+      this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
+
       const vueThis = this
       // 清空原有数据
       this.selectedTasks = []
@@ -1302,7 +1307,7 @@ export default {
       vueThis.$store.dispatch('setVueThis', vueThis)
       // 初始化对象
       myGantt = planGantt(vueThis.ganttName, vueThis)
-      myGantt.config.scale_height = 50
+      myGantt.config.scale_height = 100
       // 标识锁定后不可操作的列获取
       getMonitorLimitColumns(myGantt.config.columns, vueThis)
       // gantt视图切换
@@ -1424,6 +1429,8 @@ export default {
             vueThis.taskCount = myGantt.getTaskCount()
             // 检查gantt操作权限
             // myGantt.config.readonly = editLockUnLockCheck(vueThis.planInfoStatus, vueThis.monitorLockMap)
+          } else {
+            vueThis.fullscreenLoading.close()
           }
         })
         .catch(function (error) {

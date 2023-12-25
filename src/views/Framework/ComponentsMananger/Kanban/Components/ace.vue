@@ -54,7 +54,6 @@ export default {
   watch: {
     value: {
       handler: function (newValue, oldValue) {
-        // console.log('value watch', newValue, oldValue)
         this.editor.setValue(newValue, -1)
       }
     }
@@ -65,8 +64,10 @@ export default {
     }
   },
   beforeDestroy: function () {
-    this.editor.destroy()
-    this.editor.container.remove()
+    if (this.editor) {
+      this.editor.destroy()
+      this.editor.container.remove()
+    }
   },
   mounted () {
     this.$nextTick(() => {

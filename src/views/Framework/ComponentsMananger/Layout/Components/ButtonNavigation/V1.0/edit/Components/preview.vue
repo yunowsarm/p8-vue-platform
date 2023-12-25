@@ -4,19 +4,34 @@
 <template>
   <common-dialog title="预览"
                  :visible="visible"
+                 class="layoutDialog"
                  :show-handle-btn="false"
                  :dialog-height="dialogHeight"
                  @handle-cancel="handleCancel"
                  @close="handleCancel">
     <template #dialog>
       <normal-layout :header-visible="false"
+                     class="layoutComponents"
                      :split-layout="true">
         <template #west>
           <common-tree ref="commonTree"
                        :default-expanded-keys="defaultExpandedKeys"
                        :default-expand-all="false"
                        :data="treeData"
-                       @select="onSelect"></common-tree>
+                       :nodeSlot="true"
+                       @select="onSelect">
+            <template #tree="{ node }">
+              <span>
+                <i v-if="node.isLeaf"
+                   :class="getIcon(node)"></i>
+                <i v-else-if="!node.isLeaf && node.expanded"
+                   :class="getIcon(node)"></i>
+                <i v-else
+                   :class="getIcon(node)"></i>
+                <span>{{ node.label }}</span>
+              </span>
+            </template>
+          </common-tree>
         </template>
         <template #center>
           <!-- <component :is="componentUrl" :code="code"></component> -->
@@ -34,6 +49,19 @@
     </template>
   </common-dialog>
 </template>
+<style lang="scss" scoped>
+.layoutComponents ::v-deep .el-tree-node__content .is-leaf {
+  display: inline-block !important;
+  width: 12px;
+}
+.layoutComponents {
+  padding: 0;
+  margin: 0;
+}
+.layoutDialog ::v-deep .el-dialog__body {
+  padding: 10px;
+}
+</style>
 <script>
 import { Input, Button } from 'element-ui'
 import { P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Dialog as CommonDialog, P8Table as CommonTable } from 'p8-components-ui'
@@ -62,7 +90,7 @@ export default {
     componentUrl () {
       console.log(this.asyncComponents, '===this.asyncComponents')
       if (this.asyncComponents) {
-         if (this.asyncComponents.indexOf('?') !== -1) {
+        if (this.asyncComponents.indexOf('?') !== -1) {
           const list = this.asyncComponents.split('?')
           const url = list[0]
           const parmars = list[1].split('&')
@@ -218,9 +246,9 @@ export default {
         }
       }
     },
-    getParamsList (obj,fileName) {
+    getParamsList (obj, fileName) {
       let list = []
-      function getEndList (item){
+      function getEndList (item) {
         list.push(item[fileName])
         if (item.children && item.children.length) {
           item.children.forEach(el => {
@@ -306,6 +334,20 @@ export default {
       }
       getData(treeList)
       return arr
+    },
+    getIcon (node) {
+      let treeSettingsParmars = this.previewParmars.treeSettingsParmars
+      let icon = ''
+      if (!node.data.parentId) {
+        icon = treeSettingsParmars.rootIcon ? treeSettingsParmars.rootIcon : 'p8 icon-zong'
+      } else {
+        if (!node.isLeaf) {
+          icon = treeSettingsParmars.parentIcon ? treeSettingsParmars.parentIcon : 'p8 icon-zong'
+        } else {
+          icon = treeSettingsParmars.childIcon ? treeSettingsParmars.childIcon : 'el-icon-folder'
+        }
+      }
+      return icon
     }
   }
 }

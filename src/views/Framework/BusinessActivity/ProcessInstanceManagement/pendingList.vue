@@ -43,85 +43,84 @@ export default {
     ListLayout
   },
   data () {
-    const columns = [
-      {
-        title: '序号',
-        type: 'index',
-        width: '50px'
-      },
-      {
-        title: '流程名称',
-        dataIndex: 'processName',
-        sortable: false,
-        align: 'left',
-        headerAlign: 'left',
-        minWidth: 180,
-        filterable: true, // 列上增加输入框搜索
-        filter: {
-          alias: '',
-          val: '',
-          type: 'text'
-        }
-      },
-      {
-        title: '提交人',
-        dataIndex: 'startUser',
-        sortable: false,
-        align: 'left',
-        headerAlign: 'left',
-        minWidth: 120,
-        filterable: true, // 列上增加输入框搜索
-        filter: {
-          alias: '',
-          val: '',
-          type: 'text'
-        }
-      },
-      {
-        title: '当前审批人',
-        dataIndex: 'approveUser',
-        sortable: false,
-        align: 'left',
-        headerAlign: 'left',
-        minWidth: 120,
-        filterable: true, // 列上增加输入框搜索
-        filter: {
-          alias: '',
-          val: '',
-          type: 'text'
-        }
-      },
-      {
-        title: '提交时间',
-        dataIndex: 'startTime',
-        sortable: false,
-        align: 'left',
-        headerAlign: 'left',
-        minWidth: 190,
-        filterable: true, // 列上增加输入框搜索
-        filter: {
-          alias: 'startEndTime',
-          val: '',
-          type: 'datetimeRange',
-          fieldConfig: {
-            valueFormat: 'yyyy-MM-dd'
-          }
-        }
-      },
-      {
-        title: '操作',
-        dataIndex: 'operation',
-        scopedSlots: { customRender: 'custom' },
-        align: 'left',
-        headerAlign: 'left',
-        width: 90
-      }
-    ]
     return {
+      columns: [
+        {
+          title: '序号',
+          type: 'index',
+          width: '50px'
+        },
+        {
+          title: '流程名称',
+          dataIndex: 'processName',
+          sortable: false,
+          align: 'left',
+          headerAlign: 'left',
+          minWidth: 180,
+          filterable: true, // 列上增加输入框搜索
+          filter: {
+            alias: '',
+            val: '',
+            type: 'text'
+          }
+        },
+        {
+          title: '提交人',
+          dataIndex: 'startUser',
+          sortable: false,
+          align: 'left',
+          headerAlign: 'left',
+          minWidth: 120,
+          filterable: true, // 列上增加输入框搜索
+          filter: {
+            alias: '',
+            val: '',
+            type: 'text'
+          }
+        },
+        {
+          title: '当前审批人',
+          dataIndex: 'approveUser',
+          sortable: false,
+          align: 'left',
+          headerAlign: 'left',
+          minWidth: 120,
+          filterable: true, // 列上增加输入框搜索
+          filter: {
+            alias: '',
+            val: '',
+            type: 'text'
+          }
+        },
+        {
+          title: '提交时间',
+          dataIndex: 'startTime',
+          sortable: false,
+          align: 'left',
+          headerAlign: 'left',
+          minWidth: 190,
+          filterable: true, // 列上增加输入框搜索
+          filter: {
+            alias: 'startEndTime',
+            val: '',
+            type: 'datetimeRange',
+            fieldConfig: {
+              valueFormat: 'yyyy-MM-dd'
+            }
+          }
+        },
+        {
+          title: '操作',
+          dataIndex: 'operation',
+          scopedSlots: { customRender: 'custom' },
+          align: 'left',
+          headerAlign: 'left',
+          width: 90
+        }
+      ],
       visible1: false,
       queryParam: {},
       tableApi: 'baseData.allPendingList',
-      columns,
       tableConfig: {
         'highlight-current-row': true
       }

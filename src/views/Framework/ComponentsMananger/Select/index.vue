@@ -2,12 +2,16 @@
 
 
 <template>
-  <normal-layout>
+  <normal-layout class="normalContain">
     <template #north>
       <common-button :comp="comp"
                      :button-type="'round'"
                      :custom-button-data="customButtonData"></common-button>
-      <!--      <search-form-list ref="search" :dataSource="searchData" @search="search" @re-set="reSet"></search-form-list>-->
+      <search-form-list ref="search"
+                        :data-source="searchData"
+                        @search="search"
+                        labelWidth="100px"
+                        @re-set="reSet"></search-form-list>
     </template>
     <template #west>
       <common-tree :data="treeData"
@@ -15,16 +19,14 @@
                    :tree-config="treeCfg"></common-tree>
     </template>
     <template #center>
-      <div id="table-contain">
-        <common-table ref="table"
-                      :comp="comp"
-                      :columns="columns"
-                      :use-system-config-button="0"
-                      :custom-button-data="customButtonData"
-                      :params="queryParam"
-                      :api="tableApi"
-                      :pagination="true"></common-table>
-      </div>
+      <common-table ref="table"
+                    :comp="comp"
+                    :columns="columns"
+                    :use-system-config-button="0"
+                    :custom-button-data="customButtonData"
+                    :params="queryParam"
+                    :api="tableApi"
+                    :pagination="true"></common-table>
     </template>
     <template #drawer-panel>
       <common-drawer v-if="visibleEditDrawer"
@@ -43,11 +45,10 @@
 </template>
 
 <script>
-import { P8Button as CommonButton, P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import { P8Search as SearchFormList, P8Button as CommonButton, P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
 
 import SelectionEdit from './Components/edit'
 import moment from 'moment'
-// import { P8Search as SearchFormList } from 'p8-components-ui'
 
 const TREE_DATA = [
   {
@@ -82,12 +83,25 @@ export default {
     CommonButton,
     CommonTable,
     CommonDrawer,
-    SelectionEdit
-    // ,
-    // SearchFormList
+    SelectionEdit,
+    SearchFormList
   },
   data () {
     return {
+      searchData: [
+        {
+          type: 'text',
+          labelText: '名称',
+          fieldName: 'selectionName',
+          placeholder: '请输入名称'
+        },
+        {
+          type: 'text',
+          labelText: '编码',
+          fieldName: 'selectionCode',
+          placeholder: '请输入编码'
+        }
+      ],
       comp: this,
       customButtonData: [
         {
@@ -258,6 +272,16 @@ export default {
   //   }
   // },
   methods: {
+    search (param) {
+      let that = this
+      if (param) {
+        that.queryParam = param
+      }
+    },
+    reSet () {
+      let that = this
+      Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = null })
+    },
     onCreate () {
       this.recordId = ''
       if (this.selectionTypeId === 'root') {
@@ -313,3 +337,12 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.normalContain ::v-deep .normal-center {
+  padding: 0 15px;
+}
+.normalContain ::v-deep .normal-header {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+</style>

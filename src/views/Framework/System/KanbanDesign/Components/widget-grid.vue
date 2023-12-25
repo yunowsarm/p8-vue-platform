@@ -146,9 +146,14 @@
                        :resize-time="widgetResizeStatus[item.slot]"
                        ref="renderView"></render-view>
           <tableRenderVue v-if="item.component.functionalCategory === '3'"
-            :code="item.component.dataviewId"
-            @searchData="searchData"
-          ></tableRenderVue>
+                          :code="item.component.dataviewId"
+                          @searchData="searchData"></tableRenderVue>
+          <AntvView v-if="item.component.functionalCategory === '4' "
+                    :is-show="isLayoutReady"
+                    :app-config="item.component"
+                    :option="item.component.jsonOptions"
+                    :thirdMenuParam="thirdMenuParam"
+                    :resize-time="widgetResizeStatus[item.slot]"></AntvView>
         </widget-item>
       </smart-widget-grid>
     </VuePerfectScrollbar>
@@ -164,7 +169,7 @@ import widgetItem from './widget-item.vue'
 import dynamicLink from './dynamic-link.vue'
 import renderView from '/src/views/Framework/ComponentsMananger/Kanban/Components/renderView'
 import tableRenderVue from '../../../ComponentsMananger/Grid/Components/tableRender.vue'
-
+import AntvView from '@/views/Framework/ComponentsMananger/Kanban/Components/AntvView'
 export default {
   name: 'Widgetgrid',
   provide () {
@@ -182,7 +187,8 @@ export default {
     widgetItem,
     renderView,
     VuePerfectScrollbar,
-    dynamicLink
+    dynamicLink,
+    AntvView
   },
   props: {
     widget: {
@@ -201,6 +207,12 @@ export default {
     isDesign: {
       type: Boolean,
       default: true
+    },
+    thirdMenuParam: {
+      type: Object,
+      default: function () {
+        return {}
+      }
     }
   },
   computed: {
@@ -304,7 +316,7 @@ export default {
       let widgetList = JSON.parse(JSON.stringify(this.widget))
       widgetList.splice(data.index, 1)
       this.$emit('update:widget', widgetList)
-      this.getSearchCofnfig (widgetList)
+      this.getSearchCofnfig(widgetList)
     },
     // 设置
     setWidget (data) {
@@ -369,16 +381,16 @@ export default {
     },
     getSearchCofnfig (list) {
       list.forEach(el => {
-        if(el.component.searchConfigValue && (el.component.functionalCategory && el.component.functionalCategory !== '3')){
+        if (el.component.searchConfigValue && (el.component.functionalCategory && el.component.functionalCategory !== '3')) {
           let item
           if (el.component.searchConfigValue && el.component.searchConfigValue.indexOf('null') !== -1) {
             item = ''
           } else {
             item = JSON.parse(el.component.searchConfigValue)
           }
-          if(item && item.length && item !== 'null') {
+          if (item && item.length && item !== 'null') {
             item.forEach(val => {
-                this.searchList.push({
+              this.searchList.push({
                 type: val.type, // 控件类型
                 labelText: val.labelText, // 控件显示的文本
                 fieldName: val.fieldName,
@@ -397,15 +409,14 @@ export default {
         let list = this.searchList.concat(this.tableSearchList)
         let newobj = {}
         list = list.reduce((preVal, curVal) => {
-          newobj[curVal.fieldName] ? '' : newobj[curVal.fieldName] = preVal.push(curVal); 
-          return preVal 
+          newobj[curVal.fieldName] ? '' : newobj[curVal.fieldName] = preVal.push(curVal);
+          return preVal
         }, [])
         let obj = {
           enabled: true,
           searchForm: list
         }
-        console.log(list,'===list');
-        this.$emit('setSearchConfig',JSON.stringify(obj))
+        this.$emit('setSearchConfig', JSON.stringify(obj))
       }
     }
   }

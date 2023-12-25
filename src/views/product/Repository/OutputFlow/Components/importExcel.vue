@@ -4,7 +4,6 @@
              :dataSource="dataSource"
              :form="formData"
              :api="saveApi"
-             :existDefaultBtn="false"
              :is-custom-validate="isCustomValidate"
              @custom-validate="customValidate"
              @saved="saved"

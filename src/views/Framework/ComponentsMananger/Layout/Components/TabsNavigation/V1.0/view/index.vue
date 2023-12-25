@@ -2,7 +2,8 @@
 
 
 <template>
-  <list-layout :header-visible="false">
+  <list-layout :header-visible="false"
+               class="tabsViewLayout">
     <template #center>
       <menu-layout v-if="tabsParmar.navigation === '2'"
                    ref="menuLayout"
@@ -46,6 +47,12 @@
 <style lang="scss" scoped>
 ::v-deep .el-tabs.el-tabs__header {
   margin: 0;
+}
+.tabsViewLayout ::v-deep .list-main {
+  height: calc(100% - 20px) !important;
+  .normal-header {
+    padding-top: 8px;
+  }
 }
 .el-tabs.el-tabs--top,
 .el-tabs.el-tabs--bottom {
@@ -150,7 +157,6 @@
 
 // 选项卡 四个方向
 ::v-deep .el-tabs--card > .el-tabs__header {
-  margin: 0;
   border-top: none;
   border-bottom: none;
 }
@@ -165,12 +171,16 @@
     border: none;
   }
   .el-tabs__item {
+    border-top: 1px solid #e4e7ed;
     border-right: 1px solid #e4e7ed;
-    border-left: 0px;
+    border-left: 1px solid #e4e7ed;
   }
   .el-tabs__item:last-child {
-    border-right: 0px;
+    border-top-right-radius: 6px;
     border-left: 0px;
+  }
+  .el-tabs__item:first-child {
+    border-top-left-radius: 6px;
   }
 }
 // 左
@@ -183,18 +193,23 @@
     border: none;
   }
   .el-tabs__item {
-    border-right: 1px solid #e4e7ed;
+    border-top: 1px solid #e4e7ed;
     border-bottom: 1px solid #e4e7ed;
-    border-top: 0px;
+    border-left: 1px solid #e4e7ed;
   }
   .el-tabs__item:last-child {
-    border-bottom: 0px;
+    border-bottom-left-radius: 6px;
     border-top: 0px;
+    border-bottom: 1px solid #e4e7ed;
+  }
+  .el-tabs__item:first-child {
+    border-top: 1px solid #e4e7ed;
+    border-top-left-radius: 6px;
   }
 }
 // 下
 ::v-deep .el-tabs--card.el-tabs--bottom > .el-tabs__header {
-  // margin-top: 0;
+  margin-top: 0;
   border-top: 1px solid #e4e7ed;
   .el-tabs__item.is-active {
     border-top: 2px solid;
@@ -213,12 +228,15 @@
   }
   .el-tabs__item {
     border-right: 1px solid #e4e7ed;
-    border-left: 0px;
-    border-bottom: 0px;
+    border-bottom: 1px solid #e4e7ed;
+    border-left: 1px solid #e4e7ed;
   }
   .el-tabs__item:last-child {
-    border-right: 0px;
+    border-bottom-right-radius: 6px;
     border-left: 0px;
+  }
+  .el-tabs__item:first-child {
+    border-bottom-left-radius: 6px;
   }
 }
 // 右
@@ -231,13 +249,18 @@
     border: none;
   }
   .el-tabs__item {
-    border-left: 0px;
+    border-top: 1px solid #e4e7ed;
     border-bottom: 1px solid #e4e7ed;
-    border-top: 0px;
+    border-right: 1px solid #e4e7ed;
   }
   .el-tabs__item:last-child {
-    border-bottom: 0px;
+    border-bottom-right-radius: 6px;
     border-top: 0px;
+    border-bottom: 1px solid #e4e7ed;
+  }
+  .el-tabs__item:first-child {
+    border-top: 1px solid #e4e7ed;
+    border-top-right-radius: 6px;
   }
 }
 
@@ -245,36 +268,50 @@
 // 上
 ::v-deep .el-tabs--border-card.el-tabs--top > {
   .el-tabs__content {
+    border-top: 1px solid #e4e7ed;
     padding: 0;
   }
   .el-tabs__header {
-    margin: 0;
     border-bottom: none;
     .el-tabs__item.is-active {
-      border-color: #fff;
-      border-bottom: 2px solid;
-      border-bottom-color: #ffffff;
+      border-bottom: 1px solid;
+      border-color: #ffffff;
+      border-left: 1px solid #e4e7ed;
+      border-right: 1px solid #e4e7ed;
     }
   }
 }
 // 左
 ::v-deep .el-tabs--border-card.el-tabs--left > {
   .el-tabs__content {
+    border-left: 1px solid #e4e7ed;
     padding: 0;
+  }
+  .el-tabs__header.is-left {
+    border-right: none;
+    margin: 0;
   }
   .el-tabs__header .el-tabs__item.is-active {
     border-color: #fff;
     border-right: 2px solid;
     border-right-color: #ffffff;
+    border-top: 1px solid #e4e7ed;
+    border-bottom: 1px solid #e4e7ed;
   }
   .el-tabs__header .el-tabs__item {
-    border-right: 2px solid #fff;
+    border-right: unset;
   }
 }
 // 下
 ::v-deep .el-tabs--border-card.el-tabs--bottom > {
   .el-tabs__content {
+    height: calc(100% - 43px) !important;
+    border-bottom: 1px solid #e4e7ed;
     padding: 0;
+  }
+  .el-tabs__header.is-bottom {
+    // border-top: none;
+    margin: 0;
   }
   .el-tabs__header {
     border-top: none;
@@ -282,20 +319,31 @@
       border-color: #fff;
       border-top: 2px solid;
       border-top-color: #ffffff;
+      border-left: 1px solid #e4e7ed;
+      border-right: 1px solid #e4e7ed;
     }
   }
 }
 // 右
 ::v-deep .el-tabs--border-card.el-tabs--right > {
   .el-tabs__content {
+    border-right: 1px solid #e4e7ed;
+
     padding: 0;
+  }
+  .el-tabs__header.is-right {
+    border-top: none;
+    margin: 0;
   }
   .el-tabs__header .el-tabs__item.is-active {
     border-color: #fff;
     border-left: 2px solid;
     border-left-color: #ffffff;
+    border-top: 1px solid #e4e7ed;
+    border-bottom: 1px solid #e4e7ed;
   }
   .el-tabs__header .el-tabs__item {
+    border-left: unset;
     border-left: 2px solid #fff;
   }
 }
@@ -314,7 +362,7 @@ export default {
   computed: {
     componentUrl () {
       if (this.asyncComponents) {
-         if (this.asyncComponents.indexOf('?') !== -1) {
+        if (this.asyncComponents.indexOf('?') !== -1) {
           const list = this.asyncComponents.split('?')
           const url = list[0]
           const parmars = list[1].split('&')
@@ -484,7 +532,7 @@ export default {
       this.$emit('close')
     },
     saveSuccess (res) {
-      console.log(res,'---res布局');
+      console.log(res, '---res布局');
       this.configParmars.id = res
     }
   }

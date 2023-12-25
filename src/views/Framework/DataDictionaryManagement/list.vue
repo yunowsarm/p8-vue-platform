@@ -1,42 +1,76 @@
 <template>
-  <normal-layout class="normalHeight">
+  <list-layout>
     <template #north>
-      <common-button :comp="comp" :button-type="'round'"></common-button>
-    </template>
-    <template #west>
-      <common-tree :tree-api="treeApi" ref="tree" :node-slot="true" @select="onSelect">
-        <template #tree="{ node }">
-          <div style="display: flex; width: 100%">
-            <i class="p8 tree_icon icon-fill-in-approval-comments"></i>
-            <span class="labelShow">{{ node.label }}</span>
-            <span class="iconOperation">
-              <i class="p8 tree_icon icon-modify2" @click.stop="classifyModify(node.data)"></i>
-              <i class="p8 tree_icon icon-remove" @click.stop="classifyRemove(node.data)"></i>
-            </span>
-          </div>
-        </template>
-      </common-tree>
+      <common-button :comp="comp"
+                     :button-type="'round'"></common-button>
     </template>
     <template #center>
-      <common-table ref="table" :comp="comp" :table-config="tableConfig" :columns="columns" :params="queryParam" :has-w-b-s="true" :api="tableApi" :table-refresh="tableRefresh" :pagination="false">
-        <template #icon="{ scope }">
-          <i :class="[scope.row.icon ? scope.row.icon : '']" :style="{ 'font-size': '18px', color: scope.row.color }"></i>
+      <normal-layout :header-visible="false">
+        <template #west>
+          <common-tree :tree-api="treeApi"
+                       ref="tree"
+                       :indent="26"
+                       :node-slot="true"
+                       @select="onSelect">
+            <template #tree="{ node }">
+              <div style="display: flex; width: 100%">
+                <i class="p8 tree_icon icon-fill-in-approval-comments"></i>
+                <span class="labelShow">{{ node.label }}</span>
+                <span class="iconOperation">
+                  <i class="p8 tree_icon icon-modify2"
+                     @click.stop="classifyModify(node.data)"></i>
+                  <i class="p8 tree_icon icon-remove"
+                     @click.stop="classifyRemove(node.data)"></i>
+                </span>
+              </div>
+            </template>
+          </common-tree>
         </template>
-      </common-table>
+        <template #center>
+          <common-table ref="table"
+                        :comp="comp"
+                        :table-config="tableConfig"
+                        :columns="columns"
+                        :params="queryParam"
+                        :has-w-b-s="true"
+                        :api="tableApi"
+                        :table-refresh="tableRefresh"
+                        :pagination="false">
+            <template #icon="{ scope }">
+              <i :class="[scope.row.icon ? scope.row.icon : '']"
+                 :style="{ 'font-size': '18px', color: scope.row.color }"></i>
+            </template>
+          </common-table>
+        </template>
+        <template #drawer-panel>
+          <common-drawer v-if="visibleClassifyEditDrawer"
+                         :title="drawerTitle"
+                         :visible="visibleClassifyEditDrawer"
+                         @close="onEditClassifyClose"
+                         :size="drawerSize">
+            <template #drawer>
+              <classify-edit @save-success="saveCallback"
+                             @cancel="visibleClassifyEditDrawer = false"
+                             :row-id="rowId"></classify-edit>
+            </template>
+          </common-drawer>
+          <common-drawer v-if="visibleOptionEditDrawer"
+                         :title="drawerTitle"
+                         :visible="visibleOptionEditDrawer"
+                         @close="onEditOptionClose"
+                         :size="drawerSize">
+            <template #drawer>
+              <option-edit @save-success="saveOptionCallback"
+                           @cancel="visibleOptionEditDrawer = false"
+                           :row-id="rowId"
+                           :tree-id="treeId"
+                           :record="record"></option-edit>
+            </template>
+          </common-drawer>
+        </template>
+      </normal-layout>
     </template>
-    <template #drawer-panel>
-      <common-drawer v-if="visibleClassifyEditDrawer" :title="drawerTitle" :visible="visibleClassifyEditDrawer" @close="onEditClassifyClose" :size="drawerSize">
-        <template #drawer>
-          <classify-edit @save-success="saveCallback" @cancel="visibleClassifyEditDrawer = false" :row-id="rowId"></classify-edit>
-        </template>
-      </common-drawer>
-      <common-drawer v-if="visibleOptionEditDrawer" :title="drawerTitle" :visible="visibleOptionEditDrawer" @close="onEditOptionClose" :size="drawerSize">
-        <template #drawer>
-          <option-edit @save-success="saveOptionCallback" @cancel="visibleOptionEditDrawer = false" :row-id="rowId" :tree-id="treeId" :record="record"></option-edit>
-        </template>
-      </common-drawer>
-    </template>
-  </normal-layout>
+  </list-layout>
 </template>
 
 <style lang="scss" scoped>
@@ -55,18 +89,21 @@
   width: 100%;
   padding-right: 16px;
 }
-.normalHeight ::v-deep .normal-main {
-  height: calc(100% - 70px);
-}
 // ::v-deep .splitBtn {
 //   display: none !important;
 // }
+::v-deep .list-main {
+  padding: 0 !important;
+}
+::v-deep .normal-layout {
+  padding-left: 0 !important;
+}
 .tree_icon {
   color: #a9a9a9;
 }
 </style>
 <script>
-import { P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Button as CommonButton, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import { P8ListLayout as ListLayout, P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Button as CommonButton, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
 import classifyEdit from './classifyEdit'
 import optionEdit from './optionEdit'
 const columns = [
@@ -145,16 +182,19 @@ export default {
     CommonTable,
     CommonDrawer,
     classifyEdit,
-    optionEdit
+    optionEdit,
+    ListLayout
   },
-  data() {
+  data () {
     return {
       drawerSize: '40%',
       drawerTitle: '',
       visibleClassifyEditDrawer: false,
       visibleOptionEditDrawer: false,
       treeApi: 'dictionaryManagement.dictCategoryTree',
-      queryParam: {},
+      queryParam: {
+        dicType: ''
+      },
       tableApi: 'dictionaryManagement.list',
       columns: columns,
       rowId: '',
@@ -166,25 +206,29 @@ export default {
   },
   computed: {},
   methods: {
-    onSelect(node) {
-      this.queryParam.dicType = node.layersParams.dicType
+    onSelect (node) {
+      if (node.layersParams) {
+        this.queryParam.dicType = node.layersParams.dicType
+      } else {
+        this.queryParam.dicType = ''
+      }
       this.treeId = node.id
       this.$refs.table.searchData()
     },
     // 新建分类
-    createCategory() {
+    createCategory () {
       this.rowId = ''
       this.drawerTitle = '新建分类'
       this.visibleClassifyEditDrawer = true
     },
     // 分类修改
-    classifyModify(node) {
+    classifyModify (node) {
       this.drawerTitle = '修改分类'
       this.rowId = node.id
       this.visibleClassifyEditDrawer = true
     },
     // 分类删除
-    classifyRemove(node) {
+    classifyRemove (node) {
       const that = this
       this.$confirm(`确定要删除该分类吗？`, '提示', {
         confirmButtonText: '确定',
@@ -205,7 +249,7 @@ export default {
         })
     },
     // 导出SQL脚本
-    exportSQL() {
+    exportSQL () {
       const that = this
       that.$api['dictionaryManagement.exportSQL']({}, { responseType: 'blob' }).then((data) => {
         const date = new Date()
@@ -223,21 +267,21 @@ export default {
     },
 
     // 新建选项
-    createDict() {
+    createDict () {
       this.rowId = ''
       this.record = {}
       this.drawerTitle = '新建选项'
       this.visibleOptionEditDrawer = true
     },
     // 修改 选项
-    update(row) {
+    update (row) {
       this.rowId = row.id
       this.record = row
       this.drawerTitle = '修改选项'
       this.visibleOptionEditDrawer = true
     },
     // 启用 选项
-    openingUp(row) {
+    openingUp (row) {
       const that = this
       this.$confirm(`确定要启用该选项吗？`, '提示', {
         confirmButtonText: '确定',
@@ -257,7 +301,7 @@ export default {
         })
     },
     // 停用 选项
-    deactivate(row) {
+    deactivate (row) {
       const that = this
       this.$confirm(`确定要停用该选项吗？`, '提示', {
         confirmButtonText: '确定',
@@ -277,7 +321,7 @@ export default {
         })
     },
     // 删除 选项
-    remove(record) {
+    remove (record) {
       const that = this
       this.$confirm(`是否确定要删除该人员？`, '提示', {
         confirmButtonText: '确定',
@@ -295,15 +339,15 @@ export default {
           console.log(e)
         })
     },
-    onEditClassifyClose() {
+    onEditClassifyClose () {
       this.visibleClassifyEditDrawer = false
     },
-    saveCallback() {
+    saveCallback () {
       this.$refs.tree.initTreeData()
       this.$refs.table.searchData()
       this.visibleClassifyEditDrawer = false
     },
-    tableRefresh(param) {
+    tableRefresh (param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')
@@ -312,10 +356,10 @@ export default {
           console.log('异步失败的操作')
         })
     },
-    onEditOptionClose() {
+    onEditOptionClose () {
       this.visibleOptionEditDrawer = false
     },
-    saveOptionCallback() {
+    saveOptionCallback () {
       this.$refs.table.searchData()
       this.onEditOptionClose()
     }

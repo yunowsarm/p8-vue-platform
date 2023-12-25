@@ -6,9 +6,11 @@
       ref="parser"
       v-if="newOrModify && newOrModify === 'new' && Object.keys(formConf).length"
       :form-conf="formConf"
+      :btnLoading="btnLoading"
       :sys-params="sysParams"
       :type="type"
       :init-config="initConfig"
+      :multipleData="multipleData"
       @setPageData="setPageData"
       @saveForm="saveAction"
       @save="saveChange"
@@ -22,9 +24,11 @@
       ref="parser"
       v-else-if="newOrModify && newOrModify === 'modify' && pageType !== 'view' && Object.keys(formConf).length"
       :form-conf="formConf"
+      :btnLoading="btnLoading"
       :sys-params="sysParams"
       :type="type"
       :init-config="initConfig"
+      :multipleData="multipleData"
       :modify-res="modifyRes"
       :container-layout="modifyRes.containerLayout"
       @setPageData="setPageData"
@@ -117,6 +121,9 @@ export default {
       dynamicParamObj: {}, // 动态参数集合
       customFn: '',
       saveAction: '',
+      multipleData: {},
+      editId: '',
+      btnLoading: false,
       pageData: Object.assign({}, this.sysParams),
       containerLayout: '' //  组件的layout
     }
@@ -128,7 +135,7 @@ export default {
   },
   computed: {
     dataId() {
-      return this.dataViewId
+      return this.dataViewId || this.editId
     }
   },
   watch: {
@@ -552,6 +559,7 @@ export default {
       if (Array.isArray(result)) {
         const index = result.findIndex((v) => field.__config__.childrenTable === v.tableId)
         const newData = result[index].data
+        this.multipleData[field.__config__.childrenTable] = newData
         let modifyData = {}
         let val = []
         let data = []
@@ -566,6 +574,9 @@ export default {
           } else if (field.__config__.tag === 'el-checkbox-group') {
             val.push(item.table[field.__vModel__])
             field.__config__.defaultValue = val
+          } else if (field.__config__.tag === 'eject-select') {
+            val.push(item.table[field.__vModel__])
+            field.__config__.defaultValue = val.join(',')
           } else if (field.__config__.tag === 'el-input') {
             val = item.table[field.__vModel__]
             field.__config__.defaultValue = val
@@ -782,6 +793,7 @@ export default {
       this.$emit('close')
     },
     save(data, childData, arr, logdata) {
+      this.btnLoading = true
       if (this.dataId) {
         data.data.ID = this.dataId
       }
@@ -796,6 +808,7 @@ export default {
       }
       // console.log(params, '---params---')
       if (this.type && this.type === '001') {
+        this.btnLoading = false
         this.$emit('save-echarts')
       } else {
         const that = this
@@ -808,7 +821,7 @@ export default {
               })
               that.$emit('save-success', res)
               that.$nextTick(() => {
-                that.dataViewId = res
+                that.editId = res
               })
             } else {
               that.$message({
@@ -820,7 +833,23 @@ export default {
           .catch(function (error) {
             console.log(error)
           })
+          .finally(() => {
+            that.btnLoading = false
+          })
       }
+    },
+    customBtnFun(fun, data, childData, logdata) {
+      const params = {
+        desformCode: this.record.desformCode,
+        dataId: this.dataId,
+        primary: { table: data.data, uploadFiles: data.uploadFiles },
+        children: childData,
+        logDetail: logdata,
+        router: this.$route.name,
+        permissionVo: this.permissionVo
+      }
+      const func = new Function(`return function (formData){${fun}}`)()
+      func.call(this, params)
     },
     setSysDefaultValue(confClone) {
       if (confClone.__config__.variable && confClone.__config__.variable.startsWith('$')) {

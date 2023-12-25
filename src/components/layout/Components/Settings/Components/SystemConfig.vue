@@ -1,6 +1,10 @@
 <template>
   <div class="system-config">
-    <el-form v-model="systemCfgForm" label-width="120px">
+    <div class="tips">
+      <div class="vertical_line"></div>
+      系统配置
+    </div>
+    <el-form class="form_list" v-model="systemCfgForm" label-width="120px">
       <el-form-item :label="systemCfgForm.isShowSidebar ? '左边菜单栏隐藏' : '左边菜单栏显示'">
         <el-switch v-model="systemCfgForm.isShowSidebar"></el-switch>
       </el-form-item>
@@ -39,3 +43,20 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.tips {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  margin: 8px 8px 8px 26px;
+}
+.vertical_line {
+  margin-right: 8px;
+  width: 3px;
+  height: 16px;
+  background: $theme-color;
+}
+.form_list {
+  margin-left: 40px;
+}
+</style>

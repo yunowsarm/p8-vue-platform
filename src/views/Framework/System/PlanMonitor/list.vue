@@ -1,23 +1,23 @@
 <template>
   <list-layout>
     <template #north>
-      <common-button :comp="comp" :button-config="buttonConfig" :special-rote-name="roteName"></common-button>
+      <common-button :comp="comp"
+                     :button-config="buttonConfig"
+                     :special-rote-name="roteName"></common-button>
     </template>
     <template #center>
       <div id="table-contain">
-        <common-table
-          ref="table"
-          :comp="comp"
-          :table-config="tableConfig"
-          :columns="columns"
-          :tree="treeParams"
-          :params="queryParam"
-          :api="tableApi"
-          :table-refresh="tableRefresh"
-          :pagination="true"
-          @icon-click="iconClick"
-          :special-rote-name="roteName"
-        >
+        <common-table ref="table"
+                      :comp="comp"
+                      :table-config="tableConfig"
+                      :columns="columns"
+                      :tree="treeParams"
+                      :params="queryParam"
+                      :api="tableApi"
+                      :table-refresh="tableRefresh"
+                      :pagination="true"
+                      @icon-click="iconClick"
+                      :special-rote-name="roteName">
           <template #icon="{ scope }">
             <i :class="scope.row.icon"></i>
           </template>
@@ -25,14 +25,26 @@
       </div>
     </template>
     <template #drawer-panel>
-      <common-drawer v-if="visiblePlanLogoEditDrawer" :title="drawerTitle" :visible="visiblePlanLogoEditDrawer" @close="onEditPlanLogoClose">
+      <common-drawer v-if="visiblePlanLogoEditDrawer"
+                     :title="drawerTitle"
+                     :visible="visiblePlanLogoEditDrawer"
+                     @close="onEditPlanLogoClose">
         <template #drawer>
-          <plan-logo-edit @save-success="saveCallback" :id="id" :name="name" :record="record"></plan-logo-edit>
+          <plan-logo-edit @save-success="saveCallback"
+                          :id="id"
+                          :name="name"
+                          :record="record"></plan-logo-edit>
         </template>
       </common-drawer>
-      <common-drawer v-if="visiblePlanLogoDetailsDrawer" :title="drawerTitle" :visible="visiblePlanLogoDetailsDrawer" @close="onDetailsPlanLogoClose">
+      <common-drawer v-if="visiblePlanLogoDetailsDrawer"
+                     :title="drawerTitle"
+                     :visible="visiblePlanLogoDetailsDrawer"
+                     @close="onDetailsPlanLogoClose">
         <template #drawer>
-          <plan-logo-details @save-Success="onDetailsPlanLogoClose" :id="id" :name="name" :record="record"></plan-logo-details>
+          <plan-logo-details @save-Success="onDetailsPlanLogoClose"
+                             :id="id"
+                             :name="name"
+                             :record="record"></plan-logo-details>
         </template>
       </common-drawer>
     </template>
@@ -71,7 +83,7 @@ const columns = [
   {
     title: '时间控制',
     dataIndex: 'controlTimeType',
-    formatter(row, column, cellValue, index) {
+    formatter (row, column, cellValue, index) {
       let v = ''
       switch (cellValue) {
         case '1':
@@ -88,7 +100,7 @@ const columns = [
   {
     title: '是否固定',
     dataIndex: 'constantMarkType',
-    formatter(row, column, cellValue, index) {
+    formatter (row, column, cellValue, index) {
       let v = ''
       switch (cellValue) {
         case '1':
@@ -105,7 +117,7 @@ const columns = [
   {
     title: '状态',
     dataIndex: 'type',
-    formatter(row, column, cellValue, index) {
+    formatter (row, column, cellValue, index) {
       let v = ''
       switch (cellValue) {
         case '0':
@@ -121,6 +133,7 @@ const columns = [
   },
   {
     title: '操作',
+    width: 120,
     dataIndex: 'operation',
     scopedSlots: { customRender: 'operation' },
     align: 'center'
@@ -143,7 +156,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       comp: this,
       drawerTitle: '',
@@ -167,23 +180,23 @@ export default {
       }
     }
   },
-  mounted() {},
+  mounted () { },
   computed: {},
   methods: {
-    createPlanLogo() {
+    createPlanLogo () {
       this.id = ''
       this.drawerTitle = '新建计划标识'
       this.visiblePlanLogoEditDrawer = true
     },
-    iconClick(record) {},
-    updatePlanLogo(record) {
+    iconClick (record) { },
+    updatePlanLogo (record) {
       this.id = record.id
       this.name = record.name
       this.record = record
       this.drawerTitle = '修改计划标识'
       this.visiblePlanLogoEditDrawer = true
     },
-    detailPlanLogo(record) {
+    detailPlanLogo (record) {
       this.id = record.id
       this.record = record
       this.name = record.name
@@ -191,7 +204,7 @@ export default {
       this.drawerTitle = '查看计划标识'
       this.visiblePlanLogoDetailsDrawer = true
     },
-    removePlanLogo(record) {
+    removePlanLogo (record) {
       const that = this
       this.$confirm(`是否确定要删除该计划标识？`, '提示', {
         confirmButtonText: '确定',
@@ -209,7 +222,7 @@ export default {
           that.$message({ message: `删除计划标识失败！`, type: 'error' })
         })
     },
-    startPlanLogo(record) {
+    startPlanLogo (record) {
       const that = this
       let type = null
       this.$confirm(`是否确定要启用该计划标识？`, '提示', {
@@ -228,7 +241,7 @@ export default {
           that.$message({ message: `启用计划标识失败！`, type: 'error' })
         })
     },
-    stopPlanLogo(record) {
+    stopPlanLogo (record) {
       const that = this
       let type = null
       this.$confirm(`是否确定要停用该计划标识？`, '提示', {
@@ -247,17 +260,17 @@ export default {
           that.$message({ message: `停用计划标识失败！`, type: 'error' })
         })
     },
-    saveCallback() {
+    saveCallback () {
       this.$refs.table.searchData()
       this.onEditPlanLogoClose()
     },
-    onEditPlanLogoClose() {
+    onEditPlanLogoClose () {
       this.visiblePlanLogoEditDrawer = false
     },
-    onDetailsPlanLogoClose() {
+    onDetailsPlanLogoClose () {
       this.visiblePlanLogoDetailsDrawer = false
     },
-    tableRefresh(param) {
+    tableRefresh (param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')

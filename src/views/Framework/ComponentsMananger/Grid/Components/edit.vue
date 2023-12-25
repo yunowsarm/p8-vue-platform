@@ -4,7 +4,8 @@
 <template>
   <div>
     <form-list ref="form"
-               style="height:330px;"
+               class="form_list"
+               style="height:288px;"
                :data-source="dataSource"
                :form="formData"
                :api="saveApi"
@@ -30,6 +31,10 @@
     </form-list>
     <!-- <i v-show="iconShow" id="icon-style" class="el-icon-full-screen" @click="iconClick"></i>
     <i v-show="!iconShow" id="icon-style" class="el-icon-copy-document" @click="iconClick"></i> -->
+    <div class="tips">
+      <div class="vertical_line"></div>
+      数据表格信息
+    </div>
     <common-tabs :tabs-data="tabsData"
                  :height="height"
                  style="z-index: 1000"
@@ -98,8 +103,8 @@
                          :false-label="0"
                          @change="saveTableData(data)"></el-checkbox>
           </template>
-          <template #title="{ scope, data }">
-            <el-select v-model="scope.row.title"
+          <template #tableHeaderStyle="{ scope, data }">
+            <el-select v-model="scope.row.tableHeaderStyle"
                        clearable
                        @change="saveTableData(data)">
               <el-option label="左对齐"
@@ -385,18 +390,7 @@
             </el-tooltip>
           </template>
           <template #fieldHref="{ scope, data }">
-            <!-- <el-input v-model="scope.row.tenantId"
-                      clearable
-                      class="clearIcon"
-                      autosize
-                      :disabled="!!scope.row.isCustomColumn">
-              <i class="el-icon-link"
-                 slot="suffix"
-                 type="link"
-                 :style="{ cursor: 'pointer', fontSize: '16px', color: '#08c', marginTop: '8px' }"
-                 @click="showModal(scope, data)"></i>
-            </el-input> -->
-            <el-input v-model="scope.row.tenantId"
+            <el-input v-model="scope.row.drillDownName"
                       clearable
                       autosize
                       :disabled="!!scope.row.isCustomColumn">
@@ -657,119 +651,146 @@
         </common-dialog>
       </template>
       <template #configColumnDetails>
-        <editable-table :columns="configColumn"
-                        :add-row="false"
-                        :params="configParams"
-                        :data="editableData"
-                        @save-param-data="configParamData">
-          <template #isCustomColumn="{ scope }">
-            <span>{{ scope.row.isCustomColumn ? '是' : '否' }}</span>
-          </template>
-          <template #isTableTotal="{ scope, data }">
-            <el-checkbox v-if="isCalculate(scope)"
-                         v-model="scope.row.isTableTotal"
-                         :true-label="'1'"
-                         :false-label="'0'"
-                         @change="configParamData(data)"></el-checkbox>
-            <span v-else></span>
-          </template>
-          <template #isFatherTotal="{ scope, data }">
-            <el-checkbox v-if="isCalculate(scope)"
-                         v-model="scope.row.isFatherTotal"
-                         :true-label="'1'"
-                         :false-label="'0'"
-                         @change="configParamData(data)"></el-checkbox>
-            <span v-else></span>
-          </template>
-          <template #customColumnType="{ scope, data }">
-            <el-select v-if="scope.row.isCustomColumn == '1'"
-                       v-model="scope.row.customColumnType"
-                       clearable
-                       @change="configParamData(data, scope)">
-              <el-option label="序号"
-                         value="index"></el-option>
-              <el-option label="计算"
-                         value="count"></el-option>
-              <el-option label="图标"
-                         value="icon"></el-option>
-              <el-option label="三级菜单"
-                         value="thirdMenu"></el-option>
-              <el-option label="任务标识"
-                         value="taskIcon"></el-option>
-              <el-option label="插槽"
-                         value="slot"></el-option>
-            </el-select>
-            <span v-else></span>
-          </template>
-          <template #customColumnTypeHeader="{}">
-            自定义列类型
-            <el-tooltip class="item"
-                        effect="dark"
-                        popper-class="testtooltip"
-                        content="自定义列类型能够实现生成序号、生成图标、公式计算等功能，可在列设置中配置图标和计算的生成规则"
-                        placement="top">
-              <i style="font-size: 20px"
-                 class="el-icon-question"></i>
-            </el-tooltip>
-          </template>
-          <template #columnConfigHeader="{}">
-            列设置
-            <el-tooltip class="item"
-                        effect="dark"
-                        popper-class="testtooltip"
-                        content="自定义列类型设置为计算或图标时，可通过该列配置图标生成规则和计算规则"
-                        placement="top">
-              <i style="font-size: 20px"
-                 class="el-icon-question"></i>
-            </el-tooltip>
-          </template>
-          <template #columnConfig="{ scope, data }">
-            <el-input v-if="scope.row.isCustomColumn == '1' && scope.row.customColumnType == 'count'"
-                      type="textarea"
-                      :rows="1"
-                      v-model="scope.row.columnConfig.countStr"
-                      @click.native="showComfigDialog(scope)"
-                      @blur="configParamData(data)"></el-input>
-            <div v-else-if="scope.row.isCustomColumn == '1' && scope.row.customColumnType == 'icon'"
-                 style="text-align: left">
-              <el-button type="text"
-                         @click="showComfigDialog(scope)"
-                         style="margin-right: 5px">添加</el-button>
-              <span v-for="(item, index) in scope.row.columnConfig.iconConfig"
-                    :key="index"
-                    class="wrap"
-                    @click="modify(item, index, scope)">
-                <span v-if="item.isDataDic == '1'"> 数据字典：{{ item.dataDicDisplay }} </span>
-                <span v-else>
-                  <span :class="item.icon"
-                        :style="{ color: item.color }"
-                        style="margin-right: 3px"></span>
-                  <span>{{ item.columnsName }}</span>
-                  <span>[{{ item.condition }}]</span>
+        <div class="top-table">
+          <editable-table :columns="configColumn"
+                          :add-row="false"
+                          :params="configParams"
+                          :data="editableData"
+                          @save-param-data="configParamData">
+            <template #isCustomColumn="{ scope }">
+              <span>{{ scope.row.isCustomColumn ? '是' : '否' }}</span>
+            </template>
+            <template #isTableTotal="{ scope, data }">
+              <el-checkbox v-if="isCalculate(scope)"
+                           v-model="scope.row.isTableTotal"
+                           :true-label="'1'"
+                           :false-label="'0'"
+                           @change="configParamData(data)"></el-checkbox>
+              <span v-else></span>
+            </template>
+            <template #isFatherTotal="{ scope, data }">
+              <el-checkbox v-if="isCalculate(scope)"
+                           v-model="scope.row.isFatherTotal"
+                           :true-label="'1'"
+                           :false-label="'0'"
+                           @change="configParamData(data)"></el-checkbox>
+              <span v-else></span>
+            </template>
+            <template #customColumnType="{ scope, data }">
+              <el-select v-if="scope.row.isCustomColumn == '1'"
+                         v-model="scope.row.customColumnType"
+                         clearable
+                         @change="configParamData(data, scope)">
+                <el-option label="序号"
+                           value="index"></el-option>
+                <el-option label="计算"
+                           value="count"></el-option>
+                <el-option label="图标"
+                           value="icon"></el-option>
+                <el-option label="三级菜单"
+                           value="thirdMenu"></el-option>
+                <el-option label="任务标识"
+                           value="taskIcon"></el-option>
+                <el-option label="插槽"
+                           value="slot"></el-option>
+                <el-option label="自定义渲染"
+                           value="funRender"></el-option>
+              </el-select>
+              <span v-else></span>
+            </template>
+            <template #customColumnTypeHeader="{}">
+              自定义列类型
+              <el-tooltip class="item"
+                          effect="dark"
+                          popper-class="testtooltip"
+                          content="自定义列类型能够实现生成序号、生成图标、公式计算等功能，可在列设置中配置图标和计算的生成规则"
+                          placement="top">
+                <i style="font-size: 20px"
+                   class="el-icon-question"></i>
+              </el-tooltip>
+            </template>
+            <template #columnConfigHeader="{}">
+              列设置
+              <el-tooltip class="item"
+                          effect="dark"
+                          popper-class="testtooltip"
+                          content="自定义列类型设置为计算或图标时，可通过该列配置图标生成规则和计算规则"
+                          placement="top">
+                <i style="font-size: 20px"
+                   class="el-icon-question"></i>
+              </el-tooltip>
+            </template>
+            <template #columnConfig="{ scope, data }">
+              <el-input v-if="scope.row.isCustomColumn == '1' && scope.row.customColumnType == 'count'"
+                        type="textarea"
+                        :rows="1"
+                        v-model="scope.row.columnConfig.countStr"
+                        @click.native="showComfigDialog(scope)"
+                        @blur="configParamData(data)"></el-input>
+              <div v-else-if="scope.row.isCustomColumn == '1' && scope.row.customColumnType == 'icon'"
+                   style="text-align: left">
+                <el-button type="text"
+                           @click="showComfigDialog(scope)"
+                           style="margin-right: 5px">添加</el-button>
+                <span v-for="(item, index) in scope.row.columnConfig.iconConfig"
+                      :key="index"
+                      class="wrap"
+                      @click="modify(item, index, scope)">
+                  <span v-if="item.isDataDic == '1'"> 数据字典：{{ item.dataDicDisplay }} </span>
+                  <span v-else>
+                    <span :class="item.icon"
+                          :style="{ color: item.color }"
+                          style="margin-right: 3px"></span>
+                    <span>{{ item.columnsName }}</span>
+                    <span>[{{ item.condition }}]</span>
+                  </span>
+                  <span class="el-icon-circle-close iconClose"
+                        @click.stop="delectIconList(index, scope)"></span>
                 </span>
-                <span class="el-icon-circle-close iconClose"
-                      @click.stop="delectIconList(index, scope)"></span>
-              </span>
-            </div>
-            <el-input v-else-if="scope.row.isCustomColumn == '1' && scope.row.customColumnType == 'slot'"
-                      placeholder="插槽名"
-                      v-model="scope.row.columnConfig.slotName"
-                      @blur="configParamData(data)"></el-input>
-            <span v-else></span>
-            <formula v-if="countVisible && scope.$index === index"
-                     :visible="countVisible"
-                     :data-list="dataList"
-                     :default-list="scope.row.columnConfig.countArr"
-                     @close="countVisible = false"
-                     @handleOk="formulaHandleOk"></formula>
-            <icon-custom v-if="iconVisible && scope.$index === index"
-                         :visible="iconVisible"
-                         @close="iconVisible = false"
-                         @handleOk="iconConfigOk"
-                         :data-list="dataList"
-                         :modify-record="modifyRecord"></icon-custom>
-          </template>
-        </editable-table>
+              </div>
+              <el-input v-else-if="scope.row.isCustomColumn == '1' && scope.row.customColumnType == 'slot'"
+                        placeholder="插槽名"
+                        v-model="scope.row.columnConfig.slotName"
+                        @blur="configParamData(data)"></el-input>
+              <div v-else-if="scope.row.isCustomColumn == '1' && scope.row.customColumnType == 'funRender'"
+                   style="text-align: left">
+                <el-button type="text"
+                           @click="showCustomRenderDialog(scope)"
+                           style="margin-right: 5px">渲染函数</el-button>
+              </div>
+              <span v-else></span>
+              <common-dialog title="设置事件参数"
+                             :visible="customRenderVisible && scope.$index === index"
+                             @handle-cancel="customRenderDialogClose"
+                             @handle-ok="customRenderDialogOk"
+                             width="40%"
+                             @close="customRenderDialogClose">
+                <template #dialog>
+                  <ace-edit :value.sync="customRenderFun"
+                            :config="aceConfig"
+                            width="100%"
+                            height="300px"></ace-edit>
+                  <el-alert title="该方法默认传递的的参数为row（当前行数据）,返回一个规范的html标签或字符串。该项展示已添加xss过滤,展示不正常时联系开发人员"
+                            :closable="false"
+                            type="warning">
+                  </el-alert>
+                </template>
+              </common-dialog>
+              <formula v-if="countVisible && scope.$index === index"
+                       :visible="countVisible"
+                       :data-list="dataList"
+                       :default-list="scope.row.columnConfig.countArr"
+                       @close="countVisible = false"
+                       @handleOk="formulaHandleOk"></formula>
+              <icon-custom v-if="iconVisible && scope.$index === index"
+                           :visible="iconVisible"
+                           @close="iconVisible = false"
+                           @handleOk="iconConfigOk"
+                           :data-list="dataList"
+                           :modify-record="modifyRecord"></icon-custom>
+            </template>
+          </editable-table>
+        </div>
       </template>
       <template #editConfig>
         <form-list ref="editConfigForm"
@@ -879,197 +900,200 @@
         </editable-table>
       </template>
       <template #searchDetails>
-        <editable-table ref="searchTable"
-                        class="searchTable"
-                        :columns="searchColumns"
-                        :add-row="false"
-                        :height="eaitHeight"
-                        :need-params="true"
-                        :changeTableData="searchData"
-                        @save-param-data="saveSearchData">
-          <template #fieldName="{ scope, data }">
-            <el-input v-model="scope.row.fieldName"
-                      :disabled="!!scope.row.isCustomColumn"
-                      @blur="saveSearchData(data)"></el-input>
-          </template>
-          <template #fieldType="{ scope, data }">
-            <el-input v-model="scope.row.fieldType"
-                      :disabled="!!scope.row.isCustomColumn"
-                      @blur="saveSearchData(data)"></el-input>
-          </template>
-          <template #fieldTxt="{ scope, data }">
-            <el-input v-model="scope.row.fieldTxt"
-                      @blur="saveSearchData(data)"></el-input>
-          </template>
-          <template #searchMode="{ scope, data }">
-            <el-select v-model="scope.row.searchMode"
-                       clearable
-                       :disabled="!!scope.row.isCustomColumn"
-                       @change="saveSearchData(data, scope.row.searchMode, scope)">
-              <el-option label="文本框"
-                         value="text"></el-option>
-              <el-option label="目录组件"
-                         value="select"></el-option>
-              <el-option label="树组件"
-                         value="treeSelect"></el-option>
-              <el-option label="复选"
-                         value="multiple"></el-option>
-              <el-option label="数字"
-                         value="number"></el-option>
-              <el-option label="单选按钮"
-                         value="radioButton"></el-option>
-              <el-option label="弹出组件"
-                         value="popUpSelect"></el-option>
-              <el-option label="日期"
-                         value="datetime"></el-option>
-              <el-option label="时间范围"
-                         value="datetimeRange"></el-option>
-            </el-select>
-          </template>
-          <template #queryFieldNameHeader="{}">
-            查询目标字段
-            <el-tooltip class="item"
-                        effect="dark"
-                        popper-class="testtooltip"
-                        placement="top">
-              <div slot="content">
-                <p>通过该值对目标字段进行查询筛选，例如：显示名称的字段通过目录组件选择后对ID列进行查询。</p>
-              </div>
-              <i style="font-size: 20px"
-                 class="el-icon-question"></i>
-            </el-tooltip>
-          </template>
-          <template #replaceVal="{ scope, data }">
-            <el-select v-model="scope.row.replaceVal"
-                       style="width: 100%"
-                       clearable
-                       :disabled="!!scope.row.isCustomColumn"
-                       @change="saveSearchData(data)">
-              <el-option v-for="item in replaceData"
-                         :key="item.value"
-                         :label="item.value"
-                         :value="item.value"></el-option>
-            </el-select>
-          </template>
-          <template #dictCodeHeader="{}">
-            选项组件
-            <el-tooltip class="item"
-                        effect="dark"
-                        popper-class="testtooltip"
-                        placement="top">
-              <div slot="content">
-                <p>查询模式为目录组件、树组件、弹出组件时，可选择选项组件管理中创建的选项组件，在查询时约束取值范围。</p>
-              </div>
-              <i style="font-size: 20px"
-                 class="el-icon-question"></i>
-            </el-tooltip>
-          </template>
-          <template #dictCode="{ scope, data }">
-            <!-- 目录组件 复选组件-->
-            <div v-if="scope.row.searchMode === 'select' || scope.row.searchMode === 'multiple' || scope.row.searchMode === 'radioButton'">
-              <el-select v-model="scope.row.dictCode"
-                         style="width: 100%"
+        <div class="top-table">
+          <editable-table ref="searchTable"
+                          class="searchTable"
+                          :columns="searchColumns"
+                          :add-row="false"
+                          :height="eaitHeight"
+                          :need-params="true"
+                          :changeTableData="searchData"
+                          @save-param-data="saveSearchData">
+            <template #fieldName="{ scope, data }">
+              <el-input v-model="scope.row.fieldName"
+                        @blur="saveSearchData(data)"></el-input>
+            </template>
+            <template #fieldType="{ scope, data }">
+              <el-input v-model="scope.row.fieldType"
+                        @blur="saveSearchData(data)"></el-input>
+            </template>
+            <template #fieldTxt="{ scope, data }">
+              <el-input v-model="scope.row.fieldTxt"
+                        @blur="saveSearchData(data)"></el-input>
+            </template>
+            <template #searchMode="{ scope, data }">
+              <el-select v-model="scope.row.searchMode"
                          clearable
-                         :disabled="!!scope.row.isCustomColumn"
-                         filterable
-                         @change="saveSearchData(data,)">
-                <el-option v-for="item in renderData"
-                           :key="item.selectionCode"
-                           :label="item.selectionName + '(' + item.selectionCode + ')'"
-                           :value="item.selectionCode"> </el-option>
+                         @change="saveSearchData(data, scope.row.searchMode, scope)">
+                <el-option label="文本框"
+                           value="text"></el-option>
+                <el-option label="目录组件"
+                           value="select"></el-option>
+                <el-option label="树组件"
+                           value="treeSelect"></el-option>
+                <el-option label="复选"
+                           value="multiple"></el-option>
+                <el-option label="数字"
+                           value="number"></el-option>
+                <el-option label="单选按钮"
+                           value="radioButton"></el-option>
+                <el-option label="弹出组件"
+                           value="popUpSelect"></el-option>
+                <el-option label="日期"
+                           value="datetime"></el-option>
+                <el-option label="时间范围"
+                           value="datetimeRange"></el-option>
+                <el-option label="日期年"
+                           value="year"></el-option>
               </el-select>
-            </div>
-            <!-- 树组件 -->
-            <div v-if="scope.row.searchMode === 'treeSelect'">
-              <el-select v-model="scope.row.dictCode"
+            </template>
+            <template #queryFieldNameHeader="{}">
+              查询目标字段
+              <el-tooltip class="item"
+                          effect="dark"
+                          popper-class="testtooltip"
+                          placement="top">
+                <div slot="content">
+                  <p>通过该值对目标字段进行查询筛选，例如：显示名称的字段通过目录组件选择后对ID列进行查询。</p>
+                </div>
+                <i style="font-size: 20px"
+                   class="el-icon-question"></i>
+              </el-tooltip>
+            </template>
+            <template #replaceVal="{ scope, data }">
+              <el-select v-model="scope.row.replaceVal"
                          style="width: 100%"
                          clearable
-                         :disabled="!!scope.row.isCustomColumn"
-                         filterable
                          @change="saveSearchData(data)">
-                <el-option v-for="item in treeData"
-                           :key="item.selectionCode"
-                           :label="item.selectionName + '(' + item.selectionCode + ')'"
-                           :value="item.selectionCode"> </el-option>
+                <el-option v-for="item in replaceData"
+                           :key="item.value"
+                           :label="item.value"
+                           :value="item.value"></el-option>
               </el-select>
-            </div>
-            <!-- 弹出组件 -->
-            <div v-if="scope.row.searchMode === 'popUpSelect'">
-              <el-input v-model="scope.row.dictCode"
-                        readonly
-                        autosize
-                        :disabled="!!scope.row.isCustomColumn"
-                        @click.native="showDialog(scope, data)">
-                <i class="el-icon-link"
-                   slot="suffix"
-                   type="link"
-                   :style="{ cursor: 'pointer', fontSize: '16px', color: '#08c' }"></i>
-              </el-input>
-              <common-dialog title="表格组件"
-                             :visible="moduleVisible"
-                             @handle-cancel="handleCancel"
-                             @handle-ok="componentsHandleOk"
-                             @close="handleCancel"
-                             width="60%">
-                <template #dialog>
-                  <common-table ref="table"
-                                :comp="comp"
-                                :columns="tableColumns"
-                                :params="queryParam"
-                                :api="tableApi"
-                                @selection-change="handleSelectionChange"> </common-table>
-                </template>
-              </common-dialog>
-            </div>
-          </template>
-          <template #defaultValueData="{ scope, data }">
-            <!-- 文本框 -->
-            <div v-if="scope.row.searchMode === 'text'">
-              <el-input clearable
-                        placeholder="请输入"
-                        :disabled="!!scope.row.isCustomColumn"
-                        @change="saveSearchData(data)"
-                        v-model="scope.row.defaultValueData"></el-input>
-            </div>
-            <!-- 日期 -->
-            <div v-if="scope.row.searchMode === 'datetime'">
-              <el-date-picker v-model="scope.row.defaultValueData"
-                              type="date"
-                              clearable
-                              style="width: 100%"
-                              valueFormat='yyyy-MM-dd'
-                              :disabled="!!scope.row.isCustomColumn"
-                              @change="saveSearchData(data)"
-                              placeholder="选择日期"> </el-date-picker>
-            </div>
-            <!-- 时间范围 -->
-            <div v-if="scope.row.searchMode === 'datetimeRange'">
-              <el-date-picker v-model="scope.row.defaultValueDatas"
-                              type="daterange"
-                              style="width: 100%"
-                              :disabled="!!scope.row.isCustomColumn"
-                              range-separator="至"
-                              start-placeholder="开始日期"
-                              end-placeholder="结束日期"
-                              valueFormat='yyyy-MM-dd'
-                              @change="dateChange(scope)">
-              </el-date-picker>
-            </div>
-            <!-- 数字 -->
-            <div v-if="scope.row.searchMode === 'number'">
-              <el-input clearable
-                        :disabled="!!scope.row.isCustomColumn"
-                        v-model="scope.row.defaultValueData"
-                        type="number"
-                        @change="saveSearchData(data)"
-                        size="medium"></el-input>
-            </div>
-          </template>
-        </editable-table>
+            </template>
+            <template #dictCodeHeader="{}">
+              选项组件
+              <el-tooltip class="item"
+                          effect="dark"
+                          popper-class="testtooltip"
+                          placement="top">
+                <div slot="content">
+                  <p>查询模式为目录组件、树组件、弹出组件时，可选择选项组件管理中创建的选项组件，在查询时约束取值范围。</p>
+                </div>
+                <i style="font-size: 20px"
+                   class="el-icon-question"></i>
+              </el-tooltip>
+            </template>
+            <template #dictCode="{ scope, data }">
+              <!-- 目录组件 复选组件-->
+              <div v-if="scope.row.searchMode === 'select' || scope.row.searchMode === 'multiple' || scope.row.searchMode === 'radioButton'">
+                <el-select v-model="scope.row.dictCode"
+                           style="width: 100%"
+                           clearable
+                           filterable
+                           @change="saveSearchData(data,)">
+                  <el-option v-for="item in renderData"
+                             :key="item.selectionCode"
+                             :label="item.selectionName + '(' + item.selectionCode + ')'"
+                             :value="item.selectionCode"> </el-option>
+                </el-select>
+              </div>
+              <!-- 树组件 -->
+              <div v-if="scope.row.searchMode === 'treeSelect'">
+                <el-select v-model="scope.row.dictCode"
+                           style="width: 100%"
+                           clearable
+                           filterable
+                           @change="saveSearchData(data)">
+                  <el-option v-for="item in treeData"
+                             :key="item.selectionCode"
+                             :label="item.selectionName + '(' + item.selectionCode + ')'"
+                             :value="item.selectionCode"> </el-option>
+                </el-select>
+              </div>
+              <!-- 弹出组件 -->
+              <div v-if="scope.row.searchMode === 'popUpSelect'">
+                <el-input v-model="scope.row.dictCode"
+                          readonly
+                          autosize
+                          @click.native="showDialog(scope, data)">
+                  <i class="el-icon-link"
+                     slot="suffix"
+                     type="link"
+                     :style="{ cursor: 'pointer', fontSize: '16px', color: '#08c' }"></i>
+                </el-input>
+                <common-dialog title="表格组件"
+                               :visible="moduleVisible"
+                               @handle-cancel="handleCancel"
+                               @handle-ok="componentsHandleOk"
+                               @close="handleCancel"
+                               width="60%">
+                  <template #dialog>
+                    <common-table ref="table"
+                                  :comp="comp"
+                                  :columns="tableColumns"
+                                  :params="queryParam"
+                                  :api="tableApi"
+                                  @selection-change="handleSelectionChange"> </common-table>
+                  </template>
+                </common-dialog>
+              </div>
+            </template>
+            <template #defaultValueData="{ scope, data }">
+              <!-- 文本框 -->
+              <div v-if="scope.row.searchMode === 'text'">
+                <el-input clearable
+                          placeholder="请输入"
+                          @change="saveSearchData(data)"
+                          v-model="scope.row.defaultValueData"></el-input>
+              </div>
+              <!-- 日期 -->
+              <div v-if="scope.row.searchMode === 'datetime'">
+                <el-date-picker v-model="scope.row.defaultValueData"
+                                type="date"
+                                clearable
+                                style="width: 100%"
+                                valueFormat='yyyy-MM-dd'
+                                @change="saveSearchData(data)"
+                                placeholder="选择日期"> </el-date-picker>
+              </div>
+              <!-- 日期年 -->
+              <div v-if="scope.row.searchMode === 'year'">
+                <el-date-picker v-model="scope.row.defaultValueData"
+                                type="year"
+                                clearable
+                                style="width: 100%"
+                                valueFormat='yyyy'
+                                @change="saveSearchData(data)"
+                                placeholder="选择日期"> </el-date-picker>
+              </div>
+              <!-- 时间范围 -->
+              <div v-if="scope.row.searchMode === 'datetimeRange'">
+                <el-date-picker v-model="scope.row.defaultValueDatas"
+                                type="daterange"
+                                style="width: 100%"
+                                range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期"
+                                valueFormat='yyyy-MM-dd'
+                                @change="dateChange(scope)">
+                </el-date-picker>
+              </div>
+              <!-- 数字 -->
+              <div v-if="scope.row.searchMode === 'number'">
+                <el-input clearable
+                          v-model="scope.row.defaultValueData"
+                          type="number"
+                          @change="saveSearchData(data)"
+                          size="medium"></el-input>
+              </div>
+            </template>
+          </editable-table>
+        </div>
       </template>
       <template #customCSS>
         <ace-edit :value.sync="styleValue"
-                  width="95%"
+                  class="top-ace"
                   :height="aceEditHeight"
                   :config="{lang: 'css'}"
                   @update:value="onEditModify"></ace-edit>
@@ -1156,7 +1180,7 @@ export default {
     }
   },
   data () {
-    const height = document.documentElement.clientHeight - 440
+    const height = document.documentElement.clientHeight - 472
     return {
       noApiTableData: [],
       selectModuleIndex: null,
@@ -1431,39 +1455,41 @@ export default {
         selectionRanges: []
       },
       des: '',
+      customRenderFun: '',
+      customRenderVisible: false,
       sqlIdOption: [],
       height: height + 'px',
-      aceEditHeight: height * 0.9 + 'px',
+      aceEditHeight: height * 0.9 - 65 + 'px',
       tabsData: [
         {
           label: '表格配置明细',
           name: 'tableConfigDetails',
-          icon: 'icon-multi-project-manage'
+          icon: 'icon-baobiaopeizhimingxi tabs_icon'
         },
         {
           label: '查询配置',
           name: 'searchDetails',
-          icon: 'icon-multi-project-manage'
+          icon: 'icon-chaxunpeizhi tabs_icon'
         },
         {
           label: '自定义列配置',
           name: 'configColumnDetails',
-          icon: 'icon-planning'
+          icon: 'icon-zidingyiliepeizhi tabs_icon'
         },
         {
           label: '参数',
           name: 'tableParam',
-          icon: 'icon-business-execution'
+          icon: 'icon-baobiaocanshu tabs_icon'
         },
         {
           label: '表格按钮',
           name: 'tableButton',
-          icon: 'icon-process-template'
+          icon: 'icon-biaogeanniu tabs_icon'
         },
         {
           label: '自定义CSS',
           name: 'customCSS',
-          icon: 'icon-process-template'
+          icon: 'icon-zidingyicss tabs_icon'
         }
       ],
       columns: [
@@ -1504,7 +1530,7 @@ export default {
         },
         {
           title: '表头对齐方式',
-          dataIndex: 'title',
+          dataIndex: 'tableHeaderStyle',
           align: 'center',
           width: 140,
           scopedSlots: { customRender: 'custom' }
@@ -2067,7 +2093,9 @@ export default {
       countVisible: false,
       dataList: [],
       index: null,
-      aceConfig: {},
+      aceConfig: {
+        lang: 'javascript'
+      },
       iconShow: true,
       eaitHeight: '100%',
       paramsVisible: false,
@@ -2260,37 +2288,37 @@ export default {
           {
             label: '表格配置明细',
             name: 'tableConfigDetails',
-            icon: 'icon-multi-project-manage'
+            icon: 'icon-baobiaopeizhimingxi tabs_icon'
           },
           {
             label: '查询配置',
             name: 'searchDetails',
-            icon: 'icon-multi-project-manage'
+            icon: 'icon-chaxunpeizhi tabs_icon'
           },
           {
             label: '自定义列配置',
             name: 'configColumnDetails',
-            icon: 'icon-planning'
+            icon: 'icon-zidingyiliepeizhi tabs_icon'
           },
           {
             label: '参数',
             name: 'tableParam',
-            icon: 'icon-business-execution'
+            icon: 'icon-baobiaocanshu tabs_icon'
           },
           {
             label: '表格按钮',
             name: 'tableButton',
-            icon: 'icon-process-template'
+            icon: 'icon-biaogeanniu tabs_icon'
           },
           {
             label: '自定义CSS',
             name: 'customCSS',
-            icon: 'icon-process-template'
+            icon: 'icon-zidingyicss tabs_icon'
           },
           {
             label: '编辑配置',
             name: 'editConfig',
-            icon: 'icon-my-task'
+            icon: 'icon-bianjipeizhi tabs_icon'
           }
         ]
       } else {
@@ -2298,32 +2326,32 @@ export default {
           {
             label: '表格配置明细',
             name: 'tableConfigDetails',
-            icon: 'icon-multi-project-manage'
+            icon: 'icon-baobiaopeizhimingxi tabs_icon'
           },
           {
             label: '查询配置',
             name: 'searchDetails',
-            icon: 'icon-multi-project-manage'
+            icon: 'icon-chaxunpeizhi tabs_icon'
           },
           {
             label: '自定义列配置',
             name: 'configColumnDetails',
-            icon: 'icon-planning'
+            icon: 'icon-zidingyiliepeizhi tabs_icon'
           },
           {
             label: '参数',
             name: 'tableParam',
-            icon: 'icon-business-execution'
+            icon: 'icon-baobiaocanshu tabs_icon'
           },
           {
             label: '表格按钮',
             name: 'tableButton',
-            icon: 'icon-process-template'
+            icon: 'icon-biaogeanniu tabs_icon'
           },
           {
             label: '自定义CSS',
             name: 'customCSS',
-            icon: 'icon-process-template'
+            icon: 'icon-zidingyicss tabs_icon'
           }
         ]
       }
@@ -2461,6 +2489,8 @@ export default {
           }
           break
         case 'startProcess':
+        case 'viewProcess':
+        case 'cancelProcess':
           obj = {
             module: 'BPM流程',
             code: this.paramsFormData.formCode
@@ -2581,7 +2611,7 @@ export default {
     handleOk (val) {
       this.dialogVisible = false
       this.reportParams.infoList[this.scopeValue.$index].fieldHref = JSON.stringify(val)
-      this.reportParams.infoList[this.scopeValue.$index].tenantId = val.name
+      this.reportParams.infoList[this.scopeValue.$index].drillDownName = val.name ? val.name : val.url
     },
     _initTableSize () {
       // const vm = this
@@ -2735,23 +2765,34 @@ export default {
       if (this.searchDetailData && this.searchDetailData.length) {
         this.searchDetailData.forEach(el => {
           if (el.parameterSource) {
-            params.reportParam.forEach(item => {
-              if (el.fieldName == item.fieldName) {
-                item.searchMode = el.searchMode
-                item.replaceVal = el.replaceVal
-                item.dictCode = el.dictCode
-                item.defaultValueData = el.defaultValueData
-              }
-            })
+            if (params.reportParam) {
+              params.reportParam.forEach(item => {
+                if (el.fieldName == item.fieldName) {
+                  item.searchMode = el.searchMode
+                  item.replaceVal = el.replaceVal
+                  item.dictCode = el.dictCode
+                  item.defaultValueData = el.defaultValueData
+                }
+              })
+            }
           } else {
-            params.reportItem.forEach(item => {
-              if (el.fieldName == item.fieldName) {
-                item.searchMode = el.searchMode
-                item.replaceVal = el.replaceVal
-                item.dictCode = el.dictCode
-                item.defaultValueData = el.defaultValueData
-              }
-            })
+            if (params.reportItem) {
+              params.reportItem.forEach(item => {
+                if (el.fieldName == item.fieldName) {
+                  item.searchMode = el.searchMode
+                  item.replaceVal = el.replaceVal
+                  item.dictCode = el.dictCode
+                  item.defaultValueData = el.defaultValueData
+                }
+              })
+            }
+          }
+        })
+      }
+      if (params.reportItem) {
+        params.reportItem.forEach(item => {
+          if (item.fieldWidth === 0) {
+            item.fieldWidth = item.fieldTxt ? item.fieldTxt.length * 30 : 0
           }
         })
       }
@@ -2990,6 +3031,23 @@ export default {
         return false
       }
     },
+    showCustomRenderDialog (scope) {
+      this.customRenderFun = ''
+      const row = scope.row
+      this.index = scope.$index
+      this.customRenderFun = row.columnConfig.renderFun || ''
+      this.customRenderVisible = true
+    },
+    customRenderDialogOk () {
+      const obj = this.editableData[this.index].columnConfig ? this.editableData[this.index].columnConfig : {}
+      obj.renderFun = this.customRenderFun
+      this.$set(this.editableData[this.index], 'columnConfig', obj)
+      this.customRenderVisible = false
+    },
+    customRenderDialogClose () {
+      this.customRenderFun = ''
+      this.customRenderVisible = false
+    },
     showComfigDialog (scope) {
       // 序号 index
       // 计算 count
@@ -3127,13 +3185,31 @@ export default {
 .formList.el-form > .el-row.formBtn {
   z-index: 9999;
 }
-// .editTable ::v-deep .el-table__body-wrapper {
-//   height: calc(100% - 50px) !important;
-// }
+.editTable ::v-deep .el-table__body-wrapper {
+  height: calc(100% - 50px) !important;
+}
 .editConfig {
   height: calc(100% - 120px) !important;
 }
+.form_list {
+  margin: 0 16px 0 16px;
+}
+.tips {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  margin: 8px 8px 8px 26px;
+  color: $theme-color;
+}
+.vertical_line {
+  margin-right: 8px;
+  width: 3px;
+  height: 16px;
+  background: $theme-color;
+}
 ::v-deep .el_tabs {
+  box-sizing: border-box;
+  margin: 0 26px 60px 26px;
   .el-tabs__content {
     padding: 0 !important;
     .list-layout {
@@ -3141,9 +3217,12 @@ export default {
       height: 100%;
     }
   }
+  .tabs_icon {
+    font-size: 16px;
+  }
 }
 </style>
-<style lang="scss">
+<style lang="scss" scoped>
 .testtooltip {
   width: 240px;
   max-height: 280px;
@@ -3155,5 +3234,19 @@ export default {
   position: 'relative';
   top: '0';
   left: '20px';
+}
+.item {
+  position: relative;
+  bottom: -2px;
+  right: 3px;
+}
+.top-table {
+  height: calc(100% - 55px);
+  padding: 0;
+  padding-top: 50px;
+}
+.top-ace {
+  margin: 15px;
+  margin-top: 50px;
 }
 </style>
