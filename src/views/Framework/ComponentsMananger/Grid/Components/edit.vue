@@ -2796,11 +2796,6 @@ export default {
           }
         })
       }
-      params.reportItem.forEach(item => {
-        if (item.fieldWidth === 0) {
-          item.fieldWidth = item.fieldTxt.length * 30
-        }
-      })
       this.$refs.form.submitForm(params, this.saveApi)
     },
     async changeSql (val) {
