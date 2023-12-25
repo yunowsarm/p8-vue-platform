@@ -6,6 +6,11 @@
     <template #north>
       <common-button :comp="comp"
                      :button-type="'round'"></common-button>
+      <search-form-list ref="search"
+                        :data-source="searchData"
+                        @search="search"
+                        labelWidth="100px"
+                        @re-set="reSet"></search-form-list>
     </template>
     <template #center>
       <div id="table-contain">
@@ -64,9 +69,14 @@
   </list-layout>
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped>
+::v-deep .p8-bpmnNew {
+  height: 100% !important;
+}
+</style>
 <script>
 import {
+  P8Search as SearchFormList,
   P8Bpm as ModelEdit,
   BpmnNew as BpmnNewEdit,
   P8ProcessDefinition as ModelView,
@@ -124,12 +134,27 @@ export default {
     CommonImport,
     CommonTable,
     // commonDialog,
+    SearchFormList,
     CommonDrawer,
     CommonButton,
     BpmnNewEdit
   },
   data () {
     return {
+      searchData: [
+        {
+          type: 'text',
+          labelText: '流程名称',
+          fieldName: 'name',
+          placeholder: '请输入流程名称'
+        },
+        {
+          type: 'text',
+          labelText: '流程KEY',
+          fieldName: 'key',
+          placeholder: '请输入流程KEY'
+        }
+      ],
       title: '',
       drawerTitle: '',
       visibleModelEditDrawer: false,
@@ -174,6 +199,16 @@ export default {
   mounted () { },
   computed: {},
   methods: {
+    search (param) {
+      let that = this
+      if (param) {
+        that.queryParam = param
+      }
+    },
+    reSet () {
+      let that = this
+      Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = null })
+    },
     showMessage (obj, message, type) {
       obj.$message({
         message: message,

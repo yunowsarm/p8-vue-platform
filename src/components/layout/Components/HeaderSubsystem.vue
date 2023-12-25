@@ -182,7 +182,7 @@ export default {
 <style lang="scss" scoped>
 .shortcut-menu-list {
   width: 50%;
-  height: 100%;
+  // height: 100%;
   margin: 0;
   display: flex;
   align-items: center;

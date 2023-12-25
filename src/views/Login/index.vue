@@ -91,7 +91,7 @@ export default {
         userPassword: [{ required: true, message: '请输入密码', trigger: 'blur' }]
       },
       dayTime: '',
-      system_name: '中车永济电机项目管理系统',
+      system_name: '项目管理系统',
       systemNames: PLATFORM_PREFIX_NAME,
       flag: 'systemModel1',
       loginCa: CA_LOGIN

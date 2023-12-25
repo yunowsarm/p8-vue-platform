@@ -148,7 +148,7 @@
 
 .planGantt ::v-deep {
   .gantt_row:not([aria-expanded]).updColor {
-    background-color: #9bffed;
+    background-color: #f0f8ff;
   }
 }
 </style>
@@ -195,6 +195,10 @@ export default {
     },
     taskStatus: {
       type: Object,
+      default: null
+    },
+    wholeDescribeId: {
+      type: String,
       default: null
     },
     createPage: {
@@ -274,11 +278,13 @@ export default {
       deep: 0,
       mouseX: '',
       mouseY: '',
+      columnSettings: [],
       copyTasks: [], // 复制任务载体
       taskClassifyDatas: [],
       monitorPointDatas: [],
       searchForm: {},
       monitorLockMap: {}, // 标识锁定状态
+      secretGrades: [],
       limitColumns: [], // 标识加锁后不可编辑列定义
       lockLevel: 3, // 编辑锁定任务层级，指定后，gantt页面对应任务不可做任何操作
       autoParentDate: '1', // 是否自动计算父任务时间,1：自动，2：手动
@@ -399,7 +405,10 @@ export default {
     ...mapGetters(['taskStyles'])
   },
   methods: {
-    initGantt(planInfoId, changeRecordId, viewType) {
+    async initGantt(planInfoId, changeRecordId, viewType) {
+      // 根据项目类型，获取gantt列设置
+      this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
+
       const vueThis = this
       myGantt = GanttObject.getGanttObject(vueThis.ganttName)
       // 清空原有数据
@@ -490,6 +499,7 @@ export default {
             vueThis.taskClassifyDatas = res.taskClassifys
             vueThis.monitorPointDatas = res.monitorPointDatas
             vueThis.monitorLockMap = res.monitorLock
+            vueThis.secretGrades = res.secretGradeList
             vueThis.managerStatusMap = res.managerStatusMap
             vueThis.taskMonitorMap = res.taskMonitorMap
             vueThis.changeTaskInfo = res.changeTaskInfo

@@ -55,24 +55,37 @@
                   <span style="padding-left: 10px">{{startTimeSplice(item.startTime)}}</span>
                 </el-col>
               </el-row>
-              <el-row type="flex"
-                      style="text-align: left">
-                <el-col :span="24">
-                  <span class="msg-content overHiding">项目名称：{{ item.projectInfoApproval && (item.projectInfoApproval.projectName || '') }}</span>
-                </el-col>
-              </el-row>
-              <el-row type="flex"
-                      style="text-align: left">
-                <el-col :span="24">
-                  <span class="msg-content overHiding">项目类型：{{ item.projectInfoApproval && (item.projectInfoApproval.projectType || '') }}</span>
-                </el-col>
-              </el-row>
-              <el-row type="flex"
-                      style="text-align: left">
-                <el-col :span="24">
-                  <span class="msg-content overHiding">型号代号：{{ item.projectInfoApproval && (item.projectInfoApproval.modelCode || '') }}</span>
-                </el-col>
-              </el-row>
+              <template v-if="item.approveInfoConfig">
+                <el-row type="flex"
+                        v-for="(el,index) in Object.keys(item.approveInfoConfig)"
+                        :key="index"
+                        style="text-align: left">
+                  <el-col :span="24">
+                    <span class="msg-content overHiding"
+                          v-if="item.approveInfoConfig[el]">{{item.approveInfoConfig[el].label}}：{{ item.approveInfoConfig[el].value }}</span>
+                  </el-col>
+                </el-row>
+              </template>
+              <template v-else>
+                <el-row type="flex"
+                        style="text-align: left">
+                  <el-col :span="24">
+                    <span class="msg-content overHiding">项目名称：{{ item.projectInfoApproval && (item.projectInfoApproval.projectName || '') }}</span>
+                  </el-col>
+                </el-row>
+                <el-row type="flex"
+                        style="text-align: left">
+                  <el-col :span="24">
+                    <span class="msg-content overHiding">项目类型：{{ item.projectInfoApproval && (item.projectInfoApproval.projectType || '') }}</span>
+                  </el-col>
+                </el-row>
+                <el-row type="flex"
+                        style="text-align: left">
+                  <el-col :span="24">
+                    <span class="msg-content overHiding">型号代号：{{ item.projectInfoApproval && (item.projectInfoApproval.modelCode || '') }}</span>
+                  </el-col>
+                </el-row>
+              </template>
             </div>
           </template>
         </infinite-list>
@@ -251,7 +264,7 @@ $icon-span-width: 20px;
     height: 30px;
     margin-left: 10px;
     .el-button {
-      margin: 0px !important;
+      margin: 0px 2px !important;
       padding: 0px 8px;
     }
   }

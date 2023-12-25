@@ -211,11 +211,14 @@ export function getAnalysisGantt(ganttName, vueThis) {
       monitorLockLimit: true, // 标识锁定后不可操作的列声明
       min_width: 350,
       template: function (task) {
-        if (task.style) {
-          return '<div style="color:' + task.style + '">' + task.oldName + '</div>'
-        } else {
-          return task.oldName
+        if(task.oldName){
+          if (task.style) {
+            return '<div style="color:' + task.style + '">' + task.oldName + '</div>'
+          } else {
+            return task.oldName
+          }
         }
+
       }
     },
     {

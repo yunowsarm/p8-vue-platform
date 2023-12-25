@@ -1567,6 +1567,13 @@ export const formGeneratorApi = {
       desc: '报表管理-报表删除'
     },
     {
+      name: 'reportCopy',
+      method: 'POST',
+      path: '/framework/report/reportCopy',
+      mockPath: '/framework/report/reportCopy',
+      desc: '报表管理-报表复制'
+    },
+    {
       name: 'tableSqlParse',
       method: 'POST',
       path: '/framework/report/parse',
@@ -1805,10 +1812,17 @@ export const kanbanApi = {
     {
       name: 'getViewData',
       method: 'POST',
-      path: '/framework/bp-common-component-library/applyDataview',
-      mockPath: '/framework/bp-common-component-library/applyDataview',
+      path: '/product/pm/planOverview/applyDataviewNew',
+      mockPath: '/product/pm/planOverview/applyDataviewNew',
       desc: '看板组件管理-获取数据视图数据'
     },
+    // {
+    //   name: 'getViewData',
+    //   method: 'POST',
+    //   path: '/framework/bp-common-component-library/applyDataview',
+    //   mockPath: '/framework/bp-common-component-library/applyDataview',
+    //   desc: '看板组件管理-获取数据视图数据'
+    // },
     {
       name: 'getSqlParams',
       method: 'POST',

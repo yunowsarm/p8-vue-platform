@@ -104,22 +104,22 @@ export default {
     },
     initUpdateFromData () {
       this.formData = {
-        forecastBeginDate: this.getPlanInfo().forecastBeginDate,
-        forecastEndDate: this.getPlanInfo().forecastEndDate,
-        content: this.getPlanInfo().content
+        forecastBeginDate: this.getPlanInfo().FORECASTBEGINDATE,
+        forecastEndDate: this.getPlanInfo().FORECASTENDDATE,
+        content: this.getPlanInfo().CONTENT
       }
     },
     customValidate (params) {
       const _this = this
       let postParams = {
         pmTaskProgressFeedback: {
-          planInfoId: _this.getPlanInfo().planInfoId,
-          pmProjectTasksId: _this.getPlanInfo().taskId,
+          planInfoId: _this.getPlanInfo().PLANINFOID,
+          pmProjectTasksId: _this.getPlanInfo().TASKID,
           forecastBeginDate: params.forecastBeginDate,
           forecastEndDate: params.forecastEndDate,
           content: params.content,
           progress: 0,
-          status: _this.getPlanInfo().status
+          status: _this.getPlanInfo().STATUS
         }
       }
       this.$api['taskManager.progressFeedback'](postParams).then(res => {

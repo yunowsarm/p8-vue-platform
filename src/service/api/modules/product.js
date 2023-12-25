@@ -941,6 +941,28 @@ export const repositoryApi = {
       mockPath: '/product/pm/plan/getSpecialVersionData',
       desc: '项目管理->计划管理->计划编辑->版本管理->版本任务列表->特别说明',
       cancelLoading: true
+    },
+    {
+      name: 'getGanttColumnSettingByWholeId',
+      method: 'POST',
+      path: '/taskType/loadTaskDetailByWholeId',
+      mockPath: '/taskType/loadTaskDetailByWholeId',
+      desc: '项目管理->计划管理->计划编辑->gantt列配置信息',
+      cancelLoading: true
+    },
+    {
+      name: 'getGanttExtendAttr',
+      method: 'POST',
+      path: '/product/pm/plan/getTaskInfo',
+      mockPath: '/product/pm/plan/getTaskInfo',
+      desc: '项目管理->计划管理->计划编辑->gantt拓展属性查询'
+    },
+    {
+      name: 'saveGanttExtendAttr',
+      method: 'POST',
+      path: '/product/pm/plan/extendSave',
+      mockPath: '/product/pm/plan/extendSave',
+      desc: '项目管理->计划管理->计划编辑->gantt拓展属性保存'
     }
   ],
   planChange: [
@@ -1452,6 +1474,43 @@ export const repositoryApi = {
       path: '/product/klActivity/pasteNode',
       mockPath: '/product/klActivity/pasteNode',
       desc: '知识库管理->产出流程管理->excel导入'
+    },
+    {
+      name: 'loadModeData',
+      method: 'POST',
+      path: '/product/klActivity/loadModeData',
+      mockPath: '/product/klActivity/loadModeData',
+      desc: '知识库管理->产出流程管理->图形模式查询接口'
+    },
+    {
+      name: 'loadModeDataSave',
+      method: 'POST',
+      path: '/product/klActivity/loadModeDataSave',
+      mockPath: '/product/klActivity/loadModeDataSave',
+      desc: '知识库管理->产出流程管理->存储位置信息'
+    }
+  ],
+  TodoList: [
+    {
+      name: 'list',
+      method: 'POST',
+      path: '/product/backlog/list',
+      mockPath: '/product/backlog/list',
+      desc: '我的待办-我接收的-执行详情'
+    },
+    {
+      name: 'save',
+      method: 'POST',
+      path: '/product/backlog/save',
+      mockPath: '/product/backlog/save',
+      desc: '我的待办-我接收的-执行保存'
+    },
+    {
+      name: 'submit',
+      method: 'POST',
+      path: '/product/backlog/submit',
+      mockPath: '/product/backlog/submit',
+      desc: '我的待办-我接收的-执行保存并提交'
     }
   ]
 }

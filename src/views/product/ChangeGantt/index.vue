@@ -3,7 +3,7 @@
     <div class="bottom" style="height: 100%">
       <list-layout>
         <template #north>
-          <common-button :select-records="selectRecord" :comp="comp"></common-button>
+          <common-button :select-records="selectRecord" buttonType="primary" :comp="comp"></common-button>
           <search-form-list ref="search" :data-source="searchData" @search="search" @re-set="reSet"></search-form-list>
         </template>
         <template #center>
@@ -28,6 +28,7 @@
               :plan-info-id="planInfoId"
               :task-id="taskId"
               :secret-grade="secretGrade"
+              :whole-describe-id="wholeDescribeId"
               :plan-info-status="planInfoStatus"
               @closed="onClose"
               :create-page="createPage"
@@ -89,6 +90,7 @@
   font-size: larger;
 }
 .couerDivClass {
+  padding: 14px;
   height: 100% !important;
   box-sizing: border-box;
   overflow: scroll;
@@ -106,12 +108,15 @@
 }
 .bottom {
   height: calc(100% - 192px);
+  padding-left: 5px;
   position: relative;
   border-top: none;
   background: $base-white-color;
   overflow: hidden;
 }
-
+::v-deep .list-layout {
+  margin-top: 0;
+}
 .el-row {
   &:last-child {
     margin-bottom: 0;
@@ -134,9 +139,9 @@
   padding: 10px 0;
   background-color: #f9fafc;
 }
-::v-deep .el-table__fixed-body-wrapper {
-  top: 41px !important;
-}
+// ::v-deep .el-table__fixed-body-wrapper {
+//   top: 41px !important;
+// }
 // /deep/ .el-table__fixed-right{
 //   height: 100% !important;
 // }
@@ -306,12 +311,12 @@ export default {
         },
         {
           title: '变更计划数',
-          width: 90,
+          width: 120,
           dataIndex: 'changeCount'
         },
         {
           title: '变更原因分类',
-          width: 100,
+          width: 120,
           dataIndex: 'changeTypeDisp'
         },
         {
@@ -335,23 +340,25 @@ export default {
         }
       ],
       tableConfig: {},
+      wholeDescribeId: '',
       menuStateObj: []
     }
   },
   mounted() {
     if (this.thirdMenuParam.createPage === 'decompose') {
       this.projectCategory = this.thirdMenuParam.projectCategory
-      this.secretLevel = this.thirdMenuParam.secretGrade
-      this.planInfoId = this.thirdMenuParam.planInfoId
-      this.planInfoStatus = this.thirdMenuParam.executeState
-      this.taskId = this.thirdMenuParam.taskId
-      this.secretGrade = this.thirdMenuParam.secretGrade
+      this.secretLevel = this.thirdMenuParam.SECRETGRADE
+      this.planInfoId = this.thirdMenuParam.PLANINFOID
+      this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
+      this.taskId = this.thirdMenuParam.TASKID
+      this.secretGrade = this.thirdMenuParam.SECRETGRADE
       this.selectRecord = [{
         ...this.thirdMenuParam,
-        EXECUTESTATE: this.thirdMenuParam.executeState
+        EXECUTESTATE: this.thirdMenuParam.EXECUTESTATE
       }]
       this.currentRoute = this.thirdMenuParam.currentRoute
       this.createPage = 'userChange'
+      this.wholeDescribeId = this.thirdMenuParam.wholeDescribeId
     } else {
       this.projectCategory = this.thirdMenuParam.projectCategory
       this.secretLevel = this.thirdMenuParam.SECRETLEVEL
@@ -362,6 +369,7 @@ export default {
       this.selectRecord = [this.thirdMenuParam]
       this.currentRoute = this.thirdMenuParam.currentRoute
       this.createPage = 'planChange'
+      this.wholeDescribeId = this.thirdMenuParam.WHOLEDESCRIBEID
     }
     if (this.planInfoId && this.createPage) {
       this.queryParam.createPage = this.createPage

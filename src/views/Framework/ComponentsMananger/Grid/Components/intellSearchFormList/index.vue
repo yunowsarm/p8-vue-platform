@@ -12,7 +12,6 @@
                   v-model="searchVal"
                   readonly
                   prefix-icon="el-icon-search"
-                  :disabled="!defaultSearch"
                   @keyup.enter.native="enterSearch"
                   @click.native="toggleAdvanced">
           <template slot="suffix">
@@ -99,13 +98,14 @@ export default {
       advanced: false,
       loadingVisible: false,
       separator: ';',
-      formField: {...this.form},
+      formField: { ...this.form },
       defaultSearch: '',
       setInputDefault: false, // 设置查询条件中的第一个输入框default: true
       dateDataIndex: [], // 日期fieldName集合
       modeData: {}, // 模糊查询模式
       resetFlag: false, // 是否点击重置按钮
-      replaceData: {} // 下拉选择是否有代替的查询字段（智能报表下拉传入后台的值）
+      replaceData: {}, // 下拉选择是否有代替的查询字段（智能报表下拉传入后台的值）
+      popUplabel: ''
     }
   },
   computed: {
@@ -160,8 +160,9 @@ export default {
   },
   methods: {
     // 弹出选择回填值后手动给formField赋值
-    setParentFormData (data) {
+    setParentFormData (data, label) {
       this.formField = { ...this.formField, ...data }
+      this.popUplabel = label
     },
     setMode (obj) {
       this.modeData = { ...this.modeData, ...obj }
@@ -337,6 +338,9 @@ export default {
               case 'datetimeRange':
                 inputVal += _this.setDateVal(item, queryParams)
                 break
+              case 'popUpSelect':
+                inputVal += _this.setPopUpVal(item, queryParams)
+                break
               default:
                 inputVal += item.labelText + ':' + (queryParams[item.fieldName] === true ? '是' : queryParams[item.fieldName] === false ? '否' : queryParams[item.fieldName]) + _this.separator
             }
@@ -345,6 +349,10 @@ export default {
       }
       this.searchVal = inputVal.slice(0, -1)
       this.advanced = false
+    },
+    // popUpSelect弹出框选择
+    setPopUpVal (item) {
+      return item.labelText + ':' + this.popUplabel + this.separator
     },
     // select单选 radioGroup单选框组
     setSelectVal (item, queryParams) {

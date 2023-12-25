@@ -1,24 +1,34 @@
 <template>
   <div style="height: 100%">
-    <form-list ref="form" @rendered="rendered" @saved="saved" :data-source="dataSource" :api="saveApi" :form="modify" :is-custom-validate="true" @custom-validate="customValidate">
+    <form-list ref="form"
+               @rendered="rendered"
+               @saved="saved"
+               :data-source="dataSource"
+               :api="saveApi"
+               :form="modify"
+               :is-custom-validate="true"
+               @custom-validate="customValidate">
       <template #icon>
         <div class="icon_box">
-          <span :class="['icon_example', imageCt]" :style="{ color: iconColor }" @click="iconPopover = true"></span>
-          <span class="link_box p8 icon-link" @click="iconPopover = true"></span>
+          <span :class="['icon_example', imageCt]"
+                :style="{ color: iconColor }"
+                @click="iconPopover = true"></span>
+          <span class="link_box p8 icon-link"
+                @click="iconPopover = true"></span>
         </div>
-        <common-dialog
-          title="图标选择"
-          width="50%"
-          v-if="iconPopover"
-          :visible="iconPopover"
-          :dialog-config="dialogConfig"
-          :dialog-height="dialogHeight"
-          @close="handleClose"
-          @handle-cancel="handleClose"
-          @handle-ok="handleClose"
-        >
+        <common-dialog title="图标选择"
+                       width="50%"
+                       v-if="iconPopover"
+                       :visible="iconPopover"
+                       :dialog-config="dialogConfig"
+                       :dialog-height="dialogHeight"
+                       @close="handleClose"
+                       @handle-cancel="handleClose"
+                       @handle-ok="handleClose">
           <template #dialog>
-            <icon-selector @icon-select="iconSelect" :selected-name="modify.icon" :color-picker="true"></icon-selector>
+            <icon-selector @icon-select="iconSelect"
+                           :selected-name="modify.icon"
+                           :color-picker="true"></icon-selector>
           </template>
         </common-dialog>
       </template>
@@ -49,7 +59,7 @@ export default {
     },
     record: {
       type: Object,
-      default: () => {}
+      default: () => { }
     }
   },
   computed: {
@@ -60,7 +70,7 @@ export default {
       return this.modify.color ? this.modify.color : '#2196f3'
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'dictionaryManagement.saveDict',
       modify: { dictCategoryId: this.treeId, color: '' },
@@ -203,19 +213,19 @@ export default {
   },
   watch: {
     'modify.dictCategoryId': {
-      handler(to, from) {
+      handler (to, from) {
         this.getOptions()
         this.getMinorcode()
       }
     },
     'modify.parentId': {
-      handler(to, from) {
+      handler (to, from) {
         this.getMinorcode()
       }
     }
   },
   methods: {
-    rendered() {
+    rendered () {
       if (this.rowId && this.rowId !== '') {
         this.getProjectTeamSettingData(this.rowId)
         // 当修改时不可对所属分类进行修改
@@ -234,7 +244,7 @@ export default {
       }
       this.getOptions()
     },
-    getProjectTeamSettingData(id) {
+    getProjectTeamSettingData (id) {
       let that = this
       that.$api['dictionaryManagement.getDictInfo']({ id: id })
         .then(function (res) {
@@ -248,20 +258,20 @@ export default {
           console.log(error)
         })
     },
-    cancel() {
+    cancel () {
       this.$emit('cancel')
     },
-    saved(res) {
+    saved (res) {
       this.$emit('save-success', res)
     },
-    handleClose() {
+    handleClose () {
       this.iconPopover = false
     },
-    iconSelect(select) {
+    iconSelect (select) {
       this.$set(this.modify, 'icon', select.icon)
       this.$set(this.modify, 'color', select.color)
     },
-    getOptions() {
+    getOptions () {
       let that = this
       this.$api['dictionaryManagement.dictTree']({ dictCategoryId: this.modify.dictCategoryId }).then((res) => {
         res.forEach((el) => {
@@ -272,7 +282,7 @@ export default {
         that.$set(that.dataSource[1], 'treeData', res)
       })
     },
-    getMinorcode() {
+    getMinorcode () {
       let that = this
       if (this.rowId && this.rowId !== '') {
         if (this.count > 0) {
@@ -287,7 +297,7 @@ export default {
       }
       this.count = 1
     },
-    customValidate(saveParams) {
+    customValidate (saveParams) {
       this.saveParams = saveParams
       this.$api[this.saveApi](this.saveParams).then((res) => {
         console.log(res, '====res')
@@ -295,6 +305,7 @@ export default {
           this.$message({ type: 'warning', message: res.resultMsg })
         } else {
           this.$emit('save-success', res)
+          this.$message.success("保存成功")
         }
       })
     }

@@ -1,91 +1,141 @@
 <template>
   <div>
-    <form-list
-ref="form" :data-source="modifiedData" :form="formData" :api="saveApi" @saved="saved" label-width="90px" @rendered="rendered" :is-custom-validate="true" @custom-validate="parseCheck">
+    <form-list ref="form"
+               class="form_list"
+               :data-source="modifiedData"
+               :form="formData"
+               :api="saveApi"
+               @saved="saved"
+               label-width="90px"
+               @rendered="rendered"
+               :is-custom-validate="true"
+               @custom-validate="parseCheck">
       <template #sql>
-        <codemirror
-v-model="formData.sql" :options="cmOptions"></codemirror>
+        <el-popover placement="top-start"
+                    class="pop_left"
+                    title="系统内置的登录人信息字段"
+                    trigger="hover">
+          <p>
+            当前登录人id: currentUserId<br />
+            当前登录人用户名: currentUserName<br />
+            当前登录人密级id: currentUserConfidentialite<br />
+            当前登录人密级释义: currentUserConfidentialiteDisplay<br />
+            当前登录人部门id: currentDepartmentId<br />
+            当前登录人部门名称: currentDepartmentName<br />
+            当前登录人真实名称: currentRealName<br />
+          </p>
+          <i slot="reference"
+             class="el-icon-question"></i>
+        </el-popover>
+        <codemirror v-model="formData.sql"
+                    :options="cmOptions"></codemirror>
       </template>
       <template #btn>
         <el-button @click="cancel">取 消</el-button>
-        <el-button
-type="primary" @click="searchResult">查询结果</el-button>
+        <!-- <el-button type="primary" @click="searchResult">查询结果</el-button> -->
       </template>
     </form-list>
     <div></div>
-    <common-tabs
-:tabs-data="tabsData" type="border-card" class="el_tabs" :height="renderHeight" :active-tabs="activeTabs" @tab-click="tabClick" :has-full-screen="true">
+    <common-tabs :tabs-data="tabsData"
+                 type="border-card"
+                 class="el_tabs"
+                 :height="renderHeight"
+                 :active-tabs="activeTabs"
+                 @tab-click="tabClick"
+                 :has-full-screen="true">
       <template #tableConfigDetails>
-        <editable-table
-:columns="paramColumns" :add-row="true" :params="params" api="formGenerator.sqlParam" :render-height="renderHeight" @save-param-data="saveParamData">
+        <editable-table :columns="paramColumns"
+                        :add-row="true"
+                        :params="params"
+                        api="formGenerator.sqlParam"
+                        :render-height="renderHeight"
+                        @save-param-data="saveParamData">
           <template #paramName="{ scope, data }">
-            <el-input
-v-model="scope.row.paramName" @blur="saveParamData(data)"></el-input>
+            <el-input v-model="scope.row.paramName"
+                      @blur="saveParamData(data)"></el-input>
           </template>
           <template #paramTxt="{ scope, data }">
-            <el-input
-v-model="scope.row.paramTxt" @blur="saveParamData(data)"></el-input>
+            <el-input v-model="scope.row.paramTxt"
+                      @blur="saveParamData(data)"></el-input>
           </template>
           <template #paramValue="{ scope, data }">
-            <el-input
-v-model="scope.row.paramValue" @blur="saveParamData(data)"></el-input>
+            <el-input v-model="scope.row.paramValue"
+                      @blur="saveParamData(data)"></el-input>
           </template>
           <template #orderNum="{ scope, data }">
-            <el-input-number
-v-model="scope.row.orderNum" @blur="saveParamData(data)"></el-input-number>
+            <el-input-number v-model="scope.row.orderNum"
+                             @blur="saveParamData(data)"></el-input-number>
           </template>
         </editable-table>
       </template>
       <template #tableParam>
-        <form-list
-ref="tableParamForm" :data-source="tableParamSource" :form="formData" :exist-default-btn="false" style="height: 50px" label-width="100px"></form-list>
-        <editable-table
-:columns="strategyColumns" :add-row="true" :need-params="true" :data="tableParamData" :params="strategyParams" api="" @save-param-data="saveStrategyData">
+        <form-list ref="tableParamForm"
+                   :data-source="tableParamSource"
+                   :form="formData"
+                   :exist-default-btn="false"
+                   style="height: 50px;margin-top:50px;"
+                   label-width="100px"></form-list>
+        <editable-table :columns="strategyColumns"
+                        :add-row="true"
+                        :need-params="true"
+                        :data="tableParamData"
+                        :params="strategyParams"
+                        api=""
+                        @save-param-data="saveStrategyData">
           <template #classPath="{ scope, data }">
-            <el-input
-v-model="scope.row.classPath" @blur="saveStrategyData(data)"></el-input>
+            <el-input v-model="scope.row.classPath"
+                      @blur="saveStrategyData(data)"></el-input>
           </template>
           <template #alias="{ scope, data }">
-            <el-input
-v-model="scope.row.alias" @blur="saveStrategyData(data)"></el-input>
+            <el-input v-model="scope.row.alias"
+                      @blur="saveStrategyData(data)"></el-input>
           </template>
           <template #name="{ scope, data }">
-            <el-input
-v-model="scope.row.name" @blur="saveStrategyData(data)"></el-input>
+            <el-input v-model="scope.row.name"
+                      @blur="saveStrategyData(data)"></el-input>
           </template>
           <template #enable="{ scope, data }">
-            <el-select
-v-model="scope.row.enable" @change="saveStrategyData(data)">
-              <el-option
-label="是" value="1"></el-option>
-              <el-option
-label="否" value="0"></el-option>
+            <el-select v-model="scope.row.enable"
+                       @change="saveStrategyData(data)">
+              <el-option label="是"
+                         value="1"></el-option>
+              <el-option label="否"
+                         value="0"></el-option>
             </el-select>
           </template>
         </editable-table>
       </template>
       <template #resultExecution>
-        <div style="margin: 10px 35px"><el-button
-round type="primary" @click="execution">执行</el-button></div>
-        <editable-table
-class="editTable" :columns="resultExecutionColumns" :add-row="false" :data="changeTableData" @save-param-data="saveTableData">
+        <div style="margin: 10px 35px"><el-button round
+                     type="primary"
+                     @click="execution">执行</el-button></div>
+        <editable-table class="editTable"
+                        :columns="resultExecutionColumns"
+                        :add-row="false"
+                        :data="changeTableData"
+                        @save-param-data="saveTableData">
           <template #fieldName="{ scope, data }">
-            <el-input
-v-model="scope.row.fieldName" :disabled="!!scope.row.isCustomColumn" @blur="saveTableData(data)"></el-input>
+            <el-input v-model="scope.row.fieldName"
+                      :disabled="!!scope.row.isCustomColumn"
+                      @blur="saveTableData(data)"></el-input>
           </template>
           <template #fieldType="{ scope, data }">
-            <el-input
-v-model="scope.row.fieldType" :disabled="!!scope.row.isCustomColumn" @blur="saveTableData(data)"></el-input>
+            <el-input v-model="scope.row.fieldType"
+                      :disabled="!!scope.row.isCustomColumn"
+                      @blur="saveTableData(data)"></el-input>
           </template>
           <template #fieldTxt="{ scope, data }">
-            <el-input
-v-model="scope.row.fieldTxt" @blur="saveTableData(data)"></el-input>
+            <el-input v-model="scope.row.fieldTxt"
+                      @blur="saveTableData(data)"></el-input>
           </template>
         </editable-table>
       </template>
+      <template v-if="currentTab === 'SearchResult'"
+                #SearchResult>
+        <search-result v-if="formData.sql"
+                       :sql="formData.sql"></search-result>
+      </template>
     </common-tabs>
-    <search-result
-v-if="searchResultVisible" :visible="searchResultVisible" :sql="formData.sql" @close="searchResultVisible = false"></search-result>
   </div>
 </template>
 
@@ -112,7 +162,7 @@ export default {
   props: {
     record: {
       type: Object,
-      default: () => {}
+      default: () => { }
     },
     tableList: {
       type: Array,
@@ -121,26 +171,32 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     const height = document.documentElement.clientHeight - 500
     return {
       renderHeight: height + 'px',
       activeTabs: 'tableConfigDetails',
+      currentTab: 'tableConfigDetails',
       tabsData: [
         {
-          label: '基础',
+          label: '参数设置',
           name: 'tableConfigDetails',
           icon: 'icon-multi-project-manage'
         },
         {
-          label: '过滤服务',
+          label: '过滤设置',
           name: 'tableParam',
+          icon: 'icon-baobiaocanshu'
+        },
+        {
+          label: '元数据',
+          name: 'resultExecution',
           icon: 'icon-planning'
         },
         {
           label: '执行结果',
-          name: 'resultExecution',
-          icon: 'icon-planning'
+          name: 'SearchResult',
+          icon: 'icon-biaogeanniu'
         }
       ],
       cmOptions: {
@@ -407,7 +463,7 @@ export default {
     }
   },
   computed: {
-    modifiedData() {
+    modifiedData () {
       // const { dataSource, record } = this
       // const arr = ['name', 'code']
       // for (let i in dataSource) {
@@ -419,16 +475,16 @@ export default {
     }
   },
   methods: {
-    rendered() {
+    rendered () {
       // 所有表单元素渲染后调用rendered
       if (this.record.id) {
         this.getFormData()
       }
     },
-    cancel() {
+    cancel () {
       this.$emit('cancel')
     },
-    getFormData() {
+    getFormData () {
       const that = this
       this.formData = Object.assign({}, this.record)
       this.changeSql(this.record.id)
@@ -441,9 +497,9 @@ export default {
         that.changeTableData = res
       })
     },
-    tabClick(target) {
+    tabClick (target) {
       if (target.name === 'configColumnDetails') {
-        const arr = JSON.parse(JSON.stringify(this.reportParams['reportItem'].filter((el) => el.isListShow || el.isCustomColumn)))
+        const arr = JSON.parse(JSON.stringify(this.reportParams.reportItem.filter((el) => el.isListShow || el.isCustomColumn)))
         this.editableData.forEach((el) => {
           if (el.columnConfig) {
             if (typeof el.columnConfig === 'string') {
@@ -455,8 +511,8 @@ export default {
         })
         const editableData = JSON.parse(JSON.stringify(this.editableData))
         const newArr = []
-        arr.map((val) => {
-          const find = editableData.find((el) => el.fieldName == val.fieldName)
+        arr.forEach((val) => {
+          const find = editableData.find((el) => el.fieldName === val.fieldName)
           if (find && val.isCustomColumn && find.isCustomColumn) {
             newArr.push(find)
           } else {
@@ -466,10 +522,10 @@ export default {
         this.editableData = newArr
       }
       if (target.name === 'editConfig') {
-        const arr = JSON.parse(JSON.stringify(this.reportParams['reportItem'].filter((el) => el.isListShow || el.isCustomColumn)))
+        const arr = JSON.parse(JSON.stringify(this.reportParams.reportItem.filter((el) => el.isListShow || el.isCustomColumn)))
         const newArr = []
-        arr.map((val) => {
-          const find = this.editConfigData.find((el) => el.fieldName == val.fieldName)
+        arr.forEach((val) => {
+          const find = this.editConfigData.find((el) => el.fieldName === val.fieldName)
           if (find && val.isCustomColumn && find.isCustomColumn) {
             newArr.push(find)
           } else {
@@ -478,14 +534,15 @@ export default {
         })
         this.editConfigData = newArr
       }
+      this.currentTab = target.name
     },
-    saveParamData(data) {
+    saveParamData (data) {
       this.sqlParams.sqlParamList = data
     },
-    saveStrategyData(data) {
+    saveStrategyData (data) {
       this.sqlParams.strategyList = data
     },
-    saved(res) {
+    saved (res) {
       console.log('修改页面关闭时的回调方法')
       this.$emit('saveSuccess', res)
     },
@@ -495,7 +552,7 @@ export default {
     params: 修改或者新增时表单对象
     recordId: 修改数据当前id，新建recordId = ''
     */
-    checkDuplicate(params, recordId) {
+    checkDuplicate (params, recordId) {
       const arr = [...this.tableList]
       if (recordId) {
         return false
@@ -511,7 +568,7 @@ export default {
     },
 
     //  保存的提交
-    parseCheck(saveParams) {
+    parseCheck (saveParams) {
       // let arr = []
       const params = { ...saveParams, ...this.sqlParams }
       // if (this.tableList && this.tableList.length > 0) {
@@ -537,13 +594,13 @@ export default {
         }
       })
     },
-    changeSql(val) {
+    changeSql (val) {
       this.params = { sqlId: val }
     },
-    saveTableData(data) {
+    saveTableData (data) {
       this.sqlParams.sqlItemList = data
     },
-    execution() {
+    execution () {
       const that = this
       this.$api['formGenerator.sqlParseCheck'](this.formData).then((res) => {
         if (res) {
@@ -558,7 +615,7 @@ export default {
         }
       })
     },
-    searchResult() {
+    searchResult () {
       const that = this
       this.$api['formGenerator.sqlParseCheck'](this.formData).then((res) => {
         if (res) {
@@ -583,9 +640,16 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-.el_tabs {
-  ::v-deep.el-tabs__content {
+.form_list {
+  margin: 0 16px;
+}
+.el_tabs ::v-deep {
+  margin: 0 26px;
+  .el-tabs__content {
     padding: 0 !important;
+    .list-layout {
+      margin: 0;
+    }
   }
 }
 </style>

@@ -1,16 +1,16 @@
 <template>
-  <div class="select-theme">
-    <ul>
-      <li v-for="(theme, index) in themeName"
-          :key="index"
-          :class="{ active: activeTheme === theme }"
-          :style="{ background: theme }"
-          @click="changeSystemTheme(theme)"></li>
-    </ul>
-    <div class="select-theme">
-      <el-color-picker v-model="pickerColor"
-                       @change="changeSystemTheme(pickerColor)"></el-color-picker>
+  <div>
+    <div class="tips">
+      <div class="vertical_line"></div>
+      主题
     </div>
+    <div class="select-theme">
+      <ul>
+        <li v-for="(theme, index) in themeName" :key="index" :class="{ active: activeTheme === theme }" :style="{ background: theme }" @click="changeSystemTheme(theme)"></li>
+      </ul>
+      <el-color-picker v-model="pickerColor" @change="changeSystemTheme(pickerColor)"></el-color-picker>
+    </div>
+    <div class="select-theme"></div>
   </div>
 </template>
 <script>
@@ -19,30 +19,30 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Theme',
-  data () {
+  data() {
     return {
       chalk: '',
       pickerColor: '',
       themeName: []
     }
   },
-  beforeMount () {
+  beforeMount() {
     const systemTheme = this.$const.systemTheme.theme
-    for (let key of Object.values(systemTheme)) {
+    for (const key of Object.values(systemTheme)) {
       this.themeName.push(key)
     }
   },
-  mounted () {
+  mounted() {
     this.pickerColor = this.theme
   },
   computed: {
     ...mapGetters(['theme']),
-    activeTheme () {
+    activeTheme() {
       return this.$store.getters.theme
     }
   },
   methods: {
-    changeSystemTheme (theme) {
+    changeSystemTheme(theme) {
       this.$store.dispatch('setTheme', { theme, handler: true })
     }
   },
@@ -52,9 +52,22 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.tips {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  margin: 8px 8px 8px 26px;
+}
+.vertical_line {
+  margin-right: 8px;
+  width: 3px;
+  height: 16px;
+  background: $theme-color;
+}
 .select-theme {
   display: flex;
-
+  align-items: center;
+  margin-left: 40px;
   h4 {
     padding: 10px 0;
     border-bottom: 2px solid $base-light-color;

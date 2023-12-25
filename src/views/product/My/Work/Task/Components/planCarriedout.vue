@@ -33,6 +33,7 @@ import TaskTabsView from './taskOperating/TaskTabs'
 import TaskInfoView from './taskInfo'
 import TaskManageView from './taskManage/index'
 import TaskRelationView from './taskRelation/index'
+import { getTaskStatusInfo } from '@/utils/commonBusiness'
 export default {
   name: 'planExecute',
   provide () { // 使用 provide对深层组件进行数据信息传递 例:taskOperating/Progress.vue中 inject搭配computed接收数据
@@ -67,14 +68,15 @@ export default {
       thirdMenuParamTemp: this.thirdMenuParam
     }
   },
-  created () {
-  },
   mounted () {
     this.reload()
   },
   methods: {
     reload () {
-      this.isRouterShow = true
+      getTaskStatusInfo({ currentStatus: 'all' }).then(data => {
+        this.thirdMenuParamTemp.allStatus = data
+        this.isRouterShow = true
+      })
     }
   },
   components: {

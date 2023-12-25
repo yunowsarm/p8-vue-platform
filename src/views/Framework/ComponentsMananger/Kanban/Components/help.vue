@@ -11,6 +11,7 @@
     <template #center>
       <el-tabs v-if="configExample != ''"
                v-model="activeName"
+               class="help"
                type="card">
         <el-tab-pane label="Json配置"
                      name="first">
@@ -116,5 +117,11 @@ export default {
 .el-tabs__content {
   padding-top: 2px;
   overflow-y: auto;
+}
+.help {
+  height: 100%;
+}
+.help .ace_content {
+  height: calc(100% - 20px);
 }
 </style>

@@ -51,12 +51,12 @@ export function outPutFlowGantt (ganttName, vueThis) {
       min_width: 100,
       resize: true,
       align: 'left',
-      template: function (task){
+      template: function (task) {
         let str = ''
         if (task.type) {
           vueThis.logoList.forEach(el => {
             if (el.id == task.type) {
-              str += '<i class="'+ el.icon +'" title="'+ el.meaning +'"></i>'
+              str += '<i class="' + el.icon + '" title="' + el.meaning + '"></i>'
             }
           })
         }
@@ -83,7 +83,10 @@ export function outPutFlowGantt (ganttName, vueThis) {
       label: '时限',
       min_width: 100,
       resize: true,
-      align: 'left'
+      align: 'left',
+      template: function (task) {
+        return task.duration
+      }
     },
     {
       name: 'teamRoleName',
@@ -111,12 +114,18 @@ export function outPutFlowGantt (ganttName, vueThis) {
   })
   ganttObject.attachEvent('onTaskMultiSelect', function (id, state, e) {
     if (state) {
-      vueThis.selectedTasks.push(ganttObject.getTask(id))
+      let ids = vueThis.selectedTasks.map(el => el.id)
+      if (ganttObject.getTask(id) && ids.indexOf(id) === -1) {
+        vueThis.selectedTasks.push(ganttObject.getTask(id))
+      }
     } else {
-      vueThis.selectedTasks.splice(
-        vueThis.selectedTasks.indexOf(ganttObject.getTask(id)),
-        1
-      )
+      let ids = vueThis.selectedTasks.map(el => el.id)
+      if (ids.indexOf(id) !== -1) {
+        vueThis.selectedTasks.splice(
+          ids.indexOf(id),
+          1
+        )
+      }
     }
   })
   // 升降级

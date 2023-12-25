@@ -83,19 +83,72 @@
             </el-radio-group>
           </div>
         </template>
+        <template #rootIcon="{ scope }">
+          <i v-if="!formData.rootIcon"
+             class="p8 icon-tupian"
+             slot="suffix"
+             type="link"
+             :style="{ cursor: 'pointer', fontSize: '40px', color: '#c0c4cc', marginTop: '8px' }"
+             @click="iconClick(scope,'rootIcon')"></i>
+          <i v-else
+             style="font-size:16px;"
+             :class="formData.rootIcon"
+             @click="iconClick(scope,'rootIcon')"></i>
+          <common-dialog title="图标选择"
+                         width="50%"
+                         v-if="iconPopover"
+                         :visible="iconPopover"
+                         :dialog-config="{ modal: false }"
+                         :dialog-height="400"
+                         @close="ionClose"
+                         @handle-cancel="ionClose"
+                         @handle-ok="doIconSelect">
+            <template #dialog>
+              <icon-selector @icon-select="iconSelect"
+                             :color-picker="false"></icon-selector>
+            </template>
+          </common-dialog>
+        </template>
+        <template #parentIcon="{ scope }">
+          <i v-if="!formData.parentIcon"
+             class="p8 icon-tupian"
+             slot="suffix"
+             type="link"
+             :style="{ cursor: 'pointer', fontSize: '40px', color: '#c0c4cc', marginTop: '8px' }"
+             @click="iconClick(scope,'parentIcon')"></i>
+          <i v-else
+             style="font-size:16px;"
+             :class="formData.parentIcon"
+             @click="iconClick(scope,'parentIcon')"></i>
+        </template>
+        <template #childIcon="{ scope }">
+          <i v-if="!formData.childIcon"
+             class="p8 icon-tupian"
+             slot="suffix"
+             type="link"
+             :style="{ cursor: 'pointer', fontSize: '40px', color: '#c0c4cc', marginTop: '8px' }"
+             @click="iconClick(scope,'childIcon')"></i>
+          <i v-else
+             style="font-size:16px;"
+             :class="formData.childIcon"
+             @click="iconClick(scope,'childIcon')"></i>
+        </template>
       </form-list>
     </template>
   </common-dialog>
 </template>
 
 <script>
-import { P8Form as FormList, P8Dialog as CommonDialog } from 'p8-components-ui'
+import {
+  P8Form as FormList, P8Dialog as CommonDialog, P8IconSelector as IconSelector
+} from 'p8-components-ui'
 import formConfig from './formConfig'
 export default {
   name: 'TreeSettings',
   components: {
     FormList,
-    CommonDialog
+    CommonDialog,
+    IconSelector
   },
   props: {
     visible: {
@@ -155,7 +208,7 @@ export default {
       saveApi: 'PersonalProcessApproval.setApproveUser',
       isCustomValidate: true,
       formData: {},
-      dialogHeight: 350,
+      dialogHeight: 550,
       dialogConfig: {
         modal: false
       },
@@ -175,6 +228,8 @@ export default {
         }
       ],
       isChange: false,
+      iconPopover: false,
+      iconTempSel: null
     }
   },
   mounted () {
@@ -202,6 +257,23 @@ export default {
         _this.sqlViewCols = res
         _this.isChange = true
       })
+    },
+    ionClose () {
+      this.iconTempSel = null
+      this.iconPopover = false
+    },
+    doIconSelect () {
+      if (this.iconTempSel) {
+        this.formData[this.fileName] = this.iconTempSel.icon
+      }
+      this.ionClose()
+    },
+    iconClick (scope, fileName) {
+      this.fileName = fileName
+      this.iconPopover = true
+    },
+    iconSelect (select) {
+      this.iconTempSel = select
     }
   }
 }

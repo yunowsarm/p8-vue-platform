@@ -1,28 +1,23 @@
 <template>
   <div class="personal-setting">
-    <section style="overflow: auto"
-             :style="{ height: maxHeight }">
+    <section style="overflow: auto" :style="{ height: maxHeight }">
       <div class="setting-block">
-        <h4>个人资料</h4>
         <div class="settings">
           <user-info />
         </div>
       </div>
       <div class="setting-block">
-        <h4>系统配置</h4>
         <div class="settings">
           <system-config />
         </div>
       </div>
       <div class="setting-block">
-        <h4>主题</h4>
         <div class="settings">
           <theme />
-          <div class="info">注意:主题色仅会在保证正常显示与配色的前提下调整部分色彩,而非全部色彩.</div>
+          <el-alert :closable="false" title="注意:主题色仅会在保证正常显示与配色的前提下调整部分色彩,而非全部色彩." type="warning" show-icon> </el-alert>
         </div>
       </div>
       <div class="setting-block">
-        <h4>主题背景</h4>
         <div class="settings">
           <background-image />
         </div>
@@ -99,15 +94,14 @@ export default {
   section {
     display: -webkit-box;
     flex-direction: column;
-    justify-content: center;
+    // justify-content: center;
     align-items: center;
     padding: 15px 0;
     background: mix($base-gray-color, #fff, 5%);
 
     .setting-block {
-      width: 100%;
+      width: calc(100% - 52px);
       position: relative;
-      max-width: 1500px;
       margin-bottom: 15px;
       z-index: 1;
 

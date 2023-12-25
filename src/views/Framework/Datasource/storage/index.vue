@@ -4,35 +4,22 @@
       <!-- <el-button type="primary"
                  round
                  @click="edit">新建</el-button> -->
-      <common-button :comp="comp"
-                     :button-type="'round'"
-                     :custom-button-data="customButtonData"></common-button>
+      <common-button :comp="comp" :button-type="'round'" :custom-button-data="customButtonData"></common-button>
       <!-- <search-form-list ref="search" :dataSource="searchData" @search="search" @re-set="reSet"></search-form-list> -->
     </template>
     <template #center>
-      <common-table ref="table"
-                    :columns="columns"
-                    api="formGenerator.dataSourceList"
-                    :table-refresh="tableRefresh">
+      <common-table ref="table" :columns="columns" api="formGenerator.dataSourceList" :table-refresh="tableRefresh">
         <template #operation="{ scope }">
-          <el-button type="text"
-                     @click="modify(scope)">修改</el-button>
-          <el-button type="text"
-                     @click="remove(scope)">删除</el-button>
-          <el-button type="text"
-                     @click="sync(scope)">同步</el-button>
+          <el-button type="text" @click="modify(scope)">修改</el-button>
+          <el-button type="text" @click="remove(scope)">删除</el-button>
+          <el-button type="text" @click="sync(scope)">同步</el-button>
         </template>
       </common-table>
     </template>
     <template #drawer-panel>
-      <common-drawer :title="drawerTitle"
-                     :visible="visible"
-                     size="100%"
-                     @close="compEditClose">
+      <common-drawer :title="drawerTitle" :visible="visible" size="100%" @close="compEditClose">
         <template #drawer>
-          <comp-list-edit :record="record"
-                          @cancel="compEditClose"
-                          @saveSuccess="saveCallback"></comp-list-edit>
+          <comp-list-edit :record="record" @cancel="compEditClose" @saveSuccess="saveCallback"></comp-list-edit>
         </template>
       </common-drawer>
     </template>
@@ -54,7 +41,7 @@ export default {
     'el-button': Button,
     CommonButton
   },
-  data () {
+  data() {
     const columns = [
       {
         title: '类型',
@@ -159,7 +146,7 @@ export default {
     }
   },
   methods: {
-    tableRefresh (param) {
+    tableRefresh(param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')
@@ -168,31 +155,31 @@ export default {
           console.log('异步失败的操作')
         })
     },
-    search (param) {
+    search(param) {
       this.queryParam = param
-      let that = this
+      const that = this
       Vue.nextTick(function () {
         that.$refs.table.searchData()
       })
     },
-    reSet () {
-      let that = this
+    reSet() {
+      const that = this
       Vue.nextTick(function () {
         that.$refs.table.searchData()
       })
     },
-    edit () {
+    edit() {
       this.record.id = ''
       this.drawerTitle = '新建数据源'
       this.visible = true
     },
-    modify (scope) {
+    modify(scope) {
       this.record = Object.assign({}, scope.row)
       this.drawerTitle = '修改数据源'
       this.visible = true
     },
-    remove (scope) {
-      let that = this
+    remove(scope) {
+      const that = this
       if (scope.row.isDbSynch === '1') {
         return this.$message.warning('已同步的数据源不能删除')
       }
@@ -217,8 +204,8 @@ export default {
           console.log(e)
         })
     },
-    sync (scope) {
-      let that = this
+    sync(scope) {
+      const that = this
       this.$confirm('是否确定要同步该数据源？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -247,13 +234,13 @@ export default {
           console.log(e)
         })
     },
-    compEditClose () {
+    compEditClose() {
       this.visible = false
       this.record = {
         id: ''
       }
     },
-    saveCallback () {
+    saveCallback() {
       this.$refs.table.searchData()
       this.compEditClose()
     }

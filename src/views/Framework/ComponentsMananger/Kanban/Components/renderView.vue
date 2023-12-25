@@ -2,8 +2,13 @@
 
 <template>
   <div style="width: 100%; height: 100%">
-    <div :id="chartId" :style="chartDivStyle"></div>
-    <drill :dialog-visible="drillVisiable" v-if="drillVisiable" :event-config="eventOption.eventConfig" :event-param="eventParam" @close="onDrillClose()"></drill>
+    <div :id="chartId"
+         :style="chartDivStyle"></div>
+    <drill :dialog-visible="drillVisiable"
+           v-if="drillVisiable"
+           :event-config="eventOption.eventConfig"
+           :event-param="eventParam"
+           @close="onDrillClose()"></drill>
   </div>
 </template>
 
@@ -39,7 +44,7 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     return {
       myChart: null,
       chartId: this.genId(),
@@ -61,7 +66,7 @@ export default {
     drill
   },
   computed: {
-    chartOption() {
+    chartOption () {
       let data = this.option
       // console.log('option', this.option)
       let chartConfig = ''
@@ -80,7 +85,7 @@ export default {
       // console.log('chartConfig', chartConfig)
       return chartConfig
     },
-    eventOption() {
+    eventOption () {
       let data = this.option
       let eventOption = {}
       // console.log('data', data)
@@ -119,7 +124,7 @@ export default {
       handler: function (val, oldVal) {
         if (val && this.myChart) {
           const _this = this
-          if (_this.remoteData[0].NAME) {
+          if (_this.remoteData[0] && _this.remoteData[0].NAME) {
             this.myChart.setOption({
               title: {
                 text: _this.remoteData[0].NAME,
@@ -131,6 +136,10 @@ export default {
             })
           } else {
             this.myChart.setOption({
+              title: {
+                text: '',
+                left: 'center'
+              },
               dataset: {
                 source: _this.remoteData
               }
@@ -157,7 +166,7 @@ export default {
       deep: true
     }
   },
-  created() {
+  created () {
     const { devBaseUrl, prodBaseUrl, isDevMode } = this.$sysConfig.API_DEFAULT_CONFIG
     this.urlPrefix = isDevMode ? `${devBaseUrl}` : `${prodBaseUrl}`
     if (this.appConfig && this.appConfig.dataviewId) {
@@ -201,8 +210,8 @@ export default {
       this.doDataview()
     }
   },
-  beforeMount() {},
-  mounted() {
+  beforeMount () { },
+  mounted () {
     // 不能在watch里编写的原因是，一开始就触发时，this.$el 组件还不存在，会造成无法渲染
     this.$watch(
       'isShow',
@@ -219,11 +228,11 @@ export default {
     )
     window.addEventListener('resize', this.resizeChart)
   },
-  destroyed() {
+  destroyed () {
     window.removeEventListener('resize', this.resizeChart)
   },
   methods: {
-    doDataview() {
+    doDataview () {
       const _this = this
       if (this.appConfig.apiDataUrl) {
         const url = this.appConfig.apiDataUrl.indexOf('http') !== -1 ? this.appConfig.apiDataUrl : `${this.urlPrefix}${this.appConfig.apiDataUrl}`
@@ -257,11 +266,11 @@ export default {
         })
       }
     },
-    resizeChart() {
+    resizeChart () {
       // console.log('chart-resize')
       this.myChart.resize()
     },
-    initEchart() {
+    initEchart () {
       try {
         if (!document.getElementById(this.chartId)) {
           return
@@ -274,7 +283,7 @@ export default {
       this.bindChartEvent()
       return this.myChart
     },
-    setChartOption() {
+    setChartOption () {
       try {
         // console.log('this.chartOption', this.chartOption)
         this.myChart.setOption(this.chartOption, {
@@ -285,12 +294,12 @@ export default {
       }
       return this.myChart
     },
-    genId() {
+    genId () {
       const uid = 'TestDataset' + new Date().getTime()
       const roundStr = Math.round(Math.random() * 100000)
       return uid + roundStr
     },
-    bindChartEvent() {
+    bindChartEvent () {
       // console.log('bindChartEvent', this.eventOption)
       if (this.myChart && this.eventOption.eventName) {
         const _this = this
@@ -312,7 +321,7 @@ export default {
         })
       }
     },
-    onDrillClose() {
+    onDrillClose () {
       this.drillVisiable = false
     }
   }

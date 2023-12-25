@@ -24,6 +24,7 @@
           <span v-if="scope.row.functionalCategory == '1'">自定义</span>
           <span v-if="scope.row.functionalCategory == '2'">ECharts渲染器</span>
           <span v-if="scope.row.functionalCategory == '3'">表格渲染器</span>
+          <span v-if="scope.row.functionalCategory == '4'">AntV_G2图表渲染器</span>
         </template>
         <template #operation="{scope}">
           <el-button type="text"
@@ -87,7 +88,7 @@ export default {
       },
       {
         title: '业务分类',
-        dataIndex: 'businessClassifyDisplay',
+        dataIndex: 'classificationDisPlay',
         align: 'left',
         headerAlign: 'left'
       },
@@ -155,12 +156,9 @@ export default {
       if (param) {
         this.queryParam = param
       }
-      this.$refs.table.searchData()
     },
     reSet () {
-      this.queryParam = this.$data.queryParam
-      // Object.keys(this.queryParam).forEach(key => { this.queryParam[key] = '' })
-      this.$refs.table.searchData()
+      Object.keys(this.queryParam).forEach(key => { this.queryParam[key] = '' })
     },
     tableRefresh (param) {
       param.then(() => {

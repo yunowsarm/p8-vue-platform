@@ -6,7 +6,7 @@
               :isHaveParentTaskParentId="isHaveParentTaskParentId"
               :formRules="formRules"
               :tableApi="tableApi"
-              :exceedType="exceedType"
+              :exceedType="exceedTypeVal"
               :tableParams="tableParams"
               :columns="columns"
               :key="dateTime"
@@ -61,7 +61,7 @@ export default {
   },
   watch: {
     leafChildrenIsFinished () {
-      this.progressChange(this.getPlanInfo().progress)
+      this.progressChange(this.getPlanInfo().PROGRESS)
     }
   },
   data () {
@@ -171,13 +171,14 @@ export default {
         ]
       },
       tableApi: 'taskManager.progressFeedbackHistory',
-      tableParams: { taskId: this.getPlanInfo().taskId },
+      tableParams: { taskId: this.getPlanInfo().TASKID },
       columns,
       dialogVisible: false,
       dateTime: null,
       dialogConfig: {
         modal: false
-      }
+      },
+      exceedTypeVal: this.exceedType
     }
   },
   created () {
@@ -190,11 +191,11 @@ export default {
   },
   mounted () {
     this.initUpdateFromData()
-    this.progressChange(this.getPlanInfo().progress)
+    this.progressChange(this.getPlanInfo().PROGRESS)
   },
   methods: {
     initUpdateFromData () {
-      this.$api['taskManager.taskInfo']({ taskId: this.planInfoParams.taskId }).then(res => {
+      this.$api['taskManager.taskInfo']({ taskId: this.planInfoParams.TASKID }).then(res => {
         this.formData.content = res.content
         this.formData.realBeginDate = res.realBeginDate
         this.formData.realEndDate = res.realEndDate
@@ -212,7 +213,7 @@ export default {
       // } else {
       //   this.formData.leaf = false
       // }
-      if (this.planInfoParams.managerStatusDisplay && this.planInfoParams.managerStatusDisplay == '审批撤销') {
+      if (this.planInfoParams.MANAGERSTATUSDISPLAY && this.planInfoParams.MANAGERSTATUSDISPLAY == '审批撤销') {
         this.formData.realEndDate = ''
         this.formData.progress = 99
         // this.formData.leaf = true
@@ -222,10 +223,10 @@ export default {
       /**
        * 叶子节点 isLeaf: 0--判断是否是叶子节点, 不是请求接口确认子节点是否完
        */
-      if (this.getPlanInfo().isLeaf) {
+      if (this.getPlanInfo().ISLEAF) {
         const api = 'taskManager.isChildrenFinished'
         const _this = this
-        this.$api[api]({ taskId: _this.getPlanInfo().taskId }).then(res => {
+        this.$api[api]({ taskId: _this.getPlanInfo().TASKID }).then(res => {
           if (res) {
             _this.leafChildrenIsFinished = res
           }
@@ -234,7 +235,7 @@ export default {
          * 任务的父任务是否有父id
          */
         const apiIsHaveParentTaskParentId = 'taskManager.isHaveParentTaskParentId'
-        this.$api[apiIsHaveParentTaskParentId]({ taskId: _this.getPlanInfo().taskId }).then(res => {
+        this.$api[apiIsHaveParentTaskParentId]({ taskId: _this.getPlanInfo().TASKID }).then(res => {
           if (res) {
             _this.isHaveParentTaskParentId = res
           }
@@ -245,7 +246,7 @@ export default {
          */
         const _this = this
         const apiIsHaveParentTaskParentId = 'taskManager.isHaveParentTaskParentId'
-        this.$api[apiIsHaveParentTaskParentId]({ taskId: _this.getPlanInfo().taskId }).then(res => {
+        this.$api[apiIsHaveParentTaskParentId]({ taskId: _this.getPlanInfo().TASKID }).then(res => {
           if (res) {
             _this.isHaveParentTaskParentId = res
           }
@@ -258,7 +259,7 @@ export default {
     dialogOk () {
       this.dialogVisible = false
       // 弹窗提示点击确定--表示人员要填写偏离相关的信息, 展示偏离模块(信息为必填)
-      this.exceedType = true
+      this.exceedTypeVal = true
       // 切换页面不继续弹出超期提示框
       this.$emit('dialogOk', true)
     },
@@ -273,7 +274,7 @@ export default {
       }
       this.formData = { ...this.formData, ...deviation }
       this.$api['taskManager.deviationReasonsHistory']({
-        taskId: _this.getPlanInfo().taskId
+        taskId: _this.getPlanInfo().TASKID
       }).then(res => {
         if (res && res.length) {
           this.formData.deviationType = res[0].deviationType
@@ -290,7 +291,7 @@ export default {
         this.formType.overdueChange = false
         return
       }
-      if (!(moment(endTime).isBefore(this.planInfoParams.forecastEndDate))) {
+      if (!(moment(endTime).isBefore(this.planInfoParams.FORECASTENDDATE))) {
         this.formType.overdueChange = true
         this.formData = { ...this.formData, ...{ changeCauseClassify: '', reason: '' } }
       } else {
@@ -319,9 +320,9 @@ export default {
     },
     progressToShowRealDate (newProgress) {
       let key = ''
-      let managerStatus = this.getPlanInfo().managerStatus // 当前管理状态  [6406,6409]审批中 完成
-      let normalProgress = this.getPlanInfo().progress || 0 // 数据库的已保存的进度  newProgress 实时更改的进度
-      let isLeaf = this.getPlanInfo().isLeaf // 是否子 0: 是    1: 否
+      let managerStatus = this.getPlanInfo().MANAGERSTATUS // 当前管理状态  [6406,6409]审批中 完成
+      let normalProgress = this.getPlanInfo().PROGRESS || 0 // 数据库的已保存的进度  newProgress 实时更改的进度
+      let isLeaf = this.getPlanInfo().ISLEAF // 是否子 0: 是    1: 否
       let leafChildrenIsFinished = this.leafChildrenIsFinished // 子是否完成
       let autoScheduling = this.autoScheduling // 任务排程  '1' 自动  '2'：手动
       // 父任务
@@ -364,9 +365,9 @@ export default {
     progressSubmit (form, submitType) {
       let params = this.submitParamsHandle(form, submitType)
       const _this = this
-      params.pmTaskProgressFeedback.hierarchy = this.getPlanInfo().level
+      params.pmTaskProgressFeedback.hierarchy = this.getPlanInfo().LEVEL
       this.$api['taskManager.progressFeedback'](params).then(res => {
-        _this.progressChange(_this.getPlanInfo().progress)
+        _this.progressChange(_this.getPlanInfo().PROGRESS)
         _this.$message({
           type: 'success',
           message: '成功'
@@ -377,10 +378,10 @@ export default {
     },
     NewProgressSubmit (form, submitType, obj) {
       let params = this.submitParamsHandle(form, submitType)
-      params.pmTaskProgressFeedback.hierarchy = this.getPlanInfo().level
+      params.pmTaskProgressFeedback.hierarchy = this.getPlanInfo().LEVEL
       const _this = this
       this.$api['taskManager.progressFeedback'](params).then(res => {
-        _this.progressChange(_this.getPlanInfo().progress)
+        _this.progressChange(_this.getPlanInfo().PROGRESS)
         _this.$message({
           type: 'success',
           message: '成功'
@@ -395,15 +396,15 @@ export default {
       let deviate = ['deviationType', 'deviationCauses', 'deviationImpact', 'deviationProgress', 'solutions']
       let params = {
         pmTaskProgressFeedback: {
-          planInfoId: _this.planInfoParams.planInfoId,
-          pmProjectTasksId: _this.planInfoParams.taskId,
+          planInfoId: _this.planInfoParams.PLANINFOID,
+          pmProjectTasksId: _this.planInfoParams.TASKID,
           status: _this.statusByProgress(submitType),
           content: form.content,
           submitType: submitType
         },
         pmTaskDeviationCauses: {        // 偏离参数
-          planInfoId: _this.planInfoParams.planInfoId,
-          pmProjectTasksId: _this.planInfoParams.taskId,
+          planInfoId: _this.planInfoParams.PLANINFOID,
+          pmProjectTasksId: _this.planInfoParams.TASKID,
           id: form.id, //偏离数据id
           deviationType: form.deviationType, //偏离类型
           deviationCauses: form.deviationCauses, //偏离原因
@@ -431,8 +432,8 @@ export default {
       })
       if (this.formType.overdue) {
         params.pmTaskDeviationCauses = {
-          planInfoId: _this.planInfoParams.planInfoId,
-          pmProjectTasksId: _this.planInfoParams.taskId
+          planInfoId: _this.planInfoParams.PLANINFOID,
+          pmProjectTasksId: _this.planInfoParams.TASKID
         }
         deviate.forEach(key => {
           if (key === 'deviationProgress') {
@@ -443,8 +444,8 @@ export default {
       }
       if (this.formType.overdueChange) {
         params.pmTaskChangeRequest = {
-          planInfoId: _this.planInfoParams.planInfoId,
-          pmProjectTasksId: _this.planInfoParams.taskId,
+          planInfoId: _this.planInfoParams.PLANINFOID,
+          pmProjectTasksId: _this.planInfoParams.TASKID,
           forecastBeginDate: moment(form.forecastDateRange[0]).format('YYYY-MM-DD'),
           forecastEndDate: moment(form.forecastDateRange[1]).format('YYYY-MM-DD'),
           changeCauseClassify: form.changeCauseClassify,
@@ -455,7 +456,7 @@ export default {
     },
     statusByProgress (submitType) { // 根据进度--获取对应的状态 --需优化
       let progress = this.formData.progress
-      let normalStatus = this.planInfoParams.status
+      let normalStatus = this.planInfoParams.STATUS
       let status = ''
       if (progress === 0) {
         if (normalStatus === '6020') {

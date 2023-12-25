@@ -5,91 +5,103 @@
              @tab-click="triggerChange">
       <el-tab-pane label="默认模式"
                    name="first">
-        <div class="wrap">
+        <div class="wrap"
+             v-if="defaultActiveKey == 'first'">
           <normal-layout :headerVisible="false"
-                       :splitDefaultLeftWidth="50"
-                       :normalLayout="normalLayout">
-          <template #west>
-            <activityTree ref="activityTree"
-                          class="left-container"
-                          :activity-info-id="activityInfoId"
-                          v-if="triggerVal"
-                          @taskSelected="selectTask"
-                          @importExcel="importTask"
-                          @refrshDes="refrshDes"
-                          @remove-task="removeTask">
-            </activityTree>
-          </template>
-          <template #center>
-            <el-tabs v-model="describeKey"
-                     ref="tab"
-                     tab-position="left"
-                     class="flowTabs"
-                     style="height: 100%;"
-                     @tab-click="onSelect"
-                     v-if="triggerVal">
-              <el-tab-pane name="describeKey">
-                <span slot="label">
-                  <div style="display: flex; align-items: center"><i class="p8 icon-jindu"></i><span style="margin-left: 4px">活动描述</span></div>
-                </span>
+                         :splitDefaultLeftWidth="50"
+                         :normalLayout="normalLayout">
+            <template #west>
+              <activityTree ref="activityTree"
+                            class="left-container"
+                            :activity-info-id="activityInfoId"
+                            v-if="triggerVal"
+                            @taskSelected="selectTask"
+                            @importExcel="importTask"
+                            @refrshDes="refrshDes"
+                            @remove-task="removeTask">
+              </activityTree>
+            </template>
+            <template #center>
+              <el-tabs v-model="describeKey"
+                       ref="tab"
+                       tab-position="left"
+                       class="flowTabs"
+                       style="height: 100%;"
+                       @tab-click="onSelect"
+                       v-if="triggerVal">
+                <el-tab-pane name="describeKey">
+                  <span slot="label">
+                    <div style="display: flex; align-items: center"><i class="p8 icon-jindu"></i><span style="margin-left: 4px">活动描述</span></div>
+                  </span>
 
-              </el-tab-pane>
-              <el-tab-pane name="inputKey">
-                <span slot="label">
-                  <div style="display: flex; align-items: center"><i class="p8 icon-shuruyaoqiu"></i><span style="margin-left: 4px">输入</span></div>
-                </span>
+                </el-tab-pane>
+                <el-tab-pane name="inputKey">
+                  <span slot="label">
+                    <div style="display: flex; align-items: center"><i class="p8 icon-shuruyaoqiu"></i><span style="margin-left: 4px">输入</span></div>
+                  </span>
 
-              </el-tab-pane>
-              <el-tab-pane name="outputKey">
-                <span slot="label">
-                  <div style="display: flex; align-items: center"><i class="p8 icon-shuchuyaoqiu"></i><span style="margin-left: 4px">输出</span></div>
-                </span>
+                </el-tab-pane>
+                <el-tab-pane name="outputKey">
+                  <span slot="label">
+                    <div style="display: flex; align-items: center"><i class="p8 icon-shuchuyaoqiu"></i><span style="margin-left: 4px">输出</span></div>
+                  </span>
 
-              </el-tab-pane>
-              <el-tab-pane name="specialKey">
-                <span slot="label">
-                  <div style="display: flex; align-items: center"><i class="p8 icon-tebieshuoming"></i><span style="margin-left: 4px">特别说明</span></div>
-                </span>
+                </el-tab-pane>
+                <el-tab-pane name="specialKey">
+                  <span slot="label">
+                    <div style="display: flex; align-items: center"><i class="p8 icon-tebieshuoming"></i><span style="margin-left: 4px">特别说明</span></div>
+                  </span>
 
-              </el-tab-pane>
-            </el-tabs>
-            <div class="formEdit" :key="describeRefrshKey">
-               <keep-alive>
-              <describe-edit @saveSuccess="saveCallback"
-                             @saveAll="saveAll"
-                             ref="describeEdit"
-                             :activityInfoId="activityId"
-                             :teamId="teamId"
-                             :rootId="activityInfoId"
-                             :colLayoutClassify="colLayoutClassify"
-                             v-show="'describeKey' == activeKey && activityId"></describe-edit>
-            </keep-alive>
-            <keep-alive>
-              <input-edit @saveSuccess="saveCallback"
-                          @saveAll="saveAll"
-                          ref="inputEdit"
-                          :activityInfoId="activityId"
-                          v-show="'inputKey' == activeKey && activityId"></input-edit>
-            </keep-alive>
-            <keep-alive>
-              <output-edit @saveSuccess="saveCallback"
-                           @saveAll="saveAll"
-                           ref="outputEdit"
-                           :activityInfoId="activityId"
-                           v-show="'outputKey' == activeKey && activityId"></output-edit>
-            </keep-alive>
-            <keep-alive>
-              <special-edit @saveSuccess="saveCallback"
-                            @saveAll="saveAll"
-                            ref="specialEdit"
-                            :activityInfoId="activityId"
-                            v-show="'specialKey' == activeKey && activityId"></special-edit>
-            </keep-alive>
-            </div>
-          </template>
-        </normal-layout>
-          <div class="footer"><el-button plain @click="$emit('close')">取消</el-button><el-button type="primary" @click="saveAll" style="margin-right: 20px;">保存</el-button></div>
+                </el-tab-pane>
+              </el-tabs>
+              <div class="formEdit"
+                   :key="describeRefrshKey">
+                <keep-alive>
+                  <describe-edit @saveSuccess="saveCallback"
+                                 @saveAll="saveAll"
+                                 ref="describeEdit"
+                                 :activityInfoId="activityId"
+                                 :teamId="teamId"
+                                 :rootId="activityInfoId"
+                                 :colLayoutClassify="colLayoutClassify"
+                                 v-show="'describeKey' == activeKey && activityId"></describe-edit>
+                </keep-alive>
+                <keep-alive>
+                  <input-edit @saveSuccess="saveCallback"
+                              @saveAll="saveAll"
+                              ref="inputEdit"
+                              :activityInfoId="activityId"
+                              v-show="'inputKey' == activeKey && activityId"></input-edit>
+                </keep-alive>
+                <keep-alive>
+                  <output-edit @saveSuccess="saveCallback"
+                               @saveAll="saveAll"
+                               ref="outputEdit"
+                               :activityInfoId="activityId"
+                               v-show="'outputKey' == activeKey && activityId"></output-edit>
+                </keep-alive>
+                <keep-alive>
+                  <special-edit @saveSuccess="saveCallback"
+                                @saveAll="saveAll"
+                                ref="specialEdit"
+                                :activityInfoId="activityId"
+                                v-show="'specialKey' == activeKey && activityId"></special-edit>
+                </keep-alive>
+              </div>
+            </template>
+          </normal-layout>
+          <div class="footer"><el-button plain
+                       @click="$emit('close')">取消</el-button><el-button type="primary"
+                       @click="saveAll"
+                       style="margin-right: 20px;">保存</el-button></div>
         </div>
+      </el-tab-pane>
+      <el-tab-pane label="图形模式"
+                   name="second">
+        <graphics-mode :teamId="teamId"
+                       v-if="defaultActiveKey == 'second'"
+                       :activityInfoId="activityInfoId">
+        </graphics-mode>
       </el-tab-pane>
     </el-tabs>
 
@@ -109,8 +121,8 @@
   </div>
 </template>
 
-<style lang="scss" scope>
-.flowTopTabs ::v-deep .normal-center{
+<style lang="scss" scoped>
+.flowTopTabs ::v-deep .normal-center {
   position: relative;
 }
 .secret_level {
@@ -131,10 +143,7 @@
   margin-bottom: 24px;
   margin-right: 0;
 }
-.table-page-search-wrapper
-  .ant-form-inline
-  .ant-form-item
-  .ant-form-item-control-wrapper {
+.table-page-search-wrapper .ant-form-inline .ant-form-item .ant-form-item-control-wrapper {
   -webkit-box-flex: 1;
   -ms-flex: 1 1;
   flex: 1 1;
@@ -147,7 +156,7 @@
   position: relative;
   height: 100%;
 }
-.flowTopTabs .el-tabs__content{
+.flowTopTabs .el-tabs__content {
   background-color: rgba(243, 245, 248, 0.9);
 }
 .flowTopTabs {
@@ -160,9 +169,9 @@
     height: calc(100% - 80px);
     padding: 0;
   }
-  .wrap{
+  .wrap {
     height: 100%;
-    .footer{
+    .footer {
       width: 100%;
       height: 50px;
       line-height: 50px;
@@ -170,11 +179,12 @@
       background: #fff;
     }
   }
-  > .el-tabs__header.is-top {
-    height: 42px;
+  > ::v-deep .el-tabs__header.is-top {
+    margin: 0;
+    height: 35px;
   }
-  > .el-tabs__content {
-    height: calc(100% - 43px);
+  > ::v-deep .el-tabs__content {
+    height: calc(100% - 40px);
     > .el-tab-pane {
       height: 100%;
     }
@@ -184,19 +194,19 @@
   position: relative;
 }
 .flowTabs {
-  width:120px !important;
+  width: 120px !important;
   display: inline-block;
   vertical-align: top;
-  .el-tabs__item.is-active{
+  .el-tabs__item.is-active {
     color: #1890ff;
   }
   .el-tabs__nav-wrap.is-left::after {
     width: 0;
   }
-  .el-tabs__nav{
-    border-right: 2px solid #E4E7ED;
+  .el-tabs__nav {
+    border-right: 2px solid #e4e7ed;
   }
-  .el-tabs__active-bar{
+  .el-tabs__active-bar {
     background: #1890ff;
   }
   .el-tabs__active-bar.is-left {
@@ -204,9 +214,6 @@
   }
   > .el-tabs__header.is-top {
     height: 42px;
-  }
-  .el-tabs__content {
-    height: calc(100% - 43px);
   }
   .el-tab-pane {
     height: 100%;
@@ -337,10 +344,16 @@ export default {
       })
       await that.$refs.inputEdit.$refs.form.validate().then((queryParams) => {
         let saveParams = { ...queryParams, ...that.$refs.inputEdit.$refs.form.otherParam }
+        if (!saveParams.uploadFiles.length && !saveParams.describes) {
+          return
+        }
         that.$api[that.$refs.inputEdit.saveApi](saveParams)
       })
       await that.$refs.outputEdit.$refs.form.validate().then((queryParams) => {
         let saveParams = { ...queryParams, ...that.$refs.outputEdit.$refs.form.otherParam }
+        if (!saveParams.uploadFiles.length && !saveParams.describes) {
+          return
+        }
         that.$api[that.$refs.outputEdit.saveApi](saveParams)
       })
       await that.$refs.specialEdit.$refs.form.validate().then((queryParams) => {
