@@ -113,14 +113,7 @@ export default {
       handler: function (chart) {
         const _this = this
         if (chart && _this.remoteData) {
-          // transitionType为进度图，为true则转换进度title
-          if (this.myChart.children && this.myChart.children[1] && this.myChart.children[1].value.style && this.myChart.children[1].value.style.transitionType) {
-            let obj = Object.assign({}, this.myChart.children[1].value.style)
-            this.myChart.children[1].value.style.text = Math.round(_this.remoteData[0][this.myChart.children[1].value.style.text] * 100) + '%'
-            this.myChart.data([1, _this.remoteData[0][obj.text]])
-          } else {
-            this.myChart.data(_this.remoteData)
-          }
+          this.myChart.data(_this.remoteData)
           this.myChart.render();
         }
       }
@@ -129,14 +122,7 @@ export default {
       handler: function (val, oldVal) {
         const _this = this
         if (val && this.myChart) {
-          // transitionType为进度图，为true则转换进度title
-          if (this.myChart.children && this.myChart.children[1] && this.myChart.children[1].value.style && this.myChart.children[1].value.style.transitionType) {
-            let obj = Object.assign({}, this.myChart.children[1].value.style)
-            this.myChart.data([1, val[0][obj.text]])
-            this.myChart.children[1].value.style.text = Math.round(_this.remoteData[0][this.myChart.children[1].value.style.text] * 100) + '%'
-          } else {
-            this.myChart.data(val)
-          }
+          this.myChart.data(val)
           this.myChart.options({ ...this.chartOption })
           this.myChart.render()
         }
