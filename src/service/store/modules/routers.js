@@ -128,14 +128,32 @@ function generateNewRoutes(remoteRoutes) {
    * 创建父路由
    */
   remoteRoutes.forEach((route) => {
-    let newRoute = {
-      path: route.path ? (route.path.startsWith('/') ? route.path : '/' + route.path) : '',
-      component: Layout,
-      meta: { ...route.meta }
-    }
-    // 判断是否有子路由
-    if (route.children && route.children.length) {
-      newRoute.children = _createRoutes(route.children)
+    let newRoute = {}
+    /**
+     * auther: wangzhifeng
+     * desc: 判断一级菜单
+     * date: 2023/11/24 16:20:27
+     */
+    if (route.path && (!route.children || route.children.length == 0)) {
+      newRoute = {
+        path: '',
+        component: Layout,
+        meta: { ...route.meta },
+        redirect: route.path ? (route.path.startsWith('/') ? route.path : '/' + route.path) : '',
+        children:[]
+      }
+      let children = [route]
+      newRoute.children = _createRoutes(children)
+    } else {
+      newRoute = {
+        path: route.path ? (route.path.startsWith('/') ? route.path : '/' + route.path) : '',
+        component: Layout,
+        meta: { ...route.meta }
+      }
+      // 判断是否有子路由
+      if (route.children && route.children.length) {
+        newRoute.children = _createRoutes(route.children)
+      }
     }
     addRouters.push(newRoute)
   })
