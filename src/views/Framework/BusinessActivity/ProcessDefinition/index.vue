@@ -241,6 +241,7 @@ export default {
     },
 
     editModel (record) {
+      this.title = '编辑流程模版'
       this.modelId = record.id
       this.modelName = record.name
       this.visibleModelEditDrawer = true
