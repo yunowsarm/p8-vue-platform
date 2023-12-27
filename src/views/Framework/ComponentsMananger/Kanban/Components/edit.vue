@@ -547,10 +547,14 @@ export default {
         if (queryParams.urlType) {
           queryParams.urlType = queryParams.urlType.toString()
         }
-        if (this.formData.searchConfigValue && this.formData.searchConfigValue.indexOf('null') !== -1) {
-          queryParams.searchConfigValue = ''
+        if (this.formData.searchConfigValue) {
+          if(this.formData.searchConfigValue.indexOf('null') !== -1) {
+            queryParams.searchConfigValue = ''
+          } else {
+            queryParams.searchConfigValue = JSON.stringify(this.formData.searchConfigValue)
+          }
         } else {
-          queryParams.searchConfigValue = JSON.stringify(this.formData.searchConfigValue)
+          queryParams.searchConfigValue = ''
         }
         this.$refs.form.submitForm(queryParams, this.saveApi)
       })
