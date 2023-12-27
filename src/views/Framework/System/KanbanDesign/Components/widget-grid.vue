@@ -369,7 +369,7 @@ export default {
             layout: { x: 0, y: 0, w: item.defaultWidth, h: item.defaultHigh, i: maxSolt + index + 1 },
             component: item,
             styleObject: {},
-            title: ''
+            title: item.name
           })
         })
       }
