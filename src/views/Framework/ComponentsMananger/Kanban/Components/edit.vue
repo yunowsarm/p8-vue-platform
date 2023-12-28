@@ -528,15 +528,15 @@ export default {
       }
     },
     getFormData () {
+      if (this.formData.searchConfigValue) {
+        this.searchData = JSON.parse(this.formData.searchConfigValue)
+      }
       if (this.record.urlType !== null) {
         this.record.urlType = this.record.urlType.split(',')
       }
       this.formData = { ...this.formData, ...this.record }
       if (this.formData.jsonOptions) {
         this.editValue = this.formData.jsonOptions
-      }
-      if (this.formData.searchConfigValue) {
-        this.searchData = JSON.parse(this.formData.searchConfigValue)
       }
     },
     saved (res) {
@@ -678,6 +678,7 @@ export default {
       } else {
         this.dataSource = this.$options.data().dataSource
       }
+      this.dateKey = new Date().getTime()
     },
     'formData.dataviewId': function (newVal, oldVal) {
       let that = this
