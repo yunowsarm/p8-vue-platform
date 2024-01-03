@@ -204,11 +204,12 @@ export default {
         if (createPage === 'compile' && that.vueThis.planEditLock) {
           return true
         }
-        // 如果是任务分解，且角色为计划员，只能编辑责任人
-        const roles = that.$store.getters.userInfo.userRoles.map((role) => {
-          return role.roleId
+        // 如果是任务分解，非当前人员创建的，只能编辑责任人
+        const userId = that.$store.getters.userInfo.id
+        const ele = tasks.find(task => {
+          return task.createUserId != userId
         })
-        if (createPage === 'decompose' && roles.includes('SYS_ROLE077')) {
+        if (window.createPage === 'decompose' && ele && ele.id) {
           return true
         }
         if (createPage === 'decompose') {

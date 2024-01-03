@@ -804,6 +804,14 @@ export const CommandButtonData = [
       if (checkHasApproveTask(ganttName, tasks)) {
         result = true
       }
+      // 如果是任务分解，非当前人员创建的，只能编辑责任人
+      const userId = store.getters.userInfo.id
+      const ele = tasks.find(task => {
+        return task.createUserId != userId
+      })
+      if (window.createPage === 'decompose' && ele && ele.id) {
+        return true
+      }
       if (createPage === 'decompose' && tasks.length >= 1) {
         tasks.forEach(function (task, index) {
           // if (task.managerStatus === '6403') {
