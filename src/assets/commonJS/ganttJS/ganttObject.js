@@ -2015,11 +2015,9 @@ GanttObject.setOnBeforeEditStart = function (ganttObject, vueThis) {
     if (ganttObject.config.readonly) {
       return false
     }
-    // 如果是任务分解，且角色为计划员，只能编辑责任人
-    const roles = store.getters.userInfo.userRoles.map((role) => {
-      return role.roleId
-    })
-    if (vueThis.createPage === 'decompose' && roles.includes('SYS_ROLE077')) {
+    // 如果是任务分解，非当前人员创建的，只能编辑责任人
+    const userId = store.getters.userInfo.id
+    if (vueThis.createPage === 'decompose' && task.createUserId != userId) {
       return false
     }
     const userMaxSecret = vueThis.$store.state.user.userInfo.confidentialiteList[vueThis.$store.state.user.userInfo.confidentialiteList.length - 1].id
