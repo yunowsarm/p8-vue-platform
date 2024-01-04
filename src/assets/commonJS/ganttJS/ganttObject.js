@@ -2017,7 +2017,7 @@ GanttObject.setOnBeforeEditStart = function (ganttObject, vueThis) {
     }
     // 如果是任务分解，非当前人员创建的，只能编辑责任人
     const userId = store.getters.userInfo.id
-    if (vueThis.createPage === 'decompose' && task.createUserId != userId) {
+    if (vueThis.createPage === 'decompose' && task.createUserId && task.createUserId != userId) {
       return false
     }
     const userMaxSecret = vueThis.$store.state.user.userInfo.confidentialiteList[vueThis.$store.state.user.userInfo.confidentialiteList.length - 1].id
