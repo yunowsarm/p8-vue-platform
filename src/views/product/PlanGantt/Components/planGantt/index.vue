@@ -1459,7 +1459,7 @@ export default {
       // 如果是任务分解，非当前人员创建的，只能编辑责任人
       const userId = this.$store.getters.userInfo.id
       const ele = tasks.find(task => {
-        return task.createUserId != userId
+        return task.createUserId && task.createUserId != userId
       })
       if (this.createPage === 'decompose' && ele && ele.id) {
         this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, 'view')
