@@ -807,7 +807,7 @@ export const CommandButtonData = [
       // 如果是任务分解，非当前人员创建的，只能编辑责任人
       const userId = store.getters.userInfo.id
       const ele = tasks.find(task => {
-        return task.createUserId != userId
+        return task.createUserId && task.createUserId != userId
       })
       if (window.createPage === 'decompose' && ele && ele.id) {
         return true
