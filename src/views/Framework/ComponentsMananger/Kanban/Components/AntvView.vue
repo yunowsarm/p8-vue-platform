@@ -270,7 +270,7 @@ export default {
         const _this = this
         this.myChart.on(this.eventOption.eventName, (params) => {
           const chartData = params.data.data
-          const drillParams = this.eventOption.drillParams
+          const drillParams = this.eventOption.drillParams || this.eventOption.eventConfig.drillParams
           for (const key in drillParams) {
             if (chartData[drillParams[key]]) {
               _this.eventParam[key] = {
