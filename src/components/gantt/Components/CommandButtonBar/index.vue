@@ -107,7 +107,6 @@ import { mapGetters } from 'vuex'
 import { Tabs, TabPane } from 'p8-components-ui'
 import CommandButton from '@/components/gantt/Components/CommandButton'
 import { CommandButtonData } from '@/assets/commonJS/ganttJS/commandButtonData'
-import { CommandResolveButtonData } from '@/assets/commonJS/ganttJS/resolve/commandResolveButtonData'
 import CommandClassify from '@/components/gantt/Components/CommandClassify'
 import CommandMonitor from '@/components/gantt/Components/CommandMonitor'
 import CommandSearch from '@/components/gantt/Components/CommandSearch'
@@ -215,7 +214,7 @@ export default {
   },
   data() {
     return {
-      buttonDatas: this.ganttType === 'common' ? CommandButtonData : CommandResolveButtonData,
+      buttonDatas: CommandButtonData,
       advance: true,
       scrollArea: '', // 内容滚动盒子
       scrollContent: '', // 内容滚动dom

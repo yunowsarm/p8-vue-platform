@@ -48,35 +48,6 @@
       @close-dialog="outPutViewClose"
     >
     </out-put-view>
-    <product-task-view
-      v-if="productTaskViewVisible"
-      :visible="productTaskViewVisible"
-      :plan-info-id="planInfoId"
-      :task-id="taskId"
-      :gantt-name="ganttName"
-      :plan-type-datas="planTypeDatas"
-      @close-dialog="productTaskViewClose"
-    >
-    </product-task-view>
-    <product-task
-      v-if="productTaskVisible"
-      :visible="productTaskVisible"
-      :plan-info-id="planInfoId"
-      :task-id="taskId"
-      :gantt-name="ganttName"
-      :plan-type-datas="planTypeDatas"
-      @close-dialog="productTaskClose"
-    >
-    </product-task>
-    <product-task-edit
-      v-if="productTaskEditVisible"
-      :visible="productTaskEditVisible"
-      :plan-info-id="planInfoId"
-      :task-id="selectTaskId"
-      :task-name="selectTaskName"
-      @close-dialog="productTaskEditClose"
-    >
-    </product-task-edit>
     <div ref="myGantt" style="width: 100%; height: calc(100% - 40px) !important" @mousemove="mouseMove"></div>
     <div class="detail_div">
       <div style="width: 50%">
@@ -331,42 +302,6 @@
         <detail :av-task-id="avTaskId"></detail>
       </template>
     </common-drawer>
-
-    <!-- <common-dialog title="飞行试验" :visible="myFlyExperienceVisible" :show-handle-btn="false" @isfullscreen="isfullscreen" @close="closeMyFlyExperience" :is-view-cs-footer="false">
-      <template #dialog>
-        <flight ref="flight" :plan-type-param="planTypeParam" @saveSuccess="saveCallback" v-if="myFlyExperienceVisible"></flight>
-      </template>
-    </common-dialog> -->
-    <!-- <common-dialog title="SDM链接"
-                   style="top: 120px;"
-                   :SDMParam="SDMParam"
-                   :visible="SDMlinkVisible"
-                   :dialogHeight="200"
-                   @close="closeSDMlinkVisible"
-                   @handle-cancel="closeSDMlinkVisible"
-                   @handle-ok="SDMhandleOk"
-                   :isViewCsFooter="false">
-                   <template #dialog>
-                    <div class="SDMlink">
-                      SDM链接:<el-input v-model="SDMlink" style="width: 80%;margin-left: 5px;"></el-input>
-                    </div>
-                   </template>
-    </common-dialog> -->
-    <save-product :visible="productTaskSaveVisible" :record="selectTaskDate" @close-modal="closeProductTaskSave" @save-success="productTaskSaveCallback" v-if="productTaskSaveVisible"></save-product>
-
-    <!-- <common-dialog
-      title="大型试验填报"
-      :visible="myBigExperienceVisible"
-      :show-handle-btn="false"
-      @isfullscreen="isfullscreen"
-      @close="closeMyBigExperience"
-      :is-view-cs-footer="false"
-      :dialog-height="360"
-    >
-      <template #dialog>
-        <large ref="large" :plan-type-param="planTypeParam" @saveSuccess="saveCallback" v-if="myBigExperienceVisible"></large>
-      </template>
-    </common-dialog> -->
     <common-dialog
       title="查询"
       width="90%"
@@ -434,14 +369,9 @@
       @copy="copyExperienceBase"
       @handleCancel="closExperienceBase"
     ></my-experience-base>
-    <common-drawer v-if="versionListVisible"
-                   :visible="versionListVisible"
-                   size="70%"
-                   placement="top"
-                   title="版本列表"
-                   @close="versionListVisible = false">
+    <common-drawer v-if="versionListVisible" :visible="versionListVisible" size="70%" placement="top" title="版本列表" @close="versionListVisible = false">
       <template #drawer>
-        <version-list :planInfoId="planInfoId"></version-list>
+        <version-list :plan-info-id="planInfoId"></version-list>
       </template>
     </common-drawer>
   </div>
@@ -532,11 +462,8 @@ import SubjectNumberSelect from '../subjectNumberSelect'
 import ProductionDialog from '../ProductionDialog'
 import AddRevenueView from '../addRevenueView'
 import OutPutView from '../outPutView'
-import ProductTaskView from '../productTaskView'
-import ProductTask from '../productTaskView/ProjectTask'
 import ErpList from '../erpList'
 import Notice from '../notice'
-import ProductTaskEdit from '../productTaskView/productTaskEdit'
 // import MyExperienceClassify from '@/views/Product/Repository/MyExperienceBase/myExperienceClassify'
 
 // import ExperienceImport from '@/views/Product/Repository/MyExperienceBase/experienceImport'
@@ -545,7 +472,6 @@ import GridSetting from '@/components/gantt/Components/CommandGridSetting/gridSe
 
 // import Flight from '@/views/Product/Pm/Flight/Flight'
 // import Large from '@/views/Product/Pm/Flight/Large'
-import SaveProduct from '../saveProduct/saveProduct'
 import Detail from './detail'
 import CommandSearch from '@/components/gantt/Components/CommandSearch'
 import CommandStatistic from '@/components/gantt/Components/CommandStatistic'
@@ -650,7 +576,6 @@ export default {
     Edit,
     'my-experience-base': MyExperienceBase,
     ClassificationSelection,
-    SaveProduct,
     Detail,
     SubjectNumberSelect,
     ProductionDialog,
@@ -680,9 +605,6 @@ export default {
     researchTaskRelevanceMore,
     researchTaskRelevanceLook,
     OutPutView,
-    ProductTaskView,
-    ProductTask,
-    ProductTaskEdit,
     ImportExcel,
     ImportProject,
     // TeamManager,
@@ -886,11 +808,7 @@ export default {
       finishTypeOptions: [],
       unitOptions: [],
       outPutViewVisible: false, // 查看输出物
-      productTaskViewVisible: false, // 查看生产计划
-      productTaskVisible: false,
-      productTaskEditVisible: false, // 编辑生产计划信息
       planTypeViewVisible: false, // 点击行记录生产计划图标
-      productTaskSaveVisible: false, // 填写生产计划
       selectTaskDate: {},
       planTypeParam: {},
       comResForm: {
@@ -1016,7 +934,7 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll'])
   },
   methods: {
-    copyExperienceBase (ids) {
+    copyExperienceBase(ids) {
       this.copyTasks = ids
       this.copyFlag = true
     },
@@ -1244,13 +1162,6 @@ export default {
       this.selectedRowKeys = []
       this.myBigExperienceVisible = false
     },
-    closeProductTaskSave() {
-      this.selectTaskDate = null
-      this.productTaskSaveVisible = false
-    },
-    productTaskSaveCallback() {
-      this.productTaskSaveVisible = false
-    },
     saveCallback() {
       this.onEditModelClose()
       this.onDrawerClose()
@@ -1458,7 +1369,7 @@ export default {
       if (myGantt.getGlobalTaskIndex(this.selectTaskId) === 0) return
       // 如果是任务分解，非当前人员创建的，只能编辑责任人
       const userId = this.$store.getters.userInfo.id
-      let task = myGantt.getTask(this.selectTaskId)
+      const task = myGantt.getTask(this.selectTaskId)
       if (this.createPage === 'decompose' && task.createUserId && task.createUserId != userId) {
         this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, 'view')
       } else {
@@ -1612,31 +1523,6 @@ export default {
     outPutViewClose() {
       this.outPutViewVisible = false
     },
-    productTaskViewClose() {
-      this.productTaskViewVisible = false
-      // this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-      myGantt.eachSelectedTask(function (id) {
-        if (myGantt.isTaskExists(id)) {
-          myGantt.unselectTask(id)
-        }
-      })
-      this.callParentSelectTasks()
-      this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-    },
-    productTaskClose() {
-      this.productTaskVisible = false
-      // this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-      myGantt.eachSelectedTask(function (id) {
-        if (myGantt.isTaskExists(id)) {
-          myGantt.unselectTask(id)
-        }
-      })
-      // this.callParentSelectTasks()
-      this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-    },
-    productTaskEditClose() {
-      this.productTaskEditVisible = false
-    },
     resourceSelected(ownerId, row) {
       const that = this
       if (that.selectedTasks && that.selectedTasks.length > 0) {
@@ -1741,7 +1627,7 @@ export default {
       this.rightMenuConfigVisible = false
     },
     //  创建版本
-    createPlanVersion () {
+    createPlanVersion() {
       this.$api['planGanttManager.versionCreate']({
         planInfoId: this.planInfoId
       }).then((res) => {
