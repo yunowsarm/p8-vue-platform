@@ -1135,10 +1135,17 @@ export default {
           column.drillName = el.drillName
         }
       })
+      let param = this.tableParam.param
+      let obj = {}
+      if(Object.keys(param).length){
+        Object.keys(param).forEach(el => {
+          obj[el] = param[el].value
+        })
+      }
       // 是否开启了行点击
       if (this.tableInfo.enableClick === 1) {
         this.$emit('row-click', row)
-        this.runInHoleParam = row
+        this.runInHoleParam = { ...row,...obj }
         this.runInHoleParam.property = column.property
         this.reportItems.forEach((item) => {
           if (column.property === item.fieldName) {
