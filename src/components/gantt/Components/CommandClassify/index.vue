@@ -11,7 +11,6 @@
 <script>
 import CommandButton from '../CommandButton'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
-import { GanttResolveObject } from '@/assets/commonJS/ganttJS/resolve/resolveGanttObject'
 import { mapGetters } from 'vuex'
 import { generateTree } from '@/utils/generateTree'
 import { beforeUpdateTask, setNewTaskMap } from '@/assets/commonJS/ganttJS/changeGantt'
@@ -140,11 +139,7 @@ export default {
   },
   methods: {
     initGanttObject() {
-      if (this.ganttName === 'planResolveGantt') {
-        this.ganttObjectData = GanttResolveObject
-      } else {
-        this.ganttObjectData = GanttObject
-      }
+      this.ganttObjectData = GanttObject
     },
     isDisableFun() {
       const that = this
@@ -158,7 +153,7 @@ export default {
         }
         // 如果是任务分解，非当前人员创建的，只能编辑责任人
         const userId = that.$store.getters.userInfo.id
-        const ele = tasks.find(task => {
+        const ele = tasks.find((task) => {
           return task.createUserId && task.createUserId != userId
         })
         if (window.createPage === 'decompose' && ele && ele.id) {

@@ -755,19 +755,19 @@ export const CommandButtonData = [
     title: '删除',
     help: '删除',
     clickFun: function (btn, ganttName, tasks) {
-      let thisGantt = GanttObject.getGanttObject(ganttName)
+      const thisGantt = GanttObject.getGanttObject(ganttName)
       const vueThis = store.getters.vueThis
       if (ganttName === 'changeGantt') {
         if (tasks[0].infoType === 'create') {
           vueThis.delSaveChange(tasks)
-          let thisGantt = GanttObject.getGanttObject(ganttName)
-          let thisDp = GanttObject.getDpObject(ganttName)
+          const thisGantt = GanttObject.getGanttObject(ganttName)
+          const thisDp = GanttObject.getDpObject(ganttName)
           removeTasks(thisGantt, thisDp, ganttName)
         } else {
           vueThis.delSaveChange(tasks)
         }
       } else {
-        let thisDp = GanttObject.getDpObject(ganttName)
+        const thisDp = GanttObject.getDpObject(ganttName)
         if (thisGantt && thisDp) {
           let msg = '是否确认删除选中任务?'
           if (checkHasApproveTask(ganttName, tasks)) {
@@ -806,7 +806,7 @@ export const CommandButtonData = [
       }
       // 如果是任务分解，非当前人员创建的，只能编辑责任人
       const userId = store.getters.userInfo.id
-      const ele = tasks.find(task => {
+      const ele = tasks.find((task) => {
         return task.createUserId && task.createUserId != userId
       })
       if (window.createPage === 'decompose' && ele && ele.id) {
@@ -1002,29 +1002,6 @@ export const CommandButtonData = [
     help: '全部同步',
     clickFun: function (btn, ganttName, tasks) {
       batchSyncTask(ganttName, [])
-    },
-    isDisableFun: function (btn, ganttName, tasks) {
-      let result = false
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (checkReadOnly(ganttName)) {
-        result = true
-      }
-      return result
-    }
-  },
-  {
-    id: 'product-task-view',
-    icon: 'p8 icon-management-elements',
-    title: '添加/查看生产计划',
-    help: '添加/查看生产计划',
-    clickFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
-      const thisGantt = GanttObject.getGanttObject(ganttName)
-      vueThis.planTypeDatas = thisGantt.serverList(thisGantt.config.plan_type)
-      vueThis.ganttName = ganttName
-      vueThis.productTaskViewVisible = true
     },
     isDisableFun: function (btn, ganttName, tasks) {
       let result = false
@@ -2293,7 +2270,7 @@ export const CommandButtonData = [
     title: '创建版本',
     help: '创建版本',
     clickFun: function (btn, ganttName, tasks) {
-      let vueThis = store.getters.vueThis
+      const vueThis = store.getters.vueThis
       vueThis.createPlanVersion()
     },
     isDisableFun: function (btn, ganttName, tasks) {
@@ -2327,7 +2304,7 @@ export const CommandButtonData = [
     help: '版本列表',
     clickFun: function (btn, ganttName, tasks) {
       if (ganttName) {
-        let vueThis = store.getters.vueThis
+        const vueThis = store.getters.vueThis
         vueThis.versionListVisible = true
       }
     },
@@ -3134,8 +3111,6 @@ function removePlanGanttData(ganttObject, dp, ganttName, vueThis, selectedTaskId
               if (ganttObject.isTaskExists(id)) {
                 const parTask = ganttObject.getTask(id)
                 parTask.progress = GanttObject.calculateProgress(parTask, ganttObject)
-                GanttObject.calculateForecastDate(ganttObject, parTask)
-                // ganttObject.updateTask(id)
                 vueThis.updateRootProgress(id, parTask.progress)
               }
             })
@@ -3219,8 +3194,8 @@ function copyTask(ganttObject, tasks, vueThis) {
  * @param tasks
  */
 function pasteTask(ganttObject, tasks, vueThis, type, dpObj) {
-  console.log(vueThis.copyFlag,'----vueThis.copyFlag');
-  if(vueThis.copyFlag){
+  console.log(vueThis.copyFlag, '----vueThis.copyFlag')
+  if (vueThis.copyFlag) {
     const that = this
     if (vueThis.copyTasks.length > 0) {
       const selTask = tasks[0]
@@ -3246,7 +3221,6 @@ function pasteTask(ganttObject, tasks, vueThis, type, dpObj) {
     } else {
       vueThis.$message.warning('请选择需要粘贴的数据')
     }
-    return 
   } else {
     const copyTasks = vueThis.copyTasks
     if (copyTasks != null) {
