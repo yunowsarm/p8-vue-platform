@@ -63,6 +63,7 @@ export default {
       isCustomValidate: true,
       ownerDataOptions: [],
       extraList: {},
+      extraIds: {}, // 存储拓展字段的id
       dataSource: [
         {
           labelText: '任务名称',
@@ -294,8 +295,13 @@ export default {
     const ganttObject = GanttObject.getGanttObject(this.ganttName)
     const task = ganttObject.getTask(this.taskId)
     this.$api['planGanttManager.getGanttExtendAttr']({ taskId: task.id }).then((res) => {
-      if (res && res.taskExtend) {
-        let obj = JSON.parse(res.taskExtend)
+      if (res && res.taskExtendList) {
+        this.extraIds = {}
+        res.taskExtendList.forEach((item) => {
+          this.$set(this.formData, item.fieldName, item.fieldValue)
+          this.$set(this.extraIds, item.fieldName, item.id)
+        })
+        const obj = JSON.parse(res.taskExtend)
         this.formData = {
           ...this.formData,
           ...obj
@@ -306,11 +312,11 @@ export default {
     this.$api['planGanttManager.classifiedFiltering']({ secretGrade: task.secretGrade }).then((res) => {
       this.falg = res
     })
-    this.extraList = this.vueThis.columnSettings.filter(item => item.customItem1 == '1')
-    this.extraList.forEach(extra => {
+    this.extraList = this.vueThis.columnSettings.filter((item) => item.customItem1 == '1')
+    this.extraList.forEach((extra) => {
       this.dataSource.push({
         labelText: extra.textName,
-        type: this.ganttName === 'planGantt' ? extra.textType == '数字' ? 'number' : 'text' : 'view',
+        type: this.ganttName === 'planGantt' ? (extra.textType == '数字' ? 'number' : 'text') : 'view',
         fieldName: extra.name,
         placeholder: `请输入${extra.textName}`,
         colLayout: 'doubleCol'
@@ -518,11 +524,19 @@ export default {
         if (that.taskId) {
           if (that.ganttName === 'planGantt') {
             // 计划编辑
-            let extraData = {}
-            let keys = this.extraList.map(item => item.name)
-            keys.forEach(key => extraData[key] = saveParams[key])
+            const extraData = []
+            this.extraList.forEach((item) => {
+              const obj = {
+                id: this.extraIds[item.name] || '',
+                fieldName: item.name,
+                fieldType: item.textType === '数字' ? 'number' : 'varchar',
+                fieldValue: saveParams[item.name],
+                indexNo: item.indexNo // 排序号
+              }
+              extraData.push(obj)
+            })
             // 保存
-            this.$api['planGanttManager.saveGanttExtendAttr']({ taskId: that.taskId, taskExtend: JSON.stringify(extraData) })
+            this.$api['planGanttManager.saveGanttExtendAttr']({ taskId: that.taskId, taskExtendRequests: extraData })
             that.$refs.form.submitForm(saveParams, that.saveApi)
           } else if (that.ganttName === 'changeGantt') {
             // 变更校验
