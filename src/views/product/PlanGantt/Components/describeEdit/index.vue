@@ -301,11 +301,6 @@ export default {
           this.$set(this.formData, item.fieldName, item.fieldValue)
           this.$set(this.extraIds, item.fieldName, item.id)
         })
-        const obj = JSON.parse(res.taskExtend)
-        this.formData = {
-          ...this.formData,
-          ...obj
-        }
       }
     })
     this.formData.secretGradeDisplay = task.secretGradeDisplay
@@ -315,10 +310,10 @@ export default {
     this.extraList = this.vueThis.columnSettings.filter((item) => item.customItem1 == '1')
     this.extraList.forEach((extra) => {
       this.dataSource.push({
-        labelText: extra.textName,
+        labelText: extra.name,
         type: this.ganttName === 'planGantt' ? (extra.textType == '数字' ? 'number' : 'text') : 'view',
-        fieldName: extra.name,
-        placeholder: `请输入${extra.textName}`,
+        fieldName: extra.textName,
+        placeholder: `请输入${extra.name}`,
         colLayout: 'doubleCol'
       })
     })
@@ -527,10 +522,10 @@ export default {
             const extraData = []
             this.extraList.forEach((item) => {
               const obj = {
-                id: this.extraIds[item.name] || '',
-                fieldName: item.name,
+                id: this.extraIds[item.textName] || '',
+                fieldName: item.textName,
                 fieldType: item.textType === '数字' ? 'number' : 'varchar',
-                fieldValue: saveParams[item.name],
+                fieldValue: saveParams[item.textName],
                 indexNo: item.indexNo // 排序号
               }
               extraData.push(obj)
