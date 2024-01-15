@@ -1098,7 +1098,7 @@ export default {
       let report = {}
       this.serachForm = {}
       this.searchList.forEach(el => {
-        if (el.type && el.type == "datetimeRange" && el.defaultValue.indexOf(',') !== -1) {
+        if (el.type && el.type == "datetimeRange" && el.defaultValue && el.defaultValue.indexOf(',') !== -1) {
           el.defaultValue = el.defaultValue.split(',')
         }
         this.serachForm[el.fieldName] = el.defaultValue ? el.defaultValue : ''
