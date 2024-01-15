@@ -1070,8 +1070,10 @@ export default {
       this.tableParam.param = { ...param, ...this.westParmars }
     },
     reSet () {
+      let columnType = JSON.parse(JSON.stringify(this.tableParam.sqlParam.columnType))
+      this.tableParam.sqlParam = {columnType:columnType}
       // this.tableParam.param = {}
-      // this.$refs.table.searchData()
+      this.$refs.table.searchData()
     },
     rebuildParam (val) {
       const reportParam = {}
