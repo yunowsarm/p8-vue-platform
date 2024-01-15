@@ -2860,6 +2860,9 @@ export default {
       this.$api['formGenerator.tableParam'](this.paramParams).then(res => {
         res.forEach(item => {
           if (item.isSearch) {
+            if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
+              item.defaultValueDatas = item.defaultValueData.split(',')
+            }
             this.searchData.push(item)
           }
         })
