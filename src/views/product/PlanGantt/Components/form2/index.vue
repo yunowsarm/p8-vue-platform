@@ -24,19 +24,18 @@
             </template>
             <el-col v-if="!isView" class="form-btn-operation" :span="5" style="float: right">
               <el-form-item v-if="!formItem.issubmit" label-width="0">
-                <el-button style="padding: 7px 5px; font-size: 12px" type="primary" size="mini" @click.stop="submit(formIndex)">添加</el-button>
-                <i class="el-icon-close" style="padding: 0 8px; font-size: 18px" @click.stop="formDelete(formIndex)"></i>
+                <el-button style="padding: 7px 5px; font-size: 12px" type="primary" size="mini" @click.stop="submit(formIndex)">保存</el-button>
               </el-form-item>
               <el-form-item v-if="formItem.issubmit && !formItem.notedit" label-width="0">
                 <i class="el-icon-edit" style="padding: 0 8px; font-size: 18px" @click.stop="formEdit(formIndex)"></i>
-                <i class="el-icon-delete" style="padding: 0 8px; font-size: 18px" @click.stop="formEdit(formIndex)"></i>
+                <i class="el-icon-delete" style="padding: 0 8px; font-size: 18px" @click.stop="formDelete(formIndex)"></i>
               </el-form-item>
             </el-col>
           </el-form>
         </el-row>
       </template>
     </div>
-    <el-row v-if="isAdd && !isView" :style="{ marginTop: formDataList.length ? '20px' : '0' }">
+    <el-row v-if="!isView" :style="{ marginTop: formDataList.length ? '20px' : '0' }">
       <el-col :span="24">
         <el-button type="dashed" style="width: 100%" @click="add">
           <i class="el-icon-plus"></i>
@@ -233,11 +232,18 @@ export default {
       /**
        * add: 添加后, 添加按钮隐藏, 当前行form提交后再显示
        */
+      const isExistEditForm = this.formDataList.findIndex((item) => !item.issubmit) // findIndex 返回存在的索引, 不存在返回 -1
+      if (isExistEditForm !== -1) {
+        this.$message({
+          message: '存在未保存的数据,请先保存后再添加',
+          type: 'warning'
+        })
+        return
+      }
       const that = this
       this.formDataList.push(this.renderDefaultFormHandle())
       this.dataSourceTwoDimensional.push(JSON.parse(JSON.stringify(that.renderDataSource())))
       this.$emit('form-add', { formToApiData: this.formDataList, dataSourceArray: this.dataSourceTwoDimensional, currentIndex: this.formDataList.length - 1 })
-      this.isAdd = false
     },
     submit(formIndex) {
       /**
@@ -280,18 +286,26 @@ export default {
        * formDelete: 行form删除, 删除当前行form, 并展示 add按钮
        *    存在正在编辑(未保存)的行form,且与当前删除的索引不对等时, 不允许删除
        */
-      const isExistEditForm = this.formDataList.findIndex((item) => !item.issubmit) // findIndex 返回存在的索引, 不存在返回 -1
-      if (isExistEditForm !== -1 && isExistEditForm !== formIndex) {
-        this.$message({
-          message: '存在未保存的数据',
-          type: 'warning'
+      this.$confirm('是否确认删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          const isExistEditForm = this.formDataList.findIndex((item) => !item.issubmit) // findIndex 返回存在的索引, 不存在返回 -1
+          if (isExistEditForm !== -1 && isExistEditForm !== formIndex) {
+            this.$message({
+              message: '存在未保存的数据',
+              type: 'warning'
+            })
+          } else {
+            // this.formDataList.splice(formIndex, 1)
+            // this.dataSourceTwoDimensional.splice(formIndex, 1)
+            this.$emit('form-delete', { formToApiData: this.formDataList, dataSourceArray: this.dataSourceTwoDimensional, currentIndex: formIndex })
+            this.isAdd = true
+          }
         })
-      } else {
-        // this.formDataList.splice(formIndex, 1)
-        // this.dataSourceTwoDimensional.splice(formIndex, 1)
-        this.$emit('form-delete', { formToApiData: this.formDataList, dataSourceArray: this.dataSourceTwoDimensional, currentIndex: formIndex })
-        this.isAdd = true
-      }
+        .catch(() => {})
     }
   }
 }
