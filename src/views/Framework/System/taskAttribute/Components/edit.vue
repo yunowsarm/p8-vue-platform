@@ -39,12 +39,10 @@
           </template>
           <template #filedType="{ scope, data }">
             <el-select v-model="scope.row.filedType" style="width: 100%" clearable @change="saveParamDataNew(data)">
-              <el-option label="VARCHAR" value="VARCHAR"> </el-option>
-              <el-option label="NUMBER" value="NUMBER"> </el-option>
-              <el-option label="FLOAT" value="FLOAT"> </el-option>
-              <el-option label="LONG" value="LONG"> </el-option>
-              <el-option label="CLOB" value="CLOB"> </el-option>
-              <el-option label="TIMESTAMP" value="TIMESTAMP"> </el-option>
+              <el-option label="字符串" value="text"> </el-option>
+              <el-option label="数字" value="number"> </el-option>
+              <el-option label="大文本" value="textarea"> </el-option>
+              <el-option label="日期" value="datepicker"> </el-option>
             </el-select>
           </template>
           <template #verificationRules="{ scope, data }">
