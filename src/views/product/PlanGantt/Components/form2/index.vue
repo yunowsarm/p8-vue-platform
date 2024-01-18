@@ -25,6 +25,7 @@
             <el-col v-if="!isView" class="form-btn-operation" :span="5" style="float: right">
               <el-form-item v-if="!formItem.issubmit" label-width="0">
                 <el-button style="padding: 7px 5px; font-size: 12px" type="primary" size="mini" @click.stop="submit(formIndex)">保存</el-button>
+                <i class="el-icon-close" style="padding: 0 8px; font-size: 18px" @click.stop="formDelete(formIndex)"></i>
               </el-form-item>
               <el-form-item v-if="formItem.issubmit && !formItem.notedit" label-width="0">
                 <i class="el-icon-edit" style="padding: 0 8px; font-size: 18px" @click.stop="formEdit(formIndex)"></i>
