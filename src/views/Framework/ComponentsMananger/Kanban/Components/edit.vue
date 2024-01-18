@@ -597,6 +597,7 @@ export default {
         this.formData.url = ''
         // 切换清空json框
         this.formData.jsonOptions = ''
+        this.formData.dataviewId = ''
       }
       if (newVal === '2') {
         this.dataSource = this.dataSource
