@@ -122,6 +122,9 @@
 </template>
 
 <style lang="scss" scoped>
+.flowTopTabs ::v-deep .normal-layout .normal-main .splitBtn > i{
+  left: 0px;
+}
 .flowTopTabs ::v-deep .normal-center {
   position: relative;
 }

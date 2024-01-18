@@ -307,12 +307,12 @@ export default {
     this.$api['planGanttManager.classifiedFiltering']({ secretGrade: task.secretGrade }).then((res) => {
       this.falg = res
     })
-    this.extraList = this.vueThis.columnSettings.filter((item) => item.customItem1 == '1')
+    this.extraList = this.vueThis.columnSettings.filter((item) => item.attributeType === '1')
     this.extraList.forEach((extra) => {
       this.dataSource.push({
         labelText: extra.name,
-        type: this.ganttName === 'planGantt' ? (extra.textType == '数字' ? 'number' : 'text') : 'view',
-        fieldName: extra.textName,
+        type: this.ganttName === 'planGantt' ? extra.filedType : 'view',
+        fieldName: extra.filedName,
         placeholder: `请输入${extra.name}`,
         colLayout: 'doubleCol'
       })
@@ -522,10 +522,10 @@ export default {
             const extraData = []
             this.extraList.forEach((item) => {
               const obj = {
-                id: this.extraIds[item.textName] || '',
-                fieldName: item.textName,
-                fieldType: item.textType === '数字' ? 'number' : 'varchar',
-                fieldValue: saveParams[item.textName],
+                id: this.extraIds[item.filedName] || '',
+                fieldName: item.filedName,
+                fieldType: item.filedType,
+                fieldValue: saveParams[item.filedName],
                 indexNo: item.indexNo // 排序号
               }
               extraData.push(obj)
