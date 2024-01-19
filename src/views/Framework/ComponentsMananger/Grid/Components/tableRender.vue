@@ -2090,7 +2090,10 @@ export default {
     thirdMenuClick (record, item) {
       this.defaultMenu = item
       this.thirdMenuTitle = '计划详情'
-      this.thirdMenuParam = { ...record }
+      this.thirdMenuParam = {
+        ...record,
+        route: this.currentRouterPath
+      }
       this.visibleThirdDrawer = true
     },
     onThirdMenuClose () {
