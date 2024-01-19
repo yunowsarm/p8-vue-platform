@@ -107,9 +107,9 @@ export default {
         if (task.readonly) {
           this.isView = false
         }
-        if (this.$route.path === '/TaskChange') {
-          this.isView = true
-        }
+        // if (this.$route.path === '/TaskChange') {
+        //   this.isView = true
+        // }
         if (task.managerStatus === '6404') {
           // 已下发
           this.isView = true

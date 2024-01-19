@@ -212,12 +212,12 @@ export default {
   beforeMount() {},
   created() {},
   mounted() {
-    if (this.thirdMenuParam.createPage === 'decompose') {
+    if (this.thirdMenuParam.createPage === 'decompose' || this.thirdMenuParam.route === '/MyTask/MyTask/latest') {
       this.planInfoId = this.thirdMenuParam.PLANINFOID
       this.secretGrade = this.thirdMenuParam.SECRETGRADE || ''
       this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
       this.taskId = this.thirdMenuParam.TASKID || ''
-      this.createPage = this.thirdMenuParam.createPage
+      this.createPage = this.thirdMenuParam.createPage || 'decompose'
       this.wholeDescribeId = this.thirdMenuParam.WHOLEDESCRIBEID
       this.planBeginDateArray = this.thirdMenuParam.planBeginDateArray || []
       this.planEndDateArray = this.thirdMenuParam.planEndDateArray || []
