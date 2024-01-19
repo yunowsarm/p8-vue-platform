@@ -519,16 +519,24 @@
               <div slot="content">
                 <p>
                   按钮事件定义，可使用平台内置事件，也可使用输入名称使用自定义事件 ，自定义事件需嵌入渲染器二次开发实现。内置事件如下：<br />
-                  表单新建操作：调用表单组件进行新建操作<br />
-                  新建修改操作：调用表单组件进行修改操作<br />
-                  表单删除操作：删除表格行内数据<br />
-                  弹出窗口打开组件：弹出已设置的组件<br />
-                  Api接口调用：调用方法向配置的接口发起请求<br />
-                  发起流程：弹出弹框发起审批流程<br />
-                  查看流程图：弹出流程图查看界面<br />
-                  撤回流程：撤回已发起的流程<br />
-                  导出Excel：导出Excel<br />
-                  导入Excel：弹出弹框导入附件<br />
+                  createForm 表单新建操作: 调用表单组件进行新建操作<br />
+                  modifvForm 表单修改操作: 调用表单组件进行修改操作<br />
+                  deleteForm 表单删除操作: 删除表格行内数据<br />
+                  viewForm 表单查看操作: 调用表单组件进行查看<br />
+                  openComponent 弹出窗口打开组件: 弹出已设置的组件<br />
+                  dynamicAPI 接口调用: 调用方法向配置的接口发起请求<br />
+                  startProcess 发起流程: 弹出弹框发起审批流程<br />
+                  viewProcess 查看流程图: 弹出流程图查看界面<br />
+                  cancelProcess 撤回流程: 撤回已发起的流程<br />
+                  addFirstRow 新增首行: 可编辑表格新增一行数据<br />
+                  addLastRow 新增尾行: 可编辑表格新增一行数据<br />
+                  saveEditData 行编辑保存事件: 可编辑表格保存事件<br />
+                  editRowEvent 行编辑事件: 打开行编辑进行修改<br />
+                  deleteRowEvent 行删除事件: 可编辑表格删除表格行内数据<br />
+                  openEditTable: 编辑类型为弹出编辑时，该事件为打开弹框，可编辑子表,需选择已配置的编辑表格<br />
+                  customerFun: 该事件为用户自定义事件执行<br />
+                  viewTableRow: 查看表格行数据<br />
+                  exportExcel: 导出列表数据<br />
                 </p>
               </div>
               <i style="font-size: 20px"
@@ -2120,6 +2128,22 @@ export default {
         },
         {
           type: 'select',
+          labelText: '表单',
+          fieldName: 'formCode',
+          placeholder: '选择表单',
+          colLayout: 'singleCol',
+          options: []
+        }
+      ],
+      processSource: [
+        {
+          type: 'view',
+          labelText: '事件',
+          fieldName: 'paramsChange',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'select',
           labelText: '业务流程定义',
           fieldName: 'formCode',
           placeholder: '选择业务流程定义',
@@ -2415,7 +2439,7 @@ export default {
         case 'startProcess':
         case 'cancelProcess':
         case 'viewProcess':
-          this.paramsSource = this.formSource
+          this.paramsSource = this.processSource
           api = 'ProcessDefinition.listData'
           this.des = '该事件为流程事件，需选择已配置的流程模板'
           break
