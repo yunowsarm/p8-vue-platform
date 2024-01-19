@@ -345,7 +345,7 @@ export default {
     }
   },
   mounted() {
-    if (this.thirdMenuParam.createPage === 'decompose') {
+    if (this.thirdMenuParam.createPage === 'decompose' || this.thirdMenuParam.route === '/MyTask/MyTask/latest') {
       this.projectCategory = this.thirdMenuParam.projectCategory
       this.secretLevel = this.thirdMenuParam.SECRETGRADE
       this.planInfoId = this.thirdMenuParam.PLANINFOID
