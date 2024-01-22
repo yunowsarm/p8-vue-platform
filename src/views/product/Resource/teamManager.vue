@@ -517,12 +517,14 @@ export default {
     search (params) {
       let realName = params.realName ? params.realName : null
       let deptName = params.deptName ? params.deptName : null
-      let tableData = this.tableData.filter(item => {
-        if ((item.realName.indexOf(realName) > -1) || (item.deptName.indexOf(deptName) > -1)) {
-          return item
-        }
-      })
-      this.tableData = tableData
+      if(realName || deptName){
+        let tableData = this.tableData.filter(item => {
+          if ((item.realName.indexOf(realName) > -1) || (item.deptName.indexOf(deptName) > -1)) {
+            return item
+          }
+        })
+        this.tableData = tableData
+      }
     },
     reset () {
       if (this.rolesSelectedIndex > -1) {
