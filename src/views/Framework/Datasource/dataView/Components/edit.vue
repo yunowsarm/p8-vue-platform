@@ -320,10 +320,6 @@ export default {
             {
               label: 'DB_SOURCE1',
               value: 'DB_SOURCE1'
-            },
-            {
-              label: 'DB_SOURCE2',
-              value: 'DB_SOURCE2'
             }
           ],
           rules: [
