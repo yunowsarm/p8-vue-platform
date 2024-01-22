@@ -835,15 +835,13 @@
                         :change-table-data="editConfigData"
                         @save-param-data="editParamData">
           <template #isRequired="{ scope, data }">
-            <el-checkbox :disabled="!!scope.row.isCustomColumn"
-                         v-model="scope.row.isRequired"
+            <el-checkbox v-model="scope.row.isRequired"
                          :true-label="1"
                          :false-label="0"
                          @change="editParamData(data)"></el-checkbox>
           </template>
           <template #editDisplay="{ scope, data }">
-            <el-checkbox :disabled="!!scope.row.isCustomColumn"
-                         v-model="scope.row.editDisplay"
+            <el-checkbox v-model="scope.row.editDisplay"
                          :true-label="'1'"
                          :false-label="'0'"
                          @change="editParamData(data)"></el-checkbox>
@@ -859,8 +857,7 @@
                @click="openHelp"></i>
           </template>
           <template #editComponentType="{ scope, data }">
-            <el-select :disabled="!!scope.row.isCustomColumn"
-                       v-model="scope.row.editComponentType"
+            <el-select v-model="scope.row.editComponentType"
                        clearable
                        @change="editParamData(data)">
               <el-option label="文本框"
@@ -873,8 +870,7 @@
             </el-select>
           </template>
           <template #sourceTableFiled="{ scope, data }">
-            <el-select :disabled="!!scope.row.isCustomColumn"
-                       v-model="scope.row.sourceTableFiled"
+            <el-select v-model="scope.row.sourceTableFiled"
                        clearable
                        @change="editParamData(data, scope)">
               <el-option v-for="item in childTableList"
@@ -884,8 +880,7 @@
             </el-select>
           </template>
           <template #tableFieldName="{ scope, data }">
-            <el-select :disabled="!!scope.row.isCustomColumn"
-                       v-if="scope.row.sourceTableFiled"
+            <el-select v-if="scope.row.sourceTableFiled"
                        clearable
                        v-model="scope.row.tableFieldName"
                        @change="editParamData(data)">
@@ -894,8 +889,7 @@
                          :label="item.label"
                          :value="item.value"></el-option>
             </el-select>
-            <el-select :disabled="!!scope.row.isCustomColumn"
-                       v-else
+            <el-select v-else
                        v-model="scope.row.tableFieldName"
                        clearable
                        @change="editParamData(data)">
