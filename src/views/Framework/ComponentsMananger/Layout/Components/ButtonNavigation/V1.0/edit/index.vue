@@ -51,7 +51,7 @@
       <el-button class="delectButton"
                  v-if="asyncComponents"
                  @click="settingsDelect"><i class="el-icon-delete"
-           style="margin-right: 5px"></i>修改</el-button>
+           style="margin-right: 5px"></i>重置</el-button>
       <div v-if="!asyncComponents"
            id="table-contain"
            @click="centerClick">
