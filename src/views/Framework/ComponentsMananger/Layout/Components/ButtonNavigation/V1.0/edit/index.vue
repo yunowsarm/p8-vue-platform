@@ -12,6 +12,7 @@
                    :data="treeData"
                    :allow-drop="handlerAllowDrog"
                    :allow-drag="handlerAllowDrag"
+                   @select="onSelect"
                    :draggable="treeSettingsParmars.dataType === '1'">
         <template #tree="{ node }">
           <div style="width: 100%">
@@ -225,7 +226,10 @@ export default {
       // 子节点参数
       ChildNodeParmars: {},
       paramsList: [],
-      componentsConfig: {}
+      componentsConfig: {},
+      provideParams: {
+        searchParams: {}
+      }
     }
   },
   created () {
@@ -444,7 +448,108 @@ export default {
         }
       }
       return icon
-    }
+    },
+    onSelect (obj) {
+      if (obj.id == '0') {
+        return
+      }
+      let treeSettingsParmars = this.treeSettingsParmars
+      let dynamicParameter = this.dynamicParameter
+      // 数据类型为静态数据
+      if (treeSettingsParmars.dataType === '1') {
+        // let paramsList = this.getParams(obj)
+        let paramsObj = {}
+        let paramsFilterList = this.getParams(obj)
+        let paramsList = []
+        if (paramsFilterList && paramsFilterList.length) {
+          paramsList = paramsFilterList.filter((el) => {
+            return el.after !== ''
+          })
+        }
+        if (paramsList && paramsList.length > 0) {
+          paramsList.forEach((el) => {
+            paramsObj[el.after] = obj[el.before]
+          })
+        }
+        let otherParmarsMap = {}
+        if (obj.otherParmarsMap) {
+          otherParmarsMap = JSON.parse(obj.otherParmarsMap)
+        }
+        this.provideParams.searchParams = { ...paramsObj, ...otherParmarsMap }
+      } else {
+        // 动态数据
+        let paramsObj = {}
+        let prmarsList = dynamicParameter.filter((el) => {
+          return el.after !== ''
+        })
+        if (prmarsList && prmarsList.length > 0) {
+          prmarsList.forEach((el) => {
+            paramsObj[el.after] = this.getParamsList(obj, el.before)
+          })
+        }
+        this.provideParams.searchParams = paramsObj
+      }
+
+      // 组件切换
+      if (treeSettingsParmars.navigationPattern === '0') {
+        let key
+        // 数据类型为静态数据时组件路径字段为componentsUrl
+        if (treeSettingsParmars.dataType === '1') {
+          if (obj.componentsType === '1') {
+            obj.componentsUrl = obj.componentsConfig.url
+            this.componentsConfig = obj.componentsConfig
+          }
+          key = 'componentsUrl'
+        } else {
+          // 数据类型为动态态数据
+          key = treeSettingsParmars.optionUrl
+        }
+        if (obj[key]) {
+          this.asyncComponents = obj[key]
+        } else {
+          this.asyncComponents = this.previewParmars.defaultComponents.url
+        }
+      }
+    },
+    getParams (node) {
+      const { parentId, parmarsMap } = node
+      let arr = []
+      if (parmarsMap) return parmarsMap
+      const filterData = (parId, data) => {
+        data.map((val) => {
+          if (val.id == parId) {
+            if (val.parmarsMap) {
+              arr = val.parmarsMap
+            } else {
+              filterData(val.parentId, this.treeData)
+            }
+          } else {
+            if (val.children && val.children.length > 0) {
+              filterData(parId, val.children)
+            }
+          }
+        })
+      }
+      if (parentId) {
+        filterData(parentId, this.treeData)
+      } else {
+        return []
+      }
+      return arr
+    },
+    getParamsList (obj, fileName) {
+      let list = []
+      function getEndList (item) {
+        list.push(item[fileName])
+        if (item.children && item.children.length) {
+          item.children.forEach(el => {
+            getEndList(el)
+          })
+        }
+      }
+      getEndList(obj)
+      return list
+    },
   }
 }
 </script>
