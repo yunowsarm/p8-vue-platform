@@ -258,6 +258,9 @@ export default {
       // 加载数据
       this.$api['OutputFlow.loadAcivityData']({ activityInfoId: activityInfoId }).then(function (res) {
         if (res) {
+          res.forEach(el => {
+            el.durations = el.duration
+          })
           // 初始化数据
           let datas = {
             tasks: res
@@ -271,6 +274,9 @@ export default {
     loadGanttData () {
       this.$api['OutputFlow.loadAcivityData']({ activityInfoId: this.activityInfoId }).then(function (res) {
         if (res) {
+          res.forEach(el => {
+            el.durations = el.duration
+          })
           // 初始化数据
           let datas = {
             tasks: res
@@ -508,7 +514,7 @@ export default {
   },
   beforeDestroy () {
     myGantt.unselectTask()
-    myGantt.parse([])
+    myGantt.parse({ tasks: [] })
     this.selectedTasks = []
     this.buttonList = []
     myGantt = null
