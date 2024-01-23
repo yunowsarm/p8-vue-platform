@@ -234,7 +234,9 @@ export default {
       // console.log('onSearch:', this.provideParams.searchParams)
       // console.log('_provided:', this._provided.provideParams)
     },
-    onReset () { }
+    onReset () {
+      this.provideParams.searchParams = {}
+     }
   }
 }
 </script>
