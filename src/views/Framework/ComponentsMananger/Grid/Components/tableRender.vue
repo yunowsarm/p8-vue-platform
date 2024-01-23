@@ -681,6 +681,10 @@ export default {
   },
   methods: {
     fiflterParams (newValue) {
+      if (!Object.keys(newValue).length) {
+        this.tableParam.param = {}
+        this.tableParam.reportParam = {}
+      }
       let obj = {}
       let reportParmars = {}
       let sqlParmars = {}
