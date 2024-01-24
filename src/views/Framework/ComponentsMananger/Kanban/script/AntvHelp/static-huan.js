@@ -67,7 +67,11 @@ let code =
     eventName: 'element:click',
     eventConfig: {
       componentType: 'table',
-      componentCode: 'WZ_MATERIAL'
+      componentCode: 'WZ_MATERIAL',
+      drillParams: {
+        图表数据key或搜索数据key: '穿透组件搜索key',
+        chartDataKey: 'drillSearchkey'
+      }
     }
   }
 }

@@ -85,7 +85,11 @@ export function outPutFlowGantt (ganttName, vueThis) {
       resize: true,
       align: 'left',
       template: function (task) {
-        return task.duration
+        if (task.parent) {
+          return task.durations
+        } else {
+          return ''
+        }
       }
     },
     {

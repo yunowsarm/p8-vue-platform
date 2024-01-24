@@ -96,7 +96,8 @@ export default {
           type: 'number',
           fieldName: 'duration',
           placeholder: '请输入时限',
-          colLayout: this.colLayoutClassify
+          colLayout: this.colLayoutClassify,
+          min: 0
         },
         {
           type: 'select',
@@ -218,15 +219,17 @@ export default {
             that.formData.id = res.id
             that.formData.name = res.name
             that.formData.code = res.code
-            if (res.duration) {
-              that.formData.duration = res.duration
-            }
             that.formData.type = res.type
             that.formData.predecessorsIds = res.predecessorsIds && res.predecessorsIds.length > 0 ? res.predecessorsIds : []
             that.formData.teamRoleId = res.teamRoleId ? res.teamRoleId : ''
             that.formData.isMilestone = res.isMilestone
             that.formData.describes = res.describes
             that.formData = Object.assign({}, that.formData)
+            if (res.duration) {
+              that.formData.duration = res.duration
+            } else {
+              that.formData.duration = 0
+            }
           } else {
             that.formData = Object.assign({}, that.formData)
           }

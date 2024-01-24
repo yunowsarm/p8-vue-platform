@@ -128,16 +128,16 @@ export default {
           headerAlign: 'left',
           dataIndex: 'description'
         },
-        {
-          title: '布局调用链接',
-          minWidth: 200,
-          align: 'left',
-          headerAlign: 'left',
-          dataIndex: 'url',
-          formatter: function (row) {
-            return row.rendererRendererComponent + '?code=' + row.layoutCode + '&version=' + row.version
-          }
-        },
+        // {
+        //   title: '布局调用链接',
+        //   minWidth: 200,
+        //   align: 'left',
+        //   headerAlign: 'left',
+        //   dataIndex: 'url',
+        //   formatter: function (row) {
+        //     return row.rendererRendererComponent + '?code=' + row.layoutCode + '&version=' + row.version
+        //   }
+        // },
         {
           title: '操作',
           width: 120,
@@ -246,6 +246,27 @@ export default {
     saveCallback (res) {
       this.$refs.table.searchData()
       this.onDrawerClose()
+    },
+    layoutAddress (record) {
+      let url = record.rendererRendererComponent + '?code=' + record.layoutCode + '&version=' + record.version
+      this.$confirm(url, '布局配置地址', {
+        confirmButtonText: '复制',
+        showCancelButton: false,
+        type: 'info'
+      }).then(() => {
+        (function () {
+          document.oncopy = function (e) {
+            e.clipboardData.setData('text', url);
+            e.preventDefault();
+            document.oncopy = null;
+          }
+      })(url);
+      document.execCommand('Copy');
+      this.$message({
+          type: 'success',
+          message: '已复制到粘贴板'
+        });
+      })
     }
   },
   components: {

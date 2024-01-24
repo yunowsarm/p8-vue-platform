@@ -737,7 +737,6 @@ GanttObject.getActions = function (ganttObject) {
         newParent.updateType = 'indent'
         task.updateType = 'indent'
         ganttObject.updateTask(taskId)
-        GanttObject.calculateForecastDate(ganttObject, newParent)
         ganttObject.updateTask(newParent.id)
         return taskId
       }
@@ -763,7 +762,6 @@ GanttObject.getActions = function (ganttObject) {
         oldParent.updateType = 'outdent'
         curTask.updateType = 'outdent'
         ganttObject.updateTask(taskId)
-        GanttObject.calculateForecastDate(ganttObject, oldParent)
         // 旧父排程为自动时进度计算
         if (oldParent.autoScheduling === '1') {
           oldParent.progress = GanttObject.calculateProgress(oldParent, ganttObject)
@@ -2015,11 +2013,9 @@ GanttObject.setOnBeforeEditStart = function (ganttObject, vueThis) {
     if (ganttObject.config.readonly) {
       return false
     }
-    // 如果是任务分解，且角色为计划员，只能编辑责任人
-    const roles = store.getters.userInfo.userRoles.map((role) => {
-      return role.roleId
-    })
-    if (vueThis.createPage === 'decompose' && roles.includes('SYS_ROLE077')) {
+    // 如果是任务分解，非当前人员创建的，只能编辑责任人
+    const userId = store.getters.userInfo.id
+    if (vueThis.createPage === 'decompose' && task.createUserId && task.createUserId != userId) {
       return false
     }
     const userMaxSecret = vueThis.$store.state.user.userInfo.confidentialiteList[vueThis.$store.state.user.userInfo.confidentialiteList.length - 1].id
@@ -2121,8 +2117,6 @@ GanttObject.checkoutBeforeCellSave = function (ganttObject, vueThis) {
               const endDate = ganttObject.date.add(ganttObject.calculateEndDate(task.start_date, newVal), -1, 'day')
               task.forecastBeginDate = GanttObject.dateToStr(task.start_date, '%Y-%m-%d', ganttObject)
               task.forecastEndDate = GanttObject.dateToStr(endDate, '%Y-%m-%d', ganttObject)
-              task.adjustForecastBeginDate = null
-              task.adjustForecastEndDate = null
             }
           }
           break
@@ -2142,8 +2136,6 @@ GanttObject.checkoutBeforeCellSave = function (ganttObject, vueThis) {
           } else {
             task.forecastBeginDate = GanttObject.dateToStr(task.start_date, '%Y-%m-%d', ganttObject)
             task.forecastEndDate = GanttObject.dateToStr(ganttObject.date.add(newVal, -1, 'day'), '%Y-%m-%d', ganttObject)
-            task.adjustForecastBeginDate = null
-            task.adjustForecastEndDate = null
           }
           break
         case 'autoScheduling': // 排成类型
@@ -2159,8 +2151,6 @@ GanttObject.checkoutBeforeCellSave = function (ganttObject, vueThis) {
               task.auto_scheduling = false
               task.type = 'task'
             }
-            task.adjustForecastBeginDate = null
-            task.adjustForecastEndDate = null
           }
           break
         case 'start_date': // 开始时间
@@ -2179,8 +2169,6 @@ GanttObject.checkoutBeforeCellSave = function (ganttObject, vueThis) {
             const endDate = ganttObject.date.add(ganttObject.calculateEndDate(state.newValue, task.duration), -1, 'day')
             task.forecastBeginDate = GanttObject.dateToStr(newVal, '%Y-%m-%d', ganttObject)
             task.forecastEndDate = GanttObject.dateToStr(endDate, '%Y-%m-%d', ganttObject)
-            task.adjustForecastBeginDate = null
-            task.adjustForecastEndDate = null
           }
           break
       }
@@ -2909,7 +2897,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
   } else if (vueThis.columnSettings.length > 0) {
     const tempColumns = []
     vueThis.columnSettings.forEach((item) => {
-      const initColumn = initColumns.filter((initItem) => initItem.name === item.textName)
+      const initColumn = initColumns.filter((initItem) => initItem.name === item.filedName)
       if (initColumn && initColumn.length > 0) {
         initColumn[0].hide = !(item.isEnable == '1')
         tempColumns.push(initColumn[0])
@@ -2917,7 +2905,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
     })
     // 当ganttObject对象中columns数据与配置信息中数据不一致（增加或减少）时，根据ganttObject对象中columns新增列下标插入tempColumns，超出时加在末尾
     initColumns.forEach((initItem, initIndex) => {
-      const settingItem = vueThis.columnSettings.filter((settingItem) => settingItem.textName === initItem.name)
+      const settingItem = vueThis.columnSettings.filter((settingItem) => settingItem.filedName === initItem.name)
       if (!settingItem || Object.keys(settingItem).length === 0) {
         initItem.hide = false
         if (tempColumns && tempColumns.length > initIndex) {
@@ -3137,8 +3125,6 @@ GanttObject.calculateParentForecastDate = function (ganttObject, task) {
 export function updateforecastDate(task, ganttObject) {
   task.forecastBeginDate = GanttObject.dateToStr(task.start_date, '%Y-%m-%d', ganttObject)
   task.forecastEndDate = GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), '%Y-%m-%d', ganttObject)
-  task.adjustForecastBeginDate = null
-  task.adjustForecastEndDate = null
 }
 
 /**
@@ -3154,39 +3140,6 @@ GanttObject.checkIsCriticalTask = function (ganttObject) {
       return ''
     }
   }
-}
-
-/**
- * 任务预计时间计算
- * @param ganttObject
- * @param task
- */
-GanttObject.calculateForecastDate = function (ganttObject, task) {
-  // if (ganttObject.hasChild(task.id)) {
-  //   let maxForecastEndDate = moment(ganttObject.date.add(task.end_date, -1, 'day'))
-  //   // 父预计时间计算
-  //   // 子中最大预计完成时间与父计划完成时间比较，取最大值
-  //   ganttObject.eachTask(function (child) {
-  //     let forecastEndDate = moment(child.forecastEndDate)
-  //     if (maxForecastEndDate.diff(forecastEndDate) < 0) {
-  //       maxForecastEndDate = forecastEndDate
-  //     }
-  //   }, task.id)
-  //   // 当父主动修改过预测时间，且修改的预测时间大于maxForecastEndDate，设置父预测时间为修改后的预测时间
-  //   if (task.adjustForecastEndDate) {
-  //     if (moment(task.adjustForecastEndDate).diff(maxForecastEndDate) >= 0) {
-  //       task.forecastEndDate = task.adjustForecastEndDate
-  //     } else {
-  //       task.forecastEndDate = moment(maxForecastEndDate).format('YYYY-MM-DD')
-  //     }
-  //   } else {
-  //     task.forecastEndDate = moment(maxForecastEndDate).format('YYYY-MM-DD')
-  //   }
-  // } else if (task.adjustForecastEndDate) { // 父预计时间计算
-  //   task.forecastEndDate = task.adjustForecastEndDate
-  // } else {
-  //   task.forecastEndDate = moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD')
-  // }
 }
 
 /**

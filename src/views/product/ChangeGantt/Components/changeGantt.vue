@@ -458,23 +458,23 @@ export default {
           if (res) {
             vueThis.resourcesData = res.resources
             // 初始化数据
-            let initData
-            initData = res.tasks.map(item => {
+            const initData = res.tasks.map((item) => {
               item.changeStatus = ''
               let obj = {}
+              obj = {
+                ...item
+              }
               if (res.changeTaskInfo && res.changeTaskInfo[item.id] && res.changeTaskInfo[item.id].id) {
-                obj = {
-                  ...item,
-                  ...res.changeTaskInfo[item.id]
-                }
-              } else {
-                obj = {
-                  ...item
-                }
+                const changeTaskKeys = Object.keys(res.changeTaskInfo[item.id])
+                changeTaskKeys.forEach((changeTaskKey) => {
+                  if (res.changeTaskInfo[item.id][changeTaskKey] !== '' && res.changeTaskInfo[item.id][changeTaskKey] !== null && res.changeTaskInfo[item.id][changeTaskKey] !== undefined) {
+                    obj[changeTaskKey] = res.changeTaskInfo[item.id][changeTaskKey]
+                  }
+                })
               }
               return obj
             })
-            let datas = {
+            const datas = {
               tasks: initData,
               links: res.links
             }
@@ -511,7 +511,7 @@ export default {
           console.error('error' + error)
         })
     },
-    btnClick (btn, isDisable) {
+    btnClick(btn, isDisable) {
       if (!isDisable) {
         this.menuVisible = false
         btn.clickFun(null, this.ganttName, this.selectedTasks)
@@ -550,23 +550,23 @@ export default {
     monitorManagerSave(obj) {
       this.controlTimeVisible = false
     },
-    delSaveChange (task) {
+    delSaveChange(task) {
       if (task[0].infoType === 'create') {
         delete this.newTaskMap[task[0].id]
         return false
       }
-      let that = this
-      let obj = that.newTaskMap
-      let oldObj = that.oldTaskMap
-      let sendDatas = []
-      for (let key in obj) {
+      const that = this
+      const obj = that.newTaskMap
+      const oldObj = that.oldTaskMap
+      const sendDatas = []
+      for (const key in obj) {
         // 获取newTaskMap对象
-        let task = obj[key]
-        let oldTask = oldObj[key]
-        let updateInfo = obj[key].updateInfo
+        const task = obj[key]
+        const oldTask = oldObj[key]
+        const updateInfo = obj[key].updateInfo
         // 获取gantt中task对象
-        let nowGanttTask = myGantt.getTask(task.id)
-        let indexNo = myGantt.getGlobalTaskIndex(task.id)
+        const nowGanttTask = myGantt.getTask(task.id)
+        const indexNo = myGantt.getGlobalTaskIndex(task.id)
         // newTaskMap中数据过滤
         // 当只修改任务且最终于原始数据一致时，删除newTaskMap中对应数据
         if (!nowGanttTask.infoType && updateInfo && updateInfo.length === 1 && updateInfo.indexOf('task') !== -1) {
@@ -574,11 +574,11 @@ export default {
           break
         }
         if (oldTask && Object.keys(oldTask).length > 0) {
-          let oldIndexNo = oldObj[key].indexNo
+          const oldIndexNo = oldObj[key].indexNo
           // 任务属性未修改时，取消updateInfo中task
           if (updateInfo && updateInfo.indexOf('task') !== -1 && nowGanttTask.infoType === 'update' && oldIndexNo === indexNo && nowGanttTask.parent === oldTask.parent) {
             let check = true
-            for (let okey in oldTask) {
+            for (const okey in oldTask) {
               if (checkKeys.indexOf(okey) !== -1 && nowGanttTask[okey] !== oldTask[okey]) {
                 check = false
                 break
@@ -598,15 +598,15 @@ export default {
         that.newTaskMap[key] = nowGanttTask
         sendDatas.push(that.newTaskMap[key])
       }
-      let isObjectInArray1 = sendDatas.some(item1 => {
-        return task.some(item2 => item1.id === item2.id)
+      const isObjectInArray1 = sendDatas.some((item1) => {
+        return task.some((item2) => item1.id === item2.id)
       })
       if (isObjectInArray1) {
         this.$message.warning('不能删除已修改的数据，请重新选择')
         return false
       } else {
-        let isObjectInArray2 = this.delDataList.some(item1 => {
-          return task.some(item2 => item1.id === item2.id)
+        const isObjectInArray2 = this.delDataList.some((item1) => {
+          return task.some((item2) => item1.id === item2.id)
         })
         if (isObjectInArray2) {
           this.$message.warning('不能删除已删除的数据，请重新选择')
@@ -622,20 +622,20 @@ export default {
       }
     },
     saveChange() {
-      let that = this
-      let obj = that.newTaskMap
-      let oldObj = that.oldTaskMap
+      const that = this
+      const obj = that.newTaskMap
+      const oldObj = that.oldTaskMap
       console.log(obj, 'obj')
-      console.log(oldObj, 'oldObjoldObj');
-      let sendDatas = []
-      for (let key in obj) {
+      console.log(oldObj, 'oldObjoldObj')
+      const sendDatas = []
+      for (const key in obj) {
         // 获取newTaskMap对象
-        let task = obj[key]
-        let oldTask = oldObj[key]
-        let updateInfo = obj[key].updateInfo
+        const task = obj[key]
+        const oldTask = oldObj[key]
+        const updateInfo = obj[key].updateInfo
         // 获取gantt中task对象
-        let nowGanttTask = myGantt.getTask(task.id)
-        let indexNo = myGantt.getGlobalTaskIndex(task.id)
+        const nowGanttTask = myGantt.getTask(task.id)
+        const indexNo = myGantt.getGlobalTaskIndex(task.id)
         // newTaskMap中数据过滤
         // 当只修改任务且最终于原始数据一致时，删除newTaskMap中对应数据
         if (!nowGanttTask.infoType && updateInfo && updateInfo.length === 1 && updateInfo.indexOf('task') !== -1) {
@@ -643,11 +643,11 @@ export default {
           break
         }
         if (oldTask && Object.keys(oldTask).length > 0) {
-          let oldIndexNo = oldObj[key].indexNo
+          const oldIndexNo = oldObj[key].indexNo
           // 任务属性未修改时，取消updateInfo中task
           if (updateInfo && updateInfo.indexOf('task') !== -1 && nowGanttTask.infoType === 'update' && oldIndexNo === indexNo && nowGanttTask.parent === oldTask.parent) {
             let check = true
-            for (let okey in oldTask) {
+            for (const okey in oldTask) {
               if (checkKeys.indexOf(okey) !== -1 && nowGanttTask[okey] !== oldTask[okey]) {
                 check = false
                 break
@@ -667,27 +667,25 @@ export default {
         that.newTaskMap[key] = nowGanttTask
         sendDatas.push(that.newTaskMap[key])
       }
-      console.log(sendDatas, 'sendDatas');
-      const mergedArray = [];
+      console.log(sendDatas, 'sendDatas')
+      const mergedArray = []
       if (sendDatas && Array.isArray(sendDatas)) {
-        mergedArray.push(...sendDatas);
+        mergedArray.push(...sendDatas)
       }
       if (this.newSendDatas && Array.isArray(this.newSendDatas)) {
-        mergedArray.push(...this.newSendDatas);
+        mergedArray.push(...this.newSendDatas)
       }
-      const uniqueMergedArray = mergedArray.filter((item, index, self) =>
-        index === self.findIndex((t) => t && item && t.id === item.id)
-      )
+      const uniqueMergedArray = mergedArray.filter((item, index, self) => index === self.findIndex((t) => t && item && t.id === item.id))
       if (uniqueMergedArray && uniqueMergedArray.length > 0) {
         // 请求后台接口
-        for (let i in uniqueMergedArray) {
+        for (const i in uniqueMergedArray) {
           if (uniqueMergedArray[i].infoType === 'delete') {
             uniqueMergedArray[i].end_date = moment(uniqueMergedArray[i].end_date).format('YYYY-MM-DD')
             uniqueMergedArray[i].start_date = moment(uniqueMergedArray[i].start_date).format('YYYY-MM-DD')
           }
         }
-        for (let i in uniqueMergedArray) {
-          for (let j in this.resourcesData) {
+        for (const i in uniqueMergedArray) {
+          for (const j in this.resourcesData) {
             if (uniqueMergedArray[i].owner_id) {
               if (this.resourcesData[j].id === uniqueMergedArray[i].owner_id) {
                 uniqueMergedArray[i].userId = this.resourcesData[j].userId
@@ -695,17 +693,19 @@ export default {
             }
           }
         }
-        that.$api['planChange.calculateChangeInfoAndSave']({ changeTasks: uniqueMergedArray, planInfoId: that.planInfoId, id: that.changeRecordId }).then(function (res) {
-          if (res) {
-            that.sendDataList = uniqueMergedArray
-            that.changeRecordId = res
-            // that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
-            that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)
-            that.hasSave = false
-          }
-        }).catch(function (error) {
-          console.error('error' + error)
-        })
+        that.$api['planChange.calculateChangeInfoAndSave']({ changeTasks: uniqueMergedArray, planInfoId: that.planInfoId, id: that.changeRecordId })
+          .then(function (res) {
+            if (res) {
+              that.sendDataList = uniqueMergedArray
+              that.changeRecordId = res
+              // that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
+              that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)
+              that.hasSave = false
+            }
+          })
+          .catch(function (error) {
+            console.error('error' + error)
+          })
       } else {
         that.$message({
           message: '未产生变更数据，请修改后再保存！',
@@ -788,7 +788,7 @@ export default {
     },
     closeNotice() {
       this.noticeVisible = false
-    },
+    }
   }
 }
 </script>

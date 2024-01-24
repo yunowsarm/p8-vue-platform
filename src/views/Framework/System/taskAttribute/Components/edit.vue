@@ -1,28 +1,28 @@
 <template>
-  <div style="overflow:hidden;">
-    <form-list ref="form" 
-              :data-source="dataSource" 
-              :form="formData" 
-              :api="saveApi" 
-              @saved="saved" 
-              label-width="90px" 
-              @rendered="rendered" 
-              :is-custom-validate="true" 
-              :existDefaultBtn="false" 
-              :existCustomBtn="true"  
-              @custom-validate="customValidate">
-            <template #customBtn>
-               <el-button type="primary"
-                   @click="$emit('saveSuccess')">取消</el-button>
-               <el-button type="primary"
-                   @click="$refs.form.handleSubmit($event)">保存</el-button>
-            </template>
+  <div style="overflow: hidden">
+    <form-list
+      ref="form"
+      :data-source="dataSource"
+      :form="formData"
+      :api="saveApi"
+      @saved="saved"
+      label-width="90px"
+      @rendered="rendered"
+      :is-custom-validate="true"
+      :exist-default-btn="false"
+      :exist-custom-btn="true"
+      @custom-validate="customValidate"
+    >
+      <template #customBtn>
+        <el-button type="primary" @click="$emit('saveSuccess')">取消</el-button>
+        <el-button type="primary" @click="$refs.form.handleSubmit($event)">保存</el-button>
+      </template>
     </form-list>
     <common-tabs :tabs-data="tabsData" type="border-card" :height="renderHeight" :active-tabs="activeTabs" @tab-click="tabClick" :has-full-screen="true">
       <template #attributeSettings>
         <editable-table :columns="settingsColumns" ref="editTable" :add-row="false" :data="settingsData" @save-param-data="saveParamData">
           <template #isEnable="{ scope, data }">
-             <el-checkbox v-model="scope.row.isEnable" true-label="1" false-label="0" @blur="saveParamData(data)" :disabled="scope.row.type == '0'"></el-checkbox>
+            <el-checkbox v-model="scope.row.isEnable" true-label="1" false-label="0" @blur="saveParamData(data)" :disabled="scope.row.type == '0'"></el-checkbox>
           </template>
           <template #indexNo>
             <i class="el-icon-s-fold"></i>
@@ -34,13 +34,15 @@
           <template #name="{ scope, data }">
             <el-input v-model="scope.row.name" style="width: 100%" clearable @blur="saveParamDataNew(data)"></el-input>
           </template>
-          <template #textName="{ scope, data }">
-            <el-input v-model="scope.row.textName" style="width: 100%" clearable @blur="saveParamDataNew(data)"></el-input>
+          <template #filedName="{ scope, data }">
+            <el-input v-model="scope.row.filedName" style="width: 100%" clearable @blur="saveParamDataNew(data)"></el-input>
           </template>
-          <template #textType="{ scope, data }">
-            <el-select v-model="scope.row.textType" style="width: 100%" clearable @change="saveParamDataNew(data)">
-              <el-option  label="数字" value="数字"> </el-option>
-              <el-option  label="文本" value="文本"> </el-option>
+          <template #filedType="{ scope, data }">
+            <el-select v-model="scope.row.filedType" style="width: 100%" clearable @change="saveParamDataNew(data)">
+              <el-option label="字符串" value="text"> </el-option>
+              <el-option label="数字" value="number"> </el-option>
+              <el-option label="大文本" value="textarea"> </el-option>
+              <el-option label="日期" value="datepicker"> </el-option>
             </el-select>
           </template>
           <template #verificationRules="{ scope, data }">
@@ -57,9 +59,9 @@
 </template>
 
 <script>
-import { P8Form as FormList,P8EditTable as EditableTable, P8Tabs as CommonTabs } from 'p8-components-ui'
+import { P8Form as FormList, P8EditTable as EditableTable, P8Tabs as CommonTabs } from 'p8-components-ui'
 import { generateTree } from '@/utils/generateTree'
-import Sortable from "sortablejs";
+import Sortable from 'sortablejs'
 export default {
   name: 'CompEdit',
   components: {
@@ -126,72 +128,72 @@ export default {
       ],
       settingsColumns: [
         {
-            title: '序号',
-            type: 'index',
-            align: 'center',
-            width: '50'
+          title: '序号',
+          type: 'index',
+          align: 'center',
+          width: '50'
         },
         {
-            title: '启用/禁用',
-            dataIndex: 'isEnable',
-            minWidth: 150,
-            align: 'center',
-            scopedSlots: { customRender: 'custom' }
+          title: '启用/禁用',
+          dataIndex: 'isEnable',
+          minWidth: 150,
+          align: 'center',
+          scopedSlots: { customRender: 'custom' }
         },
         {
-            title: '属性',
-            dataIndex: 'name',
-            minWidth: 150,
-            align: 'center',
+          title: '属性',
+          dataIndex: 'name',
+          minWidth: 150,
+          align: 'center'
         },
         {
-            title: '排序',
-            dataIndex: 'indexNo',
-            minWidth: 80,
-            align: 'center',
-            scopedSlots: { customRender: 'custom' }
+          title: '排序',
+          dataIndex: 'indexNo',
+          minWidth: 80,
+          align: 'center',
+          scopedSlots: { customRender: 'custom' }
         }
       ],
       extendColumns: [
         {
-            title: '序号',
-            type: 'index',
-            align: 'center',
-            width: '50'
+          title: '序号',
+          type: 'index',
+          align: 'center',
+          width: '50'
         },
         {
-            title: '属性名称',
-            dataIndex: 'name',
-            minWidth: 120,
-            align: 'center',
-            scopedSlots: { customRender: 'custom' }
+          title: '属性名称',
+          dataIndex: 'name',
+          minWidth: 120,
+          align: 'center',
+          scopedSlots: { customRender: 'custom' }
         },
         {
-            title: '类型',
-            dataIndex: 'textType',
-            minWidth: 120,
-            align: 'center',
-            scopedSlots: { customRender: 'custom' }
+          title: '类型',
+          dataIndex: 'filedType',
+          minWidth: 120,
+          align: 'center',
+          scopedSlots: { customRender: 'custom' }
         },
         {
-            title: '字段名称',
-            dataIndex: 'textName',
-            minWidth: 120,
-            align: 'center',
-            scopedSlots: { customRender: 'custom' }
+          title: '字段名称',
+          dataIndex: 'filedName',
+          minWidth: 120,
+          align: 'center',
+          scopedSlots: { customRender: 'custom' }
         },
         {
-            title: '校验',
-            dataIndex: 'verificationRules',
-            minWidth: 180,
-            align: 'center',
-            scopedSlots: { customRender: 'custom' }
-        },
+          title: '校验',
+          dataIndex: 'verificationRules',
+          minWidth: 180,
+          align: 'center',
+          scopedSlots: { customRender: 'custom' }
+        }
       ],
       activeTabs: 'attributeSettings'
     }
   },
-  mounted(){
+  mounted() {
     this.columnDrop()
   },
   methods: {
@@ -199,61 +201,61 @@ export default {
       this.getFormData()
     },
     getFormData() {
-        this.$api['taskAttribute.getInfo']({id: this.id}).then(res => {
-            this.formData.projectTypeId = res.projectTypeId
-            this.formData.describe = res.describe
-            this.settingsData = res.propertiesList
-            this.extendData = res.attributeExtensionList
+      this.$api['taskAttribute.getInfo']({ id: this.id }).then((res) => {
+        this.formData.projectTypeId = res.projectTypeId
+        this.formData.describe = res.describe
+        this.settingsData = res.propertiesList
+        this.extendData = res.attributeExtensionList
+      })
+      this.$api['formGenerator.getSelectionData']({ selectCode: 'projectTypeTree1' }).then((res) => {
+        let treeData = []
+        res.data.forEach((el) => {
+          treeData.push({ id: el.ID, value: el.ID, label: el.NAME, pId: el.PARENTID })
         })
-        this.$api['formGenerator.getSelectionData']({selectCode: 'projectTypeTree1'}).then(res => {
-            let treeData = []
-            res.data.forEach(el => {
-                treeData.push({id:el.ID,value: el.ID,label:el.NAME,pId: el.PARENTID})
-            })
-            treeData = generateTree(treeData, 'pId')
-            this.dataSource[0].treeData = treeData
-        })
-        if (this.id) {
-            this.formData.id = this.id
-            this.formData.type = this.type
-        }
+        treeData = generateTree(treeData, 'pId')
+        this.dataSource[0].treeData = treeData
+      })
+      if (this.id) {
+        this.formData.id = this.id
+        this.formData.type = this.type
+      }
     },
     saved(res) {
       this.$emit('saveSuccess', res)
     },
-    tabClick () {},
+    tabClick() {},
     saveParamData(data) {
       this.formData.propertiesList = data
     },
     saveParamDataNew(data) {
       this.formData.attributeExtensionList = data
     },
-    columnDrop () {
-      let that = this
+    columnDrop() {
+      const that = this
       this.$nextTick(() => {
         const $table = that.$refs.editTable
         that.sortable = Sortable.create($table.$el.querySelector('.list-main .common-table .el-table__body-wrapper .el-table__body tbody'), {
           onEnd: ({ item, newIndex, oldIndex }) => {
             // 获取排序之后的data数据
             that.settingsData.splice(newIndex, 0, that.settingsData.splice(oldIndex, 1)[0])
-            var newArray = that.settingsData.slice(0)
+            const newArray = that.settingsData.slice(0)
             that.settingsData = []
             that.$nextTick(function () {
-                that.settingsData = newArray
-                that.formData.propertiesList = newArray
+              that.settingsData = newArray
+              that.formData.propertiesList = newArray
             })
           }
         })
       })
     },
-    customValidate (saveParmars) {
-      let that = this
-      this.$api['taskAttribute.saveData'](saveParmars).then(res => {
-          if (res) {
-            that.$emit('saveSuccess')
-          } else {
-            that.$message({type:'warning',message:'每类项目类型只可有一条设置记录!'})
-          }
+    customValidate(saveParmars) {
+      const that = this
+      this.$api['taskAttribute.saveData'](saveParmars).then((res) => {
+        if (res) {
+          that.$emit('saveSuccess')
+        } else {
+          that.$message({ type: 'warning', message: '每类项目类型只可有一条设置记录!' })
+        }
       })
     }
   }

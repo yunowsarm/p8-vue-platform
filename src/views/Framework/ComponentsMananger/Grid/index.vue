@@ -244,10 +244,24 @@ export default {
         })
     },
     tableAddress (scope) {
-      this.$confirm('Framework/ComponentsMananger/Grid/Components/tableRender?code=' + scope.row.code, '表格配置地址', {
-        confirmButtonText: '确定',
+      let url = 'Framework/ComponentsMananger/Grid/Components/tableRender?code=' + scope.row.code
+      this.$confirm(url, '表格配置地址', {
+        confirmButtonText: '复制',
         showCancelButton: false,
         type: 'info'
+      }).then(() => {
+        (function () {
+          document.oncopy = function (e) {
+            e.clipboardData.setData('text', url);
+            e.preventDefault();
+            document.oncopy = null;
+          }
+      })(url);
+      document.execCommand('Copy');
+      this.$message({
+          type: 'success',
+          message: '已复制到粘贴板'
+        });
       })
     },
     viewAddress (scope) {

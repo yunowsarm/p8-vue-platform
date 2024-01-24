@@ -10,7 +10,7 @@
     <template #dialog>
       <el-tabs class="tabs"
                v-model="activeName">
-        <el-tab-pane label="选项组件"
+        <el-tab-pane label="内部组件"
                      name="first">
           <normal-layout :header-visible="false">
             <template #west>

@@ -589,15 +589,35 @@ export function getGanttColumns(ganttObject, vueThis) {
         if (task.switchType === '9010' || task.switchType === '9020') {
           return task.name + suspendIcon
         }
+        // 注意：该逻辑修改时，需同时修改PmProjectTasksMapper.xml中sql片段checkForecastDateInfo逻辑
+        if ((task.forecastBeginDate && task.start_date) || (task.end_date && task.forecastEndDate)) {
+          const beginStr = moment(task.start_date).format('YYYY-MM-DD')
+          const forecastStartStr = task.forecastBeginDate
+          const endStr = moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD')
+          const forecastEndStr = task.forecastEndDate
+          let bool = false
+          let tips = ''
+          if (beginStr !== forecastStartStr) {
+            // 叶子节点且计划完成时间和预测完成时间不一致
+            bool = true
+            tips += '当前任务计划开始时间和预测开始时间不一致，注意关注\n'
+          }
+          if (endStr !== forecastEndStr) {
+            // 叶子节点且计划完成时间和预测完成时间不一致
+            bool = true
+            tips += '当前任务计划完成时间和预测完成时间不一致，注意关注\n'
+          }
+          if (bool) result = result + `<i class="p8 icon-tishi" title="${tips}" style="color: #e6a23c;"></i>`
+        }
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
           if (ganttObject.hasChild(task.id)) {
-            result = result + '<div style="' + (vueThis.taskStyles[task.id] || '') + 'font-weight:bold;">' + task.name + '</div>'
+            result = result + '<div style="display: inline-block;' + (vueThis.taskStyles[task.id] || '') + 'font-weight:bold;">' + task.name + '</div>'
           } else {
-            result = result + '<div style="' + (vueThis.taskStyles[task.id] || '') + '">' + task.name + '</div>'
+            result = result + '<div style="display: inline-block;' + (vueThis.taskStyles[task.id] || '') + '">' + task.name + '</div>'
           }
         } else {
           if (ganttObject.hasChild(task.id)) {
-            result = result + '<div style="font-weight:bold;">' + task.name + '</div>'
+            result = result + '<div style="display: inline-block;font-weight:bold;">' + task.name + '</div>'
           } else {
             result = task.name
           }
@@ -782,34 +802,6 @@ export function getGanttColumns(ganttObject, vueThis) {
               const item = taskStatusMap[status]
               html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.title}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
             }
-          }
-        }
-        // 注意：该逻辑修改时，需同时修改PmProjectTasksMapper.xml中sql片段checkForecastDateInfo逻辑
-        if (task.forecastBeginDate && task.start_date && task.end_date && task.forecastEndDate) {
-          // let beginStr = moment(task.start_date).format('YYYY-MM-DD')
-          const endStr = moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD')
-          const forecastEndStr = task.forecastEndDate
-          // 父节点
-          if (ganttObject.hasChild(task.id)) {
-            // 计划完成时间和预测完成时间不一致 => 红色感叹号
-            if (endStr !== forecastEndStr) {
-              // 父修改过预计完成时间
-              if (task.adjustForecastEndDate) {
-                const afed = task.adjustForecastEndDate
-                const fed = task.forecastEndDate
-                if (afed === fed) {
-                  html = html + '<i class="p8 icon-estimated-time-modify" style="color: rgb(255, 153, 33);"></i>'
-                } else if (afed < fed) {
-                  html = html + '<i class="p8 icon-estimated-time-modify" style="color: #ff001b;"></i><i class="p8 icon-estimated-time-modify" style="color: rgb(255, 153, 33);"></i>'
-                }
-              } else {
-                // 父未修改预计完成时间
-                html = html + '<i class="p8 icon-estimated-time-modify" style="color: rgb(255, 153, 33);"></i>'
-              }
-            }
-          } else if (endStr !== forecastEndStr) {
-            // 叶子节点且计划完成时间和预测完成时间不一致 => 红色感叹号
-            html = html + '<i class="p8 icon-estimated-time-modify" style="color: #ff001b;"></i>'
           }
         }
         return html

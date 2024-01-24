@@ -17,7 +17,6 @@ import iconCourtOrder from '@/assets/image/gantt/icon-court-order.png'
 import iconProjectQuality from '@/assets/image/gantt/icon-project-quality.png'
 import CommandButton from '../CommandButton'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
-import { GanttResolveObject } from '@/assets/commonJS/ganttJS/resolve/resolveGanttObject'
 import { checkContentRoot, checkTaskReadonly } from '@/assets/commonJS/ganttJS/commandButtonData'
 import { lockMonitor, lockIUDMonitor, lockIUDMonitorCheck } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
 import { mapGetters } from 'vuex'
@@ -151,11 +150,7 @@ export default {
   },
   methods: {
     initGanttObject() {
-      if (this.ganttName === 'planResolveGantt') {
-        this.ganttObjectData = GanttResolveObject
-      } else {
-        this.ganttObjectData = GanttObject
-      }
+      this.ganttObjectData = GanttObject
     },
     loadMonitorData(planInfoId) {
       // 加载标识数据
@@ -204,11 +199,12 @@ export default {
         if (createPage === 'compile' && that.vueThis.planEditLock) {
           return true
         }
-        // 如果是任务分解，且角色为计划员，只能编辑责任人
-        const roles = that.$store.getters.userInfo.userRoles.map((role) => {
-          return role.roleId
+        // 如果是任务分解，非当前人员创建的，只能编辑责任人
+        const userId = that.$store.getters.userInfo.id
+        const ele = tasks.find((task) => {
+          return task.createUserId && task.createUserId != userId
         })
-        if (createPage === 'decompose' && roles.includes('SYS_ROLE077')) {
+        if (window.createPage === 'decompose' && ele && ele.id) {
           return true
         }
         if (createPage === 'decompose') {

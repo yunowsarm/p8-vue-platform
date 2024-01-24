@@ -210,10 +210,16 @@ export default {
       let that = this
       let id = this.row[0].ID
       let parmars = { id: id, ...this.formDataRight }
+      let approveInfoConfig = {
+        filed1: {label: '标题',value: parmars.title},
+        filed2: {label: '类型',value: parmars.typeDisplay},
+        filed3: {label: '内容',value: parmars.content}
+      }
+      console.log({ businessId: [id], approveUser: that.formData.affirmUserId, approveInfoConfig: approveInfoConfig },123);
       this.$refs.formRight.validate().then(() => {
         that.$api['TodoList.save'](parmars).then(res => {
           if (res) {
-            that.$api['TodoList.submit']({ businessId: [id], approveUser: that.formData.affirmUserId }).then(res => {
+            that.$api['TodoList.submit']({ businessId: [id], approveUser: that.formData.affirmUserId, approveInfoConfig: approveInfoConfig }).then(res => {
               if (res) {
                 that.$message({ type: 'success', message: '提交成功' })
                 that.$emit('close')
