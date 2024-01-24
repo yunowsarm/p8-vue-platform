@@ -37,6 +37,19 @@
                 <span slot="title">{{ item.children[0].meta.title }}</span>
               </el-menu-item>
             </template>
+            <!-- 一级菜单 -->
+            <template v-else-if="!item.path && item.redirect && item.children[0].path == item.redirect">
+              <el-menu-item :index="item.children[0].path"
+                            :key="item.name">
+                <i v-if="!sidebarState.isOpen"
+                   class="p8"
+                   :class="item.children[0].meta.icon"></i>
+                <i v-else
+                   class="p8"
+                   :class="item.children[0].meta.icon"></i>
+                <span slot="title">{{ item.children[0].meta.title }}</span>
+              </el-menu-item>
+            </template>
             <!-- have children -->
             <el-submenu v-else
                         :index="item.meta.title || item.path"

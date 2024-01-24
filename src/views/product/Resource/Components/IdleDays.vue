@@ -15,7 +15,7 @@
       </div>
     <!-- </template> -->
     <div class="idle-con" slot="reference">
-      <el-progress :percentage="row.utilization" :color="customColorMethod"></el-progress>
+      <el-progress :percentage="row.utilization ? row.utilization : 0" :color="customColorMethod"></el-progress>
     </div>
   </el-popover>
 </template>

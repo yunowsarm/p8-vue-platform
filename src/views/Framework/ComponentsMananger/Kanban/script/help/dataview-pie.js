@@ -49,8 +49,10 @@ const code =
   "      type: 'dialog', //事件响应类型：dialog-弹出窗口\n" +
   "      componentType: 'table', //组件类型：table-表格组件\n" +
   "      componentCode: 'LOG_DRILL_LIST', //组件code\n" +
-  "      dataKey: 'MODULE',\n" +
-  "      outParamName: 'MODULE'\n" +
+  "      drillParams: {\n" +
+  "        图表数据key或搜索数据key: '穿透组件搜索key',\n" +
+  "        chartDataKey: 'drillSearchkey'\n" +
+  "      }\n" +
   '    }\n' +
   '  }\n' +
   '}'

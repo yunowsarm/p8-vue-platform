@@ -10,6 +10,7 @@
         <template #operation="{ scope }">
           <el-button type="text" @click="modify(scope)">修改</el-button>
           <el-button type="text" @click="remove(scope)">删除</el-button>
+          <el-button type="text" @click="kanbanAddress(scope.row)">看板配置地址</el-button>
           <!-- <el-button type="text" @click="enable(scope)">启用</el-button> -->
         </template>
       </common-table>
@@ -73,20 +74,20 @@ export default {
         headerAlign: 'left',
         width: '80px'
       },
-      {
-        title: '看板调用链接',
-        dataIndex: 'compType',
-        width: '180px',
-        formatter: (row, column, cellValue, index) => {
-          return kanbanUrl + '?id=' + row.id + '&code=' + row.code
-        },
-        align: 'left',
-        headerAlign: 'left'
-      },
+      // {
+      //   title: '看板调用链接',
+      //   dataIndex: 'compType',
+      //   width: '180px',
+      //   formatter: (row, column, cellValue, index) => {
+      //     return kanbanUrl + '?id=' + row.id + '&code=' + row.code
+      //   },
+      //   align: 'left',
+      //   headerAlign: 'left'
+      // },
       {
         title: '操作',
         dataIndex: 'operation',
-        width: '120px',
+        width: '180px',
         align: 'left',
         headerAlign: 'left',
         scopedSlots: { customRender: 'custom' }
@@ -194,6 +195,27 @@ export default {
     saveCallback() {
       this.$refs.table.searchData()
       this.compEditClose()
+    },
+    kanbanAddress (row) {
+      let url = 'Framework/System/KanbanDesign/kanbanView' + '?id=' + row.id + '&code=' + row.code
+      this.$confirm(url, '看板配置地址', {
+        confirmButtonText: '复制',
+        showCancelButton: false,
+        type: 'info'
+      }).then(() => {
+        (function () {
+          document.oncopy = function (e) {
+            e.clipboardData.setData('text', url);
+            e.preventDefault();
+            document.oncopy = null;
+          }
+      })(url);
+      document.execCommand('Copy');
+      this.$message({
+          type: 'success',
+          message: '已复制到粘贴板'
+        });
+      })
     }
   }
 }

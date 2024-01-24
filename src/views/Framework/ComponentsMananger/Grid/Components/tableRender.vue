@@ -681,6 +681,10 @@ export default {
   },
   methods: {
     fiflterParams (newValue) {
+      if (!Object.keys(newValue).length) {
+        this.tableParam.param = {}
+        this.tableParam.reportParam = {}
+      }
       let obj = {}
       let reportParmars = {}
       let sqlParmars = {}
@@ -1070,8 +1074,10 @@ export default {
       this.tableParam.param = { ...param, ...this.westParmars }
     },
     reSet () {
+      let columnType = JSON.parse(JSON.stringify(this.tableParam.sqlParam.columnType))
+      this.tableParam.sqlParam = {columnType:columnType}
       // this.tableParam.param = {}
-      // this.$refs.table.searchData()
+      this.$refs.table.searchData()
     },
     rebuildParam (val) {
       const reportParam = {}
@@ -1093,6 +1099,9 @@ export default {
       let report = {}
       this.serachForm = {}
       this.searchList.forEach(el => {
+        if (el.type && el.type == "datetimeRange" && el.defaultValue && el.defaultValue.indexOf(',') !== -1) {
+          el.defaultValue = el.defaultValue.split(',')
+        }
         this.serachForm[el.fieldName] = el.defaultValue ? el.defaultValue : ''
         if (el.parameterSource && el.parameterSource == 'SQL参数') {
           if (reportParam[el.fieldName]) {
@@ -1132,10 +1141,17 @@ export default {
           column.drillName = el.drillName
         }
       })
+      let param = {...this.tableParam.param}
+      let obj = {}
+      if(Object.keys(param).length){
+        Object.keys(param).forEach(el => {
+          obj[el] = param[el].value
+        })
+      }
       // 是否开启了行点击
       if (this.tableInfo.enableClick === 1) {
         this.$emit('row-click', row)
-        this.runInHoleParam = row
+        this.runInHoleParam = { ...row,...obj ,...this.tableParam.sqlParam}
         this.runInHoleParam.property = column.property
         this.reportItems.forEach((item) => {
           if (column.property === item.fieldName) {
@@ -1165,8 +1181,15 @@ export default {
           column.drillName = el.drillName
         }
       })
+      let param = {...this.tableParam.param}
+      let obj = {}
+      if(Object.keys(param).length){
+        Object.keys(param).forEach(el => {
+          obj[el] = param[el].value
+        })
+      }
       if (this.tableInfo.enableClick === 1) {
-        this.runInHoleParam = row
+        this.runInHoleParam = { ...row,...obj ,...this.tableParam.sqlParam}
         this.runInHoleParam.property = column.property
         this.reportItems.forEach((item) => {
           if (column.field === item.fieldName) {
@@ -2068,7 +2091,10 @@ export default {
     thirdMenuClick (record, item) {
       this.defaultMenu = item
       this.thirdMenuTitle = '计划详情'
-      this.thirdMenuParam = { ...record }
+      this.thirdMenuParam = {
+        ...record,
+        route: this.currentRouterPath
+      }
       this.visibleThirdDrawer = true
     },
     onThirdMenuClose () {

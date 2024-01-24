@@ -260,7 +260,7 @@ export function monitorPointsEditCheck(oldObj, newObj, vueThis, task, ganttObjec
       oldObj.forEach(function (m) {
         const newT = newMonitorMap[m.monitorId]
         // 标识删除或未删除但修改了时间时
-        if (m.controlTimeType === '0' && !(newT && Object.keys(newT).length > 0 && newT.logBeginTime === m.logBeginTime && newT.logEndTime === m.logEndTime)) {
+        if (!newT || (m.controlTimeType === '0' && !(newT && Object.keys(newT).length > 0 && newT.logBeginTime === m.logBeginTime && newT.logEndTime === m.logEndTime))) {
           editMonitor = true
         }
       })

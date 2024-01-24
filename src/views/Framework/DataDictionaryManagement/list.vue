@@ -11,6 +11,7 @@
                        ref="tree"
                        :indent="26"
                        :node-slot="true"
+                       :tree-config="treeConfig"
                        @select="onSelect">
             <template #tree="{ node }">
               <div style="display: flex; width: 100%">
@@ -187,13 +188,17 @@ export default {
   },
   data () {
     return {
+      treeConfig: {
+       'highlight-current': true,
+       'current-node-key': '31'
+      },
       drawerSize: '40%',
       drawerTitle: '',
       visibleClassifyEditDrawer: false,
       visibleOptionEditDrawer: false,
       treeApi: 'dictionaryManagement.dictCategoryTree',
       queryParam: {
-        dicType: ''
+        dicType: '-1'
       },
       tableApi: 'dictionaryManagement.list',
       columns: columns,
@@ -205,15 +210,18 @@ export default {
     }
   },
   computed: {},
+  mounted() {
+    console.log(this.$refs.tree.treeData[0]);
+    console.log(this.$refs.tree.treeData[0].children[0].layersParams.dicType);
+  },
   methods: {
     onSelect (node) {
       if (node.layersParams) {
         this.queryParam.dicType = node.layersParams.dicType
       } else {
-        this.queryParam.dicType = ''
+        this.queryParam.dicType = '-1'
       }
       this.treeId = node.id
-      this.$refs.table.searchData()
     },
     // 新建分类
     createCategory () {
