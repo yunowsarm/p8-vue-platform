@@ -76,6 +76,7 @@
                    style="height: 50px;margin-top:50px;"
                    label-width="100px"></form-list>
         <editable-table :columns="strategyColumns"
+                        style="height:calc(100% - 110px);width:100%;"
                         :add-row="true"
                         :need-params="true"
                         :data="tableParamData"
@@ -319,6 +320,10 @@ export default {
             {
               label: 'DB_SOURCE1',
               value: 'DB_SOURCE1'
+            },
+            {
+              label: 'DB_SOURCE2',
+              value: 'DB_SOURCE2'
             }
           ],
           rules: [
