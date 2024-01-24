@@ -96,7 +96,8 @@ export default {
           type: 'number',
           fieldName: 'duration',
           placeholder: '请输入时限',
-          colLayout: this.colLayoutClassify
+          colLayout: this.colLayoutClassify,
+          min: 0
         },
         {
           type: 'select',
