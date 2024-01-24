@@ -27,6 +27,7 @@
           :columns="databasePropColumns"
           :add-row="true"
           :disabled="modifyDisable({}, 'main')"
+          :removeDisabledFu="removeDisabledFu"
           api="formGenerator.getDefaultProp"
           :data="databasePropData"
           @save-param-data="saveParamData"
@@ -80,7 +81,6 @@
         </editable-table>
       </template>
       <template #foreignKey>
-        <div style="height:50px;"></div>
         <editable-table :columns="foreignKeyColumns" api="formGenerator.getDefaultProp" :data="forengnKeyData" @save-param-data="saveKeyData">
           <template #fieldName="{ scope, data }">
             <el-input v-model="scope.row.fieldName" disabled @blur="saveKeyData(data)"></el-input>
@@ -272,12 +272,15 @@ export default {
         },
         {
           // 默认隐藏
-          title: '是否同步',
+          title: '状态',
           dataIndex: 'fieldSyncType',
           minWidth: 140,
           default: '0',
           formatter: function (row, column, cellValue, index) {
             let value = ''
+            if (row.removeSign == '1') {
+              return '已删除'
+            }
             if (cellValue === '0') {
               value = '未同步'
             } else {
@@ -397,6 +400,12 @@ export default {
        * 表格单元格 通用禁用
        */
       const normalDis = ['ID', 'CREATE_BY', 'UPDATE_BY', 'CREATE_TIME', 'UPDATE_TIME', 'SECRET_LEVEL', 'INDEX_NO']
+      /**
+       * 已删除的字段禁用
+       */
+      if (row.removeSign && row.removeSign === '1'){
+        normalDis.push(row.fieldName)
+      }
       return normalDis.indexOf(row.fieldName) > -1
     },
     modifyDisable(row, pos) {
@@ -405,11 +414,11 @@ export default {
        *    表单: 表名 / 是否同步 禁止修改
        *    数据库属性: 整体禁止(新建按钮 / 表格单元格)
        */
-      if (pos && pos === 'main') {
-        return Object.keys(this.record).length && this.record.isDbSynch === '1'
-      } else {
-        return Object.keys(this.record).length && row.fieldSyncType === '1'
-      }
+      // if (pos && pos === 'main') {
+      //   return Object.keys(this.record).length && this.record.isDbSynch === '1'
+      // } else {
+      //   return Object.keys(this.record).length && row.fieldSyncType === '1'
+      // }
     },
     saveKeyData(data) {
       const saveForeignKeyData = []
@@ -474,6 +483,11 @@ export default {
           type: 'error',
           message: '数据库属性中存在空值或重复值，无法保存，请检查！'
         })
+      }
+    },
+    removeDisabledFu (scope) {
+      if(scope.row.removeSign == '1'){
+        return true
       }
     }
   }
