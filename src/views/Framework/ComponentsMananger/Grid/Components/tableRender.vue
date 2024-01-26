@@ -2156,9 +2156,9 @@ export default {
 ::v-deep .splitter-pane-resizer.vertical {
   display: none;
 }
-::v-deep .row--level-0 :nth-child(3) .el-dropdown {
-  display: none;
-}
+// ::v-deep .row--level-0 :nth-child(3) .el-dropdown {
+//   display: none;
+// }
 ::v-deep .el-table--border .el-table__cell:first-child .cell {
   padding-left: 15px !important;
 }
