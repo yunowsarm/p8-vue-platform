@@ -526,6 +526,7 @@ export default {
     }
   },
   beforeDestroy () {
+    GanttObject.setGanttObject('activityGantt', {})
     myGantt.unselectTask()
     myGantt.parse({ tasks: [] })
     this.selectedTasks = []

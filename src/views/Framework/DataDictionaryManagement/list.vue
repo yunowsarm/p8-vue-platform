@@ -210,10 +210,7 @@ export default {
     }
   },
   computed: {},
-  mounted() {
-    console.log(this.$refs.tree.treeData[0]);
-    console.log(this.$refs.tree.treeData[0].children[0].layersParams.dicType);
-  },
+  mounted() {},
   methods: {
     onSelect (node) {
       if (node.layersParams) {
