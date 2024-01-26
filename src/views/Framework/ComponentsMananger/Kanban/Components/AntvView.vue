@@ -66,6 +66,7 @@ export default {
       drillVisiable: false,
       eventParam: {},
       searchParams: {},
+      reportParams: {},
       sqlParamsList: []
     }
   },
@@ -120,7 +121,6 @@ export default {
     },
     remoteData: {
       handler: function (val, oldVal) {
-        const _this = this
         if (val && this.myChart) {
           this.myChart.data(val)
           this.myChart.options({ ...this.chartOption })
@@ -193,7 +193,7 @@ export default {
             })
         }
       } else {
-        this.$api['kanbanComponent.getViewData']({ sqlId: this.appConfig.dataviewId, param: this.searchParams, permissionVo: { router: this.$route.name, resourceId: '' }, sqlParam: { planInfoId: this.thirdMenuParam.ID } }).then((res) => {
+        this.$api['kanbanComponent.getViewData']({ sqlId: this.appConfig.dataviewId, reportParam: this.reportParams, sqlParam: this.searchParams, permissionVo: { router: this.$route.name, resourceId: '' } }).then((res) => {
           if (res) {
             _this.remoteData = res
           }
@@ -227,9 +227,10 @@ export default {
             this.$watch(
               'provideParams.searchParams',
               (newValue, oldValue) => {
-                if (newValue) {
+                if (newValue && Object.keys(newValue).length) {
+                  let params = JSON.parse(JSON.stringify(newValue))
                   const tempParams = {}
-                  // 使用数据视图SQL中定义的参数来将父组件中传递的参数进行装配，如果父组件中参数值不存在或为空，使用SQL定义中的参数默8认值进行赋值
+                  // 使用数据视图SQL中定义的参数来将父组件中传递的参数进行装配，如果父组件中参数值不存在或为空，使用SQL定义中的参数默认值进行赋值
                   if (this.sqlParamsList && this.sqlParamsList.length > 0) {
                     this.sqlParamsList.forEach((param) => {
                       const defaultValue = {
@@ -237,12 +238,29 @@ export default {
                         mode: '=',
                         relation: 'and'
                       }
-                      tempParams[param.paramName] = !_.isUndefined(newValue[param.paramName]) ? newValue[param.paramName] : defaultValue
+                      if(!_.isUndefined(newValue[param.paramName])){
+                        tempParams[param.paramName] = newValue[param.paramName]
+                        delete params[param.paramName]
+                      } else {
+                        tempParams[param.paramName] = defaultValue
+                      }
+                      // tempParams[param.paramName] = !_.isUndefined(newValue[param.paramName]) ? newValue[param.paramName] : defaultValue
                     })
                     this.searchParams = tempParams
+                    if (params) {
+                      Object.keys(params).forEach(el => {
+                        let item = params[el]
+                        if (item.replaceFiled && item.replaceFiled.takeEffectCharts && item.replaceFiled.takeEffectCharts.includes(this.appConfig.id)) {
+                          this.reportParams[item.replaceFiled.mapfields] = {mode: item.mode,relation: item.relation,value: item.value}
+                        }
+                      })
+                    }
                   } else {
                     this.searchParams = {}
                   }
+                } else {
+                  this.searchParams = {}
+                  this.reportParams = {}
                 }
               },
               {
@@ -267,6 +285,7 @@ export default {
     },
     bindChartEvent () {
       if (this.myChart && this.eventOption.eventName) {
+        let searchParams = {...this.searchParams,...this.reportParams}
         const _this = this
         this.myChart.on(this.eventOption.eventName, (params) => {
           const chartData = params.data.data
@@ -278,8 +297,8 @@ export default {
                 relation: 'and',
                 value: chartData[drillParams[key]]
               }
-            } else if (this.searchParams[drillParams[key]]) {
-              _this.eventParam[key] = this.searchParams[drillParams[key]]
+            } else if (searchParams[drillParams[key]]) {
+              _this.eventParam[key] = searchParams[drillParams[key]]
             }
           }
           _this.drillVisiable = true
