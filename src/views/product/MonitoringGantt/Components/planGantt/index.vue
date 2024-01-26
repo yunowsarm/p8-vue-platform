@@ -453,10 +453,6 @@ export default {
       fullscreenLoading: '',
       avTaskId: '',
       selectTaskwbsMainDataId: '',
-      showProductionDialog: false,
-      showSubjectNumberSelect: false,
-      researchTaskRelevanceLookShow: false,
-      researchTaskRelevanceShow: false,
       ClassificationSelectVisible: false,
       researchTaskRelevanceShowMore: false,
       customHeight: 300,
@@ -590,10 +586,6 @@ export default {
       comResTaskSaveVisible: false, // 共性资源编辑
       comResTypesOption: [],
       budgetList: [], // 任务挂接经费数据
-      addRevenueVisible: false, // 选择经费挂接
-      otherParam: {}, // 经费挂接参数
-      addRevenueViewVisible: false, // 经费挂接信息查看
-      revenueParam: {}, // 查看经费挂接信息参数
       planTypeDatas: [],
       finishTypeOptions: [],
       unitOptions: [],
