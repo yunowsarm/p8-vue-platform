@@ -7,17 +7,14 @@
               #[`slot${index}`]>
     </template>
   </common-tabs> -->
-  <normal-layout :header-visible="searchFormConfig.length > 0"
-                 :normal-layout="normalLayout">
+  <normal-layout :header-visible="searchFormConfig.length > 0" :normal-layout="normalLayout">
     <template #north>
-      <search-form-list ref="search"
-                        :data-source="searchFormConfig"
-                        @search="onSearch"
-                        @re-set="onReset"></search-form-list>
+      <search-form-list ref="search" :data-source="searchFormConfig" @search="onSearch" @re-set="onReset"></search-form-list>
     </template>
     <template #center>
       <VuePerfectScrollbar class="scroll-area">
-        <widget-grid :key="renderTime"
+        <widget-grid
+          :key="renderTime"
                      v-bind="$attrs"
                      v-on="$listeners"
                      :local-parames="localParames"
@@ -26,8 +23,8 @@
                      :widget="getWidget"
                      :resizable="false"
                      :is-design="false"
-                     :thirdMenuParam="thirdMenuParam"
-                     style="height: 100%">
+          style="height: 100%"
+        >
         </widget-grid>
       </VuePerfectScrollbar>
     </template>
@@ -45,7 +42,7 @@ import mixin from './Components/mixin'
 export default {
   name: 'KanbanView',
   mixins: [mixin],
-  provide () {
+  provide() {
     return {
       provideParams: this.provideParams
     }
@@ -101,7 +98,7 @@ export default {
     }
   },
 
-  data () {
+  data() {
     return {
       renderTime: new Date().getTime(),
       widgetData: [],
@@ -134,7 +131,7 @@ export default {
   },
 
   computed: {
-    tabsData () {
+    tabsData() {
       if (this.renderData && Object.keys(this.renderData).length > 0) {
         return this.renderData.map((item, index) => {
           return { label: item.name, name: 'slot' + index }
@@ -143,7 +140,6 @@ export default {
       return []
     },
     renderKanbanData () {
-      // console.log('renderKanbanData computed:', this.renderData, this.formData, this.$options.data().formData)
       return this.renderData[0] || this.formData || this.$options.data().formData
     },
     getId () {
@@ -224,6 +220,15 @@ export default {
           .catch((e) => { }))
     },
     onSearch (param) {
+      if (this.searchFormConfig && this.searchFormConfig.length){
+        this.searchFormConfig.forEach(el => {
+          if (el.replaceFiled && el.replaceFiled.mapfields) {
+            if(param[el.fieldName]){
+              param[el.fieldName].replaceFiled = el.replaceFiled
+            }
+          }
+        })
+      }
       // let _this = this
       // Object.keys(param).forEach((key) => {
       //   _this.$set(_this.searchParams, key, param[key])
@@ -231,8 +236,6 @@ export default {
       // Object.assign(_this.searchParams, param)
       // _this.searchParams = param
       this.provideParams.searchParams = param
-      // console.log('onSearch:', this.provideParams.searchParams)
-      // console.log('_provided:', this._provided.provideParams)
     },
     onReset () {
       this.provideParams.searchParams = {}

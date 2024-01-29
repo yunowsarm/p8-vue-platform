@@ -20,7 +20,7 @@
               <ace-edit :value="queryConfigValue" width="100%" height="300px" @update:value="onQueryModify"></ace-edit>
             </template>
           </form-list>
-          <search-custom v-if="searchCustomVisible" :visible="searchCustomVisible" :edit-data="editData" @close="searchCustomClose" @handleOk="handleOk"></search-custom>
+          <search-custom v-if="searchCustomVisible" :visible="searchCustomVisible" :edit-data="editData" :widgets="widgets" @close="searchCustomClose" @handleOk="handleOk"></search-custom>
         </VuePerfectScrollbar>
       </el-tab-pane>
     </el-tabs>
@@ -226,7 +226,9 @@ export default {
           fieldName: item.fieldName,
           mode: '=',
           selectCode: item.selectCode,
-          replaceSearch: item.replaceVal
+          replaceSearch: item.replaceVal,
+          replaceFiled: item.replaceFiled,
+          parameterSource: item.parameterSource
         })
       })
       let obj = {

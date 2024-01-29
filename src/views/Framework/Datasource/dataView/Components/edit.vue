@@ -321,10 +321,10 @@ export default {
               label: 'DB_SOURCE1',
               value: 'DB_SOURCE1'
             },
-            {
-              label: 'DB_SOURCE2',
-              value: 'DB_SOURCE2'
-            }
+            // {
+            //   label: 'DB_SOURCE2',
+            //   value: 'DB_SOURCE2'
+            // }
           ],
           rules: [
             {
@@ -462,6 +462,9 @@ export default {
       changeTableData: [],
       searchResultVisible: false
     }
+  },
+  created(){
+    this.formData.dbSource = 'DB_SOURCE1'
   },
   computed: {
     modifiedData () {

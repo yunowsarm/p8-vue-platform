@@ -155,98 +155,6 @@ export function planGantt(ganttName, vueThis) {
       vueThis.controlTimeVisible = true
     }
   }
-  Gantt.setCommonResource = function setCommonResource(taskId) {
-    const task = ganttObject.getTask(taskId)
-    vueThis.comResForm.projectTaskId = taskId
-    vueThis.comResForm.commonResourceTaskId = task.comResTaskId
-    vueThis.comResForm.commonResourceTypesId = task.commonResourceTypesId
-    vueThis.comResForm.comResName = task.comResName
-    vueThis.comResForm.planBeginTime = task.comResPlanBeginTime
-    vueThis.comResForm.planEndTime = task.comResPlanEndTime
-    vueThis.comResForm.contact = task.comResContact
-    vueThis.comResForm.tel = task.comResTel
-    vueThis.comResTaskSaveVisible = true
-  }
-  Gantt.showSDetail = function showSDetail(taskId) {
-    // let task = ganttObject.getTask(taskId)
-    vueThis.avTaskId = taskId
-    vueThis.detailVisible = true
-  }
-  Gantt.placeRelevancy = function placeRelevancy(task) {
-    vueThis.yTask = Object.assign({}, [task])
-    vueThis.researchTaskRelevanceLookShow = true
-  }
-  Gantt.fundMouseover = function fundMouseover(name, planType, money, years) {
-    const param = {
-      name: name,
-      planType: planType,
-      money: money + '(万元)',
-      years: years + '(年)'
-    }
-    vueThis.revenueParam = Object.assign({}, param)
-    vueThis.addRevenueViewVisible = true
-  }
-  Gantt.planTypeClick = function planTypeClick(planType, taskId, taskName, parentId) {
-    console.log(planType, 'type>>>>>')
-    const task = ganttObject.getTask(taskId)
-    if (planType === '3103' || planType === '310301' || planType === '310302' || planType === '310303') {
-      const param = {
-        taskId: taskId,
-        taskName: taskName,
-        planType: planType,
-        parentId: parentId
-      }
-      vueThis.planTypeParam = Object.assign({}, param)
-      vueThis.planTypeViewVisible = true
-    }
-    if (planType === '3112' && task.pushStatus) {
-      // eslint-disable-next-line no-undef
-      window.open(sdmLink + `/SDMID=${task.pushStatus}`, '_blank')
-    }
-    if (planType === '3113') {
-      // eslint-disable-next-line no-undef
-      vueThis.selectTaskId = taskId
-      vueThis.showProductionDialog = true
-    }
-    if (planType === '3110') {
-      const param = {
-        taskId: taskId,
-        taskName: taskName,
-        planType: planType,
-        parentId: parentId
-      }
-      vueThis.planTypeParam = Object.assign({}, param)
-      vueThis.myFlyExperienceVisible = true
-    }
-    if (planType === '3111') {
-      const param = {
-        taskId: taskId,
-        taskName: taskName,
-        planType: planType,
-        parentId: parentId
-      }
-      vueThis.planTypeParam = Object.assign({}, param)
-      vueThis.myBigExperienceVisible = true
-    }
-    if (planType === '3101') {
-      api['thirdPartInterface.getA5FileLink']({ taskId: taskId })
-        .then((res) => {
-          if (res) {
-            let url = res.fileLink
-            if (url.substring(0, 10) === 'VISIT_URL=') {
-              url = res.fileLink.substring(10)
-            }
-            window.open(url, '_blank')
-          }
-        })
-        .catch(() => {})
-    }
-  }
-  Gantt.attentionTaskView = function attentionTaskView(taskId) {
-    const param = { taskId: taskId }
-    vueThis.planTypeParam = Object.assign({}, param)
-    vueThis.planTypeViewVisible = true
-  }
   // 表头查询值绑定
   Gantt.searchColumnsChange = function searchColumnsChange(name, value, searchType, eleInstance) {
     const customComp = ['select', 'date', 'input']
@@ -315,19 +223,6 @@ export function planGantt(ganttName, vueThis) {
     }
     const parentNode = e.target.parentNode
     const fieldName1 = parentNode.getAttribute('data-column-name')
-    if (fieldName1 === 'wbsMainDataId') {
-      const userMaxSecret = vueThis.$store.state.user.userInfo.confidentialiteList[vueThis.$store.state.user.userInfo.confidentialiteList.length - 1].id
-      if (task.secretGrade > userMaxSecret) {
-        vueThis.$message.warning('低密人员不允许创建高密数据')
-      } else {
-        if (ganttObject.config.readonly || ganttObject.getGlobalTaskIndex(id) === 0) {
-          return false
-        } else {
-          vueThis.selectTaskwbsMainDataId = task.wbsMainDataId
-          vueThis.showSubjectNumberSelect = true
-        }
-      }
-    }
     if (task && task.managerStatus && task.managerStatus === '6404') {
       return false
     }
@@ -359,10 +254,6 @@ export function planGantt(ganttName, vueThis) {
             }
           }
           switch (fieldName) {
-            // case 'wbsMainDataId':
-            //   vueThis.selectTaskwbsMainDataId = task.wbsMainDataId
-            //   vueThis.showSubjectNumberSelect = true
-            //   break
             case 'owner_id':
               if (vueThis.createPage === 'decompose') {
                 if (batchOwnerCheck(ganttName)) {
@@ -862,11 +753,6 @@ export function getGanttColumns(ganttObject, vueThis) {
         const monitorPointDatas = ganttObject.serverList(ganttObject.config.monitor_point)
         const monitorPoints = task[ganttObject.config.monitor_point]
         let html = ''
-        if (task.relationCourtTaskId) {
-          html += `<span onclick='Gantt.placeRelevancy(${JSON.stringify(
-            task
-          )})' style='cursor: pointer;margin-right: 3px' title='点击查看已关联的院MPM任务'><i class='p8 icon-relation' style='color: orange'></i></span>`
-        }
         if (monitorPoints && monitorPointDatas) {
           monitorPoints.split(',').forEach(function (id) {
             monitorPointDatas.some((point, index) => {
@@ -874,7 +760,7 @@ export function getGanttColumns(ganttObject, vueThis) {
                 const icon = point.icon
                 const controlTimeType = point.controlTimeType
                 if (id === '1023') {
-                  html += `<span style="cursor: pointer" onclick=Gantt.showSDetail('${task.id}')><i class="p8 ${icon}" style="cursor:pointer;" title="${point.title}"></i></span>`
+                  html += `<span style="cursor: pointer"><i class="p8 ${icon}" style="cursor:pointer;" title="${point.title}"></i></span>`
                 } else {
                   if (controlTimeType && controlTimeType === '0') {
                     html +=
@@ -898,25 +784,6 @@ export function getGanttColumns(ganttObject, vueThis) {
             })
           })
         }
-        if (task.commonResourceTypesId) {
-          html += "<span onclick=Gantt.setCommonResource('" + task.id + '\')><i class="el-icon-s-order" style="cursor:pointer;"></i></span>'
-        }
-        if (task.revenueBudgetId) {
-          vueThis.budgetList.forEach(function (budget) {
-            if (task.revenueBudgetId === budget.id) {
-              html +=
-                "<span  onclick = Gantt.fundMouseover('" +
-                budget.name +
-                "','" +
-                budget.planType +
-                "','" +
-                budget.money +
-                "','" +
-                budget.years +
-                '\')><i class="p8 icon-cost " style="color:#1bbf9e;cursor:pointer;"></i></span>'
-            }
-          })
-        }
         return html
       }
     },
@@ -931,19 +798,14 @@ export function getGanttColumns(ganttObject, vueThis) {
         let html = ''
         const taskClassifyDatas = ganttObject.serverList(ganttObject.config.plan_type)
         const planType = task[ganttObject.config.plan_type]
-        const attentionTaskNum = task.attentionTaskNum || 0
         if (planType && taskClassifyDatas) {
           taskClassifyDatas.some((point, index) => {
             if (point.id === planType) {
               const icon = point.icon
-              html += "<i onclick = Gantt.planTypeClick('" + point.id + "','" + task.id + "','" + task.parent + '\') class="' + icon + '" style="cursor:pointer;" title="' + point.title + '"></i>'
-              // html += '<i  class="' + icon + '" title="' + point.title + '"></i>'
+              html += `<i class="${icon}" style="cursor:pointer;" title="${point.title} "></i>`
               return true
             }
           })
-        }
-        if (attentionTaskNum > 0) {
-          html += "<i onclick = Gantt.attentionTaskView('" + task.id + '\') class="el-icon-star-on" style="cursor:pointer;color:#FF5809" title="关注' + attentionTaskNum + '条"></i>'
         }
         return html
       }
