@@ -138,7 +138,7 @@ const platform = {
       state.sidebarState.isHidden = isHidden
       // 为了保证隐藏动效,这里设置sidebar隐藏后的宽度
       // 这里因为计算的原因,必须保证为 {string} 0px, 请勿修改成 {number} 0
-      // state.sidebarState.width = isHidden ? '0px' : SIDEBAR_OPEN_STATE === 'true' ? SIDEBAR_EXPANDED_WIDTH : SIDEBAR_COLLAPSED_WIDTH
+      state.sidebarState.width = isHidden ? '0px' : '180px'
       Cookie.set(SIDEBAR_HIDDEN_STATE_KEY, isHidden, 1000)
     },
     INIT_SHORTCUTMENU(state, menuItems) {
