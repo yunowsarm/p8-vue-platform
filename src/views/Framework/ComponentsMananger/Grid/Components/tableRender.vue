@@ -127,7 +127,7 @@
                           :seach-type="seachType"
                           :show-search-row="showSearchRow"
                           :is-smart-form="true"
-                          :pagination="false"
+                          :pagination="true"
                           api="formGenerator.tableApply"
                           :use-system-config-button="tableInfo.useSystemConfigButton"
                           :is-layout-button="isLayoutButton"
