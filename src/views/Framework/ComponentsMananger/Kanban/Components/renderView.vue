@@ -59,6 +59,7 @@ export default {
       drillVisiable: false,
       eventParam: {},
       searchParams: {},
+      reportParams: {},
       sqlParamsList: []
     }
   },
@@ -68,7 +69,6 @@ export default {
   computed: {
     chartOption () {
       let data = this.option
-      // console.log('option', this.option)
       let chartConfig = ''
       try {
         if (typeof data === 'string') {
@@ -82,13 +82,11 @@ export default {
       } catch (e) {
         console.error(e)
       }
-      // console.log('chartConfig', chartConfig)
       return chartConfig
     },
     eventOption () {
       let data = this.option
       let eventOption = {}
-      // console.log('data', data)
       try {
         if (typeof data === 'string') {
           data = eval('(' + data + ')')
@@ -103,7 +101,6 @@ export default {
       } catch (e) {
         console.error(e)
       }
-      // console.log('eventOption', eventOption)
       return eventOption
     }
   },
@@ -150,7 +147,6 @@ export default {
     },
     resizeTime: {
       handler: function (val, oldVal) {
-        // console.log('resizeTime', val)
         if (val && val != oldVal && this.myChart) {
           this.resizeChart()
         }
@@ -158,7 +154,6 @@ export default {
     },
     searchParams: {
       handler: function (newValue, oldValue) {
-        console.log('searchParams watch', newValue, oldValue)
         if (!_.isEqual(newValue, oldValue)) {
           this.doDataview()
         }
@@ -179,25 +174,40 @@ export default {
         this.$watch(
           'provideParams.searchParams',
           (newValue, oldValue) => {
-            // console.log('searchParams watch', newValue, this.appConfig)
-            if (newValue) {
-              // console.log('newValue $watch:', newValue)
+            if (newValue && Object.keys(newValue).length) {
+              let params = JSON.parse(JSON.stringify(newValue))
               const tempParams = {}
               // 使用数据视图SQL中定义的参数来将父组件中传递的参数进行装配，如果父组件中参数值不存在或为空，使用SQL定义中的参数默认值进行赋值
               if (this.sqlParamsList && this.sqlParamsList.length > 0) {
                 this.sqlParamsList.forEach((param) => {
-                  console.log('SQLParam:', param)
                   const defaultValue = {
                     value: param.paramValue || '',
                     mode: '=',
                     relation: 'and'
                   }
-                  tempParams[param.paramName] = !_.isUndefined(newValue[param.paramName]) ? newValue[param.paramName] : defaultValue
+                  if(!_.isUndefined(newValue[param.paramName])){
+                    tempParams[param.paramName] = newValue[param.paramName]
+                    delete params[param.paramName]
+                  } else {
+                    tempParams[param.paramName] = defaultValue
+                  }
+                  // tempParams[param.paramName] = !_.isUndefined(newValue[param.paramName]) ? newValue[param.paramName] : defaultValue
                 })
                 this.searchParams = tempParams
+                if (params) {
+                  Object.keys(params).forEach(el => {
+                    let item = params[el]
+                    if (item.replaceFiled && item.replaceFiled.takeEffectCharts && item.replaceFiled.takeEffectCharts.includes(this.appConfig.id)) {
+                      this.reportParams[item.replaceFiled.mapfields] = {mode: item.mode,relation: item.relation,value: item.value}
+                    }
+                  })
+                }
               } else {
                 this.searchParams = {}
               }
+            } else {
+              this.searchParams = {}
+              this.reportParams = {}
             }
           },
           {
@@ -217,7 +227,6 @@ export default {
       'isShow',
       (newValue, oldValue) => {
         if (newValue) {
-          // console.log('$watch-initEchart', this.$el)
           this.initEchart()
         }
       },
@@ -257,17 +266,14 @@ export default {
             })
         }
       } else {
-        this.$api['kanbanComponent.getViewData']({ sqlId: this.appConfig.dataviewId, param: this.searchParams, permissionVo: { router: this.$route.name, resourceId: '' } }).then((res) => {
-          // console.log('kanbanComponent.getViewData:', res)
+        this.$api['kanbanComponent.getViewData']({ sqlId: this.appConfig.dataviewId, reportParam: this.reportParams, sqlParam: this.searchParams, permissionVo: { router: this.$route.name, resourceId: '' } }).then((res) => {
           if (res) {
             _this.remoteData = res
-            // console.log('setremoteData')
           }
         })
       }
     },
     resizeChart () {
-      // console.log('chart-resize')
       this.myChart.resize()
     },
     initEchart () {
@@ -285,7 +291,6 @@ export default {
     },
     setChartOption () {
       try {
-        // console.log('this.chartOption', this.chartOption)
         this.myChart.setOption(this.chartOption, {
           replaceMerge: ['xAxis', 'yAxis', 'series']
         })
@@ -300,8 +305,8 @@ export default {
       return uid + roundStr
     },
     bindChartEvent () {
-      // console.log('bindChartEvent', this.eventOption)
       if (this.myChart && this.eventOption.eventName) {
+        let searchParams = {...this.searchParams,...this.reportParams}
         const _this = this
         this.myChart.on(this.eventOption.eventName, (params) => {
           const chartData = params.data
@@ -313,8 +318,8 @@ export default {
                 relation: 'and',
                 value: chartData[drillParams[key]]
               }
-            } else if (this.searchParams[drillParams[key]]) {
-              _this.eventParam[key] = this.searchParams[drillParams[key]]
+            } else if (searchParams[drillParams[key]]) {
+              _this.eventParam[key] = searchParams[drillParams[key]]
             }
           }
           _this.drillVisiable = true

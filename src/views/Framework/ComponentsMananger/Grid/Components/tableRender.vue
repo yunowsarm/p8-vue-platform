@@ -675,26 +675,22 @@ export default {
           relation: 'and'
         }
       })
-      this.tableParam.param = { ...obj, ...this.tableParam.param }
+      this.tableParam.reportParam = { ...obj, ...this.tableParam.reportParam }
       this.propParam = Object.assign(this.propParam, val)
     }
   },
   methods: {
     fiflterParams (newValue) {
       if (!Object.keys(newValue).length) {
-        this.tableParam.param = {}
         this.tableParam.reportParam = {}
+        this.tableParam.sqlParam = {}
       }
       let obj = {}
-      let reportParmars = {}
       let sqlParmars = {}
       let searchKeys = []
-      let reportList = []
       let SQLList = []
       this.searchList.map((el) => {
-        if (el.parameterSource == '报表参数') {
-          reportList.push(el.replaceSearch ? el.replaceSearch : el.fieldName)
-        } else if (el.parameterSource == 'SQL参数') {
+        if (el.parameterSource == 'SQL参数') {
           SQLList.push(el.replaceSearch ? el.replaceSearch : el.fieldName)
         } else {
           searchKeys.push(el.replaceSearch ? el.replaceSearch : el.fieldName)
@@ -702,6 +698,7 @@ export default {
       })
       Object.keys({ ...newValue }).forEach((item) => {
         if (searchKeys.includes(item)) {
+          if( newValue[item] ){
           if (typeof newValue[item] === 'string') {
             obj[item] = {
               value: newValue[item],
@@ -717,21 +714,31 @@ export default {
           } else if (typeof newValue[item] === 'object') {
             obj[item] = newValue[item]
           }
+          }
         }
       })
       this.westParmars = obj
       Object.keys({ ...newValue }).forEach((item) => {
-        if (reportList.includes(item)) {
-          reportParmars[item] = newValue[item]
-        }
-      })
-      Object.keys({ ...newValue }).forEach((item) => {
         if (SQLList.includes(item)) {
-          sqlParmars[item] = newValue[item]
+          if (typeof newValue[item] === 'string') {
+            sqlParmars[item] = {
+              value: newValue[item],
+              mode: '=',
+              relation: 'and'
+            }
+          } else if (newValue[item] instanceof Array) {
+            sqlParmars[item] = {
+              value: newValue[item],
+              mode: 'in',
+              relation: 'multiple'
+            }
+          } else if (typeof newValue[item] === 'object') {
+            sqlParmars[item] = newValue[item]
+          }
         }
       })
-      this.tableParam.param = { ...this.tableParam.param, ...obj }
-      this.tableParam.reportParam = { ...this.tableParam.reportParam, ...reportParmars }
+      // this.tableParam.param = { ...this.tableParam.param, ...obj }
+      this.tableParam.reportParam = { ...this.tableParam.reportParam, ...obj}
       this.tableParam.sqlParam = { ...sqlParmars, ...this.sqlParam, ...this.tableParam.sqlParam }
       this.tableParam.permissionVo = { router: this.$route.name, resourceId: '' }
       this.propParam = Object.assign(this.propParam, newValue)
@@ -834,6 +841,9 @@ export default {
                     minWidth: item.fieldWidth,
                     sortable: item.isOrder ? item.isOrder : false
                   })
+                  if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
+                    item.defaultValueData = item.defaultValueData.split(',')
+                  }
                 }
               } else if (item.isCustomColumn) {
                 if (item.fieldName === '_ROWNO') {
@@ -895,7 +905,6 @@ export default {
               })
             }
           })
-          this.$emit('searchData', this.searchList)
           // 报表按钮参数
           if (this.tableInfo.useSystemConfigButton == 1) {
             columnData.push({
@@ -1002,7 +1011,9 @@ export default {
         // 报表参数
         if (res.reportParams && res.reportParams.length) {
           res.reportParams.forEach((item) => {
-            this.defaultReportParam[item.paramName] = this.getDefaultValue(item.paramValue)
+            if (this.getDefaultValue(item.paramValue)) {
+              this.defaultReportParam[item.paramName] = { mode: '=',relation: "and",value: this.getDefaultValue(item.paramValue) }
+            }
             if (item.isSearch && item.searchMode) {
               this.searchData.push({
                 type: item.searchMode, // 控件类型
@@ -1027,7 +1038,7 @@ export default {
             })
           })
         }
-
+        this.$emit('searchData', this.searchList)
         // SQL参数
         if (res.reportSqlParams && res.reportSqlParams.length) {
           res.reportSqlParams.forEach((item) => {
@@ -1054,29 +1065,33 @@ export default {
     },
     search (param) {
       let sqlParam = {}
-      let reportParam = {}
+      // let reportParam = {}
       this.searchData.forEach(el => {
+        let fieldName =  el.replaceSearch ? el.replaceSearch : el.fieldName
         if (el.parameterSource && el.parameterSource == 'SQL参数') {
-          if (param[el.fieldName]) {
-            sqlParam[el.fieldName] = param[el.fieldName].value
-            delete param[el.fieldName]
-          }
-        } else if (el.parameterSource && el.parameterSource == '报表参数') {
-          if (param[el.fieldName]) {
-            reportParam[el.fieldName] = param[el.fieldName].value
-            delete param[el.fieldName]
+          if (param[fieldName]) {
+            sqlParam[fieldName] = param[fieldName]
+            delete param[fieldName]
           }
         }
       })
       this.sqlParam = sqlParam
-      this.tableParam.reportParam = { ...reportParam, ...this.tableParam.reportParam }
+      // this.tableParam.reportParam = { ...reportParam, ...this.tableParam.reportParam }
       this.tableParam.sqlParam = { ...sqlParam, ...this.tableParam.sqlParam, ...this.sqlParam }
-      this.tableParam.param = { ...param, ...this.westParmars }
+      this.tableParam.reportParam = {  ...this.westParmars, ...param }
     },
     reSet () {
-      let columnType = JSON.parse(JSON.stringify(this.tableParam.sqlParam.columnType))
-      this.tableParam.sqlParam = {columnType:columnType}
-      // this.tableParam.param = {}
+      this.sqlParam = {}
+      if(this.tableParam.sqlParam && this.tableParam.sqlParam.columnType){
+        let columnType = JSON.parse(JSON.stringify(this.tableParam.sqlParam.columnType))
+        this.tableParam.sqlParam = {columnType:columnType}
+      } else {
+        this.tableParam.sqlParam = {}
+      }
+      this.tableParam.reportParam = {}
+      if (this.provideParams.searchParams && Object.keys(this.provideParams.searchParams).length > 0) {
+        this.fiflterParams(this.provideParams.searchParams)
+      }
       this.$refs.table.searchData()
     },
     rebuildParam (val) {
@@ -1091,7 +1106,9 @@ export default {
           }
         })
       }
-      this.sqlParam.columnType = val.property ? val.property : this.columnType
+      if (val.property || this.columnType) {
+        this.sqlParam.columnType = {mode: '=',relation: "and",value: val.property ? val.property : this.columnType}
+      }
       if (this.taskId) {
         reportParam.TASKID = this.taskId
       }
@@ -1105,10 +1122,10 @@ export default {
         this.serachForm[el.fieldName] = el.defaultValue ? el.defaultValue : ''
         if (el.parameterSource && el.parameterSource == 'SQL参数') {
           if (reportParam[el.fieldName]) {
-            sql[el.fieldName] = reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName]
+            sql[el.fieldName] = { mode: '=',relation: "and",value: reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName] }
             delete reportParam[el.fieldName]
           }
-        } else if (el.parameterSource && el.parameterSource == '报表参数') {
+        } else {
           if (reportParam[el.fieldName]) {
             report[el.fieldName] = reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName]
             delete reportParam[el.fieldName]
@@ -1118,7 +1135,6 @@ export default {
       this.tableParam = {
         sqlParam: { ...this.sqlParam, ...sql, ...this.tableParam.sqlParam },
         reportId: this.tableInfo.id,
-        param: {},
         reportParam: {
           ...this.defaultReportParam, ...this.tableParam.reportParam, ...report
         },
@@ -1141,7 +1157,7 @@ export default {
           column.drillName = el.drillName
         }
       })
-      let param = {...this.tableParam.param}
+      let param = {...this.tableParam.reportParam}
       let obj = {}
       if(Object.keys(param).length){
         Object.keys(param).forEach(el => {
@@ -1181,7 +1197,7 @@ export default {
           column.drillName = el.drillName
         }
       })
-      let param = {...this.tableParam.param}
+      let param = {...this.tableParam.reportParam}
       let obj = {}
       if(Object.keys(param).length){
         Object.keys(param).forEach(el => {

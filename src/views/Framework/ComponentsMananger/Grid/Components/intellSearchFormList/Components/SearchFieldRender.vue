@@ -152,6 +152,7 @@
     </el-col>
     <el-col :span="6">
       <el-select v-model="mode"
+                :disabled="fields.parameterSource === 'SQL参数'"
                  @change="changeMode"
                  style="height: 32px; line-height: 32px">
         <el-option v-for="items in modeSelect"

@@ -1,7 +1,5 @@
 import store from '@/plugins/store'
 import { backfillChangeDatas } from './changeGantt'
-import de from 'element-ui/src/locale/lang/de'
-import fa from 'element-ui/src/locale/lang/fa'
 
 /**
  * 计划编辑加解锁逻辑处理类
@@ -415,7 +413,3 @@ export function monitorTimeCheck(monitorLockMap, task, ganttObject, monitorId, l
   }
   return true
 }
-
-/**
- * 标识加锁后复制任务时，不复制加锁标识，该逻辑在任务复制sql中实现
- */

@@ -124,6 +124,7 @@
     <common-drawer v-if="visibleProcessDrawer"
                    :visible="visibleProcessDrawer"
                    title="我的审批"
+                   class="my_process"
                    @close="visibleProcessDrawer = false"
                    direction="ttb"
                    size="100%">
