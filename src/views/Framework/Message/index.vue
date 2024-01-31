@@ -81,9 +81,9 @@ export default {
         right: {
           xs: 8,
           sm: 10,
-          md: 13,
-          lg: 13,
-          xl: 13
+          md: 14,
+          lg: 14,
+          xl: 14
         }
       },
       searchConfig: [

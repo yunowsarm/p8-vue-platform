@@ -143,12 +143,7 @@
                    @close="closeMyExperience"
                    :is-view-cs-footer="true">
       <template #dialog>
-        <list-layout>
-          <template #north>
-            <span style="color: red; font-size: 14px; font-weight: bolder; float: right; line-height: 30px; display: inline-block; margin-right: 10px"
-              >密级：{{ experienceLibrarySecretGradeDisplay }}</span
-            >
-          </template>
+        <list-layout :header-visible="false">
           <template #center>
             <common-table ref="table"
                           v-if="myExperienceVisible"
@@ -357,9 +352,6 @@ export default {
       type: String,
       default: null
     },
-    secretGrade: {
-      type: String
-    },
     wholeDescribeId: {
       type: String,
       default: null
@@ -461,10 +453,6 @@ export default {
       fullscreenLoading: '',
       avTaskId: '',
       selectTaskwbsMainDataId: '',
-      showProductionDialog: false,
-      showSubjectNumberSelect: false,
-      researchTaskRelevanceLookShow: false,
-      researchTaskRelevanceShow: false,
       ClassificationSelectVisible: false,
       researchTaskRelevanceShowMore: false,
       customHeight: 300,
@@ -598,10 +586,6 @@ export default {
       comResTaskSaveVisible: false, // 共性资源编辑
       comResTypesOption: [],
       budgetList: [], // 任务挂接经费数据
-      addRevenueVisible: false, // 选择经费挂接
-      otherParam: {}, // 经费挂接参数
-      addRevenueViewVisible: false, // 经费挂接信息查看
-      revenueParam: {}, // 查看经费挂接信息参数
       planTypeDatas: [],
       finishTypeOptions: [],
       unitOptions: [],
@@ -907,7 +891,6 @@ export default {
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
       // 配置团队成员编辑配置文件
       this.thirdMenuParam.planInfoId = this.planInfoId
-      this.thirdMenuParam.secretGrade = this.secretGrade
       this.thirdMenuParam.status = '2210'
       this.thirdMenuParam.id = this.wholeDescribeId
       this.thirdMenuParam.projectCategory = this.projectCategory
@@ -951,7 +934,6 @@ export default {
               myGantt.serverList(myGantt.config.training_mode_list, trainingModeListArr)
             }
             myGantt.$resourcesStore.parse(res.resources)
-            myGantt.serverList('secretGrades', res.secretGradeList)
             myGantt.serverList('userList', res.userResourceList)
             myGantt.serverList(myGantt.config.monitor_point, res.monitorPointDatas)
             myGantt.serverList(myGantt.config.plan_type, res.taskClassifys)

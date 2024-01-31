@@ -108,7 +108,6 @@ import { Drawer } from 'p8-components-ui'
 import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/changeGantt/commandButtonBarDataDoubleRow'
 import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/changeGantt/commandButtonBarDataSingleRow'
 import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/changeGantt/commandButtonBarData'
-import { ChangeGanttButtonBarData } from '@/assets/commonJS/ganttJS/changeGanttButtonBarData'
 import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
 import PlanAttribute from '../../PlanGantt/Components/planAttribute'
 import { mapGetters } from 'vuex'
@@ -127,7 +126,6 @@ export default {
         modal: false
       },
       ganttName: '',
-      barData: ChangeGanttButtonBarData,
       taskStatus: {},
       status: '',
       advance: true,

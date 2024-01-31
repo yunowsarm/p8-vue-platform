@@ -20,7 +20,6 @@
           :task-id="taskId"
           :plan-end-date-array="planEndDateArray"
           :plan-begin-date-array="planBeginDateArray"
-          :secret-grade="secretGrade"
           :create-page="createPage"
           :flag="thirdMenuParam.specialPlan"
           :project-category="thirdMenuParam.projectCategory"
@@ -38,7 +37,6 @@
         @save-success="detailDrawerClosed"
         :create-page="createPage"
         :task-id="selectTaskId"
-        :secret-grade="secretGrade"
         :att-read-only="readOnly"
         :view-type="viewType"
         :gantt-name="ganttName"
@@ -121,7 +119,6 @@ export default {
         modal: false
       },
       planInfoId: '',
-      secretGrade: '',
       planBeginDateArray: [],
       planEndDateArray: [],
       wholeDescribeId: '',
@@ -173,7 +170,6 @@ export default {
   created() {},
   mounted() {
     this.planInfoId = this.thirdMenuParam.ID || ''
-    this.secretGrade = this.thirdMenuParam.SECRETLEVEL || ''
     this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
     this.taskId = this.thirdMenuParam.taskId || ''
     this.createPage = this.thirdMenuParam.createPage || 'compile'

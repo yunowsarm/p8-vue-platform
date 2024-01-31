@@ -70,6 +70,7 @@ export default {
       {
         title: '序号',
         type: 'index',
+        width: 60,
         align: 'left',
         headerAlign: 'left'
       },

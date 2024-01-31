@@ -72,6 +72,7 @@ export default {
             },
             {
               validator: (rule, value, callback) => {
+                let me = this
                 api['ProcessDefinition.repeatedCheck']({ name: value })
                   .then((res) => {
                     if (res.result) {
@@ -101,6 +102,7 @@ export default {
             },
             {
               validator: (rule, value, callback) => {
+                let me = this
                 api['ProcessDefinition.repeatedCheck']({ key: value })
                   .then((res) => {
                     if (res.result) {
