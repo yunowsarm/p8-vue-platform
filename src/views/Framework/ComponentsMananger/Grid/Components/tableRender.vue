@@ -281,6 +281,7 @@
       <common-drawer v-if="visibleThirdDrawer"
                      :visible="visibleThirdDrawer"
                      direction="ttb"
+                     :title="thirdMenuTitle"
                      @close='onThirdMenuClose'
                      size="100%">
         <template #drawer>
@@ -1040,13 +1041,13 @@ export default {
         }
         this.$emit('searchData', this.searchList)
         // SQL参数
-        if (res.reportSqlParams && res.reportSqlParams.length) {
-          res.reportSqlParams.forEach((item) => {
-            if (item.paramValue) {
-              this.sqlParam[item.paramName] = item.paramValue
-            }
-          })
-        }
+        // if (res.reportSqlParams && res.reportSqlParams.length) {
+        //   res.reportSqlParams.forEach((item) => {
+        //     if (item.paramValue) {
+        //       this.sqlParam[item.paramName] = item.paramValue
+        //     }
+        //   })
+        // }
         that.enableEdit = res.enableEdit
         this.rebuildParam(this.reportParam)
         if (this.provideParams.searchParams && Object.keys(this.provideParams.searchParams).length > 0) {
@@ -1078,7 +1079,7 @@ export default {
       this.sqlParam = sqlParam
       // this.tableParam.reportParam = { ...reportParam, ...this.tableParam.reportParam }
       this.tableParam.sqlParam = { ...sqlParam, ...this.tableParam.sqlParam, ...this.sqlParam }
-      this.tableParam.reportParam = {  ...this.westParmars, ...param }
+      this.tableParam.reportParam = {  ...this.westParmars, ...param, ...this.tableParam.reportParam }
     },
     reSet () {
       this.sqlParam = {}
@@ -1097,11 +1098,11 @@ export default {
     rebuildParam (val) {
       const reportParam = {}
       const defaultReportParamArr = Object.keys(this.defaultReportParam)
-      const sqlParamArr = Object.keys(this.sqlParam)
+      const searchListArr = this.searchList.map(el => el.fieldName)
       const valArr = Object.keys(val)
       if (valArr.length) {
         valArr.forEach((item) => {
-          if (defaultReportParamArr.indexOf(item) !== -1 || sqlParamArr.indexOf(item) !== -1) {
+          if (defaultReportParamArr.concat(searchListArr).indexOf(item) !== -1) {
             reportParam[item] = val[item]
           }
         })
@@ -1127,7 +1128,7 @@ export default {
           }
         } else {
           if (reportParam[el.fieldName]) {
-            report[el.fieldName] = reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName]
+            report[el.fieldName] = { mode: '=',relation: "and",value: reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName] }  
             delete reportParam[el.fieldName]
           }
         }
