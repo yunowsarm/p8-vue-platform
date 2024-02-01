@@ -98,12 +98,12 @@ export default {
           slotName: 'status',
           colLayout: 'singleCol'
         },
-        {
-          type: 'blank',
-          labelText: '进度说明:',
-          slotName: 'content',
-          colLayout: 'singleCol'
-        },
+        // {
+        //   type: 'blank',
+        //   labelText: '进度说明:',
+        //   slotName: 'content',
+        //   colLayout: 'singleCol'
+        // },
         // {
         //   type: 'view',
         //   labelText: '完成形式:',
@@ -126,29 +126,35 @@ export default {
           type: 'view',
           labelText: '工期:',
           fieldName: 'duration',
-          colLayout: 'doubleCol'
+          colLayout: 'singleCol'
         },
         {
           type: 'blank',
           labelText: '超期/剩余天数:',
           slotName: 'durationDay',
-          colLayout: 'doubleCol'
+          colLayout: 'singleCol'
         },
         {
           type: 'blank',
           labelText: '完成百分比:',
           slotName: 'progress',
-          colLayout: 'doubleCol'
+          colLayout: 'singleCol'
         },
         {
           type: 'view',
-          labelText: '计划起始日期:',
+          labelText: '计划周期:',
           fieldName: 'planDate',
-          colLayout: 'doubleCol'
+          colLayout: 'singleCol'
         },
         {
           type: 'view',
-          labelText: '实际起始日期:',
+          labelText: '预计周期',
+          fieldName: 'forecastDate',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'view',
+          labelText: '实际周期:',
           fieldName: 'realDate',
           colLayout: 'doubleCol'
         },

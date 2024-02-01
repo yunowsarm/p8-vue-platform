@@ -55,7 +55,7 @@
 </template>
 <script>
 import { P8Form as FormList, Progress } from 'p8-components-ui'
-
+import { getTaskStatusInfo } from '@/utils/commonBusiness'
 import moment from 'moment'
 import Vue from 'vue'
 export default {
@@ -110,6 +110,9 @@ export default {
   methods: {
     rendered () {
       if (this.api) {
+        getTaskStatusInfo({ currentStatus: 'all' }).then(data => {
+          this.allStatus = data
+        })
         this.getTaskInfo()
       }
     },
@@ -152,27 +155,24 @@ export default {
           this.formData[key] = res[key]
         }
       })
-      console.log(this.formData, 'ppppppppppppppppppppppppppppppppppppppppppp');
     },
     statusHandle () {
-      let allStatus = this.getPlanInfo ? this.getPlanInfo().allStatus : []
       const statusColor = {
         '6010': '#ffd782',
         '6020': '#1bbf9e',
         '6050': '#ff9921',
         '6070': '#1890ff'
       }
-      allStatus.forEach(item => {
+      this.allStatus.forEach(item => {
         item.color = statusColor[item.value]
       })
       let value = this.formData.status
-      let currStatus = allStatus.filter(item => item.value === value)
+      let currStatus = this.allStatus.filter(item => item.value === value)
       if (currStatus && currStatus.length) {
         return `<span class="pane-status"><span style="background-color: ${currStatus[0].color}; width: 6px;height: 6px;border-radius: 10px;margin-right: 6px;" class="pane-status-cir"></span>${this.taskInfo.statusDisplay}</span>`
       }
     },
     durationDayHandle (currStatus, systemCurrentDate, planEndDate, realEndDate) {
-      console.log("🚀 ~ file: TaskPane.vue:173 ~ durationDayHandle ~ currStatus, systemCurrentDate, planEndDate, realEndDate:", currStatus, systemCurrentDate, planEndDate, realEndDate)
       // let allStatus = this.getPlanInfo().allStatus
       if (planEndDate && currStatus) {
         // let currStatusInfo = allStatus.filter(item => item.value === currStatus)
