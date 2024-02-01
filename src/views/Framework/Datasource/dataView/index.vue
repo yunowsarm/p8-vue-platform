@@ -1,34 +1,22 @@
 <template>
   <list-layout>
     <template #north>
-      <common-button :comp="comp"
-                     :button-type="'round'"
-                     :custom-button-data="customButtonData"></common-button>
+      <common-button :comp="comp" :button-type="'round'" :custom-button-data="customButtonData"></common-button>
+      <search-form-list ref="search" :data-source="searchData" @search="search" label-width="100px" @re-set="reSet"></search-form-list>
     </template>
     <template #center>
-      <common-table ref="table"
-                    :columns="columns"
-                    api="formGenerator.sqlList"
-                    :table-refresh="tableRefresh">
+      <common-table ref="table" :columns="columns" api="formGenerator.sqlList" :params="queryParam" :table-refresh="tableRefresh">
         <template #operation="{ scope }">
-          <el-button type="text"
-                     @click="modify(scope)">修改</el-button>
-          <el-button type="text"
-                     @click="remove(scope)">删除</el-button>
+          <el-button type="text" @click="modify(scope)">修改</el-button>
+          <el-button type="text" @click="remove(scope)">删除</el-button>
           <!-- <el-button type="text" @click="enable(scope)">启用</el-button> -->
         </template>
       </common-table>
     </template>
     <template #drawer-panel>
-      <common-drawer :title="drawerTitle"
-                     :visible="visible"
-                     size="100%"
-                     @close="sqlEditClose">
+      <common-drawer :title="drawerTitle" :visible="visible" size="100%" @close="sqlEditClose">
         <template #drawer>
-          <sql-list-edit :record="record"
-                          @cancel="sqlEditClose"
-                         @saveSuccess="saveCallback"
-                         :table-list="tableList"></sql-list-edit>
+          <sql-list-edit :record="record" @cancel="sqlEditClose" @saveSuccess="saveCallback" :table-list="tableList"></sql-list-edit>
         </template>
       </common-drawer>
     </template>
@@ -36,7 +24,7 @@
 </template>
 
 <script>
-import { Button, P8ListLayout as ListLayout, P8Table as CommonTable, P8Drawer as CommonDrawer, P8Button as CommonButton } from 'p8-components-ui'
+import { P8Search as SearchFormList, Button, P8ListLayout as ListLayout, P8Table as CommonTable, P8Drawer as CommonDrawer, P8Button as CommonButton } from 'p8-components-ui'
 
 import SqlListEdit from './Components/edit'
 export default {
@@ -44,12 +32,13 @@ export default {
   components: {
     ListLayout,
     CommonTable,
+    SearchFormList,
     CommonDrawer,
     SqlListEdit,
     'el-button': Button,
     CommonButton
   },
-  data () {
+  data() {
     const columns = [
       {
         title: 'SQL编码',
@@ -112,6 +101,21 @@ export default {
     return {
       comp: this,
       columns: columns,
+      queryParam: {},
+      searchData: [
+        {
+          type: 'text',
+          labelText: 'SQL编码',
+          fieldName: 'code',
+          placeholder: '请输入SQL编码'
+        },
+        {
+          type: 'text',
+          labelText: 'SQL名字',
+          fieldName: 'name',
+          placeholder: '请输入SQL名字'
+        }
+      ],
       visible: false,
       drawerTitle: '',
       record: {},
@@ -130,7 +134,7 @@ export default {
     }
   },
   methods: {
-    tableRefresh (param) {
+    tableRefresh(param) {
       param
         .then((res) => {
           this.tableList = res.records
@@ -140,18 +144,30 @@ export default {
           console.log('异步失败的操作')
         })
     },
-    edit () {
+    search(param) {
+      const that = this
+      if (param) {
+        that.queryParam = param
+      }
+    },
+    reSet() {
+      const that = this
+      Object.keys(that.queryParam).forEach((key) => {
+        that.queryParam[key] = null
+      })
+    },
+    edit() {
       this.record.id = ''
       this.drawerTitle = '新建SQL'
       this.visible = true
     },
-    modify (scope) {
+    modify(scope) {
       this.record = Object.assign({}, scope.row)
       this.drawerTitle = '修改SQL'
       this.visible = true
     },
-    remove (scope) {
-      let that = this
+    remove(scope) {
+      const that = this
       this.$confirm('是否确定要删除该sql？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -169,11 +185,11 @@ export default {
           console.log(e)
         })
     },
-    enable (scope) { },
-    sqlEditClose () {
+    enable(scope) {},
+    sqlEditClose() {
       this.visible = false
     },
-    saveCallback () {
+    saveCallback() {
       this.$refs.table.searchData()
       this.sqlEditClose()
     }
