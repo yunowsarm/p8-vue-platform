@@ -140,6 +140,7 @@ export default {
         // },
         {
           title: '操作',
+          fixed: 'right',
           width: 120,
           align: 'left',
           headerAlign: 'left',
@@ -260,9 +261,9 @@ export default {
             e.preventDefault();
             document.oncopy = null;
           }
-      })(url);
-      document.execCommand('Copy');
-      this.$message({
+        })(url);
+        document.execCommand('Copy');
+        this.$message({
           type: 'success',
           message: '已复制到粘贴板'
         });

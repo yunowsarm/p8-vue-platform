@@ -346,6 +346,7 @@ export default {
       },
       {
         title: '操作',
+        fixed: 'right',
         dataIndex: 'operation',
         width: 80,
         scopedSlots: {
@@ -731,7 +732,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 /**调整 左中右布局样式 */
- ::v-deep  .normal-layout.custom-nlcr {
+::v-deep .normal-layout.custom-nlcr {
   height: calc(100% - 60px);
 
   .normal-main {
@@ -791,7 +792,7 @@ export default {
       padding: 0 6px;
 
       &.active {
-         ::v-deep  span {
+        ::v-deep span {
           font-weight: bolder;
           color: #0e77d1 !important;
         }

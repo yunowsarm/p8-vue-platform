@@ -2,22 +2,51 @@
   <list-layout>
     <template #center>
       <div id="table-contain">
-        <el-table :data="tableData" row-key="id" style="width: 100%" max-height="600" border default-expand-all :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
-          <el-table-column prop="name" label="名称" sortable></el-table-column>
-          <el-table-column prop="operation" label="操作" width="150" sortable>
+        <el-table :data="tableData"
+                  row-key="id"
+                  style="width: 100%"
+                  max-height="600"
+                  border
+                  default-expand-all
+                  :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+          <el-table-column prop="name"
+                           label="名称"
+                           sortable></el-table-column>
+          <el-table-column prop="operation"
+                           label="操作"
+                           width="150"
+                           sortable>
             <template slot-scope="scope">
-              <el-button type="text" v-if="scope.row.type !== 'PROJECT_CLASSIFY'" style="color: #0070c5" @click="relate(scope.row)">关联</el-button>
-              <span v-if="scope.row.type !== 'PROJECT_CLASSIFY'" style="color: #eeeef0">&nbsp;|</span>
-              <el-button type="text" v-if="scope.row.type !== 'PROJECT_CLASSIFY'" style="color: #0070c5" @click="cancel(scope.row)">&nbsp;取消关联</el-button>
-              <el-button type="text" v-if="scope.row.type === 'PROJECT_CLASSIFY'" style="color: #0070c5" @click="cancel(scope.row)">移除</el-button>
+              <el-button type="text"
+                         v-if="scope.row.type !== 'PROJECT_CLASSIFY'"
+                         style="color: #0070c5"
+                         @click="relate(scope.row)">关联</el-button>
+              <span v-if="scope.row.type !== 'PROJECT_CLASSIFY'"
+                    style="color: #eeeef0">&nbsp;|</span>
+              <el-button type="text"
+                         v-if="scope.row.type !== 'PROJECT_CLASSIFY'"
+                         style="color: #0070c5"
+                         @click="cancel(scope.row)">&nbsp;取消关联</el-button>
+              <el-button type="text"
+                         v-if="scope.row.type === 'PROJECT_CLASSIFY'"
+                         style="color: #0070c5"
+                         @click="cancel(scope.row)">移除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
     </template>
     <template #drawer-panel>
-      <select-field-classify v-if="visibleField" :visible="visibleField" @saveCallback="saveCallback" :record="record" @close-field="closeField"></select-field-classify>
-      <select-project-classify v-if="visibleProject" :visible="visibleProject" @saveCallback="saveCallback" :record="record" @close-field="closeProject"></select-project-classify>
+      <select-field-classify v-if="visibleField"
+                             :visible="visibleField"
+                             @saveCallback="saveCallback"
+                             :record="record"
+                             @close-field="closeField"></select-field-classify>
+      <select-project-classify v-if="visibleProject"
+                               :visible="visibleProject"
+                               @saveCallback="saveCallback"
+                               :record="record"
+                               @close-field="closeProject"></select-project-classify>
     </template>
   </list-layout>
 </template>
@@ -43,7 +72,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     const columns = [
       {
         title: '名称',
@@ -52,6 +81,7 @@ export default {
       },
       {
         title: '操作',
+        fixed: 'right',
         dataIndex: 'operation',
         width: '100',
         scopedSlots: {
@@ -75,11 +105,11 @@ export default {
       record: []
     }
   },
-  mounted() {
+  mounted () {
     this.queryList()
   },
   methods: {
-    queryList() {
+    queryList () {
       let page = {
         current: 1,
         orders: [],
@@ -90,7 +120,7 @@ export default {
         that.tableData = res
       })
     },
-    relate(record) {
+    relate (record) {
       if (record.type !== 'OWNER_TYPE') {
         this.visibleField = true
         this.record = record
@@ -99,7 +129,7 @@ export default {
         this.record = record
       }
     },
-    cancel(record) {
+    cancel (record) {
       let that = this
       that
         .$confirm('是否要取消关联？', '提示', {
@@ -131,20 +161,20 @@ export default {
             type: type
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
-    closeField() {
+    closeField () {
       this.visibleField = false
     },
-    closeProject() {
+    closeProject () {
       this.visibleProject = false
     },
-    saveCallback() {
+    saveCallback () {
       this.visibleProject = false
       this.visibleField = false
       this.queryList()
     },
-    tableRefresh(param) {
+    tableRefresh (param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')

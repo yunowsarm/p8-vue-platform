@@ -300,6 +300,7 @@ export default {
       },
       {
         title: '操作',
+        fixed: 'right',
         dataIndex: 'operation',
         width: 80,
         scopedSlots: {
