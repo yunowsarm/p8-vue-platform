@@ -128,6 +128,7 @@ const componentData = {
       },
       {
         title: '操作',
+        fixed: 'right',
         dataIndex: 'operation',
         scopedSlots: { customRender: 'custom' },
         minWidth: 80,
@@ -385,6 +386,7 @@ export default {
         },
         {
           title: '操作',
+          fixed: 'right',
           dataIndex: 'operation',
           scopedSlots: { customRender: 'custom' },
           minWidth: 80,

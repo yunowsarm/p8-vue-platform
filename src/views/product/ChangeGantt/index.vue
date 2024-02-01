@@ -1,75 +1,94 @@
 <template>
-  <div class="couerDivClass" id="couerDiv">
-    <div class="bottom" style="height: 100%">
+  <div class="couerDivClass"
+       id="couerDiv">
+    <div class="bottom"
+         style="height: 100%">
       <list-layout>
         <template #north>
-          <common-button :select-records="selectRecord" buttonType="primary" :comp="comp"></common-button>
-          <search-form-list ref="search" :data-source="searchData" @search="search" @re-set="reSet"></search-form-list>
+          <common-button :select-records="selectRecord"
+                         buttonType="primary"
+                         :comp="comp"></common-button>
+          <search-form-list ref="search"
+                            :data-source="searchData"
+                            @search="search"
+                            @re-set="reSet"></search-form-list>
         </template>
         <template #center>
           <div id="table-contain">
-            <common-table
-              ref="table"
-              :columns="columns"
-              :table-refresh="tableRefresh"
-              :params="queryParam"
-              :api="tableApi"
-              :comp="comp"
-              :table-config="tableConfig"
-              :menu-state="menuStateObj"
-              :pagination="true"
-            >
+            <common-table ref="table"
+                          :columns="columns"
+                          :table-refresh="tableRefresh"
+                          :params="queryParam"
+                          :api="tableApi"
+                          :comp="comp"
+                          :table-config="tableConfig"
+                          :menu-state="menuStateObj"
+                          :pagination="true">
             </common-table>
           </div>
         </template>
         <template #drawer-panel>
-          <el-drawer :title="title" :append-to-body="true" size="100%" :destroy-on-close="true" :wrapper-closable="false" @closed="onClose" :visible.sync="drawerVisible">
-            <change-index
-              :plan-info-id="planInfoId"
-              :task-id="taskId"
-              :secret-grade="secretGrade"
-              :whole-describe-id="wholeDescribeId"
-              :plan-info-status="planInfoStatus"
-              @closed="onClose"
-              :create-page="createPage"
-              :current-route="currentRoute"
-              :read-only="readOnlyVisible"
-              :change-id="changeId"
-            ></change-index>
+          <el-drawer :title="title"
+                     :append-to-body="true"
+                     size="100%"
+                     :destroy-on-close="true"
+                     :wrapper-closable="false"
+                     @closed="onClose"
+                     :visible.sync="drawerVisible">
+            <change-index :plan-info-id="planInfoId"
+                          :task-id="taskId"
+                          :secret-grade="secretGrade"
+                          :whole-describe-id="wholeDescribeId"
+                          :plan-info-status="planInfoStatus"
+                          @closed="onClose"
+                          :create-page="createPage"
+                          :current-route="currentRoute"
+                          :read-only="readOnlyVisible"
+                          :change-id="changeId"></change-index>
           </el-drawer>
-          <el-drawer :title="title" :append-to-body="true" size="100%" :destroy-on-close="true" :wrapper-closable="false" @closed="onClose" :visible.sync="analysisVisible">
-            <impact-analysis :plan-info-id="planInfoId" @closed="onClose" :create-page="createPage" :read-only="readOnlyVisible" :change-id="changeId"></impact-analysis>
+          <el-drawer :title="title"
+                     :append-to-body="true"
+                     size="100%"
+                     :destroy-on-close="true"
+                     :wrapper-closable="false"
+                     @closed="onClose"
+                     :visible.sync="analysisVisible">
+            <impact-analysis :plan-info-id="planInfoId"
+                             @closed="onClose"
+                             :create-page="createPage"
+                             :read-only="readOnlyVisible"
+                             :change-id="changeId"></impact-analysis>
           </el-drawer>
-          <submit-change
-            v-if="submitChangeValidate"
-            :visible="submitChangeValidate"
-            :change-id="changeId"
-            :create-page="createPage"
-            :project-classification="projectClassification"
-            :project-task-id="projectTasksId"
-            :id="id"
-            :project-category="projectCategory"
-            :plan-info-id="planId"
-            @save-success="submitChangeSave"
-          >
+          <submit-change v-if="submitChangeValidate"
+                         :visible="submitChangeValidate"
+                         :change-id="changeId"
+                         :create-page="createPage"
+                         :project-classification="projectClassification"
+                         :project-task-id="projectTasksId"
+                         :id="id"
+                         :project-category="projectCategory"
+                         :plan-info-id="planId"
+                         @save-success="submitChangeSave">
           </submit-change>
-          <selectApproveUser
-            v-if="isSelectApproveUserView"
-            :is-select-approve-user-view="isSelectApproveUserView"
-            :select-user-data-source="selectUserDataSource"
-            :select-user-form-data="selectUserFormData"
-            @close-modal="closeSelectApproveUser"
-            @commit="commitSelectApproveUser"
-          ></selectApproveUser>
-          <common-drawer v-if="visibleBpmView" :visible="visibleBpmView" :drawer-config="drawerConfig" :is-need-custom-drawer-class="false" direction="ttb" size="100%" @close="onVisibleBpmViewClose">
+          <selectApproveUser v-if="isSelectApproveUserView"
+                             :is-select-approve-user-view="isSelectApproveUserView"
+                             :select-user-data-source="selectUserDataSource"
+                             :select-user-form-data="selectUserFormData"
+                             @close-modal="closeSelectApproveUser"
+                             @commit="commitSelectApproveUser"></selectApproveUser>
+          <common-drawer v-if="visibleBpmView"
+                         :visible="visibleBpmView"
+                         :drawer-config="drawerConfig"
+                         :is-need-custom-drawer-class="false"
+                         direction="ttb"
+                         size="100%"
+                         @close="onVisibleBpmViewClose">
             <template #drawer>
-              <process-approval-view
-                :isSmartForm="true"
-                :business-obj="{
+              <process-approval-view :isSmartForm="true"
+                                     :business-obj="{
                   businessId: businessId,
                   processDefinitionKey: processDefinitionKey
-                }"
-              >
+                }">
               </process-approval-view>
             </template>
           </common-drawer>
@@ -195,7 +214,7 @@ export default {
       default: 'planChangeApprove'
     }
   },
-  data() {
+  data () {
     return {
       projectCategory: '',
       secretLevel: '',
@@ -333,10 +352,10 @@ export default {
         },
         {
           title: '操作',
+          fixed: 'right',
           dataIndex: 'operation',
           scopedSlots: { customRender: 'operation' },
-          width: 120,
-          fixed: 'right'
+          width: 120
         }
       ],
       tableConfig: {},
@@ -344,7 +363,7 @@ export default {
       menuStateObj: []
     }
   },
-  mounted() {
+  mounted () {
     if (this.thirdMenuParam.createPage === 'decompose' || this.thirdMenuParam.route === '/MyTask/MyTask/latest') {
       this.projectCategory = this.thirdMenuParam.projectCategory
       this.secretLevel = this.thirdMenuParam.SECRETGRADE
@@ -378,7 +397,7 @@ export default {
     }
   },
   methods: {
-    search(param) {
+    search (param) {
       if (param && param.recordingTime && param.recordingTime.length === 2) {
         param.beginTime = moment(param.recordingTime[0]).format('YYYY-MM-DD')
         param.endTime = moment(param.recordingTime[1]).format('YYYY-MM-DD')
@@ -393,7 +412,7 @@ export default {
         that.$refs.table.searchData()
       })
     },
-    reSet() {
+    reSet () {
       const that = this
       Object.keys(that.queryParam).forEach((key) => {
         that.queryParam[key] = null
@@ -406,33 +425,33 @@ export default {
         that.$refs.table.searchData()
       })
     },
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       this.selectedRowKeys = []
       val.map((item) => {
         this.selectedRowKeys.push(item.id)
       })
     },
-    getChangeInfo(planInfoId) {},
-    releaseChange() {
+    getChangeInfo (planInfoId) { },
+    releaseChange () {
       this.changeId = ''
       this.drawerVisible = true
       this.readOnlyVisible = false
     },
-    approveChange(record) {
+    approveChange (record) {
       this.changeId = record.id
       this.submitChangeValidate = true
     },
-    modifyChange(record) {
+    modifyChange (record) {
       this.changeId = record.id
       this.drawerVisible = true
       this.readOnlyVisible = false
     },
-    changAnalyze(record) {
+    changAnalyze (record) {
       this.changeId = record.id
       this.analysisVisible = true
       this.readOnlyVisible = true
     },
-    removeChange(record) {
+    removeChange (record) {
       const that = this
       that
         .$confirm(`是否要删除该变更记录？`, '提示', {
@@ -462,9 +481,9 @@ export default {
             type: type
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
-    submitForRelease(record) {
+    submitForRelease (record) {
       this.id = record.id
       this.planId = record.planInfoId
       this.projectTasksId = record.lastCreateTaskId
@@ -502,7 +521,7 @@ export default {
       })
       // this.submitChangeValidate = true
     },
-    tableRefresh(param) {
+    tableRefresh (param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')
@@ -511,7 +530,7 @@ export default {
           console.error('异步失败的操作')
         })
     },
-    onClose() {
+    onClose () {
       this.drawerVisible = false
       this.submitChangeValidate = false
       this.$refs.table.searchData()
@@ -520,7 +539,7 @@ export default {
         _this.$refs.table.$refs.table.doLayout()
       })
     },
-    submitChangeSave(obj) {
+    submitChangeSave (obj) {
       /* let this_ = this
       if (obj && obj.processInstanceIds && obj.processInstanceIds.length > 0) {
         nextApproveUser.initDataSource(obj.approveTime, obj.processInstanceIds, this_).then(res1 => {
@@ -539,23 +558,23 @@ export default {
       this.$refs.table.searchData()
       this.submitChangeValidate = false
     },
-    closeSelectApproveUser() {
+    closeSelectApproveUser () {
       this.isSelectApproveUserView = false
       this.$emit('approved', this.formData.taskId)
     },
-    commitSelectApproveUser(fullParams) {
+    commitSelectApproveUser (fullParams) {
       this.$refs.form.submitForm(fullParams, this.saveApi)
       this.closeModal()
       this.$emit('closed', true)
     },
-    processApprovalView(record) {
+    processApprovalView (record) {
       if (record.projectClassification === 'PROJECT_CLASSIFICATION_0_02') {
         this.processDefinitionKey = 'planChangeApproveSpecialPlan'
       }
       this.visibleBpmView = true
       this.businessId = record.id
     },
-    onVisibleBpmViewClose() {
+    onVisibleBpmViewClose () {
       this.visibleBpmView = false
       this.businessId = undefined
       this.processDefinitionKey = undefined

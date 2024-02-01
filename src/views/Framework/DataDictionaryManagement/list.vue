@@ -165,6 +165,7 @@ const columns = [
   },
   {
     title: '操作',
+    fixed: 'right',
     dataIndex: 'operation',
     width: '120',
     scopedSlots: {
@@ -189,8 +190,8 @@ export default {
   data () {
     return {
       treeConfig: {
-       'highlight-current': true,
-       'current-node-key': '31'
+        'highlight-current': true,
+        'current-node-key': '31'
       },
       drawerSize: '40%',
       drawerTitle: '',
@@ -210,7 +211,7 @@ export default {
     }
   },
   computed: {},
-  mounted() {},
+  mounted () { },
   methods: {
     onSelect (node) {
       if (node.layersParams) {

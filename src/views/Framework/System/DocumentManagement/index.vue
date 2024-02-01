@@ -178,7 +178,7 @@ export default {
         {
           title: '序号',
           type: 'index',
-          minWidth: 55,
+          width: 55,
           align: 'left',
           headerAlign: 'left'
         },
@@ -211,6 +211,7 @@ export default {
         },
         {
           title: '操作',
+          fixed: 'right',
           dataIndex: 'operation',
           scopedSlots: { customRender: 'operation' },
           width: 120,

@@ -1,24 +1,44 @@
 <template>
   <list-layout>
     <template #north>
-      <common-button :comp="comp" :custom-button-data="customButtonData" :button-type="'round'"></common-button>
-      <search-form-list ref="search" :data-source="searchData" @search="search" @re-set="reSet"></search-form-list>
+      <common-button :comp="comp"
+                     :custom-button-data="customButtonData"
+                     :button-type="'round'"></common-button>
+      <search-form-list ref="search"
+                        :data-source="searchData"
+                        @search="search"
+                        @re-set="reSet"></search-form-list>
     </template>
     <template #center>
       <!-- kanbanView.list -->
-      <common-table ref="table" :flex="200" :columns="columns" :params="queryParam" api="kanbanView.list" :table-refresh="tableRefresh" :pagination="true" @row-dblclick="handleDblClick">
+      <common-table ref="table"
+                    :flex="200"
+                    :columns="columns"
+                    :params="queryParam"
+                    api="kanbanView.list"
+                    :table-refresh="tableRefresh"
+                    :pagination="true"
+                    @row-dblclick="handleDblClick">
         <template #operation="{ scope }">
-          <el-button type="text" @click="modify(scope)">修改</el-button>
-          <el-button type="text" @click="remove(scope)">删除</el-button>
-          <el-button type="text" @click="kanbanAddress(scope.row)">看板配置地址</el-button>
+          <el-button type="text"
+                     @click="modify(scope)">修改</el-button>
+          <el-button type="text"
+                     @click="remove(scope)">删除</el-button>
+          <el-button type="text"
+                     @click="kanbanAddress(scope.row)">看板配置地址</el-button>
           <!-- <el-button type="text" @click="enable(scope)">启用</el-button> -->
         </template>
       </common-table>
     </template>
     <template #drawer-panel>
-      <common-drawer :title="drawerTitle" v-if="visible" :visible="visible" size="100%" @close="compEditClose">
+      <common-drawer :title="drawerTitle"
+                     v-if="visible"
+                     :visible="visible"
+                     size="100%"
+                     @close="compEditClose">
         <template #drawer>
-          <comp-list-edit :record="record" @saveSuccess="saveCallback"></comp-list-edit>
+          <comp-list-edit :record="record"
+                          @saveSuccess="saveCallback"></comp-list-edit>
         </template>
       </common-drawer>
     </template>
@@ -39,7 +59,7 @@ export default {
     SearchFormList,
     CommonButton
   },
-  data() {
+  data () {
     const kanbanUrl = 'Framework/System/KanbanDesign/kanbanView'
     const columns = [
       {
@@ -86,6 +106,7 @@ export default {
       // },
       {
         title: '操作',
+        fixed: 'right',
         dataIndex: 'operation',
         width: '180px',
         align: 'left',
@@ -133,26 +154,26 @@ export default {
     }
   },
   methods: {
-    handleDblClick(row, column, event) {
+    handleDblClick (row, column, event) {
       // console.log('row, column, event>>>>>>>>', row, column, event)
       // if (column.property === 'compType') {
       //   console.log('column.formatter>>>>>>>>', column.formatter())
       // }
     },
-    search(param) {
+    search (param) {
       if (param) {
         this.queryParam = param
       }
       // this.$refs.table.searchData()
     },
-    reSet() {
+    reSet () {
       this.queryParam = this.$data.queryParam
       Object.keys(this.queryParam).forEach((key) => {
         this.queryParam[key] = ''
       })
       this.$refs.table.searchData()
     },
-    tableRefresh(param) {
+    tableRefresh (param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')
@@ -161,17 +182,17 @@ export default {
           console.log('异步失败的操作')
         })
     },
-    edit() {
+    edit () {
       this.record.id = ''
       this.drawerTitle = '新建看板'
       this.visible = true
     },
-    modify(scope) {
+    modify (scope) {
       this.record = Object.assign({}, scope.row)
       this.drawerTitle = '修改看板'
       this.visible = true
     },
-    remove(scope) {
+    remove (scope) {
       this.$confirm(`是否确定要删除该看板？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -187,12 +208,12 @@ export default {
           console.log(e)
         })
     },
-    enable(scope) {},
-    compEditClose() {
+    enable (scope) { },
+    compEditClose () {
       this.visible = false
       this.$refs.table.searchData()
     },
-    saveCallback() {
+    saveCallback () {
       this.$refs.table.searchData()
       this.compEditClose()
     },
@@ -209,9 +230,9 @@ export default {
             e.preventDefault();
             document.oncopy = null;
           }
-      })(url);
-      document.execCommand('Copy');
-      this.$message({
+        })(url);
+        document.execCommand('Copy');
+        this.$message({
           type: 'success',
           message: '已复制到粘贴板'
         });
