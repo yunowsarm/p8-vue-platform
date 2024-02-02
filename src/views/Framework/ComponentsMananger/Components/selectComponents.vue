@@ -4,6 +4,7 @@
 <template>
   <common-dialog title="选择组件"
                  :visible="visible"
+                 :dialog-height="600"
                  @handle-cancel="handleCancel"
                  @handle-ok="handleOk"
                  @close="handleCancel">
@@ -12,13 +13,19 @@
                v-model="activeName">
         <el-tab-pane label="内部组件"
                      name="first">
-          <normal-layout :header-visible="false">
+          <normal-layout :header-visible="true">
             <template #west>
               <common-tree :data="treeData"
                            :tree-param="treeParam"
                            :tree-config="{ 'default-checked-keys': ['0'], 'default-checked-keys': ['table'] }"
                            :default-expand-all="true"
                            @select="onSelect"></common-tree>
+            </template>
+            <template #north>
+              <search-form-list ref="search"
+                      :dataSource="searchData"
+                      @search="search"
+                      @re-set="reSet"></search-form-list>
             </template>
             <template #center>
               <common-table ref="table"
@@ -85,7 +92,7 @@
 </style>
 <script>
 import { Button } from 'element-ui'
-import { P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Dialog as CommonDialog, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import { P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Dialog as CommonDialog, P8Table as CommonTable, P8Drawer as CommonDrawer, P8Search as SearchFormList } from 'p8-components-ui'
 import TableRender from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
 const componentData = {
   table: {
@@ -128,13 +135,28 @@ const componentData = {
       },
       {
         title: '操作',
+        fixed: 'right',
         dataIndex: 'operation',
         scopedSlots: { customRender: 'custom' },
         minWidth: 80,
         align: 'center'
       }
     ],
-    api: 'formGenerator.tableList'
+    api: 'formGenerator.tableList',
+    searchData: [
+      {
+        type: 'text',
+        labelText: '表格名字',
+        fieldName: 'name',
+        placeholder: '请输入表格名字'
+      },
+      {
+        type: 'text',
+        labelText: '表格编码',
+        fieldName: 'code',
+        placeholder: '请输入表格编码'
+      }
+    ]
   },
   form: {
     url: 'Framework/ComponentsMananger/Form/Components/Components/edit',
@@ -188,7 +210,21 @@ const componentData = {
         headerAlign: 'left'
       }
     ],
-    api: 'formGenerator.formList'
+    api: 'formGenerator.formList',
+    searchData: [
+      {
+        type: 'text',
+        labelText: '表单名称',
+        fieldName: 'desformName',
+        placeholder: '请输入表单名称'
+      },
+      {
+        type: 'text',
+        labelText: '表单编码',
+        fieldName: 'desformCode',
+        placeholder: '请输入表单编码'
+      }
+    ]
   },
   layout: {
     url: '',
@@ -265,7 +301,21 @@ const componentData = {
         }
       }
     ],
-    api: 'desLayout.list'
+    api: 'desLayout.list',
+    searchData: [
+      {
+        type: 'text',
+        labelText: '布局名称',
+        fieldName: 'layoutName',
+        placeholder: '请输入布局名称'
+      },
+      {
+        type: 'text',
+        labelText: '布局编号',
+        fieldName: 'layoutCode',
+        placeholder: '请输入布局编号'
+      }
+    ]
   },
   kanban: {
     url: '',
@@ -318,7 +368,23 @@ const componentData = {
         headerAlign: 'left'
       }
     ],
-    api: 'kanbanView.list'
+    api: 'kanbanView.list',
+    searchData: [
+      {
+        type: 'text', // 组件名称
+        labelText: '看板名称', // 控件显示的文本
+        fieldName: 'name',
+        defaultValue: '',
+        placeholder: '请输入看板名称'
+      },
+      {
+        type: 'text', // 组件名称
+        labelText: '看板编码', // 控件显示的文本
+        fieldName: 'code',
+        defaultValue: '',
+        placeholder: '请输入看板编码'
+      }
+    ]
   }
 }
 export default {
@@ -385,13 +451,28 @@ export default {
         },
         {
           title: '操作',
+          fixed: 'right',
           dataIndex: 'operation',
           scopedSlots: { customRender: 'custom' },
           minWidth: 80,
           align: 'center'
         }
       ],
-      type: 'table'
+      type: 'table',
+      searchData: [
+        {
+          type: 'text',
+          labelText: '表格名字',
+          fieldName: 'name',
+          placeholder: '请输入表格名字'
+        },
+        {
+          type: 'text',
+          labelText: '表格编码',
+          fieldName: 'code',
+          placeholder: '请输入表格编码'
+        }
+      ]
     }
   },
   components: {
@@ -401,7 +482,8 @@ export default {
     CommonDialog,
     CommonTable,
     CommonDrawer,
-    TableRender
+    TableRender,
+    SearchFormList
   },
   methods: {
     handleCancel () {
@@ -458,6 +540,7 @@ export default {
       const that = this
       this.columns = componentData[obj.id].columns
       this.tableApi = componentData[obj.id].api
+      this.searchData = componentData[obj.id].searchData
       this.type = obj.id
       that.$nextTick(() => {
         this.$refs.table.searchData()
@@ -478,6 +561,12 @@ export default {
     preview (row) {
       this.record = Object.assign({}, row)
       this.functionTestVisible = true
+    },
+    search (queryParam) {
+      this.queryParam = queryParam
+    },
+    reSet () {
+      this.queryParam = {}
     }
   }
 }

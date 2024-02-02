@@ -83,6 +83,7 @@ const columns = [
   },
   {
     title: '操作',
+    fixed: 'right',
     dataIndex: 'operation',
     scopedSlots: { customRender: 'operation' },
     align: 'left',
