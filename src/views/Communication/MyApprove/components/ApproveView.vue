@@ -8,9 +8,10 @@
                    :tabs-data="tabs">
         <template #approval>
           <component ref="approveContent"
+                     class="approveComponent"
                      :style="{ height: tabsHeight }"
                      :is="componentUrl"
-                     v-if="formComp != null && formComp != '' && componentsParams"
+                     v-if="componentsParams"
                      :code="componentsParams.code"
                      :data-view-id="componentsParams.dataViewId"
                      :record="{ desformCode: componentsParams.codeForm }"
@@ -749,6 +750,9 @@ $paddingLeft: 10px;
       height: 100%;
     }
   }
+}
+.approveComponent ::v-deep .formElement .el-col{
+  height: unset !important;
 }
 .custom-tabs {
   height: calc(100% - 40px);

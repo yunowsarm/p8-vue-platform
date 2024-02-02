@@ -3,9 +3,9 @@
     <template #north>
       <el-button type="primary"
                  @click="createThird">新建</el-button>
-      <search-form-list ref="search" 
-                        :data-source="searchDatasource" 
-                        @search="search" 
+      <search-form-list ref="search"
+                        :data-source="searchDatasource"
+                        @search="search"
                         @re-set="reset"></search-form-list>
     </template>
     <template #center>
@@ -15,12 +15,17 @@
                     :params="queryParam"
                     :api="tableApi"
                     :pagination="true">
-                    <template #operation="{scope}">
-                      <el-button type="text" round @click="updateThird(scope.row)">修改</el-button>
-                      <el-divider direction="vertical"></el-divider>
-                      <el-button type="text" round @click="deleteThird(scope.row)" :disabled="scope.row.type == '0'">删除</el-button>
-                    </template>
-                    </common-table>
+        <template #operation="{scope}">
+          <el-button type="text"
+                     round
+                     @click="updateThird(scope.row)">修改</el-button>
+          <el-divider direction="vertical"></el-divider>
+          <el-button type="text"
+                     round
+                     @click="deleteThird(scope.row)"
+                     :disabled="scope.row.type == '0'">删除</el-button>
+        </template>
+      </common-table>
     </template>
     <template #drawer-panel>
       <common-drawer v-if="visibleThirdDrawer"
@@ -29,7 +34,9 @@
                      size="60%"
                      @close="visibleThirdDrawer = false">
         <template #drawer>
-          <edit :id="id" :type="type" @saveSuccess="onEditThird"></edit>
+          <edit :id="id"
+                :type="type"
+                @saveSuccess="onEditThird"></edit>
         </template>
       </common-drawer>
     </template>
@@ -60,6 +67,7 @@ const columns = [
   },
   {
     title: '操作',
+    fixed: 'right',
     dataIndex: 'operation',
     width: 150,
     scopedSlots: { customRender: 'custom' },
@@ -114,7 +122,7 @@ export default {
       this.$refs.table.searchData()
     },
     deleteThird (record) {
-      this.$api['taskAttribute.delete']({id: record.id}).then(res => {
+      this.$api['taskAttribute.delete']({ id: record.id }).then(res => {
         if (res) {
           this.$refs.table.searchData()
         }

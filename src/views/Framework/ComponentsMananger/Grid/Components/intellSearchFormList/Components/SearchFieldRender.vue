@@ -243,6 +243,11 @@ export default {
       popLabel: '' // 弹出选择回填label
     }
   },
+  created (){
+    if(this.fields.type == 'text' || this.fields.type == 'textarea'){
+      this.mode = 'like'
+    }
+  },
   async mounted () {
     let that = this
     let needHandleTags = ['treeSelect', 'select']

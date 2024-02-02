@@ -247,7 +247,8 @@ export default {
     async handleMenuBeforClose (done) {
       this.$router.push({ path: this.currentRouterPath })
       this.visible = false
-      this.dateTime = new Date().getTime()
+      // this.dateTime = new Date().getTime()
+      this.$refs.tableRender.search()
     },
     // 点击项目/计划列钻取进入三级菜单-计划编制页面
     drillCol (scope, thirdMenuData) {

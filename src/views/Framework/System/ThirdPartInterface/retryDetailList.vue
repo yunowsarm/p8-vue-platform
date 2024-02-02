@@ -1,16 +1,18 @@
 <template>
   <div>
-    <form-list ref="form" @rendered="rendered" :data-source="dataSource" :form="record" :is-view="true"></form-list>
-    <common-table
-      ref="table"
-      v-on="{ doOneRetry: doOneRetry }"
-      :columns="columns"
-      :params="queryParam"
-      :api="retryDetailListApi"
-      :table-refresh="tableRefresh"
-      :pagination="true"
-      @click="iconClick"
-    ></common-table>
+    <form-list ref="form"
+               @rendered="rendered"
+               :data-source="dataSource"
+               :form="record"
+               :is-view="true"></form-list>
+    <common-table ref="table"
+                  v-on="{ doOneRetry: doOneRetry }"
+                  :columns="columns"
+                  :params="queryParam"
+                  :api="retryDetailListApi"
+                  :table-refresh="tableRefresh"
+                  :pagination="true"
+                  @click="iconClick"></common-table>
   </div>
 </template>
 <script>
@@ -52,6 +54,7 @@ const columns = [
   },
   {
     title: '操作',
+    fixed: 'right',
     dataIndex: 'operation',
     scopedSlots: { customRender: 'operation' },
     align: 'center'
@@ -75,7 +78,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       loadPermissionBtn: true,
       advanced: false,
@@ -116,10 +119,10 @@ export default {
       modifyData: {}
     }
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    rendered() {},
-    tableRefresh(param) {
+    rendered () { },
+    tableRefresh (param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')
@@ -128,10 +131,10 @@ export default {
           console.log('异步失败的操作')
         })
     },
-    iconClick(record) {
+    iconClick (record) {
       console.log(record, 'record')
     },
-    doOneRetry(record) {
+    doOneRetry (record) {
       /// commonDrawer 中的commonTable row 上的按钮获取错误，可能没有按照parentId获取，待组件满足
       let that = this
       this.$confirm('是否确定要进行单条手动处理？', '提示', {
@@ -152,7 +155,7 @@ export default {
               console.log(error)
             })
         })
-        .catch(() => {})
+        .catch(() => { })
     }
   }
 }

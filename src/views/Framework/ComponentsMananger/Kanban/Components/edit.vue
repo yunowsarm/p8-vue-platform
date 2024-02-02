@@ -679,6 +679,7 @@ export default {
       } else {
         this.dataSource = this.$options.data().dataSource
       }
+      this.dateKey = new Date().getTime()
     },
     'formData.dataviewId': function (newVal, oldVal) {
       let that = this
