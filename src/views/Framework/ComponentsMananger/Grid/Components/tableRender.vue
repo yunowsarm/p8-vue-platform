@@ -804,7 +804,7 @@ export default {
                   // 查询放置表头
                   columnData.push({
                     title: item.fieldTxt,
-                    headerAlign: item.title,
+                    headerAlign: item.title ? item.title : 'center',
                     align: item.alignmentStyle,
                     dataIndex: item.fieldName,
                     minWidth: item.fieldWidth,
@@ -819,7 +819,7 @@ export default {
                   // 查询放置表头
                   columnData.push({
                     title: item.fieldTxt,
-                    headerAlign: item.title,
+                    headerAlign: item.title ? item.title : 'center',
                     align: item.alignmentStyle,
                     dataIndex: item.fieldName,
                     minWidth: item.fieldWidth,
@@ -836,7 +836,7 @@ export default {
                   // 查询放置按钮区域
                   columnData.push({
                     title: item.fieldTxt,
-                    headerAlign: item.title,
+                    headerAlign: item.title ? item.title : 'center',
                     align: item.alignmentStyle,
                     dataIndex: item.fieldName,
                     minWidth: item.fieldWidth,
@@ -851,7 +851,7 @@ export default {
                   // 序号列为自定义列，默认的fieldName为"_ROWNO"
                   columnData.push({
                     title: item.fieldTxt,
-                    headerAlign: item.title,
+                    headerAlign: item.title ? item.title : 'center',
                     align: item.alignmentStyle,
                     dataIndex: item.fieldName,
                     minWidth: item.fieldWidth,
@@ -860,7 +860,7 @@ export default {
                 } else {
                   columnData.push({
                     title: item.fieldTxt,
-                    headerAlign: item.title,
+                    headerAlign: item.title ? item.title : 'center',
                     align: item.alignmentStyle,
                     dataIndex: item.fieldName,
                     minWidth: item.fieldWidth,
@@ -871,7 +871,7 @@ export default {
               } else {
                 columnData.push({
                   title: item.fieldTxt,
-                  headerAlign: item.title,
+                  headerAlign: item.title ? item.title : 'center',
                   align: item.alignmentStyle,
                   dataIndex: item.fieldName,
                   minWidth: item.fieldWidth,
