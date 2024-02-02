@@ -1812,8 +1812,8 @@ export const kanbanApi = {
     {
       name: 'getViewData',
       method: 'POST',
-      path: '/product/pm/planOverview/applyDataviewNew',
-      mockPath: '/product/pm/planOverview/applyDataviewNew',
+      path: '/product/pm/planOverview/applyDataview',
+      mockPath: '/product/pm/planOverview/applyDataview',
       desc: '看板组件管理-获取数据视图数据'
     },
     // {
