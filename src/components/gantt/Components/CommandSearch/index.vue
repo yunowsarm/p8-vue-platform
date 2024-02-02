@@ -1,17 +1,17 @@
 <template>
   <el-form id="ganttSearch" ref="searchForm" :inline="true" :model="searchForm" class="demo-form-inline" size="mini" label-width="75px" label-position="right">
     <el-form-item label="大纲层级" prop="deep">
-      <el-select v-model="searchForm.deep" class="field" style="width: 100%">
+      <el-select v-model="searchForm.deep" class="field" clearable style="width: 100%">
         <el-option v-for="(item, index) in vueThis.deep" :key="index + 1" :label="index + 1" :value="index + 1"> </el-option>
       </el-select>
     </el-form-item>
 
     <el-form-item label="任务名称" prop="name">
-      <el-input v-model="searchForm.name" placeholder="请输入" class="field"></el-input>
+      <el-input v-model="searchForm.name" placeholder="请输入" class="field" clearable></el-input>
     </el-form-item>
 
     <el-form-item label="角色" v-if="isInput" prop="roleName">
-      <el-select v-model="searchForm.roleIds" filterable collapse-tags class="field" style="width: 100%">
+      <el-select v-model="searchForm.roleIds" filterable collapse-tags class="field" clearable style="width: 100%">
         <el-option v-for="item in roleOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
       </el-select>
     </el-form-item>
@@ -20,41 +20,41 @@
     </el-form-item>
 
     <el-form-item label="责任人" v-if="isInput" prop="ownerName">
-      <el-select v-model="searchForm.ownerIds" filterable collapse-tags class="field" style="width: 100%">
+      <el-select v-model="searchForm.ownerIds" filterable collapse-tags class="field" clearable style="width: 100%">
         <el-option v-for="item in userOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
       </el-select>
     </el-form-item>
     <el-form-item label="责任人" v-else prop="name">
-      <el-input v-model="searchForm.ownerIds" placeholder="请输入" class="field"></el-input>
+      <el-input v-model="searchForm.ownerIds" placeholder="请输入" class="field" clearable></el-input>
     </el-form-item>
 
     <el-form-item label="部门" v-if="isInput" prop="deptName">
-      <el-select v-model="searchForm.deptIds" filterable collapse-tags class="field" style="width: 100%">
+      <el-select v-model="searchForm.deptIds" filterable collapse-tags class="field" clearable style="width: 100%">
         <el-option v-for="item in deptOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
       </el-select>
     </el-form-item>
     <el-form-item label="部门" v-else prop="name">
-      <el-input v-model="searchForm.deptIds" placeholder="请输入" class="field"></el-input>
+      <el-input v-model="searchForm.deptIds" placeholder="请输入" class="field" clearable></el-input>
     </el-form-item>
 
     <el-form-item label="任务类型" prop="planType">
-      <el-select v-model="searchForm.planTypes" collapse-tags class="field" style="width: 100%">
+      <el-select v-model="searchForm.planTypes" collapse-tags class="field" clearable style="width: 100%">
         <el-option v-for="item in vueThis.taskClassifyDatas" :key="item.id" :label="item.title" :value="item.id"> </el-option>
       </el-select>
     </el-form-item>
 
     <el-form-item label="任务状态" prop="managerStatus">
-      <el-select v-model="searchForm.managerStatus" collapse-tags class="field" style="width: 100%">
+      <el-select v-model="searchForm.managerStatus" collapse-tags class="field" clearable style="width: 100%">
         <el-option v-for="item in vueThis.managerStatusMap" :key="item.cminorcode" :label="item.cmeaning" :value="item.cminorcode"> </el-option>
       </el-select>
     </el-form-item>
 
     <el-form-item label="标识" prop="monitors">
-      <el-select v-model="searchForm.monitorPoints" collapse-tags class="field" style="width: 100%">
+      <el-select v-model="searchForm.monitorPoints" collapse-tags class="field" clearable style="width: 100%">
         <el-option v-for="item in vueThis.monitorPointDatas" :key="item.id" :label="item.title" :value="item.id"> </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="完成时间" prop="startEndDate" class="block">
+    <el-form-item label="完成时间" prop="startEndDate" class="block" clearable>
       <el-date-picker class="field" v-model="searchForm.startEndDate" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
     </el-form-item>
 
