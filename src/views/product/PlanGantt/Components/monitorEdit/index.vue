@@ -12,7 +12,7 @@
       @form-delete="formDelete"
     >
       <template #logBeginTimeView="{ scope }">
-        <span>{{ scope.logBeginTime }}~{{ scope.logEndTime }}</span>
+        <span>{{ scope.logBeginTime }}{{ scope.logBeginTime || scope.logEndTime ? '~' : '' }}{{ scope.logEndTime }}</span>
       </template>
     </form2>
   </div>
