@@ -1,13 +1,7 @@
 <template>
   <div style="height: 100%">
     <div class="top" :style="{ height: commandButtonBarHeight }">
-      <command-button-bar
-        :panel-data="btnData"
-        :selected-tasks="selectedTasks"
-        :gantt-name="ganttName"
-        :plan-info-id="planInfoId"
-        @change-command-button="changeCommandButton"
-      ></command-button-bar>
+      <command-button-bar :panel-data="btnData" :selected-tasks="selectedTasks" :gantt-name="ganttName" :plan-info-id="planInfoId" @change-command-button="changeCommandButton"></command-button-bar>
     </div>
     <div class="bottom" :class="expandBottom">
       <div class="myGantt" ref="myGantt" style="width: 100%; height: calc(100% - 40px) !important"></div>
@@ -41,11 +35,10 @@
 @import '~p8-dhtmlx-gantt/codebase/dhtmlxgantt.css';
 @import '@/assets/commonJS/ganttJS/ganttObject.css';
 
-
 .myGantt ::v-deep {
   // 2个版本，无数据的颜色修改
   .gantt_row:not([aria-expanded]).analysisColor {
-    background-color: #ffa96e;
+    background-color: #ffa96e !important;
   }
 }
 
@@ -299,8 +292,7 @@ export default {
         .then(function (res) {
           if (res) {
             // 初始化数据
-            let initData
-            initData = res.tasks.map(item => {
+            const initData = res.tasks.map((item) => {
               item.changeStatus = ''
               let obj = {}
               obj = {
@@ -317,7 +309,7 @@ export default {
               }
               return obj
             })
-            let datas = {
+            const datas = {
               tasks: initData,
               links: res.links
             }
