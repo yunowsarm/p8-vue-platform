@@ -331,6 +331,9 @@ export default {
       if (val) {
         this.mode = '='
         this.popLabel = ''
+        if(this.fields.type == 'text' || this.fields.type == 'textarea'){
+          this.mode = 'like'
+        }
       }
     }
   },
