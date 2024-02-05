@@ -342,6 +342,7 @@ export default {
           data.map((item) => {
             if (item.id === _this.selectTaskOwnerId) {
               _this.$refs.tableCom.$refs.table.setCurrentRow(item)
+              _this.currentRow = item
               _this.$refs.tableCom.$refs.table.toggleRowSelection(item, true)
             }
           })
