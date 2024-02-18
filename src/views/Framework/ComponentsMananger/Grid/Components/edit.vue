@@ -358,6 +358,7 @@
             <div v-if="scope.row.searchMode === 'datetimeRange'">
               <el-date-picker v-model="scope.row.defaultValueDatas"
                               type="daterange"
+                              unlink-panels
                               style="width: 100%"
                               :disabled="!!scope.row.isCustomColumn"
                               range-separator="至"
@@ -1075,6 +1076,7 @@
                                 type="daterange"
                                 style="width: 100%"
                                 range-separator="至"
+                                unlink-panels
                                 start-placeholder="开始日期"
                                 end-placeholder="结束日期"
                                 valueFormat='yyyy-MM-dd'
