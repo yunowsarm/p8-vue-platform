@@ -99,6 +99,7 @@
                               label-width="100px">
                   <el-date-picker v-model="formData.changeDateRange"
                                   type="daterange"
+                                  unlink-panels
                                   range-separator="至"
                                   start-placeholder="开始日期"
                                   end-placeholder="结束日期">
@@ -201,6 +202,7 @@
                 <el-form-item label="预计起止时间">
                   <el-date-picker v-model="formData.forecastDateRange"
                                   type="daterange"
+                                  unlink-panels
                                   range-separator="至"
                                   start-placeholder="开始日期"
                                   end-placeholder="结束日期">
