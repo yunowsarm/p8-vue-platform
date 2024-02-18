@@ -2214,9 +2214,7 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      if (checkSwitchType(tasks)) {
-        return true
-      }
+      return false
     }
   },
   {
