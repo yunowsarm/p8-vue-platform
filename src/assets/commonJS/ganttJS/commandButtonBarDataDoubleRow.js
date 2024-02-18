@@ -48,6 +48,11 @@ const CommandButtonBarDataDoubleRow = [
             position: ['top']
           },
           {
+            buttonId: 'batch-owner',
+            size: 'small',
+            position: ['top']
+          },
+          {
             buttonId: 'remove-tasks',
             size: 'small',
             position: ['top', 'right']
