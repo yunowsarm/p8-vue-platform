@@ -19,6 +19,7 @@
                      v-if="addWidgetVisible"
                      :visible="addWidgetVisible"
                      destroy-on-close
+                     dialog-height=500
                      @close="handleCancel('addWidgetVisible')"
                      :show-handle-btn="false"
                      :is-view-cs-footer="true"
@@ -31,12 +32,23 @@
                      :close-on-press-escape="false">
         <template #dialog>
           <!-- kanbanComponent.list -->
-          <common-table ref="table"
-                        :params="queryParam"
-                        api="kanbanComponent.list"
-                        :columns="columns"
-                        :pagination="true">
-          </common-table>
+          <list-layout>
+            <template #north>
+              <search-form-list ref="search"
+                                label-width="100px"
+                                :data-source="searchData"
+                                @search="search"
+                                @re-set="reSet"></search-form-list>
+            </template>
+            <template #center>
+              <common-table ref="table"
+                            :params="queryParam"
+                            api="kanbanComponent.list"
+                            :columns="columns"
+                            :pagination="true">
+              </common-table>
+            </template>
+          </list-layout>
         </template>
         <template #cs-footer>
           <el-button @click="addWidgetVisible=false">取消</el-button>
@@ -163,7 +175,7 @@
 <script>
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import { SmartWidgetGrid } from 'p8-vue-smart-widget'
-import { P8Table as CommonTable, P8Dialog as CommonDialog } from 'p8-components-ui'
+import { P8ListLayout as ListLayout, P8Search as SearchFormList, P8Table as CommonTable, P8Dialog as CommonDialog } from 'p8-components-ui'
 import _cloneDeep from 'lodash/cloneDeep'
 import widgetItem from './widget-item.vue'
 import dynamicLink from './dynamic-link.vue'
@@ -188,7 +200,9 @@ export default {
     renderView,
     VuePerfectScrollbar,
     dynamicLink,
-    AntvView
+    AntvView,
+    SearchFormList,
+    ListLayout
   },
   props: {
     widget: {
@@ -231,6 +245,14 @@ export default {
   },
   data () {
     return {
+      searchData: [
+        {
+          type: 'text',
+          labelText: '组件名称',
+          fieldName: 'name',
+          placeholder: '请输入组件名称'
+        }
+      ],
       tableSearchList: [],
       searchList: [],
       widgetList: [],
@@ -259,15 +281,25 @@ export default {
           title: '组件名称',
           dataIndex: 'name'
         },
-        {
-          title: '描述',
-          dataIndex: 'compCode'
-        }
+        // {
+        //   title: '描述',
+        //   dataIndex: 'compCode'
+        // }
       ],
       widgetResizeStatus: []
     }
   },
   methods: {
+    search (param) {
+      let that = this
+      if (param) {
+        that.queryParam = param
+      }
+    },
+    reSet () {
+      let that = this
+      Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = null })
+    },
     searchData (data) {
       this.tableSearchList = Array.from(new Set([...this.tableSearchList, ...data]))
       this.changeSearchConfig()
