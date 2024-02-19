@@ -9,18 +9,14 @@
         <common-upload :files="files"
                        @upload="handleUpload"
                        @remove="handleRemove"></common-upload>
-      </div>
-    </template>
-    <template #west>
-      <div style="padding: 10px">
         <search-form-list ref="search"
-                          search-width="90%"
-                          search-contain-width="100%"
-                          label-width="70px"
+                          label-width="100px"
                           :data-source="searchData"
                           @search="search"
                           @re-set="reSet"></search-form-list>
       </div>
+    </template>
+    <template #west>
       <div class="treeContain">
         <common-tree :tree-api="treeDataApi"
                      :tree-param="treeParam"
@@ -336,6 +332,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.upload-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
 .time {
   font-size: 13px;
   color: #999;
