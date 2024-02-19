@@ -15,7 +15,7 @@
                  style="width: 100%">
         <el-option v-for="(item, index) in vueThis.deep"
                    :key="index + 1"
-                   :label="index + 1"
+                   :label="index + 1 + '级'"
                    :value="index + 1"> </el-option>
       </el-select>
     </el-form-item>
