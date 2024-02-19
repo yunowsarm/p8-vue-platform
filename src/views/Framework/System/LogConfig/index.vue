@@ -5,6 +5,11 @@
                      :button-config="buttonConfig"
                      :special-rote-name="roteName"
                      :button-type="'round'"></common-button>
+      <search-form-list ref="search"
+                        label-width="100px"
+                        :data-source="searchData"
+                        @search="search"
+                        @re-set="reSet"></search-form-list>
     </template>
     <template #center>
       <common-table ref="table"
@@ -34,7 +39,7 @@
 // }
 </style>
 <script>
-import { P8ListLayout as ListLayout, P8Table as CommonTable, P8Button as CommonButton, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import { P8Search as SearchFormList, P8ListLayout as ListLayout, P8Table as CommonTable, P8Button as CommonButton, P8Drawer as CommonDrawer } from 'p8-components-ui'
 import edit from './Components/edit.vue'
 export default {
   name: 'LogConfig',
@@ -152,7 +157,31 @@ export default {
       columns: columns,
       buttonConfig: {
         icon: 'edit'
-      }
+      },
+      searchData: [
+        {
+          type: 'text',
+          labelText: '业务对象名',
+          fieldName: 'entityName',
+          placeholder: '请输入业务对象名'
+        },
+        {
+          type: 'select',
+          labelText: '动作ID',
+          fieldName: 'actionId',
+          optionUrl: {
+            api: 'thirdPartInterface.getDic',
+            params: { dicType: 'LOG_ACTION' }
+          },
+          placeholder: '请输入动作ID'
+        },
+        {
+          type: 'text',
+          labelText: '功能模块',
+          fieldName: 'module',
+          placeholder: '请输入功能模块'
+        }
+      ],
     }
   },
   props: {
@@ -162,6 +191,16 @@ export default {
     }
   },
   methods: {
+    search (param) {
+      let that = this
+      if (param) {
+        that.queryParams = param
+      }
+    },
+    reSet () {
+      let that = this
+      Object.keys(that.queryParams).forEach(key => { that.queryParams[key] = null })
+    },
     // 新建
     create () {
       this.drawerTitle = '新建'
@@ -201,7 +240,8 @@ export default {
     CommonTable,
     edit,
     CommonButton,
-    CommonDrawer
+    CommonDrawer,
+    SearchFormList
   }
 }
 </script>

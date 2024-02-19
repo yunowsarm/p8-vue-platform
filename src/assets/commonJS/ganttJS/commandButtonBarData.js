@@ -47,6 +47,11 @@ const CommandButtonBarData = [
             position: ['top']
           },
           {
+            buttonId: 'batch-owner',
+            size: 'small',
+            position: ['top']
+          },
+          {
             buttonId: 'remove-tasks',
             size: 'large',
             position: ['top', 'right']

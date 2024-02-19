@@ -113,6 +113,7 @@
           <div v-if="scope.row.type === 'datetimeRange'">
             <el-date-picker v-model="scope.row.selectCode"
                             type="daterange"
+                            unlink-panels
                             style="width: 100%"
                             range-separator="至"
                             start-placeholder="开始日期"
@@ -548,7 +549,7 @@ export default {
           queryParams.urlType = queryParams.urlType.toString()
         }
         if (this.formData.searchConfigValue) {
-          if(this.formData.searchConfigValue.indexOf('null') !== -1) {
+          if (this.formData.searchConfigValue.indexOf('null') !== -1) {
             queryParams.searchConfigValue = ''
           } else {
             queryParams.searchConfigValue = JSON.stringify(this.formData.searchConfigValue)
