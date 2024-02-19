@@ -193,7 +193,8 @@
                    :dialog-height="360">
       <template #dialog>
         <command-search :gantt-name="ganttName"
-                        :plan-info-id="planInfoId"></command-search>
+                        :plan-info-id="planInfoId"
+                        @close="closeSearch"></command-search>
       </template>
     </common-dialog>
     <common-dialog title="统计信息"

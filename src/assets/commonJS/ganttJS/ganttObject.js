@@ -1665,15 +1665,10 @@ function searchFilter(parent, searchForm, ganttObject) {
     const owner = task[ganttObject.config.resource_property]
     const resource = resourceDatas.getItem(owner)
 
-    const deep = Number(searchForm.deep) - 1 // 大纲层级
-    let deepCheck = true
-    if (deep >= 0 && Number(ganttObject.calculateTaskLevel(task)) > Number(deep)) {
-      deepCheck = false
-    }
     const wbs = searchForm.wbs // 大纲号模糊查询
     let wbsCheck = true
-    const code = ganttObject.getWBSCode(task).toString()
-    if (wbs && code.indexOf(wbs) === -1) {
+    const level = task.$level + 1
+    if (wbs && level != wbs) {
       wbsCheck = false
     }
     const taskName = searchForm.name // 任务名称
@@ -1840,7 +1835,6 @@ function searchFilter(parent, searchForm, ganttObject) {
     }
     if (
       wbsCheck &&
-      deepCheck &&
       taskNameCheck &&
       startDateCheck &&
       managerStatusCheck &&
@@ -3071,20 +3065,7 @@ GanttObject.searchColumnsDataInit = function (vueThis, ganttObject) {
               placeholder: '请选择', // 默认提示文本
               onSelect: function (value) {
                 // select change事件
-                if (name === 'wbs') {
-                  // 列->大纲: 查询和其他列查询方式不同: 大纲列单独处理,选中的值单独存放; 其余列查询按照值进行包含匹配
-                  vueThis.searchForm__WBS = value
-                  ganttObject.eachTask(function (task) {
-                    if (value && ganttObject.calculateTaskLevel(task) === value - 1) {
-                      task.$open = false
-                    } else {
-                      task.$open = true
-                    }
-                  })
-                  ganttObject.render()
-                } else {
-                  Gantt.searchColumnsChange(name, value, 'select', vueThis[selectorKey])
-                }
+                Gantt.searchColumnsChange(name, value, 'select', vueThis[selectorKey])
               }
             })
             vueThis[selectorKey] = obj

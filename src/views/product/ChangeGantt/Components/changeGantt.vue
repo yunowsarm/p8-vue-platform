@@ -88,7 +88,7 @@
     ></selectApproveUser>
     <common-dialog title="查询" width="90%" :visible="ganttSearchVisible" :show-handle-btn="false" @isfullscreen="isfullscreen" @close="closeSearch" :is-view-cs-footer="false" :dialog-height="360">
       <template #dialog>
-        <command-search :gantt-name="ganttName" :is-input="false" :plan-info-id="planInfoId"></command-search>
+        <command-search :gantt-name="ganttName" :is-input="false" :plan-info-id="planInfoId" @close="closeSearch"></command-search>
       </template>
     </common-dialog>
     <common-dialog
