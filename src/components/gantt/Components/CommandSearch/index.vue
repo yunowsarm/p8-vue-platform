@@ -9,7 +9,7 @@
            label-position="right">
     <el-form-item label="大纲层级"
                   prop="deep">
-      <el-select v-model="searchForm.deep"
+      <el-select v-model="searchForm.wbs"
                  class="field"
                  clearable
                  style="width: 100%">
@@ -197,7 +197,7 @@ export default {
       roleOptions: [],
       searchCheck: false,
       searchForm: {
-        deep: '',
+        wbs: '',
         name: '',
         roleIds: this.isInput ? [] : '',
         ownerIds: this.isInput ? [] : '',
@@ -251,6 +251,7 @@ export default {
         const ganttObject = GanttObject.getGanttObject(this.ganttName)
         ganttObject.refreshData()
         this.searchCheck = false
+        this.$emit('close')
       }
     },
     // 重置
