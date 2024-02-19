@@ -676,7 +676,7 @@ export default {
           relation: 'and'
         }
       })
-      this.tableParam.reportParam = { ...obj, ...this.tableParam.reportParam }
+      this.tableParam.sqlParam = { ...obj, ...this.tableParam.sqlParam }
       this.propParam = Object.assign(this.propParam, val)
     }
   },
@@ -1081,7 +1081,7 @@ export default {
       this.sqlParam = sqlParam
       // this.tableParam.reportParam = { ...reportParam, ...this.tableParam.reportParam }
       this.tableParam.sqlParam = { ...sqlParam, ...this.tableParam.sqlParam, ...this.sqlParam }
-      this.tableParam.reportParam = { ...this.westParmars, ...this.tableParam.reportParam, ...param }
+      this.tableParam.reportParam = { ...this.westParmars, ...param }
     },
     reSet () {
       this.sqlParam = {}
