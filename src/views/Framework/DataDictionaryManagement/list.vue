@@ -3,6 +3,11 @@
     <template #north>
       <common-button :comp="comp"
                      :button-type="'round'"></common-button>
+      <search-form-list ref="search"
+                        label-width="100px"
+                        :data-source="searchData"
+                        @search="search"
+                        @re-set="reSet"></search-form-list>
     </template>
     <template #center>
       <normal-layout :header-visible="false">
@@ -104,7 +109,7 @@
 }
 </style>
 <script>
-import { P8ListLayout as ListLayout, P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Button as CommonButton, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import { P8Search as SearchFormList, P8ListLayout as ListLayout, P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Button as CommonButton, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
 import classifyEdit from './classifyEdit'
 import optionEdit from './optionEdit'
 const columns = [
@@ -185,10 +190,41 @@ export default {
     CommonDrawer,
     classifyEdit,
     optionEdit,
-    ListLayout
+    ListLayout,
+    SearchFormList
   },
   data () {
     return {
+      searchData: [
+        {
+          type: 'text',
+          labelText: '选项名称',
+          fieldName: 'meaning',
+          placeholder: '请输入选项名称'
+        },
+        {
+          type: 'text',
+          labelText: '字典编码',
+          fieldName: 'minorcode',
+          placeholder: '请输入字典编码'
+        },
+        {
+          type: 'radioButton',
+          labelText: '停用状态',
+          options: [
+            {
+              value: '0',
+              label: '启用'
+            },
+            {
+              value: '1',
+              label: '停用'
+            }
+          ],
+          fieldName: 'isDelete',
+          placeholder: ''
+        }
+      ],
       treeConfig: {
         'highlight-current': true,
         'current-node-key': '31'
@@ -213,6 +249,18 @@ export default {
   computed: {},
   mounted () { },
   methods: {
+    search (param) {
+      let that = this
+      if (param) {
+        that.queryParam = { ...param, ...that.queryParam }
+      }
+    },
+    reSet () {
+      let that = this
+      that.queryParam = {
+        dicType: '-1'
+      }
+    },
     onSelect (node) {
       if (node.layersParams) {
         this.queryParam.dicType = node.layersParams.dicType
