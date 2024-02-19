@@ -117,7 +117,7 @@ export function planGantt(ganttName, vueThis) {
               GanttObject.showMessage(vueThis, '前后置关系创建失败！', 'error')
               return { action: 'error' }
             })
-          vueThis.initGantt()
+          // vueThis.initGantt()
         })
       },
       update: function (data, id) {},
