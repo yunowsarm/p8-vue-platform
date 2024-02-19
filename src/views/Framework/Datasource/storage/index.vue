@@ -7,11 +7,15 @@
       <common-button :comp="comp"
                      :button-type="'round'"
                      :custom-button-data="customButtonData"></common-button>
-      <!-- <search-form-list ref="search" :dataSource="searchData" @search="search" @re-set="reSet"></search-form-list> -->
+      <search-form-list ref="search"
+                        :dataSource="searchData"
+                        @search="search"
+                        @re-set="reSet"></search-form-list>
     </template>
     <template #center>
       <common-table ref="table"
                     :columns="columns"
+                    :params="queryParam"
                     api="formGenerator.dataSourceList"
                     :table-refresh="tableRefresh">
         <template #operation="{ scope }">
@@ -41,14 +45,14 @@
 
 <script>
 import Vue from 'vue'
-import { Button, P8ListLayout as ListLayout, P8Table as CommonTable, P8Drawer as CommonDrawer, P8Button as CommonButton } from 'p8-components-ui'
+import { P8Search as SearchFormList, Button, P8ListLayout as ListLayout, P8Table as CommonTable, P8Drawer as CommonDrawer, P8Button as CommonButton } from 'p8-components-ui'
 import CompListEdit from './Components/edit'
 export default {
   name: 'DataSourceList',
   components: {
     ListLayout,
     CommonTable,
-    // SearchFormList,
+    SearchFormList,
     CommonDrawer,
     CompListEdit,
     'el-button': Button,
@@ -122,6 +126,12 @@ export default {
           placeholder: '请输入数据源名称'
         },
         {
+          type: 'text',
+          labelText: '描述',
+          fieldName: 'tableDesc',
+          placeholder: '请输入描述'
+        },
+        {
           type: 'select',
           labelText: '表单类型',
           fieldName: 'tableType',
@@ -138,6 +148,22 @@ export default {
             {
               label: '子表',
               value: '2'
+            }
+          ]
+        },
+        {
+          type: 'select',
+          labelText: '状态',
+          fieldName: 'isDbSynch',
+          placeholder: '下拉选择你要的',
+          options: [
+            {
+              label: '未同步',
+              value: '0'
+            },
+            {
+              label: '已同步',
+              value: '1'
             }
           ]
         }
@@ -170,17 +196,14 @@ export default {
         })
     },
     search (param) {
-      this.queryParam = param
-      const that = this
-      Vue.nextTick(function () {
-        that.$refs.table.searchData()
-      })
+      let that = this
+      if (param) {
+        that.queryParam = param
+      }
     },
     reSet () {
-      const that = this
-      Vue.nextTick(function () {
-        that.$refs.table.searchData()
-      })
+      let that = this
+      Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = null })
     },
     edit () {
       this.record.id = ''
