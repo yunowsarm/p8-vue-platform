@@ -2978,7 +2978,7 @@ GanttObject.searchColumnsDataInit = function (vueThis, ganttObject) {
               for (let i = 0; i < vueThis.deep; i++) {
                 const item = {
                   id: i + 1 + '',
-                  title: i + 1 + ''
+                  title: i + 1 + '级'
                 }
                 datas.push(item)
               }
