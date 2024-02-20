@@ -743,6 +743,8 @@ export const CommandButtonData = [
     title: '批量设置责任人',
     help: '批量设置责任人',
     clickFun: function (btn, ganttName, tasks) {
+      const vueThis = store.getters.vueThis
+      vueThis.selectTaskOwnerId = tasks[0].owner_id
       batchOwner(ganttName)
     },
     isDisableFun: function (btn, ganttName, tasks) {
