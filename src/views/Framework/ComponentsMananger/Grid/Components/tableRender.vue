@@ -17,7 +17,7 @@
                         @search="search"
                         labelWidth="100px"
                         @re-set="reSet"
-                        :form="serachForm"
+                        :form="searchForm"
                         :search-width="searchWidth"
                         :permission-vo="permissionVo"
                         :search-contain-width="searchContainWidth"></search-form-list>
@@ -555,7 +555,7 @@ export default {
       customCSS: {},
       sysParams: Object.assign({ $SYSTEM_PARAMS_SELECT: _cloneDeep(this.$store.state.user.userInfo) }), // 系统级参数
       currentRouterPath: '',
-      serachForm: {},
+      searchForm: {},
       headerVisibleType: this.headerVisible
     }
   },
@@ -1068,7 +1068,6 @@ export default {
     },
     search (param) {
       let sqlParam = {}
-      // let reportParam = {}
       this.searchData.forEach(el => {
         let fieldName = el.replaceSearch ? el.replaceSearch : el.fieldName
         if (el.parameterSource && el.parameterSource == 'SQL参数') {
@@ -1079,7 +1078,6 @@ export default {
         }
       })
       this.sqlParam = sqlParam
-      // this.tableParam.reportParam = { ...reportParam, ...this.tableParam.reportParam }
       this.tableParam.sqlParam = { ...sqlParam, ...this.tableParam.sqlParam, ...this.sqlParam }
       this.tableParam.reportParam = { ...this.westParmars, ...param }
     },
@@ -1117,12 +1115,12 @@ export default {
       }
       let sql = {}
       let report = {}
-      this.serachForm = {}
+      this.searchForm = {}
       this.searchList.forEach(el => {
         if (el.type && el.type == "datetimeRange" && el.defaultValue && el.defaultValue.indexOf(',') !== -1) {
           el.defaultValue = el.defaultValue.split(',')
         }
-        this.serachForm[el.fieldName] = el.defaultValue ? el.defaultValue : ''
+        this.searchForm[el.fieldName] = el.defaultValue ? el.defaultValue : ''
         if (el.parameterSource && el.parameterSource == 'SQL参数') {
           if (reportParam[el.fieldName]) {
             sql[el.fieldName] = { mode: '=', relation: "and", value: reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName] }
