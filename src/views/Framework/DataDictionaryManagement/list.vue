@@ -377,7 +377,7 @@ export default {
     // 删除 选项
     remove (record) {
       const that = this
-      this.$confirm(`是否确定要删除该人员？`, '提示', {
+      this.$confirm(`是否确定要删除该字典项？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

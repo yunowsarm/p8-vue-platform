@@ -282,9 +282,19 @@ export default {
     delete (record) {
       const this_ = this
       this.selectedRecord = record
-      this.$api['documentManagement.delete']({ id: record.id }).then((res) => {
-        this_.queryData()
+      this.$confirm(`是否确定要删除该附件？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
+        .then(() => {
+          this_.$api['documentManagement.delete']({ id: record.id }).then((res) => {
+            this_.queryData()
+          })
+        })
+        .catch((e) => {
+          console.log(e)
+        })
     },
     handleUpload (file) {
       this.uploadFiles.push(file)
