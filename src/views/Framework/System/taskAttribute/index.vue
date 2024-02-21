@@ -122,10 +122,16 @@ export default {
       this.$refs.table.searchData()
     },
     deleteThird (record) {
-      this.$api['taskAttribute.delete']({ id: record.id }).then(res => {
-        if (res) {
-          this.$refs.table.searchData()
-        }
+      this.$confirm('是否要删除该记录？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$api['taskAttribute.delete']({ id: record.id }).then(res => {
+          if (res) {
+            this.$refs.table.searchData()
+          }
+        })
       })
     },
     search (param) {
