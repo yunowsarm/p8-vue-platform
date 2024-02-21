@@ -289,7 +289,7 @@ export default {
     },
     loadGanttData(planInfoId, taskId, createPage, changeRecordId) {
       const vueThis = this
-      vueThis.$api['planGanttManager.loadPlanGanttData']({ planInfoId: planInfoId, dicType: 'ACTIVITY_TYPE', taskId: taskId, createPage: createPage, changeRecordId: changeRecordId, type: '3' })
+      vueThis.$api['planGanttManager.loadPlanGanttData']({ planInfoId: planInfoId, dicType: 'ACTIVITY_TYPE', taskId: taskId, createPage: createPage })
         .then(function (res) {
           if (res) {
             // 初始化数据
