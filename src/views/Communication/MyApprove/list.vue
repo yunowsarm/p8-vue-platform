@@ -66,25 +66,25 @@ export default {
       userUnReadMessageCountApi: 'userMessage.userUnReadMessageCount',
       layoutConfig: {
         left: {
-          xs: 8,
-          sm: 6,
-          md: 5,
-          lg: 5,
-          xl: 5
+          xs: 3,
+          sm: 3,
+          md: 3,
+          lg: 3,
+          xl: 3
         },
         center: {
-          xs: 8,
-          sm: 8,
-          md: 7,
-          lg: 7,
-          xl: 7
+          xs: 6,
+          sm: 6,
+          md: 6,
+          lg: 6,
+          xl: 6
         },
         right: {
-          xs: 8,
-          sm: 10,
-          md: 12,
-          lg: 12,
-          xl: 12
+          xs: 15,
+          sm: 15,
+          md: 15,
+          lg: 15,
+          xl: 15
         }
       },
       searchParams: {
@@ -146,14 +146,14 @@ export default {
     },
     queryMsgList (nodeData) {
       this.searchParams.msgCatalog = nodeData.id
-      this.searchParams.assigneeUserId  = ''
+      this.searchParams.assigneeUserId = ''
       this.searchParams.startUserId = ''
       this.renderTime = new Date() + ''
       if (nodeData.id === 'APPROVE_TYPE_01_02' || nodeData.id === 'APPROVE_TYPE_01_01') {
         this.searchParams.startUserId = this.$store.state.user.userInfo.id
       } else if (nodeData.id === 'APPROVE_TYPE_02_02' || nodeData.id === 'APPROVE_TYPE_02_01') {
         this.searchParams.assigneeUserId = this.$store.state.user.userInfo.id
-      } 
+      }
     },
     userCatalogCount (queryParam) {
       let params = queryParam != null ? queryParam : this.searchParams
