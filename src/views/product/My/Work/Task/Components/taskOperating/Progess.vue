@@ -183,9 +183,13 @@ export default {
   },
   created () {
     this.dialogVisible = false
-    //false 已超期
-    if (!this.durationDay) {
-      this.dialogVisible = true
+    if (this.getPlanInfo().pageType === 'view') {
+      this.dialogOk()
+    } else {
+      //false 已超期
+      if (!this.durationDay) {
+        this.dialogVisible = true
+      }
     }
     this.getDeviatuon()
   },
