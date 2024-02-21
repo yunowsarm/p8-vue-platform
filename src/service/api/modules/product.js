@@ -247,6 +247,13 @@ export const repositoryApi = {
       desc: '我的任务->列表->计划执行->获取任务信息'
     },
     {
+      name: 'getTaskByIdByCapitalization',
+      method: 'GET',
+      path: '/product/my/work/task/getTaskByIdByCapitalization',
+      mockPath: '/product/my/work/task/getTaskByIdByCapitalization',
+      desc: '我的任务->列表->计划执行->获取任务信息'
+    },
+    {
       name: 'getOutputRequire',
       method: 'GET',
       path: '/product/my/work/task/getOutputRequire',
