@@ -866,6 +866,7 @@ export default {
       func.call(this, params)
     },
     setSysDefaultValue(confClone) {
+      if (confClone.__config__.defaultValue) return
       if (confClone.__config__.variable && confClone.__config__.variable.startsWith('$')) {
         // 处理系统参数变量
         const paramArr = confClone.__config__.variable.trim().split('.')
