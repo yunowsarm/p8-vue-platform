@@ -73,6 +73,13 @@ export const workflowApi = {
       path: '/bpm/manage/ProcessDefinition/getProcessByBusinessId',
       mockPath: '/bpm/manage/ProcessDefinition/getProcessByBusinessId',
       desc: '查看审批位置流程图'
+    },
+    {
+      name: 'getProcessSelect',
+      method: 'POST',
+      path: '/bpm/manage/ProcessDefinition/getProcessSelect',
+      mockPath: '/bpm/manage/ProcessDefinition/getProcessSelect',
+      desc: '获取选择器下拉数据'
     }
   ],
   PersonalProcessApproval: [
