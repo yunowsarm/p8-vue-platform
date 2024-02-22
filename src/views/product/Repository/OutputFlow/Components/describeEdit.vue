@@ -1,5 +1,6 @@
 <template>
   <form-list ref="form"
+             v-if="activityInfoId"
              @rendered="rendered"
              form-layout="vertical"
              @saved="saved"
@@ -8,6 +9,7 @@
              :form="formData"
              :existDefaultBtn="false"
              :is-custom-validate="isCustomValidate"
+             :key="timeKey"
              @custom-validate="customValidate">
   </form-list>
 </template>
@@ -183,7 +185,8 @@ export default {
         }
       ],
       formData: {},
-      otherParam: {}
+      otherParam: {},
+      timeKey: new Date().getTime()
     }
   },
   watch: {
@@ -191,16 +194,19 @@ export default {
       handler (newValue, oldValue) {
         if (newValue && newValue !== '') {
           this.activityInfoId = newValue
+          this.dataSource.forEach(el => {
+            el.disabledValues = [this.activityInfoId]
+          })
           this.getDescribeData(newValue)
         } else {
           this.activityInfoId = null
           this.formData = Object.assign({}, {})
         }
+        this.timeKey = new Date().getTime()
       }
     }
   },
   mounted () {
-
   },
   methods: {
     rendered () {
@@ -215,6 +221,7 @@ export default {
       let that = this
       if (activityInfoId) {
         that.$api['OutputFlow.activityInfo']({ id: activityInfoId }).then(function (res) {
+          console.log(that.dataSource,1);
           if (res) {
             that.formData.id = res.id
             that.formData.name = res.name

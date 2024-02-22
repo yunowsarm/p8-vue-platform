@@ -5,6 +5,11 @@
   <component :is="componentLoader"
              v-bind="$attrs"
              v-on="$listeners"
+             :code="componentsConfig.code"
+             :record="{ desformCode: componentsConfig.codeForm }"
+             :permission-vo="componentsConfig.permissionVo"
+             :layout-config="componentsConfig"
+             :kanban-config="componentsConfig"
              :key="renderTime" />
 </template>
 <script>
@@ -14,7 +19,8 @@ export default {
   data () {
     return {
       component: null,
-      renderTime: new Date().getTime()
+      renderTime: new Date().getTime(),
+      componentsConfig: {}
     }
   },
   computed: {
@@ -24,10 +30,26 @@ export default {
    * 组件开发必须放在 Dashboard/Components/ 目录下
    */
     componentLoader () {
-      if (!this.data.url) {
-        return
+      if (this.data.url) {
+        if (this.data.url.indexOf('?') !== -1) {
+          const list = this.data.url.split('?')
+          const url = list[0]
+          const parmars = list[1].split('&')
+          const obj = {}
+          parmars.forEach((item) => {
+            const str = item.split('=')
+            if (str[0] === 'code') {
+              obj.code = str[1]
+            }
+          })
+          this.componentsConfig = obj
+          return () => import('@/views/' + url + '.vue')
+        } else {
+          return () => import(`@/views/${this.data.url}.vue`)
+        }
+      } else {
+        return ''
       }
-      return () => import(`@/views/${this.data.url}.vue`)
     }
   },
   mounted () { },
