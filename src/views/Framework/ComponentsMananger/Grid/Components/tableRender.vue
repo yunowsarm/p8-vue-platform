@@ -258,6 +258,7 @@
       </common-drawer>
       <!-- 启动流程 -->
       <selectApproveUserBeforehand v-if="isSelectApproveUserBeforehandView"
+                                   :selsctRow="selsctRow"
                                    :is-select-approve-user-beforehand-view="isSelectApproveUserBeforehandView"
                                    :select-user-beforehand-data-source="selectUserBeforehandDataSource"
                                    :select-user-beforehand-form-data="selectUserBeforehandFormData"
@@ -2154,7 +2155,7 @@ export default {
   text-decoration: underline;
   cursor: pointer;
 }
-::v-deep .splitter-pane-resizer.vertical {
+.grid-table-render ::v-deep .splitter-pane-resizer.vertical {
   display: none;
 }
 // ::v-deep .row--level-0 :nth-child(3) .el-dropdown {
