@@ -8,17 +8,16 @@
              size="medium"
              @submit.native.prevent>
       <el-form-item prop="formInput">
-        <el-input placeholder="点击下拉搜索"
+        <el-input placeholder="例：XX:XXX;多个用分号隔开"
                   v-model="searchVal"
-                  readonly
                   prefix-icon="el-icon-search"
-                  @keyup.enter.native="enterSearch"
-                  @click.native="toggleAdvanced">
+                  @keyup.enter.native="enterSearch">
           <template slot="suffix">
             <i v-if="searchVal"
                class="el-icon-close"
                @click.stop="removeSearchVal"></i>
-            <i :class="advanced ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+            <i :class="advanced ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
+               @click="toggleAdvanced"></i>
           </template>
         </el-input>
       </el-form-item>
@@ -99,7 +98,7 @@ export default {
       loadingVisible: false,
       separator: ';',
       formField: { ...this.form },
-      defaultSearch: '',
+      // defaultSearch: '',
       setInputDefault: false, // 设置查询条件中的第一个输入框default: true
       dateDataIndex: [], // 日期fieldName集合
       modeData: {}, // 模糊查询模式
@@ -142,9 +141,9 @@ export default {
         if (item.fieldName) {
           formDataObj[item.fieldName] = item.defaultValue
         }
-        if (item.default) {
-          that.defaultSearch = item.fieldName
-        }
+        // if (item.default) {
+        //   that.defaultSearch = item.fieldName
+        // }
         if (item.type === 'checkboxGroup') {
           that.$set(that.formField, item.fieldName, that.formField[item.fieldName] || item.defaultValue || [])
         }
@@ -233,8 +232,36 @@ export default {
     },
     enterSearch () {
       const queryParams = {}
-      queryParams[this.defaultSearch] = this.searchVal
-      queryParams.current = 1
+      let result = this.searchVal.split(";")
+      let defaultArr = []
+      let paramObj = {}
+      result.forEach(item => {
+        if (item) {
+          let temporary = item.split(":")
+          if (temporary.length > 0) {
+            let obj = {}
+            obj.label = temporary[0]
+            obj.value = temporary[1]
+            defaultArr.push(obj)
+          }
+        }
+      })
+      defaultArr.forEach(item => {
+        this.dataSource.forEach(el => {
+          if (item.label === el.labelText) {
+            paramObj[el.fieldName] = item.value
+            if (el.type === 'text') {
+              queryParams[el.fieldName] = { 'mode': "like", 'relation': "and", 'value': '%' + item.value + '%' }
+            } else if (el.type === 'datetimeRange') {
+              let times = item.value.split("~")
+              queryParams[el.fieldName] = { 'mode': "=", 'relation': "time", 'value': times }
+            } else {
+              queryParams[el.fieldName] = { 'mode': "=", 'relation': "and", 'value': item.value }
+            }
+          }
+        })
+      })
+      this.formField = paramObj
       this.$emit('search', queryParams)
     },
     toggleAdvanced () {
