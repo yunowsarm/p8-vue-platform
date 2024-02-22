@@ -17,7 +17,11 @@
 .files-type--row {
   .files-item--row {
     box-sizing: border-box;
-    padding: 0 10px 10px;
+    padding: 0 10px 0px;
+    margin-bottom: 10px;
+    .el-link{
+      border-bottom: 1px solid #333333;
+    }
     .files-confidentialite--row {
       padding-left: 30px;
     }
@@ -25,6 +29,7 @@
       color: #333333;
       &:hover {
         color: $base-light-color;
+        border-bottom: 0px;
       }
     }
   }

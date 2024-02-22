@@ -401,6 +401,13 @@ export const repositoryApi = {
       path: '/framework/project/getPermissionSetting',
       mockPath: '/framework/project/getPermissionSetting',
       desc: '立项管理->项目立项->获取权限设置'
+    },
+    {
+      name: 'getWholeById',
+      method: 'POST',
+      path: '/framework/project/getWholeById',
+      mockPath: '/framework/project/getWholeById',
+      desc: '发起审批->根据业务id获取项目id'
     }
   ],
   planInfoManager: [

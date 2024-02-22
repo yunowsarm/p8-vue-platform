@@ -13,7 +13,9 @@ export const nextApproveUserBeforehand = {
       options: [],
       rules: [
         {
-          required: true
+          required: true,
+          trigger: 'change',
+          message: '必填'
         }
       ]
     }
@@ -68,10 +70,17 @@ export const nextApproveUserBeforehand = {
                   // vueInstance.selectUserBeforehandFormData[expressionText] = res.candidateUserMap[expressionText][0].value
                 }
               }
+              if (res.urls && res.urls[instance.key]) {
+                template.approveNodeUsers.type = 'blank'
+                template.approveNodeUsers.slotName = expressionText
+                template.approveNodeUsers.url = res.urls[instance.key]
+                template.approveNodeUsers.fieldConfig = { readOnly: true }
+              }
               template.approveNodeUsers.fieldName = expressionText
               template.approveNodeUsers.labelText = instance.nameExpression.expressionText
               template.approveNodeUsers.options = res.candidateUserMap[expressionText]
               vueInstance.selectUserBeforehandDataSource.push({ ...template.approveNodeUsers })
+              template.approveNodeUsers.type = 'select'
             })
             resolve(true)
           } else if (res && res.result && !res.beforehand) {
