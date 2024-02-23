@@ -496,17 +496,26 @@ export default {
         if (valid) {
           this.getPlanInfo().PROGRESS = this.formData.progress
           if (submitType === 'submit') {
-            _this.$api['taskManager.progressFeedbackCheck']({ taskId: _this.getPlanInfo().TASKID, parent: _this.getPlanInfo().PARENTID, hierarchy: _this.getPlanInfo().GETPROJECTLEVEL }).then(res => {
-              if (res && res.success) {
-                _this.getPlanInfo().MANAGERSTATUS = '6406'
-                _this.$emit('submit', _this.formData, submitType)
-              } else {
-                _this.$message({
-                  message: res.message,
-                  type: 'error'
-                })
-              }
+            this.$confirm('是否确定要提交完成审批?', '提醒', {
+              lockScroll: false,
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'info'
             })
+              .then(() => {
+                _this.$api['taskManager.progressFeedbackCheck']({ taskId: _this.getPlanInfo().TASKID, parent: _this.getPlanInfo().PARENTID, hierarchy: _this.getPlanInfo().GETPROJECTLEVEL }).then(res => {
+                  if (res && res.success) {
+                    _this.getPlanInfo().MANAGERSTATUS = '6406'
+                    _this.$emit('submit', _this.formData, submitType)
+                  } else {
+                    _this.$message({
+                      message: res.message,
+                      type: 'error'
+                    })
+                  }
+                })
+              })
+              .catch(() => { })
           } else {
             this.$emit('submit', this.formData, submitType)
           }
