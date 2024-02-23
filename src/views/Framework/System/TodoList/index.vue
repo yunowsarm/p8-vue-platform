@@ -217,16 +217,25 @@ export default {
       }
       console.log({ businessId: [id], approveUser: that.formData.affirmUserId, approveInfoConfig: approveInfoConfig },123);
       this.$refs.formRight.validate().then(() => {
-        that.$api['TodoList.save'](parmars).then(res => {
-          if (res) {
-            that.$api['TodoList.submit']({ businessId: [id], approveUser: that.formData.affirmUserId, approveInfoConfig: approveInfoConfig }).then(res => {
+        this.$confirm('是否确认保存并提交该项?', '提醒', {
+          lockScroll: false,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'info'
+        })
+          .then(() => {
+            that.$api['TodoList.save'](parmars).then(res => {
               if (res) {
-                that.$message({ type: 'success', message: '提交成功' })
-                that.$emit('close')
+                that.$api['TodoList.submit']({ businessId: [id], approveUser: that.formData.affirmUserId, approveInfoConfig: approveInfoConfig }).then(res => {
+                  if (res) {
+                    that.$message({ type: 'success', message: '提交成功' })
+                    that.$emit('close')
+                  }
+                })
               }
             })
-          }
-        })
+          })
+          .catch(() => { })
       })
 
     },
