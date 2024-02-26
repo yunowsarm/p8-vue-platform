@@ -49,7 +49,7 @@ export function planGantt(ganttName, vueThis) {
           data.progress = Math.round(num * 100) / 100
         }
         const parent = ganttObject.getTask(task.parent)
-        if (parent.secretGrade && data.secretGrade > parent.secretGrade) {
+        if (parent && parent.secretGrade && data.secretGrade > parent.secretGrade) {
           GanttObject.showMessage(vueThis, '子任务密级不能大于父任务密级！', 'error')
           task.secretGrade = parent.secretGrade
           return
@@ -65,8 +65,12 @@ export function planGantt(ganttName, vueThis) {
         //     GanttObject.showMessage(vueThis, '子任务密级不能大于父任务密级！', 'error')
         //   }
         // })
+        let secretGrade = ''
+        if (parent && parent.secretGrade) {
+          secretGrade = parent.secretGrade
+        }
         api['planGanttManager.updatePlanGanttData']({
-          pId: parent.secretGrade,
+          pId: secretGrade,
           id: task.secretGrade,
           planGanttRequest: data,
           createPage: vueThis.createPage
