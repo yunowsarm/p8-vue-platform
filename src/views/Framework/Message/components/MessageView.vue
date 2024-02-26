@@ -4,7 +4,7 @@
       <el-row type="flex" style="text-align: left; height: 22px; line-height: 22px">
         <el-col :span="20">
           <span class="left-span">
-            <i class="p8 icon-message" style="color: #1890ff"></i>
+            <i class="p8 icon-message iconColor" style="color: #1890ff"></i>
           </span>
           <span class="title-span">
             {{ messageData.msgTitle }}
@@ -21,8 +21,8 @@
         </el-col>
         <el-col :span="4" style="text-align: right; padding-right: 5px">
           <span class="operate-span">
-            <el-link :underline="false" @click="toggleStatus(messageData.id)"><i class="p8" :class="statusIcon" style="color: #1890ff"></i></el-link>
-            <el-link :underline="false" @click="deleteMsg(messageData.id)"><i class="p8 icon-delete" style="color: #1890ff"></i></el-link>
+            <el-link :underline="false" @click="toggleStatus(messageData.id)"><i class="p8 iconColor" :class="statusIcon" style="color: #1890ff"></i></el-link>
+            <el-link :underline="false" @click="deleteMsg(messageData.id)"><i class="p8 icon-delete iconColor" style="color: #1890ff"></i></el-link>
           </span>
         </el-col>
       </el-row>

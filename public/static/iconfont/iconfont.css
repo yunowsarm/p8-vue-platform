@@ -1,8 +1,8 @@
 @font-face {
   font-family: "p8"; /* Project id 4084759 */
-  src: url('iconfont.woff2?t=1699250459120') format('woff2'),
-       url('iconfont.woff?t=1699250459120') format('woff'),
-       url('iconfont.ttf?t=1699250459120') format('truetype');
+  src: url('iconfont.woff2?t=1706755125678') format('woff2'),
+       url('iconfont.woff?t=1706755125678') format('woff'),
+       url('iconfont.ttf?t=1706755125678') format('truetype');
 }
 
 .p8 {
@@ -11,6 +11,42 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-jihuajiankong:before {
+  content: "\e63c";
+}
+
+.icon-conflict:before {
+  content: "\e7c9";
+}
+
+.icon-bianjipeizhi:before {
+  content: "\e7c8";
+}
+
+.icon-baobiaopeizhimingxi:before {
+  content: "\e7c4";
+}
+
+.icon-zidingyicss:before {
+  content: "\e7c2";
+}
+
+.icon-chaxunpeizhi:before {
+  content: "\e7c3";
+}
+
+.icon-biaogeanniu:before {
+  content: "\e7c5";
+}
+
+.icon-zidingyiliepeizhi:before {
+  content: "\e7c6";
+}
+
+.icon-baobiaocanshu:before {
+  content: "\e7c7";
 }
 
 .icon-fenjielianjiexian:before {
@@ -475,10 +511,6 @@
 
 .icon-warning-threshold:before {
   content: "\e772";
-}
-
-.icon-plan-monitoring:before {
-  content: "\e773";
 }
 
 .icon-plan-overview:before {

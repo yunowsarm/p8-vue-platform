@@ -41,6 +41,9 @@ export default {
               fieldName: 'specialRes',
               colLayout: 'singleCol',
               placeholder: '特别说明', // 默认控件的空值文本
+              fieldConfig: {
+                rows: '6'
+              },
               rules: [
                 {
                   required: true,

@@ -125,7 +125,16 @@ const platform = {
     // 设置侧边栏折叠
     SET_COLLAPSE_SIDEBAR(state, sidebarStatus) {
       state.sidebarState.isOpen = sidebarStatus
-      state.sidebarState.width = sidebarStatus ? plateformVariables.sidebarMaxWidth : plateformVariables.sidebarMinWidth
+      // state.sidebarState.width = sidebarStatus ? plateformVariables.sidebarMaxWidth : plateformVariables.sidebarMinWidth
+      if (state.sidebarState.isHidden) {
+        state.sidebarState.width = '0px'
+      } else {
+        if (sidebarStatus) {
+          state.sidebarState.width = plateformVariables.sidebarMaxWidth
+        } else {
+          state.sidebarState.width = plateformVariables.sidebarMinWidth
+        }
+      }
       Cookie.set(SIDEBAR_OPEN_KEY, sidebarStatus, 64)
     },
     SET_SYSTEM_NAME(state, data) {
@@ -138,7 +147,16 @@ const platform = {
       state.sidebarState.isHidden = isHidden
       // 为了保证隐藏动效,这里设置sidebar隐藏后的宽度
       // 这里因为计算的原因,必须保证为 {string} 0px, 请勿修改成 {number} 0
-      // state.sidebarState.width = isHidden ? '0px' : SIDEBAR_OPEN_STATE === 'true' ? SIDEBAR_EXPANDED_WIDTH : SIDEBAR_COLLAPSED_WIDTH
+      // state.sidebarState.width = isHidden ? '0px' : '180px'
+      if (isHidden) {
+        state.sidebarState.width = '0px'
+      } else {
+        if (state.sidebarState.isOpen) {
+          state.sidebarState.width = plateformVariables.sidebarMaxWidth
+        } else {
+          state.sidebarState.width = plateformVariables.sidebarMinWidth
+        }
+      }
       Cookie.set(SIDEBAR_HIDDEN_STATE_KEY, isHidden, 1000)
     },
     INIT_SHORTCUTMENU(state, menuItems) {

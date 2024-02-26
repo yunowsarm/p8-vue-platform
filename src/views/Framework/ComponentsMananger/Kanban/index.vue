@@ -70,6 +70,7 @@ export default {
       {
         title: '序号',
         type: 'index',
+        width: 60,
         align: 'left',
         headerAlign: 'left'
       },
@@ -112,6 +113,7 @@ export default {
       // },
       {
         title: '操作',
+        fixed: 'right',
         dataIndex: 'operation',
         width: 120,
         scopedSlots: { customRender: 'custom' },

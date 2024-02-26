@@ -12,7 +12,7 @@
       @form-delete="formDelete"
     >
       <template #logBeginTimeView="{ scope }">
-        <span>{{ scope.logBeginTime }}~{{ scope.logEndTime }}</span>
+        <span>{{ scope.logBeginTime }}{{ scope.logBeginTime || scope.logEndTime ? '~' : '' }}{{ scope.logEndTime }}</span>
       </template>
     </form2>
   </div>
@@ -391,7 +391,7 @@ export default {
         this.dataSourceArray[currentIndex][1].colSpan = 8
         this.dataSourceArray[currentIndex][1].labelText = '开始时间'
         this.dataSourceArray[currentIndex][2].colSpan = 8
-        this.dataSourceArray[currentIndex][2].elementOpacity = true
+        // this.dataSourceArray[currentIndex][2].elementOpacity = true
       } else {
         // 测试提出问题: 保存后的开始时间与结束时间合并至一起 处理
         this.dataSourceArray[currentIndex][1].colSpan = 16

@@ -1,22 +1,43 @@
 <template>
   <list-layout>
     <template #north>
-      <common-button :comp="comp" button-type="primary"></common-button>
+      <common-button :comp="comp"
+                     button-type="primary"></common-button>
     </template>
     <template #center>
-      <common-table ref="table" :comp="comp" :table-border="false" :columns="columns" :table-config="tableConfig" :table-refresh="tableRefresh" :pagination="false" :api="tableApi"></common-table>
+      <common-table ref="table"
+                    :comp="comp"
+                    :table-border="false"
+                    :columns="columns"
+                    :table-config="tableConfig"
+                    :table-refresh="tableRefresh"
+                    :pagination="false"
+                    :api="tableApi"></common-table>
     </template>
     <template #drawer-panel>
-      <common-drawer :title="drawerTitle" :visible="drawerVisible" size="50%" @close="onDrawerClose">
+      <common-drawer :title="drawerTitle"
+                     :visible="drawerVisible"
+                     size="50%"
+                     @close="onDrawerClose">
         <template #drawer>
           <template v-if="drawerContentView === 'edit'">
-            <department-edit-view @saveSuccess="saveCallback" @cancel="drawerVisible = false" :record-id="recordId" :parent-id="parentId" :no="no"></department-edit-view>
+            <department-edit-view @saveSuccess="saveCallback"
+                                  @cancel="drawerVisible = false"
+                                  :record-id="recordId"
+                                  :parent-id="parentId"
+                                  :no="no"></department-edit-view>
           </template>
           <template v-if="drawerContentView === 'view'">
-            <department-view @saveSuccess="saveCallback" @cancel="drawerVisible = false" :record-id="recordId" :parent-id="parentId" :no="no"></department-view>
+            <department-view @saveSuccess="saveCallback"
+                             @cancel="drawerVisible = false"
+                             :record-id="recordId"
+                             :parent-id="parentId"
+                             :no="no"></department-view>
           </template>
           <template v-if="drawerContentView === 'moveuser'">
-            <department-move-user-view @saveSuccess="saveCallback" @cancel="drawerVisible = false" :record-id="recordId"></department-move-user-view>
+            <department-move-user-view @saveSuccess="saveCallback"
+                                       @cancel="drawerVisible = false"
+                                       :record-id="recordId"></department-move-user-view>
           </template>
         </template>
       </common-drawer>
@@ -33,7 +54,7 @@ import departmentMoveUserView from './moveUser'
 
 export default {
   name: 'DepartmentIndex',
-  data() {
+  data () {
     return {
       columns: [
         {
@@ -62,6 +83,7 @@ export default {
         },
         {
           title: '操作',
+          fixed: 'right',
           width: 120,
           dataIndex: 'operation',
           scopedSlots: { customRender: 'operation' },
@@ -82,7 +104,7 @@ export default {
     }
   },
   methods: {
-    createDepartment() {
+    createDepartment () {
       this.drawerTitle = '新建部门'
       this.drawerVisible = true
       this.drawerContentView = 'edit'
@@ -90,7 +112,7 @@ export default {
       this.parentId = null
       this.no = null
     },
-    updateDepartment(record) {
+    updateDepartment (record) {
       // 修改
       this.drawerTitle = '修改部门'
       this.drawerVisible = true
@@ -99,7 +121,7 @@ export default {
       this.parentId = record.parentId
       this.no = record.no
     },
-    viewDepartment(record) {
+    viewDepartment (record) {
       // 查看
       this.drawerTitle = '查看部门'
       this.drawerVisible = true
@@ -108,7 +130,7 @@ export default {
       this.parentId = record.parentId
       this.no = record.no
     },
-    removeDepartment(record) {
+    removeDepartment (record) {
       // 删除
       console.log('removeDepartment', record)
       const that = this
@@ -150,13 +172,13 @@ export default {
           console.log('取消')
         })
     },
-    moveUser(record) {
+    moveUser (record) {
       this.drawerTitle = '部门人员转移'
       this.drawerVisible = true
       this.drawerContentView = 'moveuser'
       this.recordId = record.id
     },
-    tableRefresh(param) {
+    tableRefresh (param) {
       param
         .then(() => {
           console.log('table--异步成功后端做的操作')
@@ -165,13 +187,13 @@ export default {
           console.log('table--异步失败的操作')
         })
     },
-    onDrawerClose() {
+    onDrawerClose () {
       // 抽屉关闭
       this.drawerVisible = false
       this.drawerContentView = null
       this.drawerTitle = null
     },
-    saveCallback(res) {
+    saveCallback (res) {
       // console.log('添加或修改的回调', res)
       this.$refs.table.searchData()
       this.onDrawerClose()

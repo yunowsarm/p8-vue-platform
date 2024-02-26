@@ -152,6 +152,7 @@
     </el-col>
     <el-col :span="6">
       <el-select v-model="mode"
+                :disabled="fields.parameterSource === 'SQL参数'"
                  @change="changeMode"
                  style="height: 32px; line-height: 32px">
         <el-option v-for="items in modeSelect"
@@ -242,6 +243,11 @@ export default {
       popLabel: '' // 弹出选择回填label
     }
   },
+  created (){
+    if(this.fields.type == 'text' || this.fields.type == 'textarea'){
+      this.mode = 'like'
+    }
+  },
   async mounted () {
     let that = this
     let needHandleTags = ['treeSelect', 'select']
@@ -325,6 +331,9 @@ export default {
       if (val) {
         this.mode = '='
         this.popLabel = ''
+        if(this.fields.type == 'text' || this.fields.type == 'textarea'){
+          this.mode = 'like'
+        }
       }
     }
   },

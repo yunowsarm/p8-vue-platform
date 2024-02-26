@@ -1809,20 +1809,20 @@ export const kanbanApi = {
       mockPath: '/framework/bp-common-component-library/getDataviewList',
       desc: '看板组件管理-获取数据视图列表'
     },
-    {
-      name: 'getViewData',
-      method: 'POST',
-      path: '/product/pm/planOverview/applyDataviewNew',
-      mockPath: '/product/pm/planOverview/applyDataviewNew',
-      desc: '看板组件管理-获取数据视图数据'
-    },
     // {
     //   name: 'getViewData',
     //   method: 'POST',
-    //   path: '/framework/bp-common-component-library/applyDataview',
-    //   mockPath: '/framework/bp-common-component-library/applyDataview',
+    //   path: '/product/pm/planOverview/applyDataview',
+    //   mockPath: '/product/pm/planOverview/applyDataview',
     //   desc: '看板组件管理-获取数据视图数据'
     // },
+    {
+      name: 'getViewData',
+      method: 'POST',
+      path: '/framework/bp-common-component-library/applyDataview',
+      mockPath: '/framework/bp-common-component-library/applyDataview',
+      desc: '看板组件管理-获取数据视图数据'
+    },
     {
       name: 'getSqlParams',
       method: 'POST',

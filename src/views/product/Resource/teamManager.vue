@@ -159,7 +159,8 @@
           </div>
         </div>
         <div class="right-con">
-          <project-form-view :id="id" ref="projectFormView"></project-form-view>
+          <project-form-view :id="id"
+                             ref="projectFormView"></project-form-view>
           <!-- <member-upload :files="namedFiles"
                            :view="!group_add_role"
                            @getFormComp="getMemberFormComp"></member-upload> -->
@@ -318,6 +319,7 @@ export default {
       },
       {
         title: '操作',
+        fixed: 'right',
         dataIndex: 'operation',
         width: 80,
         scopedSlots: {
@@ -517,7 +519,7 @@ export default {
     search (params) {
       let realName = params.realName ? params.realName : null
       let deptName = params.deptName ? params.deptName : null
-      if(realName || deptName){
+      if (realName || deptName) {
         let tableData = this.tableData.filter(item => {
           if ((item.realName.indexOf(realName) > -1) || (item.deptName.indexOf(deptName) > -1)) {
             return item
@@ -775,7 +777,7 @@ export default {
             flag = false
           }
         })
-        if(flag){
+        if (flag) {
           let tempObj = {
             id: item.id,
             indexNo: item.indexNo,
@@ -802,7 +804,7 @@ export default {
       }
       this.rolesData.push(...tempArr)
       this.rolesData = _.uniqWith(this.rolesData, _.isEqual)
-      this.rolesData.sort(function (a,b){
+      this.rolesData.sort(function (a, b) {
         return b.isFixed - a.isFixed
       })
     },

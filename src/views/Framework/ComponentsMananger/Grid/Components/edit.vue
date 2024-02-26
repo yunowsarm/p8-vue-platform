@@ -2080,6 +2080,7 @@ export default {
         },
         {
           title: '操作',
+          fixed: 'right',
           dataIndex: 'operation',
           width: '150',
           scopedSlots: {
@@ -2810,7 +2811,7 @@ export default {
       if (params.reportItem) {
         params.reportItem.forEach(item => {
           if (item.fieldWidth === 0) {
-            item.fieldWidth = item.fieldTxt ? item.fieldTxt.length * 30 : 0
+            item.fieldWidth = 200
           }
         })
       }

@@ -273,12 +273,9 @@ export default {
       this.changeSearchConfig()
     },
     onWidgetResize (widget) {
-      // console.log('onWidgetResize', widget)
       this.$set(this.widgetResizeStatus, widget.slot, new Date().getTime())
-      // console.log('this.widgetResizeStatus[widget.slot]', this.widgetResizeStatus[widget.slot])
     },
     onLayoutUpdated (newLayout) {
-      // console.log('onLayoutUpdated:', JSON.stringify(newLayout))
     },
     onLayoutReady (newLayout) {
       // let delay = this.isDesign ? 1500 : 200
@@ -287,21 +284,17 @@ export default {
       setTimeout(() => {
         that.isLayoutReady = true
       }, delay)
-      // console.log('onLayoutReady:', JSON.stringify(newLayout))
     },
     onMove (params) {
-      // console.log('onMove:', params)
     },
     // 大小改变
     onResize (params) {
-      // console.log('onResize:', params, 'widget:', this.$refs['widget' + params.i][0])
       // setTimeout(() => {
       //   this.$refs['widget' + params.i][0].handleRefresh()
       // }, 300)
     },
     // 放大
     onFullscreen (booleanParams, params) {
-      // console.log('放大')
       // setTimeout(() => {
       //   this.$refs['conten' + params.slot][0].reload()
       // }, 300)
@@ -369,11 +362,10 @@ export default {
             layout: { x: 0, y: 0, w: item.defaultWidth, h: item.defaultHigh, i: maxSolt + index + 1 },
             component: item,
             styleObject: {},
-            title: ''
+            title: item.name
           })
         })
       }
-      // console.log('save')
       this.tableSearchList = []
       this.getSearchCofnfig(this.widget.concat(this.widgetList))
       this.$emit('update:widget', this.widget.concat(this.widgetList))
@@ -382,12 +374,7 @@ export default {
     getSearchCofnfig (list) {
       list.forEach(el => {
         if (el.component.searchConfigValue && (el.component.functionalCategory && el.component.functionalCategory !== '3')) {
-          let item
-          if (el.component.searchConfigValue && el.component.searchConfigValue.indexOf('null') !== -1) {
-            item = ''
-          } else {
-            item = JSON.parse(el.component.searchConfigValue)
-          }
+          let item = JSON.parse(el.component.searchConfigValue)
           if (item && item.length && item !== 'null') {
             item.forEach(val => {
               this.searchList.push({
@@ -396,7 +383,8 @@ export default {
                 fieldName: val.fieldName,
                 mode: '=',
                 selectCode: val.selectCode,
-                replaceSearch: ''
+                replaceSearch: '',
+                parameterSource: 'SQL参数'
               })
             })
           }

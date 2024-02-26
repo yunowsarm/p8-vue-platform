@@ -125,9 +125,9 @@ export const overdueTextHandle = ({ managerStatus, status: currStatus, planEndDa
   }
   return text
 }
-export const overdueTextHandles = ({ MANAGERSTATUS, status: CURRSTATUS, PLANENDDATE, REALENDDATE }) => {
+export const overdueTextHandles = ({ MANAGERSTATUS, STATUS: CURRSTATUS, PLANENDDATE, REALENDDATE }) => {
   if (!CURRSTATUS) {
-    return '1'
+    return ''
   }
   let currDate = moment().format('YYYY-MM-DD')
   let diffDays = 0

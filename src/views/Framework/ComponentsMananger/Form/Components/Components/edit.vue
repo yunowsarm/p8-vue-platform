@@ -792,6 +792,20 @@ export default {
     closeForm() {
       this.$emit('close')
     },
+    beforeSave(data, childData, arr, logdata) {
+      let that = this
+      if (that.formConf.savePromptMsg) {
+        that.$confirm(that.formConf.savePromptMsg, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          that.save(data, childData, arr, logdata)
+        }).catch(() => {})
+      } else {
+        that.save(data, childData, arr, logdata)
+      }
+    },
     save(data, childData, arr, logdata) {
       this.btnLoading = true
       if (this.dataId) {

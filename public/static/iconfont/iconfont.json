@@ -6,6 +6,69 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "24848551",
+      "name": "计划监控",
+      "font_class": "jihuajiankong",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
+      "icon_id": "17889741",
+      "name": "冲突",
+      "font_class": "conflict",
+      "unicode": "e7c9",
+      "unicode_decimal": 59337
+    },
+    {
+      "icon_id": "38001294",
+      "name": "编辑配置",
+      "font_class": "bianjipeizhi",
+      "unicode": "e7c8",
+      "unicode_decimal": 59336
+    },
+    {
+      "icon_id": "37998583",
+      "name": "报表配置明细",
+      "font_class": "baobiaopeizhimingxi",
+      "unicode": "e7c4",
+      "unicode_decimal": 59332
+    },
+    {
+      "icon_id": "37998441",
+      "name": "自定义css",
+      "font_class": "zidingyicss",
+      "unicode": "e7c2",
+      "unicode_decimal": 59330
+    },
+    {
+      "icon_id": "37998440",
+      "name": "查询配置",
+      "font_class": "chaxunpeizhi",
+      "unicode": "e7c3",
+      "unicode_decimal": 59331
+    },
+    {
+      "icon_id": "37998436",
+      "name": "表格按钮",
+      "font_class": "biaogeanniu",
+      "unicode": "e7c5",
+      "unicode_decimal": 59333
+    },
+    {
+      "icon_id": "37998437",
+      "name": "自定义列配置",
+      "font_class": "zidingyiliepeizhi",
+      "unicode": "e7c6",
+      "unicode_decimal": 59334
+    },
+    {
+      "icon_id": "37998438",
+      "name": "报表参数",
+      "font_class": "baobiaocanshu",
+      "unicode": "e7c7",
+      "unicode_decimal": 59335
+    },
+    {
       "icon_id": "37979559",
       "name": "分解连接线",
       "font_class": "fenjielianjiexian",
@@ -816,13 +879,6 @@
       "font_class": "warning-threshold",
       "unicode": "e772",
       "unicode_decimal": 59250
-    },
-    {
-      "icon_id": "16536275",
-      "name": "计划监控binoculars",
-      "font_class": "plan-monitoring",
-      "unicode": "e773",
-      "unicode_decimal": 59251
     },
     {
       "icon_id": "16536276",

@@ -1,16 +1,10 @@
 <template>
   <div style="height: 100%">
     <div class="top" :style="{ height: commandButtonBarHeight }">
-      <command-button-bar
-        :panel-data="btnData"
-        :selected-tasks="selectedTasks"
-        :gantt-name="ganttName"
-        :plan-info-id="planInfoId"
-        @change-command-button="changeCommandButton"
-      ></command-button-bar>
+      <command-button-bar :panel-data="btnData" :selected-tasks="selectedTasks" :gantt-name="ganttName" :plan-info-id="planInfoId" @change-command-button="changeCommandButton"></command-button-bar>
     </div>
     <div class="bottom" :class="expandBottom">
-      <div ref="myGantt" style="width: 100%; height: calc(100% - 40px) !important"></div>
+      <div class="myGantt" ref="myGantt" style="width: 100%; height: calc(100% - 40px) !important"></div>
       <div class="detail_div">
         <div style="width: 50%">
           <span style="margin-left: 16px">选中任务：</span>
@@ -37,9 +31,16 @@
     </el-drawer>
   </div>
 </template>
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~p8-dhtmlx-gantt/codebase/dhtmlxgantt.css';
 @import '@/assets/commonJS/ganttJS/ganttObject.css';
+
+.myGantt ::v-deep {
+  // 2个版本，无数据的颜色修改
+  .gantt_row:not([aria-expanded]).analysisColor {
+    background-color: #ffa96e !important;
+  }
+}
 
 .bottom {
   position: relative;
@@ -291,23 +292,24 @@ export default {
         .then(function (res) {
           if (res) {
             // 初始化数据
-            let initData
-            initData = res.tasks.map(item => {
+            const initData = res.tasks.map((item) => {
+              item.changeStatus = ''
               let obj = {}
+              obj = {
+                ...item
+              }
               if (res.changeTaskInfo && res.changeTaskInfo[item.id] && res.changeTaskInfo[item.id].id) {
-                obj = {
-                  ...item,
-                  // ...res.changeTaskInfo[item.id],
-                  oldName: res.changeTaskInfo[item.id].oldName
-                }
-              } else {
-                obj = {
-                  ...item
-                }
+                const changeTaskKeys = Object.keys(res.changeTaskInfo[item.id])
+                changeTaskKeys.forEach((changeTaskKey) => {
+                  if (res.changeTaskInfo[item.id][changeTaskKey] !== '' && res.changeTaskInfo[item.id][changeTaskKey] !== null && res.changeTaskInfo[item.id][changeTaskKey] !== undefined) {
+                    obj[changeTaskKey] = res.changeTaskInfo[item.id][changeTaskKey]
+                  }
+                })
+                obj.oldName = res.changeTaskInfo[item.id].oldName
               }
               return obj
             })
-            let datas = {
+            const datas = {
               tasks: initData,
               links: res.links
             }

@@ -124,11 +124,11 @@ export default {
           options: [
             {
               label: '是',
-              value: '1'
+              value: '0'
             },
             {
               label: '否',
-              value: '0'
+              value: '1'
             }
           ]
         },
@@ -142,11 +142,11 @@ export default {
           options: [
             {
               label: '是',
-              value: '1'
+              value: '0'
             },
             {
               label: '否',
-              value: '0'
+              value: '1'
             }
           ]
         },
@@ -250,7 +250,7 @@ export default {
   watch: {
     'modify.constantMarkType': {
       handler(val) {
-        if (val === '1') {
+        if (val === '0') {
           this.dataSource[6].type = 'textarea'
         } else {
           this.dataSource[6].type = 'hidden'

@@ -1,5 +1,5 @@
 <template>
-  <common-dialog title="查询条件配置" :visible="visible" @handle-cancel="handleCancel" @handle-ok="componentsHandleOk" @close="handleCancel" width="60%">
+  <common-dialog title="查询条件配置" class="searchCustom" :visible="visible" @handle-cancel="handleCancel" @handle-ok="componentsHandleOk" @close="handleCancel" width="60%">
     <template #dialog>
       <editable-table :columns="columns" :add-row="true" :data="editTableData" :change-table-data="editTableData" height="100%" @save-param-data="saveTableData">
         <template #type="{ scope, data }">
@@ -43,12 +43,17 @@
             <el-date-picker v-model="scope.row.selectCode" type="daterange" style="width: 100%" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
           </div>
         </template>
+        <template #searchConfig="{ scope }">
+          <el-button type="text" @click="settingClick(scope.row,scope.$index)">点击设置</el-button>
+        </template>
       </editable-table>
+      <searchConfig v-if="settingVisible" :visible="settingVisible" :widgets="widgets" :record="record" @close="settingVisible = false" @saveSuccess="saveSuccess" ></searchConfig>
     </template>
   </common-dialog>
 </template>
 <script>
 import { P8EditTable as EditableTable, P8Dialog as CommonDialog } from 'p8-components-ui'
+import searchConfig from './searchConfig.vue'
 export default {
   name: 'SearchCustom',
   props: {
@@ -61,10 +66,17 @@ export default {
       default: () => {
         return []
       }
+    },
+    widgets: {
+      type: Array,
+      default: () => {
+        return []
+      }
     }
   },
   data() {
     return {
+      settingVisible: false,
       renderData: [],
       treeData: [],
       columns: [
@@ -91,17 +103,25 @@ export default {
           dataIndex: 'selectCode',
           minWidth: 140,
           scopedSlots: { customRender: 'custom' }
+        },
+        {
+          title: '查询设置',
+          dataIndex: 'searchConfig',
+          minWidth: 140,
+          scopedSlots: { customRender: 'custom' }
         }
       ],
       reportParams: {
         tableData: []
       },
-      editTableData: []
+      editTableData: [],
+      record: {}
     }
   },
   components: {
     EditableTable,
-    CommonDialog
+    CommonDialog,
+    searchConfig
   },
   mounted() {
     this.$api['selection.list']({ selectionType: 1, page: { current: 1, size: -1, orders: [] } }).then((res) => {
@@ -117,6 +137,13 @@ export default {
   },
   methods: {
     saveTableData(data) {
+      if(data && data.length) {
+        data.forEach(el => {
+          if(!el.labelText && !el.fieldName && !el.type && !el.parameterSource){
+            el.parameterSource = '报表参数'
+          }
+        })
+      }
       this.reportParams.tableData = data
     },
     handleCancel() {
@@ -124,12 +151,22 @@ export default {
     },
     componentsHandleOk() {
       this.$emit('handleOk', this.reportParams.tableData)
+    },
+    settingClick (row,index) {
+      this.index = index
+      this.record = row
+      this.settingVisible = true
+    },
+    saveSuccess (form) {
+      this.reportParams.tableData[this.index].replaceFiled = form
+      this.editTableData[this.index].replaceFiled = form
+      this.settingVisible = false
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-::v-deep.el-dialog__body {
+::v-deep .el-dialog__body {
   padding: 0;
 }
 </style>

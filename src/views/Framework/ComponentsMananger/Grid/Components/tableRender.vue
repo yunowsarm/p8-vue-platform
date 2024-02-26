@@ -127,7 +127,7 @@
                           :seach-type="seachType"
                           :show-search-row="showSearchRow"
                           :is-smart-form="true"
-                          :pagination="false"
+                          :pagination="true"
                           api="formGenerator.tableApply"
                           :use-system-config-button="tableInfo.useSystemConfigButton"
                           :is-layout-button="isLayoutButton"
@@ -281,6 +281,7 @@
       <common-drawer v-if="visibleThirdDrawer"
                      :visible="visibleThirdDrawer"
                      direction="ttb"
+                     :title="thirdMenuTitle"
                      @close='onThirdMenuClose'
                      size="100%">
         <template #drawer>
@@ -373,11 +374,11 @@ export default {
     },
     searchWidth: {
       type: String,
-      default: '350px'
+      default: '450px'
     },
     searchContainWidth: {
       type: String,
-      default: '350px'
+      default: '450px'
     },
     summaryMethod: {
       // 合计计算方法
@@ -675,26 +676,22 @@ export default {
           relation: 'and'
         }
       })
-      this.tableParam.param = { ...obj, ...this.tableParam.param }
+      this.tableParam.reportParam = { ...obj, ...this.tableParam.reportParam }
       this.propParam = Object.assign(this.propParam, val)
     }
   },
   methods: {
     fiflterParams (newValue) {
       if (!Object.keys(newValue).length) {
-        this.tableParam.param = {}
         this.tableParam.reportParam = {}
+        this.tableParam.sqlParam = {}
       }
       let obj = {}
-      let reportParmars = {}
       let sqlParmars = {}
       let searchKeys = []
-      let reportList = []
       let SQLList = []
       this.searchList.map((el) => {
-        if (el.parameterSource == '报表参数') {
-          reportList.push(el.replaceSearch ? el.replaceSearch : el.fieldName)
-        } else if (el.parameterSource == 'SQL参数') {
+        if (el.parameterSource == 'SQL参数') {
           SQLList.push(el.replaceSearch ? el.replaceSearch : el.fieldName)
         } else {
           searchKeys.push(el.replaceSearch ? el.replaceSearch : el.fieldName)
@@ -702,36 +699,47 @@ export default {
       })
       Object.keys({ ...newValue }).forEach((item) => {
         if (searchKeys.includes(item)) {
-          if (typeof newValue[item] === 'string') {
-            obj[item] = {
-              value: newValue[item],
-              mode: '=',
-              relation: 'and'
+          if (newValue[item]) {
+            if (typeof newValue[item] === 'string') {
+              obj[item] = {
+                value: newValue[item],
+                mode: '=',
+                relation: 'and'
+              }
+            } else if (newValue[item] instanceof Array) {
+              obj[item] = {
+                value: newValue[item],
+                mode: 'in',
+                relation: 'multiple'
+              }
+            } else if (typeof newValue[item] === 'object') {
+              obj[item] = newValue[item]
             }
-          } else if (newValue[item] instanceof Array) {
-            obj[item] = {
-              value: newValue[item],
-              mode: 'in',
-              relation: 'multiple'
-            }
-          } else if (typeof newValue[item] === 'object') {
-            obj[item] = newValue[item]
           }
         }
       })
       this.westParmars = obj
       Object.keys({ ...newValue }).forEach((item) => {
-        if (reportList.includes(item)) {
-          reportParmars[item] = newValue[item]
-        }
-      })
-      Object.keys({ ...newValue }).forEach((item) => {
         if (SQLList.includes(item)) {
-          sqlParmars[item] = newValue[item]
+          if (typeof newValue[item] === 'string') {
+            sqlParmars[item] = {
+              value: newValue[item],
+              mode: '=',
+              relation: 'and'
+            }
+          } else if (newValue[item] instanceof Array) {
+            sqlParmars[item] = {
+              value: newValue[item],
+              mode: 'in',
+              relation: 'multiple'
+            }
+          } else if (typeof newValue[item] === 'object') {
+            sqlParmars[item] = newValue[item]
+          }
         }
       })
-      this.tableParam.param = { ...this.tableParam.param, ...obj }
-      this.tableParam.reportParam = { ...this.tableParam.reportParam, ...reportParmars }
+      // this.tableParam.param = { ...this.tableParam.param, ...obj }
+      this.tableParam.reportParam = { ...this.tableParam.reportParam, ...obj }
       this.tableParam.sqlParam = { ...sqlParmars, ...this.sqlParam, ...this.tableParam.sqlParam }
       this.tableParam.permissionVo = { router: this.$route.name, resourceId: '' }
       this.propParam = Object.assign(this.propParam, newValue)
@@ -796,7 +804,7 @@ export default {
                   // 查询放置表头
                   columnData.push({
                     title: item.fieldTxt,
-                    headerAlign: item.title,
+                    headerAlign: item.title ? item.title : 'center',
                     align: item.alignmentStyle,
                     dataIndex: item.fieldName,
                     minWidth: item.fieldWidth,
@@ -811,7 +819,7 @@ export default {
                   // 查询放置表头
                   columnData.push({
                     title: item.fieldTxt,
-                    headerAlign: item.title,
+                    headerAlign: item.title ? item.title : 'center',
                     align: item.alignmentStyle,
                     dataIndex: item.fieldName,
                     minWidth: item.fieldWidth,
@@ -828,19 +836,22 @@ export default {
                   // 查询放置按钮区域
                   columnData.push({
                     title: item.fieldTxt,
-                    headerAlign: item.title,
+                    headerAlign: item.title ? item.title : 'center',
                     align: item.alignmentStyle,
                     dataIndex: item.fieldName,
                     minWidth: item.fieldWidth,
                     sortable: item.isOrder ? item.isOrder : false
                   })
+                  if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
+                    item.defaultValueData = item.defaultValueData.split(',')
+                  }
                 }
               } else if (item.isCustomColumn) {
                 if (item.fieldName === '_ROWNO') {
                   // 序号列为自定义列，默认的fieldName为"_ROWNO"
                   columnData.push({
                     title: item.fieldTxt,
-                    headerAlign: item.title,
+                    headerAlign: item.title ? item.title : 'center',
                     align: item.alignmentStyle,
                     dataIndex: item.fieldName,
                     minWidth: item.fieldWidth,
@@ -849,7 +860,7 @@ export default {
                 } else {
                   columnData.push({
                     title: item.fieldTxt,
-                    headerAlign: item.title,
+                    headerAlign: item.title ? item.title : 'center',
                     align: item.alignmentStyle,
                     dataIndex: item.fieldName,
                     minWidth: item.fieldWidth,
@@ -860,7 +871,7 @@ export default {
               } else {
                 columnData.push({
                   title: item.fieldTxt,
-                  headerAlign: item.title,
+                  headerAlign: item.title ? item.title : 'center',
                   align: item.alignmentStyle,
                   dataIndex: item.fieldName,
                   minWidth: item.fieldWidth,
@@ -895,11 +906,11 @@ export default {
               })
             }
           })
-          this.$emit('searchData', this.searchList)
           // 报表按钮参数
           if (this.tableInfo.useSystemConfigButton == 1) {
             columnData.push({
               title: '操作',
+              fixed: 'right',
               headerAlign: 'center',
               align: 'center',
               dataIndex: 'operation',
@@ -926,6 +937,7 @@ export default {
 
             columnData.push({
               title: '操作',
+              fixed: 'right',
               headerAlign: 'center',
               align: 'center',
               dataIndex: 'operation',
@@ -1002,7 +1014,9 @@ export default {
         // 报表参数
         if (res.reportParams && res.reportParams.length) {
           res.reportParams.forEach((item) => {
-            this.defaultReportParam[item.paramName] = this.getDefaultValue(item.paramValue)
+            if (this.getDefaultValue(item.paramValue)) {
+              this.defaultReportParam[item.paramName] = { mode: '=', relation: "and", value: this.getDefaultValue(item.paramValue) }
+            }
             if (item.isSearch && item.searchMode) {
               this.searchData.push({
                 type: item.searchMode, // 控件类型
@@ -1027,15 +1041,15 @@ export default {
             })
           })
         }
-
+        this.$emit('searchData', this.searchList)
         // SQL参数
-        if (res.reportSqlParams && res.reportSqlParams.length) {
-          res.reportSqlParams.forEach((item) => {
-            if (item.paramValue) {
-              this.sqlParam[item.paramName] = item.paramValue
-            }
-          })
-        }
+        // if (res.reportSqlParams && res.reportSqlParams.length) {
+        //   res.reportSqlParams.forEach((item) => {
+        //     if (item.paramValue) {
+        //       this.sqlParam[item.paramName] = item.paramValue
+        //     }
+        //   })
+        // }
         that.enableEdit = res.enableEdit
         this.rebuildParam(this.reportParam)
         if (this.provideParams.searchParams && Object.keys(this.provideParams.searchParams).length > 0) {
@@ -1054,44 +1068,50 @@ export default {
     },
     search (param) {
       let sqlParam = {}
-      let reportParam = {}
+      // let reportParam = {}
       this.searchData.forEach(el => {
+        let fieldName = el.replaceSearch ? el.replaceSearch : el.fieldName
         if (el.parameterSource && el.parameterSource == 'SQL参数') {
-          if (param[el.fieldName]) {
-            sqlParam[el.fieldName] = param[el.fieldName].value
-            delete param[el.fieldName]
-          }
-        } else if (el.parameterSource && el.parameterSource == '报表参数') {
-          if (param[el.fieldName]) {
-            reportParam[el.fieldName] = param[el.fieldName].value
-            delete param[el.fieldName]
+          if (param[fieldName]) {
+            sqlParam[fieldName] = param[fieldName]
+            delete param[fieldName]
           }
         }
       })
       this.sqlParam = sqlParam
-      this.tableParam.reportParam = { ...reportParam, ...this.tableParam.reportParam }
+      // this.tableParam.reportParam = { ...reportParam, ...this.tableParam.reportParam }
       this.tableParam.sqlParam = { ...sqlParam, ...this.tableParam.sqlParam, ...this.sqlParam }
-      this.tableParam.param = { ...param, ...this.westParmars }
+      this.tableParam.reportParam = { ...this.westParmars, ...this.tableParam.reportParam, ...param }
     },
     reSet () {
-      let columnType = JSON.parse(JSON.stringify(this.tableParam.sqlParam.columnType))
-      this.tableParam.sqlParam = {columnType:columnType}
-      // this.tableParam.param = {}
+      this.sqlParam = {}
+      if (this.tableParam.sqlParam && this.tableParam.sqlParam.columnType) {
+        let columnType = JSON.parse(JSON.stringify(this.tableParam.sqlParam.columnType))
+        this.tableParam.sqlParam = { columnType: columnType }
+      } else {
+        this.tableParam.sqlParam = {}
+      }
+      this.tableParam.reportParam = {}
+      if (this.provideParams.searchParams && Object.keys(this.provideParams.searchParams).length > 0) {
+        this.fiflterParams(this.provideParams.searchParams)
+      }
       this.$refs.table.searchData()
     },
     rebuildParam (val) {
       const reportParam = {}
       const defaultReportParamArr = Object.keys(this.defaultReportParam)
-      const sqlParamArr = Object.keys(this.sqlParam)
+      const searchListArr = this.searchList.map(el => el.fieldName)
       const valArr = Object.keys(val)
       if (valArr.length) {
         valArr.forEach((item) => {
-          if (defaultReportParamArr.indexOf(item) !== -1 || sqlParamArr.indexOf(item) !== -1) {
+          if (defaultReportParamArr.concat(searchListArr).indexOf(item) !== -1) {
             reportParam[item] = val[item]
           }
         })
       }
-      this.sqlParam.columnType = val.property ? val.property : this.columnType
+      if (val.property || this.columnType) {
+        this.sqlParam.columnType = { mode: '=', relation: "and", value: val.property ? val.property : this.columnType }
+      }
       if (this.taskId) {
         reportParam.TASKID = this.taskId
       }
@@ -1105,12 +1125,12 @@ export default {
         this.serachForm[el.fieldName] = el.defaultValue ? el.defaultValue : ''
         if (el.parameterSource && el.parameterSource == 'SQL参数') {
           if (reportParam[el.fieldName]) {
-            sql[el.fieldName] = reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName]
+            sql[el.fieldName] = { mode: '=', relation: "and", value: reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName] }
             delete reportParam[el.fieldName]
           }
-        } else if (el.parameterSource && el.parameterSource == '报表参数') {
+        } else {
           if (reportParam[el.fieldName]) {
-            report[el.fieldName] = reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName]
+            report[el.fieldName] = { mode: '=', relation: "and", value: reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName] }
             delete reportParam[el.fieldName]
           }
         }
@@ -1118,7 +1138,6 @@ export default {
       this.tableParam = {
         sqlParam: { ...this.sqlParam, ...sql, ...this.tableParam.sqlParam },
         reportId: this.tableInfo.id,
-        param: {},
         reportParam: {
           ...this.defaultReportParam, ...this.tableParam.reportParam, ...report
         },
@@ -1141,9 +1160,9 @@ export default {
           column.drillName = el.drillName
         }
       })
-      let param = {...this.tableParam.param}
+      let param = { ...this.tableParam.reportParam }
       let obj = {}
-      if(Object.keys(param).length){
+      if (Object.keys(param).length) {
         Object.keys(param).forEach(el => {
           obj[el] = param[el].value
         })
@@ -1151,7 +1170,7 @@ export default {
       // 是否开启了行点击
       if (this.tableInfo.enableClick === 1) {
         this.$emit('row-click', row)
-        this.runInHoleParam = { ...row,...obj ,...this.tableParam.sqlParam}
+        this.runInHoleParam = { ...row, ...obj, ...this.tableParam.sqlParam }
         this.runInHoleParam.property = column.property
         this.reportItems.forEach((item) => {
           if (column.property === item.fieldName) {
@@ -1181,15 +1200,15 @@ export default {
           column.drillName = el.drillName
         }
       })
-      let param = {...this.tableParam.param}
+      let param = { ...this.tableParam.reportParam }
       let obj = {}
-      if(Object.keys(param).length){
+      if (Object.keys(param).length) {
         Object.keys(param).forEach(el => {
           obj[el] = param[el].value
         })
       }
       if (this.tableInfo.enableClick === 1) {
-        this.runInHoleParam = { ...row,...obj ,...this.tableParam.sqlParam}
+        this.runInHoleParam = { ...row, ...obj, ...this.tableParam.sqlParam }
         this.runInHoleParam.property = column.property
         this.reportItems.forEach((item) => {
           if (column.field === item.fieldName) {
@@ -2140,9 +2159,9 @@ export default {
 ::v-deep .splitter-pane-resizer.vertical {
   display: none;
 }
-::v-deep .row--level-0 :nth-child(3) .el-dropdown {
-  display: none;
-}
+// ::v-deep .row--level-0 :nth-child(3) .el-dropdown {
+//   display: none;
+// }
 ::v-deep .el-table--border .el-table__cell:first-child .cell {
   padding-left: 15px !important;
 }

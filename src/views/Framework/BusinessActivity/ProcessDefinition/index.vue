@@ -117,6 +117,7 @@ const columns = [
   },
   {
     title: '操作',
+    fixed: 'right',
     dataIndex: 'operation',
     scopedSlots: { customRender: 'operation' },
     align: 'left',
@@ -241,6 +242,7 @@ export default {
     },
 
     editModel (record) {
+      this.title = '编辑流程模版'
       this.modelId = record.id
       this.modelName = record.name
       this.visibleModelEditDrawer = true
