@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative; height: 520px">
+  <div style="position: relative">
     <form-list
       class="describe-form"
       ref="form"

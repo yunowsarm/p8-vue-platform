@@ -33,7 +33,7 @@
         ></plan-gantt>
       </div>
     </div>
-    <el-drawer :title="detailTitle" :append-to-body="true" size="50%" :destroy-on-close="true" :wrapper-closable="false" @closed="detailDrawerClosed" :visible.sync="detailVisible">
+    <el-drawer :title="detailTitle" v-drawerDrag :append-to-body="true" size="50%" :destroy-on-close="true" :wrapper-closable="false" @closed="detailDrawerClosed" :visible.sync="detailVisible">
       <plan-attribute
         @save-success="detailDrawerClosed"
         :create-page="createPage"

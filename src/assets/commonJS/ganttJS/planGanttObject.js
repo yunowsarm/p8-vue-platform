@@ -181,6 +181,11 @@ export function planGantt(ganttName, vueThis) {
     }
     ganttObject.render()
   }
+  Gantt.taskProgressDetails = function taskProgressDetails (taskId) {
+    if (vueThis.createPage === 'compile') {
+      vueThis.showTaskProgressDialog(taskId)
+    }
+  }
   GanttObject.treeDataEditor(ganttObject, vueThis.treeDataEditorConfig, vueThis.treeDataEditorConfig1)
   // 列定义
   GanttObject.synchronizationColumns(vueThis, ganttObject)
@@ -691,7 +696,7 @@ export function getGanttColumns(ganttObject, vueThis) {
             const taskStatusMap = store.state.project.dicConfig.taskStatus
             if (taskStatusMap && Object.keys(taskStatusMap).length > 0) {
               const item = taskStatusMap[status]
-              html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.title}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
+              html = `<i onclick=Gantt.taskProgressDetails('${task.id}') class="gantt-tip p8 ${item.icon}" style="color: ${item.color};cursor:pointer;" title="${item.title}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
             }
           }
         }

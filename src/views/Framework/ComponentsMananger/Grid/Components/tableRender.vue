@@ -1593,18 +1593,28 @@ export default {
     },
     // 启动流程
     startProcess (row, btn) {
-      const rowBtnData = this.getRowBtnData(row, btn)
-      row = rowBtnData.row
-      btn = rowBtnData.btn
-      if (!row) {
-        return
-      }
-      // this.remark = btn.remark
-      const obj = JSON.parse(btn.eventParams)
-      this.selsctRow = row
-      this.eventParams = obj
-      this.processDefinationTwoKey = obj.code
-      this.nextApproveUserBeforehand(obj.code)
+      let that = this
+      this.$confirm('是否确定发起流程?', '提醒', {
+        lockScroll: false,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'info'
+      })
+        .then(() => {
+          const rowBtnData = that.getRowBtnData(row, btn)
+          row = rowBtnData.row
+          btn = rowBtnData.btn
+          if (!row) {
+            return
+          }
+          // that.remark = btn.remark
+          const obj = JSON.parse(btn.eventParams)
+          that.selsctRow = row
+          that.eventParams = obj
+          that.processDefinationTwoKey = obj.code
+          that.nextApproveUserBeforehand(obj.code)
+        })
+        .catch(() => { })
     },
     nextApproveUserBeforehand (processDefinationTwoKey) {
       const that = this
