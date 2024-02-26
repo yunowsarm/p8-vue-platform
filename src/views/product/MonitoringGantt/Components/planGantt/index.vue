@@ -193,7 +193,8 @@
                    :dialog-height="360">
       <template #dialog>
         <command-search :gantt-name="ganttName"
-                        :plan-info-id="planInfoId"></command-search>
+                        :plan-info-id="planInfoId"
+                        @close="closeSearch"></command-search>
       </template>
     </common-dialog>
     <common-dialog title="统计信息"
@@ -448,6 +449,7 @@ export default {
       projectSecretGradeDisplay: '', // project文件导入 弹框需要展示的密级
       projectSecretGrade: '', // project文件导入 弹框需要展示的密级
       isPlan: true,
+      pageName: 'planMonitor',
       detailVisible: false,
       detailTitle: '查看院任务',
       fullscreenLoading: '',
@@ -816,6 +818,9 @@ export default {
         text: 'Loading',
         spinner: 'el-icon-loading'
       })
+      // 根据项目类型，获取gantt列设置
+      this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
+
       const vueThis = this
       // 清空原有数据
       this.selectedTasks = []

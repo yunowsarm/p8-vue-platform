@@ -7,6 +7,7 @@
     <template #center>
       <menu-layout v-if="tabsParmar.navigation === '2'"
                    ref="menuLayout"
+                   class="thirdMenu"
                    :third-menu-param="thirdMenuParam"
                    :cache="false"
                    :default-menu="defaultMenu"></menu-layout>
@@ -45,6 +46,9 @@
   </list-layout>
 </template>
 <style lang="scss" scoped>
+.thirdMenu ::v-deep .normal-main .normal-center{
+  height: calc(100% - 40px);
+}
 ::v-deep .el-tabs.el-tabs__header {
   margin: 0;
 }
@@ -532,8 +536,8 @@ export default {
       this.$emit('close')
     },
     saveSuccess (res) {
-      console.log(res, '---res布局');
       this.configParmars.id = res
+      this.$emit('close')
     }
   }
 }

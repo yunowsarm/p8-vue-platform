@@ -15,7 +15,9 @@
               <el-col :span="24">
                 <el-form-item label="未完成原因分类"
                               prop="deviationType">
-                  <el-select v-model="formData.deviationType"
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationType }}</span>
+                  <el-select v-else
+                             v-model="formData.deviationType"
                              size="medium">
                     <el-option v-for="item in unfinishOption"
                                :key="item.value"
@@ -29,7 +31,9 @@
             <el-row>
               <el-col :span="12">
                 <el-form-item label="未完成原因">
-                  <el-input v-model="formData.deviationCauses"
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationCauses }}</span>
+                  <el-input v-else
+                            v-model="formData.deviationCauses"
                             type="textarea"
                             resize="none"
                             maxlength="1000"
@@ -40,7 +44,9 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="偏离影响">
-                  <el-input v-model="formData.deviationImpact"
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationImpact }}</span>
+                  <el-input v-else
+                            v-model="formData.deviationImpact"
                             type="textarea"
                             resize="none"
                             maxlength="1000"
@@ -53,7 +59,9 @@
             <el-row>
               <el-col :span="12">
                 <el-form-item label="进展情况">
-                  <el-input v-model="formData.deviationProgress"
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationProgress }}</span>
+                  <el-input v-else
+                            v-model="formData.deviationProgress"
                             type="textarea"
                             resize="none"
                             maxlength="1000"
@@ -64,7 +72,9 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="解决方案">
-                  <el-input v-model="formData.solutions"
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.solutions }}</span>
+                  <el-input v-else
+                            v-model="formData.solutions"
                             type="textarea"
                             resize="none"
                             maxlength="1000"
@@ -99,6 +109,7 @@
                               label-width="100px">
                   <el-date-picker v-model="formData.changeDateRange"
                                   type="daterange"
+                                  unlink-panels
                                   range-separator="至"
                                   start-placeholder="开始日期"
                                   end-placeholder="结束日期">
@@ -125,7 +136,9 @@
               <el-col :span="24">
                 <el-form-item label="未完成原因分类"
                               prop="deviationType">
-                  <el-select v-model="formData.deviationType"
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationType }}</span>
+                  <el-select v-else
+                             v-model="formData.deviationType"
                              placeholder="请选择">
                     <el-option v-for="item in unfinishOption"
                                :key="item.value"
@@ -140,7 +153,9 @@
               <el-col :span="12">
                 <el-form-item label="未完成原因"
                               prop="deviationCauses">
-                  <el-input v-model="formData.deviationCauses"
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationCauses }}</span>
+                  <el-input v-else
+                            v-model="formData.deviationCauses"
                             maxlength="1000"
                             show-word-limit
                             placeholder="请输入未完成原因"></el-input>
@@ -148,7 +163,9 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="偏离影响">
-                  <el-input v-model="formData.deviationImpact"
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationImpact }}</span>
+                  <el-input v-else
+                            v-model="formData.deviationImpact"
                             maxlength="1000"
                             show-word-limit
                             placeholder="请输入偏离影响"></el-input>
@@ -158,7 +175,9 @@
             <el-row v-if="exceedType">
               <el-col :span="12">
                 <el-form-item label="进展情况">
-                  <el-input v-model="formData.deviationProgress"
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationProgress }}</span>
+                  <el-input v-else
+                            v-model="formData.deviationProgress"
                             maxlength="1000"
                             show-word-limit
                             placeholder="请输入进展情况"></el-input>
@@ -167,7 +186,9 @@
               <el-col :span="12">
                 <el-form-item label="解决方案"
                               placeholder="请输入解决方案">
-                  <el-input v-model="formData.solutions"
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.solutions }}</span>
+                  <el-input v-else
+                            v-model="formData.solutions"
                             maxlength="1000"
                             show-word-limit></el-input>
                 </el-form-item>
@@ -185,7 +206,8 @@
                                :percentage="formData.progress"></el-progress>
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="12"
+                      v-if="!this.getPlanInfo().pageType">
                 <el-form-item label-width="30px">
                   <el-input-number size="mini"
                                    v-model="formData.progress"
@@ -199,8 +221,11 @@
             <el-row>
               <el-col :span="24">
                 <el-form-item label="预计起止时间">
-                  <el-date-picker v-model="formData.forecastDateRange"
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.forecastBeginDate + "  -  " + formData.forecastEndDate }}</span>
+                  <el-date-picker v-else
+                                  v-model="formData.forecastDateRange"
                                   type="daterange"
+                                  unlink-panels
                                   range-separator="至"
                                   start-placeholder="开始日期"
                                   end-placeholder="结束日期">
@@ -213,7 +238,9 @@
                       v-if="formData.progress > 0">
                 <el-form-item label="实际开始日期"
                               prop="realBeginDate">
-                  <el-date-picker v-model="formData.realBeginDate"
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.realBeginDate }}</span>
+                  <el-date-picker v-else
+                                  v-model="formData.realBeginDate"
                                   type="date"
                                   style="width: 100%;"
                                   :picker-options="startRealPickerOptions"
@@ -225,7 +252,9 @@
                       v-if="formData.progress === 100">
                 <el-form-item label="实际完成日期"
                               prop="realEndDate">
-                  <el-date-picker v-model="formData.realEndDate"
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.realEndDate }}</span>
+                  <el-date-picker v-else
+                                  v-model="formData.realEndDate"
                                   type="date"
                                   :picker-options="endRealPickerOptions"
                                   style="width: 100%;"
@@ -237,7 +266,9 @@
             <el-row>
               <el-col :span="24">
                 <el-form-item label="进度说明">
-                  <el-input v-model="formData.content"
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.content }}</span>
+                  <el-input v-else
+                            v-model="formData.content"
                             type="textarea"
                             resize="none"
                             maxlength="1000"
@@ -301,11 +332,13 @@ export default {
        *    6407：审批驳回 6408：审批撤销
        *  status=6070 && managerStatus !== 6407 || 6408时, 禁用
        */
-      const statusEnd = this.getPlanInfo().allStatus.filter(item => item.progressRange[0] === '1')
-      return (statusEnd.find((item) =>
-        item.value === this.getPlanInfo().STATUS) ||
-        this.managerStatus.indexOf(this.getPlanInfo().MANAGERSTATUS) !== -1
-      )
+      if (this.getPlanInfo().allStatus) {
+        const statusEnd = this.getPlanInfo().allStatus.filter(item => item.progressRange[0] === '1')
+        return (statusEnd.find((item) =>
+          item.value === this.getPlanInfo().STATUS) ||
+          this.managerStatus.indexOf(this.getPlanInfo().MANAGERSTATUS) !== -1
+        )
+      }
     }
   },
   components: {
@@ -463,17 +496,26 @@ export default {
         if (valid) {
           this.getPlanInfo().PROGRESS = this.formData.progress
           if (submitType === 'submit') {
-            _this.$api['taskManager.progressFeedbackCheck']({ taskId: _this.getPlanInfo().TASKID, parent: _this.getPlanInfo().PARENTID, hierarchy: _this.getPlanInfo().GETPROJECTLEVEL }).then(res => {
-              if (res && res.success) {
-                _this.getPlanInfo().MANAGERSTATUS = '6406'
-                _this.$emit('submit', _this.formData, submitType)
-              } else {
-                _this.$message({
-                  message: res.message,
-                  type: 'error'
-                })
-              }
+            this.$confirm('是否确定要提交完成审批?', '提醒', {
+              lockScroll: false,
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'info'
             })
+              .then(() => {
+                _this.$api['taskManager.progressFeedbackCheck']({ taskId: _this.getPlanInfo().TASKID, parent: _this.getPlanInfo().PARENTID, hierarchy: _this.getPlanInfo().GETPROJECTLEVEL }).then(res => {
+                  if (res && res.success) {
+                    _this.getPlanInfo().MANAGERSTATUS = '6406'
+                    _this.$emit('submit', _this.formData, submitType)
+                  } else {
+                    _this.$message({
+                      message: res.message,
+                      type: 'error'
+                    })
+                  }
+                })
+              })
+              .catch(() => { })
           } else {
             this.$emit('submit', this.formData, submitType)
           }
@@ -531,6 +573,9 @@ export default {
          * 保存按钮是否展示，false是隐藏
          * 1. 责任令状态为已发布，计划非已发布
          */
+      if (this.getPlanInfo().pageType === 'view') {
+        return false
+      }
       let display = false
       let managerStatus = this.getPlanInfo().MANAGERSTATUS
       let executeState = this.getPlanInfo().EXECUTESTATE
@@ -553,6 +598,9 @@ export default {
        * 4. 或该任务的子任务全部完成并且该任务的父任务的父id为空
        * 5. 责任令状态为已发布，计划非已发布
        */
+      if (this.getPlanInfo().pageType === 'view') {
+        return false
+      }
       let isLeafNode = this.getPlanInfo().ISLEAF// 叶子节点为0，父任务为1
       let leafChildrenIsFinished = this.leafChildrenIsFinished
       let isHaveParentTaskParentId = this.isHaveParentTaskParentId

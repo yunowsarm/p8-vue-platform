@@ -739,19 +739,16 @@ export const CommandButtonData = [
   },
   {
     id: 'batch-owner',
-    icon: 'p8 icon-full-name',
+    icon: 'p8 icon-person-manage',
     title: '批量设置责任人',
     help: '批量设置责任人',
     clickFun: function (btn, ganttName, tasks) {
+      const vueThis = store.getters.vueThis
+      vueThis.selectTaskOwnerId = tasks[0].owner_id
       batchOwner(ganttName)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
       let result
-      // 等于专题计划禁用
-      if (vueThis.flag === 'SPECIAL_PLAN_0_01' || vueThis.flag === 'SPECIAL_PLAN_0_02' || vueThis.flag === 'SPECIAL_PLAN_0_03') {
-        return true
-      }
       if (checkSwitchType(tasks)) {
         return true
       }
@@ -2219,9 +2216,7 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      if (checkSwitchType(tasks)) {
-        return true
-      }
+      return false
     }
   },
   {

@@ -9,18 +9,14 @@
         <common-upload :files="files"
                        @upload="handleUpload"
                        @remove="handleRemove"></common-upload>
-      </div>
-    </template>
-    <template #west>
-      <div style="padding: 10px">
         <search-form-list ref="search"
-                          search-width="90%"
-                          search-contain-width="100%"
-                          label-width="70px"
+                          label-width="100px"
                           :data-source="searchData"
                           @search="search"
                           @re-set="reSet"></search-form-list>
       </div>
+    </template>
+    <template #west>
       <div class="treeContain">
         <common-tree :tree-api="treeDataApi"
                      :tree-param="treeParam"
@@ -286,9 +282,19 @@ export default {
     delete (record) {
       const this_ = this
       this.selectedRecord = record
-      this.$api['documentManagement.delete']({ id: record.id }).then((res) => {
-        this_.queryData()
+      this.$confirm(`是否确定要删除该附件？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
+        .then(() => {
+          this_.$api['documentManagement.delete']({ id: record.id }).then((res) => {
+            this_.queryData()
+          })
+        })
+        .catch((e) => {
+          console.log(e)
+        })
     },
     handleUpload (file) {
       this.uploadFiles.push(file)
@@ -336,6 +342,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.upload-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
 .time {
   font-size: 13px;
   color: #999;

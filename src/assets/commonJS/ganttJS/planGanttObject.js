@@ -117,7 +117,7 @@ export function planGantt(ganttName, vueThis) {
               GanttObject.showMessage(vueThis, '前后置关系创建失败！', 'error')
               return { action: 'error' }
             })
-          vueThis.initGantt()
+          // vueThis.initGantt()
         })
       },
       update: function (data, id) {},
@@ -180,6 +180,11 @@ export function planGantt(ganttName, vueThis) {
       vueThis.searchForm[name] = value
     }
     ganttObject.render()
+  }
+  Gantt.taskProgressDetails = function taskProgressDetails (taskId) {
+    if (vueThis.createPage === 'compile') {
+      vueThis.showTaskProgressDialog(taskId)
+    }
   }
   GanttObject.treeDataEditor(ganttObject, vueThis.treeDataEditorConfig, vueThis.treeDataEditorConfig1)
   // 列定义
@@ -691,7 +696,7 @@ export function getGanttColumns(ganttObject, vueThis) {
             const taskStatusMap = store.state.project.dicConfig.taskStatus
             if (taskStatusMap && Object.keys(taskStatusMap).length > 0) {
               const item = taskStatusMap[status]
-              html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.title}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
+              html = `<i onclick=Gantt.taskProgressDetails('${task.id}') class="gantt-tip p8 ${item.icon}" style="color: ${item.color};cursor:pointer;" title="${item.title}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
             }
           }
         }
@@ -869,4 +874,42 @@ export function getGanttColumns(ganttObject, vueThis) {
       resize: true
     }
   ]
+}
+
+export function planMonitorAdd (ganttObject, vueThis) {
+  return {
+    name: 'overdueRemainingDays',
+    label: '超期/剩余天数',
+    align: 'center',
+    min_width: 190,
+    resize: true,
+    template: function (task) {
+      let text = ''
+      if (task.managerStatus === '6409') {
+        let realEndDate = new Date(task.realEndDate)
+        let endDate = new Date(task.end_date)
+        let days = Math.floor(Math.abs((realEndDate - endDate) / 1000 / 60 / 60 / 24))
+        // 已完成
+        if (realEndDate > endDate) {
+          text = `<span style="color: #F80012">超期${days}天完成</span>`
+        } else if (days === 0) {
+          text = `<span style="color: #1892FF">当天完成</span>`
+        } else {
+          text = `<span style="color: #1892FF">提前${days}天完成</span>`
+        }
+      } else {
+        let nowDate = new Date()
+        let endDate = new Date(task.end_date)
+        let days = Math.floor(Math.abs((nowDate - endDate) / 1000 / 60 / 60 / 24))
+        if (nowDate > endDate) {
+          text = `<span style="color: #F80012">超期${days + 1}天</span>`
+        } else if (days === 0) {
+          text = `<span style="color: #1BBF9E">今天</span>`
+        } else {
+          text = `<span style="color: #0296ff">剩余${days}天</span>`
+        }
+      }
+      return text
+    }
+  }
 }

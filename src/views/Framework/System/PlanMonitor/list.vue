@@ -4,6 +4,10 @@
       <common-button :comp="comp"
                      :button-config="buttonConfig"
                      :special-rote-name="roteName"></common-button>
+      <search-form-list ref="search"
+                        :data-source="searchDatasource"
+                        @search="search"
+                        @re-set="reset"></search-form-list>
     </template>
     <template #center>
       <div id="table-contain">
@@ -51,7 +55,7 @@
   </list-layout>
 </template>
 <script>
-import { P8Table as CommonTable, P8Button as CommonButton, P8Drawer as CommonDrawer, P8ListLayout as ListLayout } from 'p8-components-ui'
+import { P8Table as CommonTable, P8Button as CommonButton, P8Drawer as CommonDrawer, P8ListLayout as ListLayout, P8Search as SearchFormList } from 'p8-components-ui'
 
 import PlanLogoEdit from '@/views/Framework/System/PlanMonitor/edit'
 import PlanLogoDetails from '@/views/Framework/System/PlanMonitor/details'
@@ -149,7 +153,8 @@ export default {
     CommonTable,
     CommonButton,
     CommonDrawer,
-    ListLayout
+    ListLayout,
+    SearchFormList
   },
   props: {
     roteName: {
@@ -178,7 +183,31 @@ export default {
       searchData: [],
       buttonConfig: {
         icon: 'edit'
-      }
+      },
+      searchDatasource: [
+        {
+          type: 'text',
+          labelText: '标识名称',
+          fieldName: 'name',
+          placeholder: '请输入标识名称'
+        },
+        {
+          type: 'select',
+          labelText: '状态',
+          fieldName: 'type',
+          placeholder: '请选择状态',
+          options: [
+            {
+              label: '未启用',
+              value: '0'
+            },
+            {
+              label: '已启用',
+              value: '1'
+            }
+          ],
+        }
+      ]
     }
   },
   mounted () { },
@@ -279,7 +308,13 @@ export default {
         .catch(() => {
           console.error('异步失败的操作')
         })
-    }
+    },
+    search (param) {
+      this.queryParam = param
+    },
+    reset () {
+      this.queryParam = {}
+    },
   }
 }
 </script>

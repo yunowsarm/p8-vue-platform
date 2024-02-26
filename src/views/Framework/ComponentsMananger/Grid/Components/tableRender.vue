@@ -17,7 +17,7 @@
                         @search="search"
                         labelWidth="100px"
                         @re-set="reSet"
-                        :form="serachForm"
+                        :form="searchForm"
                         :search-width="searchWidth"
                         :permission-vo="permissionVo"
                         :search-contain-width="searchContainWidth"></search-form-list>
@@ -555,7 +555,7 @@ export default {
       customCSS: {},
       sysParams: Object.assign({ $SYSTEM_PARAMS_SELECT: _cloneDeep(this.$store.state.user.userInfo) }), // 系统级参数
       currentRouterPath: '',
-      serachForm: {},
+      searchForm: {},
       headerVisibleType: this.headerVisible
     }
   },
@@ -676,7 +676,7 @@ export default {
           relation: 'and'
         }
       })
-      this.tableParam.reportParam = { ...obj, ...this.tableParam.reportParam }
+      this.tableParam.sqlParam = { ...obj, ...this.tableParam.sqlParam }
       this.propParam = Object.assign(this.propParam, val)
     }
   },
@@ -749,7 +749,7 @@ export default {
       let columnName = ''
       this.columns.forEach(item => {
         // 开启了行点击，配置了下钻，并且不为null
-        if (this.tableInfo.enableClick === 1 && item.drillDownName && item.dataIndex === column.property && row[column.property]) {
+        if ((this.tableInfo.enableClick === 1 && item.drillDownName && item.dataIndex === column.property && row[column.property]) || row[column.property] == 0) {
           columnName = 'columnStyle'
         }
         if (classList && classList.length) {
@@ -1068,7 +1068,6 @@ export default {
     },
     search (param) {
       let sqlParam = {}
-      // let reportParam = {}
       this.searchData.forEach(el => {
         let fieldName = el.replaceSearch ? el.replaceSearch : el.fieldName
         if (el.parameterSource && el.parameterSource == 'SQL参数') {
@@ -1079,9 +1078,8 @@ export default {
         }
       })
       this.sqlParam = sqlParam
-      // this.tableParam.reportParam = { ...reportParam, ...this.tableParam.reportParam }
       this.tableParam.sqlParam = { ...sqlParam, ...this.tableParam.sqlParam, ...this.sqlParam }
-      this.tableParam.reportParam = { ...this.westParmars, ...this.tableParam.reportParam, ...param }
+      this.tableParam.reportParam = { ...this.westParmars, ...param }
     },
     reSet () {
       this.sqlParam = {}
@@ -1117,12 +1115,12 @@ export default {
       }
       let sql = {}
       let report = {}
-      this.serachForm = {}
+      this.searchForm = {}
       this.searchList.forEach(el => {
         if (el.type && el.type == "datetimeRange" && el.defaultValue && el.defaultValue.indexOf(',') !== -1) {
           el.defaultValue = el.defaultValue.split(',')
         }
-        this.serachForm[el.fieldName] = el.defaultValue ? el.defaultValue : ''
+        this.searchForm[el.fieldName] = el.defaultValue ? el.defaultValue : ''
         if (el.parameterSource && el.parameterSource == 'SQL参数') {
           if (reportParam[el.fieldName]) {
             sql[el.fieldName] = { mode: '=', relation: "and", value: reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName] }
@@ -1594,18 +1592,28 @@ export default {
     },
     // 启动流程
     startProcess (row, btn) {
-      const rowBtnData = this.getRowBtnData(row, btn)
-      row = rowBtnData.row
-      btn = rowBtnData.btn
-      if (!row) {
-        return
-      }
-      // this.remark = btn.remark
-      const obj = JSON.parse(btn.eventParams)
-      this.selsctRow = row
-      this.eventParams = obj
-      this.processDefinationTwoKey = obj.code
-      this.nextApproveUserBeforehand(obj.code)
+      let that = this
+      this.$confirm('是否确定发起流程?', '提醒', {
+        lockScroll: false,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'info'
+      })
+        .then(() => {
+          const rowBtnData = that.getRowBtnData(row, btn)
+          row = rowBtnData.row
+          btn = rowBtnData.btn
+          if (!row) {
+            return
+          }
+          // that.remark = btn.remark
+          const obj = JSON.parse(btn.eventParams)
+          that.selsctRow = row
+          that.eventParams = obj
+          that.processDefinationTwoKey = obj.code
+          that.nextApproveUserBeforehand(obj.code)
+        })
+        .catch(() => { })
     },
     nextApproveUserBeforehand (processDefinationTwoKey) {
       const that = this
@@ -2149,7 +2157,7 @@ export default {
   }
 }
 .grid-table-render {
-  padding: 0 10px !important;
+  padding: 0 !important;
   margin: 0;
 }
 ::v-deep .columnStyle {

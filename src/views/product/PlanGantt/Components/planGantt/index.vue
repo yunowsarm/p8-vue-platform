@@ -191,7 +191,7 @@
       :dialog-height="360"
     >
       <template #dialog>
-        <command-search :gantt-name="ganttName" :plan-info-id="planInfoId"></command-search>
+        <command-search :gantt-name="ganttName" :plan-info-id="planInfoId" @close="closeSearch"></command-search>
       </template>
     </common-dialog>
     <common-dialog
@@ -241,6 +241,11 @@
     <common-drawer v-if="versionListVisible" :visible="versionListVisible" size="70%" placement="top" title="版本列表" @close="versionListVisible = false">
       <template #drawer>
         <version-list :plan-info-id="planInfoId"></version-list>
+      </template>
+    </common-drawer>
+    <common-drawer v-if="progressHistoryVisible" :visible="progressHistoryVisible" size="50%" placement="top" title="任务进度反馈" @close="progressHistoryVisible = false">
+      <template #drawer>
+        <ProgressHistory :task-id="selectedId" />
       </template>
     </common-drawer>
   </div>
@@ -333,6 +338,7 @@ import CommonButtonBarSetting from '@/components/gantt/Components/CommonButtonBa
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
 import VersionList from '../versionList'
+import ProgressHistory from '../progressHistory';
 const Mycolumns = [
   {
     title: '',
@@ -452,6 +458,7 @@ export default {
     Notice,
     // Flight,
     // Large,
+    ProgressHistory,
     CommandSearch,
     CommandStatistic,
     CommonButtonBarSetting,
@@ -653,6 +660,8 @@ export default {
       ganttStatisticVisible: false,
       rightMenuConfigVisible: false, // 右键菜单配置弹出框
       getSelectTasks: [],
+      progressHistoryVisible: false,
+      selectedId: '',
       versionListVisible: false //  版本列表显示隐藏
     }
   },
@@ -1319,6 +1328,10 @@ export default {
           })
         }
       })
+    },
+    showTaskProgressDialog (taskId) {
+      this.selectedId = taskId
+      this.progressHistoryVisible = true
     }
   }
 }
