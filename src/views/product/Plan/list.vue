@@ -11,6 +11,7 @@
     <template #center>
         <table-render
             ref="tableRender"
+            class="planLayout"
             :code="componentsConfig.code"
             :permission-vo="componentsConfig.permissionVo"
             :west-tree-param="provideParams.searchParams"
@@ -38,6 +39,9 @@
   background-size: 300px;
   background-position: center;
   margin-top: 25px;
+}
+.planLayout {
+  height: 100%;
 }
 </style>
 <script>
