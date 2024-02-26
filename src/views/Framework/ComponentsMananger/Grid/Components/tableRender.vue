@@ -750,7 +750,7 @@ export default {
       let columnName = ''
       this.columns.forEach(item => {
         // 开启了行点击，配置了下钻，并且不为null
-        if (this.tableInfo.enableClick === 1 && item.drillDownName && item.dataIndex === column.property && row[column.property]) {
+        if ((this.tableInfo.enableClick === 1 && item.drillDownName && item.dataIndex === column.property && row[column.property]) || row[column.property] == 0) {
           columnName = 'columnStyle'
         }
         if (classList && classList.length) {
@@ -2148,7 +2148,7 @@ export default {
   }
 }
 .grid-table-render {
-  padding: 0 10px !important;
+  padding: 0 !important;
   margin: 0;
 }
 ::v-deep .columnStyle {
