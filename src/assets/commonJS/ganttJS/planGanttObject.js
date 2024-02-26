@@ -887,7 +887,7 @@ export function planMonitorAdd (ganttObject, vueThis) {
       let text = ''
       if (task.managerStatus === '6409') {
         let realEndDate = new Date(task.realEndDate)
-        let endDate = new Date(task.end_date)
+        let endDate = new Date(task.end_date) - (24 * 60 *60 * 1000)
         let days = Math.floor(Math.abs((realEndDate - endDate) / 1000 / 60 / 60 / 24))
         // 已完成
         if (realEndDate > endDate) {
@@ -899,7 +899,7 @@ export function planMonitorAdd (ganttObject, vueThis) {
         }
       } else {
         let nowDate = new Date()
-        let endDate = new Date(task.end_date)
+        let endDate = new Date(task.end_date)- (24 * 60 *60 * 1000)
         let days = Math.floor(Math.abs((nowDate - endDate) / 1000 / 60 / 60 / 24))
         if (nowDate > endDate) {
           text = `<span style="color: #F80012">超期${days + 1}天</span>`
