@@ -8,7 +8,7 @@
                 @on-refresh="handleRefresh">
     <template slot="toolbar"> </template>
     <a href="javascript:;"
-       style="position: absolute; right: 5px; top: 5px"
+       style="position: absolute; right: 5px; top: 5px;"
        v-if="isDesign">
       <!-- <template>
         <el-dropdown trigger="click">
