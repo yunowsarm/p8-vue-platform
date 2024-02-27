@@ -42,6 +42,7 @@ export default {
         {
           title: '序号',
           type: 'index',
+          width: 55,
           align: 'center'
         },
         {
