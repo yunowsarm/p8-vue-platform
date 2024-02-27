@@ -143,16 +143,21 @@ export default {
         const findChildren = (tree) => {
           tree.forEach((node) => {
             let index = 0
+            let child
             let arr = treeData.filter((cNode) => {
               if (cNode[pidName] === node[idName]) {
                 cNode.x = index
                 if (cNode.level > 2) {
-                  cNode.x = node.x
+                  cNode.x = node.x + index
                 }
                 index++
                 return true
               }
             })
+            child = arr.length
+            if (!node.x) {
+              node.x = child
+            }
             if (arr.length) {
               findChildren(arr)
             }

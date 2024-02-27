@@ -34,7 +34,6 @@
                  :permission-vo="componentsConfig.permissionVo"
                  :layout-config="componentsConfig"
                  :kanban-config="componentsConfig"
-                 :west-tree-param="provideParams.searchParams"
                  v-bind="$attrs"
                  v-on="$listeners"
                  @refresh="init()"
@@ -61,6 +60,12 @@
 .layoutComponents .layoutTree ::v-deep .el-tree-node__content .is-leaf{
   display: inline-block !important;
   width: 12px;
+}
+.layoutComponents ::v-deep .splitter-pane .normal-center{
+  height: 100% !important;
+  .grid-table-render{
+    height: 100%;
+  }
 }
 ::v-deep .search-wrapper {
   right: 10px;
