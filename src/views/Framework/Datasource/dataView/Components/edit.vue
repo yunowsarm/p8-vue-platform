@@ -129,6 +129,18 @@
             <el-input v-model="scope.row.fieldTxt"
                       @blur="saveTableData(data)"></el-input>
           </template>
+          <template #associationSecret="{ scope, data }">
+            <el-checkbox v-model="scope.row.associationSecret"
+                         :true-label="1"
+                         :false-label="0"
+                         @change="saveTableData(data,scope.row)"></el-checkbox>
+          </template>
+          <template #confoundField="{ scope, data }">
+            <el-checkbox v-model="scope.row.confoundField"
+                         :true-label="1"
+                         :false-label="0"
+                         @change="saveTableData(data)"></el-checkbox>
+          </template>
         </editable-table>
       </template>
       <template v-if="currentTab === 'SearchResult'"
@@ -457,6 +469,18 @@ export default {
           title: '字段文本',
           dataIndex: 'fieldTxt',
           scopedSlots: { customRender: 'custom' }
+        },
+        {
+          title: '是否关联密级字段',
+          dataIndex: 'associationSecret',
+          align: 'center',
+          scopedSlots: { customRender: 'custom' }
+        },
+        {
+          title: '是否混淆字段',
+          dataIndex: 'confoundField',
+          align: 'center',
+          scopedSlots: { customRender: 'custom' }
         }
       ],
       changeTableData: [],
@@ -601,7 +625,14 @@ export default {
     changeSql (val) {
       this.params = { sqlId: val }
     },
-    saveTableData (data) {
+    saveTableData (data,row) {
+      if (row && row.fieldName) {
+        data.forEach(item => {
+          if (item.fieldName !== row.fieldName && item.associationSecret) {
+            item.associationSecret = 0
+          }
+        })
+      }
       this.sqlParams.sqlItemList = data
     },
     execution () {
