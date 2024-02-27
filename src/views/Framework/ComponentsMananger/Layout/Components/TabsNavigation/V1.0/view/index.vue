@@ -34,7 +34,6 @@
                      :permission-vo="componentsConfig.permissionVo"
                      :layout-config="componentsConfig"
                      :kanban-config="componentsConfig"
-                     :west-tree-param="provideParams.searchParams"
                      :configParmars="configParmars"
                      v-bind="$attrs"
                      v-on="$listeners"
