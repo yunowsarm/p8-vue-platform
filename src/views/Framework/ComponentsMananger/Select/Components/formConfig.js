@@ -8,7 +8,7 @@ export default {
       type: 'text', // 控件类型
       labelText: '选项编码', // 控件显示的文本
       fieldName: 'selectionCode',
-      placeholder: '请输入选项编码', // 默认控件的空值文本
+      placeholder: '请输入选项编码 例：XXX_XXX_XXX', // 默认控件的空值文本
       rules: [
         {
           required: true,
@@ -69,7 +69,7 @@ export default {
       type: 'text', // 控件类型
       labelText: '选项编码', // 控件显示的文本
       fieldName: 'selectionCode',
-      placeholder: '请输入选项编码', // 默认控件的空值文本
+      placeholder: '请输入表格编码 例：XXX_XXX_XXX', // 默认控件的空值文本
       rules: [
         {
           required: true,
@@ -131,7 +131,7 @@ export default {
       type: 'text', // 控件类型
       labelText: '选项编码', // 控件显示的文本
       fieldName: 'selectionCode',
-      placeholder: '请输入选项编码', // 默认控件的空值文本
+      placeholder: '请输入表格编码 例：XXX_XXX_XXX', // 默认控件的空值文本
       rules: [
         {
           required: true,
@@ -198,7 +198,7 @@ export default {
       type: 'text', // 控件类型
       labelText: '选项编码', // 控件显示的文本
       fieldName: 'selectionCode',
-      placeholder: '请输入选项编码', // 默认控件的空值文本
+      placeholder: '请输入表格编码 例：XXX_XXX_XXX', // 默认控件的空值文本
       rules: [
         {
           required: true,
