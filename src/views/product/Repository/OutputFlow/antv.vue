@@ -493,6 +493,11 @@ export default {
           }
         })
       }
+      // 更新节点位置
+      this.graph.getNodes().forEach((node) => {
+        const position = node.getPosition();
+        node.position(position.x + node.getBBox().width / 2, position.y + node.getBBox().height / 2);
+      });
     },
     // 分解连接线
     changePortsShow () {
@@ -584,27 +589,27 @@ export default {
     },
     getX (el, index) {
       let x = 0
-      if (el.nodeConfig) {
-        x = JSON.parse(el.nodeConfig).x
-      } else {
+      // if (el.nodeConfig) {
+      //   x = JSON.parse(el.nodeConfig).x
+      // } else {
         if (!el.parent) {
           x = 0
         } else {
-          x = el.x * (200 + 50)
+          x = el.x * (200 + 90)
         }
-      }
+      // }
       return x
     },
     getY (el, index) {
-      if (el.nodeConfig) {
-        return JSON.parse(el.nodeConfig).y
-      } else {
+      // if (el.nodeConfig) {
+      //   return JSON.parse(el.nodeConfig).y
+      // } else {
         if (!el.parent) {
           return 0
         } else {
-          return Number(el.level - 1) * (95 + 60)
+          return Number(el.level - 1) * (95 + 110)
         }
-      }
+      // }
     }
   }
 }
