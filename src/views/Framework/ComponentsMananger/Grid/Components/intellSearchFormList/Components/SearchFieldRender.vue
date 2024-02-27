@@ -333,6 +333,7 @@ export default {
         this.popLabel = ''
         if(this.fields.type == 'text' || this.fields.type == 'textarea'){
           this.mode = 'like'
+          this.$emit('setMode', { [this.fields.fieldName]: this.mode })
         }
       }
     }
