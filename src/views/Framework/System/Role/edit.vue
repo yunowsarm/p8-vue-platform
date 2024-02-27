@@ -96,8 +96,7 @@
                      :style="{height: tabPaneHeight}"
                      name="setProject"
                      key="4">
-          <el-col :style="{ height: flexHeight }"
-                  style="overflow: auto;padding-top:10px;">
+          <el-col style="overflow: auto;padding-top:10px;">
             <form-list ref="form1"
                        :data-source="projectDataSource"
                        :form="formData"
@@ -256,7 +255,7 @@ export default {
       },
       imgUrl: require('@/assets/image/common/Group.png'),
       setUserHeight: document.documentElement.clientHeight - 318 + 'px',
-      tabPaneHeight: document.documentElement.clientHeight - 290 + 'px',
+      tabPaneHeight: document.documentElement.clientHeight - 330 + 'px',
       saveApi: 'role.save',
       visible: false,
       selectedRows: [],
@@ -355,7 +354,7 @@ export default {
       activeType: '',
       adhibitionList: [],
       activeTabs: [],
-      flexHeight: document.documentElement.clientHeight - 318 + 'px',
+      flexHeight: document.documentElement.clientHeight - 320 + 'px',
       dateTime: null
     }
   },
