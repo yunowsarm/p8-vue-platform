@@ -750,7 +750,7 @@ export default {
       let columnName = ''
       this.columns.forEach(item => {
         // 开启了行点击，配置了下钻，并且不为null
-        if ((this.tableInfo.enableClick === 1 && item.drillDownName && item.dataIndex === column.property && row[column.property]) || row[column.property] == 0) {
+        if ((this.tableInfo.enableClick === 1 && item.drillDownName && item.dataIndex === column.property && ((row[column.property]) || row[column.property] == 0))) {
           columnName = 'columnStyle'
         }
         if (classList && classList.length) {
@@ -1080,7 +1080,7 @@ export default {
       })
       this.sqlParam = sqlParam
       this.tableParam.sqlParam = { ...sqlParam, ...this.tableParam.sqlParam, ...this.sqlParam }
-      this.tableParam.reportParam = { ...this.westParmars, ...param }
+      this.tableParam.reportParam = { ...this.westParmars, ...param, ...this.tableParam.reportParam }
     },
     reSet () {
       this.sqlParam = {}
