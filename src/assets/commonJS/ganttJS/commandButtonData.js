@@ -757,6 +757,11 @@ export const CommandButtonData = [
       } else {
         result = true
       }
+      tasks.forEach(task => {
+        if (task.managerStatus == '6404') {
+          result = true
+        }
+      })
       return result
     }
   },
