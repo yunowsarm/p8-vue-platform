@@ -2570,6 +2570,8 @@ function checkContentRoot(ganttName, tasks) {
 function addTask(num, pos, ganttName) {
   const ganttObject = GanttObject.getGanttObject(ganttName)
   const dpObject = GanttObject.getDpObject(ganttName)
+  let settingData = store.getters.userSettingAll.PlanButton[0]
+  let schedulingType = settingData.value && settingData.value.autoScheduling ? settingData.value.autoScheduling : ''
   if (ganttObject && dpObject) {
     const taskId = ganttObject.getSelectedId()
     const task = ganttObject.getTask(taskId)
@@ -2593,7 +2595,7 @@ function addTask(num, pos, ganttName) {
           insertType: 'Before',
           type: type,
           secretGrade: parentTask.secretGrade,
-          autoScheduling: parentTask.autoScheduling,
+          autoScheduling: schedulingType || parentTask.autoScheduling,
           createPage: vueThis.createPage,
           completeForm: ' '
         })
@@ -2626,7 +2628,7 @@ function addTask(num, pos, ganttName) {
           insertType: 'After',
           type: type,
           secretGrade: parentTask.secretGrade,
-          autoScheduling: parentTask.autoScheduling,
+          autoScheduling: schedulingType || parentTask.autoScheduling,
           createPage: vueThis.createPage,
           completeForm: ' '
         })
@@ -2658,7 +2660,7 @@ function addTask(num, pos, ganttName) {
           insertType: 'Child',
           type: type,
           secretGrade: task.secretGrade,
-          autoScheduling: task.autoScheduling,
+          autoScheduling: schedulingType || task.autoScheduling,
           createPage: vueThis.createPage,
           completeForm: ' '
         })

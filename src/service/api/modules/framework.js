@@ -505,6 +505,22 @@ export const system = {
       desc: '计划标识管理   依赖互斥标识查询'
     }
   ],
+  PlanGanttSetting: [
+    {
+      name: 'getSchedulingBasicConfig',
+      method: 'POST',
+      path: '/framework/project/autoSchedulingBasicConfig',
+      mockPath: '/framework/project/autoSchedulingBasicConfig',
+      desc: '系统设置-功能设置-排程设置-查询排程'
+    },
+    {
+      name: 'saveSchedulingBasicConfig',
+      method: 'POST',
+      path: '/framework/project/saveSchedulingConfig',
+      mockPath: '/framework/project/saveSchedulingConfig',
+      desc: '系统设置-功能设置-排程设置-保存排程设置'
+    }
+  ],
   role: [
     {
       name: 'list',
