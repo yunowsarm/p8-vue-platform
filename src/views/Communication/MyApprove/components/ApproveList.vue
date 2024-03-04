@@ -55,14 +55,14 @@
                   <span style="padding-left: 10px">{{startTimeSplice(item.startTime)}}</span>
                 </el-col>
               </el-row>
-              <template v-if="item.approveInfoConfig">
+              <template v-if="item.approveInfoConfig && Object.keys(item.approveInfoConfig).length">
                 <el-row type="flex"
                         v-for="(el,index) in Object.keys(item.approveInfoConfig)"
                         :key="index"
                         style="text-align: left">
                   <el-col :span="24">
                     <span class="msg-content overHiding"
-                          v-if="item.approveInfoConfig[el]">{{item.approveInfoConfig[el].label}}：{{ item.approveInfoConfig[el].value }}</span>
+                          v-if="item.approveInfoConfig[el] && item.approveInfoConfig[el].label">{{item.approveInfoConfig[el].label}}：{{ item.approveInfoConfig[el].value }}</span>
                   </el-col>
                 </el-row>
               </template>
