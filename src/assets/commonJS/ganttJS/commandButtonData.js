@@ -494,32 +494,32 @@ export const CommandButtonData = [
       return result
     }
   },
-  {
-    id: 'task-sync',
-    icon: 'p8 icon-refresh',
-    title: '单条同步',
-    help: '单条同步',
-    clickFun: function (btn, ganttName, tasks) {
-      const allTaskIds = []
-      tasks.forEach(function (task) {
-        allTaskIds.push(task.id)
-      })
-      batchSyncTask(ganttName, allTaskIds)
-    },
-    isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (tasks && tasks.length === 1) {
-        result = false
-      } else {
-        result = true
-      }
-
-      return result
-    }
-  },
+  // {
+  //   id: 'task-sync',
+  //   icon: 'p8 icon-refresh',
+  //   title: '单条同步',
+  //   help: '单条同步',
+  //   clickFun: function (btn, ganttName, tasks) {
+  //     const allTaskIds = []
+  //     tasks.forEach(function (task) {
+  //       allTaskIds.push(task.id)
+  //     })
+  //     batchSyncTask(ganttName, allTaskIds)
+  //   },
+  //   isDisableFun: function (btn, ganttName, tasks) {
+  //     let result
+  //     if (checkSwitchType(tasks)) {
+  //       return true
+  //     }
+  //     if (tasks && tasks.length === 1) {
+  //       result = false
+  //     } else {
+  //       result = true
+  //     }
+  //
+  //     return result
+  //   }
+  // },
   {
     id: 'product-message-sync',
     icon: 'p8 icon-refresh',
