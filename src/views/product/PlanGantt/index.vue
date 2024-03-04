@@ -1,50 +1,54 @@
 <template>
   <div style="height: 100%">
-    <div class="couerDivClass" id="couerDiv">
-      <div class="top" :style="{ height: commandButtonBarHeight }">
-        <command-button-bar
-          :panel-data="btnData"
-          :selected-tasks="selectedTasks"
-          :gantt-name="ganttName"
-          :plan-info-id="planInfoId"
-          :special-plan="thirdMenuParam.specialPlan"
-          :task-id="taskId"
-          @change-command-button="changeCommandButton"
-        ></command-button-bar>
+    <div class="couerDivClass"
+         id="couerDiv">
+      <div class="top"
+           :style="{ height: commandButtonBarHeight }">
+        <command-button-bar :panel-data="btnData"
+                            :selected-tasks="selectedTasks"
+                            :gantt-name="ganttName"
+                            :plan-info-id="planInfoId"
+                            :special-plan="thirdMenuParam.specialPlan"
+                            :task-id="taskId"
+                            @change-command-button="changeCommandButton"></command-button-bar>
       </div>
-      <div class="bottom" :class="expandBottom">
-        <plan-gantt
-          :plan-info-id="planInfoId"
-          :whole-describe-id="wholeDescribeId"
-          :plan-info-status="planInfoStatus"
-          :task-id="taskId"
-          :plan-end-date-array="planEndDateArray"
-          :plan-begin-date-array="planBeginDateArray"
-          :secret-grade="secretGrade"
-          :create-page="createPage"
-          :flag="thirdMenuParam.specialPlan"
-          :project-category="thirdMenuParam.projectCategory"
-          :select-record="thirdMenuParam.selectRecord"
-          :panel-data="btnData"
-          @select-task="selectTask"
-          @show-detail="showDetail"
-          @save-success="detailDrawerClosed"
-          :task-status="taskStatus"
-        ></plan-gantt>
+      <div class="bottom"
+           :class="expandBottom">
+        <plan-gantt :plan-info-id="planInfoId"
+                    :whole-describe-id="wholeDescribeId"
+                    :plan-info-status="planInfoStatus"
+                    :task-id="taskId"
+                    :plan-end-date-array="planEndDateArray"
+                    :plan-begin-date-array="planBeginDateArray"
+                    :secret-grade="secretGrade"
+                    :create-page="createPage"
+                    :flag="thirdMenuParam.specialPlan"
+                    :project-category="thirdMenuParam.projectCategory"
+                    :select-record="thirdMenuParam.selectRecord"
+                    :panel-data="btnData"
+                    @select-task="selectTask"
+                    @show-detail="showDetail"
+                    @save-success="detailDrawerClosed"
+                    :task-status="taskStatus"></plan-gantt>
       </div>
     </div>
-    <el-drawer :title="detailTitle" v-drawerDrag :append-to-body="true" size="50%" :destroy-on-close="true" :wrapper-closable="false" @closed="detailDrawerClosed" :visible.sync="detailVisible">
-      <plan-attribute
-        @save-success="detailDrawerClosed"
-        :create-page="createPage"
-        :task-id="selectTaskId"
-        :secret-grade="secretGrade"
-        :att-read-only="readOnly"
-        :view-type="viewType"
-        :gantt-name="ganttName"
-        :status="status"
-        :plan-info-id="planInfoId"
-      ></plan-attribute>
+    <el-drawer :title="detailTitle"
+               v-drawerDrag
+               :append-to-body="true"
+               size="50%"
+               :destroy-on-close="true"
+               :wrapper-closable="false"
+               @closed="detailDrawerClosed"
+               :visible.sync="detailVisible">
+      <plan-attribute @save-success="detailDrawerClosed"
+                      :create-page="createPage"
+                      :task-id="selectTaskId"
+                      :secret-grade="secretGrade"
+                      :att-read-only="readOnly"
+                      :view-type="viewType"
+                      :gantt-name="ganttName"
+                      :status="status"
+                      :plan-info-id="planInfoId"></plan-attribute>
     </el-drawer>
   </div>
 </template>
@@ -56,7 +60,7 @@
   overflow: scroll;
   overflow-x: hidden;
   overflow-y: hidden;
-  z-index: 2000 !important;
+  z-index: 9999 !important;
 }
 #couerDiv {
   background: $base-bg-color;
@@ -106,7 +110,7 @@ import PlanAttribute from './Components/planAttribute'
 import { deepClone } from '@/utils/common'
 export default {
   name: 'PlanGanttManage',
-  data() {
+  data () {
     return {
       defaultKey: '1',
       advanced: false,
@@ -144,7 +148,7 @@ export default {
   },
   watch: {
     ganttButtonMode: {
-      handler(val) {
+      handler (val) {
         if (val == 'tabs') {
           this.commandButtonBarHeight = '145px'
         }
@@ -159,7 +163,7 @@ export default {
     }
   },
   computed: {
-    btnData() {
+    btnData () {
       if (this.$route.path === '/TaskDecomposition') {
         const NewCommandButtonBarDataTabsRow = deepClone(CommandButtonBarData)
         const tabsRow = NewCommandButtonBarDataTabsRow.filter((item) => {
@@ -186,7 +190,7 @@ export default {
         return this.ganttButtonMode === 'tabs' ? CommandButtonBarData : this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
       }
     },
-    expandBottom() {
+    expandBottom () {
       if (this.ganttButtonMode == 'tabs' && this.advance) {
         return 'tabs'
       }
@@ -209,9 +213,9 @@ export default {
     PlanAttribute,
     CommandButtonBar
   },
-  beforeMount() {},
-  created() {},
-  mounted() {
+  beforeMount () { },
+  created () { },
+  mounted () {
     if (this.thirdMenuParam.createPage === 'decompose' || this.thirdMenuParam.route === '/MyTask/MyTask/latest') {
       this.planInfoId = this.thirdMenuParam.PLANINFOID
       this.secretGrade = this.thirdMenuParam.SECRETGRADE || ''
@@ -233,15 +237,15 @@ export default {
     }
   },
   methods: {
-    selectTask(selectDatas, ganttName) {
+    selectTask (selectDatas, ganttName) {
       this.selectedTasks = selectDatas
       this.ganttName = ganttName
     },
-    toggleAdvanced() {
+    toggleAdvanced () {
       this.advanced = !this.advanced
     },
-    tabBarExtraContent() {},
-    showDetail(selectTask, ganttName, viewType) {
+    tabBarExtraContent () { },
+    showDetail (selectTask, ganttName, viewType) {
       this.detailVisible = true
       this.ganttName = ganttName
       this.selectTaskId = selectTask.id
@@ -249,12 +253,12 @@ export default {
       this.detailTitle = selectTask.name
       this.viewType = viewType
     },
-    detailDrawerClosed(res) {
+    detailDrawerClosed (res) {
       this.detailVisible = false
       this.selectTaskId = ''
       this.detailTitle = ''
     },
-    changeCommandButton(advance) {
+    changeCommandButton (advance) {
       this.advance = advance
       if (advance) {
         this.commandButtonBarHeight = '152px'
