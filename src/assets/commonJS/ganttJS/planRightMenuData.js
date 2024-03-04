@@ -15,10 +15,10 @@ const PlanRightMenuData = [
   //   buttonId: 'fund-task',
   //   title: '设置经费节点'
   // },
-  {
-    buttonId: 'task-sync',
-    title: '单条同步'
-  },
+  // {
+  //   buttonId: 'task-sync',
+  //   title: '单条同步'
+  // },
   // {
   //   buttonId: 'product-message-sync',
   //   title: '添加生产信息'
