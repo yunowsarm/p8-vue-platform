@@ -184,6 +184,33 @@ export default {
               if (el.type === 'multiple' && el.fieldName == item) {
                 type = 'multiple'
               }
+              if (el.type === 'treeSelect' && el.fieldName == item) {
+                let treeData = el.options
+                let selectId = queryParams[item]
+                let selectList = [selectId];
+                let flag = false;
+                const findIds = (data) => {
+                  data.map((el) => {
+                    if (el.ID == selectId) {
+                      if (el.children && el.children.length) {
+                        flag = true
+                        el.children.map((val) => {
+                          selectList.push(val.ID)
+                          findIds(val.children)
+                        })
+                      }
+                    } else if (flag) {
+                      selectList.push(el.ID)
+                      findIds(el.children)
+                    } else {
+                      findIds(el.children)
+                    }
+                  })
+                }
+                findIds(treeData)
+                type = 'multiple'
+                queryParams[item] = selectList
+              }
             })
             if (queryParams[item]) {
               switch (_this.modeData[item]) {
@@ -225,6 +252,7 @@ export default {
             //   }
             // }
           })
+          console.log(searchParam,'-----searchParam');
           this.resetFlag = false
           this.$emit('search', searchParam) // 搜集查询条件数据，触发父页面的查询条件
         }
