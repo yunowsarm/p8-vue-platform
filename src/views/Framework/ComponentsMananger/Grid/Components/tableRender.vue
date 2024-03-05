@@ -1012,6 +1012,11 @@ export default {
               this.treeConfig.parentField = item.fieldName
             }
           })
+          columnData.forEach(item => {
+            if (item.width === 0) {
+              item.minWidth = 120
+            }
+          })
           this.columns = columnData
           // 是编辑表格
           if (res.enableEdit == 1) {
