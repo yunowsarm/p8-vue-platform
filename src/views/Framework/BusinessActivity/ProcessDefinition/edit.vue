@@ -93,7 +93,7 @@ export default {
           type: 'text',
           labelText: '流程key',
           fieldName: 'key',
-          placeholder: '请输入key',
+          placeholder: '请输入流程key',
           colLayout: 'singleCol',
           rules: [
             {
@@ -103,6 +103,11 @@ export default {
             {
               validator: (rule, value, callback) => {
                 let me = this
+                let pattern = /^[A-Za-z]+$/;
+                if (!pattern.test(value)) {
+                  me.showMessage(me, '输入的字符只能包含英文大小写字母', 'error')
+                  return
+                }
                 api['ProcessDefinition.repeatedCheck']({ key: value })
                   .then((res) => {
                     if (res.result) {

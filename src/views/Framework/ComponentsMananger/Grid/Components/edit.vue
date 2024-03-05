@@ -2810,13 +2810,6 @@ export default {
           }
         })
       }
-      if (params.reportItem) {
-        params.reportItem.forEach(item => {
-          if (item.fieldWidth === 0) {
-            item.fieldWidth = 200
-          }
-        })
-      }
       this.$refs.form.submitForm(params, this.saveApi)
     },
     async changeSql (val) {
