@@ -318,6 +318,13 @@ export default {
                 relation: 'and',
                 value: chartData[drillParams[key]]
               }
+            } else if (params[drillParams[key]]) {
+              //params内置的字段,如果有对应的字段封装进去
+              _this.eventParam[key] = {
+                mode: '=',
+                relation: 'and',
+                value: params[drillParams[key]]
+              }
             } else if (searchParams[drillParams[key]]) {
               _this.eventParam[key] = searchParams[drillParams[key]]
             }
