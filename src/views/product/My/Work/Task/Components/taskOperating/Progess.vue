@@ -271,6 +271,7 @@ export default {
       const _this = this
       let deviation = {
         deviationType: '',
+        deviationTypeDisplay: '',
         deviationCauses: '', // 偏离原因
         deviationImpact: '', // 偏离影响
         deviationProgress: '', // 进展情况
@@ -282,6 +283,7 @@ export default {
       }).then(res => {
         if (res && res.length) {
           this.formData.deviationType = res[0].deviationType
+          this.formData.deviationTypeDisplay = res[0].deviationTypeDisplay
           this.formData.deviationCauses = res[0].deviationCauses
           this.formData.deviationProgress = res[0].deviationProgress
           this.formData.deviationImpact = res[0].deviationImpact
