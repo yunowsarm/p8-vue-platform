@@ -2567,10 +2567,10 @@ function checkContentRoot(ganttName, tasks) {
  * @author fukai
  * @date 2020/5/7 12:01
  */
-function addTask(num, pos, ganttName) {
+function addTask (num, pos, ganttName) {
   const ganttObject = GanttObject.getGanttObject(ganttName)
   const dpObject = GanttObject.getDpObject(ganttName)
-  let settingData = store.getters.userSettingAll.PlanButton[0]
+  let settingData = store.getters.userSettingAll.PlanButton && store.getters.userSettingAll.PlanButton[0] || {}
   let schedulingType = settingData.value && settingData.value.autoScheduling ? settingData.value.autoScheduling : ''
   if (ganttObject && dpObject) {
     const taskId = ganttObject.getSelectedId()
