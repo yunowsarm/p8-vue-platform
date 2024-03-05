@@ -55,6 +55,7 @@
 </template>
 <script>
 import { P8Drawer as CommonDrawer} from 'p8-components-ui'
+import store from '@/plugins/store'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import { getPlanVersionGantt } from '@/assets/commonJS/ganttJS/planVersionGantt/planVersionGanttObject'
 import PlanAttribute from './list'
@@ -112,6 +113,7 @@ export default {
       monitorPointDatas: [],
       searchForm1: {},
       searchForm2: {},
+      ganttThis: {},
       dataLoading: false,
       managerStatusMap: {} // 管理状态全部数据
     }
@@ -132,6 +134,7 @@ export default {
     if (this.planVersionId1 && this.planVersionId2) {
       this.initVersionGantt(this.planVersionId1, this.planVersionId2)
     }
+    this.ganttThis = store.getters.vueThis
   },
   computed: {},
   methods: {
@@ -197,27 +200,13 @@ export default {
           // 获取gantt对象
           myGantt1 = GanttObject.getGanttObject(vueThis.ganttName1)
           myGantt2 = GanttObject.getGanttObject(vueThis.ganttName2)
-          // 初始化数据
-          const neData1 = res.v1.map(item => {
-            return {
-              ...item,
-              start_date: item.planBeginTime,
-              end_date: item.planEndTime
-            }
-          })
-          const neData2 = res.v2.map(item => {
-            return {
-              ...item,
-              start_date: item.planBeginTime,
-              end_date: item.planEndTime
-            }
-          })
+          // // 初始化数据
           let datas1 = {
-            tasks: neData1,
+            tasks: res.v1,
             links: []
           }
           let datas2 = {
-            tasks: neData2,
+            tasks: res.v2,
             links: []
           }
           vueThis.saveGantColumnColor({
