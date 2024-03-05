@@ -11,13 +11,11 @@
     </template>
     <template #center>
       <div class="task-operating-con">
-        <div class="task-manage-table"
-             style="height: 260px !important;">
+        <div class="task-manage-table">
           <!-- 管理要素 -->
           <task-manage-view></task-manage-view>
         </div>
-        <div class="task-tabs-con"
-             style="height: 500px !important;">
+        <div class="task-tabs-con">
           <!-- 进度反馈-未完成原因 -->
           <task-tabs-view></task-tabs-view>
         </div>
@@ -114,7 +112,7 @@ div.task-operating-con {
     background-color: #ffffff;
   }
   div.task-tabs-con {
-    height: 50%;
+    height: 100%;
     background-color: #ffffff;
   }
 }
