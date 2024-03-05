@@ -252,7 +252,6 @@ export default {
             //   }
             // }
           })
-          console.log(searchParam,'-----searchParam');
           this.resetFlag = false
           this.$emit('search', searchParam) // 搜集查询条件数据，触发父页面的查询条件
         }
@@ -555,7 +554,7 @@ export default {
   float: right;
   position: relative;
   top: -3px;
-  z-index: 2;
+  // z-index: 2;
   right: 0;
 
   .search-contain {
