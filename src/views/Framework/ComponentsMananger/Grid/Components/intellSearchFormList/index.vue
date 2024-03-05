@@ -554,10 +554,10 @@ export default {
   float: right;
   position: relative;
   top: -3px;
-  // z-index: 2;
   right: 0;
 
   .search-contain {
+    z-index: 2;
     position: absolute;
     top: 40px;
     left: 0;
