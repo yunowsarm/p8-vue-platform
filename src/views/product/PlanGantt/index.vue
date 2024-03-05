@@ -60,7 +60,7 @@
   overflow: scroll;
   overflow-x: hidden;
   overflow-y: hidden;
-  z-index: 9999 !important;
+  z-index: 2050 !important;
 }
 #couerDiv {
   background: $base-bg-color;
