@@ -79,6 +79,7 @@ export default {
       },
       formData: {
         deviationType: '',
+        deviationTypeDisplay: '',
         deviationCauses: '', // 偏离原因
         deviationImpact: '', // 偏离影响
         deviationProgress: '',

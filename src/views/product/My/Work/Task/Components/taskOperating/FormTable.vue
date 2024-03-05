@@ -15,7 +15,7 @@
               <el-col :span="24">
                 <el-form-item label="未完成原因分类"
                               prop="deviationType">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationType }}</span>
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationTypeDisplay }}</span>
                   <el-select v-else
                              v-model="formData.deviationType"
                              size="medium">
@@ -136,7 +136,7 @@
               <el-col :span="24">
                 <el-form-item label="未完成原因分类"
                               prop="deviationType">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationType }}</span>
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationTypeDisplay }}</span>
                   <el-select v-else
                              v-model="formData.deviationType"
                              placeholder="请选择">
