@@ -54,11 +54,11 @@ export default {
   font-size: 16px;
 }
 .process {
-  height: 35%;
+  height: 50%;
   box-sizing: border-box;
 }
 .tabs-taskinfo {
-  height: 63%;
+  height: calc(50% - 30px);
   box-sizing: border-box;
 }
 .knowledge {
