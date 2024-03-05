@@ -33,7 +33,6 @@
       </div>
     </div>
     <el-drawer :title="detailTitle"
-               v-drawerDrag
                :append-to-body="true"
                size="50%"
                :destroy-on-close="true"
@@ -60,7 +59,7 @@
   overflow: scroll;
   overflow-x: hidden;
   overflow-y: hidden;
-  z-index: 2050 !important;
+  // z-index: 2050 !important;
 }
 #couerDiv {
   background: $base-bg-color;
