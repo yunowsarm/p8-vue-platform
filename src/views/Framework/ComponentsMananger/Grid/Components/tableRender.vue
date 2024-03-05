@@ -283,6 +283,7 @@
                      :visible="visibleThirdDrawer"
                      direction="ttb"
                      :title="thirdMenuTitle"
+                     :drawer-config="drawerConfig"
                      @close='onThirdMenuClose'
                      size="100%">
         <template #drawer>
