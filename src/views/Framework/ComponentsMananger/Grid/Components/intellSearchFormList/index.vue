@@ -527,7 +527,7 @@ export default {
   float: right;
   position: relative;
   top: -3px;
-  z-index: 2;
+  // z-index: 2;
   right: 0;
 
   .search-contain {
