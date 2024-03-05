@@ -7,10 +7,10 @@
   float: right;
   position: relative;
   top: -3px;
-  // z-index: 4;
   right: 15px;
 
   .search-contain {
+  z-index: 4;
     position: absolute;
     top: 40px;
     left: 0;
