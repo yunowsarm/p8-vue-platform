@@ -808,7 +808,7 @@ export default {
                     headerAlign: item.title ? item.title : 'center',
                     align: item.alignmentStyle,
                     dataIndex: item.fieldName,
-                    minWidth: item.fieldWidth,
+                    width: item.fieldWidth,
                     sortable: item.isOrder ? item.isOrder : false,
                     filterable: true,
                     iconDisplay: true,
@@ -823,7 +823,7 @@ export default {
                     headerAlign: item.title ? item.title : 'center',
                     align: item.alignmentStyle,
                     dataIndex: item.fieldName,
-                    minWidth: item.fieldWidth,
+                    width: item.fieldWidth,
                     sortable: item.isOrder ? item.isOrder : false,
                     filterable: true,
                     iconDisplay: false,
@@ -840,7 +840,7 @@ export default {
                     headerAlign: item.title ? item.title : 'center',
                     align: item.alignmentStyle,
                     dataIndex: item.fieldName,
-                    minWidth: item.fieldWidth,
+                    width: item.fieldWidth,
                     sortable: item.isOrder ? item.isOrder : false
                   })
                   if (item.defaultValueData && item.defaultValueData.indexOf(',') !== -1) {
@@ -855,7 +855,7 @@ export default {
                     headerAlign: item.title ? item.title : 'center',
                     align: item.alignmentStyle,
                     dataIndex: item.fieldName,
-                    minWidth: item.fieldWidth,
+                    width: item.fieldWidth,
                     type: 'index'
                   })
                 } else {
@@ -864,7 +864,7 @@ export default {
                     headerAlign: item.title ? item.title : 'center',
                     align: item.alignmentStyle,
                     dataIndex: item.fieldName,
-                    minWidth: item.fieldWidth,
+                    width: item.fieldWidth,
                     sortable: item.isOrder ? item.isOrder : false,
                     scopedSlots: { customRender: 'custom' }
                   })
@@ -875,7 +875,7 @@ export default {
                   headerAlign: item.title ? item.title : 'center',
                   align: item.alignmentStyle,
                   dataIndex: item.fieldName,
-                  minWidth: item.fieldWidth,
+                  width: item.fieldWidth,
                   sortable: item.isOrder ? item.isOrder : false
                 })
               }
