@@ -1002,6 +1002,11 @@ export default {
                 }
               })
             }
+            columnData.forEach((el, index) => {
+              if (item.fieldName === el.dataIndex) {
+                columnData[index] = { ...el, ...item }
+              }
+            })
             if (item.isParent === 1) {
               this.treeConfig.parentField = item.fieldName
             }
