@@ -226,4 +226,10 @@
       width: 100%;
     }
   }
+  .dialog__wrapper  {
+    z-index: 3000 !important;
+  }
+}
+.el-dialog__wrapper {
+  z-index: 3000 !important;
 }
