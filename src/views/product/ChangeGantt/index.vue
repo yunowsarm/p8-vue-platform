@@ -568,16 +568,12 @@ export default {
       this.$emit('closed', true)
     },
     processApprovalView (record) {
-      if (record.projectClassification === 'PROJECT_CLASSIFICATION_0_02') {
-        this.processDefinitionKey = 'planChangeApproveSpecialPlan'
-      }
       this.visibleBpmView = true
       this.businessId = record.id
     },
     onVisibleBpmViewClose () {
       this.visibleBpmView = false
       this.businessId = undefined
-      this.processDefinitionKey = undefined
     }
   }
 }
