@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%">
+  <div style="height: 100%" v-loading="dataLoading">
     <div style='height: 50%; position: relative;'
          class="myGantt">
       <div ref='myGantt1'
@@ -7,7 +7,7 @@
       <div class='detail_div'>
         <div style="width: 50%">
           <span style="margin-left: 16px;">版本号：</span>
-          <span class="detail_span">{{planVersionNum1}}</span>
+          <span class="detail_span version_num">{{planVersionNum1}}</span>
           <span style="margin-left: 16px">选中任务：</span>
           <span @click="showDetail"
                 class="detail_span">{{selectTaskName1}}</span>
@@ -17,14 +17,14 @@
         </div>
       </div>
     </div>
-    <div style='height: 50%; position: relative;'
+    <div style='height: 50%; position: relative;border-top: 1px solid #e1e1e1;'
          class="myGantt">
       <div ref='myGantt2'
            style='width: 100%;height: calc(100% - 40px)!important;'></div>
       <div class='detail_div'>
         <div style="width: 50%">
           <span style="margin-left: 16px;">版本号：</span>
-          <span class="detail_span">{{planVersionNum2}}</span>
+          <span class="detail_span version_num">{{planVersionNum2}}</span>
           <span style="margin-left: 16px">选中任务：</span>
           <span @click="showDetail"
                 class="detail_span">{{selectTaskName2}}</span>
@@ -112,6 +112,7 @@ export default {
       monitorPointDatas: [],
       searchForm1: {},
       searchForm2: {},
+      dataLoading: false,
       managerStatusMap: {} // 管理状态全部数据
     }
   },
@@ -183,6 +184,7 @@ export default {
       this.loadGanttData(planVersionId1, planVersionId2)
     },
     loadGanttData (planVersionId1, planVersionId2) {
+      this.dataLoading = true
       let vueThis = this
       const params = {
         planInfoId: this.planInfoId,
@@ -248,8 +250,10 @@ export default {
           myGantt2.parse(datas2)
           vueThis.taskCount1 = myGantt1.getTaskCount()
           vueThis.taskCount2 = myGantt2.getTaskCount()
+          vueThis.dataLoading = false
         }
       }).catch(function (error) {
+        vueThis.dataLoading = false
         console.error('error' + error)
       })
     },
@@ -308,5 +312,8 @@ export default {
   .gantt_row:not([aria-expanded]).updColor {
     background-color: red;
   }
+}
+.version_num {
+  text-decoration: none;
 }
 </style>
