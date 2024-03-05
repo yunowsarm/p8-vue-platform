@@ -15,7 +15,7 @@
               <el-col :span="24">
                 <el-form-item label="未完成原因分类"
                               prop="deviationType">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationType }}</span>
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationTypeDisplay }}</span>
                   <el-select v-else
                              v-model="formData.deviationType"
                              size="medium">
@@ -134,9 +134,9 @@
             <!-- 已超期添加未说明原因 -->
             <el-row v-if="exceedType">
               <el-col :span="24">
-                <el-form-item label="未完成原因分类"
+                <el-form-item label="未完成原因分类2"
                               prop="deviationType">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationType }}</span>
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationTypeDisplay }}</span>
                   <el-select v-else
                              v-model="formData.deviationType"
                              placeholder="请选择">
@@ -191,6 +191,38 @@
                             v-model="formData.solutions"
                             maxlength="1000"
                             show-word-limit></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <!-- 我的审批页面展示 -->
+            <el-row v-if="!durationDay">
+              <el-col :span="24">
+                <el-form-item label="未完成原因分类">
+                  <span>{{ formData.deviationTypeDisplay }}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row v-if="!durationDay">
+              <el-col :span="12">
+                <el-form-item label="未完成原因">
+                  <span>{{ formData.deviationCauses }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="偏离影响">
+                  <span>{{ formData.deviationImpact }}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row v-if="!durationDay">
+              <el-col :span="12">
+                <el-form-item label="进展情况">
+                  <span>{{ formData.deviationProgress }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="解决方案">
+                  <span>{{ formData.solutions }}</span>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -358,6 +390,10 @@ export default {
     CommonTable
   },
   props: {
+    durationDay: {
+      type: Boolean,
+      default: true
+    },
     formData: {
       type: Object,
       default: () => { }
@@ -679,6 +715,7 @@ div.form-table-wrap {
   div.form-con {
     overflow: auto;
     margin-right: 10px;
+    height: 100%;
   }
   div.table-con {
     div.title {

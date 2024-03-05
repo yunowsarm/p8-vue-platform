@@ -10,6 +10,7 @@
               :tableParams="tableParams"
               :columns="columns"
               :key="dateTime"
+              :durationDay="durationDay"
               @submit="progressSubmit"
               @NewSubmit="NewProgressSubmit"
               @progress-date-change="progressDateChange"
@@ -182,9 +183,8 @@ export default {
     }
   },
   created () {
-    this.dialogVisible = false
     if (this.getPlanInfo().pageType === 'view') {
-      this.dialogOk()
+      // this.dialogOk()
     } else {
       //false 已超期
       if (!this.durationDay) {
@@ -200,14 +200,16 @@ export default {
   methods: {
     initUpdateFromData () {
       this.$api['taskManager.taskInfo']({ taskId: this.planInfoParams.TASKID }).then(res => {
-        this.formData.content = res.content
-        this.formData.realBeginDate = res.realBeginDate
-        this.formData.realEndDate = res.realEndDate
-        this.formData.progress = Math.round(res.progress * 100)
-        this.formData.forecastDateRange = [res.forecastBeginDate, res.forecastEndDate]
-        this.formData.forecastBeginDate = res.forecastBeginDate
-        this.formData.forecastEndDate = res.forecastEndDate
-        this.formData.managerStatusDisplay = res.managerStatusDisplay
+        if (res) {
+          this.formData.content = res.content
+          this.formData.realBeginDate = res.realBeginDate
+          this.formData.realEndDate = res.realEndDate
+          this.formData.progress = Math.round(res.progress * 100)
+          this.formData.forecastDateRange = [res.forecastBeginDate, res.forecastEndDate]
+          this.formData.forecastBeginDate = res.forecastBeginDate
+          this.formData.forecastEndDate = res.forecastEndDate
+          this.formData.managerStatusDisplay = res.managerStatusDisplay
+        }
       })
       // let leaf = this.getPlanInfo().isLeaf
       // // eslint-disable-next-line eqeqeq
@@ -271,6 +273,7 @@ export default {
       const _this = this
       let deviation = {
         deviationType: '',
+        deviationTypeDisplay: '',
         deviationCauses: '', // 偏离原因
         deviationImpact: '', // 偏离影响
         deviationProgress: '', // 进展情况
@@ -282,6 +285,7 @@ export default {
       }).then(res => {
         if (res && res.length) {
           this.formData.deviationType = res[0].deviationType
+          this.formData.deviationTypeDisplay = res[0].deviationTypeDisplay
           this.formData.deviationCauses = res[0].deviationCauses
           this.formData.deviationProgress = res[0].deviationProgress
           this.formData.deviationImpact = res[0].deviationImpact
@@ -371,12 +375,14 @@ export default {
       const _this = this
       params.pmTaskProgressFeedback.hierarchy = this.getPlanInfo().LEVEL
       this.$api['taskManager.progressFeedback'](params).then(res => {
-        _this.progressChange(_this.getPlanInfo().PROGRESS)
-        _this.$message({
-          type: 'success',
-          message: '成功'
-        })
-        _this.$bus.$emit('refresh')
+        if (res) {
+          _this.progressChange(_this.getPlanInfo().PROGRESS)
+          _this.$message({
+            type: 'success',
+            message: '成功'
+          })
+          _this.$bus.$emit('refresh')
+        }
         // this.formData.leaf = false
       })
     },
@@ -385,12 +391,14 @@ export default {
       params.pmTaskProgressFeedback.hierarchy = this.getPlanInfo().LEVEL
       const _this = this
       this.$api['taskManager.progressFeedback'](params).then(res => {
-        _this.progressChange(_this.getPlanInfo().PROGRESS)
-        _this.$message({
-          type: 'success',
-          message: '成功'
-        })
-        _this.$bus.$emit('refresh')
+        if (res) {
+          _this.progressChange(_this.getPlanInfo().PROGRESS)
+          _this.$message({
+            type: 'success',
+            message: '成功'
+          })
+          _this.$bus.$emit('refresh')
+        }
         // this.formData.leaf = false
       })
     },

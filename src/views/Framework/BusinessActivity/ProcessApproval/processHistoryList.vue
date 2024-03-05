@@ -2,7 +2,8 @@
 
 
 <template>
-  <div class="history" style="height: 100%">
+  <div class="history"
+       style="height: 100%">
     <common-table ref="table"
                   :comp="comp"
                   :columns="columns"
@@ -43,6 +44,7 @@ export default {
       default: () => [
         {
           title: '序号',
+          width: 55,
           type: 'index',
           align: 'center'
         },

@@ -79,6 +79,7 @@ export default {
       },
       formData: {
         deviationType: '',
+        deviationTypeDisplay: '',
         deviationCauses: '', // 偏离原因
         deviationImpact: '', // 偏离影响
         deviationProgress: '',
@@ -114,11 +115,12 @@ export default {
       let params = this.submitParamsHandle(form)
       let that = this
       this.$api['taskManager.deviationReasons'](params).then(res => {
-        that.$message({
-          message: '偏离原因提交成功！',
-          type: 'success'
-        })
-        this.$refs.formtable.searchTable()
+        if (res) {
+          that.$message({
+            message: '偏离原因提交成功！',
+            type: 'success'
+          })
+        }
       })
     },
     submitParamsHandle (form) {
