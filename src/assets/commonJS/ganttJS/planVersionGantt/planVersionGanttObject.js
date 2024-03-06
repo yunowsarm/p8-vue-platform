@@ -244,10 +244,10 @@ function getPlanColumn(type, ganttObject, vueThis) {
           let status = task.status
           //  status && vueThis.taskStatus
           if (status) {
-            let taskStatusMap = store.state.project.dicConfig.taskStatus
+            let taskStatusMap = vueThis.taskStatusMap
             if (taskStatusMap && Object.keys(taskStatusMap).length > 0) {
               let item = taskStatusMap[status]
-              let html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.title}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
+              let html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.cmeaning}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
               return html
             }
           }
