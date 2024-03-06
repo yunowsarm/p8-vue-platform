@@ -308,6 +308,7 @@ export default {
       submitChangeValidate: false,
       isSelectApproveUserView: false,
       managerStatusMap: {}, // 管理状态全部数据
+      taskStatusMap: {},
       selectUserDataSource: [],
       selectUserFormData: {},
       ganttEditCheck: {}, // gantt任务编辑权限
@@ -501,6 +502,7 @@ export default {
             vueThis.monitorLockMap = res.monitorLock
             vueThis.secretGrades = res.secretGradeList
             vueThis.managerStatusMap = res.managerStatusMap
+            vueThis.taskStatusMap = res.taskStatusMap
             vueThis.taskMonitorMap = res.taskMonitorMap
             vueThis.changeTaskInfo = res.changeTaskInfo
             myGantt.parse(datas)

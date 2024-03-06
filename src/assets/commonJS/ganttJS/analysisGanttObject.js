@@ -85,10 +85,10 @@ export function getAnalysisGantt(ganttName, vueThis) {
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
           let status = task.status
           if (status && vueThis.taskStatus) {
-            let taskStatusMap = store.state.project.dicConfig.taskStatus
+            let taskStatusMap = vueThis.taskStatusMap
             if (taskStatusMap && Object.keys(taskStatusMap).length > 0) {
               let item = taskStatusMap[status]
-              let html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.title}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
+              let html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.cmeaning}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
               return html
             }
           }
