@@ -2595,7 +2595,7 @@ function addTask (num, pos, ganttName) {
           insertType: 'Before',
           type: type,
           secretGrade: parentTask.secretGrade,
-          autoScheduling: parentTask.autoScheduling,
+          autoScheduling: schedulingType || parentTask.autoScheduling,
           createPage: vueThis.createPage,
           completeForm: ' '
         })
@@ -2628,7 +2628,7 @@ function addTask (num, pos, ganttName) {
           insertType: 'After',
           type: type,
           secretGrade: parentTask.secretGrade,
-          autoScheduling: parentTask.autoScheduling,
+          autoScheduling: schedulingType || parentTask.autoScheduling,
           createPage: vueThis.createPage,
           completeForm: ' '
         })
@@ -2660,7 +2660,7 @@ function addTask (num, pos, ganttName) {
           insertType: 'Child',
           type: type,
           secretGrade: task.secretGrade,
-          autoScheduling: task.autoScheduling,
+          autoScheduling: schedulingType || task.autoScheduling,
           createPage: vueThis.createPage,
           completeForm: ' '
         })

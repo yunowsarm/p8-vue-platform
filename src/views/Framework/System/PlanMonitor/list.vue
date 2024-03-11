@@ -90,10 +90,10 @@ const columns = [
     formatter (row, column, cellValue, index) {
       let v = ''
       switch (cellValue) {
-        case '1':
+        case '0':
           v = '是'
           break
-        case '0':
+        case '1':
           v = '否'
           break
       }
@@ -107,10 +107,10 @@ const columns = [
     formatter (row, column, cellValue, index) {
       let v = ''
       switch (cellValue) {
-        case '1':
+        case '0':
           v = '是'
           break
-        case '0':
+        case '1':
           v = '否'
           break
       }
