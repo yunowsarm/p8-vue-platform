@@ -2,6 +2,7 @@
   <div style="width: 100%">
     <form2
       ref="form"
+      v-if="!isEmpty"
       :comp="comp"
       :is-view="true"
       :form-to-api-data="ganttLinkResponse"
@@ -26,6 +27,7 @@
         <span style="font-size: 12px; padding: 2px 8px; margin-left: 10px" :style="{ background: renderTaskInfo(scope).color || '#999' }">{{ renderTaskInfo(scope).text }}</span>
       </template>
     </form2>
+    <el-empty v-if="isEmpty" class="custom_empty" :image-size="100"></el-empty>
     <common-dialog
       :title="dialogTitle"
       v-if="dialogVisible"
@@ -44,6 +46,11 @@
     </common-dialog>
   </div>
 </template>
+<style scoped>
+.custom_empty {
+  padding: 0;
+}
+</style>
 <script>
 import Form2 from '../form2'
 import { P8Dialog as CommonDialog, P8FileView as CommonFileView } from 'p8-components-ui'
@@ -136,6 +143,7 @@ export default {
       comp: this, // 用来绑定页面上form中元素触发的事件
       ganttLinkResponse: [], // 当前组件展示的表单数据
       dataSource,
+      isEmpty: false,
       dataSourceArray: [], // !!! 这是一个二维数组: 每一项都是一个dataSource; 在存在数据渲染的时候需要自己手动更新 dataSourceArray, 并为每一个dataSource(Array)下每一个元素对象定义 'elementOpacity': true
       dialogTitle: '',
       dialogVisible: false,
@@ -168,10 +176,13 @@ export default {
         that.dataSource[0].options = that.tempOptions // 更新default dataSource中下拉框的数据
         that.dataSource[1].treeData = that.vueThis.dependentDatas
         let datas = []
-        if (res && res.ganttLinkResponse) {
-          that.ganttLinkResponse = res.ganttLinkResponse
-          datas = res.ganttLinkResponse
-        }
+        if (res && Array.isArray(res.ganttLinkResponse) && res.ganttLinkResponse.length > 0) {
+            that.isEmpty = false
+            that.ganttLinkResponse = res.ganttLinkResponse
+            datas = res.ganttLinkResponse
+          } else {
+            that.isEmpty = true
+          }
         // 变更进入时先查看newTaskMap中是否存在对应值若存在，显示，否则加载任务描述数据
         if (
           that.ganttName === 'changeGantt' &&

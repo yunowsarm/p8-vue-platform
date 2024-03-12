@@ -2,6 +2,7 @@
   <div style="position: relative; overflow-y: auto; overflow-x: hidden;width: 100%">
     <form2
       :comp="comp"
+      v-if="!isEmpty"
       :is-view="true"
       :form-to-api-data="monitorManagerRequests"
       :data-source="dataSource"
@@ -13,8 +14,14 @@
       @form-delete="formDelete"
     >
     </form2>
+    <el-empty v-if="isEmpty" class="custom_empty" :image-size="100"></el-empty>
   </div>
 </template>
+<style scoped>
+.custom_empty {
+  padding: 0;
+}
+</style>
 <script>
 import { mapGetters } from 'vuex'
 import Form2 from '../form2'
@@ -98,6 +105,7 @@ export default {
     return {
       comp: this, // 用来绑定页面上form中元素触发的事件
       dataSource,
+      isEmpty: false,
       dataSourceArray: [], // !!! 这是一个二维数组: 每一项都是一个dataSource; 在存在数据渲染的时候需要自己手动更新 dataSourceArray, 并为每一个dataSource(Array)下每一个元素对象定义 'elementOpacity': true
       monitorManagerRequests: [], // 当前组件展示的表单数据
       oldMonitorDatas: []
@@ -113,9 +121,12 @@ export default {
       this.$api['planGanttManager.getTaskMonitorByTaskId']({ taskId: taskId }).then((res) => {
         that.dataSource[0].options = that.vueThis.monitorPointDatas // 更新default dataSource中下拉框的数据
         let datas = []
-        if (res && res.monitorManagerResponses) {
+        if (res && Array.isArray(res.monitorManagerResponses) && res.monitorManagerResponses.length > 0) {
+          that.isEmpty = false
           that.monitorManagerRequests = res.monitorManagerResponses
           datas = res.monitorManagerResponses
+        } else {
+          that.isEmpty = true
         }
         // 变更进入时先查看newTaskMap中是否存在对应值若存在，显示，否则加载任务描述数据
         if (
