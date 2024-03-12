@@ -36,7 +36,7 @@ export default {
           type: 'text',
           labelText: '表单编码',
           fieldName: 'desformCode',
-          placeholder: '请输入表单编码',
+          placeholder: '请输入表单编码，并确保编码唯一性',
           colLayout: 'singleCol',
           rules: [
             {
