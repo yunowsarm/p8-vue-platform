@@ -1,5 +1,5 @@
 <template>
-  <normal-layout class="grid-table-render"
+  <normal-layout class="grid-table-render table_render"
                  :header-visible="headerVisibleType"
                  :normal-layout="normalLayout">
     <template #north>
@@ -2171,6 +2171,11 @@ export default {
 .grid-table-render {
   padding: 0 !important;
   margin: 0;
+}
+.table_render {
+  ::v-deep .normal-main {
+    height: 100%;
+  }
 }
 ::v-deep .columnStyle {
   text-decoration: underline;
