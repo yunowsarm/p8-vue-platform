@@ -10,12 +10,12 @@
                :form="formData"
                :api="saveApi"
                @saved="saved"
-               label-width="130px"
+               label-width="150px"
                :exist-custom-btn="true"
                :exist-default-btn="false"
                @rendered="rendered">
       <template #apiDataUrl>
-        <el-input placeholder="请输入自定义数据源"
+        <el-input placeholder="请输入自定义数据源地址，例如/getList"
                   v-model="formData.apiDataUrl">
           <template slot="prepend">POST</template>
         </el-input>
@@ -287,7 +287,8 @@ export default {
         type: 'text',
         labelText: '组件地址',
         fieldName: 'url',
-        placeholder: '请输入组件地址',
+        placeholder: '请输入组件地址，例如xx/index,xx应在views文件夹下',
+        tip: '图表渲染器为自定义渲染时，调用的组件路径',
         colLayout: '',
         rules: [
           {
@@ -369,6 +370,7 @@ export default {
         fieldName: 'availableEndUsers',
         placeholder: '请选择',
         colLayout: 'doubleCol',
+        tip: '启用后，可由客户去维护该项数据',
         options: [
           {
             label: '启用',
@@ -424,7 +426,8 @@ export default {
         labelText: '自定义数据源',
         fieldName: 'apiDataUrl',
         slotName: 'apiDataUrl',
-        placeholder: '请输入自定义数据源',
+        placeholder: '请输入自定义数据源地址，例如/getList',
+        tip: '可以使用自定义的接口数据给图表使用',
         colLayout: 'doubleCol'
       },
       {
