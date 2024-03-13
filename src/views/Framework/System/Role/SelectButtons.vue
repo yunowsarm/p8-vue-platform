@@ -61,7 +61,7 @@ export default {
     'el-checkbox': Checkbox
   },
   data() {
-    const docHeight = document.documentElement.clientHeight - 318
+    const docHeight = document.documentElement.clientHeight - 340
     return {
       height: docHeight,
       resources: [],
