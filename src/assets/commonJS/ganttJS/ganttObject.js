@@ -3,7 +3,7 @@ import { Gantt } from 'p8-dhtmlx-gantt'
 import store from '@/plugins/store'
 import { lockMonitorUpdateCheck, monitorLockUnLockCheck } from './ganttLockUnLock'
 import { updateNewTaskMap, setNewTaskMap } from './changeGantt'
-import { getGanttColumns, planMonitorAdd } from './planGanttObject'
+import { getGanttColumns } from './planGanttObject'
 import moment from 'moment'
 import api from '@/plugins/api'
 import Inputor from '@/assets/commonJS/originalComponents/input'
@@ -2843,10 +2843,6 @@ export const taskStatusArr = [
  */
 GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
   const initColumns = getGanttColumns(ganttObject, vueThis)
-  if (vueThis.pageName === 'planMonitor') {
-    let idx = initColumns.findIndex(item => item.name == 'start_date')
-    initColumns.push(planMonitorAdd())
-  }
   initColumns.forEach((initItem, initIndex) => {
     const name = initItem.name
     let type = columnsTypeMap[name]

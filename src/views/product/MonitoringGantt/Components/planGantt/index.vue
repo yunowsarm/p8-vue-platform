@@ -234,6 +234,11 @@
                                @submit="submitButtonBarSetting"
                                @hidden="rightMenuConfigVisible = false">
     </common-button-bar-setting>
+    <common-drawer v-if="progressHistoryVisible" :visible="progressHistoryVisible" size="50%" placement="top" title="任务进度反馈" @close="progressHistoryVisible = false">
+      <template #drawer>
+        <ProgressHistory :task-id="selectedId" />
+      </template>
+    </common-drawer>
   </div>
 </template>
 <style lang="scss">
@@ -315,6 +320,7 @@ import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import Notice from '../../../PlanGantt/Components/notice'
 import CommandStatistic from '@/components/gantt/Components/CommandStatistic'
 import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
+import ProgressHistory from '../../../PlanGantt/Components/progressHistory';
 const Mycolumns = [
   {
     title: '',
@@ -429,6 +435,7 @@ export default {
     ListLayout,
     // Flight,
     // Large,
+    ProgressHistory,
     CommandSearch,
     CommandStatistic,
     CommonButtonBarSetting,
@@ -438,6 +445,9 @@ export default {
     const mh = document.documentElement.clientHeight - 300
     return {
       columnSettings: [],
+      reminderList: [],
+      progressHistoryVisible: false,
+      selectedId: '',
       noticeVisible: false,
       ganttStatisticVisible: false,
       activitySecretGradeDisplay: '', // 知识库导入 弹框需要展示的密级
@@ -821,6 +831,14 @@ export default {
       })
       // 根据项目类型，获取gantt列设置
       this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
+      this.reminderList = await this.$api['planGanttManager.loadReminder']({
+        planInfoId: this.planInfoId,
+        dicType: 'ACTIVITY_TYPE',
+        taskId: this.taskId,
+        createPage: this.createPage,
+        planBeginDateArray: this.planBeginDateArray,
+        planEndDateArray: this.planEndDateArray
+      })
 
       const vueThis = this
       // 清空原有数据
@@ -1084,6 +1102,10 @@ export default {
           console.error('user.setting.save--err', err)
         })
       this.rightMenuConfigVisible = false
+    },
+    showTaskProgressDialog (taskId) {
+      this.selectedId = taskId
+      this.progressHistoryVisible = true
     }
   }
 }
