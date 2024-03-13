@@ -428,6 +428,20 @@ export const repositoryApi = {
   ],
   planGanttManager: [
     {
+      name: 'reminder',
+      method: 'POST',
+      path: '/reminder/save',
+      mockPath: '/reminder/save',
+      desc: '项目管理->计划管理->计划编辑 -> 计划反馈消息已读'
+    },
+    {
+      name: 'loadReminder',
+      method: 'POST',
+      path: '/product/pm/plan/loadPlanGanttReminder',
+      mockPath: '/product/pm/plan/loadPlanGanttReminder',
+      desc: '项目管理->计划管理->计划编辑 -> 获取计划反馈消息'
+    },
+    {
       name: 'async',
       method: 'POST',
       path: '/product/ProductionPlan/async',
