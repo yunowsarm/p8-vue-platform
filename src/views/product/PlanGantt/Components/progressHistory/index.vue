@@ -143,6 +143,7 @@ export default {
     }
   },
   created() {
+    this.$api['planGanttManager.reminder']({entityId: this.taskId}).then(res => {})
   },
 }
 </script>

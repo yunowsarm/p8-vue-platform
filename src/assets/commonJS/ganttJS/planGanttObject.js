@@ -486,13 +486,13 @@ export function getGanttColumns(ganttObject, vueThis) {
       resize: true,
       min_width: 90
     },
-    {
-      name: 'taskCode',
-      label: '任务编号',
-      align: 'left',
-      resize: true,
-      min_width: 90
-    },
+    // {
+    //   name: 'taskCode',
+    //   label: '任务编号',
+    //   align: 'left',
+    //   resize: true,
+    //   min_width: 90
+    // },
     {
       name: 'name',
       label: '任务名称' + canEditIcon,
@@ -718,7 +718,7 @@ export function getGanttColumns(ganttObject, vueThis) {
             const taskStatusMap = vueThis.taskStatusMap
             if (taskStatusMap && Object.keys(taskStatusMap).length > 0) {
               const item = taskStatusMap[status]
-              html = `<i onclick=Gantt.taskProgressDetails('${task.id}') class="gantt-tip p8 ${item.icon}" style="color: ${item.color};cursor:pointer;" title="${item.cmeaning}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
+              html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color};" title="${item.cmeaning}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
             }
           }
         }
@@ -894,44 +894,63 @@ export function getGanttColumns(ganttObject, vueThis) {
       align: 'center',
       min_width: 100,
       resize: true
+    },
+    {
+      name: 'overdueRemainingDays',
+      label: '超期/剩余天数',
+      align: 'center',
+      min_width: 190,
+      resize: true,
+      template: function (task) {
+        let text = ''
+        if (task.managerStatus === '6409') {
+          let realEndDate = new Date(moment(task.realEndDate).format('YYYY-MM-DD'))
+          let endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - (24 * 60 *60 * 1000)
+          let days = Math.floor(Math.abs((realEndDate - endDate) / 1000 / 60 / 60 / 24))
+          // 已完成
+          if (realEndDate > endDate) {
+            text = `<span style="color: #F80012">超期${days}天完成</span>`
+          } else if (days === 0) {
+            text = `<span style="color: #1892FF">当天完成</span>`
+          } else {
+            text = `<span style="color: #1892FF">提前${days}天完成</span>`
+          }
+        } else {
+          let nowDate = new Date(moment(new Date()).format('YYYY-MM-DD'))
+          let endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - (24 * 60 *60 * 1000)
+          let days = Math.floor(Math.abs((nowDate - endDate) / 1000 / 60 / 60 / 24))
+          if (nowDate > endDate) {
+            text = `<span style="color: #F80012">超期${days + 1}天</span>`
+          } else if (days === 0) {
+            text = `<span style="color: #1BBF9E">今天</span>`
+          } else {
+            text = `<span style="color: #0296ff">剩余${days}天</span>`
+          }
+        }
+        return text
+      }
+    },
+    {
+      name: 'progressFeedback',
+      label: '进度反馈',
+      align: 'center',
+      min_width: 60,
+      resize: true,
+      template: function (task) {
+        let reminderList = vueThis.reminderList
+        let obj = reminderList.find(item => {
+          return item.id === task.id
+        })
+        if (obj && obj.id) {
+          return `<span onclick=Gantt.taskProgressDetails('${task.id}') class="p8 icon-weidu" style="cursor: pointer;"></span>`
+        } else {
+          return `<span onclick=Gantt.taskProgressDetails('${task.id}') class="p8 icon-read-mail" style="cursor: pointer;"></span>`
+        }
+      }
     }
   ]
 }
 
 export function planMonitorAdd (ganttObject, vueThis) {
-  return {
-    name: 'overdueRemainingDays',
-    label: '超期/剩余天数',
-    align: 'center',
-    min_width: 190,
-    resize: true,
-    template: function (task) {
-      let text = ''
-      if (task.managerStatus === '6409') {
-        let realEndDate = new Date(moment(task.realEndDate).format('YYYY-MM-DD'))
-        let endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - (24 * 60 *60 * 1000)
-        let days = Math.floor(Math.abs((realEndDate - endDate) / 1000 / 60 / 60 / 24))
-        // 已完成
-        if (realEndDate > endDate) {
-          text = `<span style="color: #F80012">超期${days}天完成</span>`
-        } else if (days === 0) {
-          text = `<span style="color: #1892FF">当天完成</span>`
-        } else {
-          text = `<span style="color: #1892FF">提前${days}天完成</span>`
-        }
-      } else {
-        let nowDate = new Date(moment(new Date()).format('YYYY-MM-DD'))
-        let endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - (24 * 60 *60 * 1000)
-        let days = Math.floor(Math.abs((nowDate - endDate) / 1000 / 60 / 60 / 24))
-        if (nowDate > endDate) {
-          text = `<span style="color: #F80012">超期${days + 1}天</span>`
-        } else if (days === 0) {
-          text = `<span style="color: #1BBF9E">今天</span>`
-        } else {
-          text = `<span style="color: #0296ff">剩余${days}天</span>`
-        }
-      }
-      return text
-    }
-  }
+  return
 }
