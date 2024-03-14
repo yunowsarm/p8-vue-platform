@@ -715,10 +715,10 @@ export function getGanttColumns(ganttObject, vueThis) {
         if (!(ganttObject.getGlobalTaskIndex(task.id) === 0 && vueThis.createPage === 'compile')) {
           const status = task.status
           if (status && vueThis.taskStatus) {
-            const taskStatusMap = store.state.project.dicConfig.taskStatus
+            const taskStatusMap = vueThis.taskStatusMap
             if (taskStatusMap && Object.keys(taskStatusMap).length > 0) {
               const item = taskStatusMap[status]
-              html = `<i onclick=Gantt.taskProgressDetails('${task.id}') class="gantt-tip p8 ${item.icon}" style="color: ${item.color};cursor:pointer;" title="${item.title}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
+              html = `<i onclick=Gantt.taskProgressDetails('${task.id}') class="gantt-tip p8 ${item.icon}" style="color: ${item.color};cursor:pointer;" title="${item.cmeaning}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
             }
           }
         }

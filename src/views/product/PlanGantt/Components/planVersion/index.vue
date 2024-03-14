@@ -115,6 +115,7 @@ export default {
       searchForm2: {},
       ganttThis: {},
       dataLoading: false,
+      taskStatusMap: {},
       managerStatusMap: {} // 管理状态全部数据
     }
   },
@@ -224,6 +225,7 @@ export default {
           myGantt2.serverList(myGantt2.config.monitor_point, res.monitorPointDatas)
           // vueThis.changeTaskInfo = res.changeTaskInfo
           vueThis.managerStatusMap = res.managerStatusMap
+          vueThis.taskStatusMap = res.taskStatusMap
           vueThis.taskClassifyDatas = res.taskClassifys
           // vueThis.resourceDatas = res.resources
 

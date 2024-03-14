@@ -549,6 +549,7 @@ export default {
       monitorId: '',
       monitorName: '',
       managerStatusMap: {}, // 管理状态全部数据
+      taskStatusMap: {},
       ganttEditCheck: {}, // gantt任务编辑权限
       issueStatus: '', // 任务待下发状态
       selectedTaskIds: [],
@@ -951,6 +952,7 @@ export default {
             vueThis.issueStatus = res.issueStatus
             vueThis.monitorPointDatas = res.monitorPointDatas
             vueThis.monitorLockMap = res.monitorLock
+            vueThis.taskStatusMap = res.taskStatusMap
             vueThis.managerStatusMap = res.managerStatusMap
             vueThis.$store.dispatch('setTaskStyles', res.taskStyle)
             myGantt.parse(datas)
