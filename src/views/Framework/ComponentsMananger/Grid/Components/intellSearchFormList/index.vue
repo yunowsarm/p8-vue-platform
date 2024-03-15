@@ -184,7 +184,7 @@ export default {
               if (el.type === 'multiple' && el.fieldName == item) {
                 type = 'multiple'
               }
-              if (el.type === 'treeSelect' && el.fieldName == item) {
+              if (el.type === 'treeSelect' && el.fieldName == item && queryParams[item]) {
                 let treeData = el.options
                 let selectId = queryParams[item]
                 let selectList = [selectId];
