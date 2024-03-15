@@ -1091,7 +1091,7 @@ export default {
       })
       this.sqlParam = sqlParam
       this.tableParam.sqlParam = { ...sqlParam, ...this.tableParam.sqlParam, ...this.sqlParam }
-      this.tableParam.reportParam = { ...this.westParmars, ...param, ...this.tableParam.reportParam }
+      this.tableParam.reportParam = { ...this.westParmars, ...this.tableParam.reportParam, ...param }
     },
     reSet () {
       this.sqlParam = {}

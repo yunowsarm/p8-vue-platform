@@ -76,12 +76,11 @@
                    style="height: 50px;margin-top:50px;"
                    label-width="100px"></form-list>
         <editable-table :columns="strategyColumns"
-                        style="height:calc(100% - 110px);width:100%;"
+                        style="height:calc(100% - 110px);width:100%;position:relative;"
                         :add-row="true"
                         :need-params="true"
                         :data="tableParamData"
                         :params="strategyParams"
-                        api=""
                         @save-param-data="saveStrategyData">
           <template #classPath="{ scope, data }">
             <el-input v-model="scope.row.classPath"
@@ -487,7 +486,7 @@ export default {
       searchResultVisible: false
     }
   },
-  created(){
+  created () {
     this.formData.dbSource = 'DB_SOURCE1'
   },
   computed: {
@@ -625,7 +624,7 @@ export default {
     changeSql (val) {
       this.params = { sqlId: val }
     },
-    saveTableData (data,row) {
+    saveTableData (data, row) {
       if (row && row.fieldName) {
         data.forEach(item => {
           if (item.fieldName !== row.fieldName && item.associationSecret) {
@@ -686,5 +685,9 @@ export default {
       margin: 0;
     }
   }
+}
+.pop_left {
+  position: absolute;
+  left: -12px;
 }
 </style>
