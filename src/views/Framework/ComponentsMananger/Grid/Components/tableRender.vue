@@ -1079,6 +1079,14 @@ export default {
         })
     },
     search (param) {
+      this.searchData.forEach(el => {
+        if (!param[el.fieldName] && this.tableParam.reportParam[el.fieldName]) {
+          delete this.tableParam.reportParam[el.fieldName]
+        }
+        if (!param[el.fieldName] && this.tableParam.sqlParam[el.fieldName]) {
+          delete this.tableParam.sqlParam[el.fieldName]
+        }
+      })
       let sqlParam = {}
       this.searchData.forEach(el => {
         let fieldName = el.replaceSearch ? el.replaceSearch : el.fieldName
