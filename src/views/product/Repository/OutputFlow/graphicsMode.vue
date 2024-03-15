@@ -129,7 +129,7 @@ export default {
         this.edgeList = res.link
         this.getXY(res.node, 'parent', 'key')
         this.acivityData = res.node
-        if (this.$refs.antv) {
+        if (this.$refs.antv && this.$refs.antv.graph) {
           this.$refs.antv.graph.clearCells()
         }
       })

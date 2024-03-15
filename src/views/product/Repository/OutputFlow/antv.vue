@@ -473,25 +473,35 @@ export default {
         })
       }
       if (this.edgeList && this.edgeList.length) {
+        let edges = []
         this.edgeList.forEach((el, index) => {
-          let source = this.graph.getCellById(el.from) //通过id获取边/节点
-          let target = this.graph.getCellById(el.to)
-          if (source && target) {
+          if (el.from && el.to) {
             if (el.category) {
-              this.graph.addEdge({
+              // this.graph.addEdge({
+              //   shape: 'dag-edge',
+              //   source: el.from,
+              //   target: el.to
+              // })
+              edges.push({
                 shape: 'dag-edge',
-                source,
-                target
+                source: el.from,
+                target: el.to
               })
             } else {
-              this.graph.addEdge({
+              // this.graph.addEdge({
+              //   shape: 'arrow-edge',
+              //   source: el.from,
+              //   target: el.to
+              // })
+              edges.push({
                 shape: 'arrow-edge',
-                source,
-                target
+                source: el.from,
+                target: el.to
               })
             }
           }
         })
+        this.graph.addEdges(edges);
       }
       // 更新节点位置
       this.graph.getNodes().forEach((node) => {
@@ -592,11 +602,11 @@ export default {
       // if (el.nodeConfig) {
       //   x = JSON.parse(el.nodeConfig).x
       // } else {
-        if (!el.parent) {
-          x = 0
-        } else {
-          x = el.x * (200 + 90)
-        }
+      if (!el.parent) {
+        x = 0
+      } else {
+        x = el.x * (200 + 90)
+      }
       // }
       return x
     },
@@ -604,11 +614,11 @@ export default {
       // if (el.nodeConfig) {
       //   return JSON.parse(el.nodeConfig).y
       // } else {
-        if (!el.parent) {
-          return 0
-        } else {
-          return Number(el.level - 1) * (95 + 110)
-        }
+      if (!el.parent) {
+        return 0
+      } else {
+        return Number(el.level - 1) * (95 + 110)
+      }
       // }
     }
   }
