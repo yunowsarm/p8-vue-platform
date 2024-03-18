@@ -307,7 +307,9 @@ export default {
     },
     // 勾选复选框选中行
     select(selection, row) {
-      // this.$refs.tableCom.$refs.table.clearSelection()
+      if (!row) {
+        this.$refs.tableCom.$refs.table.clearSelection()
+      }
       // this.$refs.tableCom.$refs.table.toggleRowSelection(row)
       this.currentRow = row
     },
