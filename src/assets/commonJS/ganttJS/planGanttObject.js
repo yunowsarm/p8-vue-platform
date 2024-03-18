@@ -251,7 +251,7 @@ export function planGantt(ganttName, vueThis) {
         return false
       }
       if (parentNode) {
-        const fieldName = parentNode.getAttribute('data-column-name')
+        const fieldName = parentNode.getAttribute('data-column-name') || e.target.getAttribute('data-column-name')
         // 根节点不可编辑
         // 任务属性readonly为true的任务不可编辑
         if (fieldName) {
@@ -565,9 +565,9 @@ export function getGanttColumns(ganttObject, vueThis) {
               text += `<span style="color: #FF0000">(已退出)</span>`
             }
           })
-          return `<span class="gantt_owner_id">${(userMessage.name += text)}</span>`
+          return `<span data-column-name="owner_id" class="gantt_owner_id">${(userMessage.name += text)}</span>`
         } else {
-          return `<span class="gantt_owner_id"></span>`
+          return `<span data-column-name="owner_id" class="gantt_owner_id"></span>`
         }
       }
     },
