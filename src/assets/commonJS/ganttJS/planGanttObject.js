@@ -335,6 +335,7 @@ export function planGantt(ganttName, vueThis) {
   const actions = GanttObject.getActions(ganttObject)
   ganttObject.performAction = GanttObject.performAction(actions, ganttObject)
   ganttObject.attachEvent("onBeforeTaskMultiSelect", function(id, state, e){
+    if (!e) return true
     let result = true
     const columnElement = e.target.querySelectorAll('*')
     // 需要判断当前选中的任务数量，单选不限制
