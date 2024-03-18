@@ -5,7 +5,6 @@
                      :button-type="'round'"
                      :special-rote-name="roteName"></common-button>
       <search-form-list ref="search"
-                        style="width: 350px"
                         :data-source="searchFormConfig"
                         @search="onSearch"
                         @re-set="onSearchReset"></search-form-list>
