@@ -134,7 +134,7 @@
             <!-- 已超期添加未说明原因 -->
             <el-row v-if="exceedType">
               <el-col :span="24">
-                <el-form-item label="未完成原因分类2"
+                <el-form-item label="未完成原因分类"
                               prop="deviationType">
                   <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationTypeDisplay }}</span>
                   <el-select v-else
