@@ -2272,6 +2272,25 @@ export const CommandButtonData = [
     }
   },
   {
+    id: 'change-history',
+    icon: 'p8 icon-rizhiliebiao',
+    title: '变更历史',
+    help: '变更历史',
+    clickFun: function (btn, ganttName, tasks) {
+      if (ganttName) {
+        const vueThis = store.getters.vueThis
+        vueThis.showChangeHistory()
+      }
+    },
+    isDisableFun: function (btn, ganttName, tasks) {
+      if (tasks.length > 0) {
+        return false
+      } else {
+        return true
+      }
+    }
+  },
+  {
     id: 'suspend-config',
     icon: 'p8 icon-pause',
     title: '暂停',
