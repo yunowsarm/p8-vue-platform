@@ -217,7 +217,7 @@ export default {
     ]
     const header = [
       { name: '要素分类', id: 'classify' },
-      { name: '要求/说明/描述', id: 'request' },
+      { name: '名称/说明/描述', id: 'request' },
       { name: '附加说明/备注', id: 'remark' },
       { name: '交付物/模板/文档', id: 'file' },
       { name: '操作', id: 'operation' }
