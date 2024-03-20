@@ -1,12 +1,11 @@
 <template>
-  <div style="height: 100%;">
+  <div>
     <common-table ref="table"
       width="100%"
       :columns="columns"
       :params="queryParam"
       :api="tableApi"
       :comp="comp"
-      height="100%"
       :pagination=true>
       <template #operate="{ scope }">
         <el-button type='text' @click="showChangeDetail(scope.row)">查看</el-button>
