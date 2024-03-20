@@ -9,7 +9,7 @@
                @custom-validate="customValidate"
                @saved="saved"
                @rendered="rendered">
-      <template #outputRequest>
+      <!-- <template #outputRequest>
         <div class="edit-outputdata-view">
           <div class="title">&nbsp;&nbsp;输出要求 </div>
           <ul class="file-list">
@@ -19,7 +19,7 @@
             </li>
           </ul>
         </div>
-      </template>
+      </template> -->
       <template #outputIo>
         <div class="edit-outputIo-view">
           <div class="title">输出物 </div>
@@ -52,12 +52,12 @@ export default {
   },
   data () {
     const dataSource = [
-      {
-        type: 'blank',
-        labelText: '',
-        slotName: 'outputRequest',
-        colLayout: ''
-      },
+      // {
+      //   type: 'blank',
+      //   labelText: '',
+      //   slotName: 'outputRequest',
+      //   colLayout: ''
+      // },
       {
         type: 'blank',
         labelText: '',
@@ -73,7 +73,7 @@ export default {
         children: [
           {
             type: 'text',
-            labelText: '提交物名称',
+            labelText: '输出物名称',
             fieldName: 'aorName',
             colLayout: 'singleCol',
             placeholder: '请输入',
