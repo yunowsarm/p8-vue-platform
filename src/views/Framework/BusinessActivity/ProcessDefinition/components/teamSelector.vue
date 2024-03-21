@@ -400,7 +400,7 @@ export default {
     },
     handleOk () {
       let select = this.selectRows.map(el => {
-        return {id: el.id,name: el.realName}
+        return {id: el.sysuserId,name: el.realName}
       })
       this.$emit('close', select)
       this.visible = false
