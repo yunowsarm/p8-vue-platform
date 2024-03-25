@@ -80,7 +80,7 @@ export default {
   },
   methods: {
     isActive (view) {
-      return this.$route.path === view.path
+      return this.$route.path === view.path || (this.$route.meta.parentPath && this.$route.meta.parentPath === view.path)
     },
     isShowCloseBtn (view) {
       const reg = new RegExp(this.homepage.path)
