@@ -323,6 +323,9 @@ $menu-collapse-text-color: #303133;
   font-family: Source Han Sans CN;
   font-weight: 500;
   color: $base-white-color;
+  white-space: nowrap; /* 不换行 */
+  overflow: hidden; /* 超出部分隐藏 */
+  text-overflow: ellipsis; /* 超出部分以省略号显示 */
   // line-height: 50px;
   // letter-spacing: 1px;
 }

@@ -56,7 +56,7 @@ const user = {
     SET_USERINFO(state, data) {
       state.userInfo = data
       state.userId = data.id
-      // state.userAccount = data.userAccount
+      state.userAccount = data.userName
       state.userName = data.realName
       // state.userStatus = data.userStatus
       state.roles = data.userRoles // static roles
