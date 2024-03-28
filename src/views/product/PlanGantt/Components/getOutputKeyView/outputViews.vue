@@ -127,9 +127,10 @@ export default {
       }
     },
     getOutputData(taskId) {
+      console.log('🚀 ~ OutputVIews ~ taskId:', taskId)
       const that = this
       that.otherParam = { taskId: taskId }
-      that.$api['taskManager.getOutputIo']({ taskId: taskId })
+      that.$api['taskManager.getOutputIo']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId })
         .then(function (res) {
           let datas = []
           if (Array.isArray(res) && res.length > 0) {
