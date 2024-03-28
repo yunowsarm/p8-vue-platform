@@ -16,16 +16,16 @@
                     :west-tree-param="provideParams.searchParams"
                     @refresh="init()">
         <template #NAME="{ scope, thirdMenuData }">
-          <span v-if="scope.row.dataType === 'task'"
+          <span v-if="scope.row.DATATYPE === 'task'"
                 class="underline"
                 @click="drillCol(scope, thirdMenuData)">{{ scope.row.NAME }} </span>
           <span v-else>{{ scope.row.NAME }}</span>
         </template>
         <template #PROGRESS="{scope}">
-          <span v-if="scope.row.dataType === 'task'">{{scope.row.PROGRESS * 100}}%</span>
+          <span v-if="scope.row.DATATYPE === 'task'">{{scope.row.PROGRESS * 100}}%</span>
         </template>
         <template #INDEXNO="{scope}">
-          <span v-if="scope.row.dataType === 'task'">{{scope.row.INDEXNO}}</span>
+          <span v-if="scope.row.DATATYPE === 'task'">{{scope.row.INDEXNO}}</span>
           <span v-else
                 style="display: -webkit-inline-box;">{{scope.row.INDEXNO}}</span>
         </template>
