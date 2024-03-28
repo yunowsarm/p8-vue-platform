@@ -765,13 +765,13 @@ export const CommandButtonData = [
       return result
     }
   },
-  {
-    id: 'batch-lock',
-    icon: 'p8 icon-modify-password',
-    title: '批量设置任务密级',
-    help: '批量设置任务密级',
-    clickFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
+  // {
+  //   id: 'batch-lock',
+  //   icon: 'p8 icon-modify-password',
+  //   title: '批量设置任务密级',
+  //   help: '批量设置任务密级',
+  //   clickFun: function (btn, ganttName, tasks) {
+  //     const vueThis = store.getters.vueThis
       // 批量修改任务密级，若包含已下发的不能下发的限制逻辑,暂时注释
       // const result = tasks.some(item => item.managerStatus === '6404')
       // if (result) {
@@ -781,19 +781,19 @@ export const CommandButtonData = [
       //   })
       // } else {
       // }
-      batchLock(ganttName)
-    },
-    isDisableFun: function (btn, ganttName, tasks) {
-      let result = false
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (checkReadOnly(ganttName)) {
-        result = true
-      }
-      return result
-    }
-  },
+      // batchLock(ganttName)
+    // },
+  //   isDisableFun: function (btn, ganttName, tasks) {
+  //     let result = false
+  //     if (checkSwitchType(tasks)) {
+  //       return true
+  //     }
+  //     if (checkReadOnly(ganttName)) {
+  //       result = true
+  //     }
+  //     return result
+  //   }
+  // },
   {
     id: 'batch-sync',
     icon: 'p8 icon-refresh',
@@ -1398,8 +1398,8 @@ export const CommandButtonData = [
     help: 'Excel导入',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
-      vueThis.excelSecretGrade = tasks[0].secretGrade
-      vueThis.excelSecretGradeDisplay = tasks[0].secretGradeDisplay
+      // vueThis.excelSecretGrade = tasks[0].secretGrade
+      // vueThis.excelSecretGradeDisplay = tasks[0].secretGradeDisplay
       vueThis.importExcel = true
     },
     isDisableFun: function (btn, ganttName, tasks) {
@@ -1439,8 +1439,8 @@ export const CommandButtonData = [
     help: 'Project导入',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
-      vueThis.projectSecretGrade = tasks[0].secretGrade
-      vueThis.projectSecretGradeDisplay = tasks[0].secretGradeDisplay
+      // vueThis.projectSecretGrade = tasks[0].secretGrade
+      // vueThis.projectSecretGradeDisplay = tasks[0].secretGradeDisplay
       vueThis.importProject = true
     },
     isDisableFun: function (btn, ganttName, tasks) {
@@ -1806,7 +1806,7 @@ export const CommandButtonData = [
     help: '知识库导入',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
-      vueThis.activitySecretGradeDisplay = tasks[0].secretGradeDisplay
+      // vueThis.activitySecretGradeDisplay = tasks[0].secretGradeDisplay
       vueThis.activityImportType = 'children'
       vueThis.activityImportVisible = true
     },
@@ -2598,11 +2598,11 @@ function addTask (num, pos, ganttName) {
     const vueThis = store.getters.vueThis
     const type = 'task'
     let parentTask
-    const userMaxSecret = vueThis.$store.state.user.userInfo.confidentialiteList[vueThis.$store.state.user.userInfo.confidentialiteList.length - 1].id
-    if (task.secretGrade > userMaxSecret) {
-      vueThis.$message.warning('低密人员不允许创建高密数据')
-      return
-    }
+    // const userMaxSecret = vueThis.$store.state.user.userInfo.confidentialiteList[vueThis.$store.state.user.userInfo.confidentialiteList.length - 1].id
+    // if (task.secretGrade > userMaxSecret) {
+    //   vueThis.$message.warning('低密人员不允许创建高密数据')
+    //   return
+    // }
     switch (pos) {
       case 'Before':
         // 同级上方插入
@@ -2613,7 +2613,7 @@ function addTask (num, pos, ganttName) {
           insertNum: num,
           insertType: 'Before',
           type: type,
-          secretGrade: parentTask.secretGrade,
+          // secretGrade: parentTask.secretGrade,
           autoScheduling: schedulingType || parentTask.autoScheduling,
           createPage: vueThis.createPage,
           completeForm: ' '
@@ -2646,7 +2646,7 @@ function addTask (num, pos, ganttName) {
           insertNum: num,
           insertType: 'After',
           type: type,
-          secretGrade: parentTask.secretGrade,
+          // secretGrade: parentTask.secretGrade,
           autoScheduling: schedulingType || parentTask.autoScheduling,
           createPage: vueThis.createPage,
           completeForm: ' '
@@ -2678,7 +2678,7 @@ function addTask (num, pos, ganttName) {
           insertNum: num,
           insertType: 'Child',
           type: type,
-          secretGrade: task.secretGrade,
+          // secretGrade: task.secretGrade,
           autoScheduling: schedulingType || task.autoScheduling,
           createPage: vueThis.createPage,
           completeForm: ' '
@@ -2744,7 +2744,7 @@ function createTaskByDatas(ganttObject, datas, parentId, pos, taskName, msg, dpO
           createSource: item.createSource,
           indexNo: item.indexNo,
           planType: item.planType,
-          secretGrade: item.secretGrade,
+          // secretGrade: item.secretGrade,
           $open: true,
           setts: item.setts,
           completeForm: item.completeForm,
@@ -3260,8 +3260,8 @@ function noDpCreateTask(ganttObject, num, parent, pos, taskName, indexNo, autoSc
         status: vueThis.createTaskStatus,
         planInfoId: vueThis.planInfoId,
         monitorPoints: '',
-        secretGrade: parent.secretGrade,
-        secretGradeDisplay: parent.secretGradeDisplay,
+        // secretGrade: parent.secretGrade,
+        // secretGradeDisplay: parent.secretGradeDisplay,
         owner_id: '',
         auto_scheduling: schedule,
         autoScheduling: autoScheduling,
@@ -3547,7 +3547,7 @@ function issueTask(ganttObject, thisDp, currentRowTask) {
     })
   } else {
     api['planGanttManager.issuePlanTasks']({
-      secretGrade: currentRowTask.currentRowTask,
+      // secretGrade: currentRowTask.currentRowTask,
       userId: currentRowTask.owner_id,
       pasteTaskIds: taskIds,
       planInfoId: vueThis.planInfoId
@@ -3625,8 +3625,8 @@ function batchOwner(ganttName) {
  * 批量设置任务密级
  */
 function batchLock() {
-  const vueThis = store.getters.vueThis
-  vueThis.ClassificationSelectVisible = true
+  // const vueThis = store.getters.vueThis
+  // vueThis.ClassificationSelectVisible = true
 }
 /**
  * 同步计划时间到预计时间
@@ -3690,7 +3690,7 @@ function batchOwnerCheck(ganttName) {
   const vueThis = store.getters.vueThis
   const planStatusLockMap = store.getters.planStatusLockMap
   const planEditStatus = planStatusLockMap[vueThis.planInfoStatus].ganttEdit
-  const userMaxSecret = vueThis.$store.state.user.userInfo.confidentialiteList[vueThis.$store.state.user.userInfo.confidentialiteList.length - 1].id
+  // const userMaxSecret = vueThis.$store.state.user.userInfo.confidentialiteList[vueThis.$store.state.user.userInfo.confidentialiteList.length - 1].id
   // 已提交完成计划不可操作
   if (planEditStatus !== 'true') {
     return false
@@ -3702,10 +3702,10 @@ function batchOwnerCheck(ganttName) {
       const task = ganttObject.getTask(id)
       const editManagerStatus = taskEditMap[task.status]
       const indexNo = ganttObject.getGlobalTaskIndex(id)
-      if (task.secretGrade > userMaxSecret) {
-        vueThis.$message.warning('低密人员不允许创建高密数据')
-        result = false
-      }
+      // if (task.secretGrade > userMaxSecret) {
+      //   vueThis.$message.warning('低密人员不允许创建高密数据')
+      //   result = false
+      // }
       if (
         indexNo === 0 ||
         (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1 && indexNo !== 0) ||

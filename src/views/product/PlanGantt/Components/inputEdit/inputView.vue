@@ -1,39 +1,59 @@
 <template>
   <div style="width: 100%">
-    <el-tabs v-model="activeOutput" type="border-card">
-      <el-tab-pane label="增加的输入物" name="inputKey">
+    <el-tabs v-model="activeOutput"
+             type="border-card">
+      <el-tab-pane label="增加的输入物"
+                   name="inputKey">
         <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 增加的输入物</span>
         <div>
-          <form-list v-if="!isEmpty" ref="form" @rendered="rendered" form-layout="vertical" :data-source="dataSource" :api="saveApi" :form="formData" :exist-default-btn="existDefaultBtn" :other-param="otherParam">
+          <form-list v-if="!isEmpty"
+                     ref="form"
+                     @rendered="rendered"
+                     form-layout="vertical"
+                     :data-source="dataSource"
+                     :api="saveApi"
+                     :form="formData"
+                     :exist-default-btn="existDefaultBtn"
+                     :other-param="otherParam">
           </form-list>
-          <el-empty v-if="isEmpty" class="custom_empty" :image-size="100"></el-empty>
+          <el-empty v-if="isEmpty"
+                    class="custom_empty"
+                    :image-size="100"></el-empty>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="前置输出物" name="getPreOutputKey">
+      <el-tab-pane label="前置输出物"
+                   name="getPreOutputKey">
         <span slot="label"><i class="p8 icon-xuanxiang1"></i> 前置输出物</span>
         <div v-if="data.length > 0">
-          <div v-for="(item, index) in data" :key="index">
+          <div v-for="(item, index) in data"
+               :key="index">
             <el-row type="flex">
-              <el-col :span="3" class="baseTitle">任务名称</el-col>
-              <el-col :span="21" class="baseContent">{{ item.taskName }}</el-col
-              ><br />
+              <el-col :span="3"
+                      class="baseTitle">任务名称</el-col>
+              <el-col :span="21"
+                      class="baseContent">{{ item.taskName }}</el-col><br />
             </el-row>
-            <div v-for="(input, inIndex) in item.inputDatas" :key="inIndex + index">
+            <div v-for="(input, inIndex) in item.inputDatas"
+                 :key="inIndex + index">
               <el-row type="flex">
-                <el-col :span="3" class="baseTitle">输入要求</el-col>
-                <el-col :span="21" class="baseContent">{{ input.describes }}</el-col
-                ><br />
+                <el-col :span="3"
+                        class="baseTitle">输入要求</el-col>
+                <el-col :span="21"
+                        class="baseContent">{{ input.describes }}</el-col><br />
               </el-row>
               <el-row type="flex">
-                <el-col :span="3" class="baseTitle">补充要求</el-col>
-                <el-col :span="21" class="baseContent">
-                  <div v-for="attr in input.uploadFiles" :key="attr.label" :value="attr.value">
+                <el-col :span="3"
+                        class="baseTitle">补充要求</el-col>
+                <el-col :span="21"
+                        class="baseContent">
+                  <div v-for="attr in input.uploadFiles"
+                       :key="attr.label"
+                       :value="attr.value">
                     <el-row type="flex">
-                      <el-col :span="12" class="baseTitle"
-                        ><span @click="downloadOutputRequsetFile(attr)">{{ attr.fileName }}</span></el-col
-                      >
-                      <el-col :span="12" class="baseContent">{{ attr.confidentialite }}</el-col
-                      ><br />
+                      <el-col :span="12"
+                              class="baseTitle"><span @click="downloadOutputRequsetFile(attr)">{{ attr.fileName }}</span></el-col>
+                      <el-col :span="12"
+                              class="baseContent">{{ attr.confidentialite }}</el-col><br />
                     </el-row>
                   </div>
                 </el-col>
@@ -43,7 +63,8 @@
           </div>
         </div>
         <div v-else>
-          <el-empty class="custom_empty" :image-size="100"></el-empty>
+          <el-empty class="custom_empty"
+                    :image-size="100"></el-empty>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -88,7 +109,7 @@ export default {
       default: null
     }
   },
-  data() {
+  data () {
     return {
       data: [],
       activeOutput: 'inputKey',
@@ -132,7 +153,7 @@ export default {
               uploadConfig: {
                 // drag: true// 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
               },
-              listType: 'secret' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+              listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
             }
           ]
         }
@@ -151,13 +172,13 @@ export default {
   computed: {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
-  mounted() {
+  mounted () {
     if (this.taskId && this.taskId !== '') {
       this.getInputData(this.taskId)
     }
   },
   methods: {
-    getInputData(taskId) {
+    getInputData (taskId) {
       const that = this
       that.$api['planGanttManager.inputInfo']({ taskId: taskId })
         .then(function (res) {
@@ -179,7 +200,7 @@ export default {
           console.error('error' + error)
         })
     },
-    downloadOutputRequsetFile(item) {
+    downloadOutputRequsetFile (item) {
       if (item.id) {
         this.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' })
           .then((backJson) => {
@@ -197,12 +218,12 @@ export default {
           })
       }
     },
-    rendered() {
+    rendered () {
       if (this.taskId && this.taskId !== '') {
         this.getCustomInputData(this.taskId)
       }
     },
-    getCustomInputData(taskId) {
+    getCustomInputData (taskId) {
       const that = this
       that.otherParam = { taskId: taskId }
       that.$api['planGanttManager.customInputInfo']({ taskId: taskId })

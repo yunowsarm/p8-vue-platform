@@ -87,7 +87,7 @@ export default {
               uploadConfig: {
                 // drag: true// 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
               },
-              listType: 'secret'// 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+              listType: 'text'// 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
             }
           ]
         }

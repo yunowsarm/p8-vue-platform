@@ -858,20 +858,20 @@ export default {
         if (!verifyResult) {
           return false
         }
-        let secretLevel = true
-        params.uploadFiles.forEach(val => {
-          // if (val.confidentialite > _this.thirdMenuParam.secretGrade) {
-          //   secretLevel = false
-          // }
-        }
-        )
-        if (!secretLevel) {
-          _this.$message({
-            type: 'warning',
-            message: '文件密级不能大于项目密级！'
-          })
-          return
-        }
+        // let secretLevel = true
+        // params.uploadFiles.forEach(val => {
+        //   // if (val.confidentialite > _this.thirdMenuParam.secretGrade) {
+        //   //   secretLevel = false
+        //   // }
+        // }
+        // )
+        // if (!secretLevel) {
+        //   _this.$message({
+        //     type: 'warning',
+        //     message: '文件密级不能大于项目密级！'
+        //   })
+        //   return
+        // }
         _this.submitLoading = true
         this.$api['teamManager.save'](params).then(res => {
           _this.submitLoading = false

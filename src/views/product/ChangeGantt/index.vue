@@ -370,7 +370,7 @@ export default {
       this.planInfoId = this.thirdMenuParam.PLANINFOID
       this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
       this.taskId = this.thirdMenuParam.TASKID
-      this.secretGrade = this.thirdMenuParam.SECRETGRADE
+      // this.secretGrade = this.thirdMenuParam.SECRETGRADE
       this.selectRecord = [{
         ...this.thirdMenuParam,
         EXECUTESTATE: this.thirdMenuParam.EXECUTESTATE
@@ -384,7 +384,7 @@ export default {
       this.planInfoId = this.thirdMenuParam.ID
       this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
       this.taskId = this.thirdMenuParam.taskId
-      this.secretGrade = this.thirdMenuParam.secretGrade
+      // this.secretGrade = this.thirdMenuParam.secretGrade
       this.selectRecord = [this.thirdMenuParam]
       this.currentRoute = this.thirdMenuParam.currentRoute
       this.createPage = 'planChange'

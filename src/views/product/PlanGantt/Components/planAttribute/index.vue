@@ -1,40 +1,68 @@
 <template>
   <div style="height: 100%">
-    <anchor placement="left" :menu="anchorMenu" style-sheet="tabs">
+    <anchor placement="left"
+            :menu="anchorMenu"
+            style-sheet="tabs">
       <template #describeKey>
-        <describe-edit
-          v-if="isView"
-          @saveSuccess="saveCallback"
-          :task-id="taskId"
-          :create-page="createPage"
-          :current-route="currentRoute"
-          :gantt-name="ganttName"
-          :plan-info-id="planInfoId"
-        ></describe-edit>
-        <describe-view v-if="!isView" :task-id="taskId" :gantt-name="ganttName" :plan-info-id="planInfoId"></describe-view>
+        <describe-edit v-if="isView"
+                       @saveSuccess="saveCallback"
+                       :task-id="taskId"
+                       :create-page="createPage"
+                       :current-route="currentRoute"
+                       :gantt-name="ganttName"
+                       :plan-info-id="planInfoId"></describe-edit>
+        <describe-view v-if="!isView"
+                       :task-id="taskId"
+                       :gantt-name="ganttName"
+                       :plan-info-id="planInfoId"></describe-view>
       </template>
       <template #monitorKey>
-        <monitor-edit v-if="isView" @saveSuccess="saveCallback" :task-id="taskId" :gantt-name="ganttName"></monitor-edit>
-        <monitor-view v-if="!isView" :task-id="taskId" :gantt-name="ganttName"></monitor-view>
+        <monitor-edit v-if="isView"
+                      @saveSuccess="saveCallback"
+                      :task-id="taskId"
+                      :gantt-name="ganttName"></monitor-edit>
+        <monitor-view v-if="!isView"
+                      :task-id="taskId"
+                      :gantt-name="ganttName"></monitor-view>
       </template>
       <template #dependenceKey>
-        <dependence-edit v-if="isView" @saveSuccess="saveCallback" :task-id="taskId" :gantt-name="ganttName"></dependence-edit>
-        <dependence-view v-if="!isView" :task-id="taskId" :gantt-name="ganttName"></dependence-view>
+        <dependence-edit v-if="isView"
+                         @saveSuccess="saveCallback"
+                         :task-id="taskId"
+                         :gantt-name="ganttName"></dependence-edit>
+        <dependence-view v-if="!isView"
+                         :task-id="taskId"
+                         :gantt-name="ganttName"></dependence-view>
       </template>
       <template #inputKey>
-        <input-edit v-if="isView" @saveSuccess="saveCallback" :task-id="taskId" :secret-grade="secretGrade" :gantt-name="ganttName"></input-edit>
-        <input-view v-if="!isView" :task-id="taskId" :gantt-name="ganttName"></input-view>
+        <input-edit v-if="isView"
+                    @saveSuccess="saveCallback"
+                    :task-id="taskId"
+                    :gantt-name="ganttName"></input-edit>
+        <input-view v-if="!isView"
+                    :task-id="taskId"
+                    :gantt-name="ganttName"></input-view>
       </template>
       <template #outputKey>
-        <el-tabs v-model="activeOutput" type="border-card">
-          <el-tab-pane label="输出要求" name="outputKey">
+        <el-tabs v-model="activeOutput"
+                 type="border-card">
+          <el-tab-pane label="输出要求"
+                       name="outputKey">
             <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 输出要求</span>
-            <output-edit v-if="isView" :secret-grade="secretGrade" @saveSuccess="saveCallback" :task-id="taskId" :gantt-name="ganttName"></output-edit>
-            <output-view v-if="!isView" :task-id="taskId" :gantt-name="ganttName"></output-view>
+            <output-edit v-if="isView"
+                         @saveSuccess="saveCallback"
+                         :task-id="taskId"
+                         :gantt-name="ganttName"></output-edit>
+            <output-view v-if="!isView"
+                         :task-id="taskId"
+                         :gantt-name="ganttName"></output-view>
           </el-tab-pane>
-          <el-tab-pane label="已提交输出物" name="getOutputKey">
+          <el-tab-pane label="已提交输出物"
+                       name="getOutputKey">
             <span slot="label"><i class="p8 icon-yitijiaoshuchuwu"></i> 已提交输出物</span>
-            <getOutPutView @saveSuccess="saveCallback" :task-id="taskId" :gantt-name="ganttName"></getOutPutView>
+            <getOutPutView @saveSuccess="saveCallback"
+                           :task-id="taskId"
+                           :gantt-name="ganttName"></getOutPutView>
           </el-tab-pane>
         </el-tabs>
       </template>
@@ -42,8 +70,13 @@
         <!-- <output-view v-if="!isView" :task-id="taskId" :gantt-name="ganttName"></output-view> -->
       </template>
       <template #specialKey>
-        <special-edit v-if="isView" :secret-grade="secretGrade" @saveSuccess="saveCallback" :task-id="taskId" :gantt-name="ganttName"></special-edit>
-        <special-view v-if="!isView" :task-id="taskId" :gantt-name="ganttName"></special-view>
+        <special-edit v-if="isView"
+                      @saveSuccess="saveCallback"
+                      :task-id="taskId"
+                      :gantt-name="ganttName"></special-edit>
+        <special-view v-if="!isView"
+                      :task-id="taskId"
+                      :gantt-name="ganttName"></special-view>
       </template>
     </anchor>
   </div>
@@ -68,7 +101,7 @@ import { P8Anchor as Anchor } from 'p8-components-ui'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 export default {
   name: 'PlanAttribute',
-  props: ['taskId', 'ganttName', 'status', 'planInfoId', 'attReadOnly', 'secretGrade', 'createPage', 'currentRoute', 'viewType'],
+  props: ['taskId', 'ganttName', 'status', 'planInfoId', 'attReadOnly', 'createPage', 'currentRoute', 'viewType'],
   components: {
     getOutPutView,
     DescribeEdit,
@@ -140,7 +173,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       headerVisible: false,
       isView: true,
@@ -157,10 +190,10 @@ export default {
     }
   },
   methods: {
-    onSelect(tab, event) {
+    onSelect (tab, event) {
       this.activeKey = tab.name
     },
-    saveCallback(res) {}
+    saveCallback (res) { }
   }
 }
 </script>

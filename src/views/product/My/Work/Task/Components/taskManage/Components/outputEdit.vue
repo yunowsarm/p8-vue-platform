@@ -95,7 +95,7 @@ export default {
               // drag: true// 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
               limit: 1
             },
-            listType: 'secret' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+            listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
           },
           {
             type: 'text',
@@ -192,39 +192,39 @@ export default {
         taskId: _this.taskId,
         uploadFileJson: []
       }
-      let secretLevel = true
-      saveParams.uploadFileJson.forEach(val => {
-        val.uploadFiles.forEach(item => {
-          if (item.confidentialite > this.thirdMenuParam.secretGrade) {
-            secretLevel = false
+      // let secretLevel = true
+      // saveParams.uploadFileJson.forEach(val => {
+      //   val.uploadFiles.forEach(item => {
+      //     if (item.confidentialite > this.thirdMenuParam.secretGrade) {
+      //       secretLevel = false
+      //     }
+      //   })
+      // })
+      // if (!secretLevel) {
+      //   this.$message({
+      //     type: 'warning',
+      //     message: '文件密级不可高于计划密级！'
+      //   })
+      // } else {
+      if (saveParams.uploadFileJson && saveParams.uploadFileJson.length) {
+        saveParams.uploadFileJson.forEach((item, index) => {
+          let tempObj = {}
+          tempObj.aorId = item.aorId ? item.aorId : ''
+          tempObj.aorName = item.aorName ? item.aorName : ''
+          tempObj.aorDetail = item.aorDetail ? item.aorDetail : ''
+          tempObj.taskId = item.taskId ? item.taskId : _this.taskId
+          if (item.uploadFiles && item.uploadFiles.length) {
+            tempObj.attId = item.uploadFiles[0].id ? item.uploadFiles[0].id : ''
+            tempObj.attFilePath = item.uploadFiles[0].filePath ? item.uploadFiles[0].filePath : ''
+            tempObj.attFileName = item.uploadFiles[0].fileName ? item.uploadFiles[0].fileName : ''
+            tempObj.attFileType = item.uploadFiles[0].fileType ? item.uploadFiles[0].fileType : ''
+            tempObj.attConfidentialite = item.uploadFiles[0].confidentialite ? item.uploadFiles[0].confidentialite : ''
           }
+          _this.$set(params.uploadFileJson, index, tempObj)
         })
-      })
-      if (!secretLevel) {
-        this.$message({
-          type: 'warning',
-          message: '文件密级不可高于计划密级！'
-        })
-      } else {
-        if (saveParams.uploadFileJson && saveParams.uploadFileJson.length) {
-          saveParams.uploadFileJson.forEach((item, index) => {
-            let tempObj = {}
-            tempObj.aorId = item.aorId ? item.aorId : ''
-            tempObj.aorName = item.aorName ? item.aorName : ''
-            tempObj.aorDetail = item.aorDetail ? item.aorDetail : ''
-            tempObj.taskId = item.taskId ? item.taskId : _this.taskId
-            if (item.uploadFiles && item.uploadFiles.length) {
-              tempObj.attId = item.uploadFiles[0].id ? item.uploadFiles[0].id : ''
-              tempObj.attFilePath = item.uploadFiles[0].filePath ? item.uploadFiles[0].filePath : ''
-              tempObj.attFileName = item.uploadFiles[0].fileName ? item.uploadFiles[0].fileName : ''
-              tempObj.attFileType = item.uploadFiles[0].fileType ? item.uploadFiles[0].fileType : ''
-              tempObj.attConfidentialite = item.uploadFiles[0].confidentialite ? item.uploadFiles[0].confidentialite : ''
-            }
-            _this.$set(params.uploadFileJson, index, tempObj)
-          })
-        }
-        _this.$refs.form.submitForm(params, _this.saveApi)
       }
+      _this.$refs.form.submitForm(params, _this.saveApi)
+      // }
     },
     downloadOutputRequsetFile (item) { // 输出要求-文件下载
       if (item.attId) {

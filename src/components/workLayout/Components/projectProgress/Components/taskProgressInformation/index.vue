@@ -1,8 +1,9 @@
 <template>
   <normal-layout :normalLayout="normalLayout"
-                 :westFullHeight="true" style="background:#fff;">
+                 :westFullHeight="true"
+                 style="background:#fff;">
     <template #north>
-      <span class="secret_level">密级：{{secretLevel}}</span>
+      <!-- <span class="secret_level">密级：{{secretLevel}}</span> -->
       <search-form-list ref="search"
                         :resetAfterToSearch="false"
                         :dataSource="dataSource"
@@ -35,7 +36,7 @@ export default {
   },
   data () {
     return {
-      secretLevel: '机密',
+      // secretLevel: '机密',
       queryParam: {},
       tableParams: {},
       normalLayout: {
@@ -93,7 +94,7 @@ export default {
     this.tableParams.searchUser = 'oneself'
   },
   mounted () {
-    this.secretLevel = this.$store.state.user.userInfo.confidentialiteList[this.$store.state.user.userInfo.confidentialiteList.length - 1].name
+    // this.secretLevel = this.$store.state.user.userInfo.confidentialiteList[this.$store.state.user.userInfo.confidentialiteList.length - 1].name
   },
   computed: {
 

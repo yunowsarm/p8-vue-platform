@@ -201,20 +201,20 @@ export function getChangeGantt(ganttName, vueThis) {
       resize: true,
       min_width: 90
     },
-    {
-      name: 'secretGrade',
-      label: '密级',
-      align: 'center',
-      resize: true,
-      min_width: 120,
-      template: function (task) {
-        const options = vueThis.secretGrades
-        const value = options.find((item) => {
-          return item.id === task.secretGrade
-        })
-        return value ? value.title : ''
-      }
-    },
+    // {
+    //   name: 'secretGrade',
+    //   label: '密级',
+    //   align: 'center',
+    //   resize: true,
+    //   min_width: 120,
+    //   template: function (task) {
+    //     const options = vueThis.secretGrades
+    //     const value = options.find((item) => {
+    //       return item.id === task.secretGrade
+    //     })
+    //     return value ? value.title : ''
+    //   }
+    // },
     {
       name: 'name',
       label: '任务名称',

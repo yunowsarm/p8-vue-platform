@@ -20,7 +20,6 @@
                     :task-id="taskId"
                     :plan-end-date-array="planEndDateArray"
                     :plan-begin-date-array="planBeginDateArray"
-                    :secret-grade="secretGrade"
                     :create-page="createPage"
                     :flag="thirdMenuParam.specialPlan"
                     :project-category="thirdMenuParam.projectCategory"
@@ -42,7 +41,6 @@
       <plan-attribute @save-success="detailDrawerClosed"
                       :create-page="createPage"
                       :task-id="selectTaskId"
-                      :secret-grade="secretGrade"
                       :att-read-only="readOnly"
                       :view-type="viewType"
                       :gantt-name="ganttName"
@@ -123,7 +121,6 @@ export default {
       },
       viewType: '',
       planInfoId: '',
-      secretGrade: '',
       planBeginDateArray: [],
       planEndDateArray: [],
       wholeDescribeId: '',
@@ -217,7 +214,7 @@ export default {
   mounted () {
     if (this.thirdMenuParam.createPage === 'decompose' || this.thirdMenuParam.route === '/MyTask/MyTask/latest') {
       this.planInfoId = this.thirdMenuParam.PLANINFOID
-      this.secretGrade = this.thirdMenuParam.SECRETGRADE || ''
+      // this.secretGrade = this.thirdMenuParam.SECRETGRADE || ''
       this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
       this.taskId = this.thirdMenuParam.TASKID || ''
       this.createPage = this.thirdMenuParam.createPage || 'decompose'
@@ -226,7 +223,7 @@ export default {
       this.planEndDateArray = this.thirdMenuParam.planEndDateArray || []
     } else {
       this.planInfoId = this.thirdMenuParam.ID || ''
-      this.secretGrade = this.thirdMenuParam.SECRETLEVEL || ''
+      // this.secretGrade = this.thirdMenuParam.SECRETLEVEL || ''
       this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
       this.taskId = this.thirdMenuParam.TASKID || ''
       this.createPage = this.thirdMenuParam.createPage || 'compile'

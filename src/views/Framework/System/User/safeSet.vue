@@ -1,8 +1,17 @@
 <template>
-  <form-list ref="form" label-width="150px" @rendered="rendered" @saved="saved" :data-source="dataSource" :api="saveApi" :form="formData">
+  <form-list ref="form"
+             label-width="150px"
+             @rendered="rendered"
+             @saved="saved"
+             :data-source="dataSource"
+             :api="saveApi"
+             :form="formData">
     <template #password>
       <div>
-        <el-switch v-model="formData.resetPassword" active-text="是" inactive-text="否" :disabled="checkResetPassword"></el-switch>
+        <el-switch v-model="formData.resetPassword"
+                   active-text="是"
+                   inactive-text="否"
+                   :disabled="checkResetPassword"></el-switch>
         是否重置密码为：000000
       </div>
     </template>
@@ -26,7 +35,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'userManager.safeSave',
       checkResetPassword: false,
@@ -66,12 +75,12 @@ export default {
           slotName: 'password',
           colLayout: 'doubleCol'
         },
-        {
-          labelText: '用户密级',
-          type: 'view',
-          fieldName: 'secretDisplay',
-          colLayout: 'doubleCol'
-        },
+        // {
+        //   labelText: '用户密级',
+        //   type: 'view',
+        //   fieldName: 'secretDisplay',
+        //   colLayout: 'doubleCol'
+        // },
         {
           labelText: '出入证号',
           type: 'view',
@@ -151,7 +160,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     const that = this
     this.$api['SystemSettings.checkBaseConfig']().then((res) => {
       if (res) {
@@ -162,13 +171,13 @@ export default {
     })
   },
   methods: {
-    rendered() {
+    rendered () {
       console.log('userId', this.userId)
       if (this.userId && this.userId !== '') {
         this.getUserData(this.userId)
       }
     },
-    getUserData(userId) {
+    getUserData (userId) {
       const that = this
       this.$api['userManager.userInfo']({
         id: that.userId
@@ -183,7 +192,7 @@ export default {
             departmentId,
             departmentName,
             confidentialite,
-            secretDisplay,
+            // secretDisplay,
             gender,
             genderDisp,
             otel,
@@ -203,7 +212,7 @@ export default {
             departmentId,
             departmentName,
             confidentialite,
-            secretDisplay,
+            // secretDisplay,
             gender,
             genderDisp,
             otel,
@@ -229,10 +238,10 @@ export default {
           console.log(error)
         })
     },
-    cancel() {
+    cancel () {
       this.$emit('cancel')
     },
-    saved(res) {
+    saved (res) {
       console.log('safeset saved')
       this.$emit('save-success', res)
     }

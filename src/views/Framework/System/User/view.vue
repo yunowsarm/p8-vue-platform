@@ -102,13 +102,13 @@ export default {
           placeholder: '',
           colLayout: 'doubleCol'
         },
-        {
-          labelText: '用户密级',
-          type: 'view',
-          fieldName: 'secretDisplay',
-          placeholder: '',
-          colLayout: 'doubleCol'
-        },
+        // {
+        //   labelText: '用户密级',
+        //   type: 'view',
+        //   fieldName: 'secretDisplay',
+        //   placeholder: '',
+        //   colLayout: 'doubleCol'
+        // },
         {
           labelText: '出入证号',
           type: 'view',
@@ -177,7 +177,7 @@ export default {
         oemail: null,
         indexNo: null,
         departmentName: null,
-        secretDisplay: null,
+        // secretDisplay: null,
         genderDisp: null,
         roles: null
       }
@@ -204,8 +204,8 @@ export default {
       this.$api['userManager.userInfo']({ id: that.userId })
         .then(function (res) {
           console.log('Success')
-          const { id, userName, pid, realName, departmentId, confidentialite, gender, otel, oemail, indexNo, roles, birthdate: birthDate, empcode: empCode, workpost: workPost, tecpost: tecPost, departmentName: departmentName, secretDisplay: secretDisplay, genderDisp: genderDisp } = res
-          that.formData = { id, userName, genderDisp, pid, realName, departmentId, confidentialite, gender, otel, oemail, indexNo, roles, birthDate, empCode, workPost, tecPost, departmentName, secretDisplay }
+          const { id, userName, pid, realName, departmentId, confidentialite, gender, otel, oemail, indexNo, roles, birthdate: birthDate, empcode: empCode, workpost: workPost, tecpost: tecPost, departmentName: departmentName, genderDisp: genderDisp } = res
+          that.formData = { id, userName, genderDisp, pid, realName, departmentId, confidentialite, gender, otel, oemail, indexNo, roles, birthDate, empCode, workPost, tecPost, departmentName }
           // that.formData.birthDate = res.birthdate
           // that.formData.empCode = res.empcode
           // that.formData.workPost = res.workpost

@@ -16,7 +16,7 @@ const user = {
     // avatar: '../static/myAvatar200.png', // static
     token: getToken(),
     roles: null, // 权限应该是返回个数组对象
-    confidentialiteList: [], // 用户密级,
+    // confidentialiteList: [], // 用户密级,
     userSettingAll: {}, // 用户配置信息
     ganttButtonMode: 'double', // gantt操作按钮采用单行还是双行模式
     ganttRightButtons: [], // gantt右键菜单
@@ -61,15 +61,15 @@ const user = {
       // state.userStatus = data.userStatus
       state.roles = data.userRoles // static roles
       // state.avatar = data.avatar
-      state.confidentialiteList =
-        data.confidentialiteList && data.confidentialiteList.length
-          ? data.confidentialiteList.map(({ name, id }) => {
-              return {
-                label: name,
-                value: id
-              }
-            })
-          : []
+      // state.confidentialiteList =
+      //   data.confidentialiteList && data.confidentialiteList.length
+      //     ? data.confidentialiteList.map(({ name, id }) => {
+      //         return {
+      //           label: name,
+      //           value: id
+      //         }
+      //       })
+      //     : []
     },
     RESET_USERINFO(state, data) {
       // state.userId = ''
@@ -79,7 +79,7 @@ const user = {
       state.userStatus = ''
       // state.avatar = ''
       state.roles = null
-      state.confidentialiteList = []
+      // state.confidentialiteList = []
     },
     SET_LOGIN_STATUS(state, data) {
       state.loginStatus = data

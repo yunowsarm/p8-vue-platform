@@ -8,7 +8,7 @@ const project = {
     buttonLimit: [], // table行上按钮权限，置灰/隐藏/悬浮提示
     dicConfig: {}, // 系统项目状态、计划状态、任务状态集合
     baseConfig: {}, // 系统基础配置项，例如系统名称\logo等
-    systemSecretConfig: [] // 系统密级
+    // systemSecretConfig: [] // 系统密级
   },
 
   mutations: {
@@ -21,9 +21,9 @@ const project = {
     SET_BASECONFIG(state, data) {
       state.baseConfig = data
     },
-    SET_SECRET(state, data) {
-      state.systemSecretConfig = data
-    }
+    // SET_SECRET(state, data) {
+    //   state.systemSecretConfig = data
+    // }
   },
 
   actions: {
@@ -57,20 +57,20 @@ const project = {
      * @param {any} params
      * @returns
      */
-    getSystemSecret({ commit, state }, params) {
-      return new Promise((resolve, reject) => {
-        api['thirdPartInterface.getDic']({ dicType: 'SECRET_LEVEL' })
-          .then((res) => {
-            if (res) {
-              commit('SET_SECRET', res)
-              resolve(res)
-            }
-          })
-          .catch((err) => {
-            reject(err)
-          })
-      })
-    },
+    // getSystemSecret({ commit, state }, params) {
+    //   return new Promise((resolve, reject) => {
+    //     api['thirdPartInterface.getDic']({ dicType: 'SECRET_LEVEL' })
+    //       .then((res) => {
+    //         if (res) {
+    //           commit('SET_SECRET', res)
+    //           resolve(res)
+    //         }
+    //       })
+    //       .catch((err) => {
+    //         reject(err)
+    //       })
+    //   })
+    // },
     /**
      * 获取系统配置信息
      * 返回当前用户的系统配置信息

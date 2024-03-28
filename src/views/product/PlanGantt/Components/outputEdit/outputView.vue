@@ -1,22 +1,22 @@
 <template>
   <div style="position: relative; padding-bottom: 25px">
-    <form-list
-      ref="form"
-      v-if="!isEmpty"
-      @rendered="rendered"
-      form-layout="vertical"
-      @saved="saved"
-      :data-source="dataSource"
-      :api="saveApi"
-      :form="formData"
-      :is-custom-validate="isCustomValidate"
-      :exist-default-btn="existDefaultBtn"
-      :exist-custom-btn="existCustomBtn"
-      :other-param="otherParam"
-      @custom-validate="customValidate"
-    >
+    <form-list ref="form"
+               v-if="!isEmpty"
+               @rendered="rendered"
+               form-layout="vertical"
+               @saved="saved"
+               :data-source="dataSource"
+               :api="saveApi"
+               :form="formData"
+               :is-custom-validate="isCustomValidate"
+               :exist-default-btn="existDefaultBtn"
+               :exist-custom-btn="existCustomBtn"
+               :other-param="otherParam"
+               @custom-validate="customValidate">
     </form-list>
-    <el-empty v-if="isEmpty" class="custom_empty" :image-size="100"></el-empty>
+    <el-empty v-if="isEmpty"
+              class="custom_empty"
+              :image-size="100"></el-empty>
   </div>
 </template>
 <style scoped>
@@ -43,7 +43,7 @@ export default {
       default: null
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'planGanttManager.outputSave',
       isCustomValidate: true,
@@ -87,7 +87,7 @@ export default {
               uploadConfig: {
                 // drag: true// 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
               },
-              listType: 'secret' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+              listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
             }
           ]
         }
@@ -105,9 +105,9 @@ export default {
   computed: {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    toLink(k) {
+    toLink (k) {
       this.$api['thirdPartInterface.getA5FileLink']({ taskId: this.taskId })
         .then((res) => {
           if (res) {
@@ -118,14 +118,14 @@ export default {
             window.open(url, '_blank')
           }
         })
-        .catch(() => {})
+        .catch(() => { })
     },
-    rendered() {
+    rendered () {
       if (this.taskId && this.taskId !== '') {
         this.getOutputData(this.taskId)
       }
     },
-    getOutputData(taskId) {
+    getOutputData (taskId) {
       const that = this
       that.otherParam = { taskId: taskId }
       that.$api['planGanttManager.outputInfo']({ taskId: taskId })
@@ -166,8 +166,8 @@ export default {
           console.error('error' + error)
         })
     },
-    saved(res) {},
-    customValidate(saveParams) {}
+    saved (res) { },
+    customValidate (saveParams) { }
   }
 }
 </script>

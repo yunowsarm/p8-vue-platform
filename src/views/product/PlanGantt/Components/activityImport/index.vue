@@ -1,29 +1,31 @@
 <template>
   <normal-layout :normal-layout="normalLayout">
     <template #north>
-      <el-button type="primary" @click="importSelect">导入</el-button>
-      <span style="color: red; font-size: 14px; font-weight: bolder; float: right; line-height: 30px; display: inline-block; margin-right: 10px">密级：{{ activitySecretGradeDisplay }}</span>
+      <el-button type="primary"
+                 @click="importSelect">导入</el-button>
+      <!-- <span style="color: red; font-size: 14px; font-weight: bolder; float: right; line-height: 30px; display: inline-block; margin-right: 10px">密级：{{ activitySecretGradeDisplay }}</span> -->
     </template>
     <template #west>
-      <common-tree :tree-api="treeApi" @select="onSelect" :tree-config="treeConfig" :tree-param="treeParam"></common-tree>
+      <common-tree :tree-api="treeApi"
+                   @select="onSelect"
+                   :tree-config="treeConfig"
+                   :tree-param="treeParam"></common-tree>
     </template>
     <template #center>
       <div id="table-contain">
-        <common-table
-          ref="table"
-          :comp="comp"
-          :columns="columns"
-          :params="queryParam"
-          :use-tree-format="useTreeFormat"
-          :use-tree-p-id="useTreePId"
-          :pagination="pagination"
-          :api="tableApi"
-          :table-refresh="tableRefresh"
-          :table-config="tableConfig"
-          @select-all="selectAll"
-          @select="onActivitiTableSelect"
-          @selection-change="handleSelectionChange"
-        >
+        <common-table ref="table"
+                      :comp="comp"
+                      :columns="columns"
+                      :params="queryParam"
+                      :use-tree-format="useTreeFormat"
+                      :use-tree-p-id="useTreePId"
+                      :pagination="pagination"
+                      :api="tableApi"
+                      :table-refresh="tableRefresh"
+                      :table-config="tableConfig"
+                      @select-all="selectAll"
+                      @select="onActivitiTableSelect"
+                      @selection-change="handleSelectionChange">
         </common-table>
       </div>
     </template>
@@ -80,7 +82,7 @@ export default {
       default: null
     }
   },
-  data() {
+  data () {
     return {
       comp: this,
       queryParam: {},
@@ -183,7 +185,7 @@ export default {
     ...mapGetters(['vueThis'])
   },
   methods: {
-    selectAll(tableData) {
+    selectAll (tableData) {
       tableData = this.$refs.table.tableData
       this.selectAllChecked = !this.selectAllChecked
       this.selectAllRow(tableData, this.selectAllChecked)
@@ -194,7 +196,7 @@ export default {
     /**
      * 处理数据，全选行，默认只选子不选父
      */
-    selectAllRow(data, flag) {
+    selectAllRow (data, flag) {
       const _this = this
       data.map((row) => {
         if (row.children && row.children.length > 0) {
@@ -207,7 +209,7 @@ export default {
         }
       })
     },
-    onActivitiTableSelect(select, row) {
+    onActivitiTableSelect (select, row) {
       // eslint-disable-next-line no-unused-vars
       const childrens = row.children
 
@@ -231,7 +233,7 @@ export default {
       }
     },
     // 取消选中递归
-    clearRow(data) {
+    clearRow (data) {
       Array.from(data).forEach((row) => {
         row.isCheck = false // 给这行数据设置一个选中字段为false
         this.$refs.table.$refs.table.toggleRowSelection(row, false)
@@ -239,19 +241,19 @@ export default {
       })
     },
     // 选中递归
-    checkRow(data) {
+    checkRow (data) {
       Array.from(data).forEach((row) => {
         row.isCheck = true // 选中是字段值为true
         this.$refs.table.$refs.table.toggleRowSelection(row, true)
         if (row.children) this.checkRow(row.children)
       })
     },
-    onSelect(obj) {
+    onSelect (obj) {
       // this.queryParam.activityInfoId = obj.id
       this.$set(this.queryParam, 'activityInfoId', obj.id)
       // this.$refs.table.searchData()
     },
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       // this.selectedRowKeys = []
       // this.multipleSelection = val
       // val.map(item => {
@@ -261,7 +263,7 @@ export default {
       //   // }
       // })
     },
-    importSelect() {
+    importSelect () {
       const that = this
       if (this.selectedRowKeys.length > 0) {
         that.$api['planGanttManager.importActivityInfo']({
@@ -287,7 +289,7 @@ export default {
         that.showMessage('请选择需要导入的活动！', 'warning')
       }
     },
-    tableRefresh(param) {
+    tableRefresh (param) {
       param
         .then(() => {
           console.log('异步成功后端做的操作')
@@ -296,7 +298,7 @@ export default {
           console.error('异步失败的操作')
         })
     },
-    showMessage(message, type) {
+    showMessage (message, type) {
       this.$message({
         message: message,
         type: type

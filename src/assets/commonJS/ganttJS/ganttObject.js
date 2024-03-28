@@ -1356,18 +1356,18 @@ GanttObject.editors = function (ganttObject, formatter, linksFormatter) {
       //   }
       // }
     },
-    secretGrades: {
-      type: 'select',
-      map_to: 'secretGrade',
-      options: [
-        { key: '9001', label: '公开' },
-        { key: '9003', label: '内部' },
-        { key: '9004', label: '普通商业秘密' },
-        { key: '9005', label: '秘密' },
-        { key: '9006', label: '核心商业秘密' },
-        { key: '9007', label: '机密' }
-      ]
-    },
+    // secretGrades: {
+    //   type: 'select',
+    //   map_to: 'secretGrade',
+    //   options: [
+    //     { key: '9001', label: '公开' },
+    //     { key: '9003', label: '内部' },
+    //     { key: '9004', label: '普通商业秘密' },
+    //     { key: '9005', label: '秘密' },
+    //     { key: '9006', label: '核心商业秘密' },
+    //     { key: '9007', label: '机密' }
+    //   ]
+    // },
     forecastBeginDate: {
       type: 'custom_date_editor',
       map_to: 'forecastBeginDate',
@@ -1759,14 +1759,14 @@ function searchFilter(parent, searchForm, ganttObject) {
       }
     }
 
-    let secretGradeCheck = true
-    const { secretGrade } = searchForm
-    if (secretGrade && task.secretGrade && !task.secretGrade.includes(secretGrade)) {
-      secretGradeCheck = false
-    }
-    if (secretGrade && !task.secretGrade) {
-      secretGradeCheck = false
-    }
+    // let secretGradeCheck = true
+    // const { secretGrade } = searchForm
+    // if (secretGrade && task.secretGrade && !task.secretGrade.includes(secretGrade)) {
+    //   secretGradeCheck = false
+    // }
+    // if (secretGrade && !task.secretGrade) {
+    //   secretGradeCheck = false
+    // }
 
     const startDate = searchForm.start_date // 任务开始时间
     const endDate = searchForm.end_date // 任务完成时间
@@ -1838,7 +1838,7 @@ function searchFilter(parent, searchForm, ganttObject) {
       taskNameCheck &&
       startDateCheck &&
       managerStatusCheck &&
-      secretGradeCheck &&
+      // secretGradeCheck &&
       specialDutyCheck &&
       tasksCooperateCheck &&
       endDateCheck &&
@@ -2012,11 +2012,11 @@ GanttObject.setOnBeforeEditStart = function (ganttObject, vueThis) {
     if (vueThis.createPage === 'decompose' && task.createUserId && task.createUserId != userId) {
       return false
     }
-    const userMaxSecret = vueThis.$store.state.user.userInfo.confidentialiteList[vueThis.$store.state.user.userInfo.confidentialiteList.length - 1].id
-    if (task.secretGrade > userMaxSecret) {
-      vueThis.$message.warning('低密人员不允许修改高密数据')
-      return false
-    }
+    // const userMaxSecret = vueThis.$store.state.user.userInfo.confidentialiteList[vueThis.$store.state.user.userInfo.confidentialiteList.length - 1].id
+    // if (task.secretGrade > userMaxSecret) {
+    //   vueThis.$message.warning('低密人员不允许修改高密数据')
+    //   return false
+    // }
     // 获取gannt操作限制策略
     const taskStatusLockMap = store.getters.taskStatusLockMap
     const editManagerStatus = taskStatusLockMap[task.status]
@@ -2805,7 +2805,7 @@ const columnsTypeMap = {
   roleName: 'input',
   dutyDeptName: 'input',
   taskProjectName: 'input',
-  secretGrade: 'select',
+  // secretGrade: 'select',
   // 'weatherControl': 'select',
   // 'predecessors': 'input',
   // 'progress': 'input',
@@ -2965,9 +2965,9 @@ GanttObject.searchColumnsDataInit = function (vueThis, ganttObject) {
                 datas.push(obj)
               }
               break
-            case 'secretGrade':
-              datas = ganttObject.serverList('secretGrades')
-              break
+            // case 'secretGrade':
+            //   datas = ganttObject.serverList('secretGrades')
+            //   break
             case 'wbs':
               for (let i = 0; i < vueThis.deep; i++) {
                 const item = {

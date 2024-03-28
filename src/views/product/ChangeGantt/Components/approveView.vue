@@ -1,33 +1,33 @@
 <template>
   <div style="height: 100%">
-    <div class="couerDivClass" id="couerDiv">
-      <div class="top" :style="{ height: changeInfoHeight }">
-        <form-list
-          ref="form"
-          class="approve_view"
-          @rendered="rendered"
-          :form="formData"
-          :data-source="dataSource"
-          :api="saveApi"
-          :exist-default-btn="existDefaultBtn"
-          :exist-custom-btn="existCustomBtn"
-          :other-param="otherParam"
-        >
+    <div class="couerDivClass"
+         id="couerDiv">
+      <div class="top"
+           :style="{ height: changeInfoHeight }">
+        <form-list ref="form"
+                   class="approve_view"
+                   @rendered="rendered"
+                   :form="formData"
+                   :data-source="dataSource"
+                   :api="saveApi"
+                   :exist-default-btn="existDefaultBtn"
+                   :exist-custom-btn="existCustomBtn"
+                   :other-param="otherParam">
           <template #weatherChange>
             {{formData.weatherChange === '0' ? '是': '否'}}
           </template>
         </form-list>
       </div>
-      <el-button type="primary" size="mini" @click="approveViewDetail">{{ '查看计划详情' }}</el-button>
-      <ApproveViewDetail
-        v-if="isApproveViewDetailView"
-        :plan-info-id="planInfoId"
-        :create-page="createPage"
-        :read-only-visible="readOnlyVisible"
-        :approve-content-view="approveContentView"
-        :is-view="isApproveViewDetailView"
-        @close="closeApproveViewDetail"
-      ></ApproveViewDetail>
+      <el-button type="primary"
+                 size="mini"
+                 @click="approveViewDetail">{{ '查看计划详情' }}</el-button>
+      <ApproveViewDetail v-if="isApproveViewDetailView"
+                         :plan-info-id="planInfoId"
+                         :create-page="createPage"
+                         :read-only-visible="readOnlyVisible"
+                         :approve-content-view="approveContentView"
+                         :is-view="isApproveViewDetailView"
+                         @close="closeApproveViewDetail"></ApproveViewDetail>
     </div>
   </div>
 </template>
@@ -85,7 +85,7 @@ export default {
       default: null
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'planChange.changeRecordInfoUpdateType',
       isCustomValidate: true,
@@ -151,7 +151,7 @@ export default {
         //     // , // 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
         //     // limit: 1
         //   },
-        //   listType: 'secret' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+        //   listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
         // },
         {
           labelText: '影响分析',
@@ -187,7 +187,7 @@ export default {
     immediate: true
   },
   methods: {
-    rendered() {
+    rendered () {
       const that = this
       if (that.approveContentView.changeId) {
         this.$api['planChange.changeRecordInfo']({ id: that.approveContentView.changeId })
@@ -215,17 +215,17 @@ export default {
           })
       }
     },
-    selectChange() {
+    selectChange () {
       this.$refs.form.submitForm(this.formData, this.saveApi)
     },
-    approveViewDetail() {
+    approveViewDetail () {
       this.isApproveViewDetailView = true
     },
-    closeApproveViewDetail() {
+    closeApproveViewDetail () {
       this.isApproveViewDetailView = false
     }
   },
-  mounted() {
+  mounted () {
     if (this.compType === 'approvalHistoryView') {
       this.weatherChangeDisabled = true
     }

@@ -1,17 +1,15 @@
 <template>
   <div style="position: relative; padding-bottom: 50px">
-    <form-list
-      ref="form"
-      @rendered="rendered"
-      form-layout="vertical"
-      @saved="saved"
-      :data-source="dataSource"
-      :api="saveApi"
-      :form="formData"
-      :is-custom-validate="isCustomValidate"
-      :other-param="otherParam"
-      @custom-validate="customValidate"
-    >
+    <form-list ref="form"
+               @rendered="rendered"
+               form-layout="vertical"
+               @saved="saved"
+               :data-source="dataSource"
+               :api="saveApi"
+               :form="formData"
+               :is-custom-validate="isCustomValidate"
+               :other-param="otherParam"
+               @custom-validate="customValidate">
     </form-list>
   </div>
 </template>
@@ -36,15 +34,15 @@ export default {
       type: String,
       default: null
     },
-    secretGrade: {
-      type: String
-    },
+    // secretGrade: {
+    //   type: String
+    // },
     ganttName: {
       type: String,
       default: null
     }
   },
-  data() {
+  data () {
     return {
       nullity: '',
       saveApi: 'planGanttManager.outputSave',
@@ -95,7 +93,7 @@ export default {
               uploadConfig: {
                 // drag: true// 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
               },
-              listType: 'secret' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+              listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
             }
           ]
         }
@@ -113,14 +111,14 @@ export default {
   computed: {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    rendered() {
+    rendered () {
       if (this.taskId && this.taskId !== '') {
         this.getOutputData(this.taskId)
       }
     },
-    getOutputData(taskId) {
+    getOutputData (taskId) {
       const that = this
       that.otherParam = { taskId: taskId }
       that.$api['planGanttManager.outputInfo']({ taskId: taskId })
@@ -158,33 +156,33 @@ export default {
           console.error('error' + error)
         })
     },
-    saved(res) {
+    saved (res) {
       if (res === 'true') {
         this.getOutputData(this.taskId)
       }
     },
-    customValidate(saveParams) {
+    customValidate (saveParams) {
       const that = this
       const ganttObject = GanttObject.getGanttObject(that.ganttName)
       const task = ganttObject.getTask(that.taskId)
       this.nullity = task.nullity
       if (this.nullity !== '1') {
         if (that.taskId) {
-          let secretLevel = true
-          saveParams.outputRequests.forEach((val) => {
-            val.uploadFiles.forEach((item) => {
-              if (item.confidentialite > task.secretGrade) {
-                secretLevel = false
-              }
-            })
-          })
-          if (!secretLevel) {
-            this.$message({
-              type: 'warning',
-              message: '文件密级不可高于计划密级！'
-            })
-            return
-          }
+          // let secretLevel = true
+          // saveParams.outputRequests.forEach((val) => {
+          //   val.uploadFiles.forEach((item) => {
+          //     if (item.confidentialite > task.secretGrade) {
+          //       secretLevel = false
+          //     }
+          //   })
+          // })
+          // if (!secretLevel) {
+          //   this.$message({
+          //     type: 'warning',
+          //     message: '文件密级不可高于计划密级！'
+          //   })
+          //   return
+          // }
           if (that.ganttName === 'planGantt') {
             // 计划编辑
             this.$refs.form.submitForm(saveParams, this.saveApi)

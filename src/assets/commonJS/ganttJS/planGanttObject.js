@@ -48,12 +48,12 @@ export function planGantt(ganttName, vueThis) {
           const num = parseFloat(data.progress)
           data.progress = Math.round(num * 100) / 100
         }
-        const parent = ganttObject.getTask(task.parent)
-        if (parent && parent.secretGrade && data.secretGrade > parent.secretGrade) {
-          GanttObject.showMessage(vueThis, '子任务密级不能大于父任务密级！', 'error')
-          task.secretGrade = parent.secretGrade
-          return
-        }
+        // const parent = ganttObject.getTask(task.parent)
+        // if (parent && parent.secretGrade && data.secretGrade > parent.secretGrade) {
+        //   GanttObject.showMessage(vueThis, '子任务密级不能大于父任务密级！', 'error')
+        //   task.secretGrade = parent.secretGrade
+        //   return
+        // }
 
         // api['planGanttManager.updatePlanGanttData']({
         //   pId: parent.secretGrade,
@@ -65,13 +65,13 @@ export function planGantt(ganttName, vueThis) {
         //     GanttObject.showMessage(vueThis, '子任务密级不能大于父任务密级！', 'error')
         //   }
         // })
-        let secretGrade = ''
-        if (parent && parent.secretGrade) {
-          secretGrade = parent.secretGrade
-        }
+        // let secretGrade = ''
+        // if (parent && parent.secretGrade) {
+        //   secretGrade = parent.secretGrade
+        // }
         api['planGanttManager.updatePlanGanttData']({
-          pId: secretGrade,
-          id: task.secretGrade,
+          // pId: secretGrade,
+          // id: task.secretGrade,
           planGanttRequest: data,
           createPage: vueThis.createPage
         })
@@ -79,8 +79,8 @@ export function planGantt(ganttName, vueThis) {
             if (res) {
               // ganttObject.getTask(id).updateType = ''
               return { action: 'ok' }
-            } else if (res === null) {
-              GanttObject.showMessage(vueThis, '子任务密级不能大于父任务密级！', 'error')
+            // } else if (res === null) {
+            //   GanttObject.showMessage(vueThis, '子任务密级不能大于父任务密级！', 'error')
             } else {
               ganttObject.undo()
               GanttObject.showMessage(vueThis, '更新失败！', 'error')
@@ -88,12 +88,12 @@ export function planGantt(ganttName, vueThis) {
             }
           })
           .catch((err) => {
-            if (err.data === '密级校验失败') {
-              // 密级校验提示框
-              GanttObject.showMessage(vueThis, err.head.message, 'error')
-            } else {
+            // if (err.data === '密级校验失败') {
+            //   // 密级校验提示框
+            //   GanttObject.showMessage(vueThis, err.head.message, 'error')
+            // } else {
               GanttObject.showMessage(vueThis, '更新失败！', 'error')
-            }
+            // }
             ganttObject.undo()
             return { action: 'error' }
           })
@@ -838,21 +838,21 @@ export function getGanttColumns(ganttObject, vueThis) {
         return html
       }
     },
-    {
-      name: 'secretGrade',
-      label: '密级' + canEditIcon,
-      align: 'center',
-      min_width: 130,
-      resize: true,
-      editor: editors.secretGrades,
-      template: function (task) {
-        const options = ganttObject.serverList('secretGradeList')
-        const value = options.find((item) => {
-          return item.key === task.secretGrade
-        })
-        return value ? value.label : ''
-      }
-    },
+    // {
+    //   name: 'secretGrade',
+    //   label: '密级' + canEditIcon,
+    //   align: 'center',
+    //   min_width: 130,
+    //   resize: true,
+    //   editor: editors.secretGrades,
+    //   template: function (task) {
+    //     const options = ganttObject.serverList('secretGradeList')
+    //     const value = options.find((item) => {
+    //       return item.key === task.secretGrade
+    //     })
+    //     return value ? value.label : ''
+    //   }
+    // },
     {
       name: 'weatherControl',
       label: '是否管控任务',

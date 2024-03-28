@@ -361,16 +361,16 @@ function getPlanColumn(type, ganttObject, vueThis) {
         return html
       }
     },
-    {
-      name: 'secretGrade',
-      label: '密级',
-      align: 'center',
-      min_width: 130,
-      resize: true,
-      template: function (task) {
-        return task.secretGradeDisplay
-      }
-    },
+    // {
+    //   name: 'secretGrade',
+    //   label: '密级',
+    //   align: 'center',
+    //   min_width: 130,
+    //   resize: true,
+    //   template: function (task) {
+    //     return task.secretGradeDisplay
+    //   }
+    // },
     {
       name: 'weatherControl',
       label: '是否管控任务',

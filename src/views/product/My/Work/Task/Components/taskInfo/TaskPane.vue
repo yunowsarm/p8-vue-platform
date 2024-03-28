@@ -95,7 +95,7 @@ export default {
       formData: {},
       allStatus: [],
       count: 1,
-      secretGradeDisplay: null
+      // secretGradeDisplay: null
     }
   },
   mounted () {

@@ -49,7 +49,7 @@ export default {
         fieldName: 'uploadFiles',
         colLayout: 'singleCol',
         defaultValue: [],
-        listType: 'secret'
+        listType: 'text'
       }
     ]
     return {
@@ -93,7 +93,7 @@ export default {
     box-sizing: border-box;
     padding: 10px 8px;
   }
-  &  ::v-deep  .formList.el-form > .el-row {
+  & ::v-deep .formList.el-form > .el-row {
     padding: 0;
     &.existBtn:first-child {
       height: 100%;

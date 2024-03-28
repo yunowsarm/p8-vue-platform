@@ -192,7 +192,7 @@ export default {
           accept: '.bpmn20.xml',
           limit: 3
         },
-        listType: 'secret' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+        listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
       },
       uploadApi: '/bpm/manage/ProcessDefinition/deploy'
     }

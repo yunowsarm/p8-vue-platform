@@ -1,26 +1,29 @@
 <template>
   <div>
-    <p style="color: red; font-size: 14px; font-weight: bolder; text-align: right; line-height: 30px; margin-right: 10px">密级：{{ projectSecretGradeDisplay }}</p>
-    <form-list
-      label-width="100px"
-      ref="form"
-      :data-source="dataSource"
-      :form="formData"
-      :api="saveApi"
-      :is-custom-validate="isCustomValidate"
-      @custom-validate="customValidate"
-      @saved="saved"
-      @rendered="rendered"
-    >
+    <!-- <p style="color: red; font-size: 14px; font-weight: bolder; text-align: right; line-height: 30px; margin-right: 10px">密级：{{ projectSecretGradeDisplay }}</p> -->
+    <form-list label-width="100px"
+               ref="form"
+               :data-source="dataSource"
+               :form="formData"
+               :api="saveApi"
+               :is-custom-validate="isCustomValidate"
+               @custom-validate="customValidate"
+               @saved="saved"
+               @rendered="rendered">
       <template #outputRequest>
         <div class="edit-outputdata-view">
           <div class="title">导入模板:</div>
-          <ul class="file-list" v-for="(item, index) in outputRequest" :key="item.attId" :class="{ 'not-last': index < outputRequest.length - 1 }">
+          <ul class="file-list"
+              v-for="(item, index) in outputRequest"
+              :key="item.attId"
+              :class="{ 'not-last': index < outputRequest.length - 1 }">
             <li>
               <p>
                 模板下载:
                 <span class="filename">
-                  <el-link type="success" :underline="true" @click="downloadOutputRequsetFile(item)">{{ item.attFileName }}</el-link>
+                  <el-link type="success"
+                           :underline="true"
+                           @click="downloadOutputRequsetFile(item)">{{ item.attFileName }}</el-link>
                 </span>
               </p>
             </li>
@@ -66,7 +69,7 @@ export default {
       type: Array
     }
   },
-  data() {
+  data () {
     const dataSource = [
       {
         type: 'blank',
@@ -90,7 +93,7 @@ export default {
           drag: true, // 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
           limit: 1
         },
-        listType: 'secret' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+        listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
       }
     ]
     return {
@@ -113,10 +116,10 @@ export default {
       )
     }
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    rendered() {},
-    saved(res) {
+    rendered () { },
+    saved (res) {
       if (res.length > 0) {
         let messages = '<ol> '
         res.forEach((message) => {
@@ -132,7 +135,7 @@ export default {
       this.formData.uploadFileJson = []
       this.$emit('save-success', 'output')
     },
-    getOutputIoData() {
+    getOutputIoData () {
       const _this = this
       this.$api[this.outputIoApi]({ taskId: _this.taskId }).then((res) => {
         // let uploadFileJson = res.uploadFileJson
@@ -145,7 +148,7 @@ export default {
         }
       })
     },
-    renderedFormData(row, index) {
+    renderedFormData (row, index) {
       if (Object.keys(row).length) {
         const tempObj = {
           uploadFiles: []
@@ -180,12 +183,12 @@ export default {
       }
     },
     /** rowInfo中 att-文件信息字段 key 的处理 */
-    keyHandle(str, key) {
+    keyHandle (str, key) {
       let s = key.replace(str, '')
       s = s.replace(s[0], s[0].toLowerCase())
       return s
     },
-    customValidate(saveParams) {
+    customValidate (saveParams) {
       const params = {
         // params: 保存时请求接口所需的参数
         taskId: this.taskId,
@@ -232,7 +235,7 @@ export default {
           })
       }
     },
-    downloadOutputRequsetFile(item) {
+    downloadOutputRequsetFile (item) {
       // 输出要求-文件下载
       if (item.attId) {
         this.$api['SystemSettings.getTemplateFileUrl']({ attachmentId: item.path }, { responseType: 'blob' })

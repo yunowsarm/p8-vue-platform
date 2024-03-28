@@ -1,19 +1,17 @@
 <template>
   <div style="position: relative; padding-bottom: 50px">
-    <form-list
-      ref="form"
-      @rendered="rendered"
-      form-layout="vertical"
-      @saved="saved"
-      :data-source="dataSource"
-      :api="saveApi"
-      :form="formData"
-      :is-custom-validate="isCustomValidate"
-      :exist-default-btn="existDefaultBtn"
-      :exist-custom-btn="existCustomBtn"
-      :other-param="otherParam"
-      @custom-validate="customValidate"
-    >
+    <form-list ref="form"
+               @rendered="rendered"
+               form-layout="vertical"
+               @saved="saved"
+               :data-source="dataSource"
+               :api="saveApi"
+               :form="formData"
+               :is-custom-validate="isCustomValidate"
+               :exist-default-btn="existDefaultBtn"
+               :exist-custom-btn="existCustomBtn"
+               :other-param="otherParam"
+               @custom-validate="customValidate">
     </form-list>
   </div>
 </template>
@@ -37,7 +35,7 @@ export default {
       default: null
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'planGanttManager.specialSave',
       isCustomValidate: true,
@@ -78,7 +76,7 @@ export default {
               uploadConfig: {
                 // drag: true// 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
               },
-              listType: 'secret' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+              listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
             }
           ]
         }
@@ -96,14 +94,14 @@ export default {
   computed: {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    rendered() {
+    rendered () {
       if (this.taskId && this.taskId !== '') {
         this.getSpecialData(this.taskId)
       }
     },
-    getSpecialData(taskId) {
+    getSpecialData (taskId) {
       const that = this
       that.otherParam = { taskId: taskId }
       that.$api['planGanttManager.specialInfo']({ taskId: taskId })
@@ -141,8 +139,8 @@ export default {
           console.error('error' + error)
         })
     },
-    saved(res) {},
-    customValidate(saveParams) {}
+    saved (res) { },
+    customValidate (saveParams) { }
   }
 }
 </script>

@@ -1,9 +1,17 @@
 <template>
   <div>
     <div>
-      <el-alert title="初始密码为 000000，登录后请及时修改密码" :closable="false" type="warning"></el-alert>
+      <el-alert title="初始密码为 000000，登录后请及时修改密码"
+                :closable="false"
+                type="warning"></el-alert>
     </div>
-    <form-list ref="form" label-width="150px" @rendered="rendered" @saved="saved" :data-source="dataSource" :api="saveApi" :form="formData">
+    <form-list ref="form"
+               label-width="150px"
+               @rendered="rendered"
+               @saved="saved"
+               :data-source="dataSource"
+               :api="saveApi"
+               :form="formData">
       <template slot="btn">
         <el-button @click="cancel">取 消</el-button>
       </template>
@@ -11,7 +19,8 @@
     <template v-if="formData.roles && formData.roles.length > 0">
       <div class="role-list-title">用户角色</div>
       <ul class="role-list">
-        <li v-for="(item, index) in formData.roles" :key="index">
+        <li v-for="(item, index) in formData.roles"
+            :key="index">
           {{ item.name }}
         </li>
       </ul>
@@ -56,7 +65,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'userManager.save',
       dataSource: [
@@ -142,24 +151,24 @@ export default {
             }
           ]
         },
-        {
-          labelText: '用户密级',
-          type: 'select',
-          fieldName: 'confidentialite',
-          placeholder: '请选择用户密级',
-          colLayout: 'doubleCol',
-          rules: [
-            {
-              required: true
-            }
-          ],
-          optionUrl: {
-            api: 'userManager.dicData',
-            params: {
-              dicType: 'USER_LEVEL'
-            }
-          }
-        },
+        // {
+        //   labelText: '用户密级',
+        //   type: 'select',
+        //   fieldName: 'confidentialite',
+        //   placeholder: '请选择用户密级',
+        //   colLayout: 'doubleCol',
+        //   rules: [
+        //     {
+        //       required: true
+        //     }
+        //   ],
+        //   optionUrl: {
+        //     api: 'userManager.dicData',
+        //     params: {
+        //       dicType: 'USER_LEVEL'
+        //     }
+        //   }
+        // },
         {
           labelText: '出入证号',
           type: 'text',
@@ -261,7 +270,7 @@ export default {
         pid: null,
         realName: null,
         departmentId: this.currentSelectDeptId,
-        confidentialite: null,
+        // confidentialite: null,
         empCode: null,
         gender: null,
         birthDate: null,
@@ -274,48 +283,42 @@ export default {
       }
     }
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    rendered() {
+    rendered () {
       // console.log('currentSelectDeptId', this.currentSelectDeptId)
       if (this.userId && this.userId !== '') {
         this.getUserData(this.userId)
       }
     },
-    clickEvent() {
+    clickEvent () {
       console.log('click')
     },
-    cancel() {
+    cancel () {
       this.$emit('cancel')
     },
-    getUserData(userId) {
+    getUserData (userId) {
       let that = this
       console.log('loadUserId', userId)
 
       this.$api['userManager.userInfo']({ id: that.userId })
         .then(function (res) {
           console.log('Success')
-          let { id, userName, pid, realName, departmentId, confidentialite, gender, otel, oemail, indexNo, roles, birthdate: birthDate, empcode: empCode, workpost: workPost, tecpost: tecPost } = res
-          that.formData = { id, userName, pid, realName, departmentId, confidentialite, gender, otel, oemail, indexNo, roles, birthDate, empCode, workPost, tecPost }
-          // that.formData.birthDate = res.birthdate
-          // that.formData.empCode = res.empcode
-          // that.formData.workPost = res.workpost
-          // that.formData.tecPost = res.tecpost
+          let { id, userName, pid, realName, departmentId, gender, otel, oemail, indexNo, roles, birthdate: birthDate, empcode: empCode, workpost: workPost, tecpost: tecPost } = res
+          that.formData = { id, userName, pid, realName, departmentId, gender, otel, oemail, indexNo, roles, birthDate, empCode, workPost, tecPost }
+          // let { id, userName, pid, realName, departmentId, confidentialite, gender, otel, oemail, indexNo, roles, birthdate: birthDate, empcode: empCode, workpost: workPost, tecpost: tecPost } = res
+          // that.formData = { id, userName, pid, realName, departmentId, confidentialite, gender, otel, oemail, indexNo, roles, birthDate, empCode, workPost, tecPost }
           console.log('formData', that.formData)
-          // if (res.birthDate) {
-          // } else {
-          //   that.formData.birthDate = null
-          // }
         })
         .catch(function (error) {
           console.log('error' + error)
         })
     },
-    saved(res) {
+    saved (res) {
       console.log('edit saved')
       this.$emit('saveSuccess', res)
     },
-    handleChange(info) {
+    handleChange (info) {
       console.log(info, 'info')
     }
   }

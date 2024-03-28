@@ -1,5 +1,9 @@
 <template>
-  <form-list ref="form" @saved="saved" :api="saveApi" :data-source="dataSource" :form="formData"></form-list>
+  <form-list ref="form"
+             @saved="saved"
+             :api="saveApi"
+             :data-source="dataSource"
+             :form="formData"></form-list>
 </template>
 <script>
 import { P8Form as FormList } from 'p8-components-ui'
@@ -11,10 +15,10 @@ export default {
   props: {
     record: {
       type: Object,
-      default: () => {}
+      default: () => { }
     }
   },
-  data() {
+  data () {
     const dataSource = [
       {
         type: 'text',
@@ -61,17 +65,17 @@ export default {
           }
         ]
       },
-      {
-        type: 'select',
-        labelText: '对应人员密级',
-        fieldName: 'sysuserSecretLevelId',
-        optionUrl: { api: 'thirdPartInterface.getDic', params: { dicType: 'USER_LEVEL' } },
-        defaultValue: '',
-        fieldConfig: {
-          disabled: false
-        },
-        options: []
-      }
+      // {
+      //   type: 'select',
+      //   labelText: '对应人员密级',
+      //   fieldName: 'sysuserSecretLevelId',
+      //   optionUrl: { api: 'thirdPartInterface.getDic', params: { dicType: 'USER_LEVEL' } },
+      //   defaultValue: '',
+      //   fieldConfig: {
+      //     disabled: false
+      //   },
+      //   options: []
+      // }
     ]
     return {
       saveApi: 'secretLevel.save',
@@ -80,12 +84,12 @@ export default {
         id: null,
         meaning: null,
         orderNo: null,
-        sysuserSecretLevelId: null,
+        // sysuserSecretLevelId: null,
         sysuserSecretLevelName: null
       }
     }
   },
-  mounted() {},
+  mounted () { },
   watch: {
     record: {
       handler: function (val) {
@@ -102,23 +106,25 @@ export default {
     }
   },
   methods: {
-    rendered() {
+    rendered () {
       // if (this.record && this.record.id) {
       //   this.getSecret(this.record.id)
       // }
     },
-    getSecret(secretId) {
+    getSecret (secretId) {
       this.$api['secretLevel.getSecret']({ id: secretId })
         .then((res) => {
-          let { id, meaning, orderNo, sysuserSecretLevelId, sysuserSecretLevelName } = res
-          this.formData = { id, meaning, orderNo, sysuserSecretLevelId, sysuserSecretLevelName }
+          let { id, meaning, orderNo, sysuserSecretLevelName } = res
+          this.formData = { id, meaning, orderNo, sysuserSecretLevelName }
+          // let { id, meaning, orderNo, sysuserSecretLevelId, sysuserSecretLevelName } = res
+          // this.formData = { id, meaning, orderNo, sysuserSecretLevelId, sysuserSecretLevelName }
           console.log('----FormData---', this.formData)
         })
         .catch(function (error) {
           console.log('error' + error)
         })
     },
-    saved(res) {
+    saved (res) {
       this.$emit('saveSuccess', res)
     }
   }

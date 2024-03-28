@@ -1,26 +1,27 @@
 <template>
-  <common-dialog :title="title" @close="handleCancel" :visible="visible" :dialog-config="dialogConfig" :show-handle-btn="false" :dialog-height="460">
+  <common-dialog :title="title"
+                 @close="handleCancel"
+                 :visible="visible"
+                 :dialog-config="dialogConfig"
+                 :show-handle-btn="false"
+                 :dialog-height="460">
     <template #dialog>
-      <form-list
-        ref="form"
-        @rendered="rendered"
-        @saved="saved"
-        :form="formData"
-        :data-source="dataSource"
-        :is-custom-validate="isCustomValidate"
-        @custom-validate="customValidate"
-        :api="saveApi"
-        :other-param="otherParam"
-      >
+      <form-list ref="form"
+                 @rendered="rendered"
+                 @saved="saved"
+                 :form="formData"
+                 :data-source="dataSource"
+                 :is-custom-validate="isCustomValidate"
+                 @custom-validate="customValidate"
+                 :api="saveApi"
+                 :other-param="otherParam">
       </form-list>
-      <selectApproveUserBeforehand
-        v-if="isSelectApproveUserBeforehandView"
-        :is-select-approve-user-beforehand-view="isSelectApproveUserBeforehandView"
-        :select-user-beforehand-data-source="selectUserBeforehandDataSource"
-        :select-user-beforehand-form-data="selectUserBeforehandFormData"
-        @close-modal="closeSelectApproveUserBeforehand"
-        @commit="commitSelectApproveUserBeforehand"
-      ></selectApproveUserBeforehand>
+      <selectApproveUserBeforehand v-if="isSelectApproveUserBeforehandView"
+                                   :is-select-approve-user-beforehand-view="isSelectApproveUserBeforehandView"
+                                   :select-user-beforehand-data-source="selectUserBeforehandDataSource"
+                                   :select-user-beforehand-form-data="selectUserBeforehandFormData"
+                                   @close-modal="closeSelectApproveUserBeforehand"
+                                   @commit="commitSelectApproveUserBeforehand"></selectApproveUserBeforehand>
     </template>
   </common-dialog>
 </template>
@@ -78,7 +79,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'planChange.changeRecordInfoSave',
       isCustomValidate: true,
@@ -170,7 +171,7 @@ export default {
         //     // , // 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
         //     // limit: 1
         //   },
-        //   listType: 'secret' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+        //   listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
         // },
         {
           labelText: '影响分析',
@@ -227,7 +228,7 @@ export default {
     }
   },
   methods: {
-    rendered() {
+    rendered () {
       const that = this
       if (that.changeId) {
         this.$api['planChange.changeRecordInfo']({ id: that.changeId })
@@ -247,7 +248,7 @@ export default {
           })
       }
     },
-    customValidate(saveParams) {
+    customValidate (saveParams) {
       saveParams.projectCategory = this.projectCategory
       saveParams.monitorPoints = this.monitorPoints
       saveParams.projectClassification = this.projectClassification
@@ -258,21 +259,21 @@ export default {
       this.saveParams = saveParams
       if (this.sendDataList.length > 0) {
         const taskWithMaxSecretGrade = this.sendDataList.reduce((maxTask, currentTask) => {
-          if (!maxTask || currentTask.secretGrade > maxTask.secretGrade) {
-            return currentTask
-          }
+          // if (!maxTask || currentTask.secretGrade > maxTask.secretGrade) {
+          //   return currentTask
+          // }
           return maxTask
         }, null)
-        this.isBig = this.saveParams.uploadFiles.some((item) => item.confidentialite > taskWithMaxSecretGrade.secretGrade)
-        if (this.isBig) {
-          this.$message.warning('附件的密级高于任务的密级！')
+        // this.isBig = this.saveParams.uploadFiles.some((item) => item.confidentialite > taskWithMaxSecretGrade.secretGrade)
+        // if (this.isBig) {
+        //   this.$message.warning('附件的密级高于任务的密级！')
+        // } else {
+        if (this.isBeforehand) {
+          this.nextApproveUserBeforehand(saveParams)
         } else {
-          if (this.isBeforehand) {
-            this.nextApproveUserBeforehand(saveParams)
-          } else {
-            this.$refs.form.submitForm(saveParams, this.saveApi)
-          }
+          this.$refs.form.submitForm(saveParams, this.saveApi)
         }
+        // }
       } else {
         this.$api['planChange.changeRecordClassification']({ id: this.id }).then((res) => {
           this.isBig = this.saveParams.uploadFiles.some((item) => item.confidentialite > res)
@@ -289,15 +290,15 @@ export default {
         })
       }
     },
-    saved(res) {
+    saved (res) {
       if (res && res.processInstanceIds && res.processInstanceIds.length > 0) {
         this.$emit('save-success', res)
       }
     },
-    handleCancel() {
+    handleCancel () {
       this.$emit('save-success', true)
     },
-    nextApproveUserBeforehand(saveParams) {
+    nextApproveUserBeforehand (saveParams) {
       // 标识 1008 月重点计划
       const monitorPoints = saveParams.monitorPoints
       // 1 所级 ； 0 非所级
@@ -319,10 +320,10 @@ export default {
         }
       })
     },
-    closeSelectApproveUserBeforehand() {
+    closeSelectApproveUserBeforehand () {
       this.isSelectApproveUserBeforehandView = false
     },
-    commitSelectApproveUserBeforehand(fullParams) {
+    commitSelectApproveUserBeforehand (fullParams) {
       if (!this.saveParams.id && !this.saveParams.planInfoId) {
         this.saveParams.id = this.id
         this.saveParams.planInfoId = this.planInfoId

@@ -265,7 +265,7 @@ export default {
         ...record,
         progress: Number((record.PROGRESS * 100).toFixed(0)),
         taskId: record.TASKID,
-        secretGrade: record.SECRETGRADE,
+        // secretGrade: record.SECRETGRADE,
         planInfoId: record.PLANINFOID,
         wholeDescribeId: record.WHOLEDESCRIBEID,
         planInfoStatus: record.EXECUTESTATE,

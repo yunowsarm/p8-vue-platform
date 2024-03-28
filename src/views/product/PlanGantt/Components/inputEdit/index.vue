@@ -1,27 +1,34 @@
 <template>
   <div>
-    <el-tabs v-model="activeOutput" type="border-card">
-      <el-tab-pane label="输入要求" name="inputKey">
+    <el-tabs v-model="activeOutput"
+             type="border-card">
+      <el-tab-pane label="输入要求"
+                   name="inputKey">
         <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 输入要求</span>
         <div style="position: relative; padding-bottom: 50px">
-          <form-list
-            ref="form"
-            @rendered="rendered"
-            form-layout="vertical"
-            @saved="saved"
-            :data-source="dataSource"
-            :api="saveApi"
-            :form="formData"
-            :is-custom-validate="isCustomValidate"
-            :other-param="otherParam"
-            @custom-validate="customValidate"
-          >
+          <form-list ref="form"
+                     @rendered="rendered"
+                     form-layout="vertical"
+                     @saved="saved"
+                     :data-source="dataSource"
+                     :api="saveApi"
+                     :form="formData"
+                     :is-custom-validate="isCustomValidate"
+                     :other-param="otherParam"
+                     @custom-validate="customValidate">
           </form-list>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="前置任务输出物" name="getPreOutputKey">
+      <el-tab-pane label="前置任务输出物"
+                   name="getPreOutputKey">
         <span slot="label"><i class="p8 icon-xuanxiang1"></i> 前置任务输出物</span>
-        <form-list ref="form1" @rendered="preRendered" @saved="preSaved" :data-source="preDataSource" :exist-default-btn="existDefaultBtn" :api="preSaveApi" :form="preFormData"> </form-list>
+        <form-list ref="form1"
+                   @rendered="preRendered"
+                   @saved="preSaved"
+                   :data-source="preDataSource"
+                   :exist-default-btn="existDefaultBtn"
+                   :api="preSaveApi"
+                   :form="preFormData"> </form-list>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -58,15 +65,15 @@ export default {
       type: String,
       default: null
     },
-    secretGrade: {
-      type: String
-    },
+    // secretGrade: {
+    //   type: String
+    // },
     ganttName: {
       type: String,
       default: null
     }
   },
-  data() {
+  data () {
     return {
       activeOutput: 'inputKey',
       data: [],
@@ -107,7 +114,7 @@ export default {
               uploadConfig: {
                 // drag: true// 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
               },
-              listType: 'secret' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+              listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
             }
           ]
         }
@@ -151,7 +158,7 @@ export default {
               uploadConfig: {
                 // drag: true// 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
               },
-              listType: 'secret' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+              listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
             }
           ]
         }
@@ -167,13 +174,13 @@ export default {
   computed: {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
-  mounted() {
+  mounted () {
     // if (this.taskId && this.taskId !== '') {
     //   this.getInputData(this.taskId)
     // }
   },
   methods: {
-    getInputData(taskId) {
+    getInputData (taskId) {
       const that = this
       that.$api['planGanttManager.inputInfo']({ taskId: taskId })
         .then(function (res) {
@@ -201,12 +208,12 @@ export default {
           console.error('error' + error)
         })
     },
-    rendered() {
+    rendered () {
       if (this.taskId && this.taskId !== '') {
         this.getCustomInputData(this.taskId)
       }
     },
-    getCustomInputData(taskId) {
+    getCustomInputData (taskId) {
       const that = this
       that.otherParam = { taskId: taskId }
       that.$api['planGanttManager.customInputInfo']({ taskId: taskId })
@@ -244,33 +251,33 @@ export default {
           console.error('error' + error)
         })
     },
-    saved(res) {
+    saved (res) {
       if (res) {
         this.getCustomInputData(this.taskId)
       }
     },
-    customValidate(saveParams) {
+    customValidate (saveParams) {
       const that = this
       const ganttObject = GanttObject.getGanttObject(that.ganttName)
       const task = ganttObject.getTask(that.taskId)
       this.nullity = task.nullity
       if (this.nullity !== '1') {
         if (that.taskId) {
-          let secretLevel = true
-          saveParams.inputRequests.forEach((val) => {
-            val.uploadFiles.forEach((item) => {
-              if (item.confidentialite > task.secretGrade) {
-                secretLevel = false
-              }
-            })
-          })
-          if (!secretLevel) {
-            this.$message({
-              type: 'warning',
-              message: '文件密级不可高于计划密级！'
-            })
-            return
-          }
+          // let secretLevel = true
+          // saveParams.inputRequests.forEach((val) => {
+          //   val.uploadFiles.forEach((item) => {
+          //     if (item.confidentialite > task.secretGrade) {
+          //       secretLevel = false
+          //     }
+          //   })
+          // })
+          // if (!secretLevel) {
+          //   this.$message({
+          //     type: 'warning',
+          //     message: '文件密级不可高于计划密级！'
+          //   })
+          //   return
+          // }
           if (that.ganttName === 'planGantt') {
             // 计划编辑
             this.$refs.form.submitForm(saveParams, this.saveApi)
@@ -289,12 +296,12 @@ export default {
         })
       }
     },
-    preRendered() {
+    preRendered () {
       if (this.taskId && this.taskId !== '') {
         this.getInputData(this.taskId)
       }
     },
-    preSaved() {}
+    preSaved () { }
   }
 }
 </script>

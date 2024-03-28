@@ -1,17 +1,19 @@
 <template>
   <div class="form">
-    <P8Form
-      ref="form"
-      :comp="comp"
-      label-width="120px"
-      :existDefaultBtn="false"
-      :existCustomBtn='true'
-      :data-source="dataSource"
-      :api="saveApi"
-      @saved="saved"
-      :form="formData">
+    <P8Form ref="form"
+            :comp="comp"
+            label-width="120px"
+            :existDefaultBtn="false"
+            :existCustomBtn='true'
+            :data-source="dataSource"
+            :api="saveApi"
+            @saved="saved"
+            :form="formData">
       <template #message>
-        <quill-editor class="quill_editor" v-model="formData.content" ref="myQuillEditor" :options="editorOption"> </quill-editor>
+        <quill-editor class="quill_editor"
+                      v-model="formData.content"
+                      ref="myQuillEditor"
+                      :options="editorOption"> </quill-editor>
       </template>
       <template #customBtn>
         <el-button size="mini"
@@ -49,7 +51,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       comp: this,
       editorOption: {
@@ -57,11 +59,11 @@ export default {
       },
       saveApi: 'planGanttManager.pushPlanMssage',
       isCustomValidate: true,
-      taskSecretLevel: '',
+      // taskSecretLevel: '',
       formData: {
         planInfoId: this.planInfoId,
         type: '',
-        secretLevel: '',
+        // secretLevel: '',
         content: '',
         taskIds: [this.taskId]
       },
@@ -89,20 +91,20 @@ export default {
             change: 'userChangeHandle'
           }
         },
-        {
-          type: 'select',
-          labelText: '密级',
-          fieldName: 'secretLevel',
-          colLayout: 'doubleCol',
-          optionUrl: {
-            api: 'thirdPartInterface.getDic',
-            params: { dicType: 'SECRET_LEVEL' }
-          },
-          options: [],
-          eventHandle: {
-            change: 'secretLevelChangeHandle'
-          }
-        },
+        // {
+        //   type: 'select',
+        //   labelText: '密级',
+        //   fieldName: 'secretLevel',
+        //   colLayout: 'doubleCol',
+        //   optionUrl: {
+        //     api: 'thirdPartInterface.getDic',
+        //     params: { dicType: 'SECRET_LEVEL' }
+        //   },
+        //   options: [],
+        //   eventHandle: {
+        //     change: 'secretLevelChangeHandle'
+        //   }
+        // },
         {
           type: 'blank',
           labelText: '',
@@ -113,7 +115,7 @@ export default {
       ]
     }
   },
-  created() {
+  created () {
     const ganttObject = GanttObject.getGanttObject(this.ganttName)
     let task = null
     if (this.taskId) {
@@ -125,19 +127,19 @@ export default {
         }
       })
     }
-    this.taskSecretLevel = task.secretGrade
+    // this.taskSecretLevel = task.secretGrade
   },
   methods: {
-    secretLevelChangeHandle(val) {
-      if (val > this.taskSecretLevel) {
-        this.$message({
-          type: 'warning',
-          message: '密级不可高于任务密级！'
-        })
-        this.formData.secretLevel = ''
-      }
-    },
-    userChangeHandle(val) {
+    // secretLevelChangeHandle(val) {
+    //   if (val > this.taskSecretLevel) {
+    //     this.$message({
+    //       type: 'warning',
+    //       message: '密级不可高于任务密级！'
+    //     })
+    //     this.formData.secretLevel = ''
+    //   }
+    // },
+    userChangeHandle (val) {
       if (val === '2' && !this.taskId) {
         this.$message({
           type: 'warning',
@@ -146,15 +148,15 @@ export default {
         this.formData.type = ''
       }
     },
-    saved(params) {
+    saved (params) {
       if (params) {
         this.$emit('close')
       }
     },
-    handleSubmit(e) {
+    handleSubmit (e) {
       this.$refs.form.handleSubmit(e)
     },
-    cancel() {
+    cancel () {
       this.$emit('close')
     }
   }

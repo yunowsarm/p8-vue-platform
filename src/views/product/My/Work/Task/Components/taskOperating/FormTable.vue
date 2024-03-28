@@ -489,7 +489,7 @@ export default {
           return timeSpace
         }
       },
-      secretGrade: '',
+      // secretGrade: '',
       unfinishOption: [],// 未完成原因分类
       adjustOption: [],
       newFormData: {},
@@ -505,7 +505,7 @@ export default {
     realBeginDate = this.formData.realBeginDate
     this.getOptions()
     let nullity = this.getPlanInfo().NULLITY
-    this.secretGrade = this.getPlanInfo().SECRETGRADEDISPLAY
+    // this.secretGrade = this.getPlanInfo().SECRETGRADEDISPLAY
     // 提交进度按钮是否置灰
     if (nullity === 1) {
       this.buttonDisabled = true
