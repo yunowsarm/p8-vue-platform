@@ -129,7 +129,7 @@
                    direction="ttb"
                    size="100%">
       <template #drawer>
-        <process-approval @approved="approved"></process-approval>
+        <process-approval class="drawer_approval" @approved="approved"></process-approval>
       </template>
     </common-drawer>
     <common-drawer v-if="visibleMsgDrawer"
