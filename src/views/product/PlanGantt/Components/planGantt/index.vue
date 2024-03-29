@@ -247,6 +247,11 @@
         <ProgressHistory :task-id="selectedId" />
       </template>
     </common-drawer>
+    <common-drawer v-if="changeHistoryVisible" :visible="changeHistoryVisible" size="80%" placement="top" title="任务历史变更" @close="changeHistoryClose">
+      <template #drawer>
+        <ChangeHistory :plan-info-id="planInfoId" :task-id="selectTaskId" :create-page="createPage"/>
+      </template>
+    </common-drawer>
   </div>
 </template>
 <style lang="scss">
@@ -338,6 +343,7 @@ import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
 import VersionList from '../versionList'
 import ProgressHistory from '../progressHistory';
+import ChangeHistory from '../changeHistory';
 const Mycolumns = [
   {
     title: '',
@@ -458,6 +464,7 @@ export default {
     // Flight,
     // Large,
     ProgressHistory,
+    ChangeHistory,
     CommandSearch,
     CommandStatistic,
     CommonButtonBarSetting,
@@ -662,6 +669,7 @@ export default {
       rightMenuConfigVisible: false, // 右键菜单配置弹出框
       getSelectTasks: [],
       progressHistoryVisible: false,
+      changeHistoryVisible: false,
       selectedId: '',
       versionListVisible: false //  版本列表显示隐藏
     }
@@ -1342,6 +1350,13 @@ export default {
     showTaskProgressDialog (taskId) {
       this.selectedId = taskId
       this.progressHistoryVisible = true
+    },
+    showChangeHistory () {
+      this.changeHistoryVisible = true
+    },
+    changeHistoryClose () {
+      this.changeHistoryVisible = false
+      this.$store.dispatch('setVueThis', this)
     }
   }
 }

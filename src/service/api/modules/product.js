@@ -442,6 +442,13 @@ export const repositoryApi = {
       desc: '项目管理->计划管理->计划编辑 -> 获取计划反馈消息'
     },
     {
+      name: 'getChangeList',
+      method: 'POST',
+      path: '/product/pm/planChange/taskChangeList',
+      mockPath: '/product/pm/planChange/taskChangeList',
+      desc: '项目管理->计划管理->计划编辑 -> 获取计划变更历史'
+    },
+    {
       name: 'async',
       method: 'POST',
       path: '/product/ProductionPlan/async',
