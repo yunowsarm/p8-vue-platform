@@ -365,7 +365,7 @@
                               start-placeholder="开始日期"
                               end-placeholder="结束日期"
                               valueFormat='yyyy-MM-dd'
-                              @change="dateChange(scope)">
+                              @change="dateChange(scope, data)">
               </el-date-picker>
             </div>
             <!-- 数字 -->
@@ -1080,7 +1080,7 @@
                                 start-placeholder="开始日期"
                                 end-placeholder="结束日期"
                                 valueFormat='yyyy-MM-dd'
-                                @change="dateChange(scope)">
+                                @change="dateChange(scope, data)">
                 </el-date-picker>
               </div>
               <!-- 数字 -->
@@ -2719,11 +2719,14 @@ export default {
       }
       this.searchDetailData = data
     },
-    dateChange (scope) {
+    dateChange (scope, data) {
       if (scope.row.defaultValueDatas) {
         scope.row.defaultValueData = scope.row.defaultValueDatas.toString()
       } else {
         scope.row.defaultValueData = ''
+      }
+      if (data && data.length) {
+        this.searchDetailData = data
       }
     },
     saveParamData (data) {
