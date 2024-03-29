@@ -334,23 +334,23 @@ export function planGantt(ganttName, vueThis) {
   // 升降级
   const actions = GanttObject.getActions(ganttObject)
   ganttObject.performAction = GanttObject.performAction(actions, ganttObject)
-  ganttObject.attachEvent("onBeforeTaskMultiSelect", function(id, state, e){
-    if (!e) return true
-    let result = true
-    const columnElement = e.target.querySelectorAll('*')
-    // 需要判断当前选中的任务数量，单选不限制
-    if (vueThis.selectedTasks.length < 2) {
-      return true
-    }
-    if (columnElement.length == 0 && e.target.classList.contains('gantt_owner_id')) {
-      // 没有子元素，且当前元素包含gantt_owner_id这个class名
-      result = false
-    } else if (columnElement.length > 0 && Array.from(columnElement).some(element => element.classList.contains('gantt_owner_id'))) {
-      // 有子元素，且子素包含gantt_owner_id这个class名
-      result = false
-    }
-    return result;
-  });
+  // ganttObject.attachEvent("onBeforeTaskMultiSelect", function(id, state, e){
+  //   if (!e) return true
+  //   let result = true
+  //   const columnElement = e.target.querySelectorAll('*')
+  //   // 需要判断当前选中的任务数量，单选不限制
+  //   if (vueThis.selectedTasks.length < 2) {
+  //     return true
+  //   }
+  //   if (columnElement.length == 0 && e.target.classList.contains('gantt_owner_id')) {
+  //     // 没有子元素，且当前元素包含gantt_owner_id这个class名
+  //     result = false
+  //   } else if (columnElement.length > 0 && Array.from(columnElement).some(element => element.classList.contains('gantt_owner_id'))) {
+  //     // 有子元素，且子素包含gantt_owner_id这个class名
+  //     result = false
+  //   }
+  //   return result;
+  // });
   // 监听任务选中
   ganttObject.attachEvent('onTaskMultiSelect', function (id, state, e) {
     if (state) {
