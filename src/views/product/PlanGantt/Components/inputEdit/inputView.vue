@@ -4,7 +4,17 @@
       <el-tab-pane label="增加的输入物" name="inputKey">
         <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 增加的输入物</span>
         <div>
-          <form-list v-if="!isEmpty" ref="form" @rendered="rendered" form-layout="vertical" :data-source="dataSource" :api="saveApi" :form="formData" :exist-default-btn="existDefaultBtn" :other-param="otherParam">
+          <form-list
+            v-if="!isEmpty"
+            ref="form"
+            @rendered="rendered"
+            form-layout="vertical"
+            :data-source="dataSource"
+            :api="saveApi"
+            :form="formData"
+            :exist-default-btn="existDefaultBtn"
+            :other-param="otherParam"
+          >
           </form-list>
           <el-empty v-if="isEmpty" class="custom_empty" :image-size="100"></el-empty>
         </div>
@@ -158,8 +168,9 @@ export default {
   },
   methods: {
     getInputData(taskId) {
+      console.log('🚀 ~ inputView ~ taskId:', taskId)
       const that = this
-      that.$api['planGanttManager.inputInfo']({ taskId: taskId })
+      that.$api['planGanttManager.inputInfo']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId })
         .then(function (res) {
           if (res) {
             that.data = res

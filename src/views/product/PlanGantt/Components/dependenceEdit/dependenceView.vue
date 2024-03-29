@@ -172,17 +172,17 @@ export default {
   methods: {
     getLinkDatas(taskId) {
       const that = this
-      this.$api['planGanttManager.getDependenceByTaskId']({ taskId: taskId }).then((res) => {
+      this.$api['planGanttManager.getDependenceByTaskId']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId }).then((res) => {
         that.dataSource[0].options = that.tempOptions // 更新default dataSource中下拉框的数据
         that.dataSource[1].treeData = that.vueThis.dependentDatas
         let datas = []
         if (res && Array.isArray(res.ganttLinkResponse) && res.ganttLinkResponse.length > 0) {
-            that.isEmpty = false
-            that.ganttLinkResponse = res.ganttLinkResponse
-            datas = res.ganttLinkResponse
-          } else {
-            that.isEmpty = true
-          }
+          that.isEmpty = false
+          that.ganttLinkResponse = res.ganttLinkResponse
+          datas = res.ganttLinkResponse
+        } else {
+          that.isEmpty = true
+        }
         // 变更进入时先查看newTaskMap中是否存在对应值若存在，显示，否则加载任务描述数据
         if (
           that.ganttName === 'changeGantt' &&
