@@ -68,19 +68,16 @@
           </template>
           <template #fieldName="{ scope, data }">
             <el-input v-model="scope.row.fieldName"
-                      placeholder="请输入"
                       :disabled="!!scope.row.isCustomColumn"
                       @blur="saveTableData(data)"></el-input>
           </template>
           <template #fieldType="{ scope, data }">
             <el-input v-model="scope.row.fieldType"
-                      placeholder="请输入"
                       :disabled="!!scope.row.isCustomColumn"
                       @blur="saveTableData(data)"></el-input>
           </template>
           <template #fieldTxt="{ scope, data }">
             <el-input v-model="scope.row.fieldTxt"
-                      placeholder="请输入"
                       @blur="saveTableData(data)"></el-input>
           </template>
           <template #fieldWidth="{ scope, data }">
@@ -108,7 +105,6 @@
           </template>
           <template #tableHeaderStyle="{ scope, data }">
             <el-select v-model="scope.row.tableHeaderStyle"
-                       placeholder="请选择"
                        clearable
                        @change="saveTableData(data)">
               <el-option label="左对齐"
@@ -122,7 +118,6 @@
           <template #alignmentStyle="{ scope, data }">
             <el-select v-model="scope.row.alignmentStyle"
                        clearable
-                       placeholder="请选择"
                        @change="saveTableData(data)">
               <el-option label="左对齐"
                          value="left"></el-option>
@@ -160,7 +155,6 @@
           </template>
           <template #customClass="{ scope, data }">
             <el-input v-model="scope.row.customClass"
-                      placeholder="请输入"
                       :disabled="!!scope.row.isCustomColumn"
                       @blur="saveTableData(data)"></el-input>
           </template>
@@ -171,7 +165,6 @@
             </el-select> -->
             <el-select v-model="scope.row.searchMode"
                        clearable
-                       placeholder="请选择"
                        :disabled="!!scope.row.isCustomColumn"
                        @change="saveTableData(data, scope.row.searchMode, scope)">
               <el-option label="文本框"
@@ -211,7 +204,6 @@
             <el-select v-model="scope.row.replaceVal"
                        style="width: 100%"
                        clearable
-                       placeholder="请选择"
                        :disabled="!!scope.row.isCustomColumn"
                        @change="saveTableData(data)">
               <el-option v-for="item in replaceData"
@@ -239,7 +231,6 @@
               <el-select v-model="scope.row.dictCode"
                          style="width: 100%"
                          clearable
-                         placeholder="请选择"
                          :disabled="!!scope.row.isCustomColumn"
                          filterable
                          @change="saveTableData(data, 'url', scope)">
@@ -254,7 +245,6 @@
               <el-select v-model="scope.row.dictCode"
                          style="width: 100%"
                          clearable
-                         placeholder="请选择"
                          :disabled="!!scope.row.isCustomColumn"
                          filterable
                          @change="saveTableData(data, 'saveTableData', scope)">
@@ -269,7 +259,6 @@
               <el-input v-model="scope.row.dictCode"
                         readonly
                         autosize
-                        placeholder="请选择"
                         :disabled="!!scope.row.isCustomColumn"
                         @click.native="showDialog(scope, data)">
                 <i class="el-icon-link"
@@ -376,7 +365,7 @@
                               start-placeholder="开始日期"
                               end-placeholder="结束日期"
                               valueFormat='yyyy-MM-dd'
-                              @change="dateChange(scope)">
+                              @change="dateChange(scope, data)">
               </el-date-picker>
             </div>
             <!-- 数字 -->
@@ -385,7 +374,6 @@
                         :disabled="!!scope.row.isCustomColumn"
                         v-model="scope.row.defaultValueData"
                         type="number"
-                        placeholder="请输入"
                         size="medium"></el-input>
             </div>
           </template>
@@ -406,7 +394,6 @@
             <el-input v-model="scope.row.drillDownName"
                       clearable
                       autosize
-                      placeholder="请选择"
                       :disabled="!!scope.row.isCustomColumn">
               <el-button slot="append"
                          icon="el-icon-link"
@@ -424,7 +411,6 @@
           </template>
           <template #drillName="{ scope }">
             <el-input v-model="scope.row.drillName"
-                      placeholder="请输入"
                       :disabled="!!scope.row.isCustomColumn"></el-input>
           </template>
         </editable-table>
@@ -439,12 +425,10 @@
                         @save-param-data="saveParamData">
           <template #paramName="{ scope, data }">
             <el-input v-model="scope.row.paramName"
-                      placeholder="请输入"
                       @blur="saveParamData(data)"></el-input>
           </template>
           <template #paramTxt="{ scope, data }">
             <el-input v-model="scope.row.paramTxt"
-                      placeholder="请输入"
                       @blur="saveParamData(data)"></el-input>
           </template>
           <template #paramValueHeader="{}">
@@ -455,7 +439,6 @@
           </template>
           <template #paramValue="{ scope, data }">
             <el-input v-model="scope.row.paramValue"
-                      placeholder="请输入"
                       @blur="saveParamData(data)"></el-input>
           </template>
           <template #isSearch="{ scope, data }">
@@ -480,7 +463,6 @@
                         @save-param-data="saveButtonData">
           <template #title="{ scope, data }">
             <el-input v-model="scope.row.title"
-                      placeholder="请输入"
                       @blur="saveButtonData(data)"></el-input>
           </template>
           <!-- <template #id="{scope, data}">
@@ -565,7 +547,6 @@
           <template #eventHandle="{ scope, data }">
             <el-autocomplete v-model="scope.row.eventHandle"
                              :fetch-suggestions="querySearch"
-                             placeholder="请选择"
                              @blur="saveButtonData(data, scope)">
               <template slot-scope="{ item }">
                 <div class="name">{{ item.value }}</div>
@@ -574,7 +555,6 @@
           </template>
           <template #belongTo="{ scope, data }">
             <el-input v-model="scope.row.belongTo"
-                      placeholder="请输入"
                       @blur="saveButtonData(data)"></el-input>
           </template>
           <template #eventParamsHeader="{}">
@@ -595,7 +575,6 @@
                        @click="focusParams(scope, data)">单击设置事件参数</el-button>
             <el-input v-if="scope.row.eventParams"
                       type="textarea"
-                      placeholder="请输入"
                       v-model="scope.row.eventParams"></el-input>
           </template>
           <template #permissionHeader="{}">
@@ -637,25 +616,21 @@
           </template>
           <template #permission="{ scope, data }">
             <el-input type="textarea"
-                      placeholder="请输入"
                       v-model="scope.row.permission"
                       @change="saveButtonData(data)"></el-input>
           </template>
           <template #component="{ scope, data }">
             <el-input type="textarea"
-                      placeholder="请输入"
                       v-model="scope.row.component"
                       @change="saveButtonData(data)"></el-input>
           </template>
           <template #remark="{ scope, data }">
             <el-input type="textarea"
-                      placeholder="请输入"
                       v-model="scope.row.remark"
                       @change="saveButtonData(data)"></el-input>
           </template>
           <template #rdesc="{ scope, data }">
             <el-input type="textarea"
-                      placeholder="请输入"
                       v-model="scope.row.rdesc"
                       @blur="saveButtonData(data)"></el-input>
           </template>
@@ -714,7 +689,6 @@
               <el-select v-if="scope.row.isCustomColumn == '1'"
                          v-model="scope.row.customColumnType"
                          clearable
-                         placeholder="请选择"
                          @change="configParamData(data, scope)">
                 <el-option label="序号"
                            value="index"></el-option>
@@ -759,7 +733,6 @@
               <el-input v-if="scope.row.isCustomColumn == '1' && scope.row.customColumnType == 'count'"
                         type="textarea"
                         :rows="1"
-                        placeholder="请选择"
                         v-model="scope.row.columnConfig.countStr"
                         @click.native="showComfigDialog(scope)"
                         @blur="configParamData(data)"></el-input>
@@ -876,7 +849,6 @@
           </template>
           <template #defaultValue="{ scope, data }">
             <el-input v-model="scope.row.defaultValue"
-                      placeholder="请输入"
                       @blur="editParamData(data)"></el-input>
           </template>
           <template #defaultValueHeader="{}">
@@ -888,7 +860,6 @@
           <template #editComponentType="{ scope, data }">
             <el-select v-model="scope.row.editComponentType"
                        clearable
-                       placeholder="请选择"
                        @change="editParamData(data)">
               <el-option label="文本框"
                          value="text"></el-option>
@@ -902,7 +873,6 @@
           <template #sourceTableFiled="{ scope, data }">
             <el-select v-model="scope.row.sourceTableFiled"
                        clearable
-                       placeholder="请选择"
                        @change="editParamData(data, scope)">
               <el-option v-for="item in childTableList"
                          :key="item.value"
@@ -913,7 +883,6 @@
           <template #tableFieldName="{ scope, data }">
             <el-select v-if="scope.row.sourceTableFiled"
                        clearable
-                       placeholder="请选择"
                        v-model="scope.row.tableFieldName"
                        @change="editParamData(data)">
               <el-option v-for="item in scope.row.FormFieldsList"
@@ -922,7 +891,6 @@
                          :value="item.value"></el-option>
             </el-select>
             <el-select v-else
-                       placeholder="请选择"
                        v-model="scope.row.tableFieldName"
                        clearable
                        @change="editParamData(data)">
@@ -946,22 +914,18 @@
                           @save-param-data="saveSearchData">
             <template #fieldName="{ scope, data }">
               <el-input v-model="scope.row.fieldName"
-                        placeholder="请输入"
                         @blur="saveSearchData(data)"></el-input>
             </template>
             <template #fieldType="{ scope, data }">
               <el-input v-model="scope.row.fieldType"
-                        placeholder="请输入"
                         @blur="saveSearchData(data)"></el-input>
             </template>
             <template #fieldTxt="{ scope, data }">
               <el-input v-model="scope.row.fieldTxt"
-                        placeholder="请输入"
                         @blur="saveSearchData(data)"></el-input>
             </template>
             <template #searchMode="{ scope, data }">
               <el-select v-model="scope.row.searchMode"
-                         placeholder="请选择"
                          clearable
                          @change="saveSearchData(data, scope.row.searchMode, scope)">
                 <el-option label="文本框"
@@ -1003,7 +967,6 @@
               <el-select v-model="scope.row.replaceVal"
                          style="width: 100%"
                          clearable
-                         placeholder="请选择"
                          @change="saveSearchData(data)">
                 <el-option v-for="item in replaceData"
                            :key="item.value"
@@ -1030,7 +993,6 @@
                 <el-select v-model="scope.row.dictCode"
                            style="width: 100%"
                            clearable
-                           placeholder="请选择"
                            filterable
                            @change="saveSearchData(data,)">
                   <el-option v-for="item in renderData"
@@ -1045,7 +1007,6 @@
                            style="width: 100%"
                            clearable
                            filterable
-                           placeholder="请选择"
                            @change="saveSearchData(data)">
                   <el-option v-for="item in treeData"
                              :key="item.selectionCode"
@@ -1058,7 +1019,6 @@
                 <el-input v-model="scope.row.dictCode"
                           readonly
                           autosize
-                          placeholder="请选择"
                           @click.native="showDialog(scope, data)">
                   <i class="el-icon-link"
                      slot="suffix"
@@ -1120,7 +1080,7 @@
                                 start-placeholder="开始日期"
                                 end-placeholder="结束日期"
                                 valueFormat='yyyy-MM-dd'
-                                @change="dateChange(scope)">
+                                @change="dateChange(scope, data)">
                 </el-date-picker>
               </div>
               <!-- 数字 -->
@@ -1128,7 +1088,6 @@
                 <el-input clearable
                           v-model="scope.row.defaultValueData"
                           type="number"
-                          placeholder="请输入"
                           @change="saveSearchData(data)"
                           size="medium"></el-input>
               </div>
@@ -1239,7 +1198,7 @@ export default {
           type: 'text',
           labelText: '表格编码',
           fieldName: 'code',
-          placeholder: '请输入表格编码 例：XXX_XXX_XXX',
+          placeholder: '请输入表格编码',
           colLayout: 'doubleCol',
           rules: [
             {
@@ -1283,7 +1242,6 @@ export default {
         {
           type: 'blank',
           labelText: '数据视图',
-          tip: '生成表格列表的字段',
           fieldName: 'sqlid',
           slotName: 'sqlid',
           colLayout: 'doubleCol',
@@ -1297,7 +1255,6 @@ export default {
         {
           type: 'radioButton',
           labelText: '启用编辑操作',
-          tip: '表格是否可以编辑',
           fieldName: 'enableEdit',
           colLayout: 'doubleCol',
           fieldConfig: {
@@ -1342,7 +1299,6 @@ export default {
         {
           type: 'radioButton',
           labelText: '启用权限按钮',
-          tip: '启用：使用菜单下配置的按钮，禁用：使用表格自定义按钮',
           fieldName: 'useSystemConfigButton',
           colLayout: 'doubleCol',
           options: [
@@ -1411,7 +1367,6 @@ export default {
           type: 'hidden',
           labelText: '选择范围',
           fieldName: 'selectionRanges',
-          tip: '复选框可勾选的范围',
           colLayout: 'doubleCol',
           options: [
             { label: '根节点', value: '0' },
@@ -1665,7 +1620,7 @@ export default {
           scopedSlots: { customRender: 'custom' }
         },
         {
-          title: '单击事件页面Title',
+          title: '单击事件页面名称',
           dataIndex: 'drillName',
           align: 'center',
           width: 180,
@@ -2764,11 +2719,17 @@ export default {
       }
       this.searchDetailData = data
     },
-    dateChange (scope) {
+    selectChange (scope, data) {
+      this.searchDetailData = data
+    },
+    dateChange (scope, data) {
       if (scope.row.defaultValueDatas) {
         scope.row.defaultValueData = scope.row.defaultValueDatas.toString()
       } else {
         scope.row.defaultValueData = ''
+      }
+      if (data && data.length) {
+        this.searchDetailData = data
       }
     },
     saveParamData (data) {
