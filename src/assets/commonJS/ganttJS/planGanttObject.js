@@ -185,7 +185,7 @@ export function planGantt(ganttName, vueThis) {
     }
     ganttObject.render()
   }
-  Gantt.taskProgressDetails = function taskProgressDetails (taskId) {
+  Gantt.taskProgressDetails = function taskProgressDetails(taskId) {
     if (vueThis.createPage === 'compile') {
       vueThis.showTaskProgressDialog(taskId)
     }
@@ -334,7 +334,24 @@ export function planGantt(ganttName, vueThis) {
   // 升降级
   const actions = GanttObject.getActions(ganttObject)
   ganttObject.performAction = GanttObject.performAction(actions, ganttObject)
-  ganttObject.attachEvent("onBeforeTaskMultiSelect", function(id, state, e){
+  let multipleState = false
+  window.addEventListener('keydown', function (event) {
+    if (event.keyCode === 16 || event.keyCode === 17) {
+      multipleState = true
+    }
+  })
+  window.addEventListener('keyup', function (event) {
+    if (event.keyCode === 16 || event.keyCode === 17) {
+      multipleState = false
+    }
+  })
+  ganttObject.attachEvent('onBeforeTaskMultiSelect', function (id, state, e) {
+    if (state) {
+      if (!multipleState) {
+        vueThis.selectedTasks = []
+      }
+      return true
+    }
     if (!e) return true
     let result = true
     const columnElement = e.target.querySelectorAll('*')
@@ -342,15 +359,16 @@ export function planGantt(ganttName, vueThis) {
     if (vueThis.selectedTasks.length < 2) {
       return true
     }
-    if (columnElement.length == 0 && e.target.classList.contains('gantt_owner_id')) {
+    if (columnElement.length === 0 && e.target.classList.contains('gantt_owner_id')) {
       // 没有子元素，且当前元素包含gantt_owner_id这个class名
       result = false
-    } else if (columnElement.length > 0 && Array.from(columnElement).some(element => element.classList.contains('gantt_owner_id'))) {
+    } else if (columnElement.length > 0 && Array.from(columnElement).some((element) => element.classList.contains('gantt_owner_id'))) {
       // 有子元素，且子素包含gantt_owner_id这个class名
       result = false
     }
-    return result;
-  });
+    // 取消时分两种情况  1. 点击多选的任务不取消 2.点击非选中的则正常取消
+    return result
+  })
   // 监听任务选中
   ganttObject.attachEvent('onTaskMultiSelect', function (id, state, e) {
     if (state) {
@@ -905,9 +923,9 @@ export function getGanttColumns(ganttObject, vueThis) {
       template: function (task) {
         let text = ''
         if (task.managerStatus === '6409') {
-          let realEndDate = new Date(moment(task.realEndDate).format('YYYY-MM-DD'))
-          let endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - (24 * 60 *60 * 1000)
-          let days = Math.floor(Math.abs((realEndDate - endDate) / 1000 / 60 / 60 / 24))
+          const realEndDate = new Date(moment(task.realEndDate).format('YYYY-MM-DD'))
+          const endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - 24 * 60 * 60 * 1000
+          const days = Math.floor(Math.abs((realEndDate - endDate) / 1000 / 60 / 60 / 24))
           // 已完成
           if (realEndDate > endDate) {
             text = `<span style="color: #F80012">超期${days}天完成</span>`
@@ -917,9 +935,9 @@ export function getGanttColumns(ganttObject, vueThis) {
             text = `<span style="color: #1892FF">提前${days}天完成</span>`
           }
         } else {
-          let nowDate = new Date(moment(new Date()).format('YYYY-MM-DD'))
-          let endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - (24 * 60 *60 * 1000)
-          let days = Math.floor(Math.abs((nowDate - endDate) / 1000 / 60 / 60 / 24))
+          const nowDate = new Date(moment(new Date()).format('YYYY-MM-DD'))
+          const endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - 24 * 60 * 60 * 1000
+          const days = Math.floor(Math.abs((nowDate - endDate) / 1000 / 60 / 60 / 24))
           if (nowDate > endDate) {
             text = `<span style="color: #F80012">超期${days + 1}天</span>`
           } else if (days === 0) {
@@ -938,8 +956,8 @@ export function getGanttColumns(ganttObject, vueThis) {
       min_width: 60,
       resize: true,
       template: function (task) {
-        let reminderList = vueThis.reminderList
-        let obj = reminderList.find(item => {
+        const reminderList = vueThis.reminderList
+        const obj = reminderList.find((item) => {
           return item.id === task.id
         })
         if (obj && obj.id) {
@@ -952,6 +970,4 @@ export function getGanttColumns(ganttObject, vueThis) {
   ]
 }
 
-export function planMonitorAdd (ganttObject, vueThis) {
-  return
-}
+export function planMonitorAdd(ganttObject, vueThis) {}
