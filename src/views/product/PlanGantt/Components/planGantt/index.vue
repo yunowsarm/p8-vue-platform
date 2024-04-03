@@ -1072,7 +1072,7 @@ export default {
             if (res.projectStatus === '2205') {
               myGantt.config.readonly = true
             }
-            if (res.monitorLock && res.monitorLock['1010'] && res.monitorLock['1010'] === '1') {
+            if ((res.monitorLock && res.monitorLock['1010'] && res.monitorLock['1010'] === '1') || (res.monitorLock && res.monitorLock['1018'] && res.monitorLock['1018'] === '1')) {
               if (createPage === 'compile') {
                 vueThis.planEditLock = true
                 myGantt.config.readonly = true
