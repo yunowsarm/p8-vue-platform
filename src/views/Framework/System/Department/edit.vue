@@ -137,7 +137,8 @@ export default {
         {
           type: 'text',
           labelText: '部门编码',
-          placeholder: '长度为2的大写字母或数字。例如：XK，2K',
+          // placeholder: '长度为2的大写字母或数字。例如：XK，2K',
+          placeholder: '请输入部门编码',
           fieldName: 'no',
           defaultValue: '',
           fieldConfig: {
@@ -147,27 +148,27 @@ export default {
             {
               required: true
             },
-            {
-              validator: (rule, value, callback) => {
-                let that = this
-                if (value !== that.no) {
-                  let reg = new RegExp('^[A-Za-z0-9]{2}$')
-                  if (reg.test(value)) {
-                    that.$api['ProjectApply.checkNo']({ no: value }).then((res) => {
-                      if (res) {
-                        callback()
-                      } else {
-                        callback(new Error('部门编号已被使用，请重新输入！'))
-                      }
-                    })
-                  } else {
-                    callback(new Error('部门编码格式不符合规则'))
-                  }
-                } else {
-                  callback()
-                }
-              }
-            }
+            // {
+            //   validator: (rule, value, callback) => {
+            //     let that = this
+            //     if (value !== that.no) {
+            //       let reg = new RegExp('^[A-Za-z0-9]{2}$')
+            //       if (reg.test(value)) {
+            //         that.$api['ProjectApply.checkNo']({ no: value }).then((res) => {
+            //           if (res) {
+            //             callback()
+            //           } else {
+            //             callback(new Error('部门编号已被使用，请重新输入！'))
+            //           }
+            //         })
+            //       } else {
+            //         callback(new Error('部门编码格式不符合规则'))
+            //       }
+            //     } else {
+            //       callback()
+            //     }
+            //   }
+            // }
           ]
         }
       ]
