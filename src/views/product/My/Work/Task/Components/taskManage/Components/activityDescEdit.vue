@@ -22,8 +22,6 @@ export default {
       type: Array
     }
   },
-  mounted () {
-  },
   data () {
     const dataSource = [
       {

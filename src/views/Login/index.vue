@@ -377,7 +377,6 @@ $login-primary--login-color: #306cf7;
 
         .login-sysName {
           font-size: 42px;
-          font-family: Source Han Sans CN;
           color: #1f1f1f !important;
           text-align: center;
           margin-top: 5px;

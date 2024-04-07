@@ -140,7 +140,8 @@
                    direction="ttb"
                    size="100%">
       <template #drawer>
-        <process-approval class="drawer_approval" @approved="approved"></process-approval>
+        <process-approval class="drawer_approval"
+                          @approved="approved"></process-approval>
       </template>
     </common-drawer>
   </div>
@@ -158,7 +159,6 @@
 
   .sysName {
     font-size: $font-size-medium;
-    font-family: Source Han Sans CN;
     font-weight: bolder;
     color: $base-dark-color;
     line-height: 50px;
