@@ -12,6 +12,7 @@
         <progess v-if="progessType !== 'progessTable'"
                  ref="progess"
                  :durationDay="durationDay"
+                 :approve="approve"
                  :exceedType="exceedType"
                  @dialogOk="dialogOk"></progess>
         <progess-table v-else
@@ -47,6 +48,12 @@ export default {
     WorkCoordination,
     'el-tabs': Tabs,
     'el-tab-pane': TabPane
+  },
+  props: {
+    approve: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -135,6 +142,7 @@ export default {
 .progressTaskTabs ::v-deep .el-tabs__content {
   // padding: 0 10px;
   height: calc(100% - 40px);
+  overflow: auto;
 }
 .progressTaskTabs ::v-deep .el-tab-pane {
   height: 100%;

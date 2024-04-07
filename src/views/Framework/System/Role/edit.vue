@@ -147,8 +147,8 @@
 }
 .nav-display {
   display: flex;
-  flex-direction: row;
   flex-flow: wrap;
+  flex-direction: row;
   justify-content: flex-start;
   align-items: center;
 }

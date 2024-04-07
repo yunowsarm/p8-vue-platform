@@ -17,7 +17,7 @@
         </div>
         <div class="task-tabs-con">
           <!-- 进度反馈-未完成原因 -->
-          <task-tabs-view></task-tabs-view>
+          <task-tabs-view :approve="true"></task-tabs-view>
         </div>
       </div>
     </template>
@@ -112,7 +112,7 @@ div.task-operating-con {
     background-color: #ffffff;
   }
   div.task-tabs-con {
-    height: 100%;
+    height: 50%;
     background-color: #ffffff;
   }
 }

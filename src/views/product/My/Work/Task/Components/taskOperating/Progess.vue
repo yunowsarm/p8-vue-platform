@@ -10,7 +10,7 @@
               :tableParams="tableParams"
               :columns="columns"
               :key="dateTime"
-              :durationDay="durationDay"
+              :approve="approve"
               @submit="progressSubmit"
               @NewSubmit="NewProgressSubmit"
               @progress-date-change="progressDateChange"
@@ -48,6 +48,10 @@ export default {
     durationDay: {
       type: Boolean,
       default: true
+    },
+    approve: {
+      type: Boolean,
+      default: false
     },
     exceedType: {
       type: Boolean,
