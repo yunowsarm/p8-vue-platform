@@ -36,7 +36,7 @@
             <template #north>
               <search-form-list ref="search"
                                 label-width="100px"
-                                :data-source="searchData"
+                                :data-source="searchDataSource"
                                 @search="search"
                                 @re-set="reSet"></search-form-list>
             </template>
@@ -245,7 +245,7 @@ export default {
   },
   data () {
     return {
-      searchData: [
+      searchDataSource: [
         {
           type: 'text',
           labelText: '组件名称',
