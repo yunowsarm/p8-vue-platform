@@ -94,9 +94,9 @@ const project = {
                 })
                 statusArr = [...new Set(statusArr)]
 
-                statusArr.map((i) => {
+                statusArr.forEach((i) => {
                   dicStatusIconColorObj[i] = {}
-                  res.dicConfig.map((item) => {
+                  res.dicConfig.forEach((item) => {
                     if (i === item.key.split('-')[0]) {
                       dicStatusIconColorObj[i][item.key.split('-')[1]] = item.status.map((statusItem) => {
                         return {
@@ -108,10 +108,10 @@ const project = {
                     }
                   })
                 })
-                Object.keys(dicStatusIconColorObj).map((item) => {
+                Object.keys(dicStatusIconColorObj).forEach((item) => {
                   let idObj = {}
-                  Object.keys(dicStatusIconColorObj[item]).map((configItem) => {
-                    dicStatusIconColorObj[item][configItem].map((i) => {
+                  Object.keys(dicStatusIconColorObj[item]).forEach((configItem) => {
+                    dicStatusIconColorObj[item][configItem].forEach((i) => {
                       idObj[i.id] = { ...i, ...idObj[i.id] }
                     })
                   })

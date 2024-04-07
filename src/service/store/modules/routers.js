@@ -94,7 +94,7 @@ function generateNewRoutes(remoteRoutes) {
         pathUrl.map((v) => (pathQuery[v.split('=')[0]] = v.split('=')[1]))
         let paramStr = ''
         Object.keys(pathQuery).map((i) => {
-          paramStr += '/' + pathQuery[i]
+         return paramStr += '/' + pathQuery[i]
         })
         let componentPath = path.split('?')[0]
         route.path = route.path + paramStr

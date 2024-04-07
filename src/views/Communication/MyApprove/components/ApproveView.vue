@@ -811,4 +811,7 @@ $paddingLeft: 10px;
   font-size: 14px;
   box-sizing: border-box;
 }
+::v-deep .el-tabs--top .el-tabs__content {
+  height: calc(100% - 30px);
+}
 </style>
