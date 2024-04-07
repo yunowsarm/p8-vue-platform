@@ -404,14 +404,18 @@ export function planGantt(ganttName, vueThis) {
     // ganttObject.attachEvent('onAfterTaskUpdate', function (id) {
     //   GanttObject.refreshProgress(ganttObject.getTask(id).parent, true, ganttObject, vueThis)
     // })
-    ganttObject.attachEvent('onBeforeTaskDrag', function (id, mode, e) {
-      return false
-    })
     // 移动任务时，更新进度
     ganttObject.attachEvent('onAfterTaskMove', function (id, parent, tindex) {
       GanttObject.refreshProgress(ganttObject.getTask(id).parent, true, ganttObject, vueThis)
     })
   }
+  ganttObject.attachEvent('onBeforeTaskDrag', function (id, mode, e) {
+    let state = {
+      id: id,
+      colName: mode === 'resize' ? 'start_date' : ''
+    }
+    return GanttObject.getTaskEditable(ganttObject, state, vueThis)
+  })
   // 在将操作添加到撤消堆栈之前触发
   GanttObject.onBeforeUndoStack(ganttObject)
   // 在将操作添加到回退堆栈之前触发

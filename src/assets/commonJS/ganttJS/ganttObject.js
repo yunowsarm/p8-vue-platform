@@ -827,6 +827,70 @@ GanttObject.performAction = function (actions, ganttObject) {
 }
 
 /**
+ * auther: wangzhifeng
+ * desc: 判断任务是否可编辑
+ * date: 2024/04/03 09:22:18
+ */
+GanttObject.getTaskEditable = function (ganttObject, state, vueThis) {
+  // 点击列名
+  const colName = state.columnName
+  // 当前任务
+  const task = ganttObject.getTask(state.id)
+  // 根节点不可编辑
+  if (ganttObject.getGlobalTaskIndex(state.id) === 0) {
+    return false
+  }
+  // 只读gantt不可操作
+  if (ganttObject.config.readonly) {
+    return false
+  }
+  // 如果是任务分解，非当前人员创建的，只能编辑责任人
+  const userId = store.getters.userInfo.id
+  if (vueThis.createPage === 'decompose' && task.createUserId && task.createUserId != userId) {
+    return false
+  }
+  const userMaxSecret = vueThis.$store.state.user.userInfo.confidentialiteList[vueThis.$store.state.user.userInfo.confidentialiteList.length - 1].id
+  if (task.secretGrade > userMaxSecret) {
+    vueThis.$message.warning('低密人员不允许修改高密数据')
+    return false
+  }
+  // 获取gannt操作限制策略
+  const taskStatusLockMap = store.getters.taskStatusLockMap
+  const editManagerStatus = taskStatusLockMap[task.status]
+  // 已完成、变更中、提交审批不可操作
+  if (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1) {
+    return false
+  }
+  // 父排程为自动时，父开始、完成、工期不可编辑
+  if (task.type === 'project' && (colName === 'start_date' || colName === 'end_date' || colName === 'duration')) {
+    return false
+  }
+
+  if (colName === 'productQuantity') {
+    const indexOf = task.monitorPoints.indexOf('1032')
+    if (indexOf !== -1) {
+      return true
+    }
+    return false
+  }
+
+  // 生产/试制类任务，不可以修改任务数量
+  if (colName === 'productQuantity' && task.planType && task.planType.startsWith('3103')) {
+    return false
+  }
+  if (task.monitorPoints && task.monitorPoints.indexOf('1015') !== -1 && vueThis.monitorLockMap['101502'] === '1') {
+    return false
+  }
+  // 标识加锁任务不可编辑
+  const monitors = task.monitorPoints
+  if (monitors && monitors.length > 0) {
+    return monitorLockUnLockCheck(colName, monitors.split(','), vueThis, ganttObject)
+  }
+
+  return true
+}
+
+/**
  * @Description 排程模式定义
  * @author fukai
  * @date 2020/5/13 14:14
@@ -1995,62 +2059,7 @@ GanttObject.createRightMenu = function (ganttObject, vueThis) {
  */
 GanttObject.setOnBeforeEditStart = function (ganttObject, vueThis) {
   return ganttObject.ext.inlineEditors.attachEvent('onBeforeEditStart', function (state) {
-    // 点击列名
-    const colName = state.columnName
-    // 当前任务
-    const task = ganttObject.getTask(state.id)
-    // 根节点不可编辑
-    if (ganttObject.getGlobalTaskIndex(state.id) === 0) {
-      return false
-    }
-    // 只读gantt不可操作
-    if (ganttObject.config.readonly) {
-      return false
-    }
-    // 如果是任务分解，非当前人员创建的，只能编辑责任人
-    const userId = store.getters.userInfo.id
-    if (vueThis.createPage === 'decompose' && task.createUserId && task.createUserId != userId) {
-      return false
-    }
-    const userMaxSecret = vueThis.$store.state.user.userInfo.confidentialiteList[vueThis.$store.state.user.userInfo.confidentialiteList.length - 1].id
-    if (task.secretGrade > userMaxSecret) {
-      vueThis.$message.warning('低密人员不允许修改高密数据')
-      return false
-    }
-    // 获取gannt操作限制策略
-    const taskStatusLockMap = store.getters.taskStatusLockMap
-    const editManagerStatus = taskStatusLockMap[task.status]
-    // 已完成、变更中、提交审批不可操作
-    if (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1) {
-      return false
-    }
-    // 父排程为自动时，父开始、完成、工期不可编辑
-    if (task.type === 'project' && (colName === 'start_date' || colName === 'end_date' || colName === 'duration')) {
-      return false
-    }
-
-    if (colName === 'productQuantity') {
-      const indexOf = task.monitorPoints.indexOf('1032')
-      if (indexOf !== -1) {
-        return true
-      }
-      return false
-    }
-
-    // 生产/试制类任务，不可以修改任务数量
-    if (colName === 'productQuantity' && task.planType && task.planType.startsWith('3103')) {
-      return false
-    }
-    if (task.monitorPoints && task.monitorPoints.indexOf('1015') !== -1 && vueThis.monitorLockMap['101502'] === '1') {
-      return false
-    }
-    // 标识加锁任务不可编辑
-    const monitors = task.monitorPoints
-    if (monitors && monitors.length > 0) {
-      return monitorLockUnLockCheck(colName, monitors.split(','), vueThis, ganttObject)
-    }
-
-    return true
+    return GanttObject.getTaskEditable(ganttObject, state, vueThis)
   })
 }
 
