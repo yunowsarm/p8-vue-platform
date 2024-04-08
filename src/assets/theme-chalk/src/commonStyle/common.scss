@@ -183,7 +183,7 @@ body {
 
 /**
  * 自定义 Vue Transition Animation
- * 
+ *
  */
 .scale-left-enter-active {
   animation: scaleLeft 0.3s;
@@ -246,7 +246,7 @@ body {
 
 /**
  * 上传附件按钮与拖拽样式
- * 
+ *
  */
 .el-upload.customUpload{
   display: inline-block;
@@ -403,7 +403,7 @@ body {
 // textarea字体修改
 .el-textarea__inner {
   font-family: "Source Han Sans CN-Normal", "Helvetica Neue", "PingFang SC",
-    "Hiragino Sans GB", "Microsoft Yahei", "STXihei", Arial;
+    "Hiragino Sans GB", "Microsoft Yahei", "STXihei", Arial, sans-serif;
 }
 
 .el-table__header {
