@@ -155,21 +155,21 @@ export default {
         // signIn?redirect=P1&userAccount=zhangsan&userPassword=1
         removeSession(TOKEN_KEY)
         const { userAccount, userPassword } = getRequest()
-        // let name = userAccount
-        // let password = userPassword
-        // let nameArr = name.split('')
-        // let nameEncryption = ''
-        // for (let i = 0; i < nameArr.length; i++) {
-        //   let s = nameArr[i].charCodeAt(0) << 2
-        //   nameEncryption += String.fromCharCode(s)
-        // }
-        // let passwordArr = password.split('')
-        // let passwordEncryption = ''
-        // for (let i = 0; i < passwordArr.length; i++) {
-        //   let s = passwordArr[i].charCodeAt(0) << 2
-        //   passwordEncryption += String.fromCharCode(s)
-        // }
-        this.$store.dispatch('userLogin', { userAccount, userPassword }).then((res) => {
+        let name = userAccount
+        let password = userPassword
+        let nameArr = name.split('')
+        let nameEncryption = ''
+        for (let i = 0; i < nameArr.length; i++) {
+          let s = nameArr[i].charCodeAt(0) << 2
+          nameEncryption += String.fromCharCode(s)
+        }
+        let passwordArr = password.split('')
+        let passwordEncryption = ''
+        for (let i = 0; i < passwordArr.length; i++) {
+          let s = passwordArr[i].charCodeAt(0) << 2
+          passwordEncryption += String.fromCharCode(s)
+        }
+        this.$store.dispatch('userLogin', { nameEncryption, passwordEncryption }).then((res) => {
           setTimeout(() => {
             this.$router.push('/signIn')
           }, 2000)
@@ -195,26 +195,26 @@ export default {
                 this.isLoginning = true
                 // 将登录状态存入vuex
                 this.$store.dispatch('setLoginState', this.keepLoggedIn)
-                // let name = this.loginForm.userAccount
-                // let password = this.loginForm.userPassword
-                // let nameArr = name.split('')
-                // let nameEncryption = ''
-                // for (let i = 0; i < nameArr.length; i++) {
-                //   let s = nameArr[i].charCodeAt(0) << 2
-                //   nameEncryption += String.fromCharCode(s)
-                // }
-                // let passwordArr = password.split('')
-                // let passwordEncryption = ''
-                // for (let i = 0; i < passwordArr.length; i++) {
-                //   let s = passwordArr[i].charCodeAt(0) << 2
-                //   passwordEncryption += String.fromCharCode(s)
-                // }
-                // let params = {
-                //   userAccount: nameEncryption,
-                //   userPassword: passwordEncryption
-                // }
+                let name = this.loginForm.userAccount
+                let password = this.loginForm.userPassword
+                let nameArr = name.split('')
+                let nameEncryption = ''
+                for (let i = 0; i < nameArr.length; i++) {
+                  let s = nameArr[i].charCodeAt(0) << 2
+                  nameEncryption += String.fromCharCode(s)
+                }
+                let passwordArr = password.split('')
+                let passwordEncryption = ''
+                for (let i = 0; i < passwordArr.length; i++) {
+                  let s = passwordArr[i].charCodeAt(0) << 2
+                  passwordEncryption += String.fromCharCode(s)
+                }
+                let params = {
+                  userAccount: nameEncryption,
+                  userPassword: passwordEncryption
+                }
                 this.$store
-                  .dispatch('userLogin', { ...this.loginForm })
+                  .dispatch('userLogin', params)
                   .then((res) => {
                     if (!res) {
                       this.$router.push('/Maintain')
