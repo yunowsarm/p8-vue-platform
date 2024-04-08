@@ -984,6 +984,8 @@
                            value="datetimeRange"></el-option>
                 <el-option label="日期年"
                            value="year"></el-option>
+                <el-option label="日期月"
+                           value="month"></el-option>
               </el-select>
             </template>
             <template #queryFieldNameHeader="{}">
@@ -1032,7 +1034,7 @@
                            clearable
                            placeholder="请选择"
                            filterable
-                           @change="saveSearchData(data,)">
+                           @change="saveSearchData(data,null,null,scope.row)">
                   <el-option v-for="item in renderData"
                              :key="item.selectionCode"
                              :label="item.selectionName + '(' + item.selectionCode + ')'"
@@ -1046,7 +1048,7 @@
                            clearable
                            filterable
                            placeholder="请选择"
-                           @change="saveSearchData(data)">
+                           @change="saveSearchData(data,null,null,scope.row)">
                   <el-option v-for="item in treeData"
                              :key="item.selectionCode"
                              :label="item.selectionName + '(' + item.selectionCode + ')'"
@@ -1110,6 +1112,16 @@
                                 @change="saveSearchData(data)"
                                 placeholder="选择日期"> </el-date-picker>
               </div>
+              <!-- 日期月 -->
+              <div v-if="scope.row.searchMode === 'month'">
+                <el-date-picker v-model="scope.row.defaultValueData"
+                                type="month"
+                                clearable
+                                style="width: 100%"
+                                valueFormat='MM'
+                                @change="saveSearchData(data)"
+                                placeholder="选择日期"> </el-date-picker>
+              </div>
               <!-- 时间范围 -->
               <div v-if="scope.row.searchMode === 'datetimeRange'">
                 <el-date-picker v-model="scope.row.defaultValueDatas"
@@ -1131,6 +1143,51 @@
                           placeholder="请输入"
                           @change="saveSearchData(data)"
                           size="medium"></el-input>
+              </div>
+              <!-- 目录组件 -->
+              <div v-if="scope.row.searchMode === 'select'">
+                <el-select v-model="scope.row.defaultValueData"
+                           style="width: 100%"
+                           clearable
+                           placeholder="请选择"
+                           filterable
+                           @change="selectChange(scope,data)">
+                  <el-option v-for="item in scope.row.defaultData"
+                             :key="item.id ? item.id : item.value"
+                             :label="item.cmeaning ? item.cmeaning : item.label"
+                             :value="item.id ? item.id : item.value"> </el-option>
+                </el-select>
+              </div>
+              <!-- 复选 -->
+              <div v-if="scope.row.searchMode === 'multiple'">
+                <el-select v-model="scope.row.defaultValueData"
+                           style="width: 100%"
+                           clearable
+                           placeholder="请选择"
+                           filterable
+                           @change="selectChange(scope,data)">
+                  <el-option v-for="item in scope.row.defaultData"
+                             :key="item.id ? item.id : item.value"
+                             :label="item.cmeaning ? item.cmeaning : item.label"
+                             :value="item.id ? item.id : item.value"> </el-option>
+                </el-select>
+              </div>
+              <!-- 树组件 -->
+              <div v-if="scope.row.searchMode === 'treeSelect'">
+                <tree-select :default-expand-all="true"
+                             :multiple="false"
+                             :placeholder="'请选择'"
+                             :data="scope.row.defaultData"
+                             :props="{
+                              value: 'value',
+                              children: 'children',
+                              label: 'label'
+                             }"
+                             :clearable="true"
+                             :reset="true"
+                             v-model="scope.row.defaultValueData"
+                             @change="treeChange(scope,data)"
+                             style="width: 100%"></tree-select>
               </div>
             </template>
           </editable-table>
@@ -1169,7 +1226,8 @@ import {
   P8Tabs as CommonTabs,
   P8EditTable as EditableTable,
   P8Dialog as CommonDialog,
-  P8IconSelector as IconSelector
+  P8IconSelector as IconSelector,
+  P8TreeSelect as TreeSelect
 } from 'p8-components-ui'
 // import { generateTree } from '@/utils/generateTree'
 import SelectModule from '@/views/Framework/ComponentsMananger/Components/selectComponents'
@@ -1179,13 +1237,14 @@ import iconCustom from './components/iconCustom.vue'
 import aceEdit from '@/views/Framework/ComponentsMananger/Base/Components/ace'
 import { eventHandleArr } from '@/views/Framework/ComponentsMananger/Grid/Components/eventHandleArr'
 import ViewParameter from './components/ViewParameter.vue'
+import { selectGenerateTree } from '@/utils/common'
 export default {
   name: 'TableEdit',
   components: {
     FormList,
     CommonTabs,
     EditableTable,
-    // TreeSelect,
+    TreeSelect,
     'select-module': SelectModule,
     'el-input': Input,
     'el-checkbox': Checkbox,
@@ -2758,13 +2817,34 @@ export default {
         }
       }
     },
-    saveSearchData (data, type, scope) {
+    async saveSearchData (data, type, scope, row) {
+      let that = this
       if (type) {
-        scope.row.defaultValueData = ''
+        console.log(scope.row.defaultValueData,'----111111111');
+        // scope.row.defaultValueData = undefined
+      }
+      if (row) {
+        if (row.searchMode === 'select' || row.searchMode === 'multiple') {
+          let res = await this.$api['formGenerator.getSelectionData']({ selectCode: row.dictCode })
+          if (res && res.data) {
+            if (res.config)  {
+              console.log(selectGenerateTree(res.data, res.config),'---selectGenerateTree(res.data, res.config)');
+              that.$set(row,'defaultData', selectGenerateTree(res.data, res.config))
+            } else {
+              that.$set(row,'defaultData', res.data)
+            }
+          }
+        }
+        if (row.searchMode === 'treeSelect') {
+          let res = await this.$api['formGenerator.getSelectionData']({ selectCode: row.dictCode })
+          if (res && res.data) {
+            that.$set(row,'defaultData', selectGenerateTree(res.data, res.config))
+          }
+        }
       }
       this.searchDetailData = data
     },
-    dateChange (scope, data) {
+    dateChange (scope) {
       if (scope.row.defaultValueDatas) {
         scope.row.defaultValueData = scope.row.defaultValueDatas.toString()
       } else {
@@ -2993,7 +3073,7 @@ export default {
       }
       this.reportParams.reportConfig = data
     },
-    tabClick (target) {
+    async tabClick (target) {
       if (target.name === 'configColumnDetails') {
         this.reportParams.reportItem.map((val) => {
           if (!val.fieldName && val.isCustomColumn) {
@@ -3061,7 +3141,8 @@ export default {
             newArr.push(val)
           }
         })
-        this.searchData = newArr
+        let selectList = await this.getDefaultSelectValue(newArr)
+        this.searchData = selectList
       }
     },
     // 判断报表配置明细配置内有无ID字段
@@ -3204,6 +3285,28 @@ export default {
     onEditModify (v) {
       this.formData.styleRendering = v
     },
+    async getDefaultSelectValue (newArr) {
+      let that = this
+      newArr.forEach(async el => {
+        if (el.searchMode === 'select' || el.searchMode === 'multiple') {
+          let res = await this.$api['formGenerator.getSelectionData']({ selectCode: el.dictCode })
+          if (res && res.data) {
+            if (res.config)  {
+              that.$set(el,'defaultData', selectGenerateTree(res.data, res.config))
+            } else {
+              that.$set(el,'defaultData', res.data)
+            }
+          }
+        }
+        if (el.searchMode === 'treeSelect') {
+          let res =  await this.$api['formGenerator.getSelectionData']({ selectCode: el.dictCode })
+          if (res && res.data) {
+            el.defaultData = selectGenerateTree(res.data, res.config)
+          }
+        }
+      })
+      return newArr
+    }
   }
 }
 </script>

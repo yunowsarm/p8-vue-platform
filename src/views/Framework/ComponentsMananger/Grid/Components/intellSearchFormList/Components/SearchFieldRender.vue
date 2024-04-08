@@ -112,6 +112,14 @@
                         style="width: 100%"
                         valueFormat='yyyy'
                         clearable></el-date-picker>
+        <el-date-picker v-else-if="fields.fieldName && fields.type === 'month'"
+                        v-model="formData[fields.fieldName]"
+                        type="month"
+                        v-bind="fields.fieldConfig"
+                        :placeholder="fields.placeholder"
+                        style="width: 100%"
+                        valueFormat='MM'
+                        clearable></el-date-picker>
         <el-date-picker v-else-if="fields.fieldName && fields.type === 'datetimeRange'"
                         v-model="formData[fields.fieldName]"
                         v-bind="fields.fieldConfig"
@@ -289,7 +297,7 @@ export default {
           }
           // 将options数据回填至dataSource中
           that.fields.options = that.options
-          this.$emit('field-mounted')
+          this.$emit('field-mounted','finished')
         })
         .catch((err) => {
           console.log(err)
@@ -320,7 +328,7 @@ export default {
       that.options = options
       // 将options数据回填至dataSource中
       that.fields.options = that.options
-      that.$emit('field-mounted')
+      that.$emit('field-mounted','finished')
     } else {
       that.$emit('field-mounted')
     }
