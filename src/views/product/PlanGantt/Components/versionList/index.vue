@@ -68,6 +68,12 @@ const columns = [
     align: 'center'
   },
   {
+    title: '版本说明',
+    dataIndex: 'versionNote',
+    minWidth: 300,
+    align: 'center'
+  },
+  {
     title: '创建时间',
     dataIndex: 'adjustTime',
     width: 200,
