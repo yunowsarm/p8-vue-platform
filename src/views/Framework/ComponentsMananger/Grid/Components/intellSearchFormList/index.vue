@@ -159,7 +159,7 @@ export default {
   },
   methods: {
     fieldMounted (finished) {
-      if(finished){
+      if (finished) {
         this.search()
       }
     },
@@ -178,7 +178,7 @@ export default {
         if (isValid) {
           const queryParams = this.handleParams(this.formData)
           this.changeInputVal(queryParams)
-          Object.keys(queryParams).map((item) => {
+          Object.keys(queryParams).forEach((item) => {
             let filterValue = ''
             let type = 'and'
             //是时间范围时 relation传time
@@ -283,12 +283,12 @@ export default {
           if (item.label === el.labelText) {
             paramObj[el.fieldName] = item.value
             if (el.type === 'text') {
-              queryParams[el.fieldName] = { 'mode': "like", 'relation': "and", 'value': '%' + item.value + '%' }
+              return queryParams[el.fieldName] = { 'mode': "like", 'relation': "and", 'value': '%' + item.value + '%' }
             } else if (el.type === 'datetimeRange') {
               let times = item.value.split("~")
-              queryParams[el.fieldName] = { 'mode': "=", 'relation': "time", 'value': times }
+              return queryParams[el.fieldName] = { 'mode': "=", 'relation': "time", 'value': times }
             } else {
-              queryParams[el.fieldName] = { 'mode': "=", 'relation': "and", 'value': item.value }
+              return queryParams[el.fieldName] = { 'mode': "=", 'relation': "and", 'value': item.value }
             }
           }
         })

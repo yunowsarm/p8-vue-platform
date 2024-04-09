@@ -153,7 +153,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 #lcr-layout,
 #lcr-left-con,
 #lcr-center-con,
@@ -161,9 +161,9 @@ export default {
   box-sizing: border-box;
   height: 100% !important;
 }
-#lcr-layout {
-  overflow-x: hidden;
-}
+// #lcr-layout {
+//   overflow-x: hidden;
+// }
 #lcr-left-con {
   padding-right: 6px;
 }
