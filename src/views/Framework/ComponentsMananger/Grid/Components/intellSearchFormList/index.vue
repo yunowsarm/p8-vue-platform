@@ -37,7 +37,8 @@
                                    :form-data="formField"
                                    :reset-flag="resetFlag"
                                    @setMode="setMode"
-                                   @setParentFormData="setParentFormData"></search-field-render>
+                                   @setParentFormData="setParentFormData"
+                                   @field-mounted="fieldMounted"></search-field-render>
             </el-col>
           </template>
         </el-row>
@@ -155,9 +156,13 @@ export default {
     }
   },
   mounted () {
-    this.search()
   },
   methods: {
+    fieldMounted (finished) {
+      if(finished){
+        this.search()
+      }
+    },
     // 弹出选择回填值后手动给formField赋值
     setParentFormData (data, label) {
       this.formField = { ...this.formField, ...data }
