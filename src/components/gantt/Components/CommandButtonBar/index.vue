@@ -1,43 +1,54 @@
 <template>
-  <div class="card-container" v-if="panelData.length > 1">
-    <i :class="advance ? 'el-icon-arrow-down' : 'el-icon-arrow-up'" @click="changeCommandButton"></i>
-    <i class="el-icon-setting" @click.stop="showButtonBarSetting"></i>
-    <el-tabs type="card" v-if="advance">
-      <el-tab-pane
-        v-for="(panel, index) in panelData"
-        :label="panel.panelName"
-        :key="index + 1"
-        :class="{ noWrap: panel.noWrap, taskTabPane: index === 0 }"
-        id="taskTabPane"
-        @mouseover.native="tabHover"
-      >
-        <div v-if="isExecute(panel.groups)" class="group-search">
-          <component :is="panel.groups" :gantt-name="ganttName" :special-plan="specialPlan" :plan-info-id="planInfoId" :task-id="taskId" :row-num="rowNum"></component>
+  <div class="card-container"
+       v-if="panelData.length > 1">
+    <i :class="advance ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"
+       @click="changeCommandButton"></i>
+    <i class="el-icon-setting"
+       @click.stop="showButtonBarSetting"></i>
+    <el-tabs type="card"
+             v-if="advance">
+      <el-tab-pane v-for="(panel, index) in panelData"
+                   :label="panel.panelName"
+                   :key="index + 1"
+                   :class="{ noWrap: panel.noWrap, taskTabPane: index === 0 }"
+                   id="taskTabPane"
+                   @mouseover.native="tabHover">
+        <div v-if="isExecute(panel.groups)"
+             class="group-search">
+          <component :is="panel.groups"
+                     :gantt-name="ganttName"
+                     :special-plan="specialPlan"
+                     :plan-info-id="planInfoId"
+                     :task-id="taskId"
+                     :row-num="rowNum"></component>
         </div>
-        <div v-else class="groupContain" :class="{ taskGroupContain: index === 0 }">
-          <div class="group" v-for="(group, index) in panel.groups" :key="index">
-            <div v-if="isExecute(group.buttonConfigs)" class="group-container">
-              <component
-                :is="group.buttonConfigs"
-                :current-records="selectedTasks"
-                :gantt-name="ganttName"
-                :plan-info-id="planInfoId"
-                :special-plan="specialPlan"
-                :task-id="taskId"
-                :row-num="rowNum"
-              ></component>
+        <div v-else
+             class="groupContain"
+             :class="{ taskGroupContain: index === 0 }">
+          <div class="group"
+               v-for="(group, index) in panel.groups"
+               :key="index">
+            <div v-if="isExecute(group.buttonConfigs)"
+                 class="group-container">
+              <component :is="group.buttonConfigs"
+                         :current-records="selectedTasks"
+                         :gantt-name="ganttName"
+                         :plan-info-id="planInfoId"
+                         :special-plan="specialPlan"
+                         :task-id="taskId"
+                         :row-num="rowNum"></component>
             </div>
-            <div v-else class="group-container">
+            <div v-else
+                 class="group-container">
               <template v-for="(childGroup, idx) in childGroups(group.buttonConfigs)">
-                <div class="child-group" :key="idx">
-                  <command-button
-                    v-for="(config, index) in childGroup.configs"
-                    :key="index"
-                    :cbutton="buttonData(config)"
-                    :size="config.size"
-                    :current-records="selectedTasks"
-                    :gantt-name="ganttName"
-                  ></command-button>
+                <div class="child-group"
+                     :key="idx">
+                  <command-button v-for="(config, index) in childGroup.configs"
+                                  :key="index"
+                                  :cbutton="buttonData(config)"
+                                  :size="config.size"
+                                  :current-records="selectedTasks"
+                                  :gantt-name="ganttName"></command-button>
                 </div>
               </template>
             </div>
@@ -46,56 +57,78 @@
             </div>
           </div>
         </div>
-        <span v-if="showArrow" id="leftArrow" :class="{ noAction: leftNoAction }" @click.stop="sliderClickHandle('left')"><i class="el-icon-caret-left"></i></span>
-        <span v-if="showArrow" id="rightArrow" :class="{ noAction: rightNoAction }" @click.stop="sliderClickHandle('right')"><i class="el-icon-caret-right"></i></span>
+        <span v-if="showArrow"
+              id="leftArrow"
+              :class="{ noAction: leftNoAction }"
+              @click.stop="sliderClickHandle('left')"><i class="el-icon-caret-left"></i></span>
+        <span v-if="showArrow"
+              id="rightArrow"
+              :class="{ noAction: rightNoAction }"
+              @click.stop="sliderClickHandle('right')"><i class="el-icon-caret-right"></i></span>
       </el-tab-pane>
     </el-tabs>
-    <el-tabs type="card" v-else>
-      <el-tab-pane v-for="(panel, index) in panelData" :label="panel.panelName" :key="index + 1"> </el-tab-pane>
+    <el-tabs type="card"
+             v-else>
+      <el-tab-pane v-for="(panel, index) in panelData"
+                   :label="panel.panelName"
+                   :key="index + 1"> </el-tab-pane>
     </el-tabs>
   </div>
-  <div class="card-container" :class="{ double: ganttButtonMode === 'double' && !isGanttChange, single: isGanttChange || ganttButtonMode === 'single' }" v-else>
-    <div class="el-tab-pane taskTabPane" :class="{ noWrap: panelData[0].noWrap }">
+  <div class="card-container"
+       :class="{ double: ganttButtonMode === 'double' && !isGanttChange, single: isGanttChange || ganttButtonMode === 'single' }"
+       v-else>
+    <div class="el-tab-pane taskTabPane"
+         :class="{ noWrap: panelData[0].noWrap }">
       <div class="groupContain taskGroupContain">
-        <div class="group" v-for="(group, index) in panelData[0].groups" :key="index">
-          <div v-if="isExecute(group.buttonConfigs)" class="group-container">
+        <div class="group"
+             v-for="(group, index) in panelData[0].groups"
+             :key="index">
+          <div v-if="isExecute(group.buttonConfigs)"
+               class="group-container">
             <div class="group-icon">
-              <component
-                :is="group.buttonConfigs"
-                :current-records="selectedTasks"
-                :gantt-name="ganttName"
-                :plan-info-id="planInfoId"
-                :special-plan="specialPlan"
-                :task-id="taskId"
-                :row-num="rowNum"
-              ></component>
+              <component :is="group.buttonConfigs"
+                         :current-records="selectedTasks"
+                         :gantt-name="ganttName"
+                         :plan-info-id="planInfoId"
+                         :special-plan="specialPlan"
+                         :task-id="taskId"
+                         :row-num="rowNum"></component>
             </div>
-            <div class="group-title" v-if="panelData[0].groupNameVisible">
+            <div class="group-title"
+                 v-if="panelData[0].groupNameVisible">
               {{ group.groupName }}
             </div>
           </div>
-          <div v-else class="group-container">
+          <div v-else
+               class="group-container">
             <div class="group-icon">
               <template v-for="(childGroup, idx) in childGroups(group.buttonConfigs)">
-                <div class="child-group" :key="idx">
-                  <span v-for="(config, index) in childGroup.configs" :key="index">
-                    <command-button
-                      v-if="config.position.indexOf('top') > -1"
-                      :cbutton="buttonData(config)"
-                      :size="config.size"
-                      :current-records="selectedTasks"
-                      :gantt-name="ganttName"
-                    ></command-button>
+                <div class="child-group"
+                     :key="idx">
+                  <span v-for="(config, index) in childGroup.configs"
+                        :key="index">
+                    <command-button v-if="config.position.indexOf('top') > -1"
+                                    :cbutton="buttonData(config)"
+                                    :size="config.size"
+                                    :current-records="selectedTasks"
+                                    :gantt-name="ganttName"></command-button>
                   </span>
                 </div>
               </template>
             </div>
-            <div class="group-title" v-if="panelData[0].groupNameVisible">
+            <div class="group-title"
+                 v-if="panelData[0].groupNameVisible">
               {{ group.groupName }}
             </div>
           </div>
-          <span v-if="showArrow" id="leftArrow" :class="{ noAction: leftNoAction }" @click.stop="sliderClickHandle('left')"><i class="el-icon-caret-left"></i></span>
-          <span v-if="showArrow" id="rightArrow" :class="{ noAction: rightNoAction }" @click.stop="sliderClickHandle('right')"><i class="el-icon-caret-right"></i></span>
+          <span v-if="showArrow"
+                id="leftArrow"
+                :class="{ noAction: leftNoAction }"
+                @click.stop="sliderClickHandle('left')"><i class="el-icon-caret-left"></i></span>
+          <span v-if="showArrow"
+                id="rightArrow"
+                :class="{ noAction: rightNoAction }"
+                @click.stop="sliderClickHandle('right')"><i class="el-icon-caret-right"></i></span>
         </div>
       </div>
     </div>
@@ -150,7 +183,7 @@ export default {
   },
   computed: {
     ...mapGetters(['vueThis', 'ganttButtonMode', 'ganttRightButtons']),
-    isExecute() {
+    isExecute () {
       return function (configs) {
         if (typeof configs === 'string') {
           return true
@@ -159,14 +192,14 @@ export default {
         }
       }
     },
-    buttonData() {
+    buttonData () {
       const that = this
       return function (btnConfig) {
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
         return btnData[0]
       }
     },
-    childGroups() {
+    childGroups () {
       return function (btnConfigs) {
         const configArray = []
         let childGroup = { configs: [] }
@@ -204,7 +237,7 @@ export default {
   },
   watch: {
     ganttButtonMode: {
-      handler(val) {
+      handler (val) {
         if (!this.isGanttChange) {
           this.rowNum = val === 'single' ? 1 : 2
         }
@@ -212,7 +245,7 @@ export default {
       immediate: true
     }
   },
-  data() {
+  data () {
     return {
       buttonDatas: CommandButtonData,
       advance: true,
@@ -224,7 +257,7 @@ export default {
       rowNum: this.isGanttChange ? 1 : this.ganttButtonMode === 'single' ? 1 : 2
     }
   },
-  mounted() {
+  mounted () {
     this.$nextTick(() => {
       this.initDom()
     })
@@ -232,7 +265,7 @@ export default {
     window.addEventListener('resize', this.resizeShowArrow)
   },
   methods: {
-    resizeShowArrow() {
+    resizeShowArrow () {
       if (this.scrollContent[0] && this.scrollContent[0].scrollWidth === this.scrollContent[0].offsetWidth) {
         this.showArrow = false
       } else {
@@ -240,22 +273,22 @@ export default {
       }
     },
     // 鼠标悬浮事件控制左右切换按钮是否出现
-    tabHover() {
+    tabHover () {
       if (this.scrollContent[0].scrollWidth === this.scrollContent[0].offsetWidth) {
         this.showArrow = false
       } else {
         this.showArrow = true
       }
     },
-    changeCommandButton() {
+    changeCommandButton () {
       this.advance = !this.advance
       this.$emit('change-command-button', this.advance)
     },
-    initDom() {
+    initDom () {
       this.scrollArea = document.getElementsByClassName('taskTabPane')
       this.scrollContent = document.getElementsByClassName('taskGroupContain')
     },
-    sliderClickHandle(pos) {
+    sliderClickHandle (pos) {
       const scrollLeft = this.scrollArea[0].scrollLeft
       const scrollWidth = this.scrollContent[0].scrollWidth
       const offsetWidth = this.scrollContent[0].offsetWidth
@@ -287,7 +320,7 @@ export default {
         }
       }
     },
-    showButtonBarSetting() {
+    showButtonBarSetting () {
       this.vueThis.rightMenuConfigVisible = true
     }
   }
@@ -402,7 +435,7 @@ export default {
   }
 
   .group {
-    padding: 0px 5px 0px 5px;
+    // padding: 0px 5px 0px 5px;
     display: inline-block;
     height: 100px;
     min-width: 150px;

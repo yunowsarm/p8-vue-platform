@@ -95,8 +95,10 @@ export default {
         })
         return generateTree(messageData, 'cparentid')
       } else {
-        this.catalogData.map((el) => {
-          el.icon ? el.icon : 'icon-fenzu'
+        this.catalogData.forEach((el) => {
+          if (!el.icon) {
+            el.icon = 'icon-fenzu'
+          }
         })
         const resultData = generateTree(this.catalogData, 'cparentid')
         if (resultData && resultData.length > 0) {

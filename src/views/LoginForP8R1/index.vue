@@ -3,27 +3,36 @@
     <div class="login-wrapper">
       <div class="login-block">
         <div class="login-contain">
-          <span class="login-logo" ref="loginLogo"></span>
+          <span class="login-logo"
+                ref="loginLogo"></span>
           <h4 class="login-sysName">{{ system_name }}</h4>
-          <el-form
-            class="loginForm"
-            ref="loginForm"
-            :model="loginForm"
-            :rules="loginRules"
-            size="small"
-            v-loading="loading"
-            element-loading-text="自动登录中......"
-            element-loading-spinner="el-icon-loading"
-            element-loading-custom-class="customClass"
-          >
+          <el-form class="loginForm"
+                   ref="loginForm"
+                   :model="loginForm"
+                   :rules="loginRules"
+                   size="small"
+                   v-loading="loading"
+                   element-loading-text="自动登录中......"
+                   element-loading-spinner="el-icon-loading"
+                   element-loading-custom-class="customClass">
             <template v-if="!loading">
-              <div style="margin-bottom: 6px"><i class="p8 icon-yonghuming" style="color: #094deb"></i>用户名</div>
+              <div style="margin-bottom: 6px"><i class="p8 icon-yonghuming"
+                   style="color: #094deb"></i>用户名</div>
               <el-form-item prop="userAccount">
-                <el-input class="login-input" type="text" v-model="loginForm.userAccount" placeholder="请输入用户名、身份证"></el-input>
+                <el-input class="login-input"
+                          type="text"
+                          v-model="loginForm.userAccount"
+                          placeholder="请输入用户名、身份证"></el-input>
               </el-form-item>
-              <div style="margin-bottom: 6px"><i class="p8 icon-mima" style="color: #094deb"></i>密码</div>
-              <el-form-item prop="userPassword" class="userPassword">
-                <el-input class="login-input" type="password" v-model="loginForm.userPassword" @keyup.enter.native="login('loginForm')" placeholder="请输入密码"></el-input>
+              <div style="margin-bottom: 6px"><i class="p8 icon-mima"
+                   style="color: #094deb"></i>密码</div>
+              <el-form-item prop="userPassword"
+                            class="userPassword">
+                <el-input class="login-input"
+                          type="password"
+                          v-model="loginForm.userPassword"
+                          @keyup.enter.native="login('loginForm')"
+                          placeholder="请输入密码"></el-input>
               </el-form-item>
 
               <el-form-item class="keepLoggedIn">
@@ -31,7 +40,9 @@
               </el-form-item>
 
               <el-form-item>
-                <el-button class="login-button" :loading="isLoginning" @click="login('loginForm')">登录</el-button>
+                <el-button class="login-button"
+                           :loading="isLoginning"
+                           @click="login('loginForm')">登录</el-button>
               </el-form-item>
             </template>
           </el-form>
@@ -51,7 +62,7 @@ import { API_DEFAULT_CONFIG, CA_LOGIN, PLATFORM_PREFIX_NAME } from '@/config/set
 
 const TOKEN_KEY = GLOBAL_CONST.token.tokenKey
 
-function getRequest() {
+function getRequest () {
   const url = window.location.href // 获取url中"?"符后的字串
   // eslint-disable-next-line no-new-object
   const theRequest = new Object()
@@ -67,7 +78,7 @@ function getRequest() {
 
 export default {
   name: 'Login',
-  data() {
+  data () {
     return {
       loading: false,
       systemLogo: '../../assets/image/login/logo.png',
@@ -91,10 +102,10 @@ export default {
   computed: {
     ...mapGetters(['userName', 'systemName'])
   },
-  created() {
+  created () {
     console.log(API_DEFAULT_CONFIG)
   },
-  mounted() {
+  mounted () {
     this.dayTime = getGreetingTime()
     // eslint-disable-next-line no-undef
     if (loginCa) {
@@ -105,7 +116,7 @@ export default {
     }
   },
   methods: {
-    autoLogin() {
+    autoLogin () {
       if (getRequest().token) {
         // url携带参数redirect，login?redirect=login&token=
         // ca信息登录
@@ -130,7 +141,7 @@ export default {
         })
       }
     },
-    login(formName) {
+    login (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // eslint-disable-next-line no-unused-vars
@@ -179,11 +190,11 @@ export default {
         }
       })
     },
-    resetForm(formName) {
+    resetForm (formName) {
       this.$refs[formName].resetFields()
     },
     // 校验系统是否维护模式  CA校验
-    loginCheckCA() {
+    loginCheckCA () {
       let uploadFileJson = []
       // eslint-disable-next-line no-unused-vars
       let userLoginSign = true
@@ -256,7 +267,7 @@ export default {
       })
     },
     // 密码框登录
-    loginCheck() {
+    loginCheck () {
       this.$api['SystemSettings.getLoginSetting']().then((res) => {
         if (res) {
           res.settings.forEach((a) => {
@@ -363,7 +374,6 @@ $login-primary--login-color: #306cf7;
 
         .login-sysName {
           font-size: 34px;
-          font-family: Source Han Sans CN;
           color: #1f1f1f;
           text-align: center;
           margin-top: 5px;

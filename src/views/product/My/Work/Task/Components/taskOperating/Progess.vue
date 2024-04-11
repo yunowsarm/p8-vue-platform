@@ -136,9 +136,6 @@ export default {
         // solutions: '' // 解决方案
       },
       formRules: {
-        deviationType: [
-          { required: true, message: '请选择偏离类型' }
-        ],
         forecastBeginDate: [
           { required: true, message: '必选' }
         ],

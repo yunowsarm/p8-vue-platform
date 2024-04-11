@@ -2,7 +2,8 @@
   <el-col :span="fields.colSpan">
     <!-- <el-form-item :label="fields.labelText"> -->
     <template v-if="fields.fieldName && fields.type === 'selectIcon'">
-      <el-form-item :label="fields.elementOpacity ? fields.labelText : ''" :label-width="fields.labelWidth">
+      <el-form-item :label="fields.elementOpacity ? fields.labelText : ''"
+                    :label-width="fields.labelWidth">
         <div style="text-align: center">
           <i :class="bindSelectIconClassHandle()"></i>
         </div>
@@ -10,14 +11,17 @@
     </template>
     <template v-else>
       <template v-if="fields.scopedSlots && fields.scopedSlots.customRender === 'custom'">
-        <el-form-item :label="fields.elementOpacity ? fields.labelText : ''" :label-width="fields.labelWidth">
+        <el-form-item :label="fields.elementOpacity ? fields.labelText : ''"
+                      :label-width="fields.labelWidth">
           <template>
-            <slot :name="fields.fieldName" :form-data="formData"></slot>
+            <slot :name="fields.fieldName"
+                  :form-data="formData"></slot>
           </template>
         </el-form-item>
       </template>
       <template v-else>
-        <el-form-item :label="fields.elementOpacity ? fields.labelText : ''" :label-width="fields.labelWidth">
+        <el-form-item :label="fields.elementOpacity ? fields.labelText : ''"
+                      :label-width="fields.labelWidth">
           <span class="font-size: 12px">{{ formData[fields.fieldName] }}</span>
         </el-form-item>
       </template>
@@ -37,16 +41,16 @@ export default {
   props: {
     formData: {
       type: Object,
-      default: () => {}
+      default: () => { }
     },
     fields: {
       type: Object,
-      default: () => {}
+      default: () => { }
     }
   },
   watch: {
     fields: {
-      handler(val) {
+      handler (val) {
         const that = this
         if (that.fields.optionUrl) {
           if (that.fields.optionUrl.api) {
@@ -58,7 +62,7 @@ export default {
                 console.error(error)
               })
           } else {
-            if (that.fields.optionUrl.noApiOptionsToRender && that.fields.optionUrl.noApiOptionsToRender) {
+            if (that.fields.optionUrl.noApiOptionsToRender) {
               if (that.fields.type === 'treeSelect') {
                 that.options = that.optionsDataHandle(that.fields.treeData)
               } else {
@@ -74,16 +78,16 @@ export default {
       deep: true
     }
   },
-  data() {
+  data () {
     return {
       options: []
     }
   },
-  mounted() {
+  mounted () {
     this.$emit('field-mounted')
   },
   methods: {
-    bindSelectIconClassHandle() {
+    bindSelectIconClassHandle () {
       const options = this.fields.options && this.fields.options.length ? this.fields.options : this.options
       /**
        * 默认处理 下拉数据对应的字段为 label / value
@@ -101,10 +105,10 @@ export default {
       const label = options.filter((item) => item[keyValue] === this.formData[this.fields.fieldName])[0][keyLabel]
       return label
     },
-    renderSlotName() {
+    renderSlotName () {
       return this.fields.fieldName ? this.fields.fieldName + 'View' : this.fields.slotName ? this.fields.slotName + 'View' : ''
     },
-    optionsDataHandle(normalData) {
+    optionsDataHandle (normalData) {
       /**
        * 下拉框数据 公共逻辑处理部分
        */
@@ -150,7 +154,7 @@ export default {
       that.$emit('field-mounted')
       return options
     },
-    treeDataHandle(treeData, props = { label: '', value: '' }) {
+    treeDataHandle (treeData, props = { label: '', value: '' }) {
       treeData.forEach((node) => {
         if (props.label) {
           node.label = node[props.label]
