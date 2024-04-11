@@ -1110,10 +1110,11 @@ export default {
         this.tableParam.sqlParam = {}
       }
       this.tableParam.reportParam = {}
+      this.rebuildParam(this.reportParam)
       if (this.provideParams.searchParams && Object.keys(this.provideParams.searchParams).length > 0) {
         this.fiflterParams(this.provideParams.searchParams)
       }
-      this.$refs.table.searchData()
+      // this.$refs.table.searchData()
     },
     rebuildParam (val) {
       const reportParam = {}
