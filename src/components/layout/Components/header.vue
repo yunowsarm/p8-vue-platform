@@ -345,7 +345,7 @@ export default {
 
   .sysName {
     font-size: $font-size-medium;
-    font-family: Source Han Sans CN;
+    font-family: 'Source Han Sans CN', 'Noto Sans SC', sans-serif;
     font-weight: 500;
     color: $base-white-color;
     line-height: 50px;
