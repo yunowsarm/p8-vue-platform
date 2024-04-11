@@ -344,6 +344,7 @@ import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLoc
 import VersionList from '../versionList'
 import ProgressHistory from '../progressHistory';
 import ChangeHistory from '../changeHistory';
+import { version } from 'vue'
 const Mycolumns = [
   {
     title: '',
@@ -1331,20 +1332,40 @@ export default {
     },
     //  创建版本
     createPlanVersion() {
-      this.$api['planGanttManager.versionCreate']({
+      let version = ''
+      this.$api['planGanttManager.getVersionNum']({
         planInfoId: this.planInfoId
       }).then((res) => {
         if (res) {
-          this.$message({
-            message: '版本创建成功',
-            type: 'success'
-          })
-        } else {
-          this.$message({
-            message: '版本创建失败',
-            type: 'error'
-          })
+          version = res
         }
+      })
+      this.$prompt('请输入版本说明', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(({ value }) => {
+        this.$confirm(`是否创建计划版本${version}, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$api['planGanttManager.versionCreate']({
+            planInfoId: this.planInfoId,
+            versionNote: value
+          }).then((res) => {
+            if (res) {
+              this.$message({
+                message: '版本创建成功',
+                type: 'success'
+              })
+            } else {
+              this.$message({
+                message: '版本创建失败',
+                type: 'error'
+              })
+            }
+          })
+        })
       })
     },
     showTaskProgressDialog (taskId) {

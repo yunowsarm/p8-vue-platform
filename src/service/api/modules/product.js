@@ -939,6 +939,13 @@ export const repositoryApi = {
       desc: '项目管理->计划管理->计划编制->版本列表'
     },
     {
+      name: 'getVersionNum',
+      method: 'POST',
+      path: '/product/pm/plan/getPlanVersion',
+      mockPath: '/product/pm/plan/getPlanVersion',
+      desc: '项目管理->计划管理->计划编制->获取版本号'
+    },
+    {
       name: 'versionCreate',
       method: 'POST',
       path: '/product/pm/plan/createPlanVersion',
