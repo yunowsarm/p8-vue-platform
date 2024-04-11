@@ -888,7 +888,7 @@ export const CommandButtonData = [
         result = true
       } else if (tasks[0].managerStatus === '6403' && tasks[0].dutyDeptName) {
         // 待下发状态责任部门（科研）不为空，可以下发
-        if (tasks[0].planType === undefined || tasks[0].planType === undefined || tasks[0].planType === '') {
+        if (tasks[0].planType === null || tasks[0].planType === undefined || tasks[0].planType === '') {
           // 当任务类型和计划类型为空时，不能下发
           result = true
         } else {

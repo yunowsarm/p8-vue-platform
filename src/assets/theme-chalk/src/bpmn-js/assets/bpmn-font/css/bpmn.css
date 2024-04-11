@@ -1,5 +1,5 @@
 @font-face {
-  font-family: 'bpmn';
+  font-family: 'bpmn, sans-serif';
   src: url('../font/bpmn.eot?26374340');
   src: url('../font/bpmn.eot?26374340#iefix') format('embedded-opentype'),
        url('../font/bpmn.woff2?26374340') format('woff2'),
@@ -21,7 +21,7 @@
 */
 
  [class^="bpmn-icon-"]:before, [class*=" bpmn-icon-"]:before {
-  font-family: "bpmn";
+  font-family: "bpmn, sans-serif";
   font-style: normal;
   font-weight: normal;
   speak: never;
