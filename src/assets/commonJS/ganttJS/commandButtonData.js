@@ -781,7 +781,7 @@ export const CommandButtonData = [
       //   })
       // } else {
       // }
-      batchLock(ganttName)
+      batchLock()
     },
     isDisableFun: function (btn, ganttName, tasks) {
       let result = false
