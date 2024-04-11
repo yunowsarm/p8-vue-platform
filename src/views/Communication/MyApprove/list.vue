@@ -212,7 +212,7 @@ export default {
   box-shadow: 0px 0px 4px #a3a3a3;
 }
 .customNlcr {
-  height: calc(100% - 46px);
+  height: calc(100% - 66px);
   margin: 14px;
   .search-wrapper {
     float: left;
