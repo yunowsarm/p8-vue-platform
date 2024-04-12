@@ -18,7 +18,7 @@ const user = {
     roles: null, // 权限应该是返回个数组对象
     confidentialiteList: [], // 用户密级,
     userSettingAll: {}, // 用户配置信息
-    ganttButtonMode: 'tabs', // gantt操作按钮采用单行还是双行模式
+    ganttButtonMode: '', // gantt操作按钮采用单行还是双行模式
     ganttRightButtons: [], // gantt右键菜单
     userInfo: {}, // 用于JT智能表单的系统级参数
     sysVars: {
@@ -89,8 +89,16 @@ const user = {
       console.log('SET_SETTING_ALL', data)
       state.userSettingAll = data
       if (data.PlanButton && data.PlanButton.length) {
-        state.ganttButtonMode = data.PlanButton[0].value.type || 'double'
+        state.ganttButtonMode = data.PlanButton[0].value.type || ''
         state.ganttRightButtons = data.PlanButton[0].value.rightBtns || []
+      }
+      if (!state.ganttButtonMode) {
+        api['PlanGanttSetting.getSchedulingBasicConfig']({ })
+          .then((res) => {
+            if (res) {
+              state.ganttButtonMode = res.defaultMode.content
+            }
+          })
       }
     },
     SET_MESSAGEINFO(state, data) {
