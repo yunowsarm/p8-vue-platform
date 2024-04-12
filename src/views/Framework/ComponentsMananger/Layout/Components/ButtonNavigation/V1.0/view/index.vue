@@ -61,12 +61,12 @@
   display: inline-block !important;
   width: 12px;
 }
-.layoutComponents ::v-deep .splitter-pane .normal-center{
-  height: 100% !important;
-  .grid-table-render{
-    height: 100%;
-  }
-}
+// .layoutComponents ::v-deep .splitter-pane .normal-center{
+//   height: 100% !important;
+//   .grid-table-render{
+//     height: 100%;
+//   }
+// }
 ::v-deep .search-wrapper {
   right: 10px;
 }

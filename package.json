@@ -34,7 +34,7 @@
     "monaco-editor": "^0.19.3",
     "net": "^1.0.2",
     "operation-tree-node": "^1.0.5",
-    "p8-components-ui": "^4.0.2",
+    "p8-components-ui": "^4.0.10",
     "p8-dhtmlx-gantt": "^7.0.12",
     "p8-gojs": "^2.1.11",
     "p8-vue-smart-widget": "^0.6.1",

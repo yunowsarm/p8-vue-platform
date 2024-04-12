@@ -42,9 +42,9 @@
 }
 .planLayout {
   height: 100%;
-  ::v-deep .normal-main{
-    height: calc(100% - 30px);
-  }
+  // ::v-deep .normal-main{
+  //   height: calc(100% - 30px);
+  // }
 }
 </style>
 <script>

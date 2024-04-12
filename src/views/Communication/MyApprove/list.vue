@@ -209,8 +209,8 @@ export default {
   /* margin-top: 25px; */
 }
 .customNlcr {
-  height: calc(100% - 46px);
-  box-shadow: 0px 0px 4px #a3a3a3;
+  height: calc(100% - 66px);
+  margin: 14px;
   .search-wrapper {
     float: left;
   }

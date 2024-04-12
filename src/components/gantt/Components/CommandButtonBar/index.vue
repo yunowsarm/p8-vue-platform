@@ -408,7 +408,7 @@ export default {
     min-width: 150px;
     /* width: 150px; */
     border-right: 1px solid $base-line-color;
-    padding: 0;
+    // padding: 0;
     box-sizing: border-box;
 
     .group-container {
