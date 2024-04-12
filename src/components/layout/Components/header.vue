@@ -16,6 +16,18 @@
 
     <div class="settings">
       <ul>
+        <li v-if="adminUserIdArr.indexOf($store.state.user.userId) === -1">
+          <span>
+            <!-- <i class="p8 icon-work-home" @click="$router.push({name:'Dashboard'})"> -->
+            <el-tooltip content="沟通消息">
+              <i class="el-icon-chat-dot-square"
+                 @click="informationDrawer = true"></i>
+            </el-tooltip>
+          </span>
+          <information v-if="informationDrawer"
+                       :visibleMsgDrawer="informationDrawer"
+                       @visibleMsgClose="visibleMsgClose"></information>
+        </li>
         <!-- $route.path !== '/dash' && -->
         <li v-if="adminUserIdArr.indexOf($store.state.user.userId) === -1">
           <span>
@@ -129,7 +141,8 @@
                    direction="ttb"
                    size="100%">
       <template #drawer>
-        <process-approval class="drawer_approval" @approved="approved"></process-approval>
+        <process-approval class="drawer_approval"
+                          @approved="approved"></process-approval>
       </template>
     </common-drawer>
     <common-drawer v-if="visibleMsgDrawer"
@@ -165,6 +178,7 @@ import HeaderSubsystem from './HeaderSubsystem'
 import ProcessApprovalIndex from '@/views/Communication/MyApprove/list.vue'
 import DocumentManagement from '@/views/Framework/System/DocumentManagement/index.vue'
 import Message from '@/views/Framework/Message'
+import Information from '@/components/information/index.vue'
 
 export default {
   name: 'Headers',
@@ -181,6 +195,7 @@ export default {
       objColor: {
         themeColor: ''
       },
+      informationDrawer: false,
       adminUserIdArr: ['SYS_USER001', 'SYS_USER009', 'SYS_USER012', 'SYS_USER010', 'SYS_USER000'] // 五元id
     }
   },
@@ -222,6 +237,9 @@ export default {
     // }
   },
   methods: {
+    visibleMsgClose () {
+      this.informationDrawer = false
+    },
     approvalTotal () {
       this.$api['PersonalProcessApproval.approvalPendingTotal']().then((res) => {
         this.approvalPendingTotal = res
@@ -328,7 +346,8 @@ export default {
     'el-dropdown-menu': DropdownMenu,
     'el-dropdown-item': DropdownItem,
     message: Message,
-    'el-tooltip': Tooltip
+    'el-tooltip': Tooltip,
+    Information
   }
 }
 </script>

@@ -1,31 +1,37 @@
 <template>
-  <left-center-right-layout :percentRight="65"
-                            v-if="isRouterShow">
-    <template #left>
-      <div class="task-info-con">
-        <!-- 任务详情信息 -->
-        <task-info-view></task-info-view>
-      </div>
-    </template>
-    <template #center>
-      <div class="task-operating-con">
-        <div class="task-manage-table">
-          <!-- 管理要素 -->
-          <task-manage-view :thirdMenuParam="thirdMenuParam"></task-manage-view>
+  <div>
+    <message-panel v-if="isVisibleCommunicationDrawer"
+                   :isVisibleDocumentEditDrawer="isVisibleCommunicationDrawer"
+                   :thirdMenuParamTemp="thirdMenuParamTemp"
+                   @success="isVisibleCommunicationDrawer = false"></message-panel>
+    <left-center-right-layout :percentRight="65"
+                              v-if="isRouterShow">
+      <template #left>
+        <div class="task-info-con">
+          <!-- 任务详情信息 -->
+          <task-info-view></task-info-view>
         </div>
-        <div class="task-tabs-con">
-          <!-- 进度反馈-未完成原因 -->
-          <task-tabs-view></task-tabs-view>
+      </template>
+      <template #center>
+        <div class="task-operating-con">
+          <div class="task-manage-table">
+            <!-- 管理要素 -->
+            <task-manage-view :thirdMenuParam="thirdMenuParam"></task-manage-view>
+          </div>
+          <div class="task-tabs-con">
+            <!-- 进度反馈-未完成原因 -->
+            <task-tabs-view></task-tabs-view>
+          </div>
         </div>
-      </div>
-    </template>
-    <template #right>
-      <div class="task-info-related-con">
-        <!-- 关联任务 -->
-        <task-relation-view></task-relation-view>
-      </div>
-    </template>
-  </left-center-right-layout>
+      </template>
+      <template #right>
+        <div class="task-info-related-con">
+          <!-- 关联任务 -->
+          <task-relation-view></task-relation-view>
+        </div>
+      </template>
+    </left-center-right-layout>
+  </div>
 </template>
 <script>
 import LeftCenterRightLayout from './layout/LeftCenterRight'
@@ -34,6 +40,8 @@ import TaskInfoView from './taskInfo'
 import TaskManageView from './taskManage/index'
 import TaskRelationView from './taskRelation/index'
 import { getTaskStatusInfo } from '@/utils/commonBusiness'
+import MessagePanel from './MessagePanel'
+import { P8Drawer as CommonDrawer } from 'p8-components-ui'
 export default {
   name: 'planExecute',
   provide () { // 使用 provide对深层组件进行数据信息传递 例:taskOperating/Progress.vue中 inject搭配computed接收数据
@@ -53,6 +61,10 @@ export default {
     thirdMenuParam: {
       handler (val) {
         this.thirdMenuParamTemp = val
+        console.log(val, '================2222');
+        if (val.isVisibleCommunicationDrawer) {
+          this.isVisibleCommunicationDrawer = true
+        }
       },
       immediate: true,
       deep: true
@@ -65,13 +77,19 @@ export default {
     return {
       isRouterShow: false,
       secretLevel: '机密',
-      thirdMenuParamTemp: this.thirdMenuParam
+      thirdMenuParamTemp: this.thirdMenuParam,
+      drawerSize: '30%',
+      isVisibleCommunicationDrawer: false
     }
   },
   mounted () {
     this.reload()
   },
   methods: {
+    documentEditDrawerClose () {
+      this.isVisibleCommunicationDrawer = false
+      console.log('1111111111111111111111111111111111');
+    },
     reload () {
       getTaskStatusInfo({ currentStatus: 'all' }).then(data => {
         this.thirdMenuParamTemp.allStatus = data
@@ -84,7 +102,9 @@ export default {
     TaskTabsView,
     TaskInfoView,
     TaskManageView,
-    TaskRelationView
+    TaskRelationView,
+    CommonDrawer,
+    MessagePanel
   }
 }
 </script>

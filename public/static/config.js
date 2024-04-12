@@ -19,3 +19,6 @@ const loginCa = false
 // 在生产环境检测错误给出提示，默认为false 意为生产环境不提示
 // eslint-disable-next-line no-unused-vars
 const CHECK_PRODUCTION_ERROR_TIP = false
+
+// socket连接地址
+const SOCKET_URL = 'http://192.168.0.199:8888'
