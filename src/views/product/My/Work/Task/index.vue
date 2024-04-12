@@ -422,7 +422,12 @@ export default {
           }
         }
       }
-      this.activeName = this.tabsData[0].name
+      if (window.STATUS_KEY === '6402') {
+        this.activeName = '协同编制'
+        window.STATUS_KEY = null
+      } else {
+        this.activeName = this.tabsData[0].name
+      }
     },
     tabClick (target) {
       this.$emit('tabClick', target)

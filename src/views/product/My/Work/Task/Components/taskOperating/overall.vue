@@ -72,7 +72,7 @@ export default {
       },
       {
         type: 'textarea',
-        labelText: '文本区域',
+        labelText: '进度说明',
         fieldName: 'content',
         colLayout: 'singleCol',
         placeholder: '说明内容'

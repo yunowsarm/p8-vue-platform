@@ -43,7 +43,7 @@ export default {
       },
       {
         type: 'textarea',
-        labelText: '文本区域',
+        labelText: '进度说明',
         colLayout: 'singleCol',
         placeholder: '说明内容',
         fieldName: 'content'
@@ -76,7 +76,8 @@ export default {
           forecastEndDate: this.formData.beginEndTime[1],
           content: this.formData.content,
           planInfoId: this.planInfoParams.PLANINFOID,
-          pmProjectTasksId: this.planInfoParams.TASKID
+          pmProjectTasksId: this.planInfoParams.TASKID,
+          status: this.planInfoParams.STATUS
         }
       }
       this.$api['taskManager.progressFeedback'](obj).then(res => {

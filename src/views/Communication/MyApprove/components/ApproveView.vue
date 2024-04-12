@@ -736,6 +736,7 @@ $titleHeight: 80px;
 $paddingLeft: 10px;
 .container {
   height: 100%;
+  z-index: 1;
 
   // .approveTitle {
   //   padding-left: $paddingLeft;

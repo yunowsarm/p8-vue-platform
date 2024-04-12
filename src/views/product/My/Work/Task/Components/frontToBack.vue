@@ -15,8 +15,8 @@
                     :permission-vo="componentsConfig.permissionVo"
                     :west-tree-param="provideParams.searchParams"
                     @refresh="init()">
-        <template #progress="{scope}">
-          <span>{{scope.row.progress * 100}}%</span>
+        <template #PROGRESS="{scope}">
+          <span>{{Math.round(scope.row.PROGRESS * 100)}}%</span>
         </template>
         <template #outputs="{scope}">
           <el-popover placement="bottom-start"
