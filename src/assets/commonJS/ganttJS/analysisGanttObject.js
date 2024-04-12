@@ -126,9 +126,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
       template: function (task) {
         // 标识展示
         let monitorPointDatas = ganttObject.serverList(ganttObject.config.monitor_point)
-        console.log('🚀 ~ getAnalysisGantt ~ monitorPointDatas:', monitorPointDatas)
         let monitorPoints = task[ganttObject.config.monitor_point]
-        console.log('🚀 ~ getAnalysisGantt ~ monitorPoints:', monitorPoints)
         let html = ''
         if (monitorPoints && monitorPointDatas) {
           let index = 0

@@ -115,7 +115,7 @@ export default {
     },
     taskStatus: {
       type: Object,
-      default: null
+      default: {}
     }
   },
   components: {
@@ -319,6 +319,7 @@ export default {
             myGantt.serverList(myGantt.config.plan_type, res.taskClassifys)
             vueThis.changeTaskInfo = res.changeTaskInfo
             vueThis.managerStatusMap = res.managerStatusMap
+            vueThis.taskStatusMap = res.taskStatusMap
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
           }
