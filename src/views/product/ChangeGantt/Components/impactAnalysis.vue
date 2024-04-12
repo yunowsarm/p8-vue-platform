@@ -316,7 +316,7 @@ export default {
               links: res.links
             }
             myGantt.$resourcesStore.parse(res.resources)
-            myGantt.serverList(myGantt.config.monitor_point, res.allMonitors)
+            myGantt.serverList(myGantt.config.monitor_point, res.monitorPointDatas)
             myGantt.serverList(myGantt.config.plan_type, res.taskClassifys)
             vueThis.changeTaskInfo = res.changeTaskInfo
             vueThis.managerStatusMap = res.managerStatusMap
