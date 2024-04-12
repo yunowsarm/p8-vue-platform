@@ -50,6 +50,8 @@
                      :projectLevel="projectLevel"
                      :drawerConfig="menuDrawerConfig">
         <template #drawer>
+          <i class="el-icon-chat-dot-square iconClass"
+             @click="open"></i>
           <menu-layout :third-menu-param="thirdMenuParam"
                        :default-menu="defaultMenu"></menu-layout>
         </template>
@@ -118,6 +120,13 @@
 }
 .icon-style {
   margin-left: -15px;
+}
+.iconClass {
+  font-size: 20px;
+  position: absolute;
+  top: 15px;
+  right: 50px;
+  z-index: 9999;
 }
 </style>
 <script>
@@ -207,6 +216,10 @@ export default {
     }
   },
   methods: {
+    open () {
+      this.$set(this.thirdMenuParam, 'isVisibleCommunicationDrawer', false)
+      this.$set(this.thirdMenuParam, 'isVisibleCommunicationDrawer', true)
+    },
     frontToBackClick (val, scope) {
       this.title = val
       this.columnType = scope.column.property

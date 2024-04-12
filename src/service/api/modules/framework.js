@@ -246,6 +246,14 @@ export const system = {
   ],
   projectTeamSetting: [
     {
+      name: 'getSystemAbout',
+      method: 'POST',
+      path: '/framework/system/SystemSettings/getSystemAbout',
+      mockPath: '/framework/system/SystemSettings/getSystemAbout',
+      params: {},
+      desc: '系统设置>功能设置>关于'
+    },
+    {
       name: 'listData',
       method: 'POST',
       path: '/framework/projectTeamSetting/teamPage/get',
@@ -914,6 +922,22 @@ export const system = {
     }
   ],
   documentManagement: [
+    {
+      name: 'getWebsocketGroupAll',
+      method: 'POST',
+      path: '/framework/websocket/getWebsocketGroupAll',
+      mockPath: '/framework/websocket/getWebsocketGroupAll',
+      params: {},
+      desc: '消息列表数据'
+    },
+    {
+      name: 'getWebsocketById',
+      method: 'POST',
+      path: '/framework/websocket/getWebsocketById',
+      mockPath: '/framework/websocket/getWebsocketById',
+      params: {},
+      desc: '列表聊天数据'
+    },
     {
       name: 'getAllDicByCodeType',
       method: 'GET',
