@@ -22,7 +22,7 @@
           <span v-else>{{ scope.row.NAME }}</span>
         </template>
         <template #PROGRESS="{scope}">
-          <span v-if="scope.row.DATATYPE === 'task'">{{scope.row.PROGRESS * 100}}%</span>
+          <span v-if="scope.row.DATATYPE === 'task'">{{Math.round(scope.row.PROGRESS * 100)}}%</span>
         </template>
         <template #INDEXNO="{scope}">
           <span v-if="scope.row.DATATYPE === 'task'">{{scope.row.INDEXNO}}</span>
@@ -197,6 +197,7 @@ export default {
   created () {
     this.init()
     this.getIconData()
+    console.log(this.$route.path, '================this.$route.path');
     this.currentRouterPath = this.$route.path
   },
   watch: {
@@ -260,10 +261,11 @@ export default {
       // }
     },
     openThirdMenu (record, item) {
+      window.STATUS_KEY = record.MANAGERSTATUS
       // this.defaultMenu = item
       this.thirdMenuParam = {
         ...record,
-        progress: Number((record.PROGRESS * 100).toFixed(0)),
+        progress: Math.round(record.PROGRESS * 100),
         taskId: record.TASKID,
         // secretGrade: record.SECRETGRADE,
         planInfoId: record.PLANINFOID,
