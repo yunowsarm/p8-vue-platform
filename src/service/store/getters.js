@@ -39,6 +39,7 @@ const getters = {
   // 计划状态、任务状态限制gantt页面操作策略
   planStatusLockMap: (state) => state.planGanttState.planStatusLockMap,
   taskStatusLockMap: (state) => state.planGanttState.taskStatusLockMap,
+  versionTask: (state) => state.planGanttState.versionTask,
   // table行上权限按钮
   buttonLimit: (state) => state.project.buttonLimit,
   // 配置项信息：项目状态/计划状态/任务状态
