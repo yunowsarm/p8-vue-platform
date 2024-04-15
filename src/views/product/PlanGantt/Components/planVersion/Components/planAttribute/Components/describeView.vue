@@ -39,6 +39,8 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
+import moment from 'moment'
 export default {
   name: 'PlanDescribeView',
   props: {
@@ -85,14 +87,27 @@ export default {
       let that = this
       that.$store.dispatch('setVersionTask', { key:that.ganttName, value: {}})
       // 获取描述信息
-      that.$api['planGanttManager.getDescribesVersionData']({ taskId: that.taskId, versionId: that.versionId, versionType: that.versionType }).then(function (res) {
-        if (res) {
-          that.formData = Object.assign({}, res)
-          that.$store.dispatch('setVersionTask', { key:that.ganttName, value: that.formData})
-        }
-      }).catch(function (error) {
-        console.error('error' + error)
-      })
+      if (that.versionType == 'task') {
+        let gantt = GanttObject.getGanttObject(that.ganttName)
+        let task = gantt.getTask(that.taskId)
+        that.formData = Object.assign({}, task)
+        let user = gantt.serverList('resources').find(user => {
+          return user.id == task.owner_id
+        })
+        that.formData.ownerName = user && user.name ? user.name : ''
+        that.formData.startDate = moment(task.start_date).format('YYYY-MM-DD')
+        that.formData.endDate = moment(task.end_date).subtract(1, 'days').format('YYYY-MM-DD')
+        that.$store.dispatch('setVersionTask', { key:that.ganttName, value: that.formData})
+      } else {
+        that.$api['planGanttManager.getDescribesVersionData']({ taskId: that.taskId, versionId: that.versionId, versionType: that.versionType }).then(function (res) {
+          if (res) {
+            that.formData = Object.assign({}, res)
+            that.$store.dispatch('setVersionTask', { key:that.ganttName, value: that.formData})
+          }
+        }).catch(function (error) {
+          console.error('error' + error)
+        })
+      }
     }
   }
 }

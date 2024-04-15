@@ -37,6 +37,7 @@
                         :planVersionNum1="planVersionNum1"
                         :planVersionNum2="planVersionNum2"
                         :versionType="versionType"
+                        v-bind="$attrs"
                         :planInfoId="queryParam.planInfoId">
           </plan-version>
         </template>

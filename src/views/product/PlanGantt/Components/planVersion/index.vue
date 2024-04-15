@@ -86,6 +86,10 @@ export default {
     versionType: {
       type: String,
       default: null
+    },
+    mainGanttName: {
+      type: String,
+      default: null
     }
   },
   components: {
@@ -114,6 +118,7 @@ export default {
       searchForm1: {},
       searchForm2: {},
       ganttThis: {},
+      mainTask: [],
       dataLoading: false,
       taskStatusMap: {},
       managerStatusMap: {} // 管理状态全部数据
@@ -135,6 +140,8 @@ export default {
     if (this.planVersionId1 && this.planVersionId2) {
       this.initVersionGantt(this.planVersionId1, this.planVersionId2)
     }
+    let myGantt3 = GanttObject.getGanttObject(this.mainGanttName)
+    this.mainTask = myGantt3.serialize().data
     this.ganttThis = store.getters.vueThis
   },
   computed: {},
@@ -212,14 +219,14 @@ export default {
             links: []
           }
           let datas2 = {
-            tasks: res.v2,
+            tasks: vueThis.versionType == 'task' ? vueThis.mainTask : res.v2,
             links: []
           }
           vueThis.saveGantColumnColor({
             gant1: myGantt1,
             gant2: myGantt2,
             result1: res.v1,
-            result2: res.v2
+            result2: datas2.tasks
           })
 
           // myGantt1.serverList(myGantt1.config.complete_form, res.completeForms)
@@ -233,6 +240,8 @@ export default {
           vueThis.taskStatusMap = res.taskStatusMap
           vueThis.taskClassifyDatas = res.taskClassifys
           // vueThis.resourceDatas = res.resources
+          myGantt1.serverList('resources', res.resources)
+          myGantt2.serverList('resources', res.resources)
 
           //   // 初始化对象
           myGantt1 = getPlanVersionGantt(myGantt1, vueThis, vueThis.ganttName1)

@@ -248,7 +248,7 @@
     ></my-experience-base>
     <common-drawer v-if="versionListVisible" :visible="versionListVisible" size="70%" placement="top" title="版本列表" @close="versionListVisible = false">
       <template #drawer>
-        <version-list :plan-info-id="planInfoId"></version-list>
+        <version-list :plan-info-id="planInfoId" :mainGanttName="ganttName"></version-list>
       </template>
     </common-drawer>
     <common-drawer v-if="progressHistoryVisible" :visible="progressHistoryVisible" size="50%" placement="top" title="任务进度反馈" @close="progressHistoryVisible = false">
