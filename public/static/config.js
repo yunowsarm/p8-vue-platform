@@ -1,6 +1,6 @@
 // 启动项目准备
 // npm run install
-const defaultServiceAddr = 'http://' + window.location.hostname + ':' + window.location.port
+const defaultServiceAddr = window.location.origin
 // eslint-disable-next-line no-unused-vars
 const CONFIG = {
   devBaseUrl: 'http://192.168.0.86:9090', // 第一次执行参考以上备注
