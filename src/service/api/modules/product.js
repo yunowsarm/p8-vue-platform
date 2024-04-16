@@ -107,6 +107,13 @@ export const repositoryApi = {
   ],
   taskManager: [
     {
+      name: 'updateTaskDistribution',
+      method: 'POST',
+      path: '/product/pm/plan/updateTaskDistribution',
+      mockPath: '/product/pm/plan/updateTaskDistribution',
+      desc: '部门任务派发-任务派发'
+    },
+    {
       name: 'projectTree',
       method: 'POST',
       path: '/product/my/work/task/projectClassifyTree',

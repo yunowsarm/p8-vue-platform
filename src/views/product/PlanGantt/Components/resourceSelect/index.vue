@@ -12,59 +12,77 @@
     @isfullscreen="isfullscreen"
   >
     <template #dialog>
-      <list-layout>
-        <template #north>
-          <div class="input-con">
-            <el-input
-              class="input-name input-search-name"
-              :placeholder="DutyPersonsMessage === '' ? '支持人员名称、部门、角色模糊查询，例如：李四、lisi、部门1、计划经理' : DutyPersonsMessage"
-              v-model="searchName"
-              @change="inputChange"
-              size="small"
-            ></el-input>
-            <el-button style="margin-left: 15px" @click="search" type="primary" size="mini">搜索</el-button>
-          </div>
-          <i
-            class="el-icon-d-arrow-right"
-            v-if="tableV"
-            @click="
-              () => {
-                tableV = !tableV
-                resourceWidth = '100%'
-              }
-            "
-          ></i>
-        </template>
-        <template #center>
-          <div id="table-contain">
-            <div class="resourceList" :style="{ width: resourceWidth }">
-              <common-table
-                ref="tableCom"
-                :columns="columns"
-                :params="queryParam"
-                :api="tableApi"
-                :table-refresh="tableRefresh"
-                :table-config="tableConfig"
-                :table-setting="false"
-                :disabled-check-all="true"
-                is-radio-select
-                @row-click="rowClick"
-                @select="select"
-                @row-dblclick="rowDblclick"
-                @requested-table-data="requestedTableData"
-              >
-                <template #taskCount="{ scope }">
-                  <i v-if="scope.row.taskCount > 0" class="p8 icon-conflict" @click="showUserLoad(scope.row)"></i>
-                </template>
-              </common-table>
-            </div>
-            <div class="resourceLoad">
-              <common-table ref="table" v-if="tableV" :columns="columnsT" :params="queryParamT" :api="tableApiT" :table-refresh="tableRefreshT" :table-config="tableConfigT" :table-setting="false">
-              </common-table>
-            </div>
-          </div>
-        </template>
-      </list-layout>
+      <el-tabs class="resource_tab" v-model="activeName">
+        <el-tab-pane v-if="tabsShow('team')" label="团队用户" name="team">
+          <list-layout>
+            <template #north>
+              <div class="input-con">
+                <el-input
+                  v-model="searchName"
+                  class="input-name input-search-name"
+                  :placeholder="DutyPersonsMessage === '' ? '支持人员名称、部门、角色模糊查询，例如：李四、lisi、部门1、计划经理' : DutyPersonsMessage"
+                  size="small"
+                  @change="inputChange"
+                />
+                <el-button style="margin-left: 15px" type="primary" size="mini" @click="search"> 搜索 </el-button>
+              </div>
+              <i
+                v-if="tableV"
+                class="el-icon-d-arrow-right"
+                @click="
+                  () => {
+                    tableV = !tableV
+                    resourceWidth = '100%'
+                  }
+                "
+              />
+            </template>
+            <template #center>
+              <div id="table-contain">
+                <div class="resourceList" :style="{ width: resourceWidth }">
+                  <common-table
+                    ref="tableCom"
+                    :columns="columns"
+                    :params="queryParam"
+                    :api="tableApi"
+                    :table-refresh="tableRefresh"
+                    :table-config="tableConfig"
+                    :table-setting="false"
+                    :disabled-check-all="true"
+                    is-radio-select
+                    @row-click="rowClick"
+                    @select="select"
+                    @row-dblclick="rowDblclick"
+                    @requested-table-data="requestedTableData"
+                  >
+                    <template #taskCount="{ scope }">
+                      <i v-if="scope.row.taskCount > 0" class="p8 icon-conflict" @click="showUserLoad(scope.row)" />
+                    </template>
+                  </common-table>
+                </div>
+                <div class="resourceLoad">
+                  <common-table
+                    v-if="tableV"
+                    ref="table"
+                    :columns="columnsT"
+                    :params="queryParamT"
+                    :api="tableApiT"
+                    :table-refresh="tableRefreshT"
+                    :table-config="tableConfigT"
+                    :table-setting="false"
+                  />
+                </div>
+              </div>
+            </template>
+          </list-layout>
+        </el-tab-pane>
+        <el-tab-pane v-if="tabsShow('user')" label="系统用户" name="user">
+          <UserSelect :visible="true" @sysUserSelect="sysUserSelect" @dbClickUser="dbClickUser" />
+        </el-tab-pane>
+        <el-tab-pane v-if="tabsShow('dept')" label="部门派发" name="dept">
+          <DeptSelect @deptChange="deptChange" />
+        </el-tab-pane>
+      </el-tabs>
     </template>
   </common-dialog>
 </template>
@@ -106,17 +124,24 @@
   width: 50%;
   height: 100%;
 }
+.resource_tab {
+  height: 100%;
+}
 </style>
 <script>
 import Vue from 'vue'
 import { P8Table as CommonTable, P8Dialog as CommonDialog, P8ListLayout as ListLayout, Input } from 'p8-components-ui'
+import UserSelect from './UserSelect.vue'
+import DeptSelect from './deptSelect.vue'
 export default {
   name: 'ResourceSelect',
   components: {
     'el-input': Input,
     CommonTable,
     CommonDialog,
-    ListLayout
+    ListLayout,
+    DeptSelect,
+    UserSelect
   },
   inject: {
     DutyPersonsMessage: {
@@ -124,7 +149,7 @@ export default {
       from: 'DutyPersonsMessage'
     }
   },
-  props: ['startTaskId', 'endTaskId', 'planInfoId', 'visible', 'selectTaskOwnerId', 'showType'],
+  props: ['startTaskId', 'endTaskId', 'planInfoId', 'visible', 'selectTaskOwnerId', 'showType', 'selectModel'],
   data() {
     return {
       comp: this,
@@ -135,7 +160,9 @@ export default {
       dialogConfig: {
         modal: false
       },
+      activeName: '',
       currentRow: null,
+      selectType: '',
       tableApi: 'planGanttManager.planResourceLoad',
       searchName: '',
       queryParam: {
@@ -196,6 +223,17 @@ export default {
       tableApiT: 'planGanttManager.resourceTaskLoad',
       tableConfigT: {}
     }
+  },
+  computed: {
+    tabsShow() {
+      return (type) => {
+        return this.selectModel.includes(type)
+      }
+    }
+  },
+  created() {
+    this.activeName = this.selectModel[0]
+    console.log('🚀 ~ created ~ this.activeName:', this.activeName)
   },
   mounted() {
     if (this.showType === '1' || this.showType === '2' || this.showType === '3') {
@@ -303,6 +341,7 @@ export default {
           this.$refs.tableCom.$refs.table.toggleRowSelection(row, true)
           this.currentRow = row
         }
+        this.selectType = 'team'
       }
     },
     // 勾选复选框选中行
@@ -312,6 +351,7 @@ export default {
       }
       // this.$refs.tableCom.$refs.table.toggleRowSelection(row)
       this.currentRow = row
+      this.selectType = 'team'
     },
     // 双击行，直接关闭抽屉、回填值
     rowDblclick(row, column, event) {
@@ -319,6 +359,7 @@ export default {
         this.$refs.tableCom.$refs.table.clearSelection()
         this.$refs.tableCom.$refs.table.toggleRowSelection(row)
         this.currentRow = row
+        this.selectType = 'team'
         this.submit()
       }
     },
@@ -341,7 +382,7 @@ export default {
       const _this = this
       if (data.length) {
         this.$nextTick(() => {
-          data.map((item) => {
+          data.forEach((item) => {
             if (item.id === _this.selectTaskOwnerId) {
               _this.$refs.tableCom.$refs.table.setCurrentRow(item)
               _this.currentRow = item
@@ -361,7 +402,21 @@ export default {
         })
     },
     submit() {
-      this.$emit('resource-selected', this.currentRow.id, this.currentRow)
+      this.$emit('resource-selected', this.currentRow.id, this.currentRow, this.selectType)
+    },
+    sysUserSelect(row) {
+      this.selectType = 'user'
+      this.currentRow = row
+    },
+    dbClickUser(row) {
+      this.selectType = 'user'
+      this.currentRow = row
+      this.submit()
+    },
+    deptChange(row) {
+      this.selectType = 'dept'
+      this.currentRow = row
+      this.submit()
     },
     search() {
       const that = this
