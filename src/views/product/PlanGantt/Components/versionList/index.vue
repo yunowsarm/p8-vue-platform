@@ -185,12 +185,24 @@ export default {
             type: 'warning'
           })
         } else {
-          this.planVersionId1 = this.selectedRows[0].id
-          this.planVersionNum1 = this.selectedRows[0].backType
           if (this.selectedRows.length === 2) {
-            this.planVersionId2 = this.selectedRows[1].id
-            this.planVersionNum2 = this.selectedRows[1].backType
+            let obj = {}
+            let versionSort = []
+            this.selectedRows.forEach((item, index) => {
+              let version = item.backType.split('.')[2]
+              obj[version] = index
+              versionSort.push(version)
+            })
+            versionSort.sort(function(a, b) {
+              return a - b;
+            })
+            this.planVersionId1 = this.selectedRows[obj[versionSort[0]]].id
+            this.planVersionNum1 = this.selectedRows[obj[versionSort[0]]].backType
+            this.planVersionId2 = this.selectedRows[obj[versionSort[1]]].id
+            this.planVersionNum2 = this.selectedRows[obj[versionSort[1]]].backType
           } else {
+            this.planVersionId1 = this.selectedRows[0].id
+            this.planVersionNum1 = this.selectedRows[0].backType
             this.planVersionId2 = this.planInfoId
             this.planVersionNum2 = '当前计划'
             this.versionType = 'task'

@@ -157,9 +157,14 @@ export default {
           this.selectTaskId2 = task.id
           this.selectTaskName2 = task.name
         }
-        ganttObject.updateTask(newVal)
-        if (oldVal) {
-          ganttObject.updateTask(oldVal)
+      } else {
+        if (type === 'one') {
+          this.selectTaskId1 = ''
+          this.selectTaskName1 = ''
+        }
+        if (type === 'two') {
+          this.selectTaskId2 = ''
+          this.selectTaskName2 = ''
         }
       }
     },
@@ -261,31 +266,38 @@ export default {
      * @param obj: { gant1, gant2, v1, v2 }
      * @params gant1: 版本的甘特对象1
      * @params gant2: 版本的甘特对象2
-     * @params v1: 版本数据
-     * @params v2: 版本数据
+     * @params v1: 版本数据 V1是比较旧的版本
+     * @params v2: 版本数据 v2是比较新的版本
      */
     saveGantColumnColor ({ ...obj }) {
-      let result = []; let gant = null
-      if (obj.result2.length > obj.result1.length) {
-        obj.result2.forEach(v2 => {
-          if (!obj.result1.some(v1 => v1.id === v2.id)) {
-            result.push(v2.id)
+      // 删选被删除的任务
+      let result1 = []
+      let gant1 = null
+      obj.result1.forEach(v1 => {
+        if (!obj.result2.some(v2 => v1.id === v2.id)) {
+          result1.push(v1.id)
+        }
+      })
+      gant1 = obj.gant1
+      if (gant1 !== null) {
+        gant1.templates.grid_row_class = (start, end, task) => {
+          if (result1.includes(task.id)) {
+            return 'delColor'
           }
-        })
-        gant = obj.gant2
+        }
       }
-      if (obj.result1.length > obj.result2.length) {
-        obj.result1.forEach(v1 => {
-          if (!obj.result2.some(v2 => v1.id === v2.id)) {
-            result.push(v1.id)
-          }
-        })
-        gant = obj.gant1
-      }
-      if (gant !== null) {
-        gant.templates.grid_row_class = (start, end, task) => {
-          //  新版和旧版数据不一致，不一致的数据样式标记
-          if (result.includes(task.id)) {
+      // 筛选新增的任务
+      let result2 = []
+      let gant2 = null
+      obj.result2.forEach(v2 => {
+        if (!obj.result1.some(v1 => v1.id === v2.id)) {
+          result2.push(v2.id)
+        }
+      })
+      gant2 = obj.gant2
+      if (gant2 !== null) {
+        gant2.templates.grid_row_class = (start, end, task) => {
+          if (result2.includes(task.id)) {
             return 'updColor'
           }
         }
@@ -301,7 +313,10 @@ export default {
 .myGantt ::v-deep {
   // 2个版本，无数据的颜色修改
   .gantt_row:not([aria-expanded]).updColor {
-    background-color: red;
+    background-color: #b2e0df !important;
+  }
+  .gantt_row:not([aria-expanded]).delColor {
+    background-color: #FF4040 !important;
   }
 }
 .version_num {
