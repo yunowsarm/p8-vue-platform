@@ -283,7 +283,7 @@
                      :visible="visibleThirdDrawer"
                      direction="ttb"
                      :title="thirdMenuTitle"
-                     :drawer-config="drawerConfig"
+                     :drawer-config="menuLayoutDrawerConfig"
                      @close='onThirdMenuClose'
                      size="100%">
         <template #drawer>
@@ -471,6 +471,10 @@ export default {
       codeForm: '', // 新建/修改表单code
       dataViewId: '', // 修改页面id
       drawerConfig: {
+        modal: false
+      },
+      menuLayoutDrawerConfig: {
+        withHeader: false,
         modal: false
       },
       viewVisible: false, // 查看抽屉visible
