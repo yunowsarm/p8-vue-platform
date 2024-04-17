@@ -55,6 +55,15 @@
       <div style="width: 50%">
         <span style="float: right; margin-right: 40px">合计 {{ taskCount }} 条</span>
         <span style="float: right; margin-right: 40px">已选中 {{ selectTaskCount }} 条</span>
+        <el-popover
+          placement="top"
+          width="200"
+          trigger="click">
+          <div class="user_list">
+            <span v-for="user in editUserList">{{user.userName}}</span>
+          </div>
+          <span slot="reference" style="float: right; margin-right: 40px;cursor:pointer">正在编辑 {{ editUserList.length }} 人</span>
+        </el-popover>
       </div>
     </div>
     <el-drawer :title="activityImportTitle" :append-to-body="true" size="50%" :destroy-on-close="true" :wrapper-closable="false" @closed="activityImportClosed" :visible.sync="activityImportVisible">
@@ -298,6 +307,17 @@
     background: #f7f8fc;
   }
 }
+.user_list {
+  display: flex;
+  flex-direction: column;
+  span {
+    padding: 5px;
+    border-bottom: #cccccc;
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
 </style>
 <script>
 import {
@@ -512,6 +532,7 @@ export default {
           params: {}
         }
       },
+      onlineData: [],
       treeDataEditorConfig1: {
         useTreeFormat: true,
         useTreePId: '',
@@ -734,11 +755,20 @@ export default {
   },
   created() {},
   mounted() {
+    let that = this
     this.scrollBarHeight = 40 * this.menuData.length + 1 + 'px'
     window.movement = this.movement
     window.isDisable = this.isDisable
+    window.myWebSocket.on('planGantGroup', (data) => {
+      that.onlineData = data
+    })
   },
   computed: {
+    editUserList () {
+      return this.onlineData.filter(item => {
+        return item.entityId == this.planInfoId && item.entityType == this.createPage
+      })
+    },
     isDisable() {
       const that = this
       return function (btnConfig) {
@@ -1379,6 +1409,9 @@ export default {
       this.changeHistoryVisible = false
       this.$store.dispatch('setVueThis', this)
     }
-  }
+  },
+  destroyed() {
+    window.myWebSocket.off('planGantGroup')
+  },
 }
 </script>
