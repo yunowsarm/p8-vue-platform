@@ -1388,7 +1388,11 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      return false
+      const vueThis = store.getters.vueThis
+      if (vueThis.viewType && (vueThis.viewType === 'resource' || vueThis.viewType === 'gantt')) {
+        return false
+      }
+      return true
     }
   },
   {
