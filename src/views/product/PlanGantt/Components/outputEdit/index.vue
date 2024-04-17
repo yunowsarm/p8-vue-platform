@@ -161,6 +161,10 @@ export default {
     saved(res) {
       if (res === 'true') {
         this.getOutputData(this.taskId)
+        const ganttObject = GanttObject.getGanttObject(this.ganttName)
+        const task = ganttObject.getTask(this.taskId)
+        task.outputAsk = 1
+        ganttObject.updateTask(this.taskId)
       }
     },
     customValidate(saveParams) {
