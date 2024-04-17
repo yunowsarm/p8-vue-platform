@@ -575,22 +575,23 @@ export function getGanttColumns(ganttObject, vueThis) {
       resize: true,
       // editor: editors.userEditor,
       template: function (task) {
-        const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
-        const owner = task[ganttObject.config.resource_property]
-        if (owner) {
-          const userMessage = resourceDatas.getItem(owner)
+        return task.realName
+        // const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
+        // const owner = task[ganttObject.config.resource_property]
+        // if (owner) {
+        //   const userMessage = resourceDatas.getItem(owner)
 
-          const userList = ganttObject.serverList('userList')
-          let text = ''
-          userList.forEach((item) => {
-            if (userMessage && item.id === userMessage.userId && item.weatherOut === '1') {
-              text += `<span style="color: #FF0000">(已退出)</span>`
-            }
-          })
-          return `<span data-column-name="owner_id" class="gantt_owner_id">${(userMessage.name += text)}</span>`
-        } else {
-          return `<span data-column-name="owner_id" class="gantt_owner_id"></span>`
-        }
+        //   const userList = ganttObject.serverList('userList')
+        //   let text = ''
+        //   userList.forEach((item) => {
+        //     if (userMessage && item.id === userMessage.userId && item.weatherOut === '1') {
+        //       text += `<span style="color: #FF0000">(已退出)</span>`
+        //     }
+        //   })
+        //   return `<span data-column-name="owner_id" class="gantt_owner_id">${(userMessage.name += text)}</span>`
+        // } else {
+        //   return `<span data-column-name="owner_id" class="gantt_owner_id"></span>`
+        // }
       }
     },
     {

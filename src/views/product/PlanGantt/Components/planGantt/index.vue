@@ -98,6 +98,7 @@
       :end-task-id="endTaskId"
       :plan-info-id="planInfoId"
       :select-task-owner-id="selectTaskOwnerId"
+      :select-model="resourceSelectModel"
       @closed="resourceSelectclosed"
       @resource-selected="resourceSelected"
     >
@@ -566,6 +567,7 @@ export default {
       Mycolumns: Mycolumns,
       selectTaskName: '',
       resourceSelectVisible: false, // 责任选择框校验
+      resourceSelectModel: null,
       activityImportTitle: '活动导入',
       experienceImportTitle: '经验库导入',
       activityImportVisible: false,
@@ -1129,6 +1131,7 @@ export default {
 
             // myGantt.serverList(myGantt.config.task_status, vueThis.taskStatus)
             vueThis.budgetList = res.budgetList
+            vueThis.resourceSelectModel = res.distribution
             vueThis.taskClassifyDatas = res.taskClassifys
             vueThis.issueStatus = res.issueStatus
             vueThis.monitorPointDatas = res.monitorPointDatas
@@ -1256,14 +1259,21 @@ export default {
     outPutViewClose() {
       this.outPutViewVisible = false
     },
-    resourceSelected(ownerId, row) {
+    resourceSelected(ownerId, row, type) {
       const that = this
       if (that.selectedTasks && that.selectedTasks.length > 0) {
         myGantt.batchUpdate(function () {
           that.selectedTasks.forEach((task) => {
-            myGantt.getTask(task.id).owner_id = ownerId
-            myGantt.getTask(task.id).specialDutyUserId = ownerId
-            myGantt.getTask(task.id).dutyDeptName = row.deptName
+            if(type == 'dept'){
+              myGantt.getTask(task.id).owner_id = ownerId
+              myGantt.getTask(task.id).dutyDeptId = row.id
+              myGantt.getTask(task.id).dutyDeptName = row.label
+            } else {
+              myGantt.getTask(task.id).owner_id = ownerId
+              myGantt.getTask(task.id).realName = row.realName
+              myGantt.getTask(task.id).dutyDeptName = row.deptName
+            }
+            myGantt.getTask(task.id).owner_type = type
             myGantt.updateTask(task.id)
           })
         })
