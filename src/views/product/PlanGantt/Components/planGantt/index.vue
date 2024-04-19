@@ -59,7 +59,7 @@
           placement="top"
           width="200"
           trigger="click">
-          <div class="user_list">
+          <div class="edit_gantt_user_list">
             <span v-for="user in editUserList">{{user.userName}}</span>
           </div>
           <span slot="reference" style="float: right; margin-right: 40px;cursor:pointer">正在编辑 {{ editUserList.length }} 人</span>
@@ -267,6 +267,19 @@
 <style lang="scss">
 @import '~p8-dhtmlx-gantt/codebase/dhtmlxgantt.css';
 @import '@/assets/commonJS/ganttJS/ganttObject.css';
+.edit_gantt_user_list {
+  max-height: 500px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  span {
+    padding: 5px;
+    border-bottom: #cccccc;
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
 </style>
 <style lang="scss" scoped>
 #actionMenu {
@@ -306,17 +319,6 @@
   & ::v-deep .el-drawer__body {
     padding: 10px;
     background: #f7f8fc;
-  }
-}
-.user_list {
-  display: flex;
-  flex-direction: column;
-  span {
-    padding: 5px;
-    border-bottom: #cccccc;
-    &:last-child {
-      border-bottom: none;
-    }
   }
 }
 </style>
@@ -763,6 +765,16 @@ export default {
     window.isDisable = this.isDisable
     window.myWebSocket.on('planGantGroup', (data) => {
       that.onlineData = data
+      let html = '<div class="edit_gantt_user_list">'
+      that.editUserList.forEach((item) => {
+        html += `<span>${item.userName}</span>`
+      })
+      html += '</div>'
+      that.$notify({
+        title: `当前共有${that.editUserList.length}人编制当前计划`,
+        dangerouslyUseHTMLString: true,
+        message: html
+      })
     })
   },
   computed: {
