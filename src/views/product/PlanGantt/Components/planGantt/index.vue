@@ -55,14 +55,11 @@
       <div style="width: 50%">
         <span style="float: right; margin-right: 40px">合计 {{ taskCount }} 条</span>
         <span style="float: right; margin-right: 40px">已选中 {{ selectTaskCount }} 条</span>
-        <el-popover
-          placement="top"
-          width="200"
-          trigger="click">
+        <el-popover placement="top" width="200" trigger="click">
           <div class="edit_gantt_user_list">
-            <span v-for="user in editUserList">{{user.userName}}</span>
+            <span v-for="user in editUserList">{{ user.userName }}</span>
           </div>
-          <span slot="reference" style="float: right; margin-right: 40px;cursor:pointer">正在编辑 {{ editUserList.length }} 人</span>
+          <span slot="reference" style="float: right; margin-right: 40px; cursor: pointer">正在编辑 {{ editUserList.length }} 人</span>
         </el-popover>
       </div>
     </div>
@@ -249,7 +246,7 @@
     ></my-experience-base>
     <common-drawer v-if="versionListVisible" :visible="versionListVisible" size="70%" placement="top" title="版本列表" @close="versionListVisible = false">
       <template #drawer>
-        <version-list :plan-info-id="planInfoId" :mainGanttName="ganttName"></version-list>
+        <version-list :plan-info-id="planInfoId" :main-gantt-name="ganttName"></version-list>
       </template>
     </common-drawer>
     <common-drawer v-if="progressHistoryVisible" :visible="progressHistoryVisible" size="50%" placement="top" title="任务进度反馈" @close="progressHistoryVisible = false">
@@ -259,7 +256,7 @@
     </common-drawer>
     <common-drawer v-if="changeHistoryVisible" :visible="changeHistoryVisible" size="80%" placement="top" title="任务历史变更" @close="changeHistoryClose">
       <template #drawer>
-        <ChangeHistory :plan-info-id="planInfoId" :task-id="selectTaskId" :create-page="createPage"/>
+        <ChangeHistory :plan-info-id="planInfoId" :task-id="selectTaskId" :create-page="createPage" />
       </template>
     </common-drawer>
   </div>
@@ -365,8 +362,8 @@ import CommonButtonBarSetting from '@/components/gantt/Components/CommonButtonBa
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
 import VersionList from '../versionList'
-import ProgressHistory from '../progressHistory';
-import ChangeHistory from '../changeHistory';
+import ProgressHistory from '../progressHistory'
+import ChangeHistory from '../changeHistory'
 import { version } from 'vue'
 const Mycolumns = [
   {
@@ -759,7 +756,7 @@ export default {
   },
   created() {},
   mounted() {
-    let that = this
+    const that = this
     this.scrollBarHeight = 40 * this.menuData.length + 1 + 'px'
     window.movement = this.movement
     window.isDisable = this.isDisable
@@ -778,8 +775,8 @@ export default {
     })
   },
   computed: {
-    editUserList () {
-      return this.onlineData.filter(item => {
+    editUserList() {
+      return this.onlineData.filter((item) => {
         return item.entityId == this.planInfoId && item.entityType == this.createPage
       })
     },
@@ -1143,7 +1140,11 @@ export default {
 
             // myGantt.serverList(myGantt.config.task_status, vueThis.taskStatus)
             vueThis.budgetList = res.budgetList
-            vueThis.resourceSelectModel = res.distribution
+            if (createPage === 'decompose' && res.distribution) {
+              vueThis.resourceSelectModel = ['user']
+            } else {
+              vueThis.resourceSelectModel = [res.distribution]
+            }
             vueThis.taskClassifyDatas = res.taskClassifys
             vueThis.issueStatus = res.issueStatus
             vueThis.monitorPointDatas = res.monitorPointDatas
@@ -1425,20 +1426,20 @@ export default {
         })
       })
     },
-    showTaskProgressDialog (taskId) {
+    showTaskProgressDialog(taskId) {
       this.selectedId = taskId
       this.progressHistoryVisible = true
     },
-    showChangeHistory () {
+    showChangeHistory() {
       this.changeHistoryVisible = true
     },
-    changeHistoryClose () {
+    changeHistoryClose() {
       this.changeHistoryVisible = false
       this.$store.dispatch('setVueThis', this)
     }
   },
   destroyed() {
     window.myWebSocket.off('planGantGroup')
-  },
+  }
 }
 </script>
