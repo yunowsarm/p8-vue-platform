@@ -982,6 +982,8 @@
                            value="datetime"></el-option>
                 <el-option label="时间范围"
                            value="datetimeRange"></el-option>
+                <el-option label="默认当前年"
+                           value="currentDate"></el-option>
                 <el-option label="日期年"
                            value="year"></el-option>
                 <el-option label="日期月"
@@ -1133,6 +1135,18 @@
                                 end-placeholder="结束日期"
                                 valueFormat='yyyy-MM-dd'
                                 @change="dateChange(scope, data)">
+                </el-date-picker>
+              </div>
+              <div v-if="scope.row.searchMode === 'currentDate'">
+                <el-date-picker v-model="scope.row.defaultValueDatas"
+                                type="daterange"
+                                style="width: 100%"
+                                range-separator="至"
+                                unlink-panels
+                                readonly
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期"
+                                valueFormat='yyyy-MM-dd'>
                 </el-date-picker>
               </div>
               <!-- 数字 -->
@@ -2819,32 +2833,38 @@ export default {
     },
     async saveSearchData (data, type, scope, row) {
       let that = this
-      if (type) {
-        console.log(scope.row.defaultValueData,'----111111111');
-        // scope.row.defaultValueData = undefined
+      if (type === 'currentDate') {
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const defaultValueDatas = [currentYear + '-01-01', currentYear + '-12-31']
+        scope.row.defaultValueData = defaultValueDatas.toString()
+        scope.row.defaultValueDatas = defaultValueDatas
+      } else {
+        scope.row.defaultValueData = ''
+        scope.row.defaultValueDatas = []
       }
       if (row) {
         if (row.searchMode === 'select' || row.searchMode === 'multiple') {
           let res = await this.$api['formGenerator.getSelectionData']({ selectCode: row.dictCode })
           if (res && res.data) {
-            if (res.config)  {
-              console.log(selectGenerateTree(res.data, res.config),'---selectGenerateTree(res.data, res.config)');
-              that.$set(row,'defaultData', selectGenerateTree(res.data, res.config))
+            if (res.config) {
+              console.log(selectGenerateTree(res.data, res.config), '---selectGenerateTree(res.data, res.config)');
+              that.$set(row, 'defaultData', selectGenerateTree(res.data, res.config))
             } else {
-              that.$set(row,'defaultData', res.data)
+              that.$set(row, 'defaultData', res.data)
             }
           }
         }
         if (row.searchMode === 'treeSelect') {
           let res = await this.$api['formGenerator.getSelectionData']({ selectCode: row.dictCode })
           if (res && res.data) {
-            that.$set(row,'defaultData', selectGenerateTree(res.data, res.config))
+            that.$set(row, 'defaultData', selectGenerateTree(res.data, res.config))
           }
         }
       }
       this.searchDetailData = data
     },
-    selectChange (scope,data) {
+    selectChange (scope, data) {
       this.searchDetailData = data
     },
     treeChange (scope, data) {
@@ -3297,15 +3317,15 @@ export default {
         if (el.searchMode === 'select' || el.searchMode === 'multiple') {
           let res = await this.$api['formGenerator.getSelectionData']({ selectCode: el.dictCode })
           if (res && res.data) {
-            if (res.config)  {
-              that.$set(el,'defaultData', selectGenerateTree(res.data, res.config))
+            if (res.config) {
+              that.$set(el, 'defaultData', selectGenerateTree(res.data, res.config))
             } else {
-              that.$set(el,'defaultData', res.data)
+              that.$set(el, 'defaultData', res.data)
             }
           }
         }
         if (el.searchMode === 'treeSelect') {
-          let res =  await this.$api['formGenerator.getSelectionData']({ selectCode: el.dictCode })
+          let res = await this.$api['formGenerator.getSelectionData']({ selectCode: el.dictCode })
           if (res && res.data) {
             el.defaultData = selectGenerateTree(res.data, res.config)
           }

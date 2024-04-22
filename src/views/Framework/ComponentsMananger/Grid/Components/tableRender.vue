@@ -890,7 +890,7 @@ export default {
               }
               if (item.searchMode) {
                 this.searchData.push({
-                  type: item.searchMode, // 控件类型
+                  type: item.searchMode === 'currentDate' ? 'datetimeRange' : item.searchMode, // 控件类型
                   labelText: item.fieldTxt, // 控件显示的文本
                   fieldName: item.fieldName,
                   mode: '=',
@@ -988,6 +988,9 @@ export default {
           })
           // 树形表格设置展开列
           res.reportItems.forEach((item, index) => {
+            if (item.type === 'currentDate') {
+              item.type === 'datetimeRange'
+            }
             if (item.treeNode === '1') {
               columnData.forEach((el) => {
                 if (el.dataIndex === item.fieldName) {
