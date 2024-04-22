@@ -894,7 +894,7 @@ export default {
               }
               if (item.searchMode) {
                 this.searchData.push({
-                  type: item.searchMode, // 控件类型
+                  type: item.searchMode === 'currentDate' ? 'datetimeRange' : item.searchMode, // 控件类型
                   labelText: item.fieldTxt, // 控件显示的文本
                   fieldName: item.fieldName,
                   mode: '=',
