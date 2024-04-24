@@ -9,9 +9,6 @@ const CONFIG = {
 }
 
 // eslint-disable-next-line no-unused-vars
-const SYSTEM_NAME = 'P8项目计划管理系统'
-
-// eslint-disable-next-line no-unused-vars
 // CA登录设置  为true时，CA登录
 // eslint-disable-next-line no-unused-vars
 const loginCa = false
