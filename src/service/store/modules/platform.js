@@ -22,7 +22,7 @@ const SYSTEM_IMAGE_KEY = GLOBAL_CONST.systemTheme.systemImageKey
 const SHORTCUT_MENU_KEY = GLOBAL_CONST.shortcut.shortcutKey
 // ORIGINAL THEME COLOR
 const ORIGINAL_THEME = GLOBAL_CONST.systemTheme.originalColor // default color
-const SYSTEM_NAME = GLOBAL_CONST.systemTheme.systemName // default color
+// const SYSTEM_NAME = GLOBAL_CONST.systemTheme.systemName // default color
 //
 let chalkTheme = null
 /**
@@ -111,7 +111,7 @@ const platform = {
     // systemTheme: Cookie.get(SYSTEM_THEME_KEY) || 'chalk',
     theme: Cookie.get(SYSTEM_THEME_KEY) || themeVariables.theme,
     shortcutMenu: [], // 自定义菜单项,由用户自定义出的菜单项
-    systemName: Cookie.get(SYSTEM_NAME) || '',
+    systemName: Cookie.get('P8V3.0-PLATFORM') || '',
     headerHeight: plateformVariables.headerHeight, // 头部(header)高度
     tagTabHeight: plateformVariables.headerTagHeight, //  标签页(tagTabs)高度
     imageUrl: Cookie.get(SYSTEM_IMAGE_KEY) || '',
@@ -140,7 +140,7 @@ const platform = {
     SET_SYSTEM_NAME(state, data) {
       state.systemName = data
       document.title = data
-      Cookie.set(SYSTEM_NAME, data, 1000)
+      Cookie.set('P8V3.0-PLATFORM', data, 1000)
     },
     // 设置侧边栏隐藏
     SET_HIDDEN_SIDEBAR(state, isHidden) {

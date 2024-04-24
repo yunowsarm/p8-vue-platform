@@ -105,7 +105,7 @@ export default {
         userPassword: [{ required: true, message: '请输入密码', trigger: 'blur' }]
       },
       dayTime: '',
-      system_name: 'PLATFORM_PREFIX_NAME',
+      system_name: 'P8V3.0-PLATFORM',
       systemNames: PLATFORM_PREFIX_NAME,
       flag: 'systemModel1',
       loginCa: CA_LOGIN,
