@@ -36,6 +36,7 @@
         </div>
         <div class="contentText-box">
           <textarea class="contentText-textarea"
+                    autofocus
                     ref="textareaRef"
                     v-model="contentText">
               </textarea>
@@ -85,6 +86,7 @@ export default {
     }
   },
   mounted () {
+    this.$refs.textareaRef.focus();
     console.log(window, 'myWebSocket' + this.$store.state.user.userId);
     setTimeout(() => {
       this.scrollBottm();
@@ -178,6 +180,7 @@ export default {
       this.$emit('input', params)
       setTimeout(() => {
         this.scrollBottm();
+        this.$refs.textareaRef.focus()
       }, 100);
     },
     // 滚动条到底部
