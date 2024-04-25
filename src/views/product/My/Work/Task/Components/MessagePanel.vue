@@ -161,6 +161,7 @@ export default {
   },
   mounted () {
     this.onSelectUser('update')
+    this.$refs.textareaRef.focus();
     // setTimeout(() => {
     //   this.scrollBottm();
     // }, 100);
@@ -295,6 +296,7 @@ export default {
       this.selectUserIds = []
       setTimeout(() => {
         this.scrollBottm();
+        this.$refs.textareaRef.focus()
       }, 100);
     },
     // 滚动条到底部
