@@ -923,6 +923,15 @@ export const system = {
   ],
   documentManagement: [
     {
+      name: 'viewExportWord',
+      method: 'POST',
+      path: '/exportWord/viewExportWord',
+      mockPath: '/exportWord/viewExportWord',
+      params: {
+      },
+      desc: '富文本编辑器导出'
+    },
+    {
       name: 'getWebsocketGroupAll',
       method: 'POST',
       path: '/framework/websocket/getWebsocketGroupAll',
