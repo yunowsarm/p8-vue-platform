@@ -239,7 +239,7 @@ export default {
     },
     save () {
       const this_ = this
-      this.$api['documentManagement.save']({ uploadFiles: this.uploadFiles, classify: this.queryParam.classify ? this.queryParam.classify : 'dc_zff_01' }).then((res) => {
+      this.$api['documentManagement.save']({ uploadFiles: this.uploadFiles, classify: this.queryParam.classify ? this.queryParam.classify : 'dc_0101' }).then((res) => {
         this_.$message({
           message: '操作成功',
           type: 'success'
