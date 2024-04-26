@@ -1,7 +1,8 @@
 <template>
-  <div style="position: relative; padding-bottom: 50px">
+  <div style="position: relative; padding-bottom: 25px">
     <form-list
       ref="form"
+      v-if="!isEmpty"
       @rendered="rendered"
       form-layout="vertical"
       @saved="saved"
@@ -15,9 +16,14 @@
       @custom-validate="customValidate"
     >
     </form-list>
+    <el-empty v-if="isEmpty" class="custom_empty" :image-size="100"></el-empty>
   </div>
 </template>
-<style scoped></style>
+<style scoped>
+.custom_empty {
+  padding: 0;
+}
+</style>
 <script>
 import { P8Form as FormList } from 'p8-components-ui'
 import { mapGetters } from 'vuex'
@@ -43,6 +49,7 @@ export default {
       isCustomValidate: true,
       existDefaultBtn: false,
       existCustomBtn: true,
+      isEmpty: false,
       dataSource: [
         {
           // labelText: '输出信息',
@@ -119,13 +126,17 @@ export default {
       }
     },
     getOutputData(taskId) {
+      console.log('🚀 ~ outputView ~ taskId:', taskId)
       const that = this
       that.otherParam = { taskId: taskId }
-      that.$api['planGanttManager.outputInfo']({ taskId: taskId })
+      that.$api['planGanttManager.outputInfo']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId })
         .then(function (res) {
           let datas = []
-          if (res) {
+          if (Array.isArray(res) && res.length > 0) {
+            that.isEmpty = false
             datas = res
+          } else {
+            that.isEmpty = true
           }
           // 变更进入时先查看newTaskMap中是否存在对应值若存在，显示，否则加载任务描述数据
           if (

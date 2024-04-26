@@ -4,6 +4,7 @@
       <common-tabs class="custom-tabs"
                    type="border-card"
                    :active-tabs="activeTabs"
+                   :hasFullScreen="true"
                    @tab-click="tabsClick"
                    :tabs-data="tabs">
         <template #approval>
@@ -751,7 +752,7 @@ $paddingLeft: 10px;
     }
   }
 }
-.approveComponent ::v-deep .formElement .el-col{
+.approveComponent ::v-deep .formElement .el-col {
   height: unset !important;
 }
 .custom-tabs {
@@ -809,5 +810,8 @@ $paddingLeft: 10px;
   line-height: 40px;
   font-size: 14px;
   box-sizing: border-box;
+}
+::v-deep .el-tabs--top .el-tabs__content {
+  height: calc(100% - 30px);
 }
 </style>

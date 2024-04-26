@@ -1,6 +1,6 @@
 // 启动项目准备
 // npm run install
-const defaultServiceAddr = 'http://' + window.location.hostname + ':' + window.location.port
+const defaultServiceAddr = window.location.origin
 // eslint-disable-next-line no-unused-vars
 const CONFIG = {
   devBaseUrl: 'http://192.168.0.86:9090', // 第一次执行参考以上备注
@@ -19,3 +19,6 @@ const loginCa = false
 // 在生产环境检测错误给出提示，默认为false 意为生产环境不提示
 // eslint-disable-next-line no-unused-vars
 const CHECK_PRODUCTION_ERROR_TIP = false
+
+// socket连接地址
+const SOCKET_URL = 'http://192.168.0.199:8888'

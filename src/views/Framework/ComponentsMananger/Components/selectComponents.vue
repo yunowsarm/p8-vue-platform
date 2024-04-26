@@ -23,9 +23,9 @@
             </template>
             <template #north>
               <search-form-list ref="search"
-                      :dataSource="searchData"
-                      @search="search"
-                      @re-set="reSet"></search-form-list>
+                                :dataSource="searchData"
+                                @search="search"
+                                @re-set="reSet"></search-form-list>
             </template>
             <template #center>
               <common-table ref="table"
@@ -62,7 +62,7 @@
             <div>自定义组件地址&nbsp;&nbsp;&nbsp;</div>
             <el-input class="input"
                       v-model="inputUrl"
-                      placeholder="请输入"></el-input>
+                      placeholder="请输入 例：XXX/XXX/XXX"></el-input>
           </div>
         </el-tab-pane>
       </el-tabs>

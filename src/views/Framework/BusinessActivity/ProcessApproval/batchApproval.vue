@@ -157,14 +157,14 @@ export default {
           .then(function (res) {
             resolve(res)
             loading.close()
+            that.close()
           })
           .catch(function (error) {
             loading.close()
             reject(error)
+            that.close()
           })
       })
-      // eslint-disable-next-line no-unreachable
-      that.close()
     }
   }
 }

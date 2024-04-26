@@ -1,5 +1,5 @@
 <template>
-  <normal-layout class="grid-table-render"
+  <normal-layout class="grid-table-render table_render"
                  :header-visible="headerVisibleType"
                  :normal-layout="normalLayout">
     <template #north>
@@ -283,7 +283,7 @@
                      :visible="visibleThirdDrawer"
                      direction="ttb"
                      :title="thirdMenuTitle"
-                     :drawer-config="drawerConfig"
+                     :drawer-config="menuLayoutDrawerConfig"
                      @close='onThirdMenuClose'
                      size="100%">
         <template #drawer>
@@ -457,6 +457,7 @@ export default {
       columns: [],
       tableParam: {}, // 应用报表参数，包括三部分
       defaultReportParam: {}, // 增删行报表参数
+      defaultSqlParam: {}, // 增删行报表参数
       sqlParam: {}, // 报表sql参数
       buttonData: [], // 报表按钮集合
       buttonConfig: [], // 重新构建的报表按钮禁用规则
@@ -470,6 +471,10 @@ export default {
       codeForm: '', // 新建/修改表单code
       dataViewId: '', // 修改页面id
       drawerConfig: {
+        modal: false
+      },
+      menuLayoutDrawerConfig: {
+        withHeader: false,
         modal: false
       },
       viewVisible: false, // 查看抽屉visible
@@ -773,6 +778,7 @@ export default {
       this.viewKeys = {}
       this.tableParam = {}
       this.defaultReportParam = {}
+      this.defaultSqlParam = {}
       this.permissionVo = { router: this.$route.name, resourceId: '' }
       this.$api['formGenerator.tableGetInfo']({ reportCode: this.code, permissionVo: this.permissionVo }).then((res) => {
         that.tableInfo = res
@@ -1027,7 +1033,11 @@ export default {
         if (res.reportParams && res.reportParams.length) {
           res.reportParams.forEach((item) => {
             if (this.getDefaultValue(item.paramValue)) {
-              this.defaultReportParam[item.paramName] = { mode: '=', relation: "and", value: this.getDefaultValue(item.paramValue) }
+              if (item.parameterSource == 'SQL参数') {
+                this.defaultSqlParam[item.paramName] = { mode: '=', relation: "and", value: this.getDefaultValue(item.paramValue) }
+              } else {
+                this.defaultReportParam[item.paramName] = { mode: '=', relation: "and", value: this.getDefaultValue(item.paramValue) }
+              }
             }
             if (item.isSearch && item.searchMode) {
               this.searchData.push({
@@ -1118,7 +1128,7 @@ export default {
     },
     rebuildParam (val) {
       const reportParam = {}
-      const defaultReportParamArr = Object.keys(this.defaultReportParam)
+      const defaultReportParamArr = [...Object.keys(this.defaultReportParam), ...Object.keys(this.defaultSqlParam)]
       const searchListArr = this.searchList.map(el => el.fieldName)
       const valArr = Object.keys(val)
       if (valArr.length) {
@@ -1155,7 +1165,7 @@ export default {
         }
       })
       this.tableParam = {
-        sqlParam: { ...this.sqlParam, ...sql, ...this.tableParam.sqlParam },
+        sqlParam: { ...this.defaultSqlParam, ...this.sqlParam, ...sql, ...this.tableParam.sqlParam },
         reportId: this.tableInfo.id,
         reportParam: {
           ...this.defaultReportParam, ...this.tableParam.reportParam, ...report
@@ -2180,6 +2190,11 @@ export default {
 .grid-table-render {
   padding: 0 !important;
   margin: 0;
+}
+.table_render {
+  ::v-deep .normal-main {
+    height: 100%;
+  }
 }
 ::v-deep .columnStyle {
   text-decoration: underline;

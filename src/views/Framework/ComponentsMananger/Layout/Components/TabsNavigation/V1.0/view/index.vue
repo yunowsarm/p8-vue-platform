@@ -45,9 +45,9 @@
   </list-layout>
 </template>
 <style lang="scss" scoped>
-.thirdMenu ::v-deep .normal-main .normal-center{
-  height: calc(100% - 40px);
-}
+// .thirdMenu ::v-deep .normal-main .normal-center{
+//   height: calc(100% - 40px);
+// }
 ::v-deep .el-tabs.el-tabs__header {
   margin: 0;
 }

@@ -80,11 +80,12 @@ function generateNewRoutes(remoteRoutes) {
    * 创建子路由
    * @param { Array } childRoute
    */
-  const _createRoutes = (childRoute) => {
+  const _createRoutes = (childRoute, parentPath) => {
     const newRoute = childRoute.map((route) => {
       // 路由传参处理，例如:path:PlanManagement/DutyOrder/index?type=1015，将type=1015通过$route的meta传到页面中
       let addChildRoute = {}
       let path = route.component
+      let routePath= ''
       if (path && path.indexOf('?') !== -1) {
         let pathUrl = path.split('?')[1].split('&')
         let pathQuery = {}
@@ -92,32 +93,34 @@ function generateNewRoutes(remoteRoutes) {
         // eslint-disable-next-line no-return-assign
         pathUrl.map((v) => (pathQuery[v.split('=')[0]] = v.split('=')[1]))
         let paramStr = ''
-        Object.keys(pathQuery).map((i) => {
-          paramStr += '/' + pathQuery[i]
+        Object.keys(pathQuery).forEach((i) => {
+         return paramStr += '/' + pathQuery[i]
         })
         let componentPath = path.split('?')[0]
         route.path = route.path + paramStr
+        routePath = route.path ? (route.path.startsWith('/') ? route.path : '/' + route.path) : ''
         addChildRoute = {
-          path: route.path ? (route.path.startsWith('/') ? route.path : '/' + route.path) : '',
+          path: routePath,
           name: route.name,
           props: pathQuery,
           isDisabled: route.isDisabled,
           component: _import_(componentPath),
-          meta: { ...route.meta, ...pathQuery }
+          meta: { ...route.meta, ...pathQuery, parentPath }
         }
       } else {
+        routePath = route.path ? (route.path.startsWith('/') ? route.path : '/' + route.path) : ''
         addChildRoute = {
-          path: route.path ? (route.path.startsWith('/') ? route.path : '/' + route.path) : '',
+          path: routePath,
           name: route.name,
           isDisabled: route.isDisabled,
           component: _import_(route.component),
-          meta: { ...route.meta }
+          meta: { ...route.meta, parentPath}
         }
       }
       // console.log(addChildRoute, 'addChildRoute')
       // // 如果有子路由,则递归创建
       if (route.children && route.children.length) {
-        addChildRoute.children = _createRoutes(route.children)
+        addChildRoute.children = _createRoutes(route.children, routePath)
       }
       return addChildRoute
     })
@@ -134,6 +137,7 @@ function generateNewRoutes(remoteRoutes) {
      * desc: 判断一级菜单
      * date: 2023/11/24 16:20:27
      */
+    let routePath = ''
     if (route.path && (!route.children || route.children.length == 0)) {
       newRoute = {
         path: '',
@@ -143,16 +147,17 @@ function generateNewRoutes(remoteRoutes) {
         children:[]
       }
       let children = [route]
-      newRoute.children = _createRoutes(children)
+      newRoute.children = _createRoutes(children, '')
     } else {
+      routePath = route.path ? (route.path.startsWith('/') ? route.path : '/' + route.path) : ''
       newRoute = {
-        path: route.path ? (route.path.startsWith('/') ? route.path : '/' + route.path) : '',
+        path: routePath,
         component: Layout,
         meta: { ...route.meta }
       }
       // 判断是否有子路由
       if (route.children && route.children.length) {
-        newRoute.children = _createRoutes(route.children)
+        newRoute.children = _createRoutes(route.children, routePath)
       }
     }
     addRouters.push(newRoute)

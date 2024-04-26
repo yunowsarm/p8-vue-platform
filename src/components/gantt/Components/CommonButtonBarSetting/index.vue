@@ -11,6 +11,17 @@
           </el-radio-group>
         </div>
       </template>
+      <template title="排程设置">
+        <div class="title">
+          <span>排程设置</span>
+        </div>
+        <div class="content">
+          <el-radio-group v-model="autoScheduling">
+            <el-radio label="1">自动</el-radio>
+            <el-radio label="0">手动</el-radio>
+          </el-radio-group>
+        </div>
+      </template>
       <template title="右键功能区">
         <div class="title">
           <span>右键功能区</span>
@@ -96,6 +107,7 @@ export default {
         }
       ],
       value: 'double',
+      autoScheduling: '',
       buttonListInLeft: [],
       valueBtns: [],
       updataParams: {
@@ -126,6 +138,7 @@ export default {
         const settingData = this.userSettingAll.PlanButton[0]
         this.updataParamsHandle(settingData)
         this.value = settingData.value && settingData.value.type ? settingData.value.type : 'double'
+        this.autoScheduling = settingData.value && settingData.value.autoScheduling ? settingData.value.autoScheduling : ''
         const rightBtns = settingData.value && settingData.value.rightBtns
         this.valueBtns = rightBtns.map((btn) => {
           return btn.buttonId
@@ -143,7 +156,7 @@ export default {
           rightBtns.push(btn)
         }
       })
-      this.$emit('submit', { type: this.value, rightBtns: rightBtns }, this.updataParams)
+      this.$emit('submit', { type: this.value, autoScheduling: this.autoScheduling, rightBtns: rightBtns }, this.updataParams)
     },
     handleCancel() {
       this.$emit('hidden')

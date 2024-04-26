@@ -115,7 +115,7 @@ export default {
     },
     taskStatus: {
       type: Object,
-      default: null
+      default: {}
     }
   },
   components: {
@@ -146,6 +146,7 @@ export default {
       modifyCount: 0,
       dependentDatas: [],
       managerStatusMap: {}, // 管理状态全部数据
+      taskStatusMap: {},
       createTaskStatus: '', // 新建任务状态
       changeTaskInfo: {},
       changeRecordId: '',
@@ -319,6 +320,7 @@ export default {
             myGantt.serverList(myGantt.config.plan_type, res.taskClassifys)
             vueThis.changeTaskInfo = res.changeTaskInfo
             vueThis.managerStatusMap = res.managerStatusMap
+            vueThis.taskStatusMap = res.taskStatusMap
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
           }
@@ -334,7 +336,7 @@ export default {
     },
     detailDrawerClosed(res) {
       this.detailVisible = false
-      this.selectTaskId = ''
+      // this.selectTaskId = ''
     },
     sendTaskJson() {
       const that = this

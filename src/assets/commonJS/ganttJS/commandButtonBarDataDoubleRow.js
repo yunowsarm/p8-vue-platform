@@ -204,6 +204,16 @@ const CommandButtonBarDataDoubleRow = [
         ]
       },
       {
+        groupName: '变更历史',
+        buttonConfigs: [
+          {
+            buttonId: 'change-history',
+            size: 'small',
+            position: ['top']
+          }
+        ]
+      },
+      {
         groupName: '统计信息',
         buttonConfigs: [
           {

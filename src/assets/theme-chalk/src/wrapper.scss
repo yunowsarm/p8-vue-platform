@@ -248,6 +248,15 @@
     border-right: 1px solid #e8eaec !important;
     // border-bottom: 1px solid #cccccc !important;
   }
+  .vxe-table--header-wrapper {
+    .vxe-table--header {
+      .vxe-header--row {
+        .col--group {
+          border-bottom: 1px solid #e8eaec !important;
+        }
+      }
+    }
+  }
 }
 .vxe-table--body .vxe-table--render-default .vxe-cell {
   padding: 0 !important;

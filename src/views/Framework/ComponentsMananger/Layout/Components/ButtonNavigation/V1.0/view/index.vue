@@ -61,12 +61,12 @@
   display: inline-block !important;
   width: 12px;
 }
-.layoutComponents ::v-deep .splitter-pane .normal-center{
-  height: 100% !important;
-  .grid-table-render{
-    height: 100%;
-  }
-}
+// .layoutComponents ::v-deep .splitter-pane .normal-center{
+//   height: 100% !important;
+//   .grid-table-render{
+//     height: 100%;
+//   }
+// }
 ::v-deep .search-wrapper {
   right: 10px;
 }
@@ -183,9 +183,36 @@ export default {
           }
         })
       } else {
+        const that = this
         this.asyncComponents = defaultComponents.url ? defaultComponents.url : ''
         this.componentsConfig = defaultComponents
+        this.$nextTick(() => {
+          let nodeId = that.setDefaultNode(defaultComponents)
+          that.$refs.commonTree.$refs.tree.setCurrentKey(nodeId, true)
+        })
       }
+    },
+    setDefaultNode (defaultComponents) {
+      let nodeId = ''
+      function getDefalutNode (list) {
+        list.forEach(el => {
+          let code = ''
+          if (el.componentsUrl) {
+            let parmars = el.componentsUrl.split('?')[1]
+            if (parmars) {
+              code = parmars.split('=')[1]
+            }
+          }
+          if (code == defaultComponents.code || el.componentsName == defaultComponents.name) {
+            nodeId = el.id
+          }
+          if (el.children && el.children.length) {
+            getDefalutNode(el.children)
+          }
+        })
+      }
+      getDefalutNode(this.treeData)
+      return nodeId
     },
     getFirstChild (data) {
       let result = ''

@@ -37,7 +37,8 @@
                                    :form-data="formField"
                                    :reset-flag="resetFlag"
                                    @setMode="setMode"
-                                   @setParentFormData="setParentFormData"></search-field-render>
+                                   @setParentFormData="setParentFormData"
+                                   @field-mounted="fieldMounted"></search-field-render>
             </el-col>
           </template>
         </el-row>
@@ -155,9 +156,13 @@ export default {
     }
   },
   mounted () {
-    this.search()
   },
   methods: {
+    fieldMounted (finished) {
+      if (finished) {
+        this.search()
+      }
+    },
     // 弹出选择回填值后手动给formField赋值
     setParentFormData (data, label) {
       this.formField = { ...this.formField, ...data }
@@ -173,7 +178,7 @@ export default {
         if (isValid) {
           const queryParams = this.handleParams(this.formData)
           this.changeInputVal(queryParams)
-          Object.keys(queryParams).map((item) => {
+          Object.keys(queryParams).forEach((item) => {
             let filterValue = ''
             let type = 'and'
             //是时间范围时 relation传time
@@ -183,6 +188,33 @@ export default {
               }
               if (el.type === 'multiple' && el.fieldName == item) {
                 type = 'multiple'
+              }
+              if (el.type === 'treeSelect' && el.fieldName == item && queryParams[item]) {
+                let treeData = el.options
+                let selectId = queryParams[item]
+                let selectList = [selectId];
+                let flag = false;
+                const findIds = (data) => {
+                  data.forEach((el) => {
+                    if (el.ID == selectId) {
+                      if (el.children && el.children.length) {
+                        flag = true
+                        el.children.forEach((val) => {
+                          selectList.push(val.ID)
+                          findIds(val.children)
+                        })
+                      }
+                    } else if (flag) {
+                      selectList.push(el.ID)
+                      findIds(el.children)
+                    } else {
+                      findIds(el.children)
+                    }
+                  })
+                }
+                findIds(treeData)
+                type = 'multiple'
+                queryParams[item] = selectList
               }
             })
             if (queryParams[item]) {
@@ -251,12 +283,12 @@ export default {
           if (item.label === el.labelText) {
             paramObj[el.fieldName] = item.value
             if (el.type === 'text') {
-              queryParams[el.fieldName] = { 'mode': "like", 'relation': "and", 'value': '%' + item.value + '%' }
+              return queryParams[el.fieldName] = { 'mode': "like", 'relation': "and", 'value': '%' + item.value + '%' }
             } else if (el.type === 'datetimeRange') {
               let times = item.value.split("~")
-              queryParams[el.fieldName] = { 'mode': "=", 'relation': "time", 'value': times }
+              return queryParams[el.fieldName] = { 'mode': "=", 'relation': "time", 'value': times }
             } else {
-              queryParams[el.fieldName] = { 'mode': "=", 'relation': "and", 'value': item.value }
+              return queryParams[el.fieldName] = { 'mode': "=", 'relation': "and", 'value': item.value }
             }
           }
         })
@@ -279,7 +311,7 @@ export default {
       }
       this.advanced = true
       let searchParam = {}
-      Object.keys(this.formData).map((item) => {
+      Object.keys(this.formData).forEach((item) => {
         let filterValue = ''
         if (_this.formData[item]) {
           switch (_this.modeData[item]) {

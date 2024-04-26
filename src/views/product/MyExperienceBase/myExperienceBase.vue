@@ -67,6 +67,7 @@
                         :table-config="tableConfig"
                         use-tree-p-id="parentId"
                         :table-refresh="tableRefresh"
+                        @select-all="selectAll"
                         @select="onTableSelect"
                         @selection-change="handleSelectionChange">
             <template #monitorPoints="{ scope }">
@@ -200,7 +201,7 @@ export default {
       columns: [
         {
           title: '',
-          width: 35,
+          width: 40,
           type: 'selection'
         },
         {
@@ -314,12 +315,27 @@ export default {
           this.$refs.table.$refs.table.toggleRowSelection(row, false)
         }
         this.clearRow(checkrow)
-      } else {
+        } else {
         if (select === 1) {
           this.$refs.table.$refs.table.toggleRowSelection(row, true)
         }
         this.checkRow(checkrow)
       }
+    },
+    selectAll (selection) {
+      let that = this
+      this.$nextTick(()=>{
+        let selectAll = document.querySelector('.headerRowClassName .el-table-column--selection .el-checkbox__input')
+        let tabindex
+        if (selectAll) {
+          tabindex = selectAll.getAttribute('tabindex')
+        }
+        if (!tabindex && selection && selection.length) {
+          this.checkRow(selection)
+        } else {
+          this.clearRow (this.$refs.table.tableData)
+        }
+      })
     },
     // 取消选中递归
     clearRow (data) {

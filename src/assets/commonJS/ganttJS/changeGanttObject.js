@@ -90,10 +90,10 @@ export function getChangeGantt(ganttName, vueThis) {
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0 || vueThis.createPage === 'userChange') {
           const status = task.status
           if (status && vueThis.taskStatus) {
-            const taskStatusMap = store.state.project.dicConfig.taskStatus
+            const taskStatusMap = vueThis.taskStatusMap
             if (taskStatusMap && Object.keys(taskStatusMap).length > 0) {
               const item = taskStatusMap[status]
-              const html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.title}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
+              const html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.cmeaning}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
               return html
             }
           }

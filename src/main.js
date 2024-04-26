@@ -5,6 +5,7 @@ import store from '@/plugins/store'
 import inject from '@/plugins/inject'
 import router from '@/plugins/router'
 import App from './App'
+import directive from './directives' // directive
 import Validate from '@/utils/extendValidate/extendValidate.js'
 import p8, { P8Contextmenu as Contextmenu, P8ContextmenuItem as ContextmenuItem } from 'p8-components-ui'
 import * as echarts from 'echarts'
@@ -16,6 +17,7 @@ import 'vxe-table/lib/style.css'
 Vue.use(VXETable)
 Vue.use(api, p8Config)
 Vue.use(p8)
+Vue.use(directive)
 // 全局配置项
 Vue.use(config)
 // 注入自定义组件和方法

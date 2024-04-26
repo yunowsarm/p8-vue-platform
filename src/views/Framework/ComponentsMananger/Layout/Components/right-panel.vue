@@ -103,7 +103,7 @@ export default {
           type: 'text',
           labelText: '布局编号',
           fieldName: 'layoutCode',
-          placeholder: '请输入布局编号',
+          placeholder: '请输入布局编号 例：XXX_XXX_XXX',
           colLayout: '',
           rules: [
             {

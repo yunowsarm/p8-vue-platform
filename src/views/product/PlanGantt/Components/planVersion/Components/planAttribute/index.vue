@@ -4,6 +4,7 @@
           :menuKey="{label: 'label', value: 'value'}">
     <template #describeKey>
       <describe-view :task-id="taskId"
+                      v-bind="$attrs"
                      :versionType="versionType"
                      :versionId="versionId"></describe-view>
     </template>

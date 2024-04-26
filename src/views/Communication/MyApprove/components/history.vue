@@ -33,7 +33,9 @@
         </div>
         <common-tabs class="custom-tabs"
                      type="border-card"
+                     :style="{height: tabsHeight}"
                      :active-tabs="activeTabs"
+                     :hasFullScreen="true"
                      :tabs-data="tabs">
           <template #approval>
             <component :style="{ height: tabsHeight}"
@@ -48,13 +50,12 @@
                        :is="componentLoader"
                        v-bind="formCompProp"
                        :kanban-config="componentsParams" />
-          <component
-                        :style="{ height: tabsHeight }"
-                        :selected-approval="selectedApproval"
-                        :curr-entity-id="currEntityId"
-                        v-else-if="formComp != null && formComp != ''"
-                        :is="componentLoader"
-                        v-bind="formCompProp"/>
+            <component :style="{ height: tabsHeight }"
+                       :selected-approval="selectedApproval"
+                       :curr-entity-id="currEntityId"
+                       v-else-if="formComp != null && formComp != ''"
+                       :is="componentLoader"
+                       v-bind="formCompProp" />
           </template>
           <template #bpmn>
             <bpm-view :style="{ height: tabsHeight}"
@@ -107,7 +108,7 @@ export default {
   },
   data () {
     return {
-      tabsHeight: document.documentElement.clientHeight - 270 + 'px',
+      tabsHeight: document.documentElement.clientHeight,
       businessId: '',
       formComp: '',
       currEntityId: '',
@@ -433,7 +434,8 @@ $paddingLeft: 10px;
   }
 }
 .custom-tabs {
-  height: calc(100% - 145px);
+  height: calc(100% - 65px);
+  z-index: 0 !important;
   ::v-deep .el-tabs {
     border: none;
     height: 100% !important;
