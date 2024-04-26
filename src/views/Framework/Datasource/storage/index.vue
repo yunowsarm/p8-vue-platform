@@ -251,14 +251,23 @@ export default {
         .then(() => {
           that.$api['formGenerator.dataSourceSync']({
             ids: [scope.row.id]
-          }).then((res) => {
+          }, { responseType: 'blob' }).then((res) => {
             console.log(res, '同步')
+            let fileName = 'update.sql'
             if (res) {
               that.$refs.table.searchData()
               that.$message({
                 message: '同步成功！',
                 type: 'success'
               })
+              const link = document.createElement('a')
+              link.href = window.URL.createObjectURL(new Blob([res.data]))
+              link.download = fileName
+              document.body.appendChild(link)
+
+              link.click()
+              window.URL.revokeObjectURL(link.href)
+              document.body.removeChild(link)
             } else {
               that.$message({
                 message: '同步失败，请检查表或字段！',
