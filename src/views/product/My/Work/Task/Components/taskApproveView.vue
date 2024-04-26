@@ -1,6 +1,7 @@
 <template>
   <left-center-right-layout :percentLeft="30"
                             :percentRight="65"
+                            :type="true"
                             v-if="isRouterShow">
     <template #left>
       <div class="task-info-con">
@@ -16,12 +17,13 @@
         </div>
         <div class="task-tabs-con">
           <!-- 进度反馈-未完成原因 -->
-          <task-tabs-view></task-tabs-view>
+          <task-tabs-view :approve="true"></task-tabs-view>
         </div>
       </div>
     </template>
     <template #right>
-      <div class="task-info-related-con">
+      <div class="task-info-related-con"
+           style="height: 700px !important;">
         <!-- 关联任务 -->
         <task-relation-view></task-relation-view>
       </div>
@@ -106,11 +108,11 @@ div.task-operating-con {
   height: 100%;
   div.task-manage-table {
     width: 100%;
-    height: 38%;
+    height: 50%;
     background-color: #ffffff;
   }
   div.task-tabs-con {
-    height: 62%;
+    height: 50%;
     background-color: #ffffff;
   }
 }

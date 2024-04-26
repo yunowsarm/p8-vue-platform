@@ -15,6 +15,7 @@
         <template #type="{ scope, data }">
           <el-select v-model="scope.row.type"
                      clearable
+                     placeholder="请选择"
                      @change="saveTableData(data, scope)">
             <el-option label="文本框"
                        value="text"></el-option>
@@ -31,17 +32,20 @@
         <template #fieldName="{ scope }">
           <el-input v-model="scope.row.fieldName"
                     style="width: 100%"
+                    placeholder="请输入"
                     clearable></el-input>
         </template>
         <template #labelText="{ scope }">
           <el-input v-model="scope.row.labelText"
                     style="width: 100%"
+                    placeholder="请输入"
                     clearable></el-input>
         </template>
         <template #selectCode="{ scope, data }">
           <!-- 文本框 -->
           <div v-if="scope.row.type === 'text'">
             <el-input clearable
+                      placeholder="请输入"
                       v-model="scope.row.selectCode"></el-input>
           </div>
           <!-- 目录组件 -->
@@ -50,6 +54,7 @@
                        style="width: 100%"
                        clearable
                        filterable
+                       placeholder="请选择"
                        @change="saveTableData(data)">
               <el-option v-for="item in renderData"
                          :key="item.selectionCode"
@@ -63,6 +68,7 @@
                        style="width: 100%"
                        clearable
                        filterable
+                       placeholder="请选择"
                        @change="saveTableData(data)">
               <el-option v-for="item in treeData"
                          :key="item.selectionCode"

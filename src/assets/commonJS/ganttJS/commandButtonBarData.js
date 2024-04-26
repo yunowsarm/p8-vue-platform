@@ -203,6 +203,21 @@ const CommandButtonBarData = [
     groups: 'command-search' // 组件名称
   },
   {
+    panelName: '变更历史',
+    groups: [
+      {
+        groupName: '变更历史',
+        buttonConfigs: [
+          {
+            buttonId: 'change-history',
+            size: 'large',
+            position: ['top']
+          }
+        ]
+      }
+    ]
+  },
+  {
     panelName: '统计信息',
     groups: 'command-statistic' // 组件名称
   },

@@ -781,7 +781,7 @@ export const CommandButtonData = [
       //   })
       // } else {
       // }
-      batchLock(ganttName)
+      batchLock()
     },
     isDisableFun: function (btn, ganttName, tasks) {
       let result = false
@@ -888,7 +888,7 @@ export const CommandButtonData = [
         result = true
       } else if (tasks[0].managerStatus === '6403' && tasks[0].dutyDeptName) {
         // 待下发状态责任部门（科研）不为空，可以下发
-        if (tasks[0].planType === undefined || tasks[0].planType === undefined || tasks[0].planType === '') {
+        if (tasks[0].planType === null || tasks[0].planType === undefined || tasks[0].planType === '') {
           // 当任务类型和计划类型为空时，不能下发
           result = true
         } else {
@@ -1388,7 +1388,11 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      return false
+      const vueThis = store.getters.vueThis
+      if (vueThis.viewType && (vueThis.viewType === 'resource' || vueThis.viewType === 'gantt')) {
+        return false
+      }
+      return true
     }
   },
   {
@@ -2272,6 +2276,25 @@ export const CommandButtonData = [
     }
   },
   {
+    id: 'change-history',
+    icon: 'p8 icon-rizhiliebiao',
+    title: '变更历史',
+    help: '变更历史',
+    clickFun: function (btn, ganttName, tasks) {
+      if (ganttName) {
+        const vueThis = store.getters.vueThis
+        vueThis.showChangeHistory()
+      }
+    },
+    isDisableFun: function (btn, ganttName, tasks) {
+      if (tasks.length > 0) {
+        return false
+      } else {
+        return true
+      }
+    }
+  },
+  {
     id: 'suspend-config',
     icon: 'p8 icon-pause',
     title: '暂停',
@@ -2595,7 +2618,7 @@ function addTask (num, pos, ganttName) {
           insertType: 'Before',
           type: type,
           secretGrade: parentTask.secretGrade,
-          autoScheduling: parentTask.autoScheduling,
+          autoScheduling: schedulingType || parentTask.autoScheduling,
           createPage: vueThis.createPage,
           completeForm: ' '
         })
@@ -2628,7 +2651,7 @@ function addTask (num, pos, ganttName) {
           insertType: 'After',
           type: type,
           secretGrade: parentTask.secretGrade,
-          autoScheduling: parentTask.autoScheduling,
+          autoScheduling: schedulingType || parentTask.autoScheduling,
           createPage: vueThis.createPage,
           completeForm: ' '
         })
@@ -2660,7 +2683,7 @@ function addTask (num, pos, ganttName) {
           insertType: 'Child',
           type: type,
           secretGrade: task.secretGrade,
-          autoScheduling: task.autoScheduling,
+          autoScheduling: schedulingType || task.autoScheduling,
           createPage: vueThis.createPage,
           completeForm: ' '
         })

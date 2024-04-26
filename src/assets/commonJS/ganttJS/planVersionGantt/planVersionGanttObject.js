@@ -241,13 +241,13 @@ function getPlanColumn(type, ganttObject, vueThis) {
       template: function (task) {
         // 任务图标，排除根节点
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
-          let status = task.status
+          const status = task.status
           //  status && vueThis.taskStatus
           if (status) {
-            let taskStatusMap = store.state.project.dicConfig.taskStatus
+            const taskStatusMap = vueThis.taskStatusMap
             if (taskStatusMap && Object.keys(taskStatusMap).length > 0) {
-              let item = taskStatusMap[status]
-              let html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.title}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
+              const item = taskStatusMap[status]
+              const html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.cmeaning}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
               return html
             }
           }
@@ -289,10 +289,10 @@ function getPlanColumn(type, ganttObject, vueThis) {
       align: 'left',
       monitorLockLimit: true, // 标识锁定后不可操作的列声明
       template: function (task) {
-        let links = task.$target
-        let labels = []
+        const links = task.$target
+        const labels = []
         for (let i = 0; i < links.length; i++) {
-          let link = ganttObject.getLink(links[i])
+          const link = ganttObject.getLink(links[i])
           labels.push(linksFormatter.format(link))
         }
         return labels.join(',')
@@ -319,12 +319,7 @@ function getPlanColumn(type, ganttObject, vueThis) {
                   html += `<span style="cursor: pointer"><i class="p8 ${icon}" style="cursor:pointer;" title="${point.title}"></i></span>`
                 } else {
                   if (controlTimeType && controlTimeType === '0') {
-                    html +=
-                      '<span><i class="p8 ' +
-                      icon +
-                      '" style="cursor:pointer;" title="' +
-                      point.title +
-                      '"></i></span>'
+                    html += '<span><i class="p8 ' + icon + '" style="cursor:pointer;" title="' + point.title + '"></i></span>'
                   } else {
                     html += '<i class="p8 ' + icon + '" title="' + point.title + '"></i>'
                   }
@@ -348,11 +343,11 @@ function getPlanColumn(type, ganttObject, vueThis) {
         let html = ''
         // let taskClassifyDatas = ganttObject.serverList(ganttObject.config.plan_type)
         const taskClassifyDatas = vueThis.taskClassifyDatas
-        let planType = task[ganttObject.config.plan_type]
+        const planType = task[ganttObject.config.plan_type]
         if (planType && taskClassifyDatas) {
           taskClassifyDatas.some((point, index) => {
             if (point.id === planType) {
-              let icon = point.icon
+              const icon = point.icon
               html += '<i class="' + icon + '" title="' + point.title + '"></i>'
               return true
             }

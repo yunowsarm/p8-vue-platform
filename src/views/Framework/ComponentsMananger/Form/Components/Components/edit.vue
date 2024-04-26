@@ -825,32 +825,35 @@ export default {
         this.btnLoading = false
         this.$emit('save-echarts')
       } else {
-        const that = this
-        this.$api['formGenerator.formCallSave'](params)
-          .then(function (res) {
-            if (res) {
-              that.$message({
-                type: 'success',
-                message: '保存成功!'
-              })
-              that.$emit('save-success', res)
-              that.$nextTick(() => {
-                that.editId = res
-              })
-            } else {
-              that.$message({
-                type: 'error',
-                message: '保存失败!'
-              })
-            }
-          })
-          .catch(function (error) {
-            console.log(error)
-          })
-          .finally(() => {
-            that.btnLoading = false
-          })
+        this.customSubmit(params)
       }
+    },
+    customSubmit(params) {
+      const that = this
+      this.$api['formGenerator.formCallSave'](params)
+        .then(function (res) {
+          if (res) {
+            that.$message({
+              type: 'success',
+              message: '保存成功!'
+            })
+            that.$emit('save-success', res)
+            that.$nextTick(() => {
+              that.editId = res
+            })
+          } else {
+            that.$message({
+              type: 'error',
+              message: '保存失败!'
+            })
+          }
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+        .finally(() => {
+          that.btnLoading = false
+        })
     },
     customBtnFun(fun, data, childData, logdata) {
       const params = {

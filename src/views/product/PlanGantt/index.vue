@@ -121,6 +121,7 @@ export default {
       drawerConfig: {
         modal: false
       },
+      msg: {},
       viewType: '',
       planInfoId: '',
       secretGrade: '',
@@ -234,6 +235,13 @@ export default {
       this.planBeginDateArray = this.thirdMenuParam.planBeginDateArray || []
       this.planEndDateArray = this.thirdMenuParam.planEndDateArray || []
     }
+    this.msg = {
+      entityId: this.planInfoId,
+      entityType: this.createPage,
+      sendUser: this.$store.state.user.userId,
+      sendSessionId: this.$store.state.user.userId
+    }
+    window.myWebSocket.emit('enterPlanGantGroup', this.msg)
   },
   methods: {
     selectTask (selectDatas, ganttName) {
@@ -265,6 +273,9 @@ export default {
         this.commandButtonBarHeight = '40px'
       }
     }
+  },
+  beforeDestroy() {
+    window.myWebSocket.emit('quitPlanGantGroup', this.msg)
   }
 }
 </script>

@@ -25,11 +25,16 @@
     .files-confidentialite--row {
       padding-left: 30px;
     }
+    .imgIcon {
+      width: 20px;
+      position: relative;
+      top: 5px;
+    }
     .el-link.el-link--default {
       color: #333333;
       &:hover {
         color: $base-light-color;
-        border-bottom: 0px;
+        border-bottom: 1px solid #fff;
       }
     }
   }

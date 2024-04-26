@@ -194,6 +194,38 @@
                 </el-form-item>
               </el-col>
             </el-row>
+            <!-- 我的审批页面展示 -->
+            <el-row v-if="approve">
+              <el-col :span="24">
+                <el-form-item label="未完成原因分类">
+                  <span>{{ formData.deviationTypeDisplay }}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row v-if="approve">
+              <el-col :span="12">
+                <el-form-item label="未完成原因">
+                  <span>{{ formData.deviationCauses }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="偏离影响">
+                  <span>{{ formData.deviationImpact }}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row v-if="approve">
+              <el-col :span="12">
+                <el-form-item label="进展情况">
+                  <span>{{ formData.deviationProgress }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="解决方案">
+                  <span>{{ formData.solutions }}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
             <el-row>
               <el-col :span="12">
                 <el-form-item class="formitem-progress"
@@ -358,6 +390,10 @@ export default {
     CommonTable
   },
   props: {
+    approve: {
+      type: Boolean,
+      default: false
+    },
     formData: {
       type: Object,
       default: () => { }
@@ -663,8 +699,8 @@ div.form-table-wrap {
   position: relative;
   div.form-table-con {
     height: calc(100% - 50px);
-    overflow-y: auto;
-    overflow-x: hidden;
+    // overflow-y: auto;
+    // overflow-x: hidden;
     .deviate,
     .change {
       margin-top: 10px;
@@ -677,8 +713,9 @@ div.form-table-wrap {
     }
   }
   div.form-con {
-    overflow: auto;
+    // overflow: auto;
     margin-right: 10px;
+    height: 100%;
   }
   div.table-con {
     div.title {

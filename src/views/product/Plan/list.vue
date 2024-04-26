@@ -35,16 +35,16 @@
   width: 100%;
   height: 85%;
   display: block;
-  margin: 0 auto;   
+  margin: 0 auto;
   background-size: 300px;
   background-position: center;
   margin-top: 25px;
 }
 .planLayout {
   height: 100%;
-  ::v-deep .normal-main{
-    height: calc(100% - 30px);
-  }
+  // ::v-deep .normal-main{
+  //   height: calc(100% - 30px);
+  // }
 }
 </style>
 <script>
@@ -332,11 +332,11 @@ export default {
       let str = ''
       let el = this.manageStatus[row.MANAGESTATUS]
       if (row.MANAGESTATUS && el && el.icon) {
-        str = '<i class="' + el.icon + '" style="color: ' + el.color + ';" title="' + el.meaning + '"></i>' 
+        str = '<i class="' + el.icon + '" style="color: ' + el.color + ';" title="' + el.meaning + '"></i>'
       } else {
         let item = this.executeState[row.EXECUTESTATE]
         if (item && item.icon) {
-          str = '<i class="' + item.icon + '" style="color: ' + item.color + ';" title="' + item.meaning + '"></i>' 
+          str = '<i class="' + item.icon + '" style="color: ' + item.color + ';" title="' + item.meaning + '"></i>'
         }
       }
       return str
@@ -378,7 +378,7 @@ export default {
       })
       executeState.forEach(el => {
         this.executeState[el.id] = {icon: el.icon,color: el.color,meaning: el.meaning}
-      }) 
+      })
     },
   }
 }

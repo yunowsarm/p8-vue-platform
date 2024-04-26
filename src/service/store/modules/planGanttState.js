@@ -7,11 +7,18 @@ const planGanttState = {
     planStatusLockMap: {}, // 计划状态影响gantt页面操作策略
     taskStatusLockMap: {}, // 任务状态影响gantt页面操作策略
     classifyBtnsByApi: [],
+    versionTask: {
+      versionGantt1: {},
+      versionGantt2: {}
+    },
     monitorBtnsByApi: []
   },
   mutations: {
     SET_TASK_STYLES(state, taskStyles) {
       state.taskStyles = taskStyles
+    },
+    SET_VERSION_TASK (state, { key, value }) {
+      state.versionTask[key] = value
     },
     SET_VUE_THIS(state, vueThis) {
       state.vueThis = vueThis
@@ -34,6 +41,9 @@ const planGanttState = {
   actions: {
     setTaskStyles({ commit }, taskStyles) {
       commit('SET_TASK_STYLES', taskStyles)
+    },
+    setVersionTask ({ commit }, data) {
+      commit('SET_VERSION_TASK', data)
     },
     setVueThis({ commit }, vueThis) {
       commit('SET_VUE_THIS', vueThis)

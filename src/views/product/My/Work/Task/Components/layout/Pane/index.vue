@@ -29,7 +29,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .pane-wrap {
   height: 100%;
   .pane-title {
@@ -43,7 +43,7 @@ export default {
     font-weight: 600;
   }
   .pane-info {
-    height: calc(100% - 40px);
+    height: calc(100% - 30px);
     overflow-y: auto;
   }
 }

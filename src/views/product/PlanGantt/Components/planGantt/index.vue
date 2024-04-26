@@ -55,6 +55,12 @@
       <div style="width: 50%">
         <span style="float: right; margin-right: 40px">合计 {{ taskCount }} 条</span>
         <span style="float: right; margin-right: 40px">已选中 {{ selectTaskCount }} 条</span>
+        <el-popover placement="top" width="200" trigger="click">
+          <div class="edit_gantt_user_list">
+            <span v-for="user in editUserList">{{ user.userName }}</span>
+          </div>
+          <span slot="reference" style="float: right; margin-right: 40px; cursor: pointer">正在编辑 {{ editUserList.length }} 人</span>
+        </el-popover>
       </div>
     </div>
     <el-drawer :title="activityImportTitle" :append-to-body="true" size="50%" :destroy-on-close="true" :wrapper-closable="false" @closed="activityImportClosed" :visible.sync="activityImportVisible">
@@ -89,6 +95,7 @@
       :end-task-id="endTaskId"
       :plan-info-id="planInfoId"
       :select-task-owner-id="selectTaskOwnerId"
+      :select-model="resourceSelectModel"
       @closed="resourceSelectclosed"
       @resource-selected="resourceSelected"
     >
@@ -240,7 +247,17 @@
     ></my-experience-base>
     <common-drawer v-if="versionListVisible" :visible="versionListVisible" size="70%" placement="top" title="版本列表" @close="versionListVisible = false">
       <template #drawer>
-        <version-list :plan-info-id="planInfoId"></version-list>
+        <version-list :plan-info-id="planInfoId" :main-gantt-name="ganttName"></version-list>
+      </template>
+    </common-drawer>
+    <common-drawer v-if="progressHistoryVisible" :visible="progressHistoryVisible" size="50%" placement="top" title="任务进度反馈" @close="progressHistoryVisible = false">
+      <template #drawer>
+        <ProgressHistory :task-id="selectedId" />
+      </template>
+    </common-drawer>
+    <common-drawer v-if="changeHistoryVisible" :visible="changeHistoryVisible" size="80%" placement="top" title="任务历史变更" @close="changeHistoryClose">
+      <template #drawer>
+        <ChangeHistory :plan-info-id="planInfoId" :task-id="selectTaskId" :create-page="createPage" />
       </template>
     </common-drawer>
     <common-drawer v-if="progressHistoryVisible" :visible="progressHistoryVisible" size="50%" placement="top" title="任务进度反馈" @close="progressHistoryVisible = false">
@@ -253,6 +270,19 @@
 <style lang="scss">
 @import '~p8-dhtmlx-gantt/codebase/dhtmlxgantt.css';
 @import '@/assets/commonJS/ganttJS/ganttObject.css';
+.edit_gantt_user_list {
+  max-height: 500px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  span {
+    padding: 5px;
+    border-bottom: #cccccc;
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
 </style>
 <style lang="scss" scoped>
 #actionMenu {
@@ -338,7 +368,9 @@ import CommonButtonBarSetting from '@/components/gantt/Components/CommonButtonBa
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
 import VersionList from '../versionList'
-import ProgressHistory from '../progressHistory';
+import ProgressHistory from '../progressHistory'
+import ChangeHistory from '../changeHistory'
+import { version } from 'vue'
 const Mycolumns = [
   {
     title: '',
@@ -459,6 +491,7 @@ export default {
     // Flight,
     // Large,
     ProgressHistory,
+    ChangeHistory,
     CommandSearch,
     CommandStatistic,
     CommonButtonBarSetting,
@@ -505,6 +538,7 @@ export default {
           params: {}
         }
       },
+      onlineData: [],
       treeDataEditorConfig1: {
         useTreeFormat: true,
         useTreePId: '',
@@ -538,6 +572,7 @@ export default {
       Mycolumns: Mycolumns,
       selectTaskName: '',
       resourceSelectVisible: false, // 责任选择框校验
+      resourceSelectModel: null,
       activityImportTitle: '活动导入',
       experienceImportTitle: '经验库导入',
       activityImportVisible: false,
@@ -568,6 +603,7 @@ export default {
       dependentDatas: [],
       searchForm: {},
       columnSettings: [],
+      reminderList: [],
       monitorLockMap: {}, // 标识锁定状态
       limitColumns: [], // 标识加锁后不可编辑列定义
       lockLevel: 3, // 编辑锁定任务层级，指定后，gantt页面对应任务不可做任何操作
@@ -576,6 +612,7 @@ export default {
       monitorId: '',
       monitorName: '',
       managerStatusMap: {}, // 管理状态全部数据
+      taskStatusMap: {},
       ganttEditCheck: {}, // gantt任务编辑权限
       issueStatus: '', // 任务待下发状态
       selectedTaskIds: [],
@@ -661,6 +698,7 @@ export default {
       rightMenuConfigVisible: false, // 右键菜单配置弹出框
       getSelectTasks: [],
       progressHistoryVisible: false,
+      changeHistoryVisible: false,
       selectedId: '',
       versionListVisible: false //  版本列表显示隐藏
     }
@@ -724,11 +762,30 @@ export default {
   },
   created() {},
   mounted() {
+    const that = this
     this.scrollBarHeight = 40 * this.menuData.length + 1 + 'px'
     window.movement = this.movement
     window.isDisable = this.isDisable
+    window.myWebSocket.on('planGantGroup', (data) => {
+      that.onlineData = data
+      let html = '<div class="edit_gantt_user_list">'
+      that.editUserList.forEach((item) => {
+        html += `<span>${item.userName}</span>`
+      })
+      html += '</div>'
+      that.$notify({
+        title: `当前共有${that.editUserList.length}人编制当前计划`,
+        dangerouslyUseHTMLString: true,
+        message: html
+      })
+    })
   },
   computed: {
+    editUserList() {
+      return this.onlineData.filter((item) => {
+        return item.entityId == this.planInfoId && item.entityType == this.createPage
+      })
+    },
     isDisable() {
       const that = this
       return function (btnConfig) {
@@ -947,7 +1004,14 @@ export default {
       })
       // 根据项目类型，获取gantt列设置
       this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
-
+      this.reminderList = await this.$api['planGanttManager.loadReminder']({
+        planInfoId: this.planInfoId,
+        dicType: 'ACTIVITY_TYPE',
+        taskId: this.taskId,
+        createPage: this.createPage,
+        planBeginDateArray: this.planBeginDateArray,
+        planEndDateArray: this.planEndDateArray
+      })
       const vueThis = this
       // 清空原有数据
       this.selectedTasks = []
@@ -1056,7 +1120,7 @@ export default {
             if (res.projectStatus === '2205') {
               myGantt.config.readonly = true
             }
-            if (res.monitorLock && res.monitorLock['1010'] && res.monitorLock['1010'] === '1') {
+            if ((res.monitorLock && res.monitorLock['1010'] && res.monitorLock['1010'] === '1') || (res.monitorLock && res.monitorLock['1018'] && res.monitorLock['1018'] === '1')) {
               if (createPage === 'compile') {
                 vueThis.planEditLock = true
                 myGantt.config.readonly = true
@@ -1082,11 +1146,18 @@ export default {
 
             // myGantt.serverList(myGantt.config.task_status, vueThis.taskStatus)
             vueThis.budgetList = res.budgetList
+            // if (createPage === 'decompose' && res.distribution) {
+            //   vueThis.resourceSelectModel = ['user']
+            // } else {
+            //   vueThis.resourceSelectModel = [res.distribution]
+            // }
+            vueThis.resourceSelectModel = ['team']
             vueThis.taskClassifyDatas = res.taskClassifys
             vueThis.issueStatus = res.issueStatus
             vueThis.monitorPointDatas = res.monitorPointDatas
             vueThis.monitorLockMap = res.monitorLock
             vueThis.managerStatusMap = res.managerStatusMap
+            vueThis.taskStatusMap = res.taskStatusMap
             vueThis.$store.dispatch('setTaskStyles', res.taskStyle)
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
@@ -1208,14 +1279,26 @@ export default {
     outPutViewClose() {
       this.outPutViewVisible = false
     },
-    resourceSelected(ownerId, row) {
+    resourceSelected(ownerId, row, type) {
       const that = this
       if (that.selectedTasks && that.selectedTasks.length > 0) {
         myGantt.batchUpdate(function () {
           that.selectedTasks.forEach((task) => {
-            myGantt.getTask(task.id).owner_id = ownerId
-            myGantt.getTask(task.id).specialDutyUserId = ownerId
-            myGantt.getTask(task.id).dutyDeptName = row.deptName
+            if (type === 'dept') {
+              myGantt.getTask(task.id).owner_id = ownerId
+              myGantt.getTask(task.id).realName = ''
+              myGantt.getTask(task.id).dutyDeptId = row.id
+              myGantt.getTask(task.id).dutyDeptName = row.label
+            } else if (type === 'team') {
+              myGantt.getTask(task.id).owner_id = ownerId
+              myGantt.getTask(task.id).realName = row.name
+              myGantt.getTask(task.id).dutyDeptName = row.deptName
+            } else {
+              myGantt.getTask(task.id).owner_id = ownerId
+              myGantt.getTask(task.id).realName = row.realName
+              myGantt.getTask(task.id).dutyDeptName = row.deptName
+            }
+            myGantt.getTask(task.id).owner_type = type
             myGantt.updateTask(task.id)
           })
         })
@@ -1294,6 +1377,7 @@ export default {
           type: requestOtherParams.type,
           value: JSON.stringify({
             type: updateValues.type,
+            autoScheduling: updateValues.autoScheduling,
             rightBtns: updateValues.rightBtns
           })
         }
@@ -1313,26 +1397,56 @@ export default {
     },
     //  创建版本
     createPlanVersion() {
-      this.$api['planGanttManager.versionCreate']({
+      let version = ''
+      this.$api['planGanttManager.getVersionNum']({
         planInfoId: this.planInfoId
       }).then((res) => {
         if (res) {
-          this.$message({
-            message: '版本创建成功',
-            type: 'success'
-          })
-        } else {
-          this.$message({
-            message: '版本创建失败',
-            type: 'error'
-          })
+          version = res
         }
       })
+      this.$prompt('请输入版本说明', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(({ value }) => {
+        this.$confirm(`是否创建计划版本${version}, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$api['planGanttManager.versionCreate']({
+            planInfoId: this.planInfoId,
+            versionNote: value
+          }).then((res) => {
+            if (res) {
+              this.$message({
+                message: '版本创建成功',
+                type: 'success'
+              })
+            } else {
+              this.$message({
+                message: '版本创建失败',
+                type: 'error'
+              })
+            }
+          })
+        })
+      })
     },
-    showTaskProgressDialog (taskId) {
+    showTaskProgressDialog(taskId) {
       this.selectedId = taskId
       this.progressHistoryVisible = true
+    },
+    showChangeHistory() {
+      this.changeHistoryVisible = true
+    },
+    changeHistoryClose() {
+      this.changeHistoryVisible = false
+      this.$store.dispatch('setVueThis', this)
     }
+  },
+  destroyed() {
+    window.myWebSocket.off('planGantGroup')
   }
 }
 </script>

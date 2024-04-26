@@ -30,8 +30,8 @@ class Particle {
     this.canvas = canvas
     this.progress = 0
 
-    this.x = document.documentElement.clientWidth / 2 + (Math.random() * 400 - Math.random() * 400)
-    this.y = document.documentElement.clientHeight / 2 + (Math.random() * 400 - Math.random() * 400)
+    this.x = document.documentElement.clientWidth / 2 + (Math.random() * 400 - Math.random() * 399)
+    this.y = document.documentElement.clientHeight / 2 + (Math.random() * 400 - Math.random() * 399)
     this.w = document.documentElement.clientWidth
     this.h = document.documentElement.clientHeight
     this.radius = 1 + 10 * this.random

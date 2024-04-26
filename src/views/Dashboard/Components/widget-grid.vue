@@ -394,7 +394,7 @@ export default {
         let list = this.searchList.concat(this.tableSearchList)
         const newobj = {}
         list = list.reduce((preVal, curVal) => {
-          newobj[curVal.fieldName] ? '' : (newobj[curVal.fieldName] = preVal.push(curVal))
+          newobj[curVal.fieldName] ? '' : newobj[curVal.fieldName] = preVal.push(curVal)
           return preVal
         }, [])
         this.$emit('setSearchConfig', list)

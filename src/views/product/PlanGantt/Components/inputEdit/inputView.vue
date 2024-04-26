@@ -3,14 +3,25 @@
     <el-tabs v-model="activeOutput" type="border-card">
       <el-tab-pane label="增加的输入物" name="inputKey">
         <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 增加的输入物</span>
-        <div style="position: relative; padding-bottom: 50px">
-          <form-list ref="form" @rendered="rendered" form-layout="vertical" :data-source="dataSource" :api="saveApi" :form="formData" :exist-default-btn="existDefaultBtn" :other-param="otherParam">
+        <div>
+          <form-list
+            v-if="!isEmpty"
+            ref="form"
+            @rendered="rendered"
+            form-layout="vertical"
+            :data-source="dataSource"
+            :api="saveApi"
+            :form="formData"
+            :exist-default-btn="existDefaultBtn"
+            :other-param="otherParam"
+          >
           </form-list>
+          <el-empty v-if="isEmpty" class="custom_empty" :image-size="100"></el-empty>
         </div>
       </el-tab-pane>
       <el-tab-pane label="前置输出物" name="getPreOutputKey">
         <span slot="label"><i class="p8 icon-xuanxiang1"></i> 前置输出物</span>
-        <div v-if="data">
+        <div v-if="data.length > 0">
           <div v-for="(item, index) in data" :key="index">
             <el-row type="flex">
               <el-col :span="3" class="baseTitle">任务名称</el-col>
@@ -41,7 +52,9 @@
             <el-divider></el-divider>
           </div>
         </div>
-        <div v-else style="height: 24px"></div>
+        <div v-else>
+          <el-empty class="custom_empty" :image-size="100"></el-empty>
+        </div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -55,6 +68,9 @@
 .baseContent {
   margin-top: 5px;
   text-align: left;
+}
+.custom_empty {
+  padding: 0;
 }
 </style>
 <script>
@@ -89,6 +105,7 @@ export default {
       saveApi: 'planGanttManager.inputSave',
       isCustomValidate: true,
       existDefaultBtn: false,
+      isEmpty: false,
       dataSource: [
         {
           labelText: '',
@@ -151,8 +168,9 @@ export default {
   },
   methods: {
     getInputData(taskId) {
+      console.log('🚀 ~ inputView ~ taskId:', taskId)
       const that = this
-      that.$api['planGanttManager.inputInfo']({ taskId: taskId })
+      that.$api['planGanttManager.inputInfo']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId })
         .then(function (res) {
           if (res) {
             that.data = res
@@ -201,8 +219,11 @@ export default {
       that.$api['planGanttManager.customInputInfo']({ taskId: taskId })
         .then(function (res) {
           let datas = []
-          if (res) {
+          if (Array.isArray(res) && res.length > 0) {
+            that.isEmpty = false
             datas = res
+          } else {
+            that.isEmpty = true
           }
           // 变更进入时先查看newTaskMap中是否存在对应值若存在，显示，否则加载任务描述数据
           if (

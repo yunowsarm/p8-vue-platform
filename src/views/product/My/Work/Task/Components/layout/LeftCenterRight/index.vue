@@ -86,6 +86,10 @@ export default {
     percentRight: {
       type: Number,
       default: 75
+    },
+    type: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -121,6 +125,11 @@ export default {
       outChildInRight.percent = 100
       _this.rightVisible = 0
     })
+    if (this.type) {
+      const outChildInRight = _this.$children[0].$children[2].$children[0]
+      outChildInRight.percent = 100
+      _this.rightVisible = 0
+    }
   },
   methods: {
     outResize (e) {
@@ -144,18 +153,17 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 #lcr-layout,
 #lcr-left-con,
 #lcr-center-con,
 #lcr-right-con {
   box-sizing: border-box;
-  height: 100%;
+  height: 100% !important;
 }
-#lcr-layout {
-  overflow-x: hidden;
-  padding: 0 10px 10px;
-}
+// #lcr-layout {
+//   overflow-x: hidden;
+// }
 #lcr-left-con {
   padding-right: 6px;
 }
@@ -167,17 +175,18 @@ export default {
 }
 .splitter-line-arrow {
   position: absolute;
-  top: 50%;
   z-index: 20;
   transform: translate(-50%, -50%);
+  top: 20px;
+  font-weight: 600;
   &.left {
-    left: -2px;
+    left: 10px;
   }
   &.right {
-    right: -16px;
+    right: 0;
   }
   i {
-    font-size: 14px;
+    font-size: 16px;
   }
 }
 .splitter-pane-resizer {
