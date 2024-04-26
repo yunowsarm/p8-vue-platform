@@ -1023,6 +1023,22 @@ export const system = {
       path: '/framework/system/PlanLogo/saveTaskType',
       mockPath: '/framework/system/PlanLogo/saveTaskType',
       desc: '任务类型操作设置'
+    },
+    {
+      name: 'saveNotice',
+      method: 'POST',
+      path: '/NotificationAnnouncement/pm-notice/saveNotice',
+      mockPath: '/NotificationAnnouncement/pm-notice/saveNotice',
+      params: {},
+      desc: '系统管理>通知公告管理>保存'
+    },
+    {
+      name: 'selectNotice',
+      method: 'POST',
+      path: '/NotificationAnnouncement/pm-notice/selectNotice',
+      mockPath: '/NotificationAnnouncement/pm-notice/selectNotice',
+      params: {},
+      desc: '系统管理>通知公告管理>查看'
     }
   ],
   extLink: [
