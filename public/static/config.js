@@ -9,6 +9,9 @@ const CONFIG = {
 }
 
 // eslint-disable-next-line no-unused-vars
+const SYSTEM_NAME = 'P8V3.0-PLATFORM'
+
+// eslint-disable-next-line no-unused-vars
 // CA登录设置  为true时，CA登录
 // eslint-disable-next-line no-unused-vars
 const loginCa = false
