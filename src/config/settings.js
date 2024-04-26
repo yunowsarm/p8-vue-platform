@@ -9,7 +9,7 @@
  * 全局项目名称配置
  */
 // eslint-disable-next-line no-undef
-export const PLATFORM_PREFIX_NAME = 'P8V3.0-PLATFORM'
+export const PLATFORM_PREFIX_NAME = SYSTEM_NAME
 /**
  * //是否ca登录
  */
