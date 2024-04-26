@@ -1140,11 +1140,12 @@ export default {
 
             // myGantt.serverList(myGantt.config.task_status, vueThis.taskStatus)
             vueThis.budgetList = res.budgetList
-            if (createPage === 'decompose' && res.distribution) {
-              vueThis.resourceSelectModel = ['user']
-            } else {
-              vueThis.resourceSelectModel = [res.distribution]
-            }
+            // if (createPage === 'decompose' && res.distribution) {
+            //   vueThis.resourceSelectModel = ['user']
+            // } else {
+            //   vueThis.resourceSelectModel = [res.distribution]
+            // }
+            vueThis.resourceSelectModel = ['team']
             vueThis.taskClassifyDatas = res.taskClassifys
             vueThis.issueStatus = res.issueStatus
             vueThis.monitorPointDatas = res.monitorPointDatas

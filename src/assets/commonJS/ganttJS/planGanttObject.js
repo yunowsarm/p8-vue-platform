@@ -410,7 +410,7 @@ export function planGantt(ganttName, vueThis) {
     })
   }
   ganttObject.attachEvent('onBeforeTaskDrag', function (id, mode, e) {
-    let state = {
+    const state = {
       id: id,
       colName: mode === 'resize' ? 'start_date' : ''
     }
@@ -575,7 +575,7 @@ export function getGanttColumns(ganttObject, vueThis) {
       resize: true,
       // editor: editors.userEditor,
       template: function (task) {
-        return task.realName
+        return `<span data-column-name="owner_id" class="gantt_owner_id">${task.realName || ''}</span>`
         // const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
         // const owner = task[ganttObject.config.resource_property]
         // if (owner) {
