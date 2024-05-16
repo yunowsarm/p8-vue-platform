@@ -562,10 +562,10 @@ export function getGanttColumns(ganttObject, vueThis) {
           let text = ''
           userList.forEach((item) => {
             if (userMessage && item.id === userMessage.userId && item.weatherOut === '1') {
-              text += `<span style="color: #FF0000">(已退出)</span>`
+              text = `<span style="color: #FF0000">(已退出)</span>`
             }
           })
-          return `<span data-column-name="owner_id" class="gantt_owner_id">${(userMessage.name += text)}</span>`
+          return `<span data-column-name="owner_id" class="gantt_owner_id">${(userMessage.name + text)}</span>`
         } else {
           return `<span data-column-name="owner_id" class="gantt_owner_id"></span>`
         }
