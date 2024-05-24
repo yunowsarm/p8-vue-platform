@@ -1152,12 +1152,14 @@ export default {
         this.searchForm[el.fieldName] = el.defaultValue ? el.defaultValue : ''
         if (el.parameterSource && el.parameterSource == 'SQL参数') {
           if (reportParam[el.fieldName]) {
-            sql[el.fieldName] = { mode: '=', relation: "and", value: reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName] }
+            let mode = /^%.*%$/.test(reportParam[el.fieldName])
+            sql[el.fieldName] = { mode: mode ? 'like' : '=', relation: "and", value: reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName] }
             delete reportParam[el.fieldName]
           }
         } else {
           if (reportParam[el.fieldName]) {
-            report[el.fieldName] = { mode: '=', relation: "and", value: reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName] }
+            let mode = /^%.*%$/.test(reportParam[el.fieldName])
+            report[el.fieldName] = { mode: mode ? 'like' : '=', relation: "and", value: reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName] }
             delete reportParam[el.fieldName]
           }
         }
