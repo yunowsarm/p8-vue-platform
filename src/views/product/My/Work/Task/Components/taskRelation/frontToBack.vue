@@ -99,6 +99,7 @@ export default {
       columns,
       columnsHierarchy,
       tableConfig: {
+        'default-expand-all': true,
         'highlight-current-row': true
       }
     }
