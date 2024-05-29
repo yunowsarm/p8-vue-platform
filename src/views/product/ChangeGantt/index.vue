@@ -5,8 +5,7 @@
          style="height: 100%">
       <list-layout>
         <template #north>
-          <common-button v-if="thirdMenuParam.MANAGERSTATUS !== '6402'"
-                         :select-records="selectRecord"
+          <common-button :select-records="selectRecord"
                          buttonType="primary"
                          :comp="comp"></common-button>
           <search-form-list ref="search"

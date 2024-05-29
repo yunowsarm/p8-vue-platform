@@ -1,7 +1,10 @@
 <template>
-  <el-button @click="downExcel" type="primary">
+  <el-button @click="downExcel"
+             type="primary">
     导出
-    <a ref="down" :href="href" :download="`${title}.xlsx`"></a>
+    <a ref="down"
+       :href="href"
+       :download="`${title}.xlsx`"></a>
   </el-button>
 </template>
 
@@ -26,14 +29,14 @@ export default {
     },
     otherParams: {
       type: Object,
-      default: () => {}
+      default: () => { }
     },
     title: {
       type: String,
       default: `日志列表-${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`
     }
   },
-  data() {
+  data () {
     return {
       href: undefined,
       page: {
@@ -44,7 +47,7 @@ export default {
     }
   },
   watch: {
-    href(val) {
+    href (val) {
       if (val) {
         setTimeout((_) => {
           this.$refs.down.click()
@@ -53,7 +56,7 @@ export default {
     }
   },
   methods: {
-    async getExportData() {
+    async getExportData () {
       let that = this
       let queryParams = { page: that.page, ...that.otherParams }
       let resData = await this.$api[that.api](queryParams)
@@ -66,11 +69,11 @@ export default {
       }
     },
     // 处理数据
-    exportDataHandle(columns, data) {
+    exportDataHandle (columns, data) {
       let baseName = [[]]
       let baseKey = []
       columns.forEach((column) => {
-        if (column.export && column.export) {
+        if (column.export) {
           baseKey.push(column.dataIndex)
           baseName[0].push(column.title)
         }
@@ -92,7 +95,7 @@ export default {
       }
       return baseName
     },
-    async downExcel(ev) {
+    async downExcel (ev) {
       //  下载excel
       if (ev.target === this.$refs.down) return //  如果是点击的a标签则取消
       let exportData = await this.getExportData()
@@ -114,7 +117,7 @@ export default {
       }, 5000)
     },
 
-    s2ab(s) {
+    s2ab (s) {
       //  字符串转字符流
       var buf = new ArrayBuffer(s.length)
       var view = new Uint8Array(buf)
@@ -122,7 +125,7 @@ export default {
       return buf
     },
     // 暂时用不到
-    getCharCol(n) {
+    getCharCol (n) {
       // 将指定的自然数转换为26进制表示。映射关系：[0-25] -> [A-Z]。
       let s = ''
       let m = 0

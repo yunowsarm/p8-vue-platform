@@ -115,7 +115,7 @@ export default {
     },
     taskStatus: {
       type: Object,
-      default: {}
+      default: null
     }
   },
   components: {
@@ -315,11 +315,10 @@ export default {
               links: res.links
             }
             myGantt.$resourcesStore.parse(res.resources)
-            myGantt.serverList(myGantt.config.monitor_point, res.monitorPointDatas)
+            myGantt.serverList(myGantt.config.monitor_point, res.allMonitors)
             myGantt.serverList(myGantt.config.plan_type, res.taskClassifys)
             vueThis.changeTaskInfo = res.changeTaskInfo
             vueThis.managerStatusMap = res.managerStatusMap
-            vueThis.taskStatusMap = res.taskStatusMap
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
           }

@@ -66,6 +66,7 @@ const changeGanttWhiteList = [
   'issue-message',
   'plan-edit-gantt',
   'plan-gantt',
+  'detail-info',
   'plan-gantt-resource',
   'critical-path',
   'search-list',

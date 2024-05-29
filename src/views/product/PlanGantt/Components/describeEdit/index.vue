@@ -1,18 +1,20 @@
 <template>
   <div style="position: relative">
-    <form-list class="describe-form"
-               ref="form"
-               :comp="comp"
-               :key="formKey"
-               @rendered="rendered"
-               form-layout="vertical"
-               @saved="saved"
-               :data-source="dataSource"
-               :api="saveApi"
-               :is-custom-validate="isCustomValidate"
-               @custom-validate="customValidate"
-               :other-param="otherParam"
-               :form="formData">
+    <form-list
+      class="describe-form"
+      ref="form"
+      :comp="comp"
+      :key="formKey"
+      @rendered="rendered"
+      form-layout="vertical"
+      @saved="saved"
+      :data-source="dataSource"
+      :api="saveApi"
+      :is-custom-validate="isCustomValidate"
+      @custom-validate="customValidate"
+      :other-param="otherParam"
+      :form="formData"
+    >
     </form-list>
   </div>
 </template>

@@ -234,12 +234,7 @@
                                @submit="submitButtonBarSetting"
                                @hidden="rightMenuConfigVisible = false">
     </common-button-bar-setting>
-    <common-drawer v-if="progressHistoryVisible"
-                   :visible="progressHistoryVisible"
-                   size="50%"
-                   placement="top"
-                   title="任务进度反馈"
-                   @close="progressHistoryVisible = false">
+    <common-drawer v-if="progressHistoryVisible" :visible="progressHistoryVisible" size="50%" placement="top" title="任务进度反馈" @close="progressHistoryVisible = false">
       <template #drawer>
         <ProgressHistory :task-id="selectedId" />
       </template>

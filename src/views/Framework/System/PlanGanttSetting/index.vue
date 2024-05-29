@@ -12,7 +12,8 @@ export default {
     return {
       saveApi: 'PlanGanttSetting.saveSchedulingBasicConfig',
       formData: {
-        content: ''
+        content: '',
+        defaultMode: ''
       },
       dataSource:[
         {
@@ -30,13 +31,34 @@ export default {
               value: '1'
             }
           ]
+        },
+        {
+          type: 'radio',
+          fieldName: 'defaultMode',
+          labelText: '按钮展示模式',
+          colLayout: 'singleCol',
+          options: [
+            {
+              label: '标签页',
+              value: 'tabs'
+            },
+            {
+              label: '多行',
+              value: 'double'
+            },
+            {
+              label: '单行',
+              value: 'single'
+            }
+          ]
         }
       ]
     }
   },
   created() {
     this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then(res => {
-      this.formData.content = res.content
+      this.formData.content = res.autoScheduling.content
+      this.formData.defaultMode = res.defaultMode.content
     })
   },
   methods: {

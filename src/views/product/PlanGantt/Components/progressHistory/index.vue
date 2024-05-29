@@ -1,25 +1,25 @@
 <template>
   <div style="height: 100%">
     <common-tabs class="custom-common-tabs"
-                 :active-tabs="activeTabs"
-                 type="border-card"
-                 :tabs-data="tabs"
-                 height="100%">
+      :active-tabs="activeTabs"
+      type="border-card"
+      :tabs-data="tabs"
+      height="100%">
       <template #history>
         <common-table ref="table"
-                      :columns="columns"
-                      :table-setting="false"
-                      :params="queryParam"
-                      :api="tableApi"
-                      :pagination="false"></common-table>
+          :columns="columns"
+          :table-setting="false"
+          :params="queryParam"
+          :api="tableApi"
+          :pagination="false"></common-table>
       </template>
       <template #undone>
         <common-table ref="table"
-                      :api="tableApi2"
-                      :params="tableParams2"
-                      :columns="columns2"
-                      :pagination="false"
-                      :tableSetting="false">
+          :api="tableApi2"
+          :params="tableParams2"
+          :columns="columns2"
+          :pagination="false"
+          :tableSetting="false">
         </common-table>
         </form-table>
       </template>
@@ -46,7 +46,7 @@ export default {
           name: 'history'
         },
         {
-          label: '偏离原因',
+          label: '未完成反馈',
           name: 'undone'
         }
       ],
@@ -69,7 +69,7 @@ export default {
           title: '完成度',
           dataIndex: 'progress',
           formatter: (row) => {
-            return Math.round(row.progress * 100) + '%'
+            return row.progress * 100 + '%'
           },
           align: 'center'
         },
@@ -142,8 +142,8 @@ export default {
       ]
     }
   },
-  created () {
-    this.$api['planGanttManager.reminder']({ entityId: this.taskId }).then(res => { })
+  created() {
+    this.$api['planGanttManager.reminder']({entityId: this.taskId}).then(res => {})
   },
 }
 </script>

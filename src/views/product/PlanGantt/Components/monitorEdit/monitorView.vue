@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative; overflow-y: auto; overflow-x: hidden;width: 100%">
+  <div style="position: relative; overflow-y: auto; overflow-x: hidden; width: 100%">
     <form2
       :comp="comp"
       v-if="!isEmpty"
@@ -118,7 +118,7 @@ export default {
   methods: {
     getMonitorData(taskId) {
       const that = this
-      this.$api['planGanttManager.getTaskMonitorByTaskId']({ taskId: taskId }).then((res) => {
+      this.$api['planGanttManager.getTaskMonitorByTaskId']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId }).then((res) => {
         that.dataSource[0].options = that.vueThis.monitorPointDatas // 更新default dataSource中下拉框的数据
         let datas = []
         if (res && Array.isArray(res.monitorManagerResponses) && res.monitorManagerResponses.length > 0) {

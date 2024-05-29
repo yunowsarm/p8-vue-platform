@@ -5,7 +5,19 @@
         <div class="login-contain">
           <span class="login-logo"
                 ref="loginLogo"></span>
-          <h2 class="login-sysName">{{ system_name }}</h2>
+          <h4 class="login-sysName">{{ system_name }}</h4>
+          <span class="login-version">
+            <el-popover placement="top-start"
+                        width="230"
+                        trigger="hover">
+              <p>
+                公司名称: 西安融智软件有限公司<br />
+                公司官网: www.xardmu.com<br />
+                公司电话: 029-87607380<br />
+              </p>
+              <span slot="reference">{{ regardsObj.systemVersion }}</span>
+            </el-popover>
+          </span>
           <el-form class="loginForm"
                    ref="loginForm"
                    :model="loginForm"
@@ -16,14 +28,16 @@
                    element-loading-spinner="el-icon-loading"
                    element-loading-custom-class="customClass">
             <template v-if="!loading">
-              <div style="margin-bottom: 6px"><i class="p8 icon-yonghuming back-color"></i>用户名</div>
+              <div style="margin-bottom: 6px"><i class="p8 icon-yonghuming"
+                   style="color: #094deb"></i>用户名</div>
               <el-form-item prop="userAccount">
                 <el-input class="login-input"
                           type="text"
                           v-model="loginForm.userAccount"
                           placeholder="请输入用户名、身份证"></el-input>
               </el-form-item>
-              <div style="margin-bottom: 6px"><i class="p8 icon-mima back-color"></i>密码</div>
+              <div style="margin-bottom: 6px"><i class="p8 icon-mima"
+                   style="color: #094deb"></i>密码</div>
               <el-form-item prop="userPassword"
                             class="userPassword">
                 <el-input class="login-input"
@@ -33,7 +47,7 @@
                           placeholder="请输入密码"></el-input>
               </el-form-item>
 
-              <el-form-item class="keepLoggedIn back-color">
+              <el-form-item class="keepLoggedIn">
                 <el-checkbox v-model="keepLoggedIn">记住登录状态</el-checkbox>
               </el-form-item>
 
@@ -91,16 +105,18 @@ export default {
         userPassword: [{ required: true, message: '请输入密码', trigger: 'blur' }]
       },
       dayTime: '',
-      system_name: 'P8V3.0-PLATFORM',
+      system_name: 'PLATFORM_PREFIX_NAME',
       systemNames: PLATFORM_PREFIX_NAME,
       flag: 'systemModel1',
-      loginCa: CA_LOGIN
+      loginCa: CA_LOGIN,
+      regardsObj: {}
     }
   },
   computed: {
     ...mapGetters(['userName', 'systemName'])
   },
   created () {
+    this.getSystemAbout()
     console.log(API_DEFAULT_CONFIG)
   },
   mounted () {
@@ -114,6 +130,13 @@ export default {
     }
   },
   methods: {
+    getSystemAbout () {
+      // this.$api['projectTeamSetting.getSystemAbout']().then(res => {
+      //   if (res) {
+      //     this.regardsObj = res
+      //   }
+      // })
+    },
     autoLogin () {
       if (getRequest().token) {
         // url携带参数redirect，login?redirect=login&token=
@@ -132,7 +155,21 @@ export default {
         // signIn?redirect=P1&userAccount=zhangsan&userPassword=1
         removeSession(TOKEN_KEY)
         const { userAccount, userPassword } = getRequest()
-        this.$store.dispatch('userLogin', { userAccount, userPassword }).then((res) => {
+        let name = userAccount
+        let password = userPassword
+        let nameArr = name.split('')
+        let nameEncryption = ''
+        for (let i = 0; i < nameArr.length; i++) {
+          let s = nameArr[i].charCodeAt(0) << 2
+          nameEncryption += String.fromCharCode(s)
+        }
+        let passwordArr = password.split('')
+        let passwordEncryption = ''
+        for (let i = 0; i < passwordArr.length; i++) {
+          let s = passwordArr[i].charCodeAt(0) << 2
+          passwordEncryption += String.fromCharCode(s)
+        }
+        this.$store.dispatch('userLogin', { nameEncryption, passwordEncryption }).then((res) => {
           setTimeout(() => {
             this.$router.push('/signIn')
           }, 2000)
@@ -158,8 +195,26 @@ export default {
                 this.isLoginning = true
                 // 将登录状态存入vuex
                 this.$store.dispatch('setLoginState', this.keepLoggedIn)
+                let name = this.loginForm.userAccount
+                let password = this.loginForm.userPassword
+                let nameArr = name.split('')
+                let nameEncryption = ''
+                for (let i = 0; i < nameArr.length; i++) {
+                  let s = nameArr[i].charCodeAt(0) << 2
+                  nameEncryption += String.fromCharCode(s)
+                }
+                let passwordArr = password.split('')
+                let passwordEncryption = ''
+                for (let i = 0; i < passwordArr.length; i++) {
+                  let s = passwordArr[i].charCodeAt(0) << 2
+                  passwordEncryption += String.fromCharCode(s)
+                }
+                let params = {
+                  userAccount: nameEncryption,
+                  userPassword: passwordEncryption
+                }
                 this.$store
-                  .dispatch('userLogin', { ...this.loginForm })
+                  .dispatch('userLogin', params)
                   .then((res) => {
                     if (!res) {
                       this.$router.push('/Maintain')
@@ -214,7 +269,6 @@ export default {
               }
             }
           })
-          this.$store.dispatch('setSystemName', this.system_name)
           uploadFileJson = res.uploadFileJson
           if (uploadFileJson && uploadFileJson[0]) {
             const that = this
@@ -282,7 +336,6 @@ export default {
               }
             }
           })
-          this.$store.dispatch('setSystemName', this.system_name)
           const uploadFileJson = res.uploadFileJson
           if (uploadFileJson && uploadFileJson[0]) {
             const that = this
@@ -361,34 +414,36 @@ $login-primary--login-color: #306cf7;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
-        align-items: center;
+        position: relative;
+        .login-version {
+          position: absolute;
+          top: 140px;
+          right: -50px;
+          font-size: 15px;
+        }
         .login-logo {
           width: 150px;
           height: 96px;
           display: block;
           margin: 0 auto;
-          // background: url(../../assets/image/login/new_logo.png) no-repeat;
+          background: url(../../assets/image/login/new_logo.png) no-repeat;
           background-size: contain;
           background-position: center;
           margin-top: 25px;
-          position: absolute;
-          top: -80px;
         }
 
         .login-sysName {
-          font-size: 42px;
+          font-size: 34px;
           font-family: Source Han Sans CN;
-          color: #1f1f1f !important;
+          color: #1f1f1f;
           text-align: center;
           margin-top: 5px;
-          white-space: nowrap;
           margin-bottom: 30px;
         }
 
         .loginForm {
           margin: 0 auto;
-          margin-top: -90px;
-          width: 100%;
+          width: 86%;
           .el-loading-spinner {
             margin-top: 30px;
             i {
@@ -411,11 +466,11 @@ $login-primary--login-color: #306cf7;
 
         .login-button {
           width: 100%;
-          height: 50px;
+          height: 40px;
           padding: 5px 0px;
           // border: 2px solid darken($login-primary--login-color, 10%);
           border-radius: 4px;
-          background: darken($base-light-color, 10%);
+          background: darken($login-primary--login-color, 10%);
           color: $base-white-color;
           font-size: 14px;
         }
@@ -501,6 +556,13 @@ $login-primary--login-color: #306cf7;
         height: 330px;
 
         .login-contain {
+          position: relative;
+          .login-version {
+            position: absolute;
+            top: 80px;
+            right: -50px;
+            font-size: 15px;
+          }
           .login-logo {
             width: 100px;
             height: 64px;
@@ -515,8 +577,7 @@ $login-primary--login-color: #306cf7;
           }
 
           .loginForm {
-            margin-top: -60px;
-            width: 88%;
+            width: 86%;
           }
 
           // .login-input {
@@ -528,7 +589,7 @@ $login-primary--login-color: #306cf7;
           // }
 
           .login-button {
-            height: 36px;
+            height: 30px;
             // border: 2px solid darken($login-primary--login-color, 10%);
             border-radius: 4px;
             font-size: 12px;
@@ -545,6 +606,13 @@ $login-primary--login-color: #306cf7;
         height: 364px;
 
         .login-contain {
+          position: relative;
+          .login-version {
+            position: absolute;
+            top: 80px;
+            right: -50px;
+            font-size: 15px;
+          }
           .login-logo {
             width: 120px;
             height: 76px;
@@ -553,13 +621,12 @@ $login-primary--login-color: #306cf7;
           }
 
           .login-sysName {
-            font-size: 32px;
+            font-size: 26px;
             margin-bottom: 20px;
           }
 
           .loginForm {
-            margin-top: -60px;
-            width: 94%;
+            width: 86%;
           }
 
           // .login-input {
@@ -571,7 +638,7 @@ $login-primary--login-color: #306cf7;
           // }
 
           .login-button {
-            height: 38px;
+            height: 32px;
             // border: 2px solid darken($login-primary--login-color, 10%);
             border-radius: 4px;
             font-size: 14px;
@@ -588,6 +655,13 @@ $login-primary--login-color: #306cf7;
         height: 414px;
 
         .login-contain {
+          position: relative;
+          .login-version {
+            position: absolute;
+            top: 130px;
+            right: -50px;
+            font-size: 15px;
+          }
           .login-logo {
             width: 140px;
             height: 90px;
@@ -596,13 +670,12 @@ $login-primary--login-color: #306cf7;
           }
 
           .login-sysName {
-            font-size: 36px;
+            font-size: 30px;
             margin-bottom: 30px;
           }
 
           .loginForm {
-            margin-top: -90px;
-            width: 100%;
+            width: 86%;
           }
 
           // .login-input {
@@ -614,7 +687,7 @@ $login-primary--login-color: #306cf7;
           // }
 
           .login-button {
-            height: 50px;
+            height: 36px;
             // border: 2px solid darken($login-primary--login-color, 10%);
             border-radius: 4px;
             font-size: 14px;
@@ -623,8 +696,5 @@ $login-primary--login-color: #306cf7;
       }
     }
   }
-}
-.back-color {
-  color: $base-light-color;
 }
 </style>

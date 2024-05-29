@@ -16,7 +16,6 @@ module.exports = defineConfig({
     }
   },
   configureWebpack: {
-    devtool: process.env.NODE_ENV === 'development' ? 'source-map' : undefined,
     // 开启缓存
     // cache: false,
     cache: {

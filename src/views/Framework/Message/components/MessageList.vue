@@ -302,7 +302,7 @@ export default {
           type: 'warning'
         }).then(() => {
           that.$api[api]({ idList: ids, msgStatus: status }).then((res) => {
-            
+
             that.flag = true
             // if (!status) {
               that.timeKey = new Date().getTime()

@@ -1,57 +1,52 @@
 <template>
   <div style="height: 100%">
-    <div class="couerDivClass" id="couerDiv">
-      <div class="top" :style="{ height: commandButtonBarHeight }">
-        <command-button-bar
-          :panel-data="btnData"
-          :selected-tasks="selectedTasks"
-          :gantt-name="ganttName"
-          :plan-info-id="planInfoId"
-          @change-command-button="changeCommandButton"
-        ></command-button-bar>
+    <div class="couerDivClass"
+         id="couerDiv">
+      <div class="top"
+           :style="{ height: commandButtonBarHeight }">
+        <command-button-bar :panel-data="btnData"
+                            :selected-tasks="selectedTasks"
+                            :gantt-name="ganttName"
+                            :plan-info-id="planInfoId"
+                            @change-command-button="changeCommandButton"></command-button-bar>
       </div>
-      <div class="bottom" :class="expandBottom">
-        <change-gantt
-          :plan-info-id="planInfoId"
-          :plan-info-status="planInfoStatus"
-          :task-id="taskId"
-          v-bind="$attrs"
-          :secret-grade="secretGrade"
-          :plan-attribute-drawer="detailVisible"
-          :create-page="createPage"
-          :change-id="changeId"
-          :read-only="readOnly"
-          @hide-drawer="detailDrawerClosed"
-          @closed="closed"
-          @select-task="selectTask"
-          @show-detail="showDetail"
-          @save-success="detailDrawerClosed"
-          :task-status="taskStatus"
-        ></change-gantt>
+      <div class="bottom"
+           :class="expandBottom">
+        <change-gantt :plan-info-id="planInfoId"
+                      :plan-info-status="planInfoStatus"
+                      :task-id="taskId"
+                      v-bind="$attrs"
+                      :secret-grade="secretGrade"
+                      :plan-attribute-drawer="detailVisible"
+                      :create-page="createPage"
+                      :change-id="changeId"
+                      :read-only="readOnly"
+                      @hide-drawer="detailDrawerClosed"
+                      @closed="closed"
+                      @select-task="selectTask"
+                      @show-detail="showDetail"
+                      @save-success="detailDrawerClosed"
+                      :task-status="taskStatus"></change-gantt>
       </div>
     </div>
-    <el-drawer
-      style="width: 60%; left: auto"
-      :title="detailTitle"
-      :append-to-body="true"
-      size="100%"
-      :destroy-on-close="true"
-      :wrapper-closable="false"
-      :modal="false"
-      @closed="detailDrawerClosed"
-      :visible.sync="detailVisible"
-    >
-      <plan-attribute
-        @save-success="detailDrawerClosed"
-        :task-id="selectTaskId"
-        v-bind="$attrs"
-        :create-page="createPage"
-        :secret-grade="secretGrade"
-        :att-read-only="readOnly"
-        :gantt-name="ganttName"
-        :status="status"
-        :plan-info-id="planInfoId"
-      ></plan-attribute>
+    <el-drawer style="width: 60%; left: auto"
+               :title="detailTitle"
+               :append-to-body="true"
+               size="100%"
+               :destroy-on-close="true"
+               :wrapper-closable="false"
+               :modal="false"
+               @closed="detailDrawerClosed"
+               :visible.sync="detailVisible">
+      <plan-attribute @save-success="detailDrawerClosed"
+                      :task-id="selectTaskId"
+                      v-bind="$attrs"
+                      :create-page="createPage"
+                      :secret-grade="secretGrade"
+                      :att-read-only="readOnly"
+                      :gantt-name="ganttName"
+                      :status="status"
+                      :plan-info-id="planInfoId"></plan-attribute>
     </el-drawer>
   </div>
 </template>
@@ -114,7 +109,7 @@ import { mapGetters } from 'vuex'
 import { deepClone } from '@/utils/common'
 export default {
   name: 'ChangeIndex',
-  data() {
+  data () {
     return {
       defaultKey: '1',
       advanced: false,
@@ -169,7 +164,7 @@ export default {
   },
   watch: {
     ganttButtonMode: {
-      handler(val) {
+      handler (val) {
         if (val == 'tabs') {
           this.commandButtonBarHeight = '145px'
         }
@@ -184,7 +179,7 @@ export default {
     }
   },
   computed: {
-    btnData() {
+    btnData () {
       if (this.$route.path === '/TaskDecomposition') {
         const NewCommandButtonBarDataTabsRow = deepClone(CommandButtonBarData)
         const tabsRow = NewCommandButtonBarDataTabsRow.filter((item) => {
@@ -211,7 +206,7 @@ export default {
         return this.ganttButtonMode === 'tabs' ? CommandButtonBarData : this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
       }
     },
-    expandBottom() {
+    expandBottom () {
       if (this.ganttButtonMode == 'tabs' && this.advance) {
         return 'tabs'
       }
@@ -228,17 +223,17 @@ export default {
     },
     ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    selectTask(selectDatas, ganttName) {
+    selectTask (selectDatas, ganttName) {
       this.selectedTasks = selectDatas
       this.ganttName = ganttName
     },
-    toggleAdvanced() {
+    toggleAdvanced () {
       this.advanced = !this.advanced
     },
-    tabBarExtraContent() {},
-    showDetail(selectTask, ganttName, createPage) {
+    tabBarExtraContent () { },
+    showDetail (selectTask, ganttName, createPage) {
       this.createPage = createPage
       this.detailVisible = true
       this.ganttName = ganttName
@@ -246,22 +241,15 @@ export default {
       this.status = selectTask.status
       this.detailTitle = selectTask.name
     },
-    detailDrawerClosed(res) {
+    detailDrawerClosed (res) {
       this.detailVisible = false
       this.selectTaskId = ''
       this.detailTitle = ''
     },
-    changeCommandButton(advance) {
-      if (advance) {
-        this.commandButtonBarHeight = '152px'
-      } else {
-        this.commandButtonBarHeight = '40px'
-      }
-    },
-    closed(obj) {
+    closed (obj) {
       this.$emit('closed', obj)
     },
-    changeCommandButton(advance) {
+    changeCommandButton (advance) {
       this.advance = advance
       if (advance) {
         this.commandButtonBarHeight = '152px'

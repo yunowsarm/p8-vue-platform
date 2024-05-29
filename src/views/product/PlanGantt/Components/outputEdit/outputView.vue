@@ -1,22 +1,22 @@
 <template>
   <div style="position: relative; padding-bottom: 25px">
-    <form-list ref="form"
-               v-if="!isEmpty"
-               @rendered="rendered"
-               form-layout="vertical"
-               @saved="saved"
-               :data-source="dataSource"
-               :api="saveApi"
-               :form="formData"
-               :is-custom-validate="isCustomValidate"
-               :exist-default-btn="existDefaultBtn"
-               :exist-custom-btn="existCustomBtn"
-               :other-param="otherParam"
-               @custom-validate="customValidate">
+    <form-list
+      ref="form"
+      v-if="!isEmpty"
+      @rendered="rendered"
+      form-layout="vertical"
+      @saved="saved"
+      :data-source="dataSource"
+      :api="saveApi"
+      :form="formData"
+      :is-custom-validate="isCustomValidate"
+      :exist-default-btn="existDefaultBtn"
+      :exist-custom-btn="existCustomBtn"
+      :other-param="otherParam"
+      @custom-validate="customValidate"
+    >
     </form-list>
-    <el-empty v-if="isEmpty"
-              class="custom_empty"
-              :image-size="100"></el-empty>
+    <el-empty v-if="isEmpty" class="custom_empty" :image-size="100"></el-empty>
   </div>
 </template>
 <style scoped>
@@ -125,10 +125,11 @@ export default {
         this.getOutputData(this.taskId)
       }
     },
-    getOutputData (taskId) {
+    getOutputData(taskId) {
+      console.log('🚀 ~ outputView ~ taskId:', taskId)
       const that = this
       that.otherParam = { taskId: taskId }
-      that.$api['planGanttManager.outputInfo']({ taskId: taskId })
+      that.$api['planGanttManager.outputInfo']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId })
         .then(function (res) {
           let datas = []
           if (Array.isArray(res) && res.length > 0) {

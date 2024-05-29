@@ -84,6 +84,15 @@
         <!--        <span style="float:right;margin-right: 20px;line-height:40px;"><i class="gantt-tip p8 icon-content-adjustment" style="color: #0d6bec;" task_status_disp = "修改"></i> {{modifyCount}}</span>-->
         <span style="float: right; margin-right: 20px; line-height: 40px">已选中 {{ selectTaskCount }} 条</span>
         <span style="float: right; margin-right: 20px; line-height: 40px">合计 {{ taskCount }} 条</span>
+        <el-popover
+          placement="top"
+          width="200"
+          trigger="click">
+          <div class="edit_gantt_user_list">
+            <span v-for="user in editUserList">{{user.userName}}</span>
+          </div>
+          <span slot="reference" style="float: right; margin-right: 40px;cursor:pointer">正在编辑 {{ editUserList.length }} 人</span>
+        </el-popover>
       </div>
     </div>
     <el-drawer :title="activityImportTitle"
@@ -132,10 +141,7 @@
                    :is-view-cs-footer="false"
                    :dialog-height="360">
       <template #dialog>
-        <command-search :gantt-name="ganttName"
-                        :is-input="false"
-                        :plan-info-id="planInfoId"
-                        @close="closeSearch"></command-search>
+        <command-search :gantt-name="ganttName" :is-input="false" :plan-info-id="planInfoId" @close="closeSearch"></command-search>
       </template>
     </common-dialog>
     <common-dialog title="通知下发"
@@ -326,6 +332,7 @@ export default {
       deep: 0,
       mouseX: '',
       mouseY: '',
+      onlineData: [],
       columnSettings: [],
       copyTasks: [], // 复制任务载体
       taskClassifyDatas: [],
@@ -364,6 +371,7 @@ export default {
       ganttSearchVisible: false, // 计划变更查询弹出框
       delDataList: [],
       noticeVisible: false,
+      msg: {},
       newSendDatas: null
     }
   },
@@ -430,14 +438,40 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
+    let that = this
+    this.msg = {
+      entityId: this.planInfoId,
+      entityType: this.createPage,
+      sendUser: this.$store.state.user.userId,
+      sendSessionId: this.$store.state.user.userId
+    }
+    window.myWebSocket.emit('enterPlanGantGroup', this.msg)
+    window.myWebSocket.on('planGantGroup', (data) => {
+      that.onlineData = data
+      let html = '<div class="edit_gantt_user_list">'
+      that.editUserList.forEach((item) => {
+        html += `<span>${item.userName}</span>`
+      })
+      html += '</div>'
+      that.$notify({
+        title: `当前共有${that.editUserList.length}人编制当前计划`,
+        dangerouslyUseHTMLString: true,
+        message: html
+      })
+    })
     this.scrollBarHeight = 40 * this.menuData.length + 1 + 'px'
     this.changeRecordId = this.changeId
     this.initGantt(this.planInfoId, this.changeRecordId, this.viewType)
     this.callParentSelectTasks()
   },
   computed: {
-    isDisable () {
+    editUserList () {
+      return this.onlineData.filter(item => {
+        return item.entityId == this.planInfoId && item.entityType == this.createPage
+      })
+    },
+    isDisable() {
       const that = this
       return function (btnConfig) {
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
@@ -839,6 +873,9 @@ export default {
     closeNotice () {
       this.noticeVisible = false
     }
+  },
+  beforeDestroy() {
+    window.myWebSocket.emit('quitPlanGantGroup', this.msg)
   }
 }
 </script>

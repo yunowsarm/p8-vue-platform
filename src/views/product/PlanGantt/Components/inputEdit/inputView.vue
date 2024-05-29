@@ -6,27 +6,26 @@
                    name="inputKey">
         <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 增加的输入物</span>
         <div>
-          <form-list v-if="!isEmpty"
-                     ref="form"
-                     @rendered="rendered"
-                     form-layout="vertical"
-                     :data-source="dataSource"
-                     :api="saveApi"
-                     :form="formData"
-                     :exist-default-btn="existDefaultBtn"
-                     :other-param="otherParam">
+          <form-list
+            v-if="!isEmpty"
+            ref="form"
+            @rendered="rendered"
+            form-layout="vertical"
+            :data-source="dataSource"
+            :api="saveApi"
+            :form="formData"
+            :exist-default-btn="existDefaultBtn"
+            :other-param="otherParam"
+          >
           </form-list>
-          <el-empty v-if="isEmpty"
-                    class="custom_empty"
-                    :image-size="100"></el-empty>
+          <el-empty v-if="isEmpty" class="custom_empty" :image-size="100"></el-empty>
         </div>
       </el-tab-pane>
       <el-tab-pane label="前置输出物"
                    name="getPreOutputKey">
         <span slot="label"><i class="p8 icon-xuanxiang1"></i> 前置输出物</span>
         <div v-if="data.length > 0">
-          <div v-for="(item, index) in data"
-               :key="index">
+          <div v-for="(item, index) in data" :key="index">
             <el-row type="flex">
               <el-col :span="3"
                       class="baseTitle">任务名称</el-col>
@@ -63,8 +62,7 @@
           </div>
         </div>
         <div v-else>
-          <el-empty class="custom_empty"
-                    :image-size="100"></el-empty>
+          <el-empty class="custom_empty" :image-size="100"></el-empty>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -178,9 +176,10 @@ export default {
     }
   },
   methods: {
-    getInputData (taskId) {
+    getInputData(taskId) {
+      console.log('🚀 ~ inputView ~ taskId:', taskId)
       const that = this
-      that.$api['planGanttManager.inputInfo']({ taskId: taskId })
+      that.$api['planGanttManager.inputInfo']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId })
         .then(function (res) {
           if (res) {
             that.data = res

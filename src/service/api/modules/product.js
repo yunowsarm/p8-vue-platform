@@ -107,6 +107,13 @@ export const repositoryApi = {
   ],
   taskManager: [
     {
+      name: 'updateTaskDistribution',
+      method: 'POST',
+      path: '/product/pm/plan/updateTaskDistribution',
+      mockPath: '/product/pm/plan/updateTaskDistribution',
+      desc: '部门任务派发-任务派发'
+    },
+    {
       name: 'projectTree',
       method: 'POST',
       path: '/product/my/work/task/projectClassifyTree',
@@ -937,6 +944,13 @@ export const repositoryApi = {
       path: '/product/pm/plan/loadPlanVersionData',
       mockPath: '/product/pm/plan/loadPlanVersionData',
       desc: '项目管理->计划管理->计划编制->版本列表'
+    },
+    {
+      name: 'getVersionNum',
+      method: 'POST',
+      path: '/product/pm/plan/getPlanVersion',
+      mockPath: '/product/pm/plan/getPlanVersion',
+      desc: '项目管理->计划管理->计划编制->获取版本号'
     },
     {
       name: 'versionCreate',

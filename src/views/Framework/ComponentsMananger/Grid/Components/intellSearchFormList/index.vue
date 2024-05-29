@@ -195,11 +195,11 @@ export default {
                 let selectList = [selectId];
                 let flag = false;
                 const findIds = (data) => {
-                  data.map((el) => {
+                  data.forEach((el) => {
                     if (el.ID == selectId) {
                       if (el.children && el.children.length) {
                         flag = true
-                        el.children.map((val) => {
+                        el.children.forEach((val) => {
                           selectList.push(val.ID)
                           findIds(val.children)
                         })
@@ -311,7 +311,7 @@ export default {
       }
       this.advanced = true
       let searchParam = {}
-      Object.keys(this.formData).map((item) => {
+      Object.keys(this.formData).forEach((item) => {
         let filterValue = ''
         if (_this.formData[item]) {
           switch (_this.modeData[item]) {

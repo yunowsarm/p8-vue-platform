@@ -787,8 +787,7 @@ export default {
             roleId: item.sysRole,
             roleType: item.isFixed == '1' ? 'fixed' : 'general',
             isFixed: item.isFixed,
-            isRequired: item.isRequired,
-            projectTeamRoleUsers: [],
+            isRequired: item.isRequired
           }
           tempArr.push(tempObj)
         }

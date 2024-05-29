@@ -336,7 +336,7 @@ export default {
     },
     detailDrawerClosed(res) {
       this.detailVisible = false
-      this.selectTaskId = ''
+      // this.selectTaskId = ''
     },
     sendTaskJson() {
       const that = this

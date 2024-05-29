@@ -1,65 +1,63 @@
 <template>
   <el-col :span="fields.colSpan">
-    <el-form-item v-if="fields.elementOpacity" :label="fields.labelText" :label-width="fields.labelWidth" :prop="fields.fieldName" :rules="validator(fields.rules)">
-      <el-select
-        v-if="fields.fieldName && fields.type === 'selectIcon'"
-        v-model="formData[fields.fieldName]"
-        v-select-icon:[selectIconArg()]="formData[fields.fieldName]"
-        :placeholder="fields.placeholder"
-        clearable
-        v-bind="fields.fieldConfig"
-        style="width: 100%"
-        @change="fields.eventHandle && fields.eventHandle.change && comp[fields.eventHandle.change](formData[fields.fieldName], formIndex)"
-      >
-        <el-option
-          v-for="item in fields.options && fields.options.length && !(fields.optionUrl && fields.optionUrl.noApiOptionsToRender) ? fields.options : options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-          :disabled="item.disabled"
-        >
-          <el-tooltip :disabled="!item.describe" :content="item.describe" placement="right">
-            <span :class="item.label" style="display: inline-block; width: 100%"></span>
+    <el-form-item v-if="fields.elementOpacity"
+                  :label="fields.labelText"
+                  :label-width="fields.labelWidth"
+                  :prop="fields.fieldName"
+                  :rules="validator(fields.rules)">
+      <el-select v-if="fields.fieldName && fields.type === 'selectIcon'"
+                 v-model="formData[fields.fieldName]"
+                 v-select-icon:[selectIconArg()]="formData[fields.fieldName]"
+                 :placeholder="fields.placeholder"
+                 clearable
+                 v-bind="fields.fieldConfig"
+                 style="width: 100%"
+                 @change="fields.eventHandle && fields.eventHandle.change && comp[fields.eventHandle.change](formData[fields.fieldName], formIndex)">
+        <el-option v-for="item in fields.options && fields.options.length && !(fields.optionUrl && fields.optionUrl.noApiOptionsToRender) ? fields.options : options"
+                   :key="item.value"
+                   :label="item.label"
+                   :value="item.value"
+                   :disabled="item.disabled">
+          <el-tooltip :disabled="!item.describe"
+                      :content="item.describe"
+                      placement="right">
+            <span :class="item.label"
+                  style="display: inline-block; width: 100%"></span>
           </el-tooltip>
         </el-option>
       </el-select>
-      <el-date-picker
-        v-else-if="fields.fieldName && fields.type === 'datetime'"
-        v-model="formData[fields.fieldName]"
-        :type="fields.fieldConfig && fields.fieldConfig.type ? fields.fieldConfig.type : 'date'"
-        :value-format="fields.fieldConfig && fields.fieldConfig['value-format'] ? fields.fieldConfig['value-format'] : 'yyyy-MM-dd'"
-        v-bind="fields.fieldConfig"
-        :placeholder="fields.placeholder"
-        style="width: 100%"
-        @change="fields.eventHandle && fields.eventHandle.change && comp[fields.eventHandle.change](formData[fields.fieldName], formIndex)"
-      ></el-date-picker>
-      <el-input-number
-        v-else-if="fields.fieldName && fields.type === 'number'"
-        v-model="formData[fields.fieldName]"
-        v-bind="fields.fieldConfig"
-        :placeholder="fields.placeholder"
-        style="width: 100%"
-        @change="fields.eventHandle && fields.eventHandle.change && comp[fields.eventHandle.change](formData[fields.fieldName], formIndex)"
-      ></el-input-number>
-      <tree-select
-        v-else-if="fields.fieldName && fields.type === 'treeSelect'"
-        :default-expand-all="fields.defaultExpandAll"
-        :multiple="fields.multiple"
-        :placeholder="fields.placeholder"
-        :disabled="fields.disabled"
-        :data="fields.treeData && fields.treeData.length && !(fields.optionUrl && fields.optionUrl.noApiOptionsToRender) ? fields.treeData : options"
-        :props="fields.treeProps"
-        :disabled-values="fields.disabledValues"
-        :check-strictly="fields.checkStrictly"
-        :clearable="fields.clearable"
-        :readonly="fields.readonly"
-        v-model="formData[fields.fieldName]"
-        :style="{ width: fields.labelText ? 'auto' : '100%' }"
-        @tree-select-clear="fields.eventHandle && fields.eventHandle.treeSelectClear && comp[fields.eventHandle.treeSelectClear](formData[fields.fieldName], formIndex)"
-      >
+      <el-date-picker v-else-if="fields.fieldName && fields.type === 'datetime'"
+                      v-model="formData[fields.fieldName]"
+                      :type="fields.fieldConfig && fields.fieldConfig.type ? fields.fieldConfig.type : 'date'"
+                      :value-format="fields.fieldConfig && fields.fieldConfig['value-format'] ? fields.fieldConfig['value-format'] : 'yyyy-MM-dd'"
+                      v-bind="fields.fieldConfig"
+                      :placeholder="fields.placeholder"
+                      style="width: 100%"
+                      @change="fields.eventHandle && fields.eventHandle.change && comp[fields.eventHandle.change](formData[fields.fieldName], formIndex)"></el-date-picker>
+      <el-input-number v-else-if="fields.fieldName && fields.type === 'number'"
+                       v-model="formData[fields.fieldName]"
+                       v-bind="fields.fieldConfig"
+                       :placeholder="fields.placeholder"
+                       style="width: 100%"
+                       @change="fields.eventHandle && fields.eventHandle.change && comp[fields.eventHandle.change](formData[fields.fieldName], formIndex)"></el-input-number>
+      <tree-select v-else-if="fields.fieldName && fields.type === 'treeSelect'"
+                   :default-expand-all="fields.defaultExpandAll"
+                   :multiple="fields.multiple"
+                   :placeholder="fields.placeholder"
+                   :disabled="fields.disabled"
+                   :data="fields.treeData && fields.treeData.length && !(fields.optionUrl && fields.optionUrl.noApiOptionsToRender) ? fields.treeData : options"
+                   :props="fields.treeProps"
+                   :disabled-values="fields.disabledValues"
+                   :check-strictly="fields.checkStrictly"
+                   :clearable="fields.clearable"
+                   :readonly="fields.readonly"
+                   v-model="formData[fields.fieldName]"
+                   :style="{ width: fields.labelText ? 'auto' : '100%' }"
+                   @tree-select-clear="fields.eventHandle && fields.eventHandle.treeSelectClear && comp[fields.eventHandle.treeSelectClear](formData[fields.fieldName], formIndex)">
         <template #treeItemSlot="{ scope }">
           <span style="float: right">
-            <slot :name="fields.fieldName" :scope="scope"></slot>
+            <slot :name="fields.fieldName"
+                  :scope="scope"></slot>
           </span>
         </template>
       </tree-select>
@@ -106,14 +104,14 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       options: []
     }
   },
   watch: {
     fields: {
-      handler(val) {
+      handler (val) {
         const that = this
         if (that.fields.optionUrl) {
           if (that.fields.optionUrl.api) {
@@ -125,7 +123,7 @@ export default {
                 console.error(error)
               })
           } else {
-            if (that.fields.optionUrl.noApiOptionsToRender && that.fields.optionUrl.noApiOptionsToRender) {
+            if (that.fields.optionUrl.noApiOptionsToRender) {
               if (that.fields.type === 'treeSelect') {
                 that.options = that.optionsDataHandle(that.fields.treeData)
               } else {
@@ -141,9 +139,9 @@ export default {
       deep: true
     }
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    selectIconArg() {
+    selectIconArg () {
       /**
        * 自定义指令select-icon 动态参数绑定的处理
        */
@@ -153,7 +151,7 @@ export default {
         return this.options
       }
     },
-    optionsDataHandle(normalData) {
+    optionsDataHandle (normalData) {
       /**
        * 下拉框数据 公共逻辑处理部分
        */
@@ -199,7 +197,7 @@ export default {
       that.$emit('field-mounted')
       return options
     },
-    treeDataHandle(treeData, props = { label: '', value: '' }) {
+    treeDataHandle (treeData, props = { label: '', value: '' }) {
       treeData.forEach((node) => {
         if (props.label) {
           node.label = node[props.label]

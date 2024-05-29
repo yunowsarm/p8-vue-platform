@@ -283,7 +283,7 @@
                      :visible="visibleThirdDrawer"
                      direction="ttb"
                      :title="thirdMenuTitle"
-                     :drawer-config="drawerConfig"
+                     :drawer-config="menuLayoutDrawerConfig"
                      @close='onThirdMenuClose'
                      size="100%">
         <template #drawer>
@@ -471,6 +471,10 @@ export default {
       codeForm: '', // 新建/修改表单code
       dataViewId: '', // 修改页面id
       drawerConfig: {
+        modal: false
+      },
+      menuLayoutDrawerConfig: {
+        withHeader: false,
         modal: false
       },
       viewVisible: false, // 查看抽屉visible
@@ -1089,10 +1093,10 @@ export default {
     },
     search (param) {
       this.searchData.forEach(el => {
-        if (param && !param[el.fieldName] && this.tableParam.reportParam[el.fieldName]) {
+        if (!param[el.fieldName] && this.tableParam.reportParam[el.fieldName]) {
           delete this.tableParam.reportParam[el.fieldName]
         }
-        if (param && !param[el.fieldName] && this.tableParam.sqlParam[el.fieldName]) {
+        if (!param[el.fieldName] && this.tableParam.sqlParam[el.fieldName]) {
           delete this.tableParam.sqlParam[el.fieldName]
         }
       })
@@ -1119,10 +1123,11 @@ export default {
         this.tableParam.sqlParam = {}
       }
       this.tableParam.reportParam = {}
+      this.rebuildParam(this.reportParam)
       if (this.provideParams.searchParams && Object.keys(this.provideParams.searchParams).length > 0) {
         this.fiflterParams(this.provideParams.searchParams)
       }
-      this.$refs.table.searchData()
+      // this.$refs.table.searchData()
     },
     rebuildParam (val) {
       const reportParam = {}
@@ -1152,14 +1157,12 @@ export default {
         this.searchForm[el.fieldName] = el.defaultValue ? el.defaultValue : ''
         if (el.parameterSource && el.parameterSource == 'SQL参数') {
           if (reportParam[el.fieldName]) {
-            let mode = /^%.*%$/.test(reportParam[el.fieldName])
-            sql[el.fieldName] = { mode: mode ? 'like' : '=', relation: "and", value: reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName] }
+            sql[el.fieldName] = { mode: '=', relation: "and", value: reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName] }
             delete reportParam[el.fieldName]
           }
         } else {
           if (reportParam[el.fieldName]) {
-            let mode = /^%.*%$/.test(reportParam[el.fieldName])
-            report[el.fieldName] = { mode: mode ? 'like' : '=', relation: "and", value: reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName] }
+            report[el.fieldName] = { mode: '=', relation: "and", value: reportParam[el.fieldName].value ? reportParam[el.fieldName].value : reportParam[el.fieldName] }
             delete reportParam[el.fieldName]
           }
         }

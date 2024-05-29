@@ -287,6 +287,19 @@ export default {
         console.error('error' + error)
       })
     },
+    loadGanttData () {
+      this.$api['OutputFlow.loadAcivityData']({ activityInfoId: this.activityInfoId }).then(function (res) {
+        if (res) {
+          // 初始化数据
+          let datas = {
+            tasks: res
+          }
+          myGantt.parse(datas)
+        }
+      }).catch(function (error) {
+        console.error('error' + error)
+      })
+    },
     btnClick (item) {
       if (this.selectedTasks && this.selectedTasks.length) {
         let that = this
