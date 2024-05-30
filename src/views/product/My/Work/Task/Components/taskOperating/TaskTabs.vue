@@ -50,7 +50,8 @@ export default {
     'el-tab-pane': TabPane
   },
   props: {
-    approve: {
+    // 是否审批页面
+    approveType: {
       type: Boolean,
       default: false
     }
@@ -70,17 +71,25 @@ export default {
       ],
       tabsActiveName: '',
       durationDay: false,
-      exceedType: false
+      exceedType: false,
+      approve: false
     }
   },
   mounted () {
-    // 超期
+    // 判断任务是否超期
     if (!this.durationDay) {
+      // 超期
       if (moment(moment().format('YYYY-MM-DD')).isAfter(moment(this.getPlanInfo().PLANENDDATE))) {
         this.durationDay = false
+        if (this.approveType) {
+          this.approve = true
+        }
         // 未超期
       } else {
         this.durationDay = true
+        if (this.approveType) {
+          this.approve = false
+        }
       }
     }
     let taskTabs = []
