@@ -305,33 +305,6 @@
         <ChangeHistory :plan-info-id="planInfoId" :task-id="selectTaskId" :create-page="createPage" />
       </template>
     </common-drawer>
-    <common-drawer v-if="progressHistoryVisible" :visible="progressHistoryVisible" size="50%" placement="top" title="任务进度反馈" @close="progressHistoryVisible = false">
-      <template #drawer>
-        <ProgressHistory :task-id="selectedId" />
-      </template>
-    </common-drawer>
-    <common-drawer v-if="progressHistoryVisible"
-                   :visible="progressHistoryVisible"
-                   size="50%"
-                   placement="top"
-                   title="任务进度反馈"
-                   @close="progressHistoryVisible = false">
-      <template #drawer>
-        <ProgressHistory :task-id="selectedId" />
-      </template>
-    </common-drawer>
-    <common-drawer v-if="changeHistoryVisible"
-                   :visible="changeHistoryVisible"
-                   size="80%"
-                   placement="top"
-                   title="任务历史变更"
-                   @close="changeHistoryClose">
-      <template #drawer>
-        <ChangeHistory :plan-info-id="planInfoId"
-                       :task-id="selectTaskId"
-                       :create-page="createPage" />
-      </template>
-    </common-drawer>
   </div>
 </template>
 <style lang="scss">
