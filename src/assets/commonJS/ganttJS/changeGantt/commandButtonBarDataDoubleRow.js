@@ -57,16 +57,16 @@ const CommandButtonBarDataDoubleRow = [
             size: 'large',
             position: ['top', 'right']
           },
-          {
-            buttonId: 'suspend-config',
-            size: 'small',
-            position: ['top']
-          },
-          {
-            buttonId: 'forbid-config',
-            size: 'small',
-            position: ['top']
-          }
+          // {
+          //   buttonId: 'suspend-config',
+          //   size: 'small',
+          //   position: ['top']
+          // },
+          // {
+          //   buttonId: 'forbid-config',
+          //   size: 'small',
+          //   position: ['top']
+          // }
         ]
       },
       {
