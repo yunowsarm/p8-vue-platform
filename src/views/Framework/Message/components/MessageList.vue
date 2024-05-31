@@ -248,6 +248,7 @@ export default {
       deep: true,
       handler: function (newVal, oldVal) {
         this.mergeParams = { ...newVal, msgStatus: '1501' }
+        this.activeTabs = '1501'
       },
       immediate: true
     }
