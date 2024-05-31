@@ -17,7 +17,7 @@
         </div>
         <div class="task-tabs-con">
           <!-- 进度反馈-未完成原因 -->
-          <task-tabs-view :approve="true"></task-tabs-view>
+          <task-tabs-view :approveType="true"></task-tabs-view>
         </div>
       </div>
     </template>
