@@ -965,8 +965,13 @@ export function getGanttColumns(ganttObject, vueThis) {
         const obj = reminderList.find((item) => {
           return item.id === task.id
         })
-        if (obj && obj.id) {
-          return `<span onclick=Gantt.taskProgressDetails('${task.id}') class="p8 icon-weidu" style="cursor: pointer;"></span>`
+        let img = require('@/assets/image/gantt/weidu.png')
+        if (obj && obj.id && Number(obj.reminder) > 0 ) {
+          return `<span onclick=Gantt.taskProgressDetails('${task.id}') style="cursor: pointer">
+            <img style="cursor: pointer;width: 17px; height: 17px" src="${img}" />
+          </span>`
+        } else if (obj && obj.id && obj.reminder == 0) {
+          return `<span onclick=Gantt.taskProgressDetails('${task.id}') class="p8 icon-read-mail" style="cursor: pointer;"></span>`
         } else {
           return `<span onclick=Gantt.taskProgressDetails('${task.id}') class="p8 icon-read-mail" style="cursor: pointer;"></span>`
         }
