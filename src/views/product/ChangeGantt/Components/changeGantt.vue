@@ -91,7 +91,7 @@
           <div class="edit_gantt_user_list">
             <span v-for="user in editUserList">{{user.userName}}</span>
           </div>
-          <span slot="reference" style="float: right; margin-right: 40px;cursor:pointer">正在编辑 {{ editUserList.length }} 人</span>
+          <span slot="reference" style="float: right; margin-right: 40px;cursor:pointer; line-height: 40px">正在编辑 {{ editUserList.length }} 人</span>
         </el-popover>
       </div>
     </div>
