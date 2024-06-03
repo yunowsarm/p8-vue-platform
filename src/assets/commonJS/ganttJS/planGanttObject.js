@@ -552,15 +552,15 @@ export function getGanttColumns(ganttObject, vueThis) {
         }
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
           if (ganttObject.hasChild(task.id)) {
-            result = result + '<div style="display: inline-block;' + (vueThis.taskStyles[task.id] || '') + 'font-weight:bold;">' + task.name + '</div>'
+            result = result + '<div style="display: inline-block;' + (vueThis.taskStyles[task.id] || '') + 'font-weight:bold;">' + (task.name || '') + '</div>'
           } else {
-            result = result + '<div style="display: inline-block;' + (vueThis.taskStyles[task.id] || '') + '">' + task.name + '</div>'
+            result = result + '<div style="display: inline-block;' + (vueThis.taskStyles[task.id] || '') + '">' + (task.name || '') + '</div>'
           }
         } else {
           if (ganttObject.hasChild(task.id)) {
-            result = result + '<div style="display: inline-block;font-weight:bold;">' + task.name + '</div>'
+            result = result + '<div style="display: inline-block;font-weight:bold;">' + (task.name || '') + '</div>'
           } else {
-            result = task.name
+            result = (task.name || '')
           }
         }
         return result
