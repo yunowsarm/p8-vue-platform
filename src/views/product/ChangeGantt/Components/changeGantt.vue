@@ -846,6 +846,7 @@ export default {
       } */
       this.submitChangeDisabled = true
       this.submitChangeValidate = false
+      this.$emit('closed')
     },
     closeSelectApproveUser () {
       this.isSelectApproveUserView = false
