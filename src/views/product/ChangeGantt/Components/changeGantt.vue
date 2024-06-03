@@ -574,7 +574,6 @@ export default {
             myGantt.$resourcesStore.parse(res.resources)
             myGantt.serverList(myGantt.config.monitor_point, res.monitorPointDatas)
             myGantt.serverList(myGantt.config.plan_type, res.taskClassifys)
-            myGantt.serverList(myGantt.config.dept_list, res.deptList)
             vueThis.createTaskStatus = res.createTaskStatus
             vueThis.managerStatus = res.managerStatus
             vueThis.weatherControl = res.weatherControl

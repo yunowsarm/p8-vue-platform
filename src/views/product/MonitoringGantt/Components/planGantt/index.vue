@@ -961,7 +961,6 @@ export default {
             myGantt.serverList('userList', res.userResourceList)
             myGantt.serverList(myGantt.config.monitor_point, res.monitorPointDatas)
             myGantt.serverList(myGantt.config.plan_type, res.taskClassifys)
-            myGantt.serverList(myGantt.config.dept_list, res.deptList)
             myGantt.serverList(myGantt.config.tasks_cooperate_dept, res.deptList)
 
             // myGantt.serverList(myGantt.config.task_status, vueThis.taskStatus)

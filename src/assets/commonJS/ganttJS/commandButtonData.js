@@ -877,34 +877,9 @@ export const CommandButtonData = [
       if (checkSwitchType(tasks)) {
         return true
       }
-      if (tasks[0].planType === undefined || tasks[0].planType === '') {
-        return true
-      }
-      if (tasks[0].managerStatus === '6401' && tasks[0].specialDutyDeptId) {
-        // 已创建状态,部门不为空，可以下发但是会提示下发失败
-        result = false
-      } else if (tasks[0].managerStatus === '6401' && tasks[0].specialDutyDeptId === undefined) {
-        // 已创建状态,部门为空，不可以下发
-        result = true
-      } else if (tasks[0].managerStatus === '6403' && tasks[0].dutyDeptName) {
+      if (tasks[0].managerStatus === '6403' && tasks[0].dutyDeptName) {
         // 待下发状态责任部门（科研）不为空，可以下发
-        if (tasks[0].planType === null || tasks[0].planType === undefined || tasks[0].planType === '') {
-          // 当任务类型和计划类型为空时，不能下发
-          result = true
-        } else {
-          result = false
-        }
-      } else if (tasks[0].managerStatus === '6403' && (tasks[0].specialDutyDeptId === undefined || tasks[0].specialDutyDeptId === '')) {
-        // 待下发状态并且主责部门为空，不能下发
-        result = true
-      } else if (tasks[0].managerStatus === '6403' && tasks[0].specialDutyDeptId) {
-        // 待下发状态并且主责部门（专题）不为空，能下发
-        if (tasks[0].planType === undefined || tasks[0].planType === '') {
-          // 当任务类型和计划类型为空时，不能下发
-          result = true
-        } else {
-          result = false
-        }
+        result = false
       } else if (tasks[0].managerStatus === '6404') {
         // 已下发状态，不能下发
         result = true
@@ -2734,9 +2709,7 @@ function createTaskByDatas(ganttObject, datas, parentId, pos, taskName, msg, dpO
           forecastBeginDate: item.forecastBeginDate,
           forecastEndDate: item.forecastEndDate,
           parent: item.parent,
-          // qualityRequirement: item.qualityRequirement === undefined ? '' : item.qualityRequirement,
           status: item.status,
-          specialDutyDeptId: item.specialDutyDeptId,
           planInfoId: item.planInfoId,
           monitorPoints: item.monitorPoints,
           owner_id: item.owner_id,

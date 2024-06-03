@@ -1304,7 +1304,7 @@ GanttObject.treeDataEditor = function (ganttObject, editorConfig, editorConfig1)
           return {
             input: '',
             treeData: [],
-            config: name === 'tasksCooperateDept' ? editorConfig : editorConfig1
+            config: editorConfig1
           }
         },
         created() {},
@@ -1315,12 +1315,7 @@ GanttObject.treeDataEditor = function (ganttObject, editorConfig, editorConfig1)
             } else {
               this.treeData = res
             }
-            // this.input = document.getElementById('gantt_treeSelect_' + name).value
-            if (name === 'tasksCooperateDept') {
-              this.input = editorConfig.multiple && task[name] ? task[name].split(',') : task[name]
-            } else {
-              this.input = editorConfig1.multiple && task[name] ? task[name].split(',') : task[name]
-            }
+            this.input = editorConfig1.multiple && task[name] ? task[name].split(',') : task[name]
           })
         },
         watch: {
@@ -1392,33 +1387,6 @@ GanttObject.editors = function (ganttObject, formatter, linksFormatter) {
       max: function (taskId) {
         return ganttObject.config.plan_limit(ganttObject, taskId, 'max', 'end')
       }
-    },
-    dutyDeptName: {
-      type: 'tree_data_editor',
-      map_to: 'specialDutyDeptId'
-    },
-    tasksCooperateDept: {
-      type: 'tree_data_editor',
-      map_to: 'tasksCooperateDept'
-      // editorConfig: {
-      //   useTreeFormat: false,
-      //   useTreePId: '',
-      //   defaultValue: [],
-      //   disabledValues: ['1'],
-      //   defaultExpandAll: true,
-      //   defaultExpandedKeys: ['1'],
-      //   placeholder: '',
-      //   clearable: true,
-      //   props: {
-      //     value: 'id',
-      //     label: 'label',
-      //     children: 'children'
-      //   },
-      //   optionUrl: {
-      //     api: 'ProjectApply.deptTree',
-      //     params: {}
-      //   }
-      // }
     },
     // secretGrades: {
     //   type: 'select',
@@ -1757,28 +1725,6 @@ function searchFilter(parent, searchForm, ganttObject) {
       if (taskName && (!resource || !resource.roleName || resource.roleName.indexOf(taskName) === -1)) {
         roleIdCheck = false
       }
-    }
-    // 主责部门查询
-    let specialDutyCheck = true
-    const { specialDutyDeptId } = searchForm
-    if (specialDutyDeptId && task.specialDutyDeptId && !task.specialDutyDeptId.includes(specialDutyDeptId)) {
-      specialDutyCheck = false
-    }
-    if (specialDutyDeptId && !task.specialDutyDeptId) {
-      specialDutyCheck = false
-    }
-    // 配合部门查询
-    let tasksCooperateCheck = true
-    const { tasksCooperateDept } = searchForm
-    let tasksCooperateDeptArr = []
-    if (tasksCooperateDept && task.tasksCooperateDept) {
-      tasksCooperateDeptArr = task.tasksCooperateDept.split(',')
-    }
-    if (tasksCooperateDept && task.tasksCooperateDept && tasksCooperateDeptArr.indexOf(tasksCooperateDept) == -1) {
-      tasksCooperateCheck = false
-    }
-    if (tasksCooperateDept && !task.tasksCooperateDept) {
-      tasksCooperateCheck = false
     }
 
     const userName = searchForm.userName // 责任人模糊查询
@@ -2206,12 +2152,6 @@ GanttObject.onSaveCellEven = function (ganttObject, vueThis) {
     }
     // console.log(ganttObject,'ganttObject');
 
-    if (colName === 'specialDutyDeptId') {
-      // vueThis.initGantt(vueThis.planInfoId,vueThis.viewType)
-      ganttObject.updateTask(taskId)
-      // vueThis.selectedTasks = []
-      // vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
-    }
 
     // 同步左下角选中任务名称
     if (colName === 'name') {
@@ -2560,7 +2500,6 @@ GanttObject.publicObject = {
     resource_property: 'owner_id', // 责任人定义
     monitor_point: 'monitorPoints', // 标识定义
     plan_type: 'planType', // 任务类型定义
-    dept_list: 'specialDutyDeptId', // 任务类型定义
     training_mode_list: 'trainingMode', // 培训方式定义
     task_status: 'taskStatus', // 任务状态定义
     tasks_cooperate_dept: 'tasksCooperateDeptList' // 任务完成形式
@@ -2806,8 +2745,6 @@ const columnsTypeMap = {
   managerStatus: 'select',
   monitorPoints: 'select',
   planType: 'select',
-  specialDutyDeptId: 'select',
-  tasksCooperateDept: 'select',
   wbs: 'select',
   name: 'input',
   owner_id: 'input',
@@ -2855,9 +2792,6 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
   initColumns.forEach((initItem, initIndex) => {
     const name = initItem.name
     let type = columnsTypeMap[name]
-    if (vueThis.isPlan && (name === 'specialDutyDeptId' || name === 'tasksCooperateDept')) {
-      type = ''
-    }
     let dataIndex
     // if (type) {
     const label = initItem.label
@@ -2953,26 +2887,6 @@ GanttObject.searchColumnsDataInit = function (vueThis, ganttObject) {
               break
             case 'planType':
               datas = ganttObject.serverList(ganttObject.config.plan_type)
-              break
-            case 'specialDutyDeptId':
-              const AyyData = ganttObject.serverList(ganttObject.config.dept_list)
-              for (const i in AyyData) {
-                const obj = {
-                  id: AyyData[i].id,
-                  title: AyyData[i].name
-                }
-                datas.push(obj)
-              }
-              break
-            case 'tasksCooperateDept':
-              const AyyData2 = ganttObject.serverList(ganttObject.config.dept_list)
-              for (const i in AyyData2) {
-                const obj = {
-                  id: AyyData2[i].id,
-                  title: AyyData2[i].name
-                }
-                datas.push(obj)
-              }
               break
             // case 'secretGrade':
             //   datas = ganttObject.serverList('secretGrades')
