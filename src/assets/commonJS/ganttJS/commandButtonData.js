@@ -2796,6 +2796,29 @@ function createTaskByDatas(ganttObject, datas, parentId, pos, taskName, msg, dpO
   })
 }
 
+
+export function deleteKeyRemove (ganttName, tasks) {
+  const thisGantt = GanttObject.getGanttObject(ganttName)
+  const vueThis = store.getters.vueThis
+  const thisDp = GanttObject.getDpObject(ganttName)
+  if (thisGantt && thisDp) {
+    let msg = '是否确认删除选中任务?'
+    if (checkHasApproveTask(ganttName, tasks)) {
+      msg = '删除任务包含已提交审批任务，是否确认删除?'
+    }
+    thisGantt.confirm({
+      text: msg,
+      ok: '确认',
+      cancel: '取消',
+      callback: function (result) {
+        if (result) {
+          removeTasks(thisGantt, thisDp, ganttName)
+        }
+      }
+    })
+  }
+}
+
 /**
  * @Description 任务删除
  * @author fukai

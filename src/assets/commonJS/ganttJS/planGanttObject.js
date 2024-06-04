@@ -1,7 +1,7 @@
 import { GanttObject, progressRefreshCheck } from './ganttObject'
 import { Gantt } from 'p8-dhtmlx-gantt'
 import { setLockTaskProperties, monitorTimeCheck, monitorLockUnLockCheckTwo, lockMonitorUpdateCheck } from './ganttLockUnLock'
-import { batchOwnerCheck } from './commandButtonData'
+import { batchOwnerCheck, deleteKeyRemove } from './commandButtonData'
 import api from '@/plugins/api'
 import moment from 'moment'
 import store from '@/plugins/store'
@@ -215,6 +215,12 @@ export function planGantt(ganttName, vueThis) {
   // 单元格单击事件
   ganttObject.attachEvent('onTaskClick', function (id, e) {
     const task = ganttObject.getTask(id)
+    const parentNode = e.target.parentNode
+    const fieldName = parentNode.getAttribute('data-column-name') || e.target.getAttribute('data-column-name')
+    const wbs = task.$wbs
+    if (fieldName === 'wbs') {
+      copyText(wbs, '大纲复制成功！')
+    }
     task.machineName = task.machineName ? task.machineName : ''
     task.completeForm = task.completeForm ? task.completeForm : ''
     task.taskProjectName = task.taskProjectName ? task.taskProjectName : ''
@@ -233,7 +239,6 @@ export function planGantt(ganttName, vueThis) {
     if (e.target.className === 'gantt_tree_icon gantt_open' || e.target.className === 'gantt_tree_icon gantt_close') {
       return true
     }
-    const parentNode = e.target.parentNode
     const fieldName1 = parentNode.getAttribute('data-column-name')
     if (task && task.managerStatus && task.managerStatus === '6404') {
       return false
@@ -346,6 +351,17 @@ export function planGantt(ganttName, vueThis) {
   window.addEventListener('keyup', function (event) {
     if (event.keyCode === 16 || event.keyCode === 17) {
       multipleState = false
+    }
+    if (event.keyCode === 46) {
+      let taskIds = ganttObject.getSelectedTasks()
+      if (vueThis.ganttName == 'planGantt' && taskIds.length > 0) {
+        let tasks = []
+        taskIds.forEach(id => {
+          let task = ganttObject.getTask(id)
+          tasks.push(task)
+        })
+        deleteKeyRemove(vueThis.ganttName, tasks)
+      }
     }
   })
   ganttObject.attachEvent('onBeforeTaskMultiSelect', function (id, state, e) {

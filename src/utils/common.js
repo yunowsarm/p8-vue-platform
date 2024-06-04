@@ -211,3 +211,27 @@ export function deepClone(obj) {
 
   return result
 }
+
+export function copyText(value, msg = "复制成功") {
+  // 动态创建 textarea 标签
+  const textarea = document.createElement('textarea')
+  // 将该 textarea 设为 readonly 防止 iOS 下自动唤起键盘，同时将 textarea 移出可视区域
+  textarea.readOnly = 'readonly'
+  textarea.style.position = 'fixed'
+  textarea.style.top = '0px'
+  textarea.style.left = '-9999px'
+  textarea.style.zIndex = '-9999'
+  // 将要 copy 的值赋给 textarea 标签的 value 属性
+  textarea.value = value
+  // 将 textarea 插入到 el 中
+  document.body.appendChild(textarea)
+  // 兼容IOS 没有 select() 方法
+  if (textarea.createTextRange) {
+    textarea.select() // 选中值并复制
+  } else {
+    textarea.setSelectionRange(0, value.length)
+    textarea.focus()
+  }
+  const result = document.execCommand('Copy')
+  if (result) Message.success(msg)
+}
