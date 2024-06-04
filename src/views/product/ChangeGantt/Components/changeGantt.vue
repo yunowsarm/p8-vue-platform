@@ -455,11 +455,13 @@ export default {
         html += `<span>${item.userName}</span>`
       })
       html += '</div>'
-      that.$notify({
-        title: `当前共有${that.editUserList.length}人编制当前计划`,
-        dangerouslyUseHTMLString: true,
-        message: html
-      })
+      if (that.editUserList.length > 1) {
+        that.$notify({
+          title: `当前共有${that.editUserList.length}人编制当前计划`,
+          dangerouslyUseHTMLString: true,
+          message: html
+        })
+      }
     })
     this.scrollBarHeight = 40 * this.menuData.length + 1 + 'px'
     this.changeRecordId = this.changeId
