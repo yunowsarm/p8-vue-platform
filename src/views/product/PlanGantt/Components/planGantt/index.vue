@@ -81,9 +81,11 @@
         <span style="float: right; margin-right: 40px">已选中 {{ selectTaskCount }} 条</span>
         <el-popover placement="top" width="200" trigger="click">
           <div class="edit_gantt_user_list">
-            <span v-for="user in editUserList">{{ user.userName }}</span>
+            <span v-if="webSocketDone">当前连接异常，无法查看正在编辑人员，请尝试刷新页面或联系运维人员</span>
+            <span v-else v-for="user in editUserList">{{ user.userName }}</span>
           </div>
-          <span slot="reference" style="float: right; margin-right: 40px; cursor: pointer">正在编辑 {{ editUserList.length }} 人</span>
+          <span slot="reference"
+                style="float: right; margin-right: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' : editUserList.length }} 人</span>
         </el-popover>
       </div>
     </div>
@@ -578,6 +580,7 @@ export default {
           params: {}
         }
       },
+      webSocketDone: false,
       onlineData: [],
       treeDataEditorConfig1: {
         useTreeFormat: true,
@@ -808,6 +811,9 @@ export default {
     this.scrollBarHeight = 40 * this.menuData.length + 1 + 'px'
     window.movement = this.movement
     window.isDisable = this.isDisable
+    if (!window.myWebSocket.connected) {
+      this.webSocketDone = true
+    }
     window.myWebSocket.on('planGantGroup', (data) => {
       that.onlineData = data
       let html = '<div class="edit_gantt_user_list">'

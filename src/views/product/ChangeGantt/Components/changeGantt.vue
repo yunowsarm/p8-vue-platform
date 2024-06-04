@@ -89,9 +89,11 @@
           width="200"
           trigger="click">
           <div class="edit_gantt_user_list">
-            <span v-for="user in editUserList">{{user.userName}}</span>
+            <span v-if="webSocketDone">当前连接异常，无法查看正在编辑人员，请尝试刷新页面或联系运维人员</span>
+            <span v-else v-for="user in editUserList">{{ user.userName }}</span>
           </div>
-          <span slot="reference" style="float: right; margin-right: 40px;cursor:pointer; line-height: 40px">正在编辑 {{ editUserList.length }} 人</span>
+          <span slot="reference"
+                style="float: right; margin-right: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' : editUserList.length }} 人</span>
         </el-popover>
       </div>
     </div>
@@ -332,6 +334,7 @@ export default {
       deep: 0,
       mouseX: '',
       mouseY: '',
+      webSocketDone: false,
       onlineData: [],
       columnSettings: [],
       copyTasks: [], // 复制任务载体
@@ -445,6 +448,9 @@ export default {
       entityType: this.createPage,
       sendUser: this.$store.state.user.userId,
       sendSessionId: this.$store.state.user.userId
+    }
+    if (!window.myWebSocket.connected) {
+      this.webSocketDone = true
     }
     window.myWebSocket.emit('enterPlanGantGroup', this.msg)
     window.myWebSocket.on('planGantGroup', (data) => {
