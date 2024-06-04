@@ -613,6 +613,8 @@ export default {
       selectTaskName: '',
       resourceSelectVisible: false, // 责任选择框校验
       resourceSelectModel: null,
+      sysUserList: [],
+      distribution: '',
       activityImportTitle: '活动导入',
       experienceImportTitle: '经验库导入',
       activityImportVisible: false,

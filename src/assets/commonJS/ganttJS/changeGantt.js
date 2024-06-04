@@ -17,6 +17,8 @@ export const checkKeys = [
   'owner_id',
   'forecastBeginDate',
   'roleName',
+  'realName',
+  'owner_type',
   'dutyDeptName',
   'forecastEndDate',
   'describes',

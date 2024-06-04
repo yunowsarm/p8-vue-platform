@@ -76,15 +76,18 @@ export function planGantt(ganttName, vueThis) {
           createPage: vueThis.createPage
         })
           .then((res) => {
-            if (res) {
+            if (res === 'true') {
               // ganttObject.getTask(id).updateType = ''
               return { action: 'ok' }
-            // } else if (res === null) {
-            //   GanttObject.showMessage(vueThis, '子任务密级不能大于父任务密级！', 'error')
-            } else {
+            } else if (res === 'false') {
               ganttObject.undo()
               GanttObject.showMessage(vueThis, '更新失败！', 'error')
               return { action: 'error' }
+            } else {
+              vueThis.$message({
+                message: res,
+                type: 'warning'
+              })
             }
           })
           .catch((err) => {

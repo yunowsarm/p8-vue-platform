@@ -718,13 +718,14 @@ export default {
     },
     ownerChangeHandle (val) {
       if (!val) {
-        this.formData.roleName = ''
+        this.formData.realName = ''
         this.formData.dutyDeptName = ''
       } else {
         const user = this.ownerDataOptions.find((item) => {
           return item.id === val
         })
-        this.formData.roleName = user.roleName
+        this.formData.realName = user.name
+        this.formData.owner_type = this.vueThis.distribution
         this.formData.dutyDeptName = user.deptName
       }
     }

@@ -448,7 +448,6 @@ export default {
     }
     window.myWebSocket.emit('enterPlanGantGroup', this.msg)
     window.myWebSocket.on('planGantGroup', (data) => {
-      console.log('🚀 ~ window.myWebSocket.on ~ data:', data)
       that.onlineData = data
       let html = '<div class="edit_gantt_user_list">'
       that.editUserList.forEach((item) => {
