@@ -725,7 +725,8 @@ export default {
           return item.id === val
         })
         this.formData.realName = user.name
-        this.formData.owner_type = this.vueThis.distribution
+        this.formData.owner_type = 'team'
+        // this.formData.owner_type = this.vueThis.distribution
         this.formData.dutyDeptName = user.deptName
       }
     }
