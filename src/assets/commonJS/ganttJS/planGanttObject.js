@@ -497,6 +497,14 @@ export function getGanttColumns(ganttObject, vueThis) {
   // 加载编辑器
   const editors = GanttObject.editors(ganttObject, formatter, linksFormatter)
 
+  function checkEdit () {
+    if (vueThis.pageName === 'planMonitor') {
+      return false
+    } else {
+      return true
+    }
+  }
+
   return [
     {
       name: 'wbs',
@@ -521,13 +529,13 @@ export function getGanttColumns(ganttObject, vueThis) {
     // },
     {
       name: 'name',
-      label: '任务名称' + canEditIcon,
+      label: '任务名称' + (checkEdit() ? canEditIcon : ''),
       tree: true,
       align: 'left',
       resize: true,
       monitorLockLimit: true, // 标识锁定后不可操作的列声明
       min_width: 350,
-      editor: editors.text,
+      editor: checkEdit() ? editors.text : null,
       template: function (task) {
         let result = ''
         if (task.switchType === '9010' || task.switchType === '9020') {
@@ -571,12 +579,12 @@ export function getGanttColumns(ganttObject, vueThis) {
     },
     {
       name: 'owner_id',
-      label: '责任人' + canEditIcon,
+      label: '责任人' + (checkEdit() ? canEditIcon : ''),
       align: 'center',
       monitorLockLimit: true, // 标识锁定后不可操作的列声明
       width: 80,
       resize: true,
-      // editor: editors.userEditor,
+      // editor: true,
       template: function (task) {
         return `<span data-column-name="owner_id" class="gantt_owner_id">${task.realName || ''}</span>`
         // const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
@@ -597,27 +605,27 @@ export function getGanttColumns(ganttObject, vueThis) {
         // }
       }
     },
-    {
-      name: 'roleName',
-      label: '角色',
-      align: 'center',
-      resize: true,
-      min_width: 120,
-      template: function (task) {
-        const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
-        const owner = task[ganttObject.config.resource_property]
-        if (owner) {
-          const userMessage = resourceDatas.getItem(owner)
-          if (userMessage) {
-            return userMessage.roleName
-          } else {
-            return ''
-          }
-        } else {
-          return ''
-        }
-      }
-    },
+    // {
+    //   name: 'roleName',
+    //   label: '角色',
+    //   align: 'center',
+    //   resize: true,
+    //   min_width: 120,
+    //   template: function (task) {
+    //     const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
+    //     const owner = task[ganttObject.config.resource_property]
+    //     if (owner) {
+    //       const userMessage = resourceDatas.getItem(owner)
+    //       if (userMessage) {
+    //         return userMessage.roleName
+    //       } else {
+    //         return ''
+    //       }
+    //     } else {
+    //       return ''
+    //     }
+    //   }
+    // },
     {
       name: 'dutyDeptName',
       label: '部门',
@@ -627,11 +635,11 @@ export function getGanttColumns(ganttObject, vueThis) {
     },
     {
       name: 'start_date',
-      label: '计划开始时间' + canEditIcon,
+      label: '计划开始时间' + (checkEdit() ? canEditIcon : ''),
       align: 'center',
       min_width: 130,
       resize: true,
-      editor: editors.start_date,
+      editor: checkEdit() ? editors.start_date : null,
       template: function (task) {
         if (ganttObject.isTaskExists(task.parent) && ganttObject.getTask(task.parent).start_date > task.start_date) {
           if (ganttObject.hasChild(task.id)) {
@@ -663,11 +671,11 @@ export function getGanttColumns(ganttObject, vueThis) {
     },
     {
       name: 'end_date',
-      label: '计划完成时间' + canEditIcon,
+      label: '计划完成时间' + (checkEdit() ? canEditIcon : ''),
       align: 'center',
       min_width: 130,
       resize: true,
-      editor: editors.end_date,
+      editor: checkEdit() ? editors.end_date : null,
       template: function (task) {
         if (task.parent && ganttObject.isTaskExists(task.parent) && task.end_date && ganttObject.getTask(task.parent).end_date) {
           const pEndDate = ganttObject.getTask(task.parent).end_date
@@ -704,11 +712,11 @@ export function getGanttColumns(ganttObject, vueThis) {
     },
     {
       name: 'autoScheduling',
-      label: '排程类型' + canEditIcon,
+      label: '排程' + (checkEdit() ? canEditIcon : ''),
       align: 'center',
-      min_width: 100,
+      min_width: 70,
       resize: true,
-      editor: editors.schedule,
+      editor: checkEdit() ? editors.schedule : null,
       template: function (task) {
         // if (ganttObject.getGlobalTaskIndex(task.id) === 0) {
         //   return '手动'
@@ -780,12 +788,12 @@ export function getGanttColumns(ganttObject, vueThis) {
     },
     {
       name: 'predecessors',
-      label: '前后置' + canEditIcon,
+      label: '前后置' + (checkEdit() ? canEditIcon : ''),
       min_width: 100,
       resize: true,
       align: 'left',
       monitorLockLimit: true, // 标识锁定后不可操作的列声明
-      editor: editors.predecessors,
+      editor: checkEdit() ? editors.predecessors : null,
       template: function (task) {
         const links = task.$target
         const labels = []
@@ -881,10 +889,10 @@ export function getGanttColumns(ganttObject, vueThis) {
     // },
     {
       name: 'weatherControl',
-      label: '是否管控任务',
+      label: '管控任务',
       align: 'center',
       resize: true,
-      min_width: 150,
+      min_width: 70,
       template: function (task) {
         const weatherControl = task.weatherControl
         if (weatherControl === '1') {
@@ -924,9 +932,9 @@ export function getGanttColumns(ganttObject, vueThis) {
     },
     {
       name: 'overdueRemainingDays',
-      label: '超期/剩余天数',
+      label: '超期/剩余',
       align: 'center',
-      min_width: 190,
+      min_width: 120,
       resize: true,
       template: function (task) {
         let text = ''
@@ -936,7 +944,7 @@ export function getGanttColumns(ganttObject, vueThis) {
           const days = Math.floor(Math.abs((realEndDate - endDate) / 1000 / 60 / 60 / 24))
           // 已完成
           if (realEndDate > endDate) {
-            text = `<span style="color: #F80012">超期${days}天完成</span>`
+            text = `<span style="color: #F80012">超${days}天完成</span>`
           } else if (days === 0) {
             text = `<span style="color: #1892FF">当天完成</span>`
           } else {
@@ -947,11 +955,11 @@ export function getGanttColumns(ganttObject, vueThis) {
           const endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - 24 * 60 * 60 * 1000
           const days = Math.floor(Math.abs((nowDate - endDate) / 1000 / 60 / 60 / 24))
           if (nowDate > endDate) {
-            text = `<span style="color: #F80012">超期${days + 1}天</span>`
+            text = `<span style="color: #F80012">超${days + 1}天</span>`
           } else if (days === 0) {
             text = `<span style="color: #1BBF9E">今天</span>`
           } else {
-            text = `<span style="color: #0296ff">剩余${days}天</span>`
+            text = `<span style="color: #0296ff">剩${days}天</span>`
           }
         }
         return text

@@ -23,11 +23,6 @@ const CommandButtonBarData = [
         groupName: '版本管理',
         buttonConfigs: [
           {
-            buttonId: 'version-compare',
-            size: 'large',
-            position: ['top']
-          },
-          {
             buttonId: 'version-list',
             size: 'large',
             position: ['top']

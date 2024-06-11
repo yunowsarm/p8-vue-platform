@@ -239,6 +239,17 @@
         <ProgressHistory :task-id="selectedId" />
       </template>
     </common-drawer>
+    <common-drawer v-if="versionListVisible"
+                   :visible="versionListVisible"
+                   size="70%"
+                   placement="top"
+                   title="版本列表"
+                   @close="versionListVisible = false">
+      <template #drawer>
+        <version-list :plan-info-id="planInfoId"
+                      :main-gantt-name="ganttName"></version-list>
+      </template>
+    </common-drawer>
   </div>
 </template>
 <style lang="scss">
@@ -318,6 +329,7 @@ import { requestUrl } from '@/utils/common.js'
 import CommonButtonBarSetting from '@/components/gantt/Components/CommonButtonBarSetting'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import Notice from '../../../PlanGantt/Components/notice'
+import VersionList from '../../../PlanGantt/Components/versionList'
 import CommandStatistic from '@/components/gantt/Components/CommandStatistic'
 import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
 import ProgressHistory from '../../../PlanGantt/Components/progressHistory';
@@ -435,6 +447,7 @@ export default {
     ListLayout,
     // Flight,
     // Large,
+    VersionList,
     ProgressHistory,
     CommandSearch,
     CommandStatistic,
@@ -458,6 +471,7 @@ export default {
       excelSecretGrade: '', // Excel文件导入 弹框需要展示的密级
       projectSecretGradeDisplay: '', // project文件导入 弹框需要展示的密级
       projectSecretGrade: '', // project文件导入 弹框需要展示的密级
+      versionListVisible: false, //  版本列表显示隐藏
       isPlan: true,
       pageName: 'planMonitor',
       detailVisible: false,
@@ -863,6 +877,8 @@ export default {
       // 初始化对象
       myGantt = planGantt(vueThis.ganttName, vueThis)
       myGantt.config.scale_height = 100
+      // 计划监控视图时，禁止编辑
+      myGantt.config.readonly = true;
       // 标识锁定后不可操作的列获取
       getMonitorLimitColumns(myGantt.config.columns, vueThis)
       // gantt视图切换

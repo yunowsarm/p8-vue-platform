@@ -43,11 +43,6 @@ const CommandButtonBarDataDoubleRow = [
         groupName: '版本',
         buttonConfigs: [
           {
-            buttonId: 'version-compare',
-            size: 'small',
-            position: ['top']
-          },
-          {
             buttonId: 'version-list',
             size: 'small',
             position: ['top']
