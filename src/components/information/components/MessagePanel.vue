@@ -35,45 +35,54 @@
           </div>
         </div>
         <div class="contentText-box">
+          <i class="el-icon-search"
+             @click="searchShow"></i>
+          <span class="span-icon"
+                @click="callOut">@</span>
           <textarea class="contentText-textarea"
                     autofocus
                     ref="textareaRef"
+                    @keydown.enter="onSubmit()"
                     v-model="contentText">
               </textarea>
         </div>
       </div>
-      <el-popover placement="top-end"
-                  width="100"
-                  v-model="popoverType"
-                  trigger="click"
-                  content="不能发送空白消息">
-        <el-button class="btn"
-                   slot="reference"
-                   type="primary"
-                   @click="onSubmit()">发送</el-button>
-      </el-popover>
+      <el-button class="btn"
+                 slot="reference"
+                 type="primary"
+                 @click="onSubmit()">发送</el-button>
     </div>
+    <resource-select v-if="resourceSelectVisible"
+                     :visible="resourceSelectVisible"
+                     :entityId="entityId"
+                     @closed="resourceSelectclosed"
+                     @resource-selected="resourceSelected">
+    </resource-select>
   </div>
 </template>
 
 <script>
 import StatusIcon from "./StatusIcon";
 import moment from 'moment'
+import ResourceSelect from '@/components/information/components/resourceSelect.vue'
 export default {
   name: "MessagePanel",
   components: {
     StatusIcon,
+    ResourceSelect
   },
   props: ['user', 'messagesData'],
   data () {
     return {
-      popoverType: false,
       userId: this.$store.state.user.userId, // 当前用户ID
       // receiverUser: this.$store.getters.name, // 当前用户昵称
       // avatar: this.$store.getters.avatar, // 当前用户头像
       msgRightWidth: '100%',
       contentText: "", // input输入的值
-      messagesList: this.messagesData
+      messagesList: this.messagesData,
+      resourceSelectVisible: false,
+      selectUserIds: [],
+      entityId: ''
     };
   },
   watch: {
@@ -86,6 +95,10 @@ export default {
     }
   },
   mounted () {
+    console.log(this.user, '==========111=======user');
+    if (this.user) {
+      this.entityId = this.user.entityId
+    }
     this.$refs.textareaRef.focus();
     console.log(window, 'myWebSocket' + this.$store.state.user.userId);
     setTimeout(() => {
@@ -142,13 +155,11 @@ export default {
 
     // },
     onSubmit () {
-      // this.user.hasNewMessages = false
-      // this.$emit('messageevent', this.user)
+      // 阻止默认的回车行为（如换行）
+      event.preventDefault();
       if (this.contentText === '') {
-        this.popoverType = false
         return
       }
-      // this.$refs.textareaRef.focus()
       this.messagesList.push(
         {
           itemCreateTime: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -159,8 +170,8 @@ export default {
           sendUserName: this.$store.state.user.userName,
           content: this.contentText,
           avatar: this.$store.getters.avatar, // 当前用户头像
-          entityId: '001',
-          entityType: 'chat'
+          entityId: this.user ? this.user.entityId : '',
+          entityType: this.user ? this.user.entityType : ''
         }
       )
       let params = {
@@ -171,17 +182,75 @@ export default {
         sendUser: this.$store.state.user.userId,
         sendUserName: this.$store.state.user.userName,
         content: this.contentText,
-        avatar: this.$store.getters.avatar, // 当前用户头像
-        entityId: '001',
-        entityType: 'chat'
+        entityId: this.user ? this.user.entityId : '',
+        entityType: this.user ? this.user.entityType : '',
+        selectUserIds: this.selectUserIds
       };
-      this.contentText = "";
-      this.popoverType = true
+
       this.$emit('input', params)
       setTimeout(() => {
         this.scrollBottm();
+        this.contentText = "";
         this.$refs.textareaRef.focus()
       }, 100);
+    },
+    callOut () {
+      console.log(this.user, '===========4444444444444');
+      this.resourceSelectVisible = true
+    },
+    resourceSelected (rows) {
+      let names = ''
+      rows.forEach(item => {
+        this.selectUserIds.push(item.userId)
+        names = names + ' @' + item.name + ' '
+      })
+      this.contentText = this.contentText + names
+      this.resourceSelectVisible = false
+    },
+    resourceSelectclosed () {
+      this.resourceSelectVisible = false
+    },
+    searchShow () {
+      this.isShow = !this.isShow
+      // if (this.isShow) {
+      //   this.drawerSize = '50%'
+      //   this.msgRightWidth = '60%'
+      // } else {
+      //   this.drawerSize = '30%'
+      //   this.msgRightWidth = '100%'
+      // }
+      this.$emit('searchShow', this.isShow)
+      this.onSelectUser('history')
+    },
+    onSelectUser (val, parameters) {
+      this.messagesList = []
+      // if (user.hasNewMessages) {
+      // this.messageevent(user)
+      // }
+      let params = {
+        entityId: this.user ? this.user.entityId : '',
+        entityType: this.user ? this.user.entityType : ''
+      }
+      if (val === 'history') {
+        params.history = val
+      }
+      if (val === 'update') {
+        params.type = val
+      }
+      this.$api['documentManagement.getWebsocketById']({ ...params, ...parameters }).then(res => {
+        // user.hasNewMessages = false
+        if (res) {
+          // this.selectedUser.sendSessionId = res[0].sendSessionId ? res[0].sendSessionId : null
+          if (val === 'history') {
+            this.messagesData = res
+          } else {
+            this.messagesList = res
+          }
+          setTimeout(() => {
+            this.scrollBottm();
+          }, 100);
+        }
+      })
     },
     // 滚动条到底部
     scrollBottm () {
@@ -201,6 +270,7 @@ export default {
   display: flex;
   flex-direction: column;
   background: #ffffff;
+  position: relative;
 }
 .header {
   margin: 20px 10px;
@@ -320,16 +390,16 @@ export default {
   overflow-y: visible;
 }
 .contentText-textarea {
-  width: 100%;
-  height: 100%;
+  width: 98%;
+  height: 80%;
   resize: none;
   border: none;
   outline-color: rgb(255, 255, 255);
 }
 .btn {
   position: absolute;
-  right: 20px;
-  bottom: 30px;
+  right: 10px;
+  bottom: 0px;
 }
 .el-icon-search {
   font-size: 20px;
@@ -338,5 +408,9 @@ export default {
 .load-msg {
   text-align: center;
   margin-bottom: 20px;
+}
+.span-icon {
+  font-size: 20px;
+  color: #606592;
 }
 </style>

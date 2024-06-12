@@ -77,6 +77,10 @@
                      :taskId="taskId"
                      :visible="visibleFrontToBack"
                      @close='close'></front-to-back>
+      <communication-msg v-if="isVisibleDocumentEditDrawer"
+                         :thirdMenuParam="thirdMenuParam"
+                         :visibleMsgDrawer="isVisibleDocumentEditDrawer"
+                         @visibleMsgClose="visibleMsgClose"></communication-msg>
     </template>
   </normal-layout>
 </template>
@@ -136,6 +140,7 @@ import { selectGenerateTree } from '@/views/Framework/ComponentsMananger/Layout/
 import tableRender from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
 import { overdueTextHandles } from '@/utils/common'
 import frontToBack from './frontToBack'
+import CommunicationMsg from '@/components/information/index.vue';
 export default {
   name: 'ButtonNavigationView',
   provide () {
@@ -145,6 +150,7 @@ export default {
   },
   data () {
     return {
+      isVisibleDocumentEditDrawer: false,
       dateTime: null,
       dialogHeight: document.documentElement.clientHeight * 0.6,
       queryParam: {},
@@ -201,7 +207,8 @@ export default {
     CommonDrawer,
     ProcessApprovalView,
     MenuLayout,
-    frontToBack
+    frontToBack,
+    CommunicationMsg
   },
   created () {
     this.init()
@@ -218,8 +225,11 @@ export default {
   },
   methods: {
     open () {
-      this.$set(this.thirdMenuParam, 'isVisibleCommunicationDrawer', false)
-      this.$set(this.thirdMenuParam, 'isVisibleCommunicationDrawer', true)
+      this.isVisibleDocumentEditDrawer = true
+    },
+    visibleMsgClose () {
+      console.log('gggggggggggggggggggggggggggggg');
+      this.isVisibleDocumentEditDrawer = false
     },
     frontToBackClick (val, scope) {
       this.title = val

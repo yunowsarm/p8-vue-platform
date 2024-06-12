@@ -128,7 +128,7 @@ export default {
       from: 'DutyPersonsMessage'
     }
   },
-  props: ['startTaskId', 'endTaskId', 'planInfoId', 'visible', 'selectTaskOwnerId', 'showType'],
+  props: ['entityId', 'startTaskId', 'endTaskId', 'planInfoId', 'visible', 'selectTaskOwnerId', 'showType'],
   data () {
     return {
       comp: this,
@@ -144,6 +144,7 @@ export default {
       searchName: '',
       queryParam: {
         planInfoId: this.planInfoId,
+        entityId: this.entityId,
         startTaskId: this.startTaskId,
         endTaskId: this.endTaskId,
         searchName: ''

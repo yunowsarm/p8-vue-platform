@@ -3,16 +3,16 @@
        @click="onClick"
        :class="{ selected: selected }">
     <div class="description">
-      <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+      <i class="el-icon-tickets"></i>
       <div class="right-content">
         <div class="name">
-          {{ user.sendUserName }} {{ user.self ? " (yourself)" : "" }}
+          {{ user.entityName }}
         </div>
-        <div class="status">
+        <!-- <div class="status">
           <status-icon v-if="connected===true || connected===false"
                        :connected="connected" />{{ status }}
 
-        </div>
+        </div> -->
       </div>
     </div>
     <div v-if="user.messageCount > 0"
@@ -52,19 +52,19 @@ export default {
       this.$emit("select");
     },
   },
-  computed: {
-    status () {
-      this.connected = this.user.status === "online" ? true : false;
-      this.user.connected = this.user.status === "online" ? true : false;
-      return this.user.status === "online" ? "在线" : "离线";
-    },
-  },
+  // computed: {
+  //   status () {
+  //     this.connected = this.user.status === "online" ? true : false;
+  //     this.user.connected = this.user.status === "online" ? true : false;
+  //     return this.user.status === "online" ? "在线" : "离线";
+  //   },
+  // },
 };
 </script>
 
 <style scoped>
 .selected {
-  background-color: #1164a3;
+  background-color: #77b5e3;
 }
 
 .user {
@@ -75,6 +75,7 @@ export default {
 
 .description {
   display: flex;
+  align-items: center;
 }
 .right-content {
   display: flex;
@@ -98,6 +99,6 @@ export default {
   text-align: center;
   position: absolute;
   right: 10px;
-  top: 25px;
+  top: 10px;
 }
 </style>
