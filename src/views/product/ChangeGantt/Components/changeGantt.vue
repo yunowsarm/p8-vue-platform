@@ -93,7 +93,7 @@
             <span v-else v-for="user in editUserList">{{ user.userName }}</span>
           </div>
           <span slot="reference"
-                style="float: right; margin-right: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' : editUserList.length }} 人</span>
+                style="float: right; margin-right: 40px;line-height: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' : editUserList.length }} 人</span>
         </el-popover>
       </div>
     </div>
