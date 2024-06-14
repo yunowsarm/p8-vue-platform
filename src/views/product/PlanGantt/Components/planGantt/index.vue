@@ -1485,6 +1485,11 @@ export default {
     showTaskProgressDialog(taskId) {
       this.selectedId = taskId
       this.progressHistoryVisible = true
+      this.reminderList.forEach(item => {
+        if (item.id == taskId) {
+          item.reminder = 0
+        }
+      })
     },
     showChangeHistory() {
       this.changeHistoryVisible = true

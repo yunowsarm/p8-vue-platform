@@ -1000,7 +1000,7 @@ export function getGanttColumns(ganttObject, vueThis) {
         } else if (obj && obj.id && obj.reminder == 0) {
           return `<span onclick=Gantt.taskProgressDetails('${task.id}') class="p8 icon-read-mail" style="cursor: pointer;"></span>`
         } else {
-          return `<span onclick=Gantt.taskProgressDetails('${task.id}') class="p8 icon-read-mail" style="cursor: pointer;"></span>`
+          return ''
         }
       }
     }
