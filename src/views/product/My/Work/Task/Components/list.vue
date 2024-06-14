@@ -22,7 +22,7 @@
           <span v-else>{{ scope.row.NAME }}</span>
         </template>
         <template #PROGRESS="{scope}">
-          <span v-if="scope.row.DATATYPE === 'task'">{{scope.row.PROGRESS * 100}}%</span>
+          <span v-if="scope.row.DATATYPE === 'task'">{{ getProgress(scope.row.PROGRESS) }}</span>
         </template>
         <template #INDEXNO="{scope}">
           <span v-if="scope.row.DATATYPE === 'task'">{{scope.row.INDEXNO}}</span>
@@ -224,6 +224,9 @@ export default {
     }
   },
   methods: {
+    getProgress (val) {
+      return Math.round(val * 100) + '%'
+    },
     open () {
       this.isVisibleDocumentEditDrawer = true
     },
