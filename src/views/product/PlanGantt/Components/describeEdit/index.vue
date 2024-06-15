@@ -254,6 +254,7 @@ export default {
       formKey: new Date().getTime(),
       describes: '',
       oldFormData: {},
+      extraKeys: [],
       ganttObject: null,
       // falg: true
     }
@@ -298,7 +299,12 @@ export default {
       if (res && res.taskExtendList) {
         this.extraIds = {}
         res.taskExtendList.forEach((item) => {
-          this.$set(this.formData, item.fieldName, item.fieldValue)
+          if (item.fieldType == 'datepicker') {
+            let date = moment(item.fieldValue)
+            this.$set(this.formData, item.fieldName, date.isValid() ? date : '')
+          } else {
+            this.$set(this.formData, item.fieldName, item.fieldValue)
+          }
           this.$set(this.extraIds, item.fieldName, item.id)
         })
       }
@@ -308,7 +314,9 @@ export default {
     //   this.falg = res
     // })
     this.extraList = this.vueThis.columnSettings.filter((item) => item.attributeType === '1')
+    this.extraKeys = []
     this.extraList.forEach((extra) => {
+      this.extraKeys.push(extra.filedName)
       this.dataSource.push({
         labelText: extra.name,
         type: this.ganttName === 'planGantt' ? extra.filedType : 'view',
@@ -493,6 +501,10 @@ export default {
                 }
               }
             }
+            // 拓展字段
+            if (that.extraKeys.includes(key)) {
+              task[key] = that.formData[key]
+            }
           }
           if (check) {
             updateforecastDate(task, ganttObject)
@@ -521,6 +533,9 @@ export default {
             // 计划编辑
             const extraData = []
             this.extraList.forEach((item) => {
+              if (item.filedType == 'datepicker') {
+                saveParams[item.filedName] = moment(saveParams[item.filedName]).format('YYYY-MM-DD')
+              }
               const obj = {
                 id: this.extraIds[item.filedName] || '',
                 fieldName: item.filedName,

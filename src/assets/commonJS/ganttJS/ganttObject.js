@@ -1021,12 +1021,12 @@ GanttObject.customDateEditor = function (ganttObject) {
       let maxValue = null
       if (typeof config.min === 'function') {
         config.min(id, column) && (minValue = dateToStr(config.min(id, column)))
-      } else {
+      } else if (config.min) {
         minValue = dateToStr(config.min)
       }
       if (typeof config.max === 'function') {
         config.max(id, column) && (maxValue = dateToStr(config.max(id, column)))
-      } else {
+      } else if (config.max) {
         maxValue = dateToStr(config.max)
       }
       const name = column.name
@@ -2788,6 +2788,13 @@ export const taskStatusArr = [
  * @returns {[]}
  */
 GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
+  function checkEdit () {
+    if (vueThis.pageName === 'planMonitor') {
+      return false
+    } else {
+      return true
+    }
+  }
   const initColumns = getGanttColumns(ganttObject, vueThis)
   initColumns.forEach((initItem, initIndex) => {
     const name = initItem.name
@@ -2804,6 +2811,12 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
     initItem.label = newLabel
     // }
   })
+  // 系统配置设置隐藏的列
+  const hideColumns = vueThis.columnSettings.filter(item => item.isEnable == '0')
+  // 系统设置，拓展属性
+  const extraColumns = vueThis.columnSettings.filter((item) => item.attributeType === '1')
+  const hideColumnKeys = hideColumns.map(item => item.filedName)
+  const extraColumnKeys = extraColumns.map(item => item.filedName)
   // 获取gantt列配置信息
   const ganttSetting = GanttObject.getGanttSettingGrid(vueThis.ganttName, vueThis.createPage)
   // 存在配置信息时，同步，不存在时显示默认gantt列信息
@@ -2811,7 +2824,14 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
     const settingColumns = ganttSetting.value.columns
     const tempColumns = []
     // 根据表头配置信息修改ganttObject对象中columns的显示隐藏属性及排序
+    const settingExtra = {}
     settingColumns.forEach((settingItem, initIndex) => {
+      if (extraColumnKeys.includes(settingItem.name)) {
+        settingExtra[settingItem.name] = {
+          index: initIndex,
+          hide: settingItem.hide
+        }
+      }
       const initColumn = initColumns.filter((initItem) => initItem.name === settingItem.name)
       if (initColumn && Object.keys(initColumn).length > 0) {
         initColumn[0].hide = settingItem.hide
@@ -2828,6 +2848,48 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
         } else {
           tempColumns.push(initItem)
         }
+      }
+    })
+    // 处理拓展字段
+    extraColumns.forEach(item => {
+      let editType = null
+      switch (item.filedType) {
+        case 'text':
+          editType = 'text'
+          break;
+        case 'number':
+          editType = 'number'
+          break;
+        case 'textarea':
+          editType = 'text'
+          break;
+        case 'datepicker':
+          editType = 'custom_date_editor'
+          break;
+        default:
+          break;
+      }
+      if (settingExtra[item.filedName]) {
+        let initItem = {
+          name: item.filedName,
+          label: `<div class="gantt_search">${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class="gantt_search gantt_blank"></div>`,
+          align: 'center',
+          resize: true,
+          hide: settingExtra[item.filedName].hide,
+          min_width: 120,
+          editor: checkEdit() ? {type: editType, map_to: item.filedName} : null,
+        }
+        tempColumns.splice(settingExtra[item.filedName].index, 0, initItem)
+      } else {
+        tempColumns.push({
+          name: item.filedName,
+          label: `<div class="gantt_search">${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class="gantt_search gantt_blank"></div>`,
+          align: 'center',
+          resize: true,
+          hide: item.isEnable == '0',
+          min_width: 120,
+          editor: checkEdit() ? {type: editType, map_to: item.filedName} : null,
+        })
       }
     })
     ganttObject.config.columns = tempColumns
@@ -2851,6 +2913,35 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
           tempColumns.push(initItem)
         }
       }
+    })
+    // 处理拓展字段的展示
+    extraColumns.forEach(item => {
+      let editType = null
+      switch (item.filedType) {
+        case 'text':
+          editType = 'text'
+          break;
+        case 'number':
+          editType = 'number'
+          break;
+        case 'textarea':
+          editType = 'text'
+          break;
+        case 'datepicker':
+          editType = 'custom_date_editor'
+          break;
+        default:
+          break;
+      }
+      tempColumns.push({
+        name: item.filedName,
+        label: `<div class="gantt_search">${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class="gantt_search gantt_blank"></div>`,
+        align: 'center',
+        resize: true,
+        hide: item.isEnable == '0',
+        min_width: 120,
+        editor: checkEdit() ? {type: editType, map_to: item.filedName} : null,
+      })
     })
     ganttObject.config.columns = tempColumns
   } else {

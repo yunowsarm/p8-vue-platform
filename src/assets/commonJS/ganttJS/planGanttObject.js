@@ -48,27 +48,29 @@ export function planGantt(ganttName, vueThis) {
           const num = parseFloat(data.progress)
           data.progress = Math.round(num * 100) / 100
         }
-        // const parent = ganttObject.getTask(task.parent)
-        // if (parent && parent.secretGrade && data.secretGrade > parent.secretGrade) {
-        //   GanttObject.showMessage(vueThis, '子任务密级不能大于父任务密级！', 'error')
-        //   task.secretGrade = parent.secretGrade
-        //   return
-        // }
-
-        // api['planGanttManager.updatePlanGanttData']({
-        //   pId: parent.secretGrade,
-        //   id: task.secretGrade
-        // }).then((res) => {
-        //   if(res){
-
-        //   }else{
-        //     GanttObject.showMessage(vueThis, '子任务密级不能大于父任务密级！', 'error')
-        //   }
-        // })
-        // let secretGrade = ''
-        // if (parent && parent.secretGrade) {
-        //   secretGrade = parent.secretGrade
-        // }
+        let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
+        if (extraList.length > 0) {
+          const extraData = []
+          let extraIds = {}
+          vueThis.extendMap[task.id] && vueThis.extendMap[task.id].forEach(item => {
+            extraIds[item.fieldName] = item.id
+          })
+          extraList.forEach((item) => {
+            if (item.filedType == 'datepicker') {
+              data[item.filedName] = moment(data[item.filedName]).format('YYYY-MM-DD')
+            }
+            const obj = {
+              id: extraIds[item.filedName] || '',
+              fieldName: item.filedName,
+              fieldType: item.filedType,
+              fieldValue: data[item.filedName],
+              indexNo: item.indexNo // 排序号
+            }
+            extraData.push(obj)
+          })
+          // 保存
+          api['planGanttManager.saveGanttExtendAttr']({ taskId: task.id, taskExtendRequests: extraData })
+        }
         api['planGanttManager.updatePlanGanttData']({
           // pId: secretGrade,
           // id: task.secretGrade,

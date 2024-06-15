@@ -100,14 +100,18 @@ export default {
   },
   mounted() {},
   methods: {
+    removeHTMLTags(str) {
+      return str.replace(/<\/?[^>]+(>|$)/g, "");
+    },
     render() {
       this.tableSettings = []
       this.initialColumns = this.columns.map((item) => {
         item.hide = item.hide ? item.hide : false
         // 正则处理，只保留表头中文，去掉多余字符
         const reg = /[\u4e00-\u9fa5]/g
-        const result = item.label.match(reg)
-        item.label = result.join('')
+        // const result = item.label.match(reg)
+        // item.label = result.join('')
+        item.label = this.removeHTMLTags(item.label)
         const tempObj = {
           hide: item.hide ? item.hide : false,
           name: item.name || null

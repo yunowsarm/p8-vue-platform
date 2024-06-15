@@ -733,6 +733,7 @@ export default {
           xl: 0
         }
       },
+      extendMap: {},
       rows: null,
       selectGridVisible: false,
       renderColumns: [],
@@ -1161,10 +1162,31 @@ export default {
       })
         .then(function (res) {
           if (res) {
+            let taskList = res.tasks
             vueThis.fullscreenLoading.close()
+            // 先给task赋值拓展字段
+            let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
+            let extraStr = extraList.map(extra => extra.filedName)
+            taskList.forEach(task => {
+              extraStr.forEach(key => {
+                task[key] = ''
+              })
+            })
+            // 处理拓展字段已有的数据
+            vueThis.extendMap = res.extendMap || {}
+            if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
+              taskList.forEach(task => {
+                if (vueThis.extendMap[task.id]) {
+                  let extendData = vueThis.extendMap[task.id]
+                  extendData.forEach(item => {
+                    task[item.fieldName] = item.fieldValue
+                  })
+                }
+              })
+            }
             // 初始化数据
             const datas = {
-              tasks: res.tasks,
+              tasks: taskList,
               links: res.links
             }
             if (res.projectStatus === '2205') {
