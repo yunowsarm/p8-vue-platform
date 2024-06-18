@@ -145,7 +145,7 @@ export default {
         // }
         if (task.managerStatus === '6404') {
           // 已下发
-          this.isView = true
+          this.isView = false
         }
         if (task.managerStatus === '6403' && this.createPage === 'decompose') {
           this.isView = true
