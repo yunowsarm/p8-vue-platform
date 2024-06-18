@@ -80,7 +80,7 @@ export default {
     }
   },
   data() {
-    const height = document.documentElement.clientHeight - 250
+    const height = document.documentElement.clientHeight - 310
     return {
       renderHeight: height + 'px',
       saveApi: 'formGenerator.compSave',
