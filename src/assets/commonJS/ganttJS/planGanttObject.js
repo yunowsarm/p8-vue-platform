@@ -4,6 +4,7 @@ import { setLockTaskProperties, monitorTimeCheck, monitorLockUnLockCheckTwo, loc
 import { batchOwnerCheck, deleteKeyRemove } from './commandButtonData'
 import api from '@/plugins/api'
 import moment from 'moment'
+import { copyText } from '@/utils/common'
 import store from '@/plugins/store'
 
 // 列可编辑图标
@@ -353,17 +354,6 @@ export function planGantt(ganttName, vueThis) {
   window.addEventListener('keyup', function (event) {
     if (event.keyCode === 16 || event.keyCode === 17) {
       multipleState = false
-    }
-    if (event.keyCode === 46) {
-      let taskIds = ganttObject.getSelectedTasks()
-      if (vueThis.ganttName == 'planGantt' && taskIds.length > 0) {
-        let tasks = []
-        taskIds.forEach(id => {
-          let task = ganttObject.getTask(id)
-          tasks.push(task)
-        })
-        deleteKeyRemove(vueThis.ganttName, tasks)
-      }
     }
   })
   ganttObject.attachEvent('onBeforeTaskMultiSelect', function (id, state, e) {

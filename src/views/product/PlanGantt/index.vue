@@ -251,6 +251,7 @@ export default {
     tabBarExtraContent () { },
     showDetail (selectTask, ganttName, viewType) {
       this.detailVisible = true
+      this.$bus.$emit('ganttDetail', true)
       this.ganttName = ganttName
       this.selectTaskId = selectTask.id
       this.status = selectTask.status
@@ -259,6 +260,7 @@ export default {
     },
     detailDrawerClosed (res) {
       this.detailVisible = false
+      this.$bus.$emit('ganttDetail', false)
       this.selectTaskId = ''
       this.detailTitle = ''
     },

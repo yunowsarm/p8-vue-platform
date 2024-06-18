@@ -389,7 +389,7 @@ import {
 } from 'p8-components-ui'
 import Edit from '@/views/product/MyExperienceBase/edit.vue'
 import MyExperienceBase from '@/views/product/MyExperienceBase/myExperienceBase.vue'
-import { CommandButtonData } from '@/assets/commonJS/ganttJS/commandButtonData'
+import { CommandButtonData, deleteKeyRemove } from '@/assets/commonJS/ganttJS/commandButtonData'
 import { PlanRightMenuData } from '@/assets/commonJS/ganttJS/planRightMenuData'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import { planGantt } from '@/assets/commonJS/ganttJS/planGanttObject'
@@ -733,6 +733,7 @@ export default {
           xl: 0
         }
       },
+      ganttDetail: false,
       extendMap: {},
       rows: null,
       selectGridVisible: false,
@@ -830,6 +831,10 @@ export default {
         })
       }
     })
+    window.addEventListener('keyup', this.deleteTask)
+    this.$bus.$on('ganttDetail', (visible) => {
+      this.ganttDetail = visible
+    })
   },
   computed: {
     editUserList() {
@@ -850,6 +855,9 @@ export default {
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
         return btnData[0]
       }
+    },
+    noOperate () {
+      return !(this.ganttDetail || this.menuVisible || this.outPutViewVisible || this.activityImportVisible || this.noticeVisible || this.controlTimeVisible || this.resourceSelectVisible || this.selectGridVisible || this.myExperienceVisible || this.importExcel || this.importProject || this.ganttSearchVisible || this.ganttStatisticVisible || this.rightMenuConfigVisible || this.createVisible || this.experienceBaseVisible || this.versionListVisible || this.progressHistoryVisible || this.changeHistoryVisible )
     },
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll'])
   },
@@ -1519,10 +1527,26 @@ export default {
     changeHistoryClose() {
       this.changeHistoryVisible = false
       this.$store.dispatch('setVueThis', this)
+    },
+    deleteTask() {
+      let that = this
+      if (event.keyCode === 46) {
+        let taskIds = myGantt.getSelectedTasks()
+        if (that.ganttName == 'planGantt' && taskIds.length > 0 && that.noOperate) {
+          let tasks = []
+          taskIds.forEach(id => {
+            let task = myGantt.getTask(id)
+            tasks.push(task)
+          })
+          deleteKeyRemove(that.ganttName, tasks)
+        }
+      }
     }
   },
   destroyed() {
     window.myWebSocket.off('planGantGroup')
+    window.removeEventListener('keyup', this.deleteTask)
+    this.$bus.$off('ganttDetail')
   }
 }
 </script>
