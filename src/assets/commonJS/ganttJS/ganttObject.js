@@ -2901,6 +2901,34 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
         initColumn[0].hide = !(item.isEnable == '1')
         tempColumns.push(initColumn[0])
       }
+      if (item.attributeType === '1') {
+        let editType = null
+        switch (item.filedType) {
+          case 'text':
+            editType = 'text'
+            break;
+          case 'number':
+            editType = 'number'
+            break;
+          case 'textarea':
+            editType = 'text'
+            break;
+          case 'datepicker':
+            editType = 'custom_date_editor'
+            break;
+          default:
+            break;
+        }
+        tempColumns.push({
+          name: item.filedName,
+          label: `<div class="gantt_search">${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class="gantt_search gantt_blank"></div>`,
+          align: 'center',
+          resize: true,
+          hide: item.isEnable == '0',
+          min_width: 120,
+          editor: checkEdit() ? {type: editType, map_to: item.filedName} : null,
+        })
+      }
     })
     // 当ganttObject对象中columns数据与配置信息中数据不一致（增加或减少）时，根据ganttObject对象中columns新增列下标插入tempColumns，超出时加在末尾
     initColumns.forEach((initItem, initIndex) => {
@@ -2915,34 +2943,9 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
       }
     })
     // 处理拓展字段的展示
-    extraColumns.forEach(item => {
-      let editType = null
-      switch (item.filedType) {
-        case 'text':
-          editType = 'text'
-          break;
-        case 'number':
-          editType = 'number'
-          break;
-        case 'textarea':
-          editType = 'text'
-          break;
-        case 'datepicker':
-          editType = 'custom_date_editor'
-          break;
-        default:
-          break;
-      }
-      tempColumns.push({
-        name: item.filedName,
-        label: `<div class="gantt_search">${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class="gantt_search gantt_blank"></div>`,
-        align: 'center',
-        resize: true,
-        hide: item.isEnable == '0',
-        min_width: 120,
-        editor: checkEdit() ? {type: editType, map_to: item.filedName} : null,
-      })
-    })
+    // extraColumns.forEach(item => {
+
+    // })
     ganttObject.config.columns = tempColumns
   } else {
     ganttObject.config.columns = initColumns
