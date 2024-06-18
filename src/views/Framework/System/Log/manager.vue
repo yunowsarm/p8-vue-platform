@@ -119,16 +119,12 @@ export default {
       {
         title: '时间',
         dataIndex: 'recordingTime',
-        defaultSort: true,
-        asc: false,
         align: 'center',
         export: true // 当前列是否需要导出
       },
       {
         title: '执行结果',
         dataIndex: 'result',
-        defaultSort: true,
-        asc: false,
         align: 'center',
         export: true // 当前列是否需要导出
       }
