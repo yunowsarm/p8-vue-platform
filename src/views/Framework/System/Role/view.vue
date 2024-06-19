@@ -106,14 +106,6 @@
   /*border:1px solid #1890FF;*/
   border: 1px solid #e8e8e8;
 }
-.userList li:first-child {
-  border: none;
-  padding: 0px;
-}
-.userList li:first-child .selectedBtn {
-  border: 1px dashed #1890ff;
-  height: 29px;
-}
 ::v-deep .el-tabs__nav-wrap {
   margin-bottom: 0;
 }
@@ -211,7 +203,7 @@ export default {
     return {
       imgUrl: require('@/assets/image/common/Group.png'),
       setUserHeight: document.documentElement.clientHeight - 318 + 'px',
-      tabPaneHeight: document.documentElement.clientHeight - 290 + 'px',
+      tabPaneHeight: document.documentElement.clientHeight - 330 + 'px',
       saveApi: 'role.save',
       selectedRows: [],
       // selectedRowKeys:[],
