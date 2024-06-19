@@ -28,6 +28,7 @@ export function planGantt(ganttName, vueThis) {
   GanttObject.endDateEditor(ganttObject)
   GanttObject.customDateEditor(ganttObject)
   GanttObject.customEndDateEditor(ganttObject)
+  GanttObject.onCollapse(ganttObject, vueThis)
   // 定义数据处理器
   const dp = ganttObject.createDataProcessor({
     task: {

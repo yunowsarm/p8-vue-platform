@@ -2586,6 +2586,18 @@ GanttObject.planChangeCheck = function (ganttObject, vueThis) {
 }
 
 /**
+ * auther: wangzhifeng
+ * desc: gantt全屏关闭事件监听
+ * date: 2024/06/19 09:53:59
+ */
+GanttObject.onCollapse = function (ganttObject, vueThis) {
+  return ganttObject.attachEvent('onCollapse', function () {
+    console.log('gantt全屏关闭')
+    vueThis.$bus.$emit('ganttOnFullscreen', false)
+  })
+}
+
+/**
  * redo后逻辑处理
  * @param ganttObject
  * @param vueThis

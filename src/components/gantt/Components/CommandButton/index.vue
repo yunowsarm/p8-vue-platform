@@ -190,7 +190,22 @@ export default {
     },
     ...mapGetters(['vueThis', 'ganttButtonMode'])
   },
-  mounted() {},
+  mounted() {
+    let that = this
+    if (this.cbutton && this.cbutton.id == 'full-screen') {
+      this.$bus.$on('ganttOnFullscreen', function (state) {
+        if (state) {
+          that.cbutton.title = '退出全屏'
+          that.cbutton.icon = 'p8 icon-exit-fullscreen'
+          that.cbutton.help = '退出全屏'
+        } else {
+          that.cbutton.title = '全屏'
+          that.cbutton.icon = 'p8 icon-full-screen'
+          that.cbutton.help = '全屏'
+        }
+      })
+    }
+  },
   methods: {
     btnClick(btn) {
       if (btn.id === '1015' && this.iconState.zrlXz) {
@@ -272,6 +287,9 @@ export default {
       // 额外的处理逻辑
       return result
     }
+  },
+  beforeDestroy(){
+    this.$bus.$off('ganttOnFullscreen')
   }
 }
 </script>

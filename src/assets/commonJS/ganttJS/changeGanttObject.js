@@ -23,6 +23,7 @@ export function getChangeGantt(ganttName, vueThis) {
   ganttObject.config.drag_links = false
   ganttObject.config.drag_timeline = false
   ganttObject.config.drag_move = false
+  GanttObject.onCollapse(ganttObject, vueThis)
   ganttObject.attachEvent('onBeforeTaskDrag', function (id, mode, e) {
     return false // denies dragging if the global task index is odd
   })
