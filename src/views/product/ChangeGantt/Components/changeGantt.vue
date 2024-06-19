@@ -755,6 +755,7 @@ export default {
         nowGanttTask.start_date = moment(nowGanttTask.start_date).format('YYYY-MM-DD')
         nowGanttTask.end_date = moment(nowGanttTask.end_date).format('YYYY-MM-DD')
         nowGanttTask.indexNo = indexNo
+        nowGanttTask.owner_type = 'team'
         that.newTaskMap[key] = nowGanttTask
         sendDatas.push(that.newTaskMap[key])
       }

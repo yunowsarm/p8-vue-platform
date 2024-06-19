@@ -143,7 +143,11 @@ export default {
         // if (this.$route.path === '/TaskChange') {
         //   this.isView = true
         // }
-        if (task.managerStatus === '6404') {
+        if (task.managerStatus === '6404' && this.ganttName === 'changeGantt') {
+          // 已下发
+          this.isView = true
+        }
+        if (task.managerStatus === '6404' && this.ganttName != 'changeGantt') {
           // 已下发
           this.isView = false
         }
