@@ -227,6 +227,7 @@ export default {
             that.ganttName === 'changeGantt' &&
             JSON.stringify(that.vueThis.newTaskMap) !== '{}' &&
             that.vueThis.newTaskMap[taskId] &&
+            that.vueThis.newTaskMap[taskId].updateInfo &&
             that.vueThis.newTaskMap[taskId].updateInfo.indexOf('input') !== -1
           ) {
             datas = that.vueThis.newTaskMap[taskId].input

@@ -463,6 +463,7 @@ export default {
             that.vueThis.newTaskMap &&
             Object.keys(that.vueThis.newTaskMap).length > 0 &&
             that.vueThis.newTaskMap[taskId] &&
+            that.vueThis.newTaskMap[taskId].updateInfo &&
             that.vueThis.newTaskMap[taskId].updateInfo.indexOf('describes') !== -1
           ) {
             that.formData.describes = that.vueThis.newTaskMap[taskId].describes

@@ -143,6 +143,7 @@ export default {
             (that.ganttName === 'changeGantt' || that.ganttName === 'analysisGantt') &&
             JSON.stringify(that.vueThis.newTaskMap) !== '{}' &&
             that.vueThis.newTaskMap[taskId] &&
+            that.vueThis.newTaskMap[taskId].updateInfo &&
             that.vueThis.newTaskMap[taskId].updateInfo.indexOf('output') !== -1
           ) {
             datas = that.vueThis.newTaskMap[taskId].output
