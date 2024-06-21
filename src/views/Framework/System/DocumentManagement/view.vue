@@ -29,7 +29,7 @@ export default {
           type: 'view',
           labelText: '文件名称',
           fieldName: 'name',
-          placeholder: '请输入流程名称',
+          placeholder: '请输入文件名称',
           colLayout: 'singleCol',
           rules: [
             {
@@ -47,7 +47,7 @@ export default {
         {
           type: 'view',
           fieldName: 'description',
-          labelText: '标识描述',
+          labelText: '文件描述',
           colLayout: 'doubleCol'
         }
       ]

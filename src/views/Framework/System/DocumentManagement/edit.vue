@@ -29,7 +29,7 @@ export default {
           type: 'text',
           labelText: '文件名称',
           fieldName: 'name',
-          placeholder: '请输入流程名称',
+          placeholder: '请输入文件名称',
           colLayout: 'singleCol',
           rules: [
             {
@@ -41,9 +41,13 @@ export default {
         {
           type: 'textarea',
           fieldName: 'description',
-          labelText: '标识描述',
+          labelText: '文件描述',
+          maxlength: '200',
+          fieldConfig: {
+            'show-word-limit': true
+          },
           placeholder: '请输入文件描述',
-          colLayout: 'doubleCol'
+          colLayout: 'singleCol'
         }
       ]
     }
