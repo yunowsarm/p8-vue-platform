@@ -144,6 +144,7 @@ import CommandClassify from '@/components/gantt/Components/CommandClassify'
 import CommandMonitor from '@/components/gantt/Components/CommandMonitor'
 import CommandSearch from '@/components/gantt/Components/CommandSearch'
 import CommandStatistic from '@/components/gantt/Components/CommandStatistic'
+import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 export default {
   name: 'CommandButtonBar',
   components: {
@@ -261,7 +262,23 @@ export default {
     this.$nextTick(() => {
       this.initDom()
     })
-
+    let that = this
+    setTimeout(() => {
+      let ganttObject = GanttObject.getGanttObject(this.ganttName)
+      let state = ganttObject.getState().fullscreen
+      that.buttonDatas.forEach(item => {
+        if (item.id == 'full-screen' && state) {
+          item.title = '退出全屏'
+          item.icon = 'p8 icon-exit-fullscreen'
+          item.help = '退出全屏'
+        }
+        if (item.id == 'full-screen' && !state) {
+          item.title = '全屏'
+          item.icon = 'p8 icon-full-screen'
+          item.help = '全屏'
+        }
+      })
+    }, 1000);
     window.addEventListener('resize', this.resizeShowArrow)
   },
   methods: {
