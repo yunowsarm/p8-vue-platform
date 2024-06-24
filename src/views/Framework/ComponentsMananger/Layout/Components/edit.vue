@@ -44,10 +44,10 @@
                    class="el-btn"
                    @click="handleSubmit">保存</el-button>
       </div>
-      <preview v-if="kanbanViewVisible"
+      <!-- <preview v-if="kanbanViewVisible"
                :visible="kanbanViewVisible"
                :preview-parmars="previewParmars"
-               @close="kanbanViewVisible = false"></preview>
+               @close="kanbanViewVisible = false"></preview> -->
       <component v-if="kanbanViewVisible"
                  :is="previewUrl"
                  :visible="kanbanViewVisible"
