@@ -46,6 +46,7 @@ export default {
       ownerDataOptions: [],
       existDefaultBtn: false,
       existCustomBtn: true,
+      planTypeDic: [],
       dataSource: [
         {
           labelText: '任务名称',
@@ -109,15 +110,9 @@ export default {
         {
           type: 'view',
           labelText: '任务类型',
-          fieldName: 'planType',
+          fieldName: 'planTypeDesc',
           colLayout: 'doubleCol',
           placeholder: '选择任务类型',
-          optionUrl: {
-            api: 'thirdPartInterface.getDic',
-            params: { dicType: 'ACTIVITY_TYPE' },
-            label: 'label',
-            value: 'value'
-          },
           options: []
         },
         {
@@ -192,7 +187,11 @@ export default {
   computed: {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
-  mounted() {},
+  created() {
+    this.$api['thirdPartInterface.getDic']({ dicType: 'ACTIVITY_TYPE' }).then(res => {
+      this.planTypeDic = res
+    })
+  },
   methods: {
     rendered() {
       if (this.taskId && this.taskId !== '') {
@@ -240,6 +239,13 @@ export default {
             that.vueThis.newTaskMap[taskId].updateInfo.indexOf('describes') !== -1
           ) {
             that.formData.describes = that.vueThis.newTaskMap[taskId].describes
+          }
+          if (that.planTypeDic.length > 0 && that.formData.planType) {
+            that.planTypeDic.forEach(dic => {
+              if (dic.value == that.formData.planType) {
+                that.formData.planTypeDesc = dic.label
+              }
+            })
           }
           that.oldFormData = that.formData
           that.formData = Object.assign({}, that.formData)
