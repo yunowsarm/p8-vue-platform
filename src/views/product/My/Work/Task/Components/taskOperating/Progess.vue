@@ -166,7 +166,7 @@ export default {
           }
         ],
         deviationType: [
-          { required: true, message: '必选' }
+          { required: true, message: '必填' }
         ],
         deviationCauses: [
           { required: true, message: '必选' }
