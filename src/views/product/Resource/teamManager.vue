@@ -1307,7 +1307,7 @@ export default {
 
     button {
       border: 1px solid #1890ff;
-      color: #1890ff;
+      // color: #1890ff;
     }
   }
 
