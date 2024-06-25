@@ -31,22 +31,24 @@
                     :task-status="taskStatus"></plan-gantt>
       </div>
     </div>
-    <el-drawer :title="detailTitle"
-               :append-to-body="true"
-               size="50%"
-               :destroy-on-close="true"
-               :wrapper-closable="false"
-               @closed="detailDrawerClosed"
-               :visible.sync="detailVisible">
-      <plan-attribute @save-success="detailDrawerClosed"
-                      :create-page="createPage"
-                      :task-id="selectTaskId"
-                      :att-read-only="readOnly"
-                      :view-type="viewType"
-                      :gantt-name="ganttName"
-                      :status="status"
-                      :plan-info-id="planInfoId"></plan-attribute>
-    </el-drawer>
+    <CommonDrawer
+      v-if="detailVisible"
+      :visible="detailVisible"
+      size="50%"
+      placement="top"
+      :title="detailTitle"
+      @close="detailDrawerClosed">
+      <template #drawer>
+        <plan-attribute @save-success="detailDrawerClosed"
+                        :create-page="createPage"
+                        :task-id="selectTaskId"
+                        :att-read-only="readOnly"
+                        :view-type="viewType"
+                        :gantt-name="ganttName"
+                        :status="status"
+                        :plan-info-id="planInfoId"></plan-attribute>
+      </template>
+    </CommonDrawer>
   </div>
 </template>
 
@@ -97,7 +99,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import PlanGantt from './Components/planGantt'
-import { Drawer } from 'p8-components-ui'
+import { Drawer, P8Drawer as CommonDrawer, } from 'p8-components-ui'
 // import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/commandButtonBarData'
 import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataDoubleRow'
 import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataSingleRow'
@@ -208,6 +210,7 @@ export default {
     'el-drawer': Drawer,
     PlanGantt,
     PlanAttribute,
+    CommonDrawer,
     CommandButtonBar
   },
   beforeMount () { },
