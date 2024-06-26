@@ -18,7 +18,7 @@
         <el-button type="primary" @click="$refs.form.handleSubmit($event)">保存</el-button>
       </template>
     </form-list>
-    <common-tabs :tabs-data="tabsData" type="border-card" :height="renderHeight" :active-tabs="activeTabs" @tab-click="tabClick" :has-full-screen="true">
+    <common-tabs :tabs-data="tabsData" type="border-card" :height="renderHeight" :active-tabs="activeTabs" @tab-click="tabClick" :keepBottom='true' :has-full-screen="true">
       <template #attributeSettings>
         <editable-table :columns="settingsColumns" ref="editTable" :add-row="false" :data="settingsData" @save-param-data="saveParamData">
           <template #isEnable="{ scope, data }">

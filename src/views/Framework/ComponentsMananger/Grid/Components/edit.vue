@@ -42,6 +42,7 @@
                  @tab-click="tabClick"
                  type="border-card"
                  class="el_tabs"
+                 :keepBottom='true'
                  :has-full-screen="true">
       <template #tableConfigDetails>
         <editable-table ref="editTable"

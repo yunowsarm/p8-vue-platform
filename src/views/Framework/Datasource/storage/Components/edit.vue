@@ -27,6 +27,7 @@
                  type="border-card"
                  class="el_tabs"
                  :active-tabs="activeTabs"
+                 :keepBottom='true'
                  :has-full-screen="true">
       <template #databaseProp>
         <editable-table :columns="databasePropColumns"

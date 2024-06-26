@@ -42,6 +42,7 @@
                  :height="renderHeight"
                  :active-tabs="activeTabs"
                  @tab-click="tabClick"
+                 :keepBottom='true'
                  :has-full-screen="true">
       <template #tableConfigDetails>
         <editable-table :columns="paramColumns"
