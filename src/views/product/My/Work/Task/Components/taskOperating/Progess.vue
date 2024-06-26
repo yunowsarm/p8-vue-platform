@@ -166,10 +166,10 @@ export default {
           }
         ],
         deviationType: [
-          { required: true, message: '必填' }
+          { required: true, message: '必选' }
         ],
         deviationCauses: [
-          { required: true, message: '必选' }
+          { required: true, message: '必填' }
         ]
       },
       tableApi: 'taskManager.progressFeedbackHistory',
