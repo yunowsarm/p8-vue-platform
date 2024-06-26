@@ -1195,7 +1195,7 @@ export default {
   padding: 0 10px 8px;
   box-sizing: border-box;
 
-  .add-member {
+  .add-member ::v-deep{
     height: 50px;
     line-height: 50px;
     box-sizing: border-box;
@@ -1205,7 +1205,7 @@ export default {
 
     button {
       border: 1px solid $base-light-color;
-      color: $base-light-color;
+      // color: #ffffff !important;
     }
   }
 
