@@ -246,6 +246,7 @@
                                    :min="minNum"
                                    :max="100"
                                    :step="1"
+                                   step-strictly
                                    @change="progressChange"></el-input-number>
                 </el-form-item>
               </el-col>
