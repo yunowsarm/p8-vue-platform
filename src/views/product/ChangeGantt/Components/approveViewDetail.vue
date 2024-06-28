@@ -3,6 +3,7 @@
     <common-dialog
       title="查看计划详情"
       :visible="isView"
+      class="w_dialog"
       :show-handle-btn="false"
       :dialog-config="dialogConfig"
       @handle-cancel="handleCancel"
@@ -63,4 +64,8 @@ export default {
   }
 }
 </script>
-<style lang="scss"></style>
+<style lang="scss">
+::v-deep .w_dialog {
+  z-index: 99999 !important;
+}
+</style>
