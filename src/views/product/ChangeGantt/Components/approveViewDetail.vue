@@ -65,7 +65,8 @@ export default {
 }
 </script>
 <style lang="scss">
-::v-deep .w_dialog {
+.w_dialog {
+  font-size: initial;
   z-index: 99999 !important;
 }
 </style>
