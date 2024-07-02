@@ -219,39 +219,43 @@ export default {
       //   this.drawerSize = '30%'
       //   this.msgRightWidth = '100%'
       // }
-      this.$emit('searchShow', this.isShow)
-      this.onSelectUser('history')
-    },
-    onSelectUser (val, parameters) {
-      this.messagesList = []
-      // if (user.hasNewMessages) {
-      // this.messageevent(user)
-      // }
       let params = {
         entityId: this.user ? this.user.entityId : '',
-        entityType: this.user ? this.user.entityType : ''
+        entityType: this.user ? this.user.entityType : '',
+        history: 'history'
       }
-      if (val === 'history') {
-        params.history = val
-      }
-      if (val === 'update') {
-        params.type = val
-      }
-      this.$api['documentManagement.getWebsocketById']({ ...params, ...parameters }).then(res => {
-        // user.hasNewMessages = false
-        if (res) {
-          // this.selectedUser.sendSessionId = res[0].sendSessionId ? res[0].sendSessionId : null
-          if (val === 'history') {
-            this.messagesData = res
-          } else {
-            this.messagesList = res
-          }
-          setTimeout(() => {
-            this.scrollBottm();
-          }, 100);
-        }
-      })
+      this.$emit('searchShow', this.isShow, params)
     },
+    // onSelectUser (val, parameters) {
+    //   this.messagesList = []
+    //   // if (user.hasNewMessages) {
+    //   // this.messageevent(user)
+    //   // }
+    //   let params = {
+    //     entityId: this.user ? this.user.entityId : '',
+    //     entityType: this.user ? this.user.entityType : ''
+    //   }
+    //   if (val === 'history') {
+    //     params.history = val
+    //   }
+    //   if (val === 'update') {
+    //     params.type = val
+    //   }
+    //   this.$api['documentManagement.getWebsocketById']({ ...params, ...parameters }).then(res => {
+    //     // user.hasNewMessages = false
+    //     if (res) {
+    //       // this.selectedUser.sendSessionId = res[0].sendSessionId ? res[0].sendSessionId : null
+    //       if (val === 'history') {
+    //         this.messagesData = res
+    //       } else {
+    //         this.messagesList = res
+    //       }
+    //       setTimeout(() => {
+    //         this.scrollBottm();
+    //       }, 100);
+    //     }
+    //   })
+    // },
     // 滚动条到底部
     scrollBottm () {
       let el = this.$refs["msg-box"];

@@ -25,13 +25,15 @@
           <div class="right-panel">
             <message-panel id="message"
                            ref="msg"
+                           v-if="selectedUser.entityId"
                            :user="selectedUser"
                            :messagesData="list"
                            @messageevent="messageevent"
                            @setUser="setUser"
                            @input="onMessage"
                            @searchShow="searchShow" />
-            <message-view v-if="historyMsg"></message-view>
+            <message-view v-if="historyMsg"
+                          :searchParams="historyParams"></message-view>
           </div>
         </template>
         <template #drawer-panel>
@@ -81,7 +83,8 @@ export default {
         //   messageCount: 1
         // }
       ],
-      dateTime: new Date().getTime()
+      dateTime: new Date().getTime(),
+      historyParams: {}
     }
   },
   async created () {
@@ -95,10 +98,10 @@ export default {
           entityType: 'project'
         }
       )
+      this.onSelectUser()
     } else {
-      // await this.getGroupAll()
+      await this.getGroupAll()
     }
-    this.onSelectUser()
     window.myWebSocket.on("privateMessage", (users) => {
       this.users.forEach(item => {
         users.forEach(user => {
@@ -125,6 +128,7 @@ export default {
         if (res) {
           console.log(window.myWebSocket.data, '===============================获取新用户');
           this.users = res
+          this.onSelectUser(res[0])
         }
       })
     },
@@ -153,9 +157,10 @@ export default {
       console.log("socketsocketsocketsocketsocketsocket:", window.myWebSocket)
       window.myWebSocket.emit('sendMessageGroupChat', params)
     },
-    searchShow (isShow) {
+    searchShow (isShow, params) {
       console.log("🚀 ~ searchShow ~ isShow:", isShow)
       this.historyMsg = isShow
+      this.historyParams = params
 
       if (isShow) {
         this.dialogWidth = '1100px'
@@ -170,6 +175,7 @@ export default {
     onSelectUser (user) {
       if (user) {
         this.selectedUser = user
+        console.log(this.selectedUser, '1111111111111111111111');
       } else {
         this.selectedUser = this.users[0] ? this.users[0] : null
       }
@@ -182,7 +188,14 @@ export default {
       this.$api['documentManagement.getWebsocketById']({
         entityId: this.selectedUser ? this.selectedUser.entityId : '',
         entityType: this.selectedUser ? this.selectedUser.entityType : '',
-        type: 'update'
+        type: 'update',
+        // page: {
+        //   current: 1,
+        //   size: 10,
+        //   total: 0,
+        //   orders: [{ column: 'pinst.start_time_', asc: false }],
+        //   pages: 0
+        // }
       }).then(res => {
         // user.hasNewMessages = false
         if (res) {

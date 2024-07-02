@@ -15,14 +15,14 @@
                   style="text-align: left"
                   class="overHiding">
             <el-col :span="16">
-              <span>{{ item.senderName }}</span>
-              <span class="msg-time">{{ item.sendDate }}</span>
+              <span>{{ item.sendUserName }}</span>
+              <span class="msg-time">{{ item.itemCreateTime }}</span>
             </el-col>
           </el-row>
           <el-row type="flex"
                   style="text-align: left">
             <el-col :span="24">
-              <span class="msg-content">{{ item.msgContent }}</span>
+              <span class="msg-content">{{ item.content }}</span>
             </el-col>
           </el-row>
         </span>
@@ -51,11 +51,17 @@ export default {
   },
   data () {
     return {
-      messageListApi: 'userMessage.list',
+      messageListApi: 'documentManagement.getWebsocketById',
       currentIndex: null,
       mergeParams: {
-        msgCatalog: null,
-        msgStatus: null
+        ...this.searchParams,
+        // page: {
+        //   current: 1,
+        //   size: 15,
+        //   total: 0,
+        //   orders: [{ column: 'pinst.start_time_', asc: false }],
+        //   pages: 0
+        // }
       },
       timeKey: new Date().getTime()
     }
@@ -63,14 +69,14 @@ export default {
   mounted () {
   },
   watch: {
-    searchParams: {
-      deep: true,
-      handler: function (newVal, oldVal) {
-        this.mergeParams = { ...newVal, msgStatus: '1501' }
-        this.activeTabs = '1501'
-      },
-      immediate: true
-    }
+    // searchParams: {
+    //   deep: true,
+    //   handler: function (newVal, oldVal) {
+    //     this.mergeParams = { ...newVal, msgStatus: '1501' }
+    //     this.activeTabs = '1501'
+    //   },
+    //   immediate: true
+    // }
   },
   methods: {
     triggerSelect (item, index) {
@@ -78,8 +84,8 @@ export default {
         return
       }
       this.currentIndex = index
-      this.$emit('select', item, index)
-      this.$emit('toggleStatus', item.id, '1505')
+      // this.$emit('select', item, index)
+      // this.$emit('toggleStatus', item.id, '1505')
     },
     messageLoad (data, current) {
       if (data && current && current === 1) {
