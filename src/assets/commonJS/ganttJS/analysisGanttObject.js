@@ -230,7 +230,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
         let resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
         let owner = task[ganttObject.config.resource_property]
         if (owner) {
-          return resourceDatas.getItem(owner).name
+          return (resourceDatas.getItem(owner) && resourceDatas.getItem(owner).name) || ''
         } else {
           return ''
         }
@@ -246,7 +246,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
         let resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
         let owner = task[ganttObject.config.resource_property]
         if (owner) {
-          return resourceDatas.getItem(owner).roleName
+          return (resourceDatas.getItem(owner) && resourceDatas.getItem(owner).roleName) || ''
         } else {
           return ''
         }
@@ -262,7 +262,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
         let resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
         let owner = task[ganttObject.config.resource_property]
         if (owner) {
-          return resourceDatas.getItem(owner).deptName
+          return (resourceDatas.getItem(owner) && resourceDatas.getItem(owner).deptName) || ''
         } else {
           return null
         }
