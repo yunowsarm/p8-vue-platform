@@ -13,7 +13,7 @@
       :dialog-height="700"
     >
       <template #dialog>
-        <div style="height: 100%">
+        <div id="couerDiv" style="background: #ffffff;height: 100%; z-index: 9999 !important;">
           <impact-analysis :plan-info-id="planInfoId" :create-page="createPage" :read-only="readOnlyVisible" :change-id="approveContentView.changeId"></impact-analysis>
         </div>
       </template>
@@ -68,5 +68,8 @@ export default {
 .w_dialog {
   font-size: initial;
   z-index: 99999 !important;
+  #couerDiv {
+    z-index: 9999 !important;
+  }
 }
 </style>

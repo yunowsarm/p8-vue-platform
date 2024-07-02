@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%">
-    <div class="couerDivClass" id="couerDiv">
+    <div class="couerDivClass">
       <div class="top" :style="{ height: changeInfoHeight }">
         <form-render page-type="view"
                        :data-view-id="businessKey"
