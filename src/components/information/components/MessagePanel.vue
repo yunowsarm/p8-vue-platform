@@ -7,7 +7,15 @@
       <div class="chat-box">
         <div class="msg-box"
              :style="{width: msgRightWidth}"
-             ref="msg-box">
+             ref="msgBox"
+             @scroll="handleScroll">
+          <div class="refresh-wrapper"
+               ref="refreshWrapper">
+            <div v-if="!loading"
+                 class="refresh-text">没有更多了</div>
+            <div v-else
+                 class="refresh-text">加载中...</div>
+          </div>
           <div v-for="(i,index) in messagesList"
                :key="index"
                class="msg"
@@ -25,8 +33,8 @@
               </div>
               <div v-else>
                 <!-- 游客 -->
+                <span style="margin-right: 20px;">{{ i.sendUserName }}</span>
                 <span>{{ i.itemCreateTime }}</span>
-                <span>{{ i.sendUserName }}</span>
                 <div class="user-msg">
                   <span class="left">{{i.content}}</span>
                 </div>
@@ -43,6 +51,7 @@
                     autofocus
                     ref="textareaRef"
                     @keydown.enter="onSubmit()"
+                    @focus="focus()"
                     v-model="contentText">
               </textarea>
         </div>
@@ -82,7 +91,15 @@ export default {
       messagesList: this.messagesData,
       resourceSelectVisible: false,
       selectUserIds: [],
-      entityId: ''
+      entityId: '',
+      loading: false,
+      page: {
+        current: 1,
+        size: 10,
+        total: 0,
+        orders: [{ column: 'createTime', asc: false }],
+        pages: 0
+      }
     };
   },
   watch: {
@@ -95,23 +112,17 @@ export default {
     }
   },
   mounted () {
-    console.log(this.user, '==========111=======user');
     if (this.user) {
       this.entityId = this.user.entityId
     }
     this.$refs.textareaRef.focus();
-    console.log(window, 'myWebSocket' + this.$store.state.user.userId);
     setTimeout(() => {
       this.scrollBottm();
     }, 100);
-    // this.$refs.textareaRef.focus()
     // 组件挂载时，订阅事件
     window.myWebSocket.on('messageevent', (data) => {
-      console.log(document.title, '================11===============document.title');
-      if (this.$store.state.user.userId !== data.sendUser) {
+      if (this.user.entityId === data.entityId) {
         this.messagesList.push(data)
-        // this.message()
-        // this.$emit('messageevent', this.user)
         setTimeout(() => {
           this.scrollBottm();
         }, 100);
@@ -126,35 +137,53 @@ export default {
     window.myWebSocket.off('messageevent')
   },
   methods: {
-    // message () {
-    //   // 设置初始标题
-    //   var originalTitle = document.title;
+    fetchData () {
+      // // 模拟异步加载数据
+      // setTimeout(() => {
+      let that = this
+      this.page.current++
+      // 假设这里是异步获取数据的操作，比如调用接口等
+      this.$api['documentManagement.getWebsocketById']({
+        entityId: this.user ? this.user.entityId : '',
+        entityType: this.user ? this.user.entityType : '',
+        type: 'update',
+        page: this.page
+      }).then(res => {
+        that.loading = false;  // 加载完成后取消 loading 状态
+        if (res.records.length > 0) {
+          res.records.forEach(item => {
+            that.messagesList.unshift(item)
+          })
+          // that.$refs.msgBox.scrollTop = 100;
+          console.log(that.$refs.msgBox.scrollTop);
+        } else {
+          // that.$refs.msgBox.scrollTop = 0;
+        }
 
-    //   // 闪烁标题的定时器
-    //   var blinkInterval = setInterval(function () {
-    //     document.title = (document.title === originalTitle) ? "\u{1F49B} 新消息到达,请注意查收！ \u{1F49A}" : originalTitle;
-    //     console.log(document.title, '================22===============document.title');
-    //   }, 1000);
-
-    //   // 显示通知
-    //   if ("Notification" in window) {
-    //     Notification.requestPermission().then(function (permission) {
-    //       if (permission === "granted") {
-    //         var notification = new Notification("新消息到达", {
-    //           body: "请注意查收！"
-    //         });
-    //       }
-    //     });
-    //   }
-
-    //   // 在用户关闭或切换页面时停止所有定时器，并将标题恢复为原始标题
-    //   window.addEventListener('focus', function () {
-    //     clearInterval(blinkInterval);
-    //     document.title = originalTitle;
-    //   });
-
-    // },
+      })
+      // }, 1000); // 模拟延迟加载
+    },
+    handleScroll () {
+      const container = this.$refs.msgBox;
+      // 检测是否在顶部并且向下拉动
+      if (container.scrollTop === 0) {
+        this.loading = true;
+        this.fetchData();  // 触发加载数据
+      }
+    },
+    // 清空已读消息
+    focus () {
+      this.$api['documentManagement.getWebsocketById']({
+        entityId: this.user ? this.user.entityId : '',
+        entityType: this.user ? this.user.entityType : '',
+        type: 'update',
+        page: this.page
+      }).then(res => {
+        this.$emit('setUser')
+      })
+    },
     onSubmit () {
+      this.$store.commit('setMessageCount', 50)
       // 阻止默认的回车行为（如换行）
       event.preventDefault();
       if (this.contentText === '') {
@@ -195,7 +224,6 @@ export default {
       }, 100);
     },
     callOut () {
-      console.log(this.user, '===========4444444444444');
       this.resourceSelectVisible = true
     },
     resourceSelected (rows) {
@@ -212,13 +240,6 @@ export default {
     },
     searchShow () {
       this.isShow = !this.isShow
-      // if (this.isShow) {
-      //   this.drawerSize = '50%'
-      //   this.msgRightWidth = '60%'
-      // } else {
-      //   this.drawerSize = '30%'
-      //   this.msgRightWidth = '100%'
-      // }
       let params = {
         entityId: this.user ? this.user.entityId : '',
         entityType: this.user ? this.user.entityType : '',
@@ -226,40 +247,8 @@ export default {
       }
       this.$emit('searchShow', this.isShow, params)
     },
-    // onSelectUser (val, parameters) {
-    //   this.messagesList = []
-    //   // if (user.hasNewMessages) {
-    //   // this.messageevent(user)
-    //   // }
-    //   let params = {
-    //     entityId: this.user ? this.user.entityId : '',
-    //     entityType: this.user ? this.user.entityType : ''
-    //   }
-    //   if (val === 'history') {
-    //     params.history = val
-    //   }
-    //   if (val === 'update') {
-    //     params.type = val
-    //   }
-    //   this.$api['documentManagement.getWebsocketById']({ ...params, ...parameters }).then(res => {
-    //     // user.hasNewMessages = false
-    //     if (res) {
-    //       // this.selectedUser.sendSessionId = res[0].sendSessionId ? res[0].sendSessionId : null
-    //       if (val === 'history') {
-    //         this.messagesData = res
-    //       } else {
-    //         this.messagesList = res
-    //       }
-    //       setTimeout(() => {
-    //         this.scrollBottm();
-    //       }, 100);
-    //     }
-    //   })
-    // },
-    // 滚动条到底部
     scrollBottm () {
-      let el = this.$refs["msg-box"];
-
+      let el = this.$refs.msgBox;
       if (el) {
         el.scrollTop = el.scrollHeight;
       }
@@ -279,41 +268,21 @@ export default {
 .header {
   margin: 20px 10px;
 }
-/* .contentText {
-  width: 80%;
-  resize: none;
-  padding: 10px;
-  line-height: 1.5;
-  border-radius: 5px;
-  border: 1px solid #000;
-} */
-
-/* .send-button {
-  vertical-align: top;
-} */
-
 .drawer-right {
   width: 100%;
   height: calc(100% - 40px);
 }
-/* .chat-box-left {
-  margin: 0 auto;
-  background: white;
-  position: absolute;
-  height: 95%;
-  width: 40%;
-} */
-/* .msg-box-left {
-  height: calc(100% - 17px);
-  overflow: auto;
-  margin-top: 30px;
-} */
 .chat-box {
   height: 100%;
 }
 .msg-box {
-  height: 70%;
-  overflow: auto;
+  height: 70%; /* 设置容器的高度，使其可以滚动 */
+  overflow-y: auto; /* 显示滚动条 */
+}
+.refresh-wrapper {
+  text-align: center;
+  padding: 10px 0;
+  color: #999;
 }
 .msg {
   width: 97%;

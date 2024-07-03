@@ -228,9 +228,6 @@ export default {
     },
     onSelectUser (val, parameters) {
       this.messagesData = []
-      // if (user.hasNewMessages) {
-      // this.messageevent(user)
-      // }
       let params = {
         entityId: '001',
         entityType: 'chat'
@@ -242,9 +239,7 @@ export default {
         params.type = val
       }
       this.$api['documentManagement.getWebsocketById']({ ...params, ...parameters }).then(res => {
-        // user.hasNewMessages = false
         if (res) {
-          // this.selectedUser.sendSessionId = res[0].sendSessionId ? res[0].sendSessionId : null
           if (val === 'history') {
             this.messagesData = res
           } else {

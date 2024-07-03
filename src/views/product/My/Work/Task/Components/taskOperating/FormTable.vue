@@ -275,6 +275,7 @@
                   <el-date-picker v-else
                                   v-model="formData.realBeginDate"
                                   type="date"
+                                  valueFormat='yyyy-MM-dd'
                                   style="width: 100%;"
                                   :picker-options="startRealPickerOptions"
                                   placeholder="请选择日期">
@@ -289,6 +290,7 @@
                   <el-date-picker v-else
                                   v-model="formData.realEndDate"
                                   type="date"
+                                  valueFormat='yyyy-MM-dd'
                                   :picker-options="endRealPickerOptions"
                                   style="width: 100%;"
                                   placeholder="请选择日期">
@@ -556,11 +558,27 @@ export default {
           } else {
             this.$emit('submit', this.formData, submitType)
           }
+          this.setMessage()
         } else {
           console.error('error submit!!', valid)
           return false
         }
       })
+    },
+    setMessage () {
+      console.log(this.formData, 'taskCommitByDatataskCommitByDatataskCommitByDatataskCommitByDatataskCommitByData');
+      this.formData.planName = this.getPlanInfo().PLANNAME
+      this.formData.name = this.getPlanInfo().NAME
+      let params = {
+        itemCreateTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+        sendUser: this.$store.state.user.userId,
+        sendUserName: this.$store.state.user.userName,
+        content: this.contentText,
+        entityId: this.getPlanInfo().WHOLEDESCRIBEID,
+        entityType: 'project',
+        taskRequest: this.formData
+      };
+      window.myWebSocket.emit('taskCommitByData', params)
     },
     onDrawerOpen () {
       this.collapse = true

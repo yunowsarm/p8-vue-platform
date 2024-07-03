@@ -12,8 +12,14 @@
                      :split-default-left-width="defaultWidth">
         <template #north> </template>
         <template #west>
+          <el-input v-if="!thirdMenuParam"
+                    v-model="projectName"
+                    style="width:90%; margin-bottom: 10px;"
+                    placeholder="请输入内容"
+                    @change="handleEnter"></el-input>
           <div class="left-panel"
                v-if="users.length > 0">
+
             <user v-for="(user, index) in users"
                   :key="index"
                   :user="user"
@@ -84,12 +90,12 @@ export default {
         // }
       ],
       dateTime: new Date().getTime(),
-      historyParams: {}
+      historyParams: {},
+      messageCount: 0,
+      projectName: ''
     }
   },
-  async created () {
-    // this.selectedUser.hasNewMessages = false
-    console.log(this.thirdMenuParam, '=============rrrrrrrrrrrrrrr');
+  created () {
     if (this.thirdMenuParam) {
       this.users.push(
         {
@@ -100,50 +106,46 @@ export default {
       )
       this.onSelectUser()
     } else {
-      await this.getGroupAll()
-    }
-    window.myWebSocket.on("privateMessage", (users) => {
-      this.users.forEach(item => {
-        users.forEach(user => {
-          if (item.id === user.id) {
-            item.messageCount = user.messageCount
-          } else {
-            this.users.push(user)
-          }
-        })
-      })
-      this.dateTime = new Date().getTime()
-      // setTimeout(() => {
-      // }, 5000)
-    });
-  },
-  mounted () {
-  },
-  destroyed () {
-    window.myWebSocket.off('privateMessage')
-  },
-  methods: {
-    getGroupAll () {
       this.$api['documentManagement.getWebsocketGroupAll']().then(res => {
         if (res) {
-          console.log(window.myWebSocket.data, '===============================获取新用户');
+          let count = 0
           this.users = res
-          this.onSelectUser(res[0])
+          res.forEach(item => {
+            count = count + item.messageCount
+          })
+          this.messageCount = count
         }
       })
+    }
+  },
+  mounted () {
+    window.myWebSocket.on("messageevent", (users) => {
+      this.setUser()
+    });
+  },
+  destroyed () {
+    window.myWebSocket.off('messageevent')
+  },
+  methods: {
+    handleEnter () {
+      this.setUser(this.projectName)
     },
     visibleMsgClose () {
       this.$emit('visibleMsgClose')
     },
-    setUser (users) {
-      this.users.forEach(item => {
-        users.forEach(user => {
-          if (item.id === user.id) {
-            item.messageCount = user.messageCount
+    setUser (val) {
+      this.$api['documentManagement.getWebsocketGroupAll']({ entityName: val }).then(res => {
+        if (res) {
+          let count = 0
+          if (!this.thirdMenuParam) {
+            this.users = res
           }
-        })
+          res.forEach(item => {
+            count = count + item.messageCount
+          })
+          this.messageCount = count
+        }
       })
-      this.dateTime = new Date().getTime()
     },
     messageevent (user) {
       this.users.forEach(item => {
@@ -154,53 +156,41 @@ export default {
       this.dateTime = new Date().getTime()
     },
     onMessage (params) {
-      console.log("socketsocketsocketsocketsocketsocket:", window.myWebSocket)
       window.myWebSocket.emit('sendMessageGroupChat', params)
     },
     searchShow (isShow, params) {
-      console.log("🚀 ~ searchShow ~ isShow:", isShow)
       this.historyMsg = isShow
       this.historyParams = params
 
       if (isShow) {
         this.dialogWidth = '1100px'
-        // document.getElementById("message").style.width = "60%";
-        // document.getElementById("history").style.width = "40%";
       } else {
         this.dialogWidth = '800px'
-        // document.getElementById("message").style.width = "100%";
-        // document.getElementById("history").style.width = "40%";
       }
     },
     onSelectUser (user) {
       if (user) {
         this.selectedUser = user
-        console.log(this.selectedUser, '1111111111111111111111');
       } else {
         this.selectedUser = this.users[0] ? this.users[0] : null
       }
-      console.log("🚀 ~ onSelectUser ~ user:", this.users[0])
-
       this.list = []
-      // if (user.hasNewMessages) {
-      // this.messageevent(user)
-      // }
       this.$api['documentManagement.getWebsocketById']({
         entityId: this.selectedUser ? this.selectedUser.entityId : '',
         entityType: this.selectedUser ? this.selectedUser.entityType : '',
         type: 'update',
-        // page: {
-        //   current: 1,
-        //   size: 10,
-        //   total: 0,
-        //   orders: [{ column: 'pinst.start_time_', asc: false }],
-        //   pages: 0
-        // }
+        page: {
+          current: 1,
+          size: 10,
+          total: 0,
+          orders: [{ column: 'createTime', asc: false }],
+          pages: 0
+        }
       }).then(res => {
-        // user.hasNewMessages = false
         if (res) {
-          // this.selectedUser.sendSessionId = res[0].sendSessionId ? res[0].sendSessionId : null
-          this.list = res
+          res.records.forEach(item => {
+            this.list.unshift(item)
+          })
         }
       })
     }

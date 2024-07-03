@@ -47,14 +47,13 @@ export default {
         window.myWebSocket = socket
         window.myWebSocket.connect()
         // socket.on("privateMessage", (data) => {
-        //   window.myWebSocket.data = data
         //   console.log(data, '==========APP=============privateMessage')
         // });
         socket.on('messageevent', (data) => {
           console.log(data, '==========APP=============messageevent')
-          if (this.$store.state.user.userId !== data.sendUser) {
-            this.message()
-          }
+          // if (this.$store.state.user.userId !== data.sendUser) {
+          this.message()
+          // }
         })
         // 连接失败时取消自动重新连接
         window.myWebSocket.on('reconnect_failed', () => {

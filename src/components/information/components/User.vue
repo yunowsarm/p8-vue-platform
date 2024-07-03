@@ -34,31 +34,14 @@ export default {
       connected: null
     }
   },
-  // watch: {
-  //   user: {
-  //     handler (val) {
-  //       // console.log(val,'============================有未读消息');
-  //       // this.user.hasNewMessages = true
-  //     },
-  //     deep: true,
-  //     immediate: true
-  //   }
-  // },
   mounted () {
-
   },
   methods: {
     onClick () {
+      this.user.messageCount = 0
       this.$emit("select");
     },
   },
-  // computed: {
-  //   status () {
-  //     this.connected = this.user.status === "online" ? true : false;
-  //     this.user.connected = this.user.status === "online" ? true : false;
-  //     return this.user.status === "online" ? "在线" : "离线";
-  //   },
-  // },
 };
 </script>
 

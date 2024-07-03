@@ -120,8 +120,25 @@ export default {
             message: '偏离原因提交成功！',
             type: 'success'
           })
+          that.setMessage()
         }
       })
+    },
+    setMessage () {
+      let obj = Object.assign({}, this.formData)
+      obj.planName = this.getPlanInfo().PLANNAME
+      obj.name = this.getPlanInfo().NAME
+      obj.deviationProgress = obj.progress
+      let params = {
+        itemCreateTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+        sendUser: this.$store.state.user.userId,
+        sendUserName: this.$store.state.user.userName,
+        content: '',
+        entityId: this.getPlanInfo().WHOLEDESCRIBEID,
+        entityType: 'project',
+        taskRequest: obj
+      };
+      window.myWebSocket.emit('taskCommitByData', params)
     },
     submitParamsHandle (form) {
       let _this = this

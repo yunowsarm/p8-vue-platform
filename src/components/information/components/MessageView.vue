@@ -15,7 +15,7 @@
                   style="text-align: left"
                   class="overHiding">
             <el-col :span="16">
-              <span>{{ item.sendUserName }}</span>
+              <span style="margin-right: 20px;">{{ item.sendUserName }}</span>
               <span class="msg-time">{{ item.itemCreateTime }}</span>
             </el-col>
           </el-row>
@@ -55,28 +55,17 @@ export default {
       currentIndex: null,
       mergeParams: {
         ...this.searchParams,
-        // page: {
-        //   current: 1,
-        //   size: 15,
-        //   total: 0,
-        //   orders: [{ column: 'pinst.start_time_', asc: false }],
-        //   pages: 0
-        // }
+        page: {
+          size: 10,
+          total: 0,
+          orders: [{ column: 'createTime', asc: false }],
+          pages: 0
+        }
       },
       timeKey: new Date().getTime()
     }
   },
   mounted () {
-  },
-  watch: {
-    // searchParams: {
-    //   deep: true,
-    //   handler: function (newVal, oldVal) {
-    //     this.mergeParams = { ...newVal, msgStatus: '1501' }
-    //     this.activeTabs = '1501'
-    //   },
-    //   immediate: true
-    // }
   },
   methods: {
     triggerSelect (item, index) {
@@ -84,8 +73,6 @@ export default {
         return
       }
       this.currentIndex = index
-      // this.$emit('select', item, index)
-      // this.$emit('toggleStatus', item.id, '1505')
     },
     messageLoad (data, current) {
       if (data && current && current === 1) {
