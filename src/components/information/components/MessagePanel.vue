@@ -179,7 +179,7 @@ export default {
         type: 'update',
         page: this.page
       }).then(res => {
-        this.$emit('setUser')
+        this.$emit('setUser', 'read')
       })
     },
     onSubmit () {

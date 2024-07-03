@@ -15,7 +15,7 @@
           <el-input v-if="!thirdMenuParam"
                     v-model="projectName"
                     style="width:90%; margin-bottom: 10px;"
-                    placeholder="请输入内容"
+                    placeholder="请输入项目名称"
                     @change="handleEnter"></el-input>
           <div class="left-panel"
                v-if="users.length > 0">
@@ -23,7 +23,7 @@
             <user v-for="(user, index) in users"
                   :key="index"
                   :user="user"
-                  :selected="selectedUser === user"
+                  :selected="isChange"
                   @select="onSelectUser(user)" />
           </div>
         </template>
@@ -92,7 +92,8 @@ export default {
       dateTime: new Date().getTime(),
       historyParams: {},
       messageCount: 0,
-      projectName: ''
+      projectName: '',
+      isChange: false
     }
   },
   created () {
@@ -128,14 +129,18 @@ export default {
   },
   methods: {
     handleEnter () {
+      this.isChange = false
       this.setUser(this.projectName)
     },
     visibleMsgClose () {
       this.$emit('visibleMsgClose')
     },
     setUser (val) {
-      this.$api['documentManagement.getWebsocketGroupAll']({ entityName: val }).then(res => {
-        if (res) {
+      if (this.thirdMenuParam) {
+        return false
+      }
+      this.$api['documentManagement.getWebsocketGroupAll']({ entityName: this.projectName }).then(res => {
+        if (res.length > 0) {
           let count = 0
           if (!this.thirdMenuParam) {
             this.users = res
@@ -144,6 +149,11 @@ export default {
             count = count + item.messageCount
           })
           this.messageCount = count
+        } else {
+          if (val !== 'read') {
+            this.selectedUser = {}
+            this.users = []
+          }
         }
       })
     },
@@ -169,6 +179,7 @@ export default {
       }
     },
     onSelectUser (user) {
+      this.isChange = true
       if (user) {
         this.selectedUser = user
       } else {
