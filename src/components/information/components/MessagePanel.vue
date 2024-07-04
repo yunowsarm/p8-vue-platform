@@ -151,13 +151,14 @@ export default {
       }).then(res => {
         that.loading = false;  // 加载完成后取消 loading 状态
         if (res.records.length > 0) {
+          let arr = []
           res.records.forEach(item => {
-            that.messagesList.unshift(item)
+            arr.unshift(item)
           })
-          // that.$refs.msgBox.scrollTop = 100;
-          console.log(that.$refs.msgBox.scrollTop);
+          that.messagesList = [...arr, ...that.messagesList]
+          that.$refs.msgBox.scrollTop = 500 * 3
         } else {
-          // that.$refs.msgBox.scrollTop = 0;
+          that.$refs.msgBox.scrollTop = 0;
         }
 
       })
@@ -166,24 +167,23 @@ export default {
     handleScroll () {
       const container = this.$refs.msgBox;
       // 检测是否在顶部并且向下拉动
-      if (container.scrollTop === 0) {
+      if (container.scrollTop < 10) {
         this.loading = true;
         this.fetchData();  // 触发加载数据
       }
     },
     // 清空已读消息
     focus () {
-      this.$api['documentManagement.getWebsocketById']({
-        entityId: this.user ? this.user.entityId : '',
-        entityType: this.user ? this.user.entityType : '',
-        type: 'update',
-        page: this.page
-      }).then(res => {
-        this.$emit('setUser', 'read')
-      })
+      // this.$api['documentManagement.getWebsocketById']({
+      //   entityId: this.user ? this.user.entityId : '',
+      //   entityType: this.user ? this.user.entityType : '',
+      //   type: 'update',
+      //   page: this.page
+      // }).then(res => {
+      //   // this.$emit('onSelectUser')
+      // })
     },
     onSubmit () {
-      this.$store.commit('setMessageCount', 50)
       // 阻止默认的回车行为（如换行）
       event.preventDefault();
       if (this.contentText === '') {
@@ -276,7 +276,7 @@ export default {
   height: 100%;
 }
 .msg-box {
-  height: 70%; /* 设置容器的高度，使其可以滚动 */
+  height: 400px; /* 设置容器的高度，使其可以滚动 */
   overflow-y: auto; /* 显示滚动条 */
 }
 .refresh-wrapper {
@@ -357,7 +357,7 @@ export default {
   }
 }
 .contentText-box {
-  height: 30%;
+  height: calc(100% - 400px);
   width: 100%;
   border-top: 2px #f2f2f2 solid;
   overflow-y: visible;

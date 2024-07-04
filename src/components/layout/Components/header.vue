@@ -20,12 +20,23 @@
         <li v-if="adminUserIdArr.indexOf($store.state.user.userId) === -1">
           <span>
             <!-- <i class="p8 icon-work-home" @click="$router.push({name:'Dashboard'})"> -->
-            <el-tooltip content="沟通消息">
+            <el-badge v-if="unreadMessageCount > 0"
+                      :value="unreadMessageCount"
+                      :max="99"
+                      class="itemNum">
+              <el-tooltip content="沟通消息">
+                <i class="el-icon-chat-dot-square"
+                   @click="informationDrawer = true"></i>
+              </el-tooltip>
+            </el-badge>
+            <el-tooltip v-else
+                        content="沟通消息">
               <i class="el-icon-chat-dot-square"
                  @click="informationDrawer = true"></i>
             </el-tooltip>
           </span>
           <information v-if="informationDrawer"
+                       ref="information"
                        :visibleMsgDrawer="informationDrawer"
                        @visibleMsgClose="visibleMsgClose"></information>
         </li>
@@ -197,17 +208,19 @@ export default {
         themeColor: ''
       },
       informationDrawer: false,
+      unreadMessageCount: 0,
       adminUserIdArr: ['SYS_USER001', 'SYS_USER009', 'SYS_USER012', 'SYS_USER010', 'SYS_USER000'] // 五元id
     }
   },
   computed: {
-    ...mapGetters(['token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl'])
+    ...mapGetters(['messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl'])
   },
   mounted () {
     console.log(this.systemName, '=========================systemName')
     this.dayTime = getGreetingTime()
     const this_ = this
     this_.approvalTotal()
+    this_.getMsgTotal()
     // this_.approvalMsg()
     // this_.noticeMsg()
     this.$store.dispatch('getMessageNum')
@@ -222,6 +235,9 @@ export default {
           }
         })
       }
+    },
+    messageCount (val, oldVal) {
+      this.unreadMessageCount = val
     }
     // theme (val, oldVal) {
     //   let color = this.fromHex(this.theme)
@@ -240,10 +256,23 @@ export default {
   methods: {
     visibleMsgClose () {
       this.informationDrawer = false
+      // this.getMsgTotal()
     },
     approvalTotal () {
       this.$api['PersonalProcessApproval.approvalPendingTotal']().then((res) => {
         this.approvalPendingTotal = res
+      })
+    },
+    getMsgTotal () {
+      this.$api['documentManagement.getWebsocketGroupAll']({ entityName: this.projectName }).then(res => {
+        if (res.length > 0) {
+          let count = 0
+          res.forEach(item => {
+            count = count + item.messageCount
+          })
+          this.unreadMessageCount = count
+          this.$store.dispatch('setMessageCount', count)
+        }
       })
     },
     approvalMsg () {
@@ -478,6 +507,7 @@ export default {
         }
 
         .itemNum {
+          font-size: 20px;
           margin-right: 10px;
         }
       }

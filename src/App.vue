@@ -52,6 +52,9 @@ export default {
         socket.on('messageevent', (data) => {
           console.log(data, '==========APP=============messageevent')
           // if (this.$store.state.user.userId !== data.sendUser) {
+          // let count = this.$store.getters.messageCount
+          // console.log("🚀 ~ socket.on ~ count:", count)
+          // this.$store.dispatch('setMessageCount', count++)
           this.message()
           // }
         })

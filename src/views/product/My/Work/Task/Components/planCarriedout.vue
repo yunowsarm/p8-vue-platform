@@ -1,9 +1,21 @@
 <template>
   <div>
-    <message-panel v-if="isVisibleCommunicationDrawer"
-                   :isVisibleDocumentEditDrawer="isVisibleCommunicationDrawer"
-                   :thirdMenuParamTemp="thirdMenuParamTemp"
-                   @success="isVisibleCommunicationDrawer = false"></message-panel>
+    <div class="msg-box">
+      <el-badge v-if="unreadMessageCount > 0"
+                :value="unreadMessageCount"
+                :max="99"
+                class="itemNum">
+        <i class="el-icon-chat-dot-square iconClass"
+           @click="open"></i>
+      </el-badge>
+      <i v-else
+         class="el-icon-chat-dot-square iconClass"
+         @click="open"></i>
+    </div>
+    <communication-msg v-if="isVisibleCommunicationDrawer"
+                       :thirdMenuParam="thirdMenuParam"
+                       :visibleMsgDrawer="isVisibleCommunicationDrawer"
+                       @visibleMsgClose="visibleMsgClose"></communication-msg>
     <left-center-right-layout :percentRight="65"
                               v-if="isRouterShow">
       <template #left>
@@ -34,13 +46,13 @@
   </div>
 </template>
 <script>
+import CommunicationMsg from '@/components/information/index.vue';
 import LeftCenterRightLayout from './layout/LeftCenterRight'
 import TaskTabsView from './taskOperating/TaskTabs'
 import TaskInfoView from './taskInfo'
 import TaskManageView from './taskManage/index'
 import TaskRelationView from './taskRelation/index'
 import { getTaskStatusInfo } from '@/utils/commonBusiness'
-import MessagePanel from './MessagePanel'
 import { P8Drawer as CommonDrawer } from 'p8-components-ui'
 export default {
   name: 'planExecute',
@@ -61,10 +73,6 @@ export default {
     thirdMenuParam: {
       handler (val) {
         this.thirdMenuParamTemp = val
-        console.log(val, '================2222');
-        if (val.isVisibleCommunicationDrawer) {
-          this.isVisibleCommunicationDrawer = true
-        }
       },
       immediate: true,
       deep: true
@@ -79,16 +87,34 @@ export default {
       secretLevel: '机密',
       thirdMenuParamTemp: this.thirdMenuParam,
       drawerSize: '30%',
-      isVisibleCommunicationDrawer: false
+      isVisibleCommunicationDrawer: false,
+      unreadMessageCount: 0
     }
   },
   mounted () {
     this.reload()
+    this.getMsgTotal()
   },
   methods: {
-    documentEditDrawerClose () {
+    getMsgTotal () {
+      this.$api['documentManagement.getWebsocketGroupAll']({ entityName: this.projectName }).then(res => {
+        if (res.length > 0) {
+          let count = 0
+          res.forEach(item => {
+            count = count + item.messageCount
+          })
+          this.unreadMessageCount = count
+        } else {
+          this.unreadMessageCount = 0
+        }
+      })
+    },
+    open () {
+      this.isVisibleCommunicationDrawer = true
+    },
+    visibleMsgClose () {
       this.isVisibleCommunicationDrawer = false
-      console.log('1111111111111111111111111111111111');
+      this.getMsgTotal()
     },
     reload () {
       getTaskStatusInfo({ currentStatus: 'all' }).then(data => {
@@ -104,11 +130,19 @@ export default {
     TaskManageView,
     TaskRelationView,
     CommonDrawer,
-    MessagePanel
+    type: Object,
+    CommunicationMsg
   }
 }
 </script>
 <style lang="scss" scoped>
+.msg-box {
+  position: absolute;
+  right: 37px;
+  z-index: 99999;
+  top: 7px;
+  font-size: 20px;
+}
 .secret_level {
   position: absolute;
   right: 20px;

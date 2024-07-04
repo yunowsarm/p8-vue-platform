@@ -50,8 +50,6 @@
                      :projectLevel="projectLevel"
                      :drawerConfig="menuDrawerConfig">
         <template #drawer>
-          <i class="el-icon-chat-dot-square iconClass"
-             @click="open"></i>
           <menu-layout :third-menu-param="thirdMenuParam"
                        :default-menu="defaultMenu"></menu-layout>
         </template>
@@ -77,10 +75,6 @@
                      :taskId="taskId"
                      :visible="visibleFrontToBack"
                      @close='close'></front-to-back>
-      <communication-msg v-if="isVisibleDocumentEditDrawer"
-                         :thirdMenuParam="thirdMenuParam"
-                         :visibleMsgDrawer="isVisibleDocumentEditDrawer"
-                         @visibleMsgClose="visibleMsgClose"></communication-msg>
     </template>
   </normal-layout>
 </template>
@@ -150,7 +144,6 @@ export default {
   },
   data () {
     return {
-      isVisibleDocumentEditDrawer: false,
       dateTime: null,
       dialogHeight: document.documentElement.clientHeight * 0.6,
       queryParam: {},
@@ -213,7 +206,6 @@ export default {
   created () {
     this.init()
     this.getIconData()
-    console.log(this.$route.path, '================this.$route.path');
     this.currentRouterPath = this.$route.path
   },
   watch: {
@@ -226,13 +218,6 @@ export default {
   methods: {
     getProgress (val) {
       return Math.round(val * 100) + '%'
-    },
-    open () {
-      this.isVisibleDocumentEditDrawer = true
-    },
-    visibleMsgClose () {
-      console.log('gggggggggggggggggggggggggggggg');
-      this.isVisibleDocumentEditDrawer = false
     },
     frontToBackClick (val, scope) {
       this.title = val

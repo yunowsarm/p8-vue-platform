@@ -39,7 +39,8 @@ const user = {
       }
     },
     messageInfo: [], // 用户消息信息
-    messageNum: [] // 用户消息已读未读条数
+    messageNum: [], // 用户消息已读未读条数
+    messageCount: 0 // 沟通消息未读条数
   },
 
   mutations: {
@@ -83,10 +84,8 @@ const user = {
     },
     SET_LOGIN_STATUS(state, data) {
       state.loginStatus = data
-      console.log(state.loginStatus, 'state.loginStatus')
     },
     SET_SETTING_ALL(state, data) {
-      console.log('SET_SETTING_ALL', data)
       state.userSettingAll = data
       if (data.PlanButton && data.PlanButton.length) {
         state.ganttButtonMode = data.PlanButton[0].value.type || ''
@@ -106,10 +105,16 @@ const user = {
     },
     SET_MESSAGENUM(state, data) {
       state.messageNum = data
+    },
+    SET_MESSAGECOUNT(state, data) {
+      state.messageCount = data
     }
   },
 
   actions: {
+    setMessageCount({ commit }, data) {
+      commit('SET_MESSAGECOUNT', data)
+    },
     /**
      * 用户登录
      * 需要通过mutation在浏览器中创建Token cookie保证一定的登录实效性;

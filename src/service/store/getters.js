@@ -20,6 +20,7 @@ const getters = {
   roles: (state) => state.user.roles,
   messageInfo: (state) => state.user.messageInfo,
   messageNum: (state) => state.user.messageNum,
+  messageCount: (state) => state.user.messageCount,
   userSettingAll: (state) => state.user.userSettingAll,
   ganttButtonMode: (state) => state.user.ganttButtonMode, // gantt操作按钮单行双行模式配置
   ganttRightButtons: (state) => state.user.ganttRightButtons, // gantt右键菜单配置

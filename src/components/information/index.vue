@@ -1,6 +1,6 @@
 <template>
-  <common-dialog v-if="visibleMsgDrawer"
-                 :visible="visibleMsgDrawer"
+  <common-dialog v-if="visible"
+                 :visible="visible"
                  :width="dialogWidth"
                  :dialog-config="dialogConfig"
                  :show-handle-btn="false"
@@ -23,7 +23,7 @@
             <user v-for="(user, index) in users"
                   :key="index"
                   :user="user"
-                  :selected="isChange"
+                  :selected="user.entityId === selectedUser.entityId"
                   @select="onSelectUser(user)" />
           </div>
         </template>
@@ -69,6 +69,7 @@ export default {
   },
   data () {
     return {
+      visible: this.visibleMsgDrawer,
       historyMsg: false,
       dialogWidth: '800px',
       dialogHeight: 600,
@@ -91,7 +92,6 @@ export default {
       ],
       dateTime: new Date().getTime(),
       historyParams: {},
-      messageCount: 0,
       projectName: '',
       isChange: false
     }
@@ -114,7 +114,7 @@ export default {
           res.forEach(item => {
             count = count + item.messageCount
           })
-          this.messageCount = count
+          this.$store.dispatch('setMessageCount', count)
         }
       })
     }
@@ -133,12 +133,16 @@ export default {
       this.setUser(this.projectName)
     },
     visibleMsgClose () {
+      this.visible = false
       this.$emit('visibleMsgClose')
     },
     setUser (val) {
       if (this.thirdMenuParam) {
         return false
       }
+      // if (val !== 'read') {
+      //   return false
+      // }
       this.$api['documentManagement.getWebsocketGroupAll']({ entityName: this.projectName }).then(res => {
         if (res.length > 0) {
           let count = 0
@@ -148,12 +152,10 @@ export default {
           res.forEach(item => {
             count = count + item.messageCount
           })
-          this.messageCount = count
+          this.$store.dispatch('setMessageCount', count)
         } else {
-          if (val !== 'read') {
-            this.selectedUser = {}
-            this.users = []
-          }
+          this.selectedUser = {}
+          this.users = []
         }
       })
     },
@@ -179,7 +181,6 @@ export default {
       }
     },
     onSelectUser (user) {
-      this.isChange = true
       if (user) {
         this.selectedUser = user
       } else {
