@@ -284,6 +284,9 @@ export default {
   padding: 10px 0;
   color: #999;
 }
+.msg .user-msg .right {
+  text-align: start;
+}
 .msg {
   width: 97%;
   min-height: 2.5rem;
