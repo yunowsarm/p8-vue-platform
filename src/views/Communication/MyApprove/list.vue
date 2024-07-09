@@ -198,5 +198,8 @@ export default {
   .search-wrapper {
     float: left;
   }
+  ::v-deep .splitBtn {
+    z-index: 1;
+  }
 }
 </style>

@@ -1849,8 +1849,8 @@ function searchFilter(parent, searchForm, ganttObject) {
       startDateCheck &&
       managerStatusCheck &&
       // secretGradeCheck &&
-      specialDutyCheck &&
-      tasksCooperateCheck &&
+      // specialDutyCheck &&
+      // tasksCooperateCheck &&
       endDateCheck &&
       roleIdCheck &&
       productQuantityCheck &&

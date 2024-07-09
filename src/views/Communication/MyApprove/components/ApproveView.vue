@@ -5,7 +5,6 @@
                    type="border-card"
                    :active-tabs="activeTabs"
                    :hasFullScreen="true"
-                   @tab-click="tabsClick"
                    :tabs-data="tabs">
         <template #approval>
           <component ref="approveContent"
@@ -32,7 +31,7 @@
                      @selection-ids="selectionIdsByApprovalResult" />
         </template>
         <template #bpmn>
-          <bpm-view v-if="selectedApproval.processDefId !== '' && activeTabs==='bpmn'"
+          <bpm-view v-if="selectedApproval.processDefId !== ''"
                     :style="{ height: tabsHeight, margin: '0px 0px 2px -333px !important;'}"
                     :isSmartForm="true"
                     :process-obj="{
