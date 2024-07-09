@@ -186,6 +186,11 @@ export default {
     onSubmit () {
       // 阻止默认的回车行为（如换行）
       event.preventDefault();
+      const encoder = new TextEncoder();
+      const encoded = encoder.encode(this.contentText);
+      if (encoded.length > 1000) {
+        return this.$message.warning('文字超出限制无法发出！')
+      }
       if (this.contentText === '') {
         return
       }
