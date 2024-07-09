@@ -395,6 +395,14 @@ export default {
         if (res && res.length) {
           res.forEach((el) => {
             el.isActive = false
+            // 回显选中的数据
+            if (that.formData.appIds.length > 0) {
+              that.formData.appIds.forEach(item => {
+                if (el.id === item) {
+                  el.isActive = true
+                }
+              })
+            }
             that.adhibitionList = res
             that.dateTime = new Date().getTime()
           })
