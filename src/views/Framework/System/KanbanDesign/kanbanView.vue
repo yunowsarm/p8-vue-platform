@@ -7,7 +7,7 @@
               #[`slot${index}`]>
     </template>
   </common-tabs> -->
-  <normal-layout :header-visible="searchFormConfig.length > 0" :normal-layout="normalLayout">
+  <normal-layout class="kanban_normal" :header-visible="searchFormConfig.length > 0" :normal-layout="normalLayout">
     <template #north>
       <search-form-list ref="search" :data-source="searchFormConfig" @search="onSearch" @re-set="onReset"></search-form-list>
     </template>
@@ -250,5 +250,11 @@ export default {
   }
 
   padding: 0 !important;
+}
+</style>
+<style>
+.kanban_normal {
+  margin: 0;
+  padding: 0;
 }
 </style>

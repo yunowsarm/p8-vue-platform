@@ -118,7 +118,7 @@ export default {
     },
     onFullscreen (booleanParams) {
       if (booleanParams) {
-        this.$refs.widget.$el.style.zIndex = PopupManager.nextZIndex()
+        this.$refs.widget.$el.style.zIndex = (PopupManager.nextZIndex() + 20)
       } else {
         this.$refs.widget.$el.style.zIndex = null
       }
