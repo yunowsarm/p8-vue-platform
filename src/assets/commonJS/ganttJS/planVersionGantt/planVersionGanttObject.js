@@ -112,19 +112,19 @@ function getPlanColumn(type, ganttObject, vueThis) {
       width: 80,
       resize: true,
       template: function (task) {
-        return task.ownerName
+        return task.realName
       }
     },
-    {
-      name: 'roleName',
-      label: '角色',
-      align: 'center',
-      resize: true,
-      min_width: 120,
-      template: function (task) {
-        return task.ownerRoleName
-      }
-    },
+    // {
+    //   name: 'roleName',
+    //   label: '角色',
+    //   align: 'center',
+    //   resize: true,
+    //   min_width: 120,
+    //   template: function (task) {
+    //     return task.ownerRoleName
+    //   }
+    // },
     {
       name: 'dutyDeptName',
       label: '部门',
@@ -132,7 +132,7 @@ function getPlanColumn(type, ganttObject, vueThis) {
       resize: true,
       min_width: 120,
       template: function (task) {
-        return task.ownerDeptName
+        return task.dutyDeptName
       }
     },
     {
@@ -281,23 +281,23 @@ function getPlanColumn(type, ganttObject, vueThis) {
         return ''
       }
     },
-    {
-      name: 'predecessors',
-      label: '前后置',
-      min_width: 100,
-      resize: true,
-      align: 'left',
-      monitorLockLimit: true, // 标识锁定后不可操作的列声明
-      template: function (task) {
-        const links = task.$target
-        const labels = []
-        for (let i = 0; i < links.length; i++) {
-          const link = ganttObject.getLink(links[i])
-          labels.push(linksFormatter.format(link))
-        }
-        return labels.join(',')
-      }
-    },
+    // {
+    //   name: 'predecessors',
+    //   label: '前后置',
+    //   min_width: 100,
+    //   resize: true,
+    //   align: 'left',
+    //   monitorLockLimit: true, // 标识锁定后不可操作的列声明
+    //   template: function (task) {
+    //     const links = task.$target
+    //     const labels = []
+    //     for (let i = 0; i < links.length; i++) {
+    //       const link = ganttObject.getLink(links[i])
+    //       labels.push(linksFormatter.format(link))
+    //     }
+    //     return labels.join(',')
+    //   }
+    // },
     {
       name: 'monitorPoints',
       label: '标识',
