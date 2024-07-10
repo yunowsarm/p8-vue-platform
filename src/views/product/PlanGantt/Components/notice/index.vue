@@ -129,7 +129,34 @@ export default {
     }
     // this.taskSecretLevel = task.secretGrade
   },
+  mounted() {
+    const toolbar = this.$refs.myQuillEditor.quill.getModule('toolbar');
+    toolbar.addHandler('image', this.imageHandler);
+  },
   methods: {
+    imageHandler() {
+      const input = document.createElement('input');
+      input.setAttribute('type', 'file');
+      input.setAttribute('accept', 'image/*');
+      input.click();
+
+      input.onchange = () => {
+        const file = input.files[0];
+        const maxSize = 5 * 1024 * 1024; // 5 MB
+
+        if (file.size > maxSize) {
+          alert('图片大小不能超过 5 MB.');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const range = this.$refs.myQuillEditor.quill.getSelection();
+          this.$refs.myQuillEditor.quill.insertEmbed(range.index, 'image', e.target.result);
+        };
+        reader.readAsDataURL(file);
+      };
+    },
     // secretLevelChangeHandle(val) {
     //   if (val > this.taskSecretLevel) {
     //     this.$message({
