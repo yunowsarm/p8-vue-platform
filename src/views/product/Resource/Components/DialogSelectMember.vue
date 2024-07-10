@@ -348,7 +348,7 @@ export default {
   .normal-header{
     border-bottom: 1px solid #e1e1e1;
   }
-  ::v-deep .normal-layout .normal-main .normal-center {
+  .normal-main .normal-center {
     height: 100%;
   }
 }
