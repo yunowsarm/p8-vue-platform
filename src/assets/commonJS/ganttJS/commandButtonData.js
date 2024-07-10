@@ -2713,6 +2713,7 @@ function createTaskByDatas(ganttObject, datas, parentId, pos, taskName, msg, dpO
           planInfoId: item.planInfoId,
           monitorPoints: item.monitorPoints,
           owner_id: item.owner_id,
+          realName: item.realName,
           auto_scheduling: scheduling,
           autoScheduling: item.autoScheduling,
           type: 'task',
