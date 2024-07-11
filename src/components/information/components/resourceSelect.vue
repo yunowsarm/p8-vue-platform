@@ -132,7 +132,7 @@ export default {
   data () {
     return {
       comp: this,
-      title: '选择责任人',
+      title: '选择人员',
       dialogWidth: '60%',
       dialogHeight: 580,
       tableV: false,
@@ -327,8 +327,9 @@ export default {
       // if (row.weatherOut === '0') {
       //   this.$refs.tableCom.$refs.table.clearSelection()
       //   this.$refs.tableCom.$refs.table.toggleRowSelection(row)
-      //   this.currentRow = row
-      //   this.submit()
+      this.selectRows = []
+      this.selectRows.push(row)
+      this.submit()
       // }
     },
     showUserLoad (row) {
