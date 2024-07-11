@@ -114,7 +114,8 @@ export default {
             title: '取消任务类型',
             icon: 'p8 icon-cancel-task-type',
             size: 'small',
-            help: '取消任务类型'
+            help: '取消任务类型',
+            isDisableFun: that.isDisableFun()
           }
           const productClassify = {
             id: '3103',
@@ -165,11 +166,11 @@ export default {
             return true
           }
         }
-        if (btn.id === 'cancelSelClassify') {
-          if (tasks[0].planType !== '') {
-            return false
-          }
-        }
+        // if (btn.id === 'cancelSelClassify') {
+        //   if (tasks[0].planType !== '') {
+        //     return false
+        //   }
+        // }
         return this.isDisable(btn, ganttName, tasks)
       }
     },
