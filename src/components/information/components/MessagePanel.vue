@@ -194,9 +194,21 @@ export default {
       if (this.contentText === '') {
         return
       }
+      // 获取当前时间的 Date 对象
+      let now = new Date();
+      // 获取本地时间与 UTC 时间的偏移量（以分钟为单位）
+      let offsetMinutes = now.getTimezoneOffset();
+      // 北京时间与 UTC 的时区偏移量是 +8 小时
+      let offsetBeijing = 8 * 60;
+      // 计算北京时间的毫秒数
+      let beijingTime = now.getTime() + (offsetBeijing + offsetMinutes) * 60 * 1000;
+      // 创建包含北京时间的 Date 对象
+
+      console.log(beijingTime);
+
       this.messagesList.push(
         {
-          itemCreateTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+          itemCreateTime: moment(beijingTime).format('YYYY-MM-DD HH:mm:ss'),
           // sessionId: this.user.sessionId,
           // sendSessionId: this.user.sendSessionId,
           // userId: '1',
@@ -229,6 +241,7 @@ export default {
       }, 100);
     },
     callOut () {
+      this.entityId = this.user.entityId
       this.resourceSelectVisible = true
     },
     resourceSelected (rows) {

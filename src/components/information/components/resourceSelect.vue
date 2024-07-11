@@ -318,7 +318,6 @@ export default {
         this.$refs.tableCom.$refs.table.clearSelection()
       }
       // this.$refs.tableCom.$refs.table.toggleRowSelection(row)
-      console.log(selection, '222222222222222222222222222222222');
       this.currentRow = row
       this.selectRows = selection
     },

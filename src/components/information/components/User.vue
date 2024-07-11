@@ -39,7 +39,7 @@ export default {
   methods: {
     onClick () {
       this.user.messageCount = 0
-      this.$emit("select");
+      this.$emit("select", this.user);
     },
   },
 };
