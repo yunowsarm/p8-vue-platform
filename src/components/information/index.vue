@@ -3,6 +3,7 @@
                  :visible="visible"
                  :width="dialogWidth"
                  :dialog-config="dialogConfig"
+                 @isfullscreen="handleFullscreen"
                  :show-handle-btn="false"
                  @close="visibleMsgClose"
                  :dialog-height="dialogHeight"
@@ -128,6 +129,9 @@ export default {
     window.myWebSocket.off('messageevent')
   },
   methods: {
+    handleFullscreen () {
+      this.selectedUser.contentText = this.$refs.msg.contentText
+    },
     handleEnter () {
       this.isChange = false
       this.setUser(this.projectName)
@@ -173,7 +177,6 @@ export default {
     searchShow (isShow, params) {
       this.historyMsg = isShow
       this.historyParams = params
-
       if (isShow) {
         this.dialogWidth = '1100px'
       } else {

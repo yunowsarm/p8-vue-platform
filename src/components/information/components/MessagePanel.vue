@@ -114,6 +114,7 @@ export default {
   mounted () {
     if (this.user) {
       this.entityId = this.user.entityId
+      this.contentText = this.user.contentText
     }
     this.$refs.textareaRef.focus();
     setTimeout(() => {
