@@ -186,6 +186,32 @@ export function getAnalysisGantt(ganttName, vueThis) {
       min_width: 90
     },
     {
+      name: 'achievements',
+      label: '绩效',
+      align: 'center',
+      width: 70,
+      resize: true,
+      template: function (task) {
+        if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
+          return task.achievements
+        }
+        return ''
+      }
+    },
+    {
+      name: 'proportion',
+      label: '比例',
+      align: 'center',
+      width: 70,
+      resize: true,
+      template: function (task) {
+        if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
+          return task.proportion
+        }
+        return ''
+      }
+    },
+    {
       name: 'name',
       label: '任务名称',
       tree: true,

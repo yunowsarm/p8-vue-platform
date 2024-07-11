@@ -32,6 +32,11 @@ Vue.component('v-contextmenu-item', ContextmenuItem)
 // Vue.component('custom-view', CustomView)
 
 Vue.prototype.$echarts = echarts
+
+Number.prototype.toFixedNoRound = function(decimals) {
+  const factor = Math.pow(10, decimals);
+  return Math.floor(this * factor) / factor;
+};
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

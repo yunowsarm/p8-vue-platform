@@ -188,6 +188,35 @@ export default {
         //   options: []
         // },
         {
+          type: 'number',
+          labelText: '绩效',
+          fieldName: 'achievements',
+          colLayout: 'doubleCol',
+          min: 0,
+          fieldConfig: {
+            precision: 4,
+            step: 1
+          },
+          eventHandle: {
+            change: 'achievementsChangeHandle'
+          }
+        },
+        {
+          type: 'number',
+          labelText: '比例',
+          fieldName: 'proportion',
+          colLayout: 'doubleCol',
+          min: 0,
+          max: 100,
+          fieldConfig: {
+            precision: 4,
+            step: 1
+          },
+          eventHandle: {
+            change: 'proportionChangeHandle'
+          }
+        },
+        {
           labelText: '预计开始时间',
           type: 'view',
           fieldName: 'forecastBeginDate',
@@ -437,6 +466,8 @@ export default {
       const task = ganttObject.getTask(taskId)
       this.nullity = task.nullity
       that.formData.name = task.name
+      that.formData.achievements = task.achievements
+      that.formData.proportion = task.proportion
       that.formData.start_date = task.start_date
       that.formData.end_date = ganttObject.date.add(task.end_date, -1, 'day')
       // that.formData.autoScheduling = task.autoScheduling
@@ -744,6 +775,22 @@ export default {
         this.formData.owner_type = 'team'
         // this.formData.owner_type = this.vueThis.distribution
         this.formData.dutyDeptName = user.deptName
+      }
+    },
+    achievementsChangeHandle (val) {
+      const ganttObject = GanttObject.getGanttObject(this.ganttName)
+      let parentId = ganttObject.getParent(this.taskId)
+      let parentTask = ganttObject.getTask(parentId)
+      if (ganttObject.getGlobalTaskIndex(parentId) !== 0 && parentTask.achievements) {
+        this.formData.proportion = ((Number(this.formData.achievements) / Number(parentTask.achievements))*100).toFixedNoRound(4)
+      }
+    },
+    proportionChangeHandle (val) {
+      const ganttObject = GanttObject.getGanttObject(this.ganttName)
+      let parentId = ganttObject.getParent(this.taskId)
+      let parentTask = ganttObject.getTask(parentId)
+      if (ganttObject.getGlobalTaskIndex(parentId) !== 0 && parentTask.achievements) {
+        this.formData.achievements = (Number(parentTask.achievements) * (Number(val) / 100)).toFixedNoRound(4)
       }
     }
   }

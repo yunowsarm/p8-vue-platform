@@ -136,6 +136,32 @@ export function getChangeGantt(ganttName, vueThis) {
       }
     },
     {
+      name: 'achievements',
+      label: '绩效',
+      align: 'left',
+      resize: true,
+      min_width: 150,
+      template: function (task) {
+        if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
+          return task.achievements
+        }
+        return ''
+      }
+    },
+    {
+      name: 'proportion',
+      label: '比例',
+      align: 'left',
+      resize: true,
+      min_width: 90,
+      template: function (task) {
+        if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
+          return task.proportion
+        }
+        return ''
+      }
+    },
+    {
       name: 'monitorPoints',
       label: '标识',
       align: 'left',

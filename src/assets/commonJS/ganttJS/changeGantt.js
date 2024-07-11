@@ -18,6 +18,8 @@ export const checkKeys = [
   'forecastBeginDate',
   'roleName',
   'realName',
+  'achievements',
+  'proportion',
   'owner_type',
   'dutyDeptName',
   'forecastEndDate',

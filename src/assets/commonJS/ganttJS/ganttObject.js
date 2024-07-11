@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Gantt } from 'p8-dhtmlx-gantt'
+import { gantt, Gantt } from 'p8-dhtmlx-gantt'
 import store from '@/plugins/store'
 import { lockMonitorUpdateCheck, monitorLockUnLockCheck } from './ganttLockUnLock'
 import { updateNewTaskMap, setNewTaskMap } from './changeGantt'
@@ -1365,6 +1365,8 @@ GanttObject.treeDataEditor = function (ganttObject, editorConfig, editorConfig1)
 GanttObject.editors = function (ganttObject, formatter, linksFormatter) {
   return {
     text: { type: 'text', map_to: 'name' },
+    achievements: { type: 'number', map_to: 'achievements' },
+    proportion: { type: 'number', map_to: 'proportion' },
     taskProjectName: { type: 'text', map_to: 'taskProjectName' },
     qualityRequirement: { type: 'text', map_to: 'qualityRequirement', defaultValue: '' },
     taskMajorName: { type: 'text', map_to: 'taskMajorName' },
@@ -2140,7 +2142,10 @@ GanttObject.onSaveCellEven = function (ganttObject, vueThis) {
   return ganttObject.ext.inlineEditors.attachEvent('onSave', (state) => {
     const colName = state.columnName
     const taskId = state.id
+    const task = ganttObject.getTask(taskId)
     const vueThis = store.getters.vueThis
+    let parentId = ganttObject.getParent(task.id)
+    let parentTask = ganttObject.getTask(parentId)
     // 当修改计划开始、计划完成、工期时，标记任务，用于更新父
     if (colName === 'end_date' || colName === 'duration' || colName === 'start_date' || colName === 'predecessors') {
       // if (colName === 'end_date') {
@@ -2151,8 +2156,18 @@ GanttObject.onSaveCellEven = function (ganttObject, vueThis) {
       GanttObject.updateTaskNew(ganttObject, taskId, vueThis)
     }
     // console.log(ganttObject,'ganttObject');
-
-
+    if (colName == 'achievements') {
+      if (ganttObject.getGlobalTaskIndex(parentId) !== 0 && parentTask.achievements) {
+        task.proportion = ((Number(task.achievements) / Number(parentTask.achievements))*100).toFixedNoRound(4)
+      }
+      ganttObject.updateTask(taskId)
+    }
+    if (colName == 'proportion') {
+      if (ganttObject.getGlobalTaskIndex(parentId) !== 0 && parentTask.achievements) {
+        task.achievements = (Number(parentTask.achievements) * (Number(task.proportion) / 100)).toFixedNoRound(4)
+      }
+      ganttObject.updateTask(taskId)
+    }
     // 同步左下角选中任务名称
     if (colName === 'name') {
       vueThis.selectTaskName = ganttObject.getTask(taskId).name
@@ -3150,6 +3165,44 @@ GanttObject.checkIsCriticalTask = function (ganttObject) {
       return ''
     }
   }
+}
+
+/**
+ * auther: wangzhifeng
+ * desc: 校验绩效和比例的合规
+ * date: 2024/07/11 15:10:42
+ */
+GanttObject.validateAchievement = function (ganttObject, vueThis, task) {
+  let childIds = ganttObject.getChildren(task.id)
+  let parentId = ganttObject.getParent(task.id)
+  let state = {
+    // 子比例超限
+    childPercentage: false,
+    // 子绩效大于当前任务绩效
+    childTotal: false
+    // 当前任务层级比例和大于100
+    // 当前任务层级绩效和大于父
+  }
+  if (ganttObject.getGlobalTaskIndex(parentId) === 0) {
+    return state
+  }
+  // 校验当前修改，是否对子有影响
+  if (childIds && childIds.length > 0) {
+    let childAchievement = 0
+    let childProportion = 0
+    childIds.forEach(childId => {
+      let child = ganttObject.getTask(childId)
+      childAchievement += Number(child.achievements)
+      childProportion += Number(child.proportion)
+    })
+    if (childAchievement > task.achievements) {
+      state.childTotal = true
+    }
+    if (childProportion > 100) {
+      state.childPercentage = true
+    }
+  }
+  return state
 }
 
 /**

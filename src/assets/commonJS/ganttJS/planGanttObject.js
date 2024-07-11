@@ -50,6 +50,7 @@ export function planGantt(ganttName, vueThis) {
           const num = parseFloat(data.progress)
           data.progress = Math.round(num * 100) / 100
         }
+
         let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
         if (extraList.length > 0) {
           const extraData = []
@@ -80,6 +81,8 @@ export function planGantt(ganttName, vueThis) {
           createPage: vueThis.createPage
         })
           .then((res) => {
+            ganttObject.render()
+            ganttObject.refreshData()
             if (res === 'true') {
               // ganttObject.getTask(id).updateType = ''
               return { action: 'ok' }
@@ -537,6 +540,34 @@ export function getGanttColumns(ganttObject, vueThis) {
     //   min_width: 90
     // },
     {
+      name: 'achievements',
+      label: '绩效' + (checkEdit() ? canEditIcon : ''),
+      align: 'left',
+      resize: true,
+      min_width: 150,
+      editor: checkEdit() ? editors.achievements : null,
+      template: function (task) {
+        if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
+          return task.achievements
+        }
+        return ''
+      }
+    },
+    {
+      name: 'proportion',
+      label: '比例' + (checkEdit() ? canEditIcon : ''),
+      align: 'left',
+      resize: true,
+      min_width: 90,
+      editor: checkEdit() ? editors.proportion : null,
+      template: function (task) {
+        if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.proportion) {
+          return task.proportion + '%'
+        }
+        return ''
+      }
+    },
+    {
       name: 'name',
       label: '任务名称' + (checkEdit() ? canEditIcon : ''),
       tree: true,
@@ -550,14 +581,15 @@ export function getGanttColumns(ganttObject, vueThis) {
         if (task.switchType === '9010' || task.switchType === '9020') {
           return task.name + suspendIcon
         }
+        let state = GanttObject.validateAchievement(ganttObject, vueThis, task)
         // 注意：该逻辑修改时，需同时修改PmProjectTasksMapper.xml中sql片段checkForecastDateInfo逻辑
+        let bool = false
+        let tips = ''
         if ((task.forecastBeginDate && task.start_date) || (task.end_date && task.forecastEndDate)) {
           const beginStr = moment(task.start_date).format('YYYY-MM-DD')
           const forecastStartStr = task.forecastBeginDate
           const endStr = moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD')
           const forecastEndStr = task.forecastEndDate
-          let bool = false
-          let tips = ''
           if (beginStr !== forecastStartStr) {
             // 叶子节点且计划完成时间和预测完成时间不一致
             bool = true
@@ -568,8 +600,15 @@ export function getGanttColumns(ganttObject, vueThis) {
             bool = true
             tips += '当前任务计划完成时间和预测完成时间不一致，注意关注\n'
           }
-          if (bool) result = result + `<i class="p8 icon-tishi" title="${tips}" style="color: #e6a23c;"></i>`
         }
+        if (ganttObject.getGlobalTaskIndex(task.id) === 0 && state.childPercentage) {
+          bool = true
+          tips += '子任务存在绩效比例分配异常，注意关注\n'
+        } else if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && (state.childTotal || state.childPercentage)) {
+          bool = true
+          tips += '子任务存在绩效比例分配异常，注意关注\n'
+        }
+        if (bool) result = result + `<i class="p8 icon-tishi" title="${tips}" style="color: #e6a23c;"></i>`
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
           if (ganttObject.hasChild(task.id)) {
             result = result + '<div style="display: inline-block;' + (vueThis.taskStyles[task.id] || '') + 'font-weight:bold;">' + (task.name || '') + '</div>'
