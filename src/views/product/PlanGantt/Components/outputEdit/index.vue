@@ -158,11 +158,14 @@ export default {
         })
     },
     saved (res) {
+      const ganttObject = GanttObject.getGanttObject(this.ganttName)
+      const task = ganttObject.getTask(this.taskId)
       if (res === 'true') {
         this.getOutputData(this.taskId)
-        const ganttObject = GanttObject.getGanttObject(this.ganttName)
-        const task = ganttObject.getTask(this.taskId)
         task.outputAsk = 1
+        ganttObject.updateTask(this.taskId)
+      } else {
+        task.outputAsk = 0
         ganttObject.updateTask(this.taskId)
       }
     },
