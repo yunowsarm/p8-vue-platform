@@ -36,7 +36,7 @@
                             v-model="formData.deviationCauses"
                             type="textarea"
                             resize="none"
-                            maxlength="1000"
+                            maxlength="200"
                             show-word-limit
                             :autosize="{ minRows: 2, maxRows: 4}"
                             placeholder="请输入未完成原因"></el-input>
@@ -49,7 +49,7 @@
                             v-model="formData.deviationImpact"
                             type="textarea"
                             resize="none"
-                            maxlength="1000"
+                            maxlength="200"
                             show-word-limit
                             :autosize="{ minRows: 2, maxRows: 4}"
                             placeholder="请输入偏离影响"></el-input>
@@ -64,7 +64,7 @@
                             v-model="formData.deviationProgress"
                             type="textarea"
                             resize="none"
-                            maxlength="1000"
+                            maxlength="200"
                             show-word-limit
                             :autosize="{ minRows: 2, maxRows: 4}"
                             placeholder="请输入进展情况"></el-input>
@@ -77,7 +77,7 @@
                             v-model="formData.solutions"
                             type="textarea"
                             resize="none"
-                            maxlength="1000"
+                            maxlength="200"
                             show-word-limit
                             :autosize="{ minRows: 2, maxRows: 4}"
                             placeholder="请输入应对措施"></el-input>
@@ -121,7 +121,7 @@
                   <el-input v-model="formData.reason"
                             type="textarea"
                             resize="none"
-                            maxlength="1000"
+                            maxlength="200"
                             show-word-limit
                             :autosize="{ minRows: 2, maxRows: 4}"
                             placeholder="请输入备注"></el-input>
@@ -156,7 +156,7 @@
                   <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationCauses }}</span>
                   <el-input v-else
                             v-model="formData.deviationCauses"
-                            maxlength="1000"
+                            maxlength="200"
                             show-word-limit
                             placeholder="请输入未完成原因"></el-input>
                 </el-form-item>
@@ -166,7 +166,7 @@
                   <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationImpact }}</span>
                   <el-input v-else
                             v-model="formData.deviationImpact"
-                            maxlength="1000"
+                            maxlength="200"
                             show-word-limit
                             placeholder="请输入偏离影响"></el-input>
                 </el-form-item>
@@ -178,7 +178,7 @@
                   <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationProgress }}</span>
                   <el-input v-else
                             v-model="formData.deviationProgress"
-                            maxlength="1000"
+                            maxlength="200"
                             show-word-limit
                             placeholder="请输入进展情况"></el-input>
                 </el-form-item>
@@ -189,7 +189,7 @@
                   <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.solutions }}</span>
                   <el-input v-else
                             v-model="formData.solutions"
-                            maxlength="1000"
+                            maxlength="200"
                             show-word-limit></el-input>
                 </el-form-item>
               </el-col>
@@ -306,7 +306,7 @@
                             v-model="formData.content"
                             type="textarea"
                             resize="none"
-                            maxlength="1000"
+                            maxlength="200"
                             show-word-limit
                             :autosize="{ minRows: 4, maxRows: 4}"
                             placeholder="请输入进度说明"></el-input>
