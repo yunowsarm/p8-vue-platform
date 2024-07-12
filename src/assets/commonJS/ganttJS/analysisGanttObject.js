@@ -205,8 +205,8 @@ export function getAnalysisGantt(ganttName, vueThis) {
       width: 70,
       resize: true,
       template: function (task) {
-        if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
-          return task.proportion
+        if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.proportion) {
+          return task.proportion + '%'
         }
         return ''
       }
@@ -220,11 +220,24 @@ export function getAnalysisGantt(ganttName, vueThis) {
       monitorLockLimit: true, // 标识锁定后不可操作的列声明
       min_width: 350,
       template: function (task) {
-        if (task.style) {
-          return '<div style="color:' + task.style + '">' + task.name + '</div>'
-        } else {
-          return task.name
+        let bool = false
+        let tips = ''
+        let result = ''
+        let state = GanttObject.validateAchievement(ganttObject, vueThis, task)
+        if (ganttObject.getGlobalTaskIndex(task.id) === 0 && state.childPercentage) {
+          bool = true
+          tips += '子任务存在绩效比例分配异常，注意关注\n'
+        } else if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && (state.childTotal || state.childPercentage)) {
+          bool = true
+          tips += '子任务存在绩效比例分配异常，注意关注\n'
         }
+        if (bool) result = result + `<i class="p8 icon-tishi" title="${tips}" style="color: #e6a23c;"></i>`
+        if (task.style) {
+          result += '<div style="display: inline-block;color:' + task.style + '">' + task.name + '</div>'
+        } else {
+          result += task.name
+        }
+        return result
       }
     },
     {

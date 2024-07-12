@@ -155,8 +155,8 @@ export function getChangeGantt(ganttName, vueThis) {
       resize: true,
       min_width: 90,
       template: function (task) {
-        if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
-          return task.proportion
+        if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.proportion) {
+          return task.proportion + '%'
         }
         return ''
       }
@@ -253,9 +253,9 @@ export function getChangeGantt(ganttName, vueThis) {
       template: function (task) {
         if (task.style) {
           if (task.infoType === 'delete') {
-            return '<div style="text-decoration:line-through;color:' + task.style + '">' + task.name + '</div>'
+            return '<div style="display: inline-block;text-decoration:line-through;color:' + task.style + '">' + task.name + '</div>'
           } else {
-            return '<div style="color:' + task.style + '">' + task.name + '</div>'
+            return '<div style="display: inline-block;color:' + task.style + '">' + task.name + '</div>'
           }
         } else {
           return task.name
