@@ -260,6 +260,11 @@ export default {
       } else {
         this.customHeight = this.dialogHeight - 120
       }
+      this.$nextTick(() => {
+        this.tableSelectValue.forEach(row => {
+          this.$refs.table.$refs.table.toggleRowSelection(row)
+        })
+      })
     },
     search () {
       this.queryParam.realName = this.realName
