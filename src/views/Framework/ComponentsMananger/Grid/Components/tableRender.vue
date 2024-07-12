@@ -996,6 +996,7 @@ export default {
               item.type === 'datetimeRange'
             }
             if (item.treeNode === '1') {
+              item.treeNode = true
               columnData.forEach((el) => {
                 if (el.dataIndex === item.fieldName) {
                   el.treeNode = true
