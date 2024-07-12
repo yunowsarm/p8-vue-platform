@@ -1568,5 +1568,49 @@ export const repositoryApi = {
       mockPath: '/product/backlog/submit',
       desc: '我的待办-我接收的-执行保存并提交'
     }
+  ],
+  planExamine: [
+    {
+      name: 'saveData',
+      method: 'POST',
+      path: '/assessment/assessment/saveData',
+      mockPath: '/assessment/assessment/saveData',
+      desc: '计划考核-保存'
+    },
+    {
+      name: 'delete',
+      method: 'POST',
+      path: '/assessment/assessment/delete',
+      mockPath: '/assessment/assessment/delete',
+      desc: '计划考核-删除'
+    },
+    {
+      name: 'startAssessment',
+      method: 'POST',
+      path: '/assessment/assessment/startAssessment',
+      mockPath: '/assessment/assessment/startAssessment',
+      desc: '计划考核-开始考核'
+    },
+    {
+      name: 'getMonth',
+      method: 'POST',
+      path: '/assessment/assessment/getMonth',
+      mockPath: '/assessment/assessment/getMonth',
+      desc: '计划考核-获取月份'
+    },
+    {
+      name: 'saveAssessmentByData',
+      method: 'POST',
+      path: '/assessment/assessment/saveAssessmentByData',
+      mockPath: '/assessment/assessment/saveAssessmentByData',
+      desc: '计划考核-下钻保存'
+    },
+    {
+      name: 'export',
+      method: 'POST',
+      path: '/assessment/assessment/export',
+      mockPath: '/assessment/assessment/export',
+      desc: '计划考核-导出'
+    }
   ]
 }

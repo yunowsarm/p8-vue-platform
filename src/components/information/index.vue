@@ -25,7 +25,7 @@
                   :key="index"
                   :user="user"
                   :selected="user.entityId === selectedUser.entityId"
-                  @select="onSelectUser(user)" />
+                  @select="onSelectUser(user, true)" />
           </div>
         </template>
         <template #center>
@@ -183,11 +183,14 @@ export default {
         this.dialogWidth = '800px'
       }
     },
-    onSelectUser (user) {
+    onSelectUser (user, val) {
       if (user) {
         this.selectedUser = user
       } else {
         this.selectedUser = this.users[0] ? this.users[0] : null
+      }
+      if (val) {
+        this.selectedUser.contentText = ''
       }
       this.list = []
       this.$api['documentManagement.getWebsocketById']({

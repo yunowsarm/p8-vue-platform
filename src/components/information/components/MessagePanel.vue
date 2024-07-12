@@ -26,9 +26,9 @@
               <div v-if="i.sendUser === userId"
                    class="text-align">
                 <span>{{ i.itemCreateTime }}</span>
-                <!-- <span>{{ i.receiverUser }}</span> -->
                 <div class="user-msg">
                   <span class="right">{{i.content}}</span>
+                  <!-- <span class="content-card">{{i.content}}</span> -->
                 </div>
               </div>
               <div v-else>
@@ -105,6 +105,7 @@ export default {
   watch: {
     messagesData (val, oldVal) {
       this.messagesList = val
+      this.contentText = ''
       setTimeout(() => {
         this.scrollBottm();
       }, 100);
@@ -307,9 +308,9 @@ export default {
   padding: 10px 0;
   color: #999;
 }
-.msg .user-msg .right {
-  text-align: start;
-}
+// .msg .user-msg .right {
+//   text-align: start;
+// }
 .msg {
   width: 97%;
   min-height: 2.5rem;
@@ -354,11 +355,24 @@ export default {
     .left {
       background: #f5f5f5;
       animation: toLeft 0.5s ease both 1;
+      max-width: 300px;
+      text-align: start;
     }
     .right {
       background: #53a8ff;
       color: white;
       animation: toright 0.5s ease both 1;
+      max-width: 300px;
+      text-align: start;
+    }
+    .content-card {
+      border-radius: 10px; /* 圆角 */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 阴影 */
+      background: #0d1130;
+      color: white;
+      animation: toright 0.5s ease both 1;
+      max-width: 300px;
+      text-align: start;
     }
     @keyframes toLeft {
       0% {

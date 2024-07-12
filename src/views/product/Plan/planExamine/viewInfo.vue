@@ -1,0 +1,64 @@
+<!-- 该代码为平台代码，请不要随意修改，修改后会造成该代码无法从平台的升级中自动获取更新。 -->
+
+
+<template>
+  <table-render code="planAssessmentByDeptData"
+                ref="table"
+                :headerVisible="false"
+                :reportParam="reportParam">
+    <template #ASSESSMENTSTATUS="{scope}">
+      <span v-if="scope.row.PLANASSESSMENTSTATUS !== 'fcfd5b1818f8ae1831c000cf8e8713bd'">{{scope.row.ASSESSMENTSTATUS}}</span>
+      <el-input v-else
+                v-model="scope.row.ASSESSMENTSTATUS"
+                @change="save(scope.row)"></el-input>
+    </template>
+    <template #REMARKS="{scope}">
+      <span v-if="scope.row.PLANASSESSMENTSTATUS !== 'fcfd5b1818f8ae1831c000cf8e8713bd'">{{scope.row.REMARKS}}</span>
+      <el-input v-else
+                v-model="scope.row.REMARKS"
+                @change="save(scope.row)"></el-input>
+    </template>
+  </table-render>
+</template>
+<script>
+import TableRender from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
+export default {
+  name: 'View',
+  components: {
+    TableRender
+  },
+  props: {
+    reportParam: {
+      // 给报表所传参数
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
+  },
+  data () {
+    return {
+      reportParam: {
+        DEPTID: this.reportParam.DEPTID,
+        columnType: this.reportParam.property
+      }
+    }
+  },
+  mounted () {
+  },
+  methods: {
+    save (row) {
+      this.$api['planExamine.saveAssessmentByData']({
+        id: row.ID,
+        assessmentStatus: row.ASSESSMENTSTATUS,
+        remarks: row.REMARKS
+      }).then(res => {
+        if (res) {
+          this.$message.success('保存成功')
+          this.$refs.table.omponentRefresh()
+        }
+      })
+    }
+  }
+}
+</script>

@@ -55,17 +55,6 @@
                 </template>
               </common-table>
             </div>
-            <div class="resourceLoad">
-              <common-table ref="table"
-                            v-if="tableV"
-                            :columns="columnsT"
-                            :params="queryParamT"
-                            :api="tableApiT"
-                            :table-refresh="tableRefreshT"
-                            :table-config="tableConfigT"
-                            :table-setting="false">
-              </common-table>
-            </div>
           </div>
         </template>
       </list-layout>
@@ -133,11 +122,11 @@ export default {
     return {
       comp: this,
       title: '选择人员',
-      dialogWidth: '60%',
-      dialogHeight: 580,
+      dialogWidth: '30%',
+      dialogHeight: 400,
       tableV: false,
       dialogConfig: {
-        modal: false
+        modal: true
       },
       currentRow: null,
       tableApi: 'planGanttManager.planResourceLoad',
@@ -154,8 +143,12 @@ export default {
       },
       resourceWidth: '100%',
       customHeight: 462,
-      columns: [],
-      columnsT: [
+      columns: [
+        {
+          title: '',
+          width: 35,
+          type: 'selection'
+        },
         {
           title: '序号',
           type: 'index',
@@ -163,33 +156,22 @@ export default {
           width: 60
         },
         {
-          title: '项目名称',
-          dataIndex: 'projectName',
-          sortable: false
-        },
-        {
-          title: '计划名称',
-          dataIndex: 'planName',
-          sortable: false
-        },
-        {
-          title: '任务名称',
-          dataIndex: 'taskName',
-          sortable: false
-        },
-        {
-          title: '计划开始时间',
-          dataIndex: 'planBeginDate',
+          title: '人员',
+          dataIndex: 'name',
           align: 'center',
-          width: 110,
-          sortable: false
+          minWidth: 100
         },
         {
-          title: '计划完成时间',
-          dataIndex: 'planEndDate',
+          title: '部门',
+          dataIndex: 'deptName',
           align: 'center',
-          width: 110,
-          sortable: false
+          minWidth: 100
+        },
+        {
+          title: '角色',
+          dataIndex: 'roleName',
+          align: 'center',
+          minWidth: 100
         }
       ],
       queryParamT: {
@@ -204,90 +186,7 @@ export default {
     }
   },
   mounted () {
-    if (this.showType === '1' || this.showType === '2' || this.showType === '3') {
-      this.columns = [
-        {
-          title: '',
-          width: 35,
-          type: 'selection',
-          selectable: function (row, index) {
-            if (row.weatherOut === '1') {
-              return false
-            }
-            return true
-          }
-        },
-        {
-          title: '序号',
-          type: 'index',
-          align: 'center',
-          width: 60
-        },
-        {
-          title: '人员',
-          dataIndex: 'name',
-          align: 'center',
-          width: 85
-        },
-        {
-          title: '部门',
-          dataIndex: 'deptName',
-          align: 'center',
-          minWidth: 130
-        }
-      ]
-    } else {
-      this.columns = [
-        {
-          title: '',
-          width: 35,
-          type: 'selection',
-          selectable: function (row, index) {
-            if (row.weatherOut === '1') {
-              return false
-            }
-            return true
-          }
-        },
-        {
-          title: '序号',
-          type: 'index',
-          align: 'center',
-          width: 60
-        },
-        {
-          title: '人员',
-          dataIndex: 'name',
-          align: 'center',
-          width: 85
-        },
-        {
-          title: '涉密等级',
-          dataIndex: 'userLevelDis',
-          width: 120,
-          align: 'center'
-        },
-        {
-          title: '部门',
-          dataIndex: 'deptName',
-          align: 'center',
-          minWidth: 130
-        },
-        {
-          title: '角色',
-          dataIndex: 'roleName',
-          align: 'center',
-          minWidth: 130
-        }
-        // {
-        //   title: '负载',
-        //   dataIndex: 'taskCount',
-        //   align: 'center',
-        //   width: 60,
-        //   scopedSlots: { customRender: 'custom' }
-        // }
-      ]
-    }
+
   },
   methods: {
     inputChange (val) {
