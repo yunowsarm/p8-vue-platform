@@ -251,7 +251,11 @@ export default {
         this.selectUserIds.push(item.userId)
         names = names + ' @' + item.name + ' '
       })
-      this.contentText = this.contentText + names
+      if (this.contentText !== undefined) {
+        this.contentText = this.contentText + names
+      } else {
+        this.contentText = names
+      }
       this.resourceSelectVisible = false
     },
     resourceSelectclosed () {
