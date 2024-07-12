@@ -244,6 +244,9 @@ export default {
         }
       },
       immediate: true
+    },
+    advance () {
+      this.resizeFull()
     }
   },
   data () {
@@ -262,26 +265,29 @@ export default {
     this.$nextTick(() => {
       this.initDom()
     })
-    let that = this
-    setTimeout(() => {
-      let ganttObject = GanttObject.getGanttObject(this.ganttName)
-      let state = ganttObject.getState().fullscreen
-      that.buttonDatas.forEach(item => {
-        if (item.id == 'full-screen' && state) {
-          item.title = '退出全屏'
-          item.icon = 'p8 icon-exit-fullscreen'
-          item.help = '退出全屏'
-        }
-        if (item.id == 'full-screen' && !state) {
-          item.title = '全屏'
-          item.icon = 'p8 icon-full-screen'
-          item.help = '全屏'
-        }
-      })
-    }, 1000);
+    this.resizeFull()
     window.addEventListener('resize', this.resizeShowArrow)
   },
   methods: {
+    resizeFull () {
+      let that = this
+      setTimeout(() => {
+        let ganttObject = GanttObject.getGanttObject(this.ganttName)
+        let state = ganttObject.getState().fullscreen
+        that.buttonDatas.forEach(item => {
+          if (item.id == 'full-screen' && state) {
+            item.title = '退出全屏'
+            item.icon = 'p8 icon-exit-fullscreen'
+            item.help = '退出全屏'
+          }
+          if (item.id == 'full-screen' && !state) {
+            item.title = '全屏'
+            item.icon = 'p8 icon-full-screen'
+            item.help = '全屏'
+          }
+        })
+      }, 500);
+    },
     resizeShowArrow () {
       if (this.scrollContent[0] && this.scrollContent[0].scrollWidth === this.scrollContent[0].offsetWidth) {
         this.showArrow = false
