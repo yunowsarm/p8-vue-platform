@@ -18,6 +18,7 @@
     </div>
     <el-drawer
       style="width: 60%; left: auto"
+      class="top_level"
       :title="detailTitle"
       :append-to-body="true"
       size="100%"
