@@ -20,8 +20,8 @@
         <li v-if="adminUserIdArr.indexOf($store.state.user.userId) === -1">
           <span>
             <!-- <i class="p8 icon-work-home" @click="$router.push({name:'Dashboard'})"> -->
-            <el-badge v-if="unreadMessageCount > 0"
-                      :value="unreadMessageCount"
+            <el-badge v-if="messageCount > 0"
+                      :value="messageCount"
                       :max="99"
                       class="itemNum">
               <el-tooltip content="沟通消息">
@@ -208,12 +208,11 @@ export default {
         themeColor: ''
       },
       informationDrawer: false,
-      unreadMessageCount: 0,
       adminUserIdArr: ['SYS_USER001', 'SYS_USER009', 'SYS_USER012', 'SYS_USER010', 'SYS_USER000'] // 五元id
     }
   },
   computed: {
-    ...mapGetters(['messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl'])
+    ...mapGetters(['messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl']),
   },
   mounted () {
     console.log(this.systemName, '=========================systemName')
@@ -235,9 +234,6 @@ export default {
           }
         })
       }
-    },
-    messageCount (val, oldVal) {
-      this.unreadMessageCount = val
     }
     // theme (val, oldVal) {
     //   let color = this.fromHex(this.theme)

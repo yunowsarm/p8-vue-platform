@@ -183,7 +183,7 @@ export default {
         this.dialogWidth = '800px'
       }
     },
-    onSelectUser (user, val) {
+    async onSelectUser (user, val) {
       if (user) {
         this.selectedUser = user
       } else {
@@ -193,7 +193,7 @@ export default {
         this.selectedUser.contentText = ''
       }
       this.list = []
-      this.$api['documentManagement.getWebsocketById']({
+      await this.$api['documentManagement.getWebsocketById']({
         entityId: this.selectedUser ? this.selectedUser.entityId : '',
         entityType: this.selectedUser ? this.selectedUser.entityType : '',
         type: 'update',
@@ -209,6 +209,18 @@ export default {
           res.records.forEach(item => {
             this.list.unshift(item)
           })
+        }
+      })
+      // 实时刷新消息数
+      await this.$api['documentManagement.getWebsocketGroupAll']({ entityName: this.projectName }).then(res => {
+        if (res.length > 0) {
+          let count = 0
+          res.forEach(item => {
+            count = count + item.messageCount
+          })
+          this.$store.dispatch('setMessageCount', count)
+        } else {
+          this.$store.dispatch('setMessageCount', 0)
         }
       })
     }

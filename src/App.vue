@@ -52,9 +52,9 @@ export default {
         socket.on('messageevent', (data) => {
           console.log(data, '==========APP=============messageevent')
           // if (this.$store.state.user.userId !== data.sendUser) {
-          // let count = this.$store.getters.messageCount
-          // console.log("🚀 ~ socket.on ~ count:", count)
-          // this.$store.dispatch('setMessageCount', count++)
+          let count = this.$store.getters.messageCount
+          console.log("🚀 ~ socket.on ~ count:", count)
+          this.$store.dispatch('setMessageCount', ++count)
           this.message()
           // }
         })
@@ -72,7 +72,7 @@ export default {
 
       // 闪烁标题的定时器
       var blinkInterval = setInterval(function () {
-        document.title = (document.title === originalTitle) ? "\u{1F49B} 新消息到达,请注意查收! \u{1F49A}" : originalTitle;
+        document.title = (document.title === originalTitle) ? "新消息到达,请注意查收!" : originalTitle;
       }, 1000);
 
       // 播放声音提示

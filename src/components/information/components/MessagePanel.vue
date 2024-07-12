@@ -190,7 +190,7 @@ export default {
       event.preventDefault();
       const encoder = new TextEncoder();
       const encoded = encoder.encode(this.contentText);
-      if (encoded.length > 1000) {
+      if (encoded.length > 1500) {
         return this.$message.warning('文字超出限制无法发出！')
       }
       if (this.contentText === '') {
