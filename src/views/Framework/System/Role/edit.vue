@@ -4,6 +4,7 @@
                @rendered="rendered"
                @saved="saved"
                :data-source="dataSource"
+               :isShouEnter="false"
                :api="saveApi"
                :form="formData">
       <template slot="btn">
