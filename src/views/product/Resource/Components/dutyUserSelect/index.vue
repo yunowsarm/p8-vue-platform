@@ -28,7 +28,6 @@
                           :columns='ruleOutSelf ? queryColumns : columns'
                           :params='ruleOutSelf ? queryParam : params'
                           :api='ruleOutSelf ? queryTableApi : tableApi'
-                          :style="{height: customHeight + 'px'}"
                           :table-Refresh='tableRefresh'
                           :table-config='tableConfig'
                           :pagination="false"

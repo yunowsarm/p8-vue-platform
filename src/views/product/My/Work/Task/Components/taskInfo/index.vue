@@ -75,9 +75,9 @@ export default {
         colLayout: 'singleCol'
       },
        {
-        type: 'view',
+        type: 'blank',
         labelText: '比例',
-        fieldName: 'proportion',
+        slotName: 'proportion',
         colLayout: 'singleCol'
       },
       {

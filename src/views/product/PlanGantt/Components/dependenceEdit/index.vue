@@ -216,6 +216,10 @@ export default {
       const ganttObject = GanttObject.getGanttObject(that.ganttName)
       const thisDp = GanttObject.getDpObject(that.ganttName)
       const task = ganttObject.getTask(that.taskId)
+      this.$set(this.ganttLinkResponse[params.currentIndex], 'issubmit', true)
+      this.$nextTick(() => {
+        this.$forceUpdate()
+      })
       if (that.ganttName && that.ganttName === 'changeGantt') {
         // 变更逻辑处理
         linksEditCheck(that.oldLinkDatas, params.formToApiData, that.vueThis, task, ganttObject)

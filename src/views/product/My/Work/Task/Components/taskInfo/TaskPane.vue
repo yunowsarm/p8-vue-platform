@@ -26,6 +26,9 @@
       <template #content>
         <span>{{formData.content}}</span>
       </template>
+      <template #proportion>
+        <span v-if="formData.proportion">{{formData.proportion}}%</span>
+      </template>
       <template #dateline>
         <div class="dateline-con">
           <div class="dateline-list">
