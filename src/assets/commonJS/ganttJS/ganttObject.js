@@ -2157,12 +2157,20 @@ GanttObject.onSaveCellEven = function (ganttObject, vueThis) {
     }
     // console.log(ganttObject,'ganttObject');
     if (colName == 'achievements') {
+      let num = Number(task.achievements)
+      if (!Number.isInteger(num)) {
+        task.achievements = num.toFixedNoRound(4)
+      }
       if (ganttObject.getGlobalTaskIndex(parentId) !== 0 && parentTask.achievements) {
         task.proportion = ((Number(task.achievements) / Number(parentTask.achievements))*100).toFixedNoRound(4)
       }
       ganttObject.updateTask(taskId)
     }
     if (colName == 'proportion') {
+      let num1 = Number(task.proportion)
+      if (!Number.isInteger(num1)) {
+        task.proportion = num1.toFixedNoRound(4)
+      }
       if (ganttObject.getGlobalTaskIndex(parentId) !== 0 && parentTask.achievements) {
         task.achievements = (Number(parentTask.achievements) * (Number(task.proportion) / 100)).toFixedNoRound(4)
       }
@@ -3182,9 +3190,6 @@ GanttObject.validateAchievement = function (ganttObject, vueThis, task) {
     childTotal: false
     // 当前任务层级比例和大于100
     // 当前任务层级绩效和大于父
-  }
-  if (ganttObject.getGlobalTaskIndex(parentId) === 0) {
-    return state
   }
   // 校验当前修改，是否对子有影响
   if (childIds && childIds.length > 0) {
