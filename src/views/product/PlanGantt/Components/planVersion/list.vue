@@ -1,6 +1,6 @@
 <template>
-  <div style="width: 100%">
-    <div style='width: 50%; position: relative;float:left;'>
+  <div class="plan_version" style="width: 100%;height:100%">
+    <div>
      <plan-attribute
       :task-id='selectTaskId1'
       ganttName='versionGantt1'
@@ -8,7 +8,7 @@
       :versionId='planVersionId1'>
     </plan-attribute>
     </div>
-    <div style='width: 50%; position: relative;float:left;'>
+    <div>
       <plan-attribute
         :task-id='selectTaskId2'
         ganttName='versionGantt2'
@@ -21,7 +21,11 @@
 </template>
 
 <style lang="scss">
-
+.plan_version {
+  display: flex;
+  width: 100%;
+  height:100%
+}
 </style>
 <script>
 
