@@ -196,7 +196,7 @@ export function planGantt(ganttName, vueThis) {
     ganttObject.render()
   }
   Gantt.taskProgressDetails = function taskProgressDetails (taskId) {
-    if (vueThis.createPage === 'compile') {
+    if (vueThis.createPage === 'compile' || vueThis.createPage === 'decompose') {
       vueThis.showTaskProgressDialog(taskId)
     }
   }
