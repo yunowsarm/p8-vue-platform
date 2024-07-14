@@ -7,13 +7,13 @@
                 :headerVisible="false"
                 :reportParam="reportParam">
     <template #ASSESSMENTSTATUS="{scope}">
-      <span v-if="scope.row.PLANASSESSMENTSTATUS !== 'fcfd5b1818f8ae1831c000cf8e8713bd'">{{scope.row.ASSESSMENTSTATUS}}</span>
+      <span v-if="scope.row.PLANASSESSMENTSTATUS !== '776e7590c4084a8ad00fb6b0dfe2a114'">{{scope.row.ASSESSMENTSTATUS}}</span>
       <el-input v-else
                 v-model="scope.row.ASSESSMENTSTATUS"
                 @change="save(scope.row)"></el-input>
     </template>
     <template #REMARKS="{scope}">
-      <span v-if="scope.row.PLANASSESSMENTSTATUS !== 'fcfd5b1818f8ae1831c000cf8e8713bd'">{{scope.row.REMARKS}}</span>
+      <span v-if="scope.row.PLANASSESSMENTSTATUS !== '776e7590c4084a8ad00fb6b0dfe2a114'">{{scope.row.REMARKS}}</span>
       <el-input v-else
                 v-model="scope.row.REMARKS"
                 @change="save(scope.row)"></el-input>

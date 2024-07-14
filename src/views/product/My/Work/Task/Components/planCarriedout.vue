@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="msg-box">
-      <el-badge v-if="unreadMessageCount > 0"
-                :value="unreadMessageCount"
+      <el-badge v-if="messageCount > 0"
+                :value="messageCount"
                 :max="99"
                 class="itemNum">
         <i class="el-icon-chat-dot-square iconClass"
@@ -54,6 +54,7 @@ import TaskManageView from './taskManage/index'
 import TaskRelationView from './taskRelation/index'
 import { getTaskStatusInfo } from '@/utils/commonBusiness'
 import { P8Drawer as CommonDrawer } from 'p8-components-ui'
+import { mapGetters } from 'vuex'
 export default {
   name: 'planExecute',
   provide () { // 使用 provide对深层组件进行数据信息传递 例:taskOperating/Progress.vue中 inject搭配computed接收数据
@@ -91,6 +92,9 @@ export default {
       unreadMessageCount: 0
     }
   },
+  computed: {
+    ...mapGetters(['messageCount']),
+  },
   mounted () {
     this.reload()
     this.getMsgTotal()
@@ -103,9 +107,9 @@ export default {
           res.forEach(item => {
             count = count + item.messageCount
           })
-          this.unreadMessageCount = count
+          this.$store.dispatch('setMessageCount', count)
         } else {
-          this.unreadMessageCount = 0
+          this.$store.dispatch('setMessageCount', 0)
         }
       })
     },

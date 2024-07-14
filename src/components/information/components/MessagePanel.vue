@@ -27,8 +27,11 @@
                    class="text-align">
                 <span>{{ i.itemCreateTime }}</span>
                 <div class="user-msg">
-                  <span class="right">{{i.content}}</span>
-                  <!-- <span class="content-card">{{i.content}}</span> -->
+                  <span v-if="i.styleType"
+                        style="width: 300px;"
+                        v-html="i.content"></span>
+                  <span v-else
+                        class="right">{{i.content}}</span>
                 </div>
               </div>
               <div v-else>
@@ -36,7 +39,11 @@
                 <span style="margin-right: 20px;">{{ i.sendUserName }}</span>
                 <span>{{ i.itemCreateTime }}</span>
                 <div class="user-msg">
-                  <span class="left">{{i.content}}</span>
+                  <span v-if="i.styleType"
+                        style="width: 300px;"
+                        v-html="i.content"></span>
+                  <span v-else
+                        class="left">{{i.content}}</span>
                 </div>
               </div>
             </div>
@@ -352,28 +359,6 @@ export default {
       margin-top: 0.2rem;
       font-size: 0.88rem;
     }
-    .left {
-      background: #f5f5f5;
-      animation: toLeft 0.5s ease both 1;
-      max-width: 300px;
-      text-align: start;
-    }
-    .right {
-      background: #53a8ff;
-      color: white;
-      animation: toright 0.5s ease both 1;
-      max-width: 300px;
-      text-align: start;
-    }
-    .content-card {
-      border-radius: 10px; /* 圆角 */
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 阴影 */
-      background: #0d1130;
-      color: white;
-      animation: toright 0.5s ease both 1;
-      max-width: 300px;
-      text-align: start;
-    }
     @keyframes toLeft {
       0% {
         opacity: 0;
@@ -394,6 +379,19 @@ export default {
         transform: translateX(0px);
       }
     }
+  }
+  .left {
+    background: #f5f5f5;
+    animation: toLeft 0.5s ease both 1;
+    max-width: 300px;
+    text-align: start;
+  }
+  .right {
+    background: #53a8ff;
+    color: white;
+    animation: toright 0.5s ease both 1;
+    max-width: 300px;
+    text-align: start;
   }
 }
 .contentText-box {

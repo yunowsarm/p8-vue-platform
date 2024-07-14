@@ -29,12 +29,11 @@ export default {
   data () {
     return {
       reportParam: {
-        PM_ASSESSMENT_ID: this.row[0].ID ? this.row[0].ID : this.businessKey
+        PM_ASSESSMENT_ID: this.businessKey ? this.businessKey : this.row[0].ID
       }
     }
   },
   mounted () {
-    console.log(this.row, '=========================row');
   },
   methods: {
 
