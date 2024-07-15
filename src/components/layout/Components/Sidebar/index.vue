@@ -93,24 +93,24 @@
     </VuePerfectScrollbar>
     <span class="sidebar-version">
       <el-popover placement="top-start"
-                  width="250"
+                  width="180"
                   trigger="hover">
         <p>
-          公司名称: 西安融智软件有限公司<br />
-          公司官网: www.xardmu.com<br />
-          公司电话: 029-87607380<br />
-          <span v-if="isShow"> 授权信息: <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;授权方：{{ regardsObj.authorizedName }}<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;授权类型：{{ regardsObj.authorizationType }}<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;安装截止日期：{{ regardsObj.bindExpires }}<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;授权终止日期：{{ regardsObj.authorizedExpires }}<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;授权用户数：{{ regardsObj.userLimit }}<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;授权登录人数：{{ regardsObj.loginLimit }}<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;预期控制策略：{{ regardsObj.authExpiredControl }}<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;硬件绑定类型：{{ regardsObj.hwBindType }}<br />
+          西安融智软件有限公司<br />
+          www.xardmu.com<br />
+          029-87607380<br />
+          <span v-if="isShow">
+            授权方：{{ regardsObj.authorizedName }}<br />
+            <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;授权类型：{{ regardsObj.authorizationType }}<br /> -->
+            <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;安装截止日期：{{ regardsObj.bindExpires }}<br /> -->
+            授权终止日期：{{ regardsObj.authorizedExpires }}<br />
+            授权用户数：{{ regardsObj.userLimit }}<br />
+            授权登录人数：{{ regardsObj.loginLimit }}<br />
+            <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;预期控制策略：{{ regardsObj.authExpiredControl }}<br /> -->
+            <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;硬件绑定类型：{{ regardsObj.hwBindType }}<br /> -->
           </span>
-          <span v-else> 授权信息: <br />
-            &nbsp;&nbsp;&nbsp;&nbsp; 授权终止日期：{{ regardsObj.authorizedExpires }}<br />
+          <span v-else>
+            授权终止日期：{{ regardsObj.authorizedExpires }}<br />
           </span>
         </p>
         <span slot="reference">{{ regardsObj.systemVersion }}</span>
@@ -167,11 +167,11 @@ export default {
     }
     this.getColor()
     this.getIcon()
-    // this.$api['projectTeamSetting.getSystemAbout']().then(res => {
-    //   if (res) {
-    //     this.regardsObj = res
-    //   }
-    // })
+    this.$api['projectTeamSetting.getSystemAbout']().then(res => {
+      if (res) {
+        this.regardsObj = res
+      }
+    })
   },
   methods: {
     // 获取系统logo
@@ -371,8 +371,9 @@ $menu-collapse-text-color: #303133;
 }
 .sidebar-version {
   position: absolute;
-  bottom: 0;
-  left: 6%;
-  color: #ffffff;
+  bottom: 5px;
+  left: 5px;
+  color: #797676;
+  font-size: 10px;
 }
 </style>

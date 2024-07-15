@@ -110,6 +110,10 @@
                 <i class="p8 icon-personal-setting"></i>
                 个性化设置
               </el-dropdown-item>
+              <el-dropdown-item @click.native="dialogVisible = true">
+                <i class="icon-size el-icon-info"></i>
+                关于
+              </el-dropdown-item>
               <el-dropdown-item @click.native="logout">
                 <i class="p8 icon-logout"></i>
                 注销
@@ -177,6 +181,18 @@
         <DocumentManagement view-type="card"></DocumentManagement>
       </template>
     </common-drawer>
+    <el-dialog title="关于"
+               v-if="dialogVisible"
+               :visible.sync="dialogVisible"
+               width="20%"
+               :before-close="beforeClose">
+      <div class="regards-box">
+        <p><span class="regards-font">系统名称:&nbsp;&nbsp;&nbsp;</span><span>{{ systemName }}</span></p>
+        <p><span class="regards-font">系统版本:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.systemVersion }}</span></p>
+        <p><span class="regards-font">官网地址:&nbsp;&nbsp;&nbsp;</span><span>www.xardmu.com</span></p>
+        <p><span class="regards-font">授权终止日期:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.authorizedExpires }}</span></p>
+      </div>
+    </el-dialog>
   </header>
 </template>
 
@@ -208,6 +224,8 @@ export default {
         themeColor: ''
       },
       informationDrawer: false,
+      dialogVisible: false,
+      regardsObj: {},
       adminUserIdArr: ['SYS_USER001', 'SYS_USER009', 'SYS_USER012', 'SYS_USER010', 'SYS_USER000'] // 五元id
     }
   },
@@ -215,6 +233,7 @@ export default {
     ...mapGetters(['messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl']),
   },
   mounted () {
+    this.getSystemAbout()
     console.log(this.systemName, '=========================systemName')
     this.dayTime = getGreetingTime()
     const this_ = this
@@ -250,6 +269,16 @@ export default {
     // }
   },
   methods: {
+    beforeClose () {
+      this.dialogVisible = false
+    },
+    getSystemAbout () {
+      this.$api['projectTeamSetting.getSystemAbout']().then(res => {
+        if (res) {
+          this.regardsObj = res
+        }
+      })
+    },
     visibleMsgClose () {
       this.informationDrawer = false
       // this.getMsgTotal()
@@ -569,5 +598,16 @@ div.header_userInfo {
       @include remCalc(padding, 0px, 6px);
     }
   }
+}
+.regards-box {
+  text-align: start;
+  padding: 5px 14%;
+  line-height: 25px;
+}
+.regards-font {
+  font-weight: bold;
+}
+.icon-size {
+  font-size: 16px;
 }
 </style>
