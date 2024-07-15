@@ -1611,6 +1611,13 @@ export const repositoryApi = {
       path: '/assessment/assessment/export',
       mockPath: '/assessment/assessment/export',
       desc: '计划考核-导出'
+    },
+    {
+      name: 'getResult',
+      method: 'POST',
+      path: '/assessment/assessment/getResult',
+      mockPath: '/assessment/assessment/getResult',
+      desc: '计划考核-查询月状态'
     }
   ]
 }

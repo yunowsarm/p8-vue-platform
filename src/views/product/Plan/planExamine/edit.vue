@@ -9,9 +9,10 @@
           <el-date-picker v-model="formData.year"
                           type="year"
                           style="width: 100%;"
+                          :disabled="disabled"
                           value-format="yyyy"
                           placeholder="选择年"
-                          @change="dateChange">
+                          @change="dateChange()">
           </el-date-picker>
         </el-form-item>
       </el-col>
@@ -27,7 +28,9 @@
                           :picker-options="setMonthDisabled">
           </el-date-picker> -->
           <el-select v-model="formData.month"
-                     placeholder="请选择">
+                     :disabled="disabled"
+                     placeholder="请选择"
+                     @change="monthChange(formData.month)">
             <el-option v-for="item in options"
                        :key="item.value"
                        :label="item.label"
@@ -46,6 +49,11 @@ import { P8Form as FormList } from 'p8-components-ui'
 export default {
   components: {
     FormList
+  },
+  props: {
+    row: {
+      type: Array
+    }
   },
   data () {
     return {
@@ -82,11 +90,10 @@ export default {
           fieldName: 'type',
           placeholder: '请选择',
           colLayout: 'doubleCol',
+          fieldConfig: {
+            disabled: true
+          },
           options: [
-            {
-              label: '自动',
-              value: '0'
-            },
             {
               label: '手动',
               value: '1'
@@ -104,11 +111,12 @@ export default {
       formData: {
         year: '',
         month: '',
-        type: '',
+        type: '1',
         remarks: ''
       },
       saveApi: 'planExamine.saveData',
       options: [],
+      disabled: false
       // setMonthDisabled: {
       //   disabledDate (time) {
       //     let falg = false
@@ -124,9 +132,37 @@ export default {
     }
   },
   mounted () {
-
+    if (this.row.length > 0) {
+      this.formData = {
+        id: this.row[0].ID,
+        year: this.row[0].YEAR,
+        month: this.row[0].MONTH,
+        type: '1',
+        remarks: this.row[0].REMARKS,
+      }
+      this.disabled = true
+    }
   },
   methods: {
+    monthChange (val) {
+      let that = this
+      this.$api['planExamine.getResult']({ year: this.formData.year, month: val }).then(res => {
+        if (res) {
+          that.$confirm(val + '月份已有考核记录，保存会覆盖原有记录，是否继续？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          })
+            .then(() => {
+
+            })
+            .catch((e) => {
+              that.formData.month = null
+            })
+        }
+
+      })
+    },
     dateChange () {
       let that = this
       let option = [
@@ -180,12 +216,13 @@ export default {
       this.$api['planExamine.getMonth']({ year: this.formData.year }).then(res => {
         if (res) {
           res.forEach(el => {
-            option.forEach(item => {
-              console.log(el === item.value);
-              if (el === item.value) {
-                item.disabled = true
-              }
-            })
+            if (el.status === '776e7590c4084a8ad00fb6b0dfe2a114' || el.status === 'e7f2513074bb66bbfdfcb81cb79fd93c') {
+              option.forEach(item => {
+                if (el.month === item.value) {
+                  item.disabled = true
+                }
+              })
+            }
           })
           that.options = option
           that.formData.month = null

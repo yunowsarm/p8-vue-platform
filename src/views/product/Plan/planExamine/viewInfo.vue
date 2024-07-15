@@ -8,9 +8,16 @@
                 :reportParam="reportParam">
     <template #ASSESSMENTSTATUS="{scope}">
       <span v-if="scope.row.PLANASSESSMENTSTATUS !== '776e7590c4084a8ad00fb6b0dfe2a114'">{{scope.row.ASSESSMENTSTATUS}}</span>
-      <el-input v-else
-                v-model="scope.row.ASSESSMENTSTATUS"
-                @change="save(scope.row)"></el-input>
+      <el-select v-else
+                 v-model="scope.row.ASSESSMENTSTATUS"
+                 clearable
+                 style="width: 100%"
+                 @change="save(scope.row)">
+        <el-option v-for="item in options"
+                   :key="item.value"
+                   :label="item.label"
+                   :value="item.value"> </el-option>
+      </el-select>
     </template>
     <template #REMARKS="{scope}">
       <span v-if="scope.row.PLANASSESSMENTSTATUS !== '776e7590c4084a8ad00fb6b0dfe2a114'">{{scope.row.REMARKS}}</span>
@@ -23,7 +30,7 @@
 <script>
 import TableRender from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
 export default {
-  name: 'View',
+  name: 'AssessInfo',
   components: {
     TableRender
   },
@@ -41,10 +48,14 @@ export default {
       reportParam: {
         DEPTID: this.reportParam.DEPTID,
         columnType: this.reportParam.property
-      }
+      },
+      options: []
     }
   },
   mounted () {
+    this.$api['thirdPartInterface.getDic']({ dicType: 'ASSESSMENT_RESULTS' }).then(res => {
+      this.options = res
+    })
   },
   methods: {
     save (row) {

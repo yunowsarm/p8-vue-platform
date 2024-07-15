@@ -499,7 +499,7 @@ export default {
       customVisible: false, // 自定义抽屉visible
       customComponentParams: {},
       componentPath: '', // 操作按钮弹出框 component 路径
-      scopeRow: '', // 表格行记录
+      scopeRow: [], // 表格行记录
       customProps: {},
       formTitle: '表单页面',
       propParam: Object.assign({}, this.westTreeParam), // 将树参数传至表单
