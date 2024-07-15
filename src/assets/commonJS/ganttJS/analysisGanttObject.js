@@ -226,10 +226,10 @@ export function getAnalysisGantt(ganttName, vueThis) {
         let state = GanttObject.validateAchievement(ganttObject, vueThis, task)
         if (ganttObject.getGlobalTaskIndex(task.id) === 0 && state.childPercentage) {
           bool = true
-          tips += '子任务存在绩效比例分配异常，注意关注\n'
+          tips += '子任务存在绩效比例分配异常\n'
         } else if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && (state.childTotal || state.childPercentage)) {
           bool = true
-          tips += '子任务存在绩效比例分配异常，注意关注\n'
+          tips += '子任务存在绩效比例分配异常\n'
         }
         if (bool) result = result + `<i class="p8 icon-tishi" title="${tips}" style="color: #e6a23c;"></i>`
         if (task.style) {
