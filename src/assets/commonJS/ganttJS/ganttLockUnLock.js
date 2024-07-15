@@ -275,7 +275,6 @@ export function setLockTaskProperties(ganttObject, vueThis) {
           if (vueThis.ganttName === 'planGantt') {
             if (
               (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1 && ganttObject.getGlobalTaskIndex(task.id) !== 0) || // 已完成、变更中、提交审批任务不可操作
-              ganttObject.getGlobalTaskIndex(task.id) === 0 || // 根节点不可操作
               (controlTaskEdit &&
                 controlTaskEdit === 'false' &&
                 task.weatherControl &&

@@ -190,13 +190,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
       label: '绩效',
       align: 'center',
       width: 70,
-      resize: true,
-      template: function (task) {
-        if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
-          return task.achievements
-        }
-        return ''
-      }
+      resize: true
     },
     {
       name: 'proportion',
@@ -224,10 +218,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
         let tips = ''
         let result = ''
         let state = GanttObject.validateAchievement(ganttObject, vueThis, task)
-        if (ganttObject.getGlobalTaskIndex(task.id) === 0 && state.childPercentage) {
-          bool = true
-          tips += '子任务存在绩效比例分配异常\n'
-        } else if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && (state.childTotal || state.childPercentage)) {
+        if (state.childTotal || state.childPercentage) {
           bool = true
           tips += '子任务存在绩效比例分配异常\n'
         }

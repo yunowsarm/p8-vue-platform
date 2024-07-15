@@ -545,13 +545,7 @@ export function getGanttColumns(ganttObject, vueThis) {
       align: 'left',
       resize: true,
       min_width: 150,
-      editor: checkEdit() ? editors.achievements : null,
-      template: function (task) {
-        if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
-          return task.achievements
-        }
-        return ''
-      }
+      editor: checkEdit() ? editors.achievements : null
     },
     {
       name: 'proportion',
@@ -601,10 +595,7 @@ export function getGanttColumns(ganttObject, vueThis) {
             tips += '当前任务计划完成时间和预测完成时间不一致，注意关注\n'
           }
         }
-        if (ganttObject.getGlobalTaskIndex(task.id) === 0 && state.childPercentage) {
-          bool = true
-          tips += '子任务存在绩效比例分配异常\n'
-        } else if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && (state.childTotal || state.childPercentage)) {
+        if (state.childTotal || state.childPercentage) {
           bool = true
           tips += '子任务存在绩效比例分配异常\n'
         }

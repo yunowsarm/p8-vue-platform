@@ -837,7 +837,7 @@ GanttObject.getTaskEditable = function (ganttObject, state, vueThis) {
   // 当前任务
   const task = ganttObject.getTask(state.id)
   // 根节点不可编辑
-  if (ganttObject.getGlobalTaskIndex(state.id) === 0) {
+  if (ganttObject.getGlobalTaskIndex(state.id) === 0 && colName != 'achievements') {
     return false
   }
   // 只读gantt不可操作
@@ -2161,7 +2161,7 @@ GanttObject.onSaveCellEven = function (ganttObject, vueThis) {
       if (!Number.isInteger(num)) {
         task.achievements = num.toFixedNoRound(4)
       }
-      if (ganttObject.getGlobalTaskIndex(parentId) !== 0 && parentTask.achievements) {
+      if (ganttObject.getGlobalTaskIndex(taskId) !== 0 && parentTask.achievements) {
         task.proportion = ((Number(task.achievements) / Number(parentTask.achievements))*100).toFixedNoRound(4)
       }
       ganttObject.updateTask(taskId)
@@ -2171,7 +2171,7 @@ GanttObject.onSaveCellEven = function (ganttObject, vueThis) {
       if (!Number.isInteger(num1)) {
         task.proportion = num1.toFixedNoRound(4)
       }
-      if (ganttObject.getGlobalTaskIndex(parentId) !== 0 && parentTask.achievements) {
+      if (ganttObject.getGlobalTaskIndex(taskId) !== 0 && parentTask.achievements) {
         task.achievements = (Number(parentTask.achievements) * (Number(task.proportion) / 100)).toFixedNoRound(4)
       }
       ganttObject.updateTask(taskId)
