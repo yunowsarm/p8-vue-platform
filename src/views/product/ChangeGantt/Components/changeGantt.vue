@@ -539,6 +539,7 @@ export default {
       getMonitorLimitColumns(myGantt.config.columns, vueThis)
       // 渲染对象
       myGantt.init(this.$refs.myGantt)
+      this.$bus.$emit('ganttInit')
       // 加载数据
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage, changeRecordId)
     },

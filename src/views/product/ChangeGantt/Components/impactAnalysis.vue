@@ -286,6 +286,7 @@ export default {
       myGantt.config.layout = GanttObject.layout1_fun(element.clientWidth - 40)
       // 渲染对象
       myGantt.init(this.$refs.myGantt)
+      this.$bus.$emit('ganttInit')
       // 加载数据
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage, changeRecordId)
     },

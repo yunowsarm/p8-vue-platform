@@ -927,6 +927,7 @@ export default {
 
       // 渲染对象
       myGantt.init(this.$refs.myGantt)
+      this.$bus.$emit('ganttInit')
       // 加载数据
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
       // 配置团队成员编辑配置文件

@@ -265,7 +265,9 @@ export default {
     this.$nextTick(() => {
       this.initDom()
     })
-    this.resizeFull()
+    this.$bus.$on('ganttInit', () => {
+      this.resizeFull()
+    })
     window.addEventListener('resize', this.resizeShowArrow)
   },
   methods: {
@@ -273,7 +275,7 @@ export default {
       let that = this
       setTimeout(() => {
         let ganttObject = GanttObject.getGanttObject(this.ganttName)
-        let state = ganttObject.getState().fullscreen
+        let state = ganttObject && ganttObject.getState().fullscreen
         that.buttonDatas.forEach(item => {
           if (item.id == 'full-screen' && state) {
             item.title = '退出全屏'
@@ -346,6 +348,9 @@ export default {
     showButtonBarSetting () {
       this.vueThis.rightMenuConfigVisible = true
     }
+  },
+  beforeDestroy() {
+    this.$bus.$off('ganttInit')
   }
 }
 </script>
