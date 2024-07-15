@@ -6,18 +6,6 @@
           <span class="login-logo"
                 ref="loginLogo"></span>
           <h4 class="login-sysName">{{ system_name }}</h4>
-          <span class="login-version">
-            <el-popover placement="top-start"
-                        width="230"
-                        trigger="hover">
-              <p>
-                公司名称: 西安融智软件有限公司<br />
-                公司官网: www.xardmu.com<br />
-                公司电话: 029-87607380<br />
-              </p>
-              <span slot="reference">{{ regardsObj.systemVersion }}</span>
-            </el-popover>
-          </span>
           <el-form class="loginForm"
                    ref="loginForm"
                    :model="loginForm"
@@ -60,6 +48,18 @@
           </el-form>
         </div>
       </div>
+      <span class="login-version">
+        <el-popover placement="top-start"
+                    width="150"
+                    trigger="hover">
+          <p>
+            西安融智软件有限公司<br />
+            www.xardmu.com<br />
+            029-87607380<br />
+          </p>
+          <span slot="reference">{{ regardsObj.systemVersion }}</span>
+        </el-popover>
+      </span>
     </div>
   </div>
 </template>
@@ -131,11 +131,11 @@ export default {
   },
   methods: {
     getSystemAbout () {
-      // this.$api['projectTeamSetting.getSystemAbout']().then(res => {
-      //   if (res) {
-      //     this.regardsObj = res
-      //   }
-      // })
+      this.$api['projectTeamSetting.getSystemAbout']().then(res => {
+        if (res) {
+          this.regardsObj = res
+        }
+      })
     },
     autoLogin () {
       if (getRequest().token) {
@@ -385,7 +385,13 @@ $login-primary--login-color: #306cf7;
   align-items: center;
   justify-content: flex-start;
   background-size: 100%;
-
+  .login-version {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    font-size: 15px;
+    color: #cccccc;
+  }
   .login-wrapper {
     // position: absolute;
     height: 100%;
@@ -415,12 +421,6 @@ $login-primary--login-color: #306cf7;
         flex-direction: column;
         justify-content: space-around;
         position: relative;
-        .login-version {
-          position: absolute;
-          top: 140px;
-          right: -50px;
-          font-size: 15px;
-        }
         .login-logo {
           width: 150px;
           height: 96px;
