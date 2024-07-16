@@ -1,5 +1,6 @@
 <template>
   <form-list :dataSource="dataSource"
+             label-width="75px"
              :form="formData"
              @saved="saved"
              :api="saveApi">
