@@ -5,6 +5,7 @@
                :data-source="modifiedData"
                :form="formData"
                :api="saveApi"
+               :isShouEnter="false"
                @saved="saved"
                label-width="90px"
                @rendered="rendered"

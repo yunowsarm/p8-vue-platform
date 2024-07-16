@@ -10,6 +10,7 @@
                :form="formData"
                :api="saveApi"
                @saved="saved"
+               :isShouEnter="false"
                label-width="120px"
                :is-custom-validate="true"
                @custom-validate="customValidate"
@@ -2823,25 +2824,25 @@ export default {
     async saveSearchData (data, type, scope, row) {
       let that = this
       if (type) {
-        console.log(scope.row.defaultValueData,'----111111111');
+        console.log(scope.row.defaultValueData, '----111111111');
         // scope.row.defaultValueData = undefined
       }
       if (row) {
         if (row.searchMode === 'select' || row.searchMode === 'multiple') {
           let res = await this.$api['formGenerator.getSelectionData']({ selectCode: row.dictCode })
           if (res && res.data) {
-            if (res.config)  {
-              console.log(selectGenerateTree(res.data, res.config),'---selectGenerateTree(res.data, res.config)');
-              that.$set(row,'defaultData', selectGenerateTree(res.data, res.config))
+            if (res.config) {
+              console.log(selectGenerateTree(res.data, res.config), '---selectGenerateTree(res.data, res.config)');
+              that.$set(row, 'defaultData', selectGenerateTree(res.data, res.config))
             } else {
-              that.$set(row,'defaultData', res.data)
+              that.$set(row, 'defaultData', res.data)
             }
           }
         }
         if (row.searchMode === 'treeSelect') {
           let res = await this.$api['formGenerator.getSelectionData']({ selectCode: row.dictCode })
           if (res && res.data) {
-            that.$set(row,'defaultData', selectGenerateTree(res.data, res.config))
+            that.$set(row, 'defaultData', selectGenerateTree(res.data, res.config))
           }
         }
       }
@@ -3294,15 +3295,15 @@ export default {
         if (el.searchMode === 'select' || el.searchMode === 'multiple') {
           let res = await this.$api['formGenerator.getSelectionData']({ selectCode: el.dictCode })
           if (res && res.data) {
-            if (res.config)  {
-              that.$set(el,'defaultData', selectGenerateTree(res.data, res.config))
+            if (res.config) {
+              that.$set(el, 'defaultData', selectGenerateTree(res.data, res.config))
             } else {
-              that.$set(el,'defaultData', res.data)
+              that.$set(el, 'defaultData', res.data)
             }
           }
         }
         if (el.searchMode === 'treeSelect') {
-          let res =  await this.$api['formGenerator.getSelectionData']({ selectCode: el.dictCode })
+          let res = await this.$api['formGenerator.getSelectionData']({ selectCode: el.dictCode })
           if (res && res.data) {
             el.defaultData = selectGenerateTree(res.data, res.config)
           }
