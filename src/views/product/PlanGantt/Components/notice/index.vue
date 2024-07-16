@@ -6,6 +6,7 @@
             :existDefaultBtn="false"
             :existCustomBtn='true'
             :data-source="dataSource"
+            :isShouEnter="false"
             :api="saveApi"
             @saved="saved"
             :form="formData">
