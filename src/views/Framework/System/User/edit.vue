@@ -144,6 +144,9 @@ export default {
             api: 'userManager.deptTree',
             params: { deptId: this.deptId }
           },
+          fieldConfig: {
+            disabledRoot: true
+          },
           rules: [
             {
               required: true
