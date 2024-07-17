@@ -2159,20 +2159,20 @@ GanttObject.onSaveCellEven = function (ganttObject, vueThis) {
     if (colName == 'achievements') {
       let num = Number(task.achievements)
       if (!Number.isInteger(num)) {
-        task.achievements = num.toFixedNoRound(4)
+        task.achievements = num.toFixedNoRound(2)
       }
       if (ganttObject.getGlobalTaskIndex(taskId) !== 0 && parentTask.achievements) {
-        task.proportion = ((Number(task.achievements) / Number(parentTask.achievements))*100).toFixedNoRound(4)
+        task.proportion = ((Number(task.achievements) / Number(parentTask.achievements))*100).toFixedNoRound(2)
       }
       ganttObject.updateTask(taskId)
     }
     if (colName == 'proportion') {
       let num1 = Number(task.proportion)
       if (!Number.isInteger(num1)) {
-        task.proportion = num1.toFixedNoRound(4)
+        task.proportion = num1.toFixedNoRound(2)
       }
       if (ganttObject.getGlobalTaskIndex(taskId) !== 0 && parentTask.achievements) {
-        task.achievements = (Number(parentTask.achievements) * (Number(task.proportion) / 100)).toFixedNoRound(4)
+        task.achievements = (Number(parentTask.achievements) * (Number(task.proportion) / 100)).toFixedNoRound(2)
       }
       ganttObject.updateTask(taskId)
     }

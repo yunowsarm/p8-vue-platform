@@ -556,7 +556,12 @@ export function getGanttColumns(ganttObject, vueThis) {
       editor: checkEdit() ? editors.proportion : null,
       template: function (task) {
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.proportion) {
-          return task.proportion + '%'
+          let parts = task.proportion.toString().split('.')
+          var fraction = parts.length === 1 ? '' : parts[1];
+          if (2 > fraction.length) {
+              fraction += new Array(2 - fraction.length + 1).join('0');
+          }
+          return parts[0] + '.' + fraction + '%'
         }
         return ''
       }

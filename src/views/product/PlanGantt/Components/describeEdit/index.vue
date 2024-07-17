@@ -782,7 +782,7 @@ export default {
       let parentId = ganttObject.getParent(this.taskId)
       let parentTask = ganttObject.getTask(parentId)
       if (ganttObject.getGlobalTaskIndex(parentId) !== 0 && parentTask.achievements) {
-        this.formData.proportion = ((Number(this.formData.achievements) / Number(parentTask.achievements))*100).toFixedNoRound(4)
+        this.formData.proportion = ((Number(this.formData.achievements) / Number(parentTask.achievements))*100).toFixedNoRound(2)
       }
     },
     proportionChangeHandle (val) {
@@ -790,7 +790,7 @@ export default {
       let parentId = ganttObject.getParent(this.taskId)
       let parentTask = ganttObject.getTask(parentId)
       if (ganttObject.getGlobalTaskIndex(parentId) !== 0 && parentTask.achievements) {
-        this.formData.achievements = (Number(parentTask.achievements) * (Number(val) / 100)).toFixedNoRound(4)
+        this.formData.achievements = (Number(parentTask.achievements) * (Number(val) / 100)).toFixedNoRound(2)
       }
     }
   }
