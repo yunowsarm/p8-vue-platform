@@ -644,27 +644,27 @@ export function getGanttColumns(ganttObject, vueThis) {
         // }
       }
     },
-    // {
-    //   name: 'roleName',
-    //   label: '角色',
-    //   align: 'center',
-    //   resize: true,
-    //   min_width: 120,
-    //   template: function (task) {
-    //     const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
-    //     const owner = task[ganttObject.config.resource_property]
-    //     if (owner) {
-    //       const userMessage = resourceDatas.getItem(owner)
-    //       if (userMessage) {
-    //         return userMessage.roleName
-    //       } else {
-    //         return ''
-    //       }
-    //     } else {
-    //       return ''
-    //     }
-    //   }
-    // },
+    {
+      name: 'roleName',
+      label: '角色',
+      align: 'center',
+      resize: true,
+      min_width: 120,
+      template: function (task) {
+        const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
+        const owner = task[ganttObject.config.resource_property]
+        if (owner) {
+          const userMessage = resourceDatas.getItem(owner)
+          if (userMessage) {
+            return userMessage.roleName
+          } else {
+            return ''
+          }
+        } else {
+          return ''
+        }
+      }
+    },
     {
       name: 'dutyDeptName',
       label: '部门',

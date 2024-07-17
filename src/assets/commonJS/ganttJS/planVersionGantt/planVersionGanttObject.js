@@ -115,16 +115,27 @@ function getPlanColumn(type, ganttObject, vueThis) {
         return task.realName
       }
     },
-    // {
-    //   name: 'roleName',
-    //   label: '角色',
-    //   align: 'center',
-    //   resize: true,
-    //   min_width: 120,
-    //   template: function (task) {
-    //     return task.ownerRoleName
-    //   }
-    // },
+    {
+      name: 'roleName',
+      label: '角色',
+      align: 'center',
+      resize: true,
+      min_width: 120,
+      template: function (task) {
+        let resourceDatas = ganttObject.serverList('resources')
+        const owner = task[ganttObject.config.resource_property]
+        if (owner) {
+          const userMessage = resourceDatas.find(item => item.id == owner)
+          if (userMessage) {
+            return userMessage.roleName
+          } else {
+            return ''
+          }
+        } else {
+          return ''
+        }
+      }
+    },
     {
       name: 'dutyDeptName',
       label: '部门',
