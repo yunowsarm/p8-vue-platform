@@ -443,6 +443,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
     }
   })
   ganttObject.attachEvent('onParse', function () {
+    vueThis.dependentDatas = []
     ganttObject.eachTask(function (task) {
       if (task.status) {
         // 已完成计划不可编辑

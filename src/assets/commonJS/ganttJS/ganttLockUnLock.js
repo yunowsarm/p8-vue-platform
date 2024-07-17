@@ -266,6 +266,7 @@ export function setLockTaskProperties(ganttObject, vueThis) {
     ganttObject.config.copy = true
   } else {
     return ganttObject.attachEvent('onParse', function () {
+      vueThis.dependentDatas = []
       // 获取gannt操作限制策略
       const taskStatusLockMap = store.getters.taskStatusLockMap
       ganttObject.eachTask(function (task) {

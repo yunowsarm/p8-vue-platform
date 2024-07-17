@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "set PORT=3001 && node --max_old_space_size=4096 node_modules/@vue/cli-service/bin/vue-cli-service.js serve --open",
+    "serve": "set PORT=3001 && node --max_old_space_size=8192 node_modules/@vue/cli-service/bin/vue-cli-service.js serve --open",
     "build": "vue-cli-service build --report",
     "mockServer": "nodemon ./server/app.js",
     "lint": "vue-cli-service lint",
