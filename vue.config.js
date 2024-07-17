@@ -20,6 +20,11 @@ module.exports = defineConfig({
   chainWebpack (config) {
     config.output.filename(`js/[name].[hash:8].${version}.js`).end();
     config.output.chunkFilename(`js/[name].[hash:8].${version}.js`).end();
+    config.plugin('extract-css').tap((args) => {
+      args[0].filename = `css/[name].[hash:8].${version}.css`;
+      args[0].chunkFilename = `css/[name].[hash:8].${version}.css`;
+      return args;
+    });
   },
   configureWebpack: {
     devtool: process.env.NODE_ENV === 'development' ? 'source-map' : undefined,
