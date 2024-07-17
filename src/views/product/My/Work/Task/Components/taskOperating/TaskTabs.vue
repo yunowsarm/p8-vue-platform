@@ -11,6 +11,7 @@
         <!-- <progess ref="progess"></progess> -->
         <progess v-if="progessType !== 'progessTable'"
                  ref="progess"
+                 :tabsName="tabsName"
                  :durationDay="durationDay"
                  :approve="approve"
                  :exceedType="exceedType"
@@ -26,7 +27,8 @@
       <!-- 未完成原因 -->
       <template v-if="tabsActiveName === 'unfinishedCause'">
         <span slot="label">{{item.label}}</span>
-        <deviate ref="deviate"></deviate>
+        <deviate ref="deviate"
+                 :tabsName="tabsName"></deviate>
       </template>
     </el-tab-pane>
   </el-tabs>
@@ -72,7 +74,8 @@ export default {
       tabsActiveName: '',
       durationDay: false,
       exceedType: false,
-      approve: false
+      approve: false,
+      tabsName: 'progess'
     }
   },
   mounted () {
@@ -124,7 +127,8 @@ export default {
     })
   },
   methods: {
-    tabsClick () {
+    tabsClick (val) {
+      this.tabsName = val.name
     },
     // 切换页面不继续弹出超期提示框
     dialogOk (val) {

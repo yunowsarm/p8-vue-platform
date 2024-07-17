@@ -56,7 +56,7 @@ export default {
           minWidth: 200,
         }
       ],
-      tableParams: { taskId: this.row[0].ID },
+      tableParams: { taskId: this.row && this.row.length > 0 ? this.row[0].ID : '' },
     }
   }
 }

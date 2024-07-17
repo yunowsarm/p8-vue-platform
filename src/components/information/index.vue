@@ -37,14 +37,8 @@
                            :messagesData="list"
                            @messageevent="messageevent"
                            @setUser="setUser"
-                           @input="onMessage"
-                           @searchShow="searchShow" />
-            <message-view v-if="historyMsg"
-                          :searchParams="historyParams"></message-view>
+                           @input="onMessage" />
           </div>
-        </template>
-        <template #drawer-panel>
-
         </template>
       </normal-layout>
     </template>
@@ -54,12 +48,11 @@
 <script>
 import User from './components/User'
 import MessagePanel from './components/MessagePanel'
-import MessageView from './components/MessageView'
 import { P8Dialog as CommonDialog, P8NormalLayoutV1 as NormalLayout } from 'p8-components-ui'
 
 export default {
   name: 'Information',
-  components: { User, MessagePanel, CommonDialog, NormalLayout, MessageView },
+  components: { User, MessagePanel, CommonDialog, NormalLayout },
   props: {
     visibleMsgDrawer: {
       type: Boolean
@@ -71,10 +64,10 @@ export default {
   data () {
     return {
       visible: this.visibleMsgDrawer,
-      historyMsg: false,
-      dialogWidth: '800px',
-      dialogHeight: 600,
-      defaultWidth: 30,
+
+      dialogWidth: '60%',
+      dialogHeight: document.documentElement.clientHeight - 200,
+      defaultWidth: 25,
       dialogConfig: {
         'append-to-body': true
       },
@@ -92,7 +85,6 @@ export default {
         // }
       ],
       dateTime: new Date().getTime(),
-      historyParams: {},
       projectName: '',
       isChange: false
     }
@@ -174,15 +166,6 @@ export default {
     onMessage (params) {
       window.myWebSocket.emit('sendMessageGroupChat', params)
     },
-    searchShow (isShow, params) {
-      this.historyMsg = isShow
-      this.historyParams = params
-      if (isShow) {
-        this.dialogWidth = '1100px'
-      } else {
-        this.dialogWidth = '800px'
-      }
-    },
     async onSelectUser (user, val) {
       if (user) {
         this.selectedUser = user
@@ -241,8 +224,6 @@ export default {
 }
 .right-panel {
   height: 100%;
-  display: flex;
-  width: 100%;
 }
 #message {
   width: 100%;

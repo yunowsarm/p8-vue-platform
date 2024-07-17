@@ -6,6 +6,62 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1368560",
+      "name": "历史",
+      "font_class": "history",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "6541618",
+      "name": "未完成",
+      "font_class": "weiwancheng",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
+      "icon_id": "31697514",
+      "name": "进度反馈",
+      "font_class": "jindufankui",
+      "unicode": "e7d5",
+      "unicode_decimal": 59349
+    },
+    {
+      "icon_id": "22377745",
+      "name": "手动排程",
+      "font_class": "shoudongpaicheng",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "25290618",
+      "name": "自动排程",
+      "font_class": "zidongpaicheng",
+      "unicode": "e7d4",
+      "unicode_decimal": 59348
+    },
+    {
+      "icon_id": "39787402",
+      "name": "已完成",
+      "font_class": "yiwancheng",
+      "unicode": "e7d2",
+      "unicode_decimal": 59346
+    },
+    {
+      "icon_id": "39786903",
+      "name": "进行中",
+      "font_class": "jinhangzhong",
+      "unicode": "e7d3",
+      "unicode_decimal": 59347
+    },
+    {
+      "icon_id": "39786886",
+      "name": "协同编制",
+      "font_class": "xietongbianzhi",
+      "unicode": "e7d1",
+      "unicode_decimal": 59345
+    },
+    {
       "icon_id": "39773988",
       "name": "统筹驳回",
       "font_class": "tongchoubohui",

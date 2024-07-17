@@ -28,7 +28,7 @@
                 <span>{{ i.itemCreateTime }}</span>
                 <div class="user-msg">
                   <span v-if="i.styleType"
-                        style="width: 300px;"
+                        style="font-size: 15px; width: 600px;"
                         v-html="i.content"></span>
                   <span v-else
                         class="right">{{i.content}}</span>
@@ -40,7 +40,7 @@
                 <span>{{ i.itemCreateTime }}</span>
                 <div class="user-msg">
                   <span v-if="i.styleType"
-                        style="width: 300px;"
+                        style="font-size: 15px; width: 600px;"
                         v-html="i.content"></span>
                   <span v-else
                         class="left">{{i.content}}</span>
@@ -56,6 +56,7 @@
                 @click="callOut">@</span>
           <textarea class="contentText-textarea"
                     autofocus
+                    placeholder="请输入内容"
                     ref="textareaRef"
                     @keydown.enter="onSubmit()"
                     @focus="focus()"
@@ -74,22 +75,54 @@
                      @closed="resourceSelectclosed"
                      @resource-selected="resourceSelected">
     </resource-select>
+    <message-view v-if="historyMsg"
+                  :visible="historyMsg"
+                  :searchParams="historyParams"
+                  @visibleHistory="visibleHistory"></message-view>
+    <common-dialog v-if="visibleFeedback"
+                   :visible="visibleFeedback"
+                   :width="dialogWidth"
+                   :dialog-config="dialogConfig"
+                   :show-handle-btn="false"
+                   @close="visibleMsgClose"
+                   :dialog-height="dialogHeight"
+                   title="历史反馈">
+      <template #dialog>
+        <history-table :row="selsectRows"></history-table>
+      </template>
+    </common-dialog>
   </div>
 </template>
 
 <script>
 import StatusIcon from "./StatusIcon";
 import moment from 'moment'
+import MessageView from './MessageView'
 import ResourceSelect from '@/components/information/components/resourceSelect.vue'
+import { P8Dialog as CommonDialog } from 'p8-components-ui'
+import historyTable from "@/views/product/Plan/planExamine/historyTable.vue";
+// import { history } from './message'
 export default {
   name: "MessagePanel",
   components: {
     StatusIcon,
-    ResourceSelect
+    ResourceSelect,
+    MessageView,
+    CommonDialog,
+    historyTable
   },
   props: ['user', 'messagesData'],
   data () {
     return {
+      historyMsg: false,
+      visibleFeedback: false,
+      dialogHeight: document.documentElement.clientHeight - 243,
+      dialogWidth: '50%',
+      dialogConfig: {
+        'append-to-body': true
+      },
+      selsectRows: [],
+      historyParams: {},
       userId: this.$store.state.user.userId, // 当前用户ID
       // receiverUser: this.$store.getters.name, // 当前用户昵称
       // avatar: this.$store.getters.avatar, // 当前用户头像
@@ -120,6 +153,11 @@ export default {
     }
   },
   mounted () {
+    // let that = this
+    // window.historyClick = function historyClick () {
+    //   console.log('2222222222222222222222222222222222');
+    //   that.visibleFeedback = true
+    // }
     if (this.user) {
       this.entityId = this.user.entityId
       this.contentText = this.user.contentText
@@ -270,19 +308,29 @@ export default {
       this.resourceSelectVisible = false
     },
     searchShow () {
-      this.isShow = !this.isShow
-      let params = {
+      this.historyMsg = true
+      this.historyParams = {
         entityId: this.user ? this.user.entityId : '',
         entityType: this.user ? this.user.entityType : '',
         history: 'history'
       }
-      this.$emit('searchShow', this.isShow, params)
+    },
+    visibleHistory () {
+      this.historyMsg = false
+      this.historyParams = {}
     },
     scrollBottm () {
       let el = this.$refs.msgBox;
       if (el) {
         el.scrollTop = el.scrollHeight;
       }
+    },
+    historyClick1 (id) {
+      console.log('2222222222222222222222222222222222');
+      this.visibleFeedback = true
+    },
+    visibleMsgClose () {
+      this.visibleFeedback = false
     }
   }
 };
@@ -307,7 +355,7 @@ export default {
   height: 100%;
 }
 .msg-box {
-  height: 400px; /* 设置容器的高度，使其可以滚动 */
+  height: 70%; /* 设置容器的高度，使其可以滚动 */
   overflow-y: auto; /* 显示滚动条 */
 }
 .refresh-wrapper {
@@ -395,7 +443,7 @@ export default {
   }
 }
 .contentText-box {
-  height: calc(100% - 400px);
+  height: 30%;
   width: 100%;
   border-top: 2px #f2f2f2 solid;
   overflow-y: visible;

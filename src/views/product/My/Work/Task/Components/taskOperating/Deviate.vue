@@ -5,14 +5,21 @@
               :tableApi="tableApi"
               :tableParams="tableParams"
               :columns="columns"
+              :tabsName="tabsName"
               @submit="deviateSubmit"></form-table>
 </template>
 <script>
 import FormTable from './FormTable'
+import moment from 'moment'
 export default {
   name: 'Deviate',
   components: {
     FormTable
+  },
+  props: {
+    tabsName: {
+      type: String
+    }
   },
   inject: ['getPlanInfo'],
   computed: {
@@ -120,15 +127,18 @@ export default {
             message: '偏离原因提交成功！',
             type: 'success'
           })
-          that.setMessage()
+          that.setMessage(form)
         }
       })
     },
-    setMessage () {
-      let obj = Object.assign({}, this.formData)
+    setMessage (formData) {
+      console.log(this.getPlanInfo(), '=================this.getPlanInfo()');
+      let obj = Object.assign({}, formData)
       obj.planName = this.getPlanInfo().PLANNAME
       obj.name = this.getPlanInfo().NAME
       obj.deviationProgress = obj.progress
+      obj.taskId = this.getPlanInfo().taskId
+      obj.type = '2'
       let params = {
         itemCreateTime: moment().format('YYYY-MM-DD HH:mm:ss'),
         sendUser: this.$store.state.user.userId,

@@ -47,7 +47,7 @@ export default {
 
 <style scoped>
 .selected {
-  background-color: #77b5e3;
+  background-color: #1890ff;
 }
 
 .user {
@@ -67,7 +67,7 @@ export default {
   margin-left: 15px;
 }
 .user:hover {
-  background: #6c8ba2;
+  background-color: rgba(24, 144, 255, 0.7);
 }
 
 .status {

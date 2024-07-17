@@ -40,10 +40,11 @@ export default {
     initWebSocket (id, name) {
       // 判断页面有没有存在websocket连接
       if (window.WebSocket) {
+        // window.myWebSocket.close();
         // let sip = '房间号'
         // 填写本地IP地址 此处的 :9101端口号 要与后端配置的一致！
         const URL = SOCKET_URL + '?sendUserName=' + name + '&sendUser=' + id
-        const socket = io(URL, { autoConnect: false, transports: ['websocket'] }) // 连接到服务器
+        const socket = io(URL, { autoConnect: true, transports: ['websocket'] }) // 连接到服务器
         window.myWebSocket = socket
         window.myWebSocket.connect()
         // socket.on("privateMessage", (data) => {
@@ -58,12 +59,24 @@ export default {
           this.message()
           // }
         })
-        // 连接失败时取消自动重新连接
+        // 连接失败时自动重新连接
         window.myWebSocket.on('reconnect_failed', () => {
-          console.log('重连失败，取消自动重连')
-          window.myWebSocket.off('reconnect') // 取消所有的重连事件监听
-          window.myWebSocket.close() // 关闭连接
+          console.log('*******************重新连接失败，自动重连*****************')
+          // window.myWebSocket.off('reconnect') // 取消所有的重连事件监听
+          // window.myWebSocket.close() // 关闭连接
+          this.$message.error('重新连接失败，自动重连中...')
+          // const URL = SOCKET_URL + '?sendUserName=' + name + '&sendUser=' + id
+          // const socket = io(URL, { autoConnect: true, transports: ['websocket'] }) // 连接到服务器
+          // window.myWebSocket = socket
+          window.myWebSocket.connect()
         })
+        window.myWebSocket.on('connect_error', (err) => {
+          this.$message.error('连接失败，自动重连中...')
+          // const URL = SOCKET_URL + '?sendUserName=' + name + '&sendUser=' + id
+          // const socket = io(URL, { autoConnect: true, transports: ['websocket'] }) // 连接到服务器
+          // window.myWebSocket = socket
+          window.myWebSocket.connect()
+        });
       }
     },
     message () {
@@ -119,6 +132,7 @@ export default {
     window.myWebSocket.off('messageevent')
     window.myWebSocket.off('privateMessage')
     window.myWebSocket.off('reconnect_failed')
+    window.myWebSocket.close()
   }
 }
 </script>

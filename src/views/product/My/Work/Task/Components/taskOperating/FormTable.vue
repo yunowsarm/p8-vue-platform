@@ -446,6 +446,9 @@ export default {
     exceedType: {
       type: Boolean,
       default: false
+    },
+    tabsName: {
+      type: String
     }
   },
   data () {
@@ -558,7 +561,7 @@ export default {
           } else {
             this.$emit('submit', this.formData, submitType)
           }
-          this.setMessage()
+          // this.setMessage()
         } else {
           console.error('error submit!!', valid)
           return false
@@ -566,19 +569,44 @@ export default {
       })
     },
     setMessage () {
-      console.log(this.formData, 'taskCommitByDatataskCommitByDatataskCommitByDatataskCommitByDatataskCommitByData');
+      console.log(this.tabsName, 'rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
       this.formData.planName = this.getPlanInfo().PLANNAME
       this.formData.name = this.getPlanInfo().NAME
-      let params = {
-        itemCreateTime: moment().format('YYYY-MM-DD HH:mm:ss'),
-        sendUser: this.$store.state.user.userId,
-        sendUserName: this.$store.state.user.userName,
-        content: this.contentText,
-        entityId: this.getPlanInfo().WHOLEDESCRIBEID,
-        entityType: 'project',
-        taskRequest: this.formData
-      };
-      window.myWebSocket.emit('taskCommitByData', params)
+      this.formData.taskId = this.getPlanInfo().taskId
+      if (this.tabsName === 'progess') {
+        this.formData.type = '1'
+        let params = {
+          itemCreateTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+          sendUser: this.$store.state.user.userId,
+          sendUserName: this.$store.state.user.userName,
+          content: this.contentText,
+          entityId: this.getPlanInfo().WHOLEDESCRIBEID,
+          entityType: 'project',
+          taskRequest: this.formData,
+        };
+        console.log("11111111111111111111111", params)
+        window.myWebSocket.emit('taskCommitByData', params)
+        if (this.formData.deviationType) {
+          this.formData.type = '2'
+          params.taskRequest = this.formData
+          console.log("22222222222222222222222222222222", params)
+          window.myWebSocket.emit('taskCommitByData', params)
+        };
+      }
+      // if (this.tabsName === 'unfinishedCause') {
+      //   this.formData.type = '2'
+      //   let params = {
+      //     itemCreateTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+      //     sendUser: this.$store.state.user.userId,
+      //     sendUserName: this.$store.state.user.userName,
+      //     content: this.contentText,
+      //     entityId: this.getPlanInfo().WHOLEDESCRIBEID,
+      //     entityType: 'project',
+      //     taskRequest: this.formData,
+      //   };
+      //   console.log("33333333333333333333333333333333333333", params)
+      //   window.myWebSocket.emit('taskCommitByData', params)
+      // }
     },
     onDrawerOpen () {
       this.collapse = true

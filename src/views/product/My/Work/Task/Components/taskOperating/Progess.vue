@@ -11,6 +11,7 @@
               :columns="columns"
               :key="dateTime"
               :approve="approve"
+              :tabsName="tabsName"
               @submit="progressSubmit"
               @NewSubmit="NewProgressSubmit"
               @progress-date-change="progressDateChange"
@@ -56,6 +57,9 @@ export default {
     exceedType: {
       type: Boolean,
       default: false
+    },
+    tabsName: {
+      type: String
     }
   },
   inject: ['getPlanInfo'],
@@ -371,8 +375,8 @@ export default {
       }
       return obj[key]()
     },
-    progressSubmit (form, submitType) {
-      let params = this.submitParamsHandle(form, submitType)
+    progressSubmit (formData, submitType) {
+      let params = this.submitParamsHandle(formData, submitType)
       const _this = this
       params.pmTaskProgressFeedback.hierarchy = this.getPlanInfo().LEVEL
       this.$api['taskManager.progressFeedback'](params).then(res => {
@@ -383,9 +387,50 @@ export default {
             message: '成功'
           })
           _this.$bus.$emit('refresh')
+          _this.setMessage(formData)
         }
         // this.formData.leaf = false
       })
+    },
+    setMessage (formData) {
+      console.log(this.tabsName, 'rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
+      formData.planName = this.getPlanInfo().PLANNAME
+      formData.name = this.getPlanInfo().NAME
+      formData.taskId = this.getPlanInfo().taskId
+      if (this.tabsName === 'progess') {
+        formData.type = '1'
+        let params = {
+          itemCreateTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+          sendUser: this.$store.state.user.userId,
+          sendUserName: this.$store.state.user.userName,
+          content: '',
+          entityId: this.getPlanInfo().WHOLEDESCRIBEID,
+          entityType: 'project',
+          taskRequest: formData,
+        };
+        console.log("11111111111111111111111", params)
+        window.myWebSocket.emit('taskCommitByData', params)
+        if (formData.deviationType) {
+          formData.type = '2'
+          params.taskRequest = formData
+          console.log("22222222222222222222222222222222", params)
+          window.myWebSocket.emit('taskCommitByData', params)
+        };
+      }
+      // if (this.tabsName === 'unfinishedCause') {
+      //   this.formData.type = '2'
+      //   let params = {
+      //     itemCreateTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+      //     sendUser: this.$store.state.user.userId,
+      //     sendUserName: this.$store.state.user.userName,
+      //     content: this.contentText,
+      //     entityId: this.getPlanInfo().WHOLEDESCRIBEID,
+      //     entityType: 'project',
+      //     taskRequest: this.formData,
+      //   };
+      //   console.log("33333333333333333333333333333333333333", params)
+      //   window.myWebSocket.emit('taskCommitByData', params)
+      // }
     },
     NewProgressSubmit (form, submitType, obj) {
       let params = this.submitParamsHandle(form, submitType)
@@ -415,7 +460,11 @@ export default {
           content: form.content,
           submitType: submitType
         },
-        pmTaskDeviationCauses: {        // 偏离参数
+        pmTaskDeviationCauses: {}
+      }
+      console.log(this.exceedTypeVal, '======================this.exceedTypeVal');
+      if (this.exceedTypeVal) {
+        params.pmTaskDeviationCauses = {        // 偏离参数
           planInfoId: _this.planInfoParams.PLANINFOID,
           pmProjectTasksId: _this.planInfoParams.TASKID,
           id: form.id, //偏离数据id
