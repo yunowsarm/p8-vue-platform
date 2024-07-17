@@ -1,6 +1,6 @@
 {
   "name": "nocturne.vue.platform",
-  "version": "0.1.0",
+  "version": "1.4.0",
   "private": true,
   "scripts": {
     "serve": "set PORT=3001 && node --max_old_space_size=8192 node_modules/@vue/cli-service/bin/vue-cli-service.js serve --open",

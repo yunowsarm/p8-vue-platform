@@ -4,6 +4,8 @@
 const webpack = require('webpack')
 const { defineConfig } = require('@vue/cli-service')
 const SplitChunksPlugin = require('webpack').optimize.SplitChunksPlugin
+let version = require("./package.json")["version"];
+version = 'V' + version
 
 module.exports = defineConfig({
   runtimeCompiler: true,
@@ -14,6 +16,10 @@ module.exports = defineConfig({
     client: {
       overlay: false
     }
+  },
+  chainWebpack (config) {
+    config.output.filename(`js/[name].[hash:8].${version}.js`).end();
+    config.output.chunkFilename(`js/[name].[hash:8].${version}.js`).end();
   },
   configureWebpack: {
     devtool: process.env.NODE_ENV === 'development' ? 'source-map' : undefined,

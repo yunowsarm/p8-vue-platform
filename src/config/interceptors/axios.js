@@ -6,6 +6,7 @@
  */
 import store from '@/plugins/store'
 import { MessageBox, Notification } from 'p8-components-ui'
+let version = require("../../../package.json")["version"];
 /**
  *
  *
@@ -16,6 +17,7 @@ import { MessageBox, Notification } from 'p8-components-ui'
 export function axiosRequestSucessFunc(config) {
   // dosth before request
   // config.headers['Content-type'] = 'application/x-www-form-urlencoded'
+  config.headers['Version'] = version
   const token = store.getters.token
   if (token) {
     config.headers['Authorization'] = token
