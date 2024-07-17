@@ -2243,7 +2243,10 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      if (tasks.length > 0) {
+      let ganttObject = GanttObject.getGanttObject(ganttName)
+      if (tasks.length == 1 && ganttObject.getGlobalTaskIndex(tasks[0].id) === 0) {
+        return true
+      } else if (tasks.length == 1) {
         return false
       } else {
         return true
