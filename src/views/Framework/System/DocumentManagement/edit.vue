@@ -1,5 +1,6 @@
 <template>
-  <form-list ref="form" @rendered="rendered" @saved="saved" :data-source="dataSource" :api="saveApi" :form="modify" :other-param="otherParam">
+  <form-list ref="form" @rendered="rendered" @saved="saved":is-custom-validate="true"
+             @custom-validate="customValidate" :data-source="dataSource" :api="saveApi" :form="modify" :other-param="otherParam">
     <template slot="btn">
       <el-button @click="cancel">取 消</el-button>
     </template>
@@ -49,11 +50,16 @@ export default {
           placeholder: '请输入文件描述',
           colLayout: 'singleCol'
         }
-      ]
+      ],
+      type: ''
     }
   },
   mounted() {
     this.modify = Object.assign({}, this.record)
+    if (this.record && Object.keys(this.record).length && this.record.name && this.record.name.split('.')) {
+      this.modify.name = this.record.name.split('.')[0]
+      this.type = this.record.name.split('.')[1]
+    }
   },
   methods: {
     saved() {
@@ -62,7 +68,11 @@ export default {
     cancel() {
       this.$emit('cancel')
     },
-    rendered() {}
+    rendered() {},
+    customValidate (saveParmars) {
+      saveParmars.name = saveParmars.name + '.' + this.type
+      this.$refs.form.submitForm(saveParmars, this.saveApi)
+    }
   }
 }
 </script>
