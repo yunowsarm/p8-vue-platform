@@ -47,6 +47,7 @@
                             @row-click="rowClick"
                             @select="select"
                             @row-dblclick="rowDblclick"
+                            @selection-change="handleTableSelectionChange"
                             @requested-table-data="requestedTableData">
                 <template #taskCount="{ scope }">
                   <i v-if="scope.row.taskCount > 0"
@@ -120,10 +121,11 @@ export default {
   props: ['entityId', 'startTaskId', 'endTaskId', 'planInfoId', 'visible', 'selectTaskOwnerId', 'showType'],
   data () {
     return {
+      tableSelectValue: [],
       comp: this,
       title: '选择人员',
       dialogWidth: '30%',
-      dialogHeight: 400,
+      dialogHeight: 500,
       tableV: false,
       dialogConfig: {
         modal: true
@@ -142,7 +144,6 @@ export default {
         'highlight-current-row': true
       },
       resourceWidth: '100%',
-      customHeight: 462,
       columns: [
         {
           title: '',
@@ -195,19 +196,9 @@ export default {
     // 单击选中行
     rowClick (row, column, event) {
       if (row.weatherOut === '0') {
-        this.$refs.tableCom.$refs.table.clearSelection()
-        if (this.currentRow) {
-          if (this.currentRow.id === row.id) {
-            this.$refs.tableCom.$refs.table.toggleRowSelection(row, false)
-            this.currentRow = null
-          } else {
-            this.$refs.tableCom.$refs.table.toggleRowSelection(row, true)
-            this.currentRow = row
-          }
-        } else {
-          this.$refs.tableCom.$refs.table.toggleRowSelection(row, true)
-          this.currentRow = row
-        }
+        let isSelect = this.tableSelectValue.filter(item => item.id === row.id).length
+        this.$refs.tableCom.$refs.table.toggleRowSelection(row, !isSelect)
+        this.selectRows = this.tableSelectValue
       }
     },
     // 勾选复选框选中行
@@ -238,11 +229,14 @@ export default {
       }
     },
     isfullscreen (isfullscreen) {
-      if (isfullscreen) {
-        this.customHeight = document.documentElement.clientHeight - 170
-      } else {
-        this.customHeight = 462
-      }
+      this.$nextTick(() => {
+        this.tableSelectValue.forEach(row => {
+          this.$refs.tableCom.$refs.table.toggleRowSelection(row)
+        })
+      })
+    },
+    handleTableSelectionChange (value) {
+      this.tableSelectValue = value
     },
     // 默认选中页面已选的责任人
     requestedTableData (data) {
@@ -279,6 +273,7 @@ export default {
       })
     },
     handleCancel () {
+      this.tableSelectValue = []
       this.$emit('closed')
     },
     getUserTaskInfo (row) {
@@ -294,6 +289,7 @@ export default {
         })
     },
     handleOk () {
+      this.tableSelectValue = []
       if (this.selectRows && Object.keys(this.selectRows).length > 0) {
         this.submit()
       } else {
