@@ -194,7 +194,7 @@ export default {
           colLayout: 'doubleCol',
           min: 0,
           fieldConfig: {
-            precision: 4,
+            precision: 2,
             step: 1
           },
           eventHandle: {
@@ -209,7 +209,7 @@ export default {
           min: 0,
           max: 100,
           fieldConfig: {
-            precision: 4,
+            precision: 2,
             step: 1
           },
           eventHandle: {
