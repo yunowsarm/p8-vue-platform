@@ -73,6 +73,10 @@ export default {
   watch: {
     thirdMenuParam: {
       handler (val) {
+        // 任务为审批中禁止编辑
+        if (val.MANAGERSTATUS === '6406') {
+          val.pageType = 'view'
+        }
         this.thirdMenuParamTemp = val
       },
       immediate: true,

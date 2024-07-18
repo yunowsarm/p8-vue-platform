@@ -189,7 +189,10 @@ export default {
   },
   created () {
     if (this.getPlanInfo().pageType === 'view') {
-      // this.dialogOk()
+      if (!this.durationDay) {
+        this.exceedTypeVal = true
+
+      }
     } else {
       //false 已超期
       if (!this.durationDay) {
