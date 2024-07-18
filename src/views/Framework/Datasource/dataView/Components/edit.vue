@@ -66,6 +66,7 @@
           </template>
           <template #orderNum="{ scope, data }">
             <el-input-number v-model="scope.row.orderNum"
+                            :precision="0"
                              @blur="saveParamData(data)"></el-input-number>
           </template>
         </editable-table>

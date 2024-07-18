@@ -325,6 +325,9 @@ export default {
           type: 'number',
           fieldName: 'indexNo',
           placeholder: '请输入排序号',
+          fieldConfig: {
+            precision: 0
+          },
           colLayout: 'doubleCol'
         }
       ],

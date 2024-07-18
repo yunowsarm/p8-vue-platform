@@ -263,6 +263,9 @@ export default {
           fieldName: 'indexNo',
           placeholder: '请输入用户排序号',
           colLayout: 'doubleCol',
+          fieldConfig: {
+            precision: 0
+          },
           min: 0,
           max: 99999999
         }

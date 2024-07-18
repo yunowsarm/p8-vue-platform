@@ -84,6 +84,7 @@ export default {
           // colLayout: 'doubleCol',
           defaultValue: 0,
           fieldConfig: {
+            precision: 0,
             disabled: false
           },
           rules: [

@@ -421,6 +421,7 @@
           </template>
           <template #orderNum="{ scope, data }">
             <el-input-number v-model="scope.row.orderNum"
+                              :precision="0"
                              :disabled="!!scope.row.isCustomColumn"
                              @blur="saveTableData(data)"></el-input-number>
           </template>
