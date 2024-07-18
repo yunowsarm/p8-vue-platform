@@ -122,7 +122,7 @@
 </template>
 
 <style lang="scss" scoped>
-.flowTopTabs ::v-deep .normal-layout .normal-main .splitBtn > i{
+.flowTopTabs ::v-deep .normal-layout .normal-main .splitBtn > i {
   left: 0px;
 }
 .flowTopTabs ::v-deep .normal-center {
@@ -163,10 +163,10 @@
   background-color: rgba(243, 245, 248, 0.9);
 }
 .flowTopTabs {
+  height: 100%;
   .splitBtn {
     display: none;
   }
-  height: 100%;
   .normal-layout {
     // box-shadow: 4px 4px 8px #bfbdbd54;
     height: calc(100% - 80px);

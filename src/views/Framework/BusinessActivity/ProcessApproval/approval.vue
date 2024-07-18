@@ -786,10 +786,10 @@ $paddingLeft: 10px;
   }
 }
 .custom-tabs {
+  height: calc(100% - 40px);
   ::v-deep.el-tabs {
     border: none;
   }
-  height: calc(100% - 40px);
 }
 .custom-tabs.el-tabs--top {
   height: calc(100% - 128px) !important;

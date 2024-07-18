@@ -95,6 +95,9 @@ export default {
 <style lang="scss" scoped>
 .project-con {
   height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding: 0;
   .title {
     height: 50px;
     line-height: 50px;
@@ -104,9 +107,6 @@ export default {
     box-sizing: border-box;
     font-weight: bold;
   }
-  box-sizing: border-box;
-  overflow-y: auto;
-  padding: 0;
   .form-con {
     overflow: auto;
     height: calc(100% - 50px);

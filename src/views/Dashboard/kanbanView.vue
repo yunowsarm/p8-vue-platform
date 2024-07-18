@@ -7,25 +7,28 @@
               #[`slot${index}`]>
     </template>
   </common-tabs> -->
-  <normal-layout class="normalLayout" :header-visible="searchFormConfig.length > 0" :normal-layout="normalLayout">
+  <normal-layout class="normalLayout"
+                 :header-visible="searchFormConfig.length > 0"
+                 :normal-layout="normalLayout">
     <template #north>
-      <search-form-list ref="search" :data-source="searchFormConfig" @search="onSearch" @re-set="onReset"></search-form-list>
+      <search-form-list ref="search"
+                        :data-source="searchFormConfig"
+                        @search="onSearch"
+                        @re-set="onReset"></search-form-list>
     </template>
     <template #center>
       <VuePerfectScrollbar class="scroll-area">
-        <widget-grid
-          :key="renderTime"
-          v-bind="$attrs"
-          v-on="$listeners"
-          :local-parames="localParames"
-          :draggable="false"
-          shadow="never"
-          :widget="getWidget"
-          :resizable="false"
-          :is-design="false"
-          style="height: 100%"
-          @setSearchConfig="setSearchConfig"
-        >
+        <widget-grid :key="renderTime"
+                     v-bind="$attrs"
+                     v-on="$listeners"
+                     :local-parames="localParames"
+                     :draggable="false"
+                     shadow="never"
+                     :widget="getWidget"
+                     :resizable="false"
+                     :is-design="false"
+                     style="height: 100%"
+                     @setSearchConfig="setSearchConfig">
         </widget-grid>
       </VuePerfectScrollbar>
     </template>
@@ -43,7 +46,7 @@ import mixin from './Components/mixin'
 export default {
   name: 'KanbanView',
   mixins: [mixin],
-  provide() {
+  provide () {
     return {
       provideParams: this.provideParams
     }
@@ -93,7 +96,7 @@ export default {
     }
   },
 
-  data() {
+  data () {
     return {
       renderTime: new Date().getTime(),
       widgetData: [],
@@ -127,7 +130,7 @@ export default {
   },
 
   computed: {
-    tabsData() {
+    tabsData () {
       if (this.renderData && Object.keys(this.renderData).length > 0) {
         return this.renderData.map((item, index) => {
           return { label: item.name, name: 'slot' + index }
@@ -135,23 +138,23 @@ export default {
       }
       return []
     },
-    renderKanbanData() {
+    renderKanbanData () {
       // console.log('renderKanbanData computed:', this.renderData, this.formData, this.$options.data().formData)
       return this.renderData[0] || this.formData || this.$options.data().formData
     },
-    getId() {
+    getId () {
       return this.id || ''
     },
-    getCode() {
+    getCode () {
       return this.code || ''
     },
-    getWidget() {
+    getWidget () {
       return this.widget.length ? this.widget : this.widgetData
     }
   },
   watch: {
     $route: {
-      handler(val) {
+      handler (val) {
         this.id = val.meta.id
         this.code = val.meta.code
         this.reload()
@@ -160,7 +163,7 @@ export default {
       immediate: true
     },
     kanbanConfig: {
-      handler(val) {
+      handler (val) {
         this.id = val.id
         this.code = val.code
         this.reload()
@@ -169,19 +172,19 @@ export default {
       immediate: true
     }
   },
-  created() {
+  created () {
     this.getKanbanData()
   },
 
-  beforeMount() {},
+  beforeMount () { },
 
-  mounted() {},
+  mounted () { },
 
   methods: {
-    reload() {
+    reload () {
       this.renderTime = new Date().getTime()
     },
-    async getKanbanData() {
+    async getKanbanData () {
       this.getId &&
         (await this.$api[this.api]({ ...{ id: this.getId, page: {} }, ...this.apiParames, permissionVo: { router: this.$route.name, resourceId: '' } })
           .then((res) => {
@@ -199,9 +202,9 @@ export default {
               })
             }
           })
-          .catch((e) => {}))
+          .catch((e) => { }))
     },
-    onSearch(param) {
+    onSearch (param) {
       // let _this = this
       // Object.keys(param).forEach((key) => {
       //   _this.$set(_this.searchParams, key, param[key])
@@ -212,8 +215,8 @@ export default {
       // console.log('onSearch:', this.provideParams.searchParams)
       // console.log('_provided:', this._provided.provideParams)
     },
-    onReset() {},
-    setSearchConfig(list) {
+    onReset () { },
+    setSearchConfig (list) {
       this.searchFormConfig = list
     }
   }
@@ -221,12 +224,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .custom-tabs.el-tabs--top {
+  padding: 0 !important;
   ::v-deep .el-tabs__content {
     padding: 0;
   }
-
-  padding: 0 !important;
-}
-.normalLayout ::v-deep .normal-header {
 }
 </style>

@@ -120,7 +120,7 @@ export default {
         })
         url = url.substring(0, url.length - 1)
       }
-      if(!url.includes('http')){
+      if (!url.includes('http')) {
         url = 'http://' + url
       }
       window.open(url, '_blank')
@@ -252,10 +252,10 @@ export default {
       }
 
       &.active {
+        background: #003a8c;
         .active-dot {
           display: block;
         }
-        background: #003a8c;
       }
       &.active::after {
         position: absolute;
