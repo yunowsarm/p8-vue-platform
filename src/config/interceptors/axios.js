@@ -72,7 +72,7 @@ export function axiosResponseSucessFunc(response) {
     400: {
       // 参数有误
       do: function (message, data) {
-        statusManage.NotificationMessage(message)
+        // statusManage.NotificationMessage(message)
         return Promise.reject(data).catch(() => {})
       }
     },
