@@ -105,8 +105,16 @@ export default {
     }
   },
   mounted () {
+    window.historyClick = this.historyClick.bind(this)
   },
   methods: {
+    historyClick (id) {
+      let arr = [{
+        ID: id
+      }]
+      this.selsectRows = arr
+      this.visibleFeedback = true
+    },
     triggerSelect (item, index) {
       if (index && index == this.currentIndex) {
         return
