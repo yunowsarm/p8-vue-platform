@@ -62,22 +62,36 @@ export default {
           this.message()
           // }
         })
+        socket.on('connect', function () {
+          this.$message.success('连接成功')
+        });
         // 连接失败时自动重新连接
         window.myWebSocket.on('reconnect_failed', () => {
           console.log('*******************重新连接失败，自动重连*****************')
           // window.myWebSocket.off('reconnect') // 取消所有的重连事件监听
           // window.myWebSocket.close() // 关闭连接
-          this.$message.error('重新连接失败，自动重连中...')
-          // const URL = SOCKET_URL + '?sendUserName=' + name + '&sendUser=' + id
-          // const socket = io(URL, { autoConnect: true, transports: ['websocket'] }) // 连接到服务器
-          // window.myWebSocket = socket
+          this.$message({
+            message: "重新连接失败，自动重连中...",
+            type: 'error',
+            duration: 20000,
+            showClose: true
+          })
+          const URL = SOCKET_URL + '?sendUserName=' + name + '&sendUser=' + id
+          const socket = io(URL, { autoConnect: true, transports: ['websocket'] }) // 连接到服务器
+          window.myWebSocket = socket
           window.myWebSocket.connect()
         })
         window.myWebSocket.on('connect_error', (err) => {
-          this.$message.error('连接失败，自动重连中...')
-          // const URL = SOCKET_URL + '?sendUserName=' + name + '&sendUser=' + id
-          // const socket = io(URL, { autoConnect: true, transports: ['websocket'] }) // 连接到服务器
-          // window.myWebSocket = socket
+          console.log('*******************连接失败，自动重连*****************')
+          this.$message({
+            message: "连接失败，自动重连中...",
+            type: 'error',
+            duration: 20000,
+            showClose: true
+          })
+          const URL = SOCKET_URL + '?sendUserName=' + name + '&sendUser=' + id
+          const socket = io(URL, { autoConnect: true, transports: ['websocket'] }) // 连接到服务器
+          window.myWebSocket = socket
           window.myWebSocket.connect()
         });
       }

@@ -77,7 +77,7 @@ export default {
 .new-messages {
   color: white;
   background-color: red;
-  width: 20px;
+  padding: 0 3px;
   border-radius: 5px;
   text-align: center;
   position: absolute;

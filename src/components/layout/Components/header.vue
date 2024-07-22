@@ -184,12 +184,14 @@
     <el-dialog title="关于"
                v-if="dialogVisible"
                :visible.sync="dialogVisible"
-               width="20%"
+               width="600px"
                :before-close="beforeClose">
       <div class="regards-box">
         <p><span class="regards-font">系统名称:&nbsp;&nbsp;&nbsp;</span><span>{{ systemName }}</span></p>
         <p><span class="regards-font">系统版本:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.systemVersion }}</span></p>
-        <p><span class="regards-font">官网地址:&nbsp;&nbsp;&nbsp;</span><span>www.xardmu.com</span></p>
+        <p><span class="regards-font">官网地址:&nbsp;&nbsp;&nbsp;</span><el-button type="text"
+                     style="font-size: 15px;"
+                     @click="openRZ">www.xardmu.com</el-button></p>
         <p><span class="regards-font">授权终止日期:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.authorizedExpires }}</span></p>
       </div>
     </el-dialog>
@@ -269,6 +271,9 @@ export default {
     // }
   },
   methods: {
+    openRZ () {
+      window.open('https://www.xardmu.com/')
+    },
     beforeClose () {
       this.dialogVisible = false
     },
@@ -603,6 +608,7 @@ div.header_userInfo {
   text-align: start;
   padding: 5px 14%;
   line-height: 25px;
+  height: 550px;
 }
 .regards-font {
   font-weight: bold;
