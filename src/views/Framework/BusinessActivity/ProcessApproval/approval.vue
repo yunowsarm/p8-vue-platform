@@ -64,7 +64,7 @@
           <i class="el-icon-edit-outline"></i>
           填写审批意见{{ signText }}
         </div>
-        <div>
+        <div style="max-height: 140px; overflow: auto;">
           <form-list v-if="formValidate"
                      ref="form"
                      label-width="120px"
