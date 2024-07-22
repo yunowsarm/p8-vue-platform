@@ -43,7 +43,10 @@ export default {
         // window.myWebSocket.close();
         // let sip = '房间号'
         // 填写本地IP地址 此处的 :9101端口号 要与后端配置的一致！
-        const URL = SOCKET_URL + '?sendUserName=' + name + '&sendUser=' + id
+        // 线上使用，直接获取浏览器地址
+        const URL = window.location.protocol + '//' + window.location.hostname + ':' + SOCKET_PORT + '?sendUserName=' + name + '&sendUser=' + id
+        // 本地开发使用
+        // const URL = SOCKET_URL + '?sendUserName=' + name + '&sendUser=' + id
         const socket = io(URL, { autoConnect: true, transports: ['websocket'] }) // 连接到服务器
         window.myWebSocket = socket
         window.myWebSocket.connect()

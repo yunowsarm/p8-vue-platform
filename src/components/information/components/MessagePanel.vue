@@ -50,10 +50,15 @@
           </div>
         </div>
         <div class="contentText-box">
-          <i class="el-icon-search"
-             @click="searchShow"></i>
-          <span class="span-icon"
-                @click="callOut">@</span>
+          <div class="span-icon">
+            <el-button type="text"
+                       style="font-size: 22px;"
+                       icon="el-icon-search"
+                       @click="searchShow"></el-button>
+            <el-button type="text"
+                       style="font-size: 20px;"
+                       @click="callOut">@</el-button>
+          </div>
           <textarea class="contentText-textarea"
                     autofocus
                     placeholder="请输入内容"
@@ -153,11 +158,8 @@ export default {
     }
   },
   mounted () {
-    // let that = this
-    // window.historyClick = function historyClick () {
-    //   console.log('2222222222222222222222222222222222');
-    //   that.visibleFeedback = true
-    // }
+    // 因原生onclick事件this指向问题无法调用vue事件，将方法挂在win上面，onclick找不到则会去win上面找
+    window.historyClick = this.historyClick.bind(this)
     if (this.user) {
       this.entityId = this.user.entityId
       this.contentText = this.user.contentText
@@ -325,8 +327,11 @@ export default {
         el.scrollTop = el.scrollHeight;
       }
     },
-    historyClick1 (id) {
-      console.log('2222222222222222222222222222222222');
+    historyClick (id) {
+      let arr = [{
+        ID: id
+      }]
+      this.selsectRows = arr
       this.visibleFeedback = true
     },
     visibleMsgClose () {
@@ -469,7 +474,8 @@ export default {
   margin-bottom: 20px;
 }
 .span-icon {
-  font-size: 20px;
+  display: flex;
+  align-items: flex-start;
   color: #606592;
 }
 </style>
