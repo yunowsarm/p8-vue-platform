@@ -11,7 +11,9 @@
                ref="loginLogo"></div>
         </div>
         <div class="sysName">
-          <span v-if="sidebarState.width == '180px'">{{ systemName }}</span>
+          <el-tooltip effect="dark" :content="systemName" placement="right">
+            <span v-if="sidebarState.width == '180px'">{{ systemName }}</span>
+          </el-tooltip>
         </div>
       </div>
       <el-menu mode="vertical"
