@@ -189,14 +189,14 @@ export function getAnalysisGantt(ganttName, vueThis) {
       name: 'achievements',
       label: '绩效',
       align: 'center',
-      width: 70,
+      width: 90,
       resize: true
     },
     {
       name: 'proportion',
       label: '比例',
       align: 'center',
-      width: 70,
+      width: 90,
       resize: true,
       template: function (task) {
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.proportion) {

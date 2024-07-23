@@ -542,17 +542,17 @@ export function getGanttColumns(ganttObject, vueThis) {
     {
       name: 'achievements',
       label: '绩效' + (checkEdit() ? canEditIcon : ''),
-      align: 'left',
+      align: 'center',
       resize: true,
-      min_width: 150,
+      min_width: 90,
       editor: checkEdit() ? editors.achievements : null
     },
     {
       name: 'proportion',
       label: '比例' + (checkEdit() ? canEditIcon : ''),
-      align: 'left',
+      align: 'center',
       resize: true,
-      min_width: 90,
+      min_width: 70,
       editor: checkEdit() ? editors.proportion : null,
       template: function (task) {
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.proportion) {

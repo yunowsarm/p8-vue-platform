@@ -138,14 +138,14 @@ export function getChangeGantt(ganttName, vueThis) {
     {
       name: 'achievements',
       label: '绩效',
-      align: 'left',
+      align: 'center',
       resize: true,
-      min_width: 150
+      min_width: 90
     },
     {
       name: 'proportion',
       label: '比例',
-      align: 'left',
+      align: 'center',
       resize: true,
       min_width: 90,
       template: function (task) {
