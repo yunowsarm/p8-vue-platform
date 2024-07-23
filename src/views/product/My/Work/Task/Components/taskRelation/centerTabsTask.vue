@@ -11,6 +11,7 @@
     </el-tab-pane>
     <el-tab-pane label="输出物">
       <form-list labelWidth="100px"
+                 class="exportList"
                  :existDefaultBtn="false"
                  ref="formExportation"
                  :dataSource="dataSourceExportation"
@@ -176,12 +177,13 @@ export default {
 }
 .taskTabs ::v-deep .el-tab-pane {
   height: 100%;
+  overflow: auto;
 }
 ::v-deep .el-tabs--top {
   height: calc(100% - 10px) !important;
 }
-::v-deep .el-form-item ::v-deep .el-form-item__content {
-  margin-left: 0;
+::v-deep .exportList.el-form > .el-row .el-form-item__content {
+  margin-left: 0 !important;
 }
 .taskTabs ::v-deep .el-tabs__nav-wrap {
   background-color: #f5f7fa;

@@ -265,12 +265,13 @@ export default {
     initData () {
       const _this = this
       const taskId = _this.getPlanInfo().TASKID
+      // 输出
       const requestApi = 'taskManager.getOutputRequire'
 
       const outputApi = 'taskManager.getOutputIo'
       // 输入
       const inputRequestApi = 'taskManager.getInputRequire'
-      // 输出
+
       const inputApi = 'taskManager.getInputIo'
       // 任务描述
       const descApi = 'taskManager.getActivityDescription'

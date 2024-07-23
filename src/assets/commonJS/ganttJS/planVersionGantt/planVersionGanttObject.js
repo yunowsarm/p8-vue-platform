@@ -81,13 +81,13 @@ function getPlanColumn(type, ganttObject, vueThis) {
         return code
       }
     },
-    {
-      name: 'taskCode',
-      label: '任务编号',
-      align: 'left',
-      resize: true,
-      min_width: 90
-    },
+    // {
+    //   name: 'taskCode',
+    //   label: '任务编号',
+    //   align: 'left',
+    //   resize: true,
+    //   min_width: 90
+    // },
     {
       name: 'name',
       label: '任务名称',
