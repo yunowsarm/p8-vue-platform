@@ -389,14 +389,14 @@ export default {
             type: 'success',
             message: '成功'
           })
-          _this.$bus.$emit('refresh')
           _this.setMessage(formData)
+          this.getDeviatuon()
+          _this.$bus.$emit('refresh')
         }
         // this.formData.leaf = false
       })
     },
     setMessage (formData) {
-      console.log(this.tabsName, 'rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
       formData.planName = this.getPlanInfo().PLANNAME
       formData.name = this.getPlanInfo().NAME
       formData.taskId = this.getPlanInfo().taskId
@@ -411,13 +411,15 @@ export default {
           entityType: 'project',
           taskRequest: formData,
         };
-        console.log("11111111111111111111111", params)
-        window.myWebSocket.emit('taskCommitByData', params)
+        if (window.myWebSocket) {
+          window.myWebSocket.emit('taskCommitByData', params)
+        }
         if (formData.deviationType) {
           formData.type = '2'
           params.taskRequest = formData
-          console.log("22222222222222222222222222222222", params)
-          window.myWebSocket.emit('taskCommitByData', params)
+          if (window.myWebSocket) {
+            window.myWebSocket.emit('taskCommitByData', params)
+          }
         };
       }
       // if (this.tabsName === 'unfinishedCause') {

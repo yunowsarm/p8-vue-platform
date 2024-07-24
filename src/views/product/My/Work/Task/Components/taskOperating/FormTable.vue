@@ -184,12 +184,12 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="解决方案"
-                              placeholder="请输入解决方案">
+                <el-form-item label="解决方案">
                   <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.solutions }}</span>
                   <el-input v-else
                             v-model="formData.solutions"
                             maxlength="200"
+                            placeholder="请输入解决方案"
                             show-word-limit></el-input>
                 </el-form-item>
               </el-col>
