@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "7326874",
+      "name": "沟通管理",
+      "font_class": "shejigoutong",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
       "icon_id": "1368560",
       "name": "历史",
       "font_class": "history",

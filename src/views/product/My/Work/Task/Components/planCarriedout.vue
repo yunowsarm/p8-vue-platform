@@ -1,16 +1,15 @@
 <template>
   <div>
-    <div class="msg-box">
+    <div class="hidden-content"
+         @click="open">
       <el-badge v-if="messageCount > 0"
                 :value="messageCount"
                 :max="99"
                 class="itemNum">
-        <i class="el-icon-chat-dot-square iconClass"
-           @click="open"></i>
+        <i class="p8 icon-shejigoutong iconClass"></i>
       </el-badge>
       <i v-else
-         class="el-icon-chat-dot-square iconClass"
-         @click="open"></i>
+         class="p8 icon-shejigoutong iconClass"></i>
     </div>
     <communication-msg v-if="isVisibleCommunicationDrawer"
                        :thirdMenuParam="thirdMenuParam"
@@ -181,5 +180,28 @@ div.task-operating-con {
 div.task-info-related-con {
   height: 100%;
   background-color: #ffffff;
+}
+.hidden-content {
+  display: block;
+  position: absolute;
+  top: 90%;
+  right: 0;
+  transform: translateX(-50%);
+  background-color: #0050b3;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border: 1px solid #ccc;
+  z-index: 10;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  color: white;
+}
+.iconClass {
+  display: block;
+  margin-top: 5px;
+  text-align: center;
+  font-size: 23px;
 }
 </style>

@@ -25,13 +25,13 @@
                       :max="99"
                       class="itemNum">
               <el-tooltip content="沟通消息">
-                <i class="el-icon-chat-dot-square"
+                <i class="p8 icon-shejigoutong"
                    @click="informationDrawer = true"></i>
               </el-tooltip>
             </el-badge>
             <el-tooltip v-else
                         content="沟通消息">
-              <i class="el-icon-chat-dot-square"
+              <i class="p8 icon-shejigoutong"
                  @click="informationDrawer = true"></i>
             </el-tooltip>
           </span>

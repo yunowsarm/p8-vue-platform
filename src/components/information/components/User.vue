@@ -48,6 +48,7 @@ export default {
 <style scoped>
 .selected {
   background-color: #1890ff;
+  color: #ffffff;
 }
 
 .user {

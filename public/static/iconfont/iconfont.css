@@ -1,8 +1,8 @@
 @font-face {
   font-family: "p8"; /* Project id 4084759 */
-  src: url('iconfont.woff2?t=1721118888164') format('woff2'),
-       url('iconfont.woff?t=1721118888164') format('woff'),
-       url('iconfont.ttf?t=1721118888164') format('truetype');
+  src: url('iconfont.woff2?t=1721786187747') format('woff2'),
+       url('iconfont.woff?t=1721786187747') format('woff'),
+       url('iconfont.ttf?t=1721786187747') format('truetype');
 }
 
 .p8 {
@@ -11,6 +11,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-shejigoutong:before {
+  content: "\e620";
 }
 
 .icon-history:before {
