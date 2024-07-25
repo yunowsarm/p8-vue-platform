@@ -229,12 +229,14 @@ export default {
       that.formData.autoScheduling = task.autoScheduling
       that.formData.duration = task.duration
       that.formData.achievements = task.achievements
-      let parts = task.proportion.toString().split('.')
-      var fraction = parts.length === 1 ? '' : parts[1];
-      if (2 > fraction.length) {
+      if (task.proportion) {
+        let parts = task.proportion && task.proportion.toString().split('.')
+        var fraction = parts.length === 1 ? '' : parts[1];
+        if (2 > fraction.length) {
           fraction += new Array(2 - fraction.length + 1).join('0');
+        }
+        that.formData.proportion = parts[0] + '.' + fraction + '%'
       }
-      that.formData.proportion = parts[0] + '.' + fraction + '%'
       that.formData.planType = task.planType
       that.formData.forecastBeginDate = moment(task.forecastBeginDate).format('YYYY-MM-DD')
       that.formData.forecastEndDate = moment(task.forecastEndDate).format('YYYY-MM-DD')
