@@ -168,10 +168,19 @@ export default {
     //   }
     // },
     userChangeHandle (val) {
+      const ganttObject = GanttObject.getGanttObject(this.ganttName)
+      let task = ganttObject.getTask(this.taskId)
       if (val === '2' && !this.taskId) {
         this.$message({
           type: 'warning',
           message: '当前无选中任务！'
+        })
+        this.formData.type = ''
+      }
+      if (val === '2' && this.taskId && !task.owner_id) {
+        this.$message({
+          type: 'warning',
+          message: '当前任务未选择责任人！'
         })
         this.formData.type = ''
       }
