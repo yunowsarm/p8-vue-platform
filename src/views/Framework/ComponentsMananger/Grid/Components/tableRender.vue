@@ -1947,7 +1947,10 @@ export default {
     },
     // 导出
     exportExcel (row, btn) {
-      const obj = JSON.parse(row.eventParams)
+      let obj
+      if (row.eventParams) {
+        obj = JSON.parse(row.eventParams)
+      }
       const exportObj = {
         fileName: obj ? obj.customJson.NAME : this.$route.meta.title, // 导出的名称
         columnConfigs: this.columns // 导出的列
