@@ -688,9 +688,10 @@ export default {
     deleteRolesHandle (index) {
       // this.generalRoles.splice(index, 1)
       // this.tableData = []
+      let idx = index >= 1 ? index - 1 : 0
       this.rolesSelectedIndex = index - 1
       this.generalRoles.splice(index - this.fixedRoles.length, 1)
-      this.tableData = this.rolesData[index - 1].projectTeamRoleUsers ? this.rolesData[index - 1].projectTeamRoleUsers : []
+      this.tableData = this.rolesData[idx].projectTeamRoleUsers ? this.rolesData[idx].projectTeamRoleUsers : []
       this.rolesData.splice(index, 1)
       this.isDelete = true
     },
