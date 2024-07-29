@@ -3,7 +3,7 @@
 const defaultServiceAddr = window.location.origin
 // eslint-disable-next-line no-unused-vars
 const CONFIG = {
-  devBaseUrl: 'http://192.168.0.25:9999', // 第一次执行参考以上备注
+  devBaseUrl: 'http://192.168.0.225:9999', // 第一次执行参考以上备注
   // devBaseUrl: 'http://localhost:9090', // 第一次执行参考以上备注
   prodBaseUrl: defaultServiceAddr // 自动获取浏览器地址栏地址作为后端访问地址，适应于前端程序部署在后端的Web服务器容器内的模式，如果分离部署模式，请修改为后台访问地址。
 }
@@ -18,5 +18,5 @@ const loginCa = false
 const CHECK_PRODUCTION_ERROR_TIP = false
 
 // socket连接地址
-const SOCKET_URL = 'http://192.168.0.25:8888'
+const SOCKET_URL = 'http://192.168.0.225:8888'
 const SOCKET_PORT = '8888'
