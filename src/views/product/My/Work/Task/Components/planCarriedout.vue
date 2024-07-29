@@ -2,8 +2,8 @@
   <div>
     <div class="hidden-content"
          @click="open">
-      <el-badge v-if="messageCount > 0"
-                :value="messageCount"
+      <el-badge v-if="taskMessageCount > 0"
+                :value="taskMessageCount"
                 :max="99"
                 class="itemNum">
         <i class="p8 icon-shejigoutong iconClass"></i>
@@ -96,7 +96,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['messageCount']),
+    ...mapGetters(['taskMessageCount']),
   },
   mounted () {
     this.reload()
@@ -104,15 +104,15 @@ export default {
   },
   methods: {
     getMsgTotal () {
-      this.$api['documentManagement.getWebsocketGroupAll']({ entityName: this.projectName }).then(res => {
+      this.$api['documentManagement.getWebsocketGroupAll']({ entityId: this.thirdMenuParam.WHOLEDESCRIBEID }).then(res => {
         if (res.length > 0) {
           let count = 0
           res.forEach(item => {
-            count = count + item.messageCount
+            count = count + item.taskMessageCount
           })
-          this.$store.dispatch('setMessageCount', count)
+          this.$store.dispatch('setTasketMessageCount', count)
         } else {
-          this.$store.dispatch('setMessageCount', 0)
+          this.$store.dispatch('setTasketMessageCount', 0)
         }
       })
     },

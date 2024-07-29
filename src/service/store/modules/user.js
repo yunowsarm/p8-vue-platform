@@ -40,7 +40,8 @@ const user = {
     },
     messageInfo: [], // 用户消息信息
     messageNum: [], // 用户消息已读未读条数
-    messageCount: 0 // 沟通消息未读条数
+    messageCount: 0, // 沟通消息未读条数
+    taskMessageCount: 0
   },
 
   mutations: {
@@ -108,12 +109,18 @@ const user = {
     },
     SET_MESSAGECOUNT(state, data) {
       state.messageCount = data
+    },
+    SET_TASK_MESSAGECOUNT(state, data) {
+      state.taskMessageCount = data
     }
   },
 
   actions: {
     setMessageCount({ commit }, data) {
       commit('SET_MESSAGECOUNT', data)
+    },
+    setTasketMessageCount({ commit }, data) {
+      commit('SET_TASK_MESSAGECOUNT', data)
     },
     /**
      * 用户登录

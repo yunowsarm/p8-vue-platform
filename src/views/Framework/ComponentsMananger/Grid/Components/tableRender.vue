@@ -204,6 +204,7 @@
                      :title="customComponentParams.title"
                      :visible="customVisible"
                      destroy-on-close
+                     :dialog-height="dialogHeight"
                      :width="customComponentParams.width"
                      @close="customClose"
                      :show-handle-btn="false"
@@ -563,7 +564,8 @@ export default {
       sysParams: Object.assign({ $SYSTEM_PARAMS_SELECT: _cloneDeep(this.$store.state.user.userInfo) }), // 系统级参数
       currentRouterPath: '',
       searchForm: {},
-      headerVisibleType: this.headerVisible
+      headerVisibleType: this.headerVisible,
+      dialogHeight: document.documentElement.clientHeight - 400
     }
   },
   created () {

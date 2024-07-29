@@ -315,12 +315,13 @@
             </el-row>
           </div>
         </el-form>
-        <el-button class="collapseBtn"
-                   type="text"
-                   @click="onDrawerOpen()">查看历史反馈</el-button>
+
       </div>
     </div>
     <div class="submit">
+      <el-button class="collapseBtn"
+                 type="primary"
+                 @click="onDrawerOpen()">查看历史反馈</el-button>
       <el-button type="primary"
                  @click="submit('progress')"
                  :disabled='buttonDisabled'
@@ -778,9 +779,6 @@ div.form-table-wrap {
     line-height: 50px;
     padding-right: 20px;
     text-align: right;
-  }
-  .collapseBtn {
-    margin-left: 85%;
   }
   ::v-deep .el-input--mini {
     width: 100% !important;

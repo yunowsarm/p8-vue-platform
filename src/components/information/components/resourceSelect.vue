@@ -124,7 +124,7 @@ export default {
       tableSelectValue: [],
       comp: this,
       title: '选择人员',
-      dialogWidth: '30%',
+      dialogWidth: '50%',
       dialogHeight: 500,
       tableV: false,
       dialogConfig: {
