@@ -34,14 +34,10 @@
 
 <script>
 import { P8Form, P8SelectUser as SelectUser } from 'p8-components-ui'
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
 
-import { quillEditor } from 'vue-quill-editor'
 export default {
   name: 'NoticeMsg',
-  components: { P8Form, quillEditor, SelectUser },
+  components: { P8Form, SelectUser },
   props: {
     row: {
       type: Array
@@ -115,9 +111,6 @@ export default {
 <style scoped lang="scss">
 .form {
   height: 100%;
-}
-.quill_editor {
-  height: 400px;
 }
 .userList {
   background: #ffffff;

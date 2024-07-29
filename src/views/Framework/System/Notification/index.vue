@@ -36,10 +36,7 @@
         </div>
       </template>
       <template #message>
-        <quill-editor class="quill_editor"
-                      v-model="formData.content"
-                      ref="myQuillEditor"
-                      :options="editorOption"> </quill-editor>
+        <P8Tinymce v-model="formData.content" :editorConfig="{height: '400px'}" />
       </template>
       <template #customBtn>
         <el-button size="mini"
@@ -54,15 +51,11 @@
 </template>
 
 <script>
-import { P8Form, P8SelectUser as SelectUser } from 'p8-components-ui'
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
+import { P8Form, P8SelectUser as SelectUser, P8Tinymce } from 'p8-components-ui'
 
-import { quillEditor } from 'vue-quill-editor'
 export default {
   name: 'NoticeMsg',
-  components: { P8Form, quillEditor, SelectUser },
+  components: { P8Form, SelectUser, P8Tinymce },
   props: {
     // planInfoId: {
     //   type: String,
@@ -185,9 +178,6 @@ export default {
 <style scoped lang="scss">
 .form {
   height: 100%;
-}
-.quill_editor {
-  height: 400px;
 }
 .userList {
   background: #ffffff;

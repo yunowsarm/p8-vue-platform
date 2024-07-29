@@ -11,10 +11,7 @@
             @saved="saved"
             :form="formData">
       <template #message>
-        <quill-editor class="quill_editor"
-                      v-model="formData.content"
-                      ref="myQuillEditor"
-                      :options="editorOption"> </quill-editor>
+        <P8Tinymce v-model="formData.content" :editorConfig="{height: '400px'}" />
       </template>
       <template #customBtn>
         <el-button size="mini"
@@ -28,16 +25,12 @@
 </template>
 
 <script>
-import { P8Form } from 'p8-components-ui'
+import { P8Form, P8Tinymce } from 'p8-components-ui'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
 
-import { quillEditor } from 'vue-quill-editor'
 export default {
   name: 'NoticeMsg',
-  components: { P8Form, quillEditor },
+  components: { P8Form, P8Tinymce },
   props: {
     planInfoId: {
       type: String,
@@ -131,33 +124,8 @@ export default {
     // this.taskSecretLevel = task.secretGrade
   },
   mounted() {
-    const toolbar = this.$refs.myQuillEditor.quill.getModule('toolbar');
-    toolbar.addHandler('image', this.imageHandler);
   },
   methods: {
-    imageHandler() {
-      const input = document.createElement('input');
-      input.setAttribute('type', 'file');
-      input.setAttribute('accept', 'image/*');
-      input.click();
-
-      input.onchange = () => {
-        const file = input.files[0];
-        const maxSize = 5 * 1024 * 1024; // 5 MB
-
-        if (file.size > maxSize) {
-          alert('图片大小不能超过 5 MB.');
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const range = this.$refs.myQuillEditor.quill.getSelection();
-          this.$refs.myQuillEditor.quill.insertEmbed(range.index, 'image', e.target.result);
-        };
-        reader.readAsDataURL(file);
-      };
-    },
     // secretLevelChangeHandle(val) {
     //   if (val > this.taskSecretLevel) {
     //     this.$message({
@@ -203,8 +171,5 @@ export default {
 <style scoped lang="scss">
 .form {
   height: 100%;
-}
-.quill_editor {
-  height: 400px;
 }
 </style>

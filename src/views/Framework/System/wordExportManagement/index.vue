@@ -5,11 +5,7 @@
         <common-button :comp="comp" :customButtonData="customButtonData"></common-button>
       </template>
       <template #center>
-        <editor
-          api-key="no-api-key"
-          :init="editorInit"
-          v-model="editorContent"
-        />
+        <P8Tinymce v-model="editorContent" :editorConfig="editorInit" />
       </template>
     </list-layout>
     <ViewRender :visible="visible" :editorContent="vueTemplateContent"
@@ -22,34 +18,9 @@ import {
   P8Button as CommonButton,
   P8ListLayout as ListLayout,
   P8SplitPane as SplitPane,
+  P8Tinymce
 } from 'p8-components-ui'
 import ViewRender from './components/ViewRender'
-
-import tinymce from 'tinymce/tinymce' //tinymce默认hidden，
-import Editor from '@tinymce/tinymce-vue' //编辑器引入
-import 'tinymce/themes/silver/theme' //编辑器主题
-import 'tinymce/icons/default' //引入编辑器图标icon
-
-/* Import plugins */
-import 'tinymce/plugins/anchor'
-import 'tinymce/plugins/image'
-import 'tinymce/plugins/advlist';
-import 'tinymce/plugins/code';
-import 'tinymce/plugins/emoticons';
-import 'tinymce/plugins/emoticons/js/emojis';
-import 'tinymce/plugins/link';
-import 'tinymce/plugins/lists';
-import 'tinymce/plugins/table';
-import 'tinymce/plugins/image';
-import 'tinymce/plugins/template';
-import 'tinymce/plugins/textcolor';
-import 'tinymce/plugins/paste';
-import 'tinymce/plugins/preview';
-import 'tinymce/plugins/noneditable';
-
-import '@npkg/tinymce-plugins/'
-
-import '@/assets/tinymce_languages/langs/zh_CN.js'
 
 export default {
   name: 'richEditor',
@@ -58,7 +29,7 @@ export default {
     ListLayout,
     CommonButton,
     SplitPane,
-    'editor': Editor
+    P8Tinymce
   },
   data() {
     return {
@@ -79,14 +50,6 @@ export default {
       },
       editorInit: {
         height: '100%',
-        menubar: true,
-        branding: false,
-        language: 'zh_CN',//注意大小写
-        plugins: ['anchor, image, lists, advlist, table, template, preview, layout, code, noneditable'],
-        toolbar:
-          'undo redo | formatselect | bold italic backcolor | \
-          alignleft aligncenter alignright alignjustify | layout | \
-          bullist numlist outdent indent | removeformat | image  table  template code anchor | preview | help',
         table_icons: {// 以下下为默认配置
           'align-right-table': '<svg width="24" height="24"><path d="M5 5h14c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 1 1 0-2zm6 4h8c.6 0 1 .4 1 1s-.4 1-1 1h-8a1 1 0 0 1 0-2zm0 8h8c.6 0 1 .4 1 1s-.4 1-1 1h-8a1 1 0 0 1 0-2zm-6-4h14c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 0 1 0-2z" fill-rule="evenodd"></path></svg>',
           'align-left-table': '<svg width="24" height="24"><path d="M5 5h14c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 1 1 0-2zm0 4h8c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 1 1 0-2zm0 8h8c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 0 1 0-2zm0-4h14c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 0 1 0-2z" fill-rule="evenodd"></path></svg>',
@@ -104,8 +67,6 @@ export default {
             url: '/static/tinymce-template/vue-template.html'
           }
         ],
-        skin: false,
-        content_css: false,
         extended_valid_elements: 'div[*],tr[*]'
       },
       vueTemplateContent: "",
