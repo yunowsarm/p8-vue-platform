@@ -1,45 +1,41 @@
 <template>
   <div style="height: 100%">
-    <div class="couerDivClass"
-         id="couerDiv">
-      <div class="top"
-           :style="{ height: commandButtonBarHeight }">
-        <command-button-bar :panel-data="btnData"
-                            :selected-tasks="selectedTasks"
-                            :gantt-name="ganttName"
-                            :plan-info-id="planInfoId"
-                            :special-plan="thirdMenuParam.specialPlan"
-                            :task-id="taskId"
-                            @change-command-button="changeCommandButton"></command-button-bar>
-      </div>
-      <div class="bottom"
-           :class="expandBottom">
-        <plan-gantt :plan-info-id="planInfoId"
-                    :whole-describe-id="wholeDescribeId"
-                    :plan-info-status="planInfoStatus"
-                    :task-id="taskId"
-                    :plan-end-date-array="planEndDateArray"
-                    :plan-begin-date-array="planBeginDateArray"
-                    :create-page="createPage"
-                    :flag="thirdMenuParam.specialPlan"
-                    :project-category="thirdMenuParam.projectCategory"
-                    :select-record="thirdMenuParam.selectRecord"
-                    :panel-data="btnData"
-                    @select-task="selectTask"
-                    @show-detail="showDetail"
-                    @save-success="detailDrawerClosed"
-                    :task-status="taskStatus"></plan-gantt>
-      </div>
-    </div>
-    <CommonDrawer
-      v-if="detailVisible"
-      :visible="detailVisible"
-      size="50%"
-      placement="top"
-      :title="detailTitle"
-      @close="detailDrawerClosed">
-      <template #drawer>
-        <plan-attribute @save-success="detailDrawerClosed"
+    <P8SplitPane split='vertical' @resize="paneSizeChange" :defaultPercent="defaultPercent" :minPercent='0'>
+      <template #paneL>
+        <div class="couerDivClass"
+            id="couerDiv">
+          <div class="top"
+              :style="{ height: commandButtonBarHeight }">
+            <command-button-bar :panel-data="btnData"
+                                :selected-tasks="selectedTasks"
+                                :gantt-name="ganttName"
+                                :plan-info-id="planInfoId"
+                                :special-plan="thirdMenuParam.specialPlan"
+                                :task-id="taskId"
+                                @change-command-button="changeCommandButton"></command-button-bar>
+          </div>
+          <div class="bottom"
+              :class="expandBottom">
+            <plan-gantt :plan-info-id="planInfoId"
+                        :whole-describe-id="wholeDescribeId"
+                        :plan-info-status="planInfoStatus"
+                        :task-id="taskId"
+                        :plan-end-date-array="planEndDateArray"
+                        :plan-begin-date-array="planBeginDateArray"
+                        :create-page="createPage"
+                        :flag="thirdMenuParam.specialPlan"
+                        :project-category="thirdMenuParam.projectCategory"
+                        :select-record="thirdMenuParam.selectRecord"
+                        :panel-data="btnData"
+                        @select-task="selectTask"
+                        @show-detail="showDetail"
+                        @save-success="detailDrawerClosed"
+                        :task-status="taskStatus"></plan-gantt>
+          </div>
+        </div>
+      </template>
+      <template #paneR>
+        <plan-attribute :key="renderKey" @save-success="detailDrawerClosed"
                         :create-page="createPage"
                         :task-id="selectTaskId"
                         :att-read-only="readOnly"
@@ -48,7 +44,17 @@
                         :status="status"
                         :plan-info-id="planInfoId"></plan-attribute>
       </template>
-    </CommonDrawer>
+    </P8SplitPane>
+    <!-- <CommonDrawer
+      v-if="detailVisible"
+      :visible="detailVisible"
+      size="50%"
+      placement="top"
+      :title="detailTitle"
+      @close="detailDrawerClosed">
+      <template #drawer>
+      </template>
+    </CommonDrawer> -->
   </div>
 </template>
 
@@ -99,7 +105,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import PlanGantt from './Components/planGantt'
-import { Drawer, P8Drawer as CommonDrawer, } from 'p8-components-ui'
+import { Drawer, P8Drawer as CommonDrawer, P8SplitPane } from 'p8-components-ui'
 // import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/commandButtonBarData'
 import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataDoubleRow'
 import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/commandButtonBarDataSingleRow'
@@ -121,6 +127,9 @@ export default {
       drawerConfig: {
         modal: false
       },
+      renderKey: new Date().getTime(),
+      defaultPercent: 100,
+      firstEntry: true,
       msg: {},
       viewType: '',
       planInfoId: '',
@@ -209,12 +218,15 @@ export default {
   components: {
     'el-drawer': Drawer,
     PlanGantt,
+    P8SplitPane,
     PlanAttribute,
     CommonDrawer,
     CommandButtonBar
   },
   beforeMount () { },
-  created () { },
+  created () {
+    this.firstEntry = true
+  },
   mounted () {
     if (this.thirdMenuParam.createPage === 'decompose' || this.thirdMenuParam.route === '/MyTask/MyTask/latest') {
       this.planInfoId = this.thirdMenuParam.PLANINFOID
@@ -252,7 +264,11 @@ export default {
       this.advanced = !this.advanced
     },
     tabBarExtraContent () { },
-    showDetail (selectTask, ganttName, viewType) {
+    showDetail (selectTask, ganttName, viewType, switchType) {
+      // defaultPercent指的是gannt的宽度
+      // 首次进入，单机任务且未拖动详情时，不弹出
+      if (this.firstEntry && switchType == 'switch' && this.defaultPercent == 100) return
+      this.renderKey = new Date().getTime()
       this.detailVisible = true
       this.$bus.$emit('ganttDetail', true)
       this.ganttName = ganttName
@@ -260,6 +276,19 @@ export default {
       this.status = selectTask.status
       this.detailTitle = selectTask.name
       this.viewType = viewType
+      if (switchType == 'switch' && this.defaultPercent == 100) {
+        // 单机任务，且详情未打开情况下，展开到40%
+        this.defaultPercent = 60
+      } else if (switchType == 'switch' && this.defaultPercent != 100) {
+
+      }
+      if (switchType != 'switch') {
+        this.defaultPercent = this.defaultPercent > 70 ? 70 : this.defaultPercent
+        this.firstEntry = false
+      }
+    },
+    paneSizeChange (val) {
+      this.defaultPercent = val
     },
     detailDrawerClosed (res) {
       this.detailVisible = false

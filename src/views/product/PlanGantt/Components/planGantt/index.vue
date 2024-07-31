@@ -763,9 +763,7 @@ export default {
         this.selectTaskName = ''
       }
       this.selectTaskCount = newVal.length
-      if (newVal !== oldVal) {
-        this.callParentSelectTasks()
-      }
+      this.callParentSelectTasks()
     },
     planInfoId: function (newVal, oldVal) {
       if (newVal) {
@@ -1259,7 +1257,10 @@ export default {
       }
     },
     callParentSelectTasks () {
-      this.$emit('select-task', this.selectedTasks, this.ganttName)
+      this.$nextTick(() => {
+        this.$emit('select-task', this.selectedTasks, this.ganttName)
+        this.showDetail('switch')
+      })
     },
     mouseMove (e) {
       if (this.menuVisible) {
@@ -1268,15 +1269,15 @@ export default {
         }
       }
     },
-    showDetail () {
+    showDetail (type) {
       if (myGantt.getGlobalTaskIndex(this.selectTaskId) === 0) return
       // 如果是任务分解，非当前人员创建的，只能编辑责任人
       const userId = this.$store.getters.userInfo.id
       const task = myGantt.getTask(this.selectTaskId)
       if (this.createPage === 'decompose' && task.createUserId && task.createUserId != userId) {
-        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, 'view')
+        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, 'view', type)
       } else {
-        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName)
+        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, '', type)
       }
     },
     activityImportClosed () {
