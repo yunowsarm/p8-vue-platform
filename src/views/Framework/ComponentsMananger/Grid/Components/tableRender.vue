@@ -87,6 +87,7 @@
                         :flex="flex"
                         row-key="ID"
                         :seach-type="seachType"
+                        :selectRows="selectRows"
                         :show-search-row="showSearchRow"
                         :is-smart-form="true"
                         :table-config="tableConfig"
@@ -118,6 +119,7 @@
                           :columns="columns"
                           :params="tableParam"
                           :row-config="rowConfig"
+                          :selectRows="selectRows"
                           :table-config="tableConfig"
                           :tree-config="treeConfig"
                           :checkbox-config="checkboxConfig"
@@ -435,6 +437,10 @@ export default {
     pageType: {
       type: String,
       default: ''
+    },
+    selectRows: {
+      type: Array,
+      default: () => [],
     }
   },
   inject: {

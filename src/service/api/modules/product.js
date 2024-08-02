@@ -1619,5 +1619,42 @@ export const repositoryApi = {
       mockPath: '/assessment/assessment/getResult',
       desc: '计划考核-查询月状态'
     }
+  ],
+  demandManagement: [
+    {
+      name: 'saveRequirement',
+      method: 'POST',
+      path: '/requirement/saveRequirement',
+      mockPath: '/requirement/saveRequirement',
+      desc: '需求管理-保存'
+    },
+    {
+      name: 'viewRequirement',
+      method: 'POST',
+      path: '/requirement/viewRequirement',
+      mockPath: '/requirement/viewRequirement',
+      desc: '需求管理-查看'
+    },
+    {
+      name: 'getTaskList',
+      method: 'POST',
+      path: '/requirement/getTaskList',
+      mockPath: '/requirement/getTaskList',
+      desc: '计划列表'
+    },
+    {
+      name: 'getRequirementList',
+      method: 'POST',
+      path: '/requirement/getRequirementList',
+      mockPath: '/requirement/getRequirementList',
+      desc: '需求管理列表'
+    },
+    {
+      name: 'saveRequirementByTask',
+      method: 'POST',
+      path: '/requirement/saveRequirementByTask',
+      mockPath: '/requirement/saveRequirementByTask',
+      desc: '关联'
+    }
   ]
 }

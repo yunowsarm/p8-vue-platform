@@ -132,7 +132,7 @@
           <div v-if="formType.constType === 'Progress'"
                class="progress">
             <!-- 已超期添加未说明原因 -->
-            <el-row v-if="exceedType">
+            <el-row v-if="exceedType && !approve">
               <el-col :span="24">
                 <el-form-item label="未完成原因分类"
                               prop="deviationType">
@@ -149,7 +149,7 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row v-if="exceedType">
+            <el-row v-if="exceedType && !approve">
               <el-col :span="12">
                 <el-form-item label="未完成原因"
                               prop="deviationCauses">
@@ -172,7 +172,7 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row v-if="exceedType">
+            <el-row v-if="exceedType && !approve">
               <el-col :span="12">
                 <el-form-item label="进展情况">
                   <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationProgress }}</span>
@@ -318,10 +318,10 @@
 
       </div>
     </div>
+    <el-button class="collapseBtn"
+               type="text"
+               @click="onDrawerOpen()">查看历史反馈</el-button>
     <div class="submit">
-      <el-button class="collapseBtn"
-                 type="primary"
-                 @click="onDrawerOpen()">查看历史反馈</el-button>
       <el-button type="primary"
                  @click="submit('progress')"
                  :disabled='buttonDisabled'
@@ -794,5 +794,8 @@ div.form-table-wrap {
 }
 .el-input-number--mini {
   width: 100%;
+}
+.collapseBtn {
+  margin-left: 85%;
 }
 </style>

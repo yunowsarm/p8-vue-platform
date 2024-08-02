@@ -140,6 +140,16 @@ const CommandButtonBarData = [
             position: ['top', 'right']
           }
         ]
+      },
+      {
+        groupName: '需求管理',
+        buttonConfigs: [
+          {
+            buttonId: 'demand-management',
+            size: 'large',
+            position: ['top', 'right']
+          }
+        ]
       }
     ]
   },

@@ -528,6 +528,21 @@ export default {
       this.isWarnApprove = isWarnApprove
     },
     handleSubmit (e) {
+      if (this.$refs.approveContent.formType && this.$refs.approveContent.formType === '1' &&
+        (!this.$refs.approveContent.formData.requirementAnalyst ||
+          !this.$refs.approveContent.formData.requirementTime)) {
+        return this.$message({ message: '请先保存表单数据', type: 'warning' })
+      }
+      if (this.$refs.approveContent.formType && this.$refs.approveContent.formType === '2' &&
+        (
+          !this.$refs.approveContent.formData.priority ||
+          !this.$refs.approveContent.formData.demandLevel ||
+          !this.$refs.approveContent.formData.preliminaryVerification ||
+          !this.$refs.approveContent.formData.timeWindow ||
+          !this.$refs.approveContent.formData.handlingSuggestions ||
+          !this.$refs.approveContent.formData.processingTeam)) {
+        return this.$message({ message: '请先保存表单数据', type: 'warning' })
+      }
       if (!this.formData.approvalResult) {
         this.$message({ message: '请选择审批结果', type: 'warning' })
         return

@@ -79,10 +79,13 @@
       <div style="width: 50%">
         <span style="float: right; margin-right: 40px">合计 {{ taskCount }} 条</span>
         <span style="float: right; margin-right: 40px">已选中 {{ selectTaskCount }} 条</span>
-        <el-popover placement="top" width="200" trigger="click">
+        <el-popover placement="top"
+                    width="200"
+                    trigger="click">
           <div class="edit_gantt_user_list">
             <span v-if="webSocketDone">当前连接异常，无法查看正在编辑人员，请尝试刷新页面或联系运维人员</span>
-            <span v-else v-for="user in editUserList">{{ user.userName }}</span>
+            <span v-else
+                  v-for="user in editUserList">{{ user.userName }}</span>
           </div>
           <span slot="reference"
                 style="float: right; margin-right: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' : editUserList.length }} 人</span>
@@ -127,17 +130,15 @@
                          :task-name="selectTaskName"
                          @save-success="monitorManagerSave">
     </monitor-time-manger>
-    <resource-select
-      v-if="resourceSelectVisible"
-      :visible="resourceSelectVisible"
-      :start-task-id="startTaskId"
-      :end-task-id="endTaskId"
-      :plan-info-id="planInfoId"
-      :select-task-owner-id="selectTaskOwnerId"
-      :select-model="resourceSelectModel"
-      @closed="resourceSelectclosed"
-      @resource-selected="resourceSelected"
-    >
+    <resource-select v-if="resourceSelectVisible"
+                     :visible="resourceSelectVisible"
+                     :start-task-id="startTaskId"
+                     :end-task-id="endTaskId"
+                     :plan-info-id="planInfoId"
+                     :select-task-owner-id="selectTaskOwnerId"
+                     :select-model="resourceSelectModel"
+                     @closed="resourceSelectclosed"
+                     @resource-selected="resourceSelected">
     </resource-select>
     <grid-setting v-if="selectGridVisible"
                   :visible="selectGridVisible"
@@ -241,7 +242,9 @@
                    :is-view-cs-footer="false"
                    :dialog-height="360">
       <template #dialog>
-        <command-search :gantt-name="ganttName" :plan-info-id="planInfoId" @close="closeSearch"></command-search>
+        <command-search :gantt-name="ganttName"
+                        :plan-info-id="planInfoId"
+                        @close="closeSearch"></command-search>
       </template>
     </common-dialog>
     <common-dialog title="统计信息"
@@ -294,17 +297,41 @@
                    title="版本列表"
                    @close="versionListVisible = false">
       <template #drawer>
-        <version-list :plan-info-id="planInfoId" :main-gantt-name="ganttName"></version-list>
+        <version-list :plan-info-id="planInfoId"
+                      :main-gantt-name="ganttName"></version-list>
       </template>
     </common-drawer>
-    <common-drawer v-if="progressHistoryVisible" :visible="progressHistoryVisible" size="50%" placement="top" title="任务进度反馈" @close="progressHistoryVisible = false">
+    <common-drawer v-if="progressHistoryVisible"
+                   :visible="progressHistoryVisible"
+                   size="50%"
+                   placement="top"
+                   title="任务进度反馈"
+                   @close="progressHistoryVisible = false">
       <template #drawer>
         <ProgressHistory :task-id="selectedId" />
       </template>
     </common-drawer>
-    <common-drawer v-if="changeHistoryVisible" :visible="changeHistoryVisible" size="80%" placement="top" title="任务历史变更" @close="changeHistoryClose">
+    <common-drawer v-if="changeHistoryVisible"
+                   :visible="changeHistoryVisible"
+                   size="80%"
+                   placement="top"
+                   title="任务历史变更"
+                   @close="changeHistoryClose">
       <template #drawer>
-        <ChangeHistory :plan-info-id="planInfoId" :task-id="selectTaskId" :create-page="createPage" />
+        <ChangeHistory :plan-info-id="planInfoId"
+                       :task-id="selectTaskId"
+                       :create-page="createPage" />
+      </template>
+    </common-drawer>
+    <common-drawer v-if="relevanceVisible"
+                   :visible="relevanceVisible"
+                   size="100%"
+                   placement="top"
+                   title="关联"
+                   @close="relevanceVisible = false">
+      <template #drawer>
+        <relevance :plan-info-id="planInfoId"
+                   :main-gantt-name="ganttName"></relevance>
       </template>
     </common-drawer>
   </div>
@@ -412,6 +439,7 @@ import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLoc
 import VersionList from '../versionList'
 import ProgressHistory from '../progressHistory'
 import ChangeHistory from '../changeHistory'
+import relevance from '../relevance'
 import { version } from 'vue'
 const Mycolumns = [
   {
@@ -538,11 +566,13 @@ export default {
     CommandStatistic,
     CommonButtonBarSetting,
     VersionList,
-    VuePerfectScrollbar
+    VuePerfectScrollbar,
+    relevance
   },
   data () {
     const mh = document.documentElement.clientHeight - 300
     return {
+      relevanceVisible: false,
       createVisible: false,
       exportExperienceType: '',
       experienceBaseVisible: false,
@@ -805,8 +835,8 @@ export default {
       deep: true
     }
   },
-  created() {},
-  mounted() {
+  created () { },
+  mounted () {
     const that = this
     this.scrollBarHeight = 40 * this.menuData.length + 1 + 'px'
     window.movement = this.movement
@@ -835,12 +865,12 @@ export default {
     })
   },
   computed: {
-    editUserList() {
+    editUserList () {
       return this.onlineData.filter((item) => {
         return item.entityId == this.planInfoId && item.entityType == this.createPage
       })
     },
-    isDisable() {
+    isDisable () {
       const that = this
       return function (btnConfig) {
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
@@ -855,7 +885,7 @@ export default {
       }
     },
     noOperate () {
-      return !(this.ganttDetail || this.menuVisible || this.outPutViewVisible || this.activityImportVisible || this.noticeVisible || this.controlTimeVisible || this.resourceSelectVisible || this.selectGridVisible || this.myExperienceVisible || this.importExcel || this.importProject || this.ganttSearchVisible || this.ganttStatisticVisible || this.rightMenuConfigVisible || this.createVisible || this.experienceBaseVisible || this.versionListVisible || this.progressHistoryVisible || this.changeHistoryVisible )
+      return !(this.ganttDetail || this.menuVisible || this.outPutViewVisible || this.activityImportVisible || this.noticeVisible || this.controlTimeVisible || this.resourceSelectVisible || this.selectGridVisible || this.myExperienceVisible || this.importExcel || this.importProject || this.ganttSearchVisible || this.ganttStatisticVisible || this.rightMenuConfigVisible || this.createVisible || this.experienceBaseVisible || this.versionListVisible || this.progressHistoryVisible || this.changeHistoryVisible)
     },
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll'])
   },
@@ -1360,7 +1390,7 @@ export default {
     outPutViewClose () {
       this.outPutViewVisible = false
     },
-    resourceSelected(ownerId, row, type) {
+    resourceSelected (ownerId, row, type) {
       const that = this
       if (that.selectedTasks && that.selectedTasks.length > 0) {
         myGantt.batchUpdate(function () {
@@ -1477,7 +1507,7 @@ export default {
       this.rightMenuConfigVisible = false
     },
     //  创建版本
-    createPlanVersion() {
+    createPlanVersion () {
       let version = ''
       this.$api['planGanttManager.getVersionNum']({
         planInfoId: this.planInfoId
@@ -1514,7 +1544,7 @@ export default {
         })
       })
     },
-    showTaskProgressDialog(taskId) {
+    showTaskProgressDialog (taskId) {
       this.selectedId = taskId
       this.progressHistoryVisible = true
       this.reminderList.forEach(item => {
@@ -1523,14 +1553,14 @@ export default {
         }
       })
     },
-    showChangeHistory() {
+    showChangeHistory () {
       this.changeHistoryVisible = true
     },
-    changeHistoryClose() {
+    changeHistoryClose () {
       this.changeHistoryVisible = false
       this.$store.dispatch('setVueThis', this)
     },
-    deleteTask() {
+    deleteTask () {
       let that = this
       if (event.keyCode === 46) {
         let taskIds = myGantt.getSelectedTasks()
@@ -1545,7 +1575,7 @@ export default {
       }
     }
   },
-  destroyed() {
+  destroyed () {
     window.myWebSocket.off('planGantGroup')
     window.removeEventListener('keyup', this.deleteTask)
     this.$bus.$off('ganttDetail')
