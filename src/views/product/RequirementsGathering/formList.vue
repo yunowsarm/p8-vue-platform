@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="content"
-         :key="appIds.length">
+         :key="dataTime">
       <div class="content-box"
            v-for="(item,index) in radioOptions"
            :key="index"
@@ -124,17 +124,29 @@ export default {
       dataViewId: '', // 修改页面id
       propParam: {}, // 将参数传至表单
       formTitle: '',
-      formVisible: false
+      formVisible: false,
+      dataTime: new Date().getTime()
     }
   },
   mounted () {
-
+    if (window.selsecRow && window.selsecRow.id) {
+      this.radioOptions.forEach(row => {
+        if (row.id === window.selsecRow.id) {
+          row.isActive = true
+          this.dataTime = new Date().getTime()
+        }
+      })
+    }
   },
   methods: {
     handleSubmit () {
-      this.formVisible = true
+      if (this.codeForm !== '') {
+        window.selsecRow = undefined
+        this.formVisible = true
+      }
     },
     handleClose () {
+      window.selsecRow = undefined
       this.$emit('close')
     },
     handleAdhibitionClick (row) {
@@ -144,6 +156,7 @@ export default {
           item.isActive = false
         }
       })
+      window.selsecRow = row
       this.codeForm = row.code
       this.propParam.DEMAND_CODE = row.code
       this.propParam.DEMAND_STATUS = '98cdd467570ee9187c65518e0010548d'
@@ -153,6 +166,7 @@ export default {
       } else {
         this.appIds = this.appIds.filter((id) => id !== row.id)
       }
+      this.dataTime = new Date().getTime()
     },
     // 表单新建/修改关闭抽屉
     formClose () {
