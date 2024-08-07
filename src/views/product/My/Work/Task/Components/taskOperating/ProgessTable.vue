@@ -41,7 +41,7 @@ export default {
         title: '完成度',
         dataIndex: 'progress',
         formatter: (row) => {
-          return row.progress * 100 + '%'
+          return Math.round(row.progress * 100) + '%'
         },
         align: 'center'
       },

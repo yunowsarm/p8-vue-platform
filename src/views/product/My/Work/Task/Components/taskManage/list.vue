@@ -123,7 +123,8 @@
                       </el-tooltip>
                     </div>
                     <div class="list-con-item__content remark">{{citem.aorDetail}}</div>
-                    <div class="list-con-item__content file"
+                    <div v-if="citem.attFileName"
+                         class="list-con-item__content file"
                          @click="downloadOutputRequsetFile(citem)">
                       <i class="el-icon-link"
                          style="font-size: 14px"></i>
