@@ -84,13 +84,13 @@
         <!--        <span style="float:right;margin-right: 20px;line-height:40px;"><i class="gantt-tip p8 icon-content-adjustment" style="color: #0d6bec;" task_status_disp = "修改"></i> {{modifyCount}}</span>-->
         <span style="float: right; margin-right: 20px; line-height: 40px">已选中 {{ selectTaskCount }} 条</span>
         <span style="float: right; margin-right: 20px; line-height: 40px">合计 {{ taskCount }} 条</span>
-        <el-popover
-          placement="top"
-          width="200"
-          trigger="click">
+        <el-popover placement="top"
+                    width="200"
+                    trigger="click">
           <div class="edit_gantt_user_list">
             <span v-if="webSocketDone">当前连接异常，无法查看正在编辑人员，请尝试刷新页面或联系运维人员</span>
-            <span v-else v-for="user in editUserList">{{ user.userName }}</span>
+            <span v-else
+                  v-for="user in editUserList">{{ user.userName }}</span>
           </div>
           <span slot="reference"
                 style="float: right; margin-right: 40px;line-height: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' : editUserList.length }} 人</span>
@@ -108,6 +108,19 @@
                        :task-id="selectTaskId"
                        :activity-import-type="activityImportType"
                        :auto-scheduling="autoParentDate"></activity-import>
+    </el-drawer>
+    <el-drawer v-if="relevanceVisible"
+               :visible="relevanceVisible"
+               size="100%"
+               :append-to-body="true"
+               :destroy-on-close="true"
+               :wrapper-closable="false"
+               title="关联"
+               @close="closeRelevance">
+      <relevance ref="relevance"
+                 :taskId="taskId"
+                 :taskData="taskData"
+                 @closeRelevance="closeRelevance"></relevance>
     </el-drawer>
     <monitor-time-manger v-if="controlTimeVisible"
                          :visible="controlTimeVisible"
@@ -143,7 +156,10 @@
                    :is-view-cs-footer="false"
                    :dialog-height="360">
       <template #dialog>
-        <command-search :gantt-name="ganttName" :is-input="false" :plan-info-id="planInfoId" @close="closeSearch"></command-search>
+        <command-search :gantt-name="ganttName"
+                        :is-input="false"
+                        :plan-info-id="planInfoId"
+                        @close="closeSearch"></command-search>
       </template>
     </common-dialog>
     <common-dialog title="通知下发"
@@ -228,14 +244,14 @@ import ActivityImport from '../../PlanGantt/Components/activityImport'
 import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
 import { mapGetters } from 'vuex'
 import MonitorTimeManger from '../../PlanGantt/Components/monitorTimeManager'
-import { checkKeys } from '@/assets/commonJS/ganttJS/changeGantt'
+import { checkKeys, monitorPointsEditCheck } from '@/assets/commonJS/ganttJS/changeGantt'
 import moment from 'moment'
 import submitChange from './submitChange'
 import SelectApproveUser from '@/views/Framework/BusinessActivity/ProcessApproval/selectApproveUser'
 import CommandSearch from '@/components/gantt/Components/CommandSearch'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import Notice from '../../PlanGantt/Components/notice'
-
+import relevance from './relevanceTable'
 const mh = document.documentElement.clientHeight - 300
 let myGantt
 export default {
@@ -301,10 +317,12 @@ export default {
     CommonDialog,
     VuePerfectScrollbar,
     Notice,
-    CommandSearch
+    CommandSearch,
+    relevance
   },
   data () {
     return {
+      relevanceVisible: false,
       sendDataList: '',
       projectCategory: '',
       monitorPoints: '',
@@ -375,7 +393,9 @@ export default {
       delDataList: [],
       noticeVisible: false,
       msg: {},
-      newSendDatas: null
+      newSendDatas: null,
+      uniqueMergedArray: [],
+      taskData: []
     }
   },
   watch: {
@@ -441,7 +461,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     let that = this
     this.msg = {
       entityId: this.planInfoId,
@@ -479,7 +499,7 @@ export default {
         return item.entityId == this.planInfoId && item.entityType == this.createPage
       })
     },
-    isDisable() {
+    isDisable () {
       const that = this
       return function (btnConfig) {
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
@@ -496,6 +516,126 @@ export default {
     ...mapGetters(['taskStyles'])
   },
   methods: {
+    closeRelevance (taskObj) {
+      this.relevanceVisible = false
+      let task = myGantt.getTask(taskObj.taskId)
+      // 存储关联的需求
+      if (this.taskData.length > 0) {
+        let falg = false
+        this.taskData.forEach((item, index) => {
+          if (item.taskId === taskObj.taskId) {
+            falg = true
+            this.taskData[index] = taskObj
+          }
+        })
+        if (!falg) {
+          this.taskData.push(taskObj)
+        }
+      } else {
+        this.taskData.push(taskObj)
+      }
+      task.infoType = "update"
+      // 判断列表是否有标识
+      if (task.monitorPoints !== null && task.monitorPoints !== '' && task.monitorPoints !== undefined) {
+        // 判断是否存在需求标识
+        if (task.monitorPoints.indexOf('1017') === -1) {
+          // 判断是新增需求
+          if (taskObj.requirementIds.length > 0) {
+            task.monitorPoints = task.monitorPoints + ',1017'
+          }
+        } else {
+          // 判断是新增需求
+          if (taskObj.requirementIds.length === 0) {
+            // 截取需求标识
+            if (task.monitorPoints.startsWith('1017')) {
+              if (task.monitorPoints.indexOf(',') !== -1) {
+                task.monitorPoints = task.monitorPoints.slice(5, task.monitorPoints.length)
+              } else {
+                task.monitorPoints = ''
+              }
+            } else if (task.monitorPoints.endsWith('1017')) {
+              if (task.monitorPoints.indexOf(',') !== -1) {
+                task.monitorPoints = task.monitorPoints.slice(0, task.monitorPoints.length - 5)
+              } else {
+                task.monitorPoints = ''
+              }
+            } else {
+              // 分割字符串成数组
+              const parts = task.monitorPoints.split(',');
+              // 选择需要的部分
+              const result = parts.filter(item => item !== '1017')
+              // 转换为字符串，并用逗号分隔
+              task.monitorPoints = result.join(',');
+            }
+          }
+        }
+        // 没有标识
+      } else {
+        task.monitorPoints = '1017'
+      }
+      let obj = {
+        id: '',
+        issubmit: true,
+        logBeginTime: "",
+        logEndTime: "",
+        monitorId: "1017",
+        taskId: taskObj.taskId
+      }
+      let taskMonitorMap = []
+      if (task.monitors) {
+        taskMonitorMap = task.monitors
+      } else {
+        taskMonitorMap = this.taskMonitorMap[task.id]
+      }
+      if (taskMonitorMap) {
+        let falg = false
+        taskMonitorMap.forEach(item => {
+          if (item.monitorId === '1017') {
+            falg = true
+          }
+        })
+        if (!falg) {
+          if (taskObj.requirementIds.length > 0) {
+            taskMonitorMap.push(obj)
+            task.monitors = taskMonitorMap
+          }
+        } else {
+          if (task.monitorPoints.indexOf('1017' !== -1)) {
+            task.monitors = taskMonitorMap
+          } else {
+            task.monitors = taskMonitorMap.filter(item => item.monitorId !== '1017')
+          }
+        }
+      } else {
+        if (taskObj.requirementIds.length > 0) {
+          task.monitors = [obj]
+        }
+      }
+      if (task.updateInfo) {
+        if (!task.updateInfo.includes('monitors')) {
+          task.updateInfo.push('monitors')
+        }
+      } else {
+        task.updateInfo = ['monitors']
+      }
+      if (this.uniqueMergedArray.length > 0) {
+        let falg = false
+        this.uniqueMergedArray.forEach((item, index) => {
+          if (item.id === task.id) {
+            falg = true
+            this.uniqueMergedArray[index] = task
+          }
+        })
+        if (!falg) {
+          this.uniqueMergedArray.push(task)
+        }
+      } else {
+        this.uniqueMergedArray.push(task)
+      }
+      console.log(this.uniqueMergedArray, '=============================this.uniqueMergedArray');
+      // 更新列表
+      myGantt.updateTask(taskObj.taskId)
+    },
     async initGantt (planInfoId, changeRecordId, viewType) {
       // 根据项目类型，获取gantt列设置
       this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
@@ -768,7 +908,15 @@ export default {
       if (this.newSendDatas && Array.isArray(this.newSendDatas)) {
         mergedArray.push(...this.newSendDatas)
       }
-      const uniqueMergedArray = mergedArray.filter((item, index, self) => index === self.findIndex((t) => t && item && t.id === item.id))
+      let uniqueMergedArray = []
+      uniqueMergedArray = mergedArray.filter((item, index, self) => index === self.findIndex((t) => t && item && t.id === item.id))
+      // 变更了需求
+      if (this.taskData.length > 0) {
+        // 只改变关联需求时将列表数据传递
+        if (uniqueMergedArray.length === 0) {
+          uniqueMergedArray = this.uniqueMergedArray
+        }
+      }
       if (uniqueMergedArray && uniqueMergedArray.length > 0) {
         // 请求后台接口
         for (const i in uniqueMergedArray) {
@@ -786,19 +934,50 @@ export default {
             }
           }
         }
-        that.$api['planChange.calculateChangeInfoAndSave']({ changeTasks: uniqueMergedArray, planInfoId: that.planInfoId, id: that.changeRecordId })
-          .then(function (res) {
-            if (res) {
-              that.sendDataList = uniqueMergedArray
-              that.changeRecordId = res
-              // that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
-              that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)
-              that.hasSave = false
-            }
+        if (this.taskData.length > 0) {
+          uniqueMergedArray.forEach(item => {
+            // item.start_date = item.startDate
+            // item.end_date = item.endDate
+            item.start_date = moment(item.start_date).format('YYYY-MM-DD')
+            item.end_date = moment(item.end_date).format('YYYY-MM-DD')
           })
-          .catch(function (error) {
-            console.error('error' + error)
-          })
+          console.log(uniqueMergedArray, '========================uniqueMergedArray');
+          that.$api['planChange.calculateChangeInfoAndSave']({ changeTasks: uniqueMergedArray, planInfoId: that.planInfoId, id: that.changeRecordId })
+            .then(function (res) {
+              if (res) {
+                that.sendDataList = uniqueMergedArray
+                that.changeRecordId = res
+                // that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
+                that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)
+                that.hasSave = false
+                that.$api['demandManagement.saveRequirementByTaskChange']({ planInfoId: that.planInfoId, taskList: that.taskData, changeRecordId: that.changeRecordId, })
+                  .then(function (res) {
+                    if (res) {
+                      that.uniqueMergedArray = []
+                      // that.taskData = []
+                    }
+                  })
+              }
+            })
+            .catch(function (error) {
+              console.error('error' + error)
+            })
+
+        } else {
+          that.$api['planChange.calculateChangeInfoAndSave']({ changeTasks: uniqueMergedArray, planInfoId: that.planInfoId, id: that.changeRecordId })
+            .then(function (res) {
+              if (res) {
+                that.sendDataList = uniqueMergedArray
+                that.changeRecordId = res
+                // that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
+                that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)
+                that.hasSave = false
+              }
+            })
+            .catch(function (error) {
+              console.error('error' + error)
+            })
+        }
       } else {
         that.$message({
           message: '未产生变更数据，请修改后再保存！',
@@ -884,7 +1063,7 @@ export default {
       this.noticeVisible = false
     }
   },
-  beforeDestroy() {
+  beforeDestroy () {
     window.myWebSocket.emit('quitPlanGantGroup', this.msg)
     window.myWebSocket.off('planGantGroup')
   }

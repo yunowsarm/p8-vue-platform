@@ -24,7 +24,8 @@ export const checkKeys = [
   'dutyDeptName',
   'forecastEndDate',
   'describes',
-  'weatherControl'
+  'weatherControl',
+  'requirementIds'
 ]
 /**
  * 变更颜色定义
@@ -238,6 +239,8 @@ export function taskDescribesEditCheck(newObj, oldObj, vueThis, taskId, ganttObj
  * @param ganttObject
  */
 export function monitorPointsEditCheck(oldObj, newObj, vueThis, task, ganttObject) {
+  // console.log("🚀 ~ monitorPointsEditCheck ~ task:", task)
+  // console.log("🚀 ~ monitorPointsEditCheck ~ oldObj, newObj:", oldObj, newObj)
   // 新标识数据处理
   let monitorIds = ''
   let addMonitor = false // 是否添加标识
@@ -274,6 +277,7 @@ export function monitorPointsEditCheck(oldObj, newObj, vueThis, task, ganttObjec
   }
   // 添加标识或修改标识
   if (addMonitor || editMonitor) {
+    console.log(monitorIds, '==============monitorIdsmonitorIds');
     task.monitorPoints = monitorIds
     task.style = changeColor
     if (!task.infoType) {

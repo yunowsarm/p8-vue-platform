@@ -1654,7 +1654,35 @@ export const repositoryApi = {
       method: 'POST',
       path: '/requirement/saveRequirementByTask',
       mockPath: '/requirement/saveRequirementByTask',
-      desc: '关联'
+      desc: '计划关联'
+    },
+    {
+      name: 'getRequirementByProject',
+      method: 'POST',
+      path: '/requirement/getRequirementByProject',
+      mockPath: '/requirement/getRequirementByProject',
+      desc: '立项关联查看'
+    },
+    {
+      name: 'saveRequirementByProject',
+      method: 'POST',
+      path: '/requirement/saveRequirementByProject',
+      mockPath: '/requirement/saveRequirementByProject',
+      desc: '立项关联'
+    },
+    {
+      name: 'getRequirementByTaskChange',
+      method: 'POST',
+      path: '/requirement/getRequirementByTaskChange',
+      mockPath: '/requirement/getRequirementByTaskChange',
+      desc: '计划变更关联列表回显'
+    },
+    {
+      name: 'saveRequirementByTaskChange',
+      method: 'POST',
+      path: '/requirement/saveRequirementByTaskChange',
+      mockPath: '/requirement/saveRequirementByTaskChange',
+      desc: '计划变更关联保存'
     }
   ]
 }

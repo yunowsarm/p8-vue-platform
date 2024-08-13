@@ -133,6 +133,9 @@ export default {
       this.radioOptions.forEach(row => {
         if (row.id === window.selsecRow.id) {
           row.isActive = true
+          console.log("🚀 ~ mounted ~ row:", row)
+          this.codeForm = row.code
+          this.formTitle = '新建' + row.label
           this.dataTime = new Date().getTime()
         }
       })
@@ -171,7 +174,7 @@ export default {
     // 表单新建/修改关闭抽屉
     formClose () {
       this.formVisible = false
-      this.$emit('close')
+      // this.$emit('close')
     },
     formCloseRefresh () {
       this.formVisible = false

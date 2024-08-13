@@ -2,43 +2,76 @@
   <div class="form-more-wrap">
     <div :class="{ 'form-more-content': formDataList.length }">
       <template v-for="(formItem, formIndex) in formDataList">
-        <el-row
-          class="form-single-row"
-          :class="{ hover: formItem.issubmit }"
-          :style="{ borderBottomWidth: formDataList.length > 1 && formIndex < formDataList.length - 1 ? '1px' : '0px' }"
-          :gutter="10"
-          :key="formIndex"
-        >
-          <el-form :ref="`form${formIndex}`" :model="formItem" :label-width="labelWidth" v-bind="formConfig">
+        <el-row class="form-single-row"
+                v-if="formItem.monitorId!=='1017'"
+                :class="{ hover: formItem.issubmit }"
+                :style="{ borderBottomWidth: formDataList.length > 1 && formIndex < formDataList.length - 1 ? '1px' : '0px' }"
+                :gutter="10"
+                :key="formIndex">
+          <el-form :ref="`form${formIndex}`"
+                   :model="formItem"
+                   :label-width="labelWidth"
+                   v-bind="formConfig">
             <template v-for="item in dataSourceTwoDimensional[formIndex]">
-              <field-render-view v-if="formItem.issubmit" :key="item.fieldName" :form-data="formItem" :form-index="formIndex" :fields="item" @field-mounted="sumRender">
+              <field-render-view v-if="formItem.issubmit"
+                                 :key="item.fieldName"
+                                 :form-data="formItem"
+                                 :form-index="formIndex"
+                                 :fields="item"
+                                 @field-mounted="sumRender">
                 <template #[renderSlotViewBind(item)]="{ formData }">
-                  <slot :name="renderSlotViewBind(item, 'View')" :scope="formData"></slot>
+                  <slot :name="renderSlotViewBind(item, 'View')"
+                        :scope="formData"></slot>
                 </template>
               </field-render-view>
-              <field-render v-if="!formItem.issubmit" :key="item.fieldName" :form-data="formItem" :form-index="formIndex" :fields="item" :comp="renderComp" @field-mounted="sumRender">
+              <field-render v-if="!formItem.issubmit"
+                            :key="item.fieldName"
+                            :form-data="formItem"
+                            :form-index="formIndex"
+                            :fields="item"
+                            :comp="renderComp"
+                            @field-mounted="sumRender">
                 <template #[renderSlot(item)]="{ scope }">
-                  <slot :name="renderSlot(item)" :scope="scope"></slot>
+
+                  <slot :name="renderSlot(item)"
+                        :scope="scope"></slot>
                 </template>
               </field-render>
             </template>
-            <el-col v-if="!isView" class="form-btn-operation" :span="5" style="float: right">
-              <el-form-item v-if="!formItem.issubmit" label-width="0">
-                <el-button style="padding: 7px 5px; font-size: 12px" type="primary" size="mini" @click.stop="submit(formIndex)">保存</el-button>
-                <i class="el-icon-close" style="padding: 0 8px; font-size: 18px" @click.stop="formDelete(formIndex)"></i>
+            <el-col v-if="!isView"
+                    class="form-btn-operation"
+                    :span="5"
+                    style="float: right">
+              <el-form-item v-if="!formItem.issubmit"
+                            label-width="0">
+                <el-button style="padding: 7px 5px; font-size: 12px"
+                           type="primary"
+                           size="mini"
+                           @click.stop="submit(formIndex)">保存</el-button>
+                <i class="el-icon-close"
+                   style="padding: 0 8px; font-size: 18px"
+                   @click.stop="formDelete(formIndex)"></i>
               </el-form-item>
-              <el-form-item v-if="formItem.issubmit && !formItem.notedit" label-width="0">
-                <i class="el-icon-edit" style="padding: 0 8px; font-size: 18px" @click.stop="formEdit(formIndex)"></i>
-                <i class="el-icon-delete" style="padding: 0 8px; font-size: 18px" @click.stop="formDelete(formIndex)"></i>
+              <el-form-item v-if="formItem.issubmit && !formItem.notedit"
+                            label-width="0">
+                <i class="el-icon-edit"
+                   style="padding: 0 8px; font-size: 18px"
+                   @click.stop="formEdit(formIndex)"></i>
+                <i class="el-icon-delete"
+                   style="padding: 0 8px; font-size: 18px"
+                   @click.stop="formDelete(formIndex)"></i>
               </el-form-item>
             </el-col>
           </el-form>
         </el-row>
       </template>
     </div>
-    <el-row v-if="!isView" :style="{ marginTop: formDataList.length ? '20px' : '0' }">
+    <el-row v-if="!isView"
+            :style="{ marginTop: formDataList.length ? '20px' : '0' }">
       <el-col :span="24">
-        <el-button type="dashed" style="width: 100%" @click="add">
+        <el-button type="dashed"
+                   style="width: 100%"
+                   @click="add">
           <i class="el-icon-plus"></i>
           {{ addBtnName }}
         </el-button>
@@ -103,7 +136,7 @@ export default {
     }
   },
   computed: {
-    renderComp() {
+    renderComp () {
       return this.comp
     }
   },
@@ -112,7 +145,7 @@ export default {
       /**
        * 监听: 当已有保存的数据时, 进行处理, issubmit:true -- 展示保存后的数据组件
        */
-      handler(val) {
+      handler (val) {
         const that = this
         if (val && val.length) {
           const temp = val.map((item) => {
@@ -126,6 +159,7 @@ export default {
             return item
           })
           that.formDataList = temp
+          // that.formDataList = temp.filter((item) => item.monitorId !== '1017')
         } else {
           that.formDataList = val
         }
@@ -134,7 +168,7 @@ export default {
       deep: true
     }
   },
-  data() {
+  data () {
     return {
       formElementNum: 0,
       renderedNum: 0,
@@ -143,15 +177,15 @@ export default {
       isAdd: true // 是否展示 添加按钮
     }
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    sumRender() {
+    sumRender () {
       this.renderedNum++
       if (this.formElementNum === this.renderedNum) {
         this.$emit('rendered')
       }
     },
-    renderSlot(item) {
+    renderSlot (item) {
       /**
        * renderSolt: 绑定对应的插槽 FieldRender.vue中提供的slot插槽, 在form2/index.vue中进行绑定
        *    目前只绑定了 treeSelect类型提供的插槽
@@ -159,7 +193,7 @@ export default {
       if (item.type !== 'treeSelect') return ''
       return item.fieldName || item.soltName
     },
-    renderSlotViewBind(item, type) {
+    renderSlotViewBind (item, type) {
       /**
        * renderSoltView: 绑定对应的插槽 FieldRenderView.vue中提供的slot插槽, 在form2/index.vue中进行绑定
        *    页面使用是 统一加上 在 fieldName || slotName 对应的值 拼接上 View
@@ -169,7 +203,7 @@ export default {
       }
       return ''
     },
-    renderDefaultFormHandle() {
+    renderDefaultFormHandle () {
       /**
        * renderDefaultFormHandle: 添加行所需的 form
        */
@@ -182,7 +216,7 @@ export default {
       })
       return formObj
     },
-    renderDataSource() {
+    renderDataSource () {
       const elementType = ['blank', 'upload', 'addField', 'hidden']
       const that = this
       return this.dataSource.map(function (item) {
@@ -198,7 +232,7 @@ export default {
         return item
       })
     },
-    handleParams(obj) {
+    handleParams (obj) {
       // 判断必须为obj
       if (!(Object.prototype.toString.call(obj) === '[object Object]')) {
         return {}
@@ -217,7 +251,7 @@ export default {
 
       return tempObj
     },
-    validate(formIndex) {
+    validate (formIndex) {
       return new Promise((resolve, reject) => {
         this.$refs[`form${formIndex}`][0].validate((isValid) => {
           if (isValid) {
@@ -229,7 +263,7 @@ export default {
         })
       })
     },
-    add() {
+    add () {
       /**
        * add: 添加后, 添加按钮隐藏, 当前行form提交后再显示
        */
@@ -246,7 +280,7 @@ export default {
       this.dataSourceTwoDimensional.push(JSON.parse(JSON.stringify(that.renderDataSource())))
       this.$emit('form-add', { formToApiData: this.formDataList, dataSourceArray: this.dataSourceTwoDimensional, currentIndex: this.formDataList.length - 1 })
     },
-    submit(formIndex) {
+    submit (formIndex) {
       /**
        * submit: 行form提交, 提交后当前行form展示 编辑和删除 操作按钮; 并展示 add按钮
        */
@@ -263,9 +297,9 @@ export default {
           this.isAdd = true
           this.$emit('form-submit', { formToApiData: this.formDataList, dataSourceArray: this.dataSourceTwoDimensional, currentIndex: formIndex })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
-    formEdit(formIndex) {
+    formEdit (formIndex) {
       /**
        * formEdit: 行form编辑, 点击编辑,展示form编辑组件[含 提交和删除]; 并将 add按钮隐藏
        *    存在正在编辑(未保存)的行form,且与当前删除的索引不对等时, 不允许其他行编辑
@@ -282,7 +316,7 @@ export default {
         this.$emit('form-edit', { currentIndex: formIndex })
       }
     },
-    formDelete(formIndex) {
+    formDelete (formIndex) {
       /**
        * formDelete: 行form删除, 删除当前行form, 并展示 add按钮
        *    存在正在编辑(未保存)的行form,且与当前删除的索引不对等时, 不允许删除
@@ -306,7 +340,7 @@ export default {
             this.isAdd = true
           }
         })
-        .catch(() => {})
+        .catch(() => { })
     }
   }
 }

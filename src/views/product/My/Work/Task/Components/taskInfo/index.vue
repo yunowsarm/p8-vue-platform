@@ -57,6 +57,12 @@ export default {
         colLayout: 'singleCol'
       },
       {
+        type: 'blank',
+        labelText: '标识',
+        slotName: 'managerStatus',
+        colLayout: 'singleCol'
+      },
+      {
         type: 'view',
         labelText: '工期(天)',
         fieldName: 'duration',
@@ -68,13 +74,13 @@ export default {
         slotName: 'durationDay',
         colLayout: 'singleCol'
       },
-       {
+      {
         type: 'view',
         labelText: '绩效',
         fieldName: 'achievements',
         colLayout: 'singleCol'
       },
-       {
+      {
         type: 'blank',
         labelText: '比例',
         slotName: 'proportion',

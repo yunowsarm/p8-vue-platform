@@ -113,6 +113,13 @@ export default {
     fields: {
       handler (val) {
         const that = this
+        if (val.options) {
+          val.options.forEach(item => {
+            if (item.id === '1017') {
+              item.disabled = true
+            }
+          })
+        }
         if (that.fields.optionUrl) {
           if (that.fields.optionUrl.api) {
             that.$api[that.fields.optionUrl.api](that.fields.optionUrl.params ? that.fields.optionUrl.params : {})

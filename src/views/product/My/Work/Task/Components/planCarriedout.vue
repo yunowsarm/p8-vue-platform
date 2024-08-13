@@ -91,12 +91,17 @@ export default {
       secretLevel: '机密',
       thirdMenuParamTemp: this.thirdMenuParam,
       drawerSize: '30%',
-      isVisibleCommunicationDrawer: false,
-      unreadMessageCount: 0
+      isVisibleCommunicationDrawer: false
     }
   },
   computed: {
     ...mapGetters(['taskMessageCount']),
+  },
+  watch: {
+    taskMessageCount (val, oldVal) {
+      console.log(val, '监听到消息***********************************************');
+      this.getMsgTotal()
+    }
   },
   mounted () {
     this.reload()
@@ -108,7 +113,7 @@ export default {
         if (res.length > 0) {
           let count = 0
           res.forEach(item => {
-            count = count + item.taskMessageCount
+            count = count + item.messageCount
           })
           this.$store.dispatch('setTasketMessageCount', count)
         } else {

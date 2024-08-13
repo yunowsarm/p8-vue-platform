@@ -15,7 +15,8 @@
                  :durationDay="durationDay"
                  :approve="approve"
                  :exceedType="exceedType"
-                 @dialogOk="dialogOk"></progess>
+                 @dialogOk="dialogOk"
+                 @dialogClose="dialogClose"></progess>
         <progess-table v-else
                        ref="progessTable"></progess-table>
       </template>
@@ -112,7 +113,7 @@ export default {
       taskTabs = [...this.taskTabsProgess, ...this.taskTabsUnfinished]
     }
     // 已完成
-    if (this.getPlanInfo().STATUS === '6070') {
+    if (this.getPlanInfo().STATUS === '6070' || this.getPlanInfo().MANAGERSTATUS === '6406') {
       this.tabsActiveName = 'progess'
       this.progessType = 'progessTable'
       taskTabs = [...this.taskTabsProgess, ...this.taskTabsUnfinished]
@@ -134,6 +135,11 @@ export default {
     dialogOk (val) {
       this.durationDay = val
       this.exceedType = val
+    },
+    dialogClose () {
+      if (this.getPlanInfo().MANAGERSTATUS === '6406') {
+        this.progessType = 'progessTable'
+      }
     }
   }
 }

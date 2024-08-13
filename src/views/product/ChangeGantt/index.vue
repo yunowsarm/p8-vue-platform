@@ -33,6 +33,7 @@
                      size="100%"
                      :destroy-on-close="true"
                      :wrapper-closable="false"
+                     :drawer-config=drawerConfig
                      @closed="onClose"
                      :visible.sync="drawerVisible">
             <change-index :plan-info-id="planInfoId"

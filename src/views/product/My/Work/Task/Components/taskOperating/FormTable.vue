@@ -746,7 +746,7 @@ div.form-table-wrap {
   height: 100%;
   position: relative;
   div.form-table-con {
-    height: calc(100% - 50px);
+    height: calc(100% - 90px);
     // overflow-y: auto;
     // overflow-x: hidden;
     .deviate,

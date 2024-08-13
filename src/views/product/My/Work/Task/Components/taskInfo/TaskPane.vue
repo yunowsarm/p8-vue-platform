@@ -10,6 +10,12 @@
       <template #status>
         <div v-html="statusHandle()"></div>
       </template>
+      <template #managerStatus>
+        <i v-if="taskInfo.relationTask === '1'"
+           class='el-icon-connection'
+           style="font-size: 30px; color: skyblue;"
+           @click="demandClick"></i>
+      </template>
       <template #durationDay>
         <div class="duration-days"
              v-html="durationDayHandle(formData.status, formData.now, formData.planEndDate, formData.realEndDate)"></div>
@@ -54,13 +60,26 @@
         </div>
       </template>
     </form-list>
+    <common-dialog title="关联的需求"
+                   width="60%"
+                   v-if="isdemandTable"
+                   :visible="isdemandTable"
+                   :show-handle-btn="false"
+                   @close="closeSearch"
+                   :is-view-cs-footer="false"
+                   :dialog-height="dialogHeight">
+      <template #dialog>
+        <demand-table :taskId="taskId"></demand-table>
+      </template>
+    </common-dialog>
   </div>
 </template>
 <script>
-import { P8Form as FormList, Progress } from 'p8-components-ui'
+import { P8Form as FormList, Progress, P8Dialog as CommonDialog } from 'p8-components-ui'
 import { getTaskStatusInfo } from '@/utils/commonBusiness'
 import moment from 'moment'
 import Vue from 'vue'
+import demandTable from './demandTable.vue'
 export default {
   name: 'TaskPaneView',
   inject: ['getPlanInfo'],
@@ -91,14 +110,19 @@ export default {
   },
   components: {
     FormList,
-    'el-progress': Progress
+    'el-progress': Progress,
+    demandTable,
+    CommonDialog
   },
   data () {
     return {
       formData: {},
       allStatus: [],
       count: 1,
-      // secretGradeDisplay: null
+      isdemandTable: false,
+      taskInfo: {},
+      dialogHeight: document.documentElement.clientHeight - 243,
+      taskId: ''
     }
   },
   mounted () {
@@ -111,6 +135,13 @@ export default {
     })
   },
   methods: {
+    demandClick () {
+      this.isdemandTable = true
+      this.taskId = this.taskInfo.id
+    },
+    closeSearch () {
+      this.isdemandTable = false
+    },
     rendered () {
       if (this.api) {
         getTaskStatusInfo({ currentStatus: 'all' }).then(data => {

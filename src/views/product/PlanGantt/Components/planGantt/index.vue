@@ -328,7 +328,7 @@
                    size="100%"
                    placement="top"
                    title="关联"
-                   @close="relevanceVisible = false">
+                   @close="closeRelevance">
       <template #drawer>
         <relevance :plan-info-id="planInfoId"
                    :main-gantt-name="ganttName"></relevance>
@@ -890,6 +890,10 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll'])
   },
   methods: {
+    closeRelevance () {
+      this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
+      this.relevanceVisible = false
+    },
     copyExperienceBase (ids) {
       this.copyTasks = ids
       this.copyFlag = true

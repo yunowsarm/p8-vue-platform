@@ -1,20 +1,20 @@
 <template>
   <div style="position: relative; overflow-y: auto; overflow-x: hidden; width: 100%">
-    <form2
-      :comp="comp"
-      v-if="!isEmpty"
-      :is-view="true"
-      :form-to-api-data="monitorManagerRequests"
-      :data-source="dataSource"
-      :data-source-array="dataSourceArray"
-      add-btn-name="添加新标识"
-      @form-add="formAdd"
-      @form-submit="formSubmit"
-      @form-edit="formEdit"
-      @form-delete="formDelete"
-    >
+    <form2 :comp="comp"
+           v-if="!isEmpty"
+           :is-view="true"
+           :form-to-api-data="monitorManagerRequests"
+           :data-source="dataSource"
+           :data-source-array="dataSourceArray"
+           add-btn-name="添加新标识"
+           @form-add="formAdd"
+           @form-submit="formSubmit"
+           @form-edit="formEdit"
+           @form-delete="formDelete">
     </form2>
-    <el-empty v-if="isEmpty" class="custom_empty" :image-size="100"></el-empty>
+    <el-empty v-if="isEmpty"
+              class="custom_empty"
+              :image-size="100"></el-empty>
   </div>
 </template>
 <style scoped>
@@ -46,7 +46,7 @@ export default {
   computed: {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
-  data() {
+  data () {
     const dataSource = [
       // 单个表单所需的元素对象
       {
@@ -94,7 +94,7 @@ export default {
             message: '选择'
           },
           {
-            validator: () => {}
+            validator: () => { }
           }
         ],
         colSpan: 8, // 元素所占宽度
@@ -112,11 +112,11 @@ export default {
     }
   },
 
-  mounted() {
+  mounted () {
     this.getMonitorData(this.taskId)
   },
   methods: {
-    getMonitorData(taskId) {
+    getMonitorData (taskId) {
       const that = this
       this.$api['planGanttManager.getTaskMonitorByTaskId']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId }).then((res) => {
         that.dataSource[0].options = that.vueThis.monitorPointDatas // 更新default dataSource中下拉框的数据
@@ -154,13 +154,13 @@ export default {
         }
       })
     },
-    formAdd(params) {
+    formAdd (params) {
       // from 添加
       this.monitorManagerRequests = params.formToApiData
       this.dataSourceArray = params.dataSourceArray
       this.monitorSelectRules()
     },
-    formSubmit(params) {
+    formSubmit (params) {
       // 单个form提交回调
       const that = this
       that.monitorManagerRequests = params.formToApiData
@@ -191,11 +191,11 @@ export default {
         })
       }
     },
-    formEdit() {
+    formEdit () {
       // 单个form编辑
       this.monitorSelectRules()
     },
-    formDelete(params) {
+    formDelete (params) {
       const that = this
       const ganttObject = GanttObject.getGanttObject(that.ganttName)
       const thisDp = GanttObject.getDpObject(that.ganttName)
@@ -251,7 +251,7 @@ export default {
         }
       }
     },
-    iconSelectHandle(val, index) {
+    iconSelectHandle (val, index) {
       // 图标选择器 select change事件
       /**
        * iconSelectHandle: select change事件
@@ -275,7 +275,7 @@ export default {
       this.$set(currentFromDataSource[1], 'elementOpacity', rules[controlInfo[0].controlTimeType])
       this.$set(currentFromDataSource[2], 'elementOpacity', rules[controlInfo[0].controlTimeType])
     },
-    beginDateChangeHandle(val, index) {
+    beginDateChangeHandle (val, index) {
       /**
        * 开始时间 校验
        */
@@ -291,7 +291,7 @@ export default {
         currentFormInfo.logBeginTime = ''
       }
     },
-    endDateChangeHandle(val, index) {
+    endDateChangeHandle (val, index) {
       /**
        * 完成时间 校验
        */
@@ -307,7 +307,7 @@ export default {
         currentFormInfo.logEndTime = ''
       }
     },
-    monitorSelectRules() {
+    monitorSelectRules () {
       /**
        * 标识校验规则
        */

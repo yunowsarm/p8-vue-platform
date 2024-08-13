@@ -54,8 +54,10 @@ export default {
         window.myWebSocket.connect()
         socket.on('messageevent', (data) => {
           let count = this.$store.getters.messageCount
-          console.log("🚀 ~ socket.on ~ count:", count)
+          let taskMessageCount = this.$store.getters.taskMessageCount
+          console.log("🚀 app*************************************:", taskMessageCount)
           this.$store.dispatch('setMessageCount', ++count)
+          this.$store.dispatch('setTasketMessageCount', ++taskMessageCount)
           this.message()
         })
         window.myWebSocket.on('connectSuccess', (res) => {

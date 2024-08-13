@@ -908,6 +908,41 @@ export const CommandButtonData = [
     }
   },
   {
+    id: 'demand-management',
+    icon: 'p8 icon-task-distribute',
+    title: '关联',
+    help: '关联',
+    clickFun: function (btn, ganttName, tasks) {
+      const vueThis = store.getters.vueThis
+      if (ganttName === 'changeGantt') {
+    console.log("🚀 ~ taskstaskstaskstaskstasks:", tasks[0])
+
+        if (tasks.length > 0) {
+          vueThis.taskId= tasks[0].id
+          if (tasks[0].indexNo === 0) {
+            vueThis.$message.warning('根节点不可进行关联')
+            return false
+          }
+          if (tasks[0].managerStatus === '6405' || tasks[0].managerStatus === '6406' || tasks[0].managerStatus === '6409') {
+            vueThis.$message.warning('变更中、提交审批、审批完成的数据不可进行关联')
+            return false
+          }
+        } else {
+          return vueThis.$message.warning('请选择需要关联的任务')
+        }
+      }
+      vueThis.relevanceVisible = true
+    },
+    isDisableFun: function (btn, ganttName, tasks) {
+  //   console.log("🚀 ~ tasks:", tasks)
+  //   let result
+  // if (tasks[0].indexNo === 0) {
+  //   result = true
+  // }
+  //   return result
+    }
+  },
+  {
     id: 'undo-tasks',
     icon: 'p8 icon-revoke',
     title: '撤销',
@@ -2463,48 +2498,7 @@ export const CommandButtonData = [
         }
       }
     ]
-  },
-  {
-    id: 'demand-management',
-    icon: 'p8 icon-task-distribute',
-    title: '关联',
-    help: '关联',
-    clickFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
-      vueThis.relevanceVisible = true
-    },
-    isDisableFun: function (btn, ganttName, tasks) {
-      // if (!ganttName || tasks.length === 0) {
-      //   return true
-      // }
-      // let result
-      // const vueThis = store.getters.vueThis
-      // const createPage = vueThis.createPage
-      // if (createPage === 'compile' && vueThis.planEditLock) {
-      //   return true
-      // }
-      // const ganttObject = GanttObject.getGanttObject(ganttName)
-      // let rootTask = {}
-      // ganttObject.eachTask(function (task) {
-      //   if (ganttObject.getGlobalTaskIndex(task.id) === 0) {
-      //     rootTask = ganttObject.getTask(task.id)
-      //   }
-      // })
-      // if (checkSwitchType(tasks)) {
-      //   return true
-      // }
-      // if (tasks[0].managerStatus === '6403' && tasks[0].dutyDeptName) {
-      //   // 待下发状态责任部门（科研）不为空，可以下发
-      //   result = false
-      // } else if (tasks[0].managerStatus === '6404') {
-      //   // 已下发状态，不能下发
-      //   result = true
-      // } else {
-      //   result = true
-      // }
-      // return result
-    }
-  },
+  }
 ]
 
 /**

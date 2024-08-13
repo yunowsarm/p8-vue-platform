@@ -3,7 +3,7 @@
 
 <template>
   <table-render code="planAssessmentByDept"
-                :headerVisible="false"
+                ref="table"
                 :reportParam="reportParam">
   </table-render>
 </template>

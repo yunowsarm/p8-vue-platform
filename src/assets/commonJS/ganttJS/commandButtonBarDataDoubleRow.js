@@ -149,6 +149,16 @@ const CommandButtonBarDataDoubleRow = [
         ]
       },
       {
+        groupName: '需求管理',
+        buttonConfigs: [
+          {
+            buttonId: 'demand-management',
+            size: 'small',
+            position: ['top', 'right']
+          }
+        ]
+      },
+      {
         groupName: '导入',
         buttonConfigs: [
           {

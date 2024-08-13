@@ -14,34 +14,34 @@
                  :exist-default-btn="false"
                  :form="formData">
         <template #requirementAnalyst>
-          <el-input v-model="formData['requirementAnalystDisplay']"
-                    readonly
-                    autosize>
-            <i class="el-icon-link"
-               slot="suffix"
-               type="link"
-               @click="selectPeople"
-               :style="{ fontSize: '16px', color: '#08c' }"></i>
-          </el-input>
+          <div @click="selectPeople">
+            <el-input v-model="formData['requirementAnalystDisplay']"
+                      readonly
+                      autosize>
+              <template slot="append"><i class="el-icon-link"
+                   type="link"
+                   :style="{ fontSize: '16px', color: '#08c' }"></i></template>
+            </el-input>
+          </div>
         </template>
         <template #processingTeam>
-          <el-input v-model="formData['processingTeamDisplay']"
-                    readonly
-                    autosize>
-            <i class="el-icon-link"
-               slot="suffix"
-               type="link"
-               @click="selectPeople"
-               :style="{ fontSize: '16px', color: '#08c' }"></i>
-          </el-input>
+          <div @click="selectPeople">
+            <el-input v-model="formData['processingTeamDisplay']"
+                      readonly
+                      autosize>
+              <template slot="append"><i class="el-icon-link"
+                   type="link"
+                   :style="{ fontSize: '16px', color: '#08c' }"></i></template>
+            </el-input>
+          </div>
         </template>
       </form-list>
     </div>
-    <div class="btn"
+    <!-- <div class="btn"
          v-if="!selectedApproval.yesOrNo">
       <el-button type="primary"
                  @click="handleSubmit">保存</el-button>
-    </div>
+    </div> -->
     <select-user v-if="visible"
                  class="selectUser"
                  :visible="visible"
@@ -87,7 +87,6 @@ export default {
       dataViewId: this.businessKey, // 修改页面id
       propParam: {}, // 将参数传至表单
       formData: {
-        requirementAnalystDisplay: '',
         uploadFiles: []
       },
       dataSource: [],
@@ -97,33 +96,33 @@ export default {
           labelText: '需求名称',
           fieldName: 'demandName',
           placeholder: '请输入需求名称',
-          colLayout: 'doubleCol',
-          maxlength: 100
+          colLayout: 'singleCol',
+          maxlength: 10
         },
         {
           type: 'view',
           labelText: '来源渠道',
           fieldName: 'sourceChannel',
-          colLayout: 'doubleCol'
+          colLayout: 'singleCol'
         },
         {
           type: 'text',
           labelText: '客户名称',
           fieldName: 'customerName',
           placeholder: '请输入客户名称',
-          colLayout: 'doubleCol',
-          maxlength: 30
+          colLayout: 'singleCol',
+          maxlength: 10
         },
         {
           labelText: '客户联系电话',
           type: 'text',
           fieldName: 'customerPhone',
-          colLayout: 'doubleCol',
+          colLayout: 'singleCol',
           placeholder: '请输入手机或座机号码',
           tip: '手机格式如:13512341234 座机格式如:010-40020020',
           rules: [
             {
-              pattern: '^(((\\+\\d{2}-)?0\\d{2,3}-\\d{7,8})|((\\+\\d{2}-)?(\\d{2,3}-)?([1][3,4,5,7,8][0-9]\\d{8})))$',
+              pattern: '^(((\\+\\d{2}-)?0\\d{2,3}-\\d{7,8})|((\\+\\d{2}-)?(\\d{2,3}-)?([1][3,4,5,7,8,9][0-9]\\d{8})))$',
               message: '请输入正确的电话号码',
               trigger: 'blur'
             }
@@ -133,12 +132,12 @@ export default {
           labelText: '收集人联系电话',
           type: 'text',
           fieldName: 'collectorPhone',
-          colLayout: 'doubleCol',
+          colLayout: 'singleCol',
           placeholder: '请输入手机或座机号码',
           tip: '手机格式如:13512341234 座机格式如:010-40020020',
           rules: [
             {
-              pattern: '^(((\\+\\d{2}-)?0\\d{2,3}-\\d{7,8})|((\\+\\d{2}-)?(\\d{2,3}-)?([1][3,4,5,7,8][0-9]\\d{8})))$',
+              pattern: '^(((\\+\\d{2}-)?0\\d{2,3}-\\d{7,8})|((\\+\\d{2}-)?(\\d{2,3}-)?([1][3,4,5,7,8,9][0-9]\\d{8})))$',
               message: '请输入正确的电话号码',
               trigger: 'blur'
             }
@@ -149,16 +148,16 @@ export default {
           labelText: '客户群',
           fieldName: 'customerGroup',
           placeholder: '请输入客户群',
-          colLayout: 'doubleCol',
-          maxlength: 30
+          colLayout: 'singleCol',
+          maxlength: 10
         },
         {
           type: 'text',
           labelText: '基线产品/项目名称',
           fieldName: 'projectName',
           placeholder: '请输入基线产品/项目名称',
-          colLayout: 'doubleCol',
-          maxlength: 200
+          colLayout: 'singleCol',
+          maxlength: 10
         },
         {
           type: 'select',
@@ -211,7 +210,7 @@ export default {
           fieldName: 'demandBackground',
           colLayout: 'singleCol',
           placeholder: '请输入需求背景',
-          maxlength: 1000
+          maxlength: 250
         },
         {
           type: 'textarea',
@@ -219,7 +218,7 @@ export default {
           fieldName: 'demandUrgency',
           colLayout: 'singleCol',
           placeholder: '请输入需求紧迫性',
-          maxlength: 1000
+          maxlength: 250
         },
         {
           type: 'textarea',
@@ -227,7 +226,7 @@ export default {
           fieldName: 'demandDescribe',
           colLayout: 'singleCol',
           placeholder: '请输入用户需求描述',
-          maxlength: 1000
+          maxlength: 250
         },
         {
           type: 'upload', // 控件类型
@@ -245,7 +244,7 @@ export default {
           fieldName: 'earlyPlan',
           colLayout: 'singleCol',
           placeholder: '请输入早期需求验证计划',
-          maxlength: 1000
+          maxlength: 250
         },
         {
           type: 'blank',
@@ -254,12 +253,12 @@ export default {
           slotName: 'requirementAnalyst',
           colLayout: 'singleCol',
           placeholder: '选择需求分析人',
-          rules: [
-            {
-              required: true,
-              message: '必选'
-            }
-          ]
+          // rules: [
+          //   {
+          //     required: true,
+          //     message: '必选'
+          //   }
+          // ]
         },
         {
           type: 'datetime',
@@ -270,12 +269,12 @@ export default {
           fieldConfig: {
             valueFormat: 'yyyy-MM-dd'
           },
-          rules: [
-            {
-              required: true,
-              message: '必选'
-            }
-          ]
+          // rules: [
+          //   {
+          //     required: true,
+          //     message: '必选'
+          //   }
+          // ]
         }
       ],
       dataSourceAnalyse: [
@@ -300,7 +299,7 @@ export default {
           fieldName: 'keywords',
           placeholder: '请输入需求关键字',
           colLayout: 'singleCol',
-          maxlength: 200
+          maxlength: 10
         },
         {
           type: 'radio', // 控件类型
@@ -364,7 +363,7 @@ export default {
           fieldName: 'preliminaryVerification',
           colLayout: 'singleCol',
           placeholder: '请输入需求初步验证情况',
-          maxlength: 1000,
+          maxlength: 250,
           rules: [
             {
               required: true,
@@ -405,7 +404,7 @@ export default {
           fieldName: 'handlingSuggestions',
           colLayout: 'singleCol',
           placeholder: '请输入需求处理建议',
-          maxlength: 1000,
+          maxlength: 250,
           rules: [
             {
               required: true,
@@ -420,7 +419,7 @@ export default {
           fieldName: 'processingTeam',
           slotName: 'processingTeam',
           placeholder: '请输入建议需求处理团队',
-          colLayout: 'doubleCol',
+          colLayout: 'singleCol',
           maxlength: 100,
           rules: [
             {
@@ -439,7 +438,13 @@ export default {
             api: 'thirdPartInterface.getDic',
             params: { dicType: 'HANDLING_SUGGESTIONS' }
           },
-          options: []
+          options: [],
+          rules: [
+            {
+              required: true,
+              message: '必选'
+            }
+          ]
         }
       ],
       dataSourceInfoView: [
@@ -448,49 +453,49 @@ export default {
           labelText: '需求名称',
           fieldName: 'demandName',
           placeholder: '请输入需求名称',
-          colLayout: 'doubleCol',
+          colLayout: 'singleCol',
           maxlength: 100
         },
         {
           type: 'view',
           labelText: '来源渠道',
           fieldName: 'sourceChannel',
-          colLayout: 'doubleCol'
+          colLayout: 'singleCol'
         },
         {
           type: 'view',
           labelText: '客户名称',
           fieldName: 'customerName',
           placeholder: '请输入客户名称',
-          colLayout: 'doubleCol',
-          maxlength: 30
+          colLayout: 'singleCol',
+          maxlength: 100
         },
         {
           labelText: '客户联系电话',
           type: 'view',
           fieldName: 'customerPhone',
-          colLayout: 'doubleCol'
+          colLayout: 'singleCol'
         },
         {
           labelText: '收集人联系电话',
           type: 'view',
           fieldName: 'collectorPhone',
-          colLayout: 'doubleCol'
+          colLayout: 'singleCol'
         },
         {
           type: 'view',
           labelText: '客户群',
           fieldName: 'customerGroup',
           placeholder: '请输入客户群',
-          colLayout: 'doubleCol',
-          maxlength: 30
+          colLayout: 'singleCol',
+          maxlength: 100
         },
         {
           type: 'view',
           labelText: '基线产品/项目名称',
           fieldName: 'projectName',
           placeholder: '请输入基线产品/项目名称',
-          colLayout: 'doubleCol',
+          colLayout: 'singleCol',
           maxlength: 200
         },
         {
@@ -498,7 +503,7 @@ export default {
           labelText: '需求预分类建议',
           fieldName: 'demandSuggestionsDisplay',
           fieldConfig: {},
-          colLayout: 'doubleCol'
+          colLayout: 'singleCol'
         },
         {
           type: 'view', // 控件类型
@@ -524,7 +529,7 @@ export default {
           fieldName: 'demandBackground',
           colLayout: 'singleCol',
           placeholder: '请输入需求背景',
-          maxlength: 1000
+          maxlength: 250
         },
         {
           type: 'view',
@@ -532,14 +537,14 @@ export default {
           fieldName: 'demandUrgency',
           colLayout: 'singleCol',
           placeholder: '请输入需求紧迫性',
-          maxlength: 1000
+          maxlength: 250
         },
         {
           type: 'view',
           labelText: '用户需求描述',
           fieldName: 'demandDescribe',
           colLayout: 'singleCol',
-          maxlength: 1000
+          maxlength: 250
         },
         {
           type: 'uploadView', // 控件类型
@@ -557,7 +562,7 @@ export default {
           fieldName: 'earlyPlan',
           colLayout: 'singleCol',
           placeholder: '请输入早期需求验证计划',
-          maxlength: 1000
+          maxlength: 250
         },
         {
           type: 'view',
@@ -569,7 +574,7 @@ export default {
           type: 'view',
           labelText: '需求分析要求完成时间',
           fieldName: 'requirementTime',
-          colLayout: 'doubleCol'
+          colLayout: 'singleCol'
         }
       ],
       dataSourceAnalyseView: [
@@ -648,13 +653,13 @@ export default {
           type: 'view',
           labelText: '建议需求处理团队',
           fieldName: 'processingTeamDisplay',
-          colLayout: 'doubleCol'
+          colLayout: 'singleCol'
         },
         {
           type: 'view',
           labelText: '需求处理结论',
           fieldName: 'processingConclusionDisplay',
-          colLayout: 'doubleCol'
+          colLayout: 'singleCol'
         }
       ]
     }
@@ -662,6 +667,7 @@ export default {
   mounted () {
     // 区分不同审批节点展示不同表单
     if (this.formType === '1') {
+      this.formData.sourceChannel = this.sourceChannel
       if (this.selectedApproval.yesOrNo) {
         this.dataSource = this.dataSourceInfoView
       } else {
@@ -674,20 +680,29 @@ export default {
         this.dataSource = this.dataSourceAnalyse
       }
     }
-
-    this.$api['demandManagement.viewRequirement']({
-      id: this.businessKey
-    }).then(res => {
-      if (res) {
-        this.formData = res
-        this.formData.sourceChannel = this.sourceChannel
-        if (res.analysisList.length > 0) {
-          this.formData = { ...this.formData, ...res.analysisList[0] }
-        }
-      }
-    })
+    this.viewForm()
   },
   methods: {
+    viewForm () {
+      this.$api['demandManagement.viewRequirement']({
+        id: this.businessKey
+      }).then(res => {
+        if (res) {
+          // debugger
+          if (this.formType === '1') {
+            if (res.requirementAnalyst) {
+              this.formData = res
+            }
+          } else {
+            if (res.analysisList.length > 0) {
+              this.formData = res.analysisList[0]
+            }
+            this.$set(this.formData, 'earlyPlan', res.earlyPlan)
+            this.$set(this.formData, 'requirementTime', res.requirementTime)
+          }
+        }
+      })
+    },
     selectPeople () {
       this.visible = true
     },
@@ -714,7 +729,8 @@ export default {
         this.formData.type = this.formType
         this.$api['demandManagement.saveRequirement'](this.formData).then(res => {
           if (res) {
-            this.$message.success('保存成功')
+            // this.$message.success('保存成功')
+            this.viewForm()
           }
         })
       })
@@ -725,7 +741,7 @@ export default {
 
 <style lang="scss" scoped>
 .header {
-  height: calc(100% - 35px) !important;
+  height: 100% !important;
   overflow: auto;
 }
 

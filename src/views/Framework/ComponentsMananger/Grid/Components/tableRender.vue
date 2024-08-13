@@ -1,6 +1,6 @@
 <template>
   <normal-layout class="grid-table-render table_render"
-                 :header-visible="headerVisibleType"
+                 :header-visible="headerVisible"
                  :normal-layout="normalLayout">
     <template #north>
       <common-button v-if="tableInfo.useSystemConfigButton == 1 || (tableInfo.useSystemConfigButton == 0 && buttonData.length > 0)"
@@ -570,7 +570,6 @@ export default {
       sysParams: Object.assign({ $SYSTEM_PARAMS_SELECT: _cloneDeep(this.$store.state.user.userInfo) }), // 系统级参数
       currentRouterPath: '',
       searchForm: {},
-      headerVisibleType: this.headerVisible,
       dialogHeight: document.documentElement.clientHeight - 400
     }
   },
@@ -589,7 +588,7 @@ export default {
   mounted () {
     // 我的审批页面表格不展示按钮
     if (this.pageType === 'view') {
-      this.headerVisibleType = false
+      this.headerVisible = false
     }
     if (this.code && this.code !== '') {
       this.getTableInfo(this.code)
@@ -1520,6 +1519,7 @@ export default {
     },
     // 关闭自定义抽屉
     customClose () {
+      window.selsecRow = undefined
       this.customComponentParams = {}
       this.customVisible = false
       // if (this.tableType == 0) {

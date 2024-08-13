@@ -4,7 +4,6 @@
 <template>
   <table-render code="planAssessmentByDeptData"
                 ref="table"
-                :headerVisible="false"
                 :reportParam="reportParam">
     <template #ASSESSMENTSTATUS="{scope}">
       <span v-if="scope.row.PLANASSESSMENTSTATUS !== '776e7590c4084a8ad00fb6b0dfe2a114'">{{scope.row.ASSESSMENTSTATUSDISPLAY}}</span>

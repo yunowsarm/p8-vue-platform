@@ -392,6 +392,7 @@ export default {
           _this.setMessage(formData)
           this.getDeviatuon()
           _this.$bus.$emit('refresh')
+          _this.$emit('dialogClose')
         }
         // this.formData.leaf = false
       })
