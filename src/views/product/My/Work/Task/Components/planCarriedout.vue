@@ -2,8 +2,8 @@
   <div>
     <div class="hidden-content"
          @click="open">
-      <el-badge v-if="taskMessageCount > 0"
-                :value="taskMessageCount"
+      <el-badge v-if="messageCount > 0"
+                :value="messageCount"
                 :max="99"
                 class="itemNum">
         <i class="p8 icon-shejigoutong iconClass"></i>
@@ -91,42 +91,44 @@ export default {
       secretLevel: '机密',
       thirdMenuParamTemp: this.thirdMenuParam,
       drawerSize: '30%',
-      isVisibleCommunicationDrawer: false
+      isVisibleCommunicationDrawer: false,
+      messageCount: 0
     }
   },
   computed: {
     ...mapGetters(['taskMessageCount']),
   },
-  watch: {
-    taskMessageCount (val, oldVal) {
-      console.log(val, '监听到消息***********************************************');
-      this.getMsgTotal()
-    }
-  },
   mounted () {
     this.reload()
     this.getMsgTotal()
+    window.myWebSocket.on('messageevent', (data) => {
+      let taskMessageCount = this.$store.state.user.taskMessageCount
+      this.messageCount = taskMessageCount + 1
+      console.log("🚀 app*************************************:", this.messageCount)
+      this.$store.dispatch('setTasketMessageCount', this.messageCount)
+    })
   },
   methods: {
     getMsgTotal () {
+      let that = this
       this.$api['documentManagement.getWebsocketGroupAll']({ entityId: this.thirdMenuParam.WHOLEDESCRIBEID }).then(res => {
         if (res.length > 0) {
-          let count = 0
-          res.forEach(item => {
-            count = count + item.messageCount
-          })
-          this.$store.dispatch('setTasketMessageCount', count)
+          that.messageCount = res[0].messageCount
+          that.$store.dispatch('setTasketMessageCount', res[0].messageCount)
         } else {
-          this.$store.dispatch('setTasketMessageCount', 0)
+          that.$store.dispatch('setTasketMessageCount', 0)
         }
       })
     },
     open () {
+      this.messageCount = 0
+      this.$store.dispatch('setTasketMessageCount', 0)
       this.isVisibleCommunicationDrawer = true
     },
     visibleMsgClose () {
       this.isVisibleCommunicationDrawer = false
-      this.getMsgTotal()
+      this.messageCount = 0
+      this.$store.dispatch('setTasketMessageCount', 0)
     },
     reload () {
       getTaskStatusInfo({ currentStatus: 'all' }).then(data => {

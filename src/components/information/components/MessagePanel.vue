@@ -182,8 +182,8 @@ export default {
     });
   },
   destroyed () {
-    window.myWebSocket.off('privateMessage')
-    window.myWebSocket.off('messageevent')
+    // window.myWebSocket.off('privateMessage')
+    // window.myWebSocket.off('messageevent')
   },
   methods: {
     fetchData () {

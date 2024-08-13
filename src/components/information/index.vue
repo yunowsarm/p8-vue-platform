@@ -118,7 +118,7 @@ export default {
     });
   },
   destroyed () {
-    window.myWebSocket.off('messageevent')
+    // window.myWebSocket.off('messageevent')
   },
   methods: {
     handleFullscreen () {
