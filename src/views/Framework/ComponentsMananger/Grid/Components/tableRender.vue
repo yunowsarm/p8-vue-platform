@@ -780,6 +780,7 @@ export default {
       const that = this
       this.searchData = []
       this.buttonData = []
+      this.selectRecords = []
       this.columns = []
       this.customColumn = []
       this.viewKeys = {}
