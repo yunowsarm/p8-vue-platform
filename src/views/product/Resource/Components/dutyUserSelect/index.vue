@@ -10,7 +10,8 @@
                  @handle-cancel="handleCancel"
                  @isfullscreen="isfullscreen">
     <template #dialog>
-      <list-layout class="layoutClass" :headerVisible="false">
+      <list-layout class="layoutClass"
+                   :headerVisible="false">
         <template #north>
           <!-- <div class="input-con">
             <el-input class="input-name input-search-name"
@@ -37,6 +38,14 @@
                           @select="select"
                           @row-dblclick='rowDblclick'
                           @requested-table-data="requestedTableData">
+              <template #userState="{ scope }">
+                <div class="userState">
+                  <span v-if="scope.row.departureTime"
+                        class="state-out">已退出</span>
+                  <span v-else
+                        class="state-working">团队中</span>
+                </div>
+              </template>
             </common-table>
           </div>
         </template>
@@ -87,8 +96,14 @@
   height: 50px !important;
   background-color: #e9ecef !important;
 }
-.layoutClass::v-deep .list-main{
+.layoutClass::v-deep .list-main {
   padding: 0;
+}
+.state-out {
+  color: red;
+}
+.state-working {
+  color: green;
 }
 </style>
 <script>
@@ -137,7 +152,12 @@ export default {
         {
           title: '',
           minWidth: 35,
-          type: 'selection'
+          type: 'selection',
+          selectable: (row, index) => {
+            if (!row.departureTime) {
+              return true
+            }
+          }
         },
         {
           title: '序号',
@@ -158,6 +178,15 @@ export default {
           minWidth: 150
         },
         {
+          title: '状态',
+          dataIndex: 'userState',
+          scopedSlots: {
+            customRender: 'custom'
+          },
+          align: 'center',
+          width: 80,
+        },
+        {
           title: '未完成数',
           dataIndex: 'taskUndoneCount',
           align: 'center',
@@ -174,7 +203,12 @@ export default {
         {
           title: '',
           minWidth: 35,
-          type: 'selection'
+          type: 'selection',
+          selectable: (row, index) => {
+            if (row.departureTime) {
+              return false
+            }
+          }
         },
         {
           title: '序号',
@@ -199,6 +233,15 @@ export default {
           dataIndex: 'deptName',
           align: 'center',
           minWidth: 200
+        },
+        {
+          title: '状态',
+          dataIndex: 'userState',
+          scopedSlots: {
+            customRender: 'custom'
+          },
+          align: 'center',
+          width: 80,
         }
       ]
     }

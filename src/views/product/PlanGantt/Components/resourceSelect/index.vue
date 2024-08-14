@@ -10,74 +10,98 @@
                  @handle-cancel="handleCancel"
                  @isfullscreen="isfullscreen">
     <template #dialog>
-      <el-tabs class="resource_tab" v-model="activeName">
-        <el-tab-pane v-if="tabsShow('team')" label="团队用户" name="team">
+      <el-tabs class="resource_tab"
+               v-model="activeName">
+        <el-tab-pane v-if="tabsShow('team')"
+                     label="团队用户"
+                     name="team">
           <list-layout>
             <template #north>
               <div class="input-con">
-                <el-input
-                  v-model="searchName"
-                  class="input-name input-search-name"
-                  :placeholder="DutyPersonsMessage === '' ? '支持人员名称、部门、角色模糊查询，例如：李四、lisi、部门1、计划经理' : DutyPersonsMessage"
-                  size="small"
-                  @change="inputChange"
-                />
-                <el-button style="margin-left: 15px" type="primary" size="mini" @click="search"> 搜索 </el-button>
+                <el-input v-model="searchName"
+                          class="input-name input-search-name"
+                          :placeholder="DutyPersonsMessage === '' ? '支持人员名称、部门、角色模糊查询，例如：李四、lisi、部门1、计划经理' : DutyPersonsMessage"
+                          size="small"
+                          @change="inputChange" />
+                <el-button style="margin-left: 15px"
+                           type="primary"
+                           size="mini"
+                           @click="search"> 搜索 </el-button>
               </div>
-              <i
-                v-if="tableV"
-                class="el-icon-d-arrow-right"
-                @click="
+              <i v-if="tableV"
+                 class="el-icon-d-arrow-right"
+                 @click="
                   () => {
                     tableV = !tableV
                     resourceWidth = '100%'
                   }
-                "
-              />
+                " />
             </template>
             <template #center>
               <div id="table-contain">
-                <div class="resourceList" :style="{ width: resourceWidth }">
-                  <common-table
-                    ref="tableCom"
-                    :columns="columns"
-                    :params="queryParam"
-                    :api="tableApi"
-                    :table-refresh="tableRefresh"
-                    :table-config="tableConfig"
-                    :table-setting="false"
-                    :disabled-check-all="true"
-                    is-radio-select
-                    @row-click="rowClick"
-                    @select="select"
-                    @row-dblclick="rowDblclick"
-                    @requested-table-data="requestedTableData"
-                  >
+                <div class="resourceList"
+                     :style="{ width: resourceWidth }">
+                  <common-table ref="tableCom"
+                                :columns="columns"
+                                :params="queryParam"
+                                :api="tableApi"
+                                :table-refresh="tableRefresh"
+                                :table-config="tableConfig"
+                                :table-setting="false"
+                                :disabled-check-all="true"
+                                is-radio-select
+                                @row-click="rowClick"
+                                @select="select"
+                                @row-dblclick="rowDblclick"
+                                @requested-table-data="requestedTableData">
                     <template #taskCount="{ scope }">
-                      <i v-if="scope.row.taskCount > 0" class="p8 icon-conflict" @click="showUserLoad(scope.row)" />
+                      <i v-if="scope.row.taskCount > 0"
+                         class="p8 icon-conflict"
+                         @click="showUserLoad(scope.row)" />
+                    </template>
+                    <template #userState="{ scope }">
+                      <div class="userState">
+                        <span v-if="scope.row.departureTime"
+                              class="state-out">已退出</span>
+                        <span v-else
+                              class="state-working">团队中</span>
+                      </div>
                     </template>
                   </common-table>
                 </div>
                 <div class="resourceLoad">
-                  <common-table
-                    v-if="tableV"
-                    ref="table"
-                    :columns="columnsT"
-                    :params="queryParamT"
-                    :api="tableApiT"
-                    :table-refresh="tableRefreshT"
-                    :table-config="tableConfigT"
-                    :table-setting="false"
-                  />
+                  <common-table v-if="tableV"
+                                ref="table"
+                                :columns="columnsT"
+                                :params="queryParamT"
+                                :api="tableApiT"
+                                :table-refresh="tableRefreshT"
+                                :table-config="tableConfigT"
+                                :table-setting="false">
+                    <template #userState="{ scope }">
+                      <div class="userState">
+                        <span v-if="scope.row.departureTime"
+                              class="state-out">已退出</span>
+                        <span v-else
+                              class="state-working">团队中</span>
+                      </div>
+                    </template>
+                  </common-table>
                 </div>
               </div>
             </template>
           </list-layout>
         </el-tab-pane>
-        <el-tab-pane v-if="tabsShow('user')" label="系统用户" name="user">
-          <UserSelect :visible="true" @sysUserSelect="sysUserSelect" @dbClickUser="dbClickUser" />
+        <el-tab-pane v-if="tabsShow('user')"
+                     label="系统用户"
+                     name="user">
+          <UserSelect :visible="true"
+                      @sysUserSelect="sysUserSelect"
+                      @dbClickUser="dbClickUser" />
         </el-tab-pane>
-        <el-tab-pane v-if="tabsShow('dept')" label="部门派发" name="dept">
+        <el-tab-pane v-if="tabsShow('dept')"
+                     label="部门派发"
+                     name="dept">
           <DeptSelect @deptChange="deptChange" />
         </el-tab-pane>
       </el-tabs>
@@ -85,6 +109,12 @@
   </common-dialog>
 </template>
 <style lang="scss" scoped>
+.state-out {
+  color: red;
+}
+.state-working {
+  color: green;
+}
 .date-range-con,
 .input-con {
   display: flex;
@@ -148,7 +178,7 @@ export default {
     }
   },
   props: ['startTaskId', 'endTaskId', 'planInfoId', 'visible', 'selectTaskOwnerId', 'showType', 'selectModel'],
-  data() {
+  data () {
     return {
       comp: this,
       title: '选择责任人',
@@ -198,6 +228,15 @@ export default {
           sortable: false
         },
         {
+          title: '状态',
+          dataIndex: 'userState',
+          scopedSlots: {
+            customRender: 'custom'
+          },
+          align: 'center',
+          width: 80,
+        },
+        {
           title: '计划开始时间',
           dataIndex: 'planBeginDate',
           align: 'center',
@@ -223,17 +262,17 @@ export default {
     }
   },
   computed: {
-    tabsShow() {
+    tabsShow () {
       return (type) => {
         return this.selectModel.includes(type)
       }
     }
   },
-  created() {
+  created () {
     this.activeName = this.selectModel[0]
     console.log('🚀 ~ created ~ this.activeName:', this.activeName)
   },
-  mounted() {
+  mounted () {
     if (this.showType === '1' || this.showType === '2' || this.showType === '3') {
       this.columns = [
         {
@@ -264,6 +303,15 @@ export default {
           dataIndex: 'deptName',
           align: 'center',
           minWidth: 130
+        },
+        {
+          title: '状态',
+          dataIndex: 'userState',
+          scopedSlots: {
+            customRender: 'custom'
+          },
+          align: 'center',
+          width: 80,
         }
       ]
     } else {
@@ -308,6 +356,15 @@ export default {
           dataIndex: 'roleName',
           align: 'center',
           minWidth: 130
+        },
+        {
+          title: '状态',
+          dataIndex: 'userState',
+          scopedSlots: {
+            customRender: 'custom'
+          },
+          align: 'center',
+          width: 80,
         }
         // {
         //   title: '负载',
@@ -343,7 +400,7 @@ export default {
       }
     },
     // 勾选复选框选中行
-    select(selection, row) {
+    select (selection, row) {
       if (!row) {
         this.$refs.tableCom.$refs.table.clearSelection()
       }
@@ -399,19 +456,19 @@ export default {
           console.error('异步失败的操作')
         })
     },
-    submit() {
+    submit () {
       this.$emit('resource-selected', this.currentRow.id, this.currentRow, this.selectType)
     },
-    sysUserSelect(row) {
+    sysUserSelect (row) {
       this.selectType = 'user'
       this.currentRow = row
     },
-    dbClickUser(row) {
+    dbClickUser (row) {
       this.selectType = 'user'
       this.currentRow = row
       this.submit()
     },
-    deptChange(row) {
+    deptChange (row) {
       this.selectType = 'dept'
       this.currentRow = row
       this.submit()
