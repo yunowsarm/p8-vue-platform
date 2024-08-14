@@ -2209,7 +2209,7 @@ export default {
 }
 .table_render {
   ::v-deep .normal-main {
-    height: 100%;
+    height: calc(100% - 10px);
   }
 }
 ::v-deep .columnStyle {
