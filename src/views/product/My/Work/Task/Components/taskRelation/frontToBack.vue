@@ -14,7 +14,7 @@
                     @row-click="rowClick">
       </common-table>
     </el-tab-pane>
-    <el-tab-pane label="层级">
+    <el-tab-pane label="父/子任务">
       <common-table ref="tableHierarchy"
                     :columns="columnsHierarchy"
                     :hasWBS="true"
@@ -82,6 +82,12 @@ export default {
         align: 'left'
       },
       {
+        title: '状态',
+        dataIndex: 'statusDisplay',
+        sortable: false,
+        align: 'left'
+      },
+      {
         title: '计划完成时间',
         dataIndex: 'planEndDate',
         sortable: false,
@@ -122,7 +128,22 @@ export default {
     rowClick (row) {
       this.$emit('rowClick', row.id)
     },
-    tabsClick () { }
+    checkRow (data) {
+      let that = this
+      Array.from(data).forEach((row) => {
+        if (row.id === that.getPlanInfo().TASKID) {
+          that.$refs.tableHierarchy.$refs.table.setCurrentRow(row)
+          that.$emit('rowClick', row.id)
+        }
+        if (row.children) this.checkRow(row.children)
+      })
+    },
+    tabsClick (val) {
+      if (val.paneName === '1') {
+        // 选中递归
+        this.checkRow(this.$refs.tableHierarchy.$refs.table.tableData)
+      }
+    }
   }
 }
 </script>
