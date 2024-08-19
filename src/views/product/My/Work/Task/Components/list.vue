@@ -9,12 +9,12 @@
                    @select="onSelect"></common-tree>
     </template>
     <template #center>
-      <table-render ref="tableRender"
-                    :key="dateTime"
-                    :code="componentsConfig.code"
-                    :permission-vo="componentsConfig.permissionVo"
-                    :west-tree-param="provideParams.searchParams"
-                    @refresh="init()">
+      <P8TableRender ref="tableRender"
+                     :key="dateTime"
+                     :code="componentsConfig.code"
+                     :permission-vo="componentsConfig.permissionVo"
+                     :west-tree-param="provideParams.searchParams"
+                     @refresh="init()">
         <template #NAME="{ scope, thirdMenuData }">
           <span v-if="scope.row.DATATYPE === 'task'"
                 class="underline"
@@ -40,7 +40,7 @@
           <span class="underline"
                 @click="frontToBackClick('后置任务查看', scope)">{{scope.row.POSTTASKNUMBER}}</span>
         </template>
-      </table-render>
+      </P8TableRender>
     </template>
     <template #drawer-panel>
       <common-drawer size="100%"
@@ -130,8 +130,7 @@
 <script>
 import { Input, Button } from 'element-ui'
 import { P8MenuLayout as MenuLayout, P8ProcessApproval as ProcessApprovalView, P8Drawer as CommonDrawer, P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Dialog as CommonDialog, P8Table as CommonTable, P8Button as CommonButton } from 'p8-components-ui'
-import { selectGenerateTree } from '@/views/Framework/ComponentsMananger/Layout/Components/ButtonNavigation/V1.0/edit/Components/general.js'
-import tableRender from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
+import { selectGenerateTree } from '@/utils/common.js'
 import { overdueTextHandles } from '@/utils/common'
 import frontToBack from './frontToBack'
 import CommunicationMsg from '@/components/information/index.vue';
@@ -196,7 +195,6 @@ export default {
     CommonDialog,
     CommonTable,
     CommonButton,
-    tableRender,
     CommonDrawer,
     ProcessApprovalView,
     MenuLayout,
@@ -276,9 +274,9 @@ export default {
       // this.defaultMenu = item
       this.thirdMenuParam = {
         ...record,
-        progress: Math.round(record.PROGRESS * 100),
+        progress: Number((record.PROGRESS * 100).toFixed(0)),
         taskId: record.TASKID,
-        // secretGrade: record.SECRETGRADE,
+        secretGrade: record.SECRETGRADE,
         planInfoId: record.PLANINFOID,
         wholeDescribeId: record.WHOLEDESCRIBEID,
         planInfoStatus: record.EXECUTESTATE,

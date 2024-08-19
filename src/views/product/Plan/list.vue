@@ -9,21 +9,22 @@
                    @select="onSelect"></common-tree>
     </template>
     <template #center>
-        <table-render
-            ref="tableRender"
-            class="planLayout"
-            :code="componentsConfig.code"
-            :permission-vo="componentsConfig.permissionVo"
-            :west-tree-param="provideParams.searchParams"
-            @refresh="init()">
-            <template #status="{scope}">
-                <span v-html="getIcon(scope.row)"></span>
-            </template>
-            <template #planName="{scope}">
-                <div v-if="scope.row.WHOLEDESCRIBEID" class="underline" @click="thirdMenuClick(scope.row)">{{scope.row.NAME}}</div>
-                <div v-else>{{scope.row.NAME}}</div>
-            </template>
-        </table-render>
+      <P8TableRender ref="tableRender"
+                     class="planLayout"
+                     :code="componentsConfig.code"
+                     :permission-vo="componentsConfig.permissionVo"
+                     :west-tree-param="provideParams.searchParams"
+                     @refresh="init()">
+        <template #status="{scope}">
+          <span v-html="getIcon(scope.row)"></span>
+        </template>
+        <template #planName="{scope}">
+          <div v-if="scope.row.WHOLEDESCRIBEID"
+               class="underline"
+               @click="thirdMenuClick(scope.row)">{{scope.row.NAME}}</div>
+          <div v-else>{{scope.row.NAME}}</div>
+        </template>
+      </P8TableRender>
     </template>
   </normal-layout>
 </template>
@@ -50,15 +51,14 @@
 <script>
 import { Input, Button } from 'element-ui'
 import { P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Dialog as CommonDialog, P8Table as CommonTable, P8Button as CommonButton } from 'p8-components-ui'
-import { selectGenerateTree } from '@/views/Framework/ComponentsMananger/Layout/Components/ButtonNavigation/V1.0/edit/Components/general.js'
-import tableRender from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
+import { selectGenerateTree } from '@/utils/common.js'
 export default {
   name: 'ButtonNavigationView',
   computed: {
     componentUrl () {
       console.log(this.asyncComponents, '===this.asyncComponents')
       if (this.asyncComponents) {
-         if (this.asyncComponents.indexOf('?') !== -1) {
+        if (this.asyncComponents.indexOf('?') !== -1) {
           const list = this.asyncComponents.split('?')
           const url = list[0]
           const parmars = list[1].split('&')
@@ -113,8 +113,7 @@ export default {
     CommonTree,
     CommonDialog,
     CommonTable,
-    CommonButton,
-    tableRender
+    CommonButton
   },
   created () {
     this.init()
@@ -132,7 +131,7 @@ export default {
       const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
       const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
       const res = await this.$api['desLayout.getLayoutJson']({ layoutCode: code, version: version })
-      if(!res){
+      if (!res) {
         return
       }
       this.previewParmars = JSON.parse(res)
@@ -239,9 +238,9 @@ export default {
         }
       }
     },
-    getParamsList (obj,fileName) {
+    getParamsList (obj, fileName) {
       let list = []
-      function getEndList (item){
+      function getEndList (item) {
         list.push(item[fileName])
         if (item.children && item.children.length) {
           item.children.forEach(el => {
@@ -332,11 +331,15 @@ export default {
       let str = ''
       let el = this.manageStatus[row.MANAGESTATUS]
       if (row.MANAGESTATUS && el && el.icon) {
-        str = '<i class="' + el.icon + '" style="color: ' + el.color + ';" title="' + el.meaning + '"></i>'
+        str = '<div style="opacity: 0.2; position: relative; height: 30px; background:' + el.color +
+          '"></div><div style="position: absolute; top: 13px; left: 20px;"><i class="' + el.icon + '"style="color: ' + el.color + ';" title="' + el.meaning +
+          '"></i><span style="font-size: 15px; color: ' + el.color + ';">' + el.meaning + '</span></div>'
       } else {
         let item = this.executeState[row.EXECUTESTATE]
         if (item && item.icon) {
-          str = '<i class="' + item.icon + '" style="color: ' + item.color + ';" title="' + item.meaning + '"></i>'
+          str = '<div style="opacity: 0.2; position: relative; height: 30px; background:' + item.color +
+            '"></div><div style="position: absolute; top: 13px; left: 20px;"><i class="' + item.icon + '"style="color: ' + item.color + ';" title="' + item.meaning +
+            '"></i><span style="font-size: 15px; color: ' + item.color + ';">' + item.meaning + '</span></div>'
         }
       }
       return str
@@ -359,7 +362,7 @@ export default {
       }
       if (thirdMenu.children) {
         thirdMenu.children.forEach(el => {
-          if(el.meta.title == '计划编制') {
+          if (el.meta.title == '计划编制') {
             item = el
           }
         })
@@ -374,10 +377,10 @@ export default {
       this.manageStatus = {}
       this.executeState = {}
       manageStatus.forEach(el => {
-        this.manageStatus[el.id] = {icon: el.icon,color: el.color,meaning: el.meaning}
+        this.manageStatus[el.id] = { icon: el.icon, color: el.color, meaning: el.meaning }
       })
       executeState.forEach(el => {
-        this.executeState[el.id] = {icon: el.icon,color: el.color,meaning: el.meaning}
+        this.executeState[el.id] = { icon: el.icon, color: el.color, meaning: el.meaning }
       })
     },
   }

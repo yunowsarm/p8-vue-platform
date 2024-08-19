@@ -120,14 +120,6 @@ export default {
       const that = this
       this.$api['planGanttManager.getTaskMonitorByTaskId']({ taskId: taskId }).then((res) => {
         that.dataSource[0].options = that.vueThis.monitorPointDatas
-        // that.dataSource[0].options = []
-        // if (that.vueThis.monitorPointDatas.length > 0) {
-        //   that.vueThis.monitorPointDatas.forEach(item => {
-        //     if (item.id !== '1017') {
-        //       that.dataSource[0].options.push(item) // 更新default dataSource中下拉框的数据
-        //     }
-        //   })
-        // }
         let datas = []
         if (res && res.monitorManagerResponses) {
           that.monitorManagerRequests = res.monitorManagerResponses
@@ -160,10 +152,12 @@ export default {
               }
               return ditem
             })
+            console.log(dataSourceTemp, '===========================dataSourceTemp');
             that.dataSourceArray.push(JSON.parse(JSON.stringify(dataSourceTemp)))
             // 对已有的保存数据 进行元素之间联动显示的逻辑
             that.iconSelectHandle(item.monitorId, index)
           })
+          console.log("🚀 ~ 111111111111111111111111111111111111111111", that.dataSourceArray)
         }
         this.monitorSelectRules()
       })

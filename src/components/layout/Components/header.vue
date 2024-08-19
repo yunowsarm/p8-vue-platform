@@ -184,7 +184,8 @@
     <el-dialog title="关于"
                v-if="dialogVisible"
                :visible.sync="dialogVisible"
-               width="600px"
+               width="618px"
+               class="dialogHeight"
                :before-close="beforeClose">
       <div class="regards-box">
         <p><span class="regards-font">系统名称:&nbsp;&nbsp;&nbsp;</span><span>{{ systemName }}</span></p>
@@ -608,12 +609,17 @@ div.header_userInfo {
   text-align: start;
   padding: 5px 14%;
   line-height: 25px;
-  height: 550px;
+  height: 250px;
 }
 .regards-font {
   font-weight: bold;
 }
 .icon-size {
   font-size: 16px;
+}
+.dialogHeight {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

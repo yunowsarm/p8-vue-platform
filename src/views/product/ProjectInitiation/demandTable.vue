@@ -92,6 +92,7 @@ export default {
         'highlight-current-row': true
       },
       checkboxConfig: {
+        showHeader: false
       },
       selectRecord: {},
       selectRecords: []

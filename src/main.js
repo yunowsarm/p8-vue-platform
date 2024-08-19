@@ -13,7 +13,9 @@ import 'echarts-gl'
 import api from 'p8-components-ui/dist/api'
 import p8Config from '@/config/p8Config'
 import VXETable from 'vxe-table'
+import P8LowCode from 'p8-lowcode'
 import 'vxe-table/lib/style.css'
+import 'p8-lowcode/lib/P8LowCode.css'
 Vue.use(VXETable)
 Vue.use(api, p8Config)
 Vue.use(p8)
@@ -24,6 +26,11 @@ Vue.use(config)
 Vue.use(inject)
 // 表单校验
 Vue.use(Validate)
+Vue.use(P8LowCode, {
+  loadComp: (url) => {
+    return () => import('@/views/' + url + '.vue')
+  }
+})
 // viser-vue
 Vue.component('v-contextmenu', Contextmenu)
 Vue.component('v-contextmenu-item', ContextmenuItem)

@@ -195,13 +195,12 @@ export default {
   bottom: 10px;
 }
 .content {
-  height: 100%;
+  height: calc(100% - 40px);
   display: flex;
   flex-wrap: wrap;
 }
 .content-box {
   width: 25%;
-  height: 150px;
   display: flex;
   flex-direction: column;
   justify-content: center;

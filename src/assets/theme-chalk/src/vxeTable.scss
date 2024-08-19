@@ -10,6 +10,9 @@
     display: flex;
     flex-direction: column;
   }
+  .havePagination {
+    height: calc(100% - 50px) !important;
+  }
   .small-table {
     width: 100%;
     flex: 1;

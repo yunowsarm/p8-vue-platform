@@ -43,8 +43,12 @@
                         :table-refresh="tableRefresh"
                         :pagination="false">
             <template #icon="{ scope }">
-              <i :class="[scope.row.icon ? scope.row.icon : '']"
-                 :style="{ 'font-size': '18px', color: scope.row.color }"></i>
+              <div :style="{ opacity: 0.1, background: scope.row.color, position: 'relative', height: '30px' }"></div>
+              <div style="position: absolute; top: 13px; left: 20px;">
+                <i :class="[scope.row.icon ? scope.row.icon : '']"
+                   :style="{ 'font-size': '18px', color: scope.row.color }"></i>
+                <span :style="{ 'font-size': '15px', color: scope.row.color }">{{ scope.row.meaning }}</span>
+              </div>
             </template>
           </common-table>
         </template>
@@ -149,7 +153,7 @@ const columns = [
   {
     title: '图标',
     dataIndex: 'icon',
-    minWidth: '50',
+    minWidth: '60',
     align: 'left',
     headerAlign: 'left',
     scopedSlots: {

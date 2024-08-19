@@ -1,26 +1,54 @@
 <template>
   <div style="height: 100%">
     <el-tabs value="first">
-      <el-tab-pane label="基本配置" name="first">
+      <el-tab-pane label="基本配置"
+                   name="first">
         <VuePerfectScrollbar class="scroll-area">
-          <form-list :api="saveApi" ref="baseForm" label-position="top" :data-source="baseSource" :form="formData" label-width="90px" :exist-default-btn="false" :exist-custom-btn="false">
+          <form-list :api="saveApi"
+                     ref="baseForm"
+                     label-position="top"
+                     :data-source="baseSource"
+                     :form="formData"
+                     label-width="90px"
+                     :exist-default-btn="false"
+                     :exist-custom-btn="false">
             <template #style>
-              <ace-edit :value="styleValue" width="100%" height="300px" @update:value="onStyleModify"></ace-edit>
+              <ace-edit :value="styleValue"
+                        width="100%"
+                        height="300px"
+                        @update:value="onStyleModify"></ace-edit>
             </template>
           </form-list>
         </VuePerfectScrollbar>
       </el-tab-pane>
-      <el-tab-pane label="查询配置" name="second">
+      <el-tab-pane label="查询配置"
+                   name="second">
         <VuePerfectScrollbar class="scroll-area">
-          <form-list ref="queryForm" label-position="top" :data-source="querySource" :form="formData" label-width="90px" :exist-default-btn="false" :exist-custom-btn="false">
+          <form-list ref="queryForm"
+                     label-position="top"
+                     :data-source="querySource"
+                     :form="formData"
+                     label-width="90px"
+                     :exist-default-btn="false"
+                     :exist-custom-btn="false">
             <template #button>
-              <el-button type="primary" round style="padding: 9px 15px" @click="openSearchCustom">点击设置</el-button>
+              <el-button type="primary"
+                         round
+                         style="padding: 9px 15px"
+                         @click="openSearchCustom">点击设置</el-button>
             </template>
             <template #query>
-              <ace-edit :value="queryConfigValue" width="100%" height="300px" @update:value="onQueryModify"></ace-edit>
+              <ace-edit :value="queryConfigValue"
+                        width="100%"
+                        height="300px"
+                        @update:value="onQueryModify"></ace-edit>
             </template>
           </form-list>
-          <search-custom v-if="searchCustomVisible" :visible="searchCustomVisible" :edit-data="editData" @close="searchCustomClose" @handleOk="handleOk"></search-custom>
+          <search-custom v-if="searchCustomVisible"
+                         :visible="searchCustomVisible"
+                         :edit-data="editData"
+                         @close="searchCustomClose"
+                         @handleOk="handleOk"></search-custom>
         </VuePerfectScrollbar>
       </el-tab-pane>
     </el-tabs>
@@ -30,7 +58,7 @@
 <script>
 import { P8Form as FormList } from 'p8-components-ui'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-import aceEdit from '@/views/Framework/ComponentsMananger/Kanban/Components/ace'
+import aceEdit from '@/views/Framework/ComponentsMananger/Base/Components/ace'
 import searchCustom from './searchCustom'
 export default {
   name: 'RightPanel',
@@ -47,7 +75,7 @@ export default {
     },
     editFormData: {
       type: Object,
-      default: () => {}
+      default: () => { }
     },
     saveApi: {
       type: String,
@@ -67,7 +95,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       baseSource: [
         {
@@ -175,7 +203,7 @@ export default {
     }
   },
   methods: {
-    checkCode(rule, value, callback) {
+    checkCode (rule, value, callback) {
       if (!value) {
         // callback 是提示的信息
         return callback(new Error('code不能为空'))
@@ -189,7 +217,7 @@ export default {
         })
       }
     },
-    async getSubmitData() {
+    async getSubmitData () {
       let _this = this
       let allFormData
       await this.$refs.baseForm.validate().then((baseParams) => {
@@ -199,22 +227,22 @@ export default {
       })
       return allFormData
     },
-    doSubmit(data) {
+    doSubmit (data) {
       this.$refs.baseForm.submitForm(data, this.saveApi)
     },
-    getFormData() {
+    getFormData () {
       return this.formData
     },
-    onStyleModify(v) {
+    onStyleModify (v) {
       this.formData.style = v
     },
-    openSearchCustom() {
+    openSearchCustom () {
       this.searchCustomVisible = true
     },
-    searchCustomClose() {
+    searchCustomClose () {
       this.searchCustomVisible = false
     },
-    handleOk(data) {
+    handleOk (data) {
       this.editData = data
       let searchData = []
       data.forEach((item) => {
@@ -235,7 +263,7 @@ export default {
       this.queryConfigValue = this.formData.queryConfig
       this.searchCustomClose()
     },
-    onQueryModify(v) {
+    onQueryModify (v) {
       this.formData.queryConfig = v
     }
   }

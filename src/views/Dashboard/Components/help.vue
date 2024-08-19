@@ -1,20 +1,27 @@
 <template>
-  <el-tabs tab-position="left" value="first" style="height: 100%">
-    <el-tab-pane label="查询条件配置样例" name="first" style="height: 100%">
-      <ace-edit :value="configExample" width="100%" height="100%" :config="editConfig"> </ace-edit>
+  <el-tabs tab-position="left"
+           value="first"
+           style="height: 100%">
+    <el-tab-pane label="查询条件配置样例"
+                 name="first"
+                 style="height: 100%">
+      <ace-edit :value="configExample"
+                width="100%"
+                height="100%"
+                :config="editConfig"> </ace-edit>
     </el-tab-pane>
   </el-tabs>
 </template>
 
 <script>
-import aceEdit from '@/views/Framework/ComponentsMananger/Kanban/Components/ace'
+import aceEdit from '@/views/Framework/ComponentsMananger/Base/Components/ace'
 
 export default {
   name: 'Help',
   components: {
     aceEdit
   },
-  data() {
+  data () {
     return {
       editConfig: {
         options: {
@@ -96,7 +103,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .el-tabs__content {
   height: calc(100%);
   overflow-y: auto;
