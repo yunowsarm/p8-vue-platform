@@ -1209,6 +1209,8 @@ export default {
             let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
             let extraStr = extraList.map(extra => extra.filedName)
             taskList.forEach(task => {
+              // 解决gantt图鼠标悬浮任务名
+              task.text = task.name
               extraStr.forEach(key => {
                 task[key] = ''
               })
