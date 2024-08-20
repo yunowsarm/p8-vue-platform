@@ -240,7 +240,9 @@ export default {
     console.log(this.systemName, '=========================systemName')
     this.dayTime = getGreetingTime()
     const this_ = this
-    this_.approvalTotal()
+    setInterval(function () {
+      this_.approvalTotal()
+    }, 60000)
     this_.getMsgTotal()
     // this_.approvalMsg()
     // this_.noticeMsg()
