@@ -217,7 +217,7 @@ export default {
       this.$api['planExamine.getMonth']({ year: this.formData.year }).then(res => {
         if (res) {
           res.forEach(el => {
-            if (el.status === '776e7590c4084a8ad00fb6b0dfe2a114' || el.status === 'e7f2513074bb66bbfdfcb81cb79fd93c') {
+            if (el.status === '776e7590c4084a8ad00fb6b0dfe2a114' || el.status === 'e7f2513074bb66bbfdfcb81cb79fd93c' || el.status === '5c366714014cec8700df5bbf94bfd31a') {
               option.forEach(item => {
                 if (el.month === item.value) {
                   item.disabled = true
