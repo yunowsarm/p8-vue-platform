@@ -163,7 +163,7 @@ export default {
           title: '序号',
           type: 'index',
           align: 'center',
-          minWidth: 50
+          width: 60
         },
         {
           title: '角色名称',
@@ -205,8 +205,8 @@ export default {
           minWidth: 35,
           type: 'selection',
           selectable: (row, index) => {
-            if (row.departureTime) {
-              return false
+            if (!row.departureTime) {
+              return true
             }
           }
         },
@@ -214,7 +214,7 @@ export default {
           title: '序号',
           type: 'index',
           align: 'center',
-          minWidth: 50
+          width: 60
         },
         {
           title: '角色名称',
@@ -251,9 +251,11 @@ export default {
   methods: {
     // 单击选中行
     rowClick (row, column, event) {
-      this.$refs.tableCom.$refs.table.clearSelection()
-      this.$refs.tableCom.$refs.table.toggleRowSelection(row)
-      this.currentRow = row
+      if (!row.departureTime) {
+        this.$refs.tableCom.$refs.table.clearSelection()
+        this.$refs.tableCom.$refs.table.toggleRowSelection(row)
+        this.currentRow = row
+      }
     },
     // 勾选复选框选中行
     select (selection, row) {
@@ -263,10 +265,12 @@ export default {
     },
     // 双击行，直接关闭抽屉、回填值
     rowDblclick (row, column, event) {
-      this.$refs.tableCom.$refs.table.clearSelection()
-      this.$refs.tableCom.$refs.table.toggleRowSelection(row)
-      this.currentRow = row
-      this.submit()
+      if (!row.departureTime) {
+        this.$refs.tableCom.$refs.table.clearSelection()
+        this.$refs.tableCom.$refs.table.toggleRowSelection(row)
+        this.currentRow = row
+        this.submit()
+      }
     },
     isfullscreen (isfullscreen) {
       if (isfullscreen) {
