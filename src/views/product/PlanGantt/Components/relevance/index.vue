@@ -23,7 +23,7 @@
     <div style="height: 4%;">
       <el-button style="margin-left: 20px;"
                  type="primary"
-                 :disabled="selectRecord.managerStatus === '6404'||selectRecord.managerStatus === '6406' || selectRecord.managerStatus === '6405'||selectRecord.managerStatus === '6409'"
+                 :disabled="selectRecord.isLeaf===0 || selectRecord.managerStatus === '6404'||selectRecord.managerStatus === '6406' || selectRecord.managerStatus === '6405'||selectRecord.managerStatus === '6409'"
                  @click="relevanceClick">关联/取消</el-button>
     </div>
     <vxe-table ref="xDemandTable"
