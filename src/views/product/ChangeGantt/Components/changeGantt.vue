@@ -59,6 +59,7 @@
       </VuePerfectScrollbar>
     </div>
     <div ref="myGantt"
+         class="myGantt"
          style="width: 100%; height: calc(100% - 40px) !important"
          @mousemove="mouseMove"></div>
     <div class="detail_div">
@@ -183,6 +184,12 @@
 <style lang="scss" scoped>
 @import '~p8-dhtmlx-gantt/codebase/dhtmlxgantt.css';
 @import '@/assets/commonJS/ganttJS/ganttObject.css';
+// .myGantt ::v-deep {
+//   // 2个版本，无数据的颜色修改
+//   .gantt_grid_data .gantt_row.changeColor:not([aria-expanded]) {
+//     background-color: #c22222 !important;
+//   }
+// }
 
 #actionMenu {
   user-select: none;
@@ -600,7 +607,7 @@ export default {
             task.monitors = taskMonitorMap
           }
         } else {
-          if (task.monitorPoints.indexOf('1017' !== -1)) {
+          if (task.monitorPoints.indexOf('1017') !== -1) {
             task.monitors = taskMonitorMap
           } else {
             task.monitors = taskMonitorMap.filter(item => item.monitorId !== '1017')
@@ -703,6 +710,9 @@ export default {
                     obj[changeTaskKey] = res.changeTaskInfo[item.id][changeTaskKey]
                   }
                 })
+                if (!res.changeTaskInfo[item.id].monitors) {
+                  obj.monitorPoints = ''
+                }
               }
               return obj
             })

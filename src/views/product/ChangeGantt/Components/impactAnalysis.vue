@@ -1,14 +1,24 @@
 <template>
   <div style="height: 100%">
-    <div class="top" ref="top" :style="{ height: commandButtonBarHeight }">
-      <command-button-bar :panel-data="btnData" :selected-tasks="selectedTasks" :gantt-name="ganttName" :plan-info-id="planInfoId" @change-command-button="changeCommandButton"></command-button-bar>
+    <div class="top"
+         ref="top"
+         :style="{ height: commandButtonBarHeight }">
+      <command-button-bar :panel-data="btnData"
+                          :selected-tasks="selectedTasks"
+                          :gantt-name="ganttName"
+                          :plan-info-id="planInfoId"
+                          @change-command-button="changeCommandButton"></command-button-bar>
     </div>
-    <div class="bottom" :class="expandBottom">
-      <div class="myGantt" ref="myGantt" style="width: 100%; height: calc(100% - 40px) !important"></div>
+    <div class="bottom"
+         :class="expandBottom">
+      <div class="myGantt"
+           ref="myGantt"
+           style="width: 100%; height: calc(100% - 40px) !important"></div>
       <div class="detail_div">
         <div style="width: 50%">
           <span style="margin-left: 16px">选中任务：</span>
-          <span @click="showDetail" class="detail_span">{{ selectTaskName }}</span>
+          <span @click="showDetail"
+                class="detail_span">{{ selectTaskName }}</span>
         </div>
         <div style="width: 50%">
           <span style="float: right; margin-right: 20px; line-height: 40px">已选中 {{ selectTaskCount }} 条</span>
@@ -16,19 +26,21 @@
         </div>
       </div>
     </div>
-    <el-drawer
-      style="width: 60%; left: auto"
-      class="top_level"
-      :title="detailTitle"
-      :append-to-body="true"
-      size="100%"
-      :destroy-on-close="true"
-      :wrapper-closable="false"
-      :modal="false"
-      @closed="detailDrawerClosed"
-      :visible.sync="detailVisible"
-    >
-      <plan-attribute @save-success="detailDrawerClosed" :task-id="selectTaskId" :att-read-only="readOnly" :gantt-name="ganttName" :plan-info-id="planInfoId"></plan-attribute>
+    <el-drawer style="width: 60%; left: auto"
+               class="top_level"
+               :title="detailTitle"
+               :append-to-body="true"
+               size="100%"
+               :destroy-on-close="true"
+               :wrapper-closable="false"
+               :modal="false"
+               @closed="detailDrawerClosed"
+               :visible.sync="detailVisible">
+      <plan-attribute @save-success="detailDrawerClosed"
+                      :task-id="selectTaskId"
+                      :att-read-only="readOnly"
+                      :gantt-name="ganttName"
+                      :plan-info-id="planInfoId"></plan-attribute>
     </el-drawer>
   </div>
 </template>
@@ -124,7 +136,7 @@ export default {
     PlanAttribute,
     CommandButtonBar
   },
-  data() {
+  data () {
     return {
       ganttName: 'analysisGantt',
       selectedTasks: [],
@@ -188,7 +200,7 @@ export default {
       }
     },
     ganttButtonMode: {
-      handler(val) {
+      handler (val) {
         if (val == 'tabs') {
           this.commandButtonBarHeight = '145px'
         }
@@ -202,26 +214,26 @@ export default {
       immediate: true
     }
   },
-  mounted() {
+  mounted () {
     this.changeRecordId = this.changeId
     this.initGantt(this.planInfoId, this.changeRecordId)
   },
   computed: {
-    isDisable() {
+    isDisable () {
       const that = this
       return function (btnConfig) {
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
         return btnData[0].isDisableFun(null, this.ganttName, this.selectedTasks)
       }
     },
-    buttonData() {
+    buttonData () {
       const that = this
       return function (btnConfig) {
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
         return btnData[0]
       }
     },
-    btnData() {
+    btnData () {
       if (this.$route.path === '/TaskDecomposition') {
         const NewCommandButtonBarDataTabsRow = deepClone(CommandButtonBarData)
         const tabsRow = NewCommandButtonBarDataTabsRow.filter((item) => {
@@ -252,7 +264,7 @@ export default {
         return this.ganttButtonMode === 'tabs' ? tabsRow : this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
       }
     },
-    expandBottom() {
+    expandBottom () {
       if (this.ganttButtonMode == 'tabs' && this.advance) {
         return 'tabs'
       }
@@ -270,7 +282,7 @@ export default {
     ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
   },
   methods: {
-    initGantt(planInfoId, changeRecordId) {
+    initGantt (planInfoId, changeRecordId) {
       const vueThis = this
       const element = this.$refs.top; // 获取DOM元素
       // 清空原有数据
@@ -290,9 +302,9 @@ export default {
       // 加载数据
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage, changeRecordId)
     },
-    loadGanttData(planInfoId, taskId, createPage, changeRecordId) {
+    loadGanttData (planInfoId, taskId, createPage, changeRecordId) {
       const vueThis = this
-      vueThis.$api['planGanttManager.loadPlanGanttData']({ planInfoId: planInfoId, dicType: 'ACTIVITY_TYPE', taskId: taskId, createPage: createPage, changeRecordId: changeRecordId})
+      vueThis.$api['planGanttManager.loadPlanGanttData']({ planInfoId: planInfoId, dicType: 'ACTIVITY_TYPE', taskId: taskId, createPage: createPage, changeRecordId: changeRecordId })
         .then(function (res) {
           if (res) {
             // 初始化数据
@@ -310,6 +322,9 @@ export default {
                   }
                 })
                 obj.oldName = res.changeTaskInfo[item.id].oldName
+                if (!res.changeTaskInfo[item.id].monitors) {
+                  obj.monitorPoints = ''
+                }
               }
               return obj
             })
@@ -332,16 +347,16 @@ export default {
           console.error('error' + error)
         })
     },
-    showDetail() {
+    showDetail () {
       if (myGantt.getGlobalTaskIndex(this.selectTaskId) !== 0) {
         this.detailVisible = true
       }
     },
-    detailDrawerClosed(res) {
+    detailDrawerClosed (res) {
       this.detailVisible = false
       // this.selectTaskId = ''
     },
-    sendTaskJson() {
+    sendTaskJson () {
       const that = this
       if (that.changeRecordId) {
         const affectTasks = []
@@ -359,14 +374,14 @@ export default {
         })
         if (affectTasks && affectTasks.length > 0) {
           that.$api['planChange.planTaskJsonSave']({ affectTasksInfo: affectTasks, id: that.changeRecordId })
-            .then(function (res) {})
+            .then(function (res) { })
             .catch(function (error) {
               console.error('error' + error)
             })
         }
       }
     },
-    changeCommandButton(advance) {
+    changeCommandButton (advance) {
       this.advance = advance
       if (advance) {
         this.commandButtonBarHeight = '152px'
