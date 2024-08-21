@@ -11,10 +11,16 @@
         <div v-html="statusHandle()"></div>
       </template>
       <template #managerStatus>
-        <i v-if="taskInfo.relationTask === '1'"
-           class='el-icon-connection'
-           style="font-size: 30px; color: skyblue;"
-           @click="demandClick"></i>
+        <div class="iconStyle">
+          <div v-for="(item, index) in mointorData"
+               :key="index">
+            <i v-if="item.icon === 'p8 icon-release'"
+               :class='item.icon'
+               @click="demandClick"></i>
+            <i v-else
+               :class='item.icon'></i>
+          </div>
+        </div>
       </template>
       <template #durationDay>
         <div class="duration-days"
@@ -122,7 +128,8 @@ export default {
       isdemandTable: false,
       taskInfo: {},
       dialogHeight: document.documentElement.clientHeight - 243,
-      taskId: ''
+      taskId: '',
+      mointorData: []
     }
   },
   mounted () {
@@ -162,8 +169,26 @@ export default {
     },
     getTaskInfo () {
       let _this = this
+      _this.mointorData = []
       this.$api[this.api]({ taskId: _this.getPlanInfo ? _this.getPlanInfo().TASKID : this.businessKey }).then(res => {
         _this.taskInfo = res
+        if (res && res.monitorpointIconArray) {
+          console.log("1111111111111111111111111111111", res.monitorpointIconArray)
+          if (res.monitorpointIconArray.includes(',')) {
+            let monitorPointIconArray = res.monitorpointIconArray.split(',')
+            let monitorLength = monitorPointIconArray.length
+            for (let i = 0; i < monitorLength; i++) {
+              _this.mointorData.push({
+                icon: monitorPointIconArray[i]
+              })
+            }
+          } else {
+            _this.mointorData.push({
+              icon: res.monitorpointIconArray
+            })
+            console.log(_this.mointorData, '=============== _this.mointorData');
+          }
+        }
         _this.rendFormData(res)
       })
     },
@@ -440,5 +465,9 @@ $red-color: #f80012;
       font-weight: bolder;
     }
   }
+}
+.iconStyle {
+  display: flex;
+  flex-direction: row;
 }
 </style>
