@@ -33,6 +33,9 @@ export function getChangeGantt(ganttName, vueThis) {
 
   // 网格行的背景颜色
   ganttObject.templates.grid_row_class = function (start, end, task) {
+    // if (task.infoType === 'update') {
+    //   return 'changeColor'
+    // }
     if (ganttObject.getGlobalTaskIndex(task.id) !== 0 || vueThis.createPage === 'userChange') {
       const managerStatus = task.managerStatus
       const status = task.status
@@ -69,10 +72,10 @@ export function getChangeGantt(ganttName, vueThis) {
                 html = `<i class="gantt-tip p8 icon-make-increase" style="color: #0d6bec;" title="调增"></i>`
                 break
               case 'update':
-                html = `<i class="gantt-tip p8 icon-content-adjustment" style="color: #0d6bec;" title = "内容调整"></i>`
+                html = `<i class="gantt-tip p8 icon-content-adjustment" style="color: #FF0000;" title = "内容调整"></i>`
                 break
               case 'delete':
-                html = `<i class="gantt-tip p8 icon-make-reductions" style="color: #0d6bec;" title = "调减"></i>`
+                html = `<i class="gantt-tip p8 icon-make-reductions" style="color: #FF0000;" title = "调减"></i>`
                 break
             }
           }
@@ -130,8 +133,8 @@ export function getChangeGantt(ganttName, vueThis) {
       resize: true,
       template: function (task) {
         // 任务图标，排除根节点
-        if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
-          return task.changeStatusName
+        if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.changeStatusName) {
+          return '<div style="display: inline-block;color:' + task.style + '">' + task.changeStatusName + '</div>'
         }
       }
     },
@@ -140,7 +143,13 @@ export function getChangeGantt(ganttName, vueThis) {
       label: '绩效',
       align: 'center',
       resize: true,
-      min_width: 90
+      min_width: 90,
+      template: function (task) {
+        if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.achievements) {
+          return '<div style="display: inline-block;color:' + task.style + '">' + task.achievements + '</div>'
+        }
+        return ''
+      }
     },
     {
       name: 'proportion',
@@ -150,7 +159,7 @@ export function getChangeGantt(ganttName, vueThis) {
       min_width: 90,
       template: function (task) {
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.proportion) {
-          return task.proportion + '%'
+          return '<div style="display: inline-block;color:' + task.style + '">' + task.proportion + '%' + '</div>'
         }
         return ''
       }
@@ -174,7 +183,7 @@ export function getChangeGantt(ganttName, vueThis) {
               monitorPointDatas.some((point, index) => {
                 if (point.id === id) {
                   const icon = point.icon
-                  html += '<i class="p8 ' + icon + '" title="' + point.title + '"></i>'
+                  html += '<i class="p8 ' + icon + '" title="' + point.title + '" style:"display: inline-block;color:' + task.style + '"></i>'
                   return true
                 }
               })
@@ -200,7 +209,7 @@ export function getChangeGantt(ganttName, vueThis) {
           taskClassifyDatas.some((point, index) => {
             if (point.id === planType) {
               const icon = point.icon
-              html += '<i class="' + icon + '" title="' + point.title + '"></i>'
+              html += '<i style:"display: inline-block;color:' + task.style + '" class="' + icon + '" title="' + point.title + '"></i>'
               return true
             }
           })
@@ -248,9 +257,11 @@ export function getChangeGantt(ganttName, vueThis) {
         if (task.style) {
           if (task.infoType === 'delete') {
             return '<div style="display: inline-block;text-decoration:line-through;color:' + task.style + '">' + task.name + '</div>'
-          } else {
+          }
+          if (task.infoType === 'update' || task.infoType === 'create') {
             return '<div style="display: inline-block;color:' + task.style + '">' + task.name + '</div>'
           }
+          return task.name
         } else {
           return task.name
         }
@@ -267,6 +278,9 @@ export function getChangeGantt(ganttName, vueThis) {
         const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
         const owner = task[ganttObject.config.resource_property]
         if (owner) {
+          if (task.infoType === 'update') {
+            return '<div style="display: inline-block;color:' + task.style + '">' + resourceDatas.getItem(owner).name + '</div>'
+          }
           return resourceDatas.getItem(owner) ? resourceDatas.getItem(owner).name : ''
         } else {
           return ''
@@ -283,6 +297,9 @@ export function getChangeGantt(ganttName, vueThis) {
         const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
         const owner = task[ganttObject.config.resource_property]
         if (owner) {
+          if (task.infoType === 'update') {
+            return '<div style="display: inline-block;color:' + task.style + '">' + resourceDatas.getItem(owner).roleName + '</div>'
+          }
           return resourceDatas.getItem(owner) ? resourceDatas.getItem(owner).roleName : ''
         } else {
           return ''
@@ -299,7 +316,10 @@ export function getChangeGantt(ganttName, vueThis) {
         const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
         const owner = task[ganttObject.config.resource_property]
         if (owner) {
-          return resourceDatas.getItem(owner) ? resourceDatas.getItem(owner).deptName : ''
+          if (task.infoType === 'update') {
+            return '<div style="display: inline-block;color:' + task.style + '">' + resourceDatas.getItem(owner).deptName + '</div>'
+          }
+          return '<div style="display: inline-block;color:#FF0000;">' + resourceDatas.getItem(owner) ? resourceDatas.getItem(owner).deptName : '' + '</div>'
         } else {
           return null
         }
@@ -314,9 +334,17 @@ export function getChangeGantt(ganttName, vueThis) {
       template: function (task) {
         const weatherControl = task.weatherControl
         if (weatherControl === '1') {
-          return '是'
+          if (task.infoType === 'update') {
+            return '<div style="display: inline-block;color:#FF0000;">' + '是' + '</div>'
+          } else {
+            return '是'
+          }
         } else {
-          return '否'
+          if (task.infoType === 'update') {
+            return '<div style="display: inline-block;color:#FF0000;">' + '否' + '</div>'
+          } else {
+            return '否'
+          }
         }
       }
     },
@@ -333,7 +361,11 @@ export function getChangeGantt(ganttName, vueThis) {
           const link = ganttObject.getLink(links[i])
           labels.push(linksFormatter.format(link))
         }
-        return labels.join(',')
+        if (task.infoType === 'update') {
+          return '<div style="display: inline-block;color:#FF0000;">' + labels.join(',') + '</div>'
+        } else {
+          return labels.join(',')
+        }
       }
     },
     {
@@ -367,10 +399,17 @@ export function getChangeGantt(ganttName, vueThis) {
       min_width: 100,
       resize: true,
       template: function (task) {
-        if (ganttObject.isTaskExists(task.parent) && ganttObject.getTask(task.parent).start_date > task.start_date) {
-          return '<span class="red-wave">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+        if (task.infoType === 'update') {
+          if (ganttObject.isTaskExists(task.parent) && ganttObject.getTask(task.parent).start_date > task.start_date) {
+            return '<span style:"display: inline-block;color:#FF0000;" class="red-wave">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+          }
+          return '<div style="display: inline-block;color:#FF0000;">' + moment(task.start_date).format('YYYY-MM-DD') + '</div>'
+        } else {
+          if (ganttObject.isTaskExists(task.parent) && ganttObject.getTask(task.parent).start_date > task.start_date) {
+            return '<span class="red-wave">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+          }
+          return task.start_date
         }
-        return task.start_date
       }
     },
     {
@@ -384,10 +423,19 @@ export function getChangeGantt(ganttName, vueThis) {
           const pEndDate = GanttObject.strToDate(GanttObject.dateToStr(ganttObject.getTask(task.parent).end_date, null, ganttObject), null, ganttObject)
           const tEndDate = GanttObject.strToDate(GanttObject.dateToStr(task.end_date, null, ganttObject), null, ganttObject)
           if (pEndDate < tEndDate) {
-            return '<span class="red-wave">' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
+            if (task.infoType === 'update') {
+              return '<span class="red-wave" style="display: inline-block;color:#FF0000;">' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
+            } else {
+              return '<span class="red-wave">' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
+            }
+            
           }
         }
-        return ganttObject.date.add(task.end_date, -1, 'day')
+        if (task.infoType === 'update') {
+          return '<div style="display: inline-block;color:#FF0000;">' + moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD') + '</div>'
+        } else {
+          return ganttObject.date.add(task.end_date, -1, 'day')
+        }
       }
     },
     {
