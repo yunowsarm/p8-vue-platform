@@ -6,6 +6,104 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "41570209",
+      "name": "B",
+      "font_class": "B",
+      "unicode": "e7e2",
+      "unicode_decimal": 59362
+    },
+    {
+      "icon_id": "41566942",
+      "name": "销售周报",
+      "font_class": "xiaoshouzhoubao",
+      "unicode": "e7db",
+      "unicode_decimal": 59355
+    },
+    {
+      "icon_id": "41566944",
+      "name": "外部会议",
+      "font_class": "waibuhuiyi",
+      "unicode": "e7dc",
+      "unicode_decimal": 59356
+    },
+    {
+      "icon_id": "41566943",
+      "name": "参观展览",
+      "font_class": "canguanzhanlan",
+      "unicode": "e7dd",
+      "unicode_decimal": 59357
+    },
+    {
+      "icon_id": "41566941",
+      "name": "客户交流",
+      "font_class": "kehujiaoliu",
+      "unicode": "e7de",
+      "unicode_decimal": 59358
+    },
+    {
+      "icon_id": "41566940",
+      "name": "市场调研",
+      "font_class": "shichangtiaoyan",
+      "unicode": "e7df",
+      "unicode_decimal": 59359
+    },
+    {
+      "icon_id": "41566939",
+      "name": "技术支持",
+      "font_class": "jishuzhichi",
+      "unicode": "e7e0",
+      "unicode_decimal": 59360
+    },
+    {
+      "icon_id": "41566938",
+      "name": "媒体信息",
+      "font_class": "meitixinxi",
+      "unicode": "e7e1",
+      "unicode_decimal": 59361
+    },
+    {
+      "icon_id": "41566948",
+      "name": "高层拜访",
+      "font_class": "gaocengbaifang",
+      "unicode": "e7d6",
+      "unicode_decimal": 59350
+    },
+    {
+      "icon_id": "41566947",
+      "name": "外聘专家",
+      "font_class": "waipinzhuanjia",
+      "unicode": "e7d7",
+      "unicode_decimal": 59351
+    },
+    {
+      "icon_id": "41566949",
+      "name": "技术交流",
+      "font_class": "jishujiaoliu",
+      "unicode": "e7d8",
+      "unicode_decimal": 59352
+    },
+    {
+      "icon_id": "41566946",
+      "name": "投标总结",
+      "font_class": "toubiaozongjie",
+      "unicode": "e7d9",
+      "unicode_decimal": 59353
+    },
+    {
+      "icon_id": "41566945",
+      "name": "沟通例会",
+      "font_class": "goutonglihui",
+      "unicode": "e7da",
+      "unicode_decimal": 59354
+    },
+    {
+      "icon_id": "35699452",
+      "name": "需求",
+      "font_class": "a-xuqiu1",
+      "unicode": "eb62",
+      "unicode_decimal": 60258
+    },
+    {
       "icon_id": "7326874",
       "name": "沟通管理",
       "font_class": "shejigoutong",

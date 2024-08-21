@@ -78,13 +78,13 @@ export default {
       {
         type: 'view',
         labelText: '计划周期',
-        fieldName: 'forecastDate',
+        fieldName: 'planDate',
         colLayout: ''
       },
       {
         type: 'view',
         labelText: '预计周期',
-        fieldName: 'planDate',
+        fieldName: 'forecastDate',
         colLayout: ''
       },
       {
