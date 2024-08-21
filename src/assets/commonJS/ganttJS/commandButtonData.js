@@ -1183,7 +1183,7 @@ export const CommandButtonData = [
   },
   {
     id: 'font-bold',
-    icon: 'p8 icon-bold',
+    icon: 'p8 icon-B',
     title: '加粗',
     style: 'font-weight:bold;', // css样式
     help: '加粗',
