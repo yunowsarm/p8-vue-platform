@@ -3,6 +3,7 @@
                :record="{ desformCode: codeForm }"
                :prop-param="propParam"
                v-bind="$attrs"
+               pageType="view"
                @close="formClose"
                @save-success="formCloseRefresh"></form-render>
 </template>
@@ -26,7 +27,7 @@ export default {
     }
   },
   mounted () {
-    // 修改回显
+    // 回显
     if (this.row && this.row.length > 0) {
       this.codeForm = this.row[0].DEMAND_CODE
       this.dataViewId = this.row[0].ID
