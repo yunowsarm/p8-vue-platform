@@ -16,6 +16,7 @@
         <div v-if="isExecute(panel.groups)"
              class="group-search">
           <component :is="panel.groups"
+                     ref="components11"
                      :gantt-name="ganttName"
                      :special-plan="specialPlan"
                      :plan-info-id="planInfoId"
@@ -349,7 +350,7 @@ export default {
       this.vueThis.rightMenuConfigVisible = true
     }
   },
-  beforeDestroy() {
+  beforeDestroy () {
     this.$bus.$off('ganttInit')
   }
 }

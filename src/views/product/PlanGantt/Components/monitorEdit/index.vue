@@ -178,7 +178,6 @@ export default {
       if (that.ganttName) {
         const ganttObject = GanttObject.getGanttObject(that.ganttName)
         const task = ganttObject.getTask(that.taskId)
-        console.log("1122222222222222222222222222:", that.vueThis.taskData)
         if (that.ganttName === 'changeGantt') {
           // 变更逻辑处理
           if (that.vueThis.taskData.length > 0) {
@@ -213,6 +212,7 @@ export default {
                     task.monitorPoints = ''
                   }
                   ganttObject.updateTask(task.id)
+                  that.$emit('refreshData')
                 })
                 that.$message({
                   message: '保存成功！',
@@ -276,6 +276,7 @@ export default {
                     task.monitorPoints = null
                   }
                   ganttObject.updateTask(that.taskId)
+                  that.$emit('refreshData')
                 })
                 that.$message({
                   message: '删除成功！',

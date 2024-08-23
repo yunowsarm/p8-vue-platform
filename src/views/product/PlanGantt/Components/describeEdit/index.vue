@@ -1,20 +1,18 @@
 <template>
   <div style="position: relative">
-    <form-list
-      class="describe-form"
-      ref="form"
-      :comp="comp"
-      :key="formKey"
-      @rendered="rendered"
-      form-layout="vertical"
-      @saved="saved"
-      :data-source="dataSource"
-      :api="saveApi"
-      :is-custom-validate="isCustomValidate"
-      @custom-validate="customValidate"
-      :other-param="otherParam"
-      :form="formData"
-    >
+    <form-list class="describe-form"
+               ref="form"
+               :comp="comp"
+               :key="formKey"
+               @rendered="rendered"
+               form-layout="vertical"
+               @saved="saved"
+               :data-source="dataSource"
+               :api="saveApi"
+               :is-custom-validate="isCustomValidate"
+               @custom-validate="customValidate"
+               :other-param="otherParam"
+               :form="formData">
     </form-list>
   </div>
 </template>
@@ -580,6 +578,10 @@ export default {
             // 保存
             this.$api['planGanttManager.saveGanttExtendAttr']({ taskId: that.taskId, taskExtendRequests: extraData })
             that.$refs.form.submitForm(saveParams, that.saveApi)
+            setTimeout(() => {
+              that.$emit('refreshData')
+              // 在这里执行你希望的操作
+            }, 3000);
           } else if (that.ganttName === 'changeGantt') {
             // 变更校验
             const ganttObject = GanttObject.getGanttObject(that.ganttName)
@@ -782,7 +784,7 @@ export default {
       let parentId = ganttObject.getParent(this.taskId)
       let parentTask = ganttObject.getTask(parentId)
       if (ganttObject.getGlobalTaskIndex(parentId) !== 0 && parentTask.achievements) {
-        this.formData.proportion = ((Number(this.formData.achievements) / Number(parentTask.achievements))*100).toFixedNoRound(2)
+        this.formData.proportion = ((Number(this.formData.achievements) / Number(parentTask.achievements)) * 100).toFixedNoRound(2)
       }
     },
     proportionChangeHandle (val) {

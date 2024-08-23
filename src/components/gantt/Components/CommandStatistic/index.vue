@@ -2,27 +2,33 @@
   <div>
     <div class="box">
       <div id="monitorChart"></div>
-      <el-divider class="line" direction="vertical"></el-divider>
+      <el-divider class="line"
+                  direction="vertical"></el-divider>
       <div class="detail_box">
         <div>
           <div class="total_num">{{ totalMonitorNum }}</div>
           <div class="tital_text">任务标识总数</div>
         </div>
         <div class="monitor_list">
-          <div class="monitor_item" v-for="(item, index) in list" :key="index">
+          <div class="monitor_item"
+               v-for="(item, index) in list"
+               :key="index">
             <span :class="item.icon"></span>
             <span class="text">{{ item.value }}</span>
           </div>
         </div>
       </div>
-      <el-divider class="line" direction="vertical"></el-divider>
+      <el-divider class="line"
+                  direction="vertical"></el-divider>
       <div class="detail_box">
         <div>
           <div class="total_num">{{ totalTypeNum }}</div>
           <div class="tital_text">任务类型总数</div>
         </div>
         <div class="monitor_list">
-          <div class="monitor_item" v-for="(item, index) in list3" :key="index">
+          <div class="monitor_item"
+               v-for="(item, index) in list3"
+               :key="index">
             <span :class="item.icon"></span>
             <span class="text">{{ item.value }}</span>
           </div>
@@ -36,7 +42,7 @@
 import * as echarts from 'echarts'
 export default {
   name: 'CommandStatistic',
-  data() {
+  data () {
     return {
       list: [],
       list2: [],
@@ -59,15 +65,15 @@ export default {
     }
   },
   watch: {
-    planInfoId(val) {
+    planInfoId (val) {
       if (val) {
-      this.getDataStatus()
-      this.getDataMonitor()
-      this.getDataTaskType()
-    }
+        this.getDataStatus()
+        this.getDataMonitor()
+        this.getDataTaskType()
+      }
     }
   },
-  created() {
+  created () {
     if (this.planInfoId) {
       this.getDataStatus()
       this.getDataMonitor()
@@ -75,7 +81,7 @@ export default {
     }
   },
   methods: {
-    getDataStatus() {
+    getDataStatus () {
       const that = this
       this.$api['planGanttManager.getPlanStatusData']({ planInfoId: this.planInfoId }).then((res) => {
         if (res) {
@@ -135,13 +141,13 @@ export default {
         }
       })
     },
-    initMonitorChart() {
+    initMonitorChart () {
       // 基于准备好的dom，初始化echarts实例
       this.myChart = echarts.init(document.getElementById('monitorChart'))
       // 绘制图表
       this.myChart.setOption(this.initOptionData)
     },
-    getDataMonitor() {
+    getDataMonitor () {
       const that = this
       this.$api['planGanttManager.getPlanStatisticData']({ planInfoId: this.planInfoId }).then((res) => {
         if (res) {
@@ -156,7 +162,7 @@ export default {
         }
       })
     },
-    getDataTaskType() {
+    getDataTaskType () {
       const that = this
       this.$api['planGanttManager.getPlanTaskTypeData']({ planInfoId: this.planInfoId }).then((res) => {
         if (res) {

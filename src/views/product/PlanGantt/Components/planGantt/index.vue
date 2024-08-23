@@ -890,6 +890,9 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll'])
   },
   methods: {
+    refreshData () {
+      this.$emit('refreshData')
+    },
     closeRelevance () {
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
       this.relevanceVisible = false

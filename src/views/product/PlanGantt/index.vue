@@ -1,12 +1,16 @@
 <template>
   <div style="height: 100%">
-    <P8SplitPane split='vertical' @resize="paneSizeChange" :defaultPercent="defaultPercent" :minPercent='0'>
+    <P8SplitPane split='vertical'
+                 @resize="paneSizeChange"
+                 :defaultPercent="defaultPercent"
+                 :minPercent='0'>
       <template #paneL>
         <div class="couerDivClass"
-            id="couerDiv">
+             id="couerDiv">
           <div class="top"
-              :style="{ height: commandButtonBarHeight }">
-            <command-button-bar :panel-data="btnData"
+               :style="{ height: commandButtonBarHeight }">
+            <command-button-bar ref="commandBottonBar"
+                                :panel-data="btnData"
                                 :selected-tasks="selectedTasks"
                                 :gantt-name="ganttName"
                                 :plan-info-id="planInfoId"
@@ -15,7 +19,7 @@
                                 @change-command-button="changeCommandButton"></command-button-bar>
           </div>
           <div class="bottom"
-              :class="expandBottom">
+               :class="expandBottom">
             <plan-gantt :plan-info-id="planInfoId"
                         :whole-describe-id="wholeDescribeId"
                         :plan-info-status="planInfoStatus"
@@ -29,19 +33,25 @@
                         :panel-data="btnData"
                         @select-task="selectTask"
                         @show-detail="showDetail"
+                        @refreshData="refreshData"
                         @save-success="detailDrawerClosed"
                         :task-status="taskStatus"></plan-gantt>
           </div>
         </div>
       </template>
       <template #paneR>
-        <plan-attribute :key="renderKey" @save-success="detailDrawerClosed"
+        <div v-if="defaultPercent !== 100"
+             class="x-style"><i class="el-dialog__close el-icon el-icon-close"
+             @click="closeClick"></i></div>
+        <plan-attribute :key="renderKey"
+                        @save-success="detailDrawerClosed"
                         :create-page="createPage"
                         :task-id="selectTaskId"
                         :att-read-only="readOnly"
                         :view-type="viewType"
                         :gantt-name="ganttName"
                         :status="status"
+                        @refreshData="refreshData"
                         :plan-info-id="planInfoId"></plan-attribute>
       </template>
     </P8SplitPane>
@@ -59,6 +69,13 @@
 </template>
 
 <style lang="scss" scoped>
+.x-style {
+  font-size: 20px;
+  position: fixed;
+  right: 25px;
+  top: 62px;
+  z-index: 9999 !important;
+}
 .couerDivClass {
   height: 100% !important;
   box-sizing: border-box;
@@ -256,6 +273,11 @@ export default {
     window.myWebSocket.emit('enterPlanGantGroup', this.msg)
   },
   methods: {
+    refreshData () {
+      // // this.$refs.commandBottonBar.$refs.components.getDataMonitor()
+      this.$refs.commandBottonBar.$refs.components11[1].getDataMonitor()
+      this.$refs.commandBottonBar.$refs.components11[1].getDataTaskType()
+    },
     selectTask (selectDatas, ganttName) {
       this.selectedTasks = selectDatas
       this.ganttName = ganttName
@@ -264,6 +286,10 @@ export default {
       this.advanced = !this.advanced
     },
     tabBarExtraContent () { },
+    closeClick () {
+      this.defaultPercent = 100
+      this.firstEntry = true
+    },
     showDetail (selectTask, ganttName, viewType, switchType) {
       // defaultPercent指的是gannt的宽度
       // 首次进入，单机任务且未拖动详情时，不弹出
@@ -305,7 +331,7 @@ export default {
       }
     }
   },
-  beforeDestroy() {
+  beforeDestroy () {
     window.myWebSocket.emit('quitPlanGantGroup', this.msg)
   }
 }

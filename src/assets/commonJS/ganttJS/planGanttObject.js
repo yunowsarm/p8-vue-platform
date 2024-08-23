@@ -85,6 +85,7 @@ export function planGantt(ganttName, vueThis) {
             ganttObject.refreshData()
             if (res === 'true') {
               // ganttObject.getTask(id).updateType = ''
+              vueThis.refreshData()
               return { action: 'ok' }
             } else if (res === 'false') {
               ganttObject.undo()

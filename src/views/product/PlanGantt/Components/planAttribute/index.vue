@@ -10,6 +10,7 @@
                        :create-page="createPage"
                        :current-route="currentRoute"
                        :gantt-name="ganttName"
+                       @refreshData="refreshData"
                        :plan-info-id="planInfoId"></describe-edit>
         <describe-view v-if="!isView"
                        :task-id="taskId"
@@ -19,6 +20,7 @@
       <template #monitorKey>
         <monitor-edit v-if="isView"
                       @saveSuccess="saveCallback"
+                      @refreshData="refreshData"
                       :task-id="taskId"
                       :gantt-name="ganttName"></monitor-edit>
         <monitor-view v-if="!isView"
@@ -197,7 +199,10 @@ export default {
     onSelect (tab, event) {
       this.activeKey = tab.name
     },
-    saveCallback (res) { }
+    saveCallback (res) { },
+    refreshData (res) {
+      this.$emit('refreshData')
+    }
   }
 }
 </script>
