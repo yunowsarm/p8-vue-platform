@@ -1,11 +1,20 @@
 <template>
-  <form-list ref="form"
-             class="formList"
-             label-width="120px"
-             :data-source="dataSource"
-             :exist-default-btn="false"
-             :form="formData">
-  </form-list>
+  <div>
+    <div class="title">需求收集信息</div>
+    <form-render :data-view-id="dataViewId"
+                 :record="{ desformCode: codeForm }"
+                 :prop-param="propParam"
+                 v-bind="$attrs"
+                 pageType="view"></form-render>
+    <div class="title">需求填报信息</div>
+    <form-list ref="form"
+               class="formList"
+               label-width="120px"
+               :data-source="dataSource"
+               :exist-default-btn="false"
+               :form="formData">
+    </form-list>
+  </div>
 </template>
 
 <script>
@@ -244,10 +253,14 @@ export default {
           fieldName: 'processingConclusionDisplay',
           colLayout: 'doubleCol'
         }
-      ]
+      ],
+      codeForm: '', // 新建/修改表单code
+      dataViewId: '', // 修改页面id
+      propParam: {} // 将参数传至表单
     }
   },
   mounted () {
+    console.log(this.row, '============this.row');
     this.$api['demandManagement.viewRequirement']({
       id: this.row[0].ID
     }).then(res => {
@@ -258,9 +271,18 @@ export default {
         }
       }
     })
+    if (this.row && this.row.length > 0) {
+      this.codeForm = this.row[0].DEMAND_CODE
+      this.dataViewId = this.row[0].ID
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.title {
+  padding: 10px;
+  font-size: 20px;
+  background: #efefef;
+}
 </style>

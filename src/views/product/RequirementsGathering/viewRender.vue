@@ -3,9 +3,7 @@
                :record="{ desformCode: codeForm }"
                :prop-param="propParam"
                v-bind="$attrs"
-               pageType="view"
-               @close="formClose"
-               @save-success="formCloseRefresh"></form-render>
+               pageType="view"></form-render>
 </template>
 
 <script>
@@ -34,15 +32,6 @@ export default {
     }
   },
   methods: {
-    // 表单新建/修改关闭抽屉
-    formClose () {
-      this.formVisible = false
-      this.$emit('close')
-    },
-    formCloseRefresh () {
-      this.formVisible = false
-      this.$emit('close')
-    },
   }
 }
 </script>

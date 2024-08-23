@@ -40,8 +40,8 @@
                @selection-change="handleSelectionChangeDemand">
       <template #relationProject="{scope}">
         <i v-if="scope.row.relationProject === 1"
-           class='el-icon-connection'
-           style="font-size: 30px; color: skyblue;"
+           class='p8 icon-a-xuqiu1'
+           style="font-size: 30px;"
            title="已关联项目"></i>
       </template>
     </vxe-table>

@@ -1683,6 +1683,13 @@ export const repositoryApi = {
       path: '/requirement/saveRequirementByTaskChange',
       mockPath: '/requirement/saveRequirementByTaskChange',
       desc: '计划变更关联保存'
+    },
+    {
+      name: 'getRequirementByProjectTask',
+      method: 'POST',
+      path: '/requirement/getRequirementByProjectTask',
+      mockPath: '/requirement/getRequirementByProjectTask',
+      desc: '市场需求关联库关联查看'
     }
   ]
 }
