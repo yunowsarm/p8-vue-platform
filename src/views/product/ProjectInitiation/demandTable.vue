@@ -92,7 +92,8 @@ export default {
         'highlight-current-row': true
       },
       checkboxConfig: {
-        showHeader: false
+        showHeader: false,
+        checkMethod: this.checkMethod
       },
       selectRecord: {},
       selectRecords: []
@@ -116,6 +117,15 @@ export default {
     })
   },
   methods: {
+    checkMethod ({ row }) {
+      if (row.demandStatus === '27d3b7598ff7a8177528b82d1e97aef5' ||
+        row.demandStatus === '1a4c0e5a2022e3db79882411c378318b' ||
+        row.demandStatus === '0db5ad18b95fa31828ca0ae226c1a23e' ||
+        row.demandStatus === '545e73dc8c6dc8145efd118492ba3226') {
+        return false
+      }
+      return true
+    },
     handleSelectionChangeDemand (rows, row, checked) {
       this.selectRecords = []
       rows.map(item => {
