@@ -2,30 +2,43 @@
   <div style="height: 100%;">
     <div style="padding: 1%;">
       <el-button type="primary"
-                 @click="relevanceClick">关联/取消</el-button>
+                 @click="relevanceClick">关联</el-button>
     </div>
-    <vxe-table ref="xDemandTable"
+    <vxe-table ref="xTable"
                :comp="comp"
                style="height: 92%;"
                :columns="columnsDemand"
                :params="tableParamDemand"
                :table-config="tableConfig"
-               :checkbox-config="checkboxConfig"
                :is-smart-form="true"
                :refreshShow="false"
                :pagination="false"
-               api="demandManagement.getRequirementList"
-               @selection-change="handleSelectionChangeDemand">
+               api="demandManagement.getRequirementByProject">
     </vxe-table>
+    <common-drawer v-if="relevanceViewDrawer"
+                   title="关联需求"
+                   :visible="relevanceViewDrawer"
+                   @close="onRelevanceClose">
+      <template #drawer>
+        <relevance-list @saveSuccess="onRelevanceClose"
+                        :row="row"></relevance-list>
+      </template>
+    </common-drawer>
+    <div v-if="viewVisible"
+         class="viewVisible">
+    </div>
   </div>
 </template>
 
 <script>
-import { P8VxeTable as VxeTable } from 'p8-components-ui'
+import { P8VxeTable as VxeTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import relevanceList from './relevanceList'
 export default {
   name: 'Index',
   components: {
-    'vxe-table': VxeTable
+    'vxe-table': VxeTable,
+    CommonDrawer,
+    relevanceList
   },
   props: {
     row: {
@@ -33,18 +46,20 @@ export default {
       default: function () {
         return []
       }
+    },
+    configParmars: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data () {
     return {
       comp: this,
+      viewVisible: false,
+      relevanceViewDrawer: false,
       columnsDemand: [
-        {
-          title: '',
-          width: 60,
-          align: 'center',
-          type: 'checkbox'
-        },
         {
           title: '序号',
           type: 'index',
@@ -87,64 +102,52 @@ export default {
           headerAlign: 'center'
         },
       ],
-      tableParamDemand: {},
+      tableParamDemand: {
+        wholeId: this.row[0].ID
+      },
       tableConfig: {
         'highlight-current-row': true
-      },
-      checkboxConfig: {
-        showHeader: false,
-        checkMethod: this.checkMethod
       },
       selectRecord: {},
       selectRecords: []
     }
   },
-  mounted () {
-    this.$api['demandManagement.getRequirementByProject']({
-      wholeId: this.row[0].ID
-    }).then(res => {
-      if (res) {
-        this.selectRecords = res
-        let selectData = this.$refs.xDemandTable.$refs.table.data
-        res.forEach(row => {
-          selectData.forEach((item, index) => {
-            if (row === item.id) {
-              this.$refs.xDemandTable.$refs.table.setCheckboxRow(selectData[index], true)
-            }
-          })
+  created () {
+    if (this.row && this.row.length) {
+      this.id = this.row[0].ID
+    } else {
+      this.id = this.configParmars.id
+      if (!this.id) {
+        this.viewVisible = true
+        this.$message({
+          message: '请先创建项目',
+          type: 'warning'
         })
       }
-    })
+    }
+  },
+  mounted () {
   },
   methods: {
-    checkMethod ({ row }) {
-      if (row.demandStatus === '27d3b7598ff7a8177528b82d1e97aef5' ||
-        row.demandStatus === '1a4c0e5a2022e3db79882411c378318b' ||
-        row.demandStatus === '0db5ad18b95fa31828ca0ae226c1a23e' ||
-        row.demandStatus === '545e73dc8c6dc8145efd118492ba3226') {
-        return false
-      }
-      return true
-    },
-    handleSelectionChangeDemand (rows, row, checked) {
-      this.selectRecords = []
-      rows.map(item => {
-        this.selectRecords.push(item.id)
-      })
-    },
     relevanceClick () {
-      this.$api['demandManagement.saveRequirementByProject']({
-        wholeId: this.row[0].ID,
-        requirementIds: this.selectRecords
-      }).then(res => {
-        if (res) {
-          this.$message.success('操作成功')
-        }
-      })
+      this.relevanceViewDrawer = true
+    },
+    onRelevanceClose () {
+      this.relevanceViewDrawer = false
+      this.$refs.xTable.searchData()
     }
   }
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.viewVisible {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 2000;
+  background-color: rgba(0, 0, 0, 0.5);
+}
 </style>
