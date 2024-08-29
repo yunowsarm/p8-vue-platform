@@ -180,7 +180,7 @@ export default {
         const task = ganttObject.getTask(that.taskId)
         if (that.ganttName === 'changeGantt') {
           // 变更逻辑处理
-          if (that.vueThis.taskData.length > 0) {
+          if (that.vueThis.temporaryDatas.length > 0) {
             that.monitorManagerRequests.push({
               id: '',
               issubmit: true,

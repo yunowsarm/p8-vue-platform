@@ -80,6 +80,10 @@
                       :task-id="taskId"
                       :gantt-name="ganttName"></special-view>
       </template>
+      <template #demandKey>
+        <relevance-list :task-id="taskId"
+                        :gantt-name="ganttName"></relevance-list>
+      </template>
     </anchor>
   </div>
 </template>
@@ -95,6 +99,7 @@ import InputEdit from '../inputEdit'
 import InputView from '../inputEdit/inputView'
 import OutputView from '../outputEdit/outputView'
 import OutputEdit from '../outputEdit'
+import relevanceList from './relevanceList'
 import getOutPutView from '../getOutputKeyView/outputViews'
 // import getOutPutEdit from '../outputEdit'
 import SpecialEdit from '../specialEdit'
@@ -118,7 +123,8 @@ export default {
     MonitorView,
     OutputView,
     DependenceView,
-    SpecialView
+    SpecialView,
+    relevanceList
   },
   watch: {},
   mounted: function () {
@@ -191,7 +197,8 @@ export default {
         { label: '前置任务', value: 'dependenceKey', icon: 'p8 icon-xuanxiang1' },
         { label: '输入要求', value: 'inputKey', icon: 'p8 icon-shuruyaoqiu', hideLabel: true },
         { label: '输出要求', value: 'outputKey', icon: 'p8 icon-shuchuyaoqiu', hideLabel: true },
-        { label: '特别说明', value: 'specialKey', icon: 'p8 el-icon-warning-outline' }
+        { label: '特别说明', value: 'specialKey', icon: 'p8 el-icon-warning-outline' },
+        { label: '关联需求', value: 'demandKey', icon: 'p8 icon-a-xuqiu1' }
       ]
     }
   },

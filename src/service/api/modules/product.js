@@ -1690,6 +1690,13 @@ export const repositoryApi = {
       path: '/requirement/getRequirementByProjectTask',
       mockPath: '/requirement/getRequirementByProjectTask',
       desc: '市场需求关联库关联查看'
+    },
+    {
+      name: 'getRequirementByTask',
+      method: 'POST',
+      path: '/requirement/getRequirementByTask',
+      mockPath: '/requirement/getRequirementByTask',
+      desc: '市场需求关联库关联查看'
     }
   ]
 }

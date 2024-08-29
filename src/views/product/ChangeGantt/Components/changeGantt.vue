@@ -120,8 +120,12 @@
                @close="closeRelevance">
       <relevance ref="relevance"
                  :taskId="taskId"
-                 :taskData="taskData"
-                 @closeRelevance="closeRelevance"></relevance>
+                 :planInfoId="planInfoId"
+                 :taskList="taskList"
+                 :resourcesData="resourcesData"
+                 :monitorPointDatas="monitorPointDatas"
+                 :temporaryDatas="temporaryDatas"
+                 @closeRelevance="closeRelevanceChange"></relevance>
     </el-drawer>
     <monitor-time-manger v-if="controlTimeVisible"
                          :visible="controlTimeVisible"
@@ -251,7 +255,7 @@ import ActivityImport from '../../PlanGantt/Components/activityImport'
 import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
 import { mapGetters } from 'vuex'
 import MonitorTimeManger from '../../PlanGantt/Components/monitorTimeManager'
-import { checkKeys, monitorPointsEditCheck } from '@/assets/commonJS/ganttJS/changeGantt'
+import { checkKeys, monitorPointsEditCheck, setNewTaskMap } from '@/assets/commonJS/ganttJS/changeGantt'
 import moment from 'moment'
 import submitChange from './submitChange'
 import SelectApproveUser from '@/views/Framework/BusinessActivity/ProcessApproval/selectApproveUser'
@@ -365,6 +369,7 @@ export default {
       copyTasks: [], // 复制任务载体
       taskClassifyDatas: [],
       monitorPointDatas: [],
+      taskList: [],
       searchForm: {},
       monitorLockMap: {}, // 标识锁定状态
       // secretGrades: [],
@@ -401,8 +406,7 @@ export default {
       noticeVisible: false,
       msg: {},
       newSendDatas: null,
-      uniqueMergedArray: [],
-      taskData: []
+      temporaryDatas: []
     }
   },
   watch: {
@@ -523,125 +527,12 @@ export default {
     ...mapGetters(['taskStyles'])
   },
   methods: {
-    closeRelevance (taskObj) {
+    closeRelevance () {
       this.relevanceVisible = false
-      let task = myGantt.getTask(taskObj.taskId)
-      // 存储关联的需求
-      if (this.taskData.length > 0) {
-        let falg = false
-        this.taskData.forEach((item, index) => {
-          if (item.taskId === taskObj.taskId) {
-            falg = true
-            this.taskData[index] = taskObj
-          }
-        })
-        if (!falg) {
-          this.taskData.push(taskObj)
-        }
-      } else {
-        this.taskData.push(taskObj)
-      }
-      task.infoType = "update"
-      // 判断列表是否有标识
-      if (task.monitorPoints !== null && task.monitorPoints !== '' && task.monitorPoints !== undefined) {
-        // 判断是否存在需求标识
-        if (task.monitorPoints.indexOf('1017') === -1) {
-          // 判断是新增需求
-          if (taskObj.requirementIds.length > 0) {
-            task.monitorPoints = task.monitorPoints + ',1017'
-          }
-        } else {
-          // 判断是新增需求
-          if (taskObj.requirementIds.length === 0) {
-            // 截取需求标识
-            if (task.monitorPoints.startsWith('1017')) {
-              if (task.monitorPoints.indexOf(',') !== -1) {
-                task.monitorPoints = task.monitorPoints.slice(5, task.monitorPoints.length)
-              } else {
-                task.monitorPoints = ''
-              }
-            } else if (task.monitorPoints.endsWith('1017')) {
-              if (task.monitorPoints.indexOf(',') !== -1) {
-                task.monitorPoints = task.monitorPoints.slice(0, task.monitorPoints.length - 5)
-              } else {
-                task.monitorPoints = ''
-              }
-            } else {
-              // 分割字符串成数组
-              const parts = task.monitorPoints.split(',');
-              // 选择需要的部分
-              const result = parts.filter(item => item !== '1017')
-              // 转换为字符串，并用逗号分隔
-              task.monitorPoints = result.join(',');
-            }
-          }
-        }
-        // 没有标识
-      } else {
-        task.monitorPoints = '1017'
-      }
-      let obj = {
-        id: '',
-        issubmit: true,
-        logBeginTime: "",
-        logEndTime: "",
-        monitorId: "1017",
-        taskId: taskObj.taskId
-      }
-      let taskMonitorMap = []
-      if (task.monitors) {
-        taskMonitorMap = task.monitors
-      } else {
-        taskMonitorMap = this.taskMonitorMap[task.id]
-      }
-      if (taskMonitorMap) {
-        let falg = false
-        taskMonitorMap.forEach(item => {
-          if (item.monitorId === '1017') {
-            falg = true
-          }
-        })
-        if (!falg) {
-          if (taskObj.requirementIds.length > 0) {
-            taskMonitorMap.push(obj)
-            task.monitors = taskMonitorMap
-          }
-        } else {
-          if (task.monitorPoints.indexOf('1017') !== -1) {
-            task.monitors = taskMonitorMap
-          } else {
-            task.monitors = taskMonitorMap.filter(item => item.monitorId !== '1017')
-          }
-        }
-      } else {
-        if (taskObj.requirementIds.length > 0) {
-          task.monitors = [obj]
-        }
-      }
-      if (task.updateInfo) {
-        if (!task.updateInfo.includes('monitors')) {
-          task.updateInfo.push('monitors')
-        }
-      } else {
-        task.updateInfo = ['monitors']
-      }
-      if (this.uniqueMergedArray.length > 0) {
-        let falg = false
-        this.uniqueMergedArray.forEach((item, index) => {
-          if (item.id === task.id) {
-            falg = true
-            this.uniqueMergedArray[index] = task
-          }
-        })
-        if (!falg) {
-          this.uniqueMergedArray.push(task)
-        }
-      } else {
-        this.uniqueMergedArray.push(task)
-      }
-      console.log(this.uniqueMergedArray, '=============================this.uniqueMergedArray');
-      // 更新列表
-      myGantt.updateTask(taskObj.taskId)
+      this.loadGanttData(this.planInfoId, this.taskId, this.createPage, this.changeRecordId)
+    },
+    closeRelevanceChange (taskDatas) {
+      this.temporaryDatas = taskDatas
     },
     async initGantt (planInfoId, changeRecordId, viewType) {
       // 根据项目类型，获取gantt列设置
@@ -697,7 +588,7 @@ export default {
           if (res) {
             vueThis.resourcesData = res.resources
             // 初始化数据
-            const initData = res.tasks.map((item) => {
+            let initData = res.tasks.map((item) => {
               item.changeStatus = ''
               let obj = {}
               obj = {
@@ -716,6 +607,72 @@ export default {
               }
               return obj
             })
+            if (vueThis.temporaryDatas.length > 0) {
+              vueThis.taskList = myGantt.serialize().data
+
+              vueThis.taskList.forEach((el, index) => {
+                vueThis.temporaryDatas.forEach(item => {
+                  if (el.id === item.taskId) {
+                    if (item.taskRow.infoType && item.taskRow.infoType === 'create') {
+                      el.infoType = 'create'
+                      el.changeStatusName = '调增'
+                    } else {
+                      el.infoType = 'update'
+                      el.changeStatusName = '调整'
+                    }
+                    el.name = item.taskRow.name
+                    el.start_date = item.taskRow.start_date
+                    el.end_date = item.taskRow.end_date
+                    el.duration = item.taskRow.duration
+                    el.planType = item.taskRow.planType
+                    el.owner_id = item.taskRow.owner_id
+                    el.achievements = item.taskRow.achievements
+                    el.proportion = item.taskRow.proportion
+                    el.describes = item.taskRow.describes
+                    el.weatherControl = item.taskRow.weatherControl
+                    el.monitorPoints = item.taskRow.monitorPoints
+                    el.monitorpointIconArray = item.taskRow.monitorpointIconArray
+
+                    // let obj = Object.entries(el) // 将对象转换为键值对数组
+                    //   .filter(([key, value]) => value !== null && value !== undefined && value !== "") // 过滤掉空值
+                    //   .reduce((acc, [key, value]) => { // 将键值对数组还原为对象
+                    //     acc[key] = value;
+                    //     return acc;
+                    //   }, {});
+                    // let keys = Object.keys(obj)
+                    // keys.forEach(key => {
+                    //   el[key] = obj[key]
+                    // })
+
+                    let newArray = item.taskRow.monitors ? item.taskRow.monitors : item.monitorManagerRequests
+                    if (item.requirementIds.length > 0) {
+                      if (el.monitorPoints && el.monitorPoints.indexOf('1017') === -1) {
+                        // const exists = newObj.some(item => item.monitorId === '1017');
+                        // if (!exists) {
+                        newArray.push({
+                          issubmit: true,
+                          logBeginTime: "",
+                          logEndTime: "",
+                          monitorId: '1017',
+                          taskId: item.taskId
+                        })
+                        // }
+                      }
+                    } else {
+                      newArray = newArray.filter(item => item.monitorId !== '1017')
+                    }
+                    let newObj = Array.from(
+                      new Map(newArray.map(item => [item.monitorId, item])).values()
+                    );
+                    el.monitors = newObj
+                    console.log(newObj, '==========================111');
+                    monitorPointsEditCheck(item.monitorManagerRequests, newObj, vueThis, el, myGantt)
+                    setNewTaskMap(vueThis, el, newObj, 'monitors')
+                  }
+                })
+              })
+              initData = vueThis.taskList
+            }
             const datas = {
               tasks: initData,
               links: res.links
@@ -867,8 +824,7 @@ export default {
       const that = this
       const obj = that.newTaskMap
       const oldObj = that.oldTaskMap
-      console.log(obj, 'obj')
-      console.log(oldObj, 'oldObjoldObj')
+      // console.log(oldObj, 'oldObjoldObj')
       const sendDatas = []
       for (const key in obj) {
         // 获取newTaskMap对象
@@ -907,6 +863,29 @@ export default {
         nowGanttTask.end_date = moment(nowGanttTask.end_date).format('YYYY-MM-DD')
         nowGanttTask.indexNo = indexNo
         nowGanttTask.owner_type = 'team'
+        // nowGanttTask.monitors = this.taskMonitorMap[nowGanttTask.id]
+        // if (nowGanttTask.monitorPoints && nowGanttTask.monitorPoints.indexOf('1017') !== -1) {
+        //   // const exists = nowGanttTask.monitors.some(item => item.monitorId === '1017');
+        //   if (nowGanttTask.monitors) {
+        //     console.log(nowGanttTask.monitors, '===========nowGanttTask.monitors');
+        //     nowGanttTask.monitors.push({
+        //       issubmit: true,
+        //       logBeginTime: "",
+        //       logEndTime: "",
+        //       monitorId: '1017',
+        //       taskId: nowGanttTask.id
+        //     })
+        //   } else {
+        //     nowGanttTask.monitors = [{
+        //       issubmit: true,
+        //       logBeginTime: "",
+        //       logEndTime: "",
+        //       monitorId: '1017',
+        //       taskId: nowGanttTask.id
+        //     }]
+        //   }
+        // }
+
         that.newTaskMap[key] = nowGanttTask
         sendDatas.push(that.newTaskMap[key])
       }
@@ -918,15 +897,16 @@ export default {
       if (this.newSendDatas && Array.isArray(this.newSendDatas)) {
         mergedArray.push(...this.newSendDatas)
       }
+      // console.log("mergedArray:", mergedArray)
       let uniqueMergedArray = []
       uniqueMergedArray = mergedArray.filter((item, index, self) => index === self.findIndex((t) => t && item && t.id === item.id))
       // 变更了需求
-      if (this.taskData.length > 0) {
-        // 只改变关联需求时将列表数据传递
-        if (uniqueMergedArray.length === 0) {
-          uniqueMergedArray = this.uniqueMergedArray
-        }
-      }
+      // if (this.taskData.length > 0) {
+      //   // 只改变关联需求时将列表数据传递
+      //   if (uniqueMergedArray.length === 0) {
+      //     uniqueMergedArray = this.uniqueMergedArray
+      //   }
+      // }
       if (uniqueMergedArray && uniqueMergedArray.length > 0) {
         // 请求后台接口
         for (const i in uniqueMergedArray) {
@@ -944,50 +924,35 @@ export default {
             }
           }
         }
-        if (this.taskData.length > 0) {
-          uniqueMergedArray.forEach(item => {
-            // item.start_date = item.startDate
-            // item.end_date = item.endDate
-            item.start_date = moment(item.start_date).format('YYYY-MM-DD')
-            item.end_date = moment(item.end_date).format('YYYY-MM-DD')
-          })
-          console.log(uniqueMergedArray, '========================uniqueMergedArray');
-          that.$api['planChange.calculateChangeInfoAndSave']({ changeTasks: uniqueMergedArray, planInfoId: that.planInfoId, id: that.changeRecordId })
-            .then(function (res) {
-              if (res) {
-                that.sendDataList = uniqueMergedArray
-                that.changeRecordId = res
-                // that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
-                that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)
-                that.hasSave = false
-                that.$api['demandManagement.saveRequirementByTaskChange']({ planInfoId: that.planInfoId, taskList: that.taskData, changeRecordId: that.changeRecordId, })
+        that.$api['planChange.calculateChangeInfoAndSave']({ changeTasks: uniqueMergedArray, planInfoId: that.planInfoId, id: that.changeRecordId })
+          .then(function (res) {
+            if (res) {
+              that.sendDataList = uniqueMergedArray
+              that.changeRecordId = res
+              // that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
+              that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)
+              that.hasSave = false
+              if (that.temporaryDatas.length > 0) {
+                // uniqueMergedArray.forEach(item => {
+                //   // item.start_date = item.startDate
+                //   // item.end_date = item.endDate
+                //   item.start_date = moment(item.start_date).format('YYYY-MM-DD')
+                //   item.end_date = moment(item.end_date).format('YYYY-MM-DD')
+                // })
+                // console.log(uniqueMergedArray, '========================uniqueMergedArray')
+                that.$api['demandManagement.saveRequirementByTaskChange']({ planInfoId: that.planInfoId, taskList: that.temporaryDatas, changeRecordId: that.changeRecordId, })
                   .then(function (res) {
                     if (res) {
-                      that.uniqueMergedArray = []
+                      // that.uniqueMergedArray = []
                       // that.taskData = []
                     }
                   })
               }
-            })
-            .catch(function (error) {
-              console.error('error' + error)
-            })
-
-        } else {
-          that.$api['planChange.calculateChangeInfoAndSave']({ changeTasks: uniqueMergedArray, planInfoId: that.planInfoId, id: that.changeRecordId })
-            .then(function (res) {
-              if (res) {
-                that.sendDataList = uniqueMergedArray
-                that.changeRecordId = res
-                // that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
-                that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)
-                that.hasSave = false
-              }
-            })
-            .catch(function (error) {
-              console.error('error' + error)
-            })
-        }
+            }
+          })
+          .catch(function (error) {
+            console.error('error' + error)
+          })
       } else {
         that.$message({
           message: '未产生变更数据，请修改后再保存！',
@@ -1043,6 +1008,9 @@ export default {
           }
         })
       } */
+      this.taskList = []
+      this.monitorPointDatas = []
+      this.resourcesData = []
       this.submitChangeDisabled = true
       this.submitChangeValidate = false
       this.$emit('closed')

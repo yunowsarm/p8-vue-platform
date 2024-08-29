@@ -914,24 +914,10 @@ export const CommandButtonData = [
     help: '关联',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
-      if (ganttName === 'changeGantt') {
-    console.log("🚀 ~ taskstaskstaskstaskstasks:", tasks[0])
-
-        if (tasks.length > 0) {
-          vueThis.taskId= tasks[0].id
-          if (tasks[0].indexNo === 0) {
-            vueThis.$message.warning('根节点不可进行关联')
-            return false
-          }
-          if (tasks[0].managerStatus === '6405' || tasks[0].managerStatus === '6406' || tasks[0].managerStatus === '6409') {
-            vueThis.$message.warning('变更中、提交审批、审批完成的数据不可进行关联')
-            return false
-          }
-        } else {
-          return vueThis.$message.warning('请选择需要关联的任务')
-        }
-      }
       vueThis.relevanceVisible = true
+      const thisGantt = GanttObject.getGanttObject(ganttName)
+      console.log("🚀 ~ thisGantt:", thisGantt)
+      vueThis.taskList = thisGantt.serialize().data
     },
     isDisableFun: function (btn, ganttName, tasks) {
   //   console.log("🚀 ~ tasks:", tasks)

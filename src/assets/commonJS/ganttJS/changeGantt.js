@@ -241,14 +241,20 @@ export function taskDescribesEditCheck(newObj, oldObj, vueThis, taskId, ganttObj
 export function monitorPointsEditCheck(oldObj, newObj, vueThis, task, ganttObject) {
   // console.log("🚀 ~ monitorPointsEditCheck ~ task:", task)
   // console.log("🚀 ~ monitorPointsEditCheck ~ oldObj, newObj:", oldObj, newObj)
+  let newArray = []
+  if (newObj.length > 0) {
+   newArray = Array.from(
+      new Map(newObj.map(item => [item.monitorId, item])).values()
+    );
+  }
   // 新标识数据处理
   let monitorIds = ''
   let addMonitor = false // 是否添加标识
   let editMonitor = false // 是否修改标识
   const newMonitorMap = {}
   // 判断是否新增标识
-  if (newObj && newObj.length > 0) {
-    newObj.forEach(function (item) {
+  if (newArray && newArray.length > 0) {
+    newArray.forEach(function (item) {
       if (monitorIds) {
         monitorIds = monitorIds + ',' + item.monitorId
       } else {
@@ -263,7 +269,7 @@ export function monitorPointsEditCheck(oldObj, newObj, vueThis, task, ganttObjec
     })
   }
   if (!addMonitor && oldObj && oldObj.length > 0) {
-    if (newObj && newObj.length > 0) {
+    if (newArray && newArray.length > 0) {
       oldObj.forEach(function (m) {
         const newT = newMonitorMap[m.monitorId]
         // 标识删除或未删除但修改了时间时
@@ -285,7 +291,7 @@ export function monitorPointsEditCheck(oldObj, newObj, vueThis, task, ganttObjec
     }
     ganttObject.updateTask(task.id)
     // 缓存
-    setNewTaskMap(vueThis, task, newObj, 'monitors')
+    setNewTaskMap(vueThis, task, newArray, 'monitors')
   }
 }
 
