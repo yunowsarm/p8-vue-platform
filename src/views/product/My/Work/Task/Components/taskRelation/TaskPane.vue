@@ -17,7 +17,7 @@
         <el-progress :text-inside="true"
                      :stroke-width="16"
                      :percentage="formData.progress ? formData.progress : 0"
-                     style="margin-top: 7px;text-shadow: 0px 1px 0px #fafcff;"></el-progress>
+                     style="margin-top: 7px;"></el-progress>
       </template>
       <template #managerStatusDisplay>
         <span>{{formData.managerStatusDisplay}}</span>
@@ -254,6 +254,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+::v-deep .el-progress-bar__innerText {
+  color: #f1c82b !important;
+}
 $green-color: #1bbf9e;
 $bule-color: #1892ff;
 $yellow-color: #ffc306;

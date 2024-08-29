@@ -234,7 +234,7 @@
                   <el-progress :text-inside="true"
                                :stroke-width="16"
                                text-color="#1e2125"
-                               style="margin-top: 8px;text-shadow: 0px 1px 0px #fafcff;"
+                               style="margin-top: 8px;"
                                :percentage="formData.progress"></el-progress>
                 </el-form-item>
               </el-col>
@@ -742,6 +742,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+::v-deep .el-progress-bar__innerText {
+  color: #f1c82b !important;
+}
 div.form-table-wrap {
   height: 100%;
   position: relative;

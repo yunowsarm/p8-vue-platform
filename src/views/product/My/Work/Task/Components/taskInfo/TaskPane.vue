@@ -30,7 +30,7 @@
         <el-progress :text-inside="true"
                      :stroke-width="16"
                      :percentage="formData.progress ? formData.progress : 0"
-                     style="margin-top: 7px;text-shadow: 0px 1px 0px #fafcff;"></el-progress>
+                     style="margin-top: 7px;"></el-progress>
       </template>
       <template #managerStatusDisplay>
         <span>{{formData.managerStatusDisplay}}</span>
@@ -320,6 +320,9 @@ $bule-color: #1892ff;
 $yellow-color: #ffc306;
 $orange-color: #ff5406;
 $red-color: #f80012;
+::v-deep .el-progress-bar__innerText {
+  color: #f1c82b !important;
+}
 // 任务信息状态样式
 ::v-deep .pane-status {
   display: flex;
