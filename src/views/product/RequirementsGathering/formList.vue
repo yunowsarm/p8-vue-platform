@@ -6,10 +6,11 @@
            v-for="(item,index) in radioOptions"
            :key="index"
            @click="handleAdhibitionClick(item)">
-        <div :class="{ active: item.isActive }">
+        <div :class="{ active: item.isActive }"
+             class="activeStyle">
           <div>
             <el-image style="width: 60px; height: 60px"
-                      :src="imgUrl"
+                      :src="item.imgUrl"
                       fit="cover"></el-image>
           </div>
           <span class="nav-text"
@@ -56,68 +57,79 @@ export default {
   },
   data () {
     return {
-      imgUrl: require('@/assets/image/common/Group.png'),
       appIds: [],
       radioOptions: [
         {
           label: '高层拜访',
           id: '1',
-          code: 'CALL_HIGH'
+          code: 'CALL_HIGH',
+          imgUrl: require('@/assets/image/common/高层拜访.png')
         },
         {
           label: '客户交流',
           id: '2',
-          code: 'CUSTOMER_INTERACTION'
+          code: 'CUSTOMER_INTERACTION',
+          imgUrl: require('@/assets/image/common/客户交流.png')
         },
         {
           label: '市场调研',
           id: '3',
-          code: 'MARKET_SURVEY'
+          code: 'MARKET_SURVEY',
+          imgUrl: require('@/assets/image/common/市场调研.png')
         },
         {
           label: '技术支持',
           id: '4',
-          code: 'TECHNICAL_SUPPORT'
+          code: 'TECHNICAL_SUPPORT',
+          imgUrl: require('@/assets/image/common/技术支持.png')
         },
         {
           label: '媒体信息',
           id: '5',
-          code: 'MEDIUM_INFORMATION'
+          code: 'MEDIUM_INFORMATION',
+          imgUrl: require('@/assets/image/common/媒体信息.png')
         },
         {
           label: '技术交流',
           id: '6',
-          code: 'TECHNICAL_EXCHANGE'
+          code: 'TECHNICAL_EXCHANGE',
+          imgUrl: require('@/assets/image/common/技术交流.png')
         },
         {
           label: '参观展览',
           id: '7',
-          code: 'VISITING_SHOW'
+          code: 'VISITING_SHOW',
+          imgUrl: require('@/assets/image/common/参观展览.png')
         },
         {
           label: '投标总结',
           id: '8',
-          code: 'BID'
+          code: 'BID',
+          imgUrl: require('@/assets/image/common/投标总结.png')
         },
         {
           label: '沟通例会',
           id: '9',
-          code: 'COMMUNICATION_MEETING'
+          code: 'COMMUNICATION_MEETING',
+          imgUrl: require('@/assets/image/common/沟通例会.png')
         },
         {
           label: '销售周报',
           id: '10',
-          code: 'MARKET_WEEKLY'
+          code: 'MARKET_WEEKLY',
+          imgUrl: require('@/assets/image/common/销售周报.png')
         },
         {
           label: '外部会议',
           id: '11',
-          code: 'EXTERNAL_MEETING'
+          code: 'EXTERNAL_MEETING',
+          imgUrl: require('@/assets/image/common/外部会议.png')
         },
         {
           label: '外聘专家',
           id: '12',
-          code: 'EXTERNAL_EXPERT'
+          code: 'EXTERNAL_EXPERT',
+          imgUrl: require('@/assets/image/common/外聘专家.png')
         }
       ],
       codeForm: '', // 新建/修改表单code
@@ -206,6 +218,11 @@ export default {
   justify-content: center;
   align-items: center;
 }
+.activeStyle {
+  border: 1px solid #ebe6e6;
+  padding: 10px 25px;
+  border-radius: 10px;
+}
 .active {
   border: 1px solid #1bbf9e;
   -webkit-box-shadow: #666 0px 0px 10px;
@@ -213,6 +230,7 @@ export default {
   box-shadow: #666 0px 0px 10px;
   position: relative;
   padding: 10px 25px;
+  border-radius: 10px;
 }
 .active:after {
   content: ' ';
