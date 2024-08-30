@@ -11,7 +11,9 @@
                ref="loginLogo"></div>
         </div>
         <div class="sysName">
-          <el-tooltip effect="dark" :content="systemName" placement="right">
+          <el-tooltip effect="dark"
+                      :content="systemName"
+                      placement="right">
             <span v-if="sidebarState.width == '180px'">{{ systemName }}</span>
           </el-tooltip>
         </div>
@@ -64,7 +66,7 @@
                 <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
               </template>
               <div class="cumtom-submenu-menu">
-                <template v-for="child in item.children">
+                <template v-for="(child,index) in item.children">
                   <template v-if="!child.hidden">
                     <!-- <sidebar-menu-item  v-if="child.children && child.children.length > 0"
                             :is-nest="true" class="nest-menu" :routes="[child]" :key="child.name">
@@ -72,7 +74,9 @@
                         <template v-else> -->
                     <el-menu-item :index="child.path"
                                   :disabled="!!child.isDisabled"
-                                  :key="child.name">
+                                  :key="child.name"
+                                  :class="isactive == index ? 'menuBackgroundColor' : ''"
+                                  @click="menuClick(index)">
                       <el-tooltip placement="right"
                                   :disabled="child.meta.title.length < 8"
                                   :content="child.meta.title">
@@ -139,7 +143,8 @@ export default {
         themeColor: ''
       },
       regardsObj: {},
-      isShow: false
+      isShow: false,
+      isactive: -1,
     }
   },
   computed: {
@@ -176,6 +181,14 @@ export default {
     })
   },
   methods: {
+    getClassName (child) {
+      console.log(child, 'childchildv');
+      if (child.children && child.children.length && child.children[0]['meta']['title'] == '我创建的') return 'redColor';
+      else return 'blueColor';
+    },
+    menuClick (index) {
+      this.isactive = index
+    },
     // 获取系统logo
     async getIcon () {
       let res = await this.$api['SystemSettings.getLoginSetting']()
@@ -237,7 +250,9 @@ export default {
 $menu-hover-color: #032353;
 $menu-active-color: #04224e;
 $menu-collapse-text-color: #303133;
-
+.menuBackgroundColor {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
 .sidebar {
   display: flex;
   flex-direction: column;
