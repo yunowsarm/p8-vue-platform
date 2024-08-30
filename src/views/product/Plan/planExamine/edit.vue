@@ -9,7 +9,7 @@
         <el-form-item>
           <el-date-picker v-model="formData.year"
                           type="year"
-                          style="width: 100%;"
+                          style="width: 92%;"
                           :disabled="disabled"
                           value-format="yyyy"
                           placeholder="选择年"
@@ -31,6 +31,7 @@
           <el-select v-model="formData.month"
                      :disabled="disabled"
                      placeholder="请选择"
+                     style="width: 92%;"
                      @change="monthChange(formData.month)">
             <el-option v-for="item in options"
                        :key="item.value"
@@ -238,5 +239,11 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+::v-deep .el-textarea {
+  width: 97% !important;
+}
+::v-deep .el-dialog .el-dialog__body {
+  height: 300px !important;
+}
 </style>
