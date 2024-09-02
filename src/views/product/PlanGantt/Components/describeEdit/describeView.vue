@@ -281,13 +281,14 @@ export default {
       that.formData.forecastEndDate = moment(task.forecastEndDate).format('YYYY-MM-DD')
       if (task.realBeginDate) that.formData.realBeginDate = moment(task.realBeginDate).format('YYYY-MM-DD')
       if (task.realEndDate) that.formData.realEndDate = moment(task.realEndDate).format('YYYY-MM-DD')
+      console.log(task.planChangeDetailId, '===================task.planChangeDetailId');
       // 获取描述信息
       that.$api['planGanttManager.getActivityInfoByTaskId']({ taskId: taskId, planChangeDetailId: task.planChangeDetailId })
         .then(function (res) {
           if (res) {
             that.formData.describes = res.describes
             that.formData.planTypeDisplay = res.planTypeDisplay
-            that.formData.proportion = res.proportion + '%'
+            that.formData.proportion = res.proportion ? Math.round(res.proportion) + '%' : ''
             that.describes = that.formData.describes
             that.otherParam.activityInfoId = res.activityInfoId
 
@@ -356,14 +357,16 @@ export default {
               }
             }
             if (res.realName !== null) {
-              if (res.realName !== res.ownerDisplayBefore) {
+              if (res.realName !== res.realNameBefore) {
                 that.dataSource.forEach(item => {
                   if (item.fieldName === 'realName') {
                     item.type = 'blank'
                     item.slotName = 'realName'
                   }
                 })
-                that.tooltipContent.realName = res.realNameBefore + '-' + res.deptNameBefore + '-' + res.roleNameBefore
+                if (res.realNameBefore) {
+                  that.tooltipContent.realName = res.realNameBefore + '-' + res.deptNameBefore + '-' + res.roleNameBefore
+                }
               }
             }
             if (res.achievements !== null) {
@@ -385,7 +388,9 @@ export default {
                     item.slotName = 'proportion'
                   }
                 })
-                that.tooltipContent.proportion = res.proportionBefore + '%'
+                if (res.proportionBefore) {
+                  that.tooltipContent.proportion = Math.round(res.proportionBefore) + '%'
+                }
               }
             }
             if (res.describes !== null) {

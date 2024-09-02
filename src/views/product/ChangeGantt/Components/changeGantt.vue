@@ -863,29 +863,9 @@ export default {
         nowGanttTask.end_date = moment(nowGanttTask.end_date).format('YYYY-MM-DD')
         nowGanttTask.indexNo = indexNo
         nowGanttTask.owner_type = 'team'
-        // nowGanttTask.monitors = this.taskMonitorMap[nowGanttTask.id]
-        // if (nowGanttTask.monitorPoints && nowGanttTask.monitorPoints.indexOf('1017') !== -1) {
-        //   // const exists = nowGanttTask.monitors.some(item => item.monitorId === '1017');
-        //   if (nowGanttTask.monitors) {
-        //     console.log(nowGanttTask.monitors, '===========nowGanttTask.monitors');
-        //     nowGanttTask.monitors.push({
-        //       issubmit: true,
-        //       logBeginTime: "",
-        //       logEndTime: "",
-        //       monitorId: '1017',
-        //       taskId: nowGanttTask.id
-        //     })
-        //   } else {
-        //     nowGanttTask.monitors = [{
-        //       issubmit: true,
-        //       logBeginTime: "",
-        //       logEndTime: "",
-        //       monitorId: '1017',
-        //       taskId: nowGanttTask.id
-        //     }]
-        //   }
-        // }
-
+        if (!nowGanttTask.monitors && nowGanttTask.monitorPoints !== null) {
+          nowGanttTask.monitors = this.taskMonitorMap[nowGanttTask.id]
+        }
         that.newTaskMap[key] = nowGanttTask
         sendDatas.push(that.newTaskMap[key])
       }

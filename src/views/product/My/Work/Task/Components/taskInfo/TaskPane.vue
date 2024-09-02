@@ -14,7 +14,7 @@
         <div class="iconStyle">
           <div v-for="(item, index) in mointorData"
                :key="index">
-            <i v-if="item.icon === 'p8 icon-release'"
+            <i v-if="item.icon === 'p8 icon-a-xuqiu1'"
                :class='item.icon'
                @click="demandClick"></i>
             <i v-else
