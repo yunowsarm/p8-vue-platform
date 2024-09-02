@@ -33,8 +33,8 @@ export default {
       comp: this,
       columnsDemand: [
         {
-          title: '',
-          width: 60,
+          title: '是否关联',
+          width: 80,
           align: 'center',
           type: 'checkbox'
         },
@@ -85,11 +85,15 @@ export default {
         'highlight-current-row': true
       },
       checkboxConfig: {
-        showHeader: false
+        showHeader: false,
+        checkMethod: this.checkMethod
       }
     }
   },
   methods: {
+    checkMethod ({ row }) {
+      return false
+    },
     requestedTableData (data) {
       let that = this
       this.$api['demandManagement.getRequirementByTask']({

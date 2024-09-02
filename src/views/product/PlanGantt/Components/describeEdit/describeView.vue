@@ -1,23 +1,61 @@
 <template>
   <div style="position: relative; height: 520px">
-    <form-list
-      ref="form"
-      @rendered="rendered"
-      form-layout="vertical"
-      @saved="saved"
-      :data-source="dataSource"
-      :api="saveApi"
-      :is-custom-validate="isCustomValidate"
-      @custom-validate="customValidate"
-      :other-param="otherParam"
-      :exist-default-btn="existDefaultBtn"
-      :exist-custom-btn="existCustomBtn"
-      :form="formData"
-    >
+    <form-list ref="form"
+               @rendered="rendered"
+               form-layout="vertical"
+               @saved="saved"
+               :data-source="dataSource"
+               :api="saveApi"
+               :is-custom-validate="isCustomValidate"
+               @custom-validate="customValidate"
+               :other-param="otherParam"
+               :exist-default-btn="existDefaultBtn"
+               :exist-custom-btn="existCustomBtn"
+               :form="formData">
+      <template #name>
+        <span style="color: red;">{{formData["name"]}}
+        </span>
+        <span v-if="tooltipContent.name">({{ tooltipContent.name }})</span>
+      </template>
+      <template #startDate>
+        <span style="color: red;">{{formData["start_date"]}}
+        </span>
+        <span v-if="tooltipContent.start_date">({{ tooltipContent.start_date }})</span>
+      </template>
+      <template #endDate>
+        <span style="color: red;">{{formData["end_date"]}}
+        </span>
+        <span v-if="tooltipContent.end_date">({{ tooltipContent.end_date }})</span>
+      </template>
+      <template #duration>
+        <span style="color: red;">{{formData["duration"]}}</span>
+        <span v-if="tooltipContent.duration">({{ tooltipContent.duration }})</span>
+      </template>
+      <template #planTypeDisplay>
+        <span style="color: red;">{{formData["planTypeDisplay"]}}</span>
+        <span v-if="tooltipContent.planTypeDisplay">({{ tooltipContent.planTypeDisplay }})</span>
+      </template>
+      <template #realName>
+        <span style="color: red;">{{formData["realName"]}}</span>
+        <span v-if="tooltipContent.realName">({{ tooltipContent.realName }})</span>
+      </template>
+      <template #achievements>
+        <span style="color: red;">{{formData["achievements"]}}</span>
+        <span v-if="tooltipContent.achievements">({{ tooltipContent.achievements }})</span>
+      </template>
+      <template #proportion>
+        <span style="color: red;">{{formData["proportion"]}}</span>
+        <span v-if="tooltipContent.proportion">({{ tooltipContent.proportion }})</span>
+      </template>
+      <template #describes>
+        <span style="color: red;">{{formData["describes"]}}</span>
+        <span v-if="tooltipContent.describes">({{ tooltipContent.describes }})</span>
+      </template>
     </form-list>
   </div>
 </template>
-<style scoped></style>
+<style scoped>
+</style>
 <script>
 import { P8Form as FormList } from 'p8-components-ui'
 import { mapGetters } from 'vuex'
@@ -39,8 +77,9 @@ export default {
       default: null
     }
   },
-  data() {
+  data () {
     return {
+      tooltipContent: {},
       saveApi: 'planGanttManager.describeSave',
       isCustomValidate: true,
       ownerDataOptions: [],
@@ -110,7 +149,7 @@ export default {
         {
           type: 'view',
           labelText: '任务类型',
-          fieldName: 'planTypeDesc',
+          fieldName: 'planTypeDisplay',
           colLayout: 'doubleCol',
           placeholder: '选择任务类型',
           options: []
@@ -118,7 +157,7 @@ export default {
         {
           type: 'view',
           labelText: '责任人',
-          fieldName: 'owner_id',
+          fieldName: 'realName',
           // colLayout: 'doubleCol',
           placeholder: '选择责任人',
           fieldConfig: {
@@ -182,10 +221,10 @@ export default {
     }
   },
   watch: {
-    taskId(val) {
+    taskId (val) {
       this.rendered()
     },
-    ownerDataOptions(newValue) {
+    ownerDataOptions (newValue) {
       if (newValue) {
         const options = []
         newValue.forEach(function (item) {
@@ -199,18 +238,18 @@ export default {
   computed: {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
-  created() {
+  created () {
     this.$api['thirdPartInterface.getDic']({ dicType: 'ACTIVITY_TYPE' }).then(res => {
       this.planTypeDic = res
     })
   },
   methods: {
-    rendered() {
+    rendered () {
       if (this.taskId && this.taskId !== '') {
         this.getDescribeData(this.taskId)
       }
     },
-    getDescribeData(taskId) {
+    getDescribeData (taskId) {
       const that = this
       const ganttObject = GanttObject.getGanttObject(that.ganttName)
       that.ownerDataOptions = ganttObject.serverList('resourceDatas')
@@ -222,33 +261,144 @@ export default {
       if (that.ownerDataOptions && that.ownerDataOptions.length > 0) {
         that.ownerDataOptions.some(function (item) {
           if (item.id === task.owner_id) {
-            that.formData.owner_id = item.name
+            that.formData.realName = item.name + '-' + item.deptName + '-' + item.roleName
           }
         })
       }
       that.formData.autoScheduling = task.autoScheduling
       that.formData.duration = task.duration
       that.formData.achievements = task.achievements
-      if (task.proportion) {
-        let parts = task.proportion && task.proportion.toString().split('.')
-        var fraction = parts.length === 1 ? '' : parts[1];
-        if (2 > fraction.length) {
-          fraction += new Array(2 - fraction.length + 1).join('0');
-        }
-        that.formData.proportion = parts[0] + '.' + fraction + '%'
-      }
+      // if (task.proportion) {
+      //   let parts = task.proportion && task.proportion.toString().split('.')
+      //   var fraction = parts.length === 1 ? '' : parts[1];
+      //   if (2 > fraction.length) {
+      //     fraction += new Array(2 - fraction.length + 1).join('0');
+      //   }
+      // that.formData.proportion = parts[0] + '.' + fraction + '%'
+      // }
       that.formData.planType = task.planType
       that.formData.forecastBeginDate = moment(task.forecastBeginDate).format('YYYY-MM-DD')
       that.formData.forecastEndDate = moment(task.forecastEndDate).format('YYYY-MM-DD')
       if (task.realBeginDate) that.formData.realBeginDate = moment(task.realBeginDate).format('YYYY-MM-DD')
       if (task.realEndDate) that.formData.realEndDate = moment(task.realEndDate).format('YYYY-MM-DD')
       // 获取描述信息
-      that.$api['planGanttManager.getActivityInfoByTaskId']({ taskId: taskId })
+      that.$api['planGanttManager.getActivityInfoByTaskId']({ taskId: taskId, planChangeDetailId: task.planChangeDetailId })
         .then(function (res) {
           if (res) {
             that.formData.describes = res.describes
+            that.formData.planTypeDisplay = res.planTypeDisplay
+            that.formData.proportion = res.proportion + '%'
             that.describes = that.formData.describes
             that.otherParam.activityInfoId = res.activityInfoId
+
+            if (res.taskName !== null) {
+              if (res.taskName !== res.taskNameBefore) {
+                that.dataSource.forEach(item => {
+                  if (item.fieldName === 'name') {
+                    item.type = 'blank'
+                    item.slotName = 'name'
+                  }
+                })
+                that.tooltipContent.name = res.taskNameBefore
+              }
+            }
+            if (res.startDate !== null) {
+              if (res.startDate !== res.startDateBefore) {
+                that.dataSource.forEach(item => {
+                  if (item.fieldName === 'start_date') {
+                    item.type = 'blank'
+                    item.slotName = 'startDate'
+                  }
+                })
+                that.tooltipContent.start_date = res.startDateBefore
+              }
+            }
+            if (res.planEndDate !== null) {
+              if (res.planEndDate !== res.planEndDateBefore) {
+                that.dataSource.forEach(item => {
+                  if (item.fieldName === 'end_date') {
+                    item.type = 'blank'
+                    item.slotName = 'endDate'
+                  }
+                })
+                if (res.planEndDateBefore) {
+                  let planEndDateBefore = new Date(res.planEndDateBefore).getTime() - 24 * 60 * 60 * 1000
+                  that.tooltipContent.end_date = moment(planEndDateBefore).format('YYYY-MM-DD')
+                }
+                if (res.planEndDate) {
+                  let planEndDate = new Date(res.planEndDate).getTime() - 24 * 60 * 60 * 1000
+                  that.formData.end_date = moment(planEndDate).format('YYYY-MM-DD')
+                }
+              }
+            }
+            if (res.duration !== null) {
+              if (res.duration !== res.durationBefore) {
+                that.dataSource.forEach(item => {
+                  if (item.fieldName === 'duration') {
+                    item.type = 'blank'
+                    item.slotName = 'duration'
+                  }
+                })
+                that.tooltipContent.duration = res.durationBefore
+              }
+            } else {
+              that.formData.duration = res.durationBefore
+            }
+            if (res.planTypeDisplay !== null) {
+              if (res.planTypeDisplay !== res.planTypeDisplayBefore) {
+                that.dataSource.forEach(item => {
+                  if (item.fieldName === 'planTypeDisplay') {
+                    item.type = 'blank'
+                    item.slotName = 'planTypeDisplay'
+                  }
+                })
+                that.tooltipContent.planTypeDisplay = res.planTypeDisplayBefore
+              }
+            }
+            if (res.realName !== null) {
+              if (res.realName !== res.ownerDisplayBefore) {
+                that.dataSource.forEach(item => {
+                  if (item.fieldName === 'realName') {
+                    item.type = 'blank'
+                    item.slotName = 'realName'
+                  }
+                })
+                that.tooltipContent.realName = res.realNameBefore + '-' + res.deptNameBefore + '-' + res.roleNameBefore
+              }
+            }
+            if (res.achievements !== null) {
+              if (res.achievements !== res.achievementsBefore) {
+                that.dataSource.forEach(item => {
+                  if (item.fieldName === 'achievements') {
+                    item.type = 'blank'
+                    item.slotName = 'achievements'
+                  }
+                })
+                that.tooltipContent.achievements = res.achievementsBefore
+              }
+            }
+            if (res.proportion !== null) {
+              if (res.proportion !== res.proportionBefore) {
+                that.dataSource.forEach(item => {
+                  if (item.fieldName === 'proportion') {
+                    item.type = 'blank'
+                    item.slotName = 'proportion'
+                  }
+                })
+                that.tooltipContent.proportion = res.proportionBefore + '%'
+              }
+            }
+            if (res.describes !== null) {
+              if (res.describes !== res.describesBefore) {
+                that.dataSource.forEach(item => {
+                  if (item.fieldName === 'describes') {
+                    item.type = 'blank'
+                    item.slotName = 'describes'
+                  }
+                })
+                that.tooltipContent.describes = res.describesBefore
+              }
+            }
           }
           // 变更进入时先查看newTaskMap中是否存在对应值若存在，显示，否则加载任务描述数据
           if (
@@ -264,7 +414,7 @@ export default {
           if (that.planTypeDic.length > 0 && that.formData.planType) {
             that.planTypeDic.forEach(dic => {
               if (dic.value == that.formData.planType) {
-                that.formData.planTypeDesc = dic.label
+                that.formData.planTypeDisplay = dic.label
               }
             })
           }
@@ -275,8 +425,8 @@ export default {
           console.error('error' + error)
         })
     },
-    saved(res) {},
-    customValidate(saveParams) {}
+    saved (res) { },
+    customValidate (saveParams) { }
   }
 }
 </script>
