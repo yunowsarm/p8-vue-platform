@@ -18,6 +18,17 @@
           <list-layout>
             <template #north>
               <div class="input-con">
+                <span style="width: 170px;">负荷分析时段:</span>
+                <el-date-picker :style="{width: '60%','margin-right': '10px'}"
+                                class="date-range"
+                                v-model="utilizationTimeRange"
+                                unlink-panels
+                                type="daterange"
+                                range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期"
+                                value-format="yyyy-MM-dd"
+                                clearable></el-date-picker>
                 <el-input v-model="searchName"
                           class="input-name input-search-name"
                           :placeholder="DutyPersonsMessage === '' ? '支持人员名称、部门、角色模糊查询，例如：李四、lisi、部门1、计划经理' : DutyPersonsMessage"
@@ -66,6 +77,9 @@
                         <span v-else
                               class="state-working">团队中</span>
                       </div>
+                    </template>
+                    <template #idleDaysCount="{ scope }">
+                      <idle-days :row="scope.row"></idle-days>
                     </template>
                   </common-table>
                 </div>
@@ -161,6 +175,8 @@ import Vue from 'vue'
 import { P8Table as CommonTable, P8Dialog as CommonDialog, P8ListLayout as ListLayout, Input } from 'p8-components-ui'
 import UserSelect from './UserSelect.vue'
 import DeptSelect from './deptSelect.vue'
+import IdleDays from './IdleDays'
+import moment from 'moment'
 export default {
   name: 'ResourceSelect',
   components: {
@@ -169,7 +185,8 @@ export default {
     CommonDialog,
     ListLayout,
     DeptSelect,
-    UserSelect
+    UserSelect,
+    IdleDays
   },
   inject: {
     DutyPersonsMessage: {
@@ -193,11 +210,13 @@ export default {
       selectType: '',
       tableApi: 'planGanttManager.planResourceLoad',
       searchName: '',
+      utilizationTimeRange: [moment().format('YYYY-MM-DD'), moment(new Date()).add(1, 'months').format('YYYY-MM-DD')],
       queryParam: {
         planInfoId: this.planInfoId,
         startTaskId: this.startTaskId,
         endTaskId: this.endTaskId,
-        searchName: ''
+        searchName: '',
+        utilizationTimeRange: [moment().format('YYYY-MM-DD'), moment(new Date()).add(1, 'months').format('YYYY-MM-DD')]
       },
       tableConfig: {
         'highlight-current-row': true
@@ -365,6 +384,13 @@ export default {
           },
           align: 'center',
           width: 80,
+        },
+        {
+          title: '负荷信息',
+          minWidth: 150,
+          dataIndex: 'idleDaysCount',
+          scopedSlots: { customRender: 'custom' },
+          align: 'center'
         }
         // {
         //   title: '负载',
@@ -476,6 +502,7 @@ export default {
     search () {
       const that = this
       this.queryParam.searchName = this.searchName
+      this.queryParam.utilizationTimeRange = this.utilizationTimeRange
       Vue.nextTick(function () {
         that.$refs.tableCom.searchData()
       })
