@@ -1,60 +1,37 @@
 <template>
   <div class="header">
-    <div class="content">
-      <form-render class="formRender"
-                   :data-view-id="dataViewId"
-                   :record="{ desformCode: codeForm }"
-                   :prop-param="propParam"
-                   pageType="view"
-                   v-bind="$attrs"></form-render>
-      <form-list ref="form"
-                 class="formList"
-                 label-width="120px"
-                 :data-source="dataSource"
-                 :exist-default-btn="false"
-                 :form="formData">
-        <template #requirementAnalyst>
-          <div @click="selectPeople">
-            <el-input v-model="formData['requirementAnalystDisplay']"
-                      readonly
-                      autosize>
-              <template slot="append"><i class="el-icon-link"
-                   type="link"
-                   :style="{ fontSize: '16px', color: '#08c' }"></i></template>
-            </el-input>
-          </div>
-        </template>
-        <template #processingTeam>
-          <div @click="selectPeople">
-            <el-input v-model="formData['processingTeamDisplay']"
-                      readonly
-                      autosize>
-              <template slot="append"><i class="el-icon-link"
-                   type="link"
-                   :style="{ fontSize: '16px', color: '#08c' }"></i></template>
-            </el-input>
-          </div>
-        </template>
-      </form-list>
-    </div>
+    <!-- <div class="content"> -->
+    <div class="title">需求收集信息</div>
+    <form-render class="formRender" :data-view-id="dataViewId" :record="{ desformCode: codeForm }" :prop-param="propParam" page-type="view" v-bind="$attrs"></form-render>
+    <div class="title">需求填报信息</div>
+    <form-list ref="form" class="formList" label-width="140px" :data-source="dataSource" :exist-default-btn="false" :form="formData">
+      <template #requirementAnalyst>
+        <div @click="selectPeople">
+          <el-input v-model="formData['requirementAnalystDisplay']" readonly autosize>
+            <template slot="append"><i class="el-icon-link" type="link" :style="{ fontSize: '16px', color: '#08c' }"></i></template>
+          </el-input>
+        </div>
+      </template>
+      <template #processingTeam>
+        <div @click="selectPeople">
+          <el-input v-model="formData['processingTeamDisplay']" readonly autosize>
+            <template slot="append"><i class="el-icon-link" type="link" :style="{ fontSize: '16px', color: '#08c' }"></i></template>
+          </el-input>
+        </div>
+      </template>
+    </form-list>
+    <!-- </div> -->
     <!-- <div class="btn"
          v-if="!selectedApproval.yesOrNo">
       <el-button type="primary"
                  @click="handleSubmit">保存</el-button>
     </div> -->
-    <select-user v-if="visible"
-                 class="selectUser"
-                 :visible="visible"
-                 @close-dialog="closeModal"
-                 :selectType="'1'"></select-user>
+    <select-user v-if="visible" class="selectUser" :visible="visible" @close-dialog="closeModal" :select-type="'1'"></select-user>
   </div>
 </template>
 
 <script>
-import {
-  P8Form as FormList,
-  P8SelectUser as SelectUser
-} from 'p8-components-ui'
+import { P8Form as FormList, P8SelectUser as SelectUser } from 'p8-components-ui'
 import FormRender from '@/views/Framework/ComponentsMananger/Form/Components/Components/edit.vue'
 export default {
   components: {
@@ -79,7 +56,7 @@ export default {
       type: Object
     }
   },
-  data () {
+  data() {
     return {
       formType: this.type,
       visible: false,
@@ -119,7 +96,7 @@ export default {
           fieldName: 'customerPhone',
           colLayout: 'singleCol',
           placeholder: '请输入手机或座机号码',
-          tip: '手机格式如:13512341234 座机格式如:010-40020020',
+          tip: '手机格式如:13512341234 座机格式如:010-40020020'
           // rules: [
           //   {
           //     pattern: '^(((\\+\\d{2}-)?0\\d{2,3}-\\d{7,8})|((\\+\\d{2}-)?(\\d{2,3}-)?([1][3,4,5,7,8,9][0-9]\\d{8})))$',
@@ -134,7 +111,7 @@ export default {
           fieldName: 'collectorPhone',
           colLayout: 'singleCol',
           placeholder: '请输入手机或座机号码',
-          tip: '手机格式如:13512341234 座机格式如:010-40020020',
+          tip: '手机格式如:13512341234 座机格式如:010-40020020'
           // rules: [
           //   {
           //     pattern: '^(((\\+\\d{2}-)?0\\d{2,3}-\\d{7,8})|((\\+\\d{2}-)?(\\d{2,3}-)?([1][3,4,5,7,8,9][0-9]\\d{8})))$',
@@ -252,7 +229,7 @@ export default {
           fieldName: 'requirementAnalyst',
           slotName: 'requirementAnalyst',
           colLayout: 'singleCol',
-          placeholder: '选择需求分析人',
+          placeholder: '选择需求分析人'
           // rules: [
           //   {
           //     required: true,
@@ -268,7 +245,7 @@ export default {
           placeholder: '请选择完成时间',
           fieldConfig: {
             valueFormat: 'yyyy-MM-dd'
-          },
+          }
           // rules: [
           //   {
           //     required: true,
@@ -409,7 +386,6 @@ export default {
             {
               required: true,
               message: '必填'
-
             }
           ]
         },
@@ -664,7 +640,7 @@ export default {
       ]
     }
   },
-  mounted () {
+  mounted() {
     // 区分不同审批节点展示不同表单
     if (this.formType === '1') {
       this.formData.sourceChannel = this.sourceChannel
@@ -683,10 +659,10 @@ export default {
     this.viewForm()
   },
   methods: {
-    viewForm () {
+    viewForm() {
       this.$api['demandManagement.viewRequirement']({
         id: this.businessKey
-      }).then(res => {
+      }).then((res) => {
         if (res) {
           // debugger
           if (this.formType === '1') {
@@ -703,23 +679,22 @@ export default {
         }
       })
     },
-    selectPeople () {
+    selectPeople() {
       this.visible = true
     },
-    closeModal (selectedRows) {
+    closeModal(selectedRows) {
       this.visible = false
       if (selectedRows) {
         if (this.formType === '1') {
           this.$set(this.formData, 'requirementAnalystDisplay', selectedRows[0].realName)
           this.formData.requirementAnalyst = selectedRows[0].id
-
         } else {
           this.$set(this.formData, 'processingTeamDisplay', selectedRows[0].realName)
           this.formData.processingTeam = selectedRows[0].id
         }
       }
     },
-    handleSubmit () {
+    handleSubmit() {
       this.$refs.form.validate().then((queryParams) => {
         if (this.formType === '1') {
           this.formData.id = this.businessKey
@@ -727,7 +702,7 @@ export default {
           this.formData.demandId = this.businessKey
         }
         this.formData.type = this.formType
-        this.$api['demandManagement.saveRequirement'](this.formData).then(res => {
+        this.$api['demandManagement.saveRequirement'](this.formData).then((res) => {
           if (res) {
             // this.$message.success('保存成功')
             this.viewForm()
@@ -740,10 +715,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.header {
-  height: 100% !important;
-  overflow: auto;
+.title {
+  padding: 10px;
+  font-size: 20px;
+  background: #efefef;
 }
+// .header {
+// height: 100% !important;
+// overflow: auto;
+// }
 
 .content {
   display: flex;
@@ -752,15 +732,15 @@ export default {
   align-items: baseline;
   position: relative;
 }
-.formRender {
-  width: 50%;
-}
-.formList {
-  width: 50%;
-  ::v-deep .el-col-12 {
-    height: 50px !important;
-  }
-}
+// .formRender {
+// width: 50%;
+// }
+// .formList {
+// width: 50%;
+// ::v-deep .el-col-12 {
+//   height: 50px !important;
+// }
+// }
 .btn {
   position: absolute;
   bottom: 5px;
