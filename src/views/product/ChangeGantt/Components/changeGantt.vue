@@ -529,7 +529,7 @@ export default {
   methods: {
     closeRelevance () {
       this.relevanceVisible = false
-      this.loadGanttData(this.planInfoId, this.taskId, this.createPage, this.changeRecordId)
+      this.loadGanttData(this.planInfoId, this.taskId, this.createPage, this.changeRecordId, true)
     },
     closeRelevanceChange (taskDatas) {
       this.temporaryDatas = taskDatas
@@ -581,7 +581,7 @@ export default {
       // 加载数据
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage, changeRecordId)
     },
-    loadGanttData (planInfoId, taskId, createPage, changeRecordId) {
+    loadGanttData (planInfoId, taskId, createPage, changeRecordId, xqFalg) {
       const vueThis = this
       vueThis.$api['planGanttManager.loadPlanGanttData']({ planInfoId: planInfoId, dicType: 'ACTIVITY_TYPE', taskId: taskId, createPage: createPage, changeRecordId: changeRecordId })
         .then(function (res) {
@@ -607,7 +607,7 @@ export default {
               }
               return obj
             })
-            if (vueThis.temporaryDatas.length > 0) {
+            if (xqFalg && vueThis.temporaryDatas.length > 0) {
               vueThis.taskList = myGantt.serialize().data
               vueThis.taskList.forEach((el, index) => {
                 vueThis.temporaryDatas.forEach(item => {
