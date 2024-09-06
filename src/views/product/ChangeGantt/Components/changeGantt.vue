@@ -663,7 +663,7 @@ export default {
                       new Map(newArray.map(item => [item.monitorId, item])).values()
                     );
                     el.monitors = newObj
-                    if (res.changeTaskInfo[el.id]) {
+                    if (res.changeTaskInfo && res.changeTaskInfo[el.id]) {
                       res.changeTaskInfo[el.id] = el
                     }
                     monitorPointsEditCheck(item.monitorManagerRequests, newObj, vueThis, el, myGantt, true)
