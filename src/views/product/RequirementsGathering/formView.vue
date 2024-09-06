@@ -720,11 +720,10 @@ export default {
   font-size: 20px;
   background: #efefef;
 }
-// .header {
-// height: 100% !important;
-// overflow: auto;
-// }
-
+.header {
+  height: 100% !important;
+  overflow: auto;
+}
 .content {
   display: flex;
   flex-direction: row;
@@ -732,15 +731,18 @@ export default {
   align-items: baseline;
   position: relative;
 }
-// .formRender {
-// width: 50%;
-// }
-// .formList {
-// width: 50%;
-// ::v-deep .el-col-12 {
-//   height: 50px !important;
-// }
-// }
+.formRender {
+  height: 100%;
+  overflow-y: auto;
+}
+.formList {
+  height: 100%;
+  overflow-y: auto;
+  // width: 50%;
+  // ::v-deep .el-col-12 {
+  //   height: 50px !important;
+  // }
+}
 .btn {
   position: absolute;
   bottom: 5px;
