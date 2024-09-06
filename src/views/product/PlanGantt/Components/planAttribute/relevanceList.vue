@@ -18,6 +18,7 @@
 
 <script>
 import { P8VxeTable as VxeTable } from 'p8-components-ui'
+import { mapGetters } from 'vuex'
 export default {
   name: 'Index',
   components: {
@@ -90,6 +91,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['vueThis'])
+  },
   methods: {
     checkMethod ({ row }) {
       return false
@@ -97,7 +101,8 @@ export default {
     requestedTableData (data) {
       let that = this
       this.$api['demandManagement.getRequirementByTask']({
-        taskId: that.taskId
+        taskId: that.taskId,
+        planChangeDetailId: this.vueThis.changeRecordId
       }).then(res => {
         if (res) {
           let selectData = that.$refs.xDemandTable.$refs.table.tableData

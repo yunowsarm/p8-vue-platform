@@ -427,6 +427,13 @@ export default {
                     task.monitorpointIconArray = task.monitorpointIconArray + ',p8 icon-a-xuqiu1'
                     // task.monitorPointDisplayArray = task.monitorPointDisplayArray + ',需求'
                     task.requirementIds = this.selectRecords
+                    task.monitors.push({
+                      issubmit: true,
+                      logBeginTime: "",
+                      logEndTime: "",
+                      monitorId: '1017',
+                      taskId: task.id
+                    })
                   }
                 } else {
                   // 判断是新增需求
@@ -474,6 +481,13 @@ export default {
                   task.monitorpointIconArray = 'p8 icon-a-xuqiu1'
                   // task.monitorPointDisplayArray = '需求'
                   task.requirementIds = this.selectRecords
+                  task.monitors = [{
+                    issubmit: true,
+                    logBeginTime: "",
+                    logEndTime: "",
+                    monitorId: '1017',
+                    taskId: task.id
+                  }]
                 } else {
                   falg = false
                 }
@@ -515,7 +529,6 @@ export default {
           }
         }
         // 传递给父页面
-        console.log(this.taskDatas, '111111111111111111111');
         this.$emit('closeRelevance', this.taskDatas)
         this.$message.success('操作成功')
       }

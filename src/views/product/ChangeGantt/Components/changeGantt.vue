@@ -609,10 +609,10 @@ export default {
             })
             if (vueThis.temporaryDatas.length > 0) {
               vueThis.taskList = myGantt.serialize().data
-
               vueThis.taskList.forEach((el, index) => {
                 vueThis.temporaryDatas.forEach(item => {
                   if (el.id === item.taskId) {
+
                     if (item.taskRow.infoType && item.taskRow.infoType === 'create') {
                       el.infoType = 'create'
                       el.changeStatusName = '调增'
@@ -632,30 +632,28 @@ export default {
                     el.weatherControl = item.taskRow.weatherControl
                     el.monitorPoints = item.taskRow.monitorPoints
                     el.monitorpointIconArray = item.taskRow.monitorpointIconArray
-
-                    // let obj = Object.entries(el) // 将对象转换为键值对数组
-                    //   .filter(([key, value]) => value !== null && value !== undefined && value !== "") // 过滤掉空值
-                    //   .reduce((acc, [key, value]) => { // 将键值对数组还原为对象
-                    //     acc[key] = value;
-                    //     return acc;
-                    //   }, {});
-                    // let keys = Object.keys(obj)
-                    // keys.forEach(key => {
-                    //   el[key] = obj[key]
-                    // })
-
                     let newArray = item.taskRow.monitors ? item.taskRow.monitors : item.monitorManagerRequests
                     if (item.requirementIds.length > 0) {
-                      if (el.monitorPoints && el.monitorPoints.indexOf('1017') === -1) {
+                      if (el.monitorPoints && el.monitorPoints.indexOf('1017') !== -1) {
+                        let falg = true
                         // const exists = newObj.some(item => item.monitorId === '1017');
                         // if (!exists) {
-                        newArray.push({
-                          issubmit: true,
-                          logBeginTime: "",
-                          logEndTime: "",
-                          monitorId: '1017',
-                          taskId: item.taskId
-                        })
+                        if (newArray) {
+                          newArray.forEach(item => {
+                            if (item.monitorId === '1017') {
+                              falg = false
+                            }
+                          })
+                        }
+                        if (falg) {
+                          newArray.push({
+                            issubmit: true,
+                            logBeginTime: "",
+                            logEndTime: "",
+                            monitorId: '1017',
+                            taskId: item.taskId
+                          })
+                        }
                         // }
                       }
                     } else {
@@ -665,8 +663,10 @@ export default {
                       new Map(newArray.map(item => [item.monitorId, item])).values()
                     );
                     el.monitors = newObj
-                    console.log(newObj, '==========================111');
-                    monitorPointsEditCheck(item.monitorManagerRequests, newObj, vueThis, el, myGantt)
+                    if (res.changeTaskInfo[el.id]) {
+                      res.changeTaskInfo[el.id] = el
+                    }
+                    monitorPointsEditCheck(item.monitorManagerRequests, newObj, vueThis, el, myGantt, true)
                     setNewTaskMap(vueThis, el, newObj, 'monitors')
                   }
                 })
@@ -702,6 +702,7 @@ export default {
             vueThis.taskStatusMap = res.taskStatusMap
             vueThis.taskMonitorMap = res.taskMonitorMap
             vueThis.changeTaskInfo = res.changeTaskInfo
+
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
           }
@@ -877,16 +878,8 @@ export default {
       if (this.newSendDatas && Array.isArray(this.newSendDatas)) {
         mergedArray.push(...this.newSendDatas)
       }
-      // console.log("mergedArray:", mergedArray)
       let uniqueMergedArray = []
       uniqueMergedArray = mergedArray.filter((item, index, self) => index === self.findIndex((t) => t && item && t.id === item.id))
-      // 变更了需求
-      // if (this.taskData.length > 0) {
-      //   // 只改变关联需求时将列表数据传递
-      //   if (uniqueMergedArray.length === 0) {
-      //     uniqueMergedArray = this.uniqueMergedArray
-      //   }
-      // }
       if (uniqueMergedArray && uniqueMergedArray.length > 0) {
         // 请求后台接口
         for (const i in uniqueMergedArray) {
@@ -913,20 +906,8 @@ export default {
               that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)
               that.hasSave = false
               if (that.temporaryDatas.length > 0) {
-                // uniqueMergedArray.forEach(item => {
-                //   // item.start_date = item.startDate
-                //   // item.end_date = item.endDate
-                //   item.start_date = moment(item.start_date).format('YYYY-MM-DD')
-                //   item.end_date = moment(item.end_date).format('YYYY-MM-DD')
-                // })
-                // console.log(uniqueMergedArray, '========================uniqueMergedArray')
                 that.$api['demandManagement.saveRequirementByTaskChange']({ planInfoId: that.planInfoId, taskList: that.temporaryDatas, changeRecordId: that.changeRecordId, })
-                  .then(function (res) {
-                    if (res) {
-                      // that.uniqueMergedArray = []
-                      // that.taskData = []
-                    }
-                  })
+                  .then(function (res) { })
               }
             }
           })

@@ -238,7 +238,7 @@ export function taskDescribesEditCheck(newObj, oldObj, vueThis, taskId, ganttObj
  * @param task
  * @param ganttObject
  */
-export function monitorPointsEditCheck(oldObj, newObj, vueThis, task, ganttObject) {
+export function monitorPointsEditCheck(oldObj, newObj, vueThis, task, ganttObject, falg) {
   // console.log("🚀 ~ monitorPointsEditCheck ~ task:", task)
   // console.log("🚀 ~ monitorPointsEditCheck ~ oldObj, newObj:", oldObj, newObj)
   let newArray = []
@@ -281,9 +281,11 @@ export function monitorPointsEditCheck(oldObj, newObj, vueThis, task, ganttObjec
       editMonitor = true
     }
   }
+  if (falg) {
+    addMonitor = true
+  }
   // 添加标识或修改标识
   if (addMonitor || editMonitor) {
-    console.log(monitorIds, '==============monitorIdsmonitorIds');
     task.monitorPoints = monitorIds
     task.style = changeColor
     if (!task.infoType) {

@@ -19,6 +19,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
+      if (ganttName === 'changeGantt') {
+        return true
+      }
       let result
       const vueThis = store.getters.vueThis
       const createPage = vueThis.createPage
@@ -64,6 +67,9 @@ export const CommandButtonData = [
           }
         },
         isDisableFun: function (btn, ganttName, tasks) {
+          if (ganttName === 'changeGantt') {
+            return true
+          }
           let result
           const vueThis = store.getters.vueThis
           const createPage = vueThis.createPage
@@ -109,6 +115,9 @@ export const CommandButtonData = [
           }
         },
         isDisableFun: function (btn, ganttName, tasks) {
+          if (ganttName === 'changeGantt') {
+            return true
+          }
           let result
           const vueThis = store.getters.vueThis
           const createPage = vueThis.createPage
@@ -154,6 +163,9 @@ export const CommandButtonData = [
           }
         },
         isDisableFun: function (btn, ganttName, tasks) {
+          if (ganttName === 'changeGantt') {
+            return true
+          }
           let result
           const vueThis = store.getters.vueThis
           const createPage = vueThis.createPage
@@ -199,6 +211,9 @@ export const CommandButtonData = [
           }
         },
         isDisableFun: function (btn, ganttName, tasks) {
+          if (ganttName === 'changeGantt') {
+            return true
+          }
           let result
           const vueThis = store.getters.vueThis
           const createPage = vueThis.createPage
