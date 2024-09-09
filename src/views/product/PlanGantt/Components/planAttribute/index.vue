@@ -4,7 +4,7 @@
             :menu="anchorMenu"
             style-sheet="tabs">
       <template #describeKey>
-        <describe-edit v-if="isView"
+        <describe-edit v-if="isChangeGantt"
                        @saveSuccess="saveCallback"
                        :task-id="taskId"
                        :create-page="createPage"
@@ -12,7 +12,7 @@
                        :gantt-name="ganttName"
                        @refreshData="refreshData"
                        :plan-info-id="planInfoId"></describe-edit>
-        <describe-view v-if="!isView"
+        <describe-view v-if="!isChangeGantt"
                        :task-id="taskId"
                        :gantt-name="ganttName"
                        :plan-info-id="planInfoId"></describe-view>
@@ -166,13 +166,16 @@ export default {
         if (task.createSource === '0' && this.createPage === 'decompose') {
           this.isView = false
         }
-        if (this.ganttName === 'changeGantt' && vueThis.createPage === 'userChange') {
-          // 计划变更
-          const loginUserName = this.$store.state.user.userInfo.realName
-          if (task.realName && task.realName !== loginUserName) {
-            // 任务存在责任人且责任人非当前登录人则不可编辑
-            this.isView = false
-          }
+        // if (this.ganttName === 'changeGantt' && vueThis.createPage === 'userChange') {
+        //   // 计划变更
+        //   const loginUserName = this.$store.state.user.userInfo.realName
+        //   if (task.realName && task.realName !== loginUserName) {
+        //     // 任务存在责任人且责任人非当前登录人则不可编辑
+        //     this.isView = false
+        //   }
+        // }
+        if(this.ganttName === 'changeGantt') {
+          this.isView = false
         }
         if (task.infoType === 'delete') {
           this.isView = false
@@ -190,6 +193,7 @@ export default {
       headerVisible: false,
       isView: true,
       isEdit: true,
+      isChangeGantt:true,
       activeOutput: 'outputKey',
       anchorMenu: [
         { label: '任务描述', value: 'describeKey', icon: 'p8 icon-jindu' },
