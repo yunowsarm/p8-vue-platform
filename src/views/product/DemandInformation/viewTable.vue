@@ -31,7 +31,9 @@ export default {
         {
           title: '序号',
           type: 'index',
-          width: '60px'
+          width: '60px',
+          align: 'center',
+          headerAlign: 'center'
         },
         {
           title: '状态',

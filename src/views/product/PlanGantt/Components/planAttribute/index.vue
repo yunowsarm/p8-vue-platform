@@ -131,6 +131,10 @@ export default {
     // isView为true时是修改页面，为false时是查看页面
     if (this.taskId && this.ganttName) {
       const ganttObject = GanttObject.getGanttObject(this.ganttName)
+      if(this.ganttName == 'analysisGantt') {
+          this.isChangeGantt = false
+          this.isView = false
+        }
       if (this.viewType === 'view') {
         this.isView = false
       } else if (this.attReadOnly || ganttObject.config.readonly) {
