@@ -1698,5 +1698,29 @@ export const repositoryApi = {
       mockPath: '/requirement/getRequirementByTask',
       desc: '市场需求关联库关联查看'
     }
+  ],
+  // 任职资格管理
+  qualifications: [
+    {
+      name: 'downloadTemplate',
+      method: 'POST',
+      path: '/attachment/downloadTemplate',
+      mockPath: '/attachment/downloadTemplate',
+      desc: '资格要求管理-模版下载'
+    },
+    {
+      name: 'upload',
+      method: 'POST',
+      path: '/attachment/upload',
+      mockPath: '/attachment/upload',
+      desc: '资格要求管理-获取文件内容'
+    },
+    {
+      name: 'importExcel',
+      method: 'POST',
+      path: '/appoint/bpRequirement/importExcel',
+      mockPath: '/appoint/bpRequirement/importExcel',
+      desc: '资格要求管理-文件导入'
+    },
   ]
 }
