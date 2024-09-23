@@ -107,6 +107,17 @@ export default {
               }
             },
             {
+              type: 'select',
+              labelText: '输入类型',
+              fieldName: 'inPutType',
+              colLayout: 'singleCol',
+              optionUrl: {
+                api: 'thirdPartInterface.getDic',
+                params: { dicType: 'TYPE_OF_OUTPUT' }
+              },
+              options: []
+            },
+            {
               type: 'upload', // 控件类型
               labelText: '上传附件', // 控件显示的文本
               fieldName: 'uploadFiles',

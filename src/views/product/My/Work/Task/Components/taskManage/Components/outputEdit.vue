@@ -9,17 +9,18 @@
                @custom-validate="customValidate"
                @saved="saved"
                @rendered="rendered">
-      <!-- <template #outputRequest>
+      <template #outputRequest>
         <div class="edit-outputdata-view">
           <div class="title">&nbsp;&nbsp;输出要求 </div>
           <ul class="file-list">
-            <li v-for="(item) in outputRequest"
-                :key="item.descriptionId">
-              <p>{{item.descriptionStr}}</p>
+            <li v-for="(item) in outputRequest" :key="item.descriptionId">
+              <p>输出要求：{{item.descriptionStr}}</p>
+              <p>输出类型：{{item.outPutTypeDisplay}}</p>
+              <p>上传附件：<span class="filename" @click="downloadOutputRequsetFile(item)">{{ item.attFileName }}</span></p>
             </li>
           </ul>
         </div>
-      </template> -->
+      </template>
       <template #outputIo>
         <div class="edit-outputIo-view">
           <div class="title">输出物 </div>
@@ -40,6 +41,10 @@ export default {
       type: String,
       default: '00001'
     },
+    ganttName: {
+      type: String,
+      default: ''
+    },
     outputRequest: {
       type: Array
     },
@@ -52,12 +57,12 @@ export default {
   },
   data () {
     const dataSource = [
-      // {
-      //   type: 'blank',
-      //   labelText: '',
-      //   slotName: 'outputRequest',
-      //   colLayout: ''
-      // },
+      {
+        type: 'blank',
+        labelText: '',
+        slotName: 'outputRequest',
+        colLayout: ''
+      },
       {
         type: 'blank',
         labelText: '',
@@ -127,9 +132,30 @@ export default {
     }
   },
   mounted () {
+    console.log(this.ganttName,'11');
+
     this.getOutputIoData()
   },
   methods: {
+    downloadOutputRequsetFile (item) {
+      // 输出要求-文件下载
+      if (item.attId) {
+        this.$api['SystemSettings.getFileUrl']({ attachmentId: item.attId }, { responseType: 'blob' })
+          .then((backJson) => {
+            const link = document.createElement('a')
+            link.href = window.URL.createObjectURL(new Blob([backJson.data]))
+            link.download = item.attFileName
+            document.body.appendChild(link)
+
+            link.click()
+            window.URL.revokeObjectURL(link.href)
+            document.body.removeChild(link)
+          })
+          .finally(() => {
+            // this.search.exportLoading = false
+          })
+      }
+    },
     rendered () {
 
     },
@@ -246,6 +272,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+p span.filename {
+  cursor: pointer;
+  color: blue;
+}
 .el-form.formList .el-row {
   height: auto;
 }

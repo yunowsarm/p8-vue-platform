@@ -143,6 +143,16 @@ export default {
               }
             },
             {
+              labelText: '输入类型',
+              type: 'view',
+              fieldName: 'inPutTypeDisplay',
+              placeholder: '请输入输入要求',
+              colLayout: 'singleCol',
+              fieldConfig: {
+                rows: '6'
+              }
+            },
+            {
               type: 'uploadView', // 控件类型
               labelText: '上传附件', // 控件显示的文本
               fieldName: 'uploadFiles',

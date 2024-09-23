@@ -3,11 +3,10 @@
     <div class="edit-outputdata-view">
       <span type="info">输入要求</span>
       <ul class="file-list">
-        <li v-for="(item) in inputRequest"
-            :key="item.attId">
-          <p>
-            <span>{{item.descriptionStr}}</span>
-          </p>
+        <li v-for="(item) in inputRequest" :key="item.attId">
+          <p>输入要求：{{item.descriptionStr}}</p>
+          <p>输入类型：{{item.inPutTypeDisplay}}</p>
+          <p>上传附件：<span class="filename" @click="downloadInputRequsetFile(item)">{{ item.attFileName }}</span></p>
         </li>
       </ul>
     </div>
@@ -81,6 +80,25 @@ export default {
     this.formData = this.inputIoData[0]
   },
   methods: {
+    downloadInputRequsetFile (item) {
+      // 输出要求-文件下载
+      if (item.attId) {
+        this.$api['SystemSettings.getFileUrl']({ attachmentId: item.attId }, { responseType: 'blob' })
+          .then((backJson) => {
+            const link = document.createElement('a')
+            link.href = window.URL.createObjectURL(new Blob([backJson.data]))
+            link.download = item.attFileName
+            document.body.appendChild(link)
+
+            link.click()
+            window.URL.revokeObjectURL(link.href)
+            document.body.removeChild(link)
+          })
+          .finally(() => {
+            // this.search.exportLoading = false
+          })
+      }
+    },
     downloadOutputRequsetFile (item) {
       if (item.attId) {
         this.$api['SystemSettings.getFileUrl']({ attachmentId: item.attId }, { responseType: 'blob' }).then(backJson => {
@@ -111,6 +129,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+p span.filename {
+  cursor: pointer;
+  color: blue;
+}
 .inputdata-view {
   position: relative;
   min-height: 40px;

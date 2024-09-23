@@ -68,12 +68,21 @@ export default {
               fieldName: 'activityInfoId'
             },
             {
-              type: 'link',
+              type: 'view',
               labelText: '输出要求', // 控件显示的文本
               fieldName: 'describes',
               placeholder: '请输入输出要求',
               colLayout: 'singleCol',
-              callback: this.toLink,
+              fieldConfig: {
+                rows: '6'
+              }
+            },
+            {
+              type: 'view',
+              labelText: '输出类型', // 控件显示的文本
+              fieldName: 'outPutTypeDisplay',
+              placeholder: '请输入输出类型',
+              colLayout: 'singleCol',
               fieldConfig: {
                 rows: '6'
               }
