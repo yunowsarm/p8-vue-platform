@@ -33,7 +33,7 @@
     "moment": "^2.25.3",
     "net": "^1.0.2",
     "operation-tree-node": "^1.0.5",
-    "p8-components-ui": "^4.0.34",
+    "p8-components-ui": "^4.0.35",
     "p8-dhtmlx-gantt": "^7.0.12",
     "p8-gojs": "^2.1.11",
     "p8-lowcode": "0.0.12-beta",
