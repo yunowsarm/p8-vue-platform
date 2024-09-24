@@ -3,8 +3,10 @@
              :data-source="dataSource"
              :api="saveApi"
              :form="formData"
+             :exist-default-btn="false"
+             :exist-custom-btn="true"
              @rendered="rendered">
-    <template slot="btn">
+    <template  #customBtn>
       <el-button @click="cancel">取 消</el-button>
     </template>
   </form-list>
