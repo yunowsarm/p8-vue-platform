@@ -132,7 +132,8 @@ export default {
     if (this.taskId && this.ganttName) {
       const ganttObject = GanttObject.getGanttObject(this.ganttName)
       // 计划编制任务完成审批 基本信息跳转查看页面
-      if (this.status == '6070') {
+      const task = ganttObject.getTask(this.taskId)
+      if (task.managerStatus == '6409' || task.managerStatus == '6404' || task.managerStatus == '6406') {
         this.isChangeGantt = false
       }
       if(this.ganttName == 'analysisGantt') {
