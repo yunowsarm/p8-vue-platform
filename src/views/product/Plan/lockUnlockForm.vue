@@ -91,7 +91,7 @@ export default {
       isCustomValidate: true,
       inlineMessage: true,
       formData: {
-
+        content:'',
       },
       monitorPoints: {},
       monitorPointLockUnlockStatus: {},
@@ -197,12 +197,13 @@ export default {
               type: 'radioButton',
               labelText: item.label,
               fieldName: item.value,
-              colLayout: 'doubleCol'
+              colLayout: 'doubleCol',
             }
             that.dataSource.push(dataSourceItem)
             that.$set(that.formData, item.value, item.lockStatus)
           }
         })
+        that.formData.content = that.monitorPoints[0].content
         that.showMonitorPoints && that.showMonitorPoints.length && (that.dataSource = that.dataSource.filter((item) => {
           return that.showMonitorPoints.includes(item.fieldName)
         }))
