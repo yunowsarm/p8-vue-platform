@@ -1416,6 +1416,34 @@ export const CommandButtonData = [
       // vueThis.excelSecretGrade = tasks[0].secretGrade
       // vueThis.excelSecretGradeDisplay = tasks[0].secretGradeDisplay
       vueThis.importExcel = true
+      const thisGantt = GanttObject.getGanttObject(ganttName)
+      const colums = thisGantt.getGridColumns()
+      let columnConfigs = colums.map(item => {
+        let columObj = {}
+        if (item.editor) {
+          // 创建一个虚拟的DOM元素
+          let tempElement = document.createElement('div');
+          tempElement.innerHTML = item.label;
+
+          // 获取包含计划开始时间的元素
+          let startTimeElement = tempElement.querySelector('.gantt_search');
+
+          // 提取计划开始时间文本内容
+          let startTime = startTimeElement.textContent.trim();
+
+          // 输出提取的计划开始时间
+          columObj.title = startTime
+          columObj.dataIndex = item.name
+        }
+        return columObj
+      })
+      let columnFilter = []
+      columnConfigs.forEach(function(element) {
+        if (element.title && element.dataIndex) {
+          columnFilter.push(element)
+        }
+      });
+      vueThis.columnConfigs = columnFilter
     },
     isDisableFun: function (btn, ganttName, tasks) {
       let result
@@ -1494,11 +1522,43 @@ export const CommandButtonData = [
     title: 'Excel导出',
     help: 'Excel导出',
     clickFun: function (btn, ganttName, tasks, data, messages) {
+      const thisGantt = GanttObject.getGanttObject(ganttName)
       const vueThis = store.getters.vueThis
       // taskId如何获得？？
       const taskId = vueThis.taskId
       const planInfoId = vueThis.planInfoId
-      api['planGanttManager.excelExport']({ planInfoId: planInfoId, dicType: 'ACTIVITY_TYPE', taskId: taskId }, { responseType: 'blob' })
+      const colums = thisGantt.getGridColumns()
+      let columnConfigs = colums.map(item => {
+        let columObj = {}
+        if (item.editor) {
+          // 创建一个虚拟的DOM元素
+          let tempElement = document.createElement('div');
+          tempElement.innerHTML = item.label;
+
+          // 获取包含计划开始时间的元素
+          let startTimeElement = tempElement.querySelector('.gantt_search');
+
+          // 提取计划开始时间文本内容
+          let startTime = startTimeElement.textContent.trim();
+
+          // 输出提取的计划开始时间
+          columObj.title = startTime
+          columObj.dataIndex = item.name
+        }
+        return columObj
+      })
+      let columnFilter = []
+      columnConfigs.forEach(function(element) {
+        if (element.title && element.dataIndex) {
+          columnFilter.push(element)
+        }
+      });
+      let exportConfig = {
+        columnConfigs: columnFilter,
+        fileName: "计划管理",
+        planInfoId: planInfoId
+      }
+      api['planGanttManager.excelExport'](exportConfig, { responseType: 'blob' })
         .then((data) => {
           const date = new Date()
           // eslint-disable-next-line camelcase

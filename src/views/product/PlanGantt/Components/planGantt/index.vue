@@ -198,6 +198,8 @@
                     :excel-secret-grade-display="excelSecretGradeDisplay"
                     :excel-secret-grade="excelSecretGrade"
                     :task-id="selectTaskId"
+                    :planInfoId="planInfoId"
+                    :columnConfigs="columnConfigs"
                     :output-request="excelImportData"></import-excel>
     </el-drawer>
     <el-drawer :title="importProjectTitle"
@@ -573,6 +575,7 @@ export default {
     const mh = document.documentElement.clientHeight - 300
     return {
       relevanceVisible: false,
+      columnConfigs: [],
       createVisible: false,
       exportExperienceType: '',
       experienceBaseVisible: false,
@@ -1358,7 +1361,8 @@ export default {
         }
       })
       this.callParentSelectTasks()
-      this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
+      // this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
+      this.initGantt(this.planInfoId, this.viewType)
     },
     resourceRelationClosed () {
       this.resourceRelation = false

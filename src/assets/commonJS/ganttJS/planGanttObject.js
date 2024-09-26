@@ -629,7 +629,7 @@ export function getGanttColumns(ganttObject, vueThis) {
       monitorLockLimit: true, // 标识锁定后不可操作的列声明
       width: 80,
       resize: true,
-      // editor: true,
+      editor: true,
       template: function (task) {
         return `<span data-column-name="owner_id" class="gantt_owner_id">${task.realName || ''}</span>`
         // const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)

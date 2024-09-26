@@ -13,12 +13,12 @@
                @rendered="rendered">
       <template #outputRequest>
         <div class="edit-outputdata-view">
-          <div class="title">导入模板:</div>
-          <ul class="file-list"
+          <div class="title">导入说明：</div>
+          <!-- <ul class="file-list"
               v-for="(item, index) in outputRequest"
               :key="item.attId"
-              :class="{ 'not-last': index < outputRequest.length - 1 }">
-            <li>
+              :class="{ 'not-last': index < outputRequest.length - 1 }"> -->
+          <!-- <li>
               <p>
                 模板下载:
                 <span class="filename">
@@ -27,11 +27,14 @@
                            @click="downloadOutputRequsetFile(item)">{{ item.attFileName }}</el-link>
                 </span>
               </p>
-            </li>
-            <li>
-              <p>导入说明: {{ item.descriptionStr }}</p>
-            </li>
-          </ul>
+            </li> -->
+          <!-- <li> -->
+          <!-- <p>导入说明: {{ item.descriptionStr }}</p> -->
+          <p>通过excel导出的文件，将当前计划下的所有任务更新</p>
+          <p>excel导出的来源为：计划管理-计划编制-excel导出</p>
+          <p class="importantSty">excel导入文件可以修改的属性为：计划编制列表的列头带有修改图标的属性</p>
+          <!-- </li>
+          </ul> -->
         </div>
       </template>
       <template #outputIo>
@@ -58,6 +61,10 @@ export default {
       type: String,
       default: '00001'
     },
+    planInfoId: {
+      type: String,
+      default: ''
+    },
     excelSecretGradeDisplay: {
       type: String,
       default: '00001'
@@ -67,6 +74,9 @@ export default {
       default: '00001'
     },
     outputRequest: {
+      type: Array
+    },
+    columnConfigs: {
       type: Array
     }
   },
@@ -204,9 +214,10 @@ export default {
 
       const params = {
         // params: 保存时请求接口所需的参数
-        taskId: this.taskId,
+        planInfoId: this.planInfoId,
         createSource: '0',
-        uploadFileJson: []
+        uploadFileJson: [],
+        columnConfigs: this.columnConfigs
       }
       if (saveParams.uploadFileJson && saveParams.uploadFileJson.length) {
         saveParams.uploadFileJson.forEach((item, index) => {
@@ -286,6 +297,9 @@ export default {
 <style lang="scss" scoped>
 .el-form.formList .el-row {
   height: auto;
+}
+.importantSty{
+  color: red;
 }
 .edit-outputdata-view {
   background-color: rgba(239, 239, 239, 0.5);
