@@ -131,12 +131,17 @@ export default {
     // isView为true时是修改页面，为false时是查看页面
     if (this.taskId && this.ganttName) {
       const ganttObject = GanttObject.getGanttObject(this.ganttName)
-      // 计划编制任务完成审批 基本信息跳转查看页面
+      // 计划编制不可编辑状态字段
       const task = ganttObject.getTask(this.taskId)
-      if (task.managerStatus == '6409' || task.managerStatus == '6404' || task.managerStatus == '6406') {
+      if (this.ganttName == 'planGantt' && (task.managerStatus == '6409' || task.managerStatus == '6404' || task.managerStatus == '6406')) {
         this.isChangeGantt = false
       }
-      if(this.ganttName == 'analysisGantt') {
+      // 计划变更不可编辑状态字段
+      if (this.ganttName == 'changeGantt' && (task.managerStatus == '6405' || task.managerStatus == '6409' || task.managerStatus == '6406')) {
+        this.isChangeGantt = false
+      }
+      // 审批页面都不可编辑
+      if (this.ganttName == 'analysisGantt') {
           this.isChangeGantt = false
           this.isView = false
       }
@@ -196,6 +201,8 @@ export default {
         // }
       }
     }
+    console.log(this.isChangeGantt,'this.isChangeGanttthis.isChangeGanttthis.isChangeGantt');
+
   },
   data () {
     return {

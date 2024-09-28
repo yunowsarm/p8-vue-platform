@@ -574,6 +574,7 @@ export default {
   data () {
     const mh = document.documentElement.clientHeight - 300
     return {
+      ganttBtnType: null,
       relevanceVisible: false,
       columnConfigs: [],
       createVisible: false,

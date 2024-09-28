@@ -1306,6 +1306,7 @@ export const CommandButtonData = [
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       const vueThis = store.getters.vueThis
+      vueThis.ganttBtnType = "ganttBtn"
       if (thisGantt) {
         // 清空选中
         thisGantt.eachSelectedTask(function (id) {
@@ -1335,6 +1336,7 @@ export const CommandButtonData = [
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       const vueThis = store.getters.vueThis
+      vueThis.ganttBtnType = "ziyuanBtn"
       if (thisGantt) {
         // 清空选中
         thisGantt.eachSelectedTask(function (id) {
@@ -1389,7 +1391,17 @@ export const CommandButtonData = [
     help: '关键路径',
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
+      const vueThis = store.getters.vueThis
       if (thisGantt) {
+        thisGantt.templates.task_class = function (start, end, task) {
+          if (!task.parent) {
+            if (vueThis.ganttBtnType == 'ganttBtn') {
+              return 'gantt_task_style'
+            } else {
+              return 'ziyuan_task_style'
+            }
+          }
+        };
         if (thisGantt.config.highlight_critical_path) {
           thisGantt.config.highlight_critical_path = false
         } else {
