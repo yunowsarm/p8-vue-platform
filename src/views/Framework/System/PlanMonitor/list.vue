@@ -3,6 +3,7 @@
     <template #north>
       <common-button :comp="comp"
                      :button-config="buttonConfig"
+                     :button-type="'round'"
                      :special-rote-name="roteName"></common-button>
       <search-form-list ref="search"
                         :data-source="searchDatasource"
