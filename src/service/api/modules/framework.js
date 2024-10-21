@@ -246,6 +246,22 @@ export const system = {
   ],
   projectTeamSetting: [
     {
+      name: 'saveLoginConfig',
+      method: 'POST',
+      path: '/framework/system/SystemSettings/saveLoginConfig',
+      mockPath: '/framework/system/SystemSettings/saveLoginConfig',
+      params: {},
+      desc: '系统设置>功能设置>系统登录设置-保存'
+    },
+    {
+      name: 'getLoginConfig',
+      method: 'POST',
+      path: '/framework/system/SystemSettings/getLoginConfig',
+      mockPath: '/framework/system/SystemSettings/getLoginConfig',
+      params: {},
+      desc: '系统设置>功能设置>系统登录设置-查询'
+    },
+    {
       name: 'getSystemAbout',
       method: 'POST',
       path: '/framework/system/SystemSettings/getSystemAbout',
