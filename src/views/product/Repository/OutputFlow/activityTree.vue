@@ -193,7 +193,7 @@ export default {
   },
   mounted () {
     if (this.activityInfoId) {
-      this.initGantt(this.activityInfoId)
+      this.initGantt()
       this.callParentSelectTasks()
     }
   },
@@ -245,7 +245,7 @@ export default {
     hideMenu () {
       this.menuVisible = false
     },
-    initGantt (activityInfoId) {
+    initGantt (taskId) {
       // 清空原有数据
       if (myGantt) {
         GanttObject.setGanttObject(ganttName, {})
@@ -256,22 +256,9 @@ export default {
       // 渲染对象
       myGantt.init(this.$refs.myGantt)
       // 加载数据
-      this.$api['OutputFlow.loadAcivityData']({ activityInfoId: activityInfoId }).then(function (res) {
-        if (res) {
-          res.forEach(el => {
-            el.durations = el.duration
-          })
-          // 初始化数据
-          let datas = {
-            tasks: res
-          }
-          myGantt.parse(datas)
-        }
-      }).catch(function (error) {
-        console.error('error' + error)
-      })
+      this.loadGanttData(taskId)
     },
-    loadGanttData () {
+    loadGanttData (taskId) {
       this.$api['OutputFlow.loadAcivityData']({ activityInfoId: this.activityInfoId }).then(function (res) {
         if (res) {
           res.forEach(el => {
@@ -281,18 +268,9 @@ export default {
           let datas = {
             tasks: res
           }
-          myGantt.parse(datas)
-        }
-      }).catch(function (error) {
-        console.error('error' + error)
-      })
-    },
-    loadGanttData () {
-      this.$api['OutputFlow.loadAcivityData']({ activityInfoId: this.activityInfoId }).then(function (res) {
-        if (res) {
-          // 初始化数据
-          let datas = {
-            tasks: res
+          if (taskId) {
+            myGantt.unselectTask();
+            myGantt.selectTask(taskId);
           }
           myGantt.parse(datas)
         }
@@ -355,7 +333,7 @@ export default {
                     myGantt.addTask(task, parent, myGantt.getTaskIndex(taskId))
                   })
                 })
-                that.loadGanttData()
+                that.loadGanttData(data[0].id)
                 that.$emit('refrshDes')
               }
             }).catch(function (error) {
@@ -394,7 +372,7 @@ export default {
                     myGantt.addTask(task, parent, indexNo)
                   })
                 })
-                that.loadGanttData()
+                that.loadGanttData(data[0].id)
                 that.$emit('refrshDes')
               }
             }).catch(function (error) {
@@ -429,7 +407,7 @@ export default {
                   // dp.setUpdated(item.flowId, true, "created");
                 })
               })
-              that.loadGanttData()
+              that.loadGanttData(data[0].id)
               that.$emit('refrshDes')
             }
           }).catch(function (error) {
@@ -491,7 +469,7 @@ export default {
       //   task.code = obj.code
       //   myGantt.refreshTask(obj.id)
       // }
-      this.initGantt(this.activityInfoId)
+      this.initGantt(obj.id)
       // }
     },
     saveData: function () {
