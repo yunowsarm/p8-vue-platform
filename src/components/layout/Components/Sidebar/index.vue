@@ -118,6 +118,9 @@
           <span v-else>
             授权终止日期：{{ regardsObj.authorizedExpires }}<br />
           </span>
+          <span>
+            设备码：{{ regardsObj.cpuSerialCode }}<br />
+          </span>
         </p>
         <span slot="reference">{{ regardsObj.systemVersion }}</span>
       </el-popover>

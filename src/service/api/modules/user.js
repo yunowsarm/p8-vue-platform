@@ -56,6 +56,13 @@ export const UserApi = {
       path: '/framework/user/setting/getAll',
       mockPath: '/framework/user/setting/getAll',
       desc: '1.14 获取用户配置信息'
+    },
+    {
+      name: 'getAuthorizationInfo',
+      method: 'POST',
+      path: '/authorization/getAuthorizationInfo',
+      mockPath: '/authorization/getAuthorizationInfo',
+      desc: '获取用户机器信息'
     }
   ],
   menu: [

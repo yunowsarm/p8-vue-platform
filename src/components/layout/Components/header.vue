@@ -194,6 +194,10 @@
                      style="font-size: 15px;"
                      @click="openRZ">www.xardmu.com</el-button></p>
         <p><span class="regards-font">授权终止日期:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.authorizedExpires }}</span></p>
+        <p v-for="(el,index) in AuthorizationInfoList"
+           :key="index">
+          <span class="regards-font">{{el.name}}&nbsp;&nbsp;</span><span>{{el.message}}</span>
+        </p>
       </div>
     </el-dialog>
   </header>
@@ -229,13 +233,15 @@ export default {
       informationDrawer: false,
       dialogVisible: false,
       regardsObj: {},
-      adminUserIdArr: ['SYS_USER001', 'SYS_USER009', 'SYS_USER012', 'SYS_USER010', 'SYS_USER000'] // 五元id
+      adminUserIdArr: ['SYS_USER001', 'SYS_USER009', 'SYS_USER012', 'SYS_USER010', 'SYS_USER000'], // 五元id
+      AuthorizationInfoList: []
     }
   },
   computed: {
     ...mapGetters(['messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl']),
   },
   mounted () {
+    this_.getAuthorizationInfo()
     this.getSystemAbout()
     console.log(this.systemName, '=========================systemName')
     this.dayTime = getGreetingTime()
@@ -274,6 +280,11 @@ export default {
     // }
   },
   methods: {
+    getAuthorizationInfo () {
+      this.$api['user.getAuthorizationInfo']({}).then(res => {
+        this.AuthorizationInfoList = res
+      })
+    },
     openRZ () {
       window.open('https://www.xardmu.com/')
     },

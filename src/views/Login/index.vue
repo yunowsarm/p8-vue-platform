@@ -56,6 +56,7 @@
             西安融智软件有限公司<br />
             www.xardmu.com<br />
             029-87607380<br />
+            {{regardsObj.cpuSerialCode}}<br />
           </p>
           <span slot="reference">{{ regardsObj.systemVersion }}</span>
         </el-popover>
