@@ -221,7 +221,6 @@ export default {
       let that = this
       if (activityInfoId) {
         that.$api['OutputFlow.activityInfo']({ id: activityInfoId }).then(function (res) {
-          console.log(that.dataSource,1);
           if (res) {
             that.formData.id = res.id
             that.formData.name = res.name

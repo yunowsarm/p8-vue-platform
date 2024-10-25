@@ -320,6 +320,7 @@ export default {
       this[funName]()
     },
     loadData () {
+      let zuob = this.getXY(this.acivityData)
       if (this.acivityData && this.acivityData.length) {
         this.acivityData.forEach((el, index) => {
           let str = ''
@@ -460,8 +461,8 @@ export default {
             width: 200,
             height: 95,
             shape: 'html',
-            x: this.getX(el, index),
-            y: this.getY(el, index),
+            x: zuob[el.key].x,
+            y: zuob[el.key].y,
             html: () => {
               const wrap = document.createElement('div')
               wrap.innerHTML = str
@@ -620,7 +621,63 @@ export default {
         return Number(el.level - 1) * (95 + 110)
       }
       // }
-    }
+    },
+    getXY (nodeData) {
+      const nodeWidth = 200;
+      const nodeHeight = 95;
+      const verticalSpacing = 120;
+      const horizontalSpacing = 120;
+
+      function calculatePositions (nodes) {
+        const nodeMap = new Map();
+        const positions = {};
+
+        // 将节点存入Map以便快速查找
+        nodes.forEach(node => {
+          nodeMap.set(node.key, { ...node, children: [] });
+        });
+
+        // 构建树形结构
+        nodes.forEach(node => {
+          if (node.parent) {
+            const parentNode = nodeMap.get(node.parent);
+            if (parentNode) {
+              parentNode.children.push(nodeMap.get(node.key));
+            }
+          }
+        });
+
+        // 递归计算坐标
+        function positionNodes (node, x, y) {
+          const { children } = node;
+
+          // 设置当前节点的坐标
+          positions[node.key] = { x, y };
+
+          const childCount = children.length;
+          if (childCount > 0) {
+            // 计算每个子节点的 x 坐标
+            const totalWidth = childCount * nodeWidth + (childCount - 1) * horizontalSpacing; // 所有子节点的总宽度
+            const startX = x - (totalWidth / 2) + (nodeWidth / 2); // 计算第一个子节点的起始 x 坐标
+
+            // 设置每个子节点的坐标
+            children.forEach((child, index) => {
+              const childX = startX + index * (nodeWidth + horizontalSpacing);
+              positionNodes(child, childX, y + nodeHeight + verticalSpacing);
+            });
+          }
+        }
+
+        // 从根节点开始计算
+        const rootNode = nodeMap.get("75e22b4af03c4719b3ba");
+        positionNodes(rootNode, 0, 0); // 根节点放在 (0, 0)
+
+        return positions;
+      }
+
+      const positions = calculatePositions(nodeData);
+      return positions
+    },
   }
 }
 </script>
