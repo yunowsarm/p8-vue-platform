@@ -1722,5 +1722,12 @@ export const repositoryApi = {
       mockPath: '/appoint/bpRequirement/importExcel',
       desc: '资格要求管理-文件导入'
     },
+    {
+      name: 'addAuthorization',
+      method: 'POST',
+      path: '/authorization/export',
+      mockPath: '/authorization/export',
+      desc: '资格要求管理-文件导入'
+    },
   ]
 }
