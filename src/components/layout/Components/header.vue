@@ -194,6 +194,7 @@
                      style="font-size: 15px;"
                      @click="openRZ">www.xardmu.com</el-button></p>
         <p><span class="regards-font">授权终止日期:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.authorizedExpires }}</span></p>
+        <p><span class="regards-font">特征码:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.cpuSerialCode }}</span></p>
         <p v-for="(el,index) in AuthorizationInfoList"
            :key="index">
           <span class="regards-font">{{el.name}}&nbsp;&nbsp;</span><span>{{el.message}}</span>
@@ -241,11 +242,11 @@ export default {
     ...mapGetters(['messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl']),
   },
   mounted () {
+    const this_ = this
     this_.getAuthorizationInfo()
     this.getSystemAbout()
     console.log(this.systemName, '=========================systemName')
     this.dayTime = getGreetingTime()
-    const this_ = this
     setInterval(function () {
       this_.approvalTotal()
     }, 60000)
