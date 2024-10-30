@@ -114,6 +114,8 @@ export function outPutFlowGantt (ganttName, vueThis) {
   ganttObject.attachEvent('onTaskSelected', (id) => {
     if (ganttObject.getGlobalTaskIndex(id) !== 0) {
       vueThis.$emit('taskSelected', id)
+    } else {
+      vueThis.$emit('taskSelected', '')
     }
   })
   ganttObject.attachEvent('onTaskMultiSelect', function (id, state, e) {

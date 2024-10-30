@@ -195,10 +195,19 @@ export default {
         if (newValue && newValue !== '') {
           this.activityInfoId = newValue
           this.dataSource.forEach(el => {
-            el.disabledValues = [this.activityInfoId]
+            if (el.fieldName == 'predecessorsIds') {
+              el.disabledValues = [newValue]
+              el.optionUrl.params.id = newValue
+            }
           })
           this.getDescribeData(newValue)
         } else {
+          this.dataSource.forEach(el => {
+            if (el.fieldName == 'predecessorsIds') {
+              el.disabledValues = []
+              el.optionUrl.params.id = ''
+            }
+          })
           this.activityInfoId = null
           this.formData = Object.assign({}, {})
         }

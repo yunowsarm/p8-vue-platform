@@ -372,6 +372,7 @@ export default {
       if (this.defaultActiveKey === 'first') {
         this.triggerVal = true
       } else {
+        this.activityId = ''
         this.triggerVal = false
       }
     },
