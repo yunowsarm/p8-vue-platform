@@ -201,5 +201,8 @@ export default {
   ::v-deep .splitBtn {
     z-index: 1;
   }
+  ::v-deep .icon-youzhedie {
+    left: -4px !important;
+  }
 }
 </style>
