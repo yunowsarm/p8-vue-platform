@@ -647,6 +647,9 @@ export default {
           }
         });
 
+        // 寻找根节点（parent为空）
+        const rootNode = nodes.find(node => !node.parent);
+
         // 递归计算坐标
         function positionNodes (node, x, y) {
           const { children } = node;
@@ -668,14 +671,15 @@ export default {
           }
         }
 
-        // 从根节点开始计算
-        const rootNode = nodeMap.get("75e22b4af03c4719b3ba");
-        positionNodes(rootNode, 0, 0); // 根节点放在 (0, 0)
+        if (rootNode) {
+          positionNodes(nodeMap.get(rootNode.key), 0, 0); // 根节点放在 (0, 0)
+        }
 
         return positions;
       }
 
       const positions = calculatePositions(nodeData);
+      console.log(positions, '=====positions');
       return positions
     },
   }
