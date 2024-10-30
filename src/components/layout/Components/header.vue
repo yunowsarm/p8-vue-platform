@@ -129,14 +129,15 @@
         <el-dropdown-menu slot="dropdown">
           <div class="header_userInfo"
                v-if="userInfo.departmentName">
-            <span class="title">部门：</span>
+            <span class="title"
+                  style="float: left; width: 46px">部门：</span>
             <span class="content"
                   v-if="userInfo.parentDept">{{ userInfo.parentDept }}-</span>
             <span class="content">{{ userInfo.departmentName }}</span>
           </div>
           <div class="header_userInfo">
             <span class="title"
-                  style="float: left; width: 36px">角色：</span>
+                  style="float: left; width: 46px">角色：</span>
             <div style="float: left; width: 114px">
               <span class="content"
                     v-for="item in userInfo.userRoles"
@@ -572,7 +573,7 @@ export default {
 
 // 用户部门、角色信息
 div.header_userInfo {
-  width: 150px;
+  width: 170px;
   line-height: 25px;
   padding: 0 15px;
   color: #606266;
