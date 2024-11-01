@@ -63,14 +63,17 @@ export default {
         {
           title: '序号',
           type: 'index',
-          width: '60px'
+          align: 'center',
+          headerAlign: 'center',
+          width: 60
         },
         {
           title: '状态',
           dataIndex: 'demandStatusDisplay',
           sortable: false,
           align: 'center',
-          headerAlign: 'center'
+          headerAlign: 'center',
+          width: 120
         },
         {
           title: '标题',
@@ -84,7 +87,8 @@ export default {
           dataIndex: 'source',
           sortable: false,
           align: 'center',
-          headerAlign: 'center'
+          headerAlign: 'center',
+          width: 120
         },
         {
           title: '录入时间',
@@ -92,14 +96,16 @@ export default {
           sortable: false,
           align: 'center',
           treeNode: true,
-          headerAlign: 'center'
+          headerAlign: 'center',
+          width: 120
         },
         {
           title: '收集人',
           dataIndex: 'createBy',
           sortable: false,
           align: 'center',
-          headerAlign: 'center'
+          headerAlign: 'center',
+          width: 120
         },
       ],
       tableParamDemand: {
