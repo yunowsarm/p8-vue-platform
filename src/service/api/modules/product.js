@@ -1729,5 +1729,68 @@ export const repositoryApi = {
       mockPath: '/authorization/export',
       desc: '资格要求管理-文件导入'
     },
+    {
+      name: 'historyAssumptionTaskTotal',
+      method: 'GET',
+      path: '/appoint/userPortrait/historyAssumptionTaskTotal',
+      mockPath: '/appoint/userPortrait/historyAssumptionTaskTotal',
+      desc: '资格要求管理-查询用户历史承担任务总数'
+    },
+    {
+      name: 'historyTaskByProjectType',
+      method: 'GET',
+      path: '/appoint/userPortrait/historyTaskByProjectType',
+      mockPath: '/appoint/userPortrait/historyTaskByProjectType',
+      desc: '资格要求管理-根据用户ID按项目类别查询用户历史承担任务以及对应分类占总数的占比(用于饼状图展示数据'
+    },
+    {
+      name: 'historyTaskByPlanType',
+      method: 'GET',
+      path: '/appoint/userPortrait/historyTaskByPlanType',
+      mockPath: '/appoint/userPortrait/historyTaskByPlanType',
+      desc: '资格要求管理-根据用户ID按任务类型查询用户历史承担任务以及对应分类占总数的占比(用于饼状图展示数据'
+    },
+    {
+      name: 'historyTaskByMonitorPoint',
+      method: 'GET',
+      path: '/appoint/userPortrait/historyTaskByMonitorPoint',
+      mockPath: '/appoint/userPortrait/historyTaskByMonitorPoint',
+      desc: '资格要求管理-根据用户ID按任务标识查询用户历史承担任务以及对应分类占总数的占比(用于饼状图展示数据'
+    },
+    {
+      name: 'historyAssumptionTaskDetailsList',
+      method: 'POST',
+      path: '/appoint/userPortrait/historyAssumptionTaskDetailsList',
+      mockPath: '/appoint/userPortrait/historyAssumptionTaskDetailsList',
+      desc: '资格要求管理-文根据用户ID及项目类别、任务类型、任务标识查询用户该类历史承担任务列表数据'
+    },
+    {
+      name: 'dataCheckLevel',
+      method: 'POST',
+      path: '/appoint/bpSysuserRoleLevel/dataCheck',
+      mockPath: '/appoint/bpSysuserRoleLevel/dataCheck',
+      desc: '资格要求管理'
+    },
+    {
+      name: 'dataCheck',
+      method: 'POST',
+      path: '/appoint/bpRoleLevel/dataCheck',
+      mockPath: '/appoint/bpRoleLevel/dataCheck',
+      desc: '资格要求管理-'
+    },
+    {
+      name: 'dataCheckRequirement',
+      method: 'POST',
+      path: '/appoint/bpLevelRequirement/dataCheck',
+      mockPath: '/appoint/bpLevelRequirement/dataCheck',
+      desc: '资格要求管理'
+    },
+    {
+      name: 'getUserGrade',
+      method: 'POST',
+      path: '/appoint/userPortrait/getUserGrade',
+      mockPath: '/appoint/userPortrait/getUserGrade',
+      desc: '资格要求管理'
+    },
   ]
 }
