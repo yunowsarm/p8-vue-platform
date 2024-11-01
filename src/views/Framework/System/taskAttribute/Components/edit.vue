@@ -1,28 +1,42 @@
 <template>
   <div style="overflow: hidden">
-    <form-list
-      ref="form"
-      :data-source="dataSource"
-      :form="formData"
-      :api="saveApi"
-      @saved="saved"
-      label-width="90px"
-      @rendered="rendered"
-      :is-custom-validate="true"
-      :exist-default-btn="false"
-      :exist-custom-btn="true"
-      @custom-validate="customValidate"
-    >
+    <form-list ref="form"
+               :data-source="dataSource"
+               :form="formData"
+               :api="saveApi"
+               @saved="saved"
+               label-width="90px"
+               @rendered="rendered"
+               :is-custom-validate="true"
+               :exist-default-btn="false"
+               :exist-custom-btn="true"
+               @custom-validate="customValidate">
       <template #customBtn>
-        <el-button type="primary" @click="$emit('saveSuccess')">取消</el-button>
-        <el-button type="primary" @click="$refs.form.handleSubmit($event)">保存</el-button>
+        <el-button type="primary"
+                   @click="$emit('saveSuccess')">取消</el-button>
+        <el-button type="primary"
+                   @click="$refs.form.handleSubmit($event)">保存</el-button>
       </template>
     </form-list>
-    <common-tabs :tabs-data="tabsData" type="border-card" :height="renderHeight" :active-tabs="activeTabs" @tab-click="tabClick" :keepBottom='true' :has-full-screen="true">
+    <common-tabs :tabs-data="tabsData"
+                 type="border-card"
+                 :height="renderHeight"
+                 :active-tabs="activeTabs"
+                 @tab-click="tabClick"
+                 :keepBottom='true'
+                 :has-full-screen="true">
       <template #attributeSettings>
-        <editable-table :columns="settingsColumns" ref="editTable" :add-row="false" :data="settingsData" @save-param-data="saveParamData">
+        <editable-table :columns="settingsColumns"
+                        ref="editTable"
+                        :add-row="false"
+                        :data="settingsData"
+                        @save-param-data="saveParamData">
           <template #isEnable="{ scope, data }">
-            <el-checkbox v-model="scope.row.isEnable" true-label="1" false-label="0" @blur="saveParamData(data)" :disabled="scope.row.type == '0'"></el-checkbox>
+            <el-checkbox v-model="scope.row.isEnable"
+                         true-label="1"
+                         false-label="0"
+                         @blur="saveParamData(data)"
+                         :disabled="scope.row.type == '0'"></el-checkbox>
           </template>
           <template #indexNo>
             <i class="el-icon-s-fold"></i>
@@ -30,19 +44,35 @@
         </editable-table>
       </template>
       <template #attributeExtend>
-        <editable-table :columns="extendColumns" :data="extendData" :add-row="true" @save-param-data="saveParamDataNew">
+        <editable-table :columns="extendColumns"
+                        :data="extendData"
+                        :add-row="true"
+                        @save-param-data="saveParamDataNew">
           <template #name="{ scope, data }">
-            <el-input v-model="scope.row.name" style="width: 100%" clearable @blur="saveParamDataNew(data)"></el-input>
+            <el-input v-model="scope.row.name"
+                      style="width: 100%"
+                      clearable
+                      @blur="saveParamDataNew(data)"></el-input>
           </template>
           <template #filedName="{ scope, data }">
-            <el-input v-model="scope.row.filedName" style="width: 100%" clearable @blur="saveParamDataNew(data)"></el-input>
+            <el-input v-model="scope.row.filedName"
+                      style="width: 100%"
+                      clearable
+                      @blur="saveParamDataNew(data)"></el-input>
           </template>
           <template #filedType="{ scope, data }">
-            <el-select v-model="scope.row.filedType" style="width: 100%" clearable @change="saveParamDataNew(data)">
-              <el-option label="字符串" value="text"> </el-option>
-              <el-option label="数字" value="number"> </el-option>
-              <el-option label="大文本" value="textarea"> </el-option>
-              <el-option label="日期" value="datepicker"> </el-option>
+            <el-select v-model="scope.row.filedType"
+                       style="width: 100%"
+                       clearable
+                       @change="saveParamDataNew(data)">
+              <el-option label="字符串"
+                         value="text"> </el-option>
+              <el-option label="数字"
+                         value="number"> </el-option>
+              <el-option label="大文本"
+                         value="textarea"> </el-option>
+              <el-option label="日期"
+                         value="datepicker"> </el-option>
             </el-select>
           </template>
           <template #verificationRules="{ scope, data }">
@@ -50,7 +80,10 @@
               <el-option  label="必填" value="必填"> </el-option>
               <el-option  label="整数" value="整数"> </el-option>
             </el-select> -->
-            <el-input v-model="scope.row.verificationRules" style="width: 100%" clearable @blur="saveParamDataNew(data)"></el-input>
+            <el-input v-model="scope.row.verificationRules"
+                      style="width: 100%"
+                      clearable
+                      @blur="saveParamDataNew(data)"></el-input>
           </template>
         </editable-table>
       </template>
@@ -79,7 +112,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     const height = document.documentElement.clientHeight - 310
     return {
       renderHeight: height + 'px',
@@ -193,14 +226,14 @@ export default {
       activeTabs: 'attributeSettings'
     }
   },
-  mounted() {
+  mounted () {
     this.columnDrop()
   },
   methods: {
-    rendered() {
+    rendered () {
       this.getFormData()
     },
-    getFormData() {
+    getFormData () {
       this.$api['taskAttribute.getInfo']({ id: this.id }).then((res) => {
         this.formData.projectTypeId = res.projectTypeId
         this.formData.describe = res.describe
@@ -220,17 +253,17 @@ export default {
         this.formData.type = this.type
       }
     },
-    saved(res) {
+    saved (res) {
       this.$emit('saveSuccess', res)
     },
-    tabClick() {},
-    saveParamData(data) {
+    tabClick () { },
+    saveParamData (data) {
       this.formData.propertiesList = data
     },
-    saveParamDataNew(data) {
+    saveParamDataNew (data) {
       this.formData.attributeExtensionList = data
     },
-    columnDrop() {
+    columnDrop () {
       const that = this
       this.$nextTick(() => {
         const $table = that.$refs.editTable
@@ -248,7 +281,7 @@ export default {
         })
       })
     },
-    customValidate(saveParmars) {
+    customValidate (saveParmars) {
       const that = this
       this.$api['taskAttribute.saveData'](saveParmars).then((res) => {
         if (res) {
@@ -261,3 +294,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+::v-deep .el-tabs--top .el-tabs__content {
+  height: calc(100% - 10px) !important;
+}
+</style>
