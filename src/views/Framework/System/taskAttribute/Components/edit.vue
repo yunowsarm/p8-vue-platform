@@ -1,5 +1,5 @@
 <template>
-  <div style="overflow: hidden">
+  <div style="height: 19%;">
     <form-list ref="form"
                :data-source="dataSource"
                :form="formData"
