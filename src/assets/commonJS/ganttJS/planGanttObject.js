@@ -673,7 +673,7 @@ export function getGanttColumns(ganttObject, vueThis) {
     },
     {
       name: 'dutyDeptName',
-      label: '部门',
+      label: '责任部门',
       align: 'center',
       resize: true,
       min_width: 120
@@ -977,7 +977,7 @@ export function getGanttColumns(ganttObject, vueThis) {
     },
     {
       name: 'overdueRemainingDays',
-      label: '超期/剩余',
+      label: '超期/剩余天数',
       align: 'center',
       min_width: 120,
       resize: true,

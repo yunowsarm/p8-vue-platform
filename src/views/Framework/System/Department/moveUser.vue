@@ -1,14 +1,12 @@
 <template>
-  <form-list
-    ref="form"
-    :api="saveApi"
-    :data-source="dataSource"
-    :form="formData"
-    @saved="saved"
-    @rendered="rendered"
-    :is-custom-validate="isCustomValidate"
-    @custom-validate="customValidate"
-  >
+  <form-list ref="form"
+             :api="saveApi"
+             :data-source="dataSource"
+             :form="formData"
+             @saved="saved"
+             @rendered="rendered"
+             :is-custom-validate="isCustomValidate"
+             @custom-validate="customValidate">
     <template slot="btn">
       <el-button @click="cancel">取 消</el-button>
     </template>
@@ -28,7 +26,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'departmentManger.moveUser',
       detailApi: 'departmentManger.deptInfo',
@@ -77,21 +75,22 @@ export default {
     }
   },
   methods: {
-    rendered() {
+    rendered () {
       this.getInfo()
     },
-    saved(res) {
+    saved (res) {
       this.$emit('saveSuccess', res)
     },
-    cancel() {
+    cancel () {
       this.$emit('cancel')
     },
-    getInfo() {
+    getInfo () {
       if (this.recordId) {
         this.$api[this.detailApi]({ id: this.recordId }).then((res) => {
-          Object.keys(this.formData).forEach((key) => {
-            this.formData[key] = res[key]
-          })
+          // Object.keys(this.formData).forEach((key) => {
+          //   this.formData[key] = res[key]
+          // })
+          this.formData = res[0]
         })
       } else {
         Object.keys(this.formData).forEach((key) => {
@@ -99,7 +98,7 @@ export default {
         })
       }
     },
-    customValidate(saveParams) {
+    customValidate (saveParams) {
       let params = {
         deptId: saveParams.parentId,
         oldDeptId: this.recordId
