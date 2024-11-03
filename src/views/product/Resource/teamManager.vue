@@ -716,14 +716,21 @@ export default {
         scope.row.waitout = true
       } else {
         this.tableData.splice(index, 1)
+        let row = scope.row
+        let roleInfo = []
+        if (row.roleType === 'fixed') {
+          roleInfo = row.userRoleId ? this.fixedRoles.filter(item => item.roleId === row.userRoleId) : this.fixedRoles.filter(item => item.name === row.roleName) 
+        } else {
+          roleInfo = row.userRoleId ? this.generalRoles.filter(item => item.roleId === row.userRoleId) : this.generalRoles.filter(item => item.name === row.roleName) 
+        }
+        // let roleInfo = row.roleType === 'fixed' ? this.fixedRoles.filter(item => item.roleId === row.userRoleId || item.name === row.roleName) : this.generalRoles.filter(item => item.roleId === row.userRoleId || item.name === row.roleName)
+        let projectTeamRoleUsers = roleInfo[0].projectTeamRoleUsers
+        let pIndex = projectTeamRoleUsers.findIndex(item => item.sysuserId === row.sysuserId)
+        if (pIndex > -1) {
+          projectTeamRoleUsers.splice(pIndex, 1)
+        }
         if (this.rolesSelectedIndex < 0) {
-          let row = scope.row
-          let roleInfo = row.roleType === 'fixed' ? this.fixedRoles.filter(item => item.roleId === row.userRoleId) : this.generalRoles.filter(item => item.roleId === row.userRoleId)
-          let projectTeamRoleUsers = roleInfo[0].projectTeamRoleUsers
-          let pIndex = projectTeamRoleUsers.findIndex(item => item.sysuserId === row.sysuserId)
-          if (pIndex > -1) {
-            projectTeamRoleUsers.splice(pIndex, 1)
-          }
+         
         }
       }
       this.isDelete = true
@@ -771,11 +778,13 @@ export default {
     },
     loadRolesCommonHandle (data) {
       let tempArr = []
+      let roleName = []
       data.forEach(item => {
         let flag = true
         this.rolesData.forEach(el => {
           if (el.name == item.name) {
             flag = false
+            roleName.push(item.name)
           }
         })
         if (flag) {
@@ -807,6 +816,17 @@ export default {
       this.rolesData.sort(function (a, b) {
         return b.isFixed - a.isFixed
       })
+      if (roleName && roleName.length) {
+        const uniqueArr = Array.from(new Set(roleName));
+        let str = ''
+        uniqueArr.forEach(el => {
+          str +=  el + '、'
+        })
+        str = str.slice(0, -1)
+        this.$message({type:'success',message:'载入成功，角色' + str + '为重复角色未载入'})
+      } else {
+        this.$message({type:'success',message:'载入成功'})
+      }
     },
     memberCloseHandle (tableSelectValue) {
       // 添加人员-面板关闭
@@ -970,9 +990,12 @@ export default {
         this.fixedRoles.forEach(fixedItem => {
           let temp = {}
           let roleId = fixedItem.roleId
-          let tempUserList = tableData.filter(i => {
-            return i.userRoleId === roleId
-          })
+          let tempUserList = []
+          if (roleId) {
+            tempUserList = tableData.filter(i => {
+              return i.userRoleId === roleId
+            })
+          }
           let fixedRolesKeys = Object.keys(fixedItem)
           fixedRolesKeys.forEach(key => {
             if (key === 'projectTeamRoleUsers') {

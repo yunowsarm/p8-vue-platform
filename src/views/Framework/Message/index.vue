@@ -215,5 +215,8 @@ export default {
   .search-wrapper{
     float: left;
   }
+  ::v-deep .icon-youzhedie {
+    left: -4px !important;
+  }
 }
 </style>
