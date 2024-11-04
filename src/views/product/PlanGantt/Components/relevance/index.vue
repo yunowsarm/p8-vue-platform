@@ -227,7 +227,8 @@ export default {
         showHeader: false
       },
       selectRecord: {},
-      selectRecords: []
+      selectRecords: [],
+      scrollPosition: 0
     }
   },
   methods: {
@@ -297,8 +298,13 @@ export default {
         })
       }
     },
-    relevanceClick () {
-      this.$api['demandManagement.saveRequirementByTask']({
+    async relevanceClick () {
+      let that = this
+      const tableElement = this.$refs.xTable.$el.querySelector('.vxe-table--body-wrapper');
+      if (tableElement) {
+        this.scrollPosition = tableElement.scrollTop; // 获取滚动条高度
+      }
+      await this.$api['demandManagement.saveRequirementByTask']({
         wholeId: this.selectRecord.wholeId,
         taskId: this.selectRecord.taskId,
         requirementIds: this.selectRecords
@@ -309,6 +315,29 @@ export default {
           this.$refs.xDemandTable.searchData()
         }
       })
+      setTimeout(() => {
+        let data = that.findNodeById(that.$refs.xTable.data, that.selectRecord.taskId)
+        that.$refs.xTable.$refs.table.setCurrentRow(data)
+        that.$refs.xTable.$refs.table.setCheckboxRow(data, true)
+        const tableElement = that.$refs.xTable.$el.querySelector('.vxe-table--body-wrapper');
+        if (tableElement) {
+          tableElement.scrollTop = that.scrollPosition
+        }
+      }, 100)
+    },
+    findNodeById (data, taskId) {
+      for (const node of data) {
+        if (node.taskId === taskId) {
+          return node; // 找到对应的节点
+        }
+        if (node.children && node.children.length > 0) {
+          const found = this.findNodeById(node.children, taskId); // 递归查找子节点
+          if (found) {
+            return found; // 如果在子节点中找到，返回
+          }
+        }
+      }
+      return null; // 如果未找到，返回 null
     }
   }
 }

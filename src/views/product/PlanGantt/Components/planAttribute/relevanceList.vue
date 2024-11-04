@@ -33,12 +33,12 @@ export default {
     return {
       comp: this,
       columnsDemand: [
-        {
-          title: '是否关联',
-          width: 80,
-          align: 'center',
-          type: 'checkbox'
-        },
+        // {
+        //   title: '是否关联',
+        //   width: 80,
+        //   align: 'center',
+        //   type: 'checkbox'
+        // },
         {
           title: '序号',
           type: 'index',
@@ -109,8 +109,8 @@ export default {
           res.forEach(row => {
             selectData.forEach((item, index) => {
               if (row === item.id) {
-                // that.$refs.xDemandTable.$refs.table.tableData = [item]
-                that.$refs.xDemandTable.$refs.table.setCheckboxRow(selectData[index], true)
+                that.$refs.xDemandTable.$refs.table.tableData = [item]
+                // that.$refs.xDemandTable.$refs.table.setCheckboxRow(selectData[index], true)
               }
             })
           })
