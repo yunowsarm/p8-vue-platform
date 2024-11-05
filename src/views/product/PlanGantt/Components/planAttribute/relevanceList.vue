@@ -1,6 +1,7 @@
 <template>
   <div style="height: 100%;">
     <vxe-table ref="xDemandTable"
+               v-if="falg"
                :comp="comp"
                style="height: 92%;"
                :columns="columnsDemand"
@@ -10,7 +11,7 @@
                :is-smart-form="true"
                :refreshShow="false"
                :pagination="false"
-               api="demandManagement.getRequirementList">
+               :api="tableApi">
     </vxe-table>
   </div>
 </template>
@@ -89,11 +90,18 @@ export default {
       checkboxConfig: {
         showHeader: false,
         checkMethod: this.checkMethod
-      }
+      },
+      tableApi: '',
+      falg: false
     }
   },
   computed: {
     ...mapGetters(['vueThis'])
+  },
+  mounted () {
+    this.tableParamDemand.planChangeDetailId = this.vueThis.changeRecordId
+    this.tableApi = 'demandManagement.getRequirementList'
+    this.falg = true
   },
   methods: {
     checkMethod ({ row }) {
