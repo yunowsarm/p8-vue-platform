@@ -2,7 +2,7 @@
   <common-dialog title="团队人员选择"
                  :width="dialogWidth + 'px'"
                  :dialogHeight="dialogHeight"
-                 v-if="visibleDislogMember"
+                 v-if="visibleDislogMember && visible"
                  :visible="visibleDislogMember"
                  :dialogConfig="dialogConfig"
                  @handle-cancel="dialogMemberCancel"
@@ -10,7 +10,8 @@
                  @close="dialogMemberCancel"
                  @isfullscreen="isfullscreen">
     <template #dialog>
-      <normal-layout :normalLayout="normalLayout" class="userSelect">
+      <normal-layout :normalLayout="normalLayout"
+                     class="userSelect">
         <template #north>
           <div class="search-con">
             <div class="date-range-con"
@@ -218,7 +219,6 @@ export default {
     let that = this
     this.$api['userManager.deptTreeByUserDepartment']({ loginFlag: this.loginFlag }).then(res => {
       // that.queryParam.deptId = res[1].id
-      that.visible = true
       // that.$refs.table.searchData()
     })
   },
@@ -251,6 +251,7 @@ export default {
         vm.dialogWidth = cw * 0.5
         vm.customHeight = vm.fullscreen ? ch - 175 : vm.dialogHeight - 120
         timer = null
+        vm.visible = true
       }, 300)
     },
     isfullscreen (isfullscreen) {
@@ -350,7 +351,7 @@ export default {
   height: 100%;
   padding: 10px;
   margin: 0;
-  .normal-header{
+  .normal-header {
     border-bottom: 1px solid #e1e1e1;
   }
   .normal-main .normal-center {
