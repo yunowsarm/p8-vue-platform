@@ -44,6 +44,14 @@ export const UserApi = {
       desc: '修改登录用户密码'
     },
     {
+      name: 'changeFirstPassword',
+      method: 'POST',
+      path: '/user/changeFirstPassword',
+      mockPath: '/user/changeFirstPassword',
+      params: {},
+      desc: '第一次登录修改用户密码'
+    },
+    {
       name: 'setting.save',
       method: 'POST',
       path: '/framework/user/setting/save',

@@ -180,65 +180,81 @@ export default {
     login (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // eslint-disable-next-line no-unused-vars
-          let userLoginSign = true
-          this.$api['SystemSettings.getLoginSetting']().then((res) => {
-            if (res) {
-              res.settings.forEach((a) => {
-                if (a.key === 'systemModel') {
-                  this.flag = a.value
-                }
-              })
-              userLoginSign = res.userLoginSign
-              if (this.flag === 'systemModel2' && userLoginSign === false) {
+          this.isLoginning = true
+          // 将登录状态存入vuex
+          this.$store.dispatch('setLoginState', this.keepLoggedIn)
+          let name = this.loginForm.userAccount
+          let password = this.loginForm.userPassword
+          let nameArr = name.split('')
+          let nameEncryption = ''
+          for (let i = 0; i < nameArr.length; i++) {
+            let s = nameArr[i].charCodeAt(0) << 2
+            nameEncryption += String.fromCharCode(s)
+          }
+          let passwordArr = password.split('')
+          let passwordEncryption = ''
+          for (let i = 0; i < passwordArr.length; i++) {
+            let s = passwordArr[i].charCodeAt(0) << 2
+            passwordEncryption += String.fromCharCode(s)
+          }
+          let params = {
+            userAccount: nameEncryption,
+            userPassword: passwordEncryption
+          }
+          this.$store
+            .dispatch('userLogin', params)
+            .then((res) => {
+              if (res === false) {
                 this.$router.push('/Maintain')
-              } else {
-                this.isLoginning = true
-                // 将登录状态存入vuex
-                this.$store.dispatch('setLoginState', this.keepLoggedIn)
-                let name = this.loginForm.userAccount
-                let password = this.loginForm.userPassword
-                let nameArr = name.split('')
-                let nameEncryption = ''
-                for (let i = 0; i < nameArr.length; i++) {
-                  let s = nameArr[i].charCodeAt(0) << 2
-                  nameEncryption += String.fromCharCode(s)
-                }
-                let passwordArr = password.split('')
-                let passwordEncryption = ''
-                for (let i = 0; i < passwordArr.length; i++) {
-                  let s = passwordArr[i].charCodeAt(0) << 2
-                  passwordEncryption += String.fromCharCode(s)
-                }
-                let params = {
-                  userAccount: nameEncryption,
-                  userPassword: passwordEncryption
-                }
-                this.$store
-                  .dispatch('userLogin', params)
-                  .then((res) => {
-                    if (!res) {
-                      this.$router.push('/Maintain')
+              } else if (res && res.type === 'updatePassword') {
+                this.$prompt('请输入新密码', '提示', {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  inputPattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`-])[A-Za-z\d!@#$%^&*()_+{}\[\]:;<>,.?\/~`-]{6,}$/,
+                  inputErrorMessage: '密码格式不正确'
+                }).then(({ value }) => {
+                  let newPasswordArr = value.split('')
+                  let newPasswordEncryption = ''
+                  for (let i = 0; i < newPasswordArr.length; i++) {
+                    let s = newPasswordArr[i].charCodeAt(0) << 2
+                    newPasswordEncryption += String.fromCharCode(s)
+                  }
+                  let params = { oldPassword: passwordEncryption, newPassword: newPasswordEncryption, userName: nameEncryption }
+                  this.$api['user.changeFirstPassword'](params).then((res) => {
+                    if (res) {
+                      this.$message({
+                        type: 'success',
+                        message: '保存成功'
+                      });
+                      window.location.reload();
                     } else {
-                      this.$router.push('/dash')
-                      setTimeout(() => {
-                        Notification.success({
-                          title: '欢迎',
-                          message: this.dayTime + '好，欢迎回来！',
-                          type: 'success',
-                          offset: 40
-                        })
-                      }, 100)
+                      this.$message({
+                        type: 'error',
+                        message: '保存失败'
+                      });
                     }
                   })
-                  .finally(() => {
-                    this.isLoginning = false
+                }).catch(() => {
+                  this.$message({
+                    type: 'info',
+                    message: '取消输入'
+                  });
+                });
+              } else {
+                this.$router.push('/dash')
+                setTimeout(() => {
+                  Notification.success({
+                    title: '欢迎',
+                    message: this.dayTime + '好，欢迎回来！',
+                    type: 'success',
+                    offset: 40
                   })
+                }, 100)
               }
-            } else {
-              return false
-            }
-          })
+            })
+            .finally(() => {
+              this.isLoginning = false
+            })
         } else {
           return false
         }
@@ -287,34 +303,29 @@ export default {
           } else {
             // this.$refs.loginLogo.style.background = `url(../../assets/image/login/logo.png) no-repeat`
           }
-          userLoginSign = res.userLoginSign
-          if (userLoginSign === false) {
-            this.$router.push('/Maintain')
-          } else {
-            this.isLoginning = true
-            // 将登录状态存入vuex
-            this.$store.dispatch('setLoginState', this.keepLoggedIn)
-            this.$store
-              .dispatch('userLogin', { ...this.loginForm })
-              .then((res) => {
-                if (!res) {
-                  this.$router.push('/Maintain')
-                } else {
-                  this.$router.push('/dash')
-                  setTimeout(() => {
-                    Notification.success({
-                      title: '欢迎',
-                      message: this.dayTime + '好，欢迎回来！',
-                      type: 'success',
-                      offset: 40
-                    })
-                  }, 100)
-                }
-              })
-              .finally(() => {
-                this.isLoginning = false
-              })
-          }
+          this.isLoginning = true
+          // 将登录状态存入vuex
+          this.$store.dispatch('setLoginState', this.keepLoggedIn)
+          this.$store
+            .dispatch('userLogin', { ...this.loginForm })
+            .then((res) => {
+              if (res === false) {
+                this.$router.push('/Maintain')
+              } else {
+                this.$router.push('/dash')
+                setTimeout(() => {
+                  Notification.success({
+                    title: '欢迎',
+                    message: this.dayTime + '好，欢迎回来！',
+                    type: 'success',
+                    offset: 40
+                  })
+                }, 100)
+              }
+            })
+            .finally(() => {
+              this.isLoginning = false
+            })
         } else {
           return false
         }

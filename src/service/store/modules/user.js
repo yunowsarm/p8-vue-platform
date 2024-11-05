@@ -142,7 +142,9 @@ const user = {
                 offset: 40
               })
               reject()
-            } else {
+            } else if(res.type === 'updatePassword'){
+              resolve(res)
+            }else {
               commit('SET_TOKEN', res.token)
               resolve(res)
             }
