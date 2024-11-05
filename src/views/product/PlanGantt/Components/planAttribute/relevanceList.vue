@@ -10,8 +10,7 @@
                :is-smart-form="true"
                :refreshShow="false"
                :pagination="false"
-               api="demandManagement.getRequirementList"
-               @requested-table-data="requestedTableData">
+               api="demandManagement.getRequirementList">
     </vxe-table>
   </div>
 </template>
@@ -81,7 +80,9 @@ export default {
           headerAlign: 'center'
         },
       ],
-      tableParamDemand: {},
+      tableParamDemand: {
+        taskId: this.taskId
+      },
       tableConfig: {
         'highlight-current-row': true
       },
@@ -97,25 +98,6 @@ export default {
   methods: {
     checkMethod ({ row }) {
       return false
-    },
-    requestedTableData (data) {
-      let that = this
-      this.$api['demandManagement.getRequirementByTask']({
-        taskId: that.taskId,
-        planChangeDetailId: this.vueThis.changeRecordId
-      }).then(res => {
-        if (res) {
-          let selectData = that.$refs.xDemandTable.$refs.table.tableData
-          res.forEach(row => {
-            selectData.forEach((item, index) => {
-              if (row === item.id) {
-                that.$refs.xDemandTable.$refs.table.tableData = [item]
-                // that.$refs.xDemandTable.$refs.table.setCheckboxRow(selectData[index], true)
-              }
-            })
-          })
-        }
-      })
     }
   }
 }
