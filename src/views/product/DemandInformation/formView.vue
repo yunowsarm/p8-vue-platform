@@ -1,19 +1,23 @@
 <template>
-  <div>
-    <div class="title">需求收集信息</div>
-    <form-render :data-view-id="dataViewId"
-                 :record="{ desformCode: codeForm }"
-                 :prop-param="propParam"
-                 v-bind="$attrs"
-                 pageType="view"></form-render>
-    <div class="title">需求填报信息</div>
-    <form-list ref="form"
-               class="formList"
-               label-width="120px"
-               :data-source="dataSource"
-               :exist-default-btn="false"
-               :form="formData">
-    </form-list>
+  <div class="content">
+    <div style="width: 50%;">
+      <div class="title">需求收集信息</div>
+      <form-render :data-view-id="dataViewId"
+                   :record="{ desformCode: codeForm }"
+                   :prop-param="propParam"
+                   v-bind="$attrs"
+                   pageType="view"></form-render>
+    </div>
+    <div style="width: 50%;">
+      <div class="title">需求填报信息</div>
+      <form-list ref="form"
+                 class="formList"
+                 label-width="120px"
+                 :data-source="dataSource"
+                 :exist-default-btn="false"
+                 :form="formData">
+      </form-list>
+    </div>
   </div>
 </template>
 
@@ -260,9 +264,8 @@ export default {
     }
   },
   mounted () {
-    console.log(this.row, '============this.row');
     this.$api['demandManagement.viewRequirement']({
-      id: this.row[0].ID
+      id: this.row[0].ID ? this.row[0].ID : this.row[0].id
     }).then(res => {
       if (res) {
         this.formData = res
@@ -272,14 +275,19 @@ export default {
       }
     })
     if (this.row && this.row.length > 0) {
-      this.codeForm = this.row[0].DEMAND_CODE
-      this.dataViewId = this.row[0].ID
+      this.codeForm = this.row[0].DEMAND_CODE ? this.row[0].DEMAND_CODE : this.row[0].demandCode
+      this.dataViewId = this.row[0].ID ? this.row[0].ID : this.row[0].id
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.content {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
 .title {
   padding: 10px;
   font-size: 20px;

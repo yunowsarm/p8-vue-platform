@@ -1,115 +1,119 @@
 <!--整体管理-团队管理-->
 <template>
   <div style="height: calc(100% - 50px);background-color: #f3f5f885">
-    <div style="height: 100%"
-         class="team-manager-wrap">
-      <div class="custom_content_wrap">
-        <div class="right-con">
-          <project-form-view :id="id"></project-form-view>
-          <!-- <member-upload :files="namedFiles"
+
+    <el-tabs type="border-card"
+             style="height: 97%;">
+      <el-tab-pane label="项目人员信息">
+        <div style="height: 95%"
+             class="team-manager-wrap">
+          <div class="custom_content_wrap">
+            <div class="right-con">
+              <project-form-view :id="id"></project-form-view>
+              <!-- <member-upload :files="namedFiles"
                            :view="!group_add_role"
                            @getFormComp="getMemberFormComp"></member-upload> -->
-        </div>
-        <div class="left_content">
-          <div class="teamFile">
-            <span style="font-size:14px; padding:0 10px;font-weight:bold;">人员任命文件：</span>
-            <!-- <common-upload  ref="commonupload"
+            </div>
+            <div class="left_content">
+              <div class="teamFile">
+                <span style="font-size:14px; padding:0 10px;font-weight:bold;">人员任命文件：</span>
+                <!-- <common-upload  ref="commonupload"
                         v-if="!uploadView"
                         :num="'1'"
                         :maxLimit="1"
                         @upload="(file) => {uploadFile(file);}"
                         @remove="(file) => {removedFile(file);}">
         </common-upload> -->
-            <common-file-view :uploadFiles="namedFiles"
-                              filesLayout="row"></common-file-view>
-          </div>
-          <div class="left_bottom_content">
-            <div class="role-con">
-              <!-- <el-button type="primary" plain style="margin: 5px;width:90%;"  @click="addRolesHandle"><i class="el-icon-plus" type="primary"></i>新建角色类别</el-button> -->
-              <vue-perfect-scrollbar class="role-list">
-                <li style="padding-left: 26px;color:#323232;font-size:12px;"
-                    :class="[{ 'active': rolesSelectedIndex === -1 }]"
-                    @click="refreshHandle">所有人员<span>({{getTotalCount}})</span></li>
-                <li :class="[
+                <common-file-view :uploadFiles="namedFiles"
+                                  filesLayout="row"></common-file-view>
+              </div>
+              <div class="left_bottom_content">
+                <div class="role-con">
+                  <!-- <el-button type="primary" plain style="margin: 5px;width:90%;"  @click="addRolesHandle"><i class="el-icon-plus" type="primary"></i>新建角色类别</el-button> -->
+                  <vue-perfect-scrollbar class="role-list">
+                    <li style="padding-left: 26px;color:#323232;font-size:12px;"
+                        :class="[{ 'active': rolesSelectedIndex === -1 }]"
+                        @click="refreshHandle">所有人员<span>({{getTotalCount}})</span></li>
+                    <li :class="[
                   { 'active': index === rolesSelectedIndex },
                   { 'fixed-role': item.roleType === 'fixed' },
                 ]"
-                    v-for="(item, index) in rolesData"
-                    :key="item.id"
-                    @click="rolesHandle(item, index)">
-                  <el-tooltip v-if="item.roleType === 'fixed'"
-                              :content="item.name"
-                              placement="bottom">
-                    <i class="el-icon-s-custom"
-                       style="cursor:pointer;"></i>
-                  </el-tooltip>
-                  <i v-else
-                     class="el-icon-s-custom"></i>
-                  <edit-input :textValue="item.name || item.roleName"
-                              :record="item"
-                              :iconShow="false"
-                              @delete="deleteRolesHandle(index, item)"
-                              @onChange="changeRolesHandle"></edit-input>
-                  <!-- {{getProjectTeamRoleUsersNum(item)}}
+                        v-for="(item, index) in rolesData"
+                        :key="item.id"
+                        @click="rolesHandle(item, index)">
+                      <el-tooltip v-if="item.roleType === 'fixed'"
+                                  :content="item.name"
+                                  placement="bottom">
+                        <i class="el-icon-s-custom"
+                           style="cursor:pointer;"></i>
+                      </el-tooltip>
+                      <i v-else
+                         class="el-icon-s-custom"></i>
+                      <edit-input :textValue="item.name || item.roleName"
+                                  :record="item"
+                                  :iconShow="false"
+                                  @delete="deleteRolesHandle(index, item)"
+                                  @onChange="changeRolesHandle"></edit-input>
+                      <!-- {{getProjectTeamRoleUsersNum(item)}}
                 <span style="color: red"
                       v-if="isShowRole(item)">*</span> -->
-                </li>
-              </vue-perfect-scrollbar>
-            </div>
-            <div class="table-con">
-              <div class="add-member">
-                <div>
-                  <!-- <el-button icon="el-icon-circle-plus"
+                    </li>
+                  </vue-perfect-scrollbar>
+                </div>
+                <div class="table-con">
+                  <div class="add-member">
+                    <div>
+                      <!-- <el-button icon="el-icon-circle-plus"
                            v-if="group_add_member"
                            type="plan"
                            @click="addMemberHandle">添加人员
                 </el-button> -->
-                  <!-- <el-button type="plan"
+                      <!-- <el-button type="plan"
                            @click="refreshHandle">查看全部成员
                 </el-button> -->
-                </div>
-                <search-form-list style="top: 2px"
-                                  ref="search"
-                                  :resetAfterToSearch="false"
-                                  :dataSource="dataSource"
-                                  @search="search"
-                                  @re-set="reset"></search-form-list>
-              </div>
-              <div class="common-table-member">
-                <common-table ref="table"
-                              class="tableMember"
-                              style="height: 100%"
-                              :columns="columns"
-                              :params="params"
-                              :pagination="false"
-                              @cell-click='cellDblclick'
-                              :tableSetting="false"
-                              :noApiTableData="tableData">
-                  <template #taskCount="{ scope }">
-                    <!-- <div class="task-count">
+                    </div>
+                    <search-form-list style="top: 2px"
+                                      ref="search"
+                                      :resetAfterToSearch="false"
+                                      :dataSource="dataSource"
+                                      @search="search"
+                                      @re-set="reset"></search-form-list>
+                  </div>
+                  <div class="common-table-member">
+                    <common-table ref="table"
+                                  class="tableMember"
+                                  style="height: 100%"
+                                  :columns="columns"
+                                  :params="params"
+                                  :pagination="false"
+                                  @cell-click='cellDblclick'
+                                  :tableSetting="false"
+                                  :noApiTableData="tableData">
+                      <template #taskCount="{ scope }">
+                        <!-- <div class="task-count">
                     <template v-if="scope.row.taskCount">
                       <el-link @click.stop="opentDialogUserTask(scope.row)">{{
                       scope.row.taskCount
                       }}<i class="el-icon-view el-icon--right"></i></el-link>
                     </template>
                     <template v-else> -->
-                    <span>{{ scope.row.taskCount }}</span>
-                    <!-- </template>
+                        <span>{{ scope.row.taskCount }}</span>
+                        <!-- </template>
                   </div> -->
-                  </template>
-                  <template #userState="{ scope }">
-                    <div class="userState">
-                      <span v-if="scope.row.entryTime && !scope.row.departureTime"
-                            class="state-working">团队中</span>
-                      <span v-if="scope.row.entryTime && scope.row.departureTime && scope.row.waitout"
-                            class="state-waitout">待退出</span>
-                      <span v-if="scope.row.entryTime && scope.row.departureTime && !scope.row.waitout"
-                            class="state-out">已退出</span>
-                    </div>
-                  </template>
-                  <template #operation="{ scope }">
-                    <template v-if="!scope.row.departureTime">
-                      <!-- <template v-if="scope.row.taskCount">
+                      </template>
+                      <template #userState="{ scope }">
+                        <div class="userState">
+                          <span v-if="scope.row.entryTime && !scope.row.departureTime"
+                                class="state-working">团队中</span>
+                          <span v-if="scope.row.entryTime && scope.row.departureTime && scope.row.waitout"
+                                class="state-waitout">待退出</span>
+                          <span v-if="scope.row.entryTime && scope.row.departureTime && !scope.row.waitout"
+                                class="state-out">已退出</span>
+                        </div>
+                      </template>
+                      <template #operation="{ scope }">
+                        <template v-if="!scope.row.departureTime">
+                          <!-- <template v-if="scope.row.taskCount">
                       <el-popconfirm title="确认要将该人退出项目组吗?"
                                      confirmButtonText="确认"
                                      cancelButtonText="取消"
@@ -128,74 +132,81 @@
                                  @click="deleteUserHandle(scope, scope.$index)">删除
                       </el-button>
                     </template> -->
-                    </template>
-                  </template>
-                  <template #flagHeader="{scope}">
-                    <span>{{ scope.column.label }}</span><i class="el-icon-edit"></i>
-                  </template>
-                  <template #flag="{scope}">
-                    <el-select v-model="scope.row.flag"
-                               size="mini"
-                               :key="scope.row.id"
-                               v-if="scope.row.editRow && group_add_member"
-                               placeholder="请选择"
-                               style="width: 90%;"
-                               @blur="()=>{quoteUpdate(scope.row)}">
-                      <el-option v-for="item in options"
-                                 :key="item.value"
-                                 @click.native="handleSetFlagName(scope.row,item)"
-                                 :label="item.label"
-                                 :value="item.value">
-                      </el-option>
-                    </el-select>
-                    <span v-else>{{ scope.row.flagName }}</span>
-                  </template>
-                </common-table>
+                        </template>
+                      </template>
+                      <template #flagHeader="{scope}">
+                        <span>{{ scope.column.label }}</span><i class="el-icon-edit"></i>
+                      </template>
+                      <template #flag="{scope}">
+                        <el-select v-model="scope.row.flag"
+                                   size="mini"
+                                   :key="scope.row.id"
+                                   v-if="scope.row.editRow && group_add_member"
+                                   placeholder="请选择"
+                                   style="width: 90%;"
+                                   @blur="()=>{quoteUpdate(scope.row)}">
+                          <el-option v-for="item in options"
+                                     :key="item.value"
+                                     @click.native="handleSetFlagName(scope.row,item)"
+                                     :label="item.label"
+                                     :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <span v-else>{{ scope.row.flagName }}</span>
+                      </template>
+                    </common-table>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="bottom-con">
-        <!-- <p class="operation"
+          <div class="bottom-con">
+            <!-- <p class="operation"
            v-if="group_add_role">
             <el-button size="mini"
                         @click="loadStandardTeamHandle">载入标准团队
             </el-button>
         </p> -->
-        <p class="submit"
-           v-if="group_add_role || group_add_member">
-          <!-- <el-button size="mini"
+            <p class="submit"
+               v-if="group_add_role || group_add_member">
+              <!-- <el-button size="mini"
                      type="primary"
                      :loading="submitLoading"
                      @click="submit">保 存
           </el-button> -->
-          <el-button size="mini"
-                     :loading="submitLoading"
-                     @click="$emit('close')">关 闭
-          </el-button>
-        </p>
-      </div>
-      <dialog-tabs-roles :visibleDialogRoles="visibleDialogRoles"
-                         :activeName="dialogRolesActiveName"
-                         :id="id"
-                         @exp-roles-close="expRolesCloseHandle"
-                         @standard-roles-close="standardRolesCloseHandle"></dialog-tabs-roles>
-      <dialog-select-member v-if="visibleDialogMember"
-                            :visibleDislogMember="visibleDialogMember"
-                            :loginFlag="loginFlag"
-                            :selectRoleId="selectRoleId"
-                            :loadingUserDeptStrategy="loadingUserDeptStrategy"
-                            @member-close="memberCloseHandle"
-                            :existsData="tableData"></dialog-select-member>
-      <dialog-user-task :dialogVisible="visibleDialogUserTask"
-                        :tableParams="userTaskTableParams"
-                        :customSearch="true"
-                        @close="closeDialogUserTask()"
-                        @custom-search="userTaskCustomSearch"
-                        @custom-reset="userTaskCustomReset">
-      </dialog-user-task>
-    </div>
+              <el-button size="mini"
+                         :loading="submitLoading"
+                         @click="$emit('close')">关 闭
+              </el-button>
+            </p>
+          </div>
+          <dialog-tabs-roles :visibleDialogRoles="visibleDialogRoles"
+                             :activeName="dialogRolesActiveName"
+                             :id="id"
+                             @exp-roles-close="expRolesCloseHandle"
+                             @standard-roles-close="standardRolesCloseHandle"></dialog-tabs-roles>
+          <dialog-select-member v-if="visibleDialogMember"
+                                :visibleDislogMember="visibleDialogMember"
+                                :loginFlag="loginFlag"
+                                :selectRoleId="selectRoleId"
+                                :loadingUserDeptStrategy="loadingUserDeptStrategy"
+                                @member-close="memberCloseHandle"
+                                :existsData="tableData"></dialog-select-member>
+          <dialog-user-task :dialogVisible="visibleDialogUserTask"
+                            :tableParams="userTaskTableParams"
+                            :customSearch="true"
+                            @close="closeDialogUserTask()"
+                            @custom-search="userTaskCustomSearch"
+                            @custom-reset="userTaskCustomReset">
+          </dialog-user-task>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="关联需求信息">
+        <demand-table :row="row"
+                      :demandFalg="false"
+                      :configParmars="configParmars"></demand-table>
+      </el-tab-pane>
+    </el-tabs>
     <div v-if="viewVisible"
          class="viewVisible">
     </div>
@@ -219,6 +230,7 @@ import ProjectFormView from './Components/ProjectFormView'
 import DialogSelectMember from './Components/DialogSelectMember'
 import DialogTabsRoles from './Components/DialogTabsRoles'
 import DialogUserTask from './Components/DialogUserTask'
+import demandTable from '@/views/product/ProjectInitiation/demandTable'
 import _ from 'lodash'
 import moment from 'moment'
 
@@ -236,7 +248,7 @@ export default {
       default: () => {
         return {}
       }
-    }
+    },
   },
   data () {
     const columns = [
@@ -1018,7 +1030,8 @@ export default {
     'el-popconfirm': Popconfirm,
     'el-link': Link,
     CommonFileView,
-    CommonUpload
+    CommonUpload,
+    demandTable
   }
 }
 </script>
@@ -1027,7 +1040,7 @@ export default {
 .custom_content_wrap {
   display: flex;
   height: 100%;
-  padding: 16px;
+  // padding: 16px;
   box-sizing: border-box;
   .left_content {
     width: 70%;
@@ -1195,7 +1208,7 @@ export default {
   padding: 0 10px 8px;
   box-sizing: border-box;
 
-  .add-member ::v-deep{
+  .add-member ::v-deep {
     height: 50px;
     line-height: 50px;
     box-sizing: border-box;

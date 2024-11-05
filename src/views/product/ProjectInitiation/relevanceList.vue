@@ -17,16 +17,34 @@
                api="demandManagement.getRequirementList"
                @selection-change="handleSelectionChangeDemand"
                @requested-table-data="requestedTableData">
+      <template #operation="{ scope }">
+        <el-button type="text"
+                   @click="showDetail(scope.row)">查看详情</el-button>
+      </template>
     </vxe-table>
+    <common-drawer v-if="relevanceInfoDrawer"
+                   title="需求详情"
+                   placement="top"
+                   size="60%"
+                   :visible="relevanceInfoDrawer"
+                   @close="onRelevanceInfoClose">
+      <template #drawer>
+        <form-view @saveSuccess="onRelevanceInfoClose"
+                   :row="selectDatas"></form-view>
+      </template>
+    </common-drawer>
   </div>
 </template>
 
 <script>
-import { P8VxeTable as VxeTable } from 'p8-components-ui'
+import { P8VxeTable as VxeTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import formView from '@/views/product/DemandInformation/formView'
 export default {
   name: 'Index',
   components: {
-    'vxe-table': VxeTable
+    'vxe-table': VxeTable,
+    CommonDrawer,
+    formView
   },
   props: {
     row: {
@@ -39,6 +57,7 @@ export default {
   data () {
     return {
       comp: this,
+      relevanceInfoDrawer: false,
       columnsDemand: [
         {
           title: '',
@@ -93,6 +112,15 @@ export default {
           headerAlign: 'center',
           width: 120
         },
+        {
+          title: '操作',
+          fixed: 'right',
+          dataIndex: 'operation',
+          width: 120,
+          scopedSlots: { customRender: 'custom' },
+          align: 'center',
+          headerAlign: 'center'
+        }
       ],
       tableParamDemand: {},
       tableConfig: {
@@ -103,10 +131,18 @@ export default {
         checkMethod: this.checkMethod
       },
       selectRecord: {},
-      selectRecords: []
+      selectRecords: [],
+      selectDatas: []
     }
   },
   methods: {
+    onRelevanceInfoClose () {
+      this.relevanceInfoDrawer = false
+    },
+    showDetail (row) {
+      this.relevanceInfoDrawer = true
+      this.selectDatas = [row]
+    },
     requestedTableData (data) {
       let that = this
       this.$api['demandManagement.getRequirementByProject']({

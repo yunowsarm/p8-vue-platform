@@ -1,12 +1,13 @@
 <template>
   <div style="height: 100%;">
-    <div style="padding: 1%;">
+    <div v-if="demandFalg"
+         style="padding: 1%;">
       <el-button type="primary"
                  @click="relevanceClick">关联</el-button>
     </div>
     <vxe-table ref="xTable"
                :comp="comp"
-               style="height: 92%;"
+               :style="{ height: tabelHeight }"
                :columns="columnsDemand"
                :params="tableParamDemand"
                :table-config="tableConfig"
@@ -14,6 +15,10 @@
                :refreshShow="false"
                :pagination="false"
                api="demandManagement.getRequirementByProject">
+      <template #operation="{ scope }">
+        <el-button type="text"
+                   @click="showDetail(scope.row)">查看详情</el-button>
+      </template>
     </vxe-table>
     <common-drawer v-if="relevanceViewDrawer"
                    title="关联需求"
@@ -22,6 +27,17 @@
       <template #drawer>
         <relevance-list @saveSuccess="onRelevanceClose"
                         :row="row"></relevance-list>
+      </template>
+    </common-drawer>
+    <common-drawer v-if="relevanceInfoDrawer"
+                   title="需求详情"
+                   placement="top"
+                   size="60%"
+                   :visible="relevanceInfoDrawer"
+                   @close="onRelevanceInfoClose">
+      <template #drawer>
+        <form-view @saveSuccess="onRelevanceInfoClose"
+                   :row="selectRecords"></form-view>
       </template>
     </common-drawer>
     <div v-if="viewVisible"
@@ -33,12 +49,14 @@
 <script>
 import { P8VxeTable as VxeTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
 import relevanceList from './relevanceList'
+import formView from '@/views/product/DemandInformation/formView'
 export default {
   name: 'Index',
   components: {
     'vxe-table': VxeTable,
     CommonDrawer,
-    relevanceList
+    relevanceList,
+    formView
   },
   props: {
     row: {
@@ -52,13 +70,19 @@ export default {
       default: () => {
         return {}
       }
+    },
+    demandFalg: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
     return {
       comp: this,
+      tabelHeight: '92%',
       viewVisible: false,
       relevanceViewDrawer: false,
+      relevanceInfoDrawer: false,
       columnsDemand: [
         {
           title: '序号',
@@ -107,9 +131,18 @@ export default {
           headerAlign: 'center',
           width: 120
         },
+        {
+          title: '操作',
+          fixed: 'right',
+          dataIndex: 'operation',
+          width: 120,
+          scopedSlots: { customRender: 'custom' },
+          align: 'center',
+          headerAlign: 'center'
+        }
       ],
       tableParamDemand: {
-        wholeId: this.row[0].ID
+        wholeId: this.row.length ? this.row[0].ID : this.row[0].id
       },
       tableConfig: {
         'highlight-current-row': true
@@ -120,7 +153,7 @@ export default {
   },
   created () {
     if (this.row && this.row.length) {
-      this.id = this.row[0].ID
+      this.id = this.row[0].ID ? this.row[0].ID : this.row[0].id
     } else {
       this.id = this.configParmars.id
       if (!this.id) {
@@ -133,6 +166,9 @@ export default {
     }
   },
   mounted () {
+    if (!this.demandFalg) {
+      this.tabelHeight = '100%'
+    }
   },
   methods: {
     relevanceClick () {
@@ -141,6 +177,13 @@ export default {
     onRelevanceClose () {
       this.relevanceViewDrawer = false
       this.$refs.xTable.searchData()
+    },
+    onRelevanceInfoClose () {
+      this.relevanceInfoDrawer = false
+    },
+    showDetail (row) {
+      this.relevanceInfoDrawer = true
+      this.selectRecords = [row]
     }
   }
 }
