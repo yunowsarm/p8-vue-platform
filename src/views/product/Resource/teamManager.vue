@@ -719,9 +719,9 @@ export default {
         let row = scope.row
         let roleInfo = []
         if (row.roleType === 'fixed') {
-          roleInfo = row.userRoleId ? this.fixedRoles.filter(item => item.roleId === row.userRoleId) : this.fixedRoles.filter(item => item.name === row.roleName) 
+          roleInfo = row.userRoleId ? this.fixedRoles.filter(item => item.roleId === row.userRoleId) : this.fixedRoles.filter(item => item.name === row.roleName)
         } else {
-          roleInfo = row.userRoleId ? this.generalRoles.filter(item => item.roleId === row.userRoleId) : this.generalRoles.filter(item => item.name === row.roleName) 
+          roleInfo = row.userRoleId ? this.generalRoles.filter(item => item.roleId === row.userRoleId) : this.generalRoles.filter(item => item.name === row.roleName)
         }
         // let roleInfo = row.roleType === 'fixed' ? this.fixedRoles.filter(item => item.roleId === row.userRoleId || item.name === row.roleName) : this.generalRoles.filter(item => item.roleId === row.userRoleId || item.name === row.roleName)
         let projectTeamRoleUsers = roleInfo[0].projectTeamRoleUsers
@@ -730,7 +730,7 @@ export default {
           projectTeamRoleUsers.splice(pIndex, 1)
         }
         if (this.rolesSelectedIndex < 0) {
-         
+
         }
       }
       this.isDelete = true
@@ -820,12 +820,12 @@ export default {
         const uniqueArr = Array.from(new Set(roleName));
         let str = ''
         uniqueArr.forEach(el => {
-          str +=  el + '、'
+          str += el + '、'
         })
         str = str.slice(0, -1)
-        this.$message({type:'success',message:'载入成功，角色' + str + '为重复角色未载入'})
+        this.$message({ type: 'success', message: '载入成功，角色' + str + '为重复角色未载入' })
       } else {
-        this.$message({type:'success',message:'载入成功'})
+        this.$message({ type: 'success', message: '载入成功' })
       }
     },
     memberCloseHandle (tableSelectValue) {
@@ -898,6 +898,12 @@ export default {
       let result = true
       let roleNotNullMsg = []
       this.fixedRoles.forEach(fixedItem => {
+        // 改角色是必填且未选择人员时给出提示
+        if (fixedItem.isRequired === '1' && fixedItem.projectTeamRoleUsers.length === 0) {
+          roleNotNullMsg.push(fixedItem.name)
+        }
+      })
+      this.generalRoles.forEach(fixedItem => {
         // 改角色是必填且未选择人员时给出提示
         if (fixedItem.isRequired === '1' && fixedItem.projectTeamRoleUsers.length === 0) {
           roleNotNullMsg.push(fixedItem.name)
