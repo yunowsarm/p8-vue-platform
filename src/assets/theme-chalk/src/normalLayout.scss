@@ -3,13 +3,15 @@
 // @import "mixins/mixins";
 
 .normal-layout {
-  .resize-icon{
+  .resize-icon {
     display: none;
   }
-  height: calc(100% - 10px);
+
+  height: calc(100% - 28px);
   overflow: hidden;
   margin: $layout-margin;
   padding-left: 15px;
+
   .normal-header {
     padding: 10px 10px 0 0;
     width: 100%;
@@ -27,22 +29,26 @@
       padding: 8px 20px;
     }
   }
+
   .normal-main.fullHeight {
     height: 100%;
   }
+
   .normal-main {
     width: 100%;
     height: calc(100% - 50px);
 
-    > .el-row,
-    > .el-row > .el-col {
+    >.el-row,
+    >.el-row>.el-col {
       height: 100%;
     }
+
     .normal-west,
     .normal-center {
       box-sizing: border-box;
       background: $base-white-color;
     }
+
     .normal-west {
       width: 100%;
       height: 100%;
@@ -65,10 +71,10 @@
       width: 0px;
       height: 100%;
       float: left;
-      position:relative;
+      position: relative;
       cursor: pointer;
 
-      > i {
+      >i {
         background: #ccc;
         color: #999999;
         font-size: 12px;
@@ -94,6 +100,7 @@
       overflow: hidden;
       box-sizing: border-box;
       padding-left: 10px;
+
       // padding: 0 $layout-padding;
       .scroll-area {
         width: 100%;
@@ -101,13 +108,15 @@
         padding: 0;
       }
     }
-    .normalCenterFullHeight{
+
+    .normalCenterFullHeight {
       height: 100%;
     }
   }
 }
-.normal-layoutV1{
-  .normal-main{
+
+.normal-layoutV1 {
+  .normal-main {
     height: 100%;
   }
 }
