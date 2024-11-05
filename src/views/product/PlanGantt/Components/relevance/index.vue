@@ -291,11 +291,12 @@ export default {
             this.selectRecords.push(item.id)
           })
         }
-      }
-      if (rows.length > 0) {
-        rows.forEach(item => {
-          this.selectRecords.push(item.id)
-        })
+      } else {
+        if (rows.length > 0) {
+          rows.forEach(item => {
+            this.selectRecords.push(item.id)
+          })
+        }
       }
     },
     async relevanceClick () {
