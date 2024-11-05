@@ -1,8 +1,11 @@
 <template>
-  <main class="main" id="contentMain">
+  <main class="main"
+        id="contentMain">
     <!-- custom scroll bar for main area -->
-    <VuePerfectScrollbar class="scroll-area" :settings="scrollOptions">
-      <transition name="fade-transform" mode="out-in">
+    <VuePerfectScrollbar class="scroll-area"
+                         :settings="scrollOptions">
+      <transition name="fade-transform"
+                  mode="out-in">
         <keep-alive :include="cachedViews">
           <router-view class="main-router" />
         </keep-alive>
@@ -17,7 +20,7 @@ import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 
 export default {
   name: 'Main',
-  data() {
+  data () {
     return {
       scrollOptions: {
         // maxScrollbarLength: 500
@@ -49,7 +52,10 @@ export default {
     position: relative;
     // padding:10px;
     box-sizing: border-box;
-
+    ::v-deep > .normal-layout.grid-table-render {
+      margin: 14px;
+      height: calc(100% - 28px);
+    }
     .main-router {
       background: #fcfcfc;
       border-radius: 5px;
