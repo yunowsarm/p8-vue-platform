@@ -47,6 +47,7 @@
                      class="el-icon-s-custom"></i>
                   <edit-input :textValue="item.name || item.roleName"
                               :record="item"
+                              :rolesData="rolesData"
                               :iconShow="item.roleType === 'general' && group_add_role"
                               @delete="deleteRolesHandle(index, item)"
                               @onChange="changeRolesHandle"></edit-input>
@@ -641,12 +642,13 @@ export default {
       })
     },
     addRolesHandle () {
+      let count = this.rolesData.length ? this.rolesData.length + 1 : 1
       // 添加角色
       let defaultObj = {
         // id: (-this.generalRoles.length + 1) + '',
         id: this.rolesData.length + '',
         indexNo: 0,
-        name: '角色名称',
+        name: '角色名称' + count,
         klTeamRoleClassifyId: '',
         projectTeamRoleUsers: [],
         roleType: 'general'

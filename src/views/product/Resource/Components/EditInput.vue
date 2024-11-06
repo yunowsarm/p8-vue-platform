@@ -1,7 +1,8 @@
 <template>
   <div class="edit-input-cell">
     <div v-if="visibility"
-         class="text"><span>{{modelText}}</span><span>{{getProjectTeamRoleUsersNum(record)}}</span><span style="color: red" v-if="isShowRole(record)">*</span></div>
+         class="text"><span>{{modelText}}</span><span>{{getProjectTeamRoleUsersNum(record)}}</span><span style="color: red"
+            v-if="isShowRole(record)">*</span></div>
     <el-input v-model="modelText"
               v-if="!visibility"
               size="mini"
@@ -15,7 +16,9 @@
          v-if="iconShow">
       <i class="el-icon-edit"
          @click="onEditCell"></i>
-      <i class="el-icon-delete" :class="{'is-disabled': disableDeleteIcon()}" @click.stop="onDeleteCell"></i>
+      <i class="el-icon-delete"
+         :class="{'is-disabled': disableDeleteIcon()}"
+         @click.stop="onDeleteCell"></i>
       <!-- <template v-if="!disableDeleteIcon()">
         <el-popconfirm title="确认要删除当前角色吗?"
                      confirmButtonText="确认"
@@ -46,6 +49,9 @@ export default {
     iconShow: {
       type: Boolean,
       default: false
+    },
+    rolesData: {
+      type: Array
     }
   },
   data () {
@@ -71,6 +77,13 @@ export default {
       return '(' + rolesItem.projectTeamRoleUsers.length + ')'
     },
     onEditCell () {
+      if (!this.visibility) {
+        const find = this.rolesData.find((el) => el.name == this.modelText)
+        if (find) {
+          this.$message({ type: 'warning', message: '角色名称不可重复' })
+          return
+        }
+      }
       this.visibility = !this.visibility
     },
     onDeleteCell () {
@@ -80,6 +93,11 @@ export default {
       this.$emit('delete')
     },
     onchangeHandle () {
+      const find = this.rolesData.find((el) => el.name == this.modelText)
+      if (find) {
+        this.$message({ type: 'warning', message: '角色名称不可重复' })
+        return
+      }
       this.visibility = !this.visibility
       this.$emit('onChange', this.modelText, this.record)
     },
@@ -128,7 +146,7 @@ export default {
     }
     i.is-disabled {
       color: #999 !important;
-      cursor: not-allowed
+      cursor: not-allowed;
     }
   }
 }
