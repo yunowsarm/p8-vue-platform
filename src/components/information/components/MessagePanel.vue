@@ -27,6 +27,9 @@
                    class="text-align">
                 <span>{{ i.itemCreateTime }}</span>
                 <div class="user-msg">
+                  <i v-if="i.socketType"
+                     class="el-icon-warning"
+                     style="color: red;"></i>
                   <span v-if="i.styleType"
                         style="font-size: 15px; width: 600px;"
                         v-html="i.content"></span>
@@ -254,7 +257,10 @@ export default {
       // 创建包含北京时间的 Date 对象
 
       console.log(beijingTime);
-
+      let socketType = false
+      if (window.socketType) {
+        socketType = true
+      }
       this.messagesList.push(
         {
           itemCreateTime: moment(beijingTime).format('YYYY-MM-DD HH:mm:ss'),
@@ -266,7 +272,8 @@ export default {
           content: this.contentText,
           avatar: this.$store.getters.avatar, // 当前用户头像
           entityId: this.user ? this.user.entityId : '',
-          entityType: this.user ? this.user.entityType : ''
+          entityType: this.user ? this.user.entityType : '',
+          socketType: socketType
         }
       )
       let params = {

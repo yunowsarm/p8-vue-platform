@@ -23,8 +23,8 @@
                   <el-descriptions class="margin-top"
                                    :column="2">
                     <el-descriptions-item label="姓名">{{ formData.REAL_NAME }}</el-descriptions-item>
-                    <!-- <el-descriptions-item label="性别">男</el-descriptions-item>
-                    <el-descriptions-item label="年龄">24</el-descriptions-item> -->
+                    <el-descriptions-item label="性别">{{ formData.GENDER }}</el-descriptions-item>
+                    <!-- <el-descriptions-item label="年龄">24</el-descriptions-item> -->
                     <el-descriptions-item label="所属部门">{{ formData.DEPARTMENT_NAME }}</el-descriptions-item>
                     <el-descriptions-item label="历史承担任务总数">{{formData.count}}</el-descriptions-item>
                   </el-descriptions>
