@@ -70,7 +70,7 @@ export default {
         {
           title: '大纲号',
           type: '',
-          headeralign: 'center',
+          headerAlign: 'center',
           dataIndex: 'taskLevel',
           width: '100px'
         },
@@ -79,7 +79,7 @@ export default {
           dataIndex: 'statusDisplay',
           sortable: false,
           align: 'center',
-          headeralign: 'center',
+          headerAlign: 'center',
           width: '100px'
         },
         {
@@ -87,7 +87,7 @@ export default {
           dataIndex: 'managerStatusDisplay',
           sortable: false,
           align: 'center',
-          headeralign: 'center',
+          headerAlign: 'center',
           width: '100px'
         },
         {
@@ -95,7 +95,7 @@ export default {
           dataIndex: 'monitorPointArray',
           sortable: false,
           align: 'center',
-          headeralign: 'center',
+          headerAlign: 'center',
           width: '100px',
           scopedSlots: {
             customRender: 'custom'
@@ -106,7 +106,7 @@ export default {
           dataIndex: 'taskTypeDisplay',
           sortable: false,
           align: 'center',
-          headeralign: 'center',
+          headerAlign: 'center',
           width: '100px'
         },
         {
@@ -122,7 +122,7 @@ export default {
           dataIndex: 'userName',
           sortable: false,
           align: 'center',
-          headeralign: 'center',
+          headerAlign: 'center',
           width: '100px'
         },
         {
@@ -130,21 +130,24 @@ export default {
           dataIndex: 'deptName',
           sortable: false,
           align: 'center',
-          headerAlign: 'center'
+          headerAlign: 'center',
+          width: '100px'
         },
         {
           title: '计划开始时间',
           dataIndex: 'planBeginTime',
           sortable: false,
           align: 'center',
-          headerAlign: 'center'
+          headerAlign: 'center',
+          width: '120px'
         },
         {
           title: '计划结束时间',
           dataIndex: 'planEndTime',
           sortable: false,
           align: 'center',
-          headerAlign: 'center'
+          headerAlign: 'center',
+          width: '120px'
         }
       ],
       columnsDemand: [
@@ -157,9 +160,11 @@ export default {
         {
           title: '序号',
           type: 'index',
-          headeralign: 'center',
+          align: 'center',
+          headerAlign: 'center',
           width: '60px'
-        }, {
+        },
+        {
           title: '是否已关联项目',
           dataIndex: 'relationProject',
           sortable: false,
@@ -167,14 +172,16 @@ export default {
           headerAlign: 'center',
           scopedSlots: {
             customRender: 'custom'
-          }
+          },
+          width: '200px'
         },
         {
           title: '状态',
           dataIndex: 'demandStatusDisplay',
           sortable: false,
           align: 'center',
-          headerAlign: 'center'
+          headerAlign: 'center',
+          width: '100px'
         },
         {
           title: '标题',
@@ -188,7 +195,8 @@ export default {
           dataIndex: 'source',
           sortable: false,
           align: 'center',
-          headerAlign: 'center'
+          headerAlign: 'center',
+          width: '200px'
         },
         {
           title: '录入时间',
@@ -196,14 +204,16 @@ export default {
           sortable: false,
           align: 'center',
           treeNode: true,
-          headerAlign: 'center'
+          headerAlign: 'center',
+          width: '200px'
         },
         {
           title: '收集人',
           dataIndex: 'createBy',
           sortable: false,
           align: 'center',
-          headerAlign: 'center'
+          headerAlign: 'center',
+          width: '200px'
         },
       ],
       tableParam: {
