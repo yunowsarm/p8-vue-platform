@@ -120,6 +120,7 @@ export default {
       formData: {
         REAL_NAME: '',
         DEPARTMENT_NAME: '',
+        GENDER: '',
         count: 0
       }
     }
@@ -133,6 +134,7 @@ export default {
       this.formData.count = res
       this.formData.REAL_NAME = this.row[0].REAL_NAME
       this.formData.DEPARTMENT_NAME = this.row[0].DEPARTMENT_NAME
+      this.formData.GENDER = this.row[0].GENDER
     })
   },
   methods: {

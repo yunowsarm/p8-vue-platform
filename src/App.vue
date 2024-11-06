@@ -63,7 +63,7 @@ export default {
         })
         window.myWebSocket.on('connectSuccess', (res) => {
           if (that.conunt === 0) {
-            that.$message.success('websocket连接成功')
+            // that.$message.success('websocket连接成功')
             window.socketType = false
           }
           that.conunt++
