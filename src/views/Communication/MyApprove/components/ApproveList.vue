@@ -45,7 +45,7 @@
                       style="text-align: left;align-items: center;margin-bottom: 12px;justify-content: space-between;"
                       class="overHiding">
                 <el-col :span="8">
-                  <span class="msg-processName overHiding">{{ item.processName }}</span>
+                  <span class="msg-processName overHiding">{{ item.processName }}-{{ item.processTaskName }}</span>
                 </el-col>
                 <el-col :span="16"
                         style="display: flex;align-items: center;justify-content: end;width: 148px">
