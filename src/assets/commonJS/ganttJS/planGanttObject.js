@@ -959,7 +959,10 @@ export function getGanttColumns(ganttObject, vueThis) {
       label: '预计完成时间',
       align: 'center',
       min_width: 100,
-      resize: true
+      resize: true,
+      template: function (task) {
+        return ganttObject.date.add(task.end_date, -1, 'day')
+      }
     },
     {
       name: 'realBeginDate',
