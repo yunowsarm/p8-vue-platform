@@ -1,8 +1,11 @@
 <template>
   <list-layout>
     <template #north>
-      <el-button type="primary"
-                 @click="createThird">新建</el-button>
+      <!-- <el-button type="primary"
+                 @click="createThird">新建</el-button> -->
+      <common-button :comp="comp"
+                     buttonType="primary"
+                     :customButtonData="customButtonData"></common-button>
       <search-form-list ref="search"
                         :data-source="searchDatasource"
                         @search="search"
@@ -101,6 +104,15 @@ export default {
           fieldName: 'projectTypeDisplay',
           placeholder: '请输入项目类型'
         }
+      ],
+      customButtonData: [
+        {
+          "id": "re-001",
+          "title": "新建",
+          "indexNumber": 1,
+          "eventHandle": "createThird",
+          "location": "head"
+        },
       ]
     }
   },
