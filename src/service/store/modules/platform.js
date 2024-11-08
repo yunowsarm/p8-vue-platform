@@ -139,7 +139,7 @@ const platform = {
     },
     SET_SYSTEM_NAME(state, data) {
       state.systemName = data
-      document.title = data
+      document.title = data.replace(/<\/?[^>]+(>|$)/g, '') 
       Cookie.set('P8V3.0-PLATFORM', data, 1000)
     },
     // 设置侧边栏隐藏

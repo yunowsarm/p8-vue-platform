@@ -1,45 +1,47 @@
 <template>
   <div style="overflow: auto">
     <el-card class="card_box">
-      <form-list
-        ref="form"
-        label-width="150px"
-        @rendered="rendered"
-        @saved="saved"
-        :data-source="dataSource1"
-        :api="saveApi"
-        :is-custom-validate="true"
-        @custom-validate="customValidate"
-        :form="formData"
-      >
+      <form-list ref="form"
+                 label-width="150px"
+                 @rendered="rendered"
+                 @saved="saved"
+                 :data-source="dataSource1"
+                 :api="saveApi"
+                 :is-custom-validate="true"
+                 @custom-validate="customValidate"
+                 :form="formData">
         <template #systemNameSlot>
-          <el-alert title="系统名称" :closable="false" type="info"></el-alert>
+          <el-alert title="系统名称"
+                    :closable="false"
+                    type="info"></el-alert>
         </template>
       </form-list>
     </el-card>
     <el-card class="card_box">
-      <form-list
-        ref="form"
-        label-width="150px"
-        @rendered="rendered"
-        @saved="saved"
-        :data-source="dataSource2"
-        :api="saveApi"
-        :is-custom-validate="true"
-        @custom-validate="customValidate"
-        :form="formData"
-      >
+      <form-list ref="form"
+                 label-width="150px"
+                 @rendered="rendered"
+                 @saved="saved"
+                 :data-source="dataSource2"
+                 :api="saveApi"
+                 :is-custom-validate="true"
+                 @custom-validate="customValidate"
+                 :form="formData">
         <template #systemOperation>
-          <el-alert title="系统运行" :closable="false" type="info"></el-alert>
+          <el-alert title="系统运行"
+                    :closable="false"
+                    type="info"></el-alert>
         </template>
         <template #systemModel>
-          <el-radio-group v-model="formData.systemModel" size="small">
+          <el-radio-group v-model="formData.systemModel"
+                          size="small">
             <el-radio-button label="systemModel1">正常模式</el-radio-button>
             <el-radio-button label="systemModel2">维护模式</el-radio-button>
           </el-radio-group>
         </template>
         <template #sysModel>
-          <el-radio-group v-model="formData.sysModel" size="small">
+          <el-radio-group v-model="formData.sysModel"
+                          size="small">
             <el-radio-button label="thisSystem">本系统内维护</el-radio-button>
             <el-radio-button label="extSystem">外部系统集成</el-radio-button>
           </el-radio-group>
@@ -85,7 +87,7 @@ export default {
     'el-radio-group': RadioGroup,
     'el-radio-button': RadioButton
   },
-  data() {
+  data () {
     return {
       saveApi: 'SystemSettings.saveBasicSetting',
       dataSource1: [
@@ -106,13 +108,13 @@ export default {
           placeholder: '请输入中文名称',
           colLayout: 'doubleCol'
         },
-        {
-          type: 'text',
-          labelText: '英文名称',
-          fieldName: 'systemNameEn',
-          placeholder: '请输入英文名称',
-          colLayout: 'doubleCol'
-        },
+        // {
+        //   type: 'text',
+        //   labelText: '英文名称',
+        //   fieldName: 'systemNameEn',
+        //   placeholder: '请输入英文名称',
+        //   colLayout: 'doubleCol'
+        // },
         {
           type: 'upload', // 控件类型
           labelText: '系统Logo',
@@ -150,15 +152,15 @@ export default {
       modify: {}
     }
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    rendered() {
+    rendered () {
       this.getSettingData()
     },
-    clickEvent() {
+    clickEvent () {
       console.log('click')
     },
-    getSettingData() {
+    getSettingData () {
       const that = this
       that.$api['SystemSettings.getBasicSetting']()
         .then(function (res) {
@@ -177,7 +179,7 @@ export default {
         })
     },
     // 获取图片流
-    getFileUrl(uploadFileJson) {
+    getFileUrl (uploadFileJson) {
       const that = this
       uploadFileJson.map((item) => {
         if (item.id) {
@@ -190,7 +192,7 @@ export default {
       that.modify.uploadFileJson = uploadFileJson
       that.formData = Object.assign({}, that.modify)
     },
-    customValidate(params) {
+    customValidate (params) {
       const saveParams = {}
       const settings = [
         {
@@ -223,7 +225,7 @@ export default {
       console.log(saveParams)
       this.$refs.form.submitForm(saveParams, this.saveApi)
     },
-    saved(res) {}
+    saved (res) { }
   }
 }
 </script>

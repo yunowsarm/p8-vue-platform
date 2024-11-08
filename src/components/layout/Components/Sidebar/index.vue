@@ -14,7 +14,8 @@
           <el-tooltip effect="dark"
                       :content="systemName"
                       placement="right">
-            <span v-if="sidebarState.width == '180px'">{{ systemName }}</span>
+            <span v-if="sidebarState.width == '180px'"
+                  v-html="systemName"></span>
           </el-tooltip>
         </div>
       </div>
@@ -373,7 +374,7 @@ $menu-collapse-text-color: #303133;
   align-items: center;
 }
 .sysName {
-  line-height: pxTorem(50px);
+  height: pxTorem(50px);
   font-size: $font-size-medium;
   font-family: 'Source Han Sans CN', 'Noto Sans SC', sans-serif;
   font-weight: 500;

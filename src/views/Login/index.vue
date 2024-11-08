@@ -5,7 +5,8 @@
         <div class="login-contain">
           <span class="login-logo"
                 ref="loginLogo"></span>
-          <h4 class="login-sysName">{{ system_name }}</h4>
+          <h4 class="login-sysName"
+              v-html="system_name"></h4>
           <el-form class="loginForm"
                    ref="loginForm"
                    :model="loginForm"
@@ -417,12 +418,13 @@ $login-primary--login-color: #306cf7;
 
     .login-block {
       position: absolute;
-      right: 25%;
-      top: 50%;
+      top: 0%;
+      left: 52%;
+      transform: translate(50%, 50%);
       margin-right: -210px;
-      margin-top: -220px;
+      // margin-top: -220px;
       width: 420px;
-      height: 440px;
+      // height: 440px;
       background: $base-white-color;
       // box-shadow: 0px 1px 5px 0px #6f7dff;
       border-radius: 1px;
@@ -563,9 +565,9 @@ $login-primary--login-color: #306cf7;
     @media screen and (max-width: 1024px) {
       .login-block {
         margin-right: -155px;
-        margin-top: -225px;
+        // margin-top: -225px;
         width: 310px;
-        height: 330px;
+        // height: 330px;
 
         .login-contain {
           position: relative;
@@ -613,9 +615,9 @@ $login-primary--login-color: #306cf7;
     @media screen and (min-width: 1025px) and (max-width: 1280px) {
       .login-block {
         margin-right: -170px;
-        margin-top: -182px;
+        // margin-top: -182px;
         width: 340px;
-        height: 364px;
+        // height: 364px;
 
         .login-contain {
           position: relative;
@@ -662,9 +664,9 @@ $login-primary--login-color: #306cf7;
     @media screen and (min-width: 1281px) and (max-width: 1440px) {
       .login-block {
         margin-right: -192px;
-        margin-top: -207px;
+        // margin-top: -207px;
         width: 384px;
-        height: 414px;
+        // height: 414px;
 
         .login-contain {
           position: relative;
