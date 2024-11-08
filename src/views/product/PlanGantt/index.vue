@@ -71,10 +71,7 @@
 <style lang="scss" scoped>
 .x-style {
   font-size: 20px;
-  position: fixed;
-  right: 25px;
-  top: 62px;
-  z-index: 9999 !important;
+  margin-left: 94%;
 }
 .couerDivClass {
   height: 100% !important;
