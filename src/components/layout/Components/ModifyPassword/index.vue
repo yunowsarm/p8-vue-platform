@@ -2,19 +2,29 @@
   <div class="main">
     <section>
       <h4>修改密码</h4>
-      <el-form ref="passwordForm" :model="passwordForm" :rules="passwordRules" label-width="85px">
-        <el-form-item label="旧密码" prop="oldPassword">
-          <el-input type="password" v-model="passwordForm.oldPassword"></el-input>
+      <el-form ref="passwordForm"
+               :model="passwordForm"
+               :rules="passwordRules"
+               label-width="85px">
+        <el-form-item label="旧密码"
+                      prop="oldPassword">
+          <el-input type="password"
+                    v-model="passwordForm.oldPassword"></el-input>
         </el-form-item>
-        <el-form-item label="新密码" prop="password">
-          <el-input type="password" v-model="passwordForm.password"></el-input>
+        <el-form-item label="新密码"
+                      prop="password">
+          <el-input type="password"
+                    v-model="passwordForm.password"></el-input>
         </el-form-item>
-        <el-form-item label="确认新密码" prop="rePassword">
-          <el-input type="password" v-model="passwordForm.rePassword"></el-input>
+        <el-form-item label="确认新密码"
+                      prop="rePassword">
+          <el-input type="password"
+                    v-model="passwordForm.rePassword"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button @click="cancel">返 回</el-button>
-          <el-button type="primary" @click="confirm">确 定</el-button>
+          <el-button type="primary"
+                     @click="confirm">确 定</el-button>
         </el-form-item>
       </el-form>
     </section>
@@ -29,7 +39,7 @@ import { Form, FormItem, Input, Button } from 'p8-components-ui'
 
 export default {
   name: 'ModifyPassword',
-  data() {
+  data () {
     const validateOldPass = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入旧密码'))
@@ -74,29 +84,31 @@ export default {
     }
   },
   methods: {
-    confirm() {
+    confirm () {
       this.$refs.passwordForm.validate((valid) => {
         if (valid) {
           const params = {
             oldPassword: this.passwordForm.oldPassword,
             newPassword: this.passwordForm.password
           }
-          this.$api['user.password.edit'](params).then(() => {
-            this.$refs.passwordForm.resetFields()
-
-            this.$alert('密码修改成功! 点击确认后重新登录.', '修改密码', {
-              confirmButtonText: '确定',
-              callback: (action) => {
-                this.$store.dispatch('userLogout').then(() => {
-                  this.$router.push('/login')
-                })
-              }
-            })
+          this.$api['user.password.edit'](params).then((res) => {
+            console.log(res, '=====res')
+            if (res) {
+              this.$refs.passwordForm.resetFields()
+              this.$alert('密码修改成功! 点击确认后重新登录.', '修改密码', {
+                confirmButtonText: '确定',
+                callback: (action) => {
+                  this.$store.dispatch('userLogout').then(() => {
+                    this.$router.push('/login')
+                  })
+                }
+              })
+            }
           })
         }
       })
     },
-    cancel() {
+    cancel () {
       this.$refs.passwordForm.resetFields()
       // this.$router.push('/dash')
       // 避免不必要的bug
