@@ -333,6 +333,9 @@
                    @close="closeRelevance">
       <template #drawer>
         <relevance :plan-info-id="planInfoId"
+                   ref="relevanceRefs"
+                   @relevanceClick="relevanceClick"
+                   :selectTaskId="selectTaskId"
                    :main-gantt-name="ganttName"></relevance>
       </template>
     </common-drawer>
@@ -894,6 +897,10 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll'])
   },
   methods: {
+    relevanceClick (id) {
+      // this.selectedTasks = [id]
+      this.selectedId = id
+    },
     refreshData () {
       this.$emit('refreshData')
     },
@@ -1282,6 +1289,15 @@ export default {
             vueThis.$store.dispatch('setTaskStyles', res.taskStyle)
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
+
+            myGantt.unselectTask()
+            console.log(vueThis.selectedId, '==========1111');
+            if (!vueThis.relevanceVisible) {
+              setTimeout(() => {
+                myGantt.showTask(vueThis.selectedId);
+                myGantt.selectTask(vueThis.selectedId);
+              }, 1000)
+            }
             // 检查gantt操作权限
             // myGantt.config.readonly = editLockUnLockCheck(vueThis.planInfoStatus, vueThis.monitorLockMap)
           } else {

@@ -122,6 +122,7 @@
                  :taskId="taskId"
                  :planInfoId="planInfoId"
                  :taskList="taskList"
+                 :selectTaskId="selectTaskId"
                  :resourcesData="resourcesData"
                  :monitorPointDatas="monitorPointDatas"
                  :temporaryDatas="temporaryDatas"
@@ -406,7 +407,8 @@ export default {
       noticeVisible: false,
       msg: {},
       newSendDatas: null,
-      temporaryDatas: []
+      temporaryDatas: [],
+      selectedId: ''
     }
   },
   watch: {
@@ -531,8 +533,9 @@ export default {
       this.relevanceVisible = false
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage, this.changeRecordId, true)
     },
-    closeRelevanceChange (taskDatas) {
+    closeRelevanceChange (taskDatas, id) {
       this.temporaryDatas = taskDatas
+      this.selectedId = id
     },
     async initGantt (planInfoId, changeRecordId, viewType) {
       // 根据项目类型，获取gantt列设置
@@ -705,6 +708,14 @@ export default {
 
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
+            myGantt.unselectTask()
+            console.log(vueThis.selectedId, '==========1111');
+            if (!vueThis.relevanceVisible) {
+              setTimeout(() => {
+                myGantt.showTask(vueThis.selectedId);
+                myGantt.selectTask(vueThis.selectedId);
+              }, 1000)
+            }
           }
         })
         .catch(function (error) {

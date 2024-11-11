@@ -73,6 +73,9 @@ export default {
     },
     resourcesData: {
       type: Array
+    },
+    selectTaskId: {
+      type: String
     }
   },
   data () {
@@ -239,7 +242,8 @@ export default {
       selectRecord: {},
       selectRecords: [],
       noApiTableData: [],
-      taskDatas: []
+      taskDatas: [],
+      taskId: ''
     }
   },
   mounted () {
@@ -407,6 +411,7 @@ export default {
       let result = null
       let that = this
       let falg = true
+      this.taskId = JSON.parse(JSON.stringify(this.selectRecord.id))
       await this.$api['planGanttManager.getTaskMonitorByTaskId']({ taskId: this.selectRecord.id }).then((res) => {
         if (res && res.monitorManagerResponses) {
           monitorManagerRequests = res.monitorManagerResponses
@@ -529,7 +534,7 @@ export default {
           }
         }
         // 传递给父页面
-        this.$emit('closeRelevance', this.taskDatas)
+        this.$emit('closeRelevance', this.taskDatas, this.taskId)
         this.$message.success('操作成功')
       }
     }

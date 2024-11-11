@@ -61,6 +61,9 @@ export default {
     },
     mainGanttName: {
       type: String
+    },
+    selectTaskId: {
+      type: String
     }
   },
   data () {
@@ -238,8 +241,20 @@ export default {
       },
       selectRecord: {},
       selectRecords: [],
-      scrollPosition: 0
+      scrollPosition: 0,
+      taskId: ''
     }
+  },
+  mounted () {
+    let that = this
+    setTimeout(() => {
+      console.log(that.$refs.xTable.data, '1111111111111111111111');
+      let row = that.findNodeById(that.$refs.xTable.data, that.selectTaskId)
+      console.log(row.name, '222222222222222222222');
+      that.$refs.xTable.$refs.table.setCheckboxRow(row, true);
+      that.$refs.xTable.$refs.table.setCurrentRow(row)
+      that.$refs.xTable.$refs.table.scrollTo(row)
+    }, 3000)
   },
   methods: {
     handleRowMointor (row) {
@@ -311,6 +326,8 @@ export default {
     },
     async relevanceClick () {
       let that = this
+      this.taskId = JSON.parse(JSON.stringify(this.selectRecord.taskId))
+      console.log("🚀hhhhhhhhhhhhhhhhhhhhhhh:", this.taskId)
       const tableElement = this.$refs.xTable.$el.querySelector('.vxe-table--body-wrapper');
       if (tableElement) {
         this.scrollPosition = tableElement.scrollTop; // 获取滚动条高度
@@ -334,7 +351,8 @@ export default {
         if (tableElement) {
           tableElement.scrollTop = that.scrollPosition
         }
-      }, 100)
+        that.$emit('relevanceClick', that.taskId)
+      }, 1000)
     },
     findNodeById (data, taskId) {
       for (const node of data) {
