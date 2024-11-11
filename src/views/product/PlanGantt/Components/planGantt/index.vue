@@ -85,7 +85,11 @@
           <div class="edit_gantt_user_list">
             <span v-if="webSocketDone">当前连接异常，无法查看正在编辑人员，请尝试刷新页面或联系运维人员</span>
             <span v-else
-                  v-for="user in editUserList">{{ user.userName }}</span>
+                  v-for="(user,ind) in editUserList"
+                  :key="ind">{{ user.userName }}
+              <span v-if="user.entityType === 'compile'">-计划编制</span>
+              <span v-if="user.entityType === 'decompose'">-计划分解</span>
+            </span>
           </div>
           <span slot="reference"
                 style="float: right; margin-right: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' : editUserList.length }} 人</span>
@@ -855,7 +859,13 @@ export default {
       that.onlineData = data
       let html = '<div class="edit_gantt_user_list">'
       that.editUserList.forEach((item) => {
-        html += `<span>${item.userName}</span>`
+        html += `<span>${item.userName}`
+        if (item.entityType === 'compile') {
+          html += ' -计划编制'
+        } else if (item.entityType === 'decompose') {
+          html += ' -任务分解'
+        }
+        html += '</span>'
       })
       html += '</div>'
       if (that.editUserList.length > 1) {
@@ -874,7 +884,7 @@ export default {
   computed: {
     editUserList () {
       return this.onlineData.filter((item) => {
-        return item.entityId == this.planInfoId && item.entityType == this.createPage
+        return item.entityId == this.planInfoId
       })
     },
     isDisable () {
