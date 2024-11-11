@@ -374,7 +374,7 @@ $menu-collapse-text-color: #303133;
   align-items: center;
 }
 .sysName {
-  height: pxTorem(50px);
+  line-height: pxTorem(50px);
   font-size: $font-size-medium;
   font-family: 'Source Han Sans CN', 'Noto Sans SC', sans-serif;
   font-weight: 500;

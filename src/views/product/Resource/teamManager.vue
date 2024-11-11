@@ -1275,7 +1275,7 @@ export default {
   }
 
   .role-list {
-    height: 100%;
+    height: calc(100% - 38px);
     padding: 5px 15px;
     // border-bottom: 1px dashed #cccccc;
     background-color: #ffffff;
