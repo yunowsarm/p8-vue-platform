@@ -149,7 +149,8 @@ export default {
     customValidate (saveParams) {
       let params = { // params: 保存时请求接口所需的参数
         taskId: this.taskId,
-        uploadFileJson: []
+        uploadFileJson: [],
+        createSource: saveParams.createSource
       }
       if (saveParams.uploadFileJson && saveParams.uploadFileJson.length) {
         saveParams.uploadFileJson.forEach((item, index) => {
