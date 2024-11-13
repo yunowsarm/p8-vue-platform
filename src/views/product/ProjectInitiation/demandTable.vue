@@ -142,7 +142,7 @@ export default {
         }
       ],
       tableParamDemand: {
-        wholeId: this.id || ''
+        wholeId: ''
       },
       tableConfig: {
         'highlight-current-row': true
@@ -164,6 +164,7 @@ export default {
         })
       }
     }
+    this.tableParamDemand.wholeId = this.id
   },
   mounted () {
     if (!this.demandFalg) {
