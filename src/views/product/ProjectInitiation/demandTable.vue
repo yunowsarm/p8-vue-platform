@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%;">
+  <div style="height: calc(100% - 50px);background-color: #f3f5f885">
     <div v-if="demandFalg"
          style="padding: 1%;">
       <el-button type="primary"
@@ -142,7 +142,7 @@ export default {
         }
       ],
       tableParamDemand: {
-        wholeId: this.row.length ? this.row[0].ID : this.row[0].id
+        wholeId: this.id || ''
       },
       tableConfig: {
         'highlight-current-row': true
