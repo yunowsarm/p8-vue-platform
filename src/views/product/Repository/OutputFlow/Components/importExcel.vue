@@ -27,7 +27,15 @@
             </p>
           </li>
           <li>
-            <p>导入说明: {{item.descriptionStr}}</p>
+            <p>
+              导入类型：
+            </p>
+            <p>
+              (1)模板导入：通过下载上方模板，按照大纲级别，将文档中的活动导入为选中活动的下级
+            </p>
+            <p>
+              (2)更新导入：通过excel导出的文件，将当前所有活动更新。excel导出的来源为：知识库管理-产出流程管理-活动管理-excel导出
+            </p>
           </li>
         </ul>
       </div>
@@ -40,13 +48,14 @@
   </form-list>
 </template>
 <script>
-import { P8Form as FormList, Link } from 'p8-components-ui'
+import { P8Form as FormList, Link, Notification } from 'p8-components-ui'
 
 export default {
   name: 'ImportExcel',
   components: {
     FormList,
-    'el-link': Link
+    'el-link': Link,
+    Notification
   },
   props: {
     taskId: {
@@ -64,6 +73,29 @@ export default {
         labelText: '',
         slotName: 'outputRequest',
         colLayout: ''
+      },
+      {
+        type: 'select', // 控件类型
+        fieldName: 'createSource',
+        labelText: '导入类型',
+        clearable: true,
+        colLayout: 'doubleCol',
+        options: [
+          {
+            label: '模板导入',
+            value: 'insert'
+          },
+          {
+            label: '更新导入',
+            value: 'update'
+          }
+        ],
+        rules: [
+          {
+            required: true,
+            message: '必选'
+          }
+        ]
       },
       {
         type: 'blank',
@@ -115,7 +147,6 @@ export default {
       return s
     },
     customValidate (saveParams) {
-
       let params = { // params: 保存时请求接口所需的参数
         taskId: this.taskId,
         uploadFileJson: []
@@ -136,7 +167,23 @@ export default {
           this.$set(params.uploadFileJson, index, tempObj)
         })
       }
-      this.$refs.form.submitForm(params, this.saveApi)
+
+      this.$api['OutputFlow.importExcelCheckout'](params).then(data => {
+        if (data.length > 0) {
+          let messages = '<ol> <li> 导入错误信息 </li>'
+          data.forEach((message) => {
+            messages += '<li> ' + message + ' </li>'
+          })
+          messages += '</ol>'
+          Notification.error({
+            title: '导入错误信息',
+            dangerouslyUseHTMLString: true,
+            message: messages
+          })
+        } else {
+          this.$refs.form.submitForm(params, this.saveApi)
+        }
+      })
     },
     downloadOutputRequsetFile (item) { // 输出要求-文件下载
       if (item.attId) {

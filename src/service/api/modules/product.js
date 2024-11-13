@@ -1544,6 +1544,13 @@ export const repositoryApi = {
       path: '/product/klActivity/loadModeDataSave',
       mockPath: '/product/klActivity/loadModeDataSave',
       desc: '知识库管理->产出流程管理->存储位置信息'
+    },
+    {
+      name: 'importExcelCheckout',
+      method: 'POST',
+      path: '/product/klActivity/importExcelCheckout',
+      mockPath: '/product/klActivity/importExcelCheckout',
+      desc: '知识库管理->产出流程管理->校验'
     }
   ],
   TodoList: [

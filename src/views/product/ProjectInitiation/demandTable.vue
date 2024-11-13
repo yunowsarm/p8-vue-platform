@@ -164,7 +164,7 @@ export default {
         })
       }
     }
-    this.tableParamDemand.wholeId = this.id
+    this.tableParamDemand.wholeId = this.id ? this.id : '0'
   },
   mounted () {
     if (!this.demandFalg) {

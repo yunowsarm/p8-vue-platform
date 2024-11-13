@@ -73,6 +73,10 @@ export default {
           colLayout: this.colLayoutClassify,
           rules: [
             {
+              required: true,
+              message: '必填'
+            },
+            {
               // 当前只校验当前流程内唯一，若要全局唯一，flIsGlobal参数设置为：1
               validator: (rule, value, callback) => {
                 let that = this
