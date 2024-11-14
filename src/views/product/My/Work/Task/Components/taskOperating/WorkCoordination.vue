@@ -77,7 +77,8 @@ export default {
           content: this.formData.content,
           planInfoId: this.planInfoParams.PLANINFOID,
           pmProjectTasksId: this.planInfoParams.TASKID,
-          status: this.planInfoParams.STATUS
+          status: this.planInfoParams.STATUS,
+          customItem1: this.planInfoParams.MANAGERSTATUS
         }
       }
       this.$api['taskManager.progressFeedback'](obj).then(res => {
