@@ -53,8 +53,8 @@
         <!-- $route.path !== '/dash' && -->
         <li v-show="adminUserIdArr.indexOf($store.state.user.userId) === -1">
           <span @click="visibleMsgDrawer = true">
-            <el-badge v-if="messageNumTotal > 0"
-                      :value="messageNumTotal"
+            <el-badge v-if="messageNum > 0"
+                      :value="messageNum"
                       :max="99"
                       class="itemNum">
               <el-tooltip content="我的消息">
@@ -71,8 +71,8 @@
         <!-- $route.path !== '/dash' &&  -->
         <li v-show="adminUserIdArr.indexOf($store.state.user.userId) === -1">
           <span @click="visibleProcessDrawer = true">
-            <el-badge v-if="approvalPendingTotal > 0"
-                      :value="approvalPendingTotal"
+            <el-badge v-if="approvalTotalMsg > 0"
+                      :value="approvalTotalMsg"
                       :max="99"
                       class="itemNum">
               <el-tooltip content="我的审批">
@@ -239,7 +239,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl']),
+    ...mapGetters(['approvalTotalMsg', 'messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl']),
   },
   mounted () {
     const this_ = this
@@ -250,22 +250,23 @@ export default {
     setInterval(function () {
       this_.approvalTotal()
     }, 60000)
+    this_.approvalTotal()
     this_.getMsgTotal()
-    // this_.approvalMsg()
-    // this_.noticeMsg()
+    this_.approvalMsg()
+    this_.noticeMsg()
     this.$store.dispatch('getMessageNum')
   },
   watch: {
-    messageNum (val, oldVal) {
-      const _this = this
-      if (val.length) {
-        val.map((item) => {
-          if (item.id === '18') {
-            _this.messageNumTotal = item.noread
-          }
-        })
-      }
-    }
+    // messageNum (val, oldVal) {
+    //   const _this = this
+    //   if (val.length) {
+    //     val.map((item) => {
+    //       if (item.id === '18') {
+    //         _this.messageNumTotal = item.noread
+    //       }
+    //     })
+    //   }
+    // }
     // theme (val, oldVal) {
     //   let color = this.fromHex(this.theme)
     //   if (this.imageUrl) {
@@ -304,8 +305,9 @@ export default {
       // this.getMsgTotal()
     },
     approvalTotal () {
+      let that = this
       this.$api['PersonalProcessApproval.approvalPendingTotal']().then((res) => {
-        this.approvalPendingTotal = res
+        that.$store.dispatch('setApprovalMessageCount', res)
       })
     },
     getMsgTotal () {
@@ -360,7 +362,7 @@ export default {
     },
     // messageTotal () {
     //   this.$api['userMessage.myMessageTotal']().then(res => {
-    //     this.messageNumTotal = res
+    //     this.$store.dispatch('setMessageCount', res)
     //   })
     // },
     slideSidebar () {

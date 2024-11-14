@@ -39,9 +39,10 @@ const user = {
       }
     },
     messageInfo: [], // 用户消息信息
-    messageNum: [], // 用户消息已读未读条数
+    messageNum: 0, // 用户消息已读未读条数
     messageCount: 0, // 沟通消息未读条数
-    taskMessageCount: 0
+    taskMessageCount: 0,
+    approvalTotalMsg: 0 // 审批消息未读条数
   },
 
   mutations: {
@@ -110,12 +111,21 @@ const user = {
     SET_MESSAGECOUNT(state, data) {
       state.messageCount = data
     },
+    SET_APPROVAL_MESSAGECOUNT(state, data) {
+      state.approvalTotalMsg = data
+    },
     SET_TASK_MESSAGECOUNT(state, data) {
       state.taskMessageCount = data
     }
   },
 
   actions: {
+    setMessageNum({ commit }, data) {
+      commit('SET_MESSAGENUM', data)
+    },
+    setApprovalMessageCount({ commit }, data) {
+      commit('SET_APPROVAL_MESSAGECOUNT', data)
+    },
     setMessageCount({ commit }, data) {
       commit('SET_MESSAGECOUNT', data)
     },
@@ -278,7 +288,11 @@ const user = {
         api['userMessage.userCatalogCount']({ msgCatalog: '' })
           .then((res) => {
             if (res) {
-              commit('SET_MESSAGENUM', res)
+              res.map((item) => {
+                if (item.id === '18') {
+                  commit('SET_MESSAGENUM', item.noread)
+                }
+              })
               resolve(res)
             }
           })

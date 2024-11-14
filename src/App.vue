@@ -48,9 +48,9 @@ export default {
         // let sip = '房间号'
         // 填写本地IP地址 此处的 :9101端口号 要与后端配置的一致！
         // 线上使用，直接获取浏览器地址
-        const URL = window.location.protocol + '//' + window.location.hostname + ':' + SOCKET_PORT + '?sendUserName=' + name + '&sendUser=' + id + '&authorization=' + this.token
+        // const URL = window.location.protocol + '//' + window.location.hostname + ':' + SOCKET_PORT + '?sendUserName=' + name + '&sendUser=' + id + '&authorization=' + this.token
         // 本地开发使用
-        // const URL = SOCKET_URL + '?sendUserName=' + name + '&sendUser=' + id + '&authorization=' + this.token
+        const URL = SOCKET_URL + '?sendUserName=' + name + '&sendUser=' + id + '&authorization=' + this.token
         const socket = io(URL, { autoConnect: true, transports: ['websocket'] }) // 连接到服务器
         window.myWebSocket = socket
         window.myWebSocket.connect()
@@ -60,6 +60,14 @@ export default {
           this.$store.dispatch('setMessageCount', ++count)
           // this.$store.dispatch('setTasketMessageCount', ++taskMessageCount)
           this.message()
+        })
+        socket.on('getApproveNum', (data) => {
+          let count = this.$store.getters.approvalTotalMsg
+          this.$store.dispatch('setApprovalMessageCount', ++count)
+        })
+        socket.on('getMessageNum', (data) => {
+          let count = this.$store.getters.messageNum
+          this.$store.commit('SET_MESSAGENUM', ++count)
         })
         window.myWebSocket.on('connectSuccess', (res) => {
           if (that.conunt === 0) {
