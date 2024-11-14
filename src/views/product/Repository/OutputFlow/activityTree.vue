@@ -446,7 +446,7 @@ export default {
         .then((data) => {
           const date = new Date()
           const file_name = '活动管理' + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-          const file_type = 'xls'
+          const file_type = 'xlsx'
           const blob = new Blob([data.data], { type: 'application/vnd.ms-excel' })
           const url = window.URL.createObjectURL(blob)
           const link = document.createElement('a')
