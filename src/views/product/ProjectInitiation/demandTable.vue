@@ -26,6 +26,7 @@
                    @close="onRelevanceClose">
       <template #drawer>
         <relevance-list @saveSuccess="onRelevanceClose"
+                        :configParmars="configParmars"
                         :row="row"></relevance-list>
       </template>
     </common-drawer>

@@ -52,6 +52,12 @@ export default {
       default: function () {
         return []
       }
+    },
+    configParmars: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data () {
@@ -145,8 +151,14 @@ export default {
     },
     requestedTableData (data) {
       let that = this
+      let id = ''
+      if (this.row.length > 0) {
+        id = that.row[0].ID
+      } else {
+        id = this.configParmars.id
+      }
       this.$api['demandManagement.getRequirementByProject']({
-        wholeId: that.row[0].ID
+        wholeId: id
       }).then(res => {
         if (res) {
           let selectData = that.$refs.xDemandTable.$refs.table.tableData
@@ -178,8 +190,21 @@ export default {
       })
     },
     relevanceClick () {
+      let that = this
+      if (this.selectRecords.length === 0) {
+        return this.$message({
+          message: '请先勾选需要关联的需求',
+          type: 'warning'
+        })
+      }
+      let id = ''
+      if (this.row.length > 0) {
+        id = that.row[0].ID
+      } else {
+        id = this.configParmars.id
+      }
       this.$api['demandManagement.saveRequirementByProject']({
-        wholeId: this.row[0].ID,
+        wholeId: id,
         requirementIds: this.selectRecords
       }).then(res => {
         if (res) {
