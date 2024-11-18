@@ -215,7 +215,7 @@ export default {
                   confirmButtonText: '确定',
                   cancelButtonText: '取消',
                   inputPattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`-])[A-Za-z\d!@#$%^&*()_+{}\[\]:;<>,.?\/~`-]{6,}$/,
-                  inputErrorMessage: '密码格式不正确'
+                  inputErrorMessage: '密码格式不正确  正确格式为字母+数字+特殊符号,最少6位'
                 }).then(({ value }) => {
                   let newPasswordArr = value.split('')
                   let newPasswordEncryption = ''
