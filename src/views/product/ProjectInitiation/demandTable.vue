@@ -1,5 +1,5 @@
 <template>
-  <div style="height: calc(100% - 50px);background-color: #f3f5f885">
+  <div style="height: 100%;background-color: #f3f5f885">
     <div v-if="demandFalg"
          style="padding: 1%;">
       <el-button type="primary"
@@ -75,6 +75,9 @@ export default {
     demandFalg: {
       type: Boolean,
       default: true
+    },
+    businessKey: {
+      type: String
     }
   },
   data () {
@@ -156,7 +159,11 @@ export default {
     if (this.row && this.row.length) {
       this.id = this.row[0].ID ? this.row[0].ID : this.row[0].id
     } else {
-      this.id = this.configParmars.id
+      if (this.businessKey) {
+        this.id = this.businessKey
+      } else {
+        this.id = this.configParmars ? this.configParmars.id : ''
+      }
       if (!this.id) {
         this.viewVisible = true
         this.$message({

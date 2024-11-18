@@ -160,7 +160,8 @@
               </div>
             </div>
           </div>
-          <div class="bottom-con">
+          <div v-if="!businessKey"
+               class="bottom-con">
             <!-- <p class="operation"
            v-if="group_add_role">
             <el-button size="mini"
@@ -204,6 +205,7 @@
       <el-tab-pane label="关联需求信息">
         <demand-table :row="row"
                       :demandFalg="false"
+                      :businessKey="businessKey"
                       :configParmars="configParmars"></demand-table>
       </el-tab-pane>
     </el-tabs>
@@ -249,6 +251,9 @@ export default {
         return {}
       }
     },
+    businessKey: {
+      type: String
+    }
   },
   data () {
     const columns = [
@@ -433,7 +438,11 @@ export default {
     if (this.row && this.row.length) {
       this.id = this.row[0].ID
     } else {
-      this.id = this.configParmars.id
+      if (this.businessKey) {
+        this.id = this.businessKey
+      } else {
+        this.id = this.configParmars ? this.configParmars.id : ''
+      }
       if (!this.id) {
         this.viewVisible = true
         this.$message({

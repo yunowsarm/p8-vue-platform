@@ -45,7 +45,7 @@
                       style="text-align: left;align-items: center;margin-bottom: 12px;justify-content: space-between;"
                       class="overHiding">
                 <el-col :span="8">
-                  <span class="msg-processName overHiding">{{ item.processName }}-{{ item.processTaskName }}</span>
+                  <span class="msg-processName overHiding">{{ item.processName }}</span>
                 </el-col>
                 <el-col :span="16"
                         style="display: flex;align-items: center;justify-content: end;width: 148px">
@@ -215,6 +215,8 @@ export default {
       that.renderTime = new Date() + ''
     },
     ascendingTime () { // 时间升序
+      console.log(this.chargeIds, '============this.chargeIds');
+      console.log(this.searchParams.msgCatalog, '----------------this.searchParams.msgCatalog');
       if (this.chargeIds.includes(this.searchParams.msgCatalog)) {
         this.mergeParams.page.orders = [{ column: 't.start_Time', asc: false }]
       } else {

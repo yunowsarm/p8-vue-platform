@@ -191,12 +191,6 @@ export default {
     },
     relevanceClick () {
       let that = this
-      if (this.selectRecords.length === 0) {
-        return this.$message({
-          message: '请先勾选需要关联的需求',
-          type: 'warning'
-        })
-      }
       let id = ''
       if (this.row.length > 0) {
         id = that.row[0].ID
