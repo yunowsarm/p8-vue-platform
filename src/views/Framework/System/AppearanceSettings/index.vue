@@ -2,14 +2,14 @@
   <div style="overflow: auto">
     <el-card class="card_box">
       <form-list ref="form"
-               label-width="150px"
-               @rendered="rendered"
-               @saved="saved"
-               :data-source="dataSource1"
-               :api="saveApi"
-               :is-custom-validate="true"
-               @custom-validate="customValidate"
-               :form="formData">
+                 label-width="150px"
+                 @rendered="rendered"
+                 @saved="saved"
+                 :data-source="dataSource1"
+                 :api="saveApi"
+                 :is-custom-validate="true"
+                 @custom-validate="customValidate"
+                 :form="formData">
         <template #interface>
           <el-alert title="界面风格"
                     :closable="false"
@@ -27,14 +27,14 @@
     </el-card>
     <el-card class="card_box">
       <form-list ref="form"
-               label-width="150px"
-               @rendered="rendered"
-               @saved="saved"
-               :data-source="dataSource2"
-               :api="saveApi"
-               :is-custom-validate="true"
-               @custom-validate="customValidate"
-               :form="formData">
+                 label-width="150px"
+                 @rendered="rendered"
+                 @saved="saved"
+                 :data-source="dataSource2"
+                 :api="saveApi"
+                 :is-custom-validate="true"
+                 @custom-validate="customValidate"
+                 :form="formData">
         <template #tool>
           <el-alert title="工具栏样式"
                     :closable="false"
@@ -44,14 +44,14 @@
     </el-card>
     <el-card class="card_box">
       <form-list ref="form"
-               label-width="150px"
-               @rendered="rendered"
-               @saved="saved"
-               :data-source="dataSource3"
-               :api="saveApi"
-               :is-custom-validate="true"
-               @custom-validate="customValidate"
-               :form="formData">
+                 label-width="150px"
+                 @rendered="rendered"
+                 @saved="saved"
+                 :data-source="dataSource3"
+                 :api="saveApi"
+                 :is-custom-validate="true"
+                 @custom-validate="customValidate"
+                 :form="formData">
         <template #assembly>
           <el-alert title="组件响应方式"
                     :closable="false"
@@ -187,14 +187,21 @@ export default {
     // 获取图片流
     getFileUrl (uploadFileJson) {
       let that = this
-      uploadFileJson.map((item) => {
-        if (item.id) {
-          that.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
-            item.urlTemp = window.URL.createObjectURL(new Blob([res.data]))
-          })
-        }
-      })
-      that.modify.uploadFileJson = uploadFileJson
+      if (uploadFileJson.length > 0) {
+        uploadFileJson.map((item) => {
+          if (item.id) {
+            that.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
+              item.urlTemp = window.URL.createObjectURL(new Blob([res.data]))
+            })
+          }
+        })
+        that.modify.uploadFileJson = uploadFileJson
+      }
+      if (that.modify.toolbarTextDisplay === 'false') {
+        that.modify.toolbarTextDisplay = false
+      } else {
+        that.modify.toolbarTextDisplay = true
+      }
       that.formData = Object.assign({}, that.modify)
     },
     customValidate (params) {
