@@ -7,7 +7,15 @@
                :api="saveApi"
                :form="modify">
       <template #icon>
-        <el-input @click.native="iconPopover = true"
+        <span :class="['icon_example', imageCt]"
+              :style="{ color: iconColor }"
+              @click="iconPopover = true"></span>
+        <!-- <ImageBlank @click="iconPopover = true" /> -->
+        <!-- </template>
+      <el-input @click.native="iconPopover = true"
+                v-model="modify.icon"
+                placeholder="请选择图标"></el-input> -->
+        <el-input style="display:none;"
                   v-model="modify.icon"
                   placeholder="请选择图标"></el-input>
         <common-dialog title="图标选择"
@@ -18,7 +26,7 @@
                        :dialog-height="dialogHeight"
                        @close="handleClose"
                        @handle-cancel="handleClose"
-                       @handle-ok="handleClose">
+                       @handle-ok="handleOk">
           <template #dialog>
             <icon-selector @icon-select="iconSelect"
                            :selected-name="modify.icon"
@@ -82,6 +90,7 @@ export default {
           rules: [
             {
               required: true,
+              trigger: 'change',
               message: '必须输入图标'
             }
           ]
@@ -167,6 +176,14 @@ export default {
       ]
     }
   },
+  computed: {
+    imageCt: function () {
+      return this.modify.icon ? this.modify.icon : ''
+    },
+    iconColor: function () {
+      return this.modify.color ? this.modify.color : '#2196f3'
+    }
+  },
   methods: {
     rendered () {
       if (this.id && this.id !== '') {
@@ -194,8 +211,54 @@ export default {
       this.iconPopover = false
     },
     iconSelect (select) {
-      this.$set(this.modify, 'icon', select.icon)
+      this.select = select
+    },
+    handleOk () {
+      if (this.select) {
+        this.$set(this.modify, 'icon', this.select.icon)
+        if (this.select.color && this.select.color !== '#606060') {
+          this.$set(this.modify, 'color', this.select.color)
+        } else {
+          this.$set(this.modify, 'color', '')
+        }
+      }
+      this.modify = Object.assign({}, this.modify)
+      console.log('this.modify', this.modify);
+      this.iconPopover = false
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.icon_example {
+  display: block;
+  width: 40px;
+  height: 40px;
+  background-color: #f0f0f0;
+  font-size: 28px;
+  text-align: center;
+  line-height: 40px;
+  color: #2196f3;
+}
+.icon_box {
+  display: flex;
+  align-items: center;
+  width: 50px;
+  height: 32px;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  box-sizing: border-box;
+  .link_box {
+    width: 20px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    border-left: 1px solid #cccccc;
+  }
+  .icon-link {
+    font-size: 12px;
+    color: #2196f3;
+  }
+}
+</style>

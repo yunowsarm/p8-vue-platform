@@ -42,8 +42,10 @@
            @click="lingSkip(item)"
            class="headerTop">
         <i class="iconStyle"
+           :style="{ color: item.color }"
            :class="item.icon"></i>
-        <span class="sysItemName">{{ item.title }}</span>
+        <span class="sysItemName"
+              :style="{ color: item.color }">{{ item.title }}</span>
       </div>
     </div>
     <!-- </transition-group> -->
