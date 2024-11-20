@@ -917,6 +917,13 @@ export const system = {
       path: '/product/BpDictionaryNew/getDicList',
       mockPath: '/product/BpDictionaryNew/getDicList',
       desc: '当前用户待审批列表数据'
+    },
+    {
+      name: 'userAssigneeCount',
+      method: 'POST',
+      path: '/bpm/personal/ProcessApproval/userAssigneeCount',
+      mockPath: '/bpm/personal/ProcessApproval/userAssigneeCount',
+      desc: '当前用户待审批数量'
     }
   ],
   commonInterface: [
