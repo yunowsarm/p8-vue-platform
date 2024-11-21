@@ -15,6 +15,7 @@
               style="display: inline-block;"><i class="p8"
              :class="'icon-fenzu'"></i></span>
         <span class="node-label">{{ node.data.cmeaning }}</span>
+        <span class="node-number">({{ catalogCount(node.data.id).num }})</span>
       </span>
     </template>
   </tree>
@@ -126,6 +127,16 @@ export default {
       } else {
         this.$message.warning('请选择子节点')
       }
+    },
+    catalogCount (catalogId) {
+      let countObj
+      if (catalogId === '') {
+        countObj = { noread: this.unReadTotal }
+      } else {
+        countObj = this.msgCount.find((value) => value.value === catalogId)
+      }
+      const o = { ...{ read: 0, noread: 0, num: 0 }, ...countObj }
+      return o
     }
   }
 }

@@ -62,8 +62,8 @@ export default {
           this.message()
         })
         socket.on('getApproveNum', (data) => {
-          let count = this.$store.getters.approvalTotalMsg
-          this.$store.dispatch('setApprovalMessageCount', ++count)
+          // let count = this.$store.getters.approvalTotalMsg
+          this.$store.dispatch('setApprovalMessageCount', data)
         })
         socket.on('getMessageNum', (data) => {
           let count = this.$store.getters.messageNum
