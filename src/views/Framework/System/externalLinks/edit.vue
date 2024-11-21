@@ -30,6 +30,7 @@
           <template #dialog>
             <icon-selector @icon-select="iconSelect"
                            :selected-name="modify.icon"
+                           :selectedColor="modify.color"
                            :color-picker="true"></icon-selector>
           </template>
         </common-dialog>
