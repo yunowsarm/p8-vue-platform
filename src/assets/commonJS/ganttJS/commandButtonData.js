@@ -935,6 +935,9 @@ export const CommandButtonData = [
       vueThis.taskList = thisGantt.serialize().data
     },
     isDisableFun: function (btn, ganttName, tasks) {
+      if (tasks.length > 1) {
+        return true
+      }
   //   console.log("🚀 ~ tasks:", tasks)
   //   let result
   // if (tasks[0].indexNo === 0) {
