@@ -248,13 +248,11 @@ export default {
   mounted () {
     let that = this
     setTimeout(() => {
-      console.log(that.$refs.xTable.data, '1111111111111111111111');
       let row = that.findNodeById(that.$refs.xTable.data, that.selectTaskId)
-      console.log(row.name, '222222222222222222222');
       that.$refs.xTable.$refs.table.setCheckboxRow(row, true);
       that.$refs.xTable.$refs.table.setCurrentRow(row)
-      that.$refs.xTable.$refs.table.scrollTo(row)
-    }, 3000)
+      that.$refs.xTable.$refs.table.scrollToRow(row)
+    }, 1000)
   },
   methods: {
     handleRowMointor (row) {

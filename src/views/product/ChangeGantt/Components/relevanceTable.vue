@@ -309,6 +309,18 @@ export default {
         }
       })
       this.noApiTableData = this.taskList
+      let row = {}
+      this.taskList.forEach(item => {
+        if (item.id === this.selectTaskId) {
+          row = item
+        }
+      })
+      let that = this
+      setTimeout(() => {
+        that.$refs.xTableData.$refs.table.setCheckboxRow(row, true);
+        that.$refs.xTableData.$refs.table.setCurrentRow(row)
+        that.$refs.xTableData.$refs.table.scrollToRow(row)
+      }, 1000)
     },
     handleRowMointor (row) {
       if (row && row.monitorPoints) {
