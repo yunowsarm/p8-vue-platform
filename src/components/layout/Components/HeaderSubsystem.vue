@@ -44,8 +44,8 @@
         <i class="iconStyle"
            :style="{ color: item.color }"
            :class="item.icon"></i>
-        <span class="sysItemName"
-              :style="{ color: item.color }">{{ item.title }}</span>
+        <div class="sysItemName"
+             :style="{ color: item.color }">{{ item.title }}</div>
       </div>
     </div>
     <!-- </transition-group> -->
@@ -336,5 +336,12 @@ export default {
   justify-content: center;
   align-items: center;
   color: $base-light-color;
+}
+.sysItemName {
+  text-align: center;
+  width: 90px;
+  white-space: nowrap; /* 不换行 */
+  overflow: hidden; /* 隐藏超出的内容 */
+  text-overflow: ellipsis; /* 用省略号表示被隐藏的部分 */
 }
 </style>
