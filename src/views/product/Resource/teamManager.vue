@@ -270,8 +270,7 @@ export default {
       {
         title: '部门',
         dataIndex: 'deptName',
-        align: 'center',
-        width: 120
+        align: 'center'
       },
       {
         title: '承担任务总数',

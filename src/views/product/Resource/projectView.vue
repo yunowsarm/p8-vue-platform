@@ -84,6 +84,7 @@
                                   class="tableMember"
                                   style="height: 100%"
                                   :columns="columns"
+                                  :key="dateTime"
                                   :params="params"
                                   :pagination="false"
                                   @cell-click='cellDblclick'
@@ -260,7 +261,8 @@ export default {
       {
         title: '姓名',
         dataIndex: 'realName',
-        align: 'center'
+        align: 'center',
+        width: 100
       },
       {
         title: '部门',
@@ -273,7 +275,8 @@ export default {
         scopedSlots: {
           customRender: 'custom'
         },
-        align: 'center'
+        align: 'center',
+        width: 120
       },
       // {
       //   title: '承担责任令数',
@@ -295,7 +298,8 @@ export default {
         scopedSlots: {
           customRender: 'custom'
         },
-        align: 'center'
+        align: 'center',
+        width: 100
       },
       // {
       //   title: '标识',
@@ -420,7 +424,8 @@ export default {
       loadingUserDeptStrategy: '',
       options: [],
       memberFormComp: null,
-      uploadView: false
+      uploadView: false,
+      dateTime: ''
     }
   },
   computed: {
@@ -674,9 +679,11 @@ export default {
       })
       this.columns.unshift({
         title: '角色',
-        dataIndex: 'roleName'
+        dataIndex: 'roleName',
+        width: 120
       })
       this.tableData = tableData
+      this.dateTime = new Date().getTime()
     },
     changeRolesHandle (text, record) {
       record.name = text
@@ -1052,8 +1059,8 @@ export default {
   // padding: 16px;
   box-sizing: border-box;
   .left_content {
-    width: 70%;
-    height: 100%;
+    width: 80%;
+    height: 520px;
     margin-left: 15px;
     box-shadow: 0px 0px 10px #bfbdbd54;
     .left_bottom_content {
@@ -1113,7 +1120,7 @@ export default {
 .role-con {
   position: relative;
   height: 100%;
-  width: 30%;
+  width: 25%;
   overflow-y: hidden;
   padding: 0 2px 0 0;
   border: 1px solid #f2f2f2;
@@ -1212,7 +1219,7 @@ export default {
 
 .table-con {
   height: 100%;
-  width: 70%;
+  width: 75%;
   background: #fff;
   padding: 0 10px 8px;
   box-sizing: border-box;
@@ -1307,7 +1314,7 @@ export default {
 
 .right-con {
   height: 100%;
-  width: 30%;
+  width: 20%;
   background-color: #fff;
   // margin-left: 16px;
   box-shadow: 0px 0px 10px #bfbdbd54;
@@ -1330,5 +1337,8 @@ export default {
   ::v-deep i {
     display: none;
   }
+}
+::v-deep .vxe-table--body-wrapper {
+  height: 480px !important;
 }
 </style>
