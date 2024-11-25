@@ -82,7 +82,7 @@
                 <el-row type="flex"
                         style="text-align: left">
                   <el-col :span="24">
-                    <span class="msg-content overHiding">产品名称{{ item.projectInfoApproval && (item.projectInfoApproval.modelCode || '') }}</span>
+                    <span class="msg-content overHiding">产品名称：{{ item.projectInfoApproval && (item.projectInfoApproval.modelCode || '') }}</span>
                   </el-col>
                 </el-row>
               </template>
