@@ -146,6 +146,7 @@
                   clearable>
       <el-date-picker class="field"
                       v-model="searchForm.startEndDate"
+                      :editable="false"
                       type="daterange"
                       unlink-panels
                       range-separator="至"

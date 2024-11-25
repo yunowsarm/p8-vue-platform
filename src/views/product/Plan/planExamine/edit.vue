@@ -8,6 +8,7 @@
       <el-col>
         <el-form-item>
           <el-date-picker v-model="formData.year"
+                          :editable="false"
                           type="year"
                           style="width: 92%;"
                           :disabled="disabled"

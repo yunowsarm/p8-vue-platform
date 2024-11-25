@@ -103,6 +103,7 @@
                       prop="planBeginTime"
                       :rules="[{ required: true, message: '必填', trigger: 'blur' }]">
           <el-date-picker v-model="comResForm.planBeginTime"
+                          :editable="false"
                           type="date"
                           value-format="yyyy-MM-dd"
                           placeholder="请选择"> </el-date-picker>
@@ -112,6 +113,7 @@
                       prop="planEndTime"
                       :rules="[{ required: true, message: '必填', trigger: 'blur' }]">
           <el-date-picker v-model="comResForm.planEndTime"
+                          :editable="false"
                           type="date"
                           value-format="yyyy-MM-dd"
                           placeholder="请选择"> </el-date-picker>
@@ -234,7 +236,12 @@
                                @submit="submitButtonBarSetting"
                                @hidden="rightMenuConfigVisible = false">
     </common-button-bar-setting>
-    <common-drawer v-if="progressHistoryVisible" :visible="progressHistoryVisible" size="50%" placement="top" title="任务进度反馈" @close="progressHistoryVisible = false">
+    <common-drawer v-if="progressHistoryVisible"
+                   :visible="progressHistoryVisible"
+                   size="50%"
+                   placement="top"
+                   title="任务进度反馈"
+                   @close="progressHistoryVisible = false">
       <template #drawer>
         <ProgressHistory :task-id="selectedId" />
       </template>

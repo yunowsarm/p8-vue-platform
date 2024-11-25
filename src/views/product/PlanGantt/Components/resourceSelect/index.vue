@@ -20,6 +20,7 @@
               <div class="input-con">
                 <span style="width: 170px;">负荷分析时段:</span>
                 <el-date-picker :style="{width: '60%','margin-right': '10px'}"
+                                :editable="false"
                                 class="date-range"
                                 v-model="utilizationTimeRange"
                                 unlink-panels

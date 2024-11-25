@@ -18,6 +18,7 @@
                  :style="{width: 'calc(55% - 31px)'}">
               负荷分析时段:
               <el-date-picker :style="{width: 'calc(100% - 100px)'}"
+                              :editable="false"
                               class="date-range"
                               v-model="utilizationTimeRange"
                               unlink-panels

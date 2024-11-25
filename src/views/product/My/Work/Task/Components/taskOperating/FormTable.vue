@@ -108,6 +108,7 @@
                 <el-form-item label="变更起止日期"
                               label-width="100px">
                   <el-date-picker v-model="formData.changeDateRange"
+                                  :editable="false"
                                   type="daterange"
                                   unlink-panels
                                   range-separator="至"
@@ -257,6 +258,7 @@
                   <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.forecastBeginDate + "  -  " + formData.forecastEndDate }}</span>
                   <el-date-picker v-else
                                   v-model="formData.forecastDateRange"
+                                  :editable="false"
                                   type="daterange"
                                   unlink-panels
                                   range-separator="至"
@@ -274,6 +276,7 @@
                   <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.realBeginDate }}</span>
                   <el-date-picker v-else
                                   v-model="formData.realBeginDate"
+                                  :editable="false"
                                   type="date"
                                   valueFormat='yyyy-MM-dd'
                                   style="width: 100%;"
@@ -289,6 +292,7 @@
                   <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.realEndDate }}</span>
                   <el-date-picker v-else
                                   v-model="formData.realEndDate"
+                                  :editable="false"
                                   type="date"
                                   valueFormat='yyyy-MM-dd'
                                   :picker-options="endRealPickerOptions"

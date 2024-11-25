@@ -27,6 +27,7 @@
         </el-option>
       </el-select>
       <el-date-picker v-else-if="fields.fieldName && fields.type === 'datetime'"
+                      :editable="false"
                       v-model="formData[fields.fieldName]"
                       :type="fields.fieldConfig && fields.fieldConfig.type ? fields.fieldConfig.type : 'date'"
                       :value-format="fields.fieldConfig && fields.fieldConfig['value-format'] ? fields.fieldConfig['value-format'] : 'yyyy-MM-dd'"

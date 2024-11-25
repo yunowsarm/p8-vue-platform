@@ -10,6 +10,7 @@
       <el-col>
         <el-form-item>
           <el-date-picker v-model="formData['forecastBeginDate']"
+                          :editable="false"
                           type="date"
                           placeholder="预计开始时间"
                           style="width: 100%"
@@ -22,6 +23,7 @@
       <el-col>
         <el-form-item>
           <el-date-picker v-model="formData['forecastEndDate']"
+                          :editable="false"
                           type="date"
                           placeholder="预计结束时间"
                           style="width: 100%"

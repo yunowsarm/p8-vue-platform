@@ -79,6 +79,7 @@
           <!-- 日期 -->
           <div v-if="scope.row.type === 'datetime'">
             <el-date-picker v-model="scope.row.selectCode"
+                            :editable="false"
                             type="date"
                             clearable
                             placeholder="选择日期"> </el-date-picker>
@@ -86,6 +87,7 @@
           <!-- 时间范围 -->
           <div v-if="scope.row.type === 'datetimeRange'">
             <el-date-picker v-model="scope.row.selectCode"
+                            :editable="false"
                             type="daterange"
                             unlink-panels
                             style="width: 100%"

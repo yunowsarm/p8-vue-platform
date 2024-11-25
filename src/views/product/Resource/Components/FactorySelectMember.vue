@@ -15,6 +15,7 @@
             <div class="date-range-con">
               负荷分析时段:
               <el-date-picker class="date-range"
+                              :editable="false"
                               v-model="rangeDate"
                               unlink-panels
                               size="mini"
