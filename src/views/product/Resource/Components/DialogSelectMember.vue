@@ -1,5 +1,6 @@
 <template>
   <common-dialog title="团队人员选择"
+                 class="dialogSelectUser"
                  :width="dialogWidth + 'px'"
                  :dialogHeight="dialogHeight"
                  v-if="visibleDislogMember && visible"
@@ -357,6 +358,13 @@ export default {
   }
   .normal-main .normal-center {
     height: 100%;
+  }
+}
+.dialogSelectUser {
+  .el-dialog {
+    .el-dialog__body {
+      padding: 0;
+    }
   }
 }
 </style>

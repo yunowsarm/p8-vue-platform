@@ -34,6 +34,7 @@ export function outPutFlowGantt (ganttName, vueThis) {
       name: 'code',
       label: '活动编号',
       min_width: 100,
+      align: 'center',
       resize: true,
       align: 'center'
     },
@@ -48,7 +49,7 @@ export function outPutFlowGantt (ganttName, vueThis) {
     {
       name: 'typeDisplay',
       label: '类型',
-      min_width: 100,
+      min_width: 80,
       resize: true,
       align: 'left',
       template: function (task) {
@@ -66,24 +67,31 @@ export function outPutFlowGantt (ganttName, vueThis) {
     {
       name: 'isMilestoneDisplay',
       label: '里程碑',
-      min_width: 100,
+      min_width: 80,
       resize: true,
       align: 'left'
     },
     {
       name: 'name',
       label: '活动名称',
-      min_width: 270,
+      min_width: 240,
       tree: true,
+      resize: true,
+      align: 'left'
+    },
+    {
+      name: 'predNames',
+      label: '前置',
+      min_width: 240,
       resize: true,
       align: 'left'
     },
     {
       name: 'duration',
       label: '时限',
-      min_width: 100,
+      min_width: 80,
       resize: true,
-      align: 'left',
+      align: 'center',
       template: function (task) {
         if (task.parent) {
           return task.durations
@@ -97,6 +105,7 @@ export function outPutFlowGantt (ganttName, vueThis) {
       label: '角色',
       min_width: 100,
       resize: true,
+      align: 'center',
       align: 'left'
     }
   ]
