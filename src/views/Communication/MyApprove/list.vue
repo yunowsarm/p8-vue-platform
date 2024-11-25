@@ -26,11 +26,13 @@
       <!-- 待处理 -->
       <approve-view v-if="searchParams.msgCatalog === 'APPROVE_TYPE_02_01' && pendingSelected"
                     :selected-approval="pendingSelected"
+                    :search-params="searchParams"
                     :data-source="approveDataSource"
                     @approved="approved" />
       <!-- 已处理 || 审批中 || 已审批 -->
       <history v-else-if="distinguishIds.includes(searchParams.msgCatalog) && historySelected"
-               :selected-approval="historySelected" />
+               :selected-approval="historySelected"
+               :search-params="searchParams" />
       <span v-else
             class="span-bg"></span>
     </template>

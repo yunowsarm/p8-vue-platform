@@ -11,6 +11,7 @@
                      class="approveComponent"
                      :style="{ height: tabsHeight }"
                      :is="componentUrl"
+                     :searchParams="searchParams"
                      v-if="componentsParams"
                      :code="componentsParams.code"
                      :data-view-id="componentsParams.dataViewId"
@@ -21,6 +22,7 @@
                      :kanban-config="componentsParams" />
           <component ref="approveContent"
                      :style="{ height: tabsHeight }"
+                     :searchParams="searchParams"
                      :selected-approval="selectedApproval"
                      :curr-entity-id="currEntityId"
                      v-else-if="formComp != null && formComp != ''"
@@ -120,6 +122,10 @@ export default {
     CommonTabs
   },
   props: {
+    searchParams: {
+      type: Object,
+      default: () => { }
+    },
     selectedApproval: {
       type: Object,
       default: () => { }
@@ -528,21 +534,12 @@ export default {
       this.isWarnApprove = isWarnApprove
     },
     handleSubmit (e) {
-      if (this.$refs.approveContent.formType && this.$refs.approveContent.formType === '2' &&
-        (
-          !this.$refs.approveContent.formData.priority ||
-          !this.$refs.approveContent.formData.demandLevel ||
-          !this.$refs.approveContent.formData.preliminaryVerification ||
-          !this.$refs.approveContent.formData.timeWindow ||
-          !this.$refs.approveContent.formData.handlingSuggestions ||
-          !this.$refs.approveContent.formData.processingConclusion ||
-          !this.$refs.approveContent.formData.processingTeam)) {
-        return this.$message({ message: '表单存在必填未填数据', type: 'warning' })
-      }
+      // 需求管理校验
       if (this.$refs.approveContent.formType) {
         this.$refs.approveContent.handleSubmit()
-        // let count = this.$store.getters.approvalTotalMsg
-        // this.$store.dispatch('setApprovalMessageCount', --count)
+        if (!this.$refs.approveContent.saveType) {
+          return
+        }
       }
       if (!this.formData.approvalResult) {
         this.$message({ message: '请选择审批结果', type: 'warning' })
@@ -559,8 +556,6 @@ export default {
 
       if (this_.$refs.approveContent.approveCommitVerification instanceof Function) {
         this_.$refs.approveContent.approveCommitVerification(e, msg)
-        // let count = this.$store.getters.approvalTotalMsg
-        // this.$store.dispatch('setApprovalMessageCount', --count)
       } else {
         this_
           .$confirm(msg, '提示', {

@@ -41,6 +41,7 @@
             <component :style="{ height: tabsHeight}"
                        :selected-approval="selectedApproval"
                        :curr-entity-id="currEntityId"
+                       :searchParams="searchParams"
                        v-if="formComp != null && formComp != '' && componentsParams"
                        :code="componentsParams.code"
                        :data-view-id="componentsParams.dataViewId"
@@ -51,6 +52,7 @@
                        v-bind="formCompProp"
                        :kanban-config="componentsParams" />
             <component :style="{ height: tabsHeight }"
+                       :searchParams="searchParams"
                        :selected-approval="selectedApproval"
                        :curr-entity-id="currEntityId"
                        v-else-if="formComp != null && formComp != ''"
@@ -101,6 +103,10 @@ export default {
     CommonTabs
   },
   props: {
+    searchParams: {
+      type: Object,
+      default: () => { }
+    },
     selectedApproval: {
       type: Object,
       default: () => { }
