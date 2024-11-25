@@ -1,13 +1,14 @@
 <template>
   <div>
-    <el-button-group>
-      <el-button size="mini"
-                 type="primary"
-                 plain
-                 v-for="(item, index) in userRoleBtnList"
-                 :key="item"
-                 @click="btnClick(index)">{{ item }}</el-button>
-    </el-button-group>
+    <el-radio-group v-model="activeName"
+                    size="mini"
+                    @input="btnClick">
+      <el-radio-button type="primary"
+                       plain
+                       v-for="(item, index) in userRoleBtnList"
+                       :label="index"
+                       :key="index">{{ item.name }}</el-radio-button>
+    </el-radio-group>
     <div :id="chartId"
          style="height: 280px;"></div>
   </div>
@@ -30,7 +31,7 @@ export default {
   data () {
     return {
       myChart: null,
-      activeName: 'first',
+      activeName: '',
       userRoleBtnList: [],
       dataList: [],
       indicator: []
@@ -51,6 +52,7 @@ export default {
   },
   methods: {
     btnClick (index) {
+      this.activeName = this.userRoleBtnList[index].id
       this.draw(this.indicator[index], [this.dataList[index]])
     },
     initData (btnType) {
@@ -91,9 +93,12 @@ export default {
       this.indicator = []
       this.dataList = []
       this.userRoleBtnList = []
-      res.forEach(item => {
+      res.forEach((item, index) => {
         let str = item.roleName + '-' + item.qualificationName
-        this.userRoleBtnList.push(str)
+        this.userRoleBtnList.push({
+          name: str,
+          id: index
+        })
         let arr = []
         let indicator2 = []
         item.assumptionList.forEach(el => {
@@ -112,6 +117,7 @@ export default {
         })
         this.indicator.push(indicator2)
       })
+      this.activeName = this.userRoleBtnList[0].id
       this.draw(this.indicator[0], [this.dataList[0]])
     },
     draw (indicator, dataList) {
