@@ -114,6 +114,10 @@
 .bottom.hiddenTabs {
   height: calc(100% - 42px);
 }
+::v-deep .splitter-pane-resizer {
+  height: 50px !important;
+  margin-top: 25% !important;
+}
 </style>
 
 <script>

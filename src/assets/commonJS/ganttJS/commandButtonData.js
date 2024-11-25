@@ -2805,6 +2805,7 @@ function addTask (num, pos, ganttName) {
  * @param dpObject
  */
 function createTaskByDatas(ganttObject, datas, parentId, pos, taskName, msg, dpObject, indexNo) {
+  ganttObject.unselectTask()
   dpObject.ignore(function () {
     ganttObject.batchUpdate(function () {
       datas.forEach(function (item) {
@@ -2852,7 +2853,6 @@ function createTaskByDatas(ganttObject, datas, parentId, pos, taskName, msg, dpO
           realEndDate: item.realEndDate,
           realBeginDate: item.realBeginDate
         }
-
         switch (pos) {
           case 'Child':
             ganttObject.addTask(task, parentId, item.indexNo)
@@ -2882,6 +2882,10 @@ function createTaskByDatas(ganttObject, datas, parentId, pos, taskName, msg, dpO
             ganttObject.addTask(task, parentId, indexNo++)
             break
         }
+        setTimeout(() => {
+          ganttObject.showTask(item.id);
+          ganttObject.selectTask(item.id);
+        }, 1000)
       })
     })
   })
