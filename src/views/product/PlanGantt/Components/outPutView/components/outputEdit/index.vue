@@ -5,6 +5,7 @@
              @saved="saved"
              :data-source="dataSource"
              :api="saveApi"
+             :isShouEnter="false"
              :form="formData"
              :is-custom-validate="isCustomValidate"
              :other-param="otherParam"

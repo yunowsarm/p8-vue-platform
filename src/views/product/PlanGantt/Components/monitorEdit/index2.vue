@@ -1,17 +1,16 @@
 <template>
   <div style="position: relative; height: 300px">
-    <form-list
-      ref="form"
-      @rendered="rendered"
-      form-layout="vertical"
-      @saved="saved"
-      :data-source="dataSource"
-      :api="saveApi"
-      :form="formData"
-      :is-custom-validate="isCustomValidate"
-      :other-param="otherParam"
-      @custom-validate="customValidate"
-    >
+    <form-list ref="form"
+               @rendered="rendered"
+               form-layout="vertical"
+               @saved="saved"
+               :data-source="dataSource"
+               :api="saveApi"
+               :isShouEnter="false"
+               :form="formData"
+               :is-custom-validate="isCustomValidate"
+               :other-param="otherParam"
+               @custom-validate="customValidate">
     </form-list>
   </div>
 </template>
@@ -37,7 +36,7 @@ export default {
       default: null
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'planGanttManager.saveTaskMonitorInfo',
       isCustomValidate: true,
@@ -109,7 +108,7 @@ export default {
     }
   },
   watch: {
-    monitorDataOptions(newValue, oldValue) {
+    monitorDataOptions (newValue, oldValue) {
       const that = this
       if (newValue && newValue.length > 0) {
         const select = that.dataSource[0].children.filter((item) => item.fieldName === 'monitorId')
@@ -125,14 +124,14 @@ export default {
   computed: {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    rendered() {
+    rendered () {
       if (this.taskId && this.taskId !== '') {
         this.getMonitorData(this.taskId)
       }
     },
-    getMonitorData(taskId) {
+    getMonitorData (taskId) {
       const that = this
       that.otherParam.taskId = taskId
       that.monitorDataOptions = that.vueThis.monitorPointDatas
@@ -158,7 +157,7 @@ export default {
           console.error('error' + error)
         })
     },
-    saved(res) {
+    saved (res) {
       const that = this
       if (res && res === 'true') {
         let monitorIds = ''
@@ -176,7 +175,7 @@ export default {
         ganttObject.updateTask(that.taskId)
       }
     },
-    customValidate(saveParams) {
+    customValidate (saveParams) {
       /**
        * 标识变更记录逻辑：
        *    可控任务添加、取消标识时，记录变更

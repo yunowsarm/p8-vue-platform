@@ -10,6 +10,7 @@
                      @rendered="rendered"
                      form-layout="vertical"
                      @saved="saved"
+                     :isShouEnter="false"
                      :data-source="dataSource"
                      :api="saveApi"
                      :form="formData"

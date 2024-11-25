@@ -1,17 +1,16 @@
 <template>
   <div style="position: relative; height: 300px">
-    <form-list
-      ref="form"
-      @rendered="rendered"
-      form-layout="vertical"
-      @saved="saved"
-      :data-source="dataSource"
-      :api="saveApi"
-      :form="formData"
-      :is-custom-validate="isCustomValidate"
-      :other-param="otherParam"
-      @custom-validate="customValidate"
-    >
+    <form-list ref="form"
+               @rendered="rendered"
+               form-layout="vertical"
+               @saved="saved"
+               :data-source="dataSource"
+               :api="saveApi"
+               :isShouEnter="false"
+               :form="formData"
+               :is-custom-validate="isCustomValidate"
+               :other-param="otherParam"
+               @custom-validate="customValidate">
     </form-list>
   </div>
 </template>
@@ -37,7 +36,7 @@ export default {
       default: null
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'planGanttManager.saveDependence',
       isCustomValidate: true,
@@ -102,14 +101,14 @@ export default {
   computed: {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    rendered() {
+    rendered () {
       if (this.taskId && this.taskId !== '') {
         this.getLinkDatas(this.taskId)
       }
     },
-    getLinkDatas(taskId) {
+    getLinkDatas (taskId) {
       const that = this
       that.otherParam.taskId = taskId
       that.$api['planGanttManager.getDependenceByTaskId']({ taskId: taskId })
@@ -134,7 +133,7 @@ export default {
           console.error('error' + error)
         })
     },
-    saved(res) {
+    saved (res) {
       const that = this
       const ganttObject = GanttObject.getGanttObject(that.ganttName)
       const ganttDp = GanttObject.getDpObject(that.ganttName)
@@ -153,7 +152,7 @@ export default {
         })
       })
     },
-    customValidate(saveParams) {
+    customValidate (saveParams) {
       /**
        * 标识变更记录逻辑：
        *    1.编辑加锁任务添加依赖时，记录变更

@@ -9,6 +9,7 @@
                @saved="saved"
                :data-source="dataSource"
                :api="saveApi"
+               :isShouEnter="false"
                :is-custom-validate="isCustomValidate"
                @custom-validate="customValidate"
                :other-param="otherParam"
