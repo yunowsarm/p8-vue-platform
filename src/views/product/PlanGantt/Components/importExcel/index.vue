@@ -30,9 +30,15 @@
             </li> -->
           <!-- <li> -->
           <!-- <p>导入说明: {{ item.descriptionStr }}</p> -->
-          <p>通过excel导出的文件，将当前计划下的所有任务更新</p>
-          <p>excel导出的来源为：计划管理-计划编制-excel导出</p>
-          <p class="importantSty">excel导入文件可以修改的属性为：计划编制列表的列头带有修改图标的属性</p>
+          <li>
+            <p>
+              (1)模板导入：通过下载上方模板，按照大纲级别，将文档中的活动导入为选中活动的下级
+            </p>
+            <p>
+              (2)更新导入：通过excel导出的文件，将当前所有活动更新。excel导出的来源为：知识库管理-产出流程管理-活动管理-excel导出
+            </p>
+            <p><span class="importantSty">excel导入文件可以修改的属性为：计划编制列表的列头带有修改图标的属性</span></p>
+          </li>
           <!-- </li>
           </ul> -->
         </div>
@@ -87,6 +93,29 @@ export default {
         labelText: '',
         slotName: 'outputRequest',
         colLayout: ''
+      },
+      {
+        type: 'select', // 控件类型
+        fieldName: 'createSource',
+        labelText: '导入类型',
+        clearable: true,
+        colLayout: 'doubleCol',
+        options: [
+          {
+            label: '模板导入',
+            value: 'insert'
+          },
+          {
+            label: '更新导入',
+            value: 'update'
+          }
+        ],
+        rules: [
+          {
+            required: true,
+            message: '必选'
+          }
+        ]
       },
       {
         type: 'blank',
@@ -217,7 +246,8 @@ export default {
         planInfoId: this.planInfoId,
         createSource: '0',
         uploadFileJson: [],
-        columnConfigs: this.columnConfigs
+        columnConfigs: this.columnConfigs,
+        createSource: saveParams.createSource
       }
       if (saveParams.uploadFileJson && saveParams.uploadFileJson.length) {
         saveParams.uploadFileJson.forEach((item, index) => {
@@ -298,7 +328,7 @@ export default {
 .el-form.formList .el-row {
   height: auto;
 }
-.importantSty{
+.importantSty {
   color: red;
 }
 .edit-outputdata-view {
