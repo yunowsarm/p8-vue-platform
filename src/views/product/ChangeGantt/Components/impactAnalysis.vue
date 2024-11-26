@@ -6,6 +6,7 @@
       <command-button-bar :panel-data="btnData"
                           :selected-tasks="selectedTasks"
                           :gantt-name="ganttName"
+                          :hasSettings="false"
                           :plan-info-id="planInfoId"
                           @change-command-button="changeCommandButton"></command-button-bar>
     </div>

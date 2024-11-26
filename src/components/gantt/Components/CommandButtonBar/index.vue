@@ -1,9 +1,11 @@
 <template>
   <div class="card-container"
        v-if="panelData.length > 1">
-    <i :class="advance ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"
+    <i v-if="hasSettings"
+       :class="advance ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"
        @click="changeCommandButton"></i>
-    <i class="el-icon-setting"
+    <i v-if="hasSettings"
+       class="el-icon-setting"
        @click.stop="showButtonBarSetting"></i>
     <el-tabs type="card"
              v-if="advance">
@@ -181,7 +183,11 @@ export default {
     ganttType: {
       type: String,
       default: 'common'
-    }
+    },
+    hasSettings: {
+      type: Boolean,
+      default: true
+    },
   },
   computed: {
     ...mapGetters(['vueThis', 'ganttButtonMode', 'ganttRightButtons']),
