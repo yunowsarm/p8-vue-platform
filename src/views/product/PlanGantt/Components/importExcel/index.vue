@@ -14,11 +14,11 @@
       <template #outputRequest>
         <div class="edit-outputdata-view">
           <div class="title">导入说明：</div>
-          <!-- <ul class="file-list"
+          <ul class="file-list"
               v-for="(item, index) in outputRequest"
               :key="item.attId"
-              :class="{ 'not-last': index < outputRequest.length - 1 }"> -->
-          <!-- <li>
+              :class="{ 'not-last': index < outputRequest.length - 1 }">
+            <li>
               <p>
                 模板下载:
                 <span class="filename">
@@ -27,20 +27,23 @@
                            @click="downloadOutputRequsetFile(item)">{{ item.attFileName }}</el-link>
                 </span>
               </p>
-            </li> -->
-          <!-- <li> -->
-          <!-- <p>导入说明: {{ item.descriptionStr }}</p> -->
-          <li>
-            <p>
-              (1)模板导入：通过下载上方模板，按照大纲级别，将文档中的活动导入为选中活动的下级
-            </p>
-            <p>
-              (2)更新导入：通过excel导出的文件，将当前所有活动更新。excel导出的来源为：知识库管理-产出流程管理-活动管理-excel导出
-            </p>
-            <p><span class="importantSty">excel导入文件可以修改的属性为：计划编制列表的列头带有修改图标的属性</span></p>
-          </li>
-          <!-- </li>
-          </ul> -->
+            </li>
+            <!-- <li> -->
+            <!-- <p>导入说明: {{ item.descriptionStr }}</p> -->
+            <li>
+              <p>
+                导入类型：
+              </p>
+              <p>
+                (1)模板导入：通过下载上方模板，按照大纲级别，将文档中的任务导入为选中任务的下级
+              </p>
+              <p>
+                (2)更新导入：通过excel导出的文件，将当前所有任务更新。excel导出的来源为：计划管理-计划编制-excel导出
+              </p>
+              <p><span class="importantSty">excel导入文件可以修改的属性为：计划编制列表的列头带有修改图标的属性</span></p>
+            </li>
+            <!-- </li> -->
+          </ul>
         </div>
       </template>
       <template #outputIo>
@@ -247,7 +250,8 @@ export default {
         createSource: '0',
         uploadFileJson: [],
         columnConfigs: this.columnConfigs,
-        createSource: saveParams.createSource
+        createSource: saveParams.createSource,
+        taskId: this.taskId
       }
       if (saveParams.uploadFileJson && saveParams.uploadFileJson.length) {
         saveParams.uploadFileJson.forEach((item, index) => {
