@@ -2,7 +2,7 @@
   <div class="header">
     <div class="content">
       <div style="width: 50%;">
-        <div class="title">需求收集信息</div>
+        <div class="title">{{ formData.sourceChannel }}</div>
         <form-render class="formRender"
                      :data-view-id="dataViewId"
                      :record="{ desformCode: codeForm }"
@@ -11,7 +11,7 @@
                      v-bind="$attrs"></form-render>
       </div>
       <div style="width: 50%;">
-        <div class="title">需求信息描述</div>
+        <div class="title">市场需求信息表</div>
         <form-list ref="formInfo2"
                    class="formList"
                    label-width="150px"

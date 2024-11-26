@@ -2,7 +2,7 @@
   <div class="header">
     <div class="content">
       <div style="width: 50%;">
-        <div class="title">需求收集信息</div>
+        <div class="title">{{ sourceChannel }}</div>
         <form-render class="formRender"
                      :data-view-id="dataViewId"
                      :record="{ desformCode: codeForm }"
@@ -12,7 +12,7 @@
       </div>
       <div v-if="formType === '1'"
            style="width: 50%;">
-        <div class="title">需求信息描述</div>
+        <div class="title">市场需求信息表</div>
         <form-list ref="formInfo2"
                    class="formList"
                    label-width="150px"
@@ -89,15 +89,17 @@
     </div> -->
     <select-user v-if="visible"
                  class="selectUser"
-                 :disabled-row="formData.processingTeam"
-                 :visible="visible"
-                 @close-dialog="closeModal"></select-user>
+                 :visibleDislogMember="visible"
+                 loginFlag="1"
+                 :existsData="selectedRows"
+                 @member-close="closeModal"></select-user>
   </div>
 </template>
 
 <script>
-import { P8Form as FormList, P8SelectUser as SelectUser } from 'p8-components-ui'
+import { P8Form as FormList } from 'p8-components-ui'
 import FormRender from '@/views/Framework/ComponentsMananger/Form/Components/Components/edit.vue'
+import SelectUser from './selectUser.vue'
 export default {
   components: {
     FormList,
@@ -932,6 +934,7 @@ export default {
       dataSource2: [],
       dataSource3: [],
       dataSource4: [],
+      selectedRows: []
     }
   },
   mounted () {
@@ -998,33 +1001,19 @@ export default {
       this.visible = true
     },
     closeModal (selectedRows) {
+      console.log(selectedRows, '============this.selectedRows');
       this.visible = false
       if (selectedRows) {
+        this.selectedRows = selectedRows
         if (this.formType === '1') {
           this.$set(this.formData, 'requirementAnalystDisplay', selectedRows[0].realName)
           this.formData.requirementAnalyst = selectedRows[0].id
         } else {
           let names = []
-          if (this.formData.processingTeamDisplay) {
-            if (this.formData.processingTeamDisplay.indexOf(',') !== -1) {
-              names = this.formData.processingTeamDisplay.split(',')
-            } else {
-              names.push(this.formData.processingTeamDisplay)
-            }
-          }
           let ids = []
-          if (this.formData.processingTeam) {
-            ids = this.formData.processingTeam
-          }
-          console.log(selectedRows, '===========selectedRows');
           selectedRows.forEach((item, index) => {
-            if (ids.indexOf(item.id) === -1) {
-              ids.push(item.id)
-            }
-            if (names.indexOf(item.realName) === -1) {
-              names.push(item.realName)
-            }
-
+            ids.push(item.id)
+            names.push(item.realName)
           })
           let name = names.join(',')
           this.$set(this.formData, 'processingTeamDisplay', name)
