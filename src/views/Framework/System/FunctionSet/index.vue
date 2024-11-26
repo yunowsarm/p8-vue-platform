@@ -1,11 +1,18 @@
 <template>
   <normal-layout :header-visible="false">
     <template #west>
-      <common-tree :data="treeData" @select="onSelect" :tree-param="treeParam"></common-tree>
+      <common-tree :data="treeData"
+                   @select="onSelect"
+                   :tree-param="treeParam"></common-tree>
     </template>
     <template #center>
-      <component v-if="roteName" :is="componentLoader" :rote-name="roteName" v-bind="params"></component>
-      <span v-else class="span-bg"></span>
+      <component v-if="roteName"
+                 :is="componentLoader"
+                 :rote-name="roteName"
+                 v-bind="params"
+                 class="component"></component>
+      <span v-else
+            class="span-bg"></span>
     </template>
   </normal-layout>
 </template>
@@ -27,6 +34,12 @@
   background-position: center;
   margin-top: 25px;
 }
+.normal-layout.normal-layoutV1.grid-table-render.table_render.component {
+  padding: 0 20px !important;
+  ::v-deep .normal-header {
+    padding-left: 0px !important;
+  }
+}
 </style>
 
 <script>
@@ -35,7 +48,7 @@ import { P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree } from 'p8-compo
 export default {
   name: 'FunctionSetIndex',
 
-  data() {
+  data () {
     return {
       treeData: [],
       selectedKeys: [],
@@ -50,14 +63,14 @@ export default {
     }
   },
   watch: {
-    customUrl(val, oldVal) {
+    customUrl (val, oldVal) {
       const result = val
       const resultMap = this.convertJson(result[1], '&')
       this.dicType = resultMap.dicType
       this.type = resultMap.type
     }
   },
-  mounted() {
+  mounted () {
     const currentName = this.$route.name
     const menuId = '09'
     let rootRouter
@@ -77,7 +90,7 @@ export default {
   //   return this.componentLoader
   // },
   methods: {
-    initThirMneu(route, currentPath) {
+    initThirMneu (route, currentPath) {
       const that = this
       if (route.children && route.children.length > 0) {
         route.children.map(function (item, index) {
@@ -89,7 +102,7 @@ export default {
         })
       }
     },
-    convertJson(paramStr, tag) {
+    convertJson (paramStr, tag) {
       const paramStrArr = paramStr.split(tag)
       const resultMap = {}
       paramStrArr.map(function (v) {
@@ -100,7 +113,7 @@ export default {
       })
       return resultMap
     },
-    onSelect(node) {
+    onSelect (node) {
       if (node.id == '0901') {
         return false
       }
@@ -114,7 +127,7 @@ export default {
         this.roteName = node.name
       }
     },
-    toTree(data) {
+    toTree (data) {
       data = {
         ...data,
         label: data.meta.title,
@@ -142,7 +155,7 @@ export default {
 
       return [data]
     },
-    cascadeTree(data, parentId) {
+    cascadeTree (data, parentId) {
       if (data && data.length) {
         data.map((item) => {
           item.label = item.meta.title
