@@ -45,6 +45,12 @@ export default {
         colLayout: 'singleCol'
       },
       {
+        type: 'view',
+        labelText: '任务类型',
+        fieldName: 'planTypeDisplay', // taskName
+        colLayout: 'singleCol'
+      },
+      {
         type: 'blank',
         labelText: '进度',
         slotName: 'status',

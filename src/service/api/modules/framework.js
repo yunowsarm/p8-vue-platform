@@ -543,6 +543,13 @@ export const system = {
       path: '/framework/project/saveSchedulingConfig',
       mockPath: '/framework/project/saveSchedulingConfig',
       desc: '系统设置-功能设置-排程设置-保存排程设置'
+    },
+    {
+      name: 'getTaskDate',
+      method: 'POST',
+      path: '/product/my/work/task/getTaskDate',
+      mockPath: '/product/my/work/task/getTaskDate',
+      desc: '系统设置-功能设置-任务实际完成时间填写限制设置'
     }
   ],
   role: [

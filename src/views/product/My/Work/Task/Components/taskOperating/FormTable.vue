@@ -228,18 +228,22 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="12">
+              <el-col :span="14">
                 <el-form-item class="formitem-progress"
                               label="完成度"
                               prop="progress">
-                  <el-progress :text-inside="true"
+                  <!-- <el-progress :text-inside="true"
                                :stroke-width="16"
                                text-color="#1e2125"
                                style="margin-top: 8px;"
-                               :percentage="formData.progress"></el-progress>
+                               :percentage="formData.progress"></el-progress> -->
+                  <el-slider v-model="formData.progress"
+                             @input="progressChange"
+                             show-input>
+                  </el-slider>
                 </el-form-item>
               </el-col>
-              <el-col :span="12"
+              <!-- <el-col :span="12"
                       v-if="!this.getPlanInfo().pageType">
                 <el-form-item label-width="30px">
                   <el-input-number size="mini"
@@ -250,7 +254,7 @@
                                    step-strictly
                                    @change="progressChange"></el-input-number>
                 </el-form-item>
-              </el-col>
+              </el-col> -->
             </el-row>
             <el-row>
               <el-col :span="24">
@@ -294,6 +298,7 @@
                                   v-model="formData.realEndDate"
                                   :editable="false"
                                   type="date"
+                                  :disabled="endDateDisabled"
                                   valueFormat='yyyy-MM-dd'
                                   :picker-options="endRealPickerOptions"
                                   style="width: 100%;"
@@ -505,14 +510,18 @@ export default {
       adjustOption: [],
       newFormData: {},
       managerStatus: '', // 管理状态
-      minNum: 0
+      minNum: 0,
+      endDateDisabled: true,
+      minValue: 0
     }
   },
   mounted () {
+    this.minValue = Number(this.getPlanInfo().PROGRESS) * 100
+    console.log("🚀 呱呱呱呱呱呱呱呱呱呱呱呱呱呱呱古古怪怪", this.minValue)
     //  进行中的任务不能减进度条
-    if (this.getPlanInfo().STATUS === '6050') {
-      this.minNum = Number(this.getPlanInfo().PROGRESS)
-    }
+    // if (this.getPlanInfo().STATUS === '6050') {
+    //   this.minValue = Number(this.getPlanInfo().PROGRESS) * 100
+    // }
     realBeginDate = this.formData.realBeginDate
     this.getOptions()
     let nullity = this.getPlanInfo().NULLITY
@@ -554,6 +563,7 @@ export default {
                   if (res && res.success) {
                     _this.getPlanInfo().MANAGERSTATUS = '6406'
                     _this.$emit('submit', _this.formData, submitType)
+                    _this.minValue = _this.formData.Progress
                   } else {
                     _this.$message({
                       message: res.message,
@@ -565,6 +575,7 @@ export default {
               .catch(() => { })
           } else {
             this.$emit('submit', this.formData, submitType)
+            _this.minValue = _this.formData.progress
           }
           // this.setMessage()
         } else {
@@ -574,7 +585,6 @@ export default {
       })
     },
     setMessage () {
-      console.log(this.tabsName, 'rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
       this.formData.planName = this.getPlanInfo().PLANNAME
       this.formData.name = this.getPlanInfo().NAME
       this.formData.taskId = this.getPlanInfo().taskId
@@ -589,29 +599,13 @@ export default {
           entityType: 'project',
           taskRequest: this.formData,
         };
-        console.log("11111111111111111111111", params)
         window.myWebSocket.emit('taskCommitByData', params)
         if (this.formData.deviationType) {
           this.formData.type = '2'
           params.taskRequest = this.formData
-          console.log("22222222222222222222222222222222", params)
           window.myWebSocket.emit('taskCommitByData', params)
         };
       }
-      // if (this.tabsName === 'unfinishedCause') {
-      //   this.formData.type = '2'
-      //   let params = {
-      //     itemCreateTime: moment().format('YYYY-MM-DD HH:mm:ss'),
-      //     sendUser: this.$store.state.user.userId,
-      //     sendUserName: this.$store.state.user.userName,
-      //     content: this.contentText,
-      //     entityId: this.getPlanInfo().WHOLEDESCRIBEID,
-      //     entityType: 'project',
-      //     taskRequest: this.formData,
-      //   };
-      //   console.log("33333333333333333333333333333333333333", params)
-      //   window.myWebSocket.emit('taskCommitByData', params)
-      // }
     },
     onDrawerOpen () {
       this.collapse = true
@@ -623,14 +617,28 @@ export default {
       this.$emit('progress-date-change', date)
     },
     progressChange (val) {
-      const maxSpeedNum = 100
-      const difference = maxSpeedNum - val
-      if (difference < 1) {
-        this.formData.progress = maxSpeedNum
-        this.$emit('progress-change', maxSpeedNum)
+      console.log(this.minValue, "🚀 ~ progressChange ~ val:", val)
+      if (val < this.minValue) {
+        console.log('111111111111111');
+        this.formData.progress = this.minValue
       } else {
-        this.formData.realBeginDate = moment().format('YYYY-MM-DD')
-        this.$emit('progress-change', val)
+        const maxSpeedNum = 100
+        const difference = maxSpeedNum - val
+        if (difference < 1) {
+          this.formData.progress = maxSpeedNum
+          this.$api['PlanGanttSetting.getTaskDate']().then(res => {
+            this.formData.realEndDate = res.taskDate
+            if (res.taskRealDateWrite.content === '1') {
+              this.endDateDisabled = false
+            } else {
+              this.endDateDisabled = true
+            }
+          })
+          this.$emit('progress-change', maxSpeedNum)
+        } else {
+          this.formData.realBeginDate = moment().format('YYYY-MM-DD')
+          this.$emit('progress-change', val)
+        }
       }
     },
     submitText (progress) {

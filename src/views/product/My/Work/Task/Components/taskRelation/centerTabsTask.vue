@@ -59,6 +59,18 @@ export default {
       },
       {
         type: 'view',
+        labelText: '责任人',
+        fieldName: 'dutyName',
+        colLayout: 'singleCol'
+      },
+      {
+        type: 'view',
+        labelText: '部门',
+        fieldName: 'dutyUnitDeptName',
+        colLayout: 'singleCol'
+      },
+      {
+        type: 'view',
         labelText: '工期(天)',
         fieldName: 'duration',
         colLayout: ''
