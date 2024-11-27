@@ -250,7 +250,7 @@ export default {
         createSource: '0',
         uploadFileJson: [],
         columnConfigs: this.columnConfigs,
-        createSource: saveParams.createSource,
+        importType: saveParams.createSource,
         taskId: this.taskId
       }
       if (saveParams.uploadFileJson && saveParams.uploadFileJson.length) {
