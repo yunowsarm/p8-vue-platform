@@ -2,13 +2,16 @@
   <div class="container">
     <div class="messageTitle">
       <el-row type="flex" style="text-align: left; height: 22px; line-height: 22px">
-        <el-col :span="20">
+        <el-col :span="20" class="flex-row">
           <span class="left-span">
             <i class="p8 icon-message iconColor" style="color: #1890ff"></i>
           </span>
-          <span class="title-span">
-            {{ messageData.msgTitle }}
-          </span>
+          <el-tooltip effect="light" :content="messageData.msgTitle" placement="top-start">
+            <span class="title-span">
+              {{ messageData.msgTitle }}
+            </span>
+          </el-tooltip>
+
           <span>
             <el-tag v-if="messageData.uploadFiles != null && messageData.uploadFiles.length > 0" size="mini" effect="plain" class="message-tag">
               <i class="p8 icon-jianhao"></i>
@@ -141,16 +144,23 @@ $paddingLeft: 10px;
         margin-bottom: 0;
       }
     }
-
+    .flex-row {
+      display: flex;
+      flex-direction: row;
+    }
     .left-span {
       display: inline-block;
       width: 20px;
     }
 
     .title-span {
+      flex: 1;
       font-size: 16px;
       font-weight: bold;
       margin-right: 20px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .msg-user {
