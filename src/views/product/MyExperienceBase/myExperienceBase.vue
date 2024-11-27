@@ -332,9 +332,12 @@ export default {
         }
         if (!tabindex && selection && selection.length) {
           this.checkRow(selection)
+          console.log(this.checkRow);
         } else {
           this.clearRow (this.$refs.table.tableData)
         }
+        this.selectedRows = this.$refs.table.$refs.table.selection
+        console.log(this.selectedRows);
       })
     },
     // 取消选中递归
