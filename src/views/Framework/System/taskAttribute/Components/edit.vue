@@ -96,6 +96,8 @@
 import { P8Form as FormList, P8EditTable as EditableTable, P8Tabs as CommonTabs } from 'p8-components-ui'
 import { generateTree } from '@/utils/generateTree'
 import Sortable from 'sortablejs'
+import { deepClone } from '@/utils/common'
+import _ from 'lodash';
 export default {
   name: 'CompEdit',
   components: {
@@ -272,11 +274,18 @@ export default {
           onEnd: ({ item, newIndex, oldIndex }) => {
             // 获取排序之后的data数据
             that.settingsData.splice(newIndex, 0, that.settingsData.splice(oldIndex, 1)[0])
+            const oldArray = that.formData.propertiesList.slice(0)
             const newArray = that.settingsData.slice(0)
+            newArray.forEach(item => {
+              const oldItem = oldArray.find(oldItem => oldItem.id === item.id);
+              if (oldItem) {
+                item.isEnable = oldItem.isEnable;
+              }
+            });
             that.settingsData = []
             that.$nextTick(function () {
               that.settingsData = newArray
-              that.formData.propertiesList = newArray
+              that.formData.propertiesList = newArray;
             })
           }
         })
