@@ -167,11 +167,7 @@ export default {
       asyncComponents: '',
       defaultExpandedKeys: [],
       paramsObj: {},
-      provideParams: {
-        searchParams: this.westTreeParam,
-        showView: 'showView003',
-        isChildren: 'false'
-      },
+      provideParams: {},
       componentsConfig: {},
       visible: false,
       thirdMenuParam: {},
@@ -192,7 +188,7 @@ export default {
       taskId: '',
       showView: 'showView003',
       isChildren: 'false',
-      btnDisable: true
+      btnDisable: false
     }
   },
   props: {
@@ -224,6 +220,9 @@ export default {
     CommunicationMsg
   },
   created () {
+    this.westTreeParam.showView = 'showView003'
+    this.westTreeParam.isChildren = 'false'
+    this.provideParams.searchParams = this.westTreeParam
     this.init()
     this.getIconData()
     this.currentRouterPath = this.$route.path
@@ -384,9 +383,6 @@ export default {
         this.asyncComponents = defaultComponents.url ? defaultComponents.url : ''
         this.componentsConfig = defaultComponents
       }
-      setTimeout(() => {
-        that.showViewChange(that.showView)
-      }, 100)
     },
     getFirstChild (data) {
       let result = ''
