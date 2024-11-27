@@ -3189,7 +3189,7 @@ function pasteTask(ganttObject, tasks, vueThis, type, dpObj) {
             }
           } else {
             vueThis.$message({
-              message: '任务粘贴失败！',
+              message: '复制的任务已被删除，请重新复制任务后粘贴!',
               type: 'error'
             })
           }
@@ -3197,7 +3197,7 @@ function pasteTask(ganttObject, tasks, vueThis, type, dpObj) {
         .catch((err) => {
           console.error(err, 'err')
           vueThis.$message({
-            message: '任务粘贴失败！',
+            message: '复制的任务已被删除，请重新复制任务后粘贴!',
             type: 'error'
           })
         })
