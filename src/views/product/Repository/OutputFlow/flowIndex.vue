@@ -347,16 +347,10 @@ export default {
       })
       await that.$refs.inputEdit.$refs.form.validate().then((queryParams) => {
         let saveParams = { ...queryParams, ...that.$refs.inputEdit.$refs.form.otherParam }
-        if (!saveParams.uploadFiles.length && !saveParams.describes) {
-          return
-        }
         that.$api[that.$refs.inputEdit.saveApi](saveParams)
       })
       await that.$refs.outputEdit.$refs.form.validate().then((queryParams) => {
         let saveParams = { ...queryParams, ...that.$refs.outputEdit.$refs.form.otherParam }
-        if (!saveParams.uploadFiles.length && !saveParams.describes) {
-          return
-        }
         that.$api[that.$refs.outputEdit.saveApi](saveParams)
       })
       await that.$refs.specialEdit.$refs.form.validate().then((queryParams) => {
