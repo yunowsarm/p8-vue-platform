@@ -9,6 +9,17 @@
                    @select="onSelect"></common-tree>
     </template>
     <template #center>
+      <div class="show-type">展示方式：
+        <el-radio-group v-model="showView"
+                        @input="showViewChange">
+          <el-radio label="showView001">父子结构</el-radio>
+          <el-radio label="showView002">计划分组</el-radio>
+          <el-radio label="showView003">列表</el-radio>
+        </el-radio-group>
+        <el-button style="margin-left: 10px;"
+                   :disabled="btnDisable"
+                   @click="childrenClick">仅展示叶子节点</el-button>
+      </div>
       <P8TableRender ref="tableRender"
                      :key="dateTime"
                      :code="componentsConfig.code"
@@ -79,6 +90,12 @@
   </normal-layout>
 </template>
 <style lang="scss" scoped>
+.show-type {
+  position: absolute;
+  top: 10px;
+  z-index: 2;
+  left: 20px;
+}
 .normal-layout {
   padding: 0;
 }
@@ -150,9 +167,7 @@ export default {
       asyncComponents: '',
       defaultExpandedKeys: [],
       paramsObj: {},
-      provideParams: {
-        searchParams: this.westTreeParam
-      },
+      provideParams: {},
       componentsConfig: {},
       visible: false,
       thirdMenuParam: {},
@@ -170,7 +185,10 @@ export default {
       visibleFrontToBack: false,
       title: '',
       columnType: '',
-      taskId: ''
+      taskId: '',
+      showView: 'showView003',
+      isChildren: 'false',
+      btnDisable: false
     }
   },
   props: {
@@ -202,6 +220,9 @@ export default {
     CommunicationMsg
   },
   created () {
+    this.westTreeParam.showView = 'showView003'
+    this.westTreeParam.isChildren = 'false'
+    this.provideParams.searchParams = this.westTreeParam
     this.init()
     this.getIconData()
     this.currentRouterPath = this.$route.path
@@ -213,7 +234,40 @@ export default {
       }
     }
   },
+  mounted () { },
   methods: {
+    showViewChange (val) {
+      let obj = {
+        showView: {
+          mode: "=",
+          relation: "and",
+          value: val
+        },
+        isChildren: {
+          mode: "=",
+          relation: "and",
+          value: 'false'
+        }
+      }
+      if (val !== 'showView001') {
+        this.btnDisable = false
+      } else {
+        this.btnDisable = true
+      }
+      this.isChildren = 'false'
+      this.$refs.tableRender.$refs.xTable.params.sqlParam = { ...this.$refs.tableRender.$refs.xTable.params.sqlParam, ...obj }
+      console.log("🚀 ~ showViewChange ~ this.$refs.tableRender.$refs.table.params.sqlParams:", this.$refs.tableRender.$refs.xTable.params.sqlParam)
+    },
+    childrenClick () {
+      let obj = {
+        isChildren: {
+          mode: "=",
+          relation: "and",
+          value: 'true'
+        }
+      }
+      this.$refs.tableRender.$refs.xTable.params.sqlParam = { ...this.$refs.tableRender.$refs.xTable.params.sqlParam, ...obj }
+    },
     getProgress (val) {
       return Math.round(val * 100) + '%'
     },
@@ -293,6 +347,7 @@ export default {
       return overdueTextHandles(row)
     },
     async init () {
+      const that = this
       const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
       const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
       const res = await this.$api['desLayout.getLayoutJson']({ layoutCode: code, version: version })
@@ -316,7 +371,6 @@ export default {
       }
       this.asyncComponents = defaultComponents.url ? defaultComponents.url : ''
       if (!this.asyncComponents) {
-        const that = this
         const resault = this.getFirstChild(this.treeData)
         this.$nextTick(() => {
           that.$refs.commonTree.$refs.tree.setCurrentKey(resault.id, true)

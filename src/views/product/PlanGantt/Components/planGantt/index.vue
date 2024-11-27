@@ -1450,6 +1450,7 @@ export default {
               myGantt.getTask(task.id).dutyDeptName = row.deptName
             }
             myGantt.getTask(task.id).owner_type = type
+            myGantt.getTask(task.id).updateType = ''
             myGantt.updateTask(task.id)
           })
         })

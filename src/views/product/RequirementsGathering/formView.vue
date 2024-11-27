@@ -137,7 +137,8 @@ export default {
       propParam: {}, // 将参数传至表单
       formData: {
         uploadFiles: [],
-        processingTeam: []
+        processingTeam: [],
+        processingTeamDisplay: ''
       },
       dataSourceInfo: [
         {
@@ -1001,13 +1002,15 @@ export default {
       this.visible = true
     },
     closeModal (selectedRows) {
-      console.log(selectedRows, '============this.selectedRows');
-      this.visible = false
-      if (selectedRows) {
-        this.selectedRows = selectedRows
+      this.selectedRows = selectedRows
+      if (selectedRows.length > 0) {
         if (this.formType === '1') {
-          this.$set(this.formData, 'requirementAnalystDisplay', selectedRows[0].realName)
-          this.formData.requirementAnalyst = selectedRows[0].id
+          if (selectedRows.length === 1) {
+            this.$set(this.formData, 'requirementAnalystDisplay', selectedRows[0].realName)
+            this.formData.requirementAnalyst = selectedRows[0].id
+          } else {
+            return this.$message.warning('只能选择一个需求分析人')
+          }
         } else {
           let names = []
           let ids = []
@@ -1019,10 +1022,18 @@ export default {
           this.$set(this.formData, 'processingTeamDisplay', name)
           this.formData.processingTeam = ids
         }
+      } else {
+        if (this.formType === '1') {
+          this.$set(this.formData, 'requirementAnalystDisplay', '')
+          this.formData.requirementAnalyst = ''
+        } else {
+          this.formData.processingTeam = []
+          this.$set(this.formData, 'processingTeamDisplay', '')
+        }
       }
+      this.visible = false
     },
     handleSubmit () {
-      console.log(this.formData.demandSuggestionsArr, '============this.formType');
       if (this.formType === '1') {
         this.$refs.formInfo2.validate().then((queryParams) => { })
         this.$refs.formInfo3.validate().then((queryParams) => { })
