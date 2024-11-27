@@ -1,5 +1,14 @@
 <template>
-  <common-dialog :title="title" :width="width" :dialog-config="dialogConfig" :visible="visible" :dialog-height="dialogHeight" @handle-ok="handleOk" @handle-cancel="handleCancel" @close="handleCancel">
+  <common-dialog
+    :title="title"
+    :width="width"
+    :dialog-config="dialogConfig"
+    :visible="visible"
+    :dialog-height="dialogHeight"
+    @handle-ok="handleOk"
+    @handle-cancel="handleCancel"
+    @close="handleCancel"
+  >
     <template #dialog>
       <template title="主菜单配置">
         <div class="title">
@@ -7,7 +16,11 @@
         </div>
         <div class="content">
           <el-radio-group v-model="value">
-            <el-radio v-for="item in radioOptions" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
+            <el-radio
+              v-for="item in radioOptions"
+              :key="item.value"
+              :label="item.value"
+            >{{ item.label }}</el-radio>
           </el-radio-group>
         </div>
       </template>
@@ -27,7 +40,13 @@
           <span>右键功能区</span>
         </div>
         <div class="content transferContent">
-          <el-transfer v-model="valueBtns" :data="buttonListInLeft" filterable :props="{ key: 'buttonId', label: 'title' }" :titles="['功能列表', '右键菜单']">
+          <el-transfer
+            v-model="valueBtns"
+            :data="buttonListInLeft"
+            filterable
+            :props="{ key: 'buttonId', label: 'title' }"
+            :titles="['功能列表', '右键菜单']"
+          >
             <span slot-scope="{ option }">
               <i :class="option.icon"></i>
               <span>{{ option.title }}</span>
@@ -90,7 +109,7 @@ export default {
   computed: {
     ...mapGetters(['userSettingAll'])
   },
-  data() {
+  data () {
     return {
       radioOptions: [
         {
@@ -119,11 +138,11 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.initButtonList()
   },
   methods: {
-    initButtonList() {
+    initButtonList () {
       /**
        * 1. vuex中获取保存的值
        * 2. 有值, 则以vuex中为基准,进行解析
@@ -133,7 +152,7 @@ export default {
       this.buttonListInLeft = getButtonData(this.panelData)
       this.getSettingData()
     },
-    getSettingData() {
+    getSettingData () {
       if (this.userSettingAll.PlanButton) {
         const settingData = this.userSettingAll.PlanButton[0]
         this.updataParamsHandle(settingData)
@@ -146,10 +165,10 @@ export default {
       }
       return []
     },
-    updataParamsHandle(data) {
+    updataParamsHandle (data) {
       this.updataParams.id = data.id
     },
-    handleOk() {
+    handleOk () {
       const rightBtns = []
       this.buttonListInLeft.forEach((btn) => {
         if (this.valueBtns.includes(btn.buttonId)) {
@@ -158,7 +177,7 @@ export default {
       })
       this.$emit('submit', { type: this.value, autoScheduling: this.autoScheduling, rightBtns: rightBtns }, this.updataParams)
     },
-    handleCancel() {
+    handleCancel () {
       this.$emit('hidden')
     }
   }
@@ -167,6 +186,7 @@ export default {
 
 <style lang="scss" scoped>
 $bgColor: #eeeeee;
+
 .title {
   height: 40px;
   line-height: 40px;
@@ -174,21 +194,28 @@ $bgColor: #eeeeee;
   background-color: $bgColor;
   font-size: 14px;
 }
+
 .content {
   padding: 14px 10px;
 }
+
 .transferContent {
-  height: calc(100% - 155px);
+  height: calc(100% - 255px);
+  overflow: auto;
 }
+
 .el-transfer {
   height: 100%;
 }
+
 ::v-deep.el-transfer-panel {
   height: 100%;
 }
+
 ::v-deep.el-transfer-panel__body {
   height: calc(100% - 60px);
 }
+
 ::v-deep.el-transfer-panel__list.is-filterable {
   height: calc(100% - 42px);
 }
