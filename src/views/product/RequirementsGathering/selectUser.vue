@@ -52,6 +52,7 @@
                         :tableSetting="false"
                         :style="{height: customHeight + 'px'}"
                         :columns="columns"
+                        :disabled-check-all="true"
                         :params="queryParam"
                         :api="tableApi"
                         @row-click="handleTableRowClick"
