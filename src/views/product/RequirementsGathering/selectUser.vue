@@ -230,7 +230,7 @@ export default {
       this.$emit('member-close', [])
     },
     dialogMemberOk () {
-      this.$emit('member-close', this.tableSelectValue)
+      this.$emit('member-save', this.tableSelectValue)
       this.tableSelectValue = []
     },
     onSelect (node) {
