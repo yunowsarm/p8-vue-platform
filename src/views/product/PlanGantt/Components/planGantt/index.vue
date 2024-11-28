@@ -88,7 +88,7 @@
                   v-for="(user,ind) in editUserList"
                   :key="ind">{{ user.userName }}
               <span v-if="user.entityType === 'compile'">-计划编制</span>
-              <span v-if="user.entityType === 'decompose'">-计划分解</span>
+              <span v-if="user.entityType === 'decompose'">-任务分解</span>
             </span>
           </div>
           <span slot="reference"
