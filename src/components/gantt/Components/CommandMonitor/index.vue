@@ -103,6 +103,7 @@ export default {
                 icon: 'p8 icon-mark-format-brush',
                 parentIcon: item.icon,
                 help: item.title + '格式刷',
+                relyIds: item.relyIds,
                 clickFun: that.clickFun(),
                 isDisableFun: that.isDisableFun()
               },
@@ -111,6 +112,7 @@ export default {
                 title: '取消' + item.title,
                 icon: 'p8 icon-remove',
                 help: '取消' + item.title,
+                relyIds: item.relyIds,
                 clickFun: that.clickFun(),
                 isDisableFun: that.isDisableFun()
               }
@@ -478,6 +480,24 @@ export default {
               monitorPointsMap[item.monitorId] = item
             })
             if (mId.startsWith('delete-')) {
+              // 依赖标识
+              const relyIds = btn.relyIds != null ? btn.relyIds.split(',') : null
+              let flag = true
+              tasks.forEach((t, i) => {
+                if (relyIds != null && relyIds.length > 0) {
+                  if (t.monitorPoints) {
+                    relyIds.forEach((rId, index) => {
+                      if (t.monitorPoints.indexOf(rId) !== -1) {
+                        flag = false
+                      }
+                    })
+                  }
+                }
+              })
+              if (!flag) {
+                that.$message({ type: 'warning', message: '当前标识存在依赖标识，无法取消！' })
+                return
+              }
               // 取消标识按钮
               thisGantt.batchUpdate(function () {
                 tasks.forEach(function (task) {
@@ -489,6 +509,18 @@ export default {
                       point = ',' + point
                     }
                     task.monitorPoints = task.monitorPoints.replace(point, '')
+
+                    that.monitorData.forEach(el => {
+                      let pointNew = el.id
+                      if (el.relyIds && el.relyIds.indexOf(point)) {
+                        if (task.monitorPoints.indexOf(pointNew + ',') !== -1) {
+                          pointNew = pointNew + ','
+                        } else if (task.monitorPoints.indexOf(',' + pointNew) !== -1) {
+                          pointNew = ',' + pointNew
+                        }
+                      }
+                      task.monitorPoints = task.monitorPoints.replace(pointNew, '')
+                    })
                     // 计划编制 责任令编制默认“院发责任令分解项目”，“关键节点计划”为否 责任令开始时间完成时间 为 空
                     if (ganttName === 'planGantt' && mId === 'delete-1015') {
                       task.breakDownProject = ''
