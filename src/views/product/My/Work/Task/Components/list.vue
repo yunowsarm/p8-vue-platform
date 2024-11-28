@@ -16,9 +16,13 @@
           <el-radio label="showView002">计划分组</el-radio>
           <el-radio label="showView003">列表</el-radio>
         </el-radio-group>
-        <el-button style="margin-left: 10px;"
+        <span style="margin-left: 20px;">仅展示叶子节点：</span>
+        <el-switch v-model="isChildren"
+                   active-color="#13ce66"
+                   inactive-color="#ff4949"
                    :disabled="btnDisable"
-                   @click="childrenClick">仅展示叶子节点</el-button>
+                   @change="childrenClick">
+        </el-switch>
       </div>
       <P8TableRender ref="tableRender"
                      :key="dateTime"
@@ -92,7 +96,7 @@
 <style lang="scss" scoped>
 .show-type {
   position: absolute;
-  top: 10px;
+  top: 14px;
   z-index: 2;
   left: 20px;
 }
@@ -237,6 +241,7 @@ export default {
   mounted () { },
   methods: {
     showViewChange (val) {
+      console.log("🚀 ~ svvvvvvvvvvvvvvvv", val)
       let obj = {
         showView: {
           mode: "=",
@@ -254,16 +259,21 @@ export default {
       } else {
         this.btnDisable = true
       }
-      this.isChildren = 'false'
+      this.isChildren = false
       this.$refs.tableRender.$refs.xTable.params.sqlParam = { ...this.$refs.tableRender.$refs.xTable.params.sqlParam, ...obj }
-      console.log("🚀 ~ showViewChange ~ this.$refs.tableRender.$refs.table.params.sqlParams:", this.$refs.tableRender.$refs.xTable.params.sqlParam)
     },
-    childrenClick () {
+    childrenClick (val) {
+      let isChildren = ''
+      if (val) {
+        isChildren = 'true'
+      } else {
+        isChildren = 'false'
+      }
       let obj = {
         isChildren: {
           mode: "=",
           relation: "and",
-          value: 'true'
+          value: isChildren
         }
       }
       this.$refs.tableRender.$refs.xTable.params.sqlParam = { ...this.$refs.tableRender.$refs.xTable.params.sqlParam, ...obj }

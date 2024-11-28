@@ -228,7 +228,7 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="14">
+              <el-col :span="10">
                 <el-form-item class="formitem-progress"
                               label="完成度"
                               prop="progress">
@@ -238,12 +238,11 @@
                                style="margin-top: 8px;"
                                :percentage="formData.progress"></el-progress> -->
                   <el-slider v-model="formData.progress"
-                             @input="progressChange"
-                             show-input>
+                             @input="progressChange">
                   </el-slider>
                 </el-form-item>
               </el-col>
-              <!-- <el-col :span="12"
+              <el-col :span="4"
                       v-if="!this.getPlanInfo().pageType">
                 <el-form-item label-width="30px">
                   <el-input-number size="mini"
@@ -254,7 +253,7 @@
                                    step-strictly
                                    @change="progressChange"></el-input-number>
                 </el-form-item>
-              </el-col> -->
+              </el-col>
             </el-row>
             <el-row>
               <el-col :span="24">
@@ -516,8 +515,7 @@ export default {
     }
   },
   mounted () {
-    this.minValue = Number(this.getPlanInfo().PROGRESS) * 100
-    console.log("🚀 呱呱呱呱呱呱呱呱呱呱呱呱呱呱呱古古怪怪", this.minValue)
+    this.minValue = Math.floor(Number(this.getPlanInfo().PROGRESS) * 100)
     //  进行中的任务不能减进度条
     // if (this.getPlanInfo().STATUS === '6050') {
     //   this.minValue = Number(this.getPlanInfo().PROGRESS) * 100
@@ -617,29 +615,30 @@ export default {
       this.$emit('progress-date-change', date)
     },
     progressChange (val) {
-      console.log(this.minValue, "🚀 ~ progressChange ~ val:", val)
-      if (val < this.minValue) {
-        console.log('111111111111111');
-        this.formData.progress = this.minValue
+      // console.log(this.minValue, "🚀 ~ progressChange ~ val:", val)
+      // if (val < this.minValue) {
+      //   console.log(this.minValue, '111111111111111');
+      //   this.minNum = this.minValue
+      //   this.formData.progress = this.minValue
+      // } else {
+      const maxSpeedNum = 100
+      const difference = maxSpeedNum - val
+      if (difference < 1) {
+        this.formData.progress = maxSpeedNum
+        this.$api['PlanGanttSetting.getTaskDate']().then(res => {
+          this.formData.realEndDate = res.taskDate
+          if (res.taskRealDateWrite.content === '1') {
+            this.endDateDisabled = false
+          } else {
+            this.endDateDisabled = true
+          }
+        })
+        this.$emit('progress-change', maxSpeedNum)
       } else {
-        const maxSpeedNum = 100
-        const difference = maxSpeedNum - val
-        if (difference < 1) {
-          this.formData.progress = maxSpeedNum
-          this.$api['PlanGanttSetting.getTaskDate']().then(res => {
-            this.formData.realEndDate = res.taskDate
-            if (res.taskRealDateWrite.content === '1') {
-              this.endDateDisabled = false
-            } else {
-              this.endDateDisabled = true
-            }
-          })
-          this.$emit('progress-change', maxSpeedNum)
-        } else {
-          this.formData.realBeginDate = moment().format('YYYY-MM-DD')
-          this.$emit('progress-change', val)
-        }
+        this.formData.realBeginDate = moment().format('YYYY-MM-DD')
+        this.$emit('progress-change', val)
       }
+      // }
     },
     submitText (progress) {
       /**
