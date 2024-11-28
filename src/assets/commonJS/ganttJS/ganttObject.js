@@ -2213,7 +2213,7 @@ GanttObject.onSaveCellEven = function (ganttObject, vueThis) {
     let parentId = ganttObject.getParent(task.id)
     let parentTask = ganttObject.getTask(parentId)
     // 当修改计划开始、计划完成、工期时，标记任务，用于更新父
-    if (colName === 'end_date' || colName === 'duration' || colName === 'start_date' || colName === 'predecessors') {
+    if (colName === 'end_date' || colName === 'duration' || colName === 'start_date' || colName === 'predecessors' || colName === 'autoScheduling') {
       // if (colName === 'end_date') {
       //   vueThis.$nextTick(() => {
       //     vueThis.initGantt(vueThis.planInfoId, vueThis.viewType)

@@ -88,7 +88,7 @@
                   v-for="(user,ind) in editUserList"
                   :key="ind">{{ user.userName }}
               <span v-if="user.entityType === 'compile'">-计划编制</span>
-              <span v-if="user.entityType === 'decompose'">-计划分解</span>
+              <span v-if="user.entityType === 'decompose'">-任务分解</span>
             </span>
           </div>
           <span slot="reference"
@@ -391,6 +391,12 @@
     width: 100%;
     position: relative;
     box-sizing: border-box;
+  }
+  ::v-deep .el-menu--collapse > .el-submenu > .el-submenu__title .el-submenu__icon-arrow {
+    display: inline-block;
+  }
+  ::v-deep .el-submenu.is-opened > .el-submenu__title .el-submenu__icon-arrow {
+    transform: rotate(180deg);
   }
 }
 ::v-deep .list-layout {
