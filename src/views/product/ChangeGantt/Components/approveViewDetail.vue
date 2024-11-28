@@ -1,20 +1,23 @@
 <template>
   <div style="height: 100%">
-    <common-dialog
-      title="查看计划详情"
-      :visible="isView"
-      class="w_dialog"
-      :show-handle-btn="false"
-      :dialog-config="dialogConfig"
-      @handle-cancel="handleCancel"
-      @handle-ok="handleOk"
-      width="80%"
-      @close="handleCancel"
-      :dialog-height="700"
-    >
+    <common-dialog title="查看计划详情"
+                   :visible="isView"
+                   class="w_dialog"
+                   :show-handle-btn="false"
+                   :dialog-config="dialogConfig"
+                   @handle-cancel="handleCancel"
+                   @handle-ok="handleOk"
+                   width="80%"
+                   @close="handleCancel"
+                   :dialog-height="700">
       <template #dialog>
-        <div id="couerDiv" style="background: #ffffff;height: 100%; z-index: 9999 !important;">
-          <impact-analysis :plan-info-id="planInfoId" :create-page="createPage" :read-only="readOnlyVisible" :change-id="approveContentView.changeId"></impact-analysis>
+        <div id="couerDiv"
+             style="background: #ffffff;height: 100%; z-index: 9999 !important;">
+          <impact-analysis :plan-info-id="planInfoId"
+                           :create-page="createPage"
+                           :read-only="readOnlyVisible"
+                           :change-id="approveContentView.changeId"
+                           changeName="changeGantt"></impact-analysis>
         </div>
       </template>
     </common-dialog>
@@ -42,10 +45,10 @@ export default {
     },
     approveContentView: {
       type: Object,
-      default: () => {}
+      default: () => { }
     }
   },
-  data() {
+  data () {
     return {
       dialogHeight: 400,
       readOnlyVisible: true,
@@ -55,10 +58,10 @@ export default {
     }
   },
   methods: {
-    handleCancel() {
+    handleCancel () {
       this.$emit('close')
     },
-    handleOk() {
+    handleOk () {
       this.handleCancel()
     }
   }

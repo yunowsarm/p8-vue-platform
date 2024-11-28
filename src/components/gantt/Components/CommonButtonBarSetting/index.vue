@@ -1,14 +1,12 @@
 <template>
-  <common-dialog
-    :title="title"
-    :width="width"
-    :dialog-config="dialogConfig"
-    :visible="visible"
-    :dialog-height="dialogHeight"
-    @handle-ok="handleOk"
-    @handle-cancel="handleCancel"
-    @close="handleCancel"
-  >
+  <common-dialog :title="title"
+                 :width="width"
+                 :dialog-config="dialogConfig"
+                 :visible="visible"
+                 :dialog-height="dialogHeight"
+                 @handle-ok="handleOk"
+                 @handle-cancel="handleCancel"
+                 @close="handleCancel">
     <template #dialog>
       <template title="主菜单配置">
         <div class="title">
@@ -16,11 +14,9 @@
         </div>
         <div class="content">
           <el-radio-group v-model="value">
-            <el-radio
-              v-for="item in radioOptions"
-              :key="item.value"
-              :label="item.value"
-            >{{ item.label }}</el-radio>
+            <el-radio v-for="item in radioOptions"
+                      :key="item.value"
+                      :label="item.value">{{ item.label }}</el-radio>
           </el-radio-group>
         </div>
       </template>
@@ -40,13 +36,11 @@
           <span>右键功能区</span>
         </div>
         <div class="content transferContent">
-          <el-transfer
-            v-model="valueBtns"
-            :data="buttonListInLeft"
-            filterable
-            :props="{ key: 'buttonId', label: 'title' }"
-            :titles="['功能列表', '右键菜单']"
-          >
+          <el-transfer v-model="valueBtns"
+                       :data="buttonListInLeft"
+                       filterable
+                       :props="{ key: 'buttonId', label: 'title' }"
+                       :titles="['功能列表', '右键菜单']">
             <span slot-scope="{ option }">
               <i :class="option.icon"></i>
               <span>{{ option.title }}</span>
@@ -201,11 +195,11 @@ $bgColor: #eeeeee;
 
 .transferContent {
   height: calc(100% - 255px);
-  overflow: auto;
 }
 
 .el-transfer {
   height: 100%;
+  margin-bottom: 20px;
 }
 
 ::v-deep.el-transfer-panel {
@@ -218,5 +212,8 @@ $bgColor: #eeeeee;
 
 ::v-deep.el-transfer-panel__list.is-filterable {
   height: calc(100% - 42px);
+}
+::v-deep .el-dialog__body {
+  height: calc(100% - 120px) !important;
 }
 </style>

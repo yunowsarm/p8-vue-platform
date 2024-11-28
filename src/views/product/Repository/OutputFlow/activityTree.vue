@@ -248,6 +248,10 @@ export default {
     initGantt (taskId) {
       // 清空原有数据
       if (myGantt) {
+        myGantt.unselectTask()
+        myGantt.parse({ tasks: [] })
+        this.selectedTasks = []
+        // myGantt = null
         GanttObject.setGanttObject(ganttName, {})
       }
       let vueThis = this
@@ -268,11 +272,11 @@ export default {
           let datas = {
             tasks: res
           }
+          myGantt.parse(datas)
           if (taskId) {
             myGantt.unselectTask();
             myGantt.selectTask(taskId);
           }
-          myGantt.parse(datas)
         }
       }).catch(function (error) {
         console.error('error' + error)

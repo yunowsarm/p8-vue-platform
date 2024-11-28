@@ -92,6 +92,7 @@
                  :visibleDislogMember="visible"
                  loginFlag="1"
                  :existsData="selectedRows"
+                 @member-save="saveModal"
                  @member-close="closeModal"></select-user>
   </div>
 </template>
@@ -1001,7 +1002,7 @@ export default {
     selectPeople () {
       this.visible = true
     },
-    closeModal (selectedRows) {
+    saveModal (selectedRows) {
       this.selectedRows = selectedRows
       if (selectedRows.length > 0) {
         if (this.formType === '1') {
@@ -1031,6 +1032,9 @@ export default {
           this.$set(this.formData, 'processingTeamDisplay', '')
         }
       }
+      this.visible = false
+    },
+    closeModal (selectedRows) {
       this.visible = false
     },
     handleSubmit () {

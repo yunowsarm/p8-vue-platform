@@ -190,6 +190,9 @@
       <div class="regards-box">
         <p><span class="regards-font">系统名称:&nbsp;&nbsp;&nbsp;</span><span>{{ systemName }}</span></p>
         <p><span class="regards-font">系统版本:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.systemVersion }}</span></p>
+        <p><span class="regards-font">官网地址:&nbsp;&nbsp;&nbsp;</span><el-button type="text"
+                     style="font-size: 15px;"
+                     @click="openRZ">www.xardmu.com</el-button></p>
         <p><span class="regards-font">授权终止日期:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.authorizedExpires }}</span></p>
         <p><span class="regards-font">特征码:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.cpuSerialCode }}</span></p>
         <p v-for="(el,index) in AuthorizationInfoList"

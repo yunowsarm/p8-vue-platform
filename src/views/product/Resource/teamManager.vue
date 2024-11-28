@@ -618,7 +618,7 @@ export default {
         return
       }
       this.rolesSelectedIndex = index
-      this.selectRoleId = item.roleType === 'fixed' ? item.roleId : ''
+      this.selectRoleId = item.roleId ? item.roleId : ''
       this.tableData = item.projectTeamRoleUsers ? item.projectTeamRoleUsers : []
       if (this.columns.filter(item => item.dataIndex === 'roleName').length) {
         this.columns.shift()

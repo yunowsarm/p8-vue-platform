@@ -182,6 +182,7 @@ export function outPutFlowGantt (ganttName, vueThis) {
           //   // GanttObject.showMessage(vueThis, '更新失败！', 'error')
           //   return { 'action': 'error' }
           // }
+          vueThis.$emit('refrshDes')
         }).catch(() => {
           ganttObject.undo()
           GanttObject.showMessage(vueThis, '更新失败！', 'error')

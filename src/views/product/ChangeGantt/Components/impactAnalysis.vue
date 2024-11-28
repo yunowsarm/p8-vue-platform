@@ -127,6 +127,10 @@ export default {
       type: String,
       default: null
     },
+    changeName: {
+      type: String,
+      default: null
+    },
     taskStatus: {
       type: Object,
       default: {}
