@@ -1191,14 +1191,27 @@ GanttObject.customEndDateEditor = function (ganttObject) {
             config: {
               pickerOptions: {
                 disabledDate: (time) => {
-                  if (minValue && maxValue) {
-                    return time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000
-                  }
-                  if (!minValue && maxValue) {
-                    return new Date(maxValue).getTime() < time.getTime()
-                  }
-                  if (minValue && !maxValue) {
-                    return time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000
+                  const vueThis = store.getters.vueThis
+                  if (vueThis.createPage === 'decompose') {
+                    if (minValue && maxValue) {
+                      return new Date(maxValue).getTime() < time.getTime() || time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000
+                    }
+                    if (!minValue && maxValue) {
+                      return new Date(maxValue).getTime() < time.getTime()
+                    }
+                    if (minValue && !maxValue) {
+                      return time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000
+                    }
+                  } else {
+                    if (minValue && maxValue) {
+                      return time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000
+                    }
+                    if (!minValue && maxValue) {
+                      return new Date(maxValue).getTime() < time.getTime()
+                    }
+                    if (minValue && !maxValue) {
+                      return time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000
+                    }
                   }
                 }
               }

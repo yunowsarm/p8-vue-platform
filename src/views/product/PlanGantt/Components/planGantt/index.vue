@@ -1251,6 +1251,13 @@ export default {
                 }
               })
             }
+            if (vueThis.createPage === 'decompose') {
+              taskList.forEach(item => {
+                if (!item.parent && item.managerStatus === '6402') {
+                  item.autoScheduling = '0'
+                }
+              })
+            }
             // 初始化数据
             const datas = {
               tasks: taskList,
