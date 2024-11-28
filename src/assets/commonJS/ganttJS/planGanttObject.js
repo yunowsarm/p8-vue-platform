@@ -960,9 +960,6 @@ export function getGanttColumns(ganttObject, vueThis) {
       align: 'center',
       min_width: 100,
       resize: true,
-      template: function (task) {
-        return ganttObject.date.add(task.end_date, -1, 'day')
-      }
     },
     {
       name: 'realBeginDate',
