@@ -392,6 +392,12 @@
     position: relative;
     box-sizing: border-box;
   }
+  ::v-deep .el-menu--collapse > .el-submenu > .el-submenu__title .el-submenu__icon-arrow {
+    display: inline-block;
+  }
+  ::v-deep .el-submenu.is-opened > .el-submenu__title .el-submenu__icon-arrow {
+    transform: rotate(180deg);
+  }
 }
 ::v-deep .list-layout {
   overflow: hidden;
