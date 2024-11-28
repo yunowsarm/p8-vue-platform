@@ -2,8 +2,7 @@
 
 
 <template>
-  <div class="history"
-       style="height: 100%">
+  <div class="history">
     <common-table ref="table"
                   :comp="comp"
                   :columns="columns"
@@ -122,4 +121,8 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.history{
+  height: 100%;
+}
+</style>

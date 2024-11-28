@@ -440,11 +440,14 @@ $paddingLeft: 10px;
   }
 }
 .custom-tabs {
-  height: calc(100% - 65px);
+  height: calc(100% - 110px);
   // z-index: 0 !important;
   ::v-deep .el-tabs {
     border: none;
     height: 100% !important;
+  }
+  ::v-deep .el-tabs--top .el-tabs__content{
+    height: calc(100% - 69px);
   }
 }
 .custom-tabs.el-tabs--top {
