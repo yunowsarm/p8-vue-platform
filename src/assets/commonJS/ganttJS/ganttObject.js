@@ -1820,10 +1820,60 @@ function searchFilter (parent, searchForm, ganttObject) {
         dateCheck = false
       }
     }
+
+    const overdueRemainingDays = searchForm.overdueRemainingDays // 超期/剩余天数
+    let overdueRemainingDaysCheck = true
+    if (overdueRemainingDays && overdueRemainingDays.length > 0) {
+      let days = 0;
+      if (task.managerStatus === '6409') {
+        const realEndDate = new Date(moment(task.realEndDate).format('YYYY-MM-DD'))
+        const endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - 24 * 60 * 60 * 1000
+        days = Math.floor(Math.abs((realEndDate - endDate) / 1000 / 60 / 60 / 24))
+        if (realEndDate > endDate) {
+          days = -days
+        }
+      } else {
+        const nowDate = new Date(moment(new Date()).format('YYYY-MM-DD'))
+        const endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - 24 * 60 * 60 * 1000
+        days = Math.floor(Math.abs((nowDate - endDate) / 1000 / 60 / 60 / 24))
+        if (nowDate > endDate) {
+          days = -days - 1
+        }
+      }
+      if (overdueRemainingDays == 0 && days > 0) {
+        overdueRemainingDaysCheck = false;
+      } else if (days < 0 || days > overdueRemainingDays) {
+        overdueRemainingDaysCheck = false;
+      }
+    }
+
     const status = searchForm.status // 任务状态
     let statusCheck = true
     if (status && status.length > 0 && status.indexOf(task.status) === -1) {
       statusCheck = false
+    }
+
+    const progressFeedback = searchForm.progressFeedback // TODO 进度反馈
+    let progressFeedbackCheck = true
+    const reminderList = vueThis.reminderList
+    const obj = reminderList.find((item) => {
+      return item.id === task.id
+    })
+    let reminder = -1;
+    if (obj) {
+      reminder = obj.reminder;
+    }
+    console.log(reminder);
+    if (progressFeedback && progressFeedback == 1 && Number(reminder) != 0) {
+      progressFeedbackCheck = false
+    } else if (progressFeedback && progressFeedback == 0 && Number(reminder) < 1) {
+      progressFeedbackCheck = false
+    }
+
+    const weatherControl = searchForm.weatherControl // 管控任务
+    let weatherControlCheck = true
+    if (weatherControl && weatherControl.length > 0 && weatherControl.indexOf(task.weatherControl) === -1) {
+      weatherControlCheck = false
     }
     const managerStatus = searchForm.managerStatus // 任务管理状态
     let managerStatusCheck = true
@@ -1878,7 +1928,10 @@ function searchFilter (parent, searchForm, ganttObject) {
       dateCheck &&
       statusCheck &&
       monitorsCheck &&
-      planTypeCheck
+      planTypeCheck &&
+      weatherControlCheck &&
+      progressFeedbackCheck &&
+      overdueRemainingDaysCheck
     ) {
       return true
     }
@@ -2789,7 +2842,8 @@ GanttObject.getGanttSettingGrid = function (ganttName, createPage) {
  * 定义列类型对应关系，此处添加后，需要编写searchFilter方法对应属性过滤逻辑
  */
 const columnsTypeMap = {
-  // 'status': 'select',
+  status: 'select',
+  progressFeedback: 'select',
   managerStatus: 'select',
   monitorPoints: 'select',
   planType: 'select',
@@ -2799,10 +2853,11 @@ const columnsTypeMap = {
   roleName: 'input',
   dutyDeptName: 'input',
   taskProjectName: 'input',
+  overdueRemainingDays: 'select',
   // secretGrade: 'select',
-  // 'weatherControl': 'select',
+  weatherControl: 'select',
   // 'predecessors': 'input',
-  // 'progress': 'input',
+  // progress: 'select',
   // 'productQuantity': 'input',
   start_date: 'date',
   end_date: 'date'
@@ -2826,6 +2881,40 @@ export const taskStatusArr = [
     id: '6070',
     title: '已完成'
   }
+]
+export const taskProgressFeedbackArr = [
+  {
+    id: '0',
+    title: '未读'
+  },
+  {
+    id: '1',
+    title: '已读'
+  },
+]
+export const taskOverdueRemainingDaysArr = [
+  {
+    id: '0',
+    title: '已超期'
+  },
+  {
+    id: '7',
+    title: '剩余7天以内'
+  },
+  {
+    id: '30',
+    title: '剩余30天以内'
+  }
+]
+export const taskWeatherControlArr = [
+  {
+    id: '1',
+    title: '是'
+  },
+  {
+    id: '0',
+    title: '否'
+  },
 ]
 
 /**
@@ -3012,6 +3101,15 @@ GanttObject.searchColumnsDataInit = function (vueThis, ganttObject) {
           switch (name) {
             case 'status':
               datas = taskStatusArr
+              break
+            case 'progressFeedback':
+              datas = taskProgressFeedbackArr
+              break
+            case 'overdueRemainingDays':
+              datas = taskOverdueRemainingDaysArr
+              break
+            case 'weatherControl':
+              datas = taskWeatherControlArr
               break
             case 'managerStatus':
               if (vueThis.managerStatusMap && Object.keys(vueThis.managerStatusMap).length > 0) {
