@@ -51,6 +51,7 @@
                         :view-type="viewType"
                         :gantt-name="ganttName"
                         :status="status"
+                        :defaultPercent="defaultPercent"
                         @refreshData="refreshData"
                         :plan-info-id="planInfoId"></plan-attribute>
       </template>
@@ -70,8 +71,9 @@
 
 <style lang="scss" scoped>
 .x-style {
+  float: right;
   font-size: 20px;
-  margin-left: 94%;
+  margin-right: 10px;
 }
 .couerDivClass {
   height: 100% !important;

@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%;">
+  <div style="height: 100%;" :style="{ width: `${formWidth}vw` }">
     <vxe-table ref="xDemandTable"
                v-if="falg"
                :comp="comp"
@@ -27,6 +27,10 @@ export default {
   props: {
     taskId: {
       type: String
+    },
+    formWidth: {
+      type: Number,
+      default: 0
     }
   },
   data () {

@@ -2,7 +2,8 @@
   <div style="height: 100%">
     <anchor placement="left"
             :menu="anchorMenu"
-            style-sheet="tabs">
+            style-sheet="tabs"
+            style="margin-left: 10px;">
       <template #describeKey>
         <describe-edit v-if="isChangeGantt"
                        @saveSuccess="saveCallback"
@@ -11,39 +12,47 @@
                        :current-route="currentRoute"
                        :gantt-name="ganttName"
                        @refreshData="refreshData"
-                       :plan-info-id="planInfoId"></describe-edit>
+                       :plan-info-id="planInfoId"
+                       :formWidth="formWidth"></describe-edit>
         <describe-view v-if="!isChangeGantt"
                        :task-id="taskId"
                        :gantt-name="ganttName"
-                       :plan-info-id="planInfoId"></describe-view>
+                       :plan-info-id="planInfoId"
+                       :formWidth="formWidth"></describe-view>
       </template>
       <template #monitorKey>
         <monitor-edit v-if="isView"
                       @saveSuccess="saveCallback"
                       @refreshData="refreshData"
                       :task-id="taskId"
-                      :gantt-name="ganttName"></monitor-edit>
+                      :gantt-name="ganttName"
+                      :formWidth="formWidth"></monitor-edit>
         <monitor-view v-if="!isView"
                       :task-id="taskId"
-                      :gantt-name="ganttName"></monitor-view>
+                      :gantt-name="ganttName"
+                      :formWidth="formWidth"></monitor-view>
       </template>
       <template #dependenceKey>
         <dependence-edit v-if="isView"
                          @saveSuccess="saveCallback"
                          :task-id="taskId"
-                         :gantt-name="ganttName"></dependence-edit>
+                         :gantt-name="ganttName"
+                         :formWidth="formWidth"></dependence-edit>
         <dependence-view v-if="!isView"
                          :task-id="taskId"
-                         :gantt-name="ganttName"></dependence-view>
+                         :gantt-name="ganttName"
+                         :formWidth="formWidth"></dependence-view>
       </template>
       <template #inputKey>
         <input-edit v-if="isView"
                     @saveSuccess="saveCallback"
                     :task-id="taskId"
-                    :gantt-name="ganttName"></input-edit>
+                    :gantt-name="ganttName"
+                    :formWidth="formWidth"></input-edit>
         <input-view v-if="!isView"
                     :task-id="taskId"
-                    :gantt-name="ganttName"></input-view>
+                    :gantt-name="ganttName"
+                    :formWidth="formWidth"></input-view>
       </template>
       <template #outputKey>
         <el-tabs v-model="activeOutput"
@@ -54,17 +63,20 @@
             <output-edit v-if="isView"
                          @saveSuccess="saveCallback"
                          :task-id="taskId"
-                         :gantt-name="ganttName"></output-edit>
+                         :gantt-name="ganttName"
+                         :formWidth="formWidth"></output-edit>
             <output-view v-if="!isView"
                          :task-id="taskId"
-                         :gantt-name="ganttName"></output-view>
+                         :gantt-name="ganttName"
+                         :formWidth="formWidth"></output-view>
           </el-tab-pane>
           <el-tab-pane label="已提交输出物"
                        name="getOutputKey">
             <span slot="label"><i class="p8 icon-yitijiaoshuchuwu"></i> 已提交输出物</span>
             <getOutPutView @saveSuccess="saveCallback"
                            :task-id="taskId"
-                           :gantt-name="ganttName"></getOutPutView>
+                           :gantt-name="ganttName"
+                           :formWidth="formWidth"></getOutPutView>
           </el-tab-pane>
         </el-tabs>
       </template>
@@ -75,14 +87,17 @@
         <special-edit v-if="isView"
                       @saveSuccess="saveCallback"
                       :task-id="taskId"
-                      :gantt-name="ganttName"></special-edit>
+                      :gantt-name="ganttName"
+                      :formWidth="formWidth"></special-edit>
         <special-view v-if="!isView"
                       :task-id="taskId"
-                      :gantt-name="ganttName"></special-view>
+                      :gantt-name="ganttName"
+                      :formWidth="formWidth"></special-view>
       </template>
       <template #demandKey>
         <relevance-list :task-id="taskId"
-                        :gantt-name="ganttName"></relevance-list>
+                        :gantt-name="ganttName"
+                        :formWidth="formWidth"></relevance-list>
       </template>
     </anchor>
   </div>
@@ -108,7 +123,7 @@ import { P8Anchor as Anchor } from 'p8-components-ui'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 export default {
   name: 'PlanAttribute',
-  props: ['taskId', 'ganttName', 'status', 'planInfoId', 'attReadOnly', 'createPage', 'currentRoute', 'viewType'],
+  props: ['taskId', 'ganttName', 'status', 'planInfoId', 'attReadOnly', 'createPage', 'currentRoute', 'viewType', 'defaultPercent'],
   components: {
     getOutPutView,
     DescribeEdit,
@@ -126,6 +141,17 @@ export default {
     SpecialView,
     relevanceList
   },
+  computed: {
+    formWidth () {
+      return (100 - this.defaultPercent - (150 / this.windowWidth * 100)).toFixed(2);
+    }
+  },
+  created() {
+    window.addEventListener('resize', this.updateWindowWidth);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.updateWindowWidth);
+  },
   watch: {},
   mounted: function () {
     // isView为true时是修改页面，为false时是查看页面
@@ -142,8 +168,8 @@ export default {
       }
       // 审批页面都不可编辑
       if (this.ganttName == 'analysisGantt') {
-          this.isChangeGantt = false
-          this.isView = false
+        this.isChangeGantt = false
+        this.isView = false
       }
       if (this.viewType === 'view') {
         this.isView = false
@@ -188,7 +214,7 @@ export default {
         //     this.isView = false
         //   }
         // }
-        if(this.ganttName === 'changeGantt') {
+        if (this.ganttName === 'changeGantt') {
           this.isView = false
         }
         if (task.infoType === 'delete') {
@@ -201,7 +227,7 @@ export default {
         // }
       }
     }
-    console.log(this.isChangeGantt,'this.isChangeGanttthis.isChangeGanttthis.isChangeGantt');
+    console.log(this.isChangeGantt, 'this.isChangeGanttthis.isChangeGanttthis.isChangeGantt');
 
   },
   data () {
@@ -209,7 +235,7 @@ export default {
       headerVisible: false,
       isView: true,
       isEdit: true,
-      isChangeGantt:true,
+      isChangeGantt: true,
       activeOutput: 'outputKey',
       anchorMenu: [
         { label: '任务描述', value: 'describeKey', icon: 'p8 icon-jindu' },
@@ -219,7 +245,8 @@ export default {
         { label: '输出要求', value: 'outputKey', icon: 'p8 icon-shuchuyaoqiu', hideLabel: true },
         { label: '特别说明', value: 'specialKey', icon: 'p8 el-icon-warning-outline' },
         { label: '关联需求', value: 'demandKey', icon: 'p8 icon-a-xuqiu1' }
-      ]
+      ],
+      windowWidth: window.innerWidth
     }
   },
   methods: {
@@ -229,6 +256,9 @@ export default {
     saveCallback (res) { },
     refreshData (res) {
       this.$emit('refreshData')
+    },
+    updateWindowWidth() {
+      this.windowWidth = window.innerWidth;
     }
   }
 }
@@ -238,7 +268,8 @@ export default {
   height: 100%;
   padding: 0 6px;
 }
-.formList.el-form > .el-row.formBtn {
+
+.formList.el-form>.el-row.formBtn {
   border-top: none;
 }
 </style>

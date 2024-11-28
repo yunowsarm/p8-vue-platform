@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :style="{ width: `${formWidth}vw` }">
     <form2
       ref="form"
       :comp="comp"
@@ -65,6 +65,10 @@ export default {
     ganttName: {
       type: String,
       default: null
+    },
+    formWidth: {
+      type: Number,
+      default: 0
     }
   },
   computed: {

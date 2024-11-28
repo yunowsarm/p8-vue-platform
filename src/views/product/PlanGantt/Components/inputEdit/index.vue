@@ -5,7 +5,7 @@
       <el-tab-pane label="输入要求"
                    name="inputKey">
         <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 输入要求</span>
-        <div style="position: relative; padding-bottom: 50px">
+        <div style="position: relative; padding-bottom: 50px" :style="{ width: `${formWidth}vw` }">
           <form-list ref="form"
                      @rendered="rendered"
                      form-layout="vertical"
@@ -72,6 +72,10 @@ export default {
     ganttName: {
       type: String,
       default: null
+    },
+    formWidth: {
+      type: Number,
+      default: 0
     }
   },
   data () {

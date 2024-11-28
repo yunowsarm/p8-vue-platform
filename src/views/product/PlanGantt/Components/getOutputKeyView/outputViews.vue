@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative; padding-bottom: 16px">
+  <div style="position: relative; padding-bottom: 16px" :style="{ width: `${formWidth}vw` }">
     <form-list
       ref="form"
       v-if="!isEmpty"
@@ -41,6 +41,10 @@ export default {
     ganttName: {
       type: String,
       default: null
+    },
+    formWidth: {
+      type: Number,
+      default: 0
     }
   },
   data() {

@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative; overflow-y: auto; overflow-x: hidden">
+  <div style="position: relative; overflow-y: auto; overflow-x: hidden" :style="{ width: `${formWidth}vw` }">
     <form2 :comp="comp"
            :form-to-api-data="monitorManagerRequests"
            :data-source="dataSource"
@@ -34,6 +34,10 @@ export default {
     ganttName: {
       type: String,
       default: null
+    },
+    formWidth: {
+      type: Number,
+      default: 0
     }
   },
   computed: {

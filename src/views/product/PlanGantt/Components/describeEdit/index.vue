@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative">
+  <div style="position: relative" :style="{ width: `${formWidth}vw` }">
     <form-list class="describe-form"
                ref="form"
                :comp="comp"
@@ -52,6 +52,10 @@ export default {
     createPage: {
       type: String,
       default: null
+    },
+    formWidth: {
+      type: Number,
+      default: 0
     }
   },
   data () {

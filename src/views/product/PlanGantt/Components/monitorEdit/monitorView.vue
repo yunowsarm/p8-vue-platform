@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative; overflow-y: auto; overflow-x: hidden; width: 100%">
+  <div style="position: relative; overflow-y: auto; overflow-x: hidden; width: 100%" :style="{ width: `${formWidth}vw` }">
     <form2 :comp="comp"
            v-if="!isEmpty"
            :is-view="true"
@@ -41,6 +41,10 @@ export default {
     ganttName: {
       type: String,
       default: null
+    },
+    formWidth: {
+      type: Number,
+      default: 0
     }
   },
   computed: {

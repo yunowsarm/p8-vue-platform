@@ -5,7 +5,7 @@
       <el-tab-pane label="增加的输入物"
                    name="inputKey">
         <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 增加的输入物</span>
-        <div>
+        <div :style="{ width: `${formWidth}vw` }">
           <form-list
             v-if="!isEmpty"
             ref="form"
@@ -105,6 +105,10 @@ export default {
     ganttName: {
       type: String,
       default: null
+    },
+    formWidth: {
+      type: Number,
+      default: 0
     }
   },
   data () {
