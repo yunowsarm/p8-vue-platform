@@ -9,14 +9,14 @@
                    @select="onSelect"></common-tree>
     </template>
     <template #center>
-      <div class="show-type">展示方式：
+      <div class="show-type"><span style="font-weight: bold;font-size: 15px;">展示方式：</span>
         <el-radio-group v-model="showView"
                         @input="showViewChange">
-          <el-radio label="showView001">父子结构</el-radio>
+          <!-- <el-radio label="showView001">父子结构</el-radio> -->
           <el-radio label="showView002">计划分组</el-radio>
           <el-radio label="showView003">列表</el-radio>
         </el-radio-group>
-        <span style="margin-left: 20px;">仅展示叶子节点：</span>
+        <span style="margin-left: 30px;font-weight: bold;font-size: 15px;">仅展示叶子节点：</span>
         <el-switch v-model="isChildren"
                    active-color="#13ce66"
                    inactive-color="#ff4949"
@@ -241,7 +241,6 @@ export default {
   mounted () { },
   methods: {
     showViewChange (val) {
-      console.log("🚀 ~ svvvvvvvvvvvvvvvv", val)
       let obj = {
         showView: {
           mode: "=",
