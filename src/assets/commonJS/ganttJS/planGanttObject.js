@@ -1003,7 +1003,7 @@ export function getGanttColumns(ganttObject, vueThis) {
           const endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - 24 * 60 * 60 * 1000
           const days = Math.floor(Math.abs((nowDate - endDate) / 1000 / 60 / 60 / 24))
           if (nowDate > endDate) {
-            text = `<span style="color: #F80012">超${days + 1}天</span>`
+            text = `<span style="color: #F80012">超${days}天</span>`
           } else if (days === 0) {
             text = `<span style="color: #1BBF9E">今天</span>`
           } else {

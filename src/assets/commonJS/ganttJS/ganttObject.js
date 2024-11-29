@@ -1837,9 +1837,10 @@ function searchFilter (parent, searchForm, ganttObject) {
         const endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - 24 * 60 * 60 * 1000
         days = Math.floor(Math.abs((nowDate - endDate) / 1000 / 60 / 60 / 24))
         if (nowDate > endDate) {
-          days = -days - 1
+          days = -days
         }
       }
+      console.log("days",days);
       if (overdueRemainingDays == 0 && days > 0) {
         overdueRemainingDaysCheck = false;
       } else if (overdueRemainingDays == 7 && (days < 0 || days > 7)) {
