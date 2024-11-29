@@ -1840,7 +1840,6 @@ function searchFilter (parent, searchForm, ganttObject) {
           days = -days
         }
       }
-      console.log("days",days);
       if (overdueRemainingDays == 0 && days > 0) {
         overdueRemainingDaysCheck = false;
       } else if (overdueRemainingDays == 7 && (days < 0 || days > 7)) {

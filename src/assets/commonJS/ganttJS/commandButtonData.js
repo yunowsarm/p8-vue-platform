@@ -3049,6 +3049,7 @@ function removePlanGanttData(ganttObject, dp, ganttName, vueThis, selectedTaskId
                 const parTask = ganttObject.getTask(id)
                 parTask.progress = GanttObject.calculateProgress(parTask, ganttObject)
                 vueThis.updateRootProgress(id, parTask.progress)
+                updateforecastDate(parTask, ganttObject)
               }
             })
           })
