@@ -1853,7 +1853,7 @@ function searchFilter (parent, searchForm, ganttObject) {
       statusCheck = false
     }
 
-    const progressFeedback = searchForm.progressFeedback // TODO 进度反馈
+    const progressFeedback = searchForm.progressFeedback // 进度反馈
     let progressFeedbackCheck = true
     const reminderList = vueThis.reminderList
     const obj = reminderList.find((item) => {
@@ -1863,7 +1863,6 @@ function searchFilter (parent, searchForm, ganttObject) {
     if (obj) {
       reminder = obj.reminder;
     }
-    console.log(reminder);
     if (progressFeedback && progressFeedback == 1 && Number(reminder) != 0) {
       progressFeedbackCheck = false
     } else if (progressFeedback && progressFeedback == 0 && Number(reminder) < 1) {

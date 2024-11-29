@@ -80,12 +80,11 @@
         <span style="float: right; margin-right: 40px">合计 {{ taskCount }} 条</span>
         <span style="float: right; margin-right: 40px">已选中 {{ selectTaskCount }} 条</span>
         <el-popover placement="top"
-                    width="200"
                     trigger="click">
           <div class="edit_gantt_user_list">
             <span v-if="webSocketDone">当前连接异常，无法查看正在编辑人员，请尝试刷新页面或联系运维人员</span>
             <span v-else
-                  v-for="(user,ind) in editUserList"
+                  v-for="(user, ind) in editUserList"
                   :key="ind">{{ user.userName }}
               <span v-if="user.entityType === 'compile'">-计划编制</span>
               <span v-if="user.entityType === 'decompose'">-任务分解</span>
@@ -348,14 +347,17 @@
 <style lang="scss">
 @import '~p8-dhtmlx-gantt/codebase/dhtmlxgantt.css';
 @import '@/assets/commonJS/ganttJS/ganttObject.css';
+
 .edit_gantt_user_list {
   max-height: 500px;
   overflow: auto;
   display: flex;
   flex-direction: column;
+
   span {
     padding: 5px;
     border-bottom: #cccccc;
+
     &:last-child {
       border-bottom: none;
     }
@@ -367,16 +369,19 @@
   user-select: none;
   width: 165px;
   background-color: $base-white-color;
+
   .el-menu--collapse {
     width: 164px;
   }
-  .el-menu--collapse > .el-menu-item .el-submenu__icon-arrow,
-  .el-menu--collapse > .el-submenu > .el-submenu__title .el-submenu__icon-arrow {
+
+  .el-menu--collapse>.el-menu-item .el-submenu__icon-arrow,
+  .el-menu--collapse>.el-submenu>.el-submenu__title .el-submenu__icon-arrow {
     display: block;
     margin-top: -5px;
   }
-  .el-menu--collapse > .el-menu-item span,
-  .el-menu--collapse > .el-submenu > .el-submenu__title span {
+
+  .el-menu--collapse>.el-menu-item span,
+  .el-menu--collapse>.el-submenu>.el-submenu__title span {
     height: 100%;
     width: 100%;
     visibility: visible;
@@ -392,16 +397,20 @@
     position: relative;
     box-sizing: border-box;
   }
-  ::v-deep .el-menu--collapse > .el-submenu > .el-submenu__title .el-submenu__icon-arrow {
+
+  ::v-deep .el-menu--collapse>.el-submenu>.el-submenu__title .el-submenu__icon-arrow {
     display: inline-block;
   }
-  ::v-deep .el-submenu.is-opened > .el-submenu__title .el-submenu__icon-arrow {
+
+  ::v-deep .el-submenu.is-opened>.el-submenu__title .el-submenu__icon-arrow {
     transform: rotate(180deg);
   }
 }
+
 ::v-deep .list-layout {
   overflow: hidden;
 }
+
 .el-drawer__wrapper.resource-group-drawer {
   & ::v-deep .el-drawer__body {
     padding: 10px;
@@ -876,7 +885,7 @@ export default {
       html += '</div>'
       if (that.editUserList.length > 1) {
         that.$notify({
-          title: `当前共有${that.editUserList.length}人编制当前计划`,
+          title: `${that.editUserList.length}人正在编制当前计划`,
           dangerouslyUseHTMLString: true,
           message: html
         })
