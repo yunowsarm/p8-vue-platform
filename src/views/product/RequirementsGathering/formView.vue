@@ -28,7 +28,7 @@
                    :exist-default-btn="false"
                    :form="formData">
           <template #requirementAnalyst>
-            <div @click="selectPeople">
+            <div @click="selectPeople('1')">
               <el-input v-model="formData['requirementAnalystDisplay']"
                         readonly
                         autosize>
@@ -57,23 +57,12 @@
                    :data-source="dataSource4"
                    :exist-default-btn="false"
                    :form="formData">
-          <template #requirementAnalyst>
-            <div @click="selectPeople">
-              <el-input v-model="formData['requirementAnalystDisplay']"
-                        readonly
-                        autosize>
-                <template slot="append"><i class="el-icon-link"
-                     type="link"
-                     :style="{ fontSize: '16px', color: '#08c' }"></i></template>
-              </el-input>
-            </div>
-          </template>
           <template #processingTeam>
             <el-button class="selectedBtn"
                        type="link"
                        size="small"
                        icon="user-add"
-                       @click="selectPeople">选择人员</el-button>
+                       @click="selectPeople('2')">选择人员</el-button>
             <ul class="userList">
               <li v-for="item in selectedRows"
                   :key="item.id">
@@ -105,6 +94,7 @@
                  :visibleDislogMember="visible"
                  loginFlag="1"
                  :existsData="selectedRows"
+                 :isRadioSelect="isRadioSelect"
                  :disabled-row="formData.processingTeam"
                  @member-save="saveModal"
                  @member-close="closeModal"></select-user>
@@ -950,19 +940,15 @@ export default {
       dataSource2: [],
       dataSource3: [],
       dataSource4: [],
-      selectedRows: []
+      selectedRows: [],
+      isRadioSelect: true
     }
   },
   mounted () {
-    console.log(this.searchParams.msgCatalog, '================this.:searchParams="searchParams"');
     this.formData.sourceChannel = this.sourceChannel
-    if (this.searchParams && this.searchParams.msgCatalog !== "APPROVE_TYPE_02_01") {
-      this.selectedApproval.yesOrNo = true
-      console.log("🚀 ~ mounted ~ this.selectedApproval.yesOrNo:", this.selectedApproval.yesOrNo)
-    }
     // 区分不同审批节点展示不同表单
     if (this.formType === '1') {
-      if (!this.selectedApproval.yesOrNo) {
+      if (!this.selectedApproval.yesOrNo && this.searchParams.msgCatalog == "APPROVE_TYPE_02_01") {
         this.dataSource = this.dataSourceInfo
         this.dataSource2 = this.dataSourceOpinion
       } else {
@@ -970,7 +956,7 @@ export default {
         this.dataSource2 = this.dataSourceOpinionView
       }
     } else {
-      if (!this.selectedApproval.yesOrNo) {
+      if (!this.selectedApproval.yesOrNo && this.searchParams.msgCatalog == "APPROVE_TYPE_02_01") {
         this.dataSource3 = this.dataSourceInfoTwo
         this.dataSource4 = this.dataSourceAnalyse
       } else {
@@ -1013,7 +999,12 @@ export default {
         }
       })
     },
-    selectPeople () {
+    selectPeople (val) {
+      if (val === '1') {
+        this.isRadioSelect = true
+      } else {
+        this.isRadioSelect = false
+      }
       this.visible = true
     },
     deleteUser (id) {

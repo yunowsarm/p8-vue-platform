@@ -534,13 +534,6 @@ export default {
       this.isWarnApprove = isWarnApprove
     },
     handleSubmit (e) {
-      // 需求管理校验
-      if (this.$refs.approveContent.formType) {
-        this.$refs.approveContent.handleSubmit()
-        if (!this.$refs.approveContent.saveType) {
-          return
-        }
-      }
       if (!this.formData.approvalResult) {
         this.$message({ message: '请选择审批结果', type: 'warning' })
         return
@@ -551,7 +544,15 @@ export default {
       }
 
       const msg = '确定' + this.approvalResultText + '吗？'
-
+      if (this.approvalResultText !== '驳回') {
+        // 需求管理校验
+        if (this.$refs.approveContent.formType) {
+          this.$refs.approveContent.handleSubmit()
+          if (!this.$refs.approveContent.saveType) {
+            return
+          }
+        }
+      }
       const this_ = this
 
       if (this_.$refs.approveContent.approveCommitVerification instanceof Function) {
