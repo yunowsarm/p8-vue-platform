@@ -1842,7 +1842,9 @@ function searchFilter (parent, searchForm, ganttObject) {
       }
       if (overdueRemainingDays == 0 && days > 0) {
         overdueRemainingDaysCheck = false;
-      } else if (days < 0 || days > overdueRemainingDays) {
+      } else if (overdueRemainingDays == 7 && (days < 0 || days > 7)) {
+        overdueRemainingDaysCheck = false;
+      } else if (overdueRemainingDays == 30 && (days < 0 || days > 30)) {
         overdueRemainingDaysCheck = false;
       }
     }
