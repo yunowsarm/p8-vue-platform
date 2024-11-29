@@ -55,6 +55,7 @@
                         :disabled-check-all="true"
                         :params="queryParam"
                         :api="tableApi"
+                        :isRadioSelect="isRadioSelect"
                         @selection-change="handleTableSelectionChange"
                         @requested-table-data="requestedTableData">
           </common-table>
@@ -72,6 +73,10 @@ export default {
   name: 'DialogSelectMember',
   props: {
     visibleDislogMember: {
+      type: Boolean,
+      default: false
+    },
+    isRadioSelect: {
       type: Boolean,
       default: false
     },
@@ -239,7 +244,12 @@ export default {
       this.$emit('member-close', [])
     },
     dialogMemberOk () {
-      let users = [...this.existsData, ...this.tableSelectValue]
+      let users = []
+      if (this.isRadioSelect) {
+        users = this.tableSelectValue
+      } else {
+        users = [...this.existsData, ...this.tableSelectValue]
+      }
       const uniqueArray = users.filter((value, index, self) =>
         index === self.findIndex((t) => (
           t.id === value.id // 基于 id 字段去重
