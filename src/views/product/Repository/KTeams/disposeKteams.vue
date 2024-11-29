@@ -1,66 +1,104 @@
 <template>
-  <normal-layout :normalLayout="normalLayout" :header-visible="false" :splitDefaultLeftWidth="22">
+  <normal-layout :normalLayout="normalLayout"
+                 :header-visible="false"
+                 :splitDefaultLeftWidth="22">
     <template #west>
       <div style="text-align:center;padding:0 15px;padding-right: 30px;">
-        <el-button type="primary" plain style="margin: 5px;width:100%;" @click="createRoles"><i class="el-icon-plus" type="primary"></i>新建角色类别</el-button>
-      <ul style="text-align:left;">
-        <li v-for="(el, index) in rolesList" :key="el.id" @click="openRight(el,index)" :class="{'active': clickIndex == index}" class="listSettings">
-          <i class="el-icon-s-custom" style="padding-right:10px;"></i>
-          <span class="name">{{el.name}}</span>
-          <span style="float: right;">
-            <i style="color:#1890ff;" class="el-icon-edit"></i>
-            <i class="el-icon-delete" @click.stop="deleteRoles(el)" style="padding-left: 5px;color:#1890ff;"></i>
-          </span>
-        </li>
-      </ul>
+        <el-button type="primary"
+                   plain
+                   style="margin: 5px;width:100%;"
+                   @click="createRoles"><i class="el-icon-plus"
+             type="primary"></i>新建角色类别</el-button>
+        <ul style="text-align:left;">
+          <li v-for="(el, index) in rolesList"
+              :key="el.id"
+              @click="openRight(el,index)"
+              :class="{'active': clickIndex == index}"
+              class="listSettings">
+            <i class="el-icon-s-custom"
+               style="padding-right:10px;"></i>
+            <span class="name">{{el.name}}</span>
+            <span style="float: right;">
+              <i style="color:#1890ff;"
+                 class="el-icon-edit"></i>
+              <i class="el-icon-delete"
+                 @click.stop="deleteRoles(el)"
+                 style="padding-left: 5px;color:#1890ff;"></i>
+            </span>
+          </li>
+        </ul>
       </div>
     </template>
     <template #center>
       <div style="position:relative;height:100%;">
         <form-list ref="form"
-                    style="height: 270px;overflow:hidden;"
-                    @rendered="rendered"
-                    @saved="saved"
-                    :dataSource="dataSource"
-                    :api="saveApi"
-                    labelWidth="80px"
-                    :isCustomValidate="true"
-                    @custom-validate="customValidate"
-                    :form="formData">
-                  <template #roleCategory><span class="title">角色类别信息</span></template>
+                   style="height: 270px;overflow:hidden;"
+                   @rendered="rendered"
+                   @saved="saved"
+                   :dataSource="dataSource"
+                   :api="saveApi"
+                   labelWidth="80px"
+                   :isCustomValidate="true"
+                   @custom-validate="customValidate"
+                   :form="formData">
+          <template #roleCategory><span class="title">角色类别信息</span></template>
         </form-list>
         <div style="display:inline-block;position:relative;bottom:40px;height:calc(100% - 280px);width:100%;">
           <span style="font-weight:bold;font-size:12px;position:relative;left:20px;">角色信息</span>
-          <editable-table
-            style="margin:0;"
-            :columns="paramColumns"
-            :add-row="true"
-            :data="formData.roles"
-            operationColumnName="操作"
-            @save-param-data="saveParamData"
-          >
+          <editable-table style="margin:0;"
+                          ref="table"
+                          :columns="paramColumns"
+                          :add-row="true"
+                          indexNo="indexNo"
+                          :data="formData.roles"
+                          operationColumnName="操作"
+                          @save-param-data="saveParamData">
             <template #name="{ scope, data }">
-              <el-input v-model="scope.row.name" @blur="saveParamData(data)" placeholder="请输入"></el-input>
+              <el-input v-model="scope.row.name"
+                        @blur="saveParamData(data)"
+                        placeholder="请输入"></el-input>
             </template>
             <template #sysRole="{ scope, data }">
-              <el-select v-model="scope.row.sysRole" size="mini" style="width: 100%" clearable @change="saveParamData(data)">
-                <el-option v-for="(item,index) in rolesSelectData" :key="index" :label="item.NAME" :value="item.ID"> </el-option>
+              <el-select v-model="scope.row.sysRole"
+                         size="mini"
+                         style="width: 100%"
+                         clearable
+                         @change="saveParamData(data)">
+                <el-option v-for="(item,index) in rolesSelectData"
+                           :key="index"
+                           :label="item.NAME"
+                           :value="item.ID"> </el-option>
               </el-select>
             </template>
             <template #isRequired="{ scope, data }">
-              <el-radio-group v-model="scope.row.isRequired" size="small" @change="saveParamData(data)">
-                <el-radio-button label="1" value="1">是</el-radio-button>
-                <el-radio-button label="0" value="0">否</el-radio-button>
+              <el-radio-group v-model="scope.row.isRequired"
+                              size="small"
+                              @change="saveParamData(data)">
+                <el-radio-button label="1"
+                                 value="1">是</el-radio-button>
+                <el-radio-button label="0"
+                                 value="0">否</el-radio-button>
               </el-radio-group>
             </template>
             <template #isFixed="{ scope, data }">
-              <el-radio-group v-model="scope.row.isFixed" size="small" @change="saveParamData(data)">
-                <el-radio-button label="1" value="1">是</el-radio-button>
-                <el-radio-button label="0" value="0">否</el-radio-button>
+              <el-radio-group v-model="scope.row.isFixed"
+                              size="small"
+                              @change="saveParamData(data)">
+                <el-radio-button label="1"
+                                 value="1">是</el-radio-button>
+                <el-radio-button label="0"
+                                 value="0">否</el-radio-button>
               </el-radio-group>
             </template>
             <template #indexNo="{ scope, data }">
-              <el-input-number v-model="scope.row.indexNo" :min="0" :step="1" :precision="0" style="width:100%;" size="mini" @change="saveParamData(data)" placeholder="请输入"></el-input-number>
+              <el-input-number v-model="scope.row.indexNo"
+                               :min="0"
+                               :step="1"
+                               :precision="0"
+                               style="width:100%;"
+                               size="mini"
+                               @change="saveParamData(data, 'indexNo', scope)"
+                               placeholder="请输入"></el-input-number>
             </template>
           </editable-table>
         </div>
@@ -81,12 +119,12 @@ i {
 .name {
   display: inline-block;
   width: calc(100% - 70px);
-  overflow:hidden;
+  overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   vertical-align: bottom;
 }
-.title{
+.title {
   color: black;
   font-size: 12px;
   font-weight: bold;
@@ -99,7 +137,7 @@ i {
 .el-radio-button {
   min-width: 40px !important;
 }
-::v-deep .el-radio-button__inner{
+::v-deep .el-radio-button__inner {
   min-width: 40px !important;
 }
 </style>
@@ -173,7 +211,7 @@ export default {
         }
       ],
       formData: {
-        roles:[]
+        roles: []
       },
       paramColumns: [
         {
@@ -221,13 +259,13 @@ export default {
   },
   created () {
     this.record = this.row[0]
-    this.$api['formGenerator.getSelectionData']({selectCode: 'SYSTEM_ROLE_LIST'}).then(res => {
+    this.$api['formGenerator.getSelectionData']({ selectCode: 'SYSTEM_ROLE_LIST' }).then(res => {
       this.rolesSelectData = res.data
     })
   },
   methods: {
     rendered () {
-      this.$api['knowledgeManagement.roleClassifyList']({klTeamsId: this.record.ID}).then(res => {
+      this.$api['knowledgeManagement.roleClassifyList']({ klTeamsId: this.record.ID }).then(res => {
         this.rolesList = res
         this.formData = {}
         if (this.rolesList && this.rolesList.length) {
@@ -244,14 +282,26 @@ export default {
     saved (res) {
       this.rendered()
     },
-    saveParamData (data) {
+    saveParamData (data, changeFlag, scope) {
+      let that = this
+      if (changeFlag === 'indexNo') {
+        // 根据 indexNo 重新排序数组
+        data.sort((a, b) => a[changeFlag] - b[changeFlag]);
+        // 为每个元素分配新的连续的 indexNo
+        data.forEach((item, index) => {
+          item[changeFlag] = index + 1;
+        });
+        this.$nextTick(() => {
+          that.formData.roles = data
+        })
+      }
       this.editableData = data
-      console.log(data,'--data');
+      console.log(data, '--data');
     },
-    openRight (item,index) {
+    openRight (item, index) {
       this.clickIndex = index
       this.editableData = item.roles
-      this.formData = {...this.formData,...item}
+      this.formData = { ...this.formData, ...item }
     },
     deleteRoles (item) {
       let that = this
@@ -262,17 +312,17 @@ export default {
         type: 'info'
       })
         .then(() => {
-          that.$api['knowledgeManagement.removeRoleClassify']({ids: [item.id]}).then(res => {
+          that.$api['knowledgeManagement.removeRoleClassify']({ ids: [item.id] }).then(res => {
             if (res) {
-              that.$message({message:'删除成功',type:'success'})
+              that.$message({ message: '删除成功', type: 'success' })
               this.rendered()
             }
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     createRoles () {
-      this.formData = {klTeamsId: this.record.ID}
+      this.formData = { klTeamsId: this.record.ID }
     }
   }
 }
