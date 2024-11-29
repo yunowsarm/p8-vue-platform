@@ -55,9 +55,7 @@
                         :disabled-check-all="true"
                         :params="queryParam"
                         :api="tableApi"
-                        @row-click="handleTableRowClick"
                         @selection-change="handleTableSelectionChange"
-                        @row-dblclick="rowDblclick"
                         @requested-table-data="requestedTableData">
           </common-table>
           <!-- </div> -->
@@ -108,7 +106,18 @@ export default {
         {
           title: '',
           type: 'selection',
-          reserveSelection: true
+          reserveSelection: true,
+          selectable: (row, index) => {
+            if (this.existsData && this.existsData.length) {
+              let data = this.existsData.filter(item => item.id === row.id)
+              if (data && data.length) {
+                return false
+              } else {
+                return true
+              }
+            }
+            return true
+          }
         },
         {
           title: '序号',
@@ -230,7 +239,15 @@ export default {
       this.$emit('member-close', [])
     },
     dialogMemberOk () {
-      this.$emit('member-save', this.tableSelectValue)
+      let users = [...this.existsData, ...this.tableSelectValue]
+      const uniqueArray = users.filter((value, index, self) =>
+        index === self.findIndex((t) => (
+          t.id === value.id // 基于 id 字段去重
+        ))
+      );
+
+      console.log(uniqueArray, '================uniqueArray');
+      this.$emit('member-save', uniqueArray)
       this.tableSelectValue = []
     },
     onSelect (node) {
@@ -238,20 +255,10 @@ export default {
       this.$refs.table.searchData()
     },
     handleTableSelectionChange (value) {
+      console.log("🚀 ~ handleTableSelectionChange ~ value:", value)
+      console.log("🚀 2222222222222:", this.existsData
+      )
       this.tableSelectValue = value
-    },
-    handleTableRowClick (row) {
-      // 单击行 -- 勾选处理
-      if (this.existsData.filter(item => item.id === row.id).length) { // existsData 人员列表中已经存在当前行(说明勾选禁止)
-        return
-      }
-      let isSelect = this.tableSelectValue.filter(item => item.id === row.id).length
-      this.$refs.table.$refs.table.toggleRowSelection(row, !isSelect)
-    },
-    rowDblclick (row, column, event) {
-      let arr = []
-      arr.push(row)
-      this.$emit('member-close', arr)
     }
   },
   components: {

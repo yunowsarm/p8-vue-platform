@@ -69,7 +69,20 @@
             </div>
           </template>
           <template #processingTeam>
-            <div @click="selectPeople">
+            <el-button class="selectedBtn"
+                       type="link"
+                       size="small"
+                       icon="user-add"
+                       @click="selectPeople">选择人员</el-button>
+            <ul class="userList">
+              <li v-for="item in selectedRows"
+                  :key="item.id">
+                <span>{{ item.realName }}</span>
+                <i class="el-icon-circle-close"
+                   @click="deleteUser(item.id)"></i>
+              </li>
+            </ul>
+            <!-- <div @click="selectPeople">
               <el-input v-model="formData['processingTeamDisplay']"
                         readonly
                         autosize>
@@ -77,7 +90,7 @@
                      type="link"
                      :style="{ fontSize: '16px', color: '#08c' }"></i></template>
               </el-input>
-            </div>
+            </div> -->
           </template>
         </form-list>
       </div>
@@ -92,6 +105,7 @@
                  :visibleDislogMember="visible"
                  loginFlag="1"
                  :existsData="selectedRows"
+                 :disabled-row="formData.processingTeam"
                  @member-save="saveModal"
                  @member-close="closeModal"></select-user>
   </div>
@@ -1002,6 +1016,16 @@ export default {
     selectPeople () {
       this.visible = true
     },
+    deleteUser (id) {
+      this.formData.processingTeam.splice(
+        this.formData.processingTeam.findIndex((v) => v === id),
+        1
+      )
+      this.selectedRows.splice(
+        this.selectedRows.findIndex((v) => v.id === id),
+        1
+      )
+    },
     saveModal (selectedRows) {
       this.selectedRows = selectedRows
       if (selectedRows.length > 0) {
@@ -1094,6 +1118,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.userList {
+  background: #ffffff;
+  overflow: hidden;
+}
+.userList li {
+  float: left;
+  padding: 0px 10px;
+  margin: 5px;
+  border-radius: 3px;
+  /*border:1px solid #1890FF;*/
+  border: 1px solid #e8e8e8;
+}
+.userList li:first-child .selectedBtn {
+  border: 1px dashed #1890ff;
+  height: 29px;
+}
 .title {
   font-size: 17px;
   font-weight: bold;
