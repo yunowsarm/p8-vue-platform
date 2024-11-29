@@ -1,8 +1,9 @@
 <template>
   <el-container class="main">
     <section>
-      <div class="content">抱歉!访问的页面不存在.</div>
-      <el-button type="primary" class="gohome" @click="backToHome">回首页 :P</el-button>
+      <img src="@/assets/image/other/404.png" alt="">
+      <div class="content">抱歉！访问的页面不存在！</div>
+      <el-button type="primary" size="large" class="gohome" @click="backToHome">返回首页</el-button>
     </section>
   </el-container>
 </template>
@@ -32,21 +33,19 @@ export default {
 
 <style lang="scss" scoped>
 .main {
-  display: flex;
-  @include flexCenter;
+  height: 100%;
+  background: $base-white-color;
 
   > section {
-    display: inherit;
-    @include flexCenter;
+    display: flex;
     flex-direction: column;
-    width: 400px;
-    height: 200px;
-    margin-top: 15%;
-    background-color: darken($base-light-color, 2%);
-    border-radius: 15px;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding-top: 10%;
 
     .content {
-      font-size: 1.7rem;
+      font-size: 1.5rem;
     }
 
     .gohome {
