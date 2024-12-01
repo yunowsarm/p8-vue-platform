@@ -5,6 +5,7 @@
                    type="border-card"
                    :active-tabs="activeTabs"
                    :hasFullScreen="true"
+                   :keepBottom="true"
                    :tabs-data="tabs">
         <template #approval>
           <component ref="approveContent"
