@@ -480,47 +480,49 @@ export default {
               monitorPointsMap[item.monitorId] = item
             })
             if (mId.startsWith('delete-')) {
-              // 依赖标识
-              const relyIds = btn.relyIds != null ? btn.relyIds.split(',') : null
-              let flag = true
-              tasks.forEach((t, i) => {
-                if (relyIds != null && relyIds.length > 0) {
-                  if (t.monitorPoints) {
-                    relyIds.forEach((rId, index) => {
-                      if (t.monitorPoints.indexOf(rId) !== -1) {
-                        flag = false
-                      }
-                    })
-                  }
-                }
-              })
-              if (!flag) {
-                that.$message({ type: 'warning', message: '当前标识存在依赖标识，无法取消！' })
-                return
-              }
               // 取消标识按钮
               thisGantt.batchUpdate(function () {
                 tasks.forEach(function (task) {
                   let point = mId.substring(7)
                   if (task.monitorPoints && task.monitorPoints.indexOf(point) !== -1) {
-                    if (task.monitorPoints.indexOf(point + ',') !== -1) {
-                      point = point + ','
-                    } else if (task.monitorPoints.indexOf(',' + point) !== -1) {
-                      point = ',' + point
-                    }
-                    task.monitorPoints = task.monitorPoints.replace(point, '')
-
+                    let flag = true
+                    let relyIds = []
+                    let relyIdName = ''
                     that.monitorData.forEach(el => {
-                      let pointNew = el.id
-                      if (el.relyIds && el.relyIds.indexOf(point)) {
-                        if (task.monitorPoints.indexOf(pointNew + ',') !== -1) {
-                          pointNew = pointNew + ','
-                        } else if (task.monitorPoints.indexOf(',' + pointNew) !== -1) {
-                          pointNew = ',' + pointNew
-                        }
+                      if (el.relyIds && el.relyIds.indexOf(point) !== -1 && task.monitorPoints.indexOf(el.id) !== -1) {
+                        relyIds.push(el.id)
+                        relyIdName += el.title
                       }
-                      task.monitorPoints = task.monitorPoints.replace(pointNew, '')
                     })
+                    if (relyIds && relyIds.length > 0) {
+                      flag = false
+                      that.$confirm(relyIdName + '依赖于该标识，是否同步删除？', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                      })
+                        .then(() => {
+                          relyIds.push(point)
+                          relyIds.forEach(el => {
+                            let monitorPoint = el
+                            if (task.monitorPoints.indexOf(el + ',') !== -1) {
+                              monitorPoint = el + ','
+                            } else if (task.monitorPoints.indexOf(',' + el) !== -1) {
+                              monitorPoint = ',' + el
+                            }
+                            task.monitorPoints = task.monitorPoints.replace(monitorPoint, '')
+                            thisGantt.updateTask(task.id)
+                          })
+                        })
+                    }
+                    if (flag) {
+                      if (task.monitorPoints.indexOf(point + ',') !== -1) {
+                        point = point + ','
+                      } else if (task.monitorPoints.indexOf(',' + point) !== -1) {
+                        point = ',' + point
+                      }
+                      task.monitorPoints = task.monitorPoints.replace(point, '')
+                    }
                     // 计划编制 责任令编制默认“院发责任令分解项目”，“关键节点计划”为否 责任令开始时间完成时间 为 空
                     if (ganttName === 'planGantt' && mId === 'delete-1015') {
                       task.breakDownProject = ''
