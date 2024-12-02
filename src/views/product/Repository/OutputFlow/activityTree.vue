@@ -106,6 +106,7 @@
   }
   .gantt_row {
     background-color: #fff;
+    font-weight: 400 !important;
   }
   .gantt_row.odd {
     background-color: #f9f9f9;
