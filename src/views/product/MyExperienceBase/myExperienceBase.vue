@@ -438,6 +438,7 @@ export default {
             .then((res) => {
               if (res === 'true') {
                 that.loadCatalog()
+                that.selectedTreeId = that.treeData[0].id;
                 that.$message.success('删除成功')
               } else {
                 that.$message.error('删除失败')
