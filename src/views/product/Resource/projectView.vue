@@ -1,7 +1,6 @@
 <!--整体管理-团队管理-->
 <template>
-  <div style="height: calc(100% - 50px);background-color: #f3f5f885">
-
+  <div class="main_content">
     <el-tabs type="border-card"
              style="height: 97%;">
       <el-tab-pane label="项目人员信息">
@@ -1053,6 +1052,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.main_content{
+  height: 100%;
+}
 .custom_content_wrap {
   display: flex;
   height: 100%;
@@ -1060,7 +1062,7 @@ export default {
   box-sizing: border-box;
   .left_content {
     width: 80%;
-    height: 520px;
+    height: 100%;
     margin-left: 15px;
     box-shadow: 0px 0px 10px #bfbdbd54;
     .left_bottom_content {
