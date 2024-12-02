@@ -16,7 +16,7 @@ const suspendIcon = '<i class="element_icon el-icon-error" style="color:#ff0000;
  * @author fukai
  * @date 2020/5/22 12:00
  */
-export function planGantt(ganttName, vueThis) {
+export function planGantt (ganttName, vueThis) {
   // 获取gantt对象
   const ganttObject = GanttObject.getGanttObject(ganttName)
   // 单元格键盘导航
@@ -106,7 +106,7 @@ export function planGantt(ganttName, vueThis) {
             //   // 密级校验提示框
             //   GanttObject.showMessage(vueThis, err.head.message, 'error')
             // } else {
-              GanttObject.showMessage(vueThis, '更新失败！', 'error')
+            GanttObject.showMessage(vueThis, '更新失败！', 'error')
             // }
             ganttObject.undo()
             return { action: 'error' }
@@ -138,7 +138,7 @@ export function planGantt(ganttName, vueThis) {
           // vueThis.initGantt()
         })
       },
-      update: function (data, id) {},
+      update: function (data, id) { },
       delete: function (id) {
         return new ganttObject.Promise((resolve, reject) => {
           api['planGanttManager.removePlanGanttLink']({ id: id })
@@ -161,7 +161,7 @@ export function planGantt(ganttName, vueThis) {
     }
   })
   // 事件绑定
-  Gantt.setControlTime = function setControlTime(monitorId, monitorName, taskId) {
+  Gantt.setControlTime = function setControlTime (monitorId, monitorName, taskId) {
     const task = ganttObject.getTask(taskId)
     const monitorLockMap = vueThis.monitorLockMap
     // 加锁逻辑控制
@@ -174,7 +174,7 @@ export function planGantt(ganttName, vueThis) {
     }
   }
   // 表头查询值绑定
-  Gantt.searchColumnsChange = function searchColumnsChange(name, value, searchType, eleInstance) {
+  Gantt.searchColumnsChange = function searchColumnsChange (name, value, searchType, eleInstance) {
     const customComp = ['select', 'date', 'input']
     if (customComp.indexOf(searchType) < 0) {
       document.getElementById(name + searchType).setAttribute('value', value)
@@ -456,7 +456,7 @@ export function planGantt(ganttName, vueThis) {
  * @param vueThis
  * @returns {({template: template, name: string, width: number, resize: boolean, label: string, align: string}|{template: template, name: string, width: number, resize: boolean, label: string, align: string}|{template: (function(*=): string), name: string, resize: boolean, label: string, align: string, min_width: number}|{template: (function(*): string), name: string, width: number, resize: boolean, label: string, align: string}|{template: (function(*=): string), name: string, resize: boolean, label: string, align: string, min_width: number})[]}
  */
-export function getGanttColumns(ganttObject, vueThis) {
+export function getGanttColumns (ganttObject, vueThis) {
   ganttObject.serverList('yesOron', [
     { key: '1', label: '是' },
     { key: '0', label: '否' }
@@ -563,7 +563,7 @@ export function getGanttColumns(ganttObject, vueThis) {
           let parts = task.proportion.toString().split('.')
           var fraction = parts.length === 1 ? '' : parts[1];
           if (2 > fraction.length) {
-              fraction += new Array(2 - fraction.length + 1).join('0');
+            fraction += new Array(2 - fraction.length + 1).join('0');
           }
           return parts[0] + '.' + fraction + '%'
         }
@@ -596,12 +596,12 @@ export function getGanttColumns(ganttObject, vueThis) {
           if (beginStr !== forecastStartStr) {
             // 叶子节点且计划完成时间和预测完成时间不一致
             bool = true
-            tips += '当前任务计划开始时间和预测开始时间不一致，注意关注\n'
+            tips += '当前任务计划开始时间和预计开始时间不一致，注意关注\n'
           }
           if (endStr !== forecastEndStr) {
             // 叶子节点且计划完成时间和预测完成时间不一致
             bool = true
-            tips += '当前任务计划完成时间和预测完成时间不一致，注意关注\n'
+            tips += '当前任务计划完成时间和预计完成时间不一致，注意关注\n'
           }
         }
         if (state.childTotal || state.childPercentage) {
@@ -1025,7 +1025,7 @@ export function getGanttColumns(ganttObject, vueThis) {
           return item.id === task.id
         })
         let img = require('@/assets/image/gantt/weidu.png')
-        if (obj && obj.id && Number(obj.reminder) > 0 ) {
+        if (obj && obj.id && Number(obj.reminder) > 0) {
           return `<span onclick=Gantt.taskProgressDetails('${task.id}') style="cursor: pointer">
             <img style="cursor: pointer;width: 17px; height: 17px" src="${img}" />
           </span>`
@@ -1039,4 +1039,4 @@ export function getGanttColumns(ganttObject, vueThis) {
   ]
 }
 
-export function planMonitorAdd(ganttObject, vueThis) {}
+export function planMonitorAdd (ganttObject, vueThis) { }
