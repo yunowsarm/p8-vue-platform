@@ -437,8 +437,7 @@ export default {
           that.$api['MyExperience.removeExperienceClassify']({ id })
             .then((res) => {
               if (res === 'true') {
-                that.loadCatalog()
-                that.selectedTreeId = that.treeData[0].id;
+                that.loadCatalog(that.treeData[0].id)
                 that.$message.success('删除成功')
               } else {
                 that.$message.error('删除失败')
@@ -450,10 +449,16 @@ export default {
         })
         .catch(() => { })
     },
-    loadCatalog () {
+    loadCatalog (id) {
       const _this = this
       this.$api[this.messageCatalogApi]({ isDisplay: '' }).then((res) => {
         _this.catalogData = res
+        if (id) {
+          this.$nextTick(() => {
+          _this.selectedTreeId = id;
+          _this.$refs.tree.$refs.tree.setCurrentKey(id);
+          })
+        }
       })
     },
     selectNode (nodeData) {
