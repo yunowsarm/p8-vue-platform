@@ -4,7 +4,7 @@
                :dataSource="dataSource"
                :form="formData"
                :existDefaultBtn="false"
-               labelWidth="100px"
+               labelWidth="120px"
                @rendered="rendered">
 
       <template #status>
@@ -312,10 +312,12 @@ export default {
         }
       } else if (moment(viewData.forecastBeginDate).isAfter(moment(viewData.planBeginDate))) {
         // 之前
+        plan.marginLeft = -10
         console.log('55555555555555开始时间相等5555555555');
         // 完成时间相等
         if (viewData.forecastEndDate === viewData.planEndDate) {
           console.log('6666666666开始时间相等66666666');
+          plan.lineWidth = 110
         } else if (moment(viewData.forecastEndDate).isAfter(moment(viewData.planEndDate))) {
           // 完成时间之前
           console.log('777777777777开始时间相等7777777');
@@ -334,6 +336,7 @@ export default {
         } else if (moment(this.formData.forecastEndDate).isAfter(moment(this.formData.planEndDate))) {
           // 完成时间之前
           console.log('bbbbbbbbbb开始时间相等bbbbbbbb');
+          plan.lineWidth = 80
         } else {
           // 完成时间之后
           console.log('ccccccccccc开始时间相等cccccccccccc');
@@ -358,7 +361,7 @@ export default {
       } else if (moment(viewData.planBeginDate).isAfter(moment(viewData.realBeginDate))) {
         // 之前
         console.log('555555555555555555555555');
-        real.marginLeft = -10
+        real.marginLeft = -15
         // 完成时间相等
         if (viewData.planEndDate === viewData.realEndDate) {
           console.log('666666666666666666');
