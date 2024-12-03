@@ -4,7 +4,7 @@
                :dataSource="dataSource"
                :form="formData"
                :existDefaultBtn="false"
-               labelWidth="100px"
+               labelWidth="120px"
                @rendered="rendered">
       <template #status>
         <div v-html="statusHandle()"></div>

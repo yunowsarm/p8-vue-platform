@@ -100,14 +100,14 @@ export default {
       },
       {
         type: 'view',
-        labelText: '计划周期',
-        fieldName: 'planDate',
+        labelText: '预计周期',
+        fieldName: 'forecastDate',
         colLayout: 'singleCol'
       },
       {
         type: 'view',
-        labelText: '预计周期',
-        fieldName: 'forecastDate',
+        labelText: '计划周期',
+        fieldName: 'planDate',
         colLayout: 'singleCol'
       },
       {
