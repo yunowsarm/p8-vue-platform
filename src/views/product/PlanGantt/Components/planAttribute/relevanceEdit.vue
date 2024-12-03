@@ -1,8 +1,11 @@
 <template>
   <div style="height: 100%;"
        :style="{ width: `${formWidth}vw` }">
+    <el-button style="margin: 10px;"
+               type="primary"
+               :disabled="disabled"
+               @click="relevanceClick">关联</el-button>
     <vxe-table ref="xDemandTable"
-               v-if="falg"
                :comp="comp"
                style="height: 92%;"
                :columns="columnsDemand"
@@ -10,9 +13,10 @@
                :table-config="tableConfig"
                :checkboxConfig="checkboxConfig"
                :is-smart-form="true"
-               :tableSetting="false"
                :refreshShow="false"
+               :tableSetting="false"
                :pagination="false"
+               @selection-change="handleSelectionChangeDemand"
                :api="tableApi">
     </vxe-table>
   </div>
@@ -30,7 +34,14 @@ export default {
     taskId: {
       type: String
     },
+    ganttName: {
+      type: String
+    },
     formWidth: {
+      type: Number,
+      default: 0
+    },
+    wholeDescribeId: {
       type: Number,
       default: 0
     }
@@ -39,12 +50,12 @@ export default {
     return {
       comp: this,
       columnsDemand: [
-        // {
-        //   title: '是否关联',
-        //   width: 80,
-        //   align: 'center',
-        //   type: 'checkbox'
-        // },
+        {
+          title: '是否关联',
+          width: 80,
+          align: 'center',
+          type: 'checkbox'
+        },
         {
           title: '序号',
           type: 'index',
@@ -87,31 +98,61 @@ export default {
           headerAlign: 'center'
         },
       ],
-      tableParamDemand: {
-        taskId: this.taskId
-      },
+      tableParamDemand: {},
       tableConfig: {
         'highlight-current-row': true
       },
       checkboxConfig: {
-        showHeader: false,
-        checkMethod: this.checkMethod
+        showHeader: false
       },
-      tableApi: '',
-      falg: false
+      tableApi: 'demandManagement.getRequirementList',
+      selectRecords: [],
+      disabled: true
     }
   },
   computed: {
     ...mapGetters(['vueThis'])
   },
   mounted () {
-    this.tableParamDemand.planChangeDetailId = this.vueThis.changeRecordId
-    this.tableApi = 'demandManagement.getRequirementList'
-    this.falg = true
+    setTimeout(() => {
+      let selectData = this.$refs.xDemandTable.$refs.table.data
+      this.$api[this.tableApi]({ taskId: this.taskId }).then(res => {
+        res.forEach(el => {
+          selectData.forEach((item, index) => {
+            if (el.id === item.id) {
+              this.$refs.xDemandTable.$refs.table.setCheckboxRow(selectData[index], true)
+            }
+          })
+        })
+      })
+    }, 1000)
   },
   methods: {
-    checkMethod ({ row }) {
-      return false
+    handleSelectionChangeDemand (rows, row, checked) {
+      this.disabled = false
+      this.selectRecords = []
+      rows.forEach(item => {
+        this.selectRecords.push(item.id)
+      })
+    },
+    relevanceClick () {
+      let that = this
+      this.$api['demandManagement.saveRequirementByTask']({
+        wholeId: this.wholeDescribeId,
+        taskId: this.taskId,
+        requirementIds: this.selectRecords
+      }).then(res => {
+        if (res) {
+          this.$message.success('操作成功')
+          this.disabled = true
+          setTimeout(() => {
+            that.$emit('refreshData', this.taskId)
+            // const ganttObject = GanttObject.getGanttObject(that.ganttName)
+            // ganttObject.updateTask(that.taskId)
+            // 在这里执行你希望的操作
+          }, 3000);
+        }
+      })
     }
   }
 }

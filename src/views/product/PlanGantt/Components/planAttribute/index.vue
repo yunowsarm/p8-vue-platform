@@ -95,7 +95,14 @@
                       :formWidth="formWidth"></special-view>
       </template>
       <template #demandKey>
-        <relevance-list :task-id="taskId"
+        <relevance-edit v-if="isView"
+                        :task-id="taskId"
+                        :wholeDescribeId="wholeDescribeId"
+                        :gantt-name="ganttName"
+                        @refreshData="refreshData"
+                        :formWidth="formWidth"></relevance-edit>
+        <relevance-list v-if="!isView"
+                        :task-id="taskId"
                         :gantt-name="ganttName"
                         :formWidth="formWidth"></relevance-list>
       </template>
@@ -115,6 +122,7 @@ import InputView from '../inputEdit/inputView'
 import OutputView from '../outputEdit/outputView'
 import OutputEdit from '../outputEdit'
 import relevanceList from './relevanceList'
+import relevanceEdit from './relevanceEdit'
 import getOutPutView from '../getOutputKeyView/outputViews'
 // import getOutPutEdit from '../outputEdit'
 import SpecialEdit from '../specialEdit'
@@ -123,7 +131,7 @@ import { P8Anchor as Anchor } from 'p8-components-ui'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 export default {
   name: 'PlanAttribute',
-  props: ['taskId', 'ganttName', 'status', 'planInfoId', 'attReadOnly', 'createPage', 'currentRoute', 'viewType', 'defaultPercent'],
+  props: ['taskId', 'wholeDescribeId', 'ganttName', 'status', 'planInfoId', 'attReadOnly', 'createPage', 'currentRoute', 'viewType', 'defaultPercent'],
   components: {
     getOutPutView,
     DescribeEdit,
@@ -139,17 +147,18 @@ export default {
     OutputView,
     DependenceView,
     SpecialView,
-    relevanceList
+    relevanceList,
+    relevanceEdit
   },
   computed: {
     formWidth () {
       return (100 - this.defaultPercent - (150 / this.windowWidth * 100)).toFixed(2);
     }
   },
-  created() {
+  created () {
     window.addEventListener('resize', this.updateWindowWidth);
   },
-  beforeDestroy() {
+  beforeDestroy () {
     window.removeEventListener('resize', this.updateWindowWidth);
   },
   watch: {},
@@ -255,9 +264,9 @@ export default {
     },
     saveCallback (res) { },
     refreshData (res) {
-      this.$emit('refreshData')
+      this.$emit('refreshData', res)
     },
-    updateWindowWidth() {
+    updateWindowWidth () {
       this.windowWidth = window.innerWidth;
     }
   }
@@ -269,7 +278,7 @@ export default {
   padding: 0 6px;
 }
 
-.formList.el-form>.el-row.formBtn {
+.formList.el-form > .el-row.formBtn {
   border-top: none;
 }
 </style>

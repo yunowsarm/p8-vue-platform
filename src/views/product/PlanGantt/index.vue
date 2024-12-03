@@ -20,7 +20,8 @@
           </div>
           <div class="bottom"
                :class="expandBottom">
-            <plan-gantt :plan-info-id="planInfoId"
+            <plan-gantt ref="planGantt"
+                        :plan-info-id="planInfoId"
                         :whole-describe-id="wholeDescribeId"
                         :plan-info-status="planInfoStatus"
                         :task-id="taskId"
@@ -47,6 +48,7 @@
                         @save-success="detailDrawerClosed"
                         :create-page="createPage"
                         :task-id="selectTaskId"
+                        :wholeDescribeId="wholeDescribeId"
                         :att-read-only="readOnly"
                         :view-type="viewType"
                         :gantt-name="ganttName"
@@ -133,6 +135,7 @@ import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/commandButtonBar
 import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
 import PlanAttribute from './Components/planAttribute'
 import { deepClone } from '@/utils/common'
+import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 export default {
   name: 'PlanGanttManage',
   data () {
@@ -276,10 +279,19 @@ export default {
     window.myWebSocket.emit('enterPlanGantGroup', this.msg)
   },
   methods: {
-    refreshData () {
+    refreshData (res) {
+      let that = this
       // // this.$refs.commandBottonBar.$refs.components.getDataMonitor()
       this.$refs.commandBottonBar.$refs.components11[1].getDataMonitor()
       this.$refs.commandBottonBar.$refs.components11[1].getDataTaskType()
+      if (res) {
+        this.$refs.planGantt.loadGanttData(this.planInfoId, this.taskId, this.createPage)
+        let myGantt = GanttObject.getGanttObject(this.ganttName)
+        setTimeout(() => {
+          myGantt.showTask(res);
+          myGantt.selectTask(res);
+        }, 1000)
+      }
     },
     selectTask (selectDatas, ganttName) {
       this.selectedTasks = selectDatas
@@ -294,6 +306,7 @@ export default {
       this.firstEntry = true
     },
     showDetail (selectTask, ganttName, viewType, switchType) {
+      console.log("🚀 ~ showDetail ~ selectTask:", selectTask)
       // defaultPercent指的是gannt的宽度
       // 首次进入，单机任务且未拖动详情时，不弹出
       if (this.firstEntry && switchType == 'switch' && this.defaultPercent == 100) return
@@ -302,6 +315,7 @@ export default {
       this.$bus.$emit('ganttDetail', true)
       this.ganttName = ganttName
       this.selectTaskId = selectTask.id
+      this.wholeDescribeId = selectTask.wholeId
       this.status = selectTask.status
       this.detailTitle = selectTask.name
       this.viewType = viewType
