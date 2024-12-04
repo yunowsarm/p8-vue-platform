@@ -183,17 +183,17 @@ export default {
             rows: '6'
           }
         },
-        {
-          type: 'select',
-          labelText: '是否记录变更',
-          fieldName: 'weatherChange',
-          colLayout: 'singleCol',
-          placeholder: '选择排程类型',
-          options: [
-            { label: '是', value: '0' },
-            { label: '否', value: '1' }
-          ]
-        }
+        // {
+        //   type: 'select',
+        //   labelText: '是否记录变更',
+        //   fieldName: 'weatherChange',
+        //   colLayout: 'singleCol',
+        //   placeholder: '选择排程类型',
+        //   options: [
+        //     { label: '是', value: '0' },
+        //     { label: '否', value: '1' }
+        //   ]
+        // }
       ],
       modify: {},
       otherParam: {
