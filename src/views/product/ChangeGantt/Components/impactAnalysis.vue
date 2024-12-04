@@ -174,7 +174,8 @@ export default {
       changeRecordId: '',
       advance: true,
       commandButtonBarHeight: this.ganttButtonMode === 'tabs' ? '145px' : this.ganttButtonMode === 'double' ? '72px' : '58px',
-      columnSettings: []
+      columnSettings: [],
+      extendMap: {}
     }
   },
   watch: {
@@ -339,6 +340,18 @@ export default {
               }
               return obj
             })
+            // 处理拓展字段已有的数据
+            vueThis.extendMap = res.extendMap || {}
+            if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
+              initData.forEach(task => {
+                if (vueThis.extendMap[task.id]) {
+                  let extendData = vueThis.extendMap[task.id]
+                  extendData.forEach(item => {
+                    task[item.fieldName] = item.fieldValue
+                  })
+                }
+              })
+            }
             const datas = {
               tasks: initData,
               links: res.links
