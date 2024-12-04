@@ -173,7 +173,6 @@ export default {
       this.$api[this.api]({ taskId: _this.getPlanInfo ? _this.getPlanInfo().TASKID : this.businessKey }).then(res => {
         _this.taskInfo = res
         if (res && res.monitorpointIconArray) {
-          console.log("1111111111111111111111111111111", res.monitorpointIconArray)
           if (res.monitorpointIconArray.includes(',')) {
             let monitorPointIconArray = res.monitorpointIconArray.split(',')
             let monitorLength = monitorPointIconArray.length
@@ -186,7 +185,6 @@ export default {
             _this.mointorData.push({
               icon: res.monitorpointIconArray
             })
-            console.log(_this.mointorData, '=============== _this.mointorData');
           }
         }
         _this.rendFormData(res)
@@ -214,6 +212,7 @@ export default {
           this.formData[key] = res[key]
         }
       })
+      this.getExtend()
     },
     statusHandle () {
       const statusColor = {
@@ -296,116 +295,113 @@ export default {
       }
       // 开始时间相等
       if (viewData.forecastBeginDate === viewData.planBeginDate) {
-        console.log('11111111开始时间相等1111111111');
         // 完成时间相等
         if (viewData.forecastEndDate === viewData.planEndDate) {
-          console.log('222222222开始时间相等222222');
           // plan.marginLeft = 0
         } else if (moment(viewData.forecastEndDate).isAfter(moment(viewData.planEndDate))) {
           // 完成时间之前
-          console.log('33333333开始时间相等333333');
           plan.lineWidth = 90
         } else {
           // 完成时间之后
-          console.log('4444444444开始时间相等444444444');
           plan.lineWidth = 110
         }
       } else if (moment(viewData.forecastBeginDate).isAfter(moment(viewData.planBeginDate))) {
         // 之前
         plan.marginLeft = -10
-        console.log('55555555555555开始时间相等5555555555');
         // 完成时间相等
         if (viewData.forecastEndDate === viewData.planEndDate) {
-          console.log('6666666666开始时间相等66666666');
           plan.lineWidth = 110
         } else if (moment(viewData.forecastEndDate).isAfter(moment(viewData.planEndDate))) {
           // 完成时间之前
-          console.log('777777777777开始时间相等7777777');
         } else {
           // 完成时间之后
-          console.log('888888888888开始时间相等888888888');
         }
       } else {
         // 之后
-        console.log('999999999999开始时间相等9999999999');
         plan.marginLeft = 10
         // 完成时间相等
         if (viewData.forecastEndDate === viewData.planEndDate) {
-          console.log('aaaaaaaa开始时间相等aaaaaaaaaaa');
           plan.lineWidth = 90
         } else if (moment(this.formData.forecastEndDate).isAfter(moment(this.formData.planEndDate))) {
           // 完成时间之前
-          console.log('bbbbbbbbbb开始时间相等bbbbbbbb');
           plan.lineWidth = 80
         } else {
           // 完成时间之后
-          console.log('ccccccccccc开始时间相等cccccccccccc');
         }
       }
 
       // 开始时间相等
       if (viewData.planBeginDate === viewData.realBeginDate) {
-        console.log('111111111111111111');
         // 完成时间相等
         if (viewData.planEndDate === viewData.realEndDate) {
-          console.log('222222222222222');
         } else if (moment(viewData.planEndDate).isAfter(moment(viewData.realEndDate))) {
           // 完成时间之前
-          console.log('33333333333333');
           real.lineWidth = 90
         } else {
           // 完成时间之后
-          console.log('4444444444444444444');
           real.lineWidth = 110
         }
       } else if (moment(viewData.planBeginDate).isAfter(moment(viewData.realBeginDate))) {
         // 之前
-        console.log('555555555555555555555555');
         real.marginLeft = -15
         // 完成时间相等
         if (viewData.planEndDate === viewData.realEndDate) {
-          console.log('666666666666666666');
         } else if (moment(viewData.planEndDate).isAfter(moment(viewData.realEndDate))) {
           // 完成时间之前
-          console.log('7777777777777777777');
         } else {
           // 完成时间之后
-          console.log('888888888888888888888');
         }
       } else {
         // 之后
-        console.log('9999999999999999999999');
         real.marginLeft = 10
         // 完成时间相等
         if (viewData.planEndDate === viewData.realEndDate) {
-          console.log('aaaaaaaaaaaaaaaaaaa');
           real.lineWidth = 80
         } else if (moment(this.formData.planEndDate).isAfter(moment(this.formData.realEndDate))) {
           // 完成时间之前
-          console.log('bbbbbbbbbbbbbbbbbb');
           real.lineWidth = 80
         } else {
           // 完成时间之后
-          console.log('ccccccccccccccccccccccc');
         }
       }
 
       if (moment(this.formData.realBeginDate).isBetween(moment(this.formData.forecastBeginDate), moment(this.formData.planBeginDate))) {
         real.marginLeft = 8
-        console.log('ddddddddddddddddddddd');
       } else {
         if (this.formData.realBeginDate) {
           if (moment(this.formData.realBeginDate).isAfter(moment(this.formData.planBeginDate))) {
             // real.marginLeft = 24
-            console.log('eeeeeeeeeeeeeeeeeeeeeee');
           }
         } else {
-          console.log('ffffffffffffffffffffffff');
           real.marginLeft = 24
           real.lineDashedWidth = 100
         }
       }
       return [forecast, plan, real]
+    },
+    async getExtend () {
+      this.$api['planGanttManager.getGanttExtendAttr']({ taskId: this.getPlanInfo().TASKID }).then((res) => {
+        if (res && res.taskExtendList) {
+          res.taskExtendList.forEach((item) => {
+            if (item.fieldType == 'datepicker') {
+              let date = moment(item.fieldValue)
+              this.$set(this.formData, item.fieldName, date.isValid() ? date : '')
+            } else {
+              this.$set(this.formData, item.fieldName, item.fieldValue)
+            }
+          })
+        }
+      })
+      this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.getPlanInfo().wholeDescribeId })
+      this.extraList = this.columnSettings.filter((item) => item.attributeType === '1')
+      this.extraList.forEach((extra) => {
+        this.dataSource.push({
+          labelText: extra.name,
+          type: 'view',
+          fieldName: extra.filedName,
+          colLayout: 'single'
+        })
+      })
     }
   }
 }

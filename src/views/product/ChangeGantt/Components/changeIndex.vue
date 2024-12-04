@@ -42,6 +42,7 @@
       <plan-attribute @save-success="detailDrawerClosed"
                       :task-id="selectTaskId"
                       v-bind="$attrs"
+                      :defaultPercent="50"
                       :create-page="createPage"
                       :secret-grade="secretGrade"
                       :att-read-only="readOnly"

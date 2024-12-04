@@ -1105,6 +1105,13 @@ export const repositoryApi = {
       path: '/product/pm/planOverview/planOverviewBulletinBoard',
       mockPath: '/product/pm/planOverview/planOverviewBulletinBoard',
       desc: '计划管理->计划概况'
+    },
+    {
+      name: 'extendChangeSave',
+      method: 'POST',
+      path: '/product/pm/plan/extendChangeSave',
+      mockPath: '/product/pm/plan/extendChangeSave',
+      desc: '计划管理->计划概况'
     }
   ],
   taskAttribute: [

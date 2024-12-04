@@ -16,6 +16,7 @@
           <impact-analysis :plan-info-id="planInfoId"
                            :create-page="createPage"
                            :read-only="readOnlyVisible"
+                           :wholeDescribeId="wholeDescribeId"
                            :change-id="approveContentView.changeId"
                            changeName="changeGantt"></impact-analysis>
         </div>
@@ -41,6 +42,9 @@ export default {
       type: String
     },
     createPage: {
+      type: String
+    },
+    wholeDescribeId: {
       type: String
     },
     approveContentView: {

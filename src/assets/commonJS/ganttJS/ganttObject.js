@@ -2975,9 +2975,13 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
       const initColumn = initColumns.filter((initItem) => initItem.name === settingItem.name)
       if (initColumn && Object.keys(initColumn).length > 0) {
         initColumn[0].hide = settingItem.hide
-        tempColumns.push(initColumn[0])
+        let columnSetting = vueThis.columnSettings.filter((el) => el.filedName === initColumn[0].name && el.isEnable !== '0')
+        if (columnSetting && columnSetting.length > 0) {
+          tempColumns.push(initColumn[0])
+        }
       }
     })
+
     // 当ganttObject对象中columns数据与配置信息中数据不一致（增加或减少）时，根据ganttObject对象中columns新增列下标插入tempColumns，超出时加在末尾
     initColumns.forEach((initItem, initIndex) => {
       const settingItem = settingColumns.filter((settingItem) => settingItem.name === initItem.name)
@@ -2986,7 +2990,9 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
         if (tempColumns && tempColumns.length > initIndex) {
           tempColumns.splice(initIndex, 0, initItem)
         } else {
-          tempColumns.push(initItem)
+          if (vueThis.columnSettings.filter((el) => el.filedName === initItem.name && el.isEnable !== '0')) {
+            tempColumns.push(initItem)
+          }
         }
       }
     })
@@ -3038,8 +3044,11 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
     vueThis.columnSettings.forEach((item) => {
       const initColumn = initColumns.filter((initItem) => initItem.name === item.filedName)
       if (initColumn && initColumn.length > 0) {
-        initColumn[0].hide = !(item.isEnable == '1')
-        tempColumns.push(initColumn[0])
+        // initColumn[0].hide = !(item.isEnable == '1')
+        // tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
+        if ((item.isEnable == '1')) {
+          tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
+        }
       }
       if (item.attributeType === '1') {
         let editType = null
@@ -3059,29 +3068,32 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
           default:
             break;
         }
-        tempColumns.push({
-          name: item.filedName,
-          label: `<div class="gantt_search">${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class="gantt_search gantt_blank"></div>`,
-          align: 'center',
-          resize: true,
-          hide: item.isEnable == '0',
-          min_width: 120,
-          editor: checkEdit() ? { type: editType, map_to: item.filedName } : null,
-        })
-      }
-    })
-    // 当ganttObject对象中columns数据与配置信息中数据不一致（增加或减少）时，根据ganttObject对象中columns新增列下标插入tempColumns，超出时加在末尾
-    initColumns.forEach((initItem, initIndex) => {
-      const settingItem = vueThis.columnSettings.filter((settingItem) => settingItem.filedName === initItem.name)
-      if (!settingItem || Object.keys(settingItem).length === 0) {
-        initItem.hide = false
-        if (tempColumns && tempColumns.length > initIndex) {
-          tempColumns.splice(initIndex, 0, initItem)
-        } else {
-          tempColumns.push(initItem)
+        if (item.isEnable == '1') {
+          tempColumns.push({
+            name: item.filedName,
+            label: `<div class="gantt_search">${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class="gantt_search gantt_blank"></div>`,
+            align: 'center',
+            resize: true,
+            hide: item.isEnable == '0',
+            min_width: 120,
+            editor: checkEdit() ? { type: editType, map_to: item.filedName } : null,
+            indexNo: item.indexNo
+          })
         }
       }
     })
+    // 当ganttObject对象中columns数据与配置信息中数据不一致（增加或减少）时，根据ganttObject对象中columns新增列下标插入tempColumns，超出时加在末尾
+    // initColumns.forEach((initItem, initIndex) => {
+    //   const settingItem = vueThis.columnSettings.filter((settingItem) => settingItem.filedName === initItem.name)
+    //   if (!settingItem || Object.keys(settingItem).length === 0) {
+    //     initItem.hide = false
+    //     if (tempColumns && tempColumns.length > initIndex) {
+    //       tempColumns.splice(initIndex, 0, initItem)
+    //     } else {
+    //       tempColumns.push(initItem)
+    //     }
+    //   }
+    // })
     // 处理拓展字段的展示
     // extraColumns.forEach(item => {
 

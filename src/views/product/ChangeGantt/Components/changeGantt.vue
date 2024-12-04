@@ -408,7 +408,9 @@ export default {
       msg: {},
       newSendDatas: null,
       temporaryDatas: [],
-      selectedId: ''
+      selectedId: '',
+      taskExtendRequests: [],
+      extendMap: {}
     }
   },
   watch: {
@@ -676,6 +678,18 @@ export default {
               })
               initData = vueThis.taskList
             }
+            // 处理拓展字段已有的数据
+            vueThis.extendMap = res.extendMap || {}
+            if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
+              initData.forEach(task => {
+                if (vueThis.extendMap[task.id]) {
+                  let extendData = vueThis.extendMap[task.id]
+                  extendData.forEach(item => {
+                    task[item.fieldName] = item.fieldValue
+                  })
+                }
+              })
+            }
             const datas = {
               tasks: initData,
               links: res.links
@@ -705,7 +719,7 @@ export default {
             vueThis.taskStatusMap = res.taskStatusMap
             vueThis.taskMonitorMap = res.taskMonitorMap
             vueThis.changeTaskInfo = res.changeTaskInfo
-
+            console.log(datas, '=-====datas')
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
             myGantt.unselectTask()
@@ -715,6 +729,28 @@ export default {
                 myGantt.showTask(vueThis.selectedId);
                 myGantt.selectTask(vueThis.selectedId);
               }, 1000)
+            }
+            if (res.changeTaskExtList && Object.keys(res.changeTaskExtList) && Object.keys(res.changeTaskExtList).length) {
+              const extraData = []
+              Object.keys(res.changeTaskExtList).forEach(item => {
+                let task = myGantt.getTask(item)
+                res.changeTaskExtList[item].forEach(ref => {
+                  task[ref.fieldName] = ref.fieldValue
+
+                  const obj = {
+                    projectTasksId: item,
+                    id: ref.id,
+                    fieldName: ref.fieldName,
+                    fieldType: ref.filedType,
+                    fieldValue: ref.fieldValue,
+                    indexNo: ref.indexNo // 排序号
+                  }
+                  extraData.push(obj)
+                })
+                myGantt.updateTask(task.id)
+              })
+              vueThis.taskExtendRequests = vueThis.taskExtendRequests.concat(extraData)
+              console.log(vueThis.taskExtendRequests, '====vueThis.taskExtendRequests')
             }
           }
         })
@@ -913,6 +949,12 @@ export default {
             if (res) {
               that.sendDataList = uniqueMergedArray
               that.changeRecordId = res
+
+              that.$api['planChange.extendChangeSave']({ changeRecordId: that.changeRecordId, taskExtendRequests: that.taskExtendRequests }).then(res => {
+                // console.log(res, '===res')
+              }).catch(er => {
+                console.log(er, '===er')
+              })
               // that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
               that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)
               that.hasSave = false

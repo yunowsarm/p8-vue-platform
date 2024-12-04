@@ -131,6 +131,10 @@ export default {
       type: String,
       default: null
     },
+    wholeDescribeId: {
+      type: String,
+      default: null
+    },
     taskStatus: {
       type: Object,
       default: {}
@@ -169,7 +173,8 @@ export default {
       changeTaskInfo: {},
       changeRecordId: '',
       advance: true,
-      commandButtonBarHeight: this.ganttButtonMode === 'tabs' ? '145px' : this.ganttButtonMode === 'double' ? '72px' : '58px'
+      commandButtonBarHeight: this.ganttButtonMode === 'tabs' ? '145px' : this.ganttButtonMode === 'double' ? '72px' : '58px',
+      columnSettings: []
     }
   },
   watch: {
@@ -287,7 +292,8 @@ export default {
     ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
   },
   methods: {
-    initGantt (planInfoId, changeRecordId) {
+    async initGantt (planInfoId, changeRecordId) {
+      this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
       const vueThis = this
       const element = this.$refs.top; // 获取DOM元素
       // 清空原有数据
@@ -346,6 +352,16 @@ export default {
             vueThis.taskStatusMap = res.taskStatusMap
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
+
+            if (res.changeTaskExtList && Object.keys(res.changeTaskExtList) && Object.keys(res.changeTaskExtList).length) {
+              Object.keys(res.changeTaskExtList).forEach(item => {
+                let task = myGantt.getTask(item)
+                res.changeTaskExtList[item].forEach(ref => {
+                  task[ref.fieldName] = ref.fieldValue
+                })
+                myGantt.updateTask(task.id)
+              })
+            }
           }
         })
         .catch(function (error) {

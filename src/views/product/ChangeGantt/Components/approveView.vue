@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%">
-    <div class="couerDivClass" >
+    <div class="couerDivClass">
       <div class="top"
            :style="{ height: changeInfoHeight }">
         <form-list ref="form"
@@ -26,6 +26,7 @@
                          :read-only-visible="readOnlyVisible"
                          :approve-content-view="approveContentView"
                          :is-view="isApproveViewDetailView"
+                         :wholeDescribeId="wholeDescribeId"
                          @close="closeApproveViewDetail"></ApproveViewDetail>
     </div>
   </div>
@@ -173,7 +174,8 @@ export default {
       otherParam: {
         id: ''
       },
-      formData: {}
+      formData: {},
+      wholeDescribeId: ''
     }
   },
   watch: {
@@ -207,6 +209,7 @@ export default {
               that.formData.projectClassification = res.projectClassification
               that.formData.uploadFiles = res.uploadFiles
               that.formData = Object.assign({}, that.formData)
+              that.wholeDescribeId = res.wholeDescribeId
             }
           })
           .catch(function (error) {

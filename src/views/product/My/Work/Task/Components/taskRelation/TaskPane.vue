@@ -151,6 +151,7 @@ export default {
           this.formData[key] = res[key]
         }
       })
+      this.getExtend()
     },
     statusHandle () {
       let allStatus = this.getPlanInfo().allStatus
@@ -249,6 +250,30 @@ export default {
         }
       }
       return [forecast, plan, real]
+    },
+    async getExtend () {
+      this.$api['planGanttManager.getGanttExtendAttr']({ taskId: this.taskId }).then((res) => {
+        if (res && res.taskExtendList) {
+          res.taskExtendList.forEach((item) => {
+            if (item.fieldType == 'datepicker') {
+              let date = moment(item.fieldValue)
+              this.$set(this.formData, item.fieldName, date.isValid() ? date : '')
+            } else {
+              this.$set(this.formData, item.fieldName, item.fieldValue)
+            }
+          })
+        }
+      })
+      this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.getPlanInfo().wholeDescribeId })
+      this.extraList = this.columnSettings.filter((item) => item.attributeType === '1')
+      this.extraList.forEach((extra) => {
+        this.dataSource.push({
+          labelText: extra.name,
+          type: 'view',
+          fieldName: extra.filedName,
+          colLayout: 'single'
+        })
+      })
     }
   }
 }

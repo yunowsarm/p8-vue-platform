@@ -37,8 +37,14 @@
                            @blur="saveParamData(data)"
                            :disabled="scope.row.type == '0'"></el-checkbox>
             </template>
-            <template #indexNo>
-              <i class="el-icon-s-fold"></i>
+            <template #indexNo="{ scope, data }">
+              <el-input-number v-model="scope.row.indexNo"
+                               :min="0"
+                               :precision="1"
+                               style="width:100%;"
+                               size="mini"
+                               @change="saveParamData(data)"
+                               placeholder="请输入"></el-input-number>
             </template>
           </editable-table>
         </template>
@@ -183,7 +189,7 @@ export default {
           align: 'center'
         },
         {
-          title: '排序',
+          title: '排序号',
           dataIndex: 'indexNo',
           minWidth: 80,
           align: 'center',
@@ -230,7 +236,7 @@ export default {
     }
   },
   mounted () {
-    this.columnDrop()
+    // this.columnDrop()
   },
   methods: {
     rendered () {
@@ -267,29 +273,29 @@ export default {
       this.formData.attributeExtensionList = data
     },
     columnDrop () {
-      const that = this
-      this.$nextTick(() => {
-        const $table = that.$refs.editTable
-        that.sortable = Sortable.create($table.$el.querySelector('.list-main .common-table .el-table__body-wrapper .el-table__body tbody'), {
-          onEnd: ({ item, newIndex, oldIndex }) => {
-            // 获取排序之后的data数据
-            that.settingsData.splice(newIndex, 0, that.settingsData.splice(oldIndex, 1)[0])
-            const oldArray = that.formData.propertiesList.slice(0)
-            const newArray = that.settingsData.slice(0)
-            newArray.forEach(item => {
-              const oldItem = oldArray.find(oldItem => oldItem.id === item.id);
-              if (oldItem) {
-                item.isEnable = oldItem.isEnable;
-              }
-            });
-            that.settingsData = []
-            that.$nextTick(function () {
-              that.settingsData = newArray
-              that.formData.propertiesList = newArray;
-            })
-          }
-        })
-      })
+      // const that = this
+      // this.$nextTick(() => {
+      //   const $table = that.$refs.editTable
+      //   that.sortable = Sortable.create($table.$el.querySelector('.list-main .common-table .el-table__body-wrapper .el-table__body tbody'), {
+      //     onEnd: ({ item, newIndex, oldIndex }) => {
+      //       // 获取排序之后的data数据
+      //       that.settingsData.splice(newIndex, 0, that.settingsData.splice(oldIndex, 1)[0])
+      //       const oldArray = that.formData.propertiesList.slice(0)
+      //       const newArray = that.settingsData.slice(0)
+      //       newArray.forEach(item => {
+      //         const oldItem = oldArray.find(oldItem => oldItem.id === item.id);
+      //         if (oldItem) {
+      //           item.isEnable = oldItem.isEnable;
+      //         }
+      //       });
+      //       that.settingsData = []
+      //       that.$nextTick(function () {
+      //         that.settingsData = newArray
+      //         that.formData.propertiesList = newArray;
+      //       })
+      //     }
+      //   })
+      // })
     },
     customValidate (saveParmars) {
       const that = this

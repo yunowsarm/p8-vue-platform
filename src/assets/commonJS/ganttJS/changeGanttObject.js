@@ -8,7 +8,7 @@ import store from '@/plugins/store'
  * @author fukai
  * @date 2020/5/22 12:00
  */
-export function getChangeGantt(ganttName, vueThis) {
+export function getChangeGantt (ganttName, vueThis) {
   // 获取gantt对象
   const ganttObject = GanttObject.getGanttObject(ganttName)
   ganttObject.config.order_branch = false
@@ -122,39 +122,39 @@ export function getChangeGantt(ganttName, vueThis) {
         return ''
       }
     },
-    {
-      name: 'changeStatusName',
-      label: '变更状态',
-      align: 'center',
-      width: 70,
-      resize: true,
-      template: function (task) {
-        // 任务图标，排除根节点
-        if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.changeStatusName) {
-          return '<div style="display: inline-block;color:red;">' + task.changeStatusName + '</div>'
-        }
-      }
-    },
-    {
-      name: 'achievements',
-      label: '绩效',
-      align: 'center',
-      resize: true,
-      min_width: 90
-    },
-    {
-      name: 'proportion',
-      label: '比例',
-      align: 'center',
-      resize: true,
-      min_width: 90,
-      template: function (task) {
-        if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.proportion) {
-          return task.proportion + '%'
-        }
-        return ''
-      }
-    },
+    // {
+    //   name: 'changeStatusName',
+    //   label: '变更状态',
+    //   align: 'center',
+    //   width: 70,
+    //   resize: true,
+    //   template: function (task) {
+    //     // 任务图标，排除根节点
+    //     if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.changeStatusName) {
+    //       return '<div style="display: inline-block;color:red;">' + task.changeStatusName + '</div>'
+    //     }
+    //   }
+    // },
+    // {
+    //   name: 'achievements',
+    //   label: '绩效',
+    //   align: 'center',
+    //   resize: true,
+    //   min_width: 90
+    // },
+    // {
+    //   name: 'proportion',
+    //   label: '比例',
+    //   align: 'center',
+    //   resize: true,
+    //   min_width: 90,
+    //   template: function (task) {
+    //     if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.proportion) {
+    //       return task.proportion + '%'
+    //     }
+    //     return ''
+    //   }
+    // },
     {
       name: 'monitorPoints',
       label: '标识',
@@ -248,7 +248,7 @@ export function getChangeGantt(ganttName, vueThis) {
         if (task.style) {
           if (task.infoType === 'delete') {
             return '<div style="display: inline-block;text-decoration:line-through;color:' + task.style + '">' + task.name + '</div>'
-          }else {
+          } else {
             return task.name
           }
         } else {
@@ -515,20 +515,85 @@ export function getChangeGantt(ganttName, vueThis) {
   return ganttObject
 }
 
-function synchronizationColumns(vueThis, ganttObject) {
+function synchronizationColumns (vueThis, ganttObject) {
+  function checkEdit () {
+    if (vueThis.pageName === 'planMonitor') {
+      return false
+    } else {
+      return true
+    }
+  }
   const initColumns = ganttObject.config.columns
-
   // 获取gantt列配置信息
+  // if (vueThis.columnSettings.length > 0) {
+  //   const tempColumns = []
+  //   console.log(vueThis.columnSettings, '------vueThis.columnSettings');
+  //   vueThis.columnSettings.forEach((item) => {
+  //     const initColumn = initColumns.filter((initItem) => initItem.name === item.filedName)
+  //     if (initColumn && initColumn.length > 0) {
+  //       initColumn[0].hide = !item.isEnable == '1'
+  //       tempColumns.push(initColumn[0])
+  //     }
+  //   })
+  //   // 当ganttObject对象中columns数据与配置信息中数据不一致（增加或减少）时，根据ganttObject对象中columns新增列下标插入tempColumns，超出时加在末尾
+  //   initColumns.forEach((initItem, initIndex) => {
+  //     const settingItem = vueThis.columnSettings.filter((settingItem) => settingItem.filedName === initItem.name)
+  //     if (!settingItem || Object.keys(settingItem).length === 0) {
+  //       initItem.hide = false
+  //       if (tempColumns && tempColumns.length > initIndex) {
+  //         tempColumns.splice(initIndex, 0, initItem)
+  //       } else {
+  //         tempColumns.push(initItem)
+  //       }
+  //     }
+  //   })
+  //   ganttObject.config.columns = tempColumns
+  // } else {
+  //   ganttObject.config.columns = initColumns
+  // }
+
   if (vueThis.columnSettings.length > 0) {
     const tempColumns = []
     vueThis.columnSettings.forEach((item) => {
       const initColumn = initColumns.filter((initItem) => initItem.name === item.filedName)
       if (initColumn && initColumn.length > 0) {
-        initColumn[0].hide = !item.isEnable == '1'
-        tempColumns.push(initColumn[0])
+        // initColumn[0].hide = !(item.isEnable == '1')
+        // tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
+        if ((item.isEnable == '1')) {
+          tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
+        }
+      }
+      if (item.attributeType === '1') {
+        let editType = null
+        switch (item.filedType) {
+          case 'text':
+            editType = 'text'
+            break;
+          case 'number':
+            editType = 'number'
+            break;
+          case 'textarea':
+            editType = 'text'
+            break;
+          case 'datepicker':
+            editType = 'custom_date_editor'
+            break;
+          default:
+            break;
+        }
+        if (item.isEnable == '1') {
+          tempColumns.push({
+            name: item.filedName,
+            label: `${item.name}`,
+            align: 'center',
+            resize: true,
+            hide: item.isEnable == '0',
+            min_width: 120,
+            indexNo: item.indexNo
+          })
+        }
       }
     })
-    // 当ganttObject对象中columns数据与配置信息中数据不一致（增加或减少）时，根据ganttObject对象中columns新增列下标插入tempColumns，超出时加在末尾
     initColumns.forEach((initItem, initIndex) => {
       const settingItem = vueThis.columnSettings.filter((settingItem) => settingItem.filedName === initItem.name)
       if (!settingItem || Object.keys(settingItem).length === 0) {

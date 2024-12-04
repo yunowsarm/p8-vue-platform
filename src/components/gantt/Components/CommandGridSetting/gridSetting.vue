@@ -1,23 +1,32 @@
 <template>
-  <common-dialog
-    title="列设置"
-    v-if="visible"
-    :visible="visible"
-    :width="dialogWidth"
-    :dialog-height="dialogHeight"
-    :dialog-config="dialogConfig"
-    @handle-cancel="close"
-    @handle-ok="save"
-    @close="close"
-  >
+  <common-dialog title="列设置"
+                 v-if="visible"
+                 :visible="visible"
+                 :width="dialogWidth"
+                 :dialog-height="dialogHeight"
+                 :dialog-config="dialogConfig"
+                 @handle-cancel="close"
+                 @handle-ok="save"
+                 @close="close">
     <template #dialog>
       <vue-perfect-scrollbar class="setting-wrap">
         <div class="columns">
-          <draggable class="list-group" tag="ul" v-model="initialColumns" v-bind="dragOptions" :move="checkDraggableMove" @start="drag = true" @end="drag = false" @change="draggableChangeHandle">
-            <li class="list-group-item" v-for="(item, index) in initialColumns" :key="item.name">
+          <draggable class="list-group"
+                     tag="ul"
+                     v-model="initialColumns"
+                     v-bind="dragOptions"
+                     :move="checkDraggableMove"
+                     @start="drag = true"
+                     @end="drag = false"
+                     @change="draggableChangeHandle">
+            <li class="list-group-item"
+                v-for="(item, index) in initialColumns"
+                :key="item.name">
               <span class="icon-rank"><i class="el-icon-rank"></i></span>
-              <el-checkbox :checked="!item.hide" @change="checkedHandle(index)">
+              <el-checkbox :checked="!item.hide"
+                           @change="checkedHandle(index)">
                 <span>{{ item.label }}</span>
+                <span>{{ item.indexNo}}</span>
               </el-checkbox>
             </li>
           </draggable>
@@ -61,7 +70,7 @@ export default {
     }
   },
   computed: {
-    dragOptions() {
+    dragOptions () {
       return {
         animation: 200,
         group: 'description',
@@ -70,7 +79,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       dialogWidth: '300px',
       dialogHeight: 400,
@@ -88,7 +97,7 @@ export default {
   },
   watch: {
     columns: {
-      handler(val) {
+      handler (val) {
         const that = this
         if (val && val.length) {
           that.render()
@@ -98,12 +107,12 @@ export default {
       deep: true
     }
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    removeHTMLTags(str) {
+    removeHTMLTags (str) {
       return str.replace(/<\/?[^>]+(>|$)/g, "");
     },
-    render() {
+    render () {
       this.tableSettings = []
       this.initialColumns = this.columns.map((item) => {
         item.hide = item.hide ? item.hide : false
@@ -114,34 +123,35 @@ export default {
         item.label = this.removeHTMLTags(item.label)
         const tempObj = {
           hide: item.hide ? item.hide : false,
-          name: item.name || null
+          name: item.name || null,
+          indexNo: item.indexNo
         }
         this.tableSettings.push(tempObj)
         return item
       })
     },
-    checkedHandle(index) {
+    checkedHandle (index) {
       // 手动处理原因[未使用 v-model 绑定 checkbox' v-model绑定时,值改变会立即体现到Table上(但不想这样体现),]
       this.tableSettings[index].hide = !this.tableSettings[index].hide
     },
-    checkDraggableMove(evt) {
+    checkDraggableMove (evt) {
       // let currIndex = evt.draggedContext.index
       // if (this.tableSettings[currIndex].name && this.tableSettings[currIndex].name !== 'select_grid') {
       //   return false
       // }
       return true
     },
-    draggableChangeHandle(v) {
+    draggableChangeHandle (v) {
       this.tableSettings = this.updateArray(this.tableSettings, v.moved.newIndex, v.moved.oldIndex)
     },
-    updateArray(array, newIndex, oldIndex) {
+    updateArray (array, newIndex, oldIndex) {
       array.splice(newIndex, 0, array.splice(oldIndex, 1)[0])
       return array
     },
-    close() {
+    close () {
       this.$emit('close')
     },
-    save() {
+    save () {
       const _this = this
       const ganttSetting = GanttObject.getGanttSettingGrid(_this.ganttName, _this.createPage)
       let id = null

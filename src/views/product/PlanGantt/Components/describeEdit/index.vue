@@ -1,5 +1,6 @@
 <template>
-  <div style="position: relative" :style="{ width: `${formWidth}vw` }">
+  <div style="position: relative"
+       :style="{ width: `${formWidth}vw` }">
     <form-list class="describe-form"
                ref="form"
                :comp="comp"
@@ -54,7 +55,7 @@ export default {
       default: null
     },
     formWidth: {
-      type: Number,
+      type: [String, Number],
       default: 0
     }
   },
@@ -190,35 +191,35 @@ export default {
         //   },
         //   options: []
         // },
-        {
-          type: 'number',
-          labelText: '绩效',
-          fieldName: 'achievements',
-          colLayout: 'doubleCol',
-          min: 0,
-          fieldConfig: {
-            precision: 2,
-            step: 1
-          },
-          eventHandle: {
-            change: 'achievementsChangeHandle'
-          }
-        },
-        {
-          type: 'number',
-          labelText: '比例',
-          fieldName: 'proportion',
-          colLayout: 'doubleCol',
-          min: 0,
-          max: 100,
-          fieldConfig: {
-            precision: 2,
-            step: 1
-          },
-          eventHandle: {
-            change: 'proportionChangeHandle'
-          }
-        },
+        // {
+        //   type: 'number',
+        //   labelText: '绩效',
+        //   fieldName: 'achievements',
+        //   colLayout: 'doubleCol',
+        //   min: 0,
+        //   fieldConfig: {
+        //     precision: 2,
+        //     step: 1
+        //   },
+        //   eventHandle: {
+        //     change: 'achievementsChangeHandle'
+        //   }
+        // },
+        // {
+        //   type: 'number',
+        //   labelText: '比例',
+        //   fieldName: 'proportion',
+        //   colLayout: 'doubleCol',
+        //   min: 0,
+        //   max: 100,
+        //   fieldConfig: {
+        //     precision: 2,
+        //     step: 1
+        //   },
+        //   eventHandle: {
+        //     change: 'proportionChangeHandle'
+        //   }
+        // },
         {
           labelText: '预计开始时间',
           type: 'view',
@@ -333,8 +334,14 @@ export default {
         res.taskExtendList.forEach((item) => {
           if (item.fieldType == 'datepicker') {
             let date = moment(item.fieldValue)
+            if (this.formData[item.fieldName]) {
+              return
+            }
             this.$set(this.formData, item.fieldName, date.isValid() ? date : '')
           } else {
+            if (this.formData[item.fieldName]) {
+              return
+            }
             this.$set(this.formData, item.fieldName, item.fieldValue)
           }
           this.$set(this.extraIds, item.fieldName, item.id)
@@ -351,7 +358,7 @@ export default {
       this.extraKeys.push(extra.filedName)
       this.dataSource.push({
         labelText: extra.name,
-        type: this.ganttName === 'planGantt' ? extra.filedType : 'view',
+        type: this.ganttName === 'planGantt' || this.ganttName === 'changeGantt' ? extra.filedType : 'view',
         fieldName: extra.filedName,
         placeholder: `请输入${extra.name}`,
         colLayout: 'doubleCol'
@@ -480,6 +487,12 @@ export default {
       that.formData.weatherControl = task.weatherControl ? task.weatherControl : ''
       that.formData.forecastBeginDate = moment(task.forecastBeginDate).format('YYYY-MM-DD')
       that.formData.forecastEndDate = moment(task.forecastEndDate).format('YYYY-MM-DD')
+      let NewcheckKeys = that.vueThis.columnSettings.filter(el => el.attributeType == '1').map(item => item.filedName)
+      if (NewcheckKeys && NewcheckKeys.length) {
+        Object.keys(NewcheckKeys).forEach(el => {
+          that.formData[NewcheckKeys[el]] = task[NewcheckKeys[el]]
+        })
+      }
       if (task.realBeginDate) that.formData.realBeginDate = moment(task.realBeginDate).format('YYYY-MM-DD')
       if (task.realEndDate) that.formData.realEndDate = moment(task.realEndDate).format('YYYY-MM-DD')
       this.updataDataSource(task.autoScheduling)
@@ -588,6 +601,33 @@ export default {
               // 在这里执行你希望的操作
             }, 3000);
           } else if (that.ganttName === 'changeGantt') {
+            // 计划编辑
+            const extraData = []
+            this.extraList.forEach((item) => {
+              if (item.filedType == 'datepicker') {
+                saveParams[item.filedName] = moment(saveParams[item.filedName]).format('YYYY-MM-DD')
+              }
+              const obj = {
+                projectTasksId: that.taskId,
+                id: this.extraIds[item.filedName] || '',
+                fieldName: item.filedName,
+                fieldType: item.filedType,
+                fieldValue: saveParams[item.filedName],
+                indexNo: item.indexNo // 排序号
+              }
+              console.log(that.vueThis.taskExtendRequests && that.vueThis.taskExtendRequests.length, '==hat.vueThis.taskExtendRequests && that.vueThis.taskExtendRequests.length');
+              if (that.vueThis.taskExtendRequests && that.vueThis.taskExtendRequests.length) {
+                that.vueThis.taskExtendRequests.forEach((el, index) => {
+                  if (el.projectTasksId == obj.projectTasksId && el.fieldName == obj.fieldName) {
+                    that.vueThis.taskExtendRequests.splice(index, 1, obj)
+                  }
+                })
+              } else {
+                extraData.push(obj)
+              }
+            })
+            that.vueThis.taskExtendRequests = that.vueThis.taskExtendRequests.concat(extraData)
+            console.log(that.vueThis.taskExtendRequests, '===taskExtendRequests')
             // 变更校验
             const ganttObject = GanttObject.getGanttObject(that.ganttName)
             taskDescribesEditCheck(saveParams, that.oldFormData, that.vueThis, that.taskId, ganttObject)

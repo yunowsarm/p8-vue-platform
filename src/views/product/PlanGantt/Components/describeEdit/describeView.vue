@@ -1,5 +1,6 @@
 <template>
-  <div style="position: relative; height: 520px" :style="{ width: `${formWidth}vw` }">
+  <div style="position: relative; height: 520px"
+       :style="{ width: `${formWidth}vw` }">
     <form-list ref="form"
                @rendered="rendered"
                form-layout="vertical"
@@ -77,7 +78,7 @@ export default {
       default: null
     },
     formWidth: {
-      type: Number,
+      type: [Number, String],
       default: 0
     }
   },
@@ -246,6 +247,43 @@ export default {
     this.$api['thirdPartInterface.getDic']({ dicType: 'ACTIVITY_TYPE' }).then(res => {
       this.planTypeDic = res
     })
+  },
+  mounted () {
+    const ganttObject = GanttObject.getGanttObject(this.ganttName)
+    const task = ganttObject.getTask(this.taskId)
+    this.$api['planGanttManager.getGanttExtendAttr']({ taskId: task.id }).then((res) => {
+      if (res && res.taskExtendList) {
+        this.extraIds = {}
+        res.taskExtendList.forEach((item) => {
+          if (item.fieldType == 'datepicker') {
+            let date = moment(item.fieldValue)
+            this.$set(this.formData, item.fieldName, date.isValid() ? date : '')
+          } else {
+            this.$set(this.formData, item.fieldName, item.fieldValue)
+          }
+          this.$set(this.extraIds, item.fieldName, item.id)
+        })
+      }
+    })
+    // this.formData.secretGradeDisplay = task.secretGradeDisplay
+    // this.$api['planGanttManager.classifiedFiltering']({ secretGrade: task.secretGrade }).then((res) => {
+    //   this.falg = res
+    // })
+    this.extraList = this.vueThis.columnSettings.filter((item) => item.attributeType === '1')
+    this.extraKeys = []
+    this.extraList.forEach((extra) => {
+      this.extraKeys.push(extra.filedName)
+      this.dataSource.push({
+        labelText: extra.name,
+        type: 'view',
+        fieldName: extra.filedName,
+        placeholder: `请输入${extra.name}`,
+        colLayout: 'doubleCol'
+      })
+    })
+    if (this.$route.path === '/TaskChange') {
+      this.getPlanInfo(task)
+    }
   },
   methods: {
     rendered () {
