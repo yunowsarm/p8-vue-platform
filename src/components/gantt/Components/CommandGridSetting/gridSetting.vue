@@ -5,6 +5,8 @@
                  :width="dialogWidth"
                  :dialog-height="dialogHeight"
                  :dialog-config="dialogConfig"
+                 :show-handle-btn="false"
+                 :is-view-cs-footer="true"
                  @handle-cancel="close"
                  @handle-ok="save"
                  @close="close">
@@ -32,6 +34,12 @@
           </draggable>
         </div>
       </vue-perfect-scrollbar>
+    </template>
+    <template #cs-footer>
+      <el-button @click="reSet">重置</el-button>
+      <el-button @click="close">取消</el-button>
+      <el-button type="primary"
+                 @click="save()">确定</el-button>
     </template>
   </common-dialog>
 </template>
@@ -187,6 +195,16 @@ export default {
         .catch((err) => {
           console.error('user.setting.save--err', err)
         })
+    },
+    reSet () {
+      let _this = this
+      this.$api['planChange.reloadGantColumn']({
+        key: _this.ganttName + '-' + _this.createPage,
+        type: _this.type
+      }).then(res => {
+        _this.$store.commit('SET_SETTING_ALL', {})
+        _this.$emit('save-setting')
+      })
     }
   }
 }

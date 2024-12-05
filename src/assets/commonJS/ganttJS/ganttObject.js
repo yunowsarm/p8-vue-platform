@@ -2830,7 +2830,7 @@ export function progressRefreshCheck (vueThis) {
  * @returns {null|*}
  */
 GanttObject.getGanttSettingGrid = function (ganttName, createPage) {
-  const ganttSetting = store.state.user.userSettingAll.Gantt ? store.state.user.userSettingAll.Gantt : null
+  const ganttSetting = store.state.user.userSettingAll && store.state.user.userSettingAll.Gantt ? store.state.user.userSettingAll.Gantt : null
   const key = ganttName + '-' + createPage
   if (ganttSetting) {
     const columnsSetting = ganttSetting.filter((item) => item.key === key)

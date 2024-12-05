@@ -668,7 +668,8 @@ export default {
       ganttSearchVisible: false, // gantt查询弹出框
       rightMenuConfigVisible: false, // 右键菜单配置弹出框
       yTask: null,
-      getSelectTasks: []
+      getSelectTasks: [],
+      extendMap: {}
     }
   },
   watch: {
@@ -963,6 +964,18 @@ export default {
         .then(function (res) {
           if (res) {
             vueThis.fullscreenLoading.close()
+            // 处理拓展字段已有的数据
+            vueThis.extendMap = res.extendMap || {}
+            if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
+              res.tasks.forEach(task => {
+                if (vueThis.extendMap[task.id]) {
+                  let extendData = vueThis.extendMap[task.id]
+                  extendData.forEach(item => {
+                    task[item.fieldName] = item.fieldValue
+                  })
+                }
+              })
+            }
             // 初始化数据
             const datas = {
               tasks: res.tasks,

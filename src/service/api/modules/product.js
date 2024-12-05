@@ -1112,6 +1112,13 @@ export const repositoryApi = {
       path: '/product/pm/plan/extendChangeSave',
       mockPath: '/product/pm/plan/extendChangeSave',
       desc: '计划管理->计划概况'
+    },
+    {
+      name: 'reloadGantColumn',
+      method: 'POST',
+      path: '/product/pm/plan/reloadGantColumn',
+      mockPath: '/product/pm/plan/reloadGantColumn',
+      desc: '计划管理->列设置->重置'
     }
   ],
   taskAttribute: [
