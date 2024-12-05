@@ -186,26 +186,26 @@ export function getAnalysisGantt (ganttName, vueThis) {
         resize: true,
         min_width: 90
       },
-      {
-        name: 'achievements',
-        label: '绩效',
-        align: 'center',
-        width: 90,
-        resize: true
-      },
-      {
-        name: 'proportion',
-        label: '比例',
-        align: 'center',
-        width: 90,
-        resize: true,
-        template: function (task) {
-          if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.proportion) {
-            return task.proportion + '%'
-          }
-          return ''
-        }
-      },
+      // {
+      //   name: 'achievements',
+      //   label: '绩效',
+      //   align: 'center',
+      //   width: 90,
+      //   resize: true
+      // },
+      // {
+      //   name: 'proportion',
+      //   label: '比例',
+      //   align: 'center',
+      //   width: 90,
+      //   resize: true,
+      //   template: function (task) {
+      //     if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.proportion) {
+      //       return task.proportion + '%'
+      //     }
+      //     return ''
+      //   }
+      // },
       {
         name: 'name',
         label: '任务名称',
@@ -247,7 +247,6 @@ export function getAnalysisGantt (ganttName, vueThis) {
               return task.oldName
             }
           }
-
         }
       },
       {
@@ -601,26 +600,26 @@ export function getAnalysisGantt (ganttName, vueThis) {
         resize: true,
         min_width: 90
       },
-      {
-        name: 'achievements',
-        label: '绩效',
-        align: 'center',
-        width: 90,
-        resize: true
-      },
-      {
-        name: 'proportion',
-        label: '比例',
-        align: 'center',
-        width: 90,
-        resize: true,
-        template: function (task) {
-          if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.proportion) {
-            return task.proportion + '%'
-          }
-          return ''
-        }
-      },
+      // {
+      //   name: 'achievements',
+      //   label: '绩效',
+      //   align: 'center',
+      //   width: 90,
+      //   resize: true
+      // },
+      // {
+      //   name: 'proportion',
+      //   label: '比例',
+      //   align: 'center',
+      //   width: 90,
+      //   resize: true,
+      //   template: function (task) {
+      //     if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.proportion) {
+      //       return task.proportion + '%'
+      //     }
+      //     return ''
+      //   }
+      // },
       {
         name: 'name',
         label: '任务名称',

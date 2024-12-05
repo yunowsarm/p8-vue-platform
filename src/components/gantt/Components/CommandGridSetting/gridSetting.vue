@@ -28,7 +28,7 @@
               <el-checkbox :checked="!item.hide"
                            @change="checkedHandle(index)">
                 <span>{{ item.label }}</span>
-                <span>{{ item.indexNo}}</span>
+                <!-- <span>{{ item.indexNo}}</span> -->
               </el-checkbox>
             </li>
           </draggable>
