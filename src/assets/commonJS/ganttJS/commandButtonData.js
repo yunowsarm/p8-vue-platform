@@ -787,17 +787,17 @@ export const CommandButtonData = [
   //   help: '批量设置任务密级',
   //   clickFun: function (btn, ganttName, tasks) {
   //     const vueThis = store.getters.vueThis
-      // 批量修改任务密级，若包含已下发的不能下发的限制逻辑,暂时注释
-      // const result = tasks.some(item => item.managerStatus === '6404')
-      // if (result) {
-      //   vueThis.$message({
-      //     message: '包含已下发状态的任务,不能设置密级',
-      //     type: 'warning'
-      //   })
-      // } else {
-      // }
-      // batchLock(ganttName)
-    // },
+  // 批量修改任务密级，若包含已下发的不能下发的限制逻辑,暂时注释
+  // const result = tasks.some(item => item.managerStatus === '6404')
+  // if (result) {
+  //   vueThis.$message({
+  //     message: '包含已下发状态的任务,不能设置密级',
+  //     type: 'warning'
+  //   })
+  // } else {
+  // }
+  // batchLock(ganttName)
+  // },
   //   isDisableFun: function (btn, ganttName, tasks) {
   //     let result = false
   //     if (checkSwitchType(tasks)) {
@@ -938,12 +938,12 @@ export const CommandButtonData = [
       if (tasks.length > 1) {
         return true
       }
-  //   console.log("🚀 ~ tasks:", tasks)
-  //   let result
-  // if (tasks[0].indexNo === 0) {
-  //   result = true
-  // }
-  //   return result
+      //   console.log("🚀 ~ tasks:", tasks)
+      //   let result
+      // if (tasks[0].indexNo === 0) {
+      //   result = true
+      // }
+      //   return result
     }
   },
   {
@@ -1083,7 +1083,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-front-and-rear',
     title: '自动/手动排程',
     help: '自动/手动排程',
-    clickFun: function (btn, ganttName, tasks) {},
+    clickFun: function (btn, ganttName, tasks) { },
     isDisableFun: function (btn, ganttName, tasks) {
       let result
       if (checkSwitchType(tasks)) {
@@ -1453,7 +1453,7 @@ export const CommandButtonData = [
         return columObj
       })
       let columnFilter = []
-      columnConfigs.forEach(function(element) {
+      columnConfigs.forEach(function (element) {
         if (element.title && element.dataIndex) {
           columnFilter.push(element)
         }
@@ -1563,7 +1563,7 @@ export const CommandButtonData = [
         return columObj
       })
       let columnFilter = []
-      columnConfigs.forEach(function(element) {
+      columnConfigs.forEach(function (element) {
         if (element.title && element.dataIndex) {
           columnFilter.push(element)
         }
@@ -1824,7 +1824,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-PDM',
     title: 'PDM',
     help: 'PDM',
-    clickFun: function (btn, ganttName, tasks) {},
+    clickFun: function (btn, ganttName, tasks) { },
     isDisableFun: function (btn, ganttName, tasks) {
       if (checkSwitchType(tasks)) {
         return true
@@ -2176,7 +2176,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-contrast',
     title: '比较',
     help: '比较',
-    clickFun: function (btn, ganttName, tasks) {},
+    clickFun: function (btn, ganttName, tasks) { },
     isDisableFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       const createPage = vueThis.createPage
@@ -2234,8 +2234,8 @@ export const CommandButtonData = [
       const updateData =
         store.getters.userSettingAll.PlanStyleClass && store.getters.userSettingAll.PlanStyleClass.length
           ? store.getters.userSettingAll.PlanStyleClass.find((i) => {
-              return i.key === 'grid-cell-border'
-            })
+            return i.key === 'grid-cell-border'
+          })
           : null
       const updataParams = {
         description: '计划编制: 缩放/列设置 / 添加/取消网格配置',
@@ -2257,8 +2257,8 @@ export const CommandButtonData = [
           const planGanttConfig =
             res.PlanStyleClass && res.PlanStyleClass.length
               ? res.PlanStyleClass.find((i) => {
-                  return i.key === 'grid-cell-border'
-                })
+                return i.key === 'grid-cell-border'
+              })
               : null
           const ganttObject = GanttObject.getGanttObject(ganttName)
           let rootClass = ganttObject.$root.getAttribute('class')
@@ -2340,7 +2340,7 @@ export const CommandButtonData = [
         vueThis.rightMenuConfigVisible = true
       }
     },
-    isDisableFun: function (btn, ganttName, tasks) {}
+    isDisableFun: function (btn, ganttName, tasks) { }
   },
   {
     id: 'detail-info',
@@ -2583,7 +2583,7 @@ export const CommandButtonData = [
  * @param tasks
  * @returns {boolean}
  */
-function isDisableFunCheck(ganttName, tasks, checkType) {
+function isDisableFunCheck (ganttName, tasks, checkType) {
   let result = false
   const vueThis = store.getters.vueThis
   const ganttObject = GanttObject.getGanttObject(ganttName)
@@ -2618,7 +2618,7 @@ function isDisableFunCheck(ganttName, tasks, checkType) {
  * @param tasks
  * @returns {boolean}
  */
-function checkTaskReadonly(ganttName, tasks) {
+function checkTaskReadonly (ganttName, tasks) {
   let result = false
   const ganttObject = GanttObject.getGanttObject(ganttName)
   ganttObject.eachSelectedTask(function (taskId) {
@@ -2635,7 +2635,7 @@ function checkTaskReadonly(ganttName, tasks) {
  * @author fukai
  * @date 2020/5/21 19:49
  */
-function checkReadOnly(ganttName) {
+function checkReadOnly (ganttName) {
   const ganttObject = GanttObject.getGanttObject(ganttName)
   if (ganttObject.config.copy) {
     return false
@@ -2658,7 +2658,7 @@ function checkReadOnly(ganttName) {
  * @author fukai
  * @date 2020/5/13 11:33
  */
-function checkContentRoot(ganttName, tasks) {
+function checkContentRoot (ganttName, tasks) {
   if (tasks.length === 0) {
     return true
   }
@@ -2804,7 +2804,7 @@ function addTask (num, pos, ganttName) {
  * @param msg
  * @param dpObject
  */
-function createTaskByDatas(ganttObject, datas, parentId, pos, taskName, msg, dpObject, indexNo) {
+function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dpObject, indexNo) {
   ganttObject.unselectTask()
   dpObject.ignore(function () {
     ganttObject.batchUpdate(function () {
@@ -2943,7 +2943,7 @@ export function deleteKeyRemove (ganttName, tasks) {
  * @author fukai
  * @date 2020/5/8 15:33
  */
-function removeTasks(ganttObject, dp, ganttName) {
+function removeTasks (ganttObject, dp, ganttName) {
   const selectedTaskIds = []
   const selTaskIds = ganttObject.getSelectedTasks()
   const vueThis = store.getters.vueThis
@@ -3010,7 +3010,7 @@ function removeTasks(ganttObject, dp, ganttName) {
     }
   }
 }
-function removePlanGanttData(ganttObject, dp, ganttName, vueThis, selectedTaskIds) {
+function removePlanGanttData (ganttObject, dp, ganttName, vueThis, selectedTaskIds) {
   api['planGanttManager.removePlanGanttData']({ taskIds: selectedTaskIds })
     .then(function (res) {
       if (res && res === 'true') {
@@ -3085,7 +3085,7 @@ function removePlanGanttData(ganttObject, dp, ganttName, vueThis, selectedTaskId
  * @param ganttObject
  * @param tasks
  */
-function copyTask(ganttObject, tasks, vueThis) {
+function copyTask (ganttObject, tasks, vueThis) {
   vueThis.copyFlag = false
   const selectTaskIds = ganttObject.getSelectedTasks()
   const planInfoId = vueThis.planInfoId
@@ -3131,7 +3131,7 @@ function copyTask(ganttObject, tasks, vueThis) {
  * @param ganttObject
  * @param tasks
  */
-function pasteTask(ganttObject, tasks, vueThis, type, dpObj) {
+function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
   console.log(vueThis.copyFlag, '----vueThis.copyFlag')
   if (vueThis.copyFlag) {
     const that = this
@@ -3213,7 +3213,7 @@ function pasteTask(ganttObject, tasks, vueThis, type, dpObj) {
  * @param {*} tasks
  * @param {*} btnId
  */
-function updateTaskStyle(ganttName, tasks, btn) {
+function updateTaskStyle (ganttName, tasks, btn) {
   const ganttObject = GanttObject.getGanttObject(ganttName)
   if (ganttObject && btn) {
     const taskStyles = store.getters.taskStyles
@@ -3294,7 +3294,7 @@ function updateTaskStyle(ganttName, tasks, btn) {
  * @param ganttName
  * @returns {boolean}
  */
-function autoSchedulingCheck(ganttName) {
+function autoSchedulingCheck (ganttName) {
   let result = false
   const ganttObject = GanttObject.getGanttObject(ganttName)
   // 已完成时不可切换
@@ -3317,7 +3317,7 @@ function autoSchedulingCheck(ganttName) {
  * @param pos
  * @param ganttName
  */
-export function noDpAddTask(num, pos, ganttName) {
+export function noDpAddTask (num, pos, ganttName) {
   const ganttObject = GanttObject.getGanttObject(ganttName)
   if (ganttObject) {
     const taskId = ganttObject.getSelectedId()
@@ -3357,7 +3357,7 @@ export function noDpAddTask(num, pos, ganttName) {
  * @param vueThis
  * @param style
  */
-function noDpCreateTask(ganttObject, num, parent, pos, taskName, indexNo, autoScheduling, vueThis, style) {
+function noDpCreateTask (ganttObject, num, parent, pos, taskName, indexNo, autoScheduling, vueThis, style) {
   let schedule = false
   const formatFunc = ganttObject.date.date_to_str('%Y-%m-%d')
   if (autoScheduling === '1') {
@@ -3417,7 +3417,7 @@ function noDpCreateTask(ganttObject, num, parent, pos, taskName, indexNo, autoSc
  * @param tasks
  * @param vueThis
  */
-function noDpCopy(thisGantt, tasks, vueThis) {
+function noDpCopy (thisGantt, tasks, vueThis) {
   const selectTaskIds = thisGantt.getSelectedTasks()
   const copyTaskIds = []
   vueThis.copyTasks = []
@@ -3444,7 +3444,7 @@ function noDpCopy(thisGantt, tasks, vueThis) {
  * @param tasks
  * @param vueThis
  */
-function noDpPaste(ganttObject, tasks, vueThis) {
+function noDpPaste (ganttObject, tasks, vueThis) {
   if (vueThis.copyTasks && vueThis.copyTasks.length > 0) {
     const selectTask = tasks[0]
     const parentTasks = ganttObject.getTask(selectTask.parent)
@@ -3516,7 +3516,7 @@ function noDpPaste(ganttObject, tasks, vueThis) {
  * @param ganttObject
  * @returns {{end_date: *, parent: *, $open: boolean, planType, forecastBeginDate: *, owner_id, monitorPoints, type: string, duration: *, autoScheduling, infoType: string, auto_scheduling: *, name: *, progress: number, style: *, forecastEndDate: *, planInfoId: *, start_date: *, status: string}}
  */
-function createTask(parent, parentId, vueThis, style, copyTask, ganttObject) {
+function createTask (parent, parentId, vueThis, style, copyTask, ganttObject) {
   const formatFunc = ganttObject.date.date_to_str('%Y-%m-%d')
   const task = {
     name: copyTask.name,
@@ -3548,7 +3548,7 @@ function createTask(parent, parentId, vueThis, style, copyTask, ganttObject) {
 /**
  * 发布后可控任务可新建下级，同级
  */
-function checkEditTask(ganttName, tasks) {
+function checkEditTask (ganttName, tasks) {
   const vueThis = store.getters.vueThis
   if (ganttName) {
     const ganttObject = GanttObject.getGanttObject(ganttName)
@@ -3573,7 +3573,7 @@ function checkEditTask(ganttName, tasks) {
  * @param ganttName
  * @param tasks
  */
-function checkCanIssue(ganttName, tasks) {
+function checkCanIssue (ganttName, tasks) {
   let result = true
   const vueThis = store.getters.vueThis
   if (checkReadOnly(ganttName)) {
@@ -3617,7 +3617,7 @@ function checkCanIssue(ganttName, tasks) {
  * 计划下发
  * @param currentRowTask {Array} 当前行信息
  */
-function issueTask(ganttObject, thisDp, currentRowTask) {
+function issueTask (ganttObject, thisDp, currentRowTask) {
   const taskIds = []
   const tasks = []
   const taskMsg = []
@@ -3708,7 +3708,7 @@ function issueTask(ganttObject, thisDp, currentRowTask) {
  * 批量设置责任人最小开始时间和最大完成时间数据获取
  * @param ganttName
  */
-function batchOwner(ganttName) {
+function batchOwner (ganttName) {
   let startTaskId = ''
   let endTaskId = ''
   let startDate = null
@@ -3744,7 +3744,7 @@ function batchOwner(ganttName) {
 /**
  * 批量设置任务密级
  */
-function batchLock() {
+function batchLock () {
   // const vueThis = store.getters.vueThis
   // vueThis.ClassificationSelectVisible = true
 }
@@ -3752,7 +3752,7 @@ function batchLock() {
  * 同步计划时间到预计时间
  * @param ganttName
  */
-function batchSyncTask(ganttName, allTaskIds) {
+function batchSyncTask (ganttName, allTaskIds) {
   const vueThis = store.getters.vueThis
   const ganttObject = GanttObject.getGanttObject(ganttName)
   const dpObject = GanttObject.getDpObject(ganttName)
@@ -3805,7 +3805,7 @@ function batchSyncTask(ganttName, allTaskIds) {
  * @param ganttName
  * @returns {boolean}
  */
-function batchOwnerCheck(ganttName) {
+function batchOwnerCheck (ganttName) {
   let result = true
   const vueThis = store.getters.vueThis
   const planStatusLockMap = store.getters.planStatusLockMap
@@ -3848,7 +3848,7 @@ function batchOwnerCheck(ganttName) {
  * @param ganttName
  * @returns {boolean}
  */
-function canIndentCheck(ganttName) {
+function canIndentCheck (ganttName) {
   let result = true
   if (ganttName) {
     const ganttObject = GanttObject.getGanttObject(ganttName)
@@ -3935,7 +3935,7 @@ function canIndentCheck(ganttName) {
  * @param tasks
  * @returns {boolean}
  */
-function outdentCheck(ganttName, tasks) {
+function outdentCheck (ganttName, tasks) {
   let result = true
   if (ganttName) {
     const ganttObject = GanttObject.getGanttObject(ganttName)
@@ -3963,7 +3963,7 @@ function outdentCheck(ganttName, tasks) {
  * @param vueThis
  * @returns {boolean}
  */
-function canDeleteCheck(ganttName, tasks, vueThis) {
+function canDeleteCheck (ganttName, tasks, vueThis) {
   let result = true
   // 获取gannt操作限制策略
   const planStatusLockMap = store.getters.planStatusLockMap
@@ -3999,7 +3999,8 @@ function canDeleteCheck(ganttName, tasks, vueThis) {
           return true
         }
         // 发布后可控任务不可删除
-        if (controlTaskEdit && controlTaskEdit === 'false' && selTask.weatherControl && selTask.weatherControl === '1') {
+        if (controlTaskEdit && controlTaskEdit === 'false') {
+          console.log(11)
           result = false
           return true
         }
@@ -4029,7 +4030,7 @@ function canDeleteCheck(ganttName, tasks, vueThis) {
  * 检查是否包含审批中任务
  * @param tasks
  */
-function checkHasApproveTask(ganttName, tasks) {
+function checkHasApproveTask (ganttName, tasks) {
   let result = false
   if (ganttName) {
     const ganttObject = GanttObject.getGanttObject(ganttName)
@@ -4053,7 +4054,7 @@ function checkHasApproveTask(ganttName, tasks) {
  * @param ganttName
  * @param tasks
  */
-function changePlanScheduling(value, ganttName, tasks) {
+function changePlanScheduling (value, ganttName, tasks) {
   const ganttObject = GanttObject.getGanttObject(ganttName)
   const dpObject = GanttObject.getDpObject(ganttName)
   const taskStatusLockMap = store.getters.taskStatusLockMap
@@ -4137,7 +4138,7 @@ function changePlanScheduling(value, ganttName, tasks) {
 }
 
 // 检测任务是否包含（备料/齐套/生产）/设计标识，则无法新建下级
-function checkHasProductTask(tasks) {
+function checkHasProductTask (tasks) {
   if (tasks.length === 0) {
     return true
   }
@@ -4149,7 +4150,7 @@ function checkHasProductTask(tasks) {
   }
 }
 // 检测是否为暂停或者禁止
-function checkSwitchType(tasks) {
+function checkSwitchType (tasks) {
   if (tasks.length === 0) {
     return true
   }
