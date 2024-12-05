@@ -200,7 +200,7 @@ export default {
         id: ''
       },
       formData: {
-        weatherChange: '0',
+        // weatherChange: '0',
         reasonChange: '',
         uploadFiles: []
       },
@@ -237,7 +237,7 @@ export default {
               that.formData.changeType = res.changeType
               that.formData.reason = res.reason
               that.formData.measure = res.measure
-              that.formData.weatherChange = res.weatherChange
+              // that.formData.weatherChange = res.weatherChange
               that.formData.reasonChange = res.reasonChange
               that.otherParam = { id: res.id, planInfoId: res.planInfoId }
               that.formData = Object.assign({}, that.formData)
