@@ -599,7 +599,7 @@ function synchronizationColumns (vueThis, ganttObject) {
       if (!settingItem || Object.keys(settingItem).length === 0) {
         initItem.hide = false
         if (tempColumns && tempColumns.length > initIndex) {
-          tempColumns.splice(initIndex, 0, initItem)
+          tempColumns.push(initItem)
         } else {
           tempColumns.push(initItem)
         }

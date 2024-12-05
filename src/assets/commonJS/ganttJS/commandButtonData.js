@@ -4000,9 +4000,15 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
         }
         // 发布后可控任务不可删除
         if (controlTaskEdit && controlTaskEdit === 'false') {
-          console.log(11)
-          result = false
-          return true
+          if (selTask.weatherControl && selTask.weatherControl === '1') {
+            console.log(1111);
+            result = false
+            return true
+          } else if (selTask.managerStatus === '6404') {
+            console.log(2222);
+            result = false
+            return true
+          }
         }
         if (indexNo === 0 || (editManagerStatus && editManagerStatus.indexOf(selTask.managerStatus) === -1 && indexNo !== 0)) {
           result = false

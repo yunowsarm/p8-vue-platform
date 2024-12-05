@@ -2988,7 +2988,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
       if (!settingItem || Object.keys(settingItem).length === 0) {
         initItem.hide = false
         if (tempColumns && tempColumns.length > initIndex) {
-          tempColumns.splice(initIndex, 0, initItem)
+          tempColumns.push(initItem)
         } else {
           if (vueThis.columnSettings.filter((el) => el.filedName === initItem.name && el.isEnable !== '0')) {
             tempColumns.push(initItem)
@@ -3047,7 +3047,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
         // initColumn[0].hide = !(item.isEnable == '1')
         // tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
         if ((item.isEnable == '1')) {
-          tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
+          tempColumns.push({ ...initColumn[0] })
         }
       }
       if (item.attributeType === '1') {
@@ -3076,8 +3076,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
             resize: true,
             hide: item.isEnable == '0',
             min_width: 120,
-            editor: checkEdit() ? { type: editType, map_to: item.filedName } : null,
-            indexNo: item.indexNo
+            editor: checkEdit() ? { type: editType, map_to: item.filedName } : null
           })
         }
       }

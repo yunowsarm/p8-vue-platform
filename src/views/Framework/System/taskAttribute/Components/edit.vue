@@ -236,6 +236,9 @@ export default {
     }
   },
   mounted () {
+    if (this.id == 'sys_01') {
+      this.dataSource[0].disabled = true
+    }
     // this.columnDrop()
   },
   methods: {

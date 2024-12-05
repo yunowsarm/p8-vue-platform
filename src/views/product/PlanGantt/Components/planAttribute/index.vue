@@ -182,6 +182,7 @@ export default {
       }
       if (this.viewType === 'view') {
         this.isView = false
+        this.isChangeGantt = false
       } else if (this.attReadOnly || ganttObject.config.readonly) {
         this.isView = false
       } else {

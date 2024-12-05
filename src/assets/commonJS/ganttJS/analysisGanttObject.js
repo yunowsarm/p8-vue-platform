@@ -439,22 +439,70 @@ export function getAnalysisGantt (ganttName, vueThis) {
           }
         }
       })
+      let oldFiled = ['oldName', 'oldForecastBeginDate', 'oldForecastEndDate']
       initColumns.forEach((initItem, initIndex) => {
         const settingItem = vueThis.columnSettings.filter((settingItem) => settingItem.filedName === initItem.name)
         if (!settingItem || Object.keys(settingItem).length === 0) {
           initItem.hide = false
           if (tempColumns && tempColumns.length > initIndex) {
-            tempColumns.splice(initIndex, 0, initItem)
+            if (oldFiled.includes(initItem.name)) return
+            tempColumns.push(initItem)
           } else {
             tempColumns.push(initItem)
           }
         }
       })
+      let nameList = [
+        {
+          key: "name",
+          value: {
+            name: 'oldName',
+            label: '原任务名称',
+            align: 'left',
+            resize: true,
+            monitorLockLimit: true, // 标识锁定后不可操作的列声明
+            min_width: 350,
+            template: function (task) {
+              if (task.oldName) {
+                if (task.style) {
+                  return '<div style="color:' + task.style + '">' + task.oldName + '</div>'
+                } else {
+                  return task.oldName
+                }
+              }
+            }
+          }
+        },
+        {
+          key: "forecastBeginDate",
+          value: {
+            name: 'oldForecastBeginDate',
+            label: '原计划开始时间',
+            align: 'center',
+            min_width: 100,
+            resize: true
+          }
+        },
+        {
+          key: "end_date",
+          value: {
+            name: 'oldForecastEndDate',
+            label: '原计划完成时间',
+            align: 'center',
+            min_width: 100,
+            resize: true
+          }
+        },
+      ];
+      nameList.map((el) => {
+        let index = tempColumns.findIndex((val) => val.name == el.key);
+        if (index > -1) {
+          tempColumns.splice(index + 1, 0, el.value);
+        }
+      });
       ganttObject.config.columns = tempColumns
-      console.log(ganttObject.config.columns, '===ganttObject.config.columns11 ');
     } else {
       ganttObject.config.columns = initColumns
-      console.log(ganttObject.config.columns, '===ganttObject.config.columns22 ');
     }
   } else {
     // 列定义

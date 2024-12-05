@@ -28,7 +28,6 @@
               <el-checkbox :checked="!item.hide"
                            @change="checkedHandle(index)">
                 <span>{{ item.label }}</span>
-                <!-- <span>{{ item.indexNo}}</span> -->
               </el-checkbox>
             </li>
           </draggable>
@@ -131,8 +130,7 @@ export default {
         item.label = this.removeHTMLTags(item.label)
         const tempObj = {
           hide: item.hide ? item.hide : false,
-          name: item.name || null,
-          indexNo: item.indexNo
+          name: item.name || null
         }
         this.tableSettings.push(tempObj)
         return item
