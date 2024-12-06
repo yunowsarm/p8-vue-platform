@@ -3,7 +3,7 @@
   <div class="main_content">
     <el-tabs type="border-card"
              style="height: 97%;">
-      <el-tab-pane label="项目人员信息">
+      <el-tab-pane label="项目团队信息">
         <div style="height: 95%"
              class="team-manager-wrap">
           <div class="custom_content_wrap">
@@ -1052,7 +1052,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.main_content{
+.main_content {
   height: 100%;
 }
 .custom_content_wrap {
