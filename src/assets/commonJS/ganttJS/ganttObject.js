@@ -2977,7 +2977,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
         initColumn[0].hide = settingItem.hide
         let columnSetting = vueThis.columnSettings.filter((el) => el.filedName === initColumn[0].name && el.isEnable !== '0')
         if (columnSetting && columnSetting.length > 0) {
-          tempColumns.push(initColumn[0])
+          tempColumns[initIndex] = initColumn[0]
         }
       }
     })
@@ -3025,7 +3025,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
           min_width: 120,
           editor: checkEdit() ? { type: editType, map_to: item.filedName } : null,
         }
-        tempColumns.splice(settingExtra[item.filedName].index, 0, initItem)
+        tempColumns.splice(settingExtra[item.filedName].index, 1, initItem)
       } else {
         tempColumns.push({
           name: item.filedName,
