@@ -2,7 +2,7 @@
 <template>
   <div style="height: 100%; position: relative">
     <div id="actionMenu"
-         v-if="menuVisible"
+         v-if="menuVisible && menuData.length"
          ref="actionMenu"
          :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
       <VuePerfectScrollbar class="scroll-area"
@@ -654,7 +654,7 @@ export default {
           params: {}
         }
       },
-      menuData: PlanRightMenuData,
+      menuData: [],
       dropTop: '0px',
       dropLeft: '0px',
       maxHeight: (mh + 300) / 2 + 'px',
@@ -854,7 +854,7 @@ export default {
     },
     ganttRightButtons: {
       handler (val) {
-        this.menuData = val.length ? val : PlanRightMenuData
+        this.menuData = val.length ? val : []
         this.scrollBarHeight = 40 * this.menuData.length + 1 + 'px'
       },
       immediate: true,

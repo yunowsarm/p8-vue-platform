@@ -147,12 +147,21 @@ export default {
       this.getSettingData()
     },
     getSettingData () {
+      let rightBtns = []
       if (this.userSettingAll.PlanButton) {
         const settingData = this.userSettingAll.PlanButton[0]
         this.updataParamsHandle(settingData)
-        this.value = settingData.value && settingData.value.type ? settingData.value.type : 'double'
+        this.value = settingData.value && settingData.value.type ? settingData.value.type : 'tabs'
         this.autoScheduling = settingData.value && settingData.value.autoScheduling ? settingData.value.autoScheduling : ''
-        const rightBtns = settingData.value && settingData.value.rightBtns
+        rightBtns = settingData.value && settingData.value.rightBtns
+        this.valueBtns = rightBtns.map((btn) => {
+          return btn.buttonId
+        })
+      } else {
+        this.value = this.$store.getters.ganttButtonMode ? this.$store.getters.ganttButtonMode : 'tabs'
+        if (rightBtns && rightBtns.length == 0) {
+          rightBtns = this.$store.getters.ganttRightButtons ? this.$store.getters.ganttRightButtons : []
+        }
         this.valueBtns = rightBtns.map((btn) => {
           return btn.buttonId
         })

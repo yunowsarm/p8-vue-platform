@@ -46,17 +46,17 @@ const user = {
   },
 
   mutations: {
-    SET_TOKEN(state, token) {
+    SET_TOKEN (state, token) {
       if (token) {
         state.token = token
         setToken(token)
       }
     },
-    REMOVE_TOKEN(state, data) {
+    REMOVE_TOKEN (state, data) {
       state.token = null
       removeToken()
     },
-    SET_USERINFO(state, data) {
+    SET_USERINFO (state, data) {
       state.userInfo = data
       state.userId = data.id
       state.userAccount = data.userName
@@ -74,7 +74,7 @@ const user = {
       //       })
       //     : []
     },
-    RESET_USERINFO(state, data) {
+    RESET_USERINFO (state, data) {
       // state.userId = ''
       state.userInfo = {}
       state.userAccount = ''
@@ -84,52 +84,59 @@ const user = {
       state.roles = null
       // state.confidentialiteList = []
     },
-    SET_LOGIN_STATUS(state, data) {
+    SET_LOGIN_STATUS (state, data) {
       state.loginStatus = data
     },
-    SET_SETTING_ALL(state, data) {
+    SET_SETTING_ALL (state, data) {
       state.userSettingAll = data
       if (data.PlanButton && data.PlanButton.length) {
         state.ganttButtonMode = data.PlanButton[0].value.type || ''
         state.ganttRightButtons = data.PlanButton[0].value.rightBtns || []
+        console.log(state.ganttButtonMode, '---111');
       }
-      if (!state.ganttButtonMode) {
-        api['PlanGanttSetting.getSchedulingBasicConfig']({ })
-          .then((res) => {
-            if (res) {
+      api['PlanGanttSetting.getSchedulingBasicConfig']({})
+        .then((res) => {
+          if (res) {
+            if (!state.ganttButtonMode) {
               state.ganttButtonMode = res.defaultMode.content
+              console.log(state.ganttButtonMode, '---222');
             }
-          })
-      }
+            if (state.ganttRightButtons && state.ganttRightButtons.length == 0) {
+              if (res.planRightButton.content) {
+                state.ganttRightButtons = JSON.parse(res.planRightButton.content) ? JSON.parse(res.planRightButton.content) : []
+              }
+            }
+          }
+        })
     },
-    SET_MESSAGEINFO(state, data) {
+    SET_MESSAGEINFO (state, data) {
       state.messageInfo = data
     },
-    SET_MESSAGENUM(state, data) {
+    SET_MESSAGENUM (state, data) {
       state.messageNum = data
     },
-    SET_MESSAGECOUNT(state, data) {
+    SET_MESSAGECOUNT (state, data) {
       state.messageCount = data
     },
-    SET_APPROVAL_MESSAGECOUNT(state, data) {
+    SET_APPROVAL_MESSAGECOUNT (state, data) {
       state.approvalTotalMsg = data
     },
-    SET_TASK_MESSAGECOUNT(state, data) {
+    SET_TASK_MESSAGECOUNT (state, data) {
       state.taskMessageCount = data
     }
   },
 
   actions: {
-    setMessageNum({ commit }, data) {
+    setMessageNum ({ commit }, data) {
       commit('SET_MESSAGENUM', data)
     },
-    setApprovalMessageCount({ commit }, data) {
+    setApprovalMessageCount ({ commit }, data) {
       commit('SET_APPROVAL_MESSAGECOUNT', data)
     },
-    setMessageCount({ commit }, data) {
+    setMessageCount ({ commit }, data) {
       commit('SET_MESSAGECOUNT', data)
     },
-    setTasketMessageCount({ commit }, data) {
+    setTasketMessageCount ({ commit }, data) {
       commit('SET_TASK_MESSAGECOUNT', data)
     },
     /**
@@ -140,7 +147,7 @@ const user = {
      * @param {any} params
      * @returns
      */
-    userLogin({ commit, state }, params) {
+    userLogin ({ commit, state }, params) {
       return new Promise((resolve, reject) => {
         api['user.login'](params)
           .then((res) => {
@@ -152,9 +159,9 @@ const user = {
                 offset: 40
               })
               reject()
-            } else if(res.type === 'updatePassword'){
+            } else if (res.type === 'updatePassword') {
               resolve(res)
-            }else {
+            } else {
               commit('SET_TOKEN', res.token)
               resolve(res)
             }
@@ -179,7 +186,7 @@ const user = {
      * @param {any} {commit}
      * @returns
      */
-    userLogout({ commit }) {
+    userLogout ({ commit }) {
       return new Promise((resolve, reject) => {
         api['user.logout']()
           .then(() => {
@@ -207,7 +214,7 @@ const user = {
      * @param {any} params
      * @returns
      */
-    getUserInfo({ commit, state }, params) {
+    getUserInfo ({ commit, state }, params) {
       return new Promise((resolve, reject) => {
         api['user.info']()
           .then((res) => {
@@ -229,7 +236,7 @@ const user = {
      * @param {any} params
      * @returns
      */
-    setLoginState({ commit }, data) {
+    setLoginState ({ commit }, data) {
       commit('SET_LOGIN_STATUS', data)
     },
     /**
@@ -239,7 +246,7 @@ const user = {
      * @param {any} {commit}
      * @returns
      */
-    getSettingAll({ commit }) {
+    getSettingAll ({ commit }) {
       return new Promise((resolve, reject) => {
         api['user.setting.getAll']()
           .then((res) => {
@@ -261,7 +268,7 @@ const user = {
      * @param {any} params
      * @returns
      */
-    getMessageInfo({ commit, state }, params) {
+    getMessageInfo ({ commit, state }, params) {
       return new Promise((resolve, reject) => {
         api['userMessage.catalog']()
           .then((res) => {
@@ -283,7 +290,7 @@ const user = {
      * @param {any} params
      * @returns
      */
-    getMessageNum({ commit, state }, params) {
+    getMessageNum ({ commit, state }, params) {
       return new Promise((resolve, reject) => {
         api['userMessage.userCatalogCount']({ msgCatalog: '' })
           .then((res) => {
