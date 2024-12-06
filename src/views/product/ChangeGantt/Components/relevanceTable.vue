@@ -254,20 +254,8 @@ export default {
   },
   methods: {
     getList () {
-      console.log(this.taskList, '====================this.taskList');
       this.taskList.forEach(item => {
         item.children = undefined
-        // if (item.requirementIds.length > 0) {
-        //           if (item.monitorPoints.indexOf('1017') === -1) {
-        //             if (item.monitorPoints.indexOf(',') === -1) {
-        //               item.monitorPoints = '1017'
-        //             item.monitorpointIconArray = item.monitorpointIconArray + ',p8 icon-a-xuqiu1'
-        //           // task.monitorPointDisplayArray = task.monitorPointDisplayArray + ',需求'
-        //             } else {
-
-        //             }
-        //           }
-        //         }
         if (item.monitorPoints) {
           if (item.monitorPoints.indexOf(',') !== -1) {
             // 分割字符串成数组
@@ -320,6 +308,7 @@ export default {
         that.$refs.xTableData.$refs.table.setCheckboxRow(row, true);
         that.$refs.xTableData.$refs.table.setCurrentRow(row)
         that.$refs.xTableData.$refs.table.scrollToRow(row)
+        that.handleSelectionChange(row)
       }, 1000)
     },
     handleRowMointor (row) {
@@ -339,8 +328,6 @@ export default {
       }
     },
     handleSelectionChange (val) {
-      console.log(this.selectRecords, '================= this.selectRecords');
-      console.log(val, '================= this.val');
       this.selectRecords = []
       this.selectRecord = val
       let selectData = this.$refs.xDemandTable.$refs.table.data

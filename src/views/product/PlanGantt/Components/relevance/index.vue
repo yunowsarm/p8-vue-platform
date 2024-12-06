@@ -252,6 +252,7 @@ export default {
       that.$refs.xTable.$refs.table.setCheckboxRow(row, true);
       that.$refs.xTable.$refs.table.setCurrentRow(row)
       that.$refs.xTable.$refs.table.scrollToRow(row)
+      that.handleSelectionChange(row)
     }, 1000)
   },
   methods: {
@@ -325,7 +326,6 @@ export default {
     async relevanceClick () {
       let that = this
       this.taskId = JSON.parse(JSON.stringify(this.selectRecord.taskId))
-      console.log("🚀hhhhhhhhhhhhhhhhhhhhhhh:", this.taskId)
       const tableElement = this.$refs.xTable.$el.querySelector('.vxe-table--body-wrapper');
       if (tableElement) {
         this.scrollPosition = tableElement.scrollTop; // 获取滚动条高度
@@ -349,6 +349,7 @@ export default {
         if (tableElement) {
           tableElement.scrollTop = that.scrollPosition
         }
+        that.handleSelectionChange(data)
         that.$emit('relevanceClick', that.taskId)
       }, 1000)
     },
