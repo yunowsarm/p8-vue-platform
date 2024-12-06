@@ -3038,6 +3038,9 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
         })
       }
     })
+    console.log(tempColumns, '==tempColumns1')
+    tempColumns = tempColumns.filter(el => el)
+    console.log(tempColumns, '==tempColumns2')
     ganttObject.config.columns = tempColumns
   } else if (vueThis.columnSettings.length > 0) {
     const tempColumns = []
