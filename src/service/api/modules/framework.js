@@ -473,6 +473,27 @@ export const system = {
       desc: '基础数据 停用'
     },
     {
+      name: 'deleteDictionary',
+      method: 'POST',
+      path: '/framework/system/PlanLogo/deleteDictionary',
+      mockPath: '/framework/system/PlanLogo/deleteDictionary',
+      desc: '基础数据管理-删除'
+    },
+    {
+      name: 'saveDictionary',
+      method: 'POST',
+      path: '/framework/system/PlanLogo/saveDictionary',
+      mockPath: '/framework/system/PlanLogo/saveDictionary',
+      desc: '基础数据管理-保存接口'
+    },
+    {
+      name: 'updateDictionary',
+      method: 'POST',
+      path: '/framework/system/PlanLogo/updateDictionary',
+      mockPath: '/framework/system/PlanLogo/updateDictionary',
+      desc: '基础数据管理-修改接口'
+    },
+    {
       name: 'getMonitorPointDataInfo',
       method: 'POST',
       path: '/framework/system/PlanLogo/getMonitorPointDataInfo',
