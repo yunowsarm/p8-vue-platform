@@ -238,6 +238,7 @@
                                style="margin-top: 8px;"
                                :percentage="formData.progress"></el-progress> -->
                   <el-slider v-model="formData.progress"
+                             :disabled="this.getPlanInfo().pageType"
                              @input="progressChange">
                   </el-slider>
                 </el-form-item>
@@ -635,8 +636,10 @@ export default {
         })
         this.$emit('progress-change', maxSpeedNum)
       } else {
-        this.formData.realBeginDate = moment().format('YYYY-MM-DD')
         this.$emit('progress-change', val)
+      }
+      if (!this.formData.realBeginDate) {
+        this.formData.realBeginDate = moment().format('YYYY-MM-DD')
       }
       // }
     },
