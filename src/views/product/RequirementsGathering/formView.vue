@@ -152,7 +152,6 @@ export default {
           fieldName: 'demandName',
           placeholder: '请输入需求名称',
           colLayout: 'singleCol',
-          maxlength: 10,
           rules: [
             {
               required: true,
