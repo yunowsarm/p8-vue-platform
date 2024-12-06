@@ -1061,7 +1061,7 @@ export default {
   // padding: 16px;
   box-sizing: border-box;
   .left_content {
-    width: 80%;
+    width: 65%;
     height: 100%;
     margin-left: 15px;
     box-shadow: 0px 0px 10px #bfbdbd54;
@@ -1316,7 +1316,7 @@ export default {
 
 .right-con {
   height: 100%;
-  width: 20%;
+  width: 35%;
   background-color: #fff;
   // margin-left: 16px;
   box-shadow: 0px 0px 10px #bfbdbd54;
