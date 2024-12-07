@@ -219,7 +219,8 @@ export default {
     handleScroll () {
       const container = this.$refs.msgBox;
       // 检测是否在顶部并且向下拉动
-      if (container.scrollTop < 10) {
+      console.log(container.scrollTop, '================container.scrollTop');
+      if (container.scrollTop === 0) {
         this.loading = true;
         this.fetchData();  // 触发加载数据
       }
