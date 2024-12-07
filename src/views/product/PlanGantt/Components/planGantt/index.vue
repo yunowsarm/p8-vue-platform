@@ -328,8 +328,8 @@
                        :create-page="createPage" />
       </template>
     </common-drawer>
-    <common-drawer v-if="relevanceVisible"
-                   :visible="relevanceVisible"
+    <common-drawer v-if="relevancePlanVisible"
+                   :visible="relevancePlanVisible"
                    size="100%"
                    placement="top"
                    title="关联"
@@ -597,7 +597,7 @@ export default {
     const mh = document.documentElement.clientHeight - 300
     return {
       ganttBtnType: null,
-      relevanceVisible: false,
+      relevancePlanVisible: false,
       columnConfigs: [],
       createVisible: false,
       exportExperienceType: '',
@@ -931,7 +931,7 @@ export default {
     },
     closeRelevance () {
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-      this.relevanceVisible = false
+      this.relevancePlanVisible = false
     },
     copyExperienceBase (ids) {
       this.copyTasks = ids
@@ -1324,7 +1324,7 @@ export default {
 
             myGantt.unselectTask()
             console.log(vueThis.selectedId, '==========1111');
-            if (!vueThis.relevanceVisible) {
+            if (!vueThis.relevancePlanVisible) {
               setTimeout(() => {
                 myGantt.showTask(vueThis.selectedId);
                 myGantt.selectTask(vueThis.selectedId);

@@ -929,7 +929,11 @@ export const CommandButtonData = [
     help: '关联',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
-      vueThis.relevanceVisible = true
+      if (ganttName === 'planGantt') {
+        vueThis.relevancePlanVisible = true
+      } else {
+        vueThis.relevanceVisible = true
+      }
       const thisGantt = GanttObject.getGanttObject(ganttName)
       console.log("🚀 ~ thisGantt:", thisGantt)
       vueThis.taskList = thisGantt.serialize().data
