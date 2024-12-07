@@ -283,7 +283,8 @@ export function setLockTaskProperties(ganttObject, vueThis) {
                 task.monitorPoints &&
                 task.monitorPoints.indexOf('1015') !== -1 &&
                 vueThis.monitorLockMap['101502'] === '1') || // 发布后可控任务不可操作
-              task.managerStatus === '6404'
+              task.managerStatus === '6404' ||
+              task.managerStatus === '6407'
             ) {
               // 计划编辑页面创建任务计划分解页面不可操作
               task.readonly = true

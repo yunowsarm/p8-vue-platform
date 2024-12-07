@@ -236,6 +236,10 @@ export default {
         //   this.isView = false
         // }
       }
+      if (task.managerStatus === '6407') {
+        this.isChangeGantt = false
+        this.isView = false
+      }
     }
     console.log(this.isChangeGantt, 'this.isChangeGanttthis.isChangeGanttthis.isChangeGantt');
 

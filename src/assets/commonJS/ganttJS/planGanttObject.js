@@ -251,7 +251,7 @@ export function planGantt (ganttName, vueThis) {
       return true
     }
     const fieldName1 = parentNode.getAttribute('data-column-name')
-    if (task && task.managerStatus && task.managerStatus === '6404') {
+    if (task && task.managerStatus && (task.managerStatus === '6404' || task.managerStatus === '6407')) {
       return false
     }
     if (ganttObject.isTaskExists(id) && parentNode) {

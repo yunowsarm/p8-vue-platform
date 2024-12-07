@@ -861,6 +861,9 @@ GanttObject.getTaskEditable = function (ganttObject, state, vueThis) {
   if (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1) {
     return false
   }
+  if (task.managerStatus === '6407') {
+    return false
+  }
   // 父排程为自动时，父开始、完成、工期不可编辑
   if (task.type === 'project' && (colName === 'start_date' || colName === 'end_date' || colName === 'duration')) {
     return false
@@ -3264,6 +3267,7 @@ GanttObject.searchColumnsDataInit = function (vueThis, ganttObject) {
  * @param task
  */
 GanttObject.calculateParentForecastDate = function (ganttObject, task) {
+  console.log('11111111111111111计算');
   if (task.parent) {
     api['planGanttManager.calculateParentForecastDate']({
       parentId: task.parent

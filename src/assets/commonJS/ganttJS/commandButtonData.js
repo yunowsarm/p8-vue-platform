@@ -492,6 +492,9 @@ export const CommandButtonData = [
       let result
       const vueThis = store.getters.vueThis
       const createPage = vueThis.createPage
+      if (tasks[0].managerStatus === '6407') {
+        return true
+      }
       if (createPage === 'compile' && vueThis.planEditLock) {
         return true
       }
@@ -661,7 +664,7 @@ export const CommandButtonData = [
           // }
         })
       }
-      if (tasks[0].managerStatus === '6407' || tasks[0].managerStatus === '6408') {
+      if (tasks[0].managerStatus === '6408') {
         if (checkContentRoot(ganttName, tasks)) {
           return true
         } else {
@@ -774,6 +777,9 @@ export const CommandButtonData = [
       }
       tasks.forEach(task => {
         if (task.managerStatus == '6404') {
+          result = true
+        }
+        if (task.managerStatus === '6407') {
           result = true
         }
       })
