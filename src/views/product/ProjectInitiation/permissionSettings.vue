@@ -167,6 +167,9 @@ export default {
       this.visible = true
     },
     closeModal (selectedRows) {
+      selectedRows.forEach(el => {
+        el.userId = el.id
+      })
       this.visible = false
       this.userList.push(...selectedRows)
       const idArr = selectedRows.map((v) => {
