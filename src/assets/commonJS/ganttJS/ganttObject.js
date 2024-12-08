@@ -1721,7 +1721,7 @@ function searchFilter (parent, searchForm, ganttObject) {
     if (wbs && level != wbs) {
       wbsCheck = false
     }
-    const taskName = searchForm.name.trim() // 任务名称
+    const taskName = searchForm.name ? searchForm.name.trim() : '' // 任务名称
     let taskNameCheck = true
     if (taskName && task.name.indexOf(taskName) === -1) {
       taskNameCheck = false
