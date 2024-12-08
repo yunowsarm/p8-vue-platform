@@ -2967,7 +2967,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
   // 存在配置信息时，同步，不存在时显示默认gantt列信息
   if (ganttSetting) {
     const settingColumns = ganttSetting.value.columns
-    const tempColumns = []
+    let tempColumns = []
     // 根据表头配置信息修改ganttObject对象中columns的显示隐藏属性及排序
     const settingExtra = {}
     settingColumns.forEach((settingItem, initIndex) => {
@@ -3022,13 +3022,13 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
       }
       if (settingExtra[item.filedName]) {
         let initItem = {
-          name: item.filedName,
+          name: 'kz' + item.id,
           label: `<div class="gantt_search">${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class="gantt_search gantt_blank"></div>`,
           align: 'center',
           resize: true,
           hide: settingExtra[item.filedName].hide,
           min_width: 120,
-          editor: checkEdit() ? { type: editType, map_to: item.filedName } : null,
+          editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null,
         }
         tempColumns.splice(settingExtra[item.filedName].index, 1, initItem)
       } else {
@@ -3039,7 +3039,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
           resize: true,
           hide: item.isEnable == '0',
           min_width: 120,
-          editor: checkEdit() ? { type: editType, map_to: item.filedName } : null,
+          editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null,
         })
       }
     })
@@ -3078,13 +3078,13 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
         }
         if (item.isEnable == '1') {
           tempColumns.push({
-            name: item.filedName,
+            name: 'kz' + item.id,
             label: `<div class="gantt_search">${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class="gantt_search gantt_blank"></div>`,
             align: 'center',
             resize: true,
             hide: item.isEnable == '0',
             min_width: 120,
-            editor: checkEdit() ? { type: editType, map_to: item.filedName } : null
+            editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null
           })
         }
       }

@@ -184,7 +184,7 @@ export function taskDescribesEditCheck (newObj, oldObj, vueThis, taskId, ganttOb
   let changeDate = false
   let hasEdit = false
   let checkChange = false
-  let NewcheckKeys = vueThis.columnSettings.filter(el => el.attributeType == '1').map(item => item.filedName)
+  let NewcheckKeys = vueThis.columnSettings.filter(el => el.attributeType == '1').map(item => 'kz' + item.id)
   let newCheckKeys = [...checkKeys, ...NewcheckKeys]
   newCheckKeys.forEach(function (key) {
     if (key === 'start_date' || key === 'end_date' || key === 'duration' || key === 'autoScheduling') {

@@ -257,6 +257,7 @@ export default {
         this.$emit('close')
       }
       ganttObject.scrollTo(0, 0)
+      ganttObject.render()
     },
     // 重置
     resetForm (formName) {
@@ -267,6 +268,7 @@ export default {
         ganttObject.refreshData()
       }
       ganttObject.scrollTo(0, 0)
+      ganttObject.render()
     },
     handleEnterOnce (event) {
       if (event.key === 'Enter') {

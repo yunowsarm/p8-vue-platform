@@ -129,7 +129,11 @@ export default {
     taskStatus: {
       type: Object,
       default: null
-    }
+    },
+    wholeDescribeId: {
+      type: String,
+      default: null
+    },
   },
   components: {
     'el-drawer': Drawer,
@@ -138,6 +142,7 @@ export default {
   },
   data () {
     return {
+      columnSettings: [],
       ganttName: 'analysisGantt',
       selectedTasks: [],
       resourceConfig: {},
@@ -281,7 +286,8 @@ export default {
     ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
   },
   methods: {
-    initGantt (planInfoId, changeRecordId) {
+    async initGantt (planInfoId, changeRecordId) {
+      this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
       const vueThis = this
       const element = this.$refs.top; // 获取DOM元素
       // 清空原有数据
@@ -324,6 +330,18 @@ export default {
               }
               return obj
             })
+            // // 处理拓展字段已有的数据
+            // vueThis.extendMap = res.extendMap || {}
+            // if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
+            //   initData.forEach(task => {
+            //     if (vueThis.extendMap[task.id]) {
+            //       let extendData = vueThis.extendMap[task.id]
+            //       extendData.forEach(item => {
+            //         task['kz' + item.customItem1] = item.fieldValue
+            //       })
+            //     }
+            //   })
+            // }
             const datas = {
               tasks: initData,
               links: res.links

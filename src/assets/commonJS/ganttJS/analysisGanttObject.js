@@ -428,7 +428,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
           }
           if (item.isEnable == '1') {
             tempColumns.push({
-              name: item.filedName,
+              name: 'kz' + item.id,
               label: `${item.name}`,
               align: 'center',
               resize: true,
@@ -841,7 +841,68 @@ export function getAnalysisGantt (ganttName, vueThis) {
       { name: 'realBeginDate', label: '实际开始时间', align: 'center', min_width: 100, resize: true },
       { name: 'realEndDate', label: '实际完成时间', align: 'center', min_width: 100, resize: true }
     ]
-
+    // const initColumns = ganttObject.config.columns
+    // console.log(vueThis.columnSettings, '====vueThis.columnSettings');
+    // if (vueThis.columnSettings.length > 0) {
+    //   const tempColumns = []
+    //   vueThis.columnSettings.forEach((item) => {
+    //     const initColumn = initColumns.filter((initItem) => initItem.name === item.filedName)
+    //     if (initColumn && initColumn.length > 0) {
+    //       // initColumn[0].hide = !(item.isEnable == '1')
+    //       // tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
+    //       if ((item.isEnable == '1')) {
+    //         tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
+    //       }
+    //     }
+    //     if (item.attributeType === '1') {
+    //       let editType = null
+    //       switch (item.filedType) {
+    //         case 'text':
+    //           editType = 'text'
+    //           break;
+    //         case 'number':
+    //           editType = 'number'
+    //           break;
+    //         case 'textarea':
+    //           editType = 'text'
+    //           break;
+    //         case 'datepicker':
+    //           editType = 'custom_date_editor'
+    //           break;
+    //         default:
+    //           break;
+    //       }
+    //       if (item.isEnable == '1') {
+    //         tempColumns.push({
+    //           name: 'kz' + item.id,
+    //           label: `${item.name}`,
+    //           align: 'center',
+    //           resize: true,
+    //           hide: item.isEnable == '0',
+    //           min_width: 120,
+    //           indexNo: item.indexNo
+    //         })
+    //       }
+    //     }
+    //   })
+    //   let oldFiled = ['oldName', 'oldForecastBeginDate', 'oldForecastEndDate']
+    //   initColumns.forEach((initItem, initIndex) => {
+    //     const settingItem = vueThis.columnSettings.filter((settingItem) => settingItem.filedName === initItem.name)
+    //     if (!settingItem || Object.keys(settingItem).length === 0) {
+    //       initItem.hide = false
+    //       if (tempColumns && tempColumns.length > initIndex) {
+    //         if (oldFiled.includes(initItem.name)) return
+    //         tempColumns.push(initItem)
+    //       } else {
+    //         tempColumns.push(initItem)
+    //       }
+    //     }
+    //   })
+    //   ganttObject.config.columns = tempColumns
+    // } else {
+    //   ganttObject.config.columns = initColumns
+    // }
+    // console.log(ganttObject.config.columns, '-----ganttObject.config.columns');
   }
 
   // 创建资源载体

@@ -1273,7 +1273,7 @@ export default {
                 if (vueThis.extendMap[task.id]) {
                   let extendData = vueThis.extendMap[task.id]
                   extendData.forEach(item => {
-                    task[item.fieldName] = item.fieldValue
+                    task['kz' + item.customItem1] = item.fieldValue
                   })
                 }
               })

@@ -657,7 +657,7 @@ export const CommandButtonData = [
       if (window.createPage === 'decompose' && ele && ele.id) {
         return true
       }
-      
+
       if (tasks[0].managerStatus === '6407' || tasks[0].managerStatus === '6408') {
         if (checkContentRoot(ganttName, tasks)) {
           return true
@@ -2816,7 +2816,7 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
   let extraTask = {}
   if (extraList && extraList.length) {
     extraList.forEach(el => {
-      extraTask[el.filedName] = ''
+      extraTask['kz' + el.id] = ''
     })
   }
   ganttObject.unselectTask()

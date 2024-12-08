@@ -347,7 +347,7 @@ export default {
                 if (vueThis.extendMap[task.id]) {
                   let extendData = vueThis.extendMap[task.id]
                   extendData.forEach(item => {
-                    task[item.fieldName] = item.fieldValue
+                    task['kz' + item.customItem1] = item.fieldValue
                   })
                 }
               })
@@ -370,7 +370,7 @@ export default {
               Object.keys(res.changeTaskExtList).forEach(item => {
                 let task = myGantt.getTask(item)
                 res.changeTaskExtList[item].forEach(ref => {
-                  task[ref.fieldName] = ref.fieldValue
+                  task['kz' + ref.customItem1] = ref.fieldValue
                 })
                 myGantt.updateTask(task.id)
               })

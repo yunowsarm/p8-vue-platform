@@ -583,7 +583,7 @@ function synchronizationColumns (vueThis, ganttObject) {
         }
         if (item.isEnable == '1') {
           tempColumns.push({
-            name: item.filedName,
+            name: 'kz' + item.id,
             label: `${item.name}`,
             align: 'center',
             resize: true,
@@ -599,7 +599,11 @@ function synchronizationColumns (vueThis, ganttObject) {
       if (!settingItem || Object.keys(settingItem).length === 0) {
         initItem.hide = false
         if (tempColumns && tempColumns.length > initIndex) {
-          tempColumns.push(initItem)
+          if (initItem.name == 'infoType') {
+            tempColumns.unshift(initItem)
+          } else {
+            tempColumns.push(initItem)
+          }
         } else {
           tempColumns.push(initItem)
         }

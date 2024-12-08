@@ -334,17 +334,17 @@ export default {
         res.taskExtendList.forEach((item) => {
           if (item.fieldType == 'datepicker') {
             let date = moment(item.fieldValue)
-            if (this.formData[item.fieldName]) {
+            if (this.formData['kz' + item.customItem1]) {
               return
             }
             this.$set(this.formData, item.fieldName, date.isValid() ? date : '')
           } else {
-            if (this.formData[item.fieldName]) {
+            if (this.formData['kz' + item.customItem1]) {
               return
             }
-            this.$set(this.formData, item.fieldName, item.fieldValue)
+            this.$set(this.formData, 'kz' + item.customItem1, item.fieldValue)
           }
-          this.$set(this.extraIds, item.fieldName, item.id)
+          this.$set(this.extraIds, 'kz' + item.customItem1, item.id)
         })
       }
     })
@@ -355,11 +355,11 @@ export default {
     this.extraList = this.vueThis.columnSettings.filter((item) => item.attributeType === '1')
     this.extraKeys = []
     this.extraList.forEach((extra) => {
-      this.extraKeys.push(extra.filedName)
+      this.extraKeys.push('kz' + extra.id)
       this.dataSource.push({
         labelText: extra.name,
         type: this.ganttName === 'planGantt' || this.ganttName === 'changeGantt' ? extra.filedType : 'view',
-        fieldName: extra.filedName,
+        fieldName: 'kz' + extra.id,
         placeholder: `请输入${extra.name}`,
         colLayout: 'doubleCol'
       })
@@ -487,7 +487,7 @@ export default {
       that.formData.weatherControl = task.weatherControl ? task.weatherControl : ''
       that.formData.forecastBeginDate = moment(task.forecastBeginDate).format('YYYY-MM-DD')
       that.formData.forecastEndDate = moment(task.forecastEndDate).format('YYYY-MM-DD')
-      let NewcheckKeys = that.vueThis.columnSettings.filter(el => el.attributeType == '1').map(item => item.filedName)
+      let NewcheckKeys = that.vueThis.columnSettings.filter(el => el.attributeType == '1').map(item => 'kz' + item.id)
       if (NewcheckKeys && NewcheckKeys.length) {
         Object.keys(NewcheckKeys).forEach(el => {
           that.formData[NewcheckKeys[el]] = task[NewcheckKeys[el]]
@@ -589,6 +589,7 @@ export default {
                 fieldName: item.filedName,
                 fieldType: item.filedType,
                 fieldValue: saveParams[item.filedName],
+                customItem1: item.id,
                 indexNo: item.indexNo // 排序号
               }
               extraData.push(obj)
@@ -601,7 +602,7 @@ export default {
               // 在这里执行你希望的操作
             }, 3000);
           } else if (that.ganttName === 'changeGantt') {
-            // 计划编辑
+            // 计划变更
             const extraData = []
             this.extraList.forEach((item) => {
               if (item.filedType == 'datepicker') {
@@ -612,7 +613,8 @@ export default {
                 id: this.extraIds[item.filedName] || '',
                 fieldName: item.filedName,
                 fieldType: item.filedType,
-                fieldValue: saveParams[item.filedName],
+                fieldValue: saveParams['kz' + item.id],
+                customItem1: item.id,
                 indexNo: item.indexNo // 排序号
               }
               console.log(that.vueThis.taskExtendRequests && that.vueThis.taskExtendRequests.length, '==hat.vueThis.taskExtendRequests && that.vueThis.taskExtendRequests.length');

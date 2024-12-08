@@ -60,16 +60,17 @@ export function planGantt (ganttName, vueThis) {
           })
           extraList.forEach((item) => {
             let fieldValue = ''
-            if (item.filedType === 'datepicker' && data[item.filedName] !== '') {
-              fieldValue = moment(data[item.filedName]).format('YYYY-MM-DD')
+            if (item.filedType === 'datepicker' && data['kz' + item.id] !== '') {
+              fieldValue = moment(data['kz' + item.id]).format('YYYY-MM-DD')
             } else {
-              fieldValue = data[item.filedName]
+              fieldValue = data['kz' + item.id]
             }
             const obj = {
               id: extraIds[item.filedName] || '',
               fieldName: item.filedName,
               fieldType: item.filedType,
               fieldValue: fieldValue,
+              customItem1: item.id,
               indexNo: item.indexNo // 排序号
             }
             extraData.push(obj)
