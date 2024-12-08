@@ -700,8 +700,8 @@ export default {
       let idx = index >= 1 ? index - 1 : 0
       this.rolesSelectedIndex = index - 1
       this.generalRoles.splice(index - this.fixedRoles.length, 1)
-      this.tableData = this.rolesData[idx].projectTeamRoleUsers ? this.rolesData[idx].projectTeamRoleUsers : []
       this.rolesData.splice(index, 1)
+      this.tableData = this.rolesData[idx] && this.rolesData[idx].projectTeamRoleUsers ? this.rolesData[idx].projectTeamRoleUsers : []
       this.isDelete = true
     },
     tableDeleteMemberHandle (row, index) {
