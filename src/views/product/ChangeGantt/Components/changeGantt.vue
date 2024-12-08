@@ -414,6 +414,9 @@ export default {
     }
   },
   watch: {
+    $route () {
+      this.initGantt(this.planInfoId, this.changeRecordId, this.viewType)
+    },
     selectedTasks: function (newVal, oldVal) {
       if (newVal && newVal.length === 1 && (myGantt.getGlobalTaskIndex(newVal[0].id) !== 0 || this.createPage === 'userChange') && newVal[0].status) {
         this.selectTaskId = newVal[0].id
@@ -531,6 +534,10 @@ export default {
     ...mapGetters(['taskStyles'])
   },
   methods: {
+    relevanceOpen () {
+      console.log('22222222222222222222');
+      this.relevanceVisible = true
+    },
     closeRelevance () {
       this.relevanceVisible = false
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage, this.changeRecordId, true)

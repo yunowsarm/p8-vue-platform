@@ -807,6 +807,9 @@ export default {
     }
   },
   watch: {
+    $route () {
+      this.initGantt(this.planInfoId, this.viewType)
+    },
     selectedTasks: function (newVal, oldVal) {
       // this.comResTypesListData()
       if (newVal && newVal.length === 1 && newVal[0].status) {
@@ -927,6 +930,10 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll'])
   },
   methods: {
+    relevanceOpen () {
+      console.log('1111111111111111');
+      this.relevancePlanVisible = true
+    },
     relevanceClick (id) {
       // this.selectedTasks = [id]
       this.selectedId = id
