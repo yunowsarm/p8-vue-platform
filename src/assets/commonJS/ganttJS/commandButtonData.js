@@ -657,20 +657,19 @@ export const CommandButtonData = [
       if (window.createPage === 'decompose' && ele && ele.id) {
         return true
       }
-      if (createPage === 'decompose' && tasks.length >= 1) {
-        tasks.forEach(function (task, index) {
-          // if (task.managerStatus === '6403') {
-          //   result = true
-          // }
-        })
-      }
-      if (tasks[0].managerStatus === '6408') {
+      
+      if (tasks[0].managerStatus === '6407' || tasks[0].managerStatus === '6408') {
         if (checkContentRoot(ganttName, tasks)) {
           return true
         } else {
-          return false
+          result = false
         }
       }
+      tasks.forEach(function (task, index) {
+        if (task.managerStatus === '6407') {
+          result = true
+        }
+      })
       return result
     }
   },
@@ -4039,6 +4038,8 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
             result = false
             return true
           }
+          console.log("🚀 ~ chiManagerStatus:", chiManagerStatus)
+
           if (indexNo === 0 || (chiManagerStatus && chiManagerStatus.indexOf(task.managerStatus) === -1 && indexNo !== 0)) {
             result = false
           }
