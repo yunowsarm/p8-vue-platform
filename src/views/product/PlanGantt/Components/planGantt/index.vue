@@ -870,26 +870,30 @@ export default {
     if (!window.myWebSocket.connected) {
       this.webSocketDone = true
     }
+    let timer = null;
     window.myWebSocket.on('planGantGroup', (data) => {
-      that.onlineData = data
-      let html = '<div class="edit_gantt_user_list">'
-      that.editUserList.forEach((item) => {
-        html += `<span>${item.userName}`
-        if (item.entityType === 'compile') {
-          html += ' -计划编制'
-        } else if (item.entityType === 'decompose') {
-          html += ' -任务分解'
-        }
-        html += '</span>'
-      })
-      html += '</div>'
-      if (that.editUserList.length > 1) {
-        that.$notify({
-          title: `${that.editUserList.length}人正在编制当前计划`,
-          dangerouslyUseHTMLString: true,
-          message: html
+      if (timer) clearTimeout(timer); // 每次监听输入值，都会去判断是否还有timer，有就清除timer
+      timer = setTimeout(() => {
+        that.onlineData = data
+        let html = '<div class="edit_gantt_user_list">'
+        that.editUserList.forEach((item) => {
+          html += `<span>${item.userName}`
+          if (item.entityType === 'compile') {
+            html += ' -计划编制'
+          } else if (item.entityType === 'decompose') {
+            html += ' -任务分解'
+          }
+          html += '</span>'
         })
-      }
+        html += '</div>'
+        if (that.editUserList.length > 1) {
+          that.$notify({
+            title: `${that.editUserList.length}人正在编制当前计划`,
+            dangerouslyUseHTMLString: true,
+            message: html
+          })
+        }
+      }, 1);
     })
     window.addEventListener('keyup', this.deleteTask)
     this.$bus.$on('ganttDetail', (visible) => {
