@@ -2815,6 +2815,14 @@ function addTask (num, pos, ganttName) {
  * @param dpObject
  */
 function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dpObject, indexNo) {
+  const vueThis = store.getters.vueThis
+  let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
+  let extraTask = {}
+  if (extraList && extraList.length) {
+    extraList.forEach(el => {
+      extraTask[el.filedName] = ''
+    })
+  }
   ganttObject.unselectTask()
   dpObject.ignore(function () {
     ganttObject.batchUpdate(function () {
@@ -2861,7 +2869,8 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
           productQuantity: item.productQuantity,
           evaluation: item.evaluation,
           realEndDate: item.realEndDate,
-          realBeginDate: item.realBeginDate
+          realBeginDate: item.realBeginDate,
+          ...extraTask
         }
         switch (pos) {
           case 'Child':
@@ -2899,8 +2908,6 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
       })
     })
   })
-  // 更新父进度
-  const vueThis = store.getters.vueThis
   if (progressRefreshCheck(vueThis)) {
     const allParTaskIds = []
     allParTaskIds.push(parentId)
