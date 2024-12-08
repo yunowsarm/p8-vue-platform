@@ -170,8 +170,7 @@ export default {
           labelText: '客户名称',
           fieldName: 'customerName',
           placeholder: '请输入客户名称',
-          colLayout: 'singleCol',
-          maxlength: 10
+          colLayout: 'singleCol'
         },
         {
           labelText: '客户联系电话',

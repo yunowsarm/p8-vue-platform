@@ -135,6 +135,7 @@ export default {
 // 解决smartwidget在添加元素宽度变化监听的时候 加了行内样式影响全屏功能
 .smartwidget.smartwidget-fullscreen ::v-deep {
   position: fixed !important;
+  z-index: 1 !important;
 }
 // 解决容器内容高度超过夫容器高度问题
 .smartwidget ::v-deep .widget-body__content {
