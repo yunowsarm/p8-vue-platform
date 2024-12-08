@@ -6,6 +6,7 @@
            class="demo-form-inline"
            size="mini"
            label-width="75px"
+           @keyup.enter="onSearch"
            label-position="right">
     <el-form-item label="大纲层级"
                   prop="deep">
@@ -229,6 +230,7 @@ export default {
   },
   mounted () {
     this.status = taskStatusArr
+    document.addEventListener('keyup', this.handleEnterOnce);
   },
   methods: {
     loadSelectOptionData (planInfoId) {
@@ -246,24 +248,37 @@ export default {
         })
     },
     onSearch () {
+      const ganttObject = GanttObject.getGanttObject(this.ganttName)
       if (this.searchCheck) {
         this.vueThis.searchForm = { ...this.searchForm, isInput: this.isInput }
         console.log(this.searchForm, this.vueThis.searchForm, this.ganttName, 'ikkkkkkkkkk')
-        const ganttObject = GanttObject.getGanttObject(this.ganttName)
         ganttObject.refreshData()
         this.searchCheck = false
         this.$emit('close')
       }
+      ganttObject.scrollTo(0, 0)
     },
     // 重置
     resetForm (formName) {
+      const ganttObject = GanttObject.getGanttObject(this.ganttName)
       if (JSON.stringify(this.vueThis.searchForm) !== '{}') {
         this.$refs[formName].resetFields()
         this.vueThis.searchForm = this.searchForm = {}
-        const ganttObject = GanttObject.getGanttObject(this.ganttName)
         ganttObject.refreshData()
       }
-    }
+      ganttObject.scrollTo(0, 0)
+    },
+    handleEnterOnce (event) {
+      if (event.key === 'Enter') {
+        // 阻止事件冒泡，确保事件只触发一次
+        event.stopPropagation();
+        // 处理回车键被按下时的逻辑
+        // 禁止回车提交
+        this.onSearch()
+      } else {
+        return
+      }
+    },
   }
 }
   </script>
