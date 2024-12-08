@@ -872,6 +872,7 @@ export default {
     }
     let timer = null;
     window.myWebSocket.on('planGantGroup', (data) => {
+      console.log(data, '=====---data');
       if (timer) clearTimeout(timer); // 每次监听输入值，都会去判断是否还有timer，有就清除timer
       timer = setTimeout(() => {
         that.onlineData = data
@@ -903,7 +904,7 @@ export default {
   computed: {
     editUserList () {
       return this.onlineData.filter((item) => {
-        return item.entityId == this.planInfoId
+        return item.entityId == this.planInfoId && item.entityType !== 'userChange'
       })
     },
     isDisable () {
