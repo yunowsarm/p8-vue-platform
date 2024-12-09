@@ -36,6 +36,7 @@
 .ant-drawer-body {
   height: calc(100% - 55px);
 }
+
 .table-page-search-wrapper .ant-form-inline .ant-form-item {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -43,6 +44,7 @@
   margin-bottom: 24px;
   margin-right: 0;
 }
+
 .table-page-search-wrapper .ant-form-inline .ant-form-item .ant-form-item-control-wrapper {
   -webkit-box-flex: 1;
   -ms-flex: 1 1;
@@ -290,13 +292,42 @@ export default {
       }
     },
     tableRefresh (param) {
+      // 保存当前选中的行的 id
+      const selectedKeysBeforeRefresh = [...this.selectedRowKeys];
+
       param
         .then(() => {
-          console.log('异步成功后端做的操作')
+          console.log('异步成功后端做的操作');
+
+          // 等待 DOM 更新后再恢复选中状态
+          this.$nextTick(() => {
+            // 获取表格的所有数据
+            const tableData = this.$refs.table.$refs.table.tableData;
+
+            // 递归遍历树形数据并恢复选中状态
+            this.restoreSelection(tableData, selectedKeysBeforeRefresh);
+
+            // 更新选中的行键
+            this.selectedRowKeys = selectedKeysBeforeRefresh;
+          });
         })
         .catch(() => {
-          console.error('异步失败的操作')
-        })
+          console.error('异步失败的操作');
+        });
+    },
+    // 递归方法：遍历树形数据并恢复选中状态
+    restoreSelection (data, selectedKeys) {
+      data.forEach(row => {
+        // 如果当前行的 id 存在于 selectedKeys 中，恢复选中状态
+        if (selectedKeys.includes(row.id)) {
+          this.$refs.table.$refs.table.toggleRowSelection(row, true);
+        }
+
+        // 如果当前行有子节点，递归处理子节点
+        if (row.children && row.children.length > 0) {
+          this.restoreSelection(row.children, selectedKeys);
+        }
+      });
     },
     showMessage (message, type) {
       this.$message({
