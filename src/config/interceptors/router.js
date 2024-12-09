@@ -2,10 +2,10 @@ import router from '@/plugins/router'
 import store from '@/plugins/store'
 import { getToken } from '@/service/expands/auth'
 
-const whiteList = ['/login', '/Maintain']
+const whiteList = ['/login', '/Maintain', '/myMessageView', '/myApproveView']
 const adminUserIdArr = ['SYS_USER001', 'SYS_USER009', 'SYS_USER012', 'SYS_USER010', 'SYS_USER000'] // 五元id
 
-export function routerBeforeEachFunc(to, from, next) {
+export function routerBeforeEachFunc (to, from, next) {
   if (getToken()) {
     if (to.path === '/login') {
       next('/login')
@@ -29,18 +29,22 @@ export function routerBeforeEachFunc(to, from, next) {
             // 每次刷新页面都回到dash页面
             const reg = new RegExp(context.homepage.path + '$')
             if (!reg.test(to.path) || to.path !== '/') {
-              // 五元登录后默认选中第一个一级菜单的第一个二级菜单
-              next({
-                name:
-                  adminUserIdArr.indexOf(res.id) === -1
-                    ? context.homepage.name
-                    : context.addRoutes.length
-                    ? context.addRoutes[0].children && context.addRoutes[0].children.length
-                      ? context.addRoutes[0].children[0].name
-                      : 'DashboardHome'
-                    : 'DashboardHome',
-                replace: true
-              })
+              if (to.path == '/myApproveView' || to.path == '/myMessageView') {
+                next(to.path)
+              } else {
+                // 五元登录后默认选中第一个一级菜单的第一个二级菜单
+                next({
+                  name:
+                    adminUserIdArr.indexOf(res.id) === -1
+                      ? context.homepage.name
+                      : context.addRoutes.length
+                        ? context.addRoutes[0].children && context.addRoutes[0].children.length
+                          ? context.addRoutes[0].children[0].name
+                          : 'DashboardHome'
+                        : 'DashboardHome',
+                  replace: true
+                })
+              }
             } else {
               next({ ...to, replace: true })
             }
