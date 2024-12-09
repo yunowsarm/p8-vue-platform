@@ -1577,7 +1577,9 @@ export const CommandButtonData = [
       let exportConfig = {
         columnConfigs: columnFilter,
         fileName: "计划管理",
-        planInfoId: planInfoId
+        planInfoId: planInfoId,
+        createPage: vueThis.createPage,
+        taskId: vueThis.taskId
       }
       api['planGanttManager.excelExport'](exportConfig, { responseType: 'blob' })
         .then((data) => {
