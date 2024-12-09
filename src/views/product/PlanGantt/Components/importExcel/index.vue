@@ -57,6 +57,7 @@
 </template>
 <script>
 import { P8Form as FormList, Link, Notification } from 'p8-components-ui'
+import { mapGetters } from 'vuex'
 export default {
   name: 'ImportExcel',
   components: {
@@ -165,6 +166,9 @@ export default {
   // mounted () {
   //      this.renderedFormData({})
   //    },
+  computed: {
+    ...mapGetters(['vueThis'])
+  },
   methods: {
     rendered () { },
     saved (res) {
@@ -251,7 +255,8 @@ export default {
         uploadFileJson: [],
         columnConfigs: this.columnConfigs,
         importType: saveParams.createSource,
-        taskId: this.taskId
+        taskId: this.taskId,
+        createPage: this.vueThis.createPage
       }
       if (saveParams.uploadFileJson && saveParams.uploadFileJson.length) {
         saveParams.uploadFileJson.forEach((item, index) => {
