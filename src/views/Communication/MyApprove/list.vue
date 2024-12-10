@@ -17,6 +17,7 @@
     <template #center>
       <approve-list :search-params="searchParams"
                     @select="select"
+                    @refreshList="refreshList"
                     :key="renderTime"
                     :distinguish-ids="distinguishIds"
                     :charge-ids="chargeIds"
@@ -105,6 +106,9 @@ export default {
     // this.userUnReadMessageCount()
   },
   methods: {
+    refreshList () {
+      this.userCatalogCount()
+    },
     approved (taskId) {
       this.approvedTaskId = taskId
       this.$refs.approveList.refreshList()
