@@ -871,7 +871,7 @@ export const CommandButtonData = [
           cancel: '取消',
           callback: function (result) {
             if (result) {
-              issueTask(thisGantt, thisDp, tasks)
+              issueTask(thisGantt, thisDp, tasks, ganttName)
             }
           }
         })
@@ -3632,7 +3632,7 @@ function checkCanIssue (ganttName, tasks) {
  * 计划下发
  * @param currentRowTask {Array} 当前行信息
  */
-function issueTask (ganttObject, thisDp, currentRowTask) {
+function issueTask (ganttObject, thisDp, currentRowTask, ganttName) {
   const taskIds = []
   const tasks = []
   const taskMsg = []
@@ -3687,7 +3687,7 @@ function issueTask (ganttObject, thisDp, currentRowTask) {
       pasteTaskIds: taskIds,
       planInfoId: vueThis.planInfoId
     })
-      .then(function (res) {
+      .then((res) => {
         if (res) {
           // thisDp.ignore(function () {
           //   ganttObject.batchUpdate(function () {
@@ -3698,10 +3698,18 @@ function issueTask (ganttObject, thisDp, currentRowTask) {
           //   })
           // })
           vueThis.initGantt(vueThis.planInfoId, 'grid')
-          vueThis.$message({
-            message: '任务下发成功！',
-            type: 'success'
-          })
+
+          setTimeout(() => {
+            const thisGantt = GanttObject.getGanttObject(ganttName)
+            vueThis.$message({
+              message: '任务下发成功！',
+              type: 'success'
+            })
+            taskIds.forEach(el => {
+              thisGantt.showTask(el);
+              thisGantt.selectTask(el);
+            })
+          }, 1000)
         } else {
           vueThis.$message({
             message: '任务下发失败！',
