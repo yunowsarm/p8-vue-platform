@@ -1,10 +1,12 @@
 <template>
   <div>
     <template v-for="(mon, index) in childGroups(monitorData)">
-      <div class="child-group" :key="'monitor' + index">
+      <div class="child-group"
+           :key="'monitor' + index">
         <command-button v-for="(config, index) in mon.configs"
                         :key="config.id"
                         :cbutton="config"
+                        :monitorData="monitorData"
                         :size="config.size"
                         :current-records="currentRecords"
                         :gantt-name="ganttName"></command-button>
