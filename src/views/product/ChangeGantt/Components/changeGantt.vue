@@ -91,8 +91,8 @@
           <div class="edit_gantt_user_list">
             <span v-if="webSocketDone">当前连接异常，无法查看正在编辑人员，请尝试刷新页面或联系运维人员</span>
             <template v-else>
-              <span
-              v-for="(user, index) in editUserList" :key="index">{{ user.userName }}</span>
+              <span v-for="(user, index) in editUserList"
+                    :key="index">{{ user.userName }}</span>
             </template>
 
           </div>
@@ -208,14 +208,14 @@
     width: 164px;
   }
 
-  .el-menu--collapse>.el-menu-item .el-submenu__icon-arrow,
-  .el-menu--collapse>.el-submenu>.el-submenu__title .el-submenu__icon-arrow {
+  .el-menu--collapse > .el-menu-item .el-submenu__icon-arrow,
+  .el-menu--collapse > .el-submenu > .el-submenu__title .el-submenu__icon-arrow {
     display: block;
     margin-top: -5px;
   }
 
-  .el-menu--collapse>.el-menu-item span,
-  .el-menu--collapse>.el-submenu>.el-submenu__title span {
+  .el-menu--collapse > .el-menu-item span,
+  .el-menu--collapse > .el-submenu > .el-submenu__title span {
     height: 100%;
     width: 100%;
     visibility: visible;
@@ -915,11 +915,11 @@ export default {
             that.newTaskMap[key].updateInfo = updateInfo
           }
         }
-        that.newTaskMap[key].indexNo = indexNo
+        // that.newTaskMap[key].indexNo = indexNo
         // 日期转换
         nowGanttTask.start_date = moment(nowGanttTask.start_date).format('YYYY-MM-DD')
         nowGanttTask.end_date = moment(nowGanttTask.end_date).format('YYYY-MM-DD')
-        nowGanttTask.indexNo = indexNo
+        // nowGanttTask.indexNo = indexNo
         nowGanttTask.owner_type = 'team'
         if (!nowGanttTask.monitors && nowGanttTask.monitorPoints !== null) {
           nowGanttTask.monitors = this.taskMonitorMap[nowGanttTask.id]
