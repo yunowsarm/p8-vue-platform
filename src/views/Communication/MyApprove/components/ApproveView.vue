@@ -836,4 +836,7 @@ $paddingLeft: 10px;
 ::v-deep .el-tabs--top .el-tabs__content {
   height: calc(100% - 30px) !important;
 }
+::v-deep .main_content{
+  height: calc(100% - 30px) !important;
+}
 </style>
