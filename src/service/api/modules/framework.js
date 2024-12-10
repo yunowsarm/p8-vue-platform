@@ -407,6 +407,13 @@ export const system = {
       desc: '安全设置保存'
     },
     {
+      name: 'checkLicUserLimit',
+      method: 'POST',
+      path: '/framework/system/User/checkLicUserLimit',
+      mockPath: '/framework/system/User/checkLicUserLimit',
+      desc: '人员管理-新建时增加人员限制校验'
+    },
+    {
       name: 'deptTree',
       method: 'POST',
       path: '/framework/system/Department/deptTree',

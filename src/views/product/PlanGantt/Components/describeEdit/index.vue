@@ -619,11 +619,17 @@ export default {
               }
               console.log(that.vueThis.taskExtendRequests && that.vueThis.taskExtendRequests.length, '==hat.vueThis.taskExtendRequests && that.vueThis.taskExtendRequests.length');
               if (that.vueThis.taskExtendRequests && that.vueThis.taskExtendRequests.length) {
-                that.vueThis.taskExtendRequests.forEach((el, index) => {
-                  if (el.projectTasksId == obj.projectTasksId && el.fieldName == obj.fieldName) {
-                    that.vueThis.taskExtendRequests.splice(index, 1, obj)
-                  }
-                })
+                // that.vueThis.taskExtendRequests.forEach((el, index) => {
+                //   if (el.projectTasksId == obj.projectTasksId && el.customItem1 == obj.customItem1) {
+                //     that.vueThis.taskExtendRequests.splice(index, 1, obj)
+                //   }
+                // })
+                let index = that.vueThis.taskExtendRequests.findIndex(el => el.projectTasksId == obj.projectTasksId && el.customItem1 == obj.customItem1)
+                if (index > -1) {
+                  that.vueThis.taskExtendRequests.splice(index, 1, obj)
+                } else {
+                  extraData.push(obj)
+                }
               } else {
                 extraData.push(obj)
               }

@@ -599,6 +599,7 @@ export default {
       vueThis.$api['planGanttManager.loadPlanGanttData']({ planInfoId: planInfoId, dicType: 'ACTIVITY_TYPE', taskId: taskId, createPage: createPage, changeRecordId: changeRecordId })
         .then(function (res) {
           if (res) {
+            vueThis.taskExtendRequests = []
             vueThis.resourcesData = res.resources
             // 初始化数据
             let initData = res.tasks.map((item) => {
@@ -743,10 +744,11 @@ export default {
               Object.keys(res.changeTaskExtList).forEach(item => {
                 let task = myGantt.getTask(item)
                 res.changeTaskExtList[item].forEach(ref => {
-                  task[ref.fieldName] = ref.fieldValue
+                  task['kz' + ref.customItem1] = ref.fieldValue
 
                   const obj = {
                     projectTasksId: item,
+                    customItem1: ref.customItem1,
                     id: ref.id,
                     fieldName: ref.fieldName,
                     fieldType: ref.filedType,

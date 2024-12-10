@@ -209,10 +209,16 @@ export default {
         })
     },
     createUser () {
-      this.currUserId = ''
-      this.currentSelectDeptId = this.queryParam.departmentId
-      this.drawerTitle = '新建用户'
-      this.visibleUserEditDrawer = true
+      this.$api['userManager.checkLicUserLimit']({}).then(res => {
+        if (res == true) {
+          this.currUserId = ''
+          this.currentSelectDeptId = this.queryParam.departmentId
+          this.drawerTitle = '新建用户'
+          this.visibleUserEditDrawer = true
+        } else {
+          this.$message({ type: "warning", message: res })
+        }
+      })
     },
     updateUser (record) {
       console.log('record:', record)
