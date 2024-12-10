@@ -139,6 +139,7 @@ export default {
     btn: Object,
     size: String, // large,small,mini
     currentRecords: Array,
+    monitorData: Array,
     ganttName: String
   },
   data () {
@@ -167,7 +168,35 @@ export default {
         // if (this.ganttName === 'analysisGantt' && !analysisGanttWhiteList.includes(btn.id)) {
         //   return true
         // }
+
         if (this.ganttName === 'changeGantt' && !changeGanttWhiteList.includes(btn.id)) {
+          // 计划变更标识编辑控制
+          if (this.monitorData) {
+            let result = true
+            this.monitorData.forEach(item => {
+              if (btn.title === item.title) {
+                if (this.currentRecords.length > 0) {
+                  if (this.currentRecords[0].parent && (this.currentRecords[0].managerStatus === '6403' || this.currentRecords[0].managerStatus === '6404' || this.currentRecords[0].managerStatus == '6407' || this.currentRecords[0].managerStatus == '6408')) {
+                    result = false
+                  }
+                }
+              }
+              if (item.children) {
+                item.children.forEach(el => {
+                  if (btn.title === el.title) {
+                    if (this.currentRecords.length > 0) {
+                      if (this.currentRecords[0].parent && (this.currentRecords[0].managerStatus === '6403' || this.currentRecords[0].managerStatus === '6404' || this.currentRecords[0].managerStatus == '6407' || this.currentRecords[0].managerStatus == '6408')) {
+                        result = false
+                      }
+                    }
+                  }
+                })
+              }
+            })
+            if (!result) {
+              return false
+            }
+          }
           that.$set(btn, 'msg', '变更gantt时不允许此操作')
           return true
         }

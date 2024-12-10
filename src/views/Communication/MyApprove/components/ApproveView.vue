@@ -49,6 +49,7 @@
                               :columns="historyColumns"
                               :process-inst-id="processInstId"
                               :business-key="businessKey"
+                              :style="{ height: historyHeight + 'px' }"
                               :table-flex="tableFlex"></ProcessHistoryList>
         </template>
       </common-tabs>
@@ -135,6 +136,7 @@ export default {
   data () {
     return {
       tabsHeight: document.documentElement.clientHeight - 380 + 'px',
+      historyHeight: document.documentElement.clientHeight - 400,
       saveApi: 'PersonalProcessApproval.saveResult',
       formComp: '',
       currEntityId: '',
@@ -836,7 +838,7 @@ $paddingLeft: 10px;
 ::v-deep .el-tabs--top .el-tabs__content {
   height: calc(100% - 30px) !important;
 }
-::v-deep .main_content{
+::v-deep .main_content {
   height: calc(100% - 30px) !important;
 }
 </style>

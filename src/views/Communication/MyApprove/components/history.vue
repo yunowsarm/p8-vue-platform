@@ -68,8 +68,8 @@
               }"></bpm-view>
           </template>
           <template #history>
-            <ProcessHistoryList v-if="processInstId"
-                                :style="{ height: tabsHeight }"
+            <ProcessHistoryList v-if="processInstId && tabsHeight"
+                                :style="{ height: historyHeight + 'px' }"
                                 :table-api="historyDataApi"
                                 :columns="historyColumns"
                                 :process-inst-id="processInstId"
@@ -115,6 +115,7 @@ export default {
   data () {
     return {
       tabsHeight: document.documentElement.clientHeight,
+      historyHeight: document.documentElement.clientHeight - 300,
       businessId: '',
       formComp: '',
       currEntityId: '',
@@ -446,7 +447,7 @@ $paddingLeft: 10px;
     border: none;
     height: 100% !important;
   }
-  ::v-deep .el-tabs--top .el-tabs__content{
+  ::v-deep .el-tabs--top .el-tabs__content {
     height: calc(100% - 69px);
   }
 }
