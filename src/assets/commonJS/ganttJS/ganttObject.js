@@ -1871,11 +1871,11 @@ function searchFilter (parent, searchForm, ganttObject) {
       if (obj) {
         reminder = obj.reminder;
       }
-    }
     if (progressFeedback && progressFeedback == 1 && Number(reminder) != 0) {
       progressFeedbackCheck = false
     } else if (progressFeedback && progressFeedback == 0 && Number(reminder) < 1) {
       progressFeedbackCheck = false
+    }
     }
 
     const weatherControl = searchForm.weatherControl // 管控任务
