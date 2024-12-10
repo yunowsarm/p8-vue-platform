@@ -90,8 +90,11 @@
                     trigger="click">
           <div class="edit_gantt_user_list">
             <span v-if="webSocketDone">当前连接异常，无法查看正在编辑人员，请尝试刷新页面或联系运维人员</span>
-            <span v-else
-                  v-for="user in editUserList">{{ user.userName }}</span>
+            <template v-else>
+              <span v-for="(user, index) in editUserList"
+                    :key="index">{{ user.userName }}</span>
+            </template>
+
           </div>
           <span slot="reference"
                 style="float: right; margin-right: 40px;line-height: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' : editUserList.length }} 人</span>
@@ -914,11 +917,11 @@ export default {
             that.newTaskMap[key].updateInfo = updateInfo
           }
         }
-        that.newTaskMap[key].indexNo = indexNo
+        // that.newTaskMap[key].indexNo = indexNo
         // 日期转换
         nowGanttTask.start_date = moment(nowGanttTask.start_date).format('YYYY-MM-DD')
         nowGanttTask.end_date = moment(nowGanttTask.end_date).format('YYYY-MM-DD')
-        nowGanttTask.indexNo = indexNo
+        // nowGanttTask.indexNo = indexNo
         nowGanttTask.owner_type = 'team'
         if (!nowGanttTask.monitors && nowGanttTask.monitorPoints !== null) {
           nowGanttTask.monitors = this.taskMonitorMap[nowGanttTask.id]
