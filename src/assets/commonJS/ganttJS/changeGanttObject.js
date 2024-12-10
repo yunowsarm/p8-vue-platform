@@ -448,6 +448,7 @@ export function getChangeGantt (ganttName, vueThis) {
   // 只读校验
   if (vueThis.readonly) {
     ganttObject.config.readonly = true
+    ganttObject.config.readonlyReason = '当前为只读模式，不可操作'
   } else {
     // 可操作
     // 前后置删除提示文本定义

@@ -3,7 +3,7 @@
        :class="buttonDynamicClass">
     <!-- 层级按钮 -->
     <template v-if="cbutton.id === 'hierarchy-filter'">
-      <el-tooltip :content="cbutton.title"
+      <el-tooltip :content="isDisable(cbutton) ? cbutton.msg : cbutton.title"
                   placement="top"
                   :offset="-15"
                   :enterable="false"
@@ -16,14 +16,14 @@
                    @change="cbutton.clickFun(level, ganttName)"
                    :clearable="true">
           <el-option v-for="(item, index) in vueThis.deep"
-                     :key="index + 1"
+                     :key="item"
                      :label="index + 1"
                      :value="index + 1"> </el-option>
         </el-select>
       </el-tooltip>
     </template>
     <template v-else-if="cbutton.type && cbutton.type === 'select' && cbutton.userDefault && cbutton.userDefault === 'true'">
-      <el-tooltip :content="cbutton.title"
+      <el-tooltip :content="isDisable(cbutton) ? cbutton.msg : cbutton.title"
                   placement="top"
                   :offset="-15"
                   :enterable="false"
@@ -35,7 +35,7 @@
                    style="width: 125px"
                    @change="cbutton.clickFun(scheduling, ganttName, currentRecords)">
           <el-option v-for="(item, index) in cbutton.options"
-                     :key="index + 1"
+                     :key="item.value"
                      :label="item.label"
                      :value="item.value"
                      :disabled="selectDisable(cbutton)"> </el-option>
@@ -51,7 +51,7 @@
                     :enterable="false"
                     effect="dark"
                     transition=" ">
-          <div slot="content">{{ dutyHintTitle || cbutton.title }}</div>
+          <div slot="content">{{ isDisable(cbutton) ? cbutton.msg : cbutton.title }}</div>
           <span @mouseleave="styleMouseleave(cbutton)"
                 ref="span">
             <el-button type="text"
@@ -76,7 +76,7 @@
              :class="{ disabled: dropVisible }"></i>
           <el-dropdown-menu slot="dropdown">
             <div v-for="(btnChild, index) in cbutton.children"
-                 :key="index"
+                 :key="btnChild.title"
                  class="c_btn_dropmenu"
                  :class="{ isdisable: isDisable(btnChild) }">
               <el-dropdown-item @click.native="btnClick(btnChild)"
@@ -164,31 +164,32 @@ export default {
     isDisable () {
       const that = this
       return function (btn) {
-        if (this.ganttName === 'analysisGantt' && !analysisGanttWhiteList.includes(btn.id)) {
-          return true
-        }
+        // if (this.ganttName === 'analysisGantt' && !analysisGanttWhiteList.includes(btn.id)) {
+        //   return true
+        // }
         if (this.ganttName === 'changeGantt' && !changeGanttWhiteList.includes(btn.id)) {
+          that.$set(btn, 'msg', '变更gantt时不允许此操作')
           return true
         }
-        let result
-        if (btn.id === '1015' && this.iconState && this.iconState.zrlXz) {
-          return true
-        }
-        if ((btn.id === 'format-1015' || btn.id === 'delete-1015') && this.iconState && this.iconState.zrlQx) {
-          return true
-        }
-        if ((btn.id === 'format-1008' || btn.id === 'delete-1008' || btn.id === '1008') && this.iconState && this.iconState.yjhXzQx) {
-          return true
-        }
-        if (!btn.isDisableFun(btn, this.ganttName, this.currentRecords)) {
-          result = this.isDisableFun(btn, this.ganttName, this.currentRecords) // 添加额外逻辑处理
-        } else {
-          result = btn.isDisableFun(btn, this.ganttName, this.currentRecords)
-        }
-        if (!result) {
-          that.dropVisible = false
-        }
-        return result
+        // let result
+        // if (btn.id === '1015' && this.iconState && this.iconState.zrlXz) {
+        //   return true
+        // }
+        // if ((btn.id === 'format-1015' || btn.id === 'delete-1015') && this.iconState && this.iconState.zrlQx) {
+        //   return true
+        // }
+        // if ((btn.id === 'format-1008' || btn.id === 'delete-1008' || btn.id === '1008') && this.iconState && this.iconState.yjhXzQx) {
+        //   return true
+        // }
+        // if (!btn.isDisableFun(btn, this.ganttName, this.currentRecords)) {
+        //   result = this.isDisableFun(btn, this.ganttName, this.currentRecords) // 添加额外逻辑处理
+        // } else {
+        //   result = btn.isDisableFun(btn, this.ganttName, this.currentRecords)
+        // }
+        // if (!result) {
+        //   that.dropVisible = false
+        // }
+        return btn.isDisableFun(btn, this.ganttName, this.currentRecords)
       }
     },
     selectDisable () {
@@ -390,6 +391,7 @@ export default {
 .c-button-disabled,
 .c_btn_dropmenu {
   color: #e0e0e0;
+
   .el-button.is-disabled,
   .el-button.is-disabled:hover,
   .el-button.is-disabled:focus {
@@ -408,9 +410,11 @@ export default {
   height: 12px;
   // border: 1px solid #ccc;
 }
+
 .disabled {
   color: #a0afc5;
 }
+
 .isdisable {
   cursor: no-drop;
 }

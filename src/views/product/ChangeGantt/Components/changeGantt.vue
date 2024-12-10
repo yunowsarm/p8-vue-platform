@@ -90,8 +90,11 @@
                     trigger="click">
           <div class="edit_gantt_user_list">
             <span v-if="webSocketDone">当前连接异常，无法查看正在编辑人员，请尝试刷新页面或联系运维人员</span>
-            <span v-else
-                  v-for="user in editUserList">{{ user.userName }}</span>
+            <template v-else>
+              <span
+              v-for="(user, index) in editUserList" :key="index">{{ user.userName }}</span>
+            </template>
+
           </div>
           <span slot="reference"
                 style="float: right; margin-right: 40px;line-height: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' : editUserList.length }} 人</span>
@@ -205,14 +208,14 @@
     width: 164px;
   }
 
-  .el-menu--collapse > .el-menu-item .el-submenu__icon-arrow,
-  .el-menu--collapse > .el-submenu > .el-submenu__title .el-submenu__icon-arrow {
+  .el-menu--collapse>.el-menu-item .el-submenu__icon-arrow,
+  .el-menu--collapse>.el-submenu>.el-submenu__title .el-submenu__icon-arrow {
     display: block;
     margin-top: -5px;
   }
 
-  .el-menu--collapse > .el-menu-item span,
-  .el-menu--collapse > .el-submenu > .el-submenu__title span {
+  .el-menu--collapse>.el-menu-item span,
+  .el-menu--collapse>.el-submenu>.el-submenu__title span {
     height: 100%;
     width: 100%;
     visibility: visible;
@@ -432,9 +435,7 @@ export default {
         }
       }
       this.selectTaskCount = newVal.length
-      if (newVal !== oldVal) {
-        this.callParentSelectTasks()
-      }
+      this.callParentSelectTasks()
     },
     planInfoId: function (newVal, oldVal) {
       if (newVal) {

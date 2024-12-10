@@ -6,7 +6,7 @@ import { checkContentRoot, checkTaskReadonly } from '@/assets/commonJS/ganttJS/c
 let Gantt = null
 let taskId = null
 // 如果所选任务的所有父级没有责任人与当前登录人相同则全禁用
-function checkResolve(ganttObject, task) {
+function checkResolve (ganttObject, task) {
   if (task.parent) {
     const parentTask = ganttObject.getTask(task.parent)
     if (parentTask.dutyUserId === parentTask.nowUserId) {
@@ -28,7 +28,7 @@ function checkResolve(ganttObject, task) {
  * @param {object} vueThis
  * @return {boolean}
  */
-function isPlanGantt(btn, ganttName, tasks, ganttObject, vueThis) {
+function isPlanGantt (btn, ganttName, tasks, ganttObject, vueThis) {
   return publicDisable(btn, ganttName, tasks, ganttObject, vueThis)
 }
 /**
@@ -41,14 +41,17 @@ function isPlanGantt(btn, ganttName, tasks, ganttObject, vueThis) {
  * @param {object} vueThis
  * @return {boolean}
  */
-function isPlanResolveGantt(btn, ganttName, tasks, ganttObject, vueThis) {
+function isPlanResolveGantt (btn, ganttName, tasks, ganttObject, vueThis) {
   if (
     tasks.some((item) => {
       return !checkResolve(ganttObject, item)
     })
   ) {
     // 如果所选任务的所有父级没有责任人与当前登录人相同则全禁用
-    return true
+    return {
+      disable: true,
+      tip: '所选任务的所有父级没有责任人与当前登录人相同'
+    }
   } else {
     return publicDisable(btn, ganttName, tasks, ganttObject, vueThis)
   }
@@ -63,13 +66,16 @@ function isPlanResolveGantt(btn, ganttName, tasks, ganttObject, vueThis) {
  * @param {object} vueThis
  * @return {boolean}
  */
-function isChangeGantt(btn, ganttName, tasks, ganttObject, vueThis) {
+function isChangeGantt (btn, ganttName, tasks, ganttObject, vueThis) {
   if (
     tasks.some(function (task) {
       return task.infoType && task.infoType === 'delete'
     })
   ) {
-    return true
+    return {
+      disable: true,
+      tip: '已删除任务不能进行变更'
+    }
   } else {
     return publicDisable(btn, ganttName, tasks, ganttObject, vueThis)
   }
@@ -83,7 +89,7 @@ function isChangeGantt(btn, ganttName, tasks, ganttObject, vueThis) {
  * @param {object} ganttObject
  * @return {boolean}
  */
-function isCancelSelClCassify(btn, ganttName, tasks, ganttObject) {
+function isCancelSelClCassify (btn, ganttName, tasks, ganttObject) {
   const mId = btn.id
   if (mId === 'cancelSelClassify') {
     return tasks.some((t, i) => {
@@ -111,7 +117,7 @@ function isCancelSelClCassify(btn, ganttName, tasks, ganttObject) {
  * @param {object} ganttObject
  * @return {boolean}
  */
-function isProduceChildNoProduce(btn, ganttName, tasks, ganttObject) {
+function isProduceChildNoProduce (btn, ganttName, tasks, ganttObject) {
   return tasks.every((taskItem) => {
     if (taskItem.planType && taskItem.planType === '3103') {
       const child = ganttObject.getChildren(taskItem.id)
@@ -123,7 +129,7 @@ function isProduceChildNoProduce(btn, ganttName, tasks, ganttObject) {
     }
   })
 }
-function multipleDisable(Gantt, btn, tasks, ganttName) {
+function multipleDisable (Gantt, btn, tasks, ganttName) {
   let taskCheck = false
   const mId = btn.id
   const mParentId = btn.parentId
@@ -137,6 +143,10 @@ function multipleDisable(Gantt, btn, tasks, ganttName) {
         }
         bool = !!Gantt.getTask(i).planType
         if (bool) {
+          bool = {
+            disable: true,
+            tip: '生产试制不可选'
+          }
           throw new Error()
         }
       })
@@ -150,7 +160,10 @@ function multipleDisable(Gantt, btn, tasks, ganttName) {
       return Gantt.hasChild(item.id)
     })
     if (noKids) {
-      return true
+      return {
+        disable: true,
+        tip: '有子任务不可选'
+      }
     }
     // step 2 父是生产试制
     // eslint-disable-next-line no-unused-expressions
@@ -159,7 +172,10 @@ function multipleDisable(Gantt, btn, tasks, ganttName) {
       return Gantt.getTask(Gantt.getParent(item.id)).planType === '3103'
     })
     if (!parentIsTrial) {
-      return true
+      return {
+        disable: true,
+        tip: '父是生产试制不可选'
+      }
     }
     // step 3 选中所有数据planType为空
     // eslint-disable-next-line no-unused-expressions
@@ -168,7 +184,10 @@ function multipleDisable(Gantt, btn, tasks, ganttName) {
       return item.planType
     })
     if (planTypeIsNull) {
-      return true
+      return {
+        disable: true,
+        tip: '计划类型为空不可选'
+      }
     }
     return false
   }
@@ -186,9 +205,12 @@ function multipleDisable(Gantt, btn, tasks, ganttName) {
     let ruleBool = null
     taskId ? (ruleBool = level >= 1) : (ruleBool = level > 1) // 显示情况判断级别应该根据不同界面判断根节点 我的任务页面   /* 为任务叶子节点并且有父任务 */
     if (ruleBool && !Gantt.hasChild(task.id)) {
-      parentTask.planType === '3103' ? (taskCheck = false) : (taskCheck = true)
+      parentTask.planType === '3103' ? (taskCheck = false) : (taskCheck = { disable: true, tip: '任务为叶子节点并且有父任务' })
     } else {
-      taskCheck = true
+      taskCheck = {
+        disable: true,
+        tip: '任务为叶子节点并且有父任务'
+      }
     }
     if (mId === '3103' && level >= 1) {
       taskCheck = false
@@ -197,7 +219,7 @@ function multipleDisable(Gantt, btn, tasks, ganttName) {
   // true 禁用
   return taskCheck
 }
-function checkTaskOtherDisable(btn, ganttName, ganttObject, tasks) {
+function checkTaskOtherDisable (btn, ganttName, ganttObject, tasks) {
   let taskCheck = false
   const mId = btn.id
   const mParentId = btn.parentId
@@ -219,23 +241,36 @@ function checkTaskOtherDisable(btn, ganttName, ganttObject, tasks) {
  * @param {object} vueThis
  * @return {boolean}
  */
-function publicDisable(btn, ganttName, tasks, ganttObject, vueThis) {
+function publicDisable (btn, ganttName, tasks, ganttObject, vueThis) {
   // 标识按钮id
   const mId = btn.id
   // gantt为readonly=true时，不可选
   if (ganttObject && ganttObject.config.readonly) {
-    return true
+    return {
+      disable: true,
+      tip: ganttObject.config.readonlyReason
+    }
   }
   if (vueThis.readOnly) {
-    return true
+    return {
+      disable: true,
+      tip: '当前为只读页面，不可操作'
+    }
   }
   // 包含根节点时，不可选
   if (checkContentRoot(ganttName, tasks)) {
-    return true
+    return {
+      disable: true,
+      tip: '包含根节点时，不可选'
+    }
   }
   // 任务的readonly属性为true时，不可操作
-  if (checkTaskReadonly(ganttName, tasks)) {
-    return true
+  const checkTaskReadonlyRes = checkTaskReadonly(ganttName, tasks)
+  if (checkTaskReadonlyRes) {
+    return {
+      disable: true,
+      tip: checkTaskReadonlyRes.readonlyReason
+    }
   }
   // 选中有计划标识的除“取消按钮”都禁用
   if (
@@ -244,7 +279,10 @@ function publicDisable(btn, ganttName, tasks, ganttObject, vueThis) {
     }) &&
     btn.id !== 'cancelSelClassify'
   ) {
-    return true
+    return {
+      disable: true,
+      tip: '选中任务有计划标识，不可操作'
+    }
   }
   // 有子任务不能添加“设计”标识
   if (
@@ -254,15 +292,25 @@ function publicDisable(btn, ganttName, tasks, ganttObject, vueThis) {
       return ganttObject.hasChild(taskItem.id)
     })
   ) {
-    return true
+    return {
+      disable: true,
+      tip: '有子任务不能添加“设计”标识'
+    }
   }
   // 生产试制，七大类禁用校验
-  if (checkTaskOtherDisable(btn, ganttName, ganttObject, tasks)) {
-    return true
+  const checkTaskOtherDisableRes = checkTaskOtherDisable(btn, ganttName, ganttObject, tasks)
+  if (checkTaskOtherDisableRes) {
+    return {
+      disable: true,
+      tip: checkTaskOtherDisableRes.tip
+    }
   }
   // 取消任务类型按钮 如果子任务存在生产/试制类型数据不能删除父
   if (isCancelSelClCassify(btn, ganttName, tasks, ganttObject)) {
-    return true
+    return {
+      disable: true,
+      tip: '如果子任务存在生产/试制类型数据不能删除父'
+    }
   }
   // 选中任务中存在任务类型为当前类型的任务时，按钮置灰
   if (
@@ -270,11 +318,17 @@ function publicDisable(btn, ganttName, tasks, ganttObject, vueThis) {
       return t.planType && t.planType.includes(mId)
     })
   ) {
-    return true
+    return {
+      disable: true,
+      tip: '选中任务中存在任务类型为当前类型的任务'
+    }
   }
   // 选中数据是生产试制类型的子节点，不能有生产试制
   if (isProduceChildNoProduce(btn, ganttName, tasks, ganttObject)) {
-    return true
+    return {
+      disable: true,
+      tip: '选中数据是生产试制类型的子节点，不能有生产试制'
+    }
   }
   return false
 }
@@ -284,7 +338,7 @@ export default {
     taskId = this.taskId
   },
   methods: {
-    isDisable(btn, ganttName, tasks) {
+    isDisable (btn, ganttName, tasks) {
       if ((!btn && !ganttName) || !tasks.length) return true
       const ganttObject = Gantt.getGanttObject(ganttName)
       if (ganttName === 'planGantt') {

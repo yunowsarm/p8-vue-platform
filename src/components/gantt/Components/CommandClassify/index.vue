@@ -1,8 +1,8 @@
 <template>
   <div>
     <template v-for="(mon, index) in childGroups(classifyData)">
-      <div class="child-group" :key="index">
-        <command-button v-for="(config, index) in mon.configs" :key="index" :cbutton="config" :size="config.size" :current-records="currentRecords" :gantt-name="ganttName"></command-button>
+      <div class="child-group" :key="'classify' + index">
+        <command-button v-for="(config, index) in mon.configs" :key="config.id" :cbutton="config" :size="config.size" :current-records="currentRecords" :gantt-name="ganttName"></command-button>
       </div>
     </template>
   </div>
@@ -36,24 +36,26 @@ export default {
       default: 2
     }
   },
-  data() {
+  data () {
     return {
       ganttObjectData: {},
       classifyData: []
     }
   },
   computed: {
-    childGroups() {
+    childGroups () {
       const that = this
       return function (data) {
         const configArray = []
         let childGroup = { configs: [] }
         data.map((item, index) => {
           // 绑定disable和click
+          item.editMark = item.editMark || ''
           const isDisableFun = that.isDisableFun()
           const clickFun = that.clickFun()
           item.isDisableFun = isDisableFun
           item.clickFun = clickFun
+          that.$set(item, 'msg', item.msg || item.title)
           if (!item.size) {
             item.size = 'small'
           }
@@ -95,7 +97,7 @@ export default {
     },
     ...mapGetters(['vueThis'])
   },
-  mounted() {
+  mounted () {
     // 加载标识数据
     const that = this
     let dicType = ''
@@ -139,42 +141,59 @@ export default {
     window.isDisableFun = this.isDisableFun
   },
   methods: {
-    initGanttObject() {
+    initGanttObject () {
       this.ganttObjectData = GanttObject
     },
-    isDisableFun() {
+    isDisableFun () {
       const that = this
       // 标识逻辑
       return (btn, ganttName, tasks) => {
         if (tasks.length === 0) {
+          btn.msg = '请选择任务'
           return true
         }
         if (window.createPage === 'compile' && that.vueThis.planEditLock) {
+          btn.msg = '计划编辑锁定时不允许此操作'
           return true
         }
         // 如果是任务分解，非当前人员创建的，只能编辑责任人
         const userId = that.$store.getters.userInfo.id
         const ele = tasks.find((task) => {
-          return task.createUserId && task.createUserId != userId
+          let res = task.createUserId && task.createUserId != userId
+          return res
         })
         if (window.createPage === 'decompose' && ele && ele.id) {
+          btn.msg = '计划分解页面，非当前人员创建不允许此操作'
           return true
         }
         const switchType = tasks[0] ? tasks[0].switchType : ''
         if (switchType) {
           if (switchType === '9010' || switchType === '9020') {
+            btn.msg = '任务为暂停或禁止状态时不允许此操作'
             return true
           }
+        }
+
+        const hasIsLeaf = tasks.find(task => task.isLeaf == '0' && task.parent !== 0)
+        if (!!hasIsLeaf && btn.editMark == '1') {
+          btn.msg = '叶子节点不允许此操作'
+          return true
         }
         // if (btn.id === 'cancelSelClassify') {
         //   if (tasks[0].planType !== '') {
         //     return false
         //   }
         // }
-        return this.isDisable(btn, ganttName, tasks)
+        const isDisableRes = that.isDisable(btn, ganttName, tasks)
+        if (isDisableRes) {
+          btn.msg = isDisableRes.tip
+          return true
+        } else {
+          return false
+        }
       }
     },
-    clickFun() {
+    clickFun () {
       const that = this
       return function (btn, ganttName, tasks) {
         const switchType = tasks[0] ? tasks[0].switchType : ''
@@ -217,7 +236,7 @@ export default {
         window.isDisable()
       }
     },
-    checkTaskOtherDisable(thisGantt, tasks, btn) {
+    checkTaskOtherDisable (thisGantt, tasks, btn) {
       const that = this
       let taskCheck = false
       const mId = btn.id
@@ -266,7 +285,7 @@ export default {
       }
       return taskCheck
     },
-    multipleDisable(Gantt, btn, tasks) {
+    multipleDisable (Gantt, btn, tasks) {
       let taskCheck = false
       const mId = btn.id
       const mParentId = btn.parentId
@@ -336,7 +355,7 @@ export default {
       // true 禁用
       return taskCheck
     },
-    beforeCancelPlanType(thisGantt, tasks) {
+    beforeCancelPlanType (thisGantt, tasks) {
       const that = this
       tasks.forEach(function (task) {
         if (task.planType && task.planType.indexOf('3103') !== -1) {
@@ -348,7 +367,7 @@ export default {
         }
       })
     },
-    async beforeSetPlanType(thisGantt, tasks, btn) {
+    async beforeSetPlanType (thisGantt, tasks, btn) {
       const that = this
       let isCcontinue = true
       const mId = btn.id
@@ -387,7 +406,7 @@ export default {
       }
       return isCcontinue
     },
-    checkProductPlanType(thisGantt, tasks, btn) {
+    checkProductPlanType (thisGantt, tasks, btn) {
       const that = this
       tasks.forEach(function (task) {
         that.$api['productTask.queryNameByType']({ planType: btn.id })
@@ -401,7 +420,7 @@ export default {
           })
       })
     },
-    async checkProductPlanTypeTwo(thisGantt, tasks, btn) {
+    async checkProductPlanTypeTwo (thisGantt, tasks, btn) {
       const that = this
       return Promise.all(
         tasks.map(function (task) {
@@ -425,7 +444,7 @@ export default {
       )
     },
     // editProductionMark拷贝，把提示框去掉
-    editProductionMarkTwo(thisGantt, task, nameKey, mId, title) {
+    editProductionMarkTwo (thisGantt, task, nameKey, mId, title) {
       const that = this
       const parentNode = thisGantt.getTask(task.parent) // 父任务
       const recordName = task.name // 任务名称
@@ -454,7 +473,7 @@ export default {
       }
       return { alContent: '', alTitle: '', checkValue: markFlag }
     },
-    editProductionMark(thisGantt, task, nameKey, mId, title) {
+    editProductionMark (thisGantt, task, nameKey, mId, title) {
       const that = this
       const parentNode = thisGantt.getTask(task.parent) // 父任务
       const recordName = task.name // 任务名称
@@ -521,7 +540,7 @@ export default {
         })
       }
     },
-    updateProductPlanType(thisGantt, task, mId) {
+    updateProductPlanType (thisGantt, task, mId) {
       const that = this
       // let parentTask = thisGantt.getTask(task.parent)
       if (mId) {
@@ -556,7 +575,7 @@ export default {
         that.deleteProductPlanType(task.id, parentId)
       }
     },
-    deleteProductPlanType(projectTasksId, parentId) {
+    deleteProductPlanType (projectTasksId, parentId) {
       // 删除挂接的产品
       const that = this
       that.$api['productTask.deleteProductPlanType']({ projectTasksId: projectTasksId, parentId: parentId })
@@ -568,7 +587,7 @@ export default {
           console.error(error)
         })
     },
-    updatePlanType(thisGantt, task, mId) {
+    updatePlanType (thisGantt, task, mId) {
       const that = this
       const parentTask = thisGantt.getTask(task.parent)
       if (mId && mId !== '3103' && mId !== '310303' && mId !== '') {

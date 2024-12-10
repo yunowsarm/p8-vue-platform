@@ -221,6 +221,7 @@ export function ganttEditCheck(taskEditAble, task, ganttObject) {
   // 已完成、提交审批的任务不可修改
   if (taskEditAble && taskEditAble === 'false') {
     task.readonly = true
+    task.readonlyReason = '任务已提交审批或已完成，不可修改'
     // 编辑加锁后任务类型默认为task，避免修改时间时发生联动
     task.type = 'task'
     task.auto_scheduling = false
@@ -263,6 +264,7 @@ export function setLockTaskProperties(ganttObject, vueThis) {
   // 已完成计划不可编辑
   if (planEditStatus === 'false') {
     ganttObject.config.readonly = true
+    ganttObject.config.readonlyReason = '已完成计划不可编辑'
     ganttObject.config.copy = true
   } else {
     return ganttObject.attachEvent('onParse', function () {
@@ -288,6 +290,7 @@ export function setLockTaskProperties(ganttObject, vueThis) {
             ) {
               // 计划编辑页面创建任务计划分解页面不可操作
               task.readonly = true
+              task.readonlyReason = '发布后可控任务不可操作'
               // 已完成、可控任务类型默认为task，避免修改时间时发生联动
               task.type = 'task'
               task.auto_scheduling = false
@@ -298,9 +301,11 @@ export function setLockTaskProperties(ganttObject, vueThis) {
                 task.type = 'task'
               }
               task.readonly = false
+              task.readonlyReason = ''
               task.auto_scheduling = true
             } else {
               task.readonly = false
+              task.readonlyReason = ''
               task.type = 'task'
               task.auto_scheduling = false
             }
@@ -310,6 +315,7 @@ export function setLockTaskProperties(ganttObject, vueThis) {
             if (vueThis.createPage === 'userChange') {
               if ((editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1) || ganttObject.getGlobalTaskIndex(task.id) === 0) {
                 task.readonly = true
+                task.readonlyReason = '计划编辑页面创建的任务我的任务变更页面不可操作'
                 task.type = 'task'
                 task.auto_scheduling = false
               } else if (!ganttObject.isChildOf(task.id, vueThis.taskId) && task.id !== vueThis.taskId) {
@@ -322,6 +328,7 @@ export function setLockTaskProperties(ganttObject, vueThis) {
                 }
               } else if (task.autoScheduling === '1') {
                 task.readonly = false
+                task.readonlyReason = ''
                 task.auto_scheduling = true
                 if (ganttObject.hasChild(task.id)) {
                   task.type = 'project'
@@ -330,6 +337,7 @@ export function setLockTaskProperties(ganttObject, vueThis) {
                 }
               } else {
                 task.readonly = false
+                task.readonlyReason = ''
                 task.type = 'task'
                 task.auto_scheduling = false
               }
@@ -343,10 +351,12 @@ export function setLockTaskProperties(ganttObject, vueThis) {
             } else {
               if ((editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1) || ganttObject.getGlobalTaskIndex(task.id) === 0) {
                 task.readonly = true
+                task.readonlyReason = '计划编辑页面创建的任务我的任务变更页面不可操作'
                 task.type = 'task'
                 task.auto_scheduling = false
               } else if (task.autoScheduling === '1') {
                 task.readonly = false
+                task.readonlyReason = ''
                 task.auto_scheduling = true
                 if (ganttObject.hasChild(task.id)) {
                   task.type = 'project'
@@ -355,6 +365,7 @@ export function setLockTaskProperties(ganttObject, vueThis) {
                 }
               } else {
                 task.readonly = false
+                task.readonlyReason = ''
                 task.type = 'task'
                 task.auto_scheduling = false
               }

@@ -1244,6 +1244,22 @@ export default {
     loadGanttData (planInfoId, taskId, createPage) {
       window.createPage = createPage
       const vueThis = this
+      vueThis.$api['planGanttManager.loadMonitorPointData']({
+        planInfoId: planInfoId
+      })
+        .then((res) => {
+          res.forEach(item => {
+            if (item.id == '1020' && item.lockStatus == '1') {
+              if (createPage === 'compile') {
+                vueThis.planEditLock = true
+                myGantt.config.readonly = true
+              }
+            }
+          });
+        })
+        .catch(function (error) {
+          console.error(error)
+        })
       vueThis.$api['planGanttManager.loadPlanGanttData']({
         planInfoId: planInfoId,
         dicType: 'ACTIVITY_TYPE',
