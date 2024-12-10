@@ -1483,27 +1483,29 @@ export default {
     resourceSelected (ownerId, row, type) {
       const that = this
       if (that.selectedTasks && that.selectedTasks.length > 0) {
-        myGantt.batchUpdate(function () {
-          that.selectedTasks.forEach((task) => {
-            if (type === 'dept') {
-              myGantt.getTask(task.id).owner_id = ownerId
-              myGantt.getTask(task.id).realName = ''
-              myGantt.getTask(task.id).dutyDeptId = row.id
-              myGantt.getTask(task.id).dutyDeptName = row.label
-            } else if (type === 'team') {
-              myGantt.getTask(task.id).owner_id = ownerId
-              myGantt.getTask(task.id).realName = row.name
-              myGantt.getTask(task.id).dutyDeptName = row.deptName
-            } else {
-              myGantt.getTask(task.id).owner_id = ownerId
-              myGantt.getTask(task.id).realName = row.realName
-              myGantt.getTask(task.id).dutyDeptName = row.deptName
-            }
-            myGantt.getTask(task.id).owner_type = type
-            myGantt.getTask(task.id).updateType = ''
-            myGantt.updateTask(task.id)
+        if (!row.departureTime) {
+          myGantt.batchUpdate(function () {
+            that.selectedTasks.forEach((task) => {
+              if (type === 'dept') {
+                myGantt.getTask(task.id).owner_id = ownerId
+                myGantt.getTask(task.id).realName = ''
+                myGantt.getTask(task.id).dutyDeptId = row.id
+                myGantt.getTask(task.id).dutyDeptName = row.label
+              } else if (type === 'team') {
+                myGantt.getTask(task.id).owner_id = ownerId
+                myGantt.getTask(task.id).realName = row.name
+                myGantt.getTask(task.id).dutyDeptName = row.deptName
+              } else {
+                myGantt.getTask(task.id).owner_id = ownerId
+                myGantt.getTask(task.id).realName = row.realName
+                myGantt.getTask(task.id).dutyDeptName = row.deptName
+              }
+              myGantt.getTask(task.id).owner_type = type
+              myGantt.getTask(task.id).updateType = ''
+              myGantt.updateTask(task.id)
+            })
           })
-        })
+        }
       }
       this.resourceSelectVisible = false
     },
