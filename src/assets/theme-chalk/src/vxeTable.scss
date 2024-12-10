@@ -3,9 +3,9 @@
 // @import "mixins/mixins";
 .common-table {
   position: relative;
-  .vxe-table--border-line {
-    border: none !important;
-  }
+  // .vxe-table--border-line {
+  //   border: none !important;
+  // }
   &.flex-table {
     display: flex;
     flex-direction: column;
@@ -27,9 +27,9 @@
       height: calc(100% - 50px);
     }
 
-    .vxeTable--border {
-      border: none;
-    }
+    // .vxeTable--border {
+    //   border: none;
+    // }
 
     &.selectAllHidden .el-table__header-wrapper .el-checkbox {
       display: none;
