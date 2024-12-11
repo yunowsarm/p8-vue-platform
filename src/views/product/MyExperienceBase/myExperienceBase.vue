@@ -310,7 +310,8 @@ export default {
       this.taskId = row.planId
       this.detailVisible = true
     },
-    onTableSelect (select, row) { // 获取表格中所有选中的数据
+    onTableSelect (select, row) {
+      // 获取表格中所有选中的数据
       const checkrow = []
       checkrow.push(row)
       if (row.isCheck === true) {
@@ -472,7 +473,6 @@ export default {
     tableRefresh (param) {
       // 先保存当前选中的行的 id
       const selectedRowIds = this.selectedRows.map(row => row.id);
-
       param
         .then(() => {
           console.log('异步成功后端做的操作');
@@ -488,11 +488,13 @@ export default {
     },
     // 恢复选中的行
     restoreSelectedRows (selectedRowIds) {
+      this.$refs.table.$refs.table.clearSelection();
       selectedRowIds.forEach(id => {
         const row = this.findRowById(this.$refs.table.tableData, id);
         if (row) {
           // 确保当前行被选中
           this.$refs.table.$refs.table.toggleRowSelection(row, true);
+          this.$set(row, 'isCheck', true);
         }
       });
     },

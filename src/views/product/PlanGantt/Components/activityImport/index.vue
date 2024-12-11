@@ -303,7 +303,7 @@ export default {
           this.$nextTick(() => {
             // 获取表格的所有数据
             const tableData = this.$refs.table.$refs.table.tableData;
-
+            this.$refs.table.$refs.table.clearSelection();
             // 递归遍历树形数据并恢复选中状态
             this.restoreSelection(tableData, selectedKeysBeforeRefresh);
 
@@ -321,6 +321,7 @@ export default {
         // 如果当前行的 id 存在于 selectedKeys 中，恢复选中状态
         if (selectedKeys.includes(row.id)) {
           this.$refs.table.$refs.table.toggleRowSelection(row, true);
+          this.$set(row, 'isCheck', true);
         }
 
         // 如果当前行有子节点，递归处理子节点
