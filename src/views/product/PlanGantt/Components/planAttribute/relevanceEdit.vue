@@ -43,7 +43,7 @@ export default {
       default: 0
     },
     wholeDescribeId: {
-      type: Number,
+      type: String,
       default: 0
     }
   },
