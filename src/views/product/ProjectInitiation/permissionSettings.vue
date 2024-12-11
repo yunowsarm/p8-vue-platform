@@ -229,7 +229,8 @@ export default {
   height: 29px;
 }
 .userSelect ::v-deep .el-dialog__body {
-  color: red;
+  padding: 0;
+  margin: 0;
   .normal-layoutV1 {
     margin: 0;
     padding: 0;
