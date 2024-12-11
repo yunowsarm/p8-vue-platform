@@ -236,7 +236,7 @@ export default {
         //   this.isView = false
         // }
       }
-      if (task.managerStatus === '6407') {
+      if (this.ganttName !== 'changeGantt' && task.managerStatus === '6407') {
         this.isChangeGantt = false
         this.isView = false
       }

@@ -1,8 +1,15 @@
 <template>
   <div>
     <template v-for="(mon, index) in childGroups(classifyData)">
-      <div class="child-group" :key="'classify' + index">
-        <command-button v-for="(config, index) in mon.configs" :key="config.id" :cbutton="config" :size="config.size" :current-records="currentRecords" :gantt-name="ganttName"></command-button>
+      <div class="child-group"
+           :key="'classify' + index">
+        <command-button v-for="(config, index) in mon.configs"
+                        :key="config.id"
+                        :classifyData="classifyData"
+                        :cbutton="config"
+                        :size="config.size"
+                        :current-records="currentRecords"
+                        :gantt-name="ganttName"></command-button>
       </div>
     </template>
   </div>
