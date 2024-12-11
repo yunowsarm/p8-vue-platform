@@ -152,7 +152,7 @@ export default {
   },
   computed: {
     formWidth () {
-      return (100 - this.defaultPercent - (150 / this.windowWidth * 100)).toFixed(2);
+      return Number((100 - this.defaultPercent - (150 / this.windowWidth * 100)).toFixed(2));
     }
   },
   created () {
