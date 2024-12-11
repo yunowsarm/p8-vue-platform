@@ -1,5 +1,6 @@
 <template>
-  <div style="height: 100%;"
+  <div v-if="taskId"
+       style="height: 100%;"
        :style="{ width: `${formWidth}vw` }">
     <el-button style="margin: 10px;"
                type="primary"
@@ -114,18 +115,20 @@ export default {
     ...mapGetters(['vueThis'])
   },
   mounted () {
-    setTimeout(() => {
-      let selectData = this.$refs.xDemandTable.$refs.table.data
-      this.$api[this.tableApi]({ taskId: this.taskId }).then(res => {
-        res.forEach(el => {
-          selectData.forEach((item, index) => {
-            if (el.id === item.id) {
-              this.$refs.xDemandTable.$refs.table.setCheckboxRow(selectData[index], true)
-            }
+    if (this.taskId) {
+      setTimeout(() => {
+        let selectData = this.$refs.xDemandTable.$refs.table.data
+        this.$api[this.tableApi]({ taskId: this.taskId }).then(res => {
+          res.forEach(el => {
+            selectData.forEach((item, index) => {
+              if (el.id === item.id) {
+                this.$refs.xDemandTable.$refs.table.setCheckboxRow(selectData[index], true)
+              }
+            })
           })
         })
-      })
-    }, 1000)
+      }, 1000)
+    }
   },
   methods: {
     handleSelectionChangeDemand (rows, row, checked) {
@@ -137,6 +140,9 @@ export default {
     },
     relevanceClick () {
       let that = this
+      if (!this.taskId) {
+        return this.$message.warning('请先选择任务')
+      }
       this.$api['demandManagement.saveRequirementByTask']({
         wholeId: this.wholeDescribeId,
         taskId: this.taskId,
