@@ -15,6 +15,11 @@
                @custom-validate="customValidate"
                :other-param="otherParam"
                :form="formData">
+      <template #describes>
+        <P8Tinymce :key="dateTime"
+                   v-model="formData.describes"
+                   :editorConfig="{height: '600px'}" />
+      </template>
     </form-list>
   </div>
 </template>
@@ -26,7 +31,7 @@
 }
 </style>
 <script>
-import { P8Form as FormList } from 'p8-components-ui'
+import { P8Form as FormList, P8Tinymce } from 'p8-components-ui'
 import { mapGetters } from 'vuex'
 import { GanttObject, updateforecastDate } from '@/assets/commonJS/ganttJS/ganttObject'
 import { taskDescribesEditCheck, checkKeys } from '@/assets/commonJS/ganttJS/changeGantt'
@@ -35,7 +40,8 @@ import moment from 'moment'
 export default {
   name: 'PlanDescribeEdit',
   components: {
-    FormList
+    FormList,
+    P8Tinymce
   },
   props: {
     taskId: {
@@ -246,13 +252,11 @@ export default {
         },
         {
           labelText: '任务描述',
-          type: 'textarea',
+          type: 'blank',
           fieldName: 'describes',
+          slotName: 'describes',
           placeholder: '请输入任务描述',
-          colLayout: 'singleCol',
-          fieldConfig: {
-            rows: '6'
-          }
+          colLayout: 'singleCol'
         }
       ],
       item1: {
@@ -279,12 +283,15 @@ export default {
           { label: '否', value: '0' }
         ]
       },
-      formData: {},
+      formData: {
+        describes: ''
+      },
       otherParam: {
         activityInfoId: ''
       },
       planInfo: {},
       formKey: new Date().getTime(),
+      dateTime: new Date().getTime(),
       describes: '',
       oldFormData: {},
       extraKeys: [],
@@ -517,6 +524,8 @@ export default {
           }
           that.oldFormData = that.formData
           that.formData = Object.assign({}, that.formData)
+          // that.$set(that.formData, 'describes', res.describes)
+          that.dateTime = new Date().getTime()
         })
         .catch(function (error) {
           console.error('error' + error)

@@ -1,6 +1,5 @@
 <template>
-  <div v-if="taskId"
-       style="height: 100%;"
+  <div style="height: 100%;"
        :style="{ width: `${formWidth}vw` }">
     <el-button style="margin: 10px;"
                type="primary"
@@ -25,6 +24,7 @@
 
 <script>
 import { P8VxeTable as VxeTable } from 'p8-components-ui'
+import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import { mapGetters } from 'vuex'
 export default {
   name: 'Index',
@@ -43,7 +43,7 @@ export default {
       default: 0
     },
     wholeDescribeId: {
-      type: Number,
+      type: String,
       default: 0
     }
   },
@@ -142,6 +142,12 @@ export default {
       let that = this
       if (!this.taskId) {
         return this.$message.warning('请先选择任务')
+      }
+      const ganttObject = GanttObject.getGanttObject(this.ganttName)
+      // 计划编制不可编辑状态字段
+      const task = ganttObject.getTask(this.taskId)
+      if (task.isLeaf > 0) {
+        return this.$message.warning('请选择子任务进行关联')
       }
       this.$api['demandManagement.saveRequirementByTask']({
         wholeId: this.wholeDescribeId,

@@ -11,17 +11,23 @@
              :is-custom-validate="isCustomValidate"
              :key="timeKey"
              @custom-validate="customValidate">
+    <template #describes>
+      <P8Tinymce v-model="formData.describes"
+                 :key="dateTime"
+                 :editorConfig="{height: '500px'}" />
+    </template>
   </form-list>
 </template>
 <style scoped>
 </style>
 <script>
-import { P8Form as FormList } from 'p8-components-ui'
+import { P8Form as FormList, P8Tinymce } from 'p8-components-ui'
 
 export default {
   name: 'DescribeEdit',
   components: {
-    FormList
+    FormList,
+    P8Tinymce
   },
   props: {
     activityInfoId: {
@@ -45,6 +51,7 @@ export default {
     return {
       saveApi: 'OutputFlow.describeSave',
       isCustomValidate: true,
+      dateTime: new Date().getTime(),
       userRoles: [],
       dataSource: [
         {
@@ -181,14 +188,17 @@ export default {
           ]
         },
         {
-          labelText: '活动描述',
-          type: 'textarea',
+          labelText: '任务描述',
+          type: 'blank',
           fieldName: 'describes',
-          placeholder: '请输入活动描述',
+          slotName: 'describes',
+          placeholder: '请输入任务描述',
           colLayout: 'singleCol'
         }
       ],
-      formData: {},
+      formData: {
+        describes: ''
+      },
       otherParam: {},
       timeKey: new Date().getTime()
     }
@@ -252,6 +262,7 @@ export default {
           } else {
             that.formData = Object.assign({}, that.formData)
           }
+          that.dateTime = new Date().getTime()
         }).catch(function (error) {
           console.error('error' + error)
         })

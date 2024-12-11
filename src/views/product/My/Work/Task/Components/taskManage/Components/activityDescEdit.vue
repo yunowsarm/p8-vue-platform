@@ -4,6 +4,9 @@
              :existDefaultBtn="false"
              :existCustomBtn="true"
              :form="formData">
+    <template #description>
+      <span v-html="formData.description"></span>
+    </template>
     <template #customBtn>
       <el-button @click="cancel">关 闭</el-button>
     </template>
@@ -90,9 +93,10 @@ export default {
         colLayout: 'doubleCol'
       },
       {
-        type: 'view',
+        type: 'blank',
         labelText: '任务描述',
         fieldName: 'description',
+        slotName: 'description',
         colLayout: 'singleCol'
       }
     ]

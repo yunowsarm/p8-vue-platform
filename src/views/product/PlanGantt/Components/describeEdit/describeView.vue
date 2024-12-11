@@ -49,8 +49,9 @@
         <span v-if="tooltipContent.proportion">({{ tooltipContent.proportion }})</span>
       </template>
       <template #describes>
-        <span style="color: red;">{{formData["describes"]}}</span>
-        <span v-if="tooltipContent.describes">({{ tooltipContent.describes }})</span>
+        <span v-html="formData.describes"></span>
+        <!-- <span style="color: red;">{{formData["describes"]}}</span>
+        <span v-if="tooltipContent.describes">({{ tooltipContent.describes }})</span> -->
       </template>
     </form-list>
   </div>
@@ -208,8 +209,9 @@ export default {
         },
         {
           labelText: '任务描述',
-          type: 'view',
+          type: 'blank',
           fieldName: 'describes',
+          slotName: 'describes',
           placeholder: '请输入活动描述',
           colLayout: 'singleCol',
           fieldConfig: {
@@ -435,17 +437,17 @@ export default {
                 }
               }
             }
-            if (res.describes !== null) {
-              if (res.describes !== res.describesBefore) {
-                that.dataSource.forEach(item => {
-                  if (item.fieldName === 'describes') {
-                    item.type = 'blank'
-                    item.slotName = 'describes'
-                  }
-                })
-                that.tooltipContent.describes = res.describesBefore
-              }
-            }
+            // if (res.describes !== null) {
+            //   if (res.describes !== res.describesBefore) {
+            //     that.dataSource.forEach(item => {
+            //       if (item.fieldName === 'describes') {
+            //         item.type = 'blank'
+            //         item.slotName = 'describes'
+            //       }
+            //     })
+            //     that.tooltipContent.describes = res.describesBefore
+            //   }
+            // }
           }
           // 变更进入时先查看newTaskMap中是否存在对应值若存在，显示，否则加载任务描述数据
           if (
