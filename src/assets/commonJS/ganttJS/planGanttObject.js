@@ -742,9 +742,9 @@ export function getGanttColumns (ganttObject, vueThis) {
           }
         }
         if (ganttObject.hasChild(task.id)) {
-          return '<span style="font-weight:bold;">' + GanttObject.dateToStr(task.end_date, null, ganttObject) + '</span>'
+          return '<span style="font-weight:bold;">' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
         } else {
-          return task.end_date
+          return ganttObject.date.add(task.end_date, -1, 'day')
         }
       }
     },
