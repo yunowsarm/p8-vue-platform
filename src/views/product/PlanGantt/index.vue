@@ -44,7 +44,12 @@
         <div v-if="defaultPercent !== 100"
              class="x-style"><i class="el-dialog__close el-icon el-icon-close"
              @click="closeClick"></i></div>
-        <plan-attribute :key="renderKey"
+        <ProgressHistory v-if="pageType === 'history'"
+                         :key="renderKey"
+                         :task-id="selectTaskId" />
+
+        <plan-attribute v-else
+                        :key="renderKey"
                         @save-success="detailDrawerClosed"
                         :create-page="createPage"
                         :task-id="selectTaskId"
@@ -145,6 +150,7 @@ import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
 import PlanAttribute from './Components/planAttribute'
 import { deepClone } from '@/utils/common'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
+import ProgressHistory from './Components/progressHistory'
 export default {
   name: 'PlanGanttManage',
   data () {
@@ -159,6 +165,7 @@ export default {
       drawerConfig: {
         modal: false
       },
+      pageType: '',
       renderKey: new Date().getTime(),
       defaultPercent: 100,
       firstEntry: true,
@@ -258,7 +265,8 @@ export default {
     P8SplitPane,
     PlanAttribute,
     CommonDrawer,
-    CommandButtonBar
+    CommandButtonBar,
+    ProgressHistory
   },
   beforeMount () { },
   created () {
@@ -320,9 +328,14 @@ export default {
       this.firstEntry = true
     },
     showDetail (selectTask, ganttName, viewType, switchType) {
-      console.log("🚀 ~ showDetail ~ selectTask:", selectTask)
+      console.log("🚀 ~ showDetail ~ pageType:", switchType)
       // defaultPercent指的是gannt的宽度
       // 首次进入，单机任务且未拖动详情时，不弹出
+      if (switchType !== 'history') {
+        this.pageType = 'switch'
+      } else {
+        this.pageType = 'history'
+      }
       if (this.firstEntry && switchType == 'switch' && this.defaultPercent == 100) return
       this.renderKey = new Date().getTime()
       this.detailVisible = true
