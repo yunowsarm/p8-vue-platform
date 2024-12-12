@@ -306,7 +306,7 @@
                       :main-gantt-name="ganttName"></version-list>
       </template>
     </common-drawer>
-    <common-drawer v-if="progressHistoryVisible"
+    <!-- <common-drawer v-if="progressHistoryVisible"
                    :visible="progressHistoryVisible"
                    size="50%"
                    placement="top"
@@ -315,7 +315,7 @@
       <template #drawer>
         <ProgressHistory :task-id="selectedId" />
       </template>
-    </common-drawer>
+    </common-drawer> -->
     <common-drawer v-if="changeHistoryVisible"
                    :visible="changeHistoryVisible"
                    size="80%"
@@ -461,7 +461,7 @@ import CommonButtonBarSetting from '@/components/gantt/Components/CommonButtonBa
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
 import VersionList from '../versionList'
-import ProgressHistory from '../progressHistory'
+// import ProgressHistory from '../progressHistory'
 import ChangeHistory from '../changeHistory'
 import relevance from '../relevance'
 import { version } from 'vue'
@@ -584,7 +584,7 @@ export default {
     Notice,
     // Flight,
     // Large,
-    ProgressHistory,
+    // ProgressHistory,
     ChangeHistory,
     CommandSearch,
     CommandStatistic,
@@ -800,9 +800,10 @@ export default {
       ganttStatisticVisible: false,
       rightMenuConfigVisible: false, // 右键菜单配置弹出框
       getSelectTasks: [],
-      progressHistoryVisible: false,
+      // progressHistoryVisible: false,
       changeHistoryVisible: false,
       selectedId: '',
+      pageType: 'switch',
       versionListVisible: false //  版本列表显示隐藏
     }
   },
@@ -1371,7 +1372,9 @@ export default {
     callParentSelectTasks () {
       this.$nextTick(() => {
         this.$emit('select-task', this.selectedTasks, this.ganttName)
-        this.showDetail('switch')
+        if (this.pageType !== 'history') {
+          this.showDetail('switch')
+        }
       })
     },
     mouseMove (e) {
@@ -1382,6 +1385,7 @@ export default {
       }
     },
     showDetail (type) {
+      this.pageType = 'switch'
       if (myGantt.getGlobalTaskIndex(this.selectTaskId) === 0) return
       // 如果是任务分解，非当前人员创建的，只能编辑责任人
       const userId = this.$store.getters.userInfo.id
@@ -1632,7 +1636,9 @@ export default {
     },
     showTaskProgressDialog (taskId) {
       this.selectedId = taskId
-      this.progressHistoryVisible = true
+      this.pageType = 'history'
+      this.$emit('show-detail', myGantt.getTask(taskId), this.ganttName, '', 'history')
+      // this.progressHistoryVisible = true
       this.reminderList.forEach(item => {
         if (item.id == taskId) {
           item.reminder = 0

@@ -10,7 +10,7 @@
           <el-date-picker v-model="formData.year"
                           :editable="false"
                           type="year"
-                          style="width: 92%;"
+                          :style="{width: formDataWidth}"
                           :disabled="disabled"
                           value-format="yyyy"
                           placeholder="选择年"
@@ -32,7 +32,7 @@
           <el-select v-model="formData.month"
                      :disabled="disabled"
                      placeholder="请选择"
-                     style="width: 92%;"
+                     :style="{width: formDataWidth}"
                      @change="monthChange(formData.month)">
             <el-option v-for="item in options"
                        :key="item.value"
@@ -60,7 +60,9 @@ export default {
   },
   data () {
     return {
-      dataSource: [
+      formDataWidth: '92%',
+      dataSource: [],
+      dataSourceOne: [
         {
           type: 'blank',
           labelText: '年份',
@@ -111,6 +113,57 @@ export default {
           placeholder: '请输入'
         }
       ],
+      dataSourceTwo: [
+        {
+          type: 'blank',
+          labelText: '年份',
+          fieldName: 'year',
+          slotName: 'year',
+          colLayout: 'singleCol',
+          rules: [
+            {
+              required: true,
+              message: '必选'
+            }
+          ]
+        },
+        {
+          type: 'blank',
+          labelText: '考核月份',
+          fieldName: 'month',
+          slotName: 'month',
+          colLayout: 'singleCol',
+          rules: [
+            {
+              required: true,
+              message: '必选'
+            }
+          ]
+        },
+        {
+          type: 'select',
+          labelText: '创建类型',
+          fieldName: 'type',
+          placeholder: '请选择',
+          colLayout: 'singleCol',
+          fieldConfig: {
+            disabled: true
+          },
+          options: [
+            {
+              label: '手动',
+              value: '1'
+            }
+          ]
+        },
+        {
+          type: 'textarea',
+          labelText: '备注',
+          fieldName: 'remarks',
+          colLayout: 'singleCol',
+          placeholder: '请输入'
+        }
+      ],
       formData: {
         year: '',
         month: '',
@@ -135,6 +188,20 @@ export default {
     }
   },
   mounted () {
+    this.dataSource = this.dataSourceOne
+    let that = this
+
+    window.addEventListener('resize', function () {
+      var width = window.innerWidth;
+      // 可以根据宽度执行其他操作
+      if (width < 1025) {
+        that.dataSource = that.dataSourceTwo
+        that.formDataWidth = '100%'
+      } else {
+        that.dataSource = that.dataSourceOne
+        that.formDataWidth = '92%'
+      }
+    });
     if (this.row.length > 0) {
       this.formData = {
         id: this.row[0].ID,
