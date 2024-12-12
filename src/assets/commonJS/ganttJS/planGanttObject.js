@@ -448,6 +448,17 @@ export function planGantt (ganttName, vueThis) {
   GanttObject.resourceOnAfterSelect(ganttObject)
   GanttObject.setDpObject(ganttName, dp)
   GanttObject.setGanttObject(ganttName, ganttObject)
+  console.log("🚀 ~ planGantt ~ ganttName:", ganttName)
+
+  ganttObject.attachEvent('onParse', function () {
+    ganttObject.eachTask(function (task) {
+       if (vueThis.createPage === 'decompose') {
+          if (!task.parent) {
+            task.type = 'task'
+          }
+       }
+    })
+  })
   return ganttObject
 }
 
