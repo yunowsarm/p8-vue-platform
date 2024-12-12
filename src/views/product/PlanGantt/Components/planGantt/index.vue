@@ -374,14 +374,14 @@
     width: 164px;
   }
 
-  .el-menu--collapse > .el-menu-item .el-submenu__icon-arrow,
-  .el-menu--collapse > .el-submenu > .el-submenu__title .el-submenu__icon-arrow {
+  .el-menu--collapse>.el-menu-item .el-submenu__icon-arrow,
+  .el-menu--collapse>.el-submenu>.el-submenu__title .el-submenu__icon-arrow {
     display: block;
     margin-top: -5px;
   }
 
-  .el-menu--collapse > .el-menu-item span,
-  .el-menu--collapse > .el-submenu > .el-submenu__title span {
+  .el-menu--collapse>.el-menu-item span,
+  .el-menu--collapse>.el-submenu>.el-submenu__title span {
     height: 100%;
     width: 100%;
     visibility: visible;
@@ -398,11 +398,11 @@
     box-sizing: border-box;
   }
 
-  ::v-deep .el-menu--collapse > .el-submenu > .el-submenu__title .el-submenu__icon-arrow {
+  ::v-deep .el-menu--collapse>.el-submenu>.el-submenu__title .el-submenu__icon-arrow {
     display: inline-block;
   }
 
-  ::v-deep .el-submenu.is-opened > .el-submenu__title .el-submenu__icon-arrow {
+  ::v-deep .el-submenu.is-opened>.el-submenu__title .el-submenu__icon-arrow {
     transform: rotate(180deg);
   }
 }
@@ -927,7 +927,7 @@ export default {
     noOperate () {
       return !(this.ganttDetail || this.menuVisible || this.outPutViewVisible || this.activityImportVisible || this.noticeVisible || this.controlTimeVisible || this.resourceSelectVisible || this.selectGridVisible || this.myExperienceVisible || this.importExcel || this.importProject || this.ganttSearchVisible || this.ganttStatisticVisible || this.rightMenuConfigVisible || this.createVisible || this.experienceBaseVisible || this.versionListVisible || this.progressHistoryVisible || this.changeHistoryVisible)
     },
-    ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll'])
+    ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
     relevanceOpen () {
@@ -1242,24 +1242,17 @@ export default {
       // }
     },
     loadGanttData (planInfoId, taskId, createPage) {
+      const monitorBtns = this.monitorBtnsByApi
       window.createPage = createPage
       const vueThis = this
-      vueThis.$api['planGanttManager.loadMonitorPointData']({
-        planInfoId: planInfoId
-      })
-        .then((res) => {
-          res.forEach(item => {
-            if (item.id == '1020' && item.lockStatus == '1') {
-              if (createPage === 'compile') {
-                vueThis.planEditLock = true
-                myGantt.config.readonly = true
-              }
-            }
-          });
-        })
-        .catch(function (error) {
-          console.error(error)
-        })
+      monitorBtns.forEach(item => {
+        if (item.id == '1020' && item.lockStatus == '1') {
+          if (createPage === 'compile') {
+            vueThis.planEditLock = true
+            myGantt.config.readonly = true
+          }
+        }
+      });
       vueThis.$api['planGanttManager.loadPlanGanttData']({
         planInfoId: planInfoId,
         dicType: 'ACTIVITY_TYPE',
