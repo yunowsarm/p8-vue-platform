@@ -154,8 +154,10 @@ export default {
     ...mapGetters(['vueThis', 'taskStatusLockMap'])
   },
   mounted () {
-    this.loadMonitorData(this.planInfoId)
     this.initGanttObject()
+    if (this.planInfoId) {
+      this.loadMonitorData(this.planInfoId)
+    }
   },
   methods: {
     initGanttObject () {
