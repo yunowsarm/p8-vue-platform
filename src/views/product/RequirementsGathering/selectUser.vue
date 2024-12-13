@@ -146,7 +146,7 @@ export default {
       tableApi: 'userManager.list',
       userName: '',
       queryParam: {
-        // deptId: '',
+        departmentId: '1',
         userName: '',
         // utilizationTimeRange: [moment().format('YYYY-MM-DD'), moment(new Date()).add(1, 'months').format('YYYY-MM-DD')],
         // startDate: moment().format('YYYY-MM-DD hh:mm:ss'), //  hh:mm:ss
@@ -256,18 +256,14 @@ export default {
         ))
       );
 
-      console.log(uniqueArray, '================uniqueArray');
       this.$emit('member-save', uniqueArray)
       this.tableSelectValue = []
     },
     onSelect (node) {
-      this.queryParam.deptId = node.id
+      this.queryParam.departmentId = node.id
       this.$refs.table.searchData()
     },
     handleTableSelectionChange (value) {
-      console.log("🚀 ~ handleTableSelectionChange ~ value:", value)
-      console.log("🚀 2222222222222:", this.existsData
-      )
       this.tableSelectValue = value
     }
   },
