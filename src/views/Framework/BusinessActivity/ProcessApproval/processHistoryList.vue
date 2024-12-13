@@ -10,6 +10,7 @@
                   :api="tableApi"
                   :table-refresh="tableRefresh"
                   :flex="tableFlex"
+                  :customPageSizes="[15, 30, 50, 100]"
                   :pagination="true"></common-table>
   </div>
 </template>
@@ -137,6 +138,7 @@ export default {
         mh / 50
       );
       that.$refs.table.page.size = calPageSize;
+      that.$refs.table.page.current = 1;
       let index = that.$refs.table.pageSizes.find(el => { el == calPageSize })
       if (!index && !that.$refs.table.pageSizes.includes(calPageSize)) {
         that.$refs.table.pageSizes.push(calPageSize)
