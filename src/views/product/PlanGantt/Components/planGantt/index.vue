@@ -1345,6 +1345,13 @@ export default {
                 myGantt.selectTask(vueThis.selectedId);
               }, 1000)
             }
+            if (vueThis.isSueTaskIds && vueThis.isSueTaskIds.length) {
+              vueThis.isSueTaskIds.forEach(el => {
+                myGantt.showTask(el);
+                myGantt.selectTask(el);
+              })
+              vueThis.isSueTaskIds = null
+            }
             // 检查gantt操作权限
             // myGantt.config.readonly = editLockUnLockCheck(vueThis.planInfoStatus, vueThis.monitorLockMap)
           } else {

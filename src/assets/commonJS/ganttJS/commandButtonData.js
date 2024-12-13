@@ -3409,18 +3409,11 @@ function issueTask (ganttObject, thisDp, currentRowTask, ganttName) {
           //   })
           // })
           vueThis.initGantt(vueThis.planInfoId, 'grid')
-
-          setTimeout(() => {
-            const thisGantt = GanttObject.getGanttObject(ganttName)
-            vueThis.$message({
-              message: '任务下发成功！',
-              type: 'success'
-            })
-            taskIds.forEach(el => {
-              thisGantt.showTask(el);
-              thisGantt.selectTask(el);
-            })
-          }, 1000)
+          vueThis.$message({
+            message: '任务下发成功！',
+            type: 'success'
+          })
+          vueThis.isSueTaskIds = taskIds
         } else {
           vueThis.$message({
             message: '任务下发失败！',
