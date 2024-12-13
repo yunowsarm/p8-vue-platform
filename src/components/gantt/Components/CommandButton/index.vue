@@ -165,9 +165,9 @@ export default {
     }
   },
   watch: {
-    // currentRecords: function (newVal, oldVal) {
-    //   this.scheduling = ''
-    // }
+    currentRecords: function (newVal, oldVal) {
+      this.scheduling = ''
+    }
   },
   computed: {
     isDisable () {
