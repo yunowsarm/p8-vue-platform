@@ -153,6 +153,6 @@ export default {
 
 <style scoped>
 .history {
-  height: 100%;
+  height: 100% !important;
 }
 </style>
