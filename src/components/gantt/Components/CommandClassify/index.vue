@@ -182,8 +182,8 @@ export default {
         }
 
         const hasIsLeaf = tasks.find(task => task.isLeaf == '0' && task.parent !== 0)
-        if (!!hasIsLeaf && btn.editMark == '1') {
-          btn.msg = '叶子节点不允许此操作'
+        if (!hasIsLeaf && btn.editMark == '1') {
+          btn.msg = '非叶子节点不允许此操作'
           return true
         }
         // if (btn.id === 'cancelSelClassify') {
