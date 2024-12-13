@@ -7,7 +7,6 @@ import axios from '@/plugins/axios'
 import { requestUrl } from '@/utils/common.js'
 import isDisable, {
   isHasTask,
-  isChangeGantt,
   isCompile,
   isSuspensionOrProhibition,
   taskStateAndReadonly,
@@ -58,7 +57,6 @@ export const CommandButtonData = [
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
         () => isHasTask(ganttName, tasks),
-        () => isChangeGantt(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => taskStateAndReadonly(ganttName, tasks),
@@ -67,7 +65,7 @@ export const CommandButtonData = [
         () => isHasProductTask(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     },
     children: [
@@ -85,7 +83,6 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isChangeGantt(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
@@ -94,7 +91,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks),
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       },
@@ -112,7 +109,6 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isChangeGantt(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
@@ -121,7 +117,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks),
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       },
@@ -139,7 +135,6 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isChangeGantt(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
@@ -148,7 +143,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks),
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       },
@@ -166,7 +161,6 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isChangeGantt(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
@@ -175,7 +169,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks),
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       },
@@ -202,7 +196,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       }
@@ -231,7 +225,7 @@ export const CommandButtonData = [
         () => taskStateAndReadonly(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     },
     children: [
@@ -253,11 +247,12 @@ export const CommandButtonData = [
           const checks = [
             () => isHasTask(ganttName, tasks),
             () => isCompile(ganttName, tasks),
+            () => isReadOnlyAndNoRoot(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       },
@@ -279,11 +274,12 @@ export const CommandButtonData = [
           const checks = [
             () => isHasTask(ganttName, tasks),
             () => isCompile(ganttName, tasks),
+            () => isReadOnlyAndNoRoot(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       },
@@ -305,11 +301,12 @@ export const CommandButtonData = [
           const checks = [
             () => isHasTask(ganttName, tasks),
             () => isCompile(ganttName, tasks),
+            () => isReadOnlyAndNoRoot(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       },
@@ -331,11 +328,12 @@ export const CommandButtonData = [
           const checks = [
             () => isHasTask(ganttName, tasks),
             () => isCompile(ganttName, tasks),
+            () => isReadOnlyAndNoRoot(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       }
@@ -358,7 +356,7 @@ export const CommandButtonData = [
         () => taskStateAndReadonly(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -382,8 +380,7 @@ export const CommandButtonData = [
         () => isAllowUpgrades(ganttName, tasks)
       ]
       const res = isDisable(checks)
-
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -432,7 +429,7 @@ export const CommandButtonData = [
         () => isSingleTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -455,7 +452,7 @@ export const CommandButtonData = [
         () => isToBeDelivered(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -508,7 +505,7 @@ export const CommandButtonData = [
         () => isApprovalReject(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -531,7 +528,7 @@ export const CommandButtonData = [
         () => isReadOnly(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -560,7 +557,7 @@ export const CommandButtonData = [
         () => isSuspensionOrProhibition(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -593,7 +590,7 @@ export const CommandButtonData = [
         () => isReadOnlyAndNoRoot(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -616,7 +613,7 @@ export const CommandButtonData = [
         () => isHasDeliveredTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -664,7 +661,7 @@ export const CommandButtonData = [
         () => isReadOnly(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -688,7 +685,7 @@ export const CommandButtonData = [
         () => isReadOnly(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -722,7 +719,7 @@ export const CommandButtonData = [
         () => isAllowIssue(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
 
     }
@@ -743,7 +740,7 @@ export const CommandButtonData = [
         () => isCompile(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -766,7 +763,7 @@ export const CommandButtonData = [
         () => isHasTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -789,7 +786,7 @@ export const CommandButtonData = [
         () => isAllowUndo(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -812,7 +809,7 @@ export const CommandButtonData = [
         () => isAllowUndo(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -842,7 +839,7 @@ export const CommandButtonData = [
         () => isHadRootAndReadOnly(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -871,7 +868,7 @@ export const CommandButtonData = [
         () => isAllowPaste(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -889,7 +886,7 @@ export const CommandButtonData = [
         () => isAllowAutoManual(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -911,7 +908,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -933,7 +930,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -955,7 +952,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -977,7 +974,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -999,7 +996,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -1021,7 +1018,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -1043,7 +1040,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -1064,7 +1061,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -1095,7 +1092,7 @@ export const CommandButtonData = [
         () => isGridView(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message + this.help : this.help;
+      this.msg = res.disable ? res.message + '' : '';
       return res.disable
     }
   },
@@ -1127,7 +1124,7 @@ export const CommandButtonData = [
         () => isGanttView(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message + this.help : this.help;
+      this.msg = res.disable ? res.message + '' : '';
       return res.disable
     }
   },
@@ -1159,7 +1156,7 @@ export const CommandButtonData = [
         () => isResourceView(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message + this.help : this.help;
+      this.msg = res.disable ? res.message + '' : '';
       return res.disable
     }
   },
@@ -1221,7 +1218,7 @@ export const CommandButtonData = [
         () => isCriticalPath(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -1274,7 +1271,7 @@ export const CommandButtonData = [
         () => isHasProductTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -1299,7 +1296,7 @@ export const CommandButtonData = [
         () => isHasProductTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -1459,7 +1456,7 @@ export const CommandButtonData = [
         () => isHasProductTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -1685,7 +1682,7 @@ export const CommandButtonData = [
         () => isHasProductTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     },
     children: [
@@ -1706,9 +1703,11 @@ export const CommandButtonData = [
             () => isHasTask(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),
+            () => isToBeDelivered(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       },
@@ -1729,9 +1728,11 @@ export const CommandButtonData = [
             () => isHasTask(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),
+            () => isToBeDelivered(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       }
@@ -1756,7 +1757,7 @@ export const CommandButtonData = [
         () => isSuspensionOrProhibition(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     },
     children: [
@@ -1765,7 +1766,7 @@ export const CommandButtonData = [
         icon: 'p8 icon-add',
         title: '创建',
         help: '创建',
-        msg: '',
+        msg: '创建',
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           vueThis.createVisible = true
@@ -1781,7 +1782,7 @@ export const CommandButtonData = [
             () => isSuspensionOrProhibition(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       },
@@ -1790,7 +1791,7 @@ export const CommandButtonData = [
         icon: 'p8 icon-new-sibling',
         title: '导入同级',
         help: '导入同级',
-        msg: '',
+        msg: '导入同级',
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           vueThis.experienceBaseVisible = true
@@ -1810,7 +1811,7 @@ export const CommandButtonData = [
             () => isExperienceImport(ganttName, tasks),
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       },
@@ -1835,7 +1836,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks),
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       },
@@ -1856,7 +1857,7 @@ export const CommandButtonData = [
             () => isSuspensionOrProhibition(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       }
@@ -1877,7 +1878,7 @@ export const CommandButtonData = [
         () => isCompile(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -1893,7 +1894,7 @@ export const CommandButtonData = [
         () => isCompile(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -1914,7 +1915,7 @@ export const CommandButtonData = [
         () => isCompile(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -2013,7 +2014,7 @@ export const CommandButtonData = [
         () => isSuspensionOrProhibition(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -2081,7 +2082,7 @@ export const CommandButtonData = [
         () => isDetailInfo(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -2102,7 +2103,7 @@ export const CommandButtonData = [
         () => isHasTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     }
   },
@@ -2146,7 +2147,7 @@ export const CommandButtonData = [
         () => isNotStart(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     },
     children: [
@@ -2190,7 +2191,7 @@ export const CommandButtonData = [
             () => isNotStart(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       }
@@ -2235,7 +2236,7 @@ export const CommandButtonData = [
         () => isNotStart(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      this.msg = res.disable ? res.message : this.help;
+      this.msg = res.disable ? res.message : '';
       return res.disable
     },
     children: [
@@ -2278,7 +2279,7 @@ export const CommandButtonData = [
             () => isNotStart(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          this.msg = res.disable ? res.message : this.help;
+          this.msg = res.disable ? res.message : '';
           return res.disable
         }
       }

@@ -209,8 +209,9 @@ export default {
         } else if (key === 'progress') {
           this.formData[key] = Number((res[key] * 100).toFixed(0))
         } else if (key === 'achievements' || key === 'proportion') {
-          // 转换为数字并保留两位小数
-          this.formData[key] = parseFloat(res[key]).toFixed(2);
+          let value = res[key];
+          // 将字符串转换为数字并检查是否是有效数字
+          this.formData[key] = !isNaN(parseFloat(value)) ? parseFloat(value).toFixed(2) : '0.00';
         } else {
           this.formData[key] = res[key]
         }
