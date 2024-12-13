@@ -79,7 +79,13 @@
                  :key="btnChild.title"
                  class="c_btn_dropmenu"
                  :class="{ isdisable: isDisable(btnChild) }">
-              <el-dropdown-item @click.native="btnClick(btnChild)"
+                 <el-tooltip :content="isDisable(btnChild) ? btnChild.msg : btnChild.title"
+                  placement="top"
+                  :offset="-15"
+                  :enterable="false"
+                  effect="dark">
+                  <div>
+                    <el-dropdown-item @click.native="btnClick(btnChild)"
                                 :disabled="isDisable(btnChild)">
                 <el-button v-if="btnChild.id !== 'createByNum'"
                            type="text"
@@ -88,6 +94,8 @@
                   {{ btnChild.title }}
                 </el-button>
               </el-dropdown-item>
+                  </div>
+                 </el-tooltip>
             </div>
           </el-dropdown-menu>
         </el-dropdown>
@@ -157,64 +165,28 @@ export default {
     }
   },
   watch: {
-    currentRecords: function (newVal, oldVal) {
-      this.scheduling = ''
-    }
+    // currentRecords: function (newVal, oldVal) {
+    //   this.scheduling = ''
+    // }
   },
   computed: {
     isDisable () {
-      const that = this
-      return function (btn) {
-        // if (this.ganttName === 'analysisGantt' && !analysisGanttWhiteList.includes(btn.id)) {
-        //   return true
-        // }
+      return (btn) => {
+        // 判断是否禁用
+        let result = this.checkButtonDisable(btn);
 
-        if (this.ganttName === 'changeGantt' && !changeGanttWhiteList.includes(btn.id)) {
-          // 计划变更标识编辑控制
-          if (this.classifyData) {
-            let result = true
-            this.classifyData.forEach(item => {
-              if (btn.title === item.title) {
-                if (this.currentRecords.length > 0) {
-                  if (this.currentRecords[0].parent && (this.currentRecords[0].managerStatus === '6403' || this.currentRecords[0].managerStatus === '6404' || this.currentRecords[0].managerStatus == '6407' || this.currentRecords[0].managerStatus == '6408')) {
-                    result = false
-                  }
-                }
-              }
-            })
-            if (!result) {
-              return false
-            }
-          }
-          that.$set(btn, 'msg', '变更gantt时不允许此操作')
-          return true
+        if (!result) {
+          this.dropVisible = false;
         }
-        // let result
-        // if (btn.id === '1015' && this.iconState && this.iconState.zrlXz) {
-        //   return true
-        // }
-        // if ((btn.id === 'format-1015' || btn.id === 'delete-1015') && this.iconState && this.iconState.zrlQx) {
-        //   return true
-        // }
-        // if ((btn.id === 'format-1008' || btn.id === 'delete-1008' || btn.id === '1008') && this.iconState && this.iconState.yjhXzQx) {
-        //   return true
-        // }
-        // if (!btn.isDisableFun(btn, this.ganttName, this.currentRecords)) {
-        //   result = this.isDisableFun(btn, this.ganttName, this.currentRecords) // 添加额外逻辑处理
-        // } else {
-        //   result = btn.isDisableFun(btn, this.ganttName, this.currentRecords)
-        // }
-        // if (!result) {
-        //   that.dropVisible = false
-        // }
-        return btn.isDisableFun(btn, this.ganttName, this.currentRecords)
-      }
+
+        return result;
+      };
     },
     selectDisable () {
       return function (btn) {
-        if (this.ganttName === 'analysisGantt' && !analysisGanttWhiteList.includes(btn.id)) {
+        if (this.ganttName === 'analysisGantt') {
           return true
-        } else if (this.ganttName === 'changeGantt' && !changeGanttWhiteList.includes(btn.id)) {
+        } else if (this.ganttName === 'changeGantt') {
           return true
         } else {
           return btn.isDisableFun(this.ganttName, this.currentRecords)
@@ -276,6 +248,63 @@ export default {
     }
   },
   methods: {
+    // 处理按钮禁用逻辑
+    checkButtonDisable (btn) {
+      let result;
+      if (this.ganttName === 'changeGantt' && this.classifyData) {
+        let disableResult = true;
+
+        // 判断按钮是否在任务列表中
+        this.classifyData.forEach(item => {
+          if (btn.title === item.title) {
+            if (this.currentRecords.length > 0) {
+              const record = this.currentRecords[0];
+              if (record.parent && ['6403', '6404', '6407', '6408'].includes(record.managerStatus)) {
+                disableResult = false;
+              }
+            }
+          }
+        });
+
+        if (!disableResult) {
+          return false;
+        }
+
+        // 更新msg
+        this.updateButtonMsg(btn);
+        return true;
+      }
+
+      // 执行btn的isDisableFun逻辑
+      if (!btn.isDisableFun(btn, this.ganttName, this.currentRecords)) {
+        result = this.isDisableFun(btn, this.ganttName, this.currentRecords);
+      } else {
+        result = btn.isDisableFun(btn, this.ganttName, this.currentRecords);
+      }
+
+      return result;
+    },
+
+    // 更新按钮的msg
+    updateButtonMsg (btn) {
+      const statusName = {
+          6401: '已创建',
+          6402: '协同编制',
+          6403: '待下发',
+          6404: '已下发',
+          6405: '变更中',
+          6406: '提交审批',
+          6407: '审批驳回',
+          6408: '审批撤销',
+          6409: '审批完成'
+        };
+      if (this.currentRecords.length > 0) {
+        const status = this.currentRecords[0].managerStatus;
+        this.$set(btn, 'msg', `任务为${statusName[status]}，不可操作`);
+      } else {
+        this.$set(btn, 'msg', '请选择任务');
+      }
+    },
     btnClick (btn) {
       if (btn.id === '1015' && this.iconState.zrlXz) {
         return null
