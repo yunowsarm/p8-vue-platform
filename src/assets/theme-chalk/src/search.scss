@@ -10,12 +10,12 @@
   right: 15px;
 
   .search-contain {
-  z-index: 4;
+    z-index: 4;
     position: absolute;
     top: 40px;
     left: 0;
     padding: 10px;
-    max-height: 600px !important;
+    max-height: 300px !important;
     box-sizing: border-box;
     background: $base-white-color;
     border: 1px solid rgba(238, 238, 240, 1);
@@ -58,6 +58,7 @@
       }
     }
   }
+
   .el-input.is-disabled .el-input__inner {
     background-color: #ffffff;
   }

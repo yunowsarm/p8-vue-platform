@@ -77,6 +77,7 @@
   font-size: 20px;
   margin-right: 10px;
 }
+
 .couerDivClass {
   height: 100% !important;
   box-sizing: border-box;
@@ -85,9 +86,11 @@
   overflow-y: hidden;
   // z-index: 2050 !important;
 }
+
 #couerDiv {
   background: $base-bg-color;
 }
+
 .top {
   position: relative;
   // margin-bottom: 8px;
@@ -97,6 +100,7 @@
   // border-radius: 6px;
   overflow: hidden;
 }
+
 .bottom {
   position: relative;
   border: 1px solid $base-line-color;
@@ -106,18 +110,23 @@
   background: $base-white-color;
   overflow: hidden;
 }
+
 .bottom.single {
   height: calc(100% - 60px);
 }
+
 .bottom.double {
   height: calc(100% - 74px);
 }
+
 .bottom.tabs {
   height: calc(100% - 148px);
 }
+
 .bottom.hiddenTabs {
   height: calc(100% - 42px);
 }
+
 ::v-deep .splitter-pane-resizer {
   height: 50px !important;
   margin-top: 25% !important;
@@ -166,7 +175,12 @@ export default {
       taskStatus: {},
       status: '',
       advance: true,
-      commandButtonBarHeight: this.ganttButtonMode === 'tabs' ? '145px' : this.ganttButtonMode === 'double' ? '72px' : '58px'
+      commandButtonBarHeight: this.ganttButtonMode === 'tabs'
+        ? (this.advance ? '145px' : '40px')
+        : this.ganttButtonMode === 'double'
+          ? '72px'
+          : '58px'
+
     }
   },
   props: {
@@ -181,7 +195,7 @@ export default {
     ganttButtonMode: {
       handler (val) {
         if (val == 'tabs') {
-          this.commandButtonBarHeight = '145px'
+          this.commandButtonBarHeight = this.advance ? '145px' : '40px';
         }
         if (val == 'double') {
           this.commandButtonBarHeight = '72px'

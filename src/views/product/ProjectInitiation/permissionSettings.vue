@@ -54,6 +54,7 @@
     <select-user v-if="visible"
                  :visible="visible"
                  @close-dialog="closeModal"
+                 class="userSelect"
                  :disabled-row="formData.toUserIds"></select-user>
   </div>
 </template>
@@ -210,7 +211,7 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .userList {
   background: #ffffff;
   overflow: hidden;
@@ -226,5 +227,14 @@ export default {
 .userList li:first-child .selectedBtn {
   border: 1px dashed #1890ff;
   height: 29px;
+}
+.userSelect ::v-deep .el-dialog__body {
+  padding: 0;
+  margin: 0;
+  .normal-layoutV1 {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
 }
 </style>

@@ -234,6 +234,7 @@ export default {
     },
     refreshList () {
       this.renderTime = new Date() + ''
+      this.$emit('refreshList')
     },
     search (queryParam) {
       this.mergeParams = Object.assign(this.mergeParams, queryParam)

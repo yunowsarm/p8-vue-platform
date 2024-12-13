@@ -96,6 +96,10 @@ export default {
     console.log(this.processInstId, 'this.processInstId')
     this.queryParam.processInstId = this.processInstId
     this.queryParam.businessKey = this.businessKey
+    let that = this
+    that.$nextTick(() => {
+      that.getPages()
+    })
   },
   computed: {},
   watch: {
@@ -103,7 +107,8 @@ export default {
       handler: function (newV, oldV) {
         this.queryParam.processInstId = this.processInstId
         this.queryParam.businessKey = this.businessKey
-        this.$refs.table.queryList()
+        // this.$refs.table.queryList()
+        this.getPages()
       }
     }
   },
@@ -116,13 +121,38 @@ export default {
         .catch(() => {
           console.log('异步失败的操作')
         })
+    },
+    getPages (eleHeight) {
+      let that = this
+      const styles = that.$el.style
+      var height = 0
+      if (eleHeight) {
+        height = eleHeight
+      } else {
+        height = parseInt(styles.height, 10);
+      }
+      console.log(height, '----height');
+      const mh = height - 90
+      let calPageSize = Math.floor(
+        mh / 50
+      );
+      that.$refs.table.page.size = calPageSize;
+      let index = that.$refs.table.pageSizes.find(el => { el == calPageSize })
+      if (!index && !that.$refs.table.pageSizes.includes(calPageSize)) {
+        that.$refs.table.pageSizes.push(calPageSize)
+        that.$refs.table.pageSizes.sort((a, b) => {
+          return a - b
+        })
+      }
+      that.$refs.table.queryList();
+      console.log(calPageSize, '===calPageSize');
     }
   }
 }
 </script>
 
 <style scoped>
-.history{
+.history {
   height: 100%;
 }
 </style>

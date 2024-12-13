@@ -152,7 +152,7 @@ export default {
   },
   computed: {
     formWidth () {
-      return (100 - this.defaultPercent - (150 / this.windowWidth * 100)).toFixed(2);
+      return Number((100 - this.defaultPercent - (150 / this.windowWidth * 100)).toFixed(2));
     }
   },
   created () {
@@ -236,7 +236,7 @@ export default {
         //   this.isView = false
         // }
       }
-      if (task.managerStatus === '6407') {
+      if (this.ganttName !== 'changeGantt' && task.managerStatus === '6407') {
         this.isChangeGantt = false
         this.isView = false
       }

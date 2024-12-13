@@ -24,6 +24,7 @@
 
 <script>
 import { P8VxeTable as VxeTable } from 'p8-components-ui'
+import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import { mapGetters } from 'vuex'
 export default {
   name: 'Index',
@@ -42,7 +43,7 @@ export default {
       default: 0
     },
     wholeDescribeId: {
-      type: Number,
+      type: String,
       default: 0
     }
   },
@@ -114,18 +115,20 @@ export default {
     ...mapGetters(['vueThis'])
   },
   mounted () {
-    setTimeout(() => {
-      let selectData = this.$refs.xDemandTable.$refs.table.data
-      this.$api[this.tableApi]({ taskId: this.taskId }).then(res => {
-        res.forEach(el => {
-          selectData.forEach((item, index) => {
-            if (el.id === item.id) {
-              this.$refs.xDemandTable.$refs.table.setCheckboxRow(selectData[index], true)
-            }
+    if (this.taskId) {
+      setTimeout(() => {
+        let selectData = this.$refs.xDemandTable.$refs.table.data
+        this.$api[this.tableApi]({ taskId: this.taskId }).then(res => {
+          res.forEach(el => {
+            selectData.forEach((item, index) => {
+              if (el.id === item.id) {
+                this.$refs.xDemandTable.$refs.table.setCheckboxRow(selectData[index], true)
+              }
+            })
           })
         })
-      })
-    }, 1000)
+      }, 1000)
+    }
   },
   methods: {
     handleSelectionChangeDemand (rows, row, checked) {
@@ -137,6 +140,15 @@ export default {
     },
     relevanceClick () {
       let that = this
+      if (!this.taskId) {
+        return this.$message.warning('请先选择任务')
+      }
+      const ganttObject = GanttObject.getGanttObject(this.ganttName)
+      // 计划编制不可编辑状态字段
+      const task = ganttObject.getTask(this.taskId)
+      if (task.isLeaf > 0) {
+        return this.$message.warning('请选择子任务进行关联')
+      }
       this.$api['demandManagement.saveRequirementByTask']({
         wholeId: this.wholeDescribeId,
         taskId: this.taskId,

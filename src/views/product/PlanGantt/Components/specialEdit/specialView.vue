@@ -109,8 +109,9 @@ export default {
       console.log('🚀 ~ SpecialVIew ~ taskId:', taskId)
       const that = this
       that.otherParam = { taskId: taskId }
-      that.$api['planGanttManager.specialInfo']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId })
+      that.$api['planGanttManager.specialInfo']({ taskId: taskId })
         .then(function (res) {
+          console.log(222);
           let datas = []
           if (res) {
             datas = res

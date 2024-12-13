@@ -105,6 +105,7 @@
   .el-dialog {
     .el-dialog__body {
       padding: 0px !important;
+
       .dialogBody {
         .normal-layout {
           padding-left: 0px !important;
@@ -114,16 +115,19 @@
     }
   }
 }
+
 .common-table ::v-deep {
   height: calc(100% - 60px) !important;
   padding: 10px;
 }
+
 .node-span {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   padding-right: 10px;
+
   .node-label {
     width: 150px;
     text-overflow: ellipsis;
@@ -307,7 +311,7 @@ export default {
       this.detailVisible = true
     },
     onTableSelect (select, row) {
-      this.selectedRows = this.$refs.table.$refs.table.selection // 获取表格中所有选中的数据
+      // 获取表格中所有选中的数据
       const checkrow = []
       checkrow.push(row)
       if (row.isCheck === true) {
@@ -315,16 +319,17 @@ export default {
           this.$refs.table.$refs.table.toggleRowSelection(row, false)
         }
         this.clearRow(checkrow)
-        } else {
+      } else {
         if (select === 1) {
           this.$refs.table.$refs.table.toggleRowSelection(row, true)
         }
         this.checkRow(checkrow)
       }
+      this.selectedRows = this.$refs.table.$refs.table.selection;
     },
     selectAll (selection) {
       let that = this
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         let selectAll = document.querySelector('.headerRowClassName .el-table-column--selection .el-checkbox__input')
         let tabindex
         if (selectAll) {
@@ -333,7 +338,7 @@ export default {
         if (!tabindex && selection && selection.length) {
           this.checkRow(selection)
         } else {
-          this.clearRow (this.$refs.table.tableData)
+          this.clearRow(this.$refs.table.tableData)
         }
         this.selectedRows = this.$refs.table.$refs.table.selection
       })
@@ -455,8 +460,8 @@ export default {
         _this.catalogData = res
         if (id) {
           this.$nextTick(() => {
-          _this.selectedTreeId = id;
-          _this.$refs.tree.$refs.tree.setCurrentKey(id);
+            _this.selectedTreeId = id;
+            _this.$refs.tree.$refs.tree.setCurrentKey(id);
           })
         }
       })
@@ -466,13 +471,46 @@ export default {
       this.selectedTreeId = nodeData.id
     },
     tableRefresh (param) {
+      // 先保存当前选中的行的 id
+      const selectedRowIds = this.selectedRows.map(row => row.id);
       param
         .then(() => {
-          console.log('异步成功后端做的操作')
+          console.log('异步成功后端做的操作');
+
+          // 使用 $nextTick 确保 DOM 渲染完成后再恢复选中状态
+          this.$nextTick(() => {
+            this.restoreSelectedRows(selectedRowIds);
+          });
         })
         .catch(() => {
-          console.log('异步失败的操作')
-        })
+          console.error('异步失败的操作');
+        });
+    },
+    // 恢复选中的行
+    restoreSelectedRows (selectedRowIds) {
+      this.$refs.table.$refs.table.clearSelection();
+      selectedRowIds.forEach(id => {
+        const row = this.findRowById(this.$refs.table.tableData, id);
+        if (row) {
+          // 确保当前行被选中
+          this.$refs.table.$refs.table.toggleRowSelection(row, true);
+          this.$set(row, 'isCheck', true);
+        }
+      });
+    },
+
+    // 递归查找树形数据中的节点
+    findRowById (treeData, id) {
+      for (const node of treeData) {
+        if (node.id === id) {
+          return node;
+        }
+        if (node.children) {
+          const found = this.findRowById(node.children, id);
+          if (found) return found;
+        }
+      }
+      return null;
     },
     handleSelectionChange (val) { },
     handleCancel () {

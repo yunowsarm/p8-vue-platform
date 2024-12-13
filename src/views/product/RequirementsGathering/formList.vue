@@ -3,7 +3,7 @@
     <div class="content"
          :key="dataTime">
       <div class="content-box"
-           v-for="(item,index) in radioOptions"
+           v-for="(item, index) in radioOptions"
            :key="index"
            @click="handleAdhibitionClick(item)">
         <div :class="{ active: item.isActive }"
@@ -165,24 +165,56 @@ export default {
       this.$emit('close')
     },
     handleAdhibitionClick (row) {
-      row.isActive = !row.isActive
+      // 切换当前行激活状态
+      row.isActive = !row.isActive;
+
+      // 处理单选逻辑：只允许一个项处于激活状态
       this.radioOptions.forEach(item => {
         if (row.id !== item.id) {
-          item.isActive = false
+          item.isActive = false; // 其他项取消激活
         }
-      })
-      window.selsecRow = row
-      this.codeForm = row.code
-      this.propParam.DEMAND_CODE = row.code
-      this.propParam.DEMAND_STATUS = '98cdd467570ee9187c65518e0010548d'
-      this.formTitle = '新建' + row.label
-      if (row.isActive) {
-        this.appIds.push(row.id)
-      } else {
-        this.appIds = this.appIds.filter((id) => id !== row.id)
-      }
-      this.dataTime = new Date().getTime()
+      });
+
+      // 更新表单数据和参数
+      this.updateFormData(row);
+
+      // 更新选中行的 ID 列表
+      this.updateAppIds(row);
+
+      // 更新时间戳
+      this.dataTime = Date.now();
     },
+
+    updateFormData (row) {
+      if (row.isActive) {
+        // 如果当前行是激活状态，更新相关表单数据
+        window.selsecRow = row;
+        this.codeForm = row.code;
+        this.propParam.DEMAND_CODE = row.code;
+        this.propParam.DEMAND_STATUS = '98cdd467570ee9187c65518e0010548d';
+        this.formTitle = '新建' + row.label;
+      } else {
+        // 如果当前行取消激活，重置相关表单数据
+        window.selsecRow = null;
+        this.codeForm = '';
+        this.propParam.DEMAND_CODE = '';
+        this.propParam.DEMAND_STATUS = '';
+        this.formTitle = '';
+      }
+    },
+
+    updateAppIds (row) {
+      if (row.isActive) {
+        // 如果当前行被激活，添加到选中 ID 列表
+        if (!this.appIds.includes(row.id)) {
+          this.appIds.push(row.id);
+        }
+      } else {
+        // 如果当前行被取消激活，移除 ID 列表中的该项
+        this.appIds = this.appIds.filter(id => id !== row.id);
+      }
+    },
+
     // 表单新建/修改关闭抽屉
     formClose () {
       this.formVisible = false
@@ -201,16 +233,19 @@ export default {
   height: 100%;
   position: relative;
 }
+
 .btn {
   position: absolute;
   right: 10px;
   bottom: 10px;
 }
+
 .content {
   height: calc(100% - 40px);
   display: flex;
   flex-wrap: wrap;
 }
+
 .content-box {
   width: 25%;
   display: flex;
@@ -218,11 +253,13 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
 .activeStyle {
   border: 1px solid #ebe6e6;
   padding: 10px 25px;
   border-radius: 10px;
 }
+
 .active {
   border: 1px solid #1bbf9e;
   -webkit-box-shadow: #666 0px 0px 10px;
@@ -232,6 +269,7 @@ export default {
   padding: 10px 25px;
   border-radius: 10px;
 }
+
 .active:after {
   content: ' ';
   border-width: 15px;

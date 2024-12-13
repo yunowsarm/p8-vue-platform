@@ -6,7 +6,6 @@
            class="demo-form-inline"
            size="mini"
            label-width="75px"
-           @keyup.enter="onSearch"
            label-position="right">
     <el-form-item label="大纲层级"
                   prop="deep">
@@ -198,17 +197,7 @@ export default {
       deptOptions: [],
       roleOptions: [],
       searchCheck: false,
-      searchForm: {
-        wbs: '',
-        name: '',
-        roleIds: this.isInput ? [] : '',
-        ownerIds: this.isInput ? [] : '',
-        deptIds: this.isInput ? [] : '',
-        startEndDate: '',
-        managerStatus: [],
-        monitors: [],
-        planTypes: []
-      }
+      searchForm: {}
     }
   },
   watch: {
@@ -249,15 +238,15 @@ export default {
     },
     onSearch () {
       const ganttObject = GanttObject.getGanttObject(this.ganttName)
-      if (this.searchCheck) {
+      if (this.searchCheck && Object.keys(this.searchForm).length !== 0) {
         this.vueThis.searchForm = { ...this.searchForm, isInput: this.isInput }
         console.log(this.searchForm, this.vueThis.searchForm, this.ganttName, 'ikkkkkkkkkk')
         ganttObject.refreshData()
         this.searchCheck = false
         this.$emit('close')
+        ganttObject.scrollTo(0, 0)
+        ganttObject.render()
       }
-      ganttObject.scrollTo(0, 0)
-      ganttObject.render()
     },
     // 重置
     resetForm (formName) {

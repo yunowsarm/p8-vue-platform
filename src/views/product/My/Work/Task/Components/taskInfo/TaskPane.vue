@@ -33,13 +33,13 @@
                      style="margin-top: 7px;"></el-progress>
       </template>
       <template #managerStatusDisplay>
-        <span>{{formData.managerStatusDisplay}}</span>
+        <span>{{ formData.managerStatusDisplay }}</span>
       </template>
       <template #content>
-        <span>{{formData.content}}</span>
+        <span>{{ formData.content }}</span>
       </template>
       <template #proportion>
-        <span v-if="formData.proportion">{{formData.proportion}}%</span>
+        <span v-if="formData.proportion">{{ formData.proportion }}%</span>
       </template>
       <template #dateline>
         <div class="dateline-con">
@@ -47,15 +47,15 @@
             <div class="clearfix dateline-item"
                  v-for="item in formData.dateline"
                  :key="item.color"
-                 :style="{color: item.color, marginLeft: item.marginLeft+'px'}">
-              <span>{{item.beginDate}}</span>
+                 :style="{ color: item.color, marginLeft: item.marginLeft + 'px' }">
+              <span>{{ item.beginDate }}</span>
               <span v-if="item.beginDate"
                     class="line"
-                    :style="{width: item.lineWidth+'px', backgroundColor: item.color}"></span>
+                    :style="{ width: item.lineWidth + 'px', backgroundColor: item.color }"></span>
               <span v-if="!item.endDate"
                     class="line dashed"
-                    :style="{width: item.lineDashedWidth+'px', borderTop: `2px dashed ${item.color}`}"></span>
-              <span>{{item.endDate}}</span>
+                    :style="{ width: item.lineDashedWidth + 'px', borderTop: `2px dashed ${item.color}` }"></span>
+              <span>{{ item.endDate }}</span>
             </div>
           </div>
           <div class="dateline-tip">
@@ -208,6 +208,10 @@ export default {
           this.$set(this.formData, 'dateline', this.datelineHandle())
         } else if (key === 'progress') {
           this.formData[key] = Number((res[key] * 100).toFixed(0))
+        } else if (key === 'achievements' || key === 'proportion') {
+          let value = res[key];
+          // 将字符串转换为数字并检查是否是有效数字
+          this.formData[key] = !isNaN(parseFloat(value)) ? parseFloat(value).toFixed(2) : '0.00';
         } else {
           this.formData[key] = res[key]
         }
@@ -440,22 +444,27 @@ $bule-color: #1892ff;
 $yellow-color: #ffc306;
 $orange-color: #ff5406;
 $red-color: #f80012;
+
 ::v-deep .el-progress-bar__innerText {
   color: #f1c82b !important;
 }
+
 // 任务信息状态样式
 ::v-deep .pane-status {
   display: flex;
   align-items: center;
 }
+
 ::v-deep .pane-status-cir {
   width: 6px;
   height: 6px;
   border-radius: 10px;
   margin-right: 6px;
 }
+
 // 超期/剩余天数 样式
 ::v-deep .duration-days {
+
   .duration-overdue,
   .duration-over,
   .duration-advance {
@@ -463,17 +472,20 @@ $red-color: #f80012;
     border-radius: 2px;
     font-size: 12px;
   }
+
   .duration-overdue {
     border: 1px solid $red-color;
     background-color: #feebec;
     color: $red-color;
   }
+
   .duration-over {
     // 剩余
     border: 1px solid $green-color;
     background-color: #ffffff;
     color: $green-color;
   }
+
   .duration-advance {
     // 提前
     border: 1px solid $bule-color;
@@ -481,60 +493,75 @@ $red-color: #f80012;
     color: $bule-color;
   }
 }
+
 // 时间线 样式
 .dateline-con {
   .dateline-list {
     padding: 10px 0 8px;
+
     .clearfix:after {
       content: '';
       clear: both;
       display: block;
     }
+
     .forecast,
     .plan,
     .real,
     .dateline-item {
       font-size: 12px;
+
       span {
         float: left;
       }
+
       .line {
         height: 2px;
         margin: 26px -10px 0;
       }
+
       .line.dashed {
         background-color: #ffffff;
       }
     }
+
     .forecast {
       color: $bule-color;
+
       .line {
         background-color: $bule-color;
       }
     }
+
     .plan {
       color: $yellow-color;
+
       .line {
         background-color: $yellow-color;
       }
     }
+
     .real {
       color: $orange-color;
+
       .line {
         background-color: $orange-color;
       }
     }
   }
+
   .dateline-tip {
     display: flex;
     align-items: center;
     padding: 0 10px;
+
     .forecast,
     .plan,
     .real {
       position: relative;
       font-size: 12px;
       padding: 0 14px 0 8px;
+
       &::before {
         content: '';
         position: absolute;
@@ -546,20 +573,26 @@ $red-color: #f80012;
         border-radius: 10px;
       }
     }
+
     .forecast {
       color: $bule-color;
+
       &::before {
         background-color: $bule-color;
       }
     }
+
     .plan {
       color: $yellow-color;
+
       &::before {
         background-color: $yellow-color;
       }
     }
+
     .real {
       color: $orange-color;
+
       &::before {
         background-color: $orange-color;
       }
@@ -569,26 +602,32 @@ $red-color: #f80012;
 
 .el-form.formList {
   position: relative;
+
   & ::v-deep .el-row {
     height: 100%;
     overflow-y: auto;
   }
+
   & ::v-deep .el-row .el-col:last-child {
     position: relative;
     border-top: none;
+
     .el-form-item__content {
       margin-left: 0 !important;
     }
   }
+
   & ::v-deep .el-form-item--small.el-form-item {
     margin-bottom: 6px;
   }
+
   & ::v-deep .el-form-item__blank {
     .el-form-item__label {
       font-weight: bolder;
     }
   }
 }
+
 .iconStyle {
   display: flex;
   flex-direction: row;

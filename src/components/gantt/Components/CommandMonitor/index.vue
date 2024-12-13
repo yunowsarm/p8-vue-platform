@@ -2,7 +2,7 @@
   <div>
     <template v-for="(mon, index) in childGroups(monitorData)">
       <div class="child-group"
-           :key="index">
+           :key="'monitor' + index">
         <command-button v-for="(config, index) in mon.configs"
                         :key="index"
                         :cbutton="config"

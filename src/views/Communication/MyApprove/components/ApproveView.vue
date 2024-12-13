@@ -6,6 +6,7 @@
                    :active-tabs="activeTabs"
                    :hasFullScreen="true"
                    :keepBottom="true"
+                   @isFullScreen="isFullScreen"
                    :tabs-data="tabs">
         <template #approval>
           <component ref="approveContent"
@@ -49,6 +50,8 @@
                               :columns="historyColumns"
                               :process-inst-id="processInstId"
                               :business-key="businessKey"
+                              ref="ProcessHistory"
+                              :style="{ height: historyHeight + 'px' }"
                               :table-flex="tableFlex"></ProcessHistoryList>
         </template>
       </common-tabs>
@@ -135,6 +138,7 @@ export default {
   data () {
     return {
       tabsHeight: document.documentElement.clientHeight - 380 + 'px',
+      historyHeight: document.documentElement.clientHeight - 400,
       saveApi: 'PersonalProcessApproval.saveResult',
       formComp: '',
       currEntityId: '',
@@ -528,6 +532,14 @@ export default {
     this.taskId = this.selectedApproval.processTaskId
   },
   methods: {
+    isFullScreen (flag) {
+      if (flag) {
+        this.historyHeight = document.documentElement.clientHeight - 100
+      } else {
+        this.historyHeight = document.documentElement.clientHeight - 400
+      }
+      this.$refs.ProcessHistory.getPages(this.historyHeight)
+    },
     tabsClick (val) {
       this.activeTabs = val.name
     },
@@ -834,6 +846,9 @@ $paddingLeft: 10px;
   box-sizing: border-box;
 }
 ::v-deep .el-tabs--top .el-tabs__content {
+  height: calc(100% - 30px) !important;
+}
+::v-deep .main_content {
   height: calc(100% - 30px) !important;
 }
 </style>
