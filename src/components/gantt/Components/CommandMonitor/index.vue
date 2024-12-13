@@ -6,7 +6,6 @@
         <command-button v-for="(config, index) in mon.configs"
                         :key="index"
                         :cbutton="config"
-                        :monitorData="monitorData"
                         :size="config.size"
                         :current-records="currentRecords"
                         :gantt-name="ganttName"></command-button>
