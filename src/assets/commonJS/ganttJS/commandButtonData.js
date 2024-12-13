@@ -1698,6 +1698,7 @@ export const CommandButtonData = [
           vueThis.activityImportVisible = true
         },
         isDisableFun: function (btn, ganttName, tasks) {
+          // 确保二级菜单跟一级菜单的disable状态一致
           const checks = [
             () => isCompile(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
@@ -1723,6 +1724,7 @@ export const CommandButtonData = [
           vueThis.activityImportVisible = true
         },
         isDisableFun: function (btn, ganttName, tasks) {
+          // 确保二级菜单跟一级菜单的disable状态一致
           const checks = [
             () => isCompile(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
