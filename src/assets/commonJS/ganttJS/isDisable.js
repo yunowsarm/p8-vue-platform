@@ -66,25 +66,17 @@ export function isSuspensionOrProhibition (ganttName, tasks) {
 
 // 判断是否为分解页面和任务状态
 export function taskStateAndReadonly (ganttName, tasks) {
-  const isDecomposePageRes = isDecomposePage(ganttName, tasks)
-  if (!isDecomposePageRes) {
-    if (!tasks.length) {
-      return
-    }
-    if (tasks[0].managerStatus === '6404') {
+  if (tasks.length && tasks[0].managerStatus === '6404') {
+    return false;
+  } else {
+    const isDisableFunCheckRes = isDisableFunCheck(ganttName, tasks, '1')
+    if (isDisableFunCheckRes.value) {
+      return false;
+    } else if (checkEditTask(ganttName, tasks)) {
       return false;
     } else {
-      const isDisableFunCheckRes = isDisableFunCheck(ganttName, tasks, '1')
-      if (isDisableFunCheckRes.value) {
-        return false;
-      } else if (checkEditTask(ganttName, tasks)) {
-        return false;
-      } else {
-        return createDisableResponse(isDisableFunCheckRes.msg);
-      }
+      return createDisableResponse(isDisableFunCheckRes.msg);
     }
-  } else {
-    return createDisableResponse(isDecomposePageRes.message);
   }
 }
 
@@ -199,7 +191,7 @@ export function noSelfCreate (ganttName, tasks) {
     return task.createUserId && task.createUserId != userId
   })
   if (window.createPage === 'decompose' && ele && ele.id) {
-    return createDisableResponse(`计划分解页面，非当前人员创建不允许此操作`);
+    return createDisableResponse(`任务分解页面，非当前人员创建不允许此操作`);
   }
 }
 
@@ -246,16 +238,24 @@ export function isAllowResponsiblePerson (ganttName, tasks) {
 
 // 判断任务是否可以下发
 export function isAllowIssue (ganttName, tasks) {
-  if (tasks[0].managerStatus === '6403' && tasks[0].dutyDeptName) {
-    // 待下发状态责任部门（科研）不为空，可以下发
-    return false
-  } else if (tasks[0].managerStatus === '6404') {
-    // 已下发状态，不能下发
+  const { managerStatus, dutyDeptName } = tasks[0];
+
+  if (managerStatus === '6403') {
+    if (dutyDeptName) {
+      // 待下发状态责任部门（科研）不为空，可以下发
+      return false;
+    } else {
+      return createDisableResponse(`责任部门为空时不允许此操作`);
+    }
+  } else if (managerStatus === '6404') {
     return createDisableResponse(`已下发状态不允许此操作`);
-  } else {
+  } else if (!dutyDeptName) {
     return createDisableResponse(`责任部门为空不允许此操作`);
+  } else {
+    return createDisableResponse(`任务状态为待下发时才允许此操作`);
   }
 }
+
 
 // 判断是否允许撤销
 export function isAllowUndo (ganttName, tasks) {
@@ -377,7 +377,7 @@ export function isAllowImport (ganttName, tasks) {
 export function isDecomposePage (ganttName, tasks) {
   const vueThis = store.getters.vueThis
   if (vueThis.createPage === 'decompose') {
-    return createDisableResponse(`分解页面不允许此操作`);
+    return createDisableResponse(`任务分解页面不允许此操作`);
   } else {
     return false
   }
@@ -397,9 +397,15 @@ export function isExperienceImport (ganttName, tasks) {
 
 // 判断详细信息
 export function isDetailInfo (ganttName, tasks) {
+  const vueThis = store.getters.vueThis
+  const createPage = vueThis.createPage
   let ganttObject = GanttObject.getGanttObject(ganttName)
   if (tasks.length == 1 && ganttObject.getGlobalTaskIndex(tasks[0].id) === 0) {
-    return createDisableResponse(`任务不能为根节点`);
+    if (createPage == 'planChange' || createPage == 'compile') {
+      return createDisableResponse(`任务不能为根节点`);
+    } else {
+      return false
+    }
   } else if (tasks.length == 1) {
     return false
   } else {
@@ -725,7 +731,17 @@ function autoSchedulingCheck (ganttName) {
  * @returns {boolean}
  */
 function canDeleteCheck (ganttName, tasks, vueThis) {
-
+  const statusName = {
+    6401: '已创建',
+    6402: '协同编制',
+    6403: '待下发',
+    6404: '已下发',
+    6405: '变更中',
+    6406: '提交审批',
+    6407: '审批驳回',
+    6408: '审批撤销',
+    6409: '审批完成'
+  }
   let result = {
     value: true,
     msg: ''
@@ -735,6 +751,7 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
   const planEditStatus = planStatusLockMap[vueThis.planInfoStatus].ganttEdit
   const controlTaskEdit = planStatusLockMap[vueThis.planInfoStatus].controlTaskEdit
   let msg = ''
+  // 定义不可删除的状态
   switch (vueThis.planInfoStatus) {
     case '1000':
       msg = '已创建'
@@ -753,7 +770,7 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
   if (planEditStatus === 'false') {
     return {
       value: false,
-      msg: '项目状态为' + msg + '，不可操作'
+      msg: '项目状态为' + msg + '，不可删除'
     }
   } else {
     if (ganttName) {
@@ -777,7 +794,10 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
       })
       selectedTaskIds.some(function (selTaskId) {
         const selTask = ganttObject.getTask(selTaskId)
+        // console.log('进度状态', selTask.status);
+        // console.log('任务状态', selTask.managerStatus);
         const editManagerStatus = taskEditMap[selTask.status]
+        // console.log('可编辑的任务状态', editManagerStatus);
         const indexNo = ganttObject.getGlobalTaskIndex(selTask.id)
         if (!result.value) {
           return true
@@ -800,7 +820,7 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
         if (editManagerStatus && editManagerStatus.indexOf(selTask.managerStatus) === -1 && indexNo !== 0) {
           result = {
             value: false,
-            msg: '所选任务或所选任务的子任务包含已完成、变更中,不可删除'
+            msg: `所选任务状态为${statusName[selTask.managerStatus]}时,不可删除`
           }
           return true
         }
@@ -824,7 +844,7 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
           if (chiManagerStatus && chiManagerStatus.indexOf(task.managerStatus) === -1 && indexNo !== 0) {
             result = {
               value: false,
-              msg: '所选任务或所选任务的子任务包含已完成、变更中,不可删除'
+              msg: `所选任务状态为${statusName[selTask.managerStatus]}时,不可删除`
             }
           }
         }, selTask.id)
@@ -839,7 +859,6 @@ function isDisable (checks) {
 
   for (const check of checks) {
     const result = check();
-
     if (result) {
       return result
     }
