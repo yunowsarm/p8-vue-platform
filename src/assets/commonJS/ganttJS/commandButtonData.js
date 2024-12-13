@@ -2609,6 +2609,7 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
             ganttObject.addTask(task, parentId, indexNo++)
             break
         }
+        vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
         setTimeout(() => {
           ganttObject.showTask(item.id);
           ganttObject.selectTask(item.id);
