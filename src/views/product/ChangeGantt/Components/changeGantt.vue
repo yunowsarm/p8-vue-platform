@@ -424,15 +424,15 @@ export default {
       if (newVal && newVal.length === 1 && (myGantt.getGlobalTaskIndex(newVal[0].id) !== 0 || this.createPage === 'userChange') && newVal[0].status) {
         this.selectTaskId = newVal[0].id
         this.selectTaskName = newVal[0].name
-        if (this.planAttributeDrawer) {
-          this.showDetail()
-        }
+        // if (this.planAttributeDrawer) {
+          // this.showDetail()
+        // }
       } else {
         this.selectTaskId = ''
         this.selectTaskName = ''
-        if (this.planAttributeDrawer) {
-          this.$emit('hide-drawer')
-        }
+        // if (this.planAttributeDrawer) {
+        //   this.$emit('hide-drawer')
+        // }
       }
       this.selectTaskCount = newVal.length
       this.callParentSelectTasks()
@@ -775,7 +775,10 @@ export default {
       }
     },
     callParentSelectTasks () {
-      this.$emit('select-task', this.selectedTasks, this.ganttName)
+      this.$nextTick(() => {
+        this.$emit('select-task', this.selectedTasks, this.ganttName)
+        this.showDetail('switch')
+      })
     },
     mouseMove (e) {
       if (this.menuVisible) {
@@ -784,12 +787,12 @@ export default {
         }
       }
     },
-    showDetail () {
+    showDetail (type) {
       if (this.$route.path === '/TaskChange') {
-        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, this.createPage)
+        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, this.createPage,type)
       } else {
         if (myGantt.getGlobalTaskIndex(this.selectTaskId) !== 0) {
-          this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, this.createPage)
+          this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, this.createPage,type)
         }
       }
     },

@@ -1,36 +1,61 @@
 <template>
   <div style="height: 100%">
-    <div class="couerDivClass"
+    <P8SplitPane split='vertical'
+                  @resize="paneSizeChange"
+                 :defaultPercent="defaultPercent"
+                 :minPercent='0'>
+      <template #paneL>
+        <div class="couerDivClass"
          id="couerDiv">
-      <div class="top"
-           :style="{ height: commandButtonBarHeight }">
-        <command-button-bar :panel-data="btnData"
-                            :selected-tasks="selectedTasks"
-                            :gantt-name="ganttName"
-                            :hasSettings="false"
-                            :plan-info-id="planInfoId"
-                            @change-command-button="changeCommandButton"></command-button-bar>
-      </div>
-      <div class="bottom"
-           :class="expandBottom">
-        <change-gantt :plan-info-id="planInfoId"
-                      :plan-info-status="planInfoStatus"
-                      :task-id="taskId"
+            <div class="top"
+                :style="{ height: commandButtonBarHeight }">
+              <command-button-bar :panel-data="btnData"
+                                  :selected-tasks="selectedTasks"
+                                  :gantt-name="ganttName"
+                                  :hasSettings="false"
+                                  :plan-info-id="planInfoId"
+                                  @change-command-button="changeCommandButton"></command-button-bar>
+            </div>
+            <div class="bottom"
+                :class="expandBottom">
+              <change-gantt :plan-info-id="planInfoId"
+                            :plan-info-status="planInfoStatus"
+                            :task-id="taskId"
+                            v-bind="$attrs"
+                            :secret-grade="secretGrade"
+                            :plan-attribute-drawer="detailVisible"
+                            :create-page="createPage"
+                            :change-id="changeId"
+                            :read-only="readOnly"
+                            @hide-drawer="detailDrawerClosed"
+                            @closed="closed"
+                            @select-task="selectTask"
+                            @show-detail="showDetail"
+                            @save-success="detailDrawerClosed"
+                            :task-status="taskStatus"></change-gantt>
+            </div>
+          </div>
+      </template>
+      <template #paneR>
+        <div v-if="defaultPercent !== 100"
+             class="x-style"><i class="el-dialog__close el-icon el-icon-close"
+             @click="closeClick"></i></div>
+        <plan-attribute @save-success="detailDrawerClosed"
+                      :task-id="selectTaskId"
                       v-bind="$attrs"
-                      :secret-grade="secretGrade"
-                      :plan-attribute-drawer="detailVisible"
                       :create-page="createPage"
-                      :change-id="changeId"
-                      :read-only="readOnly"
-                      @hide-drawer="detailDrawerClosed"
-                      @closed="closed"
-                      @select-task="selectTask"
-                      @show-detail="showDetail"
-                      @save-success="detailDrawerClosed"
-                      :task-status="taskStatus"></change-gantt>
-      </div>
-    </div>
-    <el-drawer style="width: 60%; left: auto"
+                      :secret-grade="secretGrade"
+                      :att-read-only="readOnly"
+                      :gantt-name="ganttName"
+                      :status="status"
+                      :key="renderKey"
+                      :defaultPercent="defaultPercent"
+                      class="plan_attribute"
+                      :plan-info-id="planInfoId"></plan-attribute>
+      </template>
+    </P8SplitPane>
+
+    <!-- <el-drawer style="width: 60%; left: auto"
                :title="detailTitle"
                :append-to-body="true"
                size="100%"
@@ -48,7 +73,7 @@
                       :gantt-name="ganttName"
                       :status="status"
                       :plan-info-id="planInfoId"></plan-attribute>
-    </el-drawer>
+    </el-drawer> -->
   </div>
 </template>
 
@@ -62,6 +87,7 @@
   overflow-y: hidden;
   z-index: 2000 !important;
 }
+
 .top {
   position: relative;
   background: $base-white-color;
@@ -70,6 +96,7 @@
   border-right: 1px solid $base-line-color;
   overflow: hidden;
 }
+
 .bottom {
   position: relative;
   border: 1px solid $base-line-color;
@@ -80,27 +107,40 @@
   background: $base-white-color;
   overflow: hidden;
 }
+
 .bottom.single {
   height: calc(100% - 60px);
 }
+
 .bottom.double {
   height: calc(100% - 74px);
 }
+
 .bottom.tabs {
   height: calc(100% - 148px);
 }
+
 .bottom.hiddenTabs {
   height: calc(100% - 42px);
 }
+
 .el-drawer__wrapper {
   border-left: 1px solid $base-line-color;
   box-shadow: -2px 0 5px $base-line-color;
+}
+.x-style {
+  float: right;
+  font-size: 20px;
+  margin-right: 10px;
+}
+.plan_attribute{
+  height: calc(100% - 42px) !important;
 }
 </style>
 
 <script>
 import ChangeGantt from './changeGantt'
-import { Drawer } from 'p8-components-ui'
+import { Drawer, P8SplitPane } from 'p8-components-ui'
 import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/changeGantt/commandButtonBarDataDoubleRow'
 import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/changeGantt/commandButtonBarDataSingleRow'
 import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/changeGantt/commandButtonBarData'
@@ -112,6 +152,9 @@ export default {
   name: 'ChangeIndex',
   data () {
     return {
+      firstEntry: true,
+      renderKey: new Date().getTime(),
+      defaultPercent: 100,
       defaultKey: '1',
       advanced: false,
       selectedTasks: [],
@@ -161,7 +204,8 @@ export default {
     'el-drawer': Drawer,
     ChangeGantt,
     PlanAttribute,
-    CommandButtonBar
+    CommandButtonBar,
+    P8SplitPane
   },
   watch: {
     ganttButtonMode: {
@@ -224,6 +268,9 @@ export default {
     },
     ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
   },
+  created () {
+    this.firstEntry = true
+  },
   mounted () { },
   methods: {
     selectTask (selectDatas, ganttName) {
@@ -234,13 +281,30 @@ export default {
       this.advanced = !this.advanced
     },
     tabBarExtraContent () { },
-    showDetail (selectTask, ganttName, createPage) {
+    closeClick () {
+      this.defaultPercent = 100
+      this.firstEntry = true
+    },
+    showDetail (selectTask, ganttName, createPage,switchType) {
+      if (this.firstEntry && switchType == 'switch' && this.defaultPercent == 100) return
+      this.renderKey = new Date().getTime()
       this.createPage = createPage
       this.detailVisible = true
       this.ganttName = ganttName
       this.selectTaskId = selectTask.id
       this.status = selectTask.status
-      this.detailTitle = selectTask.name
+      if (switchType == 'switch' && this.defaultPercent == 100) {
+        // 单机任务，且详情未打开情况下，展开到40%
+        this.defaultPercent = 60
+      }
+      if (switchType != 'switch') {
+        this.defaultPercent = this.defaultPercent > 70 ? 70 : this.defaultPercent
+        this.firstEntry = false
+      }
+      // this.detailTitle = selectTask.name
+    },
+    paneSizeChange (val) {
+      this.defaultPercent = val
     },
     detailDrawerClosed (res) {
       this.detailVisible = false
