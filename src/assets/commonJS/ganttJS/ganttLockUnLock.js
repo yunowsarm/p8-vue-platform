@@ -248,6 +248,12 @@ export function ganttEditCheck (taskEditAble, task, ganttObject) {
  */
 export function setLockTaskProperties (ganttObject, vueThis) {
   // 获取gannt操作限制策略
+  const ganttStatusName = {
+    1000: '已创建',
+    1010: '协同编制',
+    1070: '待下发',
+    1090: '已下发'
+  }
   const planStatusLockMap = store.getters.planStatusLockMap
   const planEditStatus = planStatusLockMap[vueThis.planInfoStatus].ganttEdit
   const controlTaskEdit = planStatusLockMap[vueThis.planInfoStatus].controlTaskEdit
@@ -264,11 +270,17 @@ export function setLockTaskProperties (ganttObject, vueThis) {
   // 已完成计划不可编辑
   if (planEditStatus === 'false') {
     ganttObject.config.readonly = true
-    ganttObject.config.readonlyReason = '已完成计划不可编辑'
+    ganttObject.config.readonlyReason = `${ganttStatusName[vueThis.planInfoStatus]}]}计划不可编辑`
     ganttObject.config.copy = true
   } else {
     return ganttObject.attachEvent('onParse', function () {
       vueThis.dependentDatas = []
+      // 使用计划的状态去禁用gant列表
+      const planManagementStatus = vueThis?.planManagementStatus;
+      if (planManagementStatus && planManagementStatus == '6620') {
+        ganttObject.config.readonly = true
+        ganttObject.config.readonlyReason = '计划发布审批，不可编辑'
+      }
       // 获取gannt操作限制策略
       const taskStatusLockMap = store.getters.taskStatusLockMap
       ganttObject.eachTask(function (task) {

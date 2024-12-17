@@ -56,6 +56,7 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
+        () => isReadOnlyAndNoRoot(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
@@ -83,6 +84,7 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
+            () => isReadOnlyAndNoRoot(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
@@ -109,6 +111,7 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
+            () => isReadOnlyAndNoRoot(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
@@ -135,6 +138,7 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
+            () => isReadOnlyAndNoRoot(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
@@ -161,6 +165,7 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
+            () => isReadOnlyAndNoRoot(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
@@ -190,6 +195,7 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
+            () => isReadOnlyAndNoRoot(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
@@ -445,6 +451,7 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
+        () => isReadOnly(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
@@ -496,6 +503,7 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
+        () => isReadOnly(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
@@ -607,6 +615,7 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
+        () => isReadOnly(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowResponsiblePerson(ganttName, tasks),
@@ -755,7 +764,6 @@ export const CommandButtonData = [
       const vueThis = store.getters.vueThis
       vueThis.relevanceOpen()
       const thisGantt = GanttObject.getGanttObject(ganttName)
-      console.log("🚀 ~ thisGantt:", thisGantt)
       vueThis.taskList = thisGantt.serialize().data
     },
     isDisableFun: function (btn, ganttName, tasks) {
@@ -1264,6 +1272,7 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
+        () => isReadOnly(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
@@ -1289,6 +1298,7 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
+        () => isReadOnly(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
@@ -1674,6 +1684,7 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
+        () => isReadOnly(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
@@ -1700,6 +1711,7 @@ export const CommandButtonData = [
         isDisableFun: function (btn, ganttName, tasks) {
           // 确保二级菜单跟一级菜单的disable状态一致
           const checks = [
+            () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
@@ -1726,6 +1738,7 @@ export const CommandButtonData = [
         isDisableFun: function (btn, ganttName, tasks) {
           // 确保二级菜单跟一级菜单的disable状态一致
           const checks = [
+            () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
@@ -1755,6 +1768,7 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
+        () => isReadOnly(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks)
       ]
@@ -1779,6 +1793,7 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
+            () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks)
@@ -1805,6 +1820,7 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
+            () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),
@@ -1831,6 +1847,7 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
+            () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),
@@ -2858,7 +2875,6 @@ function copyTask (ganttObject, tasks, vueThis) {
  * @param tasks
  */
 function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
-  console.log(vueThis.copyFlag, '----vueThis.copyFlag')
   if (vueThis.copyFlag) {
     const that = this
     if (vueThis.copyTasks.length > 0) {
@@ -3768,7 +3784,6 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
             result = false
             return true
           }
-          console.log("🚀 ~ chiManagerStatus:", chiManagerStatus)
 
           if (indexNo === 0 || (chiManagerStatus && chiManagerStatus.indexOf(task.managerStatus) === -1 && indexNo !== 0)) {
             result = false

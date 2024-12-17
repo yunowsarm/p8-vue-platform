@@ -22,6 +22,7 @@
                :class="expandBottom">
             <plan-gantt ref="planGantt"
                         :plan-info-id="planInfoId"
+                        :planManagementStatus="planManagementStatus"
                         :whole-describe-id="wholeDescribeId"
                         :plan-info-status="planInfoStatus"
                         :task-id="taskId"
@@ -155,6 +156,7 @@ export default {
   name: 'PlanGanttManage',
   data () {
     return {
+      planManagementStatus: '',
       defaultKey: '1',
       advanced: false,
       selectedTasks: [],
@@ -270,6 +272,7 @@ export default {
   },
   beforeMount () { },
   created () {
+    this.planManagementStatus = this.thirdMenuParam.MANAGESTATUS
     this.firstEntry = true
   },
   mounted () {
@@ -328,7 +331,6 @@ export default {
       this.firstEntry = true
     },
     showDetail (selectTask, ganttName, viewType, switchType) {
-      console.log("🚀 ~ showDetail ~ pageType:", switchType)
       // defaultPercent指的是gannt的宽度
       // 首次进入，单机任务且未拖动详情时，不弹出
       if (switchType !== 'history') {

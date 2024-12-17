@@ -491,6 +491,10 @@ let myGantt
 export default {
   name: 'PlanGantt',
   props: {
+    planManagementStatus: {
+      type: String,
+      default: ''
+    },
     planBeginDateArray: {
       type: Array,
       default: () => []

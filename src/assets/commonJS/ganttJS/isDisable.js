@@ -136,13 +136,12 @@ export function isReadOnlyAndNoRoot (ganttName, tasks) {
 
 // 选中任务非只读并且符合升级条件
 export function isAllowUpgrades (ganttName, tasks) {
-  if (!outdentCheck(ganttName, tasks)) {
-    return createDisableResponse('根节点任务和父节点为根节点的任务不允许此操作');
-  }
-
   const checkReadOnlyRes = checkReadOnly(ganttName)
   if (checkReadOnlyRes) {
     return createDisableResponse(checkReadOnlyRes.readonlyReason);
+  }
+  if (!outdentCheck(ganttName, tasks)) {
+    return createDisableResponse('根节点任务和父节点为根节点的任务不允许此操作');
   }
   return false
 }
