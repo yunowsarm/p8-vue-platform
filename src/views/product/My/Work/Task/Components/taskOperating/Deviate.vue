@@ -132,7 +132,7 @@ export default {
       })
     },
     setMessage (formData) {
-      console.log(this.getPlanInfo(), '=================this.getPlanInfo()');
+
       let obj = Object.assign({}, formData)
       obj.planName = this.getPlanInfo().PLANNAME
       obj.name = this.getPlanInfo().NAME

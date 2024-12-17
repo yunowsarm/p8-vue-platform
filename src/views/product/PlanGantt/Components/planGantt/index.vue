@@ -876,7 +876,7 @@ export default {
     }
     let timer = null;
     window.myWebSocket.on('planGantGroup', (data) => {
-      console.log(data, '=====---data');
+
       if (timer) clearTimeout(timer); // 每次监听输入值，都会去判断是否还有timer，有就清除timer
       timer = setTimeout(() => {
         that.onlineData = data
@@ -932,7 +932,7 @@ export default {
   },
   methods: {
     relevanceOpen () {
-      console.log('1111111111111111');
+
       this.relevancePlanVisible = true
     },
     relevanceClick (id) {
@@ -1338,7 +1338,7 @@ export default {
             vueThis.taskCount = myGantt.getTaskCount()
 
             myGantt.unselectTask()
-            console.log(vueThis.selectedId, '==========1111');
+
             if (!vueThis.relevancePlanVisible) {
               setTimeout(() => {
                 myGantt.showTask(vueThis.selectedId);

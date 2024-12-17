@@ -743,7 +743,7 @@ export default {
           this.approvalResultText = '驳回'
         }
       }
-      console.log(this.$store.state.project.baseConfig, '==this.$store.state.project.baseConfig.defaultCommentNo');
+
       if (formSub.formData.approvalResult === '0' && (this.formData.approvalComment === undefined || this.formData.approvalComment === this.$store.state.project.baseConfig.defaultCommentYes)) {
         // this.formData.approvalComment = this.$store.state.project.baseConfig.defaultCommentNo
         if (this.$store.state.project.baseConfig.defaultCommentNo) {

@@ -679,7 +679,7 @@ export default {
       }
 
       const positions = calculatePositions(nodeData);
-      console.log(positions, '=====positions');
+
       return positions
     },
   }

@@ -111,8 +111,8 @@ export default {
     getInfo () {
       if (this.recordId) {
         this.$api[this.detailApi]({ id: this.recordId }).then((res) => {
-          // console.log(res,'-------我的返回值');
-          // console.log(this.formData,'------我的列表');
+          //
+          //
           res.forEach((item, index, arr) => {
             Object.keys(this.formData).forEach((key) => {
               this.formData[key] = res[index][key]

@@ -41,7 +41,7 @@ export const nextApproveUserBeforehand = {
       if (vueInstance.releaseMenuParams && vueInstance.releaseMenuParams.ids) {
         businessIdList = vueInstance.releaseMenuParams.ids
       }
-      console.log(res,'---res');
+
       // vueInstance.$api['PersonalProcessApproval.beforehandTaskDefinition']({ processDefinitionKey: processDefinitionKey, businessIds: businessIdList }).then(res => {
         if (res && res.result && res.beforehand && res.userTasks && res.userTasks.length > 0) {
           vueInstance.selectUserBeforehandDataSource = []

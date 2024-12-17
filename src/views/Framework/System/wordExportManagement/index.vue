@@ -122,13 +122,13 @@ export default {
   methods: {
 
     save() {
-      console.log("保存", this.editorContent);
+
       this.$api['richeditor.save']({value: this.editorContent}).then(res => {
         console.log('richeditor.save', res)
       })
     },
     exportWord() {
-      console.log("导出word", this.editorContent);
+
       this.$api['richeditor.remoteExportWord']({
         content: this.editorContent,
         templateValue: this.templateValue
@@ -152,7 +152,7 @@ export default {
       this.visible = false;
     },
     // exportWordTemplate() {
-    //   console.log("导出word", this.editorContent);
+    //
     //   this.$api['richeditor.exportWordTemplate']({
     //     content: this.editorContent,
     //     templateValue: this.templateValue

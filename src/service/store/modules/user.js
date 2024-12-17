@@ -92,14 +92,14 @@ const user = {
       if (data.PlanButton && data.PlanButton.length) {
         state.ganttButtonMode = data.PlanButton[0].value.type || ''
         state.ganttRightButtons = data.PlanButton[0].value.rightBtns || []
-        console.log(state.ganttButtonMode, '---111');
+
       }
       api['PlanGanttSetting.getSchedulingBasicConfig']({})
         .then((res) => {
           if (res) {
             if (!state.ganttButtonMode) {
               state.ganttButtonMode = res.defaultMode.content
-              console.log(state.ganttButtonMode, '---222');
+
             }
             if (state.ganttRightButtons && state.ganttRightButtons.length == 0) {
               if (res.planRightButton.content) {

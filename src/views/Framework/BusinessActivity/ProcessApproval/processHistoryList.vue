@@ -132,7 +132,7 @@ export default {
       } else {
         height = parseInt(styles.height, 10);
       }
-      console.log(height, '----height');
+
       const mh = height - 90
       let calPageSize = Math.floor(
         mh / 50
@@ -147,7 +147,7 @@ export default {
         })
       }
       that.$refs.table.queryList();
-      console.log(calPageSize, '===calPageSize');
+
     }
   }
 }

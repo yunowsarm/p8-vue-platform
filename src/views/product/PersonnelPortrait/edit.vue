@@ -126,7 +126,7 @@ export default {
     }
   },
   mounted () {
-    console.log(this.row[0], '================row');
+
     this.btnClick(this.userRoleBtnList[0])
     this.$api['qualifications.historyAssumptionTaskTotal']({
       userId: this.row[0].SYSUSER_ID

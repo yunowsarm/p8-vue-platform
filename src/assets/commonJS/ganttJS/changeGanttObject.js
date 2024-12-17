@@ -528,7 +528,7 @@ function synchronizationColumns (vueThis, ganttObject) {
   // 获取gantt列配置信息
   // if (vueThis.columnSettings.length > 0) {
   //   const tempColumns = []
-  //   console.log(vueThis.columnSettings, '------vueThis.columnSettings');
+  //
   //   vueThis.columnSettings.forEach((item) => {
   //     const initColumn = initColumns.filter((initItem) => initItem.name === item.filedName)
   //     if (initColumn && initColumn.length > 0) {

@@ -241,7 +241,7 @@ export default {
         this.isView = false
       }
     }
-    console.log(this.isChangeGantt, 'this.isChangeGanttthis.isChangeGanttthis.isChangeGantt');
+
 
   },
   data () {

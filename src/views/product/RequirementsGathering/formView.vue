@@ -966,7 +966,7 @@ export default {
   },
   methods: {
     approveCommit (e, msg) {
-      // console.log(this.$refs.form, '=====================2222');
+      //
       // this.$refs.form.$refs.form.$refs.parser.submitForm()
       this.handleSubmit()
     },

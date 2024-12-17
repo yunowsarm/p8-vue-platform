@@ -219,7 +219,7 @@ export default {
     handleScroll () {
       const container = this.$refs.msgBox;
       // 检测是否在顶部并且向下拉动
-      console.log(container.scrollTop, '================container.scrollTop');
+
       if (container.scrollTop === 0) {
         this.loading = true;
         this.fetchData();  // 触发加载数据
@@ -257,7 +257,7 @@ export default {
       let beijingTime = now.getTime() + (offsetBeijing + offsetMinutes) * 60 * 1000;
       // 创建包含北京时间的 Date 对象
 
-      console.log(beijingTime);
+
       let socketType = false
       if (window.socketType) {
         socketType = true

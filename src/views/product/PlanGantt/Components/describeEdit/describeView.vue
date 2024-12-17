@@ -325,7 +325,7 @@ export default {
       that.formData.forecastEndDate = moment(task.forecastEndDate).format('YYYY-MM-DD')
       if (task.realBeginDate) that.formData.realBeginDate = moment(task.realBeginDate).format('YYYY-MM-DD')
       if (task.realEndDate) that.formData.realEndDate = moment(task.realEndDate).format('YYYY-MM-DD')
-      console.log(task.planChangeDetailId, '===================task.planChangeDetailId');
+
       // 获取描述信息
       that.$api['planGanttManager.getActivityInfoByTaskId']({ taskId: taskId, planChangeDetailId: task.planChangeDetailId })
         .then(function (res) {

@@ -518,7 +518,7 @@ export default {
     }
   },
   mounted () {
-    console.log(this.getPlanInfo().ISLEAF, '================this.getPlanInfo().ISLEAF');
+
     if (this.getPlanInfo().ISLEAF > 0) {
       this.disabledProgress = true
       this.getPlanInfo().pageType = 'view'
@@ -625,7 +625,7 @@ export default {
     progressChange (val) {
       // console.log(this.minValue, "🚀 ~ progressChange ~ val:", val)
       // if (val < this.minValue) {
-      //   console.log(this.minValue, '111111111111111');
+      //
       //   this.minNum = this.minValue
       //   this.formData.progress = this.minValue
       // } else {

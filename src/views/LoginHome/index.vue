@@ -487,7 +487,7 @@ export default {
     ...mapGetters(['token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme'])
   },
   mounted () {
-    console.log('mounted');
+
     this.dayTime = getGreetingTime()
     let this_ = this
     this_.approvalTotal()

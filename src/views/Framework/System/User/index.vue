@@ -191,9 +191,9 @@ export default {
   computed: {},
   methods: {
     onSelect (node) {
-      // console.log(node);
+      //
       this.queryParam.departmentId = node.id
-      // console.log( this.queryParam.departmentId,'----------我的选中的部门标识');
+      //
       this.$refs.table.searchData()
     },
     levelParentClick (record) {

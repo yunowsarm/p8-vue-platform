@@ -536,7 +536,7 @@ export default {
   },
   methods: {
     relevanceOpen () {
-      console.log('22222222222222222222');
+
       this.relevanceVisible = true
     },
     closeRelevance () {
@@ -732,7 +732,7 @@ export default {
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
             myGantt.unselectTask()
-            console.log(vueThis.selectedId, '==========1111');
+
             if (!vueThis.relevanceVisible) {
               setTimeout(() => {
                 myGantt.showTask(vueThis.selectedId);

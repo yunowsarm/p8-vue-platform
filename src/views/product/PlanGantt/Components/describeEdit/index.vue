@@ -626,7 +626,7 @@ export default {
                 customItem1: item.id,
                 indexNo: item.indexNo // 排序号
               }
-              console.log(that.vueThis.taskExtendRequests && that.vueThis.taskExtendRequests.length, '==hat.vueThis.taskExtendRequests && that.vueThis.taskExtendRequests.length');
+
               if (that.vueThis.taskExtendRequests && that.vueThis.taskExtendRequests.length) {
                 // that.vueThis.taskExtendRequests.forEach((el, index) => {
                 //   if (el.projectTasksId == obj.projectTasksId && el.customItem1 == obj.customItem1) {

@@ -751,7 +751,7 @@ export const CommandButtonData = [
     help: '关联',
     msg: '',
     clickFun: function (btn, ganttName, tasks) {
-      console.log(ganttName, '=====================ganttName');
+
       const vueThis = store.getters.vueThis
       vueThis.relevanceOpen()
       const thisGantt = GanttObject.getGanttObject(ganttName)
@@ -3747,11 +3747,11 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
         // 发布后可控任务不可删除
         if (controlTaskEdit && controlTaskEdit === 'false') {
           if (selTask.weatherControl && selTask.weatherControl === '1') {
-            console.log(1111);
+
             result = false
             return true
           } else if (selTask.managerStatus === '6404') {
-            console.log(2222);
+
             result = false
             return true
           }

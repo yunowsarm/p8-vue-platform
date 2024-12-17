@@ -85,7 +85,7 @@ export default {
     dialogRolesOk () {
       this.fullscreen = false
       if (this.activeNameRender === 'experience') {
-        console.log(this.experienceTeamSelect,'----this.experienceTeamSelect经验团队');
+
         this.$emit('exp-roles-close', this.experienceTeamSelect)
       } else {
         // 载入

@@ -842,7 +842,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
       { name: 'realEndDate', label: '实际完成时间', align: 'center', min_width: 100, resize: true }
     ]
     // const initColumns = ganttObject.config.columns
-    // console.log(vueThis.columnSettings, '====vueThis.columnSettings');
+    //
     // if (vueThis.columnSettings.length > 0) {
     //   const tempColumns = []
     //   vueThis.columnSettings.forEach((item) => {
@@ -902,7 +902,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
     // } else {
     //   ganttObject.config.columns = initColumns
     // }
-    // console.log(ganttObject.config.columns, '-----ganttObject.config.columns');
+    //
   }
 
   // 创建资源载体

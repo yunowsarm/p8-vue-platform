@@ -284,7 +284,7 @@ export default {
     }
   },
   mounted () {
-    console.log(this.sourceChannel, '================this.sourceChannel');
+
     this.formData.sourceChannel = this.sourceChannel
 
     // 区分不同审批节点展示不同表单

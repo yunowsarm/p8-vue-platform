@@ -1843,7 +1843,7 @@ function searchFilter (parent, searchForm, ganttObject) {
           days = -days
         }
       }
-      console.log(days);
+
 
       if (overdueRemainingDays == 0 && days >= 0) {
         overdueRemainingDaysCheck = false;
@@ -2229,7 +2229,7 @@ GanttObject.onSaveCellEven = function (ganttObject, vueThis) {
       // }
       GanttObject.updateTaskNew(ganttObject, taskId, vueThis)
     }
-    // console.log(ganttObject,'ganttObject');
+    //
     if (colName == 'achievements') {
       let num = Number(task.achievements)
       if (!Number.isInteger(num)) {
@@ -3267,7 +3267,7 @@ GanttObject.searchColumnsDataInit = function (vueThis, ganttObject) {
  * @param task
  */
 GanttObject.calculateParentForecastDate = function (ganttObject, task) {
-  console.log('11111111111111111计算');
+
   if (task.parent) {
     api['planGanttManager.calculateParentForecastDate']({
       parentId: task.parent

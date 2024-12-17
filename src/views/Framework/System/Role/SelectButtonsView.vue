@@ -169,7 +169,7 @@ export default {
       res1 = this.dataSource.filter((r) => r).map((r) => r.id)
       let res = this.resources
       if (res) {
-        // console.log('res finded', res);
+        //
         res.forEach((value) => {
           value.checked = true
         })

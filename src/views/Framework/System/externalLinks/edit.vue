@@ -224,7 +224,7 @@ export default {
         }
       }
       this.modify = Object.assign({}, this.modify)
-      console.log('this.modify', this.modify);
+
       this.iconPopover = false
     }
   }

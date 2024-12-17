@@ -191,7 +191,7 @@ export default {
       option && this.myChart.setOption(option, true)
       this.myChart.off('click')
       this.myChart.on('click', (par) => {
-        console.log(par, 'parparparparpar');
+
         this.status = par.name
         if (this.type == 'projectCategory') {
           this.chartData = {

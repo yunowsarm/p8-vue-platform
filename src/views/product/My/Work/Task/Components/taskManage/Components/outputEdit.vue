@@ -132,7 +132,7 @@ export default {
     }
   },
   mounted () {
-    console.log(this.ganttName,'11');
+
 
     this.getOutputIoData()
   },

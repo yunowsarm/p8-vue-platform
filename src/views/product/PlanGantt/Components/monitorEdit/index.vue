@@ -156,7 +156,7 @@ export default {
               }
               return ditem
             })
-            console.log(dataSourceTemp, '===========================dataSourceTemp');
+
             that.dataSourceArray.push(JSON.parse(JSON.stringify(dataSourceTemp)))
             // 对已有的保存数据 进行元素之间联动显示的逻辑
             that.iconSelectHandle(item.monitorId, index)

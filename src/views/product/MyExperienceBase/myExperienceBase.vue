@@ -475,7 +475,7 @@ export default {
       const selectedRowIds = this.selectedRows.map(row => row.id);
       param
         .then(() => {
-          console.log('异步成功后端做的操作');
+
 
           // 使用 $nextTick 确保 DOM 渲染完成后再恢复选中状态
           this.$nextTick(() => {

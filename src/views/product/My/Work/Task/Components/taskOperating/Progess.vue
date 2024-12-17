@@ -468,7 +468,7 @@ export default {
         },
         pmTaskDeviationCauses: {}
       }
-      console.log(this.exceedTypeVal, '======================this.exceedTypeVal');
+
       if (this.exceedTypeVal) {
         params.pmTaskDeviationCauses = {        // 偏离参数
           planInfoId: _this.planInfoParams.PLANINFOID,

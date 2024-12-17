@@ -794,10 +794,10 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
       })
       selectedTaskIds.some(function (selTaskId) {
         const selTask = ganttObject.getTask(selTaskId)
-        // console.log('进度状态', selTask.status);
-        // console.log('任务状态', selTask.managerStatus);
+        //
+        //
         const editManagerStatus = taskEditMap[selTask.status]
-        // console.log('可编辑的任务状态', editManagerStatus);
+        //
         const indexNo = ganttObject.getGlobalTaskIndex(selTask.id)
         if (!result.value) {
           return true
