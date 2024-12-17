@@ -114,7 +114,7 @@ export default {
           this.$emit('onDeleteMsg', id)
         })
         .catch((e) => {
-          console.log(e)
+
         })
     },
     hasHtmlTag(str) {

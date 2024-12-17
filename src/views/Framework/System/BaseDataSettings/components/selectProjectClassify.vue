@@ -114,7 +114,7 @@ export default {
             this.selectedRow.forEach((value, index) => {
               if (value.id === v.id) {
                 isRepeat = 1
-                console.log(v, 'v')
+
                 this.$refs.table.$refs.table.toggleRowSelection(v, false)
                 this.selectedRow.splice(index, 1)
               }

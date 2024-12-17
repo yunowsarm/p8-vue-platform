@@ -64,7 +64,7 @@ export const selectGenerateTree = (data, config) => {
   // 把跟节点首先放进数组
   const tmpTree = data.filter((node) => !node[pidNameStr])
   if (!tmpTree.length) {
-    console.log('tree-select:', 'not found 父节点')
+
   }
   // 递归生成节点及子节点数据
   const findChildren = (tree) => {

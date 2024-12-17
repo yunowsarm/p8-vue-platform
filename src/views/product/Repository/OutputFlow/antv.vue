@@ -306,7 +306,7 @@ export default {
           }
           that.$api['OutputFlow.loadModeDataSave'](parmar).then(res => {
             if (res) {
-              console.log(res, '====res')
+
             }
           })
         }

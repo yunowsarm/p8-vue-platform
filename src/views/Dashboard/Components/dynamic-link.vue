@@ -22,7 +22,7 @@ export default {
       if (!this.data.component.url) {
         return
       }
-      console.log(this.data.component.url, '----this.data.component.url')
+
       return () => import(`@/views/${this.data.component.url}.vue`)
     }
   },

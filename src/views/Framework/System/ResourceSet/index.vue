@@ -305,11 +305,11 @@ export default {
               _this.reloadList()
             })
             .catch((e) => {
-              console.log(e)
+
             })
         })
         .catch((e) => {
-          console.log(e)
+
         })
     },
     toEnable (row) {
@@ -340,11 +340,11 @@ export default {
               _this.reloadList()
             })
             .catch((e) => {
-              console.log(e)
+
             })
         })
         .catch((e) => {
-          console.log(e)
+
         })
     },
     exportSQL () {

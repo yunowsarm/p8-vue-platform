@@ -957,7 +957,7 @@ export default {
     closExperienceBase (res) {
       this.isManage = false
       this.experienceBaseVisible = false
-      console.log(res, 'res')
+
       if (res === 'true') {
         this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
       }

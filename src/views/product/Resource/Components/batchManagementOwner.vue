@@ -268,7 +268,7 @@ export default {
     rendered () { },
     tableRefresh (param) {
       param.then(() => {
-        console.log('异步成功后端做的操作')
+
       }).catch(() => {
         console.error('异步失败的操作')
       })

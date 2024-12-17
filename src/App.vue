@@ -112,7 +112,7 @@ export default {
         // 连接失败时自动重新连接
         window.myWebSocket.on('reconnect_failed', () => {
           that.conunt = 0
-          console.log('*******************重新连接失败，自动重连*****************')
+
           // window.myWebSocket.off('reconnect') // 取消所有的重连事件监听
           // window.myWebSocket.close() // 关闭连接
           this.$message.error('websocket重新连接失败，自动重连中...')
@@ -127,7 +127,7 @@ export default {
         })
         window.myWebSocket.on('connect_error', (err) => {
           that.conunt = 0
-          console.log('*******************连接失败，自动重连*****************')
+
           this.$message.error('websocket连接失败，自动重连中...')
           window.socketType = true
           // this.$message({

@@ -89,7 +89,7 @@ export default {
        *    modifiers: 包含修饰符的对象 如: {stop: true}
        */
       bind(el, binding) {
-        // console.log(el, binding, '自定义指令-bind')
+        //
         if (binding.value) {
           const iconDom = document.createElement('span')
           iconDom.setAttribute('class', 'el-input__prefix--custom')
@@ -101,16 +101,16 @@ export default {
         }
       },
       unbind(el, binding) {
-        // console.log(el, binding, '自定义指令-unbind')
+        //
       },
       insert(el, binding) {
-        // console.log(el, binding, '自定义指令-insert')
+        //
       },
       undate(el, binding) {
-        console.log(el, binding, '自定义指令-undate')
+
       },
       componentUpdated(el, binding) {
-        // console.log(el, binding, '自定义指令-componentUpdated')
+        //
         if (binding.value) {
           // value(v-model绑定的值)有值
           const icon = el.children[0].children[0].children[0]
@@ -166,7 +166,7 @@ export default {
        */
       bind(el, binding) {},
       unbind(el, binding) {
-        // console.log(el, binding, '自定义指令-unbind')
+        //
       },
       inserted(el, binding) {
         const selfDom = el
@@ -182,7 +182,7 @@ export default {
         }, 10)
       },
       undate(el, binding) {
-        //  console.log(el, binding, '自定义指令-undate')
+        //
       },
       componentUpdated(el, binding) {}
     })

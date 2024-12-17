@@ -103,7 +103,7 @@ export default {
         deptId: saveParams.parentId,
         oldDeptId: this.recordId
       }
-      console.log('customValidate', saveParams, params)
+
       this.$refs.form.submitForm(params, this.saveApi)
     }
   }

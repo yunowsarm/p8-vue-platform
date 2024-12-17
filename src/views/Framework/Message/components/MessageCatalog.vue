@@ -67,7 +67,7 @@ export default {
         if (newVal && newVal.length > 0) {
           newVal.forEach((item, index, arr) => {
             const catalog = this.catalogData.find((value) => value.id === item.id)
-            console.log('catalog', catalog)
+
             // catalog.
           })
         }

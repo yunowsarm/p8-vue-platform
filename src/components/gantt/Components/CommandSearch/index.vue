@@ -240,7 +240,7 @@ export default {
       const ganttObject = GanttObject.getGanttObject(this.ganttName)
       if (this.searchCheck && Object.keys(this.searchForm).length !== 0) {
         this.vueThis.searchForm = { ...this.searchForm, isInput: this.isInput }
-        console.log(this.searchForm, this.vueThis.searchForm, this.ganttName, 'ikkkkkkkkkk')
+
         ganttObject.refreshData()
         this.searchCheck = false
         this.$emit('close')

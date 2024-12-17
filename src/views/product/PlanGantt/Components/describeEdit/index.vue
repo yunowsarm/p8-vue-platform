@@ -644,7 +644,7 @@ export default {
               }
             })
             that.vueThis.taskExtendRequests = that.vueThis.taskExtendRequests.concat(extraData)
-            console.log(that.vueThis.taskExtendRequests, '===taskExtendRequests')
+
             // 变更校验
             const ganttObject = GanttObject.getGanttObject(that.ganttName)
             taskDescribesEditCheck(saveParams, that.oldFormData, that.vueThis, that.taskId, ganttObject)

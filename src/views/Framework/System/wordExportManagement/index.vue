@@ -117,14 +117,14 @@ export default {
     }
   },
   mounted() {
-    // console.log(contentUiCss,contentCss)
+    //
   },
   methods: {
 
     save() {
 
       this.$api['richeditor.save']({value: this.editorContent}).then(res => {
-        console.log('richeditor.save', res)
+
       })
     },
     exportWord() {
@@ -133,7 +133,7 @@ export default {
         content: this.editorContent,
         templateValue: this.templateValue
       }, {responseType: 'blob'}).then(res => {
-        console.log('richeditor.remoteExportWord', res)
+
         let link = document.createElement('a')
         link.href = window.URL.createObjectURL(new Blob([res.data]))
         link.download = 'test.docx'
@@ -157,7 +157,7 @@ export default {
     //     content: this.editorContent,
     //     templateValue: this.templateValue
     //   }, {responseType: 'blob'}).then(res => {
-    //     console.log('richeditor.exportWordTemplate', res)
+    //
     //     let link = document.createElement('a')
     //     link.href = window.URL.createObjectURL(new Blob([res.data]))
     //     link.download = 'test.docx'

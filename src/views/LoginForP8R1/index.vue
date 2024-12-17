@@ -103,7 +103,7 @@ export default {
     ...mapGetters(['userName', 'systemName'])
   },
   created () {
-    console.log(API_DEFAULT_CONFIG)
+
   },
   mounted () {
     this.dayTime = getGreetingTime()

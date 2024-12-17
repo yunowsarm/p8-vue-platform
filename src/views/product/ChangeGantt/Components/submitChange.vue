@@ -277,7 +277,7 @@ export default {
       } else {
         this.$api['planChange.changeRecordClassification']({ id: this.id }).then((res) => {
           this.isBig = this.saveParams.uploadFiles.some((item) => item.confidentialite > res)
-          console.log(this.isBig, '222222')
+
           if (this.isBig) {
             this.$message.warning('附件的密级高于任务的密级！')
           } else {

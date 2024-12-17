@@ -191,7 +191,7 @@ export default {
   },
   methods: {
     getInputData(taskId) {
-      console.log('🚀 ~ inputView ~ taskId:', taskId)
+
       const that = this
       that.$api['planGanttManager.inputInfo']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId })
         .then(function (res) {

@@ -158,7 +158,7 @@ export default {
       this.getSettingData()
     },
     clickEvent () {
-      console.log('click')
+
     },
     getSettingData () {
       const that = this
@@ -175,7 +175,7 @@ export default {
           }
         })
         .catch(function (error) {
-          console.log('error' + error)
+
         })
     },
     // 获取图片流
@@ -222,7 +222,7 @@ export default {
       }
 
       saveParams.settings = settings
-      console.log(saveParams)
+
       this.$refs.form.submitForm(saveParams, this.saveApi)
     },
     saved (res) { }

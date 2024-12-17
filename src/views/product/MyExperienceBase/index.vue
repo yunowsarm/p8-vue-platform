@@ -50,7 +50,7 @@ export default {
       this.experienceBaseVisible = false
     },
     exportExperienceBase () {
-      console.log("This is export")
+
     },
     closeCreate () {
       this.createVisible = false

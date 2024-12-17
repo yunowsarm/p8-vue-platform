@@ -434,7 +434,7 @@ export default {
       //     entityType: 'project',
       //     taskRequest: this.formData,
       //   };
-      //   console.log("33333333333333333333333333333333333333", params)
+      //
       //   window.myWebSocket.emit('taskCommitByData', params)
       // }
     },

@@ -728,7 +728,7 @@ export default {
             vueThis.taskStatusMap = res.taskStatusMap
             vueThis.taskMonitorMap = res.taskMonitorMap
             vueThis.changeTaskInfo = res.changeTaskInfo
-            console.log(datas, '=-====datas')
+
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
             myGantt.unselectTask()
@@ -760,7 +760,7 @@ export default {
                 myGantt.updateTask(task.id)
               })
               vueThis.taskExtendRequests = vueThis.taskExtendRequests.concat(extraData)
-              console.log(vueThis.taskExtendRequests, '====vueThis.taskExtendRequests')
+
             }
           }
         })
@@ -885,7 +885,7 @@ export default {
       const that = this
       const obj = that.newTaskMap
       const oldObj = that.oldTaskMap
-      // console.log(oldObj, 'oldObjoldObj')
+      //
       const sendDatas = []
       for (const key in obj) {
         // 获取newTaskMap对象
@@ -930,7 +930,7 @@ export default {
         that.newTaskMap[key] = nowGanttTask
         sendDatas.push(that.newTaskMap[key])
       }
-      console.log(sendDatas, 'sendDatas')
+
       const mergedArray = []
       if (sendDatas && Array.isArray(sendDatas)) {
         mergedArray.push(...sendDatas)
@@ -964,9 +964,9 @@ export default {
               that.changeRecordId = res
 
               that.$api['planChange.extendChangeSave']({ changeRecordId: that.changeRecordId, taskExtendRequests: that.taskExtendRequests }).then(res => {
-                // console.log(res, '===res')
+                //
               }).catch(er => {
-                console.log(er, '===er')
+
               })
               // that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
               that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)

@@ -56,7 +56,7 @@ export default {
   name: 'ButtonNavigationView',
   computed: {
     componentUrl () {
-      console.log(this.asyncComponents, '===this.asyncComponents')
+
       if (this.asyncComponents) {
         if (this.asyncComponents.indexOf('?') !== -1) {
           const list = this.asyncComponents.split('?')

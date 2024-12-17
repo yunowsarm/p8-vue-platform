@@ -169,7 +169,7 @@ export default {
       this.getSettingData()
     },
     clickEvent () {
-      console.log('click')
+
     },
     getSettingData () {
       let that = this
@@ -181,7 +181,7 @@ export default {
           that.getFileUrl(res.uploadFileJson) // 获取图片流
         })
         .catch(function (error) {
-          console.log('error' + error)
+
         })
     },
     // 获取图片流
@@ -235,7 +235,7 @@ export default {
       }
 
       saveParams.settings = settings
-      console.log(saveParams)
+
       this.$refs.form.submitForm(saveParams, this.saveApi)
     },
     saved (res) { }

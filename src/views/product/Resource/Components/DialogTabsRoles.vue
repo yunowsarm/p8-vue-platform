@@ -109,7 +109,7 @@ export default {
     },
     tableRefresh (param) {
       param.then((data) => {
-        console.log('异步成功后端做的操作 标准团队库', data)
+
         this.standardTeamInfo = data
       }).catch(() => {
         console.error('异步失败的操作')

@@ -1686,7 +1686,7 @@ GanttObject.calculateArrayContain = function calculateArrayContain (taskMonitors
       return true
     }
     // for (let i = 0; i < selMonitor.length; i++) {
-    //   console.log(selMonitor, 'selMonitorselMonitor')
+    //
     //   if (taskM.indexOf(selMonitor[i]) !== -1) {
     //     return true
     //   }
@@ -2689,7 +2689,7 @@ GanttObject.planChangeCheck = function (ganttObject, vueThis) {
  */
 GanttObject.onCollapse = function (ganttObject, vueThis) {
   return ganttObject.attachEvent('onCollapse', function () {
-    console.log('gantt全屏关闭')
+
     vueThis.$bus.$emit('ganttOnFullscreen', false)
   })
 }
@@ -3043,9 +3043,9 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
         })
       }
     })
-    console.log(tempColumns, '==tempColumns1')
+
     tempColumns = tempColumns.filter(el => el)
-    console.log(tempColumns, '==tempColumns2')
+
     ganttObject.config.columns = tempColumns
   } else if (vueThis.columnSettings.length > 0) {
     const tempColumns = []

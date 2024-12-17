@@ -132,7 +132,7 @@ export default {
     },
     removeDepartment (record) {
       // 删除
-      console.log('removeDepartment', record)
+
       const that = this
       const child = record.child
       // let allUser = record.allUser
@@ -164,12 +164,12 @@ export default {
       })
         .then(() => {
           that.$api['departmentManger.remove']({ id: record.id }).then((res) => {
-            console.log('---删除部门---', res)
+
             that.$refs.table.searchData()
           })
         })
         .catch(() => {
-          console.log('取消')
+
         })
     },
     moveUser (record) {
@@ -181,10 +181,10 @@ export default {
     tableRefresh (param) {
       param
         .then(() => {
-          console.log('table--异步成功后端做的操作')
+
         })
         .catch(() => {
-          console.log('table--异步失败的操作')
+
         })
     },
     onDrawerClose () {
@@ -194,7 +194,7 @@ export default {
       this.drawerTitle = null
     },
     saveCallback (res) {
-      // console.log('添加或修改的回调', res)
+      //
       this.$refs.table.searchData()
       this.onDrawerClose()
     }

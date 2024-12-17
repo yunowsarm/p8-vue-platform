@@ -205,7 +205,7 @@ export default {
     },
     tabBarExtraContent() {},
     showDetail(selectTask, ganttName, viewType) {
-      console.log('🚀 ~ file: index.vue:179 ~ showDetail ~ selectTask, ganttName, viewType:', selectTask, ganttName, viewType)
+
       this.detailVisible = true
       this.ganttName = ganttName
       this.selectTaskId = selectTask.id

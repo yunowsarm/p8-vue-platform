@@ -623,7 +623,7 @@ export default {
       this.$emit('progress-date-change', date)
     },
     progressChange (val) {
-      // console.log(this.minValue, "🚀 ~ progressChange ~ val:", val)
+      //
       // if (val < this.minValue) {
       //
       //   this.minNum = this.minValue

@@ -171,10 +171,10 @@ export default {
       })
     },
     startDownload () {
-      console.log('开始下载-showLoading')
+
     },
     finishDownload () {
-      console.log('下载完成-hideLoading')
+
     }
   },
   components: {

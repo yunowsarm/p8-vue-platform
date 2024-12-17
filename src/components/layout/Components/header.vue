@@ -245,7 +245,7 @@ export default {
     const this_ = this
     this_.getAuthorizationInfo()
     this.getSystemAbout()
-    console.log(this.systemName, '=========================systemName')
+
     this.dayTime = getGreetingTime()
     setInterval(function () {
       this_.approvalTotal()

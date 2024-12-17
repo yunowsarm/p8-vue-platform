@@ -136,7 +136,7 @@ export default {
     },
     doRetry (record) {
       let that = this
-      console.log(record)
+
 
       this.$confirm('是否确定要进行手动处理？', '提示', {
         confirmButtonText: '确定',
@@ -184,14 +184,14 @@ export default {
     tableRefresh (param) {
       param
         .then(() => {
-          console.log('异步成功后端做的操作')
+
         })
         .catch(() => {
-          console.log('异步失败的操作')
+
         })
     },
     saveCallback () {
-      console.log('修改页面关闭时的回调方法')
+
       this.$refs.table.searchData()
       this.onDetailListClose()
     }

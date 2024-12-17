@@ -104,7 +104,7 @@ export default {
     window.myWebSocket.on('messageevent', (data) => {
       let taskMessageCount = this.$store.state.user.taskMessageCount
       this.messageCount = taskMessageCount + 1
-      console.log("🚀 app*************************************:", this.messageCount)
+
       this.$store.dispatch('setTasketMessageCount', this.messageCount)
     })
   },

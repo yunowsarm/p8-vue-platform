@@ -1059,7 +1059,7 @@ export default {
         } else {
           this.formData.demandSuggestions = this.formData.demandSuggestionsArr[0]
         }
-        console.log("🚀 ~ handleSubmit ~ this.formData.demandSuggestions:", this.formData.demandSuggestions)
+
         if
           (
           !this.formData.demandName ||

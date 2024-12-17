@@ -300,7 +300,7 @@ export default {
     customValidate (saveParams) {
       this.saveParams = saveParams
       this.$api[this.saveApi](this.saveParams).then((res) => {
-        console.log(res, '====res')
+
         if (res.resultMsg) {
           this.$message({ type: 'warning', message: res.resultMsg })
         } else {

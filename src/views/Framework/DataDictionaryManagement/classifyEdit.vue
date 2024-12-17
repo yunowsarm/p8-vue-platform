@@ -47,7 +47,7 @@ export default {
   watch: {
     'modify.dicType': {
       handler(to, from) {
-        console.log(111)
+
         if (this.rowId && this.rowId !== '') {
           if (this.isModify) {
             this.modify.minorcode = to

@@ -153,7 +153,7 @@ export default {
   beforeMount () { },
 
   mounted () {
-    console.log(this.status, 'statusstatusstatusstatus')
+
   },
   methods: {
     overdueTextFun (row) {

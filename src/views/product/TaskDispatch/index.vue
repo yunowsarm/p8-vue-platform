@@ -84,7 +84,7 @@ export default {
   created() {},
   mounted() {
     this.row.forEach(item => {
-      console.log(item.ID)
+
     })
   },
   beforeDestroy() {},

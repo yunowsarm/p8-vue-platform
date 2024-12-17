@@ -97,7 +97,7 @@ export default {
     })
   },
   mounted () {
-    // console.log(this.selectUserBeforehandDataSourceCur, this.selectUserBeforehandFormDataCur, 'selectUserBeforehandFormDataCurselectUserBeforehandFormDataCur')
+    //
     this.selectUserBeforehandFormDataCur = Object.assign({}, this.selectUserBeforehandFormData)
     this.selectUserBeforehandDataSourceCur = [].concat(this.selectUserBeforehandDataSource)
     this.dialogHeight = this.dialogHeight + this.selectUserBeforehandDataSource.length * 60

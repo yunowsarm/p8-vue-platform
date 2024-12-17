@@ -93,7 +93,7 @@ export default {
     }
   },
   created () {
-    console.log(this.$store, 'store')
+
     let that = this
     this.$api['extLink.list']({}).then((res) => {
       that.menuList = res
@@ -113,8 +113,8 @@ export default {
           // 表达式格式应为 #@{xxxx}
           if (el.value.includes('#@')) {
             let key = el.value.substring(3, el.value.length - 1)
-            console.log(key, '-----key')
-            console.log(that.$store.getters.userInfo, '===userInfo')
+
+
             url += el.keys + '=' + that.$store.getters.userInfo[key] + '&'
           } else {
             url += el.keys + '=' + el.value + '&'

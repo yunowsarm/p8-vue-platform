@@ -133,17 +133,17 @@ export default {
         searchDate = { sendBeginTime: queryParam.datetimeRange[0], sendEndTime: queryParam.datetimeRange[1] }
       }
 
-      console.log('searchDate', searchDate)
+
 
       let catalogCountParams = { ...queryParam, ...searchDate }
       this.userCatalogCount(catalogCountParams)
 
       this.searchParams = { msgCatalog: this.searchParams.msgCatalog, ...catalogCountParams }
-      console.log('searchParams', this.searchParams)
+
     },
     reSet () { },
     selectMessage (messageData) {
-      console.log('message:', messageData)
+
       this.currentMessage = null
       this.currentMessage = messageData
     },

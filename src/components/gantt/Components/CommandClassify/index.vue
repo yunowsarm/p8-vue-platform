@@ -599,7 +599,7 @@ export default {
       const parentTask = thisGantt.getTask(task.parent)
       if (mId && mId !== '3103' && mId !== '310303' && mId !== '') {
         if (parentTask && parentTask.batchNumber) {
-          console.log('parentTask.batchNumber', parentTask.batchNumber)
+
           task.batchNumber = parentTask.batchNumber
           task.mapCode = parentTask.mapCode
           task.mapName = parentTask.mapName

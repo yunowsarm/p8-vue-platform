@@ -646,7 +646,7 @@ export default {
           res.forEach((o) => {
             if (o.variableName === 'approveContentView') {
               page.url = o.value.url
-              console.log(o.value.url, '----------我的路径ppppppppppp')
+
               this_.formComp = o.value.url
               page.code = o.value.code
               const canEnd = o.value.canEnd
@@ -684,7 +684,7 @@ export default {
               this_.asyncComponents = this_.componentsParams.url
             }
           }
-          console.log(this_.componentsParams, '====componentsParams')
+
         }
         this_.formValidate = true
       })
