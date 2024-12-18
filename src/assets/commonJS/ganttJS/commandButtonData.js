@@ -56,8 +56,8 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
-        () => isReadOnlyAndNoRoot(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
+        () => isReadOnly(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => taskStateAndReadonly(ganttName, tasks),
@@ -84,8 +84,8 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isReadOnlyAndNoRoot(ganttName, tasks),
             () => isCompile(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
             () => isWeave(ganttName, tasks),
@@ -111,8 +111,8 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isReadOnlyAndNoRoot(ganttName, tasks),
             () => isCompile(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
             () => isWeave(ganttName, tasks),
@@ -138,8 +138,8 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isReadOnlyAndNoRoot(ganttName, tasks),
             () => isCompile(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
             () => isWeave(ganttName, tasks),
@@ -165,8 +165,8 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isReadOnlyAndNoRoot(ganttName, tasks),
             () => isCompile(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
             () => isWeave(ganttName, tasks),
@@ -195,8 +195,8 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isReadOnlyAndNoRoot(ganttName, tasks),
             () => isCompile(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
             () => isHasProductTask(ganttName, tasks)
