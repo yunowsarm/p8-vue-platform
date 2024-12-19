@@ -11,8 +11,8 @@
            :class="{ 'icon-youzhedie1': !this.sidebarState.isOpen, 'icon-zuozhedie1': this.sidebarState.isOpen }"></div>
     </div>
     <div class="center">
-      <header-subsystem />
       <header-shortcut />
+      <header-subsystem />
     </div>
 
     <div class="settings">
@@ -453,6 +453,7 @@ export default {
     position: relative;
     // padding-left:5px;
     flex: 1;
+    display: flex;
   }
 
   .slide-bar {
