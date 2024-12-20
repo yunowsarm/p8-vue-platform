@@ -5,48 +5,30 @@
     </div> -->
     <div class="drawer-right">
       <div class="chat-box">
-        <div class="msg-box"
-             :style="{width: msgRightWidth}"
-             ref="msgBox"
-             @scroll="handleScroll">
-          <div class="refresh-wrapper"
-               ref="refreshWrapper">
-            <div v-if="!loading"
-                 class="refresh-text">没有更多了</div>
-            <div v-else
-                 class="refresh-text">加载中...</div>
+        <div class="msg-box" :style="{ width: msgRightWidth }" ref="msgBox" @scroll="handleScroll">
+          <div class="refresh-wrapper" ref="refreshWrapper">
+            <div v-if="!loading" class="refresh-text">没有更多了</div>
+            <div v-else class="refresh-text">加载中...</div>
           </div>
-          <div v-for="(i,index) in messagesList"
-               :key="index"
-               class="msg"
-               :style="i.sendUser == userId?'flex-direction:row-reverse':''">
+          <div v-for="(i, index) in messagesList" :key="index" class="msg" :style="i.sendUser == userId ? 'flex-direction:row-reverse' : ''">
             <!-- <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar> -->
             <div class="use-style">
               <!-- 自己 -->
-              <div v-if="i.sendUser === userId"
-                   class="text-align">
+              <div v-if="i.sendUser === userId" class="text-align">
                 <span>{{ i.itemCreateTime }}</span>
                 <div class="user-msg">
-                  <i v-if="i.socketType"
-                     class="el-icon-warning"
-                     style="color: red;"></i>
-                  <span v-if="i.styleType"
-                        style="font-size: 15px; width: 600px;"
-                        v-html="i.content"></span>
-                  <span v-else
-                        class="right">{{i.content}}</span>
+                  <i v-if="i.socketType" class="el-icon-warning" style="color: red"></i>
+                  <span v-if="i.styleType" style="font-size: 15px; width: 600px" v-html="i.content"></span>
+                  <span v-else class="right">{{ i.content }}</span>
                 </div>
               </div>
               <div v-else>
                 <!-- 游客 -->
-                <span style="margin-right: 20px;">{{ i.sendUserName }}</span>
+                <span style="margin-right: 20px">{{ i.sendUserName }}</span>
                 <span>{{ i.itemCreateTime }}</span>
                 <div class="user-msg">
-                  <span v-if="i.styleType"
-                        style="font-size: 15px; width: 600px;"
-                        v-html="i.content"></span>
-                  <span v-else
-                        class="left">{{i.content}}</span>
+                  <span v-if="i.styleType" style="font-size: 15px; width: 600px" v-html="i.content"></span>
+                  <span v-else class="left">{{ i.content }}</span>
                 </div>
               </div>
             </div>
@@ -54,76 +36,73 @@
         </div>
         <div class="contentText-box">
           <div class="span-icon">
-            <el-button type="text"
-                       style="font-size: 22px;"
-                       icon="el-icon-search"
-                       @click="searchShow"></el-button>
-            <el-button type="text"
-                       style="font-size: 20px;"
-                       @click="callOut">@</el-button>
+            <el-button type="text" style="font-size: 22px" icon="el-icon-search" @click="searchShow"></el-button>
+            <el-button type="text" style="font-size: 20px" @click="callOut">@</el-button>
           </div>
-          <textarea class="contentText-textarea"
-                    autofocus
-                    placeholder="请输入内容"
-                    ref="textareaRef"
-                    @keydown.enter="onSubmit()"
-                    @focus="focus()"
-                    v-model="contentText">
-              </textarea>
+          <textarea class="contentText-textarea" autofocus placeholder="请输入内容" ref="textareaRef" @keydown.enter="onSubmit()" @focus="focus()" v-model="contentText"> </textarea>
         </div>
       </div>
-      <el-button class="btn"
-                 slot="reference"
-                 type="primary"
-                 @click="onSubmit()">发送</el-button>
+      <el-button class="btn" slot="reference" type="primary" @click="onSubmit()">发送</el-button>
     </div>
-    <resource-select v-if="resourceSelectVisible"
-                     :visible="resourceSelectVisible"
-                     :entityId="entityId"
-                     @closed="resourceSelectclosed"
-                     @resource-selected="resourceSelected">
-    </resource-select>
-    <message-view v-if="historyMsg"
-                  :visible="historyMsg"
-                  :searchParams="historyParams"
-                  @visibleHistory="visibleHistory"></message-view>
-    <common-dialog v-if="visibleFeedback"
-                   :visible="visibleFeedback"
-                   :width="dialogWidth"
-                   :dialog-config="dialogConfig"
-                   :show-handle-btn="false"
-                   @close="visibleMsgClose"
-                   :dialog-height="dialogHeight"
-                   title="历史反馈">
+    <resource-select v-if="resourceSelectVisible" :visible="resourceSelectVisible" :entityId="entityId" @closed="resourceSelectclosed" @resource-selected="resourceSelected"></resource-select>
+    <message-view v-if="historyMsg" :visible="historyMsg" :searchParams="historyParams" @visibleHistory="visibleHistory"></message-view>
+    <common-dialog
+      v-if="visibleFeedback"
+      :visible="visibleFeedback"
+      :width="dialogWidth"
+      :dialog-config="dialogConfig"
+      :show-handle-btn="false"
+      @close="visibleMsgClose"
+      :dialog-height="dialogHeight"
+      title="历史反馈"
+    >
       <template #dialog>
         <history-table :row="selsectRows"></history-table>
+      </template>
+    </common-dialog>
+    <common-dialog
+      v-if="visibleTaskInfo"
+      :visible="visibleTaskInfo"
+      :width="dialogWidth"
+      :dialog-config="dialogConfig"
+      :show-handle-btn="false"
+      @close="visibleMsgClose"
+      :dialog-height="dialogHeight"
+      title="任务详情"
+    >
+      <template #dialog>
+        <task-info :task-id="taskId"></task-info>
       </template>
     </common-dialog>
   </div>
 </template>
 
 <script>
-import StatusIcon from "./StatusIcon";
+import StatusIcon from './StatusIcon'
 import moment from 'moment'
 import MessageView from './MessageView'
 import ResourceSelect from '@/components/information/components/resourceSelect.vue'
 import { P8Dialog as CommonDialog } from 'p8-components-ui'
-import historyTable from "@/views/product/Plan/planExamine/historyTable.vue";
+import historyTable from '@/views/product/Plan/planExamine/historyTable.vue'
+import taskInfo from '@/views/Framework/Message/components/TaskDetail/index.vue'
 // import { history } from './message'
 export default {
-  name: "MessagePanel",
+  name: 'MessagePanel',
   components: {
     StatusIcon,
     ResourceSelect,
     MessageView,
     CommonDialog,
-    historyTable
+    historyTable,
+    taskInfo
   },
   props: ['user', 'messagesData'],
-  data () {
+  data() {
     return {
+      taskId: '',
       historyMsg: false,
       visibleFeedback: false,
+      visibleTaskInfo: false,
       dialogHeight: document.documentElement.clientHeight - 243,
       dialogWidth: '50%',
       dialogConfig: {
@@ -135,7 +114,7 @@ export default {
       // receiverUser: this.$store.getters.name, // 当前用户昵称
       // avatar: this.$store.getters.avatar, // 当前用户头像
       msgRightWidth: '100%',
-      contentText: "", // input输入的值
+      contentText: '', // input输入的值
       messagesList: this.messagesData,
       resourceSelectVisible: false,
       selectUserIds: [],
@@ -148,48 +127,49 @@ export default {
         orders: [{ column: 'createTime', asc: false }],
         pages: 0
       }
-    };
+    }
   },
   watch: {
-    messagesData (val, oldVal) {
+    messagesData(val, oldVal) {
       this.messagesList = val
       this.contentText = ''
       setTimeout(() => {
-        this.scrollBottm();
-      }, 100);
+        this.scrollBottm()
+      }, 100)
       // this.$refs.textareaRef.focus()
     }
   },
-  mounted () {
+  mounted() {
     // 因原生onclick事件this指向问题无法调用vue事件，将方法挂在win上面，onclick找不到则会去win上面找
     window.historyClick = this.historyClick.bind(this)
+    window.taskClick = this.taskClick.bind(this)
     if (this.user) {
       this.entityId = this.user.entityId
       this.contentText = this.user.contentText
     }
-    this.$refs.textareaRef.focus();
+    this.$refs.textareaRef.focus()
     setTimeout(() => {
-      this.scrollBottm();
-    }, 100);
+      this.scrollBottm()
+    }, 100)
     // 组件挂载时，订阅事件
     window.myWebSocket.on('messageevent', (data) => {
       if (this.user.entityId === data.entityId) {
         this.messagesList.push(data)
         setTimeout(() => {
-          this.scrollBottm();
-        }, 100);
+          this.scrollBottm()
+        }, 100)
       }
     })
-    window.myWebSocket.on("privateMessage", (data) => {
+    window.myWebSocket.on('privateMessage', (data) => {
       this.$emit('setUser', data)
-    });
+    })
   },
-  destroyed () {
+  destroyed() {
     // window.myWebSocket.off('privateMessage')
     // window.myWebSocket.off('messageevent')
   },
   methods: {
-    fetchData () {
+    fetchData() {
       // // 模拟异步加载数据
       // setTimeout(() => {
       let that = this
@@ -200,33 +180,32 @@ export default {
         entityType: this.user ? this.user.entityType : '',
         type: 'update',
         page: this.page
-      }).then(res => {
-        that.loading = false;  // 加载完成后取消 loading 状态
+      }).then((res) => {
+        that.loading = false // 加载完成后取消 loading 状态
         if (res.records.length > 0) {
           let arr = []
-          res.records.forEach(item => {
+          res.records.forEach((item) => {
             arr.unshift(item)
           })
           that.messagesList = [...arr, ...that.messagesList]
           that.$refs.msgBox.scrollTop = 500 * 3
         } else {
-          that.$refs.msgBox.scrollTop = 0;
+          that.$refs.msgBox.scrollTop = 0
         }
-
       })
       // }, 1000); // 模拟延迟加载
     },
-    handleScroll () {
-      const container = this.$refs.msgBox;
+    handleScroll() {
+      const container = this.$refs.msgBox
       // 检测是否在顶部并且向下拉动
 
       if (container.scrollTop === 0) {
-        this.loading = true;
-        this.fetchData();  // 触发加载数据
+        this.loading = true
+        this.fetchData() // 触发加载数据
       }
     },
     // 清空已读消息
-    focus () {
+    focus() {
       // this.$api['documentManagement.getWebsocketById']({
       //   entityId: this.user ? this.user.entityId : '',
       //   entityType: this.user ? this.user.entityType : '',
@@ -236,11 +215,11 @@ export default {
       //   // this.$emit('onSelectUser')
       // })
     },
-    onSubmit () {
+    onSubmit() {
       // 阻止默认的回车行为（如换行）
-      event.preventDefault();
-      const encoder = new TextEncoder();
-      const encoded = encoder.encode(this.contentText);
+      event.preventDefault()
+      const encoder = new TextEncoder()
+      const encoded = encoder.encode(this.contentText)
       if (encoded.length > 1500) {
         return this.$message.warning('文字超出限制无法发出！')
       }
@@ -248,35 +227,32 @@ export default {
         return
       }
       // 获取当前时间的 Date 对象
-      let now = new Date();
+      let now = new Date()
       // 获取本地时间与 UTC 时间的偏移量（以分钟为单位）
-      let offsetMinutes = now.getTimezoneOffset();
+      let offsetMinutes = now.getTimezoneOffset()
       // 北京时间与 UTC 的时区偏移量是 +8 小时
-      let offsetBeijing = 8 * 60;
+      let offsetBeijing = 8 * 60
       // 计算北京时间的毫秒数
-      let beijingTime = now.getTime() + (offsetBeijing + offsetMinutes) * 60 * 1000;
+      let beijingTime = now.getTime() + (offsetBeijing + offsetMinutes) * 60 * 1000
       // 创建包含北京时间的 Date 对象
-
 
       let socketType = false
       if (window.socketType) {
         socketType = true
       }
-      this.messagesList.push(
-        {
-          itemCreateTime: moment(beijingTime).format('YYYY-MM-DD HH:mm:ss'),
-          // sessionId: this.user.sessionId,
-          // sendSessionId: this.user.sendSessionId,
-          // userId: '1',
-          sendUser: this.$store.state.user.userId,
-          sendUserName: this.$store.state.user.userName,
-          content: this.contentText,
-          avatar: this.$store.getters.avatar, // 当前用户头像
-          entityId: this.user ? this.user.entityId : '',
-          entityType: this.user ? this.user.entityType : '',
-          socketType: socketType
-        }
-      )
+      this.messagesList.push({
+        itemCreateTime: moment(beijingTime).format('YYYY-MM-DD HH:mm:ss'),
+        // sessionId: this.user.sessionId,
+        // sendSessionId: this.user.sendSessionId,
+        // userId: '1',
+        sendUser: this.$store.state.user.userId,
+        sendUserName: this.$store.state.user.userName,
+        content: this.contentText,
+        avatar: this.$store.getters.avatar, // 当前用户头像
+        entityId: this.user ? this.user.entityId : '',
+        entityType: this.user ? this.user.entityType : '',
+        socketType: socketType
+      })
       let params = {
         itemCreateTime: moment().format('YYYY-MM-DD HH:mm:ss'),
         // sessionId: this.user.sessionId,
@@ -288,22 +264,22 @@ export default {
         entityId: this.user ? this.user.entityId : '',
         entityType: this.user ? this.user.entityType : '',
         selectUserIds: this.selectUserIds
-      };
+      }
 
       this.$emit('input', params)
       setTimeout(() => {
-        this.scrollBottm();
-        this.contentText = "";
+        this.scrollBottm()
+        this.contentText = ''
         this.$refs.textareaRef.focus()
-      }, 100);
+      }, 100)
     },
-    callOut () {
+    callOut() {
       this.entityId = this.user.entityId
       this.resourceSelectVisible = true
     },
-    resourceSelected (rows) {
+    resourceSelected(rows) {
       let names = ''
-      rows.forEach(item => {
+      rows.forEach((item) => {
         this.selectUserIds.push(item.userId)
         names = names + ' @' + item.name + ' '
       })
@@ -314,10 +290,10 @@ export default {
       }
       this.resourceSelectVisible = false
     },
-    resourceSelectclosed () {
+    resourceSelectclosed() {
       this.resourceSelectVisible = false
     },
-    searchShow () {
+    searchShow() {
       this.historyMsg = true
       this.historyParams = {
         entityId: this.user ? this.user.entityId : '',
@@ -325,28 +301,35 @@ export default {
         history: 'history'
       }
     },
-    visibleHistory () {
+    visibleHistory() {
       this.historyMsg = false
       this.historyParams = {}
     },
-    scrollBottm () {
-      let el = this.$refs.msgBox;
+    scrollBottm() {
+      let el = this.$refs.msgBox
       if (el) {
-        el.scrollTop = el.scrollHeight;
+        el.scrollTop = el.scrollHeight
       }
     },
-    historyClick (id) {
-      let arr = [{
-        ID: id
-      }]
+    taskClick(id) {
+      this.taskId = id
+      this.visibleTaskInfo = true
+    },
+    historyClick(id) {
+      let arr = [
+        {
+          ID: id
+        }
+      ]
       this.selsectRows = arr
       this.visibleFeedback = true
     },
-    visibleMsgClose () {
+    visibleMsgClose() {
       this.visibleFeedback = false
+      this.visibleTaskInfo = false
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -357,25 +340,31 @@ export default {
   background: #ffffff;
   position: relative;
 }
+
 .header {
   margin: 20px 10px;
 }
+
 .drawer-right {
   width: 100%;
   height: calc(100% - 50px);
 }
+
 .chat-box {
   height: 100%;
 }
+
 .msg-box {
   height: 70%; /* 设置容器的高度，使其可以滚动 */
   overflow-y: auto; /* 显示滚动条 */
 }
+
 .refresh-wrapper {
   text-align: center;
   padding: 10px 0;
   color: #999;
 }
+
 // .msg .user-msg .right {
 //   text-align: start;
 // }
@@ -386,6 +375,7 @@ export default {
   position: relative;
   display: flex;
   justify-content: flex-start !important;
+
   .user-head {
     min-width: 2.5rem;
     width: 20%;
@@ -396,23 +386,28 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+
     .head {
       width: 1.2rem;
       height: 1.2rem;
     }
   }
+
   .use-style {
     display: flex;
     flex-direction: column;
     width: 100%;
   }
+
   .text-align {
     text-align: end;
   }
+
   .user-msg {
     width: 100%;
     word-break: break-all;
     position: relative;
+
     span {
       display: inline-block;
       padding: 0.5rem 0.7rem;
@@ -420,6 +415,7 @@ export default {
       margin-top: 0.2rem;
       font-size: 0.88rem;
     }
+
     @keyframes toLeft {
       0% {
         opacity: 0;
@@ -441,12 +437,14 @@ export default {
       }
     }
   }
+
   .left {
     background: #f5f5f5;
     animation: toLeft 0.5s ease both 1;
     max-width: 300px;
     text-align: start;
   }
+
   .right {
     background: #53a8ff;
     color: white;
@@ -455,12 +453,14 @@ export default {
     text-align: start;
   }
 }
+
 .contentText-box {
   height: 30%;
   width: 100%;
   border-top: 2px #f2f2f2 solid;
   overflow-y: visible;
 }
+
 .contentText-textarea {
   width: 98%;
   height: 80%;
@@ -468,19 +468,23 @@ export default {
   border: none;
   outline-color: rgb(255, 255, 255);
 }
+
 .btn {
   position: absolute;
   right: 10px;
   bottom: 0px;
 }
+
 .el-icon-search {
   font-size: 20px;
   margin: 5px;
 }
+
 .load-msg {
   text-align: center;
   margin-bottom: 20px;
 }
+
 .span-icon {
   display: flex;
   align-items: flex-start;

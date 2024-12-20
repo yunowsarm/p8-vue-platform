@@ -117,7 +117,6 @@ export default {
     }
   },
   created() {
-    debugger
     this.fetchTaskData(this.taskId)
   },
   methods: {
