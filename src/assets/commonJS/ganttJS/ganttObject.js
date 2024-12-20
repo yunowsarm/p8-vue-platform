@@ -2849,7 +2849,7 @@ GanttObject.getGanttSettingGrid = function (ganttName, createPage) {
 /**
  * 定义列类型对应关系，此处添加后，需要编写searchFilter方法对应属性过滤逻辑
  */
-const columnsTypeMap = {
+export const columnsTypeMap = {
   status: 'select',
   progressFeedback: 'select',
   managerStatus: 'select',
@@ -3351,7 +3351,7 @@ GanttObject.validateAchievement = function (ganttObject, vueThis, task) {
  * @param searchType
  * @returns {string}
  */
-function searchColumnRenderer (name, columnName, searchType) {
+export function searchColumnRenderer (name, columnName, searchType) {
   let result
   if (searchType === 'input') {
     // result = '<div class="gantt_search">' + columnName + '</div>' +

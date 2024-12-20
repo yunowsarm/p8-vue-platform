@@ -500,11 +500,13 @@ export default {
         GanttObject.setGanttObject(vueThis.ganttName, {})
         myGantt.destructor()
       }
+      // 清空表头查询缓存
+      vueThis.searchForm = {}
       // vuex存放
       vueThis.$store.dispatch('setVueThis', vueThis)
       // 初始化对象
       myGantt = getChangeGantt(vueThis.ganttName, vueThis)
-      myGantt.config.scale_height = 50
+      myGantt.config.scale_height = 100
       // gantt视图切换
       if (viewType === 'resource') {
         myGantt.config.readonly = true
