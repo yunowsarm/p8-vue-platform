@@ -9,7 +9,7 @@
   // font-size:1.1rem;
   line-height:40px;
 
-  i.zvpfont { 
+  i.zvpfont {
       display: inline-block;
       font-size:18px;
       width:24px;
@@ -33,4 +33,8 @@
 
 .el-menu--collapse .el-submenu .el-menu {
   z-index:500;
+}
+
+.el-tooltip__popper{
+  z-index: 10000 !important;
 }
