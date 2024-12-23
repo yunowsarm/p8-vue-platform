@@ -128,11 +128,13 @@ export default {
           // 将获取到的数据赋值给 formData
           this.formData = res
           // 组合责任人信息
-          this.formData.realName = `${this.formData.dutyName}-${this.formData.dutyUnitDeptName}-${this.formData.roleName}`
+          if (this.formData.dutyName) {
+            this.formData.realName = `${this.formData.dutyName}-${this.formData.dutyUnitDeptName}-${this.formData.roleName}`
+          }
           // 格式化比例数据
           this.formData.proportion = this.formData.proportion ? Math.round(res.proportion) + '%' : ''
           // 获取扩展属性
-          if (res && res.taskExtendList) {
+          if (res && res.taskExtendList.length > 0) {
             this.extraIds = {}
             res.taskExtendList.forEach((item) => {
               if (item.fieldType == 'datepicker') {
