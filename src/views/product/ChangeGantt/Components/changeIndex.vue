@@ -1,60 +1,78 @@
 <template>
   <div style="height: 100%">
     <P8SplitPane split='vertical'
-                  @resize="paneSizeChange"
+                 @resize="paneSizeChange"
                  :defaultPercent="defaultPercent"
                  :minPercent='0'>
       <template #paneL>
         <div class="couerDivClass"
-         id="couerDiv">
-            <div class="top"
-                :style="{ height: commandButtonBarHeight }">
-              <command-button-bar :panel-data="btnData"
-                                  :selected-tasks="selectedTasks"
-                                  :gantt-name="ganttName"
-                                  :hasSettings="false"
-                                  :plan-info-id="planInfoId"
-                                  @change-command-button="changeCommandButton"></command-button-bar>
-            </div>
-            <div class="bottom"
-                :class="expandBottom">
-              <change-gantt :plan-info-id="planInfoId"
-                            :plan-info-status="planInfoStatus"
-                            :task-id="taskId"
-                            v-bind="$attrs"
-                            :secret-grade="secretGrade"
-                            :plan-attribute-drawer="detailVisible"
-                            :create-page="createPage"
-                            :change-id="changeId"
-                            :read-only="readOnly"
-                            @hide-drawer="detailDrawerClosed"
-                            @closed="closed"
-                            @select-task="selectTask"
-                            @show-detail="showDetail"
-                            @save-success="detailDrawerClosed"
-                            :task-status="taskStatus"></change-gantt>
-            </div>
+             id="couerDiv">
+          <div class="top"
+               :style="{ height: commandButtonBarHeight }">
+            <command-button-bar :panel-data="btnData"
+                                :selected-tasks="selectedTasks"
+                                :gantt-name="ganttName"
+                                :hasSettings="false"
+                                :plan-info-id="planInfoId"
+                                @change-command-button="changeCommandButton"></command-button-bar>
           </div>
+          <div class="bottom"
+               :class="expandBottom">
+            <change-gantt ref="planGantt"
+                          :plan-info-id="planInfoId"
+                          :plan-info-status="planInfoStatus"
+                          :task-id="taskId"
+                          v-bind="$attrs"
+                          :secret-grade="secretGrade"
+                          :plan-attribute-drawer="detailVisible"
+                          :create-page="createPage"
+                          :change-id="changeId"
+                          :read-only="readOnly"
+                          @hide-drawer="detailDrawerClosed"
+                          @closed="closed"
+                          @open="openLocation"
+                          @select-task="selectTask"
+                          @show-detail="showDetail"
+                          @save-success="detailDrawerClosed"
+                          :task-status="taskStatus"></change-gantt>
+          </div>
+        </div>
       </template>
       <template #paneR>
         <div v-if="defaultPercent !== 100"
              class="x-style"><i class="el-dialog__close el-icon el-icon-close"
              @click="closeClick"></i></div>
         <plan-attribute @save-success="detailDrawerClosed"
-                      :task-id="selectTaskId"
-                      v-bind="$attrs"
-                      :create-page="createPage"
-                      :secret-grade="secretGrade"
-                      :att-read-only="readOnly"
-                      :gantt-name="ganttName"
-                      :status="status"
-                      :key="renderKey"
-                      :defaultPercent="defaultPercent"
-                      class="plan_attribute"
-                      :plan-info-id="planInfoId"></plan-attribute>
+                        :task-id="selectTaskId"
+                        v-bind="$attrs"
+                        :create-page="createPage"
+                        :secret-grade="secretGrade"
+                        :att-read-only="readOnly"
+                        :gantt-name="ganttName"
+                        :status="status"
+                        :key="renderKey"
+                        :defaultPercent="defaultPercent"
+                        class="plan_attribute"
+                        :plan-info-id="planInfoId"></plan-attribute>
       </template>
     </P8SplitPane>
-
+    <command-location v-if="dialogVisible"
+                      :visible="dialogVisible"
+                      @close="closeLocation">
+      <template>
+        <location-view ref="planGanttView"
+                       :plan-info-id="planInfoId"
+                       :plan-info-status="planInfoStatus"
+                       :task-id="taskId"
+                       v-bind="$attrs"
+                       :secret-grade="secretGrade"
+                       :plan-attribute-drawer="detailVisible"
+                       :create-page="createPage"
+                       :change-id="changeId"
+                       :read-only="readOnly"
+                       @onChangeTask="onChangeTask"></location-view>
+      </template>
+    </command-location>
     <!-- <el-drawer style="width: 60%; left: auto"
                :title="detailTitle"
                :append-to-body="true"
@@ -133,7 +151,7 @@
   font-size: 20px;
   margin-right: 10px;
 }
-.plan_attribute{
+.plan_attribute {
   height: calc(100% - 42px) !important;
 }
 </style>
@@ -148,10 +166,14 @@ import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
 import PlanAttribute from '../../PlanGantt/Components/planAttribute'
 import { mapGetters } from 'vuex'
 import { deepClone } from '@/utils/common'
+import CommandLocation from '@/components/gantt/Components/CommandLocation'
+import locationView from '@/views/product/PlanGantt/Components/planGantt/locationView'
+import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 export default {
   name: 'ChangeIndex',
   data () {
     return {
+      dialogVisible: false, // gantt定位弹出框
       firstEntry: true,
       renderKey: new Date().getTime(),
       defaultPercent: 100,
@@ -205,7 +227,9 @@ export default {
     ChangeGantt,
     PlanAttribute,
     CommandButtonBar,
-    P8SplitPane
+    P8SplitPane,
+    CommandLocation,
+    locationView
   },
   watch: {
     ganttButtonMode: {
@@ -273,6 +297,24 @@ export default {
   },
   mounted () { },
   methods: {
+    openLocation () {
+      this.dialogVisible = true
+    },
+    closeLocation () {
+      this.dialogVisible = false
+      this.$store.getters.vueThis.searchForm = {}
+      this.$store.getters.vueThisLocation.searchForm = {}
+      this.$refs.planGantt.relevanceVisible = false
+      this.$refs.planGantt.selectedTasks = []
+      this.$refs.planGantt.selectedId = this.$store.getters.vueThisLocation.selectTaskId
+      this.$refs.planGantt.initGantt(this.planInfoId, this.$store.getters.vueThis.changeRecordId, this.$store.getters.vueThis.viewType)
+    },
+    onChangeTask (row) {
+      let myGantt = GanttObject.getGanttObject(this.ganttName)
+      myGantt.unselectTask()
+      myGantt.showTask(row.id)
+      myGantt.selectTask(row.id)
+    },
     selectTask (selectDatas, ganttName) {
       this.selectedTasks = selectDatas
       this.ganttName = ganttName
@@ -285,7 +327,7 @@ export default {
       this.defaultPercent = 100
       this.firstEntry = true
     },
-    showDetail (selectTask, ganttName, createPage,switchType) {
+    showDetail (selectTask, ganttName, createPage, switchType) {
       if (this.firstEntry && switchType == 'switch' && this.defaultPercent == 100) return
       this.renderKey = new Date().getTime()
       this.createPage = createPage

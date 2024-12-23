@@ -669,7 +669,8 @@ export default {
       rightMenuConfigVisible: false, // 右键菜单配置弹出框
       yTask: null,
       getSelectTasks: [],
-      extendMap: {}
+      extendMap: {},
+      relevancePlanVisible: false
     }
   },
   watch: {
@@ -1011,6 +1012,13 @@ export default {
             vueThis.$store.dispatch('setTaskStyles', res.taskStyle)
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
+            myGantt.unselectTask()
+            if (!vueThis.relevancePlanVisible) {
+              setTimeout(() => {
+                myGantt.showTask(vueThis.selectedId);
+                myGantt.selectTask(vueThis.selectedId);
+              }, 1000)
+            }
             // 检查gantt操作权限
             // myGantt.config.readonly = editLockUnLockCheck(vueThis.planInfoStatus, vueThis.monitorLockMap)
           }
