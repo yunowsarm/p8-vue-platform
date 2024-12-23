@@ -36,6 +36,7 @@ const getters = {
   // planGantt页面任务样式
   taskStyles: (state) => state.planGanttState.taskStyles,
   vueThis: (state) => state.planGanttState.vueThis,
+  vueThisLocation: (state) => state.planGanttState.vueThisLocation,
   classifyBtnsByApi: (state) => state.planGanttState.classifyBtnsByApi,
   monitorBtnsByApi: (state) => state.planGanttState.monitorBtnsByApi,
   // 计划状态、任务状态限制gantt页面操作策略

@@ -2061,6 +2061,24 @@ export const CommandButtonData = [
     }
   },
   {
+    id: 'location-list',
+    icon: 'el-icon-location-outline',
+    title: '定位',
+    help: '定位',
+    msg: '定位',
+    clickFun: function (btn, ganttName, tasks) {
+      if (ganttName) {
+        const vueThis = store.getters.vueThis
+        vueThis.searchForm = {}
+        vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
+        vueThis.$emit('open', vueThis.myGantt)
+      }
+    },
+    isDisableFun: function (btn, ganttName, tasks) {
+      return false
+    }
+  },
+  {
     id: 'statistic-list',
     icon: 'p8 icon-shujushitu',
     title: '统计信息',
