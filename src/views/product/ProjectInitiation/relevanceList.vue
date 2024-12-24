@@ -17,9 +17,7 @@
                @selection-change="handleSelectionChangeDemand"
                @requested-table-data="requestedTableData">
       <template #operation="{ scope }">
-        <el-button type="text"
-                   :disabled="disabled(scope.row)"
-                   @click="cancelDetail(scope.row)">取消关联</el-button>
+
         <el-button type="text"
                    @click="showDetail(scope.row)">查看详情</el-button>
       </template>
@@ -124,7 +122,7 @@ export default {
           title: '操作',
           fixed: 'right',
           dataIndex: 'operation',
-          width: 140,
+          width: 100,
           scopedSlots: { customRender: 'custom' },
           align: 'center',
           headerAlign: 'center'
@@ -186,14 +184,6 @@ export default {
         return false
       }
       return true
-    },
-    disabled (row) {
-      if (row.demandStatus === '1a4c0e5a2022e3db79882411c378318b' ||
-        row.demandStatus === '0db5ad18b95fa31828ca0ae226c1a23e' ||
-        row.demandStatus === '545e73dc8c6dc8145efd118492ba3226') {
-        return true
-      }
-      return false
     },
     handleSelectionChangeDemand (rows, row, checked) {
       this.selectRecords = []

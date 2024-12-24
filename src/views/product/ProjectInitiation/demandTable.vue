@@ -17,6 +17,8 @@
                api="demandManagement.getRequirementByProject">
       <template #operation="{ scope }">
         <el-button type="text"
+                   @click="cancelDetail(scope.row)">取消关联</el-button>
+        <el-button type="text"
                    @click="showDetail(scope.row)">查看详情</el-button>
       </template>
     </vxe-table>
@@ -139,7 +141,7 @@ export default {
           title: '操作',
           fixed: 'right',
           dataIndex: 'operation',
-          width: 120,
+          width: 140,
           scopedSlots: { customRender: 'custom' },
           align: 'center',
           headerAlign: 'center'
@@ -193,6 +195,24 @@ export default {
     showDetail (row) {
       this.relevanceInfoDrawer = true
       this.selectRecords = [row]
+    },
+    cancelDetail (row) {
+      let id = ''
+      let that = this
+      if (this.row.length > 0) {
+        id = that.row[0].ID
+      } else {
+        id = this.configParmars.id
+      }
+      this.$api['demandManagement.cancelRequirementByProject']({
+        wholeId: id,
+        requirementIds: [row.id]
+      }).then(res => {
+        if (res) {
+          this.$message.success('取消成功')
+          this.$refs.xTable.searchData()
+        }
+      })
     }
   }
 }
