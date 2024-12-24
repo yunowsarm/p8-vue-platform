@@ -24,7 +24,7 @@
       </template>
       <template #durationDay>
         <div class="duration-days"
-             v-html="durationDayHandle(formData.status, formData.now, formData.planEndDate, formData.realEndDate)"></div>
+             v-html='getDurationDays(formData)'></div>
       </template>
       <template #progress>
         <el-progress :text-inside="true"
@@ -81,6 +81,7 @@
   </div>
 </template>
 <script>
+import { calculateRemainingDays } from "@/utils/common"
 import { P8Form as FormList, Progress, P8Dialog as CommonDialog } from 'p8-components-ui'
 import { getTaskStatusInfo } from '@/utils/commonBusiness'
 import moment from 'moment'
@@ -142,6 +143,10 @@ export default {
     })
   },
   methods: {
+    getDurationDays(data){
+      if(!data.status) return ''
+      return calculateRemainingDays(data).text
+    },
     demandClick () {
       this.isdemandTable = true
       this.taskId = this.taskInfo.id

@@ -18,8 +18,8 @@ const user = {
     roles: null, // 权限应该是返回个数组对象
     // confidentialiteList: [], // 用户密级,
     userSettingAll: {}, // 用户配置信息
-    ganttDoneSign: '', // 任务完成标志
-    ganttDisplayType:'', // gantt超期/剩余天数展示类型
+    doneSign: '', // 任务完成标志
+    displayType:'', // gantt超期/剩余天数展示类型
     ganttButtonMode: '', // gantt操作按钮采用单行还是双行模式
     ganttRightButtons: [], // gantt右键菜单
     userInfo: {}, // 用于JT智能表单的系统级参数
@@ -99,8 +99,8 @@ const user = {
       api['PlanGanttSetting.getSchedulingBasicConfig']({})
         .then((res) => {
           if (res) {
-            state.ganttDoneSign = res.ganttDoneSign.content
-            state.ganttDisplayType = res.displayType.content
+            state.doneSign = res.doneSign.content
+            state.displayType = res.displayType.content
             if (!state.ganttButtonMode) {
               state.ganttButtonMode = res.defaultMode.content
 

@@ -47,7 +47,7 @@
 import { P8Dialog as CommonDialog, P8ListLayout as ListLayout, P8Search as SearchForm, P8Table as CommonTable } from 'p8-components-ui'
 
 import { getTaskStatusInfo } from '../index'
-import { overdueTextHandle } from '@/utils/common'
+import { calculateRemainingDays } from '@/utils/common'
 export default {
   name: 'DialogUserTask',
   components: {
@@ -321,7 +321,7 @@ export default {
     },
     // 超期/剩余天数调用公共方法
     overdueTextFun (row) {
-      return overdueTextHandle(row)
+      return calculateRemainingDays(row).text
     },
     monitorpointIconHandle (row) {
       if (row.monitorpointArray && row.monitorpointIconArray) {

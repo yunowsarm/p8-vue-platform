@@ -21,7 +21,7 @@
 
 <script>
 import { P8Table as CommonTable } from 'p8-components-ui'
-import { overdueTextHandle } from '@/utils/common'
+import { calculateRemainingDays } from '@/utils/common'
 export default {
   name: 'userTaskPieChartTable',
   props: {
@@ -157,7 +157,7 @@ export default {
   },
   methods: {
     overdueTextFun (row) {
-      return overdueTextHandle(row)
+      return calculateRemainingDays(row).text
     },
     handleRowMointor (row) {
       if (row && row.monitorPoints) {

@@ -11,6 +11,7 @@ import Selector from '@/assets/commonJS/originalComponents/select'
 import Datepicker from '@/assets/commonJS/originalComponents/datePicker'
 import { P8TreeSelect, DatePicker } from 'p8-components-ui'
 import { generateTreeThree } from '@/utils/generateTree'
+import { calculateRemainingDays } from '@/utils/common'
 
 /**
  * @Description 计划时间限制策略
@@ -77,7 +78,7 @@ PlanDataLimit.strategyOne = function (ganttObject, taskId, minOrMax, startOrEnd)
  * @author fukai
  * @date 2020/5/15 13:02
  */
-function getManualParent (task, ganttObject) {
+function getManualParent(task, ganttObject) {
   if (task.autoScheduling === '1') {
     if (task.parent && ganttObject.isTaskExists(task.parent)) {
       const parTask = ganttObject.getTask(task.parent)
@@ -260,7 +261,7 @@ GanttObject.timeline_cell_class = function (ganttObject) {
  * @author fukai
  * @date 2020/5/15 15:29
  */
-function shouldHighlightTask (task, ganttObject) {
+function shouldHighlightTask(task, ganttObject) {
   const store = ganttObject.$resourcesStore
   const taskResource = task[ganttObject.config.resource_property]
   const selectedResource = store.getSelectedId()
@@ -274,7 +275,7 @@ function shouldHighlightTask (task, ganttObject) {
  * @author fukai
  * @date 2020/5/15 15:25
  */
-function shouldHighlightResource (resource, ganttObject) {
+function shouldHighlightResource(resource, ganttObject) {
   const selectedTaskId = ganttObject.getState().selected_task
   if (ganttObject.isTaskExists(selectedTaskId)) {
     const selectedTask = ganttObject.getTask(selectedTaskId)
@@ -293,7 +294,7 @@ function shouldHighlightResource (resource, ganttObject) {
  * @author fukai
  * @date 2020/5/15 15:21
  */
-function getResourceTasks (resourceId, ganttObject) {
+function getResourceTasks(resourceId, ganttObject) {
   const resourceStore = ganttObject.getDatastore(ganttObject.config.resource_store)
   const field = ganttObject.config.resource_property
   let tasks
@@ -608,7 +609,7 @@ const dpObjectMap = {}
  * @author fukai
  * @date 2020/5/21 18:31
  */
-GanttObject.getGanttObject = function getGanttObject (name, config) {
+GanttObject.getGanttObject = function getGanttObject(name, config) {
   if (name.replace(/(^s*)|(s*$)/g, '').length > 0) {
     if (Object.keys(ganttObjectMap).length > 0 && ganttObjectMap[name] && Object.keys(ganttObjectMap[name]).length > 0) {
       return ganttObjectMap[name]
@@ -622,7 +623,7 @@ GanttObject.getGanttObject = function getGanttObject (name, config) {
   }
   return null
 }
-GanttObject.getGanttObject = function getGanttObject (name) {
+GanttObject.getGanttObject = function getGanttObject(name) {
   if (name.replace(/(^s*)|(s*$)/g, '').length > 0) {
     if (Object.keys(ganttObjectMap).length > 0 && ganttObjectMap[name] && Object.keys(ganttObjectMap[name]).length > 0) {
       return ganttObjectMap[name]
@@ -637,7 +638,7 @@ GanttObject.getGanttObject = function getGanttObject (name) {
   return null
 }
 
-GanttObject.setGanttObject = function setGanttObject (name, ganttObject) {
+GanttObject.setGanttObject = function setGanttObject(name, ganttObject) {
   if (name.replace(/(^s*)|(s*$)/g, '').length > 0) {
     ganttObjectMap[name] = ganttObject
   }
@@ -648,7 +649,7 @@ GanttObject.setGanttObject = function setGanttObject (name, ganttObject) {
  * @author fukai
  * @date 2020/5/22 9:04
  */
-GanttObject.getDpObject = function getDpObject (name) {
+GanttObject.getDpObject = function getDpObject(name) {
   if (name.replace(/(^s*)|(s*$)/g, '').length > 0) {
     if (Object.keys(dpObjectMap).length > 0 && dpObjectMap[name] && Object.keys(dpObjectMap[name]).length > 0) {
       return dpObjectMap[name]
@@ -662,7 +663,7 @@ GanttObject.getDpObject = function getDpObject (name) {
  * @author fukai
  * @date 2020/5/22 9:04
  */
-GanttObject.setDpObject = function setDpObject (name, dpObject) {
+GanttObject.setDpObject = function setDpObject(name, dpObject) {
   if (name.replace(/(^s*)|(s*$)/g, '').length > 0) {
     dpObjectMap[name] = dpObject
   }
@@ -718,7 +719,7 @@ GanttObject.getActions = function (ganttObject) {
     undo: function () {
       ganttObject.ext.undo.undo()
     },
-    indentAction: function indent (taskId) {
+    indentAction: function indent(taskId) {
       const task = ganttObject.getTask(taskId)
       let prevId = ganttObject.getPrevSibling(taskId)
       while (ganttObject.isSelectedTask(prevId)) {
@@ -742,7 +743,7 @@ GanttObject.getActions = function (ganttObject) {
       }
       return null
     },
-    outdentAction: function outdent (taskId, initialIndexes, initialSiblings) {
+    outdentAction: function outdent(taskId, initialIndexes, initialSiblings) {
       const curTask = ganttObject.getTask(taskId)
       const oldParent = ganttObject.getTask(curTask.parent)
       const oldParenrPar = oldParent.parent
@@ -932,7 +933,8 @@ GanttObject.linksFormatter = function (ganttObject, formatter) {
 const html5DateFormat = '%Y-%m-%d'
 let dateToStr = null
 let strToDate = null
-function init (ganttObject) {
+
+function init(ganttObject) {
   if (!dateToStr) {
     dateToStr = ganttObject.date.date_to_str(html5DateFormat)
   }
@@ -940,6 +942,7 @@ function init (ganttObject) {
     strToDate = ganttObject.date.str_to_date(html5DateFormat)
   }
 }
+
 GanttObject.endDateEditor = function (ganttObject) {
   ganttObject.config.editor_types.end_date_editor = {
     show: function (id, column, config, placeholder) {
@@ -961,7 +964,7 @@ GanttObject.endDateEditor = function (ganttObject) {
       const html = "<div style='width:140px'><input type='date' " + minAttr + maxAttr + " name='" + column.name + "'></div>"
       placeholder.innerHTML = html
     },
-    hide: function () { },
+    hide: function () {},
     set_value: function (value, id, column, node) {
       if (value && value.getFullYear) {
         this.get_input(node).value = dateToStr(ganttObject.date.add(value, -1, 'day'))
@@ -1072,16 +1075,16 @@ GanttObject.customDateEditor = function (ganttObject) {
             }
           }
         },
-        mounted () {
+        mounted() {
           this.$refs.datePicker.focus()
         },
         watch: {
-          input (val, old) {
+          input(val, old) {
             val !== old && (document.getElementById('gantt_datePicker_' + name).value = val)
           }
         },
         methods: {
-          handlerBlur (value) {
+          handlerBlur(value) {
             ganttObject.ext.inlineEditors.save()
           }
         },
@@ -1221,16 +1224,16 @@ GanttObject.customEndDateEditor = function (ganttObject) {
             }
           }
         },
-        mounted () {
+        mounted() {
           this.$refs.datePicker.focus()
         },
         watch: {
-          input (val, old) {
+          input(val, old) {
             val !== old && (document.getElementById('gantt_end_datePicker_' + name).value = val)
           }
         },
         methods: {
-          handlerBlur (value) {
+          handlerBlur(value) {
             ganttObject.ext.inlineEditors.save()
           }
         },
@@ -1323,8 +1326,8 @@ GanttObject.treeDataEditor = function (ganttObject, editorConfig, editorConfig1)
             config: editorConfig1
           }
         },
-        created () { },
-        mounted () {
+        created() {},
+        mounted() {
           this.$api[this.config.optionUrl.api](this.config.optionUrl.params).then((res) => {
             if (this.config.useTreeFormat) {
               this.treeData = generateTreeThree(res, this.config.useTreePId)
@@ -1335,13 +1338,13 @@ GanttObject.treeDataEditor = function (ganttObject, editorConfig, editorConfig1)
           })
         },
         watch: {
-          input (val, old) {
+          input(val, old) {
             document.getElementById('gantt_treeSelect_' + name).value = val
             eventBus.$emit('isReflash', true)
           }
         },
         methods: {
-          handleChange (value) {
+          handleChange(value) {
             Gantt.searchColumnsChange(name, value, 'date')
           }
         },
@@ -1370,7 +1373,7 @@ GanttObject.treeDataEditor = function (ganttObject, editorConfig, editorConfig1)
     get_input: function (node) {
       return node.querySelector('input')
     },
-    focus: function (node) { }
+    focus: function (node) {}
   }
 }
 /**
@@ -1531,7 +1534,7 @@ GanttObject.editors = function (ganttObject, formatter, linksFormatter) {
  * @param ganttObject
  * @param parTasksIds
  */
-export function getTaskParent (ganttObject, taskId, parTasksIds) {
+export function getTaskParent(ganttObject, taskId, parTasksIds) {
   if (ganttObject.isTaskExists(taskId)) {
     const parentId = ganttObject.getTask(taskId).parent
     if (parentId && ganttObject.isTaskExists(parentId)) {
@@ -1617,7 +1620,7 @@ GanttObject.changeUnMoveTask = function (vueThis, ganttObject) {
  * @author fukai
  * @date 2020/5/18 15:58
  */
-GanttObject.calculateProgress = function calculateProgress (task, ganttObject) {
+GanttObject.calculateProgress = function calculateProgress(task, ganttObject) {
   let totalToDo = 0
   let totalDone = 0
   ganttObject.eachTask(function (child) {
@@ -1638,7 +1641,7 @@ GanttObject.calculateProgress = function calculateProgress (task, ganttObject) {
  * @author fukai
  * @date 2020/5/18 16:00
  */
-GanttObject.refreshProgress = function refreshProgress (id, submit, ganttObject, vueThis) {
+GanttObject.refreshProgress = function refreshProgress(id, submit, ganttObject, vueThis) {
   if (!ganttObject.isTaskExists(id)) {
     return
   }
@@ -1659,7 +1662,7 @@ GanttObject.refreshProgress = function refreshProgress (id, submit, ganttObject,
  * @param msg 提示内容
  * @param type success warning
  */
-GanttObject.showMessage = function showMessage (vueThis, msg, type) {
+GanttObject.showMessage = function showMessage(vueThis, msg, type) {
   if (type) {
     if (type === 'error') {
       vueThis.$message.error(msg)
@@ -1679,7 +1682,7 @@ GanttObject.showMessage = function showMessage (vueThis, msg, type) {
  * @param taskMonotors
  * @param arr2
  */
-GanttObject.calculateArrayContain = function calculateArrayContain (taskMonitors, selMonitor) {
+GanttObject.calculateArrayContain = function calculateArrayContain(taskMonitors, selMonitor) {
   if (taskMonitors !== null && taskMonitors !== '') {
     const taskM = taskMonitors.split(',')
     if (taskM.indexOf(selMonitor) !== -1) {
@@ -1702,7 +1705,7 @@ GanttObject.calculateArrayContain = function calculateArrayContain (taskMonitors
  * @param ganttObject
  * @returns {boolean}
  */
-function searchFilter (parent, searchForm, ganttObject) {
+function searchFilter(parent, searchForm, ganttObject) {
   const vueThis = store.getters.vueThis
   if (JSON.stringify(searchForm) !== '{}') {
     let task
@@ -1827,30 +1830,15 @@ function searchFilter (parent, searchForm, ganttObject) {
     const overdueRemainingDays = searchForm.overdueRemainingDays // 超期/剩余天数
     let overdueRemainingDaysCheck = true
     if (overdueRemainingDays && overdueRemainingDays.length > 0) {
-      let days = 0;
-      if (task.managerStatus === '6409') {
-        const realEndDate = new Date(moment(task.realEndDate).format('YYYY-MM-DD'))
-        const endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - 24 * 60 * 60 * 1000
-        days = Math.floor(Math.abs((realEndDate - endDate) / 1000 / 60 / 60 / 24))
-        if (realEndDate > endDate) {
-          days = -days
-        }
-      } else {
-        const nowDate = new Date(moment(new Date()).format('YYYY-MM-DD'))
-        const endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - 24 * 60 * 60 * 1000
-        days = Math.floor(Math.abs((nowDate - endDate) / 1000 / 60 / 60 / 24))
-        if (nowDate > endDate) {
-          days = -days
-        }
-      }
-
+      const result = calculateRemainingDays(task)
+      const days = result.value
 
       if (overdueRemainingDays == 0 && days >= 0) {
-        overdueRemainingDaysCheck = false;
+        overdueRemainingDaysCheck = false
       } else if (overdueRemainingDays == 7 && (days < 0 || days > 7)) {
-        overdueRemainingDaysCheck = false;
+        overdueRemainingDaysCheck = false
       } else if (overdueRemainingDays == 30 && (days < 0 || days > 30)) {
-        overdueRemainingDaysCheck = false;
+        overdueRemainingDaysCheck = false
       }
     }
 
@@ -1867,15 +1855,15 @@ function searchFilter (parent, searchForm, ganttObject) {
       const obj = reminderList.find((item) => {
         return item.id === task.id
       })
-      let reminder = -1;
+      let reminder = -1
       if (obj) {
-        reminder = obj.reminder;
+        reminder = obj.reminder
       }
-    if (progressFeedback && progressFeedback == 1 && Number(reminder) != 0) {
-      progressFeedbackCheck = false
-    } else if (progressFeedback && progressFeedback == 0 && Number(reminder) < 1) {
-      progressFeedbackCheck = false
-    }
+      if (progressFeedback && progressFeedback == 1 && Number(reminder) != 0) {
+        progressFeedbackCheck = false
+      } else if (progressFeedback && progressFeedback == 0 && Number(reminder) < 1) {
+        progressFeedbackCheck = false
+      }
     }
 
     const weatherControl = searchForm.weatherControl // 管控任务
@@ -2286,7 +2274,7 @@ GanttObject.beforeLinkUpdateCheck = function (ganttObject) {
  * @param ganttObject
  * @returns {boolean}
  */
-function linkAllowCheck (id, link, ganttObject) {
+function linkAllowCheck(id, link, ganttObject) {
   // 校验是否循环链接
   if (ganttObject.isCircularLink(link)) {
     return false
@@ -2312,7 +2300,7 @@ function linkAllowCheck (id, link, ganttObject) {
  * 由于编辑视图不包含gantt图，无法使用
  * @param ganttObject
  */
-GanttObject.zoomConfig = function ganttZoomConfig (ganttObject) {
+GanttObject.zoomConfig = function ganttZoomConfig(ganttObject) {
   return {
     // minColumnWidth: 20,
     // maxColumnWidth: 150,
@@ -2447,7 +2435,7 @@ GanttObject.linkDescription = function (ganttObject) {
  * @param linkType
  * @returns {string}
  */
-function linkTypeToString (linkType) {
+function linkTypeToString(linkType) {
   switch (linkType) {
     case '0':
       return 'Finish to start'
@@ -2689,7 +2677,6 @@ GanttObject.planChangeCheck = function (ganttObject, vueThis) {
  */
 GanttObject.onCollapse = function (ganttObject, vueThis) {
   return ganttObject.attachEvent('onCollapse', function () {
-
     vueThis.$bus.$emit('ganttOnFullscreen', false)
   })
 }
@@ -2819,7 +2806,7 @@ GanttObject.onBeforeRedo = function (ganttObject) {
  * @param vueThis
  * @returns {boolean}
  */
-export function progressRefreshCheck (vueThis) {
+export function progressRefreshCheck(vueThis) {
   let result = false
   const planStatusLockMap = store.getters.planStatusLockMap
   if (planStatusLockMap[vueThis.planInfoStatus] && planStatusLockMap[vueThis.planInfoStatus].refreshProgress === 'true') {
@@ -2898,7 +2885,7 @@ export const taskProgressFeedbackArr = [
   {
     id: '1',
     title: '已读'
-  },
+  }
 ]
 export const taskOverdueRemainingDaysArr = [
   {
@@ -2922,7 +2909,7 @@ export const taskWeatherControlArr = [
   {
     id: '0',
     title: '否'
-  },
+  }
 ]
 
 /**
@@ -2933,13 +2920,14 @@ export const taskWeatherControlArr = [
  * @returns {[]}
  */
 GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
-  function checkEdit () {
+  function checkEdit() {
     if (vueThis.pageName === 'planMonitor') {
       return false
     } else {
       return true
     }
   }
+
   const initColumns = getGanttColumns(ganttObject, vueThis)
   initColumns.forEach((initItem, initIndex) => {
     const name = initItem.name
@@ -2957,11 +2945,11 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
     // }
   })
   // 系统配置设置隐藏的列
-  const hideColumns = vueThis.columnSettings.filter(item => item.isEnable == '0')
+  const hideColumns = vueThis.columnSettings.filter((item) => item.isEnable == '0')
   // 系统设置，拓展属性
   const extraColumns = vueThis.columnSettings.filter((item) => item.attributeType === '1')
-  const hideColumnKeys = hideColumns.map(item => item.filedName)
-  const extraColumnKeys = extraColumns.map(item => item.filedName)
+  const hideColumnKeys = hideColumns.map((item) => item.filedName)
+  const extraColumnKeys = extraColumns.map((item) => item.filedName)
   // 获取gantt列配置信息
   const ganttSetting = GanttObject.getGanttSettingGrid(vueThis.ganttName, vueThis.createPage)
   // 存在配置信息时，同步，不存在时显示默认gantt列信息
@@ -3002,49 +2990,49 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
       }
     })
     // 处理拓展字段
-    extraColumns.forEach(item => {
+    extraColumns.forEach((item) => {
       let editType = null
       switch (item.filedType) {
         case 'text':
           editType = 'text'
-          break;
+          break
         case 'number':
           editType = 'number'
-          break;
+          break
         case 'textarea':
           editType = 'text'
-          break;
+          break
         case 'datepicker':
           editType = 'custom_date_editor'
-          break;
+          break
         default:
-          break;
+          break
       }
       if (settingExtra[item.filedName]) {
         let initItem = {
           name: 'kz' + item.id,
-          label: `<div class="gantt_search">${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class="gantt_search gantt_blank"></div>`,
+          label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
           align: 'center',
           resize: true,
           hide: settingExtra[item.filedName].hide,
           min_width: 120,
-          editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null,
+          editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null
         }
         tempColumns.splice(settingExtra[item.filedName].index, 1, initItem)
       } else {
         tempColumns.push({
           name: item.filedName,
-          label: `<div class="gantt_search">${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class="gantt_search gantt_blank"></div>`,
+          label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
           align: 'center',
           resize: true,
           hide: item.isEnable == '0',
           min_width: 120,
-          editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null,
+          editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null
         })
       }
     })
 
-    tempColumns = tempColumns.filter(el => el)
+    tempColumns = tempColumns.filter((el) => el)
 
     ganttObject.config.columns = tempColumns
   } else if (vueThis.columnSettings.length > 0) {
@@ -3054,7 +3042,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
       if (initColumn && initColumn.length > 0) {
         // initColumn[0].hide = !(item.isEnable == '1')
         // tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
-        if ((item.isEnable == '1')) {
+        if (item.isEnable == '1') {
           tempColumns.push({ ...initColumn[0] })
         }
       }
@@ -3063,23 +3051,23 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
         switch (item.filedType) {
           case 'text':
             editType = 'text'
-            break;
+            break
           case 'number':
             editType = 'number'
-            break;
+            break
           case 'textarea':
             editType = 'text'
-            break;
+            break
           case 'datepicker':
             editType = 'custom_date_editor'
-            break;
+            break
           default:
-            break;
+            break
         }
         if (item.isEnable == '1') {
           tempColumns.push({
             name: 'kz' + item.id,
-            label: `<div class="gantt_search">${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class="gantt_search gantt_blank"></div>`,
+            label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
             align: 'center',
             resize: true,
             hide: item.isEnable == '0',
@@ -3193,10 +3181,10 @@ GanttObject.searchColumnsDataInit = function (vueThis, ganttObject) {
             vueThis[inputKey] = new Inputor(`.${inputKey}`, {
               value: vueThis.searchForm[name] || '',
               placeholder: '请输入',
-              onChangeValue (value) {
+              onChangeValue(value) {
                 vueThis.searchForm[name] = value
               },
-              onChange (value) {
+              onChange(value) {
                 Gantt.searchColumnsChange(name, value, 'input')
               }
             })
@@ -3267,7 +3255,6 @@ GanttObject.searchColumnsDataInit = function (vueThis, ganttObject) {
  * @param task
  */
 GanttObject.calculateParentForecastDate = function (ganttObject, task) {
-
   if (task.parent) {
     api['planGanttManager.calculateParentForecastDate']({
       parentId: task.parent
@@ -3281,7 +3268,7 @@ GanttObject.calculateParentForecastDate = function (ganttObject, task) {
           })
         }
       })
-      .catch(() => { })
+      .catch(() => {})
   }
 }
 
@@ -3289,7 +3276,7 @@ GanttObject.calculateParentForecastDate = function (ganttObject, task) {
  * 更新预计时间
  * @param task
  */
-export function updateforecastDate (task, ganttObject) {
+export function updateforecastDate(task, ganttObject) {
   task.forecastBeginDate = GanttObject.dateToStr(task.start_date, '%Y-%m-%d', ganttObject)
   task.forecastEndDate = GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), '%Y-%m-%d', ganttObject)
 }
@@ -3329,7 +3316,7 @@ GanttObject.validateAchievement = function (ganttObject, vueThis, task) {
   if (childIds && childIds.length > 0) {
     let childAchievement = 0
     let childProportion = 0
-    childIds.forEach(childId => {
+    childIds.forEach((childId) => {
       let child = ganttObject.getTask(childId)
       childAchievement += Number(child.achievements)
       childProportion += Number(child.proportion)
@@ -3351,7 +3338,7 @@ GanttObject.validateAchievement = function (ganttObject, vueThis, task) {
  * @param searchType
  * @returns {string}
  */
-export function searchColumnRenderer (name, columnName, searchType) {
+export function searchColumnRenderer(name, columnName, searchType) {
   let result
   if (searchType === 'input') {
     // result = '<div class="gantt_search">' + columnName + '</div>' +

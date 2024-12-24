@@ -38,7 +38,7 @@ export default {
   components: { FormList },
   data() {
     return {
-      saveApi: 'PlanGanttSetting.saveSchedulingBasicConfig',
+      saveApi: 'PlanGanttSetting.saveOtherGlobalSettingsConfig',
       formData: {
         content: '',
         defaultMode: 'tabs',

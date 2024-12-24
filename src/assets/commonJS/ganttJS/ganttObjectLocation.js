@@ -10,6 +10,7 @@ import Selector from '@/assets/commonJS/originalComponents/select'
 import Datepicker from '@/assets/commonJS/originalComponents/datePicker'
 import { P8TreeSelect, DatePicker } from 'p8-components-ui'
 import { generateTreeThree } from '@/utils/generateTree'
+import { calculateRemainingDays } from '@/utils/common'
 
 /**
  * @Description 计划时间限制策略
@@ -1785,24 +1786,8 @@ function searchFilterLocation(parent, searchForm, ganttObject) {
     const overdueRemainingDays = searchForm.overdueRemainingDays // 超期/剩余天数
     let overdueRemainingDaysCheck = true
     if (overdueRemainingDays && overdueRemainingDays.length > 0) {
-      let days = 0;
-      if (task.managerStatus === '6409') {
-        const realEndDate = new Date(moment(task.realEndDate).format('YYYY-MM-DD'))
-        const endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - 24 * 60 * 60 * 1000
-        days = Math.floor(Math.abs((realEndDate - endDate) / 1000 / 60 / 60 / 24))
-        if (realEndDate > endDate) {
-          days = -days
-        }
-      } else {
-        const nowDate = new Date(moment(new Date()).format('YYYY-MM-DD'))
-        const endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - 24 * 60 * 60 * 1000
-        days = Math.floor(Math.abs((nowDate - endDate) / 1000 / 60 / 60 / 24))
-        if (nowDate > endDate) {
-          days = -days
-        }
-      }
-
-
+      const result = calculateRemainingDays(task)
+      const days = result.value
       if (overdueRemainingDays == 0 && days >= 0) {
         overdueRemainingDaysCheck = false;
       } else if (overdueRemainingDays == 7 && (days < 0 || days > 7)) {
@@ -2853,7 +2838,6 @@ const columnsTypeMap = {
   dutyDeptNameLocation: 'input',
   taskProjectNameLocation: 'input',
   secretGradeLocation: 'select',
-  roleNameLocation: 'input',
   weatherControlLocation: 'select',
   overdueRemainingDaysLocation: 'select',
   // 'predecessors': 'input',

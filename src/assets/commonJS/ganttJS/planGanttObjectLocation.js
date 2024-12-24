@@ -2,6 +2,7 @@ import { GanttObject, progressRefreshCheck } from './ganttObjectLocation'
 import { Gantt } from 'p8-dhtmlx-gantt'
 import api from '@/plugins/api'
 import moment from 'moment'
+import { calculateRemainingDays } from '@/utils/common'
 
 /**
  * @Description 获取gantt对象，不存在则创建
@@ -120,7 +121,7 @@ export function planGantt (ganttName, vueThisLocation) {
   // 单元格单击事件
   ganttObject.attachEvent('onTaskClick', function (id, e) {
     const task = ganttObject.getTask(id)
-    
+
     return true
   })
   // 新增前后置链接校验
@@ -544,32 +545,8 @@ export function getGanttLocationColumns (ganttObject, vueThisLocation) {
       min_width: 120,
       resize: true,
       template: function (task) {
-        let text = ''
-        if (task.managerStatus === '6409') {
-          const realEndDate = new Date(moment(task.realEndDate).format('YYYY-MM-DD'))
-          const endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - 24 * 60 * 60 * 1000
-          const days = Math.floor(Math.abs((realEndDate - endDate) / 1000 / 60 / 60 / 24))
-          // 已完成
-          if (realEndDate > endDate) {
-            text = `<span style="color: #F80012">超${days}天完成</span>`
-          } else if (days === 0) {
-            text = `<span style="color: #1892FF">当天完成</span>`
-          } else {
-            text = `<span style="color: #1892FF">提前${days}天完成</span>`
-          }
-        } else {
-          const nowDate = new Date(moment(new Date()).format('YYYY-MM-DD'))
-          const endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - 24 * 60 * 60 * 1000
-          const days = Math.floor(Math.abs((nowDate - endDate) / 1000 / 60 / 60 / 24))
-          if (nowDate > endDate) {
-            text = `<span style="color: #F80012">超${days}天</span>`
-          } else if (days === 0) {
-            text = `<span style="color: #1BBF9E">今天</span>`
-          } else {
-            text = `<span style="color: #0296ff">剩${days}天</span>`
-          }
-        }
-        return text
+        const result = calculateRemainingDays(task)
+        return result.text
       }
     },
     {

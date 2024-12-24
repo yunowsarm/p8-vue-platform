@@ -35,7 +35,7 @@
 <script>
 import Vue from 'vue'
 import { P8ListLayout as ListLayout, P8Table as CommonTable, P8Button as CommonButton, P8Search as SearchFormList } from 'p8-components-ui'
-import { overdueTextHandle } from '@/utils/common'
+import { calculateRemainingDays } from '@/utils/common'
 const columns = [
   {
     title: '序号',
@@ -171,7 +171,7 @@ export default {
   },
   methods: {
     overdueTextFun (row) {
-      return overdueTextHandle(row)
+      return calculateRemainingDays(row).text
     },
     tableRefresh (param) {
       param.then(() => {

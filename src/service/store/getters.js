@@ -23,8 +23,8 @@ const getters = {
   messageCount: (state) => state.user.messageCount,
   approvalTotalMsg: (state) => state.user.approvalTotalMsg,
   userSettingAll: (state) => state.user.userSettingAll,
-  ganttDoneSign: (state) => state.user.ganttDoneSign, // gantt任务完成标志
-  ganttDisplayType: (state) => state.user.ganttDisplayType, // gantt超期/剩余天数展示类型
+  doneSign: (state) => state.user.doneSign, // 任务完成标志
+  displayType: (state) => state.user.displayType, // 超期/剩余天数展示类型
   ganttButtonMode: (state) => state.user.ganttButtonMode, // gantt操作按钮单行双行模式配置
   ganttRightButtons: (state) => state.user.ganttRightButtons, // gantt右键菜单配置
   // 路由
