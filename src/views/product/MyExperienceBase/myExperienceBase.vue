@@ -139,7 +139,8 @@
 <script>
 import { P8NormalLayoutV1 as NormalLayout, P8Drawer as CommonDrawer, P8Table as CommonTable, P8Tree as commonTree, P8Form as FormList, P8Dialog as CommonDialog } from 'p8-components-ui'
 import DescribeView from '@/views/product/PlanGantt/Components/describeEdit/describeView.vue'
-import Detail from './taskDetail.vue'
+// import Detail from './taskDetail.vue'
+import Detail from '@/views/Framework/Message/components/TaskDetail/index.vue'
 export default {
   name: 'MyExperienceBase',
   components: {
