@@ -162,6 +162,8 @@ export default {
       this.formData.content = res.autoScheduling.content
       this.formData.defaultMode = res.defaultMode.content
       this.formData.taskFinish = res.taskFinish.content
+      this.formData.doneSign = res.doneSign.content
+      this.formData.displayType = res.displayType.content
       if (res.taskRealDateWrite.content === '1') {
         this.formData.taskRealDateWrite = '手动选择时间'
       } else {
