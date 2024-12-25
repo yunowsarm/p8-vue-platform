@@ -46,7 +46,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
     // 列定义
     ganttObject.config.columns = [
       {
-        name: 'flag',
+        name: 'status',
         label: '进度',
         align: 'center',
         width: 70,
@@ -68,7 +68,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
         }
       },
       {
-        name: 'flag',
+        name: 'managerStatus',
         label: '状态',
         align: 'center',
         width: 70,
@@ -88,39 +88,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
         }
       },
       {
-        name: 'changeStatusName',
-        label: '变更状态',
-        align: 'center',
-        width: 70,
-        resize: true,
-        template: function (task) {
-          let html = ''
-          if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
-            let infoType = task.infoType
-            let weatherChange = task.weatherChange
-            if (vueThis.ganttName && vueThis.ganttName === 'changeGantt' && weatherChange && weatherChange === '1') {
-              html = `<i class="gantt-tip p8 icon-change-item" style="color: #0d6bec;" title = "变更项"></i>`
-            }
-            if (infoType) {
-              switch (infoType) {
-                case 'create':
-                  html = `<i class="gantt-tip p8 icon-make-increase" style="color: #0d6bec;" title="调增"></i>`
-                  break
-                case 'update':
-                  html = `<i class="gantt-tip p8 icon-content-adjustment" style="color: #0d6bec;" title = "内容调整"></i>`
-                  break
-                case 'delete':
-                  html = `<i class="gantt-tip p8 icon-make-reductions" style="color: #0d6bec;" title = "调减"></i>`
-                  break
-              }
-            }
-            html += task.changeStatusName || ''
-          }
-          return html
-        }
-      },
-      {
-        name: 'text',
+        name: 'monitorPoints',
         label: '标识',
         align: 'left',
         min_width: 100,
@@ -150,7 +118,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
         }
       },
       {
-        name: 'text',
+        name: 'planType',
         label: '任务类型',
         align: 'center',
         width: 70,
@@ -328,15 +296,8 @@ export function getAnalysisGantt (ganttName, vueThis) {
         }
       },
       {
-        name: 'forecastBeginDate',
+        name: 'start_date',
         label: '计划开始时间',
-        align: 'center',
-        min_width: 100,
-        resize: true
-      },
-      {
-        name: 'oldForecastBeginDate',
-        label: '原计划开始时间',
         align: 'center',
         min_width: 100,
         resize: true
@@ -357,13 +318,6 @@ export function getAnalysisGantt (ganttName, vueThis) {
           }
           return ganttObject.date.add(task.end_date, -1, 'day')
         }
-      },
-      {
-        name: 'oldForecastEndDate',
-        label: '原计划完成时间',
-        align: 'center',
-        min_width: 100,
-        resize: true
       },
       {
         name: 'duration',
@@ -454,6 +408,41 @@ export function getAnalysisGantt (ganttName, vueThis) {
       })
       let nameList = [
         {
+          key: "managerStatus",
+          value: {
+            name: 'changeStatusName',
+            label: '变更状态',
+            align: 'center',
+            width: 70,
+            resize: true,
+            template: function (task) {
+              let html = ''
+              if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
+                let infoType = task.infoType
+                let weatherChange = task.weatherChange
+                if (vueThis.ganttName && vueThis.ganttName === 'changeGantt' && weatherChange && weatherChange === '1') {
+                  html = `<i class="gantt-tip p8 icon-change-item" style="color: #0d6bec;" title = "变更项"></i>`
+                }
+                if (infoType) {
+                  switch (infoType) {
+                    case 'create':
+                      html = `<i class="gantt-tip p8 icon-make-increase" style="color: #0d6bec;" title="调增"></i>`
+                      break
+                    case 'update':
+                      html = `<i class="gantt-tip p8 icon-content-adjustment" style="color: #0d6bec;" title = "内容调整"></i>`
+                      break
+                    case 'delete':
+                      html = `<i class="gantt-tip p8 icon-make-reductions" style="color: #0d6bec;" title = "调减"></i>`
+                      break
+                  }
+                }
+                html += task.changeStatusName || ''
+              }
+              return html
+            }
+          }
+        },
+        {
           key: "name",
           value: {
             name: 'oldName',
@@ -474,7 +463,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
           }
         },
         {
-          key: "forecastBeginDate",
+          key: "start_date",
           value: {
             name: 'oldForecastBeginDate',
             label: '原计划开始时间',
@@ -508,7 +497,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
     // 列定义
     ganttObject.config.columns = [
       {
-        name: 'flag',
+        name: 'status',
         label: '进度',
         align: 'center',
         width: 70,
@@ -530,7 +519,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
         }
       },
       {
-        name: 'flag',
+        name: 'managerStatus',
         label: '状态',
         align: 'center',
         width: 70,
@@ -582,7 +571,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
         }
       },
       {
-        name: 'text',
+        name: 'monitorPoints',
         label: '标识',
         align: 'left',
         min_width: 100,
@@ -612,7 +601,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
         }
       },
       {
-        name: 'text',
+        name: 'planType',
         label: '任务类型',
         align: 'center',
         width: 70,
@@ -773,7 +762,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
         }
       },
       {
-        name: 'forecastBeginDate',
+        name: 'start_date',
         label: '计划开始时间',
         align: 'center',
         min_width: 100,
