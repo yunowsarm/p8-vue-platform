@@ -419,9 +419,6 @@ export default {
               const relyIds = btn.relyIds != null ? btn.relyIds.split(',') : null
               // 互斥标识
               const mutexIds = btn.mutexIds != null ? btn.mutexIds.split(',') : null
-              if (btn.title == '测试') {
-                console.log(mutexIds, 1111111111)
-              }
               // 判断
               const taskCheck = tasks.some((t) => {
                 // 如果选中行已包含当前标识，不可选
