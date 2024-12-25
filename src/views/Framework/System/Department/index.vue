@@ -7,7 +7,6 @@
     <template #center>
       <common-table ref="table"
                     :comp="comp"
-                    :table-border="false"
                     :columns="columns"
                     :table-config="tableConfig"
                     :table-refresh="tableRefresh"
