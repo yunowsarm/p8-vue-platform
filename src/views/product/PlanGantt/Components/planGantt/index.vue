@@ -1245,6 +1245,10 @@ export default {
       // } else if (this.createPage === 'decompose') {
       //   this.group_type = '4'
       // }
+      if(this.planManagementStatus === '6620'){
+        myGantt.config.readonly = true
+        myGantt.config.readonlyReason = '计划发布审批，不可编辑'
+      }
     },
     loadGanttData (planInfoId, taskId, createPage) {
       const monitorBtns = this.monitorBtnsByApi
@@ -1260,6 +1264,7 @@ export default {
       })
         .then(function (res) {
           if (res) {
+            debugger
             let taskList = res.tasks
             vueThis.fullscreenLoading.close()
             // 先给task赋值拓展字段
@@ -1371,6 +1376,8 @@ export default {
         this.$emit('select-task', this.selectedTasks, this.ganttName)
         if (this.pageType !== 'history') {
           this.showDetail('switch')
+        }else{
+         this.$emit('switch-task',this.selectedTasks)
         }
       })
     },
@@ -1382,7 +1389,7 @@ export default {
       }
     },
     showDetail (type) {
-      this.pageType = 'switch'
+      this.pageType = type || 'switch'
       if (myGantt.getGlobalTaskIndex(this.selectTaskId) === 0) return
       // 如果是任务分解，非当前人员创建的，只能编辑责任人
       const userId = this.$store.getters.userInfo.id
