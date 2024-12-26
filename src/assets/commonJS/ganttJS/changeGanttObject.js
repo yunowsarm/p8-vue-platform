@@ -15,6 +15,8 @@ import Datepicker from '@/assets/commonJS/originalComponents/datePicker'
 import { Gantt } from 'p8-dhtmlx-gantt'
 import Inputor from '@/assets/commonJS/originalComponents/input'
 import Selector from '@/assets/commonJS/originalComponents/select'
+import img from '@/assets/image/gantt/weidu.png'
+import { calculateRemainingDays } from '@/utils/common'
 
 /**
  * @Description 获取gantt对象，不存在则创建
@@ -467,7 +469,18 @@ export function getChangeGantt (ganttName, vueThis) {
       }
     },
     { name: 'realBeginDate', label: '实际开始时间', align: 'center', min_width: 100, resize: true },
-    { name: 'realEndDate', label: '实际完成时间', align: 'center', min_width: 100, resize: true }
+    { name: 'realEndDate', label: '实际完成时间', align: 'center', min_width: 100, resize: true },
+    {
+      name: 'overdueRemainingDays',
+      label: '超期/剩余天数',
+      align: 'center',
+      min_width: 120,
+      resize: true,
+      template: function (task) {
+        const result = calculateRemainingDays(task)
+        return result.text
+      }
+    },
   ]
   // 创建资源载体
   ganttObject.$resourcesStore = GanttObject.createDatastore(ganttObject)
