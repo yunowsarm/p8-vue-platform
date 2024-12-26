@@ -207,7 +207,7 @@ export default {
         },
         {
           title: '录入时间',
-          dataIndex: 'itemCreateTime',
+          dataIndex: 'createTime',
           sortable: false,
           align: 'center',
           treeNode: true,
