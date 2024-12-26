@@ -139,7 +139,7 @@ export function calculateRemainingDays(task) {
       if (real_EndDate.startOf('day').isAfter(endDate.startOf('day'))) {
         // 超期完成
         value = -days
-        text = `<span style='color:  ${COLOR_OVERDUE}'>${displayType !== 'concise' ? `超期${days}天完成` : `-${days}天完成`}</span>`
+        text = `<span style='color:  ${COLOR_OVERDUE}'>${displayType !== 'concise' ? `超期${days}天完成` : `+${days}天完成`}</span>`
       } else if (days === 0) {
         // 当天完成
         value = 0
@@ -147,7 +147,7 @@ export function calculateRemainingDays(task) {
       } else {
         // 提前完成
         value = days
-        text = `<span style='color:  ${COLOR_ADVANCED}'>${displayType !== 'concise' ? `提前${days}天完成` : `+${days}天完成`}</span>`
+        text = `<span style='color:  ${COLOR_ADVANCED}'>${displayType !== 'concise' ? `提前${days}天完成` : `-${days}天完成`}</span>`
       }
 
       // 提交审批状态时加上待审批标记
@@ -164,7 +164,7 @@ export function calculateRemainingDays(task) {
     if (nowDate.startOf('day').isAfter(endDate.startOf('day'))) {
       // 超期
       value = -days
-      text = `<span style='color:  ${COLOR_OVERDUE}'>${displayType !== 'concise' ? `超期${days}天` : `-${days}天`}</span>`
+      text = `<span style='color:  ${COLOR_OVERDUE}'>${displayType !== 'concise' ? `超期${days}天` : `+${days}天`}</span>`
     } else if (days === 0) {
       // 今天
       value = 0
@@ -172,7 +172,7 @@ export function calculateRemainingDays(task) {
     } else {
       // 剩余天数
       value = days
-      text = `<span style='color:  ${COLOR_REMAINING}'>${displayType !== 'concise' ? `剩余${days}天` : `+${days}天`}</span>`
+      text = `<span style='color:  ${COLOR_REMAINING}'>${displayType !== 'concise' ? `剩余${days}天` : `-${days}天`}</span>`
     }
   }
 
