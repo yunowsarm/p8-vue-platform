@@ -62,10 +62,11 @@
                    :style="colorDynamicStyle(cbutton)"></div>
               <div v-else>
                 <i :class="cbutton.icon"
-                   :style="iconDynamicClass"></i>
+                   :style="[iconDynamicClass, !isDisable(cbutton) ? { color: cbutton.color || '' } : {}]"></i>
                 <span class="button-title"
                       v-if="size !== 'mini'"
-                      v-show="ganttButtonMode === 'tabs'">{{ cbutton.title }}</span>
+                      v-show="ganttButtonMode === 'tabs'"
+                      :style="!isDisable(cbutton) ? { color: cbutton.color || '' } : {}">{{ cbutton.title }}</span>
               </div>
             </el-button>
           </span>
@@ -232,6 +233,9 @@ export default {
     ...mapGetters(['vueThis', 'ganttButtonMode'])
   },
   mounted () {
+    if(this.cbutton.title === '设计工艺'){
+      console.log(this.cbutton)
+    }
     let that = this
     if (this.cbutton && this.cbutton.id == 'full-screen') {
       this.$bus.$on('ganttOnFullscreen', function (state) {
