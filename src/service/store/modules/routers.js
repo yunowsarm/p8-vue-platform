@@ -117,7 +117,7 @@ function generateNewRoutes(remoteRoutes) {
           meta: { ...route.meta, parentPath}
         }
       }
-      // console.log(addChildRoute, 'addChildRoute')
+      //
       // // 如果有子路由,则递归创建
       if (route.children && route.children.length) {
         addChildRoute.children = _createRoutes(route.children, routePath)

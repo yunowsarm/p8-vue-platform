@@ -151,8 +151,7 @@
 <script>
 import { Input, Button } from 'element-ui'
 import { P8MenuLayout as MenuLayout, P8ProcessApproval as ProcessApprovalView, P8Drawer as CommonDrawer, P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Dialog as CommonDialog, P8Table as CommonTable, P8Button as CommonButton } from 'p8-components-ui'
-import { selectGenerateTree } from '@/utils/common.js'
-import { overdueTextHandles } from '@/utils/common'
+import { calculateRemainingDays, selectGenerateTree } from '@/utils/common'
 import frontToBack from './frontToBack'
 import CommunicationMsg from '@/components/information/index.vue';
 export default {
@@ -353,7 +352,7 @@ export default {
     },
     // 超期/剩余天数调用公共方法
     overdueTextFun (row) {
-      return overdueTextHandles(row)
+      return calculateRemainingDays(row).text
     },
     async init () {
       const that = this

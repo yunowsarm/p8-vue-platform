@@ -75,7 +75,7 @@ export default {
       },
       {
         title: '反馈时间',
-        dataIndex: 'createTime',
+        dataIndex: 'itemCreateTime',
         align: 'left'
       }
     ]
@@ -132,7 +132,7 @@ export default {
       })
     },
     setMessage (formData) {
-      console.log(this.getPlanInfo(), '=================this.getPlanInfo()');
+
       let obj = Object.assign({}, formData)
       obj.planName = this.getPlanInfo().PLANNAME
       obj.name = this.getPlanInfo().NAME

@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     editIcon(row, column, event) {
-      console.log(row, 'row')
+
       this.record = row
       this.editIconDialog = true
     },

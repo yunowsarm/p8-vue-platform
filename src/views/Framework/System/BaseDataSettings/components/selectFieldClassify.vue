@@ -119,7 +119,7 @@ export default {
       })
       if (this.selectedRow && this.selectedRow.length > 0) {
         this.$api['basicDataRelation.relatedFieldClassify']({ parentId: this.record.id, children: data }).then(function (res) {
-          console.log(res, 'res')
+
           if (res === true) {
             that.$message({
               message: '关联成功',

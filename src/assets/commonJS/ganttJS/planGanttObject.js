@@ -6,6 +6,7 @@ import api from '@/plugins/api'
 import moment from 'moment'
 import { copyText } from '@/utils/common'
 import store from '@/plugins/store'
+import { calculateRemainingDays } from '@/utils/common'
 
 // 列可编辑图标
 const canEditIcon = '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>'
@@ -16,7 +17,7 @@ const suspendIcon = '<i class="element_icon el-icon-error" style="color:#ff0000;
  * @author fukai
  * @date 2020/5/22 12:00
  */
-export function planGantt (ganttName, vueThis) {
+export function planGantt(ganttName, vueThis) {
   // 获取gantt对象
   const ganttObject = GanttObject.getGanttObject(ganttName)
   // 单元格键盘导航
@@ -55,9 +56,10 @@ export function planGantt (ganttName, vueThis) {
         if (extraList.length > 0) {
           const extraData = []
           let extraIds = {}
-          vueThis.extendMap[task.id] && vueThis.extendMap[task.id].forEach(item => {
-            extraIds[item.fieldName] = item.id
-          })
+          vueThis.extendMap[task.id] &&
+            vueThis.extendMap[task.id].forEach((item) => {
+              extraIds[item.fieldName] = item.id
+            })
           extraList.forEach((item) => {
             let fieldValue = ''
             if (item.filedType === 'datepicker' && data['kz' + item.id] !== '') {
@@ -139,7 +141,7 @@ export function planGantt (ganttName, vueThis) {
           // vueThis.initGantt()
         })
       },
-      update: function (data, id) { },
+      update: function (data, id) {},
       delete: function (id) {
         return new ganttObject.Promise((resolve, reject) => {
           api['planGanttManager.removePlanGanttLink']({ id: id })
@@ -162,7 +164,7 @@ export function planGantt (ganttName, vueThis) {
     }
   })
   // 事件绑定
-  Gantt.setControlTime = function setControlTime (monitorId, monitorName, taskId) {
+  Gantt.setControlTime = function setControlTime(monitorId, monitorName, taskId) {
     const task = ganttObject.getTask(taskId)
     const monitorLockMap = vueThis.monitorLockMap
     // 加锁逻辑控制
@@ -175,7 +177,7 @@ export function planGantt (ganttName, vueThis) {
     }
   }
   // 表头查询值绑定
-  Gantt.searchColumnsChange = function searchColumnsChange (name, value, searchType, eleInstance) {
+  Gantt.searchColumnsChange = function searchColumnsChange(name, value, searchType, eleInstance) {
     const customComp = ['select', 'date', 'input']
     if (customComp.indexOf(searchType) < 0) {
       document.getElementById(name + searchType).setAttribute('value', value)
@@ -200,7 +202,7 @@ export function planGantt (ganttName, vueThis) {
     }
     ganttObject.render()
   }
-  Gantt.taskProgressDetails = function taskProgressDetails (taskId) {
+  Gantt.taskProgressDetails = function taskProgressDetails(taskId) {
     if (vueThis.createPage === 'compile' || vueThis.createPage === 'decompose') {
       vueThis.showTaskProgressDialog(taskId)
     }
@@ -448,15 +450,14 @@ export function planGantt (ganttName, vueThis) {
   GanttObject.resourceOnAfterSelect(ganttObject)
   GanttObject.setDpObject(ganttName, dp)
   GanttObject.setGanttObject(ganttName, ganttObject)
-  console.log("🚀 ~ planGantt ~ ganttName:", ganttName)
 
   ganttObject.attachEvent('onParse', function () {
     ganttObject.eachTask(function (task) {
-       if (vueThis.createPage === 'decompose') {
-          if (!task.parent) {
-            task.type = 'task'
-          }
-       }
+      if (vueThis.createPage === 'decompose') {
+        if (!task.parent) {
+          task.type = 'task'
+        }
+      }
     })
   })
   return ganttObject
@@ -468,7 +469,7 @@ export function planGantt (ganttName, vueThis) {
  * @param vueThis
  * @returns {({template: template, name: string, width: number, resize: boolean, label: string, align: string}|{template: template, name: string, width: number, resize: boolean, label: string, align: string}|{template: (function(*=): string), name: string, resize: boolean, label: string, align: string, min_width: number}|{template: (function(*): string), name: string, width: number, resize: boolean, label: string, align: string}|{template: (function(*=): string), name: string, resize: boolean, label: string, align: string, min_width: number})[]}
  */
-export function getGanttColumns (ganttObject, vueThis) {
+export function getGanttColumns(ganttObject, vueThis) {
   ganttObject.serverList('yesOron', [
     { key: '1', label: '是' },
     { key: '0', label: '否' }
@@ -525,7 +526,7 @@ export function getGanttColumns (ganttObject, vueThis) {
   // 加载编辑器
   const editors = GanttObject.editors(ganttObject, formatter, linksFormatter)
 
-  function checkEdit () {
+  function checkEdit() {
     if (vueThis.pageName === 'planMonitor') {
       return false
     } else {
@@ -573,9 +574,9 @@ export function getGanttColumns (ganttObject, vueThis) {
       template: function (task) {
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0 && task.proportion) {
           let parts = task.proportion.toString().split('.')
-          var fraction = parts.length === 1 ? '' : parts[1];
+          var fraction = parts.length === 1 ? '' : parts[1]
           if (2 > fraction.length) {
-            fraction += new Array(2 - fraction.length + 1).join('0');
+            fraction += new Array(2 - fraction.length + 1).join('0')
           }
           return parts[0] + '.' + fraction + '%'
         }
@@ -620,7 +621,7 @@ export function getGanttColumns (ganttObject, vueThis) {
           bool = true
           tips += '子任务存在绩效比例分配异常\n'
         }
-        if (bool) result = result + `<i class="p8 icon-tishi" title="${tips}" style="color: #e6a23c;"></i>`
+        if (bool) result = result + `<i class='p8 icon-tishi' title='${tips}' style='color: #e6a23c;'></i>`
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
           if (ganttObject.hasChild(task.id)) {
             result = result + '<div style="display: inline-block;' + (vueThis.taskStyles[task.id] || '') + 'font-weight:bold;">' + (task.name || '') + '</div>'
@@ -631,7 +632,7 @@ export function getGanttColumns (ganttObject, vueThis) {
           if (ganttObject.hasChild(task.id)) {
             result = result + '<div style="display: inline-block;font-weight:bold;">' + (task.name || '') + '</div>'
           } else {
-            result = (task.name || '')
+            result = task.name || ''
           }
         }
         return result
@@ -646,7 +647,7 @@ export function getGanttColumns (ganttObject, vueThis) {
       resize: true,
       editor: true,
       template: function (task) {
-        return `<span data-column-name="owner_id" class="gantt_owner_id">${task.realName || ''}</span>`
+        return `<span data-column-name='owner_id' class='gantt_owner_id'>${task.realName || ''}</span>`
         // const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
         // const owner = task[ganttObject.config.resource_property]
         // if (owner) {
@@ -813,7 +814,7 @@ export function getGanttColumns (ganttObject, vueThis) {
             const taskStatusMap = vueThis.taskStatusMap
             if (taskStatusMap && Object.keys(taskStatusMap).length > 0) {
               const item = taskStatusMap[status]
-              html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color};" title="${item.cmeaning}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
+              html = `<i class='gantt-tip p8 ${item.icon}' style='color: ${item.color};' title='${item.cmeaning}' task_status_disp='${item.id}' taskId='${task.id}'></i>`
             }
           }
         }
@@ -830,16 +831,16 @@ export function getGanttColumns (ganttObject, vueThis) {
         // 任务图标，排除根节点
         if (!(ganttObject.getGlobalTaskIndex(task.id) === 0)) {
           if (task.outputResult > 0) {
-            return `<i class="el-icon-star-on" style="color: #4bcafe;font-size: 23px" title="有提交物的"></i>`
+            return `<i class='el-icon-star-on' style='color: #4bcafe;font-size: 23px' title='有提交物的'></i>`
           }
           if (task.outputAsk > 0) {
-            return `<i class="el-icon-star-on" style="color: #faa010;font-size: 23px" title="有输出要求的"></i>`
+            return `<i class='el-icon-star-on' style='color: #faa010;font-size: 23px' title='有输出要求的'></i>`
           }
           const managerStatus = task.managerStatus
           if (managerStatus && vueThis.managerStatusMap) {
             const item = vueThis.managerStatusMap[managerStatus]
             if (item) {
-              return `<i class="${item.icon}" style="color: ${item.color}" title="${item.cmeaning}"></i>`
+              return `<i class='${item.icon}' style='color: ${item.color}' title='${item.cmeaning}'></i>`
             }
           }
         }
@@ -882,7 +883,7 @@ export function getGanttColumns (ganttObject, vueThis) {
                 const icon = point.icon
                 const controlTimeType = point.controlTimeType
                 if (id === '1023') {
-                  html += `<span style="cursor: pointer"><i class="p8 ${icon}" style="cursor:pointer;" title="${point.title}"></i></span>`
+                  html += `<span style='cursor: pointer'><i class='p8 ${icon}' style='cursor:pointer;' title='${point.title}'></i></span>`
                 } else {
                   if (controlTimeType && controlTimeType === '0') {
                     html +=
@@ -924,7 +925,7 @@ export function getGanttColumns (ganttObject, vueThis) {
           taskClassifyDatas.some((point, index) => {
             if (point.id === planType) {
               const icon = point.icon
-              html += `<i class="${icon}" style="cursor:pointer;" title="${point.title} "></i>`
+              html += `<i class='${icon}' style='cursor:pointer;' title='${point.title} '></i>`
               return true
             }
           })
@@ -974,7 +975,7 @@ export function getGanttColumns (ganttObject, vueThis) {
       label: '预计完成时间',
       align: 'center',
       min_width: 100,
-      resize: true,
+      resize: true
     },
     {
       name: 'realBeginDate',
@@ -997,32 +998,8 @@ export function getGanttColumns (ganttObject, vueThis) {
       min_width: 120,
       resize: true,
       template: function (task) {
-        let text = ''
-        if (task.managerStatus === '6409') {
-          const realEndDate = new Date(moment(task.realEndDate).format('YYYY-MM-DD'))
-          const endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - 24 * 60 * 60 * 1000
-          const days = Math.floor(Math.abs((realEndDate - endDate) / 1000 / 60 / 60 / 24))
-          // 已完成
-          if (realEndDate > endDate) {
-            text = `<span style="color: #F80012">超${days}天完成</span>`
-          } else if (days === 0) {
-            text = `<span style="color: #1892FF">当天完成</span>`
-          } else {
-            text = `<span style="color: #1892FF">提前${days}天完成</span>`
-          }
-        } else {
-          const nowDate = new Date(moment(new Date()).format('YYYY-MM-DD'))
-          const endDate = new Date(moment(task.end_date).format('YYYY-MM-DD')) - 24 * 60 * 60 * 1000
-          const days = Math.floor(Math.abs((nowDate - endDate) / 1000 / 60 / 60 / 24))
-          if (nowDate > endDate) {
-            text = `<span style="color: #F80012">超${days}天</span>`
-          } else if (days === 0) {
-            text = `<span style="color: #1BBF9E">今天</span>`
-          } else {
-            text = `<span style="color: #0296ff">剩${days}天</span>`
-          }
-        }
-        return text
+        const result = calculateRemainingDays(task)
+        return result.text
       }
     },
     {
@@ -1038,11 +1015,11 @@ export function getGanttColumns (ganttObject, vueThis) {
         })
         let img = require('@/assets/image/gantt/weidu.png')
         if (obj && obj.id && Number(obj.reminder) > 0) {
-          return `<span onclick=Gantt.taskProgressDetails('${task.id}') style="cursor: pointer">
-            <img style="cursor: pointer;width: 17px; height: 17px" src="${img}" />
+          return `<span onclick=Gantt.taskProgressDetails('${task.id}') style='cursor: pointer'>
+            <img style='cursor: pointer;width: 17px; height: 17px' src='${img}' />
           </span>`
         } else if (obj && obj.id && obj.reminder == 0) {
-          return `<span onclick=Gantt.taskProgressDetails('${task.id}') class="p8 icon-read-mail" style="cursor: pointer;"></span>`
+          return `<span onclick=Gantt.taskProgressDetails('${task.id}') class='p8 icon-read-mail' style='cursor: pointer;'></span>`
         } else {
           return ''
         }
@@ -1051,4 +1028,4 @@ export function getGanttColumns (ganttObject, vueThis) {
   ]
 }
 
-export function planMonitorAdd (ganttObject, vueThis) { }
+export function planMonitorAdd(ganttObject, vueThis) {}

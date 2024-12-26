@@ -214,7 +214,7 @@ export default {
       this.$refs.table.$refs.table.setCurrentRow(row)
     },
     rowClick (row, column, e) {
-      console.log(row, column, e, 'yk-row-click')
+
       this.$emit('itemClick', row)
     },
     changePage (current) {

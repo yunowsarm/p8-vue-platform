@@ -88,9 +88,9 @@ export default {
             {
               validator: (rule, value, callback) => {
                 let that = this
-                // console.log(that.userId)
+                //
                 this.$api['userManager.repeatedCheck']({ id: that.userId, userName: value }).then((response) => {
-                  // console.log(response)
+                  //
                   if (response.result) {
                     callback(new Error('用户名已被使用！'))
                   } else {
@@ -292,40 +292,40 @@ export default {
   mounted () { },
   methods: {
     rendered () {
-      // console.log('currentSelectDeptId', this.currentSelectDeptId)
+      //
       if (this.userId && this.userId !== '') {
         this.getUserData(this.userId)
       }
     },
     clickEvent () {
-      console.log('click')
+
     },
     cancel () {
       this.$emit('cancel')
     },
     getUserData (userId) {
       let that = this
-      console.log('loadUserId', userId)
+
 
       this.$api['userManager.userInfo']({ id: that.userId })
         .then(function (res) {
-          console.log('Success')
+
           let { id, userName, pid, realName, departmentId, gender, otel, oemail, indexNo, roles, birthdate: birthDate, empcode: empCode, workpost: workPost, tecpost: tecPost } = res
           that.formData = { id, userName, pid, realName, departmentId, gender, otel, oemail, indexNo, roles, birthDate, empCode, workPost, tecPost }
           // let { id, userName, pid, realName, departmentId, confidentialite, gender, otel, oemail, indexNo, roles, birthdate: birthDate, empcode: empCode, workpost: workPost, tecpost: tecPost } = res
           // that.formData = { id, userName, pid, realName, departmentId, confidentialite, gender, otel, oemail, indexNo, roles, birthDate, empCode, workPost, tecPost }
-          console.log('formData', that.formData)
+
         })
         .catch(function (error) {
-          console.log('error' + error)
+
         })
     },
     saved (res) {
-      console.log('edit saved')
+
       this.$emit('saveSuccess', res)
     },
     handleChange (info) {
-      console.log(info, 'info')
+
     }
   }
 }

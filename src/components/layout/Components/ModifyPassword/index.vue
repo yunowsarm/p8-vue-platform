@@ -92,7 +92,7 @@ export default {
             newPassword: this.passwordForm.password
           }
           this.$api['user.password.edit'](params).then((res) => {
-            console.log(res, '=====res')
+
             if (res) {
               this.$refs.passwordForm.resetFields()
               this.$alert('密码修改成功! 点击确认后重新登录.', '修改密码', {

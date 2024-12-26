@@ -423,7 +423,7 @@ export default {
       this.$emit('cancel')
     },
     clickEvent () {
-      console.log('click')
+
     },
     getRoleData (roleId) {
       const that = this
@@ -455,7 +455,7 @@ export default {
       this.$emit('saveSuccess', res)
     },
     handleChange (info) {
-      console.log(info, 'info')
+
     },
     showModal () {
       this.visible = true

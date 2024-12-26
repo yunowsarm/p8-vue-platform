@@ -90,10 +90,10 @@ let editColumns = [
       {
         validator: (rule, value, callback) => {
           const that = thisComponent
-          // console.log(thisComponent)
+          //
           if (!that.record || (that.record && that.record.name !== value)) {
             that.$api['resource.checkRepeated']({ id: that.record.id, name: value }).then((response) => {
-              // console.log(response)
+              //
               if (response.result) {
                 callback(new Error(response.resultMsg))
               } else {
@@ -231,7 +231,7 @@ let getColumns = function (resType, comp) {
   //英文名称的唯一性校验需要用到vue组件中this对象，在getColumns时传入备用。
   thisComponent = comp
   let typeColFields = _.get(editFormConfigs, resType, [])
-  console.log('typeColFields', typeColFields)
+
   return _.filter(editColumns, (o) => typeColFields.includes(o.fieldName))
 }
 export { validResTypes, getColumns }

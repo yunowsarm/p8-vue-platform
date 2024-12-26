@@ -27,7 +27,7 @@ import { P8Table as CommonTable, Tooltip, Progress } from 'p8-components-ui'
 
 import { getMonitorData, getBudgetData } from '@/components/workLayout/Components/projectProgress/Components/layoutData'
 import RevenueView from '@/components/workLayout/Components/projectProgress/Components/taskProgressInformation/Components/revenueView'
-import { overdueTextHandle } from '@/utils/common'
+import { calculateRemainingDays } from '@/utils/common'
 import langCn from '@/config/const/lang_cn'
 export default {
   name: 'UserTaskList',
@@ -195,7 +195,7 @@ export default {
     },
     // 超期/剩余天数调用公共方法
     overdueTextFun(row) {
-      return overdueTextHandle(row)
+      return calculateRemainingDays(row).text
     },
     monitorpointIconHandle(row) {
       const that = this

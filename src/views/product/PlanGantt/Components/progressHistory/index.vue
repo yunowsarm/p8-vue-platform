@@ -81,7 +81,7 @@ export default {
         },
         {
           title: '反馈时间',
-          dataIndex: 'createTime',
+          dataIndex: 'itemCreateTime',
           align: 'center',
           width: 160
         }
@@ -135,7 +135,7 @@ export default {
         },
         {
           title: '反馈时间',
-          dataIndex: 'createTime',
+          dataIndex: 'itemCreateTime',
           align: 'left'
         }
       ]
@@ -150,5 +150,6 @@ export default {
 <style lang="scss" scoped>
 .custom-common-tabs {
   height: calc(100% - 50px);
+  margin-top: 37px;
 }
 </style>

@@ -172,7 +172,7 @@ export default {
   },
   methods: {
     rendered () {
-      console.log('userId', this.userId)
+
       if (this.userId && this.userId !== '') {
         this.getUserData(this.userId)
       }
@@ -183,7 +183,7 @@ export default {
         id: that.userId
       })
         .then(function (res) {
-          console.log('res:', res)
+
           const {
             id,
             userName,
@@ -232,7 +232,7 @@ export default {
           }
           // that.$refs.form.setViewFields(that.formData)
 
-          console.log('formData', that.formData)
+
         })
         .catch(function (error) {
           console.log(error)
@@ -242,7 +242,7 @@ export default {
       this.$emit('cancel')
     },
     saved (res) {
-      console.log('safeset saved')
+
       this.$emit('save-success', res)
     }
   }

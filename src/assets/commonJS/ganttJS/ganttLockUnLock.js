@@ -11,7 +11,7 @@ import { backfillChangeDatas } from './changeGantt'
  * @param monitorLockMap 标识加解锁状态map
  * @returns {boolean} true:不可编辑，false:可操作
  */
-export function editLockUnLockCheck(planStatus, monitorLockMap) {
+export function editLockUnLockCheck (planStatus, monitorLockMap) {
   if (monitorLockMap && Object.keys(monitorLockMap).length > 0) {
     // 获取gannt操作限制策略
     const planStatusLockMap = store.getters.planStatusLockMap
@@ -32,7 +32,7 @@ export function editLockUnLockCheck(planStatus, monitorLockMap) {
  * @param ganttObject gantt对象
  * @returns {boolean} true:不可编辑，false:可操作
  */
-export function monitorLockUnLockCheck(colName, taskMonitors, vueThis, ganttObject) {
+export function monitorLockUnLockCheck (colName, taskMonitors, vueThis, ganttObject) {
   let result = true
   if (vueThis.monitorLockMap && Object.keys(vueThis.monitorLockMap).length > 0) {
     // 操作的列为受标识锁定控制的列时
@@ -59,7 +59,7 @@ export function monitorLockUnLockCheck(colName, taskMonitors, vueThis, ganttObje
  * @param ganttObject gantt对象
  * @returns {boolean} true:不可编辑，false:可操作
  */
-export function monitorLockUnLockCheckTwo(colName, taskMonitors, vueThis, ganttObject) {
+export function monitorLockUnLockCheckTwo (colName, taskMonitors, vueThis, ganttObject) {
   let result = true
   const monitorBtnsByApi = store.getters.monitorBtnsByApi
   if (monitorBtnsByApi && monitorBtnsByApi.length > 0) {
@@ -86,7 +86,7 @@ export function monitorLockUnLockCheckTwo(colName, taskMonitors, vueThis, ganttO
  * gantt定义的columns中包含monitorLockLimit：true属性的列
  * @param columns
  */
-export function getMonitorLimitColumns(columns, vueThis) {
+export function getMonitorLimitColumns (columns, vueThis) {
   columns.forEach(function (item) {
     if (item.monitorLockLimit) {
       vueThis.limitColumns.push(item.name)
@@ -98,7 +98,7 @@ export function getMonitorLimitColumns(columns, vueThis) {
  * 任务删除时标识锁定校验（若选中任务或选中任务的子任务中存在加锁标识时，选中任务不可删除）
  * @param tasks
  */
-export function monitorLockUnRemoveCheck(tasks, ganttObject) {
+export function monitorLockUnRemoveCheck (tasks, ganttObject) {
   let result = true
   const vueThis = store.getters.vueThis
   if (vueThis.monitorLockMap && Object.keys(vueThis.monitorLockMap).length > 0) {
@@ -130,7 +130,7 @@ export function monitorLockUnRemoveCheck(tasks, ganttObject) {
  * @param result
  * @returns {*}
  */
-function checkTaskLockStatus(task, monitorLockMap, result) {
+function checkTaskLockStatus (task, monitorLockMap, result) {
   const monitors = task.monitorPoints
   if (monitors && monitors.length > 0) {
     monitors.split(',').some(function (item) {
@@ -149,7 +149,7 @@ function checkTaskLockStatus(task, monitorLockMap, result) {
  * @param monitorId
  * @returns {boolean}
  */
-export function lockMonitor(monitorLockMap, monitorId) {
+export function lockMonitor (monitorLockMap, monitorId) {
   if (monitorLockMap && Object.keys(monitorLockMap).length > 0) {
     if (monitorLockMap[monitorId] === '1') {
       return true
@@ -163,7 +163,7 @@ export function lockMonitor(monitorLockMap, monitorId) {
  * @param monitorId
  * @returns {boolean}
  */
-export function lockIUDMonitor(monitorLockMap) {
+export function lockIUDMonitor (monitorLockMap) {
   let flag = false
   if (monitorLockMap && Object.keys(monitorLockMap).length > 0) {
     const monitorLocks = Object.keys(monitorLockMap)
@@ -181,7 +181,7 @@ export function lockIUDMonitor(monitorLockMap) {
  * @param monitorId
  * @returns {boolean}
  */
-export function lockIUDMonitorCheck(monitorLockMap) {
+export function lockIUDMonitorCheck (monitorLockMap) {
   let flag = false
   if (monitorLockMap && Object.keys(monitorLockMap).length > 0) {
     const monitorLocks = Object.keys(monitorLockMap)
@@ -199,7 +199,7 @@ export function lockIUDMonitorCheck(monitorLockMap) {
  * @param monitorId
  * @returns {boolean}
  */
-export function lockMonitorUpdateCheck(monitorLockMap) {
+export function lockMonitorUpdateCheck (monitorLockMap) {
   let flag = false
   if (monitorLockMap && Object.keys(monitorLockMap).length > 0) {
     const monitorLocks = Object.keys(monitorLockMap)
@@ -217,10 +217,11 @@ export function lockMonitorUpdateCheck(monitorLockMap) {
  * @param task
  * @param ganttObject
  */
-export function ganttEditCheck(taskEditAble, task, ganttObject) {
+export function ganttEditCheck (taskEditAble, task, ganttObject) {
   // 已完成、提交审批的任务不可修改
   if (taskEditAble && taskEditAble === 'false') {
     task.readonly = true
+    task.readonlyReason = '任务已提交审批或已完成，不可修改'
     // 编辑加锁后任务类型默认为task，避免修改时间时发生联动
     task.type = 'task'
     task.auto_scheduling = false
@@ -245,8 +246,14 @@ export function ganttEditCheck(taskEditAble, task, ganttObject) {
  * @param ganttObject
  * @param vueThis
  */
-export function setLockTaskProperties(ganttObject, vueThis) {
+export function setLockTaskProperties (ganttObject, vueThis) {
   // 获取gannt操作限制策略
+  const ganttStatusName = {
+    1000: '已创建',
+    1010: '协同编制',
+    1070: '待下发',
+    1090: '已下发'
+  }
   const planStatusLockMap = store.getters.planStatusLockMap
   const planEditStatus = planStatusLockMap[vueThis.planInfoStatus].ganttEdit
   const controlTaskEdit = planStatusLockMap[vueThis.planInfoStatus].controlTaskEdit
@@ -263,16 +270,34 @@ export function setLockTaskProperties(ganttObject, vueThis) {
   // 已完成计划不可编辑
   if (planEditStatus === 'false') {
     ganttObject.config.readonly = true
+    ganttObject.config.readonlyReason = `${ganttStatusName[vueThis.planInfoStatus]}]}计划不可编辑`
     ganttObject.config.copy = true
   } else {
     return ganttObject.attachEvent('onParse', function () {
       vueThis.dependentDatas = []
+      // 使用计划的状态去禁用gant列表
+      const planManagementStatus = vueThis?.planManagementStatus;
+      if (planManagementStatus && planManagementStatus == '6620') {
+        ganttObject.config.readonly = true
+        ganttObject.config.readonlyReason = '计划发布审批，不可编辑'
+      }
       // 获取gannt操作限制策略
       const taskStatusLockMap = store.getters.taskStatusLockMap
       ganttObject.eachTask(function (task) {
         // task.checked = false
         if (task.status) {
           const editManagerStatus = taskStatusLockMap[task.status]
+          const statusName = {
+            6401: '已创建',
+            6402: '协同编制',
+            6403: '待下发',
+            6404: '已下发',
+            6405: '变更中',
+            6406: '提交审批',
+            6407: '审批驳回',
+            6408: '审批撤销',
+            6409: '审批完成'
+          }
           if (vueThis.ganttName === 'planGantt') {
             if (
               (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1 && ganttObject.getGlobalTaskIndex(task.id) !== 0) || // 已完成、变更中、提交审批任务不可操作
@@ -288,6 +313,23 @@ export function setLockTaskProperties(ganttObject, vueThis) {
             ) {
               // 计划编辑页面创建任务计划分解页面不可操作
               task.readonly = true
+              if (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1 && ganttObject.getGlobalTaskIndex(task.id) !== 0) {
+                task.readonlyReason = `任务为${statusName[task.managerStatus]}，不可操作`;
+              } else if (
+                controlTaskEdit &&
+                controlTaskEdit === 'false' &&
+                task.weatherControl &&
+                task.weatherControl === '1' &&
+                task.monitorPoints &&
+                task.monitorPoints.indexOf('1015') !== -1 &&
+                vueThis.monitorLockMap['101502'] === '1'
+              ) {
+                task.readonlyReason = '发布后可控任务不可编辑';
+              } else if (task.managerStatus === '6404') {
+                task.readonlyReason = '任务已下发，不可编辑';
+              } else if (task.managerStatus === '6407') {
+                task.readonlyReason = '任务审批驳回，不可编辑';
+              }
               // 已完成、可控任务类型默认为task，避免修改时间时发生联动
               task.type = 'task'
               task.auto_scheduling = false
@@ -298,9 +340,11 @@ export function setLockTaskProperties(ganttObject, vueThis) {
                 task.type = 'task'
               }
               task.readonly = false
+              task.readonlyReason = ''
               task.auto_scheduling = true
             } else {
               task.readonly = false
+              task.readonlyReason = ''
               task.type = 'task'
               task.auto_scheduling = false
             }
@@ -310,6 +354,7 @@ export function setLockTaskProperties(ganttObject, vueThis) {
             if (vueThis.createPage === 'userChange') {
               if ((editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1) || ganttObject.getGlobalTaskIndex(task.id) === 0) {
                 task.readonly = true
+                task.readonlyReason = `任务为${statusName[task.managerStatus]}，不可操作`;
                 task.type = 'task'
                 task.auto_scheduling = false
               } else if (!ganttObject.isChildOf(task.id, vueThis.taskId) && task.id !== vueThis.taskId) {
@@ -322,6 +367,7 @@ export function setLockTaskProperties(ganttObject, vueThis) {
                 }
               } else if (task.autoScheduling === '1') {
                 task.readonly = false
+                task.readonlyReason = ''
                 task.auto_scheduling = true
                 if (ganttObject.hasChild(task.id)) {
                   task.type = 'project'
@@ -330,6 +376,7 @@ export function setLockTaskProperties(ganttObject, vueThis) {
                 }
               } else {
                 task.readonly = false
+                task.readonlyReason = ''
                 task.type = 'task'
                 task.auto_scheduling = false
               }
@@ -343,10 +390,12 @@ export function setLockTaskProperties(ganttObject, vueThis) {
             } else {
               if ((editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1) || ganttObject.getGlobalTaskIndex(task.id) === 0) {
                 task.readonly = true
+                task.readonlyReason = `任务为${statusName[task.managerStatus]}，不可操作`;
                 task.type = 'task'
                 task.auto_scheduling = false
               } else if (task.autoScheduling === '1') {
                 task.readonly = false
+                task.readonlyReason = ''
                 task.auto_scheduling = true
                 if (ganttObject.hasChild(task.id)) {
                   task.type = 'project'
@@ -355,6 +404,7 @@ export function setLockTaskProperties(ganttObject, vueThis) {
                 }
               } else {
                 task.readonly = false
+                task.readonlyReason = ''
                 task.type = 'task'
                 task.auto_scheduling = false
               }
@@ -399,7 +449,7 @@ export function setLockTaskProperties(ganttObject, vueThis) {
  * @param task
  * @param ganttObject
  */
-export function monitorTimeCheck(monitorLockMap, task, ganttObject, monitorId, lockLevel) {
+export function monitorTimeCheck (monitorLockMap, task, ganttObject, monitorId, lockLevel) {
   // 计划完成
   if (ganttObject && ganttObject.config.readonly) {
     return false

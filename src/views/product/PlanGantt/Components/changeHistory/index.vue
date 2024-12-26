@@ -1,31 +1,30 @@
 <template>
   <div style="height: 100%;">
     <common-table ref="table"
-      width="100%"
-      :columns="columns"
-      :params="queryParam"
-      :api="tableApi"
-      :comp="comp"
-      height="100%"
-      :pagination=true>
+                  width="100%"
+                  :columns="columns"
+                  :params="queryParam"
+                  :api="tableApi"
+                  :comp="comp"
+                  height="100%"
+                  :pagination=true>
       <template #operate="{ scope }">
-        <el-button type='text' @click="showChangeDetail(scope.row)">查看</el-button>
+        <el-button type='text'
+                   @click="showChangeDetail(scope.row)">查看</el-button>
       </template>
     </common-table>
-    <el-drawer
-      title="变更详情"
-      :append-to-body="true"
-      size="100%"
-      :destroy-on-close="true"
-      :wrapper-closable="false"
-      @closed="onClose"
-      :visible.sync="analysisVisible">
-      <impact-analysis
-        :plan-info-id="planInfoId"
-        @closed="onClose"
-        :create-page="page"
-        :read-only="true"
-        :change-id="changeId"></impact-analysis>
+    <el-drawer title="变更详情"
+               :append-to-body="true"
+               size="100%"
+               :destroy-on-close="true"
+               :wrapper-closable="false"
+               @closed="onClose"
+               :visible.sync="analysisVisible">
+      <impact-analysis :plan-info-id="planInfoId"
+                       @closed="onClose"
+                       :create-page="page"
+                       :read-only="true"
+                       :change-id="changeId"></impact-analysis>
     </el-drawer>
   </div>
 </template>
@@ -75,7 +74,7 @@ export default {
         },
         {
           title: '创建时间',
-          dataIndex: 'createTime'
+          dataIndex: 'itemCreateTime'
         },
         {
           title: '是否产生变更记录',
@@ -152,5 +151,4 @@ export default {
 </script>
 
 <style>
-
 </style>

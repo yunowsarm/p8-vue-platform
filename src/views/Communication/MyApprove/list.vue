@@ -185,9 +185,9 @@ export default {
           _this.$store.dispatch('getMessageNum') // 获取消息信息已读未读条数
         }
 
-        // console.log('isReload:', _this.isReload)
-        // console.log('currentMessage', this.currentMessage)
-        // console.log('toggleMsgStatusApi:', res)
+        //
+        //
+        //
       })
     }
   }

@@ -22,6 +22,7 @@
                :class="expandBottom">
             <plan-gantt ref="planGantt"
                         :plan-info-id="planInfoId"
+                        :planManagementStatus="planManagementStatus"
                         :whole-describe-id="wholeDescribeId"
                         :plan-info-status="planInfoStatus"
                         :task-id="taskId"
@@ -33,6 +34,7 @@
                         :select-record="thirdMenuParam.selectRecord"
                         :panel-data="btnData"
                         @select-task="selectTask"
+                        @open="openLocation"
                         @show-detail="showDetail"
                         @refreshData="refreshData"
                         @save-success="detailDrawerClosed"
@@ -44,7 +46,12 @@
         <div v-if="defaultPercent !== 100"
              class="x-style"><i class="el-dialog__close el-icon el-icon-close"
              @click="closeClick"></i></div>
-        <plan-attribute :key="renderKey"
+        <ProgressHistory v-if="pageType === 'history'"
+                         :key="renderKey"
+                         :task-id="selectTaskId" />
+
+        <plan-attribute v-else
+                        :key="renderKey"
                         @save-success="detailDrawerClosed"
                         :create-page="createPage"
                         :task-id="selectTaskId"
@@ -58,6 +65,26 @@
                         :plan-info-id="planInfoId"></plan-attribute>
       </template>
     </P8SplitPane>
+    <command-location v-if="dialogVisible"
+                      :visible="dialogVisible"
+                      @close="closeLocation">
+      <template>
+        <location-view ref="planGanttView"
+                       :plan-info-id="planInfoId"
+                       :whole-describe-id="wholeDescribeId"
+                       :plan-info-status="planInfoStatus"
+                       :task-id="taskId"
+                       :plan-end-date-array="planEndDateArray"
+                       :plan-begin-date-array="planBeginDateArray"
+                       :create-page="createPage"
+                       :flag="thirdMenuParam.specialPlan"
+                       :project-category="thirdMenuParam.projectCategory"
+                       :select-record="thirdMenuParam.selectRecord"
+                       :panel-data="btnData"
+                       :task-status="taskStatus"
+                       @onChangeTask="onChangeTask"></location-view>
+      </template>
+    </command-location>
     <!-- <CommonDrawer
       v-if="detailVisible"
       :visible="detailVisible"
@@ -145,10 +172,15 @@ import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
 import PlanAttribute from './Components/planAttribute'
 import { deepClone } from '@/utils/common'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
+import ProgressHistory from './Components/progressHistory'
+import CommandLocation from '@/components/gantt/Components/CommandLocation'
+import locationView from './Components/planGantt/locationView'
 export default {
   name: 'PlanGanttManage',
   data () {
     return {
+      dialogVisible: false, // gantt定位弹出框
+      planManagementStatus: '',
       defaultKey: '1',
       advanced: false,
       selectedTasks: [],
@@ -159,6 +191,7 @@ export default {
       drawerConfig: {
         modal: false
       },
+      pageType: '',
       renderKey: new Date().getTime(),
       defaultPercent: 100,
       firstEntry: true,
@@ -258,10 +291,14 @@ export default {
     P8SplitPane,
     PlanAttribute,
     CommonDrawer,
-    CommandButtonBar
+    CommandButtonBar,
+    ProgressHistory,
+    CommandLocation,
+    locationView
   },
   beforeMount () { },
   created () {
+    this.planManagementStatus = this.thirdMenuParam.MANAGESTATUS
     this.firstEntry = true
   },
   mounted () {
@@ -293,8 +330,24 @@ export default {
     window.myWebSocket.emit('enterPlanGantGroup', this.msg)
   },
   methods: {
+    openLocation () {
+      this.dialogVisible = true
+    },
+    closeLocation () {
+      this.dialogVisible = false
+      this.$store.getters.vueThis.searchForm = {}
+      this.$store.getters.vueThisLocation.searchForm = {}
+      this.$refs.planGantt.relevancePlanVisible = false
+      this.$refs.planGantt.selectedId = this.$store.getters.vueThisLocation.selectTaskId
+      this.$refs.planGantt.initGantt(this.planInfoId, this.$refs.planGantt.viewType)
+    },
+    onChangeTask (row) {
+      let myGantt = GanttObject.getGanttObject(this.ganttName)
+      myGantt.unselectTask()
+      myGantt.showTask(row.id)
+      myGantt.selectTask(row.id)
+    },
     refreshData (res) {
-      let that = this
       // // this.$refs.commandBottonBar.$refs.components.getDataMonitor()
       this.$refs.commandBottonBar.$refs.components11[1].getDataMonitor()
       this.$refs.commandBottonBar.$refs.components11[1].getDataTaskType()
@@ -320,9 +373,13 @@ export default {
       this.firstEntry = true
     },
     showDetail (selectTask, ganttName, viewType, switchType) {
-      console.log("🚀 ~ showDetail ~ selectTask:", selectTask)
       // defaultPercent指的是gannt的宽度
       // 首次进入，单机任务且未拖动详情时，不弹出
+      if (switchType !== 'history') {
+        this.pageType = 'switch'
+      } else {
+        this.pageType = 'history'
+      }
       if (this.firstEntry && switchType == 'switch' && this.defaultPercent == 100) return
       this.renderKey = new Date().getTime()
       this.detailVisible = true

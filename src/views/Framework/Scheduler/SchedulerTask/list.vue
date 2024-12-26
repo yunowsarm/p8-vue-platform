@@ -284,10 +284,10 @@ export default {
     tableRefresh (param) {
       param
         .then(() => {
-          console.log('异步成功后端做的操作')
+
         })
         .catch(() => {
-          console.log('异步失败的操作')
+
         })
     },
     schedulerTaskCreate () {
@@ -400,7 +400,7 @@ export default {
         .catch(() => { })
     },
     closeOption (optionType) {
-      console.log('🚀 ~ file: list.vue ~ line 388 ~ closeOption ~ optionType', optionType)
+
       let that = this
       if (Object.keys(optionType).length > 0) {
         let msg = ''

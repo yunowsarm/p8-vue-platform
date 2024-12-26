@@ -290,7 +290,7 @@ export default {
   },
   created () {
     this.activeName = this.selectModel[0]
-    console.log('🚀 ~ created ~ this.activeName:', this.activeName)
+
   },
   mounted () {
     if (this.showType === '1' || this.showType === '2' || this.showType === '3') {
@@ -477,7 +477,7 @@ export default {
     tableRefresh (param) {
       param
         .then(() => {
-          console.log('异步成功后端做的操作')
+
         })
         .catch(() => {
           console.error('异步失败的操作')
@@ -517,7 +517,7 @@ export default {
     tableRefreshT (param) {
       param
         .then(() => {
-          console.log('异步成功后端做的操作')
+
         })
         .catch(() => {
           console.error('异步失败的操作')

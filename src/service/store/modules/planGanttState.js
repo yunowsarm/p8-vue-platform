@@ -4,6 +4,7 @@ const planGanttState = {
   state: {
     taskStyles: {}, // planGantt页面任务样式
     vueThis: {}, // planGantt页面this对象
+    vueThisLocation: {}, // planGantt页面this对象
     planStatusLockMap: {}, // 计划状态影响gantt页面操作策略
     taskStatusLockMap: {}, // 任务状态影响gantt页面操作策略
     classifyBtnsByApi: [],
@@ -22,6 +23,9 @@ const planGanttState = {
     },
     SET_VUE_THIS(state, vueThis) {
       state.vueThis = vueThis
+    },
+    SET_VUE_THIS_LOCATION(state, vueThis) {
+      state.vueThisLocation = vueThis
     },
     SET_PLAN_STATUS_LOCK_MAP(state, planStatusLockMap) {
       state.planStatusLockMap = planStatusLockMap
@@ -47,6 +51,9 @@ const planGanttState = {
     },
     setVueThis({ commit }, vueThis) {
       commit('SET_VUE_THIS', vueThis)
+    },
+    setVueThisLocation({ commit }, vueThis) {
+      commit('SET_VUE_THIS_LOCATION', vueThis)
     },
     setPlanStatusLockMap({ commit }, planStatusLockMap) {
       commit('SET_PLAN_STATUS_LOCK_MAP', planStatusLockMap)

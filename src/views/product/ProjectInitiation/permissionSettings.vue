@@ -235,6 +235,9 @@ export default {
     margin: 0;
     padding: 0;
     height: 100%;
+    .normal-center {
+      height: calc(100% - 50px);
+    }
   }
 }
 </style>

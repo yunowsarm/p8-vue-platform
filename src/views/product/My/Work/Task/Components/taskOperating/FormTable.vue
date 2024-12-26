@@ -238,7 +238,7 @@
                                style="margin-top: 8px;"
                                :percentage="formData.progress"></el-progress> -->
                   <el-slider v-model="formData.progress"
-                             :disabled="this.getPlanInfo().pageType"
+                             :disabled="this.getPlanInfo().pageType || disabledProgress"
                              @input="progressChange">
                   </el-slider>
                 </el-form-item>
@@ -250,6 +250,7 @@
                                    v-model="formData.progress"
                                    :min="minNum"
                                    :max="100"
+                                   :disabled="disabledProgress"
                                    :step="1"
                                    step-strictly
                                    @change="progressChange"></el-input-number>
@@ -463,6 +464,7 @@ export default {
   },
   data () {
     return {
+      disabledProgress: false,
       releaseMenuParams: {},
       selectUserBeforehandFormData: {
         SYS_USER: ''
@@ -516,6 +518,11 @@ export default {
     }
   },
   mounted () {
+
+    if (this.getPlanInfo().ISLEAF > 0) {
+      this.disabledProgress = true
+      this.getPlanInfo().pageType = 'view'
+    }
     this.minValue = Math.floor(Number(this.getPlanInfo().PROGRESS) * 100)
     //  进行中的任务不能减进度条
     // if (this.getPlanInfo().STATUS === '6050') {
@@ -616,9 +623,9 @@ export default {
       this.$emit('progress-date-change', date)
     },
     progressChange (val) {
-      // console.log(this.minValue, "🚀 ~ progressChange ~ val:", val)
+      //
       // if (val < this.minValue) {
-      //   console.log(this.minValue, '111111111111111');
+      //
       //   this.minNum = this.minValue
       //   this.formData.progress = this.minValue
       // } else {

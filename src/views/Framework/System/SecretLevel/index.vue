@@ -90,7 +90,7 @@ export default {
           })
         })
         .catch(() => {
-          console.log('取消')
+
         })
     },
     onEditViewSecretLevelClose () {

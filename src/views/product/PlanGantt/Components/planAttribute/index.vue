@@ -168,7 +168,7 @@ export default {
       const ganttObject = GanttObject.getGanttObject(this.ganttName)
       // 计划编制不可编辑状态字段
       const task = ganttObject.getTask(this.taskId)
-      if (this.ganttName == 'planGantt' && (task.managerStatus == '6409' || task.managerStatus == '6404' || task.managerStatus == '6406')) {
+      if (this.ganttName == 'planGantt' && ['6409', '6404', '6405', '6406'].includes(task.managerStatus)) {
         this.isChangeGantt = false
       }
       // 计划变更不可编辑状态字段
@@ -241,7 +241,7 @@ export default {
         this.isView = false
       }
     }
-    console.log(this.isChangeGantt, 'this.isChangeGanttthis.isChangeGanttthis.isChangeGantt');
+
 
   },
   data () {

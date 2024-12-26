@@ -1,8 +1,23 @@
-import { GanttObject } from './ganttObject'
+import {
+  GanttObject,
+  searchColumnRenderer,
+  taskOverdueRemainingDaysArr,
+  taskProgressFeedbackArr,
+  taskStatusArr,
+  taskWeatherControlArr,
+  columnsTypeMap
+} from './ganttObject'
 import { setLockTaskProperties } from './ganttLockUnLock'
 import { taskMoveChange } from './changeGantt'
 import moment from 'moment'
-import store from '@/plugins/store'
+import { getGanttColumns } from '@/assets/commonJS/ganttJS/planGanttObject'
+import Datepicker from '@/assets/commonJS/originalComponents/datePicker'
+import { Gantt } from 'p8-dhtmlx-gantt'
+import Inputor from '@/assets/commonJS/originalComponents/input'
+import Selector from '@/assets/commonJS/originalComponents/select'
+import img from '@/assets/image/gantt/weidu.png'
+import { calculateRemainingDays } from '@/utils/common'
+
 /**
  * @Description 获取gantt对象，不存在则创建
  * @author fukai
@@ -24,6 +39,34 @@ export function getChangeGantt (ganttName, vueThis) {
   ganttObject.config.drag_timeline = false
   ganttObject.config.drag_move = false
   GanttObject.onCollapse(ganttObject, vueThis)
+  // 查询监听及定义
+  GanttObject.setSearchConfig(ganttObject, vueThis)
+  // 表头查询值绑定
+  Gantt.searchColumnsChange = function searchColumnsChange (name, value, searchType, eleInstance) {
+    const customComp = ['select', 'date', 'input']
+    if (customComp.indexOf(searchType) < 0) {
+      document.getElementById(name + searchType).setAttribute('value', value)
+    }
+    if (searchType === 'select') {
+      // 下拉选择
+      if (eleInstance && eleInstance.multiple) {
+        // 多选
+        if (value && !(value instanceof Array)) {
+          const arr = value.split(',')
+          vueThis.searchForm[name] = arr
+        } else {
+          vueThis.searchForm[name] = value
+        }
+      } else {
+        vueThis.searchForm[name] = value
+      }
+    } else if (searchType === 'date') {
+      vueThis.searchForm[name] = value
+    } else if (searchType === 'input') {
+      vueThis.searchForm[name] = value
+    }
+    ganttObject.render()
+  }
   ganttObject.attachEvent('onBeforeTaskDrag', function (id, mode, e) {
     return false // denies dragging if the global task index is odd
   })
@@ -426,7 +469,18 @@ export function getChangeGantt (ganttName, vueThis) {
       }
     },
     { name: 'realBeginDate', label: '实际开始时间', align: 'center', min_width: 100, resize: true },
-    { name: 'realEndDate', label: '实际完成时间', align: 'center', min_width: 100, resize: true }
+    { name: 'realEndDate', label: '实际完成时间', align: 'center', min_width: 100, resize: true },
+    {
+      name: 'overdueRemainingDays',
+      label: '超期/剩余天数',
+      align: 'center',
+      min_width: 120,
+      resize: true,
+      template: function (task) {
+        const result = calculateRemainingDays(task)
+        return result.text
+      }
+    },
   ]
   // 创建资源载体
   ganttObject.$resourcesStore = GanttObject.createDatastore(ganttObject)
@@ -448,6 +502,7 @@ export function getChangeGantt (ganttName, vueThis) {
   // 只读校验
   if (vueThis.readonly) {
     ganttObject.config.readonly = true
+    ganttObject.config.readonlyReason = '当前为只读模式，不可操作'
   } else {
     // 可操作
     // 前后置删除提示文本定义
@@ -500,6 +555,7 @@ export function getChangeGantt (ganttName, vueThis) {
       }
     })
     synchronizationColumns(vueThis, ganttObject)
+    searchColumnsDataInit(vueThis, ganttObject)
     // 在将操作添加到撤消堆栈之前触发
     GanttObject.onBeforeUndoStack(ganttObject)
     // 在将操作添加到回退堆栈之前触发
@@ -514,7 +570,11 @@ export function getChangeGantt (ganttName, vueThis) {
   }
   return ganttObject
 }
-
+/**
+ * 同步列
+ * @param vueThis
+ * @param ganttObject
+ */
 function synchronizationColumns (vueThis, ganttObject) {
   function checkEdit () {
     if (vueThis.pageName === 'planMonitor') {
@@ -524,10 +584,24 @@ function synchronizationColumns (vueThis, ganttObject) {
     }
   }
   const initColumns = ganttObject.config.columns
+  initColumns.forEach((initItem, initIndex) => {
+    const name = initItem.name
+    let type = columnsTypeMap[name]
+    let dataIndex
+    // if (type) {
+    const label = initItem.label
+    if (name === 'owner_id') {
+      dataIndex = 'userName'
+    } else {
+      dataIndex = name
+    }
+    initItem.label = searchColumnRenderer(dataIndex, label, type)
+    // }
+  })
   // 获取gantt列配置信息
   // if (vueThis.columnSettings.length > 0) {
   //   const tempColumns = []
-  //   console.log(vueThis.columnSettings, '------vueThis.columnSettings');
+  //
   //   vueThis.columnSettings.forEach((item) => {
   //     const initColumn = initColumns.filter((initItem) => initItem.name === item.filedName)
   //     if (initColumn && initColumn.length > 0) {
@@ -584,7 +658,7 @@ function synchronizationColumns (vueThis, ganttObject) {
         if (item.isEnable == '1') {
           tempColumns.push({
             name: 'kz' + item.id,
-            label: `${item.name}`,
+            label: `<div class="gantt_search">${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class="gantt_search gantt_blank"></div>`,
             align: 'center',
             resize: true,
             hide: item.isEnable == '0',
@@ -613,4 +687,154 @@ function synchronizationColumns (vueThis, ganttObject) {
   } else {
     ganttObject.config.columns = initColumns
   }
+}
+
+function searchColumnsDataInit (vueThis, ganttObject) {
+  return ganttObject.attachEvent('onDataRender', function () {
+    const initColumns = getGanttColumns(ganttObject, vueThis)
+    initColumns.forEach((initItem, initIndex) => {
+      let name = initItem.name
+      const type = columnsTypeMap[name]
+      if (type) {
+        let datas = []
+        if (type === 'select') {
+          switch (name) {
+            case 'status':
+              datas = taskStatusArr
+              break
+            case 'progressFeedback':
+              datas = taskProgressFeedbackArr
+              break
+            case 'overdueRemainingDays':
+              datas = taskOverdueRemainingDaysArr
+              break
+            case 'weatherControl':
+              datas = taskWeatherControlArr
+              break
+            case 'managerStatus':
+              if (vueThis.managerStatusMap && Object.keys(vueThis.managerStatusMap).length > 0) {
+                for (const item in vueThis.managerStatusMap) {
+                  const obj = {
+                    id: item,
+                    title: vueThis.managerStatusMap[item].cmeaning
+                  }
+                  datas.push(obj)
+                }
+              }
+              break
+            case 'monitorPoints':
+              datas = ganttObject.serverList(ganttObject.config.monitor_point)
+              break
+            case 'planType':
+              datas = ganttObject.serverList(ganttObject.config.plan_type)
+              break
+            // case 'secretGrade':
+            //   datas = ganttObject.serverList('secretGrades')
+            //   break
+            case 'wbs':
+              for (let i = 0; i < vueThis.deep; i++) {
+                const item = {
+                  id: i + 1 + '',
+                  title: i + 1 + '级'
+                }
+                datas.push(item)
+              }
+          }
+        } else if (type === 'date') {
+          const datePickerKey = `gantt_datepicker_${name}`
+          const children = document.getElementsByClassName(datePickerKey).length && document.getElementsByClassName(datePickerKey)[0].children
+          if (vueThis[datePickerKey] && children && children.length) {
+            // vueThis[datePickerKey]: 说明组件被创建
+            // let childEle = (document.getElementsByClassName(datePickerKey)[0].children).length: 说明被创建的组件存在
+            // 当vueThis[datePickerKey] 为true 但 childEle 为false 说明当前列被拖拽了, 拖拽结束,表头部分又被重写, 此时 自定义组件整体元素丢失
+          } else {
+            vueThis[datePickerKey] = new Datepicker(`.${datePickerKey}`, {
+              customClassName: 'gantt_custom_datepicker', // 自定义类名 (可根据此类名手动更改组件的样式)
+              value: vueThis.searchForm[name] || '',
+              onChange: function (value) {
+                // change事件
+                Gantt.searchColumnsChange(name, value.date, 'date')
+              }
+            })
+          }
+        } else if (type === 'input') {
+          if (name === 'owner_id') {
+            name = 'userName'
+          }
+          const inputKey = `gantt_inputor_${name}`
+          const children = document.getElementsByClassName(inputKey).length && document.getElementsByClassName(inputKey)[0].children
+          if (vueThis[inputKey] && children && children.length) {
+            // vueThis[inputKey]: 说明组件被创建
+            // let childEle = (document.getElementsByClassName(inputKey)[0].children).length: 说明被创建的组件存在
+            // 当vueThis[inputKey] 为true 但 childEle 为false 说明当前列被拖拽了, 拖拽结束,表头部分又被重写, 此时 自定义组件整体元素丢失
+          } else {
+            vueThis[inputKey] = new Inputor(`.${inputKey}`, {
+              value: vueThis.searchForm[name] || '',
+              placeholder: '请输入',
+              onChangeValue (value) {
+                vueThis.searchForm[name] = value
+              },
+              onChange (value) {
+                Gantt.searchColumnsChange(name, value, 'input')
+              }
+            })
+          }
+        } else {
+          // 列resize后数据回填
+          if (vueThis.searchForm && Object.keys(vueThis.searchForm).length) {
+            const obj = document.getElementById(name + type)
+            let result
+            if (obj) {
+              if (vueThis.searchForm[name] && vueThis.searchForm[name] instanceof Array) {
+                result = vueThis.searchForm[name].join(',')
+              } else if (vueThis.searchForm[name]) {
+                result = vueThis.searchForm[name]
+              } else {
+                result = ''
+              }
+              obj.setAttribute('value', result)
+            }
+          }
+        }
+        if (datas && datas.length > 0) {
+          const multiple = [] // 下拉选择多选定义, 如: 若存在多选, mutiple = ['wbs', 'planType']
+          const options = datas.map((item) => {
+            return {
+              name: item.title,
+              value: item.id
+            }
+          })
+          const selectorKey = `gantt_selector_${name}`
+          const children = document.getElementsByClassName(selectorKey).length && document.getElementsByClassName(selectorKey)[0].children
+          if (vueThis[selectorKey] && children && children.length) {
+            // vueThis[selectorKey]: 说明select被创建
+            // let childEle = (document.getElementsByClassName(selectorKey)[0].children).length: 说明被创建的select存在
+            // 当vueThis[selectorKey] 为true 但 childEle 为false 说明当前列被拖拽了, 拖拽结束,表头部分又被重写, 此时 自定义select整体元素丢失
+          } else {
+            // let
+            if (document.getElementsByClassName(`${selectorKey}`) && !document.getElementsByClassName(`${selectorKey}`).length) {
+              return
+            }
+            const obj = new Selector(`.${selectorKey}`, {
+              customClassName: 'gantt_custom_select', // 自定义select类名 (可根据此类名手动更改select组件的样式)
+              options: options, // select下拉列表(数组对象: [{name: '苹果', value: 'apple'}])
+              props: {
+                // 提供绑定字段(label-对应数组对象中的name, value对应数组对象的value)
+                label: 'name',
+                value: 'value'
+              },
+              multiple: multiple.includes(name), // 是否多选
+              value: vueThis.searchForm[name] || vueThis.searchForm__WBS || '', // 绑定的值[array or string](multiple为true--value: ['yk', 'p8'] or value: 'yk,p8'; multiple为false--value: 'yk')
+              placeholder: '请选择', // 默认提示文本
+              onSelect: function (value) {
+                // select change事件
+                Gantt.searchColumnsChange(name, value, 'select', vueThis[selectorKey])
+              }
+            })
+            vueThis[selectorKey] = obj
+          }
+        }
+      }
+    })
+  })
 }

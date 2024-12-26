@@ -85,7 +85,7 @@ export default {
     dialogRolesOk () {
       this.fullscreen = false
       if (this.activeNameRender === 'experience') {
-        console.log(this.experienceTeamSelect,'----this.experienceTeamSelect经验团队');
+
         this.$emit('exp-roles-close', this.experienceTeamSelect)
       } else {
         // 载入
@@ -109,7 +109,7 @@ export default {
     },
     tableRefresh (param) {
       param.then((data) => {
-        console.log('异步成功后端做的操作 标准团队库', data)
+
         this.standardTeamInfo = data
       }).catch(() => {
         console.error('异步失败的操作')

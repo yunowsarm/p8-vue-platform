@@ -186,7 +186,7 @@ export default {
   },
   methods: {
     getClassName (child) {
-      console.log(child, 'childchildv');
+
       if (child.children && child.children.length && child.children[0]['meta']['title'] == '我创建的') return 'redColor';
       else return 'blueColor';
     },

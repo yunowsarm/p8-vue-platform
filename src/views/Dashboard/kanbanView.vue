@@ -139,7 +139,7 @@ export default {
       return []
     },
     renderKanbanData () {
-      // console.log('renderKanbanData computed:', this.renderData, this.formData, this.$options.data().formData)
+      // .formData)
       return this.renderData[0] || this.formData || this.$options.data().formData
     },
     getId () {
@@ -212,8 +212,8 @@ export default {
       // Object.assign(_this.searchParams, param)
       // _this.searchParams = param
       this.provideParams.searchParams = param
-      // console.log('onSearch:', this.provideParams.searchParams)
-      // console.log('_provided:', this._provided.provideParams)
+      //
+      //
     },
     onReset () { },
     setSearchConfig (list) {

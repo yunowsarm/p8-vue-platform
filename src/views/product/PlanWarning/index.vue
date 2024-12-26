@@ -31,9 +31,9 @@ export default {
     ListLayout
   }
   // created() {
-  //   console.log(this.thirdMenuParam, 'thirdMenuParam=============')
+  //
   //   this.reportParam.PLAN_INFO_ID = this.thirdMenuParam.ID
-  //   console.log(this.reportParam.PLAN_INFO_ID, 'this.reportParam.PLAN_INFO_ID')
+  //
   // }
 }
 </script>

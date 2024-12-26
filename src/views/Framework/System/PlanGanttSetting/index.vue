@@ -1,35 +1,22 @@
 <template>
   <div>
-    <form-list :api="saveApi"
-               :data-source="dataSource"
-               :form="formData"
-               ref="form"
-               :is-custom-validate="true"
-               @custom-validate="customValidate"
-               labelWidth="150px">
+    <form-list :api="saveApi" :data-source="dataSource" :form="formData" ref="form" :is-custom-validate="true" @custom-validate="customValidate" labelWidth="150px">
       <template #taskRealDateWrite>
-        <el-popover class="pop_left"
-                    trigger="hover">
+        <el-popover class="pop_left" trigger="hover">
           <p>
             系统时间：服务端时间，不可修改<br />
             手动选择时间：可手动修改为系统当前及之前时间
           </p>
-          <i slot="reference"
-             class="el-icon-question" />
+          <i slot="reference" class="el-icon-question" />
         </el-popover>
-        <el-radio-group v-model="formData.taskRealDateWrite"
-                        @input="input">
+        <el-radio-group v-model="formData.taskRealDateWrite" @input="input">
           <el-radio-button label="系统时间"></el-radio-button>
           <el-radio-button label="手动选择时间"></el-radio-button>
         </el-radio-group>
       </template>
       <template #planRightButton>
         <div class="transferContent">
-          <el-transfer v-model="formData.planRightButton"
-                       :data="buttonListInLeft"
-                       filterable
-                       :props="{ key: 'buttonId', label: 'title' }"
-                       :titles="['功能列表', '右键菜单']">
+          <el-transfer v-model="formData.planRightButton" :data="buttonListInLeft" filterable :props="{ key: 'buttonId', label: 'title' }" :titles="['功能列表', '右键菜单']">
             <span slot-scope="{ option }">
               <i :class="option.icon"></i>
               <span>{{ option.title }}</span>
@@ -46,16 +33,19 @@ import { P8Form as FormList } from 'p8-components-ui'
 import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/commandButtonBarData'
 // import { deepClone } from '@/utils/common'
 import { getButtonData } from '@/components/gantt/Components/CommonButtonBarSetting/func.js'
+
 export default {
   components: { FormList },
-  data () {
+  data() {
     return {
-      saveApi: 'PlanGanttSetting.saveSchedulingBasicConfig',
+      saveApi: 'PlanGanttSetting.saveOtherGlobalSettingsConfig',
       formData: {
         content: '',
         defaultMode: 'tabs',
         taskRealDateWrite: '系统时间',
-        taskFinish: '自动'
+        taskFinish: '自动',
+        doneSign: 'completeApproval',
+        displayType:'intact'
       },
       dataSource: [
         {
@@ -99,7 +89,8 @@ export default {
           fieldName: 'taskRealDateWrite',
           slotName: 'taskRealDateWrite',
           labelText: '任务实际完成时间填写限制设置',
-          colLayout: 'singleCol'
+          colLayout: 'singleCol',
+          tip: '系统时间：服务端时间，不可修改；手动选择时间：可手动修改为系统当前及之前时间。'
         },
         {
           type: 'radioButton',
@@ -119,23 +110,60 @@ export default {
           ]
         },
         {
+          type: 'radio',
+          fieldName: 'doneSign',
+          labelText: '提前/超期完成标志',
+          tip: `提交完成审批：责任人在任务执行中，发起提交完成审批时(任务状态)，
+                完成审批通过：任务完成审批通过后，判定为已完成。`,
+          colLayout: 'singleCol',
+          options: [
+            {
+              label: '完成审批通过',
+              value: 'completeApproval'
+            },
+            {
+              label: '提交完成审批',
+              value: 'submitApproval'
+            }
+          ]
+        },
+        {
+          type: 'radio',
+          fieldName: 'displayType',
+          labelText: '提前/超期展示类型',
+          tip: '提前/超期xx天完成：完整展示(当前默认逻辑)-/+xx天完成：-代表剩余/提前，+代表超期。',
+          colLayout: 'singleCol',
+          options: [
+            {
+              label: '提前/超期xx天完成',
+              value: 'intact'
+            },
+            {
+              label: '-/+xx天完成',
+              value: 'concise'
+            }
+          ]
+        },
+        {
           type: 'blank',
           fieldName: 'planRightButton',
           labelText: '右键功能区',
           slotName: 'planRightButton',
-          colLayout: 'singleCol',
-        },
+          colLayout: 'singleCol'
+        }
       ],
       buttonListInLeft: [],
       valueBtns: []
     }
   },
-  created () {
+  created() {
     let that = this
-    this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then(res => {
+    this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then((res) => {
       this.formData.content = res.autoScheduling.content
       this.formData.defaultMode = res.defaultMode.content
       this.formData.taskFinish = res.taskFinish.content
+      this.formData.doneSign = res.doneSign.content
+      this.formData.displayType = res.displayType.content
       if (res.taskRealDateWrite.content === '1') {
         this.formData.taskRealDateWrite = '手动选择时间'
       } else {
@@ -152,10 +180,10 @@ export default {
     })
   },
   methods: {
-    input (val) {
+    input(val) {
       this.formData.taskRealDateWrite = val
     },
-    customValidate (saveParams) {
+    customValidate(saveParams) {
       if (saveParams.taskRealDateWrite === '系统时间') {
         saveParams.taskRealDateWrite = '0'
       } else {

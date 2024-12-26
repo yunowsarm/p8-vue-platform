@@ -186,10 +186,10 @@ export default {
     tableRefresh (param) {
       param
         .then(() => {
-          console.log('异步成功后端做的操作')
+
         })
         .catch(() => {
-          console.log('异步失败的操作')
+
         })
     },
     search (param) {

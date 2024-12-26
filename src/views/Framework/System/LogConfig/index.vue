@@ -221,7 +221,7 @@ export default {
       this.onEditClose()
     },
     delete (record) {
-      console.log(record, 111)
+
       const that = this
       this.$confirm('是否确定要删除？', '提示', {
         confirmButtonText: '确定',

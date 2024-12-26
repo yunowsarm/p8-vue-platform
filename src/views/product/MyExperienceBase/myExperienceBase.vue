@@ -139,7 +139,8 @@
 <script>
 import { P8NormalLayoutV1 as NormalLayout, P8Drawer as CommonDrawer, P8Table as CommonTable, P8Tree as commonTree, P8Form as FormList, P8Dialog as CommonDialog } from 'p8-components-ui'
 import DescribeView from '@/views/product/PlanGantt/Components/describeEdit/describeView.vue'
-import Detail from './taskDetail.vue'
+// import Detail from './taskDetail.vue'
+import Detail from '@/views/Framework/Message/components/TaskDetail/index.vue'
 export default {
   name: 'MyExperienceBase',
   components: {
@@ -475,7 +476,7 @@ export default {
       const selectedRowIds = this.selectedRows.map(row => row.id);
       param
         .then(() => {
-          console.log('异步成功后端做的操作');
+
 
           // 使用 $nextTick 确保 DOM 渲染完成后再恢复选中状态
           this.$nextTick(() => {

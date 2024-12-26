@@ -125,14 +125,14 @@ export default {
     tableRefresh (param) {
       param
         .then(() => {
-          console.log('异步成功后端做的操作')
+
         })
         .catch(() => {
-          console.log('异步失败的操作')
+
         })
     },
     iconClick (record) {
-      console.log(record, 'record')
+
     },
     doOneRetry (record) {
       /// commonDrawer 中的commonTable row 上的按钮获取错误，可能没有按照parentId获取，待组件满足

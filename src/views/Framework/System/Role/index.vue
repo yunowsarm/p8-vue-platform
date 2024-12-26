@@ -132,10 +132,10 @@ export default {
     tableRefresh(param) {
       param
         .then(() => {
-          console.log('异步成功后端做的操作')
+
         })
         .catch(() => {
-          console.log('异步失败的操作')
+
         })
     },
     createRole() {
@@ -172,13 +172,13 @@ export default {
           that.$api['role.remove']({
             id: record.id
           }).then((res) => {
-            console.log(res)
+
             that.$message({ type: 'success', message: '删除成功' })
             that.$refs.table.searchData()
           })
         })
         .catch((e) => {
-          console.log(e)
+
         })
     },
     search(param) {

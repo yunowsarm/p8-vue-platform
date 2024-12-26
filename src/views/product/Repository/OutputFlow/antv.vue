@@ -306,7 +306,7 @@ export default {
           }
           that.$api['OutputFlow.loadModeDataSave'](parmar).then(res => {
             if (res) {
-              console.log(res, '====res')
+
             }
           })
         }
@@ -679,7 +679,7 @@ export default {
       }
 
       const positions = calculatePositions(nodeData);
-      console.log(positions, '=====positions');
+
       return positions
     },
   }

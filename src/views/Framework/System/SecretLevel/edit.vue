@@ -118,10 +118,10 @@ export default {
           this.formData = { id, meaning, orderNo, sysuserSecretLevelName }
           // let { id, meaning, orderNo, sysuserSecretLevelId, sysuserSecretLevelName } = res
           // this.formData = { id, meaning, orderNo, sysuserSecretLevelId, sysuserSecretLevelName }
-          console.log('----FormData---', this.formData)
+
         })
         .catch(function (error) {
-          console.log('error' + error)
+
         })
     },
     saved (res) {

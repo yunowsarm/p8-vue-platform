@@ -1,48 +1,19 @@
 <template>
   <div class="header">
     <div class="content">
-      <div style="width: 50%;">
+      <div style="width: 50%">
         <div class="title">{{ formData.sourceChannel }}</div>
-        <form-render class="formRender"
-                     :data-view-id="dataViewId"
-                     :record="{ desformCode: codeForm }"
-                     :prop-param="propParam"
-                     page-type="view"
-                     v-bind="$attrs"></form-render>
+        <form-render class="formRender" :data-view-id="dataViewId" :record="{ desformCode: codeForm }" :prop-param="propParam" page-type="view" v-bind="$attrs"></form-render>
       </div>
-      <div style="width: 50%;">
+      <div style="width: 50%">
         <div class="title">市场需求信息表</div>
-        <form-list ref="formInfo2"
-                   class="formList"
-                   label-width="150px"
-                   :data-source="dataSourceInfo"
-                   :exist-default-btn="false"
-                   :form="formData">
-        </form-list>
+        <form-list ref="formInfo2" class="formList" label-width="150px" :data-source="dataSourceInfo" :exist-default-btn="false" :form="formData"> </form-list>
         <div class="title">预审意见</div>
-        <form-list ref="formInfo3"
-                   class="formList"
-                   label-width="150px"
-                   :data-source="dataSourceOpinion"
-                   :exist-default-btn="false"
-                   :form="formData">
-        </form-list>
+        <form-list ref="formInfo3" class="formList" label-width="150px" :data-source="dataSourceOpinion" :exist-default-btn="false" :form="formData"> </form-list>
         <div class="title">需求信息描述</div>
-        <form-list ref="formInfo4"
-                   class="formList"
-                   label-width="150px"
-                   :data-source="dataSourceInfoTwo"
-                   :exist-default-btn="false"
-                   :form="formData">
-        </form-list>
+        <form-list ref="formInfo4" class="formList" label-width="150px" :data-source="dataSourceInfoTwo" :exist-default-btn="false" :form="formData"> </form-list>
         <div class="title">分析意见</div>
-        <form-list ref="formInfo5"
-                   class="formList"
-                   label-width="150px"
-                   :data-source="dataSourceAnalyse"
-                   :exist-default-btn="false"
-                   :form="formData">
-        </form-list>
+        <form-list ref="formInfo5" class="formList" label-width="150px" :data-source="dataSourceAnalyse" :exist-default-btn="false" :form="formData"> </form-list>
       </div>
     </div>
   </div>
@@ -51,6 +22,7 @@
 <script>
 import { P8Form as FormList } from 'p8-components-ui'
 import FormRender from '@/views/Framework/ComponentsMananger/Form/Components/Components/edit.vue'
+
 export default {
   components: {
     FormList,
@@ -61,7 +33,7 @@ export default {
       type: Array
     }
   },
-  data () {
+  data() {
     return {
       formType: this.type,
       saveType: false,
@@ -79,7 +51,7 @@ export default {
           labelText: '需求名称',
           fieldName: 'demandName',
           colLayout: 'singleCol',
-          maxlength: 10,
+          maxlength: 10
         },
         {
           type: 'view',
@@ -91,7 +63,7 @@ export default {
           type: 'view',
           labelText: '客户名称',
           fieldName: 'customerName',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           labelText: '客户联系电话',
@@ -99,7 +71,7 @@ export default {
           fieldName: 'customerPhone',
           colLayout: 'singleCol',
           placeholder: '请输入手机或座机号码',
-          tip: '手机格式如:13512341234 座机格式如:010-40020020',
+          tip: '手机格式如:13512341234 座机格式如:010-40020020'
         },
         {
           labelText: '收集人联系电话',
@@ -107,61 +79,61 @@ export default {
           fieldName: 'collectorPhone',
           colLayout: 'singleCol',
           placeholder: '请输入手机或座机号码',
-          tip: '手机格式如:13512341234 座机格式如:010-40020020',
+          tip: '手机格式如:13512341234 座机格式如:010-40020020'
         },
         {
           type: 'view',
           labelText: '客户群',
           fieldName: 'customerGroup',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view',
           labelText: '基线产品/项目名称',
           fieldName: 'projectName',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view',
           labelText: '需求预分类建议',
           fieldName: 'demandSuggestionsDisplay',
-          fieldConfig: {},
+          fieldConfig: {}
         },
         {
           type: 'view', // 控件类型
           labelText: '是否属于紧急需求', // 控件显示的文本
           fieldName: 'urgentNeedDisplay',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view', // 控件类型
           labelText: '客户反映', // 控件显示的文本
           fieldName: 'customerFeedbackDisplay',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view', // 控件类型
           labelText: '是否承诺', // 控件显示的文本
           fieldName: 'commitmentDisplay',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view',
           labelText: '需求背景',
           fieldName: 'demandBackground',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view',
           labelText: '需求紧迫性',
           fieldName: 'demandUrgency',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view',
           labelText: '用户需求描述',
           fieldName: 'demandDescribe',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'uploadView', // 控件类型
@@ -187,13 +159,13 @@ export default {
           type: 'view',
           labelText: '选择需求分析人',
           fieldName: 'requirementAnalystDisplay',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view',
           labelText: '需求分析要求完成时间',
           fieldName: 'requirementTime',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         }
       ],
       dataSourceInfoTwo: [
@@ -211,44 +183,44 @@ export default {
           fieldConfig: {
             valueFormat: 'yyyy-MM-dd'
           }
-        },
+        }
       ],
       dataSourceAnalyse: [
         {
           type: 'view',
           labelText: '需求关键字',
           fieldName: 'keywords',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view', // 控件类型
           labelText: '客户优先级', // 控件显示的文本
           fieldName: 'priorityDisplay',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view', // 控件类型
           labelText: '产品优先级', // 控件显示的文本
           fieldName: 'productPriorityDisplay',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view', // 控件类型
           labelText: '技术优先级', // 控件显示的文本
           fieldName: 'technologyPriorityDisplay',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view', // 控件类型
           labelText: '需求程度分类', // 控件显示的文本
           fieldName: 'demandLevelDisplay',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view',
           labelText: '需求初步验证情况',
           fieldName: 'preliminaryVerification',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view',
@@ -266,25 +238,24 @@ export default {
           type: 'view',
           labelText: '需求处理建议',
           fieldName: 'handlingSuggestions',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view',
           labelText: '建议需求处理团队',
           fieldName: 'processingTeamDisplay',
-          colLayout: 'singleCol',
+          colLayout: 'singleCol'
         },
         {
           type: 'view',
           labelText: '需求处理结论',
           fieldName: 'processingConclusionDisplay',
-          colLayout: 'doubleCol',
+          colLayout: 'doubleCol'
         }
-      ],
+      ]
     }
   },
-  mounted () {
-    console.log(this.sourceChannel, '================this.sourceChannel');
+  mounted() {
     this.formData.sourceChannel = this.sourceChannel
 
     // 区分不同审批节点展示不同表单
@@ -304,10 +275,10 @@ export default {
     this.viewForm()
   },
   methods: {
-    viewForm () {
+    viewForm() {
       this.$api['demandManagement.viewRequirement']({
         id: this.row[0].ID ? this.row[0].ID : this.row[0].id
-      }).then(res => {
+      }).then((res) => {
         if (res) {
           this.formData = res
           if (res.analysisList.length > 0) {
@@ -328,12 +299,16 @@ export default {
 .title {
   font-size: 17px;
   font-weight: bold;
+  margin: 10px 0;
 }
+
 .header {
   height: 100% !important;
   overflow: auto;
 }
+
 .content {
+  padding: 15px;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -341,10 +316,12 @@ export default {
   position: relative;
   height: 100%;
 }
+
 .formRender {
   height: 100%;
   overflow-y: auto;
 }
+
 .formList {
   height: 100%;
   overflow-y: auto;
@@ -353,6 +330,7 @@ export default {
   //   height: 50px !important;
   // }
 }
+
 .btn {
   position: absolute;
   bottom: 5px;

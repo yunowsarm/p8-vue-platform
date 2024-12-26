@@ -108,7 +108,7 @@ export default {
       },
       {
         title: '反馈时间',
-        dataIndex: 'createTime',
+        dataIndex: 'itemCreateTime',
         align: 'center'
 
       }
@@ -434,7 +434,7 @@ export default {
       //     entityType: 'project',
       //     taskRequest: this.formData,
       //   };
-      //   console.log("33333333333333333333333333333333333333", params)
+      //
       //   window.myWebSocket.emit('taskCommitByData', params)
       // }
     },
@@ -468,7 +468,7 @@ export default {
         },
         pmTaskDeviationCauses: {}
       }
-      console.log(this.exceedTypeVal, '======================this.exceedTypeVal');
+
       if (this.exceedTypeVal) {
         params.pmTaskDeviationCauses = {        // 偏离参数
           planInfoId: _this.planInfoParams.PLANINFOID,

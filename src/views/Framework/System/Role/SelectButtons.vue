@@ -81,7 +81,7 @@ export default {
     },
     dataSource() {
       let that = this
-      // console.log('dataSource()', that.resources, this.buttonSelected)
+      // ', that.resources, this.buttonSelected)
       this.buttonSelected.forEach((b) => {
         let res = that.resources.find((r) => r.id === b)
         if (res) {
@@ -107,7 +107,7 @@ export default {
       return function (resId) {
         let checkedChild = this.dataSource.find((r) => r.parentId === resId && r.checked)
         let result = !!checkedChild
-        // console.log('resId', resId, result)
+        //
         return result
       }
     },
@@ -127,7 +127,7 @@ export default {
       // let paramdata = new FormData()
       this.$api['role.getPermissions']().then(function (res) {
         // that.skeletonLoading = false;
-        // console.log('res', res)
+        //
         that.resources = res
         that.resChanged()
       })
@@ -179,7 +179,7 @@ export default {
         }
       } else {
         let checkedChild = this.dataSource.find((r) => r.parentId === row.id && r.checked)
-        // console.log('checkedChild', checkedChild)
+        //
         if (checkedChild) {
           row.checked = true
         }
@@ -188,7 +188,7 @@ export default {
       this.resChanged()
     },
     resChanged() {
-      // console.log('selectedRes', this.selectedRes)
+      //
       this.$emit('btn-select-change', this.selectedRes)
     },
     checkAll() {
@@ -197,7 +197,7 @@ export default {
       res1 = this.dataSource.filter((r) => r).map((r) => r.id)
       let res = this.resources
       if (res) {
-        // console.log('res finded', res);
+        //
         res.forEach((value) => {
           value.checked = true
         })
