@@ -113,6 +113,19 @@
             授权终止日期：{{ regardsObj.authorizedExpires }}<br />
             授权用户数：{{ regardsObj.userLimit }}<br />
             授权登录人数：{{ regardsObj.loginLimit }}<br />
+            <el-popover placement="top-start"
+                        width="230"
+                        trigger="hover">
+              <p>
+                p8-framework-suit@{{ regardsObj.p8Version }}<br />
+                p8-lowcode@^{{ packageJson.dependencies['p8-lowcode'] }}<br />
+                p8-components-ui@{{ packageJson.dependencies['p8-components-ui'] }}<br />
+                p8-dhtmlx-gantt@{{ packageJson.dependencies['p8-dhtmlx-gantt'] }}<br />
+                p8-vue-smart-widget@{{ packageJson.dependencies['p8-vue-smart-widget'] }}<br />
+                p8-gojs@{{ packageJson.dependencies['p8-gojs'] }}<br />
+              </p>
+              <span slot="reference">系统版本：{{ regardsObj.systemVersion }}</span>
+            </el-popover><br />
             <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;预期控制策略：{{ regardsObj.authExpiredControl }}<br /> -->
             <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;硬件绑定类型：{{ regardsObj.hwBindType }}<br /> -->
           </span>
@@ -135,7 +148,7 @@ import { Menu, Submenu, MenuItem, Tooltip } from 'p8-components-ui'
 import { mapGetters } from 'vuex'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 // import SidebarMenuItem from './SidebarMenuItem'
-
+import packageJson from '../../../../../package.json'
 export default {
   name: 'Sidebar',
   data () {
@@ -149,6 +162,7 @@ export default {
       regardsObj: {},
       isShow: false,
       isactive: -1,
+      packageJson
     }
   },
   computed: {

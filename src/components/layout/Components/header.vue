@@ -189,7 +189,21 @@
                :before-close="beforeClose">
       <div class="regards-box">
         <p><span class="regards-font">系统名称:&nbsp;&nbsp;&nbsp;</span><span>{{ systemName }}</span></p>
-        <p><span class="regards-font">系统版本:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.systemVersion }}</span></p>
+        <p><span class="regards-font">系统版本:&nbsp;&nbsp;&nbsp;</span>
+          <el-popover placement="top-start"
+                      width="230"
+                      trigger="hover">
+            <p>
+              p8-framework-suit@{{ regardsObj.p8Version }}<br />
+              p8-lowcode@^{{ packageJson.dependencies['p8-lowcode'] }}<br />
+              p8-components-ui@{{ packageJson.dependencies['p8-components-ui'] }}<br />
+              p8-dhtmlx-gantt@{{ packageJson.dependencies['p8-dhtmlx-gantt'] }}<br />
+              p8-vue-smart-widget@{{ packageJson.dependencies['p8-vue-smart-widget'] }}<br />
+              p8-gojs@{{ packageJson.dependencies['p8-gojs'] }}<br />
+            </p>
+            <span slot="reference">{{ regardsObj.systemVersion }}</span>
+          </el-popover>
+        </p>
         <p><span class="regards-font">官网地址:&nbsp;&nbsp;&nbsp;</span><el-button type="text"
                      style="font-size: 15px;"
                      @click="openRZ">www.xardmu.com</el-button></p>
@@ -215,6 +229,7 @@ import ProcessApprovalIndex from '@/views/Communication/MyApprove/list.vue'
 import DocumentManagement from '@/views/Framework/System/DocumentManagement/index.vue'
 import Message from '@/views/Framework/Message'
 import Information from '@/components/information/index.vue'
+import packageJson from '../../../../package.json'
 
 export default {
   name: 'Headers',
@@ -235,7 +250,8 @@ export default {
       dialogVisible: false,
       regardsObj: {},
       adminUserIdArr: ['SYS_USER001', 'SYS_USER009', 'SYS_USER012', 'SYS_USER010', 'SYS_USER000'], // 五元id
-      AuthorizationInfoList: []
+      AuthorizationInfoList: [],
+      packageJson
     }
   },
   computed: {
