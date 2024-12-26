@@ -12,7 +12,7 @@
       <div class="show-type"><span style="font-weight: bold;font-size: 15px;">展示方式：</span>
         <el-radio-group v-model="showView"
                         @input="showViewChange">
-          <!-- <el-radio label="showView001">父子结构</el-radio> -->
+          <el-radio label="showView001">父子结构</el-radio>
           <el-radio label="showView002">计划分组</el-radio>
           <el-radio label="showView003">列表</el-radio>
         </el-radio-group>
@@ -442,6 +442,7 @@ export default {
           })
         }
         this.provideParams.searchParams = paramsObj
+        this.dateTime = new Date().getTime()
       }
       // 组件切换
       if (treeSettingsParmars.navigationPattern === '0') {
@@ -463,6 +464,7 @@ export default {
           }
           this.asyncComponents = obj[key]
         }
+        console.log('33333333333333333333333333');
       }
     },
     getParamsList (obj, fileName) {
