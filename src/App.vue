@@ -70,7 +70,7 @@ export default {
           this.$store.commit('SET_MESSAGENUM', ++count)
         })
         socket.on('getMessageContent', (data) => {
-
+          console.log(window.isSecureContext,'我的消息---window.isSecureContext');
           let res = JSON.parse(data)
           if ("Notification" in window) {
             Notification.requestPermission().then(function (permission) {
@@ -87,7 +87,7 @@ export default {
           }
         })
         socket.on('getApproveContent', (data) => {
-
+          console.log(window.isSecureContext,'我的审批---window.isSecureContext');
           if ("Notification" in window) {
             Notification.requestPermission().then(function (permission) {
               if (permission === "granted") {
