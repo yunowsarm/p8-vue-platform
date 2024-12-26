@@ -16,7 +16,8 @@
                :pagination="false"
                api="demandManagement.getRequirementByProject">
       <template #operation="{ scope }">
-        <el-button type="text"
+        <el-button v-if="demandFalg"
+                   type="text"
                    @click="cancelDetail(scope.row)">取消关联</el-button>
         <el-button type="text"
                    @click="showDetail(scope.row)">查看详情</el-button>
