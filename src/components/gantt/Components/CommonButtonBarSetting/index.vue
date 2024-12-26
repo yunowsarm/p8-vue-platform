@@ -26,8 +26,8 @@
         </div>
         <div class="content">
           <el-radio-group v-model="autoScheduling">
-            <el-radio label="1">自动</el-radio>
             <el-radio label="0">手动</el-radio>
+            <el-radio label="1">自动</el-radio>
           </el-radio-group>
         </div>
       </template>
@@ -162,6 +162,7 @@ export default {
         if (rightBtns && rightBtns.length == 0) {
           rightBtns = this.$store.getters.ganttRightButtons ? this.$store.getters.ganttRightButtons : []
         }
+        this.autoScheduling = this.$store.getters.autoScheduling ? this.$store.getters.autoScheduling : ''
         this.valueBtns = rightBtns.map((btn) => {
           return btn.buttonId
         })

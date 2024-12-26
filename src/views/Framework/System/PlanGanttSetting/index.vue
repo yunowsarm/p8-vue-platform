@@ -159,11 +159,11 @@ export default {
   created() {
     let that = this
     this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then((res) => {
-      this.formData.content = res.autoScheduling.content
-      this.formData.defaultMode = res.defaultMode.content
-      this.formData.taskFinish = res.taskFinish.content
-      this.formData.doneSign = res.doneSign.content
-      this.formData.displayType = res.displayType.content
+      this.formData.content = res.autoScheduling && res.autoScheduling.content ? res.autoScheduling.content : ''
+      this.formData.defaultMode = res.defaultMode && res.defaultMode.content ? res.defaultMode.content : ''
+      this.formData.taskFinish = res.taskFinish && res.taskFinish.content ? res.taskFinish.content : ''
+      this.formData.doneSign = res.doneSign && res.doneSign.content ? res.doneSign.content : ''
+      this.formData.displayType = res.displayType && res.displayType.content ? res.displayType.content : ''
       if (res.taskRealDateWrite.content === '1') {
         this.formData.taskRealDateWrite = '手动选择时间'
       } else {

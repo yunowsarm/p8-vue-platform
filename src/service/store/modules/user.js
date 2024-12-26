@@ -22,6 +22,7 @@ const user = {
     displayType:'', // gantt超期/剩余天数展示类型
     ganttButtonMode: '', // gantt操作按钮采用单行还是双行模式
     ganttRightButtons: [], // gantt右键菜单
+    autoScheduling: '',
     userInfo: {}, // 用于JT智能表单的系统级参数
     sysVars: {
       // 用于智能表单的系统级参数
@@ -94,16 +95,19 @@ const user = {
       if (data.PlanButton && data.PlanButton.length) {
         state.ganttButtonMode = data.PlanButton[0].value.type || ''
         state.ganttRightButtons = data.PlanButton[0].value.rightBtns || []
-
+        state.autoScheduling = data.PlanButton[0].value.autoScheduling
       }
       api['PlanGanttSetting.getSchedulingBasicConfig']({})
         .then((res) => {
           if (res) {
-            state.doneSign = res.doneSign.content
-            state.displayType = res.displayType.content
+            state.doneSign = res.doneSign ? res.doneSign.content : ''
+            state.displayType = res.displayType ? res.displayType.content : ''
             if (!state.ganttButtonMode) {
               state.ganttButtonMode = res.defaultMode.content
 
+            }
+            if (!state.autoScheduling) {
+              state.autoScheduling = res.autoScheduling.content
             }
             if (state.ganttRightButtons && state.ganttRightButtons.length == 0) {
               if (res.planRightButton.content) {
