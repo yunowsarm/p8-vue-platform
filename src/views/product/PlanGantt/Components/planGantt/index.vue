@@ -1250,14 +1250,6 @@ export default {
       const monitorBtns = this.monitorBtnsByApi
       window.createPage = createPage
       const vueThis = this
-      monitorBtns.forEach(item => {
-        if (item.id == '1020' && item.lockStatus == '1') {
-          if (createPage === 'compile') {
-            vueThis.planEditLock = true
-            myGantt.config.readonly = true
-          }
-        }
-      });
       vueThis.$api['planGanttManager.loadPlanGanttData']({
         planInfoId: planInfoId,
         dicType: 'ACTIVITY_TYPE',
@@ -1300,10 +1292,11 @@ export default {
             if (res.projectStatus === '2205') {
               myGantt.config.readonly = true
             }
-            if ((res.monitorLock && res.monitorLock['1010'] && res.monitorLock['1010'] === '1') || (res.monitorLock && res.monitorLock['1018'] && res.monitorLock['1018'] === '1')) {
+            if ((res.monitorLock && res.monitorLock['1010'] && res.monitorLock['1010'] === '1') || (res.monitorLock && res.monitorLock['1018'] && res.monitorLock['1018'] === '1')|| (res.monitorLock && res.monitorLock['1020'] && res.monitorLock['1020'] === '1')) {
               if (createPage === 'compile') {
                 vueThis.planEditLock = true
                 myGantt.config.readonly = true
+                myGantt.config.readonlyReason = '计划编辑锁定时不允许此操作'
               }
             }
             if (res.trainingModeList) {

@@ -233,9 +233,6 @@ export default {
     ...mapGetters(['vueThis', 'ganttButtonMode'])
   },
   mounted () {
-    if(this.cbutton.title === '设计工艺'){
-      console.log(this.cbutton)
-    }
     let that = this
     if (this.cbutton && this.cbutton.id == 'full-screen') {
       this.$bus.$on('ganttOnFullscreen', function (state) {
