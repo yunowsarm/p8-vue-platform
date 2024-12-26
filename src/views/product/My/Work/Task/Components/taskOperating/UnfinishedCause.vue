@@ -68,7 +68,7 @@ export default {
       },
       {
         title: '反馈时间',
-        dataIndex: 'itemCreateTime',
+        dataIndex: 'createTime',
         align: 'left'
       }
     ]
