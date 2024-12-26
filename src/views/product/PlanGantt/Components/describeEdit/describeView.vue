@@ -330,7 +330,7 @@ export default {
       that.$api['planGanttManager.getActivityInfoByTaskId']({ taskId: taskId, planChangeDetailId: task.planChangeDetailId })
         .then(function (res) {
           if (res) {
-            that.formData.describes = res.describes
+            that.formData.describes = res.describes ? res.describes : res.describesBefore
             that.formData.planTypeDisplay = res.planTypeDisplay
             that.formData.proportion = res.proportion ? Math.round(res.proportion) + '%' : ''
             that.describes = that.formData.describes

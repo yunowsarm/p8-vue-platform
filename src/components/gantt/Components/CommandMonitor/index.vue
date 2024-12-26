@@ -170,7 +170,7 @@ export default {
             //   })
             // }
             res.forEach((item) => {
-              if (item.id !== '1024' && item.id !== '1023' && item.id !== '1017' && item.lockStatus !== '1') {
+              if (item.id !== '1024' && item.id !== '1023' && item.id !== '1017' && item.id !== '1020') {
                 that.monitorData.push(item)
               }
             })

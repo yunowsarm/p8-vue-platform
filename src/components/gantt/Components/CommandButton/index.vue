@@ -62,10 +62,11 @@
                    :style="colorDynamicStyle(cbutton)"></div>
               <div v-else>
                 <i :class="cbutton.icon"
-                   :style="iconDynamicClass"></i>
+                   :style="[iconDynamicClass, !isDisable(cbutton) ? { color: cbutton.color || '' } : {}]"></i>
                 <span class="button-title"
                       v-if="size !== 'mini'"
-                      v-show="ganttButtonMode === 'tabs'">{{ cbutton.title }}</span>
+                      v-show="ganttButtonMode === 'tabs'"
+                      :style="!isDisable(cbutton) ? { color: cbutton.color || '' } : {}">{{ cbutton.title }}</span>
               </div>
             </el-button>
           </span>
