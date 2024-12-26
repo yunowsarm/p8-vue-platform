@@ -96,6 +96,9 @@
 </template>
 
 <style lang="scss" scoped>
+::v-deep .el-button--small {
+  font-size: 15px !important;
+}
 .couerDivClass {
   height: calc(100% - 2px) !important;
   // padding-top:1px;
