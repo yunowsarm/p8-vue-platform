@@ -109,13 +109,12 @@ export default {
       )
     },
     onLayoutUpdated (newLayout) {
-      console.log(JSON.stringify(newLayout))
     },
     onMove (params) {
-      console.log(params)
+
     },
     onResize (i, newH, newW, newHPx, newWPx) {
-      console.log('ddd', i, newH, newW, newHPx, newWPx)
+
     },
     handleRefresh () {
       // this.loading = false

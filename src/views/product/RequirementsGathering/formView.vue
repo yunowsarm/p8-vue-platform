@@ -966,7 +966,7 @@ export default {
   },
   methods: {
     approveCommit (e, msg) {
-      // console.log(this.$refs.form, '=====================2222');
+      //
       // this.$refs.form.$refs.form.$refs.parser.submitForm()
       this.handleSubmit()
     },
@@ -1059,7 +1059,7 @@ export default {
         } else {
           this.formData.demandSuggestions = this.formData.demandSuggestionsArr[0]
         }
-        console.log("🚀 ~ handleSubmit ~ this.formData.demandSuggestions:", this.formData.demandSuggestions)
+
         if
           (
           !this.formData.demandName ||
@@ -1126,12 +1126,14 @@ export default {
 .title {
   font-size: 17px;
   font-weight: bold;
+  margin: 10px 0;
 }
 .header {
   height: calc(100% - 50px) !important;
   overflow: auto;
 }
 .content {
+  padding: 15px;
   display: flex;
   flex-direction: row;
   justify-content: center;

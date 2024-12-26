@@ -212,7 +212,7 @@ export default {
     }
   },
   mounted() {
-    console.log(this.record, 'ssss')
+
   },
   methods: {
     rendered() {
@@ -232,24 +232,24 @@ export default {
     tableRefresh(param) {
       param
         .then(() => {
-          console.log('异步成功后端做的操作')
+
         })
         .catch(() => {
-          console.log('异步失败的操作')
+
         })
     },
     clickEvent() {
-      console.log('click')
+
     },
     cancel() {
       this.$emit('cancel')
     },
     saved(res) {
-      console.log('edit saved')
+
       this.$emit('saveSuccess', res)
     },
     handleChange(info) {
-      console.log(info, 'info')
+
     },
     changeCron(val) {
       if (val) {
@@ -261,7 +261,7 @@ export default {
     },
     customValidate(saveParams) {
       saveParams.serviceHeartRealizationName = saveParams.heartServiceRealizationName
-      console.log(saveParams.serviceHeartRealizationName, 'serviceHeartRealizationName')
+
       this.$refs.form.submitForm(saveParams, this.saveApi)
     }
   }

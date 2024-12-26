@@ -139,7 +139,7 @@ export default {
       }
     },
     getOutputData(taskId) {
-      console.log('🚀 ~ outputView ~ taskId:', taskId)
+
       const that = this
       that.otherParam = { taskId: taskId }
       that.$api['planGanttManager.outputInfo']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId })

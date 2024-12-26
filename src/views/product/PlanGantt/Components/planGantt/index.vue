@@ -306,7 +306,7 @@
                       :main-gantt-name="ganttName"></version-list>
       </template>
     </common-drawer>
-    <common-drawer v-if="progressHistoryVisible"
+    <!-- <common-drawer v-if="progressHistoryVisible"
                    :visible="progressHistoryVisible"
                    size="50%"
                    placement="top"
@@ -315,7 +315,7 @@
       <template #drawer>
         <ProgressHistory :task-id="selectedId" />
       </template>
-    </common-drawer>
+    </common-drawer> -->
     <common-drawer v-if="changeHistoryVisible"
                    :visible="changeHistoryVisible"
                    size="80%"
@@ -461,7 +461,7 @@ import CommonButtonBarSetting from '@/components/gantt/Components/CommonButtonBa
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
 import VersionList from '../versionList'
-import ProgressHistory from '../progressHistory'
+// import ProgressHistory from '../progressHistory'
 import ChangeHistory from '../changeHistory'
 import relevance from '../relevance'
 import { version } from 'vue'
@@ -491,6 +491,10 @@ let myGantt
 export default {
   name: 'PlanGantt',
   props: {
+    planManagementStatus: {
+      type: String,
+      default: ''
+    },
     planBeginDateArray: {
       type: Array,
       default: () => []
@@ -584,7 +588,7 @@ export default {
     Notice,
     // Flight,
     // Large,
-    ProgressHistory,
+    // ProgressHistory,
     ChangeHistory,
     CommandSearch,
     CommandStatistic,
@@ -800,9 +804,10 @@ export default {
       ganttStatisticVisible: false,
       rightMenuConfigVisible: false, // 右键菜单配置弹出框
       getSelectTasks: [],
-      progressHistoryVisible: false,
+      // progressHistoryVisible: false,
       changeHistoryVisible: false,
       selectedId: '',
+      pageType: 'switch',
       versionListVisible: false //  版本列表显示隐藏
     }
   },
@@ -875,7 +880,7 @@ export default {
     }
     let timer = null;
     window.myWebSocket.on('planGantGroup', (data) => {
-      console.log(data, '=====---data');
+
       if (timer) clearTimeout(timer); // 每次监听输入值，都会去判断是否还有timer，有就清除timer
       timer = setTimeout(() => {
         that.onlineData = data
@@ -927,11 +932,11 @@ export default {
     noOperate () {
       return !(this.ganttDetail || this.menuVisible || this.outPutViewVisible || this.activityImportVisible || this.noticeVisible || this.controlTimeVisible || this.resourceSelectVisible || this.selectGridVisible || this.myExperienceVisible || this.importExcel || this.importProject || this.ganttSearchVisible || this.ganttStatisticVisible || this.rightMenuConfigVisible || this.createVisible || this.experienceBaseVisible || this.versionListVisible || this.progressHistoryVisible || this.changeHistoryVisible)
     },
-    ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll'])
+    ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
     relevanceOpen () {
-      console.log('1111111111111111');
+
       this.relevancePlanVisible = true
     },
     relevanceClick (id) {
@@ -952,7 +957,7 @@ export default {
     closExperienceBase (res) {
       this.isManage = false
       this.experienceBaseVisible = false
-      console.log(res, 'res')
+
       if (res === 'true') {
         this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
       }
@@ -1242,6 +1247,7 @@ export default {
       // }
     },
     loadGanttData (planInfoId, taskId, createPage) {
+      const monitorBtns = this.monitorBtnsByApi
       window.createPage = createPage
       const vueThis = this
       vueThis.$api['planGanttManager.loadPlanGanttData']({
@@ -1286,10 +1292,11 @@ export default {
             if (res.projectStatus === '2205') {
               myGantt.config.readonly = true
             }
-            if ((res.monitorLock && res.monitorLock['1010'] && res.monitorLock['1010'] === '1') || (res.monitorLock && res.monitorLock['1018'] && res.monitorLock['1018'] === '1')) {
+            if ((res.monitorLock && res.monitorLock['1010'] && res.monitorLock['1010'] === '1') || (res.monitorLock && res.monitorLock['1018'] && res.monitorLock['1018'] === '1')|| (res.monitorLock && res.monitorLock['1020'] && res.monitorLock['1020'] === '1')) {
               if (createPage === 'compile') {
                 vueThis.planEditLock = true
                 myGantt.config.readonly = true
+                myGantt.config.readonlyReason = '计划编辑锁定时不允许此操作'
               }
             }
             if (res.trainingModeList) {
@@ -1328,12 +1335,19 @@ export default {
             vueThis.taskCount = myGantt.getTaskCount()
 
             myGantt.unselectTask()
-            console.log(vueThis.selectedId, '==========1111');
+
             if (!vueThis.relevancePlanVisible) {
               setTimeout(() => {
                 myGantt.showTask(vueThis.selectedId);
                 myGantt.selectTask(vueThis.selectedId);
               }, 1000)
+            }
+            if (vueThis.isSueTaskIds && vueThis.isSueTaskIds.length) {
+              vueThis.isSueTaskIds.forEach(el => {
+                myGantt.showTask(el);
+                myGantt.selectTask(el);
+              })
+              vueThis.isSueTaskIds = null
             }
             // 检查gantt操作权限
             // myGantt.config.readonly = editLockUnLockCheck(vueThis.planInfoStatus, vueThis.monitorLockMap)
@@ -1355,7 +1369,9 @@ export default {
     callParentSelectTasks () {
       this.$nextTick(() => {
         this.$emit('select-task', this.selectedTasks, this.ganttName)
-        this.showDetail('switch')
+        if (this.pageType !== 'history') {
+          this.showDetail('switch')
+        }
       })
     },
     mouseMove (e) {
@@ -1366,6 +1382,7 @@ export default {
       }
     },
     showDetail (type) {
+      this.pageType = 'switch'
       if (myGantt.getGlobalTaskIndex(this.selectTaskId) === 0) return
       // 如果是任务分解，非当前人员创建的，只能编辑责任人
       const userId = this.$store.getters.userInfo.id
@@ -1616,7 +1633,9 @@ export default {
     },
     showTaskProgressDialog (taskId) {
       this.selectedId = taskId
-      this.progressHistoryVisible = true
+      this.pageType = 'history'
+      this.$emit('show-detail', myGantt.getTask(taskId), this.ganttName, '', 'history')
+      // this.progressHistoryVisible = true
       this.reminderList.forEach(item => {
         if (item.id == taskId) {
           item.reminder = 0

@@ -1692,6 +1692,13 @@ export const repositoryApi = {
       desc: '立项关联'
     },
     {
+      name: 'cancelRequirementByProject',
+      method: 'POST',
+      path: '/requirement/cancelRequirementByProject',
+      mockPath: '/requirement/cancelRequirementByProject',
+      desc: '立项取消关联'
+    },
+    {
       name: 'getRequirementByTaskChange',
       method: 'POST',
       path: '/requirement/getRequirementByTaskChange',

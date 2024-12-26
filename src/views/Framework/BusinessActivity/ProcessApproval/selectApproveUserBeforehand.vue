@@ -97,12 +97,12 @@ export default {
     })
   },
   mounted () {
-    // console.log(this.selectUserBeforehandDataSourceCur, this.selectUserBeforehandFormDataCur, 'selectUserBeforehandFormDataCurselectUserBeforehandFormDataCur')
+    //
     this.selectUserBeforehandFormDataCur = Object.assign({}, this.selectUserBeforehandFormData)
     this.selectUserBeforehandDataSourceCur = [].concat(this.selectUserBeforehandDataSource)
     this.dialogHeight = this.dialogHeight + this.selectUserBeforehandDataSource.length * 60
     this.isView = this.isSelectApproveUserBeforehandView
-    console.log(this.selectUserBeforehandDataSourceCur,'-----selectUserBeforehandDataSourceCur11111111');
+
   },
   computed: {
     componentLoader () {
@@ -138,7 +138,7 @@ export default {
           }
         })
       }
-    console.log(this.selectUserBeforehandFormDataCur,'======selectUserBeforehandFormDataCur2222222');
+
       this.isView = false
       this.$emit('commit', saveParams)
       this.$emit('saveSuccess')
@@ -165,7 +165,7 @@ export default {
           this.selectUserBeforehandFormDataCur[this.fieldName + '_Display'] = selectedRows[0].name
         }
         // this.selectUserBeforehandFormDataCur = Object.assign({}, this.selectUserBeforehandFormDataCur)
-        console.log(this.selectUserBeforehandFormDataCur,'------this.selectUserBeforehandFormDataCur');
+
       }
     }
   }

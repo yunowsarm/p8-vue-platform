@@ -11,7 +11,7 @@
       </template>
       <template #durationDay>
         <div class="duration-days"
-             v-html="durationDayHandle(formData.status, formData.now, formData.planEndDate, formData.realEndDate)"></div>
+             v-html="getDurationDays(formData)"></div>
       </template>
       <template #progress>
         <el-progress :text-inside="true"
@@ -57,6 +57,7 @@ import { P8Form as FormList, Progress } from 'p8-components-ui'
 
 import moment from 'moment'
 import Vue from 'vue'
+import { calculateRemainingDays } from '@/utils/common'
 export default {
   name: 'TaskPaneView',
   inject: ['getPlanInfo'],
@@ -107,6 +108,10 @@ export default {
     })
   },
   methods: {
+    getDurationDays(data){
+      if(!data.status) return ''
+      return  calculateRemainingDays(data).text
+    },
     rendered () {
       if (this.api) {
         this.getTaskInfo()

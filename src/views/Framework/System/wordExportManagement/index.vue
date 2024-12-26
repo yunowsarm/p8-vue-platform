@@ -117,23 +117,23 @@ export default {
     }
   },
   mounted() {
-    // console.log(contentUiCss,contentCss)
+    //
   },
   methods: {
 
     save() {
-      console.log("保存", this.editorContent);
+
       this.$api['richeditor.save']({value: this.editorContent}).then(res => {
-        console.log('richeditor.save', res)
+
       })
     },
     exportWord() {
-      console.log("导出word", this.editorContent);
+
       this.$api['richeditor.remoteExportWord']({
         content: this.editorContent,
         templateValue: this.templateValue
       }, {responseType: 'blob'}).then(res => {
-        console.log('richeditor.remoteExportWord', res)
+
         let link = document.createElement('a')
         link.href = window.URL.createObjectURL(new Blob([res.data]))
         link.download = 'test.docx'
@@ -152,12 +152,12 @@ export default {
       this.visible = false;
     },
     // exportWordTemplate() {
-    //   console.log("导出word", this.editorContent);
+    //
     //   this.$api['richeditor.exportWordTemplate']({
     //     content: this.editorContent,
     //     templateValue: this.templateValue
     //   }, {responseType: 'blob'}).then(res => {
-    //     console.log('richeditor.exportWordTemplate', res)
+    //
     //     let link = document.createElement('a')
     //     link.href = window.URL.createObjectURL(new Blob([res.data]))
     //     link.download = 'test.docx'

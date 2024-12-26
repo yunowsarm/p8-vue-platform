@@ -16,7 +16,6 @@
       <div id="table-contain">
         <common-table ref="table"
                       :comp="comp"
-                      :table-border="false"
                       :table-config="tableConfig"
                       :columns="columns"
                       :tree="treeParams"
@@ -191,21 +190,21 @@ export default {
   computed: {},
   methods: {
     onSelect (node) {
-      // console.log(node);
+      //
       this.queryParam.departmentId = node.id
-      // console.log( this.queryParam.departmentId,'----------我的选中的部门标识');
+      //
       this.$refs.table.searchData()
     },
     levelParentClick (record) {
-      console.log(record, 'record---icon')
+
     },
     tableRefresh (param) {
       param
         .then(() => {
-          console.log('异步成功后端做的操作')
+
         })
         .catch(() => {
-          console.log('异步失败的操作')
+
         })
     },
     createUser () {
@@ -221,10 +220,10 @@ export default {
       })
     },
     updateUser (record) {
-      console.log('record:', record)
+
       this.currUserId = record.id
       this.drawerTitle = '修改用户'
-      console.log('currUserId', this.currUserId)
+
       this.visibleUserEditDrawer = true
     },
     viewUser (record) {
@@ -236,14 +235,14 @@ export default {
       this.visibleUserEditDrawer = false
     },
     saveCallback () {
-      console.log('修改页面关闭时的回调方法')
+
       this.$refs.table.searchData()
       this.onEditUserClose()
     },
     safeSet (record) {
       this.currUserId = record.id
       this.drawerTitle = '用户安全设置'
-      console.log('currUserId', this.currUserId)
+
       this.visibleUserSafesetDrawer = true
     },
     onUserSafesetClose () {
@@ -260,7 +259,7 @@ export default {
           that.$api['userManager.remove']({
             id: record.id
           }).then((res) => {
-            console.log(res)
+
             that.$refs.table.searchData()
             // if (res.data && res.data.result === 'success') {
             // that.$refs.table.refresh()
@@ -269,7 +268,7 @@ export default {
           })
         })
         .catch((e) => {
-          console.log(e)
+
         })
     },
     unlockUser (record) {
@@ -283,12 +282,12 @@ export default {
           that.$api['userManager.unlock']({
             id: record.id
           }).then((res) => {
-            console.log(res)
+
             that.$refs.table.searchData()
           })
         })
         .catch((e) => {
-          console.log(e)
+
         })
     },
     search (param) {
@@ -323,7 +322,7 @@ export default {
       })
     },
     iconClick (record) {
-      console.log(record, 'record')
+
     }
   }
 }

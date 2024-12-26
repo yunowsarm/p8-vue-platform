@@ -122,7 +122,7 @@ export default {
   },
   created () {
     this.getSystemAbout()
-    console.log(API_DEFAULT_CONFIG)
+
   },
   mounted () {
     this.dayTime = getGreetingTime()

@@ -127,7 +127,7 @@ export default {
         })
         .then(() => {
           let params = that.selection.map((res) => {
-            console.log(res, 'businessKeybusinessKeybusinessKey')
+
             return {
               taskId: res.processTaskId,
               businessKey: res.businessKey,

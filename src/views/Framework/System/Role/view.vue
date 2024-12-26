@@ -327,7 +327,7 @@ export default {
       this.$emit('cancel')
     },
     clickEvent () {
-      console.log('click')
+
     },
     getRoleData (roleId) {
       const that = this

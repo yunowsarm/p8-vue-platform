@@ -273,7 +273,7 @@ export default {
       }, delay)
     },
     onMove(params) {
-      // console.log('onMove:', params)
+      //
     },
     // 大小改变
     onResize(params) {

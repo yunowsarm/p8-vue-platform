@@ -43,20 +43,24 @@
         <div>{{ messageData.uploadFiles.length }} 个附件</div>
         {{ messageData.uploadFiles }}
       </div>
-      <div v-if="messageData.msgLink" class="contentBody">
-        <component v-if="messageData.msgLink != null && messageData.msgLink != ''" :rote-name="messageData.entityId" :table-flex="320" :is="componentLoader" />
+      <div v-if="messageData.msgLink" class="contentBody" style='height: calc(100% - 70px)'>
+        <component v-if="messageData.msgLink" :rote-name="messageData.entityId" :table-flex="320" :key='renderKey' :is="componentLoader" :task-id='messageData.entityId' />
       </div>
     </VuePerfectScrollbar>
   </div>
 </template>
 
 <script>
+import TaskDetail from './TaskDetail/index.vue'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import { Row, Col, Tag, Link } from 'p8-components-ui'
+import PlanAttribute from '@/views/product/PlanGantt/Components/planAttribute/index.vue'
 
 export default {
   name: 'MessageView',
   components: {
+    TaskDetail,
+    PlanAttribute,
     'el-row': Row,
     'el-col': Col,
     'el-tag': Tag,
@@ -89,6 +93,7 @@ export default {
       handler(val) {
         if (val.msgLink) {
           this.componentLoader = () => import('@/views/' + val.msgLink)
+          this.renderKey = new Date().getTime()
         }
       },
       deep: true,
@@ -97,6 +102,7 @@ export default {
   },
   data() {
     return {
+      renderKey: new Date().getTime(),
       componentLoader: null
     }
   },
@@ -113,9 +119,7 @@ export default {
         .then(() => {
           this.$emit('onDeleteMsg', id)
         })
-        .catch((e) => {
-          console.log(e)
-        })
+        .catch((e) => {})
     },
     hasHtmlTag(str) {
       return /<[^>]*>/i.test(str)
@@ -140,14 +144,17 @@ $paddingLeft: 10px;
 
     .el-row {
       margin-bottom: 10px;
+
       &:last-child {
         margin-bottom: 0;
       }
     }
+
     .flex-row {
       display: flex;
       flex-direction: row;
     }
+
     .left-span {
       display: inline-block;
       width: 20px;
@@ -176,6 +183,7 @@ $paddingLeft: 10px;
       background: #ecf5ff;
       border-color: #178fff;
       font-size: 12px;
+
       i {
         color: #f6a63d;
         font-size: 15px;

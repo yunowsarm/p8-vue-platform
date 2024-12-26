@@ -215,8 +215,8 @@ export default {
       that.renderTime = new Date() + ''
     },
     ascendingTime () { // 时间升序
-      console.log(this.chargeIds, '============this.chargeIds');
-      console.log(this.searchParams.msgCatalog, '----------------this.searchParams.msgCatalog');
+
+
       if (this.chargeIds.includes(this.searchParams.msgCatalog)) {
         this.mergeParams.page.orders = [{ column: 't.start_Time', asc: false }]
       } else {

@@ -99,7 +99,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .shortcut-menu-list {
-  width: 100%;
+  // width: 100%;
   // height: 100%;
   padding: 3px;
   margin: 0;

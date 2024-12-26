@@ -167,7 +167,7 @@ export default {
     }
   },
   mounted () {
-    console.log(this.id,'----id');
+
   },
   methods: {
     handleSave () {
@@ -175,7 +175,7 @@ export default {
       this.$refs.form.validate().then(formData => {
         // let params = { ...formData, ...this.sqlParams }
         let replaceDetails = []
-        console.log(this.sqlParams['meetingTodolistRequests'],11111);
+
         this.sqlParams['meetingTodolistRequests'].forEach(el => {
           if (el.replaceMan) {
             replaceDetails.push({
@@ -243,7 +243,7 @@ export default {
       }
     },
     selectDutyUserClosed (obj) {
-      console.log(obj,'====obj');
+
       if (obj) {
         this.formData.dutyUserName = obj.realName
         this.formData.dutyUserId = obj.id
@@ -268,7 +268,7 @@ export default {
     rendered () { },
     tableRefresh (param) {
       param.then(() => {
-        console.log('异步成功后端做的操作')
+
       }).catch(() => {
         console.error('异步失败的操作')
       })

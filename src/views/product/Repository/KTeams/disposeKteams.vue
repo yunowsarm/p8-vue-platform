@@ -296,7 +296,7 @@ export default {
         })
       }
       this.editableData = data
-      console.log(data, '--data');
+
     },
     openRight (item, index) {
       this.clickIndex = index

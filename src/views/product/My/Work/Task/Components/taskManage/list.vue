@@ -38,8 +38,8 @@
                        class="list-con-item">
                     <div class="list-con-item__content request">
                       <el-tooltip placement="top"
-                                  :content="citem.description">
-                        <span>{{citem.description}}</span>
+                                  :content="citem.descriptionDisplay">
+                        <span>{{citem.descriptionDisplay}}</span>
                       </el-tooltip>
                     </div>
                     <div class="list-con-item__content remark"></div>
@@ -291,6 +291,21 @@ export default {
         _this.inputRequestData = values[2]
         _this.inputIoData = values[3]
         _this.activityDescData = values[4]
+        if (_this.activityDescData) {
+          _this.activityDescData.forEach(item => {
+            function stripHtmlTags (html) {
+              return html.replace(/<\/?[^>]+(>|$)/g, "");  // 使用正则去除 HTML 标签
+            }
+            var plainText = stripHtmlTags(item.description);
+            function decodeHtmlEntities (text) {
+              var textarea = document.createElement('textarea');
+              textarea.innerHTML = text;
+              return textarea.value;
+            }
+            var decodedStr = decodeHtmlEntities(plainText);
+            item.descriptionDisplay = decodedStr
+          })
+        }
         _this.specialVersionData = values[5]
       }).catch(err => {
         console.error('error-all', err)

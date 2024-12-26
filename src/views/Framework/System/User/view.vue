@@ -186,46 +186,46 @@ export default {
   mounted () { },
   methods: {
     rendered () {
-      // console.log('currentSelectDeptId', this.currentSelectDeptId)
+      //
       if (this.userId && this.userId !== '') {
         this.getUserData(this.userId)
       }
     },
     clickEvent () {
-      console.log('click')
+
     },
     cancel () {
       this.$emit('cancel')
     },
     getUserData (userId) {
       const that = this
-      console.log('loadUserId', userId)
+
 
       this.$api['userManager.userInfo']({ id: that.userId })
         .then(function (res) {
-          console.log('Success')
+
           const { id, userName, pid, realName, departmentId, confidentialite, gender, otel, oemail, indexNo, roles, birthdate: birthDate, empcode: empCode, workpost: workPost, tecpost: tecPost, departmentName: departmentName, genderDisp: genderDisp } = res
           that.formData = { id, userName, genderDisp, pid, realName, departmentId, confidentialite, gender, otel, oemail, indexNo, roles, birthDate, empCode, workPost, tecPost, departmentName }
           // that.formData.birthDate = res.birthdate
           // that.formData.empCode = res.empcode
           // that.formData.workPost = res.workpost
           // that.formData.tecPost = res.tecpost
-          console.log('formData', that.formData)
+
           // if (res.birthDate) {
           // } else {
           //   that.formData.birthDate = null
           // }
         })
         .catch(function (error) {
-          console.log('error' + error)
+
         })
     },
     saved (res) {
-      console.log('edit saved')
+
       this.$emit('saveSuccess', res)
     },
     handleChange (info) {
-      console.log(info, 'info')
+
     }
   }
 }

@@ -47,7 +47,7 @@ export const constantRouterMap = [
   {
     path: '/homeDash',
     redirect: '/LoginHome',
-    hidden:  true,
+    hidden: true,
     component: _import_('LoginHome/index'),
     meta: { title: '登录主页', icon: 'icon-base-data-manage', noCache: false },
     children: [
@@ -225,5 +225,19 @@ export const constantRouterMap = [
         meta: { title: 'test1', icon: 'icon-model-related-information' }
       }
     ]
+  },
+  {
+    path: '/myMessageView',
+    name: 'myMessageView',
+    component: _import_('Framework/Message/index'),
+    hidden: true,
+    meta: { title: 'test', icon: 'icon-task-statistics-query' },
+  },
+  {
+    path: '/myApproveView',
+    name: 'myApproveView',
+    component: _import_('Communication/MyApprove/list'),
+    hidden: true,
+    meta: { title: 'test', icon: 'icon-task-statistics-query' },
   }
 ]

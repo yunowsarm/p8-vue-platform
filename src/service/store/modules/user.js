@@ -18,6 +18,8 @@ const user = {
     roles: null, // 权限应该是返回个数组对象
     // confidentialiteList: [], // 用户密级,
     userSettingAll: {}, // 用户配置信息
+    doneSign: '', // 任务完成标志
+    displayType:'', // gantt超期/剩余天数展示类型
     ganttButtonMode: '', // gantt操作按钮采用单行还是双行模式
     ganttRightButtons: [], // gantt右键菜单
     userInfo: {}, // 用于JT智能表单的系统级参数
@@ -92,14 +94,16 @@ const user = {
       if (data.PlanButton && data.PlanButton.length) {
         state.ganttButtonMode = data.PlanButton[0].value.type || ''
         state.ganttRightButtons = data.PlanButton[0].value.rightBtns || []
-        console.log(state.ganttButtonMode, '---111');
+
       }
       api['PlanGanttSetting.getSchedulingBasicConfig']({})
         .then((res) => {
           if (res) {
+            state.doneSign = res.doneSign.content
+            state.displayType = res.displayType.content
             if (!state.ganttButtonMode) {
               state.ganttButtonMode = res.defaultMode.content
-              console.log(state.ganttButtonMode, '---222');
+
             }
             if (state.ganttRightButtons && state.ganttRightButtons.length == 0) {
               if (res.planRightButton.content) {

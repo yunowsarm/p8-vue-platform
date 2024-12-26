@@ -5,12 +5,48 @@ import api from '@/plugins/api'
 import store from '@/plugins/store'
 import axios from '@/plugins/axios'
 import { requestUrl } from '@/utils/common.js'
+import isDisable, {
+  isHasTask,
+  isCompile,
+  isSuspensionOrProhibition,
+  taskStateAndReadonly,
+  isWeave,
+  isToBeDelivered,
+  isHasProductTask,
+  isApprovalCompleted,
+  isAllowUpgrades,
+  isSingleTask,
+  isAllowDowngrade,
+  isAllowDelete,
+  isHasApproveTask,
+  noSelfCreate,
+  isApprovalReject,
+  isReadOnly,
+  isReadOnlyAndNoRoot,
+  isHasDeliveredTask,
+  isAllowResponsiblePerson,
+  isAllowIssue,
+  isAllowUndo,
+  isHadRootAndReadOnly,
+  isAllowPaste,
+  isAllowAutoManual,
+  isAllowChangeStyle,
+  isGridView,
+  isGanttView,
+  isResourceView,
+  isCriticalPath,
+  isAllowImport,
+  isExperienceImport,
+  isDetailInfo,
+  isNotStart
+} from './isDisable'
 export const CommandButtonData = [
   {
     id: 'create-children',
     icon: 'p8 icon-new-subordinate',
     title: '新建下级',
     help: '新建下级',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       if (ganttName === 'changeGantt') {
         noDpAddTask(1, 'Child', ganttName)
@@ -19,39 +55,19 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      if (ganttName === 'changeGantt') {
-        return true
-      }
-      let result
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (createPage === 'decompose' && tasks[0].managerStatus === '6404') {
-        result = false
-      } else {
-        if (isDisableFunCheck(ganttName, tasks, '1')) {
-          result = false
-        } else if (checkEditTask(ganttName, tasks)) {
-          result = false
-        } else {
-          result = true
-        }
-      }
-      if (tasks.length === 1 && tasks[0].managerStatus === '6402') {
-        result = false
-      }
-      if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
-        result = true
-      }
-      if (checkHasProductTask(tasks)) {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isHasTask(ganttName, tasks),
+        () => isReadOnly(ganttName, tasks),
+        () => isCompile(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => taskStateAndReadonly(ganttName, tasks),
+        () => isWeave(ganttName, tasks),
+        () => isToBeDelivered(ganttName, tasks),
+        () => isHasProductTask(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     },
     children: [
       {
@@ -67,39 +83,19 @@ export const CommandButtonData = [
           }
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          if (ganttName === 'changeGantt') {
-            return true
-          }
-          let result
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
-          if (createPage === 'compile' && vueThis.planEditLock) {
-            return true
-          }
-          if (checkSwitchType(tasks)) {
-            return true
-          }
-          if (createPage === 'decompose' && tasks[0].managerStatus === '6404') {
-            result = false
-          } else {
-            if (isDisableFunCheck(ganttName, tasks, '1')) {
-              result = false
-            } else if (checkEditTask(ganttName, tasks)) {
-              result = false
-            } else {
-              result = true
-            }
-          }
-          if (tasks.length === 1 && tasks[0].managerStatus === '6402') {
-            result = false
-          }
-          if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
-            result = true
-          }
-          if (checkHasProductTask(tasks)) {
-            result = true
-          }
-          return result
+          const checks = [
+            () => isHasTask(ganttName, tasks),
+            () => isCompile(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
+            () => isSuspensionOrProhibition(ganttName, tasks),
+            () => taskStateAndReadonly(ganttName, tasks),
+            () => isWeave(ganttName, tasks),
+            () => isToBeDelivered(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks),
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       },
       {
@@ -115,39 +111,19 @@ export const CommandButtonData = [
           }
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          if (ganttName === 'changeGantt') {
-            return true
-          }
-          let result
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
-          if (createPage === 'compile' && vueThis.planEditLock) {
-            return true
-          }
-          if (checkSwitchType(tasks)) {
-            return true
-          }
-          if (createPage === 'decompose' && tasks[0].managerStatus === '6404') {
-            result = false
-          } else {
-            if (isDisableFunCheck(ganttName, tasks, '1')) {
-              result = false
-            } else if (checkEditTask(ganttName, tasks)) {
-              result = false
-            } else {
-              result = true
-            }
-          }
-          if (tasks.length === 1 && tasks[0].managerStatus === '6402') {
-            result = false
-          }
-          if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
-            result = true
-          }
-          if (checkHasProductTask(tasks)) {
-            result = true
-          }
-          return result
+          const checks = [
+            () => isHasTask(ganttName, tasks),
+            () => isCompile(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
+            () => isSuspensionOrProhibition(ganttName, tasks),
+            () => taskStateAndReadonly(ganttName, tasks),
+            () => isWeave(ganttName, tasks),
+            () => isToBeDelivered(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks),
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       },
       {
@@ -163,39 +139,19 @@ export const CommandButtonData = [
           }
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          if (ganttName === 'changeGantt') {
-            return true
-          }
-          let result
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
-          if (createPage === 'compile' && vueThis.planEditLock) {
-            return true
-          }
-          if (checkSwitchType(tasks)) {
-            return true
-          }
-          if (createPage === 'decompose' && tasks[0].managerStatus === '6404') {
-            result = false
-          } else {
-            if (isDisableFunCheck(ganttName, tasks, '1')) {
-              result = false
-            } else if (checkEditTask(ganttName, tasks)) {
-              result = false
-            } else {
-              result = true
-            }
-          }
-          if (tasks.length === 1 && tasks[0].managerStatus === '6402') {
-            result = false
-          }
-          if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
-            result = true
-          }
-          if (checkHasProductTask(tasks)) {
-            result = true
-          }
-          return result
+          const checks = [
+            () => isHasTask(ganttName, tasks),
+            () => isCompile(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
+            () => isSuspensionOrProhibition(ganttName, tasks),
+            () => taskStateAndReadonly(ganttName, tasks),
+            () => isWeave(ganttName, tasks),
+            () => isToBeDelivered(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks),
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       },
       {
@@ -211,39 +167,19 @@ export const CommandButtonData = [
           }
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          if (ganttName === 'changeGantt') {
-            return true
-          }
-          let result
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
-          if (createPage === 'compile' && vueThis.planEditLock) {
-            return true
-          }
-          if (checkSwitchType(tasks)) {
-            return true
-          }
-          if (createPage === 'decompose' && tasks[0].managerStatus === '6404') {
-            result = false
-          } else {
-            if (isDisableFunCheck(ganttName, tasks, '1')) {
-              result = false
-            } else if (checkEditTask(ganttName, tasks)) {
-              result = false
-            } else {
-              result = true
-            }
-          }
-          if (tasks.length === 1 && tasks[0].managerStatus === '6402') {
-            result = false
-          }
-          if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
-            result = true
-          }
-          if (checkHasProductTask(tasks)) {
-            result = true
-          }
-          return result
+          const checks = [
+            () => isHasTask(ganttName, tasks),
+            () => isCompile(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
+            () => isSuspensionOrProhibition(ganttName, tasks),
+            () => taskStateAndReadonly(ganttName, tasks),
+            () => isWeave(ganttName, tasks),
+            () => isToBeDelivered(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks),
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       },
       {
@@ -262,27 +198,17 @@ export const CommandButtonData = [
           vueThis.menuVisible = false
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          let result
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
-          if (createPage === 'compile' && vueThis.planEditLock) {
-            return true
-          }
-          if (checkSwitchType(tasks)) {
-            return true
-          }
-          // if (!checkReadOnly(ganttName) && tasks && tasks.length === 1) {
-          if (isDisableFunCheck(ganttName, tasks, '1')) {
-            result = false
-          } else if (checkEditTask(ganttName, tasks)) {
-            result = false
-          } else {
-            result = true
-          }
-          if (checkHasProductTask(tasks)) {
-            result = true
-          }
-          return result
+          const checks = [
+            () => isHasTask(ganttName, tasks),
+            () => isCompile(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
+            () => isSuspensionOrProhibition(ganttName, tasks),
+            () => taskStateAndReadonly(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks)
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       }
     ]
@@ -292,6 +218,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-new-sibling',
     title: '新建同级',
     help: '新建同级',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       if (ganttName === 'changeGantt') {
         noDpAddTask(1, 'Before', ganttName)
@@ -301,23 +228,16 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (isDisableFunCheck(ganttName, tasks, '2')) {
-        result = false
-      } else if (checkEditTask(ganttName, tasks) && !checkContentRoot(ganttName, tasks)) {
-        result = false
-      } else {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isHasTask(ganttName, tasks),
+        () => isCompile(ganttName, tasks),
+        () => isReadOnlyAndNoRoot(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => taskStateAndReadonly(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     },
     children: [
       {
@@ -325,6 +245,7 @@ export const CommandButtonData = [
         icon: 'p8 icon-new-sibling',
         title: '2 条',
         help: '新建2条',
+        msg: '',
         clickFun: function (btn, ganttName, tasks) {
           if (ganttName === 'changeGantt') {
             noDpAddTask(2, 'Before', ganttName)
@@ -334,23 +255,16 @@ export const CommandButtonData = [
           }
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          let result
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
-          if (createPage === 'compile' && vueThis.planEditLock) {
-            return true
-          }
-          if (checkSwitchType(tasks)) {
-            return true
-          }
-          if (isDisableFunCheck(ganttName, tasks, '2')) {
-            result = false
-          } else if (checkEditTask(ganttName, tasks) && !checkContentRoot(ganttName, tasks)) {
-            result = false
-          } else {
-            result = true
-          }
-          return result
+          const checks = [
+            () => isHasTask(ganttName, tasks),
+            () => isCompile(ganttName, tasks),
+            () => isReadOnlyAndNoRoot(ganttName, tasks),
+            () => isSuspensionOrProhibition(ganttName, tasks),
+            () => taskStateAndReadonly(ganttName, tasks)
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       },
       {
@@ -358,6 +272,7 @@ export const CommandButtonData = [
         icon: 'p8 icon-new-sibling',
         title: '4 条',
         help: '新建4条',
+        msg: '',
         clickFun: function (btn, ganttName, tasks) {
           if (ganttName === 'changeGantt') {
             noDpAddTask(4, 'Before', ganttName)
@@ -367,23 +282,16 @@ export const CommandButtonData = [
           }
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          let result
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
-          if (createPage === 'compile' && vueThis.planEditLock) {
-            return true
-          }
-          if (checkSwitchType(tasks)) {
-            return true
-          }
-          if (isDisableFunCheck(ganttName, tasks, '2')) {
-            result = false
-          } else if (checkEditTask(ganttName, tasks) && !checkContentRoot(ganttName, tasks)) {
-            result = false
-          } else {
-            result = true
-          }
-          return result
+          const checks = [
+            () => isHasTask(ganttName, tasks),
+            () => isCompile(ganttName, tasks),
+            () => isReadOnlyAndNoRoot(ganttName, tasks),
+            () => isSuspensionOrProhibition(ganttName, tasks),
+            () => taskStateAndReadonly(ganttName, tasks)
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       },
       {
@@ -391,6 +299,7 @@ export const CommandButtonData = [
         icon: 'p8 icon-new-sibling',
         title: '6 条',
         help: '新建6条',
+        msg: '',
         clickFun: function (btn, ganttName, tasks) {
           if (ganttName === 'changeGantt') {
             noDpAddTask(6, 'Before', ganttName)
@@ -400,23 +309,16 @@ export const CommandButtonData = [
           }
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          let result
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
-          if (createPage === 'compile' && vueThis.planEditLock) {
-            return true
-          }
-          if (checkSwitchType(tasks)) {
-            return true
-          }
-          if (isDisableFunCheck(ganttName, tasks, '2')) {
-            result = false
-          } else if (checkEditTask(ganttName, tasks) && !checkContentRoot(ganttName, tasks)) {
-            result = false
-          } else {
-            result = true
-          }
-          return result
+          const checks = [
+            () => isHasTask(ganttName, tasks),
+            () => isCompile(ganttName, tasks),
+            () => isReadOnlyAndNoRoot(ganttName, tasks),
+            () => isSuspensionOrProhibition(ganttName, tasks),
+            () => taskStateAndReadonly(ganttName, tasks)
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       },
       {
@@ -424,6 +326,7 @@ export const CommandButtonData = [
         icon: 'p8 icon-new-sibling',
         title: '8 条',
         help: '新建8条',
+        msg: '',
         clickFun: function (btn, ganttName, tasks) {
           if (ganttName === 'changeGantt') {
             noDpAddTask(8, 'Before', ganttName)
@@ -433,23 +336,16 @@ export const CommandButtonData = [
           }
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          let result
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
-          if (createPage === 'compile' && vueThis.planEditLock) {
-            return true
-          }
-          if (checkSwitchType(tasks)) {
-            return true
-          }
-          if (isDisableFunCheck(ganttName, tasks, '2')) {
-            result = false
-          } else if (checkEditTask(ganttName, tasks) && !checkContentRoot(ganttName, tasks)) {
-            result = false
-          } else {
-            result = true
-          }
-          return result
+          const checks = [
+            () => isHasTask(ganttName, tasks),
+            () => isCompile(ganttName, tasks),
+            () => isReadOnlyAndNoRoot(ganttName, tasks),
+            () => isSuspensionOrProhibition(ganttName, tasks),
+            () => taskStateAndReadonly(ganttName, tasks)
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       }
     ]
@@ -459,23 +355,20 @@ export const CommandButtonData = [
     icon: 'p8 icon-trial-production',
     title: '添加生产信息',
     help: '添加生产信息',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       vueThis.selectTaskId = tasks[0].id
       vueThis.productTaskEditVisible = true
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result = true
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (isDisableFunCheck(ganttName, tasks, '1')) {
-        const planType = tasks[0] ? tasks[0].planType : ''
-        if (planType && planType.indexOf('3103') !== -1) {
-          result = false
-        }
-      }
-      return result
+      const checks = [
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => taskStateAndReadonly(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -483,33 +376,23 @@ export const CommandButtonData = [
     icon: 'p8 icon-upgrade',
     title: '升级',
     help: '升级',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       thisGantt.performAction('outdentAction', thisGantt)
       thisGantt.refreshData()
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (tasks[0].managerStatus === '6407') {
-        return true
-      }
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (tasks.managerStatus === '6409') {
-        return true
-      }
-      if (tasks && tasks.length > 0 && outdentCheck(ganttName, tasks) && !checkReadOnly(ganttName)) {
-        result = false
-      } else {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isHasTask(ganttName, tasks),
+        () => isCompile(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isApprovalCompleted(ganttName, tasks),
+        () => isAllowUpgrades(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   // {
@@ -543,6 +426,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-refresh',
     title: '添加生产信息',
     help: '添加生产信息',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       // let vueThis = store.getters.vueThis
       // todo 创建菜单
@@ -551,17 +435,13 @@ export const CommandButtonData = [
       vueThis.productTaskSaveVisible = true
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (tasks && tasks.length === 1) {
-        result = false
-      } else {
-        result = true
-      }
-
-      return result
+      const checks = [
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isSingleTask(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -569,29 +449,23 @@ export const CommandButtonData = [
     icon: 'p8 icon-downgrade',
     title: '降级',
     help: '降级',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       thisGantt.performAction('indentAction', thisGantt)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (tasks && tasks.length > 0 && canIndentCheck(ganttName)) {
-        result = false
-      } else {
-        result = true
-      }
-      if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isReadOnly(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isCompile(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowDowngrade(ganttName, tasks),
+        () => isToBeDelivered(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -599,6 +473,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-delete',
     title: '删除',
     help: '删除',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       const vueThis = store.getters.vueThis
@@ -632,45 +507,19 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (tasks && tasks.length > 0 && canDeleteCheck(ganttName, tasks, vueThis)) {
-        result = false
-      } else {
-        result = true
-      }
-      if (checkHasApproveTask(ganttName, tasks)) {
-        result = true
-      }
-      // 如果是任务分解，非当前人员创建的，只能编辑责任人
-      const userId = store.getters.userInfo.id
-      const ele = tasks.find((task) => {
-        return task.createUserId && task.createUserId != userId
-      })
-      if (window.createPage === 'decompose' && ele && ele.id) {
-        return true
-      }
-
-      if (tasks[0].managerStatus === '6407' || tasks[0].managerStatus === '6408') {
-        if (checkContentRoot(ganttName, tasks)) {
-          return true
-        } else {
-          result = false
-        }
-      }
-      tasks.forEach(function (task, index) {
-        if (task.managerStatus === '6407') {
-          result = true
-        }
-      })
-      return result
+      const checks = [
+        () => isReadOnly(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isCompile(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowDelete(ganttName, tasks),
+        () => isHasApproveTask(ganttName, tasks),
+        () => noSelfCreate(ganttName, tasks),
+        () => isApprovalReject(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -678,6 +527,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-clear-non-production-tasks',
     title: '清空非生产任务数量',
     help: '清空非生产任务数量',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       const thisGantt = GanttObject.getGanttObject(ganttName)
@@ -686,14 +536,13 @@ export const CommandButtonData = [
       vueThis.productTaskVisible = true
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result = false
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (checkReadOnly(ganttName)) {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isReadOnly(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -702,6 +551,7 @@ export const CommandButtonData = [
     userDefault: 'false',
     title: '层级',
     help: '层级',
+    msg: '',
     clickFun: function (value, ganttName) {
       if (ganttName) {
         const ganttObject = GanttObject.getGanttObject(ganttName)
@@ -716,10 +566,12 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      return false
+      const checks = [
+        () => isSuspensionOrProhibition(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -728,6 +580,7 @@ export const CommandButtonData = [
     userDefault: 'true',
     title: '排程模式设置',
     help: '排程模式设置',
+    msg: '',
     options: [
       {
         label: '自动',
@@ -744,14 +597,14 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (ganttName, tasks) {
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      const vueThis = store.getters.vueThis
-      if (!checkReadOnly(ganttName) && tasks && tasks.length > 0 && !checkTaskReadonly(ganttName, tasks) && !vueThis.readOnly && !checkContentRoot(ganttName, tasks)) {
-        return false
-      }
-      return true
+      const checks = [
+        () => isHasTask(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isReadOnlyAndNoRoot(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -759,30 +612,23 @@ export const CommandButtonData = [
     icon: 'p8 icon-person-manage',
     title: '批量设置责任人',
     help: '批量设置责任人',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       vueThis.selectTaskOwnerId = tasks[0].owner_id
       batchOwner(ganttName)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (tasks && tasks.length > 0 && batchOwnerCheck(ganttName)) {
-        result = false
-      } else {
-        result = true
-      }
-      tasks.forEach(task => {
-        if (task.managerStatus == '6404') {
-          result = true
-        }
-        if (task.managerStatus === '6407') {
-          result = true
-        }
-      })
-      return result
+      const checks = [
+        () => isReadOnly(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowResponsiblePerson(ganttName, tasks),
+        () => isHasDeliveredTask(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   // {
@@ -823,14 +669,14 @@ export const CommandButtonData = [
       batchSyncTask(ganttName, [])
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result = false
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (checkReadOnly(ganttName)) {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isHasTask(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isReadOnly(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -838,6 +684,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-view-output',
     title: '查看输出物',
     help: '查看输出物',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       const thisGantt = GanttObject.getGanttObject(ganttName)
@@ -846,14 +693,14 @@ export const CommandButtonData = [
       vueThis.outPutViewVisible = true
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result = false
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (checkReadOnly(ganttName)) {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isHasTask(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isReadOnly(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -861,6 +708,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-task-distribute',
     title: '任务下发',
     help: '任务下发',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       const thisDp = GanttObject.getDpObject(ganttName)
@@ -878,35 +726,16 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      if (!ganttName || tasks.length === 0) {
-        return true
-      }
-      let result
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      const ganttObject = GanttObject.getGanttObject(ganttName)
-      let rootTask = {}
-      ganttObject.eachTask(function (task) {
-        if (ganttObject.getGlobalTaskIndex(task.id) === 0) {
-          rootTask = ganttObject.getTask(task.id)
-        }
-      })
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (tasks[0].managerStatus === '6403' && tasks[0].dutyDeptName) {
-        // 待下发状态责任部门（科研）不为空，可以下发
-        result = false
-      } else if (tasks[0].managerStatus === '6404') {
-        // 已下发状态，不能下发
-        result = true
-      } else {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isHasTask(ganttName, tasks),
+        () => isCompile(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowIssue(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
+
     }
   },
   {
@@ -914,17 +743,19 @@ export const CommandButtonData = [
     icon: 'p8 icon-issuance-notice',
     title: '通知下发',
     help: '通知下发',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       vueThis.noticeShow()
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      return false
+      const checks = [
+        () => isHasTask(ganttName, tasks),
+        () => isCompile(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -932,24 +763,21 @@ export const CommandButtonData = [
     icon: 'p8 icon-task-distribute',
     title: '关联',
     help: '关联',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
-      console.log(ganttName, '=====================ganttName');
+
       const vueThis = store.getters.vueThis
       vueThis.relevanceOpen()
       const thisGantt = GanttObject.getGanttObject(ganttName)
-      console.log("🚀 ~ thisGantt:", thisGantt)
       vueThis.taskList = thisGantt.serialize().data
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      if (tasks.length > 1) {
-        return true
-      }
-      //   console.log("🚀 ~ tasks:", tasks)
-      //   let result
-      // if (tasks[0].indexNo === 0) {
-      //   result = true
-      // }
-      //   return result
+      const checks = [
+        () => isHasTask(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -957,6 +785,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-revoke',
     title: '撤销',
     help: '撤销',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       if (thisGantt) {
@@ -964,22 +793,14 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      const thisGantt = GanttObject.getGanttObject(ganttName)
-      if (thisGantt && !checkReadOnly(ganttName) && thisGantt.getUndoStack() && thisGantt.getUndoStack().length > 0 && !checkTaskReadonly(ganttName, tasks) && !vueThis.readOnly) {
-        result = false
-      } else {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isCompile(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowUndo(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -994,22 +815,15 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      const thisGantt = GanttObject.getGanttObject(ganttName)
-      if (thisGantt && !checkReadOnly(ganttName) && thisGantt.getRedoStack() && thisGantt.getRedoStack().length > 0 && !checkTaskReadonly(ganttName, tasks) && !vueThis.readOnly) {
-        result = false
-      } else {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isHasTask(ganttName, tasks),
+        () => isCompile(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowUndo(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1017,6 +831,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-copy',
     title: '复制',
     help: '复制',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       const vueThis = store.getters.vueThis
@@ -1030,18 +845,15 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (tasks && tasks.length > 0 && !checkContentRoot(ganttName, tasks) && !checkReadOnly(ganttName)) {
-        return false
-      }
-      return true
+      const checks = [
+        () => isHasTask(ganttName, tasks),
+        () => isCompile(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isHadRootAndReadOnly(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1049,6 +861,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-paste',
     title: '粘贴',
     help: '粘贴',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       const vueThis = store.getters.vueThis
@@ -1062,26 +875,14 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const result = true
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      const thisGantt = GanttObject.getGanttObject(ganttName)
-      if (tasks && tasks.length === 1 && tasks[0].parent && thisGantt.isTaskExists(tasks[0].parent)) {
-        const parentTask = thisGantt.getTask(tasks[0].parent)
-        // 获取gannt操作限制策略
-        const taskStatusLockMap = store.getters.taskStatusLockMap
-        const editManagerStatus = taskStatusLockMap[parentTask.status]
-        if (editManagerStatus && editManagerStatus.indexOf(parentTask.managerStatus) !== -1 && Object.keys(vueThis.copyTasks).length) {
-          return false
-        }
-      }
-      return result
+      const checks = [
+        () => isCompile(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowPaste(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1089,18 +890,17 @@ export const CommandButtonData = [
     icon: 'p8 icon-front-and-rear',
     title: '自动/手动排程',
     help: '自动/手动排程',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) { },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (autoSchedulingCheck(ganttName)) {
-        result = true
-      } else {
-        result = false
-      }
-      return result
+      const checks = [
+        () => isHasTask(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowAutoManual(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1109,20 +909,20 @@ export const CommandButtonData = [
     title: '红色',
     style: 'color:#ff0000;', // css样式
     help: '红色',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (isDisableFunCheck(ganttName, tasks, '3')) {
-        result = false
-      } else {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isCompile(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowChangeStyle(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1131,20 +931,20 @@ export const CommandButtonData = [
     title: '蓝色',
     style: 'color:#00B0F0;', // css样式
     help: '蓝色',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (isDisableFunCheck(ganttName, tasks, '3')) {
-        result = false
-      } else {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isCompile(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowChangeStyle(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1153,20 +953,20 @@ export const CommandButtonData = [
     title: '绿色',
     style: 'color:#00B050;', // css样式
     help: '绿色',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (isDisableFunCheck(ganttName, tasks, '3')) {
-        result = false
-      } else {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isCompile(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowChangeStyle(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1175,20 +975,20 @@ export const CommandButtonData = [
     title: '橙色',
     style: 'color:#FFC000;', // css样式
     help: '橙色',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (isDisableFunCheck(ganttName, tasks, '3')) {
-        result = false
-      } else {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isCompile(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowChangeStyle(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1197,20 +997,20 @@ export const CommandButtonData = [
     title: '加粗',
     style: 'font-weight:bold;', // css样式
     help: '加粗',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (isDisableFunCheck(ganttName, tasks, '3')) {
-        result = false
-      } else {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isCompile(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowChangeStyle(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1219,20 +1019,20 @@ export const CommandButtonData = [
     title: '斜体',
     style: 'font-style:italic;', // css样式
     help: '斜体',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (isDisableFunCheck(ganttName, tasks, '3')) {
-        result = false
-      } else {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isCompile(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowChangeStyle(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1241,20 +1041,20 @@ export const CommandButtonData = [
     title: '下划线',
     style: 'text-decoration:underline;', // css样式
     help: '下划线',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (isDisableFunCheck(ganttName, tasks, '3')) {
-        result = false
-      } else {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isCompile(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowChangeStyle(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1262,20 +1062,20 @@ export const CommandButtonData = [
     icon: 'p8 icon-cancel-format',
     title: '取消样式',
     help: '取消样式',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (isDisableFunCheck(ganttName, tasks, '3')) {
-        result = false
-      } else {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isCompile(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowChangeStyle(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1283,6 +1083,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-edit-view',
     title: '编辑视图',
     help: '编辑视图',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       const vueThis = store.getters.vueThis
@@ -1300,11 +1101,12 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
-      if (vueThis.viewType && vueThis.viewType !== 'grid') {
-        return false
-      }
-      return true
+      const checks = [
+        () => isGridView(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message + '' : '';
+      return res.disable
     }
   },
   {
@@ -1312,6 +1114,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-gantt',
     title: 'gantt图',
     help: 'gantt图',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       const vueThis = store.getters.vueThis
@@ -1330,11 +1133,12 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
-      if (vueThis.viewType && vueThis.viewType !== 'gantt') {
-        return false
-      }
-      return true
+      const checks = [
+        () => isGanttView(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message + '' : '';
+      return res.disable
     }
   },
   {
@@ -1342,6 +1146,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-resource-view',
     title: '资源视图',
     help: '资源视图',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       const vueThis = store.getters.vueThis
@@ -1360,11 +1165,12 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
-      if (vueThis.viewType && vueThis.viewType !== 'resource') {
-        return false
-      }
-      return true
+      const checks = [
+        () => isResourceView(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message + '' : '';
+      return res.disable
     }
   },
   {
@@ -1372,6 +1178,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-full-screen',
     title: '全屏',
     help: '全屏',
+    msg: '全屏',
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       // 全屏监听
@@ -1420,11 +1227,12 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
-      if (vueThis.viewType && (vueThis.viewType === 'resource' || vueThis.viewType === 'gantt')) {
-        return false
-      }
-      return true
+      const checks = [
+        () => isCriticalPath(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1432,6 +1240,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-excel-import',
     title: 'Excel导入',
     help: 'Excel导入',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       // vueThis.excelSecretGrade = tasks[0].secretGrade
@@ -1467,33 +1276,17 @@ export const CommandButtonData = [
       vueThis.columnConfigs = columnFilter
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (isDisableFunCheck(ganttName, tasks, '1')) {
-        result = false
-      } else if (checkEditTask(ganttName, tasks)) {
-        result = false
-      } else {
-        result = true
-      }
-      // if (
-      //   createPage === 'decompose' &&
-      //   tasks.length === 1 &&
-      //   tasks[0].managerStatus === '6403'
-      // ) {
-      //   result = true
-      // }
-      if (checkHasProductTask(tasks)) {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isReadOnly(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isCompile(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowImport(ganttName, tasks),
+        () => isHasProductTask(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1501,6 +1294,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-project-import',
     title: 'Project导入',
     help: 'Project导入',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       // vueThis.projectSecretGrade = tasks[0].secretGrade
@@ -1508,33 +1302,17 @@ export const CommandButtonData = [
       vueThis.importProject = true
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (isDisableFunCheck(ganttName, tasks, '1')) {
-        result = false
-      } else if (checkEditTask(ganttName, tasks)) {
-        result = false
-      } else {
-        result = true
-      }
-      // if (
-      //   createPage === 'decompose' &&
-      //   tasks.length === 1 &&
-      //   tasks[0].managerStatus === '6403'
-      // ) {
-      //   result = true
-      // }
-      if (checkHasProductTask(tasks)) {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isReadOnly(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isCompile(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowImport(ganttName, tasks),
+        () => isHasProductTask(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1542,6 +1320,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-excel-export',
     title: 'Excel导出',
     help: 'Excel导出',
+    msg: 'Excel导出',
     clickFun: function (btn, ganttName, tasks, data, messages) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       const vueThis = store.getters.vueThis
@@ -1614,6 +1393,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-project-export',
     title: 'Project导出',
     help: 'Project导出',
+    msg: 'Project导出',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       const taskId = vueThis.taskId
@@ -1684,17 +1464,15 @@ export const CommandButtonData = [
       })
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (tasks.length === 0) {
-        return true
-      }
-      if (vueThis.createPage === 'decompose') {
-        return true
-      }
-      return false
+      const checks = [
+        () => isCompile(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowImport(ganttName, tasks),
+        () => isHasProductTask(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -1902,6 +1680,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-knowledge-base-import',
     title: '知识库导入',
     help: '知识库导入',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       // vueThis.activitySecretGradeDisplay = tasks[0].secretGradeDisplay
@@ -1909,29 +1688,18 @@ export const CommandButtonData = [
       vueThis.activityImportVisible = true
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      if (isDisableFunCheck(ganttName, tasks, '1')) {
-        result = false
-      } else if (checkEditTask(ganttName, tasks)) {
-        result = false
-      } else {
-        result = true
-      }
-      if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
-        result = true
-      }
-      if (checkHasProductTask(tasks)) {
-        result = true
-      }
-      return result
+      const checks = [
+        () => isReadOnly(ganttName, tasks),
+        () => isCompile(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowImport(ganttName, tasks),
+        () => isToBeDelivered(ganttName, tasks),
+        () => isHasProductTask(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     },
     children: [
       {
@@ -1939,29 +1707,26 @@ export const CommandButtonData = [
         icon: 'p8 icon-knowledge-base-import',
         title: '导入下级',
         help: '导入下级',
+        msg: '',
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           vueThis.activityImportType = 'children'
           vueThis.activityImportVisible = true
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          let result
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
-          if (createPage === 'compile' && vueThis.planEditLock) {
-            return true
-          }
-          if (checkSwitchType(tasks)) {
-            return true
-          }
-          if (isDisableFunCheck(ganttName, tasks, '1')) {
-            result = false
-          } else if (checkEditTask(ganttName, tasks)) {
-            result = false
-          } else {
-            result = true
-          }
-          return result
+          // 确保二级菜单跟一级菜单的disable状态一致
+          const checks = [
+            () => isReadOnly(ganttName, tasks),
+            () => isCompile(ganttName, tasks),
+            () => isHasTask(ganttName, tasks),
+            () => isSuspensionOrProhibition(ganttName, tasks),
+            () => isAllowImport(ganttName, tasks),
+            () => isToBeDelivered(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks)
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       },
       {
@@ -1969,29 +1734,26 @@ export const CommandButtonData = [
         icon: 'p8 icon-knowledge-base-import',
         title: '导入同级',
         help: '导入同级',
+        msg: '',
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           vueThis.activityImportType = 'before'
           vueThis.activityImportVisible = true
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          let result
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
-          if (createPage === 'compile' && vueThis.planEditLock) {
-            return true
-          }
-          if (checkSwitchType(tasks)) {
-            return true
-          }
-          if (isDisableFunCheck(ganttName, tasks, '2')) {
-            result = false
-          } else if (checkEditTask(ganttName, tasks) && !checkContentRoot(ganttName, tasks)) {
-            result = false
-          } else {
-            result = true
-          }
-          return result
+          // 确保二级菜单跟一级菜单的disable状态一致
+          const checks = [
+            () => isReadOnly(ganttName, tasks),
+            () => isCompile(ganttName, tasks),
+            () => isHasTask(ganttName, tasks),
+            () => isSuspensionOrProhibition(ganttName, tasks),
+            () => isAllowImport(ganttName, tasks),
+            () => isToBeDelivered(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks)
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       }
     ]
@@ -2001,6 +1763,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-my-experience-base',
     title: '我的经验库',
     help: '我的经验库',
+    msg: '',
     clickFun: function (btn, ganttName, tasks) {
       // const vueThis = store.getters.vueThis
       // vueThis.myExperienceType = 'children'
@@ -2009,15 +1772,14 @@ export const CommandButtonData = [
       // vueThis.queryParam.planId = vueThis.planInfoId
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      if (checkSwitchType(tasks)) {
-        return true
-      }
-      return false
+      const checks = [
+        () => isReadOnly(ganttName, tasks),
+        () => isCompile(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     },
     children: [
       {
@@ -2025,6 +1787,7 @@ export const CommandButtonData = [
         icon: 'p8 icon-add',
         title: '创建',
         help: '创建',
+        msg: '创建',
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           vueThis.createVisible = true
@@ -2034,18 +1797,15 @@ export const CommandButtonData = [
           // vueThis.queryParam.planId = vueThis.planInfoId
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
-          if (createPage === 'compile' && vueThis.planEditLock) {
-            return true
-          }
-          if (!tasks.length) {
-            return true
-          }
-          if (checkSwitchType(tasks)) {
-            return true
-          }
-          return false
+          const checks = [
+            () => isReadOnly(ganttName, tasks),
+            () => isCompile(ganttName, tasks),
+            // () => isHasTask(ganttName, tasks),
+            () => isSuspensionOrProhibition(ganttName, tasks)
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       },
       {
@@ -2053,6 +1813,7 @@ export const CommandButtonData = [
         icon: 'p8 icon-new-sibling',
         title: '导入同级',
         help: '导入同级',
+        msg: '导入同级',
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           vueThis.experienceBaseVisible = true
@@ -2063,41 +1824,19 @@ export const CommandButtonData = [
           // vueThis.queryParam.planId = vueThis.planInfoId
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          let result
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
-          if (createPage === 'compile' && vueThis.planEditLock) {
-            return true
-          }
-          if (checkSwitchType(tasks)) {
-            return true
-          }
-          if (isDisableFunCheck(ganttName, tasks, '1')) {
-            result = false
-          } else if (checkEditTask(ganttName, tasks)) {
-            result = false
-          } else {
-            result = true
-          }
-          if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
-            result = true
-          }
-          if (checkHasProductTask(tasks)) {
-            result = true
-          }
-
-          const ganttObject = GanttObject.getGanttObject(ganttName)
-          if (ganttObject && tasks) {
-            ganttObject.eachSelectedTask(function (taskId) {
-              if (ganttObject.getGlobalTaskIndex(taskId) === 0 && !result) {
-                result = true
-              }
-            })
-          }
-          if (checkSwitchType(tasks)) {
-            result = true
-          }
-          return result
+          const checks = [
+            () => isHasTask(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
+            () => isCompile(ganttName, tasks),
+            () => isSuspensionOrProhibition(ganttName, tasks),
+            () => isAllowImport(ganttName, tasks),
+            () => isToBeDelivered(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks),
+            () => isExperienceImport(ganttName, tasks),
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       },
       {
@@ -2105,6 +1844,7 @@ export const CommandButtonData = [
         icon: 'p8 icon-new-subordinate',
         title: '导入下级',
         help: '导入下级',
+        msg: '',
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           vueThis.experienceBaseVisible = true
@@ -2112,29 +1852,18 @@ export const CommandButtonData = [
           // vueThis.queryParam.planId = vueThis.planInfoId
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          let result
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
-          if (createPage === 'compile' && vueThis.planEditLock) {
-            return true
-          }
-          if (checkSwitchType(tasks)) {
-            return true
-          }
-          if (isDisableFunCheck(ganttName, tasks, '1')) {
-            result = false
-          } else if (checkEditTask(ganttName, tasks)) {
-            result = false
-          } else {
-            result = true
-          }
-          if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
-            result = true
-          }
-          if (checkHasProductTask(tasks)) {
-            result = true
-          }
-          return result
+          const checks = [
+            () => isHasTask(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
+            () => isCompile(ganttName, tasks),
+            () => isSuspensionOrProhibition(ganttName, tasks),
+            () => isAllowImport(ganttName, tasks),
+            () => isToBeDelivered(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks),
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       },
       {
@@ -2142,21 +1871,20 @@ export const CommandButtonData = [
         icon: 'p8 icon-edit-view',
         title: '管理',
         help: '管理',
+        msg: '管理',
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           vueThis.isManage = true
           vueThis.experienceBaseVisible = true
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          const vueThis = store.getters.vueThis
-          const createPage = vueThis.createPage
-          if (createPage === 'compile' && vueThis.planEditLock) {
-            return true
-          }
-          if (checkSwitchType(tasks)) {
-            return true
-          }
-          return false
+          const checks = [
+            () => isCompile(ganttName, tasks),
+            () => isSuspensionOrProhibition(ganttName, tasks)
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       }
     ]
@@ -2166,17 +1894,18 @@ export const CommandButtonData = [
     icon: 'p8 icon-create-version',
     title: '创建版本',
     help: '创建版本',
+    msg: '创建版本',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       vueThis.createPlanVersion()
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      return false
+      const checks = [
+        () => isCompile(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -2184,14 +1913,15 @@ export const CommandButtonData = [
     icon: 'p8 icon-contrast',
     title: '比较',
     help: '比较',
+    msg: '比较',
     clickFun: function (btn, ganttName, tasks) { },
     isDisableFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      return false
+      const checks = [
+        () => isCompile(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -2199,6 +1929,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-version-list',
     title: '版本列表',
     help: '版本列表',
+    msg: '版本列表',
     clickFun: function (btn, ganttName, tasks) {
       if (ganttName) {
         const vueThis = store.getters.vueThis
@@ -2206,12 +1937,12 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
-      const createPage = vueThis.createPage
-      if (createPage === 'compile' && vueThis.planEditLock) {
-        return true
-      }
-      return false
+      const checks = [
+        () => isCompile(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -2219,6 +1950,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-version-list',
     title: '列设置',
     help: '列设置',
+    msg: '列设置',
     clickFun: function (btn, ganttName, tasks) {
       if (ganttName) {
         const ganttObject = GanttObject.getGanttObject(ganttName)
@@ -2238,6 +1970,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-gridding',
     title: '添加/取消网格',
     help: '添加/取消网格',
+    msg: '添加/取消网格',
     clickFun: function (btn, ganttName, tasks) {
       const updateData =
         store.getters.userSettingAll.PlanStyleClass && store.getters.userSettingAll.PlanStyleClass.length
@@ -2295,6 +2028,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-team-member-editor',
     title: '团队成员编辑',
     help: '团队成员编辑',
+    msg: '团队成员编辑',
     clickFun: function (btn, ganttName, tasks) {
       if (ganttName) {
         const vueThis = store.getters.vueThis
@@ -2302,9 +2036,12 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      if (checkSwitchType(tasks)) {
-        return true
-      }
+      const checks = [
+        () => isSuspensionOrProhibition(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -2312,6 +2049,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-sousuo',
     title: '查询',
     help: '查询',
+    msg: '查询',
     clickFun: function (btn, ganttName, tasks) {
       if (ganttName) {
         const vueThis = store.getters.vueThis
@@ -2323,10 +2061,29 @@ export const CommandButtonData = [
     }
   },
   {
+    id: 'location-list',
+    icon: 'el-icon-location-outline',
+    title: '定位',
+    help: '定位',
+    msg: '定位',
+    clickFun: function (btn, ganttName, tasks) {
+      if (ganttName) {
+        const vueThis = store.getters.vueThis
+        vueThis.searchForm = {}
+        vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
+        vueThis.$emit('open', vueThis.myGantt)
+      }
+    },
+    isDisableFun: function (btn, ganttName, tasks) {
+      return false
+    }
+  },
+  {
     id: 'statistic-list',
     icon: 'p8 icon-shujushitu',
     title: '统计信息',
     help: '统计信息',
+    msg: '统计信息',
     clickFun: function (btn, ganttName, tasks) {
       if (ganttName) {
         const vueThis = store.getters.vueThis
@@ -2342,6 +2099,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-menu-config',
     title: '菜单配置',
     help: '菜单配置',
+    msg: '菜单配置',
     clickFun: function (btn, ganttName, tasks) {
       if (ganttName) {
         const vueThis = store.getters.vueThis
@@ -2355,6 +2113,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-task-details',
     title: '详细信息',
     help: '详细信息',
+    msg: '详细信息',
     clickFun: function (btn, ganttName, tasks) {
       if (ganttName) {
         const vueThis = store.getters.vueThis
@@ -2362,14 +2121,13 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let ganttObject = GanttObject.getGanttObject(ganttName)
-      if (tasks.length == 1 && ganttObject.getGlobalTaskIndex(tasks[0].id) === 0) {
-        return true
-      } else if (tasks.length == 1) {
-        return false
-      } else {
-        return true
-      }
+      const checks = [
+        () => isHasTask(ganttName, tasks),
+        () => isDetailInfo(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -2377,6 +2135,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-rizhiliebiao',
     title: '变更历史',
     help: '变更历史',
+    msg: '变更历史',
     clickFun: function (btn, ganttName, tasks) {
       if (ganttName) {
         const vueThis = store.getters.vueThis
@@ -2384,11 +2143,12 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      if (tasks.length > 0) {
-        return false
-      } else {
-        return true
-      }
+      const checks = [
+        () => isHasTask(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     }
   },
   {
@@ -2396,6 +2156,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-pause',
     title: '暂停',
     help: '暂停',
+    msg: '暂停',
     clickFun: function (btn, ganttName, tasks) {
       const ids = []
       tasks.forEach(function (task) {
@@ -2426,16 +2187,12 @@ export const CommandButtonData = [
         })
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result = false
-      for (let i = 0; tasks.length > i; i++) {
-        if (tasks[i]) {
-          if (tasks[i].status === '6020') {
-            result = true
-            break
-          }
-        }
-      }
-      return result
+      const checks = [
+        () => isNotStart(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     },
     children: [
       {
@@ -2443,6 +2200,7 @@ export const CommandButtonData = [
         icon: 'p8 icon-cancel-task-type',
         title: '解除暂停',
         help: '解除暂停',
+        msg: '解除暂停',
         clickFun: function (btn, ganttName, tasks) {
           const ids = []
           tasks.forEach(function (task) {
@@ -2473,16 +2231,12 @@ export const CommandButtonData = [
             })
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          let result = false
-          for (let i = 0; tasks.length > i; i++) {
-            if (tasks[i]) {
-              if (tasks[i].status === '6020') {
-                result = true
-                break
-              }
-            }
-          }
-          return result
+          const checks = [
+            () => isNotStart(ganttName, tasks)
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       }
     ]
@@ -2522,16 +2276,12 @@ export const CommandButtonData = [
         })
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      let result = false
-      for (let i = 0; tasks.length > i; i++) {
-        if (tasks[i]) {
-          if (tasks[i].status === '6020') {
-            result = true
-            break
-          }
-        }
-      }
-      return result
+      const checks = [
+        () => isNotStart(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
     },
     children: [
       {
@@ -2569,16 +2319,12 @@ export const CommandButtonData = [
             })
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          let result = false
-          for (let i = 0; tasks.length > i; i++) {
-            if (tasks[i]) {
-              if (tasks[i].status === '6020') {
-                result = true
-                break
-              }
-            }
-          }
-          return result
+          const checks = [
+            () => isNotStart(ganttName, tasks)
+          ]
+          const res = isDisable(checks)
+          this.msg = res.disable ? res.message : '';
+          return res.disable
         }
       }
     ]
@@ -2632,7 +2378,10 @@ function checkTaskReadonly (ganttName, tasks) {
   ganttObject.eachSelectedTask(function (taskId) {
     const task = ganttObject.getTask(taskId)
     if (task.readonly && !result) {
-      result = true
+      result = {
+        readonly: true,
+        readonlyReason: task.readonlyReason
+      }
     }
   })
   return result
@@ -2650,7 +2399,10 @@ function checkReadOnly (ganttName) {
   }
   if (ganttObject && ganttObject.config.readonly) {
     if (ganttObject.config.readonly) {
-      return true
+      return {
+        readonly: true,
+        readonlyReason: ganttObject.config.readonlyReason
+      }
     } else {
       return false
     }
@@ -3148,7 +2900,6 @@ function copyTask (ganttObject, tasks, vueThis) {
  * @param tasks
  */
 function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
-  console.log(vueThis.copyFlag, '----vueThis.copyFlag')
   if (vueThis.copyFlag) {
     const that = this
     if (vueThis.copyTasks.length > 0) {
@@ -3699,18 +3450,11 @@ function issueTask (ganttObject, thisDp, currentRowTask, ganttName) {
           //   })
           // })
           vueThis.initGantt(vueThis.planInfoId, 'grid')
-
-          setTimeout(() => {
-            const thisGantt = GanttObject.getGanttObject(ganttName)
-            vueThis.$message({
-              message: '任务下发成功！',
-              type: 'success'
-            })
-            taskIds.forEach(el => {
-              thisGantt.showTask(el);
-              thisGantt.selectTask(el);
-            })
-          }, 1000)
+          vueThis.$message({
+            message: '任务下发成功！',
+            type: 'success'
+          })
+          vueThis.isSueTaskIds = taskIds
         } else {
           vueThis.$message({
             message: '任务下发失败！',
@@ -3830,7 +3574,9 @@ function batchSyncTask (ganttName, allTaskIds) {
  * @returns {boolean}
  */
 function batchOwnerCheck (ganttName) {
-  let result = true
+  let result = {
+    value: true
+  }
   const vueThis = store.getters.vueThis
   const planStatusLockMap = store.getters.planStatusLockMap
   const planEditStatus = planStatusLockMap[vueThis.planInfoStatus].ganttEdit
@@ -3850,13 +3596,30 @@ function batchOwnerCheck (ganttName) {
       //   vueThis.$message.warning('低密人员不允许创建高密数据')
       //   result = false
       // }
-      if (
-        indexNo === 0 ||
-        (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1 && indexNo !== 0) ||
-        (task.readonly && (task.weatherControl === '1' || task.managerStatus === vueThis.issueStatus))
-      ) {
-        result = false
+      // 判断是否为根节点
+      if (indexNo === 0) {
+        result = {
+          value: false,
+          reason: "根节点不可设置责任人"
+        };
       }
+
+      // 判断任务状态是否有效
+      if (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1 && indexNo !== 0) {
+        result = {
+          value: false,
+          reason: "已完成、提交审批任务不可操作责任人"
+        };
+      }
+
+      // 判断任务是否只读且满足特定条件
+      if (task.readonly && (task.weatherControl === '1' || task.managerStatus === vueThis.issueStatus)) {
+        result = {
+          value: false,
+          reason: "计划发布后可控任务不可操作责任人"
+        };
+      }
+
     }
   })
   return result
@@ -4025,11 +3788,11 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
         // 发布后可控任务不可删除
         if (controlTaskEdit && controlTaskEdit === 'false') {
           if (selTask.weatherControl && selTask.weatherControl === '1') {
-            console.log(1111);
+
             result = false
             return true
           } else if (selTask.managerStatus === '6404') {
-            console.log(2222);
+
             result = false
             return true
           }
@@ -4046,7 +3809,6 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
             result = false
             return true
           }
-          console.log("🚀 ~ chiManagerStatus:", chiManagerStatus)
 
           if (indexNo === 0 || (chiManagerStatus && chiManagerStatus.indexOf(task.managerStatus) === -1 && indexNo !== 0)) {
             result = false

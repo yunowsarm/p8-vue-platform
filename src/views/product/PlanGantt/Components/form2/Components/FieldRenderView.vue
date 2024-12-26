@@ -90,7 +90,7 @@ export default {
     bindSelectIconClassHandle () {
       const options = this.fields.options && this.fields.options.length ? this.fields.options : this.options
       // const optionsFilter = options.filter((item) => item.id !== '1017')
-      // console.log("🚀aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas:", aaa)
+      //
       /**
        * 默认处理 下拉数据对应的字段为 label / value
        * 若存在 fields.optionUrl.value / fields.optionUrl.label

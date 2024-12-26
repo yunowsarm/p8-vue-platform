@@ -6,18 +6,18 @@
     </div>
     <vxe-table ref="xDemandTable"
                :comp="comp"
-               style="height: 92%;"
+               style="height: 94%;"
                :columns="columnsDemand"
                :params="tableParamDemand"
                :table-config="tableConfig"
                :checkbox-config="checkboxConfig"
                :is-smart-form="true"
-               :refreshShow="false"
                :pagination="false"
                api="demandManagement.getRequirementList"
                @selection-change="handleSelectionChangeDemand"
                @requested-table-data="requestedTableData">
       <template #operation="{ scope }">
+
         <el-button type="text"
                    @click="showDetail(scope.row)">查看详情</el-button>
       </template>
@@ -122,7 +122,7 @@ export default {
           title: '操作',
           fixed: 'right',
           dataIndex: 'operation',
-          width: 120,
+          width: 100,
           scopedSlots: { customRender: 'custom' },
           align: 'center',
           headerAlign: 'center'
@@ -166,7 +166,8 @@ export default {
             selectData.forEach((item, index) => {
               if (row.id === item.id) {
                 if (!that.selectRecords.includes(row.id)) {
-                  that.selectRecords.push(row.id)
+                  // that.selectRecords.push(row.id)
+                  item.demandStatus = '-1'
                 }
                 that.$refs.xDemandTable.$refs.table.setCheckboxRow(selectData[index], true)
               }
@@ -178,6 +179,7 @@ export default {
     checkMethod ({ row }) {
       if (row.demandStatus === '1a4c0e5a2022e3db79882411c378318b' ||
         row.demandStatus === '0db5ad18b95fa31828ca0ae226c1a23e' ||
+        row.demandStatus === '-1' ||
         row.demandStatus === '545e73dc8c6dc8145efd118492ba3226') {
         return false
       }
@@ -190,6 +192,9 @@ export default {
       })
     },
     relevanceClick () {
+      if (this.selectRecords.length === 0) {
+        return false
+      }
       let that = this
       let id = ''
       if (this.row.length > 0) {
@@ -202,7 +207,25 @@ export default {
         requirementIds: this.selectRecords
       }).then(res => {
         if (res) {
-          this.$message.success('操作成功')
+          this.$message.success('关联成功')
+          this.$emit('saveSuccess')
+        }
+      })
+    },
+    cancelDetail (row) {
+      let id = ''
+      let that = this
+      if (this.row.length > 0) {
+        id = that.row[0].ID
+      } else {
+        id = this.configParmars.id
+      }
+      this.$api['demandManagement.cancelRequirementByProject']({
+        wholeId: id,
+        requirementIds: [row.id]
+      }).then(res => {
+        if (res) {
+          this.$message.success('取消成功')
           this.$emit('saveSuccess')
         }
       })

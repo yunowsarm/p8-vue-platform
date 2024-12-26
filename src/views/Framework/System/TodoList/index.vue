@@ -215,7 +215,7 @@ export default {
         filed2: {label: '类型',value: parmars.typeDisplay},
         filed3: {label: '内容',value: parmars.content}
       }
-      console.log({ businessId: [id], approveUser: that.formData.affirmUserId, approveInfoConfig: approveInfoConfig },123);
+
       this.$refs.formRight.validate().then(() => {
         this.$confirm('是否确认保存并提交该项?', '提醒', {
           lockScroll: false,

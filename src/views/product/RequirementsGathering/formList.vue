@@ -145,7 +145,7 @@ export default {
       this.radioOptions.forEach(row => {
         if (row.id === window.selsecRow.id) {
           row.isActive = true
-          console.log("🚀 ~ mounted ~ row:", row)
+
           this.codeForm = row.code
           this.formTitle = '新建' + row.label
           this.dataTime = new Date().getTime()

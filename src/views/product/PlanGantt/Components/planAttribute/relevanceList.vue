@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%;"
-       :style="{ width: `${formWidth}vw` }">
+       :style="{ width: formWidth ? `${formWidth}vw` : '100%' }">
     <vxe-table ref="xDemandTable"
                v-if="falg"
                :comp="comp"

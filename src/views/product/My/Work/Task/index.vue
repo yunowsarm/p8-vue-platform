@@ -461,7 +461,7 @@ export default {
       this.$emit('close')
     },
     saveSuccess (res) {
-      console.log(res, '---res布局');
+
       this.configParmars.id = res
     }
   }

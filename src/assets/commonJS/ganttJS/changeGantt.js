@@ -241,8 +241,8 @@ export function taskDescribesEditCheck (newObj, oldObj, vueThis, taskId, ganttOb
  * @param ganttObject
  */
 export function monitorPointsEditCheck (oldObj, newObj, vueThis, task, ganttObject, falg) {
-  // console.log("🚀 ~ monitorPointsEditCheck ~ task:", task)
-  // console.log("🚀 ~ monitorPointsEditCheck ~ oldObj, newObj:", oldObj, newObj)
+  //
+  //
   let newArray = []
   if (newObj.length > 0) {
     newArray = Array.from(

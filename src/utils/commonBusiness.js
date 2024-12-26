@@ -8,13 +8,13 @@ export const getTaskStatusInfo = (params) => {
   const url = 'taskManager.getStatusByCurrent'
   let allStatus = []
   return api[url](params).then((res) => {
-    // console.log(res)
+    //
     let progressRange = res.allProgressRange
     res.allStatus.forEach((item) => {
       item.progressRange = progressRange.filter((p) => p[item.value])[0][item.value]
       allStatus.push(item)
     })
-    // console.log('allStatus', allStatus)
+    //
     return allStatus
   })
 }

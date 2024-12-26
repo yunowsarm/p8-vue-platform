@@ -48,9 +48,9 @@ export default {
         // let sip = '房间号'
         // 填写本地IP地址 此处的 :9101端口号 要与后端配置的一致！
         // 线上使用，直接获取浏览器地址
-        const URL = window.location.protocol + '//' + window.location.hostname + ':' + SOCKET_PORT + '?sendUserName=' + name + '&sendUser=' + id + '&authorization=' + this.token
+        // const URL = window.location.protocol + '//' + window.location.hostname + ':' + SOCKET_PORT + '?sendUserName=' + name + '&sendUser=' + id + '&authorization=' + this.token
         // 本地开发使用
-        // const URL = SOCKET_URL + '?sendUserName=' + name + '&sendUser=' + id + '&authorization=' + this.token
+        const URL = SOCKET_URL + '?sendUserName=' + name + '&sendUser=' + id + '&authorization=' + this.token
         const socket = io(URL, { autoConnect: true, transports: ['websocket'] }) // 连接到服务器
         window.myWebSocket = socket
         window.myWebSocket.connect()
@@ -69,6 +69,39 @@ export default {
           let count = this.$store.getters.messageNum
           this.$store.commit('SET_MESSAGENUM', ++count)
         })
+        socket.on('getMessageContent', (data) => {
+          console.log(window.isSecureContext,'我的消息---window.isSecureContext');
+          let res = JSON.parse(data)
+          if ("Notification" in window) {
+            Notification.requestPermission().then(function (permission) {
+              if (permission === "granted") {
+                var notification = new Notification("新消息到达", {
+                  body: res.msgNote
+                })
+                notification.onclick = function () {
+                  const URL = window.location.protocol + '//' + window.location.host + '/#/myMessageView'
+                  window.open(URL, '_blank')
+                }
+              }
+            })
+          }
+        })
+        socket.on('getApproveContent', (data) => {
+          console.log(window.isSecureContext,'我的审批---window.isSecureContext');
+          if ("Notification" in window) {
+            Notification.requestPermission().then(function (permission) {
+              if (permission === "granted") {
+                var notification = new Notification("新消息到达", {
+                  body: data
+                })
+                notification.onclick = function () {
+                  const URL = window.location.protocol + '//' + window.location.host + '/#/myApproveView'
+                  window.open(URL, '_blank')
+                }
+              }
+            })
+          }
+        })
         window.myWebSocket.on('connectSuccess', (res) => {
           if (that.conunt === 0) {
             // that.$message.success('websocket连接成功')
@@ -79,7 +112,7 @@ export default {
         // 连接失败时自动重新连接
         window.myWebSocket.on('reconnect_failed', () => {
           that.conunt = 0
-          console.log('*******************重新连接失败，自动重连*****************')
+
           // window.myWebSocket.off('reconnect') // 取消所有的重连事件监听
           // window.myWebSocket.close() // 关闭连接
           this.$message.error('websocket重新连接失败，自动重连中...')
@@ -94,7 +127,7 @@ export default {
         })
         window.myWebSocket.on('connect_error', (err) => {
           that.conunt = 0
-          console.log('*******************连接失败，自动重连*****************')
+
           this.$message.error('websocket连接失败，自动重连中...')
           window.socketType = true
           // this.$message({

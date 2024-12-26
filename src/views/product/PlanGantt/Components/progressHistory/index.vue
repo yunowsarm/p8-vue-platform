@@ -150,5 +150,6 @@ export default {
 <style lang="scss" scoped>
 .custom-common-tabs {
   height: calc(100% - 50px);
+  margin-top: 37px;
 }
 </style>

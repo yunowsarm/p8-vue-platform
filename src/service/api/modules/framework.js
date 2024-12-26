@@ -566,11 +566,11 @@ export const system = {
       desc: '系统设置-功能设置-排程设置-查询排程'
     },
     {
-      name: 'saveSchedulingBasicConfig',
+      name: 'saveOtherGlobalSettingsConfig',
       method: 'POST',
-      path: '/framework/project/saveSchedulingConfig',
-      mockPath: '/framework/project/saveSchedulingConfig',
-      desc: '系统设置-功能设置-排程设置-保存排程设置'
+      path: '/framework/project/saveOtherGlobalSettingsConfig',
+      mockPath: '/framework/project/saveOtherGlobalSettingsConfig',
+      desc: '系统设置-功能设置-计划管理-保存其他全局设置'
     },
     {
       name: 'getTaskDate',
