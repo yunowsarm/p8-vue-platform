@@ -1,14 +1,8 @@
 <template>
   <div>
     <template v-for="(mon, index) in childGroups(monitorData)">
-      <div class="child-group"
-           :key="'monitor' + index">
-        <command-button v-for="(config, index) in mon.configs"
-                        :key="config.id"
-                        :cbutton="config"
-                        :size="config.size"
-                        :current-records="currentRecords"
-                        :gantt-name="ganttName"></command-button>
+      <div class="child-group" :key="'monitor' + index">
+        <command-button v-for="(config, index) in mon.configs" :key="config.id" :cbutton="config" :size="config.size" :current-records="currentRecords" :gantt-name="ganttName"></command-button>
       </div>
     </template>
   </div>
@@ -44,7 +38,7 @@ export default {
       default: 2
     }
   },
-  data () {
+  data() {
     return {
       ganttObjectData: {},
       formatDatas: {
@@ -81,7 +75,7 @@ export default {
     }
   },
   computed: {
-    childGroups () {
+    childGroups() {
       const that = this
       return function (data) {
         const configArray = []
@@ -153,17 +147,17 @@ export default {
     },
     ...mapGetters(['vueThis', 'taskStatusLockMap'])
   },
-  mounted () {
+  mounted() {
     this.initGanttObject()
     if (this.planInfoId) {
       this.loadMonitorData(this.planInfoId)
     }
   },
   methods: {
-    initGanttObject () {
+    initGanttObject() {
       this.ganttObjectData = GanttObject
     },
-    loadMonitorData (planInfoId) {
+    loadMonitorData(planInfoId) {
       // 加载标识数据
       const that = this
       this.$api['planGanttManager.loadMonitorPointData']({ planInfoId: planInfoId })
@@ -200,7 +194,7 @@ export default {
           console.error(error)
         })
     },
-    isDisableFun () {
+    isDisableFun() {
       // 标识逻辑
       const that = this
       const mIdArr = ['1015', 'format-1015', 'delete-1015', 'format-1008', '1008', 'delete-1008']
@@ -272,7 +266,6 @@ export default {
           }
 
           // 取消选中按钮
-
 
           if (mId === 'cancelSel' && JSON.stringify(button) === '{}') {
             btn.msg = '目前没有格式刷'
@@ -427,43 +420,41 @@ export default {
               // 互斥标识
               const mutexIds = btn.mutexIds != null ? btn.mutexIds.split(',') : null
               // 判断
-              const taskCheck = tasks.some((t, i) => {
+              const taskCheck = tasks.some((t) => {
                 // 如果选中行已包含当前标识，不可选
-                if (t.monitorPoints && t.monitorPoints.indexOf(mId) !== -1) {
+                if (t.monitorPoints && t.monitorPoints.includes(mId)) {
                   btn.msg = '已包含当前标识'
-                  return true
+                  return true // 发现当前标识，停止检查
                 }
+
                 // 没有依赖标识，不可选
                 if (relyIds != null && relyIds.length > 0) {
                   if (t.monitorPoints) {
-                    return relyIds.some((rId, index) => {
-                      if (t.monitorPoints.indexOf(rId) === -1) {
-                        btn.msg = '没有依赖标识，不可选'
-                        return true
-                      }
-                    })
+                    const missingDependency = relyIds.some((rId) => !t.monitorPoints.includes(rId))
+                    if (missingDependency) {
+                      btn.msg = '没有依赖标识，不可选'
+                      return true // 存在缺失依赖标识，停止检查
+                    }
                   } else {
                     btn.msg = '没有依赖标识，不可选'
-                    return true
+                    return true // 当前任务没有标识，停止检查
                   }
                 }
+
                 // 存在互斥标识，不可选
                 if (mutexIds != null && mutexIds.length > 0) {
                   if (t.monitorPoints) {
-                    return mutexIds.some((rId, index) => {
-                      if (t.monitorPoints.indexOf(rId) !== -1) {
-                        btn.msg = '存在互斥标识，不可选'
-                        return true
-                      }
-                    })
-                  } else {
-                    return false
+                    const hasMutex = mutexIds.some((rId) => t.monitorPoints.includes(rId))
+                    if (hasMutex) {
+                      btn.msg = '存在互斥标识，不可选'
+                      return true // 存在互斥标识，停止检查
+                    }
                   }
                 }
+                return false // 没有发现问题，继续检查下一个任务
               })
               return taskCheck
             }
-            return false
           } else {
             btn.msg = '请选择任务'
             // 格式刷
@@ -478,7 +469,7 @@ export default {
         return false
       }
     },
-    clickFun () {
+    clickFun() {
       const that = this
       return function (btn, ganttName, tasks) {
         if (btn != null && ganttName) {
@@ -525,7 +516,7 @@ export default {
                     let flag = true
                     let relyIds = []
                     let relyIdName = ''
-                    that.monitorData.forEach(el => {
+                    that.monitorData.forEach((el) => {
                       if (el.relyIds && el.relyIds.indexOf(point) !== -1 && task.monitorPoints.indexOf(el.id) !== -1) {
                         relyIds.push(el.id)
                         relyIdName += el.title
@@ -533,14 +524,15 @@ export default {
                     })
                     if (relyIds && relyIds.length > 0) {
                       flag = false
-                      that.$confirm(relyIdName + '依赖于该标识，是否同步删除？', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                      })
+                      that
+                        .$confirm(relyIdName + '依赖于该标识，是否同步删除？', '提示', {
+                          confirmButtonText: '确定',
+                          cancelButtonText: '取消',
+                          type: 'warning'
+                        })
                         .then(() => {
                           relyIds.push(point)
-                          relyIds.forEach(el => {
+                          relyIds.forEach((el) => {
                             let monitorPoint = el
                             if (task.monitorPoints.indexOf(el + ',') !== -1) {
                               monitorPoint = el + ','
@@ -661,8 +653,9 @@ export default {
     }
   }
 }
+
 // 检查任务及其所有父任务的责任用户是否与当前用户相同
-function checkResolve (ganttObject, task) {
+function checkResolve(ganttObject, task) {
   if (task.parent) {
     const parentTask = ganttObject.getTask(task.parent)
     if (parentTask.dutyUserId === parentTask.nowUserId) {
@@ -676,7 +669,7 @@ function checkResolve (ganttObject, task) {
 }
 
 // 如果所选任务的所有父级有一个有月度计划或者责任令表示则禁用
-function checkResolveTwo (ganttObject, task) {
+function checkResolveTwo(ganttObject, task) {
   if (task.parent) {
     const parentTask = ganttObject.getTask(task.parent)
     if (parentTask.monitorPoints && (parentTask.monitorPoints === '1015' || parentTask.monitorPoints === '1008')) {
@@ -688,7 +681,8 @@ function checkResolveTwo (ganttObject, task) {
     return false
   }
 }
-function checkResolveThree (ganttObject, task) {
+
+function checkResolveThree(ganttObject, task) {
   let check = false
   if (ganttObject.hasChild(task.id)) {
     ganttObject.eachTask(function (t) {

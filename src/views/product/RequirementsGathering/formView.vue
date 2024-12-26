@@ -1126,12 +1126,14 @@ export default {
 .title {
   font-size: 17px;
   font-weight: bold;
+  margin: 10px 0;
 }
 .header {
   height: calc(100% - 50px) !important;
   overflow: auto;
 }
 .content {
+  padding: 15px;
   display: flex;
   flex-direction: row;
   justify-content: center;

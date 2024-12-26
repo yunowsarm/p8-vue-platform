@@ -16,7 +16,6 @@
       <div id="table-contain">
         <common-table ref="table"
                       :comp="comp"
-                      :table-border="false"
                       :table-config="tableConfig"
                       :columns="columns"
                       :tree="treeParams"
