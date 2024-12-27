@@ -33,9 +33,6 @@ export function getChangeGantt(ganttName, vueThis) {
   GanttObject.onCollapse(ganttObject, vueThis)
   // 查询监听及定义
   GanttObject.setSearchConfig(ganttObject, vueThis)
-  Gantt.taskProgressDetails = function taskProgressDetails(taskId) {
-    vueThis.showTaskProgressDialog(taskId)
-  }
   // 表头查询值绑定
   Gantt.searchColumnsChange = function searchColumnsChange(name, value, searchType, eleInstance) {
     const customComp = ['select', 'date', 'input']
@@ -61,6 +58,9 @@ export function getChangeGantt(ganttName, vueThis) {
       vueThis.searchForm[name] = value
     }
     ganttObject.render()
+  }
+  Gantt.taskProgressDetails = function taskProgressDetails(taskId) {
+    vueThis.showTaskProgressDialog(taskId)
   }
   ganttObject.attachEvent('onBeforeTaskDrag', function (id, mode, e) {
     return false // denies dragging if the global task index is odd
@@ -147,6 +147,7 @@ export function getChangeGantt(ganttName, vueThis) {
       min_width: 60,
       resize: true,
       template: function (task) {
+        debugger
         const reminderList = vueThis.reminderList
         const obj = reminderList.find((item) => {
           return item.id === task.id
