@@ -1341,7 +1341,7 @@ export default {
 
             myGantt.unselectTask()
 
-            if (!vueThis.relevancePlanVisible) {
+            if (!vueThis.relevancePlanVisible && vueThis.selectedId) {
               setTimeout(() => {
                 myGantt.showTask(vueThis.selectedId);
                 myGantt.selectTask(vueThis.selectedId);
