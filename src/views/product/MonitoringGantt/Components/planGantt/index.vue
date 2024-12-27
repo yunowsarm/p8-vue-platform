@@ -224,6 +224,7 @@
                    :dialog-height="650">
       <template #dialog>
         <Notice :task-id="selectTaskId"
+                :selected-tasks='selectedTasks'
                 :gantt-name="ganttName"
                 :plan-info-id="planInfoId"
                 @close="closeNotice" />
