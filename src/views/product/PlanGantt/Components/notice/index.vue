@@ -137,7 +137,7 @@ export default {
   created () {
     if(this.selectedTasks.length > 0){
       const task = this.selectedTasks[0]
-      this.title = task.wholeName
+      this.title = `项目【${task.wholeName}】`
       this.formData.taskIds = this.selectedTasks.map(item => item.id)
     }else{
       this.formData.title = this.title
@@ -186,7 +186,11 @@ export default {
           this.title = `项目【${task.wholeName}】-计划【${task.planName}】`
           break;
         case '2':
-          this.title = `项目【${task.wholeName}】-计划【${task.planName}】-任务【${task.name}】等多条任务`;
+          if(this.selectedTasks.length === 1){
+            this.title = `项目【${task.wholeName}】-计划【${task.planName}】-任务【${task.name}】`;
+          }else{
+            this.title = `项目【${task.wholeName}】-计划【${task.planName}】-任务【${task.name}】等多条任务`;
+          }
           break;
       }
     },
