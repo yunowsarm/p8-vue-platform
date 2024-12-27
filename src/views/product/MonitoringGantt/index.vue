@@ -1,53 +1,59 @@
 <template>
   <div style="height: 100%">
-    <div class="couerDivClass" id="couerDiv">
-      <div class="top" :style="{ height: commandButtonBarHeight }">
-        <command-button-bar
-          :panel-data="thirdMenuParam.specialPlan && thirdMenuParam.specialPlan.includes('SPECIAL_PLAN') ? thematicBarData : barData"
-          :selected-tasks="selectedTasks"
-          :gantt-name="ganttName"
-          :plan-info-id="planInfoId"
-          :special-plan="thirdMenuParam.specialPlan"
-          :task-id="taskId"
-          @change-command-button="changeCommandButton"
-        ></command-button-bar>
+    <div class="couerDivClass"
+         id="couerDiv">
+      <div class="top"
+           :style="{ height: commandButtonBarHeight }">
+        <command-button-bar :panel-data="thirdMenuParam.specialPlan && thirdMenuParam.specialPlan.includes('SPECIAL_PLAN') ? thematicBarData : barData"
+                            :selected-tasks="selectedTasks"
+                            :gantt-name="ganttName"
+                            :plan-info-id="planInfoId"
+                            :special-plan="thirdMenuParam.specialPlan"
+                            :task-id="taskId"
+                            @change-command-button="changeCommandButton"></command-button-bar>
       </div>
-      <div class="bottom" :class="expandBottom">
-        <plan-gantt
-          :plan-info-id="planInfoId"
-          :whole-describe-id="wholeDescribeId"
-          :plan-info-status="planInfoStatus"
-          :task-id="taskId"
-          :plan-end-date-array="planEndDateArray"
-          :plan-begin-date-array="planBeginDateArray"
-          :create-page="createPage"
-          :flag="thirdMenuParam.specialPlan"
-          :project-category="thirdMenuParam.projectCategory"
-          :select-record="thirdMenuParam.selectRecord"
-          :panel-data="thirdMenuParam.specialPlan && thirdMenuParam.specialPlan.includes('SPECIAL_PLAN') ? thematicBarData : barData"
-          @select-task="selectTask"
-          @show-detail="showDetail"
-          @save-success="detailDrawerClosed"
-          :task-status="taskStatus"
-        ></plan-gantt>
+      <div class="bottom"
+           :class="expandBottom">
+        <plan-gantt :plan-info-id="planInfoId"
+                    :whole-describe-id="wholeDescribeId"
+                    :plan-info-status="planInfoStatus"
+                    :task-id="taskId"
+                    :plan-end-date-array="planEndDateArray"
+                    :plan-begin-date-array="planBeginDateArray"
+                    :create-page="createPage"
+                    :flag="thirdMenuParam.specialPlan"
+                    :project-category="thirdMenuParam.projectCategory"
+                    :select-record="thirdMenuParam.selectRecord"
+                    :panel-data="thirdMenuParam.specialPlan && thirdMenuParam.specialPlan.includes('SPECIAL_PLAN') ? thematicBarData : barData"
+                    @select-task="selectTask"
+                    @show-detail="showDetail"
+                    @save-success="detailDrawerClosed"
+                    :task-status="taskStatus"></plan-gantt>
       </div>
     </div>
-    <el-drawer :title="detailTitle" :append-to-body="true" size="50%" :destroy-on-close="true" :wrapper-closable="false" @closed="detailDrawerClosed" :visible.sync="detailVisible">
-      <plan-attribute
-        @save-success="detailDrawerClosed"
-        :create-page="createPage"
-        :task-id="selectTaskId"
-        :att-read-only="readOnly"
-        :view-type="viewType"
-        :gantt-name="ganttName"
-        :status="status"
-        :plan-info-id="planInfoId"
-      ></plan-attribute>
+    <el-drawer :title="detailTitle"
+               :append-to-body="true"
+               size="50%"
+               :destroy-on-close="true"
+               :wrapper-closable="false"
+               @closed="detailDrawerClosed"
+               :visible.sync="detailVisible">
+      <plan-attribute @save-success="detailDrawerClosed"
+                      :create-page="createPage"
+                      :task-id="selectTaskId"
+                      :att-read-only="readOnly"
+                      :view-type="viewType"
+                      :gantt-name="ganttName"
+                      :status="status"
+                      :plan-info-id="planInfoId"></plan-attribute>
     </el-drawer>
   </div>
 </template>
 
 <style lang="scss" scoped>
+::v-deep .el-button--small {
+  font-size: 15px !important;
+}
 .couerDivClass {
   height: 100% !important;
   box-sizing: border-box;
@@ -105,7 +111,7 @@ import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
 import planAttribute from '../PlanGantt/Components/planAttribute'
 export default {
   name: 'PlanGanttManage',
-  data() {
+  data () {
     return {
       viewType: '',
       defaultKey: '1',
@@ -144,7 +150,7 @@ export default {
   },
   watch: {
     ganttButtonMode: {
-      handler(val) {
+      handler (val) {
         this.barData = val === 'tabs' ? CommandButtonBarData : val === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
         this.thematicBarData = val === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
         if (val == 'tabs') {
@@ -166,9 +172,9 @@ export default {
     PlanGantt,
     CommandButtonBar
   },
-  beforeMount() {},
-  created() {},
-  mounted() {
+  beforeMount () { },
+  created () { },
+  mounted () {
     this.planInfoId = this.thirdMenuParam.ID || ''
     this.planInfoStatus = this.thirdMenuParam.EXECUTESTATE
     this.taskId = this.thirdMenuParam.taskId || ''
@@ -178,7 +184,7 @@ export default {
     this.planEndDateArray = this.thirdMenuParam.planEndDateArray || []
   },
   computed: {
-    expandBottom() {
+    expandBottom () {
       if (this.ganttButtonMode == 'tabs' && this.advance) {
         return 'tabs'
       }
@@ -196,15 +202,15 @@ export default {
     ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
   },
   methods: {
-    selectTask(selectDatas, ganttName) {
+    selectTask (selectDatas, ganttName) {
       this.selectedTasks = selectDatas
       this.ganttName = ganttName
     },
-    toggleAdvanced() {
+    toggleAdvanced () {
       this.advanced = !this.advanced
     },
-    tabBarExtraContent() {},
-    showDetail(selectTask, ganttName, viewType) {
+    tabBarExtraContent () { },
+    showDetail (selectTask, ganttName, viewType) {
 
       this.detailVisible = true
       this.ganttName = ganttName
@@ -213,12 +219,12 @@ export default {
       this.detailTitle = selectTask.name
       this.viewType = viewType
     },
-    detailDrawerClosed(res) {
+    detailDrawerClosed (res) {
       this.detailVisible = false
       this.selectTaskId = ''
       this.detailTitle = ''
     },
-    changeCommandButton(advance) {
+    changeCommandButton (advance) {
       this.advance = advance
       if (advance) {
         this.commandButtonBarHeight = '152px'

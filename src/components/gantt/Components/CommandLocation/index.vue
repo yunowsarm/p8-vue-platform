@@ -9,7 +9,7 @@
     <div class="dialog-header">
       <span>定位</span>
       <i class="el-icon-close"
-         style="font-size: 20px;"
+         style="font-size: 20px;cursor: pointer;"
          @click="closeDialog"></i>
     </div>
     <slot></slot>

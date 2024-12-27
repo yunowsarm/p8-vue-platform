@@ -99,6 +99,9 @@
 </template>
 
 <style lang="scss" scoped>
+::v-deep .el-button--small {
+  font-size: 15px !important;
+}
 .x-style {
   float: right;
   font-size: 20px;
