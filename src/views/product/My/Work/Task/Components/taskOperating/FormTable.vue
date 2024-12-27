@@ -571,7 +571,7 @@ export default {
                     _this.$emit('submit', _this.formData, submitType)
                     _this.minValue = _this.formData.Progress
                   } else {
-                    _this.$message({
+                    _this.$notify({
                       message: res.message,
                       type: 'error'
                     })
