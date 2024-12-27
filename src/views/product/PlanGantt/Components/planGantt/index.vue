@@ -1395,8 +1395,16 @@ export default {
         this.$emit('select-task', this.selectedTasks, this.ganttName)
         if (this.pageType !== 'history') {
           this.showDetail('switch')
-        }else{
-         this.$emit('switch-task',this.selectedTasks)
+        } else {
+          // if (myGantt.getGlobalTaskIndex(this.selectTaskId) === -1) return
+          // // 如果是任务分解，非当前人员创建的，只能编辑责任人
+          // const task = myGantt.getTask(this.selectTaskId)
+          // this.$emit('switch-task', task)
+          // this.reminderList.forEach((item) => {
+          //   if (item.id == task.id) {
+          //     item.reminder = 0
+          //   }
+          // })
         }
       })
     },
