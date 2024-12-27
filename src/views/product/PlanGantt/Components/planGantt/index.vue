@@ -1,7 +1,7 @@
 <!---->
 <template>
   <div style="height: 100%; position: relative">
-    <div id="actionMenu" v-if="menuVisible && menuData.length" ref="actionMenu" :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
+    <div id="actionMenu" v-show="menuVisible && menuData.length" ref="actionMenu" :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
       <VuePerfectScrollbar class="scroll-area" :style="{ maxHeight: maxHeight, height: scrollBarHeight }">
         <el-menu mode="vertical" :collapse="true">
           <template v-for="(menu, index) in menuData">
