@@ -28,7 +28,6 @@ export default {
         }
 
         const [data] = await this.$api['PersonalProcessApproval.getApproveContentViewUrl']({ taskId: taskId })
-        debugger
         if (!data || !data.processInstanceId) {
           console.warn('Invalid or missing data from API')
           return
@@ -39,7 +38,7 @@ export default {
           businessKey: data.value.businessKey || data.value.changeId,
           page: {
             current: 1,
-            size: 5,
+            size: -1,
             orders: []
           }
         })
@@ -60,7 +59,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div style='height: 100%'>
     <History v-if="isDataLoaded" :selected-approval="approvalData" /> <!-- 根据标志位条件渲染 History 组件 -->
   </div>
 </template>
