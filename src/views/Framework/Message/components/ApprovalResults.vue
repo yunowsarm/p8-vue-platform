@@ -43,10 +43,9 @@ export default {
             orders: []
           }
         })
-        debugger
-
         if (records && records.length > 0) {
-          this.approvalData = records[0]
+          const i = records.length - 1
+          this.approvalData = records[i]
         } else {
           console.warn('No records found in the response')
         }
