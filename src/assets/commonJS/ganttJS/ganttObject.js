@@ -2949,7 +2949,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
   // 系统设置，拓展属性
   const extraColumns = vueThis.columnSettings.filter((item) => item.attributeType === '1')
   const hideColumnKeys = hideColumns.map((item) => item.filedName)
-  const extraColumnKeys = extraColumns.map((item) => item.filedName)
+  const extraColumnKeys = extraColumns.map((item) => 'kz' + item.id)
   // 获取gantt列配置信息
   const ganttSetting = GanttObject.getGanttSettingGrid(vueThis.ganttName, vueThis.createPage)
   // 存在配置信息时，同步，不存在时显示默认gantt列信息
@@ -3008,17 +3008,17 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
         default:
           break
       }
-      if (settingExtra[item.filedName]) {
+      if (settingExtra['kz' + item.id]) {
         let initItem = {
           name: 'kz' + item.id,
           label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
           align: 'center',
           resize: true,
-          hide: settingExtra[item.filedName].hide,
+          hide: settingExtra['kz' + item.id].hide,
           min_width: 120,
           editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null
         }
-        tempColumns.splice(settingExtra[item.filedName].index, 1, initItem)
+        tempColumns.splice(settingExtra['kz' + item.id].index, 1, initItem)
       } else {
         tempColumns.push({
           name: item.filedName,
@@ -3033,7 +3033,6 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
     })
 
     tempColumns = tempColumns.filter((el) => el)
-
     ganttObject.config.columns = tempColumns
   } else if (vueThis.columnSettings.length > 0) {
     const tempColumns = []
