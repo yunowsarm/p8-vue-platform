@@ -1,19 +1,11 @@
 <!---->
 <template>
   <div style="height: 100%; position: relative">
-    <div id="actionMenu"
-         v-if="menuVisible && menuData.length"
-         ref="actionMenu"
-         :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
-      <VuePerfectScrollbar class="scroll-area"
-                           :style="{ maxHeight: maxHeight, height: scrollBarHeight }">
-        <el-menu mode="vertical"
-                 :collapse="true">
+    <div id="actionMenu" v-if="menuVisible && menuData.length" ref="actionMenu" :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
+      <VuePerfectScrollbar class="scroll-area" :style="{ maxHeight: maxHeight, height: scrollBarHeight }">
+        <el-menu mode="vertical" :collapse="true">
           <template v-for="(menu, index) in menuData">
-            <el-submenu v-if="buttonData(menu).children"
-                        :disabled="isDisable(menu)"
-                        :key="menu.id"
-                        :index="index + 'm'">
+            <el-submenu v-if="buttonData(menu).children" :disabled="isDisable(menu)" :key="menu.id" :index="index + 'm'">
               <span slot="title">
                 <span @click="btnClick(buttonData(menu), isDisable(menu))">
                   <i :class="buttonData(menu).icon"></i>
@@ -21,36 +13,21 @@
                 </span>
               </span>
               <template v-for="(btn, index) in buttonData(menu).children">
-                <el-menu-item v-if="btn.id !== 'createByNum'"
-                              :key="index"
-                              @click="btnClick(btn, btn.isDisableFun(null, ganttName, selectedTasks))"
-                              :index="btn.id">
+                <el-menu-item v-if="btn.id !== 'createByNum'" :key="index" @click="btnClick(btn, btn.isDisableFun(null, ganttName, selectedTasks))" :index="btn.id">
                   <i :class="btn.icon"></i>
                   <span> {{ btn.title }}</span>
                 </el-menu-item>
-                <el-submenu v-if="btn.id === 'createByNum'"
-                            :key="index + 'c'"
-                            :index="index + 'b'">
+                <el-submenu v-if="btn.id === 'createByNum'" :key="index + 'c'" :index="index + 'b'">
                   <span slot="title">
                     <i :class="btn.icon"></i>
                     <span> {{ btn.title }}</span>
                   </span>
-                  <el-input-number size="mini"
-                                   v-model="createNum"
-                                   :max="50"
-                                   :min="1"
-                                   :step-strictly="true"
-                                   :step="1"></el-input-number>
-                  <el-button size="mini"
-                             @click="btn.clickFun(btn, ganttName, null)">确定</el-button>
+                  <el-input-number size="mini" v-model="createNum" :max="50" :min="1" :step-strictly="true" :step="1"></el-input-number>
+                  <el-button size="mini" @click="btn.clickFun(btn, ganttName, null)">确定 </el-button>
                 </el-submenu>
               </template>
             </el-submenu>
-            <el-menu-item v-else
-                          @click="btnClick(buttonData(menu), isDisable(menu))"
-                          :disabled="isDisable(menu)"
-                          :key="menu.id"
-                          :index="menu.id + 'm'">
+            <el-menu-item v-else @click="btnClick(buttonData(menu), isDisable(menu))" :disabled="isDisable(menu)" :key="menu.id" :index="menu.id + 'm'">
               <i :class="buttonData(menu).icon"></i>
               <span> {{ menu.title }}</span>
             </el-menu-item>
@@ -58,175 +35,152 @@
         </el-menu>
       </VuePerfectScrollbar>
     </div>
-    <out-put-view v-if="outPutViewVisible"
-                  :visible="outPutViewVisible"
-                  :plan-info-id="planInfoId"
-                  :task-id="taskId"
-                  :create-page="createPage"
-                  :gantt-name="ganttName"
-                  :plan-type-datas="planTypeDatas"
-                  @close-dialog="outPutViewClose">
+    <out-put-view
+      v-if="outPutViewVisible"
+      :visible="outPutViewVisible"
+      :plan-info-id="planInfoId"
+      :task-id="taskId"
+      :create-page="createPage"
+      :gantt-name="ganttName"
+      :plan-type-datas="planTypeDatas"
+      @close-dialog="outPutViewClose"
+    >
     </out-put-view>
-    <div ref="myGantt"
-         style="width: 100%; height: calc(100% - 40px) !important"
-         @mousemove="mouseMove"></div>
+    <div ref="myGantt" style="width: 100%; height: calc(100% - 40px) !important" @mousemove="mouseMove"></div>
     <div class="detail_div">
       <div style="width: 50%">
         <span style="margin-left: 16px">选中任务：</span>
-        <span @click="showDetail"
-              class="detail_span">{{ selectTaskName }}</span>
+        <span @click="showDetail" class="detail_span">{{ selectTaskName }}</span>
       </div>
       <div style="width: 50%">
         <span style="float: right; margin-right: 40px">合计 {{ taskCount }} 条</span>
         <span style="float: right; margin-right: 40px">已选中 {{ selectTaskCount }} 条</span>
-        <el-popover placement="top"
-                    trigger="click">
+        <el-popover placement="top" trigger="click">
           <div class="edit_gantt_user_list">
             <span v-if="webSocketDone">当前连接异常，无法查看正在编辑人员，请尝试刷新页面或联系运维人员</span>
-            <span v-else
-                  v-for="(user, ind) in editUserList"
-                  :key="ind">{{ user.userName }}
+            <span v-else v-for="(user, ind) in editUserList" :key="ind"
+              >{{ user.userName }}
               <span v-if="user.entityType === 'compile'">-计划编制</span>
               <span v-if="user.entityType === 'decompose'">-任务分解</span>
             </span>
           </div>
-          <span slot="reference"
-                style="float: right; margin-right: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' : editUserList.length }} 人</span>
+          <span slot="reference" style="float: right; margin-right: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' : editUserList.length }} 人</span>
         </el-popover>
       </div>
     </div>
-    <el-drawer :title="activityImportTitle"
-               :append-to-body="true"
-               size="50%"
-               :destroy-on-close="true"
-               :wrapper-closable="false"
-               @closed="activityImportClosed"
-               :visible.sync="activityImportVisible">
-      <activity-import @save-success="activityImportClosed"
-                       :task-id="selectTaskId"
-                       :activity-secret-grade-display="activitySecretGradeDisplay"
-                       :create-page="createPage"
-                       :activity-import-type="activityImportType"
-                       :auto-scheduling="autoParentDate"></activity-import>
+    <el-drawer :title="activityImportTitle" :append-to-body="true" size="50%" :destroy-on-close="true" :wrapper-closable="false" @closed="activityImportClosed" :visible.sync="activityImportVisible">
+      <activity-import
+        @save-success="activityImportClosed"
+        :task-id="selectTaskId"
+        :activity-secret-grade-display="activitySecretGradeDisplay"
+        :create-page="createPage"
+        :activity-import-type="activityImportType"
+        :auto-scheduling="autoParentDate"
+      ></activity-import>
     </el-drawer>
-    <common-dialog title="通知下发"
-                   width="70%"
-                   :visible="noticeVisible"
-                   :show-handle-btn="false"
-                   @isfullscreen="isfullscreen"
-                   @close="closeNotice"
-                   :is-view-cs-footer="false"
-                   :dialog-height="650">
+    <common-dialog title="通知下发" width="70%" :visible="noticeVisible" :show-handle-btn="false" @isfullscreen="isfullscreen" @close="closeNotice" :is-view-cs-footer="false" :dialog-height="650">
       <template #dialog>
-        <Notice v-if="noticeVisible"
-                :task-id="selectTaskId"
-                :gantt-name="ganttName"
-                :plan-info-id="planInfoId"
-                @close="closeNotice" />
+        <Notice v-if="noticeVisible" :task-id="selectTaskId" :gantt-name="ganttName" :plan-info-id="planInfoId" @close="closeNotice" />
       </template>
     </common-dialog>
-    <monitor-time-manger v-if="controlTimeVisible"
-                         :visible="controlTimeVisible"
-                         :monitor-id="monitorId"
-                         :task-id="selectTaskId"
-                         :monitor-name="monitorName"
-                         :task-name="selectTaskName"
-                         @save-success="monitorManagerSave">
+    <monitor-time-manger
+      v-if="controlTimeVisible"
+      :visible="controlTimeVisible"
+      :monitor-id="monitorId"
+      :task-id="selectTaskId"
+      :monitor-name="monitorName"
+      :task-name="selectTaskName"
+      @save-success="monitorManagerSave"
+    >
     </monitor-time-manger>
-    <resource-select v-if="resourceSelectVisible"
-                     :visible="resourceSelectVisible"
-                     :start-task-id="startTaskId"
-                     :end-task-id="endTaskId"
-                     :plan-info-id="planInfoId"
-                     :select-task-owner-id="selectTaskOwnerId"
-                     :select-model="resourceSelectModel"
-                     @closed="resourceSelectclosed"
-                     @resource-selected="resourceSelected">
+    <resource-select
+      v-if="resourceSelectVisible"
+      :visible="resourceSelectVisible"
+      :start-task-id="startTaskId"
+      :end-task-id="endTaskId"
+      :plan-info-id="planInfoId"
+      :select-task-owner-id="selectTaskOwnerId"
+      :select-model="resourceSelectModel"
+      @closed="resourceSelectclosed"
+      @resource-selected="resourceSelected"
+    >
     </resource-select>
-    <grid-setting v-if="selectGridVisible"
-                  :visible="selectGridVisible"
-                  :columns="renderColumns"
-                  :gantt-name="ganttName"
-                  :create-page="createPage"
-                  @close="selectGridlosed"
-                  @save-setting="gridSaved"></grid-setting>
-    <common-dialog title="请选择需要保存的任务"
-                   :visible="myExperienceVisible"
-                   :show-handle-btn="false"
-                   @isfullscreen="isfullscreen"
-                   @close="closeMyExperience"
-                   :is-view-cs-footer="true">
+    <grid-setting
+      v-if="selectGridVisible"
+      :visible="selectGridVisible"
+      :columns="renderColumns"
+      :gantt-name="ganttName"
+      :create-page="createPage"
+      @close="selectGridlosed"
+      @save-setting="gridSaved"
+    ></grid-setting>
+    <common-dialog title="请选择需要保存的任务" :visible="myExperienceVisible" :show-handle-btn="false" @isfullscreen="isfullscreen" @close="closeMyExperience" :is-view-cs-footer="true">
       <template #dialog>
         <list-layout>
           <template #north>
             <!-- <span style="color: red; font-size: 14px; font-weight: bolder; float: right; line-height: 30px; display: inline-block; margin-right: 10px">密级：{{ experienceLibrarySecretGradeDisplay }}</span> -->
           </template>
           <template #center>
-            <common-table ref="table"
-                          v-if="myExperienceVisible"
-                          :comp="comp"
-                          :style="{ height: customHeight + 'px' }"
-                          :table-config="tableConfig"
-                          :columns="Mycolumns"
-                          :api="tableApi"
-                          :params="queryParam"
-                          :special-rote-name="roteName"
-                          :use-tree-format="useTreeFormat"
-                          :use-tree-p-id="useTreePId"
-                          :pagination="false"
-                          @select="onTableSelect"
-                          @select-all="selectAll"
-                          @selection-change="handleSelectionChange">
+            <common-table
+              ref="table"
+              v-if="myExperienceVisible"
+              :comp="comp"
+              :style="{ height: customHeight + 'px' }"
+              :table-config="tableConfig"
+              :columns="Mycolumns"
+              :api="tableApi"
+              :params="queryParam"
+              :special-rote-name="roteName"
+              :use-tree-format="useTreeFormat"
+              :use-tree-p-id="useTreePId"
+              :pagination="false"
+              @select="onTableSelect"
+              @select-all="selectAll"
+              @selection-change="handleSelectionChange"
+            >
             </common-table>
           </template>
-          <template #drawer-panel> </template>
+          <template #drawer-panel></template>
         </list-layout>
       </template>
       <template #cs-footer>
         <span class="dialog-footer">
           <el-button @click="closeMyExperience">取 消</el-button>
-          <el-button type="primary"
-                     @click="saveMyExperience()">下一步</el-button>
+          <el-button type="primary" @click="saveMyExperience()">下一步</el-button>
         </span>
       </template>
     </common-dialog>
-    <el-drawer :title="importExcelTitle"
-               :append-to-body="true"
-               size="50%"
-               :wrapper-closable="false"
-               :destroy-on-close="true"
-               @closed="importExcelClosed"
-               :visible.sync="importExcel">
-      <import-excel @save-success="importExcelClosed"
-                    :excel-secret-grade-display="excelSecretGradeDisplay"
-                    :excel-secret-grade="excelSecretGrade"
-                    :task-id="selectTaskId"
-                    :planInfoId="planInfoId"
-                    :columnConfigs="columnConfigs"
-                    :output-request="excelImportData"></import-excel>
+    <el-drawer :title="importExcelTitle" :append-to-body="true" size="50%" :wrapper-closable="false" :destroy-on-close="true" @closed="importExcelClosed" :visible.sync="importExcel">
+      <import-excel
+        @save-success="importExcelClosed"
+        :excel-secret-grade-display="excelSecretGradeDisplay"
+        :excel-secret-grade="excelSecretGrade"
+        :task-id="selectTaskId"
+        :planInfoId="planInfoId"
+        :columnConfigs="columnConfigs"
+        :output-request="excelImportData"
+      ></import-excel>
     </el-drawer>
-    <el-drawer :title="importProjectTitle"
-               :append-to-body="true"
-               size="50%"
-               :wrapper-closable="false"
-               :destroy-on-close="true"
-               @closed="resourceSettingClosed"
-               :visible.sync="importProject">
-      <import-project @save-success="importProjectClosed"
-                      :project-secret-grade-display="projectSecretGradeDisplay"
-                      :project-secret-grade="projectSecretGrade"
-                      :task-id="selectTaskId"
-                      :output-request="projectImportData"></import-project>
+    <el-drawer :title="importProjectTitle" :append-to-body="true" size="50%" :wrapper-closable="false" :destroy-on-close="true" @closed="resourceSettingClosed" :visible.sync="importProject">
+      <import-project
+        @save-success="importProjectClosed"
+        :project-secret-grade-display="projectSecretGradeDisplay"
+        :project-secret-grade="projectSecretGrade"
+        :task-id="selectTaskId"
+        :output-request="projectImportData"
+      ></import-project>
     </el-drawer>
     <!--    团队成员编辑-->
-    <el-drawer class="resource-group-drawer"
-               :title="resourceGroup"
-               :append-to-body="true"
-               :before-close="isSaveCheckHandle"
-               size="100%"
-               :destroy-on-close="true"
-               @closed="importProjectClosed"
-               :visible.sync="ganttGroupSetting">
+    <el-drawer
+      class="resource-group-drawer"
+      :title="resourceGroup"
+      :append-to-body="true"
+      :before-close="isSaveCheckHandle"
+      size="100%"
+      :destroy-on-close="true"
+      @closed="importProjectClosed"
+      :visible.sync="ganttGroupSetting"
+    >
       <keep-alive>
         <!-- <team-manager ref="team" :third-menu-param="thirdMenuParam" :group_type="group_type"></team-manager> -->
       </keep-alive>
@@ -237,41 +191,44 @@
         <detail :av-task-id="avTaskId"></detail>
       </template>
     </common-drawer>
-    <common-dialog title="查询"
-                   width="90%"
-                   v-if="ganttSearchVisible"
-                   :visible="ganttSearchVisible"
-                   :show-handle-btn="false"
-                   @isfullscreen="isfullscreen"
-                   @close="closeSearch"
-                   :is-view-cs-footer="false"
-                   :dialog-height="360">
+    <common-dialog
+      title="查询"
+      width="90%"
+      v-if="ganttSearchVisible"
+      :visible="ganttSearchVisible"
+      :show-handle-btn="false"
+      @isfullscreen="isfullscreen"
+      @close="closeSearch"
+      :is-view-cs-footer="false"
+      :dialog-height="360"
+    >
       <template #dialog>
-        <command-search :gantt-name="ganttName"
-                        :plan-info-id="planInfoId"
-                        @close="closeSearch"></command-search>
+        <command-search :gantt-name="ganttName" :plan-info-id="planInfoId" @close="closeSearch"></command-search>
       </template>
     </common-dialog>
-    <common-dialog title="统计信息"
-                   width="60%"
-                   v-if="ganttStatisticVisible"
-                   :visible="ganttStatisticVisible"
-                   :show-handle-btn="false"
-                   @isfullscreen="isfullscreen"
-                   @close="closeStatistic"
-                   :is-view-cs-footer="false"
-                   :dialog-height="460">
+    <common-dialog
+      title="统计信息"
+      width="60%"
+      v-if="ganttStatisticVisible"
+      :visible="ganttStatisticVisible"
+      :show-handle-btn="false"
+      @isfullscreen="isfullscreen"
+      @close="closeStatistic"
+      :is-view-cs-footer="false"
+      :dialog-height="460"
+    >
       <template #dialog>
-        <command-statistic :gantt-name="ganttName"
-                           :plan-info-id="planInfoId"></command-statistic>
+        <command-statistic :gantt-name="ganttName" :plan-info-id="planInfoId"></command-statistic>
       </template>
     </common-dialog>
-    <common-button-bar-setting v-if="rightMenuConfigVisible"
-                               :visible="rightMenuConfigVisible"
-                               title="菜单配置"
-                               :panel-data="panelData"
-                               @submit="submitButtonBarSetting"
-                               @hidden="rightMenuConfigVisible = false">
+    <common-button-bar-setting
+      v-if="rightMenuConfigVisible"
+      :visible="rightMenuConfigVisible"
+      title="菜单配置"
+      :panel-data="panelData"
+      @submit="submitButtonBarSetting"
+      @hidden="rightMenuConfigVisible = false"
+    >
     </common-button-bar-setting>
     <!-- 批量设置任务密级 -->
     <!-- <ClassificationSelection
@@ -280,30 +237,22 @@
       @closed="ClassificationSelectclosed"
       @ClassificationSelect="ClassificationSelect"
     ></ClassificationSelection> -->
-    <Edit :visible="createVisible"
-          :selected-task="selectedTasks"
-          title="我的经验库"
-          :gantt-name="ganttName"
-          @handleCancel="closeCreate" />
-    <my-experience-base :visible="experienceBaseVisible"
-                        v-if="experienceBaseVisible"
-                        :is-manage="isManage"
-                        :gantt-name="ganttName"
-                        :create-page="createPage"
-                        :plan-info-id="planInfoId"
-                        :selected-task="selectedTasks"
-                        :export-experience-type="exportExperienceType"
-                        @copy="copyExperienceBase"
-                        @handleCancel="closExperienceBase"></my-experience-base>
-    <common-drawer v-if="versionListVisible"
-                   :visible="versionListVisible"
-                   size="70%"
-                   placement="top"
-                   title="版本列表"
-                   @close="versionListVisible = false">
+    <Edit :visible="createVisible" :selected-task="selectedTasks" title="我的经验库" :gantt-name="ganttName" @handleCancel="closeCreate" />
+    <my-experience-base
+      :visible="experienceBaseVisible"
+      v-if="experienceBaseVisible"
+      :is-manage="isManage"
+      :gantt-name="ganttName"
+      :create-page="createPage"
+      :plan-info-id="planInfoId"
+      :selected-task="selectedTasks"
+      :export-experience-type="exportExperienceType"
+      @copy="copyExperienceBase"
+      @handleCancel="closExperienceBase"
+    ></my-experience-base>
+    <common-drawer v-if="versionListVisible" :visible="versionListVisible" size="70%" placement="top" title="版本列表" @close="versionListVisible = false">
       <template #drawer>
-        <version-list :plan-info-id="planInfoId"
-                      :main-gantt-name="ganttName"></version-list>
+        <version-list :plan-info-id="planInfoId" :main-gantt-name="ganttName"></version-list>
       </template>
     </common-drawer>
     <!-- <common-drawer v-if="progressHistoryVisible"
@@ -316,30 +265,14 @@
         <ProgressHistory :task-id="selectedId" />
       </template>
     </common-drawer> -->
-    <common-drawer v-if="changeHistoryVisible"
-                   :visible="changeHistoryVisible"
-                   size="80%"
-                   placement="top"
-                   title="任务历史变更"
-                   @close="changeHistoryClose">
+    <common-drawer v-if="changeHistoryVisible" :visible="changeHistoryVisible" size="80%" placement="top" title="任务历史变更" @close="changeHistoryClose">
       <template #drawer>
-        <ChangeHistory :plan-info-id="planInfoId"
-                       :task-id="selectTaskId"
-                       :create-page="createPage" />
+        <ChangeHistory :plan-info-id="planInfoId" :task-id="selectTaskId" :create-page="createPage" />
       </template>
     </common-drawer>
-    <common-drawer v-if="relevancePlanVisible"
-                   :visible="relevancePlanVisible"
-                   size="100%"
-                   placement="top"
-                   title="关联"
-                   @close="closeRelevance">
+    <common-drawer v-if="relevancePlanVisible" :visible="relevancePlanVisible" size="100%" placement="top" title="关联" @close="closeRelevance">
       <template #drawer>
-        <relevance :plan-info-id="planInfoId"
-                   ref="relevanceRefs"
-                   @relevanceClick="relevanceClick"
-                   :selectTaskId="selectTaskId"
-                   :main-gantt-name="ganttName"></relevance>
+        <relevance :plan-info-id="planInfoId" ref="relevanceRefs" @relevanceClick="relevanceClick" :selectTaskId="selectTaskId" :main-gantt-name="ganttName"></relevance>
       </template>
     </common-drawer>
   </div>
@@ -465,6 +398,7 @@ import VersionList from '../versionList'
 import ChangeHistory from '../changeHistory'
 import relevance from '../relevance'
 import { version } from 'vue'
+
 const Mycolumns = [
   {
     title: '',
@@ -597,7 +531,7 @@ export default {
     VuePerfectScrollbar,
     relevance
   },
-  data () {
+  data() {
     const mh = document.documentElement.clientHeight - 300
     return {
       ganttBtnType: null,
@@ -812,7 +746,7 @@ export default {
     }
   },
   watch: {
-    $route () {
+    $route() {
       this.initGantt(this.planInfoId, this.viewType)
     },
     selectedTasks: function (newVal, oldVal) {
@@ -861,7 +795,7 @@ export default {
       }
     },
     ganttRightButtons: {
-      handler (val) {
+      handler(val) {
         this.menuData = val.length ? val : []
         this.scrollBarHeight = 40 * this.menuData.length + 1 + 'px'
       },
@@ -869,8 +803,8 @@ export default {
       deep: true
     }
   },
-  created () { },
-  mounted () {
+  created() {},
+  mounted() {
     const that = this
     this.scrollBarHeight = 40 * this.menuData.length + 1 + 'px'
     window.movement = this.movement
@@ -878,10 +812,9 @@ export default {
     if (!window.myWebSocket.connected) {
       this.webSocketDone = true
     }
-    let timer = null;
+    let timer = null
     window.myWebSocket.on('planGantGroup', (data) => {
-
-      if (timer) clearTimeout(timer); // 每次监听输入值，都会去判断是否还有timer，有就清除timer
+      if (timer) clearTimeout(timer) // 每次监听输入值，都会去判断是否还有timer，有就清除timer
       timer = setTimeout(() => {
         that.onlineData = data
         let html = '<div class="edit_gantt_user_list">'
@@ -902,7 +835,7 @@ export default {
             message: html
           })
         }
-      }, 1);
+      }, 1)
     })
     window.addEventListener('keyup', this.deleteTask)
     this.$bus.$on('ganttDetail', (visible) => {
@@ -910,51 +843,70 @@ export default {
     })
   },
   computed: {
-    editUserList () {
+    editUserList() {
       return this.onlineData.filter((item) => {
         return item.entityId == this.planInfoId && item.entityType !== 'userChange'
       })
     },
-    isDisable () {
+    isDisable() {
       const that = this
       return function (btnConfig) {
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
         return btnData[0].isDisableFun(null, this.ganttName, this.selectedTasks)
       }
     },
-    buttonData () {
+    buttonData() {
       const that = this
       return function (btnConfig) {
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
         return btnData[0]
       }
     },
-    noOperate () {
-      return !(this.ganttDetail || this.menuVisible || this.outPutViewVisible || this.activityImportVisible || this.noticeVisible || this.controlTimeVisible || this.resourceSelectVisible || this.selectGridVisible || this.myExperienceVisible || this.importExcel || this.importProject || this.ganttSearchVisible || this.ganttStatisticVisible || this.rightMenuConfigVisible || this.createVisible || this.experienceBaseVisible || this.versionListVisible || this.progressHistoryVisible || this.changeHistoryVisible)
+    noOperate() {
+      return !(
+        this.ganttDetail ||
+        this.menuVisible ||
+        this.outPutViewVisible ||
+        this.activityImportVisible ||
+        this.noticeVisible ||
+        this.controlTimeVisible ||
+        this.resourceSelectVisible ||
+        this.selectGridVisible ||
+        this.myExperienceVisible ||
+        this.importExcel ||
+        this.importProject ||
+        this.ganttSearchVisible ||
+        this.ganttStatisticVisible ||
+        this.rightMenuConfigVisible ||
+        this.createVisible ||
+        this.experienceBaseVisible ||
+        this.versionListVisible ||
+        this.progressHistoryVisible ||
+        this.changeHistoryVisible
+      )
     },
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
-    relevanceOpen () {
-
+    relevanceOpen() {
       this.relevancePlanVisible = true
     },
-    relevanceClick (id) {
+    relevanceClick(id) {
       // this.selectedTasks = [id]
       this.selectedId = id
     },
-    refreshData () {
+    refreshData() {
       this.$emit('refreshData')
     },
-    closeRelevance () {
+    closeRelevance() {
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
       this.relevancePlanVisible = false
     },
-    copyExperienceBase (ids) {
+    copyExperienceBase(ids) {
       this.copyTasks = ids
       this.copyFlag = true
     },
-    closExperienceBase (res) {
+    closExperienceBase(res) {
       this.isManage = false
       this.experienceBaseVisible = false
 
@@ -962,17 +914,17 @@ export default {
         this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
       }
     },
-    closeCreate () {
+    closeCreate() {
       this.createVisible = false
     },
-    movement () {
+    movement() {
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
     },
-    updateRootProgress (id, progress) {
-      this.$api['planGanttManager.updateRootProgress']({ taskId: id, progress: progress }).then((res) => { })
+    updateRootProgress(id, progress) {
+      this.$api['planGanttManager.updateRootProgress']({ taskId: id, progress: progress }).then((res) => {})
     },
     // 取消院任务关联
-    researchTaskRelevanceCancel (tasks) {
+    researchTaskRelevanceCancel(tasks) {
       if (tasks && tasks[0]) {
         this.$api['myExperience.cancelConnectTask']({
           taskId: tasks[0].id,
@@ -1007,7 +959,7 @@ export default {
         })
       }
     },
-    isSaveCheckHandle (done) {
+    isSaveCheckHandle(done) {
       const that = this
       if (!that.$refs.team.changeCheak()) {
         done()
@@ -1035,7 +987,7 @@ export default {
           })
       }
     },
-    selectAll (tableData) {
+    selectAll(tableData) {
       this.selectAllChecked = !this.selectAllChecked
       this.selectAllRow(tableData, this.selectAllChecked)
       if (!this.selectAllChecked) {
@@ -1045,7 +997,7 @@ export default {
     /**
      * 处理数据，全选行，默认只选子不选父
      */
-    selectAllRow (data, flag) {
+    selectAllRow(data, flag) {
       const _this = this
       data.map((row) => {
         if (row.children && row.children.length > 0) {
@@ -1059,22 +1011,22 @@ export default {
         }
       })
     },
-    isfullscreen (isfullscreen) {
+    isfullscreen(isfullscreen) {
       if (isfullscreen) {
         this.customHeight = document.documentElement.clientHeight - 120
       } else {
         this.customHeight = 300
       }
     },
-    closePop () {
+    closePop() {
       this.myExperienceImportVisible = false
     },
-    successPop () {
+    successPop() {
       // this.myExperienceImportVisible = false
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
       this.myExperienceImportVisible = false
     },
-    onTableSelect (select, row) {
+    onTableSelect(select, row) {
       // eslint-disable-next-line no-unused-vars
       const childrens = row.children
 
@@ -1098,7 +1050,7 @@ export default {
       }
     },
     // 取消选中递归
-    clearRow (data) {
+    clearRow(data) {
       Array.from(data).forEach((row) => {
         row.isCheck = false // 给这行数据设置一个选中字段为false
         this.$refs.table.$refs.table.toggleRowSelection(row, false)
@@ -1106,14 +1058,14 @@ export default {
       })
     },
     // 选中递归
-    checkRow (data) {
+    checkRow(data) {
       Array.from(data).forEach((row) => {
         row.isCheck = true // 选中是字段值为true
         this.$refs.table.$refs.table.toggleRowSelection(row, true)
         if (row.children) this.checkRow(row.children)
       })
     },
-    saveMyExperience () {
+    saveMyExperience() {
       const that = this
       const selectNums = that.selectedRowKeys.length
       if (selectNums === 0) {
@@ -1124,26 +1076,26 @@ export default {
         this.innerVisible = true
       }
     },
-    closeMyExperience () {
+    closeMyExperience() {
       this.selectedRowKeys = []
       this.myExperienceVisible = false
     },
-    saveCallback () {
+    saveCallback() {
       this.onEditModelClose()
     },
-    onEditModelClose () {
+    onEditModelClose() {
       this.selectedRowKeys = []
       this.innerVisible = false
       this.myExperienceVisible = false
     },
-    handleSelectionChange (val) {
+    handleSelectionChange(val) {
       // this.selectedRowKeys = []
       // this.multipleSelection = val
       // val.map(item => {
       //   this.selectedRowKeys.push(item.id)
       // })
     },
-    async initGantt (planInfoId, viewType) {
+    async initGantt(planInfoId, viewType) {
       this.fullscreenLoading = this.$loading({
         lock: true,
         text: 'Loading',
@@ -1207,8 +1159,8 @@ export default {
         const planGanttConfig =
           vueThis.userSettingAll.PlanStyleClass && vueThis.userSettingAll.PlanStyleClass.length
             ? vueThis.userSettingAll.PlanStyleClass.find((i) => {
-              return i.key === 'grid-cell-border'
-            })
+                return i.key === 'grid-cell-border'
+              })
             : null
         let rootClass = this.$refs.myGantt.getAttribute('class') || ''
         if (planGanttConfig) {
@@ -1245,12 +1197,12 @@ export default {
       // } else if (this.createPage === 'decompose') {
       //   this.group_type = '4'
       // }
-      if(this.planManagementStatus === '6620'){
+      if (this.planManagementStatus === '6620') {
         myGantt.config.readonly = true
         myGantt.config.readonlyReason = '计划发布审批，不可编辑'
       }
     },
-    loadGanttData (planInfoId, taskId, createPage) {
+    loadGanttData(planInfoId, taskId, createPage) {
       const monitorBtns = this.monitorBtnsByApi
       window.createPage = createPage
       const vueThis = this
@@ -1264,26 +1216,25 @@ export default {
       })
         .then(function (res) {
           if (res) {
-            debugger
             let taskList = res.tasks
             vueThis.fullscreenLoading.close()
             // 先给task赋值拓展字段
             let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
-            let extraStr = extraList.map(extra => extra.filedName)
-            taskList.forEach(task => {
+            let extraStr = extraList.map((extra) => extra.filedName)
+            taskList.forEach((task) => {
               // 解决gantt图鼠标悬浮任务名
               task.text = task.name
-              extraStr.forEach(key => {
+              extraStr.forEach((key) => {
                 task[key] = ''
               })
             })
             // 处理拓展字段已有的数据
             vueThis.extendMap = res.extendMap || {}
             if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
-              taskList.forEach(task => {
+              taskList.forEach((task) => {
                 if (vueThis.extendMap[task.id]) {
                   let extendData = vueThis.extendMap[task.id]
-                  extendData.forEach(item => {
+                  extendData.forEach((item) => {
                     task['kz' + item.customItem1] = item.fieldValue
                   })
                 }
@@ -1297,7 +1248,11 @@ export default {
             if (res.projectStatus === '2205') {
               myGantt.config.readonly = true
             }
-            if ((res.monitorLock && res.monitorLock['1010'] && res.monitorLock['1010'] === '1') || (res.monitorLock && res.monitorLock['1018'] && res.monitorLock['1018'] === '1')|| (res.monitorLock && res.monitorLock['1020'] && res.monitorLock['1020'] === '1')) {
+            if (
+              (res.monitorLock && res.monitorLock['1010'] && res.monitorLock['1010'] === '1') ||
+              (res.monitorLock && res.monitorLock['1018'] && res.monitorLock['1018'] === '1') ||
+              (res.monitorLock && res.monitorLock['1020'] && res.monitorLock['1020'] === '1')
+            ) {
               if (createPage === 'compile') {
                 vueThis.planEditLock = true
                 myGantt.config.readonly = true
@@ -1343,14 +1298,14 @@ export default {
 
             if (!vueThis.relevancePlanVisible && vueThis.selectedId) {
               setTimeout(() => {
-                myGantt.showTask(vueThis.selectedId);
-                myGantt.selectTask(vueThis.selectedId);
+                myGantt.showTask(vueThis.selectedId)
+                myGantt.selectTask(vueThis.selectedId)
               }, 1000)
             }
             if (vueThis.isSueTaskIds && vueThis.isSueTaskIds.length) {
-              vueThis.isSueTaskIds.forEach(el => {
-                myGantt.showTask(el);
-                myGantt.selectTask(el);
+              vueThis.isSueTaskIds.forEach((el) => {
+                myGantt.showTask(el)
+                myGantt.selectTask(el)
               })
               vueThis.isSueTaskIds = null
             }
@@ -1365,30 +1320,38 @@ export default {
           console.error('error' + error)
         })
     },
-    btnClick (btn, isDisable) {
+    btnClick(btn, isDisable) {
       if (!isDisable) {
         this.menuVisible = false
         btn.clickFun(null, this.ganttName, this.selectedTasks)
       }
     },
-    callParentSelectTasks () {
+    callParentSelectTasks() {
       this.$nextTick(() => {
         this.$emit('select-task', this.selectedTasks, this.ganttName)
         if (this.pageType !== 'history') {
           this.showDetail('switch')
-        }else{
-         this.$emit('switch-task',this.selectedTasks)
+        } else {
+          if (myGantt.getGlobalTaskIndex(this.selectTaskId) === -1) return
+          // 如果是任务分解，非当前人员创建的，只能编辑责任人
+          const task = myGantt.getTask(this.selectTaskId)
+          this.$emit('switch-task', task)
+          this.reminderList.forEach((item) => {
+            if (item.id == task.id) {
+              item.reminder = 0
+            }
+          })
         }
       })
     },
-    mouseMove (e) {
+    mouseMove(e) {
       if (this.menuVisible) {
         if (this.mouseY - 30 > e.clientY || this.mouseY + 30 < e.clientY || this.mouseX - 30 > e.clientX || this.mouseX + 30 < e.clientX) {
           this.menuVisible = false
         }
       }
     },
-    showDetail (type) {
+    showDetail(type) {
       this.pageType = type || 'switch'
       if (myGantt.getGlobalTaskIndex(this.selectTaskId) === 0) return
       // 如果是任务分解，非当前人员创建的，只能编辑责任人
@@ -1400,7 +1363,7 @@ export default {
         this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, '', type)
       }
     },
-    activityImportClosed () {
+    activityImportClosed() {
       this.activityImportVisible = false
       myGantt.eachSelectedTask(function (id) {
         if (myGantt.isTaskExists(id)) {
@@ -1410,7 +1373,7 @@ export default {
       this.callParentSelectTasks()
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
     },
-    experienceImportClosed () {
+    experienceImportClosed() {
       this.myExperienceImportVisible = false
       myGantt.eachSelectedTask(function (id) {
         if (myGantt.isTaskExists(id)) {
@@ -1428,10 +1391,10 @@ export default {
       // 编辑器保存后逻辑
       GanttObject.onSaveCellEven(myGantt, this)
     },
-    monitorManagerSave (obj) {
+    monitorManagerSave(obj) {
       this.controlTimeVisible = false
     },
-    importExcelClosed () {
+    importExcelClosed() {
       this.importExcel = false
       myGantt.eachSelectedTask(function (id) {
         if (myGantt.isTaskExists(id)) {
@@ -1442,12 +1405,12 @@ export default {
       // this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
       this.initGantt(this.planInfoId, this.viewType)
     },
-    resourceRelationClosed () {
+    resourceRelationClosed() {
       this.resourceRelation = false
       this.callParentSelectTasks()
       this.loadGanttData(this.planInfoId, this.taskId)
     },
-    importProjectClosed () {
+    importProjectClosed() {
       this.importProject = false
       myGantt.eachSelectedTask(function (id) {
         if (myGantt.isTaskExists(id)) {
@@ -1457,16 +1420,16 @@ export default {
       this.callParentSelectTasks()
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
     },
-    resourceSettingClosed () {
+    resourceSettingClosed() {
       this.importProject = false
     },
-    comResTypesListData () {
+    comResTypesListData() {
       const _this = this
       _this.$api['baseData.getPublicResourceTypes']().then(function (res) {
         _this.comResTypesOption = res
       })
     },
-    importTaskExFresh () {
+    importTaskExFresh() {
       myGantt.eachSelectedTask(function (id) {
         if (myGantt.isTaskExists(id)) {
           myGantt.unselectTask(id)
@@ -1475,13 +1438,13 @@ export default {
       this.callParentSelectTasks()
       this.loadGanttData(this.planInfoId, this.taskId)
     },
-    batchSyncTaskCallBack () {
+    batchSyncTaskCallBack() {
       this.loadGanttData(this.planInfoId, '', this.createPage)
     },
-    outPutViewClose () {
+    outPutViewClose() {
       this.outPutViewVisible = false
     },
-    resourceSelected (ownerId, row, type) {
+    resourceSelected(ownerId, row, type) {
       const that = this
       if (that.selectedTasks && that.selectedTasks.length > 0) {
         if (!row.departureTime) {
@@ -1520,19 +1483,19 @@ export default {
     //   })
     //   this.ClassificationSelectVisible = false
     // },
-    resourceSelectclosed () {
+    resourceSelectclosed() {
       this.resourceSelectVisible = false
     },
     // ClassificationSelectclosed() {
     //   this.ClassificationSelectVisible = false
     // },
-    saveExperience () {
+    saveExperience() {
       this.$refs.experience.confirmExperiece()
     },
-    selectGridlosed () {
+    selectGridlosed() {
       this.selectGridVisible = false
     },
-    gridSaved () {
+    gridSaved() {
       this.selectGridVisible = false
       // 清空选中
       myGantt.eachSelectedTask(function (id) {
@@ -1557,22 +1520,22 @@ export default {
       // 编辑器保存后逻辑
       GanttObject.onSaveCellEven(myGantt, this)
     },
-    closeSearch () {
+    closeSearch() {
       this.ganttSearchVisible = false
     },
-    closeStatistic () {
+    closeStatistic() {
       this.ganttStatisticVisible = false
     },
-    closeMenuConfig () {
+    closeMenuConfig() {
       this.rightMenuConfigVisible = false
     },
-    noticeShow () {
+    noticeShow() {
       this.noticeVisible = true
     },
-    closeNotice () {
+    closeNotice() {
       this.noticeVisible = false
     },
-    submitButtonBarSetting (updateValues, requestOtherParams) {
+    submitButtonBarSetting(updateValues, requestOtherParams) {
       const _this = this
       const params = [
         {
@@ -1601,7 +1564,7 @@ export default {
       this.rightMenuConfigVisible = false
     },
     //  创建版本
-    createPlanVersion () {
+    createPlanVersion() {
       let version = ''
       this.$api['planGanttManager.getVersionNum']({
         planInfoId: this.planInfoId
@@ -1638,31 +1601,31 @@ export default {
         })
       })
     },
-    showTaskProgressDialog (taskId) {
+    showTaskProgressDialog(taskId) {
       this.selectedId = taskId
       this.pageType = 'history'
       this.$emit('show-detail', myGantt.getTask(taskId), this.ganttName, '', 'history')
       // this.progressHistoryVisible = true
-      this.reminderList.forEach(item => {
+      this.reminderList.forEach((item) => {
         if (item.id == taskId) {
           item.reminder = 0
         }
       })
     },
-    showChangeHistory () {
+    showChangeHistory() {
       this.changeHistoryVisible = true
     },
-    changeHistoryClose () {
+    changeHistoryClose() {
       this.changeHistoryVisible = false
       this.$store.dispatch('setVueThis', this)
     },
-    deleteTask () {
+    deleteTask() {
       let that = this
       if (event.keyCode === 46) {
         let taskIds = myGantt.getSelectedTasks()
         if (that.ganttName == 'planGantt' && taskIds.length > 0 && that.noOperate) {
           let tasks = []
-          taskIds.forEach(id => {
+          taskIds.forEach((id) => {
             let task = myGantt.getTask(id)
             tasks.push(task)
           })
@@ -1671,7 +1634,7 @@ export default {
       }
     }
   },
-  destroyed () {
+  destroyed() {
     window.myWebSocket.off('planGantGroup')
     window.removeEventListener('keyup', this.deleteTask)
     this.$bus.$off('ganttDetail')
