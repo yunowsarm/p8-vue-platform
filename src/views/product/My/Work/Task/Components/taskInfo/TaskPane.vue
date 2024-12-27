@@ -239,40 +239,6 @@ export default {
         return `<span class="pane-status"><span style="background-color: ${currStatus[0].color}; width: 6px;height: 6px;border-radius: 10px;margin-right: 6px;" class="pane-status-cir"></span>${this.taskInfo.statusDisplay}</span>`
       }
     },
-    durationDayHandle (currStatus, systemCurrentDate, planEndDate, realEndDate) {
-      // let allStatus = this.getPlanInfo().allStatus
-      if (planEndDate && currStatus) {
-        // let currStatusInfo = allStatus.filter(item => item.value === currStatus)
-        // if (!currStatusInfo.length) {
-        //   return
-        // }
-        let currDate = systemCurrentDate || moment().format('YYYY-MM-DD')
-        let diffDays = 0
-        let text = ''
-        if (currStatus === '6070') {
-          diffDays = Math.abs(moment(planEndDate).diff(moment(realEndDate), 'days'))
-          // 已完成
-          if (moment(realEndDate).isAfter(moment(planEndDate))) {
-            text = `<span style="color: #F80012">超期${diffDays}天完成</span>`
-          } else if (diffDays === 0) {
-            text = `<span style="color: #1BBF9E">当天完成</span>`
-          } else {
-            text = `<span style="color: #1BBF9E">提前${diffDays}天完成</span>`
-          }
-        } else {
-          diffDays = Math.abs(moment(planEndDate).diff(moment(currDate), 'days'))
-          // 已完成
-          if (moment(currDate).isAfter(moment(planEndDate))) {
-            text = `<span style="color: #F80012">超期${diffDays}天</span>`
-          } else if (diffDays === 0) {
-            text = `<span style="color: #48BF9F">今天</span>`
-          } else {
-            text = `<span style="color: #48BF9F">剩余${diffDays}天</span>`
-          }
-        }
-        return text
-      }
-    },
     datelineHandle () {
       const buleColor = '#1892FF'
       const yellowColor = '#FFC306'
