@@ -1259,7 +1259,7 @@ export default {
       })
         .then(function (res) {
           if (res) {
-            debugger
+            // debugger
             let taskList = res.tasks
             vueThis.fullscreenLoading.close()
             // 先给task赋值拓展字段
@@ -1280,6 +1280,10 @@ export default {
                   let extendData = vueThis.extendMap[task.id]
                   extendData.forEach(item => {
                     task['kz' + item.customItem1] = item.fieldValue
+                  })
+                } else {
+                  extraList.forEach(item => {
+                    task['kz' + item.id] = ''
                   })
                 }
               })
