@@ -147,7 +147,6 @@ export function getChangeGantt(ganttName, vueThis) {
       min_width: 60,
       resize: true,
       template: function (task) {
-        debugger
         const reminderList = vueThis.reminderList
         const obj = reminderList.find((item) => {
           return item.id === task.id
