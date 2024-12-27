@@ -462,6 +462,8 @@ export default {
     // 默认选中页面已选的责任人
     requestedTableData (data) {
       const _this = this
+      this.currentRow = null
+      _this.$refs.tableCom.$refs.table.clearSelection()
       if (data.length) {
         this.$nextTick(() => {
           data.forEach((item) => {
