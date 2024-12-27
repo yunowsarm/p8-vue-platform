@@ -18,7 +18,7 @@
       <template #describes>
         <P8Tinymce :key="dateTime"
                    v-model="formData.describes"
-                   :editorConfig="{height: '600px'}" />
+                   :editorConfig="editorInit" />
       </template>
     </form-list>
   </div>
@@ -67,6 +67,10 @@ export default {
   },
   data () {
     return {
+      editorInit: {
+        height: '500px',
+        toolbar: 'bold italic strikethrough alignleft aligncenter alignright outdent indent bullist numlist image preview fullscreen'
+      },
       nullity: '',
       comp: this,
       saveApi: 'planGanttManager.describeSave',

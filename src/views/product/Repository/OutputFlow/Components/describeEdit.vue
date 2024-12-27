@@ -14,7 +14,7 @@
     <template #describes>
       <P8Tinymce v-model="formData.describes"
                  :key="dateTime"
-                 :editorConfig="{height: '500px'}" />
+                 :editorConfig="editorInit" />
     </template>
   </form-list>
 </template>
@@ -49,6 +49,10 @@ export default {
   },
   data () {
     return {
+      editorInit: {
+        height: '500px',
+        toolbar: 'bold italic strikethrough alignleft aligncenter alignright outdent indent bullist numlist image preview fullscreen'
+      },
       saveApi: 'OutputFlow.describeSave',
       isCustomValidate: true,
       dateTime: new Date().getTime(),
