@@ -3439,7 +3439,7 @@ function issueTask (ganttObject, thisDp, currentRowTask, ganttName) {
       planInfoId: vueThis.planInfoId
     })
       .then((res) => {
-        if (res) {
+        if (res == '6404') {
           // thisDp.ignore(function () {
           //   ganttObject.batchUpdate(function () {
           //     tasks.forEach(function (task) {
@@ -3456,8 +3456,8 @@ function issueTask (ganttObject, thisDp, currentRowTask, ganttName) {
           vueThis.isSueTaskIds = taskIds
         } else {
           vueThis.$message({
-            message: '任务下发失败！',
-            type: 'error'
+            message: res,
+            type: 'warning'
           })
         }
       })
