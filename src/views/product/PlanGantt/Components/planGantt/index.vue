@@ -86,7 +86,7 @@
             </span>
           </div>
           <span slot="reference"
-                style="float: right; margin-right: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' : editUserList.length }} 人</span>
+                style="float: right; margin-right: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' : editUserList.length == 0 ? 1 : editUserList.length }} 人</span>
         </el-popover>
       </div>
     </div>

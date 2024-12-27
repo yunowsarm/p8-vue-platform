@@ -297,6 +297,14 @@ export function isAllowPaste (ganttName, tasks) {
   const thisGantt = GanttObject.getGanttObject(ganttName)
   if (tasks && tasks.length === 1 && tasks[0].parent && thisGantt.isTaskExists(tasks[0].parent)) {
     const parentTask = thisGantt.getTask(tasks[0].parent)
+    // 6409：完成审批
+    // 6406：提交审批
+    // 6405：变更中
+    let statusList = [{status: '6409',title: '完成审批'}, {status: '6406',title: '提交审批'}, {status: '6405',title: '变更中'}]
+    let parent = statusList.filter(el => el.status == parentTask.managerStatus)
+    if (parent && parent.length) {
+      return createDisableResponse(`父任务状态为${parent[0].title}时不可粘贴` );
+    }
     // 获取gannt操作限制策略
     const taskStatusLockMap = store.getters.taskStatusLockMap
     const editManagerStatus = taskStatusLockMap[parentTask.status]
