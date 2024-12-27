@@ -1,12 +1,4 @@
-import {
-  GanttObject,
-  searchColumnRenderer,
-  taskOverdueRemainingDaysArr,
-  taskProgressFeedbackArr,
-  taskStatusArr,
-  taskWeatherControlArr,
-  columnsTypeMap
-} from './ganttObject'
+import { GanttObject, searchColumnRenderer, taskOverdueRemainingDaysArr, taskProgressFeedbackArr, taskStatusArr, taskWeatherControlArr, columnsTypeMap } from './ganttObject'
 import { setLockTaskProperties } from './ganttLockUnLock'
 import { taskMoveChange } from './changeGantt'
 import moment from 'moment'
@@ -23,7 +15,7 @@ import { calculateRemainingDays } from '@/utils/common'
  * @author fukai
  * @date 2020/5/22 12:00
  */
-export function getChangeGantt (ganttName, vueThis) {
+export function getChangeGantt(ganttName, vueThis) {
   // 获取gantt对象
   const ganttObject = GanttObject.getGanttObject(ganttName)
   ganttObject.config.order_branch = false
@@ -41,8 +33,11 @@ export function getChangeGantt (ganttName, vueThis) {
   GanttObject.onCollapse(ganttObject, vueThis)
   // 查询监听及定义
   GanttObject.setSearchConfig(ganttObject, vueThis)
+  Gantt.taskProgressDetails = function taskProgressDetails(taskId) {
+    vueThis.showTaskProgressDialog(taskId)
+  }
   // 表头查询值绑定
-  Gantt.searchColumnsChange = function searchColumnsChange (name, value, searchType, eleInstance) {
+  Gantt.searchColumnsChange = function searchColumnsChange(name, value, searchType, eleInstance) {
     const customComp = ['select', 'date', 'input']
     if (customComp.indexOf(searchType) < 0) {
       document.getElementById(name + searchType).setAttribute('value', value)
@@ -104,18 +99,18 @@ export function getChangeGantt (ganttName, vueThis) {
           const infoType = task.infoType
           const weatherChange = task.weatherChange
           if (vueThis.ganttName && vueThis.ganttName === 'changeGantt' && weatherChange && weatherChange === '1') {
-            html = `<i class="gantt-tip p8 icon-change-item" style="color: red;" title = "变更项"></i>`
+            html = `<i class='gantt-tip p8 icon-change-item' style='color: red;' title = '变更项'></i>`
           }
           if (infoType) {
             switch (infoType) {
               case 'create':
-                html = `<i class="gantt-tip p8 icon-make-increase" style="color: red;" title="调增"></i>`
+                html = `<i class='gantt-tip p8 icon-make-increase' style='color: red;' title='调增'></i>`
                 break
               case 'update':
-                html = `<i class="gantt-tip p8 icon-content-adjustment" style="color: red;" title = "内容调整"></i>`
+                html = `<i class='gantt-tip p8 icon-content-adjustment' style='color: red;' title = '内容调整'></i>`
                 break
               case 'delete':
-                html = `<i class="gantt-tip p8 icon-make-reductions" style="color: red;" title = "调减"></i>`
+                html = `<i class='gantt-tip p8 icon-make-reductions' style='color: red;' title = '调减'></i>`
                 break
             }
           }
@@ -137,12 +132,35 @@ export function getChangeGantt (ganttName, vueThis) {
             const taskStatusMap = vueThis.taskStatusMap
             if (taskStatusMap && Object.keys(taskStatusMap).length > 0) {
               const item = taskStatusMap[status]
-              const html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color}" title="${item.cmeaning}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
+              const html = `<i class='gantt-tip p8 ${item.icon}' style='color: ${item.color}' title='${item.cmeaning}' task_status_disp='${item.id}' taskId='${task.id}'></i>`
               return html
             }
           }
         }
         return ''
+      }
+    },
+    {
+      name: 'progressFeedback',
+      label: '进度反馈',
+      align: 'center',
+      min_width: 60,
+      resize: true,
+      template: function (task) {
+        const reminderList = vueThis.reminderList
+        const obj = reminderList.find((item) => {
+          return item.id === task.id
+        })
+        let img = require('@/assets/image/gantt/weidu.png')
+        if (obj && obj.id && Number(obj.reminder) > 0) {
+          return `<span onclick=Gantt.taskProgressDetails('${task.id}') style='cursor: pointer'>
+            <img style='cursor: pointer;width: 17px; height: 17px' src='${img}' />
+          </span>`
+        } else if (obj && obj.id && obj.reminder == 0) {
+          return `<span onclick=Gantt.taskProgressDetails('${task.id}') class='p8 icon-read-mail' style='cursor: pointer;'></span>`
+        } else {
+          return ''
+        }
       }
     },
     {
@@ -480,7 +498,7 @@ export function getChangeGantt (ganttName, vueThis) {
         const result = calculateRemainingDays(task)
         return result.text
       }
-    },
+    }
   ]
   // 创建资源载体
   ganttObject.$resourcesStore = GanttObject.createDatastore(ganttObject)
@@ -570,19 +588,21 @@ export function getChangeGantt (ganttName, vueThis) {
   }
   return ganttObject
 }
+
 /**
  * 同步列
  * @param vueThis
  * @param ganttObject
  */
-function synchronizationColumns (vueThis, ganttObject) {
-  function checkEdit () {
+function synchronizationColumns(vueThis, ganttObject) {
+  function checkEdit() {
     if (vueThis.pageName === 'planMonitor') {
       return false
     } else {
       return true
     }
   }
+
   const initColumns = ganttObject.config.columns
   initColumns.forEach((initItem, initIndex) => {
     const name = initItem.name
@@ -633,7 +653,7 @@ function synchronizationColumns (vueThis, ganttObject) {
       if (initColumn && initColumn.length > 0) {
         // initColumn[0].hide = !(item.isEnable == '1')
         // tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
-        if ((item.isEnable == '1')) {
+        if (item.isEnable == '1') {
           tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
         }
       }
@@ -642,23 +662,23 @@ function synchronizationColumns (vueThis, ganttObject) {
         switch (item.filedType) {
           case 'text':
             editType = 'text'
-            break;
+            break
           case 'number':
             editType = 'number'
-            break;
+            break
           case 'textarea':
             editType = 'text'
-            break;
+            break
           case 'datepicker':
             editType = 'custom_date_editor'
-            break;
+            break
           default:
-            break;
+            break
         }
         if (item.isEnable == '1') {
           tempColumns.push({
             name: 'kz' + item.id,
-            label: `<div class="gantt_search">${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class="gantt_search gantt_blank"></div>`,
+            label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
             align: 'center',
             resize: true,
             hide: item.isEnable == '0',
@@ -689,7 +709,7 @@ function synchronizationColumns (vueThis, ganttObject) {
   }
 }
 
-function searchColumnsDataInit (vueThis, ganttObject) {
+function searchColumnsDataInit(vueThis, ganttObject) {
   return ganttObject.attachEvent('onDataRender', function () {
     const initColumns = getGanttColumns(ganttObject, vueThis)
     initColumns.forEach((initItem, initIndex) => {
@@ -771,10 +791,10 @@ function searchColumnsDataInit (vueThis, ganttObject) {
             vueThis[inputKey] = new Inputor(`.${inputKey}`, {
               value: vueThis.searchForm[name] || '',
               placeholder: '请输入',
-              onChangeValue (value) {
+              onChangeValue(value) {
                 vueThis.searchForm[name] = value
               },
-              onChange (value) {
+              onChange(value) {
                 Gantt.searchColumnsChange(name, value, 'input')
               }
             })
