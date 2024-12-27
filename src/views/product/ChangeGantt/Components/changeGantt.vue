@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%; position: relative" class="planGantt" v-loading='loading'>
+  <div style="height: 100%; position: relative" class="planGantt" v-loading="loading">
     <div id="actionMenu" v-if="menuVisible" ref="actionMenu" :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
       <VuePerfectScrollbar class="scroll-area" :style="{ maxHeight: maxHeight, height: scrollBarHeight }">
         <el-menu mode="vertical" :collapse="true">
@@ -22,7 +22,7 @@
                     <span> {{ btn.title }}</span>
                   </span>
                   <el-input-number size="mini" v-model="createNum" :max="1000" :min="1" :step-strictly="true" :step="1"></el-input-number>
-                  <el-button size="mini" @click="btn.clickFun(btn, ganttName, null)">确定 </el-button>
+                  <el-button size="mini" @click="btn.clickFun(btn, ganttName, null)">确定</el-button>
                 </el-submenu>
               </template>
             </el-submenu>
@@ -279,7 +279,8 @@ export default {
   },
   data() {
     return {
-      loading:false,
+      reminderList: [],
+      loading: false,
       relevanceVisible: false,
       sendDataList: '',
       projectCategory: '',
@@ -356,7 +357,8 @@ export default {
       temporaryDatas: [],
       selectedId: '',
       taskExtendRequests: [],
-      extendMap: {}
+      extendMap: {},
+      pageType: 'switch'
     }
   },
   watch: {
@@ -489,10 +491,28 @@ export default {
       this.temporaryDatas = taskDatas
       this.selectedId = id
     },
+    showTaskProgressDialog(taskId) {
+      this.selectedId = taskId
+      this.pageType = 'history'
+      this.$emit('show-detail', myGantt.getTask(taskId), this.ganttName, '', 'history')
+      // this.progressHistoryVisible = true
+      this.reminderList.forEach((item) => {
+        if (item.id == taskId) {
+          item.reminder = 0
+        }
+      })
+    },
     async initGantt(planInfoId, changeRecordId, viewType) {
       // 根据项目类型，获取gantt列设置
       this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
-
+      this.reminderList = await this.$api['planGanttManager.loadReminder']({
+        planInfoId: this.planInfoId,
+        dicType: 'ACTIVITY_TYPE',
+        taskId: this.taskId,
+        createPage: this.createPage,
+        planBeginDateArray: this.planBeginDateArray,
+        planEndDateArray: this.planEndDateArray
+      })
       const vueThis = this
       myGantt = GanttObject.getGanttObject(vueThis.ganttName)
       // 清空原有数据
@@ -725,7 +745,19 @@ export default {
     callParentSelectTasks() {
       this.$nextTick(() => {
         this.$emit('select-task', this.selectedTasks, this.ganttName)
-        this.showDetail('switch')
+        if (this.pageType !== 'history') {
+          this.showDetail('switch')
+        } else {
+          if (myGantt.getGlobalTaskIndex(this.selectTaskId) === -1) return
+          // 如果是任务分解，非当前人员创建的，只能编辑责任人
+          const task = myGantt.getTask(this.selectTaskId)
+          this.$emit('switch-task', task)
+          this.reminderList.forEach((item) => {
+            if (item.id == task.id) {
+              item.reminder = 0
+            }
+          })
+        }
       })
     },
     mouseMove(e) {
@@ -736,6 +768,7 @@ export default {
       }
     },
     showDetail(type) {
+      this.pageType = type || 'switch'
       if (this.$route.path === '/TaskChange') {
         this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, this.createPage, type)
       } else {
