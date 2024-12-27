@@ -1,77 +1,80 @@
 <template>
   <div style="height: 100%">
-    <P8SplitPane split="vertical" @resize="paneSizeChange" :defaultPercent="defaultPercent" :minPercent="0">
+    <P8SplitPane split="vertical"
+                 @resize="paneSizeChange"
+                 :defaultPercent="defaultPercent"
+                 :minPercent="0">
       <template #paneL>
-        <div class="couerDivClass" id="couerDiv">
-          <div class="top" :style="{ height: commandButtonBarHeight }">
-            <command-button-bar
-              :panel-data="btnData"
-              :selected-tasks="selectedTasks"
-              :gantt-name="ganttName"
-              :hasSettings="false"
-              :plan-info-id="planInfoId"
-              @change-command-button="changeCommandButton"
-            ></command-button-bar>
+        <div class="couerDivClass"
+             id="couerDiv">
+          <div class="top"
+               :style="{ height: commandButtonBarHeight }">
+            <command-button-bar :panel-data="btnData"
+                                :selected-tasks="selectedTasks"
+                                :gantt-name="ganttName"
+                                :hasSettings="false"
+                                :plan-info-id="planInfoId"
+                                @change-command-button="changeCommandButton"></command-button-bar>
           </div>
-          <div class="bottom" :class="expandBottom">
-            <change-gantt
-              ref="planGantt"
-              :plan-info-id="planInfoId"
-              :plan-info-status="planInfoStatus"
-              :task-id="taskId"
-              v-bind="$attrs"
-              :secret-grade="secretGrade"
-              :plan-attribute-drawer="detailVisible"
-              :create-page="createPage"
-              :change-id="changeId"
-              :read-only="readOnly"
-              @hide-drawer="detailDrawerClosed"
-              @closed="closed"
-              @open="openLocation"
-              @select-task="selectTask"
-              @switch-task="switchTask"
-              @show-detail="showDetail"
-              @save-success="detailDrawerClosed"
-              :task-status="taskStatus"
-            ></change-gantt>
+          <div class="bottom"
+               :class="expandBottom">
+            <change-gantt ref="planGantt"
+                          :plan-info-id="planInfoId"
+                          :plan-info-status="planInfoStatus"
+                          :task-id="taskId"
+                          v-bind="$attrs"
+                          :secret-grade="secretGrade"
+                          :plan-attribute-drawer="detailVisible"
+                          :create-page="createPage"
+                          :change-id="changeId"
+                          :read-only="readOnly"
+                          @hide-drawer="detailDrawerClosed"
+                          @closed="closed"
+                          @open="openLocation"
+                          @select-task="selectTask"
+                          @switch-task="switchTask"
+                          @show-detail="showDetail"
+                          @save-success="detailDrawerClosed"
+                          :task-status="taskStatus"></change-gantt>
           </div>
         </div>
       </template>
       <template #paneR>
-        <div v-if="defaultPercent !== 100" class="x-style"><i class="el-dialog__close el-icon el-icon-close" @click="closeClick"></i></div>
-        <ProgressHistory v-if="pageType === 'history'" :key="renderKey" :task-id="selectTaskId" />
-        <plan-attribute
-          v-else
-          @save-success="detailDrawerClosed"
-          :task-id="selectTaskId"
-          v-bind="$attrs"
-          :create-page="createPage"
-          :secret-grade="secretGrade"
-          :att-read-only="readOnly"
-          :gantt-name="ganttName"
-          :status="status"
-          :key="renderKey"
-          :defaultPercent="defaultPercent"
-          class="plan_attribute"
-          :plan-info-id="planInfoId"
-        ></plan-attribute>
+        <div v-if="defaultPercent !== 100"
+             class="x-style"><i class="el-dialog__close el-icon el-icon-close"
+             @click="closeClick"></i></div>
+        <ProgressHistory v-if="pageType === 'history'"
+                         :key="renderKey"
+                         :task-id="selectTaskId" />
+        <plan-attribute v-else
+                        @save-success="detailDrawerClosed"
+                        :task-id="selectTaskId"
+                        v-bind="$attrs"
+                        :create-page="createPage"
+                        :secret-grade="secretGrade"
+                        :att-read-only="readOnly"
+                        :gantt-name="ganttName"
+                        :status="status"
+                        :defaultPercent="defaultPercent"
+                        class="plan_attribute"
+                        :plan-info-id="planInfoId"></plan-attribute>
       </template>
     </P8SplitPane>
-    <command-location v-if="dialogVisible" :visible="dialogVisible" @close="closeLocation">
+    <command-location v-if="dialogVisible"
+                      :visible="dialogVisible"
+                      @close="closeLocation">
       <template>
-        <location-view
-          ref="planGanttView"
-          :plan-info-id="planInfoId"
-          :plan-info-status="planInfoStatus"
-          :task-id="taskId"
-          v-bind="$attrs"
-          :secret-grade="secretGrade"
-          :plan-attribute-drawer="detailVisible"
-          :create-page="createPage"
-          :change-id="changeId"
-          :read-only="readOnly"
-          @onChangeTask="onChangeTask"
-        ></location-view>
+        <location-view ref="planGanttView"
+                       :plan-info-id="planInfoId"
+                       :plan-info-status="planInfoStatus"
+                       :task-id="taskId"
+                       v-bind="$attrs"
+                       :secret-grade="secretGrade"
+                       :plan-attribute-drawer="detailVisible"
+                       :create-page="createPage"
+                       :change-id="changeId"
+                       :read-only="readOnly"
+                       @onChangeTask="onChangeTask"></location-view>
       </template>
     </command-location>
     <!-- <el-drawer style="width: 60%; left: auto"
@@ -177,7 +180,7 @@ import ProgressHistory from '@/views/product/PlanGantt/Components/progressHistor
 import PlanGantt from '@/views/product/PlanGantt/Components/planGantt/index.vue'
 export default {
   name: 'ChangeIndex',
-  data() {
+  data () {
     return {
       pageType: '',
       dialogVisible: false, // gantt定位弹出框
@@ -242,7 +245,7 @@ export default {
   },
   watch: {
     ganttButtonMode: {
-      handler(val) {
+      handler (val) {
         if (val == 'tabs') {
           this.commandButtonBarHeight = '145px'
         }
@@ -257,7 +260,7 @@ export default {
     }
   },
   computed: {
-    btnData() {
+    btnData () {
       if (this.$route.path === '/TaskDecomposition') {
         const NewCommandButtonBarDataTabsRow = deepClone(CommandButtonBarData)
         const tabsRow = NewCommandButtonBarDataTabsRow.filter((item) => {
@@ -284,7 +287,7 @@ export default {
         return this.ganttButtonMode === 'tabs' ? CommandButtonBarData : this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
       }
     },
-    expandBottom() {
+    expandBottom () {
       if (this.ganttButtonMode == 'tabs' && this.advance) {
         return 'tabs'
       }
@@ -301,20 +304,22 @@ export default {
     },
     ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
   },
-  created() {
+  created () {
     this.firstEntry = true
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    switchTask(task) {
-      if(!task.id) return
-      this.renderKey = new Date().getTime()
+    switchTask (task) {
+      if (!task.id) return
+      let myGantt = GanttObject.getGanttObject(this.ganttName)
+      myGantt.updateTask(task.id);
       this.selectTaskId = task.id
+      this.renderKey = new Date().getTime()
     },
-    openLocation() {
+    openLocation () {
       this.dialogVisible = true
     },
-    closeLocation() {
+    closeLocation () {
       this.dialogVisible = false
       this.$store.getters.vueThis.searchForm = {}
       this.$store.getters.vueThisLocation.searchForm = {}
@@ -323,25 +328,26 @@ export default {
       this.$refs.planGantt.selectedId = this.$store.getters.vueThisLocation.selectTaskId
       this.$refs.planGantt.initGantt(this.planInfoId, this.$store.getters.vueThis.changeRecordId, this.$store.getters.vueThis.viewType)
     },
-    onChangeTask(row) {
+    onChangeTask (row) {
       let myGantt = GanttObject.getGanttObject(this.ganttName)
       myGantt.unselectTask()
       myGantt.showTask(row.id)
       myGantt.selectTask(row.id)
     },
-    selectTask(selectDatas, ganttName) {
+    selectTask (selectDatas, ganttName) {
       this.selectedTasks = selectDatas
       this.ganttName = ganttName
     },
-    toggleAdvanced() {
+    toggleAdvanced () {
       this.advanced = !this.advanced
     },
-    tabBarExtraContent() {},
-    closeClick() {
+    tabBarExtraContent () { },
+    closeClick () {
       this.defaultPercent = 100
+      this.$store.getters.vueThis.pageType = 'switch'
       this.firstEntry = true
     },
-    showDetail(selectTask, ganttName, createPage, switchType) {
+    showDetail (selectTask, ganttName, createPage, switchType) {
       if (switchType !== 'history') {
         this.pageType = 'switch'
       } else {
@@ -364,18 +370,18 @@ export default {
       }
       // this.detailTitle = selectTask.name
     },
-    paneSizeChange(val) {
+    paneSizeChange (val) {
       this.defaultPercent = val
     },
-    detailDrawerClosed(res) {
+    detailDrawerClosed (res) {
       this.detailVisible = false
       this.selectTaskId = ''
       this.detailTitle = ''
     },
-    closed(obj) {
+    closed (obj) {
       this.$emit('closed', obj)
     },
-    changeCommandButton(advance) {
+    changeCommandButton (advance) {
       this.advance = advance
       if (advance) {
         this.commandButtonBarHeight = '152px'

@@ -125,7 +125,7 @@
       :dialog-height="650"
     >
       <template #dialog>
-        <Notice :task-id="selectTaskId" :gantt-name="ganttName" :plan-info-id="planInfoId" @close="closeNotice" />
+        <Notice :key='renderKey' :task-id="selectTaskId" :selected-tasks='selectedTasks' :gantt-name="ganttName" :plan-info-id="planInfoId" @close="closeNotice" />
       </template>
     </common-dialog>
   </div>
@@ -279,6 +279,7 @@ export default {
   },
   data() {
     return {
+      renderKey:new Date().getTime(),
       reminderList: [],
       loading: false,
       relevanceVisible: false,
@@ -366,6 +367,7 @@ export default {
       this.initGantt(this.planInfoId, this.changeRecordId, this.viewType)
     },
     selectedTasks: function (newVal, oldVal) {
+      this.renderKey = new Date().getTime()
       if (newVal && newVal.length === 1 && (myGantt.getGlobalTaskIndex(newVal[0].id) !== 0 || this.createPage === 'userChange') && newVal[0].status) {
         this.selectTaskId = newVal[0].id
         this.selectTaskName = newVal[0].name

@@ -1,9 +1,14 @@
 <!---->
 <template>
   <div style="height: 100%; position: relative">
-    <div id="actionMenu" v-show="menuVisible && menuData.length" ref="actionMenu" :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
-      <VuePerfectScrollbar class="scroll-area" :style="{ maxHeight: maxHeight, height: scrollBarHeight }">
-        <el-menu mode="vertical" :collapse="true">
+    <div id="actionMenu"
+         v-show="menuVisible && menuData.length"
+         ref="actionMenu"
+         :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
+      <VuePerfectScrollbar class="scroll-area"
+                           :style="{ maxHeight: maxHeight, height: scrollBarHeight }">
+        <el-menu mode="vertical"
+                 :collapse="true">
           <template v-for="(menu, index) in menuData">
             <el-submenu v-if="buttonData(menu).children"
                         :disabled="isDisable(menu)"
@@ -113,11 +118,7 @@
                    :is-view-cs-footer="false"
                    :dialog-height="650">
       <template #dialog>
-        <Notice v-if="noticeVisible"
-                :task-id="selectTaskId"
-                :gantt-name="ganttName"
-                :plan-info-id="planInfoId"
-                @close="closeNotice" />
+        <Notice v-if="noticeVisible" :selected-tasks='selectedTasks' :task-id="selectTaskId" :gantt-name="ganttName" :plan-info-id="planInfoId" @close="closeNotice" />
       </template>
     </common-dialog>
     <monitor-time-manger v-if="controlTimeVisible"
@@ -925,13 +926,32 @@ export default {
       }
     },
     noOperate () {
-      return !(this.ganttDetail || this.menuVisible || this.outPutViewVisible || this.activityImportVisible || this.noticeVisible || this.controlTimeVisible || this.resourceSelectVisible || this.selectGridVisible || this.myExperienceVisible || this.importExcel || this.importProject || this.ganttSearchVisible || this.ganttStatisticVisible || this.rightMenuConfigVisible || this.createVisible || this.experienceBaseVisible || this.versionListVisible || this.progressHistoryVisible || this.changeHistoryVisible)
+      return !(
+        this.ganttDetail ||
+        this.menuVisible ||
+        this.outPutViewVisible ||
+        this.activityImportVisible ||
+        this.noticeVisible ||
+        this.controlTimeVisible ||
+        this.resourceSelectVisible ||
+        this.selectGridVisible ||
+        this.myExperienceVisible ||
+        this.importExcel ||
+        this.importProject ||
+        this.ganttSearchVisible ||
+        this.ganttStatisticVisible ||
+        this.rightMenuConfigVisible ||
+        this.createVisible ||
+        this.experienceBaseVisible ||
+        this.versionListVisible ||
+        this.progressHistoryVisible ||
+        this.changeHistoryVisible
+      )
     },
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
     relevanceOpen () {
-
       this.relevancePlanVisible = true
     },
     relevanceClick (id) {
@@ -1661,11 +1681,17 @@ export default {
         let taskIds = myGantt.getSelectedTasks()
         if (that.ganttName == 'planGantt' && taskIds.length > 0 && that.noOperate) {
           let tasks = []
-          taskIds.forEach(id => {
+          let falg = false
+          taskIds.forEach((id) => {
             let task = myGantt.getTask(id)
+            if (task.managerStatus === '6403' || task.managerStatus === '6401') {
+              falg = true
+            }
             tasks.push(task)
           })
-          deleteKeyRemove(that.ganttName, tasks)
+          if (falg) {
+            deleteKeyRemove(that.ganttName, tasks)
+          }
         }
       }
     }
