@@ -66,7 +66,7 @@
                         @blur="saveParamDataNew(data)"></el-input>
             </template>
             <template #filedType="{ scope, data }">
-              <el-select v-model="scope.row.filedType"
+              <!-- <el-select v-model="scope.row.filedType"
                          style="width: 100%"
                          clearable
                          @change="saveParamDataNew(data)">
@@ -78,7 +78,40 @@
                            value="textarea"> </el-option>
                 <el-option label="日期"
                            value="datepicker"> </el-option>
-              </el-select>
+              </el-select> -->
+              <el-cascader v-model="scope.row.filedType"
+                           :options="options"
+                           :show-all-levels="false"
+                           :emitPath="false"
+                           :props="{ expandTrigger: 'hover' }"
+                           @change="handleChange(scope.row, data)"></el-cascader>
+            </template>
+            <template #selectCode="{ scope, data }">
+              <div v-if="scope.row.filedType === 'selectSingle' || scope.row.filedType === 'selectMultiple'">
+                <el-select v-model="scope.row.selectCode"
+                           style="width: 100%"
+                           clearable
+                           filterable
+                           @change="saveParamDataNew(data)">
+                  <el-option v-for="item in renderData"
+                             :key="item.selectionCode"
+                             :label="item.selectionName + '(' + item.selectionCode + ')'"
+                             :value="item.selectionCode"> </el-option>
+                </el-select>
+              </div>
+              <!-- 树组件 -->
+              <div v-if="scope.row.filedType === 'treeSingle' ||scope.row.filedType === 'treeMultiple'">
+                <el-select v-model="scope.row.selectCode"
+                           style="width: 100%"
+                           clearable
+                           filterable
+                           @change="saveParamDataNew(data)">
+                  <el-option v-for="item in treeData"
+                             :key="item.selectionCode"
+                             :label="item.selectionName + '(' + item.selectionCode + ')'"
+                             :value="item.selectionCode"> </el-option>
+                </el-select>
+              </div>
             </template>
             <template #verificationRules="{ scope, data }">
               <!-- <el-select :multiple="true" v-model="scope.row.verificationRules" style="width: 100%" clearable @change="saveParamDataNew(data)">
@@ -225,6 +258,13 @@ export default {
           scopedSlots: { customRender: 'custom' }
         },
         {
+          title: '数据来源',
+          dataIndex: 'selectCode',
+          minWidth: 120,
+          align: 'center',
+          scopedSlots: { customRender: 'custom' }
+        },
+        {
           title: '校验',
           dataIndex: 'verificationRules',
           minWidth: 180,
@@ -232,13 +272,62 @@ export default {
           scopedSlots: { customRender: 'custom' }
         }
       ],
-      activeTabs: 'attributeSettings'
+      activeTabs: 'attributeSettings',
+      renderData: [],
+      treeData: [],
+      options: [
+        {
+          value: 'text',
+          label: '字符串'
+        },
+        {
+          value: 'number',
+          label: '数字'
+        },
+        {
+          value: 'textarea',
+          label: '大文本'
+        },
+        {
+          value: 'datepicker',
+          label: '日期'
+        },
+        {
+          value: 'select',
+          label: '目录选择',
+          children: [
+            {
+              value: 'selectSingle',
+              label: '单选目录'
+            },
+            {
+              value: 'selectMultiple',
+              label: '多选目录'
+            }
+          ]
+        },
+        {
+          value: 'tree',
+          label: '树形选择',
+          children: [
+            {
+              value: 'treeSingle',
+              label: '单选树形'
+            },
+            {
+              value: 'treeMultiple',
+              label: '多选树形'
+            }
+          ]
+        },
+      ]
     }
   },
   mounted () {
     if (this.id == 'sys_01') {
       this.dataSource[0].disabled = true
     }
+    this.getSelectData()
     // this.columnDrop()
   },
   methods: {
@@ -302,12 +391,39 @@ export default {
     },
     customValidate (saveParmars) {
       const that = this
+      let flag = false
+      if (saveParmars.attributeExtensionList && saveParmars.attributeExtensionList.length) {
+        let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
+        saveParmars.attributeExtensionList.forEach(el => {
+          if (typeList.includes(el.filedType) && !el.selectCode) {
+            flag = true
+          }
+        })
+      }
+      if (flag) {
+        that.$message({ type: 'warning', message: '请选择数据来源！' })
+        return
+      }
       this.$api['taskAttribute.saveData'](saveParmars).then((res) => {
         if (res) {
           that.$emit('saveSuccess')
         } else {
           that.$message({ type: 'warning', message: '每类项目类型只可有一条设置记录!' })
         }
+      })
+    },
+    handleChange (row, data) {
+      if (row.filedType && row.filedType.length) {
+        row.filedType = row.filedType[row.filedType.length - 1]
+      }
+      this.saveParamDataNew(data)
+    },
+    getSelectData () {
+      this.$api['selection.list']({ selectionType: 1, page: { current: 1, size: -1, orders: [] } }).then((res) => {
+        this.renderData = res.records
+      })
+      this.$api['selection.list']({ selectionType: 2, page: { current: 1, size: -1, orders: [] } }).then((res) => {
+        this.treeData = res.records
       })
     }
   }
