@@ -40,6 +40,10 @@ export default {
       type: String,
       default: ''
     },
+    selectedTasks:{
+      type: Array,
+      default:() => []
+    },
     ganttName: {
       type: String,
       default: ''
@@ -51,15 +55,17 @@ export default {
       editorOption: {
         placeholder: '请输入'
       },
+      title:'',
       saveApi: 'planGanttManager.pushPlanMssage',
       isCustomValidate: true,
       // taskSecretLevel: '',
       formData: {
         planInfoId: this.planInfoId,
         type: '',
+        title:'',
         // secretLevel: '',
         content: '',
-        taskIds: [this.taskId]
+        taskIds: []
       },
       dataSource: [
         {
@@ -83,7 +89,25 @@ export default {
           ],
           eventHandle: {
             change: 'userChangeHandle'
-          }
+          },
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ]
+        },
+        {
+          type: 'text',
+          labelText: '通知标题',
+          fieldName: 'title',
+          colLayout: 'singleCol',
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ]
         },
         // {
         //   type: 'select',
@@ -100,8 +124,9 @@ export default {
         //   }
         // },
         {
+
           type: 'blank',
-          labelText: '',
+          labelText: '通知内容',
           fieldName: 'message',
           slotName: 'message',
           colLayout: 'singleCol'
@@ -110,18 +135,18 @@ export default {
     }
   },
   created () {
-    const ganttObject = GanttObject.getGanttObject(this.ganttName)
-    let task = null
-    if (this.taskId) {
-      task = ganttObject.getTask(this.taskId)
-    } else {
-      ganttObject.eachTask(function (item) {
-        if (ganttObject.getGlobalTaskIndex(item.id) === 0) {
-          task = item
-        }
-      })
+    if(this.selectedTasks.length > 0){
+      const task = this.selectedTasks[0]
+      this.title = task.wholeName
+      this.formData.taskIds = this.selectedTasks.map(item => item.id)
+    }else{
+      this.formData.title = this.title
     }
-    // this.taskSecretLevel = task.secretGrade
+  },
+  watch:{
+    title(val){
+      this.formData.title = `${val}通知下发消息`
+    }
   },
   mounted() {
   },
@@ -136,21 +161,33 @@ export default {
     //   }
     // },
     userChangeHandle (val) {
-      const ganttObject = GanttObject.getGanttObject(this.ganttName)
-      let task = ganttObject.getTask(this.taskId)
-      if (val === '2' && !this.taskId) {
+      const task = this.selectedTasks[0]
+      const havaOwnerId =this.selectedTasks.find(t => !t.owner_id)
+      console.log(havaOwnerId)
+      if (val === '2' && !this.selectedTasks.length) {
         this.$message({
           type: 'warning',
           message: '当前无选中任务！'
         })
         this.formData.type = ''
       }
-      if (val === '2' && this.taskId && !task.owner_id) {
+      if (val === '2' && this.selectedTasks.length && havaOwnerId) {
         this.$message({
           type: 'warning',
-          message: '当前任务未选择责任人！'
+          message: '选中任务中存在未设置责任人！'
         })
         this.formData.type = ''
+      }
+      switch (val) {
+        case '0':
+          this.title = `项目【${task.wholeName}】`;
+          break;
+        case '1':
+          this.title = `项目【${task.wholeName}】-计划【${task.planName}】`
+          break;
+        case '2':
+          this.title = `项目【${task.wholeName}】-计划【${task.planName}】-任务【${task.name}】等多条任务`;
+          break;
       }
     },
     saved (params) {
