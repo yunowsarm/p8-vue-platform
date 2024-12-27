@@ -86,7 +86,6 @@ export default {
           const clickFun = that.clickFun()
           item.isDisableFun = isDisableFun
           item.clickFun = clickFun
-          that.$set(item, 'msg', item.msg || item.title)
           if (!item.size) {
             item.size = 'small'
           }
@@ -393,17 +392,21 @@ export default {
               // 取消标识按钮
               const taskCheck = tasks.some((t, i) => {
                 if (t.monitorPoints && t.monitorPoints.indexOf(mId.substring(7)) !== -1) {
+                  console.log('000')
                   // 院所标识同时存在不可取消所标识
                   if (mId.substring(7) === '1030' && t.monitorPoints.indexOf('1022') !== -1) {
+                    console.log(111)
                     btn.msg = '院所标识同时存在不可取消所标识'
                     return false
                   } else {
+                    console.log(222)
                     let flag = true
                     // 如果有删除标识加锁 责任令不能取消
                     if (monitorLocks && monitorLocks.length > 0) {
                       monitorLocks.forEach((monitorLock) => {
                         if (monitorLock === '101503' && that.vueThis.monitorLockMap[monitorLock] === '1') {
                           if (mId.substring(7) === '1015') {
+                            btn.msg = '有删除标识加锁 责任令不能取消'
                             flag = false
                           }
                         }
@@ -413,6 +416,9 @@ export default {
                   }
                 }
               })
+              if(!taskCheck){
+                btn.msg = '任务不包含此标识'
+              }
               return !taskCheck
             } else {
               // 依赖标识
@@ -459,9 +465,11 @@ export default {
             btn.msg = '请选择任务'
             // 格式刷
             if (mId.startsWith('format-') && JSON.stringify(button) !== '{}') {
+              btn.msg = '没有此标识'
               return true
             }
             if (!mId.startsWith('format-') && JSON.stringify(button) === '{}') {
+              btn.msg = '请选择任务'
               return true
             }
           }
@@ -508,6 +516,7 @@ export default {
               monitorPointsMap[item.monitorId] = item
             })
             if (mId.startsWith('delete-')) {
+              debugger
               // 取消标识按钮
               thisGantt.batchUpdate(function () {
                 tasks.forEach(function (task) {
