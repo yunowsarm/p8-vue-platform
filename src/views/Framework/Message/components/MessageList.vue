@@ -403,5 +403,7 @@ $icon-span-width: 20px;
 .finiteList {
   overflow-x: hidden !important;
 }
-
+::v-deep .msg-content img {
+  display: none;
+}
 </style>
