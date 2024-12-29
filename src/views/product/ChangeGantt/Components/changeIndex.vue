@@ -49,6 +49,7 @@
         <plan-attribute v-else
                         @save-success="detailDrawerClosed"
                         :task-id="selectTaskId"
+                        :key="renderKey"
                         v-bind="$attrs"
                         :create-page="createPage"
                         :secret-grade="secretGrade"
