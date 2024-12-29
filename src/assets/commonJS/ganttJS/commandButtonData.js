@@ -2875,7 +2875,18 @@ function copyTask (ganttObject, tasks, vueThis) {
       .then(function (res) {
         if (res) {
           if (res) {
+            if (res && res.tasks && res.tasks.length) {
+              res.tasks.forEach(el => {
+                el.managerStatus = '6403'
+                el.realBeginDate = ''
+                el.realEndDate = ''
+              })
+            }
             vueThis.copyTasks = res
+            vueThis.$message({
+              message: '复制成功！',
+              type: 'success'
+            })
           } else {
             vueThis.$message({
               message: '任务复制失败！',

@@ -312,7 +312,9 @@ export function isAllowPaste (ganttName, tasks) {
       return false
     }
   }
-  return createDisableResponse(`请先复制再进行`);
+  if (!(vueThis.copyTasks && vueThis.copyTasks.tasks && vueThis.copyTasks.tasks.length)) {
+    return createDisableResponse(`请先复制再进行`);
+  }
 }
 
 // 判断自动/手动排程
