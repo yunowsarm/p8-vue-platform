@@ -15,6 +15,7 @@
                             class="left-container"
                             :activity-info-id="activityInfoId"
                             v-if="triggerVal"
+                            :row="row"
                             @taskSelected="selectTask"
                             @importExcel="importTask"
                             @refrshDes="refrshDes"
@@ -169,12 +170,14 @@
   }
   .normal-layout {
     // box-shadow: 4px 4px 8px #bfbdbd54;
-    height: calc(100% - 80px);
+    margin: 0 14px;
+    height: calc(100% - 45px);
     padding: 0;
   }
   .wrap {
     height: 100%;
     .footer {
+      border-top: 1px solid #e1e1e1;
       width: 100%;
       height: 50px;
       line-height: 50px;
@@ -189,7 +192,7 @@
   > ::v-deep .el-tabs__content {
     height: calc(100% - 40px);
     > .el-tab-pane {
-      height: 100%;
+      height: calc(100% - 10px);
     }
   }
 }
