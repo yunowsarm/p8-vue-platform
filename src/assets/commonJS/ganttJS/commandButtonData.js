@@ -63,7 +63,6 @@ export const CommandButtonData = [
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => taskStateAndReadonly(ganttName, tasks),
         () => isWeave(ganttName, tasks),
-        () => isToBeDelivered(ganttName, tasks),
         () => isHasProductTask(ganttName, tasks),
       ]
       const res = isDisable(checks)
@@ -92,7 +91,6 @@ export const CommandButtonData = [
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
             () => isWeave(ganttName, tasks),
-            () => isToBeDelivered(ganttName, tasks),
             () => isHasProductTask(ganttName, tasks),
           ]
           const res = isDisable(checks)
@@ -121,7 +119,6 @@ export const CommandButtonData = [
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
             () => isWeave(ganttName, tasks),
-            () => isToBeDelivered(ganttName, tasks),
             () => isHasProductTask(ganttName, tasks),
           ]
           const res = isDisable(checks)
@@ -150,7 +147,6 @@ export const CommandButtonData = [
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
             () => isWeave(ganttName, tasks),
-            () => isToBeDelivered(ganttName, tasks),
             () => isHasProductTask(ganttName, tasks),
           ]
           const res = isDisable(checks)
@@ -179,7 +175,6 @@ export const CommandButtonData = [
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => taskStateAndReadonly(ganttName, tasks),
             () => isWeave(ganttName, tasks),
-            () => isToBeDelivered(ganttName, tasks),
             () => isHasProductTask(ganttName, tasks),
           ]
           const res = isDisable(checks)
