@@ -1667,6 +1667,20 @@ export const formGeneratorApi = {
       mockPath: '/framework/system/BpFormScope/columnList',
       desc: 'SQL管理-SQL参数'
     },
+    {
+      name: 'expandService',
+      method: 'POST',
+      path: '/framework/reportSQL/getSqlExpandService',
+      mockPath: '/framework/reportSQL/getSqlExpandService',
+      desc: 'SQL管理-服务类'
+    },
+    {
+      name: 'getSqlExpand',
+      method: 'POST',
+      path: '/framework/reportSQL/getSqlExpand',
+      mockPath: '/framework/reportSQL/getSqlExpand',
+      desc: 'SQL管理-查询SQL扩展服务'
+    },
     // 报表管理
     {
       name: 'tableList',
