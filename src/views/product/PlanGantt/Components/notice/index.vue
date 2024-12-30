@@ -47,6 +47,10 @@ export default {
     ganttName: {
       type: String,
       default: ''
+    },
+    createPage:{
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -76,11 +80,13 @@ export default {
           options: [
             {
               label: '所有团队成员',
-              value: '0'
+              value: '0',
+              disabled:this.$route.name === 'TaskDecomposition'
             },
             {
               label: '所有任务责任人',
-              value: '1'
+              value: '1',
+              disabled:this.$route.name === 'TaskDecomposition'
             },
             {
               label: '已选择任务的责任人',
@@ -137,7 +143,16 @@ export default {
   created () {
     if(this.selectedTasks.length > 0){
       const task = this.selectedTasks[0]
-      this.title = `项目【${task.wholeName}】`
+      if(this.$route.name === 'TaskDecomposition'){
+        this.formData.type = '2'
+        if(this.selectedTasks.length === 1){
+          this.title = `项目【${task.wholeName}】-计划【${task.planName}】-任务【${task.name}】`;
+        }else{
+          this.title = `项目【${task.wholeName}】-计划【${task.planName}】-任务【${task.name}】等多条任务`;
+        }
+      }else{
+        this.title = `项目【${task.wholeName}】`
+      }
       this.formData.taskIds = this.selectedTasks.map(item => item.id)
     }else{
       this.formData.title = this.title
