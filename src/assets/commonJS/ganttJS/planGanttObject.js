@@ -208,6 +208,8 @@ export function planGantt(ganttName, vueThis) {
     }
   }
   GanttObject.treeDataEditor(ganttObject, vueThis.treeDataEditorConfig, vueThis.treeDataEditorConfig1)
+  GanttObject.treeDataEditorExtra(ganttObject, vueThis.treeDataEditorConfig)
+  GanttObject.selectCanClear(ganttObject)
   // 列定义
   GanttObject.synchronizationColumns(vueThis, ganttObject)
   GanttObject.searchColumnsDataInit(vueThis, ganttObject)

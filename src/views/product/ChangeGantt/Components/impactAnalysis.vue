@@ -178,7 +178,8 @@ export default {
       advance: true,
       commandButtonBarHeight: this.ganttButtonMode === 'tabs' ? '145px' : this.ganttButtonMode === 'double' ? '72px' : '58px',
       columnSettings: [],
-      extendMap: {}
+      extendMap: {},
+      extraMap: {}
     }
   },
   watch: {
@@ -298,6 +299,7 @@ export default {
   methods: {
     async initGantt (planInfoId, changeRecordId) {
       this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
+      await this.getExtraList(this.columnSettings)
       const vueThis = this
       const element = this.$refs.top; // 获取DOM元素
       // 清空原有数据
@@ -424,6 +426,20 @@ export default {
         this.commandButtonBarHeight = '152px'
       } else {
         this.commandButtonBarHeight = '40px'
+      }
+    },
+    async getExtraList (columnSettings) {
+      let that = this
+      let extraList = columnSettings.filter((item) => item.attributeType === '1' && item.selectCode)
+      let obj = {}
+      if (extraList && extraList.length) {
+        let list = extraList.map(async el => {
+          let list = await that.$api['formGenerator.getSelectionDataDic']({selectCode: el.selectCode})
+          obj[el.selectCode] = list
+          return obj
+        })
+        that.extraMap = obj
+        let listEnd = await Promise.all(list)
       }
     }
   }

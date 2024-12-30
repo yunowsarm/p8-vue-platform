@@ -421,7 +421,8 @@ export default {
       selectedId: '',
       taskExtendRequests: [],
       extendMap: {},
-      pageType: 'switch'
+      pageType: 'switch',
+      extraMap: {}
     }
   },
   watch: {
@@ -569,6 +570,7 @@ export default {
     async initGantt (planInfoId, changeRecordId, viewType) {
       // 根据项目类型，获取gantt列设置
       this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
+      await this.getExtraList(this.columnSettings)
       this.reminderList = await this.$api['planGanttManager.loadReminder']({
         planInfoId: this.planInfoId,
         dicType: 'ACTIVITY_TYPE',
@@ -1121,6 +1123,20 @@ export default {
     },
     closeNotice () {
       this.noticeVisible = false
+    },
+    async getExtraList (columnSettings) {
+      let that = this
+      let extraList = columnSettings.filter((item) => item.attributeType === '1' && item.selectCode)
+      let obj = {}
+      if (extraList && extraList.length) {
+        let list = extraList.map(async el => {
+          let list = await that.$api['formGenerator.getSelectionDataDic']({selectCode: el.selectCode})
+          obj[el.selectCode] = list
+          return obj
+        })
+        that.extraMap = obj
+        let listEnd = await Promise.all(list)
+      }
     }
   },
   beforeDestroy () {
