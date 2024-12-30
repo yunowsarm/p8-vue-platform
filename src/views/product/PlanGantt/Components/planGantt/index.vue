@@ -1168,7 +1168,6 @@ export default {
       // 根据项目类型，获取gantt列设置
       this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
       await this.getExtraList(this.columnSettings)
-      this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
       this.reminderList = await this.$api['planGanttManager.loadReminder']({
         planInfoId: this.planInfoId,
         dicType: 'ACTIVITY_TYPE',
@@ -1311,8 +1310,8 @@ export default {
               taskList.forEach(task => {
                 if (vueThis.extendMap[task.id]) {
                   let extendData = vueThis.extendMap[task.id]
-                  extendData.forEach(item => {
-                    task['kz' + item.customItem1] = item.fieldValue
+                  extendData.forEach((item) => {
+                    task['kz' + item.customItem1] = item.fieldValue ? item.fieldValue : ''
                   })
                 } else {
                   extraList.forEach(item => {
