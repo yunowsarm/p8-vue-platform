@@ -501,21 +501,21 @@ export default {
     if (!window.myWebSocket.connected) {
       this.webSocketDone = true
     }
-    window.myWebSocket.emit('enterPlanGantGroup', this.msg)
+    // window.myWebSocket.emit('enterPlanGantGroup', this.msg)
     window.myWebSocket.on('planGantGroup', (data) => {
       that.onlineData = data
-      let html = '<div class="edit_gantt_user_list">'
-      that.editUserList.forEach((item) => {
-        html += `<span>${item.userName}</span>`
-      })
-      html += '</div>'
-      if (that.editUserList.length > 1) {
-        that.$notify({
-          title: `当前共有${that.editUserList.length}人编制当前计划`,
-          dangerouslyUseHTMLString: true,
-          message: html
-        })
-      }
+      // let html = '<div class="edit_gantt_user_list">'
+      // that.editUserList.forEach((item) => {
+      //   html += `<span>${item.userName}</span>`
+      // })
+      // html += '</div>'
+      // if (that.editUserList.length > 1) {
+      //   that.$notify({
+      //     title: `当前共有${that.editUserList.length}人编制当前计划`,
+      //     dangerouslyUseHTMLString: true,
+      //     message: html
+      //   })
+      // }
     })
     this.scrollBarHeight = 40 * this.menuData.length + 1 + 'px'
     this.changeRecordId = this.changeId
