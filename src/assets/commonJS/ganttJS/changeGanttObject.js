@@ -262,7 +262,7 @@ export function getChangeGantt(ganttName, vueThis) {
           taskClassifyDatas.some((point, index) => {
             if (point.id === planType) {
               const icon = point.icon
-              html += '<i class="' + icon + '" title="' + point.title + '"></i>'
+              html += '<i class="' + icon + '" title="' + point.title + '" style="color:' + point.color + '" ></i>'
               return true
             }
           })

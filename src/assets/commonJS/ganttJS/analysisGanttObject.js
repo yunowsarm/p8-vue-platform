@@ -132,7 +132,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
             taskClassifyDatas.some((point, index) => {
               if (point.id === planType) {
                 let icon = point.icon
-                html += '<i class="' + icon + '" style="color:#0070C5" title="' + point.title + '"></i>'
+               html += '<i class="' + icon + '" style="color:' + point.color + '" title="' + point.title + '"></i>';
                 return true
               }
             })
@@ -615,7 +615,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
             taskClassifyDatas.some((point, index) => {
               if (point.id === planType) {
                 let icon = point.icon
-                html += '<i class="' + icon + '" style="color:#0070C5" title="' + point.title + '"></i>'
+                html += '<i class="' + icon + '" style="color:' + point.color + '" title="' + point.title + '"></i>';
                 return true
               }
             })
