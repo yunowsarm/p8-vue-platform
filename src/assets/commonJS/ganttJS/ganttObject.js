@@ -9,8 +9,8 @@ import api from '@/plugins/api'
 import Inputor from '@/assets/commonJS/originalComponents/input'
 import Selector from '@/assets/commonJS/originalComponents/select'
 import Datepicker from '@/assets/commonJS/originalComponents/datePicker'
-import { P8TreeSelect, DatePicker } from 'p8-components-ui'
-import { generateTreeThree } from '@/utils/generateTree'
+import { P8TreeSelect, DatePicker, Select } from 'p8-components-ui'
+import { generateTreeThree, generateTree } from '@/utils/generateTree'
 import { calculateRemainingDays } from '@/utils/common'
 
 /**
@@ -1376,6 +1376,153 @@ GanttObject.treeDataEditor = function (ganttObject, editorConfig, editorConfig1)
     focus: function (node) {}
   }
 }
+GanttObject.treeDataEditorExtra = function (ganttObject, editorConfig) {
+  let treeSelectExample
+  ganttObject.config.editor_types.tree_data_editor_extra = {
+    show: function (id, column, config, placeholder) {
+      const task = ganttObject.getTask(id)
+      const name = column.name
+      const html =
+        "<div style='width:100%'><input id='gantt_treeSelect_" +
+        name +
+        "' type='text' style='display:none'><div style='line-height: 40px;'><div class='gantt_treeSelect_" +
+        name +
+        "'></div></div></div>"
+      placeholder.innerHTML = html
+      const Treeselect = Vue.extend({
+        components: { 'p8-tree-select': P8TreeSelect },
+        data: function () {
+          return {
+            input: '',
+            treeData: [],
+            config: config.editorConfig,
+            filter: {multiple:config.editorConfig.multiple}
+          }
+        },
+        created() { },
+        mounted() {
+          this.$api[this.config.optionUrl.api](this.config.optionUrl.params).then((res) => {
+            if (this.config.useTreeFormat) {
+              this.treeData = generateTreeThree(res, this.config.useTreePId)
+            } else {
+              this.treeData = res
+            }
+            this.input = config.editorConfig.multiple && task[name] ? task[name].split(',') : task[name]
+          })
+        },
+        watch: {
+          input(val, old) {
+            document.getElementById('gantt_treeSelect_' + name).value = val
+          }
+        },
+        methods: {
+          handleChange(value) {
+            Gantt.searchColumnsChange(name, value, 'date')
+          }
+        },
+        template: '<div class="gantt_Editor gantt_treeSelect_' + name + '"' + '><p8-tree-select v-model="input" size="mini" v-bind="config" :data="treeData"></p8-tree-select></div>'
+      })
+      treeSelectExample = new Treeselect().$mount(`.gantt_treeSelect_${name}`)
+    },
+    hide: function () {
+      treeSelectExample.$destroy()
+      treeSelectExample.$el.parentNode.removeChild(treeSelectExample.$el)
+    },
+    set_value: function (value, id, column, node) {
+      treeSelectExample.$data.input = value
+      this.get_input(node).value = value
+    },
+    get_value: function (id, column, node) {
+      return this.get_input(node).value
+    },
+    is_changed: function (value, id, column, node) {
+      treeSelectExample.$data.input = value
+      return true
+    },
+    is_valid: function (value, id, column, node) {
+      return true
+    },
+    get_input: function (node) {
+      return node.querySelector('input')
+    },
+    focus: function (node) {}
+  }
+}
+// 带清空按钮的下拉框
+GanttObject.selectCanClear = function(ganttObject) {
+  let clrearSelectExample
+  ganttObject.config.editor_types.select_can_clear = {
+      show: function(id, column, config, placeholder) {
+          var task = ganttObject.getTask(id)
+          let name = column.name
+          let html =
+              "<div style='width:100%'><input id='gantt_clearSelect_" +
+              name +
+              "' type='text' style='display:none'><div style='line-height: 40px;'><div class='gantt_clearSelect_" +
+              name +
+              "'></div></div></div>"
+          placeholder.innerHTML = html
+          let Clearselect = Vue.extend({
+              components: { 'el-select': Select },
+              data: function () {
+                  return {
+                      input: '',
+                      options: [],
+                      config: config.editorConfig,
+                      multiple: config.editorConfig.multiple
+                  }
+              },
+              created (){
+                this.$api[this.config.optionUrl.api](this.config.optionUrl.params).then((res) => {
+                  if (res && res.length) {
+                    res.forEach(el => {
+                      this.options.push({ key:el.value, label:el.label })
+                    })
+                  }
+                  this.input = config.editorConfig.multiple && task[name] ? task[name].split(',') : task[name]
+                })
+              },
+              mounted () {
+                  this.input = task[name]
+              },
+              watch: {
+                  input (val, old) {
+                      document.getElementById('gantt_clearSelect_' + name).value = val
+                  }
+              },
+              template: '<div class="gantt_Editor gantt_clearSelect_' +
+              name +
+              '"' +
+              '><el-select style="width:100%" :multiple="multiple" clearable v-model="input" size="mini" placeholder="请选择"><el-option v-for="item in options" :key="item.key" :label="item.label" :value="item.key"></el-option></el-select></div>'
+          })
+          clrearSelectExample = new Clearselect().$mount(`.gantt_clearSelect_${name}`)
+      },
+      hide: function () {
+          clrearSelectExample.$destroy()
+          clrearSelectExample.$el.parentNode.removeChild(clrearSelectExample.$el)
+      },
+      set_value: function (value, id, column, node) {
+          clrearSelectExample.$data.input = value
+          this.get_input(node).value = value
+      },
+      get_value: function (id, column, node) {
+          return this.get_input(node).value
+      },
+      is_changed: function (value, id, column, node) {
+          clrearSelectExample.$data.input = value
+          return true
+      },
+      is_valid: function (value, id, column, node) {
+          return true
+      },
+      get_input: function (node) {
+          return node.querySelector('input')
+      },
+      focus: function (node) {
+      }
+  }
+}
+
 /**
  * @Description 编辑器初始化
  * @author fukai
@@ -2036,8 +2183,8 @@ GanttObject.createRightMenu = function (ganttObject, vueThis) {
         })
         ganttObject.selectTask(taskId)
       }
-      vueThis.selectedTasks = []
-      vueThis.selectedTasks.push(ganttObject.getTask(taskId))
+      // vueThis.selectedTasks = []
+      // vueThis.selectedTasks.push(ganttObject.getTask(taskId))
       // vueThis.callParentSelectTasks()
       vueThis.menuVisible = true
       let actionMenuWidth = 0
@@ -2084,7 +2231,9 @@ GanttObject.setCellSaveConfig = function (ganttObject) {
     if (
       ganttObject.ext.inlineEditors._editorType === 'tree_data_editor' ||
       ganttObject.ext.inlineEditors._editorType === 'select_person' ||
-      ganttObject.ext.inlineEditors._editorType === 'custom_select'
+      ganttObject.ext.inlineEditors._editorType === 'custom_select' ||
+      ganttObject.ext.inlineEditors._editorType === 'tree_data_editor_extra' ||
+      ganttObject.ext.inlineEditors._editorType === 'select_can_clear'
     ) {
       el.addEventListener('input', (event) => {
         ganttObject.ext.inlineEditors.save()
@@ -2928,6 +3077,28 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
     }
   }
 
+  function getEditors(editType, item, filedType) {
+    let typeList = ['selectSingle','selectMultiple','treeSingle','treeMultiple']
+    if(typeList.includes(filedType)) {
+      let multiple = false
+      if (filedType == 'selectMultiple' || filedType == 'treeMultiple' ) {
+        multiple = true
+      }
+      return { type: editType, map_to: 'kz' + item.id, editorConfig: {
+        optionUrl: {
+          api: 'formGenerator.getSelectionDataDic',
+          params: {selectCode: item.selectCode},
+        },
+        multiple: multiple,
+        defaultExpandAll: true,
+        clearable: true,
+        useTreeFormat: true,
+        useTreePId: 'pId'
+      }}
+    } else {
+      return { type: editType, map_to: 'kz' + item.id  }
+    }
+  }
   const initColumns = getGanttColumns(ganttObject, vueThis)
   initColumns.forEach((initItem, initIndex) => {
     const name = initItem.name
@@ -3005,18 +3176,61 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
         case 'datepicker':
           editType = 'custom_date_editor'
           break
+        case 'selectSingle':
+          editType = 'select_can_clear'
+          break;
+        case 'selectMultiple':
+          editType = 'select_can_clear'
+          break;
+        case 'treeSingle':
+          editType = 'tree_data_editor_extra'
+          break;
+        case 'treeMultiple':
+          editType = 'tree_data_editor_extra'
+          break;
         default:
           break
       }
       if (settingExtra['kz' + item.id]) {
-        let initItem = {
-          name: 'kz' + item.id,
-          label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
-          align: 'center',
-          resize: true,
-          hide: settingExtra['kz' + item.id].hide,
-          min_width: 120,
-          editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null
+        let initItem = {}
+        let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
+        if (typeList.includes(item.filedType)) {
+          initItem = {
+            name: 'kz' + item.id,
+            label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
+            align: 'center',
+            resize: true,
+            hide: settingExtra['kz' + item.id].hide,
+            min_width: 120,
+            editor: checkEdit() ? getEditors(editType, item, item.filedType) : null,
+            template: function (task) {
+              let result = []
+              if (task['kz' + item.id]) {
+                let list = vueThis.extraMap[item.selectCode]
+                if (list && list.length) {
+                  let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
+                  list.forEach(el => {
+                    taskList.forEach(item => {
+                      if(el.value == item) {
+                        result.push(el.label)
+                      }
+                    })
+                  })
+                }
+              }
+              return result.join(',')
+            }
+          }
+        } else {
+          initItem = {
+            name: 'kz' + item.id,
+            label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
+            align: 'center',
+            resize: true,
+            hide: settingExtra['kz' + item.id].hide,
+            min_width: 120,
+            editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null
+          }
         }
         tempColumns.splice(settingExtra['kz' + item.id].index, 1, initItem)
       } else {
@@ -3033,6 +3247,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
     })
 
     tempColumns = tempColumns.filter((el) => el)
+
     ganttObject.config.columns = tempColumns
   } else if (vueThis.columnSettings.length > 0) {
     const tempColumns = []
@@ -3060,19 +3275,61 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
           case 'datepicker':
             editType = 'custom_date_editor'
             break
+          case 'selectSingle':
+            editType = 'select_can_clear'
+            break;
+          case 'selectMultiple':
+            editType = 'select_can_clear'
+            break;
+          case 'treeSingle':
+            editType = 'tree_data_editor_extra'
+            break;
+          case 'treeMultiple':
+            editType = 'tree_data_editor_extra'
+            break;
           default:
             break
         }
         if (item.isEnable == '1') {
-          tempColumns.push({
-            name: 'kz' + item.id,
-            label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
-            align: 'center',
-            resize: true,
-            hide: item.isEnable == '0',
-            min_width: 120,
-            editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null
-          })
+          let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
+          if (typeList.includes(item.filedType)) {
+            tempColumns.push({
+              name: 'kz' + item.id,
+              label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
+              align: 'center',
+              resize: true,
+              hide: item.isEnable == '0',
+              min_width: 120,
+              editor: checkEdit() ? getEditors(editType, item, item.filedType) : null,
+              template: function (task) {
+                let result = []
+                if (task['kz' + item.id]) {
+                  let list = vueThis.extraMap[item.selectCode]
+                  if (list && list.length) {
+                    let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
+                    list.forEach(el => {
+                      taskList.forEach(item => {
+                        if(el.value == item) {
+                          result.push(el.label)
+                        }
+                      })
+                    })
+                  }
+                }
+                return result.join(',')
+              }
+            })
+          } else {
+            tempColumns.push({
+              name: 'kz' + item.id,
+              label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
+              align: 'center',
+              resize: true,
+              hide: item.isEnable == '0',
+              min_width: 120,
+              editor: checkEdit() ? getEditors(editType, item, item.filedType) : null
+            })
+          }
         }
       }
     })
