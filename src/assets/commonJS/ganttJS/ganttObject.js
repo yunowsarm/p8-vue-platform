@@ -1478,7 +1478,7 @@ GanttObject.selectCanClear = function(ganttObject) {
                     res.forEach(el => {
                       this.options.push({ key:el.value, label:el.label })
                     })
-                  } 
+                  }
                   this.input = config.editorConfig.multiple && task[name] ? task[name].split(',') : task[name]
                 })
               },
@@ -2183,8 +2183,8 @@ GanttObject.createRightMenu = function (ganttObject, vueThis) {
         })
         ganttObject.selectTask(taskId)
       }
-      vueThis.selectedTasks = []
-      vueThis.selectedTasks.push(ganttObject.getTask(taskId))
+      // vueThis.selectedTasks = []
+      // vueThis.selectedTasks.push(ganttObject.getTask(taskId))
       // vueThis.callParentSelectTasks()
       vueThis.menuVisible = true
       let actionMenuWidth = 0

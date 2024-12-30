@@ -358,8 +358,8 @@ export default {
       // // this.$refs.commandBottonBar.$refs.components.getDataMonitor()
       this.$refs.commandBottonBar.$refs.components11[1].getDataMonitor()
       this.$refs.commandBottonBar.$refs.components11[1].getDataTaskType()
-      this.$refs.planGantt.loadGanttData(this.planInfoId, this.taskId, this.createPage)
       if (res) {
+        this.$refs.planGantt.loadGanttData(this.planInfoId, this.taskId, this.createPage)
         let myGantt = GanttObject.getGanttObject(this.ganttName)
         setTimeout(() => {
           myGantt.showTask(res)
