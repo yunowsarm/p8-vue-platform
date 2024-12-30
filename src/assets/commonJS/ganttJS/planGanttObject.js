@@ -931,7 +931,7 @@ export function getGanttColumns (ganttObject, vueThis) {
           taskClassifyDatas.some((point, index) => {
             if (point.id === planType) {
               const icon = point.icon
-              html += `<i class='${icon}' style='cursor:pointer;' title='${point.title} '></i>`
+              html += `<i class='${icon}' style='cursor:pointer;color:${point.color};' title='${point.title} '></i>`
               return true
             }
           })
