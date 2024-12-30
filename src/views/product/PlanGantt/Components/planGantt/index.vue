@@ -804,7 +804,8 @@ export default {
       changeHistoryVisible: false,
       selectedId: '',
       pageType: 'switch',
-      versionListVisible: false //  版本列表显示隐藏
+      versionListVisible: false, //  版本列表显示隐藏
+      extraMap: {}
     }
   },
   watch: {
@@ -1165,6 +1166,8 @@ export default {
         spinner: 'el-icon-loading'
       })
       // 根据项目类型，获取gantt列设置
+      this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
+      await this.getExtraList(this.columnSettings)
       this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
       this.reminderList = await this.$api['planGanttManager.loadReminder']({
         planInfoId: this.planInfoId,
@@ -1711,6 +1714,20 @@ export default {
             deleteKeyRemove(that.ganttName, tasks)
           }
         }
+      }
+    },
+    async getExtraList (columnSettings) {
+      let that = this
+      let extraList = columnSettings.filter((item) => item.attributeType === '1' && item.selectCode)
+      let obj = {}
+      if (extraList && extraList.length) {
+        let list = extraList.map(async el => {
+          let list = await that.$api['formGenerator.getSelectionDataDic']({ selectCode: el.selectCode })
+          obj[el.selectCode] = list
+          return obj
+        })
+        that.extraMap = obj
+        let listEnd = await Promise.all(list)
       }
     }
   },
