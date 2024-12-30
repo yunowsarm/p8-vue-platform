@@ -676,15 +676,44 @@ function synchronizationColumns(vueThis, ganttObject) {
             break
         }
         if (item.isEnable == '1') {
-          tempColumns.push({
-            name: 'kz' + item.id,
-            label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
-            align: 'center',
-            resize: true,
-            hide: item.isEnable == '0',
-            min_width: 120,
-            indexNo: item.indexNo
-          })
+          let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
+          if (typeList.includes(item.filedType)) {
+            tempColumns.push({
+              name: 'kz' + item.id,
+              label: `<div class='gantt_search'>${item.name}</div><div class='gantt_search gantt_blank'></div>`,
+              align: 'center',
+              resize: true,
+              hide: item.isEnable == '0',
+              min_width: 120,
+              template: function (task) {
+                let result = []
+                if (task['kz' + item.id]) {
+                  let list = vueThis.extraMap[item.selectCode]
+                  if (list && list.length) {
+                    let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
+                    list.forEach(el => {
+                      taskList.forEach(item => {
+                        if(el.value == item) {
+                          result.push(el.label)
+                        }
+                      })
+                    })
+                  }
+                }
+                return result.join(',')
+              }
+            })
+          } else {
+            tempColumns.push({
+              name: 'kz' + item.id,
+              label: `<div class="gantt_search">${item.name}</div><div class="gantt_search gantt_blank"></div>`,
+              align: 'center',
+              resize: true,
+              hide: item.isEnable == '0',
+              min_width: 120,
+              indexNo: item.indexNo
+            })
+          }
         }
       }
     })

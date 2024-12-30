@@ -671,7 +671,8 @@ export default {
       yTask: null,
       getSelectTasks: [],
       extendMap: {},
-      relevancePlanVisible: false
+      relevancePlanVisible: false,
+      extraMap: {}
     }
   },
   watch: {
@@ -855,6 +856,7 @@ export default {
       })
       // 根据项目类型，获取gantt列设置
       this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
+      await this.getExtraList(this.columnSettings)
       this.reminderList = await this.$api['planGanttManager.loadReminder']({
         planInfoId: this.planInfoId,
         dicType: 'ACTIVITY_TYPE',
@@ -1014,7 +1016,7 @@ export default {
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
             myGantt.unselectTask()
-            if (!vueThis.relevancePlanVisible) {
+            if (!vueThis.relevancePlanVisible && vueThis.selectedId) {
               setTimeout(() => {
                 myGantt.showTask(vueThis.selectedId);
                 myGantt.selectTask(vueThis.selectedId);
@@ -1151,6 +1153,20 @@ export default {
     showTaskProgressDialog (taskId) {
       this.selectedId = taskId
       this.progressHistoryVisible = true
+    },
+    async getExtraList (columnSettings) {
+      let that = this
+      let extraList = columnSettings.filter((item) => item.attributeType === '1' && item.selectCode)
+      let obj = {}
+      if (extraList && extraList.length) {
+        let list = extraList.map(async el => {
+          let list = await that.$api['formGenerator.getSelectionDataDic']({selectCode: el.selectCode})
+          obj[el.selectCode] = list
+          return obj
+        })
+        that.extraMap = obj
+        let listEnd = await Promise.all(list)
+      }
     }
   }
 }

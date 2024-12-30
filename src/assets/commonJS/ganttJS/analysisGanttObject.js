@@ -362,25 +362,35 @@ export function getAnalysisGantt (ganttName, vueThis) {
             tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
           }
         }
-        if (item.attributeType === '1') {
-          let editType = null
-          switch (item.filedType) {
-            case 'text':
-              editType = 'text'
-              break;
-            case 'number':
-              editType = 'number'
-              break;
-            case 'textarea':
-              editType = 'text'
-              break;
-            case 'datepicker':
-              editType = 'custom_date_editor'
-              break;
-            default:
-              break;
-          }
-          if (item.isEnable == '1') {
+        if (item.isEnable == '1') {
+          let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
+          if (typeList.includes(item.filedType)) {
+            tempColumns.push({
+              name: 'kz' + item.id,
+              label: `${item.name}`,
+              align: 'center',
+              resize: true,
+              hide: item.isEnable == '0',
+              min_width: 120,
+              template: function (task) {
+                let result = []
+                if (task['kz' + item.id]) {
+                  let list = vueThis.extraMap[item.selectCode]
+                  if (list && list.length) {
+                    let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
+                    list.forEach(el => {
+                      taskList.forEach(item => {
+                        if(el.value == item) {
+                          result.push(el.label)
+                        }
+                      })
+                    })
+                  }
+                }
+                return result.join(',')
+              }
+            })
+          } else {
             tempColumns.push({
               name: 'kz' + item.id,
               label: `${item.name}`,

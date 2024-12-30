@@ -365,15 +365,53 @@ export default {
     // })
     this.extraList = this.vueThis.columnSettings.filter((item) => item.attributeType === '1')
     this.extraKeys = []
+    this.extraMultipleKeys = []
     this.extraList.forEach((extra) => {
       this.extraKeys.push('kz' + extra.id)
-      this.dataSource.push({
-        labelText: extra.name,
-        type: this.ganttName === 'planGantt' || this.ganttName === 'changeGantt' ? extra.filedType : 'view',
-        fieldName: 'kz' + extra.id,
-        placeholder: `请输入${extra.name}`,
-        colLayout: 'doubleCol'
-      })
+      if (extra.filedType == 'treeSingle' || extra.filedType == 'treeMultiple') {
+        let multiple = extra.filedType == 'treeSingle' ? false : true
+        this.dataSource.push({
+          labelText: extra.name,
+          type: this.ganttName === 'planGantt' || this.ganttName === 'changeGantt' ? 'treeSelect' : 'view',
+          fieldName: 'kz' + extra.id,
+          placeholder: `请选择${extra.name}`,
+          colLayout: 'doubleCol',
+          defaultExpandAll: true,
+          optionUrl: {
+            api: 'formGenerator.getSelectionDataDic',
+            params: {selectCode: extra.selectCode},
+          },
+          multiple: multiple,
+          defaultExpandAll: true,
+          clearable: true,
+          useTreeFormat: true,
+          useTreePId: 'pId'
+        })
+      } else if (extra.filedType == 'selectSingle' || extra.filedType == 'selectMultiple') {
+        let multiple = extra.filedType == 'selectSingle' ? 'select' : 'multiple'
+        this.dataSource.push({
+          labelText: extra.name,
+          type: this.ganttName === 'planGantt' || this.ganttName === 'changeGantt' ? multiple : 'view',
+          fieldName: 'kz' + extra.id,
+          placeholder: `请选择${extra.name}`,
+          colLayout: 'doubleCol',
+          optionUrl: {
+            api: 'formGenerator.getSelectionDataDic',
+            params: {selectCode: extra.selectCode},
+          }
+        })
+      } else {
+        this.dataSource.push({
+          labelText: extra.name,
+          type: this.ganttName === 'planGantt' || this.ganttName === 'changeGantt' ? extra.filedType : 'view',
+          fieldName: 'kz' + extra.id,
+          placeholder: `请输入${extra.name}`,
+          colLayout: 'doubleCol'
+        })
+      }
+      if (extra.filedType.includes('Multiple')) {
+        this.extraMultipleKeys.push('kz' + extra.id)
+      }
     })
     if (this.$route.path === '/TaskChange') {
       this.getPlanInfo(task)
@@ -498,10 +536,14 @@ export default {
       that.formData.weatherControl = task.weatherControl ? task.weatherControl : ''
       that.formData.forecastBeginDate = moment(task.forecastBeginDate).format('YYYY-MM-DD')
       that.formData.forecastEndDate = moment(task.forecastEndDate).format('YYYY-MM-DD')
-      let NewcheckKeys = that.vueThis.columnSettings.filter(el => el.attributeType == '1').map(item => 'kz' + item.id)
+      let NewcheckKeys = that.vueThis.columnSettings.filter(el => el.attributeType == '1')
       if (NewcheckKeys && NewcheckKeys.length) {
-        Object.keys(NewcheckKeys).forEach(el => {
-          that.formData[NewcheckKeys[el]] = task[NewcheckKeys[el]]
+        NewcheckKeys.forEach(el => {
+          if (el.filedType == 'selectMultiple' || el.filedType == 'treeMultiple') {
+            that.formData['kz' + el.id] = task['kz' + el.id] ? task['kz' + el.id].split(',') : []
+          } else {
+            that.formData['kz' + el.id ] = task['kz' + el.id]
+          }
         })
       }
       if (task.realBeginDate) that.formData.realBeginDate = moment(task.realBeginDate).format('YYYY-MM-DD')
@@ -564,7 +606,11 @@ export default {
             }
             // 拓展字段
             if (that.extraKeys.includes(key)) {
-              task[key] = that.formData[key]
+              if(this.extraMultipleKeys && this.extraMultipleKeys.length && this.extraMultipleKeys.includes(key)) {
+                task[key] = that.formData[key] ? that.formData[key].join(',') : ''
+              } else {
+                task[key] = that.formData[key]
+              }
             }
           }
           if (check) {
@@ -620,6 +666,9 @@ export default {
             this.extraList.forEach((item) => {
               if (item.filedType == 'datepicker') {
                 saveParams[item.filedName] = moment(saveParams[item.filedName]).format('YYYY-MM-DD')
+              }
+              if (item.filedType == 'selectMultiple' || item.filedType == 'treeMultiple') {
+                saveParams['kz' + item.id] = saveParams['kz' + item.id].join(',')
               }
               const obj = {
                 projectTasksId: that.taskId,

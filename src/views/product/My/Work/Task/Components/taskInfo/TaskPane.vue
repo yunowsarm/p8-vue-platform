@@ -143,8 +143,8 @@ export default {
     })
   },
   methods: {
-    getDurationDays(data){
-      if(!data.status) return ''
+    getDurationDays (data) {
+      if (!data.status) return ''
       return calculateRemainingDays(data).text
     },
     demandClick () {
@@ -383,14 +383,29 @@ export default {
       return [forecast, plan, real]
     },
     async getExtend () {
-      this.$api['planGanttManager.getGanttExtendAttr']({ taskId: this.getPlanInfo().TASKID }).then((res) => {
+      let that = this
+      this.$api['planGanttManager.getGanttExtendAttr']({ taskId: this.getPlanInfo().TASKID }).then(async (res) => {
         if (res && res.taskExtendList) {
-          res.taskExtendList.forEach((item) => {
+          res.taskExtendList.forEach(async (item) => {
             if (item.fieldType == 'datepicker') {
               let date = moment(item.fieldValue)
-              this.$set(this.formData, item.fieldName, date.isValid() ? date : '')
+              this.$set(this.formData, 'kz' + item.customItem1, date.isValid() ? date : '')
             } else {
-              this.$set(this.formData, item.fieldName, item.fieldValue)
+              if (item.fieldType == 'selectSingle' || item.fieldType == 'treeSingle' || item.fieldType == 'selectMultiple' || item.fieldType == 'treeMultiple') {
+                let list = await that.$api['formGenerator.getSelectionDataDic']({ selectCode: item.selectCode })
+                let taskList = item.fieldValue ? item.fieldValue.split(',') : []
+                let result = []
+                list.forEach(el => {
+                  taskList.forEach(item => {
+                    if (el.value == item) {
+                      result.push(el.label)
+                    }
+                  })
+                })
+                this.$set(this.formData, 'kz' + item.customItem1, result.join(','))
+              } else {
+                this.$set(this.formData, 'kz' + item.customItem1, item.fieldValue)
+              }
             }
           })
         }
@@ -401,7 +416,7 @@ export default {
         this.dataSource.push({
           labelText: extra.name,
           type: 'view',
-          fieldName: extra.filedName,
+          fieldName: 'kz' + extra.id,
           colLayout: 'single'
         })
       })
@@ -435,7 +450,6 @@ $red-color: #f80012;
 
 // 超期/剩余天数 样式
 ::v-deep .duration-days {
-
   .duration-overdue,
   .duration-over,
   .duration-advance {

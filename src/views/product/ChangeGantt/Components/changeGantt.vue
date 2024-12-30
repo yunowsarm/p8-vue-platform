@@ -123,39 +123,39 @@
                title="关联"
                @close="closeRelevance">
       <relevance ref="relevance"
-                 :taskId="taskId"
-                 :planInfoId="planInfoId"
-                 :taskList="taskList"
-                 :selectTaskId="selectTaskId"
-                 :resourcesData="resourcesData"
-                 :monitorPointDatas="monitorPointDatas"
-                 :temporaryDatas="temporaryDatas"
+        :taskId="taskId"
+        :planInfoId="planInfoId"
+        :taskList="taskList"
+        :selectTaskId="selectTaskId"
+        :resourcesData="resourcesData"
+        :monitorPointDatas="monitorPointDatas"
+        :temporaryDatas="temporaryDatas"
                  @closeRelevance="closeRelevanceChange"></relevance>
     </el-drawer>
     <monitor-time-manger v-if="controlTimeVisible"
-                         :visible="controlTimeVisible"
-                         :monitor-id="monitorId"
-                         :task-id="selectTaskId"
-                         :monitor-name="monitorName"
-                         :task-name="selectTaskName"
+      :visible="controlTimeVisible"
+      :monitor-id="monitorId"
+      :task-id="selectTaskId"
+      :monitor-name="monitorName"
+      :task-name="selectTaskName"
                          @save-success="monitorManagerSave">
     </monitor-time-manger>
     <submit-change v-if="submitChangeValidate"
-                   :visible="submitChangeValidate"
-                   :change-id="changeRecordId"
-                   :send-data-list="sendDataList"
-                   :project-category="projectCategory"
-                   :monitor-points="monitorPoints"
-                   :project-classification="projectClassification"
-                   :project-task-id="projectTaskId"
-                   :create-page="createPage"
+      :visible="submitChangeValidate"
+      :change-id="changeRecordId"
+      :send-data-list="sendDataList"
+      :project-category="projectCategory"
+      :monitor-points="monitorPoints"
+      :project-classification="projectClassification"
+      :project-task-id="projectTaskId"
+      :create-page="createPage"
                    @save-success="submitChangeSave">
     </submit-change>
     <selectApproveUser v-if="isSelectApproveUserView"
-                       :is-select-approve-user-view="isSelectApproveUserView"
-                       :select-user-data-source="selectUserDataSource"
-                       :select-user-form-data="selectUserFormData"
-                       @close-modal="closeSelectApproveUser"
+      :is-select-approve-user-view="isSelectApproveUserView"
+      :select-user-data-source="selectUserDataSource"
+      :select-user-form-data="selectUserFormData"
+      @close-modal="closeSelectApproveUser"
                        @commit="commitSelectApproveUser"></selectApproveUser>
     <common-dialog title="查询"
                    width="90%"
@@ -173,13 +173,13 @@
       </template>
     </common-dialog>
     <common-dialog title="通知下发"
-                   width="70%"
-                   v-if="noticeVisible"
-                   :visible="noticeVisible"
-                   :show-handle-btn="false"
-                   @isfullscreen="isfullscreen"
-                   @close="closeNotice"
-                   :is-view-cs-footer="false"
+      width="70%"
+      v-if="noticeVisible"
+      :visible="noticeVisible"
+      :show-handle-btn="false"
+      @isfullscreen="isfullscreen"
+      @close="closeNotice"
+      :is-view-cs-footer="false"
                    :dialog-height="650">
       <template #dialog>
         <Notice :key='renderKey'
@@ -341,7 +341,7 @@ export default {
   },
   data () {
     return {
-      renderKey: new Date().getTime(),
+      renderKey:new Date().getTime(),
       reminderList: [],
       loading: false,
       relevanceVisible: false,
@@ -421,11 +421,12 @@ export default {
       selectedId: '',
       taskExtendRequests: [],
       extendMap: {},
-      pageType: 'switch'
+      pageType: 'switch',
+      extraMap: {}
     }
   },
   watch: {
-    $route () {
+    $route() {
       this.initGantt(this.planInfoId, this.changeRecordId, this.viewType)
     },
     selectedTasks: function (newVal, oldVal) {
@@ -489,7 +490,7 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     let that = this
     this.msg = {
       entityId: this.planInfoId,
@@ -569,6 +570,7 @@ export default {
     async initGantt (planInfoId, changeRecordId, viewType) {
       // 根据项目类型，获取gantt列设置
       this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
+      await this.getExtraList(this.columnSettings)
       this.reminderList = await this.$api['planGanttManager.loadReminder']({
         planInfoId: this.planInfoId,
         dicType: 'ACTIVITY_TYPE',
@@ -810,7 +812,7 @@ export default {
       this.$nextTick(() => {
         this.$emit('select-task', this.selectedTasks, this.ganttName)
         if (this.pageType !== 'history') {
-          this.showDetail('switch')
+        this.showDetail('switch')
         } else {
           // if (myGantt.getGlobalTaskIndex(this.selectTaskId) === -1) return
           // // 如果是任务分解，非当前人员创建的，只能编辑责任人
@@ -1121,6 +1123,20 @@ export default {
     },
     closeNotice () {
       this.noticeVisible = false
+    },
+    async getExtraList (columnSettings) {
+      let that = this
+      let extraList = columnSettings.filter((item) => item.attributeType === '1' && item.selectCode)
+      let obj = {}
+      if (extraList && extraList.length) {
+        let list = extraList.map(async el => {
+          let list = await that.$api['formGenerator.getSelectionDataDic']({selectCode: el.selectCode})
+          obj[el.selectCode] = list
+          return obj
+        })
+        that.extraMap = obj
+        let listEnd = await Promise.all(list)
+      }
     }
   },
   beforeDestroy () {
