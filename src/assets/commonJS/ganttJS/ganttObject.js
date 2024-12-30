@@ -3227,7 +3227,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
             label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
             align: 'center',
             resize: true,
-            hide: settingExtra[item.filedName].hide,
+            hide: settingExtra['kz' + item.id].hide,
             min_width: 120,
             editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null
           }
