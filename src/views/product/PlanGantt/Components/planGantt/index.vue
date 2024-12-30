@@ -1265,6 +1265,16 @@ export default {
         myGantt.config.readonlyReason = '计划发布审批，不可编辑'
       }
     },
+    async selectMultipleTasks(tasks){
+      const multipleTasks = JSON.parse(JSON.stringify(tasks));
+      await this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
+      setTimeout(() => {
+        multipleTasks.forEach((item, index) => {
+          myGantt.showTask(item.id);
+          myGantt.selectTask(item.id);
+        });
+      }, 1000);
+    },
     loadGanttData (planInfoId, taskId, createPage) {
       const monitorBtns = this.monitorBtnsByApi
       window.createPage = createPage
