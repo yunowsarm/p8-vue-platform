@@ -14,7 +14,8 @@
       </div>
       <div class="bottom"
            :class="expandBottom">
-        <plan-gantt :plan-info-id="planInfoId"
+        <plan-gantt ref="planGantt"
+                    :plan-info-id="planInfoId"
                     :whole-describe-id="wholeDescribeId"
                     :plan-info-status="planInfoStatus"
                     :task-id="taskId"
@@ -26,11 +27,32 @@
                     :select-record="thirdMenuParam.selectRecord"
                     :panel-data="thirdMenuParam.specialPlan && thirdMenuParam.specialPlan.includes('SPECIAL_PLAN') ? thematicBarData : barData"
                     @select-task="selectTask"
+                    @open="openLocation"
                     @show-detail="showDetail"
                     @save-success="detailDrawerClosed"
                     :task-status="taskStatus"></plan-gantt>
       </div>
     </div>
+    <command-location v-if="dialogVisible"
+                      :visible="dialogVisible"
+                      @close="closeLocation">
+      <template>
+        <location-view ref="planGanttView"
+                       :plan-info-id="planInfoId"
+                       :whole-describe-id="wholeDescribeId"
+                       :plan-info-status="planInfoStatus"
+                       :task-id="taskId"
+                       :plan-end-date-array="planEndDateArray"
+                       :plan-begin-date-array="planBeginDateArray"
+                       :create-page="createPage"
+                       :flag="thirdMenuParam.specialPlan"
+                       :project-category="thirdMenuParam.projectCategory"
+                       :select-record="thirdMenuParam.selectRecord"
+                       :panel-data="btnData"
+                       :task-status="taskStatus"
+                       @onChangeTask="onChangeTask"></location-view>
+      </template>
+    </command-location>
     <el-drawer :title="detailTitle"
                :append-to-body="true"
                size="50%"
@@ -109,6 +131,9 @@ import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/PlanMon
 import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/PlanMonitoringGantt/commandButtonBarDataSingleRow'
 import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
 import planAttribute from '../PlanGantt/Components/planAttribute'
+import CommandLocation from '@/components/gantt/Components/CommandLocation'
+import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
+import locationView from '../PlanGantt/Components/planGantt/locationView'
 export default {
   name: 'PlanGanttManage',
   data () {
@@ -137,6 +162,7 @@ export default {
       taskStatus: {},
       status: '',
       advance: true,
+      dialogVisible: false, // gantt定位弹出框
       commandButtonBarHeight: this.ganttButtonMode === 'tabs' ? '145px' : this.ganttButtonMode === 'double' ? '72px' : '58px'
     }
   },
@@ -170,7 +196,9 @@ export default {
     'el-drawer': Drawer,
     planAttribute,
     PlanGantt,
-    CommandButtonBar
+    CommandButtonBar,
+    CommandLocation,
+    locationView
   },
   beforeMount () { },
   created () { },
@@ -202,6 +230,24 @@ export default {
     ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
   },
   methods: {
+    openLocation () {
+      console.log('222222222222222222222222');
+      this.dialogVisible = true
+    },
+    closeLocation () {
+      this.dialogVisible = false
+      this.$store.getters.vueThis.searchForm = {}
+      this.$store.getters.vueThisLocation.searchForm = {}
+      this.$refs.planGantt.relevancePlanVisible = false
+      this.$refs.planGantt.selectedId = this.$store.getters.vueThisLocation.selectTaskId
+      this.$refs.planGantt.initGantt(this.planInfoId, this.$refs.planGantt.viewType)
+    },
+    onChangeTask (row) {
+      let myGantt = GanttObject.getGanttObject(this.ganttName)
+      myGantt.unselectTask()
+      myGantt.showTask(row.id)
+      myGantt.selectTask(row.id)
+    },
     selectTask (selectDatas, ganttName) {
       this.selectedTasks = selectDatas
       this.ganttName = ganttName
