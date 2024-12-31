@@ -17,7 +17,7 @@ const suspendIcon = '<i class="element_icon el-icon-error" style="color:#ff0000;
  * @author fukai
  * @date 2020/5/22 12:00
  */
-export function planGantt(ganttName, vueThis) {
+export function planGantt (ganttName, vueThis) {
   // 获取gantt对象
   const ganttObject = GanttObject.getGanttObject(ganttName)
   // 单元格键盘导航
@@ -141,7 +141,7 @@ export function planGantt(ganttName, vueThis) {
           // vueThis.initGantt()
         })
       },
-      update: function (data, id) {},
+      update: function (data, id) { },
       delete: function (id) {
         return new ganttObject.Promise((resolve, reject) => {
           api['planGanttManager.removePlanGanttLink']({ id: id })
@@ -164,7 +164,7 @@ export function planGantt(ganttName, vueThis) {
     }
   })
   // 事件绑定
-  Gantt.setControlTime = function setControlTime(monitorId, monitorName, taskId) {
+  Gantt.setControlTime = function setControlTime (monitorId, monitorName, taskId) {
     const task = ganttObject.getTask(taskId)
     const monitorLockMap = vueThis.monitorLockMap
     // 加锁逻辑控制
@@ -177,7 +177,7 @@ export function planGantt(ganttName, vueThis) {
     }
   }
   // 表头查询值绑定
-  Gantt.searchColumnsChange = function searchColumnsChange(name, value, searchType, eleInstance) {
+  Gantt.searchColumnsChange = function searchColumnsChange (name, value, searchType, eleInstance) {
     const customComp = ['select', 'date', 'input']
     if (customComp.indexOf(searchType) < 0) {
       document.getElementById(name + searchType).setAttribute('value', value)
@@ -202,7 +202,7 @@ export function planGantt(ganttName, vueThis) {
     }
     ganttObject.render()
   }
-  Gantt.taskProgressDetails = function taskProgressDetails(taskId) {
+  Gantt.taskProgressDetails = function taskProgressDetails (taskId) {
     if (vueThis.createPage === 'compile' || vueThis.createPage === 'decompose') {
       vueThis.showTaskProgressDialog(taskId)
     }
@@ -471,7 +471,7 @@ export function planGantt(ganttName, vueThis) {
  * @param vueThis
  * @returns {({template: template, name: string, width: number, resize: boolean, label: string, align: string}|{template: template, name: string, width: number, resize: boolean, label: string, align: string}|{template: (function(*=): string), name: string, resize: boolean, label: string, align: string, min_width: number}|{template: (function(*): string), name: string, width: number, resize: boolean, label: string, align: string}|{template: (function(*=): string), name: string, resize: boolean, label: string, align: string, min_width: number})[]}
  */
-export function getGanttColumns(ganttObject, vueThis) {
+export function getGanttColumns (ganttObject, vueThis) {
   ganttObject.serverList('yesOron', [
     { key: '1', label: '是' },
     { key: '0', label: '否' }
@@ -528,7 +528,7 @@ export function getGanttColumns(ganttObject, vueThis) {
   // 加载编辑器
   const editors = GanttObject.editors(ganttObject, formatter, linksFormatter)
 
-  function checkEdit() {
+  function checkEdit () {
     if (vueThis.pageName === 'planMonitor') {
       return false
     } else {
@@ -625,10 +625,14 @@ export function getGanttColumns(ganttObject, vueThis) {
         }
         if (bool) result = result + `<i class='p8 icon-tishi' title='${tips}' style='color: #e6a23c;'></i>`
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
+          let taskStyles = vueThis.taskStyles[task.id] || ''
+          if (taskStyles && taskStyles.indexOf('text-decoration: line-through;') !== -1 && taskStyles.indexOf('text-decoration:underline;') !== -1) {
+            taskStyles += 'text-decoration: line-through underline;'
+          }
           if (ganttObject.hasChild(task.id)) {
-            result = result + '<div style="display: inline-block;' + (vueThis.taskStyles[task.id] || '') + 'font-weight:bold;">' + (task.name || '') + '</div>'
+            result = result + '<div style="display: inline-block;' + (taskStyles || '') + 'font-weight:bold;">' + (task.name || '') + '</div>'
           } else {
-            result = result + '<div style="display: inline-block;' + (vueThis.taskStyles[task.id] || '') + '">' + (task.name || '') + '</div>'
+            result = result + '<div style="display: inline-block;' + (taskStyles || '') + '">' + (task.name || '') + '</div>'
           }
         } else {
           if (ganttObject.hasChild(task.id)) {
@@ -1030,4 +1034,4 @@ export function getGanttColumns(ganttObject, vueThis) {
   ]
 }
 
-export function planMonitorAdd(ganttObject, vueThis) {}
+export function planMonitorAdd (ganttObject, vueThis) { }
