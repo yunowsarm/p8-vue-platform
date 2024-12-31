@@ -431,9 +431,15 @@ export default {
     },
     selectedTasks: function (newVal, oldVal) {
       this.renderKey = new Date().getTime()
-      if (newVal && newVal.length === 1 && (myGantt.getGlobalTaskIndex(newVal[0].id) !== 0 || this.createPage === 'userChange') && newVal[0].status) {
+      if (newVal && newVal.length === 1 &&  newVal[0].status) {
         this.selectTaskId = newVal[0].id
-        this.selectTaskName = newVal[0].name
+        if(createPage !== 'compile' && createPage !== 'planChange'){
+          this.selectTaskName = newVal[0].name
+        }else{
+          if (myGantt.getGlobalTaskIndex(newVal[0].id) !== 0) {
+            this.selectTaskName = newVal[0].name
+          }
+        }
         // if (this.planAttributeDrawer) {
         // this.showDetail()
         // }
@@ -834,14 +840,15 @@ export default {
       }
     },
     showDetail (type) {
-      this.pageType = type || 'switch'
-      if (this.$route.path === '/TaskChange') {
-        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, this.createPage, type)
-      } else {
-        if (myGantt.getGlobalTaskIndex(this.selectTaskId) !== 0) {
-          this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, this.createPage, type)
-        }
-      }
+      this.pageType = 'switch'
+      this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, this.createPage, type)
+      // if (this.$route.path === '/TaskChange') {
+      //   this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, this.createPage, type)
+      // } else {
+      //   if (myGantt.getGlobalTaskIndex(this.selectTaskId) !== 0) {
+      //     this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, this.createPage, type)
+      //   }
+      // }
     },
     activityImportClosed () {
       this.activityImportVisible = false

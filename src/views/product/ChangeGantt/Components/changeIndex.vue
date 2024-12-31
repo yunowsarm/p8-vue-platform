@@ -39,7 +39,7 @@
           </div>
         </div>
       </template>
-      <template #paneR>
+      <template #paneR v-if='notRoot'>
         <div v-if="defaultPercent !== 100"
              class="x-style"><i class="el-dialog__close el-icon el-icon-close"
              @click="closeClick"></i></div>
@@ -183,6 +183,7 @@ export default {
   name: 'ChangeIndex',
   data () {
     return {
+      notRoot:false,
       pageType: '',
       dialogVisible: false, // gantt定位弹出框
       firstEntry: true,
@@ -349,6 +350,16 @@ export default {
       this.firstEntry = true
     },
     showDetail (selectTask, ganttName, createPage, switchType) {
+      this.selectTaskId = selectTask.id
+      let myGantt = GanttObject.getGanttObject(this.ganttName)
+      if(myGantt.getGlobalTaskIndex(this.selectTaskId) === 0 && (this.createPage === 'planChange' || this.createPage === 'compile')){
+        this.defaultPercent = 100
+        // this.firstEntry = true
+        this.notRoot = false
+        return
+      }else{
+        this.notRoot = true
+      }
       if (switchType !== 'history') {
         this.pageType = 'switch'
       } else {

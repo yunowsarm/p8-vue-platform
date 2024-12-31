@@ -822,8 +822,12 @@ export default {
       // this.comResTypesListData()
       if (newVal && newVal.length === 1 && newVal[0].status) {
         this.selectTaskId = newVal[0].id
-        if (myGantt.getGlobalTaskIndex(newVal[0].id) !== 0) {
+        if(createPage !== 'compile' && createPage !== 'planChange'){
           this.selectTaskName = newVal[0].name
+        }else{
+          if (myGantt.getGlobalTaskIndex(newVal[0].id) !== 0) {
+            this.selectTaskName = newVal[0].name
+          }
         }
       } else {
         this.selectTaskId = ''
@@ -1435,8 +1439,7 @@ export default {
       }
     },
     showDetail (type) {
-      this.pageType = type || 'switch'
-      if (myGantt.getGlobalTaskIndex(this.selectTaskId) === 0) return
+      this.pageType = 'switch'
       // 如果是任务分解，非当前人员创建的，只能编辑责任人
       const userId = this.$store.getters.userInfo.id
       const task = myGantt.getTask(this.selectTaskId)
