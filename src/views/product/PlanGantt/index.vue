@@ -43,7 +43,7 @@
           </div>
         </div>
       </template>
-      <template #paneR>
+      <template #paneR v-if='notRoot'>
         <div v-if="defaultPercent !== 100"
              class="x-style"><i class="el-dialog__close el-icon el-icon-close"
              @click="closeClick"></i></div>
@@ -184,6 +184,7 @@ export default {
   name: 'PlanGanttManage',
   data () {
     return {
+      notRoot:true,
       dialogVisible: false, // gantt定位弹出框
       planManagementStatus: '',
       defaultKey: '1',
@@ -381,6 +382,16 @@ export default {
       this.firstEntry = true
     },
     showDetail (selectTask, ganttName, viewType, switchType) {
+      this.selectTaskId = selectTask.id
+      let myGantt = GanttObject.getGanttObject(this.ganttName)
+      if(myGantt.getGlobalTaskIndex(this.selectTaskId) === 0 && (this.createPage === 'planChange' || this.createPage === 'compile')){
+        this.defaultPercent = 100
+        // this.firstEntry = true
+        this.notRoot = false
+        return
+      }else{
+        this.notRoot = true
+      }
       // defaultPercent指的是gannt的宽度
       // 首次进入，单机任务且未拖动详情时，不弹出
       if (switchType !== 'history') {
@@ -393,7 +404,6 @@ export default {
       this.detailVisible = true
       this.$bus.$emit('ganttDetail', true)
       this.ganttName = ganttName
-      this.selectTaskId = selectTask.id
       this.wholeDescribeId = selectTask.wholeId
       this.status = selectTask.status
       this.detailTitle = selectTask.name
