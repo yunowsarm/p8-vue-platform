@@ -127,6 +127,11 @@ const CommandButtonBarDataSingleRow = [
             position: ['top']
           },
           {
+            buttonId: 'font-lineThrough',
+            size: 'mini',
+            position: ['top']
+          },
+          {
             buttonId: 'removeStyle',
             size: 'small',
             position: ['top']

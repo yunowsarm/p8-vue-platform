@@ -1069,6 +1069,28 @@ export const CommandButtonData = [
     }
   },
   {
+    id: 'font-lineThrough',
+    icon: 'p8 icon-shanchuxian',
+    title: '删除线',
+    style: 'text-decoration: line-through;', // css样式
+    help: '删除线',
+    msg: '',
+    clickFun: function (btn, ganttName, tasks) {
+      updateTaskStyle(ganttName, tasks, btn)
+    },
+    isDisableFun: function (btn, ganttName, tasks) {
+      const checks = [
+        () => isCompile(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
+        () => isAllowChangeStyle(ganttName, tasks),
+      ]
+      const res = isDisable(checks)
+      this.msg = res.disable ? res.message : '';
+      return res.disable
+    }
+  },
+  {
     id: 'removeStyle',
     icon: 'p8 icon-cancel-format',
     title: '取消样式',
