@@ -1308,16 +1308,20 @@ export default {
             vueThis.extendMap = res.extendMap || {}
             if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
               taskList.forEach(task => {
+                extraList.forEach(item => {
+                  task['kz' + item.id] = ''
+                })
                 if (vueThis.extendMap[task.id]) {
                   let extendData = vueThis.extendMap[task.id]
                   extendData.forEach((item) => {
                     task['kz' + item.customItem1] = item.fieldValue ? item.fieldValue : ''
                   })
-                } else {
-                  extraList.forEach(item => {
-                    task['kz' + item.id] = ''
-                  })
                 }
+                //  else {
+                //   extraList.forEach(item => {
+                //     task['kz' + item.id] = ''
+                //   })
+                // }
               })
             }
             // 初始化数据
