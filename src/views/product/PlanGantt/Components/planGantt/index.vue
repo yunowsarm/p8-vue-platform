@@ -118,7 +118,12 @@
                    :is-view-cs-footer="false"
                    :dialog-height="650">
       <template #dialog>
-        <Notice v-if="noticeVisible" :selected-tasks='selectedTasks' :task-id="selectTaskId" :gantt-name="ganttName" :plan-info-id="planInfoId" @close="closeNotice" />
+        <Notice v-if="noticeVisible"
+                :selected-tasks='selectedTasks'
+                :task-id="selectTaskId"
+                :gantt-name="ganttName"
+                :plan-info-id="planInfoId"
+                @close="closeNotice" />
       </template>
     </common-dialog>
     <monitor-time-manger v-if="controlTimeVisible"
@@ -1262,12 +1267,12 @@ export default {
       // } else if (this.createPage === 'decompose') {
       //   this.group_type = '4'
       // }
-      if(this.planManagementStatus === '6620'){
+      if (this.planManagementStatus === '6620') {
         myGantt.config.readonly = true
         myGantt.config.readonlyReason = '计划发布审批，不可编辑'
       }
     },
-    async selectMultipleTasks(tasks){
+    async selectMultipleTasks (tasks) {
       const multipleTasks = JSON.parse(JSON.stringify(tasks));
       await this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
       setTimeout(() => {
@@ -1306,24 +1311,19 @@ export default {
             })
             // 处理拓展字段已有的数据
             vueThis.extendMap = res.extendMap || {}
-            if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
-              taskList.forEach(task => {
-                extraList.forEach(item => {
-                  task['kz' + item.id] = ''
-                })
+            taskList.forEach(task => {
+              extraList.forEach(item => {
+                task['kz' + item.id] = ''
+              })
+              if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
                 if (vueThis.extendMap[task.id]) {
                   let extendData = vueThis.extendMap[task.id]
                   extendData.forEach((item) => {
                     task['kz' + item.customItem1] = item.fieldValue ? item.fieldValue : ''
                   })
                 }
-                //  else {
-                //   extraList.forEach(item => {
-                //     task['kz' + item.id] = ''
-                //   })
-                // }
-              })
-            }
+              }
+            })
             // 初始化数据
             const datas = {
               tasks: taskList,
@@ -1332,7 +1332,7 @@ export default {
             if (res.projectStatus === '2205') {
               myGantt.config.readonly = true
             }
-            if ((res.monitorLock && res.monitorLock['1010'] && res.monitorLock['1010'] === '1') || (res.monitorLock && res.monitorLock['1018'] && res.monitorLock['1018'] === '1')|| (res.monitorLock && res.monitorLock['1020'] && res.monitorLock['1020'] === '1')) {
+            if ((res.monitorLock && res.monitorLock['1010'] && res.monitorLock['1010'] === '1') || (res.monitorLock && res.monitorLock['1018'] && res.monitorLock['1018'] === '1') || (res.monitorLock && res.monitorLock['1020'] && res.monitorLock['1020'] === '1')) {
               if (createPage === 'compile') {
                 vueThis.planEditLock = true
                 myGantt.config.readonly = true

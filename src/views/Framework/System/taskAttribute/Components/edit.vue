@@ -392,6 +392,14 @@ export default {
     customValidate (saveParmars) {
       const that = this
       let flag = false
+      saveParmars.propertiesList.forEach((el, index) => {
+        if (el.attributeType == '1') {
+          let item = saveParmars.attributeExtensionList.filter(res => res.id == el.id)
+          if (!(item && item.length)) {
+            saveParmars.propertiesList.splice(index, 1)
+          }
+        }
+      })
       if (saveParmars.attributeExtensionList && saveParmars.attributeExtensionList.length) {
         let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
         saveParmars.attributeExtensionList.forEach(el => {
