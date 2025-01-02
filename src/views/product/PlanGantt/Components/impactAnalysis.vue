@@ -174,7 +174,8 @@ export default {
       changeTaskInfo: {},
       changeRecordId: '',
       advance: true,
-      commandButtonBarHeight: this.ganttButtonMode === 'tabs' ? '145px' : this.ganttButtonMode === 'double' ? '72px' : '58px'
+      commandButtonBarHeight: this.ganttButtonMode === 'tabs' ? '145px' : this.ganttButtonMode === 'double' ? '72px' : '58px',
+      extraMap: {}
     }
   },
   watch: {
@@ -294,6 +295,7 @@ export default {
   methods: {
     async initGantt (planInfoId, changeRecordId) {
       this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
+      await this.getExtraList(this.columnSettings)
       const vueThis = this
       const element = this.$refs.top; // 获取DOM元素
       // 清空原有数据
@@ -336,18 +338,18 @@ export default {
               }
               return obj
             })
-            // // 处理拓展字段已有的数据
-            // vueThis.extendMap = res.extendMap || {}
-            // if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
-            //   initData.forEach(task => {
-            //     if (vueThis.extendMap[task.id]) {
-            //       let extendData = vueThis.extendMap[task.id]
-            //       extendData.forEach(item => {
-            //         task['kz' + item.customItem1] = item.fieldValue
-            //       })
-            //     }
-            //   })
-            // }
+           // 处理拓展字段已有的数据
+            vueThis.extendMap = res.extendMap || {}
+            if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
+              initData.forEach((task) => {
+                if (vueThis.extendMap[task.id]) {
+                  let extendData = vueThis.extendMap[task.id]
+                  extendData.forEach((item) => {
+                    task['kz' + item.customItem1] = item.fieldValue
+                  })
+                }
+              })
+            }
             const datas = {
               tasks: initData,
               links: res.links
@@ -406,6 +408,20 @@ export default {
         this.commandButtonBarHeight = '152px'
       } else {
         this.commandButtonBarHeight = '40px'
+      }
+    },
+    async getExtraList (columnSettings) {
+      let that = this
+      let extraList = columnSettings.filter((item) => item.attributeType === '1' && item.selectCode)
+      let obj = {}
+      if (extraList && extraList.length) {
+        let list = extraList.map(async el => {
+          let list = await that.$api['formGenerator.getSelectionDataDic']({ selectCode: el.selectCode })
+          obj[el.selectCode] = list
+          return obj
+        })
+        that.extraMap = obj
+        let listEnd = await Promise.all(list)
       }
     }
   }
