@@ -141,6 +141,7 @@ export default {
         _this.rendered()
       })
     })
+    this.getExtend()
   },
   methods: {
     getDurationDays (data) {
@@ -221,7 +222,6 @@ export default {
           this.formData[key] = res[key]
         }
       })
-      this.getExtend()
     },
     statusHandle () {
       const statusColor = {
