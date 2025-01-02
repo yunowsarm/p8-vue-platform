@@ -22,6 +22,8 @@ export function getChangeGantt(ganttName, vueThis) {
   ganttObject.config.order_branch_free = false
   // 加载排程类型
   GanttObject.autoScheduleList(ganttObject)
+  // 添加工具提示提示
+  GanttObject.addTooltip(ganttObject, vueThis)
   // 加载工期格式化
   const formatter = GanttObject.formatter(ganttObject)
   // 加载前后置格式化
@@ -79,7 +81,33 @@ export function getChangeGantt(ganttName, vueThis) {
       }
     }
   }
-
+  /**
+   * 添加工具提示
+   * @param ganttObject
+   */
+  GanttObject.addTooltip = function (ganttObject, vueThis) {
+    ganttObject.plugins({
+      tooltip: true
+    })
+    ganttObject.attachEvent('onGanttReady', function () {
+      const tooltips = ganttObject.ext.tooltips
+      tooltips.tooltipFor({
+        selector: '*',
+        html: function (event, node) {
+          // 判断节点是否包含 text_overflow 类名
+          if (node && node.classList.contains('text_overflow')) {
+            if (node.innerText) {
+              // 检查文本是否溢出
+              if (node.scrollWidth > node.offsetWidth) {
+                return node.innerText // 返回溢出的文本
+              }
+            }
+          }
+          return '' // 如果没有文本溢出或节点无效，则不显示 Tooltip
+        }
+      })
+    })
+  }
   // ganttObject.attachEvent('onBeforeTaskMove', function (id, parent, tindex) {
   //   let task = ganttObject.getTask(id)
   //   if (task.parent !== parent) { return false }
@@ -308,12 +336,13 @@ export function getChangeGantt(ganttName, vueThis) {
       template: function (task) {
         if (task.style) {
           if (task.infoType === 'delete') {
-            return '<div style="display: inline-block;text-decoration:line-through;color:' + task.style + '">' + task.name + '</div>'
+            return '<div class="text_overflow" style="display: inline-block;text-decoration:line-through;color:' + task.style + '">' + task.name + '</div>'
           } else {
-            return task.name
+            return `<div class="text_overflow">${task.name}</div>`
+
           }
         } else {
-          return task.name
+          return `<div class="text_overflow">${task.name}</div>`
         }
       }
     },
@@ -700,7 +729,7 @@ function synchronizationColumns(vueThis, ganttObject) {
                     })
                   }
                 }
-                return result.join(',')
+                return `<div class='text_overflow'>${result.join(',')}</div>`
               }
             })
           } else {
@@ -711,7 +740,10 @@ function synchronizationColumns(vueThis, ganttObject) {
               resize: true,
               hide: item.isEnable == '0',
               min_width: 120,
-              indexNo: item.indexNo
+              indexNo: item.indexNo,
+              template: function (task) {
+                return `<div class='text_overflow'>${task['kz' + item.id]}</div>`
+              }
             })
           }
         }
