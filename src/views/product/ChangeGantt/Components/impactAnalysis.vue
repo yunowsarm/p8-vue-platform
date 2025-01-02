@@ -57,6 +57,9 @@
   .gantt_row:not([aria-expanded]).analysisColor {
     background-color: #ffa96e !important;
   }
+  .analysisColor {
+    background-color: #ffa96e !important;
+  }
 }
 
 .bottom {

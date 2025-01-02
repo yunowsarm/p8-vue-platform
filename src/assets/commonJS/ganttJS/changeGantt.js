@@ -214,9 +214,7 @@ export function taskDescribesEditCheck (newObj, oldObj, vueThis, taskId, ganttOb
     }
   })
   if (checkChange) {
-    if (!task.infoType) {
-      task.infoType = 'update'
-    }
+    addChangeMark(ganttObject, task)
     task.style = changeColor
     ganttObject.updateTask(taskId)
     if (changeDate) {
@@ -229,6 +227,20 @@ export function taskDescribesEditCheck (newObj, oldObj, vueThis, taskId, ganttOb
     if (describesEdit) {
       setNewTaskMap(vueThis, task, newObj.describes, 'describes')
     }
+  }
+}
+
+// 向上递归添加变更标记
+export function addChangeMark(ganttObject, task) {
+  if (!task.infoType) {
+    task.infoType = 'update'
+    task.changeStatusName = '变更'
+  }
+  task.style = changeColor
+  task.changeStatus = true
+  if (task.parent) {
+    const parentTask = ganttObject.getTask(task.parent)
+    addChangeMark(ganttObject, parentTask)
   }
 }
 
@@ -290,9 +302,7 @@ export function monitorPointsEditCheck (oldObj, newObj, vueThis, task, ganttObje
   if (addMonitor || editMonitor) {
     task.monitorPoints = monitorIds
     task.style = changeColor
-    if (!task.infoType) {
-      task.infoType = 'update'
-    }
+    addChangeMark(ganttObject, task)
     ganttObject.updateTask(task.id)
     // 缓存
     setNewTaskMap(vueThis, task, newArray, 'monitors')
@@ -336,9 +346,7 @@ export function linksEditCheck (oldObj, newObj, vueThis, task, ganttObject) {
   }
   // 发生变动
   if (editL) {
-    if (!task.infoType) {
-      task.infoType = 'update'
-    }
+    addChangeMark(ganttObject, task)
     task.style = changeColor
     // 删除旧关系
     if (oldObj && oldObj.length > 0) {
@@ -416,9 +424,7 @@ export function otherEditCheck (oldObj, newObj, ganttObject, vueThis, taskId, ty
   }
   // 发生变动
   if (editO) {
-    if (!task.infoType) {
-      task.infoType = 'update'
-    }
+    addChangeMark(ganttObject, task)
     if (type === 'output') {
       task.hasAtt = newObj.length
     }
@@ -514,9 +520,7 @@ export function changeGanttRemove (ganttObject, selectedTaskIds, vueThis) {
 export function beforeUpdateTask (ganttObject, ganttName, taskId) {
   if (ganttName && ganttName === 'changeGantt') {
     const task = ganttObject.getTask(taskId)
-    if (!task.infoType) {
-      task.infoType = 'update'
-    }
+    addChangeMark(ganttObject, task)
     task.style = changeColor
   }
 }
