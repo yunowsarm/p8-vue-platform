@@ -106,6 +106,7 @@ export default {
         _this.rendered()
       })
     })
+    this.getExtend()
   },
   methods: {
     getDurationDays(data){
@@ -156,7 +157,6 @@ export default {
           this.formData[key] = res[key]
         }
       })
-      this.getExtend()
     },
     statusHandle () {
       let allStatus = this.getPlanInfo().allStatus
