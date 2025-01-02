@@ -2607,72 +2607,59 @@ GanttObject.addTooltip = function (ganttObject, vueThis) {
   ganttObject.plugins({
     tooltip: true
   })
-  ganttObject.templates.tooltip_date_format = ganttObject.date.date_to_str('%Y-%m-%d')
   ganttObject.attachEvent('onGanttReady', function () {
     const tooltips = ganttObject.ext.tooltips
-    ganttObject.templates.tooltip_text = function (start, end, task) {
-      const statusData = vueThis.taskStatus[task.status]
-      if (statusData && statusData.name) {
-        return [
-          '<b>任务名称：</b> ' + task.name,
-          '<b>任务状态：</b> ' + statusData.name,
-          '<b>计划开始时间</b> ' + ganttObject.templates.tooltip_date_format(task.start_date),
-          '<b>计划完成时间</b> ' + ganttObject.templates.tooltip_date_format(ganttObject.date.add(task.end_date, -1, 'day'))
-        ].join('<br>')
-      } else {
-        return ''
-      }
-    }
     tooltips.tooltipFor({
-      selector: '.p8',
+      selector: '*',
       html: function (event, node) {
-        const taskId = node.getAttribute('task_id')
-        const task = ganttObject.getTask(taskId)
-        if (task) {
-          const statusData = vueThis.taskStatus[task.status]
-          if (statusData && statusData.name) {
-            return '<b>任务状态：</b> ' + statusData.name
-          } else {
-            return ''
+        // 判断节点是否包含 text_overflow 类名
+        if (node && node.classList.contains('text_overflow')) {
+          if (node.innerText) {
+            // 检查文本是否溢出
+            if (node.scrollWidth > node.offsetWidth) {
+              return node.innerText // 返回溢出的文本
+            }
           }
         }
+        return '' // 如果没有文本溢出或节点无效，则不显示 Tooltip
       }
     })
-    tooltips.tooltipFor({
-      selector: '.gantt_task_link',
-      html: function (event, node) {
-        const linkId = node.getAttribute(ganttObject.config.link_attribute)
-        if (linkId) {
-          const link = ganttObject.getLink(linkId)
-          const from = ganttObject.getTask(link.source)
-          const to = ganttObject.getTask(link.target)
-          return ['<b>前后置类型:</b> ' + linkTypeToString(link.type), '<b>前置任务: </b> ' + from.name, '<b>当前任务: </b> ' + to.name].join('<br>')
-        }
-      }
-    })
-    tooltips.tooltipFor({
-      selector: '.gantt_task_progress_wrapper',
-      html: function (event, node) {
-        const taskId = node.getAttribute('task_id')
-        const task = ganttObject.getTask(taskId)
-        if (task) {
-          const statusData = vueThis.taskStatus[task.status]
-          if (statusData && statusData.name) {
-            return [
-              '<b>任务名称：</b> ' + task.name,
-              '<b>任务状态：</b> ' + statusData.name,
-              '<b>计划开始时间</b> ' + ganttObject.templates.tooltip_date_format(task.start_date),
-              '<b>计划完成时间</b> ' + ganttObject.templates.tooltip_date_format(ganttObject.date.add(task.end_date, -1, 'day'))
-            ].join('<br>')
-          } else {
-            return ''
-          }
-        }
-      }
-    })
+
+
+    // tooltips.tooltipFor({
+    //   selector: '.gantt_task_link',
+    //   html: function (event, node) {
+    //     const linkId = node.getAttribute(ganttObject.config.link_attribute)
+    //     if (linkId) {
+    //       const link = ganttObject.getLink(linkId)
+    //       const from = ganttObject.getTask(link.source)
+    //       const to = ganttObject.getTask(link.target)
+    //       return ['<b>前后置类型:</b> ' + linkTypeToString(link.type), '<b>前置任务: </b> ' + from.name, '<b>当前任务: </b> ' + to.name].join('<br>')
+    //     }
+    //   }
+    // })
+    // tooltips.tooltipFor({
+    //   selector: '.gantt_task_progress_wrapper',
+    //   html: function (event, node) {
+    //     const taskId = node.getAttribute('task_id')
+    //     const task = ganttObject.getTask(taskId)
+    //     if (task) {
+    //       const statusData = vueThis.taskStatus[task.status]
+    //       if (statusData && statusData.name) {
+    //         return [
+    //           '<b>任务名称：</b> ' + task.name,
+    //           '<b>任务状态：</b> ' + statusData.name,
+    //           '<b>计划开始时间</b> ' + ganttObject.templates.tooltip_date_format(task.start_date),
+    //           '<b>计划完成时间</b> ' + ganttObject.templates.tooltip_date_format(ganttObject.date.add(task.end_date, -1, 'day'))
+    //         ].join('<br>')
+    //       } else {
+    //         return ''
+    //       }
+    //     }
+    //   }
+    // })
   })
 }
-
 /**
  * @Description 通用属性定义
  * @author fukai
@@ -3078,27 +3065,32 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
   }
 
   function getEditors(editType, item, filedType) {
-    let typeList = ['selectSingle','selectMultiple','treeSingle','treeMultiple']
-    if(typeList.includes(filedType)) {
+    let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
+    if (typeList.includes(filedType)) {
       let multiple = false
-      if (filedType == 'selectMultiple' || filedType == 'treeMultiple' ) {
+      if (filedType == 'selectMultiple' || filedType == 'treeMultiple') {
         multiple = true
       }
-      return { type: editType, map_to: 'kz' + item.id, editorConfig: {
-        optionUrl: {
-          api: 'formGenerator.getSelectionDataDic',
-          params: {selectCode: item.selectCode},
-        },
-        multiple: multiple,
-        defaultExpandAll: true,
-        clearable: true,
-        useTreeFormat: true,
-        useTreePId: 'pId'
-      }}
+      return {
+        type: editType,
+        map_to: 'kz' + item.id,
+        editorConfig: {
+          optionUrl: {
+            api: 'formGenerator.getSelectionDataDic',
+            params: { selectCode: item.selectCode }
+          },
+          multiple: multiple,
+          defaultExpandAll: true,
+          clearable: true,
+          useTreeFormat: true,
+          useTreePId: 'pId'
+        }
+      }
     } else {
-      return { type: editType, map_to: 'kz' + item.id  }
+      return { type: editType, map_to: 'kz' + item.id }
     }
   }
+
   const initColumns = getGanttColumns(ganttObject, vueThis)
   initColumns.forEach((initItem, initIndex) => {
     const name = initItem.name
@@ -3178,16 +3170,16 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
           break
         case 'selectSingle':
           editType = 'select_can_clear'
-          break;
+          break
         case 'selectMultiple':
           editType = 'select_can_clear'
-          break;
+          break
         case 'treeSingle':
           editType = 'tree_data_editor_extra'
-          break;
+          break
         case 'treeMultiple':
           editType = 'tree_data_editor_extra'
-          break;
+          break
         default:
           break
       }
@@ -3209,16 +3201,16 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
                 let list = vueThis.extraMap[item.selectCode]
                 if (list && list.length) {
                   let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
-                  list.forEach(el => {
-                    taskList.forEach(item => {
-                      if(el.value == item) {
+                  list.forEach((el) => {
+                    taskList.forEach((item) => {
+                      if (el.value == item) {
                         result.push(el.label)
                       }
                     })
                   })
                 }
               }
-              return result.join(',')
+              return `<div class='text_overflow'>${result.join(',')}</div>`
             }
           }
         } else {
@@ -3229,7 +3221,10 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
             resize: true,
             hide: settingExtra['kz' + item.id].hide,
             min_width: 120,
-            editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null
+            editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null,
+            template: function (task) {
+              return `<div class='text_overflow'>${task['kz' + item.id]}</div>`
+            }
           }
         }
         tempColumns.splice(settingExtra['kz' + item.id].index, 1, initItem)
@@ -3241,7 +3236,10 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
           resize: true,
           hide: item.isEnable == '0',
           min_width: 120,
-          editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null
+          editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null,
+          template: function (task) {
+            return `<div class='text_overflow'>${task['kz' + item.id]}</div>`
+          }
         })
       }
     })
@@ -3277,16 +3275,16 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
             break
           case 'selectSingle':
             editType = 'select_can_clear'
-            break;
+            break
           case 'selectMultiple':
             editType = 'select_can_clear'
-            break;
+            break
           case 'treeSingle':
             editType = 'tree_data_editor_extra'
-            break;
+            break
           case 'treeMultiple':
             editType = 'tree_data_editor_extra'
-            break;
+            break
           default:
             break
         }
@@ -3307,16 +3305,16 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
                   let list = vueThis.extraMap[item.selectCode]
                   if (list && list.length) {
                     let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
-                    list.forEach(el => {
-                      taskList.forEach(item => {
-                        if(el.value == item) {
+                    list.forEach((el) => {
+                      taskList.forEach((item) => {
+                        if (el.value == item) {
                           result.push(el.label)
                         }
                       })
                     })
                   }
                 }
-                return result.join(',')
+                return `<div class='text_overflow'>${result.join(',')}</div>`
               }
             })
           } else {
@@ -3327,7 +3325,10 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
               resize: true,
               hide: item.isEnable == '0',
               min_width: 120,
-              editor: checkEdit() ? getEditors(editType, item, item.filedType) : null
+              editor: checkEdit() ? getEditors(editType, item, item.filedType) : null,
+              template: function (task) {
+                return `<div class='text_overflow'>${task['kz' + item.id]}</div>`
+              }
             })
           }
         }
