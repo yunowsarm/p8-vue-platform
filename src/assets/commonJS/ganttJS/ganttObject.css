@@ -406,3 +406,11 @@
 .grid-cell-border-remove .gantt_grid_data .gantt_cell {
   border-right: none;
 }
+
+/* 设置列的超出隐藏并显示省略号 */
+.text_overflow {
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}

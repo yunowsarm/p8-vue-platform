@@ -354,7 +354,7 @@ export function planGantt (ganttName, vueThis) {
   // // 开启单元格编辑
   // ganttObject.config.keyboard_navigation_cells = true
   // 添加工具提示提示
-  // GanttObject.addTooltip(ganttObject, vueThis)
+  GanttObject.addTooltip(ganttObject, vueThis)
   // 升降级
   const actions = GanttObject.getActions(ganttObject)
   ganttObject.performAction = GanttObject.performAction(actions, ganttObject)
@@ -630,13 +630,13 @@ export function getGanttColumns (ganttObject, vueThis) {
             taskStyles += 'text-decoration: line-through underline;'
           }
           if (ganttObject.hasChild(task.id)) {
-            result = result + '<div style="display: inline-block;' + (taskStyles || '') + 'font-weight:bold;">' + (task.name || '') + '</div>'
+            result = result + '<div class="text_overflow" style="display: inline-block;' + (taskStyles || '') + 'font-weight:bold;">' + (task.name || '') + '</div>'
           } else {
-            result = result + '<div style="display: inline-block;' + (taskStyles || '') + '">' + (task.name || '') + '</div>'
+            result = result + '<div class="text_overflow" style="display: inline-block;' + (taskStyles || '') + '">' + (task.name || '') + '</div>'
           }
         } else {
           if (ganttObject.hasChild(task.id)) {
-            result = result + '<div style="display: inline-block;font-weight:bold;">' + (task.name || '') + '</div>'
+            result = result + '<div class="text_overflow" style="display: inline-block;font-weight:bold;">' + (task.name || '') + '</div>'
           } else {
             result = task.name || ''
           }
