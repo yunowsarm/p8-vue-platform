@@ -121,7 +121,7 @@ export default {
   },
   methods: {
     // 根据任务 ID 获取任务数据的方法
-    fetchTaskData(taskId) {
+    async fetchTaskData(taskId) {
       // 调用 API 获取甘特图扩展属性数据
        this.$api['planGanttManager.getGanttExtendAttr']({ taskId: taskId })
         .then(async (res) => {
@@ -134,29 +134,38 @@ export default {
           // 格式化比例数据
           this.formData.proportion = this.formData.proportion ? Math.round(res.proportion) + '%' : ''
           // 获取扩展属性
-          if (res && res.taskExtendList.length > 0) {
-            this.extraIds = {}
-            res.taskExtendList.forEach((item) => {
+          if (res && res.taskExtendList) {
+            res.taskExtendList.forEach(async (item) => {
               if (item.fieldType == 'datepicker') {
                 let date = moment(item.fieldValue)
-                this.$set(this.formData, item.fieldName, date.isValid() ? date : '')
+                this.$set(this.formData, 'kz' + item.customItem1, date.isValid() ? date : '')
               } else {
-                this.$set(this.formData, item.fieldName, item.fieldValue)
+                if (item.fieldType == 'selectSingle' || item.fieldType == 'treeSingle' || item.fieldType == 'selectMultiple' || item.fieldType == 'treeMultiple') {
+                  let list = await this.$api['formGenerator.getSelectionDataDic']({ selectCode: item.selectCode })
+                  let taskList = item.fieldValue ? item.fieldValue.split(',') : []
+                  let result = []
+                  list.forEach(el => {
+                    taskList.forEach(item => {
+                      if (el.value == item) {
+                        result.push(el.label)
+                      }
+                    })
+                  })
+                  this.$set(this.formData, 'kz' + item.customItem1, result.join(','))
+                } else {
+                  this.$set(this.formData, 'kz' + item.customItem1, item.fieldValue)
+                }
               }
-              this.$set(this.extraIds, item.fieldName, item.id)
             })
           }
           const wholeDescribeId = this.formData.wholeDescribeId
           const columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: wholeDescribeId })
           this.extraList = columnSettings.filter((item) => item.attributeType === '1')
-          this.extraKeys = []
           this.extraList.forEach((extra) => {
-            this.extraKeys.push(extra.filedName)
             this.dataSource.push({
               labelText: extra.name,
               type: 'view',
-              fieldName: extra.filedName,
-              placeholder: `请输入${extra.name}`,
+              fieldName: 'kz' + extra.id,
               colLayout: 'doubleCol'
             })
           })
