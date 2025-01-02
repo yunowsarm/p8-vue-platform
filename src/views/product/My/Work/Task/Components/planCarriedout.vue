@@ -15,7 +15,8 @@
                        :thirdMenuParam="thirdMenuParam"
                        :visibleMsgDrawer="isVisibleCommunicationDrawer"
                        @visibleMsgClose="visibleMsgClose"></communication-msg>
-    <left-center-right-layout :percentRight="65"
+    <left-center-right-layout :percentLeft="25"
+                              :percentRight="65"
                               v-if="isRouterShow">
       <template #left>
         <div class="task-info-con">
