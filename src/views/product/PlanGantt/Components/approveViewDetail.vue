@@ -15,7 +15,7 @@
     >
       <template #dialog>
         <div id="couerDiv" style="background: #ffffff;height: calc(100% - 30px); z-index: 9999 !important;">
-          <impact-analysis :plan-info-id="planInfoId" :create-page="createPage" :read-only="readOnlyVisible" :change-id="approveContentView.changeId"></impact-analysis>
+          <impact-analysis :plan-info-id="planInfoId" :create-page="createPage" :read-only="readOnlyVisible" :change-id="approveContentView.changeId" :wholeDescribeId="wholeDescribeId"></impact-analysis>
         </div>
       </template>
     </common-dialog>
@@ -39,6 +39,9 @@ export default {
       type: String
     },
     createPage: {
+      type: String
+    },
+    wholeDescribeId: {
       type: String
     },
     approveContentView: {

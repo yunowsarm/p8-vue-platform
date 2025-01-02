@@ -3,6 +3,7 @@
     <div class="couerDivClass">
       <div class="top" :style="{ height: changeInfoHeight }">
         <form-render page-type="view"
+                       ref="formRender"
                        :data-view-id="businessKey"
                        :record="{ desformCode: desformCode }"></form-render>
       </div>
@@ -14,6 +15,7 @@
         :read-only-visible="readOnlyVisible"
         :approve-content-view="approveContentView"
         :is-view="isApproveViewDetailView"
+        :wholeDescribeId="wholeDescribeId"
         @close="closeApproveViewDetail"
       ></ApproveViewDetail>
     </div>
@@ -96,7 +98,8 @@ export default {
       ],
       otherParam: {
         id: ''
-      }
+      },
+      wholeDescribeId: ''
     }
   },
   watch: {
@@ -112,6 +115,8 @@ export default {
     selectChange() {
     },
     approveViewDetail() {
+      let that= this
+      that.wholeDescribeId = that.$refs.formRender.$children[0] && that.$refs.formRender.$children[0].modifyRes.primary ? that.$refs.formRender.$children[0].modifyRes.primary.table.WHOLE_DESCRIBE_ID : ''
       this.isApproveViewDetailView = true
     },
     closeApproveViewDetail() {

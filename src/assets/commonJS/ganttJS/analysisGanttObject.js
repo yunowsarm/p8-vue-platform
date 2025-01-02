@@ -2,6 +2,7 @@ import { GanttObject } from './ganttObject'
 import { ganttEditCheck } from './ganttLockUnLock'
 import { backfillChangeDatas, taskMoveChange } from './changeGantt'
 import store from '@/plugins/store'
+import { log } from 'vxe-table'
 
 /**
  * @Description 获取gantt对象，不存在则创建
@@ -840,68 +841,151 @@ export function getAnalysisGantt (ganttName, vueThis) {
       { name: 'realBeginDate', label: '实际开始时间', align: 'center', min_width: 100, resize: true },
       { name: 'realEndDate', label: '实际完成时间', align: 'center', min_width: 100, resize: true }
     ]
-    // const initColumns = ganttObject.config.columns
-    //
-    // if (vueThis.columnSettings.length > 0) {
-    //   const tempColumns = []
-    //   vueThis.columnSettings.forEach((item) => {
-    //     const initColumn = initColumns.filter((initItem) => initItem.name === item.filedName)
-    //     if (initColumn && initColumn.length > 0) {
-    //       // initColumn[0].hide = !(item.isEnable == '1')
-    //       // tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
-    //       if ((item.isEnable == '1')) {
-    //         tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
-    //       }
-    //     }
-    //     if (item.attributeType === '1') {
-    //       let editType = null
-    //       switch (item.filedType) {
-    //         case 'text':
-    //           editType = 'text'
-    //           break;
-    //         case 'number':
-    //           editType = 'number'
-    //           break;
-    //         case 'textarea':
-    //           editType = 'text'
-    //           break;
-    //         case 'datepicker':
-    //           editType = 'custom_date_editor'
-    //           break;
-    //         default:
-    //           break;
-    //       }
-    //       if (item.isEnable == '1') {
-    //         tempColumns.push({
-    //           name: 'kz' + item.id,
-    //           label: `${item.name}`,
-    //           align: 'center',
-    //           resize: true,
-    //           hide: item.isEnable == '0',
-    //           min_width: 120,
-    //           indexNo: item.indexNo
-    //         })
-    //       }
-    //     }
-    //   })
-    //   let oldFiled = ['oldName', 'oldForecastBeginDate', 'oldForecastEndDate']
-    //   initColumns.forEach((initItem, initIndex) => {
-    //     const settingItem = vueThis.columnSettings.filter((settingItem) => settingItem.filedName === initItem.name)
-    //     if (!settingItem || Object.keys(settingItem).length === 0) {
-    //       initItem.hide = false
-    //       if (tempColumns && tempColumns.length > initIndex) {
-    //         if (oldFiled.includes(initItem.name)) return
-    //         tempColumns.push(initItem)
-    //       } else {
-    //         tempColumns.push(initItem)
-    //       }
-    //     }
-    //   })
-    //   ganttObject.config.columns = tempColumns
-    // } else {
-    //   ganttObject.config.columns = initColumns
-    // }
-    //
+    const initColumns = ganttObject.config.columns
+    
+    if (vueThis.columnSettings.length > 0) {
+      const tempColumns = []
+      vueThis.columnSettings.forEach((item) => {
+        const initColumn = initColumns.filter((initItem) => initItem.name === item.filedName)
+        if (initColumn && initColumn.length > 0) {
+          // initColumn[0].hide = !(item.isEnable == '1')
+          // tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
+          if ((item.isEnable == '1')) {
+            tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
+          }
+        }
+        if (item.isEnable == '1') {
+          let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
+          if (typeList.includes(item.filedType)) {
+            tempColumns.push({
+              name: 'kz' + item.id,
+              label: `${item.name}`,
+              align: 'center',
+              resize: true,
+              hide: item.isEnable == '0',
+              min_width: 120,
+              template: function (task) {
+                let result = []
+                if (task['kz' + item.id]) {
+                  let list = vueThis.extraMap[item.selectCode]
+                  if (list && list.length) {
+                    let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
+                    list.forEach(el => {
+                      taskList.forEach(item => {
+                        if(el.value == item) {
+                          result.push(el.label)
+                        }
+                      })
+                    })
+                  }
+                }
+                return result.join(',')
+              }
+            })
+          }
+        }
+      })
+      let oldFiled = ['oldName', 'oldForecastBeginDate', 'oldForecastEndDate']
+      initColumns.forEach((initItem, initIndex) => {
+        const settingItem = vueThis.columnSettings.filter((settingItem) => settingItem.filedName === initItem.name)
+        if (!settingItem || Object.keys(settingItem).length === 0) {
+          initItem.hide = false
+          if (tempColumns && tempColumns.length > initIndex) {
+            if (oldFiled.includes(initItem.name)) return
+            tempColumns.push(initItem)
+          } else {
+            tempColumns.push(initItem)
+          }
+        }
+      })
+      let nameList = [
+        {
+          key: "managerStatus",
+          value: {
+            name: 'changeStatusName',
+            label: '变更状态',
+            align: 'center',
+            width: 70,
+            resize: true,
+            template: function (task) {
+              let html = ''
+              if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
+                let infoType = task.infoType
+                let weatherChange = task.weatherChange
+                if (vueThis.ganttName && vueThis.ganttName === 'changeGantt' && weatherChange && weatherChange === '1') {
+                  html = `<i class="gantt-tip p8 icon-change-item" style="color: #0d6bec;" title = "变更项"></i>`
+                }
+                if (infoType) {
+                  switch (infoType) {
+                    case 'create':
+                      html = `<i class="gantt-tip p8 icon-make-increase" style="color: #0d6bec;" title="调增"></i>`
+                      break
+                    case 'update':
+                      html = `<i class="gantt-tip p8 icon-content-adjustment" style="color: #0d6bec;" title = "内容调整"></i>`
+                      break
+                    case 'delete':
+                      html = `<i class="gantt-tip p8 icon-make-reductions" style="color: #0d6bec;" title = "调减"></i>`
+                      break
+                  }
+                }
+                html += task.changeStatusName || ''
+              }
+              return html
+            }
+          }
+        },
+        {
+          key: "name",
+          value: {
+            name: 'oldName',
+            label: '原任务名称',
+            align: 'left',
+            resize: true,
+            monitorLockLimit: true, // 标识锁定后不可操作的列声明
+            min_width: 350,
+            template: function (task) {
+              if (task.oldName) {
+                if (task.style) {
+                  return '<div style="color:' + task.style + '">' + task.oldName + '</div>'
+                } else {
+                  return task.oldName
+                }
+              }
+            }
+          }
+        },
+        {
+          key: "start_date",
+          value: {
+            name: 'oldForecastBeginDate',
+            label: '原计划开始时间',
+            align: 'center',
+            min_width: 100,
+            resize: true
+          }
+        },
+        {
+          key: "end_date",
+          value: {
+            name: 'oldForecastEndDate',
+            label: '原计划完成时间',
+            align: 'center',
+            min_width: 100,
+            resize: true
+          }
+        },
+      ];
+      nameList.map((el) => {
+        let index = tempColumns.findIndex((val) => val.name == el.key);
+        if (index > -1) {
+          tempColumns.splice(index + 1, 0, el.value);
+        }
+      });
+      ganttObject.config.columns = tempColumns
+    } else {
+      ganttObject.config.columns = initColumns
+    }
+    
   }
 
   // 创建资源载体
