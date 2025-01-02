@@ -129,7 +129,9 @@ export function calculateRemainingDays(task) {
   }
 
   // 计算日期差（以天为单位）
-  const calculateDateDifference = (start, end) => Math.floor(Math.abs(start.diff(end, 'days')))
+  const calculateDateDifference = (start, end) =>{
+    return Math.abs(start.startOf('day').diff(end.startOf('day'), 'days'))
+  }
 
   // 判断任务是否已完成或处于提交审批、审批完成状态
   if (status === '6070' || managerStatus === '6409' || (doneSign === 'submitApproval' && managerStatus === '6406')) {
@@ -159,7 +161,7 @@ export function calculateRemainingDays(task) {
     }
   } else {
     // 任务未完成，计算剩余天数
-    const nowDate = moment()
+    const nowDate = moment();
     const days = calculateDateDifference(nowDate, endDate)
     if (nowDate.startOf('day').isAfter(endDate.startOf('day'))) {
       // 超期

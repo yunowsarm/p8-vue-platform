@@ -226,4 +226,8 @@ export default {
 
 <style scoped lang="scss">
 // 此处添加组件的样式
+::v-deep img{
+  width: 100%;
+  height: auto;
+}
 </style>
