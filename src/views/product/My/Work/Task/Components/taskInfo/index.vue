@@ -80,18 +80,18 @@ export default {
         slotName: 'durationDay',
         colLayout: 'singleCol'
       },
-      {
-        type: 'view',
-        labelText: '绩效',
-        fieldName: 'achievements',
-        colLayout: 'singleCol'
-      },
-      {
-        type: 'blank',
-        labelText: '比例',
-        slotName: 'proportion',
-        colLayout: 'singleCol'
-      },
+      // {
+      //   type: 'view',
+      //   labelText: '绩效',
+      //   fieldName: 'achievements',
+      //   colLayout: 'singleCol'
+      // },
+      // {
+      //   type: 'blank',
+      //   labelText: '比例',
+      //   slotName: 'proportion',
+      //   colLayout: 'singleCol'
+      // },
       {
         type: 'blank',
         labelText: '完成度',

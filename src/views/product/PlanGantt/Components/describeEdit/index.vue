@@ -300,6 +300,8 @@ export default {
       oldFormData: {},
       extraKeys: [],
       ganttObject: null,
+      defaultList: ['createTime', 'createBy', 'changeCount', 'updateTime', 'updateBy'],
+      ganttColumns: []
       // falg: true
     }
   },
@@ -379,7 +381,7 @@ export default {
           defaultExpandAll: true,
           optionUrl: {
             api: 'formGenerator.getSelectionDataDic',
-            params: {selectCode: extra.selectCode},
+            params: { selectCode: extra.selectCode },
           },
           multiple: multiple,
           defaultExpandAll: true,
@@ -397,7 +399,7 @@ export default {
           colLayout: 'doubleCol',
           optionUrl: {
             api: 'formGenerator.getSelectionDataDic',
-            params: {selectCode: extra.selectCode},
+            params: { selectCode: extra.selectCode },
           }
         })
       } else {
@@ -412,6 +414,22 @@ export default {
       if (extra.filedType.includes('Multiple')) {
         this.extraMultipleKeys.push('kz' + extra.id)
       }
+    })
+    // 处理默认属性
+    this.ganttColumns = ganttObject.config.columns.filter((el) => el.hide !== true && this.defaultList.includes(el.name))
+    this.ganttColumns.forEach(el => {
+      const startIdx = el.label.indexOf('<div class="gantt_search">');
+      const endIdx = el.label.indexOf('</div>', startIdx);
+      let content = ''
+      if (startIdx !== -1 && endIdx !== -1) {
+        content = el.label.substring(startIdx + '<div class="gantt_search">'.length, endIdx);
+      }
+      this.dataSource.push({
+        labelText: content,
+        type: 'view',
+        fieldName: el.name,
+        colLayout: 'doubleCol'
+      })
     })
     if (this.$route.path === '/TaskChange') {
       this.getPlanInfo(task)
@@ -542,10 +560,16 @@ export default {
           if (el.filedType == 'selectMultiple' || el.filedType == 'treeMultiple') {
             that.formData['kz' + el.id] = task['kz' + el.id] ? task['kz' + el.id].split(',') : []
           } else {
-            that.formData['kz' + el.id ] = task['kz' + el.id]
+            that.formData['kz' + el.id] = task['kz' + el.id]
           }
         })
       }
+      this.ganttColumns = ganttObject.config.columns.filter((el) => el.hide !== true && this.defaultList.includes(el.name))
+      this.ganttColumns.forEach(el => {
+        if (task[el.name]) {
+          that.formData[el.name] = task[el.name]
+        }
+      })
       if (task.realBeginDate) that.formData.realBeginDate = moment(task.realBeginDate).format('YYYY-MM-DD')
       if (task.realEndDate) that.formData.realEndDate = moment(task.realEndDate).format('YYYY-MM-DD')
       this.updataDataSource(task.autoScheduling)
@@ -606,7 +630,7 @@ export default {
             }
             // 拓展字段
             if (that.extraKeys.includes(key)) {
-              if(this.extraMultipleKeys && this.extraMultipleKeys.length && this.extraMultipleKeys.includes(key)) {
+              if (this.extraMultipleKeys && this.extraMultipleKeys.length && this.extraMultipleKeys.includes(key)) {
                 task[key] = that.formData[key] ? that.formData[key].join(',') : ''
               } else {
                 task[key] = that.formData[key]

@@ -15,7 +15,7 @@ import { calculateRemainingDays } from '@/utils/common'
  * @author fukai
  * @date 2020/5/22 12:00
  */
-export function getChangeGantt(ganttName, vueThis) {
+export function getChangeGantt (ganttName, vueThis) {
   // 获取gantt对象
   const ganttObject = GanttObject.getGanttObject(ganttName)
   ganttObject.config.order_branch = false
@@ -36,7 +36,7 @@ export function getChangeGantt(ganttName, vueThis) {
   // 查询监听及定义
   GanttObject.setSearchConfig(ganttObject, vueThis)
   // 表头查询值绑定
-  Gantt.searchColumnsChange = function searchColumnsChange(name, value, searchType, eleInstance) {
+  Gantt.searchColumnsChange = function searchColumnsChange (name, value, searchType, eleInstance) {
     const customComp = ['select', 'date', 'input']
     if (customComp.indexOf(searchType) < 0) {
       document.getElementById(name + searchType).setAttribute('value', value)
@@ -61,7 +61,7 @@ export function getChangeGantt(ganttName, vueThis) {
     }
     ganttObject.render()
   }
-  Gantt.taskProgressDetails = function taskProgressDetails(taskId) {
+  Gantt.taskProgressDetails = function taskProgressDetails (taskId) {
     vueThis.showTaskProgressDialog(taskId)
   }
   ganttObject.attachEvent('onBeforeTaskDrag', function (id, mode, e) {
@@ -528,6 +528,41 @@ export function getChangeGantt(ganttName, vueThis) {
         const result = calculateRemainingDays(task)
         return result.text
       }
+    },
+    {
+      name: 'createTime',
+      label: '创建时间',
+      align: 'center',
+      min_width: 120,
+      resize: true
+    },
+    {
+      name: 'createBy',
+      label: '创建人',
+      align: 'center',
+      min_width: 120,
+      resize: true
+    },
+    {
+      name: 'changeCount',
+      label: '变更次数',
+      align: 'center',
+      min_width: 120,
+      resize: true
+    },
+    {
+      name: 'updateTime',
+      label: '更新时间',
+      align: 'center',
+      min_width: 120,
+      resize: true
+    },
+    {
+      name: 'updateBy',
+      label: '更新人',
+      align: 'center',
+      min_width: 120,
+      resize: true
     }
   ]
   // 创建资源载体
@@ -624,8 +659,8 @@ export function getChangeGantt(ganttName, vueThis) {
  * @param vueThis
  * @param ganttObject
  */
-function synchronizationColumns(vueThis, ganttObject) {
-  function checkEdit() {
+function synchronizationColumns (vueThis, ganttObject) {
+  function checkEdit () {
     if (vueThis.pageName === 'planMonitor') {
       return false
     } else {
@@ -723,7 +758,7 @@ function synchronizationColumns(vueThis, ganttObject) {
                     let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
                     list.forEach(el => {
                       taskList.forEach(item => {
-                        if(el.value == item) {
+                        if (el.value == item) {
                           result.push(el.label)
                         }
                       })
@@ -755,13 +790,15 @@ function synchronizationColumns(vueThis, ganttObject) {
       if (!settingItem || Object.keys(settingItem).length === 0) {
         initItem.hide = false
         if (tempColumns && tempColumns.length > initIndex) {
-          if (initItem.name == 'infoType') {
-            tempColumns.unshift(initItem)
-          } else {
+          // if (initItem.name == 'infoType') {
+          //   tempColumns.unshift(initItem)
+          // } else {
+          //   tempColumns.push(initItem)
+          // }
+        } else {
+          if (vueThis.columnSettings.filter((el) => el.filedName === initItem.name && el.isEnable !== '0')) {
             tempColumns.push(initItem)
           }
-        } else {
-          tempColumns.push(initItem)
         }
       }
     })
@@ -771,7 +808,7 @@ function synchronizationColumns(vueThis, ganttObject) {
   }
 }
 
-function searchColumnsDataInit(vueThis, ganttObject) {
+function searchColumnsDataInit (vueThis, ganttObject) {
   return ganttObject.attachEvent('onDataRender', function () {
     const initColumns = getGanttColumns(ganttObject, vueThis)
     initColumns.forEach((initItem, initIndex) => {
@@ -853,10 +890,10 @@ function searchColumnsDataInit(vueThis, ganttObject) {
             vueThis[inputKey] = new Inputor(`.${inputKey}`, {
               value: vueThis.searchForm[name] || '',
               placeholder: '请输入',
-              onChangeValue(value) {
+              onChangeValue (value) {
                 vueThis.searchForm[name] = value
               },
-              onChange(value) {
+              onChange (value) {
                 Gantt.searchColumnsChange(name, value, 'input')
               }
             })

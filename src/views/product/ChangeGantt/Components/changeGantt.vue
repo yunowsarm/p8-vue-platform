@@ -431,11 +431,11 @@ export default {
     },
     selectedTasks: function (newVal, oldVal) {
       this.renderKey = new Date().getTime()
-      if (newVal && newVal.length === 1 &&  newVal[0].status) {
+      if (newVal && newVal.length === 1 && newVal[0].status) {
         this.selectTaskId = newVal[0].id
-        if(createPage !== 'compile' && createPage !== 'planChange'){
+        if (createPage !== 'compile' && createPage !== 'planChange') {
           this.selectTaskName = newVal[0].name
-        }else{
+        } else {
           if (myGantt.getGlobalTaskIndex(newVal[0].id) !== 0) {
             this.selectTaskName = newVal[0].name
           }
@@ -728,18 +728,22 @@ export default {
               })
               initData = vueThis.taskList
             }
+            let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
             // 处理拓展字段已有的数据
             vueThis.extendMap = res.extendMap || {}
-            if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
-              initData.forEach((task) => {
+            initData.forEach(task => {
+              extraList.forEach(item => {
+                task['kz' + item.id] = ''
+              })
+              if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
                 if (vueThis.extendMap[task.id]) {
                   let extendData = vueThis.extendMap[task.id]
                   extendData.forEach((item) => {
-                    task['kz' + item.customItem1] = item.fieldValue
+                    task['kz' + item.customItem1] = item.fieldValue ? item.fieldValue : ''
                   })
                 }
-              })
-            }
+              }
+            })
             const datas = {
               tasks: initData,
               links: res.links
