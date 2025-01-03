@@ -1,4 +1,4 @@
-import { GanttObject, progressRefreshCheck } from './ganttObjectLocation'
+import { GanttObjectLocation, progressRefreshCheck } from './ganttObjectLocation'
 import { Gantt } from 'p8-dhtmlx-gantt'
 import api from '@/plugins/api'
 import moment from 'moment'
@@ -9,12 +9,13 @@ import { calculateRemainingDays } from '@/utils/common'
  * @author fukai
  * @date 2020/5/22 12:00
  */
-export function planGantt (ganttName, vueThisLocation) {
+export function planGanttLocation (ganttName, vueThisLocation) {
   // 获取gantt对象
-  const ganttObject = GanttObject.getGanttObject(ganttName)
-  GanttObject.endDateEditor(ganttObject)
-  GanttObject.customDateEditor(ganttObject)
-  GanttObject.customEndDateEditor(ganttObject)
+  console.log(ganttName, '===================ganttName');
+  const ganttObject = GanttObjectLocation.getGanttObject(ganttName)
+  GanttObjectLocation.endDateEditor(ganttObject)
+  GanttObjectLocation.customDateEditor(ganttObject)
+  GanttObjectLocation.customEndDateEditor(ganttObject)
   // 定义数据处理器
   const dp = ganttObject.createDataProcessor({
     task: {
@@ -39,13 +40,13 @@ export function planGantt (ganttName, vueThisLocation) {
                 return resolve({ tid: res.id, sid: data.id })
               } else {
                 ganttObject.undo()
-                GanttObject.showMessage(vueThisLocation, '前后置关系创建失败！', 'error')
+                GanttObjectLocation.showMessage(vueThisLocation, '前后置关系创建失败！', 'error')
                 return { action: 'error' }
               }
             })
             .catch(() => {
               ganttObject.undo()
-              GanttObject.showMessage(vueThisLocation, '前后置关系创建失败！', 'error')
+              GanttObjectLocation.showMessage(vueThisLocation, '前后置关系创建失败！', 'error')
               return { action: 'error' }
             })
           // vueThisLocation.initGantt()
@@ -60,13 +61,13 @@ export function planGantt (ganttName, vueThisLocation) {
                 return resolve({ tid: res })
               } else {
                 ganttObject.undo()
-                GanttObject.showMessage(vueThisLocation, '前后置关系删除失败！', 'error')
+                GanttObjectLocation.showMessage(vueThisLocation, '前后置关系删除失败！', 'error')
                 return { action: 'error' }
               }
             })
             .catch(() => {
               ganttObject.undo()
-              GanttObject.showMessage(vueThisLocation, '前后置关系删除失败！', 'error')
+              GanttObjectLocation.showMessage(vueThisLocation, '前后置关系删除失败！', 'error')
               return { action: 'error' }
             })
         })
@@ -99,18 +100,18 @@ export function planGantt (ganttName, vueThisLocation) {
     }
     ganttObject.render()
   }
-  GanttObject.treeDataEditor(ganttObject, vueThisLocation.treeDataEditorConfig, vueThisLocation.treeDataEditorConfig1)
+  GanttObjectLocation.treeDataEditor(ganttObject, vueThisLocation.treeDataEditorConfig, vueThisLocation.treeDataEditorConfig1)
   // 列定义
-  GanttObject.synchronizationColumns(vueThisLocation, ganttObject)
-  GanttObject.searchColumnsDataInit(vueThisLocation, ganttObject)
+  GanttObjectLocation.synchronizationColumns(vueThisLocation, ganttObject)
+  GanttObjectLocation.searchColumnsDataInit(vueThisLocation, ganttObject)
   // 任务更新前校验排程
   ganttObject.attachEvent('onBeforeTaskUpdate', function (id, newItem) {
     const task = ganttObject.getTask(id)
     if (task.parent && ganttObject.isTaskExists(task.parent) && newItem.end_date && newItem.start_date && ganttObject.getTask(task.parent).end_date && ganttObject.getTask(task.parent).start_date) {
-      const pStartDate = GanttObject.strToDate(GanttObject.dateToStr(ganttObject.getTask(task.parent).start_date, null, ganttObject), null, ganttObject)
-      const pEndDate = GanttObject.strToDate(GanttObject.dateToStr(ganttObject.getTask(task.parent).end_date, null, ganttObject), null, ganttObject)
-      const tStartDate = GanttObject.strToDate(GanttObject.dateToStr(newItem.start_date, null, ganttObject), null, ganttObject)
-      const tEndDate = GanttObject.strToDate(GanttObject.dateToStr(newItem.end_date, null, ganttObject), null, ganttObject)
+      const pStartDate = GanttObjectLocation.strToDate(GanttObjectLocation.dateToStr(ganttObject.getTask(task.parent).start_date, null, ganttObject), null, ganttObject)
+      const pEndDate = GanttObjectLocation.strToDate(GanttObjectLocation.dateToStr(ganttObject.getTask(task.parent).end_date, null, ganttObject), null, ganttObject)
+      const tStartDate = GanttObjectLocation.strToDate(GanttObjectLocation.dateToStr(newItem.start_date, null, ganttObject), null, ganttObject)
+      const tEndDate = GanttObjectLocation.strToDate(GanttObjectLocation.dateToStr(newItem.end_date, null, ganttObject), null, ganttObject)
       if (pEndDate < tEndDate || pStartDate > tStartDate) {
         newItem.weatherNormal = '1' // 排程不正确
       } else {
@@ -125,17 +126,17 @@ export function planGantt (ganttName, vueThisLocation) {
     return true
   })
   // 新增前后置链接校验
-  GanttObject.beforeLinkAddCheck(ganttObject)
+  GanttObjectLocation.beforeLinkAddCheck(ganttObject)
   // 修改前后置链接校验
-  GanttObject.beforeLinkUpdateCheck(ganttObject)
+  GanttObjectLocation.beforeLinkUpdateCheck(ganttObject)
   // 创建资源载体
-  ganttObject.$resourcesStore = GanttObject.createDatastore(ganttObject)
+  ganttObject.$resourcesStore = GanttObjectLocation.createDatastore(ganttObject)
   // 封装资源数据 名称[部门]-角色
-  GanttObject.resourceStoreOnParse(ganttObject)
+  GanttObjectLocation.resourceStoreOnParse(ganttObject)
   // 工作时间设置
-  // GanttObject.workTimeSetting(ganttObject, vueThisLocation)
+  // GanttObjectLocation.workTimeSetting(ganttObject, vueThisLocation)
   // 前后置删除提示文本定义
-  GanttObject.linkDescription(ganttObject)
+  GanttObjectLocation.linkDescription(ganttObject)
   // 受新建、删除任务限制、暂时注销
   // // 键盘事件绑定
   // ganttObject.plugins({
@@ -144,10 +145,10 @@ export function planGantt (ganttName, vueThisLocation) {
   // // 开启单元格编辑
   // ganttObject.config.keyboard_navigation_cells = true
   // 添加工具提示提示
-  // GanttObject.addTooltip(ganttObject, vueThisLocation)
+  // GanttObjectLocation.addTooltip(ganttObject, vueThisLocation)
   // 升降级
-  const actions = GanttObject.getActions(ganttObject)
-  ganttObject.performAction = GanttObject.performAction(actions, ganttObject)
+  const actions = GanttObjectLocation.getActions(ganttObject)
+  ganttObject.performAction = GanttObjectLocation.performAction(actions, ganttObject)
   let multipleState = false
   window.addEventListener('keydown', function (event) {
     if (event.keyCode === 16 || event.keyCode === 17) {
@@ -199,20 +200,20 @@ export function planGantt (ganttName, vueThisLocation) {
     }
   })
   // 查询监听及定义
-  GanttObject.setSearchConfig(ganttObject, vueThisLocation)
+  GanttObjectLocation.setSearchConfigLocation(ganttObject, vueThisLocation)
   // 控制列表grid是否动态显示关键路径
   if (vueThisLocation.dynamicDisplayCritical && vueThisLocation.createPage === 'compile' && !ganttObject.config.readonly) {
-    GanttObject.checkIsCriticalTask(ganttObject)
+    GanttObjectLocation.checkIsCriticalTask(ganttObject)
   }
   // 是否刷新进度校验
   if (progressRefreshCheck(vueThisLocation)) {
     // 更新任务时，进度更新
     // ganttObject.attachEvent('onAfterTaskUpdate', function (id) {
-    //   GanttObject.refreshProgress(ganttObject.getTask(id).parent, true, ganttObject, vueThisLocation)
+    //   GanttObjectLocation.refreshProgress(ganttObject.getTask(id).parent, true, ganttObject, vueThisLocation)
     // })
     // 移动任务时，更新进度
     ganttObject.attachEvent('onAfterTaskMove', function (id, parent, tindex) {
-      GanttObject.refreshProgress(ganttObject.getTask(id).parent, true, ganttObject, vueThisLocation)
+      GanttObjectLocation.refreshProgress(ganttObject.getTask(id).parent, true, ganttObject, vueThisLocation)
     })
   }
   ganttObject.attachEvent('onBeforeTaskDrag', function (id, mode, e) {
@@ -220,19 +221,19 @@ export function planGantt (ganttName, vueThisLocation) {
       id: id,
       colName: mode === 'resize' ? 'start_date' : ''
     }
-    return GanttObject.getTaskEditable(ganttObject, state, vueThisLocation)
+    return GanttObjectLocation.getTaskEditable(ganttObject, state, vueThisLocation)
   })
   // 在将操作添加到撤消堆栈之前触发
-  GanttObject.onBeforeUndoStack(ganttObject)
+  GanttObjectLocation.onBeforeUndoStack(ganttObject)
   // 在将操作添加到回退堆栈之前触发
-  GanttObject.onBeforeRedoStack(ganttObject)
+  GanttObjectLocation.onBeforeRedoStack(ganttObject)
   // 撤销前校验任务是否存在
-  GanttObject.onBeforeUndo(ganttObject)
+  GanttObjectLocation.onBeforeUndo(ganttObject)
   // 回退前校验任务是否存在
-  GanttObject.onBeforeRedo(ganttObject)
+  GanttObjectLocation.onBeforeRedo(ganttObject)
   // 监听资源选择后事件
-  GanttObject.setDpObject(ganttName, dp)
-  GanttObject.setGanttObject(ganttName, ganttObject)
+  GanttObjectLocation.setDpObject(ganttName, dp)
+  GanttObjectLocation.setGanttObject(ganttName, ganttObject)
 
   ganttObject.attachEvent('onParse', function () {
     ganttObject.eachTask(function (task) {
@@ -483,27 +484,27 @@ export function getGanttLocationColumns (ganttObject, vueThisLocation) {
       template: function (task) {
         if (ganttObject.isTaskExists(task.parent) && ganttObject.getTask(task.parent).start_date > task.start_date) {
           if (ganttObject.hasChild(task.id)) {
-            return '<span class="red-wave" title="计划开始时间早于父任务的计划开始时间" style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+            return '<span class="red-wave" title="计划开始时间早于父任务的计划开始时间" style="font-weight:bold;">' + GanttObjectLocation.dateToStr(task.start_date, null, ganttObject) + '</span>'
           } else {
-            return '<span class="red-wave" title="计划开始时间早于父任务的计划开始时间">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+            return '<span class="red-wave" title="计划开始时间早于父任务的计划开始时间">' + GanttObjectLocation.dateToStr(task.start_date, null, ganttObject) + '</span>'
           }
         }
         if (ganttObject.isTaskExists(task.parent) && ganttObject.date.add(ganttObject.getTask(task.parent).end_date, -1, 'day') < task.start_date) {
           if (ganttObject.hasChild(task.id)) {
-            return '<span class="red-wave" title="计划开始时间晚于父任务的计划完成时间" style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+            return '<span class="red-wave" title="计划开始时间晚于父任务的计划完成时间" style="font-weight:bold;">' + GanttObjectLocation.dateToStr(task.start_date, null, ganttObject) + '</span>'
           } else {
-            return '<span class="red-wave" title="计划开始时间晚于父任务的计划完成时间">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+            return '<span class="red-wave" title="计划开始时间晚于父任务的计划完成时间">' + GanttObjectLocation.dateToStr(task.start_date, null, ganttObject) + '</span>'
           }
         }
         if (task.start_date > ganttObject.date.add(task.end_date, -1, 'day')) {
           if (ganttObject.hasChild(task.id)) {
-            return '<span class="red-wave" title="计划开始时间晚于计划完成时间" style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+            return '<span class="red-wave" title="计划开始时间晚于计划完成时间" style="font-weight:bold;">' + GanttObjectLocation.dateToStr(task.start_date, null, ganttObject) + '</span>'
           } else {
-            return '<span class="red-wave" title="计划开始时间晚于计划完成时间">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+            return '<span class="red-wave" title="计划开始时间晚于计划完成时间">' + GanttObjectLocation.dateToStr(task.start_date, null, ganttObject) + '</span>'
           }
         }
         if (ganttObject.hasChild(task.id)) {
-          return '<span style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+          return '<span style="font-weight:bold;">' + GanttObjectLocation.dateToStr(task.start_date, null, ganttObject) + '</span>'
         } else {
           return task.start_date
         }
@@ -523,16 +524,16 @@ export function getGanttLocationColumns (ganttObject, vueThisLocation) {
             if (ganttObject.hasChild(task.id)) {
               return (
                 '<span class="red-wave" title="计划完成时间大于父任务的计划完成时间" style="font-weight:bold;">' +
-                GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) +
+                GanttObjectLocation.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) +
                 '</span>'
               )
             } else {
-              return '<span class="red-wave" title="计划完成时间大于父任务的计划完成时间" >' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
+              return '<span class="red-wave" title="计划完成时间大于父任务的计划完成时间" >' + GanttObjectLocation.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
             }
           }
         }
         if (ganttObject.hasChild(task.id)) {
-          return '<span style="font-weight:bold;">' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
+          return '<span style="font-weight:bold;">' + GanttObjectLocation.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
         } else {
           return ganttObject.date.add(task.end_date, -1, 'day')
         }
