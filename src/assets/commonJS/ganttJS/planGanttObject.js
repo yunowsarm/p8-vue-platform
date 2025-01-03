@@ -623,7 +623,7 @@ export function getGanttColumns (ganttObject, vueThis) {
           bool = true
           tips += '子任务存在绩效比例分配异常\n'
         }
-        if (bool) result = result + `<i class='p8 icon-tishi' title='${tips}' style='color: #e6a23c;'></i>`
+        if (bool) result = result + `<i class='p8 icon-tishi' title='${tips}' style='color: #e6a23c; float: left'></i>`
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
           let taskStyles = vueThis.taskStyles[task.id] || ''
           if (taskStyles && taskStyles.indexOf('text-decoration: line-through;') !== -1 && taskStyles.indexOf('text-decoration:underline;') !== -1) {
