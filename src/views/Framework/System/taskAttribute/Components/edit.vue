@@ -424,6 +424,7 @@ export default {
       if (row.filedType && row.filedType.length) {
         row.filedType = row.filedType[row.filedType.length - 1]
       }
+      row.selectCode = ''
       this.saveParamDataNew(data)
     },
     getSelectData () {
