@@ -1,6 +1,6 @@
 <!---->
 <template>
-  <div style="height: calc(100% - 50px); position: relative">
+  <div style="height: calc(100% - 60px);  position: relative; margin-left: 10px; margin-top: 10px;">
     <div ref="myGanttLocation"
          style="width: 100%; height: 100% !important"></div>
   </div>
@@ -80,8 +80,8 @@
 }
 </style>
 <script>
-import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObjectLocation'
-import { planGantt } from '@/assets/commonJS/ganttJS/planGanttObjectLocation'
+import { GanttObjectLocation } from '@/assets/commonJS/ganttJS/ganttObjectLocation'
+import { planGanttLocation } from '@/assets/commonJS/ganttJS/planGanttObjectLocation'
 import { mapGetters } from 'vuex'
 const Mycolumns = [
   {
@@ -263,35 +263,35 @@ export default {
       const vueThis = this
       // 清空原有数据
       this.selectedTasks = []
-      myGanttLocation = GanttObject.getGanttObject(vueThis.ganttName)
+      myGanttLocation = GanttObjectLocation.getGanttObject(vueThis.ganttName)
       if (myGanttLocation) {
-        GanttObject.setGanttObject(vueThis.ganttName, {})
+        GanttObjectLocation.setGanttObject(vueThis.ganttName, {})
         myGanttLocation.destructor()
       }
       // vuex存放
       vueThis.$store.dispatch('setVueThisLocation', vueThis)
       // 初始化对象
-      myGanttLocation = planGantt(vueThis.ganttName, vueThis)
+      myGanttLocation = planGanttLocation(vueThis.ganttName, vueThis)
       myGanttLocation.config.scale_height = 100
       // gantt视图切换
       if (this.viewType === 'resource') {
         myGanttLocation.config.readonly = true
-        myGanttLocation.ext.zoom.init(GanttObject.zoomConfig(myGanttLocation))
+        myGanttLocation.ext.zoom.init(GanttObjectLocation.zoomConfig(myGanttLocation))
         // 资源负载图列头定义
-        const resourceConfig = GanttObject.resourceConfig(myGanttLocation, vueThis)
+        const resourceConfig = GanttObjectLocation.resourceConfig(myGanttLocation, vueThis)
         // 定义资源模板
-        const resourceTemplates = GanttObject.resourceTemplates(myGanttLocation)
+        const resourceTemplates = GanttObjectLocation.resourceTemplates(myGanttLocation)
         // 重新布局
-        myGanttLocation.config.layout = GanttObject.layout3(resourceConfig, resourceTemplates)
+        myGanttLocation.config.layout = GanttObjectLocation.layout3(resourceConfig, resourceTemplates)
         // 样式绑定
-        myGanttLocation.templates.grid_row_class = GanttObject.grid_row_class(myGanttLocation)
-        myGanttLocation.templates.task_row_class = GanttObject.task_row_class(myGanttLocation)
-        myGanttLocation.templates.timeline_cell_class = GanttObject.timeline_cell_class(myGanttLocation)
-        myGanttLocation.templates.resource_cell_class = GanttObject.resource_cell_class()
-        myGanttLocation.templates.resource_cell_value = GanttObject.resource_cell_value()
+        myGanttLocation.templates.grid_row_class = GanttObjectLocation.grid_row_class(myGanttLocation)
+        myGanttLocation.templates.task_row_class = GanttObjectLocation.task_row_class(myGanttLocation)
+        myGanttLocation.templates.timeline_cell_class = GanttObjectLocation.timeline_cell_class(myGanttLocation)
+        myGanttLocation.templates.resource_cell_class = GanttObjectLocation.resource_cell_class()
+        myGanttLocation.templates.resource_cell_value = GanttObjectLocation.resource_cell_value()
       } else if (this.viewType === 'gantt') {
-        myGanttLocation.ext.zoom.init(GanttObject.zoomConfig(myGanttLocation))
-        myGanttLocation.config.layout = GanttObject.layout1
+        myGanttLocation.ext.zoom.init(GanttObjectLocation.zoomConfig(myGanttLocation))
+        myGanttLocation.config.layout = GanttObjectLocation.layout1
       } else {
         const planGanttConfig =
           vueThis.userSettingAll.PlanStyleClass && vueThis.userSettingAll.PlanStyleClass.length
@@ -304,18 +304,18 @@ export default {
           rootClass += rootClass ? ' ' + planGanttConfig.value.value : planGanttConfig.value.value
         }
         this.$refs.myGanttLocation.setAttribute('class', rootClass)
-        myGanttLocation.config.layout = GanttObject.layout2
+        myGanttLocation.config.layout = GanttObjectLocation.layout2
       }
       // 清空表头查询缓存
       vueThis.searchForm = {}
       // cell编辑器打开前逻辑设置
-      GanttObject.setOnBeforeEditStart(myGanttLocation, vueThis)
+      GanttObjectLocation.setOnBeforeEditStart(myGanttLocation, vueThis)
       // 设置保存时机
-      GanttObject.setCellSaveConfig(myGanttLocation)
+      GanttObjectLocation.setCellSaveConfig(myGanttLocation)
       // 编辑器保存前校验
-      GanttObject.checkoutBeforeCellSave(myGanttLocation, vueThis)
+      GanttObjectLocation.checkoutBeforeCellSave(myGanttLocation, vueThis)
       // 编辑器保存后逻辑
-      GanttObject.onSaveCellEven(myGanttLocation, vueThis)
+      GanttObjectLocation.onSaveCellEven(myGanttLocation, vueThis)
 
       // 渲染对象
       myGanttLocation.init(this.$refs.myGanttLocation)
