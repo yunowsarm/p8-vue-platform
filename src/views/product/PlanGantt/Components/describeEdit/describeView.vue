@@ -171,18 +171,18 @@ export default {
           },
           options: []
         },
-        {
-          type: 'view',
-          labelText: '绩效',
-          fieldName: 'achievements',
-          colLayout: 'doubleCol'
-        },
-        {
-          type: 'view',
-          labelText: '比例',
-          fieldName: 'proportion',
-          colLayout: 'doubleCol'
-        },
+        // {
+        //   type: 'view',
+        //   labelText: '绩效',
+        //   fieldName: 'achievements',
+        //   colLayout: 'doubleCol'
+        // },
+        // {
+        //   type: 'view',
+        //   labelText: '比例',
+        //   fieldName: 'proportion',
+        //   colLayout: 'doubleCol'
+        // },
         {
           labelText: '预计开始时间',
           type: 'view',
@@ -224,7 +224,9 @@ export default {
         activityInfoId: ''
       },
       describes: '',
-      oldFormData: {}
+      oldFormData: {},
+      defaultList: ['createTime', 'createBy', 'changeCount', 'updateTime', 'updateBy'],
+      ganttColumns: []
     }
   },
   watch: {
@@ -257,7 +259,7 @@ export default {
     this.$api['planGanttManager.getGanttExtendAttr']({ taskId: task.id }).then((res) => {
       if (res && res.taskExtendList) {
         this.extraIds = {}
-        res.taskExtendList.forEach( async (item) => {
+        res.taskExtendList.forEach(async (item) => {
           if (item.fieldType == 'datepicker') {
             let date = moment(item.fieldValue)
             this.$set(this.formData, 'kz' + item.customItem1, date.isValid() ? date : '')
@@ -294,6 +296,22 @@ export default {
         type: 'view',
         fieldName: 'kz' + extra.id,
         placeholder: `请输入${extra.name}`,
+        colLayout: 'doubleCol'
+      })
+    })
+    // 处理默认属性
+    this.ganttColumns = ganttObject.config.columns.filter((el) => el.hide !== true && this.defaultList.includes(el.name))
+    this.ganttColumns.forEach(el => {
+      const startIdx = el.label.indexOf('<div class="gantt_search">');
+      const endIdx = el.label.indexOf('</div>', startIdx);
+      let content = ''
+      if (startIdx !== -1 && endIdx !== -1) {
+        content = el.label.substring(startIdx + '<div class="gantt_search">'.length, endIdx);
+      }
+      this.dataSource.push({
+        labelText: content,
+        type: 'view',
+        fieldName: el.name,
         colLayout: 'doubleCol'
       })
     })
@@ -339,7 +357,12 @@ export default {
       that.formData.forecastEndDate = moment(task.forecastEndDate).format('YYYY-MM-DD')
       if (task.realBeginDate) that.formData.realBeginDate = moment(task.realBeginDate).format('YYYY-MM-DD')
       if (task.realEndDate) that.formData.realEndDate = moment(task.realEndDate).format('YYYY-MM-DD')
-
+      this.ganttColumns = ganttObject.config.columns.filter((el) => el.hide !== true && this.defaultList.includes(el.name))
+      this.ganttColumns.forEach(el => {
+        if (task[el.name]) {
+          that.formData[el.name] = task[el.name]
+        }
+      })
       // 获取描述信息
       that.$api['planGanttManager.getActivityInfoByTaskId']({ taskId: taskId, planChangeDetailId: task.planChangeDetailId })
         .then(function (res) {

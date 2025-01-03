@@ -1030,6 +1030,41 @@ export function getGanttColumns (ganttObject, vueThis) {
           return ''
         }
       }
+    },
+    {
+      name: 'createTime',
+      label: '创建时间',
+      align: 'center',
+      min_width: 120,
+      resize: true
+    },
+    {
+      name: 'createBy',
+      label: '创建人',
+      align: 'center',
+      min_width: 120,
+      resize: true
+    },
+    {
+      name: 'changeCount',
+      label: '变更次数',
+      align: 'center',
+      min_width: 120,
+      resize: true
+    },
+    {
+      name: 'updateTime',
+      label: '更新时间',
+      align: 'center',
+      min_width: 120,
+      resize: true
+    },
+    {
+      name: 'updateBy',
+      label: '更新人',
+      align: 'center',
+      min_width: 120,
+      resize: true
     }
   ]
 }
