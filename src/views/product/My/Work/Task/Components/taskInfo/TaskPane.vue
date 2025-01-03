@@ -130,7 +130,8 @@ export default {
       taskInfo: {},
       dialogHeight: document.documentElement.clientHeight - 243,
       taskId: '',
-      mointorData: []
+      mointorData: [],
+      defaultList: ['createTime', 'createBy', 'changeCount', 'updateTime', 'updateBy']
     }
   },
   mounted () {
@@ -141,7 +142,9 @@ export default {
         _this.rendered()
       })
     })
-    this.getExtend()
+    setTimeout(() => {
+      _this.getExtend()
+    }, 1000)
   },
   methods: {
     getDurationDays (data) {
@@ -219,8 +222,15 @@ export default {
           // 将字符串转换为数字并检查是否是有效数字
           this.formData[key] = !isNaN(parseFloat(value)) ? parseFloat(value).toFixed(2) : '0.00';
         } else {
-          this.formData[key] = res[key]
+          if (key.includes('kz')) {
+            return
+          } else {
+            this.formData[key] = res[key]
+          }
         }
+      })
+      this.defaultList.forEach(el => {
+        this.formData[el] = res[el]
       })
     },
     statusHandle () {
@@ -395,13 +405,15 @@ export default {
                 let list = await that.$api['formGenerator.getSelectionDataDic']({ selectCode: item.selectCode })
                 let taskList = item.fieldValue ? item.fieldValue.split(',') : []
                 let result = []
-                list.forEach(el => {
-                  taskList.forEach(item => {
-                    if (el.value == item) {
-                      result.push(el.label)
-                    }
+                if (list && list.length) {
+                  list.forEach(el => {
+                    taskList.forEach(item => {
+                      if (el.value == item) {
+                        result.push(el.label)
+                      }
+                    })
                   })
-                })
+                }
                 this.$set(this.formData, 'kz' + item.customItem1, result.join(','))
               } else {
                 this.$set(this.formData, 'kz' + item.customItem1, item.fieldValue)
@@ -417,6 +429,15 @@ export default {
           labelText: extra.name,
           type: 'view',
           fieldName: 'kz' + extra.id,
+          colLayout: 'single'
+        })
+      })
+      let ganttColumns = this.columnSettings.filter((el) => el.isEnable == '1' && this.defaultList.includes(el.filedName))
+      ganttColumns.forEach(el => {
+        this.dataSource.push({
+          labelText: el.name,
+          type: 'view',
+          fieldName: el.filedName,
           colLayout: 'single'
         })
       })
