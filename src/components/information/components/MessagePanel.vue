@@ -69,6 +69,7 @@
       @close="visibleMsgClose"
       :dialog-height="dialogHeight"
       title="任务详情"
+      :top='dialogTop'
     >
       <template #dialog>
         <task-info :task-id="taskId"></task-info>
@@ -103,10 +104,10 @@ export default {
       historyMsg: false,
       visibleFeedback: false,
       visibleTaskInfo: false,
-      dialogHeight: document.documentElement.clientHeight - 243,
-      dialogWidth: '50%',
+      dialogHeight: document.documentElement.clientHeight - 384,
       dialogConfig: {
-        'append-to-body': true
+        'append-to-body': true,
+        'top':'20vh'
       },
       selsectRows: [],
       historyParams: {},
@@ -489,5 +490,8 @@ export default {
   display: flex;
   align-items: flex-start;
   color: #606592;
+}
+::v-deep .el-dialog{
+  margin-top: 20vh !important;
 }
 </style>
