@@ -1,6 +1,6 @@
 <!---->
 <template>
-  <div style="height: 100%; position: relative">
+  <div style="height: 100%; position: relative" class="Gantt">
     <div id="actionMenu"
          v-show="menuVisible && menuData.length"
          ref="actionMenu"
@@ -1401,6 +1401,7 @@ export default {
           } else {
             vueThis.fullscreenLoading.close()
           }
+          vueThis.addEventClick()
         })
         .catch(function (error) {
           vueThis.fullscreenLoading.close()
@@ -1737,6 +1738,43 @@ export default {
         })
         that.extraMap = obj
         let listEnd = await Promise.all(list)
+      }
+    },
+    addEventClick() {
+      let GanttEle = document.querySelector('.gantt_grid_data')
+      if (GanttEle) {
+        GanttEle.addEventListener('click', function (e) {
+          let selectEles = document.querySelectorAll('.select-dropdown')
+          let csInputIcons = document.querySelectorAll('.cs-input-icon')
+          if (selectEles && selectEles.length) {
+            selectEles.forEach(el => {
+              el.style.opacity = '0'
+              el.style.transform = 'scale(1,0)'
+            })
+          }
+          if (csInputIcons && csInputIcons.length) {
+            csInputIcons.forEach(el => {
+              el.classList.remove('is-reverse');
+            })
+          }
+        })
+        this.clearClick = true
+      }
+    },
+    getSelectStatus () {
+      let opacity = '0'
+      let selectEles = document.querySelectorAll('.select-dropdown')
+      if (selectEles && selectEles.length) {
+        selectEles.forEach(el => {
+          if(el.style.opacity  == '1') {
+            opacity = el.style.opacity  
+          }
+        })
+      }
+      if (opacity == '1') {
+        return true
+      } else {
+        return false
       }
     }
   },

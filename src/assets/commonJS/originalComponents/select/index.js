@@ -1,7 +1,7 @@
 import DOMJS from '@/assets/commonJS/originalComponents/utils/dom'
 export default class Selector {
-  constructor (parentEle, options) {
-    this._init(parentEle, options)
+  constructor (parentEle, options, vueThis) {
+    this._init(parentEle, options, vueThis)
   }
 
   _init (parentEle, {
@@ -15,7 +15,7 @@ export default class Selector {
     placeholder = '请选择',
     multiple = false, // 是否多选
     onSelect // 列表选中
-  }) {
+  }, vueThis) {
     // 将传入的数据绑定到this上
     this.parentEle = document.querySelector(parentEle) || document.body
     this.customClassName = customClassName
@@ -31,10 +31,10 @@ export default class Selector {
     this.dropboxShow = false // 定义存储下拉框的显示隐藏状态
     this.defaultValue = multiple ? [] : '' // 定义村赤默认选中的值
     this.defaultText = this.placeholder
-    this._creatElement() // 初始化后执行创建元素方法
+    this._creatElement(vueThis) // 初始化后执行创建元素方法
   }
 
-  _creatElement () {
+  _creatElement (vueThis) {
     let wrapEle = DOMJS.createElement('div', `cs-select ${this.customClassName}`)
 
     // 根据传入的值获取选择框默认的值和内容
@@ -74,7 +74,7 @@ export default class Selector {
       selectIcon: icon
     }
     // 绑定事件处理函数
-    this._bind(this.parentEle)
+    this._bind(this.parentEle, vueThis)
   }
 
   _renderDefaultValue () {
@@ -206,10 +206,13 @@ export default class Selector {
   }
 
   // 绑定下拉框事件处理函数
-  _bind (parentEle) {
+  _bind (parentEle, vueThis) {
     let _this = this
     // 事件委托到最外层包裹元素进行绑定处理
     parentEle.addEventListener('click', function (e) {
+      if (vueThis.clearClick && !vueThis.getSelectStatus()) {
+        _this.dropboxShow = false
+      }
       const ele = e.target
       // 遍历当前点击的元素，如果是选中框内的元素执行
       if (_this._getTargetNode(ele, _this.ele.inputWrap)) {
