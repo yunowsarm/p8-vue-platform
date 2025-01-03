@@ -728,9 +728,9 @@ export default {
       excelImportData: [
         {
           attId: '1',
-          attFilePath: 'Excel导入模板.xlsx',
+          attFilePath: 'Excel导入模板.xls',
           attFileName: 'Excel导入模板',
-          path: 'Accessory.xlsx',
+          path: 'Accessory.xls',
           descriptionStr: '按照大纲级别，将文档中的任务导入为选中任务的下级任务。'
         }
       ],
