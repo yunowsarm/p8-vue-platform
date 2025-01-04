@@ -2662,6 +2662,7 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
             const parentTask = ganttObject.getTask(parentId)
             if (parentTask.autoScheduling === '1' && parentTask.type === 'task' && ganttObject.getGlobalTaskIndex(parentTask.id) !== 0) {
               parentTask.type = 'project'
+              parentTask.isLeaf = 1
               ganttObject.updateTask(parentId)
             }
             break
@@ -2669,14 +2670,17 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
             let parTask = ganttObject.getTask(parentId)
             if (parentId === item.parent) {
               parTask = ganttObject.getTask(parentId)
+              parTask.isLeaf = 1
               ganttObject.addTask(task, parentId, indexNo++)
             } else {
               parTask = ganttObject.getTask(item.parent)
+              parTask.isLeaf = 1
               ganttObject.addTask(task, item.parent, item.indexNo)
             }
             // 父任务排程类型为自动时，更新排程
             if (parTask.autoScheduling === '1' && parTask.type === 'task' && ganttObject.getGlobalTaskIndex(parTask.id) !== 0) {
               parTask.type = 'project'
+              parTask.isLeaf = 1
               ganttObject.updateTask(parTask.id)
             }
             break
@@ -2684,9 +2688,10 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
             ganttObject.addTask(task, parentId, indexNo++)
             break
         }
-        vueThis.relevancePlanVisible = false
-        vueThis.selectedId = item.id
-        vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
+        setTimeout(() => {
+          ganttObject.showTask(item.id)
+          ganttObject.selectTask(item.id )
+        }, 1000)
       })
     })
   })
