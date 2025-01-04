@@ -350,16 +350,19 @@ export default {
             })
             // 处理拓展字段已有的数据
             vueThis.extendMap = res.extendMap || {}
-            if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
-              initData.forEach(task => {
+            initData.forEach(task => {
+              extraList.forEach(item => {
+                task['kz' + item.id] = ''
+              })
+              if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
                 if (vueThis.extendMap[task.id]) {
                   let extendData = vueThis.extendMap[task.id]
-                  extendData.forEach(item => {
-                    task['kz' + item.customItem1] = item.fieldValue
+                  extendData.forEach((item) => {
+                    task['kz' + item.customItem1] = item.fieldValue ? item.fieldValue : ''
                   })
                 }
-              })
-            }
+              }
+            })
             const datas = {
               tasks: initData,
               links: res.links
@@ -437,7 +440,7 @@ export default {
       let obj = {}
       if (extraList && extraList.length) {
         let list = extraList.map(async el => {
-          let list = await that.$api['formGenerator.getSelectionDataDic']({selectCode: el.selectCode})
+          let list = await that.$api['formGenerator.getSelectionDataDic']({ selectCode: el.selectCode })
           obj[el.selectCode] = list
           return obj
         })
