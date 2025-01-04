@@ -401,6 +401,11 @@ export default {
             saveParmars.propertiesList.splice(index, 1)
           }
         }
+        saveParmars.attributeExtensionList.forEach(item => {
+          if (item.id == el.id) {
+            item.indexNo = el.indexNo
+          }
+        })
       })
       if (saveParmars.attributeExtensionList && saveParmars.attributeExtensionList.length) {
         let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
