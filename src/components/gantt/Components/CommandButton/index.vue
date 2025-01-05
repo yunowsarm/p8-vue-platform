@@ -233,7 +233,6 @@ export default {
     ...mapGetters(['vueThis', 'ganttButtonMode', 'buttonMsg'])
   },
   mounted () {
-    console.log('commandButton')
     let that = this
     if (this.cbutton && this.cbutton.id == 'full-screen') {
       this.$bus.$on('ganttOnFullscreen', function (state) {

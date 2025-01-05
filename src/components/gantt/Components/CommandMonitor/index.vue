@@ -513,7 +513,6 @@ export default {
               monitorPointsMap[item.monitorId] = item
             })
             if (mId.startsWith('delete-')) {
-              debugger
               // 取消标识按钮
               thisGantt.batchUpdate(function () {
                 tasks.forEach(function (task) {
