@@ -155,7 +155,6 @@ export default {
       // 标识逻辑
       return (btn, ganttName, tasks) => {
         if (tasks.length === 0) {
-          console.log(that.$store)
           that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '请选择任务' })
           return true
         }
