@@ -32,7 +32,8 @@ export default {
         width: '60%',
         height: '60%',
         transform: 'translate(-50%, -50%)',
-        'box-shadow': '0 0 15px rgba(0, 0, 0, 0.5)' /* 给最外层添加阴影 */
+        'box-shadow': '0 0 15px rgba(0, 0, 0, 0.5)', /* 给最外层添加阴影 */
+        'z-index': 99999
       },  // 弹框的初始位置和大小
       isDragging: false,  // 是否正在拖动
       isResizing: false,  // 是否正在缩放

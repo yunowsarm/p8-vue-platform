@@ -92,17 +92,7 @@ const CommandButtonBarDataSingleRow = [
         groupName: '样式',
         buttonConfigs: [
           {
-            buttonId: 'color-red',
-            size: 'mini',
-            position: ['top']
-          },
-          {
             buttonId: 'font-bold',
-            size: 'mini',
-            position: ['top']
-          },
-          {
-            buttonId: 'color-blue',
             size: 'mini',
             position: ['top']
           },
@@ -112,22 +102,32 @@ const CommandButtonBarDataSingleRow = [
             position: ['top']
           },
           {
-            buttonId: 'color-green',
-            size: 'mini',
-            position: ['top']
-          },
-          {
             buttonId: 'font-underline',
             size: 'mini',
             position: ['top']
           },
           {
-            buttonId: 'color-purple',
+            buttonId: 'font-lineThrough',
             size: 'mini',
             position: ['top']
           },
           {
-            buttonId: 'font-lineThrough',
+            buttonId: 'color-red',
+            size: 'mini',
+            position: ['top']
+          },
+          {
+            buttonId: 'color-blue',
+            size: 'mini',
+            position: ['top']
+          },
+          {
+            buttonId: 'color-green',
+            size: 'mini',
+            position: ['top']
+          },
+          {
+            buttonId: 'color-purple',
             size: 'mini',
             position: ['top']
           },

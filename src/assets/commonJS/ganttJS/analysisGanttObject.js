@@ -133,7 +133,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
             taskClassifyDatas.some((point, index) => {
               if (point.id === planType) {
                 let icon = point.icon
-               html += '<i class="' + icon + '" style="color:' + point.color + '" title="' + point.title + '"></i>';
+                html += '<i class="' + icon + '" style="color:' + point.color + '" title="' + point.title + '"></i>';
                 return true
               }
             })
@@ -359,48 +359,50 @@ export function getAnalysisGantt (ganttName, vueThis) {
         if (initColumn && initColumn.length > 0) {
           // initColumn[0].hide = !(item.isEnable == '1')
           // tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
-          if ((item.isEnable == '1')) {
+          if (item.isEnable == '1') {
             tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
           }
         }
-        if (item.isEnable == '1') {
-          let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
-          if (typeList.includes(item.filedType)) {
-            tempColumns.push({
-              name: 'kz' + item.id,
-              label: `${item.name}`,
-              align: 'center',
-              resize: true,
-              hide: item.isEnable == '0',
-              min_width: 120,
-              template: function (task) {
-                let result = []
-                if (task['kz' + item.id]) {
-                  let list = vueThis.extraMap[item.selectCode]
-                  if (list && list.length) {
-                    let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
-                    list.forEach(el => {
-                      taskList.forEach(item => {
-                        if(el.value == item) {
-                          result.push(el.label)
-                        }
+        if (item.attributeType === '1') {
+          if (item.isEnable == '1') {
+            let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
+            if (typeList.includes(item.filedType)) {
+              tempColumns.push({
+                name: 'kz' + item.id,
+                label: `${item.name}`,
+                align: 'center',
+                resize: true,
+                hide: item.isEnable == '0',
+                min_width: 120,
+                template: function (task) {
+                  let result = []
+                  if (task['kz' + item.id]) {
+                    let list = vueThis.extraMap[item.selectCode]
+                    if (list && list.length) {
+                      let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
+                      list.forEach((el) => {
+                        taskList.forEach((item) => {
+                          if (el.value == item) {
+                            result.push(el.label)
+                          }
+                        })
                       })
-                    })
+                    }
                   }
+                  return result.join(',')
                 }
-                return result.join(',')
-              }
-            })
-          } else {
-            tempColumns.push({
-              name: 'kz' + item.id,
-              label: `${item.name}`,
-              align: 'center',
-              resize: true,
-              hide: item.isEnable == '0',
-              min_width: 120,
-              indexNo: item.indexNo
-            })
+              })
+            } else {
+              tempColumns.push({
+                name: 'kz' + item.id,
+                label: `${item.name}`,
+                align: 'center',
+                resize: true,
+                hide: item.isEnable == '0',
+                min_width: 120,
+                indexNo: item.indexNo
+              })
+            }
           }
         }
       })
@@ -842,7 +844,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
       { name: 'realEndDate', label: '实际完成时间', align: 'center', min_width: 100, resize: true }
     ]
     const initColumns = ganttObject.config.columns
-    
+
     if (vueThis.columnSettings.length > 0) {
       const tempColumns = []
       vueThis.columnSettings.forEach((item) => {
@@ -850,38 +852,49 @@ export function getAnalysisGantt (ganttName, vueThis) {
         if (initColumn && initColumn.length > 0) {
           // initColumn[0].hide = !(item.isEnable == '1')
           // tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
-          if ((item.isEnable == '1')) {
+          if (item.isEnable == '1') {
             tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
           }
         }
-        if (item.isEnable == '1') {
-          let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
-          if (typeList.includes(item.filedType)) {
-            tempColumns.push({
-              name: 'kz' + item.id,
-              label: `${item.name}`,
-              align: 'center',
-              resize: true,
-              hide: item.isEnable == '0',
-              min_width: 120,
-              template: function (task) {
-                let result = []
-                if (task['kz' + item.id]) {
-                  let list = vueThis.extraMap[item.selectCode]
-                  if (list && list.length) {
-                    let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
-                    list.forEach(el => {
-                      taskList.forEach(item => {
-                        if(el.value == item) {
-                          result.push(el.label)
-                        }
+        if (item.attributeType === '1') {
+          if (item.isEnable == '1') {
+            let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
+            if (typeList.includes(item.filedType)) {
+              tempColumns.push({
+                name: 'kz' + item.id,
+                label: `${item.name}`,
+                align: 'center',
+                resize: true,
+                hide: item.isEnable == '0',
+                min_width: 120,
+                template: function (task) {
+                  let result = []
+                  if (task['kz' + item.id]) {
+                    let list = vueThis.extraMap[item.selectCode]
+                    if (list && list.length) {
+                      let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
+                      list.forEach((el) => {
+                        taskList.forEach((item) => {
+                          if (el.value == item) {
+                            result.push(el.label)
+                          }
+                        })
                       })
-                    })
+                    }
                   }
+                  return result.join(',')
                 }
-                return result.join(',')
-              }
-            })
+              })
+            } else {
+              tempColumns.push({
+                name: 'kz' + item.id,
+                label: `${item.name}`,
+                align: 'center',
+                resize: true,
+                hide: item.isEnable == '0',
+                min_width: 120
+              })
+            }
           }
         }
       })
@@ -985,7 +998,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
     } else {
       ganttObject.config.columns = initColumns
     }
-    
+
   }
 
   // 创建资源载体

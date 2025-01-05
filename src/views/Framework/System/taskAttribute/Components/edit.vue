@@ -320,7 +320,8 @@ export default {
             }
           ]
         },
-      ]
+      ],
+      oldAttributeExtensionList: []
     }
   },
   mounted () {
@@ -340,6 +341,7 @@ export default {
         this.formData.describe = res.describe
         this.settingsData = res.propertiesList
         this.extendData = res.attributeExtensionList
+        this.oldAttributeExtensionList = res.attributeExtensionList
       })
       this.$api['formGenerator.getSelectionData']({ selectCode: 'projectTypeTree1' }).then((res) => {
         let treeData = []
@@ -399,6 +401,11 @@ export default {
             saveParmars.propertiesList.splice(index, 1)
           }
         }
+        saveParmars.attributeExtensionList.forEach(item => {
+          if (item.id == el.id) {
+            item.indexNo = el.indexNo
+          }
+        })
       })
       if (saveParmars.attributeExtensionList && saveParmars.attributeExtensionList.length) {
         let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
@@ -406,6 +413,13 @@ export default {
           if (typeList.includes(el.filedType) && !el.selectCode) {
             flag = true
           }
+          this.oldAttributeExtensionList.forEach(item => {
+            if (item.id == el.id) {
+              if (item.filedType !== el.filedType || item.selectCode !== el.selectCode) {
+                el.isChange = true
+              }
+            }
+          })
         })
       }
       if (flag) {

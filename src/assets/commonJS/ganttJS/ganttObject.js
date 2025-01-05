@@ -3498,7 +3498,7 @@ GanttObject.searchColumnsDataInit = function (vueThis, ganttObject) {
                 // select change事件
                 Gantt.searchColumnsChange(name, value, 'select', vueThis[selectorKey])
               }
-            })
+            },vueThis)
             vueThis[selectorKey] = obj
           }
         }
