@@ -131,22 +131,23 @@ export default {
           if (this.formData.dutyName) {
             this.formData.realName = `${this.formData.dutyName}-${this.formData.dutyUnitDeptName}-${this.formData.roleName}`
           }
-          // 格式化比例数据
-          this.formData.proportion = this.formData.proportion ? Math.round(res.proportion) + '%' : ''
+          // 格式化比例和绩效（保留两位小数）
+          this.formData.proportion = this.formData.proportion ? (Math.round(res.proportion * 100) / 100) + '%' : 0;
+          this.formData.achievements = this.formData.achievements ? (Math.round(res.achievements * 100) / 100) : 0;
           // 获取扩展属性
           if (res && res.taskExtendList) {
-            res.taskExtendList.forEach(async (item) => {
-              if (item.fieldType == 'datepicker') {
+            for (const item of res.taskExtendList) {
+              if (item.fieldType === 'datepicker') {
                 let date = moment(item.fieldValue)
                 this.$set(this.formData, 'kz' + item.customItem1, date.isValid() ? date : '')
               } else {
-                if (item.fieldType == 'selectSingle' || item.fieldType == 'treeSingle' || item.fieldType == 'selectMultiple' || item.fieldType == 'treeMultiple') {
+                if (['selectSingle', 'treeSingle', 'selectMultiple', 'treeMultiple'].includes(item.fieldType)) {
                   let list = await this.$api['formGenerator.getSelectionDataDic']({ selectCode: item.selectCode })
                   let taskList = item.fieldValue ? item.fieldValue.split(',') : []
                   let result = []
                   list.forEach(el => {
                     taskList.forEach(item => {
-                      if (el.value == item) {
+                      if (el.value === item) {
                         result.push(el.label)
                       }
                     })
@@ -156,7 +157,7 @@ export default {
                   this.$set(this.formData, 'kz' + item.customItem1, item.fieldValue)
                 }
               }
-            })
+            }
           }
           const wholeDescribeId = this.formData.wholeDescribeId
           const columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: wholeDescribeId })

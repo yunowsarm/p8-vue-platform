@@ -2,6 +2,7 @@ import api from '@/plugins/api'
 
 const planGanttState = {
   state: {
+    buttonMsg: {},
     taskStyles: {}, // planGantt页面任务样式
     vueThis: {}, // planGantt页面this对象
     vueThisLocation: {}, // planGantt页面this对象
@@ -15,6 +16,11 @@ const planGanttState = {
     monitorBtnsByApi: []
   },
   mutations: {
+    SET_BUTTONMSG (state, data) {
+      if(state.buttonMsg[data.id] !== data.msg){
+        state.buttonMsg[data.id] = data.msg
+      }
+    },
     SET_TASK_STYLES(state, taskStyles) {
       state.taskStyles = taskStyles
     },

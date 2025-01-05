@@ -3,7 +3,7 @@
        :class="buttonDynamicClass">
     <!-- 层级按钮 -->
     <template v-if="cbutton.id === 'hierarchy-filter'">
-      <el-tooltip :content="isDisable(cbutton) ? cbutton.msg : cbutton.title"
+      <el-tooltip :content="isDisable(cbutton) ? getButtonMsg(cbutton) : cbutton.title"
                   placement="top"
                   :offset="-15"
                   :enterable="false"
@@ -23,7 +23,7 @@
       </el-tooltip>
     </template>
     <template v-else-if="cbutton.type && cbutton.type === 'select' && cbutton.userDefault && cbutton.userDefault === 'true'">
-      <el-tooltip :content="isDisable(cbutton) ? cbutton.msg : cbutton.title"
+      <el-tooltip :content="isDisable(cbutton) ? getButtonMsg(cbutton) : cbutton.title"
                   placement="top"
                   :offset="-15"
                   :enterable="false"
@@ -51,7 +51,7 @@
                     :enterable="false"
                     effect="dark"
                     transition=" ">
-          <div slot="content">{{ isDisable(cbutton) ? cbutton.msg : cbutton.title }}</div>
+          <div slot="content">{{ isDisable(cbutton) ? getButtonMsg(cbutton) : cbutton.title }}</div>
           <span @mouseleave="styleMouseleave(cbutton)"
                 ref="span">
             <el-button type="text"
@@ -80,7 +80,7 @@
                  :key="btnChild.title"
                  class="c_btn_dropmenu"
                  :class="{ isdisable: isDisable(btnChild) }">
-                 <el-tooltip :content="isDisable(btnChild) ? btnChild.msg : btnChild.title"
+                 <el-tooltip :content="isDisable(btnChild) ? getButtonMsg(btnChild) : btnChild.title"
                   placement="top"
                   :offset="-15"
                   :enterable="false"
@@ -230,9 +230,10 @@ export default {
         return styleObj
       }
     },
-    ...mapGetters(['vueThis', 'ganttButtonMode'])
+    ...mapGetters(['vueThis', 'ganttButtonMode', 'buttonMsg'])
   },
   mounted () {
+    console.log('commandButton')
     let that = this
     if (this.cbutton && this.cbutton.id == 'full-screen') {
       this.$bus.$on('ganttOnFullscreen', function (state) {
@@ -249,6 +250,14 @@ export default {
     }
   },
   methods: {
+    // 获取禁用提示语
+    getButtonMsg(btn){
+      if(this.buttonMsg[btn.id]){
+        return this.buttonMsg[btn.id]
+      }else{
+        return  btn.title
+      }
+    },
     // 处理按钮禁用逻辑
     checkButtonDisable (btn) {
       let result;
