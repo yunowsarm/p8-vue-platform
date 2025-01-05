@@ -201,7 +201,7 @@ export default {
         // 我的工作--我的任务-计划分解--计划分解页面不可标记责任令和月度计划。
         const createPage = that.vueThis.createPage || ''
         if (createPage === 'compile' && that.vueThis.planEditLock) {
-          btn.msg = '计划编辑锁定时不允许此操作'
+          that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '计划编辑锁定时不允许此操作' })
           return true
         }
         // 如果是任务分解，非当前人员创建的，只能编辑责任人
@@ -210,12 +210,12 @@ export default {
           return task.createUserId && task.createUserId != userId
         })
         if (window.createPage === 'decompose' && ele && ele.id) {
-          btn.msg = '计划分解页面，非当前人员创建不允许此操作'
+          that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '计划分解页面，非当前人员创建不允许此操作' })
           return true
         }
         if (createPage === 'decompose') {
           if (mIdArr.includes(btn.id)) {
-            btn.msg = '分解页面时此标识不允许操作'
+            that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '分解页面时此标识不允许操作' })
             return true
           }
         }
@@ -223,22 +223,22 @@ export default {
         const switchType = tasks[0] ? tasks[0].switchType : ''
         if (switchType) {
           if (switchType === '9010' || switchType === '9020') {
-            btn.msg = '任务为暂停或禁止状态时不允许此操作'
+            that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '任务为暂停或禁止状态时不允许此操作' })
             return true
           }
         }
         if (btn.id === '1030' || btn.id === 'format-1030') {
-          btn.msg = '此标识不允许操作'
+          that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '此标识不允许操作' })
           return true
         }
         if (ganttName === 'planResolveGantt' && (btn.id === '1012' || btn.id === 'format-1012' || btn.id === 'delete-1012')) {
-          btn.msg = '计划分解gantt，此标识不允许操作'
+          that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '计划分解gantt，此标识不允许操作' })
           return true
         }
         if (ganttName === 'planResolveGantt' && tasks.length > 0) {
           const thisGantt = that.ganttObjectData.getGanttObject(ganttName)
           if (!checkResolve(thisGantt, tasks[0])) {
-            btn.msg = '计划分解gantt，任务及其所有父任务的责任用户与当前用户不同'
+            that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '计划分解gantt，任务及其所有父任务的责任用户与当前用户不同' })
             return true
           }
         }
@@ -248,18 +248,18 @@ export default {
           const mId = btn.id
           // gantt为readonly=true时，不可选
           if (thisGantt && thisGantt.config.readonly) {
-            btn.msg = thisGantt.config.readonlyReason
+            that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: thisGantt.config.readonlyReason })
             return true
           }
           if (that.vueThis.readOnly) {
-            btn.msg = '当前为只读模式'
+            that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '当前为只读模式' })
             return true
           }
           const monitorLocks = Object.keys(that.vueThis.monitorLockMap)
           // 责任令新增加锁后，不可操作
           if (lockIUDMonitor(that.vueThis.monitorLockMap)) {
             if (mId === '1015') {
-              btn.msg = '责任令新增加锁后，不可操作'
+              that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '责任令新增加锁后，不可操作' })
               return true
             }
           }
@@ -267,7 +267,7 @@ export default {
           // 取消选中按钮
 
           if (mId === 'cancelSel' && JSON.stringify(button) === '{}') {
-            btn.msg = '目前没有格式刷'
+            that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '目前没有格式刷' })
             return true
           }
           // 计划标识加锁后，不可操作
@@ -275,12 +275,12 @@ export default {
             if (mId.indexOf('format') !== -1 || mId.indexOf('delete') !== -1) {
               const monId = mId.split('-')[1]
               if (lockMonitor(that.vueThis.monitorLockMap, monId)) {
-                btn.msg = '计划标识加锁后，不可操作'
+                that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '计划标识加锁后，不可操作' })
                 return true
               }
             } else {
               if (lockMonitor(that.vueThis.monitorLockMap, mId)) {
-                btn.msg = '计划标识加锁后，不可操作'
+                that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '计划标识加锁后，不可操作' })
                 return true
               }
             }
@@ -300,14 +300,14 @@ export default {
           if (tasks && tasks.length > 0) {
             // 包含根节点时，不可选
             if (checkContentRoot(ganttName, tasks)) {
-              btn.msg = '包含根节点时，不可选'
+              that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '包含根节点时，不可选' })
               return true
             }
             // 任务的readonly属性为true时，不可操作
             if (checkTaskReadonly(ganttName, tasks)) {
               // 已下发的任务readonly=true,单独判断责任令解锁标志
               if (!lockIUDMonitorCheck(that.vueThis.monitorLockMap)) {
-                btn.msg = '已下发的任务,不可操作'
+                that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '已下发的任务,不可操作' })
                 return true
               }
             }
@@ -321,7 +321,7 @@ export default {
                 }
               })
               if (result) {
-                btn.msg = '变更中已删除任务不可操作'
+                that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '变更中已删除任务不可操作' })
                 return result
               }
             }
@@ -337,7 +337,7 @@ export default {
                 }
               })
               if (result) {
-                btn.msg = '月度计划、责任令计划为“提交审批”、“已完成”时，不可再取消其标识。'
+                that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '月度计划、责任令计划为“提交审批”、“已完成”时，不可再取消其标识。' })
                 return result
               }
             }
@@ -359,7 +359,7 @@ export default {
               }
 
               if (result) {
-                btn.msg = msg
+                that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: msg })
                 return result
               }
             }
@@ -375,7 +375,7 @@ export default {
                 }
               })
               if (result) {
-                btn.msg = msg
+                that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: msg })
                 return result
               }
               // 有新增加锁标识 不能用责任令格式刷
@@ -384,7 +384,7 @@ export default {
                 result = true
               }
               if (result) {
-                btn.msg = msg
+                that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: msg })
                 return result
               }
             }
@@ -392,21 +392,18 @@ export default {
               // 取消标识按钮
               const taskCheck = tasks.some((t, i) => {
                 if (t.monitorPoints && t.monitorPoints.indexOf(mId.substring(7)) !== -1) {
-                  console.log('000')
                   // 院所标识同时存在不可取消所标识
                   if (mId.substring(7) === '1030' && t.monitorPoints.indexOf('1022') !== -1) {
-                    console.log(111)
-                    btn.msg = '院所标识同时存在不可取消所标识'
+                    that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '院所标识同时存在不可取消所标识' })
                     return false
                   } else {
-                    console.log(222)
                     let flag = true
                     // 如果有删除标识加锁 责任令不能取消
                     if (monitorLocks && monitorLocks.length > 0) {
                       monitorLocks.forEach((monitorLock) => {
                         if (monitorLock === '101503' && that.vueThis.monitorLockMap[monitorLock] === '1') {
                           if (mId.substring(7) === '1015') {
-                            btn.msg = '有删除标识加锁 责任令不能取消'
+                            that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '有删除标识加锁 责任令不能取消' })
                             flag = false
                           }
                         }
@@ -416,8 +413,8 @@ export default {
                   }
                 }
               })
-              if(!taskCheck){
-                btn.msg = '任务不包含此标识'
+              if (!taskCheck) {
+                that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '任务不包含此标识' })
               }
               return !taskCheck
             } else {
@@ -429,7 +426,7 @@ export default {
               const taskCheck = tasks.some((t) => {
                 // 如果选中行已包含当前标识，不可选
                 if (t.monitorPoints && t.monitorPoints.includes(mId)) {
-                  btn.msg = '已包含当前标识'
+                  that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '已包含当前标识' })
                   return true // 发现当前标识，停止检查
                 }
 
@@ -438,11 +435,11 @@ export default {
                   if (t.monitorPoints) {
                     const missingDependency = relyIds.some((rId) => !t.monitorPoints.includes(rId))
                     if (missingDependency) {
-                      btn.msg = '没有依赖标识，不可选'
+                      that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '没有依赖标识，不可选' })
                       return true // 存在缺失依赖标识，停止检查
                     }
                   } else {
-                    btn.msg = '没有依赖标识，不可选'
+                    that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '没有依赖标识，不可选' })
                     return true // 当前任务没有标识，停止检查
                   }
                 }
@@ -452,7 +449,7 @@ export default {
                   if (t.monitorPoints) {
                     const hasMutex = mutexIds.some((rId) => t.monitorPoints.includes(rId))
                     if (hasMutex) {
-                      btn.msg = '存在互斥标识，不可选'
+                      that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '存在互斥标识，不可选' })
                       return true // 存在互斥标识，停止检查
                     }
                   }
@@ -462,14 +459,14 @@ export default {
               return taskCheck
             }
           } else {
-            btn.msg = '请选择任务'
+            that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '请选择任务' })
             // 格式刷
             if (mId.startsWith('format-') && JSON.stringify(button) !== '{}') {
-              btn.msg = '没有此标识'
+              that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '没有此标识' })
               return true
             }
             if (!mId.startsWith('format-') && JSON.stringify(button) === '{}') {
-              btn.msg = '请选择任务'
+              that.$store.commit('SET_BUTTONMSG', { id: btn.id, msg: '请选择任务' })
               return true
             }
           }
