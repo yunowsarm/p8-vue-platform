@@ -433,13 +433,14 @@ export default {
       this.renderKey = new Date().getTime()
       if (newVal && newVal.length === 1 && newVal[0].status) {
         this.selectTaskId = newVal[0].id
-        if (createPage !== 'compile' && createPage !== 'planChange') {
-          this.selectTaskName = newVal[0].name
-        } else {
-          if (myGantt.getGlobalTaskIndex(newVal[0].id) !== 0) {
-            this.selectTaskName = newVal[0].name
-          }
-        }
+        this.selectTaskName = newVal[0].name
+        // if (createPage !== 'compile' && createPage !== 'planChange') {
+        //   this.selectTaskName = newVal[0].name
+        // } else {
+        //   if (myGantt.getGlobalTaskIndex(newVal[0].id) !== 0) {
+        //     this.selectTaskName = newVal[0].name
+        //   }
+        // }
         // if (this.planAttributeDrawer) {
         // this.showDetail()
         // }
