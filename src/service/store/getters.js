@@ -42,6 +42,7 @@ const getters = {
   vueThisLocation: (state) => state.planGanttState.vueThisLocation,
   classifyBtnsByApi: (state) => state.planGanttState.classifyBtnsByApi,
   monitorBtnsByApi: (state) => state.planGanttState.monitorBtnsByApi,
+  buttonMsg: (state) => state.planGanttState.buttonMsg,
   // 计划状态、任务状态限制gantt页面操作策略
   planStatusLockMap: (state) => state.planGanttState.planStatusLockMap,
   taskStatusLockMap: (state) => state.planGanttState.taskStatusLockMap,

@@ -2,6 +2,18 @@ import { GanttObject } from './ganttObject'
 import { checkContentRoot, checkReadOnly, checkTaskReadonly, batchOwnerCheck } from './commandButtonData'
 import store from '@/plugins/store'
 
+
+const statusName = {
+  '6401': '已创建',
+  '6402': '协同编制',
+  '6403': '待下发',
+  '6404': '已下发',
+  '6405': '变更中',
+  '6406': '提交审批',
+  '6407': '审批驳回',
+  '6408': '审批撤销',
+  '6409': '审批完成',
+}
 // 公共函数，用于返回禁用状态和提示信息
 function createDisableResponse (message) {
   return {
@@ -10,21 +22,28 @@ function createDisableResponse (message) {
   };
 }
 
-/**
- * 6401: '已创建'
-   6402: '协同编制'
-   6403: '待下发'
-   6404: '已下发'
-   6405: '变更中'
-   6406: '提交审批'
-   6407: '审批驳回'
-   6408: '审批撤销'
-   6409: '审批完成
- * @param btn
- * @param ganttName
- * @param tasks
- * @returns {boolean, string}  返回true表示禁用，返回false表示不禁用，返回字符串表示禁用并提示
- */
+// 判断是否能新建下级
+export function isNewChild (ganttName, tasks) {
+  const task = tasks[0]
+  if (['6405','6406', '6409'].includes(task.managerStatus)) {
+    return createDisableResponse(`任务为${statusName[task.managerStatus]},不可操作`);
+  } else {
+    return false;
+  }
+}
+
+// 判断是否能新建同级
+export function isNewSibling (ganttName, tasks) {
+  const ganttObject = GanttObject.getGanttObject(ganttName)
+  // 获取父任务
+  const parentId = tasks[0].parent
+  const parentTask = ganttObject.getTask(parentId)
+  if (['6405', '6409'].includes(parentTask.managerStatus)) {
+    return createDisableResponse(`父任务为${statusName[parentTask.managerStatus]},不可操作`);
+  } else {
+    return false;
+  }
+}
 
 // 判断是否为变更gantt图
 export function isChangeGantt (ganttName, tasks) {
@@ -114,20 +133,8 @@ export function isReadOnly (ganttName, tasks) {
     return false;
   }
 }
-// 判断选中任务是非只读并且任务非根节点
-export function isReadOnlyAndNoRoot (ganttName, tasks) {
-  const vueThis = store.getters.vueThis
-  const checkReadOnlyRes = checkReadOnly(ganttName)
-  if (checkReadOnlyRes) {
-    return createDisableResponse(checkReadOnlyRes.readonlyReason);
-  }
-  const checkTaskReadonlyRes = checkTaskReadonly(ganttName, tasks)
-  if (checkTaskReadonlyRes) {
-    return createDisableResponse(checkTaskReadonlyRes.readonlyReason)
-  }
-  if (vueThis.readOnly) {
-    return createDisableResponse('当前页面为只读状态,不允许此操作');
-  }
+// 判断选中任务是非根节点
+export function isNoRoot (ganttName, tasks) {
   if (checkContentRoot(ganttName, tasks)) {
     return createDisableResponse('包含根节点时不允许此操作');
   }
@@ -506,7 +513,7 @@ function isDisableFunCheck (ganttName, tasks, checkType) {
   return result;
 }
 
-// 发布后可控任务可新建下级，同级
+// 发布后可控任务可新建下级
 function checkEditTask (ganttName, tasks) {
   const vueThis = store.getters.vueThis
   if (ganttName) {
