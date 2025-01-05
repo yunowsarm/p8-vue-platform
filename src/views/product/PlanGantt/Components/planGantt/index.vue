@@ -821,7 +821,7 @@ export default {
       // this.comResTypesListData()
       if (newVal && newVal.length === 1 && newVal[0].status) {
         this.selectTaskId = newVal[0].id
-        this.selectTaskName = newVal[0].name
+          this.selectTaskName = newVal[0].name
       } else {
         this.selectTaskId = ''
         this.selectTaskName = ''
@@ -1638,6 +1638,7 @@ export default {
         .catch((err) => {
           console.error('user.setting.save--err', err)
         })
+      this.initGantt(this.planInfoId, this.viewType)
       this.rightMenuConfigVisible = false
     },
     //  创建版本
