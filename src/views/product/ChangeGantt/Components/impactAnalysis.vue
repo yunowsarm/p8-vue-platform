@@ -348,6 +348,7 @@ export default {
               }
               return obj
             })
+            let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
             // 处理拓展字段已有的数据
             vueThis.extendMap = res.extendMap || {}
             initData.forEach(task => {
