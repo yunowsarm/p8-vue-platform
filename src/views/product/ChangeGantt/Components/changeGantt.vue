@@ -992,6 +992,9 @@ export default {
 
       const mergedArray = []
       if (sendDatas && Array.isArray(sendDatas)) {
+        sendDatas.forEach(el => {
+          el.parent = el.parentId
+        })
         mergedArray.push(...sendDatas)
       }
       if (this.newSendDatas && Array.isArray(this.newSendDatas)) {
