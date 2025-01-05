@@ -790,7 +790,7 @@ export default {
               Object.keys(res.changeTaskExtList).forEach((item) => {
                 let task = myGantt.getTask(item)
                 res.changeTaskExtList[item].forEach((ref) => {
-                  task['kz' + ref.customItem1] = ref.fieldValue
+                  task['kz' + ref.customItem1] = ref.fieldValue ? ref.fieldValue : ''
 
                   const obj = {
                     projectTasksId: item,
