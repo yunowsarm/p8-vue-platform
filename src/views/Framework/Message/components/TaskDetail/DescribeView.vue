@@ -61,20 +61,20 @@ export default {
           fieldName: 'realName',
           colLayout: 'doubleCol'
         },
-        // 绩效字段配置
-        {
-          type: 'view',
-          labelText: '绩效',
-          fieldName: 'achievements',
-          colLayout: 'doubleCol'
-        },
-        // 比例字段配置
-        {
-          type: 'view',
-          labelText: '比例',
-          fieldName: 'proportion',
-          colLayout: 'doubleCol'
-        },
+        // // 绩效字段配置
+        // {
+        //   type: 'view',
+        //   labelText: '绩效',
+        //   fieldName: 'achievements',
+        //   colLayout: 'doubleCol'
+        // },
+        // // 比例字段配置
+        // {
+        //   type: 'view',
+        //   labelText: '比例',
+        //   fieldName: 'proportion',
+        //   colLayout: 'doubleCol'
+        // },
         // 预计开始时间字段配置
         {
           labelText: '预计开始时间',
@@ -161,6 +161,7 @@ export default {
           }
           const wholeDescribeId = this.formData.wholeDescribeId
           const columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: wholeDescribeId })
+          debugger
           this.extraList = columnSettings.filter((item) => item.attributeType === '1')
           this.extraList.forEach((extra) => {
             this.dataSource.push({
