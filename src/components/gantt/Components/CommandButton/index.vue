@@ -283,7 +283,11 @@ export default {
         this.updateButtonMsg(btn);
         return true;
       }
-
+      // 审批页面不可操作（详细信息按钮除外）
+      if(this.ganttName === 'analysisGantt' && btn.id !== 'detail-info'){
+        this.$store.dispatch('setButtonMsg', { id: btn.id, msg: '审批页面不可操作' })
+        return true
+      }
       // 执行btn的isDisableFun逻辑
       if (!btn.isDisableFun(btn, this.ganttName, this.currentRecords)) {
         result = this.isDisableFun(btn, this.ganttName, this.currentRecords);
@@ -309,9 +313,9 @@ export default {
         };
       if (this.currentRecords.length > 0) {
         const status = this.currentRecords[0].managerStatus;
-        this.$set(btn, 'msg', `任务为${statusName[status]}，不可操作`);
+        this.$store.dispatch('setButtonMsg', { id: btn.id, msg: `任务为${statusName[status]}，不可操作` })
       } else {
-        this.$set(btn, 'msg', '请选择任务');
+        this.$store.dispatch('setButtonMsg', { id: btn.id, msg: '请选择任务' })
       }
     },
     btnClick (btn) {

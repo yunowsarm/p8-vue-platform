@@ -232,6 +232,7 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
+        () => isReadOnly(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
         () => isSingleTask(ganttName, tasks),
         () => isCompile(ganttName, tasks),
@@ -261,6 +262,7 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
+            () => isReadOnly(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
             () => isSingleTask(ganttName, tasks),
             () => isCompile(ganttName, tasks),
@@ -289,6 +291,7 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
+            () => isReadOnly(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
             () => isSingleTask(ganttName, tasks),
             () => isCompile(ganttName, tasks),
@@ -317,6 +320,7 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
+            () => isReadOnly(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
             () => isSingleTask(ganttName, tasks),
             () => isCompile(ganttName, tasks),
@@ -345,6 +349,7 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
+            () => isReadOnly(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
             () => isSingleTask(ganttName, tasks),
             () => isCompile(ganttName, tasks),
