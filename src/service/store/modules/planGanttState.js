@@ -17,9 +17,7 @@ const planGanttState = {
   },
   mutations: {
     SET_BUTTONMSG (state, data) {
-      if(state.buttonMsg[data.id] !== data.msg){
-        state.buttonMsg[data.id] = data.msg
-      }
+      state.buttonMsg[data.id] = data.msg
     },
     SET_TASK_STYLES(state, taskStyles) {
       state.taskStyles = taskStyles
@@ -49,6 +47,9 @@ const planGanttState = {
     }
   },
   actions: {
+    setButtonMsg({ commit }, data) {
+      commit('SET_BUTTONMSG', data)
+    },
     setTaskStyles({ commit }, taskStyles) {
       commit('SET_TASK_STYLES', taskStyles)
     },
