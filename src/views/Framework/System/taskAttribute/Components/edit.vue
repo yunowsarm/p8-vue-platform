@@ -413,13 +413,15 @@ export default {
           if (typeList.includes(el.filedType) && !el.selectCode) {
             flag = true
           }
-          this.oldAttributeExtensionList.forEach(item => {
-            if (item.id == el.id) {
-              if (item.filedType !== el.filedType || item.selectCode !== el.selectCode) {
-                el.isChange = true
+          if (this.oldAttributeExtensionList && this.oldAttributeExtensionList.length) {
+            this.oldAttributeExtensionList.forEach((item) => {
+              if (item.id == el.id) {
+                if (item.filedType !== el.filedType || item.selectCode !== el.selectCode) {
+                  el.isChange = true
+                }
               }
-            }
-          })
+            })
+          }
         })
       }
       if (flag) {

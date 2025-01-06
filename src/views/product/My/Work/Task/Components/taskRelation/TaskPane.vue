@@ -262,7 +262,8 @@ export default {
           })
         }
       })
-      this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.getPlanInfo().wholeDescribeId })
+      let wholeDescribeId = this.getPlanInfo().wholeDescribeId ? this.getPlanInfo().wholeDescribeId : this.getPlanInfo().WHOLEDESCRIBEID
+      this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: wholeDescribeId })
       this.extraList = this.columnSettings.filter((item) => item.attributeType === '1')
       this.extraList.forEach((extra) => {
         this.dataSource.push({
