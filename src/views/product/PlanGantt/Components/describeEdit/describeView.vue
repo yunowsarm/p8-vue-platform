@@ -510,6 +510,33 @@ export default {
         .catch(function (error) {
           console.error('error' + error)
         })
+      this.$api['planGanttManager.getGanttExtendAttr']({ taskId: task.id }).then((res) => {
+        if (res && res.taskExtendList) {
+          this.extraIds = {}
+          res.taskExtendList.forEach(async (item) => {
+            if (item.fieldType == 'datepicker') {
+              let date = moment(item.fieldValue)
+              this.$set(this.formData, 'kz' + item.customItem1, date.isValid() ? date : '')
+            } else {
+              if (item.fieldType == 'selectSingle' || item.fieldType == 'treeSingle' || item.fieldType == 'selectMultiple' || item.fieldType == 'treeMultiple') {
+                let list = await that.$api['formGenerator.getSelectionDataDic']({ selectCode: item.selectCode })
+                let taskList = item.fieldValue ? item.fieldValue.split(',') : []
+                let result = []
+                list.forEach(el => {
+                  taskList.forEach(item => {
+                    if (el.value == item) {
+                      result.push(el.label)
+                    }
+                  })
+                })
+                this.$set(this.formData, 'kz' + item.customItem1, result.join(','))
+              } else {
+                this.$set(this.formData, 'kz' + item.customItem1, item.fieldValue)
+              }
+            }
+          })
+        }
+      })
     },
     saved (res) { },
     customValidate (saveParams) { }
