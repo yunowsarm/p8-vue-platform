@@ -789,11 +789,9 @@ function synchronizationColumns (vueThis, ganttObject) {
       if (!settingItem || Object.keys(settingItem).length === 0) {
         initItem.hide = false
         if (tempColumns && tempColumns.length > initIndex) {
-          // if (initItem.name == 'infoType') {
-          //   tempColumns.unshift(initItem)
-          // } else {
-          //   tempColumns.push(initItem)
-          // }
+          if (initItem.name == 'infoType') {
+            tempColumns.unshift(initItem)
+          }
         } else {
           if (vueThis.columnSettings.filter((el) => el.filedName === initItem.name && el.isEnable !== '0')) {
             tempColumns.push(initItem)
