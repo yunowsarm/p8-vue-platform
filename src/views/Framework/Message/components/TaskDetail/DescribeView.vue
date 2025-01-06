@@ -61,20 +61,20 @@ export default {
           fieldName: 'realName',
           colLayout: 'doubleCol'
         },
-        // 绩效字段配置
-        {
-          type: 'view',
-          labelText: '绩效',
-          fieldName: 'achievements',
-          colLayout: 'doubleCol'
-        },
-        // 比例字段配置
-        {
-          type: 'view',
-          labelText: '比例',
-          fieldName: 'proportion',
-          colLayout: 'doubleCol'
-        },
+        // // 绩效字段配置
+        // {
+        //   type: 'view',
+        //   labelText: '绩效',
+        //   fieldName: 'achievements',
+        //   colLayout: 'doubleCol'
+        // },
+        // // 比例字段配置
+        // {
+        //   type: 'view',
+        //   labelText: '比例',
+        //   fieldName: 'proportion',
+        //   colLayout: 'doubleCol'
+        // },
         // 预计开始时间字段配置
         {
           labelText: '预计开始时间',

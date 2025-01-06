@@ -4,7 +4,7 @@
     <el-button style="margin: 10px;"
                type="primary"
                :disabled="disabled"
-               @click="relevanceClick">关联</el-button>
+               @click="relevanceClick">关联/取消</el-button>
     <vxe-table ref="xDemandTable"
                :comp="comp"
                style="height: 92%;"
