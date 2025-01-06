@@ -161,7 +161,6 @@ export default {
           }
           const wholeDescribeId = this.formData.wholeDescribeId
           const columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: wholeDescribeId })
-          debugger
           this.extraList = columnSettings.filter((item) => item.attributeType === '1')
           this.extraList.forEach((extra) => {
             this.dataSource.push({
