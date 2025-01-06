@@ -407,6 +407,7 @@ export default {
           }
         })
       })
+      let changeList = []
       if (saveParmars.attributeExtensionList && saveParmars.attributeExtensionList.length) {
         let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
         saveParmars.attributeExtensionList.forEach(el => {
@@ -418,6 +419,7 @@ export default {
               if (item.id == el.id) {
                 if (item.filedType !== el.filedType || item.selectCode !== el.selectCode) {
                   el.isChange = true
+                  changeList.push(el.id)
                 }
               }
             })
@@ -428,13 +430,33 @@ export default {
         that.$message({ type: 'warning', message: '请选择数据来源！' })
         return
       }
-      this.$api['taskAttribute.saveData'](saveParmars).then((res) => {
-        if (res) {
-          that.$emit('saveSuccess')
-        } else {
-          that.$message({ type: 'warning', message: '每类项目类型只可有一条设置记录!' })
-        }
-      })
+      console.log(changeList, '====changeList');
+      if (changeList && changeList.length) {
+        this.$api['taskAttribute.checkAttributeChange']({ attributeExtensionList: saveParmars.attributeExtensionList }).then((res) => {
+          if (res) {
+            this.$confirm('已有任务绑定类型或数据来源，谁否确认修改？', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              save()
+            })
+          } else {
+            save()
+          }
+        })
+      } else {
+        save()
+      }
+      function save () {
+        that.$api['taskAttribute.saveData'](saveParmars).then((res) => {
+          if (res) {
+            that.$emit('saveSuccess')
+          } else {
+            that.$message({ type: 'warning', message: '每类项目类型只可有一条设置记录!' })
+          }
+        })
+      }
     },
     handleChange (row, data) {
       if (row.filedType && row.filedType.length) {
