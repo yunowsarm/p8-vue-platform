@@ -1149,6 +1149,13 @@ export const repositoryApi = {
       path: '/taskType/delete',
       mockPath: '/taskType/delete',
       desc: '任务属性设置-删除接口'
+    },
+    {
+      name: 'checkAttributeChange',
+      method: 'POST',
+      path: '/taskType/checkAttributeChange',
+      mockPath: '/taskType/checkAttributeChange',
+      desc: '任务属性设置-校验扩展属性列'
     }
   ],
   // 知识库管理
