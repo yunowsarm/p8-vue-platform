@@ -728,9 +728,9 @@ export default {
       excelImportData: [
         {
           attId: '1',
-          attFilePath: 'Excel导入模板.xlsx',
+          attFilePath: 'Excel导入模板.xls',
           attFileName: 'Excel导入模板',
-          path: 'Accessory.xlsx',
+          path: 'Accessory.xls',
           descriptionStr: '按照大纲级别，将文档中的任务导入为选中任务的下级任务。'
         }
       ],
@@ -821,7 +821,7 @@ export default {
       // this.comResTypesListData()
       if (newVal && newVal.length === 1 && newVal[0].status) {
         this.selectTaskId = newVal[0].id
-        this.selectTaskName = newVal[0].name
+          this.selectTaskName = newVal[0].name
       } else {
         this.selectTaskId = ''
         this.selectTaskName = ''
@@ -1638,6 +1638,7 @@ export default {
         .catch((err) => {
           console.error('user.setting.save--err', err)
         })
+      this.initGantt(this.planInfoId, this.viewType)
       this.rightMenuConfigVisible = false
     },
     //  创建版本
