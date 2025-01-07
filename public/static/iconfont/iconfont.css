@@ -1,8 +1,8 @@
 @font-face {
   font-family: "p8"; /* Project id 4084759 */
-  src: url('iconfont.woff2?t=1735542971828') format('woff2'),
-       url('iconfont.woff?t=1735542971828') format('woff'),
-       url('iconfont.ttf?t=1735542971828') format('truetype');
+  src: url('iconfont.woff2?t=1736220316592') format('woff2'),
+       url('iconfont.woff?t=1736220316592') format('woff'),
+       url('iconfont.ttf?t=1736220316592') format('truetype');
 }
 
 .p8 {
@@ -13,8 +13,60 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-wangpan:before {
+  content: "\e7d8";
+}
+
 .icon-shanchuxian:before {
-  content: "\e975";
+  content: "\e7d7";
+}
+
+.icon-kehujiaoliu:before {
+  content: "\e7d6";
+}
+
+.icon-jishuzhichi1:before {
+  content: "\e97c";
+}
+
+.icon-meitixinxi1:before {
+  content: "\e97e";
+}
+
+.icon-canguanzhanlan1:before {
+  content: "\e97a";
+}
+
+.icon-shichangtiaoyan1:before {
+  content: "\e979";
+}
+
+.icon-goutonglihui1:before {
+  content: "\e980";
+}
+
+.icon-xiaoshouzhoubao1:before {
+  content: "\e981";
+}
+
+.icon-waibuhuiyi1:before {
+  content: "\e977";
+}
+
+.icon-jishujiaoliu1:before {
+  content: "\e97b";
+}
+
+.icon-toubiaozongjie1:before {
+  content: "\e97d";
+}
+
+.icon-waipinzhuanjia1:before {
+  content: "\e97f";
+}
+
+.icon-gaocengbaifang1:before {
+  content: "\e976";
 }
 
 .icon-fuxuan:before {
@@ -1627,54 +1679,6 @@
 
 .icon-B:before {
   content: "\e7e2";
-}
-
-.icon-xiaoshouzhoubao:before {
-  content: "\e7db";
-}
-
-.icon-waibuhuiyi:before {
-  content: "\e7dc";
-}
-
-.icon-canguanzhanlan:before {
-  content: "\e7dd";
-}
-
-.icon-kehujiaoliu:before {
-  content: "\e7de";
-}
-
-.icon-shichangtiaoyan:before {
-  content: "\e7df";
-}
-
-.icon-jishuzhichi:before {
-  content: "\e7e0";
-}
-
-.icon-meitixinxi:before {
-  content: "\e7e1";
-}
-
-.icon-gaocengbaifang:before {
-  content: "\e7d6";
-}
-
-.icon-waipinzhuanjia:before {
-  content: "\e7d7";
-}
-
-.icon-jishujiaoliu:before {
-  content: "\e7d8";
-}
-
-.icon-toubiaozongjie:before {
-  content: "\e7d9";
-}
-
-.icon-goutonglihui:before {
-  content: "\e7da";
 }
 
 .icon-a-xuqiu1:before {
