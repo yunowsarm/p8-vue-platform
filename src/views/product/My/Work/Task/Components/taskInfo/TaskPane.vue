@@ -147,8 +147,8 @@ export default {
     }, 1000)
   },
   methods: {
-    getDurationDays(data){
-      if(!data.status) return ''
+    getDurationDays (data) {
+      if (!data.status) return ''
       return calculateRemainingDays(data).text
     },
     demandClick () {
@@ -472,7 +472,6 @@ $red-color: #f80012;
 
 // 超期/剩余天数 样式
 ::v-deep .duration-days {
-
   .duration-overdue,
   .duration-over,
   .duration-advance {

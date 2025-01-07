@@ -112,9 +112,9 @@ export default {
     }, 1000)
   },
   methods: {
-    getDurationDays(data){
-      if(!data.status) return ''
-      return  calculateRemainingDays(data).text
+    getDurationDays (data) {
+      if (!data.status) return ''
+      return calculateRemainingDays(data).text
     },
     rendered () {
       if (this.api) {

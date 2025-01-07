@@ -192,7 +192,7 @@ export default {
   created () {
     if (this.chargeIds.includes(this.searchParams.msgCatalog)) {
       this.messageListApi = 'PersonalProcessApproval.historyApprovalList'
-      this.mergeParams.page.orders = [{ column: 't.start_Time', asc: false }]
+      this.mergeParams.page.orders = [{ column: 't.end_time_', asc: false }]
     }
   },
   mounted () {
@@ -218,7 +218,7 @@ export default {
 
 
       if (this.chargeIds.includes(this.searchParams.msgCatalog)) {
-        this.mergeParams.page.orders = [{ column: 't.start_Time', asc: false }]
+        this.mergeParams.page.orders = [{ column: 't.end_time_', asc: false }]
       } else {
         this.mergeParams.page.orders = [{ column: 'pinst.start_time_', asc: false }]
       }
@@ -226,7 +226,7 @@ export default {
     },
     descendingOrderTime () { // 时间降序
       if (this.chargeIds.includes(this.searchParams.msgCatalog)) {
-        this.mergeParams.page.orders = [{ column: 't.start_Time', asc: true }]
+        this.mergeParams.page.orders = [{ column: 't.end_time_', asc: true }]
       } else {
         this.mergeParams.page.orders = [{ column: 'pinst.start_time_', asc: true }]
       }
