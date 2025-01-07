@@ -1,12 +1,13 @@
 <template>
   <div style="height: 100%">
+    <div class="couerDivClass"
+         id="couerDiv">
     <P8SplitPane split="vertical"
                  @resize="paneSizeChange"
                  :defaultPercent="defaultPercent"
                  :minPercent="0">
       <template #paneL>
-        <div class="couerDivClass"
-             id="couerDiv">
+
           <div class="top"
                :style="{ height: commandButtonBarHeight }">
             <command-button-bar ref="commandBottonBar"
@@ -41,7 +42,7 @@
                         @save-success="detailDrawerClosed"
                         :task-status="taskStatus"></plan-gantt>
           </div>
-        </div>
+
       </template>
       <template #paneR
                 v-if='notRoot'>
@@ -97,6 +98,7 @@
       <template #drawer>
       </template>
     </CommonDrawer> -->
+    </div>
   </div>
 </template>
 
