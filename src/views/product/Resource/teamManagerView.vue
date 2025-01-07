@@ -1,12 +1,11 @@
 <!--整体管理-团队管理-->
 <template>
-  <div style="height: calc(100% - 50px);background-color: #f3f5f885">
-    <div style="height: 100%"
-         class="team-manager-wrap">
+  <div style="height: calc(100% - 50px); background-color: #f3f5f885">
+    <div style="height: 100%" class="team-manager-wrap">
       <div class="custom_content_wrap">
         <div class="left_content">
           <div class="teamFile">
-            <span style="font-size:14px; padding:0 10px;font-weight:bold;">人员任命文件：</span>
+            <span style="font-size: 14px; padding: 0 10px; font-weight: bold">人员任命文件：</span>
             <!-- <common-upload  ref="commonupload"
                         v-if="!uploadView"
                         :num="'1'"
@@ -14,36 +13,26 @@
                         @upload="(file) => {uploadFile(file);}"
                         @remove="(file) => {removedFile(file);}">
         </common-upload> -->
-            <common-file-view :uploadFiles="namedFiles"
-                              filesLayout="row"></common-file-view>
+            <common-file-view :uploadFiles="namedFiles" filesLayout="row"></common-file-view>
           </div>
           <div class="left_bottom_content">
             <div class="role-con">
               <!-- <el-button type="primary" plain style="margin: 5px;width:90%;"  @click="addRolesHandle"><i class="el-icon-plus" type="primary"></i>新建角色类别</el-button> -->
               <vue-perfect-scrollbar class="role-list">
-                <li style="padding-left: 26px;color:#323232;font-size:12px;"
-                    :class="[{ 'active': rolesSelectedIndex === -1 }]"
-                    @click="refreshHandle">所有人员<span>({{getTotalCount}})</span></li>
-                <li :class="[
-                  { 'active': index === rolesSelectedIndex },
-                  { 'fixed-role': item.roleType === 'fixed' },
-                ]"
-                    v-for="(item, index) in rolesData"
-                    :key="item.id"
-                    @click="rolesHandle(item, index)">
-                  <el-tooltip v-if="item.roleType === 'fixed'"
-                              :content="item.klTeamsRoleClassifyName"
-                              placement="bottom">
-                    <i class="el-icon-s-custom"
-                       style="cursor:pointer;"></i>
+                <li style="padding-left: 26px; color: #323232; font-size: 12px" :class="[{ active: rolesSelectedIndex === -1 }]" @click="refreshHandle">
+                  所有人员<span>({{ getTotalCount }})</span>
+                </li>
+                <li
+                  :class="[{ active: index === rolesSelectedIndex }, { 'fixed-role': item.roleType === 'fixed' }]"
+                  v-for="(item, index) in rolesData"
+                  :key="item.id"
+                  @click="rolesHandle(item, index)"
+                >
+                  <el-tooltip v-if="item.roleType === 'fixed'" :content="item.klTeamsRoleClassifyName" placement="bottom">
+                    <i class="el-icon-s-custom" style="cursor: pointer"></i>
                   </el-tooltip>
-                  <i v-else
-                     class="el-icon-s-custom"></i>
-                  <edit-input :textValue="item.name || item.roleName"
-                              :record="item"
-                              :iconShow="false"
-                              @delete="deleteRolesHandle(index, item)"
-                              @onChange="changeRolesHandle"></edit-input>
+                  <i v-else class="el-icon-s-custom"></i>
+                  <edit-input :textValue="item.name || item.roleName" :record="item" :iconShow="false" @delete="deleteRolesHandle(index, item)" @onChange="changeRolesHandle"></edit-input>
                   <!-- {{getProjectTeamRoleUsersNum(item)}}
                 <span style="color: red"
                       v-if="isShowRole(item)">*</span> -->
@@ -62,44 +51,36 @@
                            @click="refreshHandle">查看全部成员
                 </el-button> -->
                 </div>
-                <search-form-list style="top: 2px"
-                                  ref="search"
-                                  :resetAfterToSearch="false"
-                                  :dataSource="dataSource"
-                                  @search="search"
-                                  @re-set="reset"></search-form-list>
+                <search-form-list style="top: 2px" ref="search" :resetAfterToSearch="false" :dataSource="dataSource" @search="search" @re-set="reset"></search-form-list>
               </div>
               <div class="common-table-member">
-                <common-table ref="table"
-                              class="tableMember"
-                              style="height: 100%"
-                              :columns="columns"
-                              :key="dateTime"
-                              :params="params"
-                              :pagination="false"
-                              @cell-click='cellDblclick'
-                              :tableSetting="false"
-                              :noApiTableData="tableData">
+                <common-table
+                  ref="table"
+                  class="tableMember"
+                  style="height: 100%"
+                  :columns="columns"
+                  :key="dateTime"
+                  :params="params"
+                  :pagination="false"
+                  @cell-click="cellDblclick"
+                  :tableSetting="false"
+                  :noApiTableData="tableData"
+                >
                   <template #taskCount="{ scope }">
-                    <!-- <div class="task-count">
-                    <template v-if="scope.row.taskCount">
-                      <el-link @click.stop="opentDialogUserTask(scope.row)">{{
-                      scope.row.taskCount
-                      }}<i class="el-icon-view el-icon--right"></i></el-link>
-                    </template>
-                    <template v-else> -->
-                    <span>{{ scope.row.taskCount }}</span>
-                    <!-- </template>
-                  </div> -->
+                    <div class="task-count">
+                      <template v-if="scope.row.taskCount">
+                        <el-link @click.stop="opentDialogUserTask(scope.row)">{{ scope.row.taskCount }}<i class="el-icon-view el-icon--right"></i></el-link>
+                      </template>
+                      <template v-else>
+                        <span>{{ scope.row.taskCount }}</span>
+                      </template>
+                    </div>
                   </template>
                   <template #userState="{ scope }">
                     <div class="userState">
-                      <span v-if="scope.row.entryTime && !scope.row.departureTime"
-                            class="state-working">团队中</span>
-                      <span v-if="scope.row.entryTime && scope.row.departureTime && scope.row.waitout"
-                            class="state-waitout">待退出</span>
-                      <span v-if="scope.row.entryTime && scope.row.departureTime && !scope.row.waitout"
-                            class="state-out">已退出</span>
+                      <span v-if="scope.row.entryTime && !scope.row.departureTime" class="state-working">团队中</span>
+                      <span v-if="scope.row.entryTime && scope.row.departureTime && scope.row.waitout" class="state-waitout">待退出</span>
+                      <span v-if="scope.row.entryTime && scope.row.departureTime && !scope.row.waitout" class="state-out">已退出</span>
                     </div>
                   </template>
                   <template #operation="{ scope }">
@@ -125,23 +106,25 @@
                     </template> -->
                     </template>
                   </template>
-                  <template #flagHeader="{scope}">
-                    <span>{{ scope.column.label }}</span><i class="el-icon-edit"></i>
+                  <template #flagHeader="{ scope }">
+                    <span>{{ scope.column.label }}</span
+                    ><i class="el-icon-edit"></i>
                   </template>
-                  <template #flag="{scope}">
-                    <el-select v-model="scope.row.flag"
-                               size="mini"
-                               :key="scope.row.id"
-                               v-if="scope.row.editRow && group_add_member"
-                               placeholder="请选择"
-                               style="width: 90%;"
-                               @blur="()=>{quoteUpdate(scope.row)}">
-                      <el-option v-for="item in options"
-                                 :key="item.value"
-                                 @click.native="handleSetFlagName(scope.row,item)"
-                                 :label="item.label"
-                                 :value="item.value">
-                      </el-option>
+                  <template #flag="{ scope }">
+                    <el-select
+                      v-model="scope.row.flag"
+                      size="mini"
+                      :key="scope.row.id"
+                      v-if="scope.row.editRow && group_add_member"
+                      placeholder="请选择"
+                      style="width: 90%"
+                      @blur="
+                        () => {
+                          quoteUpdate(scope.row)
+                        }
+                      "
+                    >
+                      <el-option v-for="item in options" :key="item.value" @click.native="handleSetFlagName(scope.row, item)" :label="item.label" :value="item.value"> </el-option>
                     </el-select>
                     <span v-else>{{ scope.row.flagName }}</span>
                   </template>
@@ -164,42 +147,40 @@
                         @click="loadStandardTeamHandle">载入标准团队
             </el-button>
         </p> -->
-        <p class="submit"
-           v-if="group_add_role || group_add_member">
+        <p class="submit" v-if="group_add_role || group_add_member">
           <!-- <el-button size="mini"
                      type="primary"
                      :loading="submitLoading"
                      @click="submit">保 存
           </el-button> -->
-          <el-button size="mini"
-                     :loading="submitLoading"
-                     @click="$emit('close')">关 闭
-          </el-button>
+          <el-button size="mini" :loading="submitLoading" @click="$emit('close')">关 闭 </el-button>
         </p>
       </div>
-      <dialog-tabs-roles :visibleDialogRoles="visibleDialogRoles"
-                         :activeName="dialogRolesActiveName"
-                         :id="id"
-                         @exp-roles-close="expRolesCloseHandle"
-                         @standard-roles-close="standardRolesCloseHandle"></dialog-tabs-roles>
-      <dialog-select-member v-if="visibleDialogMember"
-                            :visibleDislogMember="visibleDialogMember"
-                            :loginFlag="loginFlag"
-                            :selectRoleId="selectRoleId"
-                            :loadingUserDeptStrategy="loadingUserDeptStrategy"
-                            @member-close="memberCloseHandle"
-                            :existsData="tableData"></dialog-select-member>
-      <dialog-user-task :dialogVisible="visibleDialogUserTask"
-                        :tableParams="userTaskTableParams"
-                        :customSearch="true"
-                        @close="closeDialogUserTask()"
-                        @custom-search="userTaskCustomSearch"
-                        @custom-reset="userTaskCustomReset">
+      <dialog-tabs-roles
+        :visibleDialogRoles="visibleDialogRoles"
+        :activeName="dialogRolesActiveName"
+        :id="id"
+        @exp-roles-close="expRolesCloseHandle"
+        @standard-roles-close="standardRolesCloseHandle"
+      ></dialog-tabs-roles>
+      <dialog-select-member
+        v-if="visibleDialogMember"
+        :visibleDislogMember="visibleDialogMember"
+        :loginFlag="loginFlag"
+        :selectRoleId="selectRoleId"
+        :loadingUserDeptStrategy="loadingUserDeptStrategy"
+        @member-close="memberCloseHandle"
+        :existsData="tableData"
+      ></dialog-select-member>
+      <dialog-user-task
+        v-if='visibleDialogUserTask'
+        :dialogVisible="visibleDialogUserTask"
+        :components-config="componentsConfig"
+        @close="closeDialogUserTask()"
+      >
       </dialog-user-task>
     </div>
-    <div v-if="viewVisible"
-         class="viewVisible">
-    </div>
+    <div v-if="viewVisible" class="viewVisible"></div>
   </div>
 </template>
 <script>
@@ -220,6 +201,7 @@ import ProjectFormView from './Components/ProjectFormView'
 import DialogSelectMember from './Components/DialogSelectMember'
 import DialogTabsRoles from './Components/DialogTabsRoles'
 import DialogUserTask from './Components/DialogUserTask'
+import taskCount from './Components/taskCount.vue'
 import _ from 'lodash'
 import moment from 'moment'
 
@@ -239,7 +221,7 @@ export default {
       }
     }
   },
-  data () {
+  data() {
     const columns = [
       {
         title: '姓名',
@@ -326,7 +308,8 @@ export default {
         placeholder: '请输入部门名称'
       }
     ]
-    const groupType = [ // 0否 1 是
+    const groupType = [
+      // 0否 1 是
       {
         id: '3',
         name: '计划编制（部分可编辑）',
@@ -366,6 +349,13 @@ export default {
       }
     ]
     return {
+      componentsConfig: {
+        code:'undertakeTaskDetails',
+        permissionVo: {
+          router: this.$route.name,
+          resourceId: ''
+        }
+      },
       projectClassname: '',
       roleId: '',
       id: null,
@@ -411,9 +401,9 @@ export default {
     }
   },
   computed: {
-    getTotalCount () {
+    getTotalCount() {
       let count = 0
-      this.rolesData.forEach(el => {
+      this.rolesData.forEach((el) => {
         if (el.projectTeamRoleUsers && el.projectTeamRoleUsers.length) {
           count += el.projectTeamRoleUsers.length
         }
@@ -421,7 +411,7 @@ export default {
       return count
     }
   },
-  created () {
+  created() {
     if (this.row && this.row.length) {
       this.id = this.row[0].ID
     } else {
@@ -435,7 +425,7 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     if (this.id) {
       this.getTeamInfo()
     }
@@ -445,7 +435,7 @@ export default {
     //   return '(' + rolesItem.projectTeamRoleUsers.length + ')'
     // },
     // 双击打开行内
-    cellDblclick (row, column, cell, event) {
+    cellDblclick(row, column, cell, event) {
       if (column.property === 'flag') {
         let params = { dicType: '0' }
         if (row.userRoleId !== 'SYS_ROLE004' && row.userRoleId !== 'SYS_ROLE008') {
@@ -460,7 +450,7 @@ export default {
         if (row.userRoleId === 'SYS_ROLE008') {
           params = { dicType: 'COMBINATION' }
         }
-        this.$api['thirdPartInterface.getDic'](params).then(res => {
+        this.$api['thirdPartInterface.getDic'](params).then((res) => {
           if (res) {
             this.options = res
             this.$set(row, 'flag', row.flag || '')
@@ -471,14 +461,14 @@ export default {
       }
     },
     // 行内修改
-    quoteUpdate (row) {
+    quoteUpdate(row) {
       // this.$set(row, 'editRow', false)
     },
-    handleSetFlagName (row, item) {
+    handleSetFlagName(row, item) {
       this.$set(row, 'flagName', item.label)
       this.$set(row, 'editRow', false)
     },
-    initButton () {
+    initButton() {
       let _this = this
       _this.groupType.forEach(function (data) {
         // if (data.id === _this.thirdMenuParam.group_type) {
@@ -491,60 +481,62 @@ export default {
         _this.loadingUserDeptStrategy = _this.groupTypeData.is_loading_userDept
       }
     },
-    getMemberFormComp (formComp) {
+    getMemberFormComp(formComp) {
       // 获取人员命名文件 form表单组件, 用于校验附件密级是否选择
       this.memberFormComp = formComp
     },
-    search (params) {
+    search(params) {
       let realName = params.realName ? params.realName : null
       let deptName = params.deptName ? params.deptName : null
-      let tableData = this.tableData.filter(item => {
-        if ((item.realName.indexOf(realName) > -1) || (item.deptName.indexOf(deptName) > -1)) {
+      let tableData = this.tableData.filter((item) => {
+        if (item.realName.indexOf(realName) > -1 || item.deptName.indexOf(deptName) > -1) {
           return item
         }
       })
       this.tableData = tableData
     },
-    reset () {
+    reset() {
       if (this.rolesSelectedIndex > -1) {
         this.tableData = this.rolesData[this.rolesSelectedIndex].projectTeamRoleUsers
       } else {
         let tableData = []
-        this.rolesData.map(item => {
+        this.rolesData.map((item) => {
           tableData.push(...item.projectTeamRoleUsers)
         })
         this.tableData = tableData
       }
     },
-    getTeamInfo () {
+    getTeamInfo() {
       this.$api['teamManager.get']({
         wholeDescribeId: this.id
-      }).then(res => {
+      }).then((res) => {
         if (res) {
           this.klTeamsId = res.klTeamsId
           this.namedFiles = res.uploadFiles ? res.uploadFiles : []
-          res.fixedRoles && res.fixedRoles.forEach(item => {
-            item.roleType = 'fixed'
-            if (item.projectTeamRoleUsers && item.projectTeamRoleUsers.length) {
-              item.projectTeamRoleUsers.forEach(citem => {
-                citem.entryTime = citem.entryTime ? moment(citem.entryTime).format('YYYY-MM-DD HH:mm:ss') : ''
-                citem.departureTime = citem.departureTime ? moment(citem.departureTime).format('YYYY-MM-DD HH:mm:ss') : ''
-              })
-            } else {
-              item.projectTeamRoleUsers = []
-            }
-          })
-          res.generalRoles && res.generalRoles.forEach(item => {
-            item.roleType = 'general'
-            if (item.projectTeamRoleUsers && item.projectTeamRoleUsers.length) {
-              item.projectTeamRoleUsers.forEach(citem => {
-                citem.entryTime = citem.entryTime ? moment(citem.entryTime).format('YYYY-MM-DD HH:mm:ss') : ''
-                citem.departureTime = citem.departureTime ? moment(citem.departureTime).format('YYYY-MM-DD HH:mm:ss') : ''
-              })
-            } else {
-              item.projectTeamRoleUsers = []
-            }
-          })
+          res.fixedRoles &&
+            res.fixedRoles.forEach((item) => {
+              item.roleType = 'fixed'
+              if (item.projectTeamRoleUsers && item.projectTeamRoleUsers.length) {
+                item.projectTeamRoleUsers.forEach((citem) => {
+                  citem.entryTime = citem.entryTime ? moment(citem.entryTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                  citem.departureTime = citem.departureTime ? moment(citem.departureTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                })
+              } else {
+                item.projectTeamRoleUsers = []
+              }
+            })
+          res.generalRoles &&
+            res.generalRoles.forEach((item) => {
+              item.roleType = 'general'
+              if (item.projectTeamRoleUsers && item.projectTeamRoleUsers.length) {
+                item.projectTeamRoleUsers.forEach((citem) => {
+                  citem.entryTime = citem.entryTime ? moment(citem.entryTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                  citem.departureTime = citem.departureTime ? moment(citem.departureTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                })
+              } else {
+                item.projectTeamRoleUsers = []
+              }
+            })
           this.fixedRoles = res.fixedRoles || []
           this.generalRoles = res.generalRoles || []
           this.rolesData = [...this.fixedRoles, ...this.generalRoles]
@@ -564,34 +556,39 @@ export default {
               // 否则 列表未被选中, 展示全部角色
               this.selectRoleId = ''
               let tableData = []
-              this.rolesData.map(item => {
-                let projectTeamRoleUsers = item.projectTeamRoleUsers && item.projectTeamRoleUsers.map(pitem => {
-                  pitem.roleName = item.name
-                  pitem.userRoleId = item.roleId
-                  pitem.roleType = item.roleType
-                  return pitem
-                })
+              this.rolesData.map((item) => {
+                let projectTeamRoleUsers =
+                  item.projectTeamRoleUsers &&
+                  item.projectTeamRoleUsers.map((pitem) => {
+                    pitem.roleName = item.name
+                    pitem.userRoleId = item.roleId
+                    pitem.roleType = item.roleType
+                    return pitem
+                  })
                 tableData.push(...projectTeamRoleUsers)
               })
               this.tableData = tableData
             }
           }
           this.teamsId = this.team && this.team.teamsId ? this.team.teamsId : ''
-          res.uploadFiles && res.uploadFiles.length && res.uploadFiles.forEach(function (data) {
-            let name = data.fileName
-            data.name = name
-          })
+          res.uploadFiles &&
+            res.uploadFiles.length &&
+            res.uploadFiles.forEach(function (data) {
+              let name = data.fileName
+              data.name = name
+            })
         }
       })
     },
-    rolesHandle (item, index) { // 角色列表点击切换
+    rolesHandle(item, index) {
+      // 角色列表点击切换
       if (this.rolesSelectedIndex === index) {
         return
       }
       this.rolesSelectedIndex = index
       this.selectRoleId = item.roleType === 'fixed' ? item.roleId : ''
       this.tableData = item.projectTeamRoleUsers ? item.projectTeamRoleUsers : []
-      if (this.columns.filter(item => item.dataIndex === 'roleName').length) {
+      if (this.columns.filter((item) => item.dataIndex === 'roleName').length) {
         this.columns.shift()
       }
 
@@ -611,13 +608,13 @@ export default {
         params = { dicType: 'COMBINATION' }
       }
       this.roleId = item.roleId
-      this.$api['thirdPartInterface.getDic'](params).then(res => {
+      this.$api['thirdPartInterface.getDic'](params).then((res) => {
         if (res) {
           this.options = res
         }
       })
     },
-    addRolesHandle () {
+    addRolesHandle() {
       // 添加角色
       let defaultObj = {
         // id: (-this.generalRoles.length + 1) + '',
@@ -634,7 +631,7 @@ export default {
       this.isAddMember = true
       this.rolesHandle(this.rolesData[this.rolesData.length - 1], this.rolesData.length - 1)
     },
-    refreshHandle () {
+    refreshHandle() {
       /**
        * 刷新: 1. 清空角色选中; 2. 人员列表展示所有角色下的人员 3. 对应人员列表添加角色信息
        */
@@ -643,8 +640,8 @@ export default {
       }
       this.rolesSelectedIndex = -1
       let tableData = []
-      this.rolesData.map(item => {
-        let projectTeamRoleUsers = item.projectTeamRoleUsers.map(pitem => {
+      this.rolesData.map((item) => {
+        let projectTeamRoleUsers = item.projectTeamRoleUsers.map((pitem) => {
           pitem.roleName = item.name
           pitem.roleId = item.id
           pitem.userRoleId = item.roleId
@@ -661,10 +658,10 @@ export default {
       this.tableData = tableData
       this.dateTime = new Date().getTime()
     },
-    changeRolesHandle (text, record) {
+    changeRolesHandle(text, record) {
       record.name = text
     },
-    deleteRolesHandle (index) {
+    deleteRolesHandle(index) {
       // this.generalRoles.splice(index, 1)
       // this.tableData = []
       this.rolesSelectedIndex = index - 1
@@ -673,12 +670,12 @@ export default {
       this.rolesData.splice(index, 1)
       this.isDelete = true
     },
-    tableDeleteMemberHandle (row, index) {
+    tableDeleteMemberHandle(row, index) {
       if ((row.entryTime && row.departureTime) || (!row.entryTime && !row.departureTime)) {
         this.tableData.splice(index, 1)
       }
     },
-    deleteUserHandle (scope, index) {
+    deleteUserHandle(scope, index) {
       /**
        * 人员删除
        *    人员在该项目中的任务数为0时，直接删除
@@ -696,9 +693,9 @@ export default {
         this.tableData.splice(index, 1)
         if (this.rolesSelectedIndex < 0) {
           let row = scope.row
-          let roleInfo = row.roleType === 'fixed' ? this.fixedRoles.filter(item => item.roleId === row.userRoleId) : this.generalRoles.filter(item => item.roleId === row.userRoleId)
+          let roleInfo = row.roleType === 'fixed' ? this.fixedRoles.filter((item) => item.roleId === row.userRoleId) : this.generalRoles.filter((item) => item.roleId === row.userRoleId)
           let projectTeamRoleUsers = roleInfo[0].projectTeamRoleUsers
-          let pIndex = projectTeamRoleUsers.findIndex(item => item.sysuserId === row.sysuserId)
+          let pIndex = projectTeamRoleUsers.findIndex((item) => item.sysuserId === row.sysuserId)
           if (pIndex > -1) {
             projectTeamRoleUsers.splice(pIndex, 1)
           }
@@ -706,7 +703,7 @@ export default {
       }
       this.isDelete = true
     },
-    addMemberHandle () {
+    addMemberHandle() {
       // 添加人员
       if ((this.fixedRoles && this.fixedRoles.length > 0) || (this.generalRoles && this.generalRoles.length > 0)) {
         if (this.rolesSelectedIndex > -1) {
@@ -724,22 +721,22 @@ export default {
         })
       }
     },
-    copyRoleHandle () {
+    copyRoleHandle() {
       // 从历史项目复制
       this.visibleDialogRoles = true
     },
-    expRolesCloseHandle (experienceTeamSelectValue) {
+    expRolesCloseHandle(experienceTeamSelectValue) {
       // (我的经验团队)从历史项目复制-面板关闭
       this.visibleDialogRoles = false
       if (experienceTeamSelectValue.length > 0) {
         this.loadRolesCommonHandle(experienceTeamSelectValue)
       }
     },
-    loadStandardTeamHandle () {
+    loadStandardTeamHandle() {
       // 载入标准团队
       this.visibleDialogRoles = true
     },
-    standardRolesCloseHandle (info) {
+    standardRolesCloseHandle(info) {
       // (标准团队)载入标准团队-面板关闭
       this.visibleDialogRoles = false
       if (info && info.kTeamId) {
@@ -747,9 +744,9 @@ export default {
         this.loadRolesCommonHandle(info.data)
       }
     },
-    loadRolesCommonHandle (data) {
+    loadRolesCommonHandle(data) {
       let tempArr = []
-      data.forEach(item => {
+      data.forEach((item) => {
         let tempObj = {
           id: item.id,
           indexNo: item.indexNo,
@@ -765,15 +762,15 @@ export default {
       this.rolesData.push(...tempArr)
       this.rolesData = _.uniqWith(this.rolesData, _.isEqual)
     },
-    memberCloseHandle (tableSelectValue) {
+    memberCloseHandle(tableSelectValue) {
       // 添加人员-面板关闭
       this.visibleDialogMember = false
       if (tableSelectValue.length > 0) {
         let tempSelectData = []
         let selectRoleId = this.selectRoleId
         let userRoleId = this.roleId
-        tableSelectValue.forEach(item => {
-          let filter = this.tableData.filter(titem => titem.sysuserId === item.id).length
+        tableSelectValue.forEach((item) => {
+          let filter = this.tableData.filter((titem) => titem.sysuserId === item.id).length
           if (!filter) {
             item.sysuserId = item.id
             item.id = ''
@@ -787,23 +784,21 @@ export default {
         this.isAddUser = true
       }
     },
-    opentDialogUserTask (row, moint) {
-      this.userTaskTableParams.currentUserId = row.sysuserId
-      this.userTaskTableParams.tameRoleId = row.tameRoleId
-      this.userTaskTableParams.dutyMonitor = moint
+    opentDialogUserTask(row) {
+      this.componentsConfig.reportParam = {
+        rolename:row.roleName,
+        deptname:row.deptName,
+        projectid:this.id,
+        projecttype:1,
+        REAL_NAME:row.realName
+      }
       // this.userTaskTableParams.wholeDescribeId = this.thirdMenuParam.id || ''
       this.visibleDialogUserTask = true
     },
-    closeDialogUserTask (row) {
-      /**
-       * 人员列表-承担任务总数-任务明细 弹窗关闭
-       */
-      Object.keys(this.userTaskTableParams).forEach(key => {
-        this.userTaskTableParams[key] = ''
-      })
+    closeDialogUserTask(row) {
       this.visibleDialogUserTask = false
     },
-    userTaskCustomSearch (searchParam, _table) {
+    userTaskCustomSearch(searchParam, _table) {
       /**
        * 人员列表-承担任务总数-任务明细列表搜索
        */
@@ -813,7 +808,7 @@ export default {
       }
       this.userTaskTableParams = { ...this.userTaskTableParams, ...searchParam }
     },
-    userTaskCustomReset () {
+    userTaskCustomReset() {
       /**
        * 人员列表-承担任务总数-任务明细列表搜索重置
        */
@@ -822,15 +817,15 @@ export default {
         currentUserId = this.userTaskTableParams.currentUserId
         this.wholeDescribeId = this.id
       }
-      Object.keys(this.userTaskTableParams).forEach(key => {
+      Object.keys(this.userTaskTableParams).forEach((key) => {
         this.userTaskTableParams[key] = ''
       })
       this.userTaskTableParams.currentUserId = currentUserId
     },
-    submitVerifyHandle () {
+    submitVerifyHandle() {
       let result = true
       let roleNotNullMsg = []
-      this.fixedRoles.forEach(fixedItem => {
+      this.fixedRoles.forEach((fixedItem) => {
         // 改角色是必填且未选择人员时给出提示
         if (fixedItem.isRequired === '1' && fixedItem.projectTeamRoleUsers.length === 0) {
           roleNotNullMsg.push(fixedItem.name)
@@ -848,7 +843,7 @@ export default {
       }
       return result
     },
-    async saveAndRelease () {
+    async saveAndRelease() {
       this.submitLoading = true
       await this.submit()
       if (!this.submitLoading) {
@@ -858,9 +853,9 @@ export default {
       }
       this.submitLoading = false
     },
-    submit () {
+    submit() {
       let _this = this
-      this.submitParamsHandle().then(params => {
+      this.submitParamsHandle().then((params) => {
         let verifyResult = this.submitVerifyHandle()
         if (!verifyResult) {
           return false
@@ -880,32 +875,34 @@ export default {
         //   return
         // }
         _this.submitLoading = true
-        this.$api['teamManager.save'](params).then(res => {
-          _this.submitLoading = false
-          if (res !== undefined) {
-            _this.$message({
-              message: '信息已提交',
-              type: 'success'
-            })
-            _this.getTeamInfo()
-            _this.isAddUser = false
-            _this.isAddMember = false
-          } else {
+        this.$api['teamManager.save'](params)
+          .then((res) => {
+            _this.submitLoading = false
+            if (res !== undefined) {
+              _this.$message({
+                message: '信息已提交',
+                type: 'success'
+              })
+              _this.getTeamInfo()
+              _this.isAddUser = false
+              _this.isAddMember = false
+            } else {
+              _this.$message({
+                message: '保存失败',
+                type: 'error'
+              })
+            }
+          })
+          .catch(function (err) {
+            _this.submitLoading = false
             _this.$message({
               message: '保存失败',
               type: 'error'
             })
-          }
-        }).catch(function (err) {
-          _this.submitLoading = false
-          _this.$message({
-            message: '保存失败',
-            type: 'error'
           })
-        })
       })
     },
-    submitParamsHandle () {
+    submitParamsHandle() {
       return new Promise((resolve, reject) => {
         // this.memberFormComp.validate().then(queryParams => {
         let params = {
@@ -921,19 +918,19 @@ export default {
           generalRoles: []
         }
         let tableData = this.tableData
-        this.fixedRoles.forEach(fixedItem => {
+        this.fixedRoles.forEach((fixedItem) => {
           let temp = {}
           let roleId = fixedItem.roleId
-          let tempUserList = tableData.filter(i => {
+          let tempUserList = tableData.filter((i) => {
             return i.userRoleId === roleId
           })
           let fixedRolesKeys = Object.keys(fixedItem)
-          fixedRolesKeys.forEach(key => {
+          fixedRolesKeys.forEach((key) => {
             if (key === 'projectTeamRoleUsers') {
               temp[key] = []
-              fixedItem[key].forEach(projectItem => {
+              fixedItem[key].forEach((projectItem) => {
                 let projectTemp = {}
-                let projectUserByIdIndex = tempUserList.findIndex(i => {
+                let projectUserByIdIndex = tempUserList.findIndex((i) => {
                   return i.id === projectItem.id
                 })
                 let projectUserById = tempUserList[projectUserByIdIndex]
@@ -946,7 +943,7 @@ export default {
                 projectTemp.departureTime = projectItem.departureTime ? projectItem.departureTime : ''
                 temp[key].push(projectTemp)
               })
-              tempUserList.forEach(projectItem => {
+              tempUserList.forEach((projectItem) => {
                 let projectTemp = {}
                 projectTemp.id = projectItem.id && projectItem.id.length === 32 ? projectItem.id : '' // projectItem.id ? projectItem.id :
                 projectTemp.sysuserId = projectItem.sysuserId ? projectItem.sysuserId : ''
@@ -963,13 +960,13 @@ export default {
           temp.klTeamsRoleId = fixedItem.klTeamsRoleId
           params.fixedRoles.push(temp)
         })
-        this.generalRoles.forEach(generalItem => {
+        this.generalRoles.forEach((generalItem) => {
           let temp = {}
           let generalRolesKeys = Object.keys(generalItem)
-          generalRolesKeys.forEach(key => {
+          generalRolesKeys.forEach((key) => {
             if (key === 'projectTeamRoleUsers') {
               temp[key] = []
-              generalItem[key].forEach(projectItem => {
+              generalItem[key].forEach((projectItem) => {
                 let projectTemp = {}
                 projectTemp.id = projectItem.id && projectItem.id.length === 32 ? projectItem.id : '' // projectItem.id ? projectItem.id :
                 projectTemp.sysuserId = projectItem.sysuserId ? projectItem.sysuserId : ''
@@ -990,19 +987,19 @@ export default {
         // })
       })
     },
-    changeCheak () {
+    changeCheak() {
       let result = false
       if (this.isAddMember || this.isAddUser || this.isDelete) {
         result = true
       }
       return result
     },
-    uploadFile (file, field) {
+    uploadFile(file, field) {
       this.namedFiles.push(file)
     },
-    removedFile (file, field) {
+    removedFile(file, field) {
       this.namedFiles = []
-    },
+    }
     // isShowRole (row) {
     //   return row.isRequired === '1'
     // }
@@ -1033,17 +1030,20 @@ export default {
   height: 100%;
   padding: 20px;
   box-sizing: border-box;
+
   .left_content {
     width: 80%;
     // height: 100%;
     margin-left: 15px;
     box-shadow: 0px 0px 10px #bfbdbd54;
+
     .left_bottom_content {
       display: flex;
       height: calc(100% - 50px);
     }
   }
 }
+
 .teamFile {
   height: 50px;
   display: flex;
@@ -1054,6 +1054,7 @@ export default {
   background: white;
   border-bottom: 2px solid #f2f2f2;
 }
+
 .viewVisible {
   position: absolute;
   top: 0;
@@ -1063,6 +1064,7 @@ export default {
   z-index: 2000;
   background-color: rgba(0, 0, 0, 0.5);
 }
+
 .normal-nlcr-layout.custom-normal-layout {
   margin: 0;
   height: 90% !important;
@@ -1075,9 +1077,11 @@ export default {
 /**调整 左中右布局样式 */
 ::v-deep .normal-nlcr-layout.custom-nlcr {
   height: calc(100% - 110px);
+
   .icon-zuozhedie {
     display: none;
   }
+
   .normal-nlcr-main {
     .el-row,
     .el-col {
@@ -1164,6 +1168,7 @@ export default {
       &.active {
         font-weight: bolder;
         color: #0e77d1 !important;
+
         ::v-deep span {
           font-weight: bolder;
           color: #0e77d1 !important;
@@ -1258,9 +1263,11 @@ export default {
     }
   }
 }
+
 .submit {
   margin-right: 20px;
 }
+
 .bottom-con {
   width: 100%;
   height: 50px !important;
@@ -1270,6 +1277,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+
   div.tip {
     font-size: 16px;
     color: #323232;
@@ -1293,22 +1301,27 @@ export default {
   background-color: #fff;
   margin-left: 16px;
   box-shadow: 4px 4px 8px #bfbdbd54;
+
   ::v-deep .files-view-wrap {
     .files-item--row {
       padding: 0;
     }
+
     i {
       display: none;
     }
   }
 }
+
 .tableMember ::v-deep .bottom-flex {
   display: none;
 }
+
 .files-view-wrap {
   position: relative;
   top: 5px;
   right: 15px;
+
   ::v-deep i {
     display: none;
   }
