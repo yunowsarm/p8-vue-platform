@@ -249,7 +249,8 @@
                    :is-view-cs-footer="false"
                    :dialog-height="360">
       <template #dialog>
-        <command-search :gantt-name="ganttName"
+        <command-search :searchType="searchType"
+                        :gantt-name="ganttName"
                         :plan-info-id="planInfoId"
                         @close="closeSearch"></command-search>
       </template>
@@ -624,6 +625,7 @@ export default {
       // ClassificationSelectVisible: false,
       customHeight: 300,
       ganttName: 'planGantt',
+      searchType: false,
       createNum: 1,
       noticeVisible: false,
       menuVisible: false,
