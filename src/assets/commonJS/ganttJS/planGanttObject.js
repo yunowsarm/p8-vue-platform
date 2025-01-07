@@ -785,11 +785,11 @@ export function getGanttColumns (ganttObject, vueThis) {
       resize: true,
       editor: checkEdit() ? editors.schedule : null,
       template: function (task) {
-        // if (ganttObject.getGlobalTaskIndex(task.id) === 0) {
-        //   return '手动'
-        // } else {
-        return task.autoScheduling === '1' ? '自动' : '手动'
-        // }
+        if (ganttObject.getGlobalTaskIndex(task.id) === 0 && vueThis.$route.name == 'Planning') {
+          return '自动'
+        } else {
+          return task.autoScheduling === '1' ? '自动' : '手动'
+        }
       }
     },
     {
