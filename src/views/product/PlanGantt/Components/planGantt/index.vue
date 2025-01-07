@@ -1308,6 +1308,9 @@ export default {
               extraStr.forEach((key) => {
                 task[key] = ''
               })
+              if( vueThis.$route.name == 'Planning' && !task.parent ){
+                task.autoScheduling = '0'
+              }
             })
             // 处理拓展字段已有的数据
             vueThis.extendMap = res.extendMap || {}
