@@ -1147,7 +1147,7 @@ export default {
       let obj = {}
       if (extraList && extraList.length) {
         let list = extraList.map(async el => {
-          let list = await that.$api['formGenerator.getSelectionDataDic']({selectCode: el.selectCode})
+          let list = await that.$api['formGenerator.getSelectionDataDic']({ selectCode: el.selectCode })
           obj[el.selectCode] = list
           return obj
         })
@@ -1158,7 +1158,7 @@ export default {
   },
   beforeDestroy () {
     window.myWebSocket.emit('quitPlanGantGroup', this.msg)
-    window.myWebSocket.off('planGantGroup')
+    window.myWebSocket.off('  ')
   }
 }
 </script>
