@@ -2091,6 +2091,7 @@ export const CommandButtonData = [
     clickFun: function (btn, ganttName, tasks) {
       if (ganttName) {
         const vueThis = store.getters.vueThis
+        vueThis.searchType = true
         vueThis.ganttSearchVisible = true
       }
     },

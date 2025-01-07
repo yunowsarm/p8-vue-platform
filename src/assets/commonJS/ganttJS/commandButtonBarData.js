@@ -155,16 +155,6 @@ const CommandButtonBarData = [
             position: ['top', 'right']
           }
         ]
-      },
-      {
-        groupName: '查询',
-        buttonConfigs: [
-          {
-            buttonId: 'location-list',
-            size: 'large',
-            position: ['top', 'right']
-          }
-        ]
       }
     ]
   },
