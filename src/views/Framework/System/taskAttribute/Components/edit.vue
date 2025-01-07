@@ -440,8 +440,11 @@ export default {
                 // 在这里进行 map 操作，例如返回一个新的对象或提取某个属性
                 return item.name;
               });
-            const attributeNames = changeAttributelist.join('、')
-            this.$confirm(`已有任务绑定了属性名称为${attributeNames}的数据来源，修改可能会导致对应的任务属性显示异常，是否确认修改？`, '提示', {
+            let attributeNames = changeAttributelist.join('、')
+            if (changeAttributelist.length > 1) {
+              attributeNames += '等';
+            }
+            this.$confirm(`属性名称为：${attributeNames}配置项已绑定了"数据来源"，且已产生业务数据。修改"数据来源"可能会导致历史数据相应属性值显示异常，是否确认修改？`, '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
               type: 'warning'
