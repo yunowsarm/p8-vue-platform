@@ -123,7 +123,7 @@ export default {
     // 根据任务 ID 获取任务数据的方法
     async fetchTaskData(taskId) {
       // 调用 API 获取甘特图扩展属性数据
-       this.$api['planGanttManager.getGanttExtendAttr']({ taskId: taskId })
+      this.$api['planGanttManager.getGanttExtendAttr']({ taskId: taskId })
         .then(async (res) => {
           // 将获取到的数据赋值给 formData
           this.formData = res
@@ -132,8 +132,8 @@ export default {
             this.formData.realName = `${this.formData.dutyName}-${this.formData.dutyUnitDeptName}-${this.formData.roleName}`
           }
           // 格式化比例和绩效（保留两位小数）
-          this.formData.proportion = this.formData.proportion ? (Math.round(res.proportion * 100) / 100) + '%' : 0;
-          this.formData.achievements = this.formData.achievements ? (Math.round(res.achievements * 100) / 100) : 0;
+          this.formData.proportion = this.formData.proportion ? Math.round(res.proportion * 100) / 100 + '%' : 0
+          this.formData.achievements = this.formData.achievements ? Math.round(res.achievements * 100) / 100 : 0
           // 获取扩展属性
           if (res && res.taskExtendList) {
             for (const item of res.taskExtendList) {
@@ -142,17 +142,28 @@ export default {
                 this.$set(this.formData, 'kz' + item.customItem1, date.isValid() ? date : '')
               } else {
                 if (['selectSingle', 'treeSingle', 'selectMultiple', 'treeMultiple'].includes(item.fieldType)) {
-                  let list = await this.$api['formGenerator.getSelectionDataDic']({ selectCode: item.selectCode })
-                  let taskList = item.fieldValue ? item.fieldValue.split(',') : []
-                  let result = []
-                  list.forEach(el => {
-                    taskList.forEach(item => {
-                      if (el.value === item) {
-                        result.push(el.label)
-                      }
-                    })
-                  })
-                  this.$set(this.formData, 'kz' + item.customItem1, result.join(','))
+                  try {
+                    let list = await this.$api['formGenerator.getSelectionDataDic']({ selectCode: item.selectCode })
+                    if (list && Array.isArray(list)) {
+                      // 检查 list 是否存在且为数组
+                      let taskList = item.fieldValue ? item.fieldValue.split(',') : []
+                      let result = []
+                      list.forEach((el) => {
+                        taskList.forEach((taskItem) => {
+                          if (el.value === taskItem) {
+                            result.push(el.label)
+                          }
+                        })
+                      })
+                      this.$set(this.formData, 'kz' + item.customItem1, result.join(','))
+                    } else {
+                      console.error('Received invalid list data:', list)
+                      this.$set(this.formData, 'kz' + item.customItem1, '')
+                    }
+                  } catch (error) {
+                    console.error('Error fetching task data:', error)
+                    this.$set(this.formData, 'kz' + item.customItem1, '')
+                  }
                 } else {
                   this.$set(this.formData, 'kz' + item.customItem1, item.fieldValue)
                 }
@@ -174,6 +185,7 @@ export default {
           return this.$api['planGanttManager.getActivityInfoByTaskId']({ taskId: taskId, planChangeDetailId: null })
         })
         .then((res) => {
+          debugger
           // 更新 formData 中的任务描述信息
           this.$set(this.formData, 'describes', res.describes)
         })
@@ -236,7 +248,7 @@ export default {
 
 <style scoped lang="scss">
 // 此处添加组件的样式
-::v-deep img{
+::v-deep img {
   width: 100%;
   height: auto;
 }
