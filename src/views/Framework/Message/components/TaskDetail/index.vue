@@ -104,4 +104,20 @@ export default {
   </Anchor>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.p8-anchor {
+  box-sizing: border-box;
+  padding-left: 20px;
+}
+
+::v-deep .p8-anchor-content--wrap .scroll-area {
+  padding-right: 20px;
+}
+//::v-deep .p8-anchor-slider--wrap .scroll-area{
+//  padding: 10px 0;
+//}
+
+::v-deep .p8-anchor-slider {
+  width: auto !important;
+}
+</style>
