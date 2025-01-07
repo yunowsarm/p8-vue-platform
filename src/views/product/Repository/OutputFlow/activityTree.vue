@@ -457,14 +457,13 @@ export default {
         .then((data) => {
           let fileName = this.row && this.row.length ? this.row[0].NAME : '活动管理'
           const date = new Date()
-          const file_name = '【' + fileName + '】' + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + '_' + String(date.getHours()).padStart(2, '0') + ':' + String(date.getMinutes()).padStart(2, '0');
-          const file_type = 'xlsx'
+          const file_name = `【${fileName}】${date.getFullYear()}-${(date.getMonth() + 1)}-${date.getDate()}_${String(date.getHours()).padStart(2, '0')}h${String(date.getMinutes()).padStart(2, '0')}m.xlsx`;
           const blob = new Blob([data.data], { type: 'application/vnd.ms-excel' })
           const url = window.URL.createObjectURL(blob)
           const link = document.createElement('a')
           link.style.display = 'none'
           link.href = url
-          link.download = `${file_name}.${file_type}`
+          link.download = file_name
           document.body.appendChild(link)
           link.click()
         })
