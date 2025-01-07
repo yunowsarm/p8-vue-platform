@@ -434,7 +434,14 @@ export default {
       if (changeList && changeList.length) {
         this.$api['taskAttribute.checkAttributeChange']({ attributeExtensionList: saveParmars.attributeExtensionList }).then((res) => {
           if (res) {
-            this.$confirm('已有任务绑定类型或数据来源，谁否确认修改？', '提示', {
+            const changeAttributelist = saveParmars.attributeExtensionList
+              .filter(item => res.includes(item.id))
+              .map(item => {
+                // 在这里进行 map 操作，例如返回一个新的对象或提取某个属性
+                return item.name;
+              });
+            const attributeNames = changeAttributelist.join('、')
+            this.$confirm(`已有任务绑定了属性名称为${attributeNames}的数据来源，修改可能会导致对应的任务属性显示异常，是否确认修改？`, '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
               type: 'warning'
