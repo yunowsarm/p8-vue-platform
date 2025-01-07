@@ -201,7 +201,6 @@ import ProjectFormView from './Components/ProjectFormView'
 import DialogSelectMember from './Components/DialogSelectMember'
 import DialogTabsRoles from './Components/DialogTabsRoles'
 import DialogUserTask from './Components/DialogUserTask'
-import taskCount from './Components/taskCount.vue'
 import _ from 'lodash'
 import moment from 'moment'
 
