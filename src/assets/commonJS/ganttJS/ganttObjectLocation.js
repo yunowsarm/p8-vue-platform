@@ -992,6 +992,14 @@ GanttObjectLocation.customDateEditor = function (ganttObject) {
             config: {
               valueFormat: 'yyyy-MM-dd',
               pickerOptions: {
+                // 添加快捷选项
+                shortcuts: [{
+                  text: '今天',
+                  onClick(picker) {
+                    const today = new Date();
+                    picker.$emit('pick', today);
+                  }
+                }],
                 disabledDate: (time) => {
                   if (minValue && maxValue) {
                     return new Date(maxValue).getTime() < time.getTime() || time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000
@@ -1128,6 +1136,14 @@ GanttObjectLocation.customEndDateEditor = function (ganttObject) {
             treeData: [],
             config: {
               pickerOptions: {
+                // 添加快捷选项
+                shortcuts: [{
+                  text: '今天',
+                  onClick(picker) {
+                    const today = new Date();
+                    picker.$emit('pick', today);
+                  }
+                }],
                 disabledDate: (time) => {
                   if (minValue && maxValue) {
                     return time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000
