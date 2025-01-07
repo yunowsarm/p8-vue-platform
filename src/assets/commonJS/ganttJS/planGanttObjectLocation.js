@@ -3,15 +3,21 @@ import { Gantt } from 'p8-dhtmlx-gantt'
 import api from '@/plugins/api'
 import moment from 'moment'
 import { calculateRemainingDays } from '@/utils/common'
+import img from '@/assets/image/gantt/weidu.png'
+import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
+
+// 列可编辑图标
+const canEditIcon = '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>'
+const suspendIcon = '<i class="element_icon el-icon-error" style="color:#ff0000;"></i>'
 
 /**
  * @Description 获取gantt对象，不存在则创建
  * @author fukai
  * @date 2020/5/22 12:00
  */
-export function planGanttLocation (ganttName, vueThisLocation) {
+export function planGanttLocation(ganttName, vueThisLocation) {
   // 获取gantt对象
-  console.log(ganttName, '===================ganttName');
+  console.log(ganttName, '===================ganttName')
   const ganttObject = GanttObjectLocation.getGanttObject(ganttName)
   GanttObjectLocation.endDateEditor(ganttObject)
   GanttObjectLocation.customDateEditor(ganttObject)
@@ -20,12 +26,9 @@ export function planGanttLocation (ganttName, vueThisLocation) {
   const dp = ganttObject.createDataProcessor({
     task: {
       // 任务操作
-      create: function (data) {
-      },
-      delete: function (id) {
-      },
-      update: function (data, id) {
-      }
+      create: function (data) {},
+      delete: function (id) {},
+      update: function (data, id) {}
     },
     link: {
       // 前后置关系操作
@@ -52,7 +55,7 @@ export function planGanttLocation (ganttName, vueThisLocation) {
           // vueThisLocation.initGantt()
         })
       },
-      update: function (data, id) { },
+      update: function (data, id) {},
       delete: function (id) {
         return new ganttObject.Promise((resolve, reject) => {
           api['planGanttManager.removePlanGanttLink']({ id: id })
@@ -75,7 +78,7 @@ export function planGanttLocation (ganttName, vueThisLocation) {
     }
   })
   // 表头查询值绑定
-  Gantt.searchColumnsChange = function searchColumnsChange (name, value, searchType, eleInstance) {
+  Gantt.searchColumnsChange = function searchColumnsChange(name, value, searchType, eleInstance) {
     const customComp = ['select', 'date', 'input']
     if (customComp.indexOf(searchType) < 0) {
       document.getElementById(name + searchType).setAttribute('value', value)
@@ -237,11 +240,11 @@ export function planGanttLocation (ganttName, vueThisLocation) {
 
   ganttObject.attachEvent('onParse', function () {
     ganttObject.eachTask(function (task) {
-       if (vueThisLocation.createPage === 'decompose') {
-          if (!task.parent) {
-            task.type = 'task'
-          }
-       }
+      if (vueThisLocation.createPage === 'decompose') {
+        if (!task.parent) {
+          task.type = 'task'
+        }
+      }
     })
   })
   return ganttObject
@@ -253,7 +256,7 @@ export function planGanttLocation (ganttName, vueThisLocation) {
  * @param vueThisLocation
  * @returns {({template: template, name: string, width: number, resize: boolean, label: string, align: string}|{template: template, name: string, width: number, resize: boolean, label: string, align: string}|{template: (function(*=): string), name: string, resize: boolean, label: string, align: string, min_width: number}|{template: (function(*): string), name: string, width: number, resize: boolean, label: string, align: string}|{template: (function(*=): string), name: string, resize: boolean, label: string, align: string, min_width: number})[]}
  */
-export function getGanttLocationColumns (ganttObject, vueThisLocation) {
+export function getGanttLocationColumns(ganttObject, vueThisLocation) {
   ganttObject.serverList('yesOron', [
     { key: '1', label: '是' },
     { key: '0', label: '否' }
@@ -267,7 +270,45 @@ export function getGanttLocationColumns (ganttObject, vueThisLocation) {
     { key: '9006', label: '核心商业秘密' },
     { key: '9007', label: '机密' }
   ])
+  // 加载工期格式化
+  const formatter = GanttObject.formatter(ganttObject)
+  // 加载前后置格式化
+  const linksFormatter = GanttObject.linksFormatter(ganttObject, formatter)
+  // 加载编辑器
+  const editors = GanttObject.editors(ganttObject, formatter, linksFormatter)
+
+  function checkEdit() {
+    if (vueThisLocation.pageName === 'planMonitor') {
+      return false
+    } else {
+      return true
+    }
+  }
+
   return [
+    {
+      name: 'progressFeedbackLocation',
+      label: '进度反馈',
+      align: 'center',
+      min_width: 60,
+      resize: true,
+      template: function (task) {
+        const reminderList = vueThisLocation.reminderList
+        const obj = reminderList.find((item) => {
+          return item.id === task.id
+        })
+        let img = require('@/assets/image/gantt/weidu.png')
+        if (obj && obj.id && Number(obj.reminder) > 0) {
+          return `<span style='cursor: pointer'>
+            <img style='cursor: pointer;width: 17px; height: 17px' src='${img}' />
+          </span>`
+        } else if (obj && obj.id && obj.reminder == 0) {
+          return `<span class='p8 icon-read-mail' style='cursor: pointer;'></span>`
+        } else {
+          return ''
+        }
+      }
+    },
     {
       name: 'statusLocation',
       label: '进度',
@@ -283,7 +324,7 @@ export function getGanttLocationColumns (ganttObject, vueThisLocation) {
             const taskStatusMap = vueThisLocation.taskStatusMap
             if (taskStatusMap && Object.keys(taskStatusMap).length > 0) {
               const item = taskStatusMap[status]
-              html = `<i class="gantt-tip p8 ${item.icon}" style="color: ${item.color};" title="${item.cmeaning}" task_status_disp="${item.id}" taskId="${task.id}"></i>`
+              html = `<i class='gantt-tip p8 ${item.icon}' style='color: ${item.color};' title='${item.cmeaning}' task_status_disp='${item.id}' taskId='${task.id}'></i>`
             }
           }
         }
@@ -300,16 +341,16 @@ export function getGanttLocationColumns (ganttObject, vueThisLocation) {
         // 任务图标，排除根节点
         if (!(ganttObject.getGlobalTaskIndex(task.id) === 0)) {
           if (task.outputResult > 0) {
-            return `<i class="el-icon-star-on" style="color: #4bcafe;font-size: 23px" title="有提交物的"></i>`
+            return `<i class='el-icon-star-on' style='color: #4bcafe;font-size: 23px' title='有提交物的'></i>`
           }
           if (task.outputAsk > 0) {
-            return `<i class="el-icon-star-on" style="color: #faa010;font-size: 23px" title="有输出要求的"></i>`
+            return `<i class='el-icon-star-on' style='color: #faa010;font-size: 23px' title='有输出要求的'></i>`
           }
           const managerStatus = task.managerStatus
           if (managerStatus && vueThisLocation.managerStatusMap) {
             const item = vueThisLocation.managerStatusMap[managerStatus]
             if (item) {
-              return `<i class="${item.icon}" style="color: ${item.color}" title="${item.cmeaning}"></i>`
+              return `<i class='${item.icon}' style='color: ${item.color}' title='${item.cmeaning}'></i>`
             }
           }
         }
@@ -334,7 +375,7 @@ export function getGanttLocationColumns (ganttObject, vueThisLocation) {
                 const icon = point.icon
                 const controlTimeType = point.controlTimeType
                 if (id === '1023') {
-                  html += `<span style="cursor: pointer"><i class="p8 ${icon}" style="cursor:pointer;" title="${point.title}"></i></span>`
+                  html += `<span style='cursor: pointer'><i class='p8 ${icon}' style='cursor:pointer;' title='${point.title}'></i></span>`
                 } else {
                   if (controlTimeType && controlTimeType === '0') {
                     html +=
@@ -376,35 +417,12 @@ export function getGanttLocationColumns (ganttObject, vueThisLocation) {
           taskClassifyDatas.some((point, index) => {
             if (point.id === planType) {
               const icon = point.icon
-              html += `<i class="${icon}"  style='cursor:pointer;color:${point.color};' title="${point.title} "></i>`
+              html += `<i class='${icon}'  style='cursor:pointer;color:${point.color};' title='${point.title} '></i>`
               return true
             }
           })
         }
         return html
-      }
-    },
-    {
-      name: 'progressFeedbackLocation',
-      label: '进度反馈',
-      align: 'center',
-      min_width: 60,
-      resize: true,
-      template: function (task) {
-        const reminderList = vueThisLocation.reminderList
-        const obj = reminderList.find((item) => {
-          return item.id === task.id
-        })
-        let img = require('@/assets/image/gantt/weidu.png')
-        if (obj && obj.id && Number(obj.reminder) > 0) {
-          return `<span style="cursor: pointer">
-            <img style="cursor: pointer;width: 17px; height: 17px" src="${img}" />
-          </span>`
-        } else if (obj && obj.id && obj.reminder == 0) {
-          return `<span class="p8 icon-read-mail" style="cursor: pointer;"></span>`
-        } else {
-          return ''
-        }
       }
     },
     {
@@ -441,7 +459,7 @@ export function getGanttLocationColumns (ganttObject, vueThisLocation) {
       width: 80,
       resize: true,
       template: function (task) {
-        return `<span data-column-name="owner_id" class="gantt_owner_id">${task.realName || ''}</span>`
+        return `<span data-column-name='owner_id' class='gantt_owner_id'>${task.realName || ''}</span>`
       }
     },
     {
@@ -473,6 +491,47 @@ export function getGanttLocationColumns (ganttObject, vueThisLocation) {
       min_width: 120,
       template: function (task) {
         return task.dutyDeptName
+      }
+    },
+    {
+      name: 'predecessors',
+      label: '前后置',
+      min_width: 100,
+      resize: true,
+      align: 'left',
+      monitorLockLimit: true, // 标识锁定后不可操作的列声明
+      template: function (task) {
+        const links = task.$target
+        const labels = []
+        for (let i = 0; i < links.length; i++) {
+          const link = ganttObject.getLink(links[i])
+          labels.push(linksFormatter.format(link))
+        }
+        return labels.join(',')
+      }
+    },
+    {
+      name: 'progress',
+      label: '完成度',
+      align: 'center',
+      width: 60,
+      resize: true,
+      template: function (task) {
+        if (task.progress > 0) {
+          return Math.round(task.progress * 100) + '%'
+        }
+        return 0
+      }
+    },
+    {
+      name: 'overdueRemainingDaysLocation',
+      label: '超期/剩余天数',
+      align: 'center',
+      min_width: 120,
+      resize: true,
+      template: function (task) {
+        const result = calculateRemainingDays(task)
+        return result.text
       }
     },
     {
@@ -528,7 +587,9 @@ export function getGanttLocationColumns (ganttObject, vueThisLocation) {
                 '</span>'
               )
             } else {
-              return '<span class="red-wave" title="计划完成时间大于父任务的计划完成时间" >' + GanttObjectLocation.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
+              return (
+                '<span class="red-wave" title="计划完成时间大于父任务的计划完成时间" >' + GanttObjectLocation.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
+              )
             }
           }
         }
@@ -540,14 +601,28 @@ export function getGanttLocationColumns (ganttObject, vueThisLocation) {
       }
     },
     {
-      name: 'overdueRemainingDaysLocation',
-      label: '超期/剩余天数',
+      name: 'duration',
+      label: '工期',
       align: 'center',
-      min_width: 120,
+      min_width: 70,
+      resize: true,
+      // editor: editors.duration,
+      template: function (task) {
+        return formatter.format(task.duration)
+      }
+    },
+    {
+      name: 'autoScheduling',
+      label: '排程',
+      align: 'center',
+      min_width: 70,
       resize: true,
       template: function (task) {
-        const result = calculateRemainingDays(task)
-        return result.text
+        // if (ganttObject.getGlobalTaskIndex(task.id) === 0) {
+        //   return '手动'
+        // } else {
+        return task.autoScheduling === '1' ? '自动' : '手动'
+        // }
       }
     },
     {
@@ -564,8 +639,36 @@ export function getGanttLocationColumns (ganttObject, vueThisLocation) {
           return '否'
         }
       }
-    }
+    },
+    {
+      name: 'forecastBeginDate',
+      label: '预计开始时间',
+      align: 'center',
+      min_width: 100,
+      resize: true
+    },
+    {
+      name: 'forecastEndDate',
+      label: '预计完成时间',
+      align: 'center',
+      min_width: 100,
+      resize: true
+    },
+    {
+      name: 'realBeginDate',
+      label: '实际开始时间',
+      align: 'center',
+      min_width: 100,
+      resize: true
+    },
+    {
+      name: 'realEndDate',
+      label: '实际完成时间',
+      align: 'center',
+      min_width: 100,
+      resize: true
+    },
   ]
 }
 
-export function planMonitorAdd (ganttObject, vueThisLocation) { }
+export function planMonitorAdd(ganttObject, vueThisLocation) {}

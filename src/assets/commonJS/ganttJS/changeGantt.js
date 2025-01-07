@@ -37,6 +37,7 @@ export const changeColor = '#FF0000;'
  * @type {string}
  */
 export const affectColor = '#0070C5;'
+
 /**
  * 计划变更缓存对象定义
  */
@@ -59,7 +60,7 @@ export class ChangeTask {
  * @param vueThis
  * @param taskId
  */
-export function updateNewTaskMap (ganttObject, updatedTasks, vueThis, taskId) {
+export function updateNewTaskMap(ganttObject, updatedTasks, vueThis, taskId) {
   const task = ganttObject.getTask(taskId)
   let affectTasks = []
   const affecTaskIds = []
@@ -105,7 +106,7 @@ export function updateNewTaskMap (ganttObject, updatedTasks, vueThis, taskId) {
  * @param obj  task、describes、monitorPoints、links、output、special
  * @param type  task、describes、monitorPoints、links、output、special
  */
-export function setNewTaskMap (vueThis, newTask, obj, type) {
+export function setNewTaskMap(vueThis, newTask, obj, type) {
   if (vueThis.ganttName && vueThis.ganttName === 'changeGantt') {
     // 历史数据为空时，保存历史数据
     let newT = new ChangeTask()
@@ -173,7 +174,7 @@ export function setNewTaskMap (vueThis, newTask, obj, type) {
  * @param taskId
  * @param ganttObject
  */
-export function taskDescribesEditCheck (newObj, oldObj, vueThis, taskId, ganttObject) {
+export function taskDescribesEditCheck(newObj, oldObj, vueThis, taskId, ganttObject) {
   const task = ganttObject.getTask(taskId)
   // 日期处理
   const oldS = moment(oldObj.start_date).format('YYYY-MM-DD')
@@ -184,7 +185,7 @@ export function taskDescribesEditCheck (newObj, oldObj, vueThis, taskId, ganttOb
   let changeDate = false
   let hasEdit = false
   let checkChange = false
-  let NewcheckKeys = vueThis.columnSettings.filter(el => el.attributeType == '1').map(item => 'kz' + item.id)
+  let NewcheckKeys = vueThis.columnSettings.filter((el) => el.attributeType == '1').map((item) => 'kz' + item.id)
   let newCheckKeys = [...checkKeys, ...NewcheckKeys]
   newCheckKeys.forEach(function (key) {
     if (key === 'start_date' || key === 'end_date' || key === 'duration' || key === 'autoScheduling') {
@@ -214,7 +215,17 @@ export function taskDescribesEditCheck (newObj, oldObj, vueThis, taskId, ganttOb
     }
   })
   if (checkChange) {
-    addChangeMark(ganttObject, task)
+    let changeParent = false
+    if (newE !== oldE && moment(newE).isAfter(oldE)) {
+      const parentId = task.parent
+      if (parentId && parentId !== 0) {
+        const parentTask = ganttObject.getTask(parentId)
+        if (parentTask.autoScheduling === '1') {
+          changeParent = true
+        }
+      }
+    }
+    addChangeMark(ganttObject, task,changeParent)
     task.style = changeColor
     ganttObject.updateTask(taskId)
     if (changeDate) {
@@ -231,14 +242,14 @@ export function taskDescribesEditCheck (newObj, oldObj, vueThis, taskId, ganttOb
 }
 
 // 向上递归添加变更标记
-export function addChangeMark(ganttObject, task) {
+export function addChangeMark(ganttObject, task,changeParent) {
   if (!task.infoType) {
     task.infoType = 'update'
     task.changeStatusName = '变更'
   }
   task.style = changeColor
   task.changeStatus = true
-  if (task.parent) {
+  if (changeParent) {
     const parentTask = ganttObject.getTask(task.parent)
     addChangeMark(ganttObject, parentTask)
   }
@@ -252,14 +263,12 @@ export function addChangeMark(ganttObject, task) {
  * @param task
  * @param ganttObject
  */
-export function monitorPointsEditCheck (oldObj, newObj, vueThis, task, ganttObject, falg) {
+export function monitorPointsEditCheck(oldObj, newObj, vueThis, task, ganttObject, falg) {
   //
   //
   let newArray = []
   if (newObj.length > 0) {
-    newArray = Array.from(
-      new Map(newObj.map(item => [item.monitorId, item])).values()
-    );
+    newArray = Array.from(new Map(newObj.map((item) => [item.monitorId, item])).values())
   }
   // 新标识数据处理
   let monitorIds = ''
@@ -317,7 +326,7 @@ export function monitorPointsEditCheck (oldObj, newObj, vueThis, task, ganttObje
  * @param vueThis
  * @param task
  */
-export function linksEditCheck (oldObj, newObj, vueThis, task, ganttObject) {
+export function linksEditCheck(oldObj, newObj, vueThis, task, ganttObject) {
   // 判断是否存在新增
   const newLinksMap = {}
   // 判断变更及修改
@@ -380,7 +389,7 @@ export function linksEditCheck (oldObj, newObj, vueThis, task, ganttObject) {
  * 输出、特别说明修改校验
  * @param oldObj
  */
-export function otherEditCheck (oldObj, newObj, ganttObject, vueThis, taskId, type) {
+export function otherEditCheck(oldObj, newObj, ganttObject, vueThis, taskId, type) {
   const task = ganttObject.getTask(taskId)
   // 变更逻辑处理
   let editO = false
@@ -443,7 +452,7 @@ export function otherEditCheck (oldObj, newObj, ganttObject, vueThis, taskId, ty
  * @param selectedTaskIds
  * @param vueThis
  */
-export function changeGanttRemove (ganttObject, selectedTaskIds, vueThis) {
+export function changeGanttRemove(ganttObject, selectedTaskIds, vueThis) {
   ganttObject.batchUpdate(function () {
     let result = true
     selectedTaskIds.some(function (id) {
@@ -517,7 +526,7 @@ export function changeGanttRemove (ganttObject, selectedTaskIds, vueThis) {
  * @param ganttName
  * @param taskId
  */
-export function beforeUpdateTask (ganttObject, ganttName, taskId) {
+export function beforeUpdateTask(ganttObject, ganttName, taskId) {
   if (ganttName && ganttName === 'changeGantt') {
     const task = ganttObject.getTask(taskId)
     addChangeMark(ganttObject, task)
@@ -535,7 +544,7 @@ export function beforeUpdateTask (ganttObject, ganttName, taskId) {
  * @param flag
  * @param thisGantt
  */
-export function updateMonitor (taskMonitorMap, task, vueThis, monitorPointsMap, mId, flag, thisGantt) {
+export function updateMonitor(taskMonitorMap, task, vueThis, monitorPointsMap, mId, flag, thisGantt) {
   let newM = []
   if (flag === 'add') {
     const mon = {
@@ -612,7 +621,7 @@ export function updateMonitor (taskMonitorMap, task, vueThis, monitorPointsMap, 
  * @param vueThis
  * @param monitorLockMap
  */
-export function checkTaskChangeStatus (task, ganttObject, vueThis, monitorLockMap) {
+export function checkTaskChangeStatus(task, ganttObject, vueThis, monitorLockMap) {
   // 获取任务层级
   const taskLevel = Number(ganttObject.calculateTaskLevel(task))
   let result = false
@@ -641,7 +650,7 @@ export function checkTaskChangeStatus (task, ganttObject, vueThis, monitorLockMa
  * @param id 拖动任务
  * @param parentId 新父id
  */
-export function taskMoveChange (ganttObject, id, parentId, vueThis) {
+export function taskMoveChange(ganttObject, id, parentId, vueThis) {
   const task = ganttObject.getTask(id)
   // 变更页面修改添加标记
   if (!task.infoType) {
@@ -664,7 +673,7 @@ export function taskMoveChange (ganttObject, id, parentId, vueThis) {
  * @param vueThis
  * @param task
  */
-export function checkInputData (ganttObject, vueThis, task, searchDatas) {
+export function checkInputData(ganttObject, vueThis, task, searchDatas) {
   const result = []
   const oldMap = {}
   if (searchDatas && searchDatas.length > 0) {
@@ -704,7 +713,7 @@ export function checkInputData (ganttObject, vueThis, task, searchDatas) {
 /**
  * 计算gantt变更数量
  */
-export function calculateChangeCount (ganttObject, vueThis) {
+export function calculateChangeCount(ganttObject, vueThis) {
   let addCount = 0
   let deleteCount = 0
   let modifyCount = 0
@@ -732,7 +741,7 @@ export function calculateChangeCount (ganttObject, vueThis) {
  * @param vueThis
  * @param ganttObject
  */
-export function backfillChangeDatas (vueThis, ganttObject) {
+export function backfillChangeDatas(vueThis, ganttObject) {
   // 先添加，再更新，后删除
   const creTask = []
   const upTask = []
@@ -774,7 +783,9 @@ export function backfillChangeDatas (vueThis, ganttObject) {
     if (upTask != null && upTask.length > 0) {
       upTask.forEach(function (changeTask) {
         if (ganttObject.isTaskExists(changeTask.id) && !ganttObject.getTask(changeTask.id).readonly) {
-          const oldTask = ganttObject.getTask(changeTask.id)
+          const oldTask = vueThis.tasks.find(task => task.id === changeTask.id)
+          oldTask.end_date = moment(oldTask.end_date).subtract(1, 'days').format('YYYY-MM-DD');
+          changeTask.end_date = moment(changeTask.end_date).subtract(1, 'days').format('YYYY-MM-DD');
           // 工期处理
           vueThis.newTaskMap[changeTask.id] = changeTask
           // 子修改计划完成时间会改变父级的计划完成时间
@@ -803,7 +814,7 @@ export function backfillChangeDatas (vueThis, ganttObject) {
  * 附件回填时间修改
  * @param datas
  */
-function changeAttItemDate (datas) {
+function changeAttItemDate(datas) {
   datas.forEach(function (att) {
     if (att.uploadFiles && att.uploadFiles.length > 0) {
       att.uploadFiles.forEach(function (t) {
@@ -813,7 +824,7 @@ function changeAttItemDate (datas) {
   })
 }
 
-function linckCheck (changeTask, vueThis, ganttObject, oldTask) {
+function linckCheck(changeTask, vueThis, ganttObject, oldTask) {
   // 添加依赖关系
   if (changeTask.updateInfo && changeTask.updateInfo.length > 0 && changeTask.updateInfo.indexOf('links') !== -1) {
     const links = []
@@ -837,7 +848,7 @@ function linckCheck (changeTask, vueThis, ganttObject, oldTask) {
   }
 }
 
-function monitorCheck (changeTask, vueThis, ganttObject, oldTask) {
+function monitorCheck(changeTask, vueThis, ganttObject, oldTask) {
   // 添加依赖关系
   if (changeTask.updateInfo && changeTask.updateInfo.length > 0 && changeTask.updateInfo.indexOf('monitors') !== -1) {
     monitorPointsEditCheck(null, changeTask.monitors, vueThis, ganttObject.getTask(changeTask.id), ganttObject)
@@ -848,7 +859,7 @@ function monitorCheck (changeTask, vueThis, ganttObject, oldTask) {
  * 变更中，修改任务时间、工期时，若父任务为手动默认，手动修改父任务完成时间和工期，实现类似project模式
  *
  */
-export function calculateParentEndDateAndDuration (ganttObject, taskId, vueThis) {
+export function calculateParentEndDateAndDuration(ganttObject, taskId, vueThis) {
   if (ganttObject && Object.keys(ganttObject).length > 0 && taskId) {
     const task = ganttObject.getTask(taskId)
     if (!task.affecTaskIds || task.affecTaskIds.length === 0) {
