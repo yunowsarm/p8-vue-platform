@@ -414,6 +414,9 @@
   overflow: hidden;
   white-space: nowrap;
 }
+.gantt_cell_search .cs-input .cs-input_inner{
+  background: #e6f7ff;
+}
 .icon-underline, .icon-shanchuxian{
   font-size: 18px;
 }

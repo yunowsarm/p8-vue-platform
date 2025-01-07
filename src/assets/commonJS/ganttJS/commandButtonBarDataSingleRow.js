@@ -217,6 +217,11 @@ const CommandButtonBarDataSingleRow = [
             position: ['top']
           },
           {
+            buttonId: 'reset-list',
+            size: 'small',
+            position: ['top']
+          },
+          {
             buttonId: 'location-list',
             size: 'small',
             position: ['top']
