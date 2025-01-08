@@ -285,7 +285,11 @@ export default {
       }
       // 审批页面不可操作（详细信息按钮除外）
       if(this.ganttName === 'analysisGantt' && btn.id !== 'detail-info'){
-        this.$store.dispatch('setButtonMsg', { id: btn.id, msg: '审批页面不可操作' })
+        if(this.$route.name === 'PlanChanges'){
+          this.$store.dispatch('setButtonMsg', { id: btn.id, msg: '查看页面不可操作' })
+        }else{
+          this.$store.dispatch('setButtonMsg', { id: btn.id, msg: '审批查看页面不可操作' })
+        }
         return true
       }
       // 执行btn的isDisableFun逻辑
