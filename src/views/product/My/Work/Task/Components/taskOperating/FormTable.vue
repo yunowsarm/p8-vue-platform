@@ -339,7 +339,7 @@
       <el-button type="primary"
                  @click="submit('submit')"
                  :disabled="formDisabled || buttonDisabled"
-                 v-if="submitFinishBtnDisplay()">提交完成审批</el-button>
+                 v-if="submitFinishBtnDisplay()||taskFinish">提交完成审批</el-button>
     </div>
     <slot name="dialog-con"></slot>
     <common-drawer size="50%"
@@ -514,15 +514,23 @@ export default {
       managerStatus: '', // 管理状态
       minNum: 0,
       endDateDisabled: true,
-      minValue: 0
+      minValue: 0,
+      taskFinish: false
     }
   },
-  mounted () {
-
+  async created () {
     if (this.getPlanInfo().ISLEAF > 0) {
-      this.disabledProgress = true
       this.getPlanInfo().pageType = 'view'
+      this.disabledProgress = true
+      await this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then((res) => {
+        let taskFinish = res.taskFinish && res.taskFinish.content ? res.taskFinish.content : ''
+        if (taskFinish === '手动') {
+          this.taskFinish = true
+        }
+      })
     }
+  },
+  async mounted () {
     this.minValue = Math.floor(Number(this.getPlanInfo().PROGRESS) * 100)
     //  进行中的任务不能减进度条
     // if (this.getPlanInfo().STATUS === '6050') {
@@ -703,6 +711,7 @@ export default {
        * 4. 或该任务的子任务全部完成并且该任务的父任务的父id为空
        * 5. 责任令状态为已发布，计划非已发布
        */
+      console.log('==============22222222');
       if (this.getPlanInfo().pageType === 'view') {
         return false
       }
