@@ -331,6 +331,17 @@ export function getAnalysisGantt (ganttName, vueThis) {
         }
       },
       {
+        name: 'autoScheduling',
+        label: '排程',
+        align: 'center',
+        min_width: 100,
+        resize: true,
+        template: function (task) {
+          // return task.auto_scheduling === true ? '自动' : '手动'
+          return task.autoScheduling === '1' ? '自动' : '手动'
+        }
+      },
+      {
         name: 'forecastBeginDate',
         label: '预计开始时间',
         align: 'center',
