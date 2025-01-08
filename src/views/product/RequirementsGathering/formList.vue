@@ -9,9 +9,12 @@
         <div :class="{ active: item.isActive }"
              class="activeStyle">
           <div>
-            <el-image style="width: 60px; height: 60px"
-                      :src="item.imgUrl"
-                      fit="cover"></el-image>
+<!--            <el-image style="width: 60px; height: 60px"-->
+<!--                      :src="item.imgUrl"-->
+<!--                      fit="cover"></el-image>-->
+            <i :class="item.icon"
+               class="p8 iconfont" :style="{ color: theme }"></i>
+
           </div>
           <span class="nav-text"
                 v-text="item.label"></span>
@@ -63,72 +66,84 @@ export default {
           label: '高层拜访',
           id: '1',
           code: 'CALL_HIGH',
+          icon: 'icon-gaocengbaifang1',
           imgUrl: require('@/assets/image/common/高层拜访.png')
         },
         {
           label: '客户交流',
           id: '2',
           code: 'CUSTOMER_INTERACTION',
+          icon: 'icon-kehujiaoliu',
           imgUrl: require('@/assets/image/common/客户交流.png')
         },
         {
           label: '市场调研',
           id: '3',
           code: 'MARKET_SURVEY',
+          icon: 'icon-shichangtiaoyan1',
           imgUrl: require('@/assets/image/common/市场调研.png')
         },
         {
           label: '技术支持',
           id: '4',
           code: 'TECHNICAL_SUPPORT',
+          icon: 'icon-jishuzhichi1',
           imgUrl: require('@/assets/image/common/技术支持.png')
         },
         {
           label: '媒体信息',
           id: '5',
           code: 'MEDIUM_INFORMATION',
+          icon: 'icon-meitixinxi1',
           imgUrl: require('@/assets/image/common/媒体信息.png')
         },
         {
           label: '技术交流',
           id: '6',
           code: 'TECHNICAL_EXCHANGE',
+          icon: 'icon-jishujiaoliu1',
           imgUrl: require('@/assets/image/common/技术交流.png')
         },
         {
           label: '参观展览',
           id: '7',
           code: 'VISITING_SHOW',
+          icon: 'icon-canguanzhanlan1',
           imgUrl: require('@/assets/image/common/参观展览.png')
         },
         {
           label: '投标总结',
           id: '8',
           code: 'BID',
+          icon: 'icon-toubiaozongjie1',
           imgUrl: require('@/assets/image/common/投标总结.png')
         },
         {
           label: '沟通例会',
           id: '9',
           code: 'COMMUNICATION_MEETING',
+          icon: 'icon-goutonglihui1',
           imgUrl: require('@/assets/image/common/沟通例会.png')
         },
         {
           label: '销售周报',
           id: '10',
           code: 'MARKET_WEEKLY',
+          icon: 'icon-xiaoshouzhoubao1',
           imgUrl: require('@/assets/image/common/销售周报.png')
         },
         {
           label: '外部会议',
           id: '11',
           code: 'EXTERNAL_MEETING',
+          icon: 'icon-waibuhuiyi1',
           imgUrl: require('@/assets/image/common/外部会议.png')
         },
         {
           label: '外聘专家',
           id: '12',
           code: 'EXTERNAL_EXPERT',
+          icon: 'icon-waipinzhuanjia1',
           imgUrl: require('@/assets/image/common/外聘专家.png')
         }
       ],
@@ -140,7 +155,13 @@ export default {
       dataTime: new Date().getTime()
     }
   },
+  computed:{
+    theme () {
+      return this.$store.getters.theme
+    }
+  },
   mounted () {
+    console.log(this.$store.getters)
     if (window.selsecRow && window.selsecRow.id) {
       this.radioOptions.forEach(row => {
         if (row.id === window.selsecRow.id) {
@@ -282,5 +303,8 @@ export default {
   top: 0px;
   right: 0px;
   border-top-right-radius: 8px;
+}
+.iconfont{
+  font-size: 54px;
 }
 </style>

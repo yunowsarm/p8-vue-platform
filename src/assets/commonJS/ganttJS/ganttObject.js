@@ -1060,6 +1060,14 @@ GanttObject.customDateEditor = function (ganttObject) {
             config: {
               valueFormat: 'yyyy-MM-dd',
               pickerOptions: {
+                // 添加快捷选项
+                shortcuts: [{
+                  text: '今天',
+                  onClick(picker) {
+                    const today = new Date();
+                    picker.$emit('pick', today);
+                  }
+                }],
                 disabledDate: (time) => {
                   if (minValue && maxValue) {
                     return new Date(maxValue).getTime() < time.getTime() || time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000
@@ -1196,6 +1204,14 @@ GanttObject.customEndDateEditor = function (ganttObject) {
             treeData: [],
             config: {
               pickerOptions: {
+                // 添加快捷选项
+                shortcuts: [{
+                  text: '今天',
+                  onClick(picker) {
+                    const today = new Date();
+                    picker.$emit('pick', today);
+                  }
+                }],
                 disabledDate: (time) => {
                   const vueThis = store.getters.vueThis
                   if (vueThis.createPage === 'decompose') {
@@ -3603,19 +3619,19 @@ export function searchColumnRenderer (name, columnName, searchType) {
     //   '<div class="gantt_search">' +
     //   '<input id="' + name + searchType + '" type="text" class="search_item" value="" placeholder="请输入..." onchange="Gantt.searchColumnsChange(\'' + name + '\',this.value,\'input\')"/>' +
     //   '</div>'
-    result = '<div class="gantt_search">' + columnName + '</div>' + '<div class="gantt_search gantt_inputor_' + name + '"' + '></div>'
+    result = '<div class="gantt_search">' + columnName + '</div>' + '<div class="gantt_cell_search gantt_search gantt_inputor_' + name + '"' + '></div>'
   } else if (searchType === 'select') {
     // result = '<div class="gantt_search">' + columnName + '</div>' +
     //   '<div class="gantt_search">' +
     //   '<select id="' + name + searchType + '" class="search_item" placeholder="请选择..." onchange="Gantt.searchColumnsChange(\'' + name + '\',this.value,\'select\')"/>">' +
     //   '<option value =""></option>' +
     //   '</select></div>'
-    result = '<div class="gantt_search">' + columnName + '</div>' + '<div class="gantt_search gantt_selector_' + name + '"' + '></div>'
+    result = '<div class="gantt_search">' + columnName + '</div>' + '<div class="gantt_cell_search gantt_search gantt_selector_' + name + '"' + '></div>'
   } else if (searchType === 'date') {
     // result = '<div class="gantt_search">' + columnName + '</div>' +
     //   '<div class="gantt_search">' +
     //   '<input id="' + name + searchType + '" type="date" class="search_item" value="" onchange="Gantt.searchColumnsChange(\'' + name + '\',this.value,\'date\')"/></div>'
-    result = '<div class="gantt_search">' + columnName + '</div>' + '<div class="gantt_search gantt_datepicker_' + name + '"' + '></div>'
+    result = '<div class="gantt_search">' + columnName + '</div>' + '<div class="gantt_cell_search gantt_search gantt_datepicker_' + name + '"' + '></div>'
   } else {
     result = '<div class="gantt_search">' + columnName + '</div>' + '<div class="gantt_search gantt_blank"' + '></div>'
   }

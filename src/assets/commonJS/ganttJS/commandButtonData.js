@@ -2099,6 +2099,26 @@ export const CommandButtonData = [
     }
   },
   {
+    id: 'reset-list',
+    icon: 'el-icon-refresh-left',
+    title: '重置',
+    help: '重置',
+    msg: '重置',
+    clickFun: function (btn, ganttName, tasks) {
+      const ganttObject = GanttObject.getGanttObject(ganttName)
+      const vueThis = store.getters.vueThis
+      if (JSON.stringify(vueThis.searchForm) !== '{}') {
+        vueThis.searchForm = {}
+        ganttObject.refreshData()
+      }
+      ganttObject.scrollTo(0, 0)
+      ganttObject.render()
+    },
+    isDisableFun: function (btn, ganttName, tasks) {
+      return false
+    }
+  },
+  {
     id: 'location-list',
     icon: 'el-icon-location-outline',
     title: '定位',
