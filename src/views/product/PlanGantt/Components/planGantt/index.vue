@@ -331,6 +331,18 @@
                        :create-page="createPage" />
       </template>
     </common-drawer>
+    <common-drawer v-if="examineHistoryVisible"
+                   :visible="examineHistoryVisible"
+                   size="80%"
+                   placement="top"
+                   title="审批历史"
+                   @close="examineHistoryClose">
+      <template #drawer>
+        <ExamineHistory :plan-info-id="planInfoId"
+                        :task-id="selectTaskId"
+                        :create-page="createPage" />
+      </template>
+    </common-drawer>
     <common-drawer v-if="relevancePlanVisible"
                    :visible="relevancePlanVisible"
                    size="100%"
@@ -466,6 +478,7 @@ import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLoc
 import VersionList from '../versionList'
 // import ProgressHistory from '../progressHistory'
 import ChangeHistory from '../changeHistory'
+import ExamineHistory from '../examineHistory'
 import relevance from '../relevance'
 import { version } from 'vue'
 
@@ -594,6 +607,7 @@ export default {
     // Large,
     // ProgressHistory,
     ChangeHistory,
+    ExamineHistory,
     CommandSearch,
     CommandStatistic,
     CommonButtonBarSetting,
@@ -811,6 +825,7 @@ export default {
       getSelectTasks: [],
       // progressHistoryVisible: false,
       changeHistoryVisible: false,
+      examineHistoryVisible: false,
       selectedId: '',
       pageType: 'switch',
       versionListVisible: false, //  版本列表显示隐藏
@@ -1308,7 +1323,7 @@ export default {
               extraStr.forEach((key) => {
                 task[key] = ''
               })
-              if( vueThis.$route.name == 'Planning' && !task.parent ){
+              if (vueThis.$route.name == 'Planning' && !task.parent) {
                 task.autoScheduling = '0'
               }
             })
@@ -1705,6 +1720,10 @@ export default {
     },
     changeHistoryClose () {
       this.changeHistoryVisible = false
+      this.$store.dispatch('setVueThis', this)
+    },
+    examineHistoryClose () {
+      this.examineHistoryVisible = false
       this.$store.dispatch('setVueThis', this)
     },
     deleteTask () {
