@@ -158,6 +158,8 @@
       <el-button type="primary"
                  @click="onSearch">查询</el-button>
       <el-button @click="resetForm('searchForm')">重置</el-button>
+      <el-button v-if="!searchType"
+                 @click="openLocation()">定位</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -188,6 +190,11 @@ export default {
       // 为了兼容别的弹框对类型输入框的要求而增加的
       type: Boolean,
       default: true
+    },
+    searchType: {
+      // 为了兼容别的弹框对类型输入框的要求而增加的
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -218,10 +225,14 @@ export default {
     ...mapGetters(['vueThis'])
   },
   mounted () {
+    console.log(this.rowNum, this.isInput, '11111111111111111111111');
     this.status = taskStatusArr
     document.addEventListener('keyup', this.handleEnterOnce);
   },
   methods: {
+    openLocation () {
+      this.vueThis.$emit('open', this.vueThis.myGantt)
+    },
     loadSelectOptionData (planInfoId) {
       const that = this
       this.$api['planGanttManager.loadSelectOptionData']({ planInfoId: planInfoId })
