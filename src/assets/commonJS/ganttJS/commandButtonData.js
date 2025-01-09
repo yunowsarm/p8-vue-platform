@@ -2211,6 +2211,28 @@ export const CommandButtonData = [
     }
   },
   {
+    id: 'examine-history',
+    icon: 'p8 icon-daxingshiyanpingshen',
+    title: '审批历史',
+    help: '审批历史',
+    msg: '审批历史',
+    clickFun: function (btn, ganttName, tasks) {
+      if (ganttName) {
+        const vueThis = store.getters.vueThis
+        vueThis.examineHistoryVisible = true
+      }
+    },
+    isDisableFun: function (btn, ganttName, tasks) {
+      const checks = [
+        () => isHasTask(ganttName, tasks),
+        () => isSingleTask(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      return res.disable
+    }
+  },
+  {
     id: 'suspend-config',
     icon: 'p8 icon-pause',
     title: '暂停',
