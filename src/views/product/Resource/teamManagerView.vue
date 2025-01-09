@@ -66,6 +66,13 @@
                   :tableSetting="false"
                   :noApiTableData="tableData"
                 >
+                  <template #realName="{ scope }">
+                    <div class="real-name">
+                      <template>
+                        <el-link @click.stop="opentDialogUserTaskStatistics(scope.row)">{{ scope.row.realName }}</el-link>
+                      </template>
+                    </div>
+                  </template>
                   <template #taskCount="{ scope }">
                     <div class="task-count">
                       <template v-if="scope.row.taskCount">
@@ -124,7 +131,7 @@
                         }
                       "
                     >
-                      <el-option v-for="item in options" :key="item.value" @click.native="handleSetFlagName(scope.row, item)" :label="item.label" :value="item.value"> </el-option>
+                      <el-option v-for="item in options" :key="item.value" @click.native="handleSetFlagName(scope.row, item)" :label="item.label" :value="item.value"></el-option>
                     </el-select>
                     <span v-else>{{ scope.row.flagName }}</span>
                   </template>
@@ -153,7 +160,7 @@
                      :loading="submitLoading"
                      @click="submit">保 存
           </el-button> -->
-          <el-button size="mini" :loading="submitLoading" @click="$emit('close')">关 闭 </el-button>
+          <el-button size="mini" :loading="submitLoading" @click="$emit('close')">关 闭</el-button>
         </p>
       </div>
       <dialog-tabs-roles
@@ -172,13 +179,13 @@
         @member-close="memberCloseHandle"
         :existsData="tableData"
       ></dialog-select-member>
-      <dialog-user-task
-        v-if='visibleDialogUserTask'
-        :dialogVisible="visibleDialogUserTask"
-        :components-config="componentsConfig"
+      <dialog-user-task-statistics
+        v-if="visibleUserTaskStatistics"
+        :dialogVisible="visibleUserTaskStatistics"
+        :table-config="userTaskStatisticsConfig"
         @close="closeDialogUserTask()"
-      >
-      </dialog-user-task>
+      ></dialog-user-task-statistics>
+      <dialog-user-task v-if="visibleDialogUserTask" :dialogVisible="visibleDialogUserTask" :table-config="userTaskConfig" @close="closeDialogUserTask()"></dialog-user-task>
     </div>
     <div v-if="viewVisible" class="viewVisible"></div>
   </div>
@@ -200,7 +207,8 @@ import EditInput from './Components/EditInput'
 import ProjectFormView from './Components/ProjectFormView'
 import DialogSelectMember from './Components/DialogSelectMember'
 import DialogTabsRoles from './Components/DialogTabsRoles'
-import DialogUserTask from './Components/DialogUserTask'
+import DialogUserTask from './Components/DialogUserTask/'
+import DialogUserTaskStatistics from './Components/UserTaskStatistics'
 import _ from 'lodash'
 import moment from 'moment'
 
@@ -225,6 +233,9 @@ export default {
       {
         title: '姓名',
         dataIndex: 'realName',
+        scopedSlots: {
+          customRender: 'custom'
+        },
         align: 'center',
         width: 100
       },
@@ -348,8 +359,16 @@ export default {
       }
     ]
     return {
-      componentsConfig: {
-        code:'undertakeTaskDetails',
+      userTaskConfig: {
+        code: 'undertakeTaskDetails',
+        permissionVo: {
+          router: this.$route.name,
+          resourceId: ''
+        }
+      },
+      userTaskStatisticsConfig: {
+        code: 'takeTaskStatisticsTable',
+        pagination:false,
         permissionVo: {
           router: this.$route.name,
           resourceId: ''
@@ -378,6 +397,7 @@ export default {
       teamsId: '',
       isSave: false,
       visibleDialogUserTask: false,
+      visibleUserTaskStatistics: false,
       userTaskTableParams: {
         currentUserId: '',
         dutyMonitor: '',
@@ -784,18 +804,61 @@ export default {
       }
     },
     opentDialogUserTask(row) {
-      this.componentsConfig.reportParam = {
-        rolename:row.roleName,
-        deptname:row.deptName,
-        projectid:this.id,
-        projecttype:1,
-        REAL_NAME:row.realName
+      this.userTaskConfig.sqlParam = {
+        roleId: {
+          mode: '=',
+          relation: 'and',
+          value: row.userRoleId
+        },
+        deptName: {
+          mode: '=',
+          relation: 'and',
+          value: row.deptName
+        },
+        projectId: {
+          mode: '=',
+          relation: 'and',
+          value: this.id
+        },
+        projectType: {
+          mode: '=',
+          relation: 'and',
+          value: '1'
+        },
+        userId: {
+          mode: '=',
+          relation: 'and',
+          value: row.sysuserId
+        }
       }
-      // this.userTaskTableParams.wholeDescribeId = this.thirdMenuParam.id || ''
       this.visibleDialogUserTask = true
     },
+    opentDialogUserTaskStatistics(row) {
+      this.userTaskStatisticsConfig.sqlParam = {
+        projectId: {
+          mode: '=',
+          relation: 'and',
+          value: this.id
+        },
+        projectType: {
+          mode: '=',
+          relation: 'and',
+          value: '1'
+        },
+        userId: {
+          mode: '=',
+          relation: 'and',
+          value: row.sysuserId
+        }
+      }
+      // this.userTaskTableParams.wholeDescribeId = this.thirdMenuParam.id || ''
+      this.visibleUserTaskStatistics = true
+    },
     closeDialogUserTask(row) {
+      this.userTaskConfig.sqlParam = null
+      this.userTaskStatisticsConfig.sqlParam = null
       this.visibleDialogUserTask = false
+      this.visibleUserTaskStatistics = false
     },
     userTaskCustomSearch(searchParam, _table) {
       /**
@@ -1018,7 +1081,8 @@ export default {
     'el-popconfirm': Popconfirm,
     'el-link': Link,
     CommonFileView,
-    CommonUpload
+    CommonUpload,
+    DialogUserTaskStatistics
   }
 }
 </script>

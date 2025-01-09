@@ -11,7 +11,7 @@
     @isfullscreen="isfullscreen"
   >
     <template #dialog>
-      <P8TableRender ref="tableRender" :code="componentsConfig.code" :permission-vo="componentsConfig.permissionVo" :reportParam='componentsConfig.reportParam' @refresh="init()"> </P8TableRender>
+      <P8TableRender ref="tableRender" :code="tableConfig.code" :permission-vo="tableConfig.permissionVo" :reportParam="tableConfig.sqlParam"> </P8TableRender>
     </template>
   </common-dialog>
 </template>
@@ -25,7 +25,7 @@ export default {
     CommonDialog
   },
   props: {
-    componentsConfig:{
+    tableConfig:{
       type:Object,
       default: () => {
         return {}
@@ -69,9 +69,6 @@ export default {
     this.dialogHeight = dh * 0.6
   },
   methods: {
-    init(){
-
-    },
     dialogClose() {
       this.$emit('close')
     },
@@ -86,4 +83,6 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+
+</style>

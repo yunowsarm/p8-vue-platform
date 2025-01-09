@@ -80,6 +80,13 @@
                   :tableSetting="false"
                   :noApiTableData="tableData"
                 >
+                  <template #realName="{ scope }">
+                    <div class="real-name">
+                      <template>
+                        <el-link @click.stop="opentDialogUserTaskStatistics(scope.row)">{{ scope.row.realName }}</el-link>
+                      </template>
+                    </div>
+                  </template>
                   <template #taskCount="{ scope }">
                     <div class="task-count">
                       <template v-if="scope.row.taskCount">
@@ -168,13 +175,13 @@
         @member-close="memberCloseHandle"
         :existsData="tableData"
       ></dialog-select-member>
-      <dialog-user-task
-        v-if='visibleDialogUserTask'
-        :dialogVisible="visibleDialogUserTask"
-        :components-config="componentsConfig"
+      <dialog-user-task v-if="visibleDialogUserTask" :dialogVisible="visibleDialogUserTask" :table-config="userTaskConfig" @close="closeDialogUserTask()"></dialog-user-task>
+      <dialog-user-task-statistics
+        v-if="visibleUserTaskStatistics"
+        :dialogVisible="visibleUserTaskStatistics"
+        :table-config="userTaskStatisticsConfig"
         @close="closeDialogUserTask()"
-      >
-      </dialog-user-task>
+      ></dialog-user-task-statistics>
       <!-- 启动流程 -->
       <selectApproveUserBeforehand
         v-if="isSelectApproveUserBeforehandView"
@@ -210,6 +217,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import SelectApproveUserBeforehand from '@/views/Framework/BusinessActivity/ProcessApproval/selectApproveUserBeforehand'
 import { nextApproveUserBeforehand } from '@/assets/commonJS/BusinessActivity/nextApproveUserBeforehand'
+import DialogUserTaskStatistics from './Components/UserTaskStatistics'
 
 export default {
   name: 'teamManager',
@@ -232,6 +240,9 @@ export default {
       {
         title: '姓名',
         dataIndex: 'realName',
+        scopedSlots: {
+          customRender: 'custom'
+        },
         align: 'center',
         width: 100
       },
@@ -356,8 +367,16 @@ export default {
       }
     ]
     return {
-      componentsConfig: {
-        code:'undertakeTaskDetails',
+      userTaskConfig: {
+        code: 'undertakeTaskDetails',
+        permissionVo: {
+          router: this.$route.name,
+          resourceId: ''
+        }
+      },
+      userTaskStatisticsConfig: {
+        code: 'takeTaskStatisticsTable',
+        pagination:false,
         permissionVo: {
           router: this.$route.name,
           resourceId: ''
@@ -386,6 +405,7 @@ export default {
       teamsId: '',
       isSave: false,
       visibleDialogUserTask: false,
+      visibleUserTaskStatistics: false,
       userTaskTableParams: {
         currentUserId: '',
         dutyMonitor: '',
@@ -845,25 +865,62 @@ export default {
         this.isAddUser = true
       }
     },
-    opentDialogUserTask(row, moint) {
-      this.componentsConfig.reportParam = {
-        rolename:row.roleName,
-        deptname:row.deptName,
-        projectid:this.id,
-        projecttype:1,
-        REAL_NAME:row.realName
+    opentDialogUserTask(row) {
+      this.userTaskConfig.sqlParam = {
+        roleId: {
+          mode: '=',
+          relation: 'and',
+          value: row.userRoleId
+        },
+        deptName: {
+          mode: '=',
+          relation: 'and',
+          value: row.deptName
+        },
+        projectId: {
+          mode: '=',
+          relation: 'and',
+          value: this.id
+        },
+        projectType: {
+          mode: '=',
+          relation: 'and',
+          value: '1'
+        },
+        userId: {
+          mode: '=',
+          relation: 'and',
+          value: row.sysuserId
+        }
       }
-      // this.userTaskTableParams.wholeDescribeId = this.thirdMenuParam.id || ''
       this.visibleDialogUserTask = true
     },
+    opentDialogUserTaskStatistics(row) {
+      this.userTaskStatisticsConfig.sqlParam = {
+        projectId: {
+          mode: '=',
+          relation: 'and',
+          value: this.id
+        },
+        projectType: {
+          mode: '=',
+          relation: 'and',
+          value: '1'
+        },
+        userId: {
+          mode: '=',
+          relation: 'and',
+          value: row.sysuserId
+        }
+      }
+      // this.userTaskTableParams.wholeDescribeId = this.thirdMenuParam.id || ''
+      this.visibleUserTaskStatistics = true
+    },
     closeDialogUserTask(row) {
-      /**
-       * 人员列表-承担任务总数-任务明细 弹窗关闭
-       */
-      Object.keys(this.userTaskTableParams).forEach((key) => {
-        this.userTaskTableParams[key] = ''
-      })
+      this.userTaskConfig.sqlParam = null
+      this.userTaskStatisticsConfig.sqlParam = null
       this.visibleDialogUserTask = false
+      this.visibleUserTaskStatistics = false
     },
     userTaskCustomSearch(searchParam, _table) {
       /**
@@ -1143,7 +1200,8 @@ export default {
     'el-link': Link,
     CommonFileView,
     CommonUpload,
-    SelectApproveUserBeforehand
+    SelectApproveUserBeforehand,
+    DialogUserTaskStatistics
   }
 }
 </script>
