@@ -3,8 +3,6 @@ import { Gantt } from 'p8-dhtmlx-gantt'
 import api from '@/plugins/api'
 import moment from 'moment'
 import { calculateRemainingDays } from '@/utils/common'
-import img from '@/assets/image/gantt/weidu.png'
-import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 
 // 列可编辑图标
 const canEditIcon = '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>'
@@ -17,7 +15,6 @@ const suspendIcon = '<i class="element_icon el-icon-error" style="color:#ff0000;
  */
 export function planGanttLocation(ganttName, vueThisLocation) {
   // 获取gantt对象
-  console.log(ganttName, '===================ganttName')
   const ganttObject = GanttObjectLocation.getGanttObject(ganttName)
   GanttObjectLocation.endDateEditor(ganttObject)
   GanttObjectLocation.customDateEditor(ganttObject)
@@ -78,7 +75,7 @@ export function planGanttLocation(ganttName, vueThisLocation) {
     }
   })
   // 表头查询值绑定
-  Gantt.searchColumnsChange = function searchColumnsChange(name, value, searchType, eleInstance) {
+  Gantt.searchColumnsChangeLocation = function searchColumnsChange(name, value, searchType, eleInstance) {
     const customComp = ['select', 'date', 'input']
     if (customComp.indexOf(searchType) < 0) {
       document.getElementById(name + searchType).setAttribute('value', value)
@@ -271,11 +268,11 @@ export function getGanttLocationColumns(ganttObject, vueThisLocation) {
     { key: '9007', label: '机密' }
   ])
   // 加载工期格式化
-  const formatter = GanttObject.formatter(ganttObject)
+  const formatter = GanttObjectLocation.formatter(ganttObject)
   // 加载前后置格式化
-  const linksFormatter = GanttObject.linksFormatter(ganttObject, formatter)
+  const linksFormatter = GanttObjectLocation.linksFormatter(ganttObject, formatter)
   // 加载编辑器
-  const editors = GanttObject.editors(ganttObject, formatter, linksFormatter)
+  // const editors = GanttObjectLocation.editors(ganttObject, formatter, linksFormatter)
 
   function checkEdit() {
     if (vueThisLocation.pageName === 'planMonitor') {
@@ -608,7 +605,7 @@ export function getGanttLocationColumns(ganttObject, vueThisLocation) {
       resize: true,
       // editor: editors.duration,
       template: function (task) {
-        return formatter.format(task.duration)
+        // return formatter.format(task.duration)
       }
     },
     {
