@@ -253,6 +253,7 @@ export default {
       rolesList: [],
       editableData: [],
       clickIndex: null,
+      selectRow: {},
       rolesSelectData: [],
       record: {}
     }
@@ -265,17 +266,21 @@ export default {
   },
   methods: {
     rendered () {
+      let that = this
       this.$api['knowledgeManagement.roleClassifyList']({ klTeamsId: this.record.ID }).then(res => {
         this.rolesList = res
         this.formData = {}
         if (this.rolesList && this.rolesList.length) {
-          this.clickIndex = 0
           this.formData = this.rolesList[0]
         }
         this.formData.klTeamsId = this.record.ID
+        setTimeout(() => {
+          that.openRight(that.selectRow, that.clickIndex)
+        }, 1000)
       })
     },
     customValidate (saveParams) {
+      this.selectRow = saveParams
       saveParams.roles = this.editableData
       this.$refs.form.submitForm(saveParams, this.saveApi)
     },
