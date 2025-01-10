@@ -158,7 +158,8 @@
 .x-style {
   float: right;
   font-size: 20px;
-  margin-right: 10px;
+  margin-right: 15px;
+  margin-top: 30px;
 }
 .plan_attribute {
   height: calc(100% - 42px) !important;
