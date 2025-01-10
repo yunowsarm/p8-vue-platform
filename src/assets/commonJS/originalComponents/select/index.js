@@ -210,7 +210,7 @@ export default class Selector {
     let _this = this
     // 事件委托到最外层包裹元素进行绑定处理
     parentEle.addEventListener('click', function (e) {
-      if (vueThis.clearClick && !vueThis.getSelectStatus()) {
+      if (vueThis && vueThis.clearClick && !vueThis.getSelectStatus()) {
         _this.dropboxShow = false
       }
       const ele = e.target
