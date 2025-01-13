@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "16188108",
+      "name": "标识格式刷brush",
+      "font_class": "mark-format-brush",
+      "unicode": "e6cb",
+      "unicode_decimal": 59083
+    },
+    {
       "icon_id": "43130006",
       "name": "重置",
       "font_class": "zhongzhi1",
