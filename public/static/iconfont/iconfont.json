@@ -6,6 +6,76 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "43124560",
+      "name": "市场需求信息库",
+      "font_class": "shichangxuqiuxinxiku",
+      "unicode": "e975",
+      "unicode_decimal": 59765
+    },
+    {
+      "icon_id": "43124561",
+      "name": "需求收集",
+      "font_class": "xuqiushouji",
+      "unicode": "e7e1",
+      "unicode_decimal": 59361
+    },
+    {
+      "icon_id": "43069997",
+      "name": "项目任务已完成",
+      "font_class": "xiangmurenwuyiwancheng",
+      "unicode": "e7de",
+      "unicode_decimal": 59358
+    },
+    {
+      "icon_id": "43069996",
+      "name": "项目支出金额",
+      "font_class": "xiangmuzhichujine",
+      "unicode": "e7df",
+      "unicode_decimal": 59359
+    },
+    {
+      "icon_id": "43069995",
+      "name": "项目收入金额",
+      "font_class": "xiangmushourujine",
+      "unicode": "e7e0",
+      "unicode_decimal": 59360
+    },
+    {
+      "icon_id": "43069348",
+      "name": "审批中",
+      "font_class": "shenpizhong",
+      "unicode": "e7dc",
+      "unicode_decimal": 59356
+    },
+    {
+      "icon_id": "43069347",
+      "name": "已发布",
+      "font_class": "yifabu",
+      "unicode": "e7dd",
+      "unicode_decimal": 59357
+    },
+    {
+      "icon_id": "43069351",
+      "name": "已结项",
+      "font_class": "yijiexiang",
+      "unicode": "e7d9",
+      "unicode_decimal": 59353
+    },
+    {
+      "icon_id": "43069349",
+      "name": "项目数量",
+      "font_class": "xiangmushuliang",
+      "unicode": "e7da",
+      "unicode_decimal": 59354
+    },
+    {
+      "icon_id": "43069350",
+      "name": "已保存",
+      "font_class": "yibaocun",
+      "unicode": "e7db",
+      "unicode_decimal": 59355
+    },
+    {
       "icon_id": "43067190",
       "name": "网盘",
       "font_class": "wangpan",
