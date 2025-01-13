@@ -1,8 +1,8 @@
 @font-face {
   font-family: "p8"; /* Project id 4084759 */
-  src: url('iconfont.woff2?t=1736748483937') format('woff2'),
-       url('iconfont.woff?t=1736748483937') format('woff'),
-       url('iconfont.ttf?t=1736748483937') format('truetype');
+  src: url('iconfont.woff2?t=1736756705478') format('woff2'),
+       url('iconfont.woff?t=1736756705478') format('woff'),
+       url('iconfont.ttf?t=1736756705478') format('truetype');
 }
 
 .p8 {
@@ -11,6 +11,26 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-zhongzhi1:before {
+  content: "\e984";
+}
+
+.icon-dingwei:before {
+  content: "\e8cf";
+}
+
+.icon-yixiafa1:before {
+  content: "\e978";
+}
+
+.icon-yiyuqi:before {
+  content: "\e982";
+}
+
+.icon-jinhangzhong1:before {
+  content: "\e983";
 }
 
 .icon-shichangxuqiuxinxiku:before {
@@ -789,10 +809,6 @@
   content: "\e8ce";
 }
 
-.icon-dingwei:before {
-  content: "\e8cf";
-}
-
 .icon-gerenjingyankudaoru:before {
   content: "\e8d0";
 }
@@ -975,10 +991,6 @@
 
 .icon-daochu:before {
   content: "\e8a9";
-}
-
-.icon-zhongzhi:before {
-  content: "\e8aa";
 }
 
 .icon-huifu:before {
