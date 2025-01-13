@@ -1784,6 +1784,7 @@ export const CommandButtonData = [
             () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
+            () => isNoRoot(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),
             () => isToBeDelivered(ganttName, tasks),
@@ -1863,9 +1864,10 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isHasTask(ganttName, tasks),
             () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
+            () => isHasTask(ganttName, tasks),
+            () => isNoRoot(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),
             () => isToBeDelivered(ganttName, tasks),
