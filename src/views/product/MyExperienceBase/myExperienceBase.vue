@@ -141,6 +141,8 @@ import { P8NormalLayoutV1 as NormalLayout, P8Drawer as CommonDrawer, P8Table as 
 import DescribeView from '@/views/product/PlanGantt/Components/describeEdit/describeView.vue'
 // import Detail from './taskDetail.vue'
 import Detail from '@/views/Framework/Message/components/TaskDetail/index.vue'
+import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
+import api from '@/plugins/api'
 export default {
   name: 'MyExperienceBase',
   components: {
@@ -274,6 +276,9 @@ export default {
     this.loadCatalog()
   },
   computed: {
+    vueThis(){
+      return this.$store.getters.vueThis
+    },
     treeData () {
       this.catalogData.map((el) => {
         if (el.id === '0') {
@@ -388,9 +393,46 @@ export default {
       }
     },
     copyExperience () {
-      let ids = this.selectedRows.map(el => el.id)
-      this.$message({ type: 'success', message: '复制成功' })
-      this.$emit('copy', ids)
+      const vueThis = this.vueThis
+      vueThis.copyFlag = false
+      const copyTaskIds = this.selectedRows.map(el => el.planId)
+      const planInfoId = this.planInfoId
+      if (copyTaskIds !== null && copyTaskIds.length > 0) {
+        this.$api['planGanttManager.copyTasks']({
+          pasteTaskIds: copyTaskIds,
+          planInfoId: planInfoId
+        })
+          .then( (res) => {
+            if (res) {
+              if (res) {
+                if (res && res.tasks && res.tasks.length) {
+                  res.tasks.forEach(el => {
+                    el.managerStatus = '6403'
+                    el.realBeginDate = ''
+                    el.realEndDate = ''
+                  })
+                }
+                vueThis.copyTasks = res
+                this.$message({
+                  message: '复制成功！',
+                  type: 'success'
+                })
+              } else {
+                this.$message({
+                  message: '任务复制失败！',
+                  type: 'error'
+                })
+              }
+            }
+          })
+          .catch((err) => {
+            console.error(err, 'err')
+            this.$message({
+              message: '任务复制失败！',
+              type: 'error'
+            })
+          })
+      }
     },
     addClass (node, type, e) {
       const that = this

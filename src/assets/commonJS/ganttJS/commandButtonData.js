@@ -898,6 +898,8 @@ export const CommandButtonData = [
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowPaste(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isSingleTask(ganttName, tasks),
       ]
       const res = isDisable(checks)
       store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
