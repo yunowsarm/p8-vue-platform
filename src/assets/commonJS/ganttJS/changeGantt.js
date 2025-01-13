@@ -215,22 +215,18 @@ export function taskDescribesEditCheck(newObj, oldObj, vueThis, taskId, ganttObj
     }
   })
   if (checkChange) {
-    let changeParent = false
-    if (newE !== oldE && moment(newE).isAfter(oldE)) {
-      const parentId = task.parent
-      if (parentId && parentId !== 0) {
-        const parentTask = ganttObject.getTask(parentId)
-        if (parentTask.autoScheduling === '1') {
-          changeParent = true
-        }
-      }
-    }
-    addChangeMark(ganttObject, task,changeParent)
+    if (!task.infoType) {
+    task.infoType = 'update'
+  }
     task.style = changeColor
     ganttObject.updateTask(taskId)
     if (changeDate) {
       GanttObject.updateTaskNew(ganttObject, taskId, vueThis)
-      calculateParentEndDateAndDuration(ganttObject, taskId, vueThis)
+      const parentTask = ganttObject.getTask(task.parent)
+      if (parentTask.autoScheduling === '1') {
+        calculateParentEndDateAndDuration(ganttObject, taskId, vueThis)
+      }
+
     }
     if (hasEdit) {
       setNewTaskMap(vueThis, task, null, 'task')
@@ -238,20 +234,6 @@ export function taskDescribesEditCheck(newObj, oldObj, vueThis, taskId, ganttObj
     if (describesEdit) {
       setNewTaskMap(vueThis, task, newObj.describes, 'describes')
     }
-  }
-}
-
-// 向上递归添加变更标记
-export function addChangeMark(ganttObject, task,changeParent) {
-  if (!task.infoType) {
-    task.infoType = 'update'
-    task.changeStatusName = '变更'
-  }
-  task.style = changeColor
-  task.changeStatus = true
-  if (changeParent) {
-    const parentTask = ganttObject.getTask(task.parent)
-    addChangeMark(ganttObject, parentTask)
   }
 }
 
@@ -311,7 +293,9 @@ export function monitorPointsEditCheck(oldObj, newObj, vueThis, task, ganttObjec
   if (addMonitor || editMonitor) {
     task.monitorPoints = monitorIds
     task.style = changeColor
-    addChangeMark(ganttObject, task)
+    if (!task.infoType) {
+    task.infoType = 'update'
+  }
     ganttObject.updateTask(task.id)
     // 缓存
     setNewTaskMap(vueThis, task, newArray, 'monitors')
@@ -355,7 +339,9 @@ export function linksEditCheck(oldObj, newObj, vueThis, task, ganttObject) {
   }
   // 发生变动
   if (editL) {
-    addChangeMark(ganttObject, task)
+    if (!task.infoType) {
+    task.infoType = 'update'
+  }
     task.style = changeColor
     // 删除旧关系
     if (oldObj && oldObj.length > 0) {
@@ -433,7 +419,9 @@ export function otherEditCheck(oldObj, newObj, ganttObject, vueThis, taskId, typ
   }
   // 发生变动
   if (editO) {
-    addChangeMark(ganttObject, task)
+    if (!task.infoType) {
+    task.infoType = 'update'
+  }
     if (type === 'output') {
       task.hasAtt = newObj.length
     }
@@ -529,7 +517,9 @@ export function changeGanttRemove(ganttObject, selectedTaskIds, vueThis) {
 export function beforeUpdateTask(ganttObject, ganttName, taskId) {
   if (ganttName && ganttName === 'changeGantt') {
     const task = ganttObject.getTask(taskId)
-    addChangeMark(ganttObject, task)
+    if (!task.infoType) {
+    task.infoType = 'update'
+  }
     task.style = changeColor
   }
 }
@@ -783,9 +773,9 @@ export function backfillChangeDatas(vueThis, ganttObject) {
     if (upTask != null && upTask.length > 0) {
       upTask.forEach(function (changeTask) {
         if (ganttObject.isTaskExists(changeTask.id) && !ganttObject.getTask(changeTask.id).readonly) {
-          const oldTask = vueThis.tasks.find(task => task.id === changeTask.id)
-          oldTask.end_date = moment(oldTask.end_date).subtract(1, 'days').format('YYYY-MM-DD');
-          changeTask.end_date = moment(changeTask.end_date).subtract(1, 'days').format('YYYY-MM-DD');
+          const oldTask = vueThis.tasks.find((task) => task.id === changeTask.id)
+          oldTask.end_date = moment(oldTask.end_date).subtract(1, 'days').format('YYYY-MM-DD')
+          changeTask.end_date = moment(changeTask.end_date).subtract(1, 'days').format('YYYY-MM-DD')
           // 工期处理
           vueThis.newTaskMap[changeTask.id] = changeTask
           // 子修改计划完成时间会改变父级的计划完成时间
@@ -867,13 +857,18 @@ export function calculateParentEndDateAndDuration(ganttObject, taskId, vueThis) 
     }
     ganttObject.batchUpdate(function () {
       ganttObject.eachParent(function (t) {
+        if (!t.parent || ['6405', '6406','6407','6408','6409'].includes(t.managerStatus)) {
+          return;  // 跳过根节点
+        }
         const oldTask = vueThis.oldTaskMap[t.id]
         // 为手动时，若计划完成时间小于当前操作任务的计划完成时间，修改父为操作任务完成时间
         if (t.type === 'task') {
           if (!oldTask || oldTask.end_date < task.end_date) {
             t.end_date = task.end_date
+            t.forecastEndDate = task.forecastEndDate
           } else {
             t.end_date = oldTask.end_date
+            t.forecastEndDate = oldTask.forecastEndDate
           }
           t.duration = ganttObject.calculateDuration(t.start_date, task.end_date)
           t.progress = GanttObject.calculateProgress(t, ganttObject)
@@ -883,6 +878,12 @@ export function calculateParentEndDateAndDuration(ganttObject, taskId, vueThis) 
           task.affecTaskIds.push(t.id)
           ganttObject.updateTask(t.id)
         }
+        if (!t.infoType) {
+          t.infoType = 'update'
+          t.changeStatusName = '变更'
+        }
+        t.style = changeColor
+        setNewTaskMap(vueThis, t, null, 'task')
       }, taskId)
     })
     ganttObject.updateTask(taskId)
