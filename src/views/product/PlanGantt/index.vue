@@ -105,9 +105,6 @@
 </template>
 
 <style lang="scss" scoped>
-::v-deep .el-button--small {
-  font-size: 15px !important;
-}
 .x-style {
   float: right;
   font-size: 20px;
@@ -168,7 +165,7 @@
   height: 50px !important;
   margin-top: 25% !important;
 }
-.disable_split_pane ::v-deep .splitter-pane-resizer{
+.disable_split_pane ::v-deep .splitter-pane-resizer {
   display: none;
 }
 </style>
@@ -251,11 +248,11 @@ export default {
     }
   },
   computed: {
-    splitPaneDisable(){
+    splitPaneDisable () {
       const myGantt = GanttObject.getGanttObject(this.ganttName)
-      if(!this.selectTaskId){
+      if (!this.selectTaskId) {
         return true
-      }else return myGantt.getGlobalTaskIndex(this.selectTaskId) === 0 && (this.createPage === 'planChange' || this.createPage === 'compile');
+      } else return myGantt.getGlobalTaskIndex(this.selectTaskId) === 0 && (this.createPage === 'planChange' || this.createPage === 'compile');
     },
     btnData () {
       if (this.$route.path === '/TaskDecomposition') {

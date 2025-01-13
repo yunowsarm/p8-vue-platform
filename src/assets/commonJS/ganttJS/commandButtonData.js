@@ -2144,7 +2144,7 @@ export const CommandButtonData = [
   },
   {
     id: 'location-list',
-    icon: 'el-icon-location-outline',
+    icon: 'p8 icon-dingwei',
     title: '定位',
     help: '定位',
     msg: '定位',

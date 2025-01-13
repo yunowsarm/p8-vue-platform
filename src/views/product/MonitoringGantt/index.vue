@@ -73,9 +73,6 @@
 </template>
 
 <style lang="scss" scoped>
-::v-deep .el-button--small {
-  font-size: 15px !important;
-}
 .couerDivClass {
   height: 100% !important;
   box-sizing: border-box;
