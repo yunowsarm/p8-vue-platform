@@ -6,6 +6,48 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "16188108",
+      "name": "标识格式刷brush",
+      "font_class": "mark-format-brush",
+      "unicode": "e6cb",
+      "unicode_decimal": 59083
+    },
+    {
+      "icon_id": "43130006",
+      "name": "重置",
+      "font_class": "zhongzhi1",
+      "unicode": "e984",
+      "unicode_decimal": 59780
+    },
+    {
+      "icon_id": "43129532",
+      "name": "定位",
+      "font_class": "dingwei",
+      "unicode": "e8cf",
+      "unicode_decimal": 59599
+    },
+    {
+      "icon_id": "43128391",
+      "name": "已下发",
+      "font_class": "yixiafa1",
+      "unicode": "e978",
+      "unicode_decimal": 59768
+    },
+    {
+      "icon_id": "43128389",
+      "name": "已逾期",
+      "font_class": "yiyuqi",
+      "unicode": "e982",
+      "unicode_decimal": 59778
+    },
+    {
+      "icon_id": "43128390",
+      "name": "进行中",
+      "font_class": "jinhangzhong1",
+      "unicode": "e983",
+      "unicode_decimal": 59779
+    },
+    {
       "icon_id": "43124560",
       "name": "市场需求信息库",
       "font_class": "shichangxuqiuxinxiku",
@@ -1364,13 +1406,6 @@
       "unicode_decimal": 59598
     },
     {
-      "icon_id": "42703291",
-      "name": "定位",
-      "font_class": "dingwei",
-      "unicode": "e8cf",
-      "unicode_decimal": 59599
-    },
-    {
       "icon_id": "42703290",
       "name": "个人经验库导入",
       "font_class": "gerenjingyankudaoru",
@@ -1691,13 +1726,6 @@
       "font_class": "daochu",
       "unicode": "e8a9",
       "unicode_decimal": 59561
-    },
-    {
-      "icon_id": "42699218",
-      "name": "重置",
-      "font_class": "zhongzhi",
-      "unicode": "e8aa",
-      "unicode_decimal": 59562
     },
     {
       "icon_id": "42699215",

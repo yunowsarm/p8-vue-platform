@@ -2124,7 +2124,7 @@ export const CommandButtonData = [
   },
   {
     id: 'reset-list',
-    icon: 'el-icon-refresh-left',
+    icon: 'p8 icon-zhongzhi1',
     title: '重置',
     help: '重置',
     msg: '重置',
