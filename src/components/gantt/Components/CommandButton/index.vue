@@ -71,7 +71,7 @@
             </el-button>
           </span>
         </el-tooltip>
-        <el-dropdown v-if="cbutton.children && cbutton.children.length && size != 'mini'" :disabled='isDisable(cbutton)'>
+        <el-dropdown v-if="cbutton.children && cbutton.children.length && size != 'mini'" :disabled='dropdownDisable(cbutton)'>
           <i class="el-icon-caret-bottom"
              @mouseleave="styleMouseleave(cbutton)"
              :class="{ disabled: dropVisible }"></i>
@@ -249,6 +249,14 @@ export default {
     }
   },
   methods: {
+    dropdownDisable(btn) {
+      for (let btnChild of btn.children) {
+        if (!this.isDisable(btnChild)) {
+          return false;
+        }
+      }
+      return true;
+    },
     // 获取禁用提示语
     getButtonMsg(btn){
       if(this.buttonMsg[btn.id]){
