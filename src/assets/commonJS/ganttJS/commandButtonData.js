@@ -1388,6 +1388,24 @@ export const CommandButtonData = [
         }
         return columObj
       })
+      //所有列的列名
+      let columnList = colums.map(item => {
+        let columObj = {}
+        // 创建一个虚拟的DOM元素
+        let tempElement = document.createElement('div');
+        tempElement.innerHTML = item.label;
+
+        // 获取包含计划开始时间的元素
+        let startTimeElement = tempElement.querySelector('.gantt_search');
+
+        // 提取计划开始时间文本内容
+        let startTime = startTimeElement.textContent.trim();
+
+        // 输出提取的计划开始时间
+        columObj.title = startTime
+        columObj.dataIndex = item.name
+        return columObj
+      })
       let columnFilter = []
       columnConfigs.forEach(function (element) {
         if (element.title && element.dataIndex) {
@@ -1396,6 +1414,7 @@ export const CommandButtonData = [
       });
       let exportConfig = {
         columnConfigs: columnFilter,
+        columnList: columnList,
         fileName: "计划管理",
         planInfoId: planInfoId,
         createPage: vueThis.createPage,
