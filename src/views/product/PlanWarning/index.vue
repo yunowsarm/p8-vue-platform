@@ -1,9 +1,9 @@
 <template>
-  <list-layout :header-visible="false">
-    <template #center>
-      <table-render code="PLAN_WARNING" :west-tree-param="reportParam" :report-param="reportParam"></table-render>
-    </template>
-  </list-layout>
+  <div class="content">
+    <table-render code="PLAN_WARNING"
+                  :west-tree-param="reportParam"
+                  :report-param="reportParam"></table-render>
+  </div>
 </template>
 <script>
 import TableRender from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
@@ -18,7 +18,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       record: null,
       reportParam: {
@@ -37,3 +37,10 @@ export default {
   // }
 }
 </script>
+<style scoped>
+.content {
+  width: calc(100% - 29px) !important;
+  height: calc(100% - 20px) !important;
+  margin: 15px 15px 0 15px;
+}
+</style>

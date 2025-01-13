@@ -315,6 +315,10 @@ export default {
   data () {
     const columns = [
       {
+        title: '角色',
+        dataIndex: 'roleName'
+      },
+      {
         title: '姓名',
         dataIndex: 'realName'
       },

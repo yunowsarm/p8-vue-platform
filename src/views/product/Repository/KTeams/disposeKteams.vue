@@ -37,7 +37,7 @@
                    @saved="saved"
                    :dataSource="dataSource"
                    :api="saveApi"
-                   labelWidth="80px"
+                   labelWidth="120px"
                    :isCustomValidate="true"
                    @custom-validate="customValidate"
                    :form="formData">
