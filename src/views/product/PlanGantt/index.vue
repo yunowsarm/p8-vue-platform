@@ -2,7 +2,9 @@
   <div style="height: 100%">
     <div class="couerDivClass"
          id="couerDiv">
-      <P8SplitPane split="vertical"
+      <P8SplitPane :class="splitPaneDisable ? 'disable_split_pane' : ''"
+                   className='split_pane'
+                   split="vertical"
                    @resize="paneSizeChange"
                    :defaultPercent="defaultPercent"
                    :minPercent="0">
@@ -166,6 +168,9 @@
   height: 50px !important;
   margin-top: 25% !important;
 }
+.disable_split_pane ::v-deep .splitter-pane-resizer{
+  display: none;
+}
 </style>
 
 <script>
@@ -246,6 +251,12 @@ export default {
     }
   },
   computed: {
+    splitPaneDisable(){
+      const myGantt = GanttObject.getGanttObject(this.ganttName)
+      if(!this.selectTaskId){
+        return true
+      }else return myGantt.getGlobalTaskIndex(this.selectTaskId) === 0 && (this.createPage === 'planChange' || this.createPage === 'compile');
+    },
     btnData () {
       if (this.$route.path === '/TaskDecomposition') {
         const NewCommandButtonBarDataTabsRow = deepClone(CommandButtonBarData)
