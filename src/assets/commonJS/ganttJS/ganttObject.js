@@ -2781,10 +2781,25 @@ GanttObject.updateTaskNew = function (ganttObject, taskId, vueThis) {
         const parTask = ganttObject.getTask(parentId)
         // 更新父任务
         parTasksIds.push(parTask.id)
-        getTaskParent(ganttObject, parTask.id, parTasksIds)
+        ganttObject.eachParent(function (task) {
+          parTasksIds.push(task.id)
+        }, parTask.id)
       }
-      // if (parTasksIds && parTasksIds.length > 0) {
-      updateNewTaskMap(ganttObject, parTasksIds, vueThis, taskId)
+      if (parTasksIds && parTasksIds.length > 0) {
+        parTasksIds.forEach((t) => {
+          const parT = ganttObject.getTask(t)
+          updateforecastDate(parT, ganttObject)
+          ganttObject.updateTask(t)
+        })
+      }
+      // if (ganttObject.isTaskExists(parentId)) {
+      //   const parTask = ganttObject.getTask(parentId)
+      //   // 更新父任务
+      //   parTasksIds.push(parTask.id)
+      //   getTaskParent(ganttObject, parTask.id, parTasksIds)
+      // }
+      // // if (parTasksIds && parTasksIds.length > 0) {
+      // updateNewTaskMap(ganttObject, parTasksIds, vueThis, taskId)
       // }
     } else if (vueThis.ganttName === 'planGantt') {
       if (ganttObject.isTaskExists(parentId)) {
