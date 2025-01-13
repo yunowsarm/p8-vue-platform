@@ -59,11 +59,10 @@ export default {
         if (!button.isDisableFun(button, this.ganttName, newVal)) {
           button.clickFun(button, this.ganttName, newVal)
         } else {
-          const thisGantt = _this.ganttObjectData.getGanttObject(this.ganttName)
-          thisGantt.message({
-            text: '当前任务无法标识！',
-            expire: 3000
-          })
+          if(newVal.length !== 0){
+            const msg = _this.buttonMsg[button.id]
+            _this.$message.warning(msg)
+          }
         }
       }
     },
@@ -144,7 +143,7 @@ export default {
         return configArray
       }
     },
-    ...mapGetters(['vueThis', 'taskStatusLockMap'])
+    ...mapGetters(['vueThis', 'taskStatusLockMap','buttonMsg'])
   },
   mounted() {
     this.initGanttObject()
@@ -304,10 +303,11 @@ export default {
               return true
             }
             // 任务的readonly属性为true时，不可操作
-            if (checkTaskReadonly(ganttName, tasks)) {
+            const res = checkTaskReadonly(ganttName, tasks)
+            if (res.readonly) {
               // 已下发的任务readonly=true,单独判断责任令解锁标志
               if (!lockIUDMonitorCheck(that.vueThis.monitorLockMap)) {
-                that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '已下发的任务,不可操作' })
+                that.$store.dispatch('setButtonMsg', { id: btn.id, msg: res.readonlyReason })
                 return true
               }
             }
