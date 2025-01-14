@@ -199,7 +199,7 @@
                :destroy-on-close="true"
                @closed="importExcelClosed"
                :visible.sync="importExcel">
-      <import-excel @save-success="importExcelClosed"
+      <import-excel @save-success="importExcelSave"
                     :excel-secret-grade-display="excelSecretGradeDisplay"
                     :excel-secret-grade="excelSecretGrade"
                     :task-id="selectTaskId"
@@ -1496,7 +1496,10 @@ export default {
     monitorManagerSave (obj) {
       this.controlTimeVisible = false
     },
-    importExcelClosed () {
+    importExcelClosed(){
+      this.importExcel = false
+    },
+    importExcelSave () {
       this.importExcel = false
       myGantt.eachSelectedTask(function (id) {
         if (myGantt.isTaskExists(id)) {
