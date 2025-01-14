@@ -2760,8 +2760,13 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
             break
         }
         setTimeout(() => {
-          ganttObject.showTask(item.id)
-          ganttObject.selectTask(item.id )
+          if (!Object.values(vueThis.searchForm).every(value => value === '')) {
+            ganttObject.showTask(parentId)
+            ganttObject.selectTask(parentId)
+          } else {
+            ganttObject.showTask(item.id)
+            ganttObject.selectTask(item.id)
+          }
         }, 1000)
       })
     })
