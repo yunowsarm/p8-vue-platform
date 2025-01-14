@@ -686,6 +686,7 @@ export default {
           this.options = res
         }
       })
+      this.dateTime = new Date().getTime()
     },
     addRolesHandle () {
       let count = this.rolesData.length ? this.rolesData.length + 1 : 1
