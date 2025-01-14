@@ -186,6 +186,10 @@ export default {
       type: String,
       default: ''
     },
+    planManagementStatus:{
+      type: String,
+      default: ''
+    },
     exportExperienceType: {
       type: String,
       default: ''
@@ -392,6 +396,7 @@ export default {
         that.$message.warning('请选择需要导入的数据')
       }
     },
+    // 复制到粘贴板
     copyExperience () {
       const vueThis = this.vueThis
       vueThis.copyFlag = false
@@ -407,7 +412,7 @@ export default {
               if (res) {
                 if (res && res.tasks && res.tasks.length) {
                   res.tasks.forEach(el => {
-                    el.managerStatus = '6403'
+                    el.managerStatus = this.planManagementStatus === '6609' ? '6401' : '6403'
                     el.realBeginDate = ''
                     el.realEndDate = ''
                   })

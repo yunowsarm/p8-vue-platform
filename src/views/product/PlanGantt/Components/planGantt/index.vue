@@ -295,6 +295,7 @@
                         :gantt-name="ganttName"
                         :create-page="createPage"
                         :plan-info-id="planInfoId"
+                        :plan-management-status="planManagementStatus"
                         :selected-task="selectedTasks"
                         :export-experience-type="exportExperienceType"
                         @copy="copyExperienceBase"
