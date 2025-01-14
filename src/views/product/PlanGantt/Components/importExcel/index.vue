@@ -1,44 +1,36 @@
 <template>
   <div>
     <!-- <p style="color: red; font-size: 14px; font-weight: bolder; text-align: right; line-height: 30px; margin-right: 10px">密级：{{ excelSecretGradeDisplay }}</p> -->
-    <form-list label-width="100px"
-               ref="form"
-               :data-source="dataSource"
-               :form="formData"
-               :api="saveApi"
-               :is-custom-validate="isCustomValidate"
-               :visible.sync="visibleImportExcel"
-               @custom-validate="customValidate"
-               @saved="saved"
-               @rendered="rendered">
+    <form-list
+      label-width="100px"
+      ref="form"
+      :data-source="dataSource"
+      :form="formData"
+      :api="saveApi"
+      :is-custom-validate="isCustomValidate"
+      :visible.sync="visibleImportExcel"
+      @custom-validate="customValidate"
+      @saved="saved"
+      @rendered="rendered"
+    >
       <template #outputRequest>
         <div class="edit-outputdata-view">
           <div class="title">导入说明：</div>
-          <ul class="file-list"
-              v-for="(item, index) in outputRequest"
-              :key="item.attId"
-              :class="{ 'not-last': index < outputRequest.length - 1 }">
-            <li>
-              <p>
-                模板下载:
-                <span class="filename">
-                  <el-link type="success"
-                           :underline="true"
-                           @click="downloadOutputRequsetFile(item)">{{ item.attFileName }}</el-link>
-                </span>
-              </p>
-            </li>
+          <ul class="file-list" v-for="(item, index) in outputRequest" :key="item.attId" :class="{ 'not-last': index < outputRequest.length - 1 }">
             <!-- <li> -->
             <!-- <p>导入说明: {{ item.descriptionStr }}</p> -->
             <li>
-              <p>
-                导入类型：
+              <p style="line-height: 40px">
+                <span>(1)模板导入：通过下载右侧模板，通过“模板导入”类型，按照大纲级别，将文档中的任务导入为选中任务的下级</span>
+                <span class="filename">
+                  <el-link type="success" :underline="true" @click="downloadOutputRequsetFile(item)">{{ item.attFileName }}</el-link>
+                </span>
               </p>
               <p>
-                (1)模板导入：通过下载上方模板，按照大纲级别，将文档中的任务导入为选中任务的下级
-              </p>
-              <p>
-                (2)更新导入：通过excel导出的文件，将当前所有任务更新。excel导出的来源为:计划管理-计划编制-excel导出后的文件，在线下更新后，通过“更新导入”类型，将当前所有任务更新。
+                <span> (2)更新导入：通过excel导出的文件，将当前所有任务更新。excel导出的来源为:计划管理-计划编制-excel导出后的文件，在线下更新后，通过“更新导入”类型，将当前所有任务更新。 </span>
+                <span class="filename">
+                  <el-link type="success" :underline="true" @click="updateImportTemplate()">生成更新导入模板</el-link>
+                </span>
               </p>
               <p><span class="importantSty">excel导入文件可以修改的属性为：计划编制列表的列头带有修改图标的属性</span></p>
             </li>
@@ -47,8 +39,7 @@
         </div>
       </template>
       <template #outputIo>
-        <div class="edit-outputIo-view"
-             v-if="visibleImportExcel">
+        <div class="edit-outputIo-view" v-if="visibleImportExcel">
           <div class="title">Excel:导入模板</div>
         </div>
       </template>
@@ -58,6 +49,7 @@
 <script>
 import { P8Form as FormList, Link, Notification } from 'p8-components-ui'
 import { mapGetters } from 'vuex'
+
 export default {
   name: 'ImportExcel',
   components: {
@@ -90,7 +82,7 @@ export default {
       type: Array
     }
   },
-  data () {
+  data() {
     const dataSource = [
       {
         type: 'blank',
@@ -170,8 +162,11 @@ export default {
     ...mapGetters(['vueThis'])
   },
   methods: {
-    rendered () { },
-    saved (res) {
+    updateImportTemplate(){
+      this.$emit('excel-export')
+    },
+    rendered() {},
+    saved(res) {
       if (res.length > 0) {
         let messages = '<ol style="padding-inline-start: 0;">'
         res.forEach((message) => {
@@ -182,13 +177,13 @@ export default {
           title: '导入警告信息',
           dangerouslyUseHTMLString: true,
           message: messages,
-          duration:0
+          duration: 0
         })
       }
       this.formData.uploadFileJson = []
       this.$emit('save-success', 'output')
     },
-    getOutputIoData () {
+    getOutputIoData() {
       const _this = this
       this.$api[this.outputIoApi]({ taskId: _this.taskId }).then((res) => {
         // let uploadFileJson = res.uploadFileJson
@@ -201,7 +196,7 @@ export default {
         }
       })
     },
-    renderedFormData (row, index) {
+    renderedFormData(row, index) {
       if (Object.keys(row).length) {
         const tempObj = {
           uploadFiles: []
@@ -241,12 +236,12 @@ export default {
       }
     },
     /** rowInfo中 att-文件信息字段 key 的处理 */
-    keyHandle (str, key) {
+    keyHandle(str, key) {
       let s = key.replace(str, '')
       s = s.replace(s[0], s[0].toLowerCase())
       return s
     },
-    customValidate (saveParams) {
+    customValidate(saveParams) {
       this.$refs.form.isDisable = true
 
       const params = {
@@ -302,7 +297,7 @@ export default {
           })
       }
     },
-    downloadOutputRequsetFile (item) {
+    downloadOutputRequsetFile(item) {
       // 输出要求-文件下载
       if (item.attId) {
         this.$api['SystemSettings.getTemplateFileUrl']({ attachmentId: item.path }, { responseType: 'blob' })
@@ -338,13 +333,16 @@ export default {
 .el-form.formList .el-row {
   height: auto;
 }
+
 .importantSty {
   color: red;
 }
+
 .edit-outputdata-view {
   background-color: rgba(239, 239, 239, 0.5);
   position: relative;
   min-height: 40px;
+
   .title {
     position: absolute;
     left: -100px;
@@ -352,28 +350,35 @@ export default {
     height: 100%;
     text-align: center;
     background-color: rgba(239, 239, 239, 0.5);
+    line-height: 40px;
   }
+
   .file-list {
+    font-size: 14px;
+
     li {
       box-sizing: border-box;
-      list-style: decimal;
-      padding: 0 10px;
-      margin-left: 20px;
+
       &.not-last {
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
       }
+
       p {
         margin: 0;
         padding: 0;
       }
+
       p span.filename {
         cursor: pointer;
+        margin-left: 10px;
       }
     }
   }
 }
+
 .edit-outputIo-view {
   position: relative;
+
   .title {
     position: absolute;
     left: -100px;
