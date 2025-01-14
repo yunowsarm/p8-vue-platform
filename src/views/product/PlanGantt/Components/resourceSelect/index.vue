@@ -61,6 +61,7 @@
                                 :table-config="tableConfig"
                                 :table-setting="false"
                                 :disabled-check-all="true"
+                                :customPageSizes='customPageSizes'
                                 is-radio-select
                                 @row-click="rowClick"
                                 @select="select"
@@ -90,6 +91,7 @@
                                 :columns="columnsT"
                                 :params="queryParamT"
                                 :api="tableApiT"
+                                :customPageSizes='customPageSizes'
                                 :table-refresh="tableRefreshT"
                                 :table-config="tableConfigT"
                                 :table-setting="false">
@@ -170,6 +172,13 @@
 .resource_tab {
   height: 100%;
 }
+::v-deep .el-tabs--top .el-tabs__content{
+  height: calc(100% - 42px);
+}
+.list-layout{
+  margin: 0;
+  height: 100%;
+}
 </style>
 <script>
 import Vue from 'vue'
@@ -198,6 +207,7 @@ export default {
   props: ['startTaskId', 'endTaskId', 'planInfoId', 'visible', 'selectTaskOwnerId', 'showType', 'selectModel'],
   data () {
     return {
+      customPageSizes:[10,20, 50, 100, 200, 400],
       comp: this,
       title: '选择责任人',
       dialogWidth: '60%',
@@ -455,8 +465,10 @@ export default {
     isfullscreen (isfullscreen) {
       if (isfullscreen) {
         this.customHeight = document.documentElement.clientHeight - 170
+        this.customPageSizes = []
       } else {
         this.customHeight = 462
+        this.customPageSizes = [10,20, 50, 100, 200, 400]
       }
     },
     // 默认选中页面已选的责任人

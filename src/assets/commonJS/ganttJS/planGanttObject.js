@@ -46,6 +46,14 @@ export function planGantt (ganttName, vueThis) {
       },
       update: function (data, id) {
         const task = ganttObject.getTask(id)
+        if (data.name.length > 1000) {
+          data.name = data.name.substring(0, 1000);  // 截取前2000个字符
+          task.name = data.name
+          vueThis.$message({
+            message: '最多可输入一千字',
+            type: 'warning'
+          })
+        }
         // 进度小数位数限制--进度保留小数点后2位
         if (data.progress && data.progress > 0) {
           const num = parseFloat(data.progress)

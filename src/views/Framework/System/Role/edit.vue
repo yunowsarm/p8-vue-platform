@@ -106,20 +106,6 @@
         </el-tab-pane>
       </el-tabs>
     </template>
-    <el-dropdown v-if="activePane === 'setLimit'"
-                 size="mini"
-                 split-button
-                 type="primary"
-                 trigger="click"
-                 style="margin-top: 10px; margin-left: 10px">
-      关联操作
-      <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item @click.native="allSelect()">全部勾选</el-dropdown-item>
-        <el-dropdown-item @click.native="unAllSelect()">取消全选</el-dropdown-item>
-        <el-dropdown-item @click.native="relate()">父子关联</el-dropdown-item>
-        <el-dropdown-item @click.native="unRelate()">取消关联</el-dropdown-item>
-      </el-dropdown-menu>
-    </el-dropdown>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -211,7 +197,7 @@
 }
 </style>
 <script>
-import { Tabs, TabPane, Main, Button, Dropdown, DropdownMenu, DropdownItem, P8Form as FormList, P8SelectUser as SelectUser } from 'p8-components-ui'
+import { Tabs, TabPane, Main, Button, P8Form as FormList, P8SelectUser as SelectUser } from 'p8-components-ui'
 
 import SelectBtn from './SelectButtons.vue'
 
@@ -226,10 +212,7 @@ export default {
     // 'form-list' : FormList,
     // 'select-user' : httpVueLoader('components/CommonFunction/SelectUser.vue'),
     'select-btn': SelectBtn,
-    SelectUser,
-    'el-dropdown-menu': DropdownMenu,
-    'el-dropdown-item': DropdownItem,
-    'el-dropdown': Dropdown
+    SelectUser
   },
   props: {
     roleId: {
@@ -485,18 +468,6 @@ export default {
     btnSelectChange (selectedRes) {
       this.$set(this.formData, 'resourceIds', selectedRes)
       // this.formData.resourceIds = selectedRes
-    },
-    unAllSelect () {
-      this.$refs.selectBtn.unCheckAll()
-    },
-    allSelect () {
-      this.$refs.selectBtn.checkAll()
-    },
-    relate () {
-      this.$refs.selectBtn.relate()
-    },
-    unRelate () {
-      this.$refs.selectBtn.unRelate()
     },
     handleAdhibitionClick (row) {
       row.isActive = !row.isActive

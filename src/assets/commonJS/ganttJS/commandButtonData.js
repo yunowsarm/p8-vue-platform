@@ -898,6 +898,8 @@ export const CommandButtonData = [
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowPaste(ganttName, tasks),
+        () => isHasTask(ganttName, tasks),
+        () => isSingleTask(ganttName, tasks),
       ]
       const res = isDisable(checks)
       store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
@@ -1388,6 +1390,24 @@ export const CommandButtonData = [
         }
         return columObj
       })
+      //所有列的列名
+      let columnList = colums.map(item => {
+        let columObj = {}
+        // 创建一个虚拟的DOM元素
+        let tempElement = document.createElement('div');
+        tempElement.innerHTML = item.label;
+
+        // 获取包含计划开始时间的元素
+        let startTimeElement = tempElement.querySelector('.gantt_search');
+
+        // 提取计划开始时间文本内容
+        let startTime = startTimeElement.textContent.trim();
+
+        // 输出提取的计划开始时间
+        columObj.title = startTime
+        columObj.dataIndex = item.name
+        return columObj
+      })
       let columnFilter = []
       columnConfigs.forEach(function (element) {
         if (element.title && element.dataIndex) {
@@ -1396,6 +1416,7 @@ export const CommandButtonData = [
       });
       let exportConfig = {
         columnConfigs: columnFilter,
+        columnList: columnList,
         fileName: "计划管理",
         planInfoId: planInfoId,
         createPage: vueThis.createPage,
@@ -1784,6 +1805,7 @@ export const CommandButtonData = [
             () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
+            () => isNoRoot(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),
             () => isToBeDelivered(ganttName, tasks),
@@ -1863,9 +1885,10 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isHasTask(ganttName, tasks),
             () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
+            () => isHasTask(ganttName, tasks),
+            () => isNoRoot(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),
             () => isToBeDelivered(ganttName, tasks),
@@ -2101,7 +2124,7 @@ export const CommandButtonData = [
   },
   {
     id: 'reset-list',
-    icon: 'el-icon-refresh-left',
+    icon: 'p8 icon-zhongzhi1',
     title: '重置',
     help: '重置',
     msg: '重置',
@@ -2121,7 +2144,7 @@ export const CommandButtonData = [
   },
   {
     id: 'location-list',
-    icon: 'el-icon-location-outline',
+    icon: 'p8 icon-dingwei',
     title: '定位',
     help: '定位',
     msg: '定位',
@@ -2204,6 +2227,28 @@ export const CommandButtonData = [
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
         () => isHasTask(ganttName, tasks)
+      ]
+      const res = isDisable(checks)
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      return res.disable
+    }
+  },
+  {
+    id: 'examine-history',
+    icon: 'p8 icon-daxingshiyanpingshen',
+    title: '审批历史',
+    help: '审批历史',
+    msg: '审批历史',
+    clickFun: function (btn, ganttName, tasks) {
+      if (ganttName) {
+        const vueThis = store.getters.vueThis
+        vueThis.examineHistoryVisible = true
+      }
+    },
+    isDisableFun: function (btn, ganttName, tasks) {
+      const checks = [
+        () => isHasTask(ganttName, tasks),
+        () => isSingleTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
       store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})

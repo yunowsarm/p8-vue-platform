@@ -73,9 +73,6 @@
 </template>
 
 <style lang="scss" scoped>
-::v-deep .el-button--small {
-  font-size: 15px !important;
-}
 .couerDivClass {
   height: 100% !important;
   box-sizing: border-box;
@@ -238,9 +235,9 @@ export default {
       this.dialogVisible = false
       this.$store.getters.vueThis.searchForm = {}
       this.$store.getters.vueThisLocation.searchForm = {}
-      this.$refs.planGantt.relevancePlanVisible = false
-      this.$refs.planGantt.selectedId = this.$store.getters.vueThisLocation.selectTaskId
-      this.$refs.planGantt.initGantt(this.planInfoId, this.$refs.planGantt.viewType)
+      // this.$refs.planGantt.relevancePlanVisible = false
+      // this.$refs.planGantt.selectedId = this.$store.getters.vueThisLocation.selectTaskId
+      // this.$refs.planGantt.initGantt(this.planInfoId, this.$refs.planGantt.viewType)
     },
     onChangeTask (row) {
       let myGantt = GanttObject.getGanttObject(this.ganttName)

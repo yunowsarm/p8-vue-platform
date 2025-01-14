@@ -103,7 +103,7 @@ export function calculateRemainingDays(task) {
   const COLOR_TODAY_REMAINING = '#1BBF9E'; // 今天
   const COLOR_REMAINING = '#0296ff'; // 剩余天数
   // 获取任务的管理状态
-  const managerStatus = task.managerStatus || task.MANAGERSTATUS
+  const managerStatus = task.managerStatus || task.MANAGERSTATUSID || task.MANAGERSTATUS
   // 获取任务的状态
   const status = task.status || task.currStatus || task.CURRSTATUS
   // 获取任务的计划结束日期

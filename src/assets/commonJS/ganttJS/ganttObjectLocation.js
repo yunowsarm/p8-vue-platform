@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { Gantt } from 'p8-dhtmlx-gantt'
 import store from '@/plugins/store'
-import { updateNewTaskMap, setNewTaskMap } from './changeGantt'
+// import { updateNewTaskMap, setNewTaskMap } from './changeGantt'
 import { getGanttLocationColumns } from './planGanttObjectLocation'
 import moment from 'moment'
 import api from '@/plugins/api'
@@ -1285,7 +1285,7 @@ GanttObjectLocation.treeDataEditor = function (ganttObject, editorConfig, editor
         },
         methods: {
           handleChange(value) {
-            Gantt.searchColumnsChange(name, value, 'date')
+            Gantt.searchColumnsChangeLocation(name, value, 'date')
           }
         },
         template: '<div class="gantt_Editor gantt_treeSelect_' + name + '"' + '><p8-tree-select v-model="input" size="mini" v-bind="config" :data="treeData"></p8-tree-select></div>'
@@ -1670,7 +1670,6 @@ GanttObjectLocation.calculateArrayContain = function calculateArrayContain(taskM
  * @returns {boolean}
  */
 function searchFilterLocation(parent, searchForm, ganttObject) {
-  console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaa", searchForm)
   let keys = Object.keys(searchForm)
   if (keys.length > 0) {
     keys.forEach(el => {
@@ -1922,7 +1921,6 @@ function searchFilterLocation(parent, searchForm, ganttObject) {
  */
 GanttObjectLocation.setSearchConfigLocation = function (ganttObject, vueThisLocation) {
   return ganttObject.attachEvent('onBeforeTaskDisplay', function (id, task) {
-    console.log('222222222222222222222222222222');
     if (searchFilterLocation(id, vueThisLocation.searchForm, ganttObject)) {
       return true
     }
@@ -2648,7 +2646,7 @@ GanttObjectLocation.updateTaskNew = function (ganttObject, taskId, vueThisLocati
         getTaskParent(ganttObject, parTask.id, parTasksIds)
       }
       // if (parTasksIds && parTasksIds.length > 0) {
-      updateNewTaskMap(ganttObject, parTasksIds, vueThisLocation, taskId)
+      // updateNewTaskMap(ganttObject, parTasksIds, vueThisLocation, taskId)
       // }
     } else if (vueThisLocation.ganttName === 'planGantt') {
       if (ganttObject.isTaskExists(parentId)) {
@@ -2681,7 +2679,7 @@ GanttObjectLocation.planChangeCheck = function (ganttObject, vueThisLocation) {
   return ganttObject.attachEvent('onAfterAutoSchedule', function (taskId, updatedTasks) {
     // 判断是否产生变更
     if (vueThisLocation.ganttName === 'changeGantt' && updatedTasks && updatedTasks.length > 0 && taskId) {
-      updateNewTaskMap(ganttObject, updatedTasks, vueThisLocation, ganttObject.getTask(taskId).predecessor)
+      // updateNewTaskMap(ganttObject, updatedTasks, vueThisLocation, ganttObject.getTask(taskId).predecessor)
     }
   })
 }
@@ -2697,7 +2695,7 @@ GanttObjectLocation.planAfterRedo = function (ganttObject, vueThisLocation) {
     if (vueThisLocation.ganttName && vueThisLocation.ganttName === 'changeGantt' && action.commands && action.commands.length > 0 && vueThisLocation.newTaskMap && Object.keys(vueThisLocation.newTaskMap).length > 0) {
       action.commands.forEach(function (item) {
         if (item.entity === 'task' && vueThisLocation.newTaskMap[item.value.id] && Object.keys(vueThisLocation.newTaskMap[item.value.id]).length > 0) {
-          setNewTaskMap(vueThisLocation, item.oldValue, null, 'task')
+          // setNewTaskMap(vueThisLocation, item.oldValue, null, 'task')
         }
       })
     }
@@ -2715,7 +2713,7 @@ GanttObjectLocation.planAfterUndo = function (ganttObject, vueThisLocation) {
     if (vueThisLocation.ganttName && vueThisLocation.ganttName === 'changeGantt' && action.commands && action.commands.length > 0 && vueThisLocation.newTaskMap && Object.keys(vueThisLocation.newTaskMap).length > 0) {
       action.commands.forEach(function (item) {
         if (item.entity === 'task' && vueThisLocation.newTaskMap[item.value.id] && Object.keys(vueThisLocation.newTaskMap[item.value.id]).length > 0) {
-          setNewTaskMap(vueThisLocation, item.value, null, 'task')
+          // setNewTaskMap(vueThisLocation, item.value, null, 'task')
         }
       })
     }
@@ -3062,7 +3060,7 @@ GanttObjectLocation.searchColumnsDataInit = function (vueThisLocation, ganttObje
               value: vueThisLocation.searchForm[name] || '',
               onChange: function (value) {
                 // change事件
-                Gantt.searchColumnsChange(name, value.date, 'date')
+                Gantt.searchColumnsChangeLocation(name, value.date, 'date')
               }
             })
           }
@@ -3082,11 +3080,9 @@ GanttObjectLocation.searchColumnsDataInit = function (vueThisLocation, ganttObje
               placeholder: '请输入',
               onChangeValue(value) {
                 vueThisLocation.searchForm[name] = value
-                console.log(value, '===============================value');
               },
               onChange(value) {
-                console.log('44444444444444444');
-                Gantt.searchColumnsChange(name, value, 'input')
+                Gantt.searchColumnsChangeLocation(name, value, 'input')
               }
             })
           }
@@ -3151,7 +3147,7 @@ GanttObjectLocation.searchColumnsDataInit = function (vueThisLocation, ganttObje
                   })
                   ganttObject.render()
                 } else {
-                  Gantt.searchColumnsChange(name, value, 'select', vueThisLocation[selectorKey])
+                  Gantt.searchColumnsChangeLocation(name, value, 'select', vueThisLocation[selectorKey])
                 }
               }
             })
@@ -3257,20 +3253,20 @@ function searchColumnRenderer(name, columnName, searchType) {
   if (searchType === 'input') {
     // result = '<div class="gantt_search">' + columnName + '</div>' +
     //   '<div class="gantt_search">' +
-    //   '<input id="' + name + searchType + '" type="text" class="search_item" value="" placeholder="请输入..." onchange="Gantt.searchColumnsChange(\'' + name + '\',this.value,\'input\')"/>' +
+    //   '<input id="' + name + searchType + '" type="text" class="search_item" value="" placeholder="请输入..." onchange="Gantt.searchColumnsChangeLocation(\'' + name + '\',this.value,\'input\')"/>' +
     //   '</div>'
     result = '<div class="gantt_search">' + columnName + '</div>' + '<div class="gantt_search gantt_inputor_' + name + '"' + '></div>'
   } else if (searchType === 'select') {
     // result = '<div class="gantt_search">' + columnName + '</div>' +
     //   '<div class="gantt_search">' +
-    //   '<select id="' + name + searchType + '" class="search_item" placeholder="请选择..." onchange="Gantt.searchColumnsChange(\'' + name + '\',this.value,\'select\')"/>">' +
+    //   '<select id="' + name + searchType + '" class="search_item" placeholder="请选择..." onchange="Gantt.searchColumnsChangeLocation(\'' + name + '\',this.value,\'select\')"/>">' +
     //   '<option value =""></option>' +
     //   '</select></div>'
     result = '<div class="gantt_search">' + columnName + '</div>' + '<div class="gantt_search gantt_selector_' + name + '"' + '></div>'
   } else if (searchType === 'date') {
     // result = '<div class="gantt_search">' + columnName + '</div>' +
     //   '<div class="gantt_search">' +
-    //   '<input id="' + name + searchType + '" type="date" class="search_item" value="" onchange="Gantt.searchColumnsChange(\'' + name + '\',this.value,\'date\')"/></div>'
+    //   '<input id="' + name + searchType + '" type="date" class="search_item" value="" onchange="Gantt.searchColumnsChangeLocation(\'' + name + '\',this.value,\'date\')"/></div>'
     result = '<div class="gantt_search">' + columnName + '</div>' + '<div class="gantt_search gantt_datepicker_' + name + '"' + '></div>'
   } else {
     result = '<div class="gantt_search">' + columnName + '</div>' + '<div class="gantt_search gantt_blank"' + '></div>'

@@ -111,29 +111,6 @@
                                 class="state-out">已退出</span>
                         </div>
                       </template>
-                      <template #operation="{ scope }">
-                        <template v-if="!scope.row.departureTime">
-                          <!-- <template v-if="scope.row.taskCount">
-                      <el-popconfirm title="确认要将该人退出项目组吗?"
-                                     confirmButtonText="确认"
-                                     cancelButtonText="取消"
-                                     @onConfirm="deleteUserHandle(scope, scope.$index)">
-                        <el-button slot="reference"
-                                   size="mini"
-                                   type="text"
-                                   v-if="group_add_member">删除
-                        </el-button>
-                      </el-popconfirm>
-                    </template>
-                    <template v-else>
-                      <el-button v-if="group_add_member"
-                                 size="mini"
-                                 type="text"
-                                 @click="deleteUserHandle(scope, scope.$index)">删除
-                      </el-button>
-                    </template> -->
-                        </template>
-                      </template>
                       <template #flagHeader="{scope}">
                         <span>{{ scope.column.label }}</span><i class="el-icon-edit"></i>
                       </template>
@@ -258,6 +235,12 @@ export default {
   data () {
     const columns = [
       {
+        title: '角色',
+        dataIndex: 'roleName',
+        align: 'center',
+        width: 120
+      },
+      {
         title: '姓名',
         dataIndex: 'realName',
         align: 'center',
@@ -316,16 +299,6 @@ export default {
       {
         title: '退出时间',
         dataIndex: 'departureTime',
-        align: 'center'
-      },
-      {
-        title: '操作',
-        fixed: 'right',
-        dataIndex: 'operation',
-        width: 80,
-        scopedSlots: {
-          customRender: 'custom'
-        },
         align: 'center'
       }
     ]
@@ -1053,7 +1026,7 @@ export default {
 
 <style lang="scss" scoped>
 .main_content {
-  height: 100%;
+  height: calc(100% + 45px) !important;
 }
 .custom_content_wrap {
   display: flex;
@@ -1061,7 +1034,7 @@ export default {
   // padding: 16px;
   box-sizing: border-box;
   .left_content {
-    width: 65%;
+    width: 68%;
     height: 100%;
     margin-left: 15px;
     box-shadow: 0px 0px 10px #bfbdbd54;
@@ -1122,7 +1095,7 @@ export default {
 .role-con {
   position: relative;
   height: 100%;
-  width: 25%;
+  width: 33%;
   overflow-y: hidden;
   padding: 0 2px 0 0;
   border: 1px solid #f2f2f2;
@@ -1221,7 +1194,7 @@ export default {
 
 .table-con {
   height: 100%;
-  width: 75%;
+  width: 67%;
   background: #fff;
   padding: 0 10px 8px;
   box-sizing: border-box;
@@ -1316,7 +1289,7 @@ export default {
 
 .right-con {
   height: 100%;
-  width: 35%;
+  width: 32%;
   background-color: #fff;
   // margin-left: 16px;
   box-shadow: 0px 0px 10px #bfbdbd54;
