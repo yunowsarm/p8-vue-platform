@@ -1426,7 +1426,7 @@ export const CommandButtonData = [
         .then((data) => {
           const date = new Date()
           // eslint-disable-next-line camelcase
-          const file_name = '计划编制数据导出' + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+          const file_name = `【计划编制数据导出】${date.getFullYear()}-${(date.getMonth() + 1)}-${date.getDate()}_${String(date.getHours()).padStart(2, '0')}h${String(date.getMinutes()).padStart(2, '0')}m${String(date.getSeconds()).padStart(2, '0')}s`;
           // eslint-disable-next-line camelcase
           const file_type = 'xls'
           const blob = new Blob([data.data], { type: 'application/vnd.ms-excel' })
@@ -1465,7 +1465,7 @@ export const CommandButtonData = [
         .then((data) => {
           const date = new Date()
           // eslint-disable-next-line camelcase
-          const file_name = '计划编制数据导出' + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+          const file_name = `【计划编制数据导出】${date.getFullYear()}-${(date.getMonth() + 1)}-${date.getDate()}_${String(date.getHours()).padStart(2, '0')}h${String(date.getMinutes()).padStart(2, '0')}m${String(date.getSeconds()).padStart(2, '0')}s`;
           // eslint-disable-next-line camelcase
           const file_type = 'xml'
           const blob = new Blob([data.data], { type: 'application/octet-stream' })
@@ -2760,8 +2760,13 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
             break
         }
         setTimeout(() => {
-          ganttObject.showTask(item.id)
-          ganttObject.selectTask(item.id )
+          if (!Object.values(vueThis.searchForm).every(value => value === '')) {
+            ganttObject.showTask(parentId)
+            ganttObject.selectTask(parentId)
+          } else {
+            ganttObject.showTask(item.id)
+            ganttObject.selectTask(item.id)
+          }
         }, 1000)
       })
     })
