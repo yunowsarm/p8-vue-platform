@@ -1,6 +1,8 @@
 <template>
   <div style="height: 100%">
-    <P8SplitPane split="vertical"
+    <P8SplitPane :class="splitPaneDisable ? 'disable_split_pane' : ''"
+                 className="split_pane"
+                 split="vertical"
                  @resize="paneSizeChange"
                  :defaultPercent="defaultPercent"
                  :minPercent="0">
@@ -39,7 +41,8 @@
           </div>
         </div>
       </template>
-      <template #paneR v-if='notRoot'>
+      <template #paneR
+                v-if="notRoot">
         <div v-if="defaultPercent !== 100"
              class="x-style"><i class="el-dialog__close el-icon el-icon-close"
              @click="closeClick"></i></div>
@@ -101,9 +104,6 @@
 </template>
 
 <style lang="scss" scoped>
-::v-deep .el-button--small {
-  font-size: 15px !important;
-}
 .couerDivClass {
   height: calc(100% - 2px) !important;
   // padding-top:1px;
@@ -154,13 +154,19 @@
   border-left: 1px solid $base-line-color;
   box-shadow: -2px 0 5px $base-line-color;
 }
+
 .x-style {
   float: right;
   font-size: 20px;
-  margin-right: 10px;
+  margin-right: 15px;
+  margin-top: 30px;
 }
+
 .plan_attribute {
   height: calc(100% - 42px) !important;
+}
+.disable_split_pane ::v-deep .splitter-pane-resizer {
+  display: none;
 }
 </style>
 
@@ -179,11 +185,12 @@ import locationView from '@/views/product/PlanGantt/Components/planGantt/locatio
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import ProgressHistory from '@/views/product/PlanGantt/Components/progressHistory/index.vue'
 import PlanGantt from '@/views/product/PlanGantt/Components/planGantt/index.vue'
+
 export default {
   name: 'ChangeIndex',
   data () {
     return {
-      notRoot:false,
+      notRoot: false,
       pageType: '',
       dialogVisible: false, // gantt定位弹出框
       firstEntry: true,
@@ -262,6 +269,12 @@ export default {
     }
   },
   computed: {
+    splitPaneDisable () {
+      const myGantt = GanttObject.getGanttObject(this.ganttName)
+      if (!this.selectTaskId) {
+        return true
+      } else return myGantt.getGlobalTaskIndex(this.selectTaskId) === 0 && (this.createPage === 'planChange' || this.createPage === 'compile');
+    },
     btnData () {
       if (this.$route.path === '/TaskDecomposition') {
         const NewCommandButtonBarDataTabsRow = deepClone(CommandButtonBarData)
@@ -314,7 +327,7 @@ export default {
     switchTask (task) {
       if (!task.id) return
       let myGantt = GanttObject.getGanttObject(this.ganttName)
-      myGantt.updateTask(task.id);
+      myGantt.updateTask(task.id)
       this.selectTaskId = task.id
       this.renderKey = new Date().getTime()
     },
@@ -325,10 +338,10 @@ export default {
       this.dialogVisible = false
       this.$store.getters.vueThis.searchForm = {}
       this.$store.getters.vueThisLocation.searchForm = {}
-      this.$refs.planGantt.relevanceVisible = false
-      this.$refs.planGantt.selectedTasks = []
-      this.$refs.planGantt.selectedId = this.$store.getters.vueThisLocation.selectTaskId
-      this.$refs.planGantt.initGantt(this.planInfoId, this.$store.getters.vueThis.changeRecordId, this.$store.getters.vueThis.viewType)
+      // this.$refs.planGantt.relevanceVisible = false
+      // this.$refs.planGantt.selectedTasks = []
+      // this.$refs.planGantt.selectedId = this.$store.getters.vueThisLocation.selectTaskId
+      // this.$refs.planGantt.initGantt(this.planInfoId, this.$store.getters.vueThis.changeRecordId, this.$store.getters.vueThis.viewType)
     },
     onChangeTask (row) {
       let myGantt = GanttObject.getGanttObject(this.ganttName)
@@ -352,12 +365,12 @@ export default {
     showDetail (selectTask, ganttName, createPage, switchType) {
       this.selectTaskId = selectTask.id
       let myGantt = GanttObject.getGanttObject(this.ganttName)
-      if(myGantt.getGlobalTaskIndex(this.selectTaskId) === 0 && (this.createPage === 'planChange' || this.createPage === 'compile')){
+      if (myGantt.getGlobalTaskIndex(this.selectTaskId) === 0 && (this.createPage === 'planChange' || this.createPage === 'compile')) {
         this.defaultPercent = 100
         // this.firstEntry = true
         this.notRoot = false
         return
-      }else{
+      } else {
         this.notRoot = true
       }
       if (switchType !== 'history') {

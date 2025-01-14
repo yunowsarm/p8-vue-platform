@@ -229,10 +229,15 @@ const CommandButtonBarDataDoubleRow = [
         ]
       },
       {
-        groupName: '变更历史',
+        groupName: '历史',
         buttonConfigs: [
           {
             buttonId: 'change-history',
+            size: 'small',
+            position: ['top']
+          },
+          {
+            buttonId: 'examine-history',
             size: 'small',
             position: ['top']
           }

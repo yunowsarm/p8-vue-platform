@@ -2,11 +2,13 @@
   <div style="height: 100%">
     <div class="couerDivClass"
          id="couerDiv">
-    <P8SplitPane split="vertical"
-                 @resize="paneSizeChange"
-                 :defaultPercent="defaultPercent"
-                 :minPercent="0">
-      <template #paneL>
+      <P8SplitPane :class="splitPaneDisable ? 'disable_split_pane' : ''"
+                   className='split_pane'
+                   split="vertical"
+                   @resize="paneSizeChange"
+                   :defaultPercent="defaultPercent"
+                   :minPercent="0">
+        <template #paneL>
 
           <div class="top"
                :style="{ height: commandButtonBarHeight }">
@@ -43,52 +45,52 @@
                         :task-status="taskStatus"></plan-gantt>
           </div>
 
-      </template>
-      <template #paneR
-                v-if='notRoot'>
-        <div v-if="defaultPercent !== 100"
-             class="x-style"><i class="el-dialog__close el-icon el-icon-close"
-             @click="closeClick"></i></div>
-        <ProgressHistory v-if="pageType === 'history'"
-                         :key="renderKey"
-                         :task-id="selectTaskId" />
+        </template>
+        <template #paneR
+                  v-if='notRoot'>
+          <div v-if="defaultPercent !== 100"
+               class="x-style"><i class="el-dialog__close el-icon el-icon-close"
+               @click="closeClick"></i></div>
+          <ProgressHistory v-if="pageType === 'history'"
+                           :key="renderKey"
+                           :task-id="selectTaskId" />
 
-        <plan-attribute v-else
-                        :key="renderKey"
-                        @save-success="detailDrawerClosed"
-                        :create-page="createPage"
-                        :task-id="selectTaskId"
-                        :wholeDescribeId="wholeDescribeId"
-                        :att-read-only="readOnly"
-                        :view-type="viewType"
-                        :gantt-name="ganttName"
-                        :status="status"
-                        :defaultPercent="defaultPercent"
-                        @refreshData="refreshData"
-                        :plan-info-id="planInfoId"></plan-attribute>
-      </template>
-    </P8SplitPane>
-    <command-location v-if="dialogVisible"
-                      :visible="dialogVisible"
-                      @close="closeLocation">
-      <template>
-        <location-view ref="planGanttView"
-                       :plan-info-id="planInfoId"
-                       :whole-describe-id="wholeDescribeId"
-                       :plan-info-status="planInfoStatus"
-                       :task-id="taskId"
-                       :plan-end-date-array="planEndDateArray"
-                       :plan-begin-date-array="planBeginDateArray"
-                       :create-page="createPage"
-                       :flag="thirdMenuParam.specialPlan"
-                       :project-category="thirdMenuParam.projectCategory"
-                       :select-record="thirdMenuParam.selectRecord"
-                       :panel-data="btnData"
-                       :task-status="taskStatus"
-                       @onChangeTask="onChangeTask"></location-view>
-      </template>
-    </command-location>
-    <!-- <CommonDrawer
+          <plan-attribute v-else
+                          :key="renderKey"
+                          @save-success="detailDrawerClosed"
+                          :create-page="createPage"
+                          :task-id="selectTaskId"
+                          :wholeDescribeId="wholeDescribeId"
+                          :att-read-only="readOnly"
+                          :view-type="viewType"
+                          :gantt-name="ganttName"
+                          :status="status"
+                          :defaultPercent="defaultPercent"
+                          @refreshData="refreshData"
+                          :plan-info-id="planInfoId"></plan-attribute>
+        </template>
+      </P8SplitPane>
+      <command-location v-if="dialogVisible"
+                        :visible="dialogVisible"
+                        @close="closeLocation">
+        <template>
+          <location-view ref="planGanttView"
+                         :plan-info-id="planInfoId"
+                         :whole-describe-id="wholeDescribeId"
+                         :plan-info-status="planInfoStatus"
+                         :task-id="taskId"
+                         :plan-end-date-array="planEndDateArray"
+                         :plan-begin-date-array="planBeginDateArray"
+                         :create-page="createPage"
+                         :flag="thirdMenuParam.specialPlan"
+                         :project-category="thirdMenuParam.projectCategory"
+                         :select-record="thirdMenuParam.selectRecord"
+                         :panel-data="btnData"
+                         :task-status="taskStatus"
+                         @onChangeTask="onChangeTask"></location-view>
+        </template>
+      </command-location>
+      <!-- <CommonDrawer
       v-if="detailVisible"
       :visible="detailVisible"
       size="50%"
@@ -103,13 +105,11 @@
 </template>
 
 <style lang="scss" scoped>
-::v-deep .el-button--small {
-  font-size: 15px !important;
-}
 .x-style {
   float: right;
   font-size: 20px;
-  margin-right: 10px;
+  margin-right: 15px;
+  margin-top: 30px;
 }
 
 .couerDivClass {
@@ -164,6 +164,9 @@
 ::v-deep .splitter-pane-resizer {
   height: 50px !important;
   margin-top: 25% !important;
+}
+.disable_split_pane ::v-deep .splitter-pane-resizer {
+  display: none;
 }
 </style>
 
@@ -245,6 +248,12 @@ export default {
     }
   },
   computed: {
+    splitPaneDisable () {
+      const myGantt = GanttObject.getGanttObject(this.ganttName)
+      if (!this.selectTaskId) {
+        return true
+      } else return myGantt.getGlobalTaskIndex(this.selectTaskId) === 0 && (this.createPage === 'planChange' || this.createPage === 'compile');
+    },
     btnData () {
       if (this.$route.path === '/TaskDecomposition') {
         const NewCommandButtonBarDataTabsRow = deepClone(CommandButtonBarData)

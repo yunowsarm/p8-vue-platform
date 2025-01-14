@@ -1,17 +1,46 @@
 <template>
-  <el-table row-key="id" :data="menus" :pagination="false" :height="height" :default-expand-all="true">
-    <el-table-column label="选择" type="index">
+  <el-table row-key="id"
+            :data="menus"
+            :pagination="false"
+            :height="height"
+            :default-expand-all="true">
+    <el-table-column label="选择"
+                     type="index">
       <span slot-scope="scope">
-        <el-checkbox v-model="scope.row.checked" :disabled="resDisabled(scope.row.id)" @change="(v) => checkMenu(v, scope.row)"></el-checkbox>
+        <el-checkbox v-model="scope.row.checked"
+                     :disabled="resDisabled(scope.row.id)"
+                     @change="(v) => checkMenu(v, scope.row)"></el-checkbox>
       </span>
     </el-table-column>
-    <el-table-column width="180" label="菜单" prop="title"></el-table-column>
+    <el-table-column label="功能选项"
+                     type="">
+      <span slot-scope="scope">
+        <el-dropdown v-if="scope.row.children.length > 0"
+                     size="mini"
+                     split-button
+                     type="primary"
+                     @click.native="relate(scope.row)"
+                     style="margin-top: 10px; margin-left: 10px">
+          父子关联
+          <el-dropdown-menu slot="dropdown">
+            <!-- <el-dropdown-item @click.native="relate(scope.row)">父子关联</el-dropdown-item> -->
+            <el-dropdown-item @click.native="unRelate(scope.row)">取消关联</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </span>
+    </el-table-column>
+    <el-table-column width="180"
+                     label="菜单"
+                     prop="title"></el-table-column>
     <el-table-column label="功能">
       <span slot-scope="scope">
         <ul class="btn-container">
           <template v-for="btn in buttons(scope.row.id)">
-            <li :key="btn.id" :class="btnClass(btn.checked)">
-              <el-checkbox :key="btn.id" v-model="btn.checked" @change="(v) => checkMenu(v, btn)">
+            <li :key="btn.id"
+                :class="btnClass(btn.checked)">
+              <el-checkbox :key="btn.id"
+                           v-model="btn.checked"
+                           @change="(v) => checkMenu(v, btn)">
                 <!-- <a-icon class="roleOperationIcon" :type="btn.icon"></a-icon> -->
                 {{ btn.title }}
               </el-checkbox>
@@ -43,7 +72,7 @@
 }
 </style>
 <script>
-import { Checkbox, Table, TableColumn } from 'p8-components-ui'
+import { Dropdown, DropdownMenu, DropdownItem, Checkbox, Table, TableColumn } from 'p8-components-ui'
 import { generateTree } from '@/utils/generateTree'
 
 export default {
@@ -58,9 +87,12 @@ export default {
   components: {
     'el-table': Table,
     'el-table-column': TableColumn,
-    'el-checkbox': Checkbox
+    'el-checkbox': Checkbox,
+    'el-dropdown-menu': DropdownMenu,
+    'el-dropdown-item': DropdownItem,
+    'el-dropdown': Dropdown
   },
-  data() {
+  data () {
     const docHeight = document.documentElement.clientHeight - 340
     return {
       height: docHeight,
@@ -69,17 +101,17 @@ export default {
       related: false
     }
   },
-  mounted() {
+  mounted () {
     this.getPermissions()
     window.addEventListener('resize', this._initTableSize)
   },
   computed: {
-    btnClass() {
+    btnClass () {
       return function (checked) {
         return checked ? 'checked' : ''
       }
     },
-    dataSource() {
+    dataSource () {
       let that = this
       // ', that.resources, this.buttonSelected)
       this.buttonSelected.forEach((b) => {
@@ -90,7 +122,7 @@ export default {
       })
       return that.resources
     },
-    menus() {
+    menus () {
       // this.dataSource.filter(r => r.parentId === 'root').forEach(i => { i.parentId = null })
       // filter(r => r.type === 'MENU' && r.id !== 'root') 不包含根节点
       return generateTree(
@@ -98,12 +130,12 @@ export default {
         'parentId'
       )
     },
-    buttons() {
+    buttons () {
       return function (menuId) {
         return this.dataSource.filter((r) => r.parentId === menuId && r.type === 'BUTTON')
       }
     },
-    resDisabled() {
+    resDisabled () {
       return function (resId) {
         let checkedChild = this.dataSource.find((r) => r.parentId === resId && r.checked)
         let result = !!checkedChild
@@ -118,11 +150,11 @@ export default {
     }
   },
   methods: {
-    _initTableSize() {
+    _initTableSize () {
       let docHeight = document.documentElement.clientHeight - 318
       this.height = docHeight
     },
-    getPermissions() {
+    getPermissions () {
       let that = this
       // let paramdata = new FormData()
       this.$api['role.getPermissions']().then(function (res) {
@@ -132,31 +164,34 @@ export default {
         that.resChanged()
       })
     },
-    relateSelect(id) {
+    relateSelect (id, bool) {
       let cRow = this.dataSource.filter((r) => r.parentId === id)
       cRow.forEach((value) => {
-        value.checked = true
+        value.checked = bool
         let cBtn = this.dataSource.filter((r) => r.parentId === value.id)
         cBtn.forEach((cValue) => {
-          cValue.checked = true
+          cValue.checked = bool
           if (cValue.children && cValue.children.length > 0) {
-            this.relateSelect(cValue.id)
+            this.relateSelect(cValue.id, bool)
           } else {
             let cRow = this.dataSource.filter((r) => r.parentId === cValue.id)
             cRow.forEach((value) => {
-              value.checked = true
+              value.checked = bool
             })
           }
         })
       })
     },
-    checkMenu(v, row) {
+    checkMenu (v, row) {
+      console.log(this.related, '===============this.related');
+      console.log(v, '===============vvv');
       if (this.related) {
         if (v === true) {
           if (row.type === 'MENU') {
             let id = row.id
             if (row.children && row.children.length > 0) {
-              this.relateSelect(id)
+              row.checked = true
+              this.relateSelect(id, true)
             } else {
               let cRow = this.dataSource.filter((r) => r.parentId === id)
               cRow.forEach((value) => {
@@ -165,33 +200,63 @@ export default {
             }
           }
         }
-      }
-      if (v === true) {
+        if (v === true) {
+          let pId = row.parentId
+          while (pId !== null) {
+            let pRow = this.dataSource.find((r) => r.id === pId)
+            if (pRow) {
+              console.log('11111111111');
+
+              pRow.checked = true
+              pId = pRow.parentId
+            } else {
+              pId = null
+            }
+          }
+        } else {
+          console.log('2222222222');
+
+          let checkedChild = this.dataSource.find((r) => r.parentId === row.id && r.checked)
+          //
+          if (checkedChild) {
+            row.checked = true
+          }
+        }
+      } else {
+        if (row.type === 'MENU') {
+          let id = row.id
+          if (row.children && row.children.length > 0) {
+            row.checked = false
+            this.relateSelect(id, false)
+          } else {
+            let cRow = this.dataSource.filter((r) => r.parentId === id)
+            cRow.forEach((value) => {
+              value.checked = false
+            })
+          }
+        }
         let pId = row.parentId
         while (pId !== null) {
           let pRow = this.dataSource.find((r) => r.id === pId)
           if (pRow) {
-            pRow.checked = true
+            console.log('3333333333333333');
+
+            pRow.checked = false
             pId = pRow.parentId
           } else {
             pId = null
           }
         }
-      } else {
-        let checkedChild = this.dataSource.find((r) => r.parentId === row.id && r.checked)
-        //
-        if (checkedChild) {
-          row.checked = true
-        }
       }
+
 
       this.resChanged()
     },
-    resChanged() {
+    resChanged () {
       //
       this.$emit('btn-select-change', this.selectedRes)
     },
-    checkAll() {
+    checkAll () {
       // this.isIndeterminate = true
       let res1 = []
       res1 = this.dataSource.filter((r) => r).map((r) => r.id)
@@ -204,18 +269,20 @@ export default {
       }
       this.$emit('btn-select-change', res1)
     },
-    unCheckAll() {
+    unCheckAll () {
       this.resources.forEach((value) => {
         value.checked = false
       })
       let res = []
       this.$emit('btn-select-change', res)
     },
-    relate() {
+    relate (row) {
       this.related = true
+      this.checkMenu(true, row)
     },
-    unRelate() {
+    unRelate (row) {
       this.related = false
+      this.checkMenu(true, row)
     }
   }
 }

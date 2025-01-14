@@ -55,11 +55,11 @@ export default {
         window.myWebSocket = socket
         window.myWebSocket.connect()
         socket.on('messageevent', (data) => {
-          let count = this.$store.getters.messageCount
-          // let taskMessageCount = this.$store.state.user.taskMessageCount
-          this.$store.dispatch('setMessageCount', ++count)
-          // this.$store.dispatch('setTasketMessageCount', ++taskMessageCount)
-          this.message()
+          if (data.sendUser !== id) {
+            let count = this.$store.getters.messageCount
+            this.$store.dispatch('setMessageCount', ++count)
+            this.message()
+          }
         })
         socket.on('getApproveNum', (data) => {
           // let count = this.$store.getters.approvalTotalMsg
@@ -70,7 +70,7 @@ export default {
           this.$store.commit('SET_MESSAGENUM', ++count)
         })
         socket.on('getMessageContent', (data) => {
-          console.log(window.isSecureContext,'我的消息---window.isSecureContext');
+          console.log(window.isSecureContext, '我的消息---window.isSecureContext');
           let res = JSON.parse(data)
           if ("Notification" in window) {
             Notification.requestPermission().then(function (permission) {
@@ -87,7 +87,7 @@ export default {
           }
         })
         socket.on('getApproveContent', (data) => {
-          console.log(window.isSecureContext,'我的审批---window.isSecureContext');
+          console.log(window.isSecureContext, '我的审批---window.isSecureContext');
           if ("Notification" in window) {
             Notification.requestPermission().then(function (permission) {
               if (permission === "granted") {

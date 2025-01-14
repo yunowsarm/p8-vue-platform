@@ -71,9 +71,6 @@ export default {
 <style lang="scss">
 .w_dialog {
   font-size: initial;
-  z-index: 99999 !important;
-  #couerDiv {
-    z-index: 9999 !important;
-  }
+  z-index: 2020;
 }
 </style>

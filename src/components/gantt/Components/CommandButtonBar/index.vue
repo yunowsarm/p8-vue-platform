@@ -546,6 +546,7 @@ export default {
   .el-tab-pane {
     height: 100%;
     overflow-y: hidden;
+    margin-right: 50px;
   }
 
   .group {
@@ -573,6 +574,7 @@ export default {
   #rightArrow {
     height: 58px;
     line-height: 58px;
+    right: 41px;
   }
 }
 </style>

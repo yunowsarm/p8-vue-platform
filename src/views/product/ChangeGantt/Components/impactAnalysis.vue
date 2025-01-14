@@ -49,9 +49,6 @@
 @import '~p8-dhtmlx-gantt/codebase/dhtmlxgantt.css';
 @import '@/assets/commonJS/ganttJS/ganttObject.css';
 
-::v-deep .el-button--small {
-  font-size: 15px !important;
-}
 .myGantt ::v-deep {
   // 2个版本，无数据的颜色修改
   .gantt_row:not([aria-expanded]).analysisColor {
@@ -154,7 +151,7 @@ export default {
   data () {
     return {
       ganttName: 'analysisGantt',
-      tasks:[],
+      tasks: [],
       selectedTasks: [],
       resourceConfig: {},
       resourceTemplates: {},
