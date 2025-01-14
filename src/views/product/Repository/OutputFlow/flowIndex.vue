@@ -1,122 +1,101 @@
 <template>
-  <div style="height:100%;position:relative">
-    <el-tabs v-model="defaultActiveKey"
-             class="flowTopTabs"
-             @tab-click="triggerChange">
-      <el-tab-pane label="默认模式"
-                   name="first">
-        <div class="wrap"
-             v-if="defaultActiveKey == 'first'">
-          <normal-layout :headerVisible="false"
-                         :splitDefaultLeftWidth="50"
-                         :normalLayout="normalLayout">
+  <div style="height: 100%; position: relative">
+    <el-tabs v-model="defaultActiveKey" class="flowTopTabs" @tab-click="triggerChange">
+      <el-tab-pane label="默认模式" name="first">
+        <div class="wrap" v-if="defaultActiveKey == 'first'">
+          <activityTree
+            ref="activityTree"
+            class="left-container"
+            style='height: calc(100% - 45px)'
+            :activity-info-id="activityInfoId"
+            v-if="triggerVal && !showRight"
+            :row="row"
+            @taskCount="taskCount"
+            @taskSelected="selectTask"
+            @importExcel="importTask"
+            @refrshDes="refrshDes"
+            @remove-task="removeTask"
+          >
+          </activityTree>
+          <normal-layout v-if='showRight' :headerVisible="false" :splitDefaultLeftWidth="50" :normalLayout="normalLayout">
             <template #west>
-              <activityTree ref="activityTree"
-                            class="left-container"
-                            :activity-info-id="activityInfoId"
-                            v-if="triggerVal"
-                            :row="row"
-                            @taskSelected="selectTask"
-                            @importExcel="importTask"
-                            @refrshDes="refrshDes"
-                            @remove-task="removeTask">
+              <activityTree
+                ref="activityTree"
+                class="left-container"
+                :activity-info-id="activityInfoId"
+                v-if="triggerVal"
+                :row="row"
+                @taskCount="taskCount"
+                @taskSelected="selectTask"
+                @importExcel="importTask"
+                @refrshDes="refrshDes"
+                @remove-task="removeTask"
+              >
               </activityTree>
             </template>
             <template #center>
-              <el-tabs v-model="describeKey"
-                       ref="tab"
-                       tab-position="left"
-                       class="flowTabs"
-                       style="height: 100%;"
-                       @tab-click="onSelect"
-                       v-if="triggerVal">
+              <el-tabs v-model="describeKey" ref="tab" tab-position="left" class="flowTabs" style="height: 100%" @tab-click="onSelect" v-if="triggerVal">
                 <el-tab-pane name="describeKey">
                   <span slot="label">
                     <div style="display: flex; align-items: center"><i class="p8 icon-jindu"></i><span style="margin-left: 4px">活动描述</span></div>
                   </span>
-
                 </el-tab-pane>
                 <el-tab-pane name="inputKey">
                   <span slot="label">
                     <div style="display: flex; align-items: center"><i class="p8 icon-shuruyaoqiu"></i><span style="margin-left: 4px">输入</span></div>
                   </span>
-
                 </el-tab-pane>
                 <el-tab-pane name="outputKey">
                   <span slot="label">
                     <div style="display: flex; align-items: center"><i class="p8 icon-shuchuyaoqiu"></i><span style="margin-left: 4px">输出</span></div>
                   </span>
-
                 </el-tab-pane>
                 <el-tab-pane name="specialKey">
                   <span slot="label">
                     <div style="display: flex; align-items: center"><i class="p8 icon-tebieshuoming"></i><span style="margin-left: 4px">特别说明</span></div>
                   </span>
-
                 </el-tab-pane>
               </el-tabs>
-              <div class="formEdit"
-                   :key="describeRefrshKey">
+              <div class="formEdit" :key="describeRefrshKey">
                 <keep-alive>
-                  <describe-edit @saveSuccess="saveCallback"
-                                 @saveAll="saveAll"
-                                 ref="describeEdit"
-                                 :activityInfoId="activityId"
-                                 :teamId="teamId"
-                                 :rootId="activityInfoId"
-                                 :colLayoutClassify="colLayoutClassify"
-                                 v-show="'describeKey' == activeKey && activityId"></describe-edit>
+                  <describe-edit
+                    @saveSuccess="saveCallback"
+                    @saveAll="saveAll"
+                    ref="describeEdit"
+                    :activityInfoId="activityId"
+                    :teamId="teamId"
+                    :rootId="activityInfoId"
+                    :colLayoutClassify="colLayoutClassify"
+                    v-show="'describeKey' == activeKey && activityId"
+                  ></describe-edit>
                 </keep-alive>
                 <keep-alive>
-                  <input-edit @saveSuccess="saveCallback"
-                              @saveAll="saveAll"
-                              ref="inputEdit"
-                              :activityInfoId="activityId"
-                              v-show="'inputKey' == activeKey && activityId"></input-edit>
+                  <input-edit @saveSuccess="saveCallback" @saveAll="saveAll" ref="inputEdit" :activityInfoId="activityId" v-show="'inputKey' == activeKey && activityId"></input-edit>
                 </keep-alive>
                 <keep-alive>
-                  <output-edit @saveSuccess="saveCallback"
-                               @saveAll="saveAll"
-                               ref="outputEdit"
-                               :activityInfoId="activityId"
-                               v-show="'outputKey' == activeKey && activityId"></output-edit>
+                  <output-edit @saveSuccess="saveCallback" @saveAll="saveAll" ref="outputEdit" :activityInfoId="activityId" v-show="'outputKey' == activeKey && activityId"></output-edit>
                 </keep-alive>
                 <keep-alive>
-                  <special-edit @saveSuccess="saveCallback"
-                                @saveAll="saveAll"
-                                ref="specialEdit"
-                                :activityInfoId="activityId"
-                                v-show="'specialKey' == activeKey && activityId"></special-edit>
+                  <special-edit @saveSuccess="saveCallback" @saveAll="saveAll" ref="specialEdit" :activityInfoId="activityId" v-show="'specialKey' == activeKey && activityId"></special-edit>
                 </keep-alive>
               </div>
             </template>
           </normal-layout>
-          <div class="footer"><el-button plain
-                       @click="$emit('close')">取消</el-button><el-button type="primary"
-                       @click="saveAll"
-                       style="margin-right: 20px;">保存</el-button></div>
+          <div class="footer">
+            <el-button plain @click="$emit('close')">取消</el-button>
+            <el-button type="primary" @click="saveAll" style="margin-right: 20px">保存</el-button>
+          </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="图形模式"
-                   name="second">
-        <graphics-mode :teamId="teamId"
-                       v-if="defaultActiveKey == 'second'"
-                       :activityInfoId="activityInfoId">
-        </graphics-mode>
+      <el-tab-pane label="图形模式" name="second">
+        <graphics-mode :teamId="teamId" v-if="defaultActiveKey == 'second'" :activityInfoId="activityInfoId"></graphics-mode>
       </el-tab-pane>
     </el-tabs>
 
     <div>
-      <common-drawer v-if="excelDrawer"
-                     :title="excelTitle"
-                     :drawerConfig="drawerConfig"
-                     :visible="excelDrawer"
-                     @close="onExcelClose">
+      <common-drawer v-if="excelDrawer" :title="excelTitle" :drawerConfig="drawerConfig" :visible="excelDrawer" @close="onExcelClose">
         <template #drawer>
-          <import-excel @saveSuccess="importExcelClosed"
-                        @importExcel="importExcel"
-                        :task-id="selectTaskId"
-                        :output-request="excelImportData"></import-excel>
+          <import-excel @saveSuccess="importExcelClosed" @importExcel="importExcel" :task-id="selectTaskId" :output-request="excelImportData"></import-excel>
         </template>
       </common-drawer>
     </div>
@@ -127,9 +106,11 @@
 .flowTopTabs ::v-deep .normal-layout .normal-main .splitBtn > i {
   left: 0px;
 }
+
 .flowTopTabs ::v-deep .normal-center {
   position: relative;
 }
+
 .secret_level {
   position: absolute;
   right: 20px;
@@ -141,6 +122,7 @@
   color: red;
   font-size: larger;
 }
+
 .table-page-search-wrapper .ant-form-inline .ant-form-item {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -148,6 +130,7 @@
   margin-bottom: 24px;
   margin-right: 0;
 }
+
 .table-page-search-wrapper .ant-form-inline .ant-form-item .ant-form-item-control-wrapper {
   -webkit-box-flex: 1;
   -ms-flex: 1 1;
@@ -155,28 +138,35 @@
   display: inline-block;
   vertical-align: middle;
 }
+
 .left-container {
   padding-left: 10px;
   overflow: hidden;
   position: relative;
   height: 100%;
 }
+
 .flowTopTabs .el-tabs__content {
   background-color: rgba(243, 245, 248, 0.9);
 }
+
 .flowTopTabs {
   height: 100%;
+
   .splitBtn {
     display: none;
   }
+
   .normal-layout {
     // box-shadow: 4px 4px 8px #bfbdbd54;
     margin: 0 14px;
     height: calc(100% - 45px);
     padding: 0;
   }
+
   .wrap {
     height: 100%;
+
     .footer {
       border-top: 1px solid #e1e1e1;
       width: 100%;
@@ -186,42 +176,54 @@
       background: #fff;
     }
   }
+
   > ::v-deep .el-tabs__header.is-top {
     margin: 0;
     height: 35px;
   }
+
   > ::v-deep .el-tabs__content {
     height: calc(100% - 40px);
+
     > .el-tab-pane {
       height: calc(100% - 10px);
     }
   }
 }
+
 .normal-center {
   position: relative;
 }
+
 .flowTabs {
   width: 120px !important;
   display: inline-block;
   vertical-align: top;
+
   .el-tabs__item.is-active {
     color: #1890ff;
   }
+
   .el-tabs__nav-wrap.is-left::after {
     width: 0;
   }
+
   .el-tabs__nav {
     border-right: 2px solid #e4e7ed;
   }
+
   .el-tabs__active-bar {
     background: #1890ff;
   }
+
   .el-tabs__active-bar.is-left {
     right: -2px;
   }
+
   > .el-tabs__header.is-top {
     height: 42px;
   }
+
   .el-tab-pane {
     height: 100%;
 
@@ -230,6 +232,7 @@
     }
   }
 }
+
 .formEdit {
   width: calc(100% - 125px);
   height: 100%;
@@ -249,6 +252,7 @@ import DescribeEdit from './Components/describeEdit'
 import InputEdit from './Components/inputEdit'
 import SpecialEdit from './Components/specialEdit'
 import OutputEdit from './Components/outputEdit'
+
 export default {
   name: 'FlowManager',
   components: {
@@ -272,8 +276,9 @@ export default {
       }
     }
   },
-  data () {
+  data() {
     return {
+      showRight: true,
       activityInfoId: '',
       teamId: '',
       secretLevel: '内部',
@@ -304,13 +309,22 @@ export default {
       ],
       normalLayout: {
         west: {
-          xs: 12, sm: 12, md: 12, lg: 12, xl: 12
+          xs: 12,
+          sm: 12,
+          md: 12,
+          lg: 12,
+          xl: 12
         },
         center: {
-          xs: 12, sm: 12, md: 12, lg: 12, xl: 12
+          xs: 12,
+          sm: 12,
+          md: 12,
+          lg: 12,
+          xl: 12
         }
       },
-      drawerConfig: { /// z-index
+      drawerConfig: {
+        /// z-index
         destroyOnClose: true,
         modal: false,
         appendToBody: true,
@@ -319,17 +333,24 @@ export default {
       describeRefrshKey: new Date().getTime()
     }
   },
-  created () {
+  created() {
     if (this.row.length && this.row.length > 0) {
       this.teamId = this.row[0].KTEAMSID
       this.activityInfoId = this.row[0].ID
     }
   },
   methods: {
-    refrshDes () {
+    taskCount(num) {
+      if (num === 1) {
+        this.$nextTick(() => {
+          this.$set(this, 'showRight', false)
+        })
+      }
+    },
+    refrshDes() {
       this.describeRefrshKey = new Date().getTime()
     },
-    async saveAll (e) {
+    async saveAll(e) {
       if (this.activityId) {
         await this.saveParams()
         this.$message({ type: 'success', message: '保存成功' })
@@ -340,12 +361,12 @@ export default {
         })
       }
     },
-    async saveParams () {
+    async saveParams() {
       let that = this
       that.flag = false
       await that.$refs.describeEdit.$refs.form.validate().then((queryParams) => {
         let saveParams = { ...queryParams, ...that.$refs.describeEdit.$refs.form.otherParam }
-        that.$api[that.$refs.describeEdit.saveApi](saveParams).then(res => {
+        that.$api[that.$refs.describeEdit.saveApi](saveParams).then((res) => {
           that.$refs.activityTree.updateTaskName(res)
         })
       })
@@ -363,10 +384,10 @@ export default {
       })
       this.describeRefrshKey = new Date().getTime()
     },
-    destructorDp () {
+    destructorDp() {
       // this.$refs.activityTree.destructorDp()
     },
-    triggerChange () {
+    triggerChange() {
       if (this.defaultActiveKey === 'first') {
         this.triggerVal = true
       } else {
@@ -379,7 +400,7 @@ export default {
     //   this.activeKey = activeKey
     // },
     // tabs页切换
-    onSelect (tab, event) {
+    onSelect(tab, event) {
       this.activeKey = tab.name
       if (!this.activityId) {
         this.$message({
@@ -389,20 +410,18 @@ export default {
       }
       // this.$refs.tab.refresh()
     },
-    updateActivity (record) {
-
-    },
-    saveCallback (res) {
+    updateActivity(record) {},
+    saveCallback(res) {
       if (res) {
         this.$refs.activityTree.updateTaskName(res)
       }
     },
-    removeActivity (record) {
+    removeActivity(record) {
       let that = this
       that.$confirm({
         title: '确认',
         content: '是否确定要删除该活动？',
-        onOk () {
+        onOk() {
           //   return new Promise((resolve, reject) => {
           //     removeUserAPI({ entityId: record.id }).then(res => {
           //       if (res.data && res.data.result == 'success') {
@@ -414,10 +433,10 @@ export default {
           //     })
           //   }).catch(() => console.error('Oops errors!'))
         },
-        onCancel () { }
+        onCancel() {}
       })
     },
-    selectTask (activityId) {
+    selectTask(activityId) {
       this.activityId = activityId
       // 刷新页面
       if (this.activeKey && this.activeKey === 'describeKey') {
@@ -425,42 +444,41 @@ export default {
         this.$nextTick(() => (this.activeKey = 'describeKey'))
       }
     },
-    importTask (activityId) {
+    importTask(activityId) {
       this.selectTaskId = activityId
       this.excelDrawer = true
     },
-    removeTask () {
+    removeTask() {
       this.activityId = ''
     },
-    addMessage (message) {
+    addMessage(message) {
       this.messages.unshift(message)
       if (this.messages.length > 40) {
         this.messages.pop()
       }
     },
-    logTaskUpdate (id, mode, task) {
-      let text = (task && task.text ? ` (${task.text})` : '')
+    logTaskUpdate(id, mode, task) {
+      let text = task && task.text ? ` (${task.text})` : ''
       let message = `Task ${mode}: ${id} ${text}`
       this.addMessage(message)
     },
-    logLinkUpdate (id, mode, link) {
+    logLinkUpdate(id, mode, link) {
       let message = `Link ${mode}: ${id}`
       if (link) {
         message += ` ( source: ${link.source}, target: ${link.target} )`
       }
       this.addMessage(message)
     },
-    onExcelClose () {
+    onExcelClose() {
       this.excelDrawer = false
     },
-    importExcelClosed () {
+    importExcelClosed() {
       this.excelDrawer = false
       this.$refs.activityTree.initGantt(this.activityInfoId)
     },
-    importExcel(){
+    importExcel() {
       this.$refs.activityTree.exportTask()
     }
   }
 }
-
 </script>
