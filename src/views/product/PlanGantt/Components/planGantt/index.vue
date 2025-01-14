@@ -1324,7 +1324,7 @@ export default {
                 task[key] = ''
               })
               if (vueThis.$route.name == 'Planning' && !task.parent) {
-                task.autoScheduling = '0'
+                task.autoScheduling = '2'
               }
             })
             // 处理拓展字段已有的数据

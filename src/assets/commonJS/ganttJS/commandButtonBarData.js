@@ -231,7 +231,7 @@ const CommandButtonBarData = [
           {
             buttonId: 'examine-history',
             size: 'large',
-            position: ['top']
+            position: ['top', 'right']
           }
         ]
       }

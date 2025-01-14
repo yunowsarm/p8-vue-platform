@@ -239,7 +239,7 @@ const CommandButtonBarDataSingleRow = [
           {
             buttonId: 'examine-history',
             size: 'small',
-            position: ['top']
+            position: ['top', 'right']
           }
         ]
       },

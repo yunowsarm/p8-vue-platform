@@ -152,7 +152,7 @@ export default {
         const settingData = this.userSettingAll.PlanButton[0]
         this.updataParamsHandle(settingData)
         this.value = settingData.value && settingData.value.type ? settingData.value.type : 'tabs'
-        this.autoScheduling = settingData.value && settingData.value.autoScheduling ? settingData.value.autoScheduling : ''
+        this.autoScheduling = settingData.value && settingData.value.autoScheduling ? settingData.value.autoScheduling : '2'
         rightBtns = settingData.value && settingData.value.rightBtns
         this.valueBtns = rightBtns.map((btn) => {
           return btn.buttonId
@@ -162,7 +162,7 @@ export default {
         if (rightBtns && rightBtns.length == 0) {
           rightBtns = this.$store.getters.ganttRightButtons ? this.$store.getters.ganttRightButtons : []
         }
-        this.autoScheduling = this.$store.getters.autoScheduling ? this.$store.getters.autoScheduling : ''
+        this.autoScheduling = this.$store.getters.autoScheduling ? this.$store.getters.autoScheduling : '2'
         this.valueBtns = rightBtns.map((btn) => {
           return btn.buttonId
         })
