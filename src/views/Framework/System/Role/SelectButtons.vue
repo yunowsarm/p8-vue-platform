@@ -13,6 +13,7 @@
       </span>
     </el-table-column>
     <el-table-column label="功能选项"
+                     width="150"
                      type="">
       <span slot-scope="scope">
         <el-dropdown v-if="scope.row.children.length > 0"
@@ -183,8 +184,6 @@ export default {
       })
     },
     checkMenu (v, row) {
-      console.log(this.related, '===============this.related');
-      console.log(v, '===============vvv');
       if (this.related) {
         if (v === true) {
           if (row.type === 'MENU') {
@@ -200,28 +199,6 @@ export default {
             }
           }
         }
-        if (v === true) {
-          let pId = row.parentId
-          while (pId !== null) {
-            let pRow = this.dataSource.find((r) => r.id === pId)
-            if (pRow) {
-              console.log('11111111111');
-
-              pRow.checked = true
-              pId = pRow.parentId
-            } else {
-              pId = null
-            }
-          }
-        } else {
-          console.log('2222222222');
-
-          let checkedChild = this.dataSource.find((r) => r.parentId === row.id && r.checked)
-          //
-          if (checkedChild) {
-            row.checked = true
-          }
-        }
       } else {
         if (row.type === 'MENU') {
           let id = row.id
@@ -235,21 +212,25 @@ export default {
             })
           }
         }
+      }
+      if (v === true) {
         let pId = row.parentId
         while (pId !== null) {
           let pRow = this.dataSource.find((r) => r.id === pId)
           if (pRow) {
-            console.log('3333333333333333');
-
-            pRow.checked = false
+            pRow.checked = true
             pId = pRow.parentId
           } else {
             pId = null
           }
         }
+      } else {
+        let checkedChild = this.dataSource.find((r) => r.parentId === row.id && r.checked)
+        //
+        if (checkedChild) {
+          row.checked = true
+        }
       }
-
-
       this.resChanged()
     },
     resChanged () {
