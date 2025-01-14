@@ -10,31 +10,27 @@
              @rendered="rendered">
     <template #outputRequest>
       <div class="edit-outputdata-view">
-        <div class="title">导入模板: </div>
+        <div class="title">导入说明：</div>
         <ul class="file-list"
             v-for="(item,index) in outputRequest"
             :key="item.attId"
             :class="{ 'not-last': index < outputRequest.length -1 }">
           <li>
-            <p>模板下载:
+            <p>
+              <span>(1)模板导入：通过下载右侧模板，通过“模板导入”类型，按照大纲级别，将文档中的活动导入为选中活动的下级 </span>
               <span class="filename">
                 <el-link type="success"
                          :underline="true"
                          @click="downloadOutputRequsetFile(item)">{{item.attFileName}}</el-link>
               </span>
-              <!-- <span class="filename" @click="downloadOutputRequsetFile(item)">{{item.attFileName}}
-                </span> -->
-            </p>
-          </li>
-          <li>
-            <p>
-              导入类型：
             </p>
             <p>
-              (1)模板导入：通过下载上方模板，按照大纲级别，将文档中的活动导入为选中活动的下级
-            </p>
-            <p>
-              (2)更新导入：通过excel导出的文件，将当前所有活动更新。excel导出的来源为：知识库管理-产出流程管理-活动管理-excel导出
+              <span>(2)更新导入：通过下载右侧模板，在线下更新后，通过“更新导入”类型，将当前所有活动更新。</span>
+              <span class="filename">
+                <el-link type="success"
+                         :underline="true"
+                         @click="updateImportTemplate()">生成更新导入模板</el-link>
+              </span>
             </p>
           </li>
         </ul>
@@ -134,6 +130,9 @@ export default {
     }
   },
   methods: {
+    updateImportTemplate(){
+      this.$emit('importExcel')
+    },
     rendered () {
 
     },
@@ -222,11 +221,10 @@ export default {
     background-color: rgba(239, 239, 239, 0.5);
   }
   .file-list {
+    font-size: 14px;
     li {
       box-sizing: border-box;
-      list-style: decimal;
       padding: 0 10px;
-      margin-left: 20px;
       &.not-last {
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
       }
@@ -236,6 +234,7 @@ export default {
       }
       p span.filename {
         cursor: pointer;
+        margin-left: 10px;
       }
     }
   }

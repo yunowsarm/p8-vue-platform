@@ -114,6 +114,7 @@
                      @close="onExcelClose">
         <template #drawer>
           <import-excel @saveSuccess="importExcelClosed"
+                        @importExcel="importExcel"
                         :task-id="selectTaskId"
                         :output-request="excelImportData"></import-excel>
         </template>
@@ -455,6 +456,9 @@ export default {
     importExcelClosed () {
       this.excelDrawer = false
       this.$refs.activityTree.initGantt(this.activityInfoId)
+    },
+    importExcel(){
+      this.$refs.activityTree.exportTask()
     }
   }
 }
