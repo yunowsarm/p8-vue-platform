@@ -17,9 +17,6 @@
               <i class="p8 icon-jianhao"></i>
               <span class="tag-num">{{ messageData.uploadFiles.length }}</span>
             </el-tag>
-            <el-tag v-if="messageData.msgLink != null && messageData.msgLink != ''" size="mini" effect="plain" class="message-tag">
-              <i class="p8 icon-fenzu"></i>
-            </el-tag>
           </span>
         </el-col>
         <el-col :span="4" style="text-align: right; padding-right: 5px">

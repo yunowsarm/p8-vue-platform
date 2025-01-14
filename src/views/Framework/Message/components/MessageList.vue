@@ -45,7 +45,6 @@
                     </el-col>
                     <el-col :span="8" style="text-align: right">
                       <i v-if="item.uploadFiles != null && item.uploadFiles.length > 0" class="p8 icon-jianhao"></i>
-                      <i v-if="item.msgLink != null && item.msgLink != ''" class="p8 icon-fenzu"></i>
                     </el-col>
                   </el-row>
                   <el-row type="flex" style="text-align: left">
@@ -102,7 +101,6 @@
                     </el-col>
                     <el-col :span="8" style="text-align: right">
                       <i v-if="item.uploadFiles != null && item.uploadFiles.length > 0" class="p8 icon-jianhao"></i>
-                      <i v-if="item.msgLink != null && item.msgLink != ''" class="p8 icon-fenzu"></i>
                     </el-col>
                   </el-row>
                   <el-row type="flex" style="text-align: left">
@@ -159,7 +157,6 @@
                     </el-col>
                     <el-col :span="8" style="text-align: right">
                       <i v-if="item.uploadFiles != null && item.uploadFiles.length > 0" class="p8 icon-jianhao"></i>
-                      <i v-if="item.msgLink != null && item.msgLink != ''" class="p8 icon-fenzu"></i>
                     </el-col>
                   </el-row>
                   <el-row type="flex" style="text-align: left">
