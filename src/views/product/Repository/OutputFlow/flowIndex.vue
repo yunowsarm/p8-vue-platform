@@ -56,7 +56,7 @@
                   </span>
                 </el-tab-pane>
               </el-tabs>
-              <div class="formEdit" :key="describeRefrshKey">
+              <div v-if='activityId' class="formEdit" :key="describeRefrshKey">
                 <keep-alive>
                   <describe-edit
                     @saveSuccess="saveCallback"
@@ -303,7 +303,7 @@ export default {
         {
           attId: '2',
           attFilePath: 'Excel产出流程导入模板.xlsx',
-          attFileName: 'Excel产出流程导入模板',
+          attFileName: 'Excel导入模板',
           descriptionStr: '按照大纲级别，将文档中的任务导入为选中任务的下级任务。'
         }
       ],
@@ -344,6 +344,10 @@ export default {
       if (num === 1) {
         this.$nextTick(() => {
           this.$set(this, 'showRight', false)
+        })
+      }else{
+        this.$nextTick(() => {
+          this.$set(this, 'showRight', true)
         })
       }
     },
