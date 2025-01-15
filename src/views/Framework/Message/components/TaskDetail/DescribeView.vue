@@ -102,14 +102,6 @@ export default {
           type: 'view',
           fieldName: 'realEndDate',
           colLayout: 'doubleCol'
-        },
-        // 任务描述字段配置
-        {
-          labelText: '任务描述',
-          type: 'blank',
-          fieldName: 'describes',
-          slotName: 'describes',
-          colLayout: 'singleCol'
         }
       ],
       // 定义表单数据对象
@@ -181,11 +173,19 @@ export default {
               colLayout: 'doubleCol'
             })
           })
+          this.dataSource.push(
+            // 任务描述字段配置
+            {
+              labelText: '任务描述',
+              type: 'blank',
+              fieldName: 'describes',
+              slotName: 'describes',
+              colLayout: 'singleCol'
+            })
           // 调用 API 获取任务活动信息
           return this.$api['planGanttManager.getActivityInfoByTaskId']({ taskId: taskId, planChangeDetailId: null })
         })
         .then((res) => {
-          debugger
           // 更新 formData 中的任务描述信息
           this.$set(this.formData, 'describes', res.describes)
         })
