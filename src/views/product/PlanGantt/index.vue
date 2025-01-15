@@ -47,7 +47,7 @@
 
         </template>
         <template #paneR>
-          <div v-if="defaultPercent !== 100"
+          <div v-if="defaultPercent <99"
                class="x-style"><i class="el-dialog__close el-icon el-icon-close"
                @click="closeClick"></i></div>
           <ProgressHistory v-if="pageType === 'history'"
