@@ -62,7 +62,7 @@
                    :style="colorDynamicStyle(cbutton)"></div>
               <div v-else>
                 <i :class="cbutton.icon"
-                   :style="[iconDynamicClass, !isDisable(cbutton) ? { color: cbutton.color || '' } : {}]"></i>
+                   :style="iconDynamicClass(!isDisable(cbutton) ? cbutton.color : null)"></i>
                 <span class="button-title"
                       v-if="size !== 'mini'"
                       v-show="ganttButtonMode === 'tabs'"
@@ -207,20 +207,6 @@ export default {
       const classObj = [{ 'c-button-disabled': this.isDisable }, sizeClass]
       return classObj
     },
-    iconDynamicClass () {
-      let iconSize
-      switch (this.size) {
-        case 'large':
-          iconSize = 'font-size: 24px;'
-          break
-        case 'mini':
-          iconSize = 'font-size: 16px;'
-          break
-        default:
-          iconSize = 'font-size: 16px;'
-      }
-      return iconSize
-    },
     colorDynamicStyle () {
       return function (btn) {
         let styleObj = 'background:' + btn.icon
@@ -249,6 +235,24 @@ export default {
     }
   },
   methods: {
+    iconDynamicClass (color) {
+      let iconStyle
+      switch (this.size) {
+        case 'large':
+          iconStyle = 'font-size: 24px;'
+          break
+        case 'mini':
+          iconStyle = 'font-size: 16px;'
+          break
+        default:
+          iconStyle = 'font-size: 16px;'
+      }
+      // 判断颜色
+      if (color) {
+        iconStyle += ` color: ${color};`;
+      }
+      return iconStyle
+    },
     dropdownDisable(btn) {
       for (let btnChild of btn.children) {
         if (!this.isDisable(btnChild)) {

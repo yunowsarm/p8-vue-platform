@@ -270,7 +270,7 @@ export default {
       this.loadGanttData(taskId)
     },
     loadGanttData (taskId) {
-      this.$api['OutputFlow.loadAcivityData']({ activityInfoId: this.activityInfoId }).then(function (res) {
+      this.$api['OutputFlow.loadAcivityData']({ activityInfoId: this.activityInfoId }).then( (res) => {
         if (res) {
           res.forEach(el => {
             el.durations = el.duration
@@ -279,7 +279,15 @@ export default {
           let datas = {
             tasks: res
           }
+
+
           myGantt.parse(datas)
+          const taskCount = myGantt.getTaskCount()
+          this.$emit('taskCount',taskCount)
+          if(taskCount>1){
+            const defaultTaskSelected = myGantt.getTaskByIndex(1)
+            myGantt.selectTask(defaultTaskSelected.id);
+          }
           if (taskId) {
             myGantt.unselectTask();
             myGantt.selectTask(taskId);
