@@ -1515,6 +1515,8 @@ export default {
     },
     callParentSelectTasks () {
       this.$nextTick(() => {
+        const task = myGantt.getTask(this.selectTaskId)
+        this.$emit('switch-task', task)
         this.$emit('select-task', this.selectedTasks, this.ganttName)
         if (this.pageType !== 'history') {
           this.showDetail('switch')
@@ -1543,10 +1545,13 @@ export default {
       // 如果是任务分解，非当前人员创建的，只能编辑责任人
       const userId = this.$store.getters.userInfo.id
       const task = myGantt.getTask(this.selectTaskId)
-      if (this.createPage === 'decompose' && task.createUserId && task.createUserId != userId) {
-        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, 'view', type)
-      } else {
-        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, '', type)
+      console.log(task,'task')
+      if(task){
+        if (this.createPage === 'decompose' && task.createUserId && task.createUserId != userId) {
+          this.$emit('show-detail', task, this.ganttName, 'view', type)
+        } else {
+          this.$emit('show-detail', task, this.ganttName, '', type)
+        }
       }
     },
     activityImportClosed () {
