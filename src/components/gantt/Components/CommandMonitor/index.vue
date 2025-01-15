@@ -151,6 +151,9 @@ export default {
       this.loadMonitorData(this.planInfoId)
     }
   },
+  destroyed() {
+    button = {}
+  },
   methods: {
     initGanttObject() {
       this.ganttObjectData = GanttObject
@@ -462,7 +465,7 @@ export default {
             that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '请选择任务' })
             // 格式刷
             if (mId.startsWith('format-') && JSON.stringify(button) !== '{}') {
-              that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '没有此标识' })
+              that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '已有其他标识格式刷' })
               return true
             }
             if (!mId.startsWith('format-') && JSON.stringify(button) === '{}') {
@@ -581,6 +584,7 @@ export default {
                 })
               })
             } else if (mId !== 'cancelSel') {
+              button = btn
               let monitorPointsId = btn.id
               if (btn.id.startsWith('format-')) {
                 monitorPointsId = monitorPointsId.replace('format-', '')
