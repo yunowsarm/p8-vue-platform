@@ -239,7 +239,7 @@ export default {
       let iconStyle
       switch (this.size) {
         case 'large':
-          iconStyle = 'font-size: 24px;'
+          iconStyle = 'font-size: 32px;'
           break
         case 'mini':
           iconStyle = 'font-size: 16px;'
@@ -434,7 +434,7 @@ export default {
 .c-button-large .button-title {
   display: block;
   font-size: 13px;
-  margin-top: 3px;
+  margin-top: 7px;
 }
 
 .c-button-large .el-dropdown {
