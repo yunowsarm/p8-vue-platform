@@ -33,6 +33,7 @@
                         :plan-begin-date-array="planBeginDateArray"
                         :create-page="createPage"
                         :flag="thirdMenuParam.specialPlan"
+                        :thirdMenuParam="thirdMenuParam"
                         :project-category="thirdMenuParam.projectCategory"
                         :select-record="thirdMenuParam.selectRecord"
                         :panel-data="btnData"
@@ -392,7 +393,7 @@ export default {
       this.firstEntry = true
     },
     showDetail (selectTask, ganttName, viewType, switchType) {
-      console.log(selectTask.id,'taskId')
+      console.log(selectTask.id, 'taskId')
       this.selectTaskId = selectTask.id
       let myGantt = GanttObject.getGanttObject(this.ganttName)
       if (myGantt.getGlobalTaskIndex(this.selectTaskId) === 0 && (this.createPage === 'planChange' || this.createPage === 'compile')) {

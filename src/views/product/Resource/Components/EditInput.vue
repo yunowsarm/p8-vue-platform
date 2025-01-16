@@ -1,8 +1,15 @@
 <template>
   <div class="edit-input-cell">
     <div v-if="visibility"
-         class="text"><span>{{modelText}}</span><span>{{getProjectTeamRoleUsersNum(record)}}</span><span style="color: red"
-            v-if="isShowRole(record)">*</span></div>
+         class="text">
+      <el-tooltip :content="modelText"
+                  placement="bottom">
+        <div class="input-text">{{modelText}}</div>
+      </el-tooltip>
+      <div>{{getProjectTeamRoleUsersNum(record)}}</div>
+      <div style="color: red"
+           v-if="isShowRole(record)">*</div>
+    </div>
     <el-input v-model="modelText"
               v-if="!visibility"
               size="mini"
@@ -120,6 +127,7 @@ export default {
   align-items: center;
   div.text {
     flex: 1;
+    display: flex;
   }
   .el-input {
     flex: 1;
@@ -149,5 +157,13 @@ export default {
       cursor: not-allowed;
     }
   }
+}
+.input-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* 显示最多3行文本 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  // width: 100%; /* 设置最大宽度 */
 }
 </style>
