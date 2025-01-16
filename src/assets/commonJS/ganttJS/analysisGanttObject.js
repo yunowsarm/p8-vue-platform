@@ -959,26 +959,6 @@ export function getAnalysisGantt (ganttName, vueThis) {
           }
         },
         {
-          key: "name",
-          value: {
-            name: 'oldName',
-            label: '原任务名称',
-            align: 'left',
-            resize: true,
-            monitorLockLimit: true, // 标识锁定后不可操作的列声明
-            min_width: 350,
-            template: function (task) {
-              if (task.oldName) {
-                if (task.style) {
-                  return '<div style="color:' + task.style + '">' + task.oldName + '</div>'
-                } else {
-                  return task.oldName
-                }
-              }
-            }
-          }
-        },
-        {
           key: "start_date",
           value: {
             name: 'oldForecastBeginDate',
