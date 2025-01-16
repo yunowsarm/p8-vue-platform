@@ -222,11 +222,12 @@ export function taskDescribesEditCheck(newObj, oldObj, vueThis, taskId, ganttObj
     ganttObject.updateTask(taskId)
     if (changeDate) {
       GanttObject.updateTaskNew(ganttObject, taskId, vueThis)
-      const parentTask = ganttObject.getTask(task.parent)
-      if (parentTask.autoScheduling === '1') {
-        calculateParentEndDateAndDuration(ganttObject, taskId, vueThis)
+      if(task.parent){
+        const parentTask = ganttObject.getTask(task.parent)
+        if (parentTask.autoScheduling === '1') {
+          calculateParentEndDateAndDuration(ganttObject, taskId, vueThis)
+        }
       }
-
     }
     if (hasEdit) {
       setNewTaskMap(vueThis, task, null, 'task')
