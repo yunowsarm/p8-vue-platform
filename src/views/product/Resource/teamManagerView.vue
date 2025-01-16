@@ -82,7 +82,7 @@
                   <template #realName="{ scope }">
                     <div class="real-name">
                       <template>
-                        <el-link @click.stop="opentDialogUserTaskStatistics(scope.row)">{{ scope.row.realName }}</el-link>
+                        <el-link @click.stop="opentDialogUserTaskStatistics(scope.row)">{{ scope.row.realName }}<i class="el-icon-view el-icon--right"></i></el-link>
                       </template>
                     </div>
                   </template>
