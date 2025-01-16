@@ -227,11 +227,6 @@ const CommandButtonBarData = [
             buttonId: 'change-history',
             size: 'large',
             position: ['top']
-          },
-          {
-            buttonId: 'examine-history',
-            size: 'large',
-            position: ['top', 'right']
           }
         ]
       }
