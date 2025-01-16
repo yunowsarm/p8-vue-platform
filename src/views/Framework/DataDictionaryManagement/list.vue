@@ -43,11 +43,18 @@
                         :table-refresh="tableRefresh"
                         :pagination="false">
             <template #icon="{ scope }">
-              <div :style="{ opacity: 0.1, background: scope.row.color, position: 'relative', height: '30px' }"></div>
-              <div style="position: absolute; top: 13px; left: 20px;">
+              <div v-if="isShowIcon">
+                <div :style="{ opacity: 0.1, background: scope.row.color, position: 'relative', height: '30px' }"></div>
+                <div style="position: absolute; top: 13px; left: 20px;">
+                  <!-- <i :class="[scope.row.icon ? scope.row.icon : '']"
+                     :style="{ 'font-size': '18px', color: scope.row.color }"></i> -->
+                  <span :style="{ 'font-size': '15px', color: scope.row.color }">{{ scope.row.meaning }}</span>
+                </div>
+              </div>
+              <div v-else
+                   style="text-align: center;">
                 <i :class="[scope.row.icon ? scope.row.icon : '']"
                    :style="{ 'font-size': '18px', color: scope.row.color }"></i>
-                <span :style="{ 'font-size': '15px', color: scope.row.color }">{{ scope.row.meaning }}</span>
               </div>
             </template>
           </common-table>
@@ -153,7 +160,7 @@ const columns = [
   {
     title: '图标',
     dataIndex: 'icon',
-    minWidth: '60',
+    minWidth: '100',
     align: 'left',
     headerAlign: 'left',
     scopedSlots: {
@@ -199,6 +206,7 @@ export default {
   },
   data () {
     return {
+      isShowIcon: null,
       searchData: [
         {
           type: 'text',
@@ -251,7 +259,14 @@ export default {
     }
   },
   computed: {},
-  mounted () { },
+  mounted () {
+    // 获取图标展示类型
+    if (this.$store.getters.baseConfig.toolbarTextDisplay === '0') {
+      this.isShowIcon = false
+    } else {
+      this.isShowIcon = true
+    }
+  },
   methods: {
     search (param) {
       let that = this
