@@ -62,7 +62,7 @@
                    :style="colorDynamicStyle(cbutton)"></div>
               <div v-else>
                 <i :class="cbutton.icon"
-                   :style="iconDynamicClass(!isDisable(cbutton) ? cbutton.color : null)"></i>
+                   :style="iconDynamicClass(!isDisable(cbutton) ? cbutton.color : null,cbutton.id)"></i>
                 <span class="button-title"
                       v-if="size !== 'mini'"
                       v-show="ganttButtonMode === 'tabs'"
@@ -235,11 +235,15 @@ export default {
     }
   },
   methods: {
-    iconDynamicClass (color) {
+    iconDynamicClass (color,btnId) {
       let iconStyle
       switch (this.size) {
         case 'large':
-          iconStyle = 'font-size: 24px;'
+          if(btnId === 'activity-import' || btnId === 'my-experience'){
+            iconStyle = 'font-size: 20px;'
+          }else{
+            iconStyle = 'font-size: 32px;'
+          }
           break
         case 'mini':
           iconStyle = 'font-size: 16px;'
@@ -434,7 +438,7 @@ export default {
 .c-button-large .button-title {
   display: block;
   font-size: 13px;
-  margin-top: 3px;
+  margin-top: 7px;
 }
 
 .c-button-large .el-dropdown {

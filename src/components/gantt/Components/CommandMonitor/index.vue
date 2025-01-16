@@ -2,7 +2,7 @@
   <div>
     <template v-for="(mon, index) in childGroups(monitorData)">
       <div class="child-group" :key="'monitor' + index">
-        <command-button v-for="(config, index) in mon.configs" :key="config.id" :cbutton="config" :size="config.size" :current-records="currentRecords" :gantt-name="ganttName"></command-button>
+        <command-button v-for="(config, index) in mon.configs"  :key="`${config.id}-${reloadKey}`" :cbutton="config" :size="config.size" :current-records="currentRecords" :gantt-name="ganttName"></command-button>
       </div>
     </template>
   </div>
@@ -40,6 +40,7 @@ export default {
   },
   data() {
     return {
+      reloadKey:0,
       ganttObjectData: {},
       formatDatas: {
         'p8 icon-annual-overall-plan': iconAnnualOverallPlan,
@@ -150,6 +151,9 @@ export default {
     if (this.planInfoId) {
       this.loadMonitorData(this.planInfoId)
     }
+  },
+  destroyed() {
+    button = {}
   },
   methods: {
     initGanttObject() {
@@ -459,13 +463,16 @@ export default {
               return taskCheck
             }
           } else {
-            that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '请选择任务' })
             // 格式刷
             if (mId.startsWith('format-') && JSON.stringify(button) !== '{}') {
-              that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '没有此标识' })
+              that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '已有其他标识格式刷' })
               return true
             }
             if (!mId.startsWith('format-') && JSON.stringify(button) === '{}') {
+              that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '请选择任务' })
+              return true
+            }
+            if(!mId.startsWith('format-') && JSON.stringify(button) !== '{}' && mId !=='cancelSel'){
               that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '请选择任务' })
               return true
             }
@@ -491,6 +498,7 @@ export default {
           // 取消标识选中
           if (mId === 'cancelSel') {
             button = {}
+            that.reloadKey += 1
             document.getElementById('couerDiv').style.cursor = null
             thisGantt.eachSelectedTask(function (id) {
               if (thisGantt.isTaskExists(id)) {
@@ -581,6 +589,7 @@ export default {
                 })
               })
             } else if (mId !== 'cancelSel') {
+              button = btn
               let monitorPointsId = btn.id
               if (btn.id.startsWith('format-')) {
                 monitorPointsId = monitorPointsId.replace('format-', '')
@@ -652,6 +661,7 @@ export default {
                 })
               }
             })
+            that.reloadKey += 1
           }
         }
       }

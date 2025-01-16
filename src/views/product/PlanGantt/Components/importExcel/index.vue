@@ -27,7 +27,7 @@
                 </span>
               </p>
               <p>
-                <span> (2)更新导入：通过excel导出的文件，将当前所有任务更新。excel导出的来源为:计划管理-计划编制-excel导出后的文件，在线下更新后，通过“更新导入”类型，将当前所有任务更新。 </span>
+                <span> (2)更新导入：通过下载右侧模板，在线下更新后，通过“更新导入”类型，将当前所有任务更新。</span>
                 <span class="filename">
                   <el-link type="success" :underline="true" @click="updateImportTemplate()">生成更新导入模板</el-link>
                 </span>

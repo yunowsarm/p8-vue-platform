@@ -92,11 +92,11 @@
                               :pagination="false"
                               @cell-click="cellDblclick"
                               :tableSetting="false"
-                              :noApiTableData="tableData">
+                              :noApiTableData="filterTableData(tableData)">
                   <template #realName="{ scope }">
                     <div class="real-name">
                       <template>
-                        <el-link @click.stop="opentDialogUserTaskStatistics(scope.row)">{{ scope.row.realName }}</el-link>
+                        <el-link @click.stop="opentDialogUserTaskStatistics(scope.row)">{{ scope.row.realName }}<i class="el-icon-view el-icon--right"></i></el-link>
                       </template>
                     </div>
                   </template>
@@ -502,6 +502,16 @@ export default {
     }
   },
   methods: {
+    filterTableData(data){
+      const projectStatus = this.row[0].STATUS
+      if(projectStatus === '2202'){
+        return data
+      }else{
+        return data.filter(item => {
+          return !item.departureTime
+        })
+      }
+    },
     // getProjectTeamRoleUsersNum (rolesItem) {
     //   return '(' + rolesItem.projectTeamRoleUsers.length + ')'
     // },

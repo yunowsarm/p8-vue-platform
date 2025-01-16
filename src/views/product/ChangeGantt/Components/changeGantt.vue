@@ -873,6 +873,8 @@ export default {
     },
     callParentSelectTasks() {
       this.$nextTick(() => {
+        const task = myGantt.getTask(this.selectTaskId)
+        this.$emit('switch-task', task)
         this.$emit('select-task', this.selectedTasks, this.ganttName)
         if (this.pageType !== 'history') {
           this.showDetail('switch')

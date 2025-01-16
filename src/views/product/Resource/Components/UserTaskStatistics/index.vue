@@ -15,15 +15,20 @@
         <div class="filter-form">
           <span style="font-weight: bold; font-size: 15px">统计范围：</span>
           <el-radio-group v-model="filterParam" @input="filterData">
-            <el-radio label="1">本项目</el-radio>
-            <el-radio label="2">跨负责项目</el-radio>
-            <el-radio label="3">全部项目</el-radio>
+            <el-radio v-for='item in statisticalRange' :label="item.value" :key='item.value'>
+              <span>{{item.name}}</span>
+              <el-tooltip placement="top"
+                          :content="item.tip">
+                <i v-if="item.tip"
+                   class="p8 icon-help-tips"></i>
+              </el-tooltip>
+            </el-radio>
           </el-radio-group>
         </div>
           <P8TableRender class='table_body' ref="tableRender" :code="tableConfig.code" :pagination='tableConfig.pagination' :permission-vo="tableConfig.permissionVo" :reportParam="tableConfig.sqlParam">
             <template #leafCount="{ scope }">
               <div class="task-count">
-                <template v-if="scope.row.isAllProject">
+                <template v-if="isAllowView(scope.row)">
                   <el-link @click.stop="opentDialogUserTask(scope.row,scope.column)">{{ scope.row.leafCount }}<i class="el-icon-view el-icon--right"></i></el-link>
                 </template>
                 <template v-else>
@@ -33,7 +38,7 @@
             </template>
             <template #nonLeafCount="{ scope }">
               <div class="task-count">
-                <template v-if="scope.row.isAllProject">
+                <template v-if="isAllowView(scope.row)">
                   <el-link @click.stop="opentDialogUserTask(scope.row,scope.column)">{{ scope.row.nonLeafCount }}<i class="el-icon-view el-icon--right"></i></el-link>
                 </template>
                 <template v-else>
@@ -43,7 +48,7 @@
             </template>
             <template #allCount="{ scope }">
               <div class="task-count">
-                <template v-if="scope.row.isAllProject">
+                <template v-if="isAllowView(scope.row)">
                   <el-link @click.stop="opentDialogUserTask(scope.row,scope.column)">{{ scope.row.allCount }}<i class="el-icon-view el-icon--right"></i></el-link>
                 </template>
                 <template v-else>
@@ -104,6 +109,23 @@ export default {
   },
   data() {
     return {
+      statisticalRange:[
+        {
+          name:'本项目',
+          value:'1',
+          tip:'仅统计团队人员在“当前所属项目”中的任务情况，支持钻取任务详情。'
+        },
+        {
+          name:'跨负责项目',
+          value:'2',
+          tip:'统计该人员在“当前登陆人项目权限下”其所参与的“权限内”项目中的任务情况，支持钻取任务详情。'
+        },
+        {
+          name:'全部项目',
+          value:'3',
+          tip:'统计该人员在其所参与的“所有”项目中的任务情况，登录人无“所有项目”权限时,不支持钻取任务详情。'
+        }
+      ],
       visibleDialogUserTask:false,
       filterParam: '1',
       userTaskConfig:{
@@ -122,6 +144,15 @@ export default {
     this.dialogHeight = dh * 0.7
   },
   methods: {
+    isAllowView(row){
+      const {isAllProject} = row
+      const statisticalRange = this.filterParam
+      if(statisticalRange === '3'){
+        return !!isAllProject;
+      }else{
+        return true
+      }
+    },
     opentDialogUserTask(row,column){
       const queryType = {
         mode: '=',
