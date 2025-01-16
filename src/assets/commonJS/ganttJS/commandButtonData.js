@@ -1753,7 +1753,6 @@ export const CommandButtonData = [
         () => isHasTask(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowImport(ganttName, tasks),
-        () => isToBeDelivered(ganttName, tasks),
         () => isHasProductTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
@@ -1780,7 +1779,6 @@ export const CommandButtonData = [
             () => isHasTask(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),
-            () => isToBeDelivered(ganttName, tasks),
             () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
@@ -1808,7 +1806,6 @@ export const CommandButtonData = [
             () => isNoRoot(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),
-            () => isToBeDelivered(ganttName, tasks),
             () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
@@ -1891,7 +1888,6 @@ export const CommandButtonData = [
             () => isNoRoot(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),
-            () => isToBeDelivered(ganttName, tasks),
             () => isHasProductTask(ganttName, tasks),
             () => isExperienceImport(ganttName, tasks),
           ]
@@ -1919,7 +1915,6 @@ export const CommandButtonData = [
             () => isCompile(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),
-            () => isToBeDelivered(ganttName, tasks),
             () => isHasProductTask(ganttName, tasks),
           ]
           const res = isDisable(checks)
