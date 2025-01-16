@@ -1576,6 +1576,13 @@ export const formGeneratorApi = {
       desc: '数据源管理-数据源同步'
     },
     {
+      name: 'lowCodeExportSql',
+      method: 'POST',
+      path: '/framework/desForm/lowCodeExportSql',
+      mockPath: '/framework/desForm/lowCodeExportSql',
+      desc: '全局导出'
+    },
+    {
       name: 'getFieldList',
       method: 'POST',
       path: '/framework/cgForm/fieldList',
