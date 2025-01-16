@@ -512,6 +512,10 @@ let myGantt
 export default {
   name: 'PlanGantt',
   props: {
+    thirdMenuParam: {
+      type: Object,
+      default: () => { }
+    },
     planManagementStatus: {
       type: String,
       default: ''
@@ -977,7 +981,7 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
-    excelExport(){
+    excelExport () {
       const thisGantt = GanttObject.getGanttObject(this.ganttName)
       const vueThis = this
       const planInfoId = vueThis.planInfoId
@@ -1545,8 +1549,8 @@ export default {
       // 如果是任务分解，非当前人员创建的，只能编辑责任人
       const userId = this.$store.getters.userInfo.id
       const task = myGantt.getTask(this.selectTaskId)
-      console.log(task,'task')
-      if(task){
+      console.log(task, 'task')
+      if (task) {
         if (this.createPage === 'decompose' && task.createUserId && task.createUserId != userId) {
           this.$emit('show-detail', task, this.ganttName, 'view', type)
         } else {
@@ -1585,7 +1589,7 @@ export default {
     monitorManagerSave (obj) {
       this.controlTimeVisible = false
     },
-    importExcelClosed(){
+    importExcelClosed () {
       this.importExcel = false
     },
     importExcelSave () {
