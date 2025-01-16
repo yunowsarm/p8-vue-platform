@@ -279,8 +279,6 @@ export default {
           let datas = {
             tasks: res
           }
-
-
           myGantt.parse(datas)
           const taskCount = myGantt.getTaskCount()
           this.$emit('taskCount',taskCount)
@@ -352,6 +350,8 @@ export default {
                     myGantt.addTask(task, parent, myGantt.getTaskIndex(taskId))
                   })
                 })
+                myGantt.unselectTask();
+                myGantt.selectTask(taskId);
                 that.loadGanttData(data[0].id)
                 that.$emit('refrshDes')
               }
@@ -393,6 +393,8 @@ export default {
                 })
                 that.loadGanttData(data[0].id)
                 that.$emit('refrshDes')
+                myGantt.unselectTask();
+                myGantt.selectTask(taskId);
               }
             }).catch(function (error) {
               console.error('error' + error)
@@ -428,6 +430,8 @@ export default {
               })
               that.loadGanttData(data[0].id)
               that.$emit('refrshDes')
+              myGantt.unselectTask();
+              myGantt.selectTask(task.id);
             }
           }).catch(function (error) {
             console.error('error' + error)
@@ -445,17 +449,22 @@ export default {
       myGantt.performAction('outdentAction')
     },
     // 删除
-    removeTask () {
+    async removeTask () {
       let that = this
       let taskId = this.selectedTasks.map(el => el.id)[0]
-      myGantt.batchUpdate(function () {
-        myGantt.deleteTask(taskId)
+      await new Promise((resolve) => {
+        myGantt.batchUpdate(function () {
+          myGantt.deleteTask(taskId)
+          resolve() // 完成时调用 resolve
+        })
       })
       this.$emit('remove-task')
-      Vue.$nextTick(() => {
+      this.$nextTick(() => {
         that.loadGanttData()
       })
       this.menuVisible = false
+      // const taskCount = myGantt.getTaskCount()
+      // this.$emit('taskCount',taskCount)
     },
     importTask () {
       this.callExcelImportTasks()
