@@ -609,20 +609,6 @@ export function getGanttLocationColumns(ganttObject, vueThisLocation) {
       }
     },
     {
-      name: 'autoScheduling',
-      label: '排程',
-      align: 'center',
-      min_width: 70,
-      resize: true,
-      template: function (task) {
-        // if (ganttObject.getGlobalTaskIndex(task.id) === 0) {
-        //   return '手动'
-        // } else {
-        return task.autoScheduling === '1' ? '自动' : '手动'
-        // }
-      }
-    },
-    {
       name: 'weatherControlLocation',
       label: '管控任务',
       align: 'center',
@@ -635,6 +621,20 @@ export function getGanttLocationColumns(ganttObject, vueThisLocation) {
         } else {
           return '否'
         }
+      }
+    },
+    {
+      name: 'autoScheduling',
+      label: '排程',
+      align: 'center',
+      min_width: 70,
+      resize: true,
+      template: function (task) {
+        // if (ganttObject.getGlobalTaskIndex(task.id) === 0) {
+        //   return '手动'
+        // } else {
+        return task.autoScheduling === '1' ? '自动' : '手动'
+        // }
       }
     },
     {
