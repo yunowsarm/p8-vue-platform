@@ -295,8 +295,8 @@
                         :gantt-name="ganttName"
                         :create-page="createPage"
                         :plan-info-id="planInfoId"
-                        :plan-management-status="planManagementStatus"
                         :selected-task="selectedTasks"
+                        :thirdMenuParam="thirdMenuParam"
                         :export-experience-type="exportExperienceType"
                         @copy="copyExperienceBase"
                         @handleCancel="closExperienceBase"></my-experience-base>
@@ -515,10 +515,6 @@ export default {
     thirdMenuParam: {
       type: Object,
       default: () => { }
-    },
-    planManagementStatus: {
-      type: String,
-      default: ''
     },
     planBeginDateArray: {
       type: Array,
@@ -1372,7 +1368,7 @@ export default {
       // } else if (this.createPage === 'decompose') {
       //   this.group_type = '4'
       // }
-      if (this.planManagementStatus === '6620') {
+      if (this.thirdMenuParam.MANAGESTATUS === '6620') {
         myGantt.config.readonly = true
         myGantt.config.readonlyReason = '计划发布审批，不可编辑'
       }
@@ -1576,7 +1572,6 @@ export default {
       // 如果是任务分解，非当前人员创建的，只能编辑责任人
       const userId = this.$store.getters.userInfo.id
       const task = myGantt.getTask(this.selectTaskId)
-      console.log(task, 'task')
       if (task) {
         if (this.createPage === 'decompose' && task.createUserId && task.createUserId != userId) {
           this.$emit('show-detail', task, this.ganttName, 'view', type)

@@ -25,7 +25,6 @@
                :class="expandBottom">
             <plan-gantt ref="planGantt"
                         :plan-info-id="planInfoId"
-                        :planManagementStatus="planManagementStatus"
                         :whole-describe-id="wholeDescribeId"
                         :plan-info-status="planInfoStatus"
                         :task-id="taskId"
@@ -191,7 +190,6 @@ export default {
   data () {
     return {
       dialogVisible: false, // gantt定位弹出框
-      planManagementStatus: '',
       defaultKey: '1',
       advanced: false,
       selectedTasks: [],
@@ -310,7 +308,6 @@ export default {
   },
   beforeMount () { },
   created () {
-    this.planManagementStatus = this.thirdMenuParam.MANAGESTATUS
     this.firstEntry = true
   },
   mounted () {
@@ -393,7 +390,6 @@ export default {
       this.firstEntry = true
     },
     showDetail (selectTask, ganttName, viewType, switchType) {
-      console.log(selectTask.id, 'taskId')
       this.selectTaskId = selectTask.id
       let myGantt = GanttObject.getGanttObject(this.ganttName)
       if (myGantt.getGlobalTaskIndex(this.selectTaskId) === 0 && (this.createPage === 'planChange' || this.createPage === 'compile')) {
