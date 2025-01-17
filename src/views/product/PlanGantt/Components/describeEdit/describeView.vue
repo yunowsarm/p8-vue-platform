@@ -206,17 +206,6 @@ export default {
           type: 'view',
           fieldName: 'realEndDate',
           colLayout: 'doubleCol'
-        },
-        {
-          labelText: '任务描述',
-          type: 'blank',
-          fieldName: 'describes',
-          slotName: 'describes',
-          placeholder: '请输入活动描述',
-          colLayout: 'singleCol',
-          fieldConfig: {
-            rows: '6'
-          }
         }
       ],
       formData: {},
@@ -314,6 +303,17 @@ export default {
         fieldName: el.name,
         colLayout: 'doubleCol'
       })
+    })
+    this.dataSource.push({
+      labelText: '任务描述',
+      type: 'blank',
+      fieldName: 'describes',
+      slotName: 'describes',
+      placeholder: '请输入活动描述',
+      colLayout: 'singleCol',
+      fieldConfig: {
+        rows: '6'
+      }
     })
     if (this.$route.path === '/TaskChange') {
       this.getPlanInfo(task)
