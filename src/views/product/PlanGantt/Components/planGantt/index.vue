@@ -849,6 +849,7 @@ export default {
       if (newVal && newVal.length === 1 && newVal[0].status) {
         this.selectTaskId = newVal[0].id
         this.selectTaskName = newVal[0].name
+        this.loadGantt()
       } else {
         this.selectTaskId = ''
         this.selectTaskName = ''
@@ -1510,6 +1511,32 @@ export default {
           vueThis.fullscreenLoading.close()
           console.error('error' + error)
         })
+    },
+    loadGantt () {
+      let vueThis = this
+      vueThis.dependentDatas = []
+      vueThis.$api['planGanttManager.loadPlanGanttData']({
+        planInfoId: this.planInfoId,
+        dicType: 'ACTIVITY_TYPE',
+        taskId: this.taskId,
+        createPage: this.createPage,
+        planBeginDateArray: vueThis.planBeginDateArray,
+        planEndDateArray: vueThis.planEndDateArray
+      }).then(res => {
+        if (res) {
+          let taskList = res.tasks
+          taskList.forEach(task => {
+            vueThis.dependentDatas.push({
+              id: task.id,
+              name: task.name,
+              parent: task.parent,
+              status: task.status,
+              hasAtt: task.hasAtt && task.hasAtt > 0 ? 'true' : 'false' // 是否存在输出
+            })
+          })
+
+        }
+      })
     },
     btnClick (btn, isDisable) {
       if (!isDisable) {

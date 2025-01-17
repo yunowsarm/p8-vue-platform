@@ -128,8 +128,18 @@ export default {
           colLayout: 'singleCol'
         },
         {
-          labelText: '显示文字',
-          type: 'switch',
+          labelText: '图标显示方式',
+          type: 'radio',
+          options: [
+            {
+              label: '显示',
+              value: '0'
+            },
+            {
+              label: '隐藏',
+              value: '1'
+            }
+          ],
           fieldName: 'toolbarTextDisplay',
           colLayout: 'singleCol'
         },
@@ -159,11 +169,14 @@ export default {
           colLayout: 'singleCol'
         }
       ],
-      formData: {},
+      formData: {
+        toolbarTextDisplay: '0'
+      },
       modify: {}
     }
   },
-  mounted () { },
+  mounted () {
+  },
   methods: {
     rendered () {
       this.getSettingData()
@@ -197,10 +210,10 @@ export default {
         })
         that.modify.uploadFileJson = uploadFileJson
       }
-      if (that.modify.toolbarTextDisplay === 'false') {
-        that.modify.toolbarTextDisplay = false
+      if (this.modify.toolbarTextDisplay === '1') {
+        this.modify.toolbarTextDisplay = '1'
       } else {
-        that.modify.toolbarTextDisplay = true
+        this.modify.toolbarTextDisplay = '0'
       }
       that.formData = Object.assign({}, that.modify)
     },
