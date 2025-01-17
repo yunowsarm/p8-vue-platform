@@ -173,7 +173,12 @@ export default {
           value: '11'
         }
       }
-      this.userTaskConfig.sqlParam ={...this.tableConfig.sqlParam,queryType,nodeType}
+      const projectType = {
+        mode: '=',
+        relation: 'and',
+        value: this.filterParam
+      }
+      this.userTaskConfig.sqlParam ={...this.tableConfig.sqlParam,projectType,queryType,nodeType}
       this.visibleDialogUserTask = true
     },
     closeDialogUserTask() {
