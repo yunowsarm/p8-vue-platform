@@ -160,13 +160,13 @@ export default {
         value: row.typeId
       }
       let nodeType = null
-      if(column.title === '父任务'){
+      if(column.field === 'nonLeafCount'){
         nodeType = {
           mode: '=',
           relation: 'and',
           value: '10'
         }
-      }else if(column.title === '子任务'){
+      }else if(column.field === 'leafCount'){
         nodeType = {
           mode: '=',
           relation: 'and',
