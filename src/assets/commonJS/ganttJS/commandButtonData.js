@@ -2930,6 +2930,7 @@ function removePlanGanttData (ganttObject, dp, ganttName, vueThis, selectedTaskI
           })
         }
         vueThis.taskCount = ganttObject.getTaskCount()
+        vueThis.deleteTaskCallback();
         vueThis.selectedTasks = []
         vueThis.$message({
           message: '任务删除成功',

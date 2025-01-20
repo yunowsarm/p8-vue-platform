@@ -305,7 +305,7 @@ export default {
       }, 500);
     },
     resizeShowArrow () {
-      if(needArrow){
+      if(this.needArrow){
         if (this.scrollContent[0] && this.scrollContent[0].scrollWidth === this.scrollContent[0].offsetWidth) {
           this.showArrow = false
         } else {
@@ -315,7 +315,7 @@ export default {
     },
     // 鼠标悬浮事件控制左右切换按钮是否出现
     tabHover () {
-      if(needArrow){
+      if(this.needArrow){
         if (this.scrollContent[0].scrollWidth === this.scrollContent[0].offsetWidth) {
           this.showArrow = false
         } else {

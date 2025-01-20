@@ -978,6 +978,10 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
+    // 删除任务后的回调
+    deleteTaskCallback(){
+      this.$emit('delete-task-callback')
+    },
     excelExport () {
       const thisGantt = GanttObject.getGanttObject(this.ganttName)
       const vueThis = this

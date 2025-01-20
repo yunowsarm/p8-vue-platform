@@ -42,6 +42,7 @@
                         @switch-task="switchTask"
                         @refreshData="refreshData"
                         @save-success="detailDrawerClosed"
+                        @delete-task-callback='deleteTaskCallback'
                         :task-status="taskStatus"></plan-gantt>
           </div>
 
@@ -339,10 +340,14 @@ export default {
     window.myWebSocket.emit('enterPlanGantGroup', this.msg)
   },
   methods: {
+    deleteTaskCallback(){
+      this.selectTaskId = '';
+      this.closeClick();
+    },
     switchTask (task) {
       if (!task.id) return
-      let myGantt = GanttObject.getGanttObject(this.ganttName)
-      myGantt.updateTask(task.id);
+      // let myGantt = GanttObject.getGanttObject(this.ganttName)
+      // myGantt.updateTask(task.id);
       this.selectTaskId = task.id
       this.renderKey = new Date().getTime()
     },
