@@ -81,7 +81,8 @@ export default {
       return row.isRequired === '1'
     },
     getProjectTeamRoleUsersNum (rolesItem) {
-      return '(' + rolesItem.projectTeamRoleUsers.length + ')'
+      const rolesUsersNum = rolesItem.projectTeamRoleUsers.filter((el) => !el.departureTime).length
+      return '(' + rolesUsersNum + ')'
     },
     onEditCell () {
       if (!this.visibility) {

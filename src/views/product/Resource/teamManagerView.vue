@@ -446,7 +446,8 @@ export default {
       let count = 0
       this.rolesData.forEach((el) => {
         if (el.projectTeamRoleUsers && el.projectTeamRoleUsers.length) {
-          count += el.projectTeamRoleUsers.length
+          const length = el.projectTeamRoleUsers.filter((el) =>!el.departureTime).length
+          count += length
         }
       })
       return count
