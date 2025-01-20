@@ -38,3 +38,15 @@
 .el-tooltip__popper{
   z-index: 10000 !important;
 }
+.el-dialog__wrapper {
+  z-index: 2600 !important;
+}
+.el-message-box__wrapper {
+  z-index: 2600 !important;
+}
+.v-modal {
+  z-index: 2500 !important;
+}
+.el-message {
+  z-index: 2500 !important;
+}
