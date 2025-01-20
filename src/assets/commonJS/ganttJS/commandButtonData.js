@@ -68,7 +68,7 @@ export const CommandButtonData = [
         () => isHasProductTask(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     },
     children: [
@@ -96,7 +96,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks),
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       },
@@ -124,7 +124,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks),
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       },
@@ -152,7 +152,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks),
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       },
@@ -180,7 +180,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks),
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       },
@@ -210,7 +210,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       }
@@ -242,7 +242,7 @@ export const CommandButtonData = [
         // () => taskStateAndReadonly(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     },
     children: [
@@ -271,7 +271,7 @@ export const CommandButtonData = [
             () => isNewSibling(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       },
@@ -300,7 +300,7 @@ export const CommandButtonData = [
             () => isNewSibling(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       },
@@ -329,7 +329,7 @@ export const CommandButtonData = [
             () => isNewSibling(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       },
@@ -358,7 +358,7 @@ export const CommandButtonData = [
             () => isNewSibling(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       }
@@ -381,7 +381,7 @@ export const CommandButtonData = [
         () => taskStateAndReadonly(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -406,7 +406,7 @@ export const CommandButtonData = [
         () => isAllowUpgrades(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -455,7 +455,7 @@ export const CommandButtonData = [
         () => isSingleTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -481,7 +481,7 @@ export const CommandButtonData = [
         () => isToBeDelivered(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -535,7 +535,7 @@ export const CommandButtonData = [
         () => isApprovalReject(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -558,7 +558,7 @@ export const CommandButtonData = [
         () => isReadOnly(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -587,7 +587,7 @@ export const CommandButtonData = [
         () => isSuspensionOrProhibition(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -620,7 +620,7 @@ export const CommandButtonData = [
         () => isNoRoot(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -644,7 +644,7 @@ export const CommandButtonData = [
         () => isHasDeliveredTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -692,7 +692,7 @@ export const CommandButtonData = [
         () => isReadOnly(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -716,7 +716,7 @@ export const CommandButtonData = [
         () => isReadOnly(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -751,7 +751,7 @@ export const CommandButtonData = [
         () => isAllowIssue(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
 
     }
@@ -772,7 +772,7 @@ export const CommandButtonData = [
         () => isCompile(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -795,7 +795,7 @@ export const CommandButtonData = [
         () => isHasTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -818,7 +818,7 @@ export const CommandButtonData = [
         () => isAllowUndo(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -841,7 +841,7 @@ export const CommandButtonData = [
         () => isAllowUndo(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -871,7 +871,7 @@ export const CommandButtonData = [
         () => isHadRootAndReadOnly(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -902,7 +902,7 @@ export const CommandButtonData = [
         () => isSingleTask(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -920,7 +920,7 @@ export const CommandButtonData = [
         () => isAllowAutoManual(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -942,7 +942,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -964,7 +964,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -986,7 +986,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1008,7 +1008,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1030,7 +1030,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1052,7 +1052,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1074,7 +1074,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1096,7 +1096,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1117,7 +1117,7 @@ export const CommandButtonData = [
         () => isAllowChangeStyle(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1148,7 +1148,7 @@ export const CommandButtonData = [
         () => isGridView(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1180,7 +1180,7 @@ export const CommandButtonData = [
         () => isGanttView(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1212,7 +1212,7 @@ export const CommandButtonData = [
         () => isResourceView(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1274,7 +1274,7 @@ export const CommandButtonData = [
         () => isCriticalPath(ganttName, tasks),
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1328,7 +1328,7 @@ export const CommandButtonData = [
         () => isHasProductTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1354,7 +1354,7 @@ export const CommandButtonData = [
         () => isHasProductTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1533,7 +1533,7 @@ export const CommandButtonData = [
         () => isHasProductTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1756,7 +1756,7 @@ export const CommandButtonData = [
         () => isHasProductTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     },
     children: [
@@ -1782,7 +1782,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       },
@@ -1809,7 +1809,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       }
@@ -1835,7 +1835,7 @@ export const CommandButtonData = [
         () => isSuspensionOrProhibition(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     },
     children: [
@@ -1861,7 +1861,7 @@ export const CommandButtonData = [
             () => isSuspensionOrProhibition(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       },
@@ -1892,7 +1892,7 @@ export const CommandButtonData = [
             () => isExperienceImport(ganttName, tasks),
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       },
@@ -1918,7 +1918,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks),
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       },
@@ -1939,7 +1939,7 @@ export const CommandButtonData = [
             () => isSuspensionOrProhibition(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       }
@@ -1960,7 +1960,7 @@ export const CommandButtonData = [
         () => isCompile(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1976,7 +1976,7 @@ export const CommandButtonData = [
         () => isCompile(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -1997,7 +1997,7 @@ export const CommandButtonData = [
         () => isCompile(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -2096,7 +2096,7 @@ export const CommandButtonData = [
         () => isSuspensionOrProhibition(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -2203,7 +2203,7 @@ export const CommandButtonData = [
         () => isDetailInfo(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -2224,7 +2224,7 @@ export const CommandButtonData = [
         () => isHasTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -2246,7 +2246,7 @@ export const CommandButtonData = [
         () => isSingleTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     }
   },
@@ -2290,7 +2290,7 @@ export const CommandButtonData = [
         () => isNotStart(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     },
     children: [
@@ -2334,7 +2334,7 @@ export const CommandButtonData = [
             () => isNotStart(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       }
@@ -2379,7 +2379,7 @@ export const CommandButtonData = [
         () => isNotStart(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
       return res.disable
     },
     children: [
@@ -2422,7 +2422,7 @@ export const CommandButtonData = [
             () => isNotStart(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          // store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
           return res.disable
         }
       }
