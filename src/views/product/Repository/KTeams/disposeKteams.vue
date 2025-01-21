@@ -12,8 +12,8 @@
         <ul style="text-align:left;">
           <li v-for="(el, index) in rolesList"
               :key="el.id"
-              @click="openRight(el,index)"
-              :class="{'active': clickIndex == index}"
+              @click="openRight(el,el.id)"
+              :class="{'active': clickIndex == el.id}"
               class="listSettings">
             <i class="el-icon-s-custom"
                style="padding-right:10px;"></i>
@@ -32,6 +32,7 @@
     <template #center>
       <div style="position:relative;height:100%;">
         <form-list ref="form"
+                   :key="dateTime"
                    style="height: 270px;overflow:hidden;"
                    @rendered="rendered"
                    @saved="saved"
@@ -207,7 +208,9 @@ export default {
           labelText: '排序号',
           fieldName: 'indexNo',
           placeholder: '请输入排序号',
-          colLayout: 'singleCol'
+          colLayout: 'singleCol',
+          min: 0,
+          max: 99999999
         }
       ],
       formData: {
@@ -255,7 +258,8 @@ export default {
       clickIndex: null,
       selectRow: {},
       rolesSelectData: [],
-      record: {}
+      record: {},
+      dateTime: ''
     }
   },
   created () {
@@ -272,20 +276,32 @@ export default {
         this.formData = {}
         if (this.rolesList && this.rolesList.length) {
           this.formData = this.rolesList[0]
+          if (!this.clickIndex) {
+            this.clickIndex = this.rolesList[0].id
+          }
         }
         this.formData.klTeamsId = this.record.ID
-        setTimeout(() => {
-          that.openRight(that.selectRow, that.clickIndex)
-        }, 1000)
+        if (that.selectRow && that.selectRow.id) {
+          setTimeout(() => {
+            that.openRightAdd(that.selectRow, that.selectRow.id)
+            that.formData = that.selectRow
+          }, 1000)
+        }
       })
     },
     customValidate (saveParams) {
-      this.selectRow = saveParams
       saveParams.roles = this.editableData
-      this.$refs.form.submitForm(saveParams, this.saveApi)
+      this.$api[this.saveApi](saveParams).then(res => {
+        if (res) {
+          this.clickIndex = res
+          saveParams.id = res
+          this.selectRow = saveParams
+          this.rendered()
+        }
+      })
     },
     saved (res) {
-      this.rendered()
+      // this.rendered()
     },
     saveParamData (data, changeFlag, scope) {
       let that = this
@@ -304,6 +320,14 @@ export default {
 
     },
     openRight (item, index) {
+      this.dateTime = new Date().getTime()
+      this.selectRow = item
+      this.clickIndex = index
+      this.editableData = item.roles
+      this.formData = { ...this.formData, ...item }
+    },
+    openRightAdd (item, index) {
+      this.selectRow = item
       this.clickIndex = index
       this.editableData = item.roles
       this.formData = { ...this.formData, ...item }

@@ -476,7 +476,8 @@ export default {
       let count = 0
       this.rolesData.forEach((el) => {
         if (el.projectTeamRoleUsers && el.projectTeamRoleUsers.length) {
-          count += el.projectTeamRoleUsers.length
+          const length = el.projectTeamRoleUsers.filter((el) =>!el.departureTime).length
+          count += length
         }
       })
       return count
@@ -623,6 +624,7 @@ export default {
           this.fixedRoles = res.fixedRoles || []
           this.generalRoles = res.generalRoles || []
           this.rolesData = [...this.fixedRoles, ...this.generalRoles]
+          console.log('this.rolesData', this.rolesData)
           if (this.rolesData.length) {
             if (this.rolesSelectedIndex > -1) {
               // > -1 说明左侧角色列表有被选中的

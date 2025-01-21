@@ -160,6 +160,10 @@ export default {
     CommandStatistic
   },
   props: {
+    needArrow:{
+      type:Boolean,
+      default: true
+    },
     planInfoId: {
       type: String,
       default: ''
@@ -269,6 +273,9 @@ export default {
     }
   },
   mounted () {
+    if(!this.needArrow){
+      this.showArrow = false
+    }
     this.$nextTick(() => {
       this.initDom()
     })
@@ -298,18 +305,22 @@ export default {
       }, 500);
     },
     resizeShowArrow () {
-      if (this.scrollContent[0] && this.scrollContent[0].scrollWidth === this.scrollContent[0].offsetWidth) {
-        this.showArrow = false
-      } else {
-        this.showArrow = true
+      if(this.needArrow){
+        if (this.scrollContent[0] && this.scrollContent[0].scrollWidth === this.scrollContent[0].offsetWidth) {
+          this.showArrow = false
+        } else {
+          this.showArrow = true
+        }
       }
     },
     // 鼠标悬浮事件控制左右切换按钮是否出现
     tabHover () {
-      if (this.scrollContent[0].scrollWidth === this.scrollContent[0].offsetWidth) {
-        this.showArrow = false
-      } else {
-        this.showArrow = true
+      if(this.needArrow){
+        if (this.scrollContent[0].scrollWidth === this.scrollContent[0].offsetWidth) {
+          this.showArrow = false
+        } else {
+          this.showArrow = true
+        }
       }
     },
     changeCommandButton () {
@@ -473,7 +484,7 @@ export default {
     // padding: 0px 5px 0px 5px;
     display: inline-block;
     height: 100px;
-    min-width: 150px;
+    min-width: 120px;
     /* width: 150px; */
     border-right: 1px solid $base-line-color;
     // padding: 0;

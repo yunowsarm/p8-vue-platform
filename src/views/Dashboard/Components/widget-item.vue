@@ -140,7 +140,7 @@ export default {
 .smartwidget ::v-deep .widget-body__content {
   height: 100%;
   box-sizing: border-box;
-  text-align: center;
+  // text-align: center;
 }
 .smartwidget ::v-deep .widget-body {
   position: unset;

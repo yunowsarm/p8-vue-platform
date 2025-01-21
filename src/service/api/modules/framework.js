@@ -1807,6 +1807,20 @@ export const formGeneratorApi = {
       path: '/framework/report/editList',
       mockPath: '/framework/report/editList',
       desc: '表格组件-获取所有配置为编辑表格的数据'
+    },
+    {
+      name: 'getUserFilterScheme',
+      method: 'POST',
+      path: '/framework/user/setting/getUserFilterScheme',
+      mockPath: '/framework/user/setting/getUserFilterScheme',
+      desc: '报表管理-报表列表-行单击事件'
+    },
+    {
+      name: 'sharing',
+      method: 'POST',
+      path: '/framework/user/setting/sharing',
+      mockPath: '/framework/user/setting/sharing',
+      desc: '报表管理-报表列表-分享'
     }
   ]
 }

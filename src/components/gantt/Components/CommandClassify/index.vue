@@ -155,11 +155,11 @@ export default {
       // 标识逻辑
       return (btn, ganttName, tasks) => {
         if (tasks.length === 0) {
-          // that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '请选择任务' })
+          that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '请选择任务' })
           return true
         }
         if (window.createPage === 'compile' && that.vueThis.planEditLock) {
-          // that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '计划编辑锁定时不允许此操作' })
+          that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '计划编辑锁定时不允许此操作' })
           return true
         }
         // 如果是任务分解，非当前人员创建的，只能编辑责任人
@@ -169,20 +169,20 @@ export default {
           return res
         })
         if (window.createPage === 'decompose' && ele && ele.id) {
-          // that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '计划分解页面，非当前人员创建不允许此操作' })
+          that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '计划分解页面，非当前人员创建不允许此操作' })
           return true
         }
         const switchType = tasks[0] ? tasks[0].switchType : ''
         if (switchType) {
           if (switchType === '9010' || switchType === '9020') {
-            // that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '任务为暂停或禁止状态时不允许此操作' })
+            that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '任务为暂停或禁止状态时不允许此操作' })
             return true
           }
         }
 
         const hasIsLeaf = tasks.find((task) => task.isLeaf == '0' && task.parent !== 0)
         if (!hasIsLeaf && btn.editMark == '1') {
-          // that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '非叶子节点不允许此操作' })
+          that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '非叶子节点不允许此操作' })
           return true
         }
         // if (btn.id === 'cancelSelClassify') {
@@ -192,7 +192,7 @@ export default {
         // }
         const isDisableRes = that.isDisable(btn, ganttName, tasks)
         if (isDisableRes) {
-          // that.$store.dispatch('setButtonMsg', { id: btn.id, msg: isDisableRes.tip })
+          that.$store.dispatch('setButtonMsg', { id: btn.id, msg: isDisableRes.tip })
           return true
         } else {
           return false
