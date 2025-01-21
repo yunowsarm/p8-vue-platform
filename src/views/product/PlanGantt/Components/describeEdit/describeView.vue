@@ -423,7 +423,7 @@ export default {
                 })
                 that.tooltipContent.duration = res.durationBefore
               }
-            } else {
+            } else if(!!res.durationBefore){
               that.formData.duration = res.durationBefore
             }
             if (res.planTypeDisplay !== null) {
