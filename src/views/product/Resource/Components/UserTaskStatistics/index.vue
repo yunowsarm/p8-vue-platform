@@ -160,20 +160,25 @@ export default {
         value: row.typeId
       }
       let nodeType = null
-      if(column.title === '父任务'){
+      if(column.field === 'nonLeafCount'){
         nodeType = {
           mode: '=',
           relation: 'and',
           value: '10'
         }
-      }else if(column.title === '子任务'){
+      }else if(column.field === 'leafCount'){
         nodeType = {
           mode: '=',
           relation: 'and',
           value: '11'
         }
       }
-      this.userTaskConfig.sqlParam ={...this.tableConfig.sqlParam,queryType,nodeType}
+      const projectType = {
+        mode: '=',
+        relation: 'and',
+        value: this.filterParam
+      }
+      this.userTaskConfig.sqlParam ={...this.tableConfig.sqlParam,projectType,queryType,nodeType}
       this.visibleDialogUserTask = true
     },
     closeDialogUserTask() {
