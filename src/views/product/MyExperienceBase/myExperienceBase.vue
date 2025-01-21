@@ -156,6 +156,10 @@ export default {
     CommonDialog
   },
   props: {
+    thirdMenuParam: {
+      type: Object,
+      default: () => { }
+    },
     visible: {
       type: Boolean,
       default: () => {
@@ -183,10 +187,6 @@ export default {
       default: ''
     },
     planInfoId: {
-      type: String,
-      default: ''
-    },
-    planManagementStatus:{
       type: String,
       default: ''
     },
@@ -412,7 +412,7 @@ export default {
               if (res) {
                 if (res && res.tasks && res.tasks.length) {
                   res.tasks.forEach(el => {
-                    el.managerStatus = this.planManagementStatus === '6609' ? '6401' : '6403'
+                    el.managerStatus = (this.thirdMenuParam.MANAGESTATUS === '6609' || this.thirdMenuParam.EXECUTESTATE === '1000') ? '6401' : '6403'
                     el.realBeginDate = ''
                     el.realEndDate = ''
                   })
