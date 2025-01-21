@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%">
+  <div style="height: 100%; margin-top: 55px;">
     <common-tabs class="custom-common-tabs"
                  :active-tabs="activeTabs"
                  type="border-card"
