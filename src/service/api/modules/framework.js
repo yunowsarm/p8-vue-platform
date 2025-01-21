@@ -1661,6 +1661,13 @@ export const formGeneratorApi = {
       desc: '数据视图-查询结果'
     },
     {
+      name: 'copyReportSql',
+      method: 'POST',
+      path: '/framework/reportSQL/copyReportSql',
+      mockPath: '/framework/reportSQL/copyReportSql',
+      desc: '数据视图-复制'
+    },
+    {
       name: 'strategyList',
       method: 'POST',
       path: '/framework/system/BpFormScope/strategyList',
@@ -1896,6 +1903,13 @@ export const ComponentManagerApi = {
       path: '/framework/selection/preview',
       mockPath: '/framework/selection/preview',
       desc: '组件管理-选项-1.6.4选项预览'
+    },
+    {
+      name: 'saveCopy',
+      method: 'POST',
+      path: '/framework/selection/saveCopy',
+      mockPath: '/framework/selection/saveCopy',
+      desc: '组件管理-选项-复制'
     }
   ],
   basicDataRelation: [
@@ -2008,6 +2022,13 @@ export const kanbanApi = {
       path: '/framework/bp-common-component-library/getRoleAppInfo',
       mockPath: '/framework/bp-common-component-library/getRoleAppInfo',
       desc: '主业看版-获取当前角色已授权的图标'
+    },
+    {
+      name: 'saveAppByCopy',
+      method: 'POST',
+      path: '/framework/bp-common-component-library/saveAppByCopy',
+      mockPath: '/framework/bp-common-component-library/saveAppByCopy',
+      desc: '图表复制'
     }
   ],
   kanbanView: [
@@ -2073,6 +2094,13 @@ export const kanbanApi = {
       path: '/framework/personal/homeboard/get',
       mockPath: '/framework/personal/homeboard/get',
       desc: '主业看版-获取当前登录人设置的主页看版'
+    },
+    {
+      name: 'saveCopy',
+      method: 'POST',
+      path: '/framework/personal/homepage/saveCopy',
+      mockPath: '/framework/personal/homepage/saveCopy',
+      desc: '看板复制'
     }
   ],
   desLayout: [
@@ -2145,6 +2173,13 @@ export const kanbanApi = {
       path: '/framework/desLayout/getLayoutJson',
       mockPath: '/framework/desLayout/getLayoutJson',
       desc: '组建管理->布局->渲染器获取json数据'
+    },
+    {
+      name: 'saveCopy',
+      method: 'POST',
+      path: '/framework/desLayout/saveCopy',
+      mockPath: '/framework/desLayout/saveCopy',
+      desc: '组建管理->布局->复制'
     }
   ],
   logApiConfig: [
