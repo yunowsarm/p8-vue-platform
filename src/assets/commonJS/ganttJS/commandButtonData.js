@@ -1390,6 +1390,12 @@ export const CommandButtonData = [
         }
         return columObj
       })
+      let filteredTasks = []
+      thisGantt.eachTask((task) => {
+        if (thisGantt.isTaskVisible(task.id)) {
+          filteredTasks.push(task.id);
+        }
+      });
       //所有列的列名
       let columnList = colums.map(item => {
         let columObj = {}
@@ -1420,7 +1426,8 @@ export const CommandButtonData = [
         fileName: "计划管理",
         planInfoId: planInfoId,
         createPage: vueThis.createPage,
-        taskId: vueThis.taskId
+        taskId: vueThis.taskId,
+        taskIdList: filteredTasks
       }
       api['planGanttManager.excelExport'](exportConfig, { responseType: 'blob' })
         .then((data) => {
