@@ -83,6 +83,7 @@ export default {
       }
       this.$api['taskManager.progressFeedback'](obj).then(res => {
         this.$message.success('保存成功')
+        this.$bus.$emit('refresh')
       })
     }
   },

@@ -1,4 +1,5 @@
 import { GanttObject, progressRefreshCheck } from './ganttObject'
+import { MessageBox, Notification } from 'p8-components-ui'
 import { Gantt } from 'p8-dhtmlx-gantt'
 import { setLockTaskProperties, monitorTimeCheck, monitorLockUnLockCheckTwo, lockMonitorUpdateCheck } from './ganttLockUnLock'
 import { batchOwnerCheck, deleteKeyRemove } from './commandButtonData'
@@ -120,6 +121,13 @@ export function planGantt (ganttName, vueThis) {
             GanttObject.showMessage(vueThis, '更新失败！', 'error')
             // }
             ganttObject.undo()
+            MessageBox.alert('授权信息无效，请重新授权!', '提示', {
+              confirmButtonText: '确定',
+              type: 'warning',
+              callback: (action) => {
+                location.reload()
+              }
+            })
             return { action: 'error' }
           })
       }

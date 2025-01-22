@@ -2787,8 +2787,15 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
             ganttObject.addTask(task, parentId, indexNo++)
             break
         }
+        let filteredData = ganttObject.serialize();  // 获取当前显示的所有任务数据
+        let filteredTasks = []
+        filteredData.data.forEach((item) => {
+                    if (ganttObject.isTaskVisible(item.id)) {
+                      filteredTasks.push(item.id);
+                    }
+          });
         setTimeout(() => {
-          if (!Object.values(vueThis.searchForm).every(value => value === '')) {
+          if (filteredTasks.indexOf(task.id) === -1) {
             ganttObject.showTask(parentId)
             ganttObject.selectTask(parentId)
           } else {
@@ -3310,7 +3317,6 @@ function noDpCreateTask (ganttObject, num, parent, pos, taskName, indexNo, autoS
         type: 'task',
         $open: true
       }
-
       switch (pos) {
         case 'Child': // 新建子在最后
           ganttObject.addTask(task, parent.id, 99999 + i)
