@@ -324,8 +324,8 @@ export default {
   methods: {
     switchTask (task) {
       if (!task.id) return
-      let myGantt = GanttObject.getGanttObject(this.ganttName)
-      myGantt.updateTask(task.id)
+      // let myGantt = GanttObject.getGanttObject(this.ganttName)
+      // myGantt.updateTask(task.id)
       this.selectTaskId = task.id
       this.renderKey = new Date().getTime()
     },

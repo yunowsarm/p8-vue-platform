@@ -90,6 +90,9 @@ const user = {
     SET_LOGIN_STATUS (state, data) {
       state.loginStatus = data
     },
+    SET_GANTT_BUTTON(state,data){
+      state.ganttButtonMode = data
+    },
     SET_SETTING_ALL (state, data) {
       state.userSettingAll = data
       if (data.PlanButton && data.PlanButton.length) {
