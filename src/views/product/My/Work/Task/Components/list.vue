@@ -191,7 +191,7 @@ export default {
       columnType: '',
       taskId: '',
       showView: 'showView003',
-      isChildren: 'false',
+      isChildren: false,
       btnDisable: false,
       sqlParam: {}
     }
@@ -239,19 +239,20 @@ export default {
       }
     }
   },
-  mounted () { },
+  mounted () {
+
+  },
   methods: {
     showViewChange (val) {
-      let obj = {
-        showView: {
-          mode: "=",
-          relation: "and",
-          value: val
-        },
-        isChildren: {
-          mode: "=",
-          relation: "and",
-          value: 'false'
+      let a = this.$refs.tableRender.$refs.xTable.params.sqlParam
+      let sqlParam = {
+        isChildren: '',
+        showView: '',
+        tabsName: ''
+      };
+      for (let key in sqlParam) {
+        if (a[key] && a[key].value !== undefined) {
+          sqlParam[key] = a[key].value;  // 将值赋给 sqlParam
         }
       }
       if (val !== 'showView001') {
@@ -260,25 +261,30 @@ export default {
         this.btnDisable = true
       }
       this.isChildren = false
-      this.$refs.tableRender.$refs.xTable.params.sqlParam = { ...this.$refs.tableRender.$refs.xTable.params.sqlParam, ...obj }
-      this.sqlParam = { ...this.$refs.tableRender.$refs.xTable.params.sqlParam, ...obj }
+      this.sqlParam.isChildren = 'false'
+      this.sqlParam.showView = val
+      this.sqlParam = { ...sqlParam, ... this.sqlParam }
+      this.dateTime = new Date().getTime()
     },
     childrenClick (val) {
-      let isChildren = ''
-      if (val) {
-        isChildren = 'true'
-      } else {
-        isChildren = 'false'
-      }
-      let obj = {
-        isChildren: {
-          mode: "=",
-          relation: "and",
-          value: isChildren
+      let a = this.$refs.tableRender.$refs.xTable.params.sqlParam
+      let sqlParam = {
+        isChildren: '',
+        showView: '',
+        tabsName: ''
+      };
+      for (let key in sqlParam) {
+        if (a[key] && a[key].value !== undefined) {
+          sqlParam[key] = a[key].value;  // 将值赋给 sqlParam
         }
       }
-      this.$refs.tableRender.$refs.xTable.params.sqlParam = { ...this.$refs.tableRender.$refs.xTable.params.sqlParam, ...obj }
-      this.sqlParam = { ...this.$refs.tableRender.$refs.xTable.params.sqlParam, ...obj }
+      if (val) {
+        this.sqlParam.isChildren = 'true'
+      } else {
+        this.sqlParam.isChildren = 'false'
+      }
+      this.sqlParam = { ...sqlParam, ... this.sqlParam }
+      this.dateTime = new Date().getTime()
     },
     getProgress (val) {
       return Math.round(val * 100) + '%'
@@ -446,9 +452,20 @@ export default {
           })
         }
         this.provideParams.searchParams = paramsObj
+        let a = this.$refs.tableRender.$refs.xTable.params.sqlParam
+        let sqlParam = {
+          isChildren: '',
+          showView: '',
+          tabsName: ''
+        };
+        for (let key in sqlParam) {
+          if (a[key] && a[key].value !== undefined) {
+            sqlParam[key] = a[key].value;  // 将值赋给 sqlParam
+          }
+        }
+        this.sqlParam = { ...sqlParam, ... this.sqlParam }
         this.dateTime = new Date().getTime()
       }
-      this.$refs.tableRender.$refs.xTable.params.sqlParam = { ...this.$refs.tableRender.$refs.xTable.params.sqlParam, ...this.sqlParam }
       // 组件切换
       if (treeSettingsParmars.navigationPattern === '0') {
         let key
