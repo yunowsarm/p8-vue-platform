@@ -237,7 +237,7 @@
                                @submit="submitButtonBarSetting"
                                @hidden="rightMenuConfigVisible = false">
     </common-button-bar-setting>
-    <common-drawer v-if="progressHistoryVisible"
+    <!-- <common-drawer v-if="progressHistoryVisible"
                    :visible="progressHistoryVisible"
                    size="50%"
                    placement="top"
@@ -246,7 +246,7 @@
       <template #drawer>
         <ProgressHistory :task-id="selectedId" />
       </template>
-    </common-drawer>
+    </common-drawer> -->
     <common-drawer v-if="versionListVisible"
                    :visible="versionListVisible"
                    size="70%"
@@ -467,7 +467,7 @@ export default {
     return {
       columnSettings: [],
       reminderList: [],
-      progressHistoryVisible: false,
+      // progressHistoryVisible: false,
       selectedId: '',
       noticeVisible: false,
       ganttStatisticVisible: false,
@@ -672,7 +672,8 @@ export default {
       getSelectTasks: [],
       extendMap: {},
       relevancePlanVisible: false,
-      extraMap: {}
+      extraMap: {},
+      pageType: 'switch',
     }
   },
   watch: {
@@ -688,9 +689,9 @@ export default {
         this.selectTaskName = ''
       }
       this.selectTaskCount = newVal.length
-      if (newVal !== oldVal) {
-        this.callParentSelectTasks()
-      }
+      // if (newVal !== oldVal) {
+      this.callParentSelectTasks()
+      // }
     },
     planInfoId: function (newVal, oldVal) {
       if (newVal) {
@@ -1032,7 +1033,6 @@ export default {
         })
         .catch(function (error) {
           vueThis.fullscreenLoading.close()
-          console.error('error' + error)
         })
     },
     btnClick (btn, isDisable) {
@@ -1042,7 +1042,14 @@ export default {
       }
     },
     callParentSelectTasks () {
-      this.$emit('select-task', this.selectedTasks, this.ganttName)
+      this.$nextTick(() => {
+        const task = myGantt.getTask(this.selectTaskId)
+        this.$emit('switch-task', task)
+        this.$emit('select-task', this.selectedTasks, this.ganttName)
+        if (this.pageType !== 'history') {
+          this.showDetail('switch')
+        }
+      })
     },
     mouseMove (e) {
       if (this.menuVisible) {
@@ -1051,9 +1058,11 @@ export default {
         }
       }
     },
-    showDetail () {
+    showDetail (type) {
+      this.pageType = 'switch'
+      const task = myGantt.getTask(this.selectTaskId)
       if (myGantt.getGlobalTaskIndex(this.selectTaskId) !== 0) {
-        this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, 'view')
+        this.$emit('show-detail', task, this.ganttName, 'view', type)
       }
     },
     comResTypesListData () {
@@ -1150,13 +1159,19 @@ export default {
           this.$store.commit('SET_SETTING_ALL', res)
         })
         .catch((err) => {
-          console.error('user.setting.save--err', err)
         })
       this.rightMenuConfigVisible = false
     },
     showTaskProgressDialog (taskId) {
       this.selectedId = taskId
-      this.progressHistoryVisible = true
+      this.pageType = 'history'
+      this.$emit('show-detail', myGantt.getTask(taskId), this.ganttName, '', 'history')
+      // this.progressHistoryVisible = true
+      this.reminderList.forEach((item) => {
+        if (item.id == taskId) {
+          item.reminder = 0
+        }
+      })
     },
     async getExtraList (columnSettings) {
       let that = this
@@ -1164,7 +1179,7 @@ export default {
       let obj = {}
       if (extraList && extraList.length) {
         let list = extraList.map(async el => {
-          let list = await that.$api['formGenerator.getSelectionDataDic']({selectCode: el.selectCode})
+          let list = await that.$api['formGenerator.getSelectionDataDic']({ selectCode: el.selectCode })
           obj[el.selectCode] = list
           return obj
         })
