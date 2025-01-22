@@ -29,6 +29,7 @@
                      :code="componentsConfig.code"
                      :permission-vo="componentsConfig.permissionVo"
                      :west-tree-param="provideParams.searchParams"
+                     :reportParam="sqlParam"
                      @refresh="init()">
         <template #NAME="{ scope, thirdMenuData }">
           <span v-if="scope.row.DATATYPE === 'task'"
@@ -191,7 +192,8 @@ export default {
       taskId: '',
       showView: 'showView003',
       isChildren: 'false',
-      btnDisable: false
+      btnDisable: false,
+      sqlParam: {}
     }
   },
   props: {
@@ -259,6 +261,7 @@ export default {
       }
       this.isChildren = false
       this.$refs.tableRender.$refs.xTable.params.sqlParam = { ...this.$refs.tableRender.$refs.xTable.params.sqlParam, ...obj }
+      this.sqlParam = { ...this.$refs.tableRender.$refs.xTable.params.sqlParam, ...obj }
     },
     childrenClick (val) {
       let isChildren = ''
@@ -275,6 +278,7 @@ export default {
         }
       }
       this.$refs.tableRender.$refs.xTable.params.sqlParam = { ...this.$refs.tableRender.$refs.xTable.params.sqlParam, ...obj }
+      this.sqlParam = { ...this.$refs.tableRender.$refs.xTable.params.sqlParam, ...obj }
     },
     getProgress (val) {
       return Math.round(val * 100) + '%'
@@ -444,6 +448,7 @@ export default {
         this.provideParams.searchParams = paramsObj
         this.dateTime = new Date().getTime()
       }
+      this.$refs.tableRender.$refs.xTable.params.sqlParam = { ...this.$refs.tableRender.$refs.xTable.params.sqlParam, ...this.sqlParam }
       // 组件切换
       if (treeSettingsParmars.navigationPattern === '0') {
         let key
@@ -464,7 +469,6 @@ export default {
           }
           this.asyncComponents = obj[key]
         }
-        console.log('33333333333333333333333333');
       }
     },
     getParamsList (obj, fileName) {

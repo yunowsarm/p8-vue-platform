@@ -169,9 +169,7 @@ export default {
           colLayout: 'singleCol'
         }
       ],
-      formData: {
-        toolbarTextDisplay: '0'
-      },
+      formData: {},
       modify: {}
     }
   },
@@ -191,6 +189,7 @@ export default {
           res.settings.forEach(function (item) {
             that.modify[item.key] = item.value === 'true' ? true : item.value === 'false' ? false : item.value
           })
+          that.formData = Object.assign({}, that.modify)
           that.getFileUrl(res.uploadFileJson) // 获取图片流
         })
         .catch(function (error) {
@@ -209,11 +208,6 @@ export default {
           }
         })
         that.modify.uploadFileJson = uploadFileJson
-      }
-      if (this.modify.toolbarTextDisplay === '1') {
-        this.modify.toolbarTextDisplay = '1'
-      } else {
-        this.modify.toolbarTextDisplay = '0'
       }
       that.formData = Object.assign({}, that.modify)
     },

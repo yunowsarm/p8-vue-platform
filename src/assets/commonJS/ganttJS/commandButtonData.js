@@ -1390,6 +1390,12 @@ export const CommandButtonData = [
         }
         return columObj
       })
+      let filteredTasks = []
+      thisGantt.eachTask((task) => {
+        if (thisGantt.isTaskVisible(task.id)) {
+          filteredTasks.push(task.id);
+        }
+      });
       //所有列的列名
       let columnList = colums.map(item => {
         let columObj = {}
@@ -1420,7 +1426,8 @@ export const CommandButtonData = [
         fileName: "计划管理",
         planInfoId: planInfoId,
         createPage: vueThis.createPage,
-        taskId: vueThis.taskId
+        taskId: vueThis.taskId,
+        taskIdList: filteredTasks
       }
       api['planGanttManager.excelExport'](exportConfig, { responseType: 'blob' })
         .then((data) => {
@@ -2780,8 +2787,15 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
             ganttObject.addTask(task, parentId, indexNo++)
             break
         }
+        let filteredData = ganttObject.serialize();  // 获取当前显示的所有任务数据
+        let filteredTasks = []
+        filteredData.data.forEach((item) => {
+                    if (ganttObject.isTaskVisible(item.id)) {
+                      filteredTasks.push(item.id);
+                    }
+          });
         setTimeout(() => {
-          if (!Object.values(vueThis.searchForm).every(value => value === '')) {
+          if (filteredTasks.indexOf(task.id) === -1) {
             ganttObject.showTask(parentId)
             ganttObject.selectTask(parentId)
           } else {
@@ -3303,7 +3317,6 @@ function noDpCreateTask (ganttObject, num, parent, pos, taskName, indexNo, autoS
         type: 'task',
         $open: true
       }
-
       switch (pos) {
         case 'Child': // 新建子在最后
           ganttObject.addTask(task, parent.id, 99999 + i)
