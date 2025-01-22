@@ -1828,6 +1828,13 @@ export const formGeneratorApi = {
       path: '/framework/user/setting/sharing',
       mockPath: '/framework/user/setting/sharing',
       desc: '报表管理-报表列表-分享'
+    },
+    {
+      name: 'getBpReportByCode',
+      method: 'POST',
+      path: '/framework/user/setting/getBpReportByCode',
+      mockPath: '/framework/user/setting/getBpReportByCode',
+      desc: '报表管理-报表列表-获取版本'
     }
   ]
 }
