@@ -420,8 +420,8 @@ export function isDetailInfo (ganttName, tasks) {
   const vueThis = store.getters.vueThis
   const createPage = vueThis.createPage
   let ganttObject = GanttObject.getGanttObject(ganttName)
-  if (tasks.length == 1 && ganttObject.getGlobalTaskIndex(tasks[0].id) === 0) {
-    if (createPage == 'planChange' || createPage == 'compile') {
+  if (tasks.length == 1 && !tasks[0].parent) {
+    if (createPage == 'planChange' || createPage == 'compile' || createPage == 'taskStatistics') {
       return createDisableResponse(`任务不能为根节点`);
     } else {
       return false
