@@ -109,7 +109,9 @@ export default {
     }
   },
   created() {
-    this.fetchTaskData(this.taskId)
+    if(this.taskId){
+      this.fetchTaskData(this.taskId)
+    }
   },
   methods: {
     // 根据任务 ID 获取任务数据的方法

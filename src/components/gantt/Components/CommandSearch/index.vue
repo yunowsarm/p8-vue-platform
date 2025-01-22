@@ -301,6 +301,7 @@ export default {
 }
 #ganttSearch {
   padding: 2px 10px;
+  padding-bottom: 60px;
   .el-form-item.el-form-item--mini {
     margin-bottom: 0;
   }
@@ -309,4 +310,3 @@ export default {
   }
 }
 </style>
-</template>

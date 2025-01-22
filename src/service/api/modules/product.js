@@ -484,6 +484,13 @@ export const repositoryApi = {
       desc: '项目管理->计划管理->计划编辑 -> gantt数据加载'
     },
     {
+      name: 'loadPlanGanttDataByProjectType',
+      method: 'POST',
+      path: '/product/pm/plan/loadPlanGanttDataByProjectType',
+      mockPath: '/product/pm/plan/loadPlanGanttDataByProjectType',
+      desc: '项目管理->多项目管理->任务统计查询 -> gantt数据加载'
+    },
+    {
       name: 'pushPlanMssage',
       method: 'POST',
       path: '/product/pm/plan/planIssuanceMessage',
@@ -925,6 +932,13 @@ export const repositoryApi = {
       desc: '项目管理->计划管理->gantt->获取计划统计信息'
     },
     {
+      name: 'getPlanStatisticAllData',
+      method: 'POST',
+      path: '/product/pm/plan/loadMonitorAllTask',
+      mockPath: '/product/pm/plan/loadMonitorAllTask',
+      desc: '项目管理->任务统计->gantt->获取计划统计信息'
+    },
+    {
       name: 'getPlanStatusData',
       method: 'POST',
       path: '/product/pm/plan/loadStatusTask',
@@ -932,11 +946,18 @@ export const repositoryApi = {
       desc: '项目管理->计划管理->gantt->状态饼图'
     },
     {
-      name: 'getPlanTaskTypeData',
+      name: 'getPlanStatusAllData',
       method: 'POST',
-      path: '/product/pm/plan/loadTaskTypeTask',
-      mockPath: '/product/pm/plan/loadTaskTypeTask',
-      desc: '项目管理->计划管理->gantt->任务类型饼状图'
+      path: '/product/pm/plan/loadStatusAllTask',
+      mockPath: '/product/pm/plan/loadStatusAllTask',
+      desc: '项目管理->任务统计->gantt->状态饼图'
+    },
+    {
+      name: 'getPlanTaskTypeAllData',
+      method: 'POST',
+      path: '/product/pm/plan/loadTaskTypeAllTask',
+      mockPath: '/product/pm/plan/loadTaskTypeAllTask',
+      desc: '项目管理->任务统计->gantt->任务类型饼状图'
     },
     {
       name: 'versionList',
@@ -1003,6 +1024,14 @@ export const repositoryApi = {
       method: 'POST',
       path: '/taskType/loadTaskDetailByWholeId',
       mockPath: '/taskType/loadTaskDetailByWholeId',
+      desc: '项目管理->计划管理->计划编辑->gantt列配置信息',
+      cancelLoading: true
+    },
+    {
+      name: 'getGanttColumnSettingByWholeIds',
+      method: 'POST',
+      path: '/taskType/loadTaskDetailByWholeIds',
+      mockPath: '/taskType/loadTaskDetailByWholeIds',
       desc: '项目管理->计划管理->计划编辑->gantt列配置信息',
       cancelLoading: true
     },

@@ -2348,6 +2348,32 @@ export const CommandButtonData = [
     ]
   },
   {
+    id:'expand-all',
+    icon:'p8 icon-daxingshiyanpingshen',
+    title:'全部展开',
+    help:'全部展开',
+    clickFun: function (btn, ganttName, tasks) {
+      const vueThis = store.getters.vueThis
+      vueThis.expandAll()
+    },
+    isDisableFun: function (btn, ganttName, tasks) {
+      return false
+    }
+  },
+  {
+    id:'collapse-all',
+    icon:'p8 icon-daxingshiyanpingshen',
+    title:'全部折叠',
+    help:'全部折叠',
+    clickFun: function (btn, ganttName, tasks) {
+      const vueThis = store.getters.vueThis
+      vueThis.collapseAll()
+    },
+    isDisableFun: function (btn, ganttName, tasks) {
+      return false
+    }
+  },
+  {
     id: 'forbid-config',
     icon: 'p8 icon-termination',
     title: '终止',
