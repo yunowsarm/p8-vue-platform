@@ -282,10 +282,10 @@ export default {
         }
         this.formData.klTeamsId = this.record.ID
         if (that.selectRow && that.selectRow.id) {
-          setTimeout(() => {
-            that.openRightAdd(that.selectRow, that.selectRow.id)
-            that.formData = that.selectRow
-          }, 1000)
+          // setTimeout(() => {
+          that.openRightAdd(that.selectRow, that.selectRow.id)
+          that.formData = that.selectRow
+          // }, 1000)
         }
       })
     },
