@@ -86,9 +86,9 @@
 // ::v-deep .el-tabs__header .el-tabs__item {
 //   border-bottom: 1px solid #e4e7ed;
 // }
-::v-deep.el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
-  color: #2196f3;
-}
+//::v-deep.el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
+//  color: #2196f3;
+//}
 .iconStyle {
   font-size: 16px;
   margin: 0 5px;
@@ -122,7 +122,7 @@
   border-bottom: 1px solid #e4e7ed;
   margin: 0;
   .el-tabs__item.is-active {
-    border-bottom: 2px solid #1890ff;
+    border-bottom: 2px solid $theme-color;
   }
 }
 ::v-deep .el-tabs.el-tabs--left > .el-tabs__header {
