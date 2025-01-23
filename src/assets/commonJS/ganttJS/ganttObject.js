@@ -1061,11 +1061,60 @@ GanttObject.customDateEditor = function (ganttObject) {
               valueFormat: 'yyyy-MM-dd',
               pickerOptions: {
                 // 添加快捷选项
-                shortcuts: [{
-                  text: '今天',
-                  onClick(picker) {
-                    const today = new Date();
-                    picker.$emit('pick', today);
+                shortcuts: [
+                  {
+                    text: '今天',
+                    onClick(picker) {
+                      picker.$emit('pick', new Date());
+                    }
+                  },
+                  {
+                    text: '昨天',
+                    onClick(picker) {
+                      const date = new Date();
+                      date.setTime(date.getTime() - 3600 * 1000 * 24);
+                      picker.$emit('pick', date);
+                    }
+                  },
+                  {
+                    text: '明天',
+                    onClick(picker) {
+                      const date = new Date();
+                      date.setTime(date.getTime() + 3600 * 1000 * 24);
+                      picker.$emit('pick', date);
+                    }
+                  },
+                  {
+                    text: '一周前',
+                    onClick(picker) {
+                      const date = new Date();
+                      date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                      picker.$emit('pick', date);
+                    }
+                  },
+                  {
+                    text: '一周后',
+                    onClick(picker) {
+                      const date = new Date();
+                      date.setTime(date.getTime() + 3600 * 1000 * 24 * 7);
+                      picker.$emit('pick', date);
+                    }
+                  },
+                  {
+                    text: '一个月前',
+                    onClick(picker) {
+                      const date = new Date();
+                      date.setMonth(date.getMonth() - 1);
+                      picker.$emit('pick', date);
+                    }
+                  },
+                  {
+                    text: '一个月后',
+                    onClick(picker) {
+                      const date = new Date();
+                      date.setMonth(date.getMonth() + 1);
+                      picker.$emit('pick', date);
+                    }
                   }
                 }],
                 disabledDate: (time) => {
