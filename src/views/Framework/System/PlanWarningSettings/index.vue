@@ -2,11 +2,11 @@
   <div class="content">
     <div class="list-header">
       <el-button type="primary" @click="addAlert()"> 新建</el-button>
-      <el-button type="primary" :disabled='!selectedData?.length' @click="updateAlert()"> 修改</el-button>
-      <el-button type="primary" :disabled='!selectedData?.length' @click="deleteAlert()"> 删除</el-button>
+      <el-button type="primary" :disabled='!selectedData || !selectedData.length' @click="updateAlert()"> 修改</el-button>
+      <el-button type="primary" :disabled='!selectedData || !selectedData.length' @click="deleteAlert()"> 删除</el-button>
       <el-button type="primary" @click="forceSynchronization()">强制同步</el-button>
     </div>
-    <table-render ref='tableRender' :key='tableKey' code="planWaeningBasicTable" :report-param="sqlParam" @selection-change="handleSelectionChange"></table-render>
+    <table-render ref='tableRender' :key='tableKey' code="planWaeningBasicTable" :report-param="sqlParam" :tableRefresh='tableRefresh' @selection-change="handleSelectionChange"></table-render>
     <common-drawer v-if="formVisible" :title="formTitle" :visible="formVisible" size="50%" @close="formClose">
       <template #drawer>
         <form-render :dataViewId="formViewId" :record="{ desformCode: codeForm }" v-bind="$attrs" @close="formClose" @save-success="formCloseRefresh"></form-render>
@@ -145,6 +145,11 @@ export default {
       this.selectedData = []
       this.formViewId = ''
       this.tableKey++
+    },
+    tableRefresh(){
+      console.log('refreshCallback')
+      this.selectedData = []
+      this.formViewId = ''
     }
   }
 }
