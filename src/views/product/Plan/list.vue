@@ -11,6 +11,7 @@
     <template #center>
       <P8TableRender ref="tableRender"
                      class="planLayout"
+                     :tableRefresh='tableRefresh'
                      :code="componentsConfig.code"
                      :permission-vo="componentsConfig.permissionVo"
                      :west-tree-param="provideParams.searchParams"
@@ -127,6 +128,10 @@ export default {
     }
   },
   methods: {
+    // 表格刷新
+    tableRefresh(){
+      this.$refs.tableRender.selectRecords = []
+    },
     async init () {
       const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
       const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
