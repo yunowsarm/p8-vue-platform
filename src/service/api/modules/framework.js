@@ -175,7 +175,15 @@ export const system = {
       path: '/product/pm/planManager/loadLockUnlockFormData',
       mockPath: '/product/pm/planManager/loadLockUnlockFormData',
       desc: '项目管理->计划管理->计划加解锁表单数据获取'
-    }
+    },
+    {
+      name: 'synchronousWarning',
+      method: 'POST',
+      path: '/product/planWarning/synchronousWarning',
+      mockPath: '/product/planWarning/synchronousWarning',
+      params: {},
+      desc: '计划预警 强制同步'
+    },
   ],
   schedulerTask: [
     {
@@ -1311,7 +1319,6 @@ export const messageApi = {
     }
   ]
 }
-
 export const formGeneratorApi = {
   formGenerator: [
     {
