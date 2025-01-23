@@ -833,7 +833,8 @@ export default {
       selectedId: '',
       pageType: 'switch',
       versionListVisible: false, //  版本列表显示隐藏
-      extraMap: {}
+      extraMap: {},
+      deleteCount: 0
     }
   },
   watch: {
@@ -979,7 +980,7 @@ export default {
   },
   methods: {
     // 删除任务后的回调
-    deleteTaskCallback(){
+    deleteTaskCallback () {
       this.$emit('delete-task-callback')
     },
     excelExport () {

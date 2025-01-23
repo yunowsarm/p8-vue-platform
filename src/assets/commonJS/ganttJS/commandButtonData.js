@@ -2836,6 +2836,10 @@ export function deleteKeyRemove (ganttName, tasks) {
   const vueThis = store.getters.vueThis
   const thisDp = GanttObject.getDpObject(ganttName)
   if (thisGantt && thisDp) {
+    vueThis.deleteCount++
+    if (vueThis.deleteCount > 1) {
+      return
+    }
     let msg = '是否确认删除选中任务?'
     if (checkHasApproveTask(ganttName, tasks)) {
       msg = '删除任务包含已提交审批任务，是否确认删除?'
@@ -2845,6 +2849,7 @@ export function deleteKeyRemove (ganttName, tasks) {
       ok: '确认',
       cancel: '取消',
       callback: function (result) {
+        vueThis.deleteCount = 0
         if (result) {
           removeTasks(thisGantt, thisDp, ganttName)
         }

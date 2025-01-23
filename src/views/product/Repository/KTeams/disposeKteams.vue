@@ -282,10 +282,10 @@ export default {
         }
         this.formData.klTeamsId = this.record.ID
         if (that.selectRow && that.selectRow.id) {
-          setTimeout(() => {
-            that.openRightAdd(that.selectRow, that.selectRow.id)
-            that.formData = that.selectRow
-          }, 1000)
+          // setTimeout(() => {
+          that.openRightAdd(that.selectRow, that.selectRow.id)
+          that.formData = that.selectRow
+          // }, 1000)
         }
       })
     },
@@ -296,6 +296,7 @@ export default {
           this.clickIndex = res
           saveParams.id = res
           this.selectRow = saveParams
+          this.$message({ message: '操作成功', type: 'success' })
           this.rendered()
         }
       })
@@ -344,6 +345,8 @@ export default {
           that.$api['knowledgeManagement.removeRoleClassify']({ ids: [item.id] }).then(res => {
             if (res) {
               that.$message({ message: '删除成功', type: 'success' })
+              this.clickIndex = null
+              that.selectRow = {}
               this.rendered()
             }
           })

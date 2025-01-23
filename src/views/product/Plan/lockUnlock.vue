@@ -1,14 +1,14 @@
 <template>
   <div>
-      <lock-unlock-form :plan-info-array='planInfoArray'
-                        :content='content'
-                        :showMonitorPoints='showMonitorPoints'
-                        :monitorDutyType='monitorDutyType'
-                        :monitorApi='monitorApi'
-                        @close-lock-unlock='handleCancel'></lock-unlock-form>
-      <span slot='footer'
-            class='dialog-footer'>
-      </span>
+    <lock-unlock-form :plan-info-array='planInfoArray'
+                      :content='content'
+                      :showMonitorPoints='showMonitorPoints'
+                      :monitorDutyType='monitorDutyType'
+                      :monitorApi='monitorApi'
+                      @close-lock-unlock='handleCancel'></lock-unlock-form>
+    <span slot='footer'
+          class='dialog-footer'>
+    </span>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -31,7 +31,12 @@ export default {
     LockUnlockForm
   },
   created () {
-    this.planInfoArray = [this.row[0].ID]
+    if (this.row.length > 0) {
+      this.planInfoArray = []
+      this.row.forEach(item => {
+        this.planInfoArray.push(item.ID)
+      })
+    }
   },
   data () {
     return {

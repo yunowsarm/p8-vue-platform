@@ -315,7 +315,7 @@ export default {
         },
         {
           title: '创建时间',
-          dataIndex: 'itemCreateTime'
+          dataIndex: 'createTime'
         },
         {
           title: '是否产生变更记录',

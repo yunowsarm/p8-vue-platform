@@ -642,7 +642,8 @@ export function checkTaskChangeStatus(task, ganttObject, vueThis, monitorLockMap
  * @param parentId 新父id
  */
 export function taskMoveChange(ganttObject, id, parentId, vueThis) {
-  const task = ganttObject.getTask(id)
+  if (vueThis.ganttName !== 'analysisGantt') {
+    const task = ganttObject.getTask(id)
   // 变更页面修改添加标记
   if (!task.infoType) {
     task.infoType = 'update'
@@ -655,6 +656,7 @@ export function taskMoveChange(ganttObject, id, parentId, vueThis) {
   // 修改任务添加关联
   if (vueThis.ganttName === 'changeGantt' && parTasksIds && parTasksIds.length > 0) {
     updateNewTaskMap(ganttObject, parTasksIds, vueThis, id)
+  }
   }
 }
 
