@@ -1020,9 +1020,9 @@ export function getAnalysisGantt (ganttName, vueThis) {
     taskMoveChange(ganttObject, id, parent, vueThis)
   })
   // 拖动任务时，进度更新
-  ganttObject.attachEvent('onTaskDrag', function (id) {
-    GanttObject.refreshProgress(ganttObject.getTask(id).parent, true, ganttObject, vueThis)
-  })
+  // ganttObject.attachEvent('onTaskDrag', function (id) {
+  //   GanttObject.refreshProgress(ganttObject.getTask(id).parent, true, ganttObject, vueThis)
+  // })
   // 新增任务时，进度更新
   ganttObject.attachEvent('onAfterTaskAdd', function (id) {
     GanttObject.refreshProgress(ganttObject.getTask(id).parent, true, ganttObject, vueThis)
