@@ -2754,6 +2754,7 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
           realBeginDate: item.realBeginDate,
           ...extraTask
         }
+        console.log(extraTask,'======extraTask');
         switch (pos) {
           case 'Child':
             ganttObject.addTask(task, parentId, item.indexNo)
@@ -3294,6 +3295,13 @@ function noDpCreateTask (ganttObject, num, parent, pos, taskName, indexNo, autoS
   if (autoScheduling === '1') {
     schedule = true
   }
+  let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
+  let extraTask = {}
+  if (extraList && extraList.length) {
+    extraList.forEach(el => {
+      extraTask['kz' + el.id] = ''
+    })
+  }
   ganttObject.batchUpdate(function () {
     for (let i = 0; i < num; i++) {
       const task = {
@@ -3320,7 +3328,8 @@ function noDpCreateTask (ganttObject, num, parent, pos, taskName, indexNo, autoS
         weatherControl: vueThis.weatherControl,
         createSource: vueThis.createSource,
         type: 'task',
-        $open: true
+        $open: true,
+        ...extraTask
       }
       switch (pos) {
         case 'Child': // 新建子在最后
