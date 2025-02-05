@@ -50,7 +50,7 @@ export default {
     },
     // 树形数据选中事件
     onSelect(data,node) {
-      if(node.level === 1) {
+      if(!!node && node.level === 1) {
         this.projectId = ''
       }else{
         this.projectId = data.ID
