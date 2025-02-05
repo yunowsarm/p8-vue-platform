@@ -2154,7 +2154,7 @@ export const CommandButtonData = [
       if (ganttName) {
         const vueThis = store.getters.vueThis
         vueThis.searchForm = {}
-        vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
+        vueThis.loadGanttData(vueThis.planInfoId,true)
         vueThis.$emit('open', vueThis.myGantt)
       }
     },
@@ -2349,7 +2349,7 @@ export const CommandButtonData = [
   },
   {
     id:'expand-all',
-    icon:'p8 icon-daxingshiyanpingshen',
+    icon:'icon-zhankai p8',
     title:'全部展开',
     help:'全部展开',
     clickFun: function (btn, ganttName, tasks) {
@@ -2362,7 +2362,7 @@ export const CommandButtonData = [
   },
   {
     id:'collapse-all',
-    icon:'p8 icon-daxingshiyanpingshen',
+    icon:'icon-shousuo p8',
     title:'全部折叠',
     help:'全部折叠',
     clickFun: function (btn, ganttName, tasks) {
