@@ -521,6 +521,9 @@ export default {
               if (item.fieldType == 'selectSingle' || item.fieldType == 'treeSingle' || item.fieldType == 'selectMultiple' || item.fieldType == 'treeMultiple') {
                 let list = await that.$api['formGenerator.getSelectionDataDic']({ selectCode: item.selectCode })
                 let taskList = item.fieldValue ? item.fieldValue.split(',') : []
+                if (this.ganttName == 'analysisGantt') {
+                  taskList = task['kz' + item.customItem1] ? task['kz' + item.customItem1].split(',') : []
+                }
                 let result = []
                 list.forEach(el => {
                   taskList.forEach(item => {
@@ -531,7 +534,11 @@ export default {
                 })
                 this.$set(this.formData, 'kz' + item.customItem1, result.join(','))
               } else {
-                this.$set(this.formData, 'kz' + item.customItem1, item.fieldValue)
+                if (this.ganttName == 'analysisGantt') {
+                  this.$set(this.formData, 'kz' + item.customItem1, task['kz' + item.customItem1])
+                } else {
+                  this.$set(this.formData, 'kz' + item.customItem1, item.fieldValue)
+                }
               }
             }
           })
