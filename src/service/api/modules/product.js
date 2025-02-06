@@ -1148,6 +1148,13 @@ export const repositoryApi = {
       path: '/product/pm/plan/reloadGantColumn',
       mockPath: '/product/pm/plan/reloadGantColumn',
       desc: '计划管理->列设置->重置'
+    },
+    {
+      name: 'userTaskSaveCheck',
+      method: 'POST',
+      path: '/product/pm/plan/userTaskSaveCheck',
+      mockPath: '/product/pm/plan/userTaskSaveCheck',
+      desc: '计划管理->任务详细信息-校验人员是否退出团队'
     }
   ],
   taskAttribute: [

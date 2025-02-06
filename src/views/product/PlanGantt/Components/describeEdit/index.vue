@@ -648,7 +648,12 @@ export default {
         }
       }
     },
-    customValidate (saveParams) {
+    async customValidate (saveParams) {
+      let resData = await this.$api['planChange.userTaskSaveCheck']({owner_id: saveParams.owner_id})
+      if (resData) {
+        this.$message({type:'warning',message: '所选责任人已退出当前团队，请重新选择'})
+        return
+      }
       const that = this
       // if (!this.falg) {
       //   return this.$message.warning('低密不能修改高密')
