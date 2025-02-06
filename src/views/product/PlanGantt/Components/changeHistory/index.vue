@@ -25,6 +25,7 @@
         @closed="onClose"
         :create-page="page"
         :read-only="true"
+        :wholeDescribeId="wholeDescribeId"
         :change-id="changeId"></impact-analysis>
     </el-drawer>
   </div>
@@ -39,6 +40,10 @@ export default {
   components: { CommonTable, ImpactAnalysis },
   props: {
     taskId: {
+      type: String,
+      default: ''
+    },
+    wholeDescribeId: {
       type: String,
       default: ''
     },

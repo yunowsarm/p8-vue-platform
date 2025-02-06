@@ -330,6 +330,7 @@
       <template #drawer>
         <ChangeHistory :plan-info-id="planInfoId"
                        :task-id="selectTaskId"
+                       :wholeDescribeId="wholeDescribeId"
                        :create-page="createPage" />
       </template>
     </common-drawer>

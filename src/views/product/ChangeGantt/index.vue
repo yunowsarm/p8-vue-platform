@@ -58,6 +58,7 @@
                              @closed="onClose"
                              :create-page="createPage"
                              :read-only="readOnlyVisible"
+                             :wholeDescribeId="wholeDescribeId"
                              :change-id="changeId"></impact-analysis>
           </el-drawer>
           <submit-change v-if="submitChangeValidate"
