@@ -1489,6 +1489,13 @@ export const formGeneratorApi = {
       mockPath: '/framework/cgForm/dataSaveCheck',
       desc: '表单渲染器-新建修改-校验唯一性'
     },
+    {
+      name: 'designFormListData',
+      method: 'POST',
+      path: '/attachmentBox/designFormListData',
+      mockPath: '/attachmentBox/designFormListData',
+      desc: '表单渲染器-上传附件文件中心列表'
+    },
     // 选项组件管理
     {
       name: 'getSelectionDetail',

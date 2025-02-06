@@ -22,8 +22,7 @@
       </div>
     </template>
     <template #right>
-      <div class="task-info-related-con"
-           style="height: 700px !important;">
+      <div class="task-info-related-con">
         <!-- 关联任务 -->
         <task-relation-view></task-relation-view>
       </div>
