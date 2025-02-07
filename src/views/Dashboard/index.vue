@@ -194,5 +194,8 @@ export default {
   ::v-deep .el-tabs--top .el-tabs__content .el-tab-pane {
     height: calc(100% - 10px);
   }
+  ::v-deep .el-tabs__nav {
+    z-index: 1;
+  }
 }
 </style>
