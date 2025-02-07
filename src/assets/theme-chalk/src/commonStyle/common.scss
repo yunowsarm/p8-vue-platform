@@ -397,6 +397,7 @@ body {
 
 // element-ui tooltip 背景色调整
 .el-tooltip__popper.is-dark {
+  z-index: 99999 !important;
   background: rgba(70, 76, 91, 0.9);
 }
 
