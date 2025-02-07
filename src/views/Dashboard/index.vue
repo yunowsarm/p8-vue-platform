@@ -181,7 +181,7 @@ export default {
     position: absolute;
     right: 20px;
     top: 6px;
-    z-index: 10;
+    z-index: 1;
     font-size: 18px;
     color: black;
   }
