@@ -53,6 +53,7 @@ export default {
           fieldName: 'content',
           labelText: '排程类型',
           colLayout: 'singleCol',
+          tip:'根任务默认手动。',
           options: [
             {
               label: '手动',
