@@ -152,7 +152,7 @@ import { mapGetters } from 'vuex'
 import taskStatisticsGantt from './taskStatisticsGantt.vue'
 import { Drawer, P8Drawer as CommonDrawer, P8SplitPane } from 'p8-components-ui'
 import CommandButtonBarData from './js/CommandButtonBarData'
-import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
+import CommandButtonBar from './components/CommandButtonBar'
 import PlanAttribute from '@/views/Framework/Message/components/TaskDetail/index.vue'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import ProgressHistory from '@/views/product/PlanGantt/Components/progressHistory'
@@ -228,9 +228,6 @@ export default {
   beforeMount() {},
   created() {
     this.firstEntry = true
-  },
-  mounted() {
-    this.$store.commit('SET_GANTT_BUTTON', this.ganttButtonMode)
   },
   methods: {
     switchTask(task) {

@@ -23,6 +23,9 @@ export default {
       projectId:''
     }
   },
+  activated() {
+    this.$refs.ganttList.$refs.planGantt.refreshGanttData()
+  },
   created() {
     this.getTreeData(this.treeSettingsParams)
   },
@@ -66,7 +69,7 @@ export default {
       <common-tree :default-expanded-keys="defaultExpandedKeys" :default-expand-all="false" :data="treeData" ref="commonTree" @select="onSelect"></common-tree>
     </template>
     <template #center>
-      <list :project-id='projectId'></list>
+      <list ref='ganttList' :project-id="projectId"></list>
     </template>
   </normal-layout>
 </template>

@@ -643,6 +643,10 @@ export default {
     ...mapGetters(['taskStyles', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
+    refreshGanttData() {
+      myGantt.refreshData()
+      this.$store.dispatch('setVueThis', this)
+    },
     relevanceOpen() {
       this.relevancePlanVisible = true
     },
@@ -820,6 +824,7 @@ export default {
             })
             vueThis.loading = false
             // 先给task赋值拓展字段
+            debugger
             let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
             let extraStr = extraList.map((extra) => extra.filedName)
             taskList.forEach((task) => {
