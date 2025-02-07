@@ -81,6 +81,10 @@
 .card_box {
   margin: 16px;
 }
+::v-deep .formList.el-form > .el-row.formBtn {
+  background: #ffffff !important;
+  padding-bottom: 22px !important;
+}
 </style>
 <script>
 import { P8Form as FormList, Alert, RadioGroup, RadioButton } from 'p8-components-ui'
