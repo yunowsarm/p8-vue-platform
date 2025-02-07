@@ -12,6 +12,7 @@ export default {
   },
   data() {
     return {
+      renderKey: new Date().getTime(),
       treeSettingsParams: {
         optionLabelCol: 'NAME',
         optionPidCol: 'PARENTID',
@@ -58,6 +59,7 @@ export default {
       }else{
         this.projectId = data.ID
       }
+      this.renderKey = new Date().getTime()
     }
   }
 }
@@ -69,7 +71,7 @@ export default {
       <common-tree :default-expanded-keys="defaultExpandedKeys" :default-expand-all="false" :data="treeData" ref="commonTree" @select="onSelect"></common-tree>
     </template>
     <template #center>
-      <list ref='ganttList' :project-id="projectId"></list>
+      <list :key='renderKey' ref='ganttList' :project-id="projectId"></list>
     </template>
   </normal-layout>
 </template>
