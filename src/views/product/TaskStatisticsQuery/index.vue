@@ -77,7 +77,7 @@ export default {
 </template>
 
 <style scoped lang="scss">
-.normal-layout .normal-main .splitBtn > i{
-  z-index: 1;
+::v-deep .icon-zuozhedie{
+  z-index: 1 !important;
 }
 </style>
