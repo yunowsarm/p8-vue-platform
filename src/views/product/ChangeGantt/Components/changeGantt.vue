@@ -21,8 +21,8 @@
                     <i :class="btn.icon"></i>
                     <span> {{ btn.title }}</span>
                   </span>
-                  <el-input-number size="mini" v-model="createNum" :max="1000" :min="1" :step-strictly="true" :step="1"></el-input-number>
-                  <el-button size="mini" @click="btn.clickFun(btn, ganttName, null)">确定</el-button>
+                  <el-input-number size="mini" v-model="createNum" :max="1000" :min="1" :step-strictly="true" :step="1" style='margin: 0 10px'></el-input-number>
+                  <el-button size="mini" @click="btn.clickFun(btn, ganttName, null)" style='margin-right: 10px'>确定</el-button>
                 </el-submenu>
               </template>
             </el-submenu>

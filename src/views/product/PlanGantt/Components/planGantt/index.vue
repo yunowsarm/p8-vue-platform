@@ -41,9 +41,10 @@
                                    :max="50"
                                    :min="1"
                                    :step-strictly="true"
+                                   style='margin: 0 10px'
                                    :step="1"></el-input-number>
                   <el-button size="mini"
-                             @click="btn.clickFun(btn, ganttName, null)">确定 </el-button>
+                             @click="btn.clickFun(btn, ganttName, null)" style='margin-right: 10px'>确定 </el-button>
                 </el-submenu>
               </template>
             </el-submenu>
