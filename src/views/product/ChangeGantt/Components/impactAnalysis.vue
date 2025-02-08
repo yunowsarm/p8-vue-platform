@@ -92,9 +92,9 @@ body {
 </style>
 <script>
 import CommandButtonBar from '@/components/gantt/Components/CommandButtonBar'
-import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/changeGantt/commandButtonBarDataDoubleRow'
-import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/changeGantt/commandButtonBarDataSingleRow'
-import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/changeGantt/commandButtonBarData'
+import { CommandButtonBarDataDoubleRow } from '@/assets/commonJS/ganttJS/PlanMonitoringGantt/commandButtonBarDataDoubleRow'
+import { CommandButtonBarDataSingleRow } from '@/assets/commonJS/ganttJS/PlanMonitoringGantt/commandButtonBarDataSingleRow'
+import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/PlanMonitoringGantt/commandButtonBarData'
 import PlanAttribute from '../../PlanGantt/Components/planAttribute'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import { Drawer } from 'p8-components-ui'

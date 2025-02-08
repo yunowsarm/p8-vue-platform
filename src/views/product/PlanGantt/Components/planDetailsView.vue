@@ -121,6 +121,8 @@ export default {
     },
     closeApproveViewDetail() {
       this.isApproveViewDetailView = false
+      const vueThis = this.$store.getters.previousThis
+      this.$store.commit('SET_VUE_THIS', vueThis)
     }
   },
   mounted() {
