@@ -23,7 +23,7 @@
                     <span> {{ btn.title }}</span>
                   </span>
                   <el-input-number size="mini" v-model="createNum" :max="50" :min="1" :step-strictly="true" :step="1"></el-input-number>
-                  <el-button size="mini" @click="btn.clickFun(btn, ganttName, null)">确定 </el-button>
+                  <el-button size="mini" @click="btn.clickFun(btn, ganttName, null)">确定</el-button>
                 </el-submenu>
               </template>
             </el-submenu>
@@ -631,18 +631,38 @@ export default {
         return btnData[0]
       }
     },
-    ganttRightButtons(){
+    ganttRightButtons() {
       return [
         {
-          "title": "详细信息",
-          "buttonId": "detail-info",
-          "icon": "p8 icon-task-details"
+          title: '详细信息',
+          buttonId: 'detail-info',
+          icon: 'p8 icon-task-details'
         }
       ]
     },
     ...mapGetters(['taskStyles', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
+    fullscreen(btn) {
+      myGantt.ext.fullscreen.getFullscreenElement = function () {
+        return document.querySelector('#couerDiv')
+      }
+      if (btn.title === '全屏') {
+        myGantt.ext.fullscreen.expand()
+      } else {
+        myGantt.ext.fullscreen.collapse()
+      }
+      myGantt.attachEvent("onCollapse", function() {
+        btn.title = '全屏'
+        btn.icon = 'p8 icon-full-screen'
+        btn.help = '全屏'
+      });
+      myGantt.attachEvent("onExpand", function() {
+        btn.title = '退出全屏'
+        btn.icon = 'p8 icon-exit-fullscreen'
+        btn.help = '退出全屏'
+      });
+    },
     refreshGanttData() {
       myGantt.refreshData()
       this.$store.dispatch('setVueThis', this)
@@ -779,8 +799,8 @@ export default {
       const planGanttConfig =
         vueThis.userSettingAll.PlanStyleClass && vueThis.userSettingAll.PlanStyleClass.length
           ? vueThis.userSettingAll.PlanStyleClass.find((i) => {
-            return i.key === 'grid-cell-border'
-          })
+              return i.key === 'grid-cell-border'
+            })
           : null
       let rootClass = this.$refs.myGantt.getAttribute('class') || ''
       if (planGanttConfig) {
@@ -806,7 +826,7 @@ export default {
         })
       }, 1000)
     },
-    loadGanttData(projectId,open=false) {
+    loadGanttData(projectId, open = false) {
       const monitorBtns = this.monitorBtnsByApi
       window.createPage = this.createPage
       const vueThis = this
@@ -892,7 +912,7 @@ export default {
             vueThis.managerStatusMap = project.managerStatusMap
             vueThis.taskStatusMap = project.taskStatusMap
             vueThis.$store.dispatch('setTaskStyles', project.taskStyle)
-            myGantt.clearAll();
+            myGantt.clearAll()
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
 
@@ -925,11 +945,11 @@ export default {
     },
     // 展开所有gantt
     expandAll() {
-      this.loadGanttData(this.projectId,true)
+      this.loadGanttData(this.projectId, true)
     },
     // 收缩所有gantt
     collapseAll() {
-      this.loadGanttData(this.projectId,false)
+      this.loadGanttData(this.projectId, false)
     },
     gridSaved() {
       this.selectGridVisible = false

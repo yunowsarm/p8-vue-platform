@@ -1223,20 +1223,25 @@ export const CommandButtonData = [
     help: '全屏',
     msg: '全屏',
     clickFun: function (btn, ganttName, tasks) {
-      const thisGantt = GanttObject.getGanttObject(ganttName)
-      // 全屏监听
-      thisGantt.ext.fullscreen.getFullscreenElement = function () {
-        return document.querySelector('#couerDiv')
-      }
-      thisGantt.ext.fullscreen.toggle()
-      if (btn.title === '全屏') {
-        btn.title = '退出全屏'
-        btn.icon = 'p8 icon-exit-fullscreen'
-        btn.help = '退出全屏'
-      } else {
-        btn.title = '全屏'
-        btn.icon = 'p8 icon-full-screen'
-        btn.help = '全屏'
+      const vueThis = store.getters.vueThis
+      if(ganttName === 'taskStatisticsGantt'){
+        vueThis.fullscreen(btn)
+      }else{
+        const thisGantt = GanttObject.getGanttObject(ganttName)
+        // 全屏监听
+        thisGantt.ext.fullscreen.getFullscreenElement = function () {
+          return document.querySelector('#couerDiv')
+        }
+        thisGantt.ext.fullscreen.toggle()
+        if (btn.title === '全屏') {
+          btn.title = '退出全屏'
+          btn.icon = 'p8 icon-exit-fullscreen'
+          btn.help = '退出全屏'
+        } else {
+          btn.title = '全屏'
+          btn.icon = 'p8 icon-full-screen'
+          btn.help = '全屏'
+        }
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
