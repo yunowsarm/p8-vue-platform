@@ -563,38 +563,6 @@ export function getAnalysisGantt (ganttName, vueThis) {
         }
       },
       {
-        name: 'changeStatusName',
-        label: '变更状态',
-        align: 'center',
-        width: 70,
-        resize: true,
-        template: function (task) {
-          let html = ''
-          if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
-            let infoType = task.infoType
-            let weatherChange = task.weatherChange
-            if (vueThis.ganttName && vueThis.ganttName === 'changeGantt' && weatherChange && weatherChange === '1') {
-              html = `<i class="gantt-tip p8 icon-change-item" style="color: #0d6bec;" title = "变更项"></i>`
-            }
-            if (infoType) {
-              switch (infoType) {
-                case 'create':
-                  html = `<i class="gantt-tip p8 icon-make-increase" style="color: #0d6bec;" title="调增"></i>`
-                  break
-                case 'update':
-                  html = `<i class="gantt-tip p8 icon-content-adjustment" style="color: #0d6bec;" title = "内容调整"></i>`
-                  break
-                case 'delete':
-                  html = `<i class="gantt-tip p8 icon-make-reductions" style="color: #0d6bec;" title = "调减"></i>`
-                  break
-              }
-            }
-            html += task.changeStatusName || ''
-          }
-          return html
-        }
-      },
-      {
         name: 'monitorPoints',
         label: '标识',
         align: 'left',
