@@ -296,6 +296,12 @@
     box-sizing: border-box;
   }
 }
+::v-deep .el-icon-minus{
+  margin-bottom: 4px !important;
+}
+::v-deep .el-icon-plus{
+  margin-bottom: 4px !important;
+}
 ::v-deep .list-layout {
   overflow: hidden;
 }

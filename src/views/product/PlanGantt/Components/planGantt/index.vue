@@ -424,8 +424,14 @@
   ::v-deep .el-submenu.is-opened > .el-submenu__title .el-submenu__icon-arrow {
     transform: rotate(180deg);
   }
-}
 
+}
+::v-deep .el-icon-minus{
+  margin-bottom: 4px !important;
+}
+::v-deep .el-icon-plus{
+  margin-bottom: 4px !important;
+}
 ::v-deep .list-layout {
   overflow: hidden;
 }
