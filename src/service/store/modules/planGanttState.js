@@ -5,6 +5,7 @@ const planGanttState = {
     buttonMsg: {},
     taskStyles: {}, // planGantt页面任务样式
     vueThis: {}, // planGantt页面this对象
+    previousThis:{},
     vueThisLocation: {}, // planGantt页面this对象
     planStatusLockMap: {}, // 计划状态影响gantt页面操作策略
     taskStatusLockMap: {}, // 任务状态影响gantt页面操作策略
@@ -27,6 +28,9 @@ const planGanttState = {
     },
     SET_VUE_THIS(state, vueThis) {
       state.vueThis = vueThis
+    },
+    SET_PREVIOUS_THIS(state, vueThis) {
+      state.previousThis = vueThis
     },
     SET_VUE_THIS_LOCATION(state, vueThis) {
       state.vueThisLocation = vueThis

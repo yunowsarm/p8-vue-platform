@@ -772,6 +772,7 @@ export default {
       //   })
       // vuex存放
       vueThis.$store.dispatch('setVueThis', vueThis)
+      vueThis.$store.commit('SET_PREVIOUS_THIS', vueThis)
       // 初始化对象
       myGantt = taskStatisticsGantt(vueThis.ganttName, vueThis)
       myGantt.config.scale_height = 100
