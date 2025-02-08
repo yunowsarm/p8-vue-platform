@@ -76,4 +76,8 @@ export default {
   </normal-layout>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.normal-layout .normal-main .splitBtn > i{
+  z-index: 1;
+}
+</style>

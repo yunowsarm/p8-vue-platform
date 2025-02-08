@@ -824,7 +824,6 @@ export default {
             })
             vueThis.loading = false
             // 先给task赋值拓展字段
-            debugger
             let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
             let extraStr = extraList.map((extra) => extra.filedName)
             taskList.forEach((task) => {
@@ -892,6 +891,7 @@ export default {
             vueThis.managerStatusMap = project.managerStatusMap
             vueThis.taskStatusMap = project.taskStatusMap
             vueThis.$store.dispatch('setTaskStyles', project.taskStyle)
+            myGantt.clearAll();
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
 
