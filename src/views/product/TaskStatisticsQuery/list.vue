@@ -32,6 +32,7 @@
               @switch-task="switchTask"
               @refreshData="refreshData"
               @save-success="detailDrawerClosed"
+              @update-view-width='updateViewWidth'
               :task-status="taskStatus"
             ></task-statistics-gantt>
           </div>
@@ -52,6 +53,7 @@
             :gantt-name="ganttName"
             :status="status"
             :defaultPercent="defaultPercent"
+            :view-width='viewWidth'
             @refreshData="refreshData"
             :plan-info-id="planInfoId"
           ></plan-attribute>
@@ -198,7 +200,8 @@ export default {
       taskStatus: {},
       status: '',
       advance: true,
-      commandButtonBarHeight: '58px'
+      commandButtonBarHeight: '58px',
+      viewWidth:null
     }
   },
   computed: {
@@ -228,8 +231,12 @@ export default {
   beforeMount() {},
   created() {
     this.firstEntry = true
+    this.viewWidth =document.querySelector('#couerDiv').clientWidth
   },
   methods: {
+    updateViewWidth(viewWidth){
+      this.viewWidth = viewWidth
+    },
     switchTask(task) {
       if (!task.id) return
       let myGantt = GanttObject.getGanttObject(this.ganttName)

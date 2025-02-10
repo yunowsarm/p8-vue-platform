@@ -647,20 +647,25 @@ export default {
       myGantt.ext.fullscreen.getFullscreenElement = function () {
         return document.querySelector('#couerDiv')
       }
+      let viewWidth = null
       if (btn.title === '全屏') {
         myGantt.ext.fullscreen.expand()
       } else {
         myGantt.ext.fullscreen.collapse()
       }
-      myGantt.attachEvent("onCollapse", function() {
+      myGantt.attachEvent("onCollapse", (event) => {
         btn.title = '全屏'
         btn.icon = 'p8 icon-full-screen'
         btn.help = '全屏'
+        viewWidth = document.querySelector('#couerDiv').clientWidth;
+        this.$emit('update-view-width',viewWidth)
       });
-      myGantt.attachEvent("onExpand", function() {
+      myGantt.attachEvent("onExpand", () => {
         btn.title = '退出全屏'
         btn.icon = 'p8 icon-exit-fullscreen'
         btn.help = '退出全屏'
+        viewWidth = window.innerWidth;
+        this.$emit('update-view-width',viewWidth)
       });
     },
     refreshGanttData() {
@@ -860,6 +865,7 @@ export default {
             })
             // 处理拓展字段已有的数据
             const project = res[0]
+            console.log(project)
             vueThis.extendMap = project.extendMap || {}
             taskList.forEach((task) => {
               extraList.forEach((item) => {
@@ -917,7 +923,9 @@ export default {
             vueThis.taskCount = myGantt.getTaskCount()
 
             myGantt.unselectTask()
-
+            myGantt.ext.fullscreen.getFullscreenElement = function () {
+              return document.querySelector('#couerDiv')
+            }
             if (!vueThis.relevancePlanVisible && vueThis.selectedId) {
               setTimeout(() => {
                 myGantt.showTask(vueThis.selectedId)
@@ -951,7 +959,7 @@ export default {
     collapseAll() {
       this.loadGanttData(this.projectId, false)
     },
-    gridSaved() {
+    async gridSaved() {
       this.selectGridVisible = false
       // 清空选中
       myGantt.unselectTask()
@@ -960,10 +968,13 @@ export default {
       // myGantt.groupBy(false)
       // myGantt.config.layout = GanttObject.layout1
       // myGantt.config.scale_height = 20 * 3
-      this.initGantt(this.projectId)
+      myGantt.ext.fullscreen.collapse()
+      await this.initGantt(this.projectId)
+      myGantt.ext.fullscreen.getFullscreenElement = function () {
+        return document.querySelector('#couerDiv')
+      }
       // myGantt.resetLayout()
       this.callParentSelectTasks()
-      // cell编辑器打开前逻辑设置
       // GanttObject.setOnBeforeEditStart(myGantt, this)
       // 设置保存时机
       // GanttObject.setCellSaveConfig(myGantt)

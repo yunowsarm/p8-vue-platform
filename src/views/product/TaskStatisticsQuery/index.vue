@@ -25,7 +25,8 @@ export default {
     }
   },
   activated() {
-    this.$refs.ganttList.$refs.planGantt.refreshGanttData()
+    this.renderKey = new Date().getTime()
+    // this.$refs.ganttList.$refs.planGantt.refreshGanttData()
   },
   created() {
     this.getTreeData(this.treeSettingsParams)

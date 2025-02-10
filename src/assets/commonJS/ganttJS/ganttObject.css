@@ -380,7 +380,7 @@
   background-color: #F9F9F9 !important;
 }
 .gantt_grid_head_cell .gantt_blank {
-  background-color: #ffffff;
+  background-color: #f5f7fa;
 }
 .gantt_row,
 .gantt_task_row {
@@ -413,9 +413,6 @@
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-}
-.gantt_cell_search .cs-input .cs-input_inner{
-  background: #e6f7ff;
 }
 .icon-underline, .icon-shanchuxian{
   font-size: 18px;

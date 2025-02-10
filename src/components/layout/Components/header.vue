@@ -154,7 +154,7 @@
                    :visible="visibleProcessDrawer"
                    title="我的审批"
                    class="my_process"
-                   @close="visibleProcessDrawer = false"
+                   @close="closeMyApproval"
                    direction="ttb"
                    size="100%">
       <template #drawer>
@@ -298,6 +298,11 @@ export default {
     // }
   },
   methods: {
+    closeMyApproval () {
+      this.visibleProcessDrawer = false
+      const vueThis = this.$store.getters.previousThis
+      this.$store.commit('SET_VUE_THIS', vueThis)
+    },
     getAuthorizationInfo () {
       this.$api['user.getAuthorizationInfo']({}).then(res => {
         this.AuthorizationInfoList = res
