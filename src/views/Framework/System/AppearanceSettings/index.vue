@@ -76,7 +76,7 @@
   color: black;
 }
 .main-router {
-  height: 100% !important;
+  height: calc(100% - 60px) !important;
 }
 .card_box {
   margin: 16px;
