@@ -116,17 +116,20 @@ export default {
   },
   mounted () {
     if (this.taskId) {
+      let that = this
       setTimeout(() => {
-        let selectData = this.$refs.xDemandTable.$refs.table.data
-        this.$api[this.tableApi]({ taskId: this.taskId }).then(res => {
-          res.forEach(el => {
-            selectData.forEach((item, index) => {
-              if (el.id === item.id) {
-                this.$refs.xDemandTable.$refs.table.setCheckboxRow(selectData[index], true)
-              }
+        if (that.$refs.xDemandTable) {
+          let selectData = that.$refs.xDemandTable.$refs.table.data
+          that.$api[that.tableApi]({ taskId: that.taskId }).then(res => {
+            res.forEach(el => {
+              selectData.forEach((item, index) => {
+                if (el.id === item.id) {
+                  that.$refs.xDemandTable.$refs.table.setCheckboxRow(selectData[index], true)
+                }
+              })
             })
           })
-        })
+        }
       }, 1000)
     }
   },
