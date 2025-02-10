@@ -9,7 +9,18 @@
                    @select="onSelect"></common-tree>
     </template>
     <template #center>
-      <div class="show-type"><span style="font-weight: bold;font-size: 15px;">展示方式：</span>
+      <div class="show-type"><span style="font-weight: bold;font-size: 15px;">展示方式
+          <el-tooltip effect="dark"
+                      popper-class="testtooltip"
+                      placement="top">
+            <div slot="content">
+              <p>父子结构：与当前父子集展示逻辑一致</p>
+              <p>计划分组：与当前默认展示逻辑一致</p>
+              <p>列表：平铺计划，默认排除已完成的任务</p>
+            </div>
+            <i class="p8 icon-help-tips"></i>
+          </el-tooltip>
+          ：</span>
         <el-radio-group v-model="showView"
                         @input="showViewChange">
           <el-radio label="showView001">父子结构</el-radio>
