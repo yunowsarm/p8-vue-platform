@@ -1741,6 +1741,7 @@ export default {
       // myGantt.groupBy(false)
       // myGantt.config.layout = GanttObject.layout1
       // myGantt.config.scale_height = 20 * 3
+      myGantt.ext.fullscreen.collapse()
       this.initGantt(this.planInfoId, this.viewType)
       // myGantt.resetLayout()
       this.callParentSelectTasks()

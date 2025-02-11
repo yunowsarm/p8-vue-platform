@@ -204,7 +204,7 @@
 
 .gantt_grid_data .gantt_row:hover,
 .gantt_grid_data .gantt_row.odd:hover {
-  background-color: #e6f7ff !important;
+  background-color: #e4e4e6 !important;
 }
 
 .gantt_grid_data .gantt_row.can_edit_color:hover,
