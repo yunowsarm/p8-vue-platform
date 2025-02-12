@@ -476,7 +476,7 @@ export default {
       let count = 0
       this.rolesData.forEach((el) => {
         if (el.projectTeamRoleUsers && el.projectTeamRoleUsers.length) {
-          const length = el.projectTeamRoleUsers.filter((el) =>!el.departureTime).length
+          const length = el.projectTeamRoleUsers.filter((el) => !el.departureTime).length
           count += length
         }
       })
@@ -503,11 +503,11 @@ export default {
     }
   },
   methods: {
-    filterTableData(data){
+    filterTableData (data) {
       const projectStatus = this.row[0].STATUS
-      if(projectStatus === '2202'){
+      if (projectStatus === '2202') {
         return data
-      }else{
+      } else {
         return data.filter(item => {
           return !item.departureTime
         })
@@ -740,7 +740,8 @@ export default {
       this.columns.unshift({
         title: '角色',
         dataIndex: 'roleName',
-        width: 120
+        width: 120,
+        align: 'center'
       })
       this.tableData = tableData
       this.dateTime = new Date().getTime()

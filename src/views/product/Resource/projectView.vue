@@ -652,7 +652,8 @@ export default {
       this.columns.unshift({
         title: '角色',
         dataIndex: 'roleName',
-        width: 120
+        width: 120,
+        align: 'center'
       })
       this.tableData = tableData
       this.dateTime = new Date().getTime()
