@@ -342,7 +342,7 @@ export default {
       // this.$refs.planGantt.initGantt(this.planInfoId, this.$store.getters.vueThis.changeRecordId, this.$store.getters.vueThis.viewType)
     },
     onChangeTask (row) {
-      let myGantt = GanttObject.getGanttObject(this.ganttName)
+      let myGantt = GanttObject.getGanttObject('changeGantt')
       myGantt.unselectTask()
       myGantt.showTask(row.id)
       myGantt.selectTask(row.id)

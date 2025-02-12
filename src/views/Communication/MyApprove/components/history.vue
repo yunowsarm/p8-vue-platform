@@ -42,13 +42,15 @@
                        :selected-approval="selectedApproval"
                        :curr-entity-id="currEntityId"
                        :searchParams="searchParams"
-                       v-if="formComp != null && formComp != '' && componentsParams"
+                       v-if="componentsParams"
                        :code="componentsParams.code"
                        :data-view-id="componentsParams.dataViewId"
                        :record="{ desformCode: componentsParams.codeForm }"
                        :permission-vo="componentsParams.permissionVo"
                        :layout-config="componentsParams"
-                       :is="componentLoader"
+                       :is="componentUrl"
+                       ref="approveContent"
+                       class="approveComponent"
                        v-bind="formCompProp"
                        :kanban-config="componentsParams" />
             <component :style="{ height: tabsHeight }"
@@ -249,13 +251,19 @@ export default {
         }
       ],
       activeTabs: 'approval',
-      tableFlex: 240
+      tableFlex: 240,
+      asyncComponents: ''
     }
   },
   computed: {
     componentLoader () {
       const comp = this.formComp
       return () => import('@/views/' + comp)
+    },
+    componentUrl () {
+      if (this.asyncComponents) {
+        return () => import(`@/views/${this.asyncComponents}.vue`)
+      }
     }
   },
   watch: {
@@ -314,6 +322,7 @@ export default {
     loadFormKey () {
       const this_ = this
       this_.dataSource = this_.dataSourceDefault
+      this.asyncComponents = ''
       this_.$api['PersonalProcessApproval.getApproveContentViewUrl']({ taskId: this.selectedApproval.processTaskId }).then((res) => {
         if (res && res.length > 0) {
           const page = {}
@@ -350,7 +359,7 @@ export default {
               this_.asyncComponents = this_.componentsParams.url
             }
           }
-        }
+         }
         this_.formValidate = true
       })
     },
