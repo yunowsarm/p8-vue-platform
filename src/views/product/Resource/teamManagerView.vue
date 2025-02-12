@@ -250,7 +250,8 @@ export default {
     const columns = [
       {
         title: '角色',
-        dataIndex: 'roleName'
+        dataIndex: 'roleName',
+        align: 'center'
       },
       {
         title: '姓名',
@@ -697,7 +698,8 @@ export default {
       this.columns.unshift({
         title: '角色',
         dataIndex: 'roleName',
-        width: 120
+        width: 120,
+        align: 'center'
       })
       this.tableData = tableData
       this.dateTime = new Date().getTime()
