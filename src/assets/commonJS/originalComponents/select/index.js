@@ -213,6 +213,20 @@ export default class Selector {
       if (vueThis && vueThis.clearClick && !vueThis.getSelectStatus()) {
         _this.dropboxShow = false
       }
+      let selectEles = document.querySelectorAll('.select-dropdown')
+      let csInputIcons = document.querySelectorAll('.cs-input-icon')
+      if (selectEles && selectEles.length) {
+        selectEles.forEach(el => {
+          el.style.opacity = '0'
+          el.style.transform = 'scale(1,0)'
+        })
+      }
+      if (csInputIcons && csInputIcons.length) {
+        csInputIcons.forEach(el => {
+          el.classList.remove('is-reverse');
+        })
+      }
+
       const ele = e.target
       // 遍历当前点击的元素，如果是选中框内的元素执行
       if (_this._getTargetNode(ele, _this.ele.inputWrap)) {
