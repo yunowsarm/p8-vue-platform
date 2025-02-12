@@ -16,7 +16,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['token', 'userId', 'userInfo'])
+    ...mapGetters(['token', 'userId', 'userInfo','difyChatbot'])
   },
   watch: {
     token: {
@@ -38,6 +38,12 @@ export default {
   },
   mounted () {
     window.socketType = null
+    // 获取聊天机器人窗口元素
+    const chatbotWindow = document.getElementById('dify-chatbot-bubble-button');
+    console.log(chatbotWindow)
+    if(!this.difyChatbot){
+      chatbotWindow.style.display = 'none';
+    }
   },
   methods: {
     initWebSocket (id, name) {

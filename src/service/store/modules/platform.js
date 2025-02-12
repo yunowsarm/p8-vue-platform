@@ -14,6 +14,8 @@ const SIDEBAR_HIDDEN_STATE = Cookie.get(SIDEBAR_HIDDEN_STATE_KEY)
 // 侧边栏折叠状态
 const SIDEBAR_OPEN_KEY = GLOBAL_CONST.sidebar.isCollpasedSideBarKey
 const SIDEBAR_OPEN_STATE = Cookie.get(SIDEBAR_OPEN_KEY) ? Cookie.get(SIDEBAR_OPEN_KEY) : 'true'
+// ai助手
+const DIFY_CHATBOT = GLOBAL_CONST.difyChatbot
 // THEME
 const SYSTEM_THEME_KEY = GLOBAL_CONST.systemTheme.systemThemeKey
 // IMAGE
@@ -110,6 +112,7 @@ const platform = {
     },
     // systemTheme: Cookie.get(SYSTEM_THEME_KEY) || 'chalk',
     theme: Cookie.get(SYSTEM_THEME_KEY) || themeVariables.theme,
+    difyChatbot: DIFY_CHATBOT,
     shortcutMenu: [], // 自定义菜单项,由用户自定义出的菜单项
     systemName: Cookie.get('P8V3.0-PLATFORM') || '',
     headerHeight: plateformVariables.headerHeight, // 头部(header)高度
@@ -139,7 +142,7 @@ const platform = {
     },
     SET_SYSTEM_NAME(state, data) {
       state.systemName = data
-      document.title = data.replace(/<\/?[^>]+(>|$)/g, '') 
+      document.title = data.replace(/<\/?[^>]+(>|$)/g, '')
       Cookie.set('P8V3.0-PLATFORM', data, 1000)
     },
     // 设置侧边栏隐藏
@@ -196,6 +199,11 @@ const platform = {
       // state.systemTheme = theme
       state.theme = theme
       Cookie.set(SYSTEM_THEME_KEY, theme, 1000)
+    },
+    // 设置主题对比色
+    SET_CONTRAST_COLOR(state, theme){
+      state.contrastColor = getContrastColor(theme)
+      Cookie.set(SYSTEM_CONTRAST_COLOR_KEY, state.contrastColor, 1000)
     },
     // 设置主题背景图
     SET_IMAGE(state, imageUrl) {
@@ -269,6 +277,8 @@ const platform = {
       }
 
       getThemeHandler('chalk-custom-style')()
+      const contrastColor = getContrastColor(theme)
+      commit('SET_CONTRAST_COLOR', contrastColor)
       commit('SET_THEME', theme)
     },
     maxWindow({ commit }, isMaxWindow) {
@@ -284,6 +294,25 @@ const platform = {
     //   commit('SET_CTRL_KEY_STATE', isPushed)
     // }
   }
+}
+// 计算颜色亮度
+function getLuminance(color) {
+  const rgb = color.match(/\w\w/g).map(x => parseInt(x, 16)); // 将颜色值转为 RGB 数值
+  const [r, g, b] = rgb.map(val => val / 255);  // 归一化 RGB 值
+
+  // 使用公式计算亮度
+  const [rLuminance, gLuminance, bLuminance] = [r, g, b].map(val => {
+    return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
+  });
+
+  // 计算总亮度
+  return rLuminance * 0.2126 + gLuminance * 0.7152 + bLuminance * 0.0722;
+}
+
+// 获取反差色（如果亮度较低，返回白色，否则返回黑色）
+function getContrastColor(color) {
+  const luminance = getLuminance(color);
+  return luminance < 0.5 ? '#FFFFFF' : '#000000';
 }
 
 export default platform
