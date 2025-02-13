@@ -238,6 +238,7 @@ export default {
   created () {
     this.westTreeParam.showView = 'showView003'
     this.westTreeParam.isChildren = 'false'
+    this.westTreeParam.status = ['6050', '6020']
     this.provideParams.searchParams = this.westTreeParam
     this.init()
     this.getIconData()
@@ -255,15 +256,15 @@ export default {
   },
   methods: {
     showViewChange (val) {
-      let a = this.$refs.tableRender.$refs.xTable.params.sqlParam
+      let tableParam = this.$refs.tableRender.$refs.xTable.params.sqlParam
       let sqlParam = {
         isChildren: '',
         showView: '',
         tabsName: ''
       };
       for (let key in sqlParam) {
-        if (a[key] && a[key].value !== undefined) {
-          sqlParam[key] = a[key].value;  // 将值赋给 sqlParam
+        if (tableParam[key] && tableParam[key].value !== undefined) {
+          sqlParam[key] = tableParam[key].value;  // 将值赋给 sqlParam
         }
       }
       if (val !== 'showView001') {
@@ -278,15 +279,15 @@ export default {
       this.dateTime = new Date().getTime()
     },
     childrenClick (val) {
-      let a = this.$refs.tableRender.$refs.xTable.params.sqlParam
+      let tableParam = this.$refs.tableRender.$refs.xTable.params.sqlParam
       let sqlParam = {
         isChildren: '',
         showView: '',
         tabsName: ''
       };
       for (let key in sqlParam) {
-        if (a[key] && a[key].value !== undefined) {
-          sqlParam[key] = a[key].value;  // 将值赋给 sqlParam
+        if (tableParam[key] && tableParam[key].value !== undefined) {
+          sqlParam[key] = tableParam[key].value;  // 将值赋给 sqlParam
         }
       }
       if (val) {
@@ -463,15 +464,15 @@ export default {
           })
         }
         this.provideParams.searchParams = paramsObj
-        let a = this.$refs.tableRender.$refs.xTable.params.sqlParam
+        let tableParam = this.$refs.tableRender.$refs.xTable.params.sqlParam
         let sqlParam = {
           isChildren: '',
           showView: '',
           tabsName: ''
         };
         for (let key in sqlParam) {
-          if (a[key] && a[key].value !== undefined) {
-            sqlParam[key] = a[key].value;  // 将值赋给 sqlParam
+          if (tableParam[key] && tableParam[key].value !== undefined) {
+            sqlParam[key] = tableParam[key].value;  // 将值赋给 sqlParam
           }
         }
         this.sqlParam = { ...sqlParam, ... this.sqlParam }
