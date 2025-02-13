@@ -232,8 +232,8 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
-        () => isReadOnly(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
+        () => isReadOnly(ganttName, tasks),
         () => isSingleTask(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isHadRootAndReadOnly(ganttName, tasks),
@@ -262,8 +262,8 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isReadOnly(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
             () => isSingleTask(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isHadRootAndReadOnly(ganttName, tasks),
@@ -291,8 +291,8 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isReadOnly(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
             () => isSingleTask(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isHadRootAndReadOnly(ganttName, tasks),
@@ -320,8 +320,8 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isReadOnly(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
             () => isSingleTask(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isHadRootAndReadOnly(ganttName, tasks),
@@ -349,8 +349,8 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isReadOnly(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
+            () => isReadOnly(ganttName, tasks),
             () => isSingleTask(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isHadRootAndReadOnly(ganttName, tasks),
@@ -473,8 +473,8 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
-        () => isReadOnly(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
+        () => isReadOnly(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowDowngrade(ganttName, tasks),
@@ -525,8 +525,8 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
-        () => isReadOnly(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
+        () => isReadOnly(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowDelete(ganttName, tasks),
@@ -791,8 +791,8 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
-        () => isReadOnly(ganttName, tasks),
-        () => isHasTask(ganttName, tasks)
+        () => isHasTask(ganttName, tasks),
+        () => isReadOnly(ganttName, tasks)
       ]
       const res = isDisable(checks)
       store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
@@ -813,9 +813,10 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
+        () => isHasTask(ganttName, tasks),
         () => isCompile(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowUndo(ganttName, tasks),
+        () => isSuspensionOrProhibition(ganttName, tasks),
       ]
       const res = isDisable(checks)
       store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
@@ -1325,8 +1326,8 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
-        () => isReadOnly(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
+        () => isReadOnly(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowImport(ganttName, tasks),
@@ -1351,8 +1352,8 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
-        () => isReadOnly(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
+        () => isReadOnly(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowImport(ganttName, tasks),
@@ -1760,9 +1761,9 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
+        () => isHasTask(ganttName, tasks),
         () => isReadOnly(ganttName, tasks),
         () => isCompile(ganttName, tasks),
-        () => isHasTask(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowImport(ganttName, tasks),
         () => isHasProductTask(ganttName, tasks)
@@ -1786,9 +1787,9 @@ export const CommandButtonData = [
         isDisableFun: function (btn, ganttName, tasks) {
           // 确保二级菜单跟一级菜单的disable状态一致
           const checks = [
+            () => isHasTask(ganttName, tasks),
             () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
-            () => isHasTask(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),
             () => isHasProductTask(ganttName, tasks)
@@ -1812,9 +1813,9 @@ export const CommandButtonData = [
         isDisableFun: function (btn, ganttName, tasks) {
           // 确保二级菜单跟一级菜单的disable状态一致
           const checks = [
+            () => isHasTask(ganttName, tasks),
             () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
-            () => isHasTask(ganttName, tasks),
             () => isNoRoot(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),

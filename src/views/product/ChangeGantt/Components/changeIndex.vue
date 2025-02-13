@@ -203,7 +203,7 @@ export default {
       drawerConfig: {
         modal: false
       },
-      ganttName: '',
+      ganttName: 'changeGantt',
       taskStatus: {},
       status: '',
       advance: true,

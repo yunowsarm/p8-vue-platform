@@ -214,7 +214,7 @@ export default {
       planInfoStatus: '',
       taskId: null,
       createPage: '',
-      ganttName: '',
+      ganttName: 'planGantt',
       taskStatus: {},
       status: '',
       advance: true,
