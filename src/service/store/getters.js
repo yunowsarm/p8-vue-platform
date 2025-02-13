@@ -5,7 +5,6 @@ const getters = {
   imageUrl: (state) => state.platform.imageUrl,
   shortcutMenu: (state) => state.platform.shortcutMenu,
   systemName: (state) => state.platform.systemName,
-  difyChatbot: (state) => state.platform.difyChatbot,
   sidebarState: (state) => state.platform.sidebarState,
   headerHeight: (state) => state.platform.headerHeight,
   tagTabHeight: (state) => state.platform.tagTabHeight,

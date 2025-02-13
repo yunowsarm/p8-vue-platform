@@ -14,8 +14,6 @@ const SIDEBAR_HIDDEN_STATE = Cookie.get(SIDEBAR_HIDDEN_STATE_KEY)
 // 侧边栏折叠状态
 const SIDEBAR_OPEN_KEY = GLOBAL_CONST.sidebar.isCollpasedSideBarKey
 const SIDEBAR_OPEN_STATE = Cookie.get(SIDEBAR_OPEN_KEY) ? Cookie.get(SIDEBAR_OPEN_KEY) : 'true'
-// ai助手
-const DIFY_CHATBOT = GLOBAL_CONST.difyChatbot
 // THEME
 const SYSTEM_THEME_KEY = GLOBAL_CONST.systemTheme.systemThemeKey
 // IMAGE
@@ -112,7 +110,6 @@ const platform = {
     },
     // systemTheme: Cookie.get(SYSTEM_THEME_KEY) || 'chalk',
     theme: Cookie.get(SYSTEM_THEME_KEY) || themeVariables.theme,
-    difyChatbot: DIFY_CHATBOT,
     shortcutMenu: [], // 自定义菜单项,由用户自定义出的菜单项
     systemName: Cookie.get('P8V3.0-PLATFORM') || '',
     headerHeight: plateformVariables.headerHeight, // 头部(header)高度

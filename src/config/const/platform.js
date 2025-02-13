@@ -18,8 +18,6 @@ export default {
   shortcut: {
     shortcutKey: `${PLATFORM_PREFIX_NAME}_SHORTCUT_MENU`
   },
-  // ai助手
-  difyChatbot:false,
   // TOKEN NAME
   token: {
     tokenKey: `${PLATFORM_PREFIX_NAME}_PLATFORM`
