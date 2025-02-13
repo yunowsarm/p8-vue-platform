@@ -292,7 +292,7 @@ export default {
       oldFormData: {},
       extraKeys: [],
       ganttObject: null,
-      defaultList: ['createTime', 'createBy', 'changeCount', 'updateTime', 'updateBy'],
+      defaultList: ['createTime', 'createBy', 'changeCount', 'updateTime', 'updateBy', 'achievements', 'proportion'],
       ganttColumns: []
       // falg: true
     }
@@ -416,6 +416,8 @@ export default {
       if (startIdx !== -1 && endIdx !== -1) {
         content = el.label.substring(startIdx + '<div class="gantt_search">'.length, endIdx);
       }
+      // 使用正则表达式去掉 <i> 标签及其内容
+      content = content.replace(/<i\b[^<]*(?:(?!<\/i>)<[^<]*)*<\/i>/gi, '');
       this.dataSource.push({
         labelText: content,
         type: 'view',
@@ -423,7 +425,7 @@ export default {
         colLayout: 'doubleCol'
       })
     })
-    this.dataSource.push( {
+    this.dataSource.push({
       labelText: '任务描述',
       type: 'blank',
       fieldName: 'describes',
@@ -568,6 +570,9 @@ export default {
       this.ganttColumns.forEach(el => {
         if (task[el.name]) {
           that.formData[el.name] = task[el.name]
+          if (el.name == 'proportion') {
+            that.formData[el.name] = task[el.name].toFixed(2) + '%'
+          }
         }
       })
       if (task.realBeginDate) that.formData.realBeginDate = moment(task.realBeginDate).format('YYYY-MM-DD')
@@ -649,9 +654,9 @@ export default {
       }
     },
     async customValidate (saveParams) {
-      let resData = await this.$api['planChange.userTaskSaveCheck']({owner_id: saveParams.owner_id})
+      let resData = await this.$api['planChange.userTaskSaveCheck']({ owner_id: saveParams.owner_id })
       if (resData) {
-        this.$message({type:'warning',message: '所选责任人已退出当前团队，请重新选择'})
+        this.$message({ type: 'warning', message: '所选责任人已退出当前团队，请重新选择' })
         return
       }
       const that = this
