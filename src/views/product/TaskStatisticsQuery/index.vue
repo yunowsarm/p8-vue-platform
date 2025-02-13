@@ -4,7 +4,7 @@ import { selectGenerateTree } from '@/utils/common'
 import List from './list.vue'
 
 export default {
-  name: 'TaskStatisticsQuery',
+  name: 'TaskStatistics',
   components: {
     List,
     NormalLayout,
@@ -24,10 +24,11 @@ export default {
       projectId:''
     }
   },
-  activated() {
-    this.renderKey = new Date().getTime()
-    // this.$refs.ganttList.$refs.planGantt.refreshGanttData()
-  },
+  // activated() {
+  //   console.log('activated')
+  //   // this.renderKey = new Date().getTime()
+  //   this.$refs.ganttList.$refs.planGantt.refreshGanttData()
+  // },
   created() {
     this.getTreeData(this.treeSettingsParams)
   },
