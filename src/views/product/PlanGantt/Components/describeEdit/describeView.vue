@@ -214,7 +214,7 @@ export default {
       },
       describes: '',
       oldFormData: {},
-      defaultList: ['createTime', 'createBy', 'changeCount', 'updateTime', 'updateBy'],
+      defaultList: ['createTime', 'createBy', 'changeCount', 'updateTime', 'updateBy', 'achievements', 'proportion'],
       ganttColumns: []
     }
   },
@@ -297,6 +297,8 @@ export default {
       if (startIdx !== -1 && endIdx !== -1) {
         content = el.label.substring(startIdx + '<div class="gantt_search">'.length, endIdx);
       }
+      // 使用正则表达式去掉 <i> 标签及其内容
+      content = content.replace(/<i\b[^<]*(?:(?!<\/i>)<[^<]*)*<\/i>/gi, '');
       this.dataSource.push({
         labelText: content,
         type: 'view',
@@ -361,6 +363,9 @@ export default {
       this.ganttColumns.forEach(el => {
         if (task[el.name]) {
           that.formData[el.name] = task[el.name]
+          if (el.name == 'proportion') {
+            that.formData[el.name] = task[el.name].toFixed(2) + '%'
+          }
         }
       })
       // 获取描述信息
@@ -423,7 +428,7 @@ export default {
                 })
                 that.tooltipContent.duration = res.durationBefore
               }
-            } else if(!!res.durationBefore){
+            } else if (!!res.durationBefore) {
               that.formData.duration = res.durationBefore
             }
             if (res.planTypeDisplay !== null) {
