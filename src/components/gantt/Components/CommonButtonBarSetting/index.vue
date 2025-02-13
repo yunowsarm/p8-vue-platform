@@ -24,7 +24,8 @@
         <div class="title">
           <span>排程设置</span>
         </div>
-        <div class="content">
+        <div class="content"
+             :class="{'marginBottom': $route.name == 'PlanMonitoring'}">
           <el-radio-group v-model="autoScheduling">
             <el-radio label="0">手动</el-radio>
             <el-radio label="1">自动</el-radio>
@@ -32,10 +33,13 @@
         </div>
       </template>
       <template title="右键功能区">
-        <div class="title">
+        <div class="title"
+             v-if="$route.name !== 'PlanMonitoring'">
           <span>右键功能区</span>
         </div>
-        <div class="content transferContent">
+        <div class="content transferContent"
+             v-if="$route.name !== 'PlanMonitoring'"
+             s>
           <el-transfer v-model="valueBtns"
                        :data="buttonListInLeft"
                        filterable
@@ -209,9 +213,11 @@ $bgColor: #eeeeee;
 
 .el-transfer {
   height: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 35px;
 }
-
+.marginBottom {
+  margin-bottom: 50px;
+}
 ::v-deep.el-transfer-panel {
   height: 100%;
 }
