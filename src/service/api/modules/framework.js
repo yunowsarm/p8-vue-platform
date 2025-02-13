@@ -967,7 +967,14 @@ export const system = {
       path: '/bpm/personal/ProcessApproval/userAssigneeCount',
       mockPath: '/bpm/personal/ProcessApproval/userAssigneeCount',
       desc: '当前用户待审批数量'
-    }
+    },
+    {
+      name: 'getModeSupportsServicesImpl',
+      method: 'POST',
+      path: '/bpm/personal/ProcessApproval/getModeSupportsServicesImpl',
+      mockPath: '/bpm/personal/ProcessApproval/getModeSupportsServicesImpl',
+      desc: '获取发起流程时的服务类(发提供流程中各节点的受托人)'
+    },
   ],
   commonInterface: [
     {
