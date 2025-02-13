@@ -3460,7 +3460,13 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
               min_width: 120,
               editor: checkEdit() ? getEditors(editType, item, item.filedType) : null,
               template: function (task) {
-                return `<div class='text_overflow'>${task['kz' + item.id]}</div>`
+                let result = task['kz' + item.id]
+                if (editType == 'custom_date_editor') {
+                  if (result) {
+                    result = moment(result).format('YYYY-MM-DD')
+                  }
+                }
+                return `<div class='text_overflow'>${result}</div>`
               }
             })
           }
