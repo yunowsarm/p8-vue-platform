@@ -760,7 +760,6 @@ export default {
       // })
     },
     async initGantt(projectId, viewType) {
-      this.loading = true
       // this.fullscreenLoading = this.$loading({
       //   lock: true,
       //   text: 'Loading',
@@ -832,11 +831,12 @@ export default {
       }, 1000)
     },
     loadGanttData(projectId, open = false) {
+      this.loading = true
       const monitorBtns = this.monitorBtnsByApi
       window.createPage = this.createPage
       const vueThis = this
       vueThis.$api['planGanttManager.loadPlanGanttDataByProjectType']({
-        projectType: projectId,
+        projectId: projectId,
         dicType: 'ACTIVITY_TYPE',
         createPage: this.createPage
       })
@@ -844,9 +844,21 @@ export default {
           if (res) {
             let taskList = []
             let links = []
+            let resources = []
             res.forEach((item) => {
               taskList = [...taskList, ...item.tasks]
               links = [...links, ...item.links]
+              if(item.extendMap){
+                vueThis.extendMap = {...vueThis.extendMap,...item.extendMap}
+              }
+              if (item.resources) {
+                resources = [...resources, ...item.resources];
+                resources = resources.filter((resource, index, self) =>
+                    index === self.findIndex((t) => (
+                      t.id === resource.id
+                    ))
+                );
+              }
             })
             vueThis.loading = false
             // 先给task赋值拓展字段
@@ -865,8 +877,7 @@ export default {
             })
             // 处理拓展字段已有的数据
             const project = res[0]
-            console.log(project)
-            vueThis.extendMap = project.extendMap || {}
+            // vueThis.extendMap = project.extendMap || {}
             taskList.forEach((task) => {
               extraList.forEach((item) => {
                 task['kz' + item.id] = ''

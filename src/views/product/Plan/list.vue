@@ -123,14 +123,6 @@ export default {
     this.init()
     this.getIconData()
   },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      if (from.name === 'TaskStatisticsQuery') {
-        vm.init();
-        vm.getIconData();
-      }
-    });
-  },
   // watch: {
   //   $route: {
   //     handler (val) {
