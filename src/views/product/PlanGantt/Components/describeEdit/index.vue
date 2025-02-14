@@ -342,7 +342,7 @@ export default {
             if (this.formData['kz' + item.customItem1]) {
               return
             }
-            this.$set(this.formData, item.fieldName, date.isValid() ? date : '')
+            this.$set(this.formData, item.fieldName, date.isValid() ? moment(date).format('YYYY-MM-DD') : '')
           } else {
             if (this.formData['kz' + item.customItem1]) {
               return
