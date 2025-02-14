@@ -197,11 +197,11 @@ const platform = {
       state.theme = theme
       Cookie.set(SYSTEM_THEME_KEY, theme, 1000)
     },
-    // 设置主题对比色
-    SET_CONTRAST_COLOR(state, theme){
-      state.contrastColor = getContrastColor(theme)
-      Cookie.set(SYSTEM_CONTRAST_COLOR_KEY, state.contrastColor, 1000)
-    },
+    // // 设置主题对比色
+    // SET_CONTRAST_COLOR(state, theme){
+    //   state.contrastColor = getContrastColor(theme)
+    //   Cookie.set(SYSTEM_CONTRAST_COLOR_KEY, state.contrastColor, 1000)
+    // },
     // 设置主题背景图
     SET_IMAGE(state, imageUrl) {
       state.imageUrl = imageUrl
@@ -275,7 +275,7 @@ const platform = {
 
       getThemeHandler('chalk-custom-style')()
       const contrastColor = getContrastColor(theme)
-      commit('SET_CONTRAST_COLOR', contrastColor)
+      // commit('SET_CONTRAST_COLOR', contrastColor)
       commit('SET_THEME', theme)
     },
     maxWindow({ commit }, isMaxWindow) {
