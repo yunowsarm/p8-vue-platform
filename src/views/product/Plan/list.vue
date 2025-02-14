@@ -57,7 +57,7 @@ import { Input, Button } from 'element-ui'
 import { P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Dialog as CommonDialog, P8Table as CommonTable, P8Button as CommonButton } from 'p8-components-ui'
 import { selectGenerateTree } from '@/utils/common.js'
 export default {
-  name: 'ProcessManagementData',
+  name: 'ProcessManagement',
   computed: {
     componentUrl () {
 
