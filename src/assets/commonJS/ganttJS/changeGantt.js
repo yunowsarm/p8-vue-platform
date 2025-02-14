@@ -222,12 +222,12 @@ export function taskDescribesEditCheck(newObj, oldObj, vueThis, taskId, ganttObj
     ganttObject.updateTask(taskId)
     if (changeDate) {
       GanttObject.updateTaskNew(ganttObject, taskId, vueThis)
-      if(task.parent){
+      // if(task.parent){
         const parentTask = ganttObject.getTask(task.parent)
-        if (parentTask.autoScheduling === '1') {
+        // if (parentTask.autoScheduling === '1') {
           calculateParentEndDateAndDuration(ganttObject, taskId, vueThis)
-        }
-      }
+        // }
+      // }
     }
     if (hasEdit) {
       setNewTaskMap(vueThis, task, null, 'task')
@@ -860,27 +860,38 @@ export function calculateParentEndDateAndDuration(ganttObject, taskId, vueThis) 
     }
     ganttObject.batchUpdate(function () {
       ganttObject.eachParent(function (t) {
-        if (!t.parent || ['6405', '6406','6407','6408','6409'].includes(t.managerStatus)) {
-          return;  // 跳过根节点
+        console.log(t,'父任务')
+        console.log(t.type === 'task')
+        // if (!t.parent || ['6405', '6406','6407','6408','6409'].includes(t.managerStatus)) {
+        //   return;  // 跳过根节点
+        // }
+        if(t.autoScheduling !== '1'){
+          return
         }
-        const oldTask = vueThis.oldTaskMap[t.id]
-        // 为手动时，若计划完成时间小于当前操作任务的计划完成时间，修改父为操作任务完成时间
-        if (t.type === 'task') {
-          if (!oldTask || oldTask.end_date < task.end_date) {
-            t.end_date = task.end_date
-            t.forecastEndDate = task.forecastEndDate
-          } else {
-            t.end_date = oldTask.end_date
-            t.forecastEndDate = oldTask.forecastEndDate
-          }
-          t.duration = ganttObject.calculateDuration(t.start_date, task.end_date)
-          t.progress = GanttObject.calculateProgress(t, ganttObject)
-          if (!t.style) {
-            t.style = affectColor
-          }
+        // const oldTask = vueThis.oldTaskMap[t.id]
+        // // 为手动时，若计划完成时间小于当前操作任务的计划完成时间，修改父为操作任务完成时间
+        // // if (t.type === 'task') {
+        //   console.log('333')
+        // console.log(oldTask.end_date)
+        // console.log(task.end_date)
+        //   if (!oldTask || oldTask.end_date < task.end_date) {
+        //     console.log('444')
+        //     console.log('手动修改父任务完成时间')
+        //     t.end_date = task.end_date
+        //     t.forecastEndDate = task.forecastEndDate
+        //   } else {
+        //     t.end_date = oldTask.end_date
+        //     t.forecastEndDate = oldTask.forecastEndDate
+        //   }
+        //   t.duration = ganttObject.calculateDuration(t.start_date, task.end_date)
+        //   t.progress = GanttObject.calculateProgress(t, ganttObject)
+        //   if (!t.style) {
+        //     t.style = affectColor
+        //   }
           task.affecTaskIds.push(t.id)
           ganttObject.updateTask(t.id)
-        }
+        GanttObject.updateTaskNew(ganttObject, t.id, vueThis)
+        // // }
         if (!t.infoType) {
           t.infoType = 'update'
           t.changeStatusName = '变更'
@@ -889,6 +900,6 @@ export function calculateParentEndDateAndDuration(ganttObject, taskId, vueThis) 
         setNewTaskMap(vueThis, t, null, 'task')
       }, taskId)
     })
-    ganttObject.updateTask(taskId)
+    // ganttObject.updateTask(taskId)
   }
 }
