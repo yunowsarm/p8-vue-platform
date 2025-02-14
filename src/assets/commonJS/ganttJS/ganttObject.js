@@ -817,6 +817,9 @@ GanttObject.performAction = function (actions, ganttObject) {
         } else {
           action(taskId, indexes)
         }
+        if (actionName == 'indentAction') {
+          updateforecastDate(ganttObject.getTask(ganttObject.getParent(taskId)), ganttObject)
+        }
       })
       ganttObject.eachSelectedTask(function (taskId) {
         if (ganttObject.isTaskExists(taskId)) {
