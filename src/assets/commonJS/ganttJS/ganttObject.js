@@ -1815,10 +1815,59 @@ export function getTaskParent(ganttObject, taskId, parTasksIds) {
  */
 GanttObject.updateScheduling = function (ganttObject, vueThis) {
   return ganttObject.attachEvent('onAfterTaskAutoSchedule', function (task, start, link, predecessor) {
-    // if (task && predecessor && task.autoScheduling === '1') {
-    updateforecastDate(task, ganttObject)
-    ganttObject.updateTask(task.id)
-    // }
+    if (task && predecessor && task.autoScheduling === '1') {
+      updateforecastDate(task, ganttObject)
+      ganttObject.updateTask(task.id)
+      }
+    if (task.parent) {
+      const parentId = task.parent
+      const parentTask = ganttObject.getTask(parentId)
+      if (parentTask.autoScheduling !== '1') return
+      const parTasksIds = []
+      // 修改任务添加关联
+      if (vueThis.ganttName === 'changeGantt') {
+        if (ganttObject.isTaskExists(parentId)) {
+          const parTask = ganttObject.getTask(parentId)
+          // 更新父任务
+          parTasksIds.push(parTask.id)
+          ganttObject.eachParent(function (task) {
+            parTasksIds.push(task.id)
+          }, parTask.id)
+        }
+        if (parTasksIds && parTasksIds.length > 0) {
+          parTasksIds.forEach((t) => {
+            const parT = ganttObject.getTask(t)
+            updateforecastDate(parT, ganttObject)
+            ganttObject.updateTask(t)
+          })
+        }
+        if (ganttObject.isTaskExists(parentId)) {
+          const parTask = ganttObject.getTask(parentId)
+          // 更新父任务
+          parTasksIds.push(parTask.id)
+          getTaskParent(ganttObject, parTask.id, parTasksIds)
+        }
+        // if (parTasksIds && parTasksIds.length > 0) {
+        updateNewTaskMap(ganttObject, parTasksIds, vueThis, taskId)
+        // }
+      } else if (vueThis.ganttName === 'planGantt') {
+        if (ganttObject.isTaskExists(parentId)) {
+          const parTask = ganttObject.getTask(parentId)
+          // 更新父任务
+          parTasksIds.push(parTask.id)
+          ganttObject.eachParent(function (task) {
+            parTasksIds.push(task.id)
+          }, parTask.id)
+        }
+        if (parTasksIds && parTasksIds.length > 0) {
+          parTasksIds.forEach((t) => {
+            const parT = ganttObject.getTask(t)
+            updateforecastDate(parT, ganttObject)
+            ganttObject.updateTask(t)
+          })
+        }
+      }
+    }
   })
 }
 
