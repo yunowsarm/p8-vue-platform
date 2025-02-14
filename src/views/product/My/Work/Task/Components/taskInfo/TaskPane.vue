@@ -131,7 +131,7 @@ export default {
       dialogHeight: document.documentElement.clientHeight - 243,
       taskId: '',
       mointorData: [],
-      defaultList: ['createTime', 'createBy', 'changeCount', 'updateTime', 'updateBy']
+      defaultList: ['createTime', 'createBy', 'changeCount', 'updateTime', 'updateBy', 'achievements', 'proportion'],
     }
   },
   mounted () {
@@ -231,6 +231,12 @@ export default {
       })
       this.defaultList.forEach(el => {
         this.formData[el] = res[el]
+        if (el == 'proportion') {
+          this.formData[el] = res[el] ? Number(res[el]).toFixed(2) + '%' : ''
+        }
+        if (el == 'achievements') {
+          this.formData[el] = res[el] ? Number(res[el]).toFixed(2) : ''
+        }
       })
     },
     statusHandle () {
@@ -399,7 +405,7 @@ export default {
           res.taskExtendList.forEach(async (item) => {
             if (item.fieldType == 'datepicker') {
               let date = moment(item.fieldValue)
-              this.$set(this.formData, 'kz' + item.customItem1, date.isValid() ? date : '')
+              this.$set(this.formData, 'kz' + item.customItem1, date.isValid() ? moment(date).format('YYYY-MM-DD') : '')
             } else {
               if (item.fieldType == 'selectSingle' || item.fieldType == 'treeSingle' || item.fieldType == 'selectMultiple' || item.fieldType == 'treeMultiple') {
                 let list = await that.$api['formGenerator.getSelectionDataDic']({ selectCode: item.selectCode })

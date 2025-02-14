@@ -711,7 +711,6 @@ export default {
        * 4. 或该任务的子任务全部完成并且该任务的父任务的父id为空
        * 5. 责任令状态为已发布，计划非已发布
        */
-      console.log('==============22222222');
       if (this.getPlanInfo().pageType === 'view') {
         return false
       }

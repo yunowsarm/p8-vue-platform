@@ -133,7 +133,7 @@ export default {
             for (const item of res.taskExtendList) {
               if (item.fieldType === 'datepicker') {
                 let date = moment(item.fieldValue)
-                this.$set(this.formData, 'kz' + item.customItem1, date.isValid() ? date : '')
+                this.$set(this.formData, 'kz' + item.customItem1, date.isValid() ? moment(date).format('YYYY-MM-DD') : '')
               } else {
                 if (['selectSingle', 'treeSingle', 'selectMultiple', 'treeMultiple'].includes(item.fieldType)) {
                   try {
