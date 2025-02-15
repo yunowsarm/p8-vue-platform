@@ -737,7 +737,7 @@ GanttObject.getActions = function (ganttObject) {
         // 添加更新类型
         newParent.updateType = 'indent'
         task.updateType = 'indent'
-        if (newParent.autoScheduling == '1' && new Date(newParent.end_date) < new Date(task.end_date)) {
+        if (newParent.autoScheduling == '1') {
           newParent.end_date = task.end_date
         }
         updateforecastDate(newParent, ganttObject)

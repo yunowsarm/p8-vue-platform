@@ -20,7 +20,7 @@
           <normal-layout v-if='showRight' :headerVisible="false" :splitDefaultLeftWidth="50" :normalLayout="normalLayout">
             <template #west>
               <activityTree
-                ref="activityTree"
+                :key="describeRefrshKey"
                 class="left-container"
                 :activity-info-id="activityInfoId"
                 v-if="triggerVal"
@@ -357,6 +357,9 @@ export default {
     async saveAll(e) {
       if (this.activityId) {
         await this.saveParams()
+        if (res) {
+          this.$refs.activityTree.updateTaskName(this.activityId)
+        }
         this.$message({ type: 'success', message: '保存成功' })
       } else {
         this.$message({
@@ -417,7 +420,7 @@ export default {
     updateActivity(record) {},
     saveCallback(res) {
       if (res) {
-        this.$refs.activityTree.updateTaskName(res)
+        // this.$refs.activityTree.updateTaskName(res)
       }
     },
     removeActivity(record) {
