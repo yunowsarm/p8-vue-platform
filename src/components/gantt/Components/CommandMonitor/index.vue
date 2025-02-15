@@ -484,7 +484,6 @@ export default {
     clickFun() {
       const that = this
       return function (btn, ganttName, tasks) {
-        console.log(btn.title,tasks)
         if (btn != null && ganttName) {
           const thisGantt = that.ganttObjectData.getGanttObject(ganttName)
           // 标识id
@@ -593,6 +592,7 @@ export default {
               button = btn
               let monitorPointsId = btn.id
               if (btn.id.startsWith('format-')) {
+                document.getElementById('couerDiv').style.cursor = 'url(' + that.formatDatas[btn.parentIcon] + '),auto'
                 monitorPointsId = monitorPointsId.replace('format-', '')
                 // 防止格式化的互斥标识
                 const currentMonitor = that.monitorData.find((item) => {
