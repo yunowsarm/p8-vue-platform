@@ -1,5 +1,5 @@
 import { GanttObject, progressRefreshCheck, updateforecastDate } from './ganttObject'
-
+import moment from 'moment'
 import { changeColor, changeGanttRemove, setNewTaskMap } from './changeGantt'
 import api from '@/plugins/api'
 import store from '@/plugins/store'
@@ -2758,6 +2758,8 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
           evaluation: item.evaluation,
           realEndDate: item.realEndDate,
           realBeginDate: item.realBeginDate,
+          createBy: vueThis.$store.getters.userInfo.realName,
+          createTime: moment().format('YYYY-MM-DD'),
           ...extraTask
         }
         console.log(extraTask,'======extraTask');

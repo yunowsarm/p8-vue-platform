@@ -90,12 +90,17 @@ export const activityButtonData = [
     clickFun: function (tasks, _this) {
       _this.indent()
     },
-    isDisableFun: function (tasks) {
+    isDisableFun: function (tasks, _this, myGantt) {
       let result = false
       result = isDisableFunCheck(tasks)
       tasks.forEach(el => {
         if (el.parent == 0) {
           result = true
+        }
+        if(myGantt.getPrevSibling(el.id)) {
+          if(el.predIds == myGantt.getPrevSibling(el.id)) {
+            result = true
+          }
         }
       })
       return result

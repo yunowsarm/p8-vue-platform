@@ -504,13 +504,17 @@ export default {
   },
   methods: {
     filterTableData (data) {
-      const projectStatus = this.row[0].STATUS
-      if (projectStatus === '2202') {
-        return data
+      if (this.row.length > 0) {
+        const projectStatus = this.row[0].STATUS
+        if (projectStatus === '2202') {
+          return data
+        } else {
+          return data.filter(item => {
+            return !item.departureTime
+          })
+        }
       } else {
-        return data.filter(item => {
-          return !item.departureTime
-        })
+        return data
       }
     },
     // getProjectTeamRoleUsersNum (rolesItem) {

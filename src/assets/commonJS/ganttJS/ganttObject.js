@@ -737,6 +737,10 @@ GanttObject.getActions = function (ganttObject) {
         // 添加更新类型
         newParent.updateType = 'indent'
         task.updateType = 'indent'
+        if (newParent.autoScheduling == '1' && new Date(newParent.end_date) < new Date(task.end_date)) {
+          newParent.end_date = task.end_date
+        }
+        updateforecastDate(newParent, ganttObject)
         ganttObject.updateTask(taskId)
         ganttObject.updateTask(newParent.id)
         return taskId
@@ -816,9 +820,6 @@ GanttObject.performAction = function (actions, ganttObject) {
           }
         } else {
           action(taskId, indexes)
-        }
-        if (actionName == 'indentAction') {
-          updateforecastDate(ganttObject.getTask(ganttObject.getParent(taskId)), ganttObject)
         }
       })
       ganttObject.eachSelectedTask(function (taskId) {
@@ -1574,7 +1575,8 @@ GanttObject.selectCanClear = function (ganttObject) {
       let name = column.name
       let html =
         "<div style='width:100%'><input id='gantt_clearSelect_" +
-        name +
+        name + 
+        "' name='" + name +
         "' type='text' style='display:none'><div style='line-height: 40px;'><div class='gantt_clearSelect_" +
         name +
         "'></div></div></div>"
@@ -1582,8 +1584,9 @@ GanttObject.selectCanClear = function (ganttObject) {
       let Clearselect = Vue.extend({
         components: { 'el-select': Select },
         data: function () {
+          let inputData = config.editorConfig.multiple && task[name] ? task[name].split(',') : task[name]
           return {
-            input: '',
+            input: inputData,
             options: [],
             config: config.editorConfig,
             multiple: config.editorConfig.multiple
@@ -1596,22 +1599,39 @@ GanttObject.selectCanClear = function (ganttObject) {
                 this.options.push({ key: el.value, label: el.label })
               })
             }
-            this.input = config.editorConfig.multiple && task[name] ? task[name].split(',') : task[name]
           })
         },
         mounted() {
-          this.input = task[name]
+          this.$nextTick(() => {
+            setTimeout(()=> {
+              this.$refs.elSelect.$el.querySelector('.el-input__inner').click();
+            }, 200)
+          })
         },
         watch: {
           input(val, old) {
-            document.getElementById('gantt_clearSelect_' + name).value = val
+            if (val !== old) {
+              // document.getElementById('gantt_clearSelect_' + name).value = value
+            }
+          }
+        },
+        methods: {
+          inputChange (value) {
+            console.log(value,'======value');
+            document.getElementById('gantt_clearSelect_' + name).value = this.input
+          },
+          handlerBlur(e) {
+            setTimeout(()=> {
+              console.log(2222);
+              ganttObject.ext.inlineEditors.save();
+            }, 200)
           }
         },
         template:
           '<div class="gantt_Editor gantt_clearSelect_' +
           name +
           '"' +
-          '><el-select style="width:100%" :multiple="multiple" clearable v-model="input" size="mini" placeholder="请选择"><el-option v-for="item in options" :key="item.key" :label="item.label" :value="item.key"></el-option></el-select></div>'
+          '><el-select ref="elSelect" :visible="true" style="width:100%" :multiple="multiple" clearable v-model="input" size="mini" @change="inputChange" @blur="handlerBlur" placeholder="请选择"><el-option v-for="item in options" :key="item.key" :label="item.label" :value="item.key"></el-option></el-select></div>'
       })
       clrearSelectExample = new Clearselect().$mount(`.gantt_clearSelect_${name}`)
     },
@@ -1620,7 +1640,9 @@ GanttObject.selectCanClear = function (ganttObject) {
       clrearSelectExample.$el.parentNode.removeChild(clrearSelectExample.$el)
     },
     set_value: function (value, id, column, node) {
-      clrearSelectExample.$data.input = value
+      setTimeout(()=> {
+        clrearSelectExample.$data.input = value
+      }, 50)
       this.get_input(node).value = value
     },
     get_value: function (id, column, node) {
@@ -1636,7 +1658,19 @@ GanttObject.selectCanClear = function (ganttObject) {
     get_input: function (node) {
       return node.querySelector('input')
     },
-    focus: function (node) {}
+    focus: function (node) {
+      // const input = this.get_input(node)
+      // if (!input) {
+      //   return
+      // }
+      // if (input.focus) {
+      //   input.focus()
+      // }
+
+      // if (input.select) {
+      //   input.select()
+      // }
+    }
   }
 }
 
@@ -2398,8 +2432,7 @@ GanttObject.setCellSaveConfig = function (ganttObject) {
       ganttObject.ext.inlineEditors._editorType === 'tree_data_editor' ||
       ganttObject.ext.inlineEditors._editorType === 'select_person' ||
       ganttObject.ext.inlineEditors._editorType === 'custom_select' ||
-      ganttObject.ext.inlineEditors._editorType === 'tree_data_editor_extra' ||
-      ganttObject.ext.inlineEditors._editorType === 'select_can_clear'
+      ganttObject.ext.inlineEditors._editorType === 'tree_data_editor_extra' 
     ) {
       el.addEventListener('input', (event) => {
         ganttObject.ext.inlineEditors.save()

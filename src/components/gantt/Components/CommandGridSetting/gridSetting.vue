@@ -155,7 +155,7 @@ export default {
       return array
     },
     close () {
-      this.$emit('close')
+      this.$emit('save-setting')
     },
     save () {
       const _this = this
@@ -202,6 +202,10 @@ export default {
       }).then(res => {
         _this.$store.commit('SET_SETTING_ALL', {})
         _this.$emit('save-setting')
+      })
+       this.$api['planChange.reloadGantColumn']({
+        key: 'plan-btn-setting',
+        type: 'PlanButton'
       })
     }
   }
