@@ -1575,8 +1575,7 @@ GanttObject.selectCanClear = function (ganttObject) {
       let name = column.name
       let html =
         "<div style='width:100%'><input id='gantt_clearSelect_" +
-        name + 
-        "' name='" + name +
+        name +
         "' type='text' style='display:none'><div style='line-height: 40px;'><div class='gantt_clearSelect_" +
         name +
         "'></div></div></div>"
@@ -1584,7 +1583,6 @@ GanttObject.selectCanClear = function (ganttObject) {
       let Clearselect = Vue.extend({
         components: { 'el-select': Select },
         data: function () {
-          // let inputData = config.editorConfig.multiple && task[name] ? task[name].split(',') : task[name]
           return {
             input: '',
             options: [],
@@ -1598,34 +1596,23 @@ GanttObject.selectCanClear = function (ganttObject) {
               res.forEach((el) => {
                 this.options.push({ key: el.value, label: el.label })
               })
-              // this.input = config.editorConfig.multiple && task[name] ? task[name].split(',') : task[name]
             }
+            this.input = config.editorConfig.multiple && task[name] ? task[name].split(',') : task[name]
           })
         },
         mounted() {
-          this.$refs.elSelect.focus()
+          this.input = task[name]
         },
         watch: {
           input(val, old) {
-            if (val !== old) {
-              // document.getElementById('gantt_clearSelect_' + name).value = value
-            }
-          }
-        },
-        methods: {
-          handlerBlur(e) {
-            this.$nextTick(() => {
-              // console.log(this.$refs.elSelect.$data,'===this.$refs.select.$data');
-              document.getElementById('gantt_clearSelect_' + name).value = this.input
-              ganttObject.ext.inlineEditors.save();
-            });
+            document.getElementById('gantt_clearSelect_' + name).value = val
           }
         },
         template:
           '<div class="gantt_Editor gantt_clearSelect_' +
           name +
           '"' +
-          '><el-select ref="elSelect" style="width:100%" :multiple="multiple" clearable v-model="input" size="mini" @change="handlerBlur" placeholder="请选择"><el-option v-for="item in options" :key="item.key" :label="item.label" :value="item.key"></el-option></el-select></div>'
+          '><el-select style="width:100%" :multiple="multiple" clearable v-model="input" size="mini" placeholder="请选择"><el-option v-for="item in options" :key="item.key" :label="item.label" :value="item.key"></el-option></el-select></div>'
       })
       clrearSelectExample = new Clearselect().$mount(`.gantt_clearSelect_${name}`)
     },
@@ -1634,9 +1621,7 @@ GanttObject.selectCanClear = function (ganttObject) {
       clrearSelectExample.$el.parentNode.removeChild(clrearSelectExample.$el)
     },
     set_value: function (value, id, column, node) {
-      setTimeout(()=> {
-        clrearSelectExample.$data.input = value
-      },200)
+      clrearSelectExample.$data.input = value
       this.get_input(node).value = value
     },
     get_value: function (id, column, node) {
@@ -1652,19 +1637,7 @@ GanttObject.selectCanClear = function (ganttObject) {
     get_input: function (node) {
       return node.querySelector('input')
     },
-    focus: function (node) {
-      const input = this.get_input(node)
-      if (!input) {
-        return
-      }
-      if (input.focus) {
-        input.focus()
-      }
-
-      if (input.select) {
-        input.select()
-      }
-    }
+    focus: function (node) {}
   }
 }
 
@@ -2426,7 +2399,8 @@ GanttObject.setCellSaveConfig = function (ganttObject) {
       ganttObject.ext.inlineEditors._editorType === 'tree_data_editor' ||
       ganttObject.ext.inlineEditors._editorType === 'select_person' ||
       ganttObject.ext.inlineEditors._editorType === 'custom_select' ||
-      ganttObject.ext.inlineEditors._editorType === 'tree_data_editor_extra' 
+      ganttObject.ext.inlineEditors._editorType === 'tree_data_editor_extra' ||
+      ganttObject.ext.inlineEditors._editorType === 'select_can_clear'
     ) {
       el.addEventListener('input', (event) => {
         ganttObject.ext.inlineEditors.save()
@@ -2872,23 +2846,9 @@ GanttObject.publicObject = {
     work_time: false, // 计算工作时间时排除非工作时间
     skip_off_time: false, // gantt图中隐藏非工作时间
     // correct_work_time: true, // 可以将任务的开始日期和结束日期调整为工作时间（拖动时）
-
-    // gantt.config.inline_editors_date_processing = undefined 或者未定义时
-    // 影响内联编辑器对任务开始和结束日期的行为。当配置未定义时（默认）：
-    // 当用户改变任务的开始日期时，任务持续时间将保持不变，整个任务将重新安排到指定的时间。
-    // 当用户更改任务的结束日期时，任务开始日期将保持不变，任务持续时间将更新以反映更改。
-
-    // gantt.config.inline_editors_date_processing = "keepDuration";
-    // 这将产生以下效果：
-    // 当用户改变任务的开始日期时，任务持续时间将保持不变，整个任务将重新安排到指定的时间。
-    // 当用户更改任务的结束日期时，任务持续时间将保持不变，并且整个任务将重新安排在指定时间结束。
-
-
-    // gantt.config.inline_editors_date_processing = "keepDates";
-    // 它有以下作用：
-    // 当用户更改任务的开始日期时，任务结束日期将保持不变，任务持续时间将更新以反映更改。
-    // 当用户更改任务的结束日期时，任务开始日期将保持不变，任务持续时间将更新以反映更改。
-    inline_editors_date_processing: undefined,
+    // 当用户更改任务的开始日期时，任务end_date将保持不变，任务持续时间将被更新以反映更改；
+    // 当用户更改任务的结束日期时，任务开始日期将保持不变，任务持续时间将被更新以反映该更改
+    inline_editors_date_processing: 'keepDates',
     duration_unit: 'day',
     // min_column_width: 20,
     start_on_monday: true, // 设置一周从周一开始
@@ -3748,7 +3708,6 @@ GanttObject.searchColumnsDataInit = function (vueThis, ganttObject) {
  * @param task
  */
 GanttObject.calculateParentForecastDate = function (ganttObject, task) {
-  console.log(55555555555);
   if (task.parent) {
     api['planGanttManager.calculateParentForecastDate']({
       parentId: task.parent
