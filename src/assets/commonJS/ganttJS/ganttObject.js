@@ -1581,58 +1581,98 @@ GanttObject.selectCanClear = function (ganttObject) {
         name +
         "'></div></div></div>"
       placeholder.innerHTML = html
-      let Clearselect = Vue.extend({
-        components: { 'el-select': Select },
-        data: function () {
-          let inputData = config.editorConfig.multiple && task[name] ? task[name].split(',') : task[name]
-          return {
-            input: inputData,
-            options: [],
-            config: config.editorConfig,
-            multiple: config.editorConfig.multiple
-          }
-        },
-        created() {
-          this.$api[this.config.optionUrl.api](this.config.optionUrl.params).then((res) => {
-            if (res && res.length) {
-              res.forEach((el) => {
-                this.options.push({ key: el.value, label: el.label })
-              })
+      let Clearselect
+      if (config.editorConfig.multiple) {
+        Clearselect = Vue.extend({
+          components: { 'el-select': Select },
+          data: function () {
+            return {
+              input: '',
+              options: [],
+              config: config.editorConfig,
+              multiple: config.editorConfig.multiple
             }
-          })
-        },
-        mounted() {
-          this.$nextTick(() => {
-            setTimeout(()=> {
-              this.$refs.elSelect.$el.querySelector('.el-input__inner').click();
-            }, 200)
-          })
-        },
-        watch: {
-          input(val, old) {
-            if (val !== old) {
-              // document.getElementById('gantt_clearSelect_' + name).value = value
-            }
-          }
-        },
-        methods: {
-          inputChange (value) {
-            console.log(value,'======value');
-            document.getElementById('gantt_clearSelect_' + name).value = this.input
           },
-          handlerBlur(e) {
-            setTimeout(()=> {
-              console.log(2222);
-              ganttObject.ext.inlineEditors.save();
-            }, 200)
-          }
-        },
-        template:
-          '<div class="gantt_Editor gantt_clearSelect_' +
-          name +
-          '"' +
-          '><el-select ref="elSelect" :visible="true" style="width:100%" :multiple="multiple" clearable v-model="input" size="mini" @change="inputChange" @blur="handlerBlur" placeholder="请选择"><el-option v-for="item in options" :key="item.key" :label="item.label" :value="item.key"></el-option></el-select></div>'
-      })
+          created() {
+            this.$api[this.config.optionUrl.api](this.config.optionUrl.params).then((res) => {
+              if (res && res.length) {
+                res.forEach((el) => {
+                  this.options.push({ key: el.value, label: el.label })
+                })
+              }
+              this.input = config.editorConfig.multiple && task[name] ? task[name].split(',') : task[name]
+            })
+          },
+          mounted() {
+            this.input = task[name]
+          },
+          watch: {
+            input(val, old) {
+              console.log(val,'=====val');
+              document.getElementById('gantt_clearSelect_' + name).value = val
+            }
+          },
+          template:
+            '<div class="gantt_Editor gantt_clearSelect_' +
+            name +
+            '"' +
+            '><el-select style="width:100%" :multiple="multiple" clearable v-model="input" size="mini" placeholder="请选择"><el-option v-for="item in options" :key="item.key" :label="item.label" :value="item.key"></el-option></el-select></div>'
+        })
+        clrearSelectExample = new Clearselect().$mount(`.gantt_clearSelect_${name}`)
+      } else {
+        Clearselect = Vue.extend({
+          components: { 'el-select': Select },
+          data: function () {
+            let inputData = config.editorConfig.multiple && task[name] ? task[name].split(',') : task[name]
+            return {
+              input: inputData,
+              options: [],
+              config: config.editorConfig,
+              multiple: config.editorConfig.multiple
+            }
+          },
+          created() {
+            this.$api[this.config.optionUrl.api](this.config.optionUrl.params).then((res) => {
+              if (res && res.length) {
+                res.forEach((el) => {
+                  this.options.push({ key: el.value, label: el.label })
+                })
+              }
+            })
+          },
+          mounted() {
+            this.$nextTick(() => {
+              setTimeout(()=> {
+                this.$refs.elSelect.$el.querySelector('.el-input__inner').click();
+              }, 200)
+            })
+          },
+          watch: {
+            input(val, old) {
+              if (val !== old) {
+                // document.getElementById('gantt_clearSelect_' + name).value = value
+              }
+            }
+          },
+          methods: {
+            inputChange (value) {
+              console.log(value,'======value');
+              document.getElementById('gantt_clearSelect_' + name).value = this.input
+            },
+            handlerBlur(e) {
+                setTimeout(()=> {
+                console.log(2222);
+                  ganttObject.ext.inlineEditors.save();
+                }, 200)
+            }
+          },
+          template:
+            '<div class="gantt_Editor gantt_clearSelect_' +
+            name +
+            '"' +
+            '><el-select ref="elSelect" :visible="true" style="width:100%" :multiple="multiple" clearable v-model="input" size="mini" @change="inputChange" @blur="handlerBlur" placeholder="请选择"><el-option v-for="item in options" :key="item.key" :label="item.label" :value="item.key"></el-option></el-select></div>'
+        })
+      }
       clrearSelectExample = new Clearselect().$mount(`.gantt_clearSelect_${name}`)
     },
     hide: function () {
@@ -2878,9 +2918,23 @@ GanttObject.publicObject = {
     work_time: false, // 计算工作时间时排除非工作时间
     skip_off_time: false, // gantt图中隐藏非工作时间
     // correct_work_time: true, // 可以将任务的开始日期和结束日期调整为工作时间（拖动时）
-    // 当用户更改任务的开始日期时，任务end_date将保持不变，任务持续时间将被更新以反映更改；
-    // 当用户更改任务的结束日期时，任务开始日期将保持不变，任务持续时间将被更新以反映该更改
-    inline_editors_date_processing: 'keepDates',
+
+    // gantt.config.inline_editors_date_processing = undefined 或者未定义时
+    // 影响内联编辑器对任务开始和结束日期的行为。当配置未定义时（默认）：
+    // 当用户改变任务的开始日期时，任务持续时间将保持不变，整个任务将重新安排到指定的时间。
+    // 当用户更改任务的结束日期时，任务开始日期将保持不变，任务持续时间将更新以反映更改。
+
+    // gantt.config.inline_editors_date_processing = "keepDuration";
+    // 这将产生以下效果：
+    // 当用户改变任务的开始日期时，任务持续时间将保持不变，整个任务将重新安排到指定的时间。
+    // 当用户更改任务的结束日期时，任务持续时间将保持不变，并且整个任务将重新安排在指定时间结束。
+
+
+    // gantt.config.inline_editors_date_processing = "keepDates";
+    // 它有以下作用：
+    // 当用户更改任务的开始日期时，任务结束日期将保持不变，任务持续时间将更新以反映更改。
+    // 当用户更改任务的结束日期时，任务开始日期将保持不变，任务持续时间将更新以反映更改。
+    inline_editors_date_processing: undefined,
     duration_unit: 'day',
     // min_column_width: 20,
     start_on_monday: true, // 设置一周从周一开始
