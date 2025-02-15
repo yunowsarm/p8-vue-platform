@@ -1,4 +1,4 @@
-import { GanttObject, searchColumnRenderer, taskOverdueRemainingDaysArr, taskProgressFeedbackArr, taskStatusArr, taskWeatherControlArr, columnsTypeMap } from '@/assets/commonJS/ganttJS/ganttObject'
+import { GanttObject, searchColumnRenderer, taskOverdueRemainingDaysArr, taskProgressFeedbackArr, taskStatusArr, taskWeatherControlArr } from '@/assets/commonJS/ganttJS/ganttObject'
 import moment from 'moment'
 import Datepicker from '@/assets/commonJS/originalComponents/datePicker'
 import { Gantt } from 'p8-dhtmlx-gantt'
@@ -616,27 +616,27 @@ function getGanttColumns (ganttObject, vueThis) {
         // }
       }
     },
-    {
-      name: 'roleName',
-      label: '角色',
-      align: 'center',
-      resize: true,
-      min_width: 120,
-      template: function (task) {
-        const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
-        const owner = task[ganttObject.config.resource_property]
-        if (owner) {
-          const userMessage = resourceDatas.getItem(owner)
-          if (userMessage) {
-            return userMessage.roleName
-          } else {
-            return ''
-          }
-        } else {
-          return ''
-        }
-      }
-    },
+    // {
+    //   name: 'roleName',
+    //   label: '角色',
+    //   align: 'center',
+    //   resize: true,
+    //   min_width: 120,
+    //   template: function (task) {
+    //     const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
+    //     const owner = task[ganttObject.config.resource_property]
+    //     if (owner) {
+    //       const userMessage = resourceDatas.getItem(owner)
+    //       if (userMessage) {
+    //         return userMessage.roleName
+    //       } else {
+    //         return ''
+    //       }
+    //     } else {
+    //       return ''
+    //     }
+    //   }
+    // },
     {
       name: 'dutyDeptName',
       label: '责任部门',
@@ -1008,7 +1008,23 @@ function getGanttColumns (ganttObject, vueThis) {
     }
   ]
 }
-
+const columnsTypeMap = {
+  status: 'select',
+  progressFeedback: 'select',
+  managerStatus: 'select',
+  monitorPoints: 'select',
+  planType: 'select',
+  wbs: 'select',
+  name: 'input',
+  // owner_id: 'input',
+  roleName: 'input',
+  // dutyDeptName: 'input',
+  taskProjectName: 'input',
+  overdueRemainingDays: 'select',
+  weatherControl: 'select',
+  start_date: 'date',
+  end_date: 'date'
+}
 function searchColumnsDataInit (vueThis, ganttObject) {
   return ganttObject.attachEvent('onDataRender', function () {
     const initColumns = getGanttColumns(ganttObject, vueThis)

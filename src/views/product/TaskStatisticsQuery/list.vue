@@ -17,7 +17,7 @@
           <div class="bottom">
             <task-statistics-gantt
               ref="planGantt"
-              :project-id='projectId'
+              :project-id="projectId"
               :plan-info-id="planInfoId"
               :whole-describe-id="wholeDescribeId"
               :plan-info-status="planInfoStatus"
@@ -32,7 +32,7 @@
               @switch-task="switchTask"
               @refreshData="refreshData"
               @save-success="detailDrawerClosed"
-              @update-view-width='updateViewWidth'
+              @update-view-width="updateViewWidth"
               :task-status="taskStatus"
             ></task-statistics-gantt>
           </div>
@@ -42,7 +42,7 @@
           <ProgressHistory v-if="pageType === 'history'" :key="renderKey" :task-id="selectTaskId" />
 
           <plan-attribute
-            v-else-if='!splitPaneDisable'
+            v-else-if="!splitPaneDisable"
             :key="renderKey"
             @save-success="detailDrawerClosed"
             :create-page="createPage"
@@ -53,7 +53,7 @@
             :gantt-name="ganttName"
             :status="status"
             :defaultPercent="defaultPercent"
-            :view-width='viewWidth'
+            :view-width="viewWidth"
             @refreshData="refreshData"
             :plan-info-id="planInfoId"
           ></plan-attribute>
@@ -136,7 +136,7 @@
 .bottom.hiddenTabs {
   height: calc(100% - 42px);
 }
-::v-deep .splitter-pane-resizer .vertical .resize-icon{
+::v-deep .splitter-pane-resizer .vertical .resize-icon {
   display: block !important;
 }
 ::v-deep .splitter-pane-resizer {
@@ -231,6 +231,8 @@ export default {
   beforeMount() {},
   created() {
     this.firstEntry = true
+  },
+  mounted() {
     this.viewWidth =document.querySelector('#couerDiv').clientWidth
   },
   methods: {
