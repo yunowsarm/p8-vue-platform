@@ -129,19 +129,19 @@ export function outPutFlowGantt (ganttName, vueThis) {
   })
   ganttObject.attachEvent('onTaskMultiSelect', function (id, state, e) {
     if (state) {
-      let ids = vueThis.selectedTasks.map(el => el.id)
-      if (ganttObject.getTask(id) && ids.indexOf(id) === -1) {
+      setTimeout(() => {
         vueThis.selectedTasks.push(ganttObject.getTask(id))
-      }
+      })
     } else {
-      let ids = vueThis.selectedTasks.map(el => el.id)
-      if (ids.indexOf(id) !== -1) {
-        vueThis.selectedTasks.splice(
-          ids.indexOf(id),
-          1
-        )
+      const index = vueThis.selectedTasks.findIndex((i) => {
+        return i.id === id
+      })
+      if (index !== undefined) {
+        vueThis.selectedTasks.splice(index, 1)
       }
     }
+    // ganttObject.refreshData(); // 刷新数据并重新渲染
+    ganttObject.render(); // 强制刷新 Gantt
   })
   // 升降级
   let actions = GanttObject.getActions(ganttObject)
