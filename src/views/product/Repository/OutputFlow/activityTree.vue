@@ -231,7 +231,7 @@ export default {
     isDisableFun (item) {
       let that = this
       return function (item) {
-        return item.isDisableFun(that.selectedTasks, that)
+        return item.isDisableFun(that.selectedTasks, that, myGantt)
       }
     },
     menuIsView (menuKey) {

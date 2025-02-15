@@ -203,6 +203,10 @@ export default {
         _this.$store.commit('SET_SETTING_ALL', {})
         _this.$emit('save-setting')
       })
+       this.$api['planChange.reloadGantColumn']({
+        key: 'plan-btn-setting',
+        type: 'PlanButton'
+      })
     }
   }
 }
