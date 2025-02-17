@@ -604,6 +604,12 @@ export function getGanttColumns (ganttObject, vueThis) {
       min_width: 350,
       editor: checkEdit() ? editors.text : null,
       template: function (task) {
+        if (task.describes && task.describes !== '') {
+          task.unDescribes = '1'
+        }
+        if (task.describes === '') {
+          task.unDescribes = '0'
+        }
         let result = ''
         if (task.switchType === '9010' || task.switchType === '9020') {
           return task.name + suspendIcon
@@ -633,6 +639,7 @@ export function getGanttColumns (ganttObject, vueThis) {
           tips += '子任务存在绩效比例分配异常\n'
         }
         if (bool) result = result + `<i class='p8 icon-tishi' title='${tips}' style='color: #e6a23c; float: left'></i>`
+        if (task.unDescribes === '1') result = result + `<i class='p8 icon-tishi' title='存在任务描述' style='color: #0ab847; float: left'></i>`
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
           let taskStyles = vueThis.taskStyles[task.id] || ''
           if (taskStyles && taskStyles.indexOf('text-decoration: line-through;') !== -1 && taskStyles.indexOf('text-decoration:underline;') !== -1) {

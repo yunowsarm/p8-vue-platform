@@ -411,7 +411,7 @@
 .text_overflow {
   width: 100%;
   text-overflow: ellipsis;
-  overflow: hidden;
+  /* overflow: hidden; */
   white-space: nowrap;
 }
 .icon-underline, .icon-shanchuxian{

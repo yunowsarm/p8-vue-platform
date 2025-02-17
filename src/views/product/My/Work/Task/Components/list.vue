@@ -499,6 +499,7 @@ export default {
           this.asyncComponents = obj[key]
         }
       }
+      this.provideParams.searchParams.status = ['6050', '6020']
     },
     getParamsList (obj, fileName) {
       let list = []

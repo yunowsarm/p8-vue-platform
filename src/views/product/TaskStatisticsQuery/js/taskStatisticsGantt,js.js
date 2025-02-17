@@ -544,6 +544,12 @@ function getGanttColumns (ganttObject, vueThis) {
         if (task.switchType === '9010' || task.switchType === '9020') {
           return task.name + suspendIcon
         }
+        if (task.describes && task.describes !== '') {
+          task.unDescribes = '1'
+        }
+        if (task.describes === '') {
+          task.unDescribes = '0'
+        }
         let state = GanttObject.validateAchievement(ganttObject, vueThis, task)
         // 注意：该逻辑修改时，需同时修改PmProjectTasksMapper.xml中sql片段checkForecastDateInfo逻辑
         let bool = false
@@ -569,6 +575,7 @@ function getGanttColumns (ganttObject, vueThis) {
           tips += '子任务存在绩效比例分配异常\n'
         }
         if (bool) result = result + `<i class='p8 icon-tishi' title='${tips}' style='color: #e6a23c; float: left'></i>`
+        if (task.unDescribes === '1') result = result + `<i class='p8 icon-tishi' title='存在任务描述' style='color: #0ab847; float: left'></i>`
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
           let taskStyles = vueThis.taskStyles[task.id] || ''
           if (taskStyles && taskStyles.indexOf('text-decoration: line-through;') !== -1 && taskStyles.indexOf('text-decoration:underline;') !== -1) {
