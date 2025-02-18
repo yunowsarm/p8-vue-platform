@@ -280,7 +280,7 @@ export default {
     this.loadCatalog()
   },
   computed: {
-    vueThis(){
+    vueThis () {
       return this.$store.getters.vueThis
     },
     treeData () {
@@ -402,22 +402,29 @@ export default {
       vueThis.copyFlag = false
       const copyTaskIds = this.selectedRows.map(el => el.planId)
       const planInfoId = this.planInfoId
+      vueThis.copyTasks.tasks = []
       if (copyTaskIds !== null && copyTaskIds.length > 0) {
         this.$api['planGanttManager.copyTasks']({
           pasteTaskIds: copyTaskIds,
           planInfoId: planInfoId
         })
-          .then( (res) => {
+          .then((res) => {
             if (res) {
               if (res) {
                 if (res && res.tasks && res.tasks.length) {
-                  res.tasks.forEach(el => {
-                    el.managerStatus = (this.thirdMenuParam.MANAGESTATUS === '6609' || this.thirdMenuParam.EXECUTESTATE === '1000') ? '6401' : '6403'
-                    el.realBeginDate = ''
-                    el.realEndDate = ''
+                  copyTaskIds.forEach(id => {
+                    res.tasks.forEach(el => {
+                      if (id === el.id) {
+                        el.managerStatus = (this.thirdMenuParam.MANAGESTATUS === '6609' || this.thirdMenuParam.EXECUTESTATE === '1000') ? '6401' : '6403'
+                        el.realBeginDate = ''
+                        el.realEndDate = ''
+                        el.dutyDeptName = ''
+                        el.realName = ''
+                        vueThis.copyTasks.tasks.push(el)
+                      }
+                    })
                   })
                 }
-                vueThis.copyTasks = res
                 this.$message({
                   message: '复制成功！',
                   type: 'success'

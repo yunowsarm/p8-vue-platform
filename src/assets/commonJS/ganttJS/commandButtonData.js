@@ -3126,6 +3126,12 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
               ganttObject.$resourcesStore.parse(res.resources)
             }
             if (res.tasks) {
+              res.tasks.forEach(el => {
+                el.managerStatus = (vueThis.thirdMenuParam.MANAGESTATUS === '6609' || vueThis.thirdMenuParam.EXECUTESTATE === '1000') ? '6401' : '6403'
+                el.dutyDeptName = ''
+                el.realName = ''
+                el.owner_id = ''
+              })
               createTaskByDatas(ganttObject, res.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
             }
           } else {
