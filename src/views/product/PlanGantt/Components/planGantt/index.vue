@@ -44,7 +44,8 @@
                                    style='margin: 0 10px'
                                    :step="1"></el-input-number>
                   <el-button size="mini"
-                             @click="btn.clickFun(btn, ganttName, null)" style='margin-right: 10px'>确定 </el-button>
+                             @click="btn.clickFun(btn, ganttName, null)"
+                             style='margin-right: 10px'>确定 </el-button>
                 </el-submenu>
               </template>
             </el-submenu>
@@ -424,12 +425,11 @@
   ::v-deep .el-submenu.is-opened > .el-submenu__title .el-submenu__icon-arrow {
     transform: rotate(180deg);
   }
-
 }
-::v-deep .el-icon-minus{
+::v-deep .el-icon-minus {
   margin-bottom: 4px !important;
 }
-::v-deep .el-icon-plus{
+::v-deep .el-icon-plus {
   margin-bottom: 4px !important;
 }
 ::v-deep .list-layout {
@@ -842,7 +842,8 @@ export default {
       pageType: 'switch',
       versionListVisible: false, //  版本列表显示隐藏
       extraMap: {},
-      deleteCount: 0
+      deleteCount: 0,
+      isSueTaskIds: []
     }
   },
   watch: {
@@ -1388,13 +1389,10 @@ export default {
     },
     async selectMultipleTasks (tasks) {
       const multipleTasks = JSON.parse(JSON.stringify(tasks));
+      multipleTasks.forEach((item, index) => {
+        this.isSueTaskIds.push(item.id)
+      });
       await this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-      setTimeout(() => {
-        multipleTasks.forEach((item, index) => {
-          myGantt.showTask(item.id);
-          myGantt.selectTask(item.id);
-        });
-      }, 1000);
     },
     loadGanttData (planInfoId, taskId, createPage) {
       const monitorBtns = this.monitorBtnsByApi
@@ -1507,7 +1505,7 @@ export default {
                 myGantt.showTask(el)
                 myGantt.selectTask(el)
               })
-              vueThis.isSueTaskIds = null
+              vueThis.isSueTaskIds = []
             }
             // 检查gantt操作权限
             // myGantt.config.readonly = editLockUnLockCheck(vueThis.planInfoStatus, vueThis.monitorLockMap)
