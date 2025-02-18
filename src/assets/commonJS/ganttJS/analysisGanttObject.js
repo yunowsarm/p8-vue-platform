@@ -188,11 +188,18 @@ export function getAnalysisGantt (ganttName, vueThis) {
           let tips = ''
           let result = ''
           let state = GanttObject.validateAchievement(ganttObject, vueThis, task)
+          if (task.describes && task.describes !== '') {
+            task.unDescribes = '1'
+          }
+          if (task.describes === '') {
+            task.unDescribes = '0'
+          }
           if (state.childTotal || state.childPercentage) {
             bool = true
             tips += '子任务存在绩效比例分配异常\n'
           }
           if (bool) result = result + `<i class="p8 icon-tishi" title="${tips}" style="color: #e6a23c;"></i>`
+          if (task.unDescribes === '1') result = result + `<i class='p8 icon-tishi' title='存在任务描述' style='color: #0ab847; float: left'></i>`
           if (task.style) {
             result += '<div style="display: inline-block;color:' + task.style + '">' + task.name + '</div>'
           } else {
@@ -661,12 +668,19 @@ export function getAnalysisGantt (ganttName, vueThis) {
           let bool = false
           let tips = ''
           let result = ''
+          if (task.describes && task.describes !== '') {
+            task.unDescribes = '1'
+          }
+          if (task.describes === '') {
+            task.unDescribes = '0'
+          }
           let state = GanttObject.validateAchievement(ganttObject, vueThis, task)
           if (state.childTotal || state.childPercentage) {
             bool = true
             tips += '子任务存在绩效比例分配异常\n'
           }
           if (bool) result = result + `<i class="p8 icon-tishi" title="${tips}" style="color: #e6a23c;"></i>`
+          if (task.unDescribes === '1') result = result + `<i class='p8 icon-tishi' title='存在任务描述' style='color: #0ab847; float: left'></i>`
           if (task.style) {
             result += '<div style="display: inline-block;color:' + task.style + '">' + task.name + '</div>'
           } else {

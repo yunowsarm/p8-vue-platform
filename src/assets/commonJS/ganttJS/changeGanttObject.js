@@ -334,16 +334,19 @@ export function getChangeGantt (ganttName, vueThis) {
       monitorLockLimit: true, // 标识锁定后不可操作的列声明
       min_width: 350,
       template: function (task) {
+        let result = ''
+        if (task.unDescribes === '1') result = `<i class='p8 icon-tishi' title='存在任务描述' style='color: #0ab847; float: left'></i>`
         if (task.style) {
           if (task.infoType === 'delete') {
-            return '<div class="text_overflow" style="display: inline-block;text-decoration:line-through;color:' + task.style + '">' + task.name + '</div>'
+            result = result + '<div class="text_overflow" style="display: inline-block;text-decoration:line-through;color:' + task.style + '">' + task.name + '</div>'
           } else {
-            return `<div class="text_overflow">${task.name}</div>`
+            result = result + `<div class="text_overflow">${task.name}</div>`
 
           }
         } else {
-          return `<div class="text_overflow">${task.name}</div>`
+          result = result + `<div class="text_overflow">${task.name}</div>`
         }
+        return result
       }
     },
     {
