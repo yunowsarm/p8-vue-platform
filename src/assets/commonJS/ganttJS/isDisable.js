@@ -25,8 +25,11 @@ function createDisableResponse (message) {
 // 判断是否能新建下级
 export function isNewChild (ganttName, tasks) {
   const task = tasks[0]
+  console.log(task)
   if (['6405','6406', '6409'].includes(task.managerStatus)) {
     return createDisableResponse(`任务为${statusName[task.managerStatus]},不可操作`);
+  }else if(task.planType){
+    return createDisableResponse(`当前任务标识是仅叶子节点可用，无法在此创建下级`);
   } else {
     return false;
   }
