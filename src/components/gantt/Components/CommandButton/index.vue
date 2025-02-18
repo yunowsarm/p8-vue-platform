@@ -5,6 +5,7 @@
     <template v-if="cbutton.id === 'hierarchy-filter'">
       <el-tooltip :content="isDisable(cbutton) ? getButtonMsg(cbutton) : cbutton.title"
                   placement="top"
+                  :disabled="!isDisable(cbutton) && ganttButtonMode === 'tabs'"
                   :offset="-15"
                   :enterable="false"
                   effect="dark">
@@ -25,6 +26,7 @@
     <template v-else-if="cbutton.type && cbutton.type === 'select' && cbutton.userDefault && cbutton.userDefault === 'true'">
       <el-tooltip :content="isDisable(cbutton) ? getButtonMsg(cbutton) : cbutton.title"
                   placement="top"
+                  :disabled="!isDisable(cbutton) && ganttButtonMode === 'tabs'"
                   :offset="-15"
                   :enterable="false"
                   effect="dark">
@@ -48,6 +50,7 @@
            element-loading-spinner="el-icon-loading"
            class="loading-but">
         <el-tooltip placement="top"
+                    :disabled="!isDisable(cbutton) && ganttButtonMode === 'tabs'"
                     :enterable="false"
                     effect="dark"
                     transition=" ">
@@ -82,6 +85,7 @@
                  :class="{ isdisable: isDisable(btnChild) }">
                  <el-tooltip :content="isDisable(btnChild) ? getButtonMsg(btnChild) : btnChild.title"
                   placement="top"
+                             :disabled="!isDisable(btnChild) && ganttButtonMode === 'tabs'"
                   :offset="-15"
                   :enterable="false"
                   effect="dark">
