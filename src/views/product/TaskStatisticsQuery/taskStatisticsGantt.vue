@@ -811,7 +811,7 @@ export default {
         rootClass += rootClass ? ' ' + planGanttConfig.value.value : planGanttConfig.value.value
       }
       this.$refs.myGantt.setAttribute('class', rootClass)
-      myGantt.config.layout = GanttObject.layout2
+      myGantt.config.layout = GanttObject.layout4
       // 清空表头查询缓存
       vueThis.searchForm = {}
       // 渲染对象

@@ -136,7 +136,7 @@
 .bottom.hiddenTabs {
   height: calc(100% - 42px);
 }
-::v-deep .splitter-pane-resizer .vertical .resize-icon {
+::v-deep .splitter-pane-resizer .resize-icon {
   display: block !important;
 }
 ::v-deep .splitter-pane-resizer {

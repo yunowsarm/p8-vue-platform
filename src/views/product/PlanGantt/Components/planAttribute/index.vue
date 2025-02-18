@@ -102,7 +102,7 @@ export default {
       // 计算指定容器宽度相对于 100vw 的比例
       const vwRatio = width / window.innerWidth
       // 调整原来的计算公式
-      return Number(((100 - this.defaultPercent - (150 / width) * 100) * vwRatio).toFixed(2))
+      return Number(((100 - this.defaultPercent - (110 / width) * 100) * vwRatio).toFixed(2))
     }
   },
   created() {

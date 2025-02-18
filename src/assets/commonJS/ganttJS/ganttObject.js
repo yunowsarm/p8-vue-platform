@@ -595,7 +595,34 @@ GanttObject.layout3 = function (resourceConfig, resourceTemplates) {
     ]
   }
 }
-
+GanttObject.layout4 = {
+  css: 'gantt_container',
+  // rows: [
+  //   {
+  //     cols: [
+  //       { view: 'grid', id: 'grid', scrollX: 'scroller', scrollY: 'scrollVer' },
+  //       { resizer: true, width: 1 },
+  //       { view: 'scrollbar', scroll: 'y', id: 'scrollVer' }
+  //     ]
+  //   },
+  //   { resizer: true, width: 1 },
+  //   { view: 'scrollbar', id: 'scroller', scroll: 'x' }
+  // ]
+  cols: [
+    {
+      rows: [
+        {
+          view: 'grid',
+          scrollX: 'gridScroll',
+          scrollable: true,
+          scrollY: 'scrollVer'
+        },
+        { view: 'scrollbar', id: 'gridScroll', group: 'horizontal' }
+      ]
+    },
+    { view: 'scrollbar', id: 'scrollVer' }
+  ]
+}
 /**
  * @Description 定义gantt、数据处理器对象map
  * @author fukai
@@ -1575,7 +1602,7 @@ GanttObject.selectCanClear = function (ganttObject) {
       let name = column.name
       let html =
         "<div style='width:100%'><input id='gantt_clearSelect_" +
-        name + 
+        name +
         "' name='" + name +
         "' type='text' style='display:none'><div style='line-height: 40px;'><div class='gantt_clearSelect_" +
         name +
@@ -2472,7 +2499,7 @@ GanttObject.setCellSaveConfig = function (ganttObject) {
       ganttObject.ext.inlineEditors._editorType === 'tree_data_editor' ||
       ganttObject.ext.inlineEditors._editorType === 'select_person' ||
       ganttObject.ext.inlineEditors._editorType === 'custom_select' ||
-      ganttObject.ext.inlineEditors._editorType === 'tree_data_editor_extra' 
+      ganttObject.ext.inlineEditors._editorType === 'tree_data_editor_extra'
     ) {
       el.addEventListener('input', (event) => {
         ganttObject.ext.inlineEditors.save()
