@@ -405,8 +405,8 @@ export default {
               ]
             }
             str = `
-              <div class="warp" style="height: 100%; width:100%;border:1px solid #eee;border-radios:50%;font-size:14px;background:#fff;">
-                <div class="header" style="height:20px;border-bottom:1px solid #eee;position: relative;">
+              <div class="warp" style="height: 100%; width:100%;border:1px solid #a9a9a9;border-radios:50%;font-size:14px;background:#fff;box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.2);">
+                <div class="header" style="height:20px;border-bottom:1px solid #a9a9a9;position: relative;">
                   <div style="position:absolute;left:5px;top:0;">
                     <i class="${el.typeIcon ? el.typeIcon : ''}"></i>
                     <span>${el.code ? el.code : ''}</span>
@@ -419,7 +419,7 @@ export default {
                   </div>
                 </div>
                 <div style="text-align: center;height:50px;line-height:50px;">${el.name ? el.name : ''}</div>
-                <div style="text-align:right;border-top:1px solid #eee;height:20px;line-height:20px;padding-right:5px;"><i class="el-icon-time" style="display: ${el.suggestionDuration ? 'inline' : 'none'
+                <div style="text-align:right;border-top:1px solid #a9a9a9;height:20px;line-height:20px;padding-right:5px;"><i class="el-icon-time" style="display: ${el.suggestionDuration ? 'inline' : 'none'
               }"></i>${el.suggestionDuration ? el.suggestionDuration : ''}</div>
               </div>`
           } else {
@@ -449,11 +449,11 @@ export default {
               ]
             }
             str = `
-              <div class="warp" style="height: 100%; width:100%;border:1px solid #eee;border-radios:50%;font-size:14px;background:#fff;">
-                <div class="header" style="height:20px;border-bottom:1px solid #eee;position: relative;">
+              <div class="warp" style="height: 100%; width:100%;border:1px solid #a9a9a9;border-radios:50%;font-size:14px;background:#fff;">
+                <div class="header" style="height:20px;border-bottom:1px solid #a9a9a9;position: relative;">
                 </div>
                 <div style="text-align: center;height:50px;line-height:50px;">${el.name ? el.name : ''}</div>
-                <div style="text-align:right;border-top:1px solid #eee;height:20px;line-height:20px;padding-right:5px;"></i>${el.suggestionDuration ? el.suggestionDuration : ''}</div>
+                <div style="text-align:right;border-top:1px solid #a9a9a9;height:20px;line-height:20px;padding-right:5px;"></i>${el.suggestionDuration ? el.suggestionDuration : ''}</div>
               </div>`
           }
           this.addActivity({
@@ -632,12 +632,12 @@ export default {
         const nodeMap = new Map();
         const positions = {};
 
-        // 将节点存入Map以便快速查找
+        // 存储节点信息
         nodes.forEach(node => {
           nodeMap.set(node.key, { ...node, children: [] });
         });
 
-        // 构建树形结构
+        // 构建树结构
         nodes.forEach(node => {
           if (node.parent) {
             const parentNode = nodeMap.get(node.parent);
@@ -647,40 +647,44 @@ export default {
           }
         });
 
-        // 寻找根节点（parent为空）
+        // 找到根节点
         const rootNode = nodes.find(node => !node.parent);
+        if (!rootNode) return {};
 
-        // 递归计算坐标
+        // 计算每个子树的宽度（递归计算）
+        function computeSubtreeWidth (node) {
+          if (node.children.length === 0) {
+            return nodeWidth;
+          }
+          const totalWidth =
+            node.children.reduce((sum, child) => sum + computeSubtreeWidth(child) + horizontalSpacing, -horizontalSpacing);
+          return Math.max(nodeWidth, totalWidth);
+        }
+
+        // 计算每个节点的坐标
         function positionNodes (node, x, y) {
           const { children } = node;
-
-          // 设置当前节点的坐标
           positions[node.key] = { x, y };
 
-          const childCount = children.length;
-          if (childCount > 0) {
-            // 计算每个子节点的 x 坐标
-            const totalWidth = childCount * nodeWidth + (childCount - 1) * horizontalSpacing; // 所有子节点的总宽度
-            const startX = x - (totalWidth / 2) + (nodeWidth / 2); // 计算第一个子节点的起始 x 坐标
+          if (children.length > 0) {
+            let currentX = x - computeSubtreeWidth(node) / 2 + nodeWidth / 2;
 
-            // 设置每个子节点的坐标
-            children.forEach((child, index) => {
-              const childX = startX + index * (nodeWidth + horizontalSpacing);
-              positionNodes(child, childX, y + nodeHeight + verticalSpacing);
+            children.forEach(child => {
+              const childWidth = computeSubtreeWidth(child);
+              positionNodes(child, currentX + childWidth / 2 - nodeWidth / 2, y + nodeHeight + verticalSpacing);
+              currentX += childWidth + horizontalSpacing;
             });
           }
         }
 
-        if (rootNode) {
-          positionNodes(nodeMap.get(rootNode.key), 0, 0); // 根节点放在 (0, 0)
-        }
+        positionNodes(nodeMap.get(rootNode.key), 0, 0); // 根节点居中
 
         return positions;
       }
+      let result = calculatePositions(nodeData)
+      console.log(result);
+      return result
 
-      const positions = calculatePositions(nodeData);
-
-      return positions
     },
   }
 }
