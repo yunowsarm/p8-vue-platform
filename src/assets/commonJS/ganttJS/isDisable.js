@@ -25,7 +25,6 @@ function createDisableResponse (message) {
 // 判断是否能新建下级
 export function isNewChild (ganttName, tasks) {
   const task = tasks[0]
-  console.log(task)
   if (['6405','6406', '6409'].includes(task.managerStatus)) {
     return createDisableResponse(`任务为${statusName[task.managerStatus]},不可操作`);
   }else if(task.planType){
@@ -647,7 +646,7 @@ function canIndentCheck (ganttName) {
         } else if (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) == -1) {
           result = {
             value: false,
-            msg: '已完成、审批中、变更中不允许操作'
+            msg: `${statusName[task.managerStatus]}不允许操作`
           }
         } else {
           const preTask = ganttObject.getTask(preTaskId)
@@ -662,15 +661,15 @@ function canIndentCheck (ganttName) {
           if (editManagerStatus && editManagerStatus.indexOf(preTask.managerStatus) === -1) {
             result = {
               value: false,
-              msg: '上一个同级节点为已完成、审批中、变更中，不可操作'
+              msg: `上一个同级节点为${statusName[preTask.managerStatus]}，不可操作`
             }
           }
-          if (task.managerStatus !== preTask.managerStatus && preTask.managerStatus === vueThis.issueStatus) {
-            result = {
-              value: false,
-              msg: '所选任务为已下发，上一个同级任务为待下发，不可操作'
-            }
-          }
+          // if (task.managerStatus !== preTask.managerStatus && preTask.managerStatus === vueThis.issueStatus) {
+          //   result = {
+          //     value: false,
+          //     msg: '所选任务为已下发，上一个同级任务为待下发，不可操作'
+          //   }
+          // }
           // 存在前后置关系
           if (result.value && task.$target && task.$target.length > 0) {
             task.$target.forEach(function (linkId) {
@@ -696,11 +695,11 @@ function canIndentCheck (ganttName) {
           }
           // 存在“生产，齐套，备料”标识
           if (preTask.planType) {
-            if (preTask.planType === '3101' || (preTask.planType.indexOf('3103') !== -1 && preTask.planType !== '3103')) {
+            // if (preTask.planType === '3101' || (preTask.planType.indexOf('3103') !== -1 && preTask.planType !== '3103')) {
               result = {
                 value: false,
-                msg: '存在“生产，齐套，备料”标识，不可操作'
-              }
+                msg: '上一个同级节点存在任务类型，不可操作'
+              // }
             }
           }
         }

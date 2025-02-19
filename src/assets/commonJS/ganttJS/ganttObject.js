@@ -2536,9 +2536,11 @@ GanttObject.checkoutBeforeCellSave = function (ganttObject, vueThis) {
           if (state.newValue === state.oldValue) {
             result = false
           } else {
-            if (newVal > max || newVal < 1) {
+            // if (newVal > max || newVal < 1) {
+              if (newVal < 1) {
               result = false
-              msg = '工期值填写错误，只能输入1~' + max + '范围内的值！'
+              // msg = '工期值填写错误，只能输入1~' + max + '范围内的值！'
+              msg = '工期值填写错误，只能输入正整数！'
               task.duration = oldVal
               ganttObject.refreshData(taskId)
             } else {

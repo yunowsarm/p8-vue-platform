@@ -784,11 +784,11 @@ export function getGanttColumns (ganttObject, vueThis) {
     },
     {
       name: 'duration',
-      label: '工期',
+      label: '工期' + (checkEdit() ? canEditIcon : ''),
       align: 'center',
       min_width: 70,
       resize: true,
-      // editor: editors.duration,
+      editor: editors.duration,
       template: function (task) {
         return formatter.format(task.duration)
       }
