@@ -975,6 +975,13 @@ export const system = {
       mockPath: '/bpm/personal/ProcessApproval/getModeSupportsServicesImpl',
       desc: '获取发起流程时的服务类(发提供流程中各节点的受托人)'
     },
+    {
+      name: 'listData',
+      method: 'POST',
+      path: '/tag/bp-tag/listData',
+      mockPath: '/tag/bp-tag/listData',
+      desc: '获取流程审批列表的标签'
+    },
   ],
   commonInterface: [
     {
