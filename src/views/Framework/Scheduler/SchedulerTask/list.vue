@@ -132,7 +132,7 @@ export default {
                   v = '未运行'
                   break
                 case '1':
-                  v = '运行中...'
+                  v = '定时任务已启动'
                   break
               }
               return v

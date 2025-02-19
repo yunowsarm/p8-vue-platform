@@ -104,7 +104,7 @@ export default {
           labelText: '时机',
           fieldName: 'timing',
           options: [
-            { key: 'immediately', label: '立即执行', value: 'immediately' },
+            { key: 'immediately', label: '立即执行+定时轮询', value: 'immediately' },
             { key: 'polling', label: '定时轮询', value: 'polling' }
           ],
           colLayout: 'doubleCol',
