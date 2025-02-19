@@ -12,9 +12,14 @@ const CommandButtonBarDataDoubleRow = [
             size: 'large',
             position: ['top', 'right']
           },
+        ]
+      },
+      {
+        groupName: '协作',
+        buttonConfigs: [
           {
             buttonId: 'issue-message',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           }
         ]
@@ -44,7 +49,7 @@ const CommandButtonBarDataDoubleRow = [
         buttonConfigs: [
           {
             buttonId: 'statistic-list',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
@@ -54,7 +59,7 @@ const CommandButtonBarDataDoubleRow = [
         buttonConfigs: [
           {
             buttonId: 'version-list',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
@@ -85,16 +90,21 @@ const CommandButtonBarDataDoubleRow = [
         ]
       },
       {
-        groupName: '自定义',
+        groupName: '缩放',
         buttonConfigs: [
           {
             buttonId: 'full-screen',
-            size: 'small',
+            size: 'large',
             position: ['top']
-          },
+          }
+        ]
+      },
+      {
+        groupName: '列设置',
+        buttonConfigs: [
           {
             buttonId: 'grid-setting',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]

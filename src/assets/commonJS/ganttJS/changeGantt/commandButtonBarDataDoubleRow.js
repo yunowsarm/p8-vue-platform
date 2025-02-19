@@ -128,7 +128,7 @@ const CommandButtonBarDataDoubleRow = [
           },
           {
             buttonId: 'removeStyle',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
@@ -138,7 +138,7 @@ const CommandButtonBarDataDoubleRow = [
         buttonConfigs: [
           {
             buttonId: 'issue-message',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           }
         ]
@@ -148,7 +148,7 @@ const CommandButtonBarDataDoubleRow = [
         buttonConfigs: [
           {
             buttonId: 'demand-management',
-            size: 'small',
+            size: 'large',
             position: ['top', 'right']
           }
         ]
@@ -223,7 +223,7 @@ const CommandButtonBarDataDoubleRow = [
         buttonConfigs: [
           {
             buttonId: 'statistic-list',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
@@ -233,7 +233,7 @@ const CommandButtonBarDataDoubleRow = [
         buttonConfigs: [
           {
             buttonId: 'create-version',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
@@ -243,7 +243,7 @@ const CommandButtonBarDataDoubleRow = [
         buttonConfigs: [
           {
             buttonId: 'version-list',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
@@ -274,11 +274,11 @@ const CommandButtonBarDataDoubleRow = [
         ]
       },
       {
-        groupName: '缩放/列设置',
+        groupName: '缩放',
         buttonConfigs: [
           {
             buttonId: 'full-screen',
-            size: 'small',
+            size: 'large',
             position: ['top']
           }
         ]
