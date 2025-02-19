@@ -154,6 +154,7 @@ export default {
         margin-left: -2.5px;
         bottom: 2px;
         display: none;
+        filter: invert(1); /* 反转颜色 */
       }
 
       &.active {
