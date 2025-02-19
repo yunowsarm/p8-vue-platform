@@ -53,8 +53,12 @@
               </div>
               <div v-else
                    style="text-align: center;">
-                <i :class="[scope.row.icon ? scope.row.icon : '']"
-                   :style="{ 'font-size': '18px', color: scope.row.color }"></i>
+                <el-tooltip effect="dark"
+                            :content="scope.row.meaning"
+                            placement="top">
+                  <i :class="[scope.row.icon ? scope.row.icon : '']"
+                     :style="{ 'font-size': '18px', color: scope.row.color }"></i>
+                </el-tooltip>
               </div>
             </template>
           </common-table>

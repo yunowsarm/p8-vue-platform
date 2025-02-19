@@ -394,8 +394,8 @@ export const CommandButtonData = [
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       thisGantt.performAction('outdentAction', thisGantt)
-      const vueThis = store.getters.vueThis
-      vueThis.selectMultipleTasks(tasks)
+      // const vueThis = store.getters.vueThis
+      // vueThis.selectMultipleTasks(tasks)
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
@@ -468,8 +468,8 @@ export const CommandButtonData = [
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       thisGantt.performAction('indentAction', thisGantt)
-      const vueThis = store.getters.vueThis
-      vueThis.selectMultipleTasks(tasks)
+      // const vueThis = store.getters.vueThis
+      // vueThis.selectMultipleTasks(tasks)
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
