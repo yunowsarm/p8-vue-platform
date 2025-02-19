@@ -33,7 +33,25 @@
             </el-tooltip>
           </div>
         </div>
+        <div class="tagsSearch">
+          <el-tooltip v-for="item in visibleTags"
+                      :key="item.id"
+                      :content="item.name"
+                      placement="top">
+            <el-tag :class="{isActive: item.id === activeId,'tag-item':true}"
+                    @click="tagClick(item)">
+              {{ truncateName(item.name) }}
+            </el-tag>
+          </el-tooltip>
+          <el-tag v-if="showMoreButton"
+                  class="more-button"
+                  type="info"
+                  @click="showAllTags">
+            更多
+          </el-tag>
+        </div>
         <infinite-list :list-api="messageListApi"
+                       :style="{height: getHeight}"
                        :active-item="currentIndex"
                        :key="renderTime"
                        :search-params="mergeParams"
@@ -162,7 +180,11 @@ export default {
           orders: [{ column: 'pinst.start_time_', asc: false }],
           pages: 0
         }
-      }
+      },
+      approvalList: [],
+      showAll: false, // 是否显示全部标签
+      tagHeight: null,
+      activeId: ''
     }
   },
   computed: {
@@ -187,7 +209,22 @@ export default {
 
         return timeStr
       }
-    }
+    },
+    // 计算属性：默认显示的标签
+    visibleTags () {
+      this.$nextTick(() => {
+        const element = document.querySelector('.tagsSearch'); // 获取第一个匹配的元素
+        this.tagHeight = element.offsetHeight;
+      })
+      return this.showAll ? this.approvalList : this.approvalList.slice(0, 10);
+    },
+    // 计算属性：是否显示“更多”按钮
+    showMoreButton () {
+      return this.approvalList.length > 10 && !this.showAll;
+    },
+    getHeight () {
+      return 'calc(100% - ' + this.tagHeight + 'px)'
+    },
   },
   created () {
     if (this.chargeIds.includes(this.searchParams.msgCatalog)) {
@@ -196,17 +233,46 @@ export default {
     }
   },
   mounted () {
+    const element = document.querySelector('.tagsSearch'); // 获取第一个匹配的元素
+    this.tagHeight = element.offsetHeight;
   },
   watch: {
     searchParams: {
       deep: true,
       handler: function (newVal, oldVal) {
         this.mergeParams = Object.assign(this.mergeParams, newVal)
+        this.getList()
       },
       immediate: true
     }
   },
   methods: {
+    getList () {
+      let state = ''
+      if (this.mergeParams.msgCatalog == 'APPROVE_TYPE_02_01' || this.mergeParams.msgCatalog == 'APPROVE_TYPE_01_01') {
+        state = 'ACTIVE'
+      }
+      if (this.mergeParams.msgCatalog == 'APPROVE_TYPE_02_02' || this.mergeParams.msgCatalog == 'APPROVE_TYPE_01_02') {
+        state = 'COMPLETED'
+      }
+      this.$api['processApproval.listData']({ state: state }).then(res => {
+        this.approvalList = res
+      })
+    },
+    // 截取名称，超过4个字符追加省略号
+    truncateName (name) {
+      let textLength = 6
+      return name.length > textLength ? `${name.slice(0, textLength)}...` : name;
+    },
+    // 显示全部标签
+    showAllTags () {
+      this.showAll = true;
+    },
+    tagClick (item) {
+      this.activeId = item.id
+      this.mergeParams.tagName = item.name
+      this.renderTime = new Date() + ''
+    },
     reSet () {
       let that = this
       that.mergeParams.processName = ''
@@ -320,5 +386,22 @@ $icon-span-width: 20px;
     padding: 15px;
     border-bottom: 1px solid #eeeef0;
   }
+}
+.tag-item {
+  margin-right: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.more-button {
+  cursor: pointer;
+}
+.tagsSearch {
+  max-height: 120px;
+  overflow-y: auto;
+  margin-left: 8px;
+}
+.isActive {
+  background: #3373c2;
+  color: white;
 }
 </style>

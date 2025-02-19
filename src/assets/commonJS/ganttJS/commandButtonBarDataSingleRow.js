@@ -311,11 +311,11 @@ const CommandButtonBarDataSingleRow = [
             size: 'small',
             position: ['top']
           },
-          {
-            buttonId: 'grid-cell-border-setting',
-            size: 'small',
-            position: ['top']
-          }
+          // {
+          //   buttonId: 'grid-cell-border-setting',
+          //   size: 'small',
+          //   position: ['top']
+          // }
         ]
       },
       {
