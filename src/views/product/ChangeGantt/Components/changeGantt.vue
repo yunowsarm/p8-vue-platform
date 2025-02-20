@@ -702,6 +702,7 @@ export default {
           item.reminder = 0
         }
       })
+      myGantt.render();
     },
     async initGantt (planInfoId, changeRecordId, viewType) {
       // 根据项目类型，获取gantt列设置
