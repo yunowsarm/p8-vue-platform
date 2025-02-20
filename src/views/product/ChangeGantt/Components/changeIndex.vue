@@ -26,6 +26,7 @@
                           :task-id="taskId"
                           v-bind="$attrs"
                           :secret-grade="secretGrade"
+                          :selectRow="selectRow"
                           :plan-attribute-drawer="detailVisible"
                           :create-page="createPage"
                           :change-id="changeId"
@@ -235,6 +236,10 @@ export default {
       default: null
     },
     changeId: {
+      type: String,
+      default: null
+    },
+    selectRow: {
       type: String,
       default: null
     }

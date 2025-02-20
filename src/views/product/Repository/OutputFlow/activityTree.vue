@@ -205,6 +205,7 @@ export default {
     }
   },
   async created () {
+    this.isFirst = true
     let that = this
     await this.$api['dictionaryManagement.list']({ dicType: "ACTIVITY_TYPE" }).then(res => {
       that.logoList = res
@@ -270,7 +271,7 @@ export default {
       this.loadGanttData(taskId)
     },
     loadGanttData (taskId) {
-      this.$api['OutputFlow.loadAcivityData']({ activityInfoId: this.activityInfoId }).then( (res) => {
+      this.$api['OutputFlow.loadAcivityData']({ activityInfoId: this.activityInfoId }).then((res) => {
         if (res) {
           res.forEach(el => {
             el.durations = el.duration
@@ -281,10 +282,11 @@ export default {
           }
           myGantt.parse(datas)
           const taskCount = myGantt.getTaskCount()
-          this.$emit('taskCount',taskCount)
-          if(taskCount>1){
+          this.$emit('taskCount', taskCount)
+          if (taskCount > 1 && this.isFirst) {
             const defaultTaskSelected = myGantt.getTaskByIndex(1)
             myGantt.selectTask(defaultTaskSelected.id);
+            this.isFirst = false
           }
           if (taskId) {
             myGantt.unselectTask();

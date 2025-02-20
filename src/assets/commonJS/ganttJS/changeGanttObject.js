@@ -70,6 +70,12 @@ export function getChangeGantt (ganttName, vueThis) {
   ganttObject.attachEvent('onLinkDblClick', function (id, item) {
     return false
   })
+  ganttObject.attachEvent('onTaskClick', function (id, item) {
+    if (vueThis.pageType === 'history') {
+        vueThis.showTaskProgressDialog(id)
+    }
+    return false
+  })
 
   // 网格行的背景颜色
   ganttObject.templates.grid_row_class = function (start, end, task) {

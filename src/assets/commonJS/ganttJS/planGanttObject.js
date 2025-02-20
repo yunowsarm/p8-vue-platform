@@ -246,6 +246,12 @@ export function planGantt (ganttName, vueThis) {
     if (fieldName === 'wbs') {
       copyText(wbs, '大纲复制成功！')
     }
+    if (vueThis.pageType === 'history') {
+      if (vueThis.createPage === 'compile' || vueThis.createPage === 'decompose') {
+        vueThis.showTaskProgressDialog(task.id)
+      }
+    }
+    
     task.machineName = task.machineName ? task.machineName : ''
     task.completeForm = task.completeForm ? task.completeForm : ''
     task.taskProjectName = task.taskProjectName ? task.taskProjectName : ''
@@ -258,6 +264,7 @@ export function planGantt (ganttName, vueThis) {
     task.notes = task.notes ? task.notes : ''
     task.evaluation = task.evaluation ? task.evaluation : ''
     task.combinationName = task.combinationName ? task.combinationName : ''
+    vueThis.addfoldState(task)
     if (task.switchType === '9010' || task.switchType === '9020') {
       return false
     }

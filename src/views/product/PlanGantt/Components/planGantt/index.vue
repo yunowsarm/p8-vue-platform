@@ -843,7 +843,8 @@ export default {
       versionListVisible: false, //  版本列表显示隐藏
       extraMap: {},
       deleteCount: 0,
-      isSueTaskIds: []
+      isSueTaskIds: [],
+      addTaskList: []
     }
   },
   watch: {
@@ -988,6 +989,21 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
+    addfoldState (task) {
+      setTimeout(() => {
+        task.open = task.$open
+        this.$api['planGanttManager.updateFoldLevel']({
+          tasks: [task]
+        }).then((res) => {
+          // if (res) {
+          //   this.$message({
+          //     message: '保存成功',
+          //     type: 'success'
+          //   })
+          // }
+        })
+      }, 1000)
+    },
     // 删除任务后的回调
     deleteTaskCallback () {
       this.$emit('delete-task-callback')
@@ -1844,6 +1860,7 @@ export default {
           item.reminder = 0
         }
       })
+      myGantt.render();
     },
     showChangeHistory () {
       this.changeHistoryVisible = true

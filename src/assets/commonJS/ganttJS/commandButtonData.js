@@ -2169,6 +2169,340 @@ export const CommandButtonData = [
     }
   },
   {
+    id: 'unfold-config',
+    icon: 'p8 icon-zhankai',
+    title: '展开',
+    help: '展开',
+    msg: '展开',
+    clickFun: function (btn, ganttName, tasks) {},
+    isDisableFun: function (btn, ganttName, tasks) {},
+    children: [
+      // {
+      //   id: 'unfold-all',
+      //   icon: 'p8 icon-zhankai',
+      //   title: '展开所有',
+      //   help: '展开所有',
+      //   msg: '展开所有',
+      //   clickFun: function (btn, ganttName, tasks) {
+      //     const vueThis = store.getters.vueThis
+      //     const ganttObject = GanttObject.getGanttObject(ganttName)
+      //     vueThis.addTaskList = []
+      //     ganttObject.eachTask(function(task) {
+      //         task.open = true
+      //         task.$open = true
+      //         vueThis.addTaskList.push(task)
+      //     });
+      //     setTimeout(() => {
+      //       ganttObject.render()
+      //     }, 1000)
+      //   },
+      //   isDisableFun: function (btn, ganttName, tasks) {}
+      // },
+      {
+        id: 'unfold-one',
+        icon: 'p8 icon-zhankai',
+        title: '展开1级',
+        help: '展开1级',
+        msg: '展开1级',
+        clickFun: function (btn, ganttName, tasks) {
+          const vueThis = store.getters.vueThis
+          const ganttObject = GanttObject.getGanttObject(ganttName)
+          vueThis.addTaskList = []
+          ganttObject.eachTask(function(task) {
+              let wbs = task.$wbs;
+              let count = (wbs.match(/\./g) || []).length;
+              if (count < 1) {
+                task.open = true
+                task.$open = true
+              }
+              vueThis.addTaskList.push(task)
+          });
+          setTimeout(() => {
+            ganttObject.render()
+          }, 1000)
+        },
+        isDisableFun: function (btn, ganttName, tasks) {}
+      },
+      {
+        id: 'unfold-one',
+        icon: 'p8 icon-zhankai',
+        title: '展开2级',
+        help: '展开2级',
+        msg: '展开2级',
+        clickFun: function (btn, ganttName, tasks) {
+          const vueThis = store.getters.vueThis
+          const ganttObject = GanttObject.getGanttObject(ganttName)
+          vueThis.addTaskList = []
+          ganttObject.eachTask(function(task) {
+              let wbs = task.$wbs;
+              let count = (wbs.match(/\./g) || []).length;
+              if (count < 2) {
+                task.open = true
+                task.$open = true
+                vueThis.addTaskList.push(task)
+              }
+          });
+          setTimeout(() => {
+            ganttObject.render()
+          }, 1000)
+        },
+        isDisableFun: function (btn, ganttName, tasks) {}
+      },
+      {
+        id: 'unfold-one',
+        icon: 'p8 icon-zhankai',
+        title: '展开3级',
+        help: '展开3级',
+        msg: '展开3级',
+        clickFun: function (btn, ganttName, tasks) {
+          const vueThis = store.getters.vueThis
+          const ganttObject = GanttObject.getGanttObject(ganttName)
+          vueThis.addTaskList = []
+          ganttObject.eachTask(function(task) {
+              let wbs = task.$wbs;
+              let count = (wbs.match(/\./g) || []).length;
+              if (count < 3) {
+                task.open = true
+                task.$open = true
+                vueThis.addTaskList.push(task)
+              }
+          });
+          setTimeout(() => {
+            ganttObject.render()
+          }, 1000)
+        },
+        isDisableFun: function (btn, ganttName, tasks) {}
+      },
+      {
+        id: 'unfold-one',
+        icon: 'p8 icon-zhankai',
+        title: '展开3级以下',
+        help: '展开3级以下',
+        msg: '展开3级以下',
+        clickFun: function (btn, ganttName, tasks) {
+          const vueThis = store.getters.vueThis
+          const ganttObject = GanttObject.getGanttObject(ganttName)
+          vueThis.addTaskList = []
+          ganttObject.eachTask(function(task) {
+              task.open = true
+              task.$open = true
+              vueThis.addTaskList.push(task)
+          });
+          setTimeout(() => {
+            ganttObject.render()
+          }, 1000)
+        },
+        isDisableFun: function (btn, ganttName, tasks) {}
+      },
+      {
+        id: 'save-fold',
+        icon: 'p8 icon-baocun',
+        title: '保存',
+        help: '保存',
+        msg: '保存',
+        clickFun: function (btn, ganttName, tasks) {
+          const vueThis = store.getters.vueThis
+          api['planGanttManager.updateFoldLevel']({ 
+            tasks: vueThis.addTaskList
+           }).then((res) => {
+              if (res) {
+                vueThis.$message({
+                  message: '保存成功',
+                  type: 'success'
+                })
+              }
+            })
+        },
+        isDisableFun: function (btn, ganttName, tasks) {
+          return false
+        }
+      },
+      {
+        id: 'recover-fold',
+        icon: 'p8 icon-lishishujuguanli',
+        title: '恢复',
+        help: '恢复',
+        msg: '恢复',
+        clickFun: function (btn, ganttName, tasks) {
+            const vueThis = store.getters.vueThis
+            vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
+        },
+        isDisableFun: function (btn, ganttName, tasks) {
+          return false
+        }
+      }
+    ]
+  },
+  {
+    id: 'fold-config',
+    icon: 'p8 icon-shousuo',
+    title: '折叠',
+    help: '折叠',
+    msg: '折叠',
+    clickFun: function (btn, ganttName, tasks) {},
+    isDisableFun: function (btn, ganttName, tasks) {},
+    children: [
+      // {
+      //   id: 'fold-all',
+      //   icon: 'p8 icon-shousuo',
+      //   title: '折叠所有',
+      //   help: '折叠所有',
+      //   msg: '折叠所有',
+      //   clickFun: function (btn, ganttName) {
+      //     const vueThis = store.getters.vueThis
+      //     const ganttObject = GanttObject.getGanttObject(ganttName)
+      //     vueThis.addTaskList = []
+      //     ganttObject.eachTask(function(task) {
+      //         task.open = false
+      //         task.$open = false
+      //         vueThis.addTaskList.push(task)
+      //     });
+      //     setTimeout(() => {
+      //       ganttObject.render()
+      //     }, 1000)
+      //   },
+      //   isDisableFun: function (btn, ganttName, tasks) {}
+      // },
+      {
+        id: 'fold-one',
+        icon: 'p8 icon-shousuo',
+        title: '折叠1级',
+        help: '折叠1级',
+        msg: '折叠1级',
+        clickFun: function (btn, ganttName) {
+          const vueThis = store.getters.vueThis
+          const ganttObject = GanttObject.getGanttObject(ganttName)
+          vueThis.addTaskList = []
+          ganttObject.eachTask(function(task) {
+              let wbs = task.$wbs;
+              let count = (wbs.match(/\./g) || []).length;
+              if (count > 0) {
+                task.open = false
+                task.$open = false
+                vueThis.addTaskList.push(task)
+              }
+          });
+          setTimeout(() => {
+            ganttObject.render()
+          }, 1000)
+        },
+        isDisableFun: function (btn, ganttName, tasks) {}
+      },
+      {
+        id: 'fold-one',
+        icon: 'p8 icon-shousuo',
+        title: '折叠2级',
+        help: '折叠2级',
+        msg: '折叠2级',
+        clickFun: function (btn, ganttName) {
+          const vueThis = store.getters.vueThis
+          const ganttObject = GanttObject.getGanttObject(ganttName)
+          vueThis.addTaskList = []
+          ganttObject.eachTask(function(task) {
+              let wbs = task.$wbs;
+              let count = (wbs.match(/\./g) || []).length;
+              if (count > 1) {
+                task.open = false
+                task.$open = false
+                vueThis.addTaskList.push(task)
+              }
+          });
+          setTimeout(() => {
+            ganttObject.render()
+          }, 1000)
+        },
+        isDisableFun: function (btn, ganttName, tasks) {}
+      },
+      {
+        id: 'fold-one',
+        icon: 'p8 icon-shousuo',
+        title: '折叠3级',
+        help: '折叠3级',
+        msg: '折叠3级',
+        clickFun: function (btn, ganttName) {
+          const vueThis = store.getters.vueThis
+          const ganttObject = GanttObject.getGanttObject(ganttName)
+          vueThis.addTaskList = []
+          ganttObject.eachTask(function(task) {
+              let wbs = task.$wbs;
+              let count = (wbs.match(/\./g) || []).length;
+              if (count > 2) {
+                task.open = false
+                task.$open = false
+                vueThis.addTaskList.push(task)
+              }
+          });
+          setTimeout(() => {
+            ganttObject.render()
+          }, 1000)
+        },
+        isDisableFun: function (btn, ganttName, tasks) {}
+      },
+      {
+        id: 'fold-one',
+        icon: 'p8 icon-shousuo',
+        title: '折叠3级以下',
+        help: '折叠3级以下',
+        msg: '折叠3级以下',
+        clickFun: function (btn, ganttName) {
+          const vueThis = store.getters.vueThis
+          const ganttObject = GanttObject.getGanttObject(ganttName)
+          vueThis.addTaskList = []
+          ganttObject.eachTask(function(task) {
+              let wbs = task.$wbs;
+              let count = (wbs.match(/\./g) || []).length;
+              if (count > 3) {
+                task.open = false
+                task.$open = false
+                vueThis.addTaskList.push(task)
+              }
+          });
+          setTimeout(() => {
+            ganttObject.render()
+          }, 1000)
+        },
+        isDisableFun: function (btn, ganttName, tasks) {}
+      },
+      {
+        id: 'save-fold',
+        icon: 'p8 icon-baocun',
+        title: '保存',
+        help: '保存',
+        msg: '保存',
+        clickFun: function (btn, ganttName, tasks) {
+          const vueThis = store.getters.vueThis
+          api['planGanttManager.updateFoldLevel']({ 
+            tasks: vueThis.addTaskList
+           }).then((res) => {
+              if (res) {
+                vueThis.$message({
+                  message: '保存成功',
+                  type: 'success'
+                })
+              }
+            })
+        },
+        isDisableFun: function (btn, ganttName, tasks) {
+          return false
+        }
+      },
+      {
+        id: 'recover-fold',
+        icon: 'p8 icon-lishishujuguanli',
+        title: '恢复',
+        help: '恢复',
+        msg: '恢复',
+        clickFun: function (btn, ganttName, tasks) {
+            const vueThis = store.getters.vueThis
+            vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
+        },
+        isDisableFun: function (btn, ganttName, tasks) {
+          return false
+        }
+      }
+    ]
+  },
+  {
     id: 'statistic-list',
     icon: 'p8 icon-shujushitu',
     title: '统计信息',
@@ -3635,12 +3969,12 @@ function issueTask (ganttObject, thisDp, currentRowTask, ganttName) {
           //     })
           //   })
           // })
-          vueThis.initGantt(vueThis.planInfoId, 'grid')
+          vueThis.isSueTaskIds = taskIds
+          vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
           vueThis.$message({
             message: '任务下发成功！',
             type: 'success'
           })
-          vueThis.isSueTaskIds = taskIds
         } else {
           vueThis.$message({
             message: res,
