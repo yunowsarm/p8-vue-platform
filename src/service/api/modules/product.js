@@ -1048,6 +1048,13 @@ export const repositoryApi = {
       path: '/product/pm/plan/extendSave',
       mockPath: '/product/pm/plan/extendSave',
       desc: '项目管理->计划管理->计划编辑->gantt拓展属性保存'
+    },
+    {
+      name: 'aiGeneratedSendDescribe',
+      method: 'POST',
+      path: '/ai/intelligence/sendDescribe',
+      mockPath: '/ai/intelligence/sendDescribe',
+      desc: '项目管理->计划管理->计划编辑->AI自动生成'
     }
   ],
   planChange: [

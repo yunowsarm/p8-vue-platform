@@ -165,6 +165,7 @@ export default {
     getDataTaskType () {
       const that = this
       this.$api['planGanttManager.getPlanTaskTypeData']({ planInfoId: this.planInfoId }).then((res) => {
+        debugger
         if (res) {
           this.list3 = res.map((ele) => {
             this.totalTypeNum = Number(ele.totalCount) || 0
