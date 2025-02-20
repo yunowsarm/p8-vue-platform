@@ -843,7 +843,8 @@ export default {
       versionListVisible: false, //  版本列表显示隐藏
       extraMap: {},
       deleteCount: 0,
-      isSueTaskIds: []
+      isSueTaskIds: [],
+      foldHierarchy: ''
     }
   },
   watch: {
@@ -1844,6 +1845,7 @@ export default {
           item.reminder = 0
         }
       })
+      myGantt.render();
     },
     showChangeHistory () {
       this.changeHistoryVisible = true
