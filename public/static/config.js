@@ -20,3 +20,5 @@ const CHECK_PRODUCTION_ERROR_TIP = false
 // socket连接地址
 const SOCKET_URL = 'http://192.168.0.225:8888'
 const SOCKET_PORT = '8888'
+// 聊天机器人
+const aiAssistant = false
