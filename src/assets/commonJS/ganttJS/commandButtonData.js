@@ -3635,12 +3635,12 @@ function issueTask (ganttObject, thisDp, currentRowTask, ganttName) {
           //     })
           //   })
           // })
-          vueThis.initGantt(vueThis.planInfoId, 'grid')
+          vueThis.isSueTaskIds = taskIds
+          vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
           vueThis.$message({
             message: '任务下发成功！',
             type: 'success'
           })
-          vueThis.isSueTaskIds = taskIds
         } else {
           vueThis.$message({
             message: res,
