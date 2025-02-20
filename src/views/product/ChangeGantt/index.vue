@@ -39,6 +39,7 @@
             <change-index :plan-info-id="planInfoId"
                           :task-id="taskId"
                           :secret-grade="secretGrade"
+                          :selectRow="selectRow"
                           :whole-describe-id="wholeDescribeId"
                           :plan-info-status="planInfoStatus"
                           @closed="onClose"
@@ -361,6 +362,7 @@ export default {
         }
       ],
       tableConfig: {},
+      selectRow: {},
       wholeDescribeId: '',
       menuStateObj: []
     }
@@ -445,6 +447,7 @@ export default {
     },
     modifyChange (record) {
       this.changeId = record.id
+      this.selectRow = record
       this.drawerVisible = true
       this.readOnlyVisible = false
     },

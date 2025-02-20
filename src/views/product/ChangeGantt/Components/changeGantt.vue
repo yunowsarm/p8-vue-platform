@@ -1,10 +1,20 @@
 <template>
-  <div style="height: 100%; position: relative" class="planGantt" v-loading="loading">
-    <div id="actionMenu" v-if="menuVisible" ref="actionMenu" :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
-      <VuePerfectScrollbar class="scroll-area" :style="{ maxHeight: maxHeight, height: scrollBarHeight }">
-        <el-menu mode="vertical" :collapse="true">
+  <div style="height: 100%; position: relative"
+       class="planGantt"
+       v-loading="loading">
+    <div id="actionMenu"
+         v-if="menuVisible"
+         ref="actionMenu"
+         :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
+      <VuePerfectScrollbar class="scroll-area"
+                           :style="{ maxHeight: maxHeight, height: scrollBarHeight }">
+        <el-menu mode="vertical"
+                 :collapse="true">
           <template v-for="(menu, index) in menuData">
-            <el-submenu v-if="buttonData(menu).children" :disabled="isDisable(menu)" :key="menu.id" :index="index + 'm'">
+            <el-submenu v-if="buttonData(menu).children"
+                        :disabled="isDisable(menu)"
+                        :key="menu.id"
+                        :index="index + 'm'">
               <span slot="title">
                 <span @click="btnClick(buttonData(menu), isDisable(menu))">
                   <i :class="buttonData(menu).icon"></i>
@@ -12,21 +22,38 @@
                 </span>
               </span>
               <template v-for="(btn, index) in buttonData(menu).children">
-                <el-menu-item v-if="btn.id !== 'createByNum'" :key="index" @click="btnClick(btn, btn.isDisableFun(null, ganttName, selectedTasks))" :index="btn.id">
+                <el-menu-item v-if="btn.id !== 'createByNum'"
+                              :key="index"
+                              @click="btnClick(btn, btn.isDisableFun(null, ganttName, selectedTasks))"
+                              :index="btn.id">
                   <i :class="btn.icon"></i>
                   <span> {{ btn.title }}</span>
                 </el-menu-item>
-                <el-submenu v-if="btn.id === 'createByNum'" :key="index + 'c'" :index="index + 'b'">
+                <el-submenu v-if="btn.id === 'createByNum'"
+                            :key="index + 'c'"
+                            :index="index + 'b'">
                   <span slot="title">
                     <i :class="btn.icon"></i>
                     <span> {{ btn.title }}</span>
                   </span>
-                  <el-input-number size="mini" v-model="createNum" :max="1000" :min="1" :step-strictly="true" :step="1" style='margin: 0 10px'></el-input-number>
-                  <el-button size="mini" @click="btn.clickFun(btn, ganttName, null)" style='margin-right: 10px'>确定</el-button>
+                  <el-input-number size="mini"
+                                   v-model="createNum"
+                                   :max="1000"
+                                   :min="1"
+                                   :step-strictly="true"
+                                   :step="1"
+                                   style='margin: 0 10px'></el-input-number>
+                  <el-button size="mini"
+                             @click="btn.clickFun(btn, ganttName, null)"
+                             style='margin-right: 10px'>确定</el-button>
                 </el-submenu>
               </template>
             </el-submenu>
-            <el-menu-item v-else @click="btnClick(buttonData(menu), isDisable(menu))" :disabled="isDisable(menu)" :key="menu.id" :index="menu.id + 'm'">
+            <el-menu-item v-else
+                          @click="btnClick(buttonData(menu), isDisable(menu))"
+                          :disabled="isDisable(menu)"
+                          :key="menu.id"
+                          :index="menu.id + 'm'">
               <i :class="buttonData(menu).icon"></i>
               <span> {{ menu.title }}</span>
             </el-menu-item>
@@ -34,127 +61,167 @@
         </el-menu>
       </VuePerfectScrollbar>
     </div>
-    <div ref="myGantt" class="myGantt" style="width: 100%; height: calc(100% - 40px) !important" @mousemove="mouseMove"></div>
+    <div ref="myGantt"
+         class="myGantt"
+         style="width: 100%; height: calc(100% - 40px) !important"
+         @mousemove="mouseMove"></div>
     <div class="detail_div">
       <div style="width: 50%">
         <span style="margin-left: 16px">选中任务：</span>
-        <span @click="showDetail" class="detail_span">{{ selectTaskName }}</span>
+        <span @click="showDetail"
+              class="detail_span">{{ selectTaskName }}</span>
       </div>
       <div style="width: 50%">
-        <el-button style="float: right; margin-right: 20px; margin-top: 6px" type="primary" size="mini" @click="saveChange" v-if="!readOnly && hasSave">保存 </el-button>
-        <el-button style="float: right; margin-right: 20px; margin-top: 6px" type="primary" :disabled="submitChangeDisabled" size="mini" @click="submitChange" v-if="!readOnly && !hasSave"
-          >提交审批
+        <el-button style="float: right; margin-right: 20px; margin-top: 6px"
+                   type="primary"
+                   size="mini"
+                   @click="saveChange"
+                   v-if="!readOnly && hasSave">保存 </el-button>
+        <el-button style="float: right; margin-right: 20px; margin-top: 6px"
+                   type="primary"
+                   :disabled="submitChangeDisabled"
+                   size="mini"
+                   @click="submitChange"
+                   v-if="!readOnly && !hasSave">提交审批
         </el-button>
         <!--        <span style="float:right;margin-right: 20px;line-height:40px;"><i class="gantt-tip p8 icon-make-increase" style="color: #0d6bec;" task_status_disp = "调增"></i> {{addCount}}</span>-->
         <!--        <span style="float:right;margin-right: 20px;line-height:40px;"><i class="gantt-tip p8 icon-make-reductions" style="color: #0d6bec;" task_status_disp = "调减"></i> {{deleteCount}}</span>-->
         <!--        <span style="float:right;margin-right: 20px;line-height:40px;"><i class="gantt-tip p8 icon-content-adjustment" style="color: #0d6bec;" task_status_disp = "修改"></i> {{modifyCount}}</span>-->
         <span style="float: right; margin-right: 20px; line-height: 40px">已选中 {{ selectTaskCount }} 条</span>
         <span style="float: right; margin-right: 20px; line-height: 40px">合计 {{ taskCount }} 条</span>
-        <el-popover placement="top" width="200" trigger="click">
+        <el-popover placement="top"
+                    width="200"
+                    trigger="click">
           <div class="edit_gantt_user_list">
             <span v-if="webSocketDone">当前连接异常，无法查看正在编辑人员，请尝试刷新页面或联系运维人员</span>
             <template v-else>
-              <span v-for="(user, index) in editUserList" :key="index">{{ user.userName }}</span>
+              <span v-for="(user, index) in editUserList"
+                    :key="index">{{ user.userName }}</span>
             </template>
           </div>
-          <span slot="reference" style="float: right; margin-right: 40px; line-height: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' : editUserList.length }} 人</span>
+          <span slot="reference"
+                style="float: right; margin-right: 40px; line-height: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' : editUserList.length }} 人</span>
         </el-popover>
       </div>
     </div>
-    <el-drawer :title="activityImportTitle" :append-to-body="true" size="50%" :destroy-on-close="true" :wrapper-closable="false" @closed="activityImportClosed" :visible.sync="activityImportVisible">
-      <activity-import @save-success="activityImportClosed" :task-id="selectTaskId" :activity-import-type="activityImportType" :auto-scheduling="autoParentDate"></activity-import>
+    <el-drawer :title="activityImportTitle"
+               :append-to-body="true"
+               size="50%"
+               :destroy-on-close="true"
+               :wrapper-closable="false"
+               @closed="activityImportClosed"
+               :visible.sync="activityImportVisible">
+      <activity-import @save-success="activityImportClosed"
+                       :task-id="selectTaskId"
+                       :activity-import-type="activityImportType"
+                       :auto-scheduling="autoParentDate"></activity-import>
     </el-drawer>
-    <el-drawer v-if="relevanceVisible" :visible="relevanceVisible" size="100%" :append-to-body="true" :destroy-on-close="true" :wrapper-closable="false" title="关联" @close="closeRelevance">
-      <relevance
-        ref="relevance"
-        :taskId="taskId"
-        :planInfoId="planInfoId"
-        :taskList="taskList"
-        :selectTaskId="selectTaskId"
-        :resourcesData="resourcesData"
-        :monitorPointDatas="monitorPointDatas"
-        :temporaryDatas="temporaryDatas"
-        @closeRelevance="closeRelevanceChange"
-      ></relevance>
+    <el-drawer v-if="relevanceVisible"
+               :visible="relevanceVisible"
+               size="100%"
+               :append-to-body="true"
+               :destroy-on-close="true"
+               :wrapper-closable="false"
+               title="关联"
+               @close="closeRelevance">
+      <relevance ref="relevance"
+                 :taskId="taskId"
+                 :planInfoId="planInfoId"
+                 :taskList="taskList"
+                 :selectTaskId="selectTaskId"
+                 :resourcesData="resourcesData"
+                 :monitorPointDatas="monitorPointDatas"
+                 :temporaryDatas="temporaryDatas"
+                 @closeRelevance="closeRelevanceChange"></relevance>
     </el-drawer>
-    <monitor-time-manger
-      v-if="controlTimeVisible"
-      :visible="controlTimeVisible"
-      :monitor-id="monitorId"
-      :task-id="selectTaskId"
-      :monitor-name="monitorName"
-      :task-name="selectTaskName"
-      @save-success="monitorManagerSave"
-    >
+    <monitor-time-manger v-if="controlTimeVisible"
+                         :visible="controlTimeVisible"
+                         :monitor-id="monitorId"
+                         :task-id="selectTaskId"
+                         :monitor-name="monitorName"
+                         :task-name="selectTaskName"
+                         @save-success="monitorManagerSave">
     </monitor-time-manger>
-    <submit-change
-      v-if="submitChangeValidate"
-      :visible="submitChangeValidate"
-      :change-id="changeRecordId"
-      :send-data-list="sendDataList"
-      :project-category="projectCategory"
-      :monitor-points="monitorPoints"
-      :project-classification="projectClassification"
-      :project-task-id="projectTaskId"
-      :create-page="createPage"
-      @save-success="submitChangeSave"
-    >
+    <submit-change v-if="submitChangeValidate"
+                   :visible="submitChangeValidate"
+                   :change-id="changeRecordId"
+                   :send-data-list="sendDataList"
+                   :project-category="projectCategory"
+                   :monitor-points="monitorPoints"
+                   :project-classification="projectClassification"
+                   :project-task-id="projectTaskId"
+                   :create-page="createPage"
+                   @save-success="submitChangeSave">
     </submit-change>
-    <selectApproveUser
-      v-if="isSelectApproveUserView"
-      :is-select-approve-user-view="isSelectApproveUserView"
-      :select-user-data-source="selectUserDataSource"
-      :select-user-form-data="selectUserFormData"
-      @close-modal="closeSelectApproveUser"
-      @commit="commitSelectApproveUser"
-    ></selectApproveUser>
-    <common-dialog title="查询" width="90%" :visible="ganttSearchVisible" :show-handle-btn="false" @isfullscreen="isfullscreen" @close="closeSearch" :is-view-cs-footer="false" :dialog-height="360">
+    <selectApproveUser v-if="isSelectApproveUserView"
+                       :is-select-approve-user-view="isSelectApproveUserView"
+                       :select-user-data-source="selectUserDataSource"
+                       :select-user-form-data="selectUserFormData"
+                       @close-modal="closeSelectApproveUser"
+                       @commit="commitSelectApproveUser"></selectApproveUser>
+    <common-dialog title="查询"
+                   width="90%"
+                   :visible="ganttSearchVisible"
+                   :show-handle-btn="false"
+                   @isfullscreen="isfullscreen"
+                   @close="closeSearch"
+                   :is-view-cs-footer="false"
+                   :dialog-height="360">
       <template #dialog>
-        <command-search :gantt-name="ganttName" :is-input="false" :plan-info-id="planInfoId" @close="closeSearch"></command-search>
+        <command-search :gantt-name="ganttName"
+                        :is-input="false"
+                        :plan-info-id="planInfoId"
+                        @close="closeSearch"></command-search>
       </template>
     </common-dialog>
-    <common-dialog
-      title="通知下发"
-      width="70%"
-      v-if="noticeVisible"
-      :visible="noticeVisible"
-      :show-handle-btn="false"
-      @isfullscreen="isfullscreen"
-      @close="closeNotice"
-      :is-view-cs-footer="false"
-      :dialog-height="650"
-    >
+    <common-dialog title="通知下发"
+                   width="70%"
+                   v-if="noticeVisible"
+                   :visible="noticeVisible"
+                   :show-handle-btn="false"
+                   @isfullscreen="isfullscreen"
+                   @close="closeNotice"
+                   :is-view-cs-footer="false"
+                   :dialog-height="650">
       <template #dialog>
-        <Notice :key="renderKey" :task-id="selectTaskId" :selected-tasks="selectedTasks" :gantt-name="ganttName" :plan-info-id="planInfoId" @close="closeNotice" />
+        <Notice :key="renderKey"
+                :task-id="selectTaskId"
+                :selected-tasks="selectedTasks"
+                :gantt-name="ganttName"
+                :plan-info-id="planInfoId"
+                @close="closeNotice" />
       </template>
     </common-dialog>
-    <common-dialog
-      title="统计信息"
-      width="60%"
-      v-if="ganttStatisticVisible"
-      :visible="ganttStatisticVisible"
-      :show-handle-btn="false"
-      @isfullscreen="isfullscreen"
-      @close="closeStatistic"
-      :is-view-cs-footer="false"
-      :dialog-height="460"
-    >
+    <common-dialog title="统计信息"
+                   width="60%"
+                   v-if="ganttStatisticVisible"
+                   :visible="ganttStatisticVisible"
+                   :show-handle-btn="false"
+                   @isfullscreen="isfullscreen"
+                   @close="closeStatistic"
+                   :is-view-cs-footer="false"
+                   :dialog-height="460">
       <template #dialog>
-        <command-statistic :gantt-name="ganttName" :plan-info-id="planInfoId"></command-statistic>
+        <command-statistic :gantt-name="ganttName"
+                           :plan-info-id="planInfoId"></command-statistic>
       </template>
     </common-dialog>
-    <common-button-bar-setting
-      v-if="rightMenuConfigVisible"
-      :visible="rightMenuConfigVisible"
-      title="菜单配置"
-      :panel-data="panelData"
-      @submit="submitButtonBarSetting"
-      @hidden="rightMenuConfigVisible = false"
-    >
+    <common-button-bar-setting v-if="rightMenuConfigVisible"
+                               :visible="rightMenuConfigVisible"
+                               title="菜单配置"
+                               :panel-data="panelData"
+                               @submit="submitButtonBarSetting"
+                               @hidden="rightMenuConfigVisible = false">
     </common-button-bar-setting>
-    <common-drawer v-if="versionListVisible" :visible="versionListVisible" size="70%" placement="top" title="版本列表" @close="versionListVisible = false">
+    <common-drawer v-if="versionListVisible"
+                   :visible="versionListVisible"
+                   size="70%"
+                   placement="top"
+                   title="版本列表"
+                   @close="versionListVisible = false">
       <template #drawer>
-        <version-list :plan-info-id="planInfoId" :main-gantt-name="ganttName"></version-list>
+        <version-list :plan-info-id="planInfoId"
+                      :main-gantt-name="ganttName"></version-list>
       </template>
     </common-drawer>
   </div>
@@ -202,10 +269,10 @@
     box-sizing: border-box;
   }
 }
-::v-deep .el-icon-minus{
+::v-deep .el-icon-minus {
   margin-bottom: 4px !important;
 }
-::v-deep .el-icon-plus{
+::v-deep .el-icon-plus {
   margin-bottom: 4px !important;
 }
 
@@ -226,7 +293,7 @@ body {
 </style>
 <script>
 // import { Menu, Submenu, MenuItem, Drawer, InputNumber, Button } from 'p8-components-ui'
-import { Drawer, Button, P8Dialog as CommonDialog,P8Drawer as CommonDrawer, } from 'p8-components-ui'
+import { Drawer, Button, P8Dialog as CommonDialog, P8Drawer as CommonDrawer, } from 'p8-components-ui'
 import { CommandButtonData } from '@/assets/commonJS/ganttJS/commandButtonData'
 import { ChangeRightMenuData } from '@/assets/commonJS/ganttJS/changeRightMenuData'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
@@ -301,6 +368,10 @@ export default {
     changeId: {
       type: String,
       default: null
+    },
+    selectRow: {
+      type: Object,
+      default: null
     }
   },
   components: {
@@ -324,7 +395,7 @@ export default {
     CommandSearch,
     relevance
   },
-  data() {
+  data () {
     return {
       versionListVisible: false, //  版本列表显示隐藏
       ganttStatisticVisible: false,
@@ -414,7 +485,7 @@ export default {
     }
   },
   watch: {
-    $route() {
+    $route () {
       this.initGantt(this.planInfoId, this.changeRecordId, this.viewType)
     },
     selectedTasks: function (newVal, oldVal) {
@@ -485,7 +556,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     let that = this
     this.msg = {
       entityId: this.planInfoId,
@@ -518,19 +589,19 @@ export default {
     this.callParentSelectTasks()
   },
   computed: {
-    editUserList() {
+    editUserList () {
       return this.onlineData.filter((item) => {
         return item.entityId == this.planInfoId && item.entityType == this.createPage
       })
     },
-    isDisable() {
+    isDisable () {
       const that = this
       return function (btnConfig) {
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
         return btnData[0].isDisableFun(null, this.ganttName, this.selectedTasks)
       }
     },
-    buttonData() {
+    buttonData () {
       const that = this
       return function (btnConfig) {
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
@@ -610,18 +681,18 @@ export default {
       this.initGantt(this.planInfoId, this.changeRecordId, this.viewType)
       this.rightMenuConfigVisible = false
     },
-    relevanceOpen() {
+    relevanceOpen () {
       this.relevanceVisible = true
     },
-    closeRelevance() {
+    closeRelevance () {
       this.relevanceVisible = false
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage, this.changeRecordId, true)
     },
-    closeRelevanceChange(taskDatas, id) {
+    closeRelevanceChange (taskDatas, id) {
       this.temporaryDatas = taskDatas
       this.selectedId = id
     },
-    showTaskProgressDialog(taskId) {
+    showTaskProgressDialog (taskId) {
       this.selectedId = taskId
       this.pageType = 'history'
       this.$emit('show-detail', myGantt.getTask(taskId), this.ganttName, '', 'history')
@@ -632,7 +703,7 @@ export default {
         }
       })
     },
-    async initGantt(planInfoId, changeRecordId, viewType) {
+    async initGantt (planInfoId, changeRecordId, viewType) {
       // 根据项目类型，获取gantt列设置
       this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
       await this.getExtraList(this.columnSettings)
@@ -689,7 +760,7 @@ export default {
       // 加载数据
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage, changeRecordId)
     },
-    loadGanttData(planInfoId, taskId, createPage, changeRecordId, xqFalg) {
+    loadGanttData (planInfoId, taskId, createPage, changeRecordId, xqFalg) {
       this.loading = true
       const vueThis = this
       vueThis.$api['planGanttManager.loadPlanGanttData']({
@@ -865,19 +936,22 @@ export default {
               })
               vueThis.taskExtendRequests = vueThis.taskExtendRequests.concat(extraData)
             }
+            if (vueThis.selectRow && vueThis.selectRow.lastCreateTaskId) {
+              vueThis.newTaskMap[vueThis.selectRow.lastCreateTaskId] = vueThis.oldTaskMap[vueThis.selectRow.lastCreateTaskId]
+            }
           }
         })
         .catch(function (error) {
           console.error('error' + error)
         })
     },
-    btnClick(btn, isDisable) {
+    btnClick (btn, isDisable) {
       if (!isDisable) {
         this.menuVisible = false
         btn.clickFun(null, this.ganttName, this.selectedTasks)
       }
     },
-    callParentSelectTasks() {
+    callParentSelectTasks () {
       this.$nextTick(() => {
         const task = myGantt.getTask(this.selectTaskId)
         this.$emit('switch-task', task)
@@ -897,14 +971,14 @@ export default {
         }
       })
     },
-    mouseMove(e) {
+    mouseMove (e) {
       if (this.menuVisible) {
         if (this.mouseY - 30 > e.clientY || this.mouseY + 30 < e.clientY || this.mouseX - 30 > e.clientX || this.mouseX + 30 < e.clientX) {
           this.menuVisible = false
         }
       }
     },
-    showDetail(type) {
+    showDetail (type) {
       this.pageType = 'switch'
       this.$emit('show-detail', myGantt.getTask(this.selectTaskId), this.ganttName, this.createPage, type)
       // if (this.$route.path === '/TaskChange') {
@@ -915,7 +989,7 @@ export default {
       //   }
       // }
     },
-    activityImportClosed() {
+    activityImportClosed () {
       this.activityImportVisible = false
       myGantt.eachSelectedTask(function (id) {
         if (myGantt.isTaskExists(id)) {
@@ -926,10 +1000,10 @@ export default {
       this.initGantt(this.planInfoId, null, this.viewType)
       this.callParentSelectTasks()
     },
-    monitorManagerSave(obj) {
+    monitorManagerSave (obj) {
       this.controlTimeVisible = false
     },
-    delSaveChange(task) {
+    delSaveChange (task) {
       if (task[0].infoType === 'create') {
         delete this.newTaskMap[task[0].id]
         return false
@@ -1000,7 +1074,7 @@ export default {
         }
       }
     },
-    saveChange() {
+    saveChange () {
       const that = this
       const obj = that.newTaskMap
       const oldObj = that.oldTaskMap
@@ -1098,7 +1172,7 @@ export default {
                 .then((res) => {
                   //
                 })
-                .catch((er) => {})
+                .catch((er) => { })
               // that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
               that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)
               that.hasSave = false
@@ -1107,7 +1181,7 @@ export default {
                   planInfoId: that.planInfoId,
                   taskList: that.temporaryDatas,
                   changeRecordId: that.changeRecordId
-                }).then(function (res) {})
+                }).then(function (res) { })
               }
             }
           })
@@ -1121,7 +1195,7 @@ export default {
         })
       }
     },
-    submitChange() {
+    submitChange () {
       const teamRoleValidatorParams = {
         planInfoId: this.planInfoId
       }
@@ -1153,7 +1227,7 @@ export default {
         }
       })
     },
-    submitChangeSave(obj) {
+    submitChangeSave (obj) {
       /* let this_ = this
       if (obj && obj.processInstanceIds && obj.processInstanceIds.length > 0) {
         nextApproveUser.initDataSource(obj.approveTime, obj.processInstanceIds, this_).then(res1 => {
@@ -1176,32 +1250,32 @@ export default {
       this.submitChangeValidate = false
       this.$emit('closed')
     },
-    closeSelectApproveUser() {
+    closeSelectApproveUser () {
       this.isSelectApproveUserView = false
       this.$emit('approved', this.formData.taskId)
     },
-    commitSelectApproveUser(fullParams) {
+    commitSelectApproveUser (fullParams) {
       this.$refs.form.submitForm(fullParams, this.saveApi)
       this.closeModal()
       this.$emit('closed', null)
     },
-    isfullscreen(isfullscreen) {
+    isfullscreen (isfullscreen) {
       if (isfullscreen) {
         this.customHeight = document.documentElement.clientHeight - 120
       } else {
         this.customHeight = 330
       }
     },
-    closeSearch() {
+    closeSearch () {
       this.ganttSearchVisible = false
     },
-    noticeShow() {
+    noticeShow () {
       this.noticeVisible = true
     },
-    closeNotice() {
+    closeNotice () {
       this.noticeVisible = false
     },
-    async getExtraList(columnSettings) {
+    async getExtraList (columnSettings) {
       let that = this
       let extraList = columnSettings.filter((item) => item.attributeType === '1' && item.selectCode)
       let obj = {}
@@ -1216,7 +1290,7 @@ export default {
       }
     }
   },
-  beforeDestroy() {
+  beforeDestroy () {
     window.myWebSocket.emit('quitPlanGantGroup', this.msg)
     window.myWebSocket.off('  ')
   }
