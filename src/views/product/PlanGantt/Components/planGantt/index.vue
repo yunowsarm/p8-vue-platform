@@ -844,7 +844,7 @@ export default {
       extraMap: {},
       deleteCount: 0,
       isSueTaskIds: [],
-      foldHierarchy: ''
+      addTaskList: []
     }
   },
   watch: {
@@ -989,6 +989,21 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
+    addfoldState (task) {
+      setTimeout(() => {
+        task.open = task.$open
+        this.$api['planGanttManager.updateFoldLevel']({
+          tasks: [task]
+        }).then((res) => {
+          // if (res) {
+          //   this.$message({
+          //     message: '保存成功',
+          //     type: 'success'
+          //   })
+          // }
+        })
+      }, 1000)
+    },
     // 删除任务后的回调
     deleteTaskCallback () {
       this.$emit('delete-task-callback')

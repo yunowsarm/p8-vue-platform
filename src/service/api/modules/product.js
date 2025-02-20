@@ -1048,6 +1048,13 @@ export const repositoryApi = {
       path: '/product/pm/plan/extendSave',
       mockPath: '/product/pm/plan/extendSave',
       desc: '项目管理->计划管理->计划编辑->gantt拓展属性保存'
+    },
+    {
+      name: 'updateFoldLevel',
+      method: 'POST',
+      path: '/product/pm/plan/updateFoldLevel',
+      mockPath: '/product/pm/plan/updateFoldLevel',
+      desc: '项目管理->计划管理->计划编辑->gantt展开折叠保存'
     }
   ],
   planChange: [
