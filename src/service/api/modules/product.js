@@ -1055,6 +1055,13 @@ export const repositoryApi = {
       path: '/product/pm/plan/updateFoldLevel',
       mockPath: '/product/pm/plan/updateFoldLevel',
       desc: '项目管理->计划管理->计划编辑->gantt展开折叠保存'
+    },
+    {
+      name: 'aiGeneratedSendDescribe',
+      method: 'POST',
+      path: '/ai/intelligence/sendDescribe',
+      mockPath: '/ai/intelligence/sendDescribe',
+      desc: '项目管理->计划管理->计划编辑->AI自动生成'
     }
   ],
   planChange: [
