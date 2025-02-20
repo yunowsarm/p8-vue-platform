@@ -40,7 +40,7 @@ import isDisable, {
   isAllowImport,
   isExperienceImport,
   isDetailInfo,
-  isNotStart, isChangeGantt
+  isNotStart
 } from './isDisable'
 export const CommandButtonData = [
   {
@@ -777,26 +777,6 @@ export const CommandButtonData = [
     }
   },
   {
-    id: 'auto-generated',
-    icon: 'el-icon-magic-stick',
-    title: 'AI生成',
-    help: 'AI生成',
-    msg: '',
-    clickFun: function (btn, ganttName, tasks) {
-      const vueThis = store.getters.vueThis
-      vueThis.openAutoGeneration()
-    },
-    isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isReadOnly(ganttName, tasks),
-        () => isCompile(ganttName, tasks)
-      ]
-      const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
-      return res.disable
-    }
-  },
-  {
     id: 'demand-management',
     icon: 'p8 icon-task-distribute',
     title: '关联',
@@ -1346,7 +1326,6 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
-        () => isChangeGantt(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
         () => isReadOnly(ganttName, tasks),
         () => isCompile(ganttName, tasks),
@@ -1373,7 +1352,6 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
-        () => isChangeGantt(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
         () => isReadOnly(ganttName, tasks),
         () => isCompile(ganttName, tasks),
@@ -1482,12 +1460,7 @@ export const CommandButtonData = [
         })
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isChangeGantt(ganttName, tasks)
-      ]
-      const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
-      return res.disable
+      return false
     }
   },
   {
@@ -1526,12 +1499,7 @@ export const CommandButtonData = [
         })
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isChangeGantt(ganttName, tasks)
-      ]
-      const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
-      return res.disable
+      return false
     }
   },
   {
@@ -1793,7 +1761,6 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
-        () => isChangeGantt(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
         () => isReadOnly(ganttName, tasks),
         () => isCompile(ganttName, tasks),
@@ -1820,7 +1787,6 @@ export const CommandButtonData = [
         isDisableFun: function (btn, ganttName, tasks) {
           // 确保二级菜单跟一级菜单的disable状态一致
           const checks = [
-            () => isChangeGantt(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
             () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
@@ -1847,7 +1813,6 @@ export const CommandButtonData = [
         isDisableFun: function (btn, ganttName, tasks) {
           // 确保二级菜单跟一级菜单的disable状态一致
           const checks = [
-            () => isChangeGantt(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
             () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
@@ -1878,7 +1843,6 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
-        () => isChangeGantt(ganttName, tasks),
         () => isReadOnly(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks)
@@ -1904,7 +1868,6 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isChangeGantt(ganttName, tasks),
             () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             // () => isHasTask(ganttName, tasks),
@@ -1932,7 +1895,6 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isChangeGantt(ganttName, tasks),
             () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
@@ -1961,7 +1923,6 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isChangeGantt(ganttName, tasks),
             () => isHasTask(ganttName, tasks),
             () => isReadOnly(ganttName, tasks),
             () => isCompile(ganttName, tasks),
@@ -1987,7 +1948,6 @@ export const CommandButtonData = [
         },
         isDisableFun: function (btn, ganttName, tasks) {
           const checks = [
-            () => isChangeGantt(ganttName, tasks),
             () => isCompile(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks)
           ]
@@ -2010,7 +1970,6 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
-        () => isChangeGantt(ganttName, tasks),
         () => isCompile(ganttName, tasks)
       ]
       const res = isDisable(checks)
@@ -2048,7 +2007,6 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
-        () => isChangeGantt(ganttName, tasks),
         () => isCompile(ganttName, tasks)
       ]
       const res = isDisable(checks)
@@ -2223,12 +2181,7 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isChangeGantt(ganttName, tasks)
-      ]
-      const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
-      return res.disable
+      return false
     }
   },
   {

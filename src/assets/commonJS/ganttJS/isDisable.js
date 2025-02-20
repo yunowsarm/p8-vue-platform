@@ -337,9 +337,6 @@ export function isAllowAutoManual (ganttName, tasks) {
 
 // 判断是否允许更改样式
 export function isAllowChangeStyle (ganttName, tasks) {
-  if(isChangeGantt(ganttName).disable) {
-    return createDisableResponse(isChangeGantt(ganttName).message)
-  }
   const isDisableFunCheckRes = isDisableFunCheck(ganttName, tasks, '3')
   const res = checkReadOnly(ganttName)
   if (checkReadOnly(ganttName)) {

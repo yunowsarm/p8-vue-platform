@@ -1,5 +1,3 @@
-import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/commandButtonBarData'
-
 const CommandButtonBarDataDoubleRow = [
   {
     panelName: '任务',
@@ -333,17 +331,5 @@ const CommandButtonBarDataDoubleRow = [
     ]
   }
 ]
-if(aiAssistant){
-  CommandButtonBarDataDoubleRow[0].groups.push({
-    groupName: 'AI',
-    buttonConfigs: [
-      {
-        buttonId: 'auto-generated',
-        size: 'large',
-        position: ['top', 'right']
-      }
-    ]
-  })
-}
 
 export { CommandButtonBarDataDoubleRow }

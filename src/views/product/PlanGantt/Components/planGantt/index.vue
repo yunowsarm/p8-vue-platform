@@ -129,25 +129,6 @@
                 @close="closeNotice" />
       </template>
     </common-dialog>
-    <!-- ai自动生成   -->
-    <common-dialog title="AI生成"
-                   width="50%"
-                   :visible="autoGenerationVisible"
-                   @close="closeAutoGeneration"
-                   :is-view-cs-footer="false"
-                   :dialog-height="650"
-                   :show-handle-btn="false">
-      <template #dialog>
-        <auto-generation v-if="autoGenerationVisible"
-                :selected-tasks='selectedTasks'
-                         ref='autoGeneration'
-                :task-id="selectTaskId"
-                :gantt-name="ganttName"
-                :plan-info-id="planInfoId"
-                @refreshAiData='refreshAiData'
-                @close="closeAutoGeneration" />
-      </template>
-    </common-dialog>
     <monitor-time-manger v-if="controlTimeVisible"
                          :visible="controlTimeVisible"
                          :monitor-id="monitorId"
@@ -509,7 +490,6 @@ import VersionList from '../versionList'
 import ChangeHistory from '../changeHistory'
 import ExamineHistory from '../examineHistory'
 import relevance from '../relevance'
-import AutoGeneration from '@/views/product/PlanGantt/Components/autoGeneration/index.vue'
 import { version } from 'vue'
 import store from '@/plugins/store'
 import api from '@/plugins/api'
@@ -635,7 +615,6 @@ export default {
     CommonDrawer,
     ListLayout,
     Notice,
-    AutoGeneration,
     // Flight,
     // Large,
     // ProgressHistory,
@@ -675,7 +654,6 @@ export default {
       searchType: false,
       createNum: 1,
       noticeVisible: false,
-      autoGenerationVisible: false,
       menuVisible: false,
       treeDataEditorConfig: {
         useTreeFormat: true,
@@ -1010,19 +988,6 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
-    // 打开AI生成
-    openAutoGeneration () {
-      this.autoGenerationVisible = true
-    },
-    // 关闭AI生成
-    closeAutoGeneration () {
-      this.$refs.autoGeneration.saveChatHistory()
-      this.autoGenerationVisible = false
-    },
-    refreshAiData () {
-      console.log('refreshAiData','++++++++++++++')
-      this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
-    },
     // 删除任务后的回调
     deleteTaskCallback () {
       this.$emit('delete-task-callback')
@@ -1430,7 +1395,6 @@ export default {
       await this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
     },
     loadGanttData (planInfoId, taskId, createPage) {
-      console.log('loadGanttData','=================')
       const monitorBtns = this.monitorBtnsByApi
       window.createPage = createPage
       const vueThis = this

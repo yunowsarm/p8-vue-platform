@@ -313,12 +313,4 @@ const CommandButtonBarData = [
   }
 ]
 
-if(aiAssistant){
-  CommandButtonBarData[0].groups[0].buttonConfigs.unshift({
-    buttonId: 'auto-generated',
-    size: 'large',
-    position: ['top', 'right']
-  })
-}
-
 export { CommandButtonBarData }
