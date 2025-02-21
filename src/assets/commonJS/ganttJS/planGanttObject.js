@@ -611,8 +611,10 @@ export function getGanttColumns (ganttObject, vueThis) {
       min_width: 350,
       editor: checkEdit() ? editors.text : null,
       template: function (task) {
-        if (task.describes && task.describes !== '') {
-          task.unDescribes = '1'
+        if (task.unDescribes !== '1') {
+          if (task.describes && task.describes !== '') {
+            task.unDescribes = '1'
+          }
         }
         if (task.describes === '') {
           task.unDescribes = '0'

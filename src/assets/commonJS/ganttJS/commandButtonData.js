@@ -3143,7 +3143,8 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
           realBeginDate: item.realBeginDate,
           createBy: vueThis.$store.getters.userInfo.realName,
           createTime: moment().format('YYYY-MM-DD HH:mm:ss'),
-          ...extraTask
+          ...extraTask,
+          unDescribes: item.unDescribes
         }
         console.log(extraTask,'======extraTask');
         switch (pos) {
