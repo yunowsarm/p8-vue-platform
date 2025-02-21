@@ -264,7 +264,7 @@ export function planGantt (ganttName, vueThis) {
     task.notes = task.notes ? task.notes : ''
     task.evaluation = task.evaluation ? task.evaluation : ''
     task.combinationName = task.combinationName ? task.combinationName : ''
-    vueThis.addfoldState(task)
+    // vueThis.addfoldState(task)
     if (task.switchType === '9010' || task.switchType === '9020') {
       return false
     }
