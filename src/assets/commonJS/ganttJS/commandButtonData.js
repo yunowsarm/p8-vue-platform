@@ -394,7 +394,8 @@ export const CommandButtonData = [
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       thisGantt.performAction('outdentAction', thisGantt)
-      // const vueThis = store.getters.vueThis
+      const vueThis = store.getters.vueThis
+      vueThis.$message.success('升级成功')
       // vueThis.selectMultipleTasks(tasks)
     },
     isDisableFun: function (btn, ganttName, tasks) {
@@ -468,7 +469,8 @@ export const CommandButtonData = [
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       thisGantt.performAction('indentAction', thisGantt)
-      // const vueThis = store.getters.vueThis
+      const vueThis = store.getters.vueThis
+      vueThis.$message.success('降级成功')
       // vueThis.selectMultipleTasks(tasks)
     },
     isDisableFun: function (btn, ganttName, tasks) {
