@@ -234,4 +234,7 @@ export default {
 .formList.el-form > .el-row.formBtn {
   border-top: none;
 }
+::v-deep .el-tabs__content{
+  padding: 0 !important;
+}
 </style>

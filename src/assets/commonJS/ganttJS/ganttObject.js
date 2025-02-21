@@ -2594,10 +2594,10 @@ GanttObject.checkoutBeforeCellSave = function (ganttObject, vueThis) {
           const maxStartTime = moment(ganttObject.config.plan_limit(ganttObject, taskId, 'max', 'start')).format('YYYY-MM-DD')
           if (sVal === oVal) {
             result = false
-          } else if (sVal < minStartTime || sVal > maxStartTime) {
-            result = false
-            msg = '计划开始时间超出设置范围值！'
-            task.start_date = state.oldValue
+          // } else if (sVal < minStartTime || sVal > maxStartTime) {
+          //   result = false
+          //   msg = '计划开始时间超出设置范围值！'
+          //   task.start_date = state.oldValue
           } else {
             // 计算完成时间
             const endDate = ganttObject.date.add(ganttObject.calculateEndDate(state.newValue, task.duration), -1, 'day')
