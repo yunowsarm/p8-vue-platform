@@ -1,79 +1,86 @@
 <template>
   <div style="height: 100%">
-    <div class="couerDivClass" id="couerDiv">
-      <P8SplitPane :class="splitPaneDisable ? 'disable_split_pane' : ''" className="split_pane" split="vertical" @resize="paneSizeChange" :defaultPercent="defaultPercent" :minPercent="0">
+    <div class="couerDivClass"
+         id="couerDiv">
+      <P8SplitPane :class="splitPaneDisable ? 'disable_split_pane' : ''"
+                   className="split_pane"
+                   split="vertical"
+                   @resize="paneSizeChange"
+                   :defaultPercent="defaultPercent"
+                   :minPercent="0">
         <template #paneL>
-          <div class="top" :style="{ height: commandButtonBarHeight }">
-            <command-button-bar
-              ref="commandBottonBar"
-              :panel-data="btnData"
-              :selected-tasks="selectedTasks"
-              :gantt-name="ganttName"
-              :plan-info-id="planInfoId"
-              :need-arrow="false"
-              :task-id="taskId"
-            ></command-button-bar>
+          <div class="top"
+               :style="{ height: commandButtonBarHeight }">
+            <command-button-bar ref="commandBottonBar"
+                                :panel-data="btnData"
+                                :selected-tasks="selectedTasks"
+                                :gantt-name="ganttName"
+                                :plan-info-id="planInfoId"
+                                :need-arrow="false"
+                                :task-id="taskId"></command-button-bar>
           </div>
           <div class="bottom">
-            <task-statistics-gantt
-              ref="planGantt"
-              :project-id="projectId"
-              :plan-info-id="planInfoId"
-              :whole-describe-id="wholeDescribeId"
-              :plan-info-status="planInfoStatus"
-              :task-id="taskId"
-              :plan-end-date-array="planEndDateArray"
-              :plan-begin-date-array="planBeginDateArray"
-              :create-page="createPage"
-              :panel-data="btnData"
-              @select-task="selectTask"
-              @open="openLocation"
-              @show-detail="showDetail"
-              @switch-task="switchTask"
-              @refreshData="refreshData"
-              @save-success="detailDrawerClosed"
-              @update-view-width="updateViewWidth"
-              :task-status="taskStatus"
-            ></task-statistics-gantt>
+            <task-statistics-gantt ref="planGantt"
+                                   :project-id="projectId"
+                                   :plan-info-id="planInfoId"
+                                   :whole-describe-id="wholeDescribeId"
+                                   :plan-info-status="planInfoStatus"
+                                   :task-id="taskId"
+                                   :plan-end-date-array="planEndDateArray"
+                                   :plan-begin-date-array="planBeginDateArray"
+                                   :create-page="createPage"
+                                   :panel-data="btnData"
+                                   @select-task="selectTask"
+                                   @open="openLocation"
+                                   @show-detail="showDetail"
+                                   @switch-task="switchTask"
+                                   @refreshData="refreshData"
+                                   @save-success="detailDrawerClosed"
+                                   @update-view-width="updateViewWidth"
+                                   :task-status="taskStatus"></task-statistics-gantt>
           </div>
         </template>
         <template #paneR>
-          <div v-if="defaultPercent < 99" class="x-style"><i class="el-dialog__close el-icon el-icon-close" @click="closeClick"></i></div>
-          <ProgressHistory v-if="pageType === 'history'" :key="renderKey" :task-id="selectTaskId" />
+          <div v-if="defaultPercent < 99"
+               class="x-style"><i class="el-dialog__close el-icon el-icon-close"
+               @click="closeClick"></i></div>
+          <div v-if="defaultPercent < 99">
+            <ProgressHistory v-if="pageType === 'history'"
+                             :key="renderKey"
+                             :task-id="selectTaskId" />
 
-          <plan-attribute
-            v-else-if="!splitPaneDisable"
-            :key="renderKey"
-            @save-success="detailDrawerClosed"
-            :create-page="createPage"
-            :task-id="selectTaskId"
-            :wholeDescribeId="wholeDescribeId"
-            :att-read-only="readOnly"
-            :view-type="viewType"
-            :gantt-name="ganttName"
-            :status="status"
-            :defaultPercent="defaultPercent"
-            :view-width="viewWidth"
-            @refreshData="refreshData"
-            :plan-info-id="planInfoId"
-          ></plan-attribute>
+            <plan-attribute v-else-if="!splitPaneDisable"
+                            :key="renderKey"
+                            @save-success="detailDrawerClosed"
+                            :create-page="createPage"
+                            :task-id="selectTaskId"
+                            :wholeDescribeId="wholeDescribeId"
+                            :att-read-only="readOnly"
+                            :view-type="viewType"
+                            :gantt-name="ganttName"
+                            :status="status"
+                            :defaultPercent="defaultPercent"
+                            :view-width="viewWidth"
+                            @refreshData="refreshData"
+                            :plan-info-id="planInfoId"></plan-attribute>
+          </div>
         </template>
       </P8SplitPane>
-      <command-location v-if="dialogVisible" :visible="dialogVisible" @close="closeLocation">
+      <command-location v-if="dialogVisible"
+                        :visible="dialogVisible"
+                        @close="closeLocation">
         <template>
-          <location-view
-            ref="planGanttView"
-            :plan-info-id="planInfoId"
-            :whole-describe-id="wholeDescribeId"
-            :plan-info-status="planInfoStatus"
-            :task-id="taskId"
-            :plan-end-date-array="planEndDateArray"
-            :plan-begin-date-array="planBeginDateArray"
-            :create-page="createPage"
-            :panel-data="btnData"
-            :task-status="taskStatus"
-            @onChangeTask="onChangeTask"
-          ></location-view>
+          <location-view ref="planGanttView"
+                         :plan-info-id="planInfoId"
+                         :whole-describe-id="wholeDescribeId"
+                         :plan-info-status="planInfoStatus"
+                         :task-id="taskId"
+                         :plan-end-date-array="planEndDateArray"
+                         :plan-begin-date-array="planBeginDateArray"
+                         :create-page="createPage"
+                         :panel-data="btnData"
+                         :task-status="taskStatus"
+                         @onChangeTask="onChangeTask"></location-view>
         </template>
       </command-location>
     </div>
@@ -163,13 +170,13 @@ import locationView from '@/views/product/PlanGantt/Components/planGantt/locatio
 
 export default {
   name: 'taskStatisticsList',
-  props:{
-    projectId:{
+  props: {
+    projectId: {
       type: String,
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       ganttButtonMode: 'single',
       dialogVisible: false, // gantt定位弹出框
@@ -201,18 +208,18 @@ export default {
       status: '',
       advance: true,
       commandButtonBarHeight: '58px',
-      viewWidth:null
+      viewWidth: null
     }
   },
   computed: {
-    splitPaneDisable() {
+    splitPaneDisable () {
       const myGantt = GanttObject.getGanttObject(this.ganttName)
       const task = myGantt.getTask(this.selectTaskId)
       if (!this.selectTaskId) {
         return true
       } else return !task.parent
     },
-    btnData() {
+    btnData () {
       return CommandButtonBarData
     },
     ...mapGetters(['ganttRightButtons'])
@@ -228,28 +235,28 @@ export default {
     CommandLocation,
     locationView
   },
-  beforeMount() {},
-  created() {
+  beforeMount () { },
+  created () {
     this.firstEntry = true
   },
-  mounted() {
-    this.viewWidth =document.querySelector('#couerDiv').clientWidth
+  mounted () {
+    this.viewWidth = document.querySelector('#couerDiv').clientWidth
   },
   methods: {
-    updateViewWidth(viewWidth){
+    updateViewWidth (viewWidth) {
       this.viewWidth = viewWidth
     },
-    switchTask(task) {
+    switchTask (task) {
       if (!task.id) return
       let myGantt = GanttObject.getGanttObject(this.ganttName)
       myGantt.updateTask(task.id)
       this.selectTaskId = task.id
       this.renderKey = new Date().getTime()
     },
-    openLocation() {
+    openLocation () {
       this.dialogVisible = true
     },
-    closeLocation() {
+    closeLocation () {
       this.dialogVisible = false
       this.$store.getters.vueThis.searchForm = {}
       this.$store.getters.vueThisLocation.searchForm = {}
@@ -257,13 +264,13 @@ export default {
       // this.$refs.planGantt.selectedId = this.$store.getters.vueThisLocation.selectTaskId
       // this.$refs.planGantt.initGantt(this.planInfoId, 'grid')
     },
-    onChangeTask(row) {
+    onChangeTask (row) {
       let myGantt = GanttObject.getGanttObject(this.ganttName)
       myGantt.unselectTask()
       myGantt.showTask(row.id)
       myGantt.selectTask(row.id)
     },
-    refreshData(res) {
+    refreshData (res) {
       // // this.$refs.commandBottonBar.$refs.components.getDataMonitor()
       this.$refs.commandBottonBar.$refs.components11[1].getDataMonitor()
       this.$refs.commandBottonBar.$refs.components11[1].getDataTaskType()
@@ -276,16 +283,16 @@ export default {
         }, 1000)
       }
     },
-    selectTask(selectDatas, ganttName) {
+    selectTask (selectDatas, ganttName) {
       this.selectedTasks = selectDatas
       this.ganttName = ganttName
     },
-    closeClick() {
+    closeClick () {
       this.defaultPercent = 100
       this.$store.getters.vueThis.pageType = 'switch'
       this.firstEntry = true
     },
-    showDetail(selectTask, ganttName, viewType, switchType) {
+    showDetail (selectTask, ganttName, viewType, switchType) {
       this.selectTaskId = selectTask.id
       let myGantt = GanttObject.getGanttObject(this.ganttName)
       if (!selectTask.parent) {
@@ -318,17 +325,17 @@ export default {
         this.firstEntry = false
       }
     },
-    paneSizeChange(val) {
+    paneSizeChange (val) {
       this.defaultPercent = val
     },
-    detailDrawerClosed(res) {
+    detailDrawerClosed (res) {
       this.detailVisible = false
       this.$bus.$emit('ganttDetail', false)
       this.selectTaskId = ''
       this.detailTitle = ''
     }
   },
-  beforeDestroy() {
+  beforeDestroy () {
     window.myWebSocket.emit('quitPlanGantGroup', this.msg)
   }
 }

@@ -139,13 +139,13 @@
                    :show-handle-btn="false">
       <template #dialog>
         <auto-generation v-if="autoGenerationVisible"
-                :selected-tasks='selectedTasks'
+                         :selected-tasks='selectedTasks'
                          ref='autoGeneration'
-                :task-id="selectTaskId"
-                :gantt-name="ganttName"
-                :plan-info-id="planInfoId"
-                @refreshAiData='refreshAiData'
-                @close="closeAutoGeneration" />
+                         :task-id="selectTaskId"
+                         :gantt-name="ganttName"
+                         :plan-info-id="planInfoId"
+                         @refreshAiData='refreshAiData'
+                         @close="closeAutoGeneration" />
       </template>
     </common-dialog>
     <monitor-time-manger v-if="controlTimeVisible"
@@ -608,6 +608,10 @@ export default {
     flag: {
       type: String,
       default: ''
+    },
+    defaultPercent: {
+      type: Number,
+      default: ''
     }
   },
   components: {
@@ -878,7 +882,9 @@ export default {
       if (newVal && newVal.length === 1 && newVal[0].status) {
         this.selectTaskId = newVal[0].id
         this.selectTaskName = newVal[0].name
-        this.loadGantt()
+        if (this.defaultPercent < 99) {
+          this.loadGantt()
+        }
       } else {
         this.selectTaskId = ''
         this.selectTaskName = ''
@@ -1021,22 +1027,24 @@ export default {
       this.autoGenerationVisible = false
     },
     refreshAiData () {
-      console.log('refreshAiData','++++++++++++++')
+      console.log('refreshAiData', '++++++++++++++')
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
     },
     addfoldState (task) {
       setTimeout(() => {
-        task.open = task.$open
-        this.$api['planGanttManager.updateFoldLevel']({
-          tasks: [task]
-        }).then((res) => {
-          // if (res) {
-          //   this.$message({
-          //     message: '保存成功',
-          //     type: 'success'
-          //   })
-          // }
-        })
+        if (task.$open !== task.open) {
+          task.open = task.$open
+          this.$api['planGanttManager.updateFoldLevel']({
+            tasks: [task]
+          }).then((res) => {
+            // if (res) {
+            //   this.$message({
+            //     message: '保存成功',
+            //     type: 'success'
+            //   })
+            // }
+          })
+        }
       }, 1000)
     },
     // 删除任务后的回调
@@ -1446,7 +1454,7 @@ export default {
       await this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
     },
     loadGanttData (planInfoId, taskId, createPage) {
-      console.log('loadGanttData','=================')
+      console.log('loadGanttData', '=================')
       const monitorBtns = this.monitorBtnsByApi
       window.createPage = createPage
       const vueThis = this

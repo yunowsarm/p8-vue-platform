@@ -36,6 +36,7 @@
                         :project-category="thirdMenuParam.projectCategory"
                         :select-record="thirdMenuParam.selectRecord"
                         :panel-data="btnData"
+                        :defaultPercent="defaultPercent"
                         @select-task="selectTask"
                         @open="openLocation"
                         @show-detail="showDetail"
@@ -51,23 +52,25 @@
           <div v-if="defaultPercent <99"
                class="x-style"><i class="el-dialog__close el-icon el-icon-close"
                @click="closeClick"></i></div>
-          <ProgressHistory v-if="pageType === 'history'"
-                           :key="renderKey"
-                           :task-id="selectTaskId" />
+          <div v-if="defaultPercent <99">
+            <ProgressHistory v-if="pageType === 'history'"
+                             :key="renderKey"
+                             :task-id="selectTaskId" />
 
-          <plan-attribute v-else
-                          :key="renderKey"
-                          @save-success="detailDrawerClosed"
-                          :create-page="createPage"
-                          :task-id="selectTaskId"
-                          :wholeDescribeId="wholeDescribeId"
-                          :att-read-only="readOnly"
-                          :view-type="viewType"
-                          :gantt-name="ganttName"
-                          :status="status"
-                          :defaultPercent="defaultPercent"
-                          @refreshData="refreshData"
-                          :plan-info-id="planInfoId"></plan-attribute>
+            <plan-attribute v-else
+                            :key="renderKey"
+                            @save-success="detailDrawerClosed"
+                            :create-page="createPage"
+                            :task-id="selectTaskId"
+                            :wholeDescribeId="wholeDescribeId"
+                            :att-read-only="readOnly"
+                            :view-type="viewType"
+                            :gantt-name="ganttName"
+                            :status="status"
+                            :defaultPercent="defaultPercent"
+                            @refreshData="refreshData"
+                            :plan-info-id="planInfoId"></plan-attribute>
+          </div>
         </template>
       </P8SplitPane>
       <command-location v-if="dialogVisible"
@@ -340,7 +343,7 @@ export default {
     window.myWebSocket.emit('enterPlanGantGroup', this.msg)
   },
   methods: {
-    deleteTaskCallback(){
+    deleteTaskCallback () {
       this.selectTaskId = '';
       this.closeClick();
     },
