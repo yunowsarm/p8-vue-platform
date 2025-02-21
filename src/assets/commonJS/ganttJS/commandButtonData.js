@@ -3918,7 +3918,8 @@ function createTask (parent, parentId, vueThis, style, copyTask, ganttObject) {
     createSource: vueThis.createSource,
     planType: copyTask.planType,
     type: 'task',
-    $open: true
+    $open: true,
+     unDescribes: copyTask.unDescribes
   }
   return task
 }
