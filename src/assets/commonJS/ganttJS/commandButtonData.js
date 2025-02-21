@@ -3182,16 +3182,24 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
         let filteredData = ganttObject.serialize();  // 获取当前显示的所有任务数据
         let filteredTasks = []
         filteredData.data.forEach((item) => {
-                    if (ganttObject.isTaskVisible(item.id)) {
-                      filteredTasks.push(item.id);
-                    }
-          });
+          if (ganttObject.isTaskVisible(item.id)) {
+            filteredTasks.push(item.id);
+          }
+        });
         setTimeout(() => {
+          ganttObject.unselectTask()
           if (filteredTasks.indexOf(task.id) === -1) {
             ganttObject.selectTask(parentId)
           } else {
             ganttObject.selectTask(item.id)
           }
+          let ganttDatas = vueThis.$store.getters.ganttDatas
+          ganttDatas.tasks = []
+          ganttObject.eachTask((task) => {
+            ganttDatas.tasks.push(task);
+          });
+          // ganttDatas.loactionTaskId = item.id
+          vueThis.$store.dispatch('setGanttDatas', ganttDatas)
         }, 1000)
       })
     })
@@ -3289,6 +3297,19 @@ function removeTasks (ganttObject, dp, ganttName) {
     // 取消选中
     ganttObject.unselectTask(id)
   })
+  let ganttDatas = vueThis.$store.getters.ganttDatas
+  ganttDatas.tasks = []
+  ganttObject.eachTask((task) => {
+  console.log("🚀 ~ ganttObject.eachTask ~ task:", task.name)
+  selectedTaskIds.forEach(id => {
+    if (id !== task.id) {
+      ganttDatas.tasks.push(task);
+    }
+  })
+  });
+  // ganttDatas.loactionTaskId = ''
+//   ganttDatas.loactionTaskId = ganttObject.getParent(selectedTaskIds[0])
+  vueThis.$store.dispatch('setGanttDatas', ganttDatas)
   // 变更删除时，不删除任务，添加调减图标
   if (ganttName === 'changeGantt') {
     changeGanttRemove(ganttObject, selectedTaskIds, vueThis)
@@ -3741,6 +3762,28 @@ function noDpCreateTask (ganttObject, num, parent, pos, taskName, indexNo, autoS
       ganttObject.changeTaskId(task.id, task.id + 's')
       // 添加缓存
       setNewTaskMap(vueThis, task, null, 'task')
+      setTimeout(() => {
+        ganttObject.unselectTask()
+        if (filteredTasks.indexOf(task.id) === -1) {
+          ganttObject.selectTask(parentId)
+        } else {
+          ganttObject.selectTask(item.id)
+        }
+        let ganttDatas = vueThis.$store.getters.ganttDatas
+        ganttDatas.tasks = []
+        ganttObject.eachTask((task) => {
+          ganttDatas.tasks.push(task);
+        });
+        // ganttDatas.loactionTaskId = item.id
+        vueThis.$store.dispatch('setGanttDatas', ganttDatas)
+      }, 1000)
+          let ganttDatas = vueThis.$store.getters.ganttDatas
+          ganttDatas.tasks = []
+          ganttObject.eachTask((task) => {
+            ganttDatas.tasks.push(task);
+          });
+          // ganttDatas.loactionTaskId = item.id
+          vueThis.$store.dispatch('setGanttDatas', ganttDatas)
     }
   })
 }

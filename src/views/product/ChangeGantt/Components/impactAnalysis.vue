@@ -325,6 +325,7 @@ export default {
       vueThis.$api['planGanttManager.loadPlanGanttData']({ planInfoId: planInfoId, dicType: 'ACTIVITY_TYPE', taskId: taskId, createPage: createPage, changeRecordId: changeRecordId })
         .then(function (res) {
           if (res) {
+            vueThis.$store.dispatch('setGanttDatas', res)
             vueThis.tasks = res.tasks
             // 初始化数据
             const initData = res.tasks.map((item) => {

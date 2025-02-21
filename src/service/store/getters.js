@@ -40,6 +40,7 @@ const getters = {
   // planGantt页面任务样式
   taskStyles: (state) => state.planGanttState.taskStyles,
   vueThis: (state) => state.planGanttState.vueThis,
+  ganttDatas: (state) => state.planGanttState.ganttDatas,
   previousThis: (state) => state.planGanttState.previousThis,
   vueThisLocation: (state) => state.planGanttState.vueThisLocation,
   classifyBtnsByApi: (state) => state.planGanttState.classifyBtnsByApi,

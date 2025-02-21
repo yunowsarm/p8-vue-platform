@@ -14,7 +14,8 @@ const planGanttState = {
       versionGantt1: {},
       versionGantt2: {}
     },
-    monitorBtnsByApi: []
+    monitorBtnsByApi: [],
+    ganttDatas: []
   },
   mutations: {
     SET_BUTTONMSG (state, data) {
@@ -48,7 +49,10 @@ const planGanttState = {
       // if (datas.type === 'classify') {
       //   state.classifyBtnsByApi = datas.btns
       // }
-    }
+    },
+    SET_GANTT_DATAS(state, ganttDatas) {
+      state.ganttDatas = ganttDatas
+    },
   },
   actions: {
     setButtonMsg({ commit }, data) {
@@ -74,6 +78,9 @@ const planGanttState = {
     },
     setButtons({ commit }, datas) {
       commit('SET_BUTTONS', datas)
+    },
+    setGanttDatas({ commit }, ganttDatas) {
+      commit('SET_GANTT_DATAS', ganttDatas)
     },
     getPlanStatusLimitStrategy({ commit }) {
       return new Promise((resolve, reject) => {

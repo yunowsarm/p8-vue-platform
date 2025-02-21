@@ -976,6 +976,7 @@ export default {
       })
         .then(function (res) {
           if (res) {
+            vueThis.$store.dispatch('setGanttDatas', res)
             vueThis.fullscreenLoading.close()
             // 处理拓展字段已有的数据
             vueThis.extendMap = res.extendMap || {}
@@ -1031,7 +1032,7 @@ export default {
             myGantt.unselectTask()
             if (!vueThis.relevancePlanVisible && vueThis.selectedId) {
               setTimeout(() => {
-                // myGantt.showTask(vueThis.selectedId);
+                myGantt.showTask(vueThis.selectedId);
                 myGantt.selectTask(vueThis.selectedId);
               }, 1000)
             }

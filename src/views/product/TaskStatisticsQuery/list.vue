@@ -265,7 +265,7 @@ export default {
     onChangeTask (row) {
       let myGantt = GanttObject.getGanttObject(this.ganttName)
       myGantt.unselectTask()
-      // myGantt.showTask(row.id)
+      myGantt.showTask(row.id)
       myGantt.selectTask(row.id)
     },
     refreshData (res) {
@@ -276,7 +276,7 @@ export default {
         this.$refs.planGantt.loadGanttData(this.planInfoId, this.taskId, this.createPage)
         let myGantt = GanttObject.getGanttObject(this.ganttName)
         setTimeout(() => {
-          // myGantt.showTask(res)
+          myGantt.showTask(res)
           myGantt.selectTask(res)
         }, 1000)
       }

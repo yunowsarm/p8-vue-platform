@@ -240,7 +240,7 @@ export default {
       default: null
     },
     selectRow: {
-      type: String,
+      type: Object,
       default: null
     }
   },
@@ -349,7 +349,7 @@ export default {
     onChangeTask (row) {
       let myGantt = GanttObject.getGanttObject('changeGantt')
       myGantt.unselectTask()
-      // myGantt.showTask(row.id)
+      myGantt.showTask(row.id)
       myGantt.selectTask(row.id)
     },
     selectTask (selectDatas, ganttName) {

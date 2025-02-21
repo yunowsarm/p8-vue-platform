@@ -229,6 +229,14 @@ export default {
   watch: {
     selectedTasks: function (newVal, oldVal) {
       this.onChangeTask(newVal[0])
+    },
+    ganttDatas: {
+      handler (newVal, oldVal) {
+        console.log("🚀 ~ handler ~ newVal:", newVal)
+        myGanttLocation.clearAll()
+        this.loadGanttData(this.planInfoId, this.taskId, this.createPage, newVal)
+      },
+      deep: true
     }
   },
   created () {
@@ -238,7 +246,7 @@ export default {
 
   },
   computed: {
-    ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
+    ...mapGetters(['ganttDatas', 'taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
     onChangeTask (row) {
@@ -321,7 +329,7 @@ export default {
       myGanttLocation.init(this.$refs.myGanttLocation)
       this.$bus.$emit('ganttInit')
       // 加载数据
-      this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
+      this.loadGanttData(this.planInfoId, this.taskId, this.createPage, this.ganttDatas)
       // 配置团队成员编辑配置文件
       this.thirdMenuParam.planInfoId = this.planInfoId
       // this.thirdMenuParam.secretGrade = this.secretGrade
@@ -335,53 +343,61 @@ export default {
       //   this.group_type = '4'
       // }
     },
-    loadGanttData (planInfoId, taskId, createPage) {
-      const monitorBtns = this.monitorBtnsByApi
+    loadGanttData (planInfoId, taskId, createPage, ganttDatas) {
+      // const monitorBtns = this.monitorBtnsByApi
       window.createPage = createPage
       const vueThis = this
-      vueThis.$api['planGanttManager.loadPlanGanttData']({
-        planInfoId: planInfoId,
-        dicType: 'ACTIVITY_TYPE',
-        taskId: taskId,
-        createPage: createPage,
-        planBeginDateArray: vueThis.planBeginDateArray,
-        planEndDateArray: vueThis.planEndDateArray
-      })
-        .then(function (res) {
-          if (res) {
-            let taskList = res.tasks
-            vueThis.fullscreenLoading.close()
-            // 初始化数据
-            const datas = {
-              tasks: taskList,
-              links: res.links
-            }
-            vueThis.planEditLock = true
-            myGanttLocation.config.readonly = true
-            myGanttLocation.$resourcesStore.parse(res.resources)
-            // myGanttLocation.serverList('secretGrades', res.secretGradeList)
-            myGanttLocation.serverList('userList', res.userResourceList)
-            myGanttLocation.serverList(myGanttLocation.config.monitor_point, res.monitorPointDatas)
-            myGanttLocation.serverList(myGanttLocation.config.plan_type, res.taskClassifys)
-            myGanttLocation.serverList(myGanttLocation.config.tasks_cooperate_dept, res.deptList)
+      // vueThis.$api['planGanttManager.loadPlanGanttData']({
+      //   planInfoId: planInfoId,
+      //   dicType: 'ACTIVITY_TYPE',
+      //   taskId: taskId,
+      //   createPage: createPage,
+      //   planBeginDateArray: vueThis.planBeginDateArray,
+      //   planEndDateArray: vueThis.planEndDateArray
+      // })
+      //   .then(function (res) {
+      let res = ganttDatas
+      if (res) {
+        let taskList = res.tasks
+        vueThis.fullscreenLoading.close()
+        // 初始化数据
+        const datas = {
+          tasks: taskList,
+          links: res.links
+        }
+        vueThis.planEditLock = true
+        myGanttLocation.config.readonly = true
+        myGanttLocation.$resourcesStore.parse(res.resources)
+        // myGanttLocation.serverList('secretGrades', res.secretGradeList)
+        myGanttLocation.serverList('userList', res.userResourceList)
+        myGanttLocation.serverList(myGanttLocation.config.monitor_point, res.monitorPointDatas)
+        myGanttLocation.serverList(myGanttLocation.config.plan_type, res.taskClassifys)
+        myGanttLocation.serverList(myGanttLocation.config.tasks_cooperate_dept, res.deptList)
 
-            vueThis.budgetList = res.budgetList
-            vueThis.resourceSelectModel = ['team']
-            vueThis.taskClassifyDatas = res.taskClassifys
-            vueThis.issueStatus = res.issueStatus
-            vueThis.monitorPointDatas = res.monitorPointDatas
-            vueThis.monitorLockMap = res.monitorLock
-            vueThis.managerStatusMap = res.managerStatusMap
-            vueThis.taskStatusMap = res.taskStatusMap
-            myGanttLocation.parse(datas)
-          } else {
-            vueThis.fullscreenLoading.close()
-          }
-        })
-        .catch(function (error) {
-          vueThis.fullscreenLoading.close()
-          console.error('error' + error)
-        })
+        vueThis.budgetList = res.budgetList
+        vueThis.resourceSelectModel = ['team']
+        vueThis.taskClassifyDatas = res.taskClassifys
+        vueThis.issueStatus = res.issueStatus
+        vueThis.monitorPointDatas = res.monitorPointDatas
+        vueThis.monitorLockMap = res.monitorLock
+        vueThis.managerStatusMap = res.managerStatusMap
+        vueThis.taskStatusMap = res.taskStatusMap
+        myGanttLocation.parse(datas)
+        // if (ganttDatas.loactionTaskId) {
+        //   myGanttLocation.unselectTask()
+        //   setTimeout(() => {
+        //     myGanttLocation.showTask(ganttDatas.loactionTaskId)
+        //     myGanttLocation.selectTask(ganttDatas.loactionTaskId)
+        //   }, 1000)
+        // }
+      } else {
+        vueThis.fullscreenLoading.close()
+      }
+      // })
+      // .catch(function (error) {
+      //   vueThis.fullscreenLoading.close()
+      //   console.error('error' + error)
+      // })
     }
   }
 }

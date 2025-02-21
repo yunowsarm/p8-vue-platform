@@ -798,6 +798,7 @@ export default {
         .then(function (res) {
           vueThis.loading = false
           if (res) {
+            vueThis.$store.dispatch('setGanttDatas', res)
             vueThis.taskExtendRequests = []
             vueThis.resourcesData = res.resources
             // 初始化数据
@@ -933,8 +934,9 @@ export default {
             vueThis.taskCount = myGantt.getTaskCount()
             myGantt.unselectTask()
 
-            if (!vueThis.relevanceVisible) {
+            if (!vueThis.relevanceVisible && vueThis.selectedId) {
               setTimeout(() => {
+                myGantt.showTask(vueThis.selectedId)
                 myGantt.selectTask(vueThis.selectedId)
               }, 1000)
             }

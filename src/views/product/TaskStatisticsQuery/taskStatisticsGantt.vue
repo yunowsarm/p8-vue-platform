@@ -858,7 +858,7 @@ export default {
       await this.loadGanttData(this.projectId)
       setTimeout(() => {
         multipleTasks.forEach((item, index) => {
-          // myGantt.showTask(item.id)
+          myGantt.showTask(item.id)
           myGantt.selectTask(item.id)
         })
       }, 1000)
@@ -972,13 +972,13 @@ export default {
             }
             if (!vueThis.relevancePlanVisible && vueThis.selectedId) {
               setTimeout(() => {
-                // myGantt.showTask(vueThis.selectedId)
+                myGantt.showTask(vueThis.selectedId)
                 myGantt.selectTask(vueThis.selectedId)
               }, 1000)
             }
             if (vueThis.isSueTaskIds && vueThis.isSueTaskIds.length) {
               vueThis.isSueTaskIds.forEach((el) => {
-                // myGantt.showTask(el)
+                myGantt.showTask(el)
                 myGantt.selectTask(el)
               })
               vueThis.isSueTaskIds = null

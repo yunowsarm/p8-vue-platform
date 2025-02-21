@@ -364,10 +364,12 @@ export default {
       // this.$refs.planGantt.initGantt(this.planInfoId, 'grid')
     },
     onChangeTask (row) {
+      // if (!this.$store.getters.ganttDatas.loactionTaskId) {
       let myGantt = GanttObject.getGanttObject(this.ganttName)
       myGantt.unselectTask()
-      // myGantt.showTask(row.id)
+      myGantt.showTask(row.id)
       myGantt.selectTask(row.id)
+      // }
     },
     refreshData (res) {
       // // this.$refs.commandBottonBar.$refs.components.getDataMonitor()
@@ -377,7 +379,8 @@ export default {
         this.$refs.planGantt.loadGanttData(this.planInfoId, this.taskId, this.createPage)
         let myGantt = GanttObject.getGanttObject(this.ganttName)
         setTimeout(() => {
-          // myGantt.showTask(res)
+          myGantt.unselectTask()
+          myGantt.showTask(res)
           myGantt.selectTask(res)
         }, 1000)
       }
