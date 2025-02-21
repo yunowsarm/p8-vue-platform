@@ -932,6 +932,13 @@ export const repositoryApi = {
       desc: '项目管理->计划管理->gantt->获取计划统计信息'
     },
     {
+      name: 'getPlanTaskTypeData',
+      method: 'POST',
+      path: '/product/pm/plan/loadTaskTypeTask',
+      mockPath: '/product/pm/plan/loadTaskTypeTask',
+      desc: '项目管理->计划管理->gantt->获取计划统计信息'
+    },
+    {
       name: 'getPlanStatisticAllData',
       method: 'POST',
       path: '/product/pm/plan/loadMonitorAllTask',
