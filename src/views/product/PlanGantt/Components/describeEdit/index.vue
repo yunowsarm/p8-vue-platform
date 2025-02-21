@@ -149,7 +149,7 @@ export default {
         //   }
         // },
         {
-          type: 'view',
+          type: 'number',
           labelText: '工期',
           fieldName: 'duration',
           colLayout: 'doubleCol',

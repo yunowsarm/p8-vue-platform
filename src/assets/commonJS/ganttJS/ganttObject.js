@@ -1149,15 +1149,19 @@ GanttObject.customDateEditor = function (ganttObject) {
                   }
                 ],
                 disabledDate: (time) => {
-                  if (minValue && maxValue) {
-                    return new Date(maxValue).getTime() < time.getTime() || time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000
+                  if (minValue) {
+                    return time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000;
                   }
-                  if (!minValue && maxValue) {
-                    return new Date(maxValue).getTime() < time.getTime()
-                  }
-                  if (minValue && !maxValue) {
-                    return time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000
-                  }
+                  return false;
+                  // if (minValue && maxValue) {
+                  //   return new Date(maxValue).getTime() < time.getTime() || time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000
+                  // }
+                  // if (!minValue && maxValue) {
+                  //   return new Date(maxValue).getTime() < time.getTime()
+                  // }
+                  // if (minValue && !maxValue) {
+                  //   return time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000
+                  // }
                 }
               }
             }
