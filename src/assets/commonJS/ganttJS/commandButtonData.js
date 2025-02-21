@@ -3188,10 +3188,8 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
           });
         setTimeout(() => {
           if (filteredTasks.indexOf(task.id) === -1) {
-            ganttObject.showTask(parentId)
             ganttObject.selectTask(parentId)
           } else {
-            ganttObject.showTask(item.id)
             ganttObject.selectTask(item.id)
           }
         }, 1000)

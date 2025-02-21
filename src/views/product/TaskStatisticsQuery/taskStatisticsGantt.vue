@@ -1,11 +1,20 @@
 <!---->
 <template>
-  <div style="height: 100%; position: relative" class="Gantt">
-    <div id="actionMenu" v-show="menuVisible && menuData.length" ref="actionMenu" :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
-      <VuePerfectScrollbar class="scroll-area" :style="{ maxHeight: maxHeight, height: scrollBarHeight }">
-        <el-menu mode="vertical" :collapse="true">
+  <div style="height: 100%; position: relative"
+       class="Gantt">
+    <div id="actionMenu"
+         v-show="menuVisible && menuData.length"
+         ref="actionMenu"
+         :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
+      <VuePerfectScrollbar class="scroll-area"
+                           :style="{ maxHeight: maxHeight, height: scrollBarHeight }">
+        <el-menu mode="vertical"
+                 :collapse="true">
           <template v-for="(menu, index) in menuData">
-            <el-submenu v-if="buttonData(menu).children" :disabled="isDisable(menu)" :key="menu.id" :index="index + 'm'">
+            <el-submenu v-if="buttonData(menu).children"
+                        :disabled="isDisable(menu)"
+                        :key="menu.id"
+                        :index="index + 'm'">
               <span slot="title">
                 <span @click="btnClick(buttonData(menu), isDisable(menu))">
                   <i :class="buttonData(menu).icon"></i>
@@ -13,21 +22,36 @@
                 </span>
               </span>
               <template v-for="(btn, index) in buttonData(menu).children">
-                <el-menu-item v-if="btn.id !== 'createByNum'" :key="index" @click="btnClick(btn, btn.isDisableFun(null, ganttName, selectedTasks))" :index="btn.id">
+                <el-menu-item v-if="btn.id !== 'createByNum'"
+                              :key="index"
+                              @click="btnClick(btn, btn.isDisableFun(null, ganttName, selectedTasks))"
+                              :index="btn.id">
                   <i :class="btn.icon"></i>
                   <span> {{ btn.title }}</span>
                 </el-menu-item>
-                <el-submenu v-if="btn.id === 'createByNum'" :key="index + 'c'" :index="index + 'b'">
+                <el-submenu v-if="btn.id === 'createByNum'"
+                            :key="index + 'c'"
+                            :index="index + 'b'">
                   <span slot="title">
                     <i :class="btn.icon"></i>
                     <span> {{ btn.title }}</span>
                   </span>
-                  <el-input-number size="mini" v-model="createNum" :max="50" :min="1" :step-strictly="true" :step="1"></el-input-number>
-                  <el-button size="mini" @click="btn.clickFun(btn, ganttName, null)">确定</el-button>
+                  <el-input-number size="mini"
+                                   v-model="createNum"
+                                   :max="50"
+                                   :min="1"
+                                   :step-strictly="true"
+                                   :step="1"></el-input-number>
+                  <el-button size="mini"
+                             @click="btn.clickFun(btn, ganttName, null)">确定</el-button>
                 </el-submenu>
               </template>
             </el-submenu>
-            <el-menu-item v-else @click="btnClick(buttonData(menu), isDisable(menu))" :disabled="isDisable(menu)" :key="menu.id" :index="menu.id + 'm'">
+            <el-menu-item v-else
+                          @click="btnClick(buttonData(menu), isDisable(menu))"
+                          :disabled="isDisable(menu)"
+                          :key="menu.id"
+                          :index="menu.id + 'm'">
               <i :class="buttonData(menu).icon"></i>
               <span> {{ menu.title }}</span>
             </el-menu-item>
@@ -35,59 +59,68 @@
         </el-menu>
       </VuePerfectScrollbar>
     </div>
-    <div ref="myGantt" v-loading="loading" style="width: 100%; height: calc(100% - 40px) !important" @mousemove="mouseMove"></div>
+    <div ref="myGantt"
+         v-loading="loading"
+         style="width: 100%; height: calc(100% - 40px) !important"
+         @mousemove="mouseMove"></div>
     <div class="detail_div">
       <div style="width: 50%">
         <span style="margin-left: 16px">选中任务：</span>
-        <span @click="showDetail" class="detail_span">{{ selectTaskName }}</span>
+        <span @click="showDetail"
+              class="detail_span">{{ selectTaskName }}</span>
       </div>
       <div style="width: 50%">
         <span style="float: right; margin-right: 40px">合计 {{ taskCount || 0 }} 条</span>
         <span style="float: right; margin-right: 40px">已选中 {{ selectTaskCount || 0 }} 条</span>
       </div>
     </div>
-    <grid-setting
-      v-if="selectGridVisible"
-      :visible="selectGridVisible"
-      :columns="renderColumns"
-      :gantt-name="ganttName"
-      :create-page="createPage"
-      @close="selectGridlosed"
-      @save-setting="gridSaved"
-    ></grid-setting>
-    <common-dialog
-      title="查询"
-      width="90%"
-      v-if="ganttSearchVisible"
-      :visible="ganttSearchVisible"
-      :show-handle-btn="false"
-      @isfullscreen="isfullscreen"
-      @close="closeSearch"
-      :is-view-cs-footer="false"
-      :dialog-height="360"
-    >
+    <grid-setting v-if="selectGridVisible"
+                  :visible="selectGridVisible"
+                  :columns="renderColumns"
+                  :gantt-name="ganttName"
+                  :create-page="createPage"
+                  @close="selectGridlosed"
+                  @save-setting="gridSaved"></grid-setting>
+    <common-dialog title="查询"
+                   width="90%"
+                   v-if="ganttSearchVisible"
+                   :visible="ganttSearchVisible"
+                   :show-handle-btn="false"
+                   @isfullscreen="isfullscreen"
+                   @close="closeSearch"
+                   :is-view-cs-footer="false"
+                   :dialog-height="360">
       <template #dialog>
-        <command-search :searchType="searchType" :gantt-name="ganttName" :plan-info-id="planInfoId" @close="closeSearch"></command-search>
+        <command-search :searchType="searchType"
+                        :gantt-name="ganttName"
+                        :plan-info-id="planInfoId"
+                        @close="closeSearch"></command-search>
       </template>
     </common-dialog>
-    <common-dialog
-      title="统计信息"
-      width="60%"
-      v-if="ganttStatisticVisible"
-      :visible="ganttStatisticVisible"
-      :show-handle-btn="false"
-      @isfullscreen="isfullscreen"
-      @close="closeStatistic"
-      :is-view-cs-footer="false"
-      :dialog-height="460"
-    >
+    <common-dialog title="统计信息"
+                   width="60%"
+                   v-if="ganttStatisticVisible"
+                   :visible="ganttStatisticVisible"
+                   :show-handle-btn="false"
+                   @isfullscreen="isfullscreen"
+                   @close="closeStatistic"
+                   :is-view-cs-footer="false"
+                   :dialog-height="460">
       <template #dialog>
-        <command-statistic :gantt-name="ganttName" :project-id="projectId"></command-statistic>
+        <command-statistic :gantt-name="ganttName"
+                           :project-id="projectId"></command-statistic>
       </template>
     </common-dialog>
-    <common-drawer v-if="changeHistoryVisible" :visible="changeHistoryVisible" size="80%" placement="top" title="任务历史变更" @close="changeHistoryClose">
+    <common-drawer v-if="changeHistoryVisible"
+                   :visible="changeHistoryVisible"
+                   size="80%"
+                   placement="top"
+                   title="任务历史变更"
+                   @close="changeHistoryClose">
       <template #drawer>
-        <ChangeHistory :plan-info-id="planInfoId" :task-id="selectTaskId" :create-page="createPage" />
+        <ChangeHistory :plan-info-id="planInfoId"
+                       :task-id="selectTaskId"
+                       :create-page="createPage" />
       </template>
     </common-drawer>
   </div>
@@ -316,7 +349,7 @@ export default {
     VuePerfectScrollbar,
     ChangeHistory
   },
-  data() {
+  data () {
     const mh = document.documentElement.clientHeight - 300
     return {
       taskList: [],
@@ -563,7 +596,7 @@ export default {
       }
     },
     ganttRightButtons: {
-      handler(val) {
+      handler (val) {
         this.menuData = val.length ? val : []
         this.scrollBarHeight = 40 * this.menuData.length + 1 + 'px'
       },
@@ -571,8 +604,8 @@ export default {
       deep: true
     }
   },
-  created() {},
-  mounted() {
+  created () { },
+  mounted () {
     this.initGantt(this.projectId, this.viewType)
     const that = this
     this.scrollBarHeight = 40 * this.menuData.length + 1 + 'px'
@@ -612,26 +645,26 @@ export default {
     // })
   },
   computed: {
-    editUserList() {
+    editUserList () {
       return this.onlineData.filter((item) => {
         return item.entityId == this.planInfoId && item.entityType !== 'userChange'
       })
     },
-    isDisable() {
+    isDisable () {
       const that = this
       return function (btnConfig) {
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
         return btnData[0].isDisableFun(null, this.ganttName, this.selectedTasks)
       }
     },
-    buttonData() {
+    buttonData () {
       const that = this
       return function (btnConfig) {
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
         return btnData[0]
       }
     },
-    ganttRightButtons() {
+    ganttRightButtons () {
       return [
         {
           title: '详细信息',
@@ -643,7 +676,7 @@ export default {
     ...mapGetters(['taskStyles', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
-    fullscreen(btn) {
+    fullscreen (btn) {
       myGantt.ext.fullscreen.getFullscreenElement = function () {
         return document.querySelector('#couerDiv')
       }
@@ -658,39 +691,39 @@ export default {
         btn.icon = 'p8 icon-full-screen'
         btn.help = '全屏'
         viewWidth = document.querySelector('#couerDiv').clientWidth;
-        this.$emit('update-view-width',viewWidth)
+        this.$emit('update-view-width', viewWidth)
       });
       myGantt.attachEvent("onExpand", () => {
         btn.title = '退出全屏'
         btn.icon = 'p8 icon-exit-fullscreen'
         btn.help = '退出全屏'
         viewWidth = window.innerWidth;
-        this.$emit('update-view-width',viewWidth)
+        this.$emit('update-view-width', viewWidth)
       });
     },
-    refreshGanttData() {
+    refreshGanttData () {
       myGantt.refreshData()
       this.$store.dispatch('setVueThis', this)
     },
-    relevanceOpen() {
+    relevanceOpen () {
       this.relevancePlanVisible = true
     },
-    relevanceClick(id) {
+    relevanceClick (id) {
       // this.selectedTasks = [id]
       this.selectedId = id
     },
-    refreshData() {
+    refreshData () {
       this.$emit('refreshData')
     },
-    closeRelevance() {
+    closeRelevance () {
       this.loadGanttData(this.planInfoId)
       this.relevancePlanVisible = false
     },
-    copyExperienceBase(ids) {
+    copyExperienceBase (ids) {
       this.copyTasks = ids
       this.copyFlag = true
     },
-    closExperienceBase(res) {
+    closExperienceBase (res) {
       this.isManage = false
       this.experienceBaseVisible = false
 
@@ -698,16 +731,16 @@ export default {
         this.loadGanttData(this.planInfoId)
       }
     },
-    closeCreate() {
+    closeCreate () {
       this.createVisible = false
     },
-    movement() {
+    movement () {
       this.loadGanttData(this.planInfoId)
     },
     /**
      * 处理数据，全选行，默认只选子不选父
      */
-    selectAllRow(data, flag) {
+    selectAllRow (data, flag) {
       const _this = this
       data.map((row) => {
         if (row.children && row.children.length > 0) {
@@ -721,7 +754,7 @@ export default {
         }
       })
     },
-    isfullscreen(isfullscreen) {
+    isfullscreen (isfullscreen) {
       if (isfullscreen) {
         this.customHeight = document.documentElement.clientHeight - 120
       } else {
@@ -729,7 +762,7 @@ export default {
       }
     },
     // 取消选中递归
-    clearRow(data) {
+    clearRow (data) {
       Array.from(data).forEach((row) => {
         row.isCheck = false // 给这行数据设置一个选中字段为false
         this.$refs.table.$refs.table.toggleRowSelection(row, false)
@@ -737,29 +770,29 @@ export default {
       })
     },
     // 选中递归
-    checkRow(data) {
+    checkRow (data) {
       Array.from(data).forEach((row) => {
         row.isCheck = true // 选中是字段值为true
         this.$refs.table.$refs.table.toggleRowSelection(row, true)
         if (row.children) this.checkRow(row.children)
       })
     },
-    saveCallback() {
+    saveCallback () {
       this.onEditModelClose()
     },
-    onEditModelClose() {
+    onEditModelClose () {
       this.selectedRowKeys = []
       this.innerVisible = false
       this.myExperienceVisible = false
     },
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       // this.selectedRowKeys = []
       // this.multipleSelection = val
       // val.map(item => {
       //   this.selectedRowKeys.push(item.id)
       // })
     },
-    async initGantt(projectId, viewType) {
+    async initGantt (projectId, viewType) {
       // this.fullscreenLoading = this.$loading({
       //   lock: true,
       //   text: 'Loading',
@@ -803,8 +836,8 @@ export default {
       const planGanttConfig =
         vueThis.userSettingAll.PlanStyleClass && vueThis.userSettingAll.PlanStyleClass.length
           ? vueThis.userSettingAll.PlanStyleClass.find((i) => {
-              return i.key === 'grid-cell-border'
-            })
+            return i.key === 'grid-cell-border'
+          })
           : null
       let rootClass = this.$refs.myGantt.getAttribute('class') || ''
       if (planGanttConfig) {
@@ -820,17 +853,17 @@ export default {
       // 加载数据
       this.loadGanttData(this.projectId)
     },
-    async selectMultipleTasks(tasks) {
+    async selectMultipleTasks (tasks) {
       const multipleTasks = JSON.parse(JSON.stringify(tasks))
       await this.loadGanttData(this.projectId)
       setTimeout(() => {
         multipleTasks.forEach((item, index) => {
-          myGantt.showTask(item.id)
+          // myGantt.showTask(item.id)
           myGantt.selectTask(item.id)
         })
       }, 1000)
     },
-    loadGanttData(projectId, open = false) {
+    loadGanttData (projectId, open = false) {
       this.loading = true
       const monitorBtns = this.monitorBtnsByApi
       window.createPage = this.createPage
@@ -848,15 +881,15 @@ export default {
             res.forEach((item) => {
               taskList = [...taskList, ...item.tasks]
               links = [...links, ...item.links]
-              if(item.extendMap){
-                vueThis.extendMap = {...vueThis.extendMap,...item.extendMap}
+              if (item.extendMap) {
+                vueThis.extendMap = { ...vueThis.extendMap, ...item.extendMap }
               }
               if (item.resources) {
                 resources = [...resources, ...item.resources];
                 resources = resources.filter((resource, index, self) =>
-                    index === self.findIndex((t) => (
-                      t.id === resource.id
-                    ))
+                  index === self.findIndex((t) => (
+                    t.id === resource.id
+                  ))
                 );
               }
             })
@@ -939,13 +972,13 @@ export default {
             }
             if (!vueThis.relevancePlanVisible && vueThis.selectedId) {
               setTimeout(() => {
-                myGantt.showTask(vueThis.selectedId)
+                // myGantt.showTask(vueThis.selectedId)
                 myGantt.selectTask(vueThis.selectedId)
               }, 1000)
             }
             if (vueThis.isSueTaskIds && vueThis.isSueTaskIds.length) {
               vueThis.isSueTaskIds.forEach((el) => {
-                myGantt.showTask(el)
+                // myGantt.showTask(el)
                 myGantt.selectTask(el)
               })
               vueThis.isSueTaskIds = null
@@ -963,14 +996,14 @@ export default {
         })
     },
     // 展开所有gantt
-    expandAll() {
+    expandAll () {
       this.loadGanttData(this.projectId, true)
     },
     // 收缩所有gantt
-    collapseAll() {
+    collapseAll () {
       this.loadGanttData(this.projectId, false)
     },
-    async gridSaved() {
+    async gridSaved () {
       this.selectGridVisible = false
       // 清空选中
       myGantt.unselectTask()
@@ -994,7 +1027,7 @@ export default {
       // 编辑器保存后逻辑
       // GanttObject.onSaveCellEven(myGantt, this)
     },
-    loadGantt() {
+    loadGantt () {
       let vueThis = this
       vueThis.dependentDatas = []
       vueThis.$api['planGanttManager.loadPlanGanttData']({
@@ -1019,13 +1052,13 @@ export default {
         }
       })
     },
-    btnClick(btn, isDisable) {
+    btnClick (btn, isDisable) {
       if (!isDisable) {
         this.menuVisible = false
         btn.clickFun(null, this.ganttName, this.selectedTasks)
       }
     },
-    callParentSelectTasks() {
+    callParentSelectTasks () {
       this.$nextTick(() => {
         const task = myGantt.getTask(this.selectTaskId)
         this.planInfoId = task.planInfoId
@@ -1036,14 +1069,14 @@ export default {
         }
       })
     },
-    mouseMove(e) {
+    mouseMove (e) {
       if (this.menuVisible) {
         if (this.mouseY - 30 > e.clientY || this.mouseY + 30 < e.clientY || this.mouseX - 30 > e.clientX || this.mouseX + 30 < e.clientX) {
           this.menuVisible = false
         }
       }
     },
-    showDetail(type) {
+    showDetail (type) {
       this.pageType = 'switch'
       // 如果是任务分解，非当前人员创建的，只能编辑责任人
       const userId = this.$store.getters.userInfo.id
@@ -1052,20 +1085,20 @@ export default {
         this.$emit('show-detail', task, this.ganttName, 'view', type)
       }
     },
-    selectGridlosed() {
+    selectGridlosed () {
       this.selectGridVisible = false
     },
-    closeSearch() {
+    closeSearch () {
       this.ganttSearchVisible = false
     },
-    closeStatistic() {
+    closeStatistic () {
       this.ganttStatisticVisible = false
     },
-    noticeShow() {
+    noticeShow () {
       this.noticeVisible = true
     },
     //  创建版本
-    createPlanVersion() {
+    createPlanVersion () {
       let version = ''
       this.$api['planGanttManager.getVersionNum']({
         planInfoId: this.planInfoId
@@ -1102,7 +1135,7 @@ export default {
         })
       })
     },
-    showTaskProgressDialog(taskId) {
+    showTaskProgressDialog (taskId) {
       this.selectedId = taskId
       this.pageType = 'history'
       this.$emit('show-detail', myGantt.getTask(taskId), this.ganttName, '', 'history')
@@ -1113,18 +1146,18 @@ export default {
         }
       })
     },
-    showChangeHistory() {
+    showChangeHistory () {
       this.changeHistoryVisible = true
     },
-    changeHistoryClose() {
+    changeHistoryClose () {
       this.changeHistoryVisible = false
       this.$store.dispatch('setVueThis', this)
     },
-    examineHistoryClose() {
+    examineHistoryClose () {
       this.examineHistoryVisible = false
       this.$store.dispatch('setVueThis', this)
     },
-    async getExtraList(columnSettings) {
+    async getExtraList (columnSettings) {
       let that = this
       let extraList = columnSettings.filter((item) => item.attributeType === '1' && item.selectCode)
       let obj = {}
@@ -1159,7 +1192,7 @@ export default {
     //     this.clearClick = true
     //   }
     // },
-    getSelectStatus() {
+    getSelectStatus () {
       let opacity = '0'
       let selectEles = document.querySelectorAll('.select-dropdown')
       if (selectEles && selectEles.length) {
@@ -1176,7 +1209,7 @@ export default {
       }
     }
   },
-  destroyed() {
+  destroyed () {
     window.myWebSocket.off('planGantGroup')
     // window.removeEventListener('keyup', this.deleteTask)
     this.$bus.$off('ganttDetail')

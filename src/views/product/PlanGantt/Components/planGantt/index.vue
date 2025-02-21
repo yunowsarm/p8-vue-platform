@@ -870,7 +870,8 @@ export default {
       extraMap: {},
       deleteCount: 0,
       isSueTaskIds: [],
-      addTaskList: []
+      addTaskList: [],
+      ganttDatas: {}
     }
   },
   watch: {
@@ -1468,6 +1469,7 @@ export default {
       })
         .then(function (res) {
           if (res) {
+            vueThis.ganttDatas = res
             let taskList = res.tasks
             vueThis.fullscreenLoading.close()
             // 先给task赋值拓展字段
@@ -1556,13 +1558,13 @@ export default {
 
             if (!vueThis.relevancePlanVisible && vueThis.selectedId) {
               setTimeout(() => {
-                myGantt.showTask(vueThis.selectedId)
+                // myGantt.showTask(vueThis.selectedId)
                 myGantt.selectTask(vueThis.selectedId)
               }, 1000)
             }
             if (vueThis.isSueTaskIds && vueThis.isSueTaskIds.length) {
               vueThis.isSueTaskIds.forEach((el) => {
-                myGantt.showTask(el)
+                // myGantt.showTask(el)
                 myGantt.selectTask(el)
               })
               vueThis.isSueTaskIds = []

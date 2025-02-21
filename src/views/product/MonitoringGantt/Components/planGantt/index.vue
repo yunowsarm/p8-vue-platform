@@ -43,7 +43,8 @@
                                    style='margin: 0 10px'
                                    :step="1"></el-input-number>
                   <el-button size="mini"
-                             @click="btn.clickFun(btn, ganttName, null)" style='margin-right: 10px'>确定</el-button>
+                             @click="btn.clickFun(btn, ganttName, null)"
+                             style='margin-right: 10px'>确定</el-button>
                 </el-submenu>
               </template>
             </el-submenu>
@@ -296,10 +297,10 @@
     box-sizing: border-box;
   }
 }
-::v-deep .el-icon-minus{
+::v-deep .el-icon-minus {
   margin-bottom: 4px !important;
 }
-::v-deep .el-icon-plus{
+::v-deep .el-icon-plus {
   margin-bottom: 4px !important;
 }
 ::v-deep .list-layout {
@@ -1030,7 +1031,7 @@ export default {
             myGantt.unselectTask()
             if (!vueThis.relevancePlanVisible && vueThis.selectedId) {
               setTimeout(() => {
-                myGantt.showTask(vueThis.selectedId);
+                // myGantt.showTask(vueThis.selectedId);
                 myGantt.selectTask(vueThis.selectedId);
               }, 1000)
             }

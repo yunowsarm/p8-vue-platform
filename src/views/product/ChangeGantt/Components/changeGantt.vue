@@ -935,7 +935,6 @@ export default {
 
             if (!vueThis.relevanceVisible) {
               setTimeout(() => {
-                myGantt.showTask(vueThis.selectedId)
                 myGantt.selectTask(vueThis.selectedId)
               }, 1000)
             }
