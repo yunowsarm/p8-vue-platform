@@ -790,7 +790,7 @@ $paddingLeft: 10px;
   height: unset !important;
 }
 .custom-tabs {
-  height: calc(100% - 40px);
+  height: 100%;
   ::v-deep .el-tabs {
     border: none;
     height: 100% !important;
@@ -846,9 +846,9 @@ $paddingLeft: 10px;
   box-sizing: border-box;
 }
 ::v-deep .el-tabs--top .el-tabs__content {
-  height: calc(100% - 30px) !important;
+  height: calc(100% - 69px) !important;
 }
 ::v-deep .main_content {
-  height: calc(100% - 30px) !important;
+  height: 100% !important;
 }
 </style>
