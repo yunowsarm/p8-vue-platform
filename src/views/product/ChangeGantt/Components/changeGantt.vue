@@ -481,7 +481,8 @@ export default {
       taskExtendRequests: [],
       extendMap: {},
       pageType: 'switch',
-      extraMap: {}
+      extraMap: {},
+      addTaskList: []
     }
   },
   watch: {
@@ -503,6 +504,11 @@ export default {
         // if (this.planAttributeDrawer) {
         // this.showDetail()
         // }
+        if (this.pageType === 'history') {
+          this.showTaskProgressDialog(newVal[0].id)
+        }
+        // const task = ganttObject.getTask(newVal[0].id)
+        // this.addfoldState(task)
       } else {
         this.selectTaskId = ''
         this.selectTaskName = ''
@@ -611,6 +617,24 @@ export default {
     ...mapGetters(['taskStyles'])
   },
   methods: {
+    addfoldState (task) {
+      console.log('2222222222222222222');
+      setTimeout(() => {
+        if (task.$open !== task.open) {
+          task.open = task.$open
+          this.$api['planGanttManager.updateFoldLevel']({
+            tasks: [task]
+          }).then((res) => {
+            // if (res) {
+            //   this.$message({
+            //     message: '保存成功',
+            //     type: 'success'
+            //   })
+            // }
+          })
+        }
+      }, 1000)
+    },
     closeStatistic () {
       this.ganttStatisticVisible = false
     },

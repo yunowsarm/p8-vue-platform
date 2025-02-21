@@ -70,12 +70,16 @@ export function getChangeGantt (ganttName, vueThis) {
   ganttObject.attachEvent('onLinkDblClick', function (id, item) {
     return false
   })
-  ganttObject.attachEvent('onTaskClick', function (id, item) {
-    if (vueThis.pageType === 'history') {
-        vueThis.showTaskProgressDialog(id)
-    }
-    return false
-  })
+  // ganttObject.attachEvent('onTaskClick', function (id, item) {
+    
+    // if (vueThis.pageType === 'history') {
+    //     vueThis.showTaskProgressDialog(id)
+    // }
+    // const task = ganttObject.getTask(id)
+    // console.log(task,'1111111111111111111111111111');
+
+    // vueThis.addfoldState(task)
+  // })
 
   // 网格行的背景颜色
   ganttObject.templates.grid_row_class = function (start, end, task) {

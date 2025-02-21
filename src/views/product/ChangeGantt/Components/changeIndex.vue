@@ -46,24 +46,22 @@
         <div v-if="defaultPercent !== 100"
              class="x-style"><i class="el-dialog__close el-icon el-icon-close"
              @click="closeClick"></i></div>
-        <div v-if="defaultPercent !== 100">
-          <ProgressHistory v-if="pageType === 'history'"
-                           :key="renderKey"
-                           :task-id="selectTaskId" />
-          <plan-attribute v-else
-                          @save-success="detailDrawerClosed"
-                          :task-id="selectTaskId"
-                          :key="renderKey"
-                          v-bind="$attrs"
-                          :create-page="createPage"
-                          :secret-grade="secretGrade"
-                          :att-read-only="readOnly"
-                          :gantt-name="ganttName"
-                          :status="status"
-                          :defaultPercent="defaultPercent"
-                          class="plan_attribute"
-                          :plan-info-id="planInfoId"></plan-attribute>
-        </div>
+        <ProgressHistory v-if="defaultPercent <99 && pageType === 'history'"
+                         :key="renderKey"
+                         :task-id="selectTaskId" />
+        <plan-attribute v-if="defaultPercent <99 && pageType !== 'history'"
+                        @save-success="detailDrawerClosed"
+                        :task-id="selectTaskId"
+                        :key="renderKey"
+                        v-bind="$attrs"
+                        :create-page="createPage"
+                        :secret-grade="secretGrade"
+                        :att-read-only="readOnly"
+                        :gantt-name="ganttName"
+                        :status="status"
+                        :defaultPercent="defaultPercent"
+                        class="plan_attribute"
+                        :plan-info-id="planInfoId"></plan-attribute>
       </template>
     </P8SplitPane>
     <command-location v-if="dialogVisible"
