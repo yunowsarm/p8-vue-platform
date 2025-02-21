@@ -49,6 +49,7 @@ export default {
       dark: '#212121'
     },
     systemThemeKey: `${PLATFORM_PREFIX_NAME}_SYSTEM_THEME`,
+    systemThemeKeyRgba: `${PLATFORM_PREFIX_NAME}_SYSTEM_THEME_RGBA`,
     systemImageKey: `${PLATFORM_PREFIX_NAME}_SYSTEM_IMAGE`,
     systemName: `${PLATFORM_PREFIX_NAME}_SYSTEM_NAME`,
   }

@@ -154,10 +154,12 @@ export default {
   }
   .commonTree.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
     color: #1890ff;
+    background: $theme-color-opacity;
     font-weight: unset;
   }
   .commonTree .el-tree-node__content:hover {
     color: #1890ff;
+    background: $theme-color-opacity;
     font-weight: unset;
   }
 }

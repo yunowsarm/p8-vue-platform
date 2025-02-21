@@ -4,11 +4,13 @@
 **/
 
 $theme-color: var(--theme-color);
+$theme-color-opacity: var(--theme-color-01);
 
 
 $drawer-header-color: #333333;
 $base-dark-color: #212121;
 $base-light-color: #0050b3;
+$base-light-color-rgba: rgba(0, 80, 179, 0.1);
 $base-white-color: #fff;
 $base-active-color: #e5f0f9;
 $base-disabled-color: #6d6d6d;

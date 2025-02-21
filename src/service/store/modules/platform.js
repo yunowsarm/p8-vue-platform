@@ -16,6 +16,8 @@ const SIDEBAR_OPEN_KEY = GLOBAL_CONST.sidebar.isCollpasedSideBarKey
 const SIDEBAR_OPEN_STATE = Cookie.get(SIDEBAR_OPEN_KEY) ? Cookie.get(SIDEBAR_OPEN_KEY) : 'true'
 // THEME
 const SYSTEM_THEME_KEY = GLOBAL_CONST.systemTheme.systemThemeKey
+// THEME RGBA
+const SYSTEM_THEME_RGBA_KEY = GLOBAL_CONST.systemTheme.systemThemeKeyRgba
 // IMAGE
 const SYSTEM_IMAGE_KEY = GLOBAL_CONST.systemTheme.systemImageKey
 // Shortcut
@@ -40,7 +42,12 @@ const updateStorageShortcutMenu = (token, shortcuts) => {
     })
   }
 }
-
+const getRGBOpacityColor = (color, opacity = 0.1) => {
+  const red = parseInt(color.slice(1, 3), 16);
+  const green = parseInt(color.slice(3, 5), 16);
+  const blue = parseInt(color.slice(5, 7), 16);
+  return `rgba(${red}, ${green}, ${blue}, ${opacity})`;
+}
 const getRGBcolor = (color, inGamut) => {
   let red = parseInt(color.slice(0, 2), 16)
   let green = parseInt(color.slice(2, 4), 16)
@@ -109,7 +116,7 @@ const platform = {
       width: SIDEBAR_HIDDEN_STATE === 'true' ? '0px' : SIDEBAR_OPEN_STATE === 'true' ? plateformVariables.sidebarMaxWidth : plateformVariables.sidebarMinWidth // 边栏宽度,elementUI 折叠变量为64px
     },
     // systemTheme: Cookie.get(SYSTEM_THEME_KEY) || 'chalk',
-    theme: Cookie.get(SYSTEM_THEME_KEY) || themeVariables.theme,
+    theme: Cookie.get(SYSTEM_THEME_RGBA_KEY) || themeVariables.theme,
     shortcutMenu: [], // 自定义菜单项,由用户自定义出的菜单项
     systemName: Cookie.get('P8V3.0-PLATFORM') || '',
     headerHeight: plateformVariables.headerHeight, // 头部(header)高度
@@ -196,12 +203,8 @@ const platform = {
       // state.systemTheme = theme
       state.theme = theme
       Cookie.set(SYSTEM_THEME_KEY, theme, 1000)
+      Cookie.set(SYSTEM_THEME_RGBA_KEY, getRGBOpacityColor(theme), 1000)
     },
-    // // 设置主题对比色
-    // SET_CONTRAST_COLOR(state, theme){
-    //   state.contrastColor = getContrastColor(theme)
-    //   Cookie.set(SYSTEM_CONTRAST_COLOR_KEY, state.contrastColor, 1000)
-    // },
     // 设置主题背景图
     SET_IMAGE(state, imageUrl) {
       state.imageUrl = imageUrl
@@ -239,9 +242,11 @@ const platform = {
       if (!theme || (theme === state.theme && handler)) {
         // theme 为空时为默认颜色#0050b3
         !theme && document.getElementsByTagName('body')[0].style.setProperty('--theme-color', '#0050b3')
+        !theme && document.getElementsByTagName('body')[0].style.setProperty('--theme-color-01', getRGBOpacityColor('#0050b3'))
         return
       } else {
         document.getElementsByTagName('body')[0].style.setProperty('--theme-color', theme)
+        document.getElementsByTagName('body')[0].style.setProperty('--theme-color-01', getRGBOpacityColor(theme))
       }
       //
       const themeCluster = getClusterColor(theme.replace('#', ''))
