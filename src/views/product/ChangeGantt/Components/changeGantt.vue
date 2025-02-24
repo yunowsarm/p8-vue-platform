@@ -618,21 +618,17 @@ export default {
   },
   methods: {
     addfoldState (task) {
-      console.log('2222222222222222222');
       setTimeout(() => {
-        if (task.$open !== task.open) {
-          task.open = task.$open
-          this.$api['planGanttManager.updateFoldLevel']({
-            tasks: [task]
-          }).then((res) => {
-            // if (res) {
-            //   this.$message({
-            //     message: '保存成功',
-            //     type: 'success'
-            //   })
-            // }
-          })
-        }
+        this.$api['planGanttManager.updateFoldLevel']({
+          tasks: [task]
+        }).then((res) => {
+          // if (res) {
+          //   this.$message({
+          //     message: '保存成功',
+          //     type: 'success'
+          //   })
+          // }
+        })
       }, 1000)
     },
     closeStatistic () {

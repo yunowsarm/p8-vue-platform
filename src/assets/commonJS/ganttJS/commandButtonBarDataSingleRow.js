@@ -228,16 +228,16 @@ const CommandButtonBarDataSingleRow = [
             size: 'small',
             position: ['top']
           },
-          // {
-          //   buttonId: 'unfold-config',
-          //   size: 'small',
-          //   position: ['top']
-          // },
-          // {
-          //   buttonId: 'fold-config',
-          //   size: 'small',
-          //   position: ['top']
-          // }
+          {
+            buttonId: 'unfold-config',
+            size: 'small',
+            position: ['top']
+          },
+          {
+            buttonId: 'fold-config',
+            size: 'small',
+            position: ['top']
+          }
         ]
       },
       {

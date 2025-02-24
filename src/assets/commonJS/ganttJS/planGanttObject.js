@@ -264,7 +264,11 @@ export function planGantt (ganttName, vueThis) {
     task.notes = task.notes ? task.notes : ''
     task.evaluation = task.evaluation ? task.evaluation : ''
     task.combinationName = task.combinationName ? task.combinationName : ''
-    // vueThis.addfoldState(task)
+      const target = e.target || e.srcElement;
+      if (target && target.classList[0] === 'gantt_tree_icon') {
+        const task = ganttObject.getTask(id)
+        vueThis.addfoldState(task)
+      }
     if (task.switchType === '9010' || task.switchType === '9020') {
       return false
     }

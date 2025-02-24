@@ -70,16 +70,20 @@ export function getChangeGantt (ganttName, vueThis) {
   ganttObject.attachEvent('onLinkDblClick', function (id, item) {
     return false
   })
-  // ganttObject.attachEvent('onTaskClick', function (id, item) {
-    
-    // if (vueThis.pageType === 'history') {
-    //     vueThis.showTaskProgressDialog(id)
-    // }
-    // const task = ganttObject.getTask(id)
-    // console.log(task,'1111111111111111111111111111');
-
-    // vueThis.addfoldState(task)
-  // })
+  ganttObject.attachEvent('onTaskClick', function (id, e) {
+    if (vueThis.pageType === 'history') {
+        vueThis.showTaskProgressDialog(id)
+    }
+    const target = e.target || e.srcElement;
+    if (target && target.classList.contains("gantt_tree_icon")) {
+      const task = ganttObject.getTask(id)
+      task.$open = !task.$open
+      task.open = !task.open
+      ganttObject.updateTask(task.id)
+      vueThis.addfoldState(task)
+        return true;
+    }
+  })
 
   // 网格行的背景颜色
   ganttObject.templates.grid_row_class = function (start, end, task) {

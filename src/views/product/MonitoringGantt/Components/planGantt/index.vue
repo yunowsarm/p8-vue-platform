@@ -765,6 +765,23 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll'])
   },
   methods: {
+    addfoldState (task) {
+      setTimeout(() => {
+        if (task.$open !== task.open) {
+          task.open = task.$open
+          this.$api['planGanttManager.updateFoldLevel']({
+            tasks: [task]
+          }).then((res) => {
+            // if (res) {
+            //   this.$message({
+            //     message: '保存成功',
+            //     type: 'success'
+            //   })
+            // }
+          })
+        }
+      }, 1000)
+    },
     closeDetailDrawer () {
       this.detailVisible = false
     },

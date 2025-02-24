@@ -206,21 +206,21 @@ const CommandButtonBarDataDoubleRow = [
             size: 'small',
             position: ['top']
           },
-          // {
-          //   buttonId: 'unfold-config',
-          //   size: 'small',
-          //   position: ['top']
-          // },
+          {
+            buttonId: 'unfold-config',
+            size: 'small',
+            position: ['top']
+          },
           {
             buttonId: 'reset-list',
             size: 'small',
             position: ['top']
           },
-          // {
-          //   buttonId: 'fold-config',
-          //   size: 'small',
-          //   position: ['top']
-          // },
+          {
+            buttonId: 'fold-config',
+            size: 'small',
+            position: ['top']
+          },
           {
             buttonId: 'location-list',
             size: 'small',
