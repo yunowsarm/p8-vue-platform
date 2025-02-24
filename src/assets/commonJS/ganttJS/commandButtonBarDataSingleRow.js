@@ -344,15 +344,10 @@ const CommandButtonBarDataSingleRow = [
   }
 ]
 if(aiAssistant){
-  CommandButtonBarDataSingleRow[0].groups.push({
-    groupName: 'AI',
-    buttonConfigs: [
-      {
-        buttonId: 'auto-generated',
-        size: 'small',
-        position: ['top', 'right']
-      }
-    ]
+  CommandButtonBarDataSingleRow[0].groups[0].buttonConfigs.unshift({
+    buttonId: 'auto-generated',
+    size: 'small',
+    position: ['top', 'right']
   })
 }
 
