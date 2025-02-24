@@ -130,7 +130,7 @@ export default {
             }
           ],
           eventHandle: {
-            // change: 'endDateChangeHandle'
+            change: 'endDateChangeHandle'
           }
         },
         // {
@@ -157,10 +157,10 @@ export default {
           fieldConfig: {
             disabled: false
           }
-          // ,
-          // eventHandle: {
-          //   change: 'durationChangeHandle'
-          // }
+          ,
+          eventHandle: {
+            change: 'durationChangeHandle'
+          }
         },
         {
           type: 'select',
@@ -785,15 +785,16 @@ export default {
       if (this.ganttObject.config.inline_editors_date_processing && this.ganttObject.config.inline_editors_date_processing === 'keepDates') {
         this.formData.duration = df.durationByStamp(df.stamp(this.formData.end_date) - df.stamp(value))
       } else {
+        debugger
         const expectEndDate = df.format(df.stamp(value) + df.stampByDuration(_this.formData.duration))
         /**
          * 2. 计划结束时间的最大限制
          */
-        if (df.stamp(expectEndDate) > df.stamp(maxEndDate)) {
-          this.formData.end_date = maxEndDate
-          this.formData.duration = df.durationByStamp(df.stamp(maxEndDate) - df.stamp(value))
-          return
-        }
+        // if (df.stamp(expectEndDate) > df.stamp(maxEndDate)) {
+        //   this.formData.end_date = maxEndDate
+        //   this.formData.duration = df.durationByStamp(df.stamp(maxEndDate) - df.stamp(value))
+        //   return
+        // }
         this.formData.end_date = expectEndDate
       }
       this.dataSource.forEach((item) => {
@@ -822,21 +823,21 @@ export default {
         maxEndDate = df.format(this.ganttObject.config.plan_limit(this.ganttObject, this.taskId, 'max', 'end'))
       }
       let value = val
-      if (df.stamp(val) > df.stamp(maxEndDate)) {
-        value = maxEndDate
-        this.formData.end_date = maxEndDate
-        // this.$message({
-        //   type: 'warning',
-        //   message: `计划完成时间截止期限为${maxEndDate}`
-        // })
-      } else if (df.stamp(val) < df.stamp(minEndDate)) {
-        value = minEndDate
-        this.formData.end_date = minEndDate
-        // this.$message({
-        //   type: 'warning',
-        //   message: `计划完成时间最小期限为${minEndDate}`
-        // })
-      }
+      // if (df.stamp(val) > df.stamp(maxEndDate)) {
+      //   value = maxEndDate
+      //   this.formData.end_date = maxEndDate
+      //   // this.$message({
+      //   //   type: 'warning',
+      //   //   message: `计划完成时间截止期限为${maxEndDate}`
+      //   // })
+      // } else if (df.stamp(val) < df.stamp(minEndDate)) {
+      //   value = minEndDate
+      //   this.formData.end_date = minEndDate
+      //   // this.$message({
+      //   //   type: 'warning',
+      //   //   message: `计划完成时间最小期限为${minEndDate}`
+      //   // })
+      // }
       const duration = df.durationByStamp(df.stamp(value) - df.stamp(_this.formData.start_date))
       this.formData.duration = duration
       if (duration < 1) {
@@ -866,17 +867,17 @@ export default {
     durationChangeHandle(val) {
       const _this = this
       const df = this.dateFormat()
-      const rootTask = this.ganttObject.getTaskByWBSCode('1')
-      const maxDuration = df.durationByStamp(df.stamp(rootTask.end_date) - df.stamp(_this.formData.start_date))
-      if (maxDuration - 1 < val) {
-        this.formData.end_date = rootTask.end_date
-        this.formData.duration = maxDuration
-      } else {
-        /**
-         * 设置计数器最大值
-         */
+      // const rootTask = this.ganttObject.getTaskByWBSCode('1')
+      // const maxDuration = df.durationByStamp(df.stamp(rootTask.end_date) - df.stamp(_this.formData.start_date))
+      // if (maxDuration - 1 < val) {
+      //   this.formData.end_date = rootTask.end_date
+      //   this.formData.duration = maxDuration
+      // } else {
+      //   /**
+      //    * 设置计数器最大值
+      //    */
         this.formData.end_date = df.format(df.stamp(_this.formData.start_date) + df.stampByDuration(val))
-      }
+      // }
     },
     dateFormat() {
       const d = {
