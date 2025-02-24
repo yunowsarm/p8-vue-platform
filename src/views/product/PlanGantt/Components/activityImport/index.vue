@@ -276,7 +276,7 @@ export default {
           createPage: this.vueThis.createPage
         })
           .then(function (res) {
-            if (res === 'true') {
+            if (res && res.length > 0) {
               that.showMessage('活动导入成功！', 'success')
               that.$emit('save-success', res)
             } else {

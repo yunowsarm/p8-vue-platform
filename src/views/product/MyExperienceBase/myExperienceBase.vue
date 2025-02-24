@@ -382,7 +382,7 @@ export default {
         }
         that.$api['MyExperience.importTaskEx'](params)
           .then((res) => {
-            if (res === 'true') {
+            if (res && res.length > 0) {
               that.$emit('handleCancel', res)
               that.$message.success('导入成功')
             } else {
