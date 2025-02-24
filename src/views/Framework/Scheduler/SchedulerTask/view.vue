@@ -62,7 +62,7 @@ export default {
             let v = ''
             switch (cellValue) {
               case 'immediately':
-                v = '立即执行'
+                v = '立即执行+定时轮询'
                 break
               case 'polling':
                 v = '定时轮询'

@@ -147,7 +147,7 @@ export default {
               let v = ''
               switch (cellValue) {
                 case 'immediately':
-                  v = '立即执行'
+                  v = '立即执行+定时轮询'
                   break
                 case 'polling':
                   v = '定时轮询'
@@ -219,7 +219,7 @@ export default {
             labelText: '时机',
             fieldName: 'timing',
             options: [
-              { key: 'immediately', label: '立即执行', value: 'immediately' },
+              { key: 'immediately', label: '立即执行+定时轮询', value: 'immediately' },
               { key: 'polling', label: '定时轮询', value: 'polling' }
             ],
             colLayout: 'doubleCol'
