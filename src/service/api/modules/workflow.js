@@ -202,6 +202,13 @@ export const workflowApi = {
       desc: '保存消息'
     },
     {
+      name: 'myMessageGroup',
+      method: 'POST',
+      path: '/framework/message/Message/myMessageGroup',
+      mockPath: '/framework/message/Message/myMessageGroup',
+      desc: '获取消息数量'
+    },
+    {
       name: 'approvalHistoryList',
       method: 'POST',
       path: '/bpm/personal/ProcessApproval/approvalHistoryList',

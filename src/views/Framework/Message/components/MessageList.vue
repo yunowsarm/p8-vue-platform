@@ -8,54 +8,82 @@
         <el-radio-button label="1505">已读</el-radio-button>
         <el-radio-button label>全部</el-radio-button>
       </el-radio-group> -->
-      <common-tabs class="custom-common-tabs" :active-tabs="activeTabs" type="border-card" :tabs-data="tabs" :tabs-config="{ stretch: true }" height="auto" style="height: 100%" @tab-click="tabClick">
+      <common-tabs class="custom-common-tabs"
+                   :active-tabs="activeTabs"
+                   type="border-card"
+                   :tabs-data="tabs"
+                   :tabs-config="{ stretch: true }"
+                   height="auto"
+                   style="height: 100%"
+                   @tab-click="tabClick">
         <template #1501>
-          <div class="listContainer" v-if="activeTabs == '1501'">
+          <div class="listContainer"
+               v-if="activeTabs == '1501'">
             <div class="messageHeader">
               <!-- 全选目前只支持全选已加载的数据 -->
               <!-- <span @click="selectAll" style="cursor: pointer;">{{flag ? '全选' : '取消全选'}}</span> -->
               <span class="other">
-                <i class="el-icon-refresh iconColor" title="重载" @click="refresh"></i>
-                <i class="p8 icon-plan-examine iconColor" title="已读" @click="getIdsSendApi('标记为已读','userMessage.toggleStatus','1505')"></i>
+                <i class="el-icon-refresh iconColor"
+                   title="重载"
+                   @click="refresh"></i>
+                <i class="p8 icon-plan-examine iconColor"
+                   title="已读"
+                   @click="getIdsSendApi('标记为已读','userMessage.toggleStatus','1505')"></i>
                 <!-- <i class="p8 icon-message" title="未读" style="pointer-events:none; color:#ababab; cursor:not-allowed !important;" @click="getIdsSendApi('标记为未读','userMessage.toggleStatus','1501')"></i> -->
-                <i class="p8 icon-delete iconColor" title="删除" @click="getIdsSendApi('删除','userMessage.delete')"></i>
+                <i class="p8 icon-delete iconColor"
+                   title="删除"
+                   @click="getIdsSendApi('删除','userMessage.delete')"></i>
               </span>
             </div>
-            <infinite-list
-              :key="timeKey"
-              ref="infList"
-              class="finiteList"
-              v-if="mergeParams.msgCatalog != null"
-              :list-api="messageListApi"
-              :active-item="currentIndex"
-              :search-params="mergeParams"
-              :removed-item="removedMsg"
-              @load="messageLoad"
-              @onSelect="triggerSelect"
-            >
+            <infinite-list :key="timeKey"
+                           ref="infList"
+                           class="finiteList"
+                           v-if="mergeParams.msgCatalog != null"
+                           :list-api="messageListApi"
+                           :active-item="currentIndex"
+                           :search-params="mergeParams"
+                           :removed-item="removedMsg"
+                           @load="messageLoad"
+                           @onSelect="triggerSelect">
               <template #list="{ item }">
                 <span>
-                  <el-row type="flex" style="text-align: left" class="overHiding">
+                  <el-row type="flex"
+                          style="text-align: left"
+                          class="overHiding">
                     <el-col :span="16">
-                      <span style="display:inline-block;line-height: 68px;width:15px;"><el-checkbox @click.native="stopDefault($event)" v-model="item.ischeck"></el-checkbox></span>
+                      <span style="display:inline-block;line-height: 68px;width:15px;"><el-checkbox @click.native="stopDefault($event)"
+                                     v-model="item.ischeck"></el-checkbox></span>
                       <span class="left-span">
-                        <i class="p8" :class="statusIcon(item.msgStatus)"></i>
+                        <i class="p8"
+                           :class="statusIcon(item.msgStatus)"></i>
                       </span>
                       <span>{{ item.msgTitle }}</span>
                     </el-col>
-                    <el-col :span="8" style="text-align: right">
-                      <i v-if="item.uploadFiles != null && item.uploadFiles.length > 0" class="p8 icon-jianhao"></i>
+                    <el-col :span="8"
+                            style="text-align: right">
+                      <i v-if="item.uploadFiles != null && item.uploadFiles.length > 0"
+                         class="p8 icon-jianhao"></i>
                     </el-col>
                   </el-row>
-                  <el-row type="flex" style="text-align: left">
+                  <el-row type="flex"
+                          style="text-align: left">
                     <el-col :span="24">
-                      <span class="msg-content overHiding msg_content_height" v-if="hasHtmlTag(item.msgContent)" v-html="item.msgContent"></span>
-                      <span class="msg-content overHiding" v-else>{{ item.msgContent }}</span>
+                      <span class="msg-content overHiding msg_content_height"
+                            v-if="hasHtmlTag(item.msgContent)"
+                            v-html="item.msgContent"></span>
+                      <span class="msg-content overHiding"
+                            v-else>{{ item.msgContent }}</span>
                     </el-col>
                   </el-row>
-                  <el-row type="flex" style="text-align: left">
+                  <el-row type="flex"
+                          style="text-align: left">
                     <el-col :span="2"></el-col>
-                    <el-col :xs="22" :sm="22" :md="22" :lg="22" :xl="22" style="text-align: right">
+                    <el-col :xs="22"
+                            :sm="22"
+                            :md="22"
+                            :lg="22"
+                            :xl="22"
+                            style="text-align: right">
                       <span class="msg-user">{{ item.senderName }}</span>
                       <span class="msg-time">{{ item.sendDate }}</span>
                     </el-col>
@@ -66,52 +94,75 @@
           </div>
         </template>
         <template #1505>
-          <div class="listContainer" v-if="activeTabs == '1505'">
+          <div class="listContainer"
+               v-if="activeTabs == '1505'">
             <div class="messageHeader">
               <!-- 全选目前只支持全选已加载的数据 -->
               <!-- <span @click="selectAll" style="cursor: pointer;">{{flag ? '全选' : '取消全选'}}</span> -->
               <span class="other">
-                <i class="el-icon-refresh iconColor" title="重载" @click="refresh"></i>
+                <i class="el-icon-refresh iconColor"
+                   title="重载"
+                   @click="refresh"></i>
                 <!-- <i class="p8 icon-plan-examine" title="已读" style="pointer-events:none; color:#ababab; cursor:not-allowed !important;" @click="getIdsSendApi('标记为已读','userMessage.toggleStatus','1505')"></i> -->
-                <i class="p8 icon-message iconColor" title="未读" @click="getIdsSendApi('标记为未读','userMessage.toggleStatus','1501')"></i>
-                <i class="p8 icon-delete iconColor" title="删除" @click="getIdsSendApi('删除','userMessage.delete')"></i>
+                <i class="p8 icon-message iconColor"
+                   title="未读"
+                   @click="getIdsSendApi('标记为未读','userMessage.toggleStatus','1501')"></i>
+                <i class="p8 icon-delete iconColor"
+                   title="删除"
+                   @click="getIdsSendApi('删除','userMessage.delete')"></i>
               </span>
             </div>
-            <infinite-list
-              :key="timeKey"
-              ref="infList"
-              class="finiteList"
-              v-if="mergeParams.msgCatalog != null"
-              :list-api="messageListApi"
-              :active-item="currentIndex"
-              :search-params="mergeParams"
-              :removed-item="removedMsg"
-              @load="messageLoad"
-              @onSelect="triggerSelect"
-            >
+            <infinite-list :key="timeKey"
+                           ref="infList"
+                           class="finiteList"
+                           v-if="mergeParams.msgCatalog != null"
+                           :list-api="messageListApi"
+                           :active-item="currentIndex"
+                           :search-params="mergeParams"
+                           :removed-item="removedMsg"
+                           @load="messageLoad"
+                           @onSelect="triggerSelect">
               <template #list="{ item }">
                 <span>
-                  <el-row type="flex" style="text-align: left" class="overHiding">
+                  <el-row type="flex"
+                          style="text-align: left"
+                          class="overHiding">
                     <el-col :span="16">
-                      <span style="display:inline-block;line-height: 68px;width:15px;"><el-checkbox @click.native="stopDefault($event)" v-model="item.ischeck"></el-checkbox></span>
+                      <span style="display:inline-block;line-height: 68px;width:15px;"><el-checkbox @click.native="stopDefault($event)"
+                                     v-model="item.ischeck"></el-checkbox></span>
                       <span class="left-span">
-                        <i class="p8" :class="statusIcon(item.msgStatus)"></i>
+                        <i class="p8"
+                           :class="statusIcon(item.msgStatus)"></i>
                       </span>
                       <span style="font-weight: bold">{{ item.msgTitle }}</span>
                     </el-col>
-                    <el-col :span="8" style="text-align: right">
-                      <i v-if="item.uploadFiles != null && item.uploadFiles.length > 0" class="p8 icon-jianhao"></i>
+                    <el-col :span="8"
+                            style="text-align: right">
+                      <i v-if="item.uploadFiles != null && item.uploadFiles.length > 0"
+                         class="p8 icon-jianhao"></i>
                     </el-col>
                   </el-row>
-                  <el-row type="flex" style="text-align: left">
+                  <el-row type="flex"
+                          style="text-align: left">
                     <el-col :span="24">
-                      <span style="white-space: pre-wrap" class="msg-content overHiding msg_content_height" v-if="hasHtmlTag(item.msgContent)" v-html="item.msgContent"></span>
-                      <span style="white-space: pre-wrap" class="msg-content overHiding" v-else>{{ item.msgContent }}</span>
+                      <span style="white-space: pre-wrap"
+                            class="msg-content overHiding msg_content_height"
+                            v-if="hasHtmlTag(item.msgContent)"
+                            v-html="item.msgContent"></span>
+                      <span style="white-space: pre-wrap"
+                            class="msg-content overHiding"
+                            v-else>{{ item.msgContent }}</span>
                     </el-col>
                   </el-row>
-                  <el-row type="flex" style="text-align: left">
+                  <el-row type="flex"
+                          style="text-align: left">
                     <el-col :span="2"></el-col>
-                    <el-col :xs="22" :sm="22" :md="22" :lg="22" :xl="22" style="text-align: right; padding-top: 10px">
+                    <el-col :xs="22"
+                            :sm="22"
+                            :md="22"
+                            :lg="22"
+                            :xl="22"
+                            style="text-align: right; padding-top: 10px">
                       <span class="msg-user">{{ item.senderName }}</span>
                       <span class="msg-time">{{ item.sendDate }}</span>
                     </el-col>
@@ -122,52 +173,75 @@
           </div>
         </template>
         <template #0>
-          <div class="listContainer" v-if="activeTabs == '0'">
+          <div class="listContainer"
+               v-if="activeTabs == '0'">
             <div class="messageHeader">
               <!-- 全选目前只支持全选已加载的数据 -->
               <!-- <span @click="selectAll" style="cursor: pointer;">{{flag ? '全选' : '取消全选'}}</span> -->
               <span class="other">
-                <i class="el-icon-refresh iconColor" title="重载" @click="refresh"></i>
-                <i class="p8 icon-plan-examine iconColor" title="已读" @click="getIdsSendApi('标记为已读','userMessage.toggleStatus','1505')"></i>
-                <i class="p8 icon-message iconColor" title="未读" @click="getIdsSendApi('标记为未读','userMessage.toggleStatus','1501')"></i>
-                <i class="p8 icon-delete iconColor" title="删除" @click="getIdsSendApi('删除','userMessage.delete')"></i>
+                <i class="el-icon-refresh iconColor"
+                   title="重载"
+                   @click="refresh"></i>
+                <i class="p8 icon-plan-examine iconColor"
+                   title="已读"
+                   @click="getIdsSendApi('标记为已读','userMessage.toggleStatus','1505')"></i>
+                <i class="p8 icon-message iconColor"
+                   title="未读"
+                   @click="getIdsSendApi('标记为未读','userMessage.toggleStatus','1501')"></i>
+                <i class="p8 icon-delete iconColor"
+                   title="删除"
+                   @click="getIdsSendApi('删除','userMessage.delete')"></i>
               </span>
             </div>
-            <infinite-list
-              :key="timeKey"
-              ref="infList"
-              class="finiteList"
-              v-if="mergeParams.msgCatalog != null"
-              :list-api="messageListApi"
-              :active-item="currentIndex"
-              :search-params="mergeParams"
-              :removed-item="removedMsg"
-              @load="messageLoad"
-              @onSelect="triggerSelect"
-            >
+            <infinite-list :key="timeKey"
+                           ref="infList"
+                           class="finiteList"
+                           v-if="mergeParams.msgCatalog != null"
+                           :list-api="messageListApi"
+                           :active-item="currentIndex"
+                           :search-params="mergeParams"
+                           :removed-item="removedMsg"
+                           @load="messageLoad"
+                           @onSelect="triggerSelect">
               <template #list="{ item }">
                 <span>
-                  <el-row type="flex" style="text-align: left" class="overHiding">
+                  <el-row type="flex"
+                          style="text-align: left"
+                          class="overHiding">
                     <el-col :span="16">
-                      <span style="display:inline-block;line-height: 68px;width:15px;"><el-checkbox @click.native="stopDefault($event)" v-model="item.ischeck"></el-checkbox></span>
+                      <span style="display:inline-block;line-height: 68px;width:15px;"><el-checkbox @click.native="stopDefault($event)"
+                                     v-model="item.ischeck"></el-checkbox></span>
                       <span class="left-span">
-                        <i class="p8" :class="statusIcon(item.msgStatus)"></i>
+                        <i class="p8"
+                           :class="statusIcon(item.msgStatus)"></i>
                       </span>
                       <span>{{ item.msgTitle }}</span>
                     </el-col>
-                    <el-col :span="8" style="text-align: right">
-                      <i v-if="item.uploadFiles != null && item.uploadFiles.length > 0" class="p8 icon-jianhao"></i>
+                    <el-col :span="8"
+                            style="text-align: right">
+                      <i v-if="item.uploadFiles != null && item.uploadFiles.length > 0"
+                         class="p8 icon-jianhao"></i>
                     </el-col>
                   </el-row>
-                  <el-row type="flex" style="text-align: left">
+                  <el-row type="flex"
+                          style="text-align: left">
                     <el-col :span="24">
-                      <span class="msg-content overHiding msg_content_height" v-if="hasHtmlTag(item.msgContent)" v-html="item.msgContent"></span>
-                      <span class="msg-content overHiding" v-else>{{ item.msgContent }}</span>
+                      <span class="msg-content overHiding msg_content_height"
+                            v-if="hasHtmlTag(item.msgContent)"
+                            v-html="item.msgContent"></span>
+                      <span class="msg-content overHiding"
+                            v-else>{{ item.msgContent }}</span>
                     </el-col>
                   </el-row>
-                  <el-row type="flex" style="text-align: left">
+                  <el-row type="flex"
+                          style="text-align: left">
                     <el-col :span="2"></el-col>
-                    <el-col :xs="22" :sm="22" :md="22" :lg="22" :xl="22" style="text-align: right">
+                    <el-col :xs="22"
+                            :sm="22"
+                            :md="22"
+                            :lg="22"
+                            :xl="22"
+                            style="text-align: right">
                       <span class="msg-user">{{ item.senderName }}</span>
                       <span class="msg-time">{{ item.sendDate }}</span>
                     </el-col>
@@ -190,7 +264,7 @@ export default {
   props: {
     searchParams: {
       type: Object,
-      default: () => {}
+      default: () => { }
     },
     removedMsg: {
       type: String,
@@ -205,7 +279,7 @@ export default {
     'infinite-list': InfiniteList,
     CommonTabs
   },
-  data() {
+  data () {
     return {
       messageListApi: 'userMessage.list',
       currentIndex: null,
@@ -224,7 +298,7 @@ export default {
     }
   },
   computed: {
-    statusIcon() {
+    statusIcon () {
       return function (status) {
         let icon = ''
         if (status === '1501') {
@@ -237,8 +311,9 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     // this.saveNotice()
+    // this.myMessageGroup()
   },
   watch: {
     searchParams: {
@@ -251,7 +326,7 @@ export default {
     }
   },
   methods: {
-    tabClick(val) {
+    tabClick (val) {
       this.flag = true
       this.mergeParams.msgStatus = val.name
       if (val.name == '0') {
@@ -259,23 +334,44 @@ export default {
       }
       this.activeTabs = val.name
     },
-    triggerSelect(item, index) {
+    triggerSelect (item, index) {
       if (index && index == this.currentIndex) {
         return
       }
       this.currentIndex = index
       this.$emit('select', item, index)
       this.$emit('toggleStatus', item.id, '1505')
+      setTimeout(() => {
+        this.myMessageGroup()
+      }, 1000)
     },
-    saveNotice() {
-      this.$api['PersonalProcessApproval.saveNoticeMsg']({ id: null }).then((res) => {})
+    saveNotice () {
+      this.$api['PersonalProcessApproval.saveNoticeMsg']({ id: null }).then((res) => { })
     },
-    messageLoad(data, current) {
+    myMessageGroup () {
+      let that = this
+      this.$api['PersonalProcessApproval.myMessageGroup']().then((res) => {
+        if (res) {
+          let magCount = 0
+          res.forEach(el => {
+            magCount = magCount + Number(el.msgCount)
+            if (el.isRead === '1501') {
+              that.tabs[0].label = `未读(${el.msgCount ? Number(el.msgCount) : 0})`
+            }
+            if (el.isRead === '1505') {
+              that.tabs[1].label = `已读(${el.msgCount ? Number(el.msgCount) : 0})`
+            }
+          })
+          that.tabs[2].label = `全部(${magCount})`
+        }
+      })
+    },
+    messageLoad (data, current) {
       if (data && current && current === 1) {
         this.currentIndex = 0
       }
     },
-    hasHtmlTag(str) {
+    hasHtmlTag (str) {
       return /<[^>]*>/i.test(str)
     },
     // selectAll () {
@@ -289,12 +385,12 @@ export default {
       this.flag = true
       this.timeKey = new Date().getTime()
     },
-    getIdsSendApi (message,api,status) {
+    getIdsSendApi (message, api, status) {
       let list = this.$refs.infList.infiniteList.filter(el => el.ischeck)
       let ids = list.map(el => el.id)
       if (ids.length) {
         let that = this
-        this.$confirm('是否要将选中的消息'+message+'？', '提示', {
+        this.$confirm('是否要将选中的消息' + message + '？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -303,7 +399,7 @@ export default {
 
             that.flag = true
             // if (!status) {
-              that.timeKey = new Date().getTime()
+            that.timeKey = new Date().getTime()
             // } else {
             //   list.forEach(el => {
             //     el.msgStatus = status
@@ -315,10 +411,10 @@ export default {
           })
         })
       } else {
-        this.$message({type: 'warning',message: '请选择要操作的数据'})
+        this.$message({ type: 'warning', message: '请选择要操作的数据' })
       }
     },
-    stopDefault(e) {
+    stopDefault (e) {
       e.stopPropagation();
     }
   }
