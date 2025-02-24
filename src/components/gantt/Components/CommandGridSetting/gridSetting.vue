@@ -155,7 +155,7 @@ export default {
       return array
     },
     close () {
-      this.$emit('save-setting')
+      this.$emit('close')
     },
     save () {
       const _this = this
