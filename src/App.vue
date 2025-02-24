@@ -109,6 +109,14 @@ export default {
           }
           that.conunt++
         })
+        window.myWebSocket.on('updateConfig', (res) => {
+          this.$alert('系统全局配置参数已修改，请刷新页面', '提示', {
+            confirmButtonText: '确定',
+            callback: action => {
+              window.location.reload()
+            }
+          });
+        })
         // 连接失败时自动重新连接
         window.myWebSocket.on('reconnect_failed', () => {
           that.conunt = 0

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form-list :api="saveApi" :data-source="dataSource" :form="formData" ref="form" :is-custom-validate="true" @custom-validate="customValidate" labelWidth="150px">
+    <form-list :api="saveApi" :data-source="dataSource" :form="formData" ref="form" :is-custom-validate="true" @custom-validate="customValidate" @saved="saved" labelWidth="150px">
       <template #taskRealDateWrite>
         <el-popover class="pop_left" trigger="hover">
           <p>
@@ -198,6 +198,9 @@ export default {
       })
       saveParams.planRightButton = JSON.stringify(rightBtns)
       this.$refs.form.submitForm(saveParams, this.saveApi)
+    },
+    saved(){
+      window.myWebSocket.emit('updateConfig', '系统全局配置参数已修改')
     }
   }
 }
