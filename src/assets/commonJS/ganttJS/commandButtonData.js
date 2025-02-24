@@ -3194,8 +3194,10 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
         setTimeout(() => {
           ganttObject.unselectTask()
           if (filteredTasks.indexOf(task.id) === -1) {
+            ganttObject.showTask(parentId)
             ganttObject.selectTask(parentId)
           } else {
+            ganttObject.showTask(item.id)
             ganttObject.selectTask(item.id)
           }
           let ganttDatas = vueThis.$store.getters.ganttDatas
