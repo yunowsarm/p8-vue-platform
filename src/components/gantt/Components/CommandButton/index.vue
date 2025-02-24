@@ -85,7 +85,7 @@
                  :class="{ isdisable: isDisable(btnChild) }">
                  <el-tooltip :content="isDisable(btnChild) ? getButtonMsg(btnChild) : btnChild.title"
                   placement="top"
-                             :disabled="!isDisable(btnChild) && ganttButtonMode === 'tabs'"
+                  :disabled="!isDisable(btnChild)"
                   :offset="-15"
                   :enterable="false"
                   effect="dark">
