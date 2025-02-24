@@ -103,11 +103,9 @@ export function taskStateAndReadonly (ganttName, tasks) {
 
 // 选中任务中包含已下发任务
 export function isHasDeliveredTask (ganttName, tasks) {
-  tasks.forEach(task => {
-    if (task.managerStatus == '6404') {
-      return createDisableResponse(`任务已下发时不允许此操作`);
-    }
-  })
+  if (tasks.some(task => task.managerStatus === '6404')) {
+    return createDisableResponse(`任务已下发时不允许此操作`);
+  }
   return false;
 }
 

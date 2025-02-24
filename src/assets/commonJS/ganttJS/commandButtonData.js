@@ -401,10 +401,12 @@ export const CommandButtonData = [
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
         () => isHasTask(ganttName, tasks),
+        () => isHasDeliveredTask(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isApprovalCompleted(ganttName, tasks),
         () => isAllowUpgrades(ganttName, tasks)
+
       ]
       const res = isDisable(checks)
       store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
@@ -476,6 +478,7 @@ export const CommandButtonData = [
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
         () => isHasTask(ganttName, tasks),
+        () => isHasDeliveredTask(ganttName, tasks),
         () => isReadOnly(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
@@ -2346,7 +2349,7 @@ export const CommandButtonData = [
         msg: '保存',
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
-          api['planGanttManager.updateFoldLevel']({ 
+          api['planGanttManager.updateFoldLevel']({
             tasks: vueThis.addTaskList
            }).then((res) => {
               if (res) {
@@ -2515,7 +2518,7 @@ export const CommandButtonData = [
         msg: '保存',
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
-          api['planGanttManager.updateFoldLevel']({ 
+          api['planGanttManager.updateFoldLevel']({
             tasks: vueThis.addTaskList
            }).then((res) => {
               if (res) {
@@ -3086,6 +3089,7 @@ function addTask (num, pos, ganttName) {
  * @param dpObject
  */
 function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dpObject, indexNo) {
+  debugger
   const vueThis = store.getters.vueThis
   let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
   let extraTask = {}
