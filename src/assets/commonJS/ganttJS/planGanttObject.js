@@ -101,6 +101,23 @@ export function planGantt (ganttName, vueThis) {
             if (res === 'true') {
               // ganttObject.getTask(id).updateType = ''
               vueThis.refreshData()
+              if (task.parent) {
+                api['planGanttManager.getSameTaskIndex']({
+                  parentId: task.parent
+                })
+                  .then((res) => {
+                    if (res) {
+                      ganttObject.eachTask((task) => {
+                        res.forEach(item => {
+                          if (task.id === item.id) {
+                            task.indexNo = item.index
+                          }
+                        })
+                      });
+                    }
+                  })
+                  .catch(() => {})
+              }
               return { action: 'ok' }
             } else if (res === 'false') {
               ganttObject.undo()

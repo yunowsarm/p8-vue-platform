@@ -1069,6 +1069,13 @@ export const repositoryApi = {
       path: '/ai/intelligence/sendDescribe',
       mockPath: '/ai/intelligence/sendDescribe',
       desc: '项目管理->计划管理->计划编辑->AI自动生成'
+    },
+    {
+      name: 'getSameTaskIndex',
+      method: 'POST',
+      path: '/product/pm/plan/getSameTaskIndex',
+      mockPath: '/product/pm/plan/getSameTaskIndex',
+      desc: '项目管理->计划管理->计划编辑 -> 更新排序'
     }
   ],
   planChange: [
