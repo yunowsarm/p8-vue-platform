@@ -670,7 +670,7 @@ export function getGanttColumns (ganttObject, vueThis) {
             tips += '当前任务计划完成时间和预计完成时间不一致，注意关注\n'
           }
         }
-        if (state.childTotal || state.childPercentage) {
+        if ((state.childTotal || state.childPercentage) && vueThis.hasAchievements) {
           bool = true
           tips += '子任务存在绩效比例分配异常\n'
         }

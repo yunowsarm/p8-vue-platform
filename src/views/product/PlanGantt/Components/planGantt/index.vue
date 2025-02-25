@@ -797,7 +797,8 @@ export default {
       extraMap: {},
       deleteCount: 0,
       isSueTaskIds: [],
-      addTaskList: []
+      addTaskList: [],
+      hasAchievements: false
     }
   },
   watch: {
@@ -1280,6 +1281,12 @@ export default {
       })
       // 根据项目类型，获取gantt列设置
       this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
+      this.hasAchievements = checkArray(this.columnSettings)
+      function checkArray(arr) {
+        const hasAchievements = arr.some(item => item.filedName === 'achievements' && item.isEnable === '1');
+        const hasProportion = arr.some(item => item.filedName === 'proportion' && item.isEnable === '1');
+        return hasAchievements || hasProportion;
+      }
       await this.getExtraList(this.columnSettings)
       this.reminderList = await this.$api['planGanttManager.loadReminder']({
         planInfoId: this.planInfoId,
