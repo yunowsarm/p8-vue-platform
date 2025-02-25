@@ -461,7 +461,7 @@ export default {
   border-bottom: 1px solid $base-line-color;
 
   .sysName {
-    font-size: $font-size-medium;
+    font-size: 16px;
     font-family: 'Source Han Sans CN', 'Noto Sans SC', sans-serif;
     font-weight: 500;
     color: $base-white-color;

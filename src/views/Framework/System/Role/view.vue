@@ -151,7 +151,7 @@
   border-top-right-radius: 8px;
 }
 .nav-text {
-  font-size: pxTorem(16px);
+  font-size: 16px;
   margin-left: 10px;
   // line-height: 50px;
 }
