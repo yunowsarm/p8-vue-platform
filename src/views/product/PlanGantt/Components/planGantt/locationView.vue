@@ -254,11 +254,11 @@ export default {
       this.$emit('onChangeTask', row)
     },
     async initGantt (planInfoId, viewType) {
-      this.fullscreenLoading = this.$loading({
-        lock: true,
-        text: 'Loading',
-        spinner: 'el-icon-loading'
-      })
+      // this.fullscreenLoading = this.$loading({
+      //   lock: true,
+      //   text: 'Loading',
+      //   spinner: 'el-icon-loading'
+      // })
       // // 根据项目类型，获取gantt列设置
       this.reminderList = await this.$api['planGanttManager.loadReminder']({
         planInfoId: this.planInfoId,
@@ -359,7 +359,6 @@ export default {
       let res = ganttDatas
       if (res) {
         let taskList = res.tasks
-        vueThis.fullscreenLoading.close()
         // 初始化数据
         const datas = {
           tasks: taskList,
