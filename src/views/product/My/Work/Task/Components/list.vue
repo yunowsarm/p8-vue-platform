@@ -43,10 +43,28 @@
                      :reportParam="sqlParam"
                      @refresh="init()">
         <template #NAME="{ scope, thirdMenuData }">
-          <span v-if="scope.row.DATATYPE === 'task'"
+          <span v-if="scope.row.USERID === userId"
                 class="underline"
                 @click="drillCol(scope, thirdMenuData)">{{ scope.row.NAME }} </span>
           <span v-else>{{ scope.row.NAME }}</span>
+        </template>
+        <template #MENU="{ scope }">
+         <div v-if="scope.row.USERID === userId">
+           <el-dropdown :hide-on-click="false">
+                    <span class="el-dropdown-link">
+                      <i class="el-icon-menu"></i>
+                    </span>
+             <el-dropdown-menu slot="dropdown">
+               <el-dropdown-item v-for="(item, index) in thirdMenuData"
+                                 :key="index">
+                 <div @click="menuClickEvent(scope.row, item)">
+                   <i :class="item.meta.icon ? item.meta.icon : 'el-icon-setting'"
+                      style="font-size:12px;"></i> {{ item.meta.title }}
+                 </div>
+               </el-dropdown-item>
+             </el-dropdown-menu>
+           </el-dropdown>
+         </div>
         </template>
         <template #PROGRESS="{scope}">
           <span v-if="scope.row.DATATYPE === 'task'">{{ getProgress(scope.row.PROGRESS) }}</span>
@@ -166,6 +184,8 @@ import { P8MenuLayout as MenuLayout, P8ProcessApproval as ProcessApprovalView, P
 import { calculateRemainingDays, selectGenerateTree } from '@/utils/common'
 import frontToBack from './frontToBack'
 import CommunicationMsg from '@/components/information/index.vue';
+import {mapGetters} from 'vuex'
+
 export default {
   name: 'ButtonNavigationView',
   provide () {
@@ -204,7 +224,8 @@ export default {
       showView: 'showView003',
       isChildren: false,
       btnDisable: false,
-      sqlParam: {}
+      sqlParam: {},
+      filterThirdMenu:"MyTask"
     }
   },
   props: {
@@ -234,6 +255,35 @@ export default {
     MenuLayout,
     frontToBack,
     CommunicationMsg
+  },
+  computed: {
+    thirdMenuData(){
+      const currentPath = this.$route.path
+      const rootRouter = this.$store.state.routers.addRouters
+      let thirdMenu = []
+      if (rootRouter && rootRouter.length > 0) {
+        rootRouter.map(function (item, index) {
+          if (item.children && item.children.length > 0) {
+            item.children.map(function (subItem, idx) {
+              if (subItem.path === currentPath) {
+                thirdMenu = subItem
+              }
+            })
+          }
+        })
+      }
+      let children = thirdMenu.children
+      let tempChildren = []
+      if (this.filterThirdMenu && children && children.length) {
+        children.map(item => {
+          if (this.filterThirdMenu.indexOf(item.name) === -1) {
+            tempChildren.push(item)
+          }
+        })
+      }
+      return this.filterThirdMenu ? tempChildren : thirdMenu.children
+    },
+    ...mapGetters(['userId'])
   },
   created () {
     this.westTreeParam.showView = 'showView003'
@@ -589,6 +639,9 @@ export default {
       }
       getData(treeList)
       return arr
+    },
+    menuClickEvent(record, item){
+      this.$refs.tableRender.thirdMenuClick(record, item)
     },
     thirdMenuClick (record) {
       let item = {}
