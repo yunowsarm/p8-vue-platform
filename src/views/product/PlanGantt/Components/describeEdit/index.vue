@@ -1,23 +1,24 @@
 <template>
-  <div style="position: relative" :style="{ width: `${formWidth}vw` }">
-    <form-list
-      class="describe-form"
-      ref="form"
-      :comp="comp"
-      :key="formKey"
-      @rendered="rendered"
-      form-layout="vertical"
-      @saved="saved"
-      :data-source="dataSource"
-      :api="saveApi"
-      :isShouEnter="false"
-      :is-custom-validate="isCustomValidate"
-      @custom-validate="customValidate"
-      :other-param="otherParam"
-      :form="formData"
-    >
+  <div style="position: relative"
+       :style="{ width: `${formWidth}vw` }">
+    <form-list class="describe-form"
+               ref="form"
+               :comp="comp"
+               :key="formKey"
+               @rendered="rendered"
+               form-layout="vertical"
+               @saved="saved"
+               :data-source="dataSource"
+               :api="saveApi"
+               :isShouEnter="false"
+               :is-custom-validate="isCustomValidate"
+               @custom-validate="customValidate"
+               :other-param="otherParam"
+               :form="formData">
       <template #describes>
-        <P8Tinymce :key="dateTime" v-model="formData.describes" :editorConfig="editorInit" />
+        <P8Tinymce :key="dateTime"
+                   v-model="formData.describes"
+                   :editorConfig="editorInit" />
       </template>
     </form-list>
   </div>
@@ -64,7 +65,7 @@ export default {
       default: 0
     }
   },
-  data() {
+  data () {
     return {
       editorInit: {
         height: '500px',
@@ -298,7 +299,7 @@ export default {
   },
   watch: {
     ganttName: {
-      handler(val) {
+      handler (val) {
         this.ganttObject = GanttObject.getGanttObject(this.ganttName)
         // const df = this.dateFormat()
         // const minStartDate = df.format(this.ganttObject.config.plan_limit(this.ganttObject, this.taskId, 'min', 'start'))
@@ -312,10 +313,10 @@ export default {
       },
       immediate: true
     },
-    taskId(val) {
+    taskId (val) {
       this.rendered()
     },
-    ownerDataOptions(newValue) {
+    ownerDataOptions (newValue) {
       if (newValue) {
         const options = []
         newValue.forEach(function (item) {
@@ -329,7 +330,7 @@ export default {
   computed: {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
-  mounted() {
+  mounted () {
     const ganttObject = GanttObject.getGanttObject(this.ganttName)
     const task = ganttObject.getTask(this.taskId)
     this.$api['planGanttManager.getGanttExtendAttr']({ taskId: task.id }).then((res) => {
@@ -437,12 +438,12 @@ export default {
     }
   },
   methods: {
-    rendered() {
+    rendered () {
       if (this.taskId && this.taskId !== '') {
         this.getDescribeData(this.taskId)
       }
     },
-    startDateOptions() {
+    startDateOptions () {
       const _this = this
       return {
         disabledDate: (time) => {
@@ -456,7 +457,7 @@ export default {
         }
       }
     },
-    endDateOptions() {
+    endDateOptions () {
       const _this = this
       return {
         disabledDate: (time) => {
@@ -464,7 +465,7 @@ export default {
         }
       }
     },
-    changeDate(ganttObject, taskId, minOrMax, startOrEnd) {
+    changeDate (ganttObject, taskId, minOrMax, startOrEnd) {
       const limitTask = {
         start_date: this.planInfo.planBeginDate,
         end_date: this.planInfo.planEndDate
@@ -490,7 +491,7 @@ export default {
         }
       }
     },
-    startDateOptions2() {
+    startDateOptions2 () {
       const _this = this
       return {
         disabledDate: (time) => {
@@ -502,7 +503,7 @@ export default {
         }
       }
     },
-    endDateOptions2() {
+    endDateOptions2 () {
       const _this = this
       return {
         disabledDate: (time) => {
@@ -510,7 +511,7 @@ export default {
         }
       }
     },
-    getPlanInfo(task) {
+    getPlanInfo (task) {
       if (!task.planInfoId) return
       const that = this
       this.$api['planInfoManager.getPlanInfo']({ id: task.planInfoId })
@@ -538,7 +539,7 @@ export default {
           console.error(error)
         })
     },
-    getDescribeData(taskId) {
+    getDescribeData (taskId) {
       const that = this
       const ganttObject = GanttObject.getGanttObject(that.ganttName)
       that.ownerDataOptions = ganttObject.serverList('resourceDatas')
@@ -606,7 +607,7 @@ export default {
           console.error('error' + error)
         })
     },
-    saved(res) {
+    saved (res) {
       const that = this
       // if (!this.falg) {
       //   return this.$message.warning('低密不能修改高密')
@@ -653,7 +654,7 @@ export default {
         }
       }
     },
-    async customValidate(saveParams) {
+    async customValidate (saveParams) {
       let resData = await this.$api['planChange.userTaskSaveCheck']({ owner_id: saveParams.owner_id })
       if (resData) {
         this.$message({ type: 'warning', message: '所选责任人已退出当前团队，请重新选择' })
@@ -736,6 +737,12 @@ export default {
             const ganttObject = GanttObject.getGanttObject(that.ganttName)
             taskDescribesEditCheck(saveParams, that.oldFormData, that.vueThis, that.taskId, ganttObject)
             that.vueThis.hasSave = true
+            let ganttDatas = that.$store.getters.ganttDatas
+            ganttDatas.tasks = []
+            ganttObject.eachTask((task) => {
+              ganttDatas.tasks.push(task);
+            });
+            that.$store.dispatch('setGanttDatas', ganttDatas)
             this.$message({
               type: 'success',
               message: '保存成功！'
@@ -752,7 +759,7 @@ export default {
         })
       }
     },
-    startDateChangeHandle(val) {
+    startDateChangeHandle (val) {
       const _this = this
       const df = this.dateFormat()
       let minStartDate
@@ -807,7 +814,7 @@ export default {
       })
     },
 
-    endDateChangeHandle(val) {
+    endDateChangeHandle (val) {
       const _this = this
       const df = this.dateFormat()
       /**
@@ -844,7 +851,7 @@ export default {
         _this.formData.start_date = _this.formData.end_date
       }
     },
-    startDateChangeHandle2(val) {
+    startDateChangeHandle2 (val) {
       const df = this.dateFormat()
       const value = val
       this.formData.duration = df.durationByStamp(df.stamp(this.formData.end_date) - df.stamp(value))
@@ -857,14 +864,14 @@ export default {
         }
       })
     },
-    endDateChangeHandle2(val) {
+    endDateChangeHandle2 (val) {
       const _this = this
       const df = this.dateFormat()
       const value = val
       const duration = df.durationByStamp(df.stamp(value) - df.stamp(_this.formData.start_date))
       this.formData.duration = duration
     },
-    durationChangeHandle(val) {
+    durationChangeHandle (val) {
       const _this = this
       const df = this.dateFormat()
       // const rootTask = this.ganttObject.getTaskByWBSCode('1')
@@ -876,10 +883,10 @@ export default {
       //   /**
       //    * 设置计数器最大值
       //    */
-        this.formData.end_date = df.format(df.stamp(_this.formData.start_date) + df.stampByDuration(val))
+      this.formData.end_date = df.format(df.stamp(_this.formData.start_date) + df.stampByDuration(val))
       // }
     },
-    dateFormat() {
+    dateFormat () {
       const d = {
         format: (date) => {
           return moment(date).format('YYYY-MM-DD')
@@ -900,10 +907,10 @@ export default {
       }
       return d
     },
-    autoSchedulingChangeHandle(val) {
+    autoSchedulingChangeHandle (val) {
       this.updataDataSource(val)
     },
-    updataDataSource(autoSchedulingValue) {
+    updataDataSource (autoSchedulingValue) {
       if (this.ganttObject.hasChild(this.taskId)) {
         const valueObj = {
           1: true,
@@ -917,7 +924,7 @@ export default {
         duration[0].fieldConfig.disabled = valueObj[autoSchedulingValue]
       }
     },
-    ownerChangeHandle(val) {
+    ownerChangeHandle (val) {
       if (!val) {
         this.formData.realName = ''
         this.formData.dutyDeptName = ''
@@ -931,7 +938,7 @@ export default {
         this.formData.dutyDeptName = user.deptName
       }
     },
-    achievementsChangeHandle(val) {
+    achievementsChangeHandle (val) {
       const ganttObject = GanttObject.getGanttObject(this.ganttName)
       let parentId = ganttObject.getParent(this.taskId)
       let parentTask = ganttObject.getTask(parentId)
@@ -939,7 +946,7 @@ export default {
         this.formData.proportion = ((Number(this.formData.achievements) / Number(parentTask.achievements)) * 100).toFixedNoRound(2)
       }
     },
-    proportionChangeHandle(val) {
+    proportionChangeHandle (val) {
       const ganttObject = GanttObject.getGanttObject(this.ganttName)
       let parentId = ganttObject.getParent(this.taskId)
       let parentTask = ganttObject.getTask(parentId)

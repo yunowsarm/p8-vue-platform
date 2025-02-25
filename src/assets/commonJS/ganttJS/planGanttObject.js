@@ -101,6 +101,12 @@ export function planGantt (ganttName, vueThis) {
             if (res === 'true') {
               // ganttObject.getTask(id).updateType = ''
               vueThis.refreshData()
+              let ganttDatas = vueThis.$store.getters.ganttDatas
+              ganttDatas.tasks = []
+              ganttObject.eachTask((task) => {
+                ganttDatas.tasks.push(task);
+              });
+              vueThis.$store.dispatch('setGanttDatas', ganttDatas)
               if (task.parent) {
                 api['planGanttManager.getSameTaskIndex']({
                   parentId: task.parent
