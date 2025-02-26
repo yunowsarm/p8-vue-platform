@@ -78,7 +78,6 @@ export default {
   },
   methods: {
     getDataStatus () {
-      console.log(1)
       const that = this
       this.$api['planGanttManager.getPlanStatusAllData']({ projectId: this.projectId }).then((res) => {
         if (res) {
@@ -145,7 +144,6 @@ export default {
       this.myChart.setOption(this.initOptionData)
     },
     getDataMonitor () {
-      console.log(2)
       const that = this
       this.$api['planGanttManager.getPlanStatisticAllData']({ projectId: this.projectId }).then((res) => {
         if (res) {
@@ -161,7 +159,6 @@ export default {
       })
     },
     getDataTaskType () {
-      console.log(3)
       const that = this
       this.$api['planGanttManager.getPlanTaskTypeAllData']({ projectId: this.projectId }).then((res) => {
         if (res) {

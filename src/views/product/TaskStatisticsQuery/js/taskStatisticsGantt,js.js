@@ -623,27 +623,28 @@ function getGanttColumns (ganttObject, vueThis) {
         // }
       }
     },
-    // {
-    //   name: 'roleName',
-    //   label: '角色',
-    //   align: 'center',
-    //   resize: true,
-    //   min_width: 120,
-    //   template: function (task) {
-    //     const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
-    //     const owner = task[ganttObject.config.resource_property]
-    //     if (owner) {
-    //       const userMessage = resourceDatas.getItem(owner)
-    //       if (userMessage) {
-    //         return userMessage.roleName
-    //       } else {
-    //         return ''
-    //       }
-    //     } else {
-    //       return ''
-    //     }
-    //   }
-    // },
+    {
+      name: 'roleName',
+      label: '角色',
+      align: 'center',
+      resize: true,
+      min_width: 120,
+      template: function (task) {
+        if (task.type !== 'task') return ''
+        const resourceDatas = ganttObject.getDatastore(ganttObject.config.resource_store)
+        const owner = task[ganttObject.config.resource_property]
+        if (owner) {
+          const userMessage = resourceDatas.getItem(owner)
+          if (userMessage) {
+            return userMessage.roleName
+          } else {
+            return ''
+          }
+        } else {
+          return ''
+        }
+      }
+    },
     {
       name: 'dutyDeptName',
       label: '责任部门',
@@ -658,6 +659,7 @@ function getGanttColumns (ganttObject, vueThis) {
       min_width: 130,
       resize: true,
       template: function (task) {
+        if(task.type === 'project') return ''
         if (ganttObject.isTaskExists(task.parent) && ganttObject.getTask(task.parent).start_date > task.start_date) {
           if (ganttObject.hasChild(task.id)) {
             return '<span class="red-wave" title="计划开始时间早于父任务的计划开始时间" style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
@@ -693,6 +695,7 @@ function getGanttColumns (ganttObject, vueThis) {
       min_width: 130,
       resize: true,
       template: function (task) {
+        if(task.type === 'project') return ''
         if (task.parent && ganttObject.isTaskExists(task.parent) && task.end_date && ganttObject.getTask(task.parent).end_date) {
           const pEndDate = ganttObject.getTask(task.parent).end_date
           const tEndDate = task.end_date
@@ -723,6 +726,7 @@ function getGanttColumns (ganttObject, vueThis) {
       resize: true,
       // editor: editors.duration,
       template: function (task) {
+        if(task.type === 'project') return ''
         return formatter.format(task.duration)
       }
     },
@@ -733,6 +737,7 @@ function getGanttColumns (ganttObject, vueThis) {
       min_width: 70,
       resize: true,
       template: function (task) {
+        if(task.type === 'project') return ''
         if (ganttObject.getGlobalTaskIndex(task.id) === 0 && vueThis.$route.name == 'Planning') {
           return '自动'
         } else {
@@ -747,6 +752,7 @@ function getGanttColumns (ganttObject, vueThis) {
       width: 60,
       resize: true,
       template: function (task) {
+        if(task.type === 'project') return ''
         if (task.progress > 0) {
           return Math.round(task.progress * 100) + '%'
         }
@@ -760,6 +766,7 @@ function getGanttColumns (ganttObject, vueThis) {
       width: 60,
       resize: true,
       template: function (task) {
+        if (task.type !== 'task') return ''
         // 任务图标，排除根节点
         let html = ''
         if (!(ganttObject.getGlobalTaskIndex(task.id) === 0 && vueThis.createPage === 'compile')) {
@@ -783,7 +790,7 @@ function getGanttColumns (ganttObject, vueThis) {
       resize: true,
       template: function (task) {
         // 任务图标，排除根节点
-        if (task.parent) {
+        if (task.type === 'task') {
           if (task.outputResult > 0) {
             return `<i class='el-icon-star-on' style='color: #4bcafe;font-size: 23px' title='有提交物的'></i>`
           }
@@ -908,6 +915,7 @@ function getGanttColumns (ganttObject, vueThis) {
       resize: true,
       min_width: 70,
       template: function (task) {
+        if(task.type === 'project') return ''
         const weatherControl = task.weatherControl
         if (weatherControl === '1') {
           return '是'
@@ -951,6 +959,7 @@ function getGanttColumns (ganttObject, vueThis) {
       min_width: 120,
       resize: true,
       template: function (task) {
+        if(task.type === 'project') return ''
         const result = calculateRemainingDays(task)
         return result.text
       }
@@ -1023,9 +1032,9 @@ const columnsTypeMap = {
   planType: 'select',
   wbs: 'select',
   name: 'input',
-  // owner_id: 'input',
+  owner_id: 'input',
   roleName: 'input',
-  // dutyDeptName: 'input',
+  dutyDeptName: 'input',
   taskProjectName: 'input',
   overdueRemainingDays: 'select',
   weatherControl: 'select',
