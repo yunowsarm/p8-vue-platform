@@ -25,7 +25,11 @@
           <i :class="typeIcon(scope.row.type)"> {{ scope.row.title }}</i>
         </template>
         <template #image="{ scope }">
-          <i :class="'p8 ' + scope.row.image"></i>
+          <el-tooltip effect="dark"
+                      :content="scope.row.title"
+                      placement="top">
+            <i :class="'p8 ' + scope.row.image"></i>
+          </el-tooltip>
         </template>
       </vxe-table>
     </template>
@@ -66,7 +70,7 @@
 </template>
 
 <script>
-import { P8VxeTable as VxeTable, P8ListLayout as ListLayout, P8Button as CommonButton, P8Drawer as CommonDrawer, P8Search as SearchFormList } from 'p8-components-ui'
+import { P8VxeTable as VxeTable, P8ListLayout as ListLayout, P8Button as CommonButton, P8Drawer as CommonDrawer, P8Search as SearchFormList, Tooltip } from 'p8-components-ui'
 import ResourceEdit from './Components/edit'
 import { validResTypes } from './res_set_utils'
 
@@ -78,6 +82,7 @@ export default {
     CommonDrawer,
     SearchFormList,
     ResourceEdit,
+    'el-tooltip': Tooltip,
     VxeTable
   },
   props: {

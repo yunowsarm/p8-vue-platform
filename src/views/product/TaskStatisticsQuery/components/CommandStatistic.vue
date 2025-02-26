@@ -13,7 +13,11 @@
           <div class="monitor_item"
                v-for="(item, index) in list"
                :key="index">
-            <span :class="item.icon"></span>
+            <el-tooltip effect="dark"
+                        :content="item.name"
+                        placement="top">
+              <span :class="item.icon"></span>
+            </el-tooltip>
             <span class="text">{{ item.value }}</span>
           </div>
         </div>
@@ -29,7 +33,11 @@
           <div class="monitor_item"
                v-for="(item, index) in list3"
                :key="index">
-            <span :class="item.icon"></span>
+            <el-tooltip effect="dark"
+                        :content="item.name"
+                        placement="top">
+              <span :class="item.icon"></span>
+            </el-tooltip>
             <span class="text">{{ item.value }}</span>
           </div>
         </div>

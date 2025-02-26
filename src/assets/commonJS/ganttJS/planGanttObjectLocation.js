@@ -296,11 +296,11 @@ export function getGanttLocationColumns(ganttObject, vueThisLocation) {
         })
         let img = require('@/assets/image/gantt/weidu.png')
         if (obj && obj.id && Number(obj.reminder) > 0) {
-          return `<span style='cursor: pointer'>
+          return `<span title='未读' style='cursor: pointer'>
             <img style='cursor: pointer;width: 17px; height: 17px' src='${img}' />
           </span>`
         } else if (obj && obj.id && obj.reminder == 0) {
-          return `<span class='p8 icon-read-mail' style='cursor: pointer;'></span>`
+          return `<span title='已读' class='p8 icon-read-mail' style='cursor: pointer;'></span>`
         } else {
           return ''
         }
