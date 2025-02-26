@@ -2369,7 +2369,9 @@ function searchFilter(parent, searchForm, ganttObject) {
 GanttObject.setSearchConfig = function (ganttObject, vueThis) {
   return ganttObject.attachEvent('onBeforeTaskDisplay', function (id, task) {
     if (searchFilter(id, vueThis.searchForm, ganttObject)) {
-      vueThis.searchIds.push(id)
+      if (vueThis.searchIds) {
+        vueThis.searchIds.push(id)
+      }
       return true
     }
     return false
