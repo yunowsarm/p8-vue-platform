@@ -1529,6 +1529,30 @@ export const CommandButtonData = [
             type: 'error'
           })
         })
+
+      api['planGanttManager.excelProjectTemplate']({ planInfoId: planInfoId, dicType: 'ACTIVITY_TYPE' }, { responseType: 'blob' })
+        .then((data) => {
+          const date = new Date()
+          // eslint-disable-next-line camelcase
+          const file_name = `project导出模板`;
+          // eslint-disable-next-line camelcase
+          const file_type = 'mpp'
+          const blob = new Blob([data.data], { type: 'application/octet-stream' })
+          const url = window.URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.style.display = 'none'
+          link.href = url
+          // eslint-disable-next-line camelcase
+          link.download = `${file_name}.${file_type}`
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((erro) => {
+          vueThis.$message({
+            message: 'Project模板导出失败！',
+            type: 'error'
+          })
+        })
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [

@@ -785,6 +785,13 @@ export const repositoryApi = {
       desc: '项目管理->计划管理->计划编制->数据->project导出'
     },
     {
+      name: 'excelProjectTemplate',
+      method: 'POST',
+      path: '/product/pm/plan/excelProjectTemplate',
+      mockPath: '/product/pm/plan/excelProjectTemplate',
+      desc: '项目管理->计划管理->计划编制->数据->project模板导出'
+    },
+    {
       name: 'importExcel',
       method: 'POST',
       path: '/product/pm/plan/importExcel',
