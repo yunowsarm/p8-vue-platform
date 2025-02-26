@@ -1423,12 +1423,7 @@ export const CommandButtonData = [
         }
         return columObj
       })
-      let filteredTasks = []
-      thisGantt.eachTask((task) => {
-        if (thisGantt.isTaskVisible(task.id)) {
-          filteredTasks.push(task.id);
-        }
-      });
+      let filteredTasks = [...new Set(vueThis.searchIds)]
       //所有列的列名
       let columnList = colums.map(item => {
         let columObj = {}

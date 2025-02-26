@@ -232,6 +232,7 @@ export function planGantt (ganttName, vueThis) {
     } else if (searchType === 'input') {
       vueThis.searchForm[name] = value
     }
+    vueThis.searchIds = []
     ganttObject.render()
   }
   Gantt.taskProgressDetails = function taskProgressDetails (taskId) {
