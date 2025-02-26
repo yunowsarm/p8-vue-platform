@@ -40,7 +40,7 @@ import isDisable, {
   isAllowImport,
   isExperienceImport,
   isDetailInfo,
-  isNotStart, isChangeGantt
+  isNotStart, isChangeGantt,isChangeHistory
 } from './isDisable'
 export const CommandButtonData = [
   {
@@ -2615,7 +2615,9 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
-        () => isHasTask(ganttName, tasks)
+        () => isHasTask(ganttName, tasks),
+        () => isSingleTask(ganttName, tasks),
+        () => isChangeHistory(ganttName, tasks)
       ]
       const res = isDisable(checks)
       store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
