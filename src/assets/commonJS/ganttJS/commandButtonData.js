@@ -40,7 +40,7 @@ import isDisable, {
   isAllowImport,
   isExperienceImport,
   isDetailInfo,
-  isNotStart, isChangeGantt
+  isNotStart, isChangeGantt,isChangeHistory
 } from './isDisable'
 export const CommandButtonData = [
   {
@@ -1423,12 +1423,7 @@ export const CommandButtonData = [
         }
         return columObj
       })
-      let filteredTasks = []
-      thisGantt.eachTask((task) => {
-        if (thisGantt.isTaskVisible(task.id)) {
-          filteredTasks.push(task.id);
-        }
-      });
+      let filteredTasks = [...new Set(vueThis.searchIds)]
       //所有列的列名
       let columnList = colums.map(item => {
         let columObj = {}
@@ -2620,7 +2615,9 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
-        () => isHasTask(ganttName, tasks)
+        () => isHasTask(ganttName, tasks),
+        () => isSingleTask(ganttName, tasks),
+        () => isChangeHistory(ganttName, tasks)
       ]
       const res = isDisable(checks)
       store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})

@@ -444,7 +444,13 @@ export function isNotStart (ganttName, tasks) {
     }
   }
 }
-
+// 判断选中的任务是否只变更记录
+export function isChangeHistory (ganttName, tasks) {
+  console.log("🚀 ~ isChangeHistory ~ tasks:", tasks)
+  if (tasks && tasks.length === 1 && tasks[0].changeCount === '0') {
+    return createDisableResponse(`无变更记录`);
+  }
+}
 /**
  * 公共函数
  */

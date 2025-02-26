@@ -798,7 +798,8 @@ export default {
       deleteCount: 0,
       isSueTaskIds: [],
       addTaskList: [],
-      hasAchievements: false
+      hasAchievements: false,
+      searchIds: []
     }
   },
   watch: {
