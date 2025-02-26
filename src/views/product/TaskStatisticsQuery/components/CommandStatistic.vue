@@ -13,7 +13,11 @@
           <div class="monitor_item"
                v-for="(item, index) in list"
                :key="index">
-            <span :class="item.icon"></span>
+            <el-tooltip effect="dark"
+                        :content="item.name"
+                        placement="top">
+              <span :class="item.icon"></span>
+            </el-tooltip>
             <span class="text">{{ item.value }}</span>
           </div>
         </div>
@@ -29,7 +33,11 @@
           <div class="monitor_item"
                v-for="(item, index) in list3"
                :key="index">
-            <span :class="item.icon"></span>
+            <el-tooltip effect="dark"
+                        :content="item.name"
+                        placement="top">
+              <span :class="item.icon"></span>
+            </el-tooltip>
             <span class="text">{{ item.value }}</span>
           </div>
         </div>
@@ -78,7 +86,6 @@ export default {
   },
   methods: {
     getDataStatus () {
-      console.log(1)
       const that = this
       this.$api['planGanttManager.getPlanStatusAllData']({ projectId: this.projectId }).then((res) => {
         if (res) {
@@ -145,7 +152,6 @@ export default {
       this.myChart.setOption(this.initOptionData)
     },
     getDataMonitor () {
-      console.log(2)
       const that = this
       this.$api['planGanttManager.getPlanStatisticAllData']({ projectId: this.projectId }).then((res) => {
         if (res) {
@@ -161,7 +167,6 @@ export default {
       })
     },
     getDataTaskType () {
-      console.log(3)
       const that = this
       this.$api['planGanttManager.getPlanTaskTypeAllData']({ projectId: this.projectId }).then((res) => {
         if (res) {

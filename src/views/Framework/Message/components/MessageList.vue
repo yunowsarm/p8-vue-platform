@@ -350,19 +350,11 @@ export default {
     },
     myMessageGroup () {
       let that = this
-      this.$api['PersonalProcessApproval.myMessageGroup']().then((res) => {
+      this.$api['PersonalProcessApproval.myMessageGroup']({ msgType: this.mergeParams.msgCatalog }).then((res) => {
         if (res) {
-          let magCount = 0
-          res.forEach(el => {
-            magCount = magCount + Number(el.msgCount)
-            if (el.isRead === '1501') {
-              that.tabs[0].label = `未读(${el.msgCount ? Number(el.msgCount) : 0})`
-            }
-            if (el.isRead === '1505') {
-              that.tabs[1].label = `已读(${el.msgCount ? Number(el.msgCount) : 0})`
-            }
-          })
-          that.tabs[2].label = `全部(${magCount})`
+          that.tabs[0].label = `未读(${res.unRead ? Number(res.unRead) : 0})`
+          that.tabs[1].label = `已读(${res.isRead ? Number(res.isRead) : 0})`
+          that.tabs[2].label = `全部(${res.total ? Number(res.total) : 0})`
         }
       })
     },

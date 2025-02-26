@@ -863,7 +863,7 @@ export default {
         })
       }, 1000)
     },
-    loadGanttData (projectId, open = false) {
+    loadGanttData (projectId) {
       this.loading = true
       const monitorBtns = this.monitorBtnsByApi
       window.createPage = this.createPage
@@ -875,31 +875,14 @@ export default {
       })
         .then(function (res) {
           if (res) {
-            let taskList = []
-            let links = []
-            let resources = []
-            res.forEach((item) => {
-              taskList = [...taskList, ...item.tasks]
-              links = [...links, ...item.links]
-              if (item.extendMap) {
-                vueThis.extendMap = { ...vueThis.extendMap, ...item.extendMap }
-              }
-              if (item.resources) {
-                resources = [...resources, ...item.resources];
-                resources = resources.filter((resource, index, self) =>
-                  index === self.findIndex((t) => (
-                    t.id === resource.id
-                  ))
-                );
-              }
-            })
             vueThis.loading = false
+            vueThis.$store.dispatch('setGanttDatas', res)
+            let taskList = res.tasks
             // 先给task赋值拓展字段
             let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
             let extraStr = extraList.map((extra) => extra.filedName)
             taskList.forEach((task) => {
               // 解决gantt图鼠标悬浮任务名
-              task.open = open
               task.text = task.name
               extraStr.forEach((key) => {
                 task[key] = ''
@@ -909,8 +892,7 @@ export default {
               }
             })
             // 处理拓展字段已有的数据
-            const project = res[0]
-            // vueThis.extendMap = project.extendMap || {}
+            vueThis.extendMap = res.extendMap || {}
             taskList.forEach((task) => {
               extraList.forEach((item) => {
                 task['kz' + item.id] = ''
@@ -927,12 +909,25 @@ export default {
             // 初始化数据
             const datas = {
               tasks: taskList,
-              links: links
+              links: res.links
             }
-            vueThis.taskList = taskList
-            if (res[0].trainingModeList) {
+            if (res.projectStatus === '2205') {
+              myGantt.config.readonly = true
+            }
+            if (
+              (res.monitorLock && res.monitorLock['1010'] && res.monitorLock['1010'] === '1') ||
+              (res.monitorLock && res.monitorLock['1018'] && res.monitorLock['1018'] === '1') ||
+              (res.monitorLock && res.monitorLock['1020'] && res.monitorLock['1020'] === '1')
+            ) {
+              if (createPage === 'compile') {
+                vueThis.planEditLock = true
+                myGantt.config.readonly = true
+                myGantt.config.readonlyReason = '计划编辑锁定时不允许此操作'
+              }
+            }
+            if (res.trainingModeList) {
               const trainingModeListArr = []
-              res[0].trainingModeList.map((item) => {
+              res.trainingModeList.map((item) => {
                 trainingModeListArr.push({
                   key: item.id,
                   label: item.title
@@ -940,55 +935,38 @@ export default {
               })
               myGantt.serverList(myGantt.config.training_mode_list, trainingModeListArr)
             }
-            myGantt.$resourcesStore.parse(project.resources)
-            // myGantt.serverList('secretGrades', res.secretGradeList)
-            myGantt.serverList('userList', project.userResourceList)
-            myGantt.serverList(myGantt.config.monitor_point, project.monitorPointDatas)
-            myGantt.serverList(myGantt.config.plan_type, project.taskClassifys)
-            myGantt.serverList(myGantt.config.tasks_cooperate_dept, project.deptList)
-            myGantt.config.open_tree_initially = false
-            // myGantt.serverList(myGantt.config.task_status, vueThis.taskStatus)
-            vueThis.budgetList = project.budgetList
-            // if (createPage === 'decompose' && res.distribution) {
-            //   vueThis.resourceSelectModel = ['user']
-            // } else {
-            //   vueThis.resourceSelectModel = [res.distribution]
-            // }
+            myGantt.$resourcesStore.parse(res.resources)
+            myGantt.serverList('userList', res.userResourceList)
+            myGantt.serverList(myGantt.config.monitor_point, res.monitorPointDatas)
+            myGantt.serverList(myGantt.config.plan_type, res.taskClassifys)
+            myGantt.serverList(myGantt.config.tasks_cooperate_dept, res.deptList)
+
+            vueThis.budgetList = res.budgetList
             vueThis.resourceSelectModel = ['team']
-            vueThis.taskClassifyDatas = project.taskClassifys
-            vueThis.issueStatus = project.issueStatus
-            vueThis.monitorPointDatas = project.monitorPointDatas
-            vueThis.monitorLockMap = project.monitorLock
-            vueThis.managerStatusMap = project.managerStatusMap
-            vueThis.taskStatusMap = project.taskStatusMap
-            vueThis.$store.dispatch('setTaskStyles', project.taskStyle)
-            myGantt.clearAll()
+            vueThis.taskClassifyDatas = res.taskClassifys
+            vueThis.issueStatus = res.issueStatus
+            vueThis.monitorPointDatas = res.monitorPointDatas
+            vueThis.monitorLockMap = res.monitorLock
+            vueThis.managerStatusMap = res.managerStatusMap
+            vueThis.taskStatusMap = res.taskStatusMap
+            vueThis.$store.dispatch('setTaskStyles', res.taskStyle)
             myGantt.parse(datas)
-            vueThis.taskCount = myGantt.getTaskCount()
+            vueThis.taskCount = res.taskCounts
 
             myGantt.unselectTask()
-            myGantt.ext.fullscreen.getFullscreenElement = function () {
-              return document.querySelector('#couerDiv')
-            }
+
             if (!vueThis.relevancePlanVisible && vueThis.selectedId) {
               setTimeout(() => {
-                myGantt.showTask(vueThis.selectedId)
                 myGantt.selectTask(vueThis.selectedId)
               }, 1000)
             }
             if (vueThis.isSueTaskIds && vueThis.isSueTaskIds.length) {
               vueThis.isSueTaskIds.forEach((el) => {
-                myGantt.showTask(el)
                 myGantt.selectTask(el)
               })
-              vueThis.isSueTaskIds = null
+              vueThis.isSueTaskIds = []
             }
-            // 检查gantt操作权限
-            // myGantt.config.readonly = editLockUnLockCheck(vueThis.planInfoStatus, vueThis.monitorLockMap)
-          } else {
-            vueThis.loading = false
           }
-          // vueThis.addEventClick()
         })
         .catch(function (error) {
           vueThis.loading = false
@@ -997,11 +975,19 @@ export default {
     },
     // 展开所有gantt
     expandAll () {
-      this.loadGanttData(this.projectId, true)
+      myGantt.batchUpdate(function() {
+        myGantt.eachTask(function(task) {
+          myGantt.open(task.id);
+        });
+      });
     },
     // 收缩所有gantt
     collapseAll () {
-      this.loadGanttData(this.projectId, false)
+      myGantt.batchUpdate(function() {
+        myGantt.eachTask(function(task) {
+          myGantt.close(task.id);
+        });
+      });
     },
     async gridSaved () {
       this.selectGridVisible = false
