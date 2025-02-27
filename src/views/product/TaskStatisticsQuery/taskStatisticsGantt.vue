@@ -952,20 +952,29 @@ export default {
             vueThis.$store.dispatch('setTaskStyles', res.taskStyle)
             myGantt.parse(datas)
             vueThis.taskCount = res.taskCounts
-
-            myGantt.unselectTask()
-
-            if (!vueThis.relevancePlanVisible && vueThis.selectedId) {
-              setTimeout(() => {
-                myGantt.selectTask(vueThis.selectedId)
-              }, 1000)
-            }
-            if (vueThis.isSueTaskIds && vueThis.isSueTaskIds.length) {
-              vueThis.isSueTaskIds.forEach((el) => {
-                myGantt.selectTask(el)
-              })
-              vueThis.isSueTaskIds = []
-            }
+            myGantt.batchUpdate(function() {
+              myGantt.eachTask(function(task) {
+                // 判断是否为根节点（根据业务逻辑，根节点通常没有父节点）
+                if (task.type === 'project') {
+                  myGantt.open(task.id);
+                }else{
+                  myGantt.close(task.id);
+                }
+              });
+            });
+            // myGantt.unselectTask()
+            //
+            // if (!vueThis.relevancePlanVisible && vueThis.selectedId) {
+            //   setTimeout(() => {
+            //     myGantt.selectTask(vueThis.selectedId)
+            //   }, 1000)
+            // }
+            // if (vueThis.isSueTaskIds && vueThis.isSueTaskIds.length) {
+            //   vueThis.isSueTaskIds.forEach((el) => {
+            //     myGantt.selectTask(el)
+            //   })
+            //   vueThis.isSueTaskIds = []
+            // }
           }
         })
         .catch(function (error) {
