@@ -2,7 +2,7 @@
 <template>
   <div class="main_content">
     <el-tabs type="border-card"
-             style="height: 97%;">
+             style="height: 100%;">
       <el-tab-pane label="项目团队信息">
         <div style="height: 100%"
              class="team-manager-wrap">
@@ -1026,9 +1026,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.main_content {
+  height: calc(100% - 20px);
+}
 .custom_content_wrap {
   display: flex;
-  height: 100%;
+  height: calc(100% - 40px);
   // padding: 16px;
   box-sizing: border-box;
   .left_content {
