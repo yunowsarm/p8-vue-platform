@@ -613,6 +613,8 @@ export default {
       //   return this.$message.warning('低密不能修改高密')
       // }
       if (res && res === 'true') {
+        that.formData.updateTime = moment().format('YYYY-MM-DD HH:mm:ss')
+        that.formData.updateBy = that.vueThis.$store.getters.userInfo.realName
         const ganttObject = GanttObject.getGanttObject(that.ganttName)
         if (that.formData && JSON.stringify(that.formData) !== '{}') {
           let check = false
