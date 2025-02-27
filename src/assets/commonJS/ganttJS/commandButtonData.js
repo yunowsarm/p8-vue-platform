@@ -3901,6 +3901,13 @@ function noDpPaste (ganttObject, tasks, vueThis) {
  */
 function createTask (parent, parentId, vueThis, style, copyTask, ganttObject) {
   const formatFunc = ganttObject.date.date_to_str('%Y-%m-%d')
+  let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
+  let extraTask = {}
+  if (extraList && extraList.length) {
+    extraList.forEach(el => {
+      extraTask['kz' + el.id] = ''
+    })
+  }
   return {
     name: copyTask.name || '新任务', // 添加默认值
     infoType: 'create',
@@ -3924,7 +3931,8 @@ function createTask (parent, parentId, vueThis, style, copyTask, ganttObject) {
     planType: copyTask.planType || '', // 添加默认值
     type: 'task',
     $open: true,
-    unDescribes: copyTask.unDescribes || '' // 添加默认值
+    unDescribes: copyTask.unDescribes || '', // 添加默认值
+    ...extraTask,
   }
 }
 
