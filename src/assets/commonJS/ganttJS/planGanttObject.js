@@ -107,7 +107,7 @@ export function planGantt (ganttName, vueThis) {
                 ganttDatas.tasks.push(task);
               });
               vueThis.$store.dispatch('setGanttDatas', ganttDatas)
-              if (task.parent) {
+              if (vueThis.fullscreen && task.parent) {
                 api['planGanttManager.getSameTaskIndex']({
                   parentId: task.parent
                 })
@@ -120,6 +120,8 @@ export function planGantt (ganttName, vueThis) {
                           }
                         })
                       });
+                      vueThis.fullscreenLoading.close()
+                      vueThis.fullscreen = false
                     }
                   })
                   .catch(() => {})
