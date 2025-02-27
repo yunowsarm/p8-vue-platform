@@ -3271,6 +3271,7 @@ export function progressRefreshCheck(vueThis) {
  * @returns {null|*}
  */
 GanttObject.getGanttSettingGrid = function (ganttName, createPage) {
+  console.log(ganttName, createPage,'====ganttName, createPage');
   const ganttSetting = store.state.user.userSettingAll && store.state.user.userSettingAll.Gantt ? store.state.user.userSettingAll.Gantt : null
   const key = ganttName + '-' + createPage
   if (ganttSetting) {
@@ -3427,10 +3428,19 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
   const hideColumnKeys = hideColumns.map((item) => item.filedName)
   const extraColumnKeys = extraColumns.map((item) => 'kz' + item.id)
   // 获取gantt列配置信息
+  // let createPage = JSON.parse(JSON.stringify(vueThis.createPage))
+  // if (vueThis.$route.name == 'TaskDecomposition') {
+  //   createPage = 'compile'
+  // }
+  // const ganttSetting = GanttObject.getGanttSettingGrid(vueThis.ganttName, createPage)
   const ganttSetting = GanttObject.getGanttSettingGrid(vueThis.ganttName, vueThis.createPage)
   // 存在配置信息时，同步，不存在时显示默认gantt列信息
   if (ganttSetting) {
     const settingColumns = ganttSetting.value.columns
+    let lineHeight = ganttSetting.value && ganttSetting.value.lineHeight ? ganttSetting.value.lineHeight : null
+    if (lineHeight) {
+      ganttObject.config.row_height = lineHeight
+    }
     let tempColumns = []
     // 根据表头配置信息修改ganttObject对象中columns的显示隐藏属性及排序
     const settingExtra = {}
@@ -3438,12 +3448,14 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
       if (extraColumnKeys.includes(settingItem.name)) {
         settingExtra[settingItem.name] = {
           index: initIndex,
-          hide: settingItem.hide
+          hide: settingItem.hide,
+          colWidth: settingItem.colWidth,
         }
       }
       const initColumn = initColumns.filter((initItem) => initItem.name === settingItem.name)
       if (initColumn && Object.keys(initColumn).length > 0) {
         initColumn[0].hide = settingItem.hide
+        initColumn[0].width = initColumn[0].min_width = settingItem.colWidth
         let columnSetting = vueThis.columnSettings.filter((el) => el.filedName === initColumn[0].name && el.isEnable !== '0')
         if (columnSetting && columnSetting.length > 0) {
           tempColumns[initIndex] = initColumn[0]

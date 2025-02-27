@@ -735,6 +735,12 @@ function synchronizationColumns (vueThis, ganttObject) {
   //   ganttObject.config.columns = initColumns
   // }
 
+  const ganttSetting = GanttObject.getGanttSettingGrid('planGantt', 'compile')
+  let lineHeight = ganttSetting && ganttSetting.value && ganttSetting.value.lineHeight ? ganttSetting.value.lineHeight : null
+  if (lineHeight) {
+    ganttObject.config.row_height = lineHeight
+  }
+  const settingColumns = ganttSetting && ganttSetting.value && ganttSetting.value.columns ? ganttSetting.value.columns : []
   if (vueThis.columnSettings.length > 0) {
     const tempColumns = []
     vueThis.columnSettings.forEach((item) => {
@@ -743,7 +749,16 @@ function synchronizationColumns (vueThis, ganttObject) {
         // initColumn[0].hide = !(item.isEnable == '1')
         // tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
         if (item.isEnable == '1') {
-          tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
+          if (settingColumns.length > 0) {
+            settingColumns.forEach((settingItem, initIndex) => {
+              if(settingItem.name == initColumn[0].name) {
+                initColumn[0].width = initColumn[0].min_width = settingItem.colWidth
+                tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
+              }
+            })
+          } else {
+            tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
+          }
         }
       }
       if (item.attributeType === '1') {

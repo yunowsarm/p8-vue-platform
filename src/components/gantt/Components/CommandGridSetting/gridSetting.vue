@@ -21,6 +21,14 @@
                      @start="drag = true"
                      @end="drag = false"
                      @change="draggableChangeHandle">
+            <li class="list-group-item">
+              <span style="display:inline-block;height: 21px;">行高</span>
+              <span class="widthNumber">
+                <el-input-number v-model="lineHeight"
+                                 style="margin-bottom:1px;"
+                                 controls-position="right"></el-input-number>
+              </span>
+            </li>
             <li class="list-group-item"
                 v-for="(item, index) in initialColumns"
                 :key="item.name">
@@ -29,6 +37,11 @@
                            @change="checkedHandle(index)">
                 <span>{{ item.label }}</span>
               </el-checkbox>
+              <span class="widthNumber">
+                <el-input-number v-model="item.width"
+                                 @blur="numberBlur(index)"
+                                 controls-position="right"></el-input-number>
+              </span>
             </li>
           </draggable>
         </div>
@@ -88,7 +101,7 @@ export default {
   },
   data () {
     return {
-      dialogWidth: '300px',
+      dialogWidth: '450px',
       dialogHeight: 400,
       dialogConfig: {
         'append-to-body': true
@@ -99,7 +112,8 @@ export default {
       tableSettings: [],
       description: 'grid-setting',
       type: 'Gantt',
-      saveApi: '/framework/user/setting/save'
+      saveApi: '/framework/user/setting/save',
+      lineHeight: 50
     }
   },
   watch: {
@@ -114,7 +128,16 @@ export default {
       deep: true
     }
   },
-  mounted () { },
+  mounted () {
+    let ganttSetting = GanttObject.getGanttSettingGrid(this.ganttName, this.createPage)
+    if (this.$route.name == 'PlanChanges') {
+      ganttSetting = GanttObject.getGanttSettingGrid('planGantt', 'compile')
+    }
+    let lineHeight = ganttSetting.value.lineHeight ? ganttSetting.value.lineHeight : null
+    if (lineHeight) {
+      this.lineHeight = lineHeight
+    }
+  },
   methods: {
     removeHTMLTags (str) {
       return str.replace(/<\/?[^>]+(>|$)/g, "");
@@ -130,7 +153,8 @@ export default {
         item.label = this.removeHTMLTags(item.label)
         const tempObj = {
           hide: item.hide ? item.hide : false,
-          name: item.name || null
+          name: item.name || null,
+          colWidth: item.width
         }
         this.tableSettings.push(tempObj)
         return item
@@ -139,6 +163,9 @@ export default {
     checkedHandle (index) {
       // 手动处理原因[未使用 v-model 绑定 checkbox' v-model绑定时,值改变会立即体现到Table上(但不想这样体现),]
       this.tableSettings[index].hide = !this.tableSettings[index].hide
+    },
+    numberBlur (index) {
+      this.tableSettings[index].colWidth = this.initialColumns[index].width
     },
     checkDraggableMove (evt) {
       // let currIndex = evt.draggedContext.index
@@ -159,6 +186,11 @@ export default {
     },
     save () {
       const _this = this
+      // let createPage = JSON.parse(JSON.stringify(_this.createPage))
+      // if (_this.$route.name == 'TaskDecomposition') {
+      //   createPage = 'compile'
+      // }
+      // const ganttSetting = GanttObject.getGanttSettingGrid(_this.ganttName, createPage)
       const ganttSetting = GanttObject.getGanttSettingGrid(_this.ganttName, _this.createPage)
       let id = null
       if (ganttSetting) {
@@ -167,10 +199,11 @@ export default {
       const params = [
         {
           id: id,
+          // key: _this.ganttName + '-' + createPage,
           key: _this.ganttName + '-' + _this.createPage,
           description: _this.description,
           type: _this.type,
-          value: JSON.stringify({ columns: _this.tableSettings })
+          value: JSON.stringify({ columns: _this.tableSettings, lineHeight: _this.lineHeight })
         }
       ]
       const { devBaseUrl, prodBaseUrl, isDevMode } = _this.api_default_config
@@ -196,14 +229,19 @@ export default {
     },
     reSet () {
       let _this = this
+      // let createPage = JSON.parse(JSON.stringify(_this.createPage))
+      // if (_this.$route.name == 'TaskDecomposition') {
+      //   createPage = 'compile'
+      // }
       this.$api['planChange.reloadGantColumn']({
+        // key: _this.ganttName + '-' + createPage,
         key: _this.ganttName + '-' + _this.createPage,
         type: _this.type
       }).then(res => {
         _this.$store.commit('SET_SETTING_ALL', {})
         _this.$emit('save-setting')
       })
-       this.$api['planChange.reloadGantColumn']({
+      this.$api['planChange.reloadGantColumn']({
         key: 'plan-btn-setting',
         type: 'PlanButton'
       })
@@ -247,5 +285,8 @@ export default {
 }
 ::v-deep .el-radio-button--mini .el-radio-button__inner {
   padding: 6px 10px;
+}
+.widthNumber {
+  float: right;
 }
 </style>
