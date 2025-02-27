@@ -319,8 +319,14 @@ export function isAllowPaste (ganttName, tasks) {
       return false
     }
   }
-  if (!(vueThis.copyTasks && vueThis.copyTasks.tasks && vueThis.copyTasks.tasks.length)) {
-    return createDisableResponse(`请先复制再进行`);
+  if (ganttName === 'changeGantt') {
+    if (!vueThis.copyTasks || !vueThis.copyTasks.length) {
+      return createDisableResponse(`请先复制再进行`);
+    }
+  } else {
+    if (!(vueThis.copyTasks && vueThis.copyTasks.tasks && vueThis.copyTasks.tasks.length)) {
+      return createDisableResponse(`请先复制再进行`);
+    }
   }
 }
 

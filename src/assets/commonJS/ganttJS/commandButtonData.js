@@ -6,42 +6,45 @@ import store from '@/plugins/store'
 import axios from '@/plugins/axios'
 import { requestUrl } from '@/utils/common.js'
 import isDisable, {
-  isNewChild,
-  isNewSibling,
-  isHasTask,
-  isCompile,
-  isSuspensionOrProhibition,
-  taskStateAndReadonly,
-  isWeave,
-  isToBeDelivered,
-  isHasProductTask,
-  isApprovalCompleted,
-  isAllowUpgrades,
-  isSingleTask,
-  isAllowDowngrade,
-  isAllowDelete,
-  isHasApproveTask,
-  noSelfCreate,
-  isApprovalReject,
-  isReadOnly,
-  isNoRoot,
-  isHasDeliveredTask,
-  isAllowResponsiblePerson,
-  isAllowIssue,
-  isAllowUndo,
-  isHadRootAndReadOnly,
-  isAllowPaste,
   isAllowAutoManual,
   isAllowChangeStyle,
-  isGridView,
-  isGanttView,
-  isResourceView,
-  isCriticalPath,
+  isAllowDelete,
+  isAllowDowngrade,
   isAllowImport,
-  isExperienceImport,
+  isAllowIssue,
+  isAllowPaste,
+  isAllowResponsiblePerson,
+  isAllowUndo,
+  isAllowUpgrades,
+  isApprovalCompleted,
+  isApprovalReject,
+  isChangeGantt,
+  isChangeHistory,
+  isCompile,
+  isCriticalPath,
   isDetailInfo,
-  isNotStart, isChangeGantt,isChangeHistory
+  isExperienceImport,
+  isGanttView,
+  isGridView,
+  isHadRootAndReadOnly,
+  isHasApproveTask,
+  isHasDeliveredTask,
+  isHasProductTask,
+  isHasTask,
+  isNewChild,
+  isNewSibling,
+  isNoRoot,
+  isNotStart,
+  isReadOnly,
+  isResourceView,
+  isSingleTask,
+  isSuspensionOrProhibition,
+  isToBeDelivered,
+  isWeave,
+  noSelfCreate,
+  taskStateAndReadonly
 } from './isDisable'
+
 export const CommandButtonData = [
   {
     id: 'create-children',
@@ -3086,7 +3089,6 @@ function addTask (num, pos, ganttName) {
  * @param dpObject
  */
 function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dpObject, indexNo) {
-  debugger
   const vueThis = store.getters.vueThis
   let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
   let extraTask = {}
@@ -3899,8 +3901,8 @@ function noDpPaste (ganttObject, tasks, vueThis) {
  */
 function createTask (parent, parentId, vueThis, style, copyTask, ganttObject) {
   const formatFunc = ganttObject.date.date_to_str('%Y-%m-%d')
-  const task = {
-    name: copyTask.name,
+  return {
+    name: copyTask.name || '新任务', // 添加默认值
     infoType: 'create',
     style: style,
     progress: 0,
@@ -3910,21 +3912,20 @@ function createTask (parent, parentId, vueThis, style, copyTask, ganttObject) {
     forecastBeginDate: formatFunc(new Date(parent.start_date)),
     forecastEndDate: formatFunc(ganttObject.date.add(new Date(parent.end_date), -1, 'day')),
     parent: parentId,
-    status: vueThis.createTaskStatus,
+    status: vueThis.createTaskStatus || '6403', // 添加默认状态
     planInfoId: vueThis.planInfoId,
-    monitorPoints: copyTask.monitorPoints,
-    owner_id: copyTask.owner_id,
-    auto_scheduling: parent.auto_scheduling,
-    autoScheduling: parent.autoScheduling,
-    managerStatus: vueThis.managerStatus,
-    weatherControl: vueThis.weatherControl,
-    createSource: vueThis.createSource,
-    planType: copyTask.planType,
+    monitorPoints: copyTask.monitorPoints || '', // 添加默认值
+    owner_id: copyTask.owner_id || '', // 添加默认值
+    auto_scheduling: parent.auto_scheduling || '0', // 添加默认值
+    autoScheduling: parent.autoScheduling || '0', // 添加默认值
+    managerStatus: vueThis.managerStatus || '6403', // 添加默认值
+    weatherControl: vueThis.weatherControl || '0', // 添加默认值
+    createSource: vueThis.createSource || 'manual', // 添加默认值
+    planType: copyTask.planType || '', // 添加默认值
     type: 'task',
     $open: true,
-     unDescribes: copyTask.unDescribes
+    unDescribes: copyTask.unDescribes || '' // 添加默认值
   }
-  return task
 }
 
 /**
