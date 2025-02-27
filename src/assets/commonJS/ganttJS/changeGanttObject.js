@@ -348,6 +348,14 @@ export function getChangeGantt (ganttName, vueThis) {
       monitorLockLimit: true, // 标识锁定后不可操作的列声明
       min_width: 350,
       template: function (task) {
+        if (task.unDescribes !== '1') {
+          if (task.describes && task.describes !== '') {
+            task.unDescribes = '1'
+          }
+        }
+        if (task.describes === '') {
+          task.unDescribes = '0'
+        }
         let result = ''
         if (task.unDescribes === '1') result = `<i class='p8 icon-tishi' title='存在任务描述' style='color: #0ab847; float: left'></i>`
         if (task.style) {

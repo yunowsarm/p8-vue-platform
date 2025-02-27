@@ -76,7 +76,7 @@
                    type="primary"
                    size="mini"
                    @click="saveChange"
-                   v-if="!readOnly && hasSave">保存 </el-button>
+                   v-if="!readOnly && hasSave">保存</el-button>
         <el-button style="float: right; margin-right: 20px; margin-top: 6px"
                    type="primary"
                    :disabled="submitChangeDisabled"
@@ -814,6 +814,10 @@ export default {
                 if (!res.changeTaskInfo[item.id].monitors) {
                   obj.monitorPoints = ''
                 }
+                if (res.changeTaskInfo[item.id].describes) {
+                  obj.unDescribes = '1'
+                  vueThis.newTaskMap[item.id].updateInfo = ['describes']
+                }
               }
               return obj
             })
@@ -901,6 +905,7 @@ export default {
               links: res.links
             }
             if (res.tasks && res.changeTaskInfo && Object.keys(res.changeTaskInfo).length > 0) {
+              vueThis.newTaskMap = res.changeTaskInfo
               res.tasks.forEach((task) => {
                 if (Object.keys(res.changeTaskInfo)[0] === task.id) {
                   vueThis.projectCategory = task.projectCategory
@@ -957,9 +962,6 @@ export default {
                 myGantt.updateTask(task.id)
               })
               vueThis.taskExtendRequests = vueThis.taskExtendRequests.concat(extraData)
-            }
-            if (vueThis.selectRow && vueThis.selectRow.lastCreateTaskId) {
-              vueThis.newTaskMap[vueThis.selectRow.lastCreateTaskId] = vueThis.oldTaskMap[vueThis.selectRow.lastCreateTaskId]
             }
           }
         })
@@ -1104,46 +1106,48 @@ export default {
       const sendDatas = []
       for (const key in obj) {
         // 获取newTaskMap对象
-        const task = obj[key]
-        const oldTask = oldObj[key]
-        const updateInfo = obj[key].updateInfo
-        // 获取gantt中task对象
-        const nowGanttTask = myGantt.getTask(task.id)
-        const indexNo = myGantt.getGlobalTaskIndex(task.id)
-        // newTaskMap中数据过滤
-        // 当只修改任务且最终于原始数据一致时，删除newTaskMap中对应数据
-        if (!nowGanttTask.infoType && updateInfo && updateInfo.length === 1 && updateInfo.indexOf('task') !== -1) {
-          delete that.newTaskMap[key]
-          break
-        }
-        if (oldTask && Object.keys(oldTask).length > 0) {
-          const oldIndexNo = oldObj[key].indexNo
-          // 任务属性未修改时，取消updateInfo中task
-          if (updateInfo && updateInfo.indexOf('task') !== -1 && nowGanttTask.infoType === 'update' && oldIndexNo === indexNo && nowGanttTask.parent === oldTask.parent) {
-            let check = true
-            for (const okey in oldTask) {
-              if (checkKeys.indexOf(okey) !== -1 && nowGanttTask[okey] !== oldTask[okey]) {
-                check = false
-                break
-              }
-            }
-            if (check) {
-              updateInfo.splice(updateInfo.indexOf('task'), 1)
-            }
-            that.newTaskMap[key].updateInfo = updateInfo
+        if (obj[key]) {
+          const task = obj[key]
+          const oldTask = oldObj[key]
+          const updateInfo = obj[key].updateInfo
+          // 获取gantt中task对象
+          const nowGanttTask = myGantt.getTask(task.id)
+          const indexNo = myGantt.getGlobalTaskIndex(task.id)
+          // newTaskMap中数据过滤
+          // 当只修改任务且最终于原始数据一致时，删除newTaskMap中对应数据
+          if (!nowGanttTask.infoType && updateInfo && updateInfo.length === 1 && updateInfo.indexOf('task') !== -1) {
+            delete that.newTaskMap[key]
+            break
           }
+          if (oldTask && Object.keys(oldTask).length > 0) {
+            const oldIndexNo = oldObj[key].indexNo
+            // 任务属性未修改时，取消updateInfo中task
+            if (updateInfo && updateInfo.indexOf('task') !== -1 && nowGanttTask.infoType === 'update' && oldIndexNo === indexNo && nowGanttTask.parent === oldTask.parent) {
+              let check = true
+              for (const okey in oldTask) {
+                if (checkKeys.indexOf(okey) !== -1 && nowGanttTask[okey] !== oldTask[okey]) {
+                  check = false
+                  break
+                }
+              }
+              if (check) {
+                updateInfo.splice(updateInfo.indexOf('task'), 1)
+              }
+              that.newTaskMap[key].updateInfo = updateInfo
+            }
+          }
+          // that.newTaskMap[key].indexNo = indexNo
+          // 日期转换
+          nowGanttTask.start_date = moment(nowGanttTask.start_date).format('YYYY-MM-DD')
+          nowGanttTask.end_date = moment(nowGanttTask.end_date).format('YYYY-MM-DD')
+          // nowGanttTask.indexNo = indexNo
+          nowGanttTask.owner_type = 'team'
+          if (!nowGanttTask.monitors && nowGanttTask.monitorPoints !== null) {
+            nowGanttTask.monitors = this.taskMonitorMap[nowGanttTask.id]
+          }
+          that.newTaskMap[key] = nowGanttTask
+          sendDatas.push(that.newTaskMap[key])
         }
-        // that.newTaskMap[key].indexNo = indexNo
-        // 日期转换
-        nowGanttTask.start_date = moment(nowGanttTask.start_date).format('YYYY-MM-DD')
-        nowGanttTask.end_date = moment(nowGanttTask.end_date).format('YYYY-MM-DD')
-        // nowGanttTask.indexNo = indexNo
-        nowGanttTask.owner_type = 'team'
-        if (!nowGanttTask.monitors && nowGanttTask.monitorPoints !== null) {
-          nowGanttTask.monitors = this.taskMonitorMap[nowGanttTask.id]
-        }
-        that.newTaskMap[key] = nowGanttTask
-        sendDatas.push(that.newTaskMap[key])
       }
 
       const mergedArray = []

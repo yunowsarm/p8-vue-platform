@@ -544,6 +544,7 @@ export default {
       const ganttObject = GanttObject.getGanttObject(that.ganttName)
       that.ownerDataOptions = ganttObject.serverList('resourceDatas')
       const task = ganttObject.getTask(taskId)
+      that.formData.describes = task.describes || ''
       this.nullity = task.nullity
       that.formData.name = task.name
       that.formData.achievements = task.achievements

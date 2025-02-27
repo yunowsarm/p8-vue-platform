@@ -2205,7 +2205,7 @@ export const CommandButtonData = [
       if (ganttName) {
         const vueThis = store.getters.vueThis
         vueThis.searchForm = {}
-        vueThis.loadGanttData(vueThis.planInfoId,true)
+        // vueThis.loadGanttData(vueThis.planInfoId,true)
         vueThis.$emit('open', vueThis.myGantt)
       }
     },
@@ -3192,7 +3192,7 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
         });
         setTimeout(() => {
           ganttObject.unselectTask()
-          if (filteredTasks.indexOf(task.id) === -1) {
+          if (filteredTasks && filteredTasks.indexOf(task.id) === -1) {
             ganttObject.showTask(parentId)
             ganttObject.selectTask(parentId)
           } else {
@@ -3819,6 +3819,17 @@ function noDpCopy (thisGantt, tasks, vueThis) {
       }, id)
     })
   })
+  vueThis.copyTasks.forEach(function (task) {
+    api['planGanttManager.getActivityInfoByTaskId']({
+      taskId: task.id
+    }).then(function (res) {
+      if (res.describes) {
+        task.describes = res.describes
+        task.unDescribes = '1'
+        task.updateInfo = ['describes']
+      }
+    })
+  })
 }
 
 /**
@@ -3840,6 +3851,7 @@ function noDpPaste (ganttObject, tasks, vueThis) {
         let task
         if (idMap && idMap[item.parent]) {
           task = createTask(parentTasks, idMap[item.parent], vueThis, style, item, ganttObject)
+          console.log(task,'3333333333333333333333333');
           const parTask = ganttObject.getTask(item.parent)
           if (parTask.autoScheduling === '1' && parTask.type === 'task' && ganttObject.getGlobalTaskIndex(parTask.id) !== 0) {
             parTask.type = 'project'
@@ -3847,6 +3859,8 @@ function noDpPaste (ganttObject, tasks, vueThis) {
           ganttObject.addTask(task, idMap[item.parent], selIndexNo++)
         } else {
           task = createTask(parentTasks, parentTasks.id, vueThis, style, item, ganttObject)
+  console.log(task,'3333333333333333333333333');
+
           const parTask = ganttObject.getTask(selectTask.parent)
           if (parTask.autoScheduling === '1' && parTask.type === 'task' && ganttObject.getGlobalTaskIndex(parTask.id) !== 0) {
             parTask.type = 'project'
@@ -3933,6 +3947,8 @@ function createTask (parent, parentId, vueThis, style, copyTask, ganttObject) {
     $open: true,
     unDescribes: copyTask.unDescribes || '', // 添加默认值
     ...extraTask,
+    describes: copyTask.describes || '',
+    updateInfo: copyTask.updateInfo || []
   }
 }
 
