@@ -15,10 +15,10 @@
           :dialog-height="dialogHeight"
           @close="handleClose"
           @handle-cancel="handleClose"
-          @handle-ok="handleClose"
+          @handle-ok="handleOk"
         >
           <template #dialog>
-            <icon-selector @icon-select="iconSelect" :selected-name="modify.icon"></icon-selector>
+            <icon-selector @icon-select="iconSelect" :selected-name="modify.icon" :selectedColor="modify.color" :color-picker="true"></icon-selector>
           </template>
         </common-dialog>
       </template>
@@ -89,7 +89,8 @@ export default {
           rules: [
             {
               required: true,
-              message: '必填'
+              message: '必填',
+              trigger: 'change'
             },
             {
               validator: (rule, value, callback, source, options) => {
@@ -234,7 +235,8 @@ export default {
       ],
       modify: {
         controlTimeType: '1',
-        constantMarkType: '1'
+        constantMarkType: '1', 
+        icon: ''
       },
       iconPopover: false,
       icon: '',
@@ -285,8 +287,25 @@ export default {
     handleClose() {
       this.iconPopover = false
     },
-    iconSelect(select) {
-      this.$set(this.modify, 'icon', select.icon)
+    iconSelect (select) {
+      this.select = select
+    },
+    handleOk () {
+      if (this.select) {
+        this.$set(this.modify, 'icon', this.select.icon)
+        if (this.select.color && this.select.color !== '#606060') {
+          this.$set(this.modify, 'color', this.select.color)
+        } else {
+          this.$set(this.modify, 'color', '')
+        }
+      }
+      this.$refs.form.$refs.form.validateField('icon', (isValid) => {
+        if (isValid) {
+          this.$refs.form.$refs.form.clearValidate(['icon']);
+        }
+      })
+      this.modify = Object.assign({}, this.modify)
+      this.iconPopover = false
     }
   }
 }
