@@ -816,8 +816,12 @@ export default {
                 }
                 if (res.changeTaskInfo[item.id].describes) {
                   obj.unDescribes = '1'
-                  vueThis.newTaskMap[item.id].updateInfo = ['describes']
+                  // 添加判断确保对象存在
+                  if (vueThis.newTaskMap[item.id]) {
+                    vueThis.newTaskMap[item.id].updateInfo = ['describes']
+                  }
                 }
+
               }
               return obj
             })
@@ -930,8 +934,8 @@ export default {
             vueThis.taskStatusMap = res.taskStatusMap
             vueThis.taskMonitorMap = res.taskMonitorMap
             vueThis.changeTaskInfo = res.changeTaskInfo
-
             myGantt.parse(datas)
+            console.log(myGantt.getTaskByTime())
             vueThis.taskCount = myGantt.getTaskCount()
             myGantt.unselectTask()
 
@@ -1152,11 +1156,11 @@ export default {
 
       const mergedArray = []
       if (sendDatas && Array.isArray(sendDatas)) {
-        if (this.$route.name == 'TaskChange') {
-          sendDatas.forEach((el) => {
-            el.parent = el.parentId
-          })
-        }
+        // if (this.$route.name == 'TaskChange') {
+        //   sendDatas.forEach((el) => {
+        //     el.parent = el.parentId
+        //   })
+        // }
         mergedArray.push(...sendDatas)
       }
       if (this.newSendDatas && Array.isArray(this.newSendDatas)) {

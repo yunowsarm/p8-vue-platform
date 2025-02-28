@@ -776,9 +776,7 @@ export function backfillChangeDatas(vueThis, ganttObject) {
     if (upTask != null && upTask.length > 0) {
       upTask.forEach(function (changeTask) {
         if (ganttObject.isTaskExists(changeTask.id) && !ganttObject.getTask(changeTask.id).readonly) {
-          const oldTask = vueThis.tasks.find((task) => task.id === changeTask.id)
-          oldTask.end_date = moment(oldTask.end_date).subtract(1, 'days').format('YYYY-MM-DD')
-          changeTask.end_date = moment(changeTask.end_date).subtract(1, 'days').format('YYYY-MM-DD')
+          const oldTask = ganttObject.getTask(changeTask.id)
           // 工期处理
           vueThis.newTaskMap[changeTask.id] = changeTask
           // 子修改计划完成时间会改变父级的计划完成时间

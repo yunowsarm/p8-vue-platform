@@ -3054,7 +3054,7 @@ GanttObject.updateTaskNew = function (ganttObject, taskId, vueThis) {
     if (task.parent) {
       const parentId = task.parent
       const parentTask = ganttObject.getTask(parentId)
-      if (parentTask.autoScheduling !== '1') return
+      if (!parentTask || parentTask.autoScheduling !== '1') return
       const parTasksIds = []
       // 修改任务添加关联
       if (vueThis.ganttName === 'changeGantt') {
