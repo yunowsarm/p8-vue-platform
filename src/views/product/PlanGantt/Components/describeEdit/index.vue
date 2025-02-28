@@ -646,6 +646,9 @@ export default {
               }
             }
           }
+          this.defaultList.forEach(el => {
+            task[el] = that.formData[el]
+          })
           if (check) {
             updateforecastDate(task, ganttObject)
             ganttObject.updateTask(task.id)

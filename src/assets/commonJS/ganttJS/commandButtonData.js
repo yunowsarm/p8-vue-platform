@@ -2258,7 +2258,7 @@ export const CommandButtonData = [
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
-              if (count < 1) {
+              if (count < 2) {
                 task.open = true
                 task.$open = true
               }
@@ -2283,7 +2283,7 @@ export const CommandButtonData = [
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
-              if (count < 2) {
+              if (count < 3) {
                 task.open = true
                 task.$open = true
                 vueThis.addTaskList.push(task)
@@ -2308,7 +2308,7 @@ export const CommandButtonData = [
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
-              if (count < 3) {
+              if (count < 4) {
                 task.open = true
                 task.$open = true
                 vueThis.addTaskList.push(task)
@@ -3195,10 +3195,20 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
         setTimeout(() => {
           ganttObject.unselectTask()
           if (filteredTasks && filteredTasks.indexOf(task.id) === -1) {
+          if (isTaskInViewport(parentId,ganttObject)) {
+            console.log("任务在可视区域内");
+          } else {
+            console.log("任务不在可视区域内");
             ganttObject.showTask(parentId)
+          }
             ganttObject.selectTask(parentId)
           } else {
-            ganttObject.showTask(item.id)
+            if (isTaskInViewport(item.id,ganttObject)) {
+              console.log("任务在可视区域内");
+            } else {
+              console.log("任务不在可视区域内");
+              ganttObject.showTask(item.id)
+            }
             ganttObject.selectTask(item.id)
           }
           let ganttDatas = vueThis.$store.getters.ganttDatas
@@ -3236,6 +3246,28 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
   })
 }
 
+function isTaskInViewport(taskId, gantt) {
+  // 获取甘特图的任务列表滚动容器（根据实际DOM结构调整选择器）
+// 获取任务的位置
+let task = gantt.getTask(taskId)
+const taskPosition = gantt.getTaskPosition(task);
+
+// 找到滚动容器
+const scrollContainer = document.querySelector(".gantt_grid_data");
+// 获取滚动位置和可视区域尺寸
+const containerHeight = scrollContainer.clientHeight;
+let scrollTop
+// 获取 class 为 gantt_layout_content 的第一个元素
+let ganttContent = document.querySelector('.gantt_ver_scroll');
+if (ganttContent) {
+   // 获取滚动条滚动的高度
+   scrollTop = ganttContent.scrollTop;
+}
+// 判断任务是否在可视区域内
+return (
+    taskPosition.top - scrollTop < containerHeight - gantt.config.row_height
+);
+}
 
 export function deleteKeyRemove (ganttName, tasks) {
   const thisGantt = GanttObject.getGanttObject(ganttName)
