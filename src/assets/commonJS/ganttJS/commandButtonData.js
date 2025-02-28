@@ -403,6 +403,7 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
+        () => isChangeGantt(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
         () => isHasDeliveredTask(ganttName, tasks),
         () => isCompile(ganttName, tasks),
@@ -480,6 +481,7 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
+        () => isChangeGantt(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
         () => isHasDeliveredTask(ganttName, tasks),
         () => isReadOnly(ganttName, tasks),
