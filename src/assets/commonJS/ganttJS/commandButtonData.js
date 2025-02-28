@@ -2258,7 +2258,7 @@ export const CommandButtonData = [
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
-              if (count < 1) {
+              if (count < 2) {
                 task.open = true
                 task.$open = true
               }
@@ -2283,7 +2283,7 @@ export const CommandButtonData = [
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
-              if (count < 2) {
+              if (count < 3) {
                 task.open = true
                 task.$open = true
                 vueThis.addTaskList.push(task)
@@ -2308,7 +2308,7 @@ export const CommandButtonData = [
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
-              if (count < 3) {
+              if (count < 4) {
                 task.open = true
                 task.$open = true
                 vueThis.addTaskList.push(task)
