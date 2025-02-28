@@ -13,6 +13,17 @@
     <template #dialog>
       <vue-perfect-scrollbar class="setting-wrap">
         <div class="columns">
+          <div class="list-group-item1">
+            <span style="display:inline-block;height: 21px;">行高</span>
+            <span class="widthNumber">
+              <el-input-number v-model="lineHeight"
+                                :min="15"
+                                :max="300"
+                                :step="1"
+                                style="margin-bottom:1px;"
+                                controls-position="right"></el-input-number>
+            </span>
+          </div>
           <draggable class="list-group"
                      tag="ul"
                      v-model="initialColumns"
@@ -21,14 +32,7 @@
                      @start="drag = true"
                      @end="drag = false"
                      @change="draggableChangeHandle">
-            <li class="list-group-item">
-              <span style="display:inline-block;height: 21px;">行高</span>
-              <span class="widthNumber">
-                <el-input-number v-model="lineHeight"
-                                 style="margin-bottom:1px;"
-                                 controls-position="right"></el-input-number>
-              </span>
-            </li>
+            
             <li class="list-group-item"
                 v-for="(item, index) in initialColumns"
                 :key="item.name">
@@ -281,6 +285,20 @@ export default {
         margin-top: -4px;
       }
     }
+
+  }
+}
+.list-group-item1 {
+  cursor: unset;
+  padding: 12px 8px;
+  border-bottom: 1px solid #f1f1f1;
+  .icon-rank {
+    padding-right: 10px;
+    font-size: 16px;
+  }
+  .fixed-select {
+    float: right;
+    margin-top: -4px;
   }
 }
 ::v-deep .el-radio-button--mini .el-radio-button__inner {
