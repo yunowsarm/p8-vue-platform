@@ -967,6 +967,13 @@ export const repositoryApi = {
       desc: '项目管理->任务统计->gantt->任务类型饼状图'
     },
     {
+      name: 'loadTaskProgressSituation',
+      method: 'POST',
+      path: '/product/pm/plan/loadTaskProgressSituation',
+      mockPath: '/product/pm/plan/loadTaskProgressSituation',
+      desc: '计划管理->计划概况-计划进度情况'
+    },
+    {
       name: 'versionList',
       method: 'POST',
       path: '/product/pm/plan/loadPlanVersionData',
