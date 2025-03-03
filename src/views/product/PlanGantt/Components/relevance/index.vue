@@ -26,7 +26,8 @@
                  :disabled="!selectRecord.parentId || selectRecord.isLeaf===1 || selectRecord.managerStatus === '6404'||selectRecord.managerStatus === '6406' || selectRecord.managerStatus === '6405'||selectRecord.managerStatus === '6409'"
                  @click="relevanceClick">关联/取消</el-button>
     </div>
-    <vxe-table ref="xDemandTable"
+    <vxe-table v-if="xDemandTable"
+               ref="xDemandTable"
                :comp="comp"
                style="height: 48%;"
                :columns="columnsDemand"
@@ -68,6 +69,7 @@ export default {
   },
   data () {
     return {
+      xDemandTable: false,
       comp: this,
       columns: [
         {
@@ -273,6 +275,7 @@ export default {
       }
     },
     handleSelectionChange (val) {
+      this.xDemandTable = true
       this.selectRecords = []
       this.selectRecord = val
       this.$refs.xDemandTable.$refs.table.clearCheckboxRow()
