@@ -1,5 +1,3 @@
-import { CommandButtonBarData } from '@/assets/commonJS/ganttJS/commandButtonBarData'
-
 const CommandButtonBarDataSingleRow = [
   {
     panelName: '任务',
@@ -343,12 +341,5 @@ const CommandButtonBarDataSingleRow = [
     ]
   }
 ]
-if(aiAssistant){
-  CommandButtonBarDataSingleRow[0].groups[0].buttonConfigs.unshift({
-    buttonId: 'auto-generated',
-    size: 'small',
-    position: ['top', 'right']
-  })
-}
 
 export { CommandButtonBarDataSingleRow }
