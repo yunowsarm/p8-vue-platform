@@ -1577,6 +1577,7 @@ export default {
                 vueThis.isSueTaskIds.forEach((el) => {
                   myGantt.selectTask(el)
                 })
+                myGantt.showTask(vueThis.isSueTaskIds[0])
                 vueThis.isSueTaskIds = []
               }
               vueThis.addEventClick()
