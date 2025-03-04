@@ -817,7 +817,8 @@ function synchronizationColumns (vueThis, ganttObject) {
               min_width: 120,
               indexNo: item.indexNo,
               template: function (task) {
-                return `<div class='text_overflow'>${task['kz' + item.id]}</div>`
+                let result = task['kz' + item.id] ? task['kz' + item.id] : ''
+                return `<div class='text_overflow'>${result}</div>`
               }
             })
           }
