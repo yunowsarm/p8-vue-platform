@@ -307,12 +307,16 @@ export default {
     saveParamData (data, changeFlag, scope) {
       let that = this
       if (changeFlag === 'indexNo') {
-        // 根据 indexNo 重新排序数组
+        sortByOrderNum(data, scope.$index, scope.row[changeFlag])
+        function sortByOrderNum (data, ind, value) {
+          data.forEach((item, index) => {
+            if (item[changeFlag] === value && index !== ind) {
+              item[changeFlag] = item[changeFlag] + 1
+              sortByOrderNum(data, index, item[changeFlag])
+            }
+          });
+        }
         data.sort((a, b) => a[changeFlag] - b[changeFlag]);
-        // 为每个元素分配新的连续的 indexNo
-        data.forEach((item, index) => {
-          item[changeFlag] = index + 1;
-        });
         this.$nextTick(() => {
           that.formData.roles = data
         })
