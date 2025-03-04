@@ -788,7 +788,7 @@ export const CommandButtonData = [
   },
   {
     id: 'auto-generated',
-    icon: 'el-icon-magic-stick',
+    icon: 'p8 icon-a-AIshengcheng',
     title: 'AI生成',
     help: 'AI生成',
     msg: '',

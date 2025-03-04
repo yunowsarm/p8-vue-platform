@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "43514420",
+      "name": "AI 生成",
+      "font_class": "a-AIshengcheng",
+      "unicode": "e8aa",
+      "unicode_decimal": 59562
+    },
+    {
       "icon_id": "16188108",
       "name": "标识格式刷brush",
       "font_class": "mark-format-brush",
