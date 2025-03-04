@@ -1298,7 +1298,7 @@ export default {
 
 .viewVisible {
   position: absolute;
-  top: 0;
+  top: 45px;
   left: 0;
   bottom: 0;
   right: 0;
