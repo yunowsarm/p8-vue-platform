@@ -31,6 +31,7 @@
                           :create-page="createPage"
                           :change-id="changeId"
                           :read-only="readOnly"
+                          :panelData="btnData"
                           @hide-drawer="detailDrawerClosed"
                           @closed="closed"
                           @open="openLocation"
