@@ -12,7 +12,8 @@
         <div class="title">
           <span>主菜单配置</span>
         </div>
-        <div class="content">
+        <div class="content"
+             :class="{'marginBottom': $route.name == 'PlanMonitoring'}">
           <el-radio-group v-model="value">
             <el-radio v-for="item in radioOptions"
                       :key="item.value"
@@ -21,11 +22,12 @@
         </div>
       </template>
       <template title="排程设置">
-        <div class="title">
+        <div class="title" 
+             v-if="$route.name !== 'PlanMonitoring'">
           <span>排程设置</span>
         </div>
         <div class="content"
-             :class="{'marginBottom': $route.name == 'PlanMonitoring'}">
+             v-if="$route.name !== 'PlanMonitoring'">
           <el-radio-group v-model="autoScheduling">
             <el-radio label="0">手动</el-radio>
             <el-radio label="1">自动</el-radio>
