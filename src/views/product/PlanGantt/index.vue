@@ -254,28 +254,29 @@ export default {
         })
         const NewCommandButtonBarDataDoubleRow = deepClone(CommandButtonBarDataDoubleRow)
         const doubleRow = NewCommandButtonBarDataDoubleRow.map((item) => {
-          const arr = item.groups.filter((ele) => {
+          item.groups = item.groups.filter((ele) => {
             return ele.groupName !== '统计信息' && ele.groupName !== '版本编辑' && ele.groupName !== '版本管理'
           })
-          item.groups = arr
           return item
         })
         const NewCommandButtonBarDataSingleRow = deepClone(CommandButtonBarDataSingleRow)
         const singleRow = NewCommandButtonBarDataSingleRow.map((item) => {
-          const arr = item.groups.filter((ele) => {
+          item.groups = item.groups.filter((ele) => {
             return ele.groupName !== '统计信息' && ele.groupName !== '版本编辑' && ele.groupName !== '版本管理'
           })
-          item.groups = arr
           return item
         })
         return this.ganttButtonMode === 'tabs' ? tabsRow : this.ganttButtonMode === 'double' ? doubleRow : singleRow
       } else {
+        // 克隆原始数据
+        const NewCommandButtonBarDataTabsRow = deepClone(CommandButtonBarData);
+        const NewCommandButtonBarDataDoubleRow = deepClone(CommandButtonBarDataDoubleRow);
+        const NewCommandButtonBarDataSingleRow = deepClone(CommandButtonBarDataSingleRow);
         if (aiAssistant) {
           const buttonIdToCheck = 'auto-generated'
-
           // 检查 CommandButtonBarData[0].groups[0].buttonConfigs 是否已经存在该 buttonId
-          if (!CommandButtonBarData[0].groups[0].buttonConfigs.some((button) => button.buttonId === buttonIdToCheck)) {
-            CommandButtonBarData[0].groups[0].buttonConfigs.unshift({
+          if (!NewCommandButtonBarDataTabsRow[0].groups[0].buttonConfigs.some((button) => button.buttonId === buttonIdToCheck)) {
+            NewCommandButtonBarDataTabsRow[0].groups[0].buttonConfigs.unshift({
               buttonId: buttonIdToCheck,
               size: 'large',
               position: ['top', 'right']
@@ -283,8 +284,8 @@ export default {
           }
 
           // 检查 CommandButtonBarDataDoubleRow[0].groups[0].buttonConfigs 是否已经存在该 buttonId
-          if (!CommandButtonBarDataDoubleRow[0].groups[0].buttonConfigs.some((button) => button.buttonId === buttonIdToCheck)) {
-            CommandButtonBarDataDoubleRow[0].groups[0].buttonConfigs.unshift({
+          if (!NewCommandButtonBarDataDoubleRow[0].groups[0].buttonConfigs.some((button) => button.buttonId === buttonIdToCheck)) {
+            NewCommandButtonBarDataDoubleRow[0].groups[0].buttonConfigs.unshift({
               buttonId: buttonIdToCheck,
               size: 'large',
               position: ['top', 'right']
@@ -292,15 +293,15 @@ export default {
           }
 
           // 检查 CommandButtonBarDataSingleRow[0].groups[0].buttonConfigs 是否已经存在该 buttonId
-          if (!CommandButtonBarDataSingleRow[0].groups[0].buttonConfigs.some((button) => button.buttonId === buttonIdToCheck)) {
-            CommandButtonBarDataSingleRow[0].groups[0].buttonConfigs.unshift({
+          if (!NewCommandButtonBarDataSingleRow[0].groups[0].buttonConfigs.some((button) => button.buttonId === buttonIdToCheck)) {
+            NewCommandButtonBarDataSingleRow[0].groups[0].buttonConfigs.unshift({
               buttonId: buttonIdToCheck,
               size: 'small',
               position: ['top', 'right']
             })
           }
         }
-        return this.ganttButtonMode === 'tabs' ? CommandButtonBarData : this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
+        return this.ganttButtonMode === 'tabs' ? NewCommandButtonBarDataTabsRow : this.ganttButtonMode === 'double' ? NewCommandButtonBarDataDoubleRow : NewCommandButtonBarDataSingleRow
       }
     },
     expandBottom() {
