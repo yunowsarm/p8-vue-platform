@@ -439,7 +439,8 @@ export default {
       options: [],
       memberFormComp: null,
       uploadView: false,
-      dateTime: ''
+      dateTime: '',
+      searchParam:null
     }
   },
   computed: {
@@ -529,6 +530,7 @@ export default {
       this.memberFormComp = formComp
     },
     search (params) {
+      this.searchParam = params
       let realName = params.realName ? params.realName : null
       let deptName = params.deptName ? params.deptName : null
       if (deptName || realName) {
@@ -541,6 +543,7 @@ export default {
       }
     },
     reset () {
+      this.searchParam = null
       if (this.rolesSelectedIndex > -1) {
         this.tableData = this.rolesData[this.rolesSelectedIndex].projectTeamRoleUsers
       } else {
@@ -633,6 +636,9 @@ export default {
       this.rolesSelectedIndex = index
       this.selectRoleId = item.roleType === 'fixed' ? item.roleId : ''
       this.tableData = item.projectTeamRoleUsers ? item.projectTeamRoleUsers : []
+      if(this.searchParam){
+        this.search(this.searchParam)
+      }
       if (this.columns.filter((item) => item.dataIndex === 'roleName').length) {
         this.columns.shift()
       }
@@ -703,6 +709,9 @@ export default {
       })
       this.tableData = tableData
       this.dateTime = new Date().getTime()
+      if(this.searchParam){
+        this.search(this.searchParam)
+      }
     },
     changeRolesHandle (text, record) {
       record.name = text
