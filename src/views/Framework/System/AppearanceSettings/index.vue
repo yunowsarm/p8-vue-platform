@@ -66,6 +66,23 @@
         </template>
       </form-list>
     </el-card>
+    <el-card class="card_box">
+      <form-list ref="form"
+                 label-width="150px"
+                 @rendered="rendered"
+                 @saved="saved"
+                 :data-source="dataSource4"
+                 :api="saveApi"
+                 :is-custom-validate="true"
+                 @custom-validate="customValidate"
+                 :form="formData">
+        <template #tool>
+          <el-alert title="表格样式"
+                    :closable="false"
+                    type="info"></el-alert>
+        </template>
+      </form-list>
+    </el-card>
   </div>
 </template>
 <style scoped>
@@ -132,19 +149,9 @@ export default {
           colLayout: 'singleCol'
         },
         {
-          labelText: '图标显示方式',
-          type: 'radio',
-          options: [
-            {
-              label: '显示',
-              value: '0'
-            },
-            {
-              label: '隐藏',
-              value: '1'
-            }
-          ],
-          fieldName: 'toolbarTextDisplay',
+          labelText: '显示文字',
+          type: 'switch',
+          fieldName: 'toolbarDisplay',
           colLayout: 'singleCol'
         },
         {
@@ -173,7 +180,42 @@ export default {
           colLayout: 'singleCol'
         }
       ],
-      formData: {},
+      dataSource4: [
+        {
+          type: 'blank',
+          slotName: 'tool',
+          colLayout: 'singleCol'
+        },
+        {
+          labelText: '图标显示方式',
+          type: 'radio',
+          options: [
+            {
+              label: '显示',
+              value: '0'
+            },
+            {
+              label: '隐藏',
+              value: '1'
+            }
+          ],
+          fieldName: 'toolbarTextDisplay',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'number',
+          labelText: '行高',
+          fieldName: 'tableRowHeight',
+          placeholder: '请输入行高',
+          colLayout: 'doubleCol',
+          colSpan: 6,
+          min: 0,
+          max: 99999999
+        }
+      ],
+      formData: {
+        toolbarTextDisplay: '0'
+      },
       modify: {}
     }
   },
@@ -184,7 +226,6 @@ export default {
       this.getSettingData()
     },
     clickEvent () {
-
     },
     getSettingData () {
       let that = this
@@ -193,11 +234,9 @@ export default {
           res.settings.forEach(function (item) {
             that.modify[item.key] = item.value === 'true' ? true : item.value === 'false' ? false : item.value
           })
-          that.formData = Object.assign({}, that.modify)
           that.getFileUrl(res.uploadFileJson) // 获取图片流
         })
         .catch(function (error) {
-
         })
     },
     // 获取图片流
@@ -213,6 +252,11 @@ export default {
         })
         that.modify.uploadFileJson = uploadFileJson
       }
+      if (this.modify.toolbarTextDisplay === '1') {
+        this.modify.toolbarTextDisplay = '1'
+      } else {
+        this.modify.toolbarTextDisplay = '0'
+      }
       that.formData = Object.assign({}, that.modify)
     },
     customValidate (params) {
@@ -223,7 +267,11 @@ export default {
           value: params.systemThemeType
         },
         {
-          key: 'toolbarTextDisplay', // 工具栏启用文字
+          key: 'toolbarDisplay', // 工具栏启用文字
+          value: params.toolbarDisplay
+        },
+        {
+          key: 'toolbarTextDisplay', // 图标显示方式
           value: params.toolbarTextDisplay
         },
         {
@@ -237,6 +285,10 @@ export default {
         {
           key: 'componentEnableDrawer', // 组件响应方式
           value: params.componentEnableDrawer
+        },
+        {
+          key: 'tableRowHeight', // 组件响应方式
+          value: params.tableRowHeight
         }
       ]
       let uploadFileJson = params.uploadFileJson ? params.uploadFileJson : []
@@ -246,7 +298,6 @@ export default {
       }
 
       saveParams.settings = settings
-
       this.$refs.form.submitForm(saveParams, this.saveApi)
     },
     saved (res) { }
