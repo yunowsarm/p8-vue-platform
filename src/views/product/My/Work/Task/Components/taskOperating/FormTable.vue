@@ -258,17 +258,33 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="24">
-                <el-form-item label="预计起止时间">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.forecastBeginDate + "  -  " + formData.forecastEndDate }}</span>
+              <el-col :span="12">
+                <el-form-item label="预计开始时间">
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.forecastBeginDate}}</span>
                   <el-date-picker v-else
-                                  v-model="formData.forecastDateRange"
+                                  v-model="formData.forecastBeginDate"
                                   :editable="false"
-                                  type="daterange"
-                                  unlink-panels
-                                  range-separator="至"
-                                  start-placeholder="开始日期"
-                                  end-placeholder="结束日期">
+                                  type="date"
+                                  valueFormat='yyyy-MM-dd'
+                                  style="width: 100%;"
+                                  placeholder="请选择预计开始时间"
+                                  :picker-options="startPickerOptions"
+                                  unlink-panels>
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="预计完成时间">
+                  <span v-if="this.getPlanInfo().pageType === 'view'">{{formData.forecastEndDate }}</span>
+                                <el-date-picker v-else
+                                  v-model="formData.forecastEndDate"
+                                  :editable="false"
+                                  type="date"
+                                  valueFormat='yyyy-MM-dd'
+                                  style="width: 100%;"
+                                  placeholder="请选择预计完成时间"
+                                  :picker-options="endPickerOptions"
+                                  unlink-panels>
                   </el-date-picker>
                 </el-form-item>
               </el-col>
@@ -557,10 +573,10 @@ export default {
       })
     },
     submit (submitType) {
-      if (this.formData.forecastDateRange) {
-        this.formData.forecastBeginDate = this.formData.forecastDateRange[0]
-        this.formData.forecastEndDate = this.formData.forecastDateRange[1]
-      }
+      // if (this.formData.forecastDateRange) {
+      //   this.formData.forecastBeginDate = this.formData.forecastDateRange[0]
+      //   this.formData.forecastEndDate = this.formData.forecastDateRange[1]
+      // }
       this.$refs.form.validate((valid) => {
         let _this = this
         if (valid) {
