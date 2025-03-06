@@ -14,7 +14,7 @@
 </template>
 <script>
 import { P8Form as FormList } from 'p8-components-ui'
-
+import moment from 'moment'
 export default {
   name: 'meeting',
   inject: ['getPlanInfo'],
@@ -31,14 +31,29 @@ export default {
   data () {
     const dataSource = [
       {
-        type: 'datetimeRange',
-        labelText: '预计起止日期',
-        fieldName: 'beginEndTime',
+        type: 'datetime',
+        labelText: '预计开始时间',
+        fieldName: 'forecastBeginDate',
         colLayout: 'singleCol',
-        placeholder: ['开始日期', '完成日期'],
+        placeholder: '请选择预计开始时间',
         fieldConfig: {
           style: 'width: 100%',
-          'value-format': 'yyyy-MM-dd'
+          'value-format': 'yyyy-MM-dd',
+          clearable: true,
+          'picker-options': this.startPickerOptions()
+        }
+      },
+      {
+        type: 'datetime',
+        labelText: '预计完成时间',
+        fieldName: 'forecastEndDate',
+        colLayout: 'singleCol',
+        placeholder: '请选择预计完成时间',
+        fieldConfig: {
+          style: 'width: 100%',
+          'value-format': 'yyyy-MM-dd',
+          clearable: true,
+          'picker-options': this.endPickerOptions()
         }
       },
       {
@@ -52,7 +67,8 @@ export default {
     return {
       dataSource,
       formData: {
-        beginEndTime: [],
+        forecastBeginDate: '',
+        forecastEndDate: '',
         content: ''
       },
       saveApi: 'taskManager.progressFeedback'
@@ -61,19 +77,21 @@ export default {
   watch: {
 
   },
-  mounted () {
+  created () {
     let _this = this
     this.$api['taskManager.taskInfo']({ taskId: _this.planInfoParams.TASKID }).then(res => {
-      this.formData.beginEndTime = [res.forecastBeginDate, res.forecastEndDate]
       this.formData.content = res.content
+      this.formData.forecastBeginDate = res.forecastBeginDate ? res.forecastBeginDate: ''
+      this.formData.forecastEndDate = res.forecastEndDate ? res.forecastEndDate : ''
+      this.formData = Object.assign({}, this.formData)
     })
   },
   methods: {
     customValidate () {
       let obj = {
         pmTaskProgressFeedback: {
-          forecastBeginDate: this.formData.beginEndTime[0],
-          forecastEndDate: this.formData.beginEndTime[1],
+          forecastBeginDate: this.formData.forecastBeginDate,
+          forecastEndDate: this.formData.forecastEndDate,
           content: this.formData.content,
           planInfoId: this.planInfoParams.PLANINFOID,
           pmProjectTasksId: this.planInfoParams.TASKID,
@@ -85,7 +103,23 @@ export default {
         this.$message.success('保存成功')
         this.$bus.$emit('refresh')
       })
-    }
+    },
+    startPickerOptions () {
+      return {
+        disabledDate: (time) => {
+          let timeSpace = moment(time).format('YYYY-MM-DD') > moment(this.formData.forecastEndDate).format('YYYY-MM-DD')
+          return timeSpace
+        }
+      }
+    },
+    endPickerOptions () {
+      return {
+        disabledDate: (time) => {
+          let timeSpace = moment(time).format('YYYY-MM-DD') < moment(this.formData.forecastBeginDate).format('YYYY-MM-DD')
+          return timeSpace
+        }
+      }
+    },
   },
   components: {
     FormList
