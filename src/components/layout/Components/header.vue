@@ -93,6 +93,13 @@
             </el-tooltip>
           </span>
         </li>
+        <li v-show="adminUserIdArr.indexOf($store.state.user.userId) === -1">
+          <span @click="visibleDownloadDrawer1 = true">
+            <el-tooltip content="文件中心">
+              <i class="p8 icon-wangpan"></i>
+            </el-tooltip>
+          </span>
+        </li>
         <li>
           <el-dropdown size="small">
             <span>
@@ -182,6 +189,16 @@
         <DocumentManagement view-type="card"></DocumentManagement>
       </template>
     </common-drawer>
+    <common-drawer v-if="visibleDownloadDrawer1"
+                   :visible="visibleDownloadDrawer1"
+                   title="文件中心"
+                   @close="visibleDownloadDrawer1 = false"
+                   direction="ttb"
+                   size="100%">
+      <template #drawer>
+        <myNetworkDisk view-type="card"></myNetworkDisk>
+      </template>
+    </common-drawer>
     <el-dialog title="关于"
                v-if="dialogVisible"
                :visible.sync="dialogVisible"
@@ -230,6 +247,7 @@ import DocumentManagement from '@/views/Framework/System/DocumentManagement/inde
 import Message from '@/views/Framework/Message'
 import Information from '@/components/information/index.vue'
 import packageJson from '../../../../package.json'
+import myNetworkDisk from './myNetworkDisk'
 
 export default {
   name: 'Headers',
@@ -241,6 +259,7 @@ export default {
       visibleProcessDrawer: false,
       visibleMsgDrawer: false,
       visibleDownloadDrawer: false,
+      visibleDownloadDrawer1: false,
       approvalPendingTotal: 0,
       messageNumTotal: 0,
       objColor: {
@@ -445,7 +464,8 @@ export default {
     'el-dropdown-item': DropdownItem,
     message: Message,
     'el-tooltip': Tooltip,
-    Information
+    Information,
+    myNetworkDisk
   }
 }
 </script>

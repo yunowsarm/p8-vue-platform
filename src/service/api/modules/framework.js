@@ -1107,6 +1107,27 @@ export const system = {
       desc: '下载'
     },
     {
+      name: 'listData',
+      method: 'POST',
+      path: '/attachmentBox/listData',
+      mockPath: '/attachmentBox/listData',
+      desc: '下载列表'
+    },
+    {
+      name: 'listDataHistory',
+      method: 'POST',
+      path: '/attachmentHistory/listData',
+      mockPath: '/attachmentHistory/listData',
+      desc: '历史下载列表'
+    },
+    {
+      name: 'deleteFile',
+      method: 'POST',
+      path: '/attachmentBox/delete',
+      mockPath: '/attachmentBox/delete',
+      desc: '下载列表删除'
+    },
+    {
       name: 'saveTaskType',
       method: 'POST',
       path: '/framework/system/PlanLogo/saveTaskType',
