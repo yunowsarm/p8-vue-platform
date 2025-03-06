@@ -7,64 +7,76 @@
         </el-col>
         <el-col :span="12">
           <div style="text-align: right">
-            <el-button type="primary" size="mini" @click="addWidget"><i style="position: relative; top: 2px" class="p8 icon-zujianku"></i> 组件库</el-button>
+            <el-button type="primary"
+                       size="mini"
+                       @click="addWidget"><i style="position: relative; top: 2px"
+                 class="p8 icon-zujianku"></i> 组件库</el-button>
           </div>
         </el-col>
       </el-row>
-      <common-dialog
-        ref="commonDialog"
-        :title="addWidgetTitle"
-        v-if="addWidgetVisible"
-        :visible="addWidgetVisible"
-        destroy-on-close
-        @close="handleCancel('addWidgetVisible')"
-        :show-handle-btn="false"
-        :is-view-cs-footer="true"
-        :dialog-config="{
+      <common-dialog ref="commonDialog"
+                     :title="addWidgetTitle"
+                     v-if="addWidgetVisible"
+                     :visible="addWidgetVisible"
+                     destroy-on-close
+                     @close="handleCancel('addWidgetVisible')"
+                     :show-handle-btn="false"
+                     :is-view-cs-footer="true"
+                     :dialog-config="{
           modal: true,
           appendToBody: true,
           modalAppendToBody: true
         }"
-        :close-on-click-modal="false"
-        :close-on-press-escape="false"
-      >
+                     :close-on-click-modal="false"
+                     :close-on-press-escape="false">
         <template #dialog>
           <!-- kanbanComponent.list -->
-          <common-table ref="table" :params="queryParam" api="kanbanComponent.getRoleAppInfo" :columns="columns" :pagination="true"> </common-table>
+          <common-table ref="table"
+                        :params="queryParam"
+                        api="kanbanComponent.getRoleAppInfo"
+                        :columns="columns"
+                        :pagination="true"> </common-table>
         </template>
         <template #cs-footer>
           <el-button @click="addWidgetVisible = false">取消</el-button>
-          <el-button type="primary" @click="save()">确定</el-button>
+          <el-button type="primary"
+                     @click="save()">确定</el-button>
         </template>
       </common-dialog>
 
-      <common-dialog
-        ref="setCommonDialog"
-        :title="setWidgetTitle"
-        v-if="setWidgetVisible"
-        :visible="setWidgetVisible"
-        destroy-on-close
-        @close="handleCancel('setWidgetVisible')"
-        :show-handle-btn="false"
-        :is-view-cs-footer="true"
-        :dialog-config="{ modal: true, appendToBody: true, modalAppendToBody: true }"
-        :close-on-click-modal="false"
-        :close-on-press-escape="false"
-        :dialog-height="dialogHeight"
-      >
+      <common-dialog ref="setCommonDialog"
+                     :title="setWidgetTitle"
+                     v-if="setWidgetVisible"
+                     :visible="setWidgetVisible"
+                     destroy-on-close
+                     @close="handleCancel('setWidgetVisible')"
+                     :show-handle-btn="false"
+                     :is-view-cs-footer="true"
+                     :dialog-config="{ modal: true, appendToBody: true, modalAppendToBody: true }"
+                     :close-on-click-modal="false"
+                     :close-on-press-escape="false"
+                     :dialog-height="dialogHeight">
         <template #dialog>
-          <el-form ref="form" label-position="right" size="small" label-width="100px" :model="WidgetForm" class="elForm">
+          <el-form ref="form"
+                   label-position="right"
+                   size="small"
+                   label-width="100px"
+                   :model="WidgetForm"
+                   class="elForm">
             <el-row :gutter="0">
               <el-col :span="12">
                 <el-form-item label="widget别名">
-                  <el-input v-model="WidgetForm.title" placeholder="请输入widget别名"></el-input>
+                  <el-input v-model="WidgetForm.title"
+                            placeholder="请输入widget别名"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="隐藏头部">
                   <el-radio-group v-model="WidgetForm.simple">
-                    <el-radio-button :value="true" :label="true">是</el-radio-button>
-                    <el-radio-button :value="false" :label="false">否</el-radio-button>
+                    <el-radio-button :value="true"
+                                     :label="true">是</el-radio-button>
+                    <el-radio-button :value="false"
+                                     :label="false">否</el-radio-button>
                   </el-radio-group>
                 </el-form-item>
               </el-col>
@@ -72,7 +84,8 @@
             <el-row :gutter="0">
               <el-col :span="12">
                 <el-form-item label="透明度和颜色">
-                  <el-color-picker v-model="WidgetForm.styleObject.backgroundColor" show-alpha></el-color-picker>
+                  <el-color-picker v-model="WidgetForm.styleObject.backgroundColor"
+                                   show-alpha></el-color-picker>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -84,59 +97,65 @@
             <el-row :gutter="0">
               <el-col :span="12">
                 <el-form-item label="宽">
-                  <el-input-number style="width: 100%" v-model.number="WidgetForm.layout.w"></el-input-number>
+                  <el-input-number style="width: 100%"
+                                   v-model.number="WidgetForm.layout.w"></el-input-number>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="高">
-                  <el-input-number style="width: 100%" v-model.number="WidgetForm.layout.h"></el-input-number>
+                  <el-input-number style="width: 100%"
+                                   v-model.number="WidgetForm.layout.h"></el-input-number>
                 </el-form-item>
               </el-col>
             </el-row>
           </el-form>
         </template>
         <template #cs-footer>
-          <el-button type="primary" style="float: right" @click="saveWidget()">保存</el-button>
+          <el-button type="primary"
+                     style="float: right"
+                     @click="saveWidget()">保存</el-button>
         </template>
       </common-dialog>
     </div>
-    <VuePerfectScrollbar class="scroll-area" :class="{ isdesign: isDesign }">
-      <smart-widget-grid
-        :style="styleObject"
-        :layout="layout"
-        v-bind="$attrs"
-        :key="renderTime"
-        v-on="$listeners"
-        @layout-updated="onLayoutUpdated"
-        @layout-ready="onLayoutReady"
-        @moved="onMove"
-        @resized="onResize"
-      >
-        <widget-item
-          v-for="(item, index) in widget"
-          :ref="`widget${item.slot}`"
-          class="gridItem"
-          :key="item.slot"
-          :slot="item.slot"
-          :index="index"
-          v-bind="item"
-          :widget="item"
-          :is-design="isDesign"
-          :style="item.styleObject"
-          @widget-resize="onWidgetResize"
-          @on-fullscreen="onFullscreen"
-        >
-          <dynamicLink v-if="item.component && item.component.functionalCategory === '1'" :is-show="isLayoutReady" :data="item" :ref="`conten${item.slot}`" :key="renderTime + item.slot"></dynamicLink>
-          <render-view
-            v-if="item.component && item.component.functionalCategory === '2'"
-            :is-show="isLayoutReady"
-            :app-config="item.component"
-            :option="item.component.jsonOptions"
-            :resize-time="widgetResizeStatus[item.slot]"
-            ref="renderView"
-          ></render-view>
-          <tableRenderVue v-if="item.component.functionalCategory === '3'" :code="item.component.dataviewId" @searchData="searchData"></tableRenderVue>
-                    <AntvView v-if="item.component.functionalCategory === '4'"
+    <VuePerfectScrollbar class="scroll-area"
+                         :class="{ isdesign: isDesign }">
+      <smart-widget-grid :style="styleObject"
+                         :layout="layout"
+                         v-bind="$attrs"
+                         :col-num="colNum"
+                         :key="renderTime"
+                         v-on="$listeners"
+                         @layout-updated="onLayoutUpdated"
+                         @layout-ready="onLayoutReady"
+                         @moved="onMove"
+                         @resized="onResize">
+        <widget-item v-for="(item, index) in widget"
+                     :ref="`widget${item.slot}`"
+                     class="gridItem"
+                     :key="item.slot"
+                     :slot="item.slot"
+                     :index="index"
+                     v-bind="item"
+                     :widget="item"
+                     :is-design="isDesign"
+                     :style="item.styleObject"
+                     @widget-resize="onWidgetResize"
+                     @on-fullscreen="onFullscreen">
+          <dynamicLink v-if="item.component && item.component.functionalCategory === '1'"
+                       :is-show="isLayoutReady"
+                       :data="item"
+                       :ref="`conten${item.slot}`"
+                       :key="renderTime + item.slot"></dynamicLink>
+          <render-view v-if="item.component && item.component.functionalCategory === '2'"
+                       :is-show="isLayoutReady"
+                       :app-config="item.component"
+                       :option="item.component.jsonOptions"
+                       :resize-time="widgetResizeStatus[item.slot]"
+                       ref="renderView"></render-view>
+          <tableRenderVue v-if="item.component.functionalCategory === '3'"
+                          :code="item.component.dataviewId"
+                          @searchData="searchData"></tableRenderVue>
+          <AntvView v-if="item.component.functionalCategory === '4'"
                     :is-show="isLayoutReady"
                     :app-config="item.component"
                     :option="item.component.jsonOptions"
@@ -159,7 +178,7 @@ import tableRenderVue from '@/views/Framework/ComponentsMananger/Grid/Components
 import AntvView from '@/views/Framework/ComponentsMananger/Kanban/Components/AntvView'
 export default {
   name: 'Widgetgrid',
-  provide() {
+  provide () {
     return {
       deleteWidget: this.deleteWidget,
       setWidget: this.setWidget,
@@ -185,11 +204,11 @@ export default {
     },
     styleObject: {
       type: Object,
-      default: () => {}
+      default: () => { }
     },
     localParames: {
       type: Object,
-      default: () => {}
+      default: () => { }
     },
     isDesign: {
       type: Boolean,
@@ -197,7 +216,7 @@ export default {
     }
   },
   computed: {
-    layout() {
+    layout () {
       if (this.widget && this.widget.length > 0) {
         return this.widget.map((item) => {
           this.getSearchList(item)
@@ -210,13 +229,13 @@ export default {
   },
   watch: {
     widget: {
-      handler(val) {
+      handler (val) {
         this.renderConten()
       }
     }
   },
-  mounted() {},
-  data() {
+  mounted () { },
+  data () {
     return {
       tableSearchList: [],
       searchList: [],
@@ -252,19 +271,21 @@ export default {
           dataIndex: 'compCode'
         }
       ],
-      widgetResizeStatus: []
+      widgetResizeStatus: [],
+      layoutCount: [],
+      colNum: 12
     }
   },
   methods: {
-    searchData(data) {
+    searchData (data) {
       this.tableSearchList = Array.from(new Set([...this.tableSearchList, ...data]))
       this.changeSearchConfig()
     },
-    onWidgetResize(widget) {
+    onWidgetResize (widget) {
       this.$set(this.widgetResizeStatus, widget.slot, new Date().getTime())
     },
-    onLayoutUpdated(newLayout) {},
-    onLayoutReady(newLayout) {
+    onLayoutUpdated (newLayout) { },
+    onLayoutReady (newLayout) {
       // let delay = this.isDesign ? 1500 : 200
       const delay = 260
       const that = this
@@ -272,40 +293,40 @@ export default {
         that.isLayoutReady = true
       }, delay)
     },
-    onMove(params) {
+    onMove (params) {
       //
     },
     // 大小改变
-    onResize(params) {
+    onResize (params) {
       // setTimeout(() => {
       //   this.$refs['widget' + params.i][0].handleRefresh()
       // }, 300)
     },
     // 放大
-    onFullscreen(booleanParams, params) {
+    onFullscreen (booleanParams, params) {
       // setTimeout(() => {
       //   this.$refs['conten' + params.slot][0].reload()
       // }, 300)
     },
     // 重新渲染
-    renderConten() {
+    renderConten () {
       this.tableSearchList = []
       this.renderTime = new Date().getTime()
     },
     // 删除
-    deleteWidget(data) {
+    deleteWidget (data) {
       const widgetList = JSON.parse(JSON.stringify(this.widget))
       widgetList.splice(data.index, 1)
       this.getSearchCofnfig(widgetList)
       this.$emit('update:widget', widgetList)
     },
     // 设置
-    setWidget(data) {
+    setWidget (data) {
       this.WidgetForm = _cloneDeep({ ...this.$options.data().WidgetForm, ...data })
       this.setWidgetVisible = true
     },
     // 添加组件
-    addWidget() {
+    addWidget () {
       this.widgetList = []
       this.addWidgetVisible = true
       // const soltArr = this.widget.map(item => { return item.layout.i })
@@ -321,7 +342,7 @@ export default {
       // this.$emit('update:widget', this.widget.concat(this.widgetList))
     },
     // 编辑保存组件设置
-    saveWidget() {
+    saveWidget () {
       const widget = this.widget.find((item) => {
         return item.slot === this.WidgetForm.slot
       })
@@ -336,13 +357,13 @@ export default {
       this.$emit('update:widget', widgetList)
       this.setWidgetVisible = false
     },
-    handleCancel(Visible) {
+    handleCancel (Visible) {
       this[Visible] = false
     },
-    handleFullscreen() {
+    handleFullscreen () {
       this.$refs.table.doLayout()
     },
-    save() {
+    save () {
       const soltArr = this.widget.map((item) => {
         return item.layout.i
       })
@@ -353,18 +374,25 @@ export default {
           this.widgetList.push({
             slot: maxSolt + index + 1,
             fullscreen: true,
-            layout: { x: 0, y: 0, w: item.defaultWidth, h: item.defaultHigh, i: maxSolt + index + 1 },
+            layout: {
+              x: (this.layoutCount.length * 2) % (this.colNum || 12),
+              y: this.layoutCount.length + (this.colNum || 12),
+              w: 2,
+              h: 4,
+              i: maxSolt + index + 1
+            },
             component: item,
             styleObject: {},
             title: item.name
           })
+          this.layoutCount.push(index)
         })
       }
       this.tableSearchList = []
       this.$emit('update:widget', this.widget.concat(this.widgetList))
       this.addWidgetVisible = false
     },
-    getSearchCofnfig(list) {
+    getSearchCofnfig (list) {
       list.forEach((el) => {
         if (el.component.searchConfigValue && el.component.functionalCategory && el.component.functionalCategory !== '3') {
           let item
@@ -373,7 +401,7 @@ export default {
           } else {
             item = JSON.parse(el.component.searchConfigValue)
           }
-          if(item && item.length && item !== 'null') {
+          if (item && item.length && item !== 'null') {
             item.forEach((val) => {
               this.searchList.push({
                 type: val.type, // 控件类型
@@ -389,7 +417,7 @@ export default {
       })
       this.changeSearchConfig()
     },
-    changeSearchConfig() {
+    changeSearchConfig () {
       if (this.searchList && this.tableSearchList) {
         let list = this.searchList.concat(this.tableSearchList)
         const newobj = {}
@@ -400,7 +428,7 @@ export default {
         this.$emit('setSearchConfig', list)
       }
     },
-    getSearchList(addArr) {
+    getSearchList (addArr) {
       const list = []
       const soltArr = this.widget.map((item) => {
         return item.layout.i

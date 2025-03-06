@@ -468,7 +468,8 @@ export default {
       isSelectApproveUserBeforehandView: false,
       selectUserBeforehandFormData: {},
       selectUserBeforehandDataSource: [],
-      dateTime: ''
+      dateTime: '',
+      searchParam:null
     }
   },
   computed: {
@@ -572,6 +573,7 @@ export default {
       this.memberFormComp = formComp
     },
     search (params) {
+      this.searchParam = params
       let realName = params.realName ? params.realName : null
       let deptName = params.deptName ? params.deptName : null
       if (realName || deptName) {
@@ -584,6 +586,7 @@ export default {
       }
     },
     reset () {
+      this.searchParam = null
       if (this.rolesSelectedIndex > -1) {
         this.tableData = this.rolesData[this.rolesSelectedIndex].projectTeamRoleUsers
       } else {
@@ -677,6 +680,9 @@ export default {
       this.rolesSelectedIndex = index
       this.selectRoleId = item.roleId ? item.roleId : ''
       this.tableData = item.projectTeamRoleUsers ? item.projectTeamRoleUsers : []
+      if(this.searchParam){
+        this.search(this.searchParam)
+      }
       if (this.columns.filter((item) => item.dataIndex === 'roleName').length) {
         this.columns.shift()
       }
@@ -749,6 +755,9 @@ export default {
       })
       this.tableData = tableData
       this.dateTime = new Date().getTime()
+      if(this.searchParam){
+        this.search(this.searchParam)
+      }
     },
     changeRolesHandle (text, record) {
       record.name = text
@@ -1309,10 +1318,6 @@ export default {
 .normal-nlcr-layout.custom-normal-layout {
   margin: 0;
   height: 90% !important;
-}
-
-.menuLayout.el-container .el-main > div > div {
-  // height: 90%;
 }
 
 /**调整 左中右布局样式 */
