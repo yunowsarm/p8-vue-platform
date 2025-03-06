@@ -765,7 +765,7 @@ export default {
         const resourceTemplates = GanttObject.resourceTemplates(myGantt)
         // 重新布局
         myGantt.config.layout = GanttObject.layout3(resourceConfig, resourceTemplates)
-        myGantt.config.scale_height = 20 * 3
+        // myGantt.config.scale_height = 20 * 3
         myGantt.ext.zoom.init(GanttObject.zoomConfig(myGantt))
       } else if (viewType === 'gantt') {
         myGantt.ext.zoom.init(GanttObject.zoomConfig(myGantt))
