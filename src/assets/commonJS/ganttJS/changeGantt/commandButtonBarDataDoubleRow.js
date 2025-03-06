@@ -293,16 +293,16 @@ const CommandButtonBarDataDoubleRow = [
           }
         ]
       },
-      {
-        groupName: '设置',
-        buttonConfigs: [
-          {
-            buttonId: 'menu-config',
-            size: 'large',
-            position: ['top']
-          }
-        ]
-      }
+      // {
+      //   groupName: '设置',
+      //   buttonConfigs: [
+      //     {
+      //       buttonId: 'menu-config',
+      //       size: 'large',
+      //       position: ['top']
+      //     }
+      //   ]
+      // }
     ]
   }
 ]

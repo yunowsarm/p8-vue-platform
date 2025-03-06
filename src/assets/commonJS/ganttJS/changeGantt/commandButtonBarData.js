@@ -265,7 +265,7 @@ const CommandButtonBarData = [
         ]
       },
       {
-        groupName: '缩放/列设置',
+        groupName: '缩放',
         buttonConfigs: [
           {
             buttonId: 'full-screen',

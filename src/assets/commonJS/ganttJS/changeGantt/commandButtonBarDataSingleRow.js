@@ -284,7 +284,7 @@ const CommandButtonBarDataSingleRow = [
         ]
       },
       {
-        groupName: '缩放/列设置',
+        groupName: '缩放',
         buttonConfigs: [
           {
             buttonId: 'full-screen',
@@ -293,16 +293,16 @@ const CommandButtonBarDataSingleRow = [
           }
         ]
       },
-      {
-        groupName: '设置',
-        buttonConfigs: [
-          {
-            buttonId: 'menu-config',
-            size: 'small',
-            position: ['top']
-          }
-        ]
-      }
+      // {
+      //   groupName: '设置',
+      //   buttonConfigs: [
+      //     {
+      //       buttonId: 'menu-config',
+      //       size: 'small',
+      //       position: ['top']
+      //     }
+      //   ]
+      // }
     ]
   }
 ]
