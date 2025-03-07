@@ -1,22 +1,27 @@
 <template>
   <div>
-    <common-dialog :visible="visible" width="70%" @close="handleCancel" :show-handle-btn="false" :dialog-config="dialogConfig" :close-on-click-modal="false" :close-on-press-escape="false">
+    <common-dialog :visible="visible"
+                   width="70%"
+                   @close="handleCancel"
+                   :show-handle-btn="false"
+                   :dialog-config="dialogConfig"
+                   :close-on-click-modal="false"
+                   :close-on-press-escape="false">
       <template #dialog>
-        <common-table
-          ref="table"
-          :style="{ height: dialogHeight - 60 + 'px' }"
-          :comp="comp"
-          :columns="columns"
-          :params="queryParam"
-          :api="tableApi"
-          :pagination="true"
-          @selection-change="select"
-          :table-config="tableConfig"
-          @row-click="rowClick"
-          @row-dblclick="rowDblclick"
-        ></common-table>
+        <common-table ref="table"
+                      :style="{ height: dialogHeight - 60 + 'px' }"
+                      :comp="comp"
+                      :columns="columns"
+                      :params="queryParam"
+                      :api="tableApi"
+                      :pagination="true"
+                      @selection-change="select"
+                      :table-config="tableConfig"
+                      @row-click="rowClick"
+                      @row-dblclick="rowDblclick"></common-table>
         <div style="float: right; padding-right: 20px">
-          <el-button type="primary" @click="save">确定</el-button>
+          <el-button type="primary"
+                     @click="save">确定</el-button>
         </div>
       </template>
     </common-dialog>
@@ -42,16 +47,17 @@ export default {
     },
     record: {
       type: Object,
-      default: () => {}
+      default: () => { }
     }
   },
-  data() {
+  data () {
     const columns = [
       {
         title: '',
         type: 'selection',
         width: 45,
-        align: 'center'
+        align: 'center',
+        headerAlign: 'center'
       },
       {
         title: '序号',
@@ -87,25 +93,25 @@ export default {
     }
   },
   methods: {
-    handleCancel() {
+    handleCancel () {
       this.$emit('close-field')
     },
-    select(row) {
+    select (row) {
       this.selectedRow = row
     },
     // 单击选中行
-    rowClick(row, column, event) {
+    rowClick (row, column, event) {
       // this.$refs.table.$refs.table.toggleRowSelection(row)
       // this.selectedRow = row
     },
     // 双击行，直接关闭抽屉、回填值
-    rowDblclick(row, column, event) {
+    rowDblclick (row, column, event) {
       // this.$refs.table.$refs.table.clearSelection()
       // this.$refs.table.$refs.table.toggleRowSelection(row)
       // this.selectedRow = row
       // this.save()
     },
-    save() {
+    save () {
       let that = this
       let data = []
       this.selectedRow.forEach((value) => {

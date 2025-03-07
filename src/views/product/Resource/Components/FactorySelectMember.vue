@@ -102,7 +102,10 @@ export default {
             }
           }
           return true
-        }
+        },
+        width: 45,
+        align: 'center',
+        headerAlign: 'center',
       },
       {
         title: '序号',

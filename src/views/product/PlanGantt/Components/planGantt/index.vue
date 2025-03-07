@@ -521,6 +521,9 @@ const Mycolumns = [
   {
     title: '',
     dataIndex: 'checkbox',
+    width: 45,
+    align: 'center',
+    headerAlign: 'center',
     type: 'selection'
   },
   {

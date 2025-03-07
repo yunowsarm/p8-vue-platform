@@ -172,10 +172,10 @@
 .resource_tab {
   height: 100%;
 }
-::v-deep .el-tabs--top .el-tabs__content{
+::v-deep .el-tabs--top .el-tabs__content {
   height: calc(100% - 42px);
 }
-.list-layout{
+.list-layout {
   margin: 0;
   height: 100%;
 }
@@ -207,7 +207,7 @@ export default {
   props: ['startTaskId', 'endTaskId', 'planInfoId', 'visible', 'selectTaskOwnerId', 'showType', 'selectModel'],
   data () {
     return {
-      customPageSizes:[10,20, 50, 100, 200, 400],
+      customPageSizes: [10, 20, 50, 100, 200, 400],
       comp: this,
       title: '选择责任人',
       dialogWidth: '60%',
@@ -307,14 +307,16 @@ export default {
       this.columns = [
         {
           title: '',
-          width: 35,
+          width: 45,
           type: 'selection',
           selectable: function (row, index) {
             if (row.weatherOut === '1') {
               return false
             }
             return true
-          }
+          },
+          align: 'center',
+          headerAlign: 'center'
         },
         {
           title: '序号',
@@ -348,14 +350,16 @@ export default {
       this.columns = [
         {
           title: '',
-          width: 35,
+          width: 45,
           type: 'selection',
           selectable: function (row, index) {
             if (row.weatherOut === '1') {
               return false
             }
             return true
-          }
+          },
+          align: 'center',
+          headerAlign: 'center'
         },
         {
           title: '序号',
@@ -468,7 +472,7 @@ export default {
         this.customPageSizes = []
       } else {
         this.customHeight = 462
-        this.customPageSizes = [10,20, 50, 100, 200, 400]
+        this.customPageSizes = [10, 20, 50, 100, 200, 400]
       }
     },
     // 默认选中页面已选的责任人

@@ -102,7 +102,10 @@ export default {
             if (row.parentId) {
               return true
             }
-          }
+          },
+          width: 45,
+          align: 'center',
+          headerAlign: 'center',
         },
         {
           title: '活动名称',

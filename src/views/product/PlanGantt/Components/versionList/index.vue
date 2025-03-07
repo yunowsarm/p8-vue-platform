@@ -54,7 +54,10 @@ const columns = [
   {
     title: '',
     type: 'selection',
-    reserveSelection: true
+    reserveSelection: true,
+    width: 45,
+    align: 'center',
+    headerAlign: 'center',
   },
   {
     title: '序号',
@@ -194,7 +197,7 @@ export default {
               obj[version] = index
               versionSort.push(version)
             })
-            versionSort.sort(function(a, b) {
+            versionSort.sort(function (a, b) {
               return a - b;
             })
             this.planVersionId1 = this.selectedRows[obj[versionSort[0]]].id

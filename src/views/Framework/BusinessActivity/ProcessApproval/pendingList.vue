@@ -38,7 +38,9 @@ export default {
     const columns = [
       {
         type: 'selection',
-        width: 40
+        width: 45,
+        align: 'center',
+        headerAlign: 'center'
       },
       {
         title: '序号',
