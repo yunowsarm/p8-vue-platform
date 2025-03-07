@@ -945,7 +945,7 @@ export function getGanttColumns (ganttObject, vueThis) {
                 const icon = point.icon
                 const controlTimeType = point.controlTimeType
                 if (id === '1023') {
-                  html += `<span style='cursor: pointer'><i class='p8 ${icon}' style='cursor:pointer;' title='${point.title}'></i></span>`
+                  html += `<span style='cursor: pointer'><i class='p8 ${icon}' style='cursor:pointer;color: ${point.color}' title='${point.title}'></i></span>`
                 } else {
                   if (controlTimeType && controlTimeType === '0') {
                     html +=
@@ -957,11 +957,11 @@ export function getGanttColumns (ganttObject, vueThis) {
                       task.id +
                       '\')><i class="p8 ' +
                       icon +
-                      '" style="cursor:pointer;" title="' +
+                      '" style="cursor:pointer; color: '+ point.color +'" title="' +
                       point.title +
                       '"></i></span>'
                   } else {
-                    html += '<i class="p8 ' + icon + '" title="' + point.title + '"></i>'
+                    html += '<i class="p8 ' + icon + '" title="' + point.title + '" " style="color: '+ point.color +'"></i>'
                   }
                 }
                 return true

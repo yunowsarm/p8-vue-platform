@@ -34,7 +34,7 @@ export default {
         type: 'datetime',
         labelText: '预计开始时间',
         fieldName: 'forecastBeginDate',
-        colLayout: 'singleCol',
+        colLayout: 'doubleCol',
         placeholder: '请选择预计开始时间',
         fieldConfig: {
           style: 'width: 100%',
@@ -47,7 +47,7 @@ export default {
         type: 'datetime',
         labelText: '预计完成时间',
         fieldName: 'forecastEndDate',
-        colLayout: 'singleCol',
+        colLayout: 'doubleCol',
         placeholder: '请选择预计完成时间',
         fieldConfig: {
           style: 'width: 100%',
