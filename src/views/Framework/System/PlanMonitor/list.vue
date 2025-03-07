@@ -24,7 +24,7 @@
                       @icon-click="iconClick"
                       :special-rote-name="roteName">
           <template #icon="{ scope }">
-            <i :class="scope.row.icon"></i>
+            <i :class="scope.row.icon" :style="{color: scope.row.color}"></i>
           </template>
         </common-table>
       </div>

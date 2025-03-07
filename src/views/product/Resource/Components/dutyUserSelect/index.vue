@@ -151,13 +151,15 @@ export default {
       columns: [
         {
           title: '',
-          minWidth: 35,
+          minWidth: 45,
           type: 'selection',
           selectable: (row, index) => {
             if (!row.departureTime) {
               return true
             }
-          }
+          },
+          align: 'center',
+          headerAlign: 'center'
         },
         {
           title: '序号',
@@ -202,13 +204,15 @@ export default {
       queryColumns: [
         {
           title: '',
-          minWidth: 35,
+          minWidth: 45,
           type: 'selection',
           selectable: (row, index) => {
             if (!row.departureTime) {
               return true
             }
-          }
+          },
+          align: 'center',
+          headerAlign: 'center'
         },
         {
           title: '序号',

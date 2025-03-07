@@ -212,8 +212,10 @@ export default {
       columns: [
         {
           title: '',
-          width: 40,
-          type: 'selection'
+          width: 45,
+          type: 'selection',
+          align: 'center',
+          headerAlign: 'center'
         },
         {
           title: '标识',

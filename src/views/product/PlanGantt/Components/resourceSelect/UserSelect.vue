@@ -2,28 +2,35 @@
   <list-layout class="userSelect">
     <template #north>
       <div class="search-con">
-        <div class="input-con" :style="{ width: 'calc(45% - 31px)' }">
+        <div class="input-con"
+             :style="{ width: 'calc(45% - 31px)' }">
           人员姓名:
-          <el-input v-model="realName" :style="{ width: 'calc(100% - 70px)' }" class="input-name" placeholder="请输入人员姓名进行搜索" clearable size="mini" />
+          <el-input v-model="realName"
+                    :style="{ width: 'calc(100% - 70px)' }"
+                    class="input-name"
+                    placeholder="请输入人员姓名进行搜索"
+                    clearable
+                    size="mini" />
         </div>
         <div class="search-btn">
-          <el-button icon="search" size="mini" type="primary" @click="search"> 搜索 </el-button>
+          <el-button icon="search"
+                     size="mini"
+                     type="primary"
+                     @click="search"> 搜索 </el-button>
         </div>
       </div>
     </template>
     <template #center>
-      <common-table
-        ref="table"
-        :table-setting="false"
-        :columns="columns"
-        :params="queryParam"
-        :api="tableApi"
-        :disabled-check-all="true"
-        is-radio-select
-        @row-click="handleTableRowClick"
-        @select="handleTableSelectionChange"
-        @row-dblclick="rowDblclick"
-      />
+      <common-table ref="table"
+                    :table-setting="false"
+                    :columns="columns"
+                    :params="queryParam"
+                    :api="tableApi"
+                    :disabled-check-all="true"
+                    is-radio-select
+                    @row-click="handleTableRowClick"
+                    @select="handleTableSelectionChange"
+                    @row-dblclick="rowDblclick" />
     </template>
   </list-layout>
 </template>
@@ -38,10 +45,13 @@ export default {
     'el-input': Input
   },
   props: {},
-  data() {
+  data () {
     const columns = [
       {
         title: '',
+        width: 45,
+        align: 'center',
+        headerAlign: 'center',
         type: 'selection'
       },
       {
@@ -71,18 +81,18 @@ export default {
     }
   },
   watch: {},
-  created() {},
-  mounted() {},
-  beforeDestroy() {},
+  created () { },
+  mounted () { },
+  beforeDestroy () { },
   methods: {
-    search() {
+    search () {
       this.queryParam.realName = this.realName
     },
-    handleTableSelectionChange(selection, row) {
+    handleTableSelectionChange (selection, row) {
       this.currentRow = row
       this.$emit('sysUserSelect', row)
     },
-    handleTableRowClick(row) {
+    handleTableRowClick (row) {
       this.$refs.table.$refs.table.clearSelection()
       if (this.currentRow) {
         if (this.currentRow.id === row.id) {
@@ -98,7 +108,7 @@ export default {
       }
       this.$emit('sysUserSelect', this.currentRow)
     },
-    rowDblclick(row, column, event) {
+    rowDblclick (row, column, event) {
       this.currentRow = row
       this.$emit('dbClickUser', row)
     }

@@ -3,30 +3,38 @@
     <list-layout class="userSelect">
       <template #north>
         <div class="search-con">
-          <div class="input-con" :style="{ width: 'calc(45% - 31px)' }">
+          <div class="input-con"
+               :style="{ width: 'calc(45% - 31px)' }">
             人员姓名:
-            <el-input v-model="realName" :style="{ width: 'calc(100% - 70px)' }" class="input-name" placeholder="请输入人员姓名进行搜索" clearable size="mini" />
+            <el-input v-model="realName"
+                      :style="{ width: 'calc(100% - 70px)' }"
+                      class="input-name"
+                      placeholder="请输入人员姓名进行搜索"
+                      clearable
+                      size="mini" />
           </div>
           <div class="search-btn">
-            <el-button icon="search" size="mini" type="primary" @click="search"> 搜索 </el-button>
+            <el-button icon="search"
+                       size="mini"
+                       type="primary"
+                       @click="search"> 搜索 </el-button>
           </div>
         </div>
       </template>
       <template #center>
-        <common-table
-          ref="table"
-          class="user_table"
-          :table-setting="false"
-          :columns="columns"
-          :params="queryParam"
-          :api="tableApi"
-          :disabled-check-all="true"
-          is-radio-select
-          @select="handleTableSelectionChange"
-        />
+        <common-table ref="table"
+                      class="user_table"
+                      :table-setting="false"
+                      :columns="columns"
+                      :params="queryParam"
+                      :api="tableApi"
+                      :disabled-check-all="true"
+                      is-radio-select
+                      @select="handleTableSelectionChange" />
         <div class="dialog_footer">
           <el-button @click="$emit('close')">取 消</el-button>
-          <el-button type="primary" @click="submit">确 定</el-button>
+          <el-button type="primary"
+                     @click="submit">确 定</el-button>
         </div>
       </template>
     </list-layout>
@@ -48,10 +56,13 @@ export default {
       default: () => []
     }
   },
-  data() {
+  data () {
     const columns = [
       {
         title: '',
+        width: 45,
+        align: 'center',
+        headerAlign: 'center',
         type: 'selection'
       },
       {
@@ -81,21 +92,21 @@ export default {
     }
   },
   watch: {},
-  created() {},
-  mounted() {
+  created () { },
+  mounted () {
     this.row.forEach(item => {
 
     })
   },
-  beforeDestroy() {},
+  beforeDestroy () { },
   methods: {
-    search() {
+    search () {
       this.queryParam.realName = this.realName
     },
-    handleTableSelectionChange(selection, row) {
+    handleTableSelectionChange (selection, row) {
       this.currentRow = row
     },
-    submit() {
+    submit () {
       if (this.currentRow.length == 0) {
         this.$message.warning('请选择责任人！')
         return

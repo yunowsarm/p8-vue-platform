@@ -337,3 +337,8 @@
   flex-direction: row;
   align-items: baseline;
 }
+.el-table--border .el-table__cell:first-child .cell {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  min-width: 45px !important;
+}

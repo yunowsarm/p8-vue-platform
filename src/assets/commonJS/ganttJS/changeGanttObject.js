@@ -277,7 +277,7 @@ export function getChangeGantt (ganttName, vueThis) {
               monitorPointDatas.some((point, index) => {
                 if (point.id === id) {
                   const icon = point.icon
-                  html += '<i class="p8 ' + icon + '" title="' + point.title + '"></i>'
+                  html += '<i class="p8 ' + icon + '" title="' + point.title + '" style="color:' + point.color + '"></i>'
                   return true
                 }
               })

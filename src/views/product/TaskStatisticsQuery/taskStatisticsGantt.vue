@@ -237,6 +237,9 @@ const Mycolumns = [
   {
     title: '',
     dataIndex: 'checkbox',
+    width: 45,
+    align: 'center',
+    headerAlign: 'center',
     type: 'selection'
   },
   {
@@ -952,12 +955,12 @@ export default {
             vueThis.$store.dispatch('setTaskStyles', res.taskStyle)
             myGantt.parse(datas)
             vueThis.taskCount = res.taskCounts
-            myGantt.batchUpdate(function() {
-              myGantt.eachTask(function(task) {
+            myGantt.batchUpdate(function () {
+              myGantt.eachTask(function (task) {
                 // 判断是否为根节点（根据业务逻辑，根节点通常没有父节点）
                 if (task.type === 'project') {
                   myGantt.open(task.id);
-                }else{
+                } else {
                   myGantt.close(task.id);
                 }
               });
@@ -984,16 +987,16 @@ export default {
     },
     // 展开所有gantt
     expandAll () {
-      myGantt.batchUpdate(function() {
-        myGantt.eachTask(function(task) {
+      myGantt.batchUpdate(function () {
+        myGantt.eachTask(function (task) {
           myGantt.open(task.id);
         });
       });
     },
     // 收缩所有gantt
     collapseAll () {
-      myGantt.batchUpdate(function() {
-        myGantt.eachTask(function(task) {
+      myGantt.batchUpdate(function () {
+        myGantt.eachTask(function (task) {
           myGantt.close(task.id);
         });
       });

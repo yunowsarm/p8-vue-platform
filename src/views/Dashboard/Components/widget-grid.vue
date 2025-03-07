@@ -260,7 +260,8 @@ export default {
         {
           type: 'selection',
           width: 45,
-          align: 'center'
+          align: 'center',
+          headerAlign: 'center',
         },
         {
           title: '组件名称',

@@ -147,7 +147,9 @@ export default {
       columns: [
         {
           title: '',
-          width: 35,
+          width: 45,
+          align: 'center',
+          headerAlign: 'center',
           type: 'selection'
         },
         {

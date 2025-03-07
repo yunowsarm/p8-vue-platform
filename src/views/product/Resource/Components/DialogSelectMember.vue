@@ -133,6 +133,7 @@ export default {
       {
         title: '',
         type: 'selection',
+        width: 45,
         reserveSelection: true,
         selectable: (row, index) => {
           if (this.existsData && this.existsData.length) {
@@ -144,7 +145,9 @@ export default {
             }
           }
           return true
-        }
+        },
+        align: 'center',
+        headerAlign: 'center'
       },
       // {
       //   title: '序号',
