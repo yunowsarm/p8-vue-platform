@@ -3536,7 +3536,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
                   })
                 }
               }
-              return `<div class='text_overflow'>${result.join(',')}</div>`
+              return `<div class='text_overflow' title='${result.join(',')}'>${result.join(',')}</div>`
             }
           }
         } else {
@@ -3555,7 +3555,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
                     result = moment(result).format('YYYY-MM-DD')
                   }
                 }
-                return `<div class='text_overflow'>${result}</div>`
+                return `<div class='text_overflow' title='${result}'>${result}</div>`
             }
           }
         }
@@ -3576,7 +3576,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
                 result = moment(result).format('YYYY-MM-DD')
               }
             }
-            return `<div class='text_overflow'>${result}</div>`
+            return `<div class='text_overflow' title='${result}'>${result}</div>`
           }
         })
       }
@@ -3652,7 +3652,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
                     })
                   }
                 }
-                return `<div class='text_overflow'>${result.join(',')}</div>`
+                return `<div class='text_overflow' title='${result.join(',')}'>${result.join(',')}</div>`
               }
             })
           } else {
@@ -3671,7 +3671,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
                     result = moment(result).format('YYYY-MM-DD')
                   }
                 }
-                return `<div class='text_overflow'>${result}</div>`
+                return `<div class='text_overflow' title='${result}'>${result}</div>`
               }
             })
           }

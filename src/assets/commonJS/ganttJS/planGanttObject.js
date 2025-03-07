@@ -148,7 +148,7 @@ export function planGantt (ganttName, vueThis) {
             ganttObject.undo()
             return { action: 'error' }
           })
-          
+
       }
     },
     link: {
@@ -278,7 +278,7 @@ export function planGantt (ganttName, vueThis) {
         vueThis.showTaskProgressDialog(task.id)
       }
     }
-    
+
     task.machineName = task.machineName ? task.machineName : ''
     task.completeForm = task.completeForm ? task.completeForm : ''
     task.taskProjectName = task.taskProjectName ? task.taskProjectName : ''
@@ -401,7 +401,7 @@ export function planGantt (ganttName, vueThis) {
   // // 开启单元格编辑
   // ganttObject.config.keyboard_navigation_cells = true
   // 添加工具提示提示
-  GanttObject.addTooltip(ganttObject, vueThis)
+  // GanttObject.addTooltip(ganttObject, vueThis)
   // 升降级
   const actions = GanttObject.getActions(ganttObject)
   ganttObject.performAction = GanttObject.performAction(actions, ganttObject)
@@ -686,15 +686,15 @@ export function getGanttColumns (ganttObject, vueThis) {
             taskStyles += 'text-decoration: line-through underline;'
           }
           if (ganttObject.hasChild(task.id)) {
-            result = result + '<div class="text_overflow" style="display: inline-block;' + (taskStyles || '') + 'font-weight:bold;">' + (task.name || '') + '</div>'
+            result = result + '<div class="text_overflow" style="display: inline-block;' + (taskStyles || '') + 'font-weight:bold;" title="' + (task.name || '') + '">' + (task.name || '') + '</div>'
           } else {
-            result = result + '<div class="text_overflow" style="display: inline-block;' + (taskStyles || '') + '">' + (task.name || '') + '</div>'
+            result = result + '<div class="text_overflow" style="display: inline-block;' + (taskStyles || '') + '" title="' + (task.name || '') + '">' + (task.name || '') + '</div>'
           }
         } else {
           if (ganttObject.hasChild(task.id)) {
-            result = result + '<div class="text_overflow" style="display: inline-block;font-weight:bold;">' + (task.name || '') + '</div>'
+            result = result + '<div class="text_overflow" style="display: inline-block;font-weight:bold;" title="' + (task.name || '') + '">' + (task.name || '') + '</div>'
           } else {
-            result = task.name || ''
+            result = `<div title='${task.name}'>${task.name}</div>` || ''
           }
         }
         return result

@@ -23,7 +23,7 @@ export function getChangeGantt (ganttName, vueThis) {
   // 加载排程类型
   GanttObject.autoScheduleList(ganttObject)
   // 添加工具提示提示
-  GanttObject.addTooltip(ganttObject, vueThis)
+  // GanttObject.addTooltip(ganttObject, vueThis)
   // 加载工期格式化
   const formatter = GanttObject.formatter(ganttObject)
   // 加载前后置格式化
@@ -360,13 +360,13 @@ export function getChangeGantt (ganttName, vueThis) {
         if (task.unDescribes === '1') result = `<i class='p8 icon-tishi' title='存在任务描述' style='color: #0ab847; float: left'></i>`
         if (task.style) {
           if (task.infoType === 'delete') {
-            result = result + '<div class="text_overflow" style="display: inline-block;text-decoration:line-through;color:' + task.style + '">' + task.name + '</div>'
+            result = result + '<div class="text_overflow" style="display: inline-block;text-decoration:line-through;color:' + task.style + '" title="' + task.name + '" >' + task.name + '</div>'
           } else {
-            result = result + `<div class="text_overflow">${task.name}</div>`
+            result = result + `<div class="text_overflow" title="${task.name}">${task.name}</div>`
 
           }
         } else {
-          result = result + `<div class="text_overflow">${task.name}</div>`
+          result = result + `<div class="text_overflow" title="${task.name}">${task.name}</div>`
         }
         return result
       }
@@ -804,7 +804,7 @@ function synchronizationColumns (vueThis, ganttObject) {
                     })
                   }
                 }
-                return `<div class='text_overflow'>${result.join(',')}</div>`
+                return `<div class='text_overflow' title='${result.join(',')}'>${result.join(',')}</div>`
               }
             })
           } else {
@@ -818,7 +818,7 @@ function synchronizationColumns (vueThis, ganttObject) {
               indexNo: item.indexNo,
               template: function (task) {
                 let result = task['kz' + item.id] ? task['kz' + item.id] : ''
-                return `<div class='text_overflow'>${result}</div>`
+                return `<div class='text_overflow' title='${result}'>${result}</div>`
               }
             })
           }
