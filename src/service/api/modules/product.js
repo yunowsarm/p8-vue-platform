@@ -1078,12 +1078,27 @@ export const repositoryApi = {
       desc: '项目管理->计划管理->计划编辑->gantt展开折叠保存'
     },
     {
+      name: 'getWebsocketById',
+      method: 'POST',
+      path: '/framework/websocket/getWebsocketById',
+      mockPath: '/framework/websocket/getWebsocketById',
+      desc: '项目管理->计划管理->计划编辑->获取ai对话记录'
+    },
+    {
       name: 'aiGeneratedSendDescribe',
       method: 'POST',
       path: '/ai/intelligence/sendDescribe',
       mockPath: '/ai/intelligence/sendDescribe',
       desc: '项目管理->计划管理->计划编辑->AI自动生成'
     },
+    {
+      name: 'createTasks',
+      method: 'POST',
+      path: '/ai/intelligence/createTasks',
+      mockPath: '/ai/intelligence/createTasks',
+      desc: '项目管理->计划管理->计划编辑->将AI数据插入到当前计划'
+    },
+
     {
       name: 'getSameTaskIndex',
       method: 'POST',

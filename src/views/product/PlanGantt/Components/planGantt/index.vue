@@ -132,6 +132,7 @@
     <!-- ai自动生成   -->
     <common-dialog title="AI生成"
                    width="50%"
+                   class='autoGeneration'
                    :visible="autoGenerationVisible"
                    @close="closeAutoGeneration"
                    :is-view-cs-footer="false"
@@ -463,6 +464,9 @@
     padding: 10px;
     background: #f7f8fc;
   }
+}
+.autoGeneration ::v-deep .el-dialog__body {
+  padding: 0 !important;
 }
 </style>
 <script>
@@ -1031,8 +1035,7 @@ export default {
       this.autoGenerationVisible = true
     },
     // 关闭AI生成
-    closeAutoGeneration () {
-      this.$refs.autoGeneration.saveChatHistory()
+    closeAutoGeneration (){
       this.autoGenerationVisible = false
     },
     refreshAiData () {

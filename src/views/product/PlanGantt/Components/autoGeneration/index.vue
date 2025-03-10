@@ -1,14 +1,20 @@
 <template>
   <div class="ai-chat">
     <!-- 聊天窗口 -->
-    <div class="chat-window" ref="chatWindow">
-      <div v-if="aiMessages[key].messages.length === 0" class="placeholder-message">还没有消息哦，快输入您的要求吧。</div>
-      <div v-for="(message, index) in aiMessages[key].messages" :key="index" :class="['message', message.sender]">
-        <div class="text">{{ message.text }}</div>
+    <div class="chat-window" ref="chatWindow" @scroll="handleScroll">
+      <!-- 加载更多提示 -->
+      <div v-if="messages.length > 0" class="load-more-tip">
+        <span v-if="loading">加载中...</span>
+        <span v-else-if="noMore">已无更多消息</span>
       </div>
-      <div v-if="aiMessages[key] && aiMessages[key].state === 'start'" class="ai">
-        <span>{{ aiMessages[key].loadingText }}</span>
-        <i class="el-icon-loading" style="font-size: 16px"></i>
+
+      <!-- 现有的消息列表 -->
+      <div v-if="messages.length === 0" class="placeholder-message">还没有消息哦，快输入您的要求吧。</div>
+      <div v-for="(message, index) in messages" :key="index">
+        <div :class="['message', message.sendUser === userId ? 'user' : 'ai']">
+          <el-button v-if="message.styleType" class="task_preview" type="text" @click="taskPreview(message.content)">点击查看数据 </el-button>
+          <div v-else class="text">{{ message.content }}</div>
+        </div>
       </div>
     </div>
 
@@ -16,18 +22,38 @@
     <div class="input-area">
       <el-input type="textarea" :rows="5" resize="none" placeholder="请输入要求描述" @keydown.enter.native="handleKeyDown" v-model="userInput"></el-input>
       <div class="button-area">
-        <el-tooltip :disabled="!!userInput.trim() || aiMessages[key].state === 'start'" v-model="showTip" effect="dark" content="请输入您的要求" placement="top">
-          <el-button class="send_button" :disabled="aiMessages[key].state === 'start' || !userInput.trim()" type="primary" size="small" round @click="sendMessage">发送 </el-button>
+        <el-tooltip :disabled="!!userInput.trim()" v-model="showTip" effect="dark" content="请输入您的要求" placement="top">
+          <el-button class="send_button" :disabled="!userInput.trim()" type="primary" size="small" round @click="sendMessage">发送 </el-button>
         </el-tooltip>
       </div>
     </div>
+    <common-dialog
+      title="预览"
+      width="90%"
+      v-if="taskPreviewVisible"
+      :visible="taskPreviewVisible"
+      :show-handle-btn="false"
+      @close="taskPreviewVisible = false"
+      :is-view-cs-footer="false"
+      :dialog-height="700"
+    >
+      <template #dialog>
+        <task-preview v-if="taskPreviewVisible" :task-data="taskPreviewData" @success="successCreateTasks"></task-preview>
+      </template>
+    </common-dialog>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import TaskPreview from '@/views/product/PlanGantt/Components/autoGeneration/components/TaskPreview.vue'
+import { P8Dialog as CommonDialog } from 'p8-components-ui'
 
 export default {
+  components: {
+    CommonDialog,
+    TaskPreview
+  },
   props: {
     planInfoId: {
       type: String,
@@ -36,10 +62,20 @@ export default {
   },
   data() {
     return {
+      loading: false, // 是否正在加载更多
+      noMore: false, // 是否还有更多数据
+      taskPreviewVisible: false,
+      taskPreviewData: [],
       showTip: false,
       messages: [], // 存储聊天消息
       userInput: '', // 用户输入的内容
-      aiMessages: {}
+      page: {
+        current: 1,
+        size: 10,
+        total: 0,
+        orders: [{ column: 'createTime', asc: false }],
+        pages: 0
+      }
     }
   },
   computed: {
@@ -54,45 +90,73 @@ export default {
   },
   mounted() {
     window.myWebSocket.on('getIntelligenceMessage', (data) => {
-      if (data.key === this.key) {
-        if (data.type === 'start') {
-          this.$set(this.aiMessages[this.key], 'state', data.type)
-          this.$set(this.aiMessages[this.key], 'loadingText', data.message)
-          // this.saveChatHistory()
-          this.scrollToBottom()
-        } else {
-          this.$set(this.aiMessages[this.key], 'state', data.type)
-          this.$set(this.aiMessages[this.key], 'loadingText', '')
-          this.$set(this.aiMessages[this.key].messages, this.aiMessages[this.key].messages.length, { sender: 'ai', text: data.message })
-          // this.saveChatHistory()
-          this.scrollToBottom()
-          this.$emit('refreshAiData')
-        }
-        console.log(this.aiMessages[this.key].loadingText)
-        console.log(this.aiMessages[this.key].messages)
+      if (data.entityId === this.planInfoId) {
+        this.$set(this.messages, this.messages.length, data)
+        this.scrollToBottom()
+        this.$emit('refreshAiData')
         this.$forceUpdate()
       }
     })
   },
   methods: {
-    initChatHistory() {
-      // 从 localStorage 加载所有用户的对话记录
-      const storedMessages = localStorage.getItem('aiMessages')
-      if (storedMessages) {
-        this.aiMessages = JSON.parse(storedMessages)
-        this.scrollToBottom()
+    // 处理滚动事件
+    handleScroll() {
+      const chatWindow = this.$refs.chatWindow
+      // 当滚动到顶部时加载更多
+      if (chatWindow.scrollTop === 0 && !this.loading && !this.noMore) {
+        this.loadMoreMessages()
       }
+    },
 
-      // 如果当前用户没有对话记录，则初始化一个
-      if (!this.aiMessages[this.key]) {
-        this.aiMessages[this.key] = {
-          state: '',
-          loadingText: '',
-          messages: []
+    // 加载更多消息
+    loadMoreMessages() {
+      this.loading = true
+      this.page.current += 1
+
+      this.$api['planGanttManager.getWebsocketById']({
+        entityId: this.planInfoId,
+        entityType: 'aiMessage',
+        page: this.page
+      }).then((res) => {
+        if (res && res.records.length > 0) {
+          // 将新消息添加到列表开头
+          this.messages = [...res.records.reverse(), ...this.messages]
+
+          // 保持滚动位置
+          this.$nextTick(() => {
+            const chatWindow = this.$refs.chatWindow
+            chatWindow.scrollTop = 10 // 略微偏移，防止触发新的加载
+          })
+        } else {
+          this.noMore = true
         }
-        // 保存到 localStorage
-        // this.saveChatHistory()
-      }
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+
+    // 修改初始化方法
+    initChatHistory() {
+      this.loading = true
+      this.page.current = 1
+      this.noMore = false
+
+      this.$api['planGanttManager.getWebsocketById']({
+        entityId: this.planInfoId,
+        entityType: 'aiMessage',
+        page: this.page
+      }).then((res) => {
+        if (res) {
+          this.messages = [...res.records.reverse()]
+          this.scrollToBottom()
+          // 如果第一页数据不足一页，说明没有更多数据了
+          if (res.records.length < this.page.size) {
+            this.noMore = true
+          }
+        }
+      }).finally(() => {
+        this.loading = false
+      })
     },
     handleKeyDown(event) {
       // 如果是普通回车键（没有按下 Ctrl 或 Shift）
@@ -107,22 +171,24 @@ export default {
         this.showTip = true
         return
       }
-
-      // 添加用户消息
-      const userMessage = { sender: 'user', text: this.userInput }
-      this.aiMessages[this.key].messages.push(userMessage)
-      // this.saveChatHistory()
-      this.$api['planGanttManager.aiGeneratedSendDescribe']({ planId: this.planInfoId, describe: this.userInput }).then((res) => {
-        if (res) {
-          // 清空输入框
-          this.userInput = ''
-          this.scrollToBottom()
-        }
+      const userMessage = { sendUser: this.userId, content: this.userInput }
+      this.messages.push(userMessage)
+      this.$api['planGanttManager.aiGeneratedSendDescribe']({ planId: this.planInfoId, describe: this.userInput }).finally(() => {
+        this.userInput = ''
+        this.scrollToBottom()
       })
     },
-    saveChatHistory() {
-      // 将 aiMessages 对象转换为 JSON 字符串并存储到 localStorage
-      localStorage.setItem('aiMessages', JSON.stringify(this.aiMessages))
+    taskPreview(content) {
+      this.taskPreviewData = content
+      this.taskPreviewVisible = true
+    },
+    successCreateTasks() {
+      this.taskPreviewVisible = false
+      this.$emit('refreshAiData')
+      this.$message({
+        type: 'success',
+        message: '添加成功'
+      })
     },
     // 设置滚动条到最底部
     scrollToBottom() {
@@ -147,7 +213,6 @@ export default {
   border-radius: 8px;
   overflow: hidden;
   background-color: #ffffff;
-  background-color: #f0f2f5;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 
@@ -155,7 +220,6 @@ export default {
   flex: 1;
   padding: 16px;
   overflow-y: auto;
-  background-color: #f9f9f9;
   background-color: #ffffff;
 }
 
@@ -171,10 +235,16 @@ export default {
     justify-content: flex-start;
   }
 
+  .task_preview {
+    padding: 10px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    background-color: #ebeef5;
+  }
+
   .text {
     max-width: 70%;
     padding: 10px 16px;
-    border-radius: 8px;
     border-radius: 16px;
     font-size: 14px;
     line-height: 1.5;
@@ -182,13 +252,11 @@ export default {
 
   &.user .text {
     background-color: #409eff;
-    background-color: #6200ea;
     color: white;
   }
 
   &.ai .text {
     background-color: #ebeef5;
-    background-color: #e0e0e0;
     color: #303133;
   }
 }
@@ -225,5 +293,15 @@ export default {
 
 ::v-deep .el-textarea__inner {
   border: none;
+}
+
+::v-deep .el-dialog__body {
+  padding: 0 !important;
+}
+.load-more-tip {
+  text-align: center;
+  padding: 10px 0;
+  color: #999;
+  font-size: 12px;
 }
 </style>

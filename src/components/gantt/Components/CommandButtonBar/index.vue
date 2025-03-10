@@ -250,7 +250,6 @@ export default {
   watch: {
     ganttButtonMode: {
       handler (val) {
-        debugger
         if (!this.isGanttChange) {
           this.rowNum = val === 'single' ? 1 : 2
           this.$nextTick(() => {
