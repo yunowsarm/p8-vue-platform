@@ -2,25 +2,23 @@
   <div class="plan-progress">
     <div class="progress-item" v-for="(item, index) in data" :key="index">
       <div class="title">{{ item.title }}</div>
-      <div class="timeline">
-        <div
-          class="timeline-item"
-          v-for="(timelineItem, timelineIndex) in item.list"
-          :key="timelineIndex"
-          :style="{
-            '--item-count': item.list.length,
-            '--item-index': timelineIndex + 1
-          }"
-        >
-          <div class="timeline-item-tail" v-if="timelineIndex !== item.list.length - 1" :style="{ backgroundColor: timelineItem.status === '6070' ? '#1a73e8' : '#90caf9' }"></div>
-          <div class="progress-line" v-if="timelineIndex !== item.list.length - 1 && timelineItem.status === '6050'" :style="{ width: `${timelineItem.progress * 100}%`, backgroundColor: '#1a73e8' }"></div>
-          <div class="timeline-item-node" :style="{ backgroundColor: timelineItem.status === 'completed' || timelineItem.status !== '6020' ? '#1a73e8' : '#90caf9' }"></div>
-          <div class="timeline-item-content">
-            <div class="timeline-item-name" :title="timelineItem.name">
-              {{ timelineItem.name }}
-            </div>
-            <div class="timeline-item-date">
-              {{ timelineItem.endDate }}
+      <div class="timeline-wrapper" ref="timelineWrapper">
+        <div class="timeline">
+          <div
+            class="timeline-item"
+            v-for="(timelineItem, timelineIndex) in item.list"
+            :key="timelineIndex"
+          >
+            <div class="timeline-item-tail" v-if="timelineIndex !== item.list.length - 1" :style="{ backgroundColor: timelineItem.status === '6070' ? '#1a73e8' : '#90caf9' }"></div>
+            <div class="progress-line" v-if="timelineIndex !== item.list.length - 1 && timelineItem.status === '6050'" :style="{ width: `${timelineItem.progress * 100}%`, backgroundColor: '#1a73e8' }"></div>
+            <div class="timeline-item-node" :style="{ backgroundColor: timelineItem.status === 'completed' || timelineItem.status !== '6020' ? '#1a73e8' : '#90caf9' }"></div>
+            <div class="timeline-item-content">
+              <div class="timeline-item-name" :title="timelineItem.name">
+                {{ timelineItem.name }}
+              </div>
+              <div class="timeline-item-date">
+                {{ timelineItem.endDate }}
+              </div>
             </div>
           </div>
         </div>
@@ -66,6 +64,24 @@ export default {
     })
     this.getPlanProgress()
   },
+  mounted() {
+    this.$nextTick(() => {
+      const wrappers = this.$refs.timelineWrapper;
+      if (wrappers) {
+        wrappers.forEach(wrapper => {
+          wrapper.addEventListener('wheel', this.handleWheel, { passive: false });
+        });
+      }
+    });
+  },
+  beforeDestroy() {
+    const wrappers = this.$refs.timelineWrapper;
+    if (wrappers) {
+      wrappers.forEach(wrapper => {
+        wrapper.removeEventListener('wheel', this.handleWheel);
+      });
+    }
+  },
   methods: {
     getPlanProgress() {
       this.$api['planGanttManager.loadTaskProgressSituation']({ planInfoId: this.planInfoId })
@@ -76,6 +92,11 @@ export default {
         .catch((err) => {
           console.log(err, 'err')
         })
+    },
+    handleWheel(e) {
+      e.preventDefault();
+      const wrapper = e.currentTarget;
+      wrapper.scrollLeft += e.deltaY;
     }
   }
 }
@@ -90,12 +111,42 @@ export default {
   .progress-item {
     width: 100%;
     display: flex;
-    padding: 50px 0;
+    padding: 30px 0;  // 调整上下间距
 
     .title {
       font-size: 24px;
-      margin-right: 30px;
+      margin-right: 20px;  // 增加标题右侧间距
       font-weight: bold;
+      padding-top: 8px;    // 标题垂直对齐
+    }
+  }
+}
+
+.timeline-wrapper {
+  width: 100%;
+  flex: 1;
+  overflow-x: overlay;
+  overflow-y: hidden; // 新增垂直方向溢出隐藏
+  box-sizing: border-box;
+  padding-bottom: 30px;
+  height: calc(100px + 30px);
+
+  // 调整时间轴实际高度
+  .timeline {
+    height: 100px; // 确保实际内容高度不超过容器
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    display: none;
+    background: transparent;
+  }
+
+  &:hover {
+    overflow-x: auto;
+    &::-webkit-scrollbar {
+      display: block;
     }
   }
 }
@@ -104,25 +155,25 @@ export default {
   width: 100%;
   flex: 1;
   display: flex;
-  justify-content: space-between;
+  min-width: fit-content;
+  height: 100px;      // 增加时间轴整体高度
 
   .timeline-item {
     margin-top: 12px;
     position: relative;
-    min-width: 0;
+    width: 250px;
+    min-width: 250px;
 
-    // 动态计算宽度
-    &:not(:last-child) {
-      width: calc(100% / var(--item-count) + 70px * var(--item-index));
-    }
-
-    // 最后一个项保持自动宽度
     &:last-child {
       width: auto;
+      min-width: auto;
     }
+    // 移除了 padding: 0 15px;
 
     .timeline-item-node {
-      left: -1px;
+      position: absolute;
+      left: 0;        // 修改圆点位置
+      top: 0;
       width: 12px;
       height: 12px;
       background: $theme-color;
@@ -132,34 +183,25 @@ export default {
     .timeline-item-tail {
       position: absolute;
       top: 5px;
-      left: 12px;
+      left: 12px;     // 修改连接线起始位置
       height: 2px;
-      width: 100%;
+      width: calc(100% - 12px);  // 调整连接线宽度
       background-color: $theme-color-opacity;
-    }
-
-    .progress-line {
-      position: absolute;
-      top: 5px;
-      left: 12px;
-      height: 2px;
-      //background-color: red; // 红色进度线
-      z-index: 1; // 确保进度线在默认线之上
     }
 
     .timeline-item-content {
       width: 100%;
       white-space: nowrap;
-      margin-top: 10px;
+      margin-top: 20px;
       text-align: start;
       font-size: 14px;
       line-height: 20px;
-      padding-right: 30px;
+      padding-right: 20px;
 
       .timeline-item-name {
-        margin-bottom: 10px;
-        overflow: hidden; // 超出部分隐藏
-        text-overflow: ellipsis; // 超出部分显示省略号
+        margin-bottom: 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
   }
