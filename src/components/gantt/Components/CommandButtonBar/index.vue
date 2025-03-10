@@ -282,6 +282,10 @@ export default {
     }
     this.$nextTick(() => {
       this.initDom()
+      // 添加延时确保 DOM 完全渲染
+      setTimeout(() => {
+        this.resizeShowArrow()
+      }, 100)
     })
     this.$bus.$on('ganttInit', () => {
       this.resizeFull()
