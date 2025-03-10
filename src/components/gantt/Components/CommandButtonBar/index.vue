@@ -250,8 +250,12 @@ export default {
   watch: {
     ganttButtonMode: {
       handler (val) {
+        debugger
         if (!this.isGanttChange) {
           this.rowNum = val === 'single' ? 1 : 2
+          this.$nextTick(() => {
+            this.resizeShowArrow()
+          })
         }
       },
       immediate: true
@@ -266,7 +270,7 @@ export default {
       advance: true,
       scrollArea: '', // 内容滚动盒子
       scrollContent: '', // 内容滚动dom
-      showArrow: true, // 默认展示左右切换按钮
+      showArrow: false, // 默认展示左右切换按钮
       leftNoAction: true,
       rightNoAction: false,
       rowNum: this.isGanttChange ? 1 : this.ganttButtonMode === 'single' ? 1 : 2
@@ -304,23 +308,16 @@ export default {
         })
       }, 500);
     },
-    resizeShowArrow () {
-      if (this.needArrow) {
-        if (this.scrollContent[0] && this.scrollContent[0].scrollWidth === this.scrollContent[0].offsetWidth) {
-          // this.showArrow = false
-        } else {
-          this.showArrow = true
-        }
+    resizeShowArrow() {
+      // 如果内容宽度小于等于容器宽度，说明可以完全显示，不需要箭头
+      if (this.scrollContent[0]) {
+        this.showArrow = this.scrollContent[0].scrollWidth > this.scrollContent[0].offsetWidth;
       }
     },
     // 鼠标悬浮事件控制左右切换按钮是否出现
-    tabHover () {
-      if (this.needArrow) {
-        if (this.scrollContent[0].scrollWidth === this.scrollContent[0].offsetWidth) {
-          // this.showArrow = false
-        } else {
-          this.showArrow = true
-        }
+    tabHover() {
+      if (this.scrollContent[0]) {
+        this.showArrow = this.scrollContent[0].scrollWidth > this.scrollContent[0].offsetWidth;
       }
     },
     changeCommandButton () {
