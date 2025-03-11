@@ -22,7 +22,7 @@ export default {
     }
   },
   created () {
-    this.reportParam1.ID = this.reportParam.TASKID ? this.reportParam.TASKID : ''
+    this.reportParam1.ID = this.reportParam.ID ? this.reportParam.ID : ''
   },
   methods: {
     fileDownLoad (row) {
