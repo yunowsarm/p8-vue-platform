@@ -62,7 +62,8 @@
   }
 
   .el-table__cell {
-    height: $base-tableRow-height;
+   // height: $base-tableRow-height;
+   padding: 0 !important;
   }
 
   .panination {
