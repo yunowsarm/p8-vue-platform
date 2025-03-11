@@ -255,7 +255,11 @@ export default {
       if (this.mergeParams.msgCatalog == 'APPROVE_TYPE_02_02' || this.mergeParams.msgCatalog == 'APPROVE_TYPE_01_02') {
         state = 'COMPLETED'
       }
-      this.$api['processApproval.listData']({ state: state }).then(res => {
+      this.$api['processApproval.listData']({
+        state: state,
+        assigneeUserId: this.mergeParams.assigneeUserId,
+        startUserId: this.mergeParams.startUserId
+      }).then(res => {
         this.approvalList = res
       })
     },
