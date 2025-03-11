@@ -1,6 +1,7 @@
 @import '~@/assets/commonJS/originalComponents/input/input.scss';
 @import '~@/assets/commonJS/originalComponents/select/select.scss';
 @import '~@/assets/commonJS/originalComponents/datePicker/datePicker.scss';
+
 #actionMenu {
   width: 150px;
   position: fixed;
@@ -8,15 +9,18 @@
   z-index: 9999;
   border: 1px solid #eaeaea;
 }
+
 .ant-menu-vertical > .ant-menu-item,
 .ant-menu-vertical > .ant-menu-submenu > .ant-menu-submenu-title {
   height: 28px;
   line-height: 28px;
 }
+
 .ant-dropdown-menu-submenu-title .anticon {
   font-size: 14px;
   margin-right: 8px;
 }
+
 .ant-dropdown-menu-submenu-title span:not(.ant-dropdown-menu-submenu-arrow) {
   margin-right: 5px;
 }
@@ -38,6 +42,7 @@
 .resource_marker {
   text-align: center;
 }
+
 .resource_marker div {
   width: 28px;
   height: 28px;
@@ -47,6 +52,7 @@
   color: #fff;
   margin: 3px;
 }
+
 .resource_marker.workday_ok div {
   border-radius: 15px;
   background: #51c185;
@@ -61,6 +67,7 @@
   padding: 7px;
   overflow: hidden;
 }
+
 .resource-controls label {
   margin: 0 10px;
   vertical-align: bottom;
@@ -117,11 +124,13 @@
   position: absolute;
   box-sizing: border-box;
 }
+
 .gantt_task_style .gantt_task_progress_wrapper {
   background-color: rgb(0, 0, 0, 0) !important;
 }
+
 .gantt_task_style .gantt_task_progress_wrapper .gantt_task_progress {
-  background-color:#299cb4 !important;
+  background-color: #299cb4 !important;
 }
 
 .ziyuan_task_style {
@@ -131,11 +140,13 @@
   position: absolute;
   box-sizing: border-box;
 }
+
 .ziyuan_task_style .gantt_task_progress_wrapper {
   background-color: rgb(0, 0, 0, 0) !important;
 }
+
 .ziyuan_task_style .gantt_task_progress_wrapper .gantt_task_progress {
-  background-color:#46ad51 !important;
+  background-color: #46ad51 !important;
 }
 
 .gantt_task_progress {
@@ -162,21 +173,25 @@
   text-decoration: underline;
   cursor: pointer;
 }
+
 .el-popper {
   width: auto;
   max-width: 30%;
 }
-.el-notification{
+
+.el-notification {
   width: auto;
   max-width: 30%;
 }
-.el-notification__group{
+
+.el-notification__group {
   width: auto;
   max-width: 100%;
   height: auto;
   max-height: 100%;
   word-break: break-all;
 }
+
 .edit_gantt_user_list {
   width: auto;
   max-width: 100%;
@@ -184,6 +199,7 @@
   max-height: 100%;
   word-break: break-all;
 }
+
 .gantt_grid_data .gantt_row.gantt_selected,
 .gantt_grid_data .gantt_row.odd.gantt_selected,
 .gantt_task_row.odd.gantt_selected {
@@ -299,21 +315,21 @@
   width: 70px;
   height: 3px;
   background: linear-gradient(
-      135deg,
-      transparent,
-      transparent 45%,
-      #ff0000,
-      transparent 55%,
-      transparent 100%
-    ),
-    linear-gradient(
-      45deg,
-      transparent,
-      transparent 45%,
-      #ff0000,
-      transparent 55%,
-      transparent 100%
-    );
+    135deg,
+    transparent,
+    transparent 45%,
+    #ff0000,
+    transparent 55%,
+    transparent 100%
+  ),
+  linear-gradient(
+    45deg,
+    transparent,
+    transparent 45%,
+    #ff0000,
+    transparent 55%,
+    transparent 100%
+  );
   background-size: 6px 6px;
   background-repeat: repeat-x, repeat-x;
 }
@@ -321,6 +337,7 @@
 .critical_task {
   background-color: rgb(251, 241, 225) !important;
 }
+
 .critical_link {
   background-color: rgb(219, 231, 223) !important;
 }
@@ -379,9 +396,11 @@
 .gantt_row.odd, .gantt_task_row.odd {
   background-color: #F9F9F9 !important;
 }
+
 .gantt_grid_head_cell .gantt_blank {
   background-color: #f5f7fa;
 }
+
 .gantt_row,
 .gantt_task_row {
   border-bottom: 1px solid #EBEEF5;
@@ -400,20 +419,27 @@
   width: 100%;
   min-width: 130px;
 }
+
 .grid-cell-border-add .gantt_grid_data .gantt_cell {
   border-right: 1px solid #ebebeb;
 }
+
 .grid-cell-border-remove .gantt_grid_data .gantt_cell {
   border-right: none;
 }
 
+.gantt_tree_content {
+  width: 100%;
+}
+
 /* 设置列的超出隐藏并显示省略号 */
 .text_overflow {
-  width: 100%;
+  width: calc(100% - 20px);
   text-overflow: ellipsis;
-   overflow: hidden;
+  overflow: hidden;
   white-space: nowrap;
 }
-.icon-underline, .icon-shanchuxian{
+
+.icon-underline, .icon-shanchuxian {
   font-size: 18px;
 }
