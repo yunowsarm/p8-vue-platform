@@ -1,35 +1,57 @@
 <template>
   <div class="container">
     <div class="wrap">
-      <i class="el-icon-plus icon" v-if="isLock" @click="addTabs" style="right: 45px"></i>
-      <i :class="icon" class="icon" @click="openLock"></i>
+      <i class="el-icon-plus icon"
+         v-if="isLock"
+         @click="addTabs"
+         style="right: 45px"></i>
+      <i :class="icon"
+         class="icon"
+         @click="openLock"></i>
     </div>
-    <el-tabs v-model="editableTabsValue" type="card" :closable="isLock" @tab-remove="removeTab">
+    <el-tabs v-model="editableTabsValue"
+             type="card"
+             :closable="isLock"
+             @tab-remove="removeTab">
       <template v-for="(item, index) in editableTabs">
-        <el-tab-pane :label="item.name" :name="item.name" :key="index">
-          <span slot="label">{{ item.name }} <i v-if="isLock" class="el-icon-edit-outline" style="font-size: 12px" @click="modify(item.name, index)"></i></span>
-          <component v-if="isLock" :key="index" :record="{ widgets: item.deepCopyWidget }" ref="kanbanEdit" class="component" :is="hankanbanEdit" />
-          <component
-            v-else
-            ref="kanbanView"
-            class="component"
-            :key="index"
-            :id="''"
-            :code="''"
-            :render-data="[item.deepCopyFormData]"
-            :widget="item.deepCopyWidget"
-            :style-object="{}"
-            :row-height="50"
-            :margin="[5, 5]"
-            :padding="[5, 5]"
-            :is-static="true"
-            :is-design="false"
-            :is="kanbanView"
-          />
+        <el-tab-pane :label="item.name"
+                     :name="item.name"
+                     :key="index">
+          <span slot="label">{{ item.name }} <i v-if="isLock"
+               class="el-icon-edit-outline"
+               style="font-size: 12px"
+               @click="modify(item.name, index)"></i></span>
+          <component v-if="isLock"
+                     :key="index"
+                     :record="{ widgets: item.deepCopyWidget }"
+                     ref="kanbanEdit"
+                     class="component"
+                     :is="hankanbanEdit" />
+          <component v-else
+                     ref="kanbanView"
+                     class="component"
+                     :key="index"
+                     :id="''"
+                     :code="''"
+                     :headerVisible="false"
+                     :render-data="[item.deepCopyFormData]"
+                     :widget="item.deepCopyWidget"
+                     :style-object="{}"
+                     :row-height="50"
+                     :margin="[5, 5]"
+                     :padding="[5, 5]"
+                     :is-static="true"
+                     :is-design="false"
+                     :is="kanbanView" />
         </el-tab-pane>
       </template>
     </el-tabs>
-    <add-tabs v-if="addTabsVisible" :name="name" :title="title" :visible="addTabsVisible" @handleCancel="addTabsVisible = false" @handleOk="handleOk"> </add-tabs>
+    <add-tabs v-if="addTabsVisible"
+              :name="name"
+              :title="title"
+              :visible="addTabsVisible"
+              @handleCancel="addTabsVisible = false"
+              @handleOk="handleOk"> </add-tabs>
   </div>
 </template>
 <script>
@@ -44,12 +66,12 @@ export default {
     ListLayout,
     SearchFormList
   },
-  provide() {
+  provide () {
     return {
       provideParams: this.provideParams
     }
   },
-  data() {
+  data () {
     return {
       isLock: false,
       icon: 'el-icon-lock',
@@ -64,14 +86,14 @@ export default {
     }
   },
   computed: {
-    hankanbanEdit() {
+    hankanbanEdit () {
       return () => import('@/views/Dashboard/Components/edit')
     },
-    kanbanView() {
+    kanbanView () {
       return () => import('@/views/Dashboard/kanbanView')
     }
   },
-  mounted() {
+  mounted () {
     const that = this
     this.$api['kanbanView.getHomeBoard']({}).then((res) => {
       if (res && res.length) {
@@ -95,7 +117,7 @@ export default {
     })
   },
   methods: {
-    openLock() {
+    openLock () {
       if (this.$refs.kanbanEdit && this.$refs.kanbanEdit.length > 0) {
         // let index = this.editableTabs.findIndex(el => { return el.name === this.editableTabsValue })
         this.editableTabs.forEach((el, index) => {
@@ -130,7 +152,7 @@ export default {
         })
       }
     },
-    removeTab(targetName) {
+    removeTab (targetName) {
       const tabs = this.editableTabs
       let activeName = this.editableTabsValue
       if (activeName === targetName) {
@@ -146,19 +168,19 @@ export default {
       this.editableTabsValue = activeName
       this.editableTabs = tabs.filter((tab) => tab.name !== targetName)
     },
-    addTabs() {
+    addTabs () {
       this.addTabsVisible = true
       this.name = ''
       this.index = null
       this.title = '新增标签页'
     },
-    modify(name, index) {
+    modify (name, index) {
       this.addTabsVisible = true
       this.name = name
       this.index = index
       this.title = '修改标签页名称'
     },
-    handleOk(name) {
+    handleOk (name) {
       if (this.name) {
         this.editableTabs[this.index].name = name
       } else {

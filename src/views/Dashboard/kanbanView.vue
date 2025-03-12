@@ -8,7 +8,7 @@
     </template>
   </common-tabs> -->
   <normal-layout class="normalLayout"
-                 :header-visible="searchFormConfig.length > 0"
+                 :header-visible="headerVisible && searchFormConfig.length > 0"
                  :normal-layout="normalLayout">
     <template #north>
       <search-form-list ref="search"
@@ -93,6 +93,10 @@ export default {
       default: () => {
         return {}
       }
+    },
+    headerVisible: {
+      type: Boolean,
+      default: true
     }
   },
 
