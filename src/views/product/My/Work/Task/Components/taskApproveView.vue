@@ -6,7 +6,7 @@
     <template #left>
       <div class="task-info-con">
         <!-- 任务详情信息 -->
-        <task-info-view></task-info-view>
+        <task-info-view></task-info-view></task-info-view>
       </div>
     </template>
     <template #center>
@@ -48,21 +48,28 @@ export default {
       type: String
     },
     pageType: {
-      type: String
+      type: String,
+      default: 'view'
+    },
+    reportParam: {
+      type: Object,
+      default () {
+        return {}
+      }
     }
   },
   data () {
     return {
       isRouterShow: false,
       secretLevel: '机密',
+      taskId: this.businessKey ? this.businessKey : this.reportParam.TASK_ID,
       thirdMenuParamTemp: {
         pageType: this.pageType,
-        TASKID: this.businessKey
+        TASKID: this.businessKey ? this.businessKey : this.reportParam.TASK_ID
       }
     }
   },
   mounted () {
-
     this.reload()
   },
   methods: {
@@ -70,7 +77,7 @@ export default {
       getTaskStatusInfo({ currentStatus: 'all' }).then(data => {
         this.thirdMenuParamTemp.allStatus = data
       })
-      this.$api['taskManager.getTaskByIdByCapitalization']({ taskId: this.businessKey }).then(res => {
+      this.$api['taskManager.getTaskByIdByCapitalization']({ taskId: this.taskId }).then(res => {
         if (res) {
           this.thirdMenuParamTemp = { ...res, ...this.thirdMenuParamTemp }
           this.isRouterShow = true
