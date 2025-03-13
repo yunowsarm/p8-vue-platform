@@ -70,7 +70,7 @@ export default {
 <template>
   <normal-layout :header-visible="false" :split-layout="true">
     <template #west>
-      <common-tree :default-expanded-keys="defaultExpandedKeys" :default-expand-all="false" :data="treeData" ref="commonTree" @select="onSelect"></common-tree>
+      <common-tree node-key="ID" :default-expanded-keys="defaultExpandedKeys" :default-expand-all="false" :data="treeData" ref="commonTree" @select="onSelect"></common-tree>
     </template>
     <template #center>
       <list :key='renderKey' ref='ganttList' :project-id="projectId"></list>

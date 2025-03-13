@@ -4,6 +4,7 @@
     <template #west>
       <common-tree :default-expanded-keys="defaultExpandedKeys"
                    :default-expand-all="false"
+                   node-key="ID"
                    :data="treeData"
                    ref="commonTree"
                    @select="onSelect"></common-tree>
