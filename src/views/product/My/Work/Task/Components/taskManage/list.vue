@@ -493,27 +493,19 @@ $blue-color: #1b8af9;
         div.operation {
           position: relative;
           flex: 0 0 $fixedWidth;
-          // text-align: center;
-          margin-left: 10px;
+          margin-left: 0;           // 修改：移除左边距
           box-sizing: border-box;
-          padding: 0 4px;
+          padding: 0;               // 修改：移除内边距
           border-bottom: $borderBottomLine;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: $fixedWidth;   // 添加：确保最小宽度
         }
-        div.classify span {
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%);
-        }
-        div.operation .btn-con {
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%);
-          width: 100%;
-        }
+
         div.list-con {
           width: calc(100% - #{$fixedWidth * 2});
+          flex: 1;                  // 添加：让中间内容区域自适应
           .list-con-item {
             display: flex;
             align-items: center;
@@ -542,6 +534,16 @@ $blue-color: #1b8af9;
         }
       }
     }
+  }
+}
+// 同时修改header部分的样式以保持一致
+.content-header {
+  span.header.classify,
+  span.header.operation {
+    flex: 0 0 $fixedWidth;
+    text-align: center;
+    padding: 0;              // 添加：移除内边距
+    min-width: $fixedWidth;  // 添加：确保最小宽度
   }
 }
 ::v-deep .manager-drawer .el-drawer__header {
