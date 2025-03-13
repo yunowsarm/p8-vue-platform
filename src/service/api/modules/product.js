@@ -1834,6 +1834,13 @@ export const repositoryApi = {
       path: '/requirement/getRequirementByTask',
       mockPath: '/requirement/getRequirementByTask',
       desc: '市场需求关联库关联查看'
+    },
+    {
+      name: 'getRequirementByStatus',
+      method: 'POST',
+      path: '/requirement/getRequirementByStatus',
+      mockPath: '/requirement/getRequirementByStatus',
+      desc: '主业看版-需求完成情况'
     }
   ],
   // 任职资格管理
