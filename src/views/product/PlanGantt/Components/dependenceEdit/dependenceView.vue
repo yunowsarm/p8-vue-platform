@@ -1,46 +1,50 @@
 <template>
-  <div style="width: 100%" :style="{ width: `${formWidth}vw` }">
-    <form2
-      ref="form"
-      v-if="!isEmpty"
-      :comp="comp"
-      :is-view="true"
-      :form-to-api-data="ganttLinkResponse"
-      :data-source="dataSource"
-      :data-source-array="dataSourceArray"
-      add-btn-name="添加"
-      @form-add="formAdd"
-      @form-submit="formSubmit"
-      @form-edit="formEdit"
-      @form-delete="formDelete"
-    >
+  <div style="width: 100%"
+       :style="{ width: `${formWidth}vw` }">
+    <form2 ref="form"
+           v-if="!isEmpty"
+           :comp="comp"
+           :is-view="true"
+           :form-to-api-data="ganttLinkResponse"
+           :data-source="dataSource"
+           :data-source-array="dataSourceArray"
+           add-btn-name="添加"
+           @form-add="formAdd"
+           @form-submit="formSubmit"
+           @form-edit="formEdit"
+           @form-delete="formDelete">
       <template #source="{ scope }">
         <span v-if="(typeof scope.hasAtt === 'boolean' && scope.hasAtt) || (typeof scope.hasAtt === 'string' && scope.hasAtt === 'true')">
-          <i class="el-icon-paperclip" @click.stop="showModal(scope)"></i>
+          <i class="el-icon-paperclip"
+             @click.stop="showModal(scope)"></i>
         </span>
       </template>
       <template #sourceView="{ scope }">
         <span>{{ renderTaskInfo(scope).name }}</span>
-        <span v-if="renderTaskInfo(scope).hasAttr" style="padding-left: 4px" @click.stop="showModal(scope, true)">
+        <span v-if="renderTaskInfo(scope).hasAttr"
+              style="padding-left: 4px"
+              @click.stop="showModal(scope, true)">
           <i class="el-icon-paperclip"></i>
         </span>
-        <span style="font-size: 12px; padding: 2px 8px; margin-left: 10px" :style="{ background: renderTaskInfo(scope).color || '#999' }">{{ renderTaskInfo(scope).text }}</span>
+        <span style="font-size: 12px; padding: 2px 8px; margin-left: 10px"
+              :style="{ background: renderTaskInfo(scope).color || '#999' }">{{ renderTaskInfo(scope).text }}</span>
       </template>
     </form2>
-    <el-empty v-if="isEmpty" class="custom_empty" :image-size="100"></el-empty>
-    <common-dialog
-      :title="dialogTitle"
-      v-if="dialogVisible"
-      :visible="dialogVisible"
-      :show-handle-btn="false"
-      width="36%"
-      :dialog-height="300"
-      :dialog-config="dialogConfig"
-      @close="dialogVisible = false"
-    >
+    <el-empty v-if="isEmpty"
+              class="custom_empty"
+              :image-size="100"></el-empty>
+    <common-dialog :title="dialogTitle"
+                   v-if="dialogVisible"
+                   :visible="dialogVisible"
+                   :show-handle-btn="false"
+                   width="36%"
+                   :dialog-height="300"
+                   :dialog-config="dialogConfig"
+                   @close="dialogVisible = false">
       <template #dialog>
         <div style="padding: 10px">
-          <common-file-view :upload-files="uploadFiles" :file-download-key="{ id: 'id', fileName: 'fileName' }"></common-file-view>
+          <common-file-view :upload-files="uploadFiles"
+                            :file-download-key="{ id: 'id', fileName: 'fileName' }"></common-file-view>
         </div>
       </template>
     </common-dialog>
@@ -83,11 +87,11 @@ export default {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
   watch: {
-    taskId(val) {
+    taskId (val) {
       this.getLinkDatas(this.taskId)
     }
   },
-  data() {
+  data () {
     const dataSource = [
       // 单个表单所需的元素对象
       {
@@ -135,7 +139,7 @@ export default {
       },
       {
         type: 'number',
-        labelText: '滞后(/天):',
+        labelText: '滞后(天):',
         labelWidth: '80px',
         fieldName: 'lag',
         colLayout: 'doubleCol',
@@ -170,11 +174,11 @@ export default {
       ]
     }
   },
-  mounted() {
+  mounted () {
     this.getLinkDatas(this.taskId)
   },
   methods: {
-    getLinkDatas(taskId) {
+    getLinkDatas (taskId) {
       const that = this
       this.$api['planGanttManager.getDependenceByTaskId']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId }).then((res) => {
         that.dataSource[0].options = that.tempOptions // 更新default dataSource中下拉框的数据
@@ -212,14 +216,14 @@ export default {
         }
       })
     },
-    formAdd(params) {
+    formAdd (params) {
       // 添加: 重新计算选择逻辑
       this.ganttLinkResponse = params.formToApiData
       this.$set(this.ganttLinkResponse[params.currentIndex], 'target', this.taskId) // 更新对应索引的target
       this.dataSourceArray = params.dataSourceArray
       this.sourceSelectRules()
     },
-    formSubmit(params) {
+    formSubmit (params) {
       // 单个form提交回调
       const that = this
       const ganttObject = GanttObject.getGanttObject(that.ganttName)
@@ -256,11 +260,11 @@ export default {
         })
       }
     },
-    formEdit() {
+    formEdit () {
       // 单个form编辑
       this.sourceSelectRules()
     },
-    formDelete(params) {
+    formDelete (params) {
       const that = this
       const ganttObject = GanttObject.getGanttObject(that.ganttName)
       const thisDp = GanttObject.getDpObject(that.ganttName)
@@ -307,7 +311,7 @@ export default {
         }
       }
     },
-    showModal(scope, isView) {
+    showModal (scope, isView) {
       /**
        * 任务树形选择自定义元素触发的事件
        *    当前行禁用时不能触发事件
@@ -355,7 +359,7 @@ export default {
           console.error('error' + error)
         })
     },
-    renderTaskInfo(scope) {
+    renderTaskInfo (scope) {
       /**
        * 任务信息渲染
        */
@@ -370,10 +374,10 @@ export default {
       }
       return currentSource[0]
     },
-    treeSelectClear(val, index) {
+    treeSelectClear (val, index) {
       this.sourceSelectRules()
     },
-    sourceSelectRules() {
+    sourceSelectRules () {
       /**
        * 任务选择 校验
        */
@@ -415,7 +419,7 @@ export default {
         })
       }
     },
-    sourceRulesInitHandle(id) {
+    sourceRulesInitHandle (id) {
       // 初次tree处理
       if (!id) {
         return

@@ -1,43 +1,41 @@
 <template>
   <div :style="{ width: `${formWidth}vw` }">
-    <form2
-      ref="form"
-      :comp="comp"
-      :form-to-api-data="ganttLinkResponse"
-      :data-source="dataSource"
-      :data-source-array="dataSourceArray"
-      add-btn-name="添加"
-      @form-add="formAdd"
-      @form-submit="formSubmit"
-      @form-edit="formEdit"
-      @form-delete="formDelete"
-    >
+    <form2 ref="form"
+           :comp="comp"
+           :form-to-api-data="ganttLinkResponse"
+           :data-source="dataSource"
+           :data-source-array="dataSourceArray"
+           add-btn-name="添加"
+           @form-add="formAdd"
+           @form-submit="formSubmit"
+           @form-edit="formEdit"
+           @form-delete="formDelete">
       <template #source="{ scope }">
         <span v-if="(typeof scope.hasAtt === 'boolean' && scope.hasAtt) || (typeof scope.hasAtt === 'string' && scope.hasAtt === 'true')">
-          <i class="el-icon-paperclip" @click.stop="showModal(scope)"></i>
+          <i class="el-icon-paperclip"
+             @click.stop="showModal(scope)"></i>
         </span>
       </template>
       <template #sourceView="{ scope }">
         <span>{{ renderTaskViewInfo(scope) }}</span>
         <span>
-          <i class="el-icon-paperclip"></i>
+          <!-- <i class="el-icon-paperclip"></i> -->
         </span>
-        <span style="background: lightblue; padding: 2px 8px; margin-left: 10px">{{ renderTaskStatusHandle(scope) }}</span>
+        <span style="background: #999; padding: 2px 8px; margin-left: 10px">{{ renderTaskStatusHandle(scope) }}</span>
       </template>
     </form2>
-    <common-dialog
-      :title="dialogTitle"
-      v-if="dialogVisible"
-      :visible="dialogVisible"
-      :show-handle-btn="false"
-      width="36%"
-      :dialog-height="300"
-      :dialog-config="dialogConfig"
-      @close="dialogVisible = false"
-    >
+    <common-dialog :title="dialogTitle"
+                   v-if="dialogVisible"
+                   :visible="dialogVisible"
+                   :show-handle-btn="false"
+                   width="36%"
+                   :dialog-height="300"
+                   :dialog-config="dialogConfig"
+                   @close="dialogVisible = false">
       <template #dialog>
         <div style="padding: 10px">
-          <common-file-view :upload-files="uploadFiles" :file-download-key="{ id: 'id', fileName: 'fileName' }"></common-file-view>
+          <common-file-view :upload-files="uploadFiles"
+                            :file-download-key="{ id: 'id', fileName: 'fileName' }"></common-file-view>
         </div>
       </template>
     </common-dialog>
@@ -75,11 +73,11 @@ export default {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
   watch: {
-    taskId(val) {
+    taskId (val) {
       this.getLinkDatas(this.taskId)
     }
   },
-  data() {
+  data () {
     const dataSource = [
       // 单个表单所需的元素对象
       {
@@ -137,7 +135,7 @@ export default {
       },
       {
         type: 'number',
-        labelText: '滞后(/天):',
+        labelText: '滞后(天):',
         labelWidth: '80px',
         fieldName: 'lag',
         colLayout: 'doubleCol',
@@ -166,11 +164,11 @@ export default {
       ]
     }
   },
-  mounted() {
+  mounted () {
     this.getLinkDatas(this.taskId)
   },
   methods: {
-    getLinkDatas(taskId) {
+    getLinkDatas (taskId) {
       const that = this
       this.$api['planGanttManager.getDependenceByTaskId']({ taskId: taskId }).then((res) => {
         that.dataSource[0].options = that.tempOptions // 更新default dataSource中下拉框的数据
@@ -208,14 +206,14 @@ export default {
         }
       })
     },
-    formAdd(params) {
+    formAdd (params) {
       // 添加: 重新计算选择逻辑
       this.ganttLinkResponse = params.formToApiData
       this.$set(this.ganttLinkResponse[params.currentIndex], 'target', this.taskId) // 更新对应索引的target
       this.dataSourceArray = params.dataSourceArray
       this.sourceSelectRules()
     },
-    formSubmit(params) {
+    formSubmit (params) {
       // 单个form提交回调
       const that = this
       const ganttObject = GanttObject.getGanttObject(that.ganttName)
@@ -264,11 +262,11 @@ export default {
           })
       }
     },
-    formEdit() {
+    formEdit () {
       // 单个form编辑
       this.sourceSelectRules()
     },
-    formDelete(params) {
+    formDelete (params) {
       const that = this
       const ganttObject = GanttObject.getGanttObject(that.ganttName)
       const thisDp = GanttObject.getDpObject(that.ganttName)
@@ -311,7 +309,7 @@ export default {
         }
       }
     },
-    showModal(scope) {
+    showModal (scope) {
       /**
        * 任务树形选择自定义元素触发的事件
        *    当前行禁用时不能触发事件
@@ -357,7 +355,7 @@ export default {
           console.error('error' + error)
         })
     },
-    renderTaskViewInfo(scope) {
+    renderTaskViewInfo (scope) {
       /**
        * 任务名称渲染
        */
@@ -365,20 +363,24 @@ export default {
       const currentSource = this.vueThis.dependentDatas.filter((item) => item.id === source)
       return currentSource[0].name
     },
-    renderTaskStatusHandle(scope) {
+    renderTaskStatusHandle (scope) {
       /**
        * 任务状态渲染
        */
       const sourceId = scope.source
+      let status
       const currentSource = this.vueThis.dependentDatas.filter((item) => item.id === sourceId)
       if (currentSource.length) {
-        const status = currentSource[0].status
+        status = currentSource[0].status
+      }
+      if (status === '6050') {
+        return '未开始'
       }
     },
-    treeSelectClear(val, index) {
+    treeSelectClear (val, index) {
       this.sourceSelectRules()
     },
-    sourceSelectRules() {
+    sourceSelectRules () {
       /**
        * 任务选择 校验 17785182267ee7de7633c8abfbdb974e
        */
@@ -426,7 +428,7 @@ export default {
         })
       }
     },
-    sourceRulesInitHandle(id) {
+    sourceRulesInitHandle (id) {
       // 初次tree处理
       if (!id) {
         return
@@ -438,7 +440,7 @@ export default {
         this.sourceRulesInitHandle(filterTreeItem[0].parent)
       }
     },
-    showMessage(message, type) {
+    showMessage (message, type) {
       this.$message({
         message: message,
         type: type
