@@ -243,7 +243,6 @@ export default {
       ],
       treeConfig: {
         'highlight-current': true,
-        'current-node-key': '31'
       },
       drawerSize: '40%',
       drawerTitle: '',
