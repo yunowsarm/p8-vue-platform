@@ -105,6 +105,15 @@ export const repositoryApi = {
       desc: '我的任务->获取计划标识明细数据'
     }
   ],
+  homeBoard:[
+    {
+      name: 'getHomeBoardData',
+      method: 'POST',
+      path: '/framework/reportSQL/sqlParam',
+      mockPath: '/framework/reportSQL/sqlParam',
+      desc: '首页->主页看板->获取统计数据'
+    }
+  ],
   taskManager: [
     {
       name: 'updateTaskDistribution',

@@ -1,12 +1,21 @@
 import router from '@/plugins/router'
 import store from '@/plugins/store'
 import { getToken } from '@/service/expands/auth'
+import { log } from 'vxe-pc-ui'
 
-const whiteList = ['/login', '/Maintain', '/myMessageView', '/myApproveView']
+const whiteList = ['/login', '/Maintain', '/myMessageView', '/myApproveView','/MyTask/MyTask/latest']
 const adminUserIdArr = ['SYS_USER001', 'SYS_USER009', 'SYS_USER012', 'SYS_USER010', 'SYS_USER000'] // 五元id
 
 export function routerBeforeEachFunc (to, from, next) {
-  if (getToken()) {
+  const token = getToken();
+  // 新开窗口时，如果有token且store中没有用户角色信息，先从sessionStorage获取
+  if (token && !store.getters.roles && window.sessionStorage.getItem('userInfo')) {
+    const userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'));
+    store.commit('SET_ROLES', userInfo.roles);
+    store.commit('SET_USER_INFO', userInfo);
+  }
+
+  if (token) {
     if (to.path === '/login') {
       next('/login')
     } else {
@@ -17,6 +26,8 @@ export function routerBeforeEachFunc (to, from, next) {
       if (!store.getters.roles) {
         // TODO 还没有权限部分 获取权限列表
         store.dispatch('getUserInfo').then((res) => {
+          // 保存用户信息到sessionStorage，供新窗口使用
+          window.sessionStorage.setItem('userInfo', JSON.stringify(res));
           // 根据获取到的用户权限来构建动态路由表,或者做其他事情;
           store.dispatch('generateRouters', res.roles).then((context) => {
             router.addRoutes(context.addRoutes)
@@ -28,23 +39,19 @@ export function routerBeforeEachFunc (to, from, next) {
             })
             // 每次刷新页面都回到dash页面
             const reg = new RegExp(context.homepage.path + '$')
-            if (!reg.test(to.path) || to.path !== '/') {
-              if (to.path == '/myApproveView' || to.path == '/myMessageView') {
-                next(to.path)
-              } else {
-                // 五元登录后默认选中第一个一级菜单的第一个二级菜单
-                next({
-                  name:
-                    adminUserIdArr.indexOf(res.id) === -1
-                      ? context.homepage.name
-                      : context.addRoutes.length
-                        ? context.addRoutes[0].children && context.addRoutes[0].children.length
-                          ? context.addRoutes[0].children[0].name
-                          : 'DashboardHome'
-                        : 'DashboardHome',
-                  replace: true
-                })
-              }
+            // 检查是否是白名单路由或有效的目标路由
+            if (whiteList.indexOf(to.path) !== -1) {
+              next(to.path)
+            } else if (!reg.test(to.path) || to.path === '/') {
+              // 如果是根路径或不匹配homepage路径，则根据用户类型跳转
+              next({
+                name: adminUserIdArr.indexOf(res.id) === -1
+                  ? context.homepage.name
+                  : context.addRoutes.length && context.addRoutes[0].children && context.addRoutes[0].children.length
+                    ? context.addRoutes[0].children[0].name
+                    : 'DashboardHome',
+                replace: true
+              })
             } else {
               next({ ...to, replace: true })
             }
