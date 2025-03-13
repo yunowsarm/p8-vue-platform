@@ -36,7 +36,6 @@ export default {
     created() {
         this.$api['demandManagement.getRequirementByStatus']({}).then(res => {
             this.listObj = res;
-            this.listObj['未结那'] = res['已接纳'];
         });
     },
     methods: {
