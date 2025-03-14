@@ -232,12 +232,18 @@
                 <el-form-item class="formitem-progress"
                               label="完成度"
                               prop="progress">
-                  <!-- <el-progress :text-inside="true"
-                               :stroke-width="16"
-                               text-color="#1e2125"
-                               style="margin-top: 8px;"
-                               :percentage="formData.progress"></el-progress> -->
-                  <el-slider v-model="formData.progress"
+                  <template slot="label">
+                    完成度
+                    <el-tooltip effect="dark"
+                                content="父任务的进度由子任务决定"
+                                placement="top">
+                      <i v-if="this.getPlanInfo().pageType || disabledProgress"
+                         style="margin-right: 15px;"
+                         class="p8 icon-help-tips"></i>
+                    </el-tooltip>
+                  </template>
+                  <el-slider style="width: 100%;"
+                             v-model="formData.progress"
                              :disabled="this.getPlanInfo().pageType || disabledProgress"
                              @input="progressChange">
                   </el-slider>
@@ -276,7 +282,7 @@
               <el-col :span="12">
                 <el-form-item label="预计完成时间">
                   <span v-if="this.getPlanInfo().pageType === 'view'">{{formData.forecastEndDate }}</span>
-                                <el-date-picker v-else
+                  <el-date-picker v-else
                                   v-model="formData.forecastEndDate"
                                   :editable="false"
                                   type="date"

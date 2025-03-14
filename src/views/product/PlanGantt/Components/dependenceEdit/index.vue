@@ -373,7 +373,7 @@ export default {
       if (currentSource.length) {
         status = currentSource[0].status
       }
-      if (status === '6050') {
+      if (status) {
         return '未开始'
       }
     },
