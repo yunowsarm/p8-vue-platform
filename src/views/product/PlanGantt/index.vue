@@ -112,6 +112,11 @@
   overflow-x: hidden;
   overflow-y: hidden;
   // z-index: 2050 !important;
+  .top{
+    .card-container{
+      min-width: 660px;
+    }
+  }
 }
 
 #couerDiv {

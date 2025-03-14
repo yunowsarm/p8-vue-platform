@@ -98,12 +98,16 @@
               <el-col :span="12">
                 <el-form-item label="宽">
                   <el-input-number style="width: 100%"
+                                   :min="0"
+                                   :max="12"
                                    v-model.number="WidgetForm.layout.w"></el-input-number>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="高">
                   <el-input-number style="width: 100%"
+                                   :min="0"
+                                   :max="12"
                                    v-model.number="WidgetForm.layout.h"></el-input-number>
                 </el-form-item>
               </el-col>
