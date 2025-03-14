@@ -191,7 +191,9 @@
   .splitBtn {
     display: none;
   }
-
+  ::v-deep .el-tabs__item {
+    padding: 0 20px !important;
+  }
   .normal-layout {
     // box-shadow: 4px 4px 8px #bfbdbd54;
     margin: 0 14px;
