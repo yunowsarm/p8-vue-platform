@@ -135,6 +135,9 @@ export default {
 .smartwidget.smartwidget-fullscreen ::v-deep {
   position: fixed !important;
   z-index: 1 !important;
+  .span {
+    right: 35px !important;
+  }
 }
 // 解决容器内容高度超过夫容器高度问题
 .smartwidget ::v-deep .widget-body__content {

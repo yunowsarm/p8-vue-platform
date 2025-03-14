@@ -219,5 +219,8 @@ export default {
   ::v-deep .el-tabs__nav {
     z-index: 1;
   }
+  ::v-deep .smartwidget.smartwidget-fullscreen{
+    z-index: 20 !important;
+  }
 }
 </style>
