@@ -187,31 +187,31 @@ export default {
           colLayout: 'singleCol'
         },
         {
-          labelText: '图标显示方式',
+          labelText: '图标展示方式',
           type: 'radio',
           options: [
             {
-              label: '显示',
+              label: '图标',
               value: '0'
             },
             {
-              label: '隐藏',
+              label: '文字',
               value: '1'
             }
           ],
           fieldName: 'toolbarTextDisplay',
           colLayout: 'singleCol'
         },
-        {
-          type: 'number',
-          labelText: '行高(单位：px)',
-          fieldName: 'tableRowHeight',
-          placeholder: '请输入行高',
-          colLayout: 'doubleCol',
-          colSpan: 6,
-          min: 35,
-          max: 300
-        }
+        // {
+        //   type: 'number',
+        //   labelText: '行高(单位：px)',
+        //   fieldName: 'tableRowHeight',
+        //   placeholder: '请输入行高',
+        //   colLayout: 'doubleCol',
+        //   colSpan: 6,
+        //   min: 35,
+        //   max: 300
+        // }
       ],
       formData: {
         toolbarTextDisplay: '0',

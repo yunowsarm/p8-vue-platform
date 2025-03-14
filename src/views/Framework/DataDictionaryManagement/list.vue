@@ -44,11 +44,11 @@
                         :pagination="false">
             <template #icon="{ scope }">
               <div v-if="isShowIcon">
-                <div :style="{ opacity: 0.1, background: scope.row.color, position: 'relative', height: '30px' }"></div>
-                <div style="position: absolute; top: 13px; left: 20px;">
+                <!-- <div :style="{ opacity: 0.1, background: scope.row.color, position: 'relative', height: '30px' }"></div> -->
+                <div>
                   <!-- <i :class="[scope.row.icon ? scope.row.icon : '']"
                      :style="{ 'font-size': '18px', color: scope.row.color }"></i> -->
-                  <span :style="{ 'font-size': '15px', color: scope.row.color }">{{ scope.row.meaning }}</span>
+                  <div :style="{ 'font-size': '15px', color: scope.row.color,'text-overflow': 'ellipsis', overflow: 'hidden', width: '100%' }">{{ scope.row.meaning }}</div>
                 </div>
               </div>
               <div v-else
