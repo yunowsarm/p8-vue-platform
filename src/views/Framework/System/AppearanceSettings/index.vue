@@ -204,17 +204,18 @@ export default {
         },
         {
           type: 'number',
-          labelText: '行高',
+          labelText: '行高(单位：px)',
           fieldName: 'tableRowHeight',
           placeholder: '请输入行高',
           colLayout: 'doubleCol',
           colSpan: 6,
-          min: 0,
-          max: 99999999
+          min: 35,
+          max: 300
         }
       ],
       formData: {
-        toolbarTextDisplay: '0'
+        toolbarTextDisplay: '0',
+        tableRowHeight: 0
       },
       modify: {}
     }
@@ -233,6 +234,9 @@ export default {
         .then(function (res) {
           res.settings.forEach(function (item) {
             that.modify[item.key] = item.value === 'true' ? true : item.value === 'false' ? false : item.value
+            if (item.key === 'tableRowHeight') {
+              that.formData.tableRowHeight = Number(item.value)
+            }
           })
           that.getFileUrl(res.uploadFileJson) // 获取图片流
         })
