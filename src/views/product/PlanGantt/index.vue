@@ -115,6 +115,7 @@
   .top{
     .card-container{
       min-width: 660px;
+      position: relative;
     }
   }
 }
