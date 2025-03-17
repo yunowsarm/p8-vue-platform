@@ -15,6 +15,7 @@
     <template #center>
       <div id="table-contain">
         <common-table ref="table"
+                      v-if="treeSelected"
                       :comp="comp"
                       :table-config="tableConfig"
                       :columns="columns"
@@ -130,6 +131,7 @@ export default {
   },
   data () {
     return {
+      treeSelected:false,
       drawerSize: '70%',
       drawerTitle: '',
       visibleUserEditDrawer: false,
@@ -190,10 +192,13 @@ export default {
   computed: {},
   methods: {
     onSelect (node) {
+      this.treeSelected = true
       //
       this.queryParam.departmentId = node.id
       //
-      this.$refs.table.searchData()
+      this.$nextTick(() => {
+        this.$refs.table.queryList()
+      })
     },
     levelParentClick (record) {
 
