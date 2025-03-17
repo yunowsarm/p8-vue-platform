@@ -56,7 +56,19 @@ module.exports = defineConfig({
             reuseExistingChunk: true
           }
         }
-      }
+      },
+      minimize: true,
+      minimizer: [
+        new TerserPlugin({
+          terserOptions: {
+            compress: {
+              drop_console: true,
+              drop_debugger: true,
+              pure_funcs: ['console.log', 'console.info', 'console.warn', 'console.error']
+            }
+          }
+        })
+      ]
     },
     plugins: [new SplitChunksPlugin(), new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn|en/)]
   },
