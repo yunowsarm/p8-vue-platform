@@ -39,12 +39,12 @@
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import SearchFormList from '@/views/Framework/ComponentsMananger/Grid/Components/intellSearchFormList'
 import { P8NormalLayoutV1 as NormalLayout } from 'p8-components-ui'
-import widgetGrid from './Components/widget-grid.vue'
+import widgetGrid from './Components/widget-gridPreview.vue'
 import _cloneDeep from 'lodash/cloneDeep'
 import mixin from './Components/mixin'
 // import _ from 'lodash'
 export default {
-  name: 'KanbanViewDash',
+  name: 'kanbanViewPreview',
   mixins: [mixin],
   provide () {
     return {

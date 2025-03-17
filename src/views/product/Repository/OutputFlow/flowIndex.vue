@@ -5,6 +5,7 @@
              @tab-click="triggerChange">
       <el-tab-pane label="默认模式"
                    name="first">
+        <span slot="label"><i class="el-icon-s-order"></i> 默认模式</span>
         <div class="wrap"
              v-if="defaultActiveKey == 'first'">
           <activityTree ref="activityTree"
@@ -112,6 +113,7 @@
       </el-tab-pane>
       <el-tab-pane label="图形模式"
                    name="second">
+        <span slot="label"><i class="el-icon-date"></i> 图形模式</span>
         <graphics-mode :teamId="teamId"
                        v-if="defaultActiveKey == 'second'"
                        :activityInfoId="activityInfoId"></graphics-mode>
@@ -189,7 +191,9 @@
   .splitBtn {
     display: none;
   }
-
+  ::v-deep .el-tabs__item {
+    padding: 0 20px !important;
+  }
   .normal-layout {
     // box-shadow: 4px 4px 8px #bfbdbd54;
     margin: 0 14px;

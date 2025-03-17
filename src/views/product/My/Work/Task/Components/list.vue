@@ -52,9 +52,9 @@
         <template #MENU="{ scope }">
           <div v-if="scope.row.USERID === userId">
             <el-dropdown :hide-on-click="false">
-                    <span class="el-dropdown-link">
-                      <i class="el-icon-menu"></i>
-                    </span>
+              <span class="el-dropdown-link">
+                <i class="el-icon-menu"></i>
+              </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-for="(item, index) in thirdMenuData"
                                   :key="index">
@@ -189,7 +189,7 @@
 }
 </style>
 <script>
-import {Input, Button} from 'element-ui'
+import { Input, Button } from 'element-ui'
 import {
   P8MenuLayout as MenuLayout,
   P8ProcessApproval as ProcessApprovalView,
@@ -200,19 +200,19 @@ import {
   P8Table as CommonTable,
   P8Button as CommonButton
 } from 'p8-components-ui'
-import {calculateRemainingDays, selectGenerateTree} from '@/utils/common'
+import { calculateRemainingDays, selectGenerateTree } from '@/utils/common'
 import frontToBack from './frontToBack'
 import CommunicationMsg from '@/components/information/index.vue';
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'ButtonNavigationView',
-  provide() {
+  provide () {
     return {
       provideParams: this.provideParams
     }
   },
-  data() {
+  data () {
     return {
       dateTime: null,
       dialogHeight: document.documentElement.clientHeight * 0.6,
@@ -276,7 +276,7 @@ export default {
     CommunicationMsg
   },
   computed: {
-    thirdMenuData() {
+    thirdMenuData () {
       const currentPath = this.$route.path
       const rootRouter = this.$store.state.routers.addRouters
       let thirdMenu = []
@@ -304,7 +304,7 @@ export default {
     },
     ...mapGetters(['userId'])
   },
-  created() {
+  created () {
     this.westTreeParam.showView = 'showView003'
     this.westTreeParam.isChildren = 'false'
     this.westTreeParam.status = ['6050', '6020']
@@ -351,16 +351,16 @@ export default {
   },
   watch: {
     $route: {
-      handler(val) {
+      handler (val) {
         this.init()
       }
     }
   },
-  mounted() {
+  mounted () {
 
   },
   methods: {
-    showViewChange(val) {
+    showViewChange (val) {
       let tableParam = this.$refs.tableRender.$refs.xTable.params.sqlParam
       let sqlParam = {
         isChildren: '',
@@ -380,10 +380,10 @@ export default {
       this.isChildren = false
       this.sqlParam.isChildren = 'false'
       this.sqlParam.showView = val
-      this.sqlParam = {...sqlParam, ...this.sqlParam}
+      this.sqlParam = { ...sqlParam, ...this.sqlParam }
       this.dateTime = new Date().getTime()
     },
-    childrenClick(val) {
+    childrenClick (val) {
       let tableParam = this.$refs.tableRender.$refs.xTable.params.sqlParam
       let sqlParam = {
         isChildren: '',
@@ -400,29 +400,29 @@ export default {
       } else {
         this.sqlParam.isChildren = 'false'
       }
-      this.sqlParam = {...sqlParam, ...this.sqlParam}
+      this.sqlParam = { ...sqlParam, ...this.sqlParam }
       this.dateTime = new Date().getTime()
     },
-    getProgress(val) {
+    getProgress (val) {
       return Math.round(val * 100) + '%'
     },
-    frontToBackClick(val, scope) {
+    frontToBackClick (val, scope) {
       this.title = val
       this.columnType = scope.column.property
       this.taskId = scope.row.TASKID
       this.visibleFrontToBack = true
     },
-    close() {
+    close () {
       this.visibleFrontToBack = false
     },
-    viewTaskApprove(rowInfo) {
+    viewTaskApprove (rowInfo) {
       this.modelId = rowInfo.ID
       this.visibleModelPicture = true
     },
-    onModelPictureClose() {
+    onModelPictureClose () {
       this.visibleModelPicture = false
     },
-    withdrawTaskApprove(rowInfo) {
+    withdrawTaskApprove (rowInfo) {
       let taskId = rowInfo.TASKID
       const url = 'taskManager.withdrawTaskApprove'
       const _this = this
@@ -431,7 +431,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        _this.$api[url]({businessId: taskId, businessKey: 'taskFinishApprove'}).then(res => {
+        _this.$api[url]({ businessId: taskId, businessKey: 'taskFinishApprove' }).then(res => {
           _this.$message({
             type: 'success',
             message: '审批已撤回'
@@ -443,14 +443,14 @@ export default {
         })
       })
     },
-    async handleMenuBeforClose(done) {
-      this.$router.push({path: this.currentRouterPath})
+    async handleMenuBeforClose (done) {
+      this.$router.push({ path: this.currentRouterPath })
       this.visible = false
       // this.dateTime = new Date().getTime()
       this.$refs.tableRender.formCloseRefresh()
     },
     // 点击项目/计划列钻取进入三级菜单-计划编制页面
-    drillCol(scope, thirdMenuData) {
+    drillCol (scope, thirdMenuData) {
       // 保存状态到 sessionStorage
       const stateInfo = {
         taskInfo: {
@@ -496,7 +496,7 @@ export default {
       }
     },
 
-    created() {
+    created () {
       // 从 sessionStorage 恢复状态
       const stateInfo = sessionStorage.getItem('stateInfo')
       if (stateInfo) {
@@ -536,19 +536,19 @@ export default {
       this.currentRouterPath = this.$route.path
     },
     // 超期/剩余天数调用公共方法
-    overdueTextFun(row) {
+    overdueTextFun (row) {
       return calculateRemainingDays(row).text
     },
-    async init() {
+    async init () {
       const that = this
       const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
       const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
-      const res = await this.$api['desLayout.getLayoutJson']({layoutCode: code, version: version})
+      const res = await this.$api['desLayout.getLayoutJson']({ layoutCode: code, version: version })
       if (!res) {
         return
       }
       this.previewParmars = JSON.parse(res)
-      const {treeSettingsParmars, treeData, defaultComponents} = this.previewParmars
+      const { treeSettingsParmars, treeData, defaultComponents } = this.previewParmars
       // 获取tree数据
       if (treeSettingsParmars && treeSettingsParmars.dataType === '1') {
         // 是否显示根节点
@@ -577,10 +577,10 @@ export default {
         this.componentsConfig = defaultComponents
       }
     },
-    getFirstChild(data) {
+    getFirstChild (data) {
       let result = ''
 
-      function filterData(treeData) {
+      function filterData (treeData) {
         if (treeData[0].children && treeData[0].children.length) {
           filterData(treeData[0].children)
         } else {
@@ -591,14 +591,15 @@ export default {
       filterData(data)
       return result
     },
-    handleCancel() {
+    handleCancel () {
       this.$emit('close')
     },
-    onSelect(obj) {
-      if (obj.id == '0') {
+    onSelect (obj) {
+      console.log(obj, '1111111111111111111111111111');
+      if (obj.id ?? obj.ID == '0') {
         return
       }
-      const {treeSettingsParmars, dynamicParameter} = this.previewParmars
+      const { treeSettingsParmars, dynamicParameter } = this.previewParmars
       // 数据类型为静态数据
       if (treeSettingsParmars.dataType === '1') {
         // let paramsList = this.getParams(obj)
@@ -616,7 +617,7 @@ export default {
           })
         }
         const otherParmarsMap = obj.otherParmarsMap ? JSON.parse(obj.otherParmarsMap) : ''
-        this.provideParams.searchParams = {...paramsObj, ...otherParmarsMap}
+        this.provideParams.searchParams = { ...paramsObj, ...otherParmarsMap }
       } else {
         // 动态数据
         const paramsObj = {}
@@ -628,19 +629,28 @@ export default {
             paramsObj[el.after] = this.getParamsList(obj, el.before)
           })
         }
+        let sqlParam
         this.provideParams.searchParams = paramsObj
-        let tableParam = this.$refs.tableRender.$refs.xTable.params.sqlParam
-        let sqlParam = {
-          isChildren: '',
-          showView: '',
-          tabsName: ''
-        };
-        for (let key in sqlParam) {
-          if (tableParam[key] && tableParam[key].value !== undefined) {
-            sqlParam[key] = tableParam[key].value;  // 将值赋给 sqlParam
+        if (this.$refs.tableRender.$refs.xTable && this.$refs.tableRender.$refs.xTable.params.sqlParam) {
+          let tableParam = this.$refs.tableRender.$refs.xTable.params.sqlParam
+          sqlParam = {
+            isChildren: '',
+            showView: '',
+            tabsName: ''
+          };
+          for (let key in sqlParam) {
+            if (tableParam[key] && tableParam[key].value !== undefined) {
+              sqlParam[key] = tableParam[key].value;  // 将值赋给 sqlParam
+            }
           }
+        } else {
+          sqlParam = {
+            isChildren: false,
+            showView: 'showView003',
+            tabsName: '已发布'
+          };
         }
-        this.sqlParam = {...sqlParam, ...this.sqlParam}
+        this.sqlParam = { ...sqlParam, ...this.sqlParam }
         this.dateTime = new Date().getTime()
       }
       // 组件切换
@@ -666,10 +676,10 @@ export default {
       }
       this.provideParams.searchParams.status = ['6050', '6020']
     },
-    getParamsList(obj, fileName) {
+    getParamsList (obj, fileName) {
       let list = []
 
-      function getEndList(item) {
+      function getEndList (item) {
         list.push(item[fileName])
         if (item.children && item.children.length) {
           item.children.forEach(el => {
@@ -681,8 +691,8 @@ export default {
       getEndList(obj)
       return list
     },
-    getParams(node) {
-      const {parentId, parmarsMap} = node
+    getParams (node) {
+      const { parentId, parmarsMap } = node
       let arr = []
       if (parmarsMap) return parmarsMap
       const filterData = (parId, data) => {
@@ -707,9 +717,9 @@ export default {
       }
       return arr
     },
-    async getTreeData(treeSettingsParmars) {
+    async getTreeData (treeSettingsParmars) {
       let data
-      const res = await this.$api['desLayout.execute']({id: treeSettingsParmars.reportSqlId})
+      const res = await this.$api['desLayout.execute']({ id: treeSettingsParmars.reportSqlId })
       const config = {
         labelCol: treeSettingsParmars.optionLabelCol,
         valueCol: treeSettingsParmars.optionValueCol,
@@ -730,8 +740,8 @@ export default {
             componentsType: '',
             otherParmars: '',
             parmarsMap: [
-              {before: 'ID', after: ''},
-              {before: 'NODE_NAME', after: ''}
+              { before: 'ID', after: '' },
+              { before: 'NODE_NAME', after: '' }
             ],
             children: treeArr
           }
@@ -743,11 +753,11 @@ export default {
       return data
     },
     // 获取默认展开数据key
-    getDefaultExpandedKeys(level, treeList) {
+    getDefaultExpandedKeys (level, treeList) {
       const arr = []
       let count = 0
 
-      function getData(data) {
+      function getData (data) {
         count++
         if (count > level) {
           return
@@ -763,10 +773,10 @@ export default {
       getData(treeList)
       return arr
     },
-    menuClickEvent(record, item) {
+    menuClickEvent (record, item) {
       this.$refs.tableRender.thirdMenuClick(record, item)
     },
-    thirdMenuClick(record) {
+    thirdMenuClick (record) {
       let item = {}
       const currentPath = this.$route.path
       const rootRouter = this.$store.state.routers.addRouters
@@ -791,18 +801,18 @@ export default {
       }
       this.$refs.tableRender.thirdMenuClick(record, item)
     },
-    async getIconData() {
+    async getIconData () {
       // 管理状态
-      let manageStatus = await this.$api['dictionaryManagement.list']({dicType: 'PLAN_MANAGE_STATUS'})
+      let manageStatus = await this.$api['dictionaryManagement.list']({ dicType: 'PLAN_MANAGE_STATUS' })
       // 执行状态
-      let executeState = await this.$api['dictionaryManagement.list']({dicType: 'EXECUTE_STATE'})
+      let executeState = await this.$api['dictionaryManagement.list']({ dicType: 'EXECUTE_STATE' })
       this.manageStatus = {}
       this.executeState = {}
       manageStatus.forEach(el => {
-        this.manageStatus[el.id] = {icon: el.icon, color: el.color, meaning: el.meaning}
+        this.manageStatus[el.id] = { icon: el.icon, color: el.color, meaning: el.meaning }
       })
       executeState.forEach(el => {
-        this.executeState[el.id] = {icon: el.icon, color: el.color, meaning: el.meaning}
+        this.executeState[el.id] = { icon: el.icon, color: el.color, meaning: el.meaning }
       })
     },
   }

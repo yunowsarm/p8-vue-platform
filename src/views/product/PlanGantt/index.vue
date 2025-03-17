@@ -112,6 +112,17 @@
   overflow-x: hidden;
   overflow-y: hidden;
   // z-index: 2050 !important;
+  .top{
+    .card-container{
+      ::v-deep .taskGroupContain {
+        min-width: 800px;
+      }
+      ::v-deep .el-tabs__nav-wrap {
+        width: calc(100% - 80px);
+      }
+      position: relative;
+    }
+  }
 }
 
 #couerDiv {

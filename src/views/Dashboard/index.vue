@@ -12,28 +12,43 @@
     <el-tabs v-model="editableTabsValue"
              type="card"
              :closable="isLock"
-             @tab-remove="removeTab">
+             @tab-remove="removeTab"
+             :key="timeKey">
       <template v-for="(item, index) in editableTabs">
         <el-tab-pane :label="item.name"
                      :name="item.name"
                      :key="index">
-          <span slot="label">{{ item.name }} <i v-if="isLock"
+          <span slot="label"> {{ item.name }}<i v-if="isLock"
                class="el-icon-edit-outline"
                style="font-size: 12px"
-               @click="modify(item.name, index)"></i></span>
+               @click="modify(item.name, index)"></i>
+            <el-popover v-if="item.visible"
+                        class="elPopover"
+                        placement="top"
+                        trigger="manual"
+                        v-model="visible"
+                        width="140">
+              <span style="display:inline-block;padding: 3px 0;">布局有更新,<span style="color: #259bd8;text-decoration: underline;cursor: pointer;"
+                      @click="viewVlick(item.changeWidget, index)">点击同步</span></span>
+              <i slot="reference"
+                 v-if="item.visible"
+                 class="el-icon-refresh"
+                 style="font-size: 14px;margin-left: 5px;"></i>
+            </el-popover>
+          </span>
           <component v-if="isLock"
                      :key="index"
                      :record="{ widgets: item.deepCopyWidget }"
                      ref="kanbanEdit"
                      class="component"
-                     :is="hankanbanEdit" />
+                     :is="hankanbanEdit"
+                     @saveTemplate="saveTemplate" />
           <component v-else
                      ref="kanbanView"
                      class="component"
                      :key="index"
                      :id="''"
                      :code="''"
-                     :headerVisible="false"
                      :render-data="[item.deepCopyFormData]"
                      :widget="item.deepCopyWidget"
                      :style-object="{}"
@@ -52,19 +67,27 @@
               :visible="addTabsVisible"
               @handleCancel="addTabsVisible = false"
               @handleOk="handleOk"> </add-tabs>
+    <view-change v-if="viewVisible"
+                 title="查看"
+                 :visible="viewVisible"
+                 @handleCancel="viewVisible = false"
+                 @handleOk="viewhandleOk"> </view-change>
   </div>
 </template>
 <script>
 import { P8ListLayout as ListLayout, P8Dialog as CommonDialog } from 'p8-components-ui'
 import SearchFormList from '@/views/Framework/ComponentsMananger/Grid/Components/intellSearchFormList'
 import addTabs from './Components/addTabs'
+import viewChange from './Components/viewChange'
+import _ from 'lodash';
 export default {
   name: 'Index',
   components: {
     CommonDialog,
     addTabs,
     ListLayout,
-    SearchFormList
+    SearchFormList,
+    viewChange
   },
   provide () {
     return {
@@ -76,13 +99,17 @@ export default {
       isLock: false,
       icon: 'el-icon-lock',
       editableTabs: [{ name: '选项页一' }, { name: '选项页二' }],
-      editableTabsValue: '',
+      editableTabsValue: '选项页一',
       kanbanData: { deepCopyFormData: {} },
       addTabsVisible: false,
       searchFormConfig: [],
       provideParams: {
         searchParams: {}
-      }
+      },
+      visible: false,
+      timeKey: new Date().getTime(),
+      viewVisible: false,
+      newWidget: [],
     }
   },
   computed: {
@@ -91,6 +118,25 @@ export default {
     },
     kanbanView () {
       return () => import('@/views/Dashboard/kanbanView')
+    }
+  },
+  watch: {
+    editableTabsValue (val, oldVal) {
+      let index = this.editableTabs.findIndex(item => item.name === val);
+      let deepWidget = this.editableTabs[index]
+      if (deepWidget.homePageId) {
+        this.$api['kanbanView.getAllNoPage']({ id: deepWidget.homePageId }).then(res => {
+          if (res[0] && res[0].dataVersion && res[0].dataVersion !== deepWidget.homePageVersion) {
+            this.editableTabs[index].visible = true
+            this.timeKey = new Date().getTime()
+            this.editableTabs[index].changeWidget = res[0].widgets.map(el => JSON.parse(el.layout))
+            this.editableTabs[index].changeHomePageVersion = res[0].dataVersion
+            setTimeout(() => {
+              this.visible = true
+            }, 500)
+          }
+        })
+      }
     }
   },
   mounted () {
@@ -107,49 +153,57 @@ export default {
           }
           that.editableTabs[index] = {
             deepCopyWidget: deepCopyWidget,
-            name: el.name
+            name: el.name,
+            homePageId: el.homePageId,
+            homePageVersion: el.dataVersion,
+            visible: false
           }
         })
-      }
-      if (that.editableTabs && that.editableTabs.length > 0) {
-        that.editableTabsValue = that.editableTabs[0].name
+        if (that.editableTabs && that.editableTabs.length > 0) {
+          that.editableTabsValue = that.editableTabs[0].name
+        }
       }
     })
   },
   methods: {
     openLock () {
-      if (this.$refs.kanbanEdit && this.$refs.kanbanEdit.length > 0) {
-        // let index = this.editableTabs.findIndex(el => { return el.name === this.editableTabsValue })
-        this.editableTabs.forEach((el, index) => {
-          this.editableTabs[index].deepCopyWidget = this.$refs.kanbanEdit[index].getData()
-        })
-      }
       this.isLock = !this.isLock
       this.icon = this.isLock ? 'el-icon-unlock' : 'el-icon-lock'
-      const saveList = []
-      this.editableTabs.forEach((el, index) => {
-        const list = []
-        // if (el.deepCopyWidget && el.deepCopyWidget.length) {
-        el.deepCopyWidget.forEach((val) => {
-          list.push({
-            appId: val.component.dataviewId,
-            layout: JSON.stringify(val),
-            name: el.name,
-            style: ''
-          })
-        })
-        saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: index })
-        // }
-      })
-      const saveParmars = {
-        boards: saveList
-      }
       if (!this.isLock) {
-        this.$api['kanbanView.saveHomeBoard'](saveParmars).then((res) => {
-          if (res) {
-            this.$message({ type: 'success', message: '保存成功' })
-          }
+        let modifyData = []
+        if (this.$refs.kanbanEdit && this.$refs.kanbanEdit.length > 0) {
+          this.editableTabs.forEach((el, index) => {
+            if (!_.isEqual(this.$refs.kanbanEdit[index].getData(), this.editableTabs[index].deepCopyWidget)) {
+              this.editableTabs[index].deepCopyWidget = this.$refs.kanbanEdit[index].getData()
+              modifyData.push(this.editableTabs[index])
+            }
+          })
+        }
+        const saveList = []
+        this.editableTabs.forEach((el, index) => {
+          const list = []
+          // if (el.deepCopyWidget && el.deepCopyWidget.length) {
+          el.deepCopyWidget.forEach((val) => {
+            list.push({
+              appId: val.component.dataviewId,
+              layout: JSON.stringify(val),
+              name: el.name,
+              style: ''
+            })
+          })
+          saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: index, homePageId: el.homePageId ? el.homePageId : undefined, homePageVersion: el.homePageVersion })
+          // }
         })
+        if (saveList && saveList.length) {
+          const saveParmars = {
+            boards: saveList
+          }
+          this.$api['kanbanView.saveHomeBoard'](saveParmars).then((res) => {
+            if (res) {
+              this.$message({ type: 'success', message: '保存成功' })
+            }
+          })
+        }
       }
     },
     removeTab (targetName) {
@@ -190,6 +244,56 @@ export default {
       }
       this.editableTabsValue = name
       this.addTabsVisible = false
+    },
+    saveTemplate (addArr) {
+      let widget = addArr[0]
+      if (widget) {
+        const isNameExists = this.editableTabs.some(tab => tab.name === widget.name)
+        if (!isNameExists) {
+          const deepCopyWidget = []
+          widget.widgets.forEach(el => {
+            deepCopyWidget.push(JSON.parse(el.layout))
+          })
+          this.editableTabs.push({
+            name: widget.name,
+            deepCopyWidget: deepCopyWidget,
+            homePageId: widget.id
+          })
+        } else {
+          // 可选：如果需要，可以在这里处理名称重复的情况，比如提示用户
+          this.$message.warning(`名称为${widget.name}的主页已存在，请勿重复添加`)
+        }
+      }
+    },
+    viewVlick (changeWidget, index) {
+      // this.viewVisible = true
+      this.editableTabs[index].deepCopyWidget = changeWidget
+      let saveList = []
+      let list = []
+      let el = this.editableTabs[index]
+      this.editableTabs[index].deepCopyWidget.forEach((val) => {
+        list.push({
+          appId: val.appId,
+          layout: JSON.stringify(val),
+          name: el.name,
+          style: ''
+        })
+      })
+      saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: index, homePageId: el.homePageId ? el.homePageId : undefined, homePageVersion: el.changeHomePageVersion })
+      if (saveList && saveList.length) {
+        const saveParmars = {
+          boards: saveList
+        }
+        this.$api['kanbanView.saveHomeBoard'](saveParmars).then((res) => {
+          if (res) {
+            this.$message({ type: 'success', message: '同步成功' })
+          }
+        })
+        this.timeKey = new Date().getTime()
+      }
+    },
+    viewhandleOk () {
+      this.viewVisible = false
     }
   }
 }
@@ -203,7 +307,7 @@ export default {
     position: absolute;
     right: 20px;
     top: 6px;
-    z-index: 1;
+    z-index: 10;
     font-size: 18px;
     color: black;
   }
@@ -216,11 +320,9 @@ export default {
   ::v-deep .el-tabs--top .el-tabs__content .el-tab-pane {
     height: calc(100% - 10px);
   }
-  ::v-deep .el-tabs__nav {
-    z-index: 1;
-  }
-  ::v-deep .smartwidget.smartwidget-fullscreen{
-    z-index: 20 !important;
-  }
+}
+.elPopover {
+  padding: 5px;
+  min-width: 140px;
 }
 </style>

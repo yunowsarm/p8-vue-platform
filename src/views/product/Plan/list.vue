@@ -49,8 +49,8 @@
   //   height: calc(100% - 30px);
   // }
 }
-::v-deep .icon-zuozhedie{
-    z-index: 1 !important;
+::v-deep .icon-zuozhedie {
+  z-index: 1 !important;
 }
 </style>
 <script>
@@ -133,7 +133,7 @@ export default {
   // },
   methods: {
     // 表格刷新
-    tableRefresh(){
+    tableRefresh () {
       this.$refs.tableRender.selectRecords = []
     },
     async init () {
@@ -339,16 +339,30 @@ export default {
     getIcon (row) {
       let str = ''
       let el = this.manageStatus[row.MANAGESTATUS]
+      let toolbarTextDisplay = this.$store.getters.baseConfig.toolbarTextDisplay
+      if (toolbarTextDisplay === '0') {
+        toolbarTextDisplay = false
+      } else {
+        toolbarTextDisplay = true
+      }
       if (row.MANAGESTATUS && el && el.icon) {
-        str = '<div style="opacity: 0.2; position: relative; height: 30px; background:' + el.color +
-          '"></div><div style="position: absolute; top: 13px; left: 20px;"><i class="' + el.icon + '"style="color: ' + el.color + ';" title="' + el.meaning +
-          '"></i><span style="font-size: 15px; color: ' + el.color + ';">' + el.meaning + '</span></div>'
+        if (toolbarTextDisplay) {
+          str = `<div style="display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; background: ${el.color}20;">
+            <span style="color: ${el.color}; font-weight: 500;">${el.meaning}</span>
+          </div>`
+        } else {
+          str = `<i class="${el.icon}" style="color: ${el.color};"></i>`
+        }
       } else {
         let item = this.executeState[row.EXECUTESTATE]
         if (item && item.icon) {
-          str = '<div style="opacity: 0.2; position: relative; height: 30px; background:' + item.color +
-            '"></div><div style="position: absolute; top: 13px; left: 20px;"><i class="' + item.icon + '"style="color: ' + item.color + ';" title="' + item.meaning +
-            '"></i><span style="font-size: 15px; color: ' + item.color + ';">' + item.meaning + '</span></div>'
+          if (toolbarTextDisplay) {
+            str = `<div style="display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; background: ${item.color}20;">
+            <span style="color: ${item.color}; font-weight: 500;">${item.meaning}</span>
+          </div>`
+          } else {
+            str = `<i class="${item.icon}" style="color: ${item.color};"></i>`
+          }
         }
       }
       return str

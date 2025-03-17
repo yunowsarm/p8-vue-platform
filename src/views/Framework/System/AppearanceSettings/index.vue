@@ -187,15 +187,15 @@ export default {
           colLayout: 'singleCol'
         },
         {
-          labelText: '图标显示方式',
+          labelText: '图标展示方式',
           type: 'radio',
           options: [
             {
-              label: '显示',
+              label: '图标',
               value: '0'
             },
             {
-              label: '隐藏',
+              label: '文字',
               value: '1'
             }
           ],
