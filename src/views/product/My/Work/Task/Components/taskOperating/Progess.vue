@@ -12,6 +12,7 @@
               :key="dateTime"
               :approve="approve"
               :tabsName="tabsName"
+              :btnTitle="btnTitle"
               @submit="progressSubmit"
               @NewSubmit="NewProgressSubmit"
               @progress-date-change="progressDateChange"
@@ -114,6 +115,7 @@ export default {
       }
     ]
     return {
+      btnTitle: '提交进度',
       leafChildrenIsFinished: false,
       isHaveParentTaskParentId: false,
       formType: {
@@ -275,6 +277,7 @@ export default {
       // 弹窗提示点击确定--表示人员要填写偏离相关的信息, 展示偏离模块(信息为必填)
       this.exceedTypeVal = true
       // 切换页面不继续弹出超期提示框
+      this.btnTitle = '提交'
       this.$emit('dialogOk', true)
     },
     getDeviatuon () {
@@ -385,10 +388,11 @@ export default {
       this.$api['taskManager.progressFeedback'](params).then(res => {
         if (res) {
           _this.progressChange(_this.getPlanInfo().PROGRESS)
-          _this.$message({
-            type: 'success',
-            message: '成功'
-          })
+          if (this.btnTitle === '提交') {
+            this.$message.success('成功')
+          } else {
+            this.$message.success('进度提交成功！')
+          }
           _this.setMessage(formData)
           this.getDeviatuon()
           _this.$bus.$emit('refresh')

@@ -6,6 +6,7 @@
               :tableParams="tableParams"
               :columns="columns"
               :tabsName="tabsName"
+              btnTitle="提交未完成原因"
               @submit="deviateSubmit"></form-table>
 </template>
 <script>
@@ -124,7 +125,7 @@ export default {
       this.$api['taskManager.deviationReasons'](params).then(res => {
         if (res) {
           that.$message({
-            message: '偏离原因提交成功！',
+            message: '未完成原因提交成功！',
             type: 'success'
           })
           that.setMessage(form)
