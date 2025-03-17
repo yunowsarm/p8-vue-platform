@@ -6,6 +6,7 @@ const { defineConfig } = require('@vue/cli-service')
 const SplitChunksPlugin = require('webpack').optimize.SplitChunksPlugin
 let version = require("./package.json")["version"];
 version = 'V' + version
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = defineConfig({
   runtimeCompiler: true,
