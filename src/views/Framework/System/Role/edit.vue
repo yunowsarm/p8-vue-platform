@@ -4,7 +4,6 @@
                @rendered="rendered"
                @saved="saved"
                :data-source="dataSource"
-               :isShouEnter="false"
                :api="saveApi"
                :form="formData">
       <template slot="btn">
@@ -104,8 +103,47 @@
                        :exist-default-btn="false"></form-list>
           </el-col>
         </el-tab-pane>
+        <el-tab-pane label="设置主页"
+                     :style="{height: tabPaneHeight}"
+                     name="setHomepage"
+                     key="5">
+          <div class="nav-display"
+               :key="boardIds.length">
+                <div class="nav-ul"
+                      v-for="(item) in boardIds"
+                      :key="item.id"
+                      @click="boardsClick(item)">
+                  <div class="nav-span"
+                        style="height: 100%;"
+                        :class="{ active: item.isActive }">
+                    <div style="height: 40%;">
+                      <el-image style="width: 60px; height: 60px"
+                                :src="imgUrl"
+                                fit="cover"></el-image>
+                    </div>
+                    <span style="height: 60%;"
+                          class="nav-text"
+                          v-text="item.name"></span>
+                  </div>
+                </div>
+              </div>
+        </el-tab-pane>
       </el-tabs>
     </template>
+    <el-dropdown v-if="activePane === 'setLimit'"
+                 size="mini"
+                 split-button
+                 type="primary"
+                 trigger="click"
+                 style="margin-top: 10px; margin-left: 10px">
+      关联操作
+      <el-dropdown-menu slot="dropdown">
+        <el-dropdown-item @click.native="allSelect()">全部勾选</el-dropdown-item>
+        <el-dropdown-item @click.native="unAllSelect()">取消全选</el-dropdown-item>
+        <el-dropdown-item @click.native="relate()">父子关联</el-dropdown-item>
+        <el-dropdown-item @click.native="unRelate()">取消关联</el-dropdown-item>
+      </el-dropdown-menu>
+    </el-dropdown>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -308,10 +346,8 @@ export default {
           type: 'number',
           fieldName: 'indexNo',
           placeholder: '请输入排序号',
-          fieldConfig: {
-            precision: 0
-          },
-          colLayout: 'doubleCol'
+          colLayout: 'doubleCol',
+          max: 9999,
         }
       ],
       formData: {
@@ -322,7 +358,8 @@ export default {
         sysuserIds: [],
         appIds: [],
         resourceIds: [],
-        authorityTypes: []
+        authorityTypes: [],
+        boardIds: []
       },
       projectDataSource: [
         {
@@ -341,8 +378,9 @@ export default {
       activeType: '',
       adhibitionList: [],
       activeTabs: [],
-      flexHeight: document.documentElement.clientHeight - 320 + 'px',
-      dateTime: null
+      flexHeight: document.documentElement.clientHeight - 318 + 'px',
+      dateTime: null,
+      boardIds: []
     }
   },
   async created () {
@@ -357,6 +395,12 @@ export default {
             icon: 'el-icon-house'
           }
         )
+      }
+    })
+     await this.$api['kanbanView.getAllNoPage']({isTerminal: '1'}).then((res) => {
+      if (res && res.length) {
+        res.forEach(el => el.isActive = false)
+        this.boardIds = res
       }
     })
     await this.getType(null)
@@ -421,6 +465,15 @@ export default {
                 }
               })
             })
+          if (res.boardList && res.boardList.length)
+            that.boardIds.forEach((el) => {
+              res.boardList.forEach((val) => {
+                if (el.id == val) {
+                  el.isActive = true
+                  that.formData.boardIds.push(el.id)
+                }
+              })
+            })
           const { id, name, indexNo, isApprove, authorityTypes, userList = [], resourceList = [], appList = [] } = res
           that.formData = { ...that.formData, id, name, indexNo, isApprove }
 
@@ -469,12 +522,32 @@ export default {
       this.$set(this.formData, 'resourceIds', selectedRes)
       // this.formData.resourceIds = selectedRes
     },
+    unAllSelect () {
+      this.$refs.selectBtn.unCheckAll()
+    },
+    allSelect () {
+      this.$refs.selectBtn.checkAll()
+    },
+    relate () {
+      this.$refs.selectBtn.relate()
+    },
+    unRelate () {
+      this.$refs.selectBtn.unRelate()
+    },
     handleAdhibitionClick (row) {
       row.isActive = !row.isActive
       if (row.isActive) {
         this.formData.appIds.push(row.id)
       } else {
         this.formData.appIds = this.formData.appIds.filter((id) => id !== row.id)
+      }
+    },
+    boardsClick (row) {
+      row.isActive = !row.isActive
+      if (row.isActive) {
+        this.formData.boardIds.push(row.id)
+      } else {
+        this.formData.boardIds = this.formData.boardIds.filter((id) => id !== row.id)
       }
     }
   }

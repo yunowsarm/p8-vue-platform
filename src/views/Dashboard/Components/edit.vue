@@ -2,7 +2,7 @@
   <el-row style="height: 100%">
     <el-col style="height: 100%" :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
       <div style="position: relative; height: 100%">
-        <widget-grid :widget.sync="widget" :row-height="50" :margin="[5, 5]" :padding="[5, 5]" :style-object="{ height: 'calc(100% - 32px)' }" :is-static="isStatic"> </widget-grid>
+        <widget-grid :widget.sync="widget" :row-height="50" :margin="[5, 5]" :padding="[5, 5]" :style-object="{ height: 'calc(100% - 32px)' }" :is-static="isStatic" @saveTemplate="saveTemplate"> </widget-grid>
       </div>
     </el-col>
   </el-row>
@@ -64,6 +64,9 @@ export default {
     },
     getData() {
       return this.deepCopyWidget
+    },
+    saveTemplate (addArr) {
+      this.$emit('saveTemplate', addArr)
     }
   }
 }

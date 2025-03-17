@@ -9,6 +9,10 @@
           <div style="text-align: right">
             <el-button type="primary"
                        size="mini"
+                       @click="addTemplate"><i style="position: relative; top: 2px"
+                 class="p8 icon-zujianku"></i> 模版库</el-button>
+            <el-button type="primary"
+                       size="mini"
                        @click="addWidget"><i style="position: relative; top: 2px"
                  class="p8 icon-zujianku"></i> 组件库</el-button>
           </div>
@@ -120,6 +124,64 @@
                      @click="saveWidget()">保存</el-button>
         </template>
       </common-dialog>
+      <common-dialog title="添加模版"
+                     v-if="addTemplateVisible"
+                     :visible="addTemplateVisible"
+                     destroy-on-close
+                     @close="handleCancel('addTemplateVisible')"
+                     :show-handle-btn="false"
+                     :is-view-cs-footer="true"
+                     :dialog-config="{
+                        modal: true,
+                        appendToBody: true,
+                        modalAppendToBody: true
+                      }"
+                     :close-on-click-modal="false"
+                     :close-on-press-escape="false">
+        <template #dialog>
+          <common-table ref="tableTemplate"
+                        :params="{isTerminal: '1'}"
+                        api="kanbanView.list"
+                        :columns="templateColumns"
+                        :pagination="true">
+            <template #operation="{ scope }">
+              <el-button type="text"
+                         @click="preview(scope.row)">预览</el-button>
+            </template>
+          </common-table>
+        </template>
+        <template #cs-footer>
+          <el-button @click="addTemplateVisible = false">取消</el-button>
+          <el-button type="primary"
+                     @click="templateSave()">确定</el-button>
+        </template>
+      </common-dialog>
+      <common-dialog title="预览"
+                     v-if="previewVisible"
+                     :visible="previewVisible"
+                     width="50%"
+                     :dialog-height="dialogpreviewHeight"
+                     destroy-on-close
+                     :show-handle-btn="false"
+                     @close="handleCancel('previewVisible')">
+        <template #dialog>
+          <kanbanView id=""
+                      code=""
+                      :render-data="[deepCopyFormData]"
+                      :widget="deepCopyWidget"
+                      :style-object="deepCopyFormData.style ? { ...JSON.parse(deepCopyFormData.style), ...{ height: '100%', width: '100%' } } : {}"
+                      :row-height="50"
+                      :margin="[5, 5]"
+                      :padding="[5, 5]"
+                      :is-static="true"
+                      :is-design="false"></kanbanView>
+        </template>
+        <template #cs-footer>
+          <el-button @click="addWidgetVisible = false">取消</el-button>
+          <el-button type="primary"
+                     @click="save()">确定</el-button>
+        </template>
+      </common-dialog>
     </div>
     <VuePerfectScrollbar class="scroll-area"
                          :class="{ isdesign: isDesign }">
@@ -177,9 +239,10 @@ import { P8Table as CommonTable, P8Dialog as CommonDialog } from 'p8-components-
 import _cloneDeep from 'lodash/cloneDeep'
 import widgetItem from './widget-item.vue'
 import dynamicLink from './dynamic-link.vue'
-import renderView from "../../../../src/views/Framework/ComponentsMananger/Kanban/Components/renderView"
+import renderView from "@/views/Framework/ComponentsMananger/Kanban/Components/renderView"
 import tableRenderVue from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
 import AntvView from '@/views/Framework/ComponentsMananger/Kanban/Components/AntvView'
+import kanbanView from '../kanbanView.vue'
 export default {
   name: 'Widgetgrid',
   provide () {
@@ -198,7 +261,8 @@ export default {
     VuePerfectScrollbar,
     dynamicLink,
     tableRenderVue,
-    AntvView
+    AntvView,
+    kanbanView
   },
   props: {
     widget: {
@@ -229,7 +293,7 @@ export default {
       } else {
         return []
       }
-    }
+    },
   },
   watch: {
     widget: {
@@ -248,7 +312,12 @@ export default {
       isLayoutReady: false,
       renderTime: new Date().getTime(),
       addWidgetVisible: false,
+      addTemplateVisible: false,
+      previewVisible: false,
       addWidgetTitle: '添加组件',
+      deepCopyWidget: [],
+      deepCopyFormData: {},
+      dialogpreviewHeight: document.documentElement.clientHeight * 0.7,
       setWidgetVisible: false,
       WidgetForm: {
         title: '',
@@ -264,8 +333,7 @@ export default {
         {
           type: 'selection',
           width: 45,
-          align: 'center',
-          headerAlign: 'center',
+          align: 'center'
         },
         {
           title: '组件名称',
@@ -274,6 +342,29 @@ export default {
         {
           title: '描述',
           dataIndex: 'compCode'
+        }
+      ],
+      templateColumns: [
+        {
+          type: 'selection',
+          width: 45,
+        },
+        {
+          title: '组件名称',
+          align: 'center',
+          dataIndex: 'name'
+        },
+        {
+          title: '描述',
+          align: 'center',
+          dataIndex: 'describe'
+        },
+        {
+          title: '操作',
+          align: 'center',
+          width: '80px',
+          dataIndex: 'operation',
+          scopedSlots: { customRender: 'custom' },
         }
       ],
       widgetResizeStatus: [],
@@ -299,7 +390,7 @@ export default {
       }, delay)
     },
     onMove (params) {
-      //
+      // console.log('onMove:', params)
     },
     // 大小改变
     onResize (params) {
@@ -345,6 +436,24 @@ export default {
       //   title: ''
       // })
       // this.$emit('update:widget', this.widget.concat(this.widgetList))
+    },
+    addTemplate () {
+      this.addTemplateVisible = true
+    },
+    preview (row) {
+      this.deepCopyWidget = []
+      this.deepCopyFormData = row
+      this.previewVisible = true
+      if (row.widgets && row.widgets.length) {
+        row.widgets.forEach((el) => {
+          this.deepCopyWidget.push(JSON.parse(el.layout))
+        })
+      }
+    },
+    templateSave () {
+      const addArr = this.$refs.tableTemplate.selection
+      this.$emit('saveTemplate', addArr)
+      this.addTemplateVisible = false
     },
     // 编辑保存组件设置
     saveWidget () {
@@ -399,7 +508,7 @@ export default {
     },
     getSearchCofnfig (list) {
       list.forEach((el) => {
-        if (el.component.searchConfigValue && el.component.functionalCategory && el.component.functionalCategory !== '3') {
+        if (el.component.searchConfigValue && el.component && el.component.functionalCategory && el.component.functionalCategory !== '3') {
           let item
           if (el.component.searchConfigValue && el.component.searchConfigValue.indexOf('null') !== -1) {
             item = ''
@@ -427,7 +536,7 @@ export default {
         let list = this.searchList.concat(this.tableSearchList)
         const newobj = {}
         list = list.reduce((preVal, curVal) => {
-          newobj[curVal.fieldName] ? '' : newobj[curVal.fieldName] = preVal.push(curVal)
+          newobj[curVal.fieldName] ? '' : (newobj[curVal.fieldName] = preVal.push(curVal))
           return preVal
         }, [])
         this.$emit('setSearchConfig', list)

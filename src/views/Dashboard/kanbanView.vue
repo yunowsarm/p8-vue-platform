@@ -44,7 +44,7 @@ import _cloneDeep from 'lodash/cloneDeep'
 import mixin from './Components/mixin'
 // import _ from 'lodash'
 export default {
-  name: 'KanbanView',
+  name: 'KanbanViewDash',
   mixins: [mixin],
   provide () {
     return {
