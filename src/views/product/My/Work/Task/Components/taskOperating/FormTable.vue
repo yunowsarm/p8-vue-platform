@@ -357,7 +357,7 @@
       <el-button type="primary"
                  @click="submit('progress')"
                  :disabled='buttonDisabled'
-                 v-if="saveBtnDisplay()">提交进度</el-button>
+                 v-if="saveBtnDisplay()">{{ btnTitle }}</el-button>
       <el-button type="primary"
                  @click="submit('submit')"
                  :disabled="formDisabled || buttonDisabled"
@@ -453,6 +453,10 @@ export default {
     },
     tableApi: {
       type: String
+    },
+    btnTitle: {
+      type: String,
+      default: '提交'
     },
     leafChildrenIsFinished: {
       type: Boolean,

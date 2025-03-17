@@ -6,6 +6,7 @@ const { defineConfig } = require('@vue/cli-service')
 const SplitChunksPlugin = require('webpack').optimize.SplitChunksPlugin
 let version = require("./package.json")["version"];
 version = 'V' + version
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = defineConfig({
   runtimeCompiler: true,
@@ -56,7 +57,19 @@ module.exports = defineConfig({
             reuseExistingChunk: true
           }
         }
-      }
+      },
+      minimize: true,
+      minimizer: [
+        new TerserPlugin({
+          terserOptions: {
+            compress: {
+              drop_console: true,
+              drop_debugger: true,
+              pure_funcs: ['console.log', 'console.info', 'console.warn', 'console.error']
+            }
+          }
+        })
+      ]
     },
     plugins: [new SplitChunksPlugin(), new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn|en/)]
   },

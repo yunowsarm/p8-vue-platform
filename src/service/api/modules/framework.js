@@ -2157,6 +2157,27 @@ export const kanbanApi = {
       path: '/framework/personal/homepage/saveCopy',
       mockPath: '/framework/personal/homepage/saveCopy',
       desc: '看板复制'
+    },
+    {
+      name: 'getAllNoPage',
+      method: 'POST',
+      path: '/framework/personal/homepage/getAllNoPage',
+      mockPath: '/framework/personal/homepage/getAllNoPage',
+      desc: '获取所有终端用户可用'
+    },
+    {
+      name: 'getByHomePageId',
+      method: 'POST',
+      path: '/bp_role_board/getByHomePageId',
+      mockPath: '/bp_role_board/getByHomePageId',
+      desc: '主页获取角色默认看板'
+    },
+    {
+      name: 'getDefaultBoard',
+      method: 'POST',
+      path: '/bp_role_board/getDefaultBoard',
+      mockPath: '/bp_role_board/getDefaultBoard',
+      desc: '主页获取角色默认看板'
     }
   ],
   desLayout: [

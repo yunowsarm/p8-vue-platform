@@ -244,7 +244,7 @@ import tableRenderVue from '@/views/Framework/ComponentsMananger/Grid/Components
 import AntvView from '@/views/Framework/ComponentsMananger/Kanban/Components/AntvView'
 import kanbanView from '../kanbanViewPreview.vue'
 export default {
-  name: 'Widgetgrid',
+  name: 'widget-gridPreview',
   provide () {
     return {
       deleteWidget: this.deleteWidget,

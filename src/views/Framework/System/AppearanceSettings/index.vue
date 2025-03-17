@@ -202,16 +202,16 @@ export default {
           fieldName: 'toolbarTextDisplay',
           colLayout: 'singleCol'
         },
-        // {
-        //   type: 'number',
-        //   labelText: '行高(单位：px)',
-        //   fieldName: 'tableRowHeight',
-        //   placeholder: '请输入行高',
-        //   colLayout: 'doubleCol',
-        //   colSpan: 6,
-        //   min: 35,
-        //   max: 300
-        // }
+        {
+          type: 'number',
+          labelText: '行高(单位：px)',
+          fieldName: 'tableRowHeight',
+          placeholder: '请输入行高',
+          colLayout: 'doubleCol',
+          colSpan: 6,
+          min: 35,
+          max: 300
+        }
       ],
       formData: {
         toolbarTextDisplay: '0',
