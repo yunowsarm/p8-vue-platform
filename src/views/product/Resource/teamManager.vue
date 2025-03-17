@@ -572,7 +572,8 @@ export default {
       // 获取人员命名文件 form表单组件, 用于校验附件密级是否选择
       this.memberFormComp = formComp
     },
-    search (params) {
+    search (params, searchBoxParam) {
+      this.reset()
       this.searchParam = params
       let realName = params.realName ? params.realName : null
       let deptName = params.deptName ? params.deptName : null
@@ -583,6 +584,18 @@ export default {
           }
         })
         this.tableData = tableData
+      }
+      if (searchBoxParam && Object.keys(searchBoxParam).length) {
+        let realName = searchBoxParam.realName ? searchBoxParam.realName : null
+        let deptName = searchBoxParam.deptName ? searchBoxParam.deptName : null
+        if (realName && deptName) {
+          let tableData = this.tableData.filter((item) => {
+            if (item.realName.indexOf(realName) > -1 || item.deptName.indexOf(deptName) > -1) {
+              return item
+            }
+          })
+          this.tableData = tableData
+        }
       }
     },
     reset () {
