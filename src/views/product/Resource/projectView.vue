@@ -566,7 +566,7 @@ export default {
               this.rolesData.map(item => {
                 let projectTeamRoleUsers = item.projectTeamRoleUsers && item.projectTeamRoleUsers.map(pitem => {
                   pitem.roleName = item.name
-                  pitem.userRoleId = item.roleId
+                  pitem.userRoleId = item.id
                   pitem.roleType = item.roleType
                   return pitem
                 })
@@ -650,7 +650,7 @@ export default {
         let projectTeamRoleUsers = item.projectTeamRoleUsers.map(pitem => {
           pitem.roleName = item.name
           pitem.roleId = item.id
-          pitem.userRoleId = item.roleId
+          pitem.userRoleId = item.id
           pitem.roleType = item.roleType
           return pitem
         })

@@ -644,7 +644,6 @@ export default {
           this.fixedRoles = res.fixedRoles || []
           this.generalRoles = res.generalRoles || []
           this.rolesData = [...this.fixedRoles, ...this.generalRoles]
-          console.log('this.rolesData', this.rolesData)
           if (this.rolesData.length) {
             if (this.rolesSelectedIndex > -1) {
               // > -1 说明左侧角色列表有被选中的
@@ -666,7 +665,7 @@ export default {
                   item.projectTeamRoleUsers &&
                   item.projectTeamRoleUsers.map((pitem) => {
                     pitem.roleName = item.name
-                    pitem.userRoleId = item.roleId
+                    pitem.userRoleId = item.id
                     pitem.roleType = item.roleType
                     return pitem
                   })
@@ -754,7 +753,7 @@ export default {
         let projectTeamRoleUsers = item.projectTeamRoleUsers.map((pitem) => {
           pitem.roleName = item.name
           pitem.roleId = item.id
-          pitem.userRoleId = item.roleId
+          pitem.userRoleId = item.id
           pitem.roleType = item.roleType
           return pitem
         })

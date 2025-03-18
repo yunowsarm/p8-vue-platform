@@ -595,7 +595,6 @@ export default {
       this.$emit('close')
     },
     onSelect (obj) {
-      console.log(obj, '1111111111111111111111111111');
       if (obj.id ?? obj.ID == '0') {
         return
       }
