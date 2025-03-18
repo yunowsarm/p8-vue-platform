@@ -1884,6 +1884,13 @@ export const formGeneratorApi = {
       path: '/framework/user/setting/getBpReportByCode',
       mockPath: '/framework/user/setting/getBpReportByCode',
       desc: '报表管理-报表列表-获取版本'
+    },
+    {
+      name: 'settingDefault',
+      method: 'POST',
+      path: '/framework/user/setting/settingDefault',
+      mockPath: '/framework/user/setting/settingDefault',
+      desc: '报表管理-报表列表-获取版本'
     }
   ]
 }
