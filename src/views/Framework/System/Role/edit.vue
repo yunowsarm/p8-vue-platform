@@ -53,7 +53,6 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="设置应用"
-                     :style="{height: tabPaneHeight}"
                      name="setApp"
                      key="3">
           <el-tabs :key="dateTime"
@@ -229,6 +228,9 @@
 .leftTabs {
   padding-top: 10px;
   height: calc(100% - 10px) !important;
+  ::v-deep .el-tabs__content{
+    height: 100%;
+  }
 }
 .leftTabs::v-deep .el-tabs__nav-scroll {
   background: #ffffff;
