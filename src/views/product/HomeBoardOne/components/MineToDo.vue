@@ -5,7 +5,7 @@ export default {
 </script>
 
 <template>
-  <P8TableRender ref="tableRender" code="myReceived" ></P8TableRender>
+  <P8TableRender ref="tableRender" code="myReceivedByKanban" ></P8TableRender>
 </template>
 
 <style scoped lang="scss">
