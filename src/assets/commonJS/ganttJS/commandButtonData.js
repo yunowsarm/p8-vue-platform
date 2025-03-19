@@ -2259,7 +2259,7 @@ export const CommandButtonData = [
       //     const ganttObject = GanttObject.getGanttObject(ganttName)
       //     
       //     ganttObject.eachTask(function(task) {
-      //         task.open = true
+      //         task.expand = true
       //         task.$open = true
       //         updateArrayById(vueThis.addTaskList, task)
       //     });
@@ -2283,7 +2283,7 @@ export const CommandButtonData = [
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
               if (count === 1) {
-                task.open = true
+                task.expand = true
                 task.$open = true
               }
               updateArrayById(vueThis.addTaskList, task)
@@ -2308,7 +2308,7 @@ export const CommandButtonData = [
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
               if (count === 2) {
-                task.open = true
+                task.expand = true
                 task.$open = true
                 updateArrayById(vueThis.addTaskList, task)
               }
@@ -2333,7 +2333,7 @@ export const CommandButtonData = [
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
               if (count === 3) {
-                task.open = true
+                task.expand = true
                 task.$open = true
                 updateArrayById(vueThis.addTaskList, task)
               }
@@ -2357,7 +2357,7 @@ export const CommandButtonData = [
             let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
               if (count > 3) {
-                task.open = true
+                task.expand = true
                 task.$open = true
                 updateArrayById(vueThis.addTaskList, task)
               }
@@ -2428,7 +2428,7 @@ export const CommandButtonData = [
       //     const ganttObject = GanttObject.getGanttObject(ganttName)
       //     
       //     ganttObject.eachTask(function(task) {
-      //         task.open = false
+      //         task.expand = false
       //         task.$open = false
       //         updateArrayById(vueThis.addTaskList, task)
       //     });
@@ -2452,7 +2452,7 @@ export const CommandButtonData = [
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
               if (count === 1) {
-                task.open = false
+                task.expand = false
                 task.$open = false
                 updateArrayById(vueThis.addTaskList, task)
               }
@@ -2477,7 +2477,7 @@ export const CommandButtonData = [
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
               if (count === 2) {
-                task.open = false
+                task.expand = false
                 task.$open = false
                 updateArrayById(vueThis.addTaskList, task)
               }
@@ -2502,7 +2502,7 @@ export const CommandButtonData = [
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
               if (count === 3) {
-                task.open = false
+                task.expand = false
                 task.$open = false
                 updateArrayById(vueThis.addTaskList, task)
               }
@@ -2527,7 +2527,7 @@ export const CommandButtonData = [
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
               if (count > 3) {
-                task.open = false
+                task.expand = false
                 task.$open = false
                 updateArrayById(vueThis.addTaskList, task)
               }

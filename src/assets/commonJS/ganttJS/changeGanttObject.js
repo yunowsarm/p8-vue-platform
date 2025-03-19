@@ -78,7 +78,7 @@ export function getChangeGantt (ganttName, vueThis) {
     if (target && target.classList.contains("gantt_tree_icon")) {
       const task = ganttObject.getTask(id)
       task.$open = !task.$open
-      task.open = !task.open
+      task.expand = !task.expand
       ganttObject.updateTask(task.id)
       vueThis.addfoldState(task)
         return true;

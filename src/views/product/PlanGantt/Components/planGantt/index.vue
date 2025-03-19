@@ -1035,7 +1035,7 @@ export default {
       this.autoGenerationVisible = true
     },
     // 关闭AI生成
-    closeAutoGeneration (){
+    closeAutoGeneration () {
       this.autoGenerationVisible = false
     },
     refreshAiData () {
@@ -1044,8 +1044,8 @@ export default {
     },
     addfoldState (task) {
       setTimeout(() => {
-        if (task.$open !== task.open) {
-          task.open = task.$open
+        if (task.$open !== task.expand) {
+          task.expand = task.$open
           this.$api['planGanttManager.updateFoldLevel']({
             tasks: [task]
           }).then((res) => {
@@ -1501,6 +1501,7 @@ export default {
               let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
               let extraStr = extraList.map((extra) => extra.filedName)
               taskList.forEach((task) => {
+                task.open = task.expand
                 // 解决gantt图鼠标悬浮任务名
                 task.text = task.name
                 extraStr.forEach((key) => {

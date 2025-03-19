@@ -770,8 +770,8 @@ export default {
   methods: {
     addfoldState (task) {
       setTimeout(() => {
-        if (task.$open !== task.open) {
-          task.open = task.$open
+        if (task.$open !== task.expand) {
+          task.expand = task.$open
           this.$api['planGanttManager.updateFoldLevel']({
             tasks: [task]
           }).then((res) => {
@@ -1002,6 +1002,7 @@ export default {
             vueThis.extendMap = res.extendMap || {}
             let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
             res.tasks.forEach(task => {
+              task.open = task.expand
               extraList.forEach(item => {
                 task['kz' + item.id] = ''
               })
