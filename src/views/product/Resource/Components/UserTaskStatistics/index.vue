@@ -25,7 +25,7 @@
             </el-radio>
           </el-radio-group>
         </div>
-          <P8TableRender class='table_body' ref="tableRender" :code="tableConfig.code" :pagination='tableConfig.pagination' :permission-vo="tableConfig.permissionVo" :reportParam="tableConfig.sqlParam">
+          <P8TableRender class='table_body' ref="tableRender" :headerVisible='false' :code="tableConfig.code" :pagination='tableConfig.pagination' :permission-vo="tableConfig.permissionVo" :reportParam="tableConfig.sqlParam">
             <template #leafCount="{ scope }">
               <div class="task-count">
                 <template v-if="isAllowView(scope.row)">
@@ -205,7 +205,7 @@ export default {
 .filter-form {
   margin: 12px;
 }
-.table_body ::v-deep .normal-layout{
-  height: calc(100% - 70px);
+::v-deep .normal-layout{
+  height: calc(100% - 45px);
 }
 </style>
