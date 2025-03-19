@@ -1,8 +1,7 @@
 <template>
   <div class="statistics-container">
     <div class="statistics-grid">
-      <div class="statistics-item" v-for="(item, index) in statisticsItems" :key="index"
-           @click="handleItemClick(item)">
+      <div class="statistics-item" v-for="(item, index) in statisticsItems" :key="index" @click="handleItemClick(item)">
         <div class="item-title">{{ item.title }}</div>
         <div class="item-info">
           <i :class="item.icon" class="item-icon"></i>
@@ -10,9 +9,7 @@
         </div>
       </div>
     </div>
-    <CommonDialog v-if="visibleMsgDialog" :visible="visibleMsgDialog" :title="dialogName" width="90%"
-                  :dialog-height="750" top="5vh"
-                  :show-handle-btn="false" @close="visibleMsgDialog = false">
+    <CommonDialog v-if="visibleMsgDialog" :visible="visibleMsgDialog" :title="dialogName" width="90%" :dialog-height="750" top="5vh" :show-handle-btn="false" @close="visibleMsgDialog = false">
       <template #dialog>
         <MyTask v-if="comp === 'MyTask'" :layout-config="layoutConfig"></MyTask>
         <component v-else :is="comp"></component>
@@ -22,7 +19,7 @@
 </template>
 
 <script>
-import {P8Dialog as CommonDialog} from 'p8-components-ui'
+import { P8Dialog as CommonDialog } from 'p8-components-ui'
 import ProcessApprovalIndex from '@/views/Communication/MyApprove/list.vue'
 import Message from '@/views/Framework/Message'
 import MineToDo from './components/MineToDo.vue'
@@ -39,9 +36,9 @@ export default {
   },
   data() {
     return {
-      layoutConfig:{
-        layoutCode:'MyTask',
-        layoutVersion:'latest'
+      layoutConfig: {
+        layoutCode: 'MyTask',
+        layoutVersion: 'latest'
       },
       dialogName: '',
       comp: null,
@@ -84,24 +81,24 @@ export default {
   methods: {
     getHomeBoardData() {
       this.$api['formGenerator.tableApply']({
-        "sqlParam": {},
-        "reportId": "ffd55ca4c4674613c623a6d217d1d2f8",
-        "reportParam": {},
-        "router": this.$route.name,
-        "code": "pendingApprovalStatistics",
-        "permissionVo": {
-          "router": this.$route.name,
-          "resourceId": ""
+        sqlParam: {},
+        reportId: 'ffd55ca4c4674613c623a6d217d1d2f8',
+        reportParam: {},
+        router: this.$route.name,
+        code: 'pendingApprovalStatistics',
+        permissionVo: {
+          router: this.$route.name,
+          resourceId: ''
         },
-        "page": {
-          "current": 1,
-          "size": 10,
-          "orders": []
+        page: {
+          current: 1,
+          size: 10,
+          orders: []
         }
-      }).then(res => {
+      }).then((res) => {
         if (res && res.records) {
-          this.statisticsItems.forEach(item => {
-            const matchedRecord = res.records.find(record => record.NAMES === item.title)
+          this.statisticsItems.forEach((item) => {
+            const matchedRecord = res.records.find((record) => record.NAMES === item.title)
             if (matchedRecord) {
               item.count = matchedRecord.VAL
             }
@@ -120,6 +117,12 @@ export default {
 
 <style lang="scss" scoped>
 .statistics-container {
+  // 添加禁用选中效果的样式
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
   .statistics-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -149,22 +152,22 @@ export default {
 
       .item-icon {
         font-size: 40px;
-        color: #409EFF;
+        color: #409eff;
         margin-right: 15px;
       }
 
       .item-count {
         font-size: 24px;
-        color: #409EFF;
+        color: #409eff;
         font-weight: bold;
       }
     }
   }
 }
 
-::v-deep .el-dialog {
-  margin-top: 7vh !important;
-}
+//::v-deep .el-dialog {
+//  margin-top: 7vh !important;
+//}
 
 ::v-deep .el-dialog__body {
   padding: 0 !important;

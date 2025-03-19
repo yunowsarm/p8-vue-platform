@@ -36,6 +36,11 @@ export default {
   height: 100%;
   background-color: #fff;
   border-radius: 4px;
+  // 添加禁用选中效果的样式
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 
   .income-box {
     height: 100%;
