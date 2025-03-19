@@ -2257,11 +2257,11 @@ export const CommandButtonData = [
       //   clickFun: function (btn, ganttName, tasks) {
       //     const vueThis = store.getters.vueThis
       //     const ganttObject = GanttObject.getGanttObject(ganttName)
-      //     vueThis.addTaskList = []
+      //     
       //     ganttObject.eachTask(function(task) {
       //         task.open = true
       //         task.$open = true
-      //         vueThis.addTaskList.push(task)
+      //         updateArrayById(vueThis.addTaskList, task)
       //     });
       //     setTimeout(() => {
       //       ganttObject.render()
@@ -2278,15 +2278,15 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          vueThis.addTaskList = []
+          
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
-              if (count < 2) {
+              if (count === 1) {
                 task.open = true
                 task.$open = true
               }
-              vueThis.addTaskList.push(task)
+              updateArrayById(vueThis.addTaskList, task)
           });
           setTimeout(() => {
             ganttObject.render()
@@ -2303,14 +2303,14 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          vueThis.addTaskList = []
+          
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
-              if (count < 3) {
+              if (count === 2) {
                 task.open = true
                 task.$open = true
-                vueThis.addTaskList.push(task)
+                updateArrayById(vueThis.addTaskList, task)
               }
           });
           setTimeout(() => {
@@ -2328,14 +2328,14 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          vueThis.addTaskList = []
+          
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
-              if (count < 4) {
+              if (count === 3) {
                 task.open = true
                 task.$open = true
-                vueThis.addTaskList.push(task)
+                updateArrayById(vueThis.addTaskList, task)
               }
           });
           setTimeout(() => {
@@ -2353,11 +2353,14 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          vueThis.addTaskList = []
           ganttObject.eachTask(function(task) {
-              task.open = true
-              task.$open = true
-              vueThis.addTaskList.push(task)
+            let wbs = task.$wbs;
+              let count = (wbs.match(/\./g) || []).length;
+              if (count > 3) {
+                task.open = true
+                task.$open = true
+                updateArrayById(vueThis.addTaskList, task)
+              }
           });
           setTimeout(() => {
             ganttObject.render()
@@ -2377,6 +2380,7 @@ export const CommandButtonData = [
             tasks: vueThis.addTaskList
            }).then((res) => {
               if (res) {
+                vueThis.addTaskList = []
                 vueThis.$message({
                   message: '保存成功',
                   type: 'success'
@@ -2422,11 +2426,11 @@ export const CommandButtonData = [
       //   clickFun: function (btn, ganttName) {
       //     const vueThis = store.getters.vueThis
       //     const ganttObject = GanttObject.getGanttObject(ganttName)
-      //     vueThis.addTaskList = []
+      //     
       //     ganttObject.eachTask(function(task) {
       //         task.open = false
       //         task.$open = false
-      //         vueThis.addTaskList.push(task)
+      //         updateArrayById(vueThis.addTaskList, task)
       //     });
       //     setTimeout(() => {
       //       ganttObject.render()
@@ -2443,14 +2447,14 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          vueThis.addTaskList = []
+          
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
-              if (count > 0) {
+              if (count === 1) {
                 task.open = false
                 task.$open = false
-                vueThis.addTaskList.push(task)
+                updateArrayById(vueThis.addTaskList, task)
               }
           });
           setTimeout(() => {
@@ -2468,14 +2472,14 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          vueThis.addTaskList = []
+          
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
-              if (count > 1) {
+              if (count === 2) {
                 task.open = false
                 task.$open = false
-                vueThis.addTaskList.push(task)
+                updateArrayById(vueThis.addTaskList, task)
               }
           });
           setTimeout(() => {
@@ -2493,14 +2497,14 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          vueThis.addTaskList = []
+          
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
-              if (count > 2) {
+              if (count === 3) {
                 task.open = false
                 task.$open = false
-                vueThis.addTaskList.push(task)
+                updateArrayById(vueThis.addTaskList, task)
               }
           });
           setTimeout(() => {
@@ -2518,14 +2522,14 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          vueThis.addTaskList = []
+          
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
               if (count > 3) {
                 task.open = false
                 task.$open = false
-                vueThis.addTaskList.push(task)
+                updateArrayById(vueThis.addTaskList, task)
               }
           });
           setTimeout(() => {
@@ -2546,6 +2550,7 @@ export const CommandButtonData = [
             tasks: vueThis.addTaskList
            }).then((res) => {
               if (res) {
+                vueThis.addTaskList = []
                 vueThis.$message({
                   message: '保存成功',
                   type: 'success'
@@ -2880,6 +2885,16 @@ export const CommandButtonData = [
     ]
   }
 ]
+
+function updateArrayById (array, newItem) {
+  const vueThis = store.getters.vueThis
+  const index = array.findIndex(item => item.id === newItem.id);
+  if (index !== -1) {
+    vueThis.addTaskList[index] = newItem; // 覆盖已存在的数据
+  } else {
+    vueThis.addTaskList.push(newItem); // 不存在则添加
+  }
+};
 
 /**
  * 通用按钮禁用条件
@@ -4654,4 +4669,4 @@ function checkSwitchType (tasks) {
   }
 }
 
-export { checkContentRoot, checkReadOnly, checkTaskReadonly, batchOwnerCheck }
+export { checkContentRoot, checkReadOnly, checkTaskReadonly, batchOwnerCheck, updateArrayById }
