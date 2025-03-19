@@ -2,8 +2,10 @@
     <div class="demand-table">
         <div class="table-column" v-for="(item, index) in Object.keys(listObj)" :key="index">
             <div class="column-title">{{ item }}</div>
-            <div class="column-item" v-for="el in listObj[item]" :key="el.id" @click="itemClick(el)">
-                <span class="item-number">{{ el.demandNum }}</span>：<span class="item-name">{{ el.demandName }}</span>
+            <div class="column-content">
+                <div class="column-item" v-for="el in listObj[item]" :key="el.id" @click="itemClick(el)">
+                    <span class="item-number">{{ el.demandNum }}</span>：<span class="item-name">{{ el.demandName }}</span>
+                </div>
             </div>
         </div>
         <common-drawer v-if="visibleProcessDrawer"
@@ -63,6 +65,7 @@ export default {
 }
 
 .table-column {
+    height: 100%;
     flex: 1;
     border-right: 1px solid #e0e0e0;
 
@@ -70,7 +73,10 @@ export default {
         border-right: none;
     }
 }
-
+.column-content {
+    height: calc(100% - 55px);
+    overflow-y: auto;
+}
 .column-title {
     padding: 16px;
     background-color: #f5f5f5;
