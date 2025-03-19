@@ -341,6 +341,7 @@ export default {
             // 处理拓展字段已有的数据
             vueThis.extendMap = res.extendMap || {}
             initData.forEach(task => {
+              task.open = task.expand
               extraList.forEach(item => {
                 task['kz' + item.id] = ''
               })
