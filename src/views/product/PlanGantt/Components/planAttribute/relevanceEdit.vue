@@ -148,7 +148,7 @@ export default {
       }
       const ganttObject = GanttObject.getGanttObject(this.ganttName)
       // 计划编制不可编辑状态字段
-      const task = ganttObject.getTask(this.taskId)
+      let task = ganttObject.getTask(this.taskId)
       if (task.isLeaf > 0) {
         return this.$message.warning('请选择子任务进行关联')
       }
@@ -160,14 +160,32 @@ export default {
         if (res) {
           this.$message.success('操作成功')
           this.disabled = true
-          setTimeout(() => {
-            that.$emit('refreshData', this.taskId)
-            // const ganttObject = GanttObject.getGanttObject(that.ganttName)
-            // ganttObject.updateTask(that.taskId)
-            // 在这里执行你希望的操作
-          }, 3000);
+          if (that.selectRecords.length > 0) {
+            if (task.monitorPoints !== null) {
+              if (!task.monitorPoints.includes('1017')) {
+                if (task.monitorPoints.includes(',')) {
+                  task.monitorPoints += ',1017'
+                } else {
+                  task.monitorPoints += '1017'
+                }
+              }
+            } else {
+              task.monitorPoints = '1017'
+            }
+          } else {
+            if (task.monitorPoints !== null && task.monitorPoints.includes('1017')) {
+              task.monitorPoints = that.removePoint(task.monitorPoints, '1017')
+            }
+          }
+          ganttObject.updateTask(task.id)
+          that.$emit('refreshData')
         }
       })
+    },
+    removePoint (points, targetPoint) {
+      if (!points) return '';
+      const pointArray = points.split(',').filter(p => p && p !== targetPoint);
+      return pointArray.join(',');
     }
   }
 }

@@ -93,13 +93,13 @@
             </el-tooltip>
           </span>
         </li>
-        <li v-show="adminUserIdArr.indexOf($store.state.user.userId) === -1">
+        <!-- <li v-show="adminUserIdArr.indexOf($store.state.user.userId) === -1">
           <span @click="visibleDownloadDrawer1 = true">
             <el-tooltip content="文件中心">
               <i class="p8 icon-wangpan"></i>
             </el-tooltip>
           </span>
-        </li>
+        </li> -->
         <li>
           <el-dropdown size="small">
             <span>
