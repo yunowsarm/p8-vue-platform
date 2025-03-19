@@ -56,7 +56,7 @@ export const WS_CONFIG = {
  * AXIOS默认参数配置
  */
 export const AXIOS_DEFAULT_CONFIG = {
-  timeout: 60000
+  timeout: 300000
 }
 
 /**

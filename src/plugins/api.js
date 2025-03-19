@@ -16,7 +16,7 @@
 import axios from './axios'
 import _assign from 'lodash/assign'
 import _isEmpty from 'lodash/isEmpty'
-
+import { Message } from 'element-ui'
 import { API_DEFAULT_CONFIG } from '@/config/settings'
 import apis from '@/service/api'
 
@@ -49,7 +49,13 @@ class ApiCounstructor {
           // 开启debug时打印一些提示信息
           // isDebug && console.info(`调用业务接口名称:${apiNamespace}, 类型:${method}, 地址:${url}, 描述:${desc}`)
           //
-          return axios(axiosParamBuilder(_assign({ url, method, desc }, outerOptions), data))
+          return axios(axiosParamBuilder(_assign({ url, method, desc }, outerOptions), data)).catch((error) => {
+            if (error.code === 'ECONNABORTED') {
+              console.error('请求超时，数据未保存或同步，请稍后重试')
+              Message.warning('请求超时，数据未保存或同步，请稍后重试')
+            }
+            throw error
+          })
         }
       })
     })
