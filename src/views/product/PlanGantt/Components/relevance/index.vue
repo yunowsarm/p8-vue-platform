@@ -275,21 +275,25 @@ export default {
       }
     },
     handleSelectionChange (val) {
+      let that = this
       this.xDemandTable = true
-      this.selectRecords = []
-      this.selectRecord = val
-      this.$refs.xDemandTable.$refs.table.clearCheckboxRow()
-      if (val.requirementIds) {
-        this.selectRecords = val.requirementIds
-        let selectData = this.$refs.xDemandTable.$refs.table.data
-        val.requirementIds.forEach(row => {
-          selectData.forEach((item, index) => {
-            if (row === item.id) {
-              this.$refs.xDemandTable.$refs.table.setCheckboxRow(selectData[index], true)
-            }
+      that.$emit('relevanceClick', val.taskId)
+      setTimeout(() => {
+        this.selectRecords = []
+        this.selectRecord = val
+        this.$refs.xDemandTable.$refs.table.clearCheckboxRow()
+        if (val.requirementIds) {
+          this.selectRecords = val.requirementIds
+          let selectData = this.$refs.xDemandTable.$refs.table.data
+          val.requirementIds.forEach(row => {
+            selectData.forEach((item, index) => {
+              if (row === item.id) {
+                that.$refs.xDemandTable.$refs.table.setCheckboxRow(selectData[index], true)
+              }
+            })
           })
-        })
-      }
+        }
+      }, 1000)
     },
     handleSelectionChangeDemand (rows, row, checked) {
       let that = this
@@ -329,10 +333,6 @@ export default {
     async relevanceClick () {
       let that = this
       this.taskId = JSON.parse(JSON.stringify(this.selectRecord.taskId))
-      const tableElement = this.$refs.xTable.$el.querySelector('.vxe-table--body-wrapper');
-      if (tableElement) {
-        this.scrollPosition = tableElement.scrollTop; // 获取滚动条高度
-      }
       await this.$api['demandManagement.saveRequirementByTask']({
         wholeId: this.selectRecord.wholeId,
         taskId: this.selectRecord.taskId,
@@ -348,10 +348,7 @@ export default {
         let data = that.findNodeById(that.$refs.xTable.data, that.selectRecord.taskId)
         that.$refs.xTable.$refs.table.setCurrentRow(data)
         that.$refs.xTable.$refs.table.setCheckboxRow(data, true)
-        const tableElement = that.$refs.xTable.$el.querySelector('.vxe-table--body-wrapper');
-        if (tableElement) {
-          tableElement.scrollTop = that.scrollPosition
-        }
+        that.$refs.xTable.$refs.table.scrollToRow(data)
         that.handleSelectionChange(data)
         that.$emit('relevanceClick', that.taskId)
       }, 1000)

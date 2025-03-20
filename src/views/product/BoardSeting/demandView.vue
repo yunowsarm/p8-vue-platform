@@ -31,7 +31,7 @@ export default {
   beforeMount () { },
   mounted () {
     if (this.drillParam.type.value === '已保存') {
-      this.tableCode = 'requirementsGatheringList'
+      this.tableCode = 'requirementsBoardList'
     } else {
       this.tableCode = 'listOfRequirements'
       this.reportParam.ID = this.drillParam.id.value

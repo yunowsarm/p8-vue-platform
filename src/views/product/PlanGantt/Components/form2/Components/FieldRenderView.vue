@@ -5,7 +5,11 @@
       <el-form-item :label="fields.elementOpacity ? fields.labelText : ''"
                     :label-width="fields.labelWidth">
         <div style="text-align: center">
-          <i :class="bindSelectIconClassHandle()"></i>
+          <el-tooltip effect="dark"
+                      :content="iconTitleHandle()"
+                      placement="top">
+            <i :class="bindSelectIconClassHandle()"></i>
+          </el-tooltip>
         </div>
       </el-form-item>
     </template>
@@ -87,6 +91,11 @@ export default {
     this.$emit('field-mounted')
   },
   methods: {
+    iconTitleHandle () {
+      const options = this.fields.options && this.fields.options.length ? this.fields.options : this.options
+      const title = options.filter((item) => item.id === this.formData[this.fields.fieldName])[0].title
+      return title
+    },
     bindSelectIconClassHandle () {
       const options = this.fields.options && this.fields.options.length ? this.fields.options : this.options
       // const optionsFilter = options.filter((item) => item.id !== '1017')
