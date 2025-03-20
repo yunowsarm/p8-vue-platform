@@ -822,6 +822,7 @@ export const CommandButtonData = [
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
         () => isHasTask(ganttName, tasks),
+        () => isHasDeliveredTask(ganttName, tasks),
         () => isReadOnly(ganttName, tasks)
       ]
       const res = isDisable(checks)
@@ -2257,7 +2258,7 @@ export const CommandButtonData = [
       //   clickFun: function (btn, ganttName, tasks) {
       //     const vueThis = store.getters.vueThis
       //     const ganttObject = GanttObject.getGanttObject(ganttName)
-      //     
+      //
       //     ganttObject.eachTask(function(task) {
       //         task.expand = true
       //         task.$open = true
@@ -2278,7 +2279,7 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          
+
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
@@ -2303,7 +2304,7 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          
+
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
@@ -2328,7 +2329,7 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          
+
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
@@ -2426,7 +2427,7 @@ export const CommandButtonData = [
       //   clickFun: function (btn, ganttName) {
       //     const vueThis = store.getters.vueThis
       //     const ganttObject = GanttObject.getGanttObject(ganttName)
-      //     
+      //
       //     ganttObject.eachTask(function(task) {
       //         task.expand = false
       //         task.$open = false
@@ -2447,7 +2448,7 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          
+
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
@@ -2472,7 +2473,7 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          
+
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
@@ -2497,7 +2498,7 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          
+
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
@@ -2522,7 +2523,7 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          
+
           ganttObject.eachTask(function(task) {
               let wbs = task.$wbs;
               let count = (wbs.match(/\./g) || []).length;
