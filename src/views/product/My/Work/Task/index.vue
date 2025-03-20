@@ -30,6 +30,7 @@
                 :kanban-config="componentsConfig"
                 :west-tree-param="provideParams.searchParams"
                 :configParmars="configParmars"
+                :status="status"
                 v-bind="$attrs"
                 v-on="$listeners"
                 @save-success="saveSuccess"
@@ -317,6 +318,12 @@ export default {
       type: Object,
       default: () => {
         return {}
+      }
+    },
+    status: {
+      type: Array,
+      default: () => {
+        return []
       }
     }
   },

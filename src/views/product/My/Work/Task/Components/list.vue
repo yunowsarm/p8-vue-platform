@@ -259,6 +259,12 @@ export default {
       default: () => {
         return {}
       }
+    },
+    status: {
+      type: Array,
+      default: () => {
+        return ['6050', '6020']
+      }
     }
   },
   components: {
@@ -307,7 +313,7 @@ export default {
   created () {
     this.westTreeParam.showView = 'showView003'
     this.westTreeParam.isChildren = 'false'
-    this.westTreeParam.status = ['6050', '6020']
+    this.westTreeParam.status = this.status
     this.provideParams.searchParams = this.westTreeParam
 
     // 检查是否有stateInfo，优先处理stateInfo
@@ -529,7 +535,7 @@ export default {
       // 原有的初始化逻辑
       this.westTreeParam.showView = 'showView003'
       this.westTreeParam.isChildren = 'false'
-      this.westTreeParam.status = ['6050', '6020']
+      this.westTreeParam.status = this.status
       this.provideParams.searchParams = this.westTreeParam
       this.init()
       this.getIconData()
@@ -673,7 +679,7 @@ export default {
           this.asyncComponents = obj[key]
         }
       }
-      this.provideParams.searchParams.status = ['6050', '6020']
+      this.provideParams.searchParams.status = this.status
     },
     getParamsList (obj, fileName) {
       let list = []

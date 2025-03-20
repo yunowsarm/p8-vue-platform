@@ -15,17 +15,16 @@
 export default {
   name: 'demandChart',
   props: {
-    type: {
-      type: String
-    },
-    rowData: {
+    drillParam: {
       type: Object
     }
   },
   data () {
     return {
       tableCode: 'documentList',
-      reportParam: {},
+      reportParam: {
+        outPutType: this.drillParam.outPutType ? this.drillParam.outPutType.valeue : null
+      },
       provideParams: {
         searchParams: {}
       }
@@ -35,8 +34,7 @@ export default {
   },
   computed: {},
   beforeMount () { },
-  mounted () {
-  },
+  mounted () { },
   destroyed () {
   },
   methods: {

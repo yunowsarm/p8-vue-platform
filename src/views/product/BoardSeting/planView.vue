@@ -13,7 +13,8 @@
                    @isfullscreen="isfullscreen"
                    @close="onEditResourcesCloseOther">
       <template #dialog>
-        <taskList :layout-config="layoutConfig"></taskList>
+        <taskList :layout-config="layoutConfig"
+                  :status="status"></taskList>
       </template>
     </common-dialog>
   </div>
@@ -49,7 +50,7 @@ export default {
       visibleDrawer: false,
       visibleDrawerOther: false,
       drawerTitle: '我的任务',
-      status: '',
+      status: [],
       chartData: {}
     }
   },
@@ -59,7 +60,11 @@ export default {
   },
   computed: {},
   beforeMount () { },
-  created () {
+  mounted () {
+    const observer = new ResizeObserver(() => {
+      this.myChart && this.myChart.resize();
+    });
+    observer.observe(this.$refs.chartContainer);
     this.$nextTick(function () {
       this.initChart()
       window.addEventListener('resize', this.resizeChart)
@@ -67,6 +72,10 @@ export default {
   },
   destroyed () {
     window.removeEventListener('resize', this.resizeChart)
+    // 记得销毁观察器
+    if (this.observer) {
+      this.observer.disconnect();
+    }
   },
   methods: {
     isfullscreen (isfullscreen) {
@@ -167,29 +176,13 @@ export default {
         ]
       };
 
-      option && this.myChart.setOption(option, true)
-      // this.dateTime = new Date().getTime()
+      this.myChart.setOption(option, true)
       this.myChart.off('click')
       this.myChart.on('click', (par) => {
-
-        this.status = par.name
-        if (this.type == 'projectCategory') {
-          this.chartData = {
-            userId: this.rowData.SYSUSER_ID,
-            projectTypeId: par.data.projectTypeId
-          }
-        }
-        if (this.type == 'TaskCategory') {
-          this.chartData = {
-            userId: this.rowData.SYSUSER_ID,
-            planTypeId: par.data.planTypeId
-          }
-        }
-        if (this.type == 'taskId') {
-          this.chartData = {
-            userId: this.rowData.SYSUSER_ID,
-            monitorPointId: par.data.monitorPointId
-          }
+        if (par.name === '未完成') {
+          this.status = ['6050', '6020']
+        } else {
+          this.status = ['6070']
         }
         this.visibleDrawerOther = true
       })
@@ -209,7 +202,6 @@ export default {
 <style lang='scss' scoped>
 .chart-container {
   width: 100%;
-  height: 100%;
   min-height: 250px; /* 设置最小高度 */
 }
 ::v-deep .el-dialog__body {
