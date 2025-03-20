@@ -323,7 +323,7 @@ export default {
     status: {
       type: Array,
       default: () => {
-        return []
+        return ['6050', '6020']
       }
     }
   },
