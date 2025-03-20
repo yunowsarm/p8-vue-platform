@@ -170,4 +170,7 @@ export default {
   top: 11px;
   z-index: 10;
 }
+::v-deep .normal-layout{
+  height: 100%;
+}
 </style>

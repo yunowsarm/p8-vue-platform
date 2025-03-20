@@ -6,8 +6,8 @@
   .resize-icon {
     display: none;
   }
-
-  height: 100%;
+  box-sizing: border-box;
+  height: calc(100% - 28px);
   overflow: hidden;
   margin: $layout-margin;
   padding-left: 15px;
