@@ -15,6 +15,9 @@ export default {
   props: {
     row: {
       type: Array
+    },
+    reportParam: {
+      type: Object
     }
   },
   data () {
@@ -29,6 +32,9 @@ export default {
     if (this.row && this.row.length > 0) {
       this.codeForm = this.row[0].DEMAND_CODE
       this.dataViewId = this.row[0].ID
+    } else {
+      this.codeForm = this.reportParam.DEMAND_CODE
+      this.dataViewId = this.reportParam.ID
     }
   },
   methods: {

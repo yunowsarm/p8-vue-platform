@@ -62,10 +62,10 @@ export default {
     return {
       isRouterShow: false,
       secretLevel: '机密',
-      taskId: this.businessKey ? this.businessKey : this.reportParam.TASK_ID,
+      taskId: this.businessKey ? this.businessKey : this.reportParam.TASK_ID || this.reportParam.ID,
       thirdMenuParamTemp: {
         pageType: this.pageType,
-        TASKID: this.businessKey ? this.businessKey : this.reportParam.TASK_ID
+        TASKID: this.businessKey ? this.businessKey : this.reportParam.TASK_ID || this.reportParam.ID
       }
     }
   },
