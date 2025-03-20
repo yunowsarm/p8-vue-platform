@@ -17,7 +17,7 @@
       <template v-for="(item, index) in editableTabs">
         <el-tab-pane :label="item.name"
                      :name="item.name"
-                     :key="index">
+                     :key="item.name">
           <span slot="label"> {{ item.name }}<i v-if="isLock"
                class="el-icon-edit-outline"
                style="font-size: 12px"
@@ -148,7 +148,7 @@ export default {
           const deepCopyWidget = []
           if (el.widgets && el.widgets.length) {
             el.widgets.forEach((el) => {
-              deepCopyWidget.push(JSON.parse(el.layout))
+              deepCopyWidget.push({...JSON.parse(el.layout), isShow: el.isShow})
             })
           }
           that.editableTabs[index] = {
@@ -170,13 +170,9 @@ export default {
       this.isLock = !this.isLock
       this.icon = this.isLock ? 'el-icon-unlock' : 'el-icon-lock'
       if (!this.isLock) {
-        let modifyData = []
         if (this.$refs.kanbanEdit && this.$refs.kanbanEdit.length > 0) {
           this.editableTabs.forEach((el, index) => {
-            if (!_.isEqual(this.$refs.kanbanEdit[index].getData(), this.editableTabs[index].deepCopyWidget)) {
-              this.editableTabs[index].deepCopyWidget = this.$refs.kanbanEdit[index].getData()
-              modifyData.push(this.editableTabs[index])
-            }
+            this.editableTabs[index].deepCopyWidget = this.$refs.kanbanEdit[index].getData()
           })
         }
         const saveList = []
@@ -194,7 +190,7 @@ export default {
           saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: index, homePageId: el.homePageId ? el.homePageId : undefined, homePageVersion: el.homePageVersion })
           // }
         })
-        if (saveList && saveList.length) {
+        if (saveList && saveList.length || !this.editableTabs.length) {
           const saveParmars = {
             boards: saveList
           }
@@ -235,6 +231,10 @@ export default {
       this.title = '修改标签页名称'
     },
     handleOk (name) {
+      if (this.editableTabs.some(tab => tab.name === name)) {
+        this.$message.warning(`名称为${name}的标签页已存在，请勿重复添加`)
+        return
+      }
       if (this.name) {
         this.editableTabs[this.index].name = name
       } else {
@@ -268,18 +268,34 @@ export default {
     viewVlick (changeWidget, index) {
       // this.viewVisible = true
       this.editableTabs[index].deepCopyWidget = changeWidget
-      let saveList = []
-      let list = []
-      let el = this.editableTabs[index]
-      this.editableTabs[index].deepCopyWidget.forEach((val) => {
-        list.push({
-          appId: val.appId,
-          layout: JSON.stringify(val),
-          name: el.name,
-          style: ''
+      this.editableTabs[index].visible = false
+      // let saveList = []
+      // let list = []
+      // let el = this.editableTabs[index]
+      // this.editableTabs[index].deepCopyWidget.forEach((val) => {
+      //   list.push({
+      //     appId: val.appId,
+      //     layout: JSON.stringify(val),
+      //     name: el.name,
+      //     style: ''
+      //   })
+      // })
+      const saveList = []
+      this.editableTabs.forEach((el, index) => {
+        const list = []
+        // if (el.deepCopyWidget && el.deepCopyWidget.length) {
+        el.deepCopyWidget.forEach((val) => {
+          list.push({
+            appId: val.component.dataviewId,
+            layout: JSON.stringify(val),
+            name: el.name,
+            style: ''
+          })
         })
+        saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: index, homePageId: el.homePageId ? el.homePageId : undefined, homePageVersion: el.homePageVersion })
+        // }
       })
-      saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: index, homePageId: el.homePageId ? el.homePageId : undefined, homePageVersion: el.changeHomePageVersion })
+      // saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: index, homePageId: el.homePageId ? el.homePageId : undefined, homePageVersion: el.changeHomePageVersion })
       if (saveList && saveList.length) {
         const saveParmars = {
           boards: saveList

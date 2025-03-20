@@ -140,7 +140,7 @@
                      :close-on-press-escape="false">
         <template #dialog>
           <common-table ref="tableTemplate"
-                        :params="{isTerminal: '1'}"
+                        :params="{isTerminal: '1', roleIdList: roleIds}"
                         api="kanbanView.list"
                         :columns="templateColumns"
                         :pagination="true">
@@ -207,21 +207,22 @@
                      :style="item.styleObject"
                      @widget-resize="onWidgetResize"
                      @on-fullscreen="onFullscreen">
-          <dynamicLink v-if="item.component && item.component.functionalCategory === '1'"
+          <div class="noPermission" v-if="!item.isShow"><span class="text">安全管理员未授权您使用该组件的权限，请与安全管理员联系获取。</span></div>
+          <dynamicLink v-else-if="item.component && item.component.functionalCategory === '1'"
                        :is-show="isLayoutReady"
                        :data="item"
                        :ref="`conten${item.slot}`"
                        :key="renderTime + item.slot"></dynamicLink>
-          <render-view v-if="item.component && item.component.functionalCategory === '2'"
+          <render-view v-else-if="item.component && item.component.functionalCategory === '2'"
                        :is-show="isLayoutReady"
                        :app-config="item.component"
                        :option="item.component.jsonOptions"
                        :resize-time="widgetResizeStatus[item.slot]"
                        ref="renderView"></render-view>
-          <tableRenderVue v-if="item.component.functionalCategory === '3'"
+          <tableRenderVue v-else-if="item.component.functionalCategory === '3'"
                           :code="item.component.dataviewId"
                           @searchData="searchData"></tableRenderVue>
-          <AntvView v-if="item.component.functionalCategory === '4'"
+          <AntvView v-else-if="item.component.functionalCategory === '4'"
                     :is-show="isLayoutReady"
                     :app-config="item.component"
                     :option="item.component.jsonOptions"
@@ -242,7 +243,7 @@ import dynamicLink from './dynamic-link.vue'
 import renderView from "@/views/Framework/ComponentsMananger/Kanban/Components/renderView"
 import tableRenderVue from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
 import AntvView from '@/views/Framework/ComponentsMananger/Kanban/Components/AntvView'
-import kanbanView from '../kanbanViewPreview.vue'
+import kanbanView from '../kanbanView.vue'
 export default {
   name: 'Widgetgrid',
   provide () {
@@ -302,7 +303,9 @@ export default {
       }
     }
   },
-  mounted () { },
+  mounted () { 
+    this.roleIds = this.$store.getters.userInfo.userRoles.map(el => el.roleId)
+  },
   data () {
     return {
       tableSearchList: [],
@@ -369,7 +372,8 @@ export default {
       ],
       widgetResizeStatus: [],
       layoutCount: [],
-      colNum: 12
+      colNum: 12,
+      roleIds: []
     }
   },
   methods: {
@@ -443,12 +447,12 @@ export default {
     preview (row) {
       this.deepCopyWidget = []
       this.deepCopyFormData = row
+      this.previewVisible = true
       if (row.widgets && row.widgets.length) {
         row.widgets.forEach((el) => {
           this.deepCopyWidget.push(JSON.parse(el.layout))
         })
       }
-      this.previewVisible = true
     },
     templateSave () {
       const addArr = this.$refs.tableTemplate.selection
@@ -585,4 +589,17 @@ export default {
     }
   }
 }
+.noPermission {
+  height: 100%;
+  position: relative;
+  .text {
+    font-size: 14px;
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 垂直和水平居中 */
+  }
+}
+ 
 </style>
