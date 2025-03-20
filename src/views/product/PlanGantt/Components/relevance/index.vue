@@ -277,6 +277,7 @@ export default {
     handleSelectionChange (val) {
       let that = this
       this.xDemandTable = true
+      that.$emit('relevanceClick', val.taskId)
       setTimeout(() => {
         this.selectRecords = []
         this.selectRecord = val

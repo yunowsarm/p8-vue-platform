@@ -1578,6 +1578,7 @@ export default {
               if (!vueThis.relevancePlanVisible && vueThis.selectedId) {
                 setTimeout(() => {
                   myGantt.selectTask(vueThis.selectedId)
+                  myGantt.showTask(vueThis.selectedId)
                 }, 1000)
               }
               if (vueThis.isSueTaskIds && vueThis.isSueTaskIds.length) {
