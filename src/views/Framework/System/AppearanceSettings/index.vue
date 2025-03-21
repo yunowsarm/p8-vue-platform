@@ -234,9 +234,6 @@ export default {
         .then(function (res) {
           res.settings.forEach(function (item) {
             that.modify[item.key] = item.value === 'true' ? true : item.value === 'false' ? false : item.value
-            if (item.key === 'tableRowHeight') {
-              that.formData.tableRowHeight = Number(item.value)
-            }
           })
           that.getFileUrl(res.uploadFileJson) // 获取图片流
         })
@@ -261,6 +258,7 @@ export default {
       } else {
         this.modify.toolbarTextDisplay = '0'
       }
+      that.modify.tableRowHeight = that.modify.tableRowHeight ? Number(that.modify.tableRowHeight) : 48
       that.formData = Object.assign({}, that.modify)
     },
     customValidate (params) {
