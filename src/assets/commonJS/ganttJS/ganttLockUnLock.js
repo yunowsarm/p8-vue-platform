@@ -219,8 +219,9 @@ export function lockMonitorUpdateCheck (monitorLockMap) {
  */
 export function ganttEditCheck (taskEditAble, task, ganttObject) {
   // 已完成、提交审批的任务不可修改
+  const vueThis = store.getters.vueThis
   if (taskEditAble && taskEditAble === 'false') {
-    task.readonly = true
+    task.readonly = vueThis.planEditLock !== '0';
     task.readonlyReason = '任务已提交审批或已完成，不可修改'
     // 编辑加锁后任务类型默认为task，避免修改时间时发生联动
     task.type = 'task'
@@ -311,8 +312,9 @@ export function setLockTaskProperties (ganttObject, vueThis) {
               task.managerStatus === '6404' ||
               task.managerStatus === '6407'
             ) {
+              const vueThis = store.getters.vueThis
+              task.readonly = vueThis.planEditLock !== '0';
               // 计划编辑页面创建任务计划分解页面不可操作
-              task.readonly = true
               if (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1 && ganttObject.getGlobalTaskIndex(task.id) !== 0) {
                 task.readonlyReason = `任务为${statusName[task.managerStatus]}，不可操作`;
               } else if (
@@ -353,7 +355,7 @@ export function setLockTaskProperties (ganttObject, vueThis) {
             // 我的任务计划变更页面创建任务父可修改子，计划编辑页面创建的任务我的任务变更页面不可操作
             if (vueThis.createPage === 'userChange') {
               if ((editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1) || ganttObject.getGlobalTaskIndex(task.id) === 0) {
-                task.readonly = true
+                task.readonly = vueThis.planEditLock !== '0';
                 task.readonlyReason = `任务为${statusName[task.managerStatus]}，不可操作`;
                 task.type = 'task'
                 task.auto_scheduling = false
@@ -389,7 +391,7 @@ export function setLockTaskProperties (ganttObject, vueThis) {
               }
             } else {
               if ((editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1) || ganttObject.getGlobalTaskIndex(task.id) === 0) {
-                task.readonly = true
+                task.readonly = vueThis.planEditLock !== '0';
                 task.readonlyReason = `任务为${statusName[task.managerStatus]}，不可操作`;
                 task.type = 'task'
                 task.auto_scheduling = false

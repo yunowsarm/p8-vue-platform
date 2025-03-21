@@ -3191,7 +3191,6 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
           ...extraTask,
           unDescribes: item.unDescribes
         }
-        console.log(extraTask,'======extraTask');
         switch (pos) {
           case 'Child':
             ganttObject.addTask(task, parentId, item.indexNo)
@@ -3236,17 +3235,16 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
           ganttObject.unselectTask()
           if (filteredTasks && filteredTasks.indexOf(task.id) === -1) {
           if (isTaskInViewport(parentId,ganttObject)) {
-            console.log("任务在可视区域内");
+
           } else {
-            console.log("任务不在可视区域内");
             ganttObject.showTask(parentId)
           }
             ganttObject.selectTask(parentId)
           } else {
             if (isTaskInViewport(item.id,ganttObject)) {
-              console.log("任务在可视区域内");
+
             } else {
-              console.log("任务不在可视区域内");
+
               ganttObject.showTask(item.id)
             }
             ganttObject.selectTask(item.id)
@@ -3380,7 +3378,6 @@ function removeTasks (ganttObject, dp, ganttName) {
   let ganttDatas = vueThis.$store.getters.ganttDatas
   ganttDatas.tasks = []
   ganttObject.eachTask((task) => {
-  console.log("🚀 ~ ganttObject.eachTask ~ task:", task.name)
   selectedTaskIds.forEach(id => {
     if (id !== task.id) {
       ganttDatas.tasks.push(task);
@@ -3925,7 +3922,6 @@ function noDpPaste (ganttObject, tasks, vueThis) {
         let task
         if (idMap && idMap[item.parent]) {
           task = createTask(parentTasks, idMap[item.parent], vueThis, style, item, ganttObject)
-          console.log(task,'3333333333333333333333333');
           const parTask = ganttObject.getTask(item.parent)
           if (parTask.autoScheduling === '1' && parTask.type === 'task' && ganttObject.getGlobalTaskIndex(parTask.id) !== 0) {
             parTask.type = 'project'
@@ -3933,7 +3929,6 @@ function noDpPaste (ganttObject, tasks, vueThis) {
           ganttObject.addTask(task, idMap[item.parent], selIndexNo++)
         } else {
           task = createTask(parentTasks, parentTasks.id, vueThis, style, item, ganttObject)
-  console.log(task,'3333333333333333333333333');
 
           const parTask = ganttObject.getTask(selectTask.parent)
           if (parTask.autoScheduling === '1' && parTask.type === 'task' && ganttObject.getGlobalTaskIndex(parTask.id) !== 0) {
@@ -4320,6 +4315,7 @@ function batchOwnerCheck (ganttName) {
 
       // 判断任务状态是否有效
       if (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1 && indexNo !== 0) {
+        if (vueThis.planEditLock === '0') return false
         result = {
           value: false,
           reason: "已完成、提交审批任务不可操作责任人"

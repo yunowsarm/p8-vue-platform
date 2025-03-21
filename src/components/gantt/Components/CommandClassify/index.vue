@@ -158,7 +158,7 @@ export default {
           that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '请选择任务' })
           return true
         }
-        if (window.createPage === 'compile' && that.vueThis.planEditLock) {
+        if (that.vueThis.planEditLock === '1') {
           that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '计划编辑锁定时不允许此操作' })
           return true
         }
