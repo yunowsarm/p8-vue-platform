@@ -215,7 +215,7 @@ export default {
       ],
       formData: {
         toolbarTextDisplay: '0',
-        tableRowHeight: 0
+        tableRowHeight: 48
       },
       modify: {}
     }
@@ -243,7 +243,7 @@ export default {
     // 获取图片流
     getFileUrl (uploadFileJson) {
       let that = this
-      if (uploadFileJson.length > 0) {
+      if (uploadFileJson) {
         uploadFileJson.map((item) => {
           if (item.id) {
             that.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {

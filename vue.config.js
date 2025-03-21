@@ -61,13 +61,18 @@ module.exports = defineConfig({
       minimize: true,
       minimizer: [
         new TerserPlugin({
+          test: /\.js(\?.*)?$/i, // 匹配所有 js 文件
           terserOptions: {
             compress: {
               drop_console: true,
               drop_debugger: true,
               pure_funcs: ['console.log', 'console.info', 'console.warn', 'console.error']
+            },
+            format: {
+              comments: false // 移除注释
             }
-          }
+          },
+          extractComments: false // 不将注释提取到单独的文件中
         })
       ]
     },

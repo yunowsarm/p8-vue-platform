@@ -18,6 +18,8 @@ import VXETable from 'vxe-table'
 import P8LowCode from 'p8-lowcode'
 import 'vxe-table/lib/style.css'
 import 'p8-lowcode/lib/P8LowCode.css'
+// 引入入参出参封装公共方法
+import P8ParamFunc from '@/utils/paramsEncapsulation.js'
 Vue.use(VxeUI)
 Vue.use(VXETable)
 Vue.use(api, p8Config)
@@ -42,7 +44,7 @@ Vue.component('v-contextmenu-item', ContextmenuItem)
 // Vue.component('custom-view', CustomView)
 
 Vue.prototype.$echarts = echarts
-
+Vue.prototype.$P8ParamFunc = P8ParamFunc
 Number.prototype.toFixedNoRound = function(decimals) {
   const factor = Math.pow(10, decimals);
   return Math.floor(this * factor) / factor;
