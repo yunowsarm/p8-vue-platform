@@ -23,6 +23,7 @@
                      :code="code"
                      ref="components"></component> -->
           <list v-if="activeName == item.name"
+                :isFromDashboard='isFromDashboard'
                 :code="componentsConfig.code"
                 :record="{ desformCode: componentsConfig.codeForm }"
                 :permission-vo="componentsConfig.permissionVo"
@@ -325,6 +326,10 @@ export default {
       default: () => {
         return ['6050', '6020']
       }
+    },
+    isFromDashboard:{
+      type: Boolean,
+      default: false
     }
   },
   data () {

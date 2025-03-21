@@ -11,7 +11,7 @@
     </div>
     <CommonDialog v-if="visibleMsgDialog" :visible="visibleMsgDialog" :title="dialogName" width="90%" :dialog-height="750" top="5vh" :show-handle-btn="false" @close="visibleMsgDialog = false">
       <template #dialog>
-        <MyTask v-if="comp === 'MyTask'" :layout-config="layoutConfig"></MyTask>
+        <MyTask v-if="comp === 'MyTask'" :layout-config="layoutConfig" :isFromDashboard='true'></MyTask>
         <component v-else :is="comp"></component>
       </template>
     </CommonDialog>

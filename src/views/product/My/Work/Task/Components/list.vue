@@ -6,6 +6,7 @@
                    :default-expand-all="false"
                    node-key="ID"
                    :data="treeData"
+                   :tree-config='treeConfig'
                    ref="commonTree"
                    @select="onSelect"></common-tree>
     </template>
@@ -244,10 +245,17 @@ export default {
       isChildren: false,
       btnDisable: false,
       sqlParam: {},
-      filterThirdMenu: "MyTask"
+      filterThirdMenu: "MyTask",
+      treeConfig: {
+        'current-node-key': ''
+      }
     }
   },
   props: {
+    isFromDashboard:{
+      type: Boolean,
+      default: false
+    },
     layoutConfig: {
       type: Object,
       default: () => {
@@ -314,6 +322,9 @@ export default {
     this.westTreeParam.showView = 'showView003'
     this.westTreeParam.isChildren = 'false'
     this.westTreeParam.status = this.status
+    if (this.isFromDashboard) {
+      this.westTreeParam.isThisMonthTask = '1'
+    }
     this.provideParams.searchParams = this.westTreeParam
 
     // 检查是否有stateInfo，优先处理stateInfo
@@ -363,7 +374,9 @@ export default {
     }
   },
   mounted () {
-
+    // this.$nextTick(() => {
+    //     console.log(this.$refs.tableRender.$refs,'=====')
+    // })
   },
   methods: {
     showViewChange (val) {
@@ -582,6 +595,9 @@ export default {
         this.asyncComponents = defaultComponents.url ? defaultComponents.url : ''
         this.componentsConfig = defaultComponents
       }
+      if(this.isFromDashboard){
+        this.treeConfig['current-node-key'] = this.treeData[0].ID
+      }
     },
     getFirstChild (data) {
       let result = ''
@@ -680,6 +696,10 @@ export default {
         }
       }
       this.provideParams.searchParams.status = this.status
+      this.provideParams.searchParams.status = this.status
+      if (this.isFromDashboard) {
+        this.provideParams.searchParams.isThisMonthTask = '1'
+      }
     },
     getParamsList (obj, fileName) {
       let list = []
