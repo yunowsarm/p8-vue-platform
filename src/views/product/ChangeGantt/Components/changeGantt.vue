@@ -441,6 +441,7 @@ export default {
       monitorPointDatas: [],
       taskList: [],
       searchForm: {},
+      planEditLock:'-1',
       monitorLockMap: {}, // 标识锁定状态
       // secretGrades: [],
       limitColumns: [], // 标识加锁后不可编辑列定义
@@ -909,6 +910,17 @@ export default {
               tasks: initData,
               links: res.links
             }
+            if (res.monitorLock && res.monitorLock['1020'] !== undefined) {
+                vueThis.planEditLock = res.monitorLock['1020'] // 直接使用1020的值: -1(默认)、0(解锁)、1(加锁)
+                  myGantt.config.readonly = res.monitorLock['1020'] === '1'
+                  if (res.monitorLock['1020'] === '1') {
+                    myGantt.config.readonlyReason = '计划编辑锁定时不允许此操作'
+                  }
+              } else {
+                vueThis.planEditLock = '-1'// 无锁定数据时设为默认状态
+                myGantt.config.readonly = false
+                myGantt.config.readonlyReason = ''
+              }
             if (res.tasks && res.changeTaskInfo && Object.keys(res.changeTaskInfo).length > 0) {
               vueThis.newTaskMap = res.changeTaskInfo
               res.tasks.forEach((task) => {
@@ -936,7 +948,6 @@ export default {
             vueThis.taskMonitorMap = res.taskMonitorMap
             vueThis.changeTaskInfo = res.changeTaskInfo
             myGantt.parse(datas)
-            console.log(myGantt.getTaskByTime())
             vueThis.taskCount = myGantt.getTaskCount()
             myGantt.unselectTask()
 

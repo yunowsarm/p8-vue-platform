@@ -203,7 +203,7 @@ export default {
       return function (btn, ganttName, tasks) {
         // 我的工作--我的任务-计划分解--计划分解页面不可标记责任令和月度计划。
         const createPage = that.vueThis.createPage || ''
-        if (createPage === 'compile' && that.vueThis.planEditLock) {
+        if (that.vueThis.planEditLock === '1') {
           that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '计划编辑锁定时不允许此操作' })
           return true
         }

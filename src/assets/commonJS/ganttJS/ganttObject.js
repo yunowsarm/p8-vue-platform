@@ -864,6 +864,9 @@ GanttObject.performAction = function (actions, ganttObject) {
  * date: 2024/04/03 09:22:18
  */
 GanttObject.getTaskEditable = function (ganttObject, state, vueThis) {
+  // 前置判断 planEditLock
+  if (vueThis.planEditLock === '0') return true
+  if (vueThis.planEditLock === '1') return false
   // 点击列名
   const colName = state.columnName
   // 当前任务
@@ -1639,7 +1642,6 @@ GanttObject.selectCanClear = function (ganttObject) {
           },
           watch: {
             input(val, old) {
-              console.log(val,'=====val');
               document.getElementById('gantt_clearSelect_' + name).value = val
             }
           },
@@ -1687,12 +1689,10 @@ GanttObject.selectCanClear = function (ganttObject) {
           },
           methods: {
             inputChange (value) {
-              console.log(value,'======value');
               document.getElementById('gantt_clearSelect_' + name).value = this.input
             },
             handlerBlur(e) {
                 setTimeout(()=> {
-                console.log(2222);
                   ganttObject.ext.inlineEditors.save();
                 }, 200)
             }
@@ -3271,7 +3271,6 @@ export function progressRefreshCheck(vueThis) {
  * @returns {null|*}
  */
 GanttObject.getGanttSettingGrid = function (ganttName, createPage) {
-  console.log(ganttName, createPage,'====ganttName, createPage');
   const ganttSetting = store.state.user.userSettingAll && store.state.user.userSettingAll.Gantt ? store.state.user.userSettingAll.Gantt : null
   const key = ganttName + '-' + createPage
   if (ganttSetting) {

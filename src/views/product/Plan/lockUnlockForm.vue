@@ -8,6 +8,11 @@
               <el-radio-button v-for="opt in zzOptions" :key="opt.value" :label="opt.value" :value="opt.value">{{ opt.label }}</el-radio-button>
             </el-radio-group>
           </el-form-item>
+          <el-form-item v-if="item.labelText === '计划编辑'" :label="item.labelText" :prop="item.fieldName">
+            <el-radio-group :disabled="taskEditCheck" v-model="formData[item.fieldName]">
+              <el-radio-button v-for="opt in editLockState" :key="opt.value" :label="opt.value" :value="opt.value">{{ opt.label }}</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
           <el-form-item v-else :label="item.labelText" :prop="item.fieldName">
             <el-radio-group :disabled="taskEditCheck" v-if="item.fieldName !== '1008'" v-model="formData[item.fieldName]">
               <el-radio-button v-for="opt in options" :key="opt.value" :label="opt.value" :value="opt.value">{{ opt.label }}</el-radio-button>
@@ -80,6 +85,20 @@ export default {
         {
           label: '加锁全部',
           value: '3'
+        }
+      ],
+      editLockState:[
+        {
+          label: '默认',
+          value: '-1'
+        },
+        {
+          label: '解锁',
+          value: '0'
+        },
+        {
+          label: '加锁',
+          value: '1'
         }
       ],
       options: [
@@ -161,13 +180,12 @@ export default {
         if (res && res.length) {
           that.monitorPoints = res
           res.forEach(function (item, idx) {
-            // TODO:1020为计划编辑  临时隐藏
-            if (item.value !== 'taskEdit' && item.value !== '1020') {
+            if (item.value !== 'taskEdit') {
               const dataSourceItem = {
                 type: 'radioButton',
                 labelText: item.label,
                 fieldName: item.value,
-                colLayout: 'doubleCol'
+                colLayout: item.value !== '1020' ? 'doubleCol' : 'singleCol'
               }
               that.dataSource.push(dataSourceItem)
               that.$set(that.formData, item.value, item.lockStatus)

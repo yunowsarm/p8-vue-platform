@@ -15,7 +15,7 @@ const statusName = {
   '6409': '审批完成',
 }
 // 公共函数，用于返回禁用状态和提示信息
-function createDisableResponse (message) {
+function createDisableResponse(message) {
   return {
     disable: true,
     message: message,
@@ -23,11 +23,13 @@ function createDisableResponse (message) {
 }
 
 // 判断是否能新建下级
-export function isNewChild (ganttName, tasks) {
+export function isNewChild(ganttName, tasks) {
   const task = tasks[0]
-  if (['6405','6406', '6409'].includes(task.managerStatus)) {
+  if (['6405', '6406', '6409'].includes(task.managerStatus)) {
+    const vueThis = store.getters.vueThis
+    if (vueThis.planEditLock === '0') return false
     return createDisableResponse(`任务为${statusName[task.managerStatus]},不可操作`);
-  }else if(task.planType){
+  } else if (task.planType) {
     return createDisableResponse(`当前任务标识是仅叶子节点可用，无法在此创建下级`);
   } else {
     return false;
@@ -35,12 +37,14 @@ export function isNewChild (ganttName, tasks) {
 }
 
 // 判断是否能新建同级
-export function isNewSibling (ganttName, tasks) {
+export function isNewSibling(ganttName, tasks) {
   const ganttObject = GanttObject.getGanttObject(ganttName)
   // 获取父任务
   const parentId = tasks[0].parent
   const parentTask = ganttObject.getTask(parentId)
   if (['6405', '6409'].includes(parentTask.managerStatus)) {
+    const vueThis = store.getters.vueThis
+    if (vueThis.planEditLock === '0') return false
     return createDisableResponse(`父任务为${statusName[parentTask.managerStatus]},不可操作`);
   } else {
     return false;
@@ -48,7 +52,7 @@ export function isNewSibling (ganttName, tasks) {
 }
 
 // 判断是否为变更gantt图
-export function isChangeGantt (ganttName, tasks) {
+export function isChangeGantt(ganttName, tasks) {
   if (ganttName === 'changeGantt') {
     return createDisableResponse(`变更gantt时不允许此操作`);
   } else {
@@ -57,10 +61,10 @@ export function isChangeGantt (ganttName, tasks) {
 }
 
 // 判断是否为编制页面且计划编辑锁定
-export function isCompile (ganttName, tasks) {
+export function isCompile(ganttName, tasks) {
   const vueThis = store.getters.vueThis
   const createPage = vueThis.createPage
-  if (createPage === 'compile' && vueThis.planEditLock) {
+  if (vueThis.planEditLock === '1') {
     return createDisableResponse(`计划编辑锁定时不允许此操作`);
   } else {
     return false;
@@ -68,7 +72,7 @@ export function isCompile (ganttName, tasks) {
 }
 
 // 判断是否有选中的任务
-export function isHasTask (ganttName, tasks) {
+export function isHasTask(ganttName, tasks) {
   if (!ganttName || !tasks || !tasks.length) {
     return createDisableResponse(`请先选择任务`);
   } else {
@@ -77,7 +81,7 @@ export function isHasTask (ganttName, tasks) {
 }
 
 // 判断是否为暂停或禁止状态
-export function isSuspensionOrProhibition (ganttName, tasks) {
+export function isSuspensionOrProhibition(ganttName, tasks) {
   if (tasks.length && checkSwitchType(tasks)) {
     return createDisableResponse(`任务为暂停或禁止状态时不允许此操作`);
   } else {
@@ -86,7 +90,7 @@ export function isSuspensionOrProhibition (ganttName, tasks) {
 }
 
 // 判断是否为分解页面和任务状态
-export function taskStateAndReadonly (ganttName, tasks) {
+export function taskStateAndReadonly(ganttName, tasks) {
   if (tasks.length && tasks[0].managerStatus === '6404') {
     return false;
   } else {
@@ -102,21 +106,23 @@ export function taskStateAndReadonly (ganttName, tasks) {
 }
 
 // 选中任务中包含已下发任务
-export function isHasDeliveredTask (ganttName, tasks) {
+export function isHasDeliveredTask(ganttName, tasks) {
   if (tasks.some(task => task.managerStatus === '6404')) {
+    const vueThis = store.getters.vueThis
+    if (vueThis.planEditLock === '0') return false
     return createDisableResponse(`任务已下发时不允许此操作`);
   }
   return false;
 }
 
 // 判断任务状态是否为协同编制
-export function isWeave (ganttName, tasks) {
+export function isWeave(ganttName, tasks) {
   if (tasks.length === 1 && tasks[0].managerStatus === '6402') {
     return false;
   }
 }
 // 判断任务状态是否为审批完成
-export function isApprovalCompleted (ganttName, tasks) {
+export function isApprovalCompleted(ganttName, tasks) {
   if (tasks.managerStatus === '6409') {
     return createDisableResponse(`任务审批完成时不允许此操作`);
   } else {
@@ -125,7 +131,7 @@ export function isApprovalCompleted (ganttName, tasks) {
 }
 
 // 判断当前是否为只读状态
-export function isReadOnly (ganttName, tasks) {
+export function isReadOnly(ganttName, tasks) {
   const res = checkReadOnly(ganttName)
   if (checkReadOnly(ganttName)) {
     return createDisableResponse(res.readonlyReason);
@@ -134,7 +140,7 @@ export function isReadOnly (ganttName, tasks) {
   }
 }
 // 判断选中任务是非根节点
-export function isNoRoot (ganttName, tasks) {
+export function isNoRoot(ganttName, tasks) {
   if (checkContentRoot(ganttName, tasks)) {
     return createDisableResponse('包含根节点时不允许此操作');
   }
@@ -142,7 +148,7 @@ export function isNoRoot (ganttName, tasks) {
 }
 
 // 选中任务非只读并且符合升级条件
-export function isAllowUpgrades (ganttName, tasks) {
+export function isAllowUpgrades(ganttName, tasks) {
   const checkReadOnlyRes = checkReadOnly(ganttName)
   if (checkReadOnlyRes) {
     return createDisableResponse(checkReadOnlyRes.readonlyReason);
@@ -154,7 +160,7 @@ export function isAllowUpgrades (ganttName, tasks) {
 }
 
 // 选中任务非只读并且符合降级条件
-export function isAllowDowngrade (ganttName, tasks) {
+export function isAllowDowngrade(ganttName, tasks) {
   const canIndentCheckRes = canIndentCheck(ganttName)
   if (canIndentCheckRes.value) {
     return false
@@ -164,7 +170,7 @@ export function isAllowDowngrade (ganttName, tasks) {
 }
 
 // 判断任务状态是否为待下发状态
-export function isToBeDelivered (ganttName, tasks) {
+export function isToBeDelivered(ganttName, tasks) {
   if (createPage === 'decompose' && tasks.length === 1 && tasks[0].managerStatus === '6403') {
     return createDisableResponse(`任务待下发时不允许此操作`);
   } else {
@@ -173,7 +179,7 @@ export function isToBeDelivered (ganttName, tasks) {
 }
 
 // 判断任务是否包含任务标识
-export function isHasProductTask (ganttName, tasks) {
+export function isHasProductTask(ganttName, tasks) {
   if (checkHasProductTask(tasks)) {
     return createDisableResponse(`任务包含任务标识时不允许此操作`);
   } else {
@@ -181,7 +187,7 @@ export function isHasProductTask (ganttName, tasks) {
   }
 }
 // 判断是否包含审批中的任务
-export function isHasApproveTask (ganttName, tasks) {
+export function isHasApproveTask(ganttName, tasks) {
 
   if (checkHasApproveTask(ganttName, tasks)) {
     return createDisableResponse(`审批中的任务不允许此操作`);
@@ -191,7 +197,7 @@ export function isHasApproveTask (ganttName, tasks) {
 }
 
 // 如果是任务分解，非当前人员创建的，只能编辑责任人
-export function noSelfCreate (ganttName, tasks) {
+export function noSelfCreate(ganttName, tasks) {
   const userId = store.getters.userInfo.id
   const ele = tasks.find((task) => {
     return task.createUserId && task.createUserId != userId
@@ -202,7 +208,7 @@ export function noSelfCreate (ganttName, tasks) {
 }
 
 // 判断选中的任务是否只有一个
-export function isSingleTask (ganttName, tasks) {
+export function isSingleTask(ganttName, tasks) {
   if (tasks && tasks.length === 1) {
     return false;
   } else {
@@ -210,7 +216,7 @@ export function isSingleTask (ganttName, tasks) {
   }
 }
 // 选中任务不符合删除条件
-export function isAllowDelete (ganttName, tasks) {
+export function isAllowDelete(ganttName, tasks) {
   const vueThis = store.getters.vueThis
   const canDeleteCheckRes = canDeleteCheck(ganttName, tasks, vueThis)
 
@@ -221,7 +227,7 @@ export function isAllowDelete (ganttName, tasks) {
   }
 }
 // 选中任务的状态为审批驳回或者审批撤销并且任务包含根节点
-export function isApprovalReject (ganttName, tasks) {
+export function isApprovalReject(ganttName, tasks) {
   if (tasks[0].managerStatus === '6407' || tasks[0].managerStatus === '6408') {
     if (checkContentRoot(ganttName, tasks)) {
       return createDisableResponse(`任务包含根节点的任务状态为审批驳回或者审批撤销时不允许此操作`);
@@ -232,7 +238,7 @@ export function isApprovalReject (ganttName, tasks) {
 }
 
 // 判断选中任务是否符合责任人校验规则
-export function isAllowResponsiblePerson (ganttName, tasks) {
+export function isAllowResponsiblePerson(ganttName, tasks) {
 
   const batchOwnerCheckRes = batchOwnerCheck(ganttName, tasks)
   if (batchOwnerCheckRes.value) {
@@ -243,7 +249,7 @@ export function isAllowResponsiblePerson (ganttName, tasks) {
 }
 
 // 判断任务是否可以下发
-export function isAllowIssue (ganttName, tasks) {
+export function isAllowIssue(ganttName, tasks) {
   const { managerStatus, dutyDeptName } = tasks[0];
 
   if (managerStatus === '6403') {
@@ -264,7 +270,7 @@ export function isAllowIssue (ganttName, tasks) {
 
 
 // 判断是否允许撤销
-export function isAllowUndo (ganttName, tasks) {
+export function isAllowUndo(ganttName, tasks) {
   const vueThis = store.getters.vueThis
   const thisGantt = GanttObject.getGanttObject(ganttName);
   const checkReadOnlyRes = checkReadOnly(ganttName)
@@ -288,7 +294,7 @@ export function isAllowUndo (ganttName, tasks) {
 }
 
 // 判断选中节点不包含根节点并且当前gantt为非只读状态
-export function isHadRootAndReadOnly (ganttName, tasks) {
+export function isHadRootAndReadOnly(ganttName, tasks) {
   if (checkContentRoot(ganttName, tasks)) {
     return createDisableResponse(`选中任务包含根节点时不允许此操作`);
   } else if (checkReadOnly(ganttName)) {
@@ -299,7 +305,7 @@ export function isHadRootAndReadOnly (ganttName, tasks) {
 }
 
 // 判断是否允许粘贴
-export function isAllowPaste (ganttName, tasks) {
+export function isAllowPaste(ganttName, tasks) {
   const vueThis = store.getters.vueThis
   const thisGantt = GanttObject.getGanttObject(ganttName)
   if (tasks && tasks.length === 1 && tasks[0].parent && thisGantt.isTaskExists(tasks[0].parent)) {
@@ -307,10 +313,10 @@ export function isAllowPaste (ganttName, tasks) {
     // 6409：完成审批
     // 6406：提交审批
     // 6405：变更中
-    let statusList = [{status: '6409',title: '完成审批'}, {status: '6406',title: '提交审批'}, {status: '6405',title: '变更中'}]
+    let statusList = [{ status: '6409', title: '完成审批' }, { status: '6406', title: '提交审批' }, { status: '6405', title: '变更中' }]
     let parent = statusList.filter(el => el.status == parentTask.managerStatus)
     if (parent && parent.length) {
-      return createDisableResponse(`父任务状态为${parent[0].title}时不可粘贴` );
+      return createDisableResponse(`父任务状态为${parent[0].title}时不可粘贴`);
     }
     // 获取gannt操作限制策略
     const taskStatusLockMap = store.getters.taskStatusLockMap
@@ -331,7 +337,7 @@ export function isAllowPaste (ganttName, tasks) {
 }
 
 // 判断自动/手动排程
-export function isAllowAutoManual (ganttName, tasks) {
+export function isAllowAutoManual(ganttName, tasks) {
   if (autoSchedulingCheck(ganttName)) {
     return createDisableResponse(`任务已完成或编辑锁定时不允许此操作`);
   } else {
@@ -340,8 +346,8 @@ export function isAllowAutoManual (ganttName, tasks) {
 }
 
 // 判断是否允许更改样式
-export function isAllowChangeStyle (ganttName, tasks) {
-  if(isChangeGantt(ganttName).disable) {
+export function isAllowChangeStyle(ganttName, tasks) {
+  if (isChangeGantt(ganttName).disable) {
     return createDisableResponse(isChangeGantt(ganttName).message)
   }
   const isDisableFunCheckRes = isDisableFunCheck(ganttName, tasks, '3')
@@ -357,7 +363,7 @@ export function isAllowChangeStyle (ganttName, tasks) {
 }
 
 // 判断当前视图类型是否为grid
-export function isGridView (ganttName, tasks) {
+export function isGridView(ganttName, tasks) {
   const vueThis = store.getters.vueThis
   if (vueThis.viewType && vueThis.viewType !== 'grid') {
     return false
@@ -365,7 +371,7 @@ export function isGridView (ganttName, tasks) {
   return createDisableResponse(`当前已是`);
 }
 // 判断当前视图类型是否为gantt
-export function isGanttView (ganttName, tasks) {
+export function isGanttView(ganttName, tasks) {
   const vueThis = store.getters.vueThis
   if (vueThis.viewType && vueThis.viewType !== 'gantt') {
     return false
@@ -373,7 +379,7 @@ export function isGanttView (ganttName, tasks) {
   return createDisableResponse(`当前已是`);
 }
 // 判断当前视图类型是否为resource
-export function isResourceView (ganttName, tasks) {
+export function isResourceView(ganttName, tasks) {
   const vueThis = store.getters.vueThis
   if (vueThis.viewType && vueThis.viewType !== 'resource') {
     return false
@@ -382,7 +388,7 @@ export function isResourceView (ganttName, tasks) {
 }
 
 // 判断关键路径
-export function isCriticalPath (ganttName, tasks) {
+export function isCriticalPath(ganttName, tasks) {
   const vueThis = store.getters.vueThis
   if (vueThis.viewType && (vueThis.viewType === 'resource' || vueThis.viewType === 'gantt')) {
     return false
@@ -391,7 +397,7 @@ export function isCriticalPath (ganttName, tasks) {
 }
 
 // 判断是否允许导入
-export function isAllowImport (ganttName, tasks) {
+export function isAllowImport(ganttName, tasks) {
   const isDisableFunCheckRes = isDisableFunCheck(ganttName, tasks, '1')
   if (isDisableFunCheckRes.value) {
     return false
@@ -403,7 +409,7 @@ export function isAllowImport (ganttName, tasks) {
 }
 
 // 判断是否为分解页面
-export function isDecomposePage (ganttName, tasks) {
+export function isDecomposePage(ganttName, tasks) {
   const vueThis = store.getters.vueThis
   if (vueThis.createPage === 'decompose') {
     return createDisableResponse(`任务分解页面不允许此操作`);
@@ -413,7 +419,7 @@ export function isDecomposePage (ganttName, tasks) {
 }
 
 // 判断经验库导入
-export function isExperienceImport (ganttName, tasks) {
+export function isExperienceImport(ganttName, tasks) {
   const ganttObject = GanttObject.getGanttObject(ganttName)
   if (ganttObject && tasks) {
     ganttObject.eachSelectedTask(function (taskId) {
@@ -425,7 +431,7 @@ export function isExperienceImport (ganttName, tasks) {
 }
 
 // 判断详细信息
-export function isDetailInfo (ganttName, tasks) {
+export function isDetailInfo(ganttName, tasks) {
   const vueThis = store.getters.vueThis
   const createPage = vueThis.createPage
   let ganttObject = GanttObject.getGanttObject(ganttName)
@@ -443,7 +449,7 @@ export function isDetailInfo (ganttName, tasks) {
 }
 
 // 判断任务状态为未开始
-export function isNotStart (ganttName, tasks) {
+export function isNotStart(ganttName, tasks) {
   for (let i = 0; tasks.length > i; i++) {
     if (tasks[i] && tasks[i].status === '6020') {
       return createDisableResponse('任务未开始');
@@ -451,8 +457,7 @@ export function isNotStart (ganttName, tasks) {
   }
 }
 // 判断选中的任务是否只变更记录
-export function isChangeHistory (ganttName, tasks) {
-  console.log("🚀 ~ isChangeHistory ~ tasks:", tasks)
+export function isChangeHistory(ganttName, tasks) {
   if (tasks && tasks.length === 1 && tasks[0].changeCount === '0') {
     return createDisableResponse(`无变更记录`);
   }
@@ -462,7 +467,7 @@ export function isChangeHistory (ganttName, tasks) {
  */
 
 // 检测是否为暂停或者禁止
-function checkSwitchType (tasks) {
+function checkSwitchType(tasks) {
   if (tasks.length === 0) {
     return true;
   }
@@ -471,7 +476,7 @@ function checkSwitchType (tasks) {
 }
 
 // 通用按钮禁用条件
-function isDisableFunCheck (ganttName, tasks, checkType) {
+function isDisableFunCheck(ganttName, tasks, checkType) {
   const vueThis = store.getters.vueThis
   // TODO 默认禁用原因未知
   let result = {
@@ -529,7 +534,7 @@ function isDisableFunCheck (ganttName, tasks, checkType) {
 }
 
 // 发布后可控任务可新建下级
-function checkEditTask (ganttName, tasks) {
+function checkEditTask(ganttName, tasks) {
   const vueThis = store.getters.vueThis
   if (ganttName) {
     const ganttObject = GanttObject.getGanttObject(ganttName);
@@ -550,7 +555,7 @@ function checkEditTask (ganttName, tasks) {
 }
 
 // 检测任务是否包含（备料/齐套/生产）/设计标识，则无法新建下级
-function checkHasProductTask (tasks) {
+function checkHasProductTask(tasks) {
   if (tasks.length === 0) {
     return true;
   }
@@ -566,7 +571,9 @@ function checkHasProductTask (tasks) {
  * 检查是否包含审批中任务
  * @param tasks
  */
-function checkHasApproveTask (ganttName, tasks) {
+function checkHasApproveTask(ganttName, tasks) {
+  const vueThis = store.getters.vueThis
+  if (vueThis.planEditLock === '0') return false
   let result = false
   if (ganttName) {
     const ganttObject = GanttObject.getGanttObject(ganttName)
@@ -592,7 +599,7 @@ function checkHasApproveTask (ganttName, tasks) {
  * @param tasks
  * @returns {boolean}
  */
-function outdentCheck (ganttName, tasks) {
+function outdentCheck(ganttName, tasks) {
   let result = true
   if (ganttName) {
     const ganttObject = GanttObject.getGanttObject(ganttName)
@@ -619,7 +626,7 @@ function outdentCheck (ganttName, tasks) {
  * @param ganttName
  * @returns {boolean}
  */
-function canIndentCheck (ganttName) {
+function canIndentCheck(ganttName) {
   let result = {
     value: true,
     msg: ''
@@ -657,6 +664,8 @@ function canIndentCheck (ganttName) {
             msg: '没有上一个同级节点，不可操作'
           }
         } else if (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) == -1) {
+          const vueThis = store.getters.vueThis
+          if (vueThis.planEditLock === '0') return false
           result = {
             value: false,
             msg: `${statusName[task.managerStatus]}不允许操作`
@@ -672,6 +681,8 @@ function canIndentCheck (ganttName) {
             }
           }
           if (editManagerStatus && editManagerStatus.indexOf(preTask.managerStatus) === -1) {
+            const vueThis = store.getters.vueThis
+            if (vueThis.planEditLock === '0') return false
             result = {
               value: false,
               msg: `上一个同级节点为${statusName[preTask.managerStatus]}，不可操作`
@@ -709,9 +720,9 @@ function canIndentCheck (ganttName) {
           // 存在“生产，齐套，备料”标识
           if (preTask.planType) {
             // if (preTask.planType === '3101' || (preTask.planType.indexOf('3103') !== -1 && preTask.planType !== '3103')) {
-              result = {
-                value: false,
-                msg: '上一个同级节点存在任务类型，不可操作'
+            result = {
+              value: false,
+              msg: '上一个同级节点存在任务类型，不可操作'
               // }
             }
           }
@@ -737,7 +748,7 @@ function canIndentCheck (ganttName) {
  * @param ganttName
  * @returns {boolean}
  */
-function autoSchedulingCheck (ganttName) {
+function autoSchedulingCheck(ganttName) {
   let result = false
   const ganttObject = GanttObject.getGanttObject(ganttName)
   // 已完成时不可切换
@@ -765,7 +776,7 @@ function autoSchedulingCheck (ganttName) {
  * @param vueThis
  * @returns {boolean}
  */
-function canDeleteCheck (ganttName, tasks, vueThis) {
+function canDeleteCheck(ganttName, tasks, vueThis) {
   const statusName = {
     6401: '已创建',
     6402: '协同编制',
@@ -853,6 +864,8 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
           return true
         }
         if (editManagerStatus && editManagerStatus.indexOf(selTask.managerStatus) === -1 && indexNo !== 0) {
+          const vueThis = store.getters.vueThis
+          if (vueThis.planEditLock === '0') return false
           result = {
             value: false,
             msg: `所选任务状态为${statusName[selTask.managerStatus]}时,不可删除`
@@ -877,6 +890,8 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
             }
           }
           if (chiManagerStatus && chiManagerStatus.indexOf(task.managerStatus) === -1 && indexNo !== 0) {
+            const vueThis = store.getters.vueThis
+            if (vueThis.planEditLock === '0') return false
             result = {
               value: false,
               msg: `所选任务状态为${statusName[selTask.managerStatus]}时,不可删除`
@@ -890,7 +905,7 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
 }
 
 // 使用同步逻辑判断按钮是否为disable
-function isDisable (checks) {
+function isDisable(checks) {
 
   for (const check of checks) {
     const result = check();
