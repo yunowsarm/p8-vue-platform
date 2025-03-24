@@ -13,6 +13,7 @@
              type="card"
              :closable="isLock"
              @tab-remove="removeTab"
+             @tab-click="handleTabsClick"
              :key="timeKey">
       <template v-for="(item, index) in editableTabs">
         <el-tab-pane :label="item.name"
@@ -43,10 +44,10 @@
                      class="component"
                      :is="hankanbanEdit"
                      @saveTemplate="saveTemplate" />
-          <component v-else
+          <component :key="dateTime"
+                     v-else
                      ref="kanbanView"
                      class="component"
-                     :key="index"
                      :id="''"
                      :code="''"
                      :render-data="[item.deepCopyFormData]"
@@ -96,6 +97,7 @@ export default {
   },
   data () {
     return {
+      dateTime: '',
       isLock: false,
       icon: 'el-icon-lock',
       editableTabs: [{ name: '选项页一' }, { name: '选项页二' }],
@@ -148,7 +150,7 @@ export default {
           const deepCopyWidget = []
           if (el.widgets && el.widgets.length) {
             el.widgets.forEach((el) => {
-              deepCopyWidget.push({...JSON.parse(el.layout), isShow: el.isShow})
+              deepCopyWidget.push({ ...JSON.parse(el.layout), isShow: el.isShow })
             })
           }
           that.editableTabs[index] = {
@@ -200,6 +202,11 @@ export default {
             }
           })
         }
+      }
+    },
+    handleTabsClick (targetName) {
+      if (targetName.name === '主页看板四') {
+        this.dateTime = new Date().getTime()
       }
     },
     removeTab (targetName) {
