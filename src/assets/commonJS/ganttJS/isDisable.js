@@ -530,6 +530,10 @@ function isDisableFunCheck(ganttName, tasks, checkType) {
   } else {
     result.msg = 'gantt加载错误';
   }
+  if(vueThis.planEditLock === '0') {
+    result.value = true;
+    result.msg = '';
+  }
   return result;
 }
 

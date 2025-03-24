@@ -259,9 +259,11 @@ function publicDisable (btn, ganttName, tasks, ganttObject, vueThis) {
   }
   // 包含根节点时，不可选
   if (checkContentRoot(ganttName, tasks)) {
-    return {
-      disable: true,
-      tip: '包含根节点时，不可选'
+    if(!(vueThis.planEditLock === '0' && window.createPage === 'decompose')){
+      return {
+        disable: true,
+        tip: '包含根节点时，不可选'
+      }
     }
   }
   // 任务的readonly属性为true时，不可操作

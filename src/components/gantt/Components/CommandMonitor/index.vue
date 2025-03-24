@@ -303,8 +303,10 @@ export default {
           if (tasks && tasks.length > 0) {
             // 包含根节点时，不可选
             if (checkContentRoot(ganttName, tasks)) {
-              that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '包含根节点时，不可选' })
-              return true
+              if(!(that.vueThis.planEditLock === '0' && window.createPage === 'decompose')){
+                that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '包含根节点时，不可选' })
+                return true
+              }
             }
             // 任务的readonly属性为true时，不可操作
             const res = checkTaskReadonly(ganttName, tasks)
