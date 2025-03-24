@@ -157,7 +157,7 @@ export default {
         },
         series: [
           {
-            name: 'Access From',
+            name: '',
             type: 'pie',
             radius: ['40%', '70%'],
             avoidLabelOverlap: false,
