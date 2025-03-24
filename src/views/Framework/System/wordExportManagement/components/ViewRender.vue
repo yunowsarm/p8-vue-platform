@@ -10,7 +10,7 @@
     @handle-cancel="close"
     @handle-ok="handleOk">
     <template #dialog>
-      <el-form :inline="true">
+      <el-form :inline="true" label-width="100px">
         <el-form-item label="数据视图">
           <el-select
             v-model="sqlid"
@@ -150,5 +150,9 @@ export default {
 .view-content-body {
   display: block;
   margin: 8px;
+}
+
+::v-deep .dialogBody{
+  padding: 20px;
 }
 </style>
