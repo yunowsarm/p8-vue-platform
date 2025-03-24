@@ -1,6 +1,7 @@
 <template>
   <div>
-    <FullCalendar style="width: 100%;margin: auto"
+    <FullCalendar :key="dateTime"
+                  style="width: 100%;min-height: 750px; max-height: 750px; overflow: auto;"
                   :options="calendarOptions" />
     <common-dialog v-if="visibleDrawerOther"
                    :title="drawerTitle"
@@ -37,6 +38,8 @@ export default {
     FullCalendar,
     CommonDialog
   },
+  props: {
+  },
   data () {
     return {
       tableCode: 'calendarDrilldownList',
@@ -47,6 +50,8 @@ export default {
       dialogConfig: {
         modal: true
       },
+      dateTime: '',
+      hasWarning: false,
       dialogWidth: '80%',
       dialogHeight: 720,
       visibleDrawerOther: false,
@@ -64,7 +69,6 @@ export default {
         events: [],
         dayMaxEvents: 3, // 每天最多显示3个事件，超过则显示"+更多"
         dayCellDidMount: (arg) => {
-          // console.log("1111111111111111111111", arg)
           const warningDates = [
             {
               date: new Date(Date.now() - 86400000).toISOString().split('T')[0]
@@ -72,8 +76,7 @@ export default {
           ];
           const currentDate = arg.date.toISOString().split('T')[0];
           const warningInfo = warningDates.find(item => item.date === currentDate);
-
-          if (warningInfo) {
+          if (warningInfo && this.hasWarning) {
             const warningIcon = document.createElement('div');
             warningIcon.className = 'cell-warning-icon';
             warningIcon.onclick = (e) => {
@@ -134,9 +137,8 @@ export default {
       }
     }
     this.$api['formGenerator.tableApply'](params).then(res => {
-      console.log("🚀 ~ mounted ~ res:", res.records)
-
       this.calendarOptions.events = res.records.map(item => {
+        this.hasWarning = item.IS_APPROACHING_DATE === '1' ? true : false
         return {
           title: item.TASK_NAME,
           start: item.PLAN_BEGIN_DATE,
@@ -145,6 +147,7 @@ export default {
           hasWarning: item.IS_APPROACHING_DATE === '1' ? true : false
         }
       })
+      this.dateTime = new Date().getTime()
     })
   },
   methods: {
