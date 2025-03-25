@@ -18,7 +18,7 @@ const suspendIcon = '<i class="element_icon el-icon-error" style="color:#ff0000;
  * @author fukai
  * @date 2020/5/22 12:00
  */
-export function planGantt (ganttName, vueThis) {
+export function planGantt(ganttName, vueThis) {
   // 获取gantt对象
   const ganttObject = GanttObject.getGanttObject(ganttName)
   // 单元格键盘导航
@@ -124,7 +124,7 @@ export function planGantt (ganttName, vueThis) {
                       vueThis.fullscreen = false
                     }
                   })
-                  .catch(() => {})
+                  .catch(() => { })
               }
               return { action: 'ok' }
             } else if (res === 'false') {
@@ -199,7 +199,7 @@ export function planGantt (ganttName, vueThis) {
     }
   })
   // 事件绑定
-  Gantt.setControlTime = function setControlTime (monitorId, monitorName, taskId) {
+  Gantt.setControlTime = function setControlTime(monitorId, monitorName, taskId) {
     const task = ganttObject.getTask(taskId)
     const monitorLockMap = vueThis.monitorLockMap
     // 加锁逻辑控制
@@ -212,7 +212,7 @@ export function planGantt (ganttName, vueThis) {
     }
   }
   // 表头查询值绑定
-  Gantt.searchColumnsChange = function searchColumnsChange (name, value, searchType, eleInstance) {
+  Gantt.searchColumnsChange = function searchColumnsChange(name, value, searchType, eleInstance) {
     const customComp = ['select', 'date', 'input']
     if (customComp.indexOf(searchType) < 0) {
       document.getElementById(name + searchType).setAttribute('value', value)
@@ -238,7 +238,7 @@ export function planGantt (ganttName, vueThis) {
     vueThis.searchIds = []
     ganttObject.render()
   }
-  Gantt.taskProgressDetails = function taskProgressDetails (taskId) {
+  Gantt.taskProgressDetails = function taskProgressDetails(taskId) {
     if (vueThis.createPage === 'compile' || vueThis.createPage === 'decompose') {
       vueThis.showTaskProgressDialog(taskId)
     }
@@ -291,11 +291,11 @@ export function planGantt (ganttName, vueThis) {
     task.notes = task.notes ? task.notes : ''
     task.evaluation = task.evaluation ? task.evaluation : ''
     task.combinationName = task.combinationName ? task.combinationName : ''
-      const target = e.target || e.srcElement;
-      if (target && target.classList[0] === 'gantt_tree_icon') {
-        const task = ganttObject.getTask(id)
-        vueThis.addfoldState(task)
-      }
+    const target = e.target || e.srcElement;
+    if (target && target.classList[0] === 'gantt_tree_icon') {
+      const task = ganttObject.getTask(id)
+      vueThis.addfoldState(task)
+    }
     if (task.switchType === '9010' || task.switchType === '9020') {
       return false
     }
@@ -303,7 +303,7 @@ export function planGantt (ganttName, vueThis) {
       return true
     }
     const fieldName1 = parentNode.getAttribute('data-column-name')
-    if (task && task.managerStatus && (task.managerStatus === '6404' || task.managerStatus === '6407')) {
+    if (vueThis.planEditLock !== '0' && task && task.managerStatus && (task.managerStatus === '6404' || task.managerStatus === '6407')) {
       return false
     }
     if (ganttObject.isTaskExists(id) && parentNode) {
@@ -311,7 +311,7 @@ export function planGantt (ganttName, vueThis) {
       const taskStatusLockMap = store.getters.taskStatusLockMap
       const editManagerStatus = taskStatusLockMap[task.status]
       // 只读gantt、已完成、变更中、提交审批、根节点不可点击
-      if (ganttObject.config.readonly || ganttObject.getGlobalTaskIndex(id) === 0 || (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1)) {
+      if (vueThis.planEditLock !== '0' && (ganttObject.config.readonly || ganttObject.getGlobalTaskIndex(id) === 0 || (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1))) {
         return false
       }
       const monitorLockMap = vueThis.monitorLockMap
@@ -334,47 +334,41 @@ export function planGantt (ganttName, vueThis) {
             }
           }
           switch (fieldName) {
+            // ... existing code ...
             case 'owner_id':
-              if (vueThis.createPage === 'decompose') {
-                if (batchOwnerCheck(ganttName)) {
-                  vueThis.startTaskId = id
-                  vueThis.endTaskId = id
-                  // 属性gantt资源数据，满足团队角色动态修改
-                  vueThis.$api['planGanttManager.loadPlanGanttResourceData']({
-                    planInfoId: vueThis.planInfoId
-                  })
-                    .then(function (res) {
-                      ganttObject.$resourcesStore.parse(res)
-                      vueThis.selectTaskOwnerId = task.owner_id
-                      vueThis.resourceSelectVisible = true
-                    })
-                    .catch(function (error) {
-                      console.error(error, 'error')
-                    })
-                }
-                break
-              } else {
-                if (task.managerStatus !== '6404') {
-                  if (batchOwnerCheck(ganttName)) {
-                    vueThis.startTaskId = id
-                    vueThis.endTaskId = id
-                    // 属性gantt资源数据，满足团队角色动态修改
-                    vueThis.$api['planGanttManager.loadPlanGanttResourceData']({
-                      planInfoId: vueThis.planInfoId
-                    })
-                      .then(function (res) {
-                        ganttObject.$resourcesStore.parse(res)
-                        vueThis.selectTaskOwnerId = task.owner_id
-                        vueThis.resourceSelectVisible = true
-                      })
-                      .catch(function (error) {
-                        console.error(error, 'error')
-                      })
-                  }
-                  break
-                }
+              // 如果是编辑锁定状态,直接返回false
+              if (vueThis.planEditLock === '1') {
+                return false
               }
+
+              // 检查是否允许编辑责任人
+              const canEdit = (vueThis.createPage === 'decompose') ?
+                (vueThis.planEditLock === '0' || batchOwnerCheck(ganttName)) :
+                ((vueThis.planEditLock === '0' && ganttObject.getGlobalTaskIndex(id) !== 0) ||
+                  (task.managerStatus !== '6404' && batchOwnerCheck(ganttName)))
+
+              if (!canEdit) {
+                return false
+              }
+
+              // 设置任务ID
+              vueThis.startTaskId = id
+              vueThis.endTaskId = id
+
+              // 加载资源数据
+              vueThis.$api['planGanttManager.loadPlanGanttResourceData']({
+                planInfoId: vueThis.planInfoId
+              })
+                .then(function (res) {
+                  ganttObject.$resourcesStore.parse(res)
+                  vueThis.selectTaskOwnerId = task.owner_id
+                  vueThis.resourceSelectVisible = true
+                })
+                .catch(function (error) {
+                  console.error(error, 'error')
+                })
               break
+            // ... existing code ...
           }
         }
       }
@@ -518,7 +512,7 @@ export function planGantt (ganttName, vueThis) {
  * @param vueThis
  * @returns {({template: template, name: string, width: number, resize: boolean, label: string, align: string}|{template: template, name: string, width: number, resize: boolean, label: string, align: string}|{template: (function(*=): string), name: string, resize: boolean, label: string, align: string, min_width: number}|{template: (function(*): string), name: string, width: number, resize: boolean, label: string, align: string}|{template: (function(*=): string), name: string, resize: boolean, label: string, align: string, min_width: number})[]}
  */
-export function getGanttColumns (ganttObject, vueThis) {
+export function getGanttColumns(ganttObject, vueThis) {
   ganttObject.serverList('yesOron', [
     { key: '1', label: '是' },
     { key: '0', label: '否' }
@@ -575,7 +569,7 @@ export function getGanttColumns (ganttObject, vueThis) {
   // 加载编辑器
   const editors = GanttObject.editors(ganttObject, formatter, linksFormatter)
 
-  function checkEdit () {
+  function checkEdit() {
     if (vueThis.pageName === 'planMonitor') {
       return false
     } else {
@@ -844,7 +838,7 @@ export function getGanttColumns (ganttObject, vueThis) {
         // if (ganttObject.getGlobalTaskIndex(task.id) === 0 && vueThis.$route.name == 'Planning') {
         //   return '自动'
         // } else {
-          return task.autoScheduling === '1' ? '自动' : '手动'
+        return task.autoScheduling === '1' ? '自动' : '手动'
         // }
       }
     },
@@ -957,11 +951,11 @@ export function getGanttColumns (ganttObject, vueThis) {
                       task.id +
                       '\')><i class="p8 ' +
                       icon +
-                      '" style="cursor:pointer; color: '+ point.color +'" title="' +
+                      '" style="cursor:pointer; color: ' + point.color + '" title="' +
                       point.title +
                       '"></i></span>'
                   } else {
-                    html += '<i class="p8 ' + icon + '" title="' + point.title + '" " style="color: '+ point.color +'"></i>'
+                    html += '<i class="p8 ' + icon + '" title="' + point.title + '" " style="color: ' + point.color + '"></i>'
                   }
                 }
                 return true
@@ -1125,4 +1119,4 @@ export function getGanttColumns (ganttObject, vueThis) {
   ]
 }
 
-export function planMonitorAdd (ganttObject, vueThis) { }
+export function planMonitorAdd(ganttObject, vueThis) { }
