@@ -1998,12 +1998,12 @@ GanttObject.unMoveTask = function (vueThis, ganttObject) {
       return false
     } else {
       ganttObject.getTask(id).updateType = 'drag'
-      vueThis.fullscreen = true
-      vueThis.fullscreenLoading = vueThis.$loading({
-        lock: true,
-        text: 'Loading',
-        spinner: 'el-icon-loading'
-      })
+      // vueThis.fullscreen = true
+      // vueThis.fullscreenLoading = vueThis.$loading({
+      //   lock: true,
+      //   text: 'Loading',
+      //   spinner: 'el-icon-loading'
+      // })
       return true
     }
   })
