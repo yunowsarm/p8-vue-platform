@@ -54,7 +54,7 @@
   }
 
   .scroll-area {
-    height: 100%;
+    height: calc(100% - 30px);
     position: relative;
     box-sizing: border-box;
   }
