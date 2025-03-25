@@ -4,6 +4,7 @@
     <template #west>
       <common-tree :default-expanded-keys="defaultExpandedKeys"
                    :default-expand-all="false"
+                   :init-emit-select="false"
                    node-key="ID"
                    :data="treeData"
                    :tree-config='treeConfig'
@@ -274,6 +275,10 @@ export default {
       default: () => {
         return ['6050', '6020']
       }
+    },
+    tabsName: {
+      type: String,
+      default: ''
     }
   },
   components: {
@@ -385,7 +390,7 @@ export default {
       let sqlParam = {
         isChildren: '',
         showView: '',
-        tabsName: ''
+        tabsName: this.tabsName
       };
       for (let key in sqlParam) {
         if (tableParam[key] && tableParam[key].value !== undefined) {
@@ -408,7 +413,7 @@ export default {
       let sqlParam = {
         isChildren: '',
         showView: '',
-        tabsName: ''
+        tabsName: this.tabsName
       };
       for (let key in sqlParam) {
         if (tableParam[key] && tableParam[key].value !== undefined) {
@@ -596,9 +601,7 @@ export default {
         this.asyncComponents = defaultComponents.url ? defaultComponents.url : ''
         this.componentsConfig = defaultComponents
       }
-      if(this.isFromDashboard){
-        this.treeConfig['current-node-key'] = this.treeData[0].ID
-      }
+      this.treeConfig['current-node-key'] = this.treeData[0].ID
     },
     getFirstChild (data) {
       let result = ''
@@ -621,14 +624,14 @@ export default {
       // 判断节点是否真的发生变化
       const currentNodeId = obj.id || obj.ID;
       const previousNodeId = this.previousSelectedNode?.id || this.previousSelectedNode?.ID;
-      
+
       if (currentNodeId === previousNodeId) {
         return;
       }
-      
+
       // 更新previousSelectedNode
       this.previousSelectedNode = obj;
-      
+
       // 原有的onSelect逻辑
       if (obj.id ?? obj.ID == '0') {
         return
@@ -670,7 +673,7 @@ export default {
           sqlParam = {
             isChildren: '',
             showView: '',
-            tabsName: ''
+            tabsName: this.tabsName
           };
           for (let key in sqlParam) {
             if (tableParam[key] && tableParam[key].value !== undefined) {
@@ -681,7 +684,7 @@ export default {
           sqlParam = {
             isChildren: false,
             showView: 'showView003',
-            tabsName: '已发布'
+            tabsName: this.tabsName
           };
         }
         this.sqlParam = { ...sqlParam, ...this.sqlParam }

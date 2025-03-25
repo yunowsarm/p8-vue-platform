@@ -1,33 +1,33 @@
 <template>
-  <div>
-    <form-list labelWidth="100px"
-               ref="form"
-               :dataSource="dataSource"
-               :form="formData"
-               :api="saveApi"
-               :is-custom-validate="isCustomValidate"
-               @custom-validate="customValidate"
-               @saved="saved"
-               @rendered="rendered">
-      <template #outputRequest>
-        <div class="edit-outputdata-view">
-          <div class="title">&nbsp;&nbsp;输出要求 </div>
-          <ul class="file-list">
-            <li v-for="(item) in outputRequest" :key="item.descriptionId">
-              <p>输出要求：{{item.descriptionStr}}</p>
-              <p>输出类型：{{item.outPutTypeDisplay}}</p>
-              <p>上传附件：<span class="filename" @click="downloadOutputRequsetFile(item)">{{ item.attFileName }}</span></p>
-            </li>
-          </ul>
-        </div>
-      </template>
-      <template #outputIo>
-        <div class="edit-outputIo-view">
-          <div class="title">输出物 </div>
-        </div>
-      </template>
-    </form-list>
-  </div>
+  <form-list labelWidth="100px"
+             ref="form"
+             :dataSource="dataSource"
+             :form="formData"
+             :api="saveApi"
+             :is-custom-validate="isCustomValidate"
+             @custom-validate="customValidate"
+             @saved="saved"
+             @rendered="rendered">
+    <template #outputRequest>
+      <div class="edit-outputdata-view">
+        <div class="title">&nbsp;&nbsp;输出要求 </div>
+        <ul class="file-list">
+          <li v-for="(item) in outputRequest"
+              :key="item.descriptionId">
+            <p>输出要求：{{item.descriptionStr}}</p>
+            <p>输出类型：{{item.outPutTypeDisplay}}</p>
+            <p>上传附件：<span class="filename"
+                    @click="downloadOutputRequsetFile(item)">{{ item.attFileName }}</span></p>
+          </li>
+        </ul>
+      </div>
+    </template>
+    <template #outputIo>
+      <div class="edit-outputIo-view">
+        <div class="title">输出物 </div>
+      </div>
+    </template>
+  </form-list>
 </template>
 <script>
 import { P8Form as FormList } from 'p8-components-ui'

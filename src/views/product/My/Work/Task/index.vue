@@ -31,6 +31,7 @@
                 :kanban-config="componentsConfig"
                 :west-tree-param="provideParams.searchParams"
                 :configParmars="configParmars"
+                :tabsName="activeName"
                 :status="status"
                 v-bind="$attrs"
                 v-on="$listeners"
