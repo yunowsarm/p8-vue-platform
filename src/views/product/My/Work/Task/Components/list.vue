@@ -248,7 +248,8 @@ export default {
       filterThirdMenu: "MyTask",
       treeConfig: {
         'current-node-key': ''
-      }
+      },
+      previousSelectedNode: null
     }
   },
   props: {
@@ -617,6 +618,18 @@ export default {
       this.$emit('close')
     },
     onSelect (obj) {
+      // 判断节点是否真的发生变化
+      const currentNodeId = obj.id || obj.ID;
+      const previousNodeId = this.previousSelectedNode?.id || this.previousSelectedNode?.ID;
+      
+      if (currentNodeId === previousNodeId) {
+        return;
+      }
+      
+      // 更新previousSelectedNode
+      this.previousSelectedNode = obj;
+      
+      // 原有的onSelect逻辑
       if (obj.id ?? obj.ID == '0') {
         return
       }
