@@ -92,7 +92,7 @@ export default {
             title: '序号',
             type: 'index',
             width: '50',
-            align: 'left',
+            align: 'center',
             headerAlign: 'left'
           },
           {

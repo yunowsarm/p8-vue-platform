@@ -39,6 +39,7 @@ import { calculateRemainingDays } from '@/utils/common'
 const columns = [
   {
     title: '序号',
+    align: 'center',
     type: 'index'
   },
   {

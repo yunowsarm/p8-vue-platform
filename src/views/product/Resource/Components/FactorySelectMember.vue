@@ -109,6 +109,7 @@ export default {
       },
       {
         title: '序号',
+        align: 'center',
         type: 'index'
       },
       {

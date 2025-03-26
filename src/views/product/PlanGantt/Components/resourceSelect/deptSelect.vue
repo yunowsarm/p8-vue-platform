@@ -1,17 +1,16 @@
 <template>
-  <P8VxeTable
-    ref="table"
-    :special-rote-name="roteName"
-    :comp="comp"
-    :columns="columns"
-    :customHeight="customHeight"
-    :table-config="tableConfig"
-    :row-config="{ isHover: true }"
-    :params="queryParam"
-    :pagination="false"
-     @selection-change="radioChangeEvent"
-    :api="tableApi"
-    :tree-config="treeConfig">
+  <P8VxeTable ref="table"
+              :special-rote-name="roteName"
+              :comp="comp"
+              :columns="columns"
+              :customHeight="customHeight"
+              :table-config="tableConfig"
+              :row-config="{ isHover: true }"
+              :params="queryParam"
+              :pagination="false"
+              @selection-change="radioChangeEvent"
+              :api="tableApi"
+              :tree-config="treeConfig">
   </P8VxeTable>
 </template>
 <script>
@@ -43,7 +42,7 @@ export default {
           title: '序号',
           type: 'index',
           width: '100',
-          align: 'left',
+          align: 'center',
           headerAlign: 'left'
         },
         {
@@ -59,11 +58,11 @@ export default {
       deptData: []
     }
   },
-  created() {
+  created () {
 
   },
   methods: {
-    radioChangeEvent(row) {
+    radioChangeEvent (row) {
       this.$emit('deptChange', row[0])
 
     }
