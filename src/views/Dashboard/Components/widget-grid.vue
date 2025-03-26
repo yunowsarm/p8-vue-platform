@@ -255,7 +255,7 @@ import dynamicLink from './dynamic-link.vue'
 import renderView from "@/views/Framework/ComponentsMananger/Kanban/Components/renderView"
 import tableRenderVue from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
 import AntvView from '@/views/Framework/ComponentsMananger/Kanban/Components/AntvView'
-import kanbanView from '../kanbanView.vue'
+import kanbanView from '../kanbanViewPreview.vue'
 export default {
   name: 'Widgetgrid',
   provide () {
