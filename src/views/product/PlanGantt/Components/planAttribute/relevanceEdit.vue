@@ -60,6 +60,7 @@ export default {
         {
           title: '序号',
           type: 'index',
+          align: 'center',
           width: '60px'
         },
         {

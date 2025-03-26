@@ -45,7 +45,7 @@ const columns = [
   {
     title: '序号',
     type: 'index',
-    align: 'left',
+    align: 'center',
     headerAlign: 'left',
     width: '50'
   },

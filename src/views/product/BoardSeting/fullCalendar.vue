@@ -14,11 +14,23 @@
       <template #dialog>
         <P8TableRender ref="tableRender"
                        class="planLayout"
-                       :tableRefresh='tableRefresh'
                        :code="tableCode"
                        :reportParam="reportParam"
                        :west-tree-param="provideParams.searchParams">
         </P8TableRender>
+      </template>
+    </common-dialog>
+    <common-dialog v-if="visibleDrawerTodo"
+                   title="待办事项执行"
+                   :visible="visibleDrawerTodo"
+                   :dialog-config="dialogConfig"
+                   :show-handle-btn="false"
+                   :dialog-height="dialogHeight"
+                   :width="dialogWidth"
+                   @close="onEditResourcesCloseTodo">
+      <template #dialog>
+        <TodoList ref="todoList"
+                  :row="row"></TodoList>
       </template>
     </common-dialog>
   </div>
@@ -33,10 +45,12 @@ import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
 import zhCnLocale from '@fullcalendar/core/locales/zh-cn'; // 引入中文语言包
 import { P8Dialog as CommonDialog } from 'p8-components-ui'
+import TodoList from '@/views/Framework/System/TodoList/index'
 export default {
   components: {
     FullCalendar,
-    CommonDialog
+    CommonDialog,
+    TodoList
   },
   props: {
   },
@@ -55,6 +69,8 @@ export default {
       dialogWidth: '80%',
       dialogHeight: 720,
       visibleDrawerOther: false,
+      visibleDrawerTodo: false,
+      row: [],
       drawerTitle: '我的任务',
       calendarOptions: {
         plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin],
@@ -65,7 +81,6 @@ export default {
           center: 'title',
           right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
         },
-        initialDate: '2025-03-12',
         events: [],
         dayMaxEvents: 3, // 每天最多显示3个事件，超过则显示"+更多"
         dayCellDidMount: (arg) => {
@@ -87,29 +102,34 @@ export default {
           }
         },
         // 确保事件可以被点击
-        eventClick: function (info) {
+        eventClick: (info) => {
           // 事件点击处理
-          console.log('Event clicked:', info.event);
-          const stateInfo = {
-            "taskInfo": {
-              "taskId": info.event.id,
-              "thirdMenuParam": {
-                "MANAGERSTATUS": "6404",
-                "EXECUTESTATE": "1070",
-                "TASKID": info.event.id,
-                "currentRoute": "/MyTask/MyTask/latest",
-                "createPage": "decompose",
-                "currentPage": "normal",
-                "pageType": "view"
-              }
-            },
+          console.log('Event clicked:', info);
+          if (info.event._def.extendedProps.type === 'task') {
+            const stateInfo = {
+              "taskInfo": {
+                "taskId": info.event.id,
+                "thirdMenuParam": {
+                  "MANAGERSTATUS": "6404",
+                  "EXECUTESTATE": "1070",
+                  "TASKID": info.event.id,
+                  "currentRoute": "/MyTask/MyTask/latest",
+                  "createPage": "decompose",
+                  "currentPage": "normal",
+                  "pageType": "view"
+                }
+              },
+            }
+            // 如果是从其他页面打开新窗口，将状态存储到 sessionStorage
+            sessionStorage.setItem('stateInfo', JSON.stringify(stateInfo))
+            // 修改为哈希路由方式打开新窗口
+            const baseUrl = window.location.origin + window.location.pathname
+            const targetUrl = `${baseUrl}#/MyTask/MyTask/latest`
+            window.open(targetUrl, '_blank')
+          } else {
+            this.row = [{ ID: info.event.id }]
+            this.visibleDrawerTodo = true
           }
-          // 如果是从其他页面打开新窗口，将状态存储到 sessionStorage
-          sessionStorage.setItem('stateInfo', JSON.stringify(stateInfo))
-          // 修改为哈希路由方式打开新窗口
-          const baseUrl = window.location.origin + window.location.pathname
-          const targetUrl = `${baseUrl}#/MyTask/MyTask/latest`
-          window.open(targetUrl, '_blank')
         },
         // dateClick: this.handleDateClick
       }
@@ -144,6 +164,7 @@ export default {
           start: item.PLAN_BEGIN_DATE,
           end: item.PLAN_END_DATE,
           id: item.TASK_ID,
+          type: item.TYPE,
           hasWarning: item.IS_APPROACHING_DATE === '1' ? true : false
         }
       })
@@ -158,11 +179,17 @@ export default {
     onEditResourcesCloseOther () {
       this.visibleDrawerOther = false
     },
+    onEditResourcesCloseTodo () {
+      this.visibleDrawerTodo = false
+    },
   }
 }
 </script>
 
 <style>
+.fc .fc-daygrid-day-frame {
+  height: 100px !important;
+}
 .repeating-event {
   background-color: #3788d8;
   color: white;

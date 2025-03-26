@@ -172,6 +172,7 @@ export default {
         {
           title: '序号',
           type: 'index',
+          align: 'center',
           headeralign: 'center',
           width: '60px'
         }, {
