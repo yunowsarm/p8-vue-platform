@@ -2,7 +2,7 @@
   <P8TableRender ref="tableRender"
                  class="planLayout"
                  :code="tableCode"
-                 :reportParam="reportParam"
+                 :reportParam="computedReportParam"
                  :west-tree-param="provideParams.searchParams">
     <template #FILE_NAME="{scope}">
       <span class="underline"
@@ -17,22 +17,32 @@ export default {
   props: {
     drillParam: {
       type: Object
+    },
+    reportParam:{
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data () {
     return {
       tableCode: 'documentList',
-      reportParam: {
-        outPutType: this.drillParam.outPutType ? this.drillParam.outPutType.valeue : null
-      },
       provideParams: {
         searchParams: {}
       }
     }
   },
+  computed: {
+    computedReportParam() {
+      return {
+        ...this.reportParam,
+        outPutType: this.drillParam?.outPutType?.valeue || null
+      }
+    }
+  },
   components: {
   },
-  computed: {},
   beforeMount () { },
   mounted () { },
   destroyed () {
