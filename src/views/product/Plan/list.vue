@@ -18,7 +18,12 @@
                      :west-tree-param="provideParams.searchParams"
                      @refresh="init()">
         <template #status="{scope}">
-          <span v-html="getIcon(scope.row)"></span>
+          <el-tooltip effect="dark"
+                      :content="getIconTitle(scope.row)"
+                      :disabled="$store.getters.baseConfig.toolbarTextDisplay === '1'"
+                      placement="top">
+            <span v-html="getIcon(scope.row)"></span>
+          </el-tooltip>
         </template>
         <template #planName="{scope}">
           <div v-if="scope.row.WHOLEDESCRIBEID"
@@ -335,6 +340,20 @@ export default {
       }
       getData(treeList)
       return arr
+    },
+
+    getIconTitle (row) {
+      let str = ''
+      let el = this.manageStatus[row.MANAGESTATUS]
+      if (row.MANAGESTATUS && el && el.icon) {
+        str = el.meaning
+      } else {
+        let item = this.executeState[row.EXECUTESTATE]
+        if (item && item.icon) {
+          str = item.meaning
+        }
+      }
+      return str
     },
     getIcon (row) {
       let str = ''
