@@ -1751,8 +1751,46 @@ GanttObject.selectCanClear = function (ganttObject) {
  * @date 2020/5/13 14:21
  */
 GanttObject.editors = function (ganttObject, formatter, linksFormatter) {
+  ganttObject.config.editor_types.custom_text = {
+    show: function(id, column, config, placeholder) {
+      const html = "<div style='width:100%'><input type='text' style='width:100%'></div>";
+      placeholder.innerHTML = html;
+    },
+    hide: function() {},
+    set_value: function(value, id, column, node) {
+      this.get_input(node).value = value || "";
+    },
+    get_value: function(id, column, node) {
+      return this.get_input(node).value;
+    },
+    is_changed: function(value, id, column, node) {
+      return this.get_input(node).value !== value;
+    },
+    is_valid: function(value, id, column, node) {
+      return true;
+    },
+    get_input: function(node) {
+      return node.querySelector("input");
+    },
+    focus: function(node) {
+      const input = this.get_input(node);
+      if (!input) return;
+      if (input.focus) input.focus();
+      if(input.value === "新任务") {
+        input.select();
+      }
+    }
+  };
   return {
-    text: { type: 'text', map_to: 'name' },
+    text: {
+      type: 'custom_text',
+      map_to: 'name',
+      focus: function(node) {
+        const input = node.querySelector('input')
+        if (!input) return
+        if (input.focus) input.focus()
+      }
+    },
     achievements: { type: 'number', map_to: 'achievements' },
     proportion: { type: 'number', map_to: 'proportion' },
     taskProjectName: { type: 'text', map_to: 'taskProjectName' },
