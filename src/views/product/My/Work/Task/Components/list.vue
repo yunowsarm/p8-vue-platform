@@ -51,7 +51,7 @@
                 @click="drillCol(scope, thirdMenuData)">{{ scope.row.NAME }} </span>
           <span v-else>{{ scope.row.NAME }}</span>
         </template>
-        <template #MENU="{ scope }">
+        <template v-if='!isFromDashboard' #MENU="{ scope }">
           <div v-if="scope.row.USERID === userId">
             <el-dropdown :hide-on-click="false">
               <span class="el-dropdown-link">
