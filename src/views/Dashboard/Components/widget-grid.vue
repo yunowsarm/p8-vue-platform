@@ -224,7 +224,7 @@
                        :is-show="isLayoutReady"
                        :data="item"
                        :ref="`conten${item.slot}`"
-                       :key="renderTime + item.slot"></dynamicLink>
+                       :key="dynamicRenderTime + item.slot"></dynamicLink>
           <render-view v-else-if="item.component && item.component.functionalCategory === '2'"
                        :is-show="isLayoutReady"
                        :app-config="item.component"
@@ -326,6 +326,7 @@ export default {
       widgetList: [],
       isLayoutReady: false,
       renderTime: new Date().getTime(),
+      dynamicRenderTime: new Date().getTime(),
       addWidgetVisible: false,
       addTemplateVisible: false,
       previewVisible: false,
@@ -417,9 +418,7 @@ export default {
     },
     // 放大
     onFullscreen (booleanParams, params) {
-      // setTimeout(() => {
-      //   this.$refs['conten' + params.slot][0].reload()
-      // }, 300)
+      this.dynamicRenderTime = new Date().getTime()
     },
     // 重新渲染
     renderConten () {
