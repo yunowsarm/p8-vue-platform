@@ -116,6 +116,16 @@
                 </el-form-item>
               </el-col>
             </el-row>
+            <el-row :gutter="0">
+              <el-col :span="12">
+                <el-form-item label="隐藏放大">
+                  <el-switch v-model="WidgetForm.magnify"
+                             active-color="#13ce66"
+                             inactive-color="#ff4949">
+                  </el-switch>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-form>
         </template>
         <template #cs-footer>
@@ -204,10 +214,12 @@
                      v-bind="item"
                      :widget="item"
                      :is-design="isDesign"
+                     :fullscreen="!item.magnify"
                      :style="item.styleObject"
                      @widget-resize="onWidgetResize"
                      @on-fullscreen="onFullscreen">
-          <div class="noPermission" v-if="!item.isShow"><span class="text">安全管理员未授权您使用该组件的权限，请与安全管理员联系获取。</span></div>
+          <div class="noPermission"
+               v-if="!item.isShow"><span class="text">安全管理员未授权您使用该组件的权限，请与安全管理员联系获取。</span></div>
           <dynamicLink v-else-if="item.component && item.component.functionalCategory === '1'"
                        :is-show="isLayoutReady"
                        :data="item"
@@ -303,7 +315,7 @@ export default {
       }
     }
   },
-  mounted () { 
+  mounted () {
     this.roleIds = this.$store.getters.userInfo.userRoles.map(el => el.roleId)
   },
   data () {
@@ -328,7 +340,8 @@ export default {
         styleObject: {
           backgroundColor: 'rgba(255, 255, 255, 1)',
           backgroundImage: ''
-        }
+        },
+        magnify: false
       },
       queryParam: { name: '' },
       setWidgetTitle: '修改widget',
@@ -601,5 +614,4 @@ export default {
     transform: translate(-50%, -50%); /* 垂直和水平居中 */
   }
 }
- 
 </style>
