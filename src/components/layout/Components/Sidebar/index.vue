@@ -32,7 +32,7 @@
             <!-- no children -->
             <template v-if="item.children[0].path === 'dash' || item.children[0].path === 'Dashboard'">
               <el-menu-item :index="item.path + '/' + item.children[0].path"
-                            :key="item.name">
+                            :key="item.name" @click="menuClick(index)">
                 <i v-if="!sidebarState.isOpen"
                    class="p8"
                    :class="item.children[0].meta.icon"></i>
@@ -166,7 +166,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['asyncRouter', 'sidebarState', 'systemTheme', 'theme', 'imageUrl', 'systemName']),
+    ...mapGetters(['asyncRouter', 'sidebarState', 'systemTheme', 'theme', 'imageUrl', 'systemName','homepage']),
     // 这里必须根据条件结合ElementUI的sidebar来调整颜色,保证自定义主题和sidebar的内置颜色一致.
     systemThemeColor: function () {
       switch (this.systemTheme) {
@@ -205,7 +205,11 @@ export default {
       else return 'blueColor';
     },
     menuClick (index) {
-      this.isactive = index
+      if(this.$route.name === this.homepage.name){
+        this.isactive = -1
+      }else{
+        this.isactive = index
+      }
     },
     // 获取系统logo
     async getIcon () {
