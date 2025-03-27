@@ -45,7 +45,8 @@ export default {
         title: '序号',
         type: 'index',
         align: 'center',
-        width: '50px'
+        width: '50px',
+        headerAlign: 'center'
       },
       {
         title: '流程名称',

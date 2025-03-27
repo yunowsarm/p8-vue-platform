@@ -215,6 +215,16 @@ export default {
       }
     },
     handleSubmit (e) {
+      if (this.formData.type === '2') {
+        const havaOwnerId = this.selectedTasks.find(t => !t.owner_id)
+        if (havaOwnerId) {
+          this.$message({
+            type: 'warning',
+            message: '选中任务中存在未设置责任人！'
+          })
+          return
+        }
+      }
       this.$refs.form.handleSubmit(e)
     },
     cancel () {

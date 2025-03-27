@@ -72,7 +72,8 @@ export default {
         title: '序号',
         type: 'index',
         width: '50',
-        align: 'center'
+        align: 'center',
+        headerAlign: 'center'
       },
       {
         title: '模块',

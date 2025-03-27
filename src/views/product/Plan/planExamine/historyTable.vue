@@ -28,7 +28,8 @@ export default {
           title: '序号',
           type: 'index',
           width: '55px',
-          align: 'center'
+          align: 'center',
+          headerAlign: 'center'
         },
         {
           title: '状态',

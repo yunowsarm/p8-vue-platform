@@ -46,7 +46,8 @@ export default {
           title: '序号',
           width: 55,
           type: 'index',
-          align: 'center'
+          align: 'center',
+          headerAlign: 'center'
         },
         {
           title: '审批意见',

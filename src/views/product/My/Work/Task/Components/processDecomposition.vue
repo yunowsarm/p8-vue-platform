@@ -49,7 +49,8 @@ export default {
       {
         title: '序号',
         align: 'center',
-        type: 'index'
+        type: 'index',
+        headerAlign: 'center'
       },
       {
         title: '任务名称',

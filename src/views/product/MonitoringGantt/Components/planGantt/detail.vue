@@ -2,7 +2,13 @@
   <list-layout :header-visible="false">
     <template #north> </template>
     <template #center>
-      <common-table ref="table" :columns="columns" :api="tableApi" style="height: 100%" :params="tableParam" :pagination="true" @selection-change="handleSelectionChange">
+      <common-table ref="table"
+                    :columns="columns"
+                    :api="tableApi"
+                    style="height: 100%"
+                    :params="tableParam"
+                    :pagination="true"
+                    @selection-change="handleSelectionChange">
         <!-- <template #monitorPoints="{scope}">
           <span v-if="scope.row.monitorPoints">
             <i v-for="item in handleRowMointor(scope.row)"
@@ -30,13 +36,13 @@ export default {
       default: ''
     }
   },
-  created() {
+  created () {
     const that = this
     // getMonitorData({ monitorId: [] }).then((res) => {
     //   that.monitorpointDataArray = res
     // })
   },
-  data() {
+  data () {
     return {
       tableApi: 'myExperience.getConnectCourtTaskList',
       tableParam: {
@@ -48,7 +54,8 @@ export default {
           title: '序号',
           type: 'index',
           width: 55,
-          align: 'center'
+          align: 'center',
+          headerAlign: 'center'
         },
         // {
         //   title: '状态',
@@ -99,7 +106,7 @@ export default {
           dataIndex: 'duration',
           minWidth: 100,
           align: 'center',
-          formatter(row) {
+          formatter (row) {
             if (row.duration) {
               return row.duration + '天'
             } else {
@@ -144,7 +151,7 @@ export default {
           minWidth: 100,
           dataIndex: 'progress',
           align: 'center',
-          formatter(row) {
+          formatter (row) {
             if (row.progress) {
               return (row.progress * 100).toFixed(2) + '%'
             } else {
@@ -157,7 +164,7 @@ export default {
     }
   },
   methods: {
-    handleRowMointor(row) {
+    handleRowMointor (row) {
       if (row && row.monitorPoints) {
         const monitorPoints = row.monitorPoints.split(',')
         const mointIcon = []
@@ -167,7 +174,7 @@ export default {
         return mointIcon
       }
     },
-    handleSelectionChange(rows) {
+    handleSelectionChange (rows) {
       if (rows.length >= 2) {
         const arrays = rows.splice(0, rows.length - 1)
         arrays.forEach((row) => {

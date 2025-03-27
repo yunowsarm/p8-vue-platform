@@ -50,7 +50,7 @@ export default {
         type: 'index',
         width: '50',
         align: 'center',
-        headerAlign: 'left'
+        headerAlign: 'center'
       },
       {
         title: '接口类路径',

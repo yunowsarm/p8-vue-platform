@@ -298,6 +298,9 @@
     border-left: 2px solid #fff;
   }
 }
+::v-deep  .el-tabs__nav{
+  z-index: 1;
+}
 ::v-deep .el-tabs__item {
   padding: 0 20px !important;
   height: unset;

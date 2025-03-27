@@ -1260,20 +1260,24 @@ export const CommandButtonData = [
         vueThis.fullscreen(btn)
       }else{
         const thisGantt = GanttObject.getGanttObject(ganttName)
-        // 全屏监听
         thisGantt.ext.fullscreen.getFullscreenElement = function () {
           return document.querySelector('#couerDiv')
         }
-        thisGantt.ext.fullscreen.toggle()
         if (btn.title === '全屏') {
-          btn.title = '退出全屏'
-          btn.icon = 'p8 icon-exit-fullscreen'
-          btn.help = '退出全屏'
+          thisGantt.ext.fullscreen.expand()
         } else {
+          thisGantt.ext.fullscreen.collapse()
+        }
+        thisGantt.attachEvent("onCollapse", (event) => {
           btn.title = '全屏'
           btn.icon = 'p8 icon-full-screen'
           btn.help = '全屏'
-        }
+        });
+        thisGantt.attachEvent("onExpand", () => {
+          btn.title = '退出全屏'
+          btn.icon = 'p8 icon-exit-fullscreen'
+          btn.help = '退出全屏'
+        });
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {

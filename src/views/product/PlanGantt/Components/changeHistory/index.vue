@@ -64,7 +64,8 @@ export default {
           title: '序号',
           type: 'index',
           align: 'center',
-          width: 80
+          width: 80,
+          headerAlign: 'center'
         },
         {
           title: '变更人',
