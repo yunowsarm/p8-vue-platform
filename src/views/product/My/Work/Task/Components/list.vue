@@ -130,7 +130,7 @@
 .show-type {
   position: absolute;
   top: 14px;
-  z-index: 2;
+  z-index: 1;
   left: 20px;
 }
 

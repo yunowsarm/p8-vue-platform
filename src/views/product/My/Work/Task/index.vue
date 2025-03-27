@@ -301,6 +301,9 @@
 ::v-deep  .el-tabs__nav{
   z-index: 1;
 }
+::v-deep .normal-layout .normal-main .splitBtn > i{
+  z-index: 1;
+}
 ::v-deep .el-tabs__item {
   padding: 0 20px !important;
   height: unset;
