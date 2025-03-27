@@ -6,6 +6,76 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "41196126",
+      "name": "操作手册",
+      "font_class": "caozuoshouce",
+      "unicode": "e98b",
+      "unicode_decimal": 59787
+    },
+    {
+      "icon_id": "2742660",
+      "name": "视频",
+      "font_class": "shipin",
+      "unicode": "e677",
+      "unicode_decimal": 58999
+    },
+    {
+      "icon_id": "43688647",
+      "name": "结束",
+      "font_class": "jieshu",
+      "unicode": "e987",
+      "unicode_decimal": 59783
+    },
+    {
+      "icon_id": "43688649",
+      "name": "完成",
+      "font_class": "wancheng",
+      "unicode": "e988",
+      "unicode_decimal": 59784
+    },
+    {
+      "icon_id": "43688648",
+      "name": "开始",
+      "font_class": "kaishi",
+      "unicode": "e989",
+      "unicode_decimal": 59785
+    },
+    {
+      "icon_id": "43688646",
+      "name": "经理",
+      "font_class": "jingli",
+      "unicode": "e98a",
+      "unicode_decimal": 59786
+    },
+    {
+      "icon_id": "43688569",
+      "name": "当前节点",
+      "font_class": "dangqianjiedian",
+      "unicode": "e986",
+      "unicode_decimal": 59782
+    },
+    {
+      "icon_id": "15726968",
+      "name": "三角形",
+      "font_class": "sanjiaoxing",
+      "unicode": "e652",
+      "unicode_decimal": 58962
+    },
+    {
+      "icon_id": "17631859",
+      "name": "菱形",
+      "font_class": "lingxing",
+      "unicode": "e634",
+      "unicode_decimal": 58932
+    },
+    {
+      "icon_id": "34198313",
+      "name": "星号",
+      "font_class": "xinghao",
+      "unicode": "e985",
+      "unicode_decimal": 59781
+    },
+    {
       "icon_id": "43514420",
       "name": "AI 生成",
       "font_class": "a-AIshengcheng",

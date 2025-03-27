@@ -944,6 +944,34 @@ export const system = {
       path: '/attachment/getFileInputStream',
       mockPath: '/attachment/getFileInputStream',
       desc: '获取临时文件流'
+    },
+    {
+      name: 'loadBootstrapMenuList',
+      method: 'POST',
+      path: '/framework/system/operatingManual/loadBootstrapMenuList',
+      mockPath: '/framework/system/operatingManual/loadBootstrapMenuList',
+      desc: '系统引导-获取菜单列表'
+    },
+    {
+      name: 'delete',
+      method: 'POST',
+      path: '/framework/system/operatingManual/delete',
+      mockPath: '/framework/system/operatingManual/delete',
+      desc: '系统引导-个人删除'
+    },
+    {
+      name: 'restore',
+      method: 'POST',
+      path: '/framework/system/operatingManual/restore',
+      mockPath: '/framework/system/operatingManual/restore',
+      desc: '系统引导-恢复删除项'
+    },
+    {
+      name: 'selectResourcesByMenuId',
+      method: 'POST',
+      path: '/framework/system/operatingManual/selectResourcesByMenuId',
+      mockPath: '/framework/system/operatingManual/selectResourcesByMenuId',
+      desc: '系统引导-根据menuId获取视频地址和文章地址'
     }
   ],
   processApproval: [

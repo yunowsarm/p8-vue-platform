@@ -11,12 +11,8 @@
                ref="loginLogo"></div>
         </div>
         <div class="sysName">
-          <!-- <el-tooltip effect="dark"
-                      :content="systemName"
-                      placement="right"> -->
           <span v-if="sidebarState.width == '180px'"
                 v-html="systemName"></span>
-          <!-- </el-tooltip> -->
         </div>
       </div>
       <el-menu mode="vertical"
@@ -32,7 +28,7 @@
             <!-- no children -->
             <template v-if="item.children[0].path === 'dash' || item.children[0].path === 'Dashboard'">
               <el-menu-item :index="item.path + '/' + item.children[0].path"
-                            :key="item.name" @click="menuClick(index)">
+                            :key="item.name">
                 <i v-if="!sidebarState.isOpen"
                    class="p8"
                    :class="item.children[0].meta.icon"></i>
@@ -67,28 +63,31 @@
                 <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
               </template>
               <div class="cumtom-submenu-menu">
-                <template v-for="(child,index) in item.children">
+                <template v-for="child in item.children">
                   <template v-if="!child.hidden">
                     <!-- <sidebar-menu-item  v-if="child.children && child.children.length > 0"
                             :is-nest="true" class="nest-menu" :routes="[child]" :key="child.name">
                         </sidebar-menu-item>
                         <template v-else> -->
-                    <el-menu-item :index="child.path"
-                                  :disabled="!!child.isDisabled"
-                                  :key="child.name"
-                                  :class="isactive == index ? 'menuBackgroundColor' : ''"
-                                  @click="menuClick(index)">
-                      <el-tooltip placement="right"
-                                  :disabled="child.meta.title.length < 8"
-                                  :content="child.meta.title">
-                        <div>
-                          <i v-if="child.meta && child.meta.icon"
-                             class="p8"
-                             :class="child.meta.icon"></i>
-                          <span v-if="child.meta && child.meta.title">{{ child.meta.title }}</span>
-                        </div>
-                      </el-tooltip>
-                    </el-menu-item>
+                          <el-menu-item :index="child.path"
+                                        :disabled="!!child.isDisabled"
+                                        :key="child.name">
+                            <el-tooltip placement="right"
+                                        :disabled="child.meta.title.length < 8"
+                                        :content="child.meta.title">
+                              <div id="item" @mouseenter="handleMouseEnter(child)" @mouseleave="onIconMouseLeave">
+                                <i v-if="child.meta && child.meta.icon"
+                                  class="p8"
+                                  :class="child.meta.icon"></i>
+                                <span v-if="child.meta && child.meta.title">{{ child.meta.title }}
+                                    <i v-if="$route.path == child.path && hoveredMenuItem == child.path" 
+                                    class="el-icon-question"
+                                    @mouseenter="showOptions($event, child)">
+                                  </i>
+                                </span>
+                              </div>
+                            </el-tooltip>
+                          </el-menu-item>
                     <!-- </template> -->
                   </template>
                 </template>
@@ -100,7 +99,7 @@
     </VuePerfectScrollbar>
     <span class="sidebar-version">
       <el-popover placement="top-start"
-                  width="180"
+                  width="200"
                   trigger="hover">
         <p>
           西安融智软件有限公司<br />
@@ -113,12 +112,14 @@
             授权终止日期：{{ regardsObj.authorizedExpires }}<br />
             授权用户数：{{ regardsObj.userLimit }}<br />
             授权登录人数：{{ regardsObj.loginLimit }}<br />
+            授权登录人数：{{ regardsObj.loginLimit }}<br />
+            授权登录人数：{{ regardsObj.loginLimit }}<br />
             <el-popover placement="top-start"
                         width="230"
                         trigger="hover">
               <p>
                 p8-framework-suit@{{ regardsObj.p8Version }}<br />
-                p8-lowcode@^{{ packageJson.dependencies['p8-lowcode'] }}<br />
+                p8-lowcode@^{{ packageJson.version }}<br />
                 p8-components-ui@{{ packageJson.dependencies['p8-components-ui'] }}<br />
                 p8-dhtmlx-gantt@{{ packageJson.dependencies['p8-dhtmlx-gantt'] }}<br />
                 p8-vue-smart-widget@{{ packageJson.dependencies['p8-vue-smart-widget'] }}<br />
@@ -126,8 +127,6 @@
               </p>
               <span slot="reference">系统版本：{{ regardsObj.systemVersion }}</span>
             </el-popover><br />
-            <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;预期控制策略：{{ regardsObj.authExpiredControl }}<br /> -->
-            <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;硬件绑定类型：{{ regardsObj.hwBindType }}<br /> -->
           </span>
           <span v-else>
             授权终止日期：{{ regardsObj.authorizedExpires }}<br />
@@ -139,16 +138,41 @@
         <span slot="reference">{{ regardsObj.systemVersion }}</span>
       </el-popover>
     </span>
+    <common-drawer v-if="isVisibleHistoryDrawer"
+                       title="视频教程"
+                       :visible="isVisibleHistoryDrawer"
+                       placement="top"
+                       size="100%"
+                       @close="isVisibleHistoryDrawer = false"
+                       >
+        <template #drawer>
+          <videoViewing v-if="isVisibleHistoryDrawer" :record="record"></videoViewing>
+        </template>
+      </common-drawer>
+      <common-drawer v-if="isVisiblePDFdrawer"
+                      title="操作手册"
+                      :visible="isVisiblePDFdrawer"
+                      placement="top"
+                      size="100%"
+                      @close="isVisiblePDFdrawer = false"
+                      >
+        <template #drawer>
+          <PDFpreview v-if="isVisiblePDFdrawer" :record="record"></PDFpreview>
+        </template>
+      </common-drawer>
   </div>
   <!-- </transition> -->
 </template>
 
 <script>
-import { Menu, Submenu, MenuItem, Tooltip } from 'p8-components-ui'
+import { Menu, Submenu, MenuItem, Tooltip,P8Drawer as CommonDrawer, } from 'p8-components-ui'
+import videoViewing from '@/views/Framework/System/guiDe/components/videoPlayer.vue'
+import PDFpreview from '@/views/Framework/System/guiDe/components/PDFpreview.vue'
 import { mapGetters } from 'vuex'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 // import SidebarMenuItem from './SidebarMenuItem'
 import packageJson from '../../../../../package.json'
+
 export default {
   name: 'Sidebar',
   data () {
@@ -161,12 +185,18 @@ export default {
       },
       regardsObj: {},
       isShow: false,
-      isactive: -1,
-      packageJson
+      packageJson,
+      hoveredMenuItem: '',
+      popoverVisible: false,
+      manualDialogVisible: false,
+      linkDialogVisible: false,
+      isVisiblePDFdrawer: false,
+      isVisibleHistoryDrawer: false,
+      record: {}
     }
   },
   computed: {
-    ...mapGetters(['asyncRouter', 'sidebarState', 'systemTheme', 'theme', 'imageUrl', 'systemName','homepage']),
+    ...mapGetters(['asyncRouter', 'sidebarState', 'systemTheme', 'theme', 'imageUrl', 'systemName']),
     // 这里必须根据条件结合ElementUI的sidebar来调整颜色,保证自定义主题和sidebar的内置颜色一致.
     systemThemeColor: function () {
       switch (this.systemTheme) {
@@ -199,18 +229,6 @@ export default {
     })
   },
   methods: {
-    getClassName (child) {
-
-      if (child.children && child.children.length && child.children[0]['meta']['title'] == '我创建的') return 'redColor';
-      else return 'blueColor';
-    },
-    menuClick (index) {
-      if(this.$route.name === this.homepage.name){
-        this.isactive = -1
-      }else{
-        this.isactive = index
-      }
-    },
     // 获取系统logo
     async getIcon () {
       let res = await this.$api['SystemSettings.getLoginSetting']()
@@ -255,6 +273,96 @@ export default {
       })
       t.a = 1
       return t // Color
+    },
+    handleMouseEnter (item) {
+      this.hoveredMenuItem = item.path
+    },
+    handleMouseLeave () {
+      this.hoveredMenuItem = ''
+    },
+    showPopover() {
+      this.popoverVisible = true;
+    },
+    hidePopover() {
+      this.popoverVisible = false;
+    },
+    openManualDialog() {
+      this.manualDialogVisible = true;
+    },
+    openLinkDialog() {
+      this.linkDialogVisible = true;
+    },
+    showOptions(event, item) {
+      this.optionsDiv && this.hideOptions();
+      const optionsDiv = document.createElement('div');
+      optionsDiv.className = 'options-container';
+      optionsDiv.style.cssText = `
+        background-color: white;
+        padding: 5px;
+        box-shadow: 0 3px 4px rgba(0, 0, 0, 0.6);
+      `;
+      const createOption = (text, iconClass, optionType) => {
+        const div = document.createElement('div');
+        div.className = 'li';
+        div.innerHTML = `<i class="${iconClass}"></i> ${text}`;
+        div.addEventListener('click', () => this.handleOptionClick(optionType, item));
+        return div;
+      };
+      optionsDiv.appendChild(createOption('操作手册', 'p8 icon-caozuoshouce', 'manual'));
+      optionsDiv.appendChild(createOption('操作视频', 'p8 icon-shipin', 'video'));
+
+      const parentDiv = document.createElement('div');
+      parentDiv.addEventListener('mouseenter', () => this.onOptionsMouseEnter());
+      parentDiv.addEventListener('mouseleave', () => this.onOptionsMouseLeave());
+      parentDiv.style.cssText = `
+        position: absolute;
+        left: ${event.pageX-10}px;
+        top: ${event.pageY-10}px;
+        width: 100px;
+        height: auto;
+        padding: 10px;
+        background-color:rgba(0,0,0,0)
+      `;
+      parentDiv.appendChild(optionsDiv)
+      optionsDiv.className = 'options-container';
+      document.body.appendChild(parentDiv);
+      this.optionsDiv = parentDiv;
+    },
+    onIconMouseEnter() {
+      this.isIconHovered = true;
+    },
+    onIconMouseLeave() {
+      this.isIconHovered = false;
+      if (!this.isOptionsHovered) {
+        this.hideOptions();
+      }
+    },
+    onOptionsMouseEnter() {
+      this.isOptionsHovered = true;
+    },
+    onOptionsMouseLeave() {
+      this.isOptionsHovered = false;
+      if (!this.isIconHovered) {
+        this.hideOptions();
+        this.hoveredMenuItem = ''
+      }
+    },
+    hideOptions() {
+      if (this.optionsDiv) {
+        document.body.removeChild(this.optionsDiv);
+        this.optionsDiv = null;
+      }
+    },
+    async handleOptionClick(option, item) {
+      this.$api['SystemSettings.selectResourcesByMenuId']({menuId: item.meta.id}).then(res => {
+        this.record = res
+        if (option === 'manual') {
+          this.isVisiblePDFdrawer = true
+        } else if (option === 'video') {
+          this.isVisibleHistoryDrawer = true
+        }
+        this.hideOptions();
+      })
     }
   },
   components: {
@@ -263,18 +371,32 @@ export default {
     'el-menu': Menu,
     'el-submenu': Submenu,
     'el-menu-item': MenuItem,
-    'el-tooltip': Tooltip
+    'el-tooltip': Tooltip,
+    videoViewing,
+    PDFpreview,
+    CommonDrawer
   }
 }
 </script>
 
 <style lang="scss">
+.options-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.li {
+  cursor: pointer;
+  padding: 5px;
+}
+
+.li:hover {
+  background-color: #f0f0f0;
+}
 $menu-hover-color: #032353;
 $menu-active-color: #04224e;
 $menu-collapse-text-color: #303133;
-.menuBackgroundColor {
-  background: rgba(255, 255, 255, 0.2) !important;
-}
+
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -392,10 +514,9 @@ $menu-collapse-text-color: #303133;
   align-items: center;
 }
 .sysName {
-  padding-top: 10px;
-  min-height: pxTorem(40px);
+  height: pxTorem(50px);
   font-size: $font-size-medium;
-  font-family: 'Source Han Sans CN', 'Noto Sans SC', sans-serif;
+  font-family: Source Han Sans CN;
   font-weight: 500;
   color: $base-white-color;
   white-space: nowrap; /* 不换行 */
@@ -415,5 +536,13 @@ $menu-collapse-text-color: #303133;
   left: 5px;
   color: #797676;
   font-size: 10px;
+}
+.elPopover {
+  display: inline;
+  width: unset;
+  margin: 0;
+}
+.icon-shipin,.icon-caozuoshouce {
+  color: #2a78d8;
 }
 </style>
