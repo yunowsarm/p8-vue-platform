@@ -2,11 +2,12 @@
   <div>
     <form-list ref="form"
                :dataSource="dataSource"
+               :disable="true"
                :existDefaultBtn="false"
                label-width="90px"
                :form="formData">
     </form-list>
-    <div class="submit">
+    <div v-if="$route.name === 'TaskExecution'" class="submit">
       <el-button type="primary"
                  @click="customValidate">保存</el-button>
     </div>
@@ -37,6 +38,7 @@ export default {
         colLayout: 'doubleCol',
         placeholder: '请选择预计开始时间',
         fieldConfig: {
+          disabled: this.setDisabled(),
           style: 'width: 100%',
           'value-format': 'yyyy-MM-dd',
           clearable: true,
@@ -50,6 +52,7 @@ export default {
         colLayout: 'doubleCol',
         placeholder: '请选择预计完成时间',
         fieldConfig: {
+          disabled: this.setDisabled(),
           style: 'width: 100%',
           'value-format': 'yyyy-MM-dd',
           clearable: true,
@@ -61,7 +64,10 @@ export default {
         labelText: '进度说明',
         colLayout: 'singleCol',
         placeholder: '说明内容',
-        fieldName: 'content'
+        fieldName: 'content',
+        fieldConfig: {
+          disabled: this.setDisabled(),
+        }
       }
     ]
     return {
@@ -78,6 +84,7 @@ export default {
 
   },
   created () {
+    console.log(this.$route)
     let _this = this
     this.$api['taskManager.taskInfo']({ taskId: _this.planInfoParams.TASKID }).then(res => {
       this.formData.content = res.content
@@ -111,6 +118,9 @@ export default {
           return timeSpace
         }
       }
+    },
+    setDisabled () {
+      return this.$route.name !== 'TaskExecution';
     },
     endPickerOptions () {
       return {
