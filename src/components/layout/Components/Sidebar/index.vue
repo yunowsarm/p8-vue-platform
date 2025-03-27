@@ -321,6 +321,7 @@ export default {
         width: 100px;
         height: auto;
         padding: 10px;
+        z-index: 9999;
         background-color:rgba(0,0,0,0)
       `;
       parentDiv.appendChild(optionsDiv)
