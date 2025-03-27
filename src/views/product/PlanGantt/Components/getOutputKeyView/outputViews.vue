@@ -1,22 +1,24 @@
 <template>
-  <div style="position: relative; padding-bottom: 16px" :style="{ width: `${formWidth}vw` }">
-    <form-list
-      ref="form"
-      v-if="!isEmpty"
-      @rendered="rendered"
-      form-layout="vertical"
-      @saved="saved"
-      :data-source="dataSource"
-      :api="saveApi"
-      :form="formData"
-      :is-custom-validate="isCustomValidate"
-      :exist-default-btn="existDefaultBtn"
-      :exist-custom-btn="existCustomBtn"
-      :other-param="otherParam"
-      @custom-validate="customValidate"
-    >
+  <div style="position: relative; padding-bottom: 16px;width:100%;height: calc(100% - 30px);">
+    <form-list ref="form"
+               v-if="!isEmpty"
+               @rendered="rendered"
+               form-layout="vertical"
+               @saved="saved"
+               :data-source="dataSource"
+               :api="saveApi"
+               :form="formData"
+               :is-custom-validate="isCustomValidate"
+               :exist-default-btn="existDefaultBtn"
+               :exist-custom-btn="existCustomBtn"
+               :other-param="otherParam"
+               @custom-validate="customValidate">
     </form-list>
-    <el-empty v-if="isEmpty" class="custom_empty" :image-size="100"></el-empty>
+    <div v-if="isEmpty"
+         style="height: 100%;width:100%;display: flex; justify-content: center; align-items: center;">
+      <el-empty class="custom_empty"
+                :image-size="100"></el-empty>
+    </div>
   </div>
 </template>
 <style scoped>
@@ -47,7 +49,7 @@ export default {
       default: 0
     }
   },
-  data() {
+  data () {
     return {
       saveApi: 'planGanttManager.outputSave',
       isCustomValidate: true,
@@ -120,17 +122,17 @@ export default {
   computed: {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    toLink(k) {
+    toLink (k) {
       window.open(k.attFileLink, '_blank')
     },
-    rendered() {
+    rendered () {
       if (this.taskId && this.taskId !== '') {
         this.getOutputData(this.taskId)
       }
     },
-    getOutputData(taskId) {
+    getOutputData (taskId) {
 
       const that = this
       that.otherParam = { taskId: taskId }
@@ -174,8 +176,8 @@ export default {
           console.error('error' + error)
         })
     },
-    saved(res) {},
-    customValidate(saveParams) {}
+    saved (res) { },
+    customValidate (saveParams) { }
   }
 }
 </script>

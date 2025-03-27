@@ -1,5 +1,5 @@
 <template>
-  <div :style="{ width: `${formWidth}vw` }">
+  <div style="width: 100%;heigth: 100%;">
     <form2 ref="form"
            :comp="comp"
            :form-to-api-data="ganttLinkResponse"

@@ -1,6 +1,7 @@
 <template>
-  <div style="position: relative; padding-bottom: 50px" :style="{ width: `${formWidth}vw` }">
+  <div style="position: relative; width:100%;height:calc(100% - 2px);">
     <form-list ref="form"
+               v-if="!isEmpty"
                @rendered="rendered"
                form-layout="vertical"
                @saved="saved"
@@ -13,6 +14,11 @@
                :other-param="otherParam"
                @custom-validate="customValidate">
     </form-list>
+    <div v-if="isEmpty"
+         style="height: 100%;width:100%;display: flex; justify-content: center; align-items: center;">
+      <el-empty class="custom_empty"
+                :image-size="100"></el-empty>
+    </div>
   </div>
 </template>
 <style scoped></style>
@@ -92,7 +98,8 @@ export default {
       otherParam: {
         taskId: ''
       },
-      oldSpecial: []
+      oldSpecial: [],
+      isEmpty: false,
     }
   },
   computed: {
@@ -105,13 +112,17 @@ export default {
         this.getSpecialData(this.taskId)
       }
     },
-    getSpecialData(taskId) {
+    getSpecialData (taskId) {
 
       const that = this
       that.otherParam = { taskId: taskId }
       that.$api['planGanttManager.specialInfo']({ taskId: taskId })
         .then(function (res) {
-
+          if (res && Object.keys(res) && Object.keys(res).length > 0) {
+            that.isEmpty = false
+          } else {
+            that.isEmpty = true
+          }
           let datas = []
           if (res) {
             datas = res

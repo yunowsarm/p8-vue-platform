@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative; padding-bottom: 50px" :style="{ width: `${formWidth}vw` }">
+  <div style="position: relative; padding-bottom: 50pxwidth:100%;height: 100%;">
     <form-list ref="form"
                @rendered="rendered"
                form-layout="vertical"

@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div style="width: 100%;height: calc(100% - 10px);">
     <el-tabs v-model="activeOutput"
              type="border-card">
       <el-tab-pane label="输入要求"
                    name="inputKey">
         <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 输入要求</span>
-        <div style="position: relative; padding-bottom: 50px" :style="{ width: `${formWidth}vw` }">
+        <div style="position: relative; padding-bottom: 50px;width:100%;height: calc(100% - 50px);">
           <form-list ref="form"
                      @rendered="rendered"
                      form-layout="vertical"

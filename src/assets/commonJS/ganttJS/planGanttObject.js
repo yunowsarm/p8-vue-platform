@@ -240,7 +240,12 @@ export function planGantt(ganttName, vueThis) {
   }
   Gantt.taskProgressDetails = function taskProgressDetails(taskId) {
     if (vueThis.createPage === 'compile' || vueThis.createPage === 'decompose') {
-      vueThis.showTaskProgressDialog(taskId)
+      vueThis.reminderList.forEach(el => {
+        if (el.id === taskId) {
+          el.reminder = '0'
+        }
+      })
+      vueThis.debouncedShowTaskProgressDialog(taskId)
     }
   }
   GanttObject.treeDataEditor(ganttObject, vueThis.treeDataEditorConfig, vueThis.treeDataEditorConfig1)
@@ -275,7 +280,7 @@ export function planGantt(ganttName, vueThis) {
     }
     if (vueThis.pageType === 'history') {
       if (vueThis.createPage === 'compile' || vueThis.createPage === 'decompose') {
-        vueThis.showTaskProgressDialog(task.id)
+        vueThis.debouncedShowTaskProgressDialog(task.id)
       }
     }
 

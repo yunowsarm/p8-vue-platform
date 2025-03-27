@@ -1,12 +1,14 @@
 <template>
-  <div style="height: 100%; margin-top: 55px;">
+  <div style="height: 100%; margin-top: 40px;">
     <common-tabs class="custom-common-tabs"
                  :active-tabs="activeTabs"
                  type="border-card"
                  :tabs-data="tabs"
+                 @tab-click="tabClick"
                  height="100%">
       <template #history>
         <common-table ref="table"
+                      v-if="activeTabs == 'history'"
                       :columns="columns"
                       :table-setting="false"
                       :params="queryParam"
@@ -15,6 +17,7 @@
       </template>
       <template #undone>
         <common-table ref="table"
+                      v-if="activeTabs == 'undone'"
                       :api="tableApi2"
                       :params="tableParams2"
                       :columns="columns2"
@@ -143,15 +146,32 @@ export default {
       ]
     }
   },
-  created () {
-    this.$api['planGanttManager.reminder']({ entityId: this.taskId }).then(res => { })
+  watch: {
+    taskId(val){
+      this.tableParams2.taskId = val
+      this.queryParam.taskId = val
+      this.save()
+    }
   },
+  created () {
+    this.save()
+  },
+  methods: {
+    tabClick (target) {
+      this.activeTabs = target.name
+    },
+    save(){
+      this.$api['planGanttManager.reminder']({ entityId: this.taskId }).then(res => { 
+        // this.$emit('templateMounted')
+      })
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 .custom-common-tabs {
-  height: calc(100% - 50px);
+  height: calc(100% - 40px);
   margin-top: 37px;
 }
 </style>

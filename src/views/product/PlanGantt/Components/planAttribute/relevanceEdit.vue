@@ -1,6 +1,5 @@
 <template>
-  <div style="height: 100%;"
-       :style="{ width: `${formWidth}vw` }">
+  <div style="height: 100%;width:100%;">
     <el-button style="margin: 10px;"
                type="primary"
                :disabled="disabled"

@@ -1,6 +1,5 @@
 <template>
-  <div style="position: relative"
-       :style="{ width: `${formWidth}vw` }">
+  <div style="position: relative;width:100%;height:calc(100% - 20px);">
     <form-list class="describe-form"
                ref="form"
                :comp="comp"
@@ -313,9 +312,13 @@ export default {
       },
       immediate: true
     },
-    taskId (val) {
-      this.rendered()
-    },
+    // taskId: {
+    //   handler (val) {
+    //     if (val) {
+    //       this.rendered()
+    //     }
+    //   },
+    // },
     ownerDataOptions (newValue) {
       if (newValue) {
         const options = []
@@ -331,6 +334,7 @@ export default {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
   mounted () {
+    console.log(111111111);
     const ganttObject = GanttObject.getGanttObject(this.ganttName)
     const task = ganttObject.getTask(this.taskId)
     this.$api['planGanttManager.getGanttExtendAttr']({ taskId: task.id }).then((res) => {
@@ -439,6 +443,7 @@ export default {
   },
   methods: {
     rendered () {
+      console.log('rednser-----editttttttt')
       if (this.taskId && this.taskId !== '') {
         this.getDescribeData(this.taskId)
       }

@@ -1,6 +1,5 @@
 <template>
-  <div style="width: 100%"
-       :style="{ width: `${formWidth}vw` }">
+  <div style="width: 100%;height: 100%;">
     <form2 ref="form"
            v-if="!isEmpty"
            :comp="comp"
@@ -30,9 +29,11 @@
               :style="{ background: renderTaskInfo(scope).color || '#999' }">{{ renderTaskInfo(scope).text }}</span>
       </template>
     </form2>
-    <el-empty v-if="isEmpty"
-              class="custom_empty"
-              :image-size="100"></el-empty>
+    <div v-if="isEmpty"
+         style="height: 100%;width:100%;display: flex; justify-content: center; align-items: center;">
+      <el-empty class="custom_empty"
+                :image-size="100"></el-empty>
+    </div>
     <common-dialog :title="dialogTitle"
                    v-if="dialogVisible"
                    :visible="dialogVisible"

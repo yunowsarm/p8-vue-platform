@@ -1,5 +1,6 @@
 <template>
-  <div style="position: relative; overflow-y: auto; overflow-x: hidden" :style="{ width: `${formWidth}vw` }">
+  <div style="position: relative; overflow-y: auto; overflow-x: hidden;height: 100%;"
+       :style="{ width: '100%' }">
     <form2 :comp="comp"
            :form-to-api-data="monitorManagerRequests"
            :data-source="dataSource"

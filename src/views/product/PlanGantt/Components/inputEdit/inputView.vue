@@ -1,31 +1,34 @@
 <template>
-  <div style="width: 100%">
+  <div style="width: 100%;height: calc(100% - 10px);">
     <el-tabs v-model="activeOutput"
              type="border-card">
       <el-tab-pane label="增加的输入物"
                    name="inputKey">
         <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 增加的输入物</span>
-        <div :style="{ width: `${formWidth}vw` }">
-          <form-list
-            v-if="!isEmpty"
-            ref="form"
-            @rendered="rendered"
-            form-layout="vertical"
-            :data-source="dataSource"
-            :api="saveApi"
-            :form="formData"
-            :exist-default-btn="existDefaultBtn"
-            :other-param="otherParam"
-          >
+        <div style="width: 100%; height: 100%;">
+          <form-list v-if="!isEmpty"
+                     ref="form"
+                     @rendered="rendered"
+                     form-layout="vertical"
+                     :data-source="dataSource"
+                     :api="saveApi"
+                     :form="formData"
+                     :exist-default-btn="existDefaultBtn"
+                     :other-param="otherParam">
           </form-list>
-          <el-empty v-if="isEmpty" class="custom_empty" :image-size="100"></el-empty>
+          <div v-if="isEmpty"
+               style="height: 100%;width:100%;display: flex; justify-content: center; align-items: center;">
+            <el-empty class="custom_empty"
+                      :image-size="100"></el-empty>
+          </div>
         </div>
       </el-tab-pane>
       <el-tab-pane label="前置输出物"
                    name="getPreOutputKey">
         <span slot="label"><i class="p8 icon-xuanxiang1"></i> 前置输出物</span>
         <div v-if="data.length > 0">
-          <div v-for="(item, index) in data" :key="index">
+          <div v-for="(item, index) in data"
+               :key="index">
             <el-row type="flex">
               <el-col :span="3"
                       class="baseTitle">任务名称</el-col>
@@ -61,8 +64,13 @@
             <el-divider></el-divider>
           </div>
         </div>
-        <div v-else>
-          <el-empty class="custom_empty" :image-size="100"></el-empty>
+        <div v-else
+             style="height: 100%;width:100%;">
+          <div v-if="isEmpty"
+               style="height: 100%;width:100%;display: flex; justify-content: center; align-items: center;">
+            <el-empty class="custom_empty"
+                      :image-size="100"></el-empty>
+          </div>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -190,7 +198,7 @@ export default {
     }
   },
   methods: {
-    getInputData(taskId) {
+    getInputData (taskId) {
 
       const that = this
       that.$api['planGanttManager.inputInfo']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId })

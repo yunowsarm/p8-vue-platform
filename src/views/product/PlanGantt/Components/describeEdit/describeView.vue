@@ -1,6 +1,6 @@
 <template>
-  <div style="position: relative; height: 520px"
-       :style="{ width: `${formWidth}vw` }">
+  <div style="position: relative; height: 100%"
+       :style="{ width: '100%' }">
     <form-list ref="form"
                @rendered="rendered"
                form-layout="vertical"
@@ -219,9 +219,13 @@ export default {
     }
   },
   watch: {
-    taskId (val) {
-      this.rendered()
-    },
+    // taskId: {
+    //   handler (val) {
+    //     if (val) {
+    //       this.rendered()
+    //     }
+    //   },
+    // },
     ownerDataOptions (newValue) {
       if (newValue) {
         const options = []
