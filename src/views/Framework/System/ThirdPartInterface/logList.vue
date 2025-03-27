@@ -31,7 +31,8 @@ const columns = [
     title: '序号',
     type: 'index',
     width: 50,
-    align: 'center'
+    align: 'center',
+    headerAlign: 'center'
   },
   {
     title: '接口名称',

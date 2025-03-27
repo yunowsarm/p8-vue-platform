@@ -12,7 +12,9 @@
                   readonly
                   autosize
                   placeholder="请选择责任人">
-                  <el-button icon="el-icon-link"  slot="append" @click="selectDutyUser"></el-button>
+          <el-button icon="el-icon-link"
+                     slot="append"
+                     @click="selectDutyUser"></el-button>
         </el-input>
       </template>
 
@@ -141,7 +143,8 @@ export default {
           title: '序号',
           type: 'index',
           minWidth: 50,
-          align: 'center'
+          align: 'center',
+          headerAlign: 'center'
         },
         {
           title: '角色',

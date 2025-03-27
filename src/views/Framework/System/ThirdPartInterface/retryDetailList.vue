@@ -23,7 +23,8 @@ const columns = [
     title: '序号',
     type: 'index',
     width: 40,
-    align: 'center'
+    align: 'center',
+    headerAlign: 'center'
   },
   {
     title: '异常发生时间',

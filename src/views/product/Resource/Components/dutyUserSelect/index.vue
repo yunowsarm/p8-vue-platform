@@ -165,7 +165,8 @@ export default {
           title: '序号',
           type: 'index',
           align: 'center',
-          width: 60
+          width: 60,
+          headerAlign: 'center'
         },
         {
           title: '角色名称',
@@ -218,7 +219,8 @@ export default {
           title: '序号',
           type: 'index',
           align: 'center',
-          width: 60
+          width: 60,
+          headerAlign: 'center'
         },
         {
           title: '角色名称',

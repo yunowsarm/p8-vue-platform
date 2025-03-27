@@ -79,7 +79,8 @@ const columns = [
     title: '序号',
     type: 'index',
     width: '50',
-    align: 'center'
+    align: 'center',
+    headerAlign: 'center'
   },
   {
     title: '用户名称',
@@ -131,7 +132,7 @@ export default {
   },
   data () {
     return {
-      treeSelected:false,
+      treeSelected: false,
       drawerSize: '70%',
       drawerTitle: '',
       visibleUserEditDrawer: false,

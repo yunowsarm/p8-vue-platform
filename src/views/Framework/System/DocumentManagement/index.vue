@@ -176,7 +176,7 @@ export default {
           type: 'index',
           width: 55,
           align: 'center',
-          headerAlign: 'left'
+          headerAlign: 'center'
         },
         {
           title: '文件名称',

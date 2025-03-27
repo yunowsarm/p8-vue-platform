@@ -3,25 +3,25 @@
     <template #west>
       <div style="text-align: center">
         <common-table ref="projectTable"
-          :columns="projectTableColumn"
-          :api="projectTableApi"
-          :style="{height: tableHeight}"
-          :pagination="false"
-          :tableSetting="false"
-          :tableConfig="projectTableConfig"
-          @row-click="projectTableRowClickHandle"
-          @requested-table-data="getProjectTableData">
+                      :columns="projectTableColumn"
+                      :api="projectTableApi"
+                      :style="{height: tableHeight}"
+                      :pagination="false"
+                      :tableSetting="false"
+                      :tableConfig="projectTableConfig"
+                      @row-click="projectTableRowClickHandle"
+                      @requested-table-data="getProjectTableData">
         </common-table>
       </div>
     </template>
     <template #center>
       <common-table ref="roleTable"
-          :style="{height: tableHeight}"
-          :columns="roleTableColumn"
-          :pagination="false"
-          :tableSetting="false"
-          :noApiTableData="roleTableData">
-        </common-table>
+                    :style="{height: tableHeight}"
+                    :columns="roleTableColumn"
+                    :pagination="false"
+                    :tableSetting="false"
+                    :noApiTableData="roleTableData">
+      </common-table>
     </template>
   </normal-layout>
 </template>
@@ -53,7 +53,8 @@ export default {
         type: 'index',
         title: '序号',
         width: 80,
-        align: 'center'
+        align: 'center',
+        headerAlign: 'center'
       },
       {
         align: 'center',
@@ -99,7 +100,7 @@ export default {
     },
     projectTableRowClickHandle (row) {
       this.getRoleList(row.id)
-      
+
     },
     getProjectTableData (data) {
       if (data.length) {

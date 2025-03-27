@@ -110,7 +110,8 @@ export default {
       {
         title: '序号',
         align: 'center',
-        type: 'index'
+        type: 'index',
+        headerAlign: 'center'
       },
       {
         title: '姓名',

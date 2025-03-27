@@ -63,7 +63,8 @@ export default {
         title: '序号',
         type: 'index',
         width: 45,
-        align: 'center'
+        align: 'center',
+        headerAlign: 'center'
       },
       {
         title: '领域',

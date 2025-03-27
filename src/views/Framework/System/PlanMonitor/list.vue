@@ -24,7 +24,8 @@
                       @icon-click="iconClick"
                       :special-rote-name="roteName">
           <template #icon="{ scope }">
-            <i :class="scope.row.icon" :style="{color: scope.row.color}"></i>
+            <i :class="scope.row.icon"
+               :style="{color: scope.row.color}"></i>
           </template>
         </common-table>
       </div>
@@ -66,7 +67,8 @@ const columns = [
     title: '序号',
     type: 'index',
     align: 'center',
-    width: '50'
+    width: '50',
+    headerAlign: 'center'
   },
   {
     title: '图标',

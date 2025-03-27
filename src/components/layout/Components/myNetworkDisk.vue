@@ -152,6 +152,7 @@ export default {
           title: '序号',
           type: 'index',
           align: 'center',
+          headerAlign: 'center',
           width: 55,
         },
         {
@@ -191,6 +192,8 @@ export default {
         {
           title: '序号',
           type: 'index',
+          align: 'center',
+          headerAlign: 'center',
           width: 55,
         },
         {

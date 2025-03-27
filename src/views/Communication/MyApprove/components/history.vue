@@ -132,7 +132,8 @@ export default {
         {
           title: '序号',
           type: 'index',
-          align: 'center'
+          align: 'center',
+          headerAlign: 'center'
         },
         {
           title: '计划名称',
@@ -359,7 +360,7 @@ export default {
               this_.asyncComponents = this_.componentsParams.url
             }
           }
-         }
+        }
         this_.formValidate = true
       })
     },

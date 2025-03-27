@@ -63,7 +63,8 @@ export default {
         title: '序号',
         type: 'index',
         width: 45,
-        align: 'center'
+        align: 'center',
+        headerAlign: 'center'
       },
       {
         title: '项目类别/类型名称',

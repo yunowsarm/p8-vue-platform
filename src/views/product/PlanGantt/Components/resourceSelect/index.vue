@@ -240,7 +240,8 @@ export default {
           title: '序号',
           type: 'index',
           align: 'center',
-          width: 60
+          width: 60,
+          headerAlign: 'center'
         },
         {
           title: '项目名称',
@@ -322,7 +323,8 @@ export default {
           title: '序号',
           type: 'index',
           align: 'center',
-          width: 60
+          width: 60,
+          headerAlign: 'center'
         },
         {
           title: '人员',
@@ -365,7 +367,8 @@ export default {
           title: '序号',
           type: 'index',
           align: 'center',
-          width: 60
+          width: 60,
+          headerAlign: 'center'
         },
         {
           title: '人员',

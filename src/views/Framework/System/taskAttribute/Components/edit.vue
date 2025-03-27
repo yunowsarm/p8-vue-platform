@@ -206,7 +206,8 @@ export default {
           title: '序号',
           type: 'index',
           align: 'center',
-          width: '50'
+          width: '50',
+          headerAlign: 'center'
         },
         {
           title: '启用/禁用',
@@ -234,7 +235,8 @@ export default {
           title: '序号',
           type: 'index',
           align: 'center',
-          width: '50'
+          width: '50',
+          headerAlign: 'center'
         },
         {
           title: '属性名称',

@@ -1,28 +1,42 @@
 <template>
   <list-layout>
     <template #north>
-      <common-button :comp="comp" button-type="primary"></common-button>
-      <search-form-list ref="search" :data-source="searchData" @search="search" @re-set="reSet"></search-form-list>
+      <common-button :comp="comp"
+                     button-type="primary"></common-button>
+      <search-form-list ref="search"
+                        :data-source="searchData"
+                        @search="search"
+                        @re-set="reSet"></search-form-list>
     </template>
     <template #center>
       <div id="table-contain">
-        <common-table
-          ref="table"
-          :comp="comp"
-          :columns="columns"
-          :params="queryParam"
-          :api="tableApi"
-          :table-refresh="tableRefresh"
-          :pagination="true"
-          @requested-table-data="getTotalNum"
-        ></common-table>
+        <common-table ref="table"
+                      :comp="comp"
+                      :columns="columns"
+                      :params="queryParam"
+                      :api="tableApi"
+                      :table-refresh="tableRefresh"
+                      :pagination="true"
+                      @requested-table-data="getTotalNum"></common-table>
       </div>
     </template>
     <template #drawer-panel>
-      <common-drawer v-if="visibleRoleEditDrawer" :title="drawerTitle" :visible="visibleRoleEditDrawer" @close="onEditRoleClose" size="70%">
+      <common-drawer v-if="visibleRoleEditDrawer"
+                     :title="drawerTitle"
+                     :visible="visibleRoleEditDrawer"
+                     @close="onEditRoleClose"
+                     size="70%">
         <template #drawer>
-          <role-edit v-if="drawerTitle !== '查看角色'" @saveSuccess="saveCallback" @cancel="visibleRoleEditDrawer = false" :role-id="currRoleId" :date-number="dateNumber"></role-edit>
-          <role-view v-else @saveSuccess="saveCallback" @cancel="visibleRoleEditDrawer = false" :role-id="currRoleId" :date-number="dateNumber"></role-view>
+          <role-edit v-if="drawerTitle !== '查看角色'"
+                     @saveSuccess="saveCallback"
+                     @cancel="visibleRoleEditDrawer = false"
+                     :role-id="currRoleId"
+                     :date-number="dateNumber"></role-edit>
+          <role-view v-else
+                     @saveSuccess="saveCallback"
+                     @cancel="visibleRoleEditDrawer = false"
+                     :role-id="currRoleId"
+                     :date-number="dateNumber"></role-view>
         </template>
       </common-drawer>
     </template>
@@ -40,7 +54,8 @@ const columns = [
     title: '序号',
     type: 'index',
     align: 'center',
-    width: '50'
+    width: '50',
+    headerAlign: 'center'
   },
   {
     title: '角色名称',
@@ -85,7 +100,7 @@ export default {
     'role-edit': RoleEdit,
     RoleView
   },
-  data() {
+  data () {
     return {
       comp: this,
       drawerTitle: '',
@@ -129,7 +144,7 @@ export default {
     }
   },
   methods: {
-    tableRefresh(param) {
+    tableRefresh (param) {
       param
         .then(() => {
 
@@ -138,30 +153,30 @@ export default {
 
         })
     },
-    createRole() {
+    createRole () {
       this.currRoleId = ''
       this.drawerTitle = '新建角色'
       this.dateNumber = this.dataLength + 1
       this.visibleRoleEditDrawer = true
     },
-    updateRole(record) {
+    updateRole (record) {
       this.currRoleId = record.id
       this.drawerTitle = '修改角色'
       this.visibleRoleEditDrawer = true
     },
-    viewRole(record) {
+    viewRole (record) {
       this.currRoleId = record.id
       this.drawerTitle = '查看角色'
       this.visibleRoleEditDrawer = true
     },
-    onEditRoleClose() {
+    onEditRoleClose () {
       this.visibleRoleEditDrawer = false
     },
-    saveCallback() {
+    saveCallback () {
       this.$refs.table.searchData()
       this.onEditRoleClose() // 保存不关闭抽屉, 由操作人员手动关闭
     },
-    removeRole(record) {
+    removeRole (record) {
       const that = this
       this.$confirm('是否确定要删除该角色？', '提示', {
         confirmButtonText: '确定',
@@ -181,13 +196,13 @@ export default {
 
         })
     },
-    search(param) {
+    search (param) {
       const newParams = {
         ...param,
         ...(this.queryParam.roleName
           ? {
-              roleName: this.queryParam.roleName
-            }
+            roleName: this.queryParam.roleName
+          }
           : {})
       }
       this.queryParam = newParams
@@ -196,7 +211,7 @@ export default {
         that.$refs.table.searchData()
       })
     },
-    reSet() {
+    reSet () {
       const that = this
       Object.keys(that.queryParam).forEach((key) => {
         that.queryParam[key] = ''
@@ -205,7 +220,7 @@ export default {
         that.$refs.table.searchData()
       })
     },
-    getTotalNum(data) {
+    getTotalNum (data) {
       const that = this
       that.dataLength = that.$refs.table.page.total
     }

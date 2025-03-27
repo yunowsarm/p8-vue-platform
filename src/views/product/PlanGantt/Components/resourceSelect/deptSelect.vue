@@ -43,7 +43,7 @@ export default {
           type: 'index',
           width: '100',
           align: 'center',
-          headerAlign: 'left'
+          headerAlign: 'center'
         },
         {
           title: '部门名称',
