@@ -30,7 +30,8 @@
                    @close="onEditResourcesCloseTodo">
       <template #dialog>
         <TodoList ref="todoList"
-                  :row="row"></TodoList>
+                  :row="row"
+                  @close="onEditResourcesCloseTodo"></TodoList>
       </template>
     </common-dialog>
   </div>
@@ -154,6 +155,9 @@ export default {
         "resourceId": ""
       },
       "page": {
+        "current": 1,
+        "size": -1,
+        "orders": []
       }
     }
     this.$api['formGenerator.tableApply'](params).then(res => {
@@ -187,6 +191,10 @@ export default {
 </script>
 
 <style>
+.fc-event-title,
+.fc-event-title-container {
+  cursor: pointer;
+}
 .fc .fc-daygrid-day-frame {
   height: 100px !important;
 }

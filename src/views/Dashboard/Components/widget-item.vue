@@ -77,6 +77,10 @@ export default {
     }
   },
   mounted () {
+    this.$nextTick(() => {
+      const gridElements = this.$el.querySelectorAll('[title]');
+      gridElements.forEach(el => el.removeAttribute('title'));
+    });
     this.$watch(
       'widget.style',
       (newValue, oldValue) => {
@@ -170,7 +174,7 @@ export default {
   top: 11px;
   z-index: 10;
 }
-::v-deep .normal-layout{
+::v-deep .normal-layout {
   height: 100%;
 }
 </style>

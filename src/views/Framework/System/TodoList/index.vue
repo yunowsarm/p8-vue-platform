@@ -201,6 +201,7 @@ export default {
       this.$refs.formRight.validate().then(() => {
         that.$api['TodoList.save'](parmars).then(res => {
           if (res) {
+            that.$message({ type: 'success', message: '保存成功' })
             that.$emit('close')
           }
         })
@@ -211,9 +212,9 @@ export default {
       let id = this.row[0].ID
       let parmars = { id: id, ...this.formDataRight }
       let approveInfoConfig = {
-        filed1: {label: '标题',value: parmars.title},
-        filed2: {label: '类型',value: parmars.typeDisplay},
-        filed3: {label: '内容',value: parmars.content}
+        filed1: { label: '标题', value: parmars.title },
+        filed2: { label: '类型', value: parmars.typeDisplay },
+        filed3: { label: '内容', value: parmars.content }
       }
 
       this.$refs.formRight.validate().then(() => {

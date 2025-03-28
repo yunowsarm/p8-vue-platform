@@ -316,6 +316,10 @@ export default {
     }
   },
   mounted () {
+    this.$nextTick(() => {
+      const gridElements = this.$el.querySelectorAll('[title]');
+      gridElements.forEach(el => el.removeAttribute('title'));
+    });
     this.roleIds = this.$store.getters.userInfo.userRoles.map(el => el.roleId)
   },
   data () {
