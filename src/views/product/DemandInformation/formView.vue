@@ -5,7 +5,7 @@
         <div class="title">{{ formData.sourceChannel }}</div>
         <form-render class="formRender" :data-view-id="dataViewId" :record="{ desformCode: codeForm }" :prop-param="propParam" page-type="view" v-bind="$attrs"></form-render>
       </div>
-      <div style="width: 50%">
+      <div style="width: 50%" :key="formKey">
         <div class="title">市场需求信息表</div>
         <form-list ref="formInfo2" class="formList" label-width="150px" :data-source="dataSourceInfo" :exist-default-btn="false" :form="formData"> </form-list>
         <div class="title">预审意见</div>
@@ -35,6 +35,7 @@ export default {
   },
   data() {
     return {
+      formKey: new Date().getTime(),
       formType: this.type,
       saveType: false,
       visible: false,
@@ -85,7 +86,8 @@ export default {
           type: 'view',
           labelText: '客户群',
           fieldName: 'customerGroup',
-          colLayout: 'singleCol'
+          colLayout: 'singleCol',
+          tip:''
         },
         {
           type: 'view',
@@ -255,6 +257,9 @@ export default {
       ]
     }
   },
+  created() {
+    this.getFiledInfo()
+  },
   mounted() {
     this.formData.sourceChannel = this.sourceChannel
 
@@ -275,6 +280,30 @@ export default {
     this.viewForm()
   },
   methods: {
+    getFiledInfo(){
+      this.$api['demandManagement.getFiledInfo']({fieldCode:''}).then((res) => {
+        if (res && res.length > 0) {
+          const dataSources = [
+            this.dataSourceInfo,
+            this.dataSourceOpinion,
+            this.dataSourceInfoTwo,
+            this.dataSourceAnalyse
+          ];
+
+          res.forEach(field => {
+            dataSources.forEach(source => {
+              source.forEach(item => {
+                if (item.labelText === field.fieldName) {
+                  item.tip = field.fieldTitle;
+                  this.$set(item, 'tip', field.fieldTitle)
+                }
+              });
+            });
+          });
+          this.formKey = new Date().getTime()
+        }
+      })
+    },
     viewForm() {
       this.$api['demandManagement.viewRequirement']({
         id: this.row[0].ID ? this.row[0].ID : this.row[0].id

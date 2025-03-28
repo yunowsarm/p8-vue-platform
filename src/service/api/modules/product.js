@@ -1841,6 +1841,13 @@ export const repositoryApi = {
       path: '/requirement/getRequirementByStatus',
       mockPath: '/requirement/getRequirementByStatus',
       desc: '主业看版-需求完成情况'
+    },
+    {
+      name: 'getFiledInfo',
+      method: 'POST',
+      path: '/product/filedHelp/getFiledInfo',
+      mockPath: '/product/filedHelp/getFiledInfo',
+      desc: '获取市场需求信息表字段提示信息'
     }
   ],
   // 任职资格管理

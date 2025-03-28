@@ -11,6 +11,7 @@
                      v-bind="$attrs"></form-render>
       </div>
       <div v-if="formType === '1'"
+           :key="formKey"
            style="width: 50%;">
         <div class="title">市场需求信息表</div>
         <form-list ref="formInfo2"
@@ -134,6 +135,7 @@ export default {
   },
   data () {
     return {
+      formKey: new Date().getTime(),
       formType: this.type,
       saveType: false,
       visible: false,
@@ -178,7 +180,7 @@ export default {
           fieldName: 'customerPhone',
           colLayout: 'singleCol',
           placeholder: '请输入手机或座机号码',
-          tip: '手机格式如:13512341234 座机格式如:010-40020020',
+          tip: '手机格式如:13512341234 座机213格式如:010-40020020',
           rules: [
             {
               pattern: '^(((\\+\\d{2}-)?0\\d{2,3}-\\d{7,8})|((\\+\\d{2}-)?(\\d{2,3}-)?([1][3,4,5,7,8,9][0-9]\\d{8})))$',
@@ -208,7 +210,8 @@ export default {
           fieldName: 'customerGroup',
           placeholder: '请输入客户群',
           colLayout: 'singleCol',
-          maxlength: 10
+          maxlength: 10,
+          tip:''
         },
         {
           type: 'text',
@@ -942,6 +945,9 @@ export default {
       isRadioSelect: true
     }
   },
+  created() {
+    this.getFiledInfo()
+  },
   mounted () {
     this.formData.sourceChannel = this.sourceChannel
     // 区分不同审批节点展示不同表单
@@ -965,6 +971,34 @@ export default {
     this.viewForm()
   },
   methods: {
+    getFiledInfo(){
+      this.$api['demandManagement.getFiledInfo']({fieldCode:''}).then((res) => {
+        if (res && res.length > 0) {
+          const dataSources = [
+            this.dataSourceInfo,
+            this.dataSourceOpinion,
+            this.dataSourceInfoTwo,
+            this.dataSourceAnalyse,
+            this.dataSourceInfoView,
+            this.dataSourceOpinionView,
+            this.dataSourceInfoTwoView,
+            this.dataSourceAnalyseView
+          ];
+
+          res.forEach(field => {
+            dataSources.forEach(source => {
+              source.forEach(item => {
+                if (item.labelText === field.fieldName) {
+                  item.tip = field.fieldTitle;
+                  this.$set(item, 'tip', field.fieldTitle)
+                }
+              });
+            });
+          });
+          this.formKey = new Date().getTime()
+        }
+      })
+    },
     approveCommit (e, msg) {
       //
       // this.$refs.form.$refs.form.$refs.parser.submitForm()
