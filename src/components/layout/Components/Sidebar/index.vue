@@ -57,10 +57,12 @@
                         :key="item.name"
                         class="custom-submenu">
               <template slot="title">
-                <i v-if="item.meta && item.meta.icon"
-                   class="p8"
-                   :class="item.meta.icon"></i>
-                <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
+                <div  @mouseenter="handleMouseEnter(item)">
+                  <i v-if="item.meta && item.meta.icon"
+                    class="p8"
+                    :class="item.meta.icon"></i>
+                  <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
+                </div>
               </template>
               <div class="cumtom-submenu-menu">
                 <template v-for="child in item.children">
@@ -79,8 +81,9 @@
                                 <i v-if="child.meta && child.meta.icon"
                                   class="p8"
                                   :class="child.meta.icon"></i>
-                                <span v-if="child.meta && child.meta.title">{{ child.meta.title }}
-                                    <i v-if="$route.path == child.path && hoveredMenuItem == child.path" 
+                                <span v-if="child.meta && child.meta.title">
+                                  <span :style="{width: hoveredMenuItem == child.path ? 'calc(100% - 22px)' : '100%'}">{{ child.meta.title }}</span>
+                                    <i style="margin:0;width:16px;" v-if="$route.path == child.path && hoveredMenuItem == child.path" 
                                     class="el-icon-question"
                                     @mouseenter="showOptions($event, child)">
                                   </i>

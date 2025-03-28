@@ -219,7 +219,7 @@
                      @widget-resize="onWidgetResize"
                      @on-fullscreen="onFullscreen">
           <div class="noPermission"
-               v-if="!item.isShow"><span class="text">安全管理员未授权您使用该组件的权限，请与安全管理员联系获取。</span></div>
+               v-if="item.isShow == false"><span class="text">安全管理员未授权您使用该组件的权限，请与安全管理员联系获取。</span></div>
           <dynamicLink v-else-if="item.component && item.component.functionalCategory === '1'"
                        :is-show="isLayoutReady"
                        :data="item"
@@ -368,7 +368,8 @@ export default {
       templateColumns: [
         {
           type: 'selection',
-          width: 45,
+          align: 'center',
+          width: 50,
         },
         {
           title: '组件名称',
