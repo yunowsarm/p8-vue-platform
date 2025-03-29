@@ -1,5 +1,6 @@
 <template>
   <el-tabs class="progressTaskTabs"
+           v-if="taskTabs.length"
            v-model="tabsActiveName"
            @tab-click="tabsClick">
     <el-tab-pane v-for="item in taskTabs"
@@ -7,28 +8,29 @@
                  :label="item.label"
                  :name="item.name">
       <!-- 进度反馈 -->
-      <template v-if="tabsActiveName === 'progess'">
-        <!-- <progess ref="progess"></progess> -->
+      <template v-if="item.name === 'progess' && tabsActiveName == item.name">
         <progess v-if="progessType !== 'progessTable'"
                  ref="progess"
+                 :taskFinish="taskFinish"
                  :tabsName="tabsName"
                  :durationDay="durationDay"
                  :approve="approve"
                  :exceedType="exceedType"
                  @dialogOk="dialogOk"
                  @dialogClose="dialogClose"></progess>
-        <progess-table v-else
+        <progess-table  v-else
                        ref="progessTable"></progess-table>
       </template>
       <!-- 工作统筹 -->
-      <template v-if="tabsActiveName === 'workCoordination'">
+      <template v-if="item.name === 'workCoordination' && tabsActiveName == item.name">
         <span slot="label">{{item.label}}</span>
         <work-coordination ref="workCoordination"></work-coordination>
       </template>
       <!-- 未完成原因 -->
-      <template v-if="tabsActiveName === 'unfinishedCause'">
+      <template v-if="item.name === 'unfinishedCause' && tabsActiveName == item.name">
         <span slot="label">{{item.label}}</span>
         <deviate ref="deviate"
+                 :taskFinish="taskFinish"
                  :tabsName="tabsName"></deviate>
       </template>
     </el-tab-pane>
@@ -76,10 +78,11 @@ export default {
       durationDay: false,
       exceedType: false,
       approve: false,
-      tabsName: 'progess'
+      tabsName: 'progess',
+      taskFinish: false
     }
   },
-  mounted () {
+  async created () {
     // 判断任务是否超期
     if (!this.durationDay) {
       // 超期
@@ -97,37 +100,48 @@ export default {
       }
     }
     let taskTabs = []
+    let tabsActiveName = ''
     // 已下发
     if (this.getPlanInfo().MANAGERSTATUS === '6404') {
-      this.tabsActiveName = 'progess'
+      tabsActiveName = 'progess'
       taskTabs = this.taskTabsProgess
     }
     // 未开始
     if (this.getPlanInfo().STATUS === '6020') {
-      this.tabsActiveName = 'progess'
+      tabsActiveName = 'progess'
       taskTabs = [...this.taskTabsProgess, ...this.taskTabsUnfinished]
     }
     // 进行中
     if (this.getPlanInfo().STATUS === '6050') {
-      this.tabsActiveName = 'progess'
+      tabsActiveName = 'progess'
       taskTabs = [...this.taskTabsProgess, ...this.taskTabsUnfinished]
     }
     // 已完成
     if (this.getPlanInfo().STATUS === '6070' || this.getPlanInfo().MANAGERSTATUS === '6406') {
-      this.tabsActiveName = 'progess'
+      tabsActiveName = 'progess'
       this.progessType = 'progessTable'
       taskTabs = [...this.taskTabsProgess, ...this.taskTabsUnfinished]
     }
     // 统筹中
     if (this.getPlanInfo().MANAGERSTATUS === '6402') {
-      this.tabsActiveName = 'workCoordination'
+      tabsActiveName = 'workCoordination'
       taskTabs = this.taskTabsWork
     }
+    this.tabsActiveName = tabsActiveName
     this.$nextTick(() => {
       this.taskTabs = taskTabs
     })
+    await this.getTaskFinish()
   },
   methods: {
+    getTaskFinish () {
+      this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then((res) => {
+        let taskFinish = res.taskFinish && res.taskFinish.content ? res.taskFinish.content : ''
+        if (taskFinish === '手动') {
+          this.taskFinish = true
+        }
+      })
+    },
     tabsClick (val) {
       this.tabsName = val.name
     },

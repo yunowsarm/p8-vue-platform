@@ -4,6 +4,7 @@
            @tab-click="tabsClick">
     <el-tab-pane label="前后置">
       <common-table ref="table"
+                    v-if="tabsActiveName == '前后置'"
                     :columns="columns"
                     :params="queryParam"
                     :table-setting="false"
@@ -16,6 +17,7 @@
     </el-tab-pane>
     <el-tab-pane label="父/子任务">
       <common-table ref="tableHierarchy"
+                    v-if="tabsActiveName == '父/子任务'"
                     :columns="columnsHierarchy"
                     :hasWBS="true"
                     :params="queryParam"
@@ -97,7 +99,7 @@ export default {
       }
     ]
     return {
-      tabsActiveName: '',
+      tabsActiveName: '前后置',
       queryParam: {
         taskId: ''
       },
@@ -140,6 +142,7 @@ export default {
       })
     },
     tabsClick (val) {
+      this.tabsActiveName = val.label
       if (val.paneName === '1') {
         // 选中递归
         this.checkRow(this.$refs.tableHierarchy.$refs.table.tableData)

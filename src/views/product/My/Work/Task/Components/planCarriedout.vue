@@ -21,7 +21,7 @@
       <template #left>
         <div class="task-info-con">
           <!-- 任务详情信息 -->
-          <task-info-view></task-info-view>
+          <task-info-view :allStatus="thirdMenuParamTemp.allStatus"></task-info-view>
         </div>
       </template>
       <template #center>

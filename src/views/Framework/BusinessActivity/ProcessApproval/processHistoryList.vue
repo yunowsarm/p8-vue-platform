@@ -4,6 +4,7 @@
 <template>
   <div class="history">
     <common-table ref="table"
+                  v-if="this.queryParam.businessKey"
                   :comp="comp"
                   :columns="columns"
                   :params="queryParam"

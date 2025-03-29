@@ -12,6 +12,7 @@
       <task-pane-view :dataSource="dataSource"
                       :isShow="true"
                       :api="taskApi"
+                      :allStatus="allStatus"
                       :apiParams="taskApiParams"></task-pane-view>
     </template>
   </pane-view>
@@ -30,6 +31,7 @@ export default {
   computed: {
 
   },
+  props: ['allStatus'],
   data () {
     const dataSource = [
       {
