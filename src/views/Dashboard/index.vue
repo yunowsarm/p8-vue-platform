@@ -48,6 +48,7 @@
                      v-else
                      ref="kanbanView"
                      class="component"
+                     :headerVisible="false"
                      :id="''"
                      :code="''"
                      :render-data="[item.deepCopyFormData]"
