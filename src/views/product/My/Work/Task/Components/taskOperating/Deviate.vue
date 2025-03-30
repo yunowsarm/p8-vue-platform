@@ -6,6 +6,7 @@
               :tableParams="tableParams"
               :columns="columns"
               :tabsName="tabsName"
+              :taskFinish="taskFinish"
               btnTitle="提交未完成原因"
               @submit="deviateSubmit"></form-table>
 </template>
@@ -20,7 +21,10 @@ export default {
   props: {
     tabsName: {
       type: String
-    }
+    },
+    taskFinish: {
+      type: Boolean
+    },
   },
   inject: ['getPlanInfo'],
   computed: {

@@ -32,7 +32,7 @@
               <span style="display:inline-block;padding: 3px 0;">布局有更新,<span style="color: #259bd8;text-decoration: underline;cursor: pointer;"
                       @click="viewVlick(item.changeWidget, index)">点击同步</span></span>
               <i slot="reference"
-                 v-if="item.visible"
+                 v-if="item.visible && editableTabsValue == item.name"
                  class="el-icon-refresh"
                  style="font-size: 14px;margin-left: 5px;"></i>
             </el-popover>
@@ -48,6 +48,7 @@
                      v-else
                      ref="kanbanView"
                      class="component"
+                     :headerVisible="false"
                      :id="''"
                      :code="''"
                      :render-data="[item.deepCopyFormData]"
@@ -126,11 +127,12 @@ export default {
     editableTabsValue (val, oldVal) {
       let index = this.editableTabs.findIndex(item => item.name === val);
       let deepWidget = this.editableTabs[index]
+      this.visible = false
       if (deepWidget.homePageId) {
         this.$api['kanbanView.getAllNoPage']({ id: deepWidget.homePageId }).then(res => {
           if (res[0] && res[0].dataVersion && res[0].dataVersion !== deepWidget.homePageVersion) {
             this.editableTabs[index].visible = true
-            this.visible = false
+            
             this.timeKey = new Date().getTime()
             this.editableTabs[index].changeWidget = res[0].widgets.map(el => JSON.parse(el.layout))
             this.editableTabs[index].changeHomePageVersion = res[0].dataVersion

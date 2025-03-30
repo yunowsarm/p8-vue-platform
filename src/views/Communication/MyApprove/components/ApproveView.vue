@@ -6,6 +6,7 @@
                    :active-tabs="activeTabs"
                    :hasFullScreen="true"
                    :keepBottom="true"
+                   @tab-click="tabsClick"
                    @isFullScreen="isFullScreen"
                    :tabs-data="tabs">
         <template #approval>
@@ -35,7 +36,7 @@
                      @selection-ids="selectionIdsByApprovalResult" />
         </template>
         <template #bpmn>
-          <bpm-view v-if="selectedApproval.processDefId !== ''"
+          <bpm-view v-if="selectedApproval.processDefId !== '' && activeTabs == 'bpmn'"
                     :style="{ height: tabsHeight, margin: '0px 0px 2px -333px !important;'}"
                     :isSmartForm="true"
                     :process-obj="{
@@ -45,7 +46,7 @@
                     @getIsWarnApprove="getIsWarnApprove"></bpm-view>
         </template>
         <template #history>
-          <ProcessHistoryList v-if="processInstId"
+          <ProcessHistoryList v-if="processInstId && activeTabs == 'history'"
                               :table-api="historyDataApi"
                               :columns="historyColumns"
                               :process-inst-id="processInstId"
@@ -542,6 +543,7 @@ export default {
       this.$refs.ProcessHistory.getPages(this.historyHeight)
     },
     tabsClick (val) {
+      console.log(val,'===val');
       this.activeTabs = val.name
     },
     getIsWarnApprove (isWarnApprove) {

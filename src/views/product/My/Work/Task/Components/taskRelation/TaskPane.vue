@@ -133,6 +133,7 @@ export default {
     },
     getTaskInfo () {
       let _this = this
+      if(!this.taskId) return
       this.$api[this.api]({ taskId: this.taskId }).then(res => {
         _this.taskInfo = res
         _this.rendFormData(res)

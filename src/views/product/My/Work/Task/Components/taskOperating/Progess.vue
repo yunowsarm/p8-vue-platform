@@ -13,6 +13,7 @@
               :approve="approve"
               :tabsName="tabsName"
               :btnTitle="btnTitle"
+              :taskFinish="taskFinish"
               @submit="progressSubmit"
               @NewSubmit="NewProgressSubmit"
               @progress-date-change="progressDateChange"
@@ -61,6 +62,9 @@ export default {
     },
     tabsName: {
       type: String
+    },
+    taskFinish: {
+      type: Boolean
     }
   },
   inject: ['getPlanInfo'],

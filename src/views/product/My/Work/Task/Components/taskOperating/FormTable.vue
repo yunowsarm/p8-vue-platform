@@ -244,7 +244,7 @@
                   </template>
                   <el-slider style="width: 100%;"
                              v-model="formData.progress"
-                             :disabled="this.getPlanInfo().pageType || disabledProgress"
+                             :disabled="!!this.getPlanInfo().pageType || disabledProgress"
                              @input="progressChange">
                   </el-slider>
                 </el-form-item>
@@ -486,7 +486,10 @@ export default {
     },
     tabsName: {
       type: String
-    }
+    },
+    taskFinish: {
+      type: Boolean,
+    },
   },
   data () {
     return {
@@ -540,20 +543,13 @@ export default {
       managerStatus: '', // 管理状态
       minNum: 0,
       endDateDisabled: true,
-      minValue: 0,
-      taskFinish: false
+      minValue: 0
     }
   },
   async created () {
     if (this.getPlanInfo().ISLEAF > 0) {
       this.getPlanInfo().pageType = 'view'
       this.disabledProgress = true
-      await this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then((res) => {
-        let taskFinish = res.taskFinish && res.taskFinish.content ? res.taskFinish.content : ''
-        if (taskFinish === '手动') {
-          this.taskFinish = true
-        }
-      })
     }
   },
   async mounted () {

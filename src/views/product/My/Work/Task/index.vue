@@ -298,10 +298,10 @@
     border-left: 2px solid #fff;
   }
 }
-::v-deep  .el-tabs__nav{
+::v-deep .el-tabs__nav {
   z-index: 1;
 }
-::v-deep .normal-layout .normal-main .splitBtn > i{
+::v-deep .normal-layout .normal-main .splitBtn > i {
   z-index: 1;
 }
 ::v-deep .el-tabs__item {
@@ -334,7 +334,7 @@ export default {
         return ['6050', '6020']
       }
     },
-    isFromDashboard:{
+    isFromDashboard: {
       type: Boolean,
       default: false
     }
@@ -378,6 +378,7 @@ export default {
     async init () {
       const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
       const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
+      if (!code) return
       const res = await this.$api['desLayout.getLayoutJson']({ layoutCode: code, version: version })
       this.previewParmars = JSON.parse(res)
       const { tabsParmar, tabsData, defaultComponents, parmarsMap } = this.previewParmars

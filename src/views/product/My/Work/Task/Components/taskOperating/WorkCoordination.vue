@@ -84,7 +84,6 @@ export default {
 
   },
   created () {
-    console.log(this.$route)
     let _this = this
     this.$api['taskManager.taskInfo']({ taskId: _this.planInfoParams.TASKID }).then(res => {
       this.formData.content = res.content

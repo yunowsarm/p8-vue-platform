@@ -21,6 +21,7 @@ const getters = {
   roles: (state) => state.user.roles,
   messageInfo: (state) => state.user.messageInfo,
   messageNum: (state) => state.user.messageNum,
+  taskMessageCount: (state) => state.user.taskMessageCount,
   messageCount: (state) => state.user.messageCount,
   approvalTotalMsg: (state) => state.user.approvalTotalMsg,
   userSettingAll: (state) => state.user.userSettingAll,
