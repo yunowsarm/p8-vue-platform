@@ -158,7 +158,7 @@ export default {
             deepCopyWidget: deepCopyWidget,
             name: el.name,
             homePageId: el.homePageId,
-            homePageVersion: el.dataVersion,
+            homePageVersion: el.homePageVersion,
             visible: false
           }
         })
@@ -301,7 +301,7 @@ export default {
             style: ''
           })
         })
-        saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: index, homePageId: el.homePageId ? el.homePageId : undefined, homePageVersion: el.homePageVersion })
+        saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: index, homePageId: el.homePageId ? el.homePageId : undefined, homePageVersion: el.changeHomePageVersion ? el.changeHomePageVersion : el.homePageVersion })
         // }
       })
       // saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: index, homePageId: el.homePageId ? el.homePageId : undefined, homePageVersion: el.changeHomePageVersion })
