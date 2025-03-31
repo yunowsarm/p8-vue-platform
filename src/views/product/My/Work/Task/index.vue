@@ -33,6 +33,7 @@
                 :configParmars="configParmars"
                 :tabsName="activeName"
                 :status="status"
+                :isThisMonthTask="isThisMonthTask"
                 v-bind="$attrs"
                 v-on="$listeners"
                 @save-success="saveSuccess"
@@ -332,6 +333,12 @@ export default {
       type: Array,
       default: () => {
         return ['6050', '6020']
+      }
+    },
+    isThisMonthTask: {
+      type: String,
+      default: () => {
+        return ''
       }
     },
     isFromDashboard: {

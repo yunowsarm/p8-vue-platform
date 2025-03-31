@@ -51,7 +51,8 @@
                 @click="drillCol(scope, thirdMenuData)">{{ scope.row.NAME }} </span>
           <span v-else>{{ scope.row.NAME }}</span>
         </template>
-        <template v-if='!isFromDashboard' #MENU="{ scope }">
+        <template v-if='!isFromDashboard'
+                  #MENU="{ scope }">
           <div v-if="scope.row.USERID === userId">
             <el-dropdown :hide-on-click="false">
               <span class="el-dropdown-link">
@@ -254,7 +255,7 @@ export default {
     }
   },
   props: {
-    isFromDashboard:{
+    isFromDashboard: {
       type: Boolean,
       default: false
     },
@@ -277,6 +278,10 @@ export default {
       }
     },
     tabsName: {
+      type: String,
+      default: ''
+    },
+    isThisMonthTask: {
       type: String,
       default: ''
     }
@@ -330,6 +335,9 @@ export default {
     this.westTreeParam.status = this.status
     if (this.isFromDashboard) {
       this.westTreeParam.isThisMonthTask = '1'
+    }
+    if (this.isThisMonthTask) {
+      this.westTreeParam.isThisMonthTask = this.isThisMonthTask
     }
     this.provideParams.searchParams = this.westTreeParam
 
@@ -715,6 +723,9 @@ export default {
       this.provideParams.searchParams.status = this.status
       if (this.isFromDashboard) {
         this.provideParams.searchParams.isThisMonthTask = '1'
+      }
+      if (this.isThisMonthTask) {
+        this.provideParams.searchParams.isThisMonthTask = this.isThisMonthTask
       }
     },
     getParamsList (obj, fileName) {

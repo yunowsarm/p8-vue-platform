@@ -14,6 +14,7 @@
                    @close="onEditResourcesCloseOther">
       <template #dialog>
         <taskList :layout-config="layoutConfig"
+                  :isThisMonthTask="isThisMonthTask"
                   :status="status"></taskList>
       </template>
     </common-dialog>
@@ -181,8 +182,10 @@ export default {
       this.myChart.on('click', (par) => {
         if (par.name === '未完成') {
           this.status = ['6050', '6020']
+          this.isThisMonthTask = '1'
         } else {
           this.status = ['6070']
+          this.isThisMonthTask = '2'
         }
         this.visibleDrawerOther = true
       })
