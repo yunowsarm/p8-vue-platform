@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="chartId"
+    <div :id="chartId"
          class="chart-container"
          ref="chartContainer"></div>
     <common-dialog v-if="visibleDrawerOther"
@@ -52,7 +52,8 @@ export default {
       visibleDrawerOther: false,
       drawerTitle: '我的任务',
       status: [],
-      chartData: {}
+      chartData: {},
+      chartId: new Date().getTime() + '1'
     }
   },
   components: {
@@ -104,7 +105,7 @@ export default {
       if (this.myChart) {
         this.myChart.dispose()
       }
-      var chartDom = document.getElementById('chartId')
+      var chartDom = document.getElementById(this.chartId)
       this.myChart = this.$echarts.init(chartDom)
       var option
       var params = {
