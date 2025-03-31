@@ -130,7 +130,7 @@ export default {
       this.visible = false
       if (deepWidget.homePageId) {
         this.$api['kanbanView.getAllNoPage']({ id: deepWidget.homePageId }).then(res => {
-          if (res[0] && res[0].dataVersion && res[0].dataVersion !== deepWidget.homePageVersion) {
+          if (deepWidget.homePageVersion && res[0] && res[0].dataVersion && res[0].dataVersion !== deepWidget.homePageVersion) {
             this.editableTabs[index].visible = true
 
             this.timeKey = new Date().getTime()
