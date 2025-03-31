@@ -1,7 +1,7 @@
 <template>
   <div>
     <FullCalendar :key="dateTime"
-                  style="width: 100%;min-height: 750px; max-height: 750px; overflow: auto;"
+                  class="calendarLayout"
                   :options="calendarOptions" />
     <common-dialog v-if="visibleDrawerOther"
                    :title="drawerTitle"
@@ -191,12 +191,20 @@ export default {
 </script>
 
 <style>
+.calendarLayout {
+  width: 100% !important;
+  max-height: 850px !important;
+  overflow: auto;
+}
 .fc-event-title,
 .fc-event-title-container {
   cursor: pointer;
 }
 .fc .fc-daygrid-day-frame {
-  height: 100px !important;
+  height: 80px !important;
+}
+.fc-scrollgrid-sync-table {
+  height: 1000px !important;
 }
 .repeating-event {
   background-color: #3788d8;
