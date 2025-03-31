@@ -33,12 +33,14 @@
             </el-tooltip>
           </div>
         </div>
-        <div class="tagsSearch">
+        <div class="tagsSearch" :key="tabEenderTime">
           <el-tooltip v-for="item in visibleTags"
                       :key="item.id"
+                      :open-delay="300"
                       :content="item.name"
                       placement="top">
-            <el-tag :class="{isActive: item.id === activeId,'tag-item':true}"
+            <el-tag :class="{isActive: activeIds.includes(item.name)
+            ,'tag-item':true, isSearch: searchTabs == item.name}"
                     @click="tagClick(item)">
               {{ truncateName(item.name) }}
             </el-tag>
@@ -167,6 +169,14 @@ export default {
           fieldConfig: {
             'value-format': 'yyyy-MM-dd'
           }
+        },
+        {
+          type: 'select',
+          labelText: '标签筛选',
+          fieldName: 'tabsName',
+          colLayout: 'singleCol',
+          placeholder: '请选择',
+          options: []
         }
       ],
       renderTime: new Date() + '',
@@ -184,7 +194,9 @@ export default {
       approvalList: [],
       showAll: false, // 是否显示全部标签
       tagHeight: null,
-      activeId: ''
+      activeIds: [],
+      searchTabs: '',
+      tabEenderTime: new Date().getTime()
     }
   },
   computed: {
@@ -261,6 +273,12 @@ export default {
         startUserId: this.mergeParams.startUserId
       }).then(res => {
         this.approvalList = res
+        this.selectOptions = this.approvalList.map(el =>{ return {label:el.name,value:el.name}})
+        this.searchConfig.forEach(el => {
+          if (el.fieldName == 'tabsName') {
+            el.options = this.selectOptions
+          }
+        })
       })
     },
     // 截取名称，超过4个字符追加省略号
@@ -273,8 +291,15 @@ export default {
       this.showAll = true;
     },
     tagClick (item) {
-      this.activeId = item.id
-      this.mergeParams.tagName = item.name
+      const index = this.activeIds.indexOf(item.name);
+      if (index > -1) {
+        // 如果包含 item.id，则移除
+        this.activeIds.splice(index, 1);
+      } else {
+        // 如果不包含 item.id，则添加
+        this.activeIds.push(item.name);
+      }
+      this.mergeParams.tagNameList = this.activeIds
       this.renderTime = new Date() + ''
     },
     reSet () {
@@ -282,6 +307,8 @@ export default {
       that.mergeParams.processName = ''
       that.mergeParams.senderName = ''
       that.mergeParams.startEndTime = []
+      this.searchTabs = ''
+      this.activeIds = []
       that.renderTime = new Date() + ''
     },
     ascendingTime () { // 时间升序
@@ -304,11 +331,18 @@ export default {
     },
     refreshList () {
       this.renderTime = new Date() + ''
-      this.$emit('refreshList')
+      setTimeout(() => {
+        this.tabEenderTime = new Date().getTime()
+      }, 500)
     },
     search (queryParam) {
       this.mergeParams = Object.assign(this.mergeParams, queryParam)
       this.renderTime = new Date() + ''
+      if (queryParam.tabsName) {
+        this.searchTabs = queryParam.tabsName
+      } else {
+        this.searchTabs = ''
+      }
     },
     triggerSelect (item, index) {
       this.currentIndex = index
@@ -405,7 +439,11 @@ $icon-span-width: 20px;
   margin-left: 8px;
 }
 .isActive {
-  background: #3373c2;
+  background: #3373c2 !important;
+  color: white;
+}
+.isSearch {
+  background: #3c5d86;
   color: white;
 }
 </style>
