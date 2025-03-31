@@ -17,7 +17,7 @@
       </div>
       <el-menu mode="vertical"
                class="vertical-menu"
-               :default-active="$route.path"
+               :default-active="defaultActive"
                :router="true"
                unique-opened
                text-color="#fff"
@@ -83,7 +83,7 @@
                                   :class="child.meta.icon"></i>
                                 <span v-if="child.meta && child.meta.title">
                                   <span :style="{width: hoveredMenuItem == child.path ? 'calc(100% - 22px)' : '100%'}">{{ child.meta.title }}</span>
-                                    <i style="margin:0;width:16px;" v-if="$route.path == child.path && hoveredMenuItem == child.path" 
+                                    <i style="margin:0;width:16px;" v-if="(isActiveRoute(child) || isChildRouteActive(child)) && hoveredMenuItem == child.path"
                                     class="el-icon-question"
                                     @mouseenter="showOptions($event, child)">
                                   </i>
@@ -180,6 +180,7 @@ export default {
   name: 'Sidebar',
   data () {
     return {
+      defaultActive:this.$route.path,
       scrollOptions: {
         suppressScrollX: true
       },
@@ -367,6 +368,13 @@ export default {
         }
         this.hideOptions();
       })
+    },
+    isActiveRoute(item) {
+        return this.$route.path === item.path;
+    },
+    isChildRouteActive(item) {
+        if (!item.children) return false;
+        return item.children.some(child => this.$route.path === child.path);
     }
   },
   components: {

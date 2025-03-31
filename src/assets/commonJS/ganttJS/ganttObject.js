@@ -1138,7 +1138,12 @@ GanttObject.customDateEditor = function (ganttObject) {
                     text: '一个月前',
                     onClick(picker) {
                       const date = new Date()
+                      const currentDay = date.getDate()
                       date.setMonth(date.getMonth() - 1)
+                      // 处理跨月时天数不一致的情况
+                      if (date.getDate() < currentDay) {
+                        date.setDate(0) // 设置为上个月的最后一天
+                      }
                       picker.$emit('pick', date)
                     }
                   },
@@ -1146,7 +1151,12 @@ GanttObject.customDateEditor = function (ganttObject) {
                     text: '一个月后',
                     onClick(picker) {
                       const date = new Date()
+                      const currentDay = date.getDate()
                       date.setMonth(date.getMonth() + 1)
+                      // 处理跨月时天数不一致的情况
+                      if (date.getDate() < currentDay) {
+                        date.setDate(0) // 设置为下个月的最后一天
+                      }
                       picker.$emit('pick', date)
                     }
                   }
@@ -1335,7 +1345,12 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                     text: '一个月前',
                     onClick(picker) {
                       const date = new Date()
+                      const currentDay = date.getDate()
                       date.setMonth(date.getMonth() - 1)
+                      // 处理跨月时天数不一致的情况
+                      if (date.getDate() < currentDay) {
+                        date.setDate(0) // 设置为上个月的最后一天
+                      }
                       picker.$emit('pick', date)
                     }
                   },
@@ -1343,7 +1358,12 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                     text: '一个月后',
                     onClick(picker) {
                       const date = new Date()
+                      const currentDay = date.getDate()
                       date.setMonth(date.getMonth() + 1)
+                      // 处理跨月时天数不一致的情况
+                      if (date.getDate() < currentDay) {
+                        date.setDate(0) // 设置为下个月的最后一天
+                      }
                       picker.$emit('pick', date)
                     }
                   }
