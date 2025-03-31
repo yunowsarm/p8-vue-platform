@@ -469,7 +469,7 @@ export default {
       selectUserBeforehandFormData: {},
       selectUserBeforehandDataSource: [],
       dateTime: '',
-      searchParam:null
+      searchParam: null
     }
   },
   computed: {
@@ -692,7 +692,7 @@ export default {
       this.rolesSelectedIndex = index
       this.selectRoleId = item.roleId ? item.roleId : ''
       this.tableData = item.projectTeamRoleUsers ? item.projectTeamRoleUsers : []
-      if(this.searchParam){
+      if (this.searchParam) {
         this.search(this.searchParam)
       }
       if (this.columns.filter((item) => item.dataIndex === 'roleName').length) {
@@ -767,7 +767,7 @@ export default {
       })
       this.tableData = tableData
       this.dateTime = new Date().getTime()
-      if(this.searchParam){
+      if (this.searchParam) {
         this.search(this.searchParam)
       }
     },
@@ -1319,7 +1319,7 @@ export default {
 
 .viewVisible {
   position: absolute;
-  top: 45px;
+  top: 0;
   left: 0;
   bottom: 0;
   right: 0;
