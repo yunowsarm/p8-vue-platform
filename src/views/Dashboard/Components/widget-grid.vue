@@ -23,6 +23,7 @@
                      v-if="addWidgetVisible"
                      :visible="addWidgetVisible"
                      destroy-on-close
+                     :dialogHeight="500"
                      @close="handleCancel('addWidgetVisible')"
                      :show-handle-btn="false"
                      :is-view-cs-footer="true"
@@ -34,12 +35,22 @@
                      :close-on-click-modal="false"
                      :close-on-press-escape="false">
         <template #dialog>
-          <!-- kanbanComponent.list -->
-          <common-table ref="table"
-                        :params="queryParam"
-                        api="kanbanComponent.getRoleAppInfo"
-                        :columns="columns"
-                        :pagination="true"> </common-table>
+          <list-layout>
+            <template #north>
+              <search-form-list ref="searchWidget"
+                                :data-source="searchWidgetData"
+                                @search="searchWidget"
+                                @re-set="reSetWidget"></search-form-list>
+            </template>
+            <template #center>
+              <!-- kanbanComponent.list -->
+              <common-table ref="widgetTable"
+                            :params="widgetParams"
+                            api="kanbanComponent.getRoleAppInfo"
+                            :columns="columns"
+                            :pagination="true"> </common-table>
+            </template>
+          </list-layout>
         </template>
         <template #cs-footer>
           <el-button @click="addWidgetVisible = false">取消</el-button>
@@ -138,6 +149,7 @@
                      v-if="addTemplateVisible"
                      :visible="addTemplateVisible"
                      destroy-on-close
+                     :dialogHeight="500"
                      @close="handleCancel('addTemplateVisible')"
                      :show-handle-btn="false"
                      :is-view-cs-footer="true"
@@ -149,16 +161,26 @@
                      :close-on-click-modal="false"
                      :close-on-press-escape="false">
         <template #dialog>
-          <common-table ref="tableTemplate"
-                        :params="{isTerminal: '1', roleIdList: roleIds}"
-                        api="kanbanView.list"
-                        :columns="templateColumns"
-                        :pagination="true">
-            <template #operation="{ scope }">
-              <el-button type="text"
-                         @click="preview(scope.row)">预览</el-button>
+          <list-layout>
+            <template #north>
+              <search-form-list ref="searchTemplate"
+                                :data-source="searchTemplateData"
+                                @search="searchTemplate"
+                                @re-set="reSetTemplate"></search-form-list>
             </template>
-          </common-table>
+            <template #center>
+              <common-table ref="tableTemplate"
+                            :params="templateParams"
+                            api="kanbanView.list"
+                            :columns="templateColumns"
+                            :pagination="true">
+                <template #operation="{ scope }">
+                  <el-button type="text"
+                             @click="preview(scope.row)">预览</el-button>
+                </template>
+              </common-table>
+            </template>
+          </list-layout>
         </template>
         <template #cs-footer>
           <el-button @click="addTemplateVisible = false">取消</el-button>
@@ -248,7 +270,7 @@
 <script>
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import { SmartWidgetGrid } from 'p8-vue-smart-widget'
-import { P8Table as CommonTable, P8Dialog as CommonDialog } from 'p8-components-ui'
+import { P8Table as CommonTable, P8Dialog as CommonDialog,P8Search as SearchFormList,P8ListLayout as ListLayout } from 'p8-components-ui'
 import _cloneDeep from 'lodash/cloneDeep'
 import widgetItem from './widget-item.vue'
 import dynamicLink from './dynamic-link.vue'
@@ -267,6 +289,8 @@ export default {
   },
   components: {
     CommonTable,
+    ListLayout,
+    SearchFormList,
     CommonDialog,
     SmartWidgetGrid,
     widgetItem,
@@ -324,6 +348,39 @@ export default {
   },
   data () {
     return {
+      widgetParams:{},
+      templateParams:{
+        isTerminal: '1',
+        roleIdList: this.roleIds  ? this.roleIds : [],
+      },
+      searchWidgetData:[
+        {
+          type: 'text', // 控件类型
+          labelText: '组件名称', // 控件显示的文本
+          fieldName: 'name',
+          placeholder: '请输入组件名称',
+        },
+        {
+          type: 'text', // 控件类型
+          labelText: '描述', // 控件显示的文本
+          fieldName: 'compCode',
+          placeholder: '请输入描述',
+        },
+      ],
+      searchTemplateData:[
+        {
+          type: 'text', // 控件类型
+          labelText: '模板名称', // 控件显示的文本
+          fieldName: 'name',
+          placeholder: '请输入模板名称',
+        },
+        {
+          type: 'text', // 控件类型
+          labelText: '描述', // 控件显示的文本
+          fieldName: 'describe',
+          placeholder: '请输入描述',
+        },
+      ],
       tableSearchList: [],
       searchList: [],
       dialogHeight: 300,
@@ -348,7 +405,6 @@ export default {
         },
         magnify: false
       },
-      queryParam: { name: '' },
       setWidgetTitle: '修改widget',
       columns: [
         {
@@ -372,7 +428,7 @@ export default {
           width: 50,
         },
         {
-          title: '组件名称',
+          title: '模版名称',
           align: 'center',
           dataIndex: 'name'
         },
@@ -396,6 +452,43 @@ export default {
     }
   },
   methods: {
+    // 组件搜索
+    searchWidget(param){
+      this.widgetParams = {
+        ...this.widgetParams,
+        ...param
+      }
+      this.$nextTick(() => {
+        this.$refs.widgetTable.searchData()
+      })
+    },
+    // 重置组件搜索
+    reSetWidget () {
+      this.widgetParams = {}
+      this.$nextTick(() => {
+        this.$refs.widgetTable.searchData()
+      })
+    },
+    // 模板搜索
+    searchTemplate(param){
+      this.templateParams = {
+        ...this.templateParams,
+        ...param
+      }
+      this.$nextTick(() => {
+        this.$refs.tableTemplate.searchData()
+      })
+    },
+    // 重置模板搜索
+    reSetTemplate () {
+      this.templateParams = {
+        isTerminal: '1',
+        roleIdList: this.roleIds  ? this.roleIds : [],
+      }
+      this.$nextTick(() => {
+        this.$refs.tableTemplate.searchData()
+      })
+    },
     searchData (data) {
       this.tableSearchList = Array.from(new Set([...this.tableSearchList, ...data]))
       this.changeSearchConfig()
