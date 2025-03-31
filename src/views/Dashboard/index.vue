@@ -132,7 +132,7 @@ export default {
         this.$api['kanbanView.getAllNoPage']({ id: deepWidget.homePageId }).then(res => {
           if (res[0] && res[0].dataVersion && res[0].dataVersion !== deepWidget.homePageVersion) {
             this.editableTabs[index].visible = true
-            
+
             this.timeKey = new Date().getTime()
             this.editableTabs[index].changeWidget = res[0].widgets.map(el => JSON.parse(el.layout))
             this.editableTabs[index].changeHomePageVersion = res[0].dataVersion
@@ -208,9 +208,6 @@ export default {
       }
     },
     handleTabsClick (targetName) {
-      if (targetName.name === '主页看板四') {
-        this.dateTime = new Date().getTime()
-      }
       this.editableTabsValue = targetName.name
     },
     removeTab (targetName) {

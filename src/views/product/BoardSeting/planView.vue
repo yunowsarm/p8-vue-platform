@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="chartId"
+    <div :id="chartId"
          class="chart-container"
          ref="chartContainer"></div>
     <common-dialog v-if="visibleDrawerOther"
@@ -14,6 +14,7 @@
                    @close="onEditResourcesCloseOther">
       <template #dialog>
         <taskList :layout-config="layoutConfig"
+                  :isThisMonthTask="isThisMonthTask"
                   :status="status"></taskList>
       </template>
     </common-dialog>
@@ -51,7 +52,8 @@ export default {
       visibleDrawerOther: false,
       drawerTitle: '我的任务',
       status: [],
-      chartData: {}
+      chartData: {},
+      chartId: new Date().getTime() + '1'
     }
   },
   components: {
@@ -103,7 +105,7 @@ export default {
       if (this.myChart) {
         this.myChart.dispose()
       }
-      var chartDom = document.getElementById('chartId')
+      var chartDom = document.getElementById(this.chartId)
       this.myChart = this.$echarts.init(chartDom)
       var option
       var params = {
@@ -181,8 +183,10 @@ export default {
       this.myChart.on('click', (par) => {
         if (par.name === '未完成') {
           this.status = ['6050', '6020']
+          this.isThisMonthTask = '1'
         } else {
           this.status = ['6070']
+          this.isThisMonthTask = '2'
         }
         this.visibleDrawerOther = true
       })
