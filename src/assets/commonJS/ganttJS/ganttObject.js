@@ -2097,6 +2097,30 @@ GanttObject.changeUnMoveTask = function (vueThis, ganttObject) {
 }
 
 /**
+ * @Description 任务时间调整事件
+ * @author yourname
+ * @date 2024/04/03
+ */
+GanttObject.onTaskTimeChange = function(ganttObject) {
+  // 任务更新后触发
+  ganttObject.attachEvent("onAfterTaskUpdate", function(id, task) {
+    // 防止递归调用
+    if (task._updating) return;
+    
+    task._updating = true;
+    try {
+      // 同步更新预计时间
+      task.forecastBeginDate = moment(task.start_date).format('YYYY-MM-DD');
+      task.forecastEndDate = moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD');
+      ganttObject.updateTask(id);
+      ganttObject.render();
+    } finally {
+      delete task._updating;
+    }
+  });
+}
+
+/**
  * @Description 计算指定任务进度
  *      当前节点下所有叶子节点进度 * 工期的和 / 当前节点下所有叶子节点的工期合计 = 当前节点进度
  * @author fukai
