@@ -3608,9 +3608,17 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
             if (res.resources) {
               ganttObject.$resourcesStore.parse(res.resources)
             }
+            let managerStatus = ''
+            if (vueThis.thirdMenuParam.MANAGESTATUS === '6609' || vueThis.thirdMenuParam.EXECUTESTATE === '1000') {
+              managerStatus = '6401'
+            } if (vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
+              managerStatus = '6403'
+            } else {
+              managerStatus = '6402'
+            }
             if (res.tasks) {
               res.tasks.forEach(el => {
-                el.managerStatus = (vueThis.thirdMenuParam.MANAGESTATUS === '6609' || vueThis.thirdMenuParam.EXECUTESTATE === '1000') ? '6401' : '6403'
+                el.managerStatus = managerStatus
                 el.dutyDeptName = ''
                 el.realName = ''
                 el.owner_id = ''
