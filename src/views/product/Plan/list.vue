@@ -6,6 +6,7 @@
                    :default-expand-all="false"
                    node-key="ID"
                    :data="treeData"
+                   :tree-config='treeConfig'
                    ref="commonTree"
                    @select="onSelect"></common-tree>
     </template>
@@ -105,7 +106,10 @@ export default {
       provideParams: {
         searchParams: {}
       },
-      componentsConfig: {}
+      componentsConfig: {},
+      treeConfig: {
+        'current-node-key': ''
+      },
     }
   },
   props: {
@@ -177,6 +181,28 @@ export default {
       } else {
         this.asyncComponents = defaultComponents.url ? defaultComponents.url : ''
         this.componentsConfig = defaultComponents
+      }
+      // defaultCheckeNode 0 根节点       1 第一个子节点
+      if (treeSettingsParmars.defaultCheckeNode && treeSettingsParmars.defaultCheckeNode === '0') {
+        this.treeConfig['current-node-key'] = this.treeData[0].ID
+        this.$nextTick(() => {
+          this.$refs.commonTree.$refs.tree.setCurrentKey(this.treeData[0].ID, true)
+          // this.onSelect(this.treeData[0])
+        })
+      } else {
+        this.handleNodeClick(this.treeData);
+      }
+    },
+     // 选中节点
+    handleNodeClick (data) {
+      if (data[0].children && data[0].children.length > 0) {
+        this.handleNodeClick(data[0].children)
+      } else {
+        this.$nextTick(() => {
+          this.$refs.commonTree.$refs.tree.setCurrentKey(data[0].ID)
+          this.onSelect(data[0])
+
+        })
       }
     },
     getFirstChild (data) {
