@@ -161,7 +161,8 @@ export default {
         { icon: 'p8 icon-kaishizhikaishi', type: '1', describe: '开始-开始' },
         { icon: 'p8 icon-wanchengzhiwancheng', type: '2', describe: '完成-完成' },
         { icon: 'p8 icon-kaishizhiwancheng', type: '3', describe: '开始-完成' }
-      ]
+      ],
+      dependentDatas: []
     }
   },
   mounted () {
@@ -172,7 +173,7 @@ export default {
       const that = this
       this.$api['planGanttManager.getDependenceByTaskId']({ taskId: taskId }).then((res) => {
         that.dataSource[0].options = that.tempOptions // 更新default dataSource中下拉框的数据
-        that.dataSource[1].treeData = that.vueThis.dependentDatas
+        this.getAllDatas()
         let datas = []
         if (res && res.ganttLinkResponse.length > 0) {
           res.ganttLinkResponse.forEach(function (item) {
@@ -204,7 +205,25 @@ export default {
             that.dataSourceArray.push(JSON.parse(JSON.stringify(dataSourceTemp))) // push中逻辑防止表单数据相互影响
           })
         }
+        console.log(that.dataSourceArray,'=====that.dataSourceArray');
       })
+    },
+    getAllDatas () {
+      let that = this
+      let ganttObject = GanttObject.getGanttObject(that.ganttName)
+      // 获取所有任务数据
+      var allTasks = ganttObject.getTaskByTime();
+      this.dependentDatas = []
+      allTasks.forEach((task) => {
+          this.dependentDatas.push({
+            id: task.id,
+            name: task.name,
+            parent: task.parent,
+            status: task.status,
+            hasAtt: task.hasAtt && task.hasAtt > 0 ? 'true' : 'false' // 是否存在输出
+          })
+        })
+      that.dataSource[1].treeData = this.dependentDatas
     },
     formAdd (params) {
       // 添加: 重新计算选择逻辑
@@ -262,7 +281,8 @@ export default {
           })
       }
     },
-    formEdit () {
+    async formEdit () {
+      await this.getLinkDatas()
       // 单个form编辑
       this.sourceSelectRules()
     },
@@ -360,7 +380,7 @@ export default {
        * 任务名称渲染
        */
       const source = scope.source
-      const currentSource = this.vueThis.dependentDatas.filter((item) => item.id === source)
+      const currentSource = this.dependentDatas.filter((item) => item.id === source)
       return currentSource[0].name
     },
     renderTaskStatusHandle (scope) {
@@ -369,7 +389,7 @@ export default {
        */
       const sourceId = scope.source
       let status
-      const currentSource = this.vueThis.dependentDatas.filter((item) => item.id === sourceId)
+      const currentSource = this.dependentDatas.filter((item) => item.id === sourceId)
       if (currentSource.length) {
         status = currentSource[0].status
       }
@@ -419,6 +439,8 @@ export default {
               }
               if (sourceIds.indexOf(treeItem.id) !== -1 || sourceIds.indexOf(treeItem.parent) !== -1 || sourceParents.indexOf(treeItem.id) !== -1 || currSourceLinkChilds.indexOf(treeItem.id) !== -1) {
                 this.$set(treeItem, 'disabled', true)
+              } else {
+                this.$set(treeItem, 'disabled', false)
               }
               if (sourceIds.indexOf(treeItem.id) !== -1 && sourceParents.indexOf(treeItem.parent) === -1) {
                 sourceParents.push(treeItem.parent)
