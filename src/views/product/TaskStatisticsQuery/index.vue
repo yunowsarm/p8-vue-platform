@@ -12,6 +12,9 @@ export default {
   },
   data() {
     return {
+      treeConfig:{
+        'current-node-key': ''
+      },
       renderKey: new Date().getTime(),
       treeSettingsParams: {
         optionLabelCol: 'NAME',
@@ -43,17 +46,22 @@ export default {
       }
       // 获取动态数据的参数映射所有列
       this.treeData = selectGenerateTree(res, JSON.stringify(config))
-      this.getDefaultExpandedKeys(this.treeData)
-    },
-    // 展开所有树形数据
-    getDefaultExpandedKeys(data) {
-      data.forEach((item) => {
-        if (item.children && item.children.length > 0) {
-          this.defaultExpandedKeys.push(item.id)
-          this.getDefaultExpandedKeys(item.children)
-        }
+      this.treeConfig['current-node-key'] = this.treeData[0].ID
+      this.$nextTick(() => {
+        this.$refs.commonTree.$refs.tree.setCurrentKey(this.treeData[0].ID, true)
+        // this.onSelect(this.treeData[0])
       })
+      // this.getDefaultExpandedKeys(this.treeData)
     },
+    // // 展开所有树形数据
+    // getDefaultExpandedKeys(data) {
+    //   data.forEach((item) => {
+    //     if (item.children && item.children.length > 0) {
+    //       this.defaultExpandedKeys.push(item.id)
+    //       this.getDefaultExpandedKeys(item.children)
+    //     }
+    //   })
+    // },
     // 树形数据选中事件
     onSelect(data,node) {
       if(!!node && node.level === 1) {
@@ -70,7 +78,7 @@ export default {
 <template>
   <normal-layout :header-visible="false" :split-layout="true">
     <template #west>
-      <common-tree node-key="ID" :default-expanded-keys="defaultExpandedKeys" :default-expand-all="false" :data="treeData" ref="commonTree" @select="onSelect"></common-tree>
+      <common-tree node-key="ID" :tree-config='treeConfig' :default-expanded-keys="defaultExpandedKeys" :default-expand-all="false" :data="treeData" ref="commonTree" @select="onSelect"></common-tree>
     </template>
     <template #center>
       <list :key='renderKey' ref='ganttList' :project-id="projectId"></list>
