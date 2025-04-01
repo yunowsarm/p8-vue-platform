@@ -43,6 +43,7 @@
               </el-checkbox>
               <span class="widthNumber">
                 <el-input-number v-model="item.width"
+                                 :min="1"
                                  @blur="numberBlur(index)"
                                  controls-position="right"></el-input-number>
               </span>
