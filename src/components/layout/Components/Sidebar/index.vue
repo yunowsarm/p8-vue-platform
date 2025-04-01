@@ -57,10 +57,10 @@
                         :key="item.name"
                         class="custom-submenu">
               <template slot="title">
-                <div  @mouseenter="handleMouseEnter(item)">
+                <div @mouseenter="handleMouseEnter(item)">
                   <i v-if="item.meta && item.meta.icon"
-                    class="p8"
-                    :class="item.meta.icon"></i>
+                     class="p8"
+                     :class="item.meta.icon"></i>
                   <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
                 </div>
               </template>
@@ -71,26 +71,29 @@
                             :is-nest="true" class="nest-menu" :routes="[child]" :key="child.name">
                         </sidebar-menu-item>
                         <template v-else> -->
-                          <el-menu-item :index="child.path"
-                                        :disabled="!!child.isDisabled"
-                                        :key="child.name">
-                            <el-tooltip placement="right"
-                                        :disabled="child.meta.title.length < 8"
-                                        :content="child.meta.title">
-                              <div id="item" @mouseenter="handleMouseEnter(child)" @mouseleave="onIconMouseLeave">
-                                <i v-if="child.meta && child.meta.icon"
-                                  class="p8"
-                                  :class="child.meta.icon"></i>
-                                <span v-if="child.meta && child.meta.title">
-                                  <span :style="{width: hoveredMenuItem == child.path ? 'calc(100% - 22px)' : '100%'}">{{ child.meta.title }}</span>
-                                    <i style="margin:0;width:16px;" v-if="(isActiveRoute(child) || isChildRouteActive(child)) && hoveredMenuItem == child.path"
-                                    class="el-icon-question"
-                                    @mouseenter="showOptions($event, child)">
-                                  </i>
-                                </span>
-                              </div>
-                            </el-tooltip>
-                          </el-menu-item>
+                    <el-menu-item :index="child.path"
+                                  :disabled="!!child.isDisabled"
+                                  :key="child.name">
+                      <el-tooltip placement="right"
+                                  :disabled="child.meta.title.length < 8"
+                                  :content="child.meta.title">
+                        <div id="item"
+                             @mouseenter="handleMouseEnter(child)"
+                             @mouseleave="onIconMouseLeave">
+                          <i v-if="child.meta && child.meta.icon"
+                             class="p8"
+                             :class="child.meta.icon"></i>
+                          <span v-if="child.meta && child.meta.title">
+                            <span :style="{width: hoveredMenuItem == child.path ? 'calc(100% - 22px)' : '100%'}">{{ child.meta.title }}</span>
+                            <i style="margin:0;width:16px;"
+                               v-if="(isActiveRoute(child) || isChildRouteActive(child)) && hoveredMenuItem == child.path"
+                               class="el-icon-question"
+                               @mouseenter="showOptions($event, child)">
+                            </i>
+                          </span>
+                        </div>
+                      </el-tooltip>
+                    </el-menu-item>
                     <!-- </template> -->
                   </template>
                 </template>
@@ -142,33 +145,33 @@
       </el-popover>
     </span>
     <common-drawer v-if="isVisibleHistoryDrawer"
-                       title="视频教程"
-                       :visible="isVisibleHistoryDrawer"
-                       placement="top"
-                       size="100%"
-                       @close="isVisibleHistoryDrawer = false"
-                       >
-        <template #drawer>
-          <videoViewing v-if="isVisibleHistoryDrawer" :record="record"></videoViewing>
-        </template>
-      </common-drawer>
-      <common-drawer v-if="isVisiblePDFdrawer"
-                      title="操作手册"
-                      :visible="isVisiblePDFdrawer"
-                      placement="top"
-                      size="100%"
-                      @close="isVisiblePDFdrawer = false"
-                      >
-        <template #drawer>
-          <PDFpreview v-if="isVisiblePDFdrawer" :record="record"></PDFpreview>
-        </template>
-      </common-drawer>
+                   title="视频教程"
+                   :visible="isVisibleHistoryDrawer"
+                   placement="top"
+                   size="100%"
+                   @close="isVisibleHistoryDrawer = false">
+      <template #drawer>
+        <videoViewing v-if="isVisibleHistoryDrawer"
+                      :record="record"></videoViewing>
+      </template>
+    </common-drawer>
+    <common-drawer v-if="isVisiblePDFdrawer"
+                   title="操作手册"
+                   :visible="isVisiblePDFdrawer"
+                   placement="top"
+                   size="100%"
+                   @close="isVisiblePDFdrawer = false">
+      <template #drawer>
+        <PDFpreview v-if="isVisiblePDFdrawer"
+                    :record="record"></PDFpreview>
+      </template>
+    </common-drawer>
   </div>
   <!-- </transition> -->
 </template>
 
 <script>
-import { Menu, Submenu, MenuItem, Tooltip,P8Drawer as CommonDrawer, } from 'p8-components-ui'
+import { Menu, Submenu, MenuItem, Tooltip, P8Drawer as CommonDrawer, } from 'p8-components-ui'
 import videoViewing from '@/views/Framework/System/guiDe/components/videoPlayer.vue'
 import PDFpreview from '@/views/Framework/System/guiDe/components/PDFpreview.vue'
 import { mapGetters } from 'vuex'
@@ -180,7 +183,7 @@ export default {
   name: 'Sidebar',
   data () {
     return {
-      defaultActive:this.$route.path,
+      defaultActive: this.$route.path,
       scrollOptions: {
         suppressScrollX: true
       },
@@ -284,19 +287,19 @@ export default {
     handleMouseLeave () {
       this.hoveredMenuItem = ''
     },
-    showPopover() {
+    showPopover () {
       this.popoverVisible = true;
     },
-    hidePopover() {
+    hidePopover () {
       this.popoverVisible = false;
     },
-    openManualDialog() {
+    openManualDialog () {
       this.manualDialogVisible = true;
     },
-    openLinkDialog() {
+    openLinkDialog () {
       this.linkDialogVisible = true;
     },
-    showOptions(event, item) {
+    showOptions (event, item) {
       this.optionsDiv && this.hideOptions();
       const optionsDiv = document.createElement('div');
       optionsDiv.className = 'options-container';
@@ -320,8 +323,8 @@ export default {
       parentDiv.addEventListener('mouseleave', () => this.onOptionsMouseLeave());
       parentDiv.style.cssText = `
         position: absolute;
-        left: ${event.pageX-10}px;
-        top: ${event.pageY-10}px;
+        left: ${event.pageX - 10}px;
+        top: ${event.pageY - 10}px;
         width: 100px;
         height: auto;
         padding: 10px;
@@ -333,33 +336,33 @@ export default {
       document.body.appendChild(parentDiv);
       this.optionsDiv = parentDiv;
     },
-    onIconMouseEnter() {
+    onIconMouseEnter () {
       this.isIconHovered = true;
     },
-    onIconMouseLeave() {
+    onIconMouseLeave () {
       this.isIconHovered = false;
       if (!this.isOptionsHovered) {
         this.hideOptions();
       }
     },
-    onOptionsMouseEnter() {
+    onOptionsMouseEnter () {
       this.isOptionsHovered = true;
     },
-    onOptionsMouseLeave() {
+    onOptionsMouseLeave () {
       this.isOptionsHovered = false;
       if (!this.isIconHovered) {
         this.hideOptions();
         this.hoveredMenuItem = ''
       }
     },
-    hideOptions() {
+    hideOptions () {
       if (this.optionsDiv) {
         document.body.removeChild(this.optionsDiv);
         this.optionsDiv = null;
       }
     },
-    async handleOptionClick(option, item) {
-      this.$api['SystemSettings.selectResourcesByMenuId']({menuId: item.meta.id}).then(res => {
+    async handleOptionClick (option, item) {
+      this.$api['SystemSettings.selectResourcesByMenuId']({ menuId: item.meta.id }).then(res => {
         this.record = res
         if (option === 'manual') {
           this.isVisiblePDFdrawer = true
@@ -369,12 +372,12 @@ export default {
         this.hideOptions();
       })
     },
-    isActiveRoute(item) {
-        return this.$route.path === item.path;
+    isActiveRoute (item) {
+      return this.$route.path === item.path;
     },
-    isChildRouteActive(item) {
-        if (!item.children) return false;
-        return item.children.some(child => this.$route.path === child.path);
+    isChildRouteActive (item) {
+      if (!item.children) return false;
+      return item.children.some(child => this.$route.path === child.path);
     }
   },
   components: {
@@ -536,6 +539,9 @@ $menu-collapse-text-color: #303133;
   text-overflow: ellipsis; /* 超出部分以省略号显示 */
   // line-height: 50px;
   // letter-spacing: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .login-logo {
   width: 20px;
@@ -554,7 +560,8 @@ $menu-collapse-text-color: #303133;
   width: unset;
   margin: 0;
 }
-.icon-shipin,.icon-caozuoshouce {
+.icon-shipin,
+.icon-caozuoshouce {
   color: #2a78d8;
 }
 </style>
