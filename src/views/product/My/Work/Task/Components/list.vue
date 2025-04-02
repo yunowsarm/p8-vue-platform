@@ -207,7 +207,7 @@ import { calculateRemainingDays, selectGenerateTree } from '@/utils/common'
 import frontToBack from './frontToBack'
 import CommunicationMsg from '@/components/information/index.vue';
 import { mapGetters } from 'vuex'
-
+import { getSession, setSession } from '@/service/expands/session'
 export default {
   name: 'ButtonNavigationView',
   provide () {
@@ -609,6 +609,12 @@ export default {
         this.asyncComponents = defaultComponents.url ? defaultComponents.url : ''
         this.componentsConfig = defaultComponents
       }
+      let MyWorkTreeNode = getSession('MyWorkTreeNode')
+      if (MyWorkTreeNode) {
+        this.treeConfig['current-node-key'] = MyWorkTreeNode
+        this.$refs.commonTree.$refs.tree.setCurrentKey(MyWorkTreeNode, true)
+        return
+      }
       // defaultCheckeNode 0 根节点       1 第一个子节点
       if (treeSettingsParmars.defaultCheckeNode && treeSettingsParmars.defaultCheckeNode === '0') {
         this.treeConfig['current-node-key'] = this.treeData[0].ID
@@ -650,6 +656,7 @@ export default {
       this.$emit('close')
     },
     onSelect (obj) {
+      setSession('MyWorkTreeNode', obj.id || obj.ID)
       // 判断节点是否真的发生变化
       const currentNodeId = obj.id || obj.ID;
       const previousNodeId = this.previousSelectedNode?.id || this.previousSelectedNode?.ID;

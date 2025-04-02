@@ -315,6 +315,7 @@
 import { Input, Button } from 'element-ui'
 import { P8Dialog as CommonDialog, P8ListLayout as ListLayout, P8MenuLayout as MenuLayout } from 'p8-components-ui'
 import List from './Components/list'
+import { removeSession } from '@/service/expands/session'
 export default {
   name: 'TabsNavigationPreview',
   provide () {
@@ -379,7 +380,13 @@ export default {
     }
   },
   created () {
+    console.log('父页面created');
+    removeSession('MyWorkTreeNode')
     this.init()
+  },
+  beforeDestroy(){
+    console.log('父页面关闭');
+    removeSession('MyWorkTreeNode')
   },
   methods: {
     async init () {
@@ -457,6 +464,7 @@ export default {
       }
     },
     tabClick (target) {
+      removeSession('MyWorkTreeNode')
       this.$emit('tabClick', target)
       const tabs = this.tabsData.filter((el) => {
         return el.name === target.name
