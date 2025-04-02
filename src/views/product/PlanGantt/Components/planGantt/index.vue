@@ -791,7 +791,7 @@ export default {
       ganttEditCheck: {}, // gantt任务编辑权限
       issueStatus: '', // 任务待下发状态
       selectedTaskIds: [],
-      thirdMenuParam: {},
+      // thirdMenuParam: {},
       dialogMaxHeight: mh + 'px',
       defaultExpandAll: false,
       excelImportData: [
