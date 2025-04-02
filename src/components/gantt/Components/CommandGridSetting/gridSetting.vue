@@ -32,7 +32,7 @@
                      @start="drag = true"
                      @end="drag = false"
                      @change="draggableChangeHandle">
-            
+
             <li class="list-group-item"
                 v-for="(item, index) in initialColumns"
                 :key="item.name">
@@ -67,7 +67,7 @@ import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 
 import { API_DEFAULT_CONFIG } from '@/config/settings'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
-
+import _cloneDeep from 'lodash/cloneDeep'
 export default {
   name: 'TableSetting',
   components: {
@@ -149,7 +149,8 @@ export default {
     },
     render () {
       this.tableSettings = []
-      this.initialColumns = this.columns.map((item) => {
+      let columns = _cloneDeep(this.columns)
+      this.initialColumns = columns.map((item) => {
         item.hide = item.hide ? item.hide : false
         // 正则处理，只保留表头中文，去掉多余字符
         const reg = /[\u4e00-\u9fa5]/g
