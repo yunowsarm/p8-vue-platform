@@ -1287,6 +1287,33 @@ GanttObject.customEndDateEditor = function (ganttObject) {
         name +
         "'></div></div></div>"
       placeholder.innerHTML = html
+      function validateDate(date) {
+        const vueThis = store.getters.vueThis
+        if(vueThis.createPage !== 'decompose') {
+          return true
+        }
+        const task = ganttObject.getTask(id)
+        const parentTask = task.parent ? ganttObject.getTask(task.parent) : null
+
+        // 使用moment处理日期
+        const currentDate = moment(date)
+        const startDate = task.start_date ? moment(task.start_date) : null
+        const parentEndDate = parentTask && parentTask.end_date ? moment(parentTask.end_date).subtract(1, 'day') : null
+        // 检查是否小于计划开始时间
+        if (startDate && currentDate.isBefore(startDate, 'day')) {
+          vueThis.$message.warning('不能早于计划开始时间')
+          return false
+        }
+
+        // 检查是否大于父任务完成时间（已减1天）
+        if (parentEndDate && currentDate.isAfter(parentEndDate, 'day')) {
+          vueThis.$message.warning('不能晚于父任务完成时间')
+          return false
+        }
+
+        return true
+      }
+
       const EditDatePicker = Vue.extend({
         components: { 'el-date-picker': DatePicker },
         data: function () {
@@ -1306,7 +1333,10 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                   {
                     text: '今天',
                     onClick(picker) {
-                      picker.$emit('pick', new Date())
+                      const date = new Date()
+                      if (validateDate(date)) {
+                        picker.$emit('pick', date)
+                      }
                     }
                   },
                   {
@@ -1314,7 +1344,11 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                     onClick(picker) {
                       const date = new Date()
                       date.setTime(date.getTime() - 3600 * 1000 * 24)
-                      picker.$emit('pick', date)
+                      if (validateDate(date)) {
+                        picker.$emit('pick', date)
+                      }else {
+
+                      }
                     }
                   },
                   {
@@ -1322,7 +1356,11 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                     onClick(picker) {
                       const date = new Date()
                       date.setTime(date.getTime() + 3600 * 1000 * 24)
-                      picker.$emit('pick', date)
+                      if (validateDate(date)) {
+                        picker.$emit('pick', date)
+                      }else {
+
+                      }
                     }
                   },
                   {
@@ -1330,7 +1368,11 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                     onClick(picker) {
                       const date = new Date()
                       date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
-                      picker.$emit('pick', date)
+                      if (validateDate(date)) {
+                        picker.$emit('pick', date)
+                      }else {
+
+                      }
                     }
                   },
                   {
@@ -1338,7 +1380,11 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                     onClick(picker) {
                       const date = new Date()
                       date.setTime(date.getTime() + 3600 * 1000 * 24 * 7)
-                      picker.$emit('pick', date)
+                      if (validateDate(date)) {
+                        picker.$emit('pick', date)
+                      }else {
+
+                      }
                     }
                   },
                   {
@@ -1351,7 +1397,11 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                       if (date.getDate() < currentDay) {
                         date.setDate(0) // 设置为上个月的最后一天
                       }
-                      picker.$emit('pick', date)
+                      if (validateDate(date)) {
+                        picker.$emit('pick', date)
+                      }else {
+
+                      }
                     }
                   },
                   {
@@ -1364,7 +1414,11 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                       if (date.getDate() < currentDay) {
                         date.setDate(0) // 设置为下个月的最后一天
                       }
-                      picker.$emit('pick', date)
+                      if (validateDate(date)) {
+                        picker.$emit('pick', date)
+                      }else {
+
+                      }
                     }
                   }
                 ],
@@ -2106,7 +2160,7 @@ GanttObject.onTaskTimeChange = function(ganttObject) {
   ganttObject.attachEvent("onAfterTaskUpdate", function(id, task) {
     // 防止递归调用
     if (task._updating) return;
-    
+
     task._updating = true;
     try {
       // 同步更新预计时间

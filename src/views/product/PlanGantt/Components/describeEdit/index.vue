@@ -464,9 +464,130 @@ export default {
     },
     endDateOptions () {
       const _this = this
+      const isDateDisabled = (date) => {
+        if(_this.$route.path !== '/TaskDecomposition') {
+          return true
+        }
+        // 使用moment处理日期
+        const currentDate = moment(date)
+        const startDate = _this.formData.start_date ? moment(_this.formData.start_date) : null
+        // 检查是否小于计划开始时间
+        if (startDate && currentDate.isBefore(startDate, 'day')) {
+          _this.$message.warning('不能早于计划开始时间')
+          return false
+        }
+        const ganttObject = GanttObject.getGanttObject(_this.ganttName)
+        const parentId = ganttObject.getParent(_this.taskId)
+        if (parentId) {
+          const parentTask = ganttObject.getTask(parentId)
+          // 父任务结束时间减去一天
+          const parentEndDate = moment(parentTask.end_date).subtract(1, 'days')
+          // 检查是否大于父任务完成时间（已减1天）
+          if (parentEndDate && currentDate.isAfter(parentEndDate, 'day')) {
+            _this.$message.warning('不能晚于父任务完成时间')
+            return false
+          }
+        }
+
+        return true
+      }
       return {
+        shortcuts: [
+          {
+            text: '今天',
+            onClick(picker) {
+              const date = new Date()
+              if (isDateDisabled(date)) {
+                picker.$emit('pick', date)
+              }
+            }
+          },
+          {
+            text: '昨天',
+            onClick(picker) {
+              const date = new Date()
+              date.setTime(date.getTime() - 3600 * 1000 * 24)
+              if (isDateDisabled(date)) {
+                picker.$emit('pick', date)
+              }
+            }
+          },
+          {
+            text: '明天',
+            onClick(picker) {
+              const date = new Date()
+              date.setTime(date.getTime() + 3600 * 1000 * 24)
+              if (isDateDisabled(date)) {
+                picker.$emit('pick', date)
+              }
+            }
+          },
+          {
+            text: '一周前',
+            onClick(picker) {
+              const date = new Date()
+              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+              if (isDateDisabled(date)) {
+                picker.$emit('pick', date)
+              }
+            }
+          },
+          {
+            text: '一周后',
+            onClick(picker) {
+              const date = new Date()
+              date.setTime(date.getTime() + 3600 * 1000 * 24 * 7)
+              if (isDateDisabled(date)) {
+                picker.$emit('pick', date)
+              }
+            }
+          },
+          {
+            text: '一个月前',
+            onClick(picker) {
+              const date = new Date()
+              const currentDay = date.getDate()
+              date.setMonth(date.getMonth() - 1)
+              if (date.getDate() < currentDay) {
+                date.setDate(0)
+              }
+              if (isDateDisabled(date)) {
+                picker.$emit('pick', date)
+              }
+            }
+          },
+          {
+            text: '一个月后',
+            onClick(picker) {
+              const date = new Date()
+              const currentDay = date.getDate()
+              date.setMonth(date.getMonth() + 1)
+              if (date.getDate() < currentDay) {
+                date.setDate(0)
+              }
+              if (isDateDisabled(date)) {
+                picker.$emit('pick', date)
+              }
+            }
+          }
+        ],
         disabledDate: (time) => {
-          return time.getTime() < new Date(this.formData.start_date).getTime()
+          // 基础限制:不能早于开始时间
+          const baseLimit = moment(time).isBefore(moment(_this.formData.start_date))
+
+          // 如果是任务分解页面,增加父任务完成时间限制
+          if (_this.$route.path === '/TaskDecomposition') {
+            const ganttObject = GanttObject.getGanttObject(_this.ganttName)
+            const parentId = ganttObject.getParent(_this.taskId)
+            if (parentId) {
+              const parentTask = ganttObject.getTask(parentId)
+              // 父任务结束时间减去一天
+              const parentEndDate = moment(parentTask.end_date).subtract(1, 'days')
+              return baseLimit || moment(time).isAfter(parentEndDate)
+            }
+          }
+
+          return baseLimit
         }
       }
     },
