@@ -14,7 +14,7 @@
                :is-smart-form="true"
                :refreshShow="false"
                :pagination="false"
-               api="demandManagement.getRequirementByProject">
+               :api="tableApi">
       <template #operation="{ scope }">
         <el-button v-if="demandFalg"
                    type="text"
@@ -155,7 +155,8 @@ export default {
         'highlight-current-row': true
       },
       selectRecord: {},
-      selectRecords: []
+      selectRecords: [],
+      tableApi: ''
     }
   },
   created () {
@@ -169,13 +170,14 @@ export default {
       }
       if (!this.id) {
         this.viewVisible = true
-        this.$message({
+        return this.$message({
           message: '请先创建项目',
           type: 'warning'
         })
       }
     }
     this.tableParamDemand.wholeId = this.id ? this.id : '0'
+    this.tableApi = 'demandManagement.getRequirementByProject'
   },
   mounted () {
     if (!this.demandFalg) {
