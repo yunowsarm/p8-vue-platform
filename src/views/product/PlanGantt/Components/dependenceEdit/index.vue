@@ -162,7 +162,8 @@ export default {
         { icon: 'p8 icon-wanchengzhiwancheng', type: '2', describe: '完成-完成' },
         { icon: 'p8 icon-kaishizhiwancheng', type: '3', describe: '开始-完成' }
       ],
-      dependentDatas: []
+      dependentDatas: [],
+      ganttPostpositionResponse: []
     }
   },
   mounted () {
@@ -175,7 +176,8 @@ export default {
         that.dataSource[0].options = that.tempOptions // 更新default dataSource中下拉框的数据
         this.getAllDatas()
         let datas = []
-        if (res && res.ganttLinkResponse.length > 0) {
+        this.ganttPostpositionResponse = res.ganttPostpositionResponse
+        if (res && res.ganttLinkResponse && res.ganttLinkResponse.length > 0) {
           res.ganttLinkResponse.forEach(function (item) {
             datas.push(item)
           })
@@ -205,7 +207,6 @@ export default {
             that.dataSourceArray.push(JSON.parse(JSON.stringify(dataSourceTemp))) // push中逻辑防止表单数据相互影响
           })
         }
-        console.log(that.dataSourceArray,'=====that.dataSourceArray');
       })
     },
     getAllDatas () {
@@ -409,6 +410,15 @@ export default {
           this.sourceRulesInitHandle(this.taskId)
         }
         const sourceIds = [this.taskId] // 默认taskId
+        // **** 当前任务的后置任务也要禁用  bug：a前置b，b设置前置时则不能前置a ****
+        if(this.ganttPostpositionResponse && this.ganttPostpositionResponse.length) {
+          this.ganttPostpositionResponse.forEach((item, index) => {
+            const sourceId = item.target
+            if (sourceId) {
+              sourceIds.push(sourceId)
+            }
+          })
+        }
         const sourceParents = []
         const currSourceLinkIdParents = ['17785182267ee7de7633c8abfbdb974e'] // 当前任务的前置 初始为前置父, 判断时会push下面子的id
         const currSourceLinkChilds = [] // 当前任务的前置的子任务id
