@@ -216,6 +216,16 @@ export default {
     }
   },
   watch: {
+    $route (to, from) {
+      // 判断当前路由是否为三级菜单
+      if (to.matched.length === 3) {
+        // 如果是三级菜单,则高亮其父级菜单
+        this.defaultActive = to.matched[1].path
+      } else {
+        // 非三级菜单,高亮自身
+        this.defaultActive = to.path
+      }
+    },
     theme (val, oldVal) {
       this.getColor()
     },
