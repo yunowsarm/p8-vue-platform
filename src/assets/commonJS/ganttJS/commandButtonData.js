@@ -2253,27 +2253,31 @@ export const CommandButtonData = [
     clickFun: function (btn, ganttName, tasks) {},
     isDisableFun: function (btn, ganttName, tasks) {},
     children: [
-      // {
-      //   id: 'unfold-all',
-      //   icon: 'p8 icon-zhankai',
-      //   title: '展开所有',
-      //   help: '展开所有',
-      //   msg: '展开所有',
-      //   clickFun: function (btn, ganttName, tasks) {
-      //     const vueThis = store.getters.vueThis
-      //     const ganttObject = GanttObject.getGanttObject(ganttName)
-      //
-      //     ganttObject.eachTask(function(task) {
-      //         task.expand = true
-      //         task.$open = true
-      //         updateArrayById(vueThis.addTaskList, task)
-      //     });
-      //     setTimeout(() => {
-      //       ganttObject.render()
-      //     }, 1000)
-      //   },
-      //   isDisableFun: function (btn, ganttName, tasks) {}
-      // },
+      {
+        id: 'unfold-all',
+        icon: 'p8 icon-zhankai',
+        title: '展开所有',
+        help: '展开所有',
+        msg: '展开所有',
+        clickFun: function (btn, ganttName, tasks) {
+          // const vueThis = store.getters.vueThis
+          const ganttObject = GanttObject.getGanttObject(ganttName)
+          ganttObject.batchUpdate(function () {
+            ganttObject.eachTask(function (task) {
+              ganttObject.open(task.id);
+            });
+          });
+          // ganttObject.eachTask(function(task) {
+          //     task.expand = true
+          //     task.$open = true
+          //     updateArrayById(vueThis.addTaskList, task)
+          // });
+          // setTimeout(() => {
+          //   ganttObject.render()
+          // }, 1000)
+        },
+        isDisableFun: function (btn, ganttName, tasks) {}
+      },
       {
         id: 'unfold-one',
         icon: 'p8 icon-zhankai',
@@ -2422,27 +2426,31 @@ export const CommandButtonData = [
     clickFun: function (btn, ganttName, tasks) {},
     isDisableFun: function (btn, ganttName, tasks) {},
     children: [
-      // {
-      //   id: 'fold-all',
-      //   icon: 'p8 icon-shousuo',
-      //   title: '折叠所有',
-      //   help: '折叠所有',
-      //   msg: '折叠所有',
-      //   clickFun: function (btn, ganttName) {
-      //     const vueThis = store.getters.vueThis
-      //     const ganttObject = GanttObject.getGanttObject(ganttName)
-      //
-      //     ganttObject.eachTask(function(task) {
-      //         task.expand = false
-      //         task.$open = false
-      //         updateArrayById(vueThis.addTaskList, task)
-      //     });
-      //     setTimeout(() => {
-      //       ganttObject.render()
-      //     }, 1000)
-      //   },
-      //   isDisableFun: function (btn, ganttName, tasks) {}
-      // },
+      {
+        id: 'fold-all',
+        icon: 'p8 icon-shousuo',
+        title: '折叠所有',
+        help: '折叠所有',
+        msg: '折叠所有',
+        clickFun: function (btn, ganttName) {
+          // const vueThis = store.getters.vueThis
+          const ganttObject = GanttObject.getGanttObject(ganttName)
+          ganttObject.batchUpdate(function () {
+            ganttObject.eachTask(function (task) {
+              ganttObject.close(task.id);
+            });
+          });
+          // ganttObject.eachTask(function(task) {
+          //     task.expand = false
+          //     task.$open = false
+          //     updateArrayById(vueThis.addTaskList, task)
+          // });
+          // setTimeout(() => {
+          //   ganttObject.render()
+          // }, 1000)
+        },
+        isDisableFun: function (btn, ganttName, tasks) {}
+      },
       {
         id: 'fold-one',
         icon: 'p8 icon-shousuo',
