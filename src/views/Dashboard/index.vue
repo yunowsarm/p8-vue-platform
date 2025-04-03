@@ -265,6 +265,7 @@ export default {
       this.editableTabs.sort((a, b) => a.indexNo - b.indexNo)
       this.editableTabsValue = name
       this.addTabsVisible = false
+      this.timeKey = new Date().getTime()
     },
     saveTemplate (addArr) {
       let widget = addArr[0]
