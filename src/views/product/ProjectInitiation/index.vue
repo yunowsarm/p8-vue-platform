@@ -9,7 +9,7 @@
                                @tabClick="tabClick"
                                :prop-param="propParam"
                                v-on="$listeners"
-                               :row="row"></tabs-navigation-preview>
+                               :row="params.isEdit ? row : []"></tabs-navigation-preview>
     </template>
   </list-layout>
 </template>
@@ -41,6 +41,12 @@ import { P8ListLayout as ListLayout } from 'p8-components-ui'
 export default {
   name: 'ProjectInitiation',
   props: {
+    params: {
+      type: Object,
+      default: function () {
+        return {}
+      }
+    },
     row: {
       type: Array,
       default: function () {
@@ -49,11 +55,12 @@ export default {
     }
   },
   data () {
+    const shouldUseEmptyLogic = this.params && this.params.isEdit === false
     return {
       propParam: {
-        ID: this.row.length ? this.row[0].ID : ''
+        ID: shouldUseEmptyLogic ? '' : (this.row.length ? this.row[0].ID : '')
       },
-      dataViewId: this.row.length ? this.row[0].ID : '',
+      dataViewId: shouldUseEmptyLogic ? '' : (this.row.length ? this.row[0].ID : ''),
       layoutConfig: {
         layoutCode: 'creatProject',
         layoutVersion: 'latest'
@@ -64,10 +71,10 @@ export default {
     TabsNavigationPreview,
     ListLayout
   },
-  created () { },
+  created () {},
   methods: {
     tabClick (tabs) {
-      if (this.row.length === 0) {
+      if (this.row.length === 0 || (this.params && this.params.isEdit === false)) {
         this.dataViewId = this.$refs.tabsNavigation.$children && this.$refs.tabsNavigation.$children.length ? this.$refs.tabsNavigation.$children[0].configParmars.id : ''
       } else {
         this.dataViewId = this.row[0].ID
