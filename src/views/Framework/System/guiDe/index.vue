@@ -5,6 +5,7 @@
                  @click="restoreDeleted()">恢复删除项</el-button>
       <search-form-list ref="search"
                         label-width="100px"
+                        class="searchList"
                         :data-source="searchData"
                         @search="search"
                         @re-set="reSet"></search-form-list>
@@ -207,6 +208,7 @@ export default {
 </script>
 <style lang="scss" scoped>
   .listLayout{
+    min-width: 500px;
     padding: 0;
     margin: 0;
     height: 100%;
@@ -217,6 +219,12 @@ export default {
     ::v-deep .list-main {
       padding-left: 0;
       padding-right: 0;
+    }
+  }
+  .searchList {
+    width: 350px !important;
+    ::v-deep .search-contain{
+      width: 350px !important;
     }
   }
 </style>
