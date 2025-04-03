@@ -41,16 +41,34 @@ export default {
     title: {
       type: String,
       default: ''
+    },
+    indexNo: {
+      type: Number,
+      default: () => {
+        return 0
+      }
     }
   },
   data() {
     return {
-      formData: { name: '' },
+      formData: { name: '', indexNo: '' },
       dataSource: [
         {
           type: 'text',
           labelText: '名称',
           fieldName: 'name',
+          colLayout: 'singleCol',
+          rules: [
+            {
+              required: true,
+              message: '该项为必填项'
+            }
+          ]
+        },
+        {
+          type: 'number',
+          labelText: '序号',
+          fieldName: 'indexNo',
           colLayout: 'singleCol',
           rules: [
             {
@@ -64,13 +82,14 @@ export default {
   },
   created() {
     this.formData.name = this.name
+    this.formData.indexNo = this.indexNo
   },
   methods: {
     handleCancel() {
       this.$emit('handleCancel')
     },
     customValidate(saveParams) {
-      this.$emit('handleOk', saveParams.name)
+      this.$emit('handleOk', saveParams.name, saveParams.indexNo)
     },
     handleSubmit(e) {
       this.$refs.form.handleSubmit(e)

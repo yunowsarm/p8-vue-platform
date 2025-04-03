@@ -22,7 +22,7 @@
           <span slot="label"> {{ item.name }}<i v-if="isLock"
                class="el-icon-edit-outline"
                style="font-size: 12px"
-               @click="modify(item.name, index)"></i>
+               @click="modify(item.name, index, item.indexNo)"></i>
             <el-popover v-if="item.visible"
                         class="elPopover"
                         placement="top"
@@ -65,6 +65,7 @@
     </el-tabs>
     <add-tabs v-if="addTabsVisible"
               :name="name"
+              :indexNo="indexNumber"
               :title="title"
               :visible="addTabsVisible"
               @handleCancel="addTabsVisible = false"
@@ -113,6 +114,7 @@ export default {
       timeKey: new Date().getTime(),
       viewVisible: false,
       newWidget: [],
+      indexNumber: null
     }
   },
   computed: {
@@ -161,9 +163,12 @@ export default {
             name: el.name,
             homePageId: el.homePageId,
             homePageVersion: el.homePageVersion,
-            visible: false
+            visible: false,
+            indexNo: el.indexNo
           }
         })
+        // 对 editableTabs 根据 indexNo 进行排序
+        that.editableTabs.sort((a, b) => a.indexNo - b.indexNo)
         if (that.editableTabs && that.editableTabs.length > 0) {
           that.editableTabsValue = that.editableTabs[0].name
         }
@@ -192,7 +197,7 @@ export default {
               style: ''
             })
           })
-          saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: index, homePageId: el.homePageId ? el.homePageId : undefined, homePageVersion: el.homePageVersion })
+          saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: el.indexNo, homePageId: el.homePageId ? el.homePageId : undefined, homePageVersion: el.homePageVersion })
           // }
         })
         if (saveList && saveList.length || !this.editableTabs.length) {
@@ -230,26 +235,34 @@ export default {
       this.addTabsVisible = true
       this.name = ''
       this.index = null
+      this.indexNumber = this.editableTabs.length + 1
       this.title = '新增标签页'
     },
-    modify (name, index) {
+    modify (name, index, indexNo) {
       this.addTabsVisible = true
       this.name = name
       this.index = index
-      this.title = '修改标签页名称'
+      this.indexNumber = indexNo
+      this.title = '修改标签页'
     },
-    handleOk (name) {
-      if (this.editableTabs.some(tab => tab.name === name)) {
-        this.$message.warning(`名称为${name}的标签页已存在，请勿重复添加`)
-        return
+    handleOk (name, indexNumber) {
+      if (this.title == '新增标签页') {
+        if (this.editableTabs.some(tab => tab.name === name)) {
+          this.$message.warning(`名称为${name}的标签页已存在，请勿重复添加`)
+          return
+        }
       }
       if (this.name) {
         this.editableTabs[this.index].name = name
+        this.editableTabs[this.index].indexNo = indexNumber
       } else {
         this.editableTabs.push({
-          name: name
+          name: name,
+          indexNo: indexNumber
         })
       }
+    // 对 editableTabs 根据 indexNo 进行排序
+      this.editableTabs.sort((a, b) => a.indexNo - b.indexNo)
       this.editableTabsValue = name
       this.addTabsVisible = false
     },
@@ -300,7 +313,7 @@ export default {
             style: ''
           })
         })
-        saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: index, homePageId: el.homePageId ? el.homePageId : undefined, homePageVersion: el.changeHomePageVersion ? el.changeHomePageVersion : el.homePageVersion })
+        saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: el.indexNo, homePageId: el.homePageId ? el.homePageId : undefined, homePageVersion: el.changeHomePageVersion ? el.changeHomePageVersion : el.homePageVersion })
         // }
       })
       // saveList.push({ widgets: list, name: el.name, queryConfig: '', style: '', describe: '', indexNo: index, homePageId: el.homePageId ? el.homePageId : undefined, homePageVersion: el.changeHomePageVersion })
