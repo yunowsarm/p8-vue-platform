@@ -122,11 +122,13 @@ export default {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  height: 100%;
 
   .statistics-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
+    height: 100%;
   }
 
   .statistics-item {
