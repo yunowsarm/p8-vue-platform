@@ -11,10 +11,10 @@
                  :header-visible="headerVisible && searchFormConfig.length > 0"
                  :normal-layout="normalLayout">
     <template #north>
-      <search-form-list ref="search"
+      <!-- <search-form-list ref="search"
                         :data-source="searchFormConfig"
                         @search="onSearch"
-                        @re-set="onReset"></search-form-list>
+                        @re-set="onReset"></search-form-list> -->
     </template>
     <template #center>
       <VuePerfectScrollbar class="scroll-area">
