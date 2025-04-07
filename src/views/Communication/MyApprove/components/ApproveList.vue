@@ -33,7 +33,8 @@
             </el-tooltip>
           </div>
         </div>
-        <div class="tagsSearch" :key="tabEenderTime">
+        <div class="tagsSearch"
+             :key="tabEenderTime">
           <el-tooltip v-for="item in visibleTags"
                       :key="item.id"
                       :open-delay="300"
@@ -180,14 +181,14 @@ export default {
         }
       ],
       renderTime: new Date() + '',
-      messageListApi: 'PersonalProcessApproval.pendingApprovalList',
+      messageListApi: 'processApproval.pendingList',
       currentIndex: null,
       mergeParams: {
         page: {
           current: 1,
           size: 15,
           total: 0,
-          orders: [{ column: 'pinst.start_time_', asc: false }],
+          orders: [{ column: 're.start_time', asc: false }],
           pages: 0
         }
       },
@@ -240,8 +241,8 @@ export default {
   },
   created () {
     if (this.chargeIds.includes(this.searchParams.msgCatalog)) {
-      this.messageListApi = 'PersonalProcessApproval.historyApprovalList'
-      this.mergeParams.page.orders = [{ column: 't.end_time_', asc: false }]
+      this.messageListApi = 'PersonalProcessApproval.approvalHistoryList'
+      this.mergeParams.page.orders = [{ column: 'pinst.start_time_', asc: false }]
     }
   },
   mounted () {
@@ -273,7 +274,7 @@ export default {
         startUserId: this.mergeParams.startUserId
       }).then(res => {
         this.approvalList = res
-        this.selectOptions = this.approvalList.map(el =>{ return {label:el.name,value:el.name}})
+        this.selectOptions = this.approvalList.map(el => { return { label: el.name, value: el.name } })
         this.searchConfig.forEach(el => {
           if (el.fieldName == 'tabsName') {
             el.options = this.selectOptions
@@ -312,20 +313,18 @@ export default {
       that.renderTime = new Date() + ''
     },
     ascendingTime () { // 时间升序
-
-
       if (this.chargeIds.includes(this.searchParams.msgCatalog)) {
-        this.mergeParams.page.orders = [{ column: 't.end_time_', asc: false }]
-      } else {
         this.mergeParams.page.orders = [{ column: 'pinst.start_time_', asc: false }]
+      } else {
+        this.mergeParams.page.orders = [{ column: 're.start_Time', asc: false }]
       }
       this.renderTime = new Date() + ''
     },
     descendingOrderTime () { // 时间降序
       if (this.chargeIds.includes(this.searchParams.msgCatalog)) {
-        this.mergeParams.page.orders = [{ column: 't.end_time_', asc: true }]
-      } else {
         this.mergeParams.page.orders = [{ column: 'pinst.start_time_', asc: true }]
+      } else {
+        this.mergeParams.page.orders = [{ column: 're.start_Time', asc: true }]
       }
       this.renderTime = new Date() + ''
     },
