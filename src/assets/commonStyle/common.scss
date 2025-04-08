@@ -5,8 +5,23 @@
 
 $theme-color: var(--theme-color);
 $theme-color-opacity: var(--theme-color-01);
-
-
+$system-primary-bg-color: #141414;
+$system-primary-text-color: #cfd3dc;
+$system-primary-border-color: #4c4d4f;
+// 表格背景颜色
+$table-bg-clolr: var(--tableBgColor);
+// 表格表头颜色
+$table-header-bg-clolr: var(--tableHeaderBgColor);
+// 斑马条纹颜色
+$table-stripe-clolr: var(--tableStripeColor);
+// 表格行hover颜色
+$table-row-hover-bg-color: var(--tableRowHoverBgColor);
+// 表格边线颜色
+$table-border-color: var(--tableBorderColor);
+// 表格文字颜色
+$table-text-color: var(--tableTextColor);
+// 表格表头文字颜色
+$table-header-text-color: var(--tableHeaderTextColor);
 $drawer-header-color: #333333;
 $base-dark-color: #212121;
 $base-light-color: #0050b3;
@@ -169,17 +184,14 @@ body {
 .gantt_task .gantt_task_scale .gantt_scale_cell {
   font-size: 13px;
   color: #ffffff;
-  font-family: 'Source Han Sans CN', 'Source Han Sans CN-Normal',
-    'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei',
-    'STXihei, sans-serif' !important;
+  font-family: 'Source Han Sans CN', 'Source Han Sans CN-Normal', 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'STXihei, sans-serif' !important;
 }
 
 .gantt_tree_content,
 .gantt_tree_icon {
   color: #000000;
   font-size: 13px;
-  font-family: 'Source Han Sans CN-Normal', 'Helvetica Neue', 'PingFang SC',
-    'Hiragino Sans GB', 'Microsoft Yahei', 'STXihei, sans-serif' !important;
+  font-family: 'Source Han Sans CN-Normal', 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'STXihei, sans-serif' !important;
 }
 
 .gantt_grid_column_resize_wrap .gantt_grid_column_resize {
@@ -192,7 +204,7 @@ body {
 }
 
 .el-drawer__body {
-  background: #FAFCFF;
+  background: #fafcff;
 }
 
 .el-table::before {

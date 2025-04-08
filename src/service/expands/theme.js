@@ -14,6 +14,21 @@ export default {
   install(Vue, { store }) {
     const theme = Cookie.get(SYSTEM_THEME_KEY)
     store.dispatch('setTheme', { theme })
+    const systemColor = Cookie.get('systemColor')
+    if (systemColor) {
+      store.dispatch('setSystemColor', JSON.parse(systemColor))
+    } else {
+      const colors = {
+        tableBgColor: '#ffffff',
+        tableHeaderBgColor: '#f9f9f9',
+        tableStripeColor: '#f9f9f9',
+        tableRowHoverBgColor: '#f0f8ff',
+        tableBorderColor: '#ebeef5',
+        tableTextColor: '#292b2e',
+        tableHeaderTextColor: '#292b2e'
+      }
+      store.dispatch('setSystemColor', colors)
+    }
     // 加载覆盖样式表
     let baseLink = document.createElement('link')
     baseLink.href = './static/elementUI/chalk/base.css'
