@@ -17,7 +17,7 @@
 
 .vxe-table--render-default .vxe-body--row.row--hover,
 .vxe-table--render-default .vxe-body--row.row--hover.row--stripe {
-  background-color: #f0f8ff !important;
+  background-color: $table-row-hover-bg-color !important;
 }
 .common-table {
   position: relative;
@@ -245,18 +245,21 @@
   .vxe-header--column:not(.col--ellipsis) {
     padding: 0 0 !important;
     // border: 1px solid #cccccc;
-    border-right: 1px solid #e8eaec !important;
+    // border-right: 1px solid #e6e6e6 !important;
     // border-bottom: 1px solid #cccccc !important;
   }
   .vxe-table--header-wrapper {
     .vxe-table--header {
       .vxe-header--row {
         .col--group {
-          border-bottom: 1px solid #e8eaec !important;
+          border-bottom: 1px solid #e6e6e6 !important;
         }
       }
     }
   }
+}
+:root {
+  --vxe-ui-table-border-color: #e6e6e6 !important; // 这里可以替换成您想要的颜色值
 }
 .vxe-table--body .vxe-table--render-default .vxe-cell {
   padding: 0 !important;
