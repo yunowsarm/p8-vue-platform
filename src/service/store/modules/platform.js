@@ -117,6 +117,14 @@ const platform = {
     },
     // systemTheme: Cookie.get(SYSTEM_THEME_KEY) || 'chalk',
     theme: Cookie.get(SYSTEM_THEME_RGBA_KEY) || themeVariables.theme,
+     systemColor: {
+       tableBgColor: '#ffffff',
+       tableStripeColor: '#f9f9f9',
+       tableRowHoverBgColor: '#f0f8ff',
+       tableBorderColor: '#ebeef5',
+       tableTextColor: '#292b2e',
+       tableHeaderTextColor: '#292b2e'
+     },
     shortcutMenu: [], // 自定义菜单项,由用户自定义出的菜单项
     systemName: Cookie.get('P8V3.0-PLATFORM') || '',
     headerHeight: plateformVariables.headerHeight, // 头部(header)高度
@@ -209,6 +217,13 @@ const platform = {
     SET_IMAGE(state, imageUrl) {
       state.imageUrl = imageUrl
       Cookie.set(SYSTEM_IMAGE_KEY, imageUrl, 1000)
+    },
+    SET_SYSTEM_COLOR(state, data) {
+      const keys = Object.keys(data)
+      keys.forEach((key) => {
+        state.systemColor[key] = data[key]
+      })
+      Cookie.set('systemColor', JSON.stringify(state.systemColor))
     }
   },
 
@@ -282,6 +297,13 @@ const platform = {
       const contrastColor = getContrastColor(theme)
       // commit('SET_CONTRAST_COLOR', contrastColor)
       commit('SET_THEME', theme)
+    },
+    setSystemColor({ commit }, data) {
+      const keys = Object.keys(data)
+      keys.forEach((key) => {
+        document.documentElement.style.setProperty(`--${key}`, data[key])
+      })
+      commit('SET_SYSTEM_COLOR', data)
     },
     maxWindow({ commit }, isMaxWindow) {
       commit('SET_WINDOW_MAXIMIZE', isMaxWindow)

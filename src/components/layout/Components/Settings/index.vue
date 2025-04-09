@@ -1,6 +1,7 @@
 <template>
   <div class="personal-setting">
-    <section style="overflow: auto" :style="{ height: maxHeight }">
+    <section style="overflow: auto"
+             :style="{ height: maxHeight }">
       <div class="setting-block">
         <div class="settings">
           <user-info />
@@ -14,7 +15,10 @@
       <div class="setting-block">
         <div class="settings">
           <theme />
-          <el-alert :closable="false" title="注意:主题色仅会在保证正常显示与配色的前提下调整部分色彩,而非全部色彩." type="warning" show-icon> </el-alert>
+          <el-alert :closable="false"
+                    title="注意:主题色仅会在保证正常显示与配色的前提下调整部分色彩,而非全部色彩."
+                    type="warning"
+                    show-icon> </el-alert>
         </div>
       </div>
       <div class="setting-block">
@@ -22,6 +26,15 @@
           <background-image />
         </div>
       </div>
+      <!-- <div class="setting-block">
+        <div class="settings">
+          <TableTheme />
+          <el-alert :closable="false"
+                    title="注意:表格颜色仅会在保证正常显示与配色的前提下调整部分色彩,而非全部色彩."
+                    type="warning"
+                    show-icon> </el-alert>
+        </div>
+      </div> -->
       <!-- <div class="setting-block">
         <h4>快捷菜单</h4>
         <div class="settings">

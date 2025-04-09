@@ -4,6 +4,7 @@
                 v-on="$listeners"
                 :loading="loading"
                 refresh
+                :class="{'simple-widget': widget.simple}"
                 @on-fullscreen="onFullscreen"
                 @on-refresh="handleRefresh">
     <template slot="toolbar"> </template>
@@ -176,5 +177,8 @@ export default {
 }
 ::v-deep .normal-layout {
   height: 100%;
+}
+.simple-widget ::v-deep .widget-body__content {
+  padding-top: 36px !important;
 }
 </style>

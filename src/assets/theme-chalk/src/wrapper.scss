@@ -237,8 +237,8 @@
 //   top: 41px !important;
 // }
 .vxeTable th {
-  background: $base-light-color !important;
-  color: $base-white-color !important;
+  background: $base-white-color;
+  color: $base-white-color;
 }
 .vxeTable {
   width: 100%;
@@ -296,10 +296,11 @@
   height: 100%;
 }
 .bottom-flex {
-  margin-right: 30px;
+  // margin-right: 30px;
+  margin-top: 3px;
   .icon-shuaxin,.icon-shezhi{
-    font-size: 20px;
-    background: #f1f1f1;
+    font-size: 16px;
+    // background: #f1f1f1;
   }
 }
 .columns {

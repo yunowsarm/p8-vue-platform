@@ -1,4 +1,5 @@
 import api from '@/plugins/api'
+import store from '@/plugins/store'
 /**
  * User STORE
  */
@@ -121,6 +122,23 @@ const project = {
               if (res.baseConfig.length) {
                 res.baseConfig.map((item) => {
                   reBuildBaseConfig[item.key] = item.value
+                })
+              }
+              if (reBuildBaseConfig.systemThemeType) {
+                let themeArray = JSON.parse(reBuildBaseConfig.systemThemeArray)
+                themeArray.forEach(item => {
+                  switch (item.key) {
+                    case 'imageUrl':
+                      store.dispatch('setImage', item.url)
+                      break;
+                    case 'bgTheme':
+                      let theme = item.value
+                      store.dispatch('setTheme', { theme, handler: true })
+                      break;
+                    default:
+                      store.dispatch('setSystemColor', { [item.key]: item.value })
+                      break;
+                  }
                 })
               }
               commit('SET_DICCONFIG', reBuildDicStatus)

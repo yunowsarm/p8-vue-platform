@@ -45,10 +45,10 @@
 .sidebar .el-menu-item.is-active, .sidebar:hover .el-menu-item:hover .is-active:hover,.sidebar .el-menu-item:hover, .sidebar .vertical-menu .el-submenu__title:hover {
   background:rgba(255, 255, 255, 0.2)!important;
 }
-.vxeTable th {
+/* .vxeTable th {
     background-color: #f4f4f4 !important;
     color: #292b2e !important;
-}
+} */
 .el-button--primary {
     background-color: #1890ff;
     border-color: #1890ff;
