@@ -3,8 +3,8 @@
         <div class="table-column" v-for="(item, index) in Object.keys(listObj)" :key="index">
             <div class="column-title">{{ item }}</div>
             <div class="column-content">
-                <div class="column-item" v-for="el in listObj[item]" :key="el.id" @click="itemClick(el)">
-                    <span class="item-number">{{ el.demandNum }}</span>：<span class="item-name">{{ el.demandName }}</span>
+                <div :class="{'column-item': el.demandNum || el.demandName}" v-for="el in listObj[item]" :key="el.id" @click="itemClick(el)">
+                    <span v-if="el.demandNum || el.demandName"><span class="item-number">{{ el.demandNum }}</span>：<span class="item-name">{{ el.demandName }}</span></span>
                 </div>
             </div>
         </div>
