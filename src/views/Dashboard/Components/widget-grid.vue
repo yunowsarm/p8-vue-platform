@@ -6,7 +6,7 @@
           <div style="width: 100%; height: 30px"></div>
         </el-col>
         <el-col :span="12">
-          <div style="text-align: right">
+          <div style="text-align: right;margin: 10px;">
             <el-button type="primary"
                        size="mini"
                        @click="addTemplate"><i style="position: relative; top: 2px"

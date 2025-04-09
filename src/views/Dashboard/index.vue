@@ -352,6 +352,9 @@ export default {
     font-size: 18px;
     color: black;
   }
+  ::v-deep .el-tabs__header{
+    margin: 0;
+  }
   ::v-deep .el-tabs__content {
     overflow: hidden;
   }
