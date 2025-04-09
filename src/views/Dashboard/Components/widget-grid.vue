@@ -10,11 +10,13 @@
             <el-button type="primary"
                        size="mini"
                        @click="addTemplate"><i style="position: relative; top: 2px"
-                 class="p8 icon-zujianku"></i> 模版库</el-button>
+                                               class="p8 icon-zujianku"></i> 模版库
+            </el-button>
             <el-button type="primary"
                        size="mini"
                        @click="addWidget"><i style="position: relative; top: 2px"
-                 class="p8 icon-zujianku"></i> 组件库</el-button>
+                                             class="p8 icon-zujianku"></i> 组件库
+            </el-button>
           </div>
         </el-col>
       </el-row>
@@ -48,14 +50,15 @@
                             :params="widgetParams"
                             api="kanbanComponent.getRoleAppInfo"
                             :columns="columns"
-                            :pagination="true"> </common-table>
+                            :pagination="true"></common-table>
             </template>
           </list-layout>
         </template>
         <template #cs-footer>
           <el-button @click="addWidgetVisible = false">取消</el-button>
           <el-button type="primary"
-                     @click="save()">确定</el-button>
+                     @click="save()">确定
+          </el-button>
         </template>
       </common-dialog>
 
@@ -89,9 +92,11 @@
                 <el-form-item label="隐藏头部">
                   <el-radio-group v-model="WidgetForm.simple">
                     <el-radio-button :value="true"
-                                     :label="true">是</el-radio-button>
+                                     :label="true">是
+                    </el-radio-button>
                     <el-radio-button :value="false"
-                                     :label="false">否</el-radio-button>
+                                     :label="false">否
+                    </el-radio-button>
                   </el-radio-group>
                 </el-form-item>
               </el-col>
@@ -142,7 +147,8 @@
         <template #cs-footer>
           <el-button type="primary"
                      style="float: right"
-                     @click="saveWidget()">保存</el-button>
+                     @click="saveWidget()">保存
+          </el-button>
         </template>
       </common-dialog>
       <common-dialog title="添加模版"
@@ -176,7 +182,8 @@
                             :pagination="true">
                 <template #operation="{ scope }">
                   <el-button type="text"
-                             @click="preview(scope.row)">预览</el-button>
+                             @click="preview(scope.row)">预览
+                  </el-button>
                 </template>
               </common-table>
             </template>
@@ -185,7 +192,8 @@
         <template #cs-footer>
           <el-button @click="addTemplateVisible = false">取消</el-button>
           <el-button type="primary"
-                     @click="templateSave()">确定</el-button>
+                     @click="templateSave()">确定
+          </el-button>
         </template>
       </common-dialog>
       <common-dialog title="预览"
@@ -211,7 +219,8 @@
         <template #cs-footer>
           <el-button @click="addWidgetVisible = false">取消</el-button>
           <el-button type="primary"
-                     @click="save()">确定</el-button>
+                     @click="save()">确定
+          </el-button>
         </template>
       </common-dialog>
     </div>
@@ -241,7 +250,8 @@
                      @widget-resize="onWidgetResize"
                      @on-fullscreen="onFullscreen">
           <div class="noPermission"
-               v-if="item.isShow == false"><span class="text">安全管理员未授权您使用该组件的权限，请与安全管理员联系获取。</span></div>
+               v-if="item.isShow == false"><span
+            class="text">安全管理员未授权您使用该组件的权限，请与安全管理员联系获取。</span></div>
           <dynamicLink v-else-if="item.component && item.component.functionalCategory === '1'"
                        :is-show="isLayoutReady"
                        :data="item"
@@ -269,8 +279,13 @@
 
 <script>
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-import { SmartWidgetGrid } from 'p8-vue-smart-widget'
-import { P8Table as CommonTable, P8Dialog as CommonDialog,P8Search as SearchFormList,P8ListLayout as ListLayout } from 'p8-components-ui'
+import {SmartWidgetGrid} from 'p8-vue-smart-widget'
+import {
+  P8Table as CommonTable,
+  P8Dialog as CommonDialog,
+  P8Search as SearchFormList,
+  P8ListLayout as ListLayout
+} from 'p8-components-ui'
 import _cloneDeep from 'lodash/cloneDeep'
 import widgetItem from './widget-item.vue'
 import dynamicLink from './dynamic-link.vue'
@@ -278,9 +293,10 @@ import renderView from "@/views/Framework/ComponentsMananger/Kanban/Components/r
 import tableRenderVue from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
 import AntvView from '@/views/Framework/ComponentsMananger/Kanban/Components/AntvView'
 import kanbanView from '../kanbanViewPreview.vue'
+
 export default {
   name: 'Widgetgrid',
-  provide () {
+  provide() {
     return {
       deleteWidget: this.deleteWidget,
       setWidget: this.setWidget,
@@ -309,11 +325,13 @@ export default {
     },
     styleObject: {
       type: Object,
-      default: () => { }
+      default: () => {
+      }
     },
     localParames: {
       type: Object,
-      default: () => { }
+      default: () => {
+      }
     },
     isDesign: {
       type: Boolean,
@@ -321,7 +339,7 @@ export default {
     }
   },
   computed: {
-    layout () {
+    layout() {
       if (this.widget && this.widget.length > 0) {
         return this.widget.map((item) => {
           this.getSearchList(item)
@@ -334,26 +352,26 @@ export default {
   },
   watch: {
     widget: {
-      handler (val) {
+      handler(val) {
         this.renderConten()
       }
     }
   },
-  mounted () {
+  mounted() {
     this.$nextTick(() => {
       const gridElements = this.$el.querySelectorAll('[title]');
       gridElements.forEach(el => el.removeAttribute('title'));
     });
     this.roleIds = this.$store.getters.userInfo.userRoles.map(el => el.roleId)
   },
-  data () {
+  data() {
     return {
-      widgetParams:{},
-      templateParams:{
+      widgetParams: {},
+      templateParams: {
         isTerminal: '1',
-        roleIdList: this.roleIds  ? this.roleIds : [],
+        roleIdList: this.roleIds ? this.roleIds : [],
       },
-      searchWidgetData:[
+      searchWidgetData: [
         {
           type: 'text', // 控件类型
           labelText: '组件名称', // 控件显示的文本
@@ -362,12 +380,12 @@ export default {
         },
         {
           type: 'text', // 控件类型
-          labelText: '描述', // 控件显示的文本
-          fieldName: 'compCode',
-          placeholder: '请输入描述',
+          labelText: '业务分类', // 控件显示的文本
+          fieldName: 'classificationDisPlay',
+          placeholder: '请输入业务分类名称',
         },
       ],
-      searchTemplateData:[
+      searchTemplateData: [
         {
           type: 'text', // 控件类型
           labelText: '模板名称', // 控件显示的文本
@@ -417,8 +435,8 @@ export default {
           dataIndex: 'name'
         },
         {
-          title: '描述',
-          dataIndex: 'compCode'
+          title: '业务分类',
+          dataIndex: 'classificationDisPlay'
         }
       ],
       templateColumns: [
@@ -442,7 +460,7 @@ export default {
           align: 'center',
           width: '80px',
           dataIndex: 'operation',
-          scopedSlots: { customRender: 'custom' },
+          scopedSlots: {customRender: 'custom'},
         }
       ],
       widgetResizeStatus: [],
@@ -453,7 +471,7 @@ export default {
   },
   methods: {
     // 组件搜索
-    searchWidget(param){
+    searchWidget(param) {
       this.widgetParams = {
         ...this.widgetParams,
         ...param
@@ -463,14 +481,14 @@ export default {
       })
     },
     // 重置组件搜索
-    reSetWidget () {
+    reSetWidget() {
       this.widgetParams = {}
       this.$nextTick(() => {
         this.$refs.widgetTable.searchData()
       })
     },
     // 模板搜索
-    searchTemplate(param){
+    searchTemplate(param) {
       this.templateParams = {
         ...this.templateParams,
         ...param
@@ -480,24 +498,25 @@ export default {
       })
     },
     // 重置模板搜索
-    reSetTemplate () {
+    reSetTemplate() {
       this.templateParams = {
         isTerminal: '1',
-        roleIdList: this.roleIds  ? this.roleIds : [],
+        roleIdList: this.roleIds ? this.roleIds : [],
       }
       this.$nextTick(() => {
         this.$refs.tableTemplate.searchData()
       })
     },
-    searchData (data) {
+    searchData(data) {
       this.tableSearchList = Array.from(new Set([...this.tableSearchList, ...data]))
       this.changeSearchConfig()
     },
-    onWidgetResize (widget) {
+    onWidgetResize(widget) {
       this.$set(this.widgetResizeStatus, widget.slot, new Date().getTime())
     },
-    onLayoutUpdated (newLayout) { },
-    onLayoutReady (newLayout) {
+    onLayoutUpdated(newLayout) {
+    },
+    onLayoutReady(newLayout) {
       // let delay = this.isDesign ? 1500 : 200
       const delay = 260
       const that = this
@@ -505,40 +524,45 @@ export default {
         that.isLayoutReady = true
       }, delay)
     },
-    onMove (params) {
+    onMove(params) {
       // console.log('onMove:', params)
     },
     // 大小改变
-    onResize (params) {
+    onResize(params) {
       // setTimeout(() => {
       //   this.$refs['widget' + params.i][0].handleRefresh()
       // }, 300)
     },
     // 放大
-    onFullscreen (booleanParams, params) {
+    onFullscreen(booleanParams, params) {
       this.dynamicRenderTime = new Date().getTime()
     },
     // 重新渲染
-    renderConten () {
+    renderConten() {
       this.tableSearchList = []
       this.renderTime = new Date().getTime()
     },
     // 删除
-    deleteWidget (data) {
+    deleteWidget(data) {
       const widgetList = JSON.parse(JSON.stringify(this.widget))
       widgetList.splice(data.index, 1)
       this.getSearchCofnfig(widgetList)
       this.$emit('update:widget', widgetList)
     },
     // 设置
-    setWidget (data) {
-      this.WidgetForm = _cloneDeep({ ...this.$options.data().WidgetForm, ...data })
+    setWidget(data) {
+      this.WidgetForm = _cloneDeep({...this.$options.data().WidgetForm, ...data})
       this.setWidgetVisible = true
     },
     // 添加组件
-    addWidget () {
+    addWidget() {
       this.widgetList = []
       this.addWidgetVisible = true
+      // 重置搜索条件
+      this.widgetParams = {}
+      if (this.$refs.searchWidget) {
+        this.$refs.searchWidget.resetForm()
+      }
       // const soltArr = this.widget.map(item => { return item.layout.i })
       // const maxSolt = Math.max.apply(null, soltArr)
       // this.widgetList.push({
@@ -551,10 +575,16 @@ export default {
       // })
       // this.$emit('update:widget', this.widget.concat(this.widgetList))
     },
-    addTemplate () {
+    addTemplate() {
       this.addTemplateVisible = true
+      // 重置搜索条件
+      this.templateParams = {}
+      if (this.$refs.searchTemplate) {
+        this.$refs.searchTemplate.resetForm()
+      }
+
     },
-    preview (row) {
+    preview(row) {
       this.deepCopyWidget = []
       this.deepCopyFormData = row
       this.previewVisible = true
@@ -564,13 +594,13 @@ export default {
         })
       }
     },
-    templateSave () {
+    templateSave() {
       const addArr = this.$refs.tableTemplate.selection
       this.$emit('saveTemplate', addArr)
       this.addTemplateVisible = false
     },
     // 编辑保存组件设置
-    saveWidget () {
+    saveWidget() {
       const widget = this.widget.find((item) => {
         return item.slot === this.WidgetForm.slot
       })
@@ -585,18 +615,18 @@ export default {
       this.$emit('update:widget', widgetList)
       this.setWidgetVisible = false
     },
-    handleCancel (Visible) {
+    handleCancel(Visible) {
       this[Visible] = false
     },
-    handleFullscreen () {
+    handleFullscreen() {
       this.$refs.table.doLayout()
     },
-    save () {
+    save() {
       const soltArr = this.widget.map((item) => {
         return item.layout.i
       })
       const maxSolt = soltArr.length ? Math.max.apply(null, soltArr) : 0
-      const addArr = this.$refs.table.selection
+      const addArr = this.$refs.widgetTable.selection
       if (addArr.length) {
         addArr.forEach((item, index) => {
           this.widgetList.push({
@@ -620,7 +650,7 @@ export default {
       this.$emit('update:widget', this.widget.concat(this.widgetList))
       this.addWidgetVisible = false
     },
-    getSearchCofnfig (list) {
+    getSearchCofnfig(list) {
       list.forEach((el) => {
         if (el.component.searchConfigValue && el.component && el.component.functionalCategory && el.component.functionalCategory !== '3') {
           let item
@@ -645,7 +675,7 @@ export default {
       })
       this.changeSearchConfig()
     },
-    changeSearchConfig () {
+    changeSearchConfig() {
       if (this.searchList && this.tableSearchList) {
         let list = this.searchList.concat(this.tableSearchList)
         const newobj = {}
@@ -656,7 +686,7 @@ export default {
         this.$emit('setSearchConfig', list)
       }
     },
-    getSearchList (addArr) {
+    getSearchList(addArr) {
       const list = []
       const soltArr = this.widget.map((item) => {
         return item.layout.i
@@ -666,7 +696,7 @@ export default {
       list.push({
         slot: maxSolt + this.widgetList.length + 1,
         fullscreen: true,
-        layout: { x: 0, y: 0, w: item.defaultWidth, h: item.defaultHigh, i: maxSolt + this.widgetList.length + 1 },
+        layout: {x: 0, y: 0, w: item.defaultWidth, h: item.defaultHigh, i: maxSolt + this.widgetList.length + 1},
         component: item,
         styleObject: {},
         title: item.name
@@ -684,24 +714,30 @@ export default {
   width: calc(100% - 20px);
   margin: 0px 0px 20px 5px;
 }
+
 .scroll-area {
   height: calc(100% - 38px);
   position: relative;
 }
+
 .elForm {
   padding: 10px;
 }
+
 .gridItem {
   ::v-deep.widget-header {
     background: #f9f9f9;
+
     .ellis {
       font-size: 14px;
     }
   }
 }
+
 .noPermission {
   height: 100%;
   position: relative;
+
   .text {
     font-size: 14px;
     width: 100%;
