@@ -2260,10 +2260,13 @@ export const CommandButtonData = [
         help: '展开所有',
         msg: '展开所有',
         clickFun: function (btn, ganttName, tasks) {
-          // const vueThis = store.getters.vueThis
+          const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
           ganttObject.batchUpdate(function () {
             ganttObject.eachTask(function (task) {
+              task.expand = true
+              task.$open = true
+              updateArrayById(vueThis.addTaskList, task)
               ganttObject.open(task.id);
             });
           });
@@ -2433,10 +2436,13 @@ export const CommandButtonData = [
         help: '折叠所有',
         msg: '折叠所有',
         clickFun: function (btn, ganttName) {
-          // const vueThis = store.getters.vueThis
+          const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
           ganttObject.batchUpdate(function () {
             ganttObject.eachTask(function (task) {
+              task.expand = false
+              task.$open = false
+              updateArrayById(vueThis.addTaskList, task)
               ganttObject.close(task.id);
             });
           });
