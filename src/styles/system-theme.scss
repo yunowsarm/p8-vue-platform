@@ -1,0 +1,143 @@
+// 该文件中，css样式的值，不允许存在纯常量
+
+.common-table, .el-table {
+  background-color: $table-bg-clolr !important;
+}
+
+.vxe-table--render-default {
+  color: $table-text-color !important;
+  .vxe-table--body-wrapper table,
+  .vxe-table--footer-wrapper table,
+  .vxe-table--render-wrapper {
+    background-color: $table-bg-clolr !important;
+  }
+  .vxe-header--column:not(.col--seq):hover {
+    background-color: $table-header-bg-clolr !important;
+  }
+  .vxe-body--row.row--stripe {
+    background: $table-stripe-clolr !important;
+  }
+  .vxe-body--row.row--current,
+  .vxe-body--row.row--hover,
+  .vxe-body--row.row--hover.row--stripe:hover {
+    background-color: $table-row-hover-bg-color !important;
+  }
+  &.border--default .vxe-table--header-wrapper,
+  &.border--full .vxe-table--header-wrapper,
+  &.border--outer .vxe-table--header-wrapper {
+    background: $table-stripe-clolr !important;
+  }
+  &.border--default .vxe-body--column,
+  &.border--default .vxe-footer--column,
+  &.border--default .vxe-header--column,
+  &.border--full .vxe-body--column,
+  &.border--full .vxe-footer--column,
+  &.border--full .vxe-header--column,
+  &.border--inner .vxe-body--column,
+  &.border--inner .vxe-footer--column,
+  &.border--inner .vxe-header--column {
+    background-image: linear-gradient($table-border-color,$table-border-color),linear-gradient($table-border-color,$table-border-color) !important;
+  }
+  // 滚动条样式
+  .vxe-table--body-wrapper::-webkit-scrollbar-track{
+    background: $table-stripe-clolr;
+    border-radius:2px;
+  }
+  .vxe-table--body-wrapper::-webkit-scrollbar-thumb{
+    background: $table-bg-clolr;
+
+    border-radius:10px;
+  }
+  &.vxeTable th {
+    background-color: $table-header-bg-clolr;
+  }
+  &.vxeTable .vxe-cell--title {
+    color: $table-header-text-color;
+  }
+}
+
+// 表格行背景色
+.el-table th,.el-table tr{
+  background-color: $table-bg-clolr !important;
+}
+
+// 表格hover颜色
+// .common-table .small-table .el-table__fixed-body-wrapper .el-table__body .hover-row
+.common-table .small-table .el-table--enable-row-transition .el-table__body tr:hover td,
+.common-table .small-table .el-table--enable-row-transition .el-table__body .el-table__row.hover-row td,
+.common-table .small-table .el-table__fixed-body-wrapper .el-table__body .el-table__row.hover-row td{
+  background-color: $table-row-hover-bg-color !important;
+}
+
+// 表格斑马纹颜色
+.el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
+  background: $table-stripe-clolr !important;
+}
+
+// 表格边框色
+.el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell {
+  border-bottom: 1px solid $table-border-color !important;
+}
+.el-table--border .el-table__cell {
+  border-right: 1px solid $table-border-color !important;
+}
+
+// 表格内容文字颜色
+.el-table {
+  color: $table-text-color !important;
+}
+// 表格表头颜色
+.el-table thead th.el-table__cell, .el-table thead.is-group th.el-table__cell {
+  background-color: $table-header-bg-clolr !important;
+}
+// 表格标题文字颜色
+.el-table thead, .el-table thead.is-group {
+  color: $table-header-text-color !important;
+}
+
+// 滚动条样式
+.el-table__body-wrapper::-webkit-scrollbar-track{
+  background: $table-bg-clolr;
+  border-radius:2px;
+}
+.el-table__body-wrapper::-webkit-scrollbar-thumb{
+  background: $table-bg-clolr;
+
+  border-radius:10px;
+}
+.common-table .showSearchRow .colSearch {
+  background: $table-bg-clolr;
+  .el-input__inner, .el-range-input {
+    background: $table-bg-clolr !important;
+    border-color: $table-border-color;
+    color: $table-text-color;
+  }
+}
+
+// 分页样式
+.common-table {
+  .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next, .el-pagination.is-background .el-pager li{
+    background: $table-bg-clolr;
+    color: $table-text-color;
+  }
+  .el-pagination__total, .bottom-flex {
+    color: $table-text-color;
+  }
+  .el-pagination__jump {
+    color: $table-text-color;
+  }
+  .el-pagination__jump .el-pagination__editor.el-input .el-input__inner {
+    background: transparent !important;
+    border-color: $table-border-color;
+    color: $table-text-color;
+  }
+  // input样式
+  .el-input {
+    .el-input__inner {
+      background: $table-bg-clolr !important;
+      border-color: $table-border-color;
+      color: $table-text-color;
+    }
+  }
+}
+

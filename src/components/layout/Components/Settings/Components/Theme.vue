@@ -6,9 +6,14 @@
     </div>
     <div class="select-theme">
       <ul>
-        <li v-for="(theme, index) in themeName" :key="index" :class="{ active: activeTheme === theme }" :style="{ background: theme }" @click="changeSystemTheme(theme)"></li>
+        <li v-for="(theme, index) in themeName"
+            :key="index"
+            :class="{ active: activeTheme === theme }"
+            :style="{ background: theme }"
+            @click="changeSystemTheme(theme)"></li>
       </ul>
-      <el-color-picker v-model="pickerColor" @change="changeSystemTheme(pickerColor)"></el-color-picker>
+      <el-color-picker v-model="pickerColor"
+                       @change="changeSystemTheme(pickerColor)"></el-color-picker>
     </div>
     <div class="select-theme"></div>
   </div>
@@ -19,30 +24,30 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Theme',
-  data() {
+  data () {
     return {
       chalk: '',
       pickerColor: '',
       themeName: []
     }
   },
-  beforeMount() {
+  beforeMount () {
     const systemTheme = this.$const.systemTheme.theme
     for (const key of Object.values(systemTheme)) {
       this.themeName.push(key)
     }
   },
-  mounted() {
+  mounted () {
     this.pickerColor = this.theme
   },
   computed: {
     ...mapGetters(['theme']),
-    activeTheme() {
+    activeTheme () {
       return this.$store.getters.theme
     }
   },
   methods: {
-    changeSystemTheme(theme) {
+    changeSystemTheme (theme) {
       this.$store.dispatch('setTheme', { theme, handler: true })
     }
   },
