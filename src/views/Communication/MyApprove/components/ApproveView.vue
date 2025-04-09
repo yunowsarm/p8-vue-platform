@@ -543,7 +543,6 @@ export default {
       this.$refs.ProcessHistory.getPages(this.historyHeight)
     },
     tabsClick (val) {
-      console.log(val,'===val');
       this.activeTabs = val.name
     },
     getIsWarnApprove (isWarnApprove) {
@@ -560,7 +559,7 @@ export default {
       }
 
       const msg = '确定' + this.approvalResultText + '吗？'
-      if (this.approvalResultText !== '驳回') {
+      if (this.approvalResultText) {
         // 需求管理校验
         if (this.$refs.approveContent.formType) {
           this.$refs.approveContent.handleSubmit()

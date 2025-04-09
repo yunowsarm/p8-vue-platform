@@ -214,7 +214,7 @@ export default {
           placeholder: '请输入客户群',
           colLayout: 'singleCol',
           maxlength: 10,
-          tip:''
+          tip: ''
         },
         {
           type: 'text',
@@ -948,7 +948,7 @@ export default {
       isRadioSelect: true
     }
   },
-  created() {
+  created () {
     this.getFiledInfo()
   },
   mounted () {
@@ -974,8 +974,8 @@ export default {
     this.viewForm()
   },
   methods: {
-    getFiledInfo(){
-      this.$api['demandManagement.getFiledInfo']({fieldCode:''}).then((res) => {
+    getFiledInfo () {
+      this.$api['demandManagement.getFiledInfo']({ fieldCode: '' }).then((res) => {
         if (res && res.length > 0) {
           const dataSources = [
             this.dataSourceInfo,
@@ -1028,6 +1028,20 @@ export default {
           } else {
             if (res.analysisList.length > 0) {
               this.formData = res.analysisList[0]
+              const { processingTeam, processingTeamDisplay } = res.analysisList[0];
+              if (res.analysisList[0].processingTeam.indexOf(',') !== -1) {
+                this.formData.processingTeam = processingTeam.split(',');
+                this.selectedRows = processingTeam.split(',').map((id, index) => ({
+                  id,
+                  realName: processingTeamDisplay.split(',')[index]
+                }));
+              } else {
+                this.selectedRows.push({
+                  id: res.analysisList[0].processingTeam,
+                  realName: res.analysisList[0].processingTeamDisplay
+                })
+                this.formData.processingTeam = [this.formData.processingTeam]
+              }
             }
             // this.$set(this.formData, 'processingTeamDisplay', res.analysisList[0].processingTeamDisplay)
             this.$set(this.formData, 'earlyPlan', res.earlyPlan)
