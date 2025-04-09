@@ -37,29 +37,32 @@
                  style="font-size: 14px;margin-left: 5px;"></i>
             </el-popover>
           </span>
-          <component v-if="isLock"
-                     :key="index"
-                     :record="{ widgets: item.deepCopyWidget }"
-                     ref="kanbanEdit"
-                     class="component"
-                     :is="hankanbanEdit"
-                     @saveTemplate="saveTemplate" />
-          <component :key="dateTime"
-                     v-else
-                     ref="kanbanView"
-                     class="component"
-                     :headerVisible="false"
-                     :id="''"
-                     :code="''"
-                     :render-data="[item.deepCopyFormData]"
-                     :widget="item.deepCopyWidget"
-                     :style-object="{}"
-                     :row-height="50"
-                     :margin="[5, 5]"
-                     :padding="[5, 5]"
-                     :is-static="true"
-                     :is-design="false"
-                     :is="kanbanView" />
+          <!-- 使用 v-if 判断当前页签是否为激活状态 -->
+          <template v-if="editableTabsValue === item.name">
+            <component v-if="isLock"
+                       :key="index"
+                       :record="{ widgets: item.deepCopyWidget }"
+                       ref="kanbanEdit"
+                       class="component"
+                       :is="hankanbanEdit"
+                       @saveTemplate="saveTemplate" />
+            <component :key="dateTime"
+                       v-else
+                       ref="kanbanView"
+                       class="component"
+                       :headerVisible="false"
+                       :id="''"
+                       :code="''"
+                       :render-data="[item.deepCopyFormData]"
+                       :widget="item.deepCopyWidget"
+                       :style-object="{}"
+                       :row-height="50"
+                       :margin="[5, 5]"
+                       :padding="[5, 5]"
+                       :is-static="true"
+                       :is-design="false"
+                       :is="kanbanView" />
+          </template>
         </el-tab-pane>
       </template>
     </el-tabs>
@@ -261,7 +264,7 @@ export default {
           indexNo: indexNumber
         })
       }
-    // 对 editableTabs 根据 indexNo 进行排序
+      // 对 editableTabs 根据 indexNo 进行排序
       this.editableTabs.sort((a, b) => a.indexNo - b.indexNo)
       this.editableTabsValue = name
       this.addTabsVisible = false

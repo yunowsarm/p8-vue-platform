@@ -83,7 +83,7 @@ export default {
           right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
         },
         events: [],
-        dayMaxEvents: 3, // 每天最多显示3个事件，超过则显示"+更多"
+        dayMaxEvents: 6, // 每天最多显示3个事件，超过则显示"+更多"
         dayCellDidMount: (arg) => {
           const warningDates = [
             {
