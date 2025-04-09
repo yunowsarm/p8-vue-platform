@@ -5,15 +5,15 @@
         <div class="title">{{ formData.sourceChannel }}</div>
         <form-render class="formRender" :data-view-id="dataViewId" :record="{ desformCode: codeForm }" :prop-param="propParam" page-type="view" v-bind="$attrs"></form-render>
       </div>
-      <div style="width: 50%" :key="formKey">
+      <div style="width: 50%">
         <div class="title">市场需求信息表</div>
-        <form-list ref="formInfo2" class="formList" label-width="150px" :data-source="dataSourceInfo" :exist-default-btn="false" :form="formData"> </form-list>
+        <form-list :key="formKey" ref="formInfo2" class="formList" label-width="150px" :data-source="dataSourceInfo" :exist-default-btn="false" :form="formData"> </form-list>
         <div class="title">预审意见</div>
-        <form-list ref="formInfo3" class="formList" label-width="150px" :data-source="dataSourceOpinion" :exist-default-btn="false" :form="formData"> </form-list>
+        <form-list :key="formKey" ref="formInfo3" class="formList" label-width="150px" :data-source="dataSourceOpinion" :exist-default-btn="false" :form="formData"> </form-list>
         <div class="title">需求信息描述</div>
-        <form-list ref="formInfo4" class="formList" label-width="150px" :data-source="dataSourceInfoTwo" :exist-default-btn="false" :form="formData"> </form-list>
+        <form-list :key="formKey" ref="formInfo4" class="formList" label-width="150px" :data-source="dataSourceInfoTwo" :exist-default-btn="false" :form="formData"> </form-list>
         <div class="title">分析意见</div>
-        <form-list ref="formInfo5" class="formList" label-width="150px" :data-source="dataSourceAnalyse" :exist-default-btn="false" :form="formData"> </form-list>
+        <form-list :key="formKey" ref="formInfo5" class="formList" label-width="150px" :data-source="dataSourceAnalyse" :exist-default-btn="false" :form="formData"> </form-list>
       </div>
     </div>
   </div>

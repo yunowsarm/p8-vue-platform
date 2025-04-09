@@ -11,10 +11,10 @@
                      v-bind="$attrs"></form-render>
       </div>
       <div v-if="formType === '1'"
-           :key="formKey"
            style="width: 50%;">
         <div class="title">市场需求信息表</div>
         <form-list ref="formInfo2"
+                   :key="formKey"
                    class="formList"
                    label-width="150px"
                    :data-source="dataSource"
@@ -24,6 +24,7 @@
         <div class="title">预审意见</div>
         <form-list ref="formInfo3"
                    class="formList"
+                   :key="formKey"
                    label-width="150px"
                    :data-source="dataSource2"
                    :exist-default-btn="false"
@@ -45,6 +46,7 @@
            style="width: 50%;">
         <div class="title">需求信息描述</div>
         <form-list ref="formInfo4"
+                   :key="formKey"
                    class="formList"
                    label-width="150px"
                    :data-source="dataSource3"
@@ -53,6 +55,7 @@
         </form-list>
         <div class="title">分析意见</div>
         <form-list ref="formInfo5"
+                   :key="formKey"
                    class="formList"
                    label-width="150px"
                    :data-source="dataSource4"
@@ -984,7 +987,6 @@ export default {
             this.dataSourceInfoTwoView,
             this.dataSourceAnalyseView
           ];
-
           res.forEach(field => {
             dataSources.forEach(source => {
               source.forEach(item => {
@@ -995,7 +997,10 @@ export default {
               });
             });
           });
-          this.formKey = new Date().getTime()
+          // 强制重新渲染表单
+          this.$nextTick(() => {
+            this.formKey = new Date().getTime();
+          });
         }
       })
     },
