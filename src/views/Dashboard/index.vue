@@ -38,7 +38,7 @@
             </el-popover>
           </span>
           <!-- 使用 v-if 判断当前页签是否为激活状态 -->
-          <template v-if="editableTabsValue === item.name">
+          <template v-if="editableTabsValue === item.name || isLock">
             <component v-if="isLock"
                        :key="index"
                        :record="{ widgets: item.deepCopyWidget }"
@@ -352,7 +352,7 @@ export default {
     font-size: 18px;
     color: black;
   }
-  ::v-deep .el-tabs__header{
+  ::v-deep .el-tabs__header {
     margin: 0;
   }
   ::v-deep .el-tabs__content {
