@@ -1,18 +1,22 @@
 <template>
-  <common-dialog :title="title" :visible="visible" width="350px" @close="handleCancel" :show-handle-btn="false" :dialog-height="150">
+  <common-dialog :title="title"
+                 :visible="visible"
+                 width="350px"
+                 @close="handleCancel"
+                 :show-handle-btn="false"
+                 :dialog-height="180">
     <template #dialog>
-      <form-list
-        ref="form"
-        label-width="50px"
-        :data-source="dataSource"
-        :form="formData"
-        :is-custom-validate="true"
-        @custom-validate="customValidate"
-        :exist-default-btn="false"
-        :exist-custom-btn="true"
-      >
+      <form-list ref="form"
+                 label-width="50px"
+                 :data-source="dataSource"
+                 :form="formData"
+                 :is-custom-validate="true"
+                 @custom-validate="customValidate"
+                 :exist-default-btn="false"
+                 :exist-custom-btn="true">
         <template #customBtn>
-          <el-button type="primary" @click="handleSubmit">确认</el-button>
+          <el-button type="primary"
+                     @click="handleSubmit">确认</el-button>
         </template>
       </form-list>
     </template>
@@ -49,7 +53,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       formData: { name: '', indexNo: '' },
       dataSource: [
@@ -80,18 +84,18 @@ export default {
       ]
     }
   },
-  created() {
+  created () {
     this.formData.name = this.name
     this.formData.indexNo = this.indexNo
   },
   methods: {
-    handleCancel() {
+    handleCancel () {
       this.$emit('handleCancel')
     },
-    customValidate(saveParams) {
+    customValidate (saveParams) {
       this.$emit('handleOk', saveParams.name, saveParams.indexNo)
     },
-    handleSubmit(e) {
+    handleSubmit (e) {
       this.$refs.form.handleSubmit(e)
     }
   }

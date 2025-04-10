@@ -279,10 +279,12 @@ export default {
           widget.widgets.forEach(el => {
             deepCopyWidget.push(JSON.parse(el.layout))
           })
+          let index = this.editableTabs && this.editableTabs.length ? this.editableTabs[this.editableTabs.length - 1].indexNo + 1 : 1
           this.editableTabs.push({
             name: widget.name,
             deepCopyWidget: deepCopyWidget,
-            homePageId: widget.id
+            homePageId: widget.id,
+            indexNo: index
           })
         } else {
           // 可选：如果需要，可以在这里处理名称重复的情况，比如提示用户
