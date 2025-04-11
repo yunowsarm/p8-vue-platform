@@ -43,14 +43,16 @@
     height: 50px !important;
     color: $base-menu-text-color;
     font-weight: bold;
+    border-bottom: 1px solid #e6e6e6 !important;
 
     &.is-active {
-      color: $base-light-color;
+      color: $theme-color !important;
+      border-bottom: 2px solid $theme-color !important;
     }
 
     &:hover {
       color: $base-light-color;
-      border-bottom: 2px solid $base-light-color !important;
+      border-bottom: 2px solid $theme-color !important;
     }
   }
 }
