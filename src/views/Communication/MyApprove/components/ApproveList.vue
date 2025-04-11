@@ -52,6 +52,9 @@
                   @click="showAllTags">
             更多
           </el-tag>
+          <el-tag v-if="showAllTagsClicked" class="more-button" type="info" @click="hideAllTags">
+            收起
+          </el-tag>
         </div>
         <infinite-list :list-api="messageListApi"
                        :style="{height: getHeight}"
@@ -197,7 +200,8 @@ export default {
       tagHeight: null,
       activeIds: [],
       searchTabs: '',
-      tabEenderTime: new Date().getTime()
+      tabEenderTime: new Date().getTime(),
+      showAllTagsClicked: false,
     }
   },
   computed: {
@@ -290,6 +294,11 @@ export default {
     // 显示全部标签
     showAllTags () {
       this.showAll = true;
+      this.showAllTagsClicked = true; // 设置为已点击“更多”按钮
+    },
+     hideAllTags () {
+      this.showAll = false;
+      this.showAllTagsClicked = false; // 设置为未点击“更多”按钮
     },
     tagClick (item) {
       const index = this.activeIds.indexOf(item.name);
@@ -354,7 +363,8 @@ export default {
       if (data && current && current === 1) {
         this.currentIndex = 0
       }
-    }
+    },
+    
   }
 }
 </script>
