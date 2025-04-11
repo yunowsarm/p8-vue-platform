@@ -271,24 +271,31 @@ export default {
       this.timeKey = new Date().getTime()
     },
     saveTemplate (addArr) {
-      let widget = addArr[0]
-      if (widget) {
-        const isNameExists = this.editableTabs.some(tab => tab.name === widget.name)
-        if (!isNameExists) {
-          const deepCopyWidget = []
-          widget.widgets.forEach(el => {
-            deepCopyWidget.push(JSON.parse(el.layout))
-          })
-          let index = this.editableTabs && this.editableTabs.length ? this.editableTabs[this.editableTabs.length - 1].indexNo + 1 : 1
-          this.editableTabs.push({
-            name: widget.name,
-            deepCopyWidget: deepCopyWidget,
-            homePageId: widget.id,
-            indexNo: index
-          })
-        } else {
-          // 可选：如果需要，可以在这里处理名称重复的情况，比如提示用户
-          this.$message.warning(`名称为${widget.name}的主页已存在，请勿重复添加`)
+      let widgetList = addArr
+      let errList = []
+      if (widgetList && widgetList.length) {
+        widgetList.forEach(widget => {
+          const isNameExists = this.editableTabs.some(tab => tab.name === widget.name)
+          if (!isNameExists) {
+            const deepCopyWidget = []
+            widget.widgets.forEach(el => {
+              deepCopyWidget.push(JSON.parse(el.layout))
+            })
+            let index = this.editableTabs && this.editableTabs.length ? this.editableTabs[this.editableTabs.length - 1].indexNo + 1 : 1
+            this.editableTabs.push({
+              name: widget.name,
+              deepCopyWidget: deepCopyWidget,
+              homePageId: widget.id,
+              indexNo: index
+            })
+          } else {
+            // 可选：如果需要，可以在这里处理名称重复的情况，比如提示用户
+            errList.push(widget.name)
+          }
+        })
+        if (errList.length) {
+          let names = errList.join(',')
+          this.$message.warning(`名称为${names}的主页已存在，请勿重复添加`)
         }
       }
     },
