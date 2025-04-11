@@ -122,6 +122,8 @@ const project = {
               if (res.baseConfig.length) {
                 res.baseConfig.map((item) => {
                   reBuildBaseConfig[item.key] = item.value
+                  reBuildBaseConfig['toolbarWritingDisplay'] = 'true'
+                  reBuildBaseConfig['toolbarCompactLayout'] = 'false'
                 })
               }
               if (reBuildBaseConfig.systemThemeType) {
