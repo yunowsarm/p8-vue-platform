@@ -17,7 +17,7 @@
                         @re-set="onReset"></search-form-list> -->
     </template>
     <template #center>
-      <VuePerfectScrollbar class="scroll-area">
+      <VuePerfectScrollbar class="scroll-area vxeScroll">
         <widget-grid :key="renderTime"
                      v-bind="$attrs"
                      v-on="$listeners"
@@ -232,5 +232,9 @@ export default {
   ::v-deep .el-tabs__content {
     padding: 0;
   }
+}
+.vxeScroll ::v-deep .grid-table-render .vxe-table--body-wrapper {
+  overscroll-behavior: contain;
+  pointer-events: none;
 }
 </style>
