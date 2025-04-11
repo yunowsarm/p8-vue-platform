@@ -570,7 +570,10 @@ export default {
     addTemplate () {
       this.addTemplateVisible = true
       // 重置搜索条件
-      this.templateParams = {}
+      this.templateParams = {
+        isTerminal: '1',
+        roleIdList: this.roleIds ? this.roleIds : [],
+      }
       if (this.$refs.searchTemplate) {
         this.$refs.searchTemplate.resetForm()
       }
