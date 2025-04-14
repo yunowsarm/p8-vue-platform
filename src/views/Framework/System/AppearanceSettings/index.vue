@@ -17,6 +17,7 @@
         </template>
         <template #systemThemeType>
           <el-radio-group v-model="formData.systemThemeType"
+                          @input="changeThemeType"
                           size="small">
             <el-radio-button label="systemThemeType1">主题1</el-radio-button>
             <el-radio-button label="systemThemeType2">主题2</el-radio-button>
@@ -151,7 +152,7 @@ export default {
         {
           labelText: '显示文字',
           type: 'switch',
-          fieldName: 'toolbarDisplay',
+          fieldName: 'toolbarWritingDisplay',
           colLayout: 'singleCol'
         },
         {
@@ -215,7 +216,7 @@ export default {
       ],
       formData: {
         toolbarTextDisplay: '0',
-        tableRowHeight: 48
+        tableRowHeight: 50
       },
       modify: {}
     }
@@ -223,10 +224,155 @@ export default {
   mounted () {
   },
   methods: {
+    changeThemeType (key) {
+      let themeArray = []
+      switch (key) {
+        case 'systemThemeType1':
+          // 蓝色
+          themeArray = [
+            {
+              key: 'tableBgColor',//表格背景色
+              value: '#FFFFFF'
+            },
+            {
+              key: 'tableHeaderBgColor',//表格表头背景色
+              value: '#F4F8F8'
+            },
+            {
+              key: 'tableStripeColor',//表格斑马纹颜色
+              value: '#fbfbfb'
+            },
+            {
+              key: 'tableRowHoverBgColor',//表格鼠标悬停颜色
+              value: '#F1F9FF'
+            },
+            {
+              key: 'tableBorderColor',//表格边框颜色
+              value: '#E6E6E6'
+            },
+            {
+              key: 'tableTextColor',//表格文字颜色
+              value: '#606266'
+            },
+            {
+              key: 'tableHeaderTextColor',//表格表头文字颜色
+              value: '#1F2329'
+            },
+            {
+              key: 'imageUrl',// 侧边栏背景图片
+              url: './static/themeBackground/image3.png'
+            },
+            {
+              key: 'bgTheme',// 侧边栏背景颜色
+              value: '#3491FA'
+            }
+          ]
+          break;
+        case 'systemThemeType2':
+          // 红色
+          themeArray = [
+            {
+              key: 'tableBgColor',//表格背景色
+              value: '#FFFFFF'
+            },
+            {
+              key: 'tableHeaderBgColor',//表格表头背景色
+              value: '#FBF4F4'
+            },
+            {
+              key: 'tableStripeColor',//表格斑马纹颜色
+              value: '#fbfbfb'
+            },
+            {
+              key: 'tableRowHoverBgColor',//表格鼠标悬停颜色
+              value: '#FFF1F1'
+            },
+            {
+              key: 'tableBorderColor',//表格边框颜色
+              value: '#E6E6E6'
+            },
+            {
+              key: 'tableTextColor',//表格文字颜色
+              value: '#606266'
+            },
+            {
+              key: 'tableHeaderTextColor',//表格表头文字颜色
+              value: '#1F2329'
+            },
+            {
+              key: 'imageUrl',// 侧边栏背景图片
+              url: './static/themeBackground/image9.png'
+            },
+            {
+              key: 'bgTheme',// 侧边栏背景颜色
+              value: '#C70019'
+            }
+          ]
+          break;
+        case 'systemThemeType3':
+          // 黑色
+          themeArray = [
+            {
+              key: 'tableBgColor',//表格背景色
+              value: '#FFFFFF'
+            },
+            {
+              key: 'tableHeaderBgColor',//表格表头背景色
+              value: '#F7F8FA'
+            },
+            {
+              key: 'tableStripeColor',//表格斑马纹颜色
+              value: '#fbfbfb'
+            },
+            {
+              key: 'tableRowHoverBgColor',//表格鼠标悬停颜色
+              value: '#E5E6EB'
+            },
+            {
+              key: 'tableBorderColor',//表格边框颜色
+              value: '#E6E6E6'
+            },
+            {
+              key: 'tableTextColor',//表格文字颜色
+              value: '#606266'
+            },
+            {
+              key: 'tableHeaderTextColor',//表格表头文字颜色
+              value: '#1F2329'
+            },
+            {
+              key: 'imageUrl',// 侧边栏背景图片
+              url: './static/themeBackground/image10.png'
+            },
+            {
+              key: 'bgTheme',// 侧边栏背景颜色
+              value: '#272E3B'
+            }
+          ]
+        default:
+          break;
+      }
+      themeArray.forEach(item => {
+        switch (item.key) {
+          case 'imageUrl':
+            this.$store.dispatch('setImage', item.url)
+            break;
+          case 'bgTheme':
+            let theme = item.value
+            this.$store.dispatch('setTheme', { theme, handler: true })
+            break;
+          default:
+            this.$store.dispatch('setSystemColor', { [item.key]: item.value })
+            break;
+        }
+      })
+      this.formData.systemThemeArray = JSON.stringify(themeArray)
+    },
     rendered () {
       this.getSettingData()
     },
     clickEvent () {
+      // console.log('click')
     },
     getSettingData () {
       let that = this
@@ -238,6 +384,7 @@ export default {
           that.getFileUrl(res.uploadFileJson) // 获取图片流
         })
         .catch(function (error) {
+          // console.log('error' + error)
         })
     },
     // 获取图片流
@@ -269,8 +416,12 @@ export default {
           value: params.systemThemeType
         },
         {
-          key: 'toolbarDisplay', // 工具栏启用文字
-          value: params.toolbarDisplay
+          key: 'systemThemeArray', // 系统主题
+          value: params.systemThemeArray
+        },
+        {
+          key: 'toolbarWritingDisplay', // 工具栏启用文字
+          value: params.toolbarWritingDisplay
         },
         {
           key: 'toolbarTextDisplay', // 图标显示方式
@@ -300,6 +451,7 @@ export default {
       }
 
       saveParams.settings = settings
+      // console.log(saveParams)
       this.$refs.form.submitForm(saveParams, this.saveApi)
     },
     saved (res) { }
