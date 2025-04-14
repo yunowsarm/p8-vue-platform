@@ -114,9 +114,9 @@ export default {
     businessKey: {
       type: String
     },
-    allStatus: {
-      type: Array
-    },
+    // allStatus: {
+    //   type: Array
+    // },
   },
   components: {
     FormList,
@@ -127,7 +127,7 @@ export default {
   data () {
     return {
       formData: {},
-      // allStatus: [],
+      allStatus: [],
       count: 1,
       isdemandTable: false,
       taskInfo: {},
@@ -162,12 +162,12 @@ export default {
       this.isdemandTable = false
     },
     rendered () {
-      // if (this.api) {
-      //   getTaskStatusInfo({ currentStatus: 'all' }).then(data => {
-      //     this.allStatus = data
-      //   })
-      this.getTaskInfo()
-      // }
+      if (this.api) {
+        getTaskStatusInfo({ currentStatus: 'all' }).then(data => {
+          this.allStatus = data
+        })
+        this.getTaskInfo()
+      }
     },
     initFormData () {
       let tempObj = {}
