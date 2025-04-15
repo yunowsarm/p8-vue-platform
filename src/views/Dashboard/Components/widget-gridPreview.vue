@@ -116,7 +116,8 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row :gutter="0">
+            <el-row :gutter="0"
+                    v-if="!WidgetForm.simple">
               <el-col :span="12">
                 <el-form-item label="隐藏放大">
                   <el-switch v-model="WidgetForm.magnify"
