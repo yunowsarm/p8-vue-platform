@@ -125,7 +125,17 @@ const project = {
                 })
               }
               if (reBuildBaseConfig.systemThemeType) {
-                let themeArray = JSON.parse(reBuildBaseConfig.systemThemeArray)
+                let systemThemeArray = JSON.parse(reBuildBaseConfig.systemThemeArray)
+                let themeArray = []
+                if (reBuildBaseConfig.systemThemeType === 'systemThemeType1') {
+                  themeArray = systemThemeArray[0]
+                }
+                if (reBuildBaseConfig.systemThemeType === 'systemThemeType2') {
+                  themeArray = systemThemeArray[1]
+                }
+                if (reBuildBaseConfig.systemThemeType === 'systemThemeType3') {
+                  themeArray = systemThemeArray[2]
+                }
                 themeArray.forEach(item => {
                   switch (item.key) {
                     case 'imageUrl':

@@ -23,6 +23,22 @@
             <el-radio-button label="systemThemeType2">主题2</el-radio-button>
             <el-radio-button label="systemThemeType3">主题3</el-radio-button>
           </el-radio-group>
+          <el-tooltip effect="dark"
+                      popper-class="testtooltip"
+                      content="主题设计"
+                      placement="top">
+            <i class="el-icon-brush"
+               @click="open"
+               style="font-size: 20px;margin-left: 15px;"></i>
+          </el-tooltip>
+          <el-tooltip effect="dark"
+                      popper-class="testtooltip"
+                      content="恢复默认"
+                      placement="top">
+            <i class="p8 icon-zhongzhi1"
+               @click="restoreDefault"
+               style="font-size: 20px;margin-left: 15px;"></i>
+          </el-tooltip>
         </template>
       </form-list>
     </el-card>
@@ -84,6 +100,19 @@
         </template>
       </form-list>
     </el-card>
+    <common-drawer v-if="isVisibleThemeDrawer"
+                   title="主题设计"
+                   :visible="isVisibleThemeDrawer"
+                   placement="top"
+                   size="100%"
+                   @close="themeClose">
+      <template #drawer>
+        <theme-design ref="themeDesign"
+                      :themeArray="themeArray"
+                      :formData=formData
+                      @save-success="saveSuccess" />
+      </template>
+    </common-drawer>
   </div>
 </template>
 <style scoped>
@@ -105,15 +134,18 @@
 }
 </style>
 <script>
-import { P8Form as FormList, Alert, RadioGroup, RadioButton } from 'p8-components-ui'
-
+import { P8Form as FormList, Alert, RadioGroup, RadioButton, P8Drawer as CommonDrawer, P8Dialog as CommonDialog } from 'p8-components-ui'
+import themeDesign from './themeDesign.vue'
 export default {
   name: 'AppearanceEdit',
   components: {
     FormList,
     'el-alert': Alert,
     'el-radio-group': RadioGroup,
-    'el-radio-button': RadioButton
+    'el-radio-button': RadioButton,
+    CommonDrawer,
+    CommonDialog,
+    themeDesign
   },
   data () {
     return {
@@ -218,137 +250,157 @@ export default {
         toolbarTextDisplay: '0',
         tableRowHeight: 50
       },
-      modify: {}
+      modify: {},
+      isVisibleThemeDrawer: false,
+      defaultTheme: [
+        [
+          {
+            key: 'tableBgColor',//表格背景色
+            value: '#FFFFFF'
+          },
+          {
+            key: 'tableHeaderBgColor',//表格表头背景色
+            value: '#F4F8F8'
+          },
+          {
+            key: 'tableStripeColor',//表格斑马纹颜色
+            value: '#fbfbfb'
+          },
+          {
+            key: 'tableRowHoverBgColor',//表格鼠标悬停颜色
+            value: '#F1F9FF'
+          },
+          {
+            key: 'tableBorderColor',//表格边框颜色
+            value: '#E6E6E6'
+          },
+          {
+            key: 'tableTextColor',//表格文字颜色
+            value: '#606266'
+          },
+          {
+            key: 'tableHeaderTextColor',//表格表头文字颜色
+            value: '#1F2329'
+          },
+          {
+            key: 'imageUrl',// 侧边栏背景图片
+            url: './static/themeBackground/image3.png'
+          },
+          {
+            key: 'bgTheme',// 侧边栏背景颜色
+            value: '#3491FA'
+          }
+        ],
+        [
+          {
+            key: 'tableBgColor',//表格背景色
+            value: '#FFFFFF'
+          },
+          {
+            key: 'tableHeaderBgColor',//表格表头背景色
+            value: '#FBF4F4'
+          },
+          {
+            key: 'tableStripeColor',//表格斑马纹颜色
+            value: '#fbfbfb'
+          },
+          {
+            key: 'tableRowHoverBgColor',//表格鼠标悬停颜色
+            value: '#FFF1F1'
+          },
+          {
+            key: 'tableBorderColor',//表格边框颜色
+            value: '#E6E6E6'
+          },
+          {
+            key: 'tableTextColor',//表格文字颜色
+            value: '#606266'
+          },
+          {
+            key: 'tableHeaderTextColor',//表格表头文字颜色
+            value: '#1F2329'
+          },
+          {
+            key: 'imageUrl',// 侧边栏背景图片
+            url: './static/themeBackground/image9.png'
+          },
+          {
+            key: 'bgTheme',// 侧边栏背景颜色
+            value: '#C70019'
+          }
+        ]
+        ,
+        [
+          {
+            key: 'tableBgColor',//表格背景色
+            value: '#FFFFFF'
+          },
+          {
+            key: 'tableHeaderBgColor',//表格表头背景色
+            value: '#F7F8FA'
+          },
+          {
+            key: 'tableStripeColor',//表格斑马纹颜色
+            value: '#fbfbfb'
+          },
+          {
+            key: 'tableRowHoverBgColor',//表格鼠标悬停颜色
+            value: '#E5E6EB'
+          },
+          {
+            key: 'tableBorderColor',//表格边框颜色
+            value: '#E6E6E6'
+          },
+          {
+            key: 'tableTextColor',//表格文字颜色
+            value: '#606266'
+          },
+          {
+            key: 'tableHeaderTextColor',//表格表头文字颜色
+            value: '#1F2329'
+          },
+          {
+            key: 'imageUrl',// 侧边栏背景图片
+            url: './static/themeBackground/image10.png'
+          },
+          {
+            key: 'bgTheme',// 侧边栏背景颜色
+            value: '#272E3B'
+          }
+        ]
+      ],
+      themeArray: this.defaultTheme
     }
   },
   mounted () {
   },
   methods: {
+    open () {
+      this.isVisibleThemeDrawer = true
+    },
+    restoreDefault () {
+      this.themeArray = this.defaultTheme
+      // this.saveSuccess(this.themeArray)
+      this.changeThemeType(this.formData.systemThemeType)
+    },
+    themeClose () {
+      this.changeThemeType(this.formData.systemThemeType)
+      this.isVisibleThemeDrawer = false
+    },
     changeThemeType (key) {
       let themeArray = []
       switch (key) {
         case 'systemThemeType1':
           // 蓝色
-          themeArray = [
-            {
-              key: 'tableBgColor',//表格背景色
-              value: '#FFFFFF'
-            },
-            {
-              key: 'tableHeaderBgColor',//表格表头背景色
-              value: '#F4F8F8'
-            },
-            {
-              key: 'tableStripeColor',//表格斑马纹颜色
-              value: '#fbfbfb'
-            },
-            {
-              key: 'tableRowHoverBgColor',//表格鼠标悬停颜色
-              value: '#F1F9FF'
-            },
-            {
-              key: 'tableBorderColor',//表格边框颜色
-              value: '#E6E6E6'
-            },
-            {
-              key: 'tableTextColor',//表格文字颜色
-              value: '#606266'
-            },
-            {
-              key: 'tableHeaderTextColor',//表格表头文字颜色
-              value: '#1F2329'
-            },
-            {
-              key: 'imageUrl',// 侧边栏背景图片
-              url: './static/themeBackground/image3.png'
-            },
-            {
-              key: 'bgTheme',// 侧边栏背景颜色
-              value: '#3491FA'
-            }
-          ]
+          themeArray = this.themeArray[0]
           break;
         case 'systemThemeType2':
           // 红色
-          themeArray = [
-            {
-              key: 'tableBgColor',//表格背景色
-              value: '#FFFFFF'
-            },
-            {
-              key: 'tableHeaderBgColor',//表格表头背景色
-              value: '#FBF4F4'
-            },
-            {
-              key: 'tableStripeColor',//表格斑马纹颜色
-              value: '#fbfbfb'
-            },
-            {
-              key: 'tableRowHoverBgColor',//表格鼠标悬停颜色
-              value: '#FFF1F1'
-            },
-            {
-              key: 'tableBorderColor',//表格边框颜色
-              value: '#E6E6E6'
-            },
-            {
-              key: 'tableTextColor',//表格文字颜色
-              value: '#606266'
-            },
-            {
-              key: 'tableHeaderTextColor',//表格表头文字颜色
-              value: '#1F2329'
-            },
-            {
-              key: 'imageUrl',// 侧边栏背景图片
-              url: './static/themeBackground/image9.png'
-            },
-            {
-              key: 'bgTheme',// 侧边栏背景颜色
-              value: '#C70019'
-            }
-          ]
+          themeArray = this.themeArray[1]
           break;
         case 'systemThemeType3':
           // 黑色
-          themeArray = [
-            {
-              key: 'tableBgColor',//表格背景色
-              value: '#FFFFFF'
-            },
-            {
-              key: 'tableHeaderBgColor',//表格表头背景色
-              value: '#F7F8FA'
-            },
-            {
-              key: 'tableStripeColor',//表格斑马纹颜色
-              value: '#fbfbfb'
-            },
-            {
-              key: 'tableRowHoverBgColor',//表格鼠标悬停颜色
-              value: '#E5E6EB'
-            },
-            {
-              key: 'tableBorderColor',//表格边框颜色
-              value: '#E6E6E6'
-            },
-            {
-              key: 'tableTextColor',//表格文字颜色
-              value: '#606266'
-            },
-            {
-              key: 'tableHeaderTextColor',//表格表头文字颜色
-              value: '#1F2329'
-            },
-            {
-              key: 'imageUrl',// 侧边栏背景图片
-              url: './static/themeBackground/image10.png'
-            },
-            {
-              key: 'bgTheme',// 侧边栏背景颜色
-              value: '#272E3B'
-            }
-          ]
+          themeArray = this.themeArray[2]
         default:
           break;
       }
@@ -366,7 +418,7 @@ export default {
             break;
         }
       })
-      this.formData.systemThemeArray = JSON.stringify(themeArray)
+      this.formData.systemThemeArray = JSON.stringify(this.themeArray)
     },
     rendered () {
       this.getSettingData()
@@ -380,6 +432,9 @@ export default {
         .then(function (res) {
           res.settings.forEach(function (item) {
             that.modify[item.key] = item.value === 'true' ? true : item.value === 'false' ? false : item.value
+            if (item.key === 'systemThemeArray' && item.value) {
+              that.themeArray = JSON.parse(item.value)
+            }
           })
           that.getFileUrl(res.uploadFileJson) // 获取图片流
         })
@@ -407,6 +462,10 @@ export default {
       }
       that.modify.tableRowHeight = that.modify.tableRowHeight ? Number(that.modify.tableRowHeight) : 48
       that.formData = Object.assign({}, that.modify)
+    },
+    saveSuccess (themeArray) {
+      this.formData.systemThemeArray = JSON.stringify(themeArray)
+      this.customValidate(this.formData)
     },
     customValidate (params) {
       let saveParams = {}
@@ -451,7 +510,6 @@ export default {
       }
 
       saveParams.settings = settings
-      // console.log(saveParams)
       this.$refs.form.submitForm(saveParams, this.saveApi)
     },
     saved (res) { }

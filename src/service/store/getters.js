@@ -2,6 +2,7 @@ const getters = {
   // 平台
   systemTheme: (state) => state.platform.systemTheme,
   theme: (state) => state.platform.theme,
+  systemColor: (state) => state.platform.systemColor,
   imageUrl: (state) => state.platform.imageUrl,
   shortcutMenu: (state) => state.platform.shortcutMenu,
   systemName: (state) => state.platform.systemName,

@@ -123,7 +123,8 @@ const platform = {
        tableRowHoverBgColor: '#f0f8ff',
        tableBorderColor: '#ebeef5',
        tableTextColor: '#292b2e',
-       tableHeaderTextColor: '#292b2e'
+       tableHeaderTextColor: '#292b2e',
+      bgTheme: '#C70019'
      },
     shortcutMenu: [], // 自定义菜单项,由用户自定义出的菜单项
     systemName: Cookie.get('P8V3.0-PLATFORM') || '',
