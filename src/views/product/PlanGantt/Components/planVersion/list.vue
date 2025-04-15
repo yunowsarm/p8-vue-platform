@@ -50,6 +50,14 @@ export default {
       type: String,
       default: null
     },
+    planVersionNum1: {
+      type: String,
+      default: null
+    },
+    planVersionNum2: {
+      type: String,
+      default: null
+    },
     versionType: {
       type: String,
       default: null
@@ -65,6 +73,14 @@ export default {
   },
   computed: {
 
+  },
+  created () {
+    if (!this.selectTaskId2) {
+      this.$message({type: 'warning', message: `当前任务在${this.planVersionNum2}版本中不存在`})
+    }
+    if (!this.selectTaskId1) {
+      this.$message({type: 'warning', message: `当前任务在${this.planVersionNum1}版本中不存在`})
+    }
   },
   mounted () {
 

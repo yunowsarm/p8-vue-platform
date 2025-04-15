@@ -80,7 +80,9 @@ export default {
     ...mapGetters(['vueThis', 'versionTask'])
   },
   mounted () {
-    this.getDescribeData()
+    if (this.taskId) {
+      this.getDescribeData()
+    }
   },
   methods: {
     getDescribeData () {

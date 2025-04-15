@@ -48,6 +48,8 @@
                         :planVersionId1='planVersionId1'
                         :selectTaskId2='selectTaskId2'
                         :planVersionId2='planVersionId2'
+                        :planVersionNum1='planVersionNum1'
+                        :planVersionNum2='planVersionNum2'
                         :versionType="versionType"></plan-attribute>
       </template>
     </el-drawer>
