@@ -110,7 +110,7 @@
   float: right;
   font-size: 20px;
   margin-right: 15px;
-  margin-top: 30px;
+  margin-top: 10px;
 }
 .couerDivClass {
   height: 100% !important;
