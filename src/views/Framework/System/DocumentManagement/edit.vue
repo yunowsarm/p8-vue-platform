@@ -56,9 +56,15 @@ export default {
   },
   mounted() {
     this.modify = Object.assign({}, this.record)
-    if (this.record && Object.keys(this.record).length && this.record.name && this.record.name.split('.')) {
-      this.modify.name = this.record.name.split('.')[0]
-      this.type = this.record.name.split('.')[1]
+    if (this.record && Object.keys(this.record).length && this.record.name) {
+      const parts = this.record.name.split('.')
+      if (parts.length > 1) {
+        this.modify.name = parts.slice(0, -1).join('.')
+        this.type = parts[parts.length - 1]
+      } else {
+        this.modify.name = this.record.name
+        this.type = ''
+      }
     }
   },
   methods: {
@@ -70,7 +76,7 @@ export default {
     },
     rendered() {},
     customValidate (saveParmars) {
-      saveParmars.name = saveParmars.name + '.' + this.type
+      saveParmars.name = saveParmars.name + (this.type ? '.' + this.type : '')
       this.$refs.form.submitForm(saveParmars, this.saveApi)
     }
   }
