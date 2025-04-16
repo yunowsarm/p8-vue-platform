@@ -19,6 +19,7 @@
                         :pagination="true">
             <template #operation="{ scope }">
               <el-button type="text">查看</el-button>
+              <el-divider direction="vertical"></el-divider>
               <el-button type="text">删除</el-button>
             </template>
           </common-table>

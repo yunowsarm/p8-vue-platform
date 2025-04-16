@@ -100,6 +100,10 @@
         </template>
       </form-list>
     </el-card>
+    <el-button type="primary"
+               class="formBtn"
+               @click="view">预览</el-button>
+
     <common-drawer v-if="isVisibleThemeDrawer"
                    title="主题设计"
                    :visible="isVisibleThemeDrawer"
@@ -113,9 +117,115 @@
                       @save-success="saveSuccess" />
       </template>
     </common-drawer>
+    <common-dialog title="预览"
+                   v-if="visible"
+                   :visible="visible"
+                   width="50%"
+                   :dialog-height="dialogHeight"
+                   @close="handleCancel"
+                   :show-handle-btn="false">
+      <template #dialog>
+        <list-layout>
+          <template #north>
+            <div v-if="formData.toolbarWritingDisplay">
+              <el-button-group v-if="formData.toolbarCompactLayout">
+                <el-button type="primary">新建</el-button>
+                <el-button type="primary">修改</el-button>
+              </el-button-group>
+              <div v-else>
+                <el-button type="primary">新建</el-button>
+                <el-button type="primary">修改</el-button>
+              </div>
+            </div>
+            <div v-else>
+              <el-button-group v-if="formData.toolbarCompactLayout">
+                <el-tooltip placement="top"
+                            content="新建">
+                  <el-button icon="p8 icon-add"
+                             type="primary"></el-button>
+                </el-tooltip>
+                <el-tooltip placement="top"
+                            content="修改">
+                  <el-button icon="p8 icon-xiugai"
+                             type="primary"></el-button>
+                </el-tooltip>
+              </el-button-group>
+              <div v-else>
+                <el-tooltip placement="top"
+                            content="新建">
+                  <el-button icon="p8 icon-add"
+                             type="primary"></el-button>
+                </el-tooltip>
+                <el-tooltip placement="top"
+                            content="修改">
+                  <el-button icon="p8 icon-xiugai"
+                             type="primary"></el-button>
+                </el-tooltip>
+              </div>
+            </div>
+          </template>
+          <template #center>
+            <common-table ref="table"
+                          :comp="comp"
+                          :columns="columns"
+                          :no-api-table-data="infiniteList"
+                          :table-setting="false"
+                          :pagination="true">
+              <template #six="{ scope }">
+                <span v-if="formData.toolbarTextDisplay === '1'">男</span>
+                <i v-else
+                   class="p8 icon-xingbienan"></i>
+              </template>
+              <template #operation="{ scope }">
+                <div v-if="formData.toolbarWritingDisplay">
+                  <el-button-group v-if="formData.toolbarCompactLayout">
+                    <el-button style="margin-right: 2px;"
+                               type="text">查看</el-button>
+                    <el-button type="text">删除</el-button>
+                  </el-button-group>
+                  <div v-else>
+                    <el-button type="text">查看</el-button>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-button type="text">删除</el-button>
+                  </div>
+                </div>
+                <div v-else>
+                  <el-button-group v-if="formData.toolbarCompactLayout">
+                    <el-tooltip placement="top"
+                                content="查看">
+                      <el-button style="margin-right: 2px;"
+                                 icon="p8 icon-chakan"
+                                 type="primary"></el-button>
+                    </el-tooltip>
+                    <el-tooltip placement="top"
+                                content="删除">
+                      <el-button icon="p8 icon-shanchu"
+                                 type="primary"></el-button>
+                    </el-tooltip>
+                  </el-button-group>
+                  <div v-else>
+                    <el-tooltip placement="top"
+                                content="查看">
+                      <el-button icon="p8 icon-chakan"
+                                 type="primary"></el-button>
+                    </el-tooltip>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-tooltip placement="top"
+                                content="删除">
+                      <el-button icon="p8 icon-shanchu"
+                                 type="primary"></el-button>
+                    </el-tooltip>
+                  </div>
+                </div>
+              </template>
+            </common-table>
+          </template>
+        </list-layout>
+      </template>
+    </common-dialog>
   </div>
 </template>
-<style scoped>
+<style lang="scss" scoped>
 .el-alert--info.is-light {
   font-weight: 900;
   margin-left: -145px;
@@ -132,20 +242,30 @@
   background: #ffffff !important;
   padding-bottom: 22px !important;
 }
+.formBtn {
+  position: absolute;
+  bottom: 22px;
+  right: 75px;
+}
+::v-deep .el-dialog__body {
+  padding: 0 !important;
+}
 </style>
 <script>
-import { P8Form as FormList, Alert, RadioGroup, RadioButton, P8Drawer as CommonDrawer, P8Dialog as CommonDialog } from 'p8-components-ui'
+import { P8ListLayout as ListLayout, P8Form as FormList, Alert, RadioGroup, RadioButton, P8Drawer as CommonDrawer, P8Dialog as CommonDialog, P8Table as CommonTable } from 'p8-components-ui'
 import themeDesign from './themeDesign.vue'
 export default {
   name: 'AppearanceEdit',
   components: {
+    ListLayout,
     FormList,
     'el-alert': Alert,
     'el-radio-group': RadioGroup,
     'el-radio-button': RadioButton,
     CommonDrawer,
     CommonDialog,
-    themeDesign
+    themeDesign,
+    CommonTable
   },
   data () {
     return {
@@ -369,12 +489,89 @@ export default {
           }
         ]
       ],
-      themeArray: this.defaultTheme
+      themeArray: this.defaultTheme,
+      dialogHeight: 500,
+      visible: false,
+      comp: this,
+      columns: [
+        {
+          title: '序号',
+          type: 'index',
+          align: 'center',
+          width: 55,
+          headerAlign: 'center'
+        },
+        {
+          title: '姓名',
+          dataIndex: 'name',
+          align: 'center'
+        },
+        {
+          title: '年龄',
+          dataIndex: 'age',
+          align: 'center'
+        },
+        {
+          title: '性别',
+          dataIndex: 'six',
+          align: 'center',
+          scopedSlots: { customRender: 'custom' }
+        },
+        {
+          title: '操作',
+          fixed: 'right',
+          dataIndex: 'operation',
+          scopedSlots: { customRender: 'custom' },
+          width: 100,
+          align: 'center'
+        }
+      ],
+      infiniteList: [
+        {
+          name: '张三',
+          age: 18,
+          six: '男',
+          address: '上海市普陀区金沙江路 1518 弄'
+        },
+        {
+          name: '李四',
+          age: 18,
+          six: '男',
+          address: '上海市普陀区金沙江路 1518 弄'
+        },
+        {
+          name: '王五',
+          age: 18,
+          six: '男',
+          address: '上海市普陀区金沙江路 1518 弄'
+        },
+        {
+          name: '赵六',
+          age: 18,
+          six: '男',
+          address: '上海市普陀区金沙江路 1518 弄'
+        },
+        {
+          name: '钱七',
+          age: 18,
+          six: '男',
+          address: '上海市普陀区金沙江路 1518 弄'
+        }
+      ],
+      baseConfig: JSON.parse(JSON.stringify(this.$store.getters.baseConfig))
     }
   },
   mounted () {
   },
   methods: {
+    view () {
+      this.$store.getters.baseConfig.tableRowHeight = this.formData.tableRowHeight
+      this.visible = true
+    },
+    handleCancel () {
+      this.visible = false
+      this.$store.getters.baseConfig.tableRowHeight = this.baseConfig.tableRowHeight
+    },
     open () {
       this.isVisibleThemeDrawer = true
     },
