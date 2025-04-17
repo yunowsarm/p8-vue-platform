@@ -21,7 +21,7 @@
         v-model="userInput"></el-input>
       <div class="button-area">
         <!-- <div v-if="loading" style="flex: 1;margin-left: 10px">AI正在思考...</div> -->
-        <common-upload class="upload_button" :files="files" uploadSlot listType="custom" @upload="handleUpload"
+        <common-upload class="upload_button" :files="files" uploadSlot :uploadConfig="uploadConfig" listType="custom" @upload="handleUpload"
           @remove="handleRemove">
           <div slot="upload">
             <el-button type="primary" round size="mini">上传附件</el-button>
@@ -66,6 +66,9 @@ export default {
   },
   data() {
     return {
+      uploadConfig:{
+        accept:['.doc','.docx']
+      },
       userInput: '',
       files: [],
       loading: false,
