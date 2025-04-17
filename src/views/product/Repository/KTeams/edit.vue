@@ -1,19 +1,35 @@
 <template>
   <form-list ref="form"
-              @rendered="rendered"
-              :form="formData"
-              @saved="saved"
-              :dataSource="dataSource"
-              :api="saveApi"
-              :is-custom-validate="true"
-              @custom-validate="customValidate">
+             @rendered="rendered"
+             :form="formData"
+             @saved="saved"
+             :dataSource="dataSource"
+             :api="saveApi"
+             :is-custom-validate="true"
+             @custom-validate="customValidate">
+    <template v-if="aiAssistant" #btn>
+      <el-popover
+        ref="popover"
+        placement="top"
+        popper-class="ai-popover"
+        width="300"
+        trigger="click">
+        <AIForm form-code="standardTeam" :descText="descText" :formJson="formJson" @hidePopover="hidePopover"
+                @updatePopper="updatePopper" @handleAIFill="handleAIFill"></AIForm>
+        <el-button type="primary" slot="reference" style="margin-right:10px">AI帮你填</el-button>
+      </el-popover>
+    </template>
   </form-list>
 </template>
 
 <script>
 
-import { P8Form as FormList, P8Dialog as CommonDialog } from 'p8-components-ui'
-import { generateTree } from '@/utils/generateTree'
+import {P8Dialog as CommonDialog, P8Form as FormList} from 'p8-components-ui'
+import {generateTree} from '@/utils/generateTree'
+import AIForm from '@/components/AIForm/index'
+import _cloneDeep  from "lodash/cloneDeep";
+import {parseFormConfig} from "@/components/AIForm/configParser.js"
+
 let dataSource = [
   {
     type: 'text',
@@ -93,28 +109,46 @@ export default {
   name: 'KteamsEdit',
   components: {
     FormList,
-    CommonDialog
+    CommonDialog,
+    AIForm
   },
   props: {
     row: {
       type: Array
     }
   },
-  data () {
+  data() {
     return {
+      aiAssistant: aiAssistant,
+      descText:'',
+      formJson:{},
       saveApi: 'knowledgeManagement.save',
       dataSource: [],
       formData: {},
     }
   },
-  created () {
+  created() {
     this.dataSource = Object.assign([], dataSource)
   },
   methods: {
-    rendered () {
+    hidePopover() {
+      this.$nextTick(() => {
+        this.$refs.popover.doClose()
+      })
+    },
+    updatePopper() {
+      this.$nextTick(() => {
+        this.$refs.popover.updatePopper()
+      })
+    },
+    handleAIFill(formData) {
+      this.formData = formData
+      // this.$emit('handleAIFill',formData)
+    },
+    rendered() {
       if (this.row && this.row.length) {
         let that = this
-        this.$api['knowledgeManagement.get']({ id: this.row[0].ID }).then(function (data) {
+        this.$api['knowledgeManagement.get']({id: this.row[0].ID}).then(function (data) {
           that.formData = Object.assign({}, data)
         }).catch(function (error) {
           console.error(error)
@@ -124,7 +158,7 @@ export default {
         let treeData = []
         let disableValues = []
         res.data.forEach(el => {
-          treeData.push({id:el.ID, value: el.ID, label:el.C_MEANING, pId: el.C_PARENTID})
+          treeData.push({id: el.ID, value: el.ID, label: el.C_MEANING, pId: el.C_PARENTID})
           if (el.C_PARENTID === '0') {
             disableValues.push(el.ID)
           }
@@ -132,12 +166,14 @@ export default {
         treeData = generateTree(treeData, 'pId', '0')
         this.dataSource[1].treeData = treeData
         this.dataSource[1].disabledValues = disableValues
+        // this.descText = generateDescription(description)
+        this.descText = _cloneDeep(this.dataSource)
       })
     },
-    saved (res) {
+    saved(res) {
       this.$emit('close', res)
     },
-    customValidate (saveParams) {
+    customValidate(saveParams) {
       this.$api['knowledgeManagement.saveCheck'](saveParams).then(res => {
         if (res.result) {
           this.$refs.form.submitForm(saveParams, this.saveApi)
@@ -149,3 +185,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+::v-deep .el-popover.ai-popover {
+  padding: 12px;
+}
+</style>

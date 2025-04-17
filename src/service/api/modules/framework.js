@@ -1385,6 +1385,20 @@ export const messageApi = {
 export const formGeneratorApi = {
   formGenerator: [
     {
+      name: 'parseDocumentGenerateForm',
+      method: 'POST',
+      path: '/ai/intelligence/parseDocumentGenerateForm',
+      mockPath: '/ai/intelligence/parseDocumentGenerateForm',
+      desc: '表单设计器-AI帮填'
+    },
+    {
+      name: 'stopParseDocFormResult',
+      method: 'POST',
+      path: '/ai/intelligence/stopParseDocFormResult',
+      mockPath: '/ai/intelligence/stopParseDocFormResult',
+      desc: '表单设计器-终止AI进程'
+    },
+    {
       name: 'exportWord',
       method: 'POST',
       path: '/thirdpart/exportWord',

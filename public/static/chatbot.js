@@ -59,6 +59,7 @@ function loadChatbot() {
     #dify-chatbot-bubble-button {
       background-color: #1C64F2 !important;
       cursor: pointer; /* 添加鼠标指针样式 */
+      bottom: 60px !important;
     }
     #dify-chatbot-bubble-window {
       width: 30rem !important;
@@ -132,7 +133,7 @@ window.addEventListener('resize', function () {
       button.style.left = 'auto'
       button.style.right = '20px'
       button.style.top = 'auto'
-      button.style.bottom = '20px'
+      button.style.bottom = '60px'
     }
   }
 })
@@ -148,10 +149,8 @@ function stopDrag() {
 // 条件逻辑
 if (!aiAssistant) {
   removeChatbot()
-  console.log('聊天机器人已移除')
 } else {
   loadChatbot()
-  console.log('聊天机器人已加载')
 }
 
 // 页面卸载时清理
