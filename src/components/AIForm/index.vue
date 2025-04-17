@@ -40,7 +40,6 @@
 
 <script>
 import { P8Upload as CommonUpload } from 'p8-components-ui'
-import formData from './formData.json'
 export default {
   components: {
     CommonUpload
