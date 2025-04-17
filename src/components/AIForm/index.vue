@@ -67,7 +67,7 @@ export default {
   data() {
     return {
       uploadConfig:{
-        accept:['.doc','.docx']
+        accept:'.doc,.docx'
       },
       userInput: '',
       files: [],
