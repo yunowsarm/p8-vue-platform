@@ -1103,7 +1103,7 @@ export default {
     closeModal (selectedRows) {
       this.visible = false
     },
-    handleSubmit () {
+    handleSubmit (val) {
       if (this.formType === '1') {
         this.$refs.formInfo2.validate().then((queryParams) => { })
         this.$refs.formInfo3.validate().then((queryParams) => { })
@@ -1129,8 +1129,10 @@ export default {
           this.saveType = true
         }
       } else {
-        this.$refs.formInfo4.validate().then((queryParams) => { })
-        this.$refs.formInfo5.validate().then((queryParams) => { })
+        if (val !== '驳回') {
+          this.$refs.formInfo4.validate().then((queryParams) => { })
+          this.$refs.formInfo5.validate().then((queryParams) => { })
+        }
         if
           (
           !this.formData.priority ||

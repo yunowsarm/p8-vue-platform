@@ -559,7 +559,7 @@ export default {
       }
 
       const msg = '确定' + this.approvalResultText + '吗？'
-      if (this.approvalResultText) {
+      if (this.approvalResultText === '通过') {
         // 需求管理校验
         if (this.$refs.approveContent.formType) {
           this.$refs.approveContent.handleSubmit()
@@ -567,6 +567,9 @@ export default {
             return
           }
         }
+      }
+      if (this.approvalResultText === '驳回') {
+        this.$refs.approveContent.handleSubmit('驳回')
       }
       const this_ = this
 
