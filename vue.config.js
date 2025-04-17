@@ -58,28 +58,21 @@ module.exports = defineConfig({
           }
         }
       },
-      minimize: false,
+      minimize: true,
       minimizer: [
         new TerserPlugin({
-          test: /\.js(\?.*)?$/i,
-          parallel: true, // 启用多进程并行压缩
+          test: /\.js(\?.*)?$/i, // 匹配所有 js 文件
           terserOptions: {
             compress: {
               drop_console: true,
               drop_debugger: true,
-              pure_funcs: ['console.log', 'console.info', 'console.warn', 'console.error'],
-              passes: 2, // 多次优化
-              unused: true, // 删除未使用的变量和函数
-              dead_code: true // 删除不可达代码
+              pure_funcs: ['console.log', 'console.info', 'console.warn', 'console.error']
             },
-            mangle: true, // 启用变量名混淆
             format: {
-              comments: false
-            },
-            ecma: 5, // 输出 ES5 语法以提高兼容性
-            safari10: true // 解决 Safari 10 的问题
+              comments: false // 移除注释
+            }
           },
-          extractComments: false
+          extractComments: false // 不将注释提取到单独的文件中
         })
       ]
     },
