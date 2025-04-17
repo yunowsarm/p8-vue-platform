@@ -589,15 +589,15 @@ export default {
       switch (key) {
         case 'systemThemeType1':
           // 蓝色
-          themeArray = this.themeArray[0]
+          themeArray = this.themeArray ? this.themeArray[0] : this.defaultTheme[0]
           break;
         case 'systemThemeType2':
           // 红色
-          themeArray = this.themeArray[1]
+          themeArray = this.themeArray ? this.themeArray[1] : this.defaultTheme[1]
           break;
         case 'systemThemeType3':
           // 黑色
-          themeArray = this.themeArray[2]
+          themeArray = this.themeArray ? this.themeArray[2] : this.defaultTheme[2]
         default:
           break;
       }
