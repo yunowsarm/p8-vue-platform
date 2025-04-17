@@ -170,7 +170,7 @@
                           :columns="columns"
                           :no-api-table-data="infiniteList"
                           :table-setting="false"
-                          :pagination="true">
+                          :pagination="false">
               <template #six="{ scope }">
                 <span v-if="formData.toolbarTextDisplay === '1'">男</span>
                 <i v-else
@@ -577,7 +577,7 @@ export default {
     },
     restoreDefault () {
       this.themeArray = this.defaultTheme
-      // this.saveSuccess(this.themeArray)
+      this.saveSuccess(this.themeArray)
       this.changeThemeType(this.formData.systemThemeType)
     },
     themeClose () {
