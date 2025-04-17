@@ -233,8 +233,8 @@ export default {
     padding: 0;
   }
 }
-.vxeScroll ::v-deep .grid-table-render .vxe-table--body-wrapper {
-  overscroll-behavior: contain;
-  pointer-events: none;
-}
+// .vxeScroll ::v-deep .grid-table-render .vxe-table--body-wrapper {
+//   overscroll-behavior: contain;
+//   pointer-events: none;
+// }
 </style>

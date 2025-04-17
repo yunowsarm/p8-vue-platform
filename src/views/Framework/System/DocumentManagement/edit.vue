@@ -1,5 +1,5 @@
 <template>
-  <form-list ref="form" @rendered="rendered" @saved="saved":is-custom-validate="true"
+  <form-list ref="form" @rendered="rendered" @saved="saved" :is-custom-validate="true"
              @custom-validate="customValidate" :data-source="dataSource" :api="saveApi" :form="modify" :other-param="otherParam">
     <template slot="btn">
       <el-button @click="cancel">取 消</el-button>
