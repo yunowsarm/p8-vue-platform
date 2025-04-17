@@ -273,7 +273,7 @@
                    :is-view-cs-footer="false"
                    :dialog-height="360">
       <template #dialog>
-        <command-search :searchType="searchType"
+        <command-search :searchType="true"
                         :gantt-name="ganttName"
                         :plan-info-id="planInfoId"
                         @close="closeSearch"></command-search>
