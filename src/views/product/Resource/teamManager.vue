@@ -790,37 +790,39 @@ export default {
       }
     },
     deleteUserHandle (scope, index) {
+      if(!scope.row.id){
+        this.tableData.splice(index, 1)
+      }
       /**
        * 人员删除
-       *    人员在该项目中的任务数为0时，直接删除
-       *    人员在该项目中的任务数不为0时，状态为： 已退出
-       *       前台手动处理: 获取当前时间作为已退出的时间(此时列-状态: 待退出), 当用户点击保存的时, 处理的退出时间一起提交保存, 成功之后为 已退出
-       *
-       *    处于刷新的情况下(即点击角色列表右下角的刷新按钮)
-       *      此时的删除人员要考虑对应角色下的人员的删除(1. 当前列表页的一个删除, 2.点击切换到该人员对应的角色下时, 此时人员也应该被删除)
+       *    改为标记删除，而不是直接删除
        */
       if (scope.row.taskCount) {
         scope.row.visible = false // 先隐藏弹窗
         scope.row.departureTime = moment().format('YYYY-MM-DD HH:mm:ss')
         scope.row.waitout = true
       } else {
-        this.tableData.splice(index, 1)
-        let row = scope.row
-        let roleInfo = []
-        if (row.roleType === 'fixed') {
-          roleInfo = row.userRoleId ? this.fixedRoles.filter((item) => item.roleId === row.userRoleId) : this.fixedRoles.filter((item) => item.name === row.roleName)
-        } else {
-          roleInfo = row.userRoleId ? this.generalRoles.filter((item) => item.roleId === row.userRoleId) : this.generalRoles.filter((item) => item.name === row.roleName)
-        }
-        // let roleInfo = row.roleType === 'fixed' ? this.fixedRoles.filter(item => item.roleId === row.userRoleId || item.name === row.roleName) : this.generalRoles.filter(item => item.roleId === row.userRoleId || item.name === row.roleName)
-        let projectTeamRoleUsers = roleInfo[0].projectTeamRoleUsers
-        let pIndex = projectTeamRoleUsers.findIndex((item) => item.sysuserId === row.sysuserId)
-        if (pIndex > -1) {
-          projectTeamRoleUsers.splice(pIndex, 1)
-        }
-        if (this.rolesSelectedIndex < 0) {
-        }
+        // 改为标记删除
+        scope.row.isDeleted = true
+        scope.row.departureTime = moment().format('YYYY-MM-DD HH:mm:ss')
       }
+
+      // 更新角色下的用户列表
+      let row = scope.row
+      let roleInfo = []
+      if (row.roleType === 'fixed') {
+        roleInfo = row.userRoleId ? this.fixedRoles.filter((item) => item.roleId === row.userRoleId) : this.fixedRoles.filter((item) => item.name === row.roleName)
+      } else {
+        roleInfo = row.userRoleId ? this.generalRoles.filter((item) => item.roleId === row.userRoleId) : this.generalRoles.filter((item) => item.name === row.roleName)
+      }
+
+      let projectTeamRoleUsers = roleInfo[0].projectTeamRoleUsers
+      let pIndex = projectTeamRoleUsers.findIndex((item) => item.sysuserId === row.sysuserId)
+      if (pIndex > -1) {
+        projectTeamRoleUsers[pIndex].isDeleted = true
+        projectTeamRoleUsers[pIndex].departureTime = moment().format('YYYY-MM-DD HH:mm:ss')
+      }
+
       this.isDelete = true
     },
     addMemberHandle () {
@@ -930,11 +932,13 @@ export default {
             item.id = ''
             item.roleId = selectRoleId
             item.userRoleId = userRoleId
+            item.isDeleted = false
             tempSelectData.push(item)
           } else {
             let index = this.tableData.findIndex((titem) => titem.sysuserId === item.id)
             this.tableData[index].departureTime = ''
             this.tableData[index].entryTime = ''
+            this.tableData[index].isDeleted = false
           }
         })
         this.tableData.push(...tempSelectData)
@@ -1110,16 +1114,11 @@ export default {
     },
     submitParamsHandle () {
       return new Promise((resolve, reject) => {
-        // this.memberFormComp.validate().then(queryParams => {
         let params = {
           id: '',
           wholeDescribeId: this.id,
           klTeamsId: this.klTeamsId,
           uploadFiles: this.namedFiles,
-          // team: {
-          //   wholeDescribeId: this.planInfoId,
-          //   teamsId: this.teamsId
-          // },
           fixedRoles: [],
           generalRoles: []
         }
@@ -1145,20 +1144,22 @@ export default {
                 let projectUserById = tempUserList[projectUserByIdIndex]
                 tempUserList.splice(projectUserByIdIndex, 1)
 
-                projectTemp.id = projectItem.id && projectItem.id.length === 32 ? projectItem.id : '' // projectItem.id ? projectItem.id :
+                projectTemp.id = projectItem.id && projectItem.id.length === 32 ? projectItem.id : ''
                 projectTemp.sysuserId = projectItem.sysuserId ? projectItem.sysuserId : ''
                 projectTemp.entryTime = projectItem.entryTime ? projectItem.entryTime : ''
                 projectTemp.flag = projectUserById && projectUserById.flag ? projectUserById.flag : projectItem.flag
                 projectTemp.departureTime = projectItem.departureTime ? projectItem.departureTime : ''
+                projectTemp.isDeleted = projectItem.isDeleted || false // 添加删除标记
                 temp[key].push(projectTemp)
               })
               tempUserList.forEach((projectItem) => {
                 let projectTemp = {}
-                projectTemp.id = projectItem.id && projectItem.id.length === 32 ? projectItem.id : '' // projectItem.id ? projectItem.id :
+                projectTemp.id = projectItem.id && projectItem.id.length === 32 ? projectItem.id : ''
                 projectTemp.sysuserId = projectItem.sysuserId ? projectItem.sysuserId : ''
                 projectTemp.entryTime = projectItem.entryTime ? projectItem.entryTime : ''
                 projectTemp.flag = projectItem.flag ? projectItem.flag : ''
                 projectTemp.departureTime = projectItem.departureTime ? projectItem.departureTime : ''
+                projectTemp.isDeleted = projectItem.isDeleted || false // 添加删除标记
                 temp[key].push(projectTemp)
               })
             } else {
@@ -1177,15 +1178,16 @@ export default {
               temp[key] = []
               generalItem[key].forEach((projectItem) => {
                 let projectTemp = {}
-                projectTemp.id = projectItem.id && projectItem.id.length === 32 ? projectItem.id : '' // projectItem.id ? projectItem.id :
+                projectTemp.id = projectItem.id && projectItem.id.length === 32 ? projectItem.id : ''
                 projectTemp.sysuserId = projectItem.sysuserId ? projectItem.sysuserId : ''
                 projectTemp.entryTime = projectItem.entryTime ? projectItem.entryTime : ''
                 projectTemp.departureTime = projectItem.departureTime ? projectItem.departureTime : ''
+                projectTemp.isDeleted = projectItem.isDeleted || false // 添加删除标记
                 temp[key].push(projectTemp)
               })
             } else {
               temp[key] = generalItem[key]
-              temp.id = !temp.id || temp.id.length !== 32 ? '' : temp.id // id长度为32
+              temp.id = !temp.id || temp.id.length !== 32 ? '' : temp.id
             }
             delete temp.roleType
           })
@@ -1193,7 +1195,6 @@ export default {
           params.generalRoles.push(temp)
         })
         resolve(params)
-        // })
       })
     },
     changeCheak () {

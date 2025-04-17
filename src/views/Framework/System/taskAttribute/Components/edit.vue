@@ -1,69 +1,40 @@
 <template>
-  <div style="height: 100%;">
-    <form-list ref="form"
-               :data-source="dataSource"
-               :form="formData"
-               :api="saveApi"
-               @saved="saved"
-               label-width="90px"
-               @rendered="rendered"
-               :is-custom-validate="true"
-               :exist-default-btn="false"
-               :exist-custom-btn="true"
-               @custom-validate="customValidate">
+  <div style="height: 100%">
+    <form-list
+      ref="form"
+      :data-source="dataSource"
+      :form="formData"
+      :api="saveApi"
+      @saved="saved"
+      label-width="90px"
+      @rendered="rendered"
+      :is-custom-validate="true"
+      :exist-default-btn="false"
+      :exist-custom-btn="true"
+      @custom-validate="customValidate"
+    >
       <template #customBtn>
-        <el-button type="primary"
-                   @click="$emit('saveSuccess')">取消</el-button>
-        <el-button type="primary"
-                   @click="$refs.form.handleSubmit($event)">保存</el-button>
+        <el-button type="primary" @click="$emit('saveSuccess')">取消</el-button>
+        <el-button type="primary" @click="$refs.form.handleSubmit($event)">保存</el-button>
       </template>
-      <common-tabs :tabs-data="tabsData"
-                   type="border-card"
-                   :height="renderHeight"
-                   :active-tabs="activeTabs"
-                   @tab-click="tabClick"
-                   :keepBottom='true'
-                   :has-full-screen="true">
+      <common-tabs :tabs-data="tabsData" type="border-card" :height="renderHeight" :active-tabs="activeTabs" @tab-click="tabClick" :keepBottom="true" :has-full-screen="true">
         <template #attributeSettings>
-          <editable-table :columns="settingsColumns"
-                          ref="editTable"
-                          :add-row="false"
-                          :data="settingsData"
-                          @save-param-data="saveParamData">
+          <editable-table :columns="settingsColumns" ref="editTable" :add-row="false" :data="settingsData" @save-param-data="saveParamData">
             <template #isEnable="{ scope, data }">
-              <el-checkbox v-model="scope.row.isEnable"
-                           true-label="1"
-                           false-label="0"
-                           @blur="saveParamData(data)"
-                           :disabled="scope.row.type == '0'"></el-checkbox>
+              <el-checkbox v-model="scope.row.isEnable" true-label="1" false-label="0" @blur="saveParamData(data)" :disabled="scope.row.type == '0'"></el-checkbox>
             </template>
             <template #indexNo="{ scope, data }">
-              <el-input-number v-model="scope.row.indexNo"
-                               :min="0"
-                               :precision="1"
-                               style="width:100%;"
-                               size="mini"
-                               @change="saveParamData(data)"
-                               placeholder="请输入"></el-input-number>
+              <el-input-number v-model="scope.row.indexNo" :min="0" :precision="1" style="width: 100%" size="mini" @change="saveParamData(data)" placeholder="请输入"></el-input-number>
             </template>
           </editable-table>
         </template>
         <template #attributeExtend>
-          <editable-table :columns="extendColumns"
-                          :data="extendData"
-                          :add-row="true"
-                          @save-param-data="saveParamDataNew">
+          <editable-table :columns="extendColumns" :data="extendData" :add-row="true" :custom-remove-fn="attributeExtendRemove" @save-param-data="saveParamDataNew">
             <template #name="{ scope, data }">
-              <el-input v-model="scope.row.name"
-                        style="width: 100%"
-                        clearable
-                        @blur="saveParamDataNew(data)"></el-input>
+              <el-input v-model="scope.row.name" style="width: 100%" clearable @blur="saveParamDataNew(data)"></el-input>
             </template>
             <template #filedName="{ scope, data }">
-              <el-input v-model="scope.row.filedName"
-                        style="width: 100%"
-                        clearable
-                        @blur="saveParamDataNew(data)"></el-input>
+              <el-input v-model="scope.row.filedName" style="width: 100%" clearable @blur="saveParamDataNew(data)"></el-input>
             </template>
             <template #filedType="{ scope, data }">
               <!-- <el-select v-model="scope.row.filedType"
@@ -79,37 +50,25 @@
                 <el-option label="日期"
                            value="datepicker"> </el-option>
               </el-select> -->
-              <el-cascader v-model="scope.row.filedType"
-                           :options="options"
-                           :show-all-levels="false"
-                           :emitPath="false"
-                           :props="{ expandTrigger: 'hover' }"
-                           @change="handleChange(scope.row, data)"></el-cascader>
+              <el-cascader
+                v-model="scope.row.filedType"
+                :options="options"
+                :show-all-levels="false"
+                :emitPath="false"
+                :props="{ expandTrigger: 'hover' }"
+                @change="handleChange(scope.row, data)"
+              ></el-cascader>
             </template>
             <template #selectCode="{ scope, data }">
               <div v-if="scope.row.filedType === 'selectSingle' || scope.row.filedType === 'selectMultiple'">
-                <el-select v-model="scope.row.selectCode"
-                           style="width: 100%"
-                           clearable
-                           filterable
-                           @change="saveParamDataNew(data)">
-                  <el-option v-for="item in renderData"
-                             :key="item.selectionCode"
-                             :label="item.selectionName + '(' + item.selectionCode + ')'"
-                             :value="item.selectionCode"> </el-option>
+                <el-select v-model="scope.row.selectCode" style="width: 100%" clearable filterable @change="saveParamDataNew(data)">
+                  <el-option v-for="item in renderData" :key="item.selectionCode" :label="item.selectionName + '(' + item.selectionCode + ')'" :value="item.selectionCode"> </el-option>
                 </el-select>
               </div>
               <!-- 树组件 -->
-              <div v-if="scope.row.filedType === 'treeSingle' ||scope.row.filedType === 'treeMultiple'">
-                <el-select v-model="scope.row.selectCode"
-                           style="width: 100%"
-                           clearable
-                           filterable
-                           @change="saveParamDataNew(data)">
-                  <el-option v-for="item in treeData"
-                             :key="item.selectionCode"
-                             :label="item.selectionName + '(' + item.selectionCode + ')'"
-                             :value="item.selectionCode"> </el-option>
+              <div v-if="scope.row.filedType === 'treeSingle' || scope.row.filedType === 'treeMultiple'">
+                <el-select v-model="scope.row.selectCode" style="width: 100%" clearable filterable @change="saveParamDataNew(data)">
+                  <el-option v-for="item in treeData" :key="item.selectionCode" :label="item.selectionName + '(' + item.selectionCode + ')'" :value="item.selectionCode"> </el-option>
                 </el-select>
               </div>
             </template>
@@ -118,25 +77,19 @@
               <el-option  label="必填" value="必填"> </el-option>
               <el-option  label="整数" value="整数"> </el-option>
             </el-select> -->
-              <el-input v-model="scope.row.verificationRules"
-                        style="width: 100%"
-                        clearable
-                        @blur="saveParamDataNew(data)"></el-input>
+              <el-input v-model="scope.row.verificationRules" style="width: 100%" clearable @blur="saveParamDataNew(data)"></el-input>
             </template>
           </editable-table>
         </template>
       </common-tabs>
     </form-list>
-
   </div>
 </template>
 
 <script>
-import { P8Form as FormList, P8EditTable as EditableTable, P8Tabs as CommonTabs } from 'p8-components-ui'
+import { P8EditTable as EditableTable, P8Form as FormList, P8Tabs as CommonTabs } from 'p8-components-ui'
 import { generateTree } from '@/utils/generateTree'
-import Sortable from 'sortablejs'
-import { deepClone } from '@/utils/common'
-import _ from 'lodash';
+
 export default {
   name: 'CompEdit',
   components: {
@@ -154,7 +107,7 @@ export default {
       default: ''
     }
   },
-  data () {
+  data() {
     const height = document.documentElement.clientHeight - 310
     return {
       renderHeight: height + 'px',
@@ -321,12 +274,12 @@ export default {
               label: '多选树形'
             }
           ]
-        },
+        }
       ],
       oldAttributeExtensionList: []
     }
   },
-  mounted () {
+  mounted() {
     if (this.id == 'sys_01') {
       this.dataSource[0].disabled = true
     }
@@ -334,10 +287,14 @@ export default {
     // this.columnDrop()
   },
   methods: {
-    rendered () {
+    attributeExtendRemove(tableData, row, index) {
+      tableData[index].isDeleted = true
+      return [...tableData]
+    },
+    rendered() {
       this.getFormData()
     },
-    getFormData () {
+    getFormData() {
       this.$api['taskAttribute.getInfo']({ id: this.id }).then((res) => {
         this.formData.projectTypeId = res.projectTypeId
         this.formData.describe = res.describe
@@ -358,17 +315,17 @@ export default {
         this.formData.type = this.type
       }
     },
-    saved (res) {
+    saved(res) {
       this.$emit('saveSuccess', res)
     },
-    tabClick () { },
-    saveParamData (data) {
+    tabClick() {},
+    saveParamData(data) {
       this.formData.propertiesList = data
     },
-    saveParamDataNew (data) {
+    saveParamDataNew(data) {
       this.formData.attributeExtensionList = data
     },
-    columnDrop () {
+    columnDrop() {
       // const that = this
       // this.$nextTick(() => {
       //   const $table = that.$refs.editTable
@@ -393,17 +350,17 @@ export default {
       //   })
       // })
     },
-    customValidate (saveParmars) {
+    customValidate(saveParmars) {
       const that = this
       let flag = false
       saveParmars.propertiesList.forEach((el, index) => {
         if (el.attributeType == '1') {
-          let item = saveParmars.attributeExtensionList.filter(res => res.id == el.id)
+          let item = saveParmars.attributeExtensionList.filter((res) => res.id == el.id)
           if (!(item && item.length)) {
             saveParmars.propertiesList.splice(index, 1)
           }
         }
-        saveParmars.attributeExtensionList.forEach(item => {
+        saveParmars.attributeExtensionList.forEach((item) => {
           if (item.id == el.id) {
             item.indexNo = el.indexNo
           }
@@ -412,7 +369,7 @@ export default {
       let changeList = []
       if (saveParmars.attributeExtensionList && saveParmars.attributeExtensionList.length) {
         let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
-        saveParmars.attributeExtensionList.forEach(el => {
+        saveParmars.attributeExtensionList.forEach((el) => {
           if (typeList.includes(el.filedType) && !el.selectCode) {
             flag = true
           }
@@ -432,19 +389,18 @@ export default {
         that.$message({ type: 'warning', message: '请选择数据来源！' })
         return
       }
-      console.log(changeList, '====changeList');
       if (changeList && changeList.length) {
         this.$api['taskAttribute.checkAttributeChange']({ attributeExtensionList: saveParmars.attributeExtensionList }).then((res) => {
           if (res) {
             const changeAttributelist = saveParmars.attributeExtensionList
-              .filter(item => res.includes(item.id))
-              .map(item => {
+              .filter((item) => res.includes(item.id))
+              .map((item) => {
                 // 在这里进行 map 操作，例如返回一个新的对象或提取某个属性
-                return item.name;
-              });
+                return item.name
+              })
             let attributeNames = changeAttributelist.join('、')
             if (changeAttributelist.length > 1) {
-              attributeNames += '等';
+              attributeNames += '等'
             }
             this.$confirm(`属性名称为：${attributeNames}配置项已绑定了"数据来源"，且已产生业务数据。修改"数据来源"可能会导致历史数据相应属性值显示异常，是否确认修改？`, '提示', {
               confirmButtonText: '确定',
@@ -460,7 +416,7 @@ export default {
       } else {
         save()
       }
-      function save () {
+      function save() {
         that.$api['taskAttribute.saveData'](saveParmars).then((res) => {
           if (res) {
             that.$emit('saveSuccess')
@@ -470,14 +426,14 @@ export default {
         })
       }
     },
-    handleChange (row, data) {
+    handleChange(row, data) {
       if (row.filedType && row.filedType.length) {
         row.filedType = row.filedType[row.filedType.length - 1]
       }
       row.selectCode = ''
       this.saveParamDataNew(data)
     },
-    getSelectData () {
+    getSelectData() {
       this.$api['selection.list']({ selectionType: 1, page: { current: 1, size: -1, orders: [] } }).then((res) => {
         this.renderData = res.records
       })
