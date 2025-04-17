@@ -16,7 +16,8 @@
                         :comp="comp"
                         :columns="columns"
                         :no-api-table-data="infiniteList"
-                        :pagination="true">
+                        :table-setting="false"
+                        :pagination="false">
             <template #operation="{ scope }">
               <el-button type="text">查看</el-button>
               <el-divider direction="vertical"></el-divider>

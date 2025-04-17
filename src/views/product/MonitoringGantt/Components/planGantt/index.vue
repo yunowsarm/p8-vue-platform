@@ -197,6 +197,7 @@
                    :dialog-height="360">
       <template #dialog>
         <command-search :gantt-name="ganttName"
+                        :searchType="true"
                         :plan-info-id="planInfoId"
                         @close="closeSearch"></command-search>
       </template>
