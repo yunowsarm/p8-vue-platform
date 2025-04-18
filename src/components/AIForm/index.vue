@@ -144,7 +144,7 @@ export default {
     sendMessage() {
       this.showMask = true; // 打开遮罩
 
-      this.$api['formGenerator.parseDocumentGenerateForm']({
+      this.$api['formGenerator.generateFormFromDocument']({
         formCode: this.formCode,
         files: this.files,
         prompt: this.completeDescription
@@ -157,7 +157,7 @@ export default {
       })
     },
     stopAnalysis() {
-      this.$api['formGenerator.stopParseDocFormResult']({
+      this.$api['formGenerator.stopParseDocFormTask']({
         formCode: this.formCode,
         taskId: this.taskId,
         workFlowRunId: this.workFlowRunId

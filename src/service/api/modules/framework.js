@@ -1385,17 +1385,17 @@ export const messageApi = {
 export const formGeneratorApi = {
   formGenerator: [
     {
-      name: 'parseDocumentGenerateForm',
+      name: 'generateFormFromDocument',
       method: 'POST',
-      path: '/ai/intelligence/parseDocumentGenerateForm',
-      mockPath: '/ai/intelligence/parseDocumentGenerateForm',
+      path: '/ai/intelligence/generateFormFromDocument',
+      mockPath: '/ai/intelligence/generateFormFromDocument',
       desc: '表单设计器-AI帮填'
     },
     {
-      name: 'stopParseDocFormResult',
+      name: 'stopParseDocFormTask',
       method: 'POST',
-      path: '/ai/intelligence/stopParseDocFormResult',
-      mockPath: '/ai/intelligence/stopParseDocFormResult',
+      path: '/ai/intelligence/stopParseDocFormTask',
+      mockPath: '/ai/intelligence/stopParseDocFormTask',
       desc: '表单设计器-终止AI进程'
     },
     {
