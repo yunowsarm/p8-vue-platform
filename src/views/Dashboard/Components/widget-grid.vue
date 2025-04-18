@@ -218,8 +218,8 @@
         </template>
       </common-dialog>
     </div>
-    <VuePerfectScrollbar class="scroll-area"
-                         :class="{ isdesign: isDesign }">
+    <div class="scroll-area"
+         :class="{ isdesign: isDesign }">
       <smart-widget-grid :style="styleObject"
                          :layout="layout"
                          v-bind="$attrs"
@@ -266,7 +266,7 @@
                     :resize-time="widgetResizeStatus[item.slot]"></AntvView>
         </widget-item>
       </smart-widget-grid>
-    </VuePerfectScrollbar>
+    </div>
   </div>
 </template>
 
@@ -522,9 +522,19 @@ export default {
     },
     // 大小改变
     onResize (params) {
-      // setTimeout(() => {
-      //   this.$refs['widget' + params.i][0].handleRefresh()
-      // }, 300)
+      // 计算新的容器高度
+      const gridContainer = document.querySelector('.isDesign')
+      if (gridContainer) {
+        const items = this.widget.map(item => item.layout)
+        const maxY = Math.max(...items.map(item => item.y + item.h))
+        const rowHeight = 30 // 假设每行高度为30px
+        const newHeight = (maxY + 2) * rowHeight // 加2行作为缓冲
+        gridContainer.style.minHeight = `${newHeight}px`
+        // 自动滚动到底部
+        setTimeout(() => {
+          gridContainer.scrollTop = gridContainer.scrollHeight
+        }, 10)
+      }
     },
     // 放大
     onFullscreen (booleanParams, params) {
@@ -709,13 +719,34 @@ export default {
   box-sizing: content-box;
   width: calc(100% - 20px);
   margin: 0px 0px 20px 5px;
-}
+  height: calc(100% - 138px) !important;
+  padding-bottom: 100px; // 添加底部填充
 
-.scroll-area {
-  height: calc(100% - 38px);
   position: relative;
+  // 确保滚动条始终可见
+  overflow-y: scroll !important;
+  overflow-x: hidden !important;
+  // 允许内容扩展
+  &:hover {
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+  }
+  // 确保grid容器可以扩展
+  ::v-deep .vue-grid-layout {
+    min-height: 100%;
+    position: relative;
+    padding-bottom: 100px; // 添加底部填充
+  }
 }
-
+// 拖拽手柄样式调整
+::v-deep .vue-grid-item .resizable-handle {
+  z-index: 10;
+  background: transparent;
+  width: 20px;
+  height: 20px;
+  right: 0;
+  bottom: 0;
+}
 .elForm {
   padding: 10px;
 }

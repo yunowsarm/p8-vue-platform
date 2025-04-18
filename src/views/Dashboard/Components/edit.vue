@@ -1,8 +1,19 @@
 <template>
   <el-row style="height: 100%">
-    <el-col style="height: 100%" :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+    <el-col style="height: 100%"
+            :xs="24"
+            :sm="24"
+            :md="24"
+            :lg="24"
+            :xl="24">
       <div style="position: relative; height: 100%">
-        <widget-grid :widget.sync="widget" :row-height="50" :margin="[5, 5]" :padding="[5, 5]" :style-object="{ height: 'calc(100% - 32px)' }" :is-static="isStatic" @saveTemplate="saveTemplate"> </widget-grid>
+        <widget-grid :widget.sync="widget"
+                     :row-height="50"
+                     :margin="[5, 5]"
+                     :padding="[5, 5]"
+                     :style-object="{}"
+                     :is-static="isStatic"
+                     @saveTemplate="saveTemplate"> </widget-grid>
       </div>
     </el-col>
   </el-row>
@@ -24,14 +35,14 @@ export default {
     }
   },
   computed: {
-    deepCopyFormData() {
+    deepCopyFormData () {
       return _cloneDeep(this.formData)
     },
-    deepCopyWidget() {
+    deepCopyWidget () {
       return _cloneDeep(this.widget)
     }
   },
-  data() {
+  data () {
     return {
       isStatic: false,
       widget: [],
@@ -46,14 +57,14 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.$nextTick(this.rendered())
   },
   methods: {
-    rendered() {
+    rendered () {
       this.getFormData()
     },
-    getFormData() {
+    getFormData () {
       !this.record.widgets && (this.record.widgets = [])
       !this.record.style && (this.record.style = '')
       !this.record.queryConfig && (this.record.queryConfig = '')
@@ -62,7 +73,7 @@ export default {
         this.widget = this.formData.widgets
       }
     },
-    getData() {
+    getData () {
       return this.deepCopyWidget
     },
     saveTemplate (addArr) {
