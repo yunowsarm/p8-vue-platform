@@ -136,14 +136,10 @@ export default {
       }
     }
   },
-  mounted () {
+  created () {
     var params = {
       sqlParam: {
-        dates: {
-          mode: "=",
-          relation: "and",
-          value: "2025-3-1"
-        }
+        dates: {}
       },
       sqlId: '2b3f2b344eba03760830572e2d6b5932',
       "reportId": "845d5812c0b54742a99b53c05e04acee",
@@ -162,7 +158,9 @@ export default {
     }
     this.$api['formGenerator.tableApply'](params).then(res => {
       this.calendarOptions.events = res.records.map(item => {
-        this.hasWarning = item.IS_APPROACHING_DATE === '1' ? true : false
+        if (item.IS_APPROACHING_DATE === '1') {
+          this.hasWarning = true
+        }
         return {
           title: item.TASK_NAME,
           start: item.PLAN_BEGIN_DATE,
