@@ -229,8 +229,8 @@ export default {
           fixed: 'right',
           dataIndex: 'operation',
           width: '150',
-          align: 'left',
-          headerAlign: 'left',
+          align: 'center',
+          headerAlign: 'center',
           scopedSlots: { customRender: 'operation' }
         }
       ],

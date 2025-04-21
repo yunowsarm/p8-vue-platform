@@ -1,9 +1,16 @@
 <template>
   <list-layout>
     <template #north>
-      <el-button type="primary"
-                 round
+      <el-button type='primary'
+                 v-if="toolbarWritingDisplay === 'true'"
                  @click="planVersionView()">对比</el-button>
+      <el-tooltip v-else
+                  placement="top"
+                  content="对比">
+        <el-button type="primary"
+                   icon="p8 icon-contrast"
+                   @click="planVersionView()"></el-button>
+      </el-tooltip>
       <search-form-list ref="search"
                         :dataSource='searchData'
                         @search='search'
@@ -151,11 +158,16 @@ export default {
             'click': 'clickEvent(this)'
           }
         }
-      ]
+      ],
+      toolbarWritingDisplay: 'true'
     }
   },
   mounted () {
-
+    if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
+      this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
+    } else {
+      this.toolbarWritingDisplay = 'true'
+    }
   },
   methods: {
 
