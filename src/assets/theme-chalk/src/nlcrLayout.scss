@@ -1,0 +1,88 @@
+@charset "UTF-8";
+@import "./commonStyle/common";
+// @import "mixins/mixins";
+
+.normal-nlcr-layout {
+  height: calc(100% - 20px);
+  margin: 10px;
+  .normal-nlcr-header {
+    padding: 10px;
+    width: 100%;
+    height: 50px;
+    box-sizing: border-box;
+    background: $layout-header-background;
+    border-bottom: 1px solid $base-line-color;
+  }
+  .normal-nlcr-main.fullHeight {
+    height: 100%;
+  }
+  .normal-nlcr-main {
+    width: 100%;
+    height: calc(100% - 50px);
+
+    &.fullHeight {
+      height: 100%;
+    }
+
+    > .el-row,
+    > .el-row .el-col {
+      height: 100%;
+      .normal-nlcr-left,
+      .normal-nlcr-right {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+
+        .scroll-area {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      .splitBtn {
+        width: 0px;
+        height: 100%;
+        float: left;
+        position:relative;
+        cursor: pointer;
+  
+        > i {
+          background: #ccc;
+          color: #999999;
+          font-size: 12px;
+          position: absolute;
+          top: 20px;
+          width: 12px;
+          height: 18px;
+          line-height: 18px;
+          border-radius: 2px 0px 0px 2px;
+          z-index: 99;
+          border: 1px solid #e1e1e1;
+          left: -13px;
+          border-right: 1px solid #fff;
+          background-color: #fff !important;
+          font-weight: 900;
+        }
+      }
+      .normal-nlcr-center {
+        width: 100%;
+        height: 100%;
+        float: left;
+        overflow: hidden;
+        box-sizing: border-box;
+
+        .scroll-area {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      .normal-nlcr-left {
+        border-right: 1px solid $base-line-color;
+      }
+      .normal-nlcr-right {
+        border-left: 1px solid $base-line-color;
+      }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+@import './variables.module.scss';
+@import './mixins.scss';
+@import './element-ui-custom.scss';
+@import './transitions.scss';
+@import './adapter.scss';
+@import './system-theme.scss';
+
+html,body {
+  padding:0;
+  margin:0;
+  height:100%;
+  font-size:$base-font-size;
+  font-family: "Source Han Sans CN-Normal", "Helvetica Neue", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft Yahei", "STXihei", sans-serif !important;
+  overflow: hidden;
+
+  ul,li {
+      padding:0;
+      margin:0;
+      list-style:none;
+  }
+}
+
+// 配置居右显示
+.flex-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+// 覆盖原有自定义滚动条样式,保证滚动条始终的层级始终在顶部
+.ps__scrollbar-y-rail {
+  z-index:500;
+}
+
+// 不显示百度地图的版权信息
+.BMap_cpyCtrl, .anchorBL{
+  display: none;
+}
+
+.top_level {
+  z-index: 999999 !important;
+}

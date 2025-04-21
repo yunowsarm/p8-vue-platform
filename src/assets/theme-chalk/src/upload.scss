@@ -1,0 +1,142 @@
+@charset "UTF-8";
+@import "./commonStyle/common";
+// @import "mixins/mixins";
+
+// upload
+.common-upload {
+  display: flex;
+  flex-direction: column;
+}
+.el-upload--drag {
+  & .el-upload-list--text {
+    margin-left: 0;
+    padding: 10px 0;
+  }
+}
+
+.files-type--row {
+  .files-item--row {
+    box-sizing: border-box;
+    padding: 0 10px 0px;
+    margin-bottom: 10px;
+    .el-link{
+      border-bottom: 1px solid #333333;
+    }
+    .files-confidentialite--row {
+      padding-left: 30px;
+    }
+    .imgIcon {
+      width: 20px;
+      position: relative;
+      top: 5px;
+    }
+    .el-link.el-link--default {
+      color: #333333;
+      &:hover {
+        color: $base-light-color;
+        border-bottom: 1px solid #fff;
+      }
+    }
+  }
+}
+.files-type--card {
+  display: flex;
+  flex-flow: row wrap;
+  .files-item--card {
+    position: relative;
+    width: 180px;
+    height: 120px;
+    background-color: #efefef;
+    margin: 0 10px 10px 0;
+    box-sizing: border-box;
+    padding: 10px;
+    .el-link.el-link--default {
+      font-size: 12px;
+      .el-link--inner {
+        line-height: 20px;
+      }
+    }
+    .icon-download {
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 0px 8px;
+      color: #ffffff;
+      border-radius: 2px;
+      font-size: 16px;
+      &.blue {
+        background-color: $base-download-blue-color;
+      }
+      &.orange {
+        background-color: $base-download-orange-color;
+      }
+      &.green {
+        background-color: $base-download-green-color;
+      }
+    }
+    &:hover {
+      cursor: pointer;
+    }
+    &::after {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      content: "";
+      width: 0;
+      height: 0;
+      border-right: 30px solid #ffffff;
+    }
+    &.blue::after {
+      border-top: 26px solid $base-download-blue-color;
+    }
+    &.orange::after {
+      border-top: 26px solid $base-download-orange-color;
+    }
+    &.green::after {
+      border-top: 26px solid $base-download-green-color;
+    }
+    &::before {
+      position: absolute;
+      right: 30px;
+      bottom: 0;
+      content: "";
+      width: 0;
+      height: 0;
+      border-bottom: 26px solid #c4c4c4;
+      border-left: 30px solid transparent;
+    }
+  }
+}
+
+// file-list
+.upload__secret-file-list {
+  // margin-left: 140px;
+  .upload__secret-file-item {
+    padding: 4px 5px;
+    &:hover {
+      background-color: #e6f1f9;
+    }
+    .col-file-name {
+      span {
+        cursor: pointer;
+        color: #606266;
+        font-size: 14px;
+        padding-left: 6px;
+        width: calc(100% - 26px);
+        display: inline-block;
+        vertical-align: middle;
+      }
+    }
+    .col-file-name,
+    .col-file-delete,
+    .file-conf {
+      min-height: 28px;
+      line-height: 28px;
+    }
+    & .el-input.is-disabled .el-input__inner {
+      background-color: #fafafa;
+      color: #606266;
+    }
+  }
+}

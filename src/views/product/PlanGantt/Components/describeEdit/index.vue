@@ -1,0 +1,1091 @@
+<template>
+  <div style="position: relative;width:100%;height:calc(100% - 20px);">
+    <form-list class="describe-form"
+               ref="form"
+               :comp="comp"
+               :key="formKey"
+               @rendered="rendered"
+               form-layout="vertical"
+               @saved="saved"
+               :data-source="dataSource"
+               :api="saveApi"
+               :isShouEnter="false"
+               :is-custom-validate="isCustomValidate"
+               @custom-validate="customValidate"
+               :other-param="otherParam"
+               :form="formData">
+      <template #describes>
+        <P8Tinymce :key="dateTime"
+                   v-model="formData.describes"
+                   :editorConfig="editorInit" />
+      </template>
+    </form-list>
+  </div>
+</template>
+<style lang="scss" scoped>
+.describe-form {
+  & ::v-deep .view-item .el-form-item__label span {
+    font-weight: normal !important;
+  }
+}
+</style>
+<script>
+import { P8Form as FormList, P8Tinymce } from 'p8-components-ui'
+import { mapGetters } from 'vuex'
+import { GanttObject, updateforecastDate } from '@/assets/commonJS/ganttJS/ganttObject'
+import { taskDescribesEditCheck, checkKeys } from '@/assets/commonJS/ganttJS/changeGantt'
+import moment from 'moment'
+
+export default {
+  name: 'PlanDescribeEdit',
+  components: {
+    FormList,
+    P8Tinymce
+  },
+  props: {
+    taskId: {
+      type: String,
+      default: null
+    },
+    currentRoute: {
+      type: String,
+      default: null
+    },
+    ganttName: {
+      type: String,
+      default: null
+    },
+    createPage: {
+      type: String,
+      default: null
+    },
+    formWidth: {
+      type: [String, Number],
+      default: 0
+    }
+  },
+  data () {
+    return {
+      editorInit: {
+        height: '500px',
+        toolbar: 'bold italic strikethrough alignleft aligncenter alignright outdent indent bullist numlist image preview fullscreen'
+      },
+      nullity: '',
+      comp: this,
+      saveApi: 'planGanttManager.describeSave',
+      isCustomValidate: true,
+      ownerDataOptions: [],
+      extraList: {},
+      extraIds: {}, // 存储拓展字段的id
+      dataSource: [
+        {
+          labelText: '任务名称',
+          type: 'text',
+          fieldName: 'name',
+          placeholder: '请输入任务名称',
+          colLayout: 'singleCol',
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ]
+        },
+        {
+          type: 'datetime',
+          labelText: '计划开始时间',
+          fieldName: 'start_date',
+          colLayout: 'doubleCol',
+          placeholder: '选择计划开始时间',
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ],
+          fieldConfig: {
+            clearable: false,
+            disabled: false,
+            'picker-options': this.startDateOptions()
+          },
+          eventHandle: {
+            change: 'startDateChangeHandle'
+          }
+        },
+        {
+          type: 'datetime',
+          labelText: '计划完成时间',
+          fieldName: 'end_date',
+          colLayout: 'doubleCol',
+          placeholder: '选择计划完成时间',
+          fieldConfig: {
+            clearable: false,
+            disabled: false,
+            'picker-options': this.endDateOptions()
+          },
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ],
+          eventHandle: {
+            change: 'endDateChangeHandle'
+          }
+        },
+        // {
+        //   type: 'select',
+        //   labelText: '排程类型',
+        //   fieldName: 'autoScheduling',
+        //   colLayout: 'doubleCol',
+        //   placeholder: '选择排程类型',
+        //   options: [
+        //     { 'label': '自动', 'value': '1' },
+        //     { 'label': '手动', 'value': '2' }
+        //   ],
+        //   eventHandle: {
+        //     change: 'autoSchedulingChangeHandle'
+        //   }
+        // },
+        {
+          type: 'number',
+          labelText: '工期',
+          fieldName: 'duration',
+          colLayout: 'doubleCol',
+          placeholder: '选择填写工期',
+          min: 1,
+          fieldConfig: {
+            disabled: false
+          }
+          ,
+          eventHandle: {
+            change: 'durationChangeHandle'
+          }
+        },
+        {
+          type: 'select',
+          labelText: '任务类型',
+          fieldName: 'planType',
+          colLayout: 'doubleCol',
+          placeholder: '选择任务类型',
+          optionUrl: {
+            api: 'thirdPartInterface.getDic',
+            params: { dicType: 'ACTIVITY_TYPE' },
+            label: 'label',
+            value: 'value'
+          },
+          options: []
+        },
+        {
+          type: 'select',
+          labelText: '责任人',
+          fieldName: 'owner_id',
+          // colLayout: 'doubleCol',
+          placeholder: '选择责任人',
+          fieldConfig: {
+            filterable: true
+          },
+          options: [],
+          eventHandle: {
+            change: 'ownerChangeHandle'
+          }
+        },
+        // {
+        //   type: 'text',
+        //   labelText: '密级',
+        //   fieldName: 'secretGradeDisplay',
+        //   // colLayout: 'doubleCol',
+        //   fieldConfig: {
+        //     disabled: true
+        //   },
+        //   options: []
+        // },
+        // {
+        //   type: 'number',
+        //   labelText: '绩效',
+        //   fieldName: 'achievements',
+        //   colLayout: 'doubleCol',
+        //   min: 0,
+        //   fieldConfig: {
+        //     precision: 2,
+        //     step: 1
+        //   },
+        //   eventHandle: {
+        //     change: 'achievementsChangeHandle'
+        //   }
+        // },
+        // {
+        //   type: 'number',
+        //   labelText: '比例',
+        //   fieldName: 'proportion',
+        //   colLayout: 'doubleCol',
+        //   min: 0,
+        //   max: 100,
+        //   fieldConfig: {
+        //     precision: 2,
+        //     step: 1
+        //   },
+        //   eventHandle: {
+        //     change: 'proportionChangeHandle'
+        //   }
+        // },
+        {
+          labelText: '预计开始时间',
+          type: 'view',
+          fieldName: 'forecastBeginDate',
+          colLayout: 'doubleCol'
+        },
+        {
+          labelText: '预计完成时间',
+          type: 'view',
+          fieldName: 'forecastEndDate',
+          colLayout: 'doubleCol'
+        },
+        {
+          labelText: '实际开始时间',
+          type: 'view',
+          fieldName: 'realBeginDate',
+          colLayout: 'doubleCol'
+        },
+        {
+          labelText: '实际结束时间',
+          type: 'view',
+          fieldName: 'realEndDate',
+          colLayout: 'doubleCol'
+        }
+      ],
+      item1: {
+        labelText: '任务名称',
+        type: 'text',
+        fieldName: 'name',
+        placeholder: '请输入任务名称',
+        colLayout: 'doubleCol',
+        rules: [
+          {
+            required: true,
+            message: '必填'
+          }
+        ]
+      },
+      item2: {
+        type: 'select',
+        labelText: '是否可控',
+        fieldName: 'weatherControl',
+        colLayout: 'doubleCol',
+        placeholder: '选择是否可控',
+        options: [
+          { label: '是', value: '1' },
+          { label: '否', value: '0' }
+        ]
+      },
+      formData: {
+        describes: ''
+      },
+      otherParam: {
+        activityInfoId: ''
+      },
+      planInfo: {},
+      formKey: new Date().getTime(),
+      dateTime: new Date().getTime(),
+      describes: '',
+      oldFormData: {},
+      extraKeys: [],
+      ganttObject: null,
+      defaultList: ['createTime', 'createBy', 'changeCount', 'updateTime', 'updateBy', 'achievements', 'proportion'],
+      ganttColumns: []
+      // falg: true
+    }
+  },
+  watch: {
+    ganttName: {
+      handler (val) {
+        this.ganttObject = GanttObject.getGanttObject(this.ganttName)
+        // const df = this.dateFormat()
+        // const minStartDate = df.format(this.ganttObject.config.plan_limit(this.ganttObject, this.taskId, 'min', 'start'))
+        // const maxEndDate = df.format(this.ganttObject.config.plan_limit(this.ganttObject, this.taskId, 'max', 'end'))
+        // let durationMax = df.durationByStamp((df.stamp(maxEndDate) - df.stamp(minStartDate)))
+        // let durationOption = this.dataSource.filter(item => item.fieldName === 'duration')
+        // durationOption[0].max = Number(durationMax)
+        if (val === 'changeGantt') {
+          this.dataSource.splice(0, 1, this.item1, this.item2)
+        }
+      },
+      immediate: true
+    },
+    // taskId: {
+    //   handler (val) {
+    //     if (val) {
+    //       this.rendered()
+    //     }
+    //   },
+    // },
+    ownerDataOptions (newValue) {
+      if (newValue) {
+        const options = []
+        newValue.forEach(function (item) {
+          options.push({ value: item.id, label: `${item.name}[${item.deptName}]-${item.roleName}` }) // '[' + item.deptName + ']' + item.name + '-' + item.roleName
+        })
+        const select = this.dataSource.filter((item) => item.fieldName === 'owner_id')
+        select[0].options = options
+      }
+    }
+  },
+  computed: {
+    ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
+  },
+  mounted () {
+    console.log(111111111);
+    const ganttObject = GanttObject.getGanttObject(this.ganttName)
+    const task = ganttObject.getTask(this.taskId)
+    this.$api['planGanttManager.getGanttExtendAttr']({ taskId: task.id }).then((res) => {
+      if (res && res.taskExtendList) {
+        this.extraIds = {}
+        res.taskExtendList.forEach((item) => {
+          if (item.fieldType == 'datepicker') {
+            let date = moment(item.fieldValue)
+            if (this.formData['kz' + item.customItem1]) {
+              return
+            }
+            this.$set(this.formData, item.fieldName, date.isValid() ? moment(date).format('YYYY-MM-DD') : '')
+          } else {
+            if (this.formData['kz' + item.customItem1]) {
+              return
+            }
+            this.$set(this.formData, 'kz' + item.customItem1, item.fieldValue)
+          }
+          this.$set(this.extraIds, 'kz' + item.customItem1, item.id)
+        })
+      }
+    })
+    // this.formData.secretGradeDisplay = task.secretGradeDisplay
+    // this.$api['planGanttManager.classifiedFiltering']({ secretGrade: task.secretGrade }).then((res) => {
+    //   this.falg = res
+    // })
+    this.extraList = this.vueThis.columnSettings.filter((item) => item.attributeType === '1')
+    this.extraKeys = []
+    this.extraMultipleKeys = []
+    this.extraList.forEach((extra) => {
+      this.extraKeys.push('kz' + extra.id)
+      if (extra.filedType == 'treeSingle' || extra.filedType == 'treeMultiple') {
+        let multiple = extra.filedType == 'treeSingle' ? false : true
+        this.dataSource.push({
+          labelText: extra.name,
+          type: this.ganttName === 'planGantt' || this.ganttName === 'changeGantt' ? 'treeSelect' : 'view',
+          fieldName: 'kz' + extra.id,
+          placeholder: `请选择${extra.name}`,
+          colLayout: 'doubleCol',
+          defaultExpandAll: true,
+          optionUrl: {
+            api: 'formGenerator.getSelectionDataDic',
+            params: { selectCode: extra.selectCode }
+          },
+          multiple: multiple,
+          defaultExpandAll: true,
+          clearable: true,
+          useTreeFormat: true,
+          useTreePId: 'pId'
+        })
+      } else if (extra.filedType == 'selectSingle' || extra.filedType == 'selectMultiple') {
+        let multiple = extra.filedType == 'selectSingle' ? 'select' : 'multiple'
+        this.dataSource.push({
+          labelText: extra.name,
+          type: this.ganttName === 'planGantt' || this.ganttName === 'changeGantt' ? multiple : 'view',
+          fieldName: 'kz' + extra.id,
+          placeholder: `请选择${extra.name}`,
+          colLayout: 'doubleCol',
+          optionUrl: {
+            api: 'formGenerator.getSelectionDataDic',
+            params: { selectCode: extra.selectCode }
+          }
+        })
+      } else {
+        this.dataSource.push({
+          labelText: extra.name,
+          type: this.ganttName === 'planGantt' || this.ganttName === 'changeGantt' ? extra.filedType : 'view',
+          fieldName: 'kz' + extra.id,
+          placeholder: `请输入${extra.name}`,
+          colLayout: 'doubleCol'
+        })
+      }
+      if (extra.filedType.includes('Multiple')) {
+        this.extraMultipleKeys.push('kz' + extra.id)
+      }
+    })
+    // 处理默认属性
+    this.ganttColumns = ganttObject.config.columns.filter((el) => el.hide !== true && this.defaultList.includes(el.name))
+    this.ganttColumns.forEach((el) => {
+      const startIdx = el.label.indexOf('<div class="gantt_search">')
+      const endIdx = el.label.indexOf('</div>', startIdx)
+      let content = ''
+      if (startIdx !== -1 && endIdx !== -1) {
+        content = el.label.substring(startIdx + '<div class="gantt_search">'.length, endIdx)
+      }
+      // 使用正则表达式去掉 <i> 标签及其内容
+      content = content.replace(/<i\b[^<]*(?:(?!<\/i>)<[^<]*)*<\/i>/gi, '')
+      this.dataSource.push({
+        labelText: content,
+        type: 'view',
+        fieldName: el.name,
+        colLayout: 'doubleCol'
+      })
+    })
+    this.dataSource.push({
+      labelText: '任务描述',
+      type: 'blank',
+      fieldName: 'describes',
+      slotName: 'describes',
+      placeholder: '请输入任务描述',
+      colLayout: 'singleCol'
+    })
+    if (this.$route.path === '/TaskChange') {
+      this.getPlanInfo(task)
+    }
+  },
+  methods: {
+    rendered () {
+      console.log('rednser-----editttttttt')
+      if (this.taskId && this.taskId !== '') {
+        this.getDescribeData(this.taskId)
+      }
+    },
+    startDateOptions () {
+      const _this = this
+      return {
+        disabledDate: (time) => {
+          const currTime = moment(time).format('YYYY-MM-DD')
+          const minStartTime = moment(_this.ganttObject.config.plan_limit(_this.ganttObject, _this.taskId, 'min', 'start')).format('YYYY-MM-DD')
+          // let maxStartTime = moment(_this.ganttObject.config.plan_limit(_this.ganttObject, _this.taskId, 'max', 'start')).format('YYYY-MM-DD')
+          const maxStartTime = moment(this.changeDate(_this.ganttObject, _this.taskId, 'max', 'end')).format('YYYY-MM-DD')
+          // const timeSpace = currTime > maxStartTime || currTime < minStartTime
+          const timeSpace = currTime < minStartTime
+          return timeSpace
+        }
+      }
+    },
+    endDateOptions () {
+      const _this = this
+      const isDateDisabled = (date) => {
+        if(_this.$route.path !== '/TaskDecomposition') {
+          return true
+        }
+        // 使用moment处理日期
+        const currentDate = moment(date)
+        const startDate = _this.formData.start_date ? moment(_this.formData.start_date) : null
+        // 检查是否小于计划开始时间
+        if (startDate && currentDate.isBefore(startDate, 'day')) {
+          _this.$message.warning('不能早于计划开始时间')
+          return false
+        }
+        const ganttObject = GanttObject.getGanttObject(_this.ganttName)
+        const parentId = ganttObject.getParent(_this.taskId)
+        if (parentId) {
+          const parentTask = ganttObject.getTask(parentId)
+          // 父任务结束时间减去一天
+          const parentEndDate = moment(parentTask.end_date).subtract(1, 'days')
+          // 检查是否大于父任务完成时间（已减1天）
+          if (parentEndDate && currentDate.isAfter(parentEndDate, 'day')) {
+            _this.$message.warning('不能晚于父任务完成时间')
+            return false
+          }
+        }
+
+        return true
+      }
+      return {
+        shortcuts: [
+          {
+            text: '今天',
+            onClick(picker) {
+              const date = new Date()
+              if (isDateDisabled(date)) {
+                picker.$emit('pick', date)
+              }
+            }
+          },
+          {
+            text: '昨天',
+            onClick(picker) {
+              const date = new Date()
+              date.setTime(date.getTime() - 3600 * 1000 * 24)
+              if (isDateDisabled(date)) {
+                picker.$emit('pick', date)
+              }
+            }
+          },
+          {
+            text: '明天',
+            onClick(picker) {
+              const date = new Date()
+              date.setTime(date.getTime() + 3600 * 1000 * 24)
+              if (isDateDisabled(date)) {
+                picker.$emit('pick', date)
+              }
+            }
+          },
+          {
+            text: '一周前',
+            onClick(picker) {
+              const date = new Date()
+              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+              if (isDateDisabled(date)) {
+                picker.$emit('pick', date)
+              }
+            }
+          },
+          {
+            text: '一周后',
+            onClick(picker) {
+              const date = new Date()
+              date.setTime(date.getTime() + 3600 * 1000 * 24 * 7)
+              if (isDateDisabled(date)) {
+                picker.$emit('pick', date)
+              }
+            }
+          },
+          {
+            text: '一个月前',
+            onClick(picker) {
+              const date = new Date()
+              const currentDay = date.getDate()
+              date.setMonth(date.getMonth() - 1)
+              if (date.getDate() < currentDay) {
+                date.setDate(0)
+              }
+              if (isDateDisabled(date)) {
+                picker.$emit('pick', date)
+              }
+            }
+          },
+          {
+            text: '一个月后',
+            onClick(picker) {
+              const date = new Date()
+              const currentDay = date.getDate()
+              date.setMonth(date.getMonth() + 1)
+              if (date.getDate() < currentDay) {
+                date.setDate(0)
+              }
+              if (isDateDisabled(date)) {
+                picker.$emit('pick', date)
+              }
+            }
+          }
+        ],
+        disabledDate: (time) => {
+          // 基础限制:不能早于开始时间
+          const baseLimit = moment(time).isBefore(moment(_this.formData.start_date))
+
+          // 如果是任务分解页面,增加父任务完成时间限制
+          if (_this.$route.path === '/TaskDecomposition') {
+            const ganttObject = GanttObject.getGanttObject(_this.ganttName)
+            const parentId = ganttObject.getParent(_this.taskId)
+            if (parentId) {
+              const parentTask = ganttObject.getTask(parentId)
+              // 父任务结束时间减去一天
+              const parentEndDate = moment(parentTask.end_date).subtract(1, 'days')
+              return baseLimit || moment(time).isAfter(parentEndDate)
+            }
+          }
+
+          return baseLimit
+        }
+      }
+    },
+    changeDate (ganttObject, taskId, minOrMax, startOrEnd) {
+      const limitTask = {
+        start_date: this.planInfo.planBeginDate,
+        end_date: this.planInfo.planEndDate
+      }
+      const curTask = ganttObject.getTask(taskId)
+      if (startOrEnd === 'start') {
+        if (minOrMax === 'min') {
+          return limitTask.start_date
+        } else {
+          // 限制任务完成时间
+          const max1 = ganttObject.date.add(limitTask.end_date, -1, 'day')
+          const max2 = ganttObject.date.add(curTask.end_date, -1, 'day')
+          return max1 > max2 ? max2 : max1
+        }
+      } else {
+        if (minOrMax === 'min') {
+          // 在本身开始时间和限制任务开始时间中取最大值
+          const minDate1 = limitTask.start_date
+          const minDate2 = curTask.start_date
+          return minDate1 > minDate2 ? minDate1 : minDate2
+        } else {
+          return ganttObject.date.add(curTask.end_date, 0, 'day')
+        }
+      }
+    },
+    startDateOptions2 () {
+      const _this = this
+      return {
+        disabledDate: (time) => {
+          const currTime = moment(time).format('YYYY-MM-DD')
+          const minStartTime = moment(this.changeDate(_this.ganttObject, _this.taskId, 'min', 'end')).format('YYYY-MM-DD')
+          const maxStartTime = moment(this.changeDate(_this.ganttObject, _this.taskId, 'max', 'end')).format('YYYY-MM-DD')
+          const timeSpace = currTime > maxStartTime || currTime < minStartTime
+          return timeSpace
+        }
+      }
+    },
+    endDateOptions2 () {
+      const _this = this
+      return {
+        disabledDate: (time) => {
+          return time.getTime() < new Date(this.formData.start_date).getTime()
+        }
+      }
+    },
+    getPlanInfo (task) {
+      if (!task.planInfoId) return
+      const that = this
+      this.$api['planInfoManager.getPlanInfo']({ id: task.planInfoId })
+        .then(function (res) {
+          if (res) {
+            that.planInfo = res
+            that.dataSource.forEach((item) => {
+              if (item.fieldName == 'start_date') {
+                item.fieldConfig['picker-options'] = that.startDateOptions2()
+                item.eventHandle = {
+                  change: 'startDateChangeHandle2'
+                }
+              }
+              if (item.fieldName == 'end_date') {
+                item.fieldConfig['picker-options'] = that.endDateOptions2()
+                item.eventHandle = {
+                  change: 'endDateChangeHandle2'
+                }
+              }
+            })
+            that.formKey = new Date().getTime()
+          }
+        })
+        .catch(function (error) {
+          console.error(error)
+        })
+    },
+    getDescribeData (taskId) {
+      const that = this
+      const ganttObject = GanttObject.getGanttObject(that.ganttName)
+      that.ownerDataOptions = ganttObject.serverList('resourceDatas')
+      const task = ganttObject.getTask(taskId)
+      that.formData.describes = task.describes || ''
+      this.nullity = task.nullity
+      that.formData.name = task.name
+      that.formData.achievements = task.achievements
+      that.formData.proportion = task.proportion
+      that.formData.start_date = task.start_date
+      that.formData.end_date = ganttObject.date.add(task.end_date, -1, 'day')
+      // that.formData.autoScheduling = task.autoScheduling
+      that.formData.duration = task.duration
+      that.formData.planType = task.planType
+      that.formData.owner_id = task.owner_id
+      that.formData.weatherControl = task.weatherControl ? task.weatherControl : ''
+      that.formData.forecastBeginDate = moment(task.forecastBeginDate).format('YYYY-MM-DD')
+      that.formData.forecastEndDate = moment(task.forecastEndDate).format('YYYY-MM-DD')
+      let NewcheckKeys = that.vueThis.columnSettings.filter((el) => el.attributeType == '1')
+      if (NewcheckKeys && NewcheckKeys.length) {
+        NewcheckKeys.forEach((el) => {
+          if (el.filedType == 'selectMultiple' || el.filedType == 'treeMultiple') {
+            that.formData['kz' + el.id] = task['kz' + el.id] ? task['kz' + el.id].split(',') : []
+          } else {
+            that.formData['kz' + el.id] = task['kz' + el.id]
+          }
+        })
+      }
+      this.ganttColumns = ganttObject.config.columns.filter((el) => el.hide !== true && this.defaultList.includes(el.name))
+      this.ganttColumns.forEach((el) => {
+        if (task[el.name]) {
+          that.formData[el.name] = task[el.name]
+          if (el.name == 'proportion') {
+            that.formData[el.name] = task[el.name].toFixed(2) + '%'
+          }
+        }
+      })
+      if (task.realBeginDate) that.formData.realBeginDate = moment(task.realBeginDate).format('YYYY-MM-DD')
+      if (task.realEndDate) that.formData.realEndDate = moment(task.realEndDate).format('YYYY-MM-DD')
+      this.updataDataSource(task.autoScheduling)
+      // 获取描述信息
+      that.$api['planGanttManager.getActivityInfoByTaskId']({ taskId: taskId })
+        .then(function (res) {
+          if (res) {
+            that.formData.describes = res.describes
+            that.describes = that.formData.describes
+            that.otherParam.activityInfoId = res.activityInfoId
+          }
+          // 变更进入时先查看newTaskMap中是否存在对应值若存在，显示，否则加载任务描述数据
+          if (
+            that.ganttName === 'changeGantt' &&
+            that.vueThis.newTaskMap &&
+            Object.keys(that.vueThis.newTaskMap).length > 0 &&
+            that.vueThis.newTaskMap[taskId] &&
+            that.vueThis.newTaskMap[taskId].updateInfo &&
+            that.vueThis.newTaskMap[taskId].updateInfo.indexOf('describes') !== -1
+          ) {
+            that.formData.describes = that.vueThis.newTaskMap[taskId].describes
+          }
+          that.oldFormData = that.formData
+          that.formData = Object.assign({}, that.formData)
+          // that.$set(that.formData, 'describes', res.describes)
+          that.dateTime = new Date().getTime()
+        })
+        .catch(function (error) {
+          console.error('error' + error)
+        })
+    },
+    saved (res) {
+      const that = this
+      // if (!this.falg) {
+      //   return this.$message.warning('低密不能修改高密')
+      // }
+      if (res && res === 'true') {
+        that.formData.updateTime = moment().format('YYYY-MM-DD HH:mm:ss')
+        that.formData.updateBy = that.vueThis.$store.getters.userInfo.realName
+        const ganttObject = GanttObject.getGanttObject(that.ganttName)
+        if (that.formData && JSON.stringify(that.formData) !== '{}') {
+          let check = false
+          const task = ganttObject.getTask(that.taskId)
+          that.formData.start_date = moment(that.formData.start_date).toDate()
+          that.formData.end_date = moment(that.formData.end_date).toDate()
+          that.formData.autoScheduling = '2'
+          for (const key in that.formData) {
+            if (key !== '' && checkKeys.indexOf(key) !== -1 && task[key] !== that.formData[key]) {
+              if (key === 'end_date') {
+                if (ganttObject.date.add(that.formData[key], 1, 'day') !== task[key]) {
+                  task[key] = ganttObject.date.add(that.formData[key], 1, 'day')
+                  check = true
+                }
+              } else {
+                task[key] = that.formData[key]
+                if (key === 'duration' || key === 'start_date' || key === 'predecessors') {
+                  check = true
+                }
+              }
+            }
+            // 拓展字段
+            if (that.extraKeys.includes(key)) {
+              if (this.extraMultipleKeys && this.extraMultipleKeys.length && this.extraMultipleKeys.includes(key)) {
+                task[key] = that.formData[key] ? that.formData[key].join(',') : ''
+              } else {
+                task[key] = that.formData[key]
+              }
+            }
+          }
+          this.defaultList.forEach(el => {
+            task[el] = that.formData[el]
+          })
+          if (check) {
+            updateforecastDate(task, ganttObject)
+            ganttObject.updateTask(task.id)
+            GanttObject.updateTaskNew(ganttObject, task.id, that.vueThis)
+          } else {
+            ganttObject.updateTask(task.id)
+          }
+          // this.falg = true
+        }
+      }
+    },
+    async customValidate (saveParams) {
+      let resData = await this.$api['planChange.userTaskSaveCheck']({ owner_id: saveParams.owner_id })
+      if (resData) {
+        this.$message({ type: 'warning', message: '所选责任人已退出当前团队，请重新选择' })
+        return
+      }
+      const that = this
+      // if (!this.falg) {
+      //   return this.$message.warning('低密不能修改高密')
+      // }
+      /**
+       * 任务描述信息变更记录逻辑：
+       *    1.修改编辑锁定任务时，记录变更
+       *    2.修改非编辑任务时，非编辑锁定任务包含锁定标识时，修改标识锁定列时，记录变更
+       */
+      if (this.nullity !== '1') {
+        if (that.taskId) {
+          if (that.ganttName === 'planGantt') {
+            // 计划编辑
+            const extraData = []
+            this.extraList.forEach((item) => {
+              if (item.filedType == 'datepicker') {
+                saveParams[item.filedName] = moment(saveParams[item.filedName]).format('YYYY-MM-DD')
+              }
+              const obj = {
+                id: this.extraIds[item.filedName] || '',
+                fieldName: item.filedName,
+                fieldType: item.filedType,
+                fieldValue: saveParams[item.filedName],
+                customItem1: item.id,
+                indexNo: item.indexNo // 排序号
+              }
+              extraData.push(obj)
+            })
+            // 保存
+            this.$api['planGanttManager.saveGanttExtendAttr']({ taskId: that.taskId, taskExtendRequests: extraData })
+            that.$refs.form.submitForm(saveParams, that.saveApi)
+            setTimeout(() => {
+              that.$emit('refreshData')
+              // 在这里执行你希望的操作
+            }, 3000)
+          } else if (that.ganttName === 'changeGantt') {
+            // 计划变更
+            const extraData = []
+            this.extraList.forEach((item) => {
+              if (item.filedType == 'datepicker') {
+                saveParams[item.filedName] = moment(saveParams[item.filedName]).format('YYYY-MM-DD')
+              }
+              if (item.filedType == 'selectMultiple' || item.filedType == 'treeMultiple') {
+                saveParams['kz' + item.id] = saveParams['kz' + item.id].join(',')
+              }
+              const obj = {
+                projectTasksId: that.taskId,
+                id: this.extraIds[item.filedName] || '',
+                fieldName: item.filedName,
+                fieldType: item.filedType,
+                fieldValue: saveParams['kz' + item.id],
+                customItem1: item.id,
+                indexNo: item.indexNo // 排序号
+              }
+
+              if (that.vueThis.taskExtendRequests && that.vueThis.taskExtendRequests.length) {
+                // that.vueThis.taskExtendRequests.forEach((el, index) => {
+                //   if (el.projectTasksId == obj.projectTasksId && el.customItem1 == obj.customItem1) {
+                //     that.vueThis.taskExtendRequests.splice(index, 1, obj)
+                //   }
+                // })
+                let index = that.vueThis.taskExtendRequests.findIndex((el) => el.projectTasksId == obj.projectTasksId && el.customItem1 == obj.customItem1)
+                if (index > -1) {
+                  that.vueThis.taskExtendRequests.splice(index, 1, obj)
+                } else {
+                  extraData.push(obj)
+                }
+              } else {
+                extraData.push(obj)
+              }
+            })
+            that.vueThis.taskExtendRequests = that.vueThis.taskExtendRequests.concat(extraData)
+
+            // 变更校验
+            const ganttObject = GanttObject.getGanttObject(that.ganttName)
+            taskDescribesEditCheck(saveParams, that.oldFormData, that.vueThis, that.taskId, ganttObject)
+            that.vueThis.hasSave = true
+            let ganttDatas = that.$store.getters.ganttDatas
+            ganttDatas.tasks = []
+            ganttObject.eachTask((task) => {
+              ganttDatas.tasks.push(task);
+            });
+            that.$store.dispatch('setGanttDatas', ganttDatas)
+            this.$message({
+              type: 'success',
+              message: '保存成功！'
+            })
+            // this.falg = true
+          }
+          // 同步左下角任务名称
+          that.vueThis.selectTaskName = saveParams.name
+        }
+      } else {
+        this.$message({
+          type: 'warning',
+          message: '该责任人已退出团队！不允许编辑任务！'
+        })
+      }
+    },
+    startDateChangeHandle (val) {
+      const _this = this
+      const df = this.dateFormat()
+      let minStartDate
+      let maxStartDate
+      let maxEndDate
+      if (this.ganttName === 'changeGantt') {
+        minStartDate = df.format(this.ganttObject.getTaskByWBSCode('1').start_date)
+        maxStartDate = this.formData.end_date
+        // const minEndDate = df.format(this.ganttObject.config.plan_limit(this.ganttObject, this.taskId, 'min', 'end'))
+        maxEndDate = df.format(this.ganttObject.getTaskByWBSCode('1').end_date)
+      } else {
+        minStartDate = df.format(this.ganttObject.config.plan_limit(this.ganttObject, this.taskId, 'min', 'start'))
+        maxStartDate = df.format(this.ganttObject.config.plan_limit(this.ganttObject, this.taskId, 'max', 'start'))
+        // const minEndDate = df.format(this.ganttObject.config.plan_limit(this.ganttObject, this.taskId, 'min', 'end'))
+        maxEndDate = df.format(this.ganttObject.config.plan_limit(this.ganttObject, this.taskId, 'max', 'end'))
+      }
+      /**
+       * 1. 计划开始时间的最大最小限制
+       */
+      let value = val
+      // if (df.stamp(val) > df.stamp(maxStartDate)) {
+      //   value = maxStartDate
+      //   this.formData.start_date = maxStartDate
+      // }
+      if (df.stamp(val) < df.stamp(minStartDate)) {
+        value = minStartDate
+        this.formData.start_date = minStartDate
+      }
+      // 根据gantt时间工期联动策略适配
+      if (this.ganttObject.config.inline_editors_date_processing && this.ganttObject.config.inline_editors_date_processing === 'keepDates') {
+        this.formData.duration = df.durationByStamp(df.stamp(this.formData.end_date) - df.stamp(value))
+      } else {
+        debugger
+        const expectEndDate = df.format(df.stamp(value) + df.stampByDuration(_this.formData.duration))
+        /**
+         * 2. 计划结束时间的最大限制
+         */
+        // if (df.stamp(expectEndDate) > df.stamp(maxEndDate)) {
+        //   this.formData.end_date = maxEndDate
+        //   this.formData.duration = df.durationByStamp(df.stamp(maxEndDate) - df.stamp(value))
+        //   return
+        // }
+        this.formData.end_date = expectEndDate
+      }
+      this.dataSource.forEach((item) => {
+        if (item.fieldName == 'end_date') {
+          item.fieldConfig['picker-options'] = this.endDateOptions()
+          item.eventHandle = {
+            change: 'endDateChangeHandle'
+          }
+        }
+      })
+    },
+
+    endDateChangeHandle (val) {
+      const _this = this
+      const df = this.dateFormat()
+      /**
+       * 1. 计划结束时间的最大最小限制
+       */
+      let minEndDate
+      let maxEndDate
+      if (this.ganttName === 'changeGantt') {
+        minEndDate = df.format(this.ganttObject.getTask(this.taskId).start_date)
+        maxEndDate = df.format(this.ganttObject.getTaskByWBSCode('1').end_date)
+      } else {
+        minEndDate = df.format(this.ganttObject.config.plan_limit(this.ganttObject, this.taskId, 'min', 'end'))
+        maxEndDate = df.format(this.ganttObject.config.plan_limit(this.ganttObject, this.taskId, 'max', 'end'))
+      }
+      let value = val
+      // if (df.stamp(val) > df.stamp(maxEndDate)) {
+      //   value = maxEndDate
+      //   this.formData.end_date = maxEndDate
+      //   // this.$message({
+      //   //   type: 'warning',
+      //   //   message: `计划完成时间截止期限为${maxEndDate}`
+      //   // })
+      // } else if (df.stamp(val) < df.stamp(minEndDate)) {
+      //   value = minEndDate
+      //   this.formData.end_date = minEndDate
+      //   // this.$message({
+      //   //   type: 'warning',
+      //   //   message: `计划完成时间最小期限为${minEndDate}`
+      //   // })
+      // }
+      const duration = df.durationByStamp(df.stamp(value) - df.stamp(_this.formData.start_date))
+      this.formData.duration = duration
+      if (duration < 1) {
+        _this.formData.start_date = _this.formData.end_date
+      }
+    },
+    startDateChangeHandle2 (val) {
+      const df = this.dateFormat()
+      const value = val
+      this.formData.duration = df.durationByStamp(df.stamp(this.formData.end_date) - df.stamp(value))
+      this.dataSource.forEach((item) => {
+        if (item.fieldName == 'end_date') {
+          item.fieldConfig['picker-options'] = this.endDateOptions2()
+          item.eventHandle = {
+            change: 'endDateChangeHandle2'
+          }
+        }
+      })
+    },
+    endDateChangeHandle2 (val) {
+      const _this = this
+      const df = this.dateFormat()
+      const value = val
+      const duration = df.durationByStamp(df.stamp(value) - df.stamp(_this.formData.start_date))
+      this.formData.duration = duration
+    },
+    durationChangeHandle (val) {
+      const _this = this
+      const df = this.dateFormat()
+      // const rootTask = this.ganttObject.getTaskByWBSCode('1')
+      // const maxDuration = df.durationByStamp(df.stamp(rootTask.end_date) - df.stamp(_this.formData.start_date))
+      // if (maxDuration - 1 < val) {
+      //   this.formData.end_date = rootTask.end_date
+      //   this.formData.duration = maxDuration
+      // } else {
+      //   /**
+      //    * 设置计数器最大值
+      //    */
+      this.formData.end_date = df.format(df.stamp(_this.formData.start_date) + df.stampByDuration(val))
+      // }
+    },
+    dateFormat () {
+      const d = {
+        format: (date) => {
+          return moment(date).format('YYYY-MM-DD')
+        },
+        stamp: (date) => {
+          return new Date(date).getTime() // 时间戳
+        },
+        stampByDuration: (duration) => {
+          // (工期天数) 对应的毫秒值
+          const MS = 24 * 60 * 60 * 1000
+          return (duration - 1) * MS
+        },
+        durationByStamp: (stamp) => {
+          // (毫秒值) 对应的工期天数
+          const MS = 24 * 60 * 60 * 1000
+          return (stamp / MS + 1).toFixed(0)
+        }
+      }
+      return d
+    },
+    autoSchedulingChangeHandle (val) {
+      this.updataDataSource(val)
+    },
+    updataDataSource (autoSchedulingValue) {
+      if (this.ganttObject.hasChild(this.taskId)) {
+        const valueObj = {
+          1: true,
+          2: false
+        }
+        const startDate = this.dataSource.filter((item) => item.fieldName === 'start_date')
+        const endDate = this.dataSource.filter((item) => item.fieldName === 'end_date')
+        const duration = this.dataSource.filter((item) => item.fieldName === 'duration')
+        startDate[0].fieldConfig.disabled = valueObj[autoSchedulingValue]
+        endDate[0].fieldConfig.disabled = valueObj[autoSchedulingValue]
+        duration[0].fieldConfig.disabled = valueObj[autoSchedulingValue]
+      }
+    },
+    ownerChangeHandle (val) {
+      if (!val) {
+        this.formData.realName = ''
+        this.formData.dutyDeptName = ''
+      } else {
+        const user = this.ownerDataOptions.find((item) => {
+          return item.id === val
+        })
+        this.formData.realName = user.name
+        this.formData.owner_type = 'team'
+        // this.formData.owner_type = this.vueThis.distribution
+        this.formData.dutyDeptName = user.deptName
+      }
+    },
+    achievementsChangeHandle (val) {
+      const ganttObject = GanttObject.getGanttObject(this.ganttName)
+      let parentId = ganttObject.getParent(this.taskId)
+      let parentTask = ganttObject.getTask(parentId)
+      if (ganttObject.getGlobalTaskIndex(parentId) !== 0 && parentTask.achievements) {
+        this.formData.proportion = ((Number(this.formData.achievements) / Number(parentTask.achievements)) * 100).toFixedNoRound(2)
+      }
+    },
+    proportionChangeHandle (val) {
+      const ganttObject = GanttObject.getGanttObject(this.ganttName)
+      let parentId = ganttObject.getParent(this.taskId)
+      let parentTask = ganttObject.getTask(parentId)
+      if (ganttObject.getGlobalTaskIndex(parentId) !== 0 && parentTask.achievements) {
+        this.formData.achievements = (Number(parentTask.achievements) * (Number(val) / 100)).toFixedNoRound(2)
+      }
+    }
+  }
+}
+</script>

@@ -1,0 +1,183 @@
+<template>
+  <div style="position: relative; padding-bottom: 16px;width:100%;height: calc(100% - 30px);">
+    <form-list ref="form"
+               v-if="!isEmpty"
+               @rendered="rendered"
+               form-layout="vertical"
+               @saved="saved"
+               :data-source="dataSource"
+               :api="saveApi"
+               :form="formData"
+               :is-custom-validate="isCustomValidate"
+               :exist-default-btn="existDefaultBtn"
+               :exist-custom-btn="existCustomBtn"
+               :other-param="otherParam"
+               @custom-validate="customValidate">
+    </form-list>
+    <div v-if="isEmpty"
+         style="height: 100%;width:100%;display: flex; justify-content: center; align-items: center;">
+      <el-empty class="custom_empty"
+                :image-size="100"></el-empty>
+    </div>
+  </div>
+</template>
+<style scoped>
+.custom_empty {
+  padding: 0;
+}
+</style>
+<script>
+import { P8Form as FormList } from 'p8-components-ui'
+import { mapGetters } from 'vuex'
+
+export default {
+  name: 'PlanOutputEdit',
+  components: {
+    FormList
+  },
+  props: {
+    taskId: {
+      type: String,
+      default: null
+    },
+    ganttName: {
+      type: String,
+      default: null
+    },
+    formWidth: {
+      type: Number,
+      default: 0
+    }
+  },
+  data () {
+    return {
+      saveApi: 'planGanttManager.outputSave',
+      isCustomValidate: true,
+      existDefaultBtn: false,
+      existCustomBtn: true,
+      isEmpty: false,
+      dataSource: [
+        {
+          // labelText: '输出信息',
+          type: 'addField', // 控件类型--增删行
+          colLayout: 'singleCol',
+          fieldName: 'outputRequests', // 保存时格式，类似detailList[0].roleName
+          addFieldLayout: 'vertical',
+          isView: true,
+          children: [
+            {
+              type: 'hidden',
+              fieldName: 'id'
+            },
+            {
+              type: 'hidden',
+              fieldName: 'activityInfoId'
+            },
+            {
+              type: 'link',
+              labelText: '提交物名称',
+              fieldName: 'aorName',
+              colLayout: 'singleCol',
+              callback: this.toLink
+            },
+            {
+              type: 'view',
+              labelText: '输出类型',
+              fieldName: 'aorOutputTypeDisp',
+              colLayout: 'singleCol'
+            },
+            {
+              type: 'view',
+              fieldName: 'aorDetail',
+              labelText: '补充说明',
+              colLayout: 'singleCol'
+            },
+            {
+              type: 'uploadView',
+              labelText: '附件', // 控件显示的文本
+              fieldName: 'projectDesignFile',
+              colLayout: 'singleCol'
+            }
+            // {
+            //   type: 'link',
+            //   labelText: 'SDM链接',
+            //   fieldName: 'attFileLink',
+            //   colLayout: 'singleCol',
+            // callback: this.toLink
+
+            // }
+          ]
+        }
+      ],
+      formData: {
+        outputRequests: [],
+        confidentialiteList: []
+      },
+      otherParam: {
+        taskId: ''
+      },
+      oldOutput: []
+    }
+  },
+  computed: {
+    ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
+  },
+  mounted () { },
+  methods: {
+    toLink (k) {
+      window.open(k.attFileLink, '_blank')
+    },
+    rendered () {
+      if (this.taskId && this.taskId !== '') {
+        this.getOutputData(this.taskId)
+      }
+    },
+    getOutputData (taskId) {
+
+      const that = this
+      that.otherParam = { taskId: taskId }
+      that.$api['taskManager.getOutputIo']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId })
+        .then(function (res) {
+          let datas = []
+          if (Array.isArray(res) && res.length > 0) {
+            that.isEmpty = false
+            datas = res
+          } else {
+            that.isEmpty = true
+          }
+          // 变更进入时先查看newTaskMap中是否存在对应值若存在，显示，否则加载任务描述数据
+          if (
+            (that.ganttName === 'changeGantt' || that.ganttName === 'analysisGantt') &&
+            JSON.stringify(that.vueThis.newTaskMap) !== '{}' &&
+            that.vueThis.newTaskMap[taskId] &&
+            that.vueThis.newTaskMap[taskId].updateInfo &&
+            that.vueThis.newTaskMap[taskId].updateInfo.indexOf('output') !== -1
+          ) {
+            datas = that.vueThis.newTaskMap[taskId].output
+          }
+          // 附件日期处理
+          // if (datas && datas.length > 0) {
+          //   datas.forEach(function (att) {
+          //     if (att.uploadFiles && att.uploadFiles.length > 0) {
+          //       att.uploadFiles.forEach(function (t) {
+          //         t.itemCreateTime = null
+          //       })
+          //     } else {
+          //       att.uploadFiles = []
+          //     }
+          //   })
+          // }
+          that.formData.outputRequests = datas
+          that.oldOutput = JSON.parse(JSON.stringify(datas))
+          that.formData = Object.assign({}, that.formData)
+          that.formData.attFileLink = datas.attFileLink
+        })
+        .catch(function (error) {
+          console.error('error' + error)
+        })
+    },
+    saved (res) { },
+    customValidate (saveParams) { }
+  }
+}
+</script>

@@ -1,0 +1,14 @@
+@mixin partial {
+  .el-col-12 .el-form-item__content {
+    height: 40px;
+  }
+  .el-form .el-col-12 .el-form-item--medium .el-form-item__content {
+    height: 36px;
+  }
+  .el-form .el-col-12 .el-form-item--small .el-form-item__content {
+    height: 32px;
+  }
+  .el-form .el-col-12 .el-form-item--mini .el-form-item__content {
+    height: 28px;
+  }
+}

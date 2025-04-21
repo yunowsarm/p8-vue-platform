@@ -1,0 +1,211 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=7">
+    <title>欢迎使用 基于流程精益化项目管理系统 -- Powered By RDMU</title>
+    <script src="./static/jquery/jquery-1.12.4.min.js"></script>
+    <script src="./static/jquery/json2.js"></script>
+    <script>
+        var strRadom=randomNum(0,9);
+        var strPin="";
+        var rtn="";
+        var Rtn="";
+        var Rtn1="";
+        var Rtn2="";
+        var Rtn3="";
+        var CAServerIP = "10.66.65.33";
+        var xmlhttp="";
+        //获取当前的浏览器信息
+        // var sys = getBrowserInfo();
+        $(function(){
+            LoginSys(CAServerIP,strRadom);
+            // SubmitForm()
+        });
+        function LoginSys(CAServerIP,strRadom)
+        {
+//            alert(CAServerIP+"ssssss"+strRadom);
+            if(usb_ocx) return documentState()
+            rtn = usb_ocx.VgetnameFirst(CAServerIP,"1");
+            if (rtn.match("#."))//包含＃
+            {
+                if(rtn == "#2")
+                {
+                   // strPin = window.login.password.value;
+                   // rtn = usb_ocx.Vgetname(strPin,CAServerIP,"1");
+                    if (rtn.match("#."))//包含＃
+                    {
+                        if ("#8" == rtn)
+                            alert("Pin码输入错误！");
+                        else
+                            alert("没有插入key或者key错误！");
+                            documentState()
+                            // window.location.href=base+'/loginPage.do';
+
+                        return "";
+                    }
+                    else
+                    {
+
+                        var str=rtn.split("\\");
+                        SubmitForm(str[2],strRadom);
+                        return rtn;
+                    }
+                }
+                else
+                {
+                    //alert("登陆错误" + rtn)
+                    alert("没有插入key或者key错误！");
+                    documentState()
+                    return "";
+                }
+            }
+            else
+            {
+                var str=rtn.split("\\");
+                SubmitForm(str[2],strRadom);
+                return rtn;
+            }
+        }
+
+        function SubmitForm(strUserName,strRadom)
+        {
+
+//            $("#Cer").val("MIICiTCCAfKgAwIBAgIEMeZfHzANBgkqhkiG9w0BAQQFADB9MQswCQYDVQQGEwJDYTEPMA0GA1UEBxMGTmVwZWFuMR4wHAYDVQQLExVObyBMaWFiaWxpdHkgQWNjZXB0ZWQxHzAdBgNVBAoTFkZvciBEZW1vIFB1cnBvc2VzIE9ubHkxHDAaBgNVBAMTE0VudHJ1c3QgRGVtbyBXZWIgQ0EwHhcNOTYwNzEyMTQyMDE1WhcNOTYxMDEyMTQyMDE1WjB0MSQwIgYJKoZIhvcNAQkBExVjb29rZUBpc3NsLmF0bC5ocC5jb20xCzAJBgNVBAYTAlVTMScwJQYDVQQLEx5IZXdsZXR0IFBhY2thcmQgQ29tcGFueSAoSVNTTCkxFjAUBgNVBAMTDVBhdWwgQS4gQ29va2UwXDANBgkqhkiG9w0BAQEFAANLADBIAkEA6ceSq9a9AU6g+zBwaL/yVmW1/9EE8s5you1mgjHnj0wAILuoB3L6rm6jmFRy7QZTG43IhVZdDua4e+5/n1ZslwIDAQABo2MwYTARBglghkgBhvhCAQEEBAMCB4AwTAYJYIZIAYb4QgENBD8WPVRoaXMgY2VydGlmaWNhdGUgaXMgb25seSBpbnRlbmRlZCBmb3IgZGVtb25zdHJhdGlvbiBwdXJwb3Nlcy4wDQYJKoZIhvcNAQEEBQADgYEAi8qcF3zfFqy1sV8NhjwLVwOKuSfhR/Z8mbIEUeSTlnH3QbYt3HWZQ+vXI8mvtZoBc2FzlexKeIkAZXCesqGbs6z6nCt16P6tmdfbZF3I3AWzLquPcOXjPf4HgstkyvVBn0ApjAFN418KF/Cx4qyHB4cjdvLrRjjQLnb2+ibo7QU=");
+//            $("#UserSign").val("MIIEVjCCAz6gAwIBAgIOQTAyMDAwMDAwMDAwRjEwDQYJKoZIhvcNAQEEBQAwODEPMA0GA1UEBhQG5Lit5Zu9MRIwEAYDVQQKFAnoiKrlpKnpg6gxETAPBgNVBAMUCENB5Lit5b+DMCIYDzIwMDUxMDI0MTAxMjAwWhgPMjAwODEwMjQwMDAwMDBaMIGpMQ8wDQYDVQQGFAbkuK3lm70xDzANBgNVBAoUBuWMl+S6rDENMAsGA1UECxQETFJBMjEQMA4GA1UEAxQH5rWL6K+VNzEMMAoGA1UEKhQDc2hpMQ8wDQYDVQQMFAbnp5HlkZgxFTATBgNVBCkUDCNocS5jZXNoaTcjIzEPMA0GA1UELBQG5pmu6YCaMR0wGwYJKoZIhvcNAQkBFg5jZXNoaTdAaHEuY2FzYzCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA3xARzPnCsdJ2MJYZDyTJy5ds+sZ+XcO+6WmpD/oZ4AngWdAgNk9jonKXGkEsoHh4qMSAzslGBELY3EGkbri9v+j8KS6hStq4ec71r0MwIBz5bYgFg3ZMaPJ4ELesQi7VQshJ2NLX78We5Lba4nQfZ9a+4Bm9Pv6DMTbsrEu/9ycCAwEAAYIVADAwMDAwNDUyMzQ1NDM2NTc2NzM0o4IBUzCCAU8wJAYDVR0RBB0wG6AZBgorBgEEAYI3FAIDoAsMCWNlc2hpN0BocTA+BgNVHR8ENzA1MCqgKKAmhiRodHRwOi8veGhxLmhxLmNhc2MvY2VydC9DUkxDZXJ0aS5DUkwwB6AFoAOGAQEwHwYDVR0jBBgwFoAUNpIBRfzdU/MgYHDepTw4hAJ/9WgwHQYDVR0OBBYEFJuT5hMm05QGLrx5IwtyfMF54F/EMAsGA1UdDwQEAwIGwDApBgNVHSUEIjAgBggrBgEFBQcDBAYIKwYBBQUHAwIGCisGAQQBgjcUAgIwKQYJKwYBBAGCNxQCBBweGgBTAG0AYQByAHQAYwBhAHIAZABVAHMAZQByMEQGCSqGSIb3DQEJDwQ3MDUwDgYIKoZIhvcNAwICAgCAMA4GCCqGSIb3DQMEAgIAgDAHBgUrDgMCBzAKBggqhkiG9w0DBzANBgkqhkiG9w0BAQQFAAOCAQEAJI+WymG4k8nwWJseI7Ozhv5UYIwn5ulWCIXqnrsezsS8Oaffajt3TN4rPhuKO7t0d870cHfzh0uHUoE32a7oH+dqd5aY+MDsAsEOEDqSOD74WIYDVa/aDhCVebJ6q7YG+I0rcj/JVZDkHZdxiucbmPsqcVAUCqsA5p8+W6iggcAObTBfhr9XmVkBJ5yel4wfFGHlMF+eR6Sx0y1SDBvnxJHYf2WN3hARLPoEEkZ9hc/ZogQ5Fgjf0FyCl3C/NMZbOBqjgqzznwvhcPfCUv/s4SlTeh/vJEQUxHPaWt4yFbGbY69uxLXPyGPvnqN1VVGJTQr0xIzVHON+XiQfP2G6/Q==");
+//            $("#Radom").val(strRadom);
+            var dataArg =  {
+                cer: "MIICiTCCAfKgAwIBAgIEMeZfHzANBgkqhkiG9w0BAQQFADB9MQswCQYDVQQGEwJDYTEPMA0GA1UEBxMGTmVwZWFuMR4wHAYDVQQLExVObyBMaWFiaWxpdHkgQWNjZXB0ZWQxHzAdBgNVBAoTFkZvciBEZW1vIFB1cnBvc2VzIE9ubHkxHDAaBgNVBAMTE0VudHJ1c3QgRGVtbyBXZWIgQ0EwHhcNOTYwNzEyMTQyMDE1WhcNOTYxMDEyMTQyMDE1WjB0MSQwIgYJKoZIhvcNAQkBExVjb29rZUBpc3NsLmF0bC5ocC5jb20xCzAJBgNVBAYTAlVTMScwJQYDVQQLEx5IZXdsZXR0IFBhY2thcmQgQ29tcGFueSAoSVNTTCkxFjAUBgNVBAMTDVBhdWwgQS4gQ29va2UwXDANBgkqhkiG9w0BAQEFAANLADBIAkEA6ceSq9a9AU6g+zBwaL/yVmW1/9EE8s5you1mgjHnj0wAILuoB3L6rm6jmFRy7QZTG43IhVZdDua4e+5/n1ZslwIDAQABo2MwYTARBglghkgBhvhCAQEEBAMCB4AwTAYJYIZIAYb4QgENBD8WPVRoaXMgY2VydGlmaWNhdGUgaXMgb25seSBpbnRlbmRlZCBmb3IgZGVtb25zdHJhdGlvbiBwdXJwb3Nlcy4wDQYJKoZIhvcNAQEEBQADgYEAi8qcF3zfFqy1sV8NhjwLVwOKuSfhR/Z8mbIEUeSTlnH3QbYt3HWZQ+vXI8mvtZoBc2FzlexKeIkAZXCesqGbs6z6nCt16P6tmdfbZF3I3AWzLquPcOXjPf4HgstkyvVBn0ApjAFN418KF/Cx4qyHB4cjdvLrRjjQLnb2+ibo7QU=",
+                userSign: "MIIEVjCCAz6gAwIBAgIOQTAyMDAwMDAwMDAwRjEwDQYJKoZIhvcNAQEEBQAwODEPMA0GA1UEBhQG5Lit5Zu9MRIwEAYDVQQKFAnoiKrlpKnpg6gxETAPBgNVBAMUCENB5Lit5b+DMCIYDzIwMDUxMDI0MTAxMjAwWhgPMjAwODEwMjQwMDAwMDBaMIGpMQ8wDQYDVQQGFAbkuK3lm70xDzANBgNVBAoUBuWMl+S6rDENMAsGA1UECxQETFJBMjEQMA4GA1UEAxQH5rWL6K+VNzEMMAoGA1UEKhQDc2hpMQ8wDQYDVQQMFAbnp5HlkZgxFTATBgNVBCkUDCNocS5jZXNoaTcjIzEPMA0GA1UELBQG5pmu6YCaMR0wGwYJKoZIhvcNAQkBFg5jZXNoaTdAaHEuY2FzYzCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA3xARzPnCsdJ2MJYZDyTJy5ds+sZ+XcO+6WmpD/oZ4AngWdAgNk9jonKXGkEsoHh4qMSAzslGBELY3EGkbri9v+j8KS6hStq4ec71r0MwIBz5bYgFg3ZMaPJ4ELesQi7VQshJ2NLX78We5Lba4nQfZ9a+4Bm9Pv6DMTbsrEu/9ycCAwEAAYIVADAwMDAwNDUyMzQ1NDM2NTc2NzM0o4IBUzCCAU8wJAYDVR0RBB0wG6AZBgorBgEEAYI3FAIDoAsMCWNlc2hpN0BocTA+BgNVHR8ENzA1MCqgKKAmhiRodHRwOi8veGhxLmhxLmNhc2MvY2VydC9DUkxDZXJ0aS5DUkwwB6AFoAOGAQEwHwYDVR0jBBgwFoAUNpIBRfzdU/MgYHDepTw4hAJ/9WgwHQYDVR0OBBYEFJuT5hMm05QGLrx5IwtyfMF54F/EMAsGA1UdDwQEAwIGwDApBgNVHSUEIjAgBggrBgEFBQcDBAYIKwYBBQUHAwIGCisGAQQBgjcUAgIwKQYJKwYBBAGCNxQCBBweGgBTAG0AYQByAHQAYwBhAHIAZABVAHMAZQByMEQGCSqGSIb3DQEJDwQ3MDUwDgYIKoZIhvcNAwICAgCAMA4GCCqGSIb3DQMEAgIAgDAHBgUrDgMCBzAKBggqhkiG9w0DBzANBgkqhkiG9w0BAQQFAAOCAQEAJI+WymG4k8nwWJseI7Ozhv5UYIwn5ulWCIXqnrsezsS8Oaffajt3TN4rPhuKO7t0d870cHfzh0uHUoE32a7oH+dqd5aY+MDsAsEOEDqSOD74WIYDVa/aDhCVebJ6q7YG+I0rcj/JVZDkHZdxiucbmPsqcVAUCqsA5p8+W6iggcAObTBfhr9XmVkBJ5yel4wfFGHlMF+eR6Sx0y1SDBvnxJHYf2WN3hARLPoEEkZ9hc/ZogQ5Fgjf0FyCl3C/NMZbOBqjgqzznwvhcPfCUv/s4SlTeh/vJEQUxHPaWt4yFbGbY69uxLXPyGPvnqN1VVGJTQr0xIzVHON+XiQfP2G6/Q==",
+                radom: '2458'
+            };
+            // 有真实ca信息去掉下面一行的注释
+            // var dataArg = GetSignUser(strUserName,strRadom);
+            jQuery.support.cors = true;
+            $.ajax({
+                type: "POST",
+                url: "/user/caLogin",
+                data: JSON.stringify(dataArg),
+                dataType: "text",
+                crossDomain: true == !(document.all),
+                success: function(msg){
+                    // $('body').append("<li>成功:" + JSON.stringify(msg) + "</li>");
+                    var data = JSON.parse(msg)
+                    if(data.head.code === '200'){
+                        documentState('login',data.data.token.replace('Bearer ',''))
+                    } else if(data.head.code === '401') {
+                        documentState()
+                    }
+                },
+                error: function(e){
+                    // $('body').append("<li>出错:" + JSON.stringify(e) + "</li>");
+                    documentState()
+                }
+            });
+
+        }
+        function GetSignUser(m_User,m_Radom)
+        {
+            Rtn1=usb_ocx.concat(m_User,"","");
+            Rtn2=usb_ocx.concat(m_Radom,Rtn1,"");//把随机串＋登陆名转换成base64串；
+            Rtn3=usb_ocx.dataSignCertEx(Rtn2,"1","0");
+
+            return {
+                Cer: usb_ocx.readCert("3","1"),
+                UserSign: Rtn3,
+                Radom: m_Radom
+            }
+        }
+        //生成从minNum到maxNum的随机数
+        function randomNum(minNum,maxNum){
+            switch(arguments.length){
+                case 1:
+                    return parseInt(Math.random()*minNum+1,10);
+                break;
+                case 2:
+                    return parseInt(Math.random()*(maxNum-minNum+1)+minNum,10);
+                break;
+                    default:
+                        return 0;
+                    break;
+            }
+        }
+
+        // document.onreadystatechange = documentState ;
+        // eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ6aGFuZ3NhbiIsImF1dGgiOiJteVRhc2s6bGlzdCxkdXR5VG9rZW46aW1wb3J0RXhjZWwsZHV0eVRva2VuOnNhdmUsZHV0eVRva2VuOmRlbGV0ZSxkdXR5VG9rZW46c2hvdyxjb21tb25SZXNvdXJjZXNQbGFuOnNhdmUscmVzb3VyY2VNYW5hZ2VyOmxpc3Qsd2hvbGVEZXNjcmliZTpyZWxlYXNlTWVudSx3aG9sZURlc2NyaWJlOmxpc3QsZHV0eVRva2VuOmluZm8sd2hvbGVEZXNjcmliZTpmaW5pc2hNZW51LHdob2xlRGVzY3JpYmU6cGVybWlzc2lvblNldHRpbmcsY29udHJhY3Q6bGlzdCx3aG9sZURlc2NyaWJlOmRlbGV0ZSx3aG9sZURlc2NyaWJlOnBvbGljeUZpbGUsd2hvbGVEZXNjcmliZTpzYXZlLGR1dHlUb2tlbjpsaXN0LHdob2xlRGVzY3JpYmU6aW1wbGVtZW50UmVsZWFzZSx3aG9sZURlc2NyaWJlOndpdGhkcmF3SW1wbGVtZW50UmVsZWFzZSx3aG9sZURlc2NyaWJlOmluZm8sd2hvbGVEZXNjcmliZTp3aXRoZHJhdyx3aG9sZURlc2NyaWJlOmRpcmVjdFJlbGVhc2UiLCJleHAiOjE2MjA4NDA3ODd9.9v2ciNkarQKBLPlqJhgg5QVNuvlFwEVh8tbSX15uwMwzZ7YbcYZseCSixeqsgzwv111zYH5YNV4LzcFulhT8wQ'
+        function documentState(redirect,token){
+            var _redirect = redirect ? 'redirect='+redirect : 'redirect=login'
+            var _token = token ? '&token='+token : ''
+            var urlQuery = _redirect ? 'index.html?'+_redirect+_token : 'login?'
+            // ?redirect=login?userAccount=lisi&userPassword=1&redirectId=P1
+            if( document.readyState == "complete" && !checkIE() ){
+
+                window.location.href = window.location.href.replace('home.html', urlQuery);
+
+            }else if(checkIE()&&!!window.ActiveXObject){//IE跳转谷歌
+                var objShell=new ActiveXObject("WScript.Shell");
+                var reject=false;
+                try{
+                    var path=objShell.RegRead("HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\chrome.exe\\");
+                    path=path.replace(/\ /g,'%20');//空格替换为%20
+                    //path=path.replace(/\\/g,'\\\\');//单斜杠替换为双斜杠
+                    var url=window.location.href.replace('home.html', urlQuery);;
+                    objShell.Run("file:///"+path+" "+url,0,true);
+                    window.opener=null;
+                    window.open('', '_self', '');
+                    window.close();
+                }
+                catch(err){
+                    reject=true
+                }
+                if(reject){
+                    try{
+                        var path=objShell.RegRead("HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\firefox.exe\\");
+                        path=path.replace(/\ /g,'%20');//空格替换为%20
+                        //path=path.replace(/\\/g,'\\\\');//单斜杠替换为双斜杠
+                        var url=window.location.href.replace('home.html', urlQuery);
+                        objShell.Run("file:///"+path+" "+url,1,true);
+                        window.opener=null;
+                        window.open('', '_self', '');
+                        window.close();
+                    }
+                    catch(err){
+                        //alert("程序不存在或没有权限");
+                    }
+                }
+            }else{
+              window.location.href = window.location.href.replace('home.html', urlQuery);
+            }
+        }
+
+        // function checkFirefox(){
+        //     //sys.browser得到浏览器的类型，sys.ver得到浏览器的版本
+        //     if(sys.browser != 'firefox' && sys.ver != '46.0'){
+        //         return true;
+        //     }
+        // }
+
+        function checkIE(){
+            if( navigator.appName == "Microsoft Internet Explorer" ){
+                return true;
+            }
+        }
+
+        //获取当前的浏览器信息
+        function getBrowserInfo(){
+            var Sys = {};
+            var ua = navigator.userAgent.toLowerCase();
+            var re =/(msie|firefox|chrome|opera|version).*?([\d.]+)/;
+            var m = ua.match(re);
+            Sys.browser = m[1].replace(/version/, "'safari");
+            Sys.ver = m[2];
+            return Sys;
+        }
+
+    </script>
+</head>
+<body id="body">
+</body>
+<object classid="clsid:9703D810-ACC0-4C22-83C7-3FD9ED198B6E" id="usb_ocx" name="usb_ocx" style="VISIBILITY:hidden"
+        codebase="IB_USBKEY.ocx" width="100" height="50">
+</object>
+</html>

@@ -1,0 +1,143 @@
+@charset "UTF-8";
+@import "./commonStyle/common";
+// @import "mixins/mixins";
+@import "./commonStyle/ie";
+
+@if $lte11 {
+  @include partial;
+}
+
+.formList.el-form {
+  > .el-row {
+    padding: 10px;
+    box-sizing: border-box;
+
+    &.existBtn:first-child {
+      height: calc(100% - 50px);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    &.formBtn {
+      height: auto;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      border-top: 1px solid $base-line-color;
+      box-sizing: border-box;
+      padding-bottom: 9px;
+      padding-top: 9px;
+    }
+
+    .el-form-item__blank .el-form-item__label-wrap {
+      font-weight: bolder;
+    }
+
+    .el-form-item__label {
+      font-size: 12px;
+    }
+
+    .el-form-item__content {
+      font-size: 12px;
+      .el-col-12 .view {
+        line-height: 32px;
+        padding-top: 0.5px;
+        height: 40px;
+        padding-bottom: 0.5px;
+      }
+      // .el-input--medium {
+      //   height: 36px;
+      //   line-height: 36px;
+      // }
+      // .el-input--small {
+      //   height: 32px;
+      //   line-height: 32px;
+      // }
+      // .el-input--mini {
+      //   height: 28px;
+      //   line-height: 28px;
+      // }
+    }
+
+    .el-col-12 .el-form-item--medium .el-form-item__content .view {
+      height: 36px;
+    }
+    .el-col-12 .el-form-item--small .el-form-item__content .view {
+      height: 32px;
+    }
+    .el-col-12 .el-form-item--mini .el-form-item__content .view {
+      height: 28px;
+    }
+
+    /**密级附件校验信息位置 */
+    @media only screen and (min-width: 1920px) {
+      .el-form-item.el-form-item__upload {
+        .el-form-item__content {
+          .customUpload:not(.noFiles) + .el-form-item__error {
+            left: 62.5%;
+          }
+        }
+      }
+    }
+    @media only screen and (min-width: 1200px) {
+      .el-form-item.el-form-item__upload {
+        .el-form-item__content {
+          .customUpload:not(.noFiles) + .el-form-item__error {
+            left: 62.5%;
+          }
+        }
+      }
+    }
+    @media only screen and (min-width: 992px) {
+      .el-form-item.el-form-item__upload {
+        .el-form-item__content {
+          .customUpload:not(.noFiles) + .el-form-item__error {
+            left: 62.5%;
+          }
+        }
+      }
+    }
+    @media only screen and (min-width: 768px) {
+      .el-form-item.el-form-item__upload {
+        .el-form-item__content {
+          .customUpload:not(.noFiles) + .el-form-item__error {
+            left: 62.5%;
+          }
+        }
+      }
+    }
+  }
+}
+
+.el-radio__input.is-disabled.is-checked {
+  .el-radio__inner {
+    background-color: #80bdff;
+    border-color: #80bdff;
+
+    &::after {
+      background-color: #ffffff;
+    }
+  }
+}
+
+.el-checkbox__input.is-disabled.is-checked {
+  .el-checkbox__inner {
+    background-color: #80bdff;
+    border-color: #80bdff;
+
+    &::after {
+      border-color: #ffffff;
+    }
+  }
+}
+.el-radio-button, .el-radio-button__inner {
+  min-width: 70px !important;
+}
+.pop_left {
+  position: absolute;
+  left: -12px;
+}
+.el-tooltip__popper{
+  max-width: 500px !important;
+}
