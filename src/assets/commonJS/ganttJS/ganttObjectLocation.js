@@ -1692,10 +1692,13 @@ function searchFilterLocation(parent, searchForm, ganttObject) {
 
     const wbs = searchForm.wbs // 大纲号模糊查询
     let wbsCheck = true
-    const level = task.$level + 1
-    if (wbs && level != wbs) {
+    if (wbs && task.$wbs && !task.$wbs.includes(wbs)) {
       wbsCheck = false
     }
+    // const level = task.$level + 1
+    // if (wbs && level != wbs) {
+    //   wbsCheck = false
+    // }
     const taskName = searchForm.name ? searchForm.name.trim() : '' // 任务名称
     let taskNameCheck = true
     if (taskName && task.name.indexOf(taskName) === -1) {

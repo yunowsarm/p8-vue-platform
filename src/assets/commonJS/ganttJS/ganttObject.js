@@ -998,7 +998,7 @@ GanttObject.endDateEditor = function (ganttObject) {
       const html = "<div style='width:140px'><input type='date' " + minAttr + maxAttr + " name='" + column.name + "'></div>"
       placeholder.innerHTML = html
     },
-    hide: function () {},
+    hide: function () { },
     set_value: function (value, id, column, node) {
       if (value && value.getFullYear) {
         this.get_input(node).value = dateToStr(ganttObject.date.add(value, -1, 'day'))
@@ -1289,7 +1289,7 @@ GanttObject.customEndDateEditor = function (ganttObject) {
       placeholder.innerHTML = html
       function validateDate(date) {
         const vueThis = store.getters.vueThis
-        if(vueThis.createPage !== 'decompose') {
+        if (vueThis.createPage !== 'decompose') {
           return true
         }
         const task = ganttObject.getTask(id)
@@ -1346,7 +1346,7 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                       date.setTime(date.getTime() - 3600 * 1000 * 24)
                       if (validateDate(date)) {
                         picker.$emit('pick', date)
-                      }else {
+                      } else {
 
                       }
                     }
@@ -1358,7 +1358,7 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                       date.setTime(date.getTime() + 3600 * 1000 * 24)
                       if (validateDate(date)) {
                         picker.$emit('pick', date)
-                      }else {
+                      } else {
 
                       }
                     }
@@ -1370,7 +1370,7 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                       date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
                       if (validateDate(date)) {
                         picker.$emit('pick', date)
-                      }else {
+                      } else {
 
                       }
                     }
@@ -1382,7 +1382,7 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                       date.setTime(date.getTime() + 3600 * 1000 * 24 * 7)
                       if (validateDate(date)) {
                         picker.$emit('pick', date)
-                      }else {
+                      } else {
 
                       }
                     }
@@ -1399,7 +1399,7 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                       }
                       if (validateDate(date)) {
                         picker.$emit('pick', date)
-                      }else {
+                      } else {
 
                       }
                     }
@@ -1416,7 +1416,7 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                       }
                       if (validateDate(date)) {
                         picker.$emit('pick', date)
-                      }else {
+                      } else {
 
                       }
                     }
@@ -1552,7 +1552,7 @@ GanttObject.treeDataEditor = function (ganttObject, editorConfig, editorConfig1)
             config: editorConfig1
           }
         },
-        created() {},
+        created() { },
         mounted() {
           this.$api[this.config.optionUrl.api](this.config.optionUrl.params).then((res) => {
             if (this.config.useTreeFormat) {
@@ -1599,7 +1599,7 @@ GanttObject.treeDataEditor = function (ganttObject, editorConfig, editorConfig1)
     get_input: function (node) {
       return node.querySelector('input')
     },
-    focus: function (node) {}
+    focus: function (node) { }
   }
 }
 GanttObject.treeDataEditorExtra = function (ganttObject, editorConfig) {
@@ -1625,7 +1625,7 @@ GanttObject.treeDataEditorExtra = function (ganttObject, editorConfig) {
             filter: { multiple: config.editorConfig.multiple }
           }
         },
-        created() {},
+        created() { },
         mounted() {
           this.$api[this.config.optionUrl.api](this.config.optionUrl.params).then((res) => {
             if (this.config.useTreeFormat) {
@@ -1671,7 +1671,7 @@ GanttObject.treeDataEditorExtra = function (ganttObject, editorConfig) {
     get_input: function (node) {
       return node.querySelector('input')
     },
-    focus: function (node) {}
+    focus: function (node) { }
   }
 }
 // 带清空按钮的下拉框
@@ -1749,7 +1749,7 @@ GanttObject.selectCanClear = function (ganttObject) {
           },
           mounted() {
             this.$nextTick(() => {
-              setTimeout(()=> {
+              setTimeout(() => {
                 this.$refs.elSelect.$el.querySelector('.el-input__inner').click();
               }, 200)
             })
@@ -1762,13 +1762,13 @@ GanttObject.selectCanClear = function (ganttObject) {
             }
           },
           methods: {
-            inputChange (value) {
+            inputChange(value) {
               document.getElementById('gantt_clearSelect_' + name).value = this.input
             },
             handlerBlur(e) {
-                setTimeout(()=> {
-                  ganttObject.ext.inlineEditors.save();
-                }, 200)
+              setTimeout(() => {
+                ganttObject.ext.inlineEditors.save();
+              }, 200)
             }
           },
           template:
@@ -1785,7 +1785,7 @@ GanttObject.selectCanClear = function (ganttObject) {
       clrearSelectExample.$el.parentNode.removeChild(clrearSelectExample.$el)
     },
     set_value: function (value, id, column, node) {
-      setTimeout(()=> {
+      setTimeout(() => {
         clrearSelectExample.$data.input = value
       }, 50)
       this.get_input(node).value = value
@@ -1826,31 +1826,31 @@ GanttObject.selectCanClear = function (ganttObject) {
  */
 GanttObject.editors = function (ganttObject, formatter, linksFormatter) {
   ganttObject.config.editor_types.custom_text = {
-    show: function(id, column, config, placeholder) {
+    show: function (id, column, config, placeholder) {
       const html = "<div style='width:100%'><input type='text' style='width:100%'></div>";
       placeholder.innerHTML = html;
     },
-    hide: function() {},
-    set_value: function(value, id, column, node) {
+    hide: function () { },
+    set_value: function (value, id, column, node) {
       this.get_input(node).value = value || "";
     },
-    get_value: function(id, column, node) {
+    get_value: function (id, column, node) {
       return this.get_input(node).value;
     },
-    is_changed: function(value, id, column, node) {
+    is_changed: function (value, id, column, node) {
       return this.get_input(node).value !== value;
     },
-    is_valid: function(value, id, column, node) {
+    is_valid: function (value, id, column, node) {
       return true;
     },
-    get_input: function(node) {
+    get_input: function (node) {
       return node.querySelector("input");
     },
-    focus: function(node) {
+    focus: function (node) {
       const input = this.get_input(node);
       if (!input) return;
       if (input.focus) input.focus();
-      if(input.value === "新任务") {
+      if (input.value === "新任务") {
         input.select();
       }
     }
@@ -1859,7 +1859,7 @@ GanttObject.editors = function (ganttObject, formatter, linksFormatter) {
     text: {
       type: 'custom_text',
       map_to: 'name',
-      focus: function(node) {
+      focus: function (node) {
         const input = node.querySelector('input')
         if (!input) return
         if (input.focus) input.focus()
@@ -2038,7 +2038,7 @@ GanttObject.updateScheduling = function (ganttObject, vueThis) {
     if (task && predecessor && task.autoScheduling === '1') {
       updateforecastDate(task, ganttObject)
       ganttObject.updateTask(task.id)
-      }
+    }
     if (task.parent) {
       const parentId = task.parent
       const parentTask = ganttObject.getTask(parentId)
@@ -2155,9 +2155,9 @@ GanttObject.changeUnMoveTask = function (vueThis, ganttObject) {
  * @author yourname
  * @date 2024/04/03
  */
-GanttObject.onTaskTimeChange = function(ganttObject) {
+GanttObject.onTaskTimeChange = function (ganttObject) {
   // 任务更新后触发
-  ganttObject.attachEvent("onAfterTaskUpdate", function(id, task) {
+  ganttObject.attachEvent("onAfterTaskUpdate", function (id, task) {
     // 防止递归调用
     if (task._updating) return;
 
@@ -2280,10 +2280,14 @@ function searchFilter(parent, searchForm, ganttObject) {
 
     const wbs = searchForm.wbs // 大纲号模糊查询
     let wbsCheck = true
-    const level = task.$level + 1
-    if (wbs && level != wbs) {
+    // 修改这里,使用task.$wbs属性进行大纲号匹配
+    if (wbs && task.$wbs && !task.$wbs.includes(wbs)) {
       wbsCheck = false
     }
+    // const level = task.$level + 1
+    // if (wbs && level != wbs) {
+    //   wbsCheck = false
+    // }
     const taskName = searchForm.name ? searchForm.name.trim() : '' // 任务名称
     let taskNameCheck = true
     if (taskName && task.name.indexOf(taskName) === -1) {
@@ -2686,7 +2690,7 @@ GanttObject.checkoutBeforeCellSave = function (ganttObject, vueThis) {
             result = false
           } else {
             // if (newVal > max || newVal < 1) {
-              if (newVal < 1) {
+            if (newVal < 1) {
               result = false
               // msg = '工期值填写错误，只能输入1~' + max + '范围内的值！'
               msg = '工期值填写错误，只能输入正整数！'
@@ -2739,10 +2743,10 @@ GanttObject.checkoutBeforeCellSave = function (ganttObject, vueThis) {
           const maxStartTime = moment(ganttObject.config.plan_limit(ganttObject, taskId, 'max', 'start')).format('YYYY-MM-DD')
           if (sVal === oVal) {
             result = false
-          // } else if (sVal < minStartTime || sVal > maxStartTime) {
-          //   result = false
-          //   msg = '计划开始时间超出设置范围值！'
-          //   task.start_date = state.oldValue
+            // } else if (sVal < minStartTime || sVal > maxStartTime) {
+            //   result = false
+            //   msg = '计划开始时间超出设置范围值！'
+            //   task.start_date = state.oldValue
           } else {
             // 计算完成时间
             const endDate = ganttObject.date.add(ganttObject.calculateEndDate(state.newValue, task.duration), -1, 'day')
@@ -3427,7 +3431,7 @@ export const columnsTypeMap = {
   managerStatus: 'select',
   monitorPoints: 'select',
   planType: 'select',
-  wbs: 'select',
+  wbs: 'input',
   name: 'input',
   owner_id: 'input',
   roleName: 'input',
@@ -3685,12 +3689,12 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
             editor: checkEdit() ? { type: editType, map_to: 'kz' + item.id } : null,
             template: function (task) {
               let result = task['kz' + item.id] ? task['kz' + item.id] : ''
-                if (editType == 'custom_date_editor') {
-                  if (result) {
-                    result = moment(result).format('YYYY-MM-DD')
-                  }
+              if (editType == 'custom_date_editor') {
+                if (result) {
+                  result = moment(result).format('YYYY-MM-DD')
                 }
-                return `<div class='text_overflow' title='${result}'>${result}</div>`
+              }
+              return `<div class='text_overflow' title='${result}'>${result}</div>`
             }
           }
         }
@@ -4008,7 +4012,7 @@ GanttObject.calculateParentForecastDate = function (ganttObject, task) {
           })
         }
       })
-      .catch(() => {})
+      .catch(() => { })
   }
 }
 
