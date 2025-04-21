@@ -289,4 +289,7 @@ export default {
 ::v-deep .formList.el-form > .el-row.formBtn {
   z-index: 9;
 }
+::v-deep .list-main.fullHeight {
+  height: calc(100% - 50px) !important;
+}
 </style>

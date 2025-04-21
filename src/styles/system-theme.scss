@@ -1,14 +1,17 @@
 // 该文件中，css样式的值，不允许存在纯常量
 
 .common-table, .el-table,
-.vxe-table--render-default .vxe-table--body-wrapper
- {
+.vxe-table--render-default .vxe-table--body-wrapper {
   background-color: $table-bg-clolr !important;
 }
+
 .vxe-table--render-default {
   color: $table-text-color !important;
   .vxe-table--body-wrapper table,
   .vxe-table--footer-wrapper table,
+  .vxe-table--render-wrapper {
+    background-color: $table-bg-clolr !important;
+  }
   .vxe-header--column:not(.col--seq):hover {
     background-color: $table-header-bg-clolr !important;
   }
@@ -103,10 +106,10 @@
 
   border-radius:10px;
 }
-.common-table .showSearchRow .colSearch {
+.common-table .showSearchRow .vxe-cell .colSearch {
   background: $table-bg-clolr;
   .el-input__inner, .el-range-input {
-    // background: $table-bg-clolr !important;
+    background: $table-bg-clolr !important;
     border-color: $table-border-color;
     color: $table-text-color;
   }
@@ -132,7 +135,7 @@
   // input样式
   .el-input {
     .el-input__inner {
-      // background: $table-bg-clolr !important;
+      background: $table-bg-clolr !important;
       border-color: $table-border-color;
       color: $table-text-color;
     }
