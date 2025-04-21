@@ -8,8 +8,16 @@
                       :reportParam="reportParam"
                       code="historicalApprovalRecordTable">
           <template #OPERATION="{scope}">
-            <el-button type="text"
+            <el-button type='text'
+                       v-if="toolbarWritingDisplay === 'true'"
                        @click="view(scope.row)">查看</el-button>
+            <el-tooltip v-else
+                        placement="top"
+                        content="查看">
+              <el-button type="primary"
+                         icon="p8 icon-chakan"
+                         @click="view(scope.row)"></el-button>
+            </el-tooltip>
           </template>
         </table-render>
       </el-tab-pane>
@@ -58,11 +66,16 @@ export default {
       selectRow: {},
       reportParam: {
         businessKey: this.taskId
-      }
+      },
+      toolbarWritingDisplay: 'true'
     }
   },
   mounted () {
-
+    if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
+      this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
+    } else {
+      this.toolbarWritingDisplay = 'true'
+    }
   },
   methods: {
     view (row) {

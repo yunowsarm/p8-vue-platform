@@ -1,8 +1,16 @@
 <template>
   <div style="height: 100%;">
     <div style="padding: 1%;">
-      <el-button type="primary"
+      <el-button v-if="toolbarWritingDisplay === 'true'"
+                 type="primary"
                  @click="relevanceClick">保存</el-button>
+      <el-tooltip v-else
+                  placement="top"
+                  content="保存">
+        <el-button type="primary"
+                   icon="p8 icon-baocun"
+                   @click="relevanceClick"></el-button>
+      </el-tooltip>
     </div>
     <vxe-table ref="xDemandTable"
                :comp="comp"
@@ -17,9 +25,16 @@
                @selection-change="handleSelectionChangeDemand"
                @requested-table-data="requestedTableData">
       <template #operation="{ scope }">
-
-        <el-button type="text"
-                   @click="showDetail(scope.row)">查看详情</el-button>
+        <div v-if="toolbarWritingDisplay === 'true'">
+          <el-button type="text"
+                     @click="showDetail(scope.row)">查看详情</el-button>
+        </div>
+        <el-tooltip v-else
+                    placement="top"
+                    content="查看详情">
+          <el-button icon="p8 icon-chakan"
+                     type="primary"></el-button>
+        </el-tooltip>
       </template>
     </vxe-table>
     <common-drawer v-if="relevanceInfoDrawer"
@@ -138,7 +153,15 @@ export default {
       },
       selectRecord: {},
       selectRecords: [],
-      selectDatas: []
+      selectDatas: [],
+      toolbarWritingDisplay: 'true'
+    }
+  },
+  mounted () {
+    if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
+      this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
+    } else {
+      this.toolbarWritingDisplay = 'true'
     }
   },
   methods: {

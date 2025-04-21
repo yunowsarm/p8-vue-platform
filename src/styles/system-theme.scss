@@ -106,6 +106,14 @@
 
   border-radius:10px;
 }
+.common-table .showSearchRow .colSearch {
+  background: $table-bg-clolr;
+  .el-input__inner, .el-range-input {
+    background: $table-bg-clolr !important;
+    border-color: $table-border-color;
+    color: $table-text-color;
+  }
+}
 .common-table .showSearchRow .vxe-cell .colSearch {
   background: $table-bg-clolr;
   .el-input__inner, .el-range-input {
