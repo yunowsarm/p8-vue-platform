@@ -24,6 +24,7 @@
                        @closed="onClose"
                        :create-page="page"
                        :read-only="true"
+                       :taskId="taskId"
                        :wholeDescribeId="wholeDescribeId"
                        :change-id="changeId"></impact-analysis>
     </el-drawer>
