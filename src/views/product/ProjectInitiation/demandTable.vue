@@ -2,8 +2,16 @@
   <div style="height: 100%;background-color: #f3f5f885">
     <div v-if="demandFalg"
          style="padding: 1%;">
-      <el-button type="primary"
+      <el-button v-if="toolbarWritingDisplay === 'true'"
+                 type="primary"
                  @click="relevanceClick">关联</el-button>
+      <el-tooltip v-else
+                  placement="top"
+                  content="关联">
+        <el-button type="primary"
+                   icon="p8 icon-guanlianrenwu"
+                   @click="relevanceClick"></el-button>
+      </el-tooltip>
     </div>
     <vxe-table ref="xTable"
                :comp="comp"
@@ -16,11 +24,52 @@
                :pagination="false"
                :api="tableApi">
       <template #operation="{ scope }">
-        <el-button v-if="demandFalg"
-                   type="text"
-                   @click="cancelDetail(scope.row)">取消关联</el-button>
-        <el-button type="text"
-                   @click="showDetail(scope.row)">查看详情</el-button>
+        <div v-if="toolbarWritingDisplay === 'true'">
+          <el-button-group v-if="toolbarCompactLayout === 'true'">
+            <el-button v-if="demandFalg"
+                       style="margin-right: 2px;"
+                       type="text"
+                       @click="cancelDetail(scope.row)">取消关联</el-button>
+            <el-button type="text"
+                       @click="showDetail(scope.row)">查看详情</el-button>
+          </el-button-group>
+          <div v-else>
+            <el-button v-if="demandFalg"
+                       type="text"
+                       @click="cancelDetail(scope.row)">取消关联</el-button>
+            <el-divider direction="vertical"></el-divider>
+            <el-button type="text"
+                       @click="showDetail(scope.row)">查看详情</el-button>
+          </div>
+        </div>
+        <div v-else>
+          <el-button-group v-if="toolbarCompactLayout === 'true'">
+            <el-tooltip placement="top"
+                        content="取消关联">
+              <el-button style="margin-right: 2px;"
+                         icon="p8 icon-cancel-task-type"
+                         type="primary"></el-button>
+            </el-tooltip>
+            <el-tooltip placement="top"
+                        content="查看详情">
+              <el-button icon="p8 icon-chakan"
+                         type="primary"></el-button>
+            </el-tooltip>
+          </el-button-group>
+          <div v-else>
+            <el-tooltip placement="top"
+                        content="取消关联">
+              <el-button icon="p8 icon-cancel-task-type"
+                         type="primary"></el-button>
+            </el-tooltip>
+            <el-divider direction="vertical"></el-divider>
+            <el-tooltip placement="top"
+                        content="查看详情">
+              <el-button icon="p8 icon-chakan"
+                         type="primary"></el-button>
+            </el-tooltip>
+          </div>
+        </div>
       </template>
     </vxe-table>
     <common-drawer v-if="relevanceViewDrawer"
@@ -156,7 +205,9 @@ export default {
       },
       selectRecord: {},
       selectRecords: [],
-      tableApi: ''
+      tableApi: '',
+      toolbarWritingDisplay: 'true',
+      toolbarCompactLayout: 'false'
     }
   },
   created () {
@@ -180,6 +231,16 @@ export default {
     this.tableApi = 'demandManagement.getRequirementByProject'
   },
   mounted () {
+    if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
+      this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
+    } else {
+      this.toolbarWritingDisplay = 'true'
+    }
+    if (this.$store.getters.baseConfig.toolbarCompactLayout) {
+      this.toolbarCompactLayout = this.$store.getters.baseConfig.toolbarCompactLayout
+    } else {
+      this.toolbarCompactLayout = 'false'
+    }
     if (!this.demandFalg) {
       this.tabelHeight = '100%'
     }

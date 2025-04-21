@@ -10,7 +10,15 @@
                   :pagination=true>
       <template #operate="{ scope }">
         <el-button type='text'
+                   v-if="toolbarWritingDisplay === 'true'"
                    @click="showChangeDetail(scope.row)">查看</el-button>
+        <el-tooltip v-else
+                    placement="top"
+                    content="查看">
+          <el-button type="primary"
+                     icon="p8 icon-chakan"
+                     @click="showChangeDetail(scope.row)"></el-button>
+        </el-tooltip>
       </template>
     </common-table>
     <el-drawer title="变更详情"
@@ -135,10 +143,16 @@ export default {
       },
       page: '',
       changeId: '',
-      analysisVisible: false
+      analysisVisible: false,
+      toolbarWritingDisplay: 'true'
     }
   },
   mounted () {
+    if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
+      this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
+    } else {
+      this.toolbarWritingDisplay = 'true'
+    }
     if (this.createPage == 'compile') {
       this.page = 'planChange'
     } else {

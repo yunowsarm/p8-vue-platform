@@ -1,11 +1,19 @@
 <template>
   <list-layout>
     <template #north>
-      <!-- <el-button type="primary"
-                 @click="createThird">新建</el-button> -->
-      <common-button :comp="comp"
+      <el-button type="primary"
+                 v-if="toolbarWritingDisplay === 'true'"
+                 @click="createThird">新建</el-button>
+      <el-tooltip v-else
+                  placement="top"
+                  content="新建">
+        <el-button type="primary"
+                   icon="p8 icon-add"
+                   @click="createThird"></el-button>
+      </el-tooltip>
+      <!-- <common-button :comp="comp"
                      buttonType="primary"
-                     :customButtonData="customButtonData"></common-button>
+                     :customButtonData="customButtonData"></common-button> -->
       <search-form-list ref="search"
                         :data-source="searchDatasource"
                         @search="search"
@@ -19,14 +27,54 @@
                     :api="tableApi"
                     :pagination="true">
         <template #operation="{scope}">
-          <el-button type="text"
-                     round
-                     @click="updateThird(scope.row)">修改</el-button>
-          <el-divider direction="vertical"></el-divider>
-          <el-button type="text"
-                     round
-                     @click="deleteThird(scope.row)"
-                     :disabled="scope.row.type == '0'">删除</el-button>
+          <div v-if="toolbarWritingDisplay === 'true'">
+            <el-button-group v-if="toolbarCompactLayout === 'true'">
+              <el-button type="text"
+                         style="margin-right: 2px;"
+                         @click="updateThird(scope.row)">修改</el-button>
+              <el-button type="text"
+                         @click="deleteThird(scope.row)"
+                         :disabled="scope.row.type == '0'">删除</el-button>
+            </el-button-group>
+            <div v-else>
+              <el-button type="text"
+                         round
+                         @click="updateThird(scope.row)">修改</el-button>
+              <el-divider direction="vertical"></el-divider>
+              <el-button type="text"
+                         round
+                         @click="deleteThird(scope.row)"
+                         :disabled="scope.row.type == '0'">删除</el-button>
+            </div>
+          </div>
+          <div v-else>
+            <el-button-group v-if="toolbarCompactLayout === 'true'">
+              <el-tooltip placement="top"
+                          content="修改">
+                <el-button style="margin-right: 2px;"
+                           icon="p8 icon-xiugai"
+                           type="primary"></el-button>
+              </el-tooltip>
+              <el-tooltip placement="top"
+                          content="删除">
+                <el-button icon="p8 icon-shanchu"
+                           type="primary"></el-button>
+              </el-tooltip>
+            </el-button-group>
+            <div v-else>
+              <el-tooltip placement="top"
+                          content="修改">
+                <el-button icon="p8 icon-xiugai"
+                           type="primary"></el-button>
+              </el-tooltip>
+              <el-divider direction="vertical"></el-divider>
+              <el-tooltip placement="top"
+                          content="删除">
+                <el-button icon="p8 icon-shanchu"
+                           type="primary"></el-button>
+              </el-tooltip>
+            </div>
+          </div>
         </template>
       </common-table>
     </template>
@@ -114,7 +162,21 @@ export default {
           "eventHandle": "createThird",
           "location": "head"
         },
-      ]
+      ],
+      toolbarWritingDisplay: 'true',
+      toolbarCompactLayout: 'false'
+    }
+  },
+  mounted () {
+    if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
+      this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
+    } else {
+      this.toolbarWritingDisplay = 'true'
+    }
+    if (this.$store.getters.baseConfig.toolbarCompactLayout) {
+      this.toolbarCompactLayout = this.$store.getters.baseConfig.toolbarCompactLayout
+    } else {
+      this.toolbarCompactLayout = 'false'
     }
   },
   methods: {
