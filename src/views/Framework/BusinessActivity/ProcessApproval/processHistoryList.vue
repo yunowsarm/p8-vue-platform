@@ -12,7 +12,13 @@
                   :table-refresh="tableRefresh"
                   :flex="tableFlex"
                   :customPageSizes="[15, 30, 50, 100]"
-                  :pagination="true"></common-table>
+                  :pagination="true">
+      <template #opinion="{ scope }">
+        <div class="opinion">
+         {{scope.row.opinion}}
+        </div>
+      </template>
+    </common-table>
   </div>
 </template>
 
@@ -53,6 +59,9 @@ export default {
         {
           title: '审批意见',
           dataIndex: 'opinion',
+          scopedSlots: {
+            customRender: 'custom'
+          },
           sortable: false,
           align: 'left'
         },
@@ -158,5 +167,9 @@ export default {
 <style scoped>
 .history {
   height: 100% !important;
+}
+.opinion {
+  height: auto;
+  white-space: pre-line;
 }
 </style>
