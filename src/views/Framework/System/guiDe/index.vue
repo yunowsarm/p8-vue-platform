@@ -2,7 +2,15 @@
   <list-layout class="listLayout">
     <template #north>
       <el-button type="primary"
+                 v-if="toolbarWritingDisplay === 'true'"
                  @click="restoreDeleted()">恢复删除项</el-button>
+      <el-tooltip v-else
+                  placement="top"
+                  content="恢复删除项">
+        <el-button type="primary"
+                   icon="p8 icon-huifu"
+                   @click="restoreDeleted()"></el-button>
+      </el-tooltip>
       <search-form-list ref="search"
                         label-width="100px"
                         class="searchList"
@@ -34,7 +42,15 @@
         </template>
         <template #operation="{ scope }">
           <el-button type="text"
+                     v-if="toolbarWritingDisplay === 'true'"
                      @click="deletePrivew(scope.row)">删除</el-button>
+          <el-tooltip v-else
+                      placement="top"
+                      content="删除">
+            <el-button type="primary"
+                       icon="p8 icon-shanchu"
+                       @click="deletePrivew(scope.row)"></el-button>
+          </el-tooltip>
         </template>
       </common-table>
     </template>
@@ -139,12 +155,18 @@ export default {
           align: 'center'
         }
       ],
-      record: {}
+      record: {},
+      toolbarWritingDisplay: 'true'
     }
   },
   computed: {
   },
   mounted () {
+    if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
+      this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
+    } else {
+      this.toolbarWritingDisplay = 'true'
+    }
   },
   methods: {
     restoreDeleted () {
@@ -207,25 +229,25 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  .listLayout{
-    min-width: 500px;
-    padding: 0;
-    margin: 0;
-    height: 100%;
-    ::v-deep .list-header {
-      padding-left: 0;
-      padding-right: 0;
-    }
-    ::v-deep .list-main {
-      padding-left: 0;
-      padding-right: 0;
-    }
+.listLayout {
+  min-width: 500px;
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  ::v-deep .list-header {
+    padding-left: 0;
+    padding-right: 0;
   }
-  .searchList {
+  ::v-deep .list-main {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+.searchList {
+  width: 350px !important;
+  ::v-deep .search-contain {
     width: 350px !important;
-    ::v-deep .search-contain{
-      width: 350px !important;
-    }
   }
+}
 </style>
   
