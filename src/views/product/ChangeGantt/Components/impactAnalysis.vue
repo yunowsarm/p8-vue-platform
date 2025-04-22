@@ -52,10 +52,10 @@
 .myGantt ::v-deep {
   // 2个版本，无数据的颜色修改
   .gantt_row:not([aria-expanded]).analysisColor {
-    background-color: #ffa96e !important;
+    background-color: #ffa96e;
   }
   .analysisColor {
-    background-color: #ffa96e !important;
+    background-color: #ffa96e;
   }
 }
 
