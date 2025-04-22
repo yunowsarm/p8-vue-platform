@@ -34,9 +34,9 @@
   </list-layout>
 </template>
 <style lang="scss" scoped>
-// ::v-deep.el-table__fixed-body-wrapper {
-//   top: 41px !important;
-// }
+::v-deep .el-table__fixed-right {
+  right: 0 !important;
+}
 </style>
 <script>
 import { P8Search as SearchFormList, P8ListLayout as ListLayout, P8Table as CommonTable, P8Button as CommonButton, P8Drawer as CommonDrawer } from 'p8-components-ui'
@@ -76,21 +76,21 @@ export default {
       {
         title: '动作描述',
         dataIndex: 'actionDisplay',
-        minWidth: '120',
+        minWidth: '80',
         align: 'left',
         headerAlign: 'left'
       },
       {
         title: '业务对象名',
         dataIndex: 'entityName',
-        minWidth: '120',
+        minWidth: '80',
         align: 'left',
         headerAlign: 'left'
       },
       {
         title: '功能模块',
         dataIndex: 'module',
-        minWidth: '160',
+        minWidth: '80',
         headerAlign: 'left',
         align: 'left'
       },
@@ -104,7 +104,7 @@ export default {
       {
         title: '日志类型',
         dataIndex: 'logType',
-        minWidth: '180',
+        minWidth: '80',
         align: 'left',
         headerAlign: 'left',
         formatter (row, column, cellValue) {
@@ -140,7 +140,7 @@ export default {
       {
         title: '操作',
         fixed: 'right',
-        width: 150,
+        width: 120,
         dataIndex: 'operation',
         align: 'center',
         headerAlign: 'center',

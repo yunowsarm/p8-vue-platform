@@ -663,6 +663,7 @@ export default {
     saveSuccess (themeArray) {
       this.formData.systemThemeArray = JSON.stringify(themeArray)
       this.customValidate(this.formData)
+      this.isVisibleThemeDrawer = false
     },
     customValidate (params) {
       let saveParams = {}
