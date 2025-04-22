@@ -178,6 +178,10 @@
         </div>
       </div>
       <div class="bottom-con">
+        <P v-if="aiAssistant" class="ai-generated-team">
+          <el-button size="mini"
+                     @click="autoGenerationVisible = true">AI生成团队 </el-button>
+        </P>
         <p class="operation"
            v-if="group_add_role">
           <el-button size="mini"
@@ -222,6 +226,23 @@
                                    :select-user-beforehand-form-data="selectUserBeforehandFormData"
                                    @close-modal="closeSelectApproveUserBeforehand"
                                    @commit="commitSelectApproveUserBeforehand"></selectApproveUserBeforehand>
+      <!--   AI生成团队对话框   -->
+      <common-dialog title="AI生成团队"
+                     width="50%"
+                     class='autoGeneration'
+                     :visible="autoGenerationVisible"
+                     @close="closeAutoGeneration"
+                     :is-view-cs-footer="false"
+                     :dialog-height="650"
+                     :show-handle-btn="false">
+        <template #dialog>
+          <auto-generation v-if="autoGenerationVisible"
+                           ref="autoGeneration"
+                           :project-id="id"
+                           @refreshAiData="refreshAiData"
+                           @close="closeAutoGeneration" />
+        </template>
+      </common-dialog>
     </div>
     <div v-if="viewVisible"
          class="viewVisible"></div>
@@ -236,6 +257,7 @@ import {
   Popconfirm,
   Link,
   Notification,
+  P8Dialog as CommonDialog,
   P8Upload as CommonUpload,
   P8FileView as CommonFileView
 } from 'p8-components-ui'
@@ -250,6 +272,7 @@ import moment from 'moment'
 import SelectApproveUserBeforehand from '@/views/Framework/BusinessActivity/ProcessApproval/selectApproveUserBeforehand'
 import { nextApproveUserBeforehand } from '@/assets/commonJS/BusinessActivity/nextApproveUserBeforehand'
 import DialogUserTaskStatistics from './Components/UserTaskStatistics'
+import AutoGeneration from "./Components/AiGeneratedDialog";
 
 export default {
   name: 'teamManager',
@@ -405,6 +428,8 @@ export default {
       }
     ]
     return {
+      aiAssistant: aiAssistant,
+      autoGenerationVisible:false,
       userTaskConfig: {
         code: 'undertakeTaskDetails',
         permissionVo: {
@@ -504,6 +529,16 @@ export default {
     }
   },
   methods: {
+    refreshAiData (data) {
+      this.generalRoles = data.generalRoles
+      this.$set(this, 'generalRoles', data.generalRoles)
+      this.autoGenerationVisible = false
+      this.submit()
+    },
+    // 关闭AI生成
+    closeAutoGeneration () {
+      this.autoGenerationVisible = false
+    },
     filterTableData (data) {
       if (this.row.length > 0) {
         const projectStatus = this.row[0].STATUS
@@ -1263,6 +1298,7 @@ export default {
     // }
   },
   components: {
+    AutoGeneration,
     VuePerfectScrollbar,
     EditInput,
     CommonTable,
@@ -1278,6 +1314,7 @@ export default {
     'el-link': Link,
     CommonFileView,
     CommonUpload,
+    CommonDialog,
     SelectApproveUserBeforehand,
     DialogUserTaskStatistics
   }
@@ -1553,6 +1590,10 @@ export default {
     text-align: right;
     margin-right: 10px;
   }
+  .ai-generated-team{
+    text-align: right;
+    margin-right: 10px;
+  }
 }
 
 .right-con {
@@ -1584,5 +1625,8 @@ export default {
   ::v-deep i {
     display: none;
   }
+}
+.autoGeneration ::v-deep .el-dialog__body {
+  padding: 0 !important;
 }
 </style>
