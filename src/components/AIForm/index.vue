@@ -100,7 +100,7 @@ export default {
   created() {
     window.myWebSocket.on('getDocParseFormMessageMessage', (data) => {
       // 判断ai进程
-      if(data.workFlowRunId && data.workFlowRunId){
+      if(data.taskId && data.workFlowRunId){
         // ai已进入进程，可以终止
         this.taskId = data.taskId
         this.workFlowRunId = data.workFlowRunId
