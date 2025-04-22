@@ -4,6 +4,23 @@
  */
 
 export const system = {
+  // 系统备份管理
+  systemBackup: [
+    {
+      name: 'executeBackup',
+      method: 'POST',
+      path: '/framework/backup/executeBackup',
+      mockPath: '/framework/backup/executeBackup',
+      desc: '平台数据库备份'
+    },
+    {
+      name: 'executeRestore',
+      method: 'POST',
+      path: '/framework/backup/executeRestore',
+      mockPath: '/framework/backup/executeRestore',
+      desc: '平台数据库恢复'
+    }
+  ],
   // 第三方接口平台
   thirdPartInterface: [
     {
