@@ -1,15 +1,109 @@
 <template>
   <div class="content">
     <div class="list-header">
-      <el-button type="primary" @click="addAlert()"> 新建</el-button>
-      <el-button type="primary" :disabled='!selectedData || !selectedData.length' @click="updateAlert()"> 修改</el-button>
-      <el-button type="primary" :disabled='!selectedData || !selectedData.length' @click="deleteAlert()"> 删除</el-button>
-      <el-button type="primary" @click="forceSynchronization()">强制同步</el-button>
+
+      <div v-if="toolbarWritingDisplay === 'true'">
+        <el-button-group v-if="toolbarCompactLayout === 'true'">
+          <el-button type="primary"
+                     @click="addAlert()"> 新建</el-button>
+          <el-button type="primary"
+                     :disabled='!selectedData || !selectedData.length'
+                     @click="updateAlert()"> 修改</el-button>
+          <el-button type="primary"
+                     :disabled='!selectedData || !selectedData.length'
+                     @click="deleteAlert()"> 删除</el-button>
+          <el-button type="primary"
+                     @click="forceSynchronization()">强制同步</el-button>
+        </el-button-group>
+        <div v-else>
+          <el-button type="primary"
+                     @click="addAlert()"> 新建</el-button>
+          <el-button type="primary"
+                     :disabled='!selectedData || !selectedData.length'
+                     @click="updateAlert()"> 修改</el-button>
+          <el-button type="primary"
+                     :disabled='!selectedData || !selectedData.length'
+                     @click="deleteAlert()"> 删除</el-button>
+          <el-button type="primary"
+                     @click="forceSynchronization()">强制同步</el-button>
+        </div>
+      </div>
+      <div v-else>
+        <el-button-group v-if="toolbarCompactLayout === 'true'">
+          <el-tooltip placement="top"
+                      content="新建">
+            <el-button icon="p8 icon-add"
+                       @click="addAlert()"
+                       type="primary"></el-button>
+          </el-tooltip>
+          <el-tooltip placement="top"
+                      content="修改">
+            <el-button icon="p8 icon-xiugai"
+                       :disabled='!selectedData || !selectedData.length'
+                       @click="updateAlert()"
+                       type="primary"></el-button>
+          </el-tooltip>
+          <el-tooltip placement="top"
+                      content="删除">
+            <el-button icon="p8 icon-shanchu"
+                       :disabled='!selectedData || !selectedData.length'
+                       @click="deleteAlert()"
+                       type="primary"></el-button>
+          </el-tooltip>
+          <el-tooltip placement="top"
+                      content="强制同步">
+            <el-button icon="p8 icon-tongbu"
+                       @click="forceSynchronization()"
+                       type="primary"></el-button>
+          </el-tooltip>
+        </el-button-group>
+        <div v-else>
+          <el-tooltip placement="top"
+                      content="新建">
+            <el-button icon="p8 icon-add"
+                       @click="addAlert()"
+                       type="primary"></el-button>
+          </el-tooltip>
+          <el-tooltip placement="top"
+                      content="修改">
+            <el-button icon="p8 icon-xiugai"
+                       :disabled='!selectedData || !selectedData.length'
+                       @click="updateAlert()"
+                       type="primary"></el-button>
+          </el-tooltip>
+          <el-tooltip placement="top"
+                      content="删除">
+            <el-button icon="p8 icon-shanchu"
+                       :disabled='!selectedData || !selectedData.length'
+                       @click="deleteAlert()"
+                       type="primary"></el-button>
+          </el-tooltip>
+          <el-tooltip placement="top"
+                      content="强制同步">
+            <el-button icon="p8 icon-tongbu"
+                       @click="forceSynchronization()"
+                       type="primary"></el-button>
+          </el-tooltip>
+        </div>
+      </div>
     </div>
-    <table-render ref='tableRender' :key='tableKey' code="planWaeningBasicTable" :report-param="sqlParam" :tableRefresh='tableRefresh' @selection-change="handleSelectionChange"></table-render>
-    <common-drawer v-if="formVisible" :title="formTitle" :visible="formVisible" size="50%" @close="formClose">
+    <table-render ref='tableRender'
+                  :key='tableKey'
+                  code="planWaeningBasicTable"
+                  :report-param="sqlParam"
+                  :tableRefresh='tableRefresh'
+                  @selection-change="handleSelectionChange"></table-render>
+    <common-drawer v-if="formVisible"
+                   :title="formTitle"
+                   :visible="formVisible"
+                   size="50%"
+                   @close="formClose">
       <template #drawer>
-        <form-render :dataViewId="formViewId" :record="{ desformCode: codeForm }" v-bind="$attrs" @close="formClose" @save-success="formCloseRefresh"></form-render>
+        <form-render :dataViewId="formViewId"
+                     :record="{ desformCode: codeForm }"
+                     v-bind="$attrs"
+                     @close="formClose"
+                     @save-success="formCloseRefresh"></form-render>
       </template>
     </common-drawer>
   </div>
@@ -29,13 +123,13 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
-      tableKey:0,
+      tableKey: 0,
       formVisible: false,
       formTitle: '',
       selectedData: [],
-      formViewId:'',
+      formViewId: '',
       codeForm: 'planWaeningBasicForm',
       comp: this,
       record: null,
@@ -60,21 +154,21 @@ export default {
   },
   methods: {
     // 表格选中事件
-    handleSelectionChange(data) {
+    handleSelectionChange (data) {
       this.selectedData = data
     },
     // 打开表单
-    addAlert() {
+    addAlert () {
       this.formViewId = ''
       this.formVisible = true
     },
     // 修改
-    updateAlert() {
+    updateAlert () {
       this.formViewId = this.selectedData[0].ID
       this.formVisible = true
     },
     // 删除
-    deleteAlert() {
+    deleteAlert () {
       this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -91,7 +185,7 @@ export default {
           this.formCloseRefresh()
         }).catch((err) => {
           this.$message({
-            type:'error',
+            type: 'error',
             message: '删除失败!'
           })
         })
@@ -103,20 +197,20 @@ export default {
       })
     },
     // 强制同步
-    forceSynchronization() {
+    forceSynchronization () {
       this.$confirm('该操作会重置所有计划的计划预警规则，即自动创建的会被删除，并且根据当前配置创建新的。该操作不会删除和修改【手动】创建的，请确认是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.$api['thirdPartInterface.synchronousWarning']().then((res) => {
-          if(res){
+          if (res) {
             this.$message({
               type: 'success',
               message: '同步成功!'
             })
             this.formCloseRefresh()
-          }else{
+          } else {
             this.$message({
               type: 'error',
               message: '同步失败!'
@@ -124,7 +218,7 @@ export default {
           }
         }).catch((err) => {
           this.$message({
-            type:'error',
+            type: 'error',
             message: '同步失败!'
           })
         })
@@ -136,17 +230,17 @@ export default {
       })
     },
     // 表单关闭
-    formClose() {
+    formClose () {
       this.formVisible = false
     },
     // 表单关闭并刷新
-    formCloseRefresh() {
+    formCloseRefresh () {
       this.formVisible = false
       this.selectedData = []
       this.formViewId = ''
       this.tableKey++
     },
-    tableRefresh(){
+    tableRefresh () {
       console.log('refreshCallback')
       this.selectedData = []
       this.formViewId = ''
