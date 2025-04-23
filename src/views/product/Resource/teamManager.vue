@@ -157,7 +157,6 @@
                                        icon="p8 icon-shanchu"></el-button>
                           </el-popconfirm>
                         </el-tooltip>
-
                       </template>
                       <template v-else>
                         <div v-if="toolbarWritingDisplay === 'true'">
@@ -166,12 +165,14 @@
                                      v-if="group_add_member"
                                      @click="deleteUserHandle(scope, scope.$index)">删除 </el-button>
                         </div>
-                        <div v-else>
+                        <el-tooltip placement="top"
+                                    v-else
+                                    content="删除">
                           <el-button type="text"
                                      v-if="group_add_member"
                                      icon="p8 icon-shanchu"
                                      @click="deleteUserHandle(scope, scope.$index)"></el-button>
-                        </div>
+                        </el-tooltip>
                       </template>
                     </template>
                   </template>
