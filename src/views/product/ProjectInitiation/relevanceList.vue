@@ -33,6 +33,7 @@
                     placement="top"
                     content="查看详情">
           <el-button icon="p8 icon-chakan"
+                     @click="showDetail(scope.row)"
                      type="primary"></el-button>
         </el-tooltip>
       </template>

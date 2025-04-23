@@ -24,6 +24,7 @@ export function routerBeforeEachFunc (to, from, next) {
        * 如果没有获取到当前用户的权限数据则需要远程获取用户权限
        */
       if (!store.getters.roles) {
+        store.dispatch('getDicAndBaseConfig') // 获取系统配置信息-项目状态、计划状态、任务状态等dicConfig与系统名称等baseConfig
         // TODO 还没有权限部分 获取权限列表
         store.dispatch('getUserInfo').then((res) => {
           // 保存用户信息到sessionStorage，供新窗口使用
@@ -57,7 +58,6 @@ export function routerBeforeEachFunc (to, from, next) {
             }
           })
           store.dispatch('getButtonLimit') // 获取按钮禁用逻辑
-          store.dispatch('getDicAndBaseConfig') // 获取系统配置信息-项目状态、计划状态、任务状态等dicConfig与系统名称等baseConfig
           store.dispatch('getSettingAll') // 获取列表配置信息
           store.dispatch('getMessageInfo') // 获取消息信息
           store.dispatch('getMessageNum') // 获取消息信息已读未读条数
