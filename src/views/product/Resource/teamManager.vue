@@ -809,9 +809,12 @@ export default {
     changeRolesHandle (text, record) {
       record.name = text
     },
-    deleteRolesHandle (index) {
-      // this.generalRoles.splice(index, 1)
-      // this.tableData = []
+    deleteRolesHandle(index, item) {
+      // 判断该角色下是否有团队成员
+      if (item.projectTeamRoleUsers && item.projectTeamRoleUsers.length > 0) {
+        this.$message.warning('该角色下存在团队成员，不能删除')
+        return
+      }
       let idx = index >= 1 ? index - 1 : 0
       this.rolesSelectedIndex = index - 1
       this.generalRoles.splice(index - this.fixedRoles.length, 1)
