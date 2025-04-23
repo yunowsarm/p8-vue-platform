@@ -72,16 +72,7 @@
         </el-tab-pane>
       </el-tabs>
     </template>
-    <el-dropdown v-if="activePane === 'setLimit'" size="mini" split-button type="primary" trigger="click"
-      style="margin-top: 10px; margin-left: 10px">
-      关联操作
-      <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item @click.native="allSelect()">全部勾选</el-dropdown-item>
-        <el-dropdown-item @click.native="unAllSelect()">取消全选</el-dropdown-item>
-        <el-dropdown-item @click.native="relate()">父子关联</el-dropdown-item>
-        <el-dropdown-item @click.native="unRelate()">取消关联</el-dropdown-item>
-      </el-dropdown-menu>
-    </el-dropdown>
+   
   </div>
 </template>
 <style lang="scss" scoped>
