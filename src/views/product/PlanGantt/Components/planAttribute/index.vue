@@ -1,136 +1,118 @@
 <template>
-  <div style="height: 100%;padding-top: 40px;">
-    <common-tabs type="border-card"
-                 style="height:100%;"
-                 :active-tabs="activeTabs"
-                 :hasFullScreen="false"
-                 :keepBottom="true"
-                 @tab-click="tabClick"
-                 :tabs-data="tabs">
+  <div style="height: 100%">
+    <anchor placement="top"
+            :menu="anchorMenu"
+            style-sheet="tabs"
+            class="anchorCustom"
+            style="margin-left: 10px">
       <template #describeKey>
-        <template v-if="activeTabs == 'describeKey'">
-          <describe-edit v-if="isChangeGantt"
-                         @saveSuccess="saveCallback"
-                         :task-id="taskId"
-                         :create-page="createPage"
-                         :current-route="currentRoute"
-                         :gantt-name="ganttName"
-                         @refreshData="refreshData"
-                         :plan-info-id="planInfoId"
-                         :formWidth="formWidth"></describe-edit>
-          <describe-view v-if="!isChangeGantt"
-                         :task-id="taskId"
-                         :gantt-name="ganttName"
-                         :plan-info-id="planInfoId"
-                         :formWidth="formWidth"></describe-view>
-        </template>
+        <describe-edit v-if="isChangeGantt"
+                       @saveSuccess="saveCallback"
+                       :task-id="taskId"
+                       :create-page="createPage"
+                       :current-route="currentRoute"
+                       :gantt-name="ganttName"
+                       @refreshData="refreshData"
+                       :plan-info-id="planInfoId"
+                       :formWidth="formWidth"></describe-edit>
+        <describe-view v-if="!isChangeGantt"
+                       :task-id="taskId"
+                       :gantt-name="ganttName"
+                       :plan-info-id="planInfoId"
+                       :formWidth="formWidth"></describe-view>
       </template>
       <template #monitorKey>
-        <template v-if="activeTabs == 'monitorKey'">
-          <monitor-edit v-if="isView"
-                        @saveSuccess="saveCallback"
-                        @refreshData="refreshData"
-                        :task-id="taskId"
-                        :gantt-name="ganttName"
-                        :formWidth="formWidth"></monitor-edit>
-          <monitor-view v-if="!isView"
-                        :task-id="taskId"
-                        :gantt-name="ganttName"
-                        :formWidth="formWidth"></monitor-view>
-        </template>
+        <monitor-edit v-if="isView"
+                      @saveSuccess="saveCallback"
+                      @refreshData="refreshData"
+                      :task-id="taskId"
+                      :gantt-name="ganttName"
+                      :formWidth="formWidth"></monitor-edit>
+        <monitor-view v-if="!isView"
+                      :task-id="taskId"
+                      :gantt-name="ganttName"
+                      :formWidth="formWidth"></monitor-view>
       </template>
       <template #dependenceKey>
-        <template v-if="activeTabs == 'dependenceKey'">
-          <dependence-edit v-if="isView"
-                           @saveSuccess="saveCallback"
-                           :task-id="taskId"
-                           :gantt-name="ganttName"
-                           :formWidth="formWidth"></dependence-edit>
-          <dependence-view v-if="!isView"
-                           :task-id="taskId"
-                           :gantt-name="ganttName"
-                           :formWidth="formWidth"></dependence-view>
-        </template>
+        <dependence-edit v-if="isView"
+                         @saveSuccess="saveCallback"
+                         :task-id="taskId"
+                         :gantt-name="ganttName"
+                         :formWidth="formWidth"></dependence-edit>
+        <dependence-view v-if="!isView"
+                         :task-id="taskId"
+                         :gantt-name="ganttName"
+                         :formWidth="formWidth"></dependence-view>
       </template>
       <template #inputKey>
-        <template v-if="activeTabs == 'inputKey'">
-          <input-edit v-if="isView"
-                      @saveSuccess="saveCallback"
-                      :task-id="taskId"
-                      :gantt-name="ganttName"
-                      :formWidth="formWidth"></input-edit>
-          <input-view v-if="!isView"
-                      :task-id="taskId"
-                      :gantt-name="ganttName"
-                      :formWidth="formWidth"></input-view>
-        </template>
+        <input-edit v-if="isView"
+                    @saveSuccess="saveCallback"
+                    :task-id="taskId"
+                    :gantt-name="ganttName"
+                    :formWidth="formWidth"></input-edit>
+        <input-view v-if="!isView"
+                    :task-id="taskId"
+                    :gantt-name="ganttName"
+                    :formWidth="formWidth"></input-view>
       </template>
       <template #outputKey>
-        <template v-if="activeTabs == 'outputKey'">
-          <el-tabs v-model="activeOutput"
-                   class="outputStyle"
-                   type="border-card">
-            <el-tab-pane label="输出要求"
-                         name="outputKey">
-              <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 输出要求</span>
-              <output-edit v-if="isView"
-                           @saveSuccess="saveCallback"
+        <el-tabs v-model="activeOutput"
+                 type="border-card">
+          <el-tab-pane label="输出要求"
+                       name="outputKey">
+            <span slot="label"><i class="p8 icon-shuchuyaoqiu"></i> 输出要求</span>
+            <output-edit v-if="isView"
+                         @saveSuccess="saveCallback"
+                         :task-id="taskId"
+                         :gantt-name="ganttName"
+                         :formWidth="formWidth"></output-edit>
+            <output-view v-if="!isView"
+                         :task-id="taskId"
+                         :gantt-name="ganttName"
+                         :formWidth="formWidth"></output-view>
+          </el-tab-pane>
+          <el-tab-pane label="已提交输出物"
+                       name="getOutputKey">
+            <span slot="label"><i class="p8 icon-yitijiaoshuchuwu"></i> 已提交输出物</span>
+            <getOutPutView @saveSuccess="saveCallback"
                            :task-id="taskId"
                            :gantt-name="ganttName"
-                           :formWidth="formWidth"></output-edit>
-              <output-view v-if="!isView"
-                           :task-id="taskId"
-                           :gantt-name="ganttName"
-                           :formWidth="formWidth"></output-view>
-            </el-tab-pane>
-            <el-tab-pane label="已提交输出物"
-                         name="getOutputKey">
-              <span slot="label"><i class="p8 icon-yitijiaoshuchuwu"></i> 已提交输出物</span>
-              <getOutPutView @saveSuccess="saveCallback"
-                             :task-id="taskId"
-                             :gantt-name="ganttName"
-                             :formWidth="formWidth">
-              </getOutPutView>
-            </el-tab-pane>
-          </el-tabs>
-        </template>
+                           :formWidth="formWidth">
+            </getOutPutView>
+          </el-tab-pane>
+        </el-tabs>
       </template>
       <template #getOutputKey>
         <!-- <output-view v-if="!isView" :task-id="taskId" :gantt-name="ganttName"></output-view> -->
       </template>
       <template #specialKey>
-        <template v-if="activeTabs == 'specialKey'">
-          <special-edit v-if="isView"
-                        @saveSuccess="saveCallback"
-                        :task-id="taskId"
-                        :gantt-name="ganttName"
-                        :formWidth="formWidth"></special-edit>
-          <special-view v-if="!isView"
-                        :task-id="taskId"
-                        :gantt-name="ganttName"
-                        :formWidth="formWidth"></special-view>
-        </template>
+        <special-edit v-if="isView"
+                      @saveSuccess="saveCallback"
+                      :task-id="taskId"
+                      :gantt-name="ganttName"
+                      :formWidth="formWidth"></special-edit>
+        <special-view v-if="!isView"
+                      :task-id="taskId"
+                      :gantt-name="ganttName"
+                      :formWidth="formWidth"></special-view>
       </template>
       <template #demandKey>
-        <template v-if="activeTabs == 'demandKey'">
-          <relevance-edit v-if="isView"
-                          :task-id="taskId"
-                          :wholeDescribeId="wholeDescribeId"
-                          :gantt-name="ganttName"
-                          @refreshData="refreshData"
-                          :formWidth="formWidth"></relevance-edit>
-          <relevance-list v-if="!isView"
-                          :task-id="taskId"
-                          :gantt-name="ganttName"
-                          :formWidth="formWidth"></relevance-list>
-        </template>
+        <relevance-edit v-if="isView"
+                        :task-id="taskId"
+                        :wholeDescribeId="wholeDescribeId"
+                        :gantt-name="ganttName"
+                        @refreshData="refreshData"
+                        :formWidth="formWidth"></relevance-edit>
+        <relevance-list v-if="!isView"
+                        :task-id="taskId"
+                        :gantt-name="ganttName"
+                        :formWidth="formWidth"></relevance-list>
       </template>
-    </common-tabs>
+    </anchor>
   </div>
 </template>
 
 <script>
-import { P8Tabs as CommonTabs } from 'p8-components-ui'
 import DescribeEdit from '../describeEdit'
 import DescribeView from '../describeEdit/describeView'
 import MonitorEdit from '../monitorEdit'
@@ -171,7 +153,6 @@ export default {
     SpecialView,
     relevanceList,
     relevanceEdit,
-    CommonTabs
   },
   computed: {
     formWidth () {
@@ -184,7 +165,6 @@ export default {
     ...mapGetters(['vueThis'])
   },
   created () {
-    console.log('planAttribute --- created');
     window.addEventListener('resize', this.updateWindowWidth)
   },
   beforeDestroy () {
@@ -278,8 +258,6 @@ export default {
         }
       }
     }
-    console.log(this.isChangeGantt, '=====this.isChangeGantt');
-    console.log('planAttribute --- mounted');
   },
   data () {
     return {
@@ -288,17 +266,16 @@ export default {
       isEdit: true,
       isChangeGantt: true,
       activeOutput: 'outputKey',
-      tabs: [
-        { label: '任务描述', name: 'describeKey', icon: 'p8 icon-jindu' },
-        { label: '任务标识', name: 'monitorKey', icon: 'p8 icon-rizhiliebiao1' },
-        { label: '前置任务', name: 'dependenceKey', icon: 'p8 icon-xuanxiang1' },
-        { label: '输入要求', name: 'inputKey', icon: 'p8 icon-shuruyaoqiu', hideLabel: true },
-        { label: '输出要求', name: 'outputKey', icon: 'p8 icon-shuchuyaoqiu', hideLabel: true },
-        { label: '特别说明', name: 'specialKey', icon: 'p8 el-icon-warning-outline' },
-        { label: '关联需求', name: 'demandKey', icon: 'p8 icon-a-xuqiu1' }
+      anchorMenu: [
+        { label: '任务描述', value: 'describeKey', icon: 'p8 icon-jindu' },
+        { label: '任务标识', value: 'monitorKey', icon: 'p8 icon-rizhiliebiao1' },
+        { label: '前置任务', value: 'dependenceKey', icon: 'p8 icon-xuanxiang1' },
+        { label: '输入要求', value: 'inputKey', icon: 'p8 icon-shuruyaoqiu', hideLabel: true },
+        { label: '输出要求', value: 'outputKey', icon: 'p8 icon-shuchuyaoqiu', hideLabel: true },
+        { label: '特别说明', value: 'specialKey', icon: 'p8 el-icon-warning-outline' },
+        { label: '关联需求', value: 'demandKey', icon: 'p8 icon-a-xuqiu1' }
       ],
-      windowWidth: window.innerWidth,
-      activeTabs: 'describeKey'
+      windowWidth: window.innerWidth
     }
   },
   methods: {
@@ -311,10 +288,7 @@ export default {
     },
     updateWindowWidth () {
       this.windowWidth = window.innerWidth
-    },
-    tabClick (target) {
-      this.activeTabs = target.name
-    },
+    }
   }
 }
 </script>
@@ -331,7 +305,14 @@ export default {
 ::v-deep .el-tabs__content {
   padding: 0 !important;
 }
-.outputStyle {
-  height: calc(100% - 10px);
+.anchorCustom {
+  ::v-deep .p8-anchor-slider--wrap__column {
+    height: 40px !important;
+  }
+  ::v-deep .p8-anchor-slider--item__normal {
+    width: 80px;
+    height: 30px;
+    line-height: 30px;
+  }
 }
 </style>
