@@ -157,7 +157,7 @@ export default {
       })
     },
     stopAnalysis() {
-      this.$api['formGenerator.stopParseDocFormTask']({
+      this.$api['formGenerator.stopParseDocFormResult']({
         formCode: this.formCode,
         taskId: this.taskId,
         workFlowRunId: this.workFlowRunId

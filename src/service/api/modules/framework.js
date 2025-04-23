@@ -1409,10 +1409,10 @@ export const formGeneratorApi = {
       desc: '表单设计器-AI帮填'
     },
     {
-      name: 'stopParseDocFormTask',
+      name: 'stopParseDocFormResult',
       method: 'POST',
-      path: '/ai/intelligence/stopParseDocFormTask',
-      mockPath: '/ai/intelligence/stopParseDocFormTask',
+      path: '/ai/intelligence/stopParseDocFormResult',
+      mockPath: '/ai/intelligence/stopParseDocFormResult',
       desc: '表单设计器-终止AI进程'
     },
     {
