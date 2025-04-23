@@ -143,7 +143,9 @@ export default {
           relation: 'and',
           value: 'basic'
         }
-      }
+      },
+      toolbarWritingDisplay: 'true',
+      toolbarCompactLayout: 'false'
     }
   },
   components: {
@@ -151,6 +153,18 @@ export default {
     TableRender,
     ListLayout,
     CommonDrawer
+  },
+  mounted () {
+    if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
+      this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
+    } else {
+      this.toolbarWritingDisplay = 'true'
+    }
+    if (this.$store.getters.baseConfig.toolbarCompactLayout) {
+      this.toolbarCompactLayout = this.$store.getters.baseConfig.toolbarCompactLayout
+    } else {
+      this.toolbarCompactLayout = 'false'
+    }
   },
   methods: {
     // 表格选中事件
@@ -251,7 +265,7 @@ export default {
 <style lang="scss" scoped>
 .content {
   width: calc(100% - 29px) !important;
-  height: 100% !important;
+  height: calc(100% - 28px) !important;
   padding: 0 20px !important;
 }
 

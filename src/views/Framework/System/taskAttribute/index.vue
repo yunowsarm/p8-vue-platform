@@ -53,11 +53,13 @@
                           content="修改">
                 <el-button style="margin-right: 2px;"
                            icon="p8 icon-xiugai"
+                           @click="updateThird(scope.row)"
                            type="primary"></el-button>
               </el-tooltip>
               <el-tooltip placement="top"
                           content="删除">
                 <el-button icon="p8 icon-shanchu"
+                           @click="deleteThird(scope.row)"
                            type="primary"></el-button>
               </el-tooltip>
             </el-button-group>
@@ -65,12 +67,14 @@
               <el-tooltip placement="top"
                           content="修改">
                 <el-button icon="p8 icon-xiugai"
+                           @click="updateThird(scope.row)"
                            type="primary"></el-button>
               </el-tooltip>
               <el-divider direction="vertical"></el-divider>
               <el-tooltip placement="top"
                           content="删除">
                 <el-button icon="p8 icon-shanchu"
+                           @click="deleteThird(scope.row)"
                            type="primary"></el-button>
               </el-tooltip>
             </div>
