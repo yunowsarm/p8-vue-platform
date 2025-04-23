@@ -30,14 +30,14 @@ export default {
       this.title = '备份'
       this.visible = true
     },
-    
+
     // 点击恢复按钮的处理函数
     recover(rows) {
       this.title = '恢复'
       this.selectedRow = rows[0]
       this.visible = true
     },
-    
+
     // 弹窗确认按钮的处理函数
     handle() {
       if (this.title === '备份') {
@@ -48,7 +48,7 @@ export default {
         this.visible = false
       }
     },
-    
+
     // 执行备份操作
     async handleBackup() {
       const loading = this.$loading({
@@ -57,13 +57,13 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      
+
       try {
         const res = await this.$api['systemBackup.executeBackup']({
           backupType: 'full',
           notes: this.notes
         })
-        
+
         if (res) {
           this.$message.success('备份成功')
           this.resetDialog()
@@ -73,7 +73,7 @@ export default {
         loading.close()
       }
     },
-    
+
     // 执行恢复操作
     async handleRecover() {
       const loading = this.$loading({
@@ -82,14 +82,14 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      
+
       try {
         const res = await this.$api['systemBackup.executeRestore']({
           backupId: this.selectedRow.ID,
           targetDatabase: '',
           notes: ''
         })
-        
+
         if (res) {
           this.$message.success('恢复成功，请等待服务重启')
           this.resetDialog()
@@ -98,14 +98,14 @@ export default {
         loading.close()
       }
     },
-    
+
     // 重置弹窗状态
     resetDialog() {
       this.visible = false
       this.selectedRow = null
       this.notes = ''
     },
-    
+
     // 取消按钮的处理函数
     handleCancel() {
       this.resetDialog()
@@ -117,13 +117,13 @@ export default {
 <template>
   <div class="system-backup">
     <el-button class="backup-button" type="primary" @click="backup">备份</el-button>
-    <table-render 
-      :key="renderKey" 
-      ref="tableRender" 
-      :code="code" 
+    <table-render
+      :key="renderKey"
+      ref="tableRender"
+      :code="code"
       @recover="recover"
     />
-    <common-dialog 
+    <common-dialog
       :visible="visible"
       :title="title"
       width="500px"
@@ -156,7 +156,9 @@ export default {
   border-radius: 5px;
   padding: 0 20px;
 }
-
+.backup-button{
+  margin: 14px 0;
+}
 .dialog-footer {
     display: flex;
     justify-content: flex-end;
