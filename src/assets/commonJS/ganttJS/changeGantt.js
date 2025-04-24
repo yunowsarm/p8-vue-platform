@@ -192,6 +192,7 @@ export function taskDescribesEditCheck(newObj, oldObj, vueThis, taskId, ganttObj
       if (newS !== oldS || newE !== oldE || oldObj.duration !== newObj.duration || oldObj.autoScheduling !== newObj.autoScheduling) {
         changeDate = true
         checkChange = true
+        hasEdit = true
         if (key === 'end_date') {
           task.end_date = ganttObject.date.add(moment(newE).toDate(), 1, 'day')
         } else if (key === 'start_date') {
@@ -204,8 +205,7 @@ export function taskDescribesEditCheck(newObj, oldObj, vueThis, taskId, ganttObj
           task.autoScheduling = newObj.autoScheduling
         }
       }
-    }
-    if (oldObj[key] !== newObj[key]) {
+    } else if (oldObj[key] !== newObj[key]) {
       checkChange = true
       if (key === 'describes' && oldObj[key] !== newObj[key]) {
         describesEdit = true
