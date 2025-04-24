@@ -923,7 +923,14 @@ export default {
               myGantt.config.readonlyReason = ''
             }
             if (res.tasks && res.changeTaskInfo && Object.keys(res.changeTaskInfo).length > 0) {
+              let keys = Object.keys(res.changeTaskInfo)
+              keys.forEach((key) => {
+                if (!res.changeTaskInfo[key].updateInfo) {
+                  res.changeTaskInfo[key].updateInfo = []
+                }
+              })
               vueThis.newTaskMap = res.changeTaskInfo
+
               res.tasks.forEach((task) => {
                 if (Object.keys(res.changeTaskInfo)[0] === task.id) {
                   vueThis.projectCategory = task.projectCategory
