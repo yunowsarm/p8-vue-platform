@@ -8,7 +8,7 @@ export default {
     tableRender,
     CommonDialog
   },
-  data() {
+  data () {
     return {
       // 表格组件的唯一标识码
       code: 'SystemBackupRecord',
@@ -26,20 +26,20 @@ export default {
   },
   methods: {
     // 点击备份按钮的处理函数
-    backup() {
+    backup () {
       this.title = '备份'
       this.visible = true
     },
 
     // 点击恢复按钮的处理函数
-    recover(rows) {
+    recover (rows) {
       this.title = '恢复'
       this.selectedRow = rows[0]
       this.visible = true
     },
 
     // 弹窗确认按钮的处理函数
-    handle() {
+    handle () {
       if (this.title === '备份') {
         this.handleBackup()
       } else if (this.title === '恢复') {
@@ -50,7 +50,7 @@ export default {
     },
 
     // 执行备份操作
-    async handleBackup() {
+    async handleBackup () {
       const loading = this.$loading({
         lock: true,
         text: '正在备份',
@@ -75,7 +75,7 @@ export default {
     },
 
     // 执行恢复操作
-    async handleRecover() {
+    async handleRecover () {
       const loading = this.$loading({
         lock: true,
         text: '正在恢复',
@@ -100,14 +100,14 @@ export default {
     },
 
     // 重置弹窗状态
-    resetDialog() {
+    resetDialog () {
       this.visible = false
       this.selectedRow = null
       this.notes = ''
     },
 
     // 取消按钮的处理函数
-    handleCancel() {
+    handleCancel () {
       this.resetDialog()
     }
   }
@@ -116,11 +116,11 @@ export default {
 
 <template>
   <div class="system-backup">
-    <el-button class="backup-button" type="primary" @click="backup">备份</el-button>
     <table-render
       :key="renderKey"
       ref="tableRender"
       :code="code"
+      @backup="backup"
       @recover="recover"
     />
     <common-dialog
@@ -156,20 +156,13 @@ export default {
   border-radius: 5px;
   padding: 0 20px;
 }
-.backup-button{
-  margin: 14px 0;
-}
+
 .dialog-footer {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 14px;
-  }
-
-::v-deep .normal-layout .normal-main .normal-center {
-  padding-left: 0;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
 }
-
-::v-deep .normal-layout {
-  height: calc(100% - 60px);
+::v-deep .normal-layout{
+  height: 100%;
 }
 </style>
