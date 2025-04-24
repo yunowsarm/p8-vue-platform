@@ -1,7 +1,10 @@
 @charset "UTF-8";
 @import "./commonStyle/common";
 // @import "mixins/mixins";
-
+.el-button--primary {
+  background-color: $theme-color !important;
+  border-color: $theme-color !important;
+}
 .commonButton {
   .el-button--primary {
     // background-color: $base-light-color;

@@ -13,6 +13,7 @@
             @click="changeColor(theme, 'tableBgColor')" />
       </ul>
       <el-color-picker v-model="tableBgColor"
+                       show-alpha
                        @change="changeColor($event, 'tableBgColor')" />
     </div>
     <div class="tips">
@@ -28,6 +29,7 @@
             @click="changeColor(theme, 'tableHeaderBgColor')" />
       </ul>
       <el-color-picker v-model="tableHeaderBgColor"
+                       show-alpha
                        @change="changeColor($event, 'tableHeaderBgColor')" />
     </div>
     <div class="tips">
@@ -43,6 +45,7 @@
             @click="changeColor(theme, 'tableStripeColor')" />
       </ul>
       <el-color-picker v-model="tableStripeColor"
+                       show-alpha
                        @change="changeColor($event, 'tableStripeColor')" />
     </div>
     <div class="tips">
@@ -58,6 +61,7 @@
             @click="changeColor(theme, 'tableRowHoverBgColor')" />
       </ul>
       <el-color-picker v-model="tableRowHoverBgColor"
+                       show-alpha
                        @change="changeColor($event, 'tableRowHoverBgColor')" />
     </div>
     <div class="tips">
@@ -73,6 +77,7 @@
             @click="changeColor(theme, 'tableBorderColor')" />
       </ul>
       <el-color-picker v-model="tableBorderColor"
+                       show-alpha
                        @change="changeColor($event, 'tableBorderColor')" />
     </div>
     <div class="tips">
@@ -88,6 +93,7 @@
             @click="changeColor(theme, 'tableTextColor')" />
       </ul>
       <el-color-picker v-model="tableTextColor"
+                       show-alpha
                        @change="changeColor($event, 'tableTextColor')" />
     </div>
     <div class="tips">
@@ -103,6 +109,7 @@
             @click="changeColor(theme, 'tableHeaderTextColor')" />
       </ul>
       <el-color-picker v-model="tableHeaderTextColor"
+                       show-alpha
                        @change="changeColor($event, 'tableHeaderTextColor')" />
     </div>
   </div>

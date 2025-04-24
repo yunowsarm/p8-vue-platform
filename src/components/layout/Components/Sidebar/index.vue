@@ -4,7 +4,7 @@
        :style="{ width: sidebarState.width, 'background-image': 'url(' + imageUrl + ')', 'background-size': '200px 100%' }"
        v-show="!sidebarState.isHidden">
     <VuePerfectScrollbar :settings="scrollOptions"
-                         :style="{ 'background-color': objColor.themeColor }">
+                         :style="{ 'background-color': theme }">
       <div class="border-name">
         <div class="sysName">
           <div class="login-logo"
