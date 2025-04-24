@@ -26,6 +26,7 @@
                          :normalLayout="normalLayout">
             <template #west>
               <activityTree class="left-container"
+                            ref="activityTree"
                             :activity-info-id="activityInfoId"
                             v-if="triggerVal"
                             :row="row"
