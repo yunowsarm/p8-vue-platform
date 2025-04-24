@@ -3,7 +3,7 @@
     <div class="theme-design">
       <div class="theme-left"
            :style="{ width: '200px', 'background-image': 'url(' + imageUrl + ')', 'background-size': '200px 100%' }">
-        <VuePerfectScrollbar :style="{ 'background-color': objColor.themeColor }">
+        <VuePerfectScrollbar :style="{ 'background-color': theme }">
 
         </VuePerfectScrollbar>
       </div>
