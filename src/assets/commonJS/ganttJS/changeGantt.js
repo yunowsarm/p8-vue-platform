@@ -205,8 +205,7 @@ export function taskDescribesEditCheck(newObj, oldObj, vueThis, taskId, ganttObj
           task.autoScheduling = newObj.autoScheduling
         }
       }
-    }
-    if (oldObj[key] !== newObj[key]) {
+    } else if (oldObj[key] !== newObj[key]) {
       checkChange = true
       if (key === 'describes' && oldObj[key] !== newObj[key]) {
         describesEdit = true
