@@ -280,7 +280,6 @@ export default {
             this.clickIndex = this.rolesList[0].id
           }
         }
-        this.formData.klTeamsId = this.record.ID
         if (that.selectRow && that.selectRow.id) {
           // setTimeout(() => {
           that.openRightAdd(that.selectRow, that.selectRow.id)
@@ -291,6 +290,7 @@ export default {
     },
     customValidate (saveParams) {
       saveParams.roles = this.editableData
+      saveParams.klTeamsId = this.record.ID
       this.$api[this.saveApi](saveParams).then(res => {
         if (res) {
           this.clickIndex = res
