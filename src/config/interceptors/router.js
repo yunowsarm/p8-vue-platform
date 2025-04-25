@@ -70,9 +70,13 @@ export function routerBeforeEachFunc (to, from, next) {
         if (to.name === null) {
           next({ path: '*', replace: true })
         } else {
-          setTimeout(() => {
+          if (!store.state.project.baseConfig.toolbarWritingDisplay) {
+            setTimeout(() => {
+              next()
+            }, 1000)
+          } else {
             next()
-          }, 1000)
+          }
         }
       }
     }
