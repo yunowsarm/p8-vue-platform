@@ -48,7 +48,7 @@
         </template>
         <template #paneR>
           <div v-if="defaultPercent < 99"
-               class="x-style"><i class="el-dialog__close el-icon el-icon-close"
+               class="x-style"><i v-if="isDisplay" class="el-dialog__close el-icon el-icon-close"
                @click="closeClick"></i></div>
           <ProgressHistory v-if="defaultPercent < 99 && pageType === 'history'"
                            :task-id="selectTaskId"
@@ -229,7 +229,8 @@ export default {
       taskStatus: {},
       status: '',
       advance: true,
-      commandButtonBarHeight: this.ganttButtonMode === 'tabs' ? (this.advance ? '145px' : '40px') : this.ganttButtonMode === 'double' ? '72px' : '58px'
+      commandButtonBarHeight: this.ganttButtonMode === 'tabs' ? (this.advance ? '145px' : '40px') : this.ganttButtonMode === 'double' ? '72px' : '58px',
+      isDisplay: true
     }
   },
   props: {
@@ -443,6 +444,13 @@ export default {
     showDetail (selectTask, ganttName, viewType, switchType,) {
       this.selectTaskId = selectTask.id
       let myGantt = GanttObject.getGanttObject(this.ganttName)
+      let that = this
+      myGantt.attachEvent("onCollapse", (event) => {
+        that.isDisplay = true
+      })
+      myGantt.attachEvent("onExpand", () => {
+        that.isDisplay = false
+      });
       if (myGantt.getGlobalTaskIndex(this.selectTaskId) === 0 && (this.createPage === 'planChange' || this.createPage === 'compile')) {
         this.defaultPercent = 100
         return
