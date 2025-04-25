@@ -14,6 +14,15 @@
                      :exist-default-btn="false"
                      :api="saveApi"
                      :form="formData">
+            <template #approvalComment>
+              <el-tooltip effect="dark" :content="formData.approvalComment" placement="bottom">
+                <div style="
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                ">{{formData.approvalComment}}</div>
+              </el-tooltip>
+            </template>
             <template #uploadFiles>
               <div class="edit-outputdata-view">
                 <ul class="file-list">
@@ -52,14 +61,14 @@
                        ref="approveContent"
                        class="approveComponent"
                        v-bind="formCompProp"
-                       :kanban-config="componentsParams" />
+                       :kanban-config="componentsParams"/>
             <component :style="{ height: tabsHeight }"
                        :searchParams="searchParams"
                        :selected-approval="selectedApproval"
                        :curr-entity-id="currEntityId"
                        v-else-if="formComp != null && formComp != ''"
                        :is="componentLoader"
-                       v-bind="formCompProp" />
+                       v-bind="formCompProp"/>
           </template>
           <template #bpmn>
             <bpm-view :style="{ height: tabsHeight}"
@@ -85,7 +94,16 @@
 </template>
 
 <script>
-import { P8Form as FormList, P8ProcessApproval as BpmView, Row, Col, Button, P8TreeSelect as TreeSelect, P8Dialog as CommonDialog, P8Tabs as CommonTabs } from 'p8-components-ui'
+import {
+  P8Form as FormList,
+  P8ProcessApproval as BpmView,
+  Row,
+  Col,
+  Button,
+  P8TreeSelect as TreeSelect,
+  P8Dialog as CommonDialog,
+  P8Tabs as CommonTabs
+} from 'p8-components-ui'
 
 import ProcessHistoryList from '@/views/Framework/BusinessActivity/ProcessApproval/processHistoryList.vue'
 import VuePerfectScroll from 'vue-perfect-scrollbar'
@@ -107,14 +125,16 @@ export default {
   props: {
     searchParams: {
       type: Object,
-      default: () => { }
+      default: () => {
+      }
     },
     selectedApproval: {
       type: Object,
-      default: () => { }
+      default: () => {
+      }
     }
   },
-  data () {
+  data() {
     return {
       tabsHeight: document.documentElement.clientHeight,
       historyHeight: document.documentElement.clientHeight - 300,
@@ -189,11 +209,12 @@ export default {
           colLayout: 'doubleCol'
         },
         {
-          type: 'view',
+          type: 'blank',
           labelText: '审批意见',
           fieldName: 'approvalComment',
           colLayout: 'doubleCol',
-          placeholder: '请输入审批意见'
+          placeholder: '请输入审批意见',
+          slotName: 'approvalComment'
         }
       ],
       saveApi: '',
@@ -214,11 +235,12 @@ export default {
           colLayout: 'doubleCol'
         },
         {
-          type: 'view',
+          type: 'blank',
           labelText: '审批意见',
           fieldName: 'approvalComment',
           colLayout: 'doubleCol',
-          placeholder: '请输入审批意见'
+          placeholder: '请输入审批意见',
+          slotName: 'approvalComment'
         },
         {
           type: 'view',
@@ -257,11 +279,11 @@ export default {
     }
   },
   computed: {
-    componentLoader () {
+    componentLoader() {
       const comp = this.formComp
       return () => import('@/views/' + comp)
     },
-    componentUrl () {
+    componentUrl() {
       if (this.asyncComponents) {
         return () => import(`@/views/${this.asyncComponents}.vue`)
       }
@@ -291,13 +313,13 @@ export default {
       }
     },
     approveContentTitle: {
-      handler (val) {
+      handler(val) {
         this.tabs[0].label = val
       },
       immediate: true
     }
   },
-  created () {
+  created() {
     this.processKey = this.selectedApproval.processKey
     if (this.ar.indexOf(this.processKey) !== -1) {
       this.historyDataApi = 'PersonalProcessApproval.customHistoryList'
@@ -313,18 +335,18 @@ export default {
     this.getBpmnSnapshootAndLoadData()
   },
   methods: {
-    getBpmnSnapshootAndLoadData () {
+    getBpmnSnapshootAndLoadData() {
       const this_ = this
-      this.$api['PersonalProcessApproval.getBpmnSnapshoot']({ processInstanceId: this.processInstId }).then((res) => {
+      this.$api['PersonalProcessApproval.getBpmnSnapshoot']({processInstanceId: this.processInstId}).then((res) => {
         this_.bpmnSnapshoot = res
         this.loadFormKey()
       })
     },
-    loadFormKey () {
+    loadFormKey() {
       const this_ = this
       this_.dataSource = this_.dataSourceDefault
       this.asyncComponents = ''
-      this_.$api['PersonalProcessApproval.getApproveContentViewUrl']({ taskId: this.selectedApproval.processTaskId }).then((res) => {
+      this_.$api['PersonalProcessApproval.getApproveContentViewUrl']({taskId: this.selectedApproval.processTaskId}).then((res) => {
         if (res && res.length > 0) {
           const page = {}
           let inputProp = {}
@@ -346,13 +368,13 @@ export default {
                 this_.dataSource = this_.dataSourceTempView
                 this_.formData.approvalParams = canView
               }
-              inputProp = { ...inputProp, ...o.value }
+              inputProp = {...inputProp, ...o.value}
             }
             this_.loadApprovalFormData()
             inputProp[o.variableName] = o.value
           })
 
-          this_.formCompProp = { ...this_.formCompProp, ...inputProp, ...page, ...{ tableFlex: 240, headerVisible: false } }
+          this_.formCompProp = {...this_.formCompProp, ...inputProp, ...page, ...{tableFlex: 240, headerVisible: false}}
           if (this_.formCompProp.approveContentView) {
             this_.componentsParams = this_.formCompProp.approveContentView.formSelector ? JSON.parse(this_.formCompProp.approveContentView.formSelector) : null
             if (this_.componentsParams) {
@@ -363,11 +385,12 @@ export default {
         }
         this_.formValidate = true
       })
+      console.log(this_.dataSource)
     },
-    loadApprovalFormData () {
+    loadApprovalFormData() {
       const this_ = this
       if (this_.formData.approvalParams && (this_.formData.approvalParams === 'canView' || this_.formData.approvalParams === 'canEdit')) {
-        this_.$api['ProjectApply.getWholeCopyClearly']({ wholeDescribeId: this_.selectedApproval.businessKey }).then((res) => {
+        this_.$api['ProjectApply.getWholeCopyClearly']({wholeDescribeId: this_.selectedApproval.businessKey}).then((res) => {
           if (res) {
             this_.formData.officeResult = res.officeResult
             this_.formData.officeResultText = res.officeResultText
@@ -381,10 +404,10 @@ export default {
       }
 
     },
-    downloadOutputRequsetFile (item) {
+    downloadOutputRequsetFile(item) {
       // 输出要求-文件下载
       if (item.id) {
-        this.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' })
+        this.$api['SystemSettings.getFileUrl']({attachmentId: item.id}, {responseType: 'blob'})
           .then((backJson) => {
             const link = document.createElement('a')
             link.href = window.URL.createObjectURL(new Blob([backJson.data]))
@@ -439,6 +462,7 @@ $paddingLeft: 10px;
 
     .contentBody {
       height: 500px;
+
       div:first-child {
         height: 100%;
         position: relative;
@@ -450,6 +474,7 @@ $paddingLeft: 10px;
     }
   }
 }
+
 .custom-tabs {
   height: calc(100% - 110px);
   // z-index: 0 !important;
@@ -457,38 +482,47 @@ $paddingLeft: 10px;
     border: none;
     height: 100% !important;
   }
+
   ::v-deep .el-tabs--top .el-tabs__content {
     height: calc(100% - 69px);
   }
 }
+
 .custom-tabs.el-tabs--top {
   height: calc(100% - 93px) !important;
   border-top: 1px solid #dcdfe6;
   box-sizing: border-box;
+
   ::v-deep .el-tabs__content {
     padding: 0;
   }
+
   ::v-deep .el-tabs__nav-wrap {
     margin-bottom: 0;
   }
+
   ::v-deep .el-tabs__nav.is-top {
     background: #f5f7fa;
   }
 }
+
 .edit-outputdata-view {
   background-color: rgba(239, 239, 239, 0.5);
   position: relative;
   min-height: 40px;
+
   .file-list {
     li {
       box-sizing: border-box;
       list-style: decimal;
       padding: 0 10px;
       margin-left: 20px;
+
       p {
         margin: 0;
         padding: 0;
       }
+
       p span.filename {
         text-decoration: underline;
         cursor: pointer;

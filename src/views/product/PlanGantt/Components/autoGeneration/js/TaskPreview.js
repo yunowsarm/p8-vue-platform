@@ -838,7 +838,7 @@ const columnsTypeMap = {
   managerStatus: 'select',
   monitorPoints: 'select',
   planType: 'select',
-  wbs: 'select',
+  wbs: 'input',
   name: 'input',
   owner_id: 'input',
   roleName: 'input',

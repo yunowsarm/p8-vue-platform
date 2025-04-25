@@ -51,11 +51,52 @@
         </template>
         <template #center>
           <div style="padding: 10px">
-            <el-button type="primary"
-                       :disabled="isManage"
-                       @click="exportExperience">导入</el-button>
-            <el-button type="primary"
-                       @click="copyExperience">复制到粘贴板</el-button>
+            <div v-if="toolbarWritingDisplay === 'true'">
+              <el-button-group v-if="toolbarCompactLayout === 'true'">
+                <el-button type="primary"
+                           :disabled="isManage"
+                           @click="exportExperience">导入</el-button>
+                <el-button type="primary"
+                           @click="copyExperience">复制到粘贴板</el-button>
+              </el-button-group>
+              <div v-else>
+                <el-button type="primary"
+                           :disabled="isManage"
+                           @click="exportExperience">导入</el-button>
+                <el-button type="primary"
+                           @click="copyExperience">复制到粘贴板</el-button>
+              </div>
+            </div>
+            <div v-else>
+              <el-button-group v-if="toolbarCompactLayout === 'true'">
+                <el-tooltip placement="top"
+                            content="导入">
+                  <el-button icon="p8 icon-daoru"
+                             @click="exportExperience"
+                             type="primary"></el-button>
+                </el-tooltip>
+                <el-tooltip placement="top"
+                            content="复制到粘贴板">
+                  <el-button icon="p8 icon-copy"
+                             @click="copyExperience"
+                             type="primary"></el-button>
+                </el-tooltip>
+              </el-button-group>
+              <div v-else>
+                <el-tooltip placement="top"
+                            content="导入">
+                  <el-button icon="p8 icon-daoru"
+                             @click="exportExperience"
+                             type="primary"></el-button>
+                </el-tooltip>
+                <el-tooltip placement="top"
+                            content="复制到粘贴板">
+                  <el-button icon="p8 icon-copy"
+                             @click="copyExperience"
+                             type="primary"></el-button>
+                </el-tooltip>
+              </div>
+            </div>
           </div>
           <common-table ref="table"
                         :comp="comp"
@@ -80,7 +121,15 @@
             </template>
             <template #operation="{ scope }">
               <el-button type="text"
+                         v-if="toolbarWritingDisplay === 'true'"
                          @click="showDetail(scope.row)">查看详情</el-button>
+              <el-tooltip v-else
+                          placement="top"
+                          content="查看详情">
+                <el-button type="primary"
+                           icon="p8 icon-chakan"
+                           @click="showDetail(scope.row)"></el-button>
+              </el-tooltip>
             </template></common-table>
         </template>
         <template #drawer-panel>
@@ -118,7 +167,7 @@
 
 .common-table ::v-deep {
   height: calc(100% - 60px) !important;
-  padding: 10px;
+  margin: 10px;
 }
 
 .node-span {
@@ -267,7 +316,9 @@ export default {
       treeCfg: {
         indent: 48,
         'highlight-current': true
-      }
+      },
+      toolbarWritingDisplay: 'true',
+      toolbarCompactLayout: 'false'
     }
   },
   watch: {
@@ -294,6 +345,18 @@ export default {
       const resultData = this.catalogData
       return resultData
       // }
+    }
+  },
+  mounted () {
+    if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
+      this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
+    } else {
+      this.toolbarWritingDisplay = 'true'
+    }
+    if (this.$store.getters.baseConfig.toolbarCompactLayout) {
+      this.toolbarCompactLayout = this.$store.getters.baseConfig.toolbarCompactLayout
+    } else {
+      this.toolbarCompactLayout = 'false'
     }
   },
   methods: {

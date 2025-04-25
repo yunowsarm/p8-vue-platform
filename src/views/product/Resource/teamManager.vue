@@ -10,6 +10,7 @@
             <common-upload ref="commonupload"
                            v-if="!uploadView"
                            :files="namedFiles"
+                           :toolbarWritingDisplay="toolbarWritingDisplay"
                            :uploadConfig="{ limit: 1, multiple: false }"
                            @upload="
                 (file) => {
@@ -67,10 +68,17 @@
             <div class="table-con">
               <div class="add-member">
                 <div>
-                  <el-button icon="el-icon-plus"
-                             v-if="group_add_member"
+                  <el-button v-if="group_add_member && toolbarWritingDisplay === 'true'"
                              type="plan"
                              @click="addMemberHandle">添加人员 </el-button>
+                  <el-tooltip v-else
+                              placement="top"
+                              content="添加人员">
+                    <el-button type="primary"
+                               v-if="group_add_member"
+                               icon="el-icon-plus"
+                               @click="addMemberHandle"></el-button>
+                  </el-tooltip>
                   <!-- <el-button type="plan"
                            @click="refreshHandle">查看全部成员
                 </el-button> -->
@@ -123,21 +131,47 @@
                   <template #operation="{ scope }">
                     <template v-if="!scope.row.departureTime">
                       <template v-if="scope.row.taskCount">
-                        <el-popconfirm title="确认要将该人退出项目组吗?"
-                                       confirmButtonText="确认"
-                                       cancelButtonText="取消"
-                                       @confirm="deleteUserHandle(scope, scope.$index)">
-                          <el-button slot="reference"
-                                     size="mini"
-                                     type="text"
-                                     v-if="group_add_member">删除 </el-button>
-                        </el-popconfirm>
+
+                        <div v-if="toolbarWritingDisplay === 'true'">
+                          <el-popconfirm title="确认要将该人退出项目组吗?"
+                                         confirmButtonText="确认"
+                                         cancelButtonText="取消"
+                                         @confirm="deleteUserHandle(scope, scope.$index)">
+                            <el-button slot="reference"
+                                       size="mini"
+                                       v-if="group_add_member"
+                                       type="text">删除 </el-button>
+                          </el-popconfirm>
+                        </div>
+                        <el-tooltip placement="top"
+                                    v-else
+                                    content="删除">
+                          <el-popconfirm title="确认要将该人退出项目组吗?"
+                                         confirmButtonText="确认"
+                                         cancelButtonText="取消"
+                                         @confirm="deleteUserHandle(scope, scope.$index)">
+                            <el-button slot="reference"
+                                       size="mini"
+                                       type="text"
+                                       v-if="group_add_member"
+                                       icon="p8 icon-shanchu"></el-button>
+                          </el-popconfirm>
+                        </el-tooltip>
+
                       </template>
                       <template v-else>
-                        <el-button v-if="group_add_member"
-                                   size="mini"
-                                   type="text"
-                                   @click="deleteUserHandle(scope, scope.$index)">删除 </el-button>
+                        <div v-if="toolbarWritingDisplay === 'true'">
+                          <el-button size="mini"
+                                     type="text"
+                                     v-if="group_add_member"
+                                     @click="deleteUserHandle(scope, scope.$index)">删除 </el-button>
+                        </div>
+                        <div v-else>
+                          <el-button type="text"
+                                     v-if="group_add_member"
+                                     icon="p8 icon-shanchu"
+                                     @click="deleteUserHandle(scope, scope.$index)"></el-button>
+                        </div>
                       </template>
                     </template>
                   </template>
@@ -178,6 +212,11 @@
         </div>
       </div>
       <div class="bottom-con">
+        <P v-if="aiAssistant"
+           class="ai-generated-team">
+          <el-button size="mini"
+                     @click="autoGenerationVisible = true">AI生成团队 </el-button>
+        </P>
         <p class="operation"
            v-if="group_add_role">
           <el-button size="mini"
@@ -222,6 +261,23 @@
                                    :select-user-beforehand-form-data="selectUserBeforehandFormData"
                                    @close-modal="closeSelectApproveUserBeforehand"
                                    @commit="commitSelectApproveUserBeforehand"></selectApproveUserBeforehand>
+      <!--   AI生成团队对话框   -->
+      <common-dialog title="AI生成团队"
+                     width="50%"
+                     class='autoGeneration'
+                     :visible="autoGenerationVisible"
+                     @close="closeAutoGeneration"
+                     :is-view-cs-footer="false"
+                     :dialog-height="650"
+                     :show-handle-btn="false">
+        <template #dialog>
+          <auto-generation v-if="autoGenerationVisible"
+                           ref="autoGeneration"
+                           :project-id="id"
+                           @refreshAiData="refreshAiData"
+                           @close="closeAutoGeneration" />
+        </template>
+      </common-dialog>
     </div>
     <div v-if="viewVisible"
          class="viewVisible"></div>
@@ -236,6 +292,7 @@ import {
   Popconfirm,
   Link,
   Notification,
+  P8Dialog as CommonDialog,
   P8Upload as CommonUpload,
   P8FileView as CommonFileView
 } from 'p8-components-ui'
@@ -250,6 +307,7 @@ import moment from 'moment'
 import SelectApproveUserBeforehand from '@/views/Framework/BusinessActivity/ProcessApproval/selectApproveUserBeforehand'
 import { nextApproveUserBeforehand } from '@/assets/commonJS/BusinessActivity/nextApproveUserBeforehand'
 import DialogUserTaskStatistics from './Components/UserTaskStatistics'
+import AutoGeneration from "./Components/AiGeneratedDialog";
 
 export default {
   name: 'teamManager',
@@ -405,6 +463,8 @@ export default {
       }
     ]
     return {
+      aiAssistant: aiAssistant,
+      autoGenerationVisible: false,
       userTaskConfig: {
         code: 'undertakeTaskDetails',
         permissionVo: {
@@ -469,7 +529,8 @@ export default {
       selectUserBeforehandFormData: {},
       selectUserBeforehandDataSource: [],
       dateTime: '',
-      searchParam: null
+      searchParam: null,
+      toolbarWritingDisplay: 'true'
     }
   },
   computed: {
@@ -499,11 +560,26 @@ export default {
     }
   },
   mounted () {
+    if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
+      this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
+    } else {
+      this.toolbarWritingDisplay = 'true'
+    }
     if (this.id) {
       this.getTeamInfo()
     }
   },
   methods: {
+    refreshAiData (data) {
+      this.generalRoles = data.generalRoles
+      this.$set(this, 'generalRoles', data.generalRoles)
+      this.autoGenerationVisible = false
+      this.submit()
+    },
+    // 关闭AI生成
+    closeAutoGeneration () {
+      this.autoGenerationVisible = false
+    },
     filterTableData (data) {
       if (this.row.length > 0) {
         const projectStatus = this.row[0].STATUS
@@ -774,9 +850,12 @@ export default {
     changeRolesHandle (text, record) {
       record.name = text
     },
-    deleteRolesHandle (index) {
-      // this.generalRoles.splice(index, 1)
-      // this.tableData = []
+    deleteRolesHandle (index, item) {
+      // 判断该角色下是否有团队成员
+      if (item.projectTeamRoleUsers && item.projectTeamRoleUsers.length > 0) {
+        this.$message.warning('该角色下存在团队成员，不能删除')
+        return
+      }
       let idx = index >= 1 ? index - 1 : 0
       this.rolesSelectedIndex = index - 1
       this.generalRoles.splice(index - this.fixedRoles.length, 1)
@@ -790,7 +869,7 @@ export default {
       }
     },
     deleteUserHandle (scope, index) {
-      if(!scope.row.id){
+      if (!scope.row.id) {
         this.tableData.splice(index, 1)
       }
       /**
@@ -1263,6 +1342,7 @@ export default {
     // }
   },
   components: {
+    AutoGeneration,
     VuePerfectScrollbar,
     EditInput,
     CommonTable,
@@ -1278,6 +1358,7 @@ export default {
     'el-link': Link,
     CommonFileView,
     CommonUpload,
+    CommonDialog,
     SelectApproveUserBeforehand,
     DialogUserTaskStatistics
   }
@@ -1553,6 +1634,10 @@ export default {
     text-align: right;
     margin-right: 10px;
   }
+  .ai-generated-team {
+    text-align: right;
+    margin-right: 10px;
+  }
 }
 
 .right-con {
@@ -1584,5 +1669,8 @@ export default {
   ::v-deep i {
     display: none;
   }
+}
+.autoGeneration ::v-deep .el-dialog__body {
+  padding: 0 !important;
 }
 </style>

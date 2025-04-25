@@ -85,7 +85,6 @@ const columns = [
   {
     title: '执行时长(ms)',
     dataIndex: 'responseInterval',
-    width: 150,
     align: 'center'
   }
 ]

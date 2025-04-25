@@ -152,6 +152,12 @@ export default {
         },
         {
           url: './static/themeBackground/41.png'
+        },
+        {
+          url: './static/themeBackground/pic.jpg'
+        },
+        {
+          url: './static/themeBackground/pic2.jpg'
         }
       ]
     }

@@ -52,10 +52,10 @@
 .myGantt ::v-deep {
   // 2个版本，无数据的颜色修改
   .gantt_row:not([aria-expanded]).analysisColor {
-    background-color: #ffa96e !important;
+    background-color: #ffa96e;
   }
   .analysisColor {
-    background-color: #ffa96e !important;
+    background-color: #ffa96e;
   }
 }
 
@@ -378,7 +378,12 @@ export default {
             vueThis.taskStatusMap = res.taskStatusMap
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
-
+            if (vueThis.taskId) {
+              setTimeout(() => {
+                myGantt.selectTask(vueThis.taskId)
+                myGantt.showTask(vueThis.taskId)
+              }, 1000)
+            }
             if (res.changeTaskExtList && Object.keys(res.changeTaskExtList) && Object.keys(res.changeTaskExtList).length) {
               Object.keys(res.changeTaskExtList).forEach(item => {
                 let task = myGantt.getTask(item)
