@@ -222,6 +222,8 @@
          :class="{ isdesign: isDesign }">
       <smart-widget-grid :style="styleObject"
                          :layout="layout"
+                         class="gridWidget"
+                         v-nested-scroll
                          v-bind="$attrs"
                          :col-num="colNum"
                          :key="renderTime"
@@ -288,6 +290,76 @@ import AntvView from '@/views/Framework/ComponentsMananger/Kanban/Components/Ant
 import kanbanView from '../kanbanViewPreview.vue'
 
 export default {
+  directives: {
+    'nested-scroll': {
+      inserted (el) {
+        const initScrollHandlers = () => {
+          // 同时获取表头和表体的滚动容器
+          const bodyWrappers = el.querySelectorAll('.vxe-table--body-wrapper');
+          const headerWrappers = el.querySelectorAll('.vxe-table--header-wrapper');
+          if (bodyWrappers.length > 0 || headerWrappers.length > 0) {
+            const handleWheel = (event) => {
+              let parent = el.closest('.gridWidget');
+              if (!parent) return;
+              const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
+              // 检查是否到达滚动边界
+              const isAtEdge =
+                (event.deltaY > 0 && scrollTop + clientHeight >= scrollHeight) ||
+                (event.deltaY < 0 && scrollTop <= 0);
+              // 如果是表头或者到达边界，则传递事件给父容器
+              if (event.currentTarget.classList.contains('vxe-table--header-wrapper') || isAtEdge) {
+                event.preventDefault();
+                event.stopPropagation();
+                parent.dispatchEvent(new WheelEvent(event.type, event));
+              }
+            };
+            // 为表体和表头添加事件监听
+            [...bodyWrappers, ...headerWrappers].forEach(wrapper => {
+              wrapper.addEventListener('wheel', handleWheel, { passive: false });
+            });
+            return {
+              handleWheel,
+              containers: [...bodyWrappers, ...headerWrappers]
+            };
+          }
+          return null;
+        };
+        let scrollHandlers = initScrollHandlers();
+        // 观察 DOM 变化，处理动态加载的表格
+        const observer = new MutationObserver(() => {
+          if (scrollHandlers) {
+            scrollHandlers.containers.forEach(container => {
+              container.removeEventListener('wheel', scrollHandlers.handleWheel);
+            });
+          }
+          scrollHandlers = initScrollHandlers();
+        });
+        // 只观察当前元素内的变化
+        observer.observe(el, {
+          childList: true,
+          subtree: true
+        });
+        el._nestedScroll = {
+          observer,
+          scrollHandlers
+        };
+      },
+      unbind (el) {
+        if (el._nestedScroll) {
+          const { observer, scrollHandlers } = el._nestedScroll;
+          if (observer) {
+            observer.disconnect();
+          }
+          if (scrollHandlers) {
+            scrollHandlers.containers.forEach(container => {
+              container.removeEventListener('wheel', scrollHandlers.handleWheel);
+            });
+          }
+          delete el._nestedScroll;
+        }
+      }
+    }
+  },
   name: 'Widgetgrid',
   provide () {
     return {
@@ -736,6 +808,10 @@ export default {
     min-height: 100%;
     position: relative;
     padding-bottom: 100px; // 添加底部填充
+  }
+  ::v-deep .vxe-table--body-wrapper {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
   }
 }
 // 拖拽手柄样式调整
