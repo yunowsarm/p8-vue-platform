@@ -16,9 +16,10 @@
                  :durationDay="durationDay"
                  :approve="approve"
                  :exceedType="exceedType"
+                 :checkBusinessForm="checkBusinessForm"
                  @dialogOk="dialogOk"
                  @dialogClose="dialogClose"></progess>
-        <progess-table  v-else
+        <progess-table v-else
                        ref="progessTable"></progess-table>
       </template>
       <!-- 工作统筹 -->
@@ -33,6 +34,19 @@
                  :taskFinish="taskFinish"
                  :tabsName="tabsName"></deviate>
       </template>
+      <!-- 业务表单 -->
+      <template>
+        <FormRender v-if="item.editMode === '单数据'"
+                    :ref="item.name"
+                    :item="item"
+                    :approveType="progessType !==  'progessTable'"
+                    :key="item.name"></FormRender>
+        <multiple-form-table v-else-if="item.editMode === '多数据'"
+                             :ref="item.name"
+                             :key="item.name"
+                             :approveType="progessType !== 'progessTable'"
+                             :item="item"></multiple-form-table>
+      </template>
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -43,6 +57,8 @@ import Progess from './Progess'
 import ProgessTable from './ProgessTable'
 import Deviate from './Deviate'
 import WorkCoordination from './WorkCoordination'
+import multipleFormTable from './components/multipleFormTable'
+import FormRender from './components/formRender.vue'
 export default {
   name: 'TaskTabsView',
   inject: ['getPlanInfo'],
@@ -52,7 +68,9 @@ export default {
     ProgessTable,
     WorkCoordination,
     'el-tabs': Tabs,
-    'el-tab-pane': TabPane
+    'el-tab-pane': TabPane,
+    multipleFormTable,
+    FormRender
   },
   props: {
     // 是否审批页面
@@ -64,6 +82,7 @@ export default {
   data () {
     return {
       progessType: '',
+      formViewId: '',
       taskTabs: [],
       taskTabsProgess: [
         { label: '进度反馈', name: 'progess' }
@@ -79,10 +98,15 @@ export default {
       exceedType: false,
       approve: false,
       tabsName: 'progess',
-      taskFinish: false
+      taskFinish: false,
+      taskbusinessForm: []
     }
   },
   async created () {
+    this.taskbusinessForm = await this.getTaskForm()
+    this.taskbusinessForm = this.taskbusinessForm.map(el => {
+      return { label: el.formName, name: el.id, formCode: el.formCode, editMode: el.editMode, isRequired: el.isRequired, formId: el.formId }
+    })
     // 判断任务是否超期
     if (!this.durationDay) {
       // 超期
@@ -128,12 +152,23 @@ export default {
       taskTabs = this.taskTabsWork
     }
     this.tabsActiveName = tabsActiveName
+    let index = taskTabs.findIndex(item => item.name === 'progess')
+    if (index !== -1) {
+      taskTabs.splice(index + 1, 0, ...this.taskbusinessForm)
+    }
     this.$nextTick(() => {
       this.taskTabs = taskTabs
     })
     await this.getTaskFinish()
   },
   methods: {
+    async getTaskForm () {
+      let api = 'planGanttManager.taskFormInfo'
+      let params = { taskId: this.getPlanInfo().TASKID }
+      let result = this.$api[api](params)
+      return result
+    },
+
     getTaskFinish () {
       this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then((res) => {
         let taskFinish = res.taskFinish && res.taskFinish.content ? res.taskFinish.content : ''
@@ -154,6 +189,20 @@ export default {
       if (this.getPlanInfo().MANAGERSTATUS === '6406') {
         this.progessType = 'progessTable'
       }
+    },
+    checkBusinessForm () {
+      let that = this
+      let flag = true
+      let formName = []
+      this.taskbusinessForm.forEach(el => {
+        if (el.isRequired == '是' && that.$refs[el.name]) {
+          if (!that.$refs[el.name][0].checkBusinessForm()) {
+            formName.push(el.label)
+            flag = false
+          }
+        }
+      })
+      return { flag: flag, message: formName.join('、') }
     }
   }
 }

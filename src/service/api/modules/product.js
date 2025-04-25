@@ -105,7 +105,7 @@ export const repositoryApi = {
       desc: '我的任务->获取计划标识明细数据'
     }
   ],
-  homeBoard:[
+  homeBoard: [
     {
       name: 'getHomeBoardData',
       method: 'POST',
@@ -380,6 +380,27 @@ export const repositoryApi = {
       path: '/product/my/work/task/preAndPostTaskAnnex',
       mockPath: '/product/my/work/task/preAndPostTaskAnnex',
       desc: '我的任务->前后置->获取附件'
+    },
+    {
+      name: 'taskFormdataList',
+      method: 'POST',
+      path: '/product/my/work/task/taskFormdataList',
+      mockPath: '/product/my/work/task/taskFormdataList',
+      desc: '我的任务->但数据业务表单->查询接口'
+    },
+    {
+      name: 'removeFormData',
+      method: 'POST',
+      path: '/product/my/work/task/removeFormData',
+      mockPath: '/product/my/work/task/removeFormData',
+      desc: '我的任务->但数据业务表单->删除'
+    },
+    {
+      name: 'taskFormDataSave',
+      method: 'POST',
+      path: '/product/my/work/task/taskFormDataSave',
+      mockPath: '/product/my/work/task/taskFormDataSave',
+      desc: '我的任务->但数据业务表单->保存方法'
     }
   ],
   ProjectInitiationManagement: [
@@ -1120,6 +1141,20 @@ export const repositoryApi = {
       path: '/product/pm/plan/getSameTaskIndex',
       mockPath: '/product/pm/plan/getSameTaskIndex',
       desc: '项目管理->计划管理->计划编辑 -> 更新排序'
+    },
+    {
+      name: 'taskFormInfo',
+      method: 'POST',
+      path: '/product/pm/plan/taskFormInfo',
+      mockPath: '/product/pm/plan/taskFormInfo',
+      desc: '计划管理->业务表单-获取与任务关联的业务表单信息'
+    },
+    {
+      name: 'taskFormSave',
+      method: 'POST',
+      path: '/product/pm/plan/taskFormSave',
+      mockPath: '/product/pm/plan/taskFormSave',
+      desc: '计划管理->业务表单-保存业务表单信息'
     }
   ],
   planChange: [
@@ -1687,6 +1722,27 @@ export const repositoryApi = {
       path: '/product/klActivity/importExcelCheckout',
       mockPath: '/product/klActivity/importExcelCheckout',
       desc: '知识库管理->产出流程管理->校验'
+    },
+    {
+      name: 'formInfo',
+      method: 'POST',
+      path: '/product/klActivity/formInfo',
+      mockPath: '/product/klActivity/formInfo',
+      desc: '知识库管理->产出流程管理->业务表单->获取所有业务表单信息'
+    },
+    {
+      name: 'proceessFormInfo',
+      method: 'POST',
+      path: '/product/klActivity/proceessFormInfo',
+      mockPath: '/product/klActivity/proceessFormInfo',
+      desc: '知识库管理->产出流程管理->业务表单->获取回显数据'
+    },
+    {
+      name: 'proceessFormSave',
+      method: 'POST',
+      path: '/product/klActivity/proceessFormSave',
+      mockPath: '/product/klActivity/proceessFormSave',
+      desc: '知识库管理->产出流程管理->业务表单->保存'
     }
   ],
   TodoList: [

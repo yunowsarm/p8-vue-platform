@@ -96,6 +96,18 @@
                       :gantt-name="ganttName"
                       :formWidth="formWidth"></special-view>
       </template>
+      <template #businessForm>
+        <businessForm v-if="isView"
+                      :task-id="taskId"
+                      :wholeDescribeId="wholeDescribeId"
+                      :gantt-name="ganttName"
+                      @refreshData="refreshData"
+                      :formWidth="formWidth"></businessForm>
+        <businessFormView v-if="!isView"
+                        :task-id="taskId"
+                        :gantt-name="ganttName"
+                        :formWidth="formWidth"></businessFormView>
+      </template>
       <template #demandKey>
         <relevance-edit v-if="isView"
                         :task-id="taskId"
@@ -129,6 +141,8 @@ import getOutPutView from '../getOutputKeyView/outputViews'
 // import getOutPutEdit from '../outputEdit'
 import SpecialEdit from '../specialEdit'
 import SpecialView from '../specialEdit/specialView'
+import businessForm from '@/views/product/Repository/OutputFlow/Components/businessForm.vue'
+import businessFormView from './businessFormView.vue'
 import { P8Anchor as Anchor } from 'p8-components-ui'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import { mapGetters } from 'vuex'
@@ -153,6 +167,8 @@ export default {
     SpecialView,
     relevanceList,
     relevanceEdit,
+    businessForm,
+    businessFormView
   },
   computed: {
     formWidth () {
@@ -273,6 +289,7 @@ export default {
         { label: '输入要求', value: 'inputKey', icon: 'p8 icon-shuruyaoqiu', hideLabel: true },
         { label: '输出要求', value: 'outputKey', icon: 'p8 icon-shuchuyaoqiu', hideLabel: true },
         { label: '特别说明', value: 'specialKey', icon: 'p8 el-icon-warning-outline' },
+        { label: '业务表单', value: 'businessForm', icon: 'el-icon-s-order"' },
         { label: '关联需求', value: 'demandKey', icon: 'p8 icon-a-xuqiu1' }
       ],
       windowWidth: window.innerWidth

@@ -65,6 +65,11 @@
                     <div style="display: flex; align-items: center"><i class="p8 icon-tebieshuoming"></i><span style="margin-left: 4px">特别说明</span></div>
                   </span>
                 </el-tab-pane>
+                <el-tab-pane name="businessForm">
+                  <span slot="label">
+                    <div style="display: flex; align-items: center"><i class="el-icon-s-order"></i><span style="margin-left: 4px">业务表单</span></div>
+                  </span>
+                </el-tab-pane>
               </el-tabs>
               <div v-if='activityId'
                    class="formEdit"
@@ -99,6 +104,13 @@
                                 ref="specialEdit"
                                 :activityInfoId="activityId"
                                 v-show="'specialKey' == activeKey && activityId"></special-edit>
+                </keep-alive>
+                <keep-alive>
+                  <business-form @saveSuccess="saveCallback"
+                                 @saveAll="saveAll"
+                                 ref="businessForm"
+                                 :activityInfoId="activityId"
+                                 v-show="'businessForm' == activeKey && activityId"></business-form>
                 </keep-alive>
               </div>
             </template>
@@ -290,6 +302,7 @@ import DescribeEdit from './Components/describeEdit'
 import InputEdit from './Components/inputEdit'
 import SpecialEdit from './Components/specialEdit'
 import OutputEdit from './Components/outputEdit'
+import businessForm from './Components/businessForm'
 
 export default {
   name: 'FlowManager',
@@ -304,7 +317,8 @@ export default {
     InputEdit,
     SpecialEdit,
     CommonDrawer,
-    OutputEdit
+    OutputEdit,
+    businessForm
   },
   props: {
     row: {
@@ -395,10 +409,9 @@ export default {
     async saveAll (e) {
       if (this.activityId) {
         await this.saveParams()
-        if (res) {
-          this.$refs.activityTree.updateTaskName(this.activityId)
-        }
-        this.$message({ type: 'success', message: '保存成功' })
+        // if (res) {
+        //   this.$refs.activityTree.updateTaskName(this.activityId)
+        // }
       } else {
         this.$message({
           message: '请选择保存信息对应的活动！',
@@ -409,6 +422,10 @@ export default {
     async saveParams () {
       let that = this
       that.flag = false
+      let result = await that.$refs.businessForm.saveForm()
+      if (!result) {
+        return
+      }
       await that.$refs.describeEdit.$refs.form.validate().then((queryParams) => {
         let saveParams = { ...queryParams, ...that.$refs.describeEdit.$refs.form.otherParam }
         that.$api[that.$refs.describeEdit.saveApi](saveParams).then((res) => {
@@ -427,6 +444,7 @@ export default {
         let saveParams = { ...queryParams, ...that.$refs.specialEdit.$refs.form.otherParam }
         that.$api[that.$refs.specialEdit.saveApi](saveParams)
       })
+      this.$message({ type: 'success', message: '保存成功' })
       this.describeRefrshKey = new Date().getTime()
     },
     destructorDp () {
@@ -458,7 +476,7 @@ export default {
     updateActivity (record) { },
     saveCallback (res) {
       if (res) {
-        // this.$refs.activityTree.updateTaskName(res)
+        this.$refs.activityTree.updateTaskName(res)
       }
     },
     removeActivity (record) {
@@ -484,7 +502,8 @@ export default {
     selectTask (activityId) {
       this.activityId = activityId
       // 刷新页面
-      if (this.activeKey && this.activeKey === 'describeKey') {
+      if (this.activeKey) {
+        this.describeRefrshKey = new Date().getTime()
         this.activeKey = ''
         this.$nextTick(() => (this.activeKey = 'describeKey'))
       }

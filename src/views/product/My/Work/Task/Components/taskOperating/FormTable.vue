@@ -597,7 +597,6 @@ export default {
               .then(() => {
                 _this.$api['taskManager.progressFeedbackCheck']({ taskId: _this.getPlanInfo().TASKID, parent: _this.getPlanInfo().PARENTID, hierarchy: _this.getPlanInfo().GETPROJECTLEVEL }).then(res => {
                   if (res && res.success) {
-                    _this.getPlanInfo().MANAGERSTATUS = '6406'
                     _this.$emit('submit', _this.formData, submitType)
                     _this.minValue = _this.formData.Progress
                   } else {

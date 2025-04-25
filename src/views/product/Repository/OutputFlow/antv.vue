@@ -416,6 +416,7 @@ export default {
                     <i class="p8 icon-shuruyaoqiu" style="cursor:pointer;color: ${el.inputInfo ? '#1890ff' : '#606266'};" onclick="openActivityInfo('inputKey','${el.key}')"></i>
                     <i class="p8 icon-shuchuyaoqiu" style="cursor:pointer;color: ${el.outputInfo ? '#1890ff' : '#606266'};" onclick="openActivityInfo('outputKey','${el.key}')"></i>
                     <i class="p8 icon-tebieshuoming" style="cursor:pointer;color: ${el.specialInfo ? '#1890ff' : '#606266'};" onclick="openActivityInfo('specialKey','${el.key}')"></i>
+                    <i class="el-icon-s-order" style="cursor:pointer;color: ${el.businessForm ? '#1890ff' : '#606266'};" onclick="openActivityInfo('businessForm','${el.key}')"></i>
                   </div>
                 </div>
                 <div style="text-align: center;height:50px;line-height:50px;">${el.name ? el.name : ''}</div>
