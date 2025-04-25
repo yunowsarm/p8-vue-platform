@@ -1,7 +1,13 @@
 @charset "UTF-8";
 @import "./commonStyle/common";
 // @import "mixins/mixins";
-
+.el-button--primary {
+  background-color: $theme-color !important;
+  border-color: $theme-color !important;
+}
+.el-button--primary.is-plain {
+  color: $button-disabled-color !important;
+}
 .commonButton {
   .el-button--primary {
     // background-color: $base-light-color;
@@ -35,8 +41,8 @@
   .el-button--primary.is-disabled:hover,
   .el-button--primary.is-disabled:focus,
   .el-button--primary.is-disabled:active {
-    color: $button-disabled-color;
-    background-color: $button-disabled-background-color;
-    border-color: $button-disabled-border-color;
+    color: $button-disabled-color !important;
+    background-color: $button-disabled-background-color !important;
+    border-color: $button-disabled-border-color !important;
   }
 }
