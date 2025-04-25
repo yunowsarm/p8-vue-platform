@@ -70,7 +70,9 @@ export function routerBeforeEachFunc (to, from, next) {
         if (to.name === null) {
           next({ path: '*', replace: true })
         } else {
-          next()
+          setTimeout(() => {
+            next()
+          }, 1000)
         }
       }
     }
