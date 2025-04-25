@@ -4,7 +4,6 @@
 .vxe-table--render-default .vxe-table--body-wrapper, .vxe-table--layout-wrapper {
   background-color: $table-bg-clolr !important;
 }
-
 .vxe-table--render-default {
   color: $table-text-color !important;
   .vxe-table--body-wrapper table,
@@ -149,4 +148,9 @@
     }
   }
 }
-
+.vxe-table--render-default .vxe-body--row.row--stripe>.vxe-body--column {
+  background-color: $table-stripe-clolr !important;
+}
+.vxe-table--render-default .vxe-body--row.row--hover>.vxe-body--column {
+  background-color: $table-row-hover-bg-color !important;
+}

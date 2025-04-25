@@ -2,9 +2,9 @@
   <normal-layout>
     <template #north
               v-if="viewType === 'table'">
-      <common-button :comp="comp"
+      <!-- <common-button :comp="comp"
                      :button-type="'round'"
-                     :button-config="buttonConfig"></common-button>
+                     :button-config="buttonConfig"></common-button> -->
       <div class="upload-box">
         <common-upload :files="files"
                        :toolbarWritingDisplay='toolbarWritingDisplay'
