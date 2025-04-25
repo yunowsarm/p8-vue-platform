@@ -573,6 +573,9 @@ export default {
       this.$store.getters.baseConfig.tableRowHeight = this.baseConfig.tableRowHeight
     },
     open () {
+      if (!this.formData.systemThemeType) {
+        return this.$message.warning('请先选择主题')
+      }
       this.isVisibleThemeDrawer = true
     },
     restoreDefault () {
@@ -661,6 +664,8 @@ export default {
       that.formData = Object.assign({}, that.modify)
     },
     saveSuccess (themeArray) {
+      console.log(themeArray, '33333333333333333333333333');
+
       this.formData.systemThemeArray = JSON.stringify(themeArray)
       this.customValidate(this.formData)
       this.isVisibleThemeDrawer = false

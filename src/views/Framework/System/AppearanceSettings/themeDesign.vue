@@ -71,8 +71,7 @@ export default {
     },
     themeArray: {
       type: Array,
-      default: () => {
-      }
+      default: () => []
     }
   },
   components: {
@@ -237,7 +236,6 @@ export default {
           value: this.theme
         }
       ]
-      console.log(themeArray, 'themeArraythemeArray');
       if (this.formData.systemThemeType === 'systemThemeType1') {
         this.themeArray[0] = themeArray
       }
