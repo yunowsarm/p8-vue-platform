@@ -96,6 +96,7 @@
 <script>
 import {
   P8Form as FormList,
+  P8ProcessApproval as BpmView,
   Row,
   Col,
   Button,
@@ -103,7 +104,7 @@ import {
   P8Dialog as CommonDialog,
   P8Tabs as CommonTabs
 } from 'p8-components-ui'
-import BpmView from './processApprovalView.vue'
+
 import ProcessHistoryList from '@/views/Framework/BusinessActivity/ProcessApproval/processHistoryList.vue'
 import VuePerfectScroll from 'vue-perfect-scrollbar'
 
