@@ -124,7 +124,7 @@ const project = {
                   reBuildBaseConfig[item.key] = item.value
                 })
               }
-              if (reBuildBaseConfig.systemThemeType) {
+              if (reBuildBaseConfig.systemThemeType && reBuildBaseConfig.systemThemeArray) {
                 let systemThemeArray = JSON.parse(reBuildBaseConfig.systemThemeArray)
                 let themeArray = []
                 if (reBuildBaseConfig.systemThemeType === 'systemThemeType1') {
