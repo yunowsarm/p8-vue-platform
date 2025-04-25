@@ -261,23 +261,6 @@
                                    :select-user-beforehand-form-data="selectUserBeforehandFormData"
                                    @close-modal="closeSelectApproveUserBeforehand"
                                    @commit="commitSelectApproveUserBeforehand"></selectApproveUserBeforehand>
-      <!--   AI生成团队对话框   -->
-      <common-dialog title="AI生成团队"
-                     width="50%"
-                     class='autoGeneration'
-                     :visible="autoGenerationVisible"
-                     @close="closeAutoGeneration"
-                     :is-view-cs-footer="false"
-                     :dialog-height="650"
-                     :show-handle-btn="false">
-        <template #dialog>
-          <auto-generation v-if="autoGenerationVisible"
-                           ref="autoGeneration"
-                           :project-id="id"
-                           @refreshAiData="refreshAiData"
-                           @close="closeAutoGeneration" />
-        </template>
-      </common-dialog>
     </div>
     <div v-if="viewVisible"
          class="viewVisible"></div>
@@ -307,7 +290,7 @@ import moment from 'moment'
 import SelectApproveUserBeforehand from '@/views/Framework/BusinessActivity/ProcessApproval/selectApproveUserBeforehand'
 import { nextApproveUserBeforehand } from '@/assets/commonJS/BusinessActivity/nextApproveUserBeforehand'
 import DialogUserTaskStatistics from './Components/UserTaskStatistics'
-import AutoGeneration from "./Components/AiGeneratedDialog";
+// import AutoGeneration from "./Components/AiGeneratedDialog";
 
 export default {
   name: 'teamManager',
@@ -1342,7 +1325,6 @@ export default {
     // }
   },
   components: {
-    AutoGeneration,
     VuePerfectScrollbar,
     EditInput,
     CommonTable,
