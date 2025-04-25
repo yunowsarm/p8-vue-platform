@@ -1,7 +1,7 @@
 // 该文件中，css样式的值，不允许存在纯常量
 
 .common-table, .el-table,
-.vxe-table--render-default .vxe-table--body-wrapper {
+.vxe-table--render-default .vxe-table--body-wrapper, .vxe-table--layout-wrapper {
   background-color: $table-bg-clolr !important;
 }
 

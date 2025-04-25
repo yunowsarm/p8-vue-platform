@@ -72,11 +72,13 @@
                 <el-tooltip placement="top"
                             content="导入">
                   <el-button icon="p8 icon-daoru"
+                             @click="exportExperience"
                              type="primary"></el-button>
                 </el-tooltip>
                 <el-tooltip placement="top"
                             content="复制到粘贴板">
                   <el-button icon="p8 icon-copy"
+                             @click="copyExperience"
                              type="primary"></el-button>
                 </el-tooltip>
               </el-button-group>
@@ -84,11 +86,13 @@
                 <el-tooltip placement="top"
                             content="导入">
                   <el-button icon="p8 icon-daoru"
+                             @click="exportExperience"
                              type="primary"></el-button>
                 </el-tooltip>
                 <el-tooltip placement="top"
                             content="复制到粘贴板">
                   <el-button icon="p8 icon-copy"
+                             @click="copyExperience"
                              type="primary"></el-button>
                 </el-tooltip>
               </div>

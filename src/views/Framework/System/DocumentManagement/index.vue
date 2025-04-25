@@ -7,6 +7,7 @@
                      :button-config="buttonConfig"></common-button>
       <div class="upload-box">
         <common-upload :files="files"
+                       :toolbarWritingDisplay='toolbarWritingDisplay'
                        @upload="handleUpload"
                        @remove="handleRemove"></common-upload>
         <search-form-list ref="search"
@@ -214,10 +215,16 @@ export default {
           align: 'left',
           headerAlign: 'left'
         }
-      ]
+      ],
+      toolbarWritingDisplay: 'true'
     }
   },
   mounted () {
+    if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
+      this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
+    } else {
+      this.toolbarWritingDisplay = 'true'
+    }
     this.isTreeSelectView = true
     if (this.viewType !== 'table') {
       this.queryData()
