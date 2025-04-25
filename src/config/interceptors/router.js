@@ -16,6 +16,7 @@ export function routerBeforeEachFunc (to, from, next) {
   }
 
   if (token) {
+    store.dispatch('getDicAndBaseConfig') // 获取系统配置信息-项目状态、计划状态、任务状态等dicConfig与系统名称等baseConfig
     if (to.path === '/login') {
       next('/login')
     } else {
@@ -24,7 +25,6 @@ export function routerBeforeEachFunc (to, from, next) {
        * 如果没有获取到当前用户的权限数据则需要远程获取用户权限
        */
       if (!store.getters.roles) {
-        store.dispatch('getDicAndBaseConfig') // 获取系统配置信息-项目状态、计划状态、任务状态等dicConfig与系统名称等baseConfig
         // TODO 还没有权限部分 获取权限列表
         store.dispatch('getUserInfo').then((res) => {
           // 保存用户信息到sessionStorage，供新窗口使用
