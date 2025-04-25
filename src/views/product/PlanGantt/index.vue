@@ -440,6 +440,7 @@ export default {
       this.defaultPercent = 100
       this.$store.getters.vueThis.pageType = 'switch'
       this.firstEntry = true
+      this.$refs.commandBottonBar.showArrow = false
     },
     showDetail (selectTask, ganttName, viewType, switchType,) {
       this.selectTaskId = selectTask.id
@@ -480,6 +481,7 @@ export default {
         this.defaultPercent = this.defaultPercent > 70 ? 70 : this.defaultPercent
         this.firstEntry = false
       }
+      this.$refs.commandBottonBar.showArrow = true
     },
     templateMounted () {
       this.loading.close()
