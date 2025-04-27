@@ -154,7 +154,8 @@ export default {
         }
       ],
       buttonListInLeft: [],
-      valueBtns: []
+      valueBtns: [],
+      oldForm: {}
     }
   },
   created() {
@@ -178,13 +179,20 @@ export default {
       }
       that.formData = Object.assign({}, this.formData)
       this.buttonListInLeft = getButtonData(CommandButtonBarData)
+      that.oldForm = { ...that.formData }
     })
   },
   methods: {
     input(val) {
       this.formData.taskRealDateWrite = val
     },
-    customValidate(saveParams) {
+    async customValidate(saveParams) {
+      if (this.oldForm.taskFinish == '手动' && saveParams.taskFinish == '自动') {
+        let result = await this.checkTaskFinsh()
+        if (!result) {
+          return
+        }
+      }
       if (saveParams.taskRealDateWrite === '系统时间') {
         saveParams.taskRealDateWrite = '0'
       } else {
@@ -201,6 +209,19 @@ export default {
     },
     saved(){
       window.myWebSocket.emit('updateConfig', '系统全局配置参数已修改')
+    },
+    async checkTaskFinsh () {
+      return new Promise((resolve, reject) => {
+        this.$confirm('设为自动后，父任务无需手动提交，但如果父任务已被设置为有输出要求或关联表单时，届时父任务责任人将无法进行维护填报，请确认是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          resolve(true)
+        }).catch(() => {
+          reject(false)
+        })
+      })
     }
   }
 }

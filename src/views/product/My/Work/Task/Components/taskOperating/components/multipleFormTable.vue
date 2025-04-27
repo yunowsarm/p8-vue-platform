@@ -182,7 +182,7 @@ export default {
               }
             }
           ).then((res) => {
-            that.$refs.table.searchData()
+            that.searchList()
           })
         })
         .catch(() => {

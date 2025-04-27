@@ -1824,6 +1824,13 @@ export const CommandButtonData = [
       // vueThis.activitySecretGradeDisplay = tasks[0].secretGradeDisplay
       vueThis.activityImportType = 'children'
       vueThis.activityImportVisible = true
+      let hasBusinessForm = tasks[0].hasBusinessForm
+      // vueThis.taskFinish = true 手动
+      if (!vueThis.taskFinish && hasBusinessForm == 'true') {
+        setTimeout(() => {
+          vueThis.$message({type: 'warning', message: '该任务已关联业务表单且父任务完成方式为自动，导入下级后，所关联的表单将在执行时无法填写'})
+        }, 500)
+      }
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
@@ -3108,6 +3115,9 @@ function addTask (num, pos, ganttName) {
         break
       case 'Child':
         parentTask = task
+        if (task.hasBusinessForm == 'true' && !vueThis.taskFinish) {
+          vueThis.$message({ type: 'warning', message: '该任务成为父任务，所关联的表单将在执行时无法填写。' })
+        }
         // 新建下级
         api['planGanttManager.createPlanGanttData']({
           name: '新任务',

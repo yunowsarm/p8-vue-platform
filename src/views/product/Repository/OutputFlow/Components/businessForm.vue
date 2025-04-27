@@ -72,8 +72,7 @@
                      title="预览"
                      @close="drawerClose">
         <template #drawer>
-        <form-render 
-                     :record="{ desformCode: privewCode }"></form-render>
+          <form-render :record="{ desformCode: privewCode }"></form-render>
         </template>
       </common-drawer>
     </template>
@@ -82,6 +81,7 @@
 <script>
 import { P8ListLayout as ListLayout, P8Drawer as CommonDrawer, P8EditTable as EditableTable } from 'p8-components-ui'
 import FormRender from '@/views/Framework/ComponentsMananger/Form/Components/Components/edit.vue'
+import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 export default {
   name: 'businessForm',
   props: {
@@ -90,6 +90,10 @@ export default {
       default: ''
     },
     taskId: {
+      type: String,
+      default: ''
+    },
+    ganttName: {
       type: String,
       default: ''
     },
@@ -138,7 +142,9 @@ export default {
         tableData: []
       },
       editTableData: [],
-      privewCode: ''
+      privewCode: '',
+      taskFinish: null,
+      ganttObject: null
     }
   },
   components: {
@@ -147,7 +153,21 @@ export default {
     CommonDrawer,
     FormRender
   },
+  watch: {
+    ganttName: {
+      handler (val) {
+        this.ganttObject = GanttObject.getGanttObject(this.ganttName)
+      },
+      immediate: true
+    },
+  },
   created () {
+    this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then((res) => {
+      let taskFinish = res.taskFinish && res.taskFinish.content ? res.taskFinish.content : ''
+      if (taskFinish === '手动') {
+        this.taskFinish = true
+      }
+    })
     this.$api['OutputFlow.formInfo']({}).then(res => {
       this.renderData = res
     })
@@ -170,13 +190,21 @@ export default {
     },
     privew (row) {
       this.visible = true
-      let el  = this.renderData.find(item => item.id === row.formId)
+      let el = this.renderData.find(item => item.id === row.formId)
       this.privewCode = el.desformCode
     },
     drawerClose () {
       this.visible = false
     },
     addForm () {
+      if (this.taskId) {
+        if (!this.taskFinish) {
+          let hasChild = this.ganttObject.hasChild(this.taskId)
+          if (hasChild) {
+            this.$message({ type: 'warning', message: '当前任务为父任务且父任务完成方式为自动，所关联的表单将在执行时无法填写' })
+          }
+        }
+      }
       this.$refs.editTable.add()
     },
     saveForm () {
@@ -195,10 +223,17 @@ export default {
         if (this.taskId) {
           api = 'planGanttManager.taskFormSave'
           params = { taskId: this.taskId, taskFormRequests: saveData }
+          let task = this.ganttObject.getTask(this.taskId)
+          if (saveData.length) {
+            task.hasBusinessForm = 'true'
+          } else {
+            task.hasBusinessForm = 'false'
+          }
+          this.ganttObject.updateTask(this.taskId)
         }
         this.$api[api](params).then(res => {
           if (this.taskId) {
-            this.$message({type: 'success',message: '保存成功'})
+            this.$message({ type: 'success', message: '保存成功' })
           }
         })
       } else {

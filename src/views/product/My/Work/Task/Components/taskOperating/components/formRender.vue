@@ -1,5 +1,6 @@
 <template>
   <form-render ref="form"
+               style="padding-top: 20px;"
                :dataViewId="formViewId"
                :record="{ desformCode: formCode }"
                :pageType="pageType"
@@ -8,7 +9,6 @@
 
 <script>
 import FormRender from '@/views/Framework/ComponentsMananger/Form/Components/Components/edit.vue'
-import { log } from 'video.js'
 export default {
   name: 'formRender1',
   props: {

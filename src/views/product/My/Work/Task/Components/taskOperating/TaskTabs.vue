@@ -7,46 +7,54 @@
                  :key="item.name"
                  :label="item.label"
                  :name="item.name">
-      <!-- 进度反馈 -->
-      <template v-if="item.name === 'progess' && tabsActiveName == item.name">
-        <progess v-if="progessType !== 'progessTable'"
-                 ref="progess"
-                 :taskFinish="taskFinish"
-                 :tabsName="tabsName"
-                 :durationDay="durationDay"
-                 :approve="approve"
-                 :exceedType="exceedType"
-                 :checkBusinessForm="checkBusinessForm"
-                 @dialogOk="dialogOk"
-                 @dialogClose="dialogClose"></progess>
-        <progess-table v-else
-                       ref="progessTable"></progess-table>
-      </template>
-      <!-- 工作统筹 -->
-      <template v-if="item.name === 'workCoordination' && tabsActiveName == item.name">
-        <span slot="label">{{item.label}}</span>
-        <work-coordination ref="workCoordination"></work-coordination>
-      </template>
-      <!-- 未完成原因 -->
-      <template v-if="item.name === 'unfinishedCause' && tabsActiveName == item.name">
-        <span slot="label">{{item.label}}</span>
-        <deviate ref="deviate"
-                 :taskFinish="taskFinish"
-                 :tabsName="tabsName"></deviate>
-      </template>
-      <!-- 业务表单 -->
-      <template>
-        <FormRender v-if="item.editMode === '单数据'"
-                    :ref="item.name"
-                    :item="item"
-                    :approveType="progessType !==  'progessTable'"
-                    :key="item.name"></FormRender>
-        <multiple-form-table v-else-if="item.editMode === '多数据'"
-                             :ref="item.name"
-                             :key="item.name"
-                             :approveType="progessType !== 'progessTable'"
-                             :item="item"></multiple-form-table>
-      </template>
+      <div class="tab-content-wrapper"
+           :class="{ 'is-maximized': maximizedTabs[item.name] }">
+        <!-- 最大化/最小化按钮 -->
+        <div class="tab-actions">
+          <i :class="maximizedTabs[item.name] ? 'p8 icon-exit-fullscreen' : 'p8 icon-full-screen'"
+             @click="toggleMaximize(item.name)"></i>
+        </div>
+        <!-- 进度反馈 -->
+        <template v-if="item.name === 'progess' && tabsActiveName == item.name">
+          <progess v-if="progessType !== 'progessTable'"
+                   ref="progess"
+                   :taskFinish="taskFinish"
+                   :tabsName="tabsName"
+                   :durationDay="durationDay"
+                   :approve="approve"
+                   :exceedType="exceedType"
+                   :checkBusinessForm="checkBusinessForm"
+                   @dialogOk="dialogOk"
+                   @dialogClose="dialogClose"></progess>
+          <progess-table v-else
+                         ref="progessTable"></progess-table>
+        </template>
+        <!-- 工作统筹 -->
+        <template v-if="item.name === 'workCoordination' && tabsActiveName == item.name">
+          <span slot="label">{{item.label}}</span>
+          <work-coordination ref="workCoordination"></work-coordination>
+        </template>
+        <!-- 未完成原因 -->
+        <template v-if="item.name === 'unfinishedCause' && tabsActiveName == item.name">
+          <span slot="label">{{item.label}}</span>
+          <deviate ref="deviate"
+                   :taskFinish="taskFinish"
+                   :tabsName="tabsName"></deviate>
+        </template>
+        <!-- 业务表单 -->
+        <template>
+          <FormRender v-if="item.editMode === '单数据'"
+                      :ref="item.name"
+                      :item="item"
+                      :approveType="progessType !==  'progessTable'"
+                      :key="item.name"></FormRender>
+          <multiple-form-table v-else-if="item.editMode === '多数据'"
+                               :ref="item.name"
+                               :key="item.name"
+                               :approveType="progessType !== 'progessTable'"
+                               :item="item"></multiple-form-table>
+        </template>
+      </div>
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -81,6 +89,7 @@ export default {
   },
   data () {
     return {
+      maximizedTabs: {}, // 记录每个标签页的最大化状态
       progessType: '',
       formViewId: '',
       taskTabs: [],
@@ -162,6 +171,9 @@ export default {
     await this.getTaskFinish()
   },
   methods: {
+    toggleMaximize (tabName) {
+      this.$set(this.maximizedTabs, tabName, !this.maximizedTabs[tabName])
+    },
     async getTaskForm () {
       let api = 'planGanttManager.taskFormInfo'
       let params = { taskId: this.getPlanInfo().TASKID }
@@ -210,6 +222,51 @@ export default {
 <style lang="scss" scoped>
 .progressTaskTabs.el-tabs {
   height: 100%;
+  position: relative;
+}
+
+.tab-content-wrapper {
+  position: relative;
+  height: calc(100% - 10px); // 修改：底部留出10px空间
+  margin-bottom: 10px; // 添加：确保底部间距
+  transition: all 0.3s;
+
+  &.is-maximized {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 20px);
+    background: #fff;
+    z-index: 99999;
+    padding-top: 20px;
+    .tab-actions { // 添加：确保最大化时图标可见
+      position: fixed;
+      right: 20px;
+      top: 20px;
+    }
+  }
+}
+
+.tab-actions {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 99999; // 修改：提高图标层级
+  
+  i {
+    cursor: pointer;
+    font-size: 18px;
+    color: #606266;
+    padding: 5px; // 添加：增加可点击区域
+    
+    &:hover {
+      color: #409eff;
+    }
+  }
+}
+.progressTaskTabs.el-tabs {
+  height: 100%;
 }
 .progressTaskTabs ::v-deep .el-tabs__header {
   margin: 0;
@@ -227,7 +284,7 @@ export default {
   overflow: auto;
 }
 .progressTaskTabs ::v-deep .el-tab-pane {
-  height: 100%;
+  height: calc(100% - 10px);
 }
 .el-tabs--border-card {
   border: 0;

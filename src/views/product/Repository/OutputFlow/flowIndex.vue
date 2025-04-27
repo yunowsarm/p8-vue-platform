@@ -412,6 +412,7 @@ export default {
         // if (res) {
         //   this.$refs.activityTree.updateTaskName(this.activityId)
         // }
+        this.describeKey = 'describeKey'
       } else {
         this.$message({
           message: '请选择保存信息对应的活动！',
