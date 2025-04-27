@@ -72,7 +72,7 @@
         </el-tab-pane>
       </el-tabs>
     </template>
-   
+
   </div>
 </template>
 <style lang="scss" scoped>
@@ -436,7 +436,12 @@ export default {
             isDeleted: false
           }))
           that.formData.sysuserIds = selectedUserIds
+          that.formData.resourceIds = resourceList
+          that.formData.authorityTypes = authorityTypes
           that.selectedData = { ...that.selectedData, userList, resourceList, appList }
+        })
+        .catch(function (error) {
+          console.log(error)
         })
     },
     saved(res) {
