@@ -359,8 +359,9 @@ export default {
           title: '操作',
           fixed: 'right',
           dataIndex: 'operation',
+          align: 'center',
           scopedSlots: { customRender: 'operation' },
-          width: 120
+          width: 140
         }
       ],
       tableConfig: {},

@@ -2,15 +2,19 @@
   <list-layout>
     <template #north>
       <el-button type="primary"
-                 v-if="toolbarWritingDisplay === 'true'"
+                 v-if="toolbarWritingDisplay === '0'"
                  @click="createThird">新建</el-button>
-      <el-tooltip v-else
+      <el-tooltip v-if="toolbarWritingDisplay === '1'"
                   placement="top"
                   content="新建">
         <el-button type="primary"
                    icon="p8 icon-add"
                    @click="createThird"></el-button>
       </el-tooltip>
+      <el-button type="primary"
+                 v-if="toolbarWritingDisplay === '2'"
+                 icon="p8 icon-add"
+                 @click="createThird">新建</el-button>
       <!-- <common-button :comp="comp"
                      buttonType="primary"
                      :customButtonData="customButtonData"></common-button> -->
@@ -27,7 +31,7 @@
                     :api="tableApi"
                     :pagination="true">
         <template #operation="{scope}">
-          <div v-if="toolbarWritingDisplay === 'true'">
+          <div v-if="toolbarWritingDisplay === '0'">
             <el-button-group v-if="toolbarCompactLayout === 'true'">
               <el-button type="text"
                          style="margin-right: 2px;"
@@ -47,7 +51,7 @@
                          :disabled="scope.row.type == '0'">删除</el-button>
             </div>
           </div>
-          <div v-else>
+          <div v-if="toolbarWritingDisplay === '1'">
             <el-button-group v-if="toolbarCompactLayout === 'true'">
               <el-tooltip placement="top"
                           content="修改">
@@ -77,6 +81,30 @@
                            @click="deleteThird(scope.row)"
                            type="primary"></el-button>
               </el-tooltip>
+            </div>
+          </div>
+          <div v-if="toolbarWritingDisplay === '2'">
+            <el-button-group v-if="toolbarCompactLayout === 'true'">
+              <el-button type="text"
+                         style="margin-right: 2px;"
+                         icon="p8 icon-xiugai"
+                         @click="updateThird(scope.row)">修改</el-button>
+              <el-button type="text"
+                         icon="p8 icon-shanchu"
+                         @click="deleteThird(scope.row)"
+                         :disabled="scope.row.type == '0'">删除</el-button>
+            </el-button-group>
+            <div v-else>
+              <el-button type="text"
+                         round
+                         icon="p8 icon-xiugai"
+                         @click="updateThird(scope.row)">修改</el-button>
+              <el-divider direction="vertical"></el-divider>
+              <el-button type="text"
+                         round
+                         icon="p8 icon-shanchu"
+                         @click="deleteThird(scope.row)"
+                         :disabled="scope.row.type == '0'">删除</el-button>
             </div>
           </div>
         </template>
@@ -167,7 +195,7 @@ export default {
           "location": "head"
         },
       ],
-      toolbarWritingDisplay: 'true',
+      toolbarWritingDisplay: '0',
       toolbarCompactLayout: 'false'
     }
   },
@@ -175,7 +203,7 @@ export default {
     if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
       this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
     } else {
-      this.toolbarWritingDisplay = 'true'
+      this.toolbarWritingDisplay = '0'
     }
     if (this.$store.getters.baseConfig.toolbarCompactLayout) {
       this.toolbarCompactLayout = this.$store.getters.baseConfig.toolbarCompactLayout

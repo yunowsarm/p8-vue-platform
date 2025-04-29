@@ -2,15 +2,19 @@
   <list-layout class="listLayout">
     <template #north>
       <el-button type="primary"
-                 v-if="toolbarWritingDisplay === 'true'"
+                 v-if="toolbarWritingDisplay === '0'"
                  @click="restoreDeleted()">恢复删除项</el-button>
-      <el-tooltip v-else
+      <el-tooltip v-if="toolbarWritingDisplay === '1'"
                   placement="top"
                   content="恢复删除项">
         <el-button type="primary"
                    icon="p8 icon-huifu"
                    @click="restoreDeleted()"></el-button>
       </el-tooltip>
+      <el-button type="primary"
+                 v-if="toolbarWritingDisplay === '2'"
+                 icon="p8 icon-huifu"
+                 @click="restoreDeleted()">恢复删除项</el-button>
       <search-form-list ref="search"
                         label-width="100px"
                         class="searchList"
@@ -42,15 +46,19 @@
         </template>
         <template #operation="{ scope }">
           <el-button type="text"
-                     v-if="toolbarWritingDisplay === 'true'"
+                     v-if="toolbarWritingDisplay === '0'"
                      @click="deletePrivew(scope.row)">删除</el-button>
-          <el-tooltip v-else
+          <el-tooltip v-if="toolbarWritingDisplay === '0'"
                       placement="top"
                       content="删除">
             <el-button type="primary"
                        icon="p8 icon-shanchu"
                        @click="deletePrivew(scope.row)"></el-button>
           </el-tooltip>
+          <el-button type="primary"
+                     v-if="toolbarWritingDisplay === '2'"
+                     icon="p8 icon-shanchu"
+                     @click="deletePrivew(scope.row)">删除</el-button>
         </template>
       </common-table>
     </template>
@@ -156,7 +164,7 @@ export default {
         }
       ],
       record: {},
-      toolbarWritingDisplay: 'true'
+      toolbarWritingDisplay: '0'
     }
   },
   computed: {
@@ -165,7 +173,7 @@ export default {
     if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
       this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
     } else {
-      this.toolbarWritingDisplay = 'true'
+      this.toolbarWritingDisplay = '0'
     }
   },
   methods: {

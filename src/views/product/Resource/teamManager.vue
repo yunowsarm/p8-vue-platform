@@ -67,22 +67,23 @@
             </div>
             <div class="table-con">
               <div class="add-member">
-                <div>
-                  <el-button v-if="group_add_member && toolbarWritingDisplay === 'true'"
-                             type="plan"
-                             @click="addMemberHandle">添加人员 </el-button>
-                  <el-tooltip v-else
-                              placement="top"
-                              content="添加人员">
-                    <el-button type="primary"
-                               v-if="group_add_member"
-                               icon="el-icon-plus"
-                               @click="addMemberHandle"></el-button>
-                  </el-tooltip>
-                  <!-- <el-button type="plan"
+                <el-button v-if="group_add_member && toolbarWritingDisplay === '0'"
+                           type="plan"
+                           @click="addMemberHandle">添加人员 </el-button>
+                <el-tooltip v-if="group_add_member && toolbarWritingDisplay === '1'"
+                            placement="top"
+                            content="添加人员">
+                  <el-button type="primary"
+                             icon="el-icon-plus"
+                             @click="addMemberHandle"></el-button>
+                </el-tooltip>
+                <el-button v-if="group_add_member && toolbarWritingDisplay === '2'"
+                           type="primary"
+                           icon="el-icon-plus"
+                           @click="addMemberHandle">添加人员 </el-button>
+                <!-- <el-button type="plan"
                            @click="refreshHandle">查看全部成员
                 </el-button> -->
-                </div>
                 <search-form-list style="top: 2px"
                                   ref="search"
                                   :resetAfterToSearch="false"
@@ -132,7 +133,7 @@
                     <template v-if="!scope.row.departureTime">
                       <template v-if="scope.row.taskCount">
 
-                        <div v-if="toolbarWritingDisplay === 'true'">
+                        <div v-if="toolbarWritingDisplay === '0'">
                           <el-popconfirm title="确认要将该人退出项目组吗?"
                                          confirmButtonText="确认"
                                          cancelButtonText="取消"
@@ -144,35 +145,54 @@
                           </el-popconfirm>
                         </div>
                         <el-tooltip placement="top"
-                                    v-else
-                                    content="删除">
+                                    v-if="toolbarWritingDisplay === '1'">
+                          content="删除">
                           <el-popconfirm title="确认要将该人退出项目组吗?"
                                          confirmButtonText="确认"
                                          cancelButtonText="取消"
                                          @confirm="deleteUserHandle(scope, scope.$index)">
                             <el-button slot="reference"
                                        size="mini"
-                                       type="text"
+                                       type="primary"
                                        v-if="group_add_member"
                                        icon="p8 icon-shanchu"></el-button>
                           </el-popconfirm>
                         </el-tooltip>
+                        <div v-if="toolbarWritingDisplay === '2'">
+                          <el-popconfirm title="确认要将该人退出项目组吗?"
+                                         confirmButtonText="确认"
+                                         cancelButtonText="取消"
+                                         @confirm="deleteUserHandle(scope, scope.$index)">
+                            <el-button slot="reference"
+                                       size="mini"
+                                       v-if="group_add_member"
+                                       icon="p8 icon-shanchu"
+                                       type="primary">删除 </el-button>
+                          </el-popconfirm>
+                        </div>
                       </template>
                       <template v-else>
-                        <div v-if="toolbarWritingDisplay === 'true'">
+                        <div v-if="toolbarWritingDisplay === '0'">
                           <el-button size="mini"
                                      type="text"
                                      v-if="group_add_member"
                                      @click="deleteUserHandle(scope, scope.$index)">删除 </el-button>
                         </div>
                         <el-tooltip placement="top"
-                                    v-else
-                                    content="删除">
-                          <el-button type="text"
+                                    v-if="toolbarWritingDisplay === '1'">
+                          content="删除">
+                          <el-button type="primary"
                                      v-if="group_add_member"
                                      icon="p8 icon-shanchu"
                                      @click="deleteUserHandle(scope, scope.$index)"></el-button>
                         </el-tooltip>
+                        <div v-if="toolbarWritingDisplay === '2'">
+                          <el-button size="mini"
+                                     type="primary"
+                                     icon="p8 icon-shanchu"
+                                     v-if="group_add_member"
+                                     @click="deleteUserHandle(scope, scope.$index)">删除 </el-button>
+                        </div>
                       </template>
                     </template>
                   </template>
@@ -531,7 +551,7 @@ export default {
       selectUserBeforehandDataSource: [],
       dateTime: '',
       searchParam: null,
-      toolbarWritingDisplay: 'true'
+      toolbarWritingDisplay: '0'
     }
   },
   computed: {
@@ -564,7 +584,7 @@ export default {
     if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
       this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
     } else {
-      this.toolbarWritingDisplay = 'true'
+      this.toolbarWritingDisplay = '0'
     }
     if (this.id) {
       this.getTeamInfo()
@@ -839,7 +859,7 @@ export default {
       this.columns.unshift({
         title: '角色',
         dataIndex: 'roleName',
-        width: 120,
+        width: 140,
         align: 'center'
       })
       this.tableData = tableData

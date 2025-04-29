@@ -1,16 +1,20 @@
 <template>
   <div style="height: 100%;">
     <div style="padding: 1%;">
-      <el-button v-if="toolbarWritingDisplay === 'true'"
+      <el-button v-if="toolbarWritingDisplay === '0'"
                  type="primary"
                  @click="relevanceClick">保存</el-button>
-      <el-tooltip v-else
+      <el-tooltip v-if="toolbarWritingDisplay === '1'"
                   placement="top"
                   content="保存">
         <el-button type="primary"
                    icon="p8 icon-baocun"
                    @click="relevanceClick"></el-button>
       </el-tooltip>
+      <el-button v-if="toolbarWritingDisplay === '2'"
+                 type="primary"
+                 icon="p8 icon-baocun"
+                 @click="relevanceClick">保存</el-button>
     </div>
     <vxe-table ref="xDemandTable"
                :comp="comp"
@@ -25,17 +29,22 @@
                @selection-change="handleSelectionChangeDemand"
                @requested-table-data="requestedTableData">
       <template #operation="{ scope }">
-        <div v-if="toolbarWritingDisplay === 'true'">
+        <div v-if="toolbarWritingDisplay === '0'">
           <el-button type="text"
                      @click="showDetail(scope.row)">查看详情</el-button>
         </div>
-        <el-tooltip v-else
-                    placement="top"
-                    content="查看详情">
+        <el-tooltip v-if="toolbarWritingDisplay === '1'">
+          placement="top"
+          content="查看详情">
           <el-button icon="p8 icon-chakan"
                      @click="showDetail(scope.row)"
                      type="primary"></el-button>
         </el-tooltip>
+        <div v-if="toolbarWritingDisplay === '2'">
+          <el-button type="text"
+                     icon="p8 icon-chakan"
+                     @click="showDetail(scope.row)">查看详情</el-button>
+        </div>
       </template>
     </vxe-table>
     <common-drawer v-if="relevanceInfoDrawer"
@@ -155,14 +164,14 @@ export default {
       selectRecord: {},
       selectRecords: [],
       selectDatas: [],
-      toolbarWritingDisplay: 'true'
+      toolbarWritingDisplay: '0'
     }
   },
   mounted () {
     if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
       this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
     } else {
-      this.toolbarWritingDisplay = 'true'
+      this.toolbarWritingDisplay = '0'
     }
   },
   methods: {

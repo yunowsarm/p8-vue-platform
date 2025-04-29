@@ -211,19 +211,19 @@ export default {
           fixed: 'right',
           dataIndex: 'operation',
           scopedSlots: { customRender: 'operation' },
-          width: 120,
-          align: 'left',
+          width: 140,
+          align: 'center',
           headerAlign: 'left'
         }
       ],
-      toolbarWritingDisplay: 'true'
+      toolbarWritingDisplay: '0'
     }
   },
   mounted () {
     if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
       this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
     } else {
-      this.toolbarWritingDisplay = 'true'
+      this.toolbarWritingDisplay = '0'
     }
     this.isTreeSelectView = true
     if (this.viewType !== 'table') {

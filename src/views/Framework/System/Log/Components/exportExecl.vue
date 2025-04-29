@@ -1,14 +1,14 @@
 <template>
   <div>
     <el-button @click="downExcel"
-               v-if="toolbarWritingDisplay === 'true'"
+               v-if="toolbarWritingDisplay === '0'"
                type="primary">
       导出
       <a ref="down"
          :href="href"
          :download="`${title}.xlsx`"></a>
     </el-button>
-    <el-tooltip v-else
+    <el-tooltip v-if="toolbarWritingDisplay === '1'"
                 placement="top"
                 content="导出">
       <el-button type="primary"
@@ -17,6 +17,15 @@
            :href="href"
            :download="`${title}.xlsx`"></a></el-button>
     </el-tooltip>
+    <el-button @click="downExcel"
+               icon="p8 icon-daochu"
+               v-if="toolbarWritingDisplay === '2'"
+               type="primary">
+      导出
+      <a ref="down"
+         :href="href"
+         :download="`${title}.xlsx`"></a>
+    </el-button>
   </div>
 </template>
 
@@ -56,7 +65,7 @@ export default {
         size: 5000,
         orders: []
       },
-      toolbarWritingDisplay: 'true'
+      toolbarWritingDisplay: '0'
     }
   },
   watch: {
@@ -72,7 +81,7 @@ export default {
     if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
       this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
     } else {
-      this.toolbarWritingDisplay = 'true'
+      this.toolbarWritingDisplay = '0'
     }
   },
   methods: {

@@ -2,15 +2,19 @@
   <list-layout>
     <template #north>
       <el-button type='primary'
-                 v-if="toolbarWritingDisplay === 'true'"
+                 v-if="toolbarWritingDisplay === '0'"
                  @click="planVersionView()">对比</el-button>
-      <el-tooltip v-else
+      <el-tooltip v-if="toolbarWritingDisplay === '1'"
                   placement="top"
                   content="对比">
         <el-button type="primary"
                    icon="p8 icon-contrast"
                    @click="planVersionView()"></el-button>
       </el-tooltip>
+      <el-button type='primary'
+                 icon="p8 icon-contrast"
+                 v-if="toolbarWritingDisplay === '2'"
+                 @click="planVersionView()">对比</el-button>
       <search-form-list ref="search"
                         :dataSource='searchData'
                         @search='search'
@@ -159,14 +163,14 @@ export default {
           }
         }
       ],
-      toolbarWritingDisplay: 'true'
+      toolbarWritingDisplay: '0'
     }
   },
   mounted () {
     if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
       this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
     } else {
-      this.toolbarWritingDisplay = 'true'
+      this.toolbarWritingDisplay = '0'
     }
   },
   methods: {

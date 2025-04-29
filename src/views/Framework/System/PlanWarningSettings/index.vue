@@ -2,7 +2,7 @@
   <div class="content">
     <div class="list-header">
 
-      <div v-if="toolbarWritingDisplay === 'true'">
+      <div v-if="toolbarWritingDisplay === '0'">
         <el-button-group v-if="toolbarCompactLayout === 'true'">
           <el-button type="primary"
                      @click="addAlert()"> 新建</el-button>
@@ -28,7 +28,7 @@
                      @click="forceSynchronization()">强制同步</el-button>
         </div>
       </div>
-      <div v-else>
+      <div v-if="toolbarWritingDisplay === '1'">
         <el-button-group v-if="toolbarCompactLayout === 'true'">
           <el-tooltip placement="top"
                       content="新建">
@@ -84,6 +84,40 @@
                        @click="forceSynchronization()"
                        type="primary"></el-button>
           </el-tooltip>
+        </div>
+      </div>
+      <div v-if="toolbarWritingDisplay === '2'">
+        <el-button-group v-if="toolbarCompactLayout === 'true'">
+          <el-button type="primary"
+                     icon="p8 icon-add"
+                     @click="addAlert()"> 新建</el-button>
+          <el-button type="primary"
+                     icon="p8 icon-xiugai"
+                     :disabled='!selectedData || !selectedData.length'
+                     @click="updateAlert()"> 修改</el-button>
+          <el-button type="primary"
+                     icon="p8 icon-shanchu"
+                     :disabled='!selectedData || !selectedData.length'
+                     @click="deleteAlert()"> 删除</el-button>
+          <el-button type="primary"
+                     icon="p8 icon-tongbu"
+                     @click="forceSynchronization()">强制同步</el-button>
+        </el-button-group>
+        <div v-else>
+          <el-button type="primary"
+                     icon="p8 icon-add"
+                     @click="addAlert()"> 新建</el-button>
+          <el-button type="primary"
+                     icon="p8 icon-xiugai"
+                     :disabled='!selectedData || !selectedData.length'
+                     @click="updateAlert()"> 修改</el-button>
+          <el-button type="primary"
+                     icon="p8 icon-shanchu"
+                     :disabled='!selectedData || !selectedData.length'
+                     @click="deleteAlert()"> 删除</el-button>
+          <el-button type="primary"
+                     icon="p8 icon-tongbu"
+                     @click="forceSynchronization()">强制同步</el-button>
         </div>
       </div>
     </div>
@@ -144,7 +178,7 @@ export default {
           value: 'basic'
         }
       },
-      toolbarWritingDisplay: 'true',
+      toolbarWritingDisplay: '0',
       toolbarCompactLayout: 'false'
     }
   },
@@ -158,7 +192,7 @@ export default {
     if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
       this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
     } else {
-      this.toolbarWritingDisplay = 'true'
+      this.toolbarWritingDisplay = '0'
     }
     if (this.$store.getters.baseConfig.toolbarCompactLayout) {
       this.toolbarCompactLayout = this.$store.getters.baseConfig.toolbarCompactLayout

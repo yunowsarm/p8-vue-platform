@@ -51,7 +51,7 @@
         </template>
         <template #center>
           <div style="padding: 10px">
-            <div v-if="toolbarWritingDisplay === 'true'">
+            <div v-if="toolbarWritingDisplay === '0'">
               <el-button-group v-if="toolbarCompactLayout === 'true'">
                 <el-button type="primary"
                            :disabled="isManage"
@@ -67,7 +67,7 @@
                            @click="copyExperience">复制到粘贴板</el-button>
               </div>
             </div>
-            <div v-else>
+            <div v-if="toolbarWritingDisplay === '1'">
               <el-button-group v-if="toolbarCompactLayout === 'true'">
                 <el-tooltip placement="top"
                             content="导入">
@@ -95,6 +95,26 @@
                              @click="copyExperience"
                              type="primary"></el-button>
                 </el-tooltip>
+              </div>
+            </div>
+            <div v-if="toolbarWritingDisplay === '2'">
+              <el-button-group v-if="toolbarCompactLayout === 'true'">
+                <el-button type="primary"
+                           icon="p8 icon-daoru"
+                           :disabled="isManage"
+                           @click="exportExperience">导入</el-button>
+                <el-button type="primary"
+                           icon="p8 icon-copy"
+                           @click="copyExperience">复制到粘贴板</el-button>
+              </el-button-group>
+              <div v-else>
+                <el-button type="primary"
+                           icon="p8 icon-daoru"
+                           :disabled="isManage"
+                           @click="exportExperience">导入</el-button>
+                <el-button type="primary"
+                           icon="p8 icon-copy"
+                           @click="copyExperience">复制到粘贴板</el-button>
               </div>
             </div>
           </div>
@@ -121,15 +141,19 @@
             </template>
             <template #operation="{ scope }">
               <el-button type="text"
-                         v-if="toolbarWritingDisplay === 'true'"
+                         v-if="toolbarWritingDisplay === '0'"
                          @click="showDetail(scope.row)">查看详情</el-button>
-              <el-tooltip v-else
+              <el-tooltip v-if="toolbarWritingDisplay === '1'"
                           placement="top"
                           content="查看详情">
                 <el-button type="primary"
                            icon="p8 icon-chakan"
                            @click="showDetail(scope.row)"></el-button>
               </el-tooltip>
+              <el-button type="primary"
+                         icon="p8 icon-chakan"
+                         v-if="toolbarWritingDisplay === '2'"
+                         @click="showDetail(scope.row)">查看详情</el-button>
             </template></common-table>
         </template>
         <template #drawer-panel>
@@ -317,7 +341,7 @@ export default {
         indent: 48,
         'highlight-current': true
       },
-      toolbarWritingDisplay: 'true',
+      toolbarWritingDisplay: '0',
       toolbarCompactLayout: 'false'
     }
   },
@@ -351,7 +375,7 @@ export default {
     if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
       this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
     } else {
-      this.toolbarWritingDisplay = 'true'
+      this.toolbarWritingDisplay = '0'
     }
     if (this.$store.getters.baseConfig.toolbarCompactLayout) {
       this.toolbarCompactLayout = this.$store.getters.baseConfig.toolbarCompactLayout

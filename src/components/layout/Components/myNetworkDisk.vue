@@ -163,14 +163,14 @@ export default {
         {
           title: '附件大小',
           dataIndex: 'fileSize',
-          width: 120,
+          width: 140,
           align: 'center',
           scopedSlots: { customRender: 'custom' }
         },
         {
           title: '上传人',
           dataIndex: 'realName',
-          width: 120,
+          width: 140,
           align: 'center'
         },
         {
@@ -204,14 +204,14 @@ export default {
         {
           title: '附件大小',
           dataIndex: 'fileSize',
-          width: 120,
+          width: 140,
           align: 'center',
           scopedSlots: { customRender: 'custom' }
         },
         {
           title: '下载人',
           dataIndex: 'realName',
-          width: 120,
+          width: 140,
           align: 'center'
         },
         {

@@ -9,15 +9,19 @@
                       code="historicalApprovalRecordTable">
           <template #OPERATION="{scope}">
             <el-button type='text'
-                       v-if="toolbarWritingDisplay === 'true'"
+                       v-if="toolbarWritingDisplay === '0'"
                        @click="view(scope.row)">查看</el-button>
-            <el-tooltip v-else
+            <el-tooltip v-if="toolbarWritingDisplay === '1'"
                         placement="top"
                         content="查看">
               <el-button type="primary"
                          icon="p8 icon-chakan"
                          @click="view(scope.row)"></el-button>
             </el-tooltip>
+            <el-button type="primary"
+                       v-if="toolbarWritingDisplay === '2'"
+                       icon="p8 icon-chakan"
+                       @click="view(scope.row)">查看</el-button>
           </template>
         </table-render>
       </el-tab-pane>
@@ -67,14 +71,14 @@ export default {
       reportParam: {
         businessKey: this.taskId
       },
-      toolbarWritingDisplay: 'true'
+      toolbarWritingDisplay: '0'
     }
   },
   mounted () {
     if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
       this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
     } else {
-      this.toolbarWritingDisplay = 'true'
+      this.toolbarWritingDisplay = '0'
     }
   },
   methods: {
