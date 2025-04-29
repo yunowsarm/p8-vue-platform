@@ -226,12 +226,16 @@ export default {
 }
 
 .tab-content-wrapper {
+  background: #fff;
   position: relative;
   height: calc(100% - 10px); // 修改：底部留出10px空间
   margin-bottom: 10px; // 添加：确保底部间距
   transition: all 0.3s;
 
   &.is-maximized {
+    ::v-deep .parser-container{
+      height: calc(100% - 20px);
+    }
     position: fixed;
     top: 0;
     left: 0;
