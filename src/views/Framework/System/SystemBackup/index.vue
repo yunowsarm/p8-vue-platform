@@ -10,6 +10,8 @@ export default {
   },
   data () {
     return {
+      loading: false,
+      loadingText:'',
       // 表格组件的唯一标识码
       code: 'SystemBackupRecord',
       // 控制弹窗显示状态
@@ -51,12 +53,8 @@ export default {
 
     // 执行备份操作
     async handleBackup () {
-      const loading = this.$loading({
-        lock: true,
-        text: '正在备份',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
-      })
+      this.loadingText = '正在备份'
+      this.loading = true
 
       try {
         const res = await this.$api['systemBackup.executeBackup']({
@@ -64,24 +62,21 @@ export default {
           notes: this.notes
         })
 
-        if (res) {
-          this.$message.success('备份成功')
+        if (res.success === 'true') {
           this.resetDialog()
-          this.renderKey = new Date().getTime()
+          this.$message.success(res.message)
+        }else{
+          this.$message.error(res.message)
         }
       } finally {
-        loading.close()
+        this.loading = false
       }
     },
 
     // 执行恢复操作
     async handleRecover () {
-      const loading = this.$loading({
-        lock: true,
-        text: '正在恢复',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
-      })
+      this.loadingText = '正在恢复'
+      this.loading = true
 
       try {
         const res = await this.$api['systemBackup.executeRestore']({
@@ -90,12 +85,14 @@ export default {
           notes: ''
         })
 
-        if (res) {
-          this.$message.success('恢复成功，请等待服务重启')
+        if (res.success === 'true') {
           this.resetDialog()
+          this.$message.success(res.message)
+        }else{
+          this.$message.error(res.message)
         }
-      } finally {
-        loading.close()
+      }  finally {
+        this.loading = false
       }
     },
 
@@ -117,6 +114,8 @@ export default {
 <template>
   <div class="system-backup">
     <table-render
+      v-loading.fullscreen="loading"
+      :element-loading-text="loadingText"
       :key="renderKey"
       ref="tableRender"
       :code="code"
