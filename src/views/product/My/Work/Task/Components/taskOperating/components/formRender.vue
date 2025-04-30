@@ -44,7 +44,6 @@ export default {
     formCloseRefresh (res) {
       this.$api['taskManager.taskFormDataSave']({ actOrTaskFormId: this.item.name, formDataId: res }).then(res => {
         this.getInfo()
-        this.timeKey = new Date().getTime()
       })
     },
     checkBusinessForm () {
@@ -55,16 +54,17 @@ export default {
     },
     async getInfo() {
       if (this.item.name) {
-      if (this.approveType) {
-        this.pageType = 'edit'
-      } else {
-        this.pageType = 'view'
+        if (this.approveType) {
+          this.pageType = 'edit'
+        } else {
+          this.pageType = 'view'
+        }
+        await this.$api['taskManager.taskFormdataList']({ actOrTaskFormId: this.item.name, formId: this.item.formId }).then(res => {
+          this.formCode = this.item.formCode
+          this.formViewId = res[0] ? res[0].ID : ''
+          this.timeKey = new Date().getTime()
+        })
       }
-      await this.$api['taskManager.taskFormdataList']({ actOrTaskFormId: this.item.name, formId: this.item.formId }).then(res => {
-        this.formViewId = res[0] ? res[0].ID : ''
-        this.formCode = this.item.formCode
-      })
-    }
     }
   },
 }

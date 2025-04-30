@@ -434,7 +434,7 @@
 
 /* 设置列的超出隐藏并显示省略号 */
 .text_overflow {
-  width: calc(100% - 20px);
+  width: calc(100% - 35px);
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
