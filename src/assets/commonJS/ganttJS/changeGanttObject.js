@@ -357,6 +357,9 @@ export function getChangeGantt (ganttName, vueThis) {
           task.unDescribes = '0'
         }
         let result = ''
+        if (task.hasBusinessForm == 'true') {
+          result = result + `<i class='el-icon-s-order' title='该任务包含业务表单' style='color: #f59000; float: left; position:relative; top:16px; font-size: 16px;'></i>`
+        }
         if (task.unDescribes === '1') result = `<i class='p8 icon-tishi' title='存在任务描述' style='color: #0ab847; float: left'></i>`
         if (task.style) {
           if (task.infoType === 'delete') {

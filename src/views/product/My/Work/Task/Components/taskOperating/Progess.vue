@@ -395,7 +395,7 @@ export default {
         this.$message({ type: 'warning', message: `业务表单${result.message}为必填表单，请填写后再提交` })
         return
       }
-      this.getPlanInfo().MANAGERSTATUS = '6406'
+      // this.getPlanInfo().MANAGERSTATUS = '6404'
       let params = this.submitParamsHandle(formData, submitType)
       const _this = this
       params.pmTaskProgressFeedback.hierarchy = this.getPlanInfo().LEVEL

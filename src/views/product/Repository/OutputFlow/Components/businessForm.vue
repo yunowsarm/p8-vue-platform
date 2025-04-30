@@ -72,7 +72,7 @@
                      title="预览"
                      @close="drawerClose">
         <template #drawer>
-          <form-render :record="{ desformCode: privewCode }"></form-render>
+          <form-render :record="{ desformCode: privewCode }" class="desformCode" pageType="view"></form-render>
         </template>
       </common-drawer>
     </template>
@@ -275,5 +275,8 @@ export default {
 }
 .editableCustomHeight {
   height: 210px !important;
+}
+.desformCode ::v-deep .el-col.el-col-24.flex-right{
+  display: none;
 }
 </style>

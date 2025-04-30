@@ -3,6 +3,7 @@
                style="padding-top: 20px;"
                :dataViewId="formViewId"
                :record="{ desformCode: formCode }"
+               :key="timeKey"
                :pageType="pageType"
                @save-success="(res) => formCloseRefresh(res)"></form-render>
 </template>
@@ -28,14 +29,32 @@ export default {
     return {
       formViewId: '',
       formCode: '',
-      pageType: ''
+      pageType: '',
+      timeKey: new Date().getTime(),
     }
   },
   components: {
     FormRender
   },
   async created () {
-    if (this.item.name) {
+    this.getInfo()
+  },
+
+  methods: {
+    formCloseRefresh (res) {
+      this.$api['taskManager.taskFormDataSave']({ actOrTaskFormId: this.item.name, formDataId: res }).then(res => {
+        this.getInfo()
+        this.timeKey = new Date().getTime()
+      })
+    },
+    checkBusinessForm () {
+      if (this.formViewId) {
+        return true
+      }
+      return false
+    },
+    async getInfo() {
+      if (this.item.name) {
       if (this.approveType) {
         this.pageType = 'edit'
       } else {
@@ -46,19 +65,6 @@ export default {
         this.formCode = this.item.formCode
       })
     }
-  },
-
-  methods: {
-    formCloseRefresh (res) {
-      this.$api['taskManager.taskFormDataSave']({ actOrTaskFormId: this.item.name, formDataId: res }).then(res => {
-
-      })
-    },
-    checkBusinessForm () {
-      if (this.formViewId) {
-        return true
-      }
-      return false
     }
   },
 }

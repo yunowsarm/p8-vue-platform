@@ -504,8 +504,9 @@ export default {
       this.activityId = activityId
       // 刷新页面
       if (this.activeKey) {
-        this.describeRefrshKey = new Date().getTime()
+        // this.describeRefrshKey = new Date().getTime()
         this.activeKey = ''
+        this.describeKey = 'describeKey'
         this.$nextTick(() => (this.activeKey = 'describeKey'))
       }
     },
