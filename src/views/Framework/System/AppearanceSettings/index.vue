@@ -57,6 +57,14 @@
                     :closable="false"
                     type="info"></el-alert>
         </template>
+        <template #toolbarWritingDisplay>
+          <el-radio-group v-model="formData.toolbarWritingDisplay"
+                          size="small">
+            <el-radio-button label="0">文字</el-radio-button>
+            <el-radio-button label="1">图标</el-radio-button>
+            <el-radio-button label="2">图标+文字</el-radio-button>
+          </el-radio-group>
+        </template>
       </form-list>
     </el-card>
     <el-card class="card_box">
@@ -127,7 +135,7 @@
       <template #dialog>
         <list-layout>
           <template #north>
-            <div v-if="formData.toolbarWritingDisplay">
+            <div v-if="formData.toolbarWritingDisplay==='0'">
               <el-button-group v-if="formData.toolbarCompactLayout">
                 <el-button type="primary">新建</el-button>
                 <el-button type="primary">修改</el-button>
@@ -137,7 +145,7 @@
                 <el-button type="primary">修改</el-button>
               </div>
             </div>
-            <div v-else>
+            <div v-if="formData.toolbarWritingDisplay==='1'">
               <el-button-group v-if="formData.toolbarCompactLayout">
                 <el-tooltip placement="top"
                             content="新建">
@@ -161,6 +169,20 @@
                   <el-button icon="p8 icon-xiugai"
                              type="primary"></el-button>
                 </el-tooltip>
+              </div>
+            </div>
+            <div v-if="formData.toolbarWritingDisplay==='2'">
+              <el-button-group v-if="formData.toolbarCompactLayout">
+                <el-button icon="p8 icon-add"
+                           type="primary">新建</el-button>
+                <el-button icon="p8 icon-xiugai"
+                           type="primary">修改</el-button>
+              </el-button-group>
+              <div v-else>
+                <el-button icon="p8 icon-add"
+                           type="primary">新建</el-button>
+                <el-button icon="p8 icon-xiugai"
+                           type="primary">修改</el-button>
               </div>
             </div>
           </template>
@@ -177,7 +199,7 @@
                    class="p8 icon-xingbienan"></i>
               </template>
               <template #operation="{ scope }">
-                <div v-if="formData.toolbarWritingDisplay">
+                <div v-if="formData.toolbarWritingDisplay==='0'">
                   <el-button-group v-if="formData.toolbarCompactLayout">
                     <el-button style="margin-right: 2px;"
                                type="text">查看</el-button>
@@ -189,7 +211,7 @@
                     <el-button type="text">删除</el-button>
                   </div>
                 </div>
-                <div v-else>
+                <div v-if="formData.toolbarWritingDisplay==='1'">
                   <el-button-group v-if="formData.toolbarCompactLayout">
                     <el-tooltip placement="top"
                                 content="查看">
@@ -215,6 +237,22 @@
                       <el-button icon="p8 icon-shanchu"
                                  type="primary"></el-button>
                     </el-tooltip>
+                  </div>
+                </div>
+                <div v-if="formData.toolbarWritingDisplay==='2'">
+                  <el-button-group v-if="formData.toolbarCompactLayout">
+                    <el-button style="margin-right: 2px;"
+                               icon="p8 icon-chakan"
+                               type="primary">查看</el-button>
+                    <el-button icon="p8 icon-shanchu"
+                               type="primary">删除</el-button>
+                  </el-button-group>
+                  <div v-else>
+                    <el-button icon="p8 icon-chakan"
+                               type="primary">查看</el-button>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-button icon="p8 icon-shanchu"
+                               type="primary">删除</el-button>
                   </div>
                 </div>
               </template>
@@ -302,9 +340,10 @@ export default {
           colLayout: 'singleCol'
         },
         {
-          labelText: '显示文字',
-          type: 'switch',
+          labelText: '按钮展示方式',
+          type: 'blank',
           fieldName: 'toolbarWritingDisplay',
+          slotName: 'toolbarWritingDisplay',
           colLayout: 'singleCol'
         },
         {
@@ -408,7 +447,7 @@ export default {
           },
           {
             key: 'bgTheme',// 侧边栏背景颜色
-            value: '#3491FA'
+            value: 'rgba(52, 145, 250, 0.6)'
           }
         ],
         [
@@ -446,7 +485,7 @@ export default {
           },
           {
             key: 'bgTheme',// 侧边栏背景颜色
-            value: '#C70019'
+            value: 'rgba(199, 0, 25, 0.6)'
           }
         ]
         ,
@@ -485,7 +524,7 @@ export default {
           },
           {
             key: 'bgTheme',// 侧边栏背景颜色
-            value: '#272E3B'
+            value: 'rgba(39, 46, 59, 0.6)'
           }
         ]
       ],
@@ -522,7 +561,7 @@ export default {
           fixed: 'right',
           dataIndex: 'operation',
           scopedSlots: { customRender: 'custom' },
-          width: 100,
+          width: 150,
           align: 'center'
         }
       ],
@@ -573,9 +612,6 @@ export default {
       this.$store.getters.baseConfig.tableRowHeight = this.baseConfig.tableRowHeight
     },
     open () {
-      if (!this.formData.systemThemeType) {
-        return this.$message.warning('请先选择主题')
-      }
       this.isVisibleThemeDrawer = true
     },
     restoreDefault () {
@@ -664,11 +700,8 @@ export default {
       that.formData = Object.assign({}, that.modify)
     },
     saveSuccess (themeArray) {
-      console.log(themeArray, '33333333333333333333333333');
-
       this.formData.systemThemeArray = JSON.stringify(themeArray)
       this.customValidate(this.formData)
-      this.isVisibleThemeDrawer = false
     },
     customValidate (params) {
       let saveParams = {}

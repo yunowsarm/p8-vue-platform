@@ -892,6 +892,27 @@ export const system = {
       desc: '外观设置-保存'
     },
     {
+      name: 'saveMenuBgImages',
+      method: 'POST',
+      path: '/framework/system/SystemSettings/saveMenuBgImages',
+      mockPath: '/framework/system/SystemSettings/saveMenuBgImages',
+      desc: '外观设置-保存图片'
+    },
+    {
+      name: 'loadMenuBgImages',
+      method: 'POST',
+      path: '/framework/system/SystemSettings/loadMenuBgImages',
+      mockPath: '/framework/system/SystemSettings/loadMenuBgImages',
+      desc: '外观设置-查看图片'
+    },
+    {
+      name: 'removeMenuBgImage',
+      method: 'POST',
+      path: '/framework/system/SystemSettings/removeMenuBgImage',
+      mockPath: '/framework/system/SystemSettings/removeMenuBgImage',
+      desc: '外观设置-删除图片'
+    },
+    {
       name: 'getBasicSetting',
       method: 'POST',
       path: '/framework/system/SystemSettings/getBasicSetting',

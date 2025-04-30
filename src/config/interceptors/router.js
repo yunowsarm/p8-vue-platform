@@ -16,7 +16,6 @@ export function routerBeforeEachFunc (to, from, next) {
   }
 
   if (token) {
-    store.dispatch('getDicAndBaseConfig') // 获取系统配置信息-项目状态、计划状态、任务状态等dicConfig与系统名称等baseConfig
     if (to.path === '/login') {
       next('/login')
     } else {
@@ -58,6 +57,7 @@ export function routerBeforeEachFunc (to, from, next) {
             }
           })
           store.dispatch('getButtonLimit') // 获取按钮禁用逻辑
+          store.dispatch('getDicAndBaseConfig') // 获取系统配置信息-项目状态、计划状态、任务状态等dicConfig与系统名称等baseConfig
           store.dispatch('getSettingAll') // 获取列表配置信息
           store.dispatch('getMessageInfo') // 获取消息信息
           store.dispatch('getMessageNum') // 获取消息信息已读未读条数

@@ -2,6 +2,7 @@
   <div style="height: 96%;position: relative;">
     <div class="theme-design">
       <div class="theme-left"
+           ref="themeImage"
            :style="{ width: '200px', 'background-image': 'url(' + imageUrl + ')', 'background-size': '200px 100%' }">
         <VuePerfectScrollbar :style="{ 'background-color': theme }">
 
@@ -34,7 +35,16 @@
                       show-icon />
           </div>
           <div class="settings">
-            <background-image />
+            <background-image @changeSystemImage="changeSystemImage" />
+            <el-button-group v-model="buttonType"
+                             style="margin-left: 40px;padding: 10px;">
+              <el-button v-for="(btn, index) in buttonConfigs"
+                         :key="index"
+                         type="primary"
+                         @click="settingStyle(btn.value)">
+                {{ btn.label }}
+              </el-button>
+            </el-button-group>
           </div>
           <div class="settings">
             <TableTheme />
@@ -71,7 +81,8 @@ export default {
     },
     themeArray: {
       type: Array,
-      default: () => []
+      default: () => {
+      }
     }
   },
   components: {
@@ -116,7 +127,7 @@ export default {
           fixed: 'right',
           dataIndex: 'operation',
           scopedSlots: { customRender: 'custom' },
-          width: 100,
+          width: 150,
           align: 'center'
         }
       ],
@@ -151,31 +162,91 @@ export default {
           six: '男',
           address: '上海市普陀区金沙江路 1518 弄'
         }
-      ]
+      ],
+      imagePath: '',
+      imgType: 1, // 默认选中第一个按钮
+      buttonType: 1,
+      buttonConfigs: [
+        { label: '自适应', value: 1 },
+        { label: '平铺', value: 2 },
+        { label: '拉伸', value: 3 },
+      ],
     }
   },
   watch: {
     theme (val, oldVal) {
       this.getColor()
     },
-    imageUrl (val, oldVal) {
-      this.getColor()
-    }
+    imageUrl: {
+      handler (val) {
+        if (!val.includes('.png') || !val.includes('http')) {
+          this.getImage(this.imageId)
+        }
+      },
+      deep: true,
+      immediate: true
+    },
   },
   computed: {
-    ...mapGetters(['systemTheme', 'theme', 'imageUrl', 'systemColor']),
+    ...mapGetters(['systemTheme', 'theme', 'imageUrl', 'systemColor', 'imageId']),
   },
   mounted () {
     this.getColor()
   },
   methods: {
-    getColor () {
-      if (this.imageUrl) {
-        let color = this.fromHex(this.theme)
-        this.$set(this.objColor, 'themeColor', 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + 0.7 + ')')
-      } else {
-        this.$set(this.objColor, 'themeColor', this.theme)
+    settingStyle (value) {
+      this.imgType = value
+      // 根据 value 设置背景样式
+      const style = this.$refs.themeImage.style;
+      switch (value) {
+        case 1:
+          style.backgroundSize = '200px 100%';
+          style.backgroundRepeat = 'no-repeat';
+          break;
+        case 2:
+          style.backgroundPosition = 'center';
+          style.backgroundSize = 'contain';
+          style.backgroundRepeat = 'repeat';
+          break;
+        case 3:
+          style.backgroundSize = 'cover';
+          style.backgroundRepeat = 'repeat';
+          style.backgroundPosition = 'center';
+          break;
       }
+    },
+    getImage (id) {
+      let that = this
+      let systemThemeType = this.$store.getters.baseConfig.systemThemeType
+      let systemThemeArray = JSON.parse(this.$store.getters.baseConfig.systemThemeArray)
+      let themeArray = []
+      if (systemThemeType === 'systemThemeType1') {
+        themeArray = systemThemeArray[0]
+      }
+      if (systemThemeType === 'systemThemeType2') {
+        themeArray = systemThemeArray[1]
+      }
+      if (systemThemeType === 'systemThemeType3') {
+        themeArray = systemThemeArray[2]
+      }
+      themeArray.forEach(item => {
+        if (item.key === 'imageUrl') {
+          id = item.url
+          if (this.imagePath === '') {
+            this.imagePath = id
+          }
+        }
+      })
+      let imgType = this.$store.getters.systemColor.imgType || 1
+      that.$nextTick(() => {
+        that.settingStyle(imgType)
+      })
+    },
+    changeSystemImage (imageUrl) {
+      this.imagePath = imageUrl
+    },
+    getColor () {
+      this.$set(this.objColor, 'themeColor', this.theme)
     },
     fromHex (color) {
       var t = {},
@@ -229,13 +300,18 @@ export default {
         },
         {
           key: 'imageUrl',// 侧边栏背景图片
-          url: this.imageUrl
+          url: this.imagePath
         },
         {
           key: 'bgTheme',// 侧边栏背景颜色
           value: this.theme
+        },
+        {
+          key: 'imgType',// 侧边栏背景颜色
+          value: this.imgType
         }
       ]
+      console.log(themeArray, 'themeArraythemeArray');
       if (this.formData.systemThemeType === 'systemThemeType1') {
         this.themeArray[0] = themeArray
       }

@@ -5,171 +5,127 @@
         <div class="vertical_line"></div>
         菜单栏背景图
       </div>
-      <el-button type="text"
-                 @click="cloneBack('')">取消背景</el-button>
-    </div>
-    <div class="select-theme">
-      <div v-for="(item, index) in imageName"
-           :key="index">
-        <el-image style="width: 100px; height: 180px; margin-left: 10px"
-                  :src="item.url"
-                  fit="cover"
-                  @click="changeSystemImage(item.url)"></el-image>
+      <div>
+        <el-button type="text"
+                   @click="addImage()">上传背景图片</el-button>
+        <el-button type="text"
+                   @click="cloneBack('')">取消背景</el-button>
       </div>
     </div>
+    <div class="select-theme">
+      <div v-for="(item, index) in uploadFileJson"
+           :key="index">
+        <el-image style="width: 100px; height: 180px; margin-left: 10px"
+                  :src="item.filePath"
+                  fit="cover"
+                  @click="changeSystemImage(item)"></el-image>
+      </div>
+    </div>
+    <form-index v-if="isDesign"
+                :visible="isDesign"
+                @handleCancel="handleCancel"
+                ref="formIndex"></form-index>
   </div>
 </template>
 <script>
 // import { mapGetters } from 'vuex'
-
+import formIndex from './formIndex.vue'
 export default {
   name: 'BackgroundImage',
   data () {
     return {
-      imageName: [
+      imageData: [
         {
-          url: './static/themeBackground/image.png'
+          filePath: './static/themeBackground/image.png'
         },
         {
-          url: './static/themeBackground/image2.png'
+          filePath: './static/themeBackground/image2.png'
         },
         {
-          url: './static/themeBackground/image3.png'
+          filePath: './static/themeBackground/image3.png'
         },
         {
-          url: './static/themeBackground/image4.png'
+          filePath: './static/themeBackground/image4.png'
         },
         {
-          url: './static/themeBackground/image5.png'
+          filePath: './static/themeBackground/image5.png'
         },
         {
-          url: './static/themeBackground/image6.png'
+          filePath: './static/themeBackground/image6.png'
         },
         {
-          url: './static/themeBackground/image7.png'
+          filePath: './static/themeBackground/image7.png'
         },
         {
-          url: './static/themeBackground/image8.png'
+          filePath: './static/themeBackground/image8.png'
         },
         {
-          url: './static/themeBackground/1.png'
+          filePath: './static/themeBackground/image9.png'
         },
         {
-          url: './static/themeBackground/2.png'
-        },
-        {
-          url: './static/themeBackground/3.png'
-        },
-        {
-          url: './static/themeBackground/4.png'
-        },
-        {
-          url: './static/themeBackground/7.png'
-        },
-        {
-          url: './static/themeBackground/13.png'
-        },
-        {
-          url: './static/themeBackground/14.png'
-        },
-        {
-          url: './static/themeBackground/15.png'
-        },
-        {
-          url: './static/themeBackground/16.png'
-        },
-        {
-          url: './static/themeBackground/17.png'
-        },
-        {
-          url: './static/themeBackground/18.png'
-        },
-        {
-          url: './static/themeBackground/19.png'
-        },
-        {
-          url: './static/themeBackground/20.png'
-        },
-        {
-          url: './static/themeBackground/21.png'
-        },
-        {
-          url: './static/themeBackground/22.png'
-        },
-        {
-          url: './static/themeBackground/23.png'
-        },
-        {
-          url: './static/themeBackground/24.png'
-        },
-        {
-          url: './static/themeBackground/25.png'
-        },
-        {
-          url: './static/themeBackground/26.png'
-        },
-        {
-          url: './static/themeBackground/27.png'
-        },
-        {
-          url: './static/themeBackground/28.png'
-        },
-        {
-          url: './static/themeBackground/29.png'
-        },
-        {
-          url: './static/themeBackground/30.png'
-        },
-        {
-          url: './static/themeBackground/31.png'
-        },
-        {
-          url: './static/themeBackground/32.png'
-        },
-        {
-          url: './static/themeBackground/33.png'
-        },
-        {
-          url: './static/themeBackground/34.png'
-        },
-        {
-          url: './static/themeBackground/35.png'
-        },
-        {
-          url: './static/themeBackground/36.png'
-        },
-        {
-          url: './static/themeBackground/37.png'
-        },
-        {
-          url: './static/themeBackground/38.png'
-        },
-        {
-          url: './static/themeBackground/39.png'
-        },
-        {
-          url: './static/themeBackground/40.png'
-        },
-        {
-          url: './static/themeBackground/41.png'
+          filePath: './static/themeBackground/image10.png'
         }
-      ]
+      ],
+      uploadFileJson: [],
+      isDesign: false
     }
   },
   beforeMount () { },
-  mounted () { },
+  mounted () {
+    this.getSettingData()
+  },
   computed: {
     // ...mapGetters(['image'])
   },
   methods: {
-    async changeSystemImage (imageUrl) {
-      this.$store.dispatch('setImage', imageUrl)
+    async getSettingData () {
+      const that = this
+      let res = await that.$api['SystemSettings.loadMenuBgImages']()
+      if (res) {
+        that.getFileUrl(res) // 获取图片流
+      }
+    },
+    // 获取图片流
+    getFileUrl (uploadFileJson) {
+      const that = this
+      that.uploadFileJson = []
+      uploadFileJson.map(async (item) => {
+        if (item.id) {
+          await that.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
+            item.filePath = window.URL.createObjectURL(new Blob([res.data]))
+            that.uploadFileJson.push(item);
+          })
+        }
+      })
+      that.uploadFileJson = [...this.imageData, ...that.uploadFileJson]
+    },
+    addImage () {
+      this.isDesign = true
+    },
+    handleCancel () {
+      setTimeout(() => {
+        this.isDesign = false
+        this.getSettingData()
+      }, 500)
+    },
+    changeSystemImage (item) {
+      // if (item.id) {
+      //   this.$store.dispatch('setImage', JSON.stringify(item.))
+      //   this.$emit('changeSystemImage', JSON.stringify(item))
+      // } else {
+      let url = item.id ? item.id : item.filePath
+      this.$store.dispatch('setImage', url)
+      // this.$store.dispatch('setImageId', url)
+      this.$emit('changeSystemImage', url)
+      // }
     },
     cloneBack (imageUrl) {
       this.$store.dispatch('setImage', imageUrl)
     }
   },
-  components: {}
+  components: {
+    formIndex
+  }
 }
 </script>
 <style lang="scss" scoped>

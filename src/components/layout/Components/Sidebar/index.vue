@@ -1,7 +1,8 @@
 <template>
   <!-- <transition name="bounce"> -->
   <div class="sidebar"
-       :style="{ width: sidebarState.width, 'background-image': 'url(' + imageUrl + ')', 'background-size': '200px 100%' }"
+       ref="themeImage"
+       :style="{ width: sidebarState.width, 'background-image': 'url(' + imageUrl + ')', 'background-size': backgroundSize, 'background-repeat': backgroundRepeat, 'background-position': backgroundPosition }"
        v-show="!sidebarState.isHidden">
     <VuePerfectScrollbar :settings="scrollOptions"
                          :style="{ 'background-color': theme }">
@@ -17,7 +18,7 @@
       </div>
       <el-menu mode="vertical"
                class="vertical-menu"
-               :default-active="defaultActive"
+               :default-active="$route.path"
                :router="true"
                unique-opened
                text-color="#fff"
@@ -57,12 +58,10 @@
                         :key="item.name"
                         class="custom-submenu">
               <template slot="title">
-                <div @mouseenter="handleMouseEnter(item)">
-                  <i v-if="item.meta && item.meta.icon"
-                     class="p8"
-                     :class="item.meta.icon"></i>
-                  <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
-                </div>
+                <i v-if="item.meta && item.meta.icon"
+                   class="p8"
+                   :class="item.meta.icon"></i>
+                <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
               </template>
               <div class="cumtom-submenu-menu">
                 <template v-for="child in item.children">
@@ -83,10 +82,8 @@
                           <i v-if="child.meta && child.meta.icon"
                              class="p8"
                              :class="child.meta.icon"></i>
-                          <span v-if="child.meta && child.meta.title">
-                            <span :style="{width: hoveredMenuItem == child.path ? 'calc(100% - 22px)' : '100%'}">{{ child.meta.title }}</span>
-                            <i style="margin:0;width:16px;"
-                               v-if="(isActiveRoute(child) || isChildRouteActive(child)) && hoveredMenuItem == child.path"
+                          <span v-if="child.meta && child.meta.title">{{ child.meta.title }}
+                            <i v-if="$route.path == child.path && hoveredMenuItem == child.path"
                                class="el-icon-question"
                                @mouseenter="showOptions($event, child)">
                             </i>
@@ -178,12 +175,10 @@ import { mapGetters } from 'vuex'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 // import SidebarMenuItem from './SidebarMenuItem'
 import packageJson from '../../../../../package.json'
-
 export default {
   name: 'Sidebar',
   data () {
     return {
-      defaultActive: this.$route.path,
       scrollOptions: {
         suppressScrollX: true
       },
@@ -199,7 +194,11 @@ export default {
       linkDialogVisible: false,
       isVisiblePDFdrawer: false,
       isVisibleHistoryDrawer: false,
-      record: {}
+      record: {},
+      dateTime: '',
+      backgroundSize: '200px 100%',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: ''
     }
   },
   computed: {
@@ -216,22 +215,18 @@ export default {
     }
   },
   watch: {
-    $route (to, from) {
-      // 判断当前路由是否为三级菜单
-      if (to.matched.length === 3) {
-        // 如果是三级菜单,则高亮其父级菜单
-        this.defaultActive = to.matched[1].path
-      } else {
-        // 非三级菜单,高亮自身
-        this.defaultActive = to.path
-      }
-    },
     theme (val, oldVal) {
       this.getColor()
     },
-    imageUrl (val, oldVal) {
-      this.getColor()
-    }
+    imageUrl: {
+      handler (val) {
+        if (val && !val.includes('.png') && !val.includes('http')) {
+          this.getImage(val)
+        }
+      },
+      deep: true,
+      immediate: true
+    },
   },
   mounted () {
     if (this.$store.state.user.userId === 'SYS_USER000') {
@@ -246,6 +241,32 @@ export default {
     })
   },
   methods: {
+    getImage (id) {
+      let imgType = this.$store.getters.systemColor.imgType || 1
+      let that = this
+      this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: id }, { responseType: 'blob' }).then(function (res) {
+        let filePath = window.URL.createObjectURL(new Blob([res.data]))
+        that.$store.dispatch('setImage', filePath)
+        that.$nextTick(() => {
+          switch (imgType) {
+            case 1:
+              that.backgroundSize = `200px 100%`
+              that.backgroundRepeat = `no-repeat`
+              break;
+            case 2:
+              that.backgroundSize = `contain`
+              that.backgroundRepeat = `repeat`
+              that.backgroundPosition = `center`
+              break;
+            case 3:
+              that.backgroundSize = `cover`
+              that.backgroundRepeat = `center`
+              that.backgroundPosition = `center`
+              break;
+          }
+        })
+      })
+    },
     // 获取系统logo
     async getIcon () {
       let res = await this.$api['SystemSettings.getLoginSetting']()
@@ -268,12 +289,7 @@ export default {
       }
     },
     getColor () {
-      if (this.imageUrl) {
-        let color = this.fromHex(this.theme)
-        this.$set(this.objColor, 'themeColor', 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + 0.6 + ')')
-      } else {
-        this.$set(this.objColor, 'themeColor', this.theme)
-      }
+      this.$set(this.objColor, 'themeColor', this.theme)
     },
     fromHex (color) {
       var t = {},
@@ -338,7 +354,6 @@ export default {
         width: 100px;
         height: auto;
         padding: 10px;
-        z-index: 9999;
         background-color:rgba(0,0,0,0)
       `;
       parentDiv.appendChild(optionsDiv)
@@ -381,13 +396,6 @@ export default {
         }
         this.hideOptions();
       })
-    },
-    isActiveRoute (item) {
-      return this.$route.path === item.path;
-    },
-    isChildRouteActive (item) {
-      if (!item.children) return false;
-      return item.children.some(child => this.$route.path === child.path);
     }
   },
   components: {
@@ -549,9 +557,6 @@ $menu-collapse-text-color: #303133;
   text-overflow: ellipsis; /* 超出部分以省略号显示 */
   // line-height: 50px;
   // letter-spacing: 1px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 .login-logo {
   width: 20px;
