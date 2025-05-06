@@ -68,6 +68,7 @@
                                   ref="search"
                                   :resetAfterToSearch="false"
                                   :dataSource="dataSource"
+                                  :addFuzzySearch="true"
                                   @search="search"
                                   @re-set="reset"></search-form-list>
               </div>
@@ -605,6 +606,7 @@ export default {
       this.memberFormComp = formComp
     },
     search(params, searchBoxParam) {
+      console.log(params,'-=-=params');
       this.reset()
       this.searchParam = params
       let realName = params.realName ? params.realName : null
@@ -617,9 +619,9 @@ export default {
         })
         this.tableData = tableData
       }
-      if (searchBoxParam && Object.keys(searchBoxParam).length) {
-        let realName = searchBoxParam.realName ? searchBoxParam.realName : null
-        let deptName = searchBoxParam.deptName ? searchBoxParam.deptName : null
+      if (params.searchBoxParam) {
+        let realName = params.searchBoxParam ? params.searchBoxParam : null
+        let deptName = params.searchBoxParam ? params.searchBoxParam : null
         if (realName && deptName) {
           let tableData = this.tableData.filter((item) => {
             if (item.realName.indexOf(realName) > -1 || item.deptName.indexOf(deptName) > -1) {
