@@ -318,13 +318,19 @@ export default {
           labelText: '主题风格',
           type: 'blank',
           slotName: 'systemThemeType',
-          colLayout: 'doubleCol'
+          colLayout: 'doubleCol',
+          tip:`
+            <div>切换不同的主题风格，调整界面整体外观。</div>
+          `
         },
         {
           type: 'upload', // 控件类型
           labelText: '登录背景图',
           fieldName: 'uploadFileJson',
           colLayout: 'doubleCol',
+          tip: `
+            <div>该选项允许用户上传自定义的背景图像，用于设置登录页面的背景。点击加号按钮可以选择并上传图片。</div>
+          `,
           uploadConfig: {
             limit: 1,
             accept: '.jpeg,.jpg,.gif,.png'
@@ -344,13 +350,19 @@ export default {
           type: 'blank',
           fieldName: 'toolbarWritingDisplay',
           slotName: 'toolbarWritingDisplay',
-          colLayout: 'singleCol'
+          colLayout: 'singleCol',
+          tip:`
+            <div>选择工具栏项的显示方式，可以是仅图标、仅文字或图标+文字的组合。</div>
+          `
         },
         {
           labelText: '紧凑布局',
           type: 'switch',
           fieldName: 'toolbarCompactLayout',
-          colLayout: 'singleCol'
+          colLayout: 'singleCol',
+          tip:`
+            <div>启用后，按钮之间的间距会减少，使布局更加紧凑和简洁。</div>
+          `
         }
       ],
       dataSource3: [
@@ -363,13 +375,22 @@ export default {
           labelText: '列表分页方式',
           type: 'blank',
           slotName: 'pageViewType',
-          colLayout: 'singleCol'
+          colLayout: 'singleCol',
+          tip:`
+            <div>页码分页：通过点击不同的页码来查看不同的页面内容。</div>
+            <div>滚动分页：通过持续滚动页面来加载更多内容，在页面底部自动加载新的数据。</div>
+          `
         },
         {
           labelText: '启用抽屉模式',
           type: 'switch',
           fieldName: 'componentEnableDrawer',
-          colLayout: 'singleCol'
+          colLayout: 'singleCol',
+          tip:`
+            <div>新建、修改、查看等操作的交互形式。</div>
+            <div>1.默认模式：内容以对话框形式弹出。</div>
+            <div>2.抽屉形式：从页面边缘滑出显示内容。</div>
+          `
         }
       ],
       dataSource4: [
@@ -381,6 +402,9 @@ export default {
         {
           labelText: '图标展示方式',
           type: 'radio',
+          tip:`
+            <div>选择显示方式为图标或文字。</div>
+          `,
           options: [
             {
               label: '图标',
@@ -400,6 +424,9 @@ export default {
           fieldName: 'tableRowHeight',
           placeholder: '请输入行高',
           colLayout: 'doubleCol',
+          tip:`
+            <div>设置表格中每行的高度，单位为像素，可以通过加减按钮调整行高。</div>
+          `,
           colSpan: 6,
           min: 35,
           max: 300
