@@ -226,12 +226,26 @@ export default {
       this.queryParam = searchData
     },
     openVideo (row) {
-      this.record = row
-      this.isVisibleHistoryDrawer = true
+      let that  =this
+      this.$api['SystemSettings.selectResourcesByMenuId']({ menuId: row.id }).then(res => {
+        this.record = res
+        if ((res.vTitle && res.vTitle.length) || res.vURL) {
+          that.isVisibleHistoryDrawer = true
+        } else {
+          that.$message.warning('当前菜单暂无视频资源')
+        }
+      })
     },
     openManual (row) {
-      this.record = row
-      this.isVisiblePDFdrawer = true
+      let that  =this
+      this.$api['SystemSettings.selectResourcesByMenuId']({ menuId: row.id }).then(res => {
+          this.record = res
+          if ((res.mTitle && res.mTitle.length) || res.mURL) {
+            this.isVisiblePDFdrawer = true
+          } else {
+            that.$message.warning('当前菜单暂无操作手册')
+          }
+      })
     }
   }
 }

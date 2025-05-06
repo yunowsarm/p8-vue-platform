@@ -387,12 +387,21 @@ export default {
       }
     },
     async handleOptionClick (option, item) {
+      let that  =this
       this.$api['SystemSettings.selectResourcesByMenuId']({ menuId: item.meta.id }).then(res => {
         this.record = res
-        if (option === 'manual') {
-          this.isVisiblePDFdrawer = true
+         if (option === 'manual') {
+          if (res.mTitle && res.mTitle.length || res.mURL) {
+            that.isVisiblePDFdrawer = true
+          } else {
+            that.$message.warning('当前菜单暂无操作手册')
+          }
         } else if (option === 'video') {
-          this.isVisibleHistoryDrawer = true
+          if (res.vTitle && res.vTitle.length || res.vURL) {
+            that.isVisibleHistoryDrawer = true
+          } else {
+            that.$message.warning('当前菜单暂无视频资源')
+          }
         }
         this.hideOptions();
       })
