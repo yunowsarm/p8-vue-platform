@@ -8,6 +8,7 @@
                             label-width="70px"
                             ref="search"
                             :data-source="searchConfig"
+                            :addFuzzySearch="true"
                             @search="search"
                             @re-set="reSet"></search-form-list>
           <div class="btn_list">
@@ -314,6 +315,7 @@ export default {
     },
     reSet () {
       let that = this
+      this.mergeParams.searchBoxParam = undefined
       that.mergeParams.processName = ''
       that.mergeParams.senderName = ''
       that.mergeParams.startEndTime = []
