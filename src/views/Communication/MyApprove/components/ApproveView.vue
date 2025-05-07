@@ -798,7 +798,7 @@ $paddingLeft: 10px;
   height: unset !important;
 }
 .custom-tabs {
-  height: 100%;
+  height: 100% !important;
   ::v-deep .el-tabs {
     border: none;
     height: 100% !important;
