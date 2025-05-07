@@ -141,7 +141,6 @@ export default {
       }
     },
     getOutputData (taskId) {
-
       const that = this
       that.otherParam = { taskId: taskId }
       that.$api['planGanttManager.outputInfo']({ taskId: taskId, planChangeDetailId: this.vueThis.changeRecordId })
@@ -161,6 +160,7 @@ export default {
             that.vueThis.newTaskMap[taskId].updateInfo &&
             that.vueThis.newTaskMap[taskId].updateInfo.indexOf('output') !== -1
           ) {
+            that.isEmpty = false
             datas = that.vueThis.newTaskMap[taskId].output
           }
           // 附件日期处理

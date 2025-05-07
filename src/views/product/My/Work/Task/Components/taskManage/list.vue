@@ -293,17 +293,19 @@ export default {
         _this.activityDescData = values[4]
         if (_this.activityDescData) {
           _this.activityDescData.forEach(item => {
-            function stripHtmlTags (html) {
-              return html.replace(/<\/?[^>]+(>|$)/g, "");  // 使用正则去除 HTML 标签
+            if (item.description) {
+              function stripHtmlTags (html) {
+                return html.replace(/<\/?[^>]+(>|$)/g, "");  // 使用正则去除 HTML 标签
+              }
+              var plainText = stripHtmlTags(item.description);
+              function decodeHtmlEntities (text) {
+                var textarea = document.createElement('textarea');
+                textarea.innerHTML = text;
+                return textarea.value;
+              }
+              var decodedStr = decodeHtmlEntities(plainText);
+              item.descriptionDisplay = decodedStr
             }
-            var plainText = stripHtmlTags(item.description);
-            function decodeHtmlEntities (text) {
-              var textarea = document.createElement('textarea');
-              textarea.innerHTML = text;
-              return textarea.value;
-            }
-            var decodedStr = decodeHtmlEntities(plainText);
-            item.descriptionDisplay = decodedStr
           })
         }
         _this.specialVersionData = values[5]
@@ -493,19 +495,19 @@ $blue-color: #1b8af9;
         div.operation {
           position: relative;
           flex: 0 0 $fixedWidth;
-          margin-left: 0;           // 修改：移除左边距
+          margin-left: 0; // 修改：移除左边距
           box-sizing: border-box;
-          padding: 0;               // 修改：移除内边距
+          padding: 0; // 修改：移除内边距
           border-bottom: $borderBottomLine;
           display: flex;
           align-items: center;
           justify-content: center;
-          min-width: $fixedWidth;   // 添加：确保最小宽度
+          min-width: $fixedWidth; // 添加：确保最小宽度
         }
 
         div.list-con {
           width: calc(100% - #{$fixedWidth * 2});
-          flex: 1;                  // 添加：让中间内容区域自适应
+          flex: 1; // 添加：让中间内容区域自适应
           .list-con-item {
             display: flex;
             align-items: center;
@@ -542,8 +544,8 @@ $blue-color: #1b8af9;
   span.header.operation {
     flex: 0 0 $fixedWidth;
     text-align: center;
-    padding: 0;              // 添加：移除内边距
-    min-width: $fixedWidth;  // 添加：确保最小宽度
+    padding: 0; // 添加：移除内边距
+    min-width: $fixedWidth; // 添加：确保最小宽度
   }
 }
 ::v-deep .manager-drawer .el-drawer__header {

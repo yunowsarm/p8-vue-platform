@@ -135,6 +135,7 @@ export default {
             that.vueThis.newTaskMap[taskId].updateInfo &&
             that.vueThis.newTaskMap[taskId].updateInfo.indexOf('special') !== -1
           ) {
+            that.isEmpty = false
             datas = that.vueThis.newTaskMap[taskId].special
           }
           // 附件日期处理
