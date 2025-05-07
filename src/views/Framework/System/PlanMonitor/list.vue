@@ -7,6 +7,7 @@
                      :special-rote-name="roteName"></common-button>
       <search-form-list ref="search"
                         :data-source="searchDatasource"
+                        :addFuzzySearch="true"
                         @search="search"
                         @re-set="reset"></search-form-list>
     </template>

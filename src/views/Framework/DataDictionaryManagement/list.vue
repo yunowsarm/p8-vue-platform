@@ -6,6 +6,7 @@
       <search-form-list ref="search"
                         label-width="100px"
                         :data-source="searchData"
+                        :addFuzzySearch="true"
                         @search="search"
                         @re-set="reSet"></search-form-list>
     </template>
@@ -274,13 +275,13 @@ export default {
     search (param) {
       let that = this
       if (param) {
-        that.queryParam = { ...param, ...that.queryParam }
+        that.queryParam = { ...that.queryParam, ...param }
       }
     },
     reSet () {
       let that = this
       that.queryParam = {
-        dicType: '-1'
+        dicType: that.queryParam.dicType
       }
     },
     onSelect (node) {

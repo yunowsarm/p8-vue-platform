@@ -11,6 +11,7 @@
                         :data-source="dataSource"
                         search-width="500px"
                         search-contain-width="500px"
+                        :addFuzzySearch="true"
                         @search="search"
                         @re-set="reset"></search-form-list>
     </template>

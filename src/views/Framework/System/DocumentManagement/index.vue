@@ -13,6 +13,7 @@
         <search-form-list ref="search"
                           label-width="100px"
                           :data-source="searchData"
+                          :addFuzzySearch="true"
                           @search="search"
                           @re-set="reSet"></search-form-list>
       </div>
