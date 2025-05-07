@@ -223,7 +223,7 @@ export default {
           title: '操作',
           fixed: 'right',
           dataIndex: 'operation',
-          width: 140,
+          width: 200,
           scopedSlots: { customRender: 'custom' },
           align: 'center',
           headerAlign: 'center'

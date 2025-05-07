@@ -41,7 +41,7 @@
                      type="primary"></el-button>
         </el-tooltip>
         <div v-if="toolbarWritingDisplay === '2'">
-          <el-button type="text"
+          <el-button type="primary"
                      icon="p8 icon-chakan"
                      @click="showDetail(scope.row)">查看详情</el-button>
         </div>
