@@ -362,7 +362,7 @@ export default {
           dataIndex: 'operation',
           align: 'center',
           scopedSlots: { customRender: 'operation' },
-          width: 140
+          width: 160
         }
       ],
       tableConfig: {},
