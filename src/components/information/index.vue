@@ -34,6 +34,7 @@
                            ref="msg"
                            v-if="selectedUser.entityId"
                            :user="selectedUser"
+                           :key="dateTime"
                            :messagesData="list"
                            @messageevent="messageevent"
                            @setUser="setUser"
@@ -161,7 +162,6 @@ export default {
           item.messageCount = 0
         }
       })
-      this.dateTime = new Date().getTime()
     },
     onMessage (params) {
       window.myWebSocket.emit('sendMessageGroupChat', params)
@@ -176,6 +176,7 @@ export default {
         this.selectedUser.contentText = ''
       }
       this.list = []
+      this.dateTime = new Date().getTime()
       await this.$api['documentManagement.getWebsocketById']({
         entityId: this.selectedUser ? this.selectedUser.entityId : '',
         entityType: this.selectedUser ? this.selectedUser.entityType : '',

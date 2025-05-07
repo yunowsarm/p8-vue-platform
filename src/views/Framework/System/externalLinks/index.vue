@@ -7,6 +7,7 @@
                      :special-rote-name="roteName"></common-button>
       <search-form-list ref="search"
                         :data-source="searchData"
+                        :addFuzzySearch="true"
                         @search="search"
                         @re-set="reSet"></search-form-list>
     </template>
@@ -201,9 +202,10 @@ export default {
     },
     reSet () {
       let this_ = this
-      Object.keys(this_.queryParam).forEach((key) => {
-        this_.queryParam[key] = null
-      })
+      // Object.keys(this_.queryParam).forEach((key) => {
+      //   this_.queryParam[key] = null
+      // })
+      this_.queryParam = {}
       // this.$refs.table.searchData()
     }
   }

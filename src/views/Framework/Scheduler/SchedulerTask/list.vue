@@ -7,6 +7,7 @@
                      :button-config="buttonConfig"></common-button>
       <search-form-list ref="search"
                         :data-source="searchData"
+                        :addFuzzySearch="true"
                         @search="search"
                         @re-set="reSet"></search-form-list>
     </template>

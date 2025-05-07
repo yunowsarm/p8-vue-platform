@@ -5,6 +5,7 @@
       <search-form-list ref="search"
                         :comp="comp"
                         :data-source="dataSource"
+                        :addFuzzySearch="true"
                         @search="search"
                         @re-set="reSet"></search-form-list>
     </template>

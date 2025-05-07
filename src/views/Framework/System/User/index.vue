@@ -5,6 +5,7 @@
                      :button-type="'round'"></common-button>
       <search-form-list ref="search"
                         :data-source="searchData1"
+                        :addFuzzySearch="true"
                         @search="search"
                         @re-set="reSet"></search-form-list>
     </template>
