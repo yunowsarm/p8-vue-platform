@@ -171,7 +171,7 @@ export default {
             title: '操作',
             fixed: 'right',
             dataIndex: 'operation',
-            width: 140,
+            width: 160,
             scopedSlots: { customRender: 'operation' },
             align: 'left',
             headerAlign: 'left'

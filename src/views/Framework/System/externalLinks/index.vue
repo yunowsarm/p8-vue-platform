@@ -85,8 +85,9 @@ const columns = [
     title: '操作',
     fixed: 'right',
     dataIndex: 'operation',
+    width: '160',
     scopedSlots: { customRender: 'operation' },
-    align: 'left',
+    align: 'center',
     headerAlign: 'left'
   }
 ]

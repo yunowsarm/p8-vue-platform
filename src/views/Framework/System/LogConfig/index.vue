@@ -140,7 +140,7 @@ export default {
       {
         title: '操作',
         fixed: 'right',
-        width: 140,
+        width: 160,
         dataIndex: 'operation',
         align: 'center',
         headerAlign: 'center',

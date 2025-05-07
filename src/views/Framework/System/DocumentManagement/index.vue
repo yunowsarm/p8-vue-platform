@@ -211,7 +211,7 @@ export default {
           fixed: 'right',
           dataIndex: 'operation',
           scopedSlots: { customRender: 'operation' },
-          width: 140,
+          width: 160,
           align: 'center',
           headerAlign: 'left'
         }
