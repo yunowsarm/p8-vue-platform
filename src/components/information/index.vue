@@ -101,7 +101,7 @@ export default {
       )
       this.onSelectUser()
     } else {
-      this.$api['documentManagement.getWebsocketGroupAll']().then(res => {
+      this.$api['documentManagement.getWebsocketGroupAll']({ entityType: 'project'}).then(res => {
         if (res) {
           let count = 0
           this.users = res
