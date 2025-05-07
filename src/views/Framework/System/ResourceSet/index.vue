@@ -154,7 +154,7 @@ export default {
         {
           title: '序号',
           type: 'index',
-          width: '50',
+          width: '80',
           align: 'center',
           headerAlign: 'center'
         },
@@ -164,7 +164,6 @@ export default {
           align: 'left',
           headerAlign: 'left',
           minWidth: '250',
-          fixed: 'left',
           treeNode: true,
           scopedSlots: { customRender: 'custom' }
         },
