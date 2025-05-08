@@ -18,7 +18,7 @@
       </div>
       <el-menu mode="vertical"
                class="vertical-menu"
-               :default-active="$route.path"
+               :default-active="defaultActive"
                :router="true"
                unique-opened
                text-color="#fff"
@@ -202,6 +202,13 @@ export default {
     }
   },
   computed: {
+    defaultActive(){
+      if(this.$route.matched && this.$route.matched.length > 2){
+        return this.$route.meta.parentPath
+      }else{
+        return this.$route.path
+      }
+    },
     ...mapGetters(['asyncRouter', 'sidebarState', 'systemTheme', 'theme', 'imageUrl', 'systemName']),
     // 这里必须根据条件结合ElementUI的sidebar来调整颜色,保证自定义主题和sidebar的内置颜色一致.
     systemThemeColor: function () {
