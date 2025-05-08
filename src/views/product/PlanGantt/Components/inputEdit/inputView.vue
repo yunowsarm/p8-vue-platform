@@ -265,6 +265,7 @@ export default {
             that.vueThis.newTaskMap[taskId].updateInfo.indexOf('input') !== -1
           ) {
             datas = that.vueThis.newTaskMap[taskId].input
+            that.isEmpty = false
           }
           // 附件日期处理
           if (datas && datas.length > 0) {

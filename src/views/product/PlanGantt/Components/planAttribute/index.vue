@@ -104,9 +104,9 @@
                       @refreshData="refreshData"
                       :formWidth="formWidth"></businessForm>
         <businessFormView v-if="!isView"
-                        :task-id="taskId"
-                        :gantt-name="ganttName"
-                        :formWidth="formWidth"></businessFormView>
+                          :task-id="taskId"
+                          :gantt-name="ganttName"
+                          :formWidth="formWidth"></businessFormView>
       </template>
       <template #demandKey>
         <relevance-edit v-if="isView"
@@ -256,9 +256,9 @@ export default {
           //     this.isView = false
           //   }
           // }
-          if (this.ganttName === 'changeGantt') {
-            this.isView = false
-          }
+          // if (this.ganttName === 'changeGantt') {
+          //   this.isView = false
+          // }
           if (task.infoType === 'delete') {
             this.isView = false
           }

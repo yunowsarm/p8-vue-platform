@@ -393,6 +393,9 @@ export function otherEditCheck(oldObj, newObj, ganttObject, vueThis, taskId, typ
       })
       if (newObj.length === oldObj.length) {
         oldObj.forEach(function (n) {
+          if (n.inPutType !== newMap[n.id].inPutType || n.outputType !== newMap[n.id].outputType) {
+            editO = true
+          }
           // 输出描述相同、附件数量相同
           if (n.id && Object.keys(newMap[n.id]).length > 0 && n.describes === newMap[n.id].describes && n.uploadFiles.length === newMap[n.id].uploadFiles.length) {
             // 附件对象都存在id则相同
@@ -420,6 +423,8 @@ export function otherEditCheck(oldObj, newObj, ganttObject, vueThis, taskId, typ
     editO = true
   }
   // 发生变动
+  console.log(editO, 'editOeditOeditOeditOeditO');
+  
   if (editO) {
     if (!task.infoType) {
     task.infoType = 'update'

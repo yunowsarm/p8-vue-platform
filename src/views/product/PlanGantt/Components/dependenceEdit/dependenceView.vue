@@ -194,12 +194,13 @@ export default {
         }
         // 变更进入时先查看newTaskMap中是否存在对应值若存在，显示，否则加载任务描述数据
         if (
-          that.ganttName === 'changeGantt' &&
+          (that.ganttName === 'changeGantt' || that.ganttName === 'analysisGantt') &&
           JSON.stringify(that.vueThis.newTaskMap) !== '{}' &&
           that.vueThis.newTaskMap[taskId] &&
           that.vueThis.newTaskMap[taskId].updateInfo &&
           that.vueThis.newTaskMap[taskId].updateInfo.indexOf('links') !== -1
         ) {
+          that.isEmpty = false
           datas = that.vueThis.newTaskMap[taskId].links
           that.ganttLinkResponse = that.vueThis.newTaskMap[taskId].links
         }
