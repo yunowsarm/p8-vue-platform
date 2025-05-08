@@ -1,5 +1,6 @@
 <template>
-  <el-tabs class="progressTaskTabs"
+  <el-tabs class="progressTaskTabs scrollable-tabs"
+           ref="tabsContainer"
            v-if="taskTabs.length"
            v-model="tabsActiveName"
            @tab-click="tabsClick">
@@ -108,7 +109,8 @@ export default {
       approve: false,
       tabsName: 'progess',
       taskFinish: false,
-      taskbusinessForm: []
+      taskbusinessForm: [],
+      scrollContainer: null
     }
   },
   async created () {
@@ -165,12 +167,67 @@ export default {
     if (index !== -1) {
       taskTabs.splice(index + 1, 0, ...this.taskbusinessForm)
     }
-    this.$nextTick(() => {
-      this.taskTabs = taskTabs
-    })
+    this.taskTabs = taskTabs
     await this.getTaskFinish()
+    this.$nextTick(() => {
+      this.initScrollHandler()
+      this.hideScrollbar()
+    })
+  },
+  beforeDestroy() {
+    this.removeScrollHandler()
   },
   methods: {
+    initScrollHandler() {
+      const tabsEl = this.$refs.tabsContainer.$el
+      this.scrollContainer = tabsEl.querySelector('.el-tabs__nav-scroll')
+      if (this.scrollContainer) {
+        this.scrollContainer.addEventListener(
+          'wheel',
+          this.handleWheel,
+          { passive: false }
+        )
+        // 添加鼠标移入移出监听
+        this.scrollContainer.addEventListener(
+          'mouseenter',
+          this.hideScrollbar
+        )
+        this.scrollContainer.addEventListener(
+          'mouseleave',
+          this.hideScrollbar
+        )
+      }
+    },
+    removeScrollHandler() {
+      if (this.scrollContainer) {
+        this.scrollContainer.removeEventListener(
+          'wheel',
+          this.handleWheel
+      )
+        this.scrollContainer.removeEventListener(
+          'mouseenter',
+          this.hideScrollbar
+        )
+        this.scrollContainer.removeEventListener(
+          'mouseleave',
+          this.hideScrollbar
+        )
+      }
+    },
+    handleWheel(event) {
+      if (event.shiftKey) {
+        event.preventDefault()
+        const delta = Math.sign(event.deltaY)
+        // 更平滑的滚动，调整乘数系数
+        this.scrollContainer.scrollLeft += delta * 60
+      }
+    },
+    hideScrollbar() {
+      // 强制隐藏滚动条
+      if (this.scrollContainer) {
+        this.scrollContainer.style.overflow = 'hidden'
+      }
+    },
     toggleMaximize (tabName) {
       this.$set(this.maximizedTabs, tabName, !this.maximizedTabs[tabName])
     },

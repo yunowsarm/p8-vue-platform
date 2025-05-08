@@ -94,31 +94,72 @@ export default {
           await Promise.all(fields.map(async item => {
             if (!item.__config__.hidden) {
               if (dynamicTagList.includes(item.__config__.tag)) {
-                // 动态数据来源
                 columns.push({
                   title: item.__config__.label,
                   minWidth: 120,
-                  dataIndex: item.__config__.formFields,
+                  dataIndex: item.__vModel__,
                   align: 'center',
                   formatter: function (row) {
-                    if (row[item.__config__.formFields]) {
-                      let options = that.dynamicData[item.__config__.formFields].data;
-                      let config = that.dynamicData[item.__config__.formFields].config;
+                    if (row[item.__vModel__]) {
+                      let options = that.dynamicData[item.__vModel__].data;
+                      let config = that.dynamicData[item.__vModel__].config;
                       if (config) {
-                        let result = options.find(el => el[config.valueCol] === row[item.__config__.formFields]);
+                        let result = options.find(el => el[config.valueCol] === row[item.__vModel__]);
                         return result[config.labelCol] ? result[config.labelCol] : ''
                       } else {
                         let customConfig = {
                           labelCol: "cmeaning",
                           valueCol: "id"
                         }
-                        let result = options.find(el => el[customConfig.valueCol] === row[item.__config__.formFields]);
+                        let result = options.find(el => el[customConfig.valueCol] === row[item.__vModel__]);
                         return result[customConfig.labelCol] ? result[customConfig.labelCol] : ''
                       }
                     }
                   }
                 });
-              } else {
+              } else if (item.__config__.tagIcon == 'time-range' || item.__config__.tagIcon == 'date-range') {
+                columns.push({
+                  title: item.__config__.label,
+                  minWidth: 180,
+                  dataIndex: item.__vModel__,
+                  align: 'center',
+                  formatter: function (row) {
+                    let file1 = row[item.__config__.formFields[0]]
+                    let file2 = row[item.__config__.formFields[1]]
+                    if (file1 && file2) {
+                      if (item.__config__.tagIcon == 'time-range') {
+                        return file1.split(' ')[1] + '~' + file2.split(' ')[1]
+                      } else if (item.__config__.tagIcon == 'date-range') {
+                        return file1.split(' ')[0] + '~' + file2.split(' ')[0]
+                      }
+                    }
+                  }
+                })
+              }
+              else if (item.__config__.tagIcon == 'time' || item.__config__.tagIcon == 'date') {
+                columns.push({
+                  title: item.__config__.label,
+                  minWidth: 100,
+                  dataIndex: item.__config__.formFields,
+                  align: 'center',
+                  formatter: function (row) {
+                    if (item.__config__.tagIcon == 'time') {
+                      if (row[item.__config__.formFields]) {
+                        return row[item.__config__.formFields].split(' ')[1].slice(0,-3) || ''
+                      } else {
+                        return ''
+                      }
+                    } else if (item.__config__.tagIcon == 'date') {
+                      if (row[item.__config__.formFields]) {
+                        return row[item.__config__.formFields].split(' ')[0] || ''
+                      } else {
+                        return ''
+                      }
+                    }
+                  }
+                });
+              }
+              else {
                 columns.push({
                   title: item.__config__.label,
                   minWidth: 120,
