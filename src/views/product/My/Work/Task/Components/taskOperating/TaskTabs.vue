@@ -11,7 +11,7 @@
       <div class="tab-content-wrapper"
            :class="{ 'is-maximized': maximizedTabs[item.name] }">
         <!-- 最大化/最小化按钮 -->
-        <div class="tab-actions">
+        <div class="tab-actions" v-if="!viewVisible">
           <i :class="maximizedTabs[item.name] ? 'p8 icon-exit-fullscreen' : 'p8 icon-full-screen'"
              @click="toggleMaximize(item.name)"></i>
         </div>
@@ -110,7 +110,8 @@ export default {
       tabsName: 'progess',
       taskFinish: false,
       taskbusinessForm: [],
-      scrollContainer: null
+      scrollContainer: null,
+      viewVisible: false, 
     }
   },
   async created () {
@@ -173,6 +174,11 @@ export default {
       this.initScrollHandler()
       this.hideScrollbar()
     })
+  },
+  mounted () {
+    if (this.getPlanInfo().MANAGERSTATUS === '6409' || this.getPlanInfo().MANAGERSTATUS === '6406') {
+      this.viewVisible = true
+    }
   },
   beforeDestroy() {
     this.removeScrollHandler()
