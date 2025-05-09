@@ -42,7 +42,7 @@
                   所有人员<span>({{ getTotalCount }})</span>
                 </li>
                 <li :class="[{ active: index === rolesSelectedIndex }, { 'fixed-role': item.roleType === 'fixed' }]"
-                    v-for="(item, index) in rolesData"
+                    v-for="(item, index) in rolesData.filter(role => !role.isDeleted)"
                     :key="item.id"
                     @click="rolesHandle(item, index)">
                   <el-tooltip v-if="item.roleType === 'fixed'"
@@ -589,9 +589,9 @@ export default {
     }
   },
   methods: {
-    refreshAiData (data) {
-      // 获取现有角色名称集合
-      const existingRoleNames = new Set(this.generalRoles.map(role => role.name));
+    refreshAiData: async function (data) {
+      // 获取现有角色名称集合（过滤掉已删除的角色）
+      const existingRoleNames = new Set(this.generalRoles.filter(role => !role.isDeleted).map(role => role.name));
       const duplicateRoles = [];
 
       // 过滤掉重复角色
@@ -604,25 +604,21 @@ export default {
       });
       console.log(newRoles,'newRoles')
       // 合并非重复角色
-      this.generalRoles = [...this.generalRoles, ...newRoles];
+      this.generalRoles = [...this.generalRoles.filter(role => !role.isDeleted), ...newRoles];
       this.autoGenerationVisible = false;
 
-      // 如果有重复角色，提示用户
+      // 如果有新角色，先执行submit
+      if(newRoles.length > 0){
+        await this.submit();
+      }
+      
+      // submit执行完毕后，如果有重复角色则显示提示
       if (duplicateRoles.length > 0) {
         this.$message({
           type: 'warning',
           message: `以下角色已存在，未重复添加: ${duplicateRoles.join('、')}`,
-          duration: 2000,  // 设置消息显示时间为2秒
-          onClose: () => {
-            if(newRoles.length > 0){
-              this.submit();
-            }
-          }
+          duration: 2000  // 设置消息显示时间为2秒
         });
-      }else{
-        if(newRoles.length > 0){
-          this.submit();
-        }
       }
     },
     // 关闭AI生成
@@ -876,7 +872,7 @@ export default {
       }
       this.rolesSelectedIndex = -1
       let tableData = []
-      this.rolesData.map((item) => {
+      this.rolesData.filter(role => !role.isDeleted).map((item) => {
         let projectTeamRoleUsers = item.projectTeamRoleUsers.map((pitem) => {
           pitem.roleName = item.name
           pitem.roleId = item.id
@@ -910,11 +906,22 @@ export default {
         this.$message.warning('该角色下存在未退出的人员，不能删除！')
         return
       }
-      let idx = index >= 1 ? index - 1 : 0
-      this.rolesSelectedIndex = index - 1
-      this.generalRoles.splice(index - this.fixedRoles.length, 1)
-      this.rolesData.splice(index, 1)
-      this.tableData = this.rolesData[idx] && this.rolesData[idx].projectTeamRoleUsers ? this.rolesData[idx].projectTeamRoleUsers : []
+      
+      // 添加删除标记，而不是直接删除
+      item.isDeleted = true
+      
+      // 更新视图，选择上一个未删除的角色
+      let availableRoles = this.rolesData.filter(role => !role.isDeleted)
+      if (availableRoles.length > 0) {
+        let idx = availableRoles.findIndex(role => role.id === item.id)
+        idx = idx > 0 ? idx - 1 : 0
+        this.rolesSelectedIndex = this.rolesData.findIndex(role => role.id === availableRoles[idx].id)
+        this.tableData = availableRoles[idx].projectTeamRoleUsers || []
+      } else {
+        this.rolesSelectedIndex = -1
+        this.tableData = []
+      }
+      
       this.isDelete = true
     },
     tableDeleteMemberHandle (row, index) {
@@ -1163,14 +1170,14 @@ export default {
     submitVerifyHandle () {
       let result = true
       let roleNotNullMsg = []
-      this.fixedRoles.forEach((fixedItem) => {
-        // 改角色是必填且未选择人员时给出提示
+      this.fixedRoles.filter(role => !role.isDeleted).forEach((fixedItem) => {
+        // 该角色是必填且未选择人员时给出提示
         if (fixedItem.isRequired === '1' && fixedItem.projectTeamRoleUsers.length === 0) {
           roleNotNullMsg.push(fixedItem.name)
         }
       })
-      this.generalRoles.forEach((fixedItem) => {
-        // 改角色是必填且未选择人员时给出提示
+      this.generalRoles.filter(role => !role.isDeleted).forEach((fixedItem) => {
+        // 该角色是必填且未选择人员时给出提示
         if (fixedItem.isRequired === '1' && fixedItem.projectTeamRoleUsers.length === 0) {
           roleNotNullMsg.push(fixedItem.name)
         }
