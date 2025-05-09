@@ -204,10 +204,6 @@ export default {
     addCurrentTeam() {
       this.teamPreviewVisible = false
       this.$emit('refreshAiData',this.teamPreviewData)
-      this.$message({
-        type: 'success',
-        message: '添加成功'
-      })
     },
     // 设置滚动条到最底部
     scrollToBottom() {
