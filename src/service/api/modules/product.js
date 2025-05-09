@@ -1437,7 +1437,7 @@ export const repositoryApi = {
     {
       name: 'createTeamFromDescribe',
       method: 'POST',
-      path: '/product/projectTeam/createTeamFromDescribe',
+      path: '/ai/intelligence/createTeamFromDescribe',
       mockPath: '/ai/intelligence/createTeamFromDescribe',
       desc: '团队管理-AI生成团队'
     },
