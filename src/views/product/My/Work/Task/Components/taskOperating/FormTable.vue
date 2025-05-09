@@ -380,12 +380,20 @@
                       :tableSetting="false"></common-table>
       </template>
     </common-drawer>
+    <selectApproveUserBeforehand v-if="isSelectApproveUserBeforehandView"
+                                 :is-select-approve-user-beforehand-view="isSelectApproveUserBeforehandView"
+                                 :select-user-beforehand-data-source="selectUserBeforehandDataSource"
+                                 :select-user-beforehand-form-data="selectUserBeforehandFormData"
+                                 @close-modal="closeSelectApproveUserBeforehand"
+                                 @commit="commitSelectApproveUserBeforehand"></selectApproveUserBeforehand>
   </div>
 
 </template>
 <script>
 import { Form, FormItem, Progress, Input, InputNumber, DatePicker, Select, Option, Row, Col, Button, Slider, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
 import moment from 'moment'
+import SelectApproveUserBeforehand from '@/views/Framework/BusinessActivity/ProcessApproval/selectApproveUserBeforehand'
+import { nextApproveUserBeforehand } from './components/nextApproveUserBeforehand'
 const mh = document.documentElement.clientHeight - 43
 let realBeginDate
 export default {
@@ -423,7 +431,8 @@ export default {
     'el-input': Input,
     'el-slider': Slider,
     CommonDrawer,
-    CommonTable
+    CommonTable,
+    SelectApproveUserBeforehand
   },
   props: {
     approve: {
@@ -493,6 +502,10 @@ export default {
   },
   data () {
     return {
+      AUTOMATIC: false,
+      selectUserBeforehandDataSource: [],
+      selectUserBeforehandFormData: {},
+      isSelectApproveUserBeforehandView: false,
       disabledProgress: false,
       releaseMenuParams: {},
       selectUserBeforehandFormData: {
@@ -570,6 +583,27 @@ export default {
     }
   },
   methods: {
+    nextApproveUserBeforehand (processDefinationTwoKey, submitType) {
+      const that = this
+      that.AUTOMATIC = false
+      nextApproveUserBeforehand.initDataSource(processDefinationTwoKey, that).then((res1) => {
+        if (res1 === true) {
+          if (that.AUTOMATIC) {
+            that.$emit('submit', that.formData, submitType)
+            that.getPlanInfo().MANAGERSTATUS = '6406'
+          } else {
+            that.isSelectApproveUserBeforehandView = true
+          }
+        }
+      })
+    },
+    closeSelectApproveUserBeforehand () {
+      this.isSelectApproveUserBeforehandView = false
+    },
+    commitSelectApproveUserBeforehand (fullParams) {
+      this.getPlanInfo().MANAGERSTATUS = '6406'
+      this.$emit('submit', this.formData, 'submit', fullParams)
+    },
     getOptions () {
       this.$api['thirdPartInterface.getDic']({ dicType: 'DEVIATION_ClASSIFY' }).then(res => {
         this.unfinishOption = res
@@ -597,8 +631,9 @@ export default {
               .then(() => {
                 _this.$api['taskManager.progressFeedbackCheck']({ taskId: _this.getPlanInfo().TASKID, parent: _this.getPlanInfo().PARENTID, hierarchy: _this.getPlanInfo().GETPROJECTLEVEL }).then(res => {
                   if (res && res.success) {
-                    _this.getPlanInfo().MANAGERSTATUS = '6406'
-                    _this.$emit('submit', _this.formData, submitType)
+                    // _this.getPlanInfo().MANAGERSTATUS = '6406'
+                    _this.nextApproveUserBeforehand('taskFinishApprove', submitType)
+                    // _this.$emit('submit', _this.formData, submitType)
                     _this.minValue = _this.formData.Progress
                   } else {
                     _this.$message({

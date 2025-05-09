@@ -118,8 +118,6 @@
             授权终止日期：{{ regardsObj.authorizedExpires }}<br />
             授权用户数：{{ regardsObj.userLimit }}<br />
             授权登录人数：{{ regardsObj.loginLimit }}<br />
-            授权登录人数：{{ regardsObj.loginLimit }}<br />
-            授权登录人数：{{ regardsObj.loginLimit }}<br />
             <el-popover placement="top-start"
                         width="230"
                         trigger="hover">
