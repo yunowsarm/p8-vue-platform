@@ -386,10 +386,14 @@ export default {
       }
       return obj[key]()
     },
-    progressSubmit (formData, submitType) {
+    progressSubmit (formData, submitType, fullParams) {
+      // this.getPlanInfo().MANAGERSTATUS = '6404'
       let params = this.submitParamsHandle(formData, submitType)
       const _this = this
       params.pmTaskProgressFeedback.hierarchy = this.getPlanInfo().LEVEL
+      if (submitType === 'submit' && fullParams) {
+        params.beforehandParams = fullParams
+      }
       this.$api['taskManager.progressFeedback'](params).then(res => {
         if (res) {
           _this.progressChange(_this.getPlanInfo().PROGRESS)
