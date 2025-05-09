@@ -48,11 +48,20 @@ export default {
   },
 
   props: {
-    teamData:{
+    teamData: {
       type: Object,
-      default: () => {
-        return {}
-      }
+      default: () => ({}),
+      immediate: true  // 添加这个选项
+    }
+  },
+  watch: {
+    teamData: {
+      handler(newVal) {
+        if (newVal && Object.keys(newVal).length) {
+          this.handleTeamData(newVal)
+        }
+      },
+      immediate: true  // 立即执行一次
     }
   },
 
@@ -97,7 +106,6 @@ export default {
     }
   },
   created() {
-    console.log(this.teamData)
     this.handleTeamData(this.teamData)
   },
 
@@ -119,7 +127,10 @@ export default {
       this.generalRoles = formatRoles(data.generalRoles, 'general')
       this.rolesData = [...this.generalRoles]
 
-      this.updateTableData()
+      // 确保在下一个tick更新表格数据
+      this.$nextTick(() => {
+        this.updateTableData()
+      })
     },
 
     updateTableData() {
