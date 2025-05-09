@@ -1107,7 +1107,13 @@ export const repositoryApi = {
       mockPath: '/ai/intelligence/createTasks',
       desc: '项目管理->计划管理->计划编辑->将AI数据插入到当前计划'
     },
-
+    {
+      name: 'stopWorkFlow',
+      method: 'POST',
+      path: '/ai/intelligence/stopWorkFlow',
+      mockPath: '/ai/intelligence/stopWorkFlow',
+      desc: '项目管理->计划管理->计划编辑->将AI进程停止'
+    },
     {
       name: 'getSameTaskIndex',
       method: 'POST',
@@ -1427,7 +1433,14 @@ export const repositoryApi = {
       path: '/product/projectTeam/wholeDescribeInfo',
       mockPath: '/product/projectTeam/wholeDescribeInfo',
       desc: '团队管理-项目信息'
-    }
+    },
+    {
+      name: 'createTeamFromDescribe',
+      method: 'POST',
+      path: '/product/projectTeam/createTeamFromDescribe',
+      mockPath: '/ai/intelligence/createTeamFromDescribe',
+      desc: '团队管理-AI生成团队'
+    },
   ],
   OutputFlow: [
     {

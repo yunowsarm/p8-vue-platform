@@ -11,7 +11,7 @@
       <!-- 现有的消息列表 -->
       <div v-if="messages.length === 0" class="placeholder-message">还没有消息哦，快输入您的要求吧。</div>
       <div v-for="(message, index) in messages" :key="index">
-        <div :class="['message', message.sendUser === userId ? 'user' : 'ai']">
+        <div v-if="!!message.content" :class="['message', message.sendUser === userId ? 'user' : 'ai']">
           <el-button v-if="message.styleType" class="task_preview" type="text" @click="taskPreview(message.content)">点击查看数据 </el-button>
           <div v-else class="text">{{ message.content }}</div>
         </div>
@@ -22,8 +22,9 @@
     <div class="input-area">
       <el-input type="textarea" :rows="5" resize="none" placeholder="请输入要求描述" @keydown.enter.native="handleKeyDown" v-model="userInput"></el-input>
       <div class="button-area">
-        <el-tooltip :disabled="!!userInput.trim()" v-model="showTip" effect="dark" content="请输入您的要求" placement="top">
-          <el-button class="send_button" :disabled="!userInput.trim()" type="primary" size="small" round @click="sendMessage">发送 </el-button>
+        <el-button class="stop_button" type="primary" size="small" round @click="stopWorkFlow">停止 </el-button>
+        <el-tooltip :disabled="tooltipDisabled" v-model="showTip" effect="dark" :content="tooltipContent" placement="top">
+          <el-button class="send_button" :disabled="sendDisabled" type="primary" size="small" round @click="sendMessage">发送 </el-button>
         </el-tooltip>
       </div>
     </div>
@@ -82,6 +83,18 @@ export default {
     key() {
       return `${this.userId}-${this.planInfoId}`
     },
+    tooltipContent() {
+      return '请输入您的要求'
+    },
+    // 新增：发送按钮禁用条件
+    sendDisabled() {
+      return !this.userInput.trim()
+    },
+    // 新增：tooltip禁用条件
+    tooltipDisabled() {
+      // 只有在非工作流进行中且有输入内容时才禁用tooltip
+      return !!this.userInput.trim()
+    },
     ...mapGetters(['userId', 'userName'])
   },
   created() {
@@ -99,6 +112,12 @@ export default {
     })
   },
   methods: {
+    stopWorkFlow(){
+      this.$api['planGanttManager.stopWorkFlow']({
+        taskId: this.planInfoId,
+        type:'plan'
+      }).then(() => {})
+    },
     // 处理滚动事件
     handleScroll() {
       const chatWindow = this.$refs.chatWindow
@@ -115,7 +134,7 @@ export default {
 
       this.$api['planGanttManager.getWebsocketById']({
         entityId: this.planInfoId,
-        entityType: 'aiMessage',
+        entityType: 'plan',
         page: this.page
       }).then((res) => {
         if (res && res.records.length > 0) {
@@ -143,7 +162,7 @@ export default {
 
       this.$api['planGanttManager.getWebsocketById']({
         entityId: this.planInfoId,
-        entityType: 'aiMessage',
+        entityType: 'plan',
         page: this.page
       }).then((res) => {
         if (res) {
@@ -277,11 +296,8 @@ export default {
 
   .button-area {
     padding: 6px;
-
-    .send_button {
-      float: right;
-      flex-shrink: 0;
-    }
+    display: flex;
+    justify-content: flex-end;
   }
 }
 
