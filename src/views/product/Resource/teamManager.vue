@@ -596,8 +596,7 @@ export default {
   },
   methods: {
     refreshAiData (data) {
-      this.generalRoles = data.generalRoles
-      this.$set(this, 'generalRoles', data.generalRoles)
+      this.generalRoles = [...this.generalRoles, ...data.generalRoles]
       this.autoGenerationVisible = false
       this.submit()
     },
