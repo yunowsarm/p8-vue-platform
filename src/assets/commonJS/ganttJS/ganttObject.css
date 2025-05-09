@@ -411,7 +411,7 @@
 .el-button.is-disabled,
 .el-button.is-disabled:hover,
 .el-button.is-disabled:focus {
-  color: #6d6d6d;
+  color: #c0c4cc;
 }
 
 .gantt_Editor .el-date-editor.el-input,
