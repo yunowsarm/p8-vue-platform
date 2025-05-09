@@ -21,16 +21,26 @@
                  @saved="saved"
                  @custom-validate="customValidate"
                  @form-data-change="formDataChange">
-          <template v-for="(item,index) in selectUserBeforehandDataSourceCur">
-            <template v-if="item.type === 'blank'" :slot="item.slotName">
-              <div :key="item.fieldName">
-                <el-input v-model="selectUserBeforehandFormDataCur[item.fieldName + '_Display']" readonly class="clickIcon">
-                  <template slot="append"><i class="el-icon-paperclip" style="cursor: pointer;" @click="openComponent(item)"></i></template>
-                </el-input>
-              </div>
-              <component :is="componentLoader" v-bind="parmars" class="main" :key="index" @close="close"></component>
-            </template>
+        <template v-for="(item,index) in selectUserBeforehandDataSourceCur">
+          <template v-if="item.type === 'blank'"
+                    :slot="item.slotName">
+            <div :key="item.fieldName">
+              <el-input v-model="selectUserBeforehandFormDataCur[item.fieldName + '_Display']"
+                        placeholder="选择节点审批人"
+                        readonly
+                        class="clickIcon">
+                <template slot="append"><i class="el-icon-paperclip"
+                     style="cursor: pointer;"
+                     @click="openComponent(item)"></i></template>
+              </el-input>
+            </div>
+            <component :is="componentLoader"
+                       v-bind="parmars"
+                       class="main"
+                       :key="index"
+                       @close="close"></component>
           </template>
+        </template>
       </form-list>
     </template>
   </common-dialog>
@@ -91,7 +101,7 @@ export default {
       parmars: { isMultiple: false, selsctRow: this.selsctRow }
     }
   },
-  created (){
+  created () {
     this.$api['ProcessDefinition.getProcessSelect']({}).then(res => {
       this.componentUrls = res
     })
@@ -119,7 +129,7 @@ export default {
         this.parmars.isMultiple = item.fieldConfig.multiple
       }
       this.componentUrls.forEach(el => {
-        if(el.value == item.url){
+        if (el.value == item.url) {
           this.formComp = el.url
         }
       })
@@ -154,7 +164,7 @@ export default {
     },
     close (selectedRows) {
       this.formComp = ''
-      if(selectedRows && selectedRows.length) {
+      if (selectedRows && selectedRows.length) {
         if (this.parmars && this.parmars.isMultiple) {
           // this.selectUserBeforehandFormDataCur[this.fieldName] = selectedRows.filter(el => el.id)
           this.$set(this.selectUserBeforehandFormDataCur, this.fieldName, selectedRows.filter(el => el.id))

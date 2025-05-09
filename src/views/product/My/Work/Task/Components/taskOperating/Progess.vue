@@ -389,7 +389,7 @@ export default {
       }
       return obj[key]()
     },
-    progressSubmit (formData, submitType) {
+    progressSubmit (formData, submitType, fullParams) {
       let result = this.checkBusinessForm()
       if (!result.flag) {
         this.$message({ type: 'warning', message: `业务表单${result.message}为必填表单，请填写后再提交` })
@@ -399,6 +399,9 @@ export default {
       let params = this.submitParamsHandle(formData, submitType)
       const _this = this
       params.pmTaskProgressFeedback.hierarchy = this.getPlanInfo().LEVEL
+      if (submitType === 'submit' && fullParams) {
+        params.beforehandParams = fullParams
+      }
       this.$api['taskManager.progressFeedback'](params).then(res => {
         if (res) {
           _this.progressChange(_this.getPlanInfo().PROGRESS)

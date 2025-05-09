@@ -97,7 +97,7 @@ export default {
           type: 'radioButton',
           fieldName: 'taskFinish',
           labelText: '父任务完成方式',
-          tip: '自动：所有子任务都完成时，父任务自动提交完成审批。手动：所有子任务都完成时，父任务需责任人手动提交完成审批。',
+          tip: '自动：所有子任务都完成时，父任务自动提交完成审批。手动：所有子任务都完成时，父任务需责任人手动提交完成审批。当为自动时任务完成审批流程模式不可为手动。',
           colLayout: 'singleCol',
           options: [
             {
