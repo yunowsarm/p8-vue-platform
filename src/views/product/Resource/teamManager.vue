@@ -71,9 +71,15 @@
                                   @re-set="reset"></search-form-list>
               </div>
               <div class="common-table-member">
-                <common-table ref="table" class="tableMember" style="height: 100%" :columns="columns" :key="dateTime"
-                  :params="params" :pagination="false" @cell-click="cellDblclick" :tableSetting="false"
-                  :noApiTableData="filterTableData(tableData)">
+                <common-table ref="table"
+                              class="tableMember"
+                              style="height: 100%"
+                              :columns="columns"
+                              :params="params"
+                              :pagination="false"
+                              @cell-click="cellDblclick"
+                              :tableSetting="false"
+                              :noApiTableData="filterTableData(tableData)">
                   <template #realName="{ scope }">
                     <div class="real-name">
                       <template>
