@@ -269,7 +269,12 @@ const platform = {
         document.getElementsByTagName('body')[0].style.setProperty('--theme-color-01', getRGBOpacityColor(theme))
       }
       //
-      const themeCluster = getClusterColor(theme.replace('#', ''))
+      let themeCluster
+      if (theme.indexOf('#') !== -1) {
+        themeCluster = getClusterColor(theme.replace('#', ''))
+      } else {
+        themeCluster = getClusterColor(theme)
+      }
 
       const updateThemeStyleText = (styleText, originalCluster, themeCluster) => {
         let newStyleText = styleText
@@ -281,7 +286,12 @@ const platform = {
 
       const getThemeHandler = (id) => {
         return () => {
-          const originalThemeCluster = getClusterColor(ORIGINAL_THEME.replace('#', ''))
+          let originalThemeCluster
+          if (theme.indexOf('#') !== -1) {
+            originalThemeCluster = getClusterColor(ORIGINAL_THEME.replace('#', ''))
+          } else {
+            originalThemeCluster = getClusterColor(ORIGINAL_THEME)
+          }
           const newStyle = updateThemeStyleText(chalkTheme, originalThemeCluster, themeCluster)
 
           let existStyle = document.getElementById(id)
