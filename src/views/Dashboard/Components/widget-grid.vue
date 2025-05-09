@@ -294,32 +294,47 @@ export default {
     'nested-scroll': {
       inserted (el) {
         const initScrollHandlers = () => {
-          // 同时获取表头和表体的滚动容器
+          // 使用 vxe-table--body-wrapper 选择器，这是实际包含滚动条的元素
           const bodyWrappers = el.querySelectorAll('.vxe-table--body-wrapper');
-          const headerWrappers = el.querySelectorAll('.vxe-table--header-wrapper');
-          if (bodyWrappers.length > 0 || headerWrappers.length > 0) {
+          if (bodyWrappers.length > 0) {
             const handleWheel = (event) => {
-              let parent = el.closest('.gridWidget');
-              if (!parent) return;
-              const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
-              // 检查是否到达滚动边界
-              const isAtEdge =
-                (event.deltaY > 0 && scrollTop + clientHeight >= scrollHeight) ||
-                (event.deltaY < 0 && scrollTop <= 0);
-              // 如果是表头或者到达边界，则传递事件给父容器
-              if (event.currentTarget.classList.contains('vxe-table--header-wrapper') || isAtEdge) {
-                event.preventDefault();
-                event.stopPropagation();
-                parent.dispatchEvent(new WheelEvent(event.type, event));
+              // 获取当前滚动容器
+              const container = event.currentTarget;
+              const { scrollTop, scrollHeight, clientHeight } = container;
+              
+              // 判断滚动方向和是否到达边界
+              const isScrollingUp = event.deltaY < 0;
+              const isScrollingDown = event.deltaY > 0;
+              const isAtTop = scrollTop <= 0;
+              const isAtBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 1;
+              // 如果在顶部继续向上滚动，或在底部继续向下滚动，则传递事件给父容器
+              if ((isScrollingUp && isAtTop) || (isScrollingDown && isAtBottom)) {
+                // 查找父级滚动容器
+                const parent = el.closest('.gridWidget');
+                if (parent) {
+                  // 阻止当前容器的默认滚动行为
+                  // event.preventDefault();
+                  // 创建新的滚动事件并分发给父容器
+                  const newEvent = new WheelEvent(event.type, {
+                    deltaX: event.deltaX,
+                    deltaY: event.deltaY,
+                    deltaZ: event.deltaZ,
+                    deltaMode: event.deltaMode,
+                    bubbles: true,
+                    cancelable: true
+                  });
+                  parent.dispatchEvent(newEvent);
+                }
               }
             };
-            // 为表体和表头添加事件监听
-            [...bodyWrappers, ...headerWrappers].forEach(wrapper => {
+
+            // 为每个表格滚动容器添加滚动事件监听
+            bodyWrappers.forEach(wrapper => {
               wrapper.addEventListener('wheel', handleWheel, { passive: false });
             });
             return {
               handleWheel,
-              containers: [...bodyWrappers, ...headerWrappers]
+              containers: [...bodyWrappers]
             };
           }
           return null;
