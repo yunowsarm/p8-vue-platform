@@ -95,7 +95,6 @@
                               class="tableMember"
                               style="height: 100%"
                               :columns="columns"
-                              :key="dateTime"
                               :params="params"
                               :pagination="false"
                               @cell-click="cellDblclick"
@@ -314,7 +313,6 @@ export default {
         title: '角色',
         dataIndex: 'roleName',
         align: 'center',
-        width: 120
       },
       {
         title: '姓名',
@@ -323,7 +321,6 @@ export default {
           customRender: 'custom'
         },
         align: 'center',
-        width: 100
       },
       {
         title: '部门',
@@ -336,8 +333,7 @@ export default {
         scopedSlots: {
           customRender: 'custom'
         },
-        align: 'center',
-        width: 120
+        align: 'center'
       },
       // {
       //   title: '承担责任令数',
@@ -359,8 +355,7 @@ export default {
         scopedSlots: {
           customRender: 'custom'
         },
-        align: 'center',
-        width: 100
+        align: 'center'
       },
       // {
       //   title: '标识',
@@ -384,7 +379,6 @@ export default {
         title: '操作',
         fixed: 'right',
         dataIndex: 'operation',
-        width: 80,
         scopedSlots: {
           customRender: 'custom'
         },
@@ -554,10 +548,40 @@ export default {
   },
   methods: {
     refreshAiData (data) {
-      this.generalRoles = data.generalRoles
-      this.$set(this, 'generalRoles', data.generalRoles)
-      this.autoGenerationVisible = false
-      this.submit()
+      // 获取现有角色名称集合
+      const existingRoleNames = new Set(this.generalRoles.map(role => role.name));
+      const duplicateRoles = [];
+
+      // 过滤掉重复角色
+      const newRoles = data.generalRoles.filter(role => {
+        if (existingRoleNames.has(role.name)) {
+          duplicateRoles.push(role.name);
+          return false;
+        }
+        return true;
+      });
+      console.log(newRoles,'newRoles')
+      // 合并非重复角色
+      this.generalRoles = [...this.generalRoles, ...newRoles];
+      this.autoGenerationVisible = false;
+
+      // 如果有重复角色，提示用户
+      if (duplicateRoles.length > 0) {
+        this.$message({
+          type: 'warning',
+          message: `以下角色已存在，未重复添加: ${duplicateRoles.join('、')}`,
+          duration: 2000,  // 设置消息显示时间为2秒
+          onClose: () => {
+            if(newRoles.length > 0){
+              this.submit();
+            }
+          }
+        });
+      }else{
+        if(newRoles.length > 0){
+          this.submit();
+        }
+      }
     },
     // 关闭AI生成
     closeAutoGeneration () {
@@ -779,7 +803,7 @@ export default {
           this.options = res
         }
       })
-      this.dateTime = new Date().getTime()
+      // this.dateTime = new Date().getTime()
     },
     addRolesHandle () {
       let count = this.rolesData.length ? this.rolesData.length + 1 : 1
@@ -825,7 +849,8 @@ export default {
         align: 'center'
       })
       this.tableData = tableData
-      this.dateTime = new Date().getTime()
+
+      // this.dateTime = new Date().getTime()
       if (this.searchParam) {
         this.search(this.searchParam)
       }
