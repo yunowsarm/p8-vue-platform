@@ -97,25 +97,25 @@
                       :formWidth="formWidth"></special-view>
       </template>
       <template #businessForm>
-        <businessForm v-if="isView"
+        <businessForm v-if="isChangeView"
                       :task-id="taskId"
                       :wholeDescribeId="wholeDescribeId"
                       :gantt-name="ganttName"
                       @refreshData="refreshData"
                       :formWidth="formWidth"></businessForm>
-        <businessFormView v-if="!isView"
+        <businessFormView v-if="!isChangeView"
                           :task-id="taskId"
                           :gantt-name="ganttName"
                           :formWidth="formWidth"></businessFormView>
       </template>
       <template #demandKey>
-        <relevance-edit v-if="isView"
+        <relevance-edit v-if="isChangeView"
                         :task-id="taskId"
                         :wholeDescribeId="wholeDescribeId"
                         :gantt-name="ganttName"
                         @refreshData="refreshData"
                         :formWidth="formWidth"></relevance-edit>
-        <relevance-list v-if="!isView"
+        <relevance-list v-if="!isChangeView"
                         :task-id="taskId"
                         :gantt-name="ganttName"
                         :formWidth="formWidth"></relevance-list>
@@ -191,9 +191,11 @@ export default {
     if (this.vueThis.planEditLock === '0') {
       this.isChangeGantt = true
       this.isView = true
+      this.isChangeView = true
     } else if (this.vueThis.planEditLock === '1') {
       this.isChangeGantt = false
       this.isView = false
+      this.isChangeView = false
     } else {
       // isView为true时是修改页面，为false时是查看页面
       if (this.taskId && this.ganttName) {
@@ -211,12 +213,15 @@ export default {
         if (this.ganttName == 'analysisGantt') {
           this.isChangeGantt = false
           this.isView = false
+          this.isChangeView = false
         }
         if (this.viewType === 'view') {
           this.isView = false
+          this.isChangeView = false
           this.isChangeGantt = false
         } else if (this.attReadOnly || ganttObject.config.readonly) {
           this.isView = false
+          this.isChangeView = false
         } else {
           // 获取gannt操作限制策略
           const taskStatusLockMap = this.$store.getters.taskStatusLockMap
@@ -225,10 +230,12 @@ export default {
           const editManagerStatus = taskStatusLockMap[task.status]
           if (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1) {
             this.isView = false
+            this.isChangeView = false
           }
           // 发布后可控任务不可修改
           if (task.readonly) {
             this.isView = false
+            this.isChangeView = false
           }
           // if (this.$route.path === '/TaskChange') {
           //   this.isView = true
@@ -236,17 +243,21 @@ export default {
           if (task.managerStatus === '6404' && this.ganttName === 'changeGantt') {
             // 已下发
             this.isView = true
+            this.isChangeView = true
           }
           if (task.managerStatus === '6404' && this.ganttName != 'changeGantt') {
             // 已下发
             this.isView = false
+            this.isChangeView = false
           }
           if (task.managerStatus === '6403' && this.createPage === 'decompose') {
             this.isView = true
+            this.isChangeView = true
           }
 
           if (task.createSource === '0' && this.createPage === 'decompose') {
             this.isView = false
+            this.isChangeView = false
           }
           // if (this.ganttName === 'changeGantt' && vueThis.createPage === 'userChange') {
           //   // 计划变更
@@ -256,11 +267,12 @@ export default {
           //     this.isView = false
           //   }
           // }
-          // if (this.ganttName === 'changeGantt') {
-          //   this.isView = false
-          // }
+          if (this.ganttName === 'changeGantt') {
+            this.isChangeView = false
+          }
           if (task.infoType === 'delete') {
             this.isView = false
+            this.isChangeView = false
           }
           // 责任人变更页面，责任人只能操作当前任务及其子
           // let parent = ganttObject.getTask(task.parent)
@@ -271,6 +283,7 @@ export default {
         if (this.ganttName !== 'changeGantt' && task.managerStatus === '6407') {
           this.isChangeGantt = false
           this.isView = false
+          this.isChangeView = false
         }
       }
     }
@@ -279,6 +292,7 @@ export default {
     return {
       headerVisible: false,
       isView: true,
+      isChangeView: true,
       isEdit: true,
       isChangeGantt: true,
       activeOutput: 'outputKey',
