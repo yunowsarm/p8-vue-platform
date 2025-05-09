@@ -8,6 +8,7 @@
                :api="saveApi"
                :form="formData"
                :existDefaultBtn="false"
+               :isShouEnter="false"
                :is-custom-validate="isCustomValidate"
                @custom-validate="customValidate">
     </form-list>

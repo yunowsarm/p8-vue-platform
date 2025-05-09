@@ -8,6 +8,7 @@
              :api="saveApi"
              :form="formData"
              :existDefaultBtn="false"
+             :isShouEnter="false"
              :is-custom-validate="isCustomValidate"
              :key="timeKey"
              @custom-validate="customValidate">
