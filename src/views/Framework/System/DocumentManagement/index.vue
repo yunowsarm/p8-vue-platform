@@ -13,6 +13,7 @@
         <search-form-list ref="search"
                           label-width="100px"
                           :data-source="searchData"
+                          :addFuzzySearch="true"
                           @search="search"
                           @re-set="reSet"></search-form-list>
       </div>
@@ -211,19 +212,19 @@ export default {
           fixed: 'right',
           dataIndex: 'operation',
           scopedSlots: { customRender: 'operation' },
-          width: 120,
-          align: 'left',
+          width: 160,
+          align: 'center',
           headerAlign: 'left'
         }
       ],
-      toolbarWritingDisplay: 'true'
+      toolbarWritingDisplay: '0'
     }
   },
   mounted () {
     if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
       this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
     } else {
-      this.toolbarWritingDisplay = 'true'
+      this.toolbarWritingDisplay = '0'
     }
     this.isTreeSelectView = true
     if (this.viewType !== 'table') {

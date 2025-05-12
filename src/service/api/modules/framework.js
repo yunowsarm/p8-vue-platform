@@ -4,6 +4,23 @@
  */
 
 export const system = {
+  // 系统备份管理
+  systemBackup: [
+    {
+      name: 'executeBackup',
+      method: 'POST',
+      path: '/framework/backup/executeBackup',
+      mockPath: '/framework/backup/executeBackup',
+      desc: '平台数据库备份'
+    },
+    {
+      name: 'executeRestore',
+      method: 'POST',
+      path: '/framework/backup/executeRestore',
+      mockPath: '/framework/backup/executeRestore',
+      desc: '平台数据库恢复'
+    }
+  ],
   // 第三方接口平台
   thirdPartInterface: [
     {
@@ -875,6 +892,27 @@ export const system = {
       desc: '外观设置-保存'
     },
     {
+      name: 'saveMenuBgImages',
+      method: 'POST',
+      path: '/framework/system/SystemSettings/saveMenuBgImages',
+      mockPath: '/framework/system/SystemSettings/saveMenuBgImages',
+      desc: '外观设置-保存图片'
+    },
+    {
+      name: 'loadMenuBgImages',
+      method: 'POST',
+      path: '/framework/system/SystemSettings/loadMenuBgImages',
+      mockPath: '/framework/system/SystemSettings/loadMenuBgImages',
+      desc: '外观设置-查看图片'
+    },
+    {
+      name: 'removeMenuBgImage',
+      method: 'POST',
+      path: '/framework/system/SystemSettings/removeMenuBgImage',
+      mockPath: '/framework/system/SystemSettings/removeMenuBgImage',
+      desc: '外观设置-删除图片'
+    },
+    {
       name: 'getBasicSetting',
       method: 'POST',
       path: '/framework/system/SystemSettings/getBasicSetting',
@@ -1392,10 +1430,10 @@ export const formGeneratorApi = {
       desc: '表单设计器-AI帮填'
     },
     {
-      name: 'stopParseDocFormTask',
+      name: 'stopParseDocFormResult',
       method: 'POST',
-      path: '/ai/intelligence/stopParseDocFormTask',
-      mockPath: '/ai/intelligence/stopParseDocFormTask',
+      path: '/ai/intelligence/stopParseDocFormResult',
+      mockPath: '/ai/intelligence/stopParseDocFormResult',
       desc: '表单设计器-终止AI进程'
     },
     {

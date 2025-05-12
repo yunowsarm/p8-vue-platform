@@ -65,7 +65,10 @@ export default {
     },
     taskFinish: {
       type: Boolean
-    }
+    },
+    checkBusinessForm: {
+      type: Function
+    },
   },
   inject: ['getPlanInfo'],
   computed: {
@@ -387,6 +390,11 @@ export default {
       return obj[key]()
     },
     progressSubmit (formData, submitType, fullParams) {
+      let result = this.checkBusinessForm()
+      if (!result.flag) {
+        this.$message({ type: 'warning', message: `业务表单${result.message}为必填表单，请填写后再提交` })
+        return
+      }
       // this.getPlanInfo().MANAGERSTATUS = '6404'
       let params = this.submitParamsHandle(formData, submitType)
       const _this = this

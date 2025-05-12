@@ -181,6 +181,10 @@ function synchronizationColumns (vueThis, ganttObject) {
   const extraColumnKeys = extraColumns.map((item) => 'kz' + item.id)
   // 获取gantt列配置信息
   const ganttSetting = GanttObject.getGanttSettingGrid(vueThis.ganttName, vueThis.createPage)
+  let lineHeight = ganttSetting && ganttSetting.value && ganttSetting.value.lineHeight ? ganttSetting.value.lineHeight : vueThis.$store.getters.baseConfig.tableRowHeight
+  if (lineHeight) {
+    ganttObject.config.row_height = lineHeight
+  }
   // 存在配置信息时，同步，不存在时显示默认gantt列信息
   if (ganttSetting) {
     const settingColumns = ganttSetting.value.columns
@@ -575,6 +579,9 @@ function getGanttColumns (ganttObject, vueThis) {
           tips += '子任务存在绩效比例分配异常\n'
         }
         if (bool) result = result + `<i class='p8 icon-tishi' title='${tips}' style='color: #e6a23c; float: left'></i>`
+        if (task.hasBusinessForm == 'true') {
+          result = result + `<i class='el-icon-s-order' title='该任务包含业务表单' style='color: #f59000; float: left; position:relative; top:16px; font-size: 16px;'></i>`
+        }
         if (task.unDescribes === '1') result = result + `<i class='p8 icon-tishi' title='存在任务描述' style='color: #0ab847; float: left'></i>`
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
           let taskStyles = vueThis.taskStyles[task.id] || ''

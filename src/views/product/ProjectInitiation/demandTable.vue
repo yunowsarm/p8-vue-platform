@@ -2,16 +2,20 @@
   <div style="height: 100%;background-color: #f3f5f885">
     <div v-if="demandFalg"
          style="padding: 1%;">
-      <el-button v-if="toolbarWritingDisplay === 'true'"
+      <el-button v-if="toolbarWritingDisplay === '0'"
                  type="primary"
                  @click="relevanceClick">关联</el-button>
-      <el-tooltip v-else
+      <el-tooltip v-if="toolbarWritingDisplay === '1'"
                   placement="top"
                   content="关联">
         <el-button type="primary"
                    icon="p8 icon-guanlianrenwu"
                    @click="relevanceClick"></el-button>
       </el-tooltip>
+      <el-button v-if="toolbarWritingDisplay === '2'"
+                 type="primary"
+                 icon="p8 icon-guanlianrenwu"
+                 @click="relevanceClick">关联</el-button>
     </div>
     <vxe-table ref="xTable"
                :comp="comp"
@@ -24,7 +28,7 @@
                :pagination="false"
                :api="tableApi">
       <template #operation="{ scope }">
-        <div v-if="toolbarWritingDisplay === 'true'">
+        <div v-if="toolbarWritingDisplay === '0'">
           <el-button-group v-if="toolbarCompactLayout === 'true'">
             <el-button v-if="demandFalg"
                        style="margin-right: 2px;"
@@ -42,7 +46,7 @@
                        @click="showDetail(scope.row)">查看详情</el-button>
           </div>
         </div>
-        <div v-else>
+        <div v-if="toolbarWritingDisplay === '1'">
           <el-button-group v-if="toolbarCompactLayout === 'true'">
             <el-tooltip placement="top"
                         v-if="demandFalg"
@@ -74,6 +78,28 @@
                          @click="showDetail(scope.row)"
                          type="primary"></el-button>
             </el-tooltip>
+          </div>
+        </div>
+        <div v-if="toolbarWritingDisplay === '2'">
+          <el-button-group v-if="toolbarCompactLayout === 'true'">
+            <el-button v-if="demandFalg"
+                       style="margin-right: 2px;"
+                       type="primary"
+                       icon="p8 icon-cancel-task-type"
+                       @click="cancelDetail(scope.row)">取消关联</el-button>
+            <el-button type="primary"
+                       icon="p8 icon-chakan"
+                       @click="showDetail(scope.row)">查看详情</el-button>
+          </el-button-group>
+          <div v-else>
+            <el-button v-if="demandFalg"
+                       type="primary"
+                       icon="p8 icon-cancel-task-type"
+                       @click="cancelDetail(scope.row)">取消关联</el-button>
+            <el-divider direction="vertical"></el-divider>
+            <el-button type="primary"
+                       icon="p8 icon-chakan"
+                       @click="showDetail(scope.row)">查看详情</el-button>
           </div>
         </div>
       </template>
@@ -197,7 +223,7 @@ export default {
           title: '操作',
           fixed: 'right',
           dataIndex: 'operation',
-          width: 140,
+          width: 200,
           scopedSlots: { customRender: 'custom' },
           align: 'center',
           headerAlign: 'center'
@@ -212,7 +238,7 @@ export default {
       selectRecord: {},
       selectRecords: [],
       tableApi: '',
-      toolbarWritingDisplay: 'true',
+      toolbarWritingDisplay: '0',
       toolbarCompactLayout: 'false'
     }
   },
@@ -240,7 +266,7 @@ export default {
     if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
       this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
     } else {
-      this.toolbarWritingDisplay = 'true'
+      this.toolbarWritingDisplay = '0'
     }
     if (this.$store.getters.baseConfig.toolbarCompactLayout) {
       this.toolbarCompactLayout = this.$store.getters.baseConfig.toolbarCompactLayout

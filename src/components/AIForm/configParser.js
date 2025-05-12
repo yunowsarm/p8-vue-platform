@@ -1,4 +1,45 @@
 /**
+ * 将表单配置转换为默认值对象
+ * @param {Array} config 表单配置数组
+ * @returns {Object} 包含所有字段默认值的对象
+ */
+function parseFormDefaultValues(config) {
+    const values = {};
+
+    config.forEach(field => {
+        // 获取字段名
+        const fieldName = field.fieldName;
+        
+        // 设置默认值
+        if (field.defaultValue !== undefined) {
+            values[fieldName] = field.defaultValue;
+        } else {
+            // 根据字段类型设置合适的默认值
+            switch (field.type) {
+                case 'number':
+                    values[fieldName] = null;
+                    break;
+                case 'radioButton':
+                    // 如果有选项且只有两个选项，默认选择第二个（通常是否）
+                    values[fieldName] = field.options?.[1]?.value || null;
+                    break;
+                case 'treeSelect':
+                    values[fieldName] = null;
+                    break;
+                case 'textarea':
+                case 'text':
+                    values[fieldName] = null;
+                    break;
+                default:
+                    values[fieldName] = null;
+            }
+        }
+    });
+
+    return values;
+}
+
+/**
  * 将表单配置转换为结构化描述
  * @param {Array} config 表单配置数组
  * @returns {Object} 结构化描述
@@ -78,5 +119,6 @@ function generateDescription(description) {
 
 export {
     parseFormConfig,
-    generateDescription
+    generateDescription,
+    parseFormDefaultValues
 }

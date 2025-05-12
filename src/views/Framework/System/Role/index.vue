@@ -5,6 +5,7 @@
                      button-type="primary"></common-button>
       <search-form-list ref="search"
                         :data-source="searchData"
+                        :addFuzzySearch="true"
                         @search="search"
                         @re-set="reSet"></search-form-list>
     </template>
@@ -78,7 +79,7 @@ const columns = [
     title: '操作',
     fixed: 'right',
     key: 'action',
-    width: 120,
+    width: 160,
     scopedSlots: {
       customRender: 'operation'
     },

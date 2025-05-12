@@ -14,7 +14,7 @@
         popper-class="ai-popover"
         width="300"
         trigger="click">
-        <AIForm form-code="standardTeam" :descText="descText" :formJson="formJson" @hidePopover="hidePopover"
+        <AIForm form-code="standardTeam" :description="description" :formJson="formJson" @hidePopover="hidePopover"
                 @updatePopper="updatePopper" @handleAIFill="handleAIFill"></AIForm>
         <el-button type="primary" slot="reference" style="margin-right:10px">AI帮你填</el-button>
       </el-popover>
@@ -28,7 +28,7 @@ import {P8Dialog as CommonDialog, P8Form as FormList} from 'p8-components-ui'
 import {generateTree} from '@/utils/generateTree'
 import AIForm from '@/components/AIForm/index'
 import _cloneDeep  from "lodash/cloneDeep";
-import {parseFormConfig} from "@/components/AIForm/configParser.js"
+import {parseFormConfig,parseFormDefaultValues} from "@/components/AIForm/configParser.js"
 
 let dataSource = [
   {
@@ -120,8 +120,8 @@ export default {
   data() {
     return {
       aiAssistant: aiAssistant,
-      descText:'',
-      formJson:{},
+      description:[],
+      formJson: {},
       saveApi: 'knowledgeManagement.save',
       dataSource: [],
       formData: {},
@@ -142,8 +142,12 @@ export default {
       })
     },
     handleAIFill(formData) {
-      this.formData = formData
-      // this.$emit('handleAIFill',formData)
+      if (!formData || typeof formData !== 'object' || Array.isArray(formData)) {
+        this.hidePopover()
+        this.$message.error('数据解析失败：无效的表单数据格式');
+        return;
+      }
+      this.formData = formData;
     },
     rendered() {
       if (this.row && this.row.length) {
@@ -166,8 +170,11 @@ export default {
         treeData = generateTree(treeData, 'pId', '0')
         this.dataSource[1].treeData = treeData
         this.dataSource[1].disabledValues = disableValues
-        // this.descText = generateDescription(description)
-        this.descText = _cloneDeep(this.dataSource)
+        this.description = parseFormConfig(this.dataSource)
+        this.formJson = parseFormDefaultValues(this.dataSource)
+        console.log(this.description)
+        console.log(this.formJson)
+
       })
     },
     saved(res) {

@@ -7,6 +7,7 @@
                      :button-config="buttonConfig"></common-button>
       <search-form-list ref="search"
                         :data-source="searchData"
+                        :addFuzzySearch="true"
                         @search="search"
                         @re-set="reSet"></search-form-list>
     </template>
@@ -171,7 +172,7 @@ export default {
             title: '操作',
             fixed: 'right',
             dataIndex: 'operation',
-            width: 120,
+            width: 160,
             scopedSlots: { customRender: 'operation' },
             align: 'left',
             headerAlign: 'left'

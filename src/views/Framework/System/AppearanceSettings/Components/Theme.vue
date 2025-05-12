@@ -13,6 +13,7 @@
             @click="changeSystemTheme(theme)"></li>
       </ul>
       <el-color-picker v-model="pickerColor"
+                       show-alpha
                        @change="changeSystemTheme(pickerColor)"></el-color-picker>
     </div>
     <div class="select-theme"></div>
@@ -48,6 +49,7 @@ export default {
   },
   methods: {
     changeSystemTheme (theme) {
+      this.pickerColor = theme
       this.$store.dispatch('setTheme', { theme, handler: true })
     }
   },

@@ -8,6 +8,7 @@
                :api="saveApi"
                :form="formData"
                :existDefaultBtn="false"
+               :isShouEnter="false"
                :is-custom-validate="isCustomValidate"
                :other-param="otherParam"
                @custom-validate="customValidate">

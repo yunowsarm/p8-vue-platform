@@ -7,6 +7,7 @@
                      :special-rote-name="roteName"></common-button>
       <search-form-list ref="search"
                         :data-source="searchDatasource"
+                        :addFuzzySearch="true"
                         @search="search"
                         @re-set="reset"></search-form-list>
     </template>
@@ -141,7 +142,7 @@ const columns = [
   {
     title: '操作',
     fixed: 'right',
-    width: 120,
+    width: 160,
     dataIndex: 'operation',
     scopedSlots: { customRender: 'operation' },
     align: 'center'

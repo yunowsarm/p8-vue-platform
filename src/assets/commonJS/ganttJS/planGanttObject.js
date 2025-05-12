@@ -679,6 +679,9 @@ export function getGanttColumns(ganttObject, vueThis) {
           bool = true
           tips += '子任务存在绩效比例分配异常\n'
         }
+        if (task.hasBusinessForm == 'true') {
+          result = result + `<i class='el-icon-s-order' title='该任务包含业务表单' style='color: #f59000; float: left; position:relative; top:16px; font-size: 16px;'></i>`
+        }
         if (bool) result = result + `<i class='p8 icon-tishi' title='${tips}' style='color: #e6a23c; float: left'></i>`
         if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
           let taskStyles = vueThis.taskStyles[task.id] || ''
@@ -694,7 +697,11 @@ export function getGanttColumns(ganttObject, vueThis) {
           if (ganttObject.hasChild(task.id)) {
             result = result + '<div class="text_overflow" style="display: inline-block;font-weight:bold;" title="' + (task.name || '') + '">' + (task.name || '') + '</div>'
           } else {
-            result = `<div title='${task.name}'>${task.name}</div>` || ''
+            let icon = ''
+            if (task.hasBusinessForm == 'true') {
+              icon = `<i class='el-icon-s-order' title='该任务包含业务表单' style='color: #f59000; float: left; position:relative; top:16px; font-size: 16px;'></i>`
+            }
+            result = icon + `<div title='${task.name}'>${task.name}</div>` || ''
           }
         }
         if (task.unDescribes === '1') result = `<i class='p8 icon-tishi' title='存在任务描述' style='color: #0ab847; float: left'></i>` + result

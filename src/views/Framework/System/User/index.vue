@@ -5,6 +5,7 @@
                      :button-type="'round'"></common-button>
       <search-form-list ref="search"
                         :data-source="searchData1"
+                        :addFuzzySearch="true"
                         @search="search"
                         @re-set="reSet"></search-form-list>
     </template>
@@ -107,7 +108,7 @@ const columns = [
     title: '操作',
     fixed: 'right',
     dataIndex: 'operation',
-    width: '150',
+    width: '200',
     scopedSlots: {
       customRender: 'operation'
     },

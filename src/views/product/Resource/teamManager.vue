@@ -30,14 +30,11 @@
                   所有人员<span>({{ getTotalCount }})</span>
                 </li>
                 <li :class="[{ active: index === rolesSelectedIndex }, { 'fixed-role': item.roleType === 'fixed' }]"
-                    v-for="(item, index) in rolesData.filter(role => !role.isDeleted)"
-                    :key="item.id"
-                    @click="rolesHandle(item, index)">
-                  <el-tooltip v-if="item.roleType === 'fixed'"
-                              :content="item.klTeamsRoleClassifyName"
-                              placement="bottom">
-                    <i class="el-icon-s-custom"
-                       style="cursor: pointer"></i>
+                  v-for="(item, index) in rolesData.filter(role => !role.isDeleted)" :key="item.id"
+                  @click="rolesHandle(item, index)">
+                  <el-tooltip v-if="item.roleType === 'fixed'" :content="item.klTeamsRoleClassifyName"
+                    placement="bottom">
+                    <i class="el-icon-s-custom" style="cursor: pointer"></i>
                   </el-tooltip>
                   <i v-else class="el-icon-s-custom"></i>
                   <edit-input :textValue="item.name || item.roleName" :record="item" :rolesData="rolesData"
@@ -51,39 +48,23 @@
             </div>
             <div class="table-con">
               <div class="add-member">
-                <div>
-                  <el-button v-if="group_add_member && toolbarWritingDisplay === 'true'"
-                             type="plan"
-                             @click="addMemberHandle">添加人员 </el-button>
-                  <el-tooltip v-else
-                              placement="top"
-                              content="添加人员">
-                    <el-button type="primary"
-                               v-if="group_add_member"
-                               icon="el-icon-plus"
-                               @click="addMemberHandle"></el-button>
-                  </el-tooltip>
-                  <!-- <el-button type="plan"
+                <el-button v-if="group_add_member && toolbarWritingDisplay === '0'" type="plan"
+                  @click="addMemberHandle">添加人员 </el-button>
+                <el-tooltip v-if="group_add_member && toolbarWritingDisplay === '1'" placement="top" content="添加人员">
+                  <el-button type="primary" icon="el-icon-plus" @click="addMemberHandle"></el-button>
+                </el-tooltip>
+                <el-button v-if="group_add_member && toolbarWritingDisplay === '2'" type="primary" icon="el-icon-plus"
+                  @click="addMemberHandle">添加人员 </el-button>
+                <!-- <el-button type="plan"
                            @click="refreshHandle">查看全部成员
                 </el-button> -->
-                </div>
-                <search-form-list style="top: 2px"
-                                  ref="search"
-                                  :resetAfterToSearch="false"
-                                  :dataSource="dataSource"
-                                  @search="search"
-                                  @re-set="reset"></search-form-list>
+                <search-form-list style="top: 2px" ref="search" :resetAfterToSearch="false" :dataSource="dataSource"
+                  :addFuzzySearch="true" @search="search" @re-set="reset"></search-form-list>
               </div>
               <div class="common-table-member">
-                <common-table ref="table"
-                              class="tableMember"
-                              style="height: 100%"
-                              :columns="columns"
-                              :params="params"
-                              :pagination="false"
-                              @cell-click="cellDblclick"
-                              :tableSetting="false"
-                              :noApiTableData="filterTableData(tableData)">
+                <common-table ref="table" class="tableMember" style="height: 100%" :columns="columns" :params="params"
+                  :pagination="false" @cell-click="cellDblclick" :tableSetting="false"
+                  :noApiTableData="filterTableData(tableData)">
                   <template #realName="{ scope }">
                     <div class="real-name">
                       <template>
@@ -116,45 +97,41 @@
                     <template v-if="!scope.row.departureTime">
                       <template v-if="scope.row.taskCount">
 
-                        <div v-if="toolbarWritingDisplay === 'true'">
-                          <el-popconfirm title="确认要将该人退出项目组吗?"
-                                         confirmButtonText="确认"
-                                         cancelButtonText="取消"
-                                         @confirm="deleteUserHandle(scope, scope.$index)">
-                            <el-button slot="reference"
-                                       size="mini"
-                                       v-if="group_add_member"
-                                       type="text">删除 </el-button>
+                        <div v-if="toolbarWritingDisplay === '0'">
+                          <el-popconfirm title="确认要将该人退出项目组吗?" confirmButtonText="确认" cancelButtonText="取消"
+                            @confirm="deleteUserHandle(scope, scope.$index)">
+                            <el-button slot="reference" size="mini" v-if="group_add_member" type="text">删除 </el-button>
                           </el-popconfirm>
                         </div>
-                        <el-tooltip placement="top"
-                                    v-else
-                                    content="删除">
-                          <el-popconfirm title="确认要将该人退出项目组吗?"
-                                         confirmButtonText="确认"
-                                         cancelButtonText="取消"
-                                         @confirm="deleteUserHandle(scope, scope.$index)">
-                            <el-button slot="reference"
-                                       size="mini"
-                                       type="text"
-                                       v-if="group_add_member"
-                                       icon="p8 icon-shanchu"></el-button>
+                        <el-tooltip placement="top" v-if="toolbarWritingDisplay === '1'">
+                          content="删除">
+                          <el-popconfirm title="确认要将该人退出项目组吗?" confirmButtonText="确认" cancelButtonText="取消"
+                            @confirm="deleteUserHandle(scope, scope.$index)">
+                            <el-button slot="reference" size="mini" type="primary" v-if="group_add_member"
+                              icon="p8 icon-shanchu"></el-button>
                           </el-popconfirm>
                         </el-tooltip>
-
+                        <div v-if="toolbarWritingDisplay === '2'">
+                          <el-popconfirm title="确认要将该人退出项目组吗?" confirmButtonText="确认" cancelButtonText="取消"
+                            @confirm="deleteUserHandle(scope, scope.$index)">
+                            <el-button slot="reference" size="mini" v-if="group_add_member" icon="p8 icon-shanchu"
+                              type="primary">删除 </el-button>
+                          </el-popconfirm>
+                        </div>
                       </template>
                       <template v-else>
-                        <div v-if="toolbarWritingDisplay === 'true'">
-                          <el-button size="mini"
-                                     type="text"
-                                     v-if="group_add_member"
-                                     @click="deleteUserHandle(scope, scope.$index)">删除 </el-button>
+                        <div v-if="toolbarWritingDisplay === '0'">
+                          <el-button size="mini" type="text" v-if="group_add_member"
+                            @click="deleteUserHandle(scope, scope.$index)">删除 </el-button>
                         </div>
-                        <div v-else>
-                          <el-button type="text"
-                                     v-if="group_add_member"
-                                     icon="p8 icon-shanchu"
-                                     @click="deleteUserHandle(scope, scope.$index)"></el-button>
+                        <el-tooltip placement="top" v-if="toolbarWritingDisplay === '1'">
+                          content="删除">
+                          <el-button type="primary" v-if="group_add_member" icon="p8 icon-shanchu"
+                            @click="deleteUserHandle(scope, scope.$index)"></el-button>
+                        </el-tooltip>
+                        <div v-if="toolbarWritingDisplay === '2'">
+                          <el-button size="mini" type="primary" icon="p8 icon-shanchu" v-if="group_add_member"
+                            @click="deleteUserHandle(scope, scope.$index)">删除 </el-button>
                         </div>
                       </template>
                     </template>
@@ -470,7 +447,7 @@ export default {
       selectUserBeforehandDataSource: [],
       dateTime: '',
       searchParam: null,
-      toolbarWritingDisplay: 'true'
+      toolbarWritingDisplay: '0'
     }
   },
   computed: {
@@ -503,7 +480,7 @@ export default {
     if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
       this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
     } else {
-      this.toolbarWritingDisplay = 'true'
+      this.toolbarWritingDisplay = '0'
     }
     if (this.id) {
       this.getTeamInfo()
@@ -523,24 +500,29 @@ export default {
         }
         return true;
       });
-      console.log(newRoles,'newRoles')
       // 合并非重复角色
+      const originalGeneralRoles = [...this.generalRoles];
       this.generalRoles = [...this.generalRoles, ...newRoles];
       this.autoGenerationVisible = false;
 
       // 如果有新角色，先执行submit
-      if(newRoles.length > 0){
-        await this.submit();
+      if (newRoles.length > 0) {
+        const submitResult = await this.submit();
+        if (submitResult) {
+          // submit执行完毕后，如果有重复角色则显示提示
+          if (duplicateRoles.length > 0) {
+            this.$message({
+              type: 'warning',
+              message: `以下角色已存在，未重复添加: ${duplicateRoles.join('、')}`,
+              duration: 2000  // 设置消息显示时间为2秒
+            });
+          }
+        } else {
+          this.generalRoles = originalGeneralRoles;
+        }
       }
 
-      // submit执行完毕后，如果有重复角色则显示提示
-      if (duplicateRoles.length > 0) {
-        this.$message({
-          type: 'warning',
-          message: `以下角色已存在，未重复添加: ${duplicateRoles.join('、')}`,
-          duration: 2000  // 设置消息显示时间为2秒
-        });
-      }
+
     },
     // 关闭AI生成
     closeAutoGeneration() {
@@ -615,6 +597,7 @@ export default {
       this.memberFormComp = formComp
     },
     search(params, searchBoxParam) {
+      console.log(params, '-=-=params');
       this.reset()
       this.searchParam = params
       let realName = params.realName ? params.realName : null
@@ -627,9 +610,9 @@ export default {
         })
         this.tableData = tableData
       }
-      if (searchBoxParam && Object.keys(searchBoxParam).length) {
-        let realName = searchBoxParam.realName ? searchBoxParam.realName : null
-        let deptName = searchBoxParam.deptName ? searchBoxParam.deptName : null
+      if (params.searchBoxParam) {
+        let realName = params.searchBoxParam ? params.searchBoxParam : null
+        let deptName = params.searchBoxParam ? params.searchBoxParam : null
         if (realName && deptName) {
           let tableData = this.tableData.filter((item) => {
             if (item.realName.indexOf(realName) > -1 || item.deptName.indexOf(deptName) > -1) {
@@ -805,7 +788,7 @@ export default {
       this.columns.unshift({
         title: '角色',
         dataIndex: 'roleName',
-        width: 120,
+        width: 140,
         align: 'center'
       })
       this.tableData = tableData
@@ -830,19 +813,23 @@ export default {
       // 添加删除标记，而不是直接删除
       item.isDeleted = true
 
-      // 更新视图，选择上一个未删除的角色
-      let availableRoles = this.rolesData.filter(role => !role.isDeleted)
-      if (availableRoles.length > 0) {
-        let idx = availableRoles.findIndex(role => role.id === item.id)
-        idx = idx > 0 ? idx - 1 : 0
-        this.rolesSelectedIndex = this.rolesData.findIndex(role => role.id === availableRoles[idx].id)
-        this.tableData = availableRoles[idx].projectTeamRoleUsers || []
-      } else {
-        this.rolesSelectedIndex = -1
-        this.tableData = []
-      }
-
-      this.isDelete = true
+      // 强制更新视图
+     // 更新视图
+     this.$nextTick(() => {
+        if (index === this.rolesSelectedIndex) {
+          // 如果删除的是当前选中的角色，则显示所有人员
+          this.rolesSelectedIndex = -1
+          this.tableData = this.originalTableData
+        } else {
+          if(this.rolesSelectedIndex > index){
+            this.rolesSelectedIndex--
+          }
+          const roleUsers = this.rolesData.filter(role => !role.isDeleted)[this.rolesSelectedIndex].projectTeamRoleUsers
+          this.tableData = [...roleUsers]
+        }
+        // 标记删除状态用于保存
+        this.isDelete = true
+      })
     },
     tableDeleteMemberHandle(row, index) {
       if ((row.entryTime && row.departureTime) || (!row.entryTime && !row.departureTime)) {
@@ -1614,10 +1601,6 @@ export default {
 
   .operation {
     // flex: 1;
-    text-align: right;
-    margin-right: 10px;
-  }
-  .ai-generated-team{
     text-align: right;
     margin-right: 10px;
   }

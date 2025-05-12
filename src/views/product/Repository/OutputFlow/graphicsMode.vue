@@ -44,6 +44,11 @@
                 </span>
 
               </el-tab-pane>
+              <el-tab-pane name="businessForm">
+                <span slot="label">
+                  <div style="display: flex; align-items: center"><i class="el-icon-s-order"></i><span style="margin-left: 4px">业务表单</span></div>
+                </span>
+              </el-tab-pane>
             </el-tabs>
             <div class="formEdit"
                  :key="describeRefrshKey">
@@ -70,6 +75,11 @@
                               :activityInfoId="activityId"
                               v-show="'specialKey' == activeKey && activityId"></special-edit>
               </keep-alive>
+              <keep-alive>
+                <business-form ref="businessForm"
+                               :activityInfoId="activityId"
+                               v-show="'businessForm' == activeKey && activityId"></business-form>
+              </keep-alive>
             </div>
             <div class="footer"><el-button plain
                          @click="$emit('close')">取消</el-button><el-button type="primary"
@@ -86,6 +96,7 @@ import DescribeEdit from './Components/describeEdit'
 import inputEdit from './Components/inputEdit'
 import outputEdit from './Components/outputEdit'
 import specialEdit from './Components/specialEdit'
+import businessForm from './Components/businessForm'
 import { P8ListLayout as ListLayout, P8Drawer as CommonDrawer } from 'p8-components-ui'
 import antv from './antv'
 export default {
@@ -97,7 +108,8 @@ export default {
     'special-edit': specialEdit,
     ListLayout,
     CommonDrawer,
-    antv
+    antv,
+    businessForm
   },
   props: {
     activityInfoId: {

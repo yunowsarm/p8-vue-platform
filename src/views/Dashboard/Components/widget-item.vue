@@ -121,10 +121,9 @@ export default {
     onResize (i, newH, newW, newHPx, newWPx) {
 
     },
-    handleRefresh () {
-      // this.loading = false
+    handleRefresh: _debounce(function () {
       this.renderTime = new Date().getTime()
-    },
+    }, 300),
     onFullscreen (booleanParams) {
       if (booleanParams) {
         this.$refs.widget.$el.style.zIndex = PopupManager.nextZIndex()

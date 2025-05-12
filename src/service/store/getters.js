@@ -4,6 +4,7 @@ const getters = {
   theme: (state) => state.platform.theme,
   systemColor: (state) => state.platform.systemColor,
   imageUrl: (state) => state.platform.imageUrl,
+  imageId: (state) => state.platform.imageId,
   shortcutMenu: (state) => state.platform.shortcutMenu,
   systemName: (state) => state.platform.systemName,
   sidebarState: (state) => state.platform.sidebarState,

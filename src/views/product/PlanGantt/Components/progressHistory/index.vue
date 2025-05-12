@@ -25,14 +25,29 @@
                       :tableSetting="false">
         </common-table>
       </template>
+      <template v-for="item in businessForm" v-slot:[item.name]>
+        <FormRender v-if="item.editMode === '单数据'"
+                      :ref="item.name"
+                      :item="item"
+                      class="businessForm"
+                      :approveType="false"
+                      :key="item.name"></FormRender>
+          <multiple-form-table v-else-if="item.editMode === '多数据'"
+                               :ref="item.name"
+                               :key="item.name"
+                               :approveType="false"
+                               :item="item"></multiple-form-table>
+      </template>
     </common-tabs>
   </div>
 </template>
 
 <script>
 import { P8Table as CommonTable, P8Tabs as CommonTabs } from 'p8-components-ui'
+import multipleFormTable from '@/views/product/My/Work/Task/Components/taskOperating/components/multipleFormTable'
+import FormRender from '@/views/product/My/Work/Task/Components/taskOperating/components/formRender.vue'
 export default {
-  components: { CommonTable, CommonTabs },
+  components: { CommonTable, CommonTabs, multipleFormTable, FormRender },
   props: {
     taskId: {
       type: String,
@@ -143,7 +158,8 @@ export default {
           dataIndex: 'itemCreateTime',
           align: 'left'
         }
-      ]
+      ],
+      businessForm: []
     }
   },
   watch: {
@@ -154,6 +170,15 @@ export default {
     }
   },
   created () {
+    this.$api['planGanttManager.taskFormInfo']({ taskId: this.taskId }).then(res => {
+      res.forEach(el => {
+        this.businessForm.push({label: el.formName, name: el.id, formCode: el.formCode, editMode: el.editMode, formId: el.formId})
+      })
+      let index = this.tabs.findIndex(item => item.name === 'history')
+      if (index !== -1) {
+        this.tabs.splice(index + 1, 0, ...this.businessForm)
+      }
+    })
     this.save()
   },
   methods: {
@@ -173,5 +198,8 @@ export default {
 .custom-common-tabs {
   height: calc(100% - 40px);
   margin-top: 37px;
+}
+.businessForm {
+  padding: 0 !important;
 }
 </style>

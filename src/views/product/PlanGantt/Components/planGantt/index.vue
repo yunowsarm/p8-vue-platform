@@ -886,7 +886,8 @@ export default {
       addTaskList: [],
       hasAchievements: false,
       searchIds: [],
-      fullscreen: false
+      fullscreen: false,
+      taskFinish: null
     }
   },
   watch: {
@@ -949,6 +950,12 @@ export default {
     }
   },
   created () {
+    this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then((res) => {
+      let taskFinish = res.taskFinish && res.taskFinish.content ? res.taskFinish.content : ''
+      if (taskFinish === '手动') {
+        this.taskFinish = true
+      }
+    })
     this.debouncedShowTaskProgressDialog = debounce(this.showTaskProgressDialog, 500, { leading: false, trailing: true }); // 500ms 的防抖时间
   },
   beforeDestroy () {

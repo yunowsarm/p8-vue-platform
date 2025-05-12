@@ -9,9 +9,9 @@
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件&nbsp;&nbsp;&nbsp;&nbsp;
           <span class="filename"
                 @click="downloadOutputRequsetFile(item)">{{item.attFileName}}</span>
-          <span style="margin-left: 160px;">
+          <!-- <span style="margin-left: 160px;">
             密级 &nbsp;&nbsp;&nbsp;&nbsp;<span class="filename">{{item.attConfidentialiteDisplay}}</span>
-          </span>
+          </span> -->
         </p>
       </li>
     </ul>

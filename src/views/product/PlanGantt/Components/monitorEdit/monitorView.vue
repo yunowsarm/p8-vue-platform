@@ -143,6 +143,7 @@ export default {
           that.vueThis.newTaskMap[taskId].updateInfo &&
           that.vueThis.newTaskMap[taskId].updateInfo.indexOf('monitors') !== -1
         ) {
+          that.isEmpty = false
           that.monitorManagerRequests = that.vueThis.newTaskMap[taskId].monitors
           datas = that.vueThis.newTaskMap[taskId].monitors
         }

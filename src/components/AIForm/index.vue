@@ -50,7 +50,7 @@ export default {
       default: ''
     },
     // 表单配置描述文本
-    descText: {
+    description: {
       type: [],
       default: () => {
         return []
@@ -82,25 +82,22 @@ export default {
       return this.taskId && this.workFlowRunId
     },
     completeDescription() {
-      return `=== 表单生成需求说明 ===
-
-      一. 表单配置说明：
-      ${this.descText ? JSON.stringify(this.descText) : ''}
-
-      二. 用户需求：
-      ${this.userInput}
-
-      三. 生成要求：
-      - 请根据表单配置和上传的文档生成表单
-      - 生成的表单必须是json结构
-
-      请根据以上信息，生成一个完整的、符合需求的表单数据。`.trim()
+      const data = {
+        description: this.description,
+        formJson: this.formJson,
+        userInput: this.userInput,
+        requirements: `
+        1.通过分析文档和用户输入的要求（userInput）给formJson中的字段赋值
+        2.formJson中的字段必须符合description配置要求;
+        3.字段的值尽量可以通过分析文档生成，避免为空`
+      }
+      return JSON.stringify(data, null, 2)
     }
   },
   created() {
     window.myWebSocket.on('getDocParseFormMessageMessage', (data) => {
       // 判断ai进程
-      if(data.workFlowRunId && data.workFlowRunId){
+      if(data.taskId && data.workFlowRunId){
         // ai已进入进程，可以终止
         this.taskId = data.taskId
         this.workFlowRunId = data.workFlowRunId
@@ -110,11 +107,22 @@ export default {
       }
       // ai返回的最终结果
       if(data.type === 'end'){
-        this.$emit('handleAIFill', JSON.parse(data.content))
-        this.$emit('hidePopover')
-        this.files = []
-        this.userInput = ''
-        this.showMask = false
+        try {
+          // 尝试解析 data.content
+          const parsedContent = JSON.parse(data.content);
+          this.$emit('handleAIFill', parsedContent);
+          this.$emit('hidePopover');
+          this.files = [];
+          this.userInput = '';
+          this.showMask = false;
+        } catch (error) {
+          this.showMask = false;
+          // 解析失败，输出错误信息
+          console.error('解析 data.content 时出错:', error);
+          // 可以根据需求添加更多的错误处理逻辑，比如提示用户
+          this.$message.error('解析 AI 返回结果时出错，请稍后重试');
+
+        }
       }
     })
   },
@@ -142,12 +150,14 @@ export default {
       // 如果是 Shift + Enter，允许默认换行行为
     },
     sendMessage() {
+      console.log('sendMessage', this.completeDescription)
       this.showMask = true; // 打开遮罩
 
       this.$api['formGenerator.generateFormFromDocument']({
         formCode: this.formCode,
         files: this.files,
-        prompt: this.completeDescription
+        prompt: this.completeDescription,
+        formJson: JSON.stringify(this.formJson)
       }).then((res) => {
         if(res){
           this.showMask = true
@@ -157,7 +167,7 @@ export default {
       })
     },
     stopAnalysis() {
-      this.$api['formGenerator.stopParseDocFormTask']({
+      this.$api['formGenerator.stopParseDocFormResult']({
         formCode: this.formCode,
         taskId: this.taskId,
         workFlowRunId: this.workFlowRunId

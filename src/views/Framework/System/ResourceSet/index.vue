@@ -6,6 +6,7 @@
                      :special-rote-name="roteName"></common-button>
       <search-form-list ref="search"
                         :data-source="searchFormConfig"
+                        :addFuzzySearch="true"
                         @search="onSearch"
                         @re-set="onSearchReset"></search-form-list>
     </template>
@@ -153,7 +154,7 @@ export default {
         {
           title: '序号',
           type: 'index',
-          width: '50',
+          width: '80',
           align: 'center',
           headerAlign: 'center'
         },
@@ -163,7 +164,6 @@ export default {
           align: 'left',
           headerAlign: 'left',
           minWidth: '250',
-          fixed: 'left',
           treeNode: true,
           scopedSlots: { customRender: 'custom' }
         },
@@ -228,7 +228,7 @@ export default {
           title: '操作',
           fixed: 'right',
           dataIndex: 'operation',
-          width: '150',
+          width: '190',
           align: 'center',
           headerAlign: 'center',
           scopedSlots: { customRender: 'operation' }

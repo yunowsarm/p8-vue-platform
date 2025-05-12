@@ -6,6 +6,7 @@
       <search-form-list ref="search"
                         label-width="100px"
                         :data-source="searchData"
+                        :addFuzzySearch="true"
                         @search="search"
                         @re-set="reSet"></search-form-list>
     </template>
@@ -187,11 +188,11 @@ const columns = [
     title: '操作',
     fixed: 'right',
     dataIndex: 'operation',
-    width: '120',
+    width: '160',
     scopedSlots: {
       customRender: 'operation'
     },
-    align: 'left',
+    align: 'center',
     headerAlign: 'left'
   }
 ]
@@ -274,13 +275,13 @@ export default {
     search (param) {
       let that = this
       if (param) {
-        that.queryParam = { ...param, ...that.queryParam }
+        that.queryParam = { ...that.queryParam, ...param }
       }
     },
     reSet () {
       let that = this
       that.queryParam = {
-        dicType: '-1'
+        dicType: that.queryParam.dicType
       }
     },
     onSelect (node) {

@@ -134,7 +134,8 @@ const platform = {
     // mainScrollHeight: 0, // main部分的实时滚动高度scrollTop
     // ctrlKeyState: false // 判断是否全局按了ctrl按键
     // todo 配置低代码表单的title的新建、修改、删除在前还是在后
-    formTitlePosition: 'left'
+    formTitlePosition: 'left',
+    imageId: ''
   },
 
   mutations: {
@@ -218,6 +219,9 @@ const platform = {
     SET_IMAGE(state, imageUrl) {
       state.imageUrl = imageUrl
       Cookie.set(SYSTEM_IMAGE_KEY, imageUrl, 1000)
+    },
+    SET_IMAGE_ID(state, imageId) {
+      state.imageId = imageId
     },
     SET_SYSTEM_COLOR(state, data) {
       const keys = Object.keys(data)
@@ -321,6 +325,9 @@ const platform = {
     },
     setImage({ commit }, imageUrl) {
       commit('SET_IMAGE', imageUrl)
+    },
+    setImageId({ commit }, id) {
+      commit('SET_IMAGE_ID', id)
     }
     // setMainScrollHeight ({ commit }, scrollTop) {
     //   commit('SET_MAIN_SCROLL_TOP', scrollTop)

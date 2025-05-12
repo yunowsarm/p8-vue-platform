@@ -8,6 +8,7 @@
       <search-form-list ref="search"
                         label-width="100px"
                         :data-source="searchData"
+                        :addFuzzySearch="true"
                         @search="search"
                         @re-set="reSet"></search-form-list>
     </template>
@@ -140,7 +141,7 @@ export default {
       {
         title: '操作',
         fixed: 'right',
-        width: 120,
+        width: 160,
         dataIndex: 'operation',
         align: 'center',
         headerAlign: 'center',
@@ -199,7 +200,8 @@ export default {
     },
     reSet () {
       let that = this
-      Object.keys(that.queryParams).forEach(key => { that.queryParams[key] = null })
+      // Object.keys(that.queryParams).forEach(key => { that.queryParams[key] = null })
+      that.queryParams = {}
     },
     // 新建
     create () {

@@ -29,7 +29,7 @@ Vue.use(loadCurrentTheme, { store })
 
 // 系统错误捕获
 const errorHandler = (error, vm, info) => {
-  // console.error(`${error.toString()}`)
+  console.error(`${error.toString()}`)
 }
 
 Vue.config.errorHandler = errorHandler

@@ -7,6 +7,7 @@
                      :special-rote-name="roteName"></common-button>
       <search-form-list ref="search"
                         :data-source="searchData"
+                        :addFuzzySearch="true"
                         @search="search"
                         @re-set="reSet"></search-form-list>
     </template>
@@ -85,8 +86,9 @@ const columns = [
     title: '操作',
     fixed: 'right',
     dataIndex: 'operation',
+    width: '160',
     scopedSlots: { customRender: 'operation' },
-    align: 'left',
+    align: 'center',
     headerAlign: 'left'
   }
 ]
@@ -200,9 +202,10 @@ export default {
     },
     reSet () {
       let this_ = this
-      Object.keys(this_.queryParam).forEach((key) => {
-        this_.queryParam[key] = null
-      })
+      // Object.keys(this_.queryParam).forEach((key) => {
+      //   this_.queryParam[key] = null
+      // })
+      this_.queryParam = {}
       // this.$refs.table.searchData()
     }
   }
