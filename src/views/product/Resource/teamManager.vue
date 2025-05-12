@@ -824,7 +824,8 @@ export default {
           if(this.rolesSelectedIndex > index){
             this.rolesSelectedIndex--
           }
-          this.tableData = this.rolesData.filter(role => !role.isDeleted)[this.rolesSelectedIndex].projectTeamRoleUsers
+          const roleUsers = this.rolesData.filter(role => !role.isDeleted)[this.rolesSelectedIndex].projectTeamRoleUsers
+          this.tableData = [...roleUsers]
         }
         // 标记删除状态用于保存
         this.isDelete = true
