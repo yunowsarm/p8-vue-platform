@@ -181,6 +181,10 @@ function synchronizationColumns (vueThis, ganttObject) {
   const extraColumnKeys = extraColumns.map((item) => 'kz' + item.id)
   // 获取gantt列配置信息
   const ganttSetting = GanttObject.getGanttSettingGrid(vueThis.ganttName, vueThis.createPage)
+  let lineHeight = ganttSetting && ganttSetting.value && ganttSetting.value.lineHeight ? ganttSetting.value.lineHeight : vueThis.$store.getters.baseConfig.tableRowHeight
+  if (lineHeight) {
+    ganttObject.config.row_height = lineHeight
+  }
   // 存在配置信息时，同步，不存在时显示默认gantt列信息
   if (ganttSetting) {
     const settingColumns = ganttSetting.value.columns
