@@ -525,7 +525,7 @@ export default {
       });
       console.log(newRoles,'newRoles')
       // 合并非重复角色
-      this.generalRoles = [...this.generalRoles.filter(role => !role.isDeleted), ...newRoles];
+      this.generalRoles = [...this.generalRoles, ...newRoles];
       this.autoGenerationVisible = false;
 
       // 如果有新角色，先执行submit
