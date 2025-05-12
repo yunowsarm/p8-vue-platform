@@ -739,7 +739,7 @@ function synchronizationColumns (vueThis, ganttObject) {
   // }
 
   const ganttSetting = GanttObject.getGanttSettingGrid('planGantt', 'compile')
-  let lineHeight = ganttSetting && ganttSetting.value && ganttSetting.value.lineHeight ? ganttSetting.value.lineHeight : null
+  let lineHeight = ganttSetting && ganttSetting.value && ganttSetting.value.lineHeight ? ganttSetting.value.lineHeight : vueThis.$store.getters.baseConfig.tableRowHeight
   if (lineHeight) {
     ganttObject.config.row_height = lineHeight
   }

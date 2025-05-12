@@ -17,11 +17,11 @@
             <span style="display:inline-block;height: 21px;">行高</span>
             <span class="widthNumber">
               <el-input-number v-model="lineHeight"
-                                :min="15"
-                                :max="300"
-                                :step="1"
-                                style="margin-bottom:1px;"
-                                controls-position="right"></el-input-number>
+                               :min="15"
+                               :max="300"
+                               :step="1"
+                               style="margin-bottom:1px;"
+                               controls-position="right"></el-input-number>
             </span>
           </div>
           <draggable class="list-group"
@@ -118,7 +118,7 @@ export default {
       description: 'grid-setting',
       type: 'Gantt',
       saveApi: '/framework/user/setting/save',
-      lineHeight: 50
+      lineHeight: this.$store.getters.baseConfig.tableRowHeight || 50
     }
   },
   watch: {
@@ -138,7 +138,7 @@ export default {
     if (this.$route.name == 'PlanChanges') {
       ganttSetting = GanttObject.getGanttSettingGrid('planGantt', 'compile')
     }
-    let lineHeight = ganttSetting.value.lineHeight ? ganttSetting.value.lineHeight : null
+    let lineHeight = ganttSetting.value.lineHeight ? ganttSetting.value.lineHeight : this.$store.getters.baseConfig.tableRowHeight
     if (lineHeight) {
       this.lineHeight = lineHeight
     }
@@ -287,7 +287,6 @@ export default {
         margin-top: -4px;
       }
     }
-
   }
 }
 .list-group-item1 {

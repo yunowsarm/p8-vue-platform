@@ -940,26 +940,26 @@ export function getAnalysisGantt (ganttName, vueThis) {
             }
           }
         },
-        {
-          key: "start_date",
-          value: {
-            name: 'oldForecastBeginDate',
-            label: '原计划开始时间',
-            align: 'center',
-            min_width: 100,
-            resize: true
-          }
-        },
-        {
-          key: "end_date",
-          value: {
-            name: 'oldForecastEndDate',
-            label: '原计划完成时间',
-            align: 'center',
-            min_width: 100,
-            resize: true
-          }
-        },
+        // {
+        //   key: "start_date",
+        //   value: {
+        //     name: 'oldForecastBeginDate',
+        //     label: '原计划开始时间',
+        //     align: 'center',
+        //     min_width: 100,
+        //     resize: true
+        //   }
+        // },
+        // {
+        //   key: "end_date",
+        //   value: {
+        //     name: 'oldForecastEndDate',
+        //     label: '原计划完成时间',
+        //     align: 'center',
+        //     min_width: 100,
+        //     resize: true
+        //   }
+        // },
       ];
       nameList.map((el) => {
         let index = tempColumns.findIndex((val) => val.name == el.key);

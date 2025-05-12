@@ -3576,7 +3576,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
   // 存在配置信息时，同步，不存在时显示默认gantt列信息
   if (ganttSetting) {
     const settingColumns = ganttSetting.value.columns
-    let lineHeight = ganttSetting.value && ganttSetting.value.lineHeight ? ganttSetting.value.lineHeight : null
+    let lineHeight = ganttSetting.value && ganttSetting.value.lineHeight ? ganttSetting.value.lineHeight : store.getters.baseConfig.tableRowHeight
     if (lineHeight) {
       ganttObject.config.row_height = lineHeight
     }
@@ -3725,6 +3725,9 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
 
     ganttObject.config.columns = tempColumns
   } else if (vueThis.columnSettings.length > 0) {
+    if (store.getters.baseConfig.tableRowHeight) {
+      ganttObject.config.row_height = store.getters.baseConfig.tableRowHeight
+    }
     const tempColumns = []
     vueThis.columnSettings.forEach((item) => {
       const initColumn = initColumns.filter((initItem) => initItem.name === item.filedName)
@@ -3835,6 +3838,9 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
     // })
     ganttObject.config.columns = tempColumns
   } else {
+    if (store.getters.baseConfig.tableRowHeight) {
+      ganttObject.config.row_height = store.getters.baseConfig.tableRowHeight
+    }
     ganttObject.config.columns = initColumns
   }
 }
