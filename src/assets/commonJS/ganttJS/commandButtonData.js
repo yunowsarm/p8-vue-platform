@@ -3260,7 +3260,7 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
           }
         });
         setTimeout(() => {
-          ganttObject.unselectTask()
+          // ganttObject.unselectTask()
           if (filteredTasks && filteredTasks.indexOf(task.id) === -1) {
           if (isTaskInViewport(parentId,ganttObject)) {
 
