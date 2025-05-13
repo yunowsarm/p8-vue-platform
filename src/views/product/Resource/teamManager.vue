@@ -508,7 +508,9 @@ export default {
       // 如果有新角色，先执行submit
       if (newRoles.length > 0) {
         const submitResult = await this.submit();
+        console.log(submitResult)
         if (submitResult) {
+          console.log(duplicateRoles)
           // submit执行完毕后，如果有重复角色则显示提示
           if (duplicateRoles.length > 0) {
             this.$message({
@@ -819,12 +821,19 @@ export default {
         if (index === this.rolesSelectedIndex) {
           // 如果删除的是当前选中的角色，则显示所有人员
           this.rolesSelectedIndex = -1
+          this.columns.unshift({
+            title: '角色',
+            dataIndex: 'roleName',
+            width: 140,
+            align: 'center'
+          })
+          this.tableData = tableData
           this.tableData = this.originalTableData
         } else {
           if(this.rolesSelectedIndex > index){
             this.rolesSelectedIndex--
           }
-          const roleUsers = this.rolesData.filter(role => !role.isDeleted)[this.rolesSelectedIndex].projectTeamRoleUsers
+          const roleUsers = this.rolesSelectedIndex === -1 ?  this.originalTableData : this.rolesData.filter(role => !role.isDeleted)[this.rolesSelectedIndex].projectTeamRoleUsers
           this.tableData = [...roleUsers]
         }
         // 标记删除状态用于保存
@@ -1110,54 +1119,30 @@ export default {
       this.submitLoading = false
     },
     async submit() {
-      let _this = this
-      await this.submitParamsHandle().then((params) => {
-        let verifyResult = this.submitVerifyHandle()
-        if (!verifyResult) {
-          return false
+      try {
+        const params = await this.submitParamsHandle();
+        const verifyResult = this.submitVerifyHandle();
+        if (!verifyResult) return false;
+
+        this.submitLoading = true;
+        const res = await this.$api['teamManager.save'](params);
+        this.submitLoading = false;
+
+        if (res !== undefined) {
+          this.$message.success('信息已提交');
+          this.getTeamInfo();
+          this.isAddUser = false;
+          this.isAddMember = false;
+          return true;  // 明确返回true
+        } else {
+          this.$message.error('保存失败');
+          return false; // 明确返回false
         }
-        // let secretLevel = true
-        // params.uploadFiles.forEach(val => {
-        //   // if (val.confidentialite > _this.thirdMenuParam.secretGrade) {
-        //   //   secretLevel = false
-        //   // }
-        // }
-        // )
-        // if (!secretLevel) {
-        //   _this.$message({
-        //     type: 'warning',
-        //     message: '文件密级不能大于项目密级！'
-        //   })
-        //   return
-        // }
-        _this.submitLoading = true
-        _this.releaseFlag = true
-        this.$api['teamManager.save'](params)
-          .then((res) => {
-            _this.submitLoading = false
-            if (res !== undefined) {
-              _this.$message({
-                message: '信息已提交',
-                type: 'success'
-              })
-              _this.getTeamInfo()
-              _this.isAddUser = false
-              _this.isAddMember = false
-            } else {
-              _this.$message({
-                message: '保存失败',
-                type: 'error'
-              })
-            }
-          })
-          .catch(function (err) {
-            _this.submitLoading = false
-            _this.$message({
-              message: '保存失败',
-              type: 'error'
-            })
-          })
-      })
+      } catch (err) {
+        this.submitLoading = false;
+        this.$message.error('保存失败');
+        return false; // 明确返回false
+      }
     },
     submitParamsHandle() {
       return new Promise((resolve, reject) => {
