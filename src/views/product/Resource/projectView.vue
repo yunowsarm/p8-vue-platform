@@ -83,7 +83,6 @@
                                   class="tableMember"
                                   style="height: 100%"
                                   :columns="columns"
-                                  :key="dateTime"
                                   :params="params"
                                   :pagination="false"
                                   @cell-click='cellDblclick'
@@ -237,14 +236,12 @@ export default {
       {
         title: '角色',
         dataIndex: 'roleName',
-        align: 'center',
-        width: 120
+        align: 'center'
       },
       {
         title: '姓名',
         dataIndex: 'realName',
-        align: 'center',
-        width: 100
+        align: 'center'
       },
       {
         title: '部门',
@@ -257,8 +254,7 @@ export default {
         scopedSlots: {
           customRender: 'custom'
         },
-        align: 'center',
-        width: 120
+        align: 'center'
       },
       // {
       //   title: '承担责任令数',
@@ -280,8 +276,7 @@ export default {
         scopedSlots: {
           customRender: 'custom'
         },
-        align: 'center',
-        width: 100
+        align: 'center'
       },
       // {
       //   title: '标识',
@@ -397,7 +392,6 @@ export default {
       options: [],
       memberFormComp: null,
       uploadView: false,
-      dateTime: '',
       searchParam: null
     }
   },
@@ -618,7 +612,6 @@ export default {
           this.options = res
         }
       })
-      this.dateTime = new Date().getTime()
     },
     addRolesHandle () {
       // 添加角色
@@ -659,11 +652,9 @@ export default {
       this.columns.unshift({
         title: '角色',
         dataIndex: 'roleName',
-        width: 120,
         align: 'center'
       })
       this.tableData = tableData
-      this.dateTime = new Date().getTime()
       if (this.searchParam) {
         this.search(this.searchParam)
       }
