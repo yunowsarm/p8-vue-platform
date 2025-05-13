@@ -53,7 +53,10 @@
                   @click="showAllTags">
             更多
           </el-tag>
-          <el-tag v-if="showAllTagsClicked" class="more-button" type="info" @click="hideAllTags">
+          <el-tag v-if="showAllTagsClicked"
+                  class="more-button"
+                  type="info"
+                  @click="hideAllTags">
             收起
           </el-tag>
         </div>
@@ -297,7 +300,7 @@ export default {
       this.showAll = true;
       this.showAllTagsClicked = true; // 设置为已点击“更多”按钮
     },
-     hideAllTags () {
+    hideAllTags () {
       this.showAll = false;
       this.showAllTagsClicked = false; // 设置为未点击“更多”按钮
     },
@@ -341,6 +344,7 @@ export default {
     },
     refreshList () {
       this.renderTime = new Date() + ''
+      this.$emit('refreshList')
       setTimeout(() => {
         this.tabEenderTime = new Date().getTime()
       }, 500)
@@ -366,7 +370,7 @@ export default {
         this.currentIndex = 0
       }
     },
-    
+
   }
 }
 </script>
