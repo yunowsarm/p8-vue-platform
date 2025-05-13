@@ -3,15 +3,69 @@
     <div class="theme-design">
       <div class="theme-left"
            ref="themeImage"
-           :style="{ width: '200px', 'background-image': 'url(' + imageUrl + ')', 'background-size': '200px 100%' }">
+           :style="{ width: '200px', 'background-image': 'url(' + imageUrl + ')', 'background-size': backgroundSize, 'background-repeat': backgroundRepeat, 'background-position': backgroundPosition }">
         <VuePerfectScrollbar :style="{ 'background-color': theme }">
 
         </VuePerfectScrollbar>
       </div>
       <div class="theme-right">
         <div class="table-left">
-          <el-button type="primary">新建</el-button>
-          <el-button type="primary">修改</el-button>
+          <div v-if="toolbarWritingDisplay === '0'">
+            <el-button-group v-if="toolbarCompactLayout === 'true'">
+              <el-button type="primary">新建</el-button>
+              <el-button type="primary"
+                         style="margin-right: 2px;">修改</el-button>
+            </el-button-group>
+            <div v-else>
+              <el-button type="primary">新建</el-button>
+              <el-button type="primary">修改</el-button>
+            </div>
+          </div>
+          <div v-if="toolbarWritingDisplay === '1'">
+            <el-button-group v-if="toolbarCompactLayout === 'true'">
+              <el-tooltip placement="top"
+                          content="新建">
+                <el-button icon="p8 icon-add"
+                           type="primary"></el-button>
+              </el-tooltip>
+              <el-tooltip placement="top"
+                          content="修改">
+                <el-button style="margin-right: 2px;"
+                           icon="p8 icon-xiugai"
+                           type="primary"></el-button>
+              </el-tooltip>
+            </el-button-group>
+            <div v-else>
+              <el-tooltip placement="top"
+                          content="新建">
+                <el-button icon="p8 icon-add"
+                           type="primary"></el-button>
+              </el-tooltip>
+              <el-divider direction="vertical"></el-divider>
+              <el-tooltip placement="top"
+                          content="修改">
+                <el-button style="margin-right: 2px;"
+                           icon="p8 icon-xiugai"
+                           type="primary"></el-button>
+              </el-tooltip>
+            </div>
+          </div>
+          <div v-if="toolbarWritingDisplay === '2'">
+            <el-button-group v-if="toolbarCompactLayout === 'true'">
+              <el-button type="primary"
+                         icon="p8 icon-add">新建</el-button>
+              <el-button type="primary"
+                         style="margin-right: 2px;"
+                         icon="p8 icon-xiugai">修改</el-button>
+            </el-button-group>
+            <div v-else>
+              <el-button type="primary"
+                         icon="p8 icon-add">新建</el-button>
+              <el-button type="primary"
+                         style="margin-right: 2px;"
+                         icon="p8 icon-xiugai">修改</el-button>
+            </div>
+          </div>
           <common-table ref="table"
                         class="table"
                         :comp="comp"
@@ -20,15 +74,69 @@
                         :table-setting="false"
                         :pagination="false">
             <template #operation="{ scope }">
-              <el-button type="text">查看</el-button>
-              <el-divider direction="vertical"></el-divider>
-              <el-button type="text">删除</el-button>
+              <div v-if="toolbarWritingDisplay === '0'">
+                <el-button-group v-if="toolbarCompactLayout === 'true'">
+                  <el-button type="text">查看</el-button>
+                  <el-button type="text">删除</el-button>
+                </el-button-group>
+                <div v-else>
+                  <el-button type="text">查看</el-button>
+                  <el-divider direction="vertical"></el-divider>
+                  <el-button type="text">删除</el-button>
+                </div>
+              </div>
+              <div v-if="toolbarWritingDisplay === '1'">
+                <el-button-group v-if="toolbarCompactLayout === 'true'">
+                  <el-tooltip placement="top"
+                              content="查看">
+                    <el-button icon="p8 icon-chakan"
+                               type="primary"></el-button>
+                  </el-tooltip>
+                  <el-tooltip placement="top"
+                              content="删除">
+                    <el-button style="margin-right: 2px;"
+                               icon="p8 icon-shanchu"
+                               type="primary"></el-button>
+                  </el-tooltip>
+                </el-button-group>
+                <div v-else>
+                  <el-tooltip placement="top"
+                              content="查看">
+                    <el-button icon="p8 icon-chakan"
+                               type="primary"></el-button>
+                  </el-tooltip>
+                  <el-divider direction="vertical"></el-divider>
+                  <el-tooltip placement="top"
+                              content="删除">
+                    <el-button style="margin-right: 2px;"
+                               icon="p8 icon-shanchu"
+                               type="primary"></el-button>
+                  </el-tooltip>
+                </div>
+              </div>
+              <div v-if="toolbarWritingDisplay === '2'">
+                <el-button-group v-if="toolbarCompactLayout === 'true'">
+                  <el-button type="primary"
+                             icon="p8 icon-chakan">查看</el-button>
+                  <el-button type="primary"
+                             style="margin-right: 2px;"
+                             icon="p8 icon-xiugai">删除</el-button>
+                </el-button-group>
+                <div v-else>
+                  <el-button type="primary"
+                             icon="p8 icon-chakan">查看</el-button>
+                  <el-divider direction="vertical"></el-divider>
+                  <el-button type="primary"
+                             style="margin-right: 2px;"
+                             icon="p8 icon-xiugai">删除</el-button>
+                </div>
+              </div>
             </template>
           </common-table>
         </div>
         <div class="table-right">
           <div class="settings">
-            <theme />
+            <theme @changeSystemTheme="changeSystemTheme" />
             <el-alert :closable="false"
                       title="注意:主题色仅会在保证正常显示与配色的前提下调整部分色彩,而非全部色彩."
                       type="warning"
@@ -36,11 +144,11 @@
           </div>
           <div class="settings">
             <background-image @changeSystemImage="changeSystemImage" />
-            <el-button-group v-model="buttonType"
+            <el-button-group v-model="imgType"
                              style="margin-left: 40px;padding: 10px;">
               <el-button v-for="(btn, index) in buttonConfigs"
                          :key="index"
-                         type="primary"
+                         :type="imgType === btn.value ? 'primary' : ''"
                          @click="settingStyle(btn.value)">
                 {{ btn.label }}
               </el-button>
@@ -163,13 +271,17 @@ export default {
         }
       ],
       imagePath: '',
-      imgType: 1, // 默认选中第一个按钮
-      buttonType: 1,
+      imgType: this.$store.getters.systemColor.imgType || 1, // 默认选中第一个按钮
       buttonConfigs: [
         { label: '自适应', value: 1 },
         { label: '平铺', value: 2 },
         { label: '拉伸', value: 3 },
       ],
+      toolbarWritingDisplay: '0',
+      toolbarCompactLayout: 'false',
+      backgroundSize: '200px 100%',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: ''
     }
   },
   watch: {
@@ -190,32 +302,48 @@ export default {
     ...mapGetters(['systemTheme', 'theme', 'imageUrl', 'systemColor', 'imageId']),
   },
   mounted () {
+    if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
+      this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
+    } else {
+      this.toolbarWritingDisplay = '0'
+    }
+    console.log(this.toolbarWritingDisplay, 'this.toolbarWritingDisplaythis.toolbarWritingDisplay');
+
+    if (this.$store.getters.baseConfig.toolbarCompactLayout) {
+      this.toolbarCompactLayout = this.$store.getters.baseConfig.toolbarCompactLayout
+    } else {
+      this.toolbarCompactLayout = 'false'
+    }
     this.getColor()
   },
   methods: {
     settingStyle (value) {
-      this.imgType = value
-      // 根据 value 设置背景样式
-      const style = this.$refs.themeImage.style;
-      switch (value) {
-        case 1:
-          style.backgroundSize = '200px 100%';
-          style.backgroundRepeat = 'no-repeat';
-          break;
-        case 2:
-          style.backgroundPosition = 'center';
-          style.backgroundSize = 'contain';
-          style.backgroundRepeat = 'repeat';
-          break;
-        case 3:
-          style.backgroundSize = 'cover';
-          style.backgroundRepeat = 'repeat';
-          style.backgroundPosition = 'center';
-          break;
+      let that = this
+      if (value) {
+        this.imgType = value
       }
+      that.$nextTick(() => {
+        switch (this.imgType) {
+          case 1:
+            that.backgroundSize = `200px 100%`
+            that.backgroundRepeat = `no-repeat`
+            break;
+          case 2:
+            that.backgroundSize = `contain`
+            that.backgroundRepeat = `repeat`
+            that.backgroundPosition = `center`
+            break;
+          case 3:
+            that.backgroundSize = `cover`
+            that.backgroundRepeat = `center`
+            that.backgroundPosition = `center`
+            break;
+        }
+      })
     },
     getImage (id) {
       let that = this
+
       let systemThemeType = this.$store.getters.baseConfig.systemThemeType
       let systemThemeArray = JSON.parse(this.$store.getters.baseConfig.systemThemeArray)
       let themeArray = []
@@ -228,6 +356,7 @@ export default {
       if (systemThemeType === 'systemThemeType3') {
         themeArray = systemThemeArray[2]
       }
+      console.log("🚀 ~ getImage ~ arr:", themeArray)
       themeArray.forEach(item => {
         if (item.key === 'imageUrl') {
           id = item.url
@@ -236,8 +365,10 @@ export default {
           }
         }
       })
+
       let imgType = this.$store.getters.systemColor.imgType || 1
       that.$nextTick(() => {
+        // that.$store.dispatch('setImage', filePath)
         that.settingStyle(imgType)
       })
     },
