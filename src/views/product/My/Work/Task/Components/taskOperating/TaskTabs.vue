@@ -179,6 +179,9 @@ export default {
     if (this.getPlanInfo().MANAGERSTATUS === '6409' || this.getPlanInfo().MANAGERSTATUS === '6406') {
       this.viewVisible = true
     }
+    if (this.getPlanInfo().ISLEAF > 0 || getPlanInfo().pageType === 'view') {
+      this.viewVisible = true
+    }
   },
   beforeDestroy() {
     this.removeScrollHandler()
@@ -263,6 +266,7 @@ export default {
     dialogClose () {
       if (this.getPlanInfo().MANAGERSTATUS === '6406') {
         this.progessType = 'progessTable'
+        this.viewVisible = true
       }
     },
     checkBusinessForm () {

@@ -1,23 +1,48 @@
 <template>
-  <common-dialog :title="title" @close="handleCancel" :visible="visible" :dialog-config="dialogConfig"
-    :show-handle-btn="true" :dialog-height="dialogHeight" :width="dialogWidth" @handle-ok="handleOk"
-    @handle-cancel="handleCancel" @isfullscreen="isfullscreen">
+  <common-dialog :title="title"
+                 @close="handleCancel"
+                 :visible="visible"
+                 :dialog-config="dialogConfig"
+                 :show-handle-btn="true"
+                 :dialog-height="dialogHeight"
+                 :width="dialogWidth"
+                 @handle-ok="handleOk"
+                 @handle-cancel="handleCancel"
+                 @isfullscreen="isfullscreen">
     <template #dialog>
-      <el-tabs class="resource_tab" v-model="activeName">
-        <el-tab-pane v-if="tabsShow('team')" label="团队用户" name="team">
+      <el-tabs class="resource_tab"
+               v-model="activeName">
+        <el-tab-pane v-if="tabsShow('team')"
+                     label="团队用户"
+                     name="team">
           <list-layout>
             <template #north>
               <div class="input-con">
                 <span style="width: 170px;">负荷分析时段:</span>
-                <el-date-picker :style="{ width: '60%', 'margin-right': '10px' }" :editable="false" class="date-range"
-                  v-model="utilizationTimeRange" unlink-panels type="daterange" range-separator="至"
-                  start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" clearable></el-date-picker>
-                <el-input v-model="searchName" class="input-name input-search-name"
-                  :placeholder="DutyPersonsMessage === '' ? '支持人员名称、部门、角色模糊查询，例如：李四、lisi、部门1、计划经理' : DutyPersonsMessage"
-                  size="small" @change="inputChange" />
-                <el-button style="margin-left: 15px" type="primary" size="mini" @click="search"> 搜索 </el-button>
+                <el-date-picker :style="{ width: '60%', 'margin-right': '10px' }"
+                                :editable="false"
+                                class="date-range"
+                                v-model="utilizationTimeRange"
+                                unlink-panels
+                                type="daterange"
+                                range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期"
+                                value-format="yyyy-MM-dd"
+                                clearable></el-date-picker>
+                <el-input v-model="searchName"
+                          class="input-name input-search-name"
+                          :placeholder="DutyPersonsMessage === '' ? '支持人员名称、部门、角色模糊查询，例如：李四、lisi、部门1、计划经理' : DutyPersonsMessage"
+                          size="small"
+                          @change="inputChange" />
+                <el-button style="margin-left: 15px"
+                           type="primary"
+                           size="mini"
+                           @click="search"> 搜索 </el-button>
               </div>
-              <i v-if="tableV" class="el-icon-d-arrow-right" @click="
+              <i v-if="tableV"
+                 class="el-icon-d-arrow-right"
+                 @click="
                 () => {
                   tableV = !tableV
                   resourceWidth = '100%'
@@ -26,18 +51,33 @@
             </template>
             <template #center>
               <div id="table-contain">
-                <div class="resourceList" :style="{ width: resourceWidth }">
-                  <common-table ref="tableCom" :columns="columns" :params="queryParam" :api="tableApi"
-                    :table-refresh="tableRefresh" :table-config="tableConfig" :table-setting="false"
-                    :disabled-check-all="true" :customPageSizes='customPageSizes' is-radio-select @row-click="rowClick"
-                    @select="select" @row-dblclick="rowDblclick" @requested-table-data="requestedTableData">
+                <div class="resourceList"
+                     :style="{ width: resourceWidth }">
+                  <common-table ref="tableCom"
+                                :columns="columns"
+                                :params="queryParam"
+                                :api="tableApi"
+                                :table-refresh="tableRefresh"
+                                :table-config="tableConfig"
+                                :table-setting="false"
+                                :disabled-check-all="true"
+                                :customPageSizes='customPageSizes'
+                                is-radio-select
+                                @row-click="rowClick"
+                                @select="select"
+                                @row-dblclick="rowDblclick"
+                                @requested-table-data="requestedTableData">
                     <template #taskCount="{ scope }">
-                      <i v-if="scope.row.taskCount > 0" class="p8 icon-conflict" @click="showUserLoad(scope.row)" />
+                      <i v-if="scope.row.taskCount > 0"
+                         class="p8 icon-conflict"
+                         @click="showUserLoad(scope.row)" />
                     </template>
                     <template #userState="{ scope }">
                       <div class="userState">
-                        <span v-if="scope.row.departureTime" class="state-out">已退出</span>
-                        <span v-else class="state-working">团队中</span>
+                        <span v-if="scope.row.departureTime"
+                              class="state-out">已退出</span>
+                        <span v-else
+                              class="state-working">团队中</span>
                       </div>
                     </template>
                     <template #idleDaysCount="{ scope }">
@@ -46,13 +86,21 @@
                   </common-table>
                 </div>
                 <div class="resourceLoad">
-                  <common-table v-if="tableV" ref="table" :columns="columnsT" :params="queryParamT" :api="tableApiT"
-                    :customPageSizes='customPageSizes' :table-refresh="tableRefreshT" :table-config="tableConfigT"
-                    :table-setting="false">
+                  <common-table v-if="tableV"
+                                ref="table"
+                                :columns="columnsT"
+                                :params="queryParamT"
+                                :api="tableApiT"
+                                :customPageSizes='customPageSizes'
+                                :table-refresh="tableRefreshT"
+                                :table-config="tableConfigT"
+                                :table-setting="false">
                     <template #userState="{ scope }">
                       <div class="userState">
-                        <span v-if="scope.row.departureTime" class="state-out">已退出</span>
-                        <span v-else class="state-working">团队中</span>
+                        <span v-if="scope.row.departureTime"
+                              class="state-out">已退出</span>
+                        <span v-else
+                              class="state-working">团队中</span>
                       </div>
                     </template>
                   </common-table>
@@ -61,10 +109,16 @@
             </template>
           </list-layout>
         </el-tab-pane>
-        <el-tab-pane v-if="tabsShow('user')" label="系统用户" name="user">
-          <UserSelect :visible="true" @sysUserSelect="sysUserSelect" @dbClickUser="dbClickUser" />
+        <el-tab-pane v-if="tabsShow('user')"
+                     label="系统用户"
+                     name="user">
+          <UserSelect :visible="true"
+                      @sysUserSelect="sysUserSelect"
+                      @dbClickUser="dbClickUser" />
         </el-tab-pane>
-        <el-tab-pane v-if="tabsShow('dept')" label="部门派发" name="dept">
+        <el-tab-pane v-if="tabsShow('dept')"
+                     label="部门派发"
+                     name="dept">
           <DeptSelect @deptChange="deptChange" />
         </el-tab-pane>
       </el-tabs>
@@ -139,7 +193,7 @@
 }
 
 ::v-deep .el-dialog__body {
-  padding: 0 !important;
+  padding: 10 !important;
 }
 </style>
 <script>
@@ -167,7 +221,7 @@ export default {
     }
   },
   props: ['startTaskId', 'endTaskId', 'planInfoId', 'visible', 'selectTaskOwnerId', 'showType', 'selectModel'],
-  data() {
+  data () {
     return {
       customPageSizes: [10, 20, 50, 100, 200, 400],
       comp: this,
@@ -255,17 +309,17 @@ export default {
     }
   },
   computed: {
-    tabsShow() {
+    tabsShow () {
       return (type) => {
         return this.selectModel.includes(type)
       }
     }
   },
-  created() {
+  created () {
     this.activeName = this.selectModel[0]
 
   },
-  mounted() {
+  mounted () {
     if (this.showType === '1' || this.showType === '2' || this.showType === '3') {
       this.columns = [
         {
@@ -383,11 +437,11 @@ export default {
     }
   },
   methods: {
-    inputChange(val) {
+    inputChange (val) {
       this.queryParam.searchName = val
     },
     // 单击选中行
-    rowClick(row, column, event) {
+    rowClick (row, column, event) {
       if (row.weatherOut === '0') {
         this.$refs.tableCom.$refs.table.clearSelection()
         if (this.currentRow) {
@@ -406,7 +460,7 @@ export default {
       }
     },
     // 勾选复选框选中行
-    select(selection, row) {
+    select (selection, row) {
       if (!row) {
         this.$refs.tableCom.$refs.table.clearSelection()
       }
@@ -415,7 +469,7 @@ export default {
       this.selectType = 'team'
     },
     // 双击行，直接关闭抽屉、回填值
-    rowDblclick(row, column, event) {
+    rowDblclick (row, column, event) {
       if (row.weatherOut === '0') {
         this.$refs.tableCom.$refs.table.clearSelection()
         this.$refs.tableCom.$refs.table.toggleRowSelection(row)
@@ -424,14 +478,14 @@ export default {
         this.submit()
       }
     },
-    showUserLoad(row) {
+    showUserLoad (row) {
       if (row.weatherOut === '0') {
         this.getUserTaskInfo(row)
         this.tableV = true
         this.resourceWidth = 'calc( 50% - 5px )'
       }
     },
-    isfullscreen(isfullscreen) {
+    isfullscreen (isfullscreen) {
       // 保存当前选中行的ID
       const currentSelectedRowId = this.currentRow ? this.currentRow.id : null;
       if (isfullscreen) {
@@ -450,7 +504,7 @@ export default {
             if (this.$refs.tableCom && this.$refs.tableCom.$refs.table) {
               // 清除所有选中
               this.$refs.tableCom.$refs.table.clearSelection();
-              
+
               // 查找对应ID的行并选中
               const tableData = this.$refs.tableCom.$refs.table.data || [];
               const rowToSelect = tableData.find(row => row.id === currentSelectedRowId);
@@ -465,7 +519,7 @@ export default {
       }
     },
     // 默认选中页面已选的责任人
-    requestedTableData(data) {
+    requestedTableData (data) {
       const _this = this
       this.currentRow = null
       _this.$refs.tableCom.$refs.table.clearSelection()
@@ -481,7 +535,7 @@ export default {
         })
       }
     },
-    tableRefresh(param) {
+    tableRefresh (param) {
       param
         .then(() => {
 
@@ -490,24 +544,24 @@ export default {
           console.error('异步失败的操作')
         })
     },
-    submit() {
+    submit () {
       this.$emit('resource-selected', this.currentRow.id, this.currentRow, this.selectType)
     },
-    sysUserSelect(row) {
+    sysUserSelect (row) {
       this.selectType = 'user'
       this.currentRow = row
     },
-    dbClickUser(row) {
+    dbClickUser (row) {
       this.selectType = 'user'
       this.currentRow = row
       this.submit()
     },
-    deptChange(row) {
+    deptChange (row) {
       this.selectType = 'dept'
       this.currentRow = row
       this.submit()
     },
-    search() {
+    search () {
       const that = this
       this.queryParam.searchName = this.searchName
       this.queryParam.utilizationTimeRange = this.utilizationTimeRange
@@ -515,13 +569,13 @@ export default {
         that.$refs.tableCom.searchData()
       })
     },
-    handleCancel() {
+    handleCancel () {
       this.$emit('closed')
     },
-    getUserTaskInfo(row) {
+    getUserTaskInfo (row) {
       this.$set(this.queryParamT, 'resourceId', row.id)
     },
-    tableRefreshT(param) {
+    tableRefreshT (param) {
       param
         .then(() => {
 
@@ -530,7 +584,7 @@ export default {
           console.error('异步失败的操作')
         })
     },
-    handleOk() {
+    handleOk () {
       if (this.currentRow && Object.keys(this.currentRow).length > 0) {
         this.submit()
       } else {
