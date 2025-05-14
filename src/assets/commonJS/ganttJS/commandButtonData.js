@@ -3653,6 +3653,7 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
                 el.owner_id = ''
               })
               createTaskByDatas(ganttObject, res.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
+              vueThis.taskCount = ganttObject.getTaskCount()
             }
           } else {
             vueThis.$message({
