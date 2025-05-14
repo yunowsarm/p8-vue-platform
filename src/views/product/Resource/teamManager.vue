@@ -1127,7 +1127,7 @@ export default {
         this.submitLoading = true;
         const res = await this.$api['teamManager.save'](params);
         this.submitLoading = false;
-
+        this.releaseFlag = true
         if (res !== undefined) {
           this.$message.success('信息已提交');
           this.getTeamInfo();
