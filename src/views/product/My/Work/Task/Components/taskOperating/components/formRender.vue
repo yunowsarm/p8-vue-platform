@@ -1,11 +1,14 @@
 <template>
-  <form-render ref="form"
-               style="padding-top: 20px;"
-               :dataViewId="formViewId"
-               :record="{ desformCode: formCode }"
-               :key="timeKey"
-               :pageType="pageType"
-               @save-success="(res) => formCloseRefresh(res)"></form-render>
+  <div style="position: relative;">
+    <form-render ref="form"
+                style="padding-top: 20px;"
+                :dataViewId="formViewId"
+                :record="{ desformCode: formCode }"
+                :key="timeKey"
+                :pageType="pageType"
+                @save-success="(res) => formCloseRefresh(res)"></form-render>
+    <div v-if="pageType == 'view' && !formViewId" class="single-mask" ></div>
+  </div>
 </template>
 
 <script>
@@ -36,7 +39,7 @@ export default {
   components: {
     FormRender
   },
-  async created () {
+  created () {
     this.getInfo()
   },
 
@@ -71,4 +74,13 @@ export default {
 
 </script>
 <style lang='scss' scoped>
+.single-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 999;
+}
 </style>
