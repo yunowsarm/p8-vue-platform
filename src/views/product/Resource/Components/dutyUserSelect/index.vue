@@ -284,6 +284,13 @@ export default {
       } else {
         this.customHeight = 462
       }
+      // 恢复选中状态
+      if (this.currentRow) {
+        this.$nextTick(() => {
+          this.$refs.tableCom.$refs.table.setCurrentRow(this.currentRow)
+          this.$refs.tableCom.$refs.table.toggleRowSelection(this.currentRow, true)
+        })
+      }
     },
     // 默认选中页面已选的责任人
     requestedTableData (data) {
