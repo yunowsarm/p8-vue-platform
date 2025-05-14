@@ -5,6 +5,7 @@
                @saved="saved"
                :data-source="dataSource"
                :api="saveApi"
+               :isShouEnter="false"
                :form="formData">
       <template #titleMsg>
         <el-alert :title="alertTitle"

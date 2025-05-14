@@ -3216,6 +3216,7 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
           realBeginDate: item.realBeginDate,
           createBy: vueThis.$store.getters.userInfo.realName,
           createTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+          isLeaf: '0',
           ...extraTask,
           unDescribes: item.unDescribes
         }
@@ -3227,6 +3228,10 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
             if (parentTask.autoScheduling === '1' && parentTask.type === 'task' && ganttObject.getGlobalTaskIndex(parentTask.id) !== 0) {
               parentTask.type = 'project'
               parentTask.isLeaf = 1
+              ganttObject.updateTask(parentId)
+            }else {
+              // 如果是子任务，将父任务的 isLeaf 设置为 '1'
+              parentTask.isLeaf = '1'
               ganttObject.updateTask(parentId)
             }
             break
@@ -3648,6 +3653,7 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
                 el.owner_id = ''
               })
               createTaskByDatas(ganttObject, res.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
+              vueThis.taskCount = ganttObject.getTaskCount()
             }
           } else {
             vueThis.$message({

@@ -51,6 +51,7 @@ export default {
     changeSystemTheme (theme) {
       this.pickerColor = theme
       this.$store.dispatch('setTheme', { theme, handler: true })
+      this.$emit('settingStyle')
     }
   },
   components: {

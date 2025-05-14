@@ -8,6 +8,7 @@
       <div class="treeContain"
            style="height: 100%">
         <approve-catalog :msg-count="msgCatalogCount"
+                         :key="dateTime"
                          :un-read-total="unReadTotal"
                          :search-params="searchParams"
                          :select-node-id="selectNodeId"
@@ -95,6 +96,7 @@ export default {
         assigneeUserId: this.$store.state.user.userInfo.id
       },
       renderTime: new Date() + '',
+      dateTime: new Date() + '',
       currentMessage: null,
       msgCatalogCount: [],
       unReadTotal: 0,
@@ -107,6 +109,7 @@ export default {
   },
   methods: {
     refreshList () {
+      this.dateTime = new Date().getTime()
       this.userCatalogCount()
     },
     approved (taskId) {

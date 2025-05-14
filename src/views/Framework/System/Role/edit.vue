@@ -1,49 +1,89 @@
 <template>
   <div>
-    <form-list ref="form" @rendered="rendered" @saved="saved" :data-source="dataSource" :api="saveApi" :form="formData">
+    <form-list ref="form"
+               @rendered="rendered"
+               :isShouEnter="false"
+               @saved="saved"
+               :data-source="dataSource"
+               :api="saveApi"
+               :form="formData">
       <template slot="btn">
         <el-button @click="cancel">取 消</el-button>
       </template>
     </form-list>
     <template>
-      <el-tabs type="border-card" class="w_tabs" v-model="activePane">
-        <el-tab-pane label="设置权限" :style="{ height: tabPaneHeight }" name="setLimit" key="1">
-          <select-btn ref="selectBtn" style="padding-top:10px;" @btn-select-change="btnSelectChange"
-            :button-selected="selectedData.resourceList"></select-btn>
+      <el-tabs type="border-card"
+               class="w_tabs"
+               v-model="activePane">
+        <el-tab-pane label="设置权限"
+                     :style="{ height: tabPaneHeight }"
+                     name="setLimit"
+                     key="1">
+          <select-btn ref="selectBtn"
+                      style="padding-top:10px;"
+                      @btn-select-change="btnSelectChange"
+                      :button-selected="selectedData.resourceList"></select-btn>
         </el-tab-pane>
-        <el-tab-pane label="设置人员" :style="{ height: tabPaneHeight }" name="setUser" key="2">
+        <el-tab-pane label="设置人员"
+                     :style="{ height: tabPaneHeight }"
+                     name="setUser"
+                     key="2">
           <div :style="{ height: setUserHeight, overflowY: 'auto' }">
             <el-main>
               <ul class="userList">
                 <li>
-                  <el-button class="selectedBtn" type="link" size="small" icon="user-add"
-                    @click="showModal">选择人员</el-button>
+                  <el-button class="selectedBtn"
+                             type="link"
+                             size="small"
+                             icon="user-add"
+                             @click="showModal">选择人员</el-button>
                 </li>
-                <li v-for="item in selectedData.userList" :key="item.id">
+                <li v-for="item in selectedData.userList"
+                    :key="item.id">
                   <span>{{ item.realName }} [ {{ item.departmentName }} ]</span>
-                  <i class="el-icon-circle-close" @click="deleteUser(item.id)"></i>
+                  <i class="el-icon-circle-close"
+                     @click="deleteUser(item.id)"></i>
                 </li>
               </ul>
             </el-main>
-            <select-user v-if="visible" :visible="visible" @close-dialog="closeModal" :disabled-row="disabledUserIds"
-              :treeOptions="treeOptions"></select-user>
+            <select-user v-if="visible"
+                         :visible="visible"
+                         @close-dialog="closeModal"
+                         :disabled-row="disabledUserIds"
+                         :treeOptions="treeOptions"></select-user>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="设置应用" name="setApp" key="3">
-          <el-tabs :key="dateTime" class="leftTabs" :style="{ height: flexHeight }" tab-position="left"
-            @tab-click="tabClick" v-model="activeType">
+        <el-tab-pane label="设置应用"
+                     name="setApp"
+                     key="3">
+          <el-tabs :key="dateTime"
+                   class="leftTabs"
+                   :style="{ height: flexHeight }"
+                   tab-position="left"
+                   @tab-click="tabClick"
+                   v-model="activeType">
             <template v-for="(item, index) in activeTabs">
               <el-tab-pane :key="index">
                 <span slot="label"><i :class="item.icon"></i> {{ item.meaning }}</span>
-                <el-col :style="{ height: tabPaneHeight }" style="overflow: auto">
-                  <div class="nav-display" :key="formData.appIds.length">
-                    <div class="nav-ul" v-for="(item, index) in adhibitionList" :key="index"
-                      @click="handleAdhibitionClick(item)">
-                      <div class="nav-span" style="height: 100%;" :class="{ active: item.isActive }">
+                <el-col :style="{ height: tabPaneHeight }"
+                        style="overflow: auto">
+                  <div class="nav-display"
+                       :key="formData.appIds.length">
+                    <div class="nav-ul"
+                         v-for="(item, index) in adhibitionList"
+                         :key="index"
+                         @click="handleAdhibitionClick(item)">
+                      <div class="nav-span"
+                           style="height: 100%;"
+                           :class="{ active: item.isActive }">
                         <div style="height: 40%;">
-                          <el-image style="width: 60px; height: 60px" :src="imgUrl" fit="cover"></el-image>
+                          <el-image style="width: 60px; height: 60px"
+                                    :src="imgUrl"
+                                    fit="cover"></el-image>
                         </div>
-                        <span style="height: 60%;" class="nav-text" v-text="item.name"></span>
+                        <span style="height: 60%;"
+                              class="nav-text"
+                              v-text="item.name"></span>
                       </div>
                     </div>
                   </div>
@@ -52,20 +92,38 @@
             </template>
           </el-tabs>
         </el-tab-pane>
-        <el-tab-pane label="设置项目" :style="{ height: tabPaneHeight }" name="setProject" key="4">
+        <el-tab-pane label="设置项目"
+                     :style="{ height: tabPaneHeight }"
+                     name="setProject"
+                     key="4">
           <el-col style="overflow: auto;padding-top:10px;">
-            <form-list ref="form1" :data-source="projectDataSource" :form="formData"
-              :exist-default-btn="false"></form-list>
+            <form-list ref="form1"
+                       :data-source="projectDataSource"
+                       :form="formData"
+                       :exist-default-btn="false"></form-list>
           </el-col>
         </el-tab-pane>
-        <el-tab-pane label="设置主页" :style="{ height: tabPaneHeight }" name="setHomepage" key="5">
-          <div class="nav-display" :key="boardIds.length">
-            <div class="nav-ul" v-for="(item) in boardIds" :key="item.id" @click="boardsClick(item)">
-              <div class="nav-span" style="height: 100%;" :class="{ active: item.isActive }">
+        <el-tab-pane label="设置主页"
+                     :style="{ height: tabPaneHeight }"
+                     name="setHomepage"
+                     key="5">
+          <div class="nav-display"
+               :key="boardIds.length">
+            <div class="nav-ul"
+                 v-for="(item) in boardIds"
+                 :key="item.id"
+                 @click="boardsClick(item)">
+              <div class="nav-span"
+                   style="height: 100%;"
+                   :class="{ active: item.isActive }">
                 <div style="height: 40%;">
-                  <el-image style="width: 60px; height: 60px" :src="imgUrl" fit="cover"></el-image>
+                  <el-image style="width: 60px; height: 60px"
+                            :src="imgUrl"
+                            fit="cover"></el-image>
                 </div>
-                <span style="height: 60%;" class="nav-text" v-text="item.name"></span>
+                <span style="height: 60%;"
+                      class="nav-text"
+                      v-text="item.name"></span>
               </div>
             </div>
           </div>
@@ -165,7 +223,7 @@
   }
 }
 
-::v-deep .el-tabs--border-card>.el-tabs__content {
+::v-deep .el-tabs--border-card > .el-tabs__content {
   padding: 0;
 }
 
@@ -210,7 +268,7 @@ export default {
       default: 0
     }
   },
-  data() {
+  data () {
     return {
       treeOptions: {
         treeApi: "userManager.deptTree",
@@ -332,12 +390,12 @@ export default {
     }
   },
   computed: {
-    disabledUserIds() {
+    disabledUserIds () {
       return this.formData.sysuserIds
         .map(user => user.id);
     }
   },
-  async created() {
+  async created () {
     const that = this
     await this.$api['dictionaryManagement.list']({ dicType: 'SELECT_TYPE' }).then((res) => {
       if (res && res.length) {
@@ -359,13 +417,13 @@ export default {
     })
     await this.getType(null)
   },
-  mounted() {
+  mounted () {
     window.addEventListener('resize', () => {
       this.setUserHeight = document.documentElement.clientHeight - 267 + 'px'
     })
   },
   methods: {
-    tabClick() {
+    tabClick () {
       if (this.activeType === '0') {
         this.activeType = null
         this.getType(this.activeType)
@@ -373,7 +431,7 @@ export default {
         this.getType(this.activeTabs[this.activeType].id)
       }
     },
-    async getType(val) {
+    async getType (val) {
       const that = this
       that.adhibitionList = []
       await this.$api['kanbanComponent.getNoPage']({ availableEndUsers: 1, classification: val }).then((res) => {
@@ -399,14 +457,14 @@ export default {
         this.formData.indexNo = this.dateNumber
       }
     },
-    rendered() { },
-    cancel() {
+    rendered () { },
+    cancel () {
       this.$emit('cancel')
     },
-    clickEvent() {
+    clickEvent () {
 
     },
-    getRoleData(roleId) {
+    getRoleData (roleId) {
       const that = this
       this.$api['role.getAllRole']({ id: roleId })
         .then(function (res) {
@@ -444,16 +502,16 @@ export default {
           console.log(error)
         })
     },
-    saved(res) {
+    saved (res) {
       this.$emit('saveSuccess', res)
     },
-    handleChange(info) {
+    handleChange (info) {
 
     },
-    showModal() {
+    showModal () {
       this.visible = true
     },
-    closeModal(selectedRows) {
+    closeModal (selectedRows) {
       this.visible = false
       this.selectedData.userList.push(...selectedRows)
       const newUsers = selectedRows.map((v) => ({
@@ -462,7 +520,7 @@ export default {
       }))
       this.formData.sysuserIds.push(...newUsers)
     },
-    deleteUser(id) {
+    deleteUser (id) {
       // 找到要删除的用户并标记为已删除
       const userIndex = this.formData.sysuserIds.findIndex((v) => v.id === id)
       if (userIndex !== -1) {
@@ -475,23 +533,23 @@ export default {
         1
       )
     },
-    btnSelectChange(selectedRes) {
+    btnSelectChange (selectedRes) {
       this.$set(this.formData, 'resourceIds', selectedRes)
       // this.formData.resourceIds = selectedRes
     },
-    unAllSelect() {
+    unAllSelect () {
       this.$refs.selectBtn.unCheckAll()
     },
-    allSelect() {
+    allSelect () {
       this.$refs.selectBtn.checkAll()
     },
-    relate() {
+    relate () {
       this.$refs.selectBtn.relate()
     },
-    unRelate() {
+    unRelate () {
       this.$refs.selectBtn.unRelate()
     },
-    handleAdhibitionClick(row) {
+    handleAdhibitionClick (row) {
       row.isActive = !row.isActive
       if (row.isActive) {
         this.formData.appIds.push(row.id)
@@ -499,7 +557,7 @@ export default {
         this.formData.appIds = this.formData.appIds.filter((id) => id !== row.id)
       }
     },
-    boardsClick(row) {
+    boardsClick (row) {
       row.isActive = !row.isActive
       if (row.isActive) {
         this.formData.boardIds.push(row.id)

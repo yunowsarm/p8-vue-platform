@@ -1,6 +1,12 @@
 <template>
   <div>
-    <form-list ref="form" @rendered="rendered" @saved="() => {}" :data-source="dataSource" :form="record" api="" :exist-default-btn="false">
+    <form-list ref="form"
+               @rendered="rendered"
+               @saved="() => {}"
+               :data-source="dataSource"
+               :form="record"
+               api=""
+               :exist-default-btn="false">
       <template slot="btn">
         <el-button @click="cancel">取 消</el-button>
       </template>
@@ -18,10 +24,10 @@ export default {
   props: {
     record: {
       type: Object,
-      default: () => {}
+      default: () => { }
     }
   },
-  data() {
+  data () {
     return {
       dataSource: [
         {
@@ -58,7 +64,7 @@ export default {
           type: 'view',
           labelText: '时机',
           fieldName: 'timing',
-          formatter(row, column, cellValue, index) {
+          formatter (row, column, cellValue, index) {
             let v = ''
             switch (cellValue) {
               case 'immediately':
@@ -87,14 +93,19 @@ export default {
     }
   },
   methods: {
-    cancel() {
+    cancel () {
       this.$emit('cancel')
     },
-    rendered() {
+    rendered () {
       this.$refs.form.setViewFields(this.record)
     }
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+::v-deep .el-form-item__content > .view {
+  background: #f5f8fb !important;
+  height: 30px !important;
+}
+</style>

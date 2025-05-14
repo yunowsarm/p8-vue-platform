@@ -20,6 +20,14 @@ import 'vxe-table/lib/style.css'
 import 'p8-lowcode/lib/P8LowCode.css'
 // 引入入参出参封装公共方法
 import P8ParamFunc from '@/utils/paramsEncapsulation.js'
+import hljs from 'highlight.js'
+import hljsVuePlugin from '@highlightjs/vue-plugin'
+
+// 引入你需要的语言和样式
+import 'highlight.js/styles/monokai.css' // 选择你喜欢的主题样式
+
+// 注册插件
+Vue.use(hljsVuePlugin, { hljs })
 Vue.use(VxeUI)
 Vue.use(VXETable)
 Vue.use(api, p8Config)

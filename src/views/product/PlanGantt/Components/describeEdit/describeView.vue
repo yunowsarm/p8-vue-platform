@@ -552,6 +552,7 @@ export default {
             }
           })
         }
+        this.$emit('closeLoading')
       })
     },
     saved (res) { },

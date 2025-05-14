@@ -15,7 +15,8 @@
               <el-col :span="24">
                 <el-form-item label="未完成原因分类"
                               prop="deviationType">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationTypeDisplay }}</span>
+                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.deviationTypeDisplay }}</div>
                   <el-select v-else
                              v-model="formData.deviationType"
                              size="medium">
@@ -31,7 +32,8 @@
             <el-row>
               <el-col :span="12">
                 <el-form-item label="未完成原因">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationCauses }}</span>
+                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.deviationCauses }}</div>
                   <el-input v-else
                             v-model="formData.deviationCauses"
                             type="textarea"
@@ -44,7 +46,8 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="偏离影响">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationImpact }}</span>
+                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.deviationImpact }}</div>
                   <el-input v-else
                             v-model="formData.deviationImpact"
                             type="textarea"
@@ -59,7 +62,8 @@
             <el-row>
               <el-col :span="12">
                 <el-form-item label="进展情况">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationProgress }}</span>
+                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.deviationProgress }}</div>
                   <el-input v-else
                             v-model="formData.deviationProgress"
                             type="textarea"
@@ -72,7 +76,8 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="解决方案">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.solutions }}</span>
+                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.solutions }}</div>
                   <el-input v-else
                             v-model="formData.solutions"
                             type="textarea"
@@ -137,7 +142,8 @@
               <el-col :span="24">
                 <el-form-item label="未完成原因分类"
                               prop="deviationType">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationTypeDisplay }}</span>
+                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.deviationTypeDisplay }}</div>
                   <el-select v-else
                              v-model="formData.deviationType"
                              placeholder="请选择">
@@ -154,7 +160,8 @@
               <el-col :span="12">
                 <el-form-item label="未完成原因"
                               prop="deviationCauses">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationCauses }}</span>
+                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.deviationCauses }}</div>
                   <el-input v-else
                             v-model="formData.deviationCauses"
                             maxlength="200"
@@ -164,7 +171,8 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="偏离影响">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationImpact }}</span>
+                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.deviationImpact }}</div>
                   <el-input v-else
                             v-model="formData.deviationImpact"
                             maxlength="200"
@@ -176,7 +184,8 @@
             <el-row v-if="exceedType && !approve">
               <el-col :span="12">
                 <el-form-item label="进展情况">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.deviationProgress }}</span>
+                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.deviationProgress }}</div>
                   <el-input v-else
                             v-model="formData.deviationProgress"
                             maxlength="200"
@@ -186,7 +195,8 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="解决方案">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.solutions }}</span>
+                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.solutions }}</div>
                   <el-input v-else
                             v-model="formData.solutions"
                             maxlength="200"
@@ -199,31 +209,31 @@
             <el-row v-if="approve">
               <el-col :span="24">
                 <el-form-item label="未完成原因分类">
-                  <span>{{ formData.deviationTypeDisplay }}</span>
+                  <div class="view">{{ formData.deviationTypeDisplay }}</div>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row v-if="approve">
               <el-col :span="12">
                 <el-form-item label="未完成原因">
-                  <span>{{ formData.deviationCauses }}</span>
+                  <div class="view">{{ formData.deviationCauses }}</div>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="偏离影响">
-                  <span>{{ formData.deviationImpact }}</span>
+                  <div class="view">{{ formData.deviationImpact }}</div>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row v-if="approve">
               <el-col :span="12">
                 <el-form-item label="进展情况">
-                  <span>{{ formData.deviationProgress }}</span>
+                  <div class="view">{{ formData.deviationProgress }}</div>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="解决方案">
-                  <span>{{ formData.solutions }}</span>
+                  <div class="view">{{ formData.solutions }}</div>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -266,7 +276,8 @@
             <el-row>
               <el-col :span="12">
                 <el-form-item label="预计开始时间">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.forecastBeginDate}}</span>
+                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.forecastBeginDate}}</div>
                   <el-date-picker v-else
                                   v-model="formData.forecastBeginDate"
                                   :editable="false"
@@ -281,7 +292,8 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="预计完成时间">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{formData.forecastEndDate }}</span>
+                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                       class="view">{{formData.forecastEndDate }}</div>
                   <el-date-picker v-else
                                   v-model="formData.forecastEndDate"
                                   :editable="false"
@@ -300,7 +312,8 @@
                       v-if="formData.progress > 0">
                 <el-form-item label="实际开始日期"
                               prop="realBeginDate">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.realBeginDate }}</span>
+                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.realBeginDate }}</div>
                   <el-date-picker v-else
                                   v-model="formData.realBeginDate"
                                   :editable="false"
@@ -316,7 +329,8 @@
                       v-if="formData.progress === 100">
                 <el-form-item label="实际完成日期"
                               prop="realEndDate">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.realEndDate }}</span>
+                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.realEndDate }}</div>
                   <el-date-picker v-else
                                   v-model="formData.realEndDate"
                                   :editable="false"
@@ -333,7 +347,8 @@
             <el-row>
               <el-col :span="24">
                 <el-form-item label="进度说明">
-                  <span v-if="this.getPlanInfo().pageType === 'view'">{{ formData.content }}</span>
+                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.content }}</div>
                   <el-input v-else
                             v-model="formData.content"
                             type="textarea"
