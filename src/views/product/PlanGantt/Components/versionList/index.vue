@@ -17,6 +17,7 @@
                  @click="planVersionView()">对比</el-button>
       <search-form-list ref="search"
                         :dataSource='searchData'
+                        :addFuzzySearch="true"
                         @search='search'
                         @re-set='reSet'></search-form-list>
     </template>
@@ -191,7 +192,8 @@ export default {
     },
     reSet () {
       let that = this
-      Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = '' })
+      // Object.keys(that.queryParam).forEach(key => { that.queryParam[key] = '' })
+      that.queryParam = {}
       that.queryParam.planInfoId = that.planInfoId
     },
     planVersionClose () {
