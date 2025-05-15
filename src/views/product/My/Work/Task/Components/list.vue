@@ -97,7 +97,8 @@
                      :visible="visible"
                      direction="ttb"
                      :projectLevel="projectLevel"
-                     :drawerConfig="menuDrawerConfig">
+                     :drawerConfig="menuDrawerConfig"
+                     @close="visible = false">
         <template #drawer>
           <menu-layout :third-menu-param="thirdMenuParam"
                        :default-menu="defaultMenu"></menu-layout>
@@ -480,7 +481,7 @@ export default {
       this.$router.push({ path: this.currentRouterPath })
       this.visible = false
       // this.dateTime = new Date().getTime()
-      this.$refs.tableRender.formCloseRefresh()
+      // this.$refs.tableRender.formCloseRefresh()
     },
     // 点击项目/计划列钻取进入三级菜单-计划编制页面
     drillCol (scope, thirdMenuData) {
@@ -520,6 +521,8 @@ export default {
         const baseUrl = window.location.origin + window.location.pathname
         const targetUrl = `${baseUrl}#/MyTask/MyTask/latest`
         window.open(targetUrl, '_blank')
+        // 在原窗口清除 sessionStorage
+        sessionStorage.removeItem('stateInfo')
       } else {
         // 如果已经在任务页面，直接更新状态并打开抽屉
         window.STATUS_KEY = stateInfo.taskInfo.status
