@@ -48,7 +48,8 @@
         </template>
         <template #paneR>
           <div v-if="defaultPercent < 99"
-               class="x-style"><i v-if="isDisplay" class="el-dialog__close el-icon el-icon-close"
+               class="x-style"><i v-if="isDisplay"
+               class="el-dialog__close el-icon el-icon-close"
                @click="closeClick"></i></div>
           <ProgressHistory v-if="defaultPercent < 99 && pageType === 'history'"
                            :task-id="selectTaskId"
@@ -131,9 +132,9 @@
   }
 }
 
-#couerDiv {
-  background: $base-bg-color;
-}
+// #couerDiv {
+//   background: $base-bg-color;
+// }
 
 .top {
   position: relative;

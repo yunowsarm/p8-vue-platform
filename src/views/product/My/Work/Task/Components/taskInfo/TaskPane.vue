@@ -8,10 +8,11 @@
                @rendered="rendered">
 
       <template #status>
-        <div v-html="statusHandle()"></div>
+        <div class="view"
+             v-html="statusHandle()"></div>
       </template>
       <template #managerStatus>
-        <div class="iconStyle">
+        <div class="iconStyle view">
           <div v-for="(item, index) in mointorData"
                :key="index">
             <i v-if="item.icon === 'p8 icon-a-xuqiu1'"
@@ -23,7 +24,7 @@
         </div>
       </template>
       <template #durationDay>
-        <div class="duration-days"
+        <div class="duration-days view"
              v-html='getDurationDays(formData)'></div>
       </template>
       <template #progress>
@@ -33,7 +34,7 @@
                      style="margin-top: 7px;"></el-progress>
       </template>
       <template #managerStatusDisplay>
-        <span>{{ formData.managerStatusDisplay }}</span>
+        <div class="view">{{ formData.managerStatusDisplay }}</div>
       </template>
       <template #content>
         <span>{{ formData.content }}</span>

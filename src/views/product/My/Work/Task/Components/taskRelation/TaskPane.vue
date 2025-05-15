@@ -7,10 +7,11 @@
                labelWidth="120px"
                @rendered="rendered">
       <template #status>
-        <div v-html="statusHandle()"></div>
+        <div class="view"
+             v-html="statusHandle()"></div>
       </template>
       <template #durationDay>
-        <div class="duration-days"
+        <div class="duration-days view"
              v-html="getDurationDays(formData)"></div>
       </template>
       <template #progress>
@@ -20,7 +21,7 @@
                      style="margin-top: 7px;"></el-progress>
       </template>
       <template #managerStatusDisplay>
-        <span>{{formData.managerStatusDisplay}}</span>
+        <div class="view">{{formData.managerStatusDisplay}}</div>
       </template>
       <template #content>
         <span>{{formData.content}}</span>
@@ -133,7 +134,7 @@ export default {
     },
     getTaskInfo () {
       let _this = this
-      if(!this.taskId) return
+      if (!this.taskId) return
       this.$api[this.api]({ taskId: this.taskId }).then(res => {
         _this.taskInfo = res
         _this.rendFormData(res)

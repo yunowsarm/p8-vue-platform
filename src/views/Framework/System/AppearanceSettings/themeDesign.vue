@@ -136,7 +136,7 @@
         </div>
         <div class="table-right">
           <div class="settings">
-            <theme @changeSystemTheme="changeSystemTheme" />
+            <theme @settingStyle="settingStyle" />
             <el-alert :closable="false"
                       title="注意:主题色仅会在保证正常显示与配色的前提下调整部分色彩,而非全部色彩."
                       type="warning"
