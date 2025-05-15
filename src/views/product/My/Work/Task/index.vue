@@ -380,12 +380,10 @@ export default {
     }
   },
   created () {
-    console.log('父页面created');
     removeSession('MyWorkTreeNode')
     this.init()
   },
   beforeDestroy(){
-    console.log('父页面关闭');
     removeSession('MyWorkTreeNode')
   },
   methods: {
