@@ -1,12 +1,17 @@
 <template>
-  <div style="height: 100%">
+  <div style="height: 100%" >
     <anchor placement="top"
+            v-loading="loading"
+            element-loading-text="拼命加载中"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.3)"
             :menu="anchorMenu"
             style-sheet="tabs"
             class="anchorCustom"
             style="margin-left: 10px">
       <template #describeKey>
         <describe-edit v-if="isChangeGantt"
+                       @closeLoading="closeLoading"
                        @saveSuccess="saveCallback"
                        :task-id="taskId"
                        :create-page="createPage"
@@ -16,6 +21,7 @@
                        :plan-info-id="planInfoId"
                        :formWidth="formWidth"></describe-edit>
         <describe-view v-if="!isChangeGantt"
+                       @closeLoading="closeLoading"
                        :task-id="taskId"
                        :gantt-name="ganttName"
                        :plan-info-id="planInfoId"
@@ -292,6 +298,7 @@ export default {
     return {
       headerVisible: false,
       isView: true,
+      loading:true,
       isChangeView: true,
       isEdit: true,
       isChangeGantt: true,
@@ -310,6 +317,9 @@ export default {
     }
   },
   methods: {
+    closeLoading(){
+      this.loading = false
+    },
     onSelect (tab, event) {
       this.activeKey = tab.name
     },

@@ -729,6 +729,7 @@ export default {
           that.formData = Object.assign({}, that.formData)
           // that.$set(that.formData, 'describes', res.describes)
           that.dateTime = new Date().getTime()
+          that.$emit('closeLoading')
         })
         .catch(function (error) {
           console.error('error' + error)
