@@ -509,6 +509,7 @@ export default {
                         el.realEndDate = ''
                         el.dutyDeptName = ''
                         el.realName = ''
+                        el.source = 'MY_EX_BASE_INFO'
                         vueThis.copyTasks.tasks.push(el)
                       }
                     })
