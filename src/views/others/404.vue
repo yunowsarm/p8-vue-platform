@@ -19,7 +19,7 @@ export default {
   methods: {
     backToHome() {
       this.$router.push({
-        name: this.homepage.name,
+        path: '/',
         replace: true
       })
     }
