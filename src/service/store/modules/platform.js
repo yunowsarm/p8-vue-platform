@@ -118,7 +118,8 @@ const platform = {
     // systemTheme: Cookie.get(SYSTEM_THEME_KEY) || 'chalk',
     theme: Cookie.get(SYSTEM_THEME_RGBA_KEY) || themeVariables.theme,
      systemColor: {
-       tableBgColor: '#ffffff',
+      tableBgColor: '#ffffff',
+      tableHeaderBgColor: '#f9f9f9',
        tableStripeColor: '#f9f9f9',
        tableRowHoverBgColor: '#f0f8ff',
        tableBorderColor: '#ebeef5',
