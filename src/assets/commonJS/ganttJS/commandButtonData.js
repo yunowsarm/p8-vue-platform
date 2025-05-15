@@ -3549,6 +3549,7 @@ function copyTask (ganttObject, tasks, vueThis) {
                 el.managerStatus = '6403'
                 el.realBeginDate = ''
                 el.realEndDate = ''
+                el.source = 'PM_PROJECT_TASKS'
               })
             }
             vueThis.copyTasks = res
