@@ -51,9 +51,9 @@
                       :key="item.name + tabsName"></FormRender>
           <multiple-form-table v-else-if="item.editMode === '多数据'"
                                :ref="item.name"
-                               :key="item.name"
+                               :key="item.name + tabsName"
                                :approveType="progessType !== 'progessTable'"
-                               :item="item + tabsName"></multiple-form-table>
+                               :item="item"></multiple-form-table>
         </template>
       </div>
     </el-tab-pane>
