@@ -611,17 +611,18 @@ export default {
           }
         })
         this.tableData = tableData
-      }
-      if (params.searchBoxParam) {
-        let realName = params.searchBoxParam ? params.searchBoxParam : null
-        let deptName = params.searchBoxParam ? params.searchBoxParam : null
-        if (realName && deptName) {
-          let tableData = this.tableData.filter((item) => {
-            if (item.realName.indexOf(realName) > -1 || item.deptName.indexOf(deptName) > -1) {
-              return item
-            }
-          })
-          this.tableData = tableData
+      } else {
+        if (params.searchBoxParam) {
+          let realName = params.searchBoxParam ? params.searchBoxParam : null
+          let deptName = params.searchBoxParam ? params.searchBoxParam : null
+          if (realName && deptName) {
+            let tableData = this.tableData.filter((item) => {
+              if (item.realName.indexOf(realName) > -1 || item.deptName.indexOf(deptName) > -1) {
+                return item
+              }
+            })
+            this.tableData = tableData
+          }
         }
       }
     },
