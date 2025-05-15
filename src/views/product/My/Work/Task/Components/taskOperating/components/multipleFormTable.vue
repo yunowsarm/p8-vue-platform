@@ -173,7 +173,7 @@ export default {
             columns.push({
               title: '操作',
               fixed: 'right',
-              width: 140,
+              width: 160,
               dataIndex: 'operation',
               scopedSlots: { customRender: 'custom' },
             });
