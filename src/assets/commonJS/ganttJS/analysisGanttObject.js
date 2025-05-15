@@ -493,26 +493,26 @@ export function getAnalysisGantt (ganttName, vueThis) {
             }
           }
         },
-        {
-          key: "start_date",
-          value: {
-            name: 'oldForecastBeginDate',
-            label: '原计划开始时间',
-            align: 'center',
-            min_width: 100,
-            resize: true
-          }
-        },
-        {
-          key: "end_date",
-          value: {
-            name: 'oldForecastEndDate',
-            label: '原计划完成时间',
-            align: 'center',
-            min_width: 100,
-            resize: true
-          }
-        },
+        // {
+        //   key: "start_date",
+        //   value: {
+        //     name: 'oldForecastBeginDate',
+        //     label: '原计划开始时间',
+        //     align: 'center',
+        //     min_width: 100,
+        //     resize: true
+        //   }
+        // },
+        // {
+        //   key: "end_date",
+        //   value: {
+        //     name: 'oldForecastEndDate',
+        //     label: '原计划完成时间',
+        //     align: 'center',
+        //     min_width: 100,
+        //     resize: true
+        //   }
+        // },
       ];
       nameList.map((el) => {
         let index = tempColumns.findIndex((val) => val.name == el.key);
@@ -774,13 +774,13 @@ export function getAnalysisGantt (ganttName, vueThis) {
         min_width: 100,
         resize: true
       },
-      {
-        name: 'oldForecastBeginDate',
-        label: '原计划开始时间',
-        align: 'center',
-        min_width: 100,
-        resize: true
-      },
+      // {
+      //   name: 'oldForecastBeginDate',
+      //   label: '原计划开始时间',
+      //   align: 'center',
+      //   min_width: 100,
+      //   resize: true
+      // },
       {
         name: 'end_date',
         label: '计划完成时间',
@@ -798,13 +798,13 @@ export function getAnalysisGantt (ganttName, vueThis) {
           return ganttObject.date.add(task.end_date, -1, 'day')
         }
       },
-      {
-        name: 'oldForecastEndDate',
-        label: '原计划完成时间',
-        align: 'center',
-        min_width: 100,
-        resize: true
-      },
+      // {
+      //   name: 'oldForecastEndDate',
+      //   label: '原计划完成时间',
+      //   align: 'center',
+      //   min_width: 100,
+      //   resize: true
+      // },
       {
         name: 'duration',
         label: '工期',
