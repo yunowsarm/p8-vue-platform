@@ -310,7 +310,7 @@ export default {
         { label: '输入要求', value: 'inputKey', icon: 'p8 icon-shuruyaoqiu', hideLabel: true },
         { label: '输出要求', value: 'outputKey', icon: 'p8 icon-shuchuyaoqiu', hideLabel: true },
         { label: '特别说明', value: 'specialKey', icon: 'p8 el-icon-warning-outline' },
-        { label: '业务表单', value: 'businessForm', icon: 'el-icon-s-order"' },
+        { label: '业务表单', value: 'businessForm', icon: 'el-icon-s-order' },
         { label: '关联需求', value: 'demandKey', icon: 'p8 icon-a-xuqiu1' }
       ],
       windowWidth: window.innerWidth
