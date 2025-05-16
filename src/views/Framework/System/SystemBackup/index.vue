@@ -1,11 +1,9 @@
 <script>
-import tableRender from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
 import { P8Dialog as CommonDialog } from 'p8-components-ui'
 
 export default {
   name: 'SystemBackup',
   components: {
-    tableRender,
     CommonDialog
   },
   data() {
@@ -115,7 +113,7 @@ export default {
 
 <template>
   <div class="system-backup">
-    <table-render v-loading.fullscreen="loading" :element-loading-text="loadingText" :key="renderKey" ref="tableRender" :code="code" @backup="backup" @recover="recover" />
+    <P8TableRender v-loading.fullscreen="loading" :element-loading-text="loadingText" :key="renderKey" ref="tableRender" :code="code" @backup="backup" @recover="recover" />
     <common-dialog :visible="visible" :title="title" width="500px" :dialog-height="200" @close="handleCancel" :show-handle-btn="false" :close-on-click-modal="false" :close-on-press-escape="false">
       <template #dialog>
         <el-input v-model="notes" type="textarea" placeholder="请输入备注" :rows="7" resize="none" />
