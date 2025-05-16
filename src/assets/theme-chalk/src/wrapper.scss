@@ -344,3 +344,6 @@
 .vxe-table--render-default .vxe-body--column.col--ellipsis:not(.col--actived)>.vxe-cell {
   padding: 0 10px !important;
 }
+.colSearch {
+  width: calc(100% - 1px) !important;
+  }
