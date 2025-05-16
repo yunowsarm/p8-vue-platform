@@ -8,10 +8,10 @@ export default {
     tableRender,
     CommonDialog
   },
-  data () {
+  data() {
     return {
       loading: false,
-      loadingText:'',
+      loadingText: '',
       // 表格组件的唯一标识码
       code: 'SystemBackupRecord',
       // 控制弹窗显示状态
@@ -28,20 +28,20 @@ export default {
   },
   methods: {
     // 点击备份按钮的处理函数
-    backup () {
+    backup() {
       this.title = '备份'
       this.visible = true
     },
 
     // 点击恢复按钮的处理函数
-    recover (rows) {
+    recover(rows) {
       this.title = '恢复'
       this.selectedRow = rows[0]
       this.visible = true
     },
 
     // 弹窗确认按钮的处理函数
-    handle () {
+    handle() {
       if (this.title === '备份') {
         this.handleBackup()
       } else if (this.title === '恢复') {
@@ -52,7 +52,7 @@ export default {
     },
 
     // 执行备份操作
-    async handleBackup () {
+    async handleBackup() {
       this.loadingText = '正在备份'
       this.loading = true
 
@@ -64,8 +64,10 @@ export default {
 
         if (res.success === 'true') {
           this.resetDialog()
-          this.$message.success(res.message)
-        }else{
+          this.$nextTick(() => {
+            this.$refs.tableRender.$refs.xTable.refresh()
+          })
+        } else {
           this.$message.error(res.message)
         }
       } finally {
@@ -74,7 +76,7 @@ export default {
     },
 
     // 执行恢复操作
-    async handleRecover () {
+    async handleRecover() {
       this.loadingText = '正在恢复'
       this.loading = true
 
@@ -88,23 +90,23 @@ export default {
         if (res.success === 'true') {
           this.resetDialog()
           this.$message.success(res.message)
-        }else{
+        } else {
           this.$message.error(res.message)
         }
-      }  finally {
+      } finally {
         this.loading = false
       }
     },
 
     // 重置弹窗状态
-    resetDialog () {
+    resetDialog() {
       this.visible = false
       this.selectedRow = null
       this.notes = ''
     },
 
     // 取消按钮的处理函数
-    handleCancel () {
+    handleCancel() {
       this.resetDialog()
     }
   }
@@ -113,33 +115,10 @@ export default {
 
 <template>
   <div class="system-backup">
-    <table-render
-      v-loading.fullscreen="loading"
-      :element-loading-text="loadingText"
-      :key="renderKey"
-      ref="tableRender"
-      :code="code"
-      @backup="backup"
-      @recover="recover"
-    />
-    <common-dialog
-      :visible="visible"
-      :title="title"
-      width="500px"
-      :dialog-height="200"
-      @close="handleCancel"
-      :show-handle-btn="false"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
+    <table-render v-loading.fullscreen="loading" :element-loading-text="loadingText" :key="renderKey" ref="tableRender" :code="code" @backup="backup" @recover="recover" />
+    <common-dialog :visible="visible" :title="title" width="500px" :dialog-height="200" @close="handleCancel" :show-handle-btn="false" :close-on-click-modal="false" :close-on-press-escape="false">
       <template #dialog>
-        <el-input
-          v-model="notes"
-          type="textarea"
-          placeholder="请输入备注"
-          :rows="7"
-          resize="none"
-        />
+        <el-input v-model="notes" type="textarea" placeholder="请输入备注" :rows="7" resize="none" />
         <div class="dialog-footer">
           <el-button type="primary" @click="handle">确定</el-button>
         </div>
@@ -161,7 +140,7 @@ export default {
   justify-content: flex-end;
   margin-top: 14px;
 }
-::v-deep .normal-layout{
+::v-deep .normal-layout {
   height: 100%;
 }
 </style>
