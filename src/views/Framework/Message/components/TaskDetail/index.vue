@@ -17,6 +17,7 @@ import getOutPutView from './GetOutputView.vue' // 已提交的输出物
 import SpecialView from './SpecialView.vue' // 特别说明
 // 导入关联需求组件
 import relevanceList from '@/views/product/PlanGantt/Components/planAttribute/relevanceList.vue' // 关联需求
+import businessFormView from '@/views/product/PlanGantt/Components/planAttribute/businessFormView.vue'
 
 // 定义任务详情组件
 export default {
@@ -30,7 +31,8 @@ export default {
     MonitorView,
     DependenceView,
     inputView,
-    SpecialView
+    SpecialView,
+    businessFormView
   },
   props: {
     // 任务ID，用于获取任务相关数据
@@ -49,6 +51,7 @@ export default {
         { label: '输入要求', value: 'inputKey', icon: 'p8 icon-shuruyaoqiu', hideLabel: true },
         { label: '输出要求', value: 'outputKey', icon: 'p8 icon-shuchuyaoqiu', hideLabel: true },
         { label: '特别说明', value: 'specialKey', icon: 'p8 el-icon-warning-outline' },
+        { label: '业务表单', value: 'businessForm', icon: 'el-icon-s-order' },
         { label: '关联需求', value: 'demandKey', icon: 'p8 icon-a-xuqiu1' }
       ],
       // 当前激活的输出标签页
@@ -101,6 +104,9 @@ export default {
       <!-- 关联需求组件 -->
       <relevance-list :task-id="taskId"></relevance-list>
     </template>
+    <template #businessForm>
+        <businessFormView :task-id="taskId"></businessFormView>
+      </template>
   </Anchor>
 </template>
 
