@@ -106,6 +106,5 @@ export default {
 <style scoped>
 ::v-deep .el-form-item__content > .view {
   background: #f5f8fb !important;
-  height: 30px !important;
 }
 </style>
