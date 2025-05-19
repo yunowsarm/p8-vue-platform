@@ -83,10 +83,10 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: 160,
+          width: '160',
           dataIndex: 'operation',
           scopedSlots: { customRender: 'operation' },
-          headerAlign: 'left'
+          align: 'center'
         }
       ],
       tableApi: 'departmentManger.list',
