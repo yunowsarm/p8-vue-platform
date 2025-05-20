@@ -311,14 +311,14 @@ export default {
         })
       }, 500);
     },
-    resizeShowArrow() {
+    resizeShowArrow () {
       // 如果内容宽度小于等于容器宽度，说明可以完全显示，不需要箭头
       if (this.scrollContent[0]) {
         this.showArrow = this.scrollContent[0].scrollWidth > this.scrollContent[0].offsetWidth;
       }
     },
     // 鼠标悬浮事件控制左右切换按钮是否出现
-    tabHover() {
+    tabHover () {
       if (this.scrollContent[0]) {
         this.showArrow = this.scrollContent[0].scrollWidth > this.scrollContent[0].offsetWidth;
       }
@@ -396,11 +396,11 @@ export default {
         &.is-active {
           border-left: 1px solid $base-line-color;
           border-right: 1px solid $base-line-color;
-          color: $base-light-color;
+          color: $theme-color !important;
         }
 
         &:hover {
-          color: $base-light-color;
+          color: $theme-color !important;
         }
       }
 
