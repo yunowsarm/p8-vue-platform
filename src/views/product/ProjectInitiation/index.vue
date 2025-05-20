@@ -9,7 +9,7 @@
                                @tabClick="tabClick"
                                :prop-param="propParam"
                                v-on="$listeners"
-                               :row="params.isEdit ? row : []"></tabs-navigation-preview>
+                               :row="customParams.isEdit ? row : []"></tabs-navigation-preview>
     </template>
   </list-layout>
 </template>
@@ -41,7 +41,7 @@ import { P8ListLayout as ListLayout } from 'p8-components-ui'
 export default {
   name: 'ProjectInitiation',
   props: {
-    params: {
+    customParams: {
       type: Object,
       default: function () {
         return {}
@@ -55,7 +55,7 @@ export default {
     }
   },
   data () {
-    const shouldUseEmptyLogic = this.params && this.params.isEdit === false
+    const shouldUseEmptyLogic = this.customParams && this.customParams.isEdit === false
     return {
       propParam: {
         ID: shouldUseEmptyLogic ? '' : (this.row.length ? this.row[0].ID : '')
@@ -74,7 +74,7 @@ export default {
   created () {},
   methods: {
     tabClick (tabs) {
-      if (this.row.length === 0 || (this.params && this.params.isEdit === false)) {
+      if (this.row.length === 0 || (this.customParams && this.customParams.isEdit === false)) {
         this.dataViewId = this.$refs.tabsNavigation.$children && this.$refs.tabsNavigation.$children.length ? this.$refs.tabsNavigation.$children[0].configParmars.id : ''
       } else {
         this.dataViewId = this.row[0].ID
