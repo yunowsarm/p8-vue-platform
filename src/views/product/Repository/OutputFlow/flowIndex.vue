@@ -251,7 +251,7 @@
   vertical-align: top;
 
   .el-tabs__item.is-active {
-    color: #1890ff;
+    color: $theme-color;
   }
 
   .el-tabs__nav-wrap.is-left::after {

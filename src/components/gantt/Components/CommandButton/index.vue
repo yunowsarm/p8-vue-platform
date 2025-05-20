@@ -74,7 +74,8 @@
             </el-button>
           </span>
         </el-tooltip>
-        <el-dropdown v-if="cbutton.children && cbutton.children.length && size != 'mini'" :disabled='dropdownDisable(cbutton)'>
+        <el-dropdown v-if="cbutton.children && cbutton.children.length && size != 'mini'"
+                     :disabled='dropdownDisable(cbutton)'>
           <i class="el-icon-caret-bottom"
              @mouseleave="styleMouseleave(cbutton)"
              :class="{ disabled: dropVisible }"></i>
@@ -83,24 +84,24 @@
                  :key="btnChild.title"
                  class="c_btn_dropmenu"
                  :class="{ isdisable: isDisable(btnChild) }">
-                 <el-tooltip :content="isDisable(btnChild) ? getButtonMsg(btnChild) : btnChild.title"
-                  placement="top"
-                  :disabled="!isDisable(btnChild)"
-                  :offset="-15"
-                  :enterable="false"
-                  effect="dark">
-                  <div>
-                    <el-dropdown-item @click.native="btnClick(btnChild)"
-                                :disabled="isDisable(btnChild)">
-                <el-button v-if="btnChild.id !== 'createByNum'"
-                           type="text"
-                           :disabled="isDisable(btnChild)">
-                  <i :class="btnChild.icon"></i>
-                  {{ btnChild.title }}
-                </el-button>
-              </el-dropdown-item>
-                  </div>
-                 </el-tooltip>
+              <el-tooltip :content="isDisable(btnChild) ? getButtonMsg(btnChild) : btnChild.title"
+                          placement="top"
+                          :disabled="!isDisable(btnChild)"
+                          :offset="-15"
+                          :enterable="false"
+                          effect="dark">
+                <div>
+                  <el-dropdown-item @click.native="btnClick(btnChild)"
+                                    :disabled="isDisable(btnChild)">
+                    <el-button v-if="btnChild.id !== 'createByNum'"
+                               type="text"
+                               :disabled="isDisable(btnChild)">
+                      <i :class="btnChild.icon"></i>
+                      {{ btnChild.title }}
+                    </el-button>
+                  </el-dropdown-item>
+                </div>
+              </el-tooltip>
             </div>
           </el-dropdown-menu>
         </el-dropdown>
@@ -239,13 +240,13 @@ export default {
     }
   },
   methods: {
-    iconDynamicClass (color,btnId) {
+    iconDynamicClass (color, btnId) {
       let iconStyle
       switch (this.size) {
         case 'large':
-          if(btnId === 'activity-import' || btnId === 'my-experience'){
+          if (btnId === 'activity-import' || btnId === 'my-experience') {
             iconStyle = 'font-size: 20px;'
-          }else{
+          } else {
             iconStyle = 'font-size: 32px;'
           }
           break
@@ -261,7 +262,7 @@ export default {
       }
       return iconStyle
     },
-    dropdownDisable(btn) {
+    dropdownDisable (btn) {
       for (let btnChild of btn.children) {
         if (!this.isDisable(btnChild)) {
           return false;
@@ -270,11 +271,11 @@ export default {
       return true;
     },
     // 获取禁用提示语
-    getButtonMsg(btn){
-      if(this.buttonMsg[btn.id]){
+    getButtonMsg (btn) {
+      if (this.buttonMsg[btn.id]) {
         return this.buttonMsg[btn.id]
-      }else{
-        return  btn.title
+      } else {
+        return btn.title
       }
     },
     // 处理按钮禁用逻辑
@@ -304,10 +305,10 @@ export default {
         return true;
       }
       // 审批页面不可操作（详细信息按钮除外）
-      if(this.ganttName === 'analysisGantt' && btn.id !== 'detail-info'){
-        if(this.$route.name === 'PlanChanges'){
+      if (this.ganttName === 'analysisGantt' && btn.id !== 'detail-info') {
+        if (this.$route.name === 'PlanChanges') {
           this.$store.dispatch('setButtonMsg', { id: btn.id, msg: '查看页面不可操作' })
-        }else{
+        } else {
           this.$store.dispatch('setButtonMsg', { id: btn.id, msg: '审批查看页面不可操作' })
         }
         return true
@@ -325,16 +326,16 @@ export default {
     // 更新按钮的msg
     updateButtonMsg (btn) {
       const statusName = {
-          6401: '已创建',
-          6402: '协同编制',
-          6403: '待下发',
-          6404: '已下发',
-          6405: '变更中',
-          6406: '提交审批',
-          6407: '审批驳回',
-          6408: '审批撤销',
-          6409: '审批完成'
-        };
+        6401: '已创建',
+        6402: '协同编制',
+        6403: '待下发',
+        6404: '已下发',
+        6405: '变更中',
+        6406: '提交审批',
+        6407: '审批驳回',
+        6408: '审批撤销',
+        6409: '审批完成'
+      };
       if (this.currentRecords.length > 0) {
         const status = this.currentRecords[0].managerStatus;
         this.$store.dispatch('setButtonMsg', { id: btn.id, msg: `任务为${statusName[status]}，不可操作` })
@@ -435,7 +436,7 @@ export default {
 
   .el-dropdown {
     margin-top: -5px;
-    color: $base-light-color;
+    color: $theme-color;
   }
 }
 

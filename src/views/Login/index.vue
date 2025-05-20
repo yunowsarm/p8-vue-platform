@@ -33,16 +33,14 @@
                    element-loading-spinner="el-icon-loading"
                    element-loading-custom-class="customClass">
             <template v-if="!loading">
-              <div style="margin-bottom: 6px"><i class="p8 icon-yonghuming"
-                   style="color: #094deb"></i>用户名</div>
+              <div style="margin-bottom: 6px"><i class="p8 icon-yonghuming"></i>用户名</div>
               <el-form-item prop="userAccount">
                 <el-input class="login-input"
                           type="text"
                           v-model="loginForm.userAccount"
                           placeholder="请输入用户名、身份证"></el-input>
               </el-form-item>
-              <div style="margin-bottom: 6px"><i class="p8 icon-mima"
-                   style="color: #094deb"></i>密码</div>
+              <div style="margin-bottom: 6px"><i class="p8 icon-mima"></i>密码</div>
               <el-form-item prop="userPassword"
                             class="userPassword">
                 <el-input class="login-input"
@@ -388,7 +386,9 @@ $login-bg-color: #112c79;
 //$login-primary-color: #102B78;
 $login-primary-color: $base-light-color;
 $login-primary--login-color: #306cf7;
-
+.p8 {
+  color: $theme-color;
+}
 .main ::v-deep {
   position: fixed;
   top: 0;
