@@ -383,6 +383,25 @@
                    :main-gantt-name="ganttName"></relevance>
       </template>
     </common-drawer>
+    <common-dialog title="批量设置"
+                   width="30%"
+                   v-if="ganttRowEditVisible"
+                   :visible="ganttRowEditVisible"
+                   :show-handle-btn="false"
+                   @isfullscreen="isfullscreen"
+                   @close="closeRowEdit"
+                   :is-view-cs-footer="false"
+                   :dialog-height="300">
+      <template #dialog>
+        <form-list ref="form"
+                   :isShouEnter="false"
+                   :data-source="rowEditDataSource"
+                   :form="formData"
+                   :is-custom-validate="true"
+                   @custom-validate="customValidate">
+        </form-list>
+      </template>
+    </common-dialog>
   </div>
 </template>
 <style lang="scss">
@@ -489,7 +508,8 @@ import {
   P8Table as CommonTable,
   P8Dialog as CommonDialog,
   P8Drawer as CommonDrawer,
-  P8ListLayout as ListLayout
+  P8ListLayout as ListLayout,
+  P8Form as FormList
 } from 'p8-components-ui'
 import Edit from '@/views/product/MyExperienceBase/edit.vue'
 import MyExperienceBase from '@/views/product/MyExperienceBase/myExperienceBase.vue'
@@ -663,7 +683,8 @@ export default {
     CommonButtonBarSetting,
     VersionList,
     VuePerfectScrollbar,
-    relevance
+    relevance,
+    FormList
   },
   data () {
     const mh = document.documentElement.clientHeight - 300
@@ -887,7 +908,10 @@ export default {
       hasAchievements: false,
       searchIds: [],
       fullscreen: false,
-      taskFinish: null
+      taskFinish: null,
+      ganttRowEditVisible: false,
+      formData: {},
+      rowEditDataSource: []
     }
   },
   watch: {
@@ -1045,6 +1069,12 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
+    customValidate () {
+      this.ganttRowEditVisible = false
+    },
+    closeRowEdit () {
+      this.ganttRowEditVisible = false
+    },
     // 打开AI生成
     openAutoGeneration () {
       this.autoGenerationVisible = true

@@ -145,15 +145,15 @@
                           </el-popconfirm>
                         </div>
                         <el-tooltip placement="top"
-                                    v-if="toolbarWritingDisplay === '1'">
-                          content="删除">
+                                    v-if="toolbarWritingDisplay === '1'"
+                                    content="删除">
                           <el-popconfirm title="确认要将该人退出项目组吗?"
                                          confirmButtonText="确认"
                                          cancelButtonText="取消"
                                          @confirm="deleteUserHandle(scope, scope.$index)">
                             <el-button slot="reference"
                                        size="mini"
-                                       type="primary"
+                                       type="text"
                                        v-if="group_add_member"
                                        icon="p8 icon-shanchu"></el-button>
                           </el-popconfirm>
@@ -167,7 +167,7 @@
                                        size="mini"
                                        v-if="group_add_member"
                                        icon="p8 icon-shanchu"
-                                       type="primary">删除 </el-button>
+                                       type="text">删除 </el-button>
                           </el-popconfirm>
                         </div>
                       </template>
@@ -179,16 +179,16 @@
                                      @click="deleteUserHandle(scope, scope.$index)">删除 </el-button>
                         </div>
                         <el-tooltip placement="top"
-                                    v-if="toolbarWritingDisplay === '1'">
-                          content="删除">
-                          <el-button type="primary"
+                                    v-if="toolbarWritingDisplay === '1'"
+                                    content="删除">
+                          <el-button type="text"
                                      v-if="group_add_member"
                                      icon="p8 icon-shanchu"
                                      @click="deleteUserHandle(scope, scope.$index)"></el-button>
                         </el-tooltip>
                         <div v-if="toolbarWritingDisplay === '2'">
                           <el-button size="mini"
-                                     type="primary"
+                                     type="text"
                                      icon="p8 icon-shanchu"
                                      v-if="group_add_member"
                                      @click="deleteUserHandle(scope, scope.$index)">删除 </el-button>
@@ -420,6 +420,7 @@ export default {
         title: '操作',
         fixed: 'right',
         dataIndex: 'operation',
+        width: '100',
         scopedSlots: {
           customRender: 'custom'
         },

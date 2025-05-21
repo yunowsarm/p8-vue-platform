@@ -51,11 +51,11 @@
           <el-tooltip v-if="toolbarWritingDisplay === '0'"
                       placement="top"
                       content="删除">
-            <el-button type="primary"
+            <el-button type="text"
                        icon="p8 icon-shanchu"
                        @click="deletePrivew(scope.row)"></el-button>
           </el-tooltip>
-          <el-button type="primary"
+          <el-button type="text"
                      v-if="toolbarWritingDisplay === '2'"
                      icon="p8 icon-shanchu"
                      @click="deletePrivew(scope.row)">删除</el-button>
@@ -159,7 +159,7 @@ export default {
           fixed: 'right',
           dataIndex: 'operation',
           scopedSlots: { customRender: 'custom' },
-          width: 140,
+          width: 100,
           align: 'center'
         }
       ],
@@ -226,7 +226,7 @@ export default {
       this.queryParam = searchData
     },
     openVideo (row) {
-      let that  =this
+      let that = this
       this.$api['SystemSettings.selectResourcesByMenuId']({ menuId: row.id }).then(res => {
         this.record = res
         if ((res.vTitle && res.vTitle.length) || res.vURL) {
@@ -237,14 +237,14 @@ export default {
       })
     },
     openManual (row) {
-      let that  =this
+      let that = this
       this.$api['SystemSettings.selectResourcesByMenuId']({ menuId: row.id }).then(res => {
-          this.record = res
-          if ((res.mTitle && res.mTitle.length) || res.mURL) {
-            this.isVisiblePDFdrawer = true
-          } else {
-            that.$message.warning('当前菜单暂无操作手册')
-          }
+        this.record = res
+        if ((res.mTitle && res.mTitle.length) || res.mURL) {
+          this.isVisiblePDFdrawer = true
+        } else {
+          that.$message.warning('当前菜单暂无操作手册')
+        }
       })
     }
   }

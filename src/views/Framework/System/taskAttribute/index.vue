@@ -59,13 +59,13 @@
                 <el-button style="margin-right: 2px;"
                            icon="p8 icon-xiugai"
                            @click="updateThird(scope.row)"
-                           type="primary"></el-button>
+                           type="text"></el-button>
               </el-tooltip>
               <el-tooltip placement="top"
                           content="删除">
                 <el-button icon="p8 icon-shanchu"
                            @click="deleteThird(scope.row)"
-                           type="primary"></el-button>
+                           type="text"></el-button>
               </el-tooltip>
             </el-button-group>
             <div v-else>
@@ -73,34 +73,34 @@
                           content="修改">
                 <el-button icon="p8 icon-xiugai"
                            @click="updateThird(scope.row)"
-                           type="primary"></el-button>
+                           type="text"></el-button>
               </el-tooltip>
               <el-divider direction="vertical"></el-divider>
               <el-tooltip placement="top"
                           content="删除">
                 <el-button icon="p8 icon-shanchu"
                            @click="deleteThird(scope.row)"
-                           type="primary"></el-button>
+                           type="text"></el-button>
               </el-tooltip>
             </div>
           </div>
           <div v-if="toolbarWritingDisplay === '2'">
             <el-button-group v-if="toolbarCompactLayout === 'true'">
-              <el-button type="primary"
+              <el-button type="text"
                          style="margin-right: 2px;"
                          icon="p8 icon-xiugai"
                          @click="updateThird(scope.row)">修改</el-button>
-              <el-button type="primary"
+              <el-button type="text"
                          icon="p8 icon-shanchu"
                          @click="deleteThird(scope.row)"
                          :disabled="scope.row.type == '0'">删除</el-button>
             </el-button-group>
             <div v-else>
-              <el-button type="primary"
+              <el-button type="text"
                          icon="p8 icon-xiugai"
                          @click="updateThird(scope.row)">修改</el-button>
               <el-divider direction="vertical"></el-divider>
-              <el-button type="primary"
+              <el-button type="text"
                          icon="p8 icon-shanchu"
                          @click="deleteThird(scope.row)"
                          :disabled="scope.row.type == '0'">删除</el-button>

@@ -54,13 +54,13 @@
               <el-button style="margin-right: 2px;"
                          @click="cancelDetail(scope.row)"
                          icon="p8 icon-cancel-task-type"
-                         type="primary"></el-button>
+                         type="text"></el-button>
             </el-tooltip>
             <el-tooltip placement="top"
                         content="查看详情">
               <el-button icon="p8 icon-chakan"
                          @click="showDetail(scope.row)"
-                         type="primary"></el-button>
+                         type="text"></el-button>
             </el-tooltip>
           </el-button-group>
           <div v-else>
@@ -69,14 +69,14 @@
                         content="取消关联">
               <el-button icon="p8 icon-cancel-task-type"
                          @click="cancelDetail(scope.row)"
-                         type="primary"></el-button>
+                         type="text"></el-button>
             </el-tooltip>
             <el-divider direction="vertical"></el-divider>
             <el-tooltip placement="top"
                         content="查看详情">
               <el-button icon="p8 icon-chakan"
                          @click="showDetail(scope.row)"
-                         type="primary"></el-button>
+                         type="text"></el-button>
             </el-tooltip>
           </div>
         </div>
@@ -84,10 +84,10 @@
           <el-button-group v-if="toolbarCompactLayout === 'true'">
             <el-button v-if="demandFalg"
                        style="margin-right: 2px;"
-                       type="primary"
+                       type="text"
                        icon="p8 icon-cancel-task-type"
                        @click="cancelDetail(scope.row)">取消关联</el-button>
-            <el-button type="primary"
+            <el-button type="text"
                        icon="p8 icon-chakan"
                        @click="showDetail(scope.row)">查看详情</el-button>
           </el-button-group>

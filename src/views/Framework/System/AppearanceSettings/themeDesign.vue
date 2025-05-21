@@ -90,43 +90,43 @@
                   <el-tooltip placement="top"
                               content="查看">
                     <el-button icon="p8 icon-chakan"
-                               type="primary"></el-button>
+                               type="text"></el-button>
                   </el-tooltip>
                   <el-tooltip placement="top"
                               content="删除">
                     <el-button style="margin-right: 2px;"
                                icon="p8 icon-shanchu"
-                               type="primary"></el-button>
+                               type="text"></el-button>
                   </el-tooltip>
                 </el-button-group>
                 <div v-else>
                   <el-tooltip placement="top"
                               content="查看">
                     <el-button icon="p8 icon-chakan"
-                               type="primary"></el-button>
+                               type="text"></el-button>
                   </el-tooltip>
                   <el-divider direction="vertical"></el-divider>
                   <el-tooltip placement="top"
                               content="删除">
                     <el-button style="margin-right: 2px;"
                                icon="p8 icon-shanchu"
-                               type="primary"></el-button>
+                               type="text"></el-button>
                   </el-tooltip>
                 </div>
               </div>
               <div v-if="toolbarWritingDisplay === '2'">
                 <el-button-group v-if="toolbarCompactLayout === 'true'">
-                  <el-button type="primary"
+                  <el-button type="text"
                              icon="p8 icon-chakan">查看</el-button>
-                  <el-button type="primary"
+                  <el-button type="text"
                              style="margin-right: 2px;"
                              icon="p8 icon-xiugai">删除</el-button>
                 </el-button-group>
                 <div v-else>
-                  <el-button type="primary"
+                  <el-button type="text"
                              icon="p8 icon-chakan">查看</el-button>
                   <el-divider direction="vertical"></el-divider>
-                  <el-button type="primary"
+                  <el-button type="text"
                              style="margin-right: 2px;"
                              icon="p8 icon-xiugai">删除</el-button>
                 </div>

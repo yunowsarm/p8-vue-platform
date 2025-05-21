@@ -15,11 +15,11 @@
         <el-tooltip v-if="toolbarWritingDisplay === '1'"
                     placement="top"
                     content="查看">
-          <el-button type="primary"
+          <el-button type="text"
                      icon="p8 icon-chakan"
                      @click="showChangeDetail(scope.row)"></el-button>
         </el-tooltip>
-        <el-button type="primary"
+        <el-button type="text"
                    v-if="toolbarWritingDisplay === '2'"
                    icon="p8 icon-chakan"
                    @click="showChangeDetail(scope.row)">查看</el-button>

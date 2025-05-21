@@ -217,25 +217,25 @@
                                 content="查看">
                       <el-button style="margin-right: 2px;"
                                  icon="p8 icon-chakan"
-                                 type="primary"></el-button>
+                                 type="text"></el-button>
                     </el-tooltip>
                     <el-tooltip placement="top"
                                 content="删除">
                       <el-button icon="p8 icon-shanchu"
-                                 type="primary"></el-button>
+                                 type="text"></el-button>
                     </el-tooltip>
                   </el-button-group>
                   <div v-else>
                     <el-tooltip placement="top"
                                 content="查看">
                       <el-button icon="p8 icon-chakan"
-                                 type="primary"></el-button>
+                                 type="text"></el-button>
                     </el-tooltip>
                     <el-divider direction="vertical"></el-divider>
                     <el-tooltip placement="top"
                                 content="删除">
                       <el-button icon="p8 icon-shanchu"
-                                 type="primary"></el-button>
+                                 type="text"></el-button>
                     </el-tooltip>
                   </div>
                 </div>
@@ -243,16 +243,16 @@
                   <el-button-group v-if="formData.toolbarCompactLayout">
                     <el-button style="margin-right: 2px;"
                                icon="p8 icon-chakan"
-                               type="primary">查看</el-button>
+                               type="text">查看</el-button>
                     <el-button icon="p8 icon-shanchu"
-                               type="primary">删除</el-button>
+                               type="text">删除</el-button>
                   </el-button-group>
                   <div v-else>
                     <el-button icon="p8 icon-chakan"
-                               type="primary">查看</el-button>
+                               type="text">查看</el-button>
                     <el-divider direction="vertical"></el-divider>
                     <el-button icon="p8 icon-shanchu"
-                               type="primary">删除</el-button>
+                               type="text">删除</el-button>
                   </div>
                 </div>
               </template>
@@ -319,7 +319,7 @@ export default {
           type: 'blank',
           slotName: 'systemThemeType',
           colLayout: 'doubleCol',
-          tip:`
+          tip: `
             <div>切换不同的主题风格，调整界面整体外观。</div>
           `
         },
@@ -351,7 +351,7 @@ export default {
           fieldName: 'toolbarWritingDisplay',
           slotName: 'toolbarWritingDisplay',
           colLayout: 'singleCol',
-          tip:`
+          tip: `
             <div>选择工具栏项的显示方式，可以是仅图标、仅文字或图标+文字的组合。</div>
           `
         },
@@ -360,7 +360,7 @@ export default {
           type: 'switch',
           fieldName: 'toolbarCompactLayout',
           colLayout: 'singleCol',
-          tip:`
+          tip: `
             <div>启用后，按钮之间的间距会减少，使布局更加紧凑和简洁。</div>
           `
         }
@@ -376,7 +376,7 @@ export default {
           type: 'blank',
           slotName: 'pageViewType',
           colLayout: 'singleCol',
-          tip:`
+          tip: `
             <div>页码分页：通过点击不同的页码来查看不同的页面内容。</div>
             <div>滚动分页：通过持续滚动页面来加载更多内容，在页面底部自动加载新的数据。</div>
           `
@@ -386,7 +386,7 @@ export default {
           type: 'switch',
           fieldName: 'componentEnableDrawer',
           colLayout: 'singleCol',
-          tip:`
+          tip: `
             <div>新建、修改、查看等操作的交互形式。</div>
             <div>1.默认模式：内容以对话框形式弹出。</div>
             <div>2.抽屉形式：从页面边缘滑出显示内容。</div>
@@ -402,7 +402,7 @@ export default {
         {
           labelText: '图标展示方式',
           type: 'radio',
-          tip:`
+          tip: `
             <div>选择显示方式为图标或文字。</div>
           `,
           options: [
@@ -424,7 +424,7 @@ export default {
           fieldName: 'tableRowHeight',
           placeholder: '请输入行高',
           colLayout: 'doubleCol',
-          tip:`
+          tip: `
             <div>设置表格中每行的高度，单位为像素，可以通过加减按钮调整行高。</div>
           `,
           colSpan: 6,
