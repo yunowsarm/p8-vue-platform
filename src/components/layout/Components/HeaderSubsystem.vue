@@ -44,8 +44,8 @@
         <i class="iconStyle"
            :style="{ color: item.color }"
            :class="item.icon"></i>
-        <div class="sysItemName"
-             :style="{ color: item.color }">{{ item.title }}</div>
+        <span class="sysItemName"
+             :style="{ color: item.color }">{{ item.title }}</span>
       </div>
     </div>
     <!-- </transition-group> -->
@@ -321,7 +321,6 @@ export default {
 }
 .iconStyle {
   font-size: 25px;
-  padding-bottom: 5px;
 }
 .header_top {
   display: flex;

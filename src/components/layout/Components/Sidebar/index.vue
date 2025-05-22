@@ -7,7 +7,7 @@
     <VuePerfectScrollbar :settings="scrollOptions"
                          :style="{ 'background-color': theme }">
       <div class="border-name">
-        <div class="sysName">
+        <div v-if="showLogo" class="sysName">
           <div class="login-logo"
                ref="loginLogo"></div>
         </div>
@@ -78,15 +78,15 @@
                       <el-tooltip placement="right"
                                   :disabled="child.meta.title.length < 8"
                                   :content="child.meta.title">
-                        <div id="item" 
-                             @mouseenter="handleMouseEnter(child)" 
+                        <div id="item"
+                             @mouseenter="handleMouseEnter(child)"
                              @mouseleave="onIconMouseLeave">
                                 <i v-if="child.meta && child.meta.icon"
                                   class="p8"
                                   :class="child.meta.icon"></i>
                                 <span v-if="child.meta && child.meta.title">
                                   <span :style="{width: hoveredMenuItem == child.path ? 'calc(100% - 22px)' : '100%'}">{{ child.meta.title }}</span>
-                                    <i style="margin:0;width:16px;" v-if="$route.path == child.path && hoveredMenuItem == child.path" 
+                                    <i style="margin:0;width:16px;" v-if="$route.path == child.path && hoveredMenuItem == child.path"
                                     class="el-icon-question"
                                     @mouseenter="showOptions($event, child)">
                                   </i>
@@ -180,6 +180,7 @@ export default {
   name: 'Sidebar',
   data () {
     return {
+      showLogo:false,
       scrollOptions: {
         suppressScrollX: true
       },
@@ -286,6 +287,7 @@ export default {
             if (item.id) {
               this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
                 item.filePath = window.URL.createObjectURL(new Blob([res.data]))
+                that.showLogo = true
                 that.$nextTick(() => {
                   that.$refs.loginLogo.style.backgroundImage = `url(${item.filePath})`
                   that.$refs.loginLogo.style.backgroundRepeat = `no-repeat`
@@ -573,6 +575,8 @@ $menu-collapse-text-color: #303133;
   white-space: nowrap; /* 不换行 */
   overflow: hidden; /* 超出部分隐藏 */
   text-overflow: ellipsis; /* 超出部分以省略号显示 */
+  display: flex;
+  align-items: center;
   // line-height: 50px;
   // letter-spacing: 1px;
 }
