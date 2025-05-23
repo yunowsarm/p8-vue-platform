@@ -135,6 +135,7 @@ export default {
       this.$api['planGanttManager.getWebsocketById']({
         entityId: this.planInfoId,
         entityType: 'plan',
+        sessionId:this.userId,
         page: this.page
       }).then((res) => {
         if (res && res.records.length > 0) {
@@ -163,6 +164,7 @@ export default {
       this.$api['planGanttManager.getWebsocketById']({
         entityId: this.planInfoId,
         entityType: 'plan',
+        sessionId:this.userId,
         page: this.page
       }).then((res) => {
         if (res) {
