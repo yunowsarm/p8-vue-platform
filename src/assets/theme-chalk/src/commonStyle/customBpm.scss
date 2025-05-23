@@ -12,7 +12,7 @@
 /* 当前正在审批的节点 背景色填充*/
 .custom-userTask-current:not(.djs-connection) .djs-visual {
   > :nth-child(1) {
-    // fill: #48BF9F !important;
+    fill: #48BF9F !important;
     stroke-width: 0px !important;
   }
   text {
@@ -32,33 +32,33 @@
 
 /* 走过的线条 */
 .custom-flow-end .djs-visual > :nth-child(1) {
-  // stroke: #0BCAF1 !important;
-  // marker-end: url('#custom-flow-end-arrow') !important;
+  stroke: #0BCAF1 !important;
+  marker-end: url('#custom-flow-end-arrow') !important;
 }
 /* 当前审批的线条 */
 .custom-flow-current .djs-visual > :nth-child(1) {
-  // stroke: #48BF9F !important;
-  // marker-end: url('#custom-flow-current-arrow') !important;
+  stroke: #48BF9F !important;
+  marker-end: url('#custom-flow-current-arrow') !important;
 }
 
 /* 网关 */
 .custom-exclusiveGateway:not(.djs-connection) .djs-visual {
   > :nth-child(1) {
-    // stroke:#0BCAF1 !important;
+    stroke:#0BCAF1 !important;
   }
   > :nth-child(2) {
-    // stroke: #0BCAF1 !important;
-    // fill: #0BCAF1 !important;
+    stroke: #0BCAF1 !important;
+    fill: #0BCAF1 !important;
   }
 }
 /* 当前-网关 */
 .custom-exclusiveGateway-current:not(.djs-connection) .djs-visual {
   > :nth-child(1) {
-    // stroke:#48BF9F !important;
+    stroke:#48BF9F !important;
   }
   > :nth-child(2) {
-    // stroke: #48BF9F !important;
-    // fill: #48BF9F !important;
+    stroke: #48BF9F !important;
+    fill: #48BF9F !important;
   }
 }
 
