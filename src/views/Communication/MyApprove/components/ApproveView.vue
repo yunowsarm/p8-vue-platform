@@ -686,13 +686,12 @@ export default {
 
           this_.formCompProp = { ...inputProp, ...page, ...{ taskId: this_.taskId, tableFlex: this.tableFlex, headerVisible: false, pageType: 'view' } }
           if (this_.formCompProp.approveContentView) {
-            this_.componentsParams = this_.formCompProp.approveContentView.formSelector ? JSON.parse(this_.formCompProp.approveContentView.formSelector) : null
+            this_.componentsParams = this_.formCompProp.approveContentView
             if (this_.componentsParams) {
               this_.componentsParams.dataViewId = this_.formCompProp.customBusinessKey ? this_.formCompProp.customBusinessKey : this_.formCompProp.businessKey
               this_.asyncComponents = this_.componentsParams.url
             }
           }
-
         }
         this_.formValidate = true
       })
