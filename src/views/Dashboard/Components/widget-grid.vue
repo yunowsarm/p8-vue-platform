@@ -41,6 +41,7 @@
             <template #north>
               <search-form-list ref="searchWidget"
                                 :data-source="searchWidgetData"
+                                :addFuzzySearch="true"
                                 @search="searchWidget"
                                 @re-set="reSetWidget"></search-form-list>
             </template>
@@ -165,6 +166,7 @@
             <template #north>
               <search-form-list ref="searchTemplate"
                                 :data-source="searchTemplateData"
+                                :addFuzzySearch="true"
                                 @search="searchTemplate"
                                 @re-set="reSetTemplate"></search-form-list>
             </template>
@@ -301,7 +303,7 @@ export default {
               // 获取当前滚动容器
               const container = event.currentTarget;
               const { scrollTop, scrollHeight, clientHeight } = container;
-              
+
               // 判断滚动方向和是否到达边界
               const isScrollingUp = event.deltaY < 0;
               const isScrollingDown = event.deltaY > 0;

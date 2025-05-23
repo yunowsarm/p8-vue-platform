@@ -97,4 +97,8 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+::v-deep .el-form-item__content > .view {
+  background: #f5f8fb !important;
+}
+</style>

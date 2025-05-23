@@ -266,7 +266,7 @@ export default {
   vertical-align: top;
   height: calc(100% - 60px);
   .el-tabs__item.is-active {
-    color: #1890ff;
+    color: $theme-color;
   }
   .el-tabs__nav-wrap.is-left::after {
     width: 0;

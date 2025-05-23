@@ -46,7 +46,7 @@
       border: none;
     }
     .el-tabs__item.is-active{
-      color: #1890FF;
+      color: $theme-color !important;
     }
   }
   .el-tabs__nav-scroll{

@@ -141,3 +141,6 @@
 .el-tooltip__popper{
   max-width: 500px !important;
 }
+::v-deep .el-form-item__content > .view {
+  background: #f5f8fb !important;
+}

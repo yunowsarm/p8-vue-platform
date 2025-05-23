@@ -141,7 +141,7 @@ export default {
     }
     i {
       cursor: pointer;
-      color: #46a6ff !important;
+      color: $theme-color !important;
     }
   }
   .icon-con {
@@ -150,7 +150,7 @@ export default {
     }
     i {
       cursor: pointer;
-      color: #46a6ff !important;
+      color: $theme-color !important;
       padding: 0 4px;
     }
     i.is-disabled {

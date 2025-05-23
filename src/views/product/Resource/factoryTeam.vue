@@ -800,7 +800,7 @@ export default {
       &.active {
         ::v-deep span {
           font-weight: bolder;
-          color: #0e77d1 !important;
+          color: $theme-color !important;
         }
       }
 
@@ -810,7 +810,7 @@ export default {
         left: 0;
         top: 0;
         height: 100%;
-        border-left: 3px solid #46a6ff;
+        border-left: 3px solid $theme-color;
       }
 
       i {
