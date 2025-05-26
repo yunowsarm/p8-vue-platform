@@ -1,22 +1,7 @@
 <template>
   <div class="main">
-    <div class="login-wrapper">
-
-      <span class="login-version">
-        <el-popover placement="top-start"
-                    width="150"
-                    trigger="hover">
-          <p>
-            西安融智软件有限公司<br />
-            www.xardmu.com<br />
-            029-87607380<br />
-            特征码：{{regardsObj.cpuSerialCode}}<br />
-          </p>
-          <span slot="reference">{{ regardsObj.systemVersion }}</span>
-        </el-popover>
-      </span>
-    </div>
-    <div class="loginContent">
+    <div class="login-wrapper"
+         ref="loginWrapper">
       <div class="login-block">
         <div class="login-contain">
           <span class="login-logo"
@@ -63,7 +48,21 @@
           </el-form>
         </div>
       </div>
+      <span class="login-version">
+        <el-popover placement="top-start"
+                    width="150"
+                    trigger="hover">
+          <p>
+            西安融智软件有限公司<br />
+            www.xardmu.com<br />
+            029-87607380<br />
+            特征码：{{regardsObj.cpuSerialCode}}<br />
+          </p>
+          <span slot="reference">{{ regardsObj.systemVersion }}</span>
+        </el-popover>
+      </span>
     </div>
+
   </div>
 </template>
 
@@ -120,7 +119,6 @@ export default {
   },
   created () {
     this.getSystemAbout()
-
   },
   mounted () {
     this.dayTime = getGreetingTime()
@@ -288,6 +286,20 @@ export default {
               }
             }
           })
+          if (res.systemBackground && res.systemBackground[0]) {
+            const that = this
+            res.systemBackground.map((item) => {
+              if (item.id) {
+                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
+                  item.filePath = window.URL.createObjectURL(new Blob([res.data]))
+                  that.$nextTick(() => {
+                    that.$refs.loginWrapper.style.backgroundImage = `url(${item.filePath})`
+                    that.$refs.loginWrapper.style.backgroundRepeat = `no-repeat`
+                  })
+                })
+              }
+            })
+          }
           uploadFileJson = res.uploadFileJson
           if (uploadFileJson && uploadFileJson[0]) {
             const that = this
@@ -350,6 +362,20 @@ export default {
               }
             }
           })
+          if (res.systemBackground && res.systemBackground[0]) {
+            const that = this
+            res.systemBackground.map((item) => {
+              if (item.id) {
+                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
+                  item.filePath = window.URL.createObjectURL(new Blob([res.data]))
+                  that.$nextTick(() => {
+                    that.$refs.loginWrapper.style.backgroundImage = `url(${item.filePath})`
+                    that.$refs.loginWrapper.style.backgroundRepeat = `no-repeat`
+                  })
+                })
+              }
+            })
+          }
           const uploadFileJson = res.uploadFileJson
           if (uploadFileJson && uploadFileJson[0]) {
             const that = this
@@ -418,144 +444,93 @@ $login-primary--login-color: #306cf7;
     // transition: opacity .5s ease-in-out;
     background-image: url(../../assets/image/login/new_login_bic.png);
     // opacity: 1;
-  }
-  .loginContent {
-    width: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .login-block {
-    // position: absolute;
-    // top: 0%;
-    // left: 52%;
-    // transform: translate(50%, 50%);
-    // margin-right: -210px;
-    // margin-top: -220px;
-    width: 420px;
-    // height: 440px;
-    background: $base-white-color;
-    // box-shadow: 0px 1px 5px 0px #6f7dff;
-    border-radius: 1px;
 
-    .login-contain {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      position: relative;
-      .login-logo {
-        width: 150px;
-        height: 96px;
-        display: block;
-        margin: 0 auto;
-        background: url(../../assets/image/login/new_logo.png) no-repeat;
-        background-size: contain;
-        background-position: center;
-        margin-top: 25px;
-      }
+    .login-block {
+      position: absolute;
+      top: 0%;
+      left: 52%;
+      transform: translate(50%, 50%);
+      margin-right: -210px;
+      // margin-top: -220px;
+      width: 420px;
+      // height: 440px;
+      background: $base-white-color;
+      // box-shadow: 0px 1px 5px 0px #6f7dff;
+      border-radius: 1px;
 
-      .login-sysName {
-        font-size: 34px;
-        font-family: Source Han Sans CN;
-        color: #1f1f1f;
-        text-align: center;
-        margin-top: 5px;
-        margin-bottom: 30px;
-      }
+      .login-contain {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        .login-logo {
+          width: 150px;
+          height: 96px;
+          display: block;
+          margin: 0 auto;
+          background: url(../../assets/image/login/new_logo.png) no-repeat;
+          background-size: contain;
+          background-position: center;
+          margin-top: 25px;
+        }
 
-      .loginForm {
-        margin: 0 auto;
-        width: 86%;
-        .el-loading-spinner {
-          margin-top: 30px;
-          i {
-            font-size: 70px;
-          }
-          .el-loading-text {
-            font-size: 16px;
+        .login-sysName {
+          font-size: 34px;
+          font-family: Source Han Sans CN;
+          color: #1f1f1f;
+          text-align: center;
+          margin-top: 5px;
+          margin-bottom: 30px;
+        }
+
+        .loginForm {
+          margin: 0 auto;
+          width: 86%;
+          .el-loading-spinner {
+            margin-top: 30px;
+            i {
+              font-size: 70px;
+            }
+            .el-loading-text {
+              font-size: 16px;
+            }
           }
         }
-      }
 
-      // .login-input {
-      //   width: 100%;
-      //   height: 40px;
-      //   input {
-      //     // border: 2px solid #306cf7;
-      //     border-radius: 4px;
-      //   }
-      // }
+        // .login-input {
+        //   width: 100%;
+        //   height: 40px;
+        //   input {
+        //     // border: 2px solid #306cf7;
+        //     border-radius: 4px;
+        //   }
+        // }
 
-      .login-button {
-        width: 100%;
-        height: 40px;
-        padding: 5px 0px;
-        // border: 2px solid darken($login-primary--login-color, 10%);
-        border-radius: 4px;
-        background: darken($login-primary--login-color, 10%);
-        color: $base-white-color;
-        font-size: 14px;
-      }
-
-      .el-checkbox__inner {
-        border: 1px solid darken($login-primary--login-color, 10%);
-      }
-
-      .el-checkbox__input.is-checked .el-checkbox__inner {
-        background-color: darken($login-primary--login-color, 10%);
-      }
-
-      .el-checkbox__input.is-checked + .el-checkbox__label {
-        color: darken($login-primary--login-color, 10%);
-      }
-
-      .el-input--small .el-input__inner {
-        height: 40px;
-        line-height: 36px;
-        border-radius: 4px;
-      }
-      .el-form-item--small.el-form-item {
-        margin-bottom: 18px;
-
-        &.userPassword,
-        &.keepLoggedIn {
-          margin-bottom: 10px;
-        }
-      }
-      @media screen and (max-width: 1024px) {
-        .el-input--small .el-input__inner {
-          height: 30px;
-          line-height: 30px;
+        .login-button {
+          width: 100%;
+          height: 40px;
+          padding: 5px 0px;
+          // border: 2px solid darken($login-primary--login-color, 10%);
           border-radius: 4px;
+          background: darken($login-primary--login-color, 10%);
+          color: $base-white-color;
+          font-size: 14px;
         }
-        .el-form-item--small.el-form-item {
-          margin-bottom: 14px;
 
-          &.userPassword,
-          &.keepLoggedIn {
-            margin-bottom: 10px;
-          }
+        .el-checkbox__inner {
+          border: 1px solid darken($login-primary--login-color, 10%);
         }
-      }
-      @media screen and (min-width: 1025px) and (max-width: 1280px) {
-        .el-input--small .el-input__inner {
-          height: 32px;
-          line-height: 32px;
-          border-radius: 4px;
-        }
-        .el-form-item--small.el-form-item {
-          margin-bottom: 16px;
 
-          &.userPassword,
-          &.keepLoggedIn {
-            margin-bottom: 10px;
-          }
+        .el-checkbox__input.is-checked .el-checkbox__inner {
+          background-color: darken($login-primary--login-color, 10%);
         }
-      }
-      @media screen and (min-width: 1281px) and (max-width: 1440px) {
+
+        .el-checkbox__input.is-checked + .el-checkbox__label {
+          color: darken($login-primary--login-color, 10%);
+        }
+
         .el-input--small .el-input__inner {
-          height: 36px;
+          height: 40px;
           line-height: 36px;
           border-radius: 4px;
         }
@@ -567,153 +542,198 @@ $login-primary--login-color: #306cf7;
             margin-bottom: 10px;
           }
         }
-      }
-    }
-  }
+        @media screen and (max-width: 1024px) {
+          .el-input--small .el-input__inner {
+            height: 30px;
+            line-height: 30px;
+            border-radius: 4px;
+          }
+          .el-form-item--small.el-form-item {
+            margin-bottom: 14px;
 
-  @media screen and (max-width: 1024px) {
-    .login-block {
-      // margin-right: -155px;
-      // margin-top: -225px;
-      width: 310px;
-      // height: 330px;
-
-      .login-contain {
-        position: relative;
-        .login-version {
-          position: absolute;
-          top: 80px;
-          right: -50px;
-          font-size: 15px;
+            &.userPassword,
+            &.keepLoggedIn {
+              margin-bottom: 10px;
+            }
+          }
         }
-        .login-logo {
-          width: 100px;
-          height: 64px;
-          margin-top: 15px;
-          background-size: contain;
+        @media screen and (min-width: 1025px) and (max-width: 1280px) {
+          .el-input--small .el-input__inner {
+            height: 32px;
+            line-height: 32px;
+            border-radius: 4px;
+          }
+          .el-form-item--small.el-form-item {
+            margin-bottom: 16px;
+
+            &.userPassword,
+            &.keepLoggedIn {
+              margin-bottom: 10px;
+            }
+          }
         }
+        @media screen and (min-width: 1281px) and (max-width: 1440px) {
+          .el-input--small .el-input__inner {
+            height: 36px;
+            line-height: 36px;
+            border-radius: 4px;
+          }
+          .el-form-item--small.el-form-item {
+            margin-bottom: 18px;
 
-        .login-sysName {
-          font-size: 24px;
-          margin-top: 0;
-          margin-bottom: 18px;
-        }
-
-        .loginForm {
-          width: 86%;
-        }
-
-        // .login-input {
-        //   height: 30px;
-        //   input {
-        //     // border: 2px solid darken($login-primary--login-color, 10%);
-        //     border-radius: 4px;
-        //   }
-        // }
-
-        .login-button {
-          height: 30px;
-          // border: 2px solid darken($login-primary--login-color, 10%);
-          border-radius: 4px;
-          font-size: 12px;
+            &.userPassword,
+            &.keepLoggedIn {
+              margin-bottom: 10px;
+            }
+          }
         }
       }
     }
-  }
 
-  @media screen and (min-width: 1025px) and (max-width: 1280px) {
-    .login-block {
-      // margin-right: -170px;
-      // margin-top: -182px;
-      width: 340px;
-      // height: 364px;
+    @media screen and (max-width: 1024px) {
+      .login-block {
+        margin-right: -155px;
+        // margin-top: -225px;
+        width: 310px;
+        // height: 330px;
 
-      .login-contain {
-        position: relative;
-        .login-version {
-          position: absolute;
-          top: 80px;
-          right: -50px;
-          font-size: 15px;
-        }
-        .login-logo {
-          width: 120px;
-          height: 76px;
-          margin-top: 15px;
-          background-size: contain;
-        }
+        .login-contain {
+          position: relative;
+          .login-version {
+            position: absolute;
+            top: 80px;
+            right: -50px;
+            font-size: 15px;
+          }
+          .login-logo {
+            width: 100px;
+            height: 64px;
+            margin-top: 15px;
+            background-size: contain;
+          }
 
-        .login-sysName {
-          font-size: 26px;
-          margin-bottom: 20px;
-        }
+          .login-sysName {
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 18px;
+          }
 
-        .loginForm {
-          width: 86%;
-        }
+          .loginForm {
+            width: 86%;
+          }
 
-        // .login-input {
-        //   height: 32px;
-        //   input {
-        //     border: 2px solid darken($login-primary--login-color, 10%);
-        //     border-radius: 16px;
-        //   }
-        // }
+          // .login-input {
+          //   height: 30px;
+          //   input {
+          //     // border: 2px solid darken($login-primary--login-color, 10%);
+          //     border-radius: 4px;
+          //   }
+          // }
 
-        .login-button {
-          height: 32px;
-          // border: 2px solid darken($login-primary--login-color, 10%);
-          border-radius: 4px;
-          font-size: 14px;
+          .login-button {
+            height: 30px;
+            // border: 2px solid darken($login-primary--login-color, 10%);
+            border-radius: 4px;
+            font-size: 12px;
+          }
         }
       }
     }
-  }
 
-  @media screen and (min-width: 1281px) and (max-width: 1440px) {
-    .login-block {
-      // margin-right: -192px;
-      // margin-top: -207px;
-      width: 384px;
-      // height: 414px;
+    @media screen and (min-width: 1025px) and (max-width: 1280px) {
+      .login-block {
+        margin-right: -170px;
+        // margin-top: -182px;
+        width: 340px;
+        // height: 364px;
 
-      .login-contain {
-        position: relative;
-        .login-version {
-          position: absolute;
-          top: 130px;
-          right: -50px;
-          font-size: 15px;
+        .login-contain {
+          position: relative;
+          .login-version {
+            position: absolute;
+            top: 80px;
+            right: -50px;
+            font-size: 15px;
+          }
+          .login-logo {
+            width: 120px;
+            height: 76px;
+            margin-top: 15px;
+            background-size: contain;
+          }
+
+          .login-sysName {
+            font-size: 26px;
+            margin-bottom: 20px;
+          }
+
+          .loginForm {
+            width: 86%;
+          }
+
+          // .login-input {
+          //   height: 32px;
+          //   input {
+          //     border: 2px solid darken($login-primary--login-color, 10%);
+          //     border-radius: 16px;
+          //   }
+          // }
+
+          .login-button {
+            height: 32px;
+            // border: 2px solid darken($login-primary--login-color, 10%);
+            border-radius: 4px;
+            font-size: 14px;
+          }
         }
-        .login-logo {
-          width: 140px;
-          height: 90px;
-          margin-top: 20px;
-          background-size: contain;
-        }
+      }
+    }
 
-        .login-sysName {
-          font-size: 30px;
-          margin-bottom: 30px;
-        }
+    @media screen and (min-width: 1281px) and (max-width: 1440px) {
+      .login-block {
+        margin-right: -192px;
+        // margin-top: -207px;
+        width: 384px;
+        // height: 414px;
 
-        .loginForm {
-          width: 86%;
-        }
+        .login-contain {
+          position: relative;
+          .login-version {
+            position: absolute;
+            top: 130px;
+            right: -50px;
+            font-size: 15px;
+          }
+          .login-logo {
+            width: 140px;
+            height: 90px;
+            margin-top: 20px;
+            background-size: contain;
+          }
 
-        // .login-input {
-        //   height: 36px;
-        //   input {
-        //     border: 2px solid darken($login-primary--login-color, 10%);
-        //     border-radius: 18px;
-        //   }
-        // }
+          .login-sysName {
+            font-size: 30px;
+            margin-bottom: 30px;
+          }
 
-        .login-button {
-          height: 36px;
-          // border: 2px solid darken($login-primary--login-color, 10%);
-          border-radius: 4px;
-          font-size: 14px;
+          .loginForm {
+            width: 86%;
+          }
+
+          // .login-input {
+          //   height: 36px;
+          //   input {
+          //     border: 2px solid darken($login-primary--login-color, 10%);
+          //     border-radius: 18px;
+          //   }
+          // }
+
+          .login-button {
+            height: 36px;
+            // border: 2px solid darken($login-primary--login-color, 10%);
+            border-radius: 4px;
+            font-size: 14px;
+          }
         }
       }
     }

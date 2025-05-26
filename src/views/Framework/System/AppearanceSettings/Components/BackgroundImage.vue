@@ -80,7 +80,7 @@ export default {
   methods: {
     async getSettingData () {
       const that = this
-      let res = await that.$api['SystemSettings.loadMenuBgImages']()
+      let res = await that.$api['SystemSettings.loadMenuBgImages']({ entityName: 'BP_SETTINGS' })
       if (res) {
         that.getFileUrl(res) // 获取图片流
       }
@@ -115,7 +115,7 @@ export default {
       // } else {
       let url = item.id ? item.id : item.filePath
       this.$store.dispatch('setImage', url)
-      // this.$store.dispatch('setImageId', url)
+      this.$store.dispatch('setImageId', url)
       this.$emit('changeSystemImage', url)
       // }
     },

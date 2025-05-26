@@ -37,16 +37,16 @@ export default {
      *
      */
     theme: {
-      cyan: 'rgba(49, 139, 147, 0.8)',
-      gray: 'rgba(140, 153, 118, 0.8)',
-      pink: 'rgba(247, 130, 152, 0.8)',
-      red: 'rgba(245, 73, 97, 0.8)',
-      blue: 'rgba(32, 149, 205, 0.8)',
-      purple: 'rgba(104, 103, 137, 0.8)',
-      green: 'rgba(44, 88, 56, 0.8)',
-      brownneslv: 'rgba(167, 52, 59, 0.8)',
-      blackish: 'rgba(30, 82, 77, 0.8)',
-      dark: 'rgba(33, 33, 33, 0.8)'
+      cyan: '#318B93',
+      gray: '#8C9976',
+      pink: '#F78298',
+      red: '#F54961',
+      blue: '#2095CD',
+      purple: '#686789',
+      green: '#2C5838',
+      brownneslv: '#A7343B',
+      blackish: '#1E524D',
+      dark: '#212121'
     },
     systemThemeKey: `${PLATFORM_PREFIX_NAME}_SYSTEM_THEME`,
     systemThemeKeyRgba: `${PLATFORM_PREFIX_NAME}_SYSTEM_THEME_RGBA`,

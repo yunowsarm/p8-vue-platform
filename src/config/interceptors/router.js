@@ -56,9 +56,9 @@ export function routerBeforeEachFunc (to, from, next) {
               next({ ...to, replace: true })
             }
           })
+          store.dispatch('getSettingAll') // 获取列表配置信息
           store.dispatch('getButtonLimit') // 获取按钮禁用逻辑
           store.dispatch('getDicAndBaseConfig') // 获取系统配置信息-项目状态、计划状态、任务状态等dicConfig与系统名称等baseConfig
-          store.dispatch('getSettingAll') // 获取列表配置信息
           store.dispatch('getMessageInfo') // 获取消息信息
           store.dispatch('getMessageNum') // 获取消息信息已读未读条数
           // store.dispatch('getSystemSecret') // 获取系统密级

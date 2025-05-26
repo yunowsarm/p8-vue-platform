@@ -1,72 +1,131 @@
 <template>
   <div>
     <div class="tips">
-      <div class="vertical_line"></div>
-      菜单栏背景图
+      <div style="display: flex;align-items: center;">
+        <div class="vertical_line"></div>
+        菜单栏背景图
+      </div>
+      <div>
+        <el-button type="text"
+                   @click="addImage()">上传背景图片</el-button>
+        <el-button type="text"
+                   @click="cloneBack('')">取消背景</el-button>
+      </div>
     </div>
     <div class="select-theme">
-      <div v-for="(item, index) in imageName"
+      <div v-for="(item, index) in uploadFileJson"
            :key="index">
         <el-image style="width: 100px; height: 180px; margin-left: 10px"
-                  :src="item.url"
+                  :src="item.filePath"
                   fit="cover"
-                  @click="changeSystemImage(item.url)"></el-image>
+                  @click="changeSystemImage(item)"></el-image>
       </div>
-      <el-button style="position: absolute; right: 10px"
-                 type="text"
-                 @click="cloneBack('')">取消背景</el-button>
     </div>
+    <form-index v-if="isDesign"
+                :visible="isDesign"
+                @handleCancel="handleCancel"
+                ref="formIndex"></form-index>
   </div>
 </template>
 <script>
 // import { mapGetters } from 'vuex'
-
+import formIndex from './formIndex.vue'
 export default {
   name: 'BackgroundImage',
   data () {
     return {
-      imageName: [
+      imageData: [
         {
-          url: './static/themeBackground/image.png'
+          filePath: './static/themeBackground/image.png'
         },
         {
-          url: './static/themeBackground/image2.png'
+          filePath: './static/themeBackground/image2.png'
         },
         {
-          url: './static/themeBackground/image3.png'
+          filePath: './static/themeBackground/image3.png'
         },
         {
-          url: './static/themeBackground/image4.png'
+          filePath: './static/themeBackground/image4.png'
         },
         {
-          url: './static/themeBackground/image5.png'
+          filePath: './static/themeBackground/image5.png'
         },
         {
-          url: './static/themeBackground/image6.png'
+          filePath: './static/themeBackground/image6.png'
         },
         {
-          url: './static/themeBackground/image7.png'
+          filePath: './static/themeBackground/image7.png'
         },
         {
-          url: './static/themeBackground/image8.png'
+          filePath: './static/themeBackground/image8.png'
+        },
+        {
+          filePath: './static/themeBackground/image9.png'
+        },
+        {
+          filePath: './static/themeBackground/image10.png'
         }
-      ]
+      ],
+      uploadFileJson: [],
+      isDesign: false
     }
   },
   beforeMount () { },
-  mounted () { },
+  mounted () {
+    this.getSettingData()
+  },
   computed: {
     // ...mapGetters(['image'])
   },
   methods: {
-    async changeSystemImage (imageUrl) {
-      this.$store.dispatch('setImage', imageUrl)
+    async getSettingData () {
+      const that = this
+      let res = await that.$api['SystemSettings.loadMenuBgImages']({ entityName: 'BP_THEME' })
+      if (res) {
+        that.getFileUrl(res) // 获取图片流
+      }
+    },
+    // 获取图片流
+    getFileUrl (uploadFileJson) {
+      const that = this
+      that.uploadFileJson = []
+      uploadFileJson.map(async (item) => {
+        if (item.id) {
+          await that.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
+            item.filePath = window.URL.createObjectURL(new Blob([res.data]))
+            that.uploadFileJson.push(item);
+          })
+        }
+      })
+      that.uploadFileJson = [...this.imageData, ...that.uploadFileJson]
+    },
+    addImage () {
+      this.isDesign = true
+    },
+    handleCancel () {
+      setTimeout(() => {
+        this.isDesign = false
+        this.getSettingData()
+      }, 500)
+    },
+    changeSystemImage (item) {
+      // if (item.id) {
+      //   this.$store.dispatch('setImage', JSON.stringify(item.))
+      //   this.$emit('changeSystemImage', JSON.stringify(item))
+      // } else {
+      let url = item.id ? item.id : item.filePath
+      this.$store.dispatch('setImage', url)
+      this.$store.dispatch('setImageId', url)
+      this.$emit('changeSystemImage', url)
+      // }
     },
     cloneBack (imageUrl) {
       this.$store.dispatch('setImage', imageUrl)
     }
   },
-  components: {}
+  components: {
+    formIndex
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -75,6 +134,7 @@ export default {
   align-items: center;
   font-size: 20px;
   margin: 8px 8px 8px 26px;
+  justify-content: space-between;
 }
 .vertical_line {
   margin-right: 8px;
@@ -85,7 +145,8 @@ export default {
 .select-theme {
   margin-left: 40px;
   display: flex;
-
+  width: calc(100% - 50px);
+  overflow: auto;
   h4 {
     padding: 10px 0;
     border-bottom: 2px solid $base-light-color;
@@ -125,13 +186,6 @@ export default {
         box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.1), 0 8px 15px 3px rgba(0, 0, 0, 0.09), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
       }
     }
-  }
-
-  .select-theme {
-    width: 100px;
-    display: inherit;
-    align-items: center;
-    justify-content: center;
   }
 }
 </style>

@@ -76,6 +76,9 @@
 
   .el-button--small {
     padding: 5px 5px;
+    span {
+      font-size: 13px !important;
+    }
   }
 
   .el-dropdown-link {
@@ -346,4 +349,7 @@
   width: 100%;
   text-align: center;
 
+}
+.el-divider--vertical {
+  margin: 0 5px !important;
 }

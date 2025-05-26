@@ -84,7 +84,7 @@ export default {
       console.log("🚀 ~ handleUpload ~ data:", data)
     },
     async getSettingData () {
-      let res = await this.$api['SystemSettings.loadMenuBgImages']({ entityName: 'BP_SETTINGS' })
+      let res = await this.$api['SystemSettings.loadMenuBgImages']({ entityName: 'BP_THEME' })
       if (res) {
         this.getFileUrl(res) // 获取图片流
       }
@@ -107,7 +107,7 @@ export default {
       if (saveParams.uploadFileJson.length > 0) {
         saveParams.uploadFileJson.forEach(el => {
           el.filePath = el.url = el.customItem1
-          el.entityName = 'BP_SETTINGS'
+          el.entityName = 'BP_THEME'
         });
       }
       this.$refs.form.submitForm(saveParams, this.saveApi)

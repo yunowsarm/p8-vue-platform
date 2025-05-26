@@ -19,7 +19,7 @@
           <el-radio-group v-model="formData.systemThemeType"
                           @input="changeThemeType"
                           size="small">
-            <el-radio-button label="systemThemeType1">主题1</el-radio-button>
+            <el-radio-button label="systemThemeType1">主题1 </el-radio-button>
             <el-radio-button label="systemThemeType2">主题2</el-radio-button>
             <el-radio-button label="systemThemeType3">主题3</el-radio-button>
           </el-radio-group>
@@ -217,25 +217,25 @@
                                 content="查看">
                       <el-button style="margin-right: 2px;"
                                  icon="p8 icon-chakan"
-                                 type="text"></el-button>
+                                 type="primary"></el-button>
                     </el-tooltip>
                     <el-tooltip placement="top"
                                 content="删除">
                       <el-button icon="p8 icon-shanchu"
-                                 type="text"></el-button>
+                                 type="primary"></el-button>
                     </el-tooltip>
                   </el-button-group>
                   <div v-else>
                     <el-tooltip placement="top"
                                 content="查看">
                       <el-button icon="p8 icon-chakan"
-                                 type="text"></el-button>
+                                 type="primary"></el-button>
                     </el-tooltip>
                     <el-divider direction="vertical"></el-divider>
                     <el-tooltip placement="top"
                                 content="删除">
                       <el-button icon="p8 icon-shanchu"
-                                 type="text"></el-button>
+                                 type="primary"></el-button>
                     </el-tooltip>
                   </div>
                 </div>
@@ -243,16 +243,16 @@
                   <el-button-group v-if="formData.toolbarCompactLayout">
                     <el-button style="margin-right: 2px;"
                                icon="p8 icon-chakan"
-                               type="text">查看</el-button>
+                               type="primary">查看</el-button>
                     <el-button icon="p8 icon-shanchu"
-                               type="text">删除</el-button>
+                               type="primary">删除</el-button>
                   </el-button-group>
                   <div v-else>
                     <el-button icon="p8 icon-chakan"
-                               type="text">查看</el-button>
+                               type="primary">查看</el-button>
                     <el-divider direction="vertical"></el-divider>
                     <el-button icon="p8 icon-shanchu"
-                               type="text">删除</el-button>
+                               type="primary">删除</el-button>
                   </div>
                 </div>
               </template>
@@ -333,7 +333,8 @@ export default {
           `,
           uploadConfig: {
             limit: 1,
-            accept: '.jpeg,.jpg,.gif,.png'
+            accept: '.jpeg,.jpg,.gif,.png',
+            isImage: true
             // drag: true// 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
           },
           listType: 'picture-card' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
@@ -423,10 +424,10 @@ export default {
           labelText: '行高(单位：px)',
           fieldName: 'tableRowHeight',
           placeholder: '请输入行高',
-          colLayout: 'doubleCol',
           tip: `
             <div>设置表格中每行的高度，单位为像素，可以通过加减按钮调整行高。</div>
           `,
+          colLayout: 'doubleCol',
           colSpan: 6,
           min: 35,
           max: 300
@@ -474,7 +475,7 @@ export default {
           },
           {
             key: 'bgTheme',// 侧边栏背景颜色
-            value: 'rgba(52, 145, 250, 0.6)'
+            value: '#3491FA'
           }
         ],
         [
@@ -512,7 +513,7 @@ export default {
           },
           {
             key: 'bgTheme',// 侧边栏背景颜色
-            value: 'rgba(199, 0, 25, 0.6)'
+            value: '#c70019'
           }
         ]
         ,
@@ -551,7 +552,7 @@ export default {
           },
           {
             key: 'bgTheme',// 侧边栏背景颜色
-            value: 'rgba(39, 46, 59, 0.6)'
+            value: '#272E3B'
           }
         ]
       ],
@@ -639,6 +640,9 @@ export default {
       this.$store.getters.baseConfig.tableRowHeight = this.baseConfig.tableRowHeight
     },
     open () {
+      if (!this.formData.systemThemeType) {
+        return this.$message.warning('请先选择主题')
+      }
       this.isVisibleThemeDrawer = true
     },
     restoreDefault () {
@@ -690,16 +694,18 @@ export default {
       // console.log('click')
     },
     getSettingData () {
-      let that = this
-      that.$api['SystemSettings.getAppearanceSettings']()
+      const that = this
+      that.$api['SystemSettings.getBasicSetting']()
         .then(function (res) {
           res.settings.forEach(function (item) {
-            that.modify[item.key] = item.value === 'true' ? true : item.value === 'false' ? false : item.value
-            if (item.key === 'systemThemeArray' && item.value) {
-              that.themeArray = JSON.parse(item.value)
-            }
+            that.modify[item.key] = item.value
           })
-          that.getFileUrl(res.uploadFileJson) // 获取图片流
+          if (res.uploadFileJson) {
+            that.getFileUrl(res.uploadFileJson) // 获取图片流
+          } else {
+            that.modify.uploadFileJson = []
+            that.formData = Object.assign({}, that.modify)
+          }
         })
         .catch(function (error) {
           // console.log('error' + error)
@@ -712,7 +718,7 @@ export default {
         uploadFileJson.map((item) => {
           if (item.id) {
             that.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
-              item.urlTemp = window.URL.createObjectURL(new Blob([res.data]))
+              item.filePath = window.URL.createObjectURL(new Blob([res.data]))
             })
           }
         })
@@ -770,6 +776,7 @@ export default {
       saveParams.uploadFileJson = uploadFileJson
       if (saveParams.uploadFileJson[0]) {
         saveParams.uploadFileJson[0].confidentialite = '9001'
+        saveParams.uploadFileJson[0].filePath = saveParams.uploadFileJson[0].customItem1
       }
 
       saveParams.settings = settings
