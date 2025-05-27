@@ -140,9 +140,9 @@ export default {
       this.maxHeight = document.documentElement.clientHeight - 130 + 'px'
     },
     saveTheme () {
-      debugger
       let themeObg = this.$store.getters.systemColor
       themeObg.imageUrl = this.$store.getters.imageId
+      themeObg.theme = this.$store.getters.theme
       const url = '/framework/user/setting/save'
       const { devBaseUrl, prodBaseUrl, isDevMode } = this.api_default_config;
       const urlPrefix = isDevMode ? `${devBaseUrl}` : `${prodBaseUrl}`;

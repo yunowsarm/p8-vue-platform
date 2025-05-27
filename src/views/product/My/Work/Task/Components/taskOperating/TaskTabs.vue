@@ -11,7 +11,8 @@
       <div class="tab-content-wrapper"
            :class="{ 'is-maximized': maximizedTabs[item.name] }">
         <!-- 最大化/最小化按钮 -->
-        <div class="tab-actions" v-if="!viewVisible">
+        <div class="tab-actions"
+             v-if="!viewVisible">
           <i :class="maximizedTabs[item.name] ? 'p8 icon-exit-fullscreen' : 'p8 icon-full-screen'"
              @click="toggleMaximize(item.name)"></i>
         </div>
@@ -111,7 +112,7 @@ export default {
       taskFinish: false,
       taskbusinessForm: [],
       scrollContainer: null,
-      viewVisible: false, 
+      viewVisible: false,
     }
   },
   async created () {
@@ -183,11 +184,11 @@ export default {
       this.viewVisible = true
     }
   },
-  beforeDestroy() {
+  beforeDestroy () {
     this.removeScrollHandler()
   },
   methods: {
-    initScrollHandler() {
+    initScrollHandler () {
       const tabsEl = this.$refs.tabsContainer.$el
       this.scrollContainer = tabsEl.querySelector('.el-tabs__nav-scroll')
       if (this.scrollContainer) {
@@ -207,12 +208,12 @@ export default {
         )
       }
     },
-    removeScrollHandler() {
+    removeScrollHandler () {
       if (this.scrollContainer) {
         this.scrollContainer.removeEventListener(
           'wheel',
           this.handleWheel
-      )
+        )
         this.scrollContainer.removeEventListener(
           'mouseenter',
           this.hideScrollbar
@@ -223,7 +224,7 @@ export default {
         )
       }
     },
-    handleWheel(event) {
+    handleWheel (event) {
       if (event.shiftKey) {
         event.preventDefault()
         const delta = Math.sign(event.deltaY)
@@ -231,7 +232,7 @@ export default {
         this.scrollContainer.scrollLeft += delta * 60
       }
     },
-    hideScrollbar() {
+    hideScrollbar () {
       // 强制隐藏滚动条
       if (this.scrollContainer) {
         this.scrollContainer.style.overflow = 'hidden'
@@ -300,7 +301,7 @@ export default {
   transition: all 0.3s;
 
   &.is-maximized {
-    ::v-deep .parser-container{
+    ::v-deep .parser-container {
       height: calc(100% - 20px);
     }
     position: fixed;
@@ -311,7 +312,8 @@ export default {
     background: #fff;
     z-index: 99999;
     padding-top: 20px;
-    .tab-actions { // 添加：确保最大化时图标可见
+    .tab-actions {
+      // 添加：确保最大化时图标可见
       position: fixed;
       right: 20px;
       top: 20px;
@@ -324,13 +326,13 @@ export default {
   right: 10px;
   top: 10px;
   z-index: 99999; // 修改：提高图标层级
-  
+
   i {
     cursor: pointer;
     font-size: 18px;
     color: #606266;
     padding: 5px; // 添加：增加可点击区域
-    
+
     &:hover {
       color: #409eff;
     }
@@ -351,11 +353,11 @@ export default {
 }
 .progressTaskTabs ::v-deep .el-tabs__content {
   // padding: 0 10px;
-  height: calc(100% - 40px);
+  height: calc(100% - 30px) !important;
   overflow: auto;
 }
 .progressTaskTabs ::v-deep .el-tab-pane {
-  height: calc(100% - 10px);
+  height: 100%;
 }
 .el-tabs--border-card {
   border: 0;

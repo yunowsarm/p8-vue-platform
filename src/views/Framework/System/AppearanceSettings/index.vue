@@ -685,7 +685,7 @@ export default {
             break;
         }
       })
-      this.formData.systemThemeArray = JSON.stringify(this.themeArray)
+      this.formData.systemThemeArray = JSON.stringify(themeArray)
     },
     rendered () {
       this.getSettingData()
@@ -695,10 +695,13 @@ export default {
     },
     getSettingData () {
       const that = this
-      that.$api['SystemSettings.getBasicSetting']()
+      that.$api['SystemSettings.getAppearanceSettings']()
         .then(function (res) {
           res.settings.forEach(function (item) {
-            that.modify[item.key] = item.value
+            that.modify[item.key] = item.value === 'true' ? true : item.value === 'false' ? false : item.value
+            if (item.key === 'systemThemeArray' && item.value) {
+              that.themeArray = JSON.parse(item.value)
+            }
           })
           if (res.uploadFileJson) {
             that.getFileUrl(res.uploadFileJson) // 获取图片流
@@ -734,7 +737,7 @@ export default {
     },
     saveSuccess (themeArray) {
       this.formData.systemThemeArray = JSON.stringify(themeArray)
-      this.customValidate(this.formData)
+      this.customValidate(JSON.parse(JSON.stringify(this.formData)))
     },
     customValidate (params) {
       let saveParams = {}
@@ -745,7 +748,7 @@ export default {
         },
         {
           key: 'systemThemeArray', // 系统主题
-          value: params.systemThemeArray
+          value: params.systemThemeArray ? params.systemThemeArray : JSON.stringify(this.defaultTheme)
         },
         {
           key: 'toolbarWritingDisplay', // 工具栏启用文字
