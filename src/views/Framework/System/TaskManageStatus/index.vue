@@ -25,7 +25,7 @@
         @handle-ok="saveCallback"
       >
         <template #dialog>
-          <icon-selector @icon-select="onEditIConOK" :selected-name="record.icon" :selected-color="record.color" :color-picker="true"></icon-selector>
+          <icon-selector @icon-select="onEditIConOK" :selected-name="iconTemp || record.icon" :selected-color="colorTemp || record.color" :color-picker="true"></icon-selector>
         </template>
       </common-dialog>
     </template>
@@ -77,6 +77,8 @@ export default {
     },
     onEditIConClose() {
       this.editIconDialog = false
+      this.iconTemp = ''
+      this.colorTemp = ''
     },
     onEditIConOK(res) {
       this.iconTemp = res.icon

@@ -18,7 +18,7 @@
           @handle-ok="handleClose"
         >
           <template #dialog>
-            <icon-selector @icon-select="iconSelect" :selected-name="modify.icon" :color-picker="true"></icon-selector>
+            <icon-selector @icon-select="iconSelect" :selected-name="modify.icon" :selected-color="modify.color" :color-picker="true"></icon-selector>
           </template>
         </common-dialog>
       </template>
