@@ -695,10 +695,13 @@ export default {
     },
     getSettingData () {
       const that = this
-      that.$api['SystemSettings.getBasicSetting']()
+      that.$api['SystemSettings.getAppearanceSettings']()
         .then(function (res) {
           res.settings.forEach(function (item) {
-            that.modify[item.key] = item.value
+            that.modify[item.key] = item.value === 'true' ? true : item.value === 'false' ? false : item.value
+            if (item.key === 'systemThemeArray' && item.value) {
+              that.themeArray = JSON.parse(item.value)
+            }
           })
           if (res.uploadFileJson) {
             that.getFileUrl(res.uploadFileJson) // 获取图片流
