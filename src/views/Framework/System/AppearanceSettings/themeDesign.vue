@@ -358,7 +358,7 @@ export default {
     getImage (id) {
       let that = this
       let systemThemeType = this.formData.systemThemeType || this.$store.getters.baseConfig.systemThemeType
-      let systemThemeArray = JSON.parse(this.$store.getters.baseConfig.systemThemeArray)
+      let systemThemeArray = that.themeArray || JSON.parse(this.$store.getters.baseConfig.systemThemeArray)
       let themeArray = []
       if (systemThemeType === 'systemThemeType1') {
         themeArray = systemThemeArray[0]

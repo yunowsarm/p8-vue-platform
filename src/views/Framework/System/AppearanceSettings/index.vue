@@ -685,7 +685,7 @@ export default {
             break;
         }
       })
-      this.formData.systemThemeArray = JSON.stringify(this.themeArray)
+      this.formData.systemThemeArray = JSON.stringify(themeArray)
     },
     rendered () {
       this.getSettingData()
@@ -737,7 +737,7 @@ export default {
     },
     saveSuccess (themeArray) {
       this.formData.systemThemeArray = JSON.stringify(themeArray)
-      this.customValidate(this.formData)
+      this.customValidate(JSON.parse(JSON.stringify(this.formData)))
     },
     customValidate (params) {
       let saveParams = {}
@@ -748,7 +748,7 @@ export default {
         },
         {
           key: 'systemThemeArray', // 系统主题
-          value: params.systemThemeArray
+          value: params.systemThemeArray ? params.systemThemeArray : JSON.stringify(this.defaultTheme)
         },
         {
           key: 'toolbarWritingDisplay', // 工具栏启用文字
