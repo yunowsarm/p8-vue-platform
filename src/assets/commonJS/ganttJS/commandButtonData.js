@@ -526,7 +526,10 @@ export const CommandButtonData = [
             cancel: '取消',
             callback: function (result) {
               if (result) {
-                removeTasks(thisGantt, thisDp, ganttName)
+                removeTasks(thisGantt, thisDp, ganttName) 
+                tasks.forEach(item => {
+                  thisGantt.deleteTask(item.id)
+                })
               }
             }
           })
@@ -3024,6 +3027,12 @@ function checkContentRoot (ganttName, tasks) {
   }
   return result
 }
+function get32NumberUid() {
+  let array = new Uint8Array(16)
+  window.crypto.getRandomValues(array)
+  return Array.from(array).map( b=> 
+    b.toString(16).padStart(2, '0')).join('').substring(0, 32)
+}
 
 /**
  * @Description 任务新建
@@ -3047,26 +3056,56 @@ function addTask (num, pos, ganttName) {
     //   vueThis.$message.warning('低密人员不允许创建高密数据')
     //   return
     // }
+    
     switch (pos) {
       case 'Before':
         // 同级上方插入
         parentTask = ganttObject.getTask(task.parent)
-        api['planGanttManager.createPlanGanttData']({
-          name: '新任务',
-          parent: taskId,
-          insertNum: num,
-          insertType: 'Before',
-          type: type,
-          // secretGrade: parentTask.secretGrade,
-          autoScheduling: schedulingType || parentTask.autoScheduling,
-          createPage: vueThis.createPage,
-          completeForm: ' '
-        })
+        let tasksBefore = []
+        let ids = []
+        for (let i = 0; i < num; i++) {
+          let id = get32NumberUid()
+            ids.push(taskId)
+          tasksBefore.push(
+            {
+              id: id,
+              name: '新任务',
+              parent: taskId,
+              insertNum: num,
+              insertType: 'Before',
+              type: type,
+              autoScheduling: schedulingType || task.autoScheduling,
+              createPage: vueThis.createPage,
+              completeForm: ' ',
+              managerStatus: parentTask.managerStatus,
+              start_date: moment(parentTask.start_date).format('YYYY-MM-DD'),
+              end_date: moment(parentTask.end_date).format('YYYY-MM-DD'),
+              forecastBeginDate: parentTask.forecastBeginDate,
+              forecastEndDate: parentTask.forecastEndDate,
+              status: '6020'
+            }
+          )
+      }
+        createTaskByDatas(ganttObject, tasksBefore, task.parent, 'Before', '新任务', '任务创建成功!', dpObject, taskIndexNo)
+              vueThis.taskCount = vueThis.taskCount + num
+              tasksBefore[0].ids = ids
+        api['planGanttManager.createPlanGanttData'](tasksBefore[0])
           .then(function (res) {
             if (res) {
-              createTaskByDatas(ganttObject, res, task.parent, 'Before', '新任务', '任务创建成功!', dpObject, taskIndexNo)
-              vueThis.taskCount = vueThis.taskCount + num
+              task.$open = true
+              ganttObject.eachTask(function (tasks) {
+                res.forEach((item, i) => {
+                  if (tasks.id === item.id) {
+                    let task = ganttObject.getTask(tasks.id)
+                    task = item
+                    ganttObject.updateTask(tasks.id)
+                  }
+                })
+              }, task.id)
             } else {
+              tasksBefore.forEach(item => {
+                ganttObject.deleteTask(item.id)
+              })
               vueThis.$message({
                 message: '任务创建失败！',
                 type: 'error'
@@ -3074,6 +3113,10 @@ function addTask (num, pos, ganttName) {
             }
           })
           .catch(() => {
+            ganttObject.undo()
+            tasksBefore.forEach(item => {
+              ganttObject.deleteTask(item.id)
+            })
             vueThis.$message({
               message: '任务创建失败！',
               type: 'error'
@@ -3083,23 +3126,53 @@ function addTask (num, pos, ganttName) {
       case 'After':
         const afterIndexNo = taskIndexNo + 1 // 分支indexNo
         parentTask = ganttObject.getTask(task.parent)
+        let tasksAfter = []
+        let afterIds = []
+        for (let i = 0; i < num; i++) {
+          let id = get32NumberUid()
+          afterIds.push(id)
+          tasksAfter.push(
+            {
+              id: id,
+              name: '新任务',
+              parent: taskId,
+              insertNum: num,
+              insertType: 'After',
+              type: type,
+              autoScheduling: schedulingType || task.autoScheduling,
+              createPage: vueThis.createPage,
+              completeForm: ' ',
+              managerStatus: parentTask.managerStatus,
+              start_date: moment(parentTask.start_date).format('YYYY-MM-DD'),
+              end_date: moment(parentTask.end_date).format('YYYY-MM-DD'),
+              forecastBeginDate: parentTask.forecastBeginDate,
+              forecastEndDate: parentTask.forecastEndDate,
+              status: '6020'
+            }
+          )
+      }
+        createTaskByDatas(ganttObject, tasksAfter, task.parent, 'After', '新任务', '任务创建成功!', dpObject, afterIndexNo)
+              vueThis.taskCount = vueThis.taskCount + num
         // 同级下方插入
-        api['planGanttManager.createPlanGanttData']({
-          name: '新任务',
-          parent: taskId,
-          insertNum: num,
-          insertType: 'After',
-          type: type,
-          // secretGrade: parentTask.secretGrade,
-          autoScheduling: schedulingType || parentTask.autoScheduling,
-          createPage: vueThis.createPage,
-          completeForm: ' '
-        })
+        tasksAfter[0].ids = afterIds
+        api['planGanttManager.createPlanGanttData'](tasksAfter[0])
           .then(function (res) {
             if (res) {
-              createTaskByDatas(ganttObject, res, task.parent, 'After', '新任务', '任务创建成功!', dpObject, afterIndexNo)
-              vueThis.taskCount = vueThis.taskCount + num
+              task.$open = true
+              ganttObject.eachTask(function (tasks) {
+                res.forEach((item, i) => {
+                  if (tasks.id === item.id) {
+                    let task = ganttObject.getTask(tasks.id)
+                    task = item
+                    ganttObject.updateTask(tasks.id)
+                  }
+                })
+              }, task.id)
             } else {
+              ganttObject.undo()
+              tasksAfter.forEach(item => {
+                ganttObject.deleteTask(item.id)
+              })
               vueThis.$message({
                 message: '任务创建失败！',
                 type: 'error'
@@ -3107,6 +3180,7 @@ function addTask (num, pos, ganttName) {
             }
           })
           .catch(() => {
+            ganttObject.undo()
             vueThis.$message({
               message: '任务创建失败！',
               type: 'error'
@@ -3118,26 +3192,70 @@ function addTask (num, pos, ganttName) {
         if (task.hasBusinessForm == 'true' && !vueThis.taskFinish) {
           vueThis.$message({ type: 'warning', message: '该任务成为父任务，所关联的表单将在执行时无法填写。' })
         }
+        task.$open = true
+        let tasksChild = []
+        let childIds = []
+        for (let i = 0; i < num; i++) {
+          let id = get32NumberUid()
+          childIds.push(id)
+          tasksChild.push(
+            {
+              id: id,
+              name: '新任务',
+              parent: taskId,
+              insertNum: num,
+              insertType: 'Child',
+              type: type,
+              autoScheduling: schedulingType || task.autoScheduling,
+              createPage: vueThis.createPage,
+              completeForm: ' ',
+              managerStatus: parentTask.managerStatus,
+              start_date: moment(parentTask.start_date).format('YYYY-MM-DD'),
+              end_date: moment(parentTask.end_date).format('YYYY-MM-DD'),
+              forecastBeginDate: parentTask.forecastBeginDate,
+              forecastEndDate: parentTask.forecastEndDate,
+              status: '6020'
+            }
+          )
+      }
+        createTaskByDatas(ganttObject, tasksChild, taskId, 'Child', '新任务', '任务创建成功!', dpObject, null)
+        vueThis.taskCount = vueThis.taskCount + num
+        
         // 新建下级
-        api['planGanttManager.createPlanGanttData']({
-          name: '新任务',
-          parent: taskId,
-          insertNum: num,
-          insertType: 'Child',
-          type: type,
-          // secretGrade: task.secretGrade,
-          autoScheduling: schedulingType || task.autoScheduling,
-          createPage: vueThis.createPage,
-          completeForm: ' '
-        })
+        tasksChild[0].ids = childIds
+        api['planGanttManager.createPlanGanttData'](tasksChild[0])
           .then(function (res) {
             if (res) {
-              task.$open = true
-              createTaskByDatas(ganttObject, res, taskId, 'Child', '新任务', '任务创建成功!', dpObject, null)
-              vueThis.taskCount = vueThis.taskCount + num
+              // task.$open = true
+              // ganttObject.eachTask(function (tasks) {
+              //   res.forEach((item, i) => {
+              //     if (tasks.id === item.id) {
+              //       item.start_date = moment(item.start_date).format('YYYY-MM-DD')
+              //       item.end_date = moment(item.end_date).format('YYYY-MM-DD')
+              //       tasks = item
+              //     //  let fileNames = Object.keys(item)
+              //     //  console.log("🚀 ~ res.forEach ~ el:", fileNames)
+              //     //  fileNames.forEach(el => {
+                    
+              //       // tasks[el] = item[el]
+              //       // if (el !== 'id' && item[el] !== null) {
+              //       //   vueThis.$set(tasks, el, item[el])
+              //       // }
+              //     // })
+              //     // tasks.start_date = moment(item.start_date).format('YYYY-MM-DD')
+              //     // tasks.end_date = moment(item.end_date).format('YYYY-MM-DD')
+              //       // ganttObject.updateTask(tasks.id)
+              //       // ganttObject.render()
+              //     }
+              //   })
+              // }, task.id)
             }
           })
           .catch(() => {
+            ganttObject.undo()
+            tasksChild.forEach(item => {
+              ganttObject.deleteTask(item.id)
+            })
             vueThis.$message({
               message: '任务创建失败！',
               type: 'error'
@@ -3170,13 +3288,13 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
   ganttObject.unselectTask()
   dpObject.ignore(function () {
     ganttObject.batchUpdate(function () {
-      datas.forEach(function (item) {
+      datas.forEach(function (item, index) {
         let scheduling = false
         if (item.autoScheduling === '1') {
           scheduling = true
         }
         const task = {
-          id: item.id,
+          id: item.id || item.parent + index,
           name: taskName !== null ? taskName : item.name,
           progress: item.progress,
           start_date: item.start_date,
@@ -3199,7 +3317,6 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
           createSource: item.createSource,
           indexNo: item.indexNo,
           planType: item.planType,
-          // secretGrade: item.secretGrade,
           $open: true,
           setts: item.setts,
           completeForm: item.completeForm,
@@ -3260,9 +3377,9 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
         let filteredData = ganttObject.serialize();  // 获取当前显示的所有任务数据
         let filteredTasks = []
         filteredData.data.forEach((item) => {
-          if (ganttObject.isTaskVisible(item.id)) {
+          // if (ganttObject.isTaskVisible(item.id)) {
             filteredTasks.push(item.id);
-          }
+          // }
         });
         setTimeout(() => {
           // ganttObject.unselectTask()
@@ -3516,6 +3633,7 @@ function removePlanGanttData (ganttObject, dp, ganttName, vueThis, selectedTaskI
     })
     .catch((err) => {
       console.error(err, 'err')
+      ganttObject.undo()
       vueThis.$message({
         message: '任务删除失败！',
         type: 'error'
@@ -3613,14 +3731,73 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
       vueThis.$message.warning('请选择需要粘贴的数据')
     }
   } else {
-    const copyTasks = vueThis.copyTasks
+    const copyTasks = Object.assign({}, vueThis.copyTasks)
     if (copyTasks != null) {
       const selTask = tasks[0]
       const parentTask = ganttObject.getTask(selTask.parent)
       const selId = selTask.id
       const selIndexNo = ganttObject.getTaskIndex(selId) + 1 // 分支indexNo
       const planInfoId = vueThis.planInfoId
-      api['planGanttManager.pasteTasks']({
+
+      const selectTaskIds = ganttObject.getSelectedTasks()
+      const copyTaskIds = []
+      copyTasks.tasks = []
+      selectTaskIds.forEach(function (taskId) {
+        // 向上查父，若父也选中，子不计算在内
+        ganttObject.eachParent(function (task) {
+          if (selectTaskIds.indexOf(task.id) === -1 && copyTaskIds.indexOf(taskId) === -1) {
+            copyTaskIds.push(taskId)
+          }
+        }, taskId)
+        // 查询所有子
+        // let taskAll = ganttObject.serialize()
+        copyTaskIds.forEach(function (id) {
+          let parentTask = Object.assign({}, ganttObject.getTask(id))
+          // taskAll.data.forEach(item => {
+          //   console.log(parentTask.id, '=========', item.id);
+
+          //   if (parentTask.id === item.id) {
+          //     parentTask = item
+          //   }
+          // })
+          let parentTaskId = get32NumberUid()
+          parentTask.id = parentTaskId
+          parentTask.planInfoId = vueThis.planInfoId
+          copyTasks.tasks.push(parentTask)
+          ganttObject.eachTask(function (tasks) {
+            let task = Object.assign({}, tasks)
+            task.parent = parentTaskId
+            task.planInfoId = vueThis.planInfoId
+            task.id = get32NumberUid()
+            copyTasks.tasks.push(task)
+          }, id)
+        })
+      })
+      let managerStatus = ''
+      
+      if (vueThis.thirdMenuParam.MANAGESTATUS) {
+        if (vueThis.thirdMenuParam.MANAGESTATUS === '6609' || vueThis.thirdMenuParam.EXECUTESTATE === '1000') {
+          managerStatus = '6401'
+        } if (vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
+          managerStatus = '6403'
+        } else {
+          managerStatus = '6402'
+        }
+      } else {
+        managerStatus = '6401'
+      }
+      copyTasks.tasks.forEach((el, index) => {
+          el.managerStatus = managerStatus
+          el.dutyDeptName = ''
+          el.realName = ''
+          el.owner_id = '',
+          el.start_date = moment(el.start_date).format('YYYY-MM-DD'),
+          el.end_date = moment(el.end_date).format('YYYY-MM-DD'),
+          el.indexNo = null
+        })
+        createTaskByDatas(ganttObject, copyTasks.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
+        vueThis.taskCount = ganttObject.getTaskCount()
+        api['planGanttManager.pasteTasks']({
         pasteData: copyTasks,
         parentId: parentTask.id,
         selectTaskId: selId,
@@ -3638,28 +3815,32 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
             if (res.resources) {
               ganttObject.$resourcesStore.parse(res.resources)
             }
-            let managerStatus = ''
-            if (vueThis.thirdMenuParam.MANAGESTATUS === '6609' || vueThis.thirdMenuParam.EXECUTESTATE === '1000') {
-              managerStatus = '6401'
-            } if (vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
-              managerStatus = '6403'
-            } else {
-              managerStatus = '6402'
-            }
-            if (res.tasks) {
-              res.tasks.forEach(el => {
-                el.managerStatus = managerStatus
-                el.dutyDeptName = ''
-                el.realName = ''
-                el.owner_id = ''
-              })
-              createTaskByDatas(ganttObject, res.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
-              vueThis.taskCount = ganttObject.getTaskCount()
-            }
+            // let managerStatus = ''
+            // if (vueThis.thirdMenuParam.MANAGESTATUS === '6609' || vueThis.thirdMenuParam.EXECUTESTATE === '1000') {
+            //   managerStatus = '6401'
+            // } if (vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
+            //   managerStatus = '6403'
+            // } else {
+            //   managerStatus = '6402'
+            // }
+            // if (res.tasks) {
+            //   res.tasks.forEach(el => {
+            //     el.managerStatus = managerStatus
+            //     el.dutyDeptName = ''
+            //     el.realName = ''
+            //     el.owner_id = ''
+            //   })
+            //   createTaskByDatas(ganttObject, res.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
+            //   vueThis.taskCount = ganttObject.getTaskCount()
+            // }
           } else {
             vueThis.$message({
               message: '复制的任务已被删除，请重新复制任务后粘贴!',
               type: 'error'
+            })
+            ganttObject.undo()
+            copyTasks.tasks.forEach(item => {
+              ganttObject.deleteTask(item.id)
             })
           }
         })
@@ -3668,6 +3849,10 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
           vueThis.$message({
             message: '复制的任务已被删除，请重新复制任务后粘贴!',
             type: 'error'
+          })
+          ganttObject.undo()
+          copyTasks.tasks.forEach(item => {
+            ganttObject.deleteTask(item.id)
           })
         })
     }
