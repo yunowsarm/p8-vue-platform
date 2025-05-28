@@ -3056,7 +3056,16 @@ function addTask (num, pos, ganttName) {
     //   vueThis.$message.warning('低密人员不允许创建高密数据')
     //   return
     // }
-    
+      let managerStatus = ''
+      if (vueThis.thirdMenuParam.EXECUTESTATE === '1000' || vueThis.thirdMenuParam.MANAGESTATUS === '6609') {
+        managerStatus = '6401'
+      } 
+      if (vueThis.thirdMenuParam.EXECUTESTATE === '1070' || vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
+        managerStatus = '6403'
+      }
+      if (vueThis.thirdMenuParam.EXECUTESTATE === '1010') {
+         managerStatus = '6402'
+      }
     switch (pos) {
       case 'Before':
         // 同级上方插入
@@ -3077,7 +3086,7 @@ function addTask (num, pos, ganttName) {
               autoScheduling: schedulingType || task.autoScheduling,
               createPage: vueThis.createPage,
               completeForm: ' ',
-              managerStatus: parentTask.managerStatus,
+              managerStatus: managerStatus,
               start_date: moment(parentTask.start_date).format('YYYY-MM-DD'),
               end_date: moment(parentTask.end_date).format('YYYY-MM-DD'),
               forecastBeginDate: parentTask.forecastBeginDate,
@@ -3142,7 +3151,7 @@ function addTask (num, pos, ganttName) {
               autoScheduling: schedulingType || task.autoScheduling,
               createPage: vueThis.createPage,
               completeForm: ' ',
-              managerStatus: parentTask.managerStatus,
+              managerStatus: managerStatus,
               start_date: moment(parentTask.start_date).format('YYYY-MM-DD'),
               end_date: moment(parentTask.end_date).format('YYYY-MM-DD'),
               forecastBeginDate: parentTask.forecastBeginDate,
@@ -3209,7 +3218,7 @@ function addTask (num, pos, ganttName) {
               autoScheduling: schedulingType || task.autoScheduling,
               createPage: vueThis.createPage,
               completeForm: ' ',
-              managerStatus: parentTask.managerStatus,
+              managerStatus: managerStatus,
               start_date: moment(parentTask.start_date).format('YYYY-MM-DD'),
               end_date: moment(parentTask.end_date).format('YYYY-MM-DD'),
               forecastBeginDate: parentTask.forecastBeginDate,
@@ -3774,17 +3783,14 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
         })
       })
       let managerStatus = ''
-      
-      if (vueThis.thirdMenuParam.MANAGESTATUS) {
-        if (vueThis.thirdMenuParam.MANAGESTATUS === '6609' || vueThis.thirdMenuParam.EXECUTESTATE === '1000') {
-          managerStatus = '6401'
-        } if (vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
-          managerStatus = '6403'
-        } else {
-          managerStatus = '6402'
-        }
-      } else {
+      if (vueThis.thirdMenuParam.EXECUTESTATE === '1000' || vueThis.thirdMenuParam.MANAGESTATUS === '6609') {
         managerStatus = '6401'
+      } 
+      if (vueThis.thirdMenuParam.EXECUTESTATE === '1070' || vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
+        managerStatus = '6403'
+      }
+      if (vueThis.thirdMenuParam.EXECUTESTATE === '1010') {
+         managerStatus = '6402'
       }
       copyTasks.tasks.forEach((el, index) => {
           el.managerStatus = managerStatus
