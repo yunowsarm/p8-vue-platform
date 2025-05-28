@@ -1076,46 +1076,30 @@ export default {
     customValidate (params) {
       const that = this
       if (that.selectedTasks && that.selectedTasks.length > 0) {
-        if (params.start_date) {
-          myGantt.batchUpdate(function () {
-            that.selectedTasks.forEach((task) => {
+
+        myGantt.batchUpdate(function () {
+          that.selectedTasks.forEach((task) => {
+            if (params.start_date) {
               myGantt.getTask(task.id).start_date = params.start_date
-              myGantt.updateTask(task.id)
-            })
-          })
-        }
-        if (params.end_date) {
-          myGantt.batchUpdate(function () {
-            that.selectedTasks.forEach((task) => {
+            }
+            if (params.end_date) {
               const date = new Date(params.end_date)
               date.setDate(date.getDate() + 1)
               myGantt.getTask(task.id).end_date = date
-              myGantt.updateTask(task.id)
-            })
-          })
-        }
-        // if (params.duration) {
-        //   myGantt.batchUpdate(function () {
-        //     that.selectedTasks.forEach((task) => {
-        //       myGantt.getTask(task.id).duration = Number(params.duration)
-        //       myGantt.updateTask(task.id)
-        //     })
-        //   })
-        // }
-        if (params.autoScheduling) {
-          myGantt.batchUpdate(function () {
-            that.selectedTasks.forEach((task) => {
+            }
+            if (params.autoScheduling) {
               myGantt.getTask(task.id).autoScheduling = params.autoScheduling
-              myGantt.updateTask(task.id)
-            })
+            }
+            myGantt.updateTask(task.id)
           })
-        }
+        })
       }
       this.closeRowEdit()
     },
     closeRowEdit () {
       this.ganttRowEditVisible = false
       myGantt.config.readonly = false
+      this.formData = {}
     },
     // 打开AI生成
     openAutoGeneration () {

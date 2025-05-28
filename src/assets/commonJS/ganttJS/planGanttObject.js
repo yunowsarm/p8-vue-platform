@@ -377,6 +377,8 @@ export function planGantt(ganttName, vueThis) {
                 })
               break
               case 'start_date':
+              case 'end_date':
+              case 'autoScheduling':
               // 如果是编辑锁定状态,直接返回false
               if (vueThis.planEditLock === '1') {
                 return false
@@ -401,28 +403,7 @@ export function planGantt(ganttName, vueThis) {
                     fieldConfig: {
                       size: 'small'
                     }
-                  }
-                ]
-                vueThis.ganttRowEditVisible = true
-              }
-              break
-              case 'end_date':
-              // 如果是编辑锁定状态,直接返回false
-              if (vueThis.planEditLock === '1') {
-                return false
-              }
-              // 检查是否允许编辑责任人
-              const rowEndEdit = (vueThis.createPage === 'decompose') ?
-                (vueThis.planEditLock === '0' || batchOwnerCheck(ganttName)) :
-                ((vueThis.planEditLock === '0' && ganttObject.getGlobalTaskIndex(id) !== 0) ||
-                  (task.managerStatus !== '6404' && batchOwnerCheck(ganttName)))
-
-              if (!rowEndEdit) {
-                return false
-              }
-              if (ganttObject.getSelectedTasks().length > 1) {
-                ganttObject.config.readonly = true
-                vueThis.rowEditDataSource = [
+                  },
                   {
                     type: 'datetime', // 控件类型
                     labelText: '计划完成时间', // 控件显示的文本
@@ -431,58 +412,7 @@ export function planGantt(ganttName, vueThis) {
                     fieldConfig: {
                       size: 'small'
                     }
-                  }
-                ]
-                vueThis.ganttRowEditVisible = true
-              }
-              break
-              // case 'duration':
-              // // 如果是编辑锁定状态,直接返回false
-              // if (vueThis.planEditLock === '1') {
-              //   return false
-              // }
-              // // 检查是否允许编辑责任人
-              // const rowEdit = (vueThis.createPage === 'decompose') ?
-              //   (vueThis.planEditLock === '0' || batchOwnerCheck(ganttName)) :
-              //   ((vueThis.planEditLock === '0' && ganttObject.getGlobalTaskIndex(id) !== 0) ||
-              //     (task.managerStatus !== '6404' && batchOwnerCheck(ganttName)))
-
-              // if (!rowEdit) {
-              //   return false
-              // }
-              // if (ganttObject.getSelectedTasks().length > 1) {
-              //   ganttObject.config.readonly = true
-              //   vueThis.rowEditDataSource = [
-              //     {
-              //       type: 'text', // 控件类型
-              //       labelText: '工期', // 控件显示的文本
-              //       placeholder: '请输入工期',
-              //       fieldName: 'duration',
-              //       fieldConfig: {
-              //         size: 'small'
-              //       }
-              //     }
-              //   ]
-              //   vueThis.ganttRowEditVisible = true
-              // }
-              // break
-              case 'autoScheduling':
-              // 如果是编辑锁定状态,直接返回false
-              if (vueThis.planEditLock === '1') {
-                return false
-              }
-              // 检查是否允许编辑责任人
-              const rowAutoEdit = (vueThis.createPage === 'decompose') ?
-                (vueThis.planEditLock === '0' || batchOwnerCheck(ganttName)) :
-                ((vueThis.planEditLock === '0' && ganttObject.getGlobalTaskIndex(id) !== 0) ||
-                  (task.managerStatus !== '6404' && batchOwnerCheck(ganttName)))
-
-              if (!rowAutoEdit) {
-                return false
-              }
-              if (ganttObject.getSelectedTasks().length > 1) {
-                ganttObject.config.readonly = true
-                vueThis.rowEditDataSource = [
+                  },
                   {
                     type: 'select', // 控件类型
                     labelText: '排程', // 控件显示的文本
@@ -500,7 +430,6 @@ export function planGantt(ganttName, vueThis) {
                 vueThis.ganttRowEditVisible = true
               }
               break
-            // ... existing code ...
           }
         }
       }
