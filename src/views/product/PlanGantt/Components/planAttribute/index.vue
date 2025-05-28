@@ -186,14 +186,16 @@ export default {
     },
     ...mapGetters(['vueThis'])
   },
-  created () {
-    window.addEventListener('resize', this.updateWindowWidth)
-  },
+  // created () {
+  //   console.log('2222')
+  //
+  // },
   beforeDestroy () {
     window.removeEventListener('resize', this.updateWindowWidth)
   },
   watch: {},
-  mounted: function () {
+  created: function () {
+    window.addEventListener('resize', this.updateWindowWidth)
     if (this.vueThis.planEditLock === '0') {
       this.isChangeGantt = true
       this.isView = true

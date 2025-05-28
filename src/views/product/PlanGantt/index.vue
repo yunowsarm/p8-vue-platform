@@ -464,7 +464,7 @@ export default {
         this.pageType = 'history'
       }
       if (this.firstEntry && switchType == 'switch' && this.defaultPercent == 100) return
-      this.debouncedSetRenderKey(); // 使用防抖函数
+      // this.debouncedSetRenderKey(); // 使用防抖函数
       this.detailVisible = true
       this.$bus.$emit('ganttDetail', true)
       this.ganttName = ganttName
