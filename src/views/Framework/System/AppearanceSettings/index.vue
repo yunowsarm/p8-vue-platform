@@ -651,8 +651,8 @@ export default {
       this.changeThemeType(this.formData.systemThemeType)
     },
     themeClose () {
-      this.changeThemeType(this.formData.systemThemeType)
       this.isVisibleThemeDrawer = false
+      this.changeThemeType(this.formData.systemThemeType)
     },
     changeThemeType (key) {
       let themeArray = []
@@ -736,7 +736,7 @@ export default {
       that.formData = Object.assign({}, that.modify)
     },
     saveSuccess (themeArray) {
-      this.formData.systemThemeArray = JSON.stringify(themeArray)
+      this.themeArray = themeArray
       this.customValidate(JSON.parse(JSON.stringify(this.formData)))
     },
     customValidate (params) {
@@ -748,7 +748,7 @@ export default {
         },
         {
           key: 'systemThemeArray', // 系统主题
-          value: params.systemThemeArray ? params.systemThemeArray : JSON.stringify(this.defaultTheme)
+          value: JSON.stringify(this.themeArray) ? JSON.stringify(this.themeArray) : JSON.stringify(this.defaultTheme)
         },
         {
           key: 'toolbarWritingDisplay', // 工具栏启用文字
