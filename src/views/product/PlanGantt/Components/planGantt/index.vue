@@ -551,7 +551,7 @@ import { version } from 'vue'
 import store from '@/plugins/store'
 import api from '@/plugins/api'
 import { debounce } from 'lodash';
-
+import moment from 'moment'
 const Mycolumns = [
   {
     title: '',
@@ -919,7 +919,41 @@ export default {
       taskFinish: null,
       ganttRowEditVisible: false,
       formData: {},
-      rowEditDataSource: []
+      rowEditDataSource: [
+        {
+          type: 'datetime', // 控件类型
+          labelText: '计划开始时间', // 控件显示的文本
+          placeholder: '请选择计划开始时间',
+          fieldName: 'start_date',
+          fieldConfig: {
+            size: 'small',
+            'picker-options': this.startDateOptions()
+          }
+        },
+        {
+          type: 'datetime', // 控件类型
+          labelText: '计划完成时间', // 控件显示的文本
+          placeholder: '请选择计划完成时间',
+          fieldName: 'end_date',
+          fieldConfig: {
+            size: 'small',
+            'picker-options': this.endDateOptions(),
+          }
+        },
+        {
+          type: 'select', // 控件类型
+          labelText: '排程', // 控件显示的文本
+          placeholder: '请选择排程',
+          fieldName: 'autoScheduling',
+          options: [
+            { label: '自动', value: '1' },
+            { label: '手动', value: '2' }
+          ],
+          fieldConfig: {
+            size: 'small'
+          }
+        }
+      ]
     }
   },
   watch: {
@@ -1077,6 +1111,27 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
+    startDateOptions () {
+      return {
+        disabledDate: (time) => {
+          let timeSpace = ''
+          if (this.formData.end_date) {
+            timeSpace = moment(time).format('YYYY-MM-DD') < moment(this.formData.end_date).format('YYYY-MM-DD')
+          } else {
+            timeSpace = moment(time).format('YYYY-MM-DD') < moment(this.thirdMenuParam.PLANBEGINDATE).format('YYYY-MM-DD')
+          }
+          return timeSpace
+        }
+      }
+    },
+    endDateOptions () {
+      return {
+        disabledDate: (time) => {
+          let timeSpace = moment(time).format('YYYY-MM-DD') < moment(this.formData.start_date).format('YYYY-MM-DD')
+          return timeSpace
+        }
+      }
+    },
     saved (res) {
     },
     customValidate (params) {

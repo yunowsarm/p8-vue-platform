@@ -329,15 +329,17 @@ export function planGantt(ganttName, vueThis) {
       }
 
       if (parentNode) {
-        const fieldName = parentNode.getAttribute('data-column-name') || parentNode.getAttribute('gantt_tree_content') ||e.target.getAttribute('data-column-name')
+        const fieldName = parentNode.getAttribute('data-column-name') || e.target.getAttribute('data-column-name')
         // 根节点不可编辑
         // 任务属性readonly为true的任务不可编辑
         if (fieldName) {
           // 标识加锁任务不可编辑
-          const monitors = task.monitorPoints || ''
-          if (monitors && monitors.length > 0) {
-            if (monitorLockUnLockCheckTwo(fieldName, monitors.split(','), vueThis, ganttObject)) {
-              return false
+          if(ganttObject.getSelectedTasks().length === 1){
+            const monitors = task.monitorPoints || ''
+            if (monitors && monitors.length > 0) {
+              if (monitorLockUnLockCheckTwo(fieldName, monitors.split(','), vueThis, ganttObject)) {
+                return false
+              }
             }
           }
           switch (fieldName) {
@@ -393,39 +395,6 @@ export function planGantt(ganttName, vueThis) {
               }
               if (ganttObject.getSelectedTasks().length > 1) {
                 ganttObject.config.readonly = true
-                vueThis.rowEditDataSource = [
-                  {
-                    type: 'datetime', // 控件类型
-                    labelText: '计划开始时间', // 控件显示的文本
-                    placeholder: '请选择计划开始时间',
-                    fieldName: 'start_date',
-                    fieldConfig: {
-                      size: 'small'
-                    }
-                  },
-                  {
-                    type: 'datetime', // 控件类型
-                    labelText: '计划完成时间', // 控件显示的文本
-                    placeholder: '请选择计划完成时间',
-                    fieldName: 'end_date',
-                    fieldConfig: {
-                      size: 'small'
-                    }
-                  },
-                  {
-                    type: 'select', // 控件类型
-                    labelText: '排程', // 控件显示的文本
-                    placeholder: '请选择排程',
-                    fieldName: 'autoScheduling',
-                    options: [
-                      { label: '自动', value: '1' },
-                      { label: '手动', value: '2' }
-                    ],
-                    fieldConfig: {
-                      size: 'small'
-                    }
-                  }
-                ]
                 vueThis.ganttRowEditVisible = true
               }
               break
