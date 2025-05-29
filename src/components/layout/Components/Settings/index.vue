@@ -44,6 +44,9 @@
           </div>
         </div>
         <div style="height: 35px;">
+          <el-button style="position: absolute;right: 60px;margin-top: 10px;margin-bottom: 10px;"
+                     type="primary"
+                     @click='reSetSettingHandle'>重置</el-button>
           <el-button style="position: absolute;right: 0;margin-top: 10px;margin-bottom: 10px;"
                      type="primary"
                      @click='saveTheme'>保存</el-button>
@@ -115,6 +118,28 @@ export default {
     window.removeEventListener('resize', this.resizeChart)
   },
   methods: {
+    reSetSettingHandle () {
+      const _this = this
+      const url = '/framework/user/setting/del'
+      const { devBaseUrl, prodBaseUrl, isDevMode } = this.api_default_config;
+      const urlPrefix = isDevMode ? `${devBaseUrl}` : `${prodBaseUrl}`;
+      if (this.$store.state.user.userSettingAll.theme) {
+        let tableSetting = this.$store.state.user.userSettingAll.theme[0]
+        let params = [{
+          id: '',
+          key: tableSetting.key
+        }]
+        /** 使用$ajax请求: 是因为 this.$api请求会将请求参数处理成对象, 而保存设置接口请求参数为数组 */
+        _this.$ajax.post(urlPrefix + url, params, { headers: { 'Authorization': this.$store.getters.token } }).then(res => {
+          if (res) {
+            _this.$message.success("操作成功")
+          }
+        })
+          .catch((err) => {
+            // console.error("user.setting.save--err", err);
+          });
+      }
+    },
     settingStyle (value) {
       let that = this
       if (value) {
@@ -154,7 +179,7 @@ export default {
       let params = [
         {
           id: id ? id : null,
-          key: 'theme-setting',
+          key: 'theme-setting' + new Date().getTime(),
           description: "theme-setting",
           type: "theme",
           value: JSON.stringify(themeObg)
