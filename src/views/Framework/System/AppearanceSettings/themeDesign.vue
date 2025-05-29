@@ -470,8 +470,6 @@ export default {
           value: this.imgNum
         }
       ]
-      console.log(this.themeArray, 'this.formData.systemThemeType');
-      debugger
       if (this.formData.systemThemeType === 'systemThemeType1') {
         this.themeArray[0] = themeArray
       }

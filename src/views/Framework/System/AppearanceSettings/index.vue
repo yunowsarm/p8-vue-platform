@@ -649,6 +649,11 @@ export default {
       this.themeArray = this.defaultTheme
       this.saveSuccess(this.themeArray)
       this.changeThemeType(this.formData.systemThemeType)
+      let colors = {
+        imgType: 1,
+        imgNum: 0.7
+      }
+      this.$store.dispatch('setSystemColor', colors)
     },
     themeClose () {
       this.isVisibleThemeDrawer = false

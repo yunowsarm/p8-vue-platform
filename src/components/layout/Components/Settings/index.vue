@@ -94,14 +94,14 @@ export default {
         { label: '平铺', value: 2 },
         { label: '拉伸', value: 3 },
       ],
-      imagePath: this.$store.getters.systemColor.imageUrl || '',
+      imagePath: this.imageUrl || this.imageId,
       imgType: this.$store.getters.systemColor.imgType || 1, // 默认选中第一个按钮
       imgNum: this.$store.getters.systemColor.imgNum || 0.7,
       api_default_config: API_DEFAULT_CONFIG,
     }
   },
   computed: {
-    ...mapGetters(['systemTheme']),
+    ...mapGetters(['systemTheme', 'imageId', 'imageUrl']),
     menuList () {
       return this.$store.getters.asyncRouter
     },
@@ -123,6 +123,13 @@ export default {
       const url = '/framework/user/setting/del'
       const { devBaseUrl, prodBaseUrl, isDevMode } = this.api_default_config;
       const urlPrefix = isDevMode ? `${devBaseUrl}` : `${prodBaseUrl}`;
+      _this.imgType = 1
+      _this.imgNum = 0.7
+      let colors = {
+        imgType: 1,
+        imgNum: 0.7
+      }
+      _this.$store.dispatch('setSystemColor', colors)
       if (this.$store.state.user.userSettingAll.theme) {
         let tableSetting = this.$store.state.user.userSettingAll.theme[0]
         let params = [{
@@ -166,7 +173,7 @@ export default {
     },
     saveTheme () {
       let themeObg = this.$store.getters.systemColor
-      themeObg.imageUrl = this.$store.getters.imageId
+      themeObg.imageUrl = this.imageUrl || this.imageId
       themeObg.theme = this.$store.getters.theme
       const url = '/framework/user/setting/save'
       const { devBaseUrl, prodBaseUrl, isDevMode } = this.api_default_config;
