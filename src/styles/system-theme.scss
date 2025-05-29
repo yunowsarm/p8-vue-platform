@@ -154,3 +154,6 @@
 .vxe-table--render-default .vxe-body--row.row--hover>.vxe-body--column {
   background-color: $table-row-hover-bg-color !important;
 }
+.vxe-table--render-default .vxe-body--row.row--current>.vxe-body--column {
+  background-color: $table-row-hover-bg-color !important;
+}
