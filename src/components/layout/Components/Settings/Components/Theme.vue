@@ -48,6 +48,7 @@ export default {
   },
   methods: {
     changeSystemTheme (theme) {
+      this.pickerColor = theme
       this.$store.dispatch('setTheme', { theme, handler: true })
     }
   },
