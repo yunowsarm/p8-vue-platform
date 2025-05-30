@@ -19,7 +19,7 @@
           <el-radio-group v-model="formData.systemThemeType"
                           @input="changeThemeType"
                           size="small">
-            <el-radio-button label="systemThemeType1">主题1</el-radio-button>
+            <el-radio-button label="systemThemeType1">主题1 </el-radio-button>
             <el-radio-button label="systemThemeType2">主题2</el-radio-button>
             <el-radio-button label="systemThemeType3">主题3</el-radio-button>
           </el-radio-group>
@@ -319,7 +319,7 @@ export default {
           type: 'blank',
           slotName: 'systemThemeType',
           colLayout: 'doubleCol',
-          tip:`
+          tip: `
             <div>切换不同的主题风格，调整界面整体外观。</div>
           `
         },
@@ -333,7 +333,8 @@ export default {
           `,
           uploadConfig: {
             limit: 1,
-            accept: '.jpeg,.jpg,.gif,.png'
+            accept: '.jpeg,.jpg,.gif,.png',
+            isImage: true
             // drag: true// 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
           },
           listType: 'picture-card' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
@@ -351,7 +352,7 @@ export default {
           fieldName: 'toolbarWritingDisplay',
           slotName: 'toolbarWritingDisplay',
           colLayout: 'singleCol',
-          tip:`
+          tip: `
             <div>选择工具栏项的显示方式，可以是仅图标、仅文字或图标+文字的组合。</div>
           `
         },
@@ -360,7 +361,7 @@ export default {
           type: 'switch',
           fieldName: 'toolbarCompactLayout',
           colLayout: 'singleCol',
-          tip:`
+          tip: `
             <div>启用后，按钮之间的间距会减少，使布局更加紧凑和简洁。</div>
           `
         }
@@ -376,7 +377,7 @@ export default {
           type: 'blank',
           slotName: 'pageViewType',
           colLayout: 'singleCol',
-          tip:`
+          tip: `
             <div>页码分页：通过点击不同的页码来查看不同的页面内容。</div>
             <div>滚动分页：通过持续滚动页面来加载更多内容，在页面底部自动加载新的数据。</div>
           `
@@ -386,7 +387,7 @@ export default {
           type: 'switch',
           fieldName: 'componentEnableDrawer',
           colLayout: 'singleCol',
-          tip:`
+          tip: `
             <div>新建、修改、查看等操作的交互形式。</div>
             <div>1.默认模式：内容以对话框形式弹出。</div>
             <div>2.抽屉形式：从页面边缘滑出显示内容。</div>
@@ -402,7 +403,7 @@ export default {
         {
           labelText: '图标展示方式',
           type: 'radio',
-          tip:`
+          tip: `
             <div>选择显示方式为图标或文字。</div>
           `,
           options: [
@@ -423,10 +424,10 @@ export default {
           labelText: '行高(单位：px)',
           fieldName: 'tableRowHeight',
           placeholder: '请输入行高',
-          colLayout: 'doubleCol',
-          tip:`
+          tip: `
             <div>设置表格中每行的高度，单位为像素，可以通过加减按钮调整行高。</div>
           `,
+          colLayout: 'doubleCol',
           colSpan: 6,
           min: 35,
           max: 300
@@ -474,7 +475,7 @@ export default {
           },
           {
             key: 'bgTheme',// 侧边栏背景颜色
-            value: 'rgba(52, 145, 250, 0.6)'
+            value: '#3491FA'
           }
         ],
         [
@@ -512,7 +513,7 @@ export default {
           },
           {
             key: 'bgTheme',// 侧边栏背景颜色
-            value: 'rgba(199, 0, 25, 0.6)'
+            value: '#c70019'
           }
         ]
         ,
@@ -551,7 +552,7 @@ export default {
           },
           {
             key: 'bgTheme',// 侧边栏背景颜色
-            value: 'rgba(39, 46, 59, 0.6)'
+            value: '#272E3B'
           }
         ]
       ],
@@ -693,7 +694,7 @@ export default {
       // console.log('click')
     },
     getSettingData () {
-      let that = this
+      const that = this
       that.$api['SystemSettings.getAppearanceSettings']()
         .then(function (res) {
           res.settings.forEach(function (item) {
@@ -702,7 +703,12 @@ export default {
               that.themeArray = JSON.parse(item.value)
             }
           })
-          that.getFileUrl(res.uploadFileJson) // 获取图片流
+          if (res.uploadFileJson) {
+            that.getFileUrl(res.uploadFileJson) // 获取图片流
+          } else {
+            that.modify.uploadFileJson = []
+            that.formData = Object.assign({}, that.modify)
+          }
         })
         .catch(function (error) {
           // console.log('error' + error)
@@ -715,7 +721,7 @@ export default {
         uploadFileJson.map((item) => {
           if (item.id) {
             that.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
-              item.urlTemp = window.URL.createObjectURL(new Blob([res.data]))
+              item.filePath = window.URL.createObjectURL(new Blob([res.data]))
             })
           }
         })
@@ -730,11 +736,8 @@ export default {
       that.formData = Object.assign({}, that.modify)
     },
     saveSuccess (themeArray) {
-      console.log(themeArray, '33333333333333333333333333');
-
       this.formData.systemThemeArray = JSON.stringify(themeArray)
       this.customValidate(this.formData)
-      this.isVisibleThemeDrawer = false
     },
     customValidate (params) {
       let saveParams = {}
@@ -776,6 +779,7 @@ export default {
       saveParams.uploadFileJson = uploadFileJson
       if (saveParams.uploadFileJson[0]) {
         saveParams.uploadFileJson[0].confidentialite = '9001'
+        saveParams.uploadFileJson[0].filePath = saveParams.uploadFileJson[0].customItem1
       }
 
       saveParams.settings = settings
