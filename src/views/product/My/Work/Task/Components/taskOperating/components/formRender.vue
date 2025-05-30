@@ -1,18 +1,42 @@
 <template>
   <div style="position: relative;">
+    <div style="font-size: 14px;color: #606266;padding-top: 20px;height: 55px;"
+         v-if="pageType == 'edit' && PREDECESSORSNUMBER">
+      <span style="text-align: right;float: left; width: 90px;line-height: 55px;">关联前置任务</span>
+      <el-input style="position: relative;width: calc(100% - 110px);line-height: 55px; padding-left: 10px;"
+                v-model="formName"
+                placeholder="弹出选择"
+                @click.native="selectBeforeTaskFun"></el-input>
+    </div>
     <form-render ref="form"
-                style="padding-top: 20px;"
-                :dataViewId="formViewId"
-                :record="{ desformCode: formCode }"
-                :key="timeKey"
-                :pageType="pageType"
-                @save-success="(res) => formCloseRefresh(res)"></form-render>
-    <div v-if="pageType == 'view' && !formViewId" class="single-mask" ></div>
+                 :style="{'padding-top': !(pageType == 'edit' && PREDECESSORSNUMBER) ? '20px' : '0px'}"
+                 :dataViewId="formViewId"
+                 :record="{ desformCode: formCode }"
+                 :key="timeKey"
+                 :pageType="pageType"
+                 @save-success="(res) => formCloseRefresh(res)"></form-render>
+    <div v-if="pageType == 'view' && !formViewId"
+         class="single-mask"></div>
+    <el-drawer v-if="drawerVisible"
+               :title="drawerTitle"
+               size="80%"
+               :append-to-body="true"
+               :destroy-on-close="true"
+               :wrapper-closable="false"
+               :visible.sync="drawerVisible"
+               @close="onDrawerClose">
+      <selectBeforeTask :record="{ desformCode: item.formCode }"
+                        :dataViewId="formViewId"
+                        :pageType="pageType"
+                        :taskId="taskId"
+                        @handleOk="handleOk"></selectBeforeTask>
+    </el-drawer>
   </div>
 </template>
 
 <script>
 import FormRender from '@/views/Framework/ComponentsMananger/Form/Components/Components/edit.vue'
+import selectBeforeTask from './selectBeforeTask'
 export default {
   name: 'formRender1',
   props: {
@@ -25,6 +49,14 @@ export default {
     approveType: {
       type: Boolean,
       default: false
+    },
+    taskId: {
+      type: String,
+      default: ''
+    },
+    PREDECESSORSNUMBER: {
+      type: Number,
+      default: 0
     }
   },
 
@@ -34,10 +66,14 @@ export default {
       formCode: '',
       pageType: '',
       timeKey: new Date().getTime(),
+      drawerTitle: '',
+      drawerVisible: false,
+      formName: ''
     }
   },
   components: {
-    FormRender
+    FormRender,
+    selectBeforeTask
   },
   created () {
     this.getInfo()
@@ -45,7 +81,7 @@ export default {
 
   methods: {
     formCloseRefresh (res) {
-      this.$api['taskManager.taskFormDataSave']({ actOrTaskFormId: this.item.name, formDataId: res }).then(res => {
+      this.$api['taskManager.taskFormDataSave']({ actOrTaskFormId: this.item.name, formDataId: res, frontFormIds: this.frontFormIds, frontDataIds: this.frontDataIds }).then(res => {
         this.getInfo()
       })
     },
@@ -55,7 +91,7 @@ export default {
       }
       return false
     },
-    async getInfo() {
+    async getInfo () {
       if (this.item.name) {
         if (this.approveType) {
           this.pageType = 'edit'
@@ -67,7 +103,24 @@ export default {
           this.formViewId = res[0] ? res[0].ID : ''
           this.timeKey = new Date().getTime()
         })
+        if (this.formViewId) {
+          this.$api['taskManager.queryFrontInfo']({ actOrTaskFormId: this.item.name, formDataId: this.formViewId }).then(res => {
+            this.formName = res[0].formName
+          })
+        }
       }
+    },
+    selectBeforeTaskFun () {
+      this.drawerVisible = true
+    },
+    onDrawerClose () {
+      this.drawerVisible = false
+    },
+    handleOk (rows, treeNode) {
+      this.frontFormIds = [treeNode.data.id]
+      this.frontDataIds = rows.map(el => el.ID)
+      this.formName = treeNode.label
+      this.onDrawerClose()
     }
   },
 }
