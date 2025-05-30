@@ -249,33 +249,33 @@ export default {
     let that = this
     const ganttObject = GanttObject.getGanttObject(this.ganttName)
     const task = ganttObject.getTask(this.taskId)
-    this.$api['planGanttManager.getGanttExtendAttr']({ taskId: task.id }).then((res) => {
-      if (res && res.taskExtendList) {
-        this.extraIds = {}
-        res.taskExtendList.forEach(async (item) => {
-          if (item.fieldType == 'datepicker') {
-            let date = moment(item.fieldValue)
-            this.$set(this.formData, 'kz' + item.customItem1, date.isValid() ? moment(date).format('YYYY-MM-DD') : '')
-          } else {
-            if (item.fieldType == 'selectSingle' || item.fieldType == 'treeSingle' || item.fieldType == 'selectMultiple' || item.fieldType == 'treeMultiple') {
-              let list = await that.$api['formGenerator.getSelectionDataDic']({ selectCode: item.selectCode })
-              let taskList = item.fieldValue ? item.fieldValue.split(',') : []
-              let result = []
-              list.forEach(el => {
-                taskList.forEach(item => {
-                  if (el.value == item) {
-                    result.push(el.label)
-                  }
-                })
-              })
-              this.$set(this.formData, 'kz' + item.customItem1, result.join(','))
-            } else {
-              // this.$set(this.formData, 'kz' + item.customItem1, item.fieldValue)
-            }
-          }
-        })
-      }
-    })
+    // this.$api['planGanttManager.getGanttExtendAttr']({ taskId: task.id }).then((res) => {
+    //   if (res && res.taskExtendList) {
+    //     this.extraIds = {}
+    //     res.taskExtendList.forEach(async (item) => {
+    //       if (item.fieldType == 'datepicker') {
+    //         let date = moment(item.fieldValue)
+    //         this.$set(this.formData, 'kz' + item.customItem1, date.isValid() ? moment(date).format('YYYY-MM-DD') : '')
+    //       } else {
+    //         if (item.fieldType == 'selectSingle' || item.fieldType == 'treeSingle' || item.fieldType == 'selectMultiple' || item.fieldType == 'treeMultiple') {
+    //           let list = await that.$api['formGenerator.getSelectionDataDic']({ selectCode: item.selectCode })
+    //           let taskList = item.fieldValue ? item.fieldValue.split(',') : []
+    //           let result = []
+    //           list.forEach(el => {
+    //             taskList.forEach(item => {
+    //               if (el.value == item) {
+    //                 result.push(el.label)
+    //               }
+    //             })
+    //           })
+    //           this.$set(this.formData, 'kz' + item.customItem1, result.join(','))
+    //         } else {
+    //           // this.$set(this.formData, 'kz' + item.customItem1, item.fieldValue)
+    //         }
+    //       }
+    //     })
+    //   }
+    // })
     // this.formData.secretGradeDisplay = task.secretGradeDisplay
     // this.$api['planGanttManager.classifiedFiltering']({ secretGrade: task.secretGrade }).then((res) => {
     //   this.falg = res

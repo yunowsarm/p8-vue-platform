@@ -61,6 +61,7 @@ export default {
       }
     ]
     return {
+      tableHeight: document.documentElement.clientHeight * 0.5 - 80 + 'px',
       tableApi: 'taskManager.progressFeedbackHistory',
       queryParam: { taskId: this.getPlanInfo().TASKID },
       columns
