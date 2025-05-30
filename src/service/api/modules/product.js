@@ -401,6 +401,20 @@ export const repositoryApi = {
       path: '/product/my/work/task/taskFormDataSave',
       mockPath: '/product/my/work/task/taskFormDataSave',
       desc: '我的任务->但数据业务表单->保存方法'
+    },
+    {
+      name: 'pre_taskFormInfo',
+      method: 'POST',
+      path: '/product/my/work/task/pre_taskFormInfo',
+      mockPath: '/product/my/work/task/pre_taskFormInfo',
+      desc: '我的任务->查询前置任务所关联的业务表表单'
+    },
+    {
+      name: 'queryFrontInfo',
+      method: 'POST',
+      path: '/product/my/work/task/queryFrontInfo',
+      mockPath: '/product/my/work/task/queryFrontInfo',
+      desc: '我的任务->查询已关联的业务表表单'
     }
   ],
   ProjectInitiationManagement: [

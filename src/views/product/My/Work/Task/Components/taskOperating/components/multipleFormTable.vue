@@ -32,10 +32,33 @@
                  :wrapper-closable="false"
                  :visible.sync="drawerVisible"
                  @close="onDrawerClose">
+        <div style="font-size: 14px;color: #606266;height: 55px;"
+             v-if="drawerContentView == 'edit' && PREDECESSORSNUMBER">
+          <span style="text-align: right;float: left; width: 90px;line-height: 55px;">关联前置任务</span>
+          <el-input style="position: relative;width: calc(100% - 110px);line-height: 55px; padding-left: 10px;"
+                    v-model="formName"
+                    placeholder="弹出选择"
+                    @click.native="selectBeforeTaskFun"></el-input>
+        </div>
         <form-render :record="{ desformCode: item.formCode }"
+                     :style="{'height': !(drawerContentView == 'edit' && PREDECESSORSNUMBER) ? 'calc(100% - 55px)' : '100%'}"
                      :dataViewId="formViewId"
                      :pageType="drawerContentView"
                      @save-success="formCloseRefresh"></form-render>
+      </el-drawer>
+      <el-drawer v-if="drawerVisibleNew"
+                 :title="drawerTitleNew"
+                 size="80%"
+                 :append-to-body="true"
+                 :destroy-on-close="true"
+                 :wrapper-closable="false"
+                 :visible.sync="drawerVisibleNew"
+                 @close="onDrawerCloseNew">
+        <selectBeforeTask :record="{ desformCode: item.formCode }"
+                          :dataViewId="formViewId"
+                          :pageType="drawerContentView"
+                          :taskId="taskId"
+                          @handleOk="handleOk"></selectBeforeTask>
       </el-drawer>
     </template>
   </list-layout>
@@ -44,6 +67,7 @@
 <script>
 import { P8ListLayout as ListLayout, P8Button as CommonButton, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
 import FormRender from '@/views/Framework/ComponentsMananger/Form/Components/Components/edit.vue'
+import selectBeforeTask from './selectBeforeTask'
 export default {
   name: 'DepartmentIndex',
   props: {
@@ -56,6 +80,14 @@ export default {
     approveType: {
       type: Boolean,
       default: false
+    },
+    taskId: {
+      type: String,
+      default: ''
+    },
+    PREDECESSORSNUMBER: {
+      type: Number,
+      default: 0
     }
   },
   data () {
@@ -68,7 +100,10 @@ export default {
       editTableData: [],
       formViewId: '',
       dynamicData: {},
-      headerVisible: true
+      headerVisible: true,
+      drawerTitleNew: '',
+      drawerVisibleNew: false,
+      formName: ''
     }
   },
   async created () {
@@ -145,7 +180,7 @@ export default {
                   formatter: function (row) {
                     if (item.__config__.tagIcon == 'time') {
                       if (row[item.__config__.formFields]) {
-                        return row[item.__config__.formFields].split(' ')[1].slice(0,-3) || ''
+                        return row[item.__config__.formFields].split(' ')[1].slice(0, -3) || ''
                       } else {
                         return ''
                       }
@@ -196,6 +231,9 @@ export default {
       this.drawerVisible = true
       this.drawerContentView = 'edit'
       this.formViewId = record.ID
+      this.$api['taskManager.queryFrontInfo']({ actOrTaskFormId: this.item.name, formDataId: this.formViewId }).then(res => {
+        this.formName = res[0].formName
+      })
     },
     viewForm (record) {
       // 查看
@@ -203,6 +241,9 @@ export default {
       this.drawerVisible = true
       this.drawerContentView = 'view'
       this.formViewId = record.ID
+      this.$api['taskManager.queryFrontInfo']({ actOrTaskFormId: this.item.name, formDataId: this.formViewId }).then(res => {
+        this.formName = res[0].formName
+      })
     },
     removeForm (record) {
       // 删除
@@ -237,7 +278,7 @@ export default {
       this.drawerTitle = ''
     },
     formCloseRefresh (res) {
-      this.$api['taskManager.taskFormDataSave']({ actOrTaskFormId: this.item.name, formDataId: res }).then(res => {
+      this.$api['taskManager.taskFormDataSave']({ actOrTaskFormId: this.item.name, formDataId: res, frontFormIds: this.frontFormIds, frontDataIds: this.frontDataIds }).then(res => {
         this.drawerVisible = false
         this.searchList()
       })
@@ -269,6 +310,18 @@ export default {
       } else {
         return false
       }
+    },
+    selectBeforeTaskFun () {
+      this.drawerVisibleNew = true
+    },
+    onDrawerCloseNew () {
+      this.drawerVisibleNew = false
+    },
+    handleOk (rows, treeNode) {
+      this.frontFormIds = [treeNode.data.id]
+      this.frontDataIds = rows.map(el => el.ID)
+      this.formName = treeNode.label
+      this.onDrawerCloseNew()
     }
   },
   components: {
@@ -276,7 +329,8 @@ export default {
     CommonButton,
     CommonTable,
     CommonDrawer,
-    FormRender
+    FormRender,
+    selectBeforeTask
   }
 }
 </script>
