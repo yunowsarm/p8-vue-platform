@@ -65,6 +65,7 @@
           <!-- <div class="table-con"> -->
           <common-table ref="table"
                         v-if="visible"
+                        :key="dateTime"
                         :tableSetting="false"
                         :style="{height: customHeight + 'px'}"
                         :columns="columns"
@@ -177,6 +178,7 @@ export default {
     ]
     return {
       visible: false,
+      dateTime: '',
       normalLayout: {
         west: {
           xs: 8, sm: 8, md: 8, lg: 8, xl: 8
@@ -231,6 +233,7 @@ export default {
     this._initTableSize()
     window.addEventListener('resize', this._initTableSize)
     // this.$refs.tree.$refs.tree
+    this.$refs.table.searchData()
   },
   computed: {
     treeConfig () {
@@ -293,7 +296,7 @@ export default {
     },
     onSelect (node) {
       this.queryParam.deptId = node.id
-      this.$refs.table.searchData()
+      this.dateTime = new Date().getTime()
     },
     handleTableSelectionChange (value) {
       this.tableSelectValue = value
