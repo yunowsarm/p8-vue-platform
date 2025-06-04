@@ -17,7 +17,7 @@
              @click="toggleMaximize(item.name)"></i>
         </div>
         <!-- 进度反馈 -->
-        <template v-if="item.name === 'progess' && tabsActiveName == item.name">
+        <template v-if="item.name === 'progess'">
           <progess v-if="progessType !== 'progessTable'"
                    ref="progess"
                    :taskFinish="taskFinish"
@@ -37,7 +37,7 @@
           <work-coordination ref="workCoordination"></work-coordination>
         </template>
         <!-- 未完成原因 -->
-        <template v-if="item.name === 'unfinishedCause' && tabsActiveName == item.name">
+        <template v-if="item.name === 'unfinishedCause'">
           <span slot="label">{{item.label}}</span>
           <deviate ref="deviate"
                    :taskFinish="taskFinish"
@@ -49,6 +49,7 @@
                       :ref="item.name"
                       :item="item"
                       :approveType="progessType !==  'progessTable'"
+                      :isApprove="approveType"
                       :taskId="getPlanInfo().TASKID"
                       :PREDECESSORSNUMBER="getPlanInfo().PREDECESSORSNUMBER"
                       :key="item.name + tabsName"></FormRender>
@@ -58,6 +59,7 @@
                                :taskId="getPlanInfo().TASKID"
                                :PREDECESSORSNUMBER="getPlanInfo().PREDECESSORSNUMBER"
                                :approveType="progessType !== 'progessTable'"
+                               :isApprove="approveType"
                                :item="item"></multiple-form-table>
         </template>
       </div>
