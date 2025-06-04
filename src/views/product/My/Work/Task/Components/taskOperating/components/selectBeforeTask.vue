@@ -15,7 +15,18 @@
                     :no-api-table-data="editTableData"
                     :isRadioSelect="true"
                     @select="select"
+                    @row-dblclick="rowDblclick"
                     :pagination="false">
+        <template :slot="item"
+                  v-for="item in slotList"
+                  slot-scope="{ scope }">
+          <i :class="scope.row[item]"
+             :key="item"></i>
+        </template>
+        <template #operation="{ scope }">
+          <el-button type="text"
+                     @click.stop="viewForm(scope.row)">查看</el-button>
+        </template>
       </common-table>
       <el-row style="float: right;margin-top: 10px;">
         <el-button @click="handleCancel">取 消</el-button>
@@ -23,10 +34,25 @@
                    @click="handleOk">确 定</el-button>
       </el-row>
     </template>
+    <template #drawer-panel>
+      <el-drawer v-if="drawerVisible"
+                 :title="drawerTitle"
+                 size="50%"
+                 :append-to-body="true"
+                 :destroy-on-close="true"
+                 :wrapper-closable="false"
+                 :visible.sync="drawerVisible"
+                 @close="drawerVisible = false">
+        <form-render :record="{ desformCode: formCode }"
+                     :dataViewId="formViewId"
+                     :pageType="drawerContentView"></form-render>
+      </el-drawer>
+    </template>
   </normal-layout>
 </template>
 
 <script>
+import FormRender from '@/views/Framework/ComponentsMananger/Form/Components/Components/edit.vue'
 import { P8ListLayout as ListLayout, P8Table as CommonTable, P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree } from 'p8-components-ui'
 export default {
   name: 'selectBeforeTask',
@@ -42,6 +68,10 @@ export default {
       default: false
     },
     taskId: {
+      type: String,
+      default: ''
+    },
+    selectFormDataId: {
       type: String,
       default: ''
     }
@@ -60,7 +90,9 @@ export default {
       treeApi: 'taskManager.pre_taskFormInfo',
       treeParam: { taskId: '' },
       selectRows: [],
-      treeNode: ''
+      treeNode: '',
+      formCode: '',
+      slotList: []
     }
   },
   async created () {
@@ -79,11 +111,12 @@ export default {
       }
       await this.$api['formGenerator.designerDetails']({ desformCode: formCode }).then(async (res) => {
         let fields = []
-        if (res.designJson) {
+        if (res && res.designJson) {
           fields = JSON.parse(res.designJson).fields
         }
         if (fields && fields.length) {
           let columns = []
+          this.slotList = []
           columns.push({
             type: 'selection',
             width: 50,
@@ -95,7 +128,7 @@ export default {
           // 使用 Promise.all 等待所有 forEach 内部的异步操作完成
           await Promise.all(
             fields.map(async (item) => {
-              if (!item.__config__.hidden) {
+              if (!item.__config__.hidden && item.__config__.tagIcon !== 'table') {
                 if (dynamicTagList.includes(item.__config__.tag)) {
                   columns.push({
                     title: item.__config__.label,
@@ -160,7 +193,29 @@ export default {
                       }
                     }
                   })
-                } else {
+                }
+                else if (item.__config__.tagIcon == 'p8-upload') {
+                  columns.push({
+                    title: item.__config__.label,
+                    minWidth: 120,
+                    dataIndex: item.__config__.formFields,
+                    align: 'center',
+                    formatter: function (row) {
+                      //   return ''
+                    }
+                  });
+                }
+                else if (item.__config__.tagIcon == 'p8-icon-select') {
+                  columns.push({
+                    title: item.__config__.label,
+                    minWidth: 120,
+                    dataIndex: item.__config__.formFields,
+                    scopedSlots: { customRender: 'custom' },
+                    align: 'center',
+                  });
+                  this.slotList.push(item.__config__.formFields)
+                }
+                else {
                   columns.push({
                     title: item.__config__.label,
                     minWidth: 120,
@@ -181,6 +236,13 @@ export default {
             })
           }
           this.columns = columns
+        }
+      })
+      this.$nextTick(() => {
+        let record = this.editTableData.find(el => el.ID == this.selectFormDataId)
+        this.$refs.table.clearSelection()
+        if (record && this.$refs.table) {
+          this.$refs.table.toggleRowSelection(record, true)
         }
       })
     },
@@ -211,6 +273,7 @@ export default {
     },
     onSelect (node) {
       this.treeNode = node
+      this.editTableData = []
       this.init(node.data.id, node.data.formId, node.data.formCode)
     },
     select (selections) {
@@ -221,13 +284,28 @@ export default {
     },
     handleCancel () {
       this.$emit('handleCancel')
-    }
+    },
+    rowDblclick (row, column, event) {
+      this.$emit('handleOk', [row], this.treeNode)
+    },
+    viewForm (record) {
+      // 查看
+      this.formCode = this.treeNode.formCode
+      this.drawerTitle = '查看'
+      this.drawerVisible = true
+      this.drawerContentView = 'view'
+      this.formViewId = record.ID
+      // this.$api['taskManager.queryFrontInfo']({ actOrTaskFormId: this.item.name, formDataId: this.formViewId }).then(res => {
+      //   this.formName = res[0].formName
+      // })
+    },
   },
   components: {
     ListLayout,
     CommonTable,
     NormalLayout,
-    CommonTree
+    CommonTree,
+    FormRender
   }
 }
 </script>
