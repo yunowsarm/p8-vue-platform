@@ -8,8 +8,18 @@
                 placeholder="弹出选择"
                 @click.native="selectBeforeTaskFun"></el-input>
     </div>
+    <div style="font-size: 14px;color: #606266;padding-top: 20px;height: 45px;"
+         v-else-if="(pageType == 'view' && PREDECESSORSNUMBER) || isApprove">
+      <span style="text-align: right;float: left; width: 100px; line-height: 32px;">关联前置任务</span>
+      <span style="width: calc(100% - 120px); line-height: 55px; margin-left: 10px; background: #f5f8fb; height: 30px; line-height: 32px; display: inline-block;">
+        {{formName}}
+        <el-button type="text"
+                   style="margin-left: 10px;"
+                   @click="viewForm">查看</el-button>
+      </span>
+    </div>
     <form-render ref="form"
-                 :style="{'padding-top': !(pageType == 'edit' && PREDECESSORSNUMBER) ? '20px' : '0px'}"
+                 :style="{'padding-top': !(PREDECESSORSNUMBER || isApprove) ? '20px' : '0px'}"
                  :dataViewId="formViewId"
                  :record="{ desformCode: formCode }"
                  :key="timeKey"
@@ -29,7 +39,21 @@
                         :dataViewId="formViewId"
                         :pageType="pageType"
                         :taskId="taskId"
+                        :selectFormDataId="selectFormDataId"
                         @handleOk="handleOk"></selectBeforeTask>
+    </el-drawer>
+    <el-drawer v-if="viewDrawerVisible"
+               title="查看前置任务"
+               size="50%"
+               :append-to-body="true"
+               :destroy-on-close="true"
+               :wrapper-closable="false"
+               :visible.sync="viewDrawerVisible"
+               @close="onDrawerClose">
+      <form-render ref="form"
+                   :dataViewId="selectFormDataId"
+                   :record="{ desformCode: selectFormCode }"
+                   pageType="view"></form-render>
     </el-drawer>
   </div>
 </template>
@@ -57,7 +81,11 @@ export default {
     PREDECESSORSNUMBER: {
       type: Number,
       default: 0
-    }
+    },
+    isApprove: {
+      type: Boolean,
+      default: false
+    },
   },
 
   data () {
@@ -68,7 +96,10 @@ export default {
       timeKey: new Date().getTime(),
       drawerTitle: '',
       drawerVisible: false,
-      formName: ''
+      viewDrawerVisible: false,
+      formName: '',
+      selectFormDataId: '',
+      selectFormCode: ''
     }
   },
   components: {
@@ -105,7 +136,11 @@ export default {
         })
         if (this.formViewId) {
           this.$api['taskManager.queryFrontInfo']({ actOrTaskFormId: this.item.name, formDataId: this.formViewId }).then(res => {
-            this.formName = res[0].formName
+            if (res && res[0]) {
+              this.formName = res[0].formName ? res[0].formName : ''
+              this.selectFormDataId = res[0].formDataId ? res[0].formDataId : ''
+              this.selectFormCode = res[0].formCode ? res[0].formCode : ''
+            }
           })
         }
       }
@@ -115,12 +150,16 @@ export default {
     },
     onDrawerClose () {
       this.drawerVisible = false
+      this.viewDrawerVisible = false
     },
     handleOk (rows, treeNode) {
       this.frontFormIds = [treeNode.data.id]
       this.frontDataIds = rows.map(el => el.ID)
       this.formName = treeNode.label
       this.onDrawerClose()
+    },
+    viewForm () {
+      this.viewDrawerVisible = true
     }
   },
 }

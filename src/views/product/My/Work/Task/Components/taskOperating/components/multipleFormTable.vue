@@ -13,13 +13,25 @@
                     class="customTable"
                     :no-api-table-data="editTableData"
                     :pagination="false">
+        <template :slot="item"
+                  v-for="item in slotList"
+                  slot-scope="{ scope }">
+          <i :class="scope.row[item]"
+             :key="item"></i>
+        </template>
         <template #operation="{ scope }">
-          <el-button type="text"
-                     @click.stop="updateForm(scope.row)">修改</el-button>
-          <el-button type="text"
-                     @click.stop="viewForm(scope.row)">查看</el-button>
-          <el-button type="text"
-                     @click.stop="removeForm(scope.row)">删除</el-button>
+          <template v-if="headerVisible">
+            <el-button type="text"
+                       @click.stop="updateForm(scope.row)">修改</el-button>
+            <el-button type="text"
+                       @click.stop="viewForm(scope.row)">查看</el-button>
+            <el-button type="text"
+                       @click.stop="removeForm(scope.row)">删除</el-button>
+          </template>
+          <template v-else>
+            <el-button type="text"
+                       @click.stop="viewForm(scope.row)">查看</el-button>
+          </template>
         </template>
       </common-table>
     </template>
@@ -31,6 +43,7 @@
                  :destroy-on-close="true"
                  :wrapper-closable="false"
                  :visible.sync="drawerVisible"
+                 :modal="false"
                  @close="onDrawerClose">
         <div style="font-size: 14px;color: #606266;height: 55px;"
              v-if="drawerContentView == 'edit' && PREDECESSORSNUMBER">
@@ -40,8 +53,18 @@
                     placeholder="弹出选择"
                     @click.native="selectBeforeTaskFun"></el-input>
         </div>
+        <div style="font-size: 14px;color: #606266;padding-top: 20px;height: 45px;"
+             v-else-if="(drawerContentView == 'view' && PREDECESSORSNUMBER) || isApprove">
+          <span style="text-align: right;float: left; width: 100px; line-height: 32px;">关联前置任务</span>
+          <span style="width: calc(100% - 120px); line-height: 55px; margin-left: 10px; background: #f5f8fb; height: 30px; line-height: 32px; display: inline-block;">
+            {{formName}}
+            <el-button type="text"
+                       style="margin-left: 10px;"
+                       @click="viewFormNew">查看</el-button>
+          </span>
+        </div>
         <form-render :record="{ desformCode: item.formCode }"
-                     :style="{'height': !(drawerContentView == 'edit' && PREDECESSORSNUMBER) ? 'calc(100% - 55px)' : '100%'}"
+                     :style="{'height': (PREDECESSORSNUMBER || isApprove) ? 'calc(100% - 55px)' : '100%'}"
                      :dataViewId="formViewId"
                      :pageType="drawerContentView"
                      @save-success="formCloseRefresh"></form-render>
@@ -58,7 +81,22 @@
                           :dataViewId="formViewId"
                           :pageType="drawerContentView"
                           :taskId="taskId"
+                          :selectFormDataId="selectFormDataId"
                           @handleOk="handleOk"></selectBeforeTask>
+      </el-drawer>
+      <el-drawer v-if="viewDrawerVisible"
+                 title="查看前置任务"
+                 :visible.sync="viewDrawerVisible"
+                 size="50%"
+                 :append-to-body="true"
+                 :destroy-on-close="true"
+                 :wrapper-closable="false"
+                 style="z-index:99999;"
+                 :before-close="viewDrawerClose">
+        <form-render ref="form"
+                     :dataViewId="selectFormDataId"
+                     :record="{ desformCode: selectFormCode }"
+                     pageType="view"></form-render>
       </el-drawer>
     </template>
   </list-layout>
@@ -88,7 +126,11 @@ export default {
     PREDECESSORSNUMBER: {
       type: Number,
       default: 0
-    }
+    },
+    isApprove: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     return {
@@ -103,7 +145,11 @@ export default {
       headerVisible: true,
       drawerTitleNew: '',
       drawerVisibleNew: false,
-      formName: ''
+      formName: '',
+      viewDrawerVisible: false,
+      selectFormDataId: '',
+      selectFormCode: '',
+      slotList: []
     }
   },
   async created () {
@@ -118,16 +164,17 @@ export default {
       }
       await this.$api['formGenerator.designerDetails']({ desformCode: this.item.formCode }).then(async res => {
         let fields = [];
-        if (res.designJson) {
+        if (res && res.designJson) {
           fields = JSON.parse(res.designJson).fields;
         }
         if (fields && fields.length) {
           let columns = [];
+          this.slotList = []
           // 等待 getDynamicData 方法执行完成
           await this.getDynamicData(fields, dynamicTagList);
           // 使用 Promise.all 等待所有 forEach 内部的异步操作完成
           await Promise.all(fields.map(async item => {
-            if (!item.__config__.hidden) {
+            if (!item.__config__.hidden && item.__config__.tagIcon !== 'table') {
               if (dynamicTagList.includes(item.__config__.tag)) {
                 columns.push({
                   title: item.__config__.label,
@@ -194,6 +241,27 @@ export default {
                   }
                 });
               }
+              else if (item.__config__.tagIcon == 'p8-upload') {
+                columns.push({
+                  title: item.__config__.label,
+                  minWidth: 120,
+                  dataIndex: item.__config__.formFields,
+                  align: 'center',
+                  formatter: function (row) {
+                    //   return ''
+                  }
+                });
+              }
+              else if (item.__config__.tagIcon == 'p8-icon-select') {
+                columns.push({
+                  title: item.__config__.label,
+                  minWidth: 120,
+                  dataIndex: item.__config__.formFields,
+                  scopedSlots: { customRender: 'custom' },
+                  align: 'center',
+                });
+                this.slotList.push(item.__config__.formFields)
+              }
               else {
                 columns.push({
                   title: item.__config__.label,
@@ -209,6 +277,14 @@ export default {
               title: '操作',
               fixed: 'right',
               width: 160,
+              dataIndex: 'operation',
+              scopedSlots: { customRender: 'custom' },
+            });
+          } else {
+            columns.push({
+              title: '操作',
+              fixed: 'right',
+              width: 80,
               dataIndex: 'operation',
               scopedSlots: { customRender: 'custom' },
             });
@@ -232,7 +308,11 @@ export default {
       this.drawerContentView = 'edit'
       this.formViewId = record.ID
       this.$api['taskManager.queryFrontInfo']({ actOrTaskFormId: this.item.name, formDataId: this.formViewId }).then(res => {
-        this.formName = res[0].formName
+        if (res && res[0]) {
+          this.formName = res[0].formName
+          this.selectFormDataId = res[0].formDataId ? res[0].formDataId : ''
+          this.selectFormCode = res[0].formCode ? res[0].formCode : ''
+        }
       })
     },
     viewForm (record) {
@@ -242,7 +322,11 @@ export default {
       this.drawerContentView = 'view'
       this.formViewId = record.ID
       this.$api['taskManager.queryFrontInfo']({ actOrTaskFormId: this.item.name, formDataId: this.formViewId }).then(res => {
-        this.formName = res[0].formName
+        if (res && res[0]) {
+          this.formName = res[0].formName
+          this.selectFormDataId = res[0].formDataId ? res[0].formDataId : ''
+          this.selectFormCode = res[0].formCode ? res[0].formCode : ''
+        }
       })
     },
     removeForm (record) {
@@ -316,12 +400,19 @@ export default {
     },
     onDrawerCloseNew () {
       this.drawerVisibleNew = false
+      this.viewDrawerVisible = false
     },
     handleOk (rows, treeNode) {
       this.frontFormIds = [treeNode.data.id]
       this.frontDataIds = rows.map(el => el.ID)
       this.formName = treeNode.label
       this.onDrawerCloseNew()
+    },
+    viewFormNew () {
+      this.viewDrawerVisible = true
+    },
+    viewDrawerClose () {
+      this.viewDrawerVisible = false
     }
   },
   components: {
