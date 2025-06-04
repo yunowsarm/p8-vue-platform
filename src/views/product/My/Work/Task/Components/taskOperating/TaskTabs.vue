@@ -49,10 +49,14 @@
                       :ref="item.name"
                       :item="item"
                       :approveType="progessType !==  'progessTable'"
+                      :taskId="getPlanInfo().TASKID"
+                      :PREDECESSORSNUMBER="getPlanInfo().PREDECESSORSNUMBER"
                       :key="item.name + tabsName"></FormRender>
           <multiple-form-table v-else-if="item.editMode === '多数据'"
                                :ref="item.name"
                                :key="item.name + tabsName"
+                               :taskId="getPlanInfo().TASKID"
+                               :PREDECESSORSNUMBER="getPlanInfo().PREDECESSORSNUMBER"
                                :approveType="progessType !== 'progessTable'"
                                :item="item"></multiple-form-table>
         </template>
