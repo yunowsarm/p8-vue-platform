@@ -201,8 +201,12 @@ export default {
                     dataIndex: item.__config__.formFields,
                     align: 'center',
                     formatter: function (row) {
-                      let filesName = row.UPLOADFILES.map(el => el.fileName)
-                      return filesName && filesName.length ? filesName.join(',') : ''
+                      if (row.UPLOADFILES && row.UPLOADFILES.length) {
+                        let filesName = row.UPLOADFILES.map(el => el.fileName)
+                        return filesName && filesName.length ? filesName.join(',') : ''
+                      } else {
+                        return ''
+                      }
                     }
                   });
                 }
@@ -235,6 +239,14 @@ export default {
               dataIndex: 'operation',
               scopedSlots: { customRender: 'custom' }
             })
+          } else {
+            columns.push({
+              title: '操作',
+              fixed: 'right',
+              width: 80,
+              dataIndex: 'operation',
+              scopedSlots: { customRender: 'custom' },
+            });
           }
           this.columns = columns
         }

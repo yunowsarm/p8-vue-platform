@@ -248,8 +248,12 @@ export default {
                   dataIndex: item.__config__.formFields,
                   align: 'center',
                   formatter: function (row) {
-                    let filesName = row.UPLOADFILES.map(el => el.fileName)
-                    return filesName && filesName.length ? filesName.join(',') : ''
+                    if (row.UPLOADFILES && row.UPLOADFILES.length) {
+                      let filesName = row.UPLOADFILES.map(el => el.fileName)
+                      return filesName && filesName.length ? filesName.join(',') : ''
+                    } else {
+                      return ''
+                    }
                   }
                 });
               }
