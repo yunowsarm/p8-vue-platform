@@ -410,9 +410,12 @@ export default {
       this.viewDrawerVisible = false
     },
     handleOk (rows, treeNode) {
-      this.frontFormIds = [treeNode.data.id]
-      this.frontDataIds = rows.map(el => el.ID)
-      this.formName = treeNode.label
+      if (rows && rows.length) {
+        this.frontFormIds = [treeNode.data.id]
+        this.frontDataIds = rows.map(el => el.ID)
+        this.formName = treeNode.label
+        this.selectFormDataId = this.frontDataIds[0]
+      }
       this.onDrawerCloseNew()
     },
     viewFormNew () {
