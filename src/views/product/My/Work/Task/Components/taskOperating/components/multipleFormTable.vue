@@ -280,7 +280,8 @@ export default {
           if (this.headerVisible) {
             columns.push({
               title: '操作',
-              fixed: 'right',
+              // fixed: 'right',
+              align: 'center',
               width: 160,
               dataIndex: 'operation',
               scopedSlots: { customRender: 'custom' },
@@ -288,7 +289,8 @@ export default {
           } else {
             columns.push({
               title: '操作',
-              fixed: 'right',
+              // fixed: 'right',
+              align: 'center',
               width: 80,
               dataIndex: 'operation',
               scopedSlots: { customRender: 'custom' },
