@@ -228,6 +228,11 @@ export default {
           }
         })
       }
+      let codes = saveData.map(el => el.formCode)
+      if (new Set(codes).size !== codes.length) {
+        this.$message.warning('业务表单不可重复')
+        return
+      }
       if (flag) {
         let api = 'OutputFlow.proceessFormSave'
         let params = { activityInfoId: this.activityInfoId, processFormRequests: saveData }
