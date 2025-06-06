@@ -43,7 +43,7 @@
                 </li>
                 <li :class="[{ active: index === rolesSelectedIndex }, { 'fixed-role': item.roleType === 'fixed' }]"
                     v-for="(item, index) in rolesData.filter(role => !role.isDeleted)"
-                    :key="item.id"
+                    :key="item.name"
                     @click="rolesHandle(item, index)">
                   <el-tooltip v-if="item.roleType === 'fixed'"
                               :content="item.klTeamsRoleClassifyName"
@@ -817,6 +817,7 @@ export default {
       })
     },
     rolesHandle (item, index) {
+      console.log(item,'当前角色')
       // 角色列表点击切换
       if (this.rolesSelectedIndex === index) {
         return
@@ -859,7 +860,6 @@ export default {
       // 添加角色
       let defaultObj = {
         // id: (-this.generalRoles.length + 1) + '',
-        id: this.rolesData.length + '',
         indexNo: 0,
         name: '角色名称' + count,
         klTeamRoleClassifyId: '',
@@ -916,9 +916,16 @@ export default {
         return
       }
 
-      // 添加删除标记，而不是直接删除
-      item.isDeleted = true
-
+      if(item.id){
+        // 添加删除标记，而不是直接删除
+        item.isDeleted = true
+      }else{
+        this.rolesData.splice(index,1)
+        const i = this.generalRoles.findIndex(role => role.name === item.name)
+        if(i > -1){
+          this.generalRoles.splice(i,1)
+        }
+      }
       // 强制更新视图
       // 更新视图
       this.$nextTick(() => {
@@ -931,7 +938,6 @@ export default {
             width: 140,
             align: 'center'
           })
-          this.tableData = tableData
           this.tableData = this.originalTableData
         } else {
           if (this.rolesSelectedIndex > index) {
