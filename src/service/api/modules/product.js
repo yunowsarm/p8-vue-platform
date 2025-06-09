@@ -389,11 +389,25 @@ export const repositoryApi = {
       desc: '我的任务->但数据业务表单->查询接口'
     },
     {
+      name: 'taskTemplateList',
+      method: 'POST',
+      path: '/product/my/work/task/taskTemplateList',
+      mockPath: '/product/my/work/task/taskTemplateList',
+      desc: '我的任务->数据业务表单->查询接口（模板表单）'
+    },
+    {
       name: 'removeFormData',
       method: 'POST',
       path: '/product/my/work/task/removeFormData',
       mockPath: '/product/my/work/task/removeFormData',
       desc: '我的任务->但数据业务表单->删除'
+    },
+    {
+      name: 'removeTemplateData',
+      method: 'POST',
+      path: '/product/my/work/task/removeTemplateData',
+      mockPath: '/product/my/work/task/removeTemplateData',
+      desc: '我的任务->但数据业务表单->删除（模板表单）'
     },
     {
       name: 'taskFormDataSave',
@@ -1745,6 +1759,13 @@ export const repositoryApi = {
       desc: '知识库管理->产出流程管理->业务表单->获取所有业务表单信息'
     },
     {
+      name: 'getTemplateList',
+      method: 'POST',
+      path: '/templateManage/getTemplateList',
+      mockPath: '/templateManage/getTemplateList',
+      desc: '知识库管理->产出流程管理->业务表单->获取模板列表'
+    },
+    {
       name: 'proceessFormInfo',
       method: 'POST',
       path: '/product/klActivity/proceessFormInfo',
@@ -2026,5 +2047,66 @@ export const repositoryApi = {
       mockPath: '/appoint/userPortrait/getUserGrade',
       desc: '资格要求管理'
     },
+  ],
+  // 项目检测
+  projectIndicators:[
+    {
+      name: 'saveProjectIndicator',
+      method: 'POST',
+      path: '/projectIndicators/saveProjectIndicator',
+      mockPath: '/projectIndicators/saveProjectIndicator',
+      desc: '生成计算结果'
+    },
+    {
+      name: 'exportWord',
+      method: 'POST',
+      path: '/projectIndicators/exportWord',
+      mockPath: '/projectIndicators/exportWord',
+      desc: '导出word'
+    },
+    {
+      name: 'savePlanFormulasResult',
+      method: 'POST',
+      path: '/projectIndicators/savePlanFormulasResult',
+      mockPath: '/projectIndicators/savePlanFormulasResult',
+      desc: '应用检测指引'
+    },
+  ],
+  templateManagement:[
+    {
+      name: 'getTemplateAllList',
+      method: 'POST',
+      path: 'templateManage/getTemplateAllList',
+      mockPath: 'templateManage/getTemplateAllList',
+      desc: '模板获取'
+    },
+    {
+      name: 'saveTemplate',
+      method: 'POST',
+      path: 'templateManage/saveTemplate',
+      mockPath: 'templateManage/saveTemplate',
+      desc: '模板保存'
+    },
+    {
+      name: 'publishTemplate',
+      method: 'POST',
+      path: '/templateManage/publishTemplate',
+      mockPath: '/templateManage/publishTemplate',
+      desc: '模板发布'
+    },
+    {
+      name: 'unPublishTemplate',
+      method: 'POST',
+      path: '/templateManage/unPublishTemplate',
+      mockPath: '/templateManage/unPublishTemplate',
+      desc: '模板取消发布'
+    },
+    {
+      name: 'delTemplate',
+      method: 'POST',
+      path: '/templateManage/delTemplate',
+      mockPath: '/templateManage/delTemplate',
+      desc: '删除模板'
+    }
   ]
 }
