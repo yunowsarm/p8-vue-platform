@@ -1,7 +1,7 @@
 <template>
   <div class="main">
-    <div class="login-wrapper">
-
+    <div class="login-wrapper"
+         ref="loginWrapper">
       <span class="login-version">
         <el-popover placement="top-start"
                     width="150"
@@ -288,6 +288,20 @@ export default {
               }
             }
           })
+          if (res.systemBackground && res.systemBackground[0]) {
+            const that = this
+            res.systemBackground.map((item) => {
+              if (item.id) {
+                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
+                  item.filePath = window.URL.createObjectURL(new Blob([res.data]))
+                  that.$nextTick(() => {
+                    that.$refs.loginWrapper.style.backgroundImage = `url(${item.filePath})`
+                    that.$refs.loginWrapper.style.backgroundRepeat = `no-repeat`
+                  })
+                })
+              }
+            })
+          }
           uploadFileJson = res.uploadFileJson
           if (uploadFileJson && uploadFileJson[0]) {
             const that = this
@@ -350,6 +364,20 @@ export default {
               }
             }
           })
+          if (res.systemBackground && res.systemBackground[0]) {
+            const that = this
+            res.systemBackground.map((item) => {
+              if (item.id) {
+                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
+                  item.filePath = window.URL.createObjectURL(new Blob([res.data]))
+                  that.$nextTick(() => {
+                    that.$refs.loginWrapper.style.backgroundImage = `url(${item.filePath})`
+                    that.$refs.loginWrapper.style.backgroundRepeat = `no-repeat`
+                  })
+                })
+              }
+            })
+          }
           const uploadFileJson = res.uploadFileJson
           if (uploadFileJson && uploadFileJson[0]) {
             const that = this
