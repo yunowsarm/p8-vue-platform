@@ -2,6 +2,7 @@
   <select-user v-if="visible"
                class="selectUser"
                :visible="visible"
+               :dialogHeight="600"
                @close-dialog="closeModal"
                :selectType="'1'"></select-user>
 </template>
