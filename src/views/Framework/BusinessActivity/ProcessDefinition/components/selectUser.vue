@@ -3,6 +3,7 @@
                  style="font-size: 10px;"
                  class="dialogSelectUser"
                  :visible="visible"
+                 :isDialogDrag="true"
                  :dialogConfig="dialogConfig"
                  :dialogHeight="dialogHeight"
                  @isfullscreen="handleFullscreen"
