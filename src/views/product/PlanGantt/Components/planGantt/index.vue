@@ -953,7 +953,8 @@ export default {
             size: 'small'
           }
         }
-      ]
+      ],
+      taskDatas: []
     }
   },
   watch: {
@@ -1116,9 +1117,12 @@ export default {
         disabledDate: (time) => {
           let timeSpace = ''
           if (this.formData.end_date) {
-            timeSpace = moment(time).format('YYYY-MM-DD') < moment(this.formData.end_date).format('YYYY-MM-DD')
+            timeSpace = moment(this.formData.end_date).format('YYYY-MM-DD') < moment(time).format('YYYY-MM-DD')
           } else {
-            timeSpace = moment(time).format('YYYY-MM-DD') < moment(this.thirdMenuParam.PLANBEGINDATE).format('YYYY-MM-DD')
+            if (this.taskDatas.length === 0) {
+              this.taskDatas = myGantt.serialize().data
+            }
+            timeSpace = moment(time).format('YYYY-MM-DD') < moment(this.taskDatas[0].start_date).format('YYYY-MM-DD')
           }
           return timeSpace
         }
@@ -1127,7 +1131,17 @@ export default {
     endDateOptions () {
       return {
         disabledDate: (time) => {
-          let timeSpace = moment(time).format('YYYY-MM-DD') < moment(this.formData.start_date).format('YYYY-MM-DD')
+          let timeSpace = ''
+          if (this.formData.start_date) {
+            timeSpace = moment(time).format('YYYY-MM-DD') < moment(this.formData.start_date).format('YYYY-MM-DD')
+          } else {
+            let latest = this.selectedTasks.reduce((max, item) => {
+              let maxDate = new Date(max.start_date)
+              let currentDate = new Date(item.start_date)
+              return currentDate > maxDate ? item : max
+            }, this.selectedTasks[0])
+            timeSpace = moment(time).format('YYYY-MM-DD') < moment(latest.start_date).format('YYYY-MM-DD')
+          }
           return timeSpace
         }
       }
