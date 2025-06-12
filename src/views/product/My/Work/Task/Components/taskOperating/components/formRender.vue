@@ -9,7 +9,7 @@
                 @click.native="selectBeforeTaskFun"></el-input>
     </div>
     <div style="font-size: 14px;color: #606266;padding-top: 20px;height: 45px;"
-         v-else-if="(pageType == 'view' && PREDECESSORSNUMBER) || isApprove">
+         v-else-if="(pageType == 'view' && PREDECESSORSNUMBER) || (isApprove && formName)">
       <span style="text-align: right;float: left; width: 100px; line-height: 32px;">关联前置任务</span>
       <span style="width: calc(100% - 120px); line-height: 55px; margin-left: 10px; background: #f5f8fb; height: 30px; line-height: 32px; display: inline-block;">
         {{formName}}
@@ -107,6 +107,8 @@ export default {
     selectBeforeTask
   },
   created () {
+    console.log(this.PREDECESSORSNUMBER, '====PREDECESSORSNUMBER');
+    console.log(this.isApprove, '====isApprove');
     this.getInfo()
   },
 
@@ -129,6 +131,8 @@ export default {
         } else {
           this.pageType = 'view'
         }
+        console.log(this.pageType, '====pageType');
+
         await this.$api['taskManager.taskFormdataList']({ actOrTaskFormId: this.item.name, formId: this.item.formId }).then(res => {
           this.formCode = this.item.formCode
           this.formViewId = res[0] ? res[0].ID : ''
