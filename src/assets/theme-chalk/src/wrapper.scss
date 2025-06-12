@@ -353,3 +353,10 @@
   .el-divider--vertical {
     margin: 0 5px !important;
   }
+  .flex-header .vxe-header--column .vxe-cell--wrapper {
+    height: 104px !important;
+  }
+  .flex-header .searchHeight {
+    position: absolute;
+    bottom: 3px;
+  }
