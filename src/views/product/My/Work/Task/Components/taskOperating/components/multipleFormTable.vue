@@ -54,7 +54,7 @@
                     @click.native="selectBeforeTaskFun"></el-input>
         </div>
         <div style="font-size: 14px;color: #606266;padding-top: 20px;height: 45px;"
-             v-else-if="(drawerContentView == 'view' && PREDECESSORSNUMBER) || isApprove">
+             v-else-if="(drawerContentView == 'view' && PREDECESSORSNUMBER) ||(isApprove && formName)">
           <span style="text-align: right;float: left; width: 100px; line-height: 32px;">关联前置任务</span>
           <span style="width: calc(100% - 120px); line-height: 55px; margin-left: 10px; background: #f5f8fb; height: 30px; line-height: 32px; display: inline-block;">
             {{formName}}
