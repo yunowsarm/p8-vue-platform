@@ -4,12 +4,15 @@ const defaultServiceAddr = window.location.origin
 // socket连接地址
 const socketPort = '8888'
 const defaultSocketServiceAddr = window.location.protocol + '//' + window.location.hostname + ':' + socketPort
+// const defaultSocketServiceAddr ='http://192.168.0.225:8888'
 // eslint-disable-next-line no-unused-vars
 const CONFIG = {
   // devBaseUrl: 'http://192.168.0.101:9099', // 第一次执行参考以上备注
   // devBaseUrl: 'http://192.168.0.146:9091', // 第一次执行参考以上备注
+  // devBaseUrl: defaultServiceAddr, // 第一次执行参考以上备注
   devBaseUrl: 'http://192.168.0.225:9992', // 第一次执行参考以上备注
-  // devBaseUrl: 'http://localhost:9090', // 第一次执行参考以上备注
+  // jmreportUrl:'http://192.168.0.142:9092/jmreport',
+  jmreportUrl: defaultServiceAddr + '/jmreport',
   prodBaseUrl: defaultServiceAddr // 自动获取浏览器地址栏地址作为后端访问地址，适应于前端程序部署在后端的Web服务器容器内的模式，如果分离部署模式，请修改为后台访问地址。
 }
 // eslint-disable-next-line no-unused-vars
