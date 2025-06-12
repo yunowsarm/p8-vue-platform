@@ -29,8 +29,8 @@
                        @handle-ok="handleOk">
           <template #dialog>
             <icon-selector @icon-select="iconSelect"
-                           :selected-name="modify.icon"
-                           :selectedColor="modify.color"
+                           :selected-name="select.icon || modify.icon"
+                           :selectedColor="select.color || modify.color"
                            :color-picker="true"></icon-selector>
           </template>
         </common-dialog>
@@ -60,6 +60,7 @@ export default {
   },
   data () {
     return {
+      select:{},
       saveApi: 'extLink.save',
       modify: { params: [], icon: '' },
       iconPopover: false,
@@ -210,6 +211,7 @@ export default {
     },
     handleClose () {
       this.iconPopover = false
+      this.select = {}
     },
     iconSelect (select) {
       this.select = select

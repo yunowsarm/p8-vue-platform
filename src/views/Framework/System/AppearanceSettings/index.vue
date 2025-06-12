@@ -217,25 +217,25 @@
                                 content="查看">
                       <el-button style="margin-right: 2px;"
                                  icon="p8 icon-chakan"
-                                 type="primary"></el-button>
+                                 type="text"></el-button>
                     </el-tooltip>
                     <el-tooltip placement="top"
                                 content="删除">
                       <el-button icon="p8 icon-shanchu"
-                                 type="primary"></el-button>
+                                 type="text"></el-button>
                     </el-tooltip>
                   </el-button-group>
                   <div v-else>
                     <el-tooltip placement="top"
                                 content="查看">
                       <el-button icon="p8 icon-chakan"
-                                 type="primary"></el-button>
+                                 type="text"></el-button>
                     </el-tooltip>
                     <el-divider direction="vertical"></el-divider>
                     <el-tooltip placement="top"
                                 content="删除">
                       <el-button icon="p8 icon-shanchu"
-                                 type="primary"></el-button>
+                                 type="text"></el-button>
                     </el-tooltip>
                   </div>
                 </div>
@@ -243,16 +243,16 @@
                   <el-button-group v-if="formData.toolbarCompactLayout">
                     <el-button style="margin-right: 2px;"
                                icon="p8 icon-chakan"
-                               type="primary">查看</el-button>
+                               type="text">查看</el-button>
                     <el-button icon="p8 icon-shanchu"
-                               type="primary">删除</el-button>
+                               type="text">删除</el-button>
                   </el-button-group>
                   <div v-else>
                     <el-button icon="p8 icon-chakan"
-                               type="primary">查看</el-button>
+                               type="text">查看</el-button>
                     <el-divider direction="vertical"></el-divider>
                     <el-button icon="p8 icon-shanchu"
-                               type="primary">删除</el-button>
+                               type="text">删除</el-button>
                   </div>
                 </div>
               </template>
@@ -656,8 +656,8 @@ export default {
       this.$store.dispatch('setSystemColor', colors)
     },
     themeClose () {
-      this.changeThemeType(this.formData.systemThemeType)
       this.isVisibleThemeDrawer = false
+      this.changeThemeType(this.formData.systemThemeType)
     },
     changeThemeType (key) {
       let themeArray = []
@@ -690,7 +690,7 @@ export default {
             break;
         }
       })
-      this.formData.systemThemeArray = JSON.stringify(this.themeArray)
+      this.formData.systemThemeArray = JSON.stringify(themeArray)
     },
     rendered () {
       this.getSettingData()
@@ -741,8 +741,8 @@ export default {
       that.formData = Object.assign({}, that.modify)
     },
     saveSuccess (themeArray) {
-      this.formData.systemThemeArray = JSON.stringify(themeArray)
-      this.customValidate(this.formData)
+      this.themeArray = themeArray
+      this.customValidate(JSON.parse(JSON.stringify(this.formData)))
     },
     customValidate (params) {
       let saveParams = {}
@@ -753,7 +753,7 @@ export default {
         },
         {
           key: 'systemThemeArray', // 系统主题
-          value: params.systemThemeArray
+          value: JSON.stringify(this.themeArray) ? JSON.stringify(this.themeArray) : JSON.stringify(this.defaultTheme)
         },
         {
           key: 'toolbarWritingDisplay', // 工具栏启用文字

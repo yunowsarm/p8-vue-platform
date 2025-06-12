@@ -47,6 +47,9 @@
 
   .el-button--small {
     padding: 5px 5px;
+    span {
+      font-size: 13px !important;
+    }
   }
 
   .el-dropdown-link {
@@ -310,4 +313,7 @@
 }
 .colSearch {
   width: calc(100% - 1px) !important;
+  }
+  .el-divider--vertical {
+    margin: 0 5px !important;
   }

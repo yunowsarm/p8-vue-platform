@@ -124,7 +124,14 @@ const project = {
                   reBuildBaseConfig[item.key] = item.value
                 })
               }
-              if (reBuildBaseConfig.systemThemeType && reBuildBaseConfig.systemThemeArray) {
+              if (store.state.user.userSettingAll.theme ?.length) {
+                let themeObj = store.state.user.userSettingAll.theme[0].value
+                store.dispatch('setImage', themeObj.imageUrl)
+                let theme = themeObj.theme
+                store.dispatch('setTheme', { theme, handler: true })
+                store.dispatch('setSystemColor', themeObj)
+              } else {
+                if (reBuildBaseConfig.systemThemeType && reBuildBaseConfig.systemThemeArray) {
                 let systemThemeArray = JSON.parse(reBuildBaseConfig.systemThemeArray)
                 let themeArray = []
                 if (reBuildBaseConfig.systemThemeType === 'systemThemeType1') {
@@ -137,6 +144,7 @@ const project = {
                   themeArray = systemThemeArray[2]
                 }
                 themeArray.forEach(item => {
+
                   switch (item.key) {
                     case 'imageUrl':
                       store.dispatch('setImage', item.url)
@@ -150,6 +158,7 @@ const project = {
                       break;
                   }
                 })
+              }
               }
               commit('SET_DICCONFIG', reBuildDicStatus)
               commit('SET_BASECONFIG', reBuildBaseConfig)

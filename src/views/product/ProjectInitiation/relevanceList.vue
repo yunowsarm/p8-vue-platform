@@ -33,15 +33,15 @@
           <el-button type="text"
                      @click="showDetail(scope.row)">查看详情</el-button>
         </div>
-        <el-tooltip v-if="toolbarWritingDisplay === '1'">
-          placement="top"
-          content="查看详情">
+        <el-tooltip v-if="toolbarWritingDisplay === '1'"
+                    placement="top"
+                    content="查看详情">
           <el-button icon="p8 icon-chakan"
                      @click="showDetail(scope.row)"
-                     type="primary"></el-button>
+                     type="text"></el-button>
         </el-tooltip>
         <div v-if="toolbarWritingDisplay === '2'">
-          <el-button type="primary"
+          <el-button type="text"
                      icon="p8 icon-chakan"
                      @click="showDetail(scope.row)">查看详情</el-button>
         </div>

@@ -5,9 +5,10 @@
        :style="{ width: sidebarState.width, 'background-image': 'url(' + imageUrl + ')', 'background-size': backgroundSize, 'background-repeat': backgroundRepeat, 'background-position': backgroundPosition }"
        v-show="!sidebarState.isHidden">
     <VuePerfectScrollbar :settings="scrollOptions"
-                         :style="{ 'background-color': theme }">
+                         :style="{ 'background-color': objColor.themeColor }">
       <div class="border-name">
-        <div class="sysName">
+        <div v-if="showLogo"
+             class="sysName">
           <div class="login-logo"
                ref="loginLogo"></div>
         </div>
@@ -18,7 +19,7 @@
       </div>
       <el-menu mode="vertical"
                class="vertical-menu"
-               :default-active="defaultActive"
+               :default-active="$route.path"
                :router="true"
                unique-opened
                text-color="#fff"
@@ -58,10 +59,10 @@
                         :key="item.name"
                         class="custom-submenu">
               <template slot="title">
-                <div  @mouseenter="handleMouseEnter(item)">
+                <div @mouseenter="handleMouseEnter(item)">
                   <i v-if="item.meta && item.meta.icon"
-                    class="p8"
-                    :class="item.meta.icon"></i>
+                     class="p8"
+                     :class="item.meta.icon"></i>
                   <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
                 </div>
               </template>
@@ -78,20 +79,21 @@
                       <el-tooltip placement="right"
                                   :disabled="child.meta.title.length < 8"
                                   :content="child.meta.title">
-                        <div id="item" 
-                             @mouseenter="handleMouseEnter(child)" 
+                        <div id="item"
+                             @mouseenter="handleMouseEnter(child)"
                              @mouseleave="onIconMouseLeave">
-                                <i v-if="child.meta && child.meta.icon"
-                                  class="p8"
-                                  :class="child.meta.icon"></i>
-                                <span v-if="child.meta && child.meta.title">
-                                  <span :style="{width: hoveredMenuItem == child.path ? 'calc(100% - 22px)' : '100%'}">{{ child.meta.title }}</span>
-                                    <i style="margin:0;width:16px;" v-if="$route.path == child.path && hoveredMenuItem == child.path" 
-                                    class="el-icon-question"
-                                    @mouseenter="showOptions($event, child)">
-                                  </i>
-                                </span>
-                              </div>
+                          <i v-if="child.meta && child.meta.icon"
+                             class="p8"
+                             :class="child.meta.icon"></i>
+                          <span v-if="child.meta && child.meta.title">
+                            <span :style="{width: hoveredMenuItem == child.path ? 'calc(100% - 22px)' : '100%'}">{{ child.meta.title }}</span>
+                            <i style="margin:0;width:16px;"
+                               v-if="$route.path == child.path && hoveredMenuItem == child.path"
+                               class="el-icon-question"
+                               @mouseenter="showOptions($event, child)">
+                            </i>
+                          </span>
+                        </div>
                       </el-tooltip>
                     </el-menu-item>
                     <!-- </template> -->
@@ -180,6 +182,7 @@ export default {
   name: 'Sidebar',
   data () {
     return {
+      showLogo: false,
       scrollOptions: {
         suppressScrollX: true
       },
@@ -203,14 +206,7 @@ export default {
     }
   },
   computed: {
-    defaultActive(){
-      if(this.$route.matched && this.$route.matched.length > 2){
-        return this.$route.meta.parentPath
-      }else{
-        return this.$route.path
-      }
-    },
-    ...mapGetters(['asyncRouter', 'sidebarState', 'systemTheme', 'theme', 'imageUrl', 'systemName']),
+    ...mapGetters(['asyncRouter', 'sidebarState', 'systemTheme', 'theme', 'imageUrl', 'systemName', 'systemColor']),
     // 这里必须根据条件结合ElementUI的sidebar来调整颜色,保证自定义主题和sidebar的内置颜色一致.
     systemThemeColor: function () {
       switch (this.systemTheme) {
@@ -230,6 +226,29 @@ export default {
       handler (val) {
         if (val && !val.includes('.png') && !val.includes('http')) {
           this.getImage(val)
+        }
+      },
+      deep: true,
+      immediate: true
+    },
+    systemColor: {
+      handler (val) {
+        this.getColor()
+        switch (val.imgType) {
+          case 1:
+            this.backgroundSize = `200px 100%`
+            this.backgroundRepeat = `no-repeat`
+            break;
+          case 2:
+            this.backgroundSize = `contain`
+            this.backgroundRepeat = `repeat`
+            this.backgroundPosition = `center`
+            break;
+          case 3:
+            this.backgroundSize = `cover`
+            this.backgroundRepeat = `center`
+            this.backgroundPosition = `center`
+            break;
         }
       },
       deep: true,
@@ -286,6 +305,7 @@ export default {
             if (item.id) {
               this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
                 item.filePath = window.URL.createObjectURL(new Blob([res.data]))
+                that.showLogo = true
                 that.$nextTick(() => {
                   that.$refs.loginLogo.style.backgroundImage = `url(${item.filePath})`
                   that.$refs.loginLogo.style.backgroundRepeat = `no-repeat`
@@ -297,7 +317,9 @@ export default {
       }
     },
     getColor () {
-      this.$set(this.objColor, 'themeColor', this.theme)
+      let imgNum = this.$store.getters.systemColor.imgNum || 0.7
+      let color = this.fromHex(this.theme)
+      this.$set(this.objColor, 'themeColor', 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + imgNum + ')')
     },
     fromHex (color) {
       var t = {},
@@ -396,17 +418,17 @@ export default {
       }
     },
     async handleOptionClick (option, item) {
-      let that  =this
+      let that = this
       this.$api['SystemSettings.selectResourcesByMenuId']({ menuId: item.meta.id }).then(res => {
         this.record = res
-         if (option === 'manual') {
-          if (res.mTitle && res.mTitle.length || res.mURL) {
+        if (option === 'manual') {
+          if ((res.mTitle && res.mTitle.length) || res.mURL) {
             that.isVisiblePDFdrawer = true
           } else {
             that.$message.warning('当前菜单暂无操作手册')
           }
         } else if (option === 'video') {
-          if (res.vTitle && res.vTitle.length || res.vURL) {
+          if ((res.vTitle && res.vTitle.length) || res.vURL) {
             that.isVisibleHistoryDrawer = true
           } else {
             that.$message.warning('当前菜单暂无视频资源')
@@ -573,6 +595,8 @@ $menu-collapse-text-color: #303133;
   white-space: nowrap; /* 不换行 */
   overflow: hidden; /* 超出部分隐藏 */
   text-overflow: ellipsis; /* 超出部分以省略号显示 */
+  display: flex;
+  align-items: center;
   // line-height: 50px;
   // letter-spacing: 1px;
 }

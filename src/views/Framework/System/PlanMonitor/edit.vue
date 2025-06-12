@@ -18,7 +18,7 @@
           @handle-ok="handleOk"
         >
           <template #dialog>
-            <icon-selector @icon-select="iconSelect" :selected-name="modify.icon" :selectedColor="modify.color" :color-picker="true"></icon-selector>
+            <icon-selector @icon-select="iconSelect" :selected-name="select?.icon || modify.icon" :selectedColor="select?.color || modify.color" :color-picker="true"></icon-selector>
           </template>
         </common-dialog>
       </template>
@@ -51,6 +51,7 @@ export default {
   },
   data() {
     return {
+      select:{},
       saveApi: 'PlanMonitor.savePlanLogo',
       radioType: null,
       dataSource: [
@@ -235,7 +236,7 @@ export default {
       ],
       modify: {
         controlTimeType: '1',
-        constantMarkType: '1', 
+        constantMarkType: '1',
         icon: ''
       },
       iconPopover: false,
@@ -286,6 +287,7 @@ export default {
     },
     handleClose() {
       this.iconPopover = false
+      this.select = {}
     },
     iconSelect (select) {
       this.select = select

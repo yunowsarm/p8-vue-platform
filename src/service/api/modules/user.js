@@ -83,6 +83,22 @@ export const UserApi = {
         role: []
       },
       desc: '获取菜单列表TEST'
+    },
+    {
+      name: 'queryMenus',
+      method: 'POST',
+      path: '/framework/report/queryMenus',
+      mockPath: '/framework/report/queryMenus',
+      params: {},
+      desc: '查询菜单'
+    },
+    {
+      name: 'btnList',
+      method: 'POST',
+      path: '/framework/system/Resource/button/list',
+      mockPath: '/framework/system/Resource/button/list',
+      params: {},
+      desc: '获取页面权限按钮'
     }
   ],
   button: [

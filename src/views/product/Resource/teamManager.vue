@@ -42,8 +42,8 @@
                   所有人员<span>({{ getTotalCount }})</span>
                 </li>
                 <li :class="[{ active: index === rolesSelectedIndex }, { 'fixed-role': item.roleType === 'fixed' }]"
-                    v-for="(item, index) in rolesData.filter(role => !role.isDeleted)"
-                    :key="item.id"
+                    v-for="(item, index) in roleList"
+                    :key="item.name"
                     @click="rolesHandle(item, index)">
                   <el-tooltip v-if="item.roleType === 'fixed'"
                               :content="item.klTeamsRoleClassifyName"
@@ -145,15 +145,15 @@
                           </el-popconfirm>
                         </div>
                         <el-tooltip placement="top"
-                                    v-if="toolbarWritingDisplay === '1'">
-                          content="删除">
+                                    v-if="toolbarWritingDisplay === '1'"
+                                    content="删除">
                           <el-popconfirm title="确认要将该人退出项目组吗?"
                                          confirmButtonText="确认"
                                          cancelButtonText="取消"
                                          @confirm="deleteUserHandle(scope, scope.$index)">
                             <el-button slot="reference"
                                        size="mini"
-                                       type="primary"
+                                       type="text"
                                        v-if="group_add_member"
                                        icon="p8 icon-shanchu"></el-button>
                           </el-popconfirm>
@@ -167,7 +167,7 @@
                                        size="mini"
                                        v-if="group_add_member"
                                        icon="p8 icon-shanchu"
-                                       type="primary">删除 </el-button>
+                                       type="text">删除 </el-button>
                           </el-popconfirm>
                         </div>
                       </template>
@@ -179,16 +179,16 @@
                                      @click="deleteUserHandle(scope, scope.$index)">删除 </el-button>
                         </div>
                         <el-tooltip placement="top"
-                                    v-if="toolbarWritingDisplay === '1'">
-                          content="删除">
-                          <el-button type="primary"
+                                    v-if="toolbarWritingDisplay === '1'"
+                                    content="删除">
+                          <el-button type="text"
                                      v-if="group_add_member"
                                      icon="p8 icon-shanchu"
                                      @click="deleteUserHandle(scope, scope.$index)"></el-button>
                         </el-tooltip>
                         <div v-if="toolbarWritingDisplay === '2'">
                           <el-button size="mini"
-                                     type="primary"
+                                     type="text"
                                      icon="p8 icon-shanchu"
                                      v-if="group_add_member"
                                      @click="deleteUserHandle(scope, scope.$index)">删除 </el-button>
@@ -553,9 +553,12 @@ export default {
     }
   },
   computed: {
+    roleList(){
+      return this.rolesData.filter(item => !item.isDeleted)
+    },
     getTotalCount () {
       let count = 0
-      this.rolesData.forEach((el) => {
+      this.roleList.forEach((el) => {
         if (el.projectTeamRoleUsers && el.projectTeamRoleUsers.length) {
           const length = el.projectTeamRoleUsers.filter((el) => !el.departureTime).length
           count += length
@@ -610,9 +613,7 @@ export default {
       // 如果有新角色，先执行submit
       if (newRoles.length > 0) {
         const submitResult = await this.submit();
-        console.log(submitResult)
         if (submitResult) {
-          console.log(duplicateRoles)
           // submit执行完毕后，如果有重复角色则显示提示
           if (duplicateRoles.length > 0) {
             this.$message({
@@ -854,13 +855,17 @@ export default {
       // this.dateTime = new Date().getTime()
     },
     addRolesHandle () {
-      let count = this.rolesData.length ? this.rolesData.length + 1 : 1
+      let count = 1
+      let name = '角色名称' + count
+      while (this.rolesData.some(role => role.name === name)){
+        count ++
+        name = '角色名称' + count
+      }
       // 添加角色
       let defaultObj = {
         // id: (-this.generalRoles.length + 1) + '',
-        id: this.rolesData.length + '',
         indexNo: 0,
-        name: '角色名称' + count,
+        name: name,
         klTeamRoleClassifyId: '',
         projectTeamRoleUsers: [],
         roleType: 'general'
@@ -869,8 +874,11 @@ export default {
       this.generalRoles.push(defaultObj)
       // 添加角色操作有修改
       this.isAddMember = true
-      this.rolesHandle(this.rolesData[this.rolesData.length - 1], this.rolesData.length - 1)
+      const rolesData = this.roleList
+      this.rolesHandle(rolesData[rolesData.length - 1], rolesData.length - 1)
     },
+    // 自动生成不重复的角色名称
+
     refreshHandle () {
       /**
        * 刷新: 1. 清空角色选中; 2. 人员列表展示所有角色下的人员 3. 对应人员列表添加角色信息
@@ -880,7 +888,7 @@ export default {
       }
       this.rolesSelectedIndex = -1
       let tableData = []
-      this.rolesData.filter(role => !role.isDeleted).map((item) => {
+      this.roleList.map((item) => {
         let projectTeamRoleUsers = item.projectTeamRoleUsers.map((pitem) => {
           pitem.roleName = item.name
           pitem.roleId = item.id
@@ -897,7 +905,6 @@ export default {
         align: 'center'
       })
       this.tableData = tableData
-
       // this.dateTime = new Date().getTime()
       if (this.searchParam) {
         this.search(this.searchParam)
@@ -914,30 +921,48 @@ export default {
         this.$message.warning('该角色下存在未退出的人员，不能删除！')
         return
       }
-
-      // 添加删除标记，而不是直接删除
-      item.isDeleted = true
-
+      const roleIndex = this.rolesData.findIndex(role => role.name === item.name)
+      const generalRoleIndex = this.generalRoles.findIndex(role => role.name === item.name)
+      if(item.id){
+        if(roleIndex > -1) this.$set(this.rolesData,roleIndex,{...this.rolesData[roleIndex],isDeleted:true})
+        if(generalRoleIndex > -1) this.$set(this.generalRoles,generalRoleIndex,{...this.generalRoles[generalRoleIndex],isDeleted:true})
+      }else{
+        if(roleIndex > -1) this.rolesData.splice(roleIndex,1)
+        if(generalRoleIndex > -1) this.generalRoles.splice(generalRoleIndex,1)
+      }
       // 强制更新视图
       // 更新视图
       this.$nextTick(() => {
         if (index === this.rolesSelectedIndex) {
           // 如果删除的是当前选中的角色，则显示所有人员
-          this.rolesSelectedIndex = -1
-          this.columns.unshift({
-            title: '角色',
-            dataIndex: 'roleName',
-            width: 140,
-            align: 'center'
-          })
-          this.tableData = tableData
-          this.tableData = this.originalTableData
+          this.refreshHandle()
         } else {
           if (this.rolesSelectedIndex > index) {
             this.rolesSelectedIndex--
           }
-          const roleUsers = this.rolesSelectedIndex === -1 ? this.originalTableData : this.rolesData.filter(role => !role.isDeleted)[this.rolesSelectedIndex].projectTeamRoleUsers
-          this.tableData = [...roleUsers]
+          // const roleUsers = this.rolesSelectedIndex === -1 ? this.refreshHandle() : this.roleList[this.rolesSelectedIndex].projectTeamRoleUsers
+          // console.log(roleUsers)
+          // this.tableData = [...roleUsers]
+          if(this.rolesSelectedIndex > -1){
+            this.rolesHandle(this.roleList[this.rolesSelectedIndex],this.rolesSelectedIndex)
+          }else{
+            let tableData = []
+            this.roleList.map((item) => {
+              let projectTeamRoleUsers = item.projectTeamRoleUsers.map((pitem) => {
+                pitem.roleName = item.name
+                pitem.roleId = item.id
+                pitem.userRoleId = item.id
+                pitem.roleType = item.roleType
+                return pitem
+              })
+              tableData.push(...projectTeamRoleUsers)
+            })
+            this.tableData = tableData
+            // this.dateTime = new Date().getTime()
+            if (this.searchParam) {
+              this.search(this.searchParam)
+            }
+          }
         }
         // 标记删除状态用于保存
         this.isDelete = true
@@ -970,16 +995,19 @@ export default {
       let row = scope.row
       let roleInfo = []
       if (row.roleType === 'fixed') {
-        roleInfo = row.userRoleId ? this.fixedRoles.filter((item) => item.roleId === row.userRoleId) : this.fixedRoles.filter((item) => item.name === row.roleName)
+        roleInfo = row.userRoleId ? this.fixedRoles.filter((item) => item.id === row.userRoleId) : this.fixedRoles.filter((item) => item.name === row.roleName)
       } else {
-        roleInfo = row.userRoleId ? this.generalRoles.filter((item) => item.roleId === row.userRoleId) : this.generalRoles.filter((item) => item.name === row.roleName)
+        roleInfo = row.userRoleId ? this.generalRoles.filter((item) => item.id === row.userRoleId) : this.generalRoles.filter((item) => item.name === row.roleName)
       }
-
       let projectTeamRoleUsers = roleInfo[0].projectTeamRoleUsers
       let pIndex = projectTeamRoleUsers.findIndex((item) => item.sysuserId === row.sysuserId)
       if (pIndex > -1) {
-        projectTeamRoleUsers[pIndex].isDeleted = true
-        projectTeamRoleUsers[pIndex].departureTime = moment().format('YYYY-MM-DD HH:mm:ss')
+        if(row.userRoleId){
+          projectTeamRoleUsers[pIndex].isDeleted = true
+          projectTeamRoleUsers[pIndex].departureTime = moment().format('YYYY-MM-DD HH:mm:ss')
+        }else{
+          projectTeamRoleUsers.splice(pIndex, 1)
+        }
       }
 
       this.isDelete = true

@@ -64,6 +64,7 @@
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -120,7 +121,6 @@ export default {
   },
   created () {
     this.getSystemAbout()
-
   },
   mounted () {
     this.dayTime = getGreetingTime()

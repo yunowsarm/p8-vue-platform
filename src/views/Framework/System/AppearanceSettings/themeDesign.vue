@@ -4,7 +4,7 @@
       <div class="theme-left"
            ref="themeImage"
            :style="{ width: '200px', 'background-image': 'url(' + imageUrl + ')', 'background-size': backgroundSize, 'background-repeat': backgroundRepeat, 'background-position': backgroundPosition }">
-        <VuePerfectScrollbar :style="{ 'background-color': theme }">
+        <VuePerfectScrollbar :style="{ 'background-color': objColor.themeColor }">
 
         </VuePerfectScrollbar>
       </div>
@@ -90,43 +90,43 @@
                   <el-tooltip placement="top"
                               content="查看">
                     <el-button icon="p8 icon-chakan"
-                               type="primary"></el-button>
+                               type="text"></el-button>
                   </el-tooltip>
                   <el-tooltip placement="top"
                               content="删除">
                     <el-button style="margin-right: 2px;"
                                icon="p8 icon-shanchu"
-                               type="primary"></el-button>
+                               type="text"></el-button>
                   </el-tooltip>
                 </el-button-group>
                 <div v-else>
                   <el-tooltip placement="top"
                               content="查看">
                     <el-button icon="p8 icon-chakan"
-                               type="primary"></el-button>
+                               type="text"></el-button>
                   </el-tooltip>
                   <el-divider direction="vertical"></el-divider>
                   <el-tooltip placement="top"
                               content="删除">
                     <el-button style="margin-right: 2px;"
                                icon="p8 icon-shanchu"
-                               type="primary"></el-button>
+                               type="text"></el-button>
                   </el-tooltip>
                 </div>
               </div>
               <div v-if="toolbarWritingDisplay === '2'">
                 <el-button-group v-if="toolbarCompactLayout === 'true'">
-                  <el-button type="primary"
+                  <el-button type="text"
                              icon="p8 icon-chakan">查看</el-button>
-                  <el-button type="primary"
+                  <el-button type="text"
                              style="margin-right: 2px;"
                              icon="p8 icon-xiugai">删除</el-button>
                 </el-button-group>
                 <div v-else>
-                  <el-button type="primary"
+                  <el-button type="text"
                              icon="p8 icon-chakan">查看</el-button>
                   <el-divider direction="vertical"></el-divider>
-                  <el-button type="primary"
+                  <el-button type="text"
                              style="margin-right: 2px;"
                              icon="p8 icon-xiugai">删除</el-button>
                 </div>
@@ -144,15 +144,24 @@
           </div>
           <div class="settings">
             <background-image @changeSystemImage="changeSystemImage" />
-            <el-button-group v-model="imgType"
-                             style="margin-left: 40px;padding: 10px;">
-              <el-button v-for="(btn, index) in buttonConfigs"
-                         :key="index"
-                         :type="imgType === btn.value ? 'primary' : ''"
-                         @click="settingStyle(btn.value)">
-                {{ btn.label }}
-              </el-button>
-            </el-button-group>
+            <div style="margin-left: 20px;">
+              背景图展示方式：<el-button-group v-model="imgType"
+                               style="padding: 10px;">
+                <el-button v-for="(btn, index) in buttonConfigs"
+                           :key="index"
+                           :type="imgType === btn.value ? 'primary' : ''"
+                           @click="settingStyle(btn.value)">
+                  {{ btn.label }}
+                </el-button>
+              </el-button-group>
+              背景图透明度：<el-input-number :precision="1"
+                               v-model="imgNum"
+                               :step="0.1"
+                               :min="0"
+                               :max="1"
+                               style="width: 20%;"
+                               @change="getColor"></el-input-number>
+            </div>
           </div>
           <div class="settings">
             <TableTheme />
@@ -189,7 +198,11 @@ export default {
     },
     themeArray: {
       type: Array,
-      default: () => []
+      default: () => {
+      }
+    },
+    formData: {
+      type: Object
     }
   },
   components: {
@@ -281,7 +294,8 @@ export default {
       toolbarCompactLayout: 'false',
       backgroundSize: '200px 100%',
       backgroundRepeat: 'no-repeat',
-      backgroundPosition: ''
+      backgroundPosition: '',
+      imgNum: 0.7
     }
   },
   watch: {
@@ -343,9 +357,8 @@ export default {
     },
     getImage (id) {
       let that = this
-
-      let systemThemeType = this.$store.getters.baseConfig.systemThemeType
-      let systemThemeArray = JSON.parse(this.$store.getters.baseConfig.systemThemeArray)
+      let systemThemeType = this.formData.systemThemeType || this.$store.getters.baseConfig.systemThemeType
+      let systemThemeArray = that.themeArray || JSON.parse(this.$store.getters.baseConfig.systemThemeArray)
       let themeArray = []
       if (systemThemeType === 'systemThemeType1') {
         themeArray = systemThemeArray[0]
@@ -356,27 +369,39 @@ export default {
       if (systemThemeType === 'systemThemeType3') {
         themeArray = systemThemeArray[2]
       }
-      console.log("🚀 ~ getImage ~ arr:", themeArray)
       themeArray.forEach(item => {
-        if (item.key === 'imageUrl') {
-          id = item.url
-          if (this.imagePath === '') {
-            this.imagePath = id
-          }
+        switch (item.key) {
+          case 'imageUrl':
+            id = item.url
+            if (this.imagePath === '') {
+              this.imagePath = id
+            }
+            break;
+          case 'imgType':
+            this.imgType = item.value || 1
+            break;
+          case 'imgNum':
+            this.imgNum = item.value
+            break;
+          default:
+            break;
         }
       })
 
-      let imgType = this.$store.getters.systemColor.imgType || 1
       that.$nextTick(() => {
-        // that.$store.dispatch('setImage', filePath)
-        that.settingStyle(imgType)
+        that.settingStyle(this.imgType)
       })
     },
     changeSystemImage (imageUrl) {
       this.imagePath = imageUrl
     },
     getColor () {
-      this.$set(this.objColor, 'themeColor', this.theme)
+      let color = this.fromHex(this.theme)
+      let colors = {
+        imgNum: this.imgNum
+      }
+      this.$store.dispatch('setSystemColor', colors)
+      this.$set(this.objColor, 'themeColor', 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + this.imgNum + ')')
     },
     fromHex (color) {
       var t = {},
@@ -439,6 +464,10 @@ export default {
         {
           key: 'imgType',// 侧边栏背景颜色
           value: this.imgType
+        },
+        {
+          key: 'imgNum',// 背景图透明度
+          value: this.imgNum
         }
       ]
       if (this.formData.systemThemeType === 'systemThemeType1') {

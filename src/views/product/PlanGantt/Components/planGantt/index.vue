@@ -1,340 +1,341 @@
 <!---->
 <template>
-  <div style="height: 100%; position: relative"
-       class="Gantt">
-    <div id="actionMenu"
-         v-show="menuVisible && menuData.length"
-         ref="actionMenu"
-         :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
-      <VuePerfectScrollbar class="scroll-area"
-                           :style="{ maxHeight: maxHeight, height: scrollBarHeight }">
-        <el-menu mode="vertical"
-                 :collapse="true">
-          <template v-for="(menu, index) in menuData">
-            <el-submenu v-if="buttonData(menu).children"
-                        :disabled="isDisable(menu)"
-                        :key="menu.id"
-                        :index="index + 'm'">
-              <span slot="title">
-                <span @click="btnClick(buttonData(menu), isDisable(menu))">
-                  <i :class="buttonData(menu).icon"></i>
-                  <span>{{ menu.title }}</span>
-                </span>
-              </span>
-              <template v-for="(btn, index) in buttonData(menu).children">
-                <el-menu-item v-if="btn.id !== 'createByNum'"
-                              :key="index"
-                              @click="btnClick(btn, btn.isDisableFun(null, ganttName, selectedTasks))"
-                              :index="btn.id">
-                  <i :class="btn.icon"></i>
-                  <span> {{ btn.title }}</span>
-                </el-menu-item>
-                <el-submenu v-if="btn.id === 'createByNum'"
-                            :key="index + 'c'"
-                            :index="index + 'b'">
-                  <span slot="title">
-                    <i :class="btn.icon"></i>
-                    <span> {{ btn.title }}</span>
-                  </span>
-                  <el-input-number size="mini"
-                                   v-model="createNum"
-                                   :max="50"
-                                   :min="1"
-                                   :step-strictly="true"
-                                   style="margin: 0 10px"
-                                   :step="1"></el-input-number>
-                  <el-button size="mini"
-                             @click="btn.clickFun(btn, ganttName, null)"
-                             style="margin-right: 10px">确定</el-button>
-                </el-submenu>
-              </template>
-            </el-submenu>
-            <el-menu-item v-else
-                          @click="btnClick(buttonData(menu), isDisable(menu))"
+  <div style="height: 100%; position: relative">
+    <div style="height: 100%; position: relative"
+         class="Gantt">
+      <div id="actionMenu"
+           v-show="menuVisible && menuData.length"
+           ref="actionMenu"
+           :style="{ top: dropTop, left: dropLeft, maxHeight: maxHeight }">
+        <VuePerfectScrollbar class="scroll-area"
+                             :style="{ maxHeight: maxHeight, height: scrollBarHeight }">
+          <el-menu mode="vertical"
+                   :collapse="true">
+            <template v-for="(menu, index) in menuData">
+              <el-submenu v-if="buttonData(menu).children"
                           :disabled="isDisable(menu)"
                           :key="menu.id"
-                          :index="menu.id + 'm'">
-              <i :class="buttonData(menu).icon"></i>
-              <span> {{ menu.title }}</span>
-            </el-menu-item>
-          </template>
-        </el-menu>
-      </VuePerfectScrollbar>
-    </div>
-    <out-put-view v-if="outPutViewVisible"
-                  :visible="outPutViewVisible"
-                  :plan-info-id="planInfoId"
-                  :task-id="taskId"
-                  :create-page="createPage"
-                  :gantt-name="ganttName"
-                  :plan-type-datas="planTypeDatas"
-                  @close-dialog="outPutViewClose">
-    </out-put-view>
-    <div ref="myGantt"
-         style="width: 100%; height: calc(100% - 40px) !important"
-         @mousemove="mouseMove"></div>
-    <div class="detail_div">
-      <div style="width: 50%">
-        <span style="margin-left: 16px">选中任务：</span>
-        <span @click="showDetail"
-              class="detail_span">{{ selectTaskName }}</span>
+                          :index="index + 'm'">
+                <span slot="title">
+                  <span @click="btnClick(buttonData(menu), isDisable(menu))">
+                    <i :class="buttonData(menu).icon"></i>
+                    <span>{{ menu.title }}</span>
+                  </span>
+                </span>
+                <template v-for="(btn, index) in buttonData(menu).children">
+                  <el-menu-item v-if="btn.id !== 'createByNum'"
+                                :key="index"
+                                @click="btnClick(btn, btn.isDisableFun(null, ganttName, selectedTasks))"
+                                :index="btn.id">
+                    <i :class="btn.icon"></i>
+                    <span> {{ btn.title }}</span>
+                  </el-menu-item>
+                  <el-submenu v-if="btn.id === 'createByNum'"
+                              :key="index + 'c'"
+                              :index="index + 'b'">
+                    <span slot="title">
+                      <i :class="btn.icon"></i>
+                      <span> {{ btn.title }}</span>
+                    </span>
+                    <el-input-number size="mini"
+                                     v-model="createNum"
+                                     :max="50"
+                                     :min="1"
+                                     :step-strictly="true"
+                                     style="margin: 0 10px"
+                                     :step="1"></el-input-number>
+                    <el-button size="mini"
+                               @click="btn.clickFun(btn, ganttName, null)"
+                               style="margin-right: 10px">确定</el-button>
+                  </el-submenu>
+                </template>
+              </el-submenu>
+              <el-menu-item v-else
+                            @click="btnClick(buttonData(menu), isDisable(menu))"
+                            :disabled="isDisable(menu)"
+                            :key="menu.id"
+                            :index="menu.id + 'm'">
+                <i :class="buttonData(menu).icon"></i>
+                <span> {{ menu.title }}</span>
+              </el-menu-item>
+            </template>
+          </el-menu>
+        </VuePerfectScrollbar>
       </div>
-      <div style="width: 50%">
-        <span style="float: right; margin-right: 40px">合计 {{ taskCount }} 条</span>
-        <span style="float: right; margin-right: 40px">已选中 {{ selectTaskCount }} 条</span>
-        <el-popover placement="top"
-                    trigger="click">
-          <div class="edit_gantt_user_list">
-            <span v-if="webSocketDone">当前连接异常，无法查看正在编辑人员，请尝试刷新页面或联系运维人员</span>
-            <span v-else
-                  v-for="(user, ind) in editUserList"
-                  :key="ind">{{ user.userName }}
-              <span v-if="user.entityType === 'compile'">-计划编制</span>
-              <span v-if="user.entityType === 'decompose'">-任务分解</span>
-            </span>
-          </div>
-          <span slot="reference"
-                style="float: right; margin-right: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' :
+      <out-put-view v-if="outPutViewVisible"
+                    :visible="outPutViewVisible"
+                    :plan-info-id="planInfoId"
+                    :task-id="taskId"
+                    :create-page="createPage"
+                    :gantt-name="ganttName"
+                    :plan-type-datas="planTypeDatas"
+                    @close-dialog="outPutViewClose">
+      </out-put-view>
+      <div ref="myGantt"
+           style="width: 100%; height: calc(100% - 40px) !important"
+           @mousemove="mouseMove"></div>
+      <div class="detail_div">
+        <div style="width: 50%">
+          <span style="margin-left: 16px">选中任务：</span>
+          <span @click="showDetail"
+                class="detail_span">{{ selectTaskName }}</span>
+        </div>
+        <div style="width: 50%">
+          <span style="float: right; margin-right: 40px">合计 {{ taskCount }} 条</span>
+          <span style="float: right; margin-right: 40px">已选中 {{ selectTaskCount }} 条</span>
+          <el-popover placement="top"
+                      trigger="click">
+            <div class="edit_gantt_user_list">
+              <span v-if="webSocketDone">当前连接异常，无法查看正在编辑人员，请尝试刷新页面或联系运维人员</span>
+              <span v-else
+                    v-for="(user, ind) in editUserList"
+                    :key="ind">{{ user.userName }}
+                <span v-if="user.entityType === 'compile'">-计划编制</span>
+                <span v-if="user.entityType === 'decompose'">-任务分解</span>
+              </span>
+            </div>
+            <span slot="reference"
+                  style="float: right; margin-right: 40px; cursor: pointer">正在编辑 {{ webSocketDone ? '*' :
         editUserList.length == 0 ? 1 : editUserList.length }} 人</span>
-        </el-popover>
+          </el-popover>
+        </div>
       </div>
-    </div>
-    <el-drawer :title="activityImportTitle"
-               :append-to-body="true"
-               size="50%"
-               :destroy-on-close="true"
-               :wrapper-closable="false"
-               @closed="activityImportVisible = false"
-               :visible.sync="activityImportVisible">
-      <activity-import @save-success="activityImportClosed"
-                       :task-id="selectTaskId"
-                       :activity-secret-grade-display="activitySecretGradeDisplay"
-                       :create-page="createPage"
-                       :activity-import-type="activityImportType"
-                       :auto-scheduling="autoParentDate"></activity-import>
-    </el-drawer>
-    <common-dialog title="通知下发"
-                   width="70%"
-                   :visible="noticeVisible"
-                   :show-handle-btn="false"
-                   @isfullscreen="isfullscreen"
-                   @close="closeNotice"
-                   :is-view-cs-footer="false"
-                   :dialog-height="650">
-      <template #dialog>
-        <Notice v-if="noticeVisible"
-                :selected-tasks="selectedTasks"
-                :task-id="selectTaskId"
-                :gantt-name="ganttName"
-                :plan-info-id="planInfoId"
-                @close="closeNotice" />
-      </template>
-    </common-dialog>
-    <!-- ai自动生成   -->
-    <common-dialog title="AI生成"
-                   width="50%"
-                   class='autoGeneration'
-                   :visible="autoGenerationVisible"
-                   @close="closeAutoGeneration"
-                   :is-view-cs-footer="false"
-                   :dialog-height="650"
-                   :show-handle-btn="false">
-      <template #dialog>
-        <auto-generation v-if="autoGenerationVisible"
-                         :selected-tasks="selectedTasks"
-                         ref="autoGeneration"
+      <el-drawer :title="activityImportTitle"
+                 :append-to-body="true"
+                 size="50%"
+                 :destroy-on-close="true"
+                 :wrapper-closable="false"
+                 @closed="activityImportVisible = false"
+                 :visible.sync="activityImportVisible">
+        <activity-import @save-success="activityImportClosed"
                          :task-id="selectTaskId"
-                         :gantt-name="ganttName"
-                         :plan-info-id="planInfoId"
-                         @refreshAiData="refreshAiData"
-                         @close="closeAutoGeneration" />
-      </template>
-    </common-dialog>
-    <monitor-time-manger v-if="controlTimeVisible"
-                         :visible="controlTimeVisible"
-                         :monitor-id="monitorId"
-                         :task-id="selectTaskId"
-                         :monitor-name="monitorName"
-                         :task-name="selectTaskName"
-                         @save-success="monitorManagerSave">
-    </monitor-time-manger>
-    <resource-select v-if="resourceSelectVisible"
-                     :visible="resourceSelectVisible"
-                     :start-task-id="startTaskId"
-                     :end-task-id="endTaskId"
-                     :plan-info-id="planInfoId"
-                     :select-task-owner-id="selectTaskOwnerId"
-                     :select-model="resourceSelectModel"
-                     @closed="resourceSelectclosed"
-                     @resource-selected="resourceSelected">
-    </resource-select>
-    <grid-setting v-if="selectGridVisible"
-                  :visible="selectGridVisible"
-                  :columns="renderColumns"
+                         :activity-secret-grade-display="activitySecretGradeDisplay"
+                         :create-page="createPage"
+                         :activity-import-type="activityImportType"
+                         :auto-scheduling="autoParentDate"></activity-import>
+      </el-drawer>
+      <common-dialog title="通知下发"
+                     width="70%"
+                     :visible="noticeVisible"
+                     :show-handle-btn="false"
+                     @isfullscreen="isfullscreen"
+                     @close="closeNotice"
+                     :is-view-cs-footer="false"
+                     :dialog-height="650">
+        <template #dialog>
+          <Notice v-if="noticeVisible"
+                  :selected-tasks="selectedTasks"
+                  :task-id="selectTaskId"
                   :gantt-name="ganttName"
-                  :create-page="createPage"
-                  @close="selectGridlosed"
-                  @save-setting="gridSaved"></grid-setting>
-    <common-dialog title="请选择需要保存的任务"
-                   :visible="myExperienceVisible"
-                   :show-handle-btn="false"
-                   @isfullscreen="isfullscreen"
-                   @close="closeMyExperience"
-                   :is-view-cs-footer="true">
-      <template #dialog>
-        <list-layout>
-          <template #north>
-            <!-- <span style="color: red; font-size: 14px; font-weight: bolder; float: right; line-height: 30px; display: inline-block; margin-right: 10px">密级：{{ experienceLibrarySecretGradeDisplay }}</span> -->
-          </template>
-          <template #center>
-            <common-table ref="table"
-                          v-if="myExperienceVisible"
-                          :comp="comp"
-                          :style="{ height: customHeight + 'px' }"
-                          :table-config="tableConfig"
-                          :columns="Mycolumns"
-                          :api="tableApi"
-                          :params="queryParam"
-                          :special-rote-name="roteName"
-                          :use-tree-format="useTreeFormat"
-                          :use-tree-p-id="useTreePId"
-                          :pagination="false"
-                          @select="onTableSelect"
-                          @select-all="selectAll"
-                          @selection-change="handleSelectionChange">
-            </common-table>
-          </template>
-          <template #drawer-panel></template>
-        </list-layout>
-      </template>
-      <template #cs-footer>
-        <span class="dialog-footer">
-          <el-button @click="closeMyExperience">取 消</el-button>
-          <el-button type="primary"
-                     @click="saveMyExperience()">下一步</el-button>
-        </span>
-      </template>
-    </common-dialog>
-    <el-drawer :title="importExcelTitle"
-               :append-to-body="true"
-               size="50%"
-               :wrapper-closable="false"
-               :destroy-on-close="true"
-               @closed="importExcelClosed"
-               :visible.sync="importExcel">
-      <import-excel @save-success="importExcelSave"
-                    @excel-export="excelExport"
-                    :excel-secret-grade-display="excelSecretGradeDisplay"
-                    :excel-secret-grade="excelSecretGrade"
-                    :task-id="selectTaskId"
-                    :planInfoId="planInfoId"
-                    :columnConfigs="columnConfigs"
-                    :output-request="excelImportData"></import-excel>
-    </el-drawer>
-    <el-drawer :title="importProjectTitle"
-               :append-to-body="true"
-               size="50%"
-               :wrapper-closable="false"
-               :destroy-on-close="true"
-               @closed="resourceSettingClosed"
-               :visible.sync="importProject">
-      <import-project @save-success="importProjectClosed"
-                      :project-secret-grade-display="projectSecretGradeDisplay"
-                      :project-secret-grade="projectSecretGrade"
+                  :plan-info-id="planInfoId"
+                  @close="closeNotice" />
+        </template>
+      </common-dialog>
+      <!-- ai自动生成   -->
+      <common-dialog title="AI生成"
+                     width="50%"
+                     class='autoGeneration'
+                     :visible="autoGenerationVisible"
+                     @close="closeAutoGeneration"
+                     :is-view-cs-footer="false"
+                     :dialog-height="650"
+                     :show-handle-btn="false">
+        <template #dialog>
+          <auto-generation v-if="autoGenerationVisible"
+                           :selected-tasks="selectedTasks"
+                           ref="autoGeneration"
+                           :task-id="selectTaskId"
+                           :gantt-name="ganttName"
+                           :plan-info-id="planInfoId"
+                           @refreshAiData="refreshAiData"
+                           @close="closeAutoGeneration" />
+        </template>
+      </common-dialog>
+      <monitor-time-manger v-if="controlTimeVisible"
+                           :visible="controlTimeVisible"
+                           :monitor-id="monitorId"
+                           :task-id="selectTaskId"
+                           :monitor-name="monitorName"
+                           :task-name="selectTaskName"
+                           @save-success="monitorManagerSave">
+      </monitor-time-manger>
+      <resource-select v-if="resourceSelectVisible"
+                       :visible="resourceSelectVisible"
+                       :start-task-id="startTaskId"
+                       :end-task-id="endTaskId"
+                       :plan-info-id="planInfoId"
+                       :select-task-owner-id="selectTaskOwnerId"
+                       :select-model="resourceSelectModel"
+                       @closed="resourceSelectclosed"
+                       @resource-selected="resourceSelected">
+      </resource-select>
+      <grid-setting v-if="selectGridVisible"
+                    :visible="selectGridVisible"
+                    :columns="renderColumns"
+                    :gantt-name="ganttName"
+                    :create-page="createPage"
+                    @close="selectGridlosed"
+                    @save-setting="gridSaved"></grid-setting>
+      <common-dialog title="请选择需要保存的任务"
+                     :visible="myExperienceVisible"
+                     :show-handle-btn="false"
+                     @isfullscreen="isfullscreen"
+                     @close="closeMyExperience"
+                     :is-view-cs-footer="true">
+        <template #dialog>
+          <list-layout>
+            <template #north>
+              <!-- <span style="color: red; font-size: 14px; font-weight: bolder; float: right; line-height: 30px; display: inline-block; margin-right: 10px">密级：{{ experienceLibrarySecretGradeDisplay }}</span> -->
+            </template>
+            <template #center>
+              <common-table ref="table"
+                            v-if="myExperienceVisible"
+                            :comp="comp"
+                            :style="{ height: customHeight + 'px' }"
+                            :table-config="tableConfig"
+                            :columns="Mycolumns"
+                            :api="tableApi"
+                            :params="queryParam"
+                            :special-rote-name="roteName"
+                            :use-tree-format="useTreeFormat"
+                            :use-tree-p-id="useTreePId"
+                            :pagination="false"
+                            @select="onTableSelect"
+                            @select-all="selectAll"
+                            @selection-change="handleSelectionChange">
+              </common-table>
+            </template>
+            <template #drawer-panel></template>
+          </list-layout>
+        </template>
+        <template #cs-footer>
+          <span class="dialog-footer">
+            <el-button @click="closeMyExperience">取 消</el-button>
+            <el-button type="primary"
+                       @click="saveMyExperience()">下一步</el-button>
+          </span>
+        </template>
+      </common-dialog>
+      <el-drawer :title="importExcelTitle"
+                 :append-to-body="true"
+                 size="50%"
+                 :wrapper-closable="false"
+                 :destroy-on-close="true"
+                 @closed="importExcelClosed"
+                 :visible.sync="importExcel">
+        <import-excel @save-success="importExcelSave"
+                      @excel-export="excelExport"
+                      :excel-secret-grade-display="excelSecretGradeDisplay"
+                      :excel-secret-grade="excelSecretGrade"
                       :task-id="selectTaskId"
-                      :output-request="projectImportData"></import-project>
-    </el-drawer>
-    <!--    团队成员编辑-->
-    <el-drawer class="resource-group-drawer"
-               :title="resourceGroup"
-               :append-to-body="true"
-               :before-close="isSaveCheckHandle"
-               size="100%"
-               :destroy-on-close="true"
-               @closed="importProjectClosed"
-               :visible.sync="ganttGroupSetting">
-      <keep-alive>
-        <!-- <team-manager ref="team" :third-menu-param="thirdMenuParam" :group_type="group_type"></team-manager> -->
-      </keep-alive>
-    </el-drawer>
-    <!-- 点击所查看院任务 -->
-    <common-drawer size="100%">
-      <template #drawer>
-        <detail :av-task-id="avTaskId"></detail>
-      </template>
-    </common-drawer>
-    <common-dialog title="查询"
-                   width="90%"
-                   v-if="ganttSearchVisible"
-                   :visible="ganttSearchVisible"
-                   :show-handle-btn="false"
-                   @isfullscreen="isfullscreen"
-                   @close="closeSearch"
-                   :is-view-cs-footer="false"
-                   :dialog-height="360">
-      <template #dialog>
-        <command-search :searchType="true"
-                        :gantt-name="ganttName"
-                        :plan-info-id="planInfoId"
-                        @close="closeSearch"></command-search>
-      </template>
-    </common-dialog>
-    <common-dialog title="统计信息"
-                   width="60%"
-                   v-if="ganttStatisticVisible"
-                   :visible="ganttStatisticVisible"
-                   :show-handle-btn="false"
-                   @isfullscreen="isfullscreen"
-                   @close="closeStatistic"
-                   :is-view-cs-footer="false"
-                   :dialog-height="460">
-      <template #dialog>
-        <command-statistic :gantt-name="ganttName"
-                           :plan-info-id="planInfoId"></command-statistic>
-      </template>
-    </common-dialog>
-    <common-button-bar-setting v-if="rightMenuConfigVisible"
-                               :visible="rightMenuConfigVisible"
-                               title="菜单配置"
-                               :panel-data="panelData"
-                               @submit="submitButtonBarSetting"
-                               @hidden="rightMenuConfigVisible = false">
-    </common-button-bar-setting>
-    <!-- 批量设置任务密级 -->
-    <!-- <ClassificationSelection
+                      :planInfoId="planInfoId"
+                      :columnConfigs="columnConfigs"
+                      :output-request="excelImportData"></import-excel>
+      </el-drawer>
+      <el-drawer :title="importProjectTitle"
+                 :append-to-body="true"
+                 size="50%"
+                 :wrapper-closable="false"
+                 :destroy-on-close="true"
+                 @closed="resourceSettingClosed"
+                 :visible.sync="importProject">
+        <import-project @save-success="importProjectClosed"
+                        :project-secret-grade-display="projectSecretGradeDisplay"
+                        :project-secret-grade="projectSecretGrade"
+                        :task-id="selectTaskId"
+                        :output-request="projectImportData"></import-project>
+      </el-drawer>
+      <!--    团队成员编辑-->
+      <el-drawer class="resource-group-drawer"
+                 :title="resourceGroup"
+                 :append-to-body="true"
+                 :before-close="isSaveCheckHandle"
+                 size="100%"
+                 :destroy-on-close="true"
+                 @closed="importProjectClosed"
+                 :visible.sync="ganttGroupSetting">
+        <keep-alive>
+          <!-- <team-manager ref="team" :third-menu-param="thirdMenuParam" :group_type="group_type"></team-manager> -->
+        </keep-alive>
+      </el-drawer>
+      <!-- 点击所查看院任务 -->
+      <common-drawer size="100%">
+        <template #drawer>
+          <detail :av-task-id="avTaskId"></detail>
+        </template>
+      </common-drawer>
+      <common-dialog title="查询"
+                     width="90%"
+                     v-if="ganttSearchVisible"
+                     :visible="ganttSearchVisible"
+                     :show-handle-btn="false"
+                     @isfullscreen="isfullscreen"
+                     @close="closeSearch"
+                     :is-view-cs-footer="false"
+                     :dialog-height="360">
+        <template #dialog>
+          <command-search :searchType="true"
+                          :gantt-name="ganttName"
+                          :plan-info-id="planInfoId"
+                          @close="closeSearch"></command-search>
+        </template>
+      </common-dialog>
+      <common-dialog title="统计信息"
+                     width="60%"
+                     v-if="ganttStatisticVisible"
+                     :visible="ganttStatisticVisible"
+                     :show-handle-btn="false"
+                     @isfullscreen="isfullscreen"
+                     @close="closeStatistic"
+                     :is-view-cs-footer="false"
+                     :dialog-height="460">
+        <template #dialog>
+          <command-statistic :gantt-name="ganttName"
+                             :plan-info-id="planInfoId"></command-statistic>
+        </template>
+      </common-dialog>
+      <common-button-bar-setting v-if="rightMenuConfigVisible"
+                                 :visible="rightMenuConfigVisible"
+                                 title="菜单配置"
+                                 :panel-data="panelData"
+                                 @submit="submitButtonBarSetting"
+                                 @hidden="rightMenuConfigVisible = false">
+      </common-button-bar-setting>
+      <!-- 批量设置任务密级 -->
+      <!-- <ClassificationSelection
       v-if="ClassificationSelectVisible"
       :visible="ClassificationSelectVisible"
       @closed="ClassificationSelectclosed"
       @ClassificationSelect="ClassificationSelect"
     ></ClassificationSelection> -->
-    <Edit :visible="createVisible"
-          :selected-task="selectedTasks"
-          title="我的经验库"
-          :gantt-name="ganttName"
-          @handleCancel="closeCreate" />
-    <my-experience-base :visible="experienceBaseVisible"
-                        v-if="experienceBaseVisible"
-                        :is-manage="isManage"
-                        :gantt-name="ganttName"
-                        :create-page="createPage"
-                        :plan-info-id="planInfoId"
-                        :selected-task="selectedTasks"
-                        :thirdMenuParam="thirdMenuParam"
-                        :export-experience-type="exportExperienceType"
-                        @copy="copyExperienceBase"
-                        @handleCancel="closExperienceBase"></my-experience-base>
-    <common-drawer v-if="versionListVisible"
-                   :visible="versionListVisible"
-                   size="70%"
-                   placement="top"
-                   title="版本列表"
-                   @close="versionListVisible = false">
-      <template #drawer>
-        <version-list :plan-info-id="planInfoId"
-                      :main-gantt-name="ganttName"></version-list>
-      </template>
-    </common-drawer>
-    <!-- <common-drawer v-if="progressHistoryVisible"
+      <Edit :visible="createVisible"
+            :selected-task="selectedTasks"
+            title="我的经验库"
+            :gantt-name="ganttName"
+            @handleCancel="closeCreate" />
+      <my-experience-base :visible="experienceBaseVisible"
+                          v-if="experienceBaseVisible"
+                          :is-manage="isManage"
+                          :gantt-name="ganttName"
+                          :create-page="createPage"
+                          :plan-info-id="planInfoId"
+                          :selected-task="selectedTasks"
+                          :thirdMenuParam="thirdMenuParam"
+                          :export-experience-type="exportExperienceType"
+                          @copy="copyExperienceBase"
+                          @handleCancel="closExperienceBase"></my-experience-base>
+      <common-drawer v-if="versionListVisible"
+                     :visible="versionListVisible"
+                     size="70%"
+                     placement="top"
+                     title="版本列表"
+                     @close="versionListVisible = false">
+        <template #drawer>
+          <version-list :plan-info-id="planInfoId"
+                        :main-gantt-name="ganttName"></version-list>
+        </template>
+      </common-drawer>
+      <!-- <common-drawer v-if="progressHistoryVisible"
                    :visible="progressHistoryVisible"
                    size="50%"
                    placement="top"
@@ -344,45 +345,71 @@
         <ProgressHistory :task-id="selectedId" />
       </template>
     </common-drawer> -->
-    <common-drawer v-if="changeHistoryVisible"
-                   :visible="changeHistoryVisible"
-                   size="80%"
-                   placement="top"
-                   title="任务历史变更"
-                   @close="changeHistoryClose">
-      <template #drawer>
-        <ChangeHistory :plan-info-id="planInfoId"
-                       :task-id="selectTaskId"
-                       :wholeDescribeId="wholeDescribeId"
-                       :create-page="createPage" />
-      </template>
-    </common-drawer>
-    <common-drawer v-if="examineHistoryVisible"
-                   :visible="examineHistoryVisible"
-                   size="80%"
-                   placement="top"
-                   title="审批历史"
-                   @close="examineHistoryClose">
-      <template #drawer>
-        <ExamineHistory :plan-info-id="planInfoId"
-                        :task-id="selectTaskId"
-                        :create-page="createPage" />
-      </template>
-    </common-drawer>
-    <common-drawer v-if="relevancePlanVisible"
-                   :visible="relevancePlanVisible"
-                   size="100%"
-                   placement="top"
-                   title="关联"
-                   @close="closeRelevance">
-      <template #drawer>
-        <relevance :plan-info-id="planInfoId"
-                   ref="relevanceRefs"
-                   @relevanceClick="relevanceClick"
-                   :selectTaskId="selectTaskId"
-                   :main-gantt-name="ganttName"></relevance>
-      </template>
-    </common-drawer>
+      <common-drawer v-if="changeHistoryVisible"
+                     :visible="changeHistoryVisible"
+                     size="80%"
+                     placement="top"
+                     title="任务历史变更"
+                     @close="changeHistoryClose">
+        <template #drawer>
+          <ChangeHistory :plan-info-id="planInfoId"
+                         :task-id="selectTaskId"
+                         :wholeDescribeId="wholeDescribeId"
+                         :create-page="createPage" />
+        </template>
+      </common-drawer>
+      <common-drawer v-if="examineHistoryVisible"
+                     :visible="examineHistoryVisible"
+                     size="80%"
+                     placement="top"
+                     title="审批历史"
+                     @close="examineHistoryClose">
+        <template #drawer>
+          <ExamineHistory :plan-info-id="planInfoId"
+                          :task-id="selectTaskId"
+                          :create-page="createPage" />
+        </template>
+      </common-drawer>
+      <common-drawer v-if="relevancePlanVisible"
+                     :visible="relevancePlanVisible"
+                     size="100%"
+                     placement="top"
+                     title="关联"
+                     @close="closeRelevance">
+        <template #drawer>
+          <relevance :plan-info-id="planInfoId"
+                     ref="relevanceRefs"
+                     @relevanceClick="relevanceClick"
+                     :selectTaskId="selectTaskId"
+                     :main-gantt-name="ganttName"></relevance>
+        </template>
+      </common-drawer>
+      <common-dialog title="批量设置"
+                     width="30%"
+                     v-if="ganttRowEditVisible"
+                     :visible="ganttRowEditVisible"
+                     :show-handle-btn="false"
+                     @isfullscreen="isfullscreen"
+                     @close="closeRowEdit"
+                     :is-view-cs-footer="false"
+                     :dialog-height="300">
+        <template #dialog>
+          <form-list ref="form"
+                     api=""
+                     @saved="saved"
+                     :isShouEnter="false"
+                     :data-source="rowEditDataSource"
+                     :form="formData"
+                     :is-custom-validate="true"
+                     @custom-validate="customValidate">
+          </form-list>
+        </template>
+      </common-dialog>
+    </div>
+    <div style="height: 100%;">
+      <vxe-loading v-if="fullscreenLoading"
+                   v-model="fullscreenLoading"></vxe-loading>
+    </div>
   </div>
 </template>
 <style lang="scss">
@@ -489,7 +516,8 @@ import {
   P8Table as CommonTable,
   P8Dialog as CommonDialog,
   P8Drawer as CommonDrawer,
-  P8ListLayout as ListLayout
+  P8ListLayout as ListLayout,
+  P8Form as FormList
 } from 'p8-components-ui'
 import Edit from '@/views/product/MyExperienceBase/edit.vue'
 import MyExperienceBase from '@/views/product/MyExperienceBase/myExperienceBase.vue'
@@ -523,7 +551,7 @@ import { version } from 'vue'
 import store from '@/plugins/store'
 import api from '@/plugins/api'
 import { debounce } from 'lodash';
-
+import moment from 'moment'
 const Mycolumns = [
   {
     title: '',
@@ -663,7 +691,8 @@ export default {
     CommonButtonBarSetting,
     VersionList,
     VuePerfectScrollbar,
-    relevance
+    relevance,
+    FormList
   },
   data () {
     const mh = document.documentElement.clientHeight - 300
@@ -684,7 +713,7 @@ export default {
       projectSecretGrade: '', // project文件导入 弹框需要展示的密级
       isPlan: true,
       planEditLock: -1,
-      fullscreenLoading: '',
+      fullscreenLoading: false,
       avTaskId: '',
       // ClassificationSelectVisible: false,
       customHeight: 300,
@@ -887,7 +916,45 @@ export default {
       hasAchievements: false,
       searchIds: [],
       fullscreen: false,
-      taskFinish: null
+      taskFinish: null,
+      ganttRowEditVisible: false,
+      formData: {},
+      rowEditDataSource: [
+        {
+          type: 'datetime', // 控件类型
+          labelText: '计划开始时间', // 控件显示的文本
+          placeholder: '请选择计划开始时间',
+          fieldName: 'start_date',
+          fieldConfig: {
+            size: 'small',
+            'picker-options': this.startDateOptions()
+          }
+        },
+        {
+          type: 'datetime', // 控件类型
+          labelText: '计划完成时间', // 控件显示的文本
+          placeholder: '请选择计划完成时间',
+          fieldName: 'end_date',
+          fieldConfig: {
+            size: 'small',
+            'picker-options': this.endDateOptions(),
+          }
+        },
+        {
+          type: 'select', // 控件类型
+          labelText: '排程', // 控件显示的文本
+          placeholder: '请选择排程',
+          fieldName: 'autoScheduling',
+          options: [
+            { label: '自动', value: '1' },
+            { label: '手动', value: '2' }
+          ],
+          fieldConfig: {
+            size: 'small'
+          }
+        }
+      ],
+      taskDatas: []
     }
   },
   watch: {
@@ -1045,6 +1112,70 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
+    startDateOptions () {
+      return {
+        disabledDate: (time) => {
+          let timeSpace = ''
+          if (this.formData.end_date) {
+            timeSpace = moment(this.formData.end_date).format('YYYY-MM-DD') < moment(time).format('YYYY-MM-DD')
+          } else {
+            if (this.taskDatas.length === 0) {
+              this.taskDatas = myGantt.serialize().data
+            }
+            timeSpace = moment(time).format('YYYY-MM-DD') < moment(this.taskDatas[0].start_date).format('YYYY-MM-DD')
+          }
+          return timeSpace
+        }
+      }
+    },
+    endDateOptions () {
+      return {
+        disabledDate: (time) => {
+          let timeSpace = ''
+          if (this.formData.start_date) {
+            timeSpace = moment(time).format('YYYY-MM-DD') < moment(this.formData.start_date).format('YYYY-MM-DD')
+          } else {
+            let latest = this.selectedTasks.reduce((max, item) => {
+              let maxDate = new Date(max.start_date)
+              let currentDate = new Date(item.start_date)
+              return currentDate > maxDate ? item : max
+            }, this.selectedTasks[0])
+            timeSpace = moment(time).format('YYYY-MM-DD') < moment(latest.start_date).format('YYYY-MM-DD')
+          }
+          return timeSpace
+        }
+      }
+    },
+    saved (res) {
+    },
+    customValidate (params) {
+      const that = this
+      if (that.selectedTasks && that.selectedTasks.length > 0) {
+
+        myGantt.batchUpdate(function () {
+          that.selectedTasks.forEach((task) => {
+            if (params.start_date) {
+              myGantt.getTask(task.id).start_date = params.start_date
+            }
+            if (params.end_date) {
+              const date = new Date(params.end_date)
+              date.setDate(date.getDate() + 1)
+              myGantt.getTask(task.id).end_date = date
+            }
+            if (params.autoScheduling) {
+              myGantt.getTask(task.id).autoScheduling = params.autoScheduling
+            }
+            myGantt.updateTask(task.id)
+          })
+        })
+      }
+      this.closeRowEdit()
+    },
+    closeRowEdit () {
+      this.ganttRowEditVisible = false
+      myGantt.config.readonly = false
+      this.formData = {}
+    },
     // 打开AI生成
     openAutoGeneration () {
       this.autoGenerationVisible = true
@@ -1372,11 +1503,7 @@ export default {
       // })
     },
     async initGantt (planInfoId, viewType) {
-      this.fullscreenLoading = this.$loading({
-        lock: true,
-        text: 'Loading',
-        spinner: 'el-icon-loading'
-      })
+      this.fullscreenLoading = true
       // 根据项目类型，获取gantt列设置
       this.columnSettings = await this.$api['planGanttManager.getGanttColumnSettingByWholeId']({ wholeDescribeId: this.wholeDescribeId })
       this.hasAchievements = checkArray(this.columnSettings)
@@ -1511,7 +1638,7 @@ export default {
             if (res) {
               vueThis.$store.dispatch('setGanttDatas', res)
               let taskList = res.tasks
-              vueThis.fullscreenLoading.close()
+              vueThis.fullscreenLoading = false
               // 先给task赋值拓展字段
               let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
               let extraStr = extraList.map((extra) => extra.filedName)
@@ -1607,12 +1734,12 @@ export default {
               vueThis.addEventClick()
               resolve(res)
             } else {
-              vueThis.fullscreenLoading.close()
+              vueThis.fullscreenLoading = false
               resolve(null)
             }
           })
           .catch(function (error) {
-            vueThis.fullscreenLoading.close()
+            vueThis.fullscreenLoading = false
             console.error('error' + error)
             reject(error)
           })

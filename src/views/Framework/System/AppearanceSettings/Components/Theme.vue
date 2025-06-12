@@ -13,7 +13,6 @@
             @click="changeSystemTheme(theme)"></li>
       </ul>
       <el-color-picker v-model="pickerColor"
-                       show-alpha
                        @change="changeSystemTheme(pickerColor)"></el-color-picker>
     </div>
     <div class="select-theme"></div>

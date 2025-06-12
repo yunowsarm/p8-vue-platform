@@ -33,18 +33,18 @@
         </template>
         <!-- 工作统筹 -->
         <template v-if="item.name === 'workCoordination' && tabsActiveName == item.name">
-          <span slot="label">{{item.label}}</span>
+          <span slot="label">{{ item.label }}</span>
           <work-coordination ref="workCoordination"></work-coordination>
         </template>
         <!-- 未完成原因 -->
         <template v-if="item.name === 'unfinishedCause'">
-          <span slot="label">{{item.label}}</span>
+          <span slot="label">{{ item.label }}</span>
           <deviate ref="deviate"
                    :taskFinish="taskFinish"
                    :tabsName="tabsName"></deviate>
         </template>
         <!-- 业务表单 -->
-        <template>
+        <template v-if="item.formType === 'businessForm'">
           <FormRender v-if="item.editMode === '单数据'"
                       :ref="item.name"
                       :item="item"
@@ -62,6 +62,31 @@
                                :isApprove="approveType"
                                :item="item"></multiple-form-table>
         </template>
+        <!-- 自定义表单 -->
+        <template v-else-if="item.formType === 'customForm'">
+          <component v-if="item.editMode === '单数据'"
+                     :ref="item.name"
+                     :key="item.name + tabsName"
+                     :is="componentUrl(item.formUrl)"></component>
+          <custom-form-table v-else-if="item.editMode === '多数据'"
+                             :item="item"
+                             :key="item.name + tabsName"
+                             :ref="item.name"
+                             :approveType="progessType !==  'progessTable'"></custom-form-table>
+        </template>
+        <!-- 模板表单 -->
+        <template v-else-if="item.formType === 'templateForm'">
+          <iframeForm v-if="item.editMode === '单数据'"
+                      :ref="item.name"
+                      :key="item.name + tabsName"
+                      :item="item"
+                      :approveType="progessType !==  'progessTable'"></iframeForm>
+          <template-form-table v-else-if="item.editMode === '多数据'"
+                               :item="item"
+                               :key="item.name + tabsName"
+                               :ref="item.name"
+                               :approveType="progessType !==  'progessTable'"></template-form-table>
+        </template>
       </div>
     </el-tab-pane>
   </el-tabs>
@@ -74,7 +99,12 @@ import ProgessTable from './ProgessTable'
 import Deviate from './Deviate'
 import WorkCoordination from './WorkCoordination'
 import multipleFormTable from './components/multipleFormTable'
+import customFormTable from './components/customFormTable.vue'
+import templateFormTable from './components/templateFormTable.vue'
 import FormRender from './components/formRender.vue'
+import iframeForm from './components/iframeForm.vue'
+import { defineAsyncComponent, defineComponent } from 'vue'
+
 export default {
   name: 'TaskTabsView',
   inject: ['getPlanInfo'],
@@ -86,7 +116,10 @@ export default {
     'el-tabs': Tabs,
     'el-tab-pane': TabPane,
     multipleFormTable,
-    FormRender
+    customFormTable,
+    templateFormTable,
+    FormRender,
+    iframeForm
   },
   props: {
     // 是否审批页面
@@ -95,8 +128,9 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
+      value: '',
       maximizedTabs: {}, // 记录每个标签页的最大化状态
       progessType: '',
       formViewId: '',
@@ -118,13 +152,27 @@ export default {
       taskFinish: false,
       taskbusinessForm: [],
       scrollContainer: null,
-      viewVisible: false,
+      viewVisible: false
     }
   },
-  async created () {
+  computed: {
+    token() {
+      return this.$store.getters.token
+    }
+  },
+  async created() {
     this.taskbusinessForm = await this.getTaskForm()
     this.taskbusinessForm = this.taskbusinessForm.map(el => {
-      return { label: el.formName, name: el.id, formCode: el.formCode, editMode: el.editMode, isRequired: el.isRequired, formId: el.formId }
+      return {
+        formType: el.formType,
+        label: el.formName,
+        name: el.id,
+        formCode: el.formCode,
+        editMode: el.editMode,
+        isRequired: el.isRequired,
+        formId: el.formId,
+        formUrl: el.formUrl
+      }
     })
     // 判断任务是否超期
     if (!this.durationDay) {
@@ -182,19 +230,26 @@ export default {
       this.hideScrollbar()
     })
   },
-  mounted () {
+  mounted() {
     if (this.getPlanInfo().MANAGERSTATUS === '6409' || this.getPlanInfo().MANAGERSTATUS === '6406') {
       this.viewVisible = true
     }
-    if (this.getPlanInfo().ISLEAF > 0 || getPlanInfo().pageType === 'view') {
+    if (this.getPlanInfo().ISLEAF > 0 || this.getPlanInfo().pageType === 'view') {
       this.viewVisible = true
     }
   },
-  beforeDestroy () {
+  beforeDestroy() {
     this.removeScrollHandler()
   },
   methods: {
-    initScrollHandler () {
+    getIframeSrc(item) {
+      return `${this.$sysConfig.API_DEFAULT_CONFIG.jmreportUrl}/view/${item.formId}?token=${this.token}&actOrTaskFormId=${item.name}`
+    },
+    componentUrl(componentPath) {
+      const path = componentPath.startsWith('/') ? componentPath.slice(1) : componentPath
+      return defineComponent(require(`@/views/${path}.vue`).default)
+    },
+    initScrollHandler() {
       const tabsEl = this.$refs.tabsContainer.$el
       this.scrollContainer = tabsEl.querySelector('.el-tabs__nav-scroll')
       if (this.scrollContainer) {
@@ -214,7 +269,7 @@ export default {
         )
       }
     },
-    removeScrollHandler () {
+    removeScrollHandler() {
       if (this.scrollContainer) {
         this.scrollContainer.removeEventListener(
           'wheel',
@@ -230,7 +285,7 @@ export default {
         )
       }
     },
-    handleWheel (event) {
+    handleWheel(event) {
       if (event.shiftKey) {
         event.preventDefault()
         const delta = Math.sign(event.deltaY)
@@ -238,23 +293,23 @@ export default {
         this.scrollContainer.scrollLeft += delta * 60
       }
     },
-    hideScrollbar () {
+    hideScrollbar() {
       // 强制隐藏滚动条
       if (this.scrollContainer) {
         this.scrollContainer.style.overflow = 'hidden'
       }
     },
-    toggleMaximize (tabName) {
+    toggleMaximize(tabName) {
       this.$set(this.maximizedTabs, tabName, !this.maximizedTabs[tabName])
     },
-    async getTaskForm () {
+    async getTaskForm() {
       let api = 'planGanttManager.taskFormInfo'
       let params = { taskId: this.getPlanInfo().TASKID }
       let result = this.$api[api](params)
       return result
     },
 
-    getTaskFinish () {
+    getTaskFinish() {
       this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then((res) => {
         let taskFinish = res.taskFinish && res.taskFinish.content ? res.taskFinish.content : ''
         if (taskFinish === '手动') {
@@ -262,21 +317,21 @@ export default {
         }
       })
     },
-    tabsClick (val) {
+    tabsClick(val) {
       this.tabsName = val.name
     },
     // 切换页面不继续弹出超期提示框
-    dialogOk (val) {
+    dialogOk(val) {
       this.durationDay = val
       this.exceedType = val
     },
-    dialogClose () {
+    dialogClose() {
       if (this.getPlanInfo().MANAGERSTATUS === '6406') {
         this.progessType = 'progessTable'
         this.viewVisible = true
       }
     },
-    checkBusinessForm () {
+    checkBusinessForm() {
       let that = this
       let flag = true
       let formName = []
@@ -302,7 +357,7 @@ export default {
 .tab-content-wrapper {
   background: #fff;
   position: relative;
-  height: calc(100% - 10px); // 修改：底部留出10px空间
+  height: calc(100% - 40px); // 修改：底部留出10px空间
   margin-bottom: 10px; // 添加：确保底部间距
   transition: all 0.3s;
 
@@ -310,6 +365,7 @@ export default {
     ::v-deep .parser-container {
       height: calc(100% - 20px);
     }
+
     position: fixed;
     top: 0;
     left: 0;
@@ -318,8 +374,8 @@ export default {
     background: #fff;
     z-index: 99999;
     padding-top: 20px;
-    .tab-actions {
-      // 添加：确保最大化时图标可见
+
+    .tab-actions { // 添加：确保最大化时图标可见
       position: fixed;
       right: 20px;
       top: 20px;
@@ -344,27 +400,34 @@ export default {
     }
   }
 }
+
 .progressTaskTabs.el-tabs {
   height: 100%;
 }
+
 .progressTaskTabs ::v-deep .el-tabs__header {
   margin: 0;
 }
+
 .progressTaskTabs ::v-deep .el-tabs__nav-wrap {
   background-color: #f5f7fa;
   padding: 0 14px;
+
   &::after {
     height: 0px;
   }
 }
+
 .progressTaskTabs ::v-deep .el-tabs__content {
   // padding: 0 10px;
   height: calc(100% - 30px) !important;
   overflow: auto;
 }
+
 .progressTaskTabs ::v-deep .el-tab-pane {
   height: 100%;
 }
+
 .el-tabs--border-card {
   border: 0;
 }
