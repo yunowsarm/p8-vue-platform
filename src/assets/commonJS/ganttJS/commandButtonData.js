@@ -526,7 +526,7 @@ export const CommandButtonData = [
             cancel: '取消',
             callback: function (result) {
               if (result) {
-                removeTasks(thisGantt, thisDp, ganttName) 
+                removeTasks(thisGantt, thisDp, ganttName)
                 tasks.forEach(item => {
                   thisGantt.deleteTask(item.id)
                 })
@@ -3030,7 +3030,7 @@ function checkContentRoot (ganttName, tasks) {
 function get32NumberUid() {
   let array = new Uint8Array(16)
   window.crypto.getRandomValues(array)
-  return Array.from(array).map( b=> 
+  return Array.from(array).map( b=>
     b.toString(16).padStart(2, '0')).join('').substring(0, 32)
 }
 
@@ -3059,7 +3059,7 @@ function addTask (num, pos, ganttName) {
       let managerStatus = ''
       if (vueThis.thirdMenuParam.EXECUTESTATE === '1000' || vueThis.thirdMenuParam.MANAGESTATUS === '6609') {
         managerStatus = '6401'
-      } 
+      }
       if (vueThis.thirdMenuParam.EXECUTESTATE === '1070' || vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
         managerStatus = '6403'
       }
@@ -3229,7 +3229,7 @@ function addTask (num, pos, ganttName) {
       }
         createTaskByDatas(ganttObject, tasksChild, taskId, 'Child', '新任务', '任务创建成功!', dpObject, null)
         vueThis.taskCount = vueThis.taskCount + num
-        
+
         // 新建下级
         tasksChild[0].ids = childIds
         api['planGanttManager.createPlanGanttData'](tasksChild[0])
@@ -3245,7 +3245,7 @@ function addTask (num, pos, ganttName) {
               //     //  let fileNames = Object.keys(item)
               //     //  console.log("🚀 ~ res.forEach ~ el:", fileNames)
               //     //  fileNames.forEach(el => {
-                    
+
               //       // tasks[el] = item[el]
               //       // if (el !== 'id' && item[el] !== null) {
               //       //   vueThis.$set(tasks, el, item[el])
@@ -3785,7 +3785,7 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
       let managerStatus = ''
       if (vueThis.thirdMenuParam.EXECUTESTATE === '1000' || vueThis.thirdMenuParam.MANAGESTATUS === '6609') {
         managerStatus = '6401'
-      } 
+      }
       if (vueThis.thirdMenuParam.EXECUTESTATE === '1070' || vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
         managerStatus = '6403'
       }
@@ -3794,6 +3794,7 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
       }
       copyTasks.tasks.forEach((el, index) => {
           el.managerStatus = managerStatus
+          el.status = 6020
           el.dutyDeptName = ''
           el.realName = ''
           el.owner_id = '',
