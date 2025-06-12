@@ -205,7 +205,7 @@
                width="618px"
                :before-close="beforeClose">
       <div class="regards-box">
-        <p><span class="regards-font">系统名称:&nbsp;&nbsp;&nbsp;</span><span>{{ systemName }}</span></p>
+        <p><span class="regards-font">系统名称:&nbsp;&nbsp;&nbsp;</span><span v-html="systemName"></span></p>
         <p><span class="regards-font">系统版本:&nbsp;&nbsp;&nbsp;</span>
           <el-popover placement="top-start"
                       width="230"
