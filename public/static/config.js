@@ -10,11 +10,13 @@ const CONFIG = {
   // devBaseUrl: 'http://192.168.0.101:9099', // 第一次执行参考以上备注
   // devBaseUrl: 'http://192.168.0.146:9091', // 第一次执行参考以上备注
   // devBaseUrl: defaultServiceAddr, // 第一次执行参考以上备注
-  devBaseUrl: 'http://192.168.0.225:9992', // 第一次执行参考以上备注
+  devBaseUrl: 'http://192.168.0.225:9994', // 第一次执行参考以上备注
+  // devBaseUrl: 'http://192.168.0.142:9092',
   // jmreportUrl:'http://192.168.0.142:9092/jmreport',
   jmreportUrl: defaultServiceAddr + '/jmreport',
   prodBaseUrl: defaultServiceAddr // 自动获取浏览器地址栏地址作为后端访问地址，适应于前端程序部署在后端的Web服务器容器内的模式，如果分离部署模式，请修改为后台访问地址。
 }
+const SYSTEM_NAME = 'P8V3.0-PLATFORM'
 // eslint-disable-next-line no-unused-vars
 // CA登录设置  为true时，CA登录
 // eslint-disable-next-line no-unused-vars

@@ -363,4 +363,7 @@ export default {
 .dialogSelectUser {
   padding: 0;
 }
+::v-deep .el-input__validateIcon {
+  display: none !important;
+}
 </style>
