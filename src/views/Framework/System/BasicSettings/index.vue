@@ -106,6 +106,7 @@ export default {
           labelText: '中文名称',
           fieldName: 'systemName',
           placeholder: '请输入中文名称',
+          maxlength: 500,
           colLayout: 'doubleCol'
         },
         // {
