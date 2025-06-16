@@ -128,7 +128,7 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     return {
       value: '',
       maximizedTabs: {}, // 记录每个标签页的最大化状态
@@ -156,11 +156,11 @@ export default {
     }
   },
   computed: {
-    token() {
+    token () {
       return this.$store.getters.token
     }
   },
-  async created() {
+  async created () {
     this.taskbusinessForm = await this.getTaskForm()
     this.taskbusinessForm = this.taskbusinessForm.map(el => {
       return {
@@ -230,7 +230,7 @@ export default {
       this.hideScrollbar()
     })
   },
-  mounted() {
+  mounted () {
     if (this.getPlanInfo().MANAGERSTATUS === '6409' || this.getPlanInfo().MANAGERSTATUS === '6406') {
       this.viewVisible = true
     }
@@ -238,18 +238,18 @@ export default {
       this.viewVisible = true
     }
   },
-  beforeDestroy() {
+  beforeDestroy () {
     this.removeScrollHandler()
   },
   methods: {
-    getIframeSrc(item) {
+    getIframeSrc (item) {
       return `${this.$sysConfig.API_DEFAULT_CONFIG.jmreportUrl}/view/${item.formId}?token=${this.token}&actOrTaskFormId=${item.name}`
     },
-    componentUrl(componentPath) {
+    componentUrl (componentPath) {
       const path = componentPath.startsWith('/') ? componentPath.slice(1) : componentPath
       return defineComponent(require(`@/views/${path}.vue`).default)
     },
-    initScrollHandler() {
+    initScrollHandler () {
       const tabsEl = this.$refs.tabsContainer.$el
       this.scrollContainer = tabsEl.querySelector('.el-tabs__nav-scroll')
       if (this.scrollContainer) {
@@ -269,7 +269,7 @@ export default {
         )
       }
     },
-    removeScrollHandler() {
+    removeScrollHandler () {
       if (this.scrollContainer) {
         this.scrollContainer.removeEventListener(
           'wheel',
@@ -285,7 +285,7 @@ export default {
         )
       }
     },
-    handleWheel(event) {
+    handleWheel (event) {
       if (event.shiftKey) {
         event.preventDefault()
         const delta = Math.sign(event.deltaY)
@@ -293,23 +293,23 @@ export default {
         this.scrollContainer.scrollLeft += delta * 60
       }
     },
-    hideScrollbar() {
+    hideScrollbar () {
       // 强制隐藏滚动条
       if (this.scrollContainer) {
         this.scrollContainer.style.overflow = 'hidden'
       }
     },
-    toggleMaximize(tabName) {
+    toggleMaximize (tabName) {
       this.$set(this.maximizedTabs, tabName, !this.maximizedTabs[tabName])
     },
-    async getTaskForm() {
+    async getTaskForm () {
       let api = 'planGanttManager.taskFormInfo'
       let params = { taskId: this.getPlanInfo().TASKID }
       let result = this.$api[api](params)
       return result
     },
 
-    getTaskFinish() {
+    getTaskFinish () {
       this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then((res) => {
         let taskFinish = res.taskFinish && res.taskFinish.content ? res.taskFinish.content : ''
         if (taskFinish === '手动') {
@@ -317,21 +317,21 @@ export default {
         }
       })
     },
-    tabsClick(val) {
+    tabsClick (val) {
       this.tabsName = val.name
     },
     // 切换页面不继续弹出超期提示框
-    dialogOk(val) {
+    dialogOk (val) {
       this.durationDay = val
       this.exceedType = val
     },
-    dialogClose() {
+    dialogClose () {
       if (this.getPlanInfo().MANAGERSTATUS === '6406') {
         this.progessType = 'progessTable'
         this.viewVisible = true
       }
     },
-    checkBusinessForm() {
+    checkBusinessForm () {
       let that = this
       let flag = true
       let formName = []
@@ -357,7 +357,7 @@ export default {
 .tab-content-wrapper {
   background: #fff;
   position: relative;
-  height: calc(100% - 40px); // 修改：底部留出10px空间
+  height: calc(100% - 0px); // 修改：底部留出10px空间
   margin-bottom: 10px; // 添加：确保底部间距
   transition: all 0.3s;
 
@@ -375,7 +375,8 @@ export default {
     z-index: 99999;
     padding-top: 20px;
 
-    .tab-actions { // 添加：确保最大化时图标可见
+    .tab-actions {
+      // 添加：确保最大化时图标可见
       position: fixed;
       right: 20px;
       top: 20px;
