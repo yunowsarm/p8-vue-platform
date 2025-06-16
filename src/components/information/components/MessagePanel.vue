@@ -61,6 +61,7 @@
       </template>
     </common-dialog>
     <common-dialog
+      class="taskInfoDialog"
       v-if="visibleTaskInfo"
       :visible="visibleTaskInfo"
       :width="dialogWidth"
@@ -493,5 +494,8 @@ export default {
 }
 ::v-deep .el-dialog{
   margin-top: 20vh !important;
+}
+.taskInfoDialog ::v-deep .el-dialog__body{
+  padding: 0 !important;
 }
 </style>
