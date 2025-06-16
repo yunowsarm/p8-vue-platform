@@ -1,6 +1,6 @@
 <template>
-  <left-center-right-layout :percentLeft="30"
-                            :percentRight="65"
+  <left-center-right-layout :percentLeft="35"
+                            :percentRight="60"
                             :type="true"
                             v-if="isRouterShow">
     <template #left>
