@@ -3,6 +3,7 @@
                 :columns="columns"
                 :table-setting="false"
                 :params="queryParam"
+                :refreshShow="false"
                 :api="tableApi"
                 :pagination="false"></common-table>
 </template>

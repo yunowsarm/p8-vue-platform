@@ -70,25 +70,25 @@ export default {
       userUnReadMessageCountApi: 'userMessage.userUnReadMessageCount',
       layoutConfig: {
         left: {
-          xs: 4,
-          sm: 4,
-          md: 4,
-          lg: 4,
-          xl: 4
-        },
-        center: {
           xs: 5,
           sm: 5,
           md: 5,
           lg: 5,
           xl: 5
         },
+        center: {
+          xs: 6,
+          sm: 6,
+          md: 6,
+          lg: 6,
+          xl: 6
+        },
         right: {
-          xs: 15,
-          sm: 15,
-          md: 15,
-          lg: 15,
-          xl: 15
+          xs: 13,
+          sm: 13,
+          md: 13,
+          lg: 13,
+          xl: 13
         }
       },
       searchParams: {
