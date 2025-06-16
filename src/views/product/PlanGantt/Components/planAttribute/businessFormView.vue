@@ -7,6 +7,7 @@
     <template #center>
       <common-table ref="table"
                     :comp="comp"
+                    class="customTable"
                     :columns="columns"
                     :pagination="false"
                     :no-api-table-data="editTableData"></common-table>
@@ -94,5 +95,8 @@ export default {
       color: $base-light-color;
     }
   }
+}
+.customTable ::v-deep .panination {
+  display: none;
 }
 </style>
