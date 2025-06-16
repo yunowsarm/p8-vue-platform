@@ -4,7 +4,7 @@
                :dataSource="dataSource"
                :form="formData"
                :existDefaultBtn="false"
-               labelWidth="120px"
+               labelWidth="90px"
                @rendered="rendered">
 
       <template #status>

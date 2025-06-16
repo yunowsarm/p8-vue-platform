@@ -259,13 +259,13 @@ export default {
     if (this.$store.state.user.userId === 'SYS_USER000') {
       this.isShow = true
     }
-    this.getColor()
-    this.getIcon()
     this.$api['projectTeamSetting.getSystemAbout']().then(res => {
       if (res) {
         this.regardsObj = res
       }
     })
+    this.getColor()
+    this.getIcon()
   },
   methods: {
     getImage (id) {
