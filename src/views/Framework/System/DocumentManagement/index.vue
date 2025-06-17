@@ -141,7 +141,7 @@ export default {
   },
   data: function () {
     return {
-      tableHeight: document.documentElement.clientHeight * 0.9 - 150 + 'px',
+      tableHeight: document.documentElement.clientHeight * 0.9 - 80 + 'px',
       comp: this,
       classify: [],
       queryParam: {},
