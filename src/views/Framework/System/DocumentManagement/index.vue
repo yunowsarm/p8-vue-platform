@@ -337,7 +337,9 @@ export default {
     reSet () {
       const this_ = this
       Object.keys(this_.queryParam).forEach((key) => {
-        this_.queryParam[key] = null
+        if (key !== 'classify') {
+          this_.queryParam[key] = null
+        }
       })
       Vue.nextTick(function () {
         this_.$refs.table.searchData()
