@@ -147,13 +147,17 @@
     .el-dialog__body {
       position: relative;
       height: var(--height);
-
+      padding-bottom: 10px;
       .dialogBody {
         height: calc(100% - 50px);
         // box-shadow: inset 0px -2px 10px 1px #b0b3b2;
         overflow: auto;
         // padding: 20px 25px 20px;
         background: $base-white-color;
+        .normal-layout{
+          height: 100%;
+          margin-bottom: -30px;
+        }
         &::-webkit-scrollbar {
           width: 4px;
           height: 8px;
@@ -199,11 +203,15 @@
       cursor: auto !important;
     }
     .el-dialog__body {
+      box-sizing: border-box;
       height: calc(100% - 50px);
+      padding-bottom: 10px;
       .dialogBody {
         height: calc(100% - 50px) !important;
         max-height: none !important;
-
+        .normal-layout{
+          height: 100%;
+        }
         &.hiddenDialogFooter {
           height: 100% !important;
         }
