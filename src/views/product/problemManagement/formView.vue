@@ -50,6 +50,8 @@ export default {
           this.$emit('saveSuccess')
           this.customSave = false
         })
+      } else {
+        this.$emit('saveSuccess')
       }
     }
   },
