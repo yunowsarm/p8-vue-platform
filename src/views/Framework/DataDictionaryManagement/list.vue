@@ -288,7 +288,7 @@ export default {
       if (node.layersParams) {
         this.queryParam.dicType = node.layersParams.dicType
       } else {
-        this.queryParam.dicType = '-1'
+        this.queryParam.dicType = null
       }
       this.treeId = node.id
     },
