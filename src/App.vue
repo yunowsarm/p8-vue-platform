@@ -38,8 +38,16 @@ export default {
   },
   mounted () {
     window.socketType = null
+    window.addEventListener('beforeunload', this.handlerBeforeUnload)
   },
   methods: {
+    handlerBeforeUnload (e) {
+      if (window.myWebSocket) {
+        console.log(window.myWebSocket, '----window.myWebSocket');
+        window.myWebSocket.off('getMessageContent')
+        window.myWebSocket.off('getApproveContent')
+      }
+    },
     initWebSocket (id, name) {
       let that = this
       // 判断页面有没有存在websocket连接
@@ -200,7 +208,11 @@ export default {
     window.myWebSocket.off('privateMessage')
     window.myWebSocket.off('reconnect_failed')
     window.myWebSocket.off('connectSuccess')
+    window.myWebSocket.off('getMessageContent')
+    window.myWebSocket.off('getApproveContent')
     window.myWebSocket.close()
+    window.removeEventListener('beforeunload', this.handlerBeforeUnload)
+
   }
 }
 </script>
