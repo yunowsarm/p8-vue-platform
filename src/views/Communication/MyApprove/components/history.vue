@@ -47,7 +47,7 @@
                      :hasFullScreen="true"
                      :tabs-data="tabs">
           <template #approval>
-            <component :style="{ height: tabsHeight}"
+            <component :style="{ height: tabsHeight }"
                        :selected-approval="selectedApproval"
                        :curr-entity-id="currEntityId"
                        :searchParams="searchParams"
@@ -57,18 +57,20 @@
                        :record="{ desformCode: componentsParams.codeForm }"
                        :permission-vo="componentsParams.permissionVo"
                        :layout-config="componentsParams"
-                       :is="componentUrl"
+                      :is="componentUrl"
                        ref="approveContent"
                        class="approveComponent"
                        v-bind="formCompProp"
-                       :kanban-config="componentsParams"/>
-            <component :style="{ height: tabsHeight }"
+                       :kanban-config="componentsParams" />
+            <component ref="approveContent"
+                       :style="{ height: tabsHeight }"
                        :searchParams="searchParams"
                        :selected-approval="selectedApproval"
                        :curr-entity-id="currEntityId"
                        v-else-if="formComp != null && formComp != ''"
                        :is="componentLoader"
-                       v-bind="formCompProp"/>
+                       v-bind="formCompProp"
+                       :approval-result="formData.approvalResult" />
           </template>
           <template #bpmn>
             <bpm-view :style="{ height: tabsHeight}"
@@ -345,8 +347,10 @@ export default {
     loadFormKey() {
       const this_ = this
       this_.dataSource = this_.dataSourceDefault
-      this.asyncComponents = ''
-      this_.$api['PersonalProcessApproval.getApproveContentViewUrl']({taskId: this.selectedApproval.processTaskId}).then((res) => {
+      this_.formData.approvalParams = ''
+      this_.formData.sendMsg = ''
+      this_.signText = ''
+      this.$api['PersonalProcessApproval.getApproveContentViewUrl']({ taskId: this.selectedApproval.processTaskId }).then((res) => {
         if (res && res.length > 0) {
           const page = {}
           let inputProp = {}
@@ -359,24 +363,34 @@ export default {
               page.code = o.value.code
               const canEdit = o.value.canEdit
               const canView = o.value.canView
-
+              const sendMsg = o.value.sendMsg
+              const sign = o.value.sign
+              this_.formData.sendMsg = sendMsg
               if (canEdit && canEdit === 'canEdit') {
-                this_.dataSource = this_.dataSourceTempView
+                this_.dataSource = this_.dataSourceTemp
                 this_.formData.approvalParams = canEdit
               }
               if (canView && canView === 'canView') {
                 this_.dataSource = this_.dataSourceTempView
                 this_.formData.approvalParams = canView
               }
-              inputProp = {...inputProp, ...o.value}
+              if (sign && sign === 'sign') {
+                this_.dataSource = this_.dataSourceSign
+                this_.signText = '(会签)'
+              }
+              this_.loadApprovalFormData()
+              inputProp = { ...inputProp, ...o.value }
             }
-            this_.loadApprovalFormData()
             inputProp[o.variableName] = o.value
           })
 
-          this_.formCompProp = {...this_.formCompProp, ...inputProp, ...page, ...{tableFlex: 240, headerVisible: false}}
+          this_.formCompProp = { ...inputProp, ...page, ...{ taskId: this_.taskId, tableFlex: this.tableFlex, headerVisible: false, pageType: 'view' } }
           if (this_.formCompProp.approveContentView) {
-            this_.componentsParams = this_.formCompProp.approveContentView.formSelector ? JSON.parse(this_.formCompProp.approveContentView.formSelector) : null
+            if (this_.formCompProp.approveContentView.codeForm) {
+              this_.componentsParams = this_.formCompProp.approveContentView
+            } else {
+              this_.componentsParams = this_.formCompProp.approveContentView.formSelector ? JSON.parse(this_.formCompProp.approveContentView.formSelector) : null
+            }
             if (this_.componentsParams) {
               this_.componentsParams.dataViewId = this_.formCompProp.customBusinessKey ? this_.formCompProp.customBusinessKey : this_.formCompProp.businessKey
               this_.asyncComponents = this_.componentsParams.url
