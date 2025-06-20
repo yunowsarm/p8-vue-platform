@@ -143,6 +143,16 @@ export default {
       visible: false
     }
   },
+  watch: {
+    'formData.notificationScope': {
+      handler: function (val) {
+        if (val === '0') {
+          this.formData.noticeList = []
+          this.selectedData.userList = []
+        }
+      }
+    }
+  },
   methods: {
     showModal () {
       this.visible = true
