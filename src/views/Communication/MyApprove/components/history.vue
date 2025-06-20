@@ -59,7 +59,7 @@
                        :record="{ desformCode: componentsParams.codeForm }"
                        :permission-vo="componentsParams.permissionVo"
                        :layout-config="componentsParams"
-                       :is="componentUrl"
+                      :is="componentUrl"
                        ref="approveContent"
                        class="approveComponent"
                        v-bind="formCompProp"
