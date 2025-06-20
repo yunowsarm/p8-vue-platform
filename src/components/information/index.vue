@@ -218,7 +218,7 @@ export default {
   padding-left: 0 !important;
 }
 .left-panel {
-  height: 100%;
+  height: calc(100% - 42px);
   color: #293137;
   overflow-y: auto;
   margin-right: 20px;
@@ -228,5 +228,8 @@ export default {
 }
 #message {
   width: 100%;
+}
+::v-deep .el-dialog__body{
+  padding: 0 !important;
 }
 </style>

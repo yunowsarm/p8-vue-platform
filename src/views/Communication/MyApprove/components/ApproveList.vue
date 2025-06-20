@@ -89,8 +89,16 @@
                         :key="index"
                         style="text-align: left">
                   <el-col :span="24">
-                    <span class="msg-content overHiding"
-                          v-if="item.approveInfoConfig[el] && item.approveInfoConfig[el].label">{{item.approveInfoConfig[el].label}}：{{ item.approveInfoConfig[el].value }}</span>
+                    <div class="msg-content overHiding"
+                         v-if="item.approveInfoConfig[el] && item.approveInfoConfig[el].label">{{item.approveInfoConfig[el].label}}：
+                      <el-tooltip v-if="item.approveInfoConfig[el].value && item.approveInfoConfig[el].value.length > 10"
+                                  effect="dark"
+                                  :content="item.approveInfoConfig[el].value"
+                                  placement="left">
+                        <span>{{ item.approveInfoConfig[el].value }}</span>
+                      </el-tooltip>
+                      <span v-else>{{ item.approveInfoConfig[el].value }}</span>
+                    </div>
                   </el-col>
                 </el-row>
               </template>
@@ -425,6 +433,8 @@ $icon-span-width: 20px;
     .msg-content {
       margin: 5px 0px;
       display: inline-block;
+      text-overflow: ellipsis;
+      width: 100%;
     }
     .msg-user {
       padding-right: 10px;

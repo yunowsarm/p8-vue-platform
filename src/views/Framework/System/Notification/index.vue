@@ -18,6 +18,7 @@
                            type="link"
                            size="small"
                            icon="user-add"
+                           :disabled="formData.notificationScope === '0'"
                            @click="showModal">选择人员</el-button>
               </li>
               <li v-for="item in selectedData.userList"
@@ -36,7 +37,8 @@
         </div>
       </template>
       <template #message>
-        <P8Tinymce v-model="formData.content" :editorConfig="{height: '400px'}" />
+        <P8Tinymce v-model="formData.content"
+                   :editorConfig="{height: '400px'}" />
       </template>
       <template #customBtn>
         <el-button size="mini"
@@ -139,6 +141,16 @@ export default {
         }
       ],
       visible: false
+    }
+  },
+  watch: {
+    'formData.notificationScope': {
+      handler: function (val) {
+        if (val === '0') {
+          this.formData.noticeList = []
+          this.selectedData.userList = []
+        }
+      }
     }
   },
   methods: {
