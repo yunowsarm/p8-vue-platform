@@ -42,6 +42,14 @@ const updateStorageShortcutMenu = (token, shortcuts) => {
     })
   }
 }
+const rgbaToHex = (rgba) => {
+  const result = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+  if(!result) return  rgba;
+  const r = parseInt(result[1]).toString(16).padStart(2,'0')
+  const g = parseInt(result[2]).toString(16).padStart(2,'0')
+  const b = parseInt(result[3]).toString(16).padStart(2,'0')
+  return `#${r}${g}${b}`.toUpperCase();
+}
 const getRGBOpacityColor = (color, opacity = 0.1) => {
   const red = parseInt(color.slice(1, 3), 16);
   const green = parseInt(color.slice(3, 5), 16);
@@ -261,6 +269,9 @@ const platform = {
       commit('DRAGED_SHORTCUTS', items)
     },
     async setTheme({ commit, state }, { theme, handler = false }) {
+      if(typeof theme === 'string' && theme.startsWith('rgba')){
+        theme = rgbaToHex(theme)
+      }
       //  防止多次提交相同颜色
       if (!theme || (theme === state.theme && handler)) {
         // theme 为空时为默认颜色#0050b3

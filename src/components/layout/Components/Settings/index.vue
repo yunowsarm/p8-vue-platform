@@ -24,7 +24,7 @@
       <div class="setting-block">
         <div class="settings">
           <background-image @changeSystemImage="changeSystemImage" />
-          <div style="margin-left: 20px;">
+          <div v-if="imageUrl" style="margin-left: 20px;">
             背景图展示方式：<el-button-group v-model="imgType"
                              style="padding: 10px;">
               <el-button v-for="(btn, index) in buttonConfigs"
@@ -101,7 +101,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['systemTheme', 'imageId', 'imageUrl']),
+    ...mapGetters(['systemTheme', 'imageId', 'imageUrl', 'baseConfig']),
     menuList () {
       return this.$store.getters.asyncRouter
     },
@@ -118,18 +118,44 @@ export default {
     window.removeEventListener('resize', this.resizeChart)
   },
   methods: {
+    resetTheme(){
+      let themeArray
+      const systemThemeArray = JSON.parse(this.baseConfig.systemThemeArray)
+      const systemThemeType = this.baseConfig.systemThemeType
+      if (systemThemeType === 'systemThemeType1') {
+        themeArray = systemThemeArray[0]
+      }
+      if (systemThemeType === 'systemThemeType2') {
+        themeArray = systemThemeArray[1]
+      }
+      if (systemThemeType === 'systemThemeType3') {
+        themeArray = systemThemeArray[2]
+      }
+      themeArray.forEach(item => {
+        switch (item.key) {
+          case 'imageUrl':
+            this.$store.dispatch('setImage', item.url)
+            break;
+          case 'bgTheme':
+            let theme = item.value
+            this.$store.dispatch('setTheme', { theme, handler: true })
+            break;
+          default:
+            if(['imgType','imgNum'].includes(item.key)){
+              this[item.key] = item.value
+            }
+            this.$store.dispatch('setSystemColor', { [item.key]: item.value })
+            break;
+        }
+      })
+      console.log(this.$store.getters.systemColor)
+    },
     reSetSettingHandle () {
       const _this = this
+      _this.resetTheme()
       const url = '/framework/user/setting/del'
       const { devBaseUrl, prodBaseUrl, isDevMode } = this.api_default_config;
       const urlPrefix = isDevMode ? `${devBaseUrl}` : `${prodBaseUrl}`;
-      _this.imgType = 1
-      _this.imgNum = 0.7
-      let colors = {
-        imgType: 1,
-        imgNum: 0.7
-      }
-      _this.$store.dispatch('setSystemColor', colors)
       if (this.$store.state.user.userSettingAll.theme) {
         let tableSetting = this.$store.state.user.userSettingAll.theme[0]
         let params = [{
