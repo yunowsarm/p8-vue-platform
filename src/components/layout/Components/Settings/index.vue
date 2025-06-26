@@ -111,6 +111,27 @@ export default {
     }
   },
   components: { UserInfo, theme, SystemConfig, BackgroundImage, TableTheme },
+  watch:{
+    imageUrl(newVal,oldVal){
+      if(newVal && !oldVal){
+        this.imgType = 1
+        this.imgNum = 0.7
+        const colors = {
+          imgType:this.imgType,
+          imgNum:this.imgNum
+        }
+        this.$store.dispatch('setSystemColor', colors)
+      }else if(!newVal){
+        this.imgType = 1
+        this.imgNum = 1
+        const colors = {
+          imgType:this.imgType,
+          imgNum:this.imgNum
+        }
+        this.$store.dispatch('setSystemColor', colors)
+      }
+    }
+  },
   mounted () {
     window.addEventListener('resize', this.resizeChart)
   },
