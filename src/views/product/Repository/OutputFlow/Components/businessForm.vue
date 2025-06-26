@@ -367,7 +367,7 @@ export default {
         this.taskFinish = true
       }
     })
-    this.$api['OutputFlow.formInfo']({}).then(res => {
+    this.$api['OutputFlow.formInfo']({ desformStatus: '1'}).then(res => {
       this.renderData = res
     })
     this.$api['OutputFlow.getTemplateList']({}).then(res => {
