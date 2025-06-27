@@ -5,6 +5,7 @@
       <export-execl :table-columns="columns"
                     :other-params="queryParams"
                     :api="exportApi"
+                    :total="total"
                     style="float: left"></export-execl>
 
       <search-form-list ref="search"
@@ -21,6 +22,7 @@
                     :flex="200"
                     :columns="columns"
                     :params="queryParams"
+                    @requested-table-data="requestedTableData"
                     :api="tableApi"></common-table>
     </template>
   </list-layout>
@@ -138,7 +140,8 @@ export default {
       dataSource: dataSource,
       queryParams: {},
       columns: columns,
-      exportData: []
+      exportData: [],
+      total:0
     }
   },
   mounted () {
@@ -154,6 +157,9 @@ export default {
     }
   },
   methods: {
+    requestedTableData(tabelData,total){
+      this.total = total
+    },
     search (params) {
       this.queryParams = params
       let that = this
