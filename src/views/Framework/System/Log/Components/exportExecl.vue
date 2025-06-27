@@ -48,6 +48,10 @@ export default {
       type: String,
       default: ''
     },
+    total:{
+      type: Number,
+      default: 0
+    },
     otherParams: {
       type: Object,
       default: () => { }
@@ -62,13 +66,16 @@ export default {
       href: undefined,
       page: {
         current: 1,
-        size: 5000,
+        size: 0,
         orders: []
       },
       toolbarWritingDisplay: '0'
     }
   },
   watch: {
+    total(val){
+      this.page.size = val
+    },
     href (val) {
       if (val) {
         setTimeout((_) => {
@@ -88,6 +95,7 @@ export default {
     async getExportData () {
       let that = this
       let queryParams = { page: that.page, ...that.otherParams }
+      debugger
       let resData = await this.$api[that.api](queryParams)
       if (resData && resData.records) {
         resData.records.forEach((row) => {
