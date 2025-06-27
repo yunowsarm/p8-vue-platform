@@ -2,7 +2,7 @@
   <el-form ref="form" :model="formData" label-width="100px" class="formList" :inline-message="inlineMessage" style="height: 100%">
     <el-row :class="{ existBtn: true }">
       <template v-for="(item, index) in dataSource">
-        <el-col :span="item.colLayout === 24" :key="index">
+        <el-col :span="item.colLayout === 'doubleCol' ? 12 : 24" :key="index">
           <el-form-item v-if="item.labelText === '项目状态'" :label="item.labelText" :prop="item.fieldName">
             <el-radio-group :disabled="taskEditCheck" v-model="formData[item.fieldName]">
               <el-radio-button v-for="opt in zzOptions" :key="opt.value" :label="opt.value" :value="opt.value">{{ opt.label }}</el-radio-button>
