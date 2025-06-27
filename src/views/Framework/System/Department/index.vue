@@ -83,7 +83,7 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: '190',
+          width: '160',
           dataIndex: 'operation',
           scopedSlots: { customRender: 'operation' },
           align: 'center'
