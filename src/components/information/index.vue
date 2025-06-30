@@ -215,6 +215,7 @@ export default {
 <style scoped>
 .normal-layout {
   margin: 14px;
+  height: calc(100% - 28px) !important;
   padding-left: 0 !important;
 }
 .left-panel {
