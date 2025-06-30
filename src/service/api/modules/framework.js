@@ -1971,6 +1971,20 @@ export const formGeneratorApi = {
       path: '/framework/user/setting/settingDefault',
       mockPath: '/framework/user/setting/settingDefault',
       desc: '报表管理-报表列表-获取版本'
+    },
+    {
+      name: 'reportCodeUniqueCheck',
+      method: 'POST',
+      path: '/framework/report/reportCodeUniqueCheck',
+      mockPath: '/framework/report/reportCodeUniqueCheck',
+      desc: '报表管理-报表列表-code校验'
+    },
+    {
+      name: 'selectionCodeUniqueCheck',
+      method: 'POST',
+      path: '/framework/selection/selectionCodeUniqueCheck',
+      mockPath: '/framework/selection/selectionCodeUniqueCheck',
+      desc: '选项code校验'
     }
   ]
 }
