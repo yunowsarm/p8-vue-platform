@@ -549,6 +549,14 @@ export const repositoryApi = {
       desc: '项目管理->多项目管理->任务统计查询 -> gantt数据加载'
     },
     {
+      name: 'excelStatisExport',
+      method: 'POST',
+      path: '/product/pm/plan/excelStatisExport',
+      mockPath: '/product/pm/plan/excelStatisExport',
+      desc: '项目管理->多项目管理->任务统计查询 -> excel导出'
+    },
+
+    {
       name: 'pushPlanMssage',
       method: 'POST',
       path: '/product/pm/plan/planIssuanceMessage',

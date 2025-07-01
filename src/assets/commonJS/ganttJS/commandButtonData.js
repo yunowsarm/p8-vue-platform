@@ -1414,12 +1414,35 @@ export const CommandButtonData = [
       const thisGantt = GanttObject.getGanttObject(ganttName)
       const vueThis = store.getters.vueThis
       // taskId如何获得？？
-      const taskId = vueThis.taskId
-      const planInfoId = vueThis.planInfoId
-      const colums = thisGantt.getGridColumns()
-      let columnConfigs = colums.map(item => {
-        let columObj = {}
-        if (item.editor) {
+      if(ganttName === 'taskStatisticsGantt'){
+        vueThis.excelExport()
+      }else{
+        const taskId = vueThis.taskId
+        const planInfoId = vueThis.planInfoId
+        const colums = thisGantt.getGridColumns()
+        let columnConfigs = colums.map(item => {
+          let columObj = {}
+          if (item.editor) {
+            // 创建一个虚拟的DOM元素
+            let tempElement = document.createElement('div');
+            tempElement.innerHTML = item.label;
+
+            // 获取包含计划开始时间的元素
+            let startTimeElement = tempElement.querySelector('.gantt_search');
+
+            // 提取计划开始时间文本内容
+            let startTime = startTimeElement.textContent.trim();
+
+            // 输出提取的计划开始时间
+            columObj.title = startTime
+            columObj.dataIndex = item.name
+          }
+          return columObj
+        })
+        let filteredTasks = [...new Set(vueThis.searchIds)]
+        //所有列的列名
+        let columnList = colums.map(item => {
+          let columObj = {}
           // 创建一个虚拟的DOM元素
           let tempElement = document.createElement('div');
           tempElement.innerHTML = item.label;
@@ -1433,66 +1456,47 @@ export const CommandButtonData = [
           // 输出提取的计划开始时间
           columObj.title = startTime
           columObj.dataIndex = item.name
-        }
-        return columObj
-      })
-      let filteredTasks = [...new Set(vueThis.searchIds)]
-      //所有列的列名
-      let columnList = colums.map(item => {
-        let columObj = {}
-        // 创建一个虚拟的DOM元素
-        let tempElement = document.createElement('div');
-        tempElement.innerHTML = item.label;
-
-        // 获取包含计划开始时间的元素
-        let startTimeElement = tempElement.querySelector('.gantt_search');
-
-        // 提取计划开始时间文本内容
-        let startTime = startTimeElement.textContent.trim();
-
-        // 输出提取的计划开始时间
-        columObj.title = startTime
-        columObj.dataIndex = item.name
-        return columObj
-      })
-      let columnFilter = []
-      columnConfigs.forEach(function (element) {
-        if (element.title && element.dataIndex) {
-          columnFilter.push(element)
-        }
-      });
-      let exportConfig = {
-        columnConfigs: columnFilter,
-        columnList: columnList,
-        fileName: "计划管理",
-        planInfoId: planInfoId,
-        createPage: vueThis.createPage,
-        taskId: vueThis.taskId,
-        taskIdList: filteredTasks
-      }
-      api['planGanttManager.excelExport'](exportConfig, { responseType: 'blob' })
-        .then((data) => {
-          const date = new Date()
-          // eslint-disable-next-line camelcase
-          const file_name = `【计划编制数据导出】${vueThis.thirdMenuParam.NAME}-${date.getFullYear()}-${(date.getMonth() + 1)}-${date.getDate()}_${String(date.getHours()).padStart(2, '0')}h${String(date.getMinutes()).padStart(2, '0')}m${String(date.getSeconds()).padStart(2, '0')}s`;
-          // eslint-disable-next-line camelcase
-          const file_type = 'xls'
-          const blob = new Blob([data.data], { type: 'application/vnd.ms-excel' })
-          const url = window.URL.createObjectURL(blob)
-          const link = document.createElement('a')
-          link.style.display = 'none'
-          link.href = url
-          // eslint-disable-next-line camelcase
-          link.download = `${file_name}.${file_type}`
-          document.body.appendChild(link)
-          link.click()
+          return columObj
         })
-        .catch((erro) => {
-          vueThis.$message({
-            message: 'excel导出失败！',
-            type: 'error'
+        let columnFilter = []
+        columnConfigs.forEach(function (element) {
+          if (element.title && element.dataIndex) {
+            columnFilter.push(element)
+          }
+        });
+        let exportConfig = {
+          columnConfigs: columnFilter,
+          columnList: columnList,
+          fileName: "计划管理",
+          planInfoId: planInfoId,
+          createPage: vueThis.createPage,
+          taskId: vueThis.taskId,
+          taskIdList: filteredTasks
+        }
+        api['planGanttManager.excelExport'](exportConfig, { responseType: 'blob' })
+          .then((data) => {
+            const date = new Date()
+            // eslint-disable-next-line camelcase
+            const file_name = `【计划编制数据导出】${vueThis.thirdMenuParam.NAME}-${date.getFullYear()}-${(date.getMonth() + 1)}-${date.getDate()}_${String(date.getHours()).padStart(2, '0')}h${String(date.getMinutes()).padStart(2, '0')}m${String(date.getSeconds()).padStart(2, '0')}s`;
+            // eslint-disable-next-line camelcase
+            const file_type = 'xls'
+            const blob = new Blob([data.data], { type: 'application/vnd.ms-excel' })
+            const url = window.URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.style.display = 'none'
+            link.href = url
+            // eslint-disable-next-line camelcase
+            link.download = `${file_name}.${file_type}`
+            document.body.appendChild(link)
+            link.click()
           })
-        })
+          .catch((erro) => {
+            vueThis.$message({
+              message: 'excel导出失败！',
+              type: 'error'
+            })
+          })
+      }
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
