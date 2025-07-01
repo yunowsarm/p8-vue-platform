@@ -355,11 +355,11 @@ export function isAllowChangeStyle(ganttName, tasks) {
   if (checkReadOnly(ganttName)) {
     return createDisableResponse(res.readonlyReason);
   }
-  if (isDisableFunCheckRes.value) {
-    return false
-  } else {
-    return createDisableResponse(isDisableFunCheckRes.msg);
-  }
+  // if (isDisableFunCheckRes.value) {
+  //   return false
+  // } else {
+  //   return createDisableResponse(isDisableFunCheckRes.msg);
+  // }
 }
 
 // 判断当前视图类型是否为grid
