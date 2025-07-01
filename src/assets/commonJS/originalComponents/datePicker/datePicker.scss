@@ -16,7 +16,7 @@
 
 .cs-date-picker-panel {
   width: auto;
-  
+
   overflow: auto;
   background-color: #fff;
   box-sizing: border-box;
@@ -105,8 +105,8 @@
   cursor: pointer;
 }
 
-.cs-date-picker-panel__content-date-cell.today, 
-.cs-date-picker-panel__content-date-cell.normal:hover, 
+.cs-date-picker-panel__content-date-cell.today,
+.cs-date-picker-panel__content-date-cell.normal:hover,
 .cs-date-picker-panel__content-year-cell:hover,
 .cs-date-picker-panel__content-month-cell:hover {
   color: #409eff;
@@ -127,6 +127,17 @@
   z-index: -1;
   transform: translate(-50%, -50%);
   background-color: #409eff;
+  border-radius: 50%;
+}
+
+.cs-date-picker-panel__content-date-cell.in-range{
+  background: #e6f7ff;
+  color: #409eff;
+}
+.cs-date-picker-panel__content-date-cell.range-start,
+.cs-date-picker-panel__content-date-cell.range-end{
+  background: #409eff;
+  color: #fff;
   border-radius: 50%;
 }
 
