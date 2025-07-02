@@ -1415,20 +1415,35 @@ export default {
       if (this.row && this.row.length) {
         fullParams.approveInfoConfig = {
           filed1:{
-            label: 'MODELCODE',
+            label: '产品代号',
             value: this.row[0].MODELCODE
           },
           filed2:{
-            label: 'MODELNAME',
+            label: '产品名称',
             value: this.row[0].MODELNAME
           },
           filed3:{
-            label: 'PJCODE',
+            label: '项目代号',
             value: this.row[0].PJCODE
           }
         }
       } else {
-        fullParams.projectInfo = formData.projectInfo
+        const modelName = formData.modelCode.substring(0,formData.modelCode.indexOf('['))
+        const modelCode = formData.modelCode.substring(formData.modelCode.indexOf('[') + 1,formData.modelCode.length - 1)
+        fullParams.approveInfoConfig = {
+          filed1:{
+            label: '产品代号',
+            value: modelCode
+          },
+          filed2:{
+            label: '产品名称',
+            value: modelName
+          },
+          filed3:{
+            label: '项目代号',
+            value: formData.pjCode
+          }
+        }
       }
       this.releaseMenuParams.beforehandParams = { ...fullParams }
       const rowIds = [this.id]

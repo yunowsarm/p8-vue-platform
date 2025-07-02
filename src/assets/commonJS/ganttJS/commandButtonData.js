@@ -3887,7 +3887,7 @@ function updateTaskStyle (ganttName, tasks, btn) {
     tasks.forEach(function (task) {
       const oldTaskStyle = taskStyles[task.id] ? taskStyles[task.id] : ''
       if (planInfoId === '') {
-        planInfoId = task.planInfoId
+        planInfoId = task.planInfoId || vueThis.planInfoId
       }
       if (btn.id.startsWith('color-')) {
         // 颜色（只能有一个，设置新颜色时替换原先颜色）
