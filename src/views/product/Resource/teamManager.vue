@@ -1409,14 +1409,23 @@ export default {
       })
     },
     // 提交审批
-    commitSelectApproveUserBeforehand(fullParams) {
+    commitSelectApproveUserBeforehand (fullParams) {
       let formData = this.$refs.projectFormView.formData
       const that = this
       if (this.row && this.row.length) {
-        fullParams.projectInfo = {
-          projectName: this.row[0].PROJECTNAME,
-          projectType: this.row[0].PROJECTTYPE,
-          modelCode: this.row[0].MODELCODE
+        fullParams.approveInfoConfig = {
+          filed1:{
+            label: 'MODELCODE',
+            value: this.row[0].MODELCODE
+          },
+          filed2:{
+            label: 'MODELNAME',
+            value: this.row[0].MODELNAME
+          },
+          filed3:{
+            label: 'PJCODE',
+            value: this.row[0].PJCODE
+          }
         }
       } else {
         fullParams.projectInfo = formData.projectInfo
@@ -1425,6 +1434,11 @@ export default {
       const rowIds = [this.id]
       this.releaseMenuParams.businessId = rowIds
       this.releaseMenuParams.processDefinitionKey = 'projectReadyApproveRelease'
+      this.releaseMenuParams.approveInfoMap = this.row.map(item => {
+        delete item._X_ROW_KEY
+        return item
+      })
+      console.log(this.releaseMenuParams.beforehandParams)
       this.$api['baseData.commitApprove'](this.releaseMenuParams)
         .then(function(res) {
           if (res.result && res.result === 'false') {
