@@ -1108,11 +1108,12 @@ function searchColumnsDataInit (vueThis, ganttObject) {
             // 当vueThis[datePickerKey] 为true 但 childEle 为false 说明当前列被拖拽了, 拖拽结束,表头部分又被重写, 此时 自定义组件整体元素丢失
           } else {
             vueThis[datePickerKey] = new Datepicker(`.${datePickerKey}`, {
+              range:true,
               customClassName: 'gantt_custom_datepicker', // 自定义类名 (可根据此类名手动更改组件的样式)
               value: vueThis.searchForm[name] || '',
-              onChange: function (value) {
+              onChange: function ({ value }) {
                 // change事件
-                Gantt.searchColumnsChange(name, value.date, 'date')
+                Gantt.searchColumnsChange(name, value, 'date')
               }
             })
           }
