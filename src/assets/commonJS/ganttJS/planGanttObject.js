@@ -705,7 +705,7 @@ export function getGanttColumns(ganttObject, vueThis) {
           result = result + `<i class='el-icon-s-order' title='该任务包含业务表单' style='color: #f59000; float: left; position:relative; top:16px; font-size: 16px;'></i>`
         }
         if (bool) result = result + `<i class='p8 icon-tishi' title='${tips}' style='color: #e6a23c; float: left'></i>`
-        if (ganttObject.getGlobalTaskIndex(task.id) !== 0) {
+        if (ganttObject.getGlobalTaskIndex(task.id) !== 0  || vueThis.createPage === 'decompose') {
           let taskStyles = vueThis.taskStyles[task.id] || ''
           if (taskStyles && taskStyles.indexOf('text-decoration: line-through;') !== -1 && taskStyles.indexOf('text-decoration:underline;') !== -1) {
             taskStyles += 'text-decoration: line-through underline;'

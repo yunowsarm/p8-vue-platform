@@ -973,7 +973,6 @@ export const CommandButtonData = [
       const checks = [
         () => isCompile(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
-        () => isNoRoot(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowChangeStyle(ganttName, tasks),
       ]
@@ -996,7 +995,6 @@ export const CommandButtonData = [
       const checks = [
         () => isCompile(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
-        () => isNoRoot(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowChangeStyle(ganttName, tasks),
       ]
@@ -1019,7 +1017,6 @@ export const CommandButtonData = [
       const checks = [
         () => isCompile(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
-        () => isNoRoot(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowChangeStyle(ganttName, tasks),
       ]
@@ -1042,7 +1039,6 @@ export const CommandButtonData = [
       const checks = [
         () => isCompile(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
-        () => isNoRoot(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowChangeStyle(ganttName, tasks),
       ]
@@ -1065,7 +1061,6 @@ export const CommandButtonData = [
       const checks = [
         () => isCompile(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
-        () => isNoRoot(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowChangeStyle(ganttName, tasks),
       ]
@@ -1088,7 +1083,6 @@ export const CommandButtonData = [
       const checks = [
         () => isCompile(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
-        () => isNoRoot(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowChangeStyle(ganttName, tasks),
       ]
@@ -1111,7 +1105,6 @@ export const CommandButtonData = [
       const checks = [
         () => isCompile(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
-        () => isNoRoot(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowChangeStyle(ganttName, tasks),
       ]
@@ -1134,7 +1127,6 @@ export const CommandButtonData = [
       const checks = [
         () => isCompile(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
-        () => isNoRoot(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowChangeStyle(ganttName, tasks),
       ]
@@ -1156,7 +1148,6 @@ export const CommandButtonData = [
       const checks = [
         () => isCompile(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
-        () => isNoRoot(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowChangeStyle(ganttName, tasks),
       ]
