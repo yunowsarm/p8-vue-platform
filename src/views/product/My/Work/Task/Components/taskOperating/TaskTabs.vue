@@ -18,7 +18,7 @@
         </div>
         <!-- 进度反馈 -->
         <template v-if="item.name === 'progess'">
-          <progess v-if="progessType !== 'progessTable'"
+          <progess v-if="progessType !== 'progessTable' && taskFinish !== null"
                    ref="progess"
                    :taskFinish="taskFinish"
                    :tabsName="tabsName"
@@ -149,7 +149,7 @@ export default {
       exceedType: false,
       approve: false,
       tabsName: 'progess',
-      taskFinish: false,
+      taskFinish: null,
       taskbusinessForm: [],
       scrollContainer: null,
       viewVisible: false
@@ -309,11 +309,13 @@ export default {
       return result
     },
 
-    getTaskFinish () {
-      this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then((res) => {
+    async getTaskFinish () {
+      await this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then((res) => {
         let taskFinish = res.taskFinish && res.taskFinish.content ? res.taskFinish.content : ''
         if (taskFinish === '手动') {
           this.taskFinish = true
+        } else {
+          this.taskFinish = false
         }
       })
     },

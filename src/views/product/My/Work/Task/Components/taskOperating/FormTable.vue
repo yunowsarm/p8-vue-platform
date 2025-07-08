@@ -548,8 +548,8 @@ export default {
       type: String
     },
     taskFinish: {
-      type: Boolean,
-    },
+      type: Boolean
+    }
   },
   data() {
     return {
@@ -613,7 +613,11 @@ export default {
   async created() {
     this.releaseMenuParams.id = this.getPlanInfo().TASKID
     if (this.getPlanInfo().ISLEAF > 0) {
-      this.getPlanInfo().pageType = 'view'
+      if (!this.taskFinish) {
+        this.getPlanInfo().pageType = 'view'
+      } else {
+        this.getPlanInfo().pageType = 'edit'
+      }
       this.disabledProgress = true
     }
   },
