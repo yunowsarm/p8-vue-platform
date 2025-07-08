@@ -527,9 +527,9 @@ export const CommandButtonData = [
             callback: function (result) {
               if (result) {
                 removeTasks(thisGantt, thisDp, ganttName)
-                tasks.forEach(item => {
-                  thisGantt.deleteTask(item.id)
-                })
+                // tasks.forEach(item => {
+                //   thisGantt.deleteTask(item.id)
+                // })
               }
             }
           })
