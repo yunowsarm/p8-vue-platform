@@ -147,7 +147,7 @@
               <el-col :span="24">
                 <el-form-item label="未完成原因分类"
                               prop="deviationType">
-                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                  <div v-if="!taskFinishType && this.getPlanInfo().pageType === 'view'"
                        class="view">{{ formData.deviationTypeDisplay }}
                   </div>
                   <el-select v-else
@@ -166,7 +166,7 @@
               <el-col :span="12">
                 <el-form-item label="未完成原因"
                               prop="deviationCauses">
-                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                  <div v-if="!taskFinishType && this.getPlanInfo().pageType === 'view'"
                        class="view">{{ formData.deviationCauses }}
                   </div>
                   <el-input v-else
@@ -178,7 +178,7 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="偏离影响">
-                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                  <div v-if="!taskFinishType && this.getPlanInfo().pageType === 'view'"
                        class="view">{{ formData.deviationImpact }}
                   </div>
                   <el-input v-else
@@ -192,7 +192,7 @@
             <el-row v-if="exceedType && !approve">
               <el-col :span="12">
                 <el-form-item label="进展情况">
-                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                  <div v-if="!taskFinishType && this.getPlanInfo().pageType === 'view'"
                        class="view">{{ formData.deviationProgress }}
                   </div>
                   <el-input v-else
@@ -204,7 +204,7 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="解决方案">
-                  <div v-if="this.getPlanInfo().pageType === 'view'"
+                  <div v-if="!taskFinishType && this.getPlanInfo().pageType === 'view'"
                        class="view">{{ formData.solutions }}
                   </div>
                   <el-input v-else
@@ -393,7 +393,7 @@
       <el-button type="primary"
                  @click="submit('submit')"
                  :disabled="formDisabled || buttonDisabled"
-                 v-if="submitFinishBtnDisplay()||taskFinish">提交完成审批
+                 v-if="(submitFinishBtnDisplay()||taskFinish) && formData.progress === 100">提交完成审批
       </el-button>
     </div>
     <slot name="dialog-con"></slot>
@@ -449,7 +449,7 @@ export default {
   name: 'FormTable',
   inject: ['getPlanInfo'],
   computed: {
-    formDisabled() {
+    formDisabled () {
       /**
        * status 进度状态
        *    6070:已完成
@@ -460,7 +460,7 @@ export default {
       if (this.getPlanInfo().allStatus) {
         const statusEnd = this.getPlanInfo().allStatus.filter(item => item.progressRange[0] === '1')
         return (statusEnd.find((item) =>
-            item.value === this.getPlanInfo().STATUS) ||
+          item.value === this.getPlanInfo().STATUS) ||
           this.managerStatus.indexOf(this.getPlanInfo().MANAGERSTATUS) !== -1
         )
       }
@@ -498,7 +498,7 @@ export default {
     },
     formType: {
       type: Object,
-      default: function() {
+      default: function () {
         return {
           constType: 'Progress',
           overdue: false, // 超期
@@ -551,14 +551,15 @@ export default {
       type: Boolean
     }
   },
-  data() {
+  data () {
     return {
+      taskFinishType: true,
       AUTOMATIC: false,
       selectUserBeforehandDataSource: [],
       selectUserBeforehandFormData: {},
       isSelectApproveUserBeforehandView: false,
       disabledProgress: false,
-      releaseMenuParams: {  },
+      releaseMenuParams: {},
       selectUserBeforehandFormData: {
         SYS_USER: ''
       },
@@ -610,18 +611,21 @@ export default {
       minValue: 0
     }
   },
-  async created() {
+  async created () {
     this.releaseMenuParams.id = this.getPlanInfo().TASKID
     if (this.getPlanInfo().ISLEAF > 0) {
-      if (!this.taskFinish) {
-        this.getPlanInfo().pageType = 'view'
-      } else {
-        this.getPlanInfo().pageType = 'edit'
-      }
+      this.getPlanInfo().pageType = 'view'
       this.disabledProgress = true
+      if (!this.taskFinish) {
+        this.taskFinishType = false
+      } else {
+        this.taskFinishType = true
+      }
+    } else {
+      this.taskFinishType = true
     }
   },
-  async mounted() {
+  async mounted () {
     this.minValue = Math.floor(Number(this.getPlanInfo().PROGRESS) * 100)
     //  进行中的任务不能减进度条
     // if (this.getPlanInfo().STATUS === '6050') {
@@ -639,7 +643,7 @@ export default {
     }
   },
   methods: {
-    nextApproveUserBeforehand(processDefinationTwoKey, submitType) {
+    nextApproveUserBeforehand (processDefinationTwoKey, submitType) {
       const that = this
       that.AUTOMATIC = false
       that.aaa = 11
@@ -654,14 +658,14 @@ export default {
         }
       })
     },
-    closeSelectApproveUserBeforehand() {
+    closeSelectApproveUserBeforehand () {
       this.isSelectApproveUserBeforehandView = false
     },
-    commitSelectApproveUserBeforehand(fullParams) {
+    commitSelectApproveUserBeforehand (fullParams) {
       this.getPlanInfo().MANAGERSTATUS = '6406'
       this.$emit('submit', this.formData, 'submit', fullParams)
     },
-    getOptions() {
+    getOptions () {
       this.$api['thirdPartInterface.getDic']({ dicType: 'DEVIATION_ClASSIFY' }).then(res => {
         this.unfinishOption = res
       })
@@ -669,7 +673,7 @@ export default {
         this.adjustOption = res
       })
     },
-    submit(submitType) {
+    submit (submitType) {
       // if (this.formData.forecastDateRange) {
       //   this.formData.forecastBeginDate = this.formData.forecastDateRange[0]
       //   this.formData.forecastEndDate = this.formData.forecastDateRange[1]
@@ -717,7 +721,7 @@ export default {
         }
       })
     },
-    setMessage() {
+    setMessage () {
       this.formData.planName = this.getPlanInfo().PLANNAME
       this.formData.name = this.getPlanInfo().NAME
       this.formData.taskId = this.getPlanInfo().taskId
@@ -741,16 +745,16 @@ export default {
 
       }
     },
-    onDrawerOpen() {
+    onDrawerOpen () {
       this.collapse = true
     },
-    onDrawerClose() {
+    onDrawerClose () {
       this.collapse = false
     },
-    progressDateChange(date) {
+    progressDateChange (date) {
       this.$emit('progress-date-change', date)
     },
-    progressChange(val) {
+    progressChange (val) {
       //
       // if (val < this.minValue) {
       //
@@ -778,7 +782,7 @@ export default {
       }
       // }
     },
-    submitText(progress) {
+    submitText (progress) {
       /**
        * 进度反馈--默认提交按钮文本为['提交']
        * 1.当进度为100时 或 非叶子节点的子节点都已完成, 获取状态为6600(提交完成审批)对应的文本
@@ -789,7 +793,7 @@ export default {
       }
       return '提交'
     },
-    submitBtnDisplay() {
+    submitBtnDisplay () {
       /**
        * 进度反馈--提交进度按钮是否展示
        * 1. 当前进度为100且未被禁用
@@ -801,7 +805,7 @@ export default {
       }
       return display
     },
-    saveBtnDisplay() {
+    saveBtnDisplay () {
       /**
        * 保存按钮是否展示，false是隐藏
        * 1. 责任令状态为已发布，计划非已发布
@@ -822,7 +826,7 @@ export default {
       }
       return display
     },
-    submitFinishBtnDisplay() {
+    submitFinishBtnDisplay () {
       /**
        * 提交完成审批按钮是否展示，false是隐藏
        * 1. 当前进度为100且未被禁用且子任务全部完成且父任务有责任人且父任务的父id不为空
@@ -881,7 +885,7 @@ export default {
       }
       return display
     },
-    checkManagerStatus(managerStatus) {
+    checkManagerStatus (managerStatus) {
       if (managerStatus !== '6405' && managerStatus !== '6406' && managerStatus !== '6409') {
         return true
       }
