@@ -199,13 +199,18 @@ export default {
   },
   created () {
     if (this.getPlanInfo().pageType === 'view') {
-      if (!this.durationDay) {
-        this.exceedTypeVal = true
-
+      if (this.taskFinish) {
+        //false 已超期
+        if (!this.durationDay && !this.approve) {
+          this.dialogVisible = true
+        }
+        if (!this.durationDay) {
+          this.exceedTypeVal = false
+        }
       }
     } else {
       //false 已超期
-      if (!this.durationDay) {
+      if (!this.durationDay && !this.approve) {
         this.dialogVisible = true
       }
     }

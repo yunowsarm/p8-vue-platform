@@ -4,7 +4,20 @@
       <template v-if="btnIdx === 0">
         <!-- <el-tooltip> -->
         <span :key="button.name">
-          <el-button type="text"
+          <el-button v-if="button.type === 'putin'"
+                     type="text"
+                     :disabled='comp.inputRequestData.length === 0'
+                     @click="renderComp[button.eventHandle](button, stepsRow)">{{button.title}}</el-button>
+          <el-button v-else-if="button.type === 'varsion'"
+                     type="text"
+                     :disabled='comp.specialVersionData.length === 0'
+                     @click="renderComp[button.eventHandle](button, stepsRow)">{{button.title}}</el-button>
+          <el-button v-else-if="button.type === 'output'"
+                     type="text"
+                     :disabled='comp.getPlanInfo().MANAGERSTATUS === "6406"'
+                     @click="renderComp[button.eventHandle](button, stepsRow)">{{button.title}}</el-button>
+          <el-button v-else
+                     type="text"
                      :disabled='btnDisabled'
                      @click="renderComp[button.eventHandle](button, stepsRow)">{{button.title}}</el-button>
         </span>
@@ -54,6 +67,7 @@
 import { Divider, Button, Dropdown, DropdownMenu, DropdownItem } from 'p8-components-ui' // Tooltip,
 export default {
   name: 'ButtonGroup',
+  inject: ['getPlanInfo'],
   props: {
     comp: {
       type: Object
@@ -66,6 +80,9 @@ export default {
     },
     stepsRow: {
       type: Object
+    },
+    viewDisable: {
+      type: Boolean
     }
   },
   data () {

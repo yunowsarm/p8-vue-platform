@@ -679,6 +679,34 @@ export default {
     ...mapGetters(['taskStyles', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
+    excelExport(){
+      this.$api['planGanttManager.excelStatisExport']({
+        projectId: this.projectId,
+        dicType: 'ACTIVITY_TYPE',
+        createPage: this.createPage
+      }, { responseType: 'blob' }).then((data) => {
+        const date = new Date()
+        // eslint-disable-next-line camelcase
+        const file_name = `【任务统计查询数据导出】-${date.getFullYear()}-${(date.getMonth() + 1)}-${date.getDate()}_${String(date.getHours()).padStart(2, '0')}h${String(date.getMinutes()).padStart(2, '0')}m${String(date.getSeconds()).padStart(2, '0')}s`;
+        // eslint-disable-next-line camelcase
+        const file_type = 'xls'
+        const blob = new Blob([data.data], { type: 'application/vnd.ms-excel' })
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.style.display = 'none'
+        link.href = url
+        // eslint-disable-next-line camelcase
+        link.download = `${file_name}.${file_type}`
+        document.body.appendChild(link)
+        link.click()
+      })
+        .catch((erro) => {
+          vueThis.$message({
+            message: 'excel导出失败！',
+            type: 'error'
+          })
+        })
+    },
     fullscreen (btn) {
       myGantt.ext.fullscreen.getFullscreenElement = function () {
         return document.querySelector('#couerDiv')

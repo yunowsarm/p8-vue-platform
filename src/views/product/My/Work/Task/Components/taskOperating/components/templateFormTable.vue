@@ -15,11 +15,11 @@
                     :no-api-table-data="editTableData"
                     :pagination="false">
         <template #operation="{ scope }">
-          <el-button type="text"
+          <el-button v-if="headerVisible" type="text"
                      @click.stop="updateForm(scope.row)">修改</el-button>
           <el-button type="text"
                      @click.stop="viewForm(scope.row)">查看</el-button>
-          <el-button type="text"
+          <el-button v-if="headerVisible" type="text"
                      @click.stop="removeForm(scope.row)">删除</el-button>
         </template>
       </common-table>
@@ -195,15 +195,13 @@ export default {
           align: 'center',
         }
       });
-      if (this.headerVisible) {
-        columns.push({
-          title: '操作',
-          fixed: 'right',
-          width: 160,
-          dataIndex: 'operation',
-          scopedSlots: { customRender: 'custom' },
-        });
-      }
+      columns.push({
+        title: '操作',
+        fixed: 'right',
+        width: this.headerVisible ? 160 : 80,
+        dataIndex: 'operation',
+        scopedSlots: { customRender: 'custom' },
+      });
       this.columns = columns;
     },
   },

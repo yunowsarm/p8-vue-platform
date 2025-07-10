@@ -34,7 +34,8 @@
             <div class="role-con">
               <el-button type="plan"
                          style="margin: 5px; width: 90%"
-                         @click="addRolesHandle"><i class="el-icon-plus"></i> 新建角色类别 </el-button>
+                         @click="addRolesHandle"><i class="el-icon-plus"></i> 新建角色类别
+              </el-button>
               <vue-perfect-scrollbar class="role-list">
                 <li style="padding-left: 26px; color: #323232; font-size: 12px"
                     :class="[{ active: rolesSelectedIndex === -1 }]"
@@ -69,7 +70,8 @@
               <div class="add-member">
                 <el-button v-if="group_add_member && toolbarWritingDisplay === '0'"
                            type="plan"
-                           @click="addMemberHandle">添加人员 </el-button>
+                           @click="addMemberHandle">添加人员
+                </el-button>
                 <el-tooltip v-if="group_add_member && toolbarWritingDisplay === '1'"
                             placement="top"
                             content="添加人员">
@@ -80,7 +82,8 @@
                 <el-button v-if="group_add_member && toolbarWritingDisplay === '2'"
                            type="primary"
                            icon="el-icon-plus"
-                           @click="addMemberHandle">添加人员 </el-button>
+                           @click="addMemberHandle">添加人员
+                </el-button>
                 <!-- <el-button type="plan"
                            @click="refreshHandle">查看全部成员
                 </el-button> -->
@@ -105,14 +108,16 @@
                   <template #realName="{ scope }">
                     <div class="real-name">
                       <template>
-                        <el-link @click.stop="opentDialogUserTaskStatistics(scope.row)">{{ scope.row.realName }}<i class="el-icon-view el-icon--right"></i></el-link>
+                        <el-link @click.stop="opentDialogUserTaskStatistics(scope.row)">{{ scope.row.realName }}<i
+                          class="el-icon-view el-icon--right"></i></el-link>
                       </template>
                     </div>
                   </template>
                   <template #taskCount="{ scope }">
                     <div class="task-count">
                       <template v-if="scope.row.taskCount">
-                        <el-link @click.stop="opentDialogUserTask(scope.row)">{{ scope.row.taskCount }}<i class="el-icon-view el-icon--right"></i></el-link>
+                        <el-link @click.stop="opentDialogUserTask(scope.row)">{{ scope.row.taskCount }}<i
+                          class="el-icon-view el-icon--right"></i></el-link>
                       </template>
                       <template v-else>
                         <span>{{ scope.row.taskCount }}</span>
@@ -141,7 +146,8 @@
                             <el-button slot="reference"
                                        size="mini"
                                        v-if="group_add_member"
-                                       type="text">删除 </el-button>
+                                       type="text">删除
+                            </el-button>
                           </el-popconfirm>
                         </div>
                         <el-tooltip placement="top"
@@ -167,7 +173,8 @@
                                        size="mini"
                                        v-if="group_add_member"
                                        icon="p8 icon-shanchu"
-                                       type="text">删除 </el-button>
+                                       type="text">删除
+                            </el-button>
                           </el-popconfirm>
                         </div>
                       </template>
@@ -176,7 +183,8 @@
                           <el-button size="mini"
                                      type="text"
                                      v-if="group_add_member"
-                                     @click="deleteUserHandle(scope, scope.$index)">删除 </el-button>
+                                     @click="deleteUserHandle(scope, scope.$index)">删除
+                          </el-button>
                         </div>
                         <el-tooltip placement="top"
                                     v-if="toolbarWritingDisplay === '1'"
@@ -191,7 +199,8 @@
                                      type="text"
                                      icon="p8 icon-shanchu"
                                      v-if="group_add_member"
-                                     @click="deleteUserHandle(scope, scope.$index)">删除 </el-button>
+                                     @click="deleteUserHandle(scope, scope.$index)">删除
+                          </el-button>
                         </div>
                       </template>
                     </template>
@@ -237,19 +246,22 @@
         <P v-if="aiAssistant"
            class="ai-generated-team">
           <el-button size="mini"
-                     @click="autoGenerationVisible = true">AI生成团队 </el-button>
+                     @click="autoGenerationVisible = true">AI生成团队
+          </el-button>
         </P>
         <p class="operation"
            v-if="group_add_role">
           <el-button size="mini"
-                     @click="loadStandardTeamHandle">载入标准团队 </el-button>
+                     @click="loadStandardTeamHandle">载入标准团队
+          </el-button>
         </p>
         <p class="submit"
            v-if="group_add_role || group_add_member">
           <el-button size="mini"
                      type="primary"
                      :loading="submitLoading"
-                     @click="submit">保 存 </el-button>
+                     @click="submit">保 存
+          </el-button>
           <el-button size="mini"
                      v-if="$route.name == 'ProjectInitiation'"
                      type="primary"
@@ -330,7 +342,8 @@ import moment from 'moment'
 import SelectApproveUserBeforehand from '@/views/Framework/BusinessActivity/ProcessApproval/selectApproveUserBeforehand'
 import { nextApproveUserBeforehand } from '@/assets/commonJS/BusinessActivity/nextApproveUserBeforehand'
 import DialogUserTaskStatistics from './Components/UserTaskStatistics'
-import AutoGeneration from "./Components/AiGeneratedDialog";
+import AutoGeneration from './Components/AiGeneratedDialog'
+import pinyin from 'pinyin'
 
 export default {
   name: 'teamManager',
@@ -348,12 +361,12 @@ export default {
       }
     }
   },
-  data () {
+  data() {
     const columns = [
       {
         title: '角色',
         dataIndex: 'roleName',
-        align: 'center',
+        align: 'center'
       },
       {
         title: '姓名',
@@ -361,7 +374,7 @@ export default {
         scopedSlots: {
           customRender: 'custom'
         },
-        align: 'center',
+        align: 'center'
       },
       {
         title: '部门',
@@ -553,10 +566,10 @@ export default {
     }
   },
   computed: {
-    roleList(){
+    roleList() {
       return this.rolesData.filter(item => !item.isDeleted)
     },
-    getTotalCount () {
+    getTotalCount() {
       let count = 0
       this.roleList.forEach((el) => {
         if (el.projectTeamRoleUsers && el.projectTeamRoleUsers.length) {
@@ -567,7 +580,7 @@ export default {
       return count
     }
   },
-  created () {
+  created() {
     if (this.row && this.row.length) {
       this.id = this.row[0].ID
     } else {
@@ -581,7 +594,7 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
       this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
     } else {
@@ -592,27 +605,27 @@ export default {
     }
   },
   methods: {
-    refreshAiData: async function (data) {
+    refreshAiData: async function(data) {
       // 获取现有角色名称集合（过滤掉已删除的角色）
-      const existingRoleNames = new Set(this.generalRoles.filter(role => !role.isDeleted).map(role => role.name));
-      const duplicateRoles = [];
+      const existingRoleNames = new Set(this.generalRoles.filter(role => !role.isDeleted).map(role => role.name))
+      const duplicateRoles = []
 
       // 过滤掉重复角色
       const newRoles = data.generalRoles.filter(role => {
         if (existingRoleNames.has(role.name)) {
-          duplicateRoles.push(role.name);
-          return false;
+          duplicateRoles.push(role.name)
+          return false
         }
-        return true;
-      });
+        return true
+      })
       // 合并非重复角色
-      const originalGeneralRoles = [...this.generalRoles];
-      this.generalRoles = [...this.generalRoles, ...newRoles];
-      this.autoGenerationVisible = false;
+      const originalGeneralRoles = [...this.generalRoles]
+      this.generalRoles = [...this.generalRoles, ...newRoles]
+      this.autoGenerationVisible = false
 
       // 如果有新角色，先执行submit
       if (newRoles.length > 0) {
-        const submitResult = await this.submit();
+        const submitResult = await this.submit()
         if (submitResult) {
           // submit执行完毕后，如果有重复角色则显示提示
           if (duplicateRoles.length > 0) {
@@ -620,20 +633,20 @@ export default {
               type: 'warning',
               message: `以下角色已存在，未重复添加: ${duplicateRoles.join('、')}`,
               duration: 2000  // 设置消息显示时间为2秒
-            });
+            })
           }
         } else {
-          this.generalRoles = originalGeneralRoles;
+          this.generalRoles = originalGeneralRoles
         }
       }
 
 
     },
     // 关闭AI生成
-    closeAutoGeneration () {
+    closeAutoGeneration() {
       this.autoGenerationVisible = false
     },
-    filterTableData (data) {
+    filterTableData(data) {
       if (this.row.length > 0) {
         const projectStatus = this.row[0].STATUS
         if (projectStatus === '2202') {
@@ -651,7 +664,7 @@ export default {
     //   return '(' + rolesItem.projectTeamRoleUsers.length + ')'
     // },
     // 双击打开行内
-    cellDblclick (row, column, cell, event) {
+    cellDblclick(row, column, cell, event) {
       if (column.property === 'flag') {
         let params = { dicType: '0' }
         if (row.userRoleId !== 'SYS_ROLE004' && row.userRoleId !== 'SYS_ROLE008') {
@@ -677,16 +690,16 @@ export default {
       }
     },
     // 行内修改
-    quoteUpdate (row) {
+    quoteUpdate(row) {
       // this.$set(row, 'editRow', false)
     },
-    handleSetFlagName (row, item) {
+    handleSetFlagName(row, item) {
       this.$set(row, 'flagName', item.label)
       this.$set(row, 'editRow', false)
     },
-    initButton () {
+    initButton() {
       let _this = this
-      _this.groupType.forEach(function (data) {
+      _this.groupType.forEach(function(data) {
         // if (data.id === _this.thirdMenuParam.group_type) {
         //   _this.groupTypeData = data
         // }
@@ -697,39 +710,50 @@ export default {
         _this.loadingUserDeptStrategy = _this.groupTypeData.is_loading_userDept
       }
     },
-    getMemberFormComp (formComp) {
+    getMemberFormComp(formComp) {
       // 获取人员命名文件 form表单组件, 用于校验附件密级是否选择
       this.memberFormComp = formComp
     },
-    search (params, searchBoxParam) {
-      console.log(params, '-=-=params');
+    search(params, searchBoxParam) {
+      console.log(params, '-=-=params')
       this.reset()
       this.searchParam = params
-      let realName = params.realName ? params.realName : null
+
+      let realName = params.realName ? params.realName.toLowerCase() : null
       let deptName = params.deptName ? params.deptName : null
+
+      const matchByRealName = (item, keyword) => {
+        if (!item.realName) return false
+        const name = item.realName
+        const pyArr = pinyin(name, { style: pinyin.STYLE_NORMAL }).flat()
+        const fullPinyin = pyArr.join('').toLowerCase()       // zhangsan
+        const initials = pyArr.map(p => p[0]).join('').toLowerCase() // zs
+
+        return (
+          name.includes(keyword) ||
+          fullPinyin.includes(keyword) ||
+          initials.includes(keyword)
+        )
+      }
+
       if (realName || deptName) {
         let tableData = this.tableData.filter((item) => {
-          if (item.realName.indexOf(realName) > -1 || item.deptName.indexOf(deptName) > -1) {
-            return item
-          }
+          const realNameMatched = realName ? matchByRealName(item, realName) : false
+          const deptMatched = deptName ? item.deptName.includes(deptName) : false
+          return realNameMatched || deptMatched
         })
         this.tableData = tableData
-      } else {
-        if (params.searchBoxParam) {
-          let realName = params.searchBoxParam ? params.searchBoxParam : null
-          let deptName = params.searchBoxParam ? params.searchBoxParam : null
-          if (realName && deptName) {
-            let tableData = this.tableData.filter((item) => {
-              if (item.realName.indexOf(realName) > -1 || item.deptName.indexOf(deptName) > -1) {
-                return item
-              }
-            })
-            this.tableData = tableData
-          }
-        }
+      } else if (params.searchBoxParam) {
+        // 如果传的是 searchBoxParam（模糊搜索），可以复用逻辑
+        let keyword = params.searchBoxParam.toLowerCase()
+        let tableData = this.tableData.filter((item) => {
+          return matchByRealName(item, keyword) || item.deptName.includes(keyword)
+        })
+        this.tableData = tableData
       }
     },
-    reset () {
+
+    reset() {
       this.searchParam = null
       if (this.rolesSelectedIndex > -1) {
         this.tableData = this.rolesData[this.rolesSelectedIndex].projectTeamRoleUsers
@@ -741,7 +765,7 @@ export default {
         this.tableData = tableData
       }
     },
-    getTeamInfo () {
+    getTeamInfo() {
       this.$api['teamManager.get']({
         wholeDescribeId: this.id
       }).then((res) => {
@@ -749,29 +773,29 @@ export default {
           this.klTeamsId = res.klTeamsId
           this.namedFiles = res.uploadFiles ? res.uploadFiles : []
           res.fixedRoles &&
-            res.fixedRoles.forEach((item) => {
-              item.roleType = 'fixed'
-              if (item.projectTeamRoleUsers && item.projectTeamRoleUsers.length) {
-                item.projectTeamRoleUsers.forEach((citem) => {
-                  citem.entryTime = citem.entryTime ? moment(citem.entryTime).format('YYYY-MM-DD HH:mm:ss') : ''
-                  citem.departureTime = citem.departureTime ? moment(citem.departureTime).format('YYYY-MM-DD HH:mm:ss') : ''
-                })
-              } else {
-                item.projectTeamRoleUsers = []
-              }
-            })
+          res.fixedRoles.forEach((item) => {
+            item.roleType = 'fixed'
+            if (item.projectTeamRoleUsers && item.projectTeamRoleUsers.length) {
+              item.projectTeamRoleUsers.forEach((citem) => {
+                citem.entryTime = citem.entryTime ? moment(citem.entryTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                citem.departureTime = citem.departureTime ? moment(citem.departureTime).format('YYYY-MM-DD HH:mm:ss') : ''
+              })
+            } else {
+              item.projectTeamRoleUsers = []
+            }
+          })
           res.generalRoles &&
-            res.generalRoles.forEach((item) => {
-              item.roleType = 'general'
-              if (item.projectTeamRoleUsers && item.projectTeamRoleUsers.length) {
-                item.projectTeamRoleUsers.forEach((citem) => {
-                  citem.entryTime = citem.entryTime ? moment(citem.entryTime).format('YYYY-MM-DD HH:mm:ss') : ''
-                  citem.departureTime = citem.departureTime ? moment(citem.departureTime).format('YYYY-MM-DD HH:mm:ss') : ''
-                })
-              } else {
-                item.projectTeamRoleUsers = []
-              }
-            })
+          res.generalRoles.forEach((item) => {
+            item.roleType = 'general'
+            if (item.projectTeamRoleUsers && item.projectTeamRoleUsers.length) {
+              item.projectTeamRoleUsers.forEach((citem) => {
+                citem.entryTime = citem.entryTime ? moment(citem.entryTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                citem.departureTime = citem.departureTime ? moment(citem.departureTime).format('YYYY-MM-DD HH:mm:ss') : ''
+              })
+            } else {
+              item.projectTeamRoleUsers = []
+            }
+          })
           this.fixedRoles = res.fixedRoles || []
           this.generalRoles = res.generalRoles || []
           this.rolesData = [...this.fixedRoles, ...this.generalRoles]
@@ -808,15 +832,15 @@ export default {
           }
           this.teamsId = this.team && this.team.teamsId ? this.team.teamsId : ''
           res.uploadFiles &&
-            res.uploadFiles.length &&
-            res.uploadFiles.forEach(function (data) {
-              let name = data.fileName
-              data.name = name
-            })
+          res.uploadFiles.length &&
+          res.uploadFiles.forEach(function(data) {
+            let name = data.fileName
+            data.name = name
+          })
         }
       })
     },
-    rolesHandle (item, index) {
+    rolesHandle(item, index) {
       // 角色列表点击切换
       if (this.rolesSelectedIndex === index) {
         return
@@ -854,11 +878,11 @@ export default {
       })
       // this.dateTime = new Date().getTime()
     },
-    addRolesHandle () {
+    addRolesHandle() {
       let count = 1
       let name = '角色名称' + count
-      while (this.rolesData.some(role => role.name === name)){
-        count ++
+      while (this.rolesData.some(role => role.name === name)) {
+        count++
         name = '角色名称' + count
       }
       // 添加角色
@@ -879,7 +903,7 @@ export default {
     },
     // 自动生成不重复的角色名称
 
-    refreshHandle () {
+    refreshHandle() {
       /**
        * 刷新: 1. 清空角色选中; 2. 人员列表展示所有角色下的人员 3. 对应人员列表添加角色信息
        */
@@ -910,10 +934,10 @@ export default {
         this.search(this.searchParam)
       }
     },
-    changeRolesHandle (text, record) {
+    changeRolesHandle(text, record) {
       record.name = text
     },
-    deleteRolesHandle (index, item) {
+    deleteRolesHandle(index, item) {
       // 检查该角色下的人员状态
       const roleUsers = this.originalTableData.filter(user => user.userRoleId === item.id)
       const allUsersLeft = roleUsers.length === 0 || roleUsers.every(user => user.departureTime && !user.waitout)
@@ -923,12 +947,15 @@ export default {
       }
       const roleIndex = this.rolesData.findIndex(role => role.name === item.name)
       const generalRoleIndex = this.generalRoles.findIndex(role => role.name === item.name)
-      if(item.id){
-        if(roleIndex > -1) this.$set(this.rolesData,roleIndex,{...this.rolesData[roleIndex],isDeleted:true})
-        if(generalRoleIndex > -1) this.$set(this.generalRoles,generalRoleIndex,{...this.generalRoles[generalRoleIndex],isDeleted:true})
-      }else{
-        if(roleIndex > -1) this.rolesData.splice(roleIndex,1)
-        if(generalRoleIndex > -1) this.generalRoles.splice(generalRoleIndex,1)
+      if (item.id) {
+        if (roleIndex > -1) this.$set(this.rolesData, roleIndex, { ...this.rolesData[roleIndex], isDeleted: true })
+        if (generalRoleIndex > -1) this.$set(this.generalRoles, generalRoleIndex, {
+          ...this.generalRoles[generalRoleIndex],
+          isDeleted: true
+        })
+      } else {
+        if (roleIndex > -1) this.rolesData.splice(roleIndex, 1)
+        if (generalRoleIndex > -1) this.generalRoles.splice(generalRoleIndex, 1)
       }
       // 强制更新视图
       // 更新视图
@@ -943,9 +970,9 @@ export default {
           // const roleUsers = this.rolesSelectedIndex === -1 ? this.refreshHandle() : this.roleList[this.rolesSelectedIndex].projectTeamRoleUsers
           // console.log(roleUsers)
           // this.tableData = [...roleUsers]
-          if(this.rolesSelectedIndex > -1){
-            this.rolesHandle(this.roleList[this.rolesSelectedIndex],this.rolesSelectedIndex)
-          }else{
+          if (this.rolesSelectedIndex > -1) {
+            this.rolesHandle(this.roleList[this.rolesSelectedIndex], this.rolesSelectedIndex)
+          } else {
             let tableData = []
             this.roleList.map((item) => {
               let projectTeamRoleUsers = item.projectTeamRoleUsers.map((pitem) => {
@@ -968,12 +995,12 @@ export default {
         this.isDelete = true
       })
     },
-    tableDeleteMemberHandle (row, index) {
+    tableDeleteMemberHandle(row, index) {
       if ((row.entryTime && row.departureTime) || (!row.entryTime && !row.departureTime)) {
         this.tableData.splice(index, 1)
       }
     },
-    deleteUserHandle (scope, index) {
+    deleteUserHandle(scope, index) {
       if (!scope.row.id) {
         this.tableData.splice(index, 1)
       }
@@ -1002,17 +1029,17 @@ export default {
       let projectTeamRoleUsers = roleInfo[0].projectTeamRoleUsers
       let pIndex = projectTeamRoleUsers.findIndex((item) => item.sysuserId === row.sysuserId)
       if (pIndex > -1) {
-        if(row.userRoleId){
+        if (row.userRoleId) {
           projectTeamRoleUsers[pIndex].isDeleted = true
           projectTeamRoleUsers[pIndex].departureTime = moment().format('YYYY-MM-DD HH:mm:ss')
-        }else{
+        } else {
           projectTeamRoleUsers.splice(pIndex, 1)
         }
       }
 
       this.isDelete = true
     },
-    addMemberHandle () {
+    addMemberHandle() {
       // 添加人员
       if ((this.fixedRoles && this.fixedRoles.length > 0) || (this.generalRoles && this.generalRoles.length > 0)) {
         if (this.rolesSelectedIndex > -1) {
@@ -1030,22 +1057,22 @@ export default {
         })
       }
     },
-    copyRoleHandle () {
+    copyRoleHandle() {
       // 从历史项目复制
       this.visibleDialogRoles = true
     },
-    expRolesCloseHandle (experienceTeamSelectValue) {
+    expRolesCloseHandle(experienceTeamSelectValue) {
       // (我的经验团队)从历史项目复制-面板关闭
       this.visibleDialogRoles = false
       if (experienceTeamSelectValue.length > 0) {
         this.loadRolesCommonHandle(experienceTeamSelectValue)
       }
     },
-    loadStandardTeamHandle () {
+    loadStandardTeamHandle() {
       // 载入标准团队
       this.visibleDialogRoles = true
     },
-    standardRolesCloseHandle (info) {
+    standardRolesCloseHandle(info) {
       // (标准团队)载入标准团队-面板关闭
       this.visibleDialogRoles = false
       if (info && info.kTeamId) {
@@ -1053,7 +1080,7 @@ export default {
         this.loadRolesCommonHandle(info.data)
       }
     },
-    loadRolesCommonHandle (data) {
+    loadRolesCommonHandle(data) {
       let tempArr = []
       let roleName = []
       data.forEach((item) => {
@@ -1090,7 +1117,7 @@ export default {
       }
       this.rolesData.push(...tempArr)
       this.rolesData = _.uniqWith(this.rolesData, _.isEqual)
-      this.rolesData.sort(function (a, b) {
+      this.rolesData.sort(function(a, b) {
         return b.isFixed - a.isFixed
       })
       if (roleName && roleName.length) {
@@ -1105,7 +1132,7 @@ export default {
         this.$message({ type: 'success', message: '载入成功' })
       }
     },
-    memberCloseHandle (tableSelectValue) {
+    memberCloseHandle(tableSelectValue) {
       // 添加人员-面板关闭
       this.visibleDialogMember = false
       if (tableSelectValue.length > 0) {
@@ -1133,7 +1160,7 @@ export default {
         this.isAddUser = true
       }
     },
-    opentDialogUserTask (row) {
+    opentDialogUserTask(row) {
       this.userTaskConfig.sqlParam = {
         roleId: {
           mode: '=',
@@ -1163,7 +1190,7 @@ export default {
       }
       this.visibleDialogUserTask = true
     },
-    opentDialogUserTaskStatistics (row) {
+    opentDialogUserTaskStatistics(row) {
       this.userTaskStatisticsConfig.sqlParam = {
         projectId: {
           mode: '=',
@@ -1184,13 +1211,13 @@ export default {
       // this.userTaskTableParams.wholeDescribeId = this.thirdMenuParam.id || ''
       this.visibleUserTaskStatistics = true
     },
-    closeDialogUserTask (row) {
+    closeDialogUserTask(row) {
       this.userTaskConfig.sqlParam = null
       this.userTaskStatisticsConfig.sqlParam = null
       this.visibleDialogUserTask = false
       this.visibleUserTaskStatistics = false
     },
-    userTaskCustomSearch (searchParam, _table) {
+    userTaskCustomSearch(searchParam, _table) {
       /**
        * 人员列表-承担任务总数-任务明细列表搜索
        */
@@ -1200,7 +1227,7 @@ export default {
       }
       this.userTaskTableParams = { ...this.userTaskTableParams, ...searchParam }
     },
-    userTaskCustomReset () {
+    userTaskCustomReset() {
       /**
        * 人员列表-承担任务总数-任务明细列表搜索重置
        */
@@ -1214,7 +1241,7 @@ export default {
       })
       this.userTaskTableParams.currentUserId = currentUserId
     },
-    submitVerifyHandle () {
+    submitVerifyHandle() {
       let result = true
       let roleNotNullMsg = []
       this.fixedRoles.filter(role => !role.isDeleted).forEach((fixedItem) => {
@@ -1241,7 +1268,7 @@ export default {
       }
       return result
     },
-    async saveAndRelease () {
+    async saveAndRelease() {
       this.releaseFlag = false
       await this.submit()
       if (this.releaseFlag) {
@@ -1249,33 +1276,33 @@ export default {
       }
       this.submitLoading = false
     },
-    async submit () {
+    async submit() {
       try {
-        const params = await this.submitParamsHandle();
-        const verifyResult = this.submitVerifyHandle();
-        if (!verifyResult) return false;
+        const params = await this.submitParamsHandle()
+        const verifyResult = this.submitVerifyHandle()
+        if (!verifyResult) return false
 
-        this.submitLoading = true;
-        const res = await this.$api['teamManager.save'](params);
-        this.submitLoading = false;
+        this.submitLoading = true
+        const res = await this.$api['teamManager.save'](params)
+        this.submitLoading = false
         this.releaseFlag = true
         if (res !== undefined) {
-          this.$message.success('信息已提交');
-          this.getTeamInfo();
-          this.isAddUser = false;
-          this.isAddMember = false;
-          return true;  // 明确返回true
+          this.$message.success('信息已提交')
+          this.getTeamInfo()
+          this.isAddUser = false
+          this.isAddMember = false
+          return true  // 明确返回true
         } else {
-          this.$message.error('保存失败');
-          return false; // 明确返回false
+          this.$message.error('保存失败')
+          return false // 明确返回false
         }
       } catch (err) {
-        this.submitLoading = false;
-        this.$message.error('保存失败');
-        return false; // 明确返回false
+        this.submitLoading = false
+        this.$message.error('保存失败')
+        return false // 明确返回false
       }
     },
-    submitParamsHandle () {
+    submitParamsHandle() {
       return new Promise((resolve, reject) => {
         let params = {
           id: '',
@@ -1360,20 +1387,20 @@ export default {
         resolve(params)
       })
     },
-    changeCheak () {
+    changeCheak() {
       let result = false
       if (this.isAddMember || this.isAddUser || this.isDelete) {
         result = true
       }
       return result
     },
-    uploadFile (file, field) {
+    uploadFile(file, field) {
       this.namedFiles.push(file)
     },
-    removedFile (file, field) {
+    removedFile(file, field) {
       this.namedFiles = []
     },
-    nextApproveUserBeforehand (processDefinationTwoKey) {
+    nextApproveUserBeforehand(processDefinationTwoKey) {
       const that = this
       nextApproveUserBeforehand.initDataSource(processDefinationTwoKey, this).then((res1) => {
         if (res1 === true) {
@@ -1386,20 +1413,49 @@ export default {
       let formData = this.$refs.projectFormView.formData
       const that = this
       if (this.row && this.row.length) {
-        fullParams.projectInfo = {
-          projectName: this.row[0].PROJECTNAME,
-          projectType: this.row[0].PROJECTTYPE,
-          modelCode: this.row[0].MODELCODE
+        fullParams.approveInfoConfig = {
+          filed1:{
+            label: '产品代号',
+            value: this.row[0].MODELCODE
+          },
+          filed2:{
+            label: '产品名称',
+            value: this.row[0].MODELNAME
+          },
+          filed3:{
+            label: '项目代号',
+            value: this.row[0].PJCODE
+          }
         }
       } else {
-        fullParams.projectInfo = formData.projectInfo
+        const modelName = formData.modelCode.substring(0,formData.modelCode.indexOf('['))
+        const modelCode = formData.modelCode.substring(formData.modelCode.indexOf('[') + 1,formData.modelCode.length - 1)
+        fullParams.approveInfoConfig = {
+          filed1:{
+            label: '产品代号',
+            value: modelCode
+          },
+          filed2:{
+            label: '产品名称',
+            value: modelName
+          },
+          filed3:{
+            label: '项目代号',
+            value: formData.pjCode
+          }
+        }
       }
       this.releaseMenuParams.beforehandParams = { ...fullParams }
       const rowIds = [this.id]
       this.releaseMenuParams.businessId = rowIds
       this.releaseMenuParams.processDefinitionKey = 'projectReadyApproveRelease'
+      this.releaseMenuParams.approveInfoMap = this.row.map(item => {
+        delete item._X_ROW_KEY
+        return item
+      })
+      console.log(this.releaseMenuParams.beforehandParams)
       this.$api['baseData.commitApprove'](this.releaseMenuParams)
-        .then(function (res) {
+        .then(function(res) {
           if (res.result && res.result === 'false') {
             that.$message({
               type: 'error',
@@ -1413,12 +1469,12 @@ export default {
             that.$emit('close')
           }
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.error(error)
         })
       that.isSelectApproveUserBeforehandView = false
     },
-    closeSelectApproveUserBeforehand () {
+    closeSelectApproveUserBeforehand() {
       this.isSelectApproveUserBeforehandView = false
     }
     // isShowRole (row) {

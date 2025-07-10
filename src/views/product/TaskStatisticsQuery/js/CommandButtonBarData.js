@@ -73,6 +73,16 @@ const CommandButtonBarDataSingleRow = [
             position: ['top']
           },
         ]
+      },
+      {
+        groupName: '导出',
+        buttonConfigs: [
+          {
+            buttonId: 'excel-export',
+            size: 'small',
+            position: ['top']
+          },
+        ]
       }
     ]
   }

@@ -32,10 +32,10 @@
               <el-menu-item :index="item.path + '/' + item.children[0].path"
                             :key="item.name">
                 <i v-if="!sidebarState.isOpen"
-                   class="p8"
+                   class="p8 menuIcon"
                    :class="item.children[0].meta.icon"></i>
                 <i v-else
-                   class="p8"
+                   class="p8 menuIcon"
                    :class="item.children[0].meta.icon"></i>
                 <span slot="title">{{ item.children[0].meta.title }}</span>
               </el-menu-item>
@@ -45,10 +45,10 @@
               <el-menu-item :index="item.children[0].path"
                             :key="item.name">
                 <i v-if="!sidebarState.isOpen"
-                   class="p8"
+                   class="p8 menuIcon"
                    :class="item.children[0].meta.icon"></i>
                 <i v-else
-                   class="p8"
+                   class="p8 menuIcon"
                    :class="item.children[0].meta.icon"></i>
                 <span slot="title">{{ item.children[0].meta.title }}</span>
               </el-menu-item>
@@ -61,7 +61,7 @@
               <template slot="title">
                 <div @mouseenter="handleMouseEnter(item)">
                   <i v-if="item.meta && item.meta.icon"
-                     class="p8"
+                     class="p8 menuIcon"
                      :class="item.meta.icon"></i>
                   <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
                 </div>
@@ -83,10 +83,10 @@
                              @mouseenter="handleMouseEnter(child)"
                              @mouseleave="onIconMouseLeave">
                           <i v-if="child.meta && child.meta.icon"
-                             class="p8"
+                             class="p8 menuIcon"
                              :class="child.meta.icon"></i>
                           <span v-if="child.meta && child.meta.title">
-                            <span :style="{width: hoveredMenuItem == child.path ? 'calc(100% - 22px)' : '100%'}">{{ child.meta.title }}</span>
+                            <span :style="{width: hoveredMenuItem == child.path ? 'calc(100% - 30px)' : '100%'}">{{ child.meta.title }}</span>
                             <i style="margin:0;width:16px;"
                                v-if="$route.path == child.path && hoveredMenuItem == child.path"
                                class="el-icon-question"
@@ -627,5 +627,8 @@ $menu-collapse-text-color: #303133;
 .icon-shipin,
 .icon-caozuoshouce {
   color: #2a78d8;
+}
+.menuIcon{
+  font-size: 22px !important;
 }
 </style>

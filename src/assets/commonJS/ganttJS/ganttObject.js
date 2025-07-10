@@ -2362,26 +2362,41 @@ function searchFilter(parent, searchForm, ganttObject) {
     // if (secretGrade && !task.secretGrade) {
     //   secretGradeCheck = false
     // }
-
-    const startDate = searchForm.start_date // 任务开始时间
-    const endDate = searchForm.end_date // 任务完成时间
-    let endDateCheck = true
+    const startDaterRange = searchForm.start_date // 任务开始时间
     let startDateCheck = true
-    let dateCheck = true
-    if (startDate && endDate) {
-      if (
-        !(
-          new Date(moment(task.start_date).format('YYYY-MM-DD')).getTime() >= new Date(startDate).getTime() &&
-          new Date(moment(ganttObject.date.add(task.end_date, -2, 'day')).format('YYYY-MM-DD')).getTime() <= new Date(endDate).getTime()
-        )
-      ) {
-        dateCheck = false
+    if(startDaterRange && Array.isArray(startDaterRange) && startDaterRange.length === 2){
+      const [start,end] = startDaterRange
+      const taskStart = new Date(moment(task.start_date).format('YYYY-MM-DD')).getTime()
+      if(taskStart < new Date(start).getTime() || taskStart > new Date(end).getTime()){
+        startDateCheck = false
       }
-    } else if (startDate && moment(task.start_date).format('YYYY-MM-DD') !== moment(startDate).format('YYYY-MM-DD')) {
-      startDateCheck = false
-    } else if (endDate && moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD') !== moment(endDate).format('YYYY-MM-DD')) {
-      endDateCheck = false
     }
+
+    const endDateRange = searchForm.end_date // 任务完成时间
+    let endDateCheck = true
+    if(endDateRange && Array.isArray(endDateRange) && endDateRange.length === 2){
+      const [start,end] = endDateRange
+      const taskEnd = new Date(moment(task.end_date).subtract(1, 'days').format('YYYY-MM-DD')).getTime()
+      if(taskEnd < new Date(start).getTime() || taskEnd > new Date(end).getTime()){
+        endDateCheck = false
+      }
+    }
+
+    let dateCheck = true
+    // if (startDate && endDate) {
+    //   if (
+    //     !(
+    //       new Date(moment(task.start_date).format('YYYY-MM-DD')).getTime() >= new Date(startDate).getTime() &&
+    //       new Date(moment(ganttObject.date.add(task.end_date, -2, 'day')).format('YYYY-MM-DD')).getTime() <= new Date(endDate).getTime()
+    //     )
+    //   ) {
+    //     dateCheck = false
+    //   }
+    // } else if (startDate && moment(task.start_date).format('YYYY-MM-DD') !== moment(startDate).format('YYYY-MM-DD')) {
+    //   startDateCheck = false
+    // } else if (endDate && moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD') !== moment(endDate).format('YYYY-MM-DD')) {
+    //   endDateCheck = false
+    // }
     const startEndDate = searchForm.startEndDate // 任务完成时间范围
     if (startEndDate && startEndDate.length === 2) {
       const startDate = startEndDate[0]
@@ -3905,11 +3920,11 @@ GanttObject.searchColumnsDataInit = function (vueThis, ganttObject) {
             // 当vueThis[datePickerKey] 为true 但 childEle 为false 说明当前列被拖拽了, 拖拽结束,表头部分又被重写, 此时 自定义组件整体元素丢失
           } else {
             vueThis[datePickerKey] = new Datepicker(`.${datePickerKey}`, {
+              range:true,
               customClassName: 'gantt_custom_datepicker', // 自定义类名 (可根据此类名手动更改组件的样式)
               value: vueThis.searchForm[name] || '',
-              onChange: function (value) {
-                // change事件
-                Gantt.searchColumnsChange(name, value.date, 'date')
+              onChange: function ({ value }) {
+                Gantt.searchColumnsChange(name, value, 'date')
               }
             })
           }

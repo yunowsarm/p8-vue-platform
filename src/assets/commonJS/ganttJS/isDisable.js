@@ -347,6 +347,10 @@ export function isAllowAutoManual(ganttName, tasks) {
 
 // 判断是否允许更改样式
 export function isAllowChangeStyle(ganttName, tasks) {
+  const vueThis = store.getters.vueThis
+  if (vueThis.createPage !== 'decompose' && checkContentRoot(ganttName, tasks)) {
+    return createDisableResponse('包含根节点时不允许此操作');
+  }
   if (isChangeGantt(ganttName).disable) {
     return createDisableResponse(isChangeGantt(ganttName).message)
   }
@@ -355,11 +359,11 @@ export function isAllowChangeStyle(ganttName, tasks) {
   if (checkReadOnly(ganttName)) {
     return createDisableResponse(res.readonlyReason);
   }
-  if (isDisableFunCheckRes.value) {
-    return false
-  } else {
-    return createDisableResponse(isDisableFunCheckRes.msg);
-  }
+  // if (isDisableFunCheckRes.value) {
+  //   return false
+  // } else {
+  //   return createDisableResponse(isDisableFunCheckRes.msg);
+  // }
 }
 
 // 判断当前视图类型是否为grid

@@ -9,12 +9,17 @@ export default class DatePanel {
     value,
     date = new Date(),
     firstDayOfWeek = 7,
-    dateCellClick
+    dateCellClick,
+    range = false
   }) {
     this.value = value
     this.date = date
     this.firstDayOfWeek = firstDayOfWeek
     this.dateCellClick = dateCellClick
+    this.range = range
+    this.rangeSelecting = false
+    this.rangeStart = null
+    this.rangeEnd = null
 
     this.WEEKS = ['日', '一', '二', '三', '四', '五', '六']
     this.ele = {} // 将需要操作的元素集中到ele对象下
@@ -144,10 +149,31 @@ export default class DatePanel {
         item.innerText = r.text
         item.setAttribute('data-row', r.row)
         item.setAttribute('data-column', r.column)
+        // 范围高亮
+        if(this.range && this.rangeStart && this.rangeEnd){
+          const cellDate = this._getCellDate(r)
+          if(cellDate >= this.rangeStart && cellDate <= this.rangeEnd){
+            item.classList.add('in-range')
+          }
+          if(cellDate.getTime() === this.rangeStart.getTime()){
+            item.classList.add('range-start')
+          }
+          if(cellDate.getTime() === this.rangeEnd.getTime()){
+            item.classList.add('range-end')
+          }
+        }
         DOMJS.appendChild(dateItemWrap, item)
       })
       DOMJS.appendChild(contentDate, dateItemWrap)
     })
+  }
+
+  _getCellDate(r){
+    // 通过行列和当前年月推算出日期
+    const offset = this.firstDayOfWeek > 3 ? 7 - this.firstDayOfWeek : -this.firstDayOfWeek
+    const index = r.row * 7 + row.column
+    const startDate = DATEJS.getStartDateOfMonth(this.year,this.month)
+    return DATEJS.nextDate(startDate, index - offset)
   }
 
   /**
@@ -299,16 +325,39 @@ export default class DatePanel {
     const offset = this.firstDayOfWeek > 3 ? 7 - this.firstDayOfWeek : -this.firstDayOfWeek
     const index = rowIndex * 7 + columnIndex
     const startDate = DATEJS.getStartDateOfMonth(this.year, this.month)
-    // 1. 更新时间
-    this.date = DATEJS.nextDate(startDate, index - offset)
-    this.value = this.date
-    this.updateDate()
+    const cellDate = DATEJS.nextDate(startDate,index - offset)
+    if(this.range){
+      if(!this.rangeSelecting){
+        this.rangeSelecting = true
+        this.rangeStart = cellDate
+        this.rangeEnd = null
+      }else{
+        this.rangeEnd = cellDate
+        if(this.rangeStart > this.rangeEnd){
+          [this.rangeStart,this.rangeEnd] = [this.rangeEnd,this.rangeStart]
+        }
+        this.rangeSelecting = false
+      }
+      this.value = [this.rangeStart,this.rangeEnd]
+      this.updateDate()
+      this.dateCellClick && this.dateCellClick({
+        date: cellDate,
+        year: this.year,
+        month: this.month,
+        range:[this.rangeStart,this.rangeEnd]
+      })
+    }else{
+      // 1. 更新时间
+      this.date = DATEJS.nextDate(startDate, index - offset)
+      this.value = this.date
+      this.updateDate()
 
-    this.dateCellClick && this.dateCellClick({
-      date: this.date,
-      year: this.year,
-      month: this.month
-    })
+      this.dateCellClick && this.dateCellClick({
+        date: this.date,
+        year: this.year,
+        month: this.month
+      })
+    }
   }
 
   /**

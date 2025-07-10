@@ -37,9 +37,10 @@
                        :key="cindex"
                        class="list-con-item">
                     <div class="list-con-item__content request">
-                      <el-tooltip placement="top"
-                                  :content="citem.descriptionDisplay">
-                        <span>{{citem.descriptionDisplay}}</span>
+                      <el-tooltip placement="top-start">
+                        <div slot="content"
+                             v-html="citem.description"></div>
+                        <san>{{citem.descriptionDisplay}}</san>
                       </el-tooltip>
                     </div>
                     <div class="list-con-item__content remark"></div>
@@ -100,7 +101,7 @@
                          @click="downloadOutputRequsetFile(citem)">
                       <el-tooltip placement="top"
                                   :content="citem.attFileName">
-                        <span>{{citem.attFileName}}</span>
+                        <span style="color: blue; text-decoration: underline;">{{citem.attFileName}}</span>
                       </el-tooltip>
                     </div>
                   </div>
@@ -212,9 +213,9 @@ export default {
   data () {
     const steps = [
       { name: '任务描述', id: 'activityDesc', btns: [{ title: '查看', eventHandle: 'detailsSettings' }] },
-      { name: '输入', id: 'putin', btns: [{ title: '查看', eventHandle: 'detailsSettings' }] },
-      { name: '输出', id: 'output', btns: [{ title: '编辑', eventHandle: 'modifyMenu' }] },
-      { name: '特别说明', id: 'varsion', btns: [{ title: '查看', eventHandle: 'detailsSettings' }] }
+      { name: '输入', id: 'putin', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'putin' }] },
+      { name: '输出', id: 'output', btns: [{ title: '编辑', eventHandle: 'modifyMenu', type: 'output' }] },
+      { name: '特别说明', id: 'varsion', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'varsion' }] }
     ]
     const header = [
       { name: '要素分类', id: 'classify' },
@@ -459,7 +460,7 @@ $blue-color: #1b8af9;
       align-items: center;
       border-bottom: $borderBottomLine;
       font-weight: bolder;
-      color: #909399;
+      color: #606266;
       span.header {
         line-height: $fixedHeaderHeight;
         flex: 1.5;
@@ -493,6 +494,8 @@ $blue-color: #1b8af9;
         box-sizing: border-box;
         div.classify,
         div.operation {
+          color: #606266;
+          font-weight: bold;
           position: relative;
           flex: 0 0 $fixedWidth;
           margin-left: 0; // 修改：移除左边距
@@ -532,7 +535,7 @@ $blue-color: #1b8af9;
           height: 40px;
           line-height: 40px;
           border-bottom: 1px solid #efefef;
-          color: #909399;
+          // color: #909399;
         }
       }
     }

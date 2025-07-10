@@ -16,7 +16,8 @@
                 <el-form-item label="未完成原因分类"
                               prop="deviationType">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
-                       class="view">{{ formData.deviationTypeDisplay }}</div>
+                       class="view">{{ formData.deviationTypeDisplay }}
+                  </div>
                   <el-select v-else
                              v-model="formData.deviationType"
                              size="medium">
@@ -33,7 +34,8 @@
               <el-col :span="12">
                 <el-form-item label="未完成原因">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
-                       class="view">{{ formData.deviationCauses }}</div>
+                       class="view">{{ formData.deviationCauses }}
+                  </div>
                   <el-input v-else
                             v-model="formData.deviationCauses"
                             type="textarea"
@@ -47,7 +49,8 @@
               <el-col :span="12">
                 <el-form-item label="偏离影响">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
-                       class="view">{{ formData.deviationImpact }}</div>
+                       class="view">{{ formData.deviationImpact }}
+                  </div>
                   <el-input v-else
                             v-model="formData.deviationImpact"
                             type="textarea"
@@ -63,7 +66,8 @@
               <el-col :span="12">
                 <el-form-item label="进展情况">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
-                       class="view">{{ formData.deviationProgress }}</div>
+                       class="view">{{ formData.deviationProgress }}
+                  </div>
                   <el-input v-else
                             v-model="formData.deviationProgress"
                             type="textarea"
@@ -77,7 +81,8 @@
               <el-col :span="12">
                 <el-form-item label="解决方案">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
-                       class="view">{{ formData.solutions }}</div>
+                       class="view">{{ formData.solutions }}
+                  </div>
                   <el-input v-else
                             v-model="formData.solutions"
                             type="textarea"
@@ -142,8 +147,9 @@
               <el-col :span="24">
                 <el-form-item label="未完成原因分类"
                               prop="deviationType">
-                  <div v-if="this.getPlanInfo().pageType === 'view'"
-                       class="view">{{ formData.deviationTypeDisplay }}</div>
+                  <div v-if="!taskFinishType && this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.deviationTypeDisplay }}
+                  </div>
                   <el-select v-else
                              v-model="formData.deviationType"
                              placeholder="请选择">
@@ -160,8 +166,9 @@
               <el-col :span="12">
                 <el-form-item label="未完成原因"
                               prop="deviationCauses">
-                  <div v-if="this.getPlanInfo().pageType === 'view'"
-                       class="view">{{ formData.deviationCauses }}</div>
+                  <div v-if="!taskFinishType && this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.deviationCauses }}
+                  </div>
                   <el-input v-else
                             v-model="formData.deviationCauses"
                             maxlength="200"
@@ -171,8 +178,9 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="偏离影响">
-                  <div v-if="this.getPlanInfo().pageType === 'view'"
-                       class="view">{{ formData.deviationImpact }}</div>
+                  <div v-if="!taskFinishType && this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.deviationImpact }}
+                  </div>
                   <el-input v-else
                             v-model="formData.deviationImpact"
                             maxlength="200"
@@ -184,8 +192,9 @@
             <el-row v-if="exceedType && !approve">
               <el-col :span="12">
                 <el-form-item label="进展情况">
-                  <div v-if="this.getPlanInfo().pageType === 'view'"
-                       class="view">{{ formData.deviationProgress }}</div>
+                  <div v-if="!taskFinishType && this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.deviationProgress }}
+                  </div>
                   <el-input v-else
                             v-model="formData.deviationProgress"
                             maxlength="200"
@@ -195,8 +204,9 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="解决方案">
-                  <div v-if="this.getPlanInfo().pageType === 'view'"
-                       class="view">{{ formData.solutions }}</div>
+                  <div v-if="!taskFinishType && this.getPlanInfo().pageType === 'view'"
+                       class="view">{{ formData.solutions }}
+                  </div>
                   <el-input v-else
                             v-model="formData.solutions"
                             maxlength="200"
@@ -277,7 +287,8 @@
               <el-col :span="12">
                 <el-form-item label="预计开始时间">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
-                       class="view">{{ formData.forecastBeginDate}}</div>
+                       class="view">{{ formData.forecastBeginDate }}
+                  </div>
                   <el-date-picker v-else
                                   v-model="formData.forecastBeginDate"
                                   :editable="false"
@@ -293,7 +304,8 @@
               <el-col :span="12">
                 <el-form-item label="预计完成时间">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
-                       class="view">{{formData.forecastEndDate }}</div>
+                       class="view">{{ formData.forecastEndDate }}
+                  </div>
                   <el-date-picker v-else
                                   v-model="formData.forecastEndDate"
                                   :editable="false"
@@ -313,7 +325,8 @@
                 <el-form-item label="实际开始日期"
                               prop="realBeginDate">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
-                       class="view">{{ formData.realBeginDate }}</div>
+                       class="view">{{ formData.realBeginDate }}
+                  </div>
                   <el-date-picker v-else
                                   v-model="formData.realBeginDate"
                                   :editable="false"
@@ -330,7 +343,8 @@
                 <el-form-item label="实际完成日期"
                               prop="realEndDate">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
-                       class="view">{{ formData.realEndDate }}</div>
+                       class="view">{{ formData.realEndDate }}
+                  </div>
                   <el-date-picker v-else
                                   v-model="formData.realEndDate"
                                   :editable="false"
@@ -348,7 +362,8 @@
               <el-col :span="24">
                 <el-form-item label="进度说明">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
-                       class="view">{{ formData.content }}</div>
+                       class="view">{{ formData.content }}
+                  </div>
                   <el-input v-else
                             v-model="formData.content"
                             type="textarea"
@@ -367,16 +382,19 @@
     </div>
     <el-button class="collapseBtn"
                type="text"
-               @click="onDrawerOpen()">查看历史反馈</el-button>
+               @click="onDrawerOpen()">查看历史反馈
+    </el-button>
     <div class="submit">
       <el-button type="primary"
                  @click="submit('progress')"
                  :disabled='buttonDisabled'
-                 v-if="saveBtnDisplay()">{{ btnTitle }}</el-button>
+                 v-if="saveBtnDisplay()">{{ btnTitle }}
+      </el-button>
       <el-button type="primary"
                  @click="submit('submit')"
                  :disabled="formDisabled || buttonDisabled"
-                 v-if="submitFinishBtnDisplay()||taskFinish">提交完成审批</el-button>
+                 v-if="(submitFinishBtnDisplay()||taskFinish) && formData.progress === 100">提交完成审批
+      </el-button>
     </div>
     <slot name="dialog-con"></slot>
     <common-drawer size="50%"
@@ -405,10 +423,26 @@
 
 </template>
 <script>
-import { Form, FormItem, Progress, Input, InputNumber, DatePicker, Select, Option, Row, Col, Button, Slider, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import {
+  Form,
+  FormItem,
+  Progress,
+  Input,
+  InputNumber,
+  DatePicker,
+  Select,
+  Option,
+  Row,
+  Col,
+  Button,
+  Slider,
+  P8Table as CommonTable,
+  P8Drawer as CommonDrawer
+} from 'p8-components-ui'
 import moment from 'moment'
 import SelectApproveUserBeforehand from '@/views/Framework/BusinessActivity/ProcessApproval/selectApproveUserBeforehand'
 import { nextApproveUserBeforehand } from './components/nextApproveUserBeforehand'
+
 const mh = document.documentElement.clientHeight - 43
 let realBeginDate
 export default {
@@ -456,7 +490,8 @@ export default {
     },
     formData: {
       type: Object,
-      default: () => { }
+      default: () => {
+      }
     },
     formRules: {
       type: Object
@@ -502,7 +537,8 @@ export default {
     },
     formConfig: {
       type: Object,
-      default: () => { }
+      default: () => {
+      }
     },
     exceedType: {
       type: Boolean,
@@ -512,11 +548,12 @@ export default {
       type: String
     },
     taskFinish: {
-      type: Boolean,
-    },
+      type: Boolean
+    }
   },
   data () {
     return {
+      taskFinishType: true,
       AUTOMATIC: false,
       selectUserBeforehandDataSource: [],
       selectUserBeforehandFormData: {},
@@ -575,9 +612,17 @@ export default {
     }
   },
   async created () {
+    this.releaseMenuParams.id = this.getPlanInfo().TASKID
     if (this.getPlanInfo().ISLEAF > 0) {
       this.getPlanInfo().pageType = 'view'
       this.disabledProgress = true
+      if (!this.taskFinish) {
+        this.taskFinishType = false
+      } else {
+        this.taskFinishType = true
+      }
+    } else {
+      this.taskFinishType = true
     }
   },
   async mounted () {
@@ -601,6 +646,7 @@ export default {
     nextApproveUserBeforehand (processDefinationTwoKey, submitType) {
       const that = this
       that.AUTOMATIC = false
+      that.aaa = 11
       nextApproveUserBeforehand.initDataSource(processDefinationTwoKey, that).then((res1) => {
         if (res1 === true) {
           if (that.AUTOMATIC) {
@@ -644,7 +690,11 @@ export default {
               type: 'info'
             })
               .then(() => {
-                _this.$api['taskManager.progressFeedbackCheck']({ taskId: _this.getPlanInfo().TASKID, parent: _this.getPlanInfo().PARENTID, hierarchy: _this.getPlanInfo().GETPROJECTLEVEL }).then(res => {
+                _this.$api['taskManager.progressFeedbackCheck']({
+                  taskId: _this.getPlanInfo().TASKID,
+                  parent: _this.getPlanInfo().PARENTID,
+                  hierarchy: _this.getPlanInfo().GETPROJECTLEVEL
+                }).then(res => {
                   if (res && res.success) {
                     // _this.getPlanInfo().MANAGERSTATUS = '6406'
                     _this.nextApproveUserBeforehand('taskFinishApprove', submitType)
@@ -658,7 +708,8 @@ export default {
                   }
                 })
               })
-              .catch(() => { })
+              .catch(() => {
+              })
           } else {
             this.$emit('submit', this.formData, submitType)
             _this.minValue = _this.formData.progress
@@ -683,14 +734,15 @@ export default {
           content: this.contentText,
           entityId: this.getPlanInfo().WHOLEDESCRIBEID,
           entityType: 'project',
-          taskRequest: this.formData,
-        };
+          taskRequest: this.formData
+        }
         window.myWebSocket.emit('taskCommitByData', params)
         if (this.formData.deviationType) {
           this.formData.type = '2'
           params.taskRequest = this.formData
           window.myWebSocket.emit('taskCommitByData', params)
-        };
+        }
+
       }
     },
     onDrawerOpen () {
@@ -755,9 +807,9 @@ export default {
     },
     saveBtnDisplay () {
       /**
-         * 保存按钮是否展示，false是隐藏
-         * 1. 责任令状态为已发布，计划非已发布
-         */
+       * 保存按钮是否展示，false是隐藏
+       * 1. 责任令状态为已发布，计划非已发布
+       */
       if (this.getPlanInfo().pageType === 'view') {
         return false
       }
@@ -846,9 +898,11 @@ export default {
 ::v-deep .el-progress-bar__innerText {
   color: #f1c82b !important;
 }
+
 div.form-table-wrap {
   height: 100%;
   position: relative;
+
   div.form-table-con {
     height: calc(100% - 90px);
     // overflow-y: auto;
@@ -860,15 +914,18 @@ div.form-table-wrap {
       background-color: #fcfbfe;
       border-radius: 6px;
     }
+
     .progress {
       margin-top: 8px;
     }
   }
+
   div.form-con {
     // overflow: auto;
     margin-right: 10px;
     height: 100%;
   }
+
   div.table-con {
     div.title {
       height: 40px;
@@ -877,6 +934,7 @@ div.form-table-wrap {
       cursor: pointer;
     }
   }
+
   div.submit {
     box-sizing: border-box;
     height: 50px;
@@ -884,10 +942,12 @@ div.form-table-wrap {
     padding-right: 20px;
     text-align: right;
   }
+
   ::v-deep .el-input--mini {
     width: 100% !important;
   }
 }
+
 .el-select,
 .el-date-editor.el-range-editor {
   width: 100%;
@@ -896,9 +956,11 @@ div.form-table-wrap {
 ::v-deep .manager-drawer .el-drawer__header {
   padding: 11px;
 }
+
 .el-input-number--mini {
   width: 100%;
 }
+
 .collapseBtn {
   margin-left: 85%;
 }
