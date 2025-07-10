@@ -770,11 +770,13 @@ export default {
           if (res.taskRealDateWrite.content === '1') {
             this.endDateDisabled = false
           } else {
+            this.formData.forecastEndDate = moment().format('YYYY-MM-DD')
             this.endDateDisabled = true
           }
         })
         this.$emit('progress-change', maxSpeedNum)
       } else {
+        this.formData.forecastEndDate = this.getPlanInfo().FORECASTENDDATE
         this.$emit('progress-change', val)
       }
       if (!this.formData.realBeginDate) {
