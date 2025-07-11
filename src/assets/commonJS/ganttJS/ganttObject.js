@@ -12,6 +12,7 @@ import Datepicker from '@/assets/commonJS/originalComponents/datePicker'
 import { P8TreeSelect, DatePicker, Select } from 'p8-components-ui'
 import { generateTreeThree, generateTree } from '@/utils/generateTree'
 import { calculateRemainingDays } from '@/utils/common'
+import pinyin from 'pinyin'
 
 /**
  * @Description 计划时间限制策略
@@ -2314,9 +2315,26 @@ function searchFilter(parent, searchForm, ganttObject) {
 
     const userName = searchForm.userName // 责任人模糊查询
     let userNameCheck = true
-    if (userName && (!resource || (resource && !resource.name) || (resource && resource.name && resource.name.indexOf(userName) === -1))) {
+    const matchByRealName = (item, keyword) => {
+      console.log(item,keyword)
+      if (!item) return false
+      const name = item
+      const pyArr = pinyin(name, { style: pinyin.STYLE_NORMAL }).flat()
+      const fullPinyin = pyArr.join('').toLowerCase()       // zhangsan
+      const initials = pyArr.map(p => p[0]).join('').toLowerCase() // zs
+
+      return (
+        name.includes(keyword) ||
+        fullPinyin.includes(keyword) ||
+        initials.includes(keyword)
+      )
+    }
+    if (userName && (!resource || (resource && !resource.name) || (resource && resource.name && !matchByRealName(resource.name,userName)))) {
       userNameCheck = false
     }
+    // if (userName && (!resource || (resource && !resource.name) || (resource && resource.name && resource.name.indexOf(userName) === -1))) {
+    //   userNameCheck = false
+    // }
     const ownerIds = searchForm.ownerIds // 责任人
     let userIdCheck = true
     if (searchForm.isInput) {
