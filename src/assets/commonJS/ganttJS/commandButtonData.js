@@ -3744,6 +3744,7 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
       vueThis.$message.warning('请选择需要粘贴的数据')
     }
   } else {
+    
     const copyTasks = Object.assign({}, vueThis.copyTasks)
     if (copyTasks != null) {
       const selTask = tasks[0]
@@ -3753,39 +3754,21 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
       const planInfoId = vueThis.planInfoId
 
       const selectTaskIds = ganttObject.getSelectedTasks()
-      const copyTaskIds = []
-      copyTasks.tasks = []
-      selectTaskIds.forEach(function (taskId) {
-        // 向上查父，若父也选中，子不计算在内
-        ganttObject.eachParent(function (task) {
-          if (selectTaskIds.indexOf(task.id) === -1 && copyTaskIds.indexOf(taskId) === -1) {
-            copyTaskIds.push(taskId)
-          }
-        }, taskId)
-        // 查询所有子
-        // let taskAll = ganttObject.serialize()
-        copyTaskIds.forEach(function (id) {
-          let parentTask = Object.assign({}, ganttObject.getTask(id))
-          // taskAll.data.forEach(item => {
-          //   console.log(parentTask.id, '=========', item.id);
-
-          //   if (parentTask.id === item.id) {
-          //     parentTask = item
-          //   }
-          // })
-          let parentTaskId = get32NumberUid()
-          parentTask.id = parentTaskId
-          parentTask.planInfoId = vueThis.planInfoId
-          copyTasks.tasks.push(parentTask)
-          ganttObject.eachTask(function (tasks) {
-            let task = Object.assign({}, tasks)
-            task.parent = parentTaskId
+      let parentId = ''
+      if (selectTaskIds.length === 1 ) {
+        copyTasks.tasks.forEach((task, i) => {
+          if (i === 0) {
+            task.parent = selectTaskIds[0]
             task.planInfoId = vueThis.planInfoId
             task.id = get32NumberUid()
-            copyTasks.tasks.push(task)
-          }, id)
+            parentId = task.id
+          } else {
+            task.parent = parentId
+            task.planInfoId = vueThis.planInfoId
+            task.id = get32NumberUid()
+          }
         })
-      })
+      }
       let managerStatus = ''
       if (vueThis.thirdMenuParam.EXECUTESTATE === '1000' || vueThis.thirdMenuParam.MANAGESTATUS === '6609') {
         managerStatus = '6401'
@@ -3807,10 +3790,11 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
           el.indexNo = null
         })
         createTaskByDatas(ganttObject, copyTasks.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
+        vueThis.copyTasks.tasks = []
         vueThis.taskCount = ganttObject.getTaskCount()
         api['planGanttManager.pasteTasks']({
         pasteData: copyTasks,
-        parentId: parentTask.id,
+        parentId: selId,
         selectTaskId: selId,
         type: type,
         planInfoId: planInfoId,
