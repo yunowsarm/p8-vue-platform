@@ -254,9 +254,9 @@ export default {
     }
   },
   mounted () {
-    if (this.getPlanInfo().STATUS === '6070' || this.getPlanInfo().STATUS === '6090' || this.getPlanInfo().pageType === 'view') {
-      this.steps[2].btns = []
-    }
+    // if (this.getPlanInfo().STATUS === '6070' || this.getPlanInfo().STATUS === '6090' || this.getPlanInfo().pageType === 'view') {
+    //   this.steps[2].btns = []
+    // }
     this.initData()
   },
   created () {
