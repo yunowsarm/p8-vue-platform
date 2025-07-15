@@ -538,7 +538,7 @@ GanttObject.layout3 = function (resourceConfig, resourceTemplates) {
         gravity: 2,
         cols: [
           {
-            width: 550,
+            width: 700,
             min_width: 445,
             rows: [
               {
@@ -568,7 +568,7 @@ GanttObject.layout3 = function (resourceConfig, resourceTemplates) {
         templates: resourceTemplates,
         cols: [
           {
-            width: 550,
+            width: 700,
             min_width: 445,
             rows: [
               {
