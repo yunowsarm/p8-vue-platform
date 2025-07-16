@@ -68,10 +68,10 @@ export const CommandButtonData = [
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isNewChild(ganttName, tasks),
         () => isWeave(ganttName, tasks),
-        () => isHasProductTask(ganttName, tasks),
+        () => isHasProductTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     },
     children: [
@@ -96,10 +96,10 @@ export const CommandButtonData = [
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isNewChild(ganttName, tasks),
             () => isWeave(ganttName, tasks),
-            () => isHasProductTask(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       },
@@ -124,10 +124,10 @@ export const CommandButtonData = [
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isNewChild(ganttName, tasks),
             () => isWeave(ganttName, tasks),
-            () => isHasProductTask(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       },
@@ -152,10 +152,10 @@ export const CommandButtonData = [
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isNewChild(ganttName, tasks),
             () => isWeave(ganttName, tasks),
-            () => isHasProductTask(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       },
@@ -180,10 +180,10 @@ export const CommandButtonData = [
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isNewChild(ganttName, tasks),
             () => isWeave(ganttName, tasks),
-            () => isHasProductTask(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       },
@@ -213,7 +213,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       }
@@ -241,11 +241,11 @@ export const CommandButtonData = [
         () => isCompile(ganttName, tasks),
         () => isHadRootAndReadOnly(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isNewSibling(ganttName, tasks),
+        () => isNewSibling(ganttName, tasks)
         // () => taskStateAndReadonly(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     },
     children: [
@@ -274,7 +274,7 @@ export const CommandButtonData = [
             () => isNewSibling(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       },
@@ -303,7 +303,7 @@ export const CommandButtonData = [
             () => isNewSibling(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       },
@@ -332,7 +332,7 @@ export const CommandButtonData = [
             () => isNewSibling(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       },
@@ -361,7 +361,7 @@ export const CommandButtonData = [
             () => isNewSibling(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       }
@@ -379,12 +379,9 @@ export const CommandButtonData = [
       vueThis.productTaskEditVisible = true
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => taskStateAndReadonly(ganttName, tasks)
-      ]
+      const checks = [() => isSuspensionOrProhibition(ganttName, tasks), () => taskStateAndReadonly(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -410,10 +407,9 @@ export const CommandButtonData = [
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isApprovalCompleted(ganttName, tasks),
         () => isAllowUpgrades(ganttName, tasks)
-
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -457,12 +453,9 @@ export const CommandButtonData = [
       vueThis.productTaskSaveVisible = true
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isSingleTask(ganttName, tasks)
-      ]
+      const checks = [() => isSuspensionOrProhibition(ganttName, tasks), () => isSingleTask(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -491,7 +484,7 @@ export const CommandButtonData = [
         () => isToBeDelivered(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -548,7 +541,7 @@ export const CommandButtonData = [
         () => isApprovalReject(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -566,12 +559,9 @@ export const CommandButtonData = [
       vueThis.productTaskVisible = true
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isReadOnly(ganttName, tasks)
-      ]
+      const checks = [() => isSuspensionOrProhibition(ganttName, tasks), () => isReadOnly(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -596,11 +586,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isSuspensionOrProhibition(ganttName, tasks)
-      ]
+      const checks = [() => isSuspensionOrProhibition(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -627,13 +615,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (ganttName, tasks) {
-      const checks = [
-        () => isHasTask(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isNoRoot(ganttName, tasks)
-      ]
+      const checks = [() => isHasTask(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isNoRoot(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -657,7 +641,7 @@ export const CommandButtonData = [
         () => isHasDeliveredTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -699,13 +683,9 @@ export const CommandButtonData = [
       batchSyncTask(ganttName, [])
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isHasTask(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isReadOnly(ganttName, tasks),
-      ]
+      const checks = [() => isHasTask(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isReadOnly(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -723,13 +703,9 @@ export const CommandButtonData = [
       vueThis.outPutViewVisible = true
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isHasTask(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isReadOnly(ganttName, tasks),
-      ]
+      const checks = [() => isHasTask(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isReadOnly(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -761,12 +737,11 @@ export const CommandButtonData = [
         () => isHasTask(ganttName, tasks),
         () => isCompile(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isAllowIssue(ganttName, tasks),
+        () => isAllowIssue(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
-
     }
   },
   {
@@ -780,12 +755,9 @@ export const CommandButtonData = [
       vueThis.noticeShow()
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isHasTask(ganttName, tasks),
-        () => isCompile(ganttName, tasks)
-      ]
+      const checks = [() => isHasTask(ganttName, tasks), () => isCompile(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -800,12 +772,9 @@ export const CommandButtonData = [
       vueThis.openAutoGeneration()
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isReadOnly(ganttName, tasks),
-        () => isCompile(ganttName, tasks)
-      ]
+      const checks = [() => isReadOnly(ganttName, tasks), () => isCompile(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -816,20 +785,15 @@ export const CommandButtonData = [
     help: '关联',
     msg: '',
     clickFun: function (btn, ganttName, tasks) {
-
       const vueThis = store.getters.vueThis
       vueThis.relevanceOpen()
       const thisGantt = GanttObject.getGanttObject(ganttName)
       vueThis.taskList = thisGantt.serialize().data
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isHasTask(ganttName, tasks),
-        () => isHasDeliveredTask(ganttName, tasks),
-        () => isReadOnly(ganttName, tasks)
-      ]
+      const checks = [() => isHasTask(ganttName, tasks), () => isHasDeliveredTask(ganttName, tasks), () => isReadOnly(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -846,14 +810,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isHasTask(ganttName, tasks),
-        () => isCompile(ganttName, tasks),
-        () => isAllowUndo(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-      ]
+      const checks = [() => isHasTask(ganttName, tasks), () => isCompile(ganttName, tasks), () => isAllowUndo(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -869,14 +828,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isHasTask(ganttName, tasks),
-        () => isCompile(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isAllowUndo(ganttName, tasks),
-      ]
+      const checks = [() => isHasTask(ganttName, tasks), () => isCompile(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isAllowUndo(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -899,14 +853,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isHasTask(ganttName, tasks),
-        () => isCompile(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isHadRootAndReadOnly(ganttName, tasks),
-      ]
+      const checks = [() => isHasTask(ganttName, tasks), () => isCompile(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isHadRootAndReadOnly(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -934,10 +883,10 @@ export const CommandButtonData = [
         () => isSuspensionOrProhibition(ganttName, tasks),
         () => isAllowPaste(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
-        () => isSingleTask(ganttName, tasks),
+        () => isSingleTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -947,15 +896,11 @@ export const CommandButtonData = [
     title: '自动/手动排程',
     help: '自动/手动排程',
     msg: '',
-    clickFun: function (btn, ganttName, tasks) { },
+    clickFun: function (btn, ganttName, tasks) {},
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isHasTask(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isAllowAutoManual(ganttName, tasks),
-      ]
+      const checks = [() => isHasTask(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isAllowAutoManual(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -970,14 +915,9 @@ export const CommandButtonData = [
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isCompile(ganttName, tasks),
-        () => isHasTask(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isAllowChangeStyle(ganttName, tasks),
-      ]
+      const checks = [() => isCompile(ganttName, tasks), () => isHasTask(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isAllowChangeStyle(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -992,14 +932,9 @@ export const CommandButtonData = [
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isCompile(ganttName, tasks),
-        () => isHasTask(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isAllowChangeStyle(ganttName, tasks),
-      ]
+      const checks = [() => isCompile(ganttName, tasks), () => isHasTask(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isAllowChangeStyle(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1014,14 +949,9 @@ export const CommandButtonData = [
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isCompile(ganttName, tasks),
-        () => isHasTask(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isAllowChangeStyle(ganttName, tasks),
-      ]
+      const checks = [() => isCompile(ganttName, tasks), () => isHasTask(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isAllowChangeStyle(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1036,14 +966,9 @@ export const CommandButtonData = [
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isCompile(ganttName, tasks),
-        () => isHasTask(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isAllowChangeStyle(ganttName, tasks),
-      ]
+      const checks = [() => isCompile(ganttName, tasks), () => isHasTask(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isAllowChangeStyle(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1058,14 +983,9 @@ export const CommandButtonData = [
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isCompile(ganttName, tasks),
-        () => isHasTask(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isAllowChangeStyle(ganttName, tasks),
-      ]
+      const checks = [() => isCompile(ganttName, tasks), () => isHasTask(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isAllowChangeStyle(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1080,14 +1000,9 @@ export const CommandButtonData = [
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isCompile(ganttName, tasks),
-        () => isHasTask(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isAllowChangeStyle(ganttName, tasks),
-      ]
+      const checks = [() => isCompile(ganttName, tasks), () => isHasTask(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isAllowChangeStyle(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1102,14 +1017,9 @@ export const CommandButtonData = [
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isCompile(ganttName, tasks),
-        () => isHasTask(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isAllowChangeStyle(ganttName, tasks),
-      ]
+      const checks = [() => isCompile(ganttName, tasks), () => isHasTask(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isAllowChangeStyle(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1124,14 +1034,9 @@ export const CommandButtonData = [
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isCompile(ganttName, tasks),
-        () => isHasTask(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isAllowChangeStyle(ganttName, tasks),
-      ]
+      const checks = [() => isCompile(ganttName, tasks), () => isHasTask(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isAllowChangeStyle(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1145,14 +1050,9 @@ export const CommandButtonData = [
       updateTaskStyle(ganttName, tasks, btn)
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isCompile(ganttName, tasks),
-        () => isHasTask(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isAllowChangeStyle(ganttName, tasks),
-      ]
+      const checks = [() => isCompile(ganttName, tasks), () => isHasTask(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isAllowChangeStyle(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1179,11 +1079,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isGridView(ganttName, tasks)
-      ]
+      const checks = [() => isGridView(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1196,7 +1094,7 @@ export const CommandButtonData = [
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       const vueThis = store.getters.vueThis
-      vueThis.ganttBtnType = "ganttBtn"
+      vueThis.ganttBtnType = 'ganttBtn'
       if (thisGantt) {
         // 清空选中
         thisGantt.eachSelectedTask(function (id) {
@@ -1211,11 +1109,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isGanttView(ganttName, tasks)
-      ]
+      const checks = [() => isGanttView(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1228,7 +1124,7 @@ export const CommandButtonData = [
     clickFun: function (btn, ganttName, tasks) {
       const thisGantt = GanttObject.getGanttObject(ganttName)
       const vueThis = store.getters.vueThis
-      vueThis.ganttBtnType = "ziyuanBtn"
+      vueThis.ganttBtnType = 'ziyuanBtn'
       if (thisGantt) {
         // 清空选中
         thisGantt.eachSelectedTask(function (id) {
@@ -1243,11 +1139,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isResourceView(ganttName, tasks)
-      ]
+      const checks = [() => isResourceView(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1259,9 +1153,9 @@ export const CommandButtonData = [
     msg: '全屏',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
-      if(ganttName === 'taskStatisticsGantt'){
+      if (ganttName === 'taskStatisticsGantt') {
         vueThis.fullscreen(btn)
-      }else{
+      } else {
         const thisGantt = GanttObject.getGanttObject(ganttName)
         thisGantt.ext.fullscreen.getFullscreenElement = function () {
           return document.querySelector('#couerDiv')
@@ -1271,16 +1165,16 @@ export const CommandButtonData = [
         } else {
           thisGantt.ext.fullscreen.collapse()
         }
-        thisGantt.attachEvent("onCollapse", (event) => {
+        thisGantt.attachEvent('onCollapse', (event) => {
           btn.title = '全屏'
           btn.icon = 'p8 icon-full-screen'
           btn.help = '全屏'
-        });
-        thisGantt.attachEvent("onExpand", () => {
+        })
+        thisGantt.attachEvent('onExpand', () => {
           btn.title = '退出全屏'
           btn.icon = 'p8 icon-exit-fullscreen'
           btn.help = '退出全屏'
-        });
+        })
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
@@ -1304,7 +1198,7 @@ export const CommandButtonData = [
               return 'ziyuan_task_style'
             }
           }
-        };
+        }
         if (thisGantt.config.highlight_critical_path) {
           thisGantt.config.highlight_critical_path = false
         } else {
@@ -1314,11 +1208,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isCriticalPath(ganttName, tasks),
-      ]
+      const checks = [() => isCriticalPath(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1335,18 +1227,18 @@ export const CommandButtonData = [
       vueThis.importExcel = true
       const thisGantt = GanttObject.getGanttObject(ganttName)
       const colums = thisGantt.getGridColumns()
-      let columnConfigs = colums.map(item => {
+      let columnConfigs = colums.map((item) => {
         let columObj = {}
         if (item.editor) {
           // 创建一个虚拟的DOM元素
-          let tempElement = document.createElement('div');
-          tempElement.innerHTML = item.label;
+          let tempElement = document.createElement('div')
+          tempElement.innerHTML = item.label
 
           // 获取包含计划开始时间的元素
-          let startTimeElement = tempElement.querySelector('.gantt_search');
+          let startTimeElement = tempElement.querySelector('.gantt_search')
 
           // 提取计划开始时间文本内容
-          let startTime = startTimeElement.textContent.trim();
+          let startTime = startTimeElement.textContent.trim()
 
           // 输出提取的计划开始时间
           columObj.title = startTime
@@ -1359,7 +1251,7 @@ export const CommandButtonData = [
         if (element.title && element.dataIndex) {
           columnFilter.push(element)
         }
-      });
+      })
       vueThis.columnConfigs = columnFilter
     },
     isDisableFun: function (btn, ganttName, tasks) {
@@ -1373,7 +1265,7 @@ export const CommandButtonData = [
         () => isHasProductTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1400,7 +1292,7 @@ export const CommandButtonData = [
         () => isHasProductTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1414,24 +1306,24 @@ export const CommandButtonData = [
       const thisGantt = GanttObject.getGanttObject(ganttName)
       const vueThis = store.getters.vueThis
       // taskId如何获得？？
-      if(ganttName === 'taskStatisticsGantt'){
+      if (ganttName === 'taskStatisticsGantt') {
         vueThis.excelExport()
-      }else{
+      } else {
         const taskId = vueThis.taskId
         const planInfoId = vueThis.planInfoId
         const colums = thisGantt.getGridColumns()
-        let columnConfigs = colums.map(item => {
+        let columnConfigs = colums.map((item) => {
           let columObj = {}
           if (item.editor) {
             // 创建一个虚拟的DOM元素
-            let tempElement = document.createElement('div');
-            tempElement.innerHTML = item.label;
+            let tempElement = document.createElement('div')
+            tempElement.innerHTML = item.label
 
             // 获取包含计划开始时间的元素
-            let startTimeElement = tempElement.querySelector('.gantt_search');
+            let startTimeElement = tempElement.querySelector('.gantt_search')
 
             // 提取计划开始时间文本内容
-            let startTime = startTimeElement.textContent.trim();
+            let startTime = startTimeElement.textContent.trim()
 
             // 输出提取的计划开始时间
             columObj.title = startTime
@@ -1441,17 +1333,17 @@ export const CommandButtonData = [
         })
         let filteredTasks = [...new Set(vueThis.searchIds)]
         //所有列的列名
-        let columnList = colums.map(item => {
+        let columnList = colums.map((item) => {
           let columObj = {}
           // 创建一个虚拟的DOM元素
-          let tempElement = document.createElement('div');
-          tempElement.innerHTML = item.label;
+          let tempElement = document.createElement('div')
+          tempElement.innerHTML = item.label
 
           // 获取包含计划开始时间的元素
-          let startTimeElement = tempElement.querySelector('.gantt_search');
+          let startTimeElement = tempElement.querySelector('.gantt_search')
 
           // 提取计划开始时间文本内容
-          let startTime = startTimeElement.textContent.trim();
+          let startTime = startTimeElement.textContent.trim()
 
           // 输出提取的计划开始时间
           columObj.title = startTime
@@ -1463,11 +1355,11 @@ export const CommandButtonData = [
           if (element.title && element.dataIndex) {
             columnFilter.push(element)
           }
-        });
+        })
         let exportConfig = {
           columnConfigs: columnFilter,
           columnList: columnList,
-          fileName: "计划管理",
+          fileName: '计划管理',
           planInfoId: planInfoId,
           createPage: vueThis.createPage,
           taskId: vueThis.taskId,
@@ -1477,7 +1369,9 @@ export const CommandButtonData = [
           .then((data) => {
             const date = new Date()
             // eslint-disable-next-line camelcase
-            const file_name = `【计划编制数据导出】${vueThis.thirdMenuParam.NAME}-${date.getFullYear()}-${(date.getMonth() + 1)}-${date.getDate()}_${String(date.getHours()).padStart(2, '0')}h${String(date.getMinutes()).padStart(2, '0')}m${String(date.getSeconds()).padStart(2, '0')}s`;
+            const file_name = `【计划编制数据导出】${vueThis.thirdMenuParam.NAME}-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}_${String(date.getHours()).padStart(2, '0')}h${String(
+              date.getMinutes()
+            ).padStart(2, '0')}m${String(date.getSeconds()).padStart(2, '0')}s`
             // eslint-disable-next-line camelcase
             const file_type = 'xls'
             const blob = new Blob([data.data], { type: 'application/vnd.ms-excel' })
@@ -1499,11 +1393,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isChangeGantt(ganttName, tasks)
-      ]
+      const checks = [() => isChangeGantt(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1522,7 +1414,9 @@ export const CommandButtonData = [
         .then((data) => {
           const date = new Date()
           // eslint-disable-next-line camelcase
-          const file_name = `【计划编制数据导出】${vueThis.thirdMenuParam.NAME}-${date.getFullYear()}-${(date.getMonth() + 1)}-${date.getDate()}_${String(date.getHours()).padStart(2, '0')}h${String(date.getMinutes()).padStart(2, '0')}m${String(date.getSeconds()).padStart(2, '0')}s`;
+          const file_name = `【计划编制数据导出】${vueThis.thirdMenuParam.NAME}-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}_${String(date.getHours()).padStart(2, '0')}h${String(
+            date.getMinutes()
+          ).padStart(2, '0')}m${String(date.getSeconds()).padStart(2, '0')}s`
           // eslint-disable-next-line camelcase
           const file_type = 'xml'
           const blob = new Blob([data.data], { type: 'application/octet-stream' })
@@ -1546,7 +1440,7 @@ export const CommandButtonData = [
         .then((data) => {
           const date = new Date()
           // eslint-disable-next-line camelcase
-          const file_name = `project导出模板`;
+          const file_name = `project导出模板`
           // eslint-disable-next-line camelcase
           const file_type = 'mpp'
           const blob = new Blob([data.data], { type: 'application/octet-stream' })
@@ -1567,11 +1461,9 @@ export const CommandButtonData = [
         })
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isChangeGantt(ganttName, tasks)
-      ]
+      const checks = [() => isChangeGantt(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1612,14 +1504,9 @@ export const CommandButtonData = [
       })
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isCompile(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks),
-        () => isAllowImport(ganttName, tasks),
-        () => isHasProductTask(ganttName, tasks)
-      ]
+      const checks = [() => isCompile(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks), () => isAllowImport(ganttName, tasks), () => isHasProductTask(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -1755,7 +1642,7 @@ export const CommandButtonData = [
     icon: 'p8 icon-PDM',
     title: 'PDM',
     help: 'PDM',
-    clickFun: function (btn, ganttName, tasks) { },
+    clickFun: function (btn, ganttName, tasks) {},
     isDisableFun: function (btn, ganttName, tasks) {
       if (checkSwitchType(tasks)) {
         return true
@@ -1835,7 +1722,7 @@ export const CommandButtonData = [
       // vueThis.taskFinish = true 手动
       if (!vueThis.taskFinish && hasBusinessForm == 'true') {
         setTimeout(() => {
-          vueThis.$message({type: 'warning', message: '该任务已关联业务表单且父任务完成方式为自动，导入下级后，所关联的表单将在执行时无法填写'})
+          vueThis.$message({ type: 'warning', message: '该任务已关联业务表单且父任务完成方式为自动，导入下级后，所关联的表单将在执行时无法填写' })
         }, 500)
       }
     },
@@ -1850,7 +1737,7 @@ export const CommandButtonData = [
         () => isHasProductTask(ganttName, tasks)
       ]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     },
     children: [
@@ -1877,7 +1764,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       },
@@ -1905,7 +1792,7 @@ export const CommandButtonData = [
             () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       }
@@ -1925,14 +1812,9 @@ export const CommandButtonData = [
       // vueThis.queryParam.planId = vueThis.planInfoId
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isChangeGantt(ganttName, tasks),
-        () => isReadOnly(ganttName, tasks),
-        () => isCompile(ganttName, tasks),
-        () => isSuspensionOrProhibition(ganttName, tasks)
-      ]
+      const checks = [() => isChangeGantt(ganttName, tasks), () => isReadOnly(ganttName, tasks), () => isCompile(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     },
     children: [
@@ -1959,7 +1841,7 @@ export const CommandButtonData = [
             () => isSuspensionOrProhibition(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       },
@@ -1988,10 +1870,10 @@ export const CommandButtonData = [
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),
             () => isHasProductTask(ganttName, tasks),
-            () => isExperienceImport(ganttName, tasks),
+            () => isExperienceImport(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       },
@@ -2015,10 +1897,10 @@ export const CommandButtonData = [
             () => isCompile(ganttName, tasks),
             () => isSuspensionOrProhibition(ganttName, tasks),
             () => isAllowImport(ganttName, tasks),
-            () => isHasProductTask(ganttName, tasks),
+            () => isHasProductTask(ganttName, tasks)
           ]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       },
@@ -2034,13 +1916,9 @@ export const CommandButtonData = [
           vueThis.experienceBaseVisible = true
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          const checks = [
-            () => isChangeGantt(ganttName, tasks),
-            () => isCompile(ganttName, tasks),
-            () => isSuspensionOrProhibition(ganttName, tasks)
-          ]
+          const checks = [() => isChangeGantt(ganttName, tasks), () => isCompile(ganttName, tasks), () => isSuspensionOrProhibition(ganttName, tasks)]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       }
@@ -2057,12 +1935,9 @@ export const CommandButtonData = [
       vueThis.createPlanVersion()
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isChangeGantt(ganttName, tasks),
-        () => isCompile(ganttName, tasks)
-      ]
+      const checks = [() => isChangeGantt(ganttName, tasks), () => isCompile(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -2072,13 +1947,11 @@ export const CommandButtonData = [
     title: '比较',
     help: '比较',
     msg: '比较',
-    clickFun: function (btn, ganttName, tasks) { },
+    clickFun: function (btn, ganttName, tasks) {},
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isCompile(ganttName, tasks)
-      ]
+      const checks = [() => isCompile(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -2095,12 +1968,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isChangeGantt(ganttName, tasks),
-        () => isCompile(ganttName, tasks)
-      ]
+      const checks = [() => isChangeGantt(ganttName, tasks), () => isCompile(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -2134,8 +2004,8 @@ export const CommandButtonData = [
       const updateData =
         store.getters.userSettingAll.PlanStyleClass && store.getters.userSettingAll.PlanStyleClass.length
           ? store.getters.userSettingAll.PlanStyleClass.find((i) => {
-            return i.key === 'grid-cell-border'
-          })
+              return i.key === 'grid-cell-border'
+            })
           : null
       const updataParams = {
         description: '计划编制: 缩放/列设置 / 添加/取消网格配置',
@@ -2157,8 +2027,8 @@ export const CommandButtonData = [
           const planGanttConfig =
             res.PlanStyleClass && res.PlanStyleClass.length
               ? res.PlanStyleClass.find((i) => {
-                return i.key === 'grid-cell-border'
-              })
+                  return i.key === 'grid-cell-border'
+                })
               : null
           const ganttObject = GanttObject.getGanttObject(ganttName)
           let rootClass = ganttObject.$root.getAttribute('class')
@@ -2195,11 +2065,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isSuspensionOrProhibition(ganttName, tasks)
-      ]
+      const checks = [() => isSuspensionOrProhibition(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -2281,9 +2149,9 @@ export const CommandButtonData = [
               task.expand = true
               task.$open = true
               updateArrayById(vueThis.addTaskList, task)
-              ganttObject.open(task.id);
-            });
-          });
+              ganttObject.open(task.id)
+            })
+          })
           // ganttObject.eachTask(function(task) {
           //     task.expand = true
           //     task.$open = true
@@ -2305,15 +2173,15 @@ export const CommandButtonData = [
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
 
-          ganttObject.eachTask(function(task) {
-              let wbs = task.$wbs;
-              let count = (wbs.match(/\./g) || []).length;
-              if (count === 1) {
-                task.expand = true
-                task.$open = true
-              }
-              updateArrayById(vueThis.addTaskList, task)
-          });
+          ganttObject.eachTask(function (task) {
+            let wbs = task.$wbs
+            let count = (wbs.match(/\./g) || []).length
+            if (count === 1) {
+              task.expand = true
+              task.$open = true
+            }
+            updateArrayById(vueThis.addTaskList, task)
+          })
           setTimeout(() => {
             ganttObject.render()
           }, 1000)
@@ -2330,15 +2198,15 @@ export const CommandButtonData = [
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
 
-          ganttObject.eachTask(function(task) {
-              let wbs = task.$wbs;
-              let count = (wbs.match(/\./g) || []).length;
-              if (count === 2) {
-                task.expand = true
-                task.$open = true
-                updateArrayById(vueThis.addTaskList, task)
-              }
-          });
+          ganttObject.eachTask(function (task) {
+            let wbs = task.$wbs
+            let count = (wbs.match(/\./g) || []).length
+            if (count === 2) {
+              task.expand = true
+              task.$open = true
+              updateArrayById(vueThis.addTaskList, task)
+            }
+          })
           setTimeout(() => {
             ganttObject.render()
           }, 1000)
@@ -2355,15 +2223,15 @@ export const CommandButtonData = [
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
 
-          ganttObject.eachTask(function(task) {
-              let wbs = task.$wbs;
-              let count = (wbs.match(/\./g) || []).length;
-              if (count === 3) {
-                task.expand = true
-                task.$open = true
-                updateArrayById(vueThis.addTaskList, task)
-              }
-          });
+          ganttObject.eachTask(function (task) {
+            let wbs = task.$wbs
+            let count = (wbs.match(/\./g) || []).length
+            if (count === 3) {
+              task.expand = true
+              task.$open = true
+              updateArrayById(vueThis.addTaskList, task)
+            }
+          })
           setTimeout(() => {
             ganttObject.render()
           }, 1000)
@@ -2379,15 +2247,15 @@ export const CommandButtonData = [
         clickFun: function (btn, ganttName, tasks) {
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
-          ganttObject.eachTask(function(task) {
-            let wbs = task.$wbs;
-              let count = (wbs.match(/\./g) || []).length;
-              if (count > 3) {
-                task.expand = true
-                task.$open = true
-                updateArrayById(vueThis.addTaskList, task)
-              }
-          });
+          ganttObject.eachTask(function (task) {
+            let wbs = task.$wbs
+            let count = (wbs.match(/\./g) || []).length
+            if (count > 3) {
+              task.expand = true
+              task.$open = true
+              updateArrayById(vueThis.addTaskList, task)
+            }
+          })
           setTimeout(() => {
             ganttObject.render()
           }, 1000)
@@ -2404,15 +2272,15 @@ export const CommandButtonData = [
           const vueThis = store.getters.vueThis
           api['planGanttManager.updateFoldLevel']({
             tasks: vueThis.addTaskList
-           }).then((res) => {
-              if (res) {
-                vueThis.addTaskList = []
-                vueThis.$message({
-                  message: '保存成功',
-                  type: 'success'
-                })
-              }
-            })
+          }).then((res) => {
+            if (res) {
+              vueThis.addTaskList = []
+              vueThis.$message({
+                message: '保存成功',
+                type: 'success'
+              })
+            }
+          })
         },
         isDisableFun: function (btn, ganttName, tasks) {
           return false
@@ -2425,8 +2293,8 @@ export const CommandButtonData = [
         help: '恢复',
         msg: '恢复',
         clickFun: function (btn, ganttName, tasks) {
-            const vueThis = store.getters.vueThis
-            vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
+          const vueThis = store.getters.vueThis
+          vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
         },
         isDisableFun: function (btn, ganttName, tasks) {
           return false
@@ -2457,9 +2325,9 @@ export const CommandButtonData = [
               task.expand = false
               task.$open = false
               updateArrayById(vueThis.addTaskList, task)
-              ganttObject.close(task.id);
-            });
-          });
+              ganttObject.close(task.id)
+            })
+          })
           // ganttObject.eachTask(function(task) {
           //     task.expand = false
           //     task.$open = false
@@ -2481,15 +2349,15 @@ export const CommandButtonData = [
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
 
-          ganttObject.eachTask(function(task) {
-              let wbs = task.$wbs;
-              let count = (wbs.match(/\./g) || []).length;
-              if (count === 1) {
-                task.expand = false
-                task.$open = false
-                updateArrayById(vueThis.addTaskList, task)
-              }
-          });
+          ganttObject.eachTask(function (task) {
+            let wbs = task.$wbs
+            let count = (wbs.match(/\./g) || []).length
+            if (count === 1) {
+              task.expand = false
+              task.$open = false
+              updateArrayById(vueThis.addTaskList, task)
+            }
+          })
           setTimeout(() => {
             ganttObject.render()
           }, 1000)
@@ -2506,15 +2374,15 @@ export const CommandButtonData = [
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
 
-          ganttObject.eachTask(function(task) {
-              let wbs = task.$wbs;
-              let count = (wbs.match(/\./g) || []).length;
-              if (count === 2) {
-                task.expand = false
-                task.$open = false
-                updateArrayById(vueThis.addTaskList, task)
-              }
-          });
+          ganttObject.eachTask(function (task) {
+            let wbs = task.$wbs
+            let count = (wbs.match(/\./g) || []).length
+            if (count === 2) {
+              task.expand = false
+              task.$open = false
+              updateArrayById(vueThis.addTaskList, task)
+            }
+          })
           setTimeout(() => {
             ganttObject.render()
           }, 1000)
@@ -2531,15 +2399,15 @@ export const CommandButtonData = [
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
 
-          ganttObject.eachTask(function(task) {
-              let wbs = task.$wbs;
-              let count = (wbs.match(/\./g) || []).length;
-              if (count === 3) {
-                task.expand = false
-                task.$open = false
-                updateArrayById(vueThis.addTaskList, task)
-              }
-          });
+          ganttObject.eachTask(function (task) {
+            let wbs = task.$wbs
+            let count = (wbs.match(/\./g) || []).length
+            if (count === 3) {
+              task.expand = false
+              task.$open = false
+              updateArrayById(vueThis.addTaskList, task)
+            }
+          })
           setTimeout(() => {
             ganttObject.render()
           }, 1000)
@@ -2556,15 +2424,15 @@ export const CommandButtonData = [
           const vueThis = store.getters.vueThis
           const ganttObject = GanttObject.getGanttObject(ganttName)
 
-          ganttObject.eachTask(function(task) {
-              let wbs = task.$wbs;
-              let count = (wbs.match(/\./g) || []).length;
-              if (count > 3) {
-                task.expand = false
-                task.$open = false
-                updateArrayById(vueThis.addTaskList, task)
-              }
-          });
+          ganttObject.eachTask(function (task) {
+            let wbs = task.$wbs
+            let count = (wbs.match(/\./g) || []).length
+            if (count > 3) {
+              task.expand = false
+              task.$open = false
+              updateArrayById(vueThis.addTaskList, task)
+            }
+          })
           setTimeout(() => {
             ganttObject.render()
           }, 1000)
@@ -2581,15 +2449,15 @@ export const CommandButtonData = [
           const vueThis = store.getters.vueThis
           api['planGanttManager.updateFoldLevel']({
             tasks: vueThis.addTaskList
-           }).then((res) => {
-              if (res) {
-                vueThis.addTaskList = []
-                vueThis.$message({
-                  message: '保存成功',
-                  type: 'success'
-                })
-              }
-            })
+          }).then((res) => {
+            if (res) {
+              vueThis.addTaskList = []
+              vueThis.$message({
+                message: '保存成功',
+                type: 'success'
+              })
+            }
+          })
         },
         isDisableFun: function (btn, ganttName, tasks) {
           return false
@@ -2602,8 +2470,8 @@ export const CommandButtonData = [
         help: '恢复',
         msg: '恢复',
         clickFun: function (btn, ganttName, tasks) {
-            const vueThis = store.getters.vueThis
-            vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
+          const vueThis = store.getters.vueThis
+          vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
         },
         isDisableFun: function (btn, ganttName, tasks) {
           return false
@@ -2624,11 +2492,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isChangeGantt(ganttName, tasks)
-      ]
+      const checks = [() => isChangeGantt(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -2644,7 +2510,7 @@ export const CommandButtonData = [
         vueThis.rightMenuConfigVisible = true
       }
     },
-    isDisableFun: function (btn, ganttName, tasks) { }
+    isDisableFun: function (btn, ganttName, tasks) {}
   },
   {
     id: 'detail-info',
@@ -2659,12 +2525,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isHasTask(ganttName, tasks),
-        () => isDetailInfo(ganttName, tasks)
-      ]
+      const checks = [() => isHasTask(ganttName, tasks), () => isDetailInfo(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -2681,13 +2544,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isHasTask(ganttName, tasks),
-        () => isSingleTask(ganttName, tasks),
-        () => isChangeHistory(ganttName, tasks)
-      ]
+      const checks = [() => isHasTask(ganttName, tasks), () => isSingleTask(ganttName, tasks), () => isChangeHistory(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -2704,12 +2563,9 @@ export const CommandButtonData = [
       }
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isHasTask(ganttName, tasks),
-        () => isSingleTask(ganttName, tasks)
-      ]
+      const checks = [() => isHasTask(ganttName, tasks), () => isSingleTask(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     }
   },
@@ -2749,11 +2605,9 @@ export const CommandButtonData = [
         })
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isNotStart(ganttName, tasks)
-      ]
+      const checks = [() => isNotStart(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     },
     children: [
@@ -2793,21 +2647,19 @@ export const CommandButtonData = [
             })
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          const checks = [
-            () => isNotStart(ganttName, tasks)
-          ]
+          const checks = [() => isNotStart(ganttName, tasks)]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       }
     ]
   },
   {
-    id:'expand-all',
-    icon:'icon-zhankai p8',
-    title:'全部展开',
-    help:'全部展开',
+    id: 'expand-all',
+    icon: 'icon-zhankai p8',
+    title: '全部展开',
+    help: '全部展开',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       vueThis.expandAll()
@@ -2817,10 +2669,10 @@ export const CommandButtonData = [
     }
   },
   {
-    id:'collapse-all',
-    icon:'icon-shousuo p8',
-    title:'全部折叠',
-    help:'全部折叠',
+    id: 'collapse-all',
+    icon: 'icon-shousuo p8',
+    title: '全部折叠',
+    help: '全部折叠',
     clickFun: function (btn, ganttName, tasks) {
       const vueThis = store.getters.vueThis
       vueThis.collapseAll()
@@ -2864,11 +2716,9 @@ export const CommandButtonData = [
         })
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [
-        () => isNotStart(ganttName, tasks)
-      ]
+      const checks = [() => isNotStart(ganttName, tasks)]
       const res = isDisable(checks)
-      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+      store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
     },
     children: [
@@ -2907,11 +2757,9 @@ export const CommandButtonData = [
             })
         },
         isDisableFun: function (btn, ganttName, tasks) {
-          const checks = [
-            () => isNotStart(ganttName, tasks)
-          ]
+          const checks = [() => isNotStart(ganttName, tasks)]
           const res = isDisable(checks)
-          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : ''})
+          store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
           return res.disable
         }
       }
@@ -2919,15 +2767,15 @@ export const CommandButtonData = [
   }
 ]
 
-function updateArrayById (array, newItem) {
+function updateArrayById(array, newItem) {
   const vueThis = store.getters.vueThis
-  const index = array.findIndex(item => item.id === newItem.id);
+  const index = array.findIndex((item) => item.id === newItem.id)
   if (index !== -1) {
-    vueThis.addTaskList[index] = newItem; // 覆盖已存在的数据
+    vueThis.addTaskList[index] = newItem // 覆盖已存在的数据
   } else {
-    vueThis.addTaskList.push(newItem); // 不存在则添加
+    vueThis.addTaskList.push(newItem) // 不存在则添加
   }
-};
+}
 
 /**
  * 通用按钮禁用条件
@@ -2935,7 +2783,7 @@ function updateArrayById (array, newItem) {
  * @param tasks
  * @returns {boolean}
  */
-function isDisableFunCheck (ganttName, tasks, checkType) {
+function isDisableFunCheck(ganttName, tasks, checkType) {
   let result = false
   const vueThis = store.getters.vueThis
   const ganttObject = GanttObject.getGanttObject(ganttName)
@@ -2970,7 +2818,7 @@ function isDisableFunCheck (ganttName, tasks, checkType) {
  * @param tasks
  * @returns {boolean}
  */
-function checkTaskReadonly (ganttName, tasks) {
+function checkTaskReadonly(ganttName, tasks) {
   let result = false
   const ganttObject = GanttObject.getGanttObject(ganttName)
   ganttObject.eachSelectedTask(function (taskId) {
@@ -2990,7 +2838,7 @@ function checkTaskReadonly (ganttName, tasks) {
  * @author fukai
  * @date 2020/5/21 19:49
  */
-function checkReadOnly (ganttName) {
+function checkReadOnly(ganttName) {
   const ganttObject = GanttObject.getGanttObject(ganttName)
   if (ganttObject.config.copy) {
     return false
@@ -3016,7 +2864,7 @@ function checkReadOnly (ganttName) {
  * @author fukai
  * @date 2020/5/13 11:33
  */
-function checkContentRoot (ganttName, tasks) {
+function checkContentRoot(ganttName, tasks) {
   if (tasks.length === 0) {
     return true
   }
@@ -3034,8 +2882,10 @@ function checkContentRoot (ganttName, tasks) {
 function get32NumberUid() {
   let array = new Uint8Array(16)
   window.crypto.getRandomValues(array)
-  return Array.from(array).map( b=>
-    b.toString(16).padStart(2, '0')).join('').substring(0, 32)
+  return Array.from(array)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+    .substring(0, 32)
 }
 
 /**
@@ -3043,10 +2893,10 @@ function get32NumberUid() {
  * @author fukai
  * @date 2020/5/7 12:01
  */
-function addTask (num, pos, ganttName) {
+function addTask(num, pos, ganttName) {
   const ganttObject = GanttObject.getGanttObject(ganttName)
   const dpObject = GanttObject.getDpObject(ganttName)
-  let settingData = store.getters.userSettingAll.PlanButton && store.getters.userSettingAll.PlanButton[0] || {}
+  let settingData = (store.getters.userSettingAll.PlanButton && store.getters.userSettingAll.PlanButton[0]) || {}
   let schedulingType = settingData.value && settingData.value.autoScheduling ? settingData.value.autoScheduling : ''
   if (ganttObject && dpObject) {
     const taskId = ganttObject.getSelectedId()
@@ -3060,16 +2910,16 @@ function addTask (num, pos, ganttName) {
     //   vueThis.$message.warning('低密人员不允许创建高密数据')
     //   return
     // }
-      let managerStatus = ''
-      if (vueThis.thirdMenuParam.EXECUTESTATE === '1000' || vueThis.thirdMenuParam.MANAGESTATUS === '6609') {
-        managerStatus = '6401'
-      }
-      if (vueThis.thirdMenuParam.EXECUTESTATE === '1070' || vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
-        managerStatus = '6403'
-      }
-      if (vueThis.thirdMenuParam.EXECUTESTATE === '1010') {
-         managerStatus = '6402'
-      }
+    let managerStatus = ''
+    if (vueThis.thirdMenuParam.EXECUTESTATE === '1000' || vueThis.thirdMenuParam.MANAGESTATUS === '6609') {
+      managerStatus = '6401'
+    }
+    if (vueThis.thirdMenuParam.EXECUTESTATE === '1070' || vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
+      managerStatus = '6403'
+    }
+    if (vueThis.thirdMenuParam.EXECUTESTATE === '1010') {
+      managerStatus = '6402'
+    }
     switch (pos) {
       case 'Before':
         // 同级上方插入
@@ -3078,30 +2928,28 @@ function addTask (num, pos, ganttName) {
         let ids = []
         for (let i = 0; i < num; i++) {
           let id = get32NumberUid()
-            ids.push(taskId)
-          tasksBefore.push(
-            {
-              id: id,
-              name: '新任务',
-              parent: taskId,
-              insertNum: num,
-              insertType: 'Before',
-              type: type,
-              autoScheduling: schedulingType || task.autoScheduling,
-              createPage: vueThis.createPage,
-              completeForm: ' ',
-              managerStatus: managerStatus,
-              start_date: moment(parentTask.start_date).format('YYYY-MM-DD'),
-              end_date: moment(parentTask.end_date).format('YYYY-MM-DD'),
-              forecastBeginDate: parentTask.forecastBeginDate,
-              forecastEndDate: parentTask.forecastEndDate,
-              status: '6020'
-            }
-          )
-      }
+          ids.push(taskId)
+          tasksBefore.push({
+            id: id,
+            name: '新任务',
+            parent: taskId,
+            insertNum: num,
+            insertType: 'Before',
+            type: type,
+            autoScheduling: schedulingType || task.autoScheduling,
+            createPage: vueThis.createPage,
+            completeForm: ' ',
+            managerStatus: managerStatus,
+            start_date: moment(parentTask.start_date).format('YYYY-MM-DD'),
+            end_date: moment(parentTask.end_date).format('YYYY-MM-DD'),
+            forecastBeginDate: parentTask.forecastBeginDate,
+            forecastEndDate: parentTask.forecastEndDate,
+            status: '6020'
+          })
+        }
         createTaskByDatas(ganttObject, tasksBefore, task.parent, 'Before', '新任务', '任务创建成功!', dpObject, taskIndexNo)
-              vueThis.taskCount = vueThis.taskCount + num
-              tasksBefore[0].ids = ids
+        vueThis.taskCount = vueThis.taskCount + num
+        tasksBefore[0].ids = ids
         api['planGanttManager.createPlanGanttData'](tasksBefore[0])
           .then(function (res) {
             if (res) {
@@ -3116,7 +2964,7 @@ function addTask (num, pos, ganttName) {
                 })
               }, task.id)
             } else {
-              tasksBefore.forEach(item => {
+              tasksBefore.forEach((item) => {
                 ganttObject.deleteTask(item.id)
               })
               vueThis.$message({
@@ -3127,7 +2975,7 @@ function addTask (num, pos, ganttName) {
           })
           .catch(() => {
             ganttObject.undo()
-            tasksBefore.forEach(item => {
+            tasksBefore.forEach((item) => {
               ganttObject.deleteTask(item.id)
             })
             vueThis.$message({
@@ -3144,28 +2992,26 @@ function addTask (num, pos, ganttName) {
         for (let i = 0; i < num; i++) {
           let id = get32NumberUid()
           afterIds.push(id)
-          tasksAfter.push(
-            {
-              id: id,
-              name: '新任务',
-              parent: taskId,
-              insertNum: num,
-              insertType: 'After',
-              type: type,
-              autoScheduling: schedulingType || task.autoScheduling,
-              createPage: vueThis.createPage,
-              completeForm: ' ',
-              managerStatus: managerStatus,
-              start_date: moment(parentTask.start_date).format('YYYY-MM-DD'),
-              end_date: moment(parentTask.end_date).format('YYYY-MM-DD'),
-              forecastBeginDate: parentTask.forecastBeginDate,
-              forecastEndDate: parentTask.forecastEndDate,
-              status: '6020'
-            }
-          )
-      }
+          tasksAfter.push({
+            id: id,
+            name: '新任务',
+            parent: taskId,
+            insertNum: num,
+            insertType: 'After',
+            type: type,
+            autoScheduling: schedulingType || task.autoScheduling,
+            createPage: vueThis.createPage,
+            completeForm: ' ',
+            managerStatus: managerStatus,
+            start_date: moment(parentTask.start_date).format('YYYY-MM-DD'),
+            end_date: moment(parentTask.end_date).format('YYYY-MM-DD'),
+            forecastBeginDate: parentTask.forecastBeginDate,
+            forecastEndDate: parentTask.forecastEndDate,
+            status: '6020'
+          })
+        }
         createTaskByDatas(ganttObject, tasksAfter, task.parent, 'After', '新任务', '任务创建成功!', dpObject, afterIndexNo)
-              vueThis.taskCount = vueThis.taskCount + num
+        vueThis.taskCount = vueThis.taskCount + num
         // 同级下方插入
         tasksAfter[0].ids = afterIds
         api['planGanttManager.createPlanGanttData'](tasksAfter[0])
@@ -3183,7 +3029,7 @@ function addTask (num, pos, ganttName) {
               }, task.id)
             } else {
               ganttObject.undo()
-              tasksAfter.forEach(item => {
+              tasksAfter.forEach((item) => {
                 ganttObject.deleteTask(item.id)
               })
               vueThis.$message({
@@ -3211,26 +3057,24 @@ function addTask (num, pos, ganttName) {
         for (let i = 0; i < num; i++) {
           let id = get32NumberUid()
           childIds.push(id)
-          tasksChild.push(
-            {
-              id: id,
-              name: '新任务',
-              parent: taskId,
-              insertNum: num,
-              insertType: 'Child',
-              type: type,
-              autoScheduling: schedulingType || task.autoScheduling,
-              createPage: vueThis.createPage,
-              completeForm: ' ',
-              managerStatus: managerStatus,
-              start_date: moment(parentTask.start_date).format('YYYY-MM-DD'),
-              end_date: moment(parentTask.end_date).format('YYYY-MM-DD'),
-              forecastBeginDate: parentTask.forecastBeginDate,
-              forecastEndDate: parentTask.forecastEndDate,
-              status: '6020'
-            }
-          )
-      }
+          tasksChild.push({
+            id: id,
+            name: '新任务',
+            parent: taskId,
+            insertNum: num,
+            insertType: 'Child',
+            type: type,
+            autoScheduling: schedulingType || task.autoScheduling,
+            createPage: vueThis.createPage,
+            completeForm: ' ',
+            managerStatus: managerStatus,
+            start_date: moment(parentTask.start_date).format('YYYY-MM-DD'),
+            end_date: moment(parentTask.end_date).format('YYYY-MM-DD'),
+            forecastBeginDate: parentTask.forecastBeginDate,
+            forecastEndDate: parentTask.forecastEndDate,
+            status: '6020'
+          })
+        }
         createTaskByDatas(ganttObject, tasksChild, taskId, 'Child', '新任务', '任务创建成功!', dpObject, null)
         vueThis.taskCount = vueThis.taskCount + num
 
@@ -3249,7 +3093,6 @@ function addTask (num, pos, ganttName) {
               //     //  let fileNames = Object.keys(item)
               //     //  console.log("🚀 ~ res.forEach ~ el:", fileNames)
               //     //  fileNames.forEach(el => {
-
               //       // tasks[el] = item[el]
               //       // if (el !== 'id' && item[el] !== null) {
               //       //   vueThis.$set(tasks, el, item[el])
@@ -3266,7 +3109,7 @@ function addTask (num, pos, ganttName) {
           })
           .catch(() => {
             ganttObject.undo()
-            tasksChild.forEach(item => {
+            tasksChild.forEach((item) => {
               ganttObject.deleteTask(item.id)
             })
             vueThis.$message({
@@ -3289,12 +3132,12 @@ function addTask (num, pos, ganttName) {
  * @param msg
  * @param dpObject
  */
-function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dpObject, indexNo) {
+function createTaskByDatas(ganttObject, datas, parentId, pos, taskName, msg, dpObject, indexNo) {
   const vueThis = store.getters.vueThis
   let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
   let extraTask = {}
   if (extraList && extraList.length) {
-    extraList.forEach(el => {
+    extraList.forEach((el) => {
       extraTask['kz' + el.id] = ''
     })
   }
@@ -3359,7 +3202,7 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
               parentTask.type = 'project'
               parentTask.isLeaf = 1
               ganttObject.updateTask(parentId)
-            }else {
+            } else {
               // 如果是子任务，将父任务的 isLeaf 设置为 '1'
               parentTask.isLeaf = '1'
               ganttObject.updateTask(parentId)
@@ -3387,27 +3230,24 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
             ganttObject.addTask(task, parentId, indexNo++)
             break
         }
-        let filteredData = ganttObject.serialize();  // 获取当前显示的所有任务数据
+        let filteredData = ganttObject.serialize() // 获取当前显示的所有任务数据
         let filteredTasks = []
         filteredData.data.forEach((item) => {
           // if (ganttObject.isTaskVisible(item.id)) {
-            filteredTasks.push(item.id);
+          filteredTasks.push(item.id)
           // }
-        });
+        })
         setTimeout(() => {
           // ganttObject.unselectTask()
           if (filteredTasks && filteredTasks.indexOf(task.id) === -1) {
-          if (isTaskInViewport(parentId,ganttObject)) {
-
-          } else {
-            ganttObject.showTask(parentId)
-          }
+            if (isTaskInViewport(parentId, ganttObject)) {
+            } else {
+              ganttObject.showTask(parentId)
+            }
             ganttObject.selectTask(parentId)
           } else {
-            if (isTaskInViewport(item.id,ganttObject)) {
-
+            if (isTaskInViewport(item.id, ganttObject)) {
             } else {
-
               ganttObject.showTask(item.id)
             }
             ganttObject.selectTask(item.id)
@@ -3415,8 +3255,8 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
           let ganttDatas = vueThis.$store.getters.ganttDatas
           ganttDatas.tasks = []
           ganttObject.eachTask((task) => {
-            ganttDatas.tasks.push(task);
-          });
+            ganttDatas.tasks.push(task)
+          })
           // ganttDatas.loactionTaskId = item.id
           vueThis.$store.dispatch('setGanttDatas', ganttDatas)
         }, 1000)
@@ -3449,28 +3289,26 @@ function createTaskByDatas (ganttObject, datas, parentId, pos, taskName, msg, dp
 
 function isTaskInViewport(taskId, gantt) {
   // 获取甘特图的任务列表滚动容器（根据实际DOM结构调整选择器）
-// 获取任务的位置
-let task = gantt.getTask(taskId)
-const taskPosition = gantt.getTaskPosition(task);
+  // 获取任务的位置
+  let task = gantt.getTask(taskId)
+  const taskPosition = gantt.getTaskPosition(task)
 
-// 找到滚动容器
-const scrollContainer = document.querySelector(".gantt_grid_data");
-// 获取滚动位置和可视区域尺寸
-const containerHeight = scrollContainer.clientHeight;
-let scrollTop
-// 获取 class 为 gantt_layout_content 的第一个元素
-let ganttContent = document.querySelector('.gantt_ver_scroll');
-if (ganttContent) {
-   // 获取滚动条滚动的高度
-   scrollTop = ganttContent.scrollTop;
-}
-// 判断任务是否在可视区域内
-return (
-    taskPosition.top - scrollTop < containerHeight - gantt.config.row_height
-);
+  // 找到滚动容器
+  const scrollContainer = document.querySelector('.gantt_grid_data')
+  // 获取滚动位置和可视区域尺寸
+  const containerHeight = scrollContainer.clientHeight
+  let scrollTop
+  // 获取 class 为 gantt_layout_content 的第一个元素
+  let ganttContent = document.querySelector('.gantt_ver_scroll')
+  if (ganttContent) {
+    // 获取滚动条滚动的高度
+    scrollTop = ganttContent.scrollTop
+  }
+  // 判断任务是否在可视区域内
+  return taskPosition.top - scrollTop < containerHeight - gantt.config.row_height
 }
 
-export function deleteKeyRemove (ganttName, tasks) {
+export function deleteKeyRemove(ganttName, tasks) {
   const thisGantt = GanttObject.getGanttObject(ganttName)
   const vueThis = store.getters.vueThis
   const thisDp = GanttObject.getDpObject(ganttName)
@@ -3502,7 +3340,7 @@ export function deleteKeyRemove (ganttName, tasks) {
  * @author fukai
  * @date 2020/5/8 15:33
  */
-function removeTasks (ganttObject, dp, ganttName) {
+function removeTasks(ganttObject, dp, ganttName) {
   const selectedTaskIds = []
   const selTaskIds = ganttObject.getSelectedTasks()
   const vueThis = store.getters.vueThis
@@ -3541,14 +3379,14 @@ function removeTasks (ganttObject, dp, ganttName) {
   let ganttDatas = vueThis.$store.getters.ganttDatas
   ganttDatas.tasks = []
   ganttObject.eachTask((task) => {
-  selectedTaskIds.forEach(id => {
-    if (id !== task.id) {
-      ganttDatas.tasks.push(task);
-    }
+    selectedTaskIds.forEach((id) => {
+      if (id !== task.id) {
+        ganttDatas.tasks.push(task)
+      }
+    })
   })
-  });
   // ganttDatas.loactionTaskId = ''
-//   ganttDatas.loactionTaskId = ganttObject.getParent(selectedTaskIds[0])
+  //   ganttDatas.loactionTaskId = ganttObject.getParent(selectedTaskIds[0])
   vueThis.$store.dispatch('setGanttDatas', ganttDatas)
   // 变更删除时，不删除任务，添加调减图标
   if (ganttName === 'changeGantt') {
@@ -3581,7 +3419,7 @@ function removeTasks (ganttObject, dp, ganttName) {
     }
   }
 }
-function removePlanGanttData (ganttObject, dp, ganttName, vueThis, selectedTaskIds) {
+function removePlanGanttData(ganttObject, dp, ganttName, vueThis, selectedTaskIds) {
   api['planGanttManager.removePlanGanttData']({ taskIds: selectedTaskIds })
     .then(function (res) {
       if (res && res === 'true') {
@@ -3626,7 +3464,7 @@ function removePlanGanttData (ganttObject, dp, ganttName, vueThis, selectedTaskI
           })
         }
         vueThis.taskCount = ganttObject.getTaskCount()
-        vueThis.deleteTaskCallback();
+        vueThis.deleteTaskCallback()
         vueThis.selectedTasks = []
         vueThis.$message({
           message: '任务删除成功',
@@ -3658,7 +3496,7 @@ function removePlanGanttData (ganttObject, dp, ganttName, vueThis, selectedTaskI
  * @param ganttObject
  * @param tasks
  */
-function copyTask (ganttObject, tasks, vueThis) {
+function copyTask(ganttObject, tasks, vueThis) {
   vueThis.copyFlag = false
   const selectTaskIds = ganttObject.getSelectedTasks()
   const planInfoId = vueThis.planInfoId
@@ -3671,6 +3509,7 @@ function copyTask (ganttObject, tasks, vueThis) {
       }
     }, taskId)
   })
+  vueThis.copyTaskIds = copyTaskIds
   // 获取数据json对象
   if (copyTaskIds !== null && copyTaskIds.length > 0) {
     api['planGanttManager.copyTasks']({
@@ -3681,7 +3520,7 @@ function copyTask (ganttObject, tasks, vueThis) {
         if (res) {
           if (res) {
             if (res && res.tasks && res.tasks.length) {
-              res.tasks.forEach(el => {
+              res.tasks.forEach((el) => {
                 el.managerStatus = '6403'
                 el.realBeginDate = ''
                 el.realEndDate = ''
@@ -3716,7 +3555,7 @@ function copyTask (ganttObject, tasks, vueThis) {
  * @param ganttObject
  * @param tasks
  */
-function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
+function pasteTask(ganttObject, tasks, vueThis, type, dpObj) {
   if (vueThis.copyFlag) {
     const that = this
     if (vueThis.copyTasks.length > 0) {
@@ -3744,28 +3583,78 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
       vueThis.$message.warning('请选择需要粘贴的数据')
     }
   } else {
-    
     const copyTasks = Object.assign({}, vueThis.copyTasks)
+    const copyTaskIds = vueThis.copyTaskIds
     if (copyTasks != null) {
       const selTask = tasks[0]
       const parentTask = ganttObject.getTask(selTask.parent)
       const selId = selTask.id
       const selIndexNo = ganttObject.getTaskIndex(selId) + 1 // 分支indexNo
       const planInfoId = vueThis.planInfoId
-
       const selectTaskIds = ganttObject.getSelectedTasks()
-      let parentId = ''
-      if (selectTaskIds.length === 1 ) {
-        copyTasks.tasks.forEach((task, i) => {
-          if (i === 0) {
+      if (selectTaskIds.length === 1) {
+        copyTasks.tasks = []
+        let parentId
+        let defaultTaskId
+        copyTaskIds.forEach((id) => {
+          if (ganttObject.hasChild(id)) {
+            defaultTaskId = id
+            function checkRow(id, parent) {
+              let parent_task = JSON.parse(JSON.stringify(ganttObject.getTask(id)))
+              parent_task.defaultId = id
+              parent_task.parent = parent
+              parent_task.planInfoId = vueThis.planInfoId
+              parent_task.id = get32NumberUid()
+              parentId = parent_task.id
+              let falg = true
+              copyTasks.tasks.forEach((item) => {
+                if (item.defaultId === parent_task.defaultId) {
+                  falg = false
+                }
+              })
+              if (falg) {
+                copyTasks.tasks.push(parent_task)
+              }
+              ganttObject.eachTask(function (item) {
+                let task = JSON.parse(JSON.stringify(item))
+                if (ganttObject.hasChild(task.id)) {
+                  defaultTaskId = task.id
+                  checkRow(task.id, parentId)
+                } else {
+                  task.defaultId = item.id
+                  task.parent = parentId
+                  task.planInfoId = vueThis.planInfoId
+                  task.id = get32NumberUid()
+
+                  let falg = true
+                  copyTasks.tasks.forEach((item) => {
+                    if (item.defaultId === task.defaultId) {
+                      falg = false
+                    }
+                  })
+                  if (falg) {
+                    copyTasks.tasks.push(task)
+                  }
+                }
+              }, defaultTaskId)
+            }
+            checkRow(id, selectTaskIds[0])
+          } else {
+            // 子级
+            let task = JSON.parse(JSON.stringify(ganttObject.getTask(id)))
+            task.defaultId = id
             task.parent = selectTaskIds[0]
             task.planInfoId = vueThis.planInfoId
             task.id = get32NumberUid()
-            parentId = task.id
-          } else {
-            task.parent = parentId
-            task.planInfoId = vueThis.planInfoId
-            task.id = get32NumberUid()
+            let falg = true
+            copyTasks.tasks.forEach((item) => {
+              if (item.defaultId === task.defaultId) {
+                falg = false
+              }
+            })
+            if (falg) {
+              copyTasks.tasks.push(task)
+            }
           }
         })
       }
@@ -3777,22 +3666,19 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
         managerStatus = '6403'
       }
       if (vueThis.thirdMenuParam.EXECUTESTATE === '1010') {
-         managerStatus = '6402'
+        managerStatus = '6402'
       }
       copyTasks.tasks.forEach((el, index) => {
-          el.managerStatus = managerStatus
-          el.status = 6020
-          el.dutyDeptName = ''
-          el.realName = ''
-          el.owner_id = '',
-          el.start_date = moment(el.start_date).format('YYYY-MM-DD'),
-          el.end_date = moment(el.end_date).format('YYYY-MM-DD'),
-          el.indexNo = null
-        })
-        createTaskByDatas(ganttObject, copyTasks.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
-        vueThis.copyTasks.tasks = []
-        vueThis.taskCount = ganttObject.getTaskCount()
-        api['planGanttManager.pasteTasks']({
+        el.managerStatus = managerStatus
+        el.status = 6020
+        el.dutyDeptName = ''
+        el.realName = ''
+        ;(el.owner_id = ''), (el.start_date = moment(el.start_date).format('YYYY-MM-DD')), (el.end_date = moment(el.end_date).format('YYYY-MM-DD')), (el.indexNo = null)
+      })
+      createTaskByDatas(ganttObject, copyTasks.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
+      vueThis.copyTasks.tasks = []
+      vueThis.taskCount = ganttObject.getTaskCount()
+      api['planGanttManager.pasteTasks']({
         pasteData: copyTasks,
         parentId: selId,
         selectTaskId: selId,
@@ -3834,7 +3720,7 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
               type: 'error'
             })
             ganttObject.undo()
-            copyTasks.tasks.forEach(item => {
+            copyTasks.tasks.forEach((item) => {
               ganttObject.deleteTask(item.id)
             })
           }
@@ -3846,7 +3732,7 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
             type: 'error'
           })
           ganttObject.undo()
-          copyTasks.tasks.forEach(item => {
+          copyTasks.tasks.forEach((item) => {
             ganttObject.deleteTask(item.id)
           })
         })
@@ -3861,7 +3747,7 @@ function pasteTask (ganttObject, tasks, vueThis, type, dpObj) {
  * @param {*} tasks
  * @param {*} btnId
  */
-function updateTaskStyle (ganttName, tasks, btn) {
+function updateTaskStyle(ganttName, tasks, btn) {
   const ganttObject = GanttObject.getGanttObject(ganttName)
   if (ganttObject && btn) {
     const taskStyles = store.getters.taskStyles
@@ -3942,7 +3828,7 @@ function updateTaskStyle (ganttName, tasks, btn) {
  * @param ganttName
  * @returns {boolean}
  */
-function autoSchedulingCheck (ganttName) {
+function autoSchedulingCheck(ganttName) {
   let result = false
   const ganttObject = GanttObject.getGanttObject(ganttName)
   // 已完成时不可切换
@@ -3965,7 +3851,7 @@ function autoSchedulingCheck (ganttName) {
  * @param pos
  * @param ganttName
  */
-export function noDpAddTask (num, pos, ganttName) {
+export function noDpAddTask(num, pos, ganttName) {
   const ganttObject = GanttObject.getGanttObject(ganttName)
   if (ganttObject) {
     const taskId = ganttObject.getSelectedId()
@@ -4005,7 +3891,7 @@ export function noDpAddTask (num, pos, ganttName) {
  * @param vueThis
  * @param style
  */
-function noDpCreateTask (ganttObject, num, parent, pos, taskName, indexNo, autoScheduling, vueThis, style) {
+function noDpCreateTask(ganttObject, num, parent, pos, taskName, indexNo, autoScheduling, vueThis, style) {
   let schedule = false
   const formatFunc = ganttObject.date.date_to_str('%Y-%m-%d')
   if (autoScheduling === '1') {
@@ -4014,7 +3900,7 @@ function noDpCreateTask (ganttObject, num, parent, pos, taskName, indexNo, autoS
   let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
   let extraTask = {}
   if (extraList && extraList.length) {
-    extraList.forEach(el => {
+    extraList.forEach((el) => {
       extraTask['kz' + el.id] = ''
     })
   }
@@ -4072,18 +3958,18 @@ function noDpCreateTask (ganttObject, num, parent, pos, taskName, indexNo, autoS
         let ganttDatas = vueThis.$store.getters.ganttDatas
         ganttDatas.tasks = []
         ganttObject.eachTask((task) => {
-          ganttDatas.tasks.push(task);
-        });
+          ganttDatas.tasks.push(task)
+        })
         // ganttDatas.loactionTaskId = item.id
         vueThis.$store.dispatch('setGanttDatas', ganttDatas)
       }, 1000)
-          let ganttDatas = vueThis.$store.getters.ganttDatas
-          ganttDatas.tasks = []
-          ganttObject.eachTask((task) => {
-            ganttDatas.tasks.push(task);
-          });
-          // ganttDatas.loactionTaskId = item.id
-          vueThis.$store.dispatch('setGanttDatas', ganttDatas)
+      let ganttDatas = vueThis.$store.getters.ganttDatas
+      ganttDatas.tasks = []
+      ganttObject.eachTask((task) => {
+        ganttDatas.tasks.push(task)
+      })
+      // ganttDatas.loactionTaskId = item.id
+      vueThis.$store.dispatch('setGanttDatas', ganttDatas)
     }
   })
 }
@@ -4094,7 +3980,7 @@ function noDpCreateTask (ganttObject, num, parent, pos, taskName, indexNo, autoS
  * @param tasks
  * @param vueThis
  */
-function noDpCopy (thisGantt, tasks, vueThis) {
+function noDpCopy(thisGantt, tasks, vueThis) {
   const selectTaskIds = thisGantt.getSelectedTasks()
   const copyTaskIds = []
   vueThis.copyTasks = []
@@ -4132,7 +4018,7 @@ function noDpCopy (thisGantt, tasks, vueThis) {
  * @param tasks
  * @param vueThis
  */
-function noDpPaste (ganttObject, tasks, vueThis) {
+function noDpPaste(ganttObject, tasks, vueThis) {
   if (vueThis.copyTasks && vueThis.copyTasks.length > 0) {
     const selectTask = tasks[0]
     const parentTasks = ganttObject.getTask(selectTask.parent)
@@ -4205,12 +4091,12 @@ function noDpPaste (ganttObject, tasks, vueThis) {
  * @param ganttObject
  * @returns {{end_date: *, parent: *, $open: boolean, planType, forecastBeginDate: *, owner_id, monitorPoints, type: string, duration: *, autoScheduling, infoType: string, auto_scheduling: *, name: *, progress: number, style: *, forecastEndDate: *, planInfoId: *, start_date: *, status: string}}
  */
-function createTask (parent, parentId, vueThis, style, copyTask, ganttObject) {
+function createTask(parent, parentId, vueThis, style, copyTask, ganttObject) {
   const formatFunc = ganttObject.date.date_to_str('%Y-%m-%d')
   let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
   let extraTask = {}
   if (extraList && extraList.length) {
-    extraList.forEach(el => {
+    extraList.forEach((el) => {
       extraTask['kz' + el.id] = ''
     })
   }
@@ -4247,7 +4133,7 @@ function createTask (parent, parentId, vueThis, style, copyTask, ganttObject) {
 /**
  * 发布后可控任务可新建下级，同级
  */
-function checkEditTask (ganttName, tasks) {
+function checkEditTask(ganttName, tasks) {
   const vueThis = store.getters.vueThis
   if (ganttName) {
     const ganttObject = GanttObject.getGanttObject(ganttName)
@@ -4272,7 +4158,7 @@ function checkEditTask (ganttName, tasks) {
  * @param ganttName
  * @param tasks
  */
-function checkCanIssue (ganttName, tasks) {
+function checkCanIssue(ganttName, tasks) {
   let result = true
   const vueThis = store.getters.vueThis
   if (checkReadOnly(ganttName)) {
@@ -4316,7 +4202,7 @@ function checkCanIssue (ganttName, tasks) {
  * 计划下发
  * @param currentRowTask {Array} 当前行信息
  */
-function issueTask (ganttObject, thisDp, currentRowTask, ganttName) {
+function issueTask(ganttObject, thisDp, currentRowTask, ganttName) {
   const taskIds = []
   const tasks = []
   const taskMsg = []
@@ -4408,7 +4294,7 @@ function issueTask (ganttObject, thisDp, currentRowTask, ganttName) {
  * 批量设置责任人最小开始时间和最大完成时间数据获取
  * @param ganttName
  */
-function batchOwner (ganttName) {
+function batchOwner(ganttName) {
   let startTaskId = ''
   let endTaskId = ''
   let startDate = null
@@ -4444,7 +4330,7 @@ function batchOwner (ganttName) {
 /**
  * 批量设置任务密级
  */
-function batchLock () {
+function batchLock() {
   // const vueThis = store.getters.vueThis
   // vueThis.ClassificationSelectVisible = true
 }
@@ -4452,7 +4338,7 @@ function batchLock () {
  * 同步计划时间到预计时间
  * @param ganttName
  */
-function batchSyncTask (ganttName, allTaskIds) {
+function batchSyncTask(ganttName, allTaskIds) {
   const vueThis = store.getters.vueThis
   const ganttObject = GanttObject.getGanttObject(ganttName)
   const dpObject = GanttObject.getDpObject(ganttName)
@@ -4505,7 +4391,7 @@ function batchSyncTask (ganttName, allTaskIds) {
  * @param ganttName
  * @returns {boolean}
  */
-function batchOwnerCheck (ganttName) {
+function batchOwnerCheck(ganttName) {
   let result = {
     value: true
   }
@@ -4532,8 +4418,8 @@ function batchOwnerCheck (ganttName) {
       if (indexNo === 0) {
         result = {
           value: false,
-          reason: "根节点不可设置责任人"
-        };
+          reason: '根节点不可设置责任人'
+        }
       }
 
       // 判断任务状态是否有效
@@ -4541,18 +4427,17 @@ function batchOwnerCheck (ganttName) {
         if (vueThis.planEditLock === '0') return false
         result = {
           value: false,
-          reason: "已完成、提交审批任务不可操作责任人"
-        };
+          reason: '已完成、提交审批任务不可操作责任人'
+        }
       }
 
       // 判断任务是否只读且满足特定条件
       if (task.readonly && (task.weatherControl === '1' || task.managerStatus === vueThis.issueStatus)) {
         result = {
           value: false,
-          reason: "计划发布后可控任务不可操作责任人"
-        };
+          reason: '计划发布后可控任务不可操作责任人'
+        }
       }
-
     }
   })
   return result
@@ -4568,7 +4453,7 @@ function batchOwnerCheck (ganttName) {
  * @param ganttName
  * @returns {boolean}
  */
-function canIndentCheck (ganttName) {
+function canIndentCheck(ganttName) {
   let result = true
   if (ganttName) {
     const ganttObject = GanttObject.getGanttObject(ganttName)
@@ -4655,7 +4540,7 @@ function canIndentCheck (ganttName) {
  * @param tasks
  * @returns {boolean}
  */
-function outdentCheck (ganttName, tasks) {
+function outdentCheck(ganttName, tasks) {
   let result = true
   if (ganttName) {
     const ganttObject = GanttObject.getGanttObject(ganttName)
@@ -4683,7 +4568,7 @@ function outdentCheck (ganttName, tasks) {
  * @param vueThis
  * @returns {boolean}
  */
-function canDeleteCheck (ganttName, tasks, vueThis) {
+function canDeleteCheck(ganttName, tasks, vueThis) {
   let result = true
   // 获取gannt操作限制策略
   const planStatusLockMap = store.getters.planStatusLockMap
@@ -4721,11 +4606,9 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
         // 发布后可控任务不可删除
         if (controlTaskEdit && controlTaskEdit === 'false') {
           if (selTask.weatherControl && selTask.weatherControl === '1') {
-
             result = false
             return true
           } else if (selTask.managerStatus === '6404') {
-
             result = false
             return true
           }
@@ -4757,7 +4640,7 @@ function canDeleteCheck (ganttName, tasks, vueThis) {
  * 检查是否包含审批中任务
  * @param tasks
  */
-function checkHasApproveTask (ganttName, tasks) {
+function checkHasApproveTask(ganttName, tasks) {
   let result = false
   if (ganttName) {
     const ganttObject = GanttObject.getGanttObject(ganttName)
@@ -4781,7 +4664,7 @@ function checkHasApproveTask (ganttName, tasks) {
  * @param ganttName
  * @param tasks
  */
-function changePlanScheduling (value, ganttName, tasks) {
+function changePlanScheduling(value, ganttName, tasks) {
   const ganttObject = GanttObject.getGanttObject(ganttName)
   const dpObject = GanttObject.getDpObject(ganttName)
   const taskStatusLockMap = store.getters.taskStatusLockMap
@@ -4865,7 +4748,7 @@ function changePlanScheduling (value, ganttName, tasks) {
 }
 
 // 检测任务是否包含（备料/齐套/生产）/设计标识，则无法新建下级
-function checkHasProductTask (tasks) {
+function checkHasProductTask(tasks) {
   if (tasks.length === 0) {
     return true
   }
@@ -4877,7 +4760,7 @@ function checkHasProductTask (tasks) {
   }
 }
 // 检测是否为暂停或者禁止
-function checkSwitchType (tasks) {
+function checkSwitchType(tasks) {
   if (tasks.length === 0) {
     return true
   }
