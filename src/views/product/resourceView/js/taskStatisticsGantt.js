@@ -368,21 +368,25 @@ function synchronizationColumns (vueThis, ganttObject) {
               min_width: 120,
 
               template: function (task) {
-                let result = []
-                if (task['kz' + item.id]) {
-                  let list = vueThis.extraMap[item.selectCode]
-                  if (list && list.length) {
-                    let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
-                    list.forEach((el) => {
-                      taskList.forEach((item) => {
-                        if (el.value == item) {
-                          result.push(el.label)
-                        }
+                if (task.planInfoId) {
+                  let result = []
+                  if (task['kz' + item.id]) {
+                    let list = vueThis.extraMap[item.selectCode]
+                    if (list && list.length) {
+                      let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
+                      list.forEach((el) => {
+                        taskList.forEach((item) => {
+                          if (el.value == item) {
+                            result.push(el.label)
+                          }
+                        })
                       })
-                    })
+                    }
                   }
+                  return `<div class='text_overflow'>${result.join(',')}</div>`
+                } else {
+                  return `<div class='text_overflow'></div>`
                 }
-                return `<div class='text_overflow'>${result.join(',')}</div>`
               }
             })
           } else {
@@ -395,7 +399,11 @@ function synchronizationColumns (vueThis, ganttObject) {
               min_width: 120,
 
               template: function (task) {
+                if (task.planInfoId) {
                 return `<div class='text_overflow'>${task['kz' + item.id]}</div>`
+              } else {
+                return `<div class='text_overflow'></div>`
+              }
               }
             })
           }
