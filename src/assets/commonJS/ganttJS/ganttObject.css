@@ -238,7 +238,7 @@
 }
 
 .gantt_resizer_y .gantt_resizer_y {
-  height: 4px;
+  height: 4px !important;
 }
 
 /* .gantt_grid_scale,
