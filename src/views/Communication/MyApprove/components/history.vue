@@ -15,7 +15,9 @@
                      :api="saveApi"
                      :form="formData">
             <template #approvalComment>
-              <el-tooltip effect="dark" :content="formData.approvalComment" placement="bottom">
+              <el-tooltip effect="dark"
+                          :content="formData.approvalComment"
+                          placement="bottom">
                 <div style="
                 white-space: nowrap;
                 overflow: hidden;
@@ -57,7 +59,7 @@
                        :record="{ desformCode: componentsParams.codeForm }"
                        :permission-vo="componentsParams.permissionVo"
                        :layout-config="componentsParams"
-                      :is="componentUrl"
+                       :is="componentUrl"
                        ref="approveContent"
                        class="approveComponent"
                        v-bind="formCompProp"
@@ -136,7 +138,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       tabsHeight: document.documentElement.clientHeight,
       historyHeight: document.documentElement.clientHeight - 300,
@@ -281,11 +283,11 @@ export default {
     }
   },
   computed: {
-    componentLoader() {
+    componentLoader () {
       const comp = this.formComp
       return () => import('@/views/' + comp)
     },
-    componentUrl() {
+    componentUrl () {
       if (this.asyncComponents) {
         return () => import(`@/views/${this.asyncComponents}.vue`)
       }
@@ -315,13 +317,13 @@ export default {
       }
     },
     approveContentTitle: {
-      handler(val) {
+      handler (val) {
         this.tabs[0].label = val
       },
       immediate: true
     }
   },
-  created() {
+  created () {
     this.processKey = this.selectedApproval.processKey
     if (this.ar.indexOf(this.processKey) !== -1) {
       this.historyDataApi = 'PersonalProcessApproval.customHistoryList'
@@ -337,14 +339,14 @@ export default {
     this.getBpmnSnapshootAndLoadData()
   },
   methods: {
-    getBpmnSnapshootAndLoadData() {
+    getBpmnSnapshootAndLoadData () {
       const this_ = this
-      this.$api['PersonalProcessApproval.getBpmnSnapshoot']({processInstanceId: this.processInstId}).then((res) => {
+      this.$api['PersonalProcessApproval.getBpmnSnapshoot']({ processInstanceId: this.processInstId }).then((res) => {
         this_.bpmnSnapshoot = res
         this.loadFormKey()
       })
     },
-    loadFormKey() {
+    loadFormKey () {
       const this_ = this
       this_.dataSource = this_.dataSourceDefault
       this_.formData.approvalParams = ''
@@ -392,6 +394,7 @@ export default {
               this_.componentsParams = this_.formCompProp.approveContentView.formSelector ? JSON.parse(this_.formCompProp.approveContentView.formSelector) : null
             }
             if (this_.componentsParams) {
+              this_.asyncComponents = ''
               this_.componentsParams.dataViewId = this_.formCompProp.customBusinessKey ? this_.formCompProp.customBusinessKey : this_.formCompProp.businessKey
               this_.asyncComponents = this_.componentsParams.url
             }
@@ -401,10 +404,10 @@ export default {
       })
       console.log(this_.dataSource)
     },
-    loadApprovalFormData() {
+    loadApprovalFormData () {
       const this_ = this
       if (this_.formData.approvalParams && (this_.formData.approvalParams === 'canView' || this_.formData.approvalParams === 'canEdit')) {
-        this_.$api['ProjectApply.getWholeCopyClearly']({wholeDescribeId: this_.selectedApproval.businessKey}).then((res) => {
+        this_.$api['ProjectApply.getWholeCopyClearly']({ wholeDescribeId: this_.selectedApproval.businessKey }).then((res) => {
           if (res) {
             this_.formData.officeResult = res.officeResult
             this_.formData.officeResultText = res.officeResultText
@@ -418,10 +421,10 @@ export default {
       }
 
     },
-    downloadOutputRequsetFile(item) {
+    downloadOutputRequsetFile (item) {
       // 输出要求-文件下载
       if (item.id) {
-        this.$api['SystemSettings.getFileUrl']({attachmentId: item.id}, {responseType: 'blob'})
+        this.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' })
           .then((backJson) => {
             const link = document.createElement('a')
             link.href = window.URL.createObjectURL(new Blob([backJson.data]))
