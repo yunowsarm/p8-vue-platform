@@ -3593,6 +3593,7 @@ function pasteTask(ganttObject, tasks, vueThis, type, dpObj) {
       const planInfoId = vueThis.planInfoId
       const selectTaskIds = ganttObject.getSelectedTasks()
       if (selectTaskIds.length === 1) {
+        let selectTaskParentId = ganttObject.getTask(selectTaskIds[0]).parent
         copyTasks.tasks = []
         let parentId
         let defaultTaskId
@@ -3638,12 +3639,12 @@ function pasteTask(ganttObject, tasks, vueThis, type, dpObj) {
                 }
               }, defaultTaskId)
             }
-            checkRow(id, selectTaskIds[0])
+            checkRow(id, selectTaskParentId)
           } else {
             // 子级
             let task = JSON.parse(JSON.stringify(ganttObject.getTask(id)))
             task.defaultId = id
-            task.parent = selectTaskIds[0]
+            task.parent = selectTaskParentId
             task.planInfoId = vueThis.planInfoId
             task.id = get32NumberUid()
             let falg = true
