@@ -33,12 +33,13 @@
         </template>
         <!-- 工作统筹 -->
         <template v-if="item.name === 'workCoordination' && tabsActiveName == item.name">
-          <span slot="label">{{ item.label }}</span>
+          <!-- <span slot="label">{{ item.label }}</span> -->
           <work-coordination ref="workCoordination"></work-coordination>
         </template>
         <!-- 未完成原因 -->
         <template v-if="item.name === 'unfinishedCause'">
-          <span slot="label">{{ item.label }}</span>
+          <!-- <span slot="label">{{ item.label }}</span> -->
+          <div style="height: 25px;"></div>
           <deviate ref="deviate"
                    :taskFinish="taskFinish"
                    :tabsName="tabsName"></deviate>
