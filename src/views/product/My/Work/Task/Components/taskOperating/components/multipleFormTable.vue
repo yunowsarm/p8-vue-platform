@@ -155,6 +155,7 @@ export default {
   async created () {
     let that = this
     let dynamicTagList = ['el-select', 'eject-select', 'tree-select'];
+    const listHiddenFields =['custom-html','p8-upload','el-progress','tinymce','el-switch','p8-icon-select','masterSlaveTable','tabsLayout','el-alert','rowFormItem','el-button','objectFormItem','arrayFormItem','multiSelected','groupFormItem']
     await this.searchList();
     if (this.item.name) {
       if (this.approveType) {
@@ -241,33 +242,37 @@ export default {
                   }
                 });
               }
-              else if (item.__config__.tagIcon == 'p8-upload') {
-                columns.push({
-                  title: item.__config__.label,
-                  minWidth: 120,
-                  dataIndex: item.__config__.formFields,
-                  align: 'center',
-                  formatter: function (row) {
-                    if (row.UPLOADFILES && row.UPLOADFILES.length) {
-                      let filesName = row.UPLOADFILES.map(el => el.fileName)
-                      return filesName && filesName.length ? filesName.join(',') : ''
-                    } else {
-                      return ''
-                    }
-                  }
-                });
-              }
-              else if (item.__config__.tagIcon == 'p8-icon-select') {
-                columns.push({
-                  title: item.__config__.label,
-                  minWidth: 120,
-                  dataIndex: item.__config__.formFields,
-                  scopedSlots: { customRender: 'custom' },
-                  align: 'center',
-                });
-                this.slotList.push(item.__config__.formFields)
+              // else if (item.__config__.tagIcon == 'p8-upload') {
+              //   columns.push({
+              //     title: item.__config__.label,
+              //     minWidth: 120,
+              //     dataIndex: item.__config__.formFields,
+              //     align: 'center',
+              //     formatter: function (row) {
+              //       if (row.UPLOADFILES && row.UPLOADFILES.length) {
+              //         let filesName = row.UPLOADFILES.map(el => el.fileName)
+              //         return filesName && filesName.length ? filesName.join(',') : ''
+              //       } else {
+              //         return ''
+              //       }
+              //     }
+              //   });
+              // }
+              // else if (item.__config__.tagIcon == 'p8-icon-select') {
+              //   columns.push({
+              //     title: item.__config__.label,
+              //     minWidth: 120,
+              //     dataIndex: item.__config__.formFields,
+              //     scopedSlots: { customRender: 'custom' },
+              //     align: 'center',
+              //   });
+              //   this.slotList.push(item.__config__.formFields)
+              // }
+              else if(listHiddenFields.includes(item.__config__.tag) || listHiddenFields.includes(item.__config__.layout)){
+
               }
               else {
+                if(listHiddenFields)
                 columns.push({
                   title: item.__config__.label,
                   minWidth: 120,

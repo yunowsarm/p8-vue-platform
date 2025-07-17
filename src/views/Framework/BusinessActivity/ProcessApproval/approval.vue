@@ -678,6 +678,7 @@ export default {
           if (this_.formCompProp.approveContentView) {
             this_.componentsParams = this_.formCompProp.approveContentView.formSelector ? JSON.parse(this_.formCompProp.approveContentView.formSelector) : null
             if (this_.componentsParams) {
+              this_.asyncComponents = ''
               this_.componentsParams.dataViewId = this_.formCompProp.customBusinessKey ? this_.formCompProp.customBusinessKey : this_.formCompProp.businessKey
               this_.asyncComponents = this_.componentsParams.url
             }

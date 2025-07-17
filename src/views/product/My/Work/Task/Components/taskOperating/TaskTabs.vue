@@ -18,7 +18,7 @@
         </div>
         <!-- 进度反馈 -->
         <template v-if="item.name === 'progess'">
-          <progess v-if="progessType !== 'progessTable' && taskFinish !== null"
+          <progess v-if="progessType !== 'progessTable'"
                    ref="progess"
                    :taskFinish="taskFinish"
                    :tabsName="tabsName"
@@ -33,12 +33,13 @@
         </template>
         <!-- 工作统筹 -->
         <template v-if="item.name === 'workCoordination' && tabsActiveName == item.name">
-          <span slot="label">{{ item.label }}</span>
+          <!-- <span slot="label">{{ item.label }}</span> -->
           <work-coordination ref="workCoordination"></work-coordination>
         </template>
         <!-- 未完成原因 -->
         <template v-if="item.name === 'unfinishedCause'">
-          <span slot="label">{{ item.label }}</span>
+          <!-- <span slot="label">{{ item.label }}</span> -->
+          <div style="height: 25px;"></div>
           <deviate ref="deviate"
                    :taskFinish="taskFinish"
                    :tabsName="tabsName"></deviate>
@@ -149,7 +150,7 @@ export default {
       exceedType: false,
       approve: false,
       tabsName: 'progess',
-      taskFinish: null,
+      taskFinish: false,
       taskbusinessForm: [],
       scrollContainer: null,
       viewVisible: false
@@ -309,13 +310,11 @@ export default {
       return result
     },
 
-    async getTaskFinish () {
-      await this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then((res) => {
+    getTaskFinish () {
+      this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then((res) => {
         let taskFinish = res.taskFinish && res.taskFinish.content ? res.taskFinish.content : ''
         if (taskFinish === '手动') {
           this.taskFinish = true
-        } else {
-          this.taskFinish = false
         }
       })
     },
@@ -360,7 +359,7 @@ export default {
   background: #fff;
   position: relative;
   height: calc(100% - 0px); // 修改：底部留出10px空间
-  //margin-bottom: 10px; // 添加：确保底部间距
+  margin-bottom: 10px; // 添加：确保底部间距
   transition: all 0.3s;
 
   &.is-maximized {
@@ -428,7 +427,7 @@ export default {
 }
 
 .progressTaskTabs ::v-deep .el-tab-pane {
-  height: calc(100% - 10px);
+  height: 100%;
 }
 
 .el-tabs--border-card {

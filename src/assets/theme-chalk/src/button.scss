@@ -45,4 +45,9 @@
     background-color: $button-disabled-background-color !important;
     border-color: $button-disabled-border-color !important;
   }
+  .el-button-group{
+    .el-button{
+      margin-right: 1px !important;
+    }
+  }
 }

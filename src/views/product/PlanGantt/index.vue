@@ -138,7 +138,7 @@
 
 .top {
   position: relative;
-  // margin-bottom: 8px;
+  margin-bottom: 0px;
   background: $base-white-color;
   border-left: 1px solid $base-line-color;
   border-right: 1px solid $base-line-color;
