@@ -193,7 +193,7 @@ export default {
         this.handleNodeClick(this.treeData);
       }
     },
-     // 选中节点
+    // 选中节点
     handleNodeClick (data) {
       if (data[0].children && data[0].children.length > 0) {
         this.handleNodeClick(data[0].children)
@@ -392,7 +392,11 @@ export default {
       }
       if (row.MANAGESTATUS && el && el.icon) {
         if (toolbarTextDisplay) {
-          str = `<div style="display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; background: ${el.color}20;">
+          let color = JSON.parse(JSON.stringify(el.color))
+          let arr = color.match(/[\d.]+/g).map(Number)
+          let bgColor = arr.slice(0, -1).concat(0.2).toString()
+          console.log("🚀 ~ getIcon ~ bgColor:", bgColor)
+          str = `<div style="display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; background: rgba(${bgColor});width: -webkit-fill-available;justify-content: center;">
             <span style="color: ${el.color}; font-weight: 500;">${el.meaning}</span>
           </div>`
         } else {
@@ -402,7 +406,10 @@ export default {
         let item = this.executeState[row.EXECUTESTATE]
         if (item && item.icon) {
           if (toolbarTextDisplay) {
-            str = `<div style="display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; background: ${item.color}20;">
+            let color = JSON.parse(JSON.stringify(item.color))
+            let arr = color.match(/[\d.]+/g).map(Number)
+            let bgColor = arr.slice(0, -1).concat(0.2).toString()
+            str = `<div style="display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; background: rgba(${bgColor});width: -webkit-fill-available;justify-content: center;">
             <span style="color: ${item.color}; font-weight: 500;">${item.meaning}</span>
           </div>`
           } else {
