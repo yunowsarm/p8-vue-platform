@@ -2953,7 +2953,6 @@ function addTask(num, pos, ganttName) {
         api['planGanttManager.createPlanGanttData'](tasksBefore[0])
           .then(function (res) {
             if (res) {
-              task.$open = true
               ganttObject.eachTask(function (tasks) {
                 res.forEach((item, i) => {
                   if (tasks.id === item.id) {
@@ -3017,7 +3016,6 @@ function addTask(num, pos, ganttName) {
         api['planGanttManager.createPlanGanttData'](tasksAfter[0])
           .then(function (res) {
             if (res) {
-              task.$open = true
               ganttObject.eachTask(function (tasks) {
                 res.forEach((item, i) => {
                   if (tasks.id === item.id) {
