@@ -78,7 +78,7 @@ import customFormTable from '@/views/product/My/Work/Task/Components/taskOperati
 import templateFormTable from '@/views/product/My/Work/Task/Components/taskOperating/components/templateFormTable.vue'
 import FormRender from '@/views/product/My/Work/Task/Components/taskOperating/components/formRender.vue'
 import iframeForm from '@/views/product/My/Work/Task/Components/taskOperating/components/iframeForm.vue'
-import { defineComponent } from 'vue'
+import { defineAsyncComponent } from 'vue'
 export default {
   name: 'businessFormView',
   props: {
@@ -89,8 +89,8 @@ export default {
   },
   data () {
     return {
-      record:{},
-      visible:false,
+      record: {},
+      visible: false,
       comp: this,
       columns: [
         {
@@ -137,23 +137,26 @@ export default {
   },
   created () {
     this.$api['planGanttManager.taskFormInfo']({ taskId: this.taskId }).then(res => {
-      this.editTableData = res.map( item => {
-        return {name: item.id, ...item}
+      this.editTableData = res.map(item => {
+        return { name: item.id, ...item }
       })
     })
   },
   methods: {
-    viewForm(row){
+    viewForm (row) {
       this.record = row;
       this.visible = true
     },
-    drawerClose() {
+    drawerClose () {
       this.visible = false
       this.record = {}
     },
     componentUrl (componentPath) {
       const path = componentPath.startsWith('/') ? componentPath.slice(1) : componentPath
-      return defineComponent(require(`@/views/${path}.vue`).default)
+      return defineAsyncComponent(() =>
+        import(`@/views/${path}.vue`)
+      );
+
     }
   }
 }

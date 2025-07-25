@@ -41,7 +41,7 @@
         {{ messageData.uploadFiles }}
       </div>
       <div v-if="messageData.msgLink" class="contentBody" style='height: calc(100% - 70px)'>
-        <component v-if="messageData.msgLink" :rote-name="messageData.entityId" :table-flex="320" :key='renderKey' :is="componentLoader" :task-id='messageData.entityId' />
+        <component v-if="messageData.msgLink" :businessKey="messageData.entityId" :rote-name="messageData.entityId" :table-flex="320" :key='renderKey' :is="componentLoader" :task-id='messageData.entityId' />
       </div>
     </VuePerfectScrollbar>
   </div>
@@ -205,6 +205,9 @@ $paddingLeft: 10px;
 
     .contentBody {
       padding: 15px 25px 15px 35px;
+      ::v-deep .el-row .el-col{
+        height: auto;
+      }
     }
 
     .border-bottom {

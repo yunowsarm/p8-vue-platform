@@ -549,6 +549,13 @@ export const repositoryApi = {
       desc: '项目管理->多项目管理->任务统计查询 -> gantt数据加载'
     },
     {
+      name: 'loadProPlanGanttData',
+      method: 'POST',
+      path: '/product/pm/plan/loadProPlanGanttData',
+      mockPath: '/product/pm/plan/loadProPlanGanttData',
+      desc: '资源视图 -> gantt数据加载'
+    },
+    {
       name: 'excelStatisExport',
       method: 'POST',
       path: '/product/pm/plan/excelStatisExport',
@@ -2057,7 +2064,7 @@ export const repositoryApi = {
     },
   ],
   // 项目检测
-  projectIndicators:[
+  projectIndicators: [
     {
       name: 'saveProjectIndicator',
       method: 'POST',
@@ -2080,7 +2087,7 @@ export const repositoryApi = {
       desc: '应用检测指引'
     },
   ],
-  templateManagement:[
+  templateManagement: [
     {
       name: 'getTemplateAllList',
       method: 'POST',
@@ -2116,5 +2123,21 @@ export const repositoryApi = {
       mockPath: '/templateManage/delTemplate',
       desc: '删除模板'
     }
+  ],
+  qualityIssues: [
+    {
+      name: 'issueDistribution',
+      method: 'POST',
+      path: '/product/pm/qualityIssues/issueDistribution',
+      mockPath: '/product/pm/qualityIssues/issueDistribution',
+      desc: '质量管理-问题管理-派发保存接口'
+    },
+    {
+      name: 'submitValidattion',
+      method: 'POST',
+      path: '/product/pm/qualityIssues/submitValidattion',
+      mockPath: '/product/pm/qualityIssues/submitValidattion',
+      desc: '我的工作-我的问题-提交验证保存接口'
+    },
   ]
 }

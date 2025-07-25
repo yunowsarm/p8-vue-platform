@@ -2953,13 +2953,12 @@ function addTask(num, pos, ganttName) {
         api['planGanttManager.createPlanGanttData'](tasksBefore[0])
           .then(function (res) {
             if (res) {
-              task.$open = true
               ganttObject.eachTask(function (tasks) {
                 res.forEach((item, i) => {
                   if (tasks.id === item.id) {
-                    let task = ganttObject.getTask(tasks.id)
-                    task = item
-                    ganttObject.updateTask(tasks.id)
+                    let taskNew = ganttObject.getTask(tasks.id)
+                    taskNew = item
+                    ganttObject.updateTask(taskNew.id)
                   }
                 })
               }, task.id)
@@ -3017,13 +3016,12 @@ function addTask(num, pos, ganttName) {
         api['planGanttManager.createPlanGanttData'](tasksAfter[0])
           .then(function (res) {
             if (res) {
-              task.$open = true
               ganttObject.eachTask(function (tasks) {
                 res.forEach((item, i) => {
                   if (tasks.id === item.id) {
-                    let task = ganttObject.getTask(tasks.id)
-                    task = item
-                    ganttObject.updateTask(tasks.id)
+                    let taskNew = ganttObject.getTask(tasks.id)
+                    taskNew = item
+                    ganttObject.updateTask(taskNew.id)
                   }
                 })
               }, task.id)

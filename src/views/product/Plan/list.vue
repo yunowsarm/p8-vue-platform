@@ -395,7 +395,6 @@ export default {
           let color = JSON.parse(JSON.stringify(el.color))
           let arr = color.match(/[\d.]+/g).map(Number)
           let bgColor = arr.slice(0, -1).concat(0.2).toString()
-          console.log("🚀 ~ getIcon ~ bgColor:", bgColor)
           str = `<div style="display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; background: rgba(${bgColor});width: -webkit-fill-available;justify-content: center;">
             <span style="color: ${el.color}; font-weight: 500;">${el.meaning}</span>
           </div>`

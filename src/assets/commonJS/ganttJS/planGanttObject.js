@@ -31,7 +31,7 @@ export function planGantt(ganttName, vueThis) {
   GanttObject.customDateEditor(ganttObject)
   GanttObject.customEndDateEditor(ganttObject)
   GanttObject.onCollapse(ganttObject, vueThis)
-  GanttObject.onTaskTimeChange(ganttObject);
+  GanttObject.onTaskTimeChange(ganttObject)
 
   // 定义数据处理器
   const dp = ganttObject.createDataProcessor({
@@ -50,7 +50,7 @@ export function planGantt(ganttName, vueThis) {
       update: function (data, id) {
         const task = ganttObject.getTask(id)
         if (data.name.length > 1000) {
-          data.name = data.name.substring(0, 1000);  // 截取前2000个字符
+          data.name = data.name.substring(0, 1000) // 截取前2000个字符
           task.name = data.name
           vueThis.$message({
             message: '最多可输入一千字',
@@ -91,6 +91,9 @@ export function planGantt(ganttName, vueThis) {
           // 保存
           api['planGanttManager.saveGanttExtendAttr']({ taskId: task.id, taskExtendRequests: extraData })
         }
+        if (!data.indexNo) {
+          data.indexNo = 1
+        }
         api['planGanttManager.updatePlanGanttData']({
           // pId: secretGrade,
           // id: task.secretGrade,
@@ -106,8 +109,8 @@ export function planGantt(ganttName, vueThis) {
               let ganttDatas = vueThis.$store.getters.ganttDatas
               ganttDatas.tasks = []
               ganttObject.eachTask((task) => {
-                ganttDatas.tasks.push(task);
-              });
+                ganttDatas.tasks.push(task)
+              })
               vueThis.$store.dispatch('setGanttDatas', ganttDatas)
               if (vueThis.fullscreen && task.parent) {
                 api['planGanttManager.getSameTaskIndex']({
@@ -116,17 +119,17 @@ export function planGantt(ganttName, vueThis) {
                   .then((res) => {
                     if (res) {
                       ganttObject.eachTask((task) => {
-                        res.forEach(item => {
+                        res.forEach((item) => {
                           if (task.id === item.id) {
                             task.indexNo = item.index
                           }
                         })
-                      });
+                      })
                       vueThis.fullscreenLoading.close()
                       vueThis.fullscreen = false
                     }
                   })
-                  .catch(() => { })
+                  .catch(() => {})
               }
               return { action: 'ok' }
             } else if (res === 'false') {
@@ -151,7 +154,6 @@ export function planGantt(ganttName, vueThis) {
             ganttObject.undo()
             return { action: 'error' }
           })
-
       }
     },
     link: {
@@ -179,7 +181,7 @@ export function planGantt(ganttName, vueThis) {
           // vueThis.initGantt()
         })
       },
-      update: function (data, id) { },
+      update: function (data, id) {},
       delete: function (id) {
         return new ganttObject.Promise((resolve, reject) => {
           api['planGanttManager.removePlanGanttLink']({ id: id })
@@ -243,7 +245,7 @@ export function planGantt(ganttName, vueThis) {
   }
   Gantt.taskProgressDetails = function taskProgressDetails(taskId) {
     if (vueThis.createPage === 'compile' || vueThis.createPage === 'decompose') {
-      vueThis.reminderList.forEach(el => {
+      vueThis.reminderList.forEach((el) => {
         if (el.id === taskId) {
           el.reminder = '0'
         }
@@ -298,7 +300,7 @@ export function planGantt(ganttName, vueThis) {
     task.notes = task.notes ? task.notes : ''
     task.evaluation = task.evaluation ? task.evaluation : ''
     task.combinationName = task.combinationName ? task.combinationName : ''
-    const target = e.target || e.srcElement;
+    const target = e.target || e.srcElement
     if (target && target.classList[0] === 'gantt_tree_icon') {
       const task = ganttObject.getTask(id)
       vueThis.addfoldState(task)
@@ -334,7 +336,7 @@ export function planGantt(ganttName, vueThis) {
         // 任务属性readonly为true的任务不可编辑
         if (fieldName) {
           // 标识加锁任务不可编辑
-          if(ganttObject.getSelectedTasks().length === 1){
+          if (ganttObject.getSelectedTasks().length === 1) {
             const monitors = task.monitorPoints || ''
             if (monitors && monitors.length > 0) {
               if (monitorLockUnLockCheckTwo(fieldName, monitors.split(','), vueThis, ganttObject)) {
@@ -351,10 +353,10 @@ export function planGantt(ganttName, vueThis) {
               }
 
               // 检查是否允许编辑责任人
-              const canEdit = (vueThis.createPage === 'decompose') ?
-                (vueThis.planEditLock === '0' || batchOwnerCheck(ganttName)) :
-                ((vueThis.planEditLock === '0' && ganttObject.getGlobalTaskIndex(id) !== 0) ||
-                  (task.managerStatus !== '6404' && batchOwnerCheck(ganttName)))
+              const canEdit =
+                vueThis.createPage === 'decompose'
+                  ? vueThis.planEditLock === '0' || batchOwnerCheck(ganttName)
+                  : (vueThis.planEditLock === '0' && ganttObject.getGlobalTaskIndex(id) !== 0) || (task.managerStatus !== '6404' && batchOwnerCheck(ganttName))
 
               if (!canEdit) {
                 return false
@@ -377,18 +379,18 @@ export function planGantt(ganttName, vueThis) {
                   console.error(error, 'error')
                 })
               break
-              case 'start_date':
-              case 'end_date':
-              case 'autoScheduling':
+            case 'start_date':
+            case 'end_date':
+            case 'autoScheduling':
               // 如果是编辑锁定状态,直接返回false
               if (vueThis.planEditLock === '1') {
                 return false
               }
               // 检查是否允许编辑责任人
-              const rowStartEdit = (vueThis.createPage === 'decompose') ?
-                (vueThis.planEditLock === '0' || batchOwnerCheck(ganttName)) :
-                ((vueThis.planEditLock === '0' && ganttObject.getGlobalTaskIndex(id) !== 0) ||
-                  (task.managerStatus !== '6404' && batchOwnerCheck(ganttName)))
+              const rowStartEdit =
+                vueThis.createPage === 'decompose'
+                  ? vueThis.planEditLock === '0' || batchOwnerCheck(ganttName)
+                  : (vueThis.planEditLock === '0' && ganttObject.getGlobalTaskIndex(id) !== 0) || (task.managerStatus !== '6404' && batchOwnerCheck(ganttName))
 
               if (!rowStartEdit) {
                 return false
@@ -705,7 +707,7 @@ export function getGanttColumns(ganttObject, vueThis) {
           result = result + `<i class='el-icon-s-order' title='该任务包含业务表单' style='color: #f59000; float: left; position:relative; top:16px; font-size: 16px;'></i>`
         }
         if (bool) result = result + `<i class='p8 icon-tishi' title='${tips}' style='color: #e6a23c; float: left'></i>`
-        if (ganttObject.getGlobalTaskIndex(task.id) !== 0  || vueThis.createPage === 'decompose') {
+        if (ganttObject.getGlobalTaskIndex(task.id) !== 0 || vueThis.createPage === 'decompose') {
           let taskStyles = vueThis.taskStyles[task.id] || ''
           if (taskStyles && taskStyles.indexOf('text-decoration: line-through;') !== -1 && taskStyles.indexOf('text-decoration:underline;') !== -1) {
             taskStyles += 'text-decoration: line-through underline;'
@@ -796,21 +798,33 @@ export function getGanttColumns(ganttObject, vueThis) {
       template: function (task) {
         if (ganttObject.isTaskExists(task.parent) && ganttObject.getTask(task.parent).start_date > task.start_date) {
           if (ganttObject.hasChild(task.id)) {
-            return '<span data-column-name="start_date" class="red-wave" title="计划开始时间早于父任务的计划开始时间" style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+            return (
+              '<span data-column-name="start_date" class="red-wave" title="计划开始时间早于父任务的计划开始时间" style="font-weight:bold;">' +
+              GanttObject.dateToStr(task.start_date, null, ganttObject) +
+              '</span>'
+            )
           } else {
             return '<span data-column-name="start_date" class="red-wave" title="计划开始时间早于父任务的计划开始时间">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
           }
         }
         if (ganttObject.isTaskExists(task.parent) && ganttObject.date.add(ganttObject.getTask(task.parent).end_date, -1, 'day') < task.start_date) {
           if (ganttObject.hasChild(task.id)) {
-            return '<span data-column-name="start_date" class="red-wave" title="计划开始时间晚于父任务的计划完成时间" style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+            return (
+              '<span data-column-name="start_date" class="red-wave" title="计划开始时间晚于父任务的计划完成时间" style="font-weight:bold;">' +
+              GanttObject.dateToStr(task.start_date, null, ganttObject) +
+              '</span>'
+            )
           } else {
             return '<span data-column-name="start_date" class="red-wave" title="计划开始时间晚于父任务的计划完成时间">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
           }
         }
         if (task.start_date > ganttObject.date.add(task.end_date, -1, 'day')) {
           if (ganttObject.hasChild(task.id)) {
-            return '<span data-column-name="start_date" class="red-wave" title="计划开始时间晚于计划完成时间" style="font-weight:bold;">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
+            return (
+              '<span data-column-name="start_date" class="red-wave" title="计划开始时间晚于计划完成时间" style="font-weight:bold;">' +
+              GanttObject.dateToStr(task.start_date, null, ganttObject) +
+              '</span>'
+            )
           } else {
             return '<span data-column-name="start_date" class="red-wave" title="计划开始时间晚于计划完成时间">' + GanttObject.dateToStr(task.start_date, null, ganttObject) + '</span>'
           }
@@ -841,7 +855,11 @@ export function getGanttColumns(ganttObject, vueThis) {
                 '</span>'
               )
             } else {
-              return '<span data-column-name="end_date" class="red-wave" title="计划完成时间大于父任务的计划完成时间" >' + GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) + '</span>'
+              return (
+                '<span data-column-name="end_date" class="red-wave" title="计划完成时间大于父任务的计划完成时间" >' +
+                GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), null, ganttObject) +
+                '</span>'
+              )
             }
           }
         }
@@ -987,7 +1005,9 @@ export function getGanttColumns(ganttObject, vueThis) {
                       task.id +
                       '\')><i class="p8 ' +
                       icon +
-                      '" style="cursor:pointer; color: ' + point.color + '" title="' +
+                      '" style="cursor:pointer; color: ' +
+                      point.color +
+                      '" title="' +
                       point.title +
                       '"></i></span>'
                   } else {
@@ -1155,4 +1175,4 @@ export function getGanttColumns(ganttObject, vueThis) {
   ]
 }
 
-export function planMonitorAdd(ganttObject, vueThis) { }
+export function planMonitorAdd(ganttObject, vueThis) {}

@@ -7,7 +7,9 @@
                  @click="createForm">新建</el-button>
     </template>
     <template #center>
-      <component v-show="false" ref="form" :is="componentUrl"></component>
+      <component v-show="false"
+                 ref="form"
+                 :is="componentUrl"></component>
       <common-table ref="table"
                     :comp="comp"
                     :columns="columns"
@@ -33,7 +35,11 @@
                  :wrapper-closable="false"
                  :visible.sync="drawerVisible"
                  @close="onDrawerClose">
-        <component :is="componentUrl" :dataView="formView" :pageType="drawerContentView" @save-success="formCloseRefresh" @close="onDrawerClose"></component>
+        <component :is="componentUrl"
+                   :dataView="formView"
+                   :pageType="drawerContentView"
+                   @save-success="formCloseRefresh"
+                   @close="onDrawerClose"></component>
       </el-drawer>
     </template>
   </list-layout>
@@ -41,8 +47,7 @@
 
 <script>
 import { P8ListLayout as ListLayout, P8Button as CommonButton, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
-import FormRender from '@/views/Framework/ComponentsMananger/Form/Components/Components/edit.vue'
-import {defineComponent} from "vue";
+import { defineAsyncComponent } from "vue";
 export default {
   name: 'customFormTable',
   props: {
@@ -70,17 +75,19 @@ export default {
       headerVisible: true
     }
   },
-  computed:{
-    componentUrl(){
+  computed: {
+    componentUrl () {
       const componentPath = this.item.formUrl
       const path = componentPath.startsWith('/') ? componentPath.slice(1) : componentPath;
-      return defineComponent(require(`@/views/${path}.vue`).default);
+      return defineAsyncComponent(() =>
+        import(`@/views/${path}.vue`)
+      );
     }
   },
   created () {
 
   },
-  mounted() {
+  mounted () {
     if (this.item.name) {
       this.headerVisible = this.approveType;
       const fieldsInfo = this.$refs.form.fieldsInfo
@@ -144,7 +151,7 @@ export default {
         .then(() => {
           const index = this.editTableData.findIndex(item => item.id === record.id);
           if (index !== -1) {
-            this.editTableData.splice(index,1)
+            this.editTableData.splice(index, 1)
           }
           // that.$api['taskManager.removeFormData'](
           //   {
@@ -167,10 +174,10 @@ export default {
       this.drawerVisible = false
       this.drawerTitle = ''
     },
-    formCloseRefresh (res,type) {
-      if(type === 'add'){
+    formCloseRefresh (res, type) {
+      if (type === 'add') {
         this.editTableData.push(res)
-      }else if(type === 'edit'){
+      } else if (type === 'edit') {
         const index = this.editTableData.findIndex(item => item.id === res.id);
         if (index !== -1) {
           this.$set(this.editTableData, index, res);
