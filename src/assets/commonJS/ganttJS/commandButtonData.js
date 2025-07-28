@@ -2487,8 +2487,8 @@ export const CommandButtonData = [
     msg: '顶部',
     clickFun: function (btn, ganttName, tasks) {
       const ganttObject = GanttObject.getGanttObject(ganttName)
-      let firstTask = ganttObject.getTaskByIndex(0)
-      ganttObject.showTask(firstTask.id)
+      const scrollState = ganttObject.getScrollState()
+      ganttObject.scrollTo(scrollState.x,0)
     },
     isDisableFun: function (btn, ganttName, tasks) {
       return false
@@ -2502,9 +2502,8 @@ export const CommandButtonData = [
     msg: '尾部',
     clickFun: function (btn, ganttName, tasks) {
       const ganttObject = GanttObject.getGanttObject(ganttName)
-      const i = ganttObject.getTaskCount() - 1
-      let lastTask = ganttObject.getTaskByIndex(i)
-      ganttObject.showTask(lastTask.id)
+      const scrollState = ganttObject.getScrollState()
+      ganttObject.scrollTo(scrollState.x,scrollState.height)
     },
     isDisableFun: function (btn, ganttName, tasks) {
       return false
