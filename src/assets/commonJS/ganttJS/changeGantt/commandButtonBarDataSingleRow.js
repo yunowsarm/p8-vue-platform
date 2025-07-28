@@ -225,6 +225,16 @@ const CommandButtonBarDataSingleRow = [
             buttonId: 'fold-config',
             size: 'small',
             position: ['top']
+          },
+          {
+            buttonId: 'top',
+            size: 'small',
+            position: ['top']
+          },
+          {
+            buttonId: 'bottom',
+            size: 'small',
+            position: ['top']
           }
         ]
       },

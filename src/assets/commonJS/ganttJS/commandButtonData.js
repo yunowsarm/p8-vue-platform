@@ -2480,6 +2480,37 @@ export const CommandButtonData = [
     ]
   },
   {
+    id: 'top',
+    icon: 'icon-up p8',
+    title: '顶部',
+    help: '顶部',
+    msg: '顶部',
+    clickFun: function (btn, ganttName, tasks) {
+      const ganttObject = GanttObject.getGanttObject(ganttName)
+      let firstTask = ganttObject.getTaskByIndex(0)
+      ganttObject.showTask(firstTask.id)
+    },
+    isDisableFun: function (btn, ganttName, tasks) {
+      return false
+    }
+  },
+  {
+    id: 'bottom',
+    icon: 'icon-down p8',
+    title: '尾部',
+    help: '尾部',
+    msg: '尾部',
+    clickFun: function (btn, ganttName, tasks) {
+      const ganttObject = GanttObject.getGanttObject(ganttName)
+      const i = ganttObject.getTaskCount() - 1
+      let lastTask = ganttObject.getTaskByIndex(i)
+      ganttObject.showTask(lastTask.id)
+    },
+    isDisableFun: function (btn, ganttName, tasks) {
+      return false
+    }
+  },
+  {
     id: 'statistic-list',
     icon: 'p8 icon-shujushitu',
     title: '统计信息',

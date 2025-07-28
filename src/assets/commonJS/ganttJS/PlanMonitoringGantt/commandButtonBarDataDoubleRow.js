@@ -48,6 +48,16 @@ const CommandButtonBarDataDoubleRow = [
             position: ['top']
           },
           {
+            buttonId: 'top',
+            size: 'small',
+            position: ['top']
+          },
+          {
+            buttonId: 'bottom',
+            size: 'small',
+            position: ['top']
+          },
+          {
             buttonId: 'location-list',
             size: 'small',
             position: ['top']
