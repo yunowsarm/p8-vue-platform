@@ -66,12 +66,15 @@
   height: 50px;
   border-bottom: 1px solid #c6c6c6;
   margin-bottom: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 .activityButton {
   width: 530px;
   line-height: 50px;
   display: inline-block;
   .button {
+    cursor: pointer;
     display: inline-block;
     width: 25px;
     margin: 0 5px;
@@ -291,6 +294,7 @@ export default {
           if (taskId) {
             myGantt.unselectTask();
             myGantt.selectTask(taskId);
+            myGantt.showTask(taskId)
           }
         }
       }).catch(function (error) {
