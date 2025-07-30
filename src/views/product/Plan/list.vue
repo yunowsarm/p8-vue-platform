@@ -1,36 +1,28 @@
 <template>
-  <normal-layout :header-visible="false"
-                 :split-layout="true">
+  <normal-layout :header-visible="false" :split-layout="true">
     <template #west>
-      <common-tree :default-expanded-keys="defaultExpandedKeys"
-                   :default-expand-all="false"
-                   node-key="ID"
-                   :data="treeData"
-                   :tree-config='treeConfig'
-                   ref="commonTree"
-                   @select="onSelect"></common-tree>
+      <common-tree :default-expanded-keys="defaultExpandedKeys" :default-expand-all="false" node-key="ID" :data="treeData" :tree-config="treeConfig" ref="commonTree" @select="onSelect"></common-tree>
     </template>
     <template #center>
-      <P8TableRender ref="tableRender"
-                     class="planLayout"
-                     :tableRefresh='tableRefresh'
-                     :code="componentsConfig.code"
-                     :permission-vo="componentsConfig.permissionVo"
-                     :west-tree-param="provideParams.searchParams"
-                     @refresh="init()">
-        <template #status="{scope}">
-          <el-tooltip effect="dark"
-                      :content="getIconTitle(scope.row)"
-                      :disabled="$store.getters.baseConfig.toolbarTextDisplay === '1'"
-                      placement="top">
+      <P8TableRender
+        :key='tableKey'
+        ref="tableRender"
+        class="planLayout"
+        :tableRefresh="tableRefresh"
+        :code="componentsConfig.code"
+        :permission-vo="componentsConfig.permissionVo"
+        :west-tree-param="provideParams.searchParams"
+        @refresh="init()"
+        @refresh-data="refreshTable"
+      >
+        <template #status="{ scope }">
+          <el-tooltip effect="dark" :content="getIconTitle(scope.row)" :disabled="toolbarTextDisplay === '1'" placement="top">
             <span v-html="getIcon(scope.row)"></span>
           </el-tooltip>
         </template>
-        <template #planName="{scope}">
-          <div v-if="scope.row.WHOLEDESCRIBEID"
-               class="underline"
-               @click="thirdMenuClick(scope.row)">{{scope.row.NAME}}</div>
-          <div v-else>{{scope.row.NAME}}</div>
+        <template #planName="{ scope }">
+          <div v-if="scope.row.WHOLEDESCRIBEID" class="underline" @click="thirdMenuClick(scope.row)">{{ scope.row.NAME }}</div>
+          <div v-else>{{ scope.row.NAME }}</div>
         </template>
       </P8TableRender>
     </template>
@@ -40,6 +32,7 @@
 .normal-layout {
   padding: 0;
 }
+
 .span-bg {
   width: 100%;
   height: 85%;
@@ -49,12 +42,14 @@
   background-position: center;
   margin-top: 25px;
 }
+
 .planLayout {
   height: 100%;
   // ::v-deep .normal-main{
   //   height: calc(100% - 30px);
   // }
 }
+
 ::v-deep .icon-zuozhedie {
   z-index: 1 !important;
 }
@@ -63,11 +58,11 @@
 import { Input, Button } from 'element-ui'
 import { P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Dialog as CommonDialog, P8Table as CommonTable, P8Button as CommonButton } from 'p8-components-ui'
 import { selectGenerateTree } from '@/utils/common.js'
+
 export default {
   name: 'ProcessManagement',
   computed: {
-    componentUrl () {
-
+    componentUrl() {
       if (this.asyncComponents) {
         if (this.asyncComponents.indexOf('?') !== -1) {
           const list = this.asyncComponents.split('?')
@@ -90,13 +85,14 @@ export default {
       }
     }
   },
-  provide () {
+  provide() {
     return {
       provideParams: this.provideParams
     }
   },
-  data () {
+  data() {
     return {
+      tableKey:Date.now(),
       dialogHeight: document.documentElement.clientHeight * 0.6,
       queryParam: {},
       treeData: [],
@@ -110,6 +106,7 @@ export default {
       treeConfig: {
         'current-node-key': ''
       },
+      toolbarTextDisplay: this.$store.getters.baseConfig.toolbarTextDisplay
     }
   },
   props: {
@@ -129,7 +126,7 @@ export default {
     CommonTable,
     CommonButton
   },
-  created () {
+  created() {
     this.init()
     this.getIconData()
   },
@@ -141,11 +138,37 @@ export default {
   //   }
   // },
   methods: {
+    getTableSetting() {
+      let tableSettingaAll = this.$store.state.user.userSettingAll.Table ? this.$store.state.user.userSettingAll.Table : null
+      if (tableSettingaAll) {
+        let keyNew = this.$route.path + '.' + 'formGenerator.tableApply' + '.' + this.componentsConfig.code
+        let key = this.$route.path + '.' + 'formGenerator.tableApply'
+        // 需要兼容旧数据
+        let currTableSetting = tableSettingaAll.filter((item) => item.key === keyNew)
+        if (!(currTableSetting && currTableSetting.length)) {
+          currTableSetting = tableSettingaAll.filter((item) => item.key === key)
+        }
+        if (currTableSetting && currTableSetting.length) {
+          let columnsSetting = currTableSetting[0].value.columns
+          const toolbarTextDisplayIndex = columnsSetting.findIndex((item) => 'toolbarTextDisplay' in item)
+          if (toolbarTextDisplayIndex > -1 && columnsSetting[toolbarTextDisplayIndex].toolbarTextDisplay) {
+            this.toolbarTextDisplay = columnsSetting[toolbarTextDisplayIndex].toolbarTextDisplay
+          } else {
+            this.toolbarTextDisplay = this.$store.getters.baseConfig.toolbarTextDisplay
+          }
+        }
+      } else {
+        this.toolbarTextDisplay = this.$store.getters.baseConfig.toolbarTextDisplay
+      }
+    },
     // 表格刷新
-    tableRefresh () {
+    tableRefresh() {
       this.$refs.tableRender.selectRecords = []
     },
-    async init () {
+    refreshTable(){
+      this.getTableSetting()
+    },
+    async init() {
       const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
       const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
       const res = await this.$api['desLayout.getLayoutJson']({ layoutCode: code, version: version })
@@ -190,37 +213,38 @@ export default {
           // this.onSelect(this.treeData[0])
         })
       } else {
-        this.handleNodeClick(this.treeData);
+        this.handleNodeClick(this.treeData)
       }
     },
     // 选中节点
-    handleNodeClick (data) {
+    handleNodeClick(data) {
       if (data[0].children && data[0].children.length > 0) {
         this.handleNodeClick(data[0].children)
       } else {
         this.$nextTick(() => {
           this.$refs.commonTree.$refs.tree.setCurrentKey(data[0].ID)
           this.onSelect(data[0])
-
         })
       }
     },
-    getFirstChild (data) {
+    getFirstChild(data) {
       let result = ''
-      function filterData (treeData) {
+
+      function filterData(treeData) {
         if (treeData[0].children && treeData[0].children.length) {
           filterData(treeData[0].children)
         } else {
           result = treeData[0]
         }
       }
+
       filterData(data)
       return result
     },
-    handleCancel () {
+    handleCancel() {
       this.$emit('close')
     },
-    onSelect (obj) {
+    onSelect(obj) {
       if (obj.id == '0') {
         return
       }
@@ -278,20 +302,22 @@ export default {
         }
       }
     },
-    getParamsList (obj, fileName) {
+    getParamsList(obj, fileName) {
       let list = []
-      function getEndList (item) {
+
+      function getEndList(item) {
         list.push(item[fileName])
         if (item.children && item.children.length) {
-          item.children.forEach(el => {
+          item.children.forEach((el) => {
             getEndList(el)
           })
         }
       }
+
       getEndList(obj)
       return list
     },
-    getParams (node) {
+    getParams(node) {
       const { parentId, parmarsMap } = node
       let arr = []
       if (parmarsMap) return parmarsMap
@@ -317,10 +343,14 @@ export default {
       }
       return arr
     },
-    async getTreeData (treeSettingsParmars) {
+    async getTreeData(treeSettingsParmars) {
       let data
       const res = await this.$api['desLayout.execute']({ id: treeSettingsParmars.reportSqlId })
-      const config = { labelCol: treeSettingsParmars.optionLabelCol, valueCol: treeSettingsParmars.optionValueCol, pidCol: treeSettingsParmars.optionPidCol }
+      const config = {
+        labelCol: treeSettingsParmars.optionLabelCol,
+        valueCol: treeSettingsParmars.optionValueCol,
+        pidCol: treeSettingsParmars.optionPidCol
+      }
       // 获取动态数据的参数映射所有列
       const treeArr = selectGenerateTree(res, JSON.stringify(config))
       // 是否显示根节点 1为是
@@ -349,10 +379,11 @@ export default {
       return data
     },
     // 获取默认展开数据key
-    getDefaultExpandedKeys (level, treeList) {
+    getDefaultExpandedKeys(level, treeList) {
       const arr = []
       let count = 0
-      function getData (data) {
+
+      function getData(data) {
         count++
         if (count > level) {
           return
@@ -364,11 +395,12 @@ export default {
           }
         })
       }
+
       getData(treeList)
       return arr
     },
 
-    getIconTitle (row) {
+    getIconTitle(row) {
       let str = ''
       let el = this.manageStatus[row.MANAGESTATUS]
       if (row.MANAGESTATUS && el && el.icon) {
@@ -381,10 +413,10 @@ export default {
       }
       return str
     },
-    getIcon (row) {
+    getIcon(row) {
       let str = ''
       let el = this.manageStatus[row.MANAGESTATUS]
-      let toolbarTextDisplay = this.$store.getters.baseConfig.toolbarTextDisplay
+      let toolbarTextDisplay = this.toolbarTextDisplay
       if (toolbarTextDisplay === '0') {
         toolbarTextDisplay = false
       } else {
@@ -395,11 +427,11 @@ export default {
           let color = JSON.parse(JSON.stringify(el.color))
           let arr = color.match(/[\d.]+/g).map(Number)
           let bgColor = arr.slice(0, -1).concat(0.2).toString()
-          str = `<div style="display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; background: rgba(${bgColor});width: -webkit-fill-available;justify-content: center;">
-            <span style="color: ${el.color}; font-weight: 500;">${el.meaning}</span>
+          str = `<div style='display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; background: rgba(${bgColor});width: -webkit-fill-available;justify-content: center;'>
+            <span style='color: ${el.color}; font-weight: 500;'>${el.meaning}</span>
           </div>`
         } else {
-          str = `<i class="${el.icon}" style="color: ${el.color};"></i>`
+          str = `<i class='${el.icon}' style='color: ${el.color};'></i>`
         }
       } else {
         let item = this.executeState[row.EXECUTESTATE]
@@ -408,17 +440,17 @@ export default {
             let color = JSON.parse(JSON.stringify(item.color))
             let arr = color.match(/[\d.]+/g).map(Number)
             let bgColor = arr.slice(0, -1).concat(0.2).toString()
-            str = `<div style="display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; background: rgba(${bgColor});width: -webkit-fill-available;justify-content: center;">
-            <span style="color: ${item.color}; font-weight: 500;">${item.meaning}</span>
+            str = `<div style='display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; background: rgba(${bgColor});width: -webkit-fill-available;justify-content: center;'>
+            <span style='color: ${item.color}; font-weight: 500;'>${item.meaning}</span>
           </div>`
           } else {
-            str = `<i class="${item.icon}" style="color: ${item.color};"></i>`
+            str = `<i class='${item.icon}' style='color: ${item.color};'></i>`
           }
         }
       }
       return str
     },
-    thirdMenuClick (record) {
+    thirdMenuClick(record) {
       let item = {}
       const currentPath = this.$route.path
       const rootRouter = this.$store.state.routers.addRouters
@@ -435,7 +467,7 @@ export default {
         })
       }
       if (thirdMenu.children) {
-        thirdMenu.children.forEach(el => {
+        thirdMenu.children.forEach((el) => {
           if (el.meta.title == '计划编制') {
             item = el
           }
@@ -443,20 +475,20 @@ export default {
       }
       this.$refs.tableRender.thirdMenuClick(record, item)
     },
-    async getIconData () {
+    async getIconData() {
       // 管理状态
       let manageStatus = await this.$api['dictionaryManagement.list']({ dicType: 'PLAN_MANAGE_STATUS' })
       // 执行状态
       let executeState = await this.$api['dictionaryManagement.list']({ dicType: 'EXECUTE_STATE' })
       this.manageStatus = {}
       this.executeState = {}
-      manageStatus.forEach(el => {
+      manageStatus.forEach((el) => {
         this.manageStatus[el.id] = { icon: el.icon, color: el.color, meaning: el.meaning }
       })
-      executeState.forEach(el => {
+      executeState.forEach((el) => {
         this.executeState[el.id] = { icon: el.icon, color: el.color, meaning: el.meaning }
       })
-    },
+    }
   }
 }
 </script>
