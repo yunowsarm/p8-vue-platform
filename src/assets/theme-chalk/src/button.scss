@@ -47,7 +47,21 @@
   }
   .el-button-group{
     .el-button{
-      margin-right: 1px !important;
+      position: relative;
+      &:not(:last-child){
+        &::after{
+          box-sizing: border-box;
+          content: '';
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 1px;
+          height: 100%;
+          background: rgba(225,225,225,0.5);
+          border-top: 1px solid $theme-color;
+          border-bottom: 1px solid $theme-color;
+        }
+      }
     }
   }
 }
