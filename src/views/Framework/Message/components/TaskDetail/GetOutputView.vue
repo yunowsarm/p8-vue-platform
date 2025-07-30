@@ -66,7 +66,7 @@ export default {
             },
             // 可点击的链接类型字段，用于跳转到提交物名称的详细页面
             {
-              type: 'link',
+              type: 'view',
               labelText: '提交物名称',
               fieldName: 'aorName',
               colLayout: 'singleCol',

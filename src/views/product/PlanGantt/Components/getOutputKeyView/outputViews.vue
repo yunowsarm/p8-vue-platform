@@ -74,7 +74,7 @@ export default {
               fieldName: 'activityInfoId'
             },
             {
-              type: 'link',
+              type: 'view',
               labelText: '提交物名称',
               fieldName: 'aorName',
               colLayout: 'singleCol',
