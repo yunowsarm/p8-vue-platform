@@ -5,7 +5,7 @@
         <div class="item-title">{{ item.title }}</div>
         <div class="item-info">
           <i :class="item.icon" class="item-icon"></i>
-          <div class="item-count">{{ item.count }}</div>
+          <div class="item-count" :class="{'redText': item.count > 0}">{{ item.count }}</div>
         </div>
       </div>
     </div>
@@ -162,6 +162,9 @@ export default {
         font-size: 24px;
         color: #409eff;
         font-weight: bold;
+      }
+      .redText{
+        color: #f56c6c;
       }
     }
   }
