@@ -858,7 +858,7 @@ $paddingLeft: 10px;
   box-sizing: border-box;
 }
 ::v-deep .el-tabs--top .el-tabs__content {
-  height: calc(100% - 69px) !important;
+  height: calc(100% - 69px);
 }
 ::v-deep .main_content {
   height: 100% !important;

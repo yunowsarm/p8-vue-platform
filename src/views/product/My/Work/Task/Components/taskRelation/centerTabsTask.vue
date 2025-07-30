@@ -185,7 +185,7 @@ export default {
 }
 .taskTabs ::v-deep .el-tabs__content {
   padding: 0 10px;
-  height: calc(100% - 25px);
+  height: calc(100% - 40px);
 }
 .taskTabs ::v-deep .el-tab-pane {
   height: 100%;

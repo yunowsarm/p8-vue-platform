@@ -58,7 +58,7 @@ export default {
   box-sizing: border-box;
 }
 .tabs-taskinfo {
-  height: calc(50% - 30px);
+  height: 50%;
   box-sizing: border-box;
 }
 .knowledge {

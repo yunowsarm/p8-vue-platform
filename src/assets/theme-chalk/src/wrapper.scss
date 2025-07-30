@@ -360,3 +360,8 @@
     position: absolute;
     bottom: 3px;
   }
+  .vxe-table--render-default .vxe-cell--checkbox:not(.is--disabled) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

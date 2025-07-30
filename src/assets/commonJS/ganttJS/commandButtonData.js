@@ -2488,7 +2488,7 @@ export const CommandButtonData = [
     clickFun: function (btn, ganttName, tasks) {
       const ganttObject = GanttObject.getGanttObject(ganttName)
       const scrollState = ganttObject.getScrollState()
-      ganttObject.scrollTo(scrollState.x,0)
+      ganttObject.scrollTo(scrollState.x, 0)
     },
     isDisableFun: function (btn, ganttName, tasks) {
       return false
@@ -2503,7 +2503,7 @@ export const CommandButtonData = [
     clickFun: function (btn, ganttName, tasks) {
       const ganttObject = GanttObject.getGanttObject(ganttName)
       const scrollState = ganttObject.getScrollState()
-      ganttObject.scrollTo(scrollState.x,scrollState.height)
+      ganttObject.scrollTo(scrollState.x, scrollState.height)
     },
     isDisableFun: function (btn, ganttName, tasks) {
       return false
@@ -3111,25 +3111,28 @@ function addTask(num, pos, ganttName) {
         api['planGanttManager.createPlanGanttData'](tasksChild[0])
           .then(function (res) {
             if (res) {
-              // task.$open = true
+              res.forEach((item, i) => {
+                let task = ganttObject.getTask(item.id)
+                task.indexNo = item.indexNo
+                ganttObject.updateTask(task.id)
+              })
               // ganttObject.eachTask(function (tasks) {
               //   res.forEach((item, i) => {
               //     if (tasks.id === item.id) {
-              //       item.start_date = moment(item.start_date).format('YYYY-MM-DD')
-              //       item.end_date = moment(item.end_date).format('YYYY-MM-DD')
+              //       //   item.start_date = moment(item.start_date).format('YYYY-MM-DD')
+              //       //   item.end_date = moment(item.end_date).format('YYYY-MM-DD')
               //       tasks = item
-              //     //  let fileNames = Object.keys(item)
-              //     //  console.log("🚀 ~ res.forEach ~ el:", fileNames)
-              //     //  fileNames.forEach(el => {
-              //       // tasks[el] = item[el]
-              //       // if (el !== 'id' && item[el] !== null) {
-              //       //   vueThis.$set(tasks, el, item[el])
-              //       // }
-              //     // })
-              //     // tasks.start_date = moment(item.start_date).format('YYYY-MM-DD')
-              //     // tasks.end_date = moment(item.end_date).format('YYYY-MM-DD')
-              //       // ganttObject.updateTask(tasks.id)
-              //       // ganttObject.render()
+              //       let fileNames = Object.keys(item)
+              //       fileNames.forEach((el) => {
+              //         tasks[el] = item[el]
+              //         if (el !== 'id' && item[el] !== null) {
+              //           vueThis.$set(tasks, el, item[el])
+              //         }
+              //       })
+              //       //   tasks.start_date = moment(item.start_date).format('YYYY-MM-DD')
+              //       //   tasks.end_date = moment(item.end_date).format('YYYY-MM-DD')
+              //       ganttObject.updateTask(tasks.id)
+              //       // ganttObject.refreshData(tasks.id)
               //     }
               //   })
               // }, task.id)
@@ -3707,6 +3710,15 @@ function pasteTask(ganttObject, tasks, vueThis, type, dpObj) {
       createTaskByDatas(ganttObject, copyTasks.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
       vueThis.copyTasks.tasks = []
       vueThis.taskCount = ganttObject.getTaskCount()
+      if (copyTasks.activityInfos) {
+        copyTasks.activityInfos.forEach((item) => {
+          copyTasks.tasks.forEach((el) => {
+            if (item.taskId === el.defaultId) {
+              item.taskId = el.id
+            }
+          })
+        })
+      }
       api['planGanttManager.pasteTasks']({
         pasteData: copyTasks,
         parentId: selId,

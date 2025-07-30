@@ -91,9 +91,6 @@ export function planGantt(ganttName, vueThis) {
           // 保存
           api['planGanttManager.saveGanttExtendAttr']({ taskId: task.id, taskExtendRequests: extraData })
         }
-        if (!data.indexNo) {
-          data.indexNo = 1
-        }
         api['planGanttManager.updatePlanGanttData']({
           // pId: secretGrade,
           // id: task.secretGrade,
@@ -1011,7 +1008,27 @@ export function getGanttColumns(ganttObject, vueThis) {
                       point.title +
                       '"></i></span>'
                   } else {
+                    // if (id === '1018') {
+                    //   // html += `<i class='p8 ${icon}' style='color: ${point.color}'></i>`
+                    //   api['relevanceContract.selectByCpntractNodeTasks']({
+                    //     taskId: task.id
+                    //   })
+                    //     .then((res) => {
+                    //       if (res) {
+                    //         console.log('🚀 ~ .then ~ res:', res)
+                    //         return  html += `<el-tooltip effect="light" placement="right">
+                    //     <div slot="content">
+                    //       <p>1111111111111111111</p>
+                    //     </div>
+                    //    <i class='p8 ${icon}' style='color: ${point.color}'></i>
+                    //   </el-tooltip>`
+                    //         console.log('🚀 ~ .then ~ html:', html)
+                    //       }
+                    //     })
+                    //     .catch(() => {})
+                    // } else {
                     html += '<i class="p8 ' + icon + '" title="' + point.title + '" " style="color: ' + point.color + '"></i>'
+                    // }
                   }
                 }
                 return true

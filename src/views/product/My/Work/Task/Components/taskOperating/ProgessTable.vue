@@ -62,7 +62,7 @@ export default {
       }
     ]
     return {
-      tableHeight: document.documentElement.clientHeight * 0.5 - 80 + 'px',
+      tableHeight: document.documentElement.clientHeight * 0.5 - 50 + 'px',
       tableApi: 'taskManager.progressFeedbackHistory',
       queryParam: { taskId: this.getPlanInfo().TASKID },
       columns
@@ -77,4 +77,7 @@ export default {
 }
 </script>
 <style lang="scss">
+.common-table .panination {
+  display: none !important;
+}
 </style>
