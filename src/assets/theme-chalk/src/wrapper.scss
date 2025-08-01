@@ -282,7 +282,7 @@
 //   border-bottom: 1px solid #cccccc !important;
 // }
 .common-table .vxe-cell--title {
-  line-height: 30px;
+  line-height: $base-tableRow-height;
 }
 .common-table
   .vxe-table--render-default
@@ -354,14 +354,9 @@
     margin: 0 5px !important;
   }
   .flex-header .vxe-header--column .vxe-cell--wrapper {
-    height: 110px !important;
+    height: 104px !important;
   }
   .flex-header .searchHeight {
     position: absolute;
     bottom: 3px;
   }
-  .vxe-table--render-default .vxe-cell--checkbox:not(.is--disabled) {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
