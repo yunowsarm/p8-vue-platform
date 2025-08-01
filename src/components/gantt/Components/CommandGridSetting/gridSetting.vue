@@ -17,7 +17,7 @@
             <span style="display:inline-block;height: 21px;">行高</span>
             <span class="widthNumber">
               <el-input-number v-model="lineHeight"
-                               :min="15"
+                               :min="22"
                                :max="300"
                                :step="1"
                                style="margin-bottom:1px;"

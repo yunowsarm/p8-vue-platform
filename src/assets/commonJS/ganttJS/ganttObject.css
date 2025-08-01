@@ -44,13 +44,13 @@
 }
 
 .resource_marker div {
-  width: 28px;
-  height: 28px;
-  line-height: 29px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
   display: inline-block;
 
   color: #fff;
-  margin: 3px;
+  /* margin: 3px; */
 }
 
 .resource_marker.workday_ok div {
