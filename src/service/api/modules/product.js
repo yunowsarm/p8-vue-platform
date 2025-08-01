@@ -2139,5 +2139,12 @@ export const repositoryApi = {
       mockPath: '/product/pm/qualityIssues/submitValidattion',
       desc: '我的工作-我的问题-提交验证保存接口'
     },
+    {
+      name: 'generateNewCode',
+      method: 'POST',
+      path: '/product/pm/qualityIssues/generateNewCode',
+      mockPath: '/product/pm/qualityIssues/generateNewCode',
+      desc: '我的工作-我的问题-获取编号'
+    }
   ]
 }
