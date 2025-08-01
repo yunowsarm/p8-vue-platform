@@ -133,16 +133,15 @@ export default {
             message: '未完成原因提交成功！',
             type: 'success'
           })
+          form.deviationProgress = params.pmTaskDeviationCauses.progress
           that.setMessage(form)
         }
       })
     },
     setMessage (formData) {
-
       let obj = Object.assign({}, formData)
       obj.planName = this.getPlanInfo().PLANNAME
       obj.name = this.getPlanInfo().NAME
-      obj.deviationProgress = obj.progress
       obj.taskId = this.getPlanInfo().taskId
       obj.type = '2'
       let params = {
@@ -163,7 +162,8 @@ export default {
         pmTaskDeviationCauses: {
           planInfoId: _this.planInfoParams.PLANINFOID,
           pmProjectTasksId: _this.planInfoParams.TASKID,
-          id: _this.id
+          id: _this.id,
+          progress: ''
         }
       }
       deviate.forEach(key => {
