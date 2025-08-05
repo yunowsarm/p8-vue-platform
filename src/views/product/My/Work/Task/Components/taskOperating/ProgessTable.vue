@@ -77,7 +77,4 @@ export default {
 }
 </script>
 <style lang="scss">
-.common-table .panination {
-  display: none !important;
-}
 </style>
