@@ -1,27 +1,37 @@
 <template>
-  <normal-layout :header-visible="false" :split-layout="true">
+  <normal-layout :header-visible="false"
+                 :split-layout="true">
     <template #west>
-      <common-tree :default-expanded-keys="defaultExpandedKeys" :default-expand-all="false" node-key="ID" :data="treeData" :tree-config="treeConfig" ref="commonTree" @select="onSelect"></common-tree>
+      <common-tree :default-expanded-keys="defaultExpandedKeys"
+                   :default-expand-all="false"
+                   node-key="ID"
+                   :data="treeData"
+                   :tree-config="treeConfig"
+                   ref="commonTree"
+                   @select="onSelect"></common-tree>
     </template>
     <template #center>
-      <P8TableRender
-        :key='tableKey'
-        ref="tableRender"
-        class="planLayout"
-        :tableRefresh="tableRefresh"
-        :code="componentsConfig.code"
-        :permission-vo="componentsConfig.permissionVo"
-        :west-tree-param="provideParams.searchParams"
-        @refresh="init()"
-        @refresh-data="refreshTable"
-      >
+      <P8TableRender :key='tableKey'
+                     ref="tableRender"
+                     class="planLayout"
+                     :tableRefresh="tableRefresh"
+                     :code="componentsConfig.code"
+                     :permission-vo="componentsConfig.permissionVo"
+                     :west-tree-param="provideParams.searchParams"
+                     @refresh="init()"
+                     @refresh-data="refreshTable">
         <template #status="{ scope }">
-          <el-tooltip effect="dark" :content="getIconTitle(scope.row)" :disabled="toolbarTextDisplay === '1'" placement="top">
+          <el-tooltip effect="dark"
+                      :content="getIconTitle(scope.row)"
+                      :disabled="toolbarTextDisplay === '1'"
+                      placement="top">
             <span v-html="getIcon(scope.row)"></span>
           </el-tooltip>
         </template>
         <template #planName="{ scope }">
-          <div v-if="scope.row.WHOLEDESCRIBEID" class="underline" @click="thirdMenuClick(scope.row)">{{ scope.row.NAME }}</div>
+          <div v-if="scope.row.WHOLEDESCRIBEID"
+               class="underline"
+               @click="thirdMenuClick(scope.row)">{{ scope.row.NAME }}</div>
           <div v-else>{{ scope.row.NAME }}</div>
         </template>
       </P8TableRender>
@@ -62,7 +72,7 @@ import { selectGenerateTree } from '@/utils/common.js'
 export default {
   name: 'ProcessManagement',
   computed: {
-    componentUrl() {
+    componentUrl () {
       if (this.asyncComponents) {
         if (this.asyncComponents.indexOf('?') !== -1) {
           const list = this.asyncComponents.split('?')
@@ -85,14 +95,14 @@ export default {
       }
     }
   },
-  provide() {
+  provide () {
     return {
       provideParams: this.provideParams
     }
   },
-  data() {
+  data () {
     return {
-      tableKey:Date.now(),
+      tableKey: Date.now(),
       dialogHeight: document.documentElement.clientHeight * 0.6,
       queryParam: {},
       treeData: [],
@@ -126,7 +136,7 @@ export default {
     CommonTable,
     CommonButton
   },
-  created() {
+  created () {
     this.init()
     this.getIconData()
   },
@@ -138,7 +148,7 @@ export default {
   //   }
   // },
   methods: {
-    getTableSetting() {
+    getTableSetting () {
       let tableSettingaAll = this.$store.state.user.userSettingAll.Table ? this.$store.state.user.userSettingAll.Table : null
       if (tableSettingaAll) {
         let keyNew = this.$route.path + '.' + 'formGenerator.tableApply' + '.' + this.componentsConfig.code
@@ -162,13 +172,15 @@ export default {
       }
     },
     // 表格刷新
-    tableRefresh() {
+    tableRefresh () {
       this.$refs.tableRender.selectRecords = []
     },
-    refreshTable(){
+    refreshTable () {
       this.getTableSetting()
     },
-    async init() {
+    async init () {
+      // 使用完后清除，避免影响其他窗口
+      sessionStorage.removeItem('stateInfo')
       const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
       const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
       const res = await this.$api['desLayout.getLayoutJson']({ layoutCode: code, version: version })
@@ -217,7 +229,7 @@ export default {
       }
     },
     // 选中节点
-    handleNodeClick(data) {
+    handleNodeClick (data) {
       if (data[0].children && data[0].children.length > 0) {
         this.handleNodeClick(data[0].children)
       } else {
@@ -227,10 +239,10 @@ export default {
         })
       }
     },
-    getFirstChild(data) {
+    getFirstChild (data) {
       let result = ''
 
-      function filterData(treeData) {
+      function filterData (treeData) {
         if (treeData[0].children && treeData[0].children.length) {
           filterData(treeData[0].children)
         } else {
@@ -241,10 +253,10 @@ export default {
       filterData(data)
       return result
     },
-    handleCancel() {
+    handleCancel () {
       this.$emit('close')
     },
-    onSelect(obj) {
+    onSelect (obj) {
       if (obj.id == '0') {
         return
       }
@@ -302,10 +314,10 @@ export default {
         }
       }
     },
-    getParamsList(obj, fileName) {
+    getParamsList (obj, fileName) {
       let list = []
 
-      function getEndList(item) {
+      function getEndList (item) {
         list.push(item[fileName])
         if (item.children && item.children.length) {
           item.children.forEach((el) => {
@@ -317,7 +329,7 @@ export default {
       getEndList(obj)
       return list
     },
-    getParams(node) {
+    getParams (node) {
       const { parentId, parmarsMap } = node
       let arr = []
       if (parmarsMap) return parmarsMap
@@ -343,7 +355,7 @@ export default {
       }
       return arr
     },
-    async getTreeData(treeSettingsParmars) {
+    async getTreeData (treeSettingsParmars) {
       let data
       const res = await this.$api['desLayout.execute']({ id: treeSettingsParmars.reportSqlId })
       const config = {
@@ -379,11 +391,11 @@ export default {
       return data
     },
     // 获取默认展开数据key
-    getDefaultExpandedKeys(level, treeList) {
+    getDefaultExpandedKeys (level, treeList) {
       const arr = []
       let count = 0
 
-      function getData(data) {
+      function getData (data) {
         count++
         if (count > level) {
           return
@@ -400,7 +412,7 @@ export default {
       return arr
     },
 
-    getIconTitle(row) {
+    getIconTitle (row) {
       let str = ''
       let el = this.manageStatus[row.MANAGESTATUS]
       if (row.MANAGESTATUS && el && el.icon) {
@@ -413,7 +425,7 @@ export default {
       }
       return str
     },
-    getIcon(row) {
+    getIcon (row) {
       let str = ''
       let el = this.manageStatus[row.MANAGESTATUS]
       let toolbarTextDisplay = this.toolbarTextDisplay
@@ -450,7 +462,7 @@ export default {
       }
       return str
     },
-    thirdMenuClick(record) {
+    thirdMenuClick (record) {
       let item = {}
       const currentPath = this.$route.path
       const rootRouter = this.$store.state.routers.addRouters
@@ -475,7 +487,7 @@ export default {
       }
       this.$refs.tableRender.thirdMenuClick(record, item)
     },
-    async getIconData() {
+    async getIconData () {
       // 管理状态
       let manageStatus = await this.$api['dictionaryManagement.list']({ dicType: 'PLAN_MANAGE_STATUS' })
       // 执行状态
