@@ -115,7 +115,7 @@ export default {
               "taskInfo": {
                 "taskId": info.event.id,
                 "thirdMenuParam": {
-                  "MANAGERSTATUS": "6404",
+                  "MANAGERSTATUS": info.event.extendedProps.managerStatus,
                   "EXECUTESTATE": "1070",
                   "TASKID": info.event.id,
                   "currentRoute": "/MyTask/MyTask/latest",
@@ -174,7 +174,8 @@ export default {
           type: item.TYPE,
           hasWarning: item.IS_APPROACHING_DATE === '1' ? true : false,
           isLeaf: item.ISLEAF,
-          planInfoId: item.PLANINFIID
+          planInfoId: item.PLANINFIID,
+          managerStatus: item.MANAGERSTATUS
         }
       })
       this.dateTime = new Date().getTime()
