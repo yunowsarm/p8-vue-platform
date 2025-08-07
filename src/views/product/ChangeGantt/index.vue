@@ -399,7 +399,7 @@ export default {
       this.wholeDescribeId = this.thirdMenuParam.WHOLEDESCRIBEID
     }
     let stateInfo = getSession('stateInfo')
-    if (stateInfo.taskInfo.thirdMenuParam.planInfoId) {
+    if (stateInfo && stateInfo.taskInfo.thirdMenuParam.planInfoId) {
       this.planInfoId = stateInfo.taskInfo.thirdMenuParam.planInfoId
       this.thirdMenuParam.planInfoId = stateInfo.taskInfo.thirdMenuParam.planInfoId
     }
