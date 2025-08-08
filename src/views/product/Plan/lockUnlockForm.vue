@@ -2,7 +2,7 @@
   <el-form ref="form" :model="formData" label-width="100px" class="formList" :inline-message="inlineMessage" style="height: 100%">
     <el-row :class="{ existBtn: true }">
       <template v-for="(item, index) in dataSource">
-        <el-col :span="item.colLayout === 24" :key="index">
+        <el-col :span="12" :key="index">
           <el-form-item v-if="item.labelText === '项目状态'" :label="item.labelText" :prop="item.fieldName">
             <el-radio-group :disabled="taskEditCheck" v-model="formData[item.fieldName]">
               <el-radio-button v-for="opt in zzOptions" :key="opt.value" :label="opt.value" :value="opt.value">{{ opt.label }}</el-radio-button>
@@ -87,7 +87,7 @@ export default {
           value: '3'
         }
       ],
-      editLockState:[
+      editLockState: [
         {
           label: '默认',
           value: '-1'
@@ -184,8 +184,7 @@ export default {
               const dataSourceItem = {
                 type: 'radioButton',
                 labelText: item.label,
-                fieldName: item.value,
-                colLayout: item.value !== '1020' ? 'doubleCol' : 'singleCol'
+                fieldName: item.value
               }
               that.dataSource.push(dataSourceItem)
               that.$set(that.formData, item.value, item.lockStatus)
@@ -343,6 +342,8 @@ export default {
 </script>
 <style lang="scss">
 .formList.el-form {
+  padding-bottom: 52px;
+  overflow: auto;
   > .el-row {
     padding: 10px;
     box-sizing: border-box;
@@ -360,6 +361,7 @@ export default {
       width: 100%;
       border-top: 1px solid $base-line-color;
       box-sizing: border-box;
+      background: #ffffff;
     }
 
     .el-form-item__label {
