@@ -98,7 +98,7 @@
                      direction="ttb"
                      :projectLevel="projectLevel"
                      :drawerConfig="menuDrawerConfig"
-                     @close="visible = false">
+                     @close="closeLayout">
         <template #drawer>
           <menu-layout :third-menu-param="thirdMenuParam"
                        :default-menu="defaultMenu"></menu-layout>
@@ -363,7 +363,7 @@ export default {
       // 恢复任务信息并根据标记决定是否打开抽屉
       if (parsedInfo.taskInfo) {
         window.STATUS_KEY = parsedInfo.taskInfo.status
-        this.thirdMenuParam = parsedInfo.taskInfo.thirdMenuParam
+        this.thirdMenuParam = JSON.parse(JSON.stringify(parsedInfo.taskInfo.thirdMenuParam))
         this.projectLevel = parsedInfo.taskInfo.thirdMenuParam.getProjectLevel
 
         // 只有在新窗口时才打开抽屉
@@ -371,8 +371,6 @@ export default {
           this.$nextTick(() => {
             this.visible = true
           })
-          // 使用完后清除，避免影响其他窗口
-          sessionStorage.removeItem('stateInfo')
         }
       }
     }
@@ -394,6 +392,11 @@ export default {
     // })
   },
   methods: {
+    closeLayout () {
+      this.visible = false
+      // 使用完后清除，避免影响其他窗口
+      sessionStorage.removeItem('stateInfo')
+    },
     showViewChange (val) {
       let tableParam = this.$refs.tableRender.$refs.xTable.params.sqlParam
       let sqlParam = {
@@ -629,7 +632,7 @@ export default {
         this.handleNodeClick(this.treeData);
       }
     },
-     // 选中节点
+    // 选中节点
     handleNodeClick (data) {
       if (data[0].children && data[0].children.length > 0) {
         this.handleNodeClick(data[0].children)

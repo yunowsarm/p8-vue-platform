@@ -185,7 +185,7 @@ import {
 
 import ChangeIndex from './Components/changeIndex'
 import ImpactAnalysis from './Components/impactAnalysis'
-
+import { getSession, setSession } from '@/service/expands/session'
 // import { nextApproveUser } from '@/assets/commonJS/BusinessActivity/nextApproveUser'
 import SelectApproveUser from '@/views/Framework/BusinessActivity/ProcessApproval/selectApproveUser'
 import moment from 'moment'
@@ -397,6 +397,11 @@ export default {
       this.currentRoute = this.thirdMenuParam.currentRoute
       this.createPage = 'planChange'
       this.wholeDescribeId = this.thirdMenuParam.WHOLEDESCRIBEID
+    }
+    let stateInfo = getSession('stateInfo')
+    if (stateInfo.taskInfo.thirdMenuParam.planInfoId) {
+      this.planInfoId = stateInfo.taskInfo.thirdMenuParam.planInfoId
+      this.thirdMenuParam.planInfoId = stateInfo.taskInfo.thirdMenuParam.planInfoId
     }
     if (this.planInfoId && this.createPage) {
       this.queryParam.createPage = this.createPage

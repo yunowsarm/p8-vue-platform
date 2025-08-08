@@ -198,6 +198,7 @@ import ProgressHistory from './Components/progressHistory'
 import CommandLocation from '@/components/gantt/Components/CommandLocation'
 import locationView from './Components/planGantt/locationView'
 import { debounce } from 'lodash';
+import { getSession, setSession } from '@/service/expands/session'
 export default {
   name: 'PlanGanttManage',
   data () {
@@ -375,6 +376,11 @@ export default {
       this.wholeDescribeId = this.thirdMenuParam.WHOLEDESCRIBEID
       this.planBeginDateArray = this.thirdMenuParam.planBeginDateArray || []
       this.planEndDateArray = this.thirdMenuParam.planEndDateArray || []
+    }
+    let stateInfo = getSession('stateInfo')
+    if (stateInfo.taskInfo.thirdMenuParam.planInfoId) {
+      this.planInfoId = stateInfo.taskInfo.thirdMenuParam.planInfoId
+      this.thirdMenuParam.planInfoId = stateInfo.taskInfo.thirdMenuParam.planInfoId
     }
     this.msg = {
       entityId: this.planInfoId,

@@ -107,6 +107,10 @@ export default {
           // 事件点击处理
           console.log('Event clicked:', info);
           if (info.event._def.extendedProps.type === 'task') {
+            let pageType = ''
+            if (info.event.extendedProps.isLeaf > 0) {
+              pageType = 'view'
+            }
             const stateInfo = {
               "taskInfo": {
                 "taskId": info.event.id,
@@ -117,7 +121,8 @@ export default {
                   "currentRoute": "/MyTask/MyTask/latest",
                   "createPage": "decompose",
                   "currentPage": "normal",
-                  "pageType": "view"
+                  "pageType": pageType,
+                  "planInfoId": info.event.extendedProps.planInfoId
                 }
               },
             }
@@ -167,7 +172,9 @@ export default {
           end: item.PLAN_END_DATE,
           id: item.TASK_ID,
           type: item.TYPE,
-          hasWarning: item.IS_APPROACHING_DATE === '1' ? true : false
+          hasWarning: item.IS_APPROACHING_DATE === '1' ? true : false,
+          isLeaf: item.ISLEAF,
+          planInfoId: item.PLANINFIID
         }
       })
       this.dateTime = new Date().getTime()

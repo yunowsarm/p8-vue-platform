@@ -486,7 +486,7 @@ export default {
       let deviate = ['deviationType', 'deviationCauses', 'deviationImpact', 'deviationProgress', 'solutions']
       let params = {
         pmTaskProgressFeedback: {
-          planInfoId: _this.planInfoParams.PLANINFOID,
+          planInfoId: _this.planInfoParams.PLANINFOID ? _this.planInfoParams.PLANINFOID : _this.planInfoParams.planInfoId,
           pmProjectTasksId: _this.planInfoParams.TASKID,
           status: _this.statusByProgress(submitType),
           content: form.content,
