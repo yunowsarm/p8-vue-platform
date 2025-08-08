@@ -2006,6 +2006,7 @@ export default {
           type: requestOtherParams.type,
           value: JSON.stringify({
             type: updateValues.type,
+            isGroup: updateValues.isGroup,
             autoScheduling: updateValues.autoScheduling,
             rightBtns: updateValues.rightBtns
           })
