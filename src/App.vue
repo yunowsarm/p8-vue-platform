@@ -38,16 +38,16 @@ export default {
   },
   mounted () {
     window.socketType = null
-    window.addEventListener('beforeunload', this.handlerBeforeUnload)
+    // window.addEventListener('beforeunload', this.handlerBeforeUnload)
   },
   methods: {
-    handlerBeforeUnload (e) {
-      if (window.myWebSocket) {
-        console.log(window.myWebSocket, '----window.myWebSocket');
-        window.myWebSocket.off('getMessageContent')
-        window.myWebSocket.off('getApproveContent')
-      }
-    },
+    // handlerBeforeUnload (e) {
+    //   if (window.myWebSocket) {
+    //     console.log(window.myWebSocket, '----window.myWebSocket');
+    //     window.myWebSocket.off('getMessageContent')
+    //     window.myWebSocket.off('getApproveContent')
+    //   }
+    // },
     initWebSocket (id, name) {
       let that = this
       // 判断页面有没有存在websocket连接
@@ -86,6 +86,7 @@ export default {
                 })
                 notification.onclick = function () {
                   const URL = window.location.protocol + '//' + window.location.host + '/#/myMessageView'
+                  console.log(URL,'-----URL==我的消息');
                   window.open(URL, '_blank')
                 }
               }
@@ -102,6 +103,7 @@ export default {
                 })
                 notification.onclick = function () {
                   const URL = window.location.protocol + '//' + window.location.host + '/#/myApproveView'
+                  console.log(URL,'====URL--我的审批');
                   window.open(URL, '_blank')
                 }
               }
@@ -211,7 +213,7 @@ export default {
     window.myWebSocket.off('getMessageContent')
     window.myWebSocket.off('getApproveContent')
     window.myWebSocket.close()
-    window.removeEventListener('beforeunload', this.handlerBeforeUnload)
+    // window.removeEventListener('beforeunload', this.handlerBeforeUnload)
 
   }
 }
