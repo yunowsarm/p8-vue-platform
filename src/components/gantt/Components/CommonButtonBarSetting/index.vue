@@ -21,8 +21,20 @@
           </el-radio-group>
         </div>
       </template>
+      <template title="是否展示分组名">
+        <div class="title">
+          <span>是否展示分组名</span>
+        </div>
+        <div class="content"
+             :class="{'marginBottom': $route.name == 'PlanMonitoring'}">
+          <el-radio v-model="isGroup"
+                    label="1">是</el-radio>
+          <el-radio v-model="isGroup"
+                    label="2">否</el-radio>
+        </div>
+      </template>
       <template title="排程设置">
-        <div class="title" 
+        <div class="title"
              v-if="$route.name !== 'PlanMonitoring'">
           <span>排程设置</span>
         </div>
@@ -126,6 +138,7 @@ export default {
         }
       ],
       value: 'double',
+      isGroup: '1',
       autoScheduling: '',
       buttonListInLeft: [],
       valueBtns: [],
@@ -158,6 +171,7 @@ export default {
         const settingData = this.userSettingAll.PlanButton[0]
         this.updataParamsHandle(settingData)
         this.value = settingData.value && settingData.value.type ? settingData.value.type : 'tabs'
+        this.isGroup = settingData.value && settingData.value.isGroup ? settingData.value.isGroup : '1'
         this.autoScheduling = settingData.value && settingData.value.autoScheduling ? settingData.value.autoScheduling : '2'
         rightBtns = settingData.value && settingData.value.rightBtns
         this.valueBtns = rightBtns.map((btn) => {
@@ -185,7 +199,7 @@ export default {
           rightBtns.push(btn)
         }
       })
-      this.$emit('submit', { type: this.value, autoScheduling: this.autoScheduling, rightBtns: rightBtns }, this.updataParams)
+      this.$emit('submit', { isGroup: this.isGroup, type: this.value, autoScheduling: this.autoScheduling, rightBtns: rightBtns }, this.updataParams)
     },
     handleCancel () {
       this.$emit('hidden')
