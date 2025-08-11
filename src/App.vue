@@ -173,7 +173,7 @@ export default {
       if ("Notification" in window) {
         Notification.requestPermission().then(function (permission) {
           if (permission === "granted") {
-            var notification = new Notification("新消息到达", {
+            var notification = new Notification("新沟通消息到达", {
               body: "请注意查收！"
             });
           }
