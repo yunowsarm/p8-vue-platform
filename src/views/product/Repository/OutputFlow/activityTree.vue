@@ -6,7 +6,18 @@
              v-for="(item, index) in buttonList"
              :key="item.id"
              :class="{'is-disabled': isDisableFun(item)}">
-          <el-tooltip effect="dark"
+          <el-dropdown v-if="item.id==='create-children' || item.id==='create-After'">
+            <i :class="item.icon"
+               @click="buttonClick(item)"></i>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item><span @click="addTask(2, 'Child',item.id)">新建2条</span></el-dropdown-item>
+              <el-dropdown-item><span @click="addTask(4, 'Child',item.id)">新建4条</span></el-dropdown-item>
+              <el-dropdown-item><span @click="addTask(6, 'Child',item.id)">新建6条</span></el-dropdown-item>
+              <el-dropdown-item><span @click="addTask(8, 'Child',item.id)">新建8条</span></el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <el-tooltip v-else
+                      effect="dark"
                       :content="item.title"
                       placement="top"
                       :key="index">
@@ -14,6 +25,7 @@
                @click="buttonClick(item)"></i>
           </el-tooltip>
         </div>
+
       </div>
       <!-- <search-form-list ref="search"
                         searchWidth="220px"
@@ -174,6 +186,7 @@ export default {
       mouseY: '',
       buttonList: _.cloneDeep(activityButtonData),
       copyList: [],
+      selectList: [],
       dataSource: [
         {
           type: 'text',
@@ -274,8 +287,10 @@ export default {
       this.loadGanttData(taskId)
     },
     loadGanttData (taskId) {
+      let that = this
       this.$api['OutputFlow.loadAcivityData']({ activityInfoId: this.activityInfoId }).then((res) => {
         if (res) {
+          that.selectList = []
           res.forEach(el => {
             el.durations = el.duration
           })
@@ -327,7 +342,13 @@ export default {
         }
       }
     },
-    addTask (num, pos) {
+    addTask (num, pos, val) {
+      if (val === 'create-children') {
+        pos = 'Child'
+      }
+      if (val === 'create-After') {
+        pos = 'After'
+      }
       let that = this
       // 模拟添加
       let taskId = this.selectedTasks.map(el => el.id)[0]
@@ -457,16 +478,21 @@ export default {
     // 删除
     async removeTask () {
       let that = this
-      let taskId = this.selectedTasks.map(el => el.id)[0]
+      that.selectList = []
+      this.selectedTasks.forEach(item => {
+        if (item) {
+          that.selectList.push(item.id)
+        }
+      })
       await new Promise((resolve) => {
         myGantt.batchUpdate(function () {
-          myGantt.deleteTask(taskId)
+          myGantt.deleteTask(that.selectList[0])
           resolve() // 完成时调用 resolve
         })
       })
       this.$emit('remove-task')
       this.$nextTick(() => {
-        that.loadGanttData()
+        that.initGantt()
       })
       this.menuVisible = false
       // const taskCount = myGantt.getTaskCount()

@@ -20,7 +20,7 @@ export const activityButtonData = [
     isDisableFun: function (tasks, _this, myGantt) {
       let result = false
       result = isDisableFunCheck(tasks)
-      tasks.forEach(el => {
+      tasks.forEach((el) => {
         if (el.parent == 0) {
           result = true
         }
@@ -33,13 +33,13 @@ export const activityButtonData = [
     icon: 'p8 icon-copy',
     title: '复制',
     clickFun: function (tasks, _this) {
-      let taskId = tasks.map(el => el.id)
+      let taskId = tasks.map((el) => el.id)
       _this.copyList = taskId
     },
     isDisableFun: function (tasks) {
       let result = false
       result = isDisableFunCheck(tasks)
-      tasks.forEach(el => {
+      tasks.forEach((el) => {
         if (el.parent == 0) {
           result = true
         }
@@ -52,7 +52,7 @@ export const activityButtonData = [
     icon: 'p8 icon-paste',
     title: '粘贴',
     clickFun: function (tasks, _this) {
-      _this.$api['OutputFlow.pasteNode']({ "copyIds": _this.copyList, "selectId": tasks[0].id }).then(res => {
+      _this.$api['OutputFlow.pasteNode']({ copyIds: _this.copyList, selectId: tasks[0].id }).then((res) => {
         _this.copyList = []
         _this.loadGanttData(tasks[0].id)
       })
@@ -75,7 +75,7 @@ export const activityButtonData = [
     isDisableFun: function (tasks) {
       let result = false
       result = isDisableFunCheck(tasks)
-      tasks.forEach(el => {
+      tasks.forEach((el) => {
         if (el.parent == 0 || el.$level == 1) {
           result = true
         }
@@ -93,12 +93,12 @@ export const activityButtonData = [
     isDisableFun: function (tasks, _this, myGantt) {
       let result = false
       result = isDisableFunCheck(tasks)
-      tasks.forEach(el => {
+      tasks.forEach((el) => {
         if (el.parent == 0) {
           result = true
         }
-        if(myGantt.getPrevSibling(el.id)) {
-          if(el.predIds == myGantt.getPrevSibling(el.id)) {
+        if (myGantt.getPrevSibling(el.id)) {
+          if (el.predIds == myGantt.getPrevSibling(el.id)) {
             result = true
           }
         }
@@ -116,12 +116,12 @@ export const activityButtonData = [
     isDisableFun: function (tasks) {
       let result = false
       result = isDisableFunCheck(tasks)
-      tasks.forEach(el => {
+      tasks.forEach((el) => {
         if (el.parent == 0) {
           result = true
         }
       })
-      if (tasks.length && tasks.length !== 1) {
+      if (tasks.length === 0) {
         result = true
       }
       return result
@@ -174,7 +174,7 @@ export const activityButtonData = [
     clickFun: function (tasks, _this, myGantt) {
       if (tasks && tasks.length) {
         myGantt.batchUpdate(function () {
-          tasks.forEach(el => {
+          tasks.forEach((el) => {
             let task = myGantt.getTask(el.id)
             if (task) {
               task.type = ''
@@ -187,7 +187,7 @@ export const activityButtonData = [
     isDisableFun: function (tasks) {
       let result = false
       result = isDisableFunCheck(tasks)
-      tasks.forEach(el => {
+      tasks.forEach((el) => {
         if (!el.type) {
           result = true
         }
@@ -219,9 +219,8 @@ export const activityButtonData = [
     clickFun: function (tasks, _this) {
       _this.exportTask()
     },
-    isDisableFun: function (tasks) {
-    }
-  },
+    isDisableFun: function (tasks) {}
+  }
   // {
   //   id: 'create-children12',
   //   icon: 'p8 icon-full-screen',
@@ -233,10 +232,9 @@ export const activityButtonData = [
   // },
 ]
 
-function isDisableFunCheck (tasks) {
+function isDisableFunCheck(tasks) {
   let result = false
   if (tasks && tasks.length) {
-
   } else {
     result = true
   }
