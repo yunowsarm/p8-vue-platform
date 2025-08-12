@@ -386,7 +386,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style scoped lang="scss">
 .formList.el-form {
   padding-bottom: 52px;
   overflow: auto;
