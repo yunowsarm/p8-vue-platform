@@ -1,13 +1,15 @@
 <script>
 // 导入 P8Form 组件和 moment.js 库
-import { P8Form as FormList } from 'p8-components-ui'
+import { P8Form as FormList, P8Drawer as CommonDrawer } from 'p8-components-ui'
 import moment from 'moment'
-
+import taskApproveView from '@/views/product/My/Work/Task/Components/taskApproveView';
 // 定义 DescribeView 组件
 export default {
   name: 'DescribeView',
   components: {
-    FormList
+    FormList,
+    taskApproveView,
+    CommonDrawer
   },
   props: {
     taskId: {
@@ -15,15 +17,16 @@ export default {
       default: null
     }
   },
-  data() {
+  data () {
     return {
       // 定义数据源数组，包含表单字段的配置
       dataSource: [
         // 任务名称字段配置
         {
           labelText: '任务名称',
-          type: 'view',
+          type: 'blank',
           fieldName: 'name',
+          slotName: 'name',
           colLayout: 'singleCol'
         },
         // 计划开始时间字段配置
@@ -59,6 +62,13 @@ export default {
           type: 'view',
           labelText: '责任人',
           fieldName: 'realName',
+          colLayout: 'doubleCol'
+        },
+        {
+          type: 'blank',
+          labelText: '状态',
+          fieldName: 'status',
+          slotName: 'status',
           colLayout: 'doubleCol'
         },
         // // 绩效字段配置
@@ -105,17 +115,22 @@ export default {
         }
       ],
       // 定义表单数据对象
-      formData: {}
+      formData: {},
+      toolbarTextDisplay: this.$store.getters.baseConfig.toolbarTextDisplay,
+      analysisVisible: false
     }
   },
-  created() {
-    if(this.taskId){
+  created () {
+    if (this.taskId) {
       this.fetchTaskData(this.taskId)
     }
   },
   methods: {
+    getIcon (row) {
+      return `<i class='${row.taskIcon}' style='color: ${row.taskColor};'></i>`
+    },
     // 根据任务 ID 获取任务数据的方法
-    async fetchTaskData(taskId) {
+    async fetchTaskData (taskId) {
       // 调用 API 获取甘特图扩展属性数据
       this.$api['planGanttManager.getGanttExtendAttr']({ taskId: taskId })
         .then(async (res) => {
@@ -197,7 +212,7 @@ export default {
         })
     },
     // 格式化日期的方法，可选择是否减去一天
-    formatDate(value, subtract) {
+    formatDate (value, subtract) {
       let newDate
       if (subtract) {
         // 如果需要减去一天，则使用 subtract 方法
@@ -207,6 +222,12 @@ export default {
         newDate = moment(value).format('YYYY-MM-DD')
       }
       return newDate
+    },
+    openView () {
+      this.analysisVisible = true
+    },
+    onDrawerClose () {
+      this.analysisVisible = false
     }
   }
 }
@@ -215,10 +236,15 @@ export default {
 <template>
   <div>
     <!-- 使用 FormList 组件显示表单数据 -->
-    <form-list ref="form" form-layout="vertical" :data-source="dataSource" :form="formData" :exist-default-btn="false">
+    <form-list ref="form"
+               form-layout="vertical"
+               :data-source="dataSource"
+               :form="formData"
+               :exist-default-btn="false">
       <!-- 使用模板插槽自定义字段显示 -->
       <template #name>
-        <span style="color: red">{{ formData['name'] }} </span>
+        <span style="color: blue; text-decoration: underline;"
+              @click="openView">{{ formData['name'] }} </span>
       </template>
       <template #startDate>
         <span style="color: red">{{ formatDate(formData['planBeginDate']) }} </span>
@@ -244,7 +270,22 @@ export default {
       <template #describes>
         <span v-html="formData['describes']"></span>
       </template>
+      <template #status>
+        <span v-if="toolbarTextDisplay === '1'">{{ formData['statusDisplay'] }}</span>
+        <span v-html="getIcon(formData)"></span>
+      </template>
     </form-list>
+    <common-drawer v-if="analysisVisible"
+                   size="100%"
+                   class="manager-drawer"
+                   title="任务详情"
+                   :visible="analysisVisible"
+                   @close="onDrawerClose">
+      <template #drawer>
+        <taskApproveView :businessKey="taskId"
+                         pageType="view"></taskApproveView>
+      </template>
+    </common-drawer>
   </div>
 </template>
 
@@ -253,5 +294,8 @@ export default {
 ::v-deep img {
   width: 100%;
   height: auto;
+}
+::v-deep .el-form-item__label {
+  font-weight: bold !important;
 }
 </style>
