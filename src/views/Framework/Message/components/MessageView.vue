@@ -68,6 +68,7 @@
                    :rote-name="messageData.entityId"
                    :table-flex="320"
                    :key='renderKey'
+                   type="view"
                    :is="componentLoader"
                    :task-id='messageData.entityId' />
       </div>
