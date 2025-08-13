@@ -1,5 +1,5 @@
 <template>
-  <normal-layout :normal-layout="normalLayout">
+  <normal-layout :normal-layout="normalLayout" layoutCode='ACTIVITY_IMPORT'>
     <template #north>
       <el-button type="primary"
                  @click="importSelect">导入</el-button>
@@ -54,7 +54,7 @@
 }
 </style>
 <script>
-import { P8Table as CommonTable, Button, P8Tree as CommonTree, P8NormalLayout as NormalLayout } from 'p8-components-ui'
+import { P8Table as CommonTable, Button, P8Tree as CommonTree, P8NormalLayoutV1 as NormalLayout } from 'p8-components-ui'
 
 import { mapGetters } from 'vuex'
 

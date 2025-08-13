@@ -10,6 +10,7 @@
                  title="沟通消息">
     <template #dialog>
       <normal-layout :header-visible="false"
+                     layoutCode='COMMUNICATION'
                      :split-default-left-width="defaultWidth">
         <template #north> </template>
         <template #west>

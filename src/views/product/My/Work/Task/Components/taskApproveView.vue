@@ -1,6 +1,7 @@
 <template>
   <left-center-right-layout :percentLeft="35"
                             :percentRight="60"
+                            layoutCode='TASK_APPROVE_VIEW'
                             :type="true"
                             v-if="isRouterShow && innerWidth> 600">
     <template #left>

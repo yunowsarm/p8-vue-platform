@@ -13,6 +13,7 @@
     <template #dialog>
       <normal-layout :normalLayout="normalLayout"
                      style="padding: 0; margin: 0;"
+                     layoutCode='SELECT_USER'
                      :splitDefaultLeftWidth="35"
                      v-bind="normalLayoutConfig">
         <template #north>

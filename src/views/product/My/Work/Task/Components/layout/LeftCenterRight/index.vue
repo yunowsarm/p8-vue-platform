@@ -1,65 +1,43 @@
 <template>
   <div id="lcr-layout">
-    <el-row v-if="!isSplit"
-            :gutter="10"
-            style="height: 100%">
-      <el-col :span="4"
-              style="height: 100%">
+    <el-row v-if="!isSplit" :gutter="10" style="height: 100%">
+      <el-col :span="4" style="height: 100%">
         <div id="lcr-left-con">
           <slot name="left"></slot>
         </div>
       </el-col>
-      <el-col :span="16"
-              style="height: 100%">
+      <el-col :span="16" style="height: 100%">
         <div id="lcr-center-con">
           <slot name="center"></slot>
         </div>
       </el-col>
-      <el-col :span="4"
-              style="height: 100%">
+      <el-col :span="4" style="height: 100%">
         <div id="lcr-right-con">
           <slot name="right"></slot>
         </div>
       </el-col>
     </el-row>
-    <split-pane v-else
-                split="vertical"
-                :min-percent="0"
-                :max-percent="30"
-                :default-percent="layoutSetting.leftPercent"
-                @resize="outResize">
+    <split-pane v-else split="vertical" :min-percent="0" :max-percent="30" :default-percent="layoutSetting.leftPercent" @resize="outResize">
       <template #paneL>
-        <div class="splitter-line-arrow left"
-             v-if="!leftVisible"
-             @click="resetList">
-          <i class="p8 icon-youshoujin"
-             style="color: #79bcfa"></i>
+        <div class="splitter-line-arrow left" v-if="!leftVisible" @click="resetList">
+          <i class="p8 icon-youshoujin" style="color: #79bcfa"></i>
         </div>
-        <div id="lcr-left-con"
-             :style="{ opacity: leftVisible }">
+        <div id="lcr-left-con" :style="{ opacity: leftVisible }">
           <slot name="left"></slot>
         </div>
       </template>
       <template #paneR>
-        <split-pane split="vertical"
-                    :min-percent="0"
-                    :max-percent="75"
-                    :default-percent="layoutSetting.rightPercent"
-                    @resize="innerResize">
+        <split-pane split="vertical" :min-percent="0" :max-percent="75" :default-percent="layoutSetting.rightPercent" @resize="innerResize">
           <template #paneL>
             <div id="lcr-center-con">
               <slot name="center"></slot>
             </div>
           </template>
-          <template #paneR
-                    v-if="!hideRight">
-            <div class="splitter-line-arrow right"
-                 v-if="!rightVisible"
-                 @click="resetRight">
-              <i class="p8 icon-zuoshoujin"
-                 style="color: #79bcfa"></i>
+          <template #paneR v-if="!hideRight">
+            <div class="splitter-line-arrow right" v-if="!rightVisible" @click="resetRight">
+              <i class="p8 icon-zuoshoujin" style="color: #79bcfa"></i>
             </div>
-            <div id="lcr-right-con">
+            <div id="lcr-right-con" :style="{ opacity: rightVisible }">
               <slot name="right"></slot>
             </div>
           </template>
@@ -92,7 +70,7 @@ export default {
       type: Boolean,
       default: false
     },
-    layoutCode: {
+    layoutCode:{
       type: String,
       default: null
     }
@@ -104,7 +82,7 @@ export default {
   },
   watch: {
     percentRight: {
-      handler (val) {
+      handler(val) {
         if (val >= 100) {
           this.hideRight = true
         }
@@ -112,7 +90,7 @@ export default {
       immediate: true
     }
   },
-  data () {
+  data() {
     const { API_DEFAULT_CONFIG } = this.$sysConfig
     return {
       api_default_config: API_DEFAULT_CONFIG,
@@ -126,10 +104,10 @@ export default {
       layoutSetting: {}
     }
   },
-  created () {
+  created() {
     this.saveDefaultPercent = _debounce(this.saveDefaultPercent, 500)
   },
-  async mounted () {
+  async mounted() {
     let _this = this
     this.$bus.$on('split-pane-left', function (e) {
       _this.$children[0].percent = 0
@@ -140,15 +118,15 @@ export default {
       outChildInRight.percent = 100
       _this.rightVisible = 0
     })
-    // if (this.type) {
-    //   const outChildInRight = _this.$children[0].$children[2].$children[0]
-    //   outChildInRight.percent = 100
-    //   _this.rightVisible = 0
-    // }
+    if (this.type) {
+      const outChildInRight = _this.$children[0].$children[2].$children[0]
+      outChildInRight.percent = 100
+      _this.rightVisible = 0
+    }
     this.layoutSetting = await this.getDefaultPercent()
   },
   methods: {
-    getDefaultPercent () {
+    getDefaultPercent() {
       return new Promise((resolve) => {
         const _this = this
         let leftPercent = _this.percentLeft
@@ -171,11 +149,11 @@ export default {
           }
         }
         resolve({
-          leftPercent, rightPercent
+          leftPercent,rightPercent
         })
       })
     },
-    outResize (e) {
+    outResize(e) {
       console.log(e)
       let leftPercent = e
       if (this.$children[0].percent > 30) {
@@ -186,7 +164,7 @@ export default {
       this.layoutSetting.leftPercent = leftPercent
       this.saveDefaultPercent()
     },
-    innerResize (e) {
+    innerResize(e) {
       console.log(e)
       let rightPercent = e
       const outChildInRight = this.$children[0].$children[2].$children[0]
@@ -198,16 +176,16 @@ export default {
       this.layoutSetting.rightPercent = rightPercent
       this.saveDefaultPercent()
     },
-    resetList () {
+    resetList() {
       this.$children[0].percent = this.layoutSetting.leftPercent
       this.leftVisible = 1
     },
-    resetRight () {
+    resetRight() {
       const outChildInRight = this.$children[0].$children[2].$children[0]
       outChildInRight.percent = this.layoutSetting.rightPercent
       this.rightVisible = 1
     },
-    saveDefaultPercent () {
+    saveDefaultPercent() {
       const _this = this
       const url = '/framework/user/setting/save'
       let obj = _this.saveSettingOtherHandle(url)
@@ -231,7 +209,7 @@ export default {
           // console.error("user.setting.save--err", err);
         })
     },
-    saveSettingOtherHandle (url) {
+    saveSettingOtherHandle(url) {
       // console.log(url)
       const { devBaseUrl, prodBaseUrl, isDevMode } = this.api_default_config
       const urlPrefix = isDevMode ? `${devBaseUrl}` : `${prodBaseUrl}`

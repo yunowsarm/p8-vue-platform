@@ -26,7 +26,7 @@
   </normal-layout>
 </template>
 <script>
-import { P8NormalLayout as NormalLayout, P8Table as CommonTable } from 'p8-components-ui'
+import { P8NormalLayoutV1 as NormalLayout, P8Table as CommonTable } from 'p8-components-ui'
 
 export default {
   name: 'ExperienceTeam',

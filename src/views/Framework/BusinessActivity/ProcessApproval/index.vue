@@ -3,6 +3,7 @@
 
 <template>
   <normal-layout class="process-approval-layout"
+                 layoutCode='PROCESS_APPROVAL'
                  :header-visible="false"
                  :full-height="true"
                  :normal-layout="layoutConfig">
