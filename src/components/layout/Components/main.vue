@@ -5,9 +5,10 @@
     <VuePerfectScrollbar class="scroll-area"
                          :settings="scrollOptions">
       <transition name="fade-transform"
-                  mode="out-in">
+                  mode="out-in"
+                  :duration="{enter: 300, leave: 200}">
         <keep-alive :include="cachedViews">
-          <router-view class="main-router" />
+          <router-view class="main-router" v-if="showRouterView" :key="$route.fullPath"/>
         </keep-alive>
       </transition>
     </VuePerfectScrollbar>
@@ -24,7 +25,16 @@ export default {
     return {
       scrollOptions: {
         // maxScrollbarLength: 500
-      }
+      },
+      showRouterView: true
+    }
+  },
+  watch: {
+    '$route'() {
+      this.showRouterView = false
+      this.$nextTick(() => {
+        this.showRouterView = true
+      })
     }
   },
   computed: {
