@@ -1254,6 +1254,14 @@ export const system = {
       mockPath: '/NotificationAnnouncement/pm-notice/selectNotice',
       params: {},
       desc: '系统管理>通知公告管理>查看'
+    },
+    {
+      name: 'deleteNotice',
+      method: 'POST',
+      path: '/NotificationAnnouncement/pm-notice/deleteNotice',
+      mockPath: '/NotificationAnnouncement/pm-notice/deleteNotice',
+      params: {},
+      desc: '系统管理>通知公告管理>删除'
     }
   ],
   extLink: [

@@ -274,7 +274,7 @@ export default {
         <span v-html="formData['describes']"></span>
       </template>
       <template #status>
-        <span v-if="toolbarTextDisplay === '1'">{{ formData['statusDisplay'] }}</span>
+        <span v-if="toolbarTextDisplay === '1'">{{ formData['managerStatusDisplay'] }}</span>
         <span v-else
               v-html="getIcon(formData)"></span>
       </template>
