@@ -4,11 +4,9 @@
     <!-- custom scroll bar for main area -->
     <VuePerfectScrollbar class="scroll-area"
                          :settings="scrollOptions">
-      <transition name="fade-transform"
-                  mode="out-in"
-                  :duration="{enter: 300, leave: 200}">
+      <transition name="fade-transform">
         <keep-alive :include="cachedViews">
-          <router-view class="main-router" v-if="showRouterView" :key="$route.fullPath"/>
+          <router-view class="main-router" />
         </keep-alive>
       </transition>
     </VuePerfectScrollbar>
@@ -25,16 +23,7 @@ export default {
     return {
       scrollOptions: {
         // maxScrollbarLength: 500
-      },
-      showRouterView: true
-    }
-  },
-  watch: {
-    '$route'() {
-      this.showRouterView = false
-      this.$nextTick(() => {
-        this.showRouterView = true
-      })
+      }
     }
   },
   computed: {
@@ -73,6 +62,28 @@ export default {
       // overflow: auto;
       // height: 1000px;
     }
+  }
+  .fade-transform-enter-form {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  .fade-transform-enter-active {
+    transition: all 0.3s ease;
+  }
+  .fade-transform-enter-to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .fade-transform-leave-form {
+    opacity: 1;
+  }
+  .fade-transform-leave-active {
+    transition: all 0.3s ease;
+  }
+  .fade-transform-leave-to {
+    opacity: 0;
+    transform: translateX(20px);
   }
 }
 </style>
