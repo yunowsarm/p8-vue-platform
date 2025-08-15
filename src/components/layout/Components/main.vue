@@ -68,7 +68,7 @@ export default {
     transform: translateX(-20px);
   }
   .fade-transform-enter-active {
-    transition: all 0.3s ease;
+    transition: all 0.5s ease;
   }
   .fade-transform-enter-to {
     opacity: 1;
@@ -79,7 +79,7 @@ export default {
     opacity: 1;
   }
   .fade-transform-leave-active {
-    transition: all 0.3s ease;
+    transition: all 0.5s ease;
   }
   .fade-transform-leave-to {
     opacity: 0;
