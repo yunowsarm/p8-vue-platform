@@ -7,6 +7,7 @@
     <template #paneInfo>
       <div class="task-manage-con">
         <list-view :btnType="btnType"
+                   :approveType="approveType"
                    :thirdMenuParam="thirdMenuParam"></list-view>
       </div>
     </template>
@@ -31,6 +32,10 @@ export default {
     },
     btnType: {
       type: Boolean
+    },
+    approveType: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

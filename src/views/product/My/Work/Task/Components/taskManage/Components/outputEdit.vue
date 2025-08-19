@@ -48,6 +48,10 @@ export default {
     outputRequest: {
       type: Array
     },
+    approveType: {
+      type: Boolean,
+      default: false
+    },
     thirdMenuParam: {
       type: Object,
       default: function () {
@@ -132,8 +136,22 @@ export default {
     }
   },
   mounted () {
-
-
+    if (this.approveType) {
+      this.dataSource.forEach(el => {
+        if(el.type == 'addField') {
+          el.isView = true
+          if(el.children && el.children.length) {
+            el.children.forEach(item => {
+              if (item.type == 'upload'){
+                item.type = 'uploadView'
+              } else {
+                item.type = 'view'
+              }
+            })
+          }
+        }
+      })
+    }
     this.getOutputIoData()
   },
   methods: {

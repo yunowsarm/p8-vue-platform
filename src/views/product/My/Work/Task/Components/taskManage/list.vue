@@ -145,6 +145,7 @@
                             :stepsRow="item"
                             :nullity='nullity'
                             :btnType='btnType'
+                            :approveType="approveType"
                             :comp="comp"></button-group>
             </div>
           </div>
@@ -170,6 +171,7 @@
         <template v-if="drawerViewVisible === 'output'">
           <output-edit-view :taskId="getPlanInfo().TASKID"
                             :thirdMenuParam="thirdMenuParam"
+                            :approveType="approveType"
                             :outputRequest="outputRequestData"
                             @editSaveOK="editSaveOK"></output-edit-view>
         </template>
@@ -212,13 +214,17 @@ export default {
     },
     btnType: {
       type: Boolean
-    }
+    },
+    approveType: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     const steps = [
       { name: '任务描述', id: 'activityDesc', btns: [{ title: '查看', eventHandle: 'detailsSettings' }] },
       { name: '输入', id: 'putin', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'putin' }] },
-      { name: '输出', id: 'output', btns: [{ title: '编辑', eventHandle: 'modifyMenu', type: 'output' }] },
+      { name: '输出', id: 'output', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'output' }] },
       { name: '特别说明', id: 'varsion', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'varsion' }] }
     ]
     const header = [
@@ -261,6 +267,21 @@ export default {
     // if (this.getPlanInfo().STATUS === '6070' || this.getPlanInfo().STATUS === '6090' || this.getPlanInfo().pageType === 'view') {
     //   this.steps[2].btns = []
     // }
+    if (this.approveType) {
+      this.steps = [
+                { name: '任务描述', id: 'activityDesc', btns: [{ title: '查看', eventHandle: 'detailsSettings' }] },
+                { name: '输入', id: 'putin', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'putin' }] },
+                { name: '输出', id: 'output', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'output' }] },
+                { name: '特别说明', id: 'varsion', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'varsion' }] }
+              ]
+    } else {
+      this.steps = [
+                { name: '任务描述', id: 'activityDesc', btns: [{ title: '查看', eventHandle: 'detailsSettings' }] },
+                { name: '输入', id: 'putin', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'putin' }] },
+                { name: '输出', id: 'output', btns: [{ title: '编辑', eventHandle: 'modifyMenu', type: 'output' }] },
+                { name: '特别说明', id: 'varsion', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'varsion' }] }
+              ]
+    }
     this.initData()
   },
   created () {
