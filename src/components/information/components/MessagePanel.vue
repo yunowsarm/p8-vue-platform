@@ -451,7 +451,6 @@ export default {
       padding: 0.5rem 0.7rem;
       border-radius: 0.5rem;
       margin-top: 0.2rem;
-      font-size: 0.88rem;
     }
 
     @keyframes toLeft {
