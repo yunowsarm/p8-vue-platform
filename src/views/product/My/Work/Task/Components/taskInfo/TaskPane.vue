@@ -174,7 +174,7 @@ export default {
           headerAlign: 'center'
         },
         {
-          title: '付款比例',
+          title: '交付比例',
           dataIndex: 'proportion',
           sortable: false,
           width: '80px',
@@ -279,6 +279,8 @@ export default {
               icon: res.monitorpointIconArray
             })
           }
+          console.log(_this.mointorData, '4444444444444444');
+
         }
         _this.rendFormData(res)
       })
