@@ -1,4 +1,4 @@
-<template>
+  <template>
   <div style="height: 100%;background-color: #f3f5f885">
     <div v-if="demandFalg"
          style="padding: 1%;">
@@ -71,7 +71,8 @@
                          @click="cancelDetail(scope.row)"
                          type="text"></el-button>
             </el-tooltip>
-            <el-divider direction="vertical"></el-divider>
+            <el-divider v-if="demandFalg"
+                        direction="vertical"></el-divider>
             <el-tooltip placement="top"
                         content="查看详情">
               <el-button icon="p8 icon-chakan"
@@ -96,7 +97,8 @@
                        type="primary"
                        icon="p8 icon-cancel-task-type"
                        @click="cancelDetail(scope.row)">取消关联</el-button>
-            <el-divider direction="vertical"></el-divider>
+            <el-divider v-if="demandFalg"
+                        direction="vertical"></el-divider>
             <el-button type="primary"
                        icon="p8 icon-chakan"
                        @click="showDetail(scope.row)">查看详情</el-button>
