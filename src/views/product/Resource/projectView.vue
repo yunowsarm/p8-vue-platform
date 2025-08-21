@@ -1333,4 +1333,7 @@ export default {
 ::v-deep .vxe-table--body-wrapper {
   height: 480px !important;
 }
+::v-deep .common-table .panination {
+  position: relative !important;
+}
 </style>
