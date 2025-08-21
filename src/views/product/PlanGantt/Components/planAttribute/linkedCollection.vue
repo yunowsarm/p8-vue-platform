@@ -98,7 +98,7 @@ export default {
         },
         {
           title: '交付时间',
-          dataIndex: 'deliveryDate',
+          dataIndex: 'deliveryDateChar',
           sortable: false,
           width: '100px',
           align: 'left',
@@ -422,14 +422,16 @@ export default {
     },
     relevanceClick({ row }) {
       this.visibleEditDrawer = true
+      const ganttObject = GanttObject.getGanttObject(this.ganttName)
+      let task = ganttObject.getTask(this.taskId)
       if (this.title === '关联收款合同') {
         this.tableParam = {
-          projectId: this.wholeDescribeId,
+          projectId: this.wholeDescribeId ? this.wholeDescribeId : task.wholeDescribeId,
           type: '收款合同'
         }
       } else {
         this.tableParam = {
-          projectId: this.wholeDescribeId,
+          projectId: this.wholeDescribeId ? this.wholeDescribeId : task.wholeDescribeId,
           type: '付款合同'
         }
       }

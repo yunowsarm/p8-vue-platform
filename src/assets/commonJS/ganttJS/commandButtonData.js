@@ -3222,7 +3222,8 @@ function createTaskByDatas(ganttObject, datas, parentId, pos, taskName, msg, dpO
           createTime: moment().format('YYYY-MM-DD HH:mm:ss'),
           isLeaf: '0',
           ...extraTask,
-          unDescribes: item.unDescribes
+          unDescribes: item.unDescribes,
+          wholeDescribeId: vueThis.thirdMenuParam.WHOLEDESCRIBEID
         }
         switch (pos) {
           case 'Child':
