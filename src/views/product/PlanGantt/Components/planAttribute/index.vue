@@ -176,7 +176,7 @@
       </template>
       <template #linkedCollection>
         <linked-collection :task-id="taskId"
-                           :isChangeView="isChangeView"
+                           :isChangeView="isChangeGantt"
                            :wholeDescribeId="wholeDescribeId"
                            title="关联收款合同"
                            :gantt-name="ganttName"
@@ -184,7 +184,7 @@
       </template>
       <template #linkedPament>
         <linked-collection :task-id="taskId"
-                           :isChangeView="isChangeView"
+                           :isChangeView="isChangeGantt"
                            :wholeDescribeId="wholeDescribeId"
                            title="关联付款合同"
                            :gantt-name="ganttName"
@@ -282,8 +282,6 @@ export default {
   watch: {},
   created: function () {
     window.addEventListener('resize', this.updateWindowWidth)
-    console.log(this.type, 'this.typethis.typethis.typethis.typethis.typethis.typethis.type');
-
     if (this.type) {
       this.isChangeGantt = false
       this.isView = false
