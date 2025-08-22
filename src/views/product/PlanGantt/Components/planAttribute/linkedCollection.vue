@@ -641,7 +641,7 @@ export default {
                 }
                 this.$refs.xTable.queryList()
                 if (that.selectRecords.length > 0) {
-                  if (task.monitorPoints !== null) {
+                  if (task.monitorPoints) {
                     if (!task.monitorPoints.includes('1018')) {
                       task.monitorPoints += ',1018'
                     }

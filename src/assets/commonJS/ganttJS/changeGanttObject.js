@@ -277,7 +277,7 @@ export function getChangeGantt(ganttName, vueThis) {
               monitorPointDatas.some((point, index) => {
                 if (point.id === id) {
                   const icon = point.icon
-                  if (id === '1018') {
+                  if (id === '1018' && task.iconCommond) {
                     let count = null
                     if (task.iconCommond.indexOf(',') !== -1) {
                       count = task.iconCommond.split(',').length

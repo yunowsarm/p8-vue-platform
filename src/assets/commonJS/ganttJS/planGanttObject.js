@@ -992,7 +992,7 @@ export function getGanttColumns(ganttObject, vueThis) {
                 const controlTimeType = point.controlTimeType
                 if (id === '1023') {
                   html += `<span style='cursor: pointer'><i class='p8 ${icon}' style='cursor:pointer;color: ${point.color}' title='${point.title}'></i></span>`
-                } else if (id === '1018') {
+                } else if (id === '1018' && task.iconCommond) {
                   let count = null
                   if (task.iconCommond.indexOf(',') !== -1) {
                     count = task.iconCommond.split(',').length
