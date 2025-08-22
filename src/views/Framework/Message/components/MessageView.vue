@@ -69,6 +69,7 @@
                    :table-flex="320"
                    :key='renderKey'
                    type="view"
+                   :selectedApproval='messageData'
                    :is="componentLoader"
                    :task-id='messageData.entityId' />
       </div>

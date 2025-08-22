@@ -256,7 +256,7 @@ export default {
               businessKey: item.businessKey,
               processDefinitionKey: item.processKey,
               processName: item.processName,
-              pageAddress: data.value.url
+              pageAddress: 'Framework/Message/components/ApprovalWithdraw.vue'
             }
           ]
         }
