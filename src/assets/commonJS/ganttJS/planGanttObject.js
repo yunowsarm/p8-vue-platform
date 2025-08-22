@@ -992,6 +992,14 @@ export function getGanttColumns(ganttObject, vueThis) {
                 const controlTimeType = point.controlTimeType
                 if (id === '1023') {
                   html += `<span style='cursor: pointer'><i class='p8 ${icon}' style='cursor:pointer;color: ${point.color}' title='${point.title}'></i></span>`
+                } else if (id === '1018') {
+                  let count = null
+                  if (task.iconCommond.indexOf(',') !== -1) {
+                    count = task.iconCommond.split(',').length
+                  } else {
+                    count = 1
+                  }
+                  html += '<i class="p8 ' + icon + '" title="关联合同节点：' + task.iconCommond + '            关联总数：' + count + '" " style="color: ' + point.color + '"></i>'
                 } else {
                   if (controlTimeType && controlTimeType === '0') {
                     html +=
@@ -1008,28 +1016,6 @@ export function getGanttColumns(ganttObject, vueThis) {
                       '" title="' +
                       point.title +
                       '"></i></span>'
-                  } else {
-                    // if (id === '1018') {
-                    //   // html += `<i class='p8 ${icon}' style='color: ${point.color}'></i>`
-                    //   api['relevanceContract.selectByCpntractNodeTasks']({
-                    //     taskId: task.id
-                    //   })
-                    //     .then((res) => {
-                    //       if (res) {
-                    //         console.log('🚀 ~ .then ~ res:', res)
-                    //         return  html += `<el-tooltip effect="light" placement="right">
-                    //     <div slot="content">
-                    //       <p>1111111111111111111</p>
-                    //     </div>
-                    //    <i class='p8 ${icon}' style='color: ${point.color}'></i>
-                    //   </el-tooltip>`
-                    //         console.log('🚀 ~ .then ~ html:', html)
-                    //       }
-                    //     })
-                    //     .catch(() => {})
-                    // } else {
-                    html += '<i class="p8 ' + icon + '" title="' + point.title + '" " style="color: ' + point.color + '"></i>'
-                    // }
                   }
                 }
                 return true

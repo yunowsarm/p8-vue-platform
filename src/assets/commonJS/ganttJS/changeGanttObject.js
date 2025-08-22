@@ -15,7 +15,7 @@ import { calculateRemainingDays } from '@/utils/common'
  * @author fukai
  * @date 2020/5/22 12:00
  */
-export function getChangeGantt (ganttName, vueThis) {
+export function getChangeGantt(ganttName, vueThis) {
   // 获取gantt对象
   const ganttObject = GanttObject.getGanttObject(ganttName)
   ganttObject.config.order_branch = false
@@ -36,7 +36,7 @@ export function getChangeGantt (ganttName, vueThis) {
   // 查询监听及定义
   GanttObject.setSearchConfig(ganttObject, vueThis)
   // 表头查询值绑定
-  Gantt.searchColumnsChange = function searchColumnsChange (name, value, searchType, eleInstance) {
+  Gantt.searchColumnsChange = function searchColumnsChange(name, value, searchType, eleInstance) {
     const customComp = ['select', 'date', 'input']
     if (customComp.indexOf(searchType) < 0) {
       document.getElementById(name + searchType).setAttribute('value', value)
@@ -61,7 +61,7 @@ export function getChangeGantt (ganttName, vueThis) {
     }
     ganttObject.render()
   }
-  Gantt.taskProgressDetails = function taskProgressDetails (taskId) {
+  Gantt.taskProgressDetails = function taskProgressDetails(taskId) {
     vueThis.showTaskProgressDialog(taskId)
   }
   ganttObject.attachEvent('onBeforeTaskDrag', function (id, mode, e) {
@@ -72,16 +72,16 @@ export function getChangeGantt (ganttName, vueThis) {
   })
   ganttObject.attachEvent('onTaskClick', function (id, e) {
     if (vueThis.pageType === 'history') {
-        vueThis.showTaskProgressDialog(id)
+      vueThis.showTaskProgressDialog(id)
     }
-    const target = e.target || e.srcElement;
-    if (target && target.classList.contains("gantt_tree_icon")) {
+    const target = e.target || e.srcElement
+    if (target && target.classList.contains('gantt_tree_icon')) {
       const task = ganttObject.getTask(id)
       task.$open = !task.$open
       task.expand = !task.expand
       ganttObject.updateTask(task.id)
       vueThis.addfoldState(task)
-        return true;
+      return true
     }
   })
 
@@ -277,7 +277,17 @@ export function getChangeGantt (ganttName, vueThis) {
               monitorPointDatas.some((point, index) => {
                 if (point.id === id) {
                   const icon = point.icon
-                  html += '<i class="p8 ' + icon + '" title="' + point.title + '" style="color:' + point.color + '"></i>'
+                  if (id === '1018') {
+                    let count = null
+                    if (task.iconCommond.indexOf(',') !== -1) {
+                      count = task.iconCommond.split(',').length
+                    } else {
+                      count = 1
+                    }
+                    html += '<i class="p8 ' + icon + '" title="关联合同节点：' + task.iconCommond + '            关联总数：' + count + '" " style="color: ' + point.color + '"></i>'
+                  } else {
+                    html += '<i class="p8 ' + icon + '" title="' + point.title + '" style="color:' + point.color + '"></i>'
+                  }
                   return true
                 }
               })
@@ -366,7 +376,6 @@ export function getChangeGantt (ganttName, vueThis) {
             result = result + '<div class="text_overflow" style="display: inline-block;text-decoration:line-through;color:' + task.style + '" title="' + task.name + '" >' + task.name + '</div>'
           } else {
             result = result + `<div class="text_overflow" style="display: inline-block; title="${task.name}">${task.name}</div>`
-
           }
         } else {
           result = result + `<div class="text_overflow" style="display: inline-block; title="${task.name}">${task.name}</div>`
@@ -686,8 +695,8 @@ export function getChangeGantt (ganttName, vueThis) {
  * @param vueThis
  * @param ganttObject
  */
-function synchronizationColumns (vueThis, ganttObject) {
-  function checkEdit () {
+function synchronizationColumns(vueThis, ganttObject) {
+  function checkEdit() {
     if (vueThis.pageName === 'planMonitor') {
       return false
     } else {
@@ -754,7 +763,7 @@ function synchronizationColumns (vueThis, ganttObject) {
         if (item.isEnable == '1') {
           if (settingColumns.length > 0) {
             settingColumns.forEach((settingItem, initIndex) => {
-              if(settingItem.name == initColumn[0].name) {
+              if (settingItem.name == initColumn[0].name) {
                 initColumn[0].width = initColumn[0].min_width = settingItem.colWidth
                 tempColumns.push({ ...initColumn[0], indexNo: item.indexNo })
               }
@@ -798,8 +807,8 @@ function synchronizationColumns (vueThis, ganttObject) {
                   let list = vueThis.extraMap[item.selectCode]
                   if (list && list.length) {
                     let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
-                    list.forEach(el => {
-                      taskList.forEach(item => {
+                    list.forEach((el) => {
+                      taskList.forEach((item) => {
                         if (el.value == item) {
                           result.push(el.label)
                         }
@@ -849,7 +858,7 @@ function synchronizationColumns (vueThis, ganttObject) {
   }
 }
 
-function searchColumnsDataInit (vueThis, ganttObject) {
+function searchColumnsDataInit(vueThis, ganttObject) {
   return ganttObject.attachEvent('onDataRender', function () {
     const initColumns = getGanttColumns(ganttObject, vueThis)
     initColumns.forEach((initItem, initIndex) => {
@@ -909,7 +918,7 @@ function searchColumnsDataInit (vueThis, ganttObject) {
             // 当vueThis[datePickerKey] 为true 但 childEle 为false 说明当前列被拖拽了, 拖拽结束,表头部分又被重写, 此时 自定义组件整体元素丢失
           } else {
             vueThis[datePickerKey] = new Datepicker(`.${datePickerKey}`, {
-              range:true,
+              range: true,
               customClassName: 'gantt_custom_datepicker', // 自定义类名 (可根据此类名手动更改组件的样式)
               value: vueThis.searchForm[name] || '',
               onChange: function ({ value }) {
@@ -932,10 +941,10 @@ function searchColumnsDataInit (vueThis, ganttObject) {
             vueThis[inputKey] = new Inputor(`.${inputKey}`, {
               value: vueThis.searchForm[name] || '',
               placeholder: '请输入',
-              onChangeValue (value) {
+              onChangeValue(value) {
                 vueThis.searchForm[name] = value
               },
-              onChange (value) {
+              onChange(value) {
                 Gantt.searchColumnsChange(name, value, 'input')
               }
             })

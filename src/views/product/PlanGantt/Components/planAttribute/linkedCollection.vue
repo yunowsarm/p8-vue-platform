@@ -88,7 +88,74 @@ export default {
   data () {
     return {
       comp: this,
-      columnsDemand: [
+      columnsDemand: [],
+      columnsDemandOne: [
+        {
+          title: '序号',
+          type: 'index',
+          align: 'center',
+          width: '50px',
+          headerAlign: 'center'
+        },
+        {
+          title: '阶段名称',
+          dataIndex: 'stageName',
+          sortable: false,
+          minWidth: '200px',
+          align: 'center',
+          headerAlign: 'center'
+        },
+        {
+          title: '交付时间',
+          dataIndex: 'deliveryDateChar',
+          sortable: false,
+          width: '100px',
+          align: 'left',
+          headerAlign: 'center'
+        },
+        {
+          title: '收款比例',
+          dataIndex: 'proportion',
+          sortable: false,
+          width: '80px',
+          align: 'center',
+          headerAlign: 'center'
+        },
+        {
+          title: '收款金额',
+          dataIndex: 'amount',
+          sortable: false,
+          width: '80px',
+          align: 'center',
+          treeNode: true,
+          headerAlign: 'center'
+        },
+        {
+          title: '合同编号',
+          dataIndex: 'contractNo',
+          sortable: false,
+          width: '80px',
+          align: 'center',
+          headerAlign: 'center'
+        },
+        {
+          title: '合同名称',
+          dataIndex: 'contractName',
+          sortable: false,
+          width: '100px',
+          align: 'center',
+          headerAlign: 'center'
+        },
+        {
+          title: '操作',
+          fixed: 'right',
+          dataIndex: 'operation',
+          align: 'center',
+          scopedSlots: { customRender: 'custom' },
+          width: 80
+        }
+      ],
+      columnsDemandTwo: [
         {
           title: '序号',
           type: 'index',
@@ -215,7 +282,7 @@ export default {
           headerAlign: 'center'
         },
         {
-          title: '比例',
+          title: '收款比例',
           dataIndex: 'amountProgess',
           sortable: false,
           align: 'center',
@@ -320,7 +387,7 @@ export default {
           headerAlign: 'center'
         },
         {
-          title: '比例',
+          title: '付款比例',
           dataIndex: 'amountProgess',
           sortable: false,
           align: 'center',
@@ -398,12 +465,14 @@ export default {
   },
   mounted () {
     if (this.title === '关联收款合同') {
+      this.columnsDemand = this.columnsDemandOne
       this.columns = this.columnsOne
       this.tableParamDemand = {
         taskId: this.taskId,
         type: '收款合同'
       }
     } else {
+      this.columnsDemand = this.columnsDemandTwo
       this.columns = this.columnsTwo
       this.tableParamDemand = {
         taskId: this.taskId,
@@ -549,7 +618,7 @@ export default {
               if (this.ganttName === 'planGantt') {
                 this.$refs.xTable.queryList()
                 if (that.selectRecords.length > 0) {
-                  if (task.monitorPoints !== null) {
+                  if (task.monitorPoints) {
                     if (!task.monitorPoints.includes('1018')) {
                       if (task.monitorPoints.includes(',')) {
                         task.monitorPoints += ',1018'

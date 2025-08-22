@@ -92,6 +92,9 @@
           <span class="underline"
                 @click="frontToBackClick('后置任务查看', scope)">{{ scope.row.POSTTASKNUMBER }}</span>
         </template>
+        <template #MONITORPOINTARRAY="{ scope }">
+          <span v-html="getIcon(scope.row)"></span>
+        </template>
       </P8TableRender>
     </template>
     <template #drawer-panel>
@@ -244,6 +247,7 @@ import frontToBack from './frontToBack'
 import CommunicationMsg from '@/components/information/index.vue';
 import { mapGetters } from 'vuex'
 import { getSession, setSession } from '@/service/expands/session'
+import { getMonitorData, getBudgetData } from '@/components/workLayout/Components/projectProgress/Components/layoutData'
 export default {
   name: 'ButtonNavigationView',
   provide () {
@@ -287,7 +291,8 @@ export default {
       treeConfig: {
         'current-node-key': ''
       },
-      previousSelectedNode: null
+      previousSelectedNode: null,
+      monitorpointDataArray: []
     }
   },
   props: {
@@ -366,6 +371,10 @@ export default {
     ...mapGetters(['userId'])
   },
   created () {
+    const that = this
+    getMonitorData({ monitorId: [] }).then((res) => {
+      that.monitorpointDataArray = res
+    })
     this.westTreeParam.showView = 'showView003'
     this.westTreeParam.isChildren = 'false'
     this.westTreeParam.status = this.status
@@ -936,6 +945,34 @@ export default {
         this.executeState[el.id] = { icon: el.icon, color: el.color, meaning: el.meaning }
       })
     },
+    getIcon (row) {
+      let str = ''
+      let el = []
+      if (row.MONITORPOINTARRAY) {
+        if (row.MONITORPOINTARRAY.includes(',')) {
+          let monitorPoints = row.MONITORPOINTARRAY.split(',')
+          monitorPoints.forEach(item => {
+            el.push(this.monitorpointDataArray[item])
+          })
+        } else {
+          el.push(this.monitorpointDataArray[row.MONITORPOINTARRAY])
+        }
+        el.forEach(item => {
+          if (item.id === '1018' && row.ICONCOMMOND) {
+            let count = null
+            if (row.ICONCOMMOND.indexOf(',') !== -1) {
+              count = row.ICONCOMMOND.split(',').length
+            } else {
+              count = 1
+            }
+            str += `<i class='${item.icon}' title='关联合同节点：${row.ICONCOMMOND}            关联总数：${count}'  style='color: ${item.color};'></i>`
+          } else {
+            str += `<i class='${item.icon}' title='${item.name}' style='color: ${item.color};'></i>`
+          }
+        })
+      }
+      return str
+    }
   }
 }
 </script>

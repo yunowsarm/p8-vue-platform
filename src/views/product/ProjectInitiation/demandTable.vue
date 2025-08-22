@@ -41,7 +41,8 @@
             <el-button v-if="demandFalg"
                        type="text"
                        @click="cancelDetail(scope.row)">取消关联</el-button>
-            <el-divider direction="vertical"></el-divider>
+            <el-divider v-if="demandFalg"
+                        direction="vertical"></el-divider>
             <el-button type="text"
                        @click="showDetail(scope.row)">查看详情</el-button>
           </div>
