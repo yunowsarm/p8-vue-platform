@@ -15,6 +15,9 @@ export default {
     taskId: {
       type: String,
       default: null
+    },
+    type: {
+      type: Boolean
     }
   },
   data () {
@@ -272,7 +275,8 @@ export default {
       </template>
       <template #status>
         <span v-if="toolbarTextDisplay === '1'">{{ formData['statusDisplay'] }}</span>
-        <span v-html="getIcon(formData)"></span>
+        <span v-else
+              v-html="getIcon(formData)"></span>
       </template>
     </form-list>
     <common-drawer v-if="analysisVisible"
@@ -283,6 +287,7 @@ export default {
                    @close="onDrawerClose">
       <template #drawer>
         <taskApproveView :businessKey="taskId"
+                         :btnType="true"
                          pageType="view"></taskApproveView>
       </template>
     </common-drawer>

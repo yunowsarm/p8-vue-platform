@@ -14,7 +14,7 @@
                      @click="renderComp[button.eventHandle](button, stepsRow)">{{button.title}}</el-button>
           <el-button v-else-if="button.type === 'output'"
                      type="text"
-                     :disabled='comp.getPlanInfo().MANAGERSTATUS === "6406"'
+                     :disabled='comp.getPlanInfo().MANAGERSTATUS === "6406" || btnType'
                      @click="renderComp[button.eventHandle](button, stepsRow)">{{button.title}}</el-button>
           <el-button v-else
                      type="text"
@@ -82,6 +82,9 @@ export default {
       type: Object
     },
     viewDisable: {
+      type: Boolean
+    },
+    btnType: {
       type: Boolean
     }
   },

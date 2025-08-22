@@ -1,47 +1,75 @@
 <template>
   <div class="container">
     <div class="messageTitle">
-      <el-row type="flex" style="text-align: left; height: 22px; line-height: 22px">
-        <el-col :span="20" class="flex-row">
+      <el-row type="flex"
+              style="text-align: left; height: 22px; line-height: 22px">
+        <el-col :span="20"
+                class="flex-row">
           <span class="left-span">
-            <i class="p8 icon-message iconColor" style="color: #1890ff"></i>
+            <i class="p8 icon-message iconColor"
+               style="color: #1890ff"></i>
           </span>
-          <el-tooltip effect="light" :content="messageData.msgTitle" placement="top-start">
+          <el-tooltip effect="light"
+                      :content="messageData.msgTitle"
+                      placement="top-start">
             <span class="title-span">
               {{ messageData.msgTitle }}
             </span>
           </el-tooltip>
 
           <span>
-            <el-tag v-if="messageData.uploadFiles != null && messageData.uploadFiles.length > 0" size="mini" effect="plain" class="message-tag">
+            <el-tag v-if="messageData.uploadFiles != null && messageData.uploadFiles.length > 0"
+                    size="mini"
+                    effect="plain"
+                    class="message-tag">
               <i class="p8 icon-jianhao"></i>
               <span class="tag-num">{{ messageData.uploadFiles.length }}</span>
             </el-tag>
           </span>
         </el-col>
-        <el-col :span="4" style="text-align: right; padding-right: 5px">
+        <el-col :span="4"
+                style="text-align: right; padding-right: 5px">
           <span class="operate-span">
-            <el-link :underline="false" @click="toggleStatus(messageData.id)"><i class="p8 iconColor" :class="statusIcon" style="color: #1890ff"></i></el-link>
-            <el-link :underline="false" @click="deleteMsg(messageData.id)"><i class="p8 icon-delete iconColor" style="color: #1890ff"></i></el-link>
+            <el-link :underline="false"
+                     @click="toggleStatus(messageData.id)"><i class="p8 iconColor"
+                 :class="statusIcon"
+                 style="color: #1890ff"></i></el-link>
+            <el-link :underline="false"
+                     @click="deleteMsg(messageData.id)"><i class="p8 icon-delete iconColor"
+                 style="color: #1890ff"></i></el-link>
           </span>
         </el-col>
       </el-row>
-      <el-row type="flex" style="text-align: left; padding: 5px 0">
+      <el-row type="flex"
+              style="text-align: left; padding: 5px 0">
         <el-col :span="24">
           <span class="msg-user">{{ messageData.senderName }}</span>
           <span class="msg-time">{{ messageData.sendDate }}</span>
         </el-col>
       </el-row>
     </div>
-    <VuePerfectScrollbar class="messageContent" style="overflow: auto">
-      <div class="contentBody border-bottom" v-if="hasHtmlTag(messageData.msgContent)" v-html="messageData.msgContent"></div>
-      <div class="contentBody border-bottom" v-else>{{ messageData.msgContent }}</div>
-      <div v-if="messageData.uploadFiles != null && messageData.uploadFiles.length > 0" class="contentBody border-bottom">
+    <VuePerfectScrollbar class="messageContent"
+                         style="overflow: auto">
+      <div class="contentBody border-bottom"
+           v-if="hasHtmlTag(messageData.msgContent)"
+           v-html="messageData.msgContent"></div>
+      <div class="contentBody border-bottom"
+           v-else>{{ messageData.msgContent }}</div>
+      <div v-if="messageData.uploadFiles != null && messageData.uploadFiles.length > 0"
+           class="contentBody border-bottom">
         <div>{{ messageData.uploadFiles.length }} 个附件</div>
         {{ messageData.uploadFiles }}
       </div>
-      <div v-if="messageData.msgLink" class="contentBody" style='height: calc(100% - 70px)'>
-        <component v-if="messageData.msgLink" :businessKey="messageData.entityId" :rote-name="messageData.entityId" :table-flex="320" :key='renderKey' :is="componentLoader" :task-id='messageData.entityId' />
+      <div v-if="messageData.msgLink"
+           class="contentBody"
+           style='height: calc(100% - 70px)'>
+        <component v-if="messageData.msgLink"
+                   :businessKey="messageData.entityId"
+                   :rote-name="messageData.entityId"
+                   :table-flex="320"
+                   :key='renderKey'
+                   :is="componentLoader"
+                   :task-id='messageData.entityId' />
       </div>
     </VuePerfectScrollbar>
   </div>
@@ -67,14 +95,14 @@ export default {
   props: {
     messageData: {
       type: Object,
-      default: () => {}
+      default: () => { }
     }
   },
   computed: {
     // componentLoader () {
     //   return () => import('@/views/' + this.messageData.msgLink)
     // },
-    statusIcon() {
+    statusIcon () {
       let icon = ''
       if (this.messageData.msgStatus === '1501') {
         icon = 'icon-message'
@@ -87,7 +115,7 @@ export default {
   },
   watch: {
     messageData: {
-      handler(val) {
+      handler (val) {
         if (val.msgLink) {
           this.componentLoader = () => import('@/views/' + val.msgLink)
           this.renderKey = new Date().getTime()
@@ -97,17 +125,17 @@ export default {
       immediate: true
     }
   },
-  data() {
+  data () {
     return {
       renderKey: new Date().getTime(),
       componentLoader: null
     }
   },
   methods: {
-    toggleStatus(id) {
+    toggleStatus (id) {
       this.$emit('onToggleStatus', id, '1501')
     },
-    deleteMsg(id) {
+    deleteMsg (id) {
       this.$confirm('是否要删除该消息？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -116,9 +144,9 @@ export default {
         .then(() => {
           this.$emit('onDeleteMsg', id)
         })
-        .catch((e) => {})
+        .catch((e) => { })
     },
-    hasHtmlTag(str) {
+    hasHtmlTag (str) {
       return /<[^>]*>/i.test(str)
     }
   }
@@ -205,7 +233,7 @@ $paddingLeft: 10px;
 
     .contentBody {
       padding: 15px 25px 15px 35px;
-      ::v-deep .el-row .el-col{
+      ::v-deep .el-row .el-col {
         height: auto;
       }
     }

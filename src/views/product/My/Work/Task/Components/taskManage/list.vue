@@ -144,6 +144,7 @@
               <button-group :buttonGroup="item.btns"
                             :stepsRow="item"
                             :nullity='nullity'
+                            :btnType='btnType'
                             :comp="comp"></button-group>
             </div>
           </div>
@@ -208,6 +209,9 @@ export default {
       default: function () {
         return {}
       }
+    },
+    btnType: {
+      type: Boolean
     }
   },
   data () {

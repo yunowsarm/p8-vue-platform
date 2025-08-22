@@ -13,7 +13,7 @@
       <div class="task-operating-con">
         <div class="task-manage-table">
           <!-- 管理要素 -->
-          <task-manage-view></task-manage-view>
+          <task-manage-view :btnType="btnType"></task-manage-view>
         </div>
         <div class="task-tabs-con">
           <!-- 进度反馈-未完成原因 -->
@@ -56,6 +56,9 @@ export default {
       default () {
         return {}
       }
+    },
+    btnType: {
+      type: Boolean
     }
   },
   data () {
