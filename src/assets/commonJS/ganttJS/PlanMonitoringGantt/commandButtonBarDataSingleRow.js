@@ -20,7 +20,7 @@ const CommandButtonBarDataSingleRow = [
         ]
       },
       {
-        groupName: '查询',
+        groupName: '查询定位',
         buttonConfigs: [
           {
             buttonId: 'search-list',

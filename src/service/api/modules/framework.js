@@ -200,7 +200,7 @@ export const system = {
       mockPath: '/product/planWarning/synchronousWarning',
       params: {},
       desc: '计划预警 强制同步'
-    },
+    }
   ],
   schedulerTask: [
     {
@@ -365,6 +365,38 @@ export const system = {
       mockPath: '/framework/projectTeamSetting/repeatedCheckClassify',
       params: {},
       desc: '系统设置>功能设置>资源管理>项目团队设置>项目类型重复校验'
+    },
+    {
+      name: 'removeBusinessFormById',
+      method: 'POST',
+      path: '/framework/desForm/removeBusinessFormById',
+      mockPath: '/framework/desForm/removeBusinessFormById',
+      params: {},
+      desc: '系统设置>变更版本删除'
+    },
+    {
+      name: 'getBusinessDesVersionPage',
+      method: 'POST',
+      path: '/framework/desForm/getBusinessDesVersionPage',
+      mockPath: '/framework/desForm/getBusinessDesVersionPage',
+      params: {},
+      desc: '系统设置>变更版本列表'
+    },
+    {
+      name: 'getBusinessDesVersionList',
+      method: 'POST',
+      path: '/framework/desForm/getBusinessDesVersionList',
+      mockPath: '/framework/desForm/getBusinessDesVersionList',
+      params: {},
+      desc: '系统设置>变更版本历史'
+    },
+    {
+      name: 'getHistoryFormData',
+      method: 'POST',
+      path: '/framework/cgForm/getHistoryFormData',
+      mockPath: '/framework/cgForm/getHistoryFormData',
+      params: {},
+      desc: '系统设置>变更版本历史'
     }
   ],
   userManager: [
@@ -469,6 +501,14 @@ export const system = {
       mockPath: '/framework/system/Role/getRoles',
       params: {},
       desc: '普通角色选择'
+    },
+    {
+      name: 'getAllRolesByUser',
+      method: 'POST',
+      path: '/framework/system/User/getAllRoles',
+      mockPath: '/framework/system/User/getAllRoles',
+      params: {},
+      desc: '获取全部角色'
     },
     {
       name: 'getAllRoles',
@@ -1047,7 +1087,7 @@ export const system = {
       path: '/tag/bp-tag/listData',
       mockPath: '/tag/bp-tag/listData',
       desc: '获取流程审批列表的标签'
-    },
+    }
   ],
   commonInterface: [
     {
@@ -1073,8 +1113,7 @@ export const system = {
       method: 'POST',
       path: '/exportWord/viewExportWord',
       mockPath: '/exportWord/viewExportWord',
-      params: {
-      },
+      params: {},
       desc: '富文本编辑器导出'
     },
     {
@@ -1985,6 +2024,34 @@ export const formGeneratorApi = {
       path: '/framework/selection/selectionCodeUniqueCheck',
       mockPath: '/framework/selection/selectionCodeUniqueCheck',
       desc: '选项code校验'
+    },
+    {
+      name: 'getDesVersionList',
+      method: 'POST',
+      path: '/framework/desForm/getDesVersionList',
+      mockPath: '/framework/desForm/getDesVersionList',
+      desc: '表单版本列表'
+    },
+    {
+      name: 'setDesFormByVersion',
+      method: 'POST',
+      path: '/framework/desForm/setDesFormByVersion',
+      mockPath: '/framework/desForm/setDesFormByVersion',
+      desc: '设置版本'
+    },
+    {
+      name: 'removeDesFormById',
+      method: 'POST',
+      path: '/framework/desForm/removeDesFormById',
+      mockPath: '/framework/desForm/removeDesFormById',
+      desc: '删除版本'
+    },
+    {
+      name: 'getFormVersionByCode',
+      method: 'POST',
+      path: '/framework/desForm/getFormVersionByCode',
+      mockPath: '/framework/desForm/getFormVersionByCode',
+      desc: '获取版本'
     }
   ]
 }
