@@ -182,7 +182,7 @@ export default {
           headerAlign: 'center'
         },
         {
-          title: '付款金额',
+          title: '金额',
           dataIndex: 'amount',
           sortable: false,
           width: '120px',
