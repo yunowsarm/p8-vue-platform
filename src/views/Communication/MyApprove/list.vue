@@ -1,42 +1,40 @@
 <template>
-  <nlcr-Layout :header-visible="false"
-               :normal-layout="layoutConfig"
-               class="customNlcr"
-               :platform-visible="true"
-               :left-use-perfect-scrollbar="false">
+  <nlcr-Layout :header-visible="false" :normal-layout="layoutConfig" class="customNlcr" :platform-visible="true" :left-use-perfect-scrollbar="false">
     <template #left>
-      <div class="treeContain"
-           style="height: 100%">
-        <approve-catalog :msg-count="msgCatalogCount"
-                         :key="dateTime"
-                         :un-read-total="unReadTotal"
-                         :search-params="searchParams"
-                         :select-node-id="selectNodeId"
-                         @selectNode="queryMsgList"></approve-catalog>
+      <div class="treeContain" style="height: 100%">
+        <approve-catalog
+          :msg-count="msgCatalogCount"
+          :key="dateTime"
+          :un-read-total="unReadTotal"
+          :search-params="searchParams"
+          :select-node-id="selectNodeId"
+          @selectNode="queryMsgList"
+        ></approve-catalog>
       </div>
     </template>
     <template #center>
-      <approve-list :search-params="searchParams"
-                    @select="select"
-                    @refreshList="refreshList"
-                    :key="renderTime"
-                    :distinguish-ids="distinguishIds"
-                    :charge-ids="chargeIds"
-                    ref="approveList"></approve-list>
+      <approve-list
+        :search-params="searchParams"
+        @select="select"
+        @refreshList="refreshList"
+        :key="renderTime"
+        :distinguish-ids="distinguishIds"
+        :charge-ids="chargeIds"
+        ref="approveList"
+      ></approve-list>
     </template>
     <template #right>
       <!-- 待处理 -->
-      <approve-view v-if="searchParams.msgCatalog === 'APPROVE_TYPE_02_01' && pendingSelected"
-                    :selected-approval="pendingSelected"
-                    :search-params="searchParams"
-                    :data-source="approveDataSource"
-                    @approved="approved" />
+      <approve-view
+        v-if="searchParams.msgCatalog === 'APPROVE_TYPE_02_01' && pendingSelected"
+        :selected-approval="pendingSelected"
+        :search-params="searchParams"
+        :data-source="approveDataSource"
+        @approved="approved"
+      />
       <!-- 已处理 || 审批中 || 已审批 -->
-      <history v-else-if="distinguishIds.includes(searchParams.msgCatalog) && historySelected"
-               :selected-approval="historySelected"
-               :search-params="searchParams" />
-      <span v-else
-            class="span-bg"></span>
+      <history v-else-if="distinguishIds.includes(searchParams.msgCatalog) && historySelected" :selected-approval="historySelected" :search-params="searchParams" />
+      <span v-else class="span-bg"></span>
     </template>
   </nlcr-Layout>
 </template>
@@ -58,7 +56,7 @@ export default {
     'approve-view': ApproveView,
     History
   },
-  data () {
+  data() {
     return {
       chargeIds: ['APPROVE_TYPE_01_02', 'APPROVE_TYPE_02_02'],
       distinguishIds: ['APPROVE_TYPE_01_01', 'APPROVE_TYPE_01_02', 'APPROVE_TYPE_02_02'],
@@ -103,25 +101,25 @@ export default {
       selectNodeId: 'APPROVE_TYPE01' // 我的审批-审批树：默认选中'审批中'，id为'19'
     }
   },
-  mounted () {
+  mounted() {
     this.userCatalogCount()
     // this.userUnReadMessageCount()
   },
   methods: {
-    refreshList () {
+    refreshList() {
       this.dateTime = new Date().getTime()
       this.userCatalogCount()
     },
-    approved (taskId) {
+    approved(taskId) {
       this.approvedTaskId = taskId
       this.$refs.approveList.refreshList()
       this.userCatalogCount()
     },
-    selectMessage (messageData) {
+    selectMessage(messageData) {
       this.currentMessage = null
       this.currentMessage = messageData
     },
-    select (r) {
+    select(r) {
       if (this.distinguishIds.includes(this.searchParams.msgCatalog)) {
         this.historySelected = r
       } else {
@@ -154,7 +152,7 @@ export default {
         this.pendingSelected = r
       }
     },
-    queryMsgList (nodeData) {
+    queryMsgList(nodeData) {
       this.searchParams.msgCatalog = nodeData.id
       this.searchParams.assigneeUserId = ''
       this.searchParams.startUserId = ''
@@ -165,7 +163,7 @@ export default {
         this.searchParams.assigneeUserId = this.$store.state.user.userInfo.id
       }
     },
-    userCatalogCount (queryParam) {
+    userCatalogCount(queryParam) {
       // const params = queryParam != null ? queryParam : this.searchParams
       this.$api[this.userCatalogCountApi]().then((res) => {
         this.msgCatalogCount = res
@@ -178,7 +176,7 @@ export default {
     //     }
     //   })
     // },
-    toggleStatus (msgId) {
+    toggleStatus(msgId) {
       const msgIdArray = [msgId]
       const _this = this
       this.$api[this.toggleMsgStatusApi]({ idList: msgIdArray }).then((res) => {
@@ -220,6 +218,17 @@ export default {
 }
 .drawer_approval {
   box-shadow: 0px 0px 4px #a3a3a3;
+}
+.normal-layout {
+  box-shadow: 0px 0px 4px #a3a3a3;
+  margin: 10px;
+  height: calc(100% - 20px);
+  ::v-deep .normal-main .splitBtn > i {
+    z-index: 1;
+  }
+  ::v-deep .normal-main .normal-center {
+    padding: 0;
+  }
 }
 .customNlcr {
   height: calc(100% - 66px);

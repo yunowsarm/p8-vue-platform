@@ -127,6 +127,9 @@ export default {
     approveType: {
       type: Boolean,
       default: false
+    },
+    btnType: {
+      type: Boolean
     }
   },
   data () {
@@ -190,6 +193,9 @@ export default {
           this.approve = false
         }
       }
+    }
+    if (this.btnType) {
+      this.progessType = 'progessTable'
     }
     let taskTabs = []
     let tabsActiveName = ''

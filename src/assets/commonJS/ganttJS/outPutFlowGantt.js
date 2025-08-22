@@ -1,13 +1,14 @@
 import { Gantt } from 'p8-dhtmlx-gantt'
 import { GanttObject } from './ganttObject'
 import api from '@/plugins/api'
+import { log } from 'vxe-pc-ui'
 
 /**
  * @Description 产出流程gantt树对象定义
  * @author fukai
  * @date 2020/5/22 12:00
  */
-export function outPutFlowGantt (ganttName, vueThis) {
+export function outPutFlowGantt(ganttName, vueThis) {
   // 获取gantt对象
   let ganttObject = GanttObject.getGanttObject(ganttName)
   // 定义左侧树列表宽度
@@ -55,7 +56,7 @@ export function outPutFlowGantt (ganttName, vueThis) {
       template: function (task) {
         let str = ''
         if (task.type) {
-          vueThis.logoList.forEach(el => {
+          vueThis.logoList.forEach((el) => {
             if (el.id == task.type) {
               str += '<i class="' + el.icon + '" title="' + el.meaning + '"></i>'
             }
@@ -110,7 +111,7 @@ export function outPutFlowGantt (ganttName, vueThis) {
     }
   ]
   // 事件绑定
-  Gantt.taskOperations = function taskOperations (event, taskId, parentId) {
+  Gantt.taskOperations = function taskOperations(event, taskId, parentId) {
     let x = event.clientX + document.body.scrollLeft
     let y = event.clientY + document.body.scrollTop
     vueThis.menuVisible = true
@@ -129,19 +130,16 @@ export function outPutFlowGantt (ganttName, vueThis) {
   })
   ganttObject.attachEvent('onTaskMultiSelect', function (id, state, e) {
     if (state) {
-      let index = vueThis.selectedTasks.findIndex((i) => {
-        return i.id === id
+      setTimeout(() => {
+        if (ganttObject.getTask(id) !== undefined) {
+          vueThis.selectedTasks.push(ganttObject.getTask(id))
+        }
       })
-      // setTimeout(() => {
-      if (index == -1) {
-        vueThis.selectedTasks.push(ganttObject.getTask(id))
-      }
-      // })
     } else {
       const index = vueThis.selectedTasks.findIndex((i) => {
         return i.id === id
       })
-      if (index !== -1) {
+      if (index !== undefined) {
         vueThis.selectedTasks.splice(index, 1)
       }
     }
@@ -157,52 +155,57 @@ export function outPutFlowGantt (ganttName, vueThis) {
   GanttObject.unMoveTask(vueThis, ganttObject)
   // 定义数据操作
   let dp = ganttObject.createDataProcessor({
-    task: {// 任务操作
+    task: {
+      // 任务操作
       create: function (data) {
         return new ganttObject.Promise(function (resolve, reject) {
           return resolve({ action: 'inserted' })
         })
       },
       delete: function (id) {
-        let keys = []
-        keys.push(id)
-        api['OutputFlow.removeNodes']({ keys: keys }).then(function (res) {
-          if (res && res === 'true') {
-            GanttObject.showMessage(vueThis, '删除成功！', 'success')
-            return { 'action': 'ok' }
-          }
-        }).catch(() => {
-          GanttObject.showMessage(vueThis, '删除失败！', 'error')
-          return { 'action': 'error' }
-        })
+        // let keys = []
+        // keys.push(id)
+        api['OutputFlow.removeNodes']({ keys: vueThis.selectList })
+          .then(function (res) {
+            if (res && res === 'true') {
+              GanttObject.showMessage(vueThis, '删除成功！', 'success')
+              return { action: 'ok' }
+            }
+          })
+          .catch(() => {
+            GanttObject.showMessage(vueThis, '删除失败！', 'error')
+            return { action: 'error' }
+          })
       },
       update: function (data, id) {
         data.indexNo = ganttObject.getGlobalTaskIndex(id)
-        api['OutputFlow.updateActivityInfos']({ activityTaskRequest: data }).then(res => {
-          // if (res && res === 'true') {
-          //   // GanttObject.showMessage(vueThis, data.name + '-更新成功！', 'success')
-          //   return { 'action': 'ok' }
-          // } else {
-          //   ganttObject.undo()
-          //   // GanttObject.showMessage(vueThis, '更新失败！', 'error')
-          //   return { 'action': 'error' }
-          // }
-          vueThis.$emit('refrshDes')
-        }).catch(() => {
-          ganttObject.undo()
-          GanttObject.showMessage(vueThis, '更新失败！', 'error')
-          return { 'action': 'error' }
-        })
+        api['OutputFlow.updateActivityInfos']({ activityTaskRequest: data })
+          .then((res) => {
+            // if (res && res === 'true') {
+            //   // GanttObject.showMessage(vueThis, data.name + '-更新成功！', 'success')
+            //   return { 'action': 'ok' }
+            // } else {
+            //   ganttObject.undo()
+            //   // GanttObject.showMessage(vueThis, '更新失败！', 'error')
+            //   return { 'action': 'error' }
+            // }
+            vueThis.$emit('refrshDes')
+          })
+          .catch(() => {
+            ganttObject.undo()
+            GanttObject.showMessage(vueThis, '更新失败！', 'error')
+            return { action: 'error' }
+          })
       }
     },
-    link: {// 前后置关系操作
+    link: {
+      // 前后置关系操作
       create: function (data) {
         return new ganttObject.Promise(function (resolve, reject) {
           return resolve({ action: 'inserted' })
         })
       },
-      update: function (data, id) {
-      },
+      update: function (data, id) {},
       delete: function (id) {
         return new ganttObject.Promise(function (resolve, reject) {
           return resolve({ action: 'deleted' })

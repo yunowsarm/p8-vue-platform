@@ -1,167 +1,169 @@
 <template>
-  <el-form id="ganttSearch"
-           ref="searchForm"
-           :inline="true"
-           :model="searchForm"
-           class="demo-form-inline"
-           size="mini"
-           label-width="75px"
-           label-position="right">
-    <el-form-item label="大纲层级"
-                  prop="deep">
-      <el-select v-model="searchForm.wbs"
-                 class="field"
-                 clearable
-                 style="width: 100%">
-        <el-option v-for="(item, index) in vueThis.deep"
-                   :key="index + 1"
-                   :label="index + 1 + '级'"
-                   :value="index + 1"> </el-option>
-      </el-select>
-    </el-form-item>
+  <div style="height: 100px;">
+    <el-form id="ganttSearch"
+             ref="searchForm"
+             :inline="true"
+             :model="searchForm"
+             class="demo-form-inline"
+             size="mini"
+             label-width="75px"
+             label-position="right">
+      <el-form-item label="大纲层级"
+                    prop="deep">
+        <el-select v-model="searchForm.wbs"
+                   class="field"
+                   clearable
+                   style="width: 100%">
+          <el-option v-for="(item, index) in vueThis.deep"
+                     :key="index + 1"
+                     :label="index + 1 + '级'"
+                     :value="index + 1"> </el-option>
+        </el-select>
+      </el-form-item>
 
-    <el-form-item label="任务名称"
-                  prop="name">
-      <el-input v-model="searchForm.name"
-                placeholder="请输入"
-                class="field"
-                clearable></el-input>
-    </el-form-item>
+      <el-form-item label="任务名称"
+                    prop="name">
+        <el-input v-model="searchForm.name"
+                  placeholder="请输入"
+                  class="field"
+                  clearable></el-input>
+      </el-form-item>
 
-    <el-form-item label="角色"
-                  v-if="isInput"
-                  prop="roleName">
-      <el-select v-model="searchForm.roleIds"
-                 filterable
-                 collapse-tags
-                 class="field"
-                 clearable
-                 style="width: 100%">
-        <el-option v-for="item in roleOptions"
-                   :key="item.value"
-                   :label="item.label"
-                   :value="item.value"> </el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="角色"
-                  v-else
-                  prop="name">
-      <el-input v-model="searchForm.roleIds"
-                placeholder="请输入"
-                class="field"></el-input>
-    </el-form-item>
+      <el-form-item label="角色"
+                    v-if="isInput"
+                    prop="roleName">
+        <el-select v-model="searchForm.roleIds"
+                   filterable
+                   collapse-tags
+                   class="field"
+                   clearable
+                   style="width: 100%">
+          <el-option v-for="item in roleOptions"
+                     :key="item.value"
+                     :label="item.label"
+                     :value="item.value"> </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="角色"
+                    v-else
+                    prop="name">
+        <el-input v-model="searchForm.roleIds"
+                  placeholder="请输入"
+                  class="field"></el-input>
+      </el-form-item>
 
-    <el-form-item label="责任人"
-                  v-if="isInput"
-                  prop="ownerName">
-      <el-select v-model="searchForm.ownerIds"
-                 filterable
-                 collapse-tags
-                 class="field"
-                 clearable
-                 style="width: 100%">
-        <el-option v-for="item in userOptions"
-                   :key="item.value"
-                   :label="item.label"
-                   :value="item.value"> </el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="责任人"
-                  v-else
-                  prop="name">
-      <el-input v-model="searchForm.ownerIds"
-                placeholder="请输入"
-                class="field"
-                clearable></el-input>
-    </el-form-item>
+      <el-form-item label="责任人"
+                    v-if="isInput"
+                    prop="ownerName">
+        <el-select v-model="searchForm.ownerIds"
+                   filterable
+                   collapse-tags
+                   class="field"
+                   clearable
+                   style="width: 100%">
+          <el-option v-for="item in userOptions"
+                     :key="item.value"
+                     :label="item.label"
+                     :value="item.value"> </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="责任人"
+                    v-else
+                    prop="name">
+        <el-input v-model="searchForm.ownerIds"
+                  placeholder="请输入"
+                  class="field"
+                  clearable></el-input>
+      </el-form-item>
 
-    <el-form-item label="部门"
-                  v-if="isInput"
-                  prop="deptName">
-      <el-select v-model="searchForm.deptIds"
-                 filterable
-                 collapse-tags
-                 class="field"
-                 clearable
-                 style="width: 100%">
-        <el-option v-for="item in deptOptions"
-                   :key="item.value"
-                   :label="item.label"
-                   :value="item.value"> </el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="部门"
-                  v-else
-                  prop="name">
-      <el-input v-model="searchForm.deptIds"
-                placeholder="请输入"
-                class="field"
-                clearable></el-input>
-    </el-form-item>
+      <el-form-item label="部门"
+                    v-if="isInput"
+                    prop="deptName">
+        <el-select v-model="searchForm.deptIds"
+                   filterable
+                   collapse-tags
+                   class="field"
+                   clearable
+                   style="width: 100%">
+          <el-option v-for="item in deptOptions"
+                     :key="item.value"
+                     :label="item.label"
+                     :value="item.value"> </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="部门"
+                    v-else
+                    prop="name">
+        <el-input v-model="searchForm.deptIds"
+                  placeholder="请输入"
+                  class="field"
+                  clearable></el-input>
+      </el-form-item>
 
-    <el-form-item label="任务类型"
-                  prop="planType">
-      <el-select v-model="searchForm.planTypes"
-                 collapse-tags
-                 class="field"
-                 clearable
-                 style="width: 100%">
-        <el-option v-for="item in vueThis.taskClassifyDatas"
-                   :key="item.id"
-                   :label="item.title"
-                   :value="item.id"> </el-option>
-      </el-select>
-    </el-form-item>
+      <el-form-item label="任务类型"
+                    prop="planType">
+        <el-select v-model="searchForm.planTypes"
+                   collapse-tags
+                   class="field"
+                   clearable
+                   style="width: 100%">
+          <el-option v-for="item in vueThis.taskClassifyDatas"
+                     :key="item.id"
+                     :label="item.title"
+                     :value="item.id"> </el-option>
+        </el-select>
+      </el-form-item>
 
-    <el-form-item label="任务状态"
-                  prop="managerStatus">
-      <el-select v-model="searchForm.managerStatus"
-                 collapse-tags
-                 class="field"
-                 clearable
-                 style="width: 100%">
-        <el-option v-for="item in vueThis.managerStatusMap"
-                   :key="item.cminorcode"
-                   :label="item.cmeaning"
-                   :value="item.cminorcode"> </el-option>
-      </el-select>
-    </el-form-item>
+      <el-form-item label="任务状态"
+                    prop="managerStatus">
+        <el-select v-model="searchForm.managerStatus"
+                   collapse-tags
+                   class="field"
+                   clearable
+                   style="width: 100%">
+          <el-option v-for="item in vueThis.managerStatusMap"
+                     :key="item.cminorcode"
+                     :label="item.cmeaning"
+                     :value="item.cminorcode"> </el-option>
+        </el-select>
+      </el-form-item>
 
-    <el-form-item label="标识"
-                  prop="monitors">
-      <el-select v-model="searchForm.monitorPoints"
-                 collapse-tags
-                 class="field"
-                 clearable
-                 style="width: 100%">
-        <el-option v-for="item in vueThis.monitorPointDatas"
-                   :key="item.id"
-                   :label="item.title"
-                   :value="item.id"> </el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="完成时间"
-                  prop="startEndDate"
-                  class="block"
-                  clearable>
-      <el-date-picker class="field"
-                      v-model="searchForm.startEndDate"
-                      :editable="false"
-                      type="daterange"
-                      unlink-panels
-                      range-separator="至"
-                      start-placeholder="开始日期"
-                      end-placeholder="结束日期"> </el-date-picker>
-    </el-form-item>
+      <el-form-item label="标识"
+                    prop="monitors">
+        <el-select v-model="searchForm.monitorPoints"
+                   collapse-tags
+                   class="field"
+                   clearable
+                   style="width: 100%">
+          <el-option v-for="item in vueThis.monitorPointDatas"
+                     :key="item.id"
+                     :label="item.title"
+                     :value="item.id"> </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="完成时间"
+                    prop="startEndDate"
+                    class="block"
+                    clearable>
+        <el-date-picker class="field"
+                        v-model="searchForm.startEndDate"
+                        :editable="false"
+                        type="daterange"
+                        unlink-panels
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"> </el-date-picker>
+      </el-form-item>
 
-    <el-form-item>
-      <el-button type="primary"
-                 @click="onSearch">查询</el-button>
-      <el-button @click="resetForm('searchForm')">重置</el-button>
-      <el-button v-if="!searchType"
-                 @click="openLocation()">定位</el-button>
-    </el-form-item>
-  </el-form>
+      <el-form-item>
+        <el-button type="primary"
+                   @click="onSearch">查询</el-button>
+        <el-button @click="resetForm('searchForm')">重置</el-button>
+        <!-- <el-button v-if="!searchType"
+                 @click="openLocation()">定位</el-button> -->
+      </el-form-item>
+    </el-form>
+  </div>
 </template>
 
   <script>
@@ -300,13 +302,20 @@ export default {
   }
 }
 #ganttSearch {
-  padding: 2px 10px;
-  padding-bottom: 60px;
+  // padding: 2px 10px;
+  // padding-bottom: 60px;
+  margin-left: 10px;
   .el-form-item.el-form-item--mini {
     margin-bottom: 0;
   }
   .el-form-item {
-    margin-top: 16px;
+    margin-top: 10px;
   }
+}
+.el-form-item.el-form-item--mini + .el-form-item {
+  margin-top: 10px !important;
+}
+.demo-form-inline {
+  width: 1500px;
 }
 </style>

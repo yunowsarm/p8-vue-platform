@@ -21,7 +21,7 @@
                                 @change-command-button="changeCommandButton"></command-button-bar>
           </div>
           <div class="bottom"
-               :class="expandBottom">
+               :style="{height: expandBottom}">
             <plan-gantt ref="planGantt"
                         :plan-info-id="planInfoId"
                         :whole-describe-id="wholeDescribeId"
@@ -232,6 +232,7 @@ export default {
       status: '',
       advance: true,
       commandButtonBarHeight: this.ganttButtonMode === 'tabs' ? (this.advance ? '145px' : '40px') : this.ganttButtonMode === 'double' ? '72px' : '58px',
+      expandBottom: 'calc(100% - 138px)',
       isDisplay: true
     }
   },
@@ -256,6 +257,39 @@ export default {
           this.commandButtonBarHeight = '58px'
         }
       },
+      immediate: true
+    },
+    userSettingAll: {
+      handler (val) {
+        if (this.ganttButtonMode == 'tabs') {
+          if (val.PlanButton[0].value.isGroup === '1') {
+            this.commandButtonBarHeight = this.advance ? '145px' : '40px'
+            this.expandBottom = 'calc(100% - 148px)'
+          } else {
+            this.commandButtonBarHeight = '130px'
+            this.expandBottom = 'calc(100% - 130px)'
+          }
+        }
+        if (this.ganttButtonMode == 'double') {
+          if (val.PlanButton[0].value.isGroup === '1') {
+            this.commandButtonBarHeight = '72px'
+            this.expandBottom = 'calc(100% - 72px)'
+          } else {
+            this.commandButtonBarHeight = '54px'
+            this.expandBottom = 'calc(100% - 55px)'
+          }
+        }
+        if (this.ganttButtonMode == 'single') {
+          if (val.PlanButton[0].value.isGroup === '1') {
+            this.commandButtonBarHeight = '58px'
+            this.expandBottom = 'calc(100% - 55px)'
+          } else {
+            this.commandButtonBarHeight = '40px'
+            this.expandBottom = 'calc(100% - 40px)'
+          }
+        }
+      },
+      deep: true,
       immediate: true
     }
   },
@@ -339,7 +373,7 @@ export default {
       }
       return ''
     },
-    ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
+    ...mapGetters(['ganttButtonMode', 'ganttRightButtons', 'userSettingAll'])
   },
   components: {
     'el-drawer': Drawer,
@@ -378,7 +412,7 @@ export default {
       this.planEndDateArray = this.thirdMenuParam.planEndDateArray || []
     }
     let stateInfo = getSession('stateInfo')
-    if (stateInfo.taskInfo.thirdMenuParam.planInfoId) {
+    if (stateInfo && stateInfo.taskInfo.thirdMenuParam.planInfoId) {
       this.planInfoId = stateInfo.taskInfo.thirdMenuParam.planInfoId
       this.thirdMenuParam.planInfoId = stateInfo.taskInfo.thirdMenuParam.planInfoId
     }

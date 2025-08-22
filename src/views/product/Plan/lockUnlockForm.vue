@@ -1,39 +1,76 @@
 <template>
-  <el-form ref="form" :model="formData" label-width="100px" class="formList" :inline-message="inlineMessage" style="height: 100%">
+  <el-form ref="form"
+           :model="formData"
+           label-width="100px"
+           class="formList"
+           :inline-message="inlineMessage"
+           style="height: 100%">
     <el-row :class="{ existBtn: true }">
       <template v-for="(item, index) in dataSource">
-        <el-col :span="12" :key="index">
-          <el-form-item v-if="item.labelText === '项目状态'" :label="item.labelText" :prop="item.fieldName">
-            <el-radio-group :disabled="taskEditCheck" v-model="formData[item.fieldName]">
-              <el-radio-button v-for="opt in zzOptions" :key="opt.value" :label="opt.value" :value="opt.value">{{ opt.label }}</el-radio-button>
+        <el-col :span="12"
+                :key="index">
+          <el-form-item v-if="item.labelText === '项目状态'"
+                        :label="item.labelText"
+                        :prop="item.fieldName">
+            <el-radio-group :disabled="taskEditCheck"
+                            v-model="formData[item.fieldName]">
+              <el-radio-button v-for="opt in zzOptions"
+                               :key="opt.value"
+                               :label="opt.value"
+                               :value="opt.value">{{ opt.label }}</el-radio-button>
             </el-radio-group>
           </el-form-item>
-          <el-form-item v-if="item.labelText === '计划编辑'" :label="item.labelText" :prop="item.fieldName">
-            <el-radio-group :disabled="taskEditCheck" v-model="formData[item.fieldName]">
-              <el-radio-button v-for="opt in editLockState" :key="opt.value" :label="opt.value" :value="opt.value">{{ opt.label }}</el-radio-button>
+          <el-form-item v-if="item.labelText === '计划编辑'"
+                        :label="item.labelText"
+                        :prop="item.fieldName">
+            <el-radio-group :disabled="taskEditCheck"
+                            v-model="formData[item.fieldName]">
+              <el-radio-button v-for="opt in editLockState"
+                               :key="opt.value"
+                               :label="opt.value"
+                               :value="opt.value">{{ opt.label }}</el-radio-button>
             </el-radio-group>
           </el-form-item>
-          <el-form-item v-else :label="item.labelText" :prop="item.fieldName">
-            <el-radio-group :disabled="taskEditCheck" v-if="item.fieldName !== '1008'" v-model="formData[item.fieldName]">
-              <el-radio-button v-for="opt in options" :key="opt.value" :label="opt.value" :value="opt.value">{{ opt.label }}</el-radio-button>
+          <el-form-item v-else
+                        :label="item.labelText"
+                        :prop="item.fieldName">
+            <el-radio-group :disabled="taskEditCheck"
+                            v-if="item.fieldName !== '1008'"
+                            v-model="formData[item.fieldName]">
+              <el-radio-button v-for="opt in options"
+                               :key="opt.value"
+                               :label="opt.value"
+                               :value="opt.value">{{ opt.label }}</el-radio-button>
             </el-radio-group>
-            <el-radio-group :disabled="taskEditCheck" v-else v-model="formData[item.fieldName]">
-              <el-radio-button v-for="opt in options2" :key="opt.value" :label="opt.value" :value="opt.value">{{ opt.label }}</el-radio-button>
+            <el-radio-group :disabled="taskEditCheck"
+                            v-else
+                            v-model="formData[item.fieldName]">
+              <el-radio-button v-for="opt in options2"
+                               :key="opt.value"
+                               :label="opt.value"
+                               :value="opt.value">{{ opt.label }}</el-radio-button>
             </el-radio-group>
           </el-form-item>
         </el-col>
       </template>
       <el-col>
-        <el-form-item label="解锁/锁定原因" prop="content" :rules="validator(rules)">
-          <el-input type="textarea" placeholder="请输入解锁/锁定原因" v-model="formData['content']" rows="4"></el-input>
+        <el-form-item label="解锁/锁定原因"
+                      prop="content"
+                      :rules="validator(rules)">
+          <el-input type="textarea"
+                    placeholder="请输入解锁/锁定原因"
+                    v-model="formData['content']"
+                    rows="4"></el-input>
         </el-form-item>
       </el-col>
     </el-row>
     <el-row :class="{ formBtn: true }">
       <el-col class="flex-right">
         <slot name="btn"></slot>
-        <el-button plain @click="$emit('close-lock-unlock', {})">取消</el-button>
-        <el-button type="primary" @click="handleSubmit">确定</el-button>
+        <el-button plain
+                   @click="$emit('close-lock-unlock', {})">取消</el-button>
+        <el-button type="primary"
+                   @click="handleSubmit">确定</el-button>
       </el-col>
     </el-row>
   </el-form>
@@ -53,11 +90,15 @@ export default {
     'el-radio-group': RadioGroup,
     'el-radio-button': RadioButton
   },
-  data() {
+  data () {
     return {
       saveApi: 'thirdPartInterface.saveLockUnlockForm',
       otherParam: {},
-      dataSource: [],
+      dataSource: [{
+        type: 'radioButton',
+        labelText: '计划编辑',
+        fieldName: '1020'
+      }],
       taskEditCheck: false,
       viewData: ['111'], // 防止form表单保存按钮
       planInfoLockUnlockStatus: [],
@@ -180,7 +221,7 @@ export default {
         if (res && res.length) {
           that.monitorPoints = res
           res.forEach(function (item, idx) {
-            if (item.value !== 'taskEdit') {
+            if (item.value !== 'taskEdit' && item.value !== '1020') {
               const dataSourceItem = {
                 type: 'radioButton',
                 labelText: item.label,
@@ -188,6 +229,10 @@ export default {
               }
               that.dataSource.push(dataSourceItem)
               that.$set(that.formData, item.value, item.lockStatus)
+            }
+
+            if (item.value === '1020') {
+              that.$set(that.formData, '1020', item.lockStatus)
             }
           })
           that.formData.content = that.monitorPoints[0].content
@@ -203,14 +248,14 @@ export default {
       })
   },
   methods: {
-    taskEditChange(obj) {
+    taskEditChange (obj) {
       if (obj === '1') {
         this.taskEditCheck = true
       } else {
         this.taskEditCheck = false
       }
     },
-    handleSubmit(e) {
+    handleSubmit (e) {
       e.preventDefault()
       const that = this
       that
@@ -239,6 +284,7 @@ export default {
             }
           })
           that.monitorPointLockUnlockStatus.taskEdit = saveParams.taskEdit
+          that.monitorPointLockUnlockStatus['1020'] = saveParams['1020']
           if (JSON.stringify(that.monitorPointLockUnlockStatus) === '{}' && JSON.stringify(that.terminationSuspendStatus) === '{}') {
             that.$message({ message: `请选择内容`, type: 'error' })
           }
@@ -263,7 +309,7 @@ export default {
                     that.$emit('close-lock-unlock', {})
                   })
                 })
-                .catch(() => {})
+                .catch(() => { })
             } else {
               that.$api['planInfoManager.changeSwitchType']({ planInfoArray: that.planInfoArray, content: that.terminationSuspendStatus['1025'] }).then((res) => {
                 that.$message({
@@ -279,7 +325,7 @@ export default {
           console.error('异步失败的操作')
         })
     },
-    validate() {
+    validate () {
       return new Promise((resolve, reject) => {
         this.$refs.form.validate((isValid) => {
           if (isValid) {
@@ -289,7 +335,7 @@ export default {
         })
       })
     },
-    submitForm(params, api) {
+    submitForm (params, api) {
       this.loadingVisible = true
       this.saveForm(api, params)
         .then((res) => {
@@ -299,7 +345,7 @@ export default {
           console.error(e, '异步失败的操作')
         })
     },
-    handleParams(obj) {
+    handleParams (obj) {
       // 判断必须为obj
       if (!(Object.prototype.toString.call(obj) === '[object Object]')) {
         return {}
@@ -317,7 +363,7 @@ export default {
       }
       return tempObj
     },
-    saveForm(api, params, urlParam) {
+    saveForm (api, params, urlParam) {
       const that = this
       return new Promise((resolve, reject) => {
         that.$api[api](params, urlParam)
@@ -329,7 +375,7 @@ export default {
           })
       })
     },
-    successSave(res) {
+    successSave (res) {
       this.loadingVisible = false
       this.$message({
         message: '保存成功！',
@@ -340,7 +386,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style scoped lang="scss">
 .formList.el-form {
   padding-bottom: 52px;
   overflow: auto;

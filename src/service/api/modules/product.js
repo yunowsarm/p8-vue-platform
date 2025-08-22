@@ -1518,7 +1518,7 @@ export const repositoryApi = {
       path: '/ai/intelligence/createTeamFromDescribe',
       mockPath: '/ai/intelligence/createTeamFromDescribe',
       desc: '团队管理-AI生成团队'
-    },
+    }
   ],
   OutputFlow: [
     {
@@ -2061,7 +2061,7 @@ export const repositoryApi = {
       path: '/appoint/userPortrait/getUserGrade',
       mockPath: '/appoint/userPortrait/getUserGrade',
       desc: '资格要求管理'
-    },
+    }
   ],
   // 项目检测
   projectIndicators: [
@@ -2085,7 +2085,7 @@ export const repositoryApi = {
       path: '/projectIndicators/savePlanFormulasResult',
       mockPath: '/projectIndicators/savePlanFormulasResult',
       desc: '应用检测指引'
-    },
+    }
   ],
   templateManagement: [
     {
@@ -2145,6 +2145,117 @@ export const repositoryApi = {
       path: '/product/pm/qualityIssues/generateNewCode',
       mockPath: '/product/pm/qualityIssues/generateNewCode',
       desc: '我的工作-我的问题-获取编号'
+    }
+  ],
+  qRCodeScanner: [
+    {
+      name: 'save',
+      method: 'POST',
+      path: '/bp-detection/save',
+      mockPath: '/bp-detection/save',
+      desc: 'app保存接口'
+    },
+    {
+      name: 'get',
+      method: 'GET',
+      path: '/bp-detection/get',
+      mockPath: '/bp-detection/get',
+      desc: 'app查看接口'
+    }
+  ],
+  enterpriseDirectory: [
+    {
+      name: 'changeEnterpriseStatus',
+      method: 'POST',
+      path: '/enterprise/changeEnterpriseStatus',
+      mockPath: '/enterprise/changeEnterpriseStatus',
+      desc: '停用启用'
+    },
+    {
+      name: 'deleteEnterprise',
+      method: 'POST',
+      path: '/enterprise/deleteEnterprise',
+      mockPath: '/enterprise/deleteEnterprise',
+      desc: '删除'
+    }
+  ],
+  relevanceContract: [
+    {
+      name: 'contractRelatedProjected',
+      method: 'POST',
+      path: '/projectcontract/contractRelatedProjected',
+      mockPath: '/projectcontract/contractRelatedProjected',
+      desc: '关联'
+    },
+    {
+      name: 'delRelatedProjected',
+      method: 'POST',
+      path: '/projectcontract/delRelatedProjected',
+      mockPath: '/projectcontract/delRelatedProjected',
+      desc: '取消关联'
+    },
+    {
+      name: 'selectByCpntractNodeTasks',
+      method: 'POST',
+      path: '/contractNodeTask/selectByCpntractNodeTasks',
+      mockPath: '/contractNodeTask/selectByCpntractNodeTasks',
+      desc: '计划关联列表'
+    },
+    {
+      name: 'selectCgtableProjectByProjectId',
+      method: 'POST',
+      path: '/projectcontract/selectCgtableProjectByProjectId',
+      mockPath: '/projectcontract/selectCgtableProjectByProjectId',
+      desc: '查询合同列表 '
+    },
+    {
+      name: 'contractNodeRelatedTask',
+      method: 'POST',
+      path: '/projectcontract/contractNodeRelatedTask',
+      mockPath: '/projectcontract/contractNodeRelatedTask',
+      desc: '关联'
+    },
+    {
+      name: 'delNodeRelatedTask',
+      method: 'POST',
+      path: '/projectcontract/delNodeRelatedTask',
+      mockPath: '/projectcontract/delNodeRelatedTask',
+      desc: '取消关联'
+    },
+    {
+      name: 'contractRecievedByYear',
+      method: 'POST',
+      path: '/contractNodeTask/contractRecievedByYear',
+      mockPath: '/contractNodeTask/contractRecievedByYear',
+      desc: '本年应收已收'
+    },
+    {
+      name: 'checkRelatedProjected',
+      method: 'POST',
+      path: '/projectcontract/checkRelatedProjected',
+      mockPath: '/projectcontract/checkRelatedProjected',
+      desc: '关联校验'
+    },
+    {
+      name: 'checkNodeRelatedTask',
+      method: 'POST',
+      path: '/projectcontract/checkNodeRelatedTask',
+      mockPath: '/projectcontract/checkNodeRelatedTask',
+      desc: '关联校验'
+    },
+    {
+      name: 'stopNodeRelatedTask',
+      method: 'POST',
+      path: '/projectcontract/stopNodeRelatedTask',
+      mockPath: '/projectcontract/stopNodeRelatedTask',
+      desc: '关联终止'
+    },
+    {
+      name: 'finishNodeRelatedTas ',
+      method: 'POST',
+      path: '/projectcontract/finishNodeRelatedTask',
+      mockPath: '/projectcontract/finishNodeRelatedTask',
+      desc: '关联完结'
     }
   ]
 }

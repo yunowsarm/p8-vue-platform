@@ -337,12 +337,6 @@ export function getGanttLocationColumns(ganttObject, vueThisLocation) {
       template: function (task) {
         // 任务图标，排除根节点
         if (!(ganttObject.getGlobalTaskIndex(task.id) === 0)) {
-          if (task.outputResult > 0) {
-            return `<i class='el-icon-star-on' style='color: #4bcafe;font-size: 23px' title='有提交物的'></i>`
-          }
-          if (task.outputAsk > 0) {
-            return `<i class='el-icon-star-on' style='color: #faa010;font-size: 23px' title='有输出要求的'></i>`
-          }
           const managerStatus = task.managerStatus
           if (managerStatus && vueThisLocation.managerStatusMap) {
             const item = vueThisLocation.managerStatusMap[managerStatus]
@@ -445,6 +439,13 @@ export function getGanttLocationColumns(ganttObject, vueThisLocation) {
       monitorLockLimit: true, // 标识锁定后不可操作的列声明
       min_width: 350,
       template: function (task) {
+        let rowHeight = ganttObject.config.row_height
+        if (task.outputResult > 0) {
+          return `<i class='el-icon-star-on' style='color: #4bcafe;font-size: 23px;float: left;line-height: ${rowHeight}px;' title='有提交物的'></i>${task.name}`
+        }
+        if (task.outputAsk > 0) {
+          return `<i class='el-icon-star-on' style='color: #faa010;font-size: 23px;font-size: 23px;float: left;line-height: ${rowHeight}px;' title='有输出要求的'></i>${task.name}`
+        }
         return task.name
       }
     },
@@ -664,7 +665,7 @@ export function getGanttLocationColumns(ganttObject, vueThisLocation) {
       align: 'center',
       min_width: 100,
       resize: true
-    },
+    }
   ]
 }
 

@@ -61,7 +61,7 @@ const CommandButtonBarDataDoubleRow = [
             buttonId: 'detail-info',
             size: 'large',
             position: ['top', 'right']
-          },
+          }
           // {
           //   buttonId: 'suspend-config',
           //   size: 'small',
@@ -209,7 +209,7 @@ const CommandButtonBarDataDoubleRow = [
         ]
       },
       {
-        groupName: '查询',
+        groupName: '查询定位',
         buttonConfigs: [
           {
             buttonId: 'search-list',
@@ -245,7 +245,7 @@ const CommandButtonBarDataDoubleRow = [
             buttonId: 'location-list',
             size: 'small',
             position: ['top']
-          },
+          }
         ]
       },
       {

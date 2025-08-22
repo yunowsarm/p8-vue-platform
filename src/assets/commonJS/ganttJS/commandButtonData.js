@@ -3222,7 +3222,8 @@ function createTaskByDatas(ganttObject, datas, parentId, pos, taskName, msg, dpO
           createTime: moment().format('YYYY-MM-DD HH:mm:ss'),
           isLeaf: '0',
           ...extraTask,
-          unDescribes: item.unDescribes
+          unDescribes: item.unDescribes,
+          wholeDescribeId: vueThis.thirdMenuParam.WHOLEDESCRIBEID
         }
         switch (pos) {
           case 'Child':
@@ -3912,7 +3913,7 @@ export function noDpAddTask(num, pos, ganttName) {
         break
       case 'Child':
         // 新建下级--在最后
-        noDpCreateTask(ganttObject, num, task, 'Child', '新任务', null, task.autoScheduling, vueThis, style)
+        noDpCreateTask(ganttObject, num, task, 'Child', '新任务', taskIndexNo + 1, task.autoScheduling, vueThis, style)
         task.$open = true
         vueThis.taskCount = vueThis.taskCount + num
         break
@@ -3965,6 +3966,7 @@ function noDpCreateTask(ganttObject, num, parent, pos, taskName, indexNo, autoSc
         // secretGrade: parent.secretGrade,
         // secretGradeDisplay: parent.secretGradeDisplay,
         owner_id: '',
+        indexNo: indexNo,
         auto_scheduling: schedule,
         autoScheduling: autoScheduling,
         managerStatus: vueThis.managerStatus,

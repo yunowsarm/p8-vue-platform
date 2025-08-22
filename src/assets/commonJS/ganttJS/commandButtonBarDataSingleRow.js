@@ -61,7 +61,7 @@ const CommandButtonBarDataSingleRow = [
             buttonId: 'detail-info',
             size: 'small',
             position: ['top', 'right']
-          },
+          }
           // {
           //   buttonId: 'suspend-config',
           //   size: 'small',
@@ -209,7 +209,7 @@ const CommandButtonBarDataSingleRow = [
         ]
       },
       {
-        groupName: '查询',
+        groupName: '查询定位',
         buttonConfigs: [
           {
             buttonId: 'search-list',
@@ -330,7 +330,7 @@ const CommandButtonBarDataSingleRow = [
             buttonId: 'grid-setting',
             size: 'small',
             position: ['top']
-          },
+          }
           // {
           //   buttonId: 'grid-cell-border-setting',
           //   size: 'small',

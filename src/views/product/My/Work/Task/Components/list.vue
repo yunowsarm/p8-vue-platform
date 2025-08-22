@@ -12,7 +12,7 @@
                    @select="onSelect"></common-tree>
     </template>
     <template #center>
-      <div class="show-type"><span style="font-weight: bold;font-size: 15px;">展示方式
+      <div class="show-type"><span style="font-weight: bold;font-size: 14px;">展示方式
           <el-tooltip effect="dark"
                       popper-class="testtooltip"
                       placement="top">
@@ -21,7 +21,8 @@
               <p>计划分组：与当前默认展示逻辑一致</p>
               <p>列表：平铺计划，默认排除已完成的任务</p>
             </div>
-            <i class="p8 icon-help-tips"></i>
+            <i class="p8 icon-help-tips"
+               style="font-size: 14px;"></i>
           </el-tooltip>
           ：</span>
         <el-radio-group v-model="showView"
@@ -30,16 +31,18 @@
           <el-radio label="showView002">计划分组</el-radio>
           <el-radio label="showView003">列表</el-radio>
         </el-radio-group>
-        <span style="margin-left: 30px;font-weight: bold;font-size: 15px;">仅展示叶子节点：</span>
+        <span class="is-children">仅展示叶子节点：</span>
         <el-switch v-model="isChildren"
                    active-color="#13ce66"
-                   inactive-color="#ff4949"
+                   inactive-color="#cccccc"
                    :disabled="btnDisable"
                    @change="childrenClick">
         </el-switch>
       </div>
       <P8TableRender ref="tableRender"
                      :key="dateTime"
+                     searchContainWidth="380px"
+                     searchWidth="380px"
                      :code="componentsConfig.code"
                      :permission-vo="componentsConfig.permissionVo"
                      :west-tree-param="provideParams.searchParams"
@@ -190,6 +193,38 @@
   top: 15px;
   right: 50px;
   z-index: 9999;
+}
+.is-children {
+  margin-left: 30px;
+  font-weight: bold;
+  font-size: 14px;
+}
+// .el-radio {
+//   margin-right: 5px !important;
+// }
+// ::v-deep .el-radio__label {
+//   font-size: 14px !important;
+//   padding-left: 0px !important;
+// }
+@media screen and (max-width: 1440px) {
+  .el-radio {
+    margin-right: 10px !important;
+  }
+  ::v-deep .el-radio__label {
+    font-size: 14px !important;
+    padding-left: 10px !important;
+  }
+  ::v-deep .normal-layout .normal-header {
+    height: 70px !important;
+  }
+  .show-type {
+    display: flex;
+    flex-wrap: wrap;
+    width: 350px;
+  }
+  .is-children {
+    margin-left: 0px;
+  }
 }
 </style>
 <script>

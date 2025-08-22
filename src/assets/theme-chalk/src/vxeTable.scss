@@ -317,3 +317,15 @@
   .el-divider--vertical {
     margin: 0 5px !important;
   }
+
+.vxe-cell-title-suffix-icon{
+  color: var(--vxe-ui-table-column-icon-border-color);
+}
+.vxe-cell-title-suffix-icon:hover{
+  color: var(--vxe-ui-font-color);
+}
+.vxe-tooltip--wrapper{
+  z-index: 3000 !important;
+}
+
+

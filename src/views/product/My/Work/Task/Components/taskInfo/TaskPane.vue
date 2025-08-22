@@ -15,9 +15,9 @@
         <div class="iconStyle view">
           <div v-for="(item, index) in mointorData"
                :key="index">
-            <i v-if="item.icon === 'p8 icon-a-xuqiu1'"
+            <i v-if="item.icon === 'p8 icon-a-xuqiu1' || item.icon === 'p8 icon-link'"
                :class='item.icon'
-               @click="demandClick"></i>
+               @click="demandClick(item)"></i>
             <i v-else
                :class='item.icon'></i>
           </div>
@@ -67,7 +67,7 @@
         </div>
       </template>
     </form-list>
-    <common-dialog title="关联的需求"
+    <common-dialog :title="title"
                    width="60%"
                    v-if="isdemandTable"
                    :visible="isdemandTable"
@@ -76,14 +76,25 @@
                    :is-view-cs-footer="false"
                    :dialog-height="dialogHeight">
       <template #dialog>
-        <demand-table :taskId="taskId"></demand-table>
+        <demand-table v-if="title === '关联的需求'"
+                      :taskId="taskId"></demand-table>
+        <vxe-table ref="xTable"
+                   v-else
+                   :comp="comp"
+                   :columns="columnsDemand"
+                   :params="tableParamDemand"
+                   :is-smart-form="true"
+                   :tableSetting="false"
+                   :pagination="false"
+                   :api="tableApi">
+        </vxe-table>
       </template>
     </common-dialog>
   </div>
 </template>
 <script>
 import { calculateRemainingDays } from "@/utils/common"
-import { P8Form as FormList, Progress, P8Dialog as CommonDialog } from 'p8-components-ui'
+import { P8VxeTable as VxeTable, P8Form as FormList, Progress, P8Dialog as CommonDialog } from 'p8-components-ui'
 import { getTaskStatusInfo } from '@/utils/commonBusiness'
 import moment from 'moment'
 import Vue from 'vue'
@@ -123,10 +134,12 @@ export default {
     FormList,
     'el-progress': Progress,
     demandTable,
-    CommonDialog
+    CommonDialog,
+    VxeTable
   },
   data () {
     return {
+      comp: this,
       formData: {},
       allStatus: [],
       count: 1,
@@ -134,7 +147,68 @@ export default {
       taskInfo: {},
       dialogHeight: document.documentElement.clientHeight - 243,
       taskId: '',
+      title: '',
+      tableApi: 'relevanceContract.selectByCpntractNodeTasks',
       mointorData: [],
+      columnsDemand: [
+        {
+          title: '序号',
+          type: 'index',
+          align: 'center',
+          width: '50px',
+          headerAlign: 'center'
+        },
+        {
+          title: '阶段名称',
+          dataIndex: 'stageName',
+          sortable: false,
+          align: 'center',
+          headerAlign: 'center'
+        },
+        {
+          title: '交付时间',
+          dataIndex: 'deliveryDate',
+          sortable: false,
+          width: '120px',
+          align: 'left',
+          headerAlign: 'center'
+        },
+        {
+          title: '交付比例',
+          dataIndex: 'proportion',
+          sortable: false,
+          width: '80px',
+          align: 'center',
+          headerAlign: 'center'
+        },
+        {
+          title: '付款金额',
+          dataIndex: 'amount',
+          sortable: false,
+          width: '120px',
+          align: 'center',
+          treeNode: true,
+          headerAlign: 'center'
+        },
+        {
+          title: '合同编号',
+          dataIndex: 'contractNo',
+          sortable: false,
+          width: '120px',
+          align: 'center',
+          headerAlign: 'center'
+        },
+        {
+          title: '合同名称',
+          dataIndex: 'contractName',
+          sortable: false,
+          align: 'center',
+          headerAlign: 'center'
+        }
+      ],
+      tableParamDemand: {
+        taskId: ''
+      },
       defaultList: ['createTime', 'createBy', 'changeCount', 'updateTime', 'updateBy', 'achievements', 'proportion'],
     }
   },
@@ -155,9 +229,15 @@ export default {
       if (!data.status) return ''
       return calculateRemainingDays(data).text
     },
-    demandClick () {
+    demandClick (item) {
+      if (item.icon === 'p8 icon-link') {
+        this.title = '关联的合同'
+        this.tableParamDemand.taskId = this.taskInfo.id
+      } else {
+        this.title = '关联的需求'
+        this.taskId = this.taskInfo.id
+      }
       this.isdemandTable = true
-      this.taskId = this.taskInfo.id
     },
     closeSearch () {
       this.isdemandTable = false
@@ -199,6 +279,8 @@ export default {
               icon: res.monitorpointIconArray
             })
           }
+          console.log(_this.mointorData, '4444444444444444');
+
         }
         _this.rendFormData(res)
       })

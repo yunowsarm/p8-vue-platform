@@ -24,6 +24,17 @@
                      :plan-info-id="planInfoId"
                      :task-id="taskId"
                      :row-num="rowNum"></component>
+          <div style="height: 100%;width: 1px;background: #cccccc;"></div>
+          <div style="min-width: 200px;width: 200px;display: flex;flex-wrap: wrap;height: 90px;">
+            <div v-for="(config, index) in datas"
+                 :key="index">
+              <command-button v-if="config.position.indexOf('top') > -1"
+                              :cbutton="buttonData(config)"
+                              :size="config.size"
+                              :current-records="selectedTasks"
+                              :gantt-name="ganttName"></command-button>
+            </div>
+          </div>
         </div>
         <div v-else
              class="groupContain"
@@ -55,7 +66,12 @@
                 </div>
               </template>
             </div>
-            <div class="group-title">
+            <div v-if="userSettingAll.PlanButton && userSettingAll.PlanButton[0].value.isGroup === '1'"
+                 class="group-title">
+              {{ group.groupName }}
+            </div>
+            <div v-else
+                 class="group-title">
               {{ group.groupName }}
             </div>
           </div>
@@ -97,9 +113,17 @@
                          :task-id="taskId"
                          :row-num="rowNum"></component>
             </div>
-            <div class="group-title"
-                 v-if="panelData[0].groupNameVisible">
-              {{ group.groupName }}
+            <div v-if="userSettingAll.PlanButton && userSettingAll.PlanButton[0].value.isGroup === '1'">
+              <div class="group-title"
+                   v-if="panelData[0].groupNameVisible">
+                {{ group.groupName }}
+              </div>
+            </div>
+            <div v-else>
+              <div class="group-title"
+                   v-if="panelData[0].groupNameVisible">
+                {{ group.groupName }}
+              </div>
             </div>
           </div>
           <div v-else
@@ -119,9 +143,17 @@
                 </div>
               </template>
             </div>
-            <div class="group-title"
-                 v-if="panelData[0].groupNameVisible">
-              {{ group.groupName }}
+            <div v-if="userSettingAll.PlanButton && userSettingAll.PlanButton[0].value.isGroup === '1'">
+              <div class="group-title"
+                   v-if="panelData[0].groupNameVisible">
+                {{ group.groupName }}
+              </div>
+            </div>
+            <div v-else>
+              <div class="group-title"
+                   v-if="panelData[0].groupNameVisible">
+                {{ group.groupName }}
+              </div>
             </div>
           </div>
           <span v-if="showArrow"
@@ -194,7 +226,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['vueThis', 'ganttButtonMode', 'ganttRightButtons']),
+    ...mapGetters(['vueThis', 'ganttButtonMode', 'ganttRightButtons', 'userSettingAll']),
     isExecute () {
       return function (configs) {
         if (typeof configs === 'string') {
@@ -207,7 +239,9 @@ export default {
     buttonData () {
       const that = this
       return function (btnConfig) {
+        console.log("🚀 ~ btnConfig:", btnConfig)
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
+        console.log("🚀 ~ btnData:", btnData[0])
         return btnData[0]
       }
     },
@@ -243,6 +277,7 @@ export default {
             }
           }
         })
+        console.log("🚀 ~ configArray:", configArray)
         return configArray
       }
     }
@@ -265,6 +300,17 @@ export default {
   },
   data () {
     return {
+      datas: [
+        { "buttonId": "unfold-config", "size": "small", "position": ["top"] },
+        { "buttonId": "top", "size": "small", "position": ["top"] },
+        {
+          buttonId: 'location-list',
+          size: 'small',
+          position: ['top']
+        },
+        { "buttonId": "fold-config", "size": "small", "position": ["top"] },
+        { "buttonId": "bottom", "size": "small", "position": ["top"] },
+      ],
       buttonDatas: CommandButtonData,
       advance: true,
       scrollArea: '', // 内容滚动盒子
@@ -413,7 +459,7 @@ export default {
   }
 
   .el-tab-pane {
-    overflow-x: auto;
+    // overflow-x: auto;
     // height: 122px!important;
     padding: 5px 0;
   }
@@ -483,7 +529,7 @@ export default {
   .group {
     // padding: 0px 5px 0px 5px;
     display: inline-block;
-    height: 100px;
+    height: 100%;
     min-width: 120px;
     /* width: 150px; */
     border-right: 1px solid $base-line-color;
@@ -514,7 +560,11 @@ export default {
   }
 
   .group-search {
-    height: 140px;
+    height: 100px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    overflow-y: hidden;
   }
 }
 

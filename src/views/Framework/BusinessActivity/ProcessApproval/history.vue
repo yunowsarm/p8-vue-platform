@@ -41,6 +41,7 @@
           <template #approval>
             <component :style="{ height: tabsHeight}"
                        :selected-approval="selectedApproval"
+                       pageType='view'
                        :curr-entity-id="currEntityId"
                        v-if="formComp != null && formComp != ''"
                        :is="componentLoader"
