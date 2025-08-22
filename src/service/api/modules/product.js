@@ -2256,6 +2256,13 @@ export const repositoryApi = {
       path: '/projectcontract/finishNodeRelatedTask',
       mockPath: '/projectcontract/finishNodeRelatedTask',
       desc: '关联完结'
+    },
+    {
+      name: 'checkNodeRelatedTasks',
+      method: 'POST',
+      path: '/projectcontract/checkNodeRelatedTasks',
+      mockPath: '/projectcontract/checkNodeRelatedTasks',
+      desc: '终止、完成校验'
     }
   ]
 }
