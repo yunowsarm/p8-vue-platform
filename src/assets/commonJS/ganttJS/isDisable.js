@@ -107,9 +107,9 @@ export function taskStateAndReadonly(ganttName, tasks) {
 
 // 选中任务中包含已下发任务
 export function isHasDeliveredTask(ganttName, tasks) {
-  if (tasks.some(task => task.managerStatus === '6404')) {
-    const vueThis = store.getters.vueThis
-    if (vueThis.planEditLock === '0') return false
+  const vueThis = store.getters.vueThis
+  if (vueThis.planEditLock === '0') return false
+  if (tasks.some(task => task.managerStatus === '6404' && ganttName !== 'changeGantt')) {
     return createDisableResponse(`任务已下发时不允许此操作`);
   }
   return false;
@@ -123,11 +123,10 @@ export function isWeave(ganttName, tasks) {
 }
 // 判断任务状态是否为审批完成
 export function isApprovalCompleted(ganttName, tasks) {
-  if (tasks.managerStatus === '6409') {
+  if (tasks.some(task => task.managerStatus === '6409')) {
     return createDisableResponse(`任务审批完成时不允许此操作`);
-  } else {
-    return false;
   }
+  return false;
 }
 
 // 判断当前是否为只读状态

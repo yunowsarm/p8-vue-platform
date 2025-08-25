@@ -791,7 +791,7 @@ export const CommandButtonData = [
       vueThis.taskList = thisGantt.serialize().data
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [() => isHasTask(ganttName, tasks), () => isHasDeliveredTask(ganttName, tasks), () => isReadOnly(ganttName, tasks)]
+      const checks = [() => isHasTask(ganttName, tasks), () => isHasDeliveredTask(ganttName, tasks), () => isApprovalCompleted(ganttName, tasks), () => isReadOnly(ganttName, tasks)]
       const res = isDisable(checks)
       store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
@@ -1722,7 +1722,10 @@ export const CommandButtonData = [
       // vueThis.taskFinish = true 手动
       if (!vueThis.taskFinish && hasBusinessForm == 'true') {
         setTimeout(() => {
-          vueThis.$message({ type: 'warning', message: '该任务已关联业务表单且父任务完成方式为自动，导入下级后，所关联的表单将在执行时无法填写' })
+          vueThis.$message({
+            type: 'warning',
+            message: '该任务已关联业务表单且父任务完成方式为自动，导入下级后，所关联的表单将在执行时无法填写'
+          })
         }, 500)
       }
     },
@@ -2909,6 +2912,7 @@ function checkContentRoot(ganttName, tasks) {
   }
   return result
 }
+
 function get32NumberUid() {
   let array = new Uint8Array(16)
   window.crypto.getRandomValues(array)
@@ -3451,6 +3455,7 @@ function removeTasks(ganttObject, dp, ganttName) {
     }
   }
 }
+
 function removePlanGanttData(ganttObject, dp, ganttName, vueThis, selectedTaskIds) {
   api['planGanttManager.removePlanGanttData']({ taskIds: selectedTaskIds })
     .then(function (res) {
@@ -3523,6 +3528,7 @@ function removePlanGanttData(ganttObject, dp, ganttName, vueThis, selectedTaskId
       })
     })
 }
+
 /**
  * 任务复制
  * @param ganttObject
@@ -3632,6 +3638,7 @@ function pasteTask(ganttObject, tasks, vueThis, type, dpObj) {
         copyTaskIds.forEach((id) => {
           if (ganttObject.hasChild(id)) {
             defaultTaskId = id
+
             function checkRow(id, parent) {
               let parent_task = JSON.parse(JSON.stringify(ganttObject.getTask(id)))
               parent_task.defaultId = id
@@ -3671,6 +3678,7 @@ function pasteTask(ganttObject, tasks, vueThis, type, dpObj) {
                 }
               }, defaultTaskId)
             }
+
             checkRow(id, selectTaskParentId)
           } else {
             // 子级
@@ -4370,6 +4378,7 @@ function batchOwner(ganttName) {
     vueThis.resourceSelectVisible = true
   }
 }
+
 /**
  * 批量设置任务密级
  */
@@ -4377,6 +4386,7 @@ function batchLock() {
   // const vueThis = store.getters.vueThis
   // vueThis.ClassificationSelectVisible = true
 }
+
 /**
  * 同步计划时间到预计时间
  * @param ganttName
@@ -4802,6 +4812,7 @@ function checkHasProductTask(tasks) {
     }
   }
 }
+
 // 检测是否为暂停或者禁止
 function checkSwitchType(tasks) {
   if (tasks.length === 0) {
