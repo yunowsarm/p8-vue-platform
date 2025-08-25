@@ -58,6 +58,7 @@
                         :create-page="createPage"
                         :secret-grade="secretGrade"
                         :att-read-only="readOnly"
+                        :change-id="changeId"
                         :gantt-name="ganttName"
                         :status="status"
                         :defaultPercent="defaultPercent"

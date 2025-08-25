@@ -175,15 +175,19 @@
                         :formWidth="formWidth"></relevance-list>
       </template>
       <template #linkedCollection>
-        <linked-collection :task-id="taskId"
+        <linked-collection ref="linkedCollection"
+                           :task-id="taskId"
                            :isChangeView="isChangeGantt"
                            :wholeDescribeId="wholeDescribeId"
                            title="关联收款合同"
+                           :change-id="changeId"
                            :gantt-name="ganttName"
                            :formWidth="formWidth"></linked-collection>
       </template>
       <template #linkedPament>
-        <linked-collection :task-id="taskId"
+        <linked-collection ref="linkedPament"
+                           :task-id="taskId"
+                           :change-id="changeId"
                            :isChangeView="isChangeGantt"
                            :wholeDescribeId="wholeDescribeId"
                            title="关联付款合同"
@@ -233,7 +237,7 @@ import getOutPutViewTask from '@/views/Framework/Message/components/TaskDetail/G
 import SpecialViewTask from '@/views/Framework/Message/components/TaskDetail/SpecialView.vue' // 特别说明
 export default {
   name: 'PlanAttribute',
-  props: ['taskId', 'wholeDescribeId', 'ganttName', 'status', 'planInfoId', 'attReadOnly', 'createPage', 'currentRoute', 'viewType', 'defaultPercent', 'viewWidth', 'type'],
+  props: ['taskId', 'wholeDescribeId', 'ganttName', 'status', 'planInfoId', 'attReadOnly', 'createPage', 'currentRoute', 'viewType', 'defaultPercent', 'viewWidth', 'type', 'changeId'],
   components: {
     getOutPutView,
     DescribeEdit,
@@ -385,11 +389,13 @@ export default {
             this.isView = false
             this.isChangeView = false
           }
-          console.log(this.isChangeGantt, 'this.isChangeGanttthis.isChangeGantt');
+          console.log(this.isChangeView, 'this.isChangeView.isChangeView');
 
         }
       }
     }
+    console.log(this.readOnly, '1111111111111111111111111readOnly');
+
   },
   data () {
     return {

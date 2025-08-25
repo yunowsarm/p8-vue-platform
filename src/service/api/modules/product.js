@@ -2263,6 +2263,41 @@ export const repositoryApi = {
       path: '/projectcontract/checkNodeRelatedTasks',
       mockPath: '/projectcontract/checkNodeRelatedTasks',
       desc: '终止、完成校验'
+    },
+    {
+      name: 'contractNodeRelatedTaskChange',
+      method: 'POST',
+      path: '/contractNodeTaskChange/contractNodeRelatedTaskChange',
+      mockPath: '/contractNodeTaskChange/contractNodeRelatedTaskChange',
+      desc: '保存'
+    },
+    {
+      name: 'checkNodeRelatedTaskChange',
+      method: 'POST',
+      path: '/contractNodeTaskChange/checkNodeRelatedTaskChange',
+      mockPath: '/contractNodeTaskChange/checkNodeRelatedTaskChange',
+      desc: '查询变更关联节点 '
+    },
+    {
+      name: 'selectByCpntract',
+      method: 'POST',
+      path: '/contractNodeTaskChange/selectByCpntractNodeTasks',
+      mockPath: '/contractNodeTaskChange/selectByCpntractNodeTasks',
+      desc: '查询变更关联节点 '
+    },
+    {
+      name: 'clearNodeRelatedTask',
+      method: 'POST',
+      path: '/contractNodeTaskChange/clearNodeRelatedTask',
+      mockPath: '/contractNodeTaskChange/clearNodeRelatedTask',
+      desc: '取消关联节点 '
+    },
+    {
+      name: 'delNodeRelatedTaskChange',
+      method: 'POST',
+      path: '/contractNodeTaskChange/delNodeRelatedTaskChange',
+      mockPath: '/contractNodeTaskChange/delNodeRelatedTaskChange',
+      desc: '取消关联节点 '
     }
   ]
 }

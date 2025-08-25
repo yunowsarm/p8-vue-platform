@@ -548,6 +548,9 @@ export default {
       this.drawerVisible = false
       this.submitChangeValidate = false
       this.$refs.table.searchData()
+      this.$api['relevanceContract.clearNodeRelatedTask']({
+        changeDataId: this.planInfoId
+      }).then(res => { })
       const _this = this
       setTimeout(() => {
         _this.$refs.table.$refs.table.doLayout()

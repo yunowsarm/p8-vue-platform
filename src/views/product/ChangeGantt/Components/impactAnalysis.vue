@@ -40,6 +40,7 @@
       <plan-attribute @save-success="detailDrawerClosed"
                       :task-id="selectTaskId"
                       :att-read-only="readOnly"
+                      :change-id="changeId"
                       :gantt-name="ganttName"
                       :plan-info-id="planInfoId"></plan-attribute>
     </el-drawer>
