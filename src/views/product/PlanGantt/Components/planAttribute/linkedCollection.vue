@@ -15,7 +15,7 @@
                :tableSetting="false"
                :refreshShow="false"
                :pagination="false"
-               :api="tableApi">
+               :noApiTableData="noApiTableData">
       <template #operation="{ scope }">
         <el-button type="text"
                    :disabled=!isChangeView
@@ -83,7 +83,11 @@ export default {
     isChangeView: {
       type: Boolean,
       default: true
-    }
+    },
+    changeId: {
+      type: String,
+      default: null
+    },
   },
   data () {
     return {
@@ -457,13 +461,14 @@ export default {
       tableApiList: 'relevanceContract.selectCgtableProjectByProjectId',
       falg: false,
       selectRecords: [],
-      visibleEditDrawer: false
+      visibleEditDrawer: false,
+      noApiTableData: []
     }
   },
   computed: {
     ...mapGetters(['vueThis'])
   },
-  mounted () {
+  async mounted () {
     if (this.title === '关联收款合同') {
       this.columnsDemand = this.columnsDemandOne
       this.columns = this.columnsOne
@@ -479,10 +484,53 @@ export default {
         type: '付款合同'
       }
     }
-    if (this.ganttName === 'changeGantt') {
-      this.tableParamDemand.changeState = 1
+    if (!this.changeId) {
+      await this.$api['relevanceContract.selectByCpntractNodeTasks'](this.tableParamDemand).then(res => {
+        if (res) {
+          this.noApiTableData = res
+        }
+      })
+    } else {
+      this.tableParamDemand.changeDataId = this.changeId
+      await this.$api['relevanceContract.selectByCpntract'](this.tableParamDemand).then(res => {
+        if (res) {
+          this.noApiTableData = res
+        }
+      })
     }
-    this.tableApi = 'relevanceContract.selectByCpntractNodeTasks'
+    console.log(this.changeId, 'readOnlyreadOnlyreadOnly', this.ganttName);
+
+    if (this.ganttName === 'changeGantt' && !this.changeId) {
+      const ganttObject = GanttObject.getGanttObject(this.ganttName)
+      let task = ganttObject.getTask(this.taskId)
+
+      if (this.noApiTableData.length > 0) {
+        let ids = []
+        this.noApiTableData.forEach(el => {
+          ids.push(el.nodeId)
+        })
+        console.log(task.infoType, 'task.infoTypetask.infoTypetask.infoTypetask.infoType')
+        if (!task.infoType) {
+          await this.$api['relevanceContract.contractNodeRelatedTaskChange']({
+            taskId: this.taskId,
+            contractNodeList: ids,
+            changeDataId: task.planInfoId
+          }).then(res => {
+
+          })
+        }
+        await this.$api['relevanceContract.selectByCpntract']({
+          taskId: this.taskId,
+          type: this.tableParamDemand.type,
+          changeDataId: task.planInfoId
+        }).then(res => {
+          if (res.length > 0) {
+            this.noApiTableData = res
+          }
+        })
+      }
+    }
+
     this.falg = true
   },
   methods: {
@@ -517,7 +565,10 @@ export default {
       }
     },
     async closeClick (row) {
+      console.log("🚀 ~ closeClick ~ row:", row)
       let that = this
+      const ganttObject = GanttObject.getGanttObject(this.ganttName)
+      let task = ganttObject.getTask(this.taskId)
       if (this.ganttName === 'planGantt') {
         await this.$api['relevanceContract.delNodeRelatedTask']({
           taskId: this.taskId,
@@ -525,15 +576,13 @@ export default {
         }).then(res => {
           if (res) {
             this.$message.success('取消成功')
-            this.$refs.xTable.queryList()
+            this.getList()
           }
         })
         await this.$api['relevanceContract.selectByCpntractNodeTasks']({
           taskId: this.taskId
         }).then(res => {
           if (res.length === 0) {
-            const ganttObject = GanttObject.getGanttObject(this.ganttName)
-            let task = ganttObject.getTask(this.taskId)
             if (task.monitorPoints !== null && task.monitorPoints.includes('1018')) {
               task.monitorPoints = that.removePoint(task.monitorPoints, '1018')
             }
@@ -541,27 +590,157 @@ export default {
           }
         })
       } else {
-        await this.$api['relevanceContract.delNodeRelatedTask']({
+        await this.$api['relevanceContract.delNodeRelatedTaskChange']({
           taskId: this.taskId,
           contractNodeList: [row.nodeId],
-          changeState: 1
+          changeDataId: this.changeId ? this.changeId : task.planInfoId
         }).then(res => {
           if (res) {
             this.$message.success('取消成功')
-            this.$refs.xTable.queryList()
           }
         })
-        await this.$api['relevanceContract.selectByCpntractNodeTasks']({
-          taskId: this.taskId,
-          changeState: 1
-        }).then(res => {
+        await this.$api['relevanceContract.selectByCpntract'](this.tableParamDemand).then(res => {
           // if (res.length === 0) {
+          if (res) {
+            this.noApiTableData = res
+          }
           const ganttObject = GanttObject.getGanttObject(this.ganttName)
           let task = ganttObject.getTask(this.taskId)
-          if (task.monitorPoints !== null && task.monitorPoints.includes('1018')) {
-            task.monitorPoints = that.removePoint(task.monitorPoints, '1018')
+          this.$api['relevanceContract.selectByCpntract']({
+            taskId: this.taskId,
+            changeDataId: this.changeId ? this.changeId : task.planInfoId
+          }).then(res => {
+
+            if (res.length === 0) {
+              if (task.monitorPoints !== null && task.monitorPoints.includes('1018')) {
+                task.monitorPoints = that.removePoint(task.monitorPoints, '1018')
+              }
+              let newObj = []
+              if (task.monitorPoints.includes(',')) {
+                let monitorPoints = task.monitorPoints.split(',')
+                monitorPoints.forEach(item => {
+                  newObj.push({
+                    issubmit: true,
+                    logBeginTime: '',
+                    logEndTime: '',
+                    monitorId: item,
+                    taskId: task.id
+                  })
+                })
+              } else {
+                newObj = [{
+                  issubmit: true,
+                  logBeginTime: '',
+                  logEndTime: '',
+                  monitorId: task.monitorPoints,
+                  taskId: task.id
+                }]
+              }
+              monitorPointsEditCheck(task.monitorManagerRequests, newObj, this.vueThis, task, ganttObject, true)
+              setNewTaskMap(this.vueThis, task, newObj, 'monitors')
+            }
+          })
+
+
+
+          // }
+        })
+      }
+    },
+    removePoint (points, targetPoint) {
+      if (!points) return '';
+      const pointArray = points.split(',').filter(p => p && p !== targetPoint);
+      return pointArray.join(',');
+    },
+    getList () {
+      this.$api['relevanceContract.selectByCpntractNodeTasks'](this.tableParamDemand).then(res => {
+        if (res) {
+          this.noApiTableData = res
+        }
+      })
+    },
+    async saveClick () {
+      let that = this
+      if (!this.taskId) {
+        return this.$message.warning('请先选择任务')
+      }
+      const ganttObject = GanttObject.getGanttObject(this.ganttName)
+      // 计划编制不可编辑状态字段
+      let task = ganttObject.getTask(this.taskId)
+      let res = await this.$api['relevanceContract.checkNodeRelatedTask']({
+        taskId: this.taskId,
+        contractNodeList: this.selectRecords
+      })
+      if (res) {
+        if (this.ganttName === 'planGantt') {
+          await this.$api['relevanceContract.contractNodeRelatedTask']({
+            taskId: this.taskId,
+            contractNodeList: this.selectRecords
+          }).then(res => {
+            if (res) {
+              this.visibleEditDrawer = false
+              this.$message.success('关联成功')
+
+              // this.getList()
+
+            }
+          })
+          if (that.selectRecords.length > 0) {
+            if (task.monitorPoints) {
+              if (!task.monitorPoints.includes('1018')) {
+                if (task.monitorPoints.includes(',')) {
+                  task.monitorPoints += ',1018'
+                } else {
+                  task.monitorPoints += '1018'
+                }
+              }
+            } else {
+              task.monitorPoints = '1018'
+            }
+            console.log(task.monitorPoints, 'tasktasktasktasktask');
+
+            ganttObject.updateTask(task.id)
           }
-          console.log("🚀 ~ saveClick ~ task:", task)
+          await this.$api['relevanceContract.selectByCpntractNodeTasks'](this.tableParamDemand).then(res => {
+            if (res) {
+              this.noApiTableData = res
+            }
+          })
+
+        } else {
+          await this.$api['relevanceContract.contractNodeRelatedTaskChange']({
+            taskId: this.taskId,
+            contractNodeList: this.selectRecords,
+            changeDataId: this.changeId ? this.changeId : task.planInfoId
+          }).then(res => {
+            this.$api['relevanceContract.selectByCpntract']({
+              taskId: this.taskId,
+              type: this.tableParamDemand.type,
+              changeDataId: this.changeId ? this.changeId : task.planInfoId
+            }).then(res => {
+              if (res.length > 0) {
+                this.noApiTableData = res
+              }
+            })
+          })
+          this.visibleEditDrawer = false
+          this.$message.success('关联成功')
+          if (task.infoType && task.infoType === 'create') {
+            task.infoType = 'create'
+            task.changeStatusName = '调增'
+          } else {
+            task.infoType = 'update'
+            task.changeStatusName = '调整'
+          }
+          if (that.selectRecords.length > 0) {
+            if (task.monitorPoints) {
+              if (!task.monitorPoints.includes('1018')) {
+                task.monitorPoints += ',1018'
+              }
+            } else {
+              task.monitorPoints = '1018'
+            }
+          }
           let newObj = []
           if (task.monitorPoints.includes(',')) {
             let monitorPoints = task.monitorPoints.split(',')
@@ -579,106 +758,16 @@ export default {
               issubmit: true,
               logBeginTime: '',
               logEndTime: '',
-              monitorId: task.monitorPoints,
+              monitorId: '1018',
               taskId: task.id
             }]
           }
           monitorPointsEditCheck(task.monitorManagerRequests, newObj, this.vueThis, task, ganttObject, true)
           setNewTaskMap(this.vueThis, task, newObj, 'monitors')
-          // }
-        })
-      }
-    },
-    removePoint (points, targetPoint) {
-      if (!points) return '';
-      const pointArray = points.split(',').filter(p => p && p !== targetPoint);
-      return pointArray.join(',');
-    },
-    saveClick () {
-      let that = this
-      if (!this.taskId) {
-        return this.$message.warning('请先选择任务')
-      }
-      const ganttObject = GanttObject.getGanttObject(this.ganttName)
-      // 计划编制不可编辑状态字段
-      let task = ganttObject.getTask(this.taskId)
-      let params = {
-        taskId: this.taskId,
-        contractNodeList: this.selectRecords
-      }
-      if (this.ganttName === 'changeGantt') {
-        params.changeState = 1
-      }
-      this.$api['relevanceContract.checkNodeRelatedTask'](params).then(res => {
-        if (res) {
-          this.$api['relevanceContract.contractNodeRelatedTask'](params).then(res => {
-            if (res) {
-              this.visibleEditDrawer = false
-              this.$message.success('关联成功')
-              if (this.ganttName === 'planGantt') {
-                this.$refs.xTable.queryList()
-                if (that.selectRecords.length > 0) {
-                  if (task.monitorPoints) {
-                    if (!task.monitorPoints.includes('1018')) {
-                      if (task.monitorPoints.includes(',')) {
-                        task.monitorPoints += ',1018'
-                      } else {
-                        task.monitorPoints += '1018'
-                      }
-                    }
-                  } else {
-                    task.monitorPoints = '1018'
-                  }
-                }
-                ganttObject.updateTask(task.id)
-              } else {
-                if (task.infoType && task.infoType === 'create') {
-                  task.infoType = 'create'
-                  task.changeStatusName = '调增'
-                } else {
-                  task.infoType = 'update'
-                  task.changeStatusName = '调整'
-                }
-                this.$refs.xTable.queryList()
-                if (that.selectRecords.length > 0) {
-                  if (task.monitorPoints) {
-                    if (!task.monitorPoints.includes('1018')) {
-                      task.monitorPoints += ',1018'
-                    }
-                  } else {
-                    task.monitorPoints = '1018'
-                  }
-                }
-                let newObj = []
-                if (task.monitorPoints.includes(',')) {
-                  let monitorPoints = task.monitorPoints.split(',')
-                  monitorPoints.forEach(item => {
-                    newObj.push({
-                      issubmit: true,
-                      logBeginTime: '',
-                      logEndTime: '',
-                      monitorId: item,
-                      taskId: task.id
-                    })
-                  })
-                } else {
-                  newObj = [{
-                    issubmit: true,
-                    logBeginTime: '',
-                    logEndTime: '',
-                    monitorId: '1018',
-                    taskId: task.id
-                  }]
-                }
-                monitorPointsEditCheck(task.monitorManagerRequests, newObj, this.vueThis, task, ganttObject, true)
-                setNewTaskMap(this.vueThis, task, newObj, 'monitors')
-              }
-            }
-          })
-        } else {
-          return this.$message.error('不能重复关联')
         }
-      })
+      } else {
+        return this.$message.error('不能重复关联')
+      }
     }
   }
 }

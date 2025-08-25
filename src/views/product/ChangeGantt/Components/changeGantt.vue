@@ -1210,7 +1210,10 @@ export default {
             if (res) {
               that.sendDataList = uniqueMergedArray
               that.changeRecordId = res
-
+              that.$api['relevanceContract.contractNodeRelatedTaskChange']({
+                planId: that.planInfoId,
+                changeDataId: res
+              }).then(res => { })
               that.$api['planChange.extendChangeSave']({
                 changeRecordId: that.changeRecordId,
                 taskExtendRequests: that.taskExtendRequests
