@@ -278,7 +278,6 @@ export default {
             this.commandButtonBarHeight = '54px'
             this.expandBottom = 'calc(100% - 55px)'
           }
-          console.log("🚀 ~ handler ~ this.expandBottom:", this.expandBottom)
         }
         if (this.ganttButtonMode == 'single') {
           if (val.PlanButton[0].value.isGroup === '1') {
