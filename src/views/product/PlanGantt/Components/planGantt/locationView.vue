@@ -235,7 +235,6 @@ export default {
     },
     ganttDatas: {
       handler (newVal, oldVal) {
-        console.log("🚀 ~ handler ~ newVal:", newVal)
         myGanttLocation.clearAll()
         this.loadGanttData(this.planInfoId, this.taskId, this.createPage, newVal)
       },

@@ -498,8 +498,6 @@ export default {
         }
       })
     }
-    console.log(this.changeId, 'readOnlyreadOnlyreadOnly', this.ganttName);
-
     if (this.ganttName === 'changeGantt' && !this.changeId) {
       const ganttObject = GanttObject.getGanttObject(this.ganttName)
       let task = ganttObject.getTask(this.taskId)
@@ -509,7 +507,6 @@ export default {
         this.noApiTableData.forEach(el => {
           ids.push(el.nodeId)
         })
-        console.log(task.infoType, 'task.infoTypetask.infoTypetask.infoTypetask.infoType')
         if (!task.infoType) {
           await this.$api['relevanceContract.contractNodeRelatedTaskChange']({
             taskId: this.taskId,
@@ -530,7 +527,6 @@ export default {
         })
       }
     }
-
     this.falg = true
   },
   methods: {
@@ -565,7 +561,6 @@ export default {
       }
     },
     async closeClick (row) {
-      console.log("🚀 ~ closeClick ~ row:", row)
       let that = this
       const ganttObject = GanttObject.getGanttObject(this.ganttName)
       let task = ganttObject.getTask(this.taskId)
@@ -652,8 +647,8 @@ export default {
       const pointArray = points.split(',').filter(p => p && p !== targetPoint);
       return pointArray.join(',');
     },
-    getList () {
-      this.$api['relevanceContract.selectByCpntractNodeTasks'](this.tableParamDemand).then(res => {
+    async getList () {
+      await this.$api['relevanceContract.selectByCpntractNodeTasks'](this.tableParamDemand).then(res => {
         if (res) {
           this.noApiTableData = res
         }
@@ -672,7 +667,9 @@ export default {
         contractNodeList: this.selectRecords
       })
       if (res) {
+        debugger
         if (this.ganttName === 'planGantt') {
+
           await this.$api['relevanceContract.contractNodeRelatedTask']({
             taskId: this.taskId,
             contractNodeList: this.selectRecords
@@ -681,31 +678,25 @@ export default {
               this.visibleEditDrawer = false
               this.$message.success('关联成功')
 
-              // this.getList()
-
             }
           })
-          if (that.selectRecords.length > 0) {
-            if (task.monitorPoints) {
-              if (!task.monitorPoints.includes('1018')) {
-                if (task.monitorPoints.includes(',')) {
-                  task.monitorPoints += ',1018'
-                } else {
-                  task.monitorPoints += '1018'
+          await this.getList()
+          setTimeout(() => {
+            if (that.selectRecords.length > 0) {
+              if (task.monitorPoints) {
+                if (!task.monitorPoints.includes('1018')) {
+                  if (task.monitorPoints.includes(',')) {
+                    task.monitorPoints += ',1018'
+                  } else {
+                    task.monitorPoints += '1018'
+                  }
                 }
+              } else {
+                task.monitorPoints = '1018'
               }
-            } else {
-              task.monitorPoints = '1018'
+              ganttObject.updateTask(task.id)
             }
-            console.log(task.monitorPoints, 'tasktasktasktasktask');
-
-            ganttObject.updateTask(task.id)
-          }
-          await this.$api['relevanceContract.selectByCpntractNodeTasks'](this.tableParamDemand).then(res => {
-            if (res) {
-              this.noApiTableData = res
-            }
-          })
+          }, 1000)
 
         } else {
           await this.$api['relevanceContract.contractNodeRelatedTaskChange']({

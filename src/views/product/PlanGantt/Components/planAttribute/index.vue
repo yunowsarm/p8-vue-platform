@@ -389,13 +389,9 @@ export default {
             this.isView = false
             this.isChangeView = false
           }
-          console.log(this.isChangeView, 'this.isChangeView.isChangeView');
-
         }
       }
     }
-    console.log(this.readOnly, '1111111111111111111111111readOnly');
-
   },
   data () {
     return {
