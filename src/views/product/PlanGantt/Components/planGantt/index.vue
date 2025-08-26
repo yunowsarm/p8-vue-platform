@@ -697,6 +697,7 @@ export default {
   data () {
     const mh = document.documentElement.clientHeight - 300
     return {
+      isRefuls: true,
       ganttBtnType: null,
       relevancePlanVisible: false,
       columnConfigs: [],
@@ -1781,7 +1782,9 @@ export default {
     callParentSelectTasks () {
       this.$nextTick(() => {
         const task = myGantt.getTask(this.selectTaskId)
-        this.$emit('switch-task', task)
+        if (this.isRefuls) {
+          this.$emit('switch-task', task)
+        }
         this.$emit('select-task', this.selectedTasks, this.ganttName)
         if (this.pageType !== 'history') {
           this.showDetail('switch')
