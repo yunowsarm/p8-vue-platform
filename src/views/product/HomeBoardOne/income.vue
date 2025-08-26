@@ -14,14 +14,22 @@
 <script>
 export default {
   name: 'Income',
-  data() {
+  data () {
     return {
       income: 153876.00,
       expense: 353876.00
     }
   },
+  created () {
+    this.$api['relevanceContract.contractRecievedByYear']().then(res => {
+      if (res.length > 0) {
+        this.income = res[0].CURRENT_YEAR_RECEIVABLE
+        this.expense = res[0].CURRENT_YEAR_RECEIVED
+      }
+    })
+  },
   methods: {
-    formatNumber(num) {
+    formatNumber (num) {
       return num.toLocaleString('en-US', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
@@ -66,7 +74,7 @@ export default {
       font-weight: bold;
 
       .income {
-        color: #67C23A;
+        color: #67c23a;
       }
 
       .separator {
@@ -74,7 +82,7 @@ export default {
       }
 
       .expense {
-        color: #F56C6C;
+        color: #f56c6c;
       }
     }
   }

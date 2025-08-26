@@ -6,7 +6,7 @@
                @click="relevanceClick">关联/取消</el-button>
     <vxe-table ref="xDemandTable"
                :comp="comp"
-               style="height: 92%;"
+               style="height: 300px;"
                :columns="columnsDemand"
                :params="tableParamDemand"
                :table-config="tableConfig"
