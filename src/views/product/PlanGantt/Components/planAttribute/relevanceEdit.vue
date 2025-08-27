@@ -162,7 +162,7 @@ export default {
           this.$message.success('操作成功')
           this.disabled = true
           if (that.selectRecords.length > 0) {
-            if (task.monitorPoints !== null) {
+            if (task.monitorPoints) {
               if (!task.monitorPoints.includes('1017')) {
                 if (task.monitorPoints.includes(',')) {
                   task.monitorPoints += ',1017'
@@ -174,7 +174,7 @@ export default {
               task.monitorPoints = '1017'
             }
           } else {
-            if (task.monitorPoints !== null && task.monitorPoints.includes('1017')) {
+            if (task.monitorPoints && task.monitorPoints.includes('1017')) {
               task.monitorPoints = that.removePoint(task.monitorPoints, '1017')
             }
           }

@@ -1,8 +1,14 @@
 <template>
   <div>
     <template v-for="(mon, index) in childGroups(monitorData)">
-      <div class="child-group" :key="'monitor' + index">
-        <command-button v-for="(config, index) in mon.configs"  :key="`${config.id}-${reloadKey}`" :cbutton="config" :size="config.size" :current-records="currentRecords" :gantt-name="ganttName"></command-button>
+      <div class="child-group"
+           :key="'monitor' + index">
+        <command-button v-for="(config, index) in mon.configs"
+                        :key="`${config.id}-${reloadKey}`"
+                        :cbutton="config"
+                        :size="config.size"
+                        :current-records="currentRecords"
+                        :gantt-name="ganttName"></command-button>
       </div>
     </template>
   </div>
@@ -38,9 +44,9 @@ export default {
       default: 2
     }
   },
-  data() {
+  data () {
     return {
-      reloadKey:0,
+      reloadKey: 0,
       ganttObjectData: {},
       formatDatas: {
         'p8 icon-annual-overall-plan': iconAnnualOverallPlan,
@@ -60,7 +66,7 @@ export default {
         if (!button.isDisableFun(button, this.ganttName, newVal)) {
           button.clickFun(button, this.ganttName, newVal)
         } else {
-          if(newVal.length !== 0){
+          if (newVal.length !== 0) {
             const msg = _this.buttonMsg[button.id]
             _this.$message.warning(msg)
           }
@@ -75,7 +81,7 @@ export default {
     }
   },
   computed: {
-    childGroups() {
+    childGroups () {
       const that = this
       return function (data) {
         const configArray = []
@@ -144,22 +150,22 @@ export default {
         return configArray
       }
     },
-    ...mapGetters(['vueThis', 'taskStatusLockMap','buttonMsg'])
+    ...mapGetters(['vueThis', 'taskStatusLockMap', 'buttonMsg'])
   },
-  mounted() {
+  mounted () {
     this.initGanttObject()
     if (this.planInfoId) {
       this.loadMonitorData(this.planInfoId)
     }
   },
-  destroyed() {
+  destroyed () {
     button = {}
   },
   methods: {
-    initGanttObject() {
+    initGanttObject () {
       this.ganttObjectData = GanttObject
     },
-    loadMonitorData(planInfoId) {
+    loadMonitorData (planInfoId) {
       // 加载标识数据
       const that = this
       this.$api['planGanttManager.loadMonitorPointData']({ planInfoId: planInfoId })
@@ -172,7 +178,7 @@ export default {
             //   })
             // }
             res.forEach((item) => {
-              if (item.id !== '1024' && item.id !== '1023' && item.id !== '1017' && item.id !== '1020') {
+              if (item.id !== '1024' && item.id !== '1023' && item.id !== '1017' && item.id !== '1020' && item.id !== '1018') {
                 that.monitorData.push(item)
               }
             })
@@ -196,7 +202,7 @@ export default {
           console.error(error)
         })
     },
-    isDisableFun() {
+    isDisableFun () {
       // 标识逻辑
       const that = this
       const mIdArr = ['1015', 'format-1015', 'delete-1015', 'format-1008', '1008', 'delete-1008']
@@ -303,7 +309,7 @@ export default {
           if (tasks && tasks.length > 0) {
             // 包含根节点时，不可选
             if (checkContentRoot(ganttName, tasks)) {
-              if(!(that.vueThis.planEditLock === '0' && window.createPage === 'decompose')){
+              if (!(that.vueThis.planEditLock === '0' && window.createPage === 'decompose')) {
                 that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '包含根节点时，不可选' })
                 return true
               }
@@ -474,7 +480,7 @@ export default {
               that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '请选择任务' })
               return true
             }
-            if(!mId.startsWith('format-') && JSON.stringify(button) !== '{}' && mId !=='cancelSel'){
+            if (!mId.startsWith('format-') && JSON.stringify(button) !== '{}' && mId !== 'cancelSel') {
               that.$store.dispatch('setButtonMsg', { id: btn.id, msg: '请选择任务' })
               return true
             }
@@ -483,7 +489,7 @@ export default {
         return false
       }
     },
-    clickFun() {
+    clickFun () {
       const that = this
       return function (btn, ganttName, tasks) {
         if (btn != null && ganttName) {
@@ -673,7 +679,7 @@ export default {
 }
 
 // 检查任务及其所有父任务的责任用户是否与当前用户相同
-function checkResolve(ganttObject, task) {
+function checkResolve (ganttObject, task) {
   if (task.parent) {
     const parentTask = ganttObject.getTask(task.parent)
     if (parentTask.dutyUserId === parentTask.nowUserId) {
@@ -687,7 +693,7 @@ function checkResolve(ganttObject, task) {
 }
 
 // 如果所选任务的所有父级有一个有月度计划或者责任令表示则禁用
-function checkResolveTwo(ganttObject, task) {
+function checkResolveTwo (ganttObject, task) {
   if (task.parent) {
     const parentTask = ganttObject.getTask(task.parent)
     if (parentTask.monitorPoints && (parentTask.monitorPoints === '1015' || parentTask.monitorPoints === '1008')) {
@@ -700,7 +706,7 @@ function checkResolveTwo(ganttObject, task) {
   }
 }
 
-function checkResolveThree(ganttObject, task) {
+function checkResolveThree (ganttObject, task) {
   let check = false
   if (ganttObject.hasChild(task.id)) {
     ganttObject.eachTask(function (t) {
