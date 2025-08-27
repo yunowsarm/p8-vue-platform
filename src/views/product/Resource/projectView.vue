@@ -185,6 +185,14 @@
                       :businessKey="businessKey"
                       :configParmars="configParmars"></demand-table>
       </el-tab-pane>
+      <el-tab-pane label="关联合同信息">
+        <P8TableRender ref="tableRender"
+                       class="planLayout"
+                       code="viewRelevanceContractList"
+                       :reportParam="reportParam"
+                       :west-tree-param="provideParams.searchParams">
+        </P8TableRender>
+      </el-tab-pane>
     </el-tabs>
     <div v-if="viewVisible"
          class="viewVisible">
@@ -352,6 +360,12 @@ export default {
       }
     ]
     return {
+      reportParam: {
+        project_id: ''
+      },
+      provideParams: {
+        searchParams: {}
+      },
       projectClassname: '',
       roleId: '',
       id: null,
@@ -409,12 +423,15 @@ export default {
   },
   created () {
     if (this.row && this.row.length) {
-      this.id = this.row[0].ID
+      this.id = this.row[0].ID ? this.row[0].ID : this.row[0].id
+      this.reportParam.project_id = this.row[0].ID ? this.row[0].ID : this.row[0].id
     } else {
       if (this.businessKey) {
         this.id = this.businessKey
+        this.reportParam.project_id = this.businessKey
       } else {
         this.id = this.configParmars ? this.configParmars.id : ''
+        this.reportParam.project_id = this.configParmars ? this.configParmars.id : ''
       }
       if (!this.id) {
         this.viewVisible = true
