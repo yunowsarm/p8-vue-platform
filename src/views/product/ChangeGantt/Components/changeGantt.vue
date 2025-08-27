@@ -813,9 +813,7 @@ export default {
                     obj[changeTaskKey] = res.changeTaskInfo[item.id][changeTaskKey]
                   }
                 })
-                if (!res.changeTaskInfo[item.id].monitors) {
-                  obj.monitorPoints = ''
-                }
+                obj.monitorPoints = res.changeTaskInfo[item.id].monitorPoints
                 if (res.changeTaskInfo[item.id].describes) {
                   obj.unDescribes = '1'
                   // 添加判断确保对象存在
@@ -823,7 +821,6 @@ export default {
                     vueThis.newTaskMap[item.id].updateInfo = ['describes']
                   }
                 }
-
               }
               return obj
             })
