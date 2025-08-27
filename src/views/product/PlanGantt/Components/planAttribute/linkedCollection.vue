@@ -667,7 +667,6 @@ export default {
         contractNodeList: this.selectRecords
       })
       if (res) {
-        debugger
         if (this.ganttName === 'planGantt') {
 
           await this.$api['relevanceContract.contractNodeRelatedTask']({
