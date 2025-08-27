@@ -130,7 +130,7 @@ export default {
   },
   methods: {
     getIcon (row) {
-      return `<i class='${row.taskIcon}' style='color: ${row.taskColor};'></i>`
+      return `<i class='${row.taskIcon}' style='color: ${row.taskColor};' title=${row.managerStatusDisplay}></i>`
     },
     // 根据任务 ID 获取任务数据的方法
     async fetchTaskData (taskId) {
