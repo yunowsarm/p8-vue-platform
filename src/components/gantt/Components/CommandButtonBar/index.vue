@@ -70,10 +70,6 @@
                  class="group-title">
               {{ group.groupName }}
             </div>
-            <div v-else
-                 class="group-title">
-              {{ group.groupName }}
-            </div>
           </div>
         </div>
         <span v-if="showArrow"
@@ -119,12 +115,6 @@
                 {{ group.groupName }}
               </div>
             </div>
-            <div v-else>
-              <div class="group-title"
-                   v-if="panelData[0].groupNameVisible">
-                {{ group.groupName }}
-              </div>
-            </div>
           </div>
           <div v-else
                class="group-container">
@@ -144,12 +134,6 @@
               </template>
             </div>
             <div v-if="userSettingAll.PlanButton && userSettingAll.PlanButton[0].value.isGroup === '1'">
-              <div class="group-title"
-                   v-if="panelData[0].groupNameVisible">
-                {{ group.groupName }}
-              </div>
-            </div>
-            <div v-else>
               <div class="group-title"
                    v-if="panelData[0].groupNameVisible">
                 {{ group.groupName }}
