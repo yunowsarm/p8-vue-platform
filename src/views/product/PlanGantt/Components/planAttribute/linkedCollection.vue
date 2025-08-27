@@ -681,22 +681,23 @@ export default {
             }
           })
           await this.getList()
-          setTimeout(() => {
-            if (that.selectRecords.length > 0) {
-              if (task.monitorPoints) {
-                if (!task.monitorPoints.includes('1018')) {
-                  if (task.monitorPoints.includes(',')) {
-                    task.monitorPoints += ',1018'
-                  } else {
-                    task.monitorPoints += '1018'
-                  }
+          if (that.selectRecords.length > 0) {
+            if (task.monitorPoints) {
+              if (!task.monitorPoints.includes('1018')) {
+                if (task.monitorPoints.includes(',')) {
+                  task.monitorPoints += ',1018'
+                } else {
+                  task.monitorPoints += '1018'
                 }
-              } else {
-                task.monitorPoints = '1018'
               }
-              ganttObject.updateTask(task.id)
+            } else {
+              task.monitorPoints = '1018'
             }
-          }, 1000)
+            ganttObject.updateTask(task.id)
+          }
+          this.vueThis.isSueTaskIds = [task.id]
+          this.vueThis.isRefuls = false
+          this.vueThis.loadGanttData(this.vueThis.planInfoId, this.vueThis.taskId, this.vueThis.createPage)
 
         } else {
           await this.$api['relevanceContract.contractNodeRelatedTaskChange']({
