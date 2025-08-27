@@ -697,7 +697,9 @@ export default {
           this.vueThis.isSueTaskIds = [task.id]
           this.vueThis.isRefuls = false
           this.vueThis.loadGanttData(this.vueThis.planInfoId, this.vueThis.taskId, this.vueThis.createPage)
-
+          setTimeout(() => {
+            this.vueThis.isRefuls = true
+          }, 1000)
         } else {
           await this.$api['relevanceContract.contractNodeRelatedTaskChange']({
             taskId: this.taskId,
