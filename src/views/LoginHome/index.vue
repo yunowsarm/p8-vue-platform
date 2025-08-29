@@ -401,7 +401,6 @@ import { getGreetingTime } from '@/utils/common'
 import kanbanView from '@/views/Framework/System/KanbanDesign/kanbanView.vue'
 import ProcessApprovalIndex from '@/views/Communication/MyApprove/list.vue'
 import { Dropdown, DropdownMenu, DropdownItem, Badge, Tooltip, P8Drawer as CommonDrawer, P8ListLayout as ListLayout, Notification } from 'p8-components-ui'
-import kanbanViewVue from '../Dashboard/kanbanView.vue'
 import { format } from 'echarts'
 export default {
   name: 'LoginHome',
