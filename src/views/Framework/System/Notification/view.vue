@@ -41,6 +41,9 @@ export default {
   props: {
     row: {
       type: Array
+    },
+    businessKey: {
+      type: String
     }
   },
   data () {
@@ -86,7 +89,7 @@ export default {
     }
   },
   mounted () {
-    this.$api['documentManagement.selectNotice']({ id: this.row[0].ID }).then(res => {
+    this.$api['documentManagement.selectNotice']({ id: this.row ? this.row[0].ID : this.businessKey }).then(res => {
       if (res) {
         if (res.notificationScope === 0) {
           res.notificationScope = '所有成员'
