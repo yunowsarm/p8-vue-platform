@@ -363,7 +363,7 @@ export default {
     border-bottom: 1px solid #e1e1e1;
   }
   .normal-main .normal-center {
-    height: 100%;
+    height: 100% !important;
   }
 }
 .dialogSelectUser {
