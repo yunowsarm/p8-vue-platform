@@ -365,7 +365,9 @@ export default {
           width: 160
         }
       ],
-      tableConfig: {},
+      tableConfig: {
+        'highlight-current-row': true
+      },
       selectRow: {},
       wholeDescribeId: '',
       menuStateObj: []
