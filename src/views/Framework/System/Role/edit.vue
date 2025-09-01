@@ -392,6 +392,7 @@ export default {
   computed: {
     disabledUserIds () {
       return this.formData.sysuserIds
+        .filter(u => !u.isDeleted)
         .map(user => user.id);
     }
   },
