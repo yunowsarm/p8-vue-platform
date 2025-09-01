@@ -1353,4 +1353,7 @@ export default {
 ::v-deep .common-table .panination {
   position: relative !important;
 }
+.normal-layout {
+  height: 100% !important;
+}
 </style>
