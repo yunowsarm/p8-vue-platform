@@ -1941,6 +1941,13 @@ export const repositoryApi = {
       desc: '计划变更关联保存'
     },
     {
+      name: 'getChangeDemandAndTasksInfo',
+      method: 'POST',
+      path: '/requirement/getChangeDemandAndTasksInfo',
+      mockPath: '/requirement/getChangeDemandAndTasksInfo',
+      desc: '计划变更关联保存查询'
+    },
+    {
       name: 'getRequirementByProjectTask',
       method: 'POST',
       path: '/requirement/getRequirementByProjectTask',

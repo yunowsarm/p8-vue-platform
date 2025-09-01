@@ -50,6 +50,7 @@
 
 <script>
 import { P8VxeTable as VxeTable } from 'p8-components-ui'
+import { mapGetters } from 'vuex'
 export default {
   name: 'Index',
   components: {
@@ -253,6 +254,9 @@ export default {
     }
     this.getList()
   },
+  computed: {
+    ...mapGetters(['vueThis'])
+  },
   methods: {
     getList () {
       this.taskList.forEach(item => {
@@ -354,7 +358,8 @@ export default {
       if (falg) {
         // 未修改过从列表获取
         this.$api['demandManagement.getRequirementByTask']({
-          taskId: val.id
+          taskId: val.id,
+          planChangeDetailId: this.vueThis.changeRecordId ? this.vueThis.changeRecordId : ''
         }).then(res => {
           if (res) {
             res.forEach(row => {
@@ -432,13 +437,25 @@ export default {
                     task.monitorpointIconArray = task.monitorpointIconArray + ',p8 icon-a-xuqiu1'
                     // task.monitorPointDisplayArray = task.monitorPointDisplayArray + ',需求'
                     task.requirementIds = this.selectRecords
-                    task.monitors.push({
-                      issubmit: true,
-                      logBeginTime: "",
-                      logEndTime: "",
-                      monitorId: '1017',
-                      taskId: task.id
-                    })
+                    if (task.monitors) {
+                      task.monitors.push({
+                        issubmit: true,
+                        logBeginTime: "",
+                        logEndTime: "",
+                        monitorId: '1017',
+                        taskId: task.id
+                      })
+                    } else {
+                      task.monitors = [
+                        {
+                          issubmit: true,
+                          logBeginTime: "",
+                          logEndTime: "",
+                          monitorId: '1017',
+                          taskId: task.id
+                        }
+                      ]
+                    }
                   }
                 } else {
                   // 判断是新增需求

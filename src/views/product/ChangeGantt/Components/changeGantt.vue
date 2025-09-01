@@ -824,6 +824,17 @@ export default {
               }
               return obj
             })
+            if (res.tasks && res.changeTaskInfo && Object.keys(res.changeTaskInfo).length > 0) {
+              vueThis.newTaskMap = res.changeTaskInfo
+              res.tasks.forEach((task) => {
+                if (Object.keys(res.changeTaskInfo)[0] === task.id) {
+                  vueThis.projectCategory = task.projectCategory
+                  vueThis.monitorPoints = task.monitorPoints
+                  vueThis.projectClassification = task.projectClassification
+                  vueThis.projectTaskId = task.id
+                }
+              })
+            }
             if (xqFalg && vueThis.temporaryDatas.length > 0) {
               vueThis.taskList = myGantt.serialize().data
               vueThis.taskList.forEach((el, index) => {
@@ -919,17 +930,7 @@ export default {
               myGantt.config.readonly = false
               myGantt.config.readonlyReason = ''
             }
-            if (res.tasks && res.changeTaskInfo && Object.keys(res.changeTaskInfo).length > 0) {
-              vueThis.newTaskMap = res.changeTaskInfo
-              res.tasks.forEach((task) => {
-                if (Object.keys(res.changeTaskInfo)[0] === task.id) {
-                  vueThis.projectCategory = task.projectCategory
-                  vueThis.monitorPoints = task.monitorPoints
-                  vueThis.projectClassification = task.projectClassification
-                  vueThis.projectTaskId = task.id
-                }
-              })
-            }
+
             myGantt.$resourcesStore.parse(res.resources)
             myGantt.serverList(myGantt.config.monitor_point, res.monitorPointDatas)
             myGantt.serverList(myGantt.config.plan_type, res.taskClassifys)
@@ -948,7 +949,6 @@ export default {
             myGantt.parse(datas)
             vueThis.taskCount = myGantt.getTaskCount()
             myGantt.unselectTask()
-
             if (!vueThis.relevanceVisible && vueThis.selectedId) {
               setTimeout(() => {
                 myGantt.showTask(vueThis.selectedId)
@@ -1112,7 +1112,7 @@ export default {
         }
       }
     },
-    saveChange () {
+    async saveChange () {
       const that = this
       const obj = that.newTaskMap
       const oldObj = that.oldTaskMap
@@ -1198,6 +1198,16 @@ export default {
             }
           }
         }
+        let changeArr = []
+        if (that.changeId) {
+          await that.$api['demandManagement.getChangeDemandAndTasksInfo']({
+            changeRecordId: that.changeId
+          }).then(res => {
+            if (res) {
+              changeArr = res
+            }
+          })
+        }
         that.$api['planChange.calculateChangeInfoAndSave']({
           changeTasks: uniqueMergedArray,
           planInfoId: that.planInfoId,
@@ -1222,6 +1232,21 @@ export default {
               // that.initGantt(that.planInfoId, that.changeRecordId, that.viewType)
               that.loadGanttData(that.planInfoId, that.taskId, that.createPage, that.changeRecordId)
               that.hasSave = false
+              if (changeArr.length > 0) {
+                const result = Object.values(changeArr.reduce((acc, item) => {
+                  if (!acc[item.taskId]) {
+                    const task = myGantt.getTask(item.taskId)
+                    acc[item.taskId] = {
+                      taskId: item.taskId,
+                      requirementIds: [],
+                      taskRow: task
+                    }
+                  }
+                  acc[item.taskId].requirementIds.push(item.demandId)
+                  return acc
+                }, {}))
+                that.temporaryDatas = [...that.temporaryDatas, ...result]
+              }
               if (that.temporaryDatas.length > 0) {
                 that.$api['demandManagement.saveRequirementByTaskChange']({
                   planInfoId: that.planInfoId,
