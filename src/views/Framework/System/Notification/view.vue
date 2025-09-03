@@ -114,6 +114,7 @@ export default {
 <style scoped lang="scss">
 .form {
   height: 100%;
+  overflow: auto;
 }
 .userList {
   background: #ffffff;

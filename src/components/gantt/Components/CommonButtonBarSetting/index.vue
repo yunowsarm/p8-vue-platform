@@ -179,6 +179,7 @@ export default {
         })
       } else {
         this.value = this.$store.getters.ganttButtonMode ? this.$store.getters.ganttButtonMode : 'tabs'
+        this.isGroup = this.$store.getters.ganttIsGroup ? this.$store.getters.ganttIsGroup : '1'
         if (rightBtns && rightBtns.length == 0) {
           rightBtns = this.$store.getters.ganttRightButtons ? this.$store.getters.ganttRightButtons : []
         }
