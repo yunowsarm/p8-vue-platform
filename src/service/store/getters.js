@@ -31,6 +31,7 @@ const getters = {
   displayType: (state) => state.user.displayType, // 超期/剩余天数展示类型
   ganttButtonMode: (state) => state.user.ganttButtonMode, // gantt操作按钮单行双行模式配置
   ganttRightButtons: (state) => state.user.ganttRightButtons, // gantt右键菜单配置
+  ganttIsGroup: (state) => state.user.ganttIsGroup, // gantt右键菜单配置
   autoScheduling: (state) => state.user.autoScheduling, // 排程类型
   // 路由
   addRouters: (state) => state.routers.addRouters,

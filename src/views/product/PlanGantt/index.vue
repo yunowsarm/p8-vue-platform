@@ -261,8 +261,9 @@ export default {
     },
     userSettingAll: {
       handler (val) {
+        let isGroup = val.PlanButton ? val.PlanButton[0].value.isGroup : this.ganttIsGroup
         if (this.ganttButtonMode == 'tabs') {
-          if (val.PlanButton[0].value.isGroup === '1') {
+          if (isGroup === '1') {
             this.commandButtonBarHeight = this.advance ? '145px' : '40px'
             this.expandBottom = 'calc(100% - 148px)'
           } else {
@@ -271,7 +272,7 @@ export default {
           }
         }
         if (this.ganttButtonMode == 'double') {
-          if (val.PlanButton[0].value.isGroup === '1') {
+          if (isGroup === '1') {
             this.commandButtonBarHeight = '72px'
             this.expandBottom = 'calc(100% - 72px)'
           } else {
@@ -280,7 +281,7 @@ export default {
           }
         }
         if (this.ganttButtonMode == 'single') {
-          if (val.PlanButton[0].value.isGroup === '1') {
+          if (isGroup === '1') {
             this.commandButtonBarHeight = '58px'
             this.expandBottom = 'calc(100% - 55px)'
           } else {
@@ -373,7 +374,7 @@ export default {
       }
       return ''
     },
-    ...mapGetters(['ganttButtonMode', 'ganttRightButtons', 'userSettingAll'])
+    ...mapGetters(['ganttButtonMode', 'ganttRightButtons', 'userSettingAll', 'ganttIsGroup'])
   },
   components: {
     'el-drawer': Drawer,

@@ -66,8 +66,8 @@
                 </div>
               </template>
             </div>
-            <div v-if="userSettingAll.PlanButton && userSettingAll.PlanButton[0].value.isGroup === '1'"
-                 class="group-title">
+            <div class="group-title"
+                 v-if="(userSettingAll.PlanButton && userSettingAll.PlanButton[0].value.isGroup === '1') || ganttIsGroup === '1'">
               {{ group.groupName }}
             </div>
           </div>
@@ -109,7 +109,7 @@
                          :task-id="taskId"
                          :row-num="rowNum"></component>
             </div>
-            <div v-if="userSettingAll.PlanButton && userSettingAll.PlanButton[0].value.isGroup === '1'">
+            <div v-if="(userSettingAll.PlanButton && userSettingAll.PlanButton[0].value.isGroup === '1') || ganttIsGroup === '1'">
               <div class="group-title"
                    v-if="panelData[0].groupNameVisible">
                 {{ group.groupName }}
@@ -133,7 +133,7 @@
                 </div>
               </template>
             </div>
-            <div v-if="userSettingAll.PlanButton && userSettingAll.PlanButton[0].value.isGroup === '1'">
+            <div v-if="(userSettingAll.PlanButton && userSettingAll.PlanButton[0].value.isGroup === '1') || ganttIsGroup === '1'">
               <div class="group-title"
                    v-if="panelData[0].groupNameVisible">
                 {{ group.groupName }}
@@ -210,7 +210,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['vueThis', 'ganttButtonMode', 'ganttRightButtons', 'userSettingAll']),
+    ...mapGetters(['vueThis', 'ganttButtonMode', 'ganttRightButtons', 'userSettingAll', 'ganttIsGroup']),
     isExecute () {
       return function (configs) {
         if (typeof configs === 'string') {
