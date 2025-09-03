@@ -353,3 +353,6 @@
 .el-divider--vertical {
   margin: 0 5px !important;
 }
+.el-table--striped .el-table__body tr.current-row.el-table__row--striped td.el-table__cell{
+  background: #F1F9FF !important;
+}
