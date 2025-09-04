@@ -1,6 +1,7 @@
 <template>
   <div class="main">
-    <div class="login-wrapper"
+    <div v-if="innerWidth > 600"
+         class="login-wrapper"
          ref="loginWrapper">
       <span class="login-version">
         <el-popover placement="top-start"
@@ -19,7 +20,8 @@
     <div class="loginContent">
       <div class="login-block">
         <div class="login-contain">
-          <span class="login-logo"
+          <span v-if="innerWidth > 600"
+                class="login-logo"
                 ref="loginLogo"></span>
           <h4 class="login-sysName"
               v-html="system_name"></h4>
@@ -50,7 +52,8 @@
                           placeholder="请输入密码"></el-input>
               </el-form-item>
 
-              <el-form-item class="keepLoggedIn">
+              <el-form-item v-if="innerWidth > 600"
+                            class="keepLoggedIn">
                 <el-checkbox v-model="keepLoggedIn">记住登录状态</el-checkbox>
               </el-form-item>
 
@@ -96,6 +99,7 @@ export default {
   name: 'Login',
   data () {
     return {
+      innerWidth: window.innerWidth,
       loading: false,
       systemLogo: '../../assets/image/login/logo.png',
       isLoginning: false,
@@ -802,6 +806,35 @@ $login-primary--login-color: #306cf7;
           font-size: 14px;
         }
       }
+    }
+  }
+  @media screen and (min-width: 300px) and (max-width: 600px) {
+    .loginContent {
+      height: 100% !important;
+      width: 100% !important;
+      background-position: center 0 !important;
+      background-repeat: no-repeat !important;
+      background-size: cover !important;
+      background-image: url(../../assets/image/login/loginNew.png);
+      background-color: #0060ff !important;
+    }
+    .loginForm {
+      // position: absolute !important;
+      // top: 30% !important;
+      margin: 35px !important;
+      width: 80% !important;
+    }
+    .login-sysName {
+      color: #ffffff !important;
+      position: fixed !important;
+      top: 12% !important;
+      left: 5% !important;
+      font-size: 25px !important;
+    }
+    .login-button {
+      width: 100% !important;
+      border-radius: 50px 50px !important;
+      margin-top: 20px;
     }
   }
 }
