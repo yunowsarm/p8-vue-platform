@@ -7,7 +7,7 @@ const SplitChunksPlugin = require('webpack').optimize.SplitChunksPlugin
 let version = require('./package.json')['version']
 version = 'V' + version
 const TerserPlugin = require('terser-webpack-plugin')
-
+const CompressionPlugin = require('compression-webpack-plugin')
 module.exports = defineConfig({
   runtimeCompiler: true,
   lintOnSave: false,
@@ -19,13 +19,19 @@ module.exports = defineConfig({
     }
   },
   chainWebpack(config) {
+    if (process.env.NODE_ENV === 'production') {
+      // 仅在生产环境启用
+      config.plugin('compression').use(CompressionPlugin, [
+        {
+          test: /\.(js|css|html|svg)$/, // 匹配要压缩的文件类型
+          threshold: 10240, // 对超过10k的文件进行压缩
+          minRatio: 0.8, // 压缩比小于0.8时才压缩
+          deleteOriginalAssets: false // 不删除原始文件
+        }
+      ])
+    }
     config.output.filename(`js/[name].[hash:8].${version}.js`).end()
     config.output.chunkFilename(`js/[name].[hash:8].${version}.js`).end()
-    // config.plugin('extract-css').tap((args) => {
-    //   args[0].filename = `css/[name].[hash:8].${version}.css`;
-    //   args[0].chunkFilename = `css/[name].[hash:8].${version}.css`;
-    //   return args;
-    // });
   },
   configureWebpack: {
     devtool: process.env.NODE_ENV === 'development' ? 'source-map' : undefined,
@@ -58,7 +64,7 @@ module.exports = defineConfig({
           }
         }
       },
-      minimize: true,
+      minimize: false,
       minimizer: [
         new TerserPlugin({
           test: /\.js(\?.*)?$/i, // 匹配所有 js 文件
