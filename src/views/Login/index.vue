@@ -113,7 +113,53 @@ export default {
       systemNames: PLATFORM_PREFIX_NAME,
       flag: 'systemModel1',
       loginCa: CA_LOGIN,
-      regardsObj: {}
+      regardsObj: {},
+      themeArray: [
+        {
+          "key": "tableBgColor",
+          "value": "#FFFFFF"
+        },
+        {
+          "key": "tableHeaderBgColor",
+          "value": "#F4F8F8"
+        },
+        {
+          "key": "tableStripeColor",
+          "value": "#fbfbfb"
+        },
+        {
+          "key": "tableRowHoverBgColor",
+          "value": "#F1F9FF"
+        },
+        {
+          "key": "tableBorderColor",
+          "value": "#E6E6E6"
+        },
+        {
+          "key": "tableTextColor",
+          "value": "#606266"
+        },
+        {
+          "key": "tableHeaderTextColor",
+          "value": "#1F2329"
+        },
+        {
+          "key": "imageUrl",
+          "url": "./static/themeBackground/image3.png"
+        },
+        {
+          "key": "bgTheme",
+          "value": "#3491FA"
+        },
+        {
+          "key": "imgType",
+          "value": 1
+        },
+        {
+          "key": "imgNum",
+          "value": 0.7
+        }
+      ]
     }
   },
   computed: {
@@ -124,6 +170,20 @@ export default {
   mounted () {
     // 确保页面先渲染
     setTimeout(() => {
+      this.themeArray.forEach(item => {
+        switch (item.key) {
+          case 'imageUrl':
+            this.$store.dispatch('setImage', item.url)
+            break;
+          case 'bgTheme':
+            let theme = item.value
+            this.$store.dispatch('setTheme', { theme, handler: true })
+            break;
+          default:
+            this.$store.dispatch('setSystemColor', { [item.key]: item.value })
+            break;
+        }
+      })
       this.getSystemAbout()
       this.dayTime = getGreetingTime()
       // eslint-disable-next-line no-undef
