@@ -459,10 +459,9 @@ export default {
         this.btnDisable = true
       }
       this.isChildren = false
-      this.sqlParam.isChildren = 'false'
-      this.sqlParam.showView = val
-      this.sqlParam = { ...sqlParam, ...this.sqlParam }
-      this.dateTime = new Date().getTime()
+      sqlParam.isChildren = 'false'
+      sqlParam.showView = val
+      this.provideParams.searchParams = { ...this.provideParams.searchParams, ...sqlParam }
     },
     childrenClick (val) {
       let tableParam = this.$refs.tableRender.$refs.xTable.params.sqlParam
@@ -477,12 +476,11 @@ export default {
         }
       }
       if (val) {
-        this.sqlParam.isChildren = 'true'
+        sqlParam.isChildren = 'true'
       } else {
-        this.sqlParam.isChildren = 'false'
+        sqlParam.isChildren = 'false'
       }
-      this.sqlParam = { ...sqlParam, ...this.sqlParam }
-      this.dateTime = new Date().getTime()
+      this.provideParams.searchParams = { ...this.provideParams.searchParams, ...sqlParam }
     },
     getProgress (val) {
       return Math.round(val * 100) + '%'
@@ -612,7 +610,7 @@ export default {
       // 原有的初始化逻辑
       this.westTreeParam.showView = 'showView003'
       this.westTreeParam.isChildren = 'false'
-      this.westTreeParam.status = this.status
+      this.sqlParam.status = this.status
       this.provideParams.searchParams = this.westTreeParam
       this.init()
       this.getIconData()
@@ -768,12 +766,13 @@ export default {
           }
         } else {
           sqlParam = {
-            isChildren: false,
+            isChildren: 'false',
             showView: 'showView003',
             tabsName: this.tabsName
           };
         }
-        this.sqlParam = { ...sqlParam, ...this.sqlParam }
+        this.provideParams.searchParams = { ...this.provideParams.searchParams, ...sqlParam }
+        this.sqlParam = { ...this.sqlParam, ...sqlParam }
         this.dateTime = new Date().getTime()
       }
       // 组件切换
@@ -797,7 +796,6 @@ export default {
           this.asyncComponents = obj[key]
         }
       }
-      this.provideParams.searchParams.status = this.status
       this.provideParams.searchParams.status = this.status
       if (this.isFromDashboard) {
         this.provideParams.searchParams.isThisMonthTask = '1'
