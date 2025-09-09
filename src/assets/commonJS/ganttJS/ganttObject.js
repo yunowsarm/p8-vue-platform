@@ -12,7 +12,7 @@ import Datepicker from '@/assets/commonJS/originalComponents/datePicker'
 import { P8TreeSelect, DatePicker, Select } from 'p8-components-ui'
 import { generateTreeThree, generateTree } from '@/utils/generateTree'
 import { calculateRemainingDays } from '@/utils/common'
-import pinyin from 'pinyin'
+// import pinyin from 'pinyin'
 
 /**
  * @Description 计划时间限制策略
@@ -2315,10 +2315,11 @@ function searchFilter(parent, searchForm, ganttObject) {
 
     const userName = searchForm.userName // 责任人模糊查询
     let userNameCheck = true
-    const matchByRealName = (item, keyword) => {
-      console.log(item,keyword)
+    const matchByRealName = async (item, keyword) => {
       if (!item) return false
       const name = item
+      const pinyinModule = await import('pinyin')
+      const pinyin = pinyinModule.default || pinyinModule
       const pyArr = pinyin(name, { style: pinyin.STYLE_NORMAL }).flat()
       const fullPinyin = pyArr.join('').toLowerCase()       // zhangsan
       const initials = pyArr.map(p => p[0]).join('').toLowerCase() // zs
