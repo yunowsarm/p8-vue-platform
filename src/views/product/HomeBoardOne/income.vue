@@ -2,10 +2,12 @@
   <div class="income-container">
     <div class="income-box">
       <div class="title">本年已收/应收</div>
-      <div class="amount">
-        <span class="income">{{ formatNumber(income) }}</span>
-        <span class="separator">/</span>
-        <span class="expense">{{ formatNumber(expense) }}</span>
+      <div class="amount" ref="amount">
+        <div ref="amount-content">
+          <span class="income">{{ formatNumber(income) }}</span>
+          <span class="separator">/</span>
+          <span class="expense">{{ formatNumber(expense) }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -27,8 +29,24 @@ export default {
         this.expense = res[0].CURRENT_YEAR_RECEIVED
       }
     })
+    window.addEventListener('resize',this.fit)
+  },
+  updated() {
+    this.fit()
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize',this.fit)
   },
   methods: {
+    fit(){
+      const amount = this.$refs.amount
+      const amountContent = this.$refs['amount-content']
+      if(!amount || !amountContent) return
+      amountContent.style.transform = "scale(1)"
+      const scale = amount.offsetWidth / amountContent.scrollWidth
+      amountContent.style.transform = `scale(${scale})`
+      amountContent.style.transformOrigin = "center center"
+    },
     formatNumber (num) {
       return num.toLocaleString('en-US', {
         minimumFractionDigits: 2,
@@ -65,23 +83,28 @@ export default {
     }
 
     .amount {
+      width: 100%;
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      font-size: 28px;
+      //gap: 8px;
       font-weight: bold;
 
       .income {
+        text-align: end;
+        width: 48%;
         color: #67c23a;
       }
 
       .separator {
+        width: 4%;
         color: #909399;
       }
 
       .expense {
+        text-align: start;
+        width: 48%;
         color: #f56c6c;
       }
     }
