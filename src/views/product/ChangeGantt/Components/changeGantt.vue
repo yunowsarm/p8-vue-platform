@@ -277,11 +277,11 @@
   margin-bottom: 4px !important;
 }
 
-.planGantt ::v-deep {
-  .gantt_row:not([aria-expanded]).updColor {
-    background-color: #f0f8ff;
-  }
-}
+//.planGantt ::v-deep {
+//  .gantt_row:not([aria-expanded]).updColor {
+//    background-color: #f0f8ff;
+//  }
+//}
 </style>
 <style type="text/css" media="screen">
 html,
