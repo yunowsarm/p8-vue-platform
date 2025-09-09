@@ -73,6 +73,15 @@ export const repositoryApi = {
       desc: '产品信息删除'
     }
   ],
+  productInfoManagement:[
+    {
+      name: 'deleteReferencedByProject',
+      method: 'POST',
+      path: '/cgtableModelInfo/deleteReferencedByProject',
+      mockPath: '/cgtableModelInfo/deleteReferencedByProject',
+      desc: '产品信息删除'
+    }
+  ],
   ProjectApply: [
     {
       name: 'projectClassifyTree',
