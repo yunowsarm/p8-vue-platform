@@ -39,6 +39,7 @@
                     <div class="list-con-item__content request">
                       <el-tooltip placement="top-start">
                         <div slot="content"
+                             class="custom-tooltip"
                              v-html="citem.description"></div>
                         <san>{{citem.descriptionDisplay}}</san>
                       </el-tooltip>
@@ -269,18 +270,18 @@ export default {
     // }
     if (this.approveType) {
       this.steps = [
-                { name: '任务描述', id: 'activityDesc', btns: [{ title: '查看', eventHandle: 'detailsSettings' }] },
-                { name: '输入', id: 'putin', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'putin' }] },
-                { name: '输出', id: 'output', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'output' }] },
-                { name: '特别说明', id: 'varsion', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'varsion' }] }
-              ]
+        { name: '任务描述', id: 'activityDesc', btns: [{ title: '查看', eventHandle: 'detailsSettings' }] },
+        { name: '输入', id: 'putin', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'putin' }] },
+        { name: '输出', id: 'output', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'output' }] },
+        { name: '特别说明', id: 'varsion', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'varsion' }] }
+      ]
     } else {
       this.steps = [
-                { name: '任务描述', id: 'activityDesc', btns: [{ title: '查看', eventHandle: 'detailsSettings' }] },
-                { name: '输入', id: 'putin', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'putin' }] },
-                { name: '输出', id: 'output', btns: [{ title: '编辑', eventHandle: 'modifyMenu', type: 'output' }] },
-                { name: '特别说明', id: 'varsion', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'varsion' }] }
-              ]
+        { name: '任务描述', id: 'activityDesc', btns: [{ title: '查看', eventHandle: 'detailsSettings' }] },
+        { name: '输入', id: 'putin', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'putin' }] },
+        { name: '输出', id: 'output', btns: [{ title: '编辑', eventHandle: 'modifyMenu', type: 'output' }] },
+        { name: '特别说明', id: 'varsion', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'varsion' }] }
+      ]
     }
     this.initData()
   },
@@ -578,5 +579,10 @@ $blue-color: #1b8af9;
 }
 ::v-deep .manager-drawer .el-drawer__header {
   padding: 11px;
+}
+.custom-tooltip {
+  max-width: 600px;
+  max-height: 600px;
+  overflow: auto;
 }
 </style>

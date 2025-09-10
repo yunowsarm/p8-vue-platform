@@ -5,7 +5,8 @@
              :existCustomBtn="true"
              :form="formData">
     <template #description>
-      <span v-html="formData.description"></span>
+      <span style="width: 100%; overflow: auto; display: block;"
+            v-html="formData.description"></span>
     </template>
     <template #customBtn>
       <el-button @click="cancel">关 闭</el-button>
