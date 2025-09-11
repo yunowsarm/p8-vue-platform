@@ -540,9 +540,11 @@ export default {
     changeCommandButton (advance) {
       this.advance = advance
       if (advance) {
+        this.expandBottom = 'calc(100% - 148px)'
         this.commandButtonBarHeight = '152px'
       } else {
         this.commandButtonBarHeight = '40px'
+        this.expandBottom = 'calc(100% - 38px)'
       }
     },
     setRenderKey () {
