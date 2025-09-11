@@ -350,6 +350,7 @@ import VersionList from '../../../PlanGantt/Components/versionList'
 import CommandStatistic from '@/components/gantt/Components/CommandStatistic'
 import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
 import ProgressHistory from '../../../PlanGantt/Components/progressHistory';
+import { debounce } from 'lodash';
 const Mycolumns = [
   {
     title: '',
@@ -745,7 +746,12 @@ export default {
       deep: true
     }
   },
-  created () { },
+  created () {
+    this.debouncedShowTaskProgressDialog = debounce(this.showTaskProgressDialog, 500, { leading: false, trailing: true }); // 500ms 的防抖时间
+  },
+  beforeDestroy () {
+    this.debouncedShowTaskProgressDialog.cancel();
+  },
   mounted () {
     this.scrollBarHeight = 40 * this.menuData.length + 1 + 'px'
     window.movement = this.movement
@@ -769,6 +775,18 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll'])
   },
   methods: {
+    showTaskProgressDialog (taskId) {
+      this.selectedId = taskId
+      this.pageType = 'history'
+      this.$emit('show-detail', myGantt.getTask(taskId), this.ganttName, '', 'history')
+      // this.progressHistoryVisible = true
+      this.reminderList.forEach((item) => {
+        if (item.id == taskId) {
+          item.reminder = 0
+        }
+      })
+      // myGantt.render()
+    },
     addfoldState (task) {
       setTimeout(() => {
         if (task.$open !== task.expand) {
