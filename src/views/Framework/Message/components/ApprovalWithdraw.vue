@@ -1,10 +1,15 @@
 <script>
 export default {
   name: 'ApprovalWithdraw',
-  props:{
+  provide() {
+    return {
+      disabled: true
+    }
+  },
+  props: {
     selectedApproval: {
       type: Object,
-      default: () => { }
+      default: () => {}
     }
   },
   data() {
@@ -16,7 +21,7 @@ export default {
       },
       formComp: '',
       formCompProp: {},
-      taskId:'',
+      taskId: '',
       currEntityId: '',
       tableFlex: 315,
       componentsParams: null,
@@ -38,9 +43,8 @@ export default {
   watch: {
     selectedApproval: {
       deep: true,
-      immediate:true,
+      immediate: true,
       handler: function (newV, oldV) {
-        console.log(newV,'selectedApproval')
         this.formComp = ''
         // this.businessKey = newV.businessKey
         this.taskId = newV.entityId
@@ -116,11 +120,13 @@ export default {
       :permission-vo="componentsParams.permissionVo"
       :layout-config="componentsParams"
       v-bind="formCompProp"
+      :disabled="true"
       :kanban-config="componentsParams"
     />
     <component
       ref="approveContent"
       :style="{ height: tabsHeight }"
+      :disabled="true"
       :searchParams="searchParams"
       :selected-approval="{
         businessKey: this.currEntityId,
@@ -134,4 +140,8 @@ export default {
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+::v-deep .normal-layout {
+  height: 100% !important;
+}
+</style>

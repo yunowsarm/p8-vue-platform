@@ -17,6 +17,7 @@
                    :key="formKey"
                    class="formList"
                    label-width="150px"
+                   :disabled='disabled'
                    :data-source="dataSource"
                    :exist-default-btn="false"
                    :form="formData">
@@ -25,6 +26,7 @@
         <form-list ref="formInfo3"
                    class="formList"
                    :key="formKey"
+                   :disabled='disabled'
                    label-width="150px"
                    :data-source="dataSource2"
                    :exist-default-btn="false"
@@ -116,6 +118,10 @@ export default {
     FormRender
   },
   props: {
+    disabled:{
+      type: Boolean,
+      default: false
+    },
     searchParams: {
       type: Object,
       default: () => { }

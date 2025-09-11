@@ -249,7 +249,6 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async () => {
-        const [data] = await this.$api['PersonalProcessApproval.getApproveContentViewUrl']({ taskId: item.processTaskId })
         const params = {
           withdrawList: [
             {
