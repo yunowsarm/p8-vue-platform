@@ -39,6 +39,29 @@ export const repositoryApi = {
       path: '/bpm/personal/ProcessApproval/withdraw',
       mockPath: '/bpm/personal/ProcessApproval/withdraw',
       desc: '发起流程'
+    },
+    {
+      name: 'getEnableThisEnterprise',
+      method: 'POST',
+      path: '/enterprise/getEnableThisEnterprise',
+      mockPath: '/enterprise/getEnableThisEnterprise',
+      desc: '知识库管理->获取本企业'
+    },
+    {
+      name: 'selectCurrentContractById',
+      method: 'POST',
+      path: '/contractNodeTask/selectCurrentContractById',
+      mockPath: '/contractNodeTask/selectCurrentContractById',
+      desc: '知识库管理->获取未收未付'
+    }
+  ],
+  productInfoManagement: [
+    {
+      name: 'deleteReferencedByProject',
+      method: 'POST',
+      path: '/cgtableModelInfo/deleteReferencedByProject',
+      mockPath: '/cgtableModelInfo/deleteReferencedByProject',
+      desc: '产品信息删除'
     }
   ],
   ProjectApply: [
