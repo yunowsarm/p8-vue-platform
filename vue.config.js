@@ -35,17 +35,44 @@ module.exports = defineConfig({
   },
   configureWebpack: {
     devtool: process.env.NODE_ENV === 'development' ? 'source-map' : undefined,
-    // 开启缓存
+    // 关闭缓存，与下一个配置二选其一
     // cache: false,
+    // 开启缓存
     cache: {
       type: 'filesystem',
       allowCollectingMemory: true
     },
+    // 以下第三方包，不会被打入组件包，但是要求使用组件的项目必须包含这些依赖
+    externals:
+      process.env.ENV === 'packaging'
+        ? {
+            'element-ui': 'element-ui',
+            'p8-components-ui': 'p8-components-ui',
+            'p8-lowcode': 'p8-lowcode',
+            'p8-vue-smart-widget': 'p8-vue-smart-widget',
+            'vxe-table': 'vxe-table',
+            'p8-dhtmlx-gantt': 'p8-dhtmlx-gantt',
+            'vue-quill-editor': 'vue-quill-editor',
+            'vxe-pc-ui': 'vxe-pc-ui',
+            'video.js': 'video.js',
+            'echarts-gl': 'echarts-gl',
+            'echarts-liquidfill': 'echarts-liquidfill',
+            tinymce: 'tinymce',
+            pinyin: 'pinyin',
+            moment: 'moment',
+            'monaco-editor': 'monaco-editor',
+            echarts: 'echarts',
+            xlsx: 'xlsx',
+            '@antv/g2': '@antv/g2',
+            brace: 'brace',
+            lodash: 'lodash'
+          }
+        : {},
     // 分割打包文件大小
     optimization: {
       splitChunks: {
         chunks: 'all',
-        minSize: 20000,
+        minSize: 10000,
         // maxSize: 0,
         minChunks: 2,
         maxAsyncRequests: 30,
@@ -64,7 +91,7 @@ module.exports = defineConfig({
           }
         }
       },
-      minimize: false,
+      minimize: true,
       minimizer: [
         new TerserPlugin({
           test: /\.js(\?.*)?$/i, // 匹配所有 js 文件
