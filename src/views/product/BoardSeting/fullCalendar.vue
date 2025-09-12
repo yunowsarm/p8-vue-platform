@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%">
     <FullCalendar :key="dateTime" class="calendarLayout" :options="calendarOptions" />
     <common-dialog
       v-if="visibleDrawerOther"
@@ -193,7 +193,7 @@ export default {
 <style>
 .calendarLayout {
   width: 100% !important;
-  max-height: 850px !important;
+  height: 100%;
   overflow: auto;
 }
 .fc-event-title,
@@ -202,9 +202,6 @@ export default {
 }
 .fc .fc-daygrid-day-frame {
   height: 80px !important;
-}
-.fc-scrollgrid-sync-table {
-  height: 1000px !important;
 }
 .repeating-event {
   background-color: #3788d8;
