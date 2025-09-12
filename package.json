@@ -73,6 +73,7 @@
     "xlsx": "^0.16.9"
   },
   "devDependencies": {
+    "compression-webpack-plugin": "^11.1.0",
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
     "@commitlint/cli": "^17.0.3",

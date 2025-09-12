@@ -4,9 +4,9 @@
 const webpack = require('webpack')
 const { defineConfig } = require('@vue/cli-service')
 const SplitChunksPlugin = require('webpack').optimize.SplitChunksPlugin
-let version = require("./package.json")["version"];
+let version = require('./package.json')['version']
 version = 'V' + version
-const TerserPlugin = require('terser-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = defineConfig({
   runtimeCompiler: true,
@@ -18,9 +18,9 @@ module.exports = defineConfig({
       overlay: false
     }
   },
-  chainWebpack (config) {
-    config.output.filename(`js/[name].[hash:8].${version}.js`).end();
-    config.output.chunkFilename(`js/[name].[hash:8].${version}.js`).end();
+  chainWebpack(config) {
+    config.output.filename(`js/[name].[hash:8].${version}.js`).end()
+    config.output.chunkFilename(`js/[name].[hash:8].${version}.js`).end()
     // config.plugin('extract-css').tap((args) => {
     //   args[0].filename = `css/[name].[hash:8].${version}.css`;
     //   args[0].chunkFilename = `css/[name].[hash:8].${version}.css`;

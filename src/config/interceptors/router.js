@@ -2,21 +2,23 @@ import router from '@/plugins/router'
 import store from '@/plugins/store'
 import { getToken } from '@/service/expands/auth'
 import { log } from 'vxe-pc-ui'
-
-const whiteList = ['/login', '/Maintain', '/myMessageView', '/myApproveView','/MyTask/MyTask/latest']
+import { getSession } from '@/service/expands/session'
+const whiteList = ['/login', '/Maintain', '/loginNew', '/QRCodeScanner', '/myMessageView', '/myApproveView', '/MyTask/MyTask/latest']
 const adminUserIdArr = ['SYS_USER001', 'SYS_USER009', 'SYS_USER012', 'SYS_USER010', 'SYS_USER000'] // 五元id
 
-export function routerBeforeEachFunc (to, from, next) {
-  const token = getToken();
+export function routerBeforeEachFunc(to, from, next) {
+  const token = getToken()
   // 新开窗口时，如果有token且store中没有用户角色信息，先从sessionStorage获取
   if (token && !store.getters.roles && window.sessionStorage.getItem('userInfo')) {
-    const userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'));
-    store.commit('SET_ROLES', userInfo.roles);
-    store.commit('SET_USER_INFO', userInfo);
+    const userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'))
+    store.commit('SET_ROLES', userInfo.roles)
+    store.commit('SET_USER_INFO', userInfo)
   }
 
   if (token) {
-    if (to.path === '/login') {
+    if (to.path === '/loginNew') {
+      next()
+    } else if (to.path === '/login') {
       next('/login')
     } else {
       /**
@@ -26,8 +28,13 @@ export function routerBeforeEachFunc (to, from, next) {
       if (!store.getters.roles) {
         // TODO 还没有权限部分 获取权限列表
         store.dispatch('getUserInfo').then((res) => {
+          // 延迟加载非登录页必需的库
+          if (window.loadVXETable && window.loadECharts) {
+            window.loadVXETable()
+            window.loadECharts()
+          }
           // 保存用户信息到sessionStorage，供新窗口使用
-          window.sessionStorage.setItem('userInfo', JSON.stringify(res));
+          window.sessionStorage.setItem('userInfo', JSON.stringify(res))
           // 根据获取到的用户权限来构建动态路由表,或者做其他事情;
           store.dispatch('generateRouters', res.roles).then((context) => {
             router.addRoutes(context.addRoutes)
@@ -45,9 +52,10 @@ export function routerBeforeEachFunc (to, from, next) {
             } else if (!reg.test(to.path) || to.path === '/') {
               // 如果是根路径或不匹配homepage路径，则根据用户类型跳转
               next({
-                name: adminUserIdArr.indexOf(res.id) === -1
-                  ? context.homepage.name
-                  : context.addRoutes.length && context.addRoutes[0].children && context.addRoutes[0].children.length
+                name:
+                  adminUserIdArr.indexOf(res.id) === -1
+                    ? context.homepage.name
+                    : context.addRoutes.length && context.addRoutes[0].children && context.addRoutes[0].children.length
                     ? context.addRoutes[0].children[0].name
                     : 'DashboardHome',
                 replace: true
@@ -84,7 +92,11 @@ export function routerBeforeEachFunc (to, from, next) {
     if (whiteList.indexOf(to.path) !== -1) {
       next()
     } else {
-      next('/login')
+      if (getSession('SET_LOGIN_NEW') === 'loginNew') {
+        next('/loginNew')
+      } else {
+        next('/login')
+      }
     }
   }
 }

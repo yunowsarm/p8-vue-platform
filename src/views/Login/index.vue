@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { Form, FormItem, Input, Checkbox, Button, Notification } from 'p8-components-ui'
+import { Notification } from 'p8-components-ui'
 import { mapGetters } from 'vuex'
 import { getGreetingTime } from '@/utils/common'
 import { setSession, removeSession } from '@/service/expands/session'
@@ -120,17 +120,21 @@ export default {
     ...mapGetters(['userName', 'systemName'])
   },
   created () {
-    this.getSystemAbout()
   },
   mounted () {
-    this.dayTime = getGreetingTime()
-    // eslint-disable-next-line no-undef
-    if (loginCa) {
-      this.loginCheckCA()
-    } else {
-      this.loginCheck()
-      Object.keys(getRequest()).length && this.autoLogin() // url携带参数
-    }
+    // 确保页面先渲染
+    setTimeout(() => {
+      this.getSystemAbout()
+      this.dayTime = getGreetingTime()
+      // eslint-disable-next-line no-undef
+      if (loginCa) {
+        this.loginCheckCA()
+      } else {
+        this.loginCheck()
+        // 延迟执行autoLogin，避免阻塞
+        Object.keys(getRequest()).length && this.autoLogin() // url携带参数
+      }
+    }, 1000)
   },
   methods: {
     getSystemAbout () {
@@ -399,13 +403,7 @@ export default {
       })
     }
   },
-  components: {
-    'el-form': Form,
-    'el-form-item': FormItem,
-    'el-input': Input,
-    'el-checkbox': Checkbox,
-    'el-button': Button
-  }
+  components: {}
 }
 </script>
 
