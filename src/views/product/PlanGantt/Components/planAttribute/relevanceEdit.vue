@@ -164,11 +164,9 @@ export default {
           if (that.selectRecords.length > 0) {
             if (task.monitorPoints) {
               if (!task.monitorPoints.includes('1017')) {
-                if (task.monitorPoints.includes(',')) {
-                  task.monitorPoints += ',1017'
-                } else {
-                  task.monitorPoints += '1017'
-                }
+                console.log(task.monitorPoints, 'task.monitorPoints');
+
+                task.monitorPoints += ',1017'
               }
             } else {
               task.monitorPoints = '1017'

@@ -501,7 +501,6 @@ export default {
     if (this.ganttName === 'changeGantt' && !this.changeId) {
       const ganttObject = GanttObject.getGanttObject(this.ganttName)
       let task = ganttObject.getTask(this.taskId)
-
       if (this.noApiTableData.length > 0) {
         let ids = []
         this.noApiTableData.forEach(el => {
@@ -516,16 +515,16 @@ export default {
 
           })
         }
-        await this.$api['relevanceContract.selectByCpntract']({
-          taskId: this.taskId,
-          type: this.tableParamDemand.type,
-          changeDataId: task.planInfoId
-        }).then(res => {
-          if (res.length > 0) {
-            this.noApiTableData = res
-          }
-        })
       }
+      await this.$api['relevanceContract.selectByCpntract']({
+        taskId: this.taskId,
+        type: this.tableParamDemand.type,
+        changeDataId: task.planInfoId
+      }).then(res => {
+        if (res.length > 0) {
+          this.noApiTableData = res
+        }
+      })
     }
     this.falg = true
   },
@@ -684,11 +683,9 @@ export default {
           if (that.selectRecords.length > 0) {
             if (task.monitorPoints) {
               if (!task.monitorPoints.includes('1018')) {
-                if (task.monitorPoints.includes(',')) {
-                  task.monitorPoints += ',1018'
-                } else {
-                  task.monitorPoints += '1018'
-                }
+                console.log(task.monitorPoints, 'task.monitorPoints');
+
+                task.monitorPoints += ',1018'
               }
             } else {
               task.monitorPoints = '1018'
