@@ -28,11 +28,6 @@ export function routerBeforeEachFunc(to, from, next) {
       if (!store.getters.roles) {
         // TODO 还没有权限部分 获取权限列表
         store.dispatch('getUserInfo').then((res) => {
-          // 延迟加载非登录页必需的库
-          if (window.loadVXETable && window.loadECharts) {
-            window.loadVXETable()
-            window.loadECharts()
-          }
           // 保存用户信息到sessionStorage，供新窗口使用
           window.sessionStorage.setItem('userInfo', JSON.stringify(res))
           // 根据获取到的用户权限来构建动态路由表,或者做其他事情;
