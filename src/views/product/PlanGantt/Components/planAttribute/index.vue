@@ -392,6 +392,8 @@ export default {
         }
       }
     }
+    console.log(this.readOnly, '1111111111111111111111111readOnly');
+
   },
   data () {
     return {

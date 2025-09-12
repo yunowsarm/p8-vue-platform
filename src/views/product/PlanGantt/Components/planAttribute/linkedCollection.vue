@@ -561,6 +561,7 @@ export default {
       }
     },
     async closeClick (row) {
+      console.log("🚀 ~ closeClick ~ row:", row)
       let that = this
       const ganttObject = GanttObject.getGanttObject(this.ganttName)
       let task = ganttObject.getTask(this.taskId)
