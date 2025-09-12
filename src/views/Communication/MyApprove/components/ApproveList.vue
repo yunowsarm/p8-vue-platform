@@ -3,68 +3,98 @@
     <div style="height: 100%; background: white">
       <div class="listContainer">
         <div style="padding: 10px 0px; display: flex; width: 100%">
-          <search-form-list
-            search-width="70%"
-            search-contain-width="130%"
-            label-width="70px"
-            ref="search"
-            :data-source="searchConfig"
-            :addFuzzySearch="true"
-            @search="search"
-            @re-set="reSet"
-          ></search-form-list>
+          <search-form-list search-width="70%"
+                            search-contain-width="130%"
+                            label-width="70px"
+                            ref="search"
+                            :data-source="searchConfig"
+                            :addFuzzySearch="true"
+                            @search="search"
+                            @re-set="reSet"></search-form-list>
           <div class="btn_list">
             <el-tooltip content="刷新">
-              <el-button type="primary" size="mini" @click="refreshList" icon="el-icon-refresh-right"></el-button>
+              <el-button type="primary"
+                         size="mini"
+                         @click="refreshList"
+                         icon="el-icon-refresh-right"></el-button>
             </el-tooltip>
 
             <el-tooltip content="时间正序">
-              <el-button type="primary" size="mini" @click="ascendingTime" icon="el-icon-caret-bottom"></el-button>
+              <el-button type="primary"
+                         size="mini"
+                         @click="ascendingTime"
+                         icon="el-icon-caret-bottom"></el-button>
             </el-tooltip>
 
             <el-tooltip content="时间倒序">
-              <el-button type="primary" size="mini" @click="descendingOrderTime" icon="el-icon-caret-top"></el-button>
+              <el-button type="primary"
+                         size="mini"
+                         @click="descendingOrderTime"
+                         icon="el-icon-caret-top"></el-button>
             </el-tooltip>
           </div>
         </div>
-        <div class="tagsSearch" :key="tabEenderTime">
-          <el-tooltip v-for="item in visibleTags" :key="item.id" :open-delay="300" :content="item.name" placement="top">
-            <el-tag :class="{ isActive: activeIds.includes(item.name), 'tag-item': true, isSearch: searchTabs == item.name }" @click="tagClick(item)">
+        <div class="tagsSearch"
+             :key="tabEenderTime">
+          <el-tooltip v-for="item in visibleTags"
+                      :key="item.id"
+                      :open-delay="300"
+                      :content="item.name"
+                      placement="top">
+            <el-tag :class="{ isActive: activeIds.includes(item.name), 'tag-item': true, isSearch: searchTabs == item.name }"
+                    @click="tagClick(item)">
               {{ truncateName(item.name) }}
             </el-tag>
           </el-tooltip>
-          <el-tag v-if="showMoreButton" class="more-button" type="info" @click="showAllTags"> 更多</el-tag>
-          <el-tag v-if="showAllTagsClicked" class="more-button" type="info" @click="hideAllTags"> 收起</el-tag>
+          <el-tag v-if="showMoreButton"
+                  class="more-button"
+                  type="info"
+                  @click="showAllTags"> 更多</el-tag>
+          <el-tag v-if="showAllTagsClicked"
+                  class="more-button"
+                  type="info"
+                  @click="hideAllTags"> 收起</el-tag>
         </div>
-        <infinite-list
-          :list-api="messageListApi"
-          :style="{ height: getHeight }"
-          :active-item="currentIndex"
-          :key="renderTime"
-          :search-params="mergeParams"
-          @load="messageLoad"
-          @onSelect="triggerSelect"
-        >
+        <infinite-list :list-api="messageListApi"
+                       :style="{ height: getHeight }"
+                       :active-item="currentIndex"
+                       :key="renderTime"
+                       :search-params="mergeParams"
+                       @load="messageLoad"
+                       @onSelect="triggerSelect">
           <template #list="{ item }">
             <div style="padding: 10px">
-              <el-row type="flex" style="text-align: left; align-items: center; margin-bottom: 12px; justify-content: space-between" class="overHiding">
+              <el-row type="flex"
+                      style="text-align: left; align-items: center; margin-bottom: 12px; justify-content: space-between"
+                      class="overHiding">
                 <el-col :span="8">
                   <span class="msg-processName overHiding">{{ item.processName }}</span>
                 </el-col>
-                <el-col :span="16" style="display: flex; align-items: center; justify-content: end; width: 148px">
+                <el-col :span="16"
+                        style="display: flex; align-items: center; justify-content: end; width: 148px">
                   <span>
-                    <el-button v-if="mergeParams.msgCatalog === 'APPROVE_TYPE_01_01'" type="text" style="margin: 0 4px" @click.stop="withdrawApproval(item)">撤回审批</el-button>
+                    <el-button v-if="mergeParams.msgCatalog === 'APPROVE_TYPE_01_01' && item.processName !== '合同审批流程'"
+                               type="text"
+                               style="margin: 0 4px"
+                               @click.stop="withdrawApproval(item)">撤回审批</el-button>
                     <i class="el-icon-user-solid element_icon"></i>{{ item.startUser }}
                   </span>
                   <span style="padding-left: 10px">{{ startTimeSplice(item.startTime) }}</span>
                 </el-col>
               </el-row>
               <template v-if="item.approveInfoConfig && Object.keys(item.approveInfoConfig).length">
-                <el-row type="flex" v-for="(el, index) in Object.keys(item.approveInfoConfig)" :key="index" style="text-align: left">
+                <el-row type="flex"
+                        v-for="(el, index) in Object.keys(item.approveInfoConfig)"
+                        :key="index"
+                        style="text-align: left">
                   <el-col :span="24">
-                    <div class="msg-content overHiding" v-if="item.approveInfoConfig[el] && item.approveInfoConfig[el].label">
+                    <div class="msg-content overHiding"
+                         v-if="item.approveInfoConfig[el] && item.approveInfoConfig[el].label">
                       {{ item.approveInfoConfig[el].label }}：
-                      <el-tooltip v-if="item.approveInfoConfig[el].value && item.approveInfoConfig[el].value.length > 10" effect="dark" :content="item.approveInfoConfig[el].value" placement="left">
+                      <el-tooltip v-if="item.approveInfoConfig[el].value && item.approveInfoConfig[el].value.length > 10"
+                                  effect="dark"
+                                  :content="item.approveInfoConfig[el].value"
+                                  placement="left">
                         <span>{{ item.approveInfoConfig[el].value }}</span>
                       </el-tooltip>
                       <span v-else>{{ item.approveInfoConfig[el].value }}</span>
@@ -73,17 +103,20 @@
                 </el-row>
               </template>
               <template v-else>
-                <el-row type="flex" style="text-align: left">
+                <el-row type="flex"
+                        style="text-align: left">
                   <el-col :span="24">
                     <span class="msg-content overHiding">项目名称：{{ item.projectInfoApproval && (item.projectInfoApproval.projectName || '') }}</span>
                   </el-col>
                 </el-row>
-                <el-row type="flex" style="text-align: left">
+                <el-row type="flex"
+                        style="text-align: left">
                   <el-col :span="24">
                     <span class="msg-content overHiding">项目类型：{{ item.projectInfoApproval && (item.projectInfoApproval.projectType || '') }}</span>
                   </el-col>
                 </el-row>
-                <el-row type="flex" style="text-align: left">
+                <el-row type="flex"
+                        style="text-align: left">
                   <el-col :span="24">
                     <span class="msg-content overHiding">产品名称：{{ item.projectInfoApproval && (item.projectInfoApproval.modelCode || '') }}</span>
                   </el-col>
@@ -105,7 +138,7 @@ export default {
   props: {
     searchParams: {
       type: Object,
-      default: () => {}
+      default: () => { }
     },
     distinguishIds: {
       type: Array,
@@ -126,7 +159,7 @@ export default {
     'infinite-list': InfiniteList,
     CommonTabs
   },
-  data() {
+  data () {
     return {
       searchConfig: [
         {
@@ -184,7 +217,7 @@ export default {
     }
   },
   computed: {
-    statusIcon() {
+    statusIcon () {
       return function (status) {
         let icon = ''
         if (status === '1501') {
@@ -196,7 +229,7 @@ export default {
         return icon
       }
     },
-    startTimeSplice() {
+    startTimeSplice () {
       return function (date) {
         let timeStr = ''
         if (date) {
@@ -207,7 +240,7 @@ export default {
       }
     },
     // 计算属性：默认显示的标签
-    visibleTags() {
+    visibleTags () {
       this.$nextTick(() => {
         const element = document.querySelector('.tagsSearch') // 获取第一个匹配的元素
         this.tagHeight = element.offsetHeight
@@ -215,20 +248,20 @@ export default {
       return this.showAll ? this.approvalList : this.approvalList.slice(0, 10)
     },
     // 计算属性：是否显示“更多”按钮
-    showMoreButton() {
+    showMoreButton () {
       return this.approvalList.length > 10 && !this.showAll
     },
-    getHeight() {
+    getHeight () {
       return 'calc(100% - ' + this.tagHeight + 'px)'
     }
   },
-  created() {
+  created () {
     if (this.chargeIds.includes(this.searchParams.msgCatalog)) {
       this.messageListApi = 'PersonalProcessApproval.approvalHistoryList'
       this.mergeParams.page.orders = [{ column: 'pinst.start_time_', asc: false }]
     }
   },
-  mounted() {
+  mounted () {
     const element = document.querySelector('.tagsSearch') // 获取第一个匹配的元素
     this.tagHeight = element.offsetHeight
   },
@@ -243,7 +276,7 @@ export default {
     }
   },
   methods: {
-    withdrawApproval(item) {
+    withdrawApproval (item) {
       this.$confirm('是否要撤回审批', '提示', {
         confirmButtonText: '撤回',
         cancelButtonText: '取消',
@@ -275,7 +308,7 @@ export default {
         })
       })
     },
-    getList() {
+    getList () {
       let state = ''
       if (this.mergeParams.msgCatalog == 'APPROVE_TYPE_02_01' || this.mergeParams.msgCatalog == 'APPROVE_TYPE_01_01') {
         state = 'ACTIVE'
@@ -300,20 +333,20 @@ export default {
       })
     },
     // 截取名称，超过4个字符追加省略号
-    truncateName(name) {
+    truncateName (name) {
       let textLength = 6
       return name.length > textLength ? `${name.slice(0, textLength)}...` : name
     },
     // 显示全部标签
-    showAllTags() {
+    showAllTags () {
       this.showAll = true
       this.showAllTagsClicked = true // 设置为已点击“更多”按钮
     },
-    hideAllTags() {
+    hideAllTags () {
       this.showAll = false
       this.showAllTagsClicked = false // 设置为未点击“更多”按钮
     },
-    tagClick(item) {
+    tagClick (item) {
       const index = this.activeIds.indexOf(item.name)
       if (index > -1) {
         // 如果包含 item.id，则移除
@@ -325,7 +358,7 @@ export default {
       this.mergeParams.tagNameList = this.activeIds
       this.renderTime = new Date() + ''
     },
-    reSet() {
+    reSet () {
       let that = this
       this.mergeParams.searchBoxParam = undefined
       that.mergeParams.processName = ''
@@ -335,7 +368,7 @@ export default {
       this.activeIds = []
       that.renderTime = new Date() + ''
     },
-    ascendingTime() {
+    ascendingTime () {
       // 时间升序
       if (this.chargeIds.includes(this.searchParams.msgCatalog)) {
         this.mergeParams.page.orders = [{ column: 'pinst.start_time_', asc: false }]
@@ -344,7 +377,7 @@ export default {
       }
       this.renderTime = new Date() + ''
     },
-    descendingOrderTime() {
+    descendingOrderTime () {
       // 时间降序
       if (this.chargeIds.includes(this.searchParams.msgCatalog)) {
         this.mergeParams.page.orders = [{ column: 'pinst.start_time_', asc: true }]
@@ -353,14 +386,14 @@ export default {
       }
       this.renderTime = new Date() + ''
     },
-    refreshList() {
+    refreshList () {
       this.renderTime = new Date() + ''
       this.$emit('refreshList')
       setTimeout(() => {
         this.tabEenderTime = new Date().getTime()
       }, 500)
     },
-    search(queryParam) {
+    search (queryParam) {
       this.mergeParams = Object.assign(this.mergeParams, queryParam)
       this.renderTime = new Date() + ''
       if (queryParam.tabsName) {
@@ -369,14 +402,14 @@ export default {
         this.searchTabs = ''
       }
     },
-    triggerSelect(item, index) {
+    triggerSelect (item, index) {
       this.currentIndex = index
       this.$emit('select', item, index)
     },
-    saveNotice() {
-      this.$api['PersonalProcessApproval.saveNoticeMsg']({ id: null }).then((res) => {})
+    saveNotice () {
+      this.$api['PersonalProcessApproval.saveNoticeMsg']({ id: null }).then((res) => { })
     },
-    messageLoad(data, current) {
+    messageLoad (data, current) {
       if (data && current && current === 1) {
         this.currentIndex = 0
       }
