@@ -17,6 +17,7 @@
                :key="index">
             <i v-if="item.icon === 'p8 icon-a-xuqiu1' || item.icon === 'p8 icon-link'"
                :class='item.icon'
+               style="cursor: pointer;"
                @click="demandClick(item)"></i>
             <i v-else
                :class='item.icon'></i>
