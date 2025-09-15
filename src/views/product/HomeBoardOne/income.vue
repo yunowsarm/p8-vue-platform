@@ -2,7 +2,8 @@
   <div class="income-container">
     <div class="income-box">
       <div class="title">本年已收/应收</div>
-      <div class="amount" ref="amount">
+      <div class="amount"
+           ref="amount">
         <div ref="amount-content">
           <span class="income">{{ formatNumber(income) }}</span>
           <span class="separator">/</span>
@@ -25,23 +26,23 @@ export default {
   created () {
     this.$api['relevanceContract.contractRecievedByYear']().then(res => {
       if (res.length > 0) {
-        this.income = res[0].CURRENT_YEAR_RECEIVABLE
-        this.expense = res[0].CURRENT_YEAR_RECEIVED
+        this.income = res[0].current_year_receivable
+        this.expense = res[0].current_year_received
       }
     })
-    window.addEventListener('resize',this.fit)
+    window.addEventListener('resize', this.fit)
   },
-  updated() {
+  updated () {
     this.fit()
   },
-  beforeDestroy() {
-    window.removeEventListener('resize',this.fit)
+  beforeDestroy () {
+    window.removeEventListener('resize', this.fit)
   },
   methods: {
-    fit(){
+    fit () {
       const amount = this.$refs.amount
       const amountContent = this.$refs['amount-content']
-      if(!amount || !amountContent) return
+      if (!amount || !amountContent) return
       amountContent.style.transform = "scale(1)"
       const scale = amount.offsetWidth / amountContent.scrollWidth
       amountContent.style.transform = `scale(${scale})`
