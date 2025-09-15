@@ -75,6 +75,7 @@
   }
 }
 .header {
+  overflow: scroll;
   height: 50px;
   border-bottom: 1px solid #c6c6c6;
   margin-bottom: 10px;
@@ -82,9 +83,9 @@
   overflow-y: hidden;
 }
 .activityButton {
-  width: 530px;
+  white-space: nowrap;
   line-height: 50px;
-  display: inline-block;
+  // display: inline-block;
   .button {
     cursor: pointer;
     display: inline-block;
