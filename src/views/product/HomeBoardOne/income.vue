@@ -26,8 +26,8 @@ export default {
   created () {
     this.$api['relevanceContract.contractRecievedByYear']().then(res => {
       if (res.length > 0) {
-        this.income = res[0].current_year_receivable
-        this.expense = res[0].current_year_received
+        this.income = res[0].current_year_received
+        this.expense = res[0].current_year_receivable
       }
     })
     window.addEventListener('resize', this.fit)
