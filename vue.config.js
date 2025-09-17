@@ -29,6 +29,30 @@ module.exports = defineConfig({
           deleteOriginalAssets: false // 不删除原始文件
         }
       ])
+      config.optimization.minimizer('terser').use(TerserPlugin, [{
+        terserOptions: {
+          compress: {
+            drop_console: true,
+            drop_debugger: true,
+            pure_funcs: ['console.log', 'console.info', 'console.warn'],
+            pure_getters: true,
+            unused: true,
+            collapse_vars: true
+          },
+          mangle: {
+            properties: false,
+            keep_fnames: false,
+            keep_classnames: false,
+            toplevel: false
+          },
+          format: {
+            comments: false, // 移除注释
+            beautify: false
+          }
+        },
+        extractComments: false, // 不将注释提取到单独的文件中
+        parallel: true
+      }])
     }
     config.output.filename(`js/[name].[hash:8].${version}.js`).end()
     config.output.chunkFilename(`js/[name].[hash:8].${version}.js`).end()
@@ -91,33 +115,33 @@ module.exports = defineConfig({
           }
         }
       },
-      minimize: process.env.NODE_ENV === 'production',
-      minimizer: [
-        new TerserPlugin({
-          terserOptions: {
-            compress: {
-              drop_console: true,
-              drop_debugger: true,
-              pure_funcs: ['console.log', 'console.info', 'console.warn', 'console.error'],
-              pure_getters: true,
-              unused: true,
-              collapse_vars: true
-            },
-            mangle: {
-              properties: false,
-              keep_fnames: false,
-              keep_classnames: false,
-              toplevel: true
-            },
-            output: {
-              comments: false, // 移除注释
-              beautify: true
-            }
-          },
-          extractComments: false, // 不将注释提取到单独的文件中
-          parallel: true
-        })
-      ]
+      // minimize: process.env.NODE_ENV === 'production',
+      // minimizer: [
+      //   new TerserPlugin({
+      //     terserOptions: {
+      //       compress: {
+      //         drop_console: true,
+      //         drop_debugger: true,
+      //         pure_funcs: ['console.log', 'console.info', 'console.warn', 'console.error'],
+      //         pure_getters: true,
+      //         unused: true,
+      //         collapse_vars: true
+      //       },
+      //       mangle: {
+      //         properties: false,
+      //         keep_fnames: false,
+      //         keep_classnames: false,
+      //         toplevel: true
+      //       },
+      //       output: {
+      //         comments: false, // 移除注释
+      //         beautify: true
+      //       }
+      //     },
+      //     extractComments: false, // 不将注释提取到单独的文件中
+      //     parallel: true
+      //   })
+      // ]
     },
     plugins: [new SplitChunksPlugin(), new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn|en/)]
   },
