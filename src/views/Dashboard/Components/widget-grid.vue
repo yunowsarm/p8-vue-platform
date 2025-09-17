@@ -73,7 +73,8 @@
                      :is-view-cs-footer="true"
                      :dialog-config="{ modal: true, appendToBody: true, modalAppendToBody: true }"
                      :close-on-click-modal="false"
-                     :close-on-press-escape="false">
+                     :close-on-press-escape="false"
+                     :dialog-height="dialogHeight">
         <template #dialog>
           <el-form ref="form"
                    label-position="right"
@@ -90,10 +91,12 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="隐藏头部">
-                  <el-switch v-model="WidgetForm.simple"
-                             active-color="#13ce66"
-                             inactive-color="#ff4949">
-                  </el-switch>
+                  <el-radio-group v-model="WidgetForm.simple">
+                    <el-radio-button :value="true"
+                                     :label="true">是</el-radio-button>
+                    <el-radio-button :value="false"
+                                     :label="false">否</el-radio-button>
+                  </el-radio-group>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -113,13 +116,15 @@
             <el-row :gutter="0">
               <el-col :span="12">
                 <el-form-item label="宽">
-                  <el-input-number :min="WidgetForm.layout.minW"
+                  <el-input-number style="width: 100%"
+                                   :min="WidgetForm.layout.minW"
                                    v-model.number="WidgetForm.layout.w"></el-input-number>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="高">
-                  <el-input-number :min="WidgetForm.layout.minH"
+                  <el-input-number style="width: 100%"
+                                   :min="WidgetForm.layout.minH"
                                    v-model.number="WidgetForm.layout.h"></el-input-number>
                 </el-form-item>
               </el-col>
@@ -460,9 +465,9 @@ export default {
         },
         {
           type: 'text', // 控件类型
-          labelText: '业务分类', // 控件显示的文本
-          fieldName: 'classificationDisPlay',
-          placeholder: '请输入业务分类名称',
+          labelText: '描述', // 控件显示的文本
+          fieldName: 'compCode',
+          placeholder: '请输入描述',
         },
       ],
       searchTemplateData: [
@@ -515,8 +520,8 @@ export default {
           dataIndex: 'name'
         },
         {
-          title: '业务分类',
-          dataIndex: 'classificationDisPlay'
+          title: '描述',
+          dataIndex: 'compCode'
         }
       ],
       templateColumns: [
@@ -826,6 +831,9 @@ export default {
           newobj[curVal.fieldName] ? '' : (newobj[curVal.fieldName] = preVal.push(curVal))
           return preVal
         }, [])
+        list = list.filter(el => {
+          return el.type
+        })
         this.$emit('setSearchConfig', list)
       }
     },
