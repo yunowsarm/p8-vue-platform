@@ -114,7 +114,8 @@ module.exports = defineConfig({
   pluginOptions: {
     webpackBundleAnalyzer: {
       analyzerMode: 'disabled',
-      openAnalyzer: false
+      openAnalyzer: false,
+      generateStateFile: true
     }
   },
   css: {
