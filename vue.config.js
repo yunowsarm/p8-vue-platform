@@ -91,21 +91,31 @@ module.exports = defineConfig({
           }
         }
       },
-      minimize: true,
+      minimize: process.env.NODE_ENV === 'production',
       minimizer: [
         new TerserPlugin({
-          test: /\.js(\?.*)?$/i, // 匹配所有 js 文件
           terserOptions: {
             compress: {
               drop_console: true,
               drop_debugger: true,
-              pure_funcs: ['console.log', 'console.info', 'console.warn', 'console.error']
+              pure_funcs: ['console.log', 'console.info', 'console.warn', 'console.error'],
+              pure_getters: true,
+              unused: true,
+              collapse_vars: true
             },
-            format: {
-              comments: false // 移除注释
+            mangle: {
+              properties: false,
+              keep_fnames: false,
+              keep_classnames: false,
+              toplevel: true
+            },
+            output: {
+              comments: false, // 移除注释
+              beautify: true
             }
           },
-          extractComments: false // 不将注释提取到单独的文件中
+          extractComments: false, // 不将注释提取到单独的文件中
+          parallel: true
         })
       ]
     },
