@@ -165,7 +165,7 @@ export default {
             deepCopyWidget: deepCopyWidget,
             name: el.name,
             homePageId: el.homePageId,
-            homePageVersion: el.homePageVersion,
+            homePageVersion: el.homePageVersion ? el.homePageVersion : el.dataVersion,
             visible: false,
             indexNo: el.indexNo
           }
