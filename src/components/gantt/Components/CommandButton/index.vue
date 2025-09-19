@@ -149,6 +149,7 @@ export default {
     'el-tooltip': Tooltip
   },
   props: {
+    isTaskType: Boolean,
     cbutton: Object,
     btn: Object,
     size: String, // large,small,mini
@@ -178,6 +179,10 @@ export default {
   computed: {
     isDisable () {
       return (btn) => {
+        if(this.isTaskType && this.vueThis.createPage !== 'decompose' && this.vueThis.planEditLock === '1'){
+          this.$store.dispatch('setButtonMsg', { id: btn.id, msg: '计划编辑锁定时不允许此操作' })
+          return true
+        }
         // 判断是否禁用
         let result = this.checkButtonDisable(btn);
 

@@ -7,6 +7,7 @@
           :key="config.id"
           :classifyData="classifyData"
           :cbutton="config"
+          :isTaskType='true'
           :size="config.size"
           :current-records="currentRecords"
           :gantt-name="ganttName"
