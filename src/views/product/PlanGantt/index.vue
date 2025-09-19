@@ -105,6 +105,9 @@
 </template>
 
 <style lang="scss" scoped>
+::v-deep .splitter-paneR {
+  background: white !important;
+}
 .x-style {
   float: right;
   font-size: 20px;
