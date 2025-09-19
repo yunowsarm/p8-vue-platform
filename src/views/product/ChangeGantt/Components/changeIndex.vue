@@ -271,6 +271,40 @@ export default {
         }
       },
       immediate: true
+    },
+    userSettingAll: {
+      handler (val) {
+        let isGroup = val.PlanButton ? val.PlanButton[0].value.isGroup : this.ganttIsGroup
+        if (this.ganttButtonMode == 'tabs') {
+          if (isGroup === '1') {
+            this.commandButtonBarHeight = this.advance ? '145px' : '40px'
+            this.expandBottom = 'calc(100% - 148px)'
+          } else {
+            this.commandButtonBarHeight = '130px'
+            this.expandBottom = 'calc(100% - 130px)'
+          }
+        }
+        if (this.ganttButtonMode == 'double') {
+          if (isGroup === '1') {
+            this.commandButtonBarHeight = '72px'
+            this.expandBottom = 'calc(100% - 72px)'
+          } else {
+            this.commandButtonBarHeight = '54px'
+            this.expandBottom = 'calc(100% - 55px)'
+          }
+        }
+        if (this.ganttButtonMode == 'single') {
+          if (isGroup === '1') {
+            this.commandButtonBarHeight = '58px'
+            this.expandBottom = 'calc(100% - 55px)'
+          } else {
+            this.commandButtonBarHeight = '40px'
+            this.expandBottom = 'calc(100% - 40px)'
+          }
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   computed: {
@@ -322,7 +356,7 @@ export default {
       }
       return ''
     },
-    ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
+    ...mapGetters(['ganttButtonMode', 'ganttRightButtons', 'userSettingAll'])
   },
   created () {
     this.firstEntry = true
