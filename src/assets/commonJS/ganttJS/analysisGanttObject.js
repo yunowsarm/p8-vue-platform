@@ -9,7 +9,7 @@ import { log } from 'vxe-table'
  * @author fukai
  * @date 2020/5/22 12:00
  */
-export function getAnalysisGantt (ganttName, vueThis) {
+export function getAnalysisGantt(ganttName, vueThis) {
   // 获取gantt对象
   let ganttObject = GanttObject.getGanttObject(ganttName)
   // 加载排程类型
@@ -133,7 +133,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
             taskClassifyDatas.some((point, index) => {
               if (point.id === planType) {
                 let icon = point.icon
-                html += '<i class="' + icon + '" style="color:' + point.color + '" title="' + point.title + '"></i>';
+                html += '<i class="' + icon + '" style="color:' + point.color + '" title="' + point.title + '"></i>'
                 return true
               }
             })
@@ -197,6 +197,16 @@ export function getAnalysisGantt (ganttName, vueThis) {
           if (state.childTotal || state.childPercentage) {
             bool = true
             tips += '子任务存在绩效比例分配异常\n'
+          }
+          let rowHeight = ganttObject.config.row_height
+          if (task.outputResult > 0) {
+            result = `<i class='el-icon-star-on' style='color: #4bcafe;font-size: 23px;float: left;line-height: ${rowHeight}px;' title='有提交物的'></i>`
+          }
+          if (task.outputAsk > 0) {
+            result = `<i class='el-icon-star-on' style='color: #faa010;font-size: 23px;font-size: 23px;float: left;line-height: ${rowHeight}px;' title='有输出要求的'></i>`
+          }
+          if (task.hasBusinessForm == 'true') {
+            result = result + `<i class='el-icon-s-order' title='该任务包含业务表单' style='color: #f59000; float: left; position:relative; top:16px; font-size: 16px;'></i>`
           }
           if (bool) result = result + `<i class="p8 icon-tishi" title="${tips}" style="color: #e6a23c;"></i>`
           if (task.unDescribes === '1') result = result + `<i class='p8 icon-tishi' title='存在任务描述' style='color: #0ab847; float: left'></i>`
@@ -439,7 +449,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
       })
       let nameList = [
         {
-          key: "managerStatus",
+          key: 'managerStatus',
           value: {
             name: 'changeStatusName',
             label: '变更状态',
@@ -474,7 +484,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
           }
         },
         {
-          key: "name",
+          key: 'name',
           value: {
             name: 'oldName',
             label: '原任务名称',
@@ -492,7 +502,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
               }
             }
           }
-        },
+        }
         // {
         //   key: "start_date",
         //   value: {
@@ -513,13 +523,13 @@ export function getAnalysisGantt (ganttName, vueThis) {
         //     resize: true
         //   }
         // },
-      ];
+      ]
       nameList.map((el) => {
-        let index = tempColumns.findIndex((val) => val.name == el.key);
+        let index = tempColumns.findIndex((val) => val.name == el.key)
         if (index > -1) {
-          tempColumns.splice(index + 1, 0, el.value);
+          tempColumns.splice(index + 1, 0, el.value)
         }
-      });
+      })
       ganttObject.config.columns = tempColumns
     } else {
       ganttObject.config.columns = initColumns
@@ -614,7 +624,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
             taskClassifyDatas.some((point, index) => {
               if (point.id === planType) {
                 let icon = point.icon
-                html += '<i class="' + icon + '" style="color:' + point.color + '" title="' + point.title + '"></i>';
+                html += '<i class="' + icon + '" style="color:' + point.color + '" title="' + point.title + '"></i>'
                 return true
               }
             })
@@ -678,6 +688,16 @@ export function getAnalysisGantt (ganttName, vueThis) {
           if (state.childTotal || state.childPercentage) {
             bool = true
             tips += '子任务存在绩效比例分配异常\n'
+          }
+          let rowHeight = ganttObject.config.row_height
+          if (task.outputResult > 0) {
+            result = `<i class='el-icon-star-on' style='color: #4bcafe;font-size: 23px;float: left;line-height: ${rowHeight}px;' title='有提交物的'></i>`
+          }
+          if (task.outputAsk > 0) {
+            result = `<i class='el-icon-star-on' style='color: #faa010;font-size: 23px;font-size: 23px;float: left;line-height: ${rowHeight}px;' title='有输出要求的'></i>`
+          }
+          if (task.hasBusinessForm == 'true') {
+            result = result + `<i class='el-icon-s-order' title='该任务包含业务表单' style='color: #f59000; float: left; position:relative; top:16px; font-size: 16px;'></i>`
           }
           if (bool) result = result + `<i class="p8 icon-tishi" title="${tips}" style="color: #e6a23c;"></i>`
           if (task.unDescribes === '1') result = result + `<i class='p8 icon-tishi' title='存在任务描述' style='color: #0ab847; float: left'></i>`
@@ -906,7 +926,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
       })
       let nameList = [
         {
-          key: "managerStatus",
+          key: 'managerStatus',
           value: {
             name: 'changeStatusName',
             label: '变更状态',
@@ -939,7 +959,7 @@ export function getAnalysisGantt (ganttName, vueThis) {
               return html
             }
           }
-        },
+        }
         // {
         //   key: "start_date",
         //   value: {
@@ -960,18 +980,17 @@ export function getAnalysisGantt (ganttName, vueThis) {
         //     resize: true
         //   }
         // },
-      ];
+      ]
       nameList.map((el) => {
-        let index = tempColumns.findIndex((val) => val.name == el.key);
+        let index = tempColumns.findIndex((val) => val.name == el.key)
         if (index > -1) {
-          tempColumns.splice(index + 1, 0, el.value);
+          tempColumns.splice(index + 1, 0, el.value)
         }
-      });
+      })
       ganttObject.config.columns = tempColumns
     } else {
       ganttObject.config.columns = initColumns
     }
-
   }
 
   // 创建资源载体
