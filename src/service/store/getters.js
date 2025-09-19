@@ -1,5 +1,6 @@
 const getters = {
   // 平台
+  isMobile: (state) => state.platform.isMobile,
   systemTheme: (state) => state.platform.systemTheme,
   theme: (state) => state.platform.theme,
   systemColor: (state) => state.platform.systemColor,
@@ -33,6 +34,7 @@ const getters = {
   ganttRightButtons: (state) => state.user.ganttRightButtons, // gantt右键菜单配置
   ganttIsGroup: (state) => state.user.ganttIsGroup, // gantt右键菜单配置
   autoScheduling: (state) => state.user.autoScheduling, // 排程类型
+  carryOutBudgetControl: (state) => state.user.carryOutBudgetControl, // 任务执行时是否预算控制
   // 路由
   addRouters: (state) => state.routers.addRouters,
   asyncRouter: (state) => state.routers.router,
