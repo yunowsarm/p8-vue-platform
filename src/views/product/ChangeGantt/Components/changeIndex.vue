@@ -19,7 +19,7 @@
                                 @change-command-button="changeCommandButton"></command-button-bar>
           </div>
           <div class="bottom"
-               :class="expandBottom">
+               :style="{height: expandBottom}">
             <change-gantt ref="planGantt"
                           :plan-info-id="planInfoId"
                           :plan-info-status="planInfoStatus"
@@ -341,21 +341,21 @@ export default {
         return this.ganttButtonMode === 'tabs' ? CommandButtonBarData : this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
       }
     },
-    expandBottom () {
-      if (this.ganttButtonMode == 'tabs' && this.advance) {
-        return 'tabs'
-      }
-      if (this.ganttButtonMode == 'tabs' && !this.advance) {
-        return 'hiddenTabs'
-      }
-      if (this.ganttButtonMode == 'double') {
-        return 'double'
-      }
-      if (this.ganttButtonMode == 'single') {
-        return 'single'
-      }
-      return ''
-    },
+    // expandBottom () {
+    //   if (this.ganttButtonMode == 'tabs' && this.advance) {
+    //     return 'tabs'
+    //   }
+    //   if (this.ganttButtonMode == 'tabs' && !this.advance) {
+    //     return 'hiddenTabs'
+    //   }
+    //   if (this.ganttButtonMode == 'double') {
+    //     return 'double'
+    //   }
+    //   if (this.ganttButtonMode == 'single') {
+    //     return 'single'
+    //   }
+    //   return ''
+    // },
     ...mapGetters(['ganttButtonMode', 'ganttRightButtons', 'userSettingAll'])
   },
   created () {

@@ -362,21 +362,21 @@ export default {
         return this.ganttButtonMode === 'tabs' ? NewCommandButtonBarDataTabsRow : this.ganttButtonMode === 'double' ? NewCommandButtonBarDataDoubleRow : NewCommandButtonBarDataSingleRow
       }
     },
-    expandBottom () {
-      if (this.ganttButtonMode == 'tabs' && this.advance) {
-        return 'tabs'
-      }
-      if (this.ganttButtonMode == 'tabs' && !this.advance) {
-        return 'hiddenTabs'
-      }
-      if (this.ganttButtonMode == 'double') {
-        return 'double'
-      }
-      if (this.ganttButtonMode == 'single') {
-        return 'single'
-      }
-      return ''
-    },
+    // expandBottom () {
+    //   if (this.ganttButtonMode == 'tabs' && this.advance) {
+    //     return 'tabs'
+    //   }
+    //   if (this.ganttButtonMode == 'tabs' && !this.advance) {
+    //     return 'hiddenTabs'
+    //   }
+    //   if (this.ganttButtonMode == 'double') {
+    //     return 'double'
+    //   }
+    //   if (this.ganttButtonMode == 'single') {
+    //     return 'single'
+    //   }
+    //   return ''
+    // },
     ...mapGetters(['ganttButtonMode', 'ganttRightButtons', 'userSettingAll', 'ganttIsGroup'])
   },
   components: {
