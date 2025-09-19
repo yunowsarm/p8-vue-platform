@@ -130,16 +130,19 @@ export function outPutFlowGantt(ganttName, vueThis) {
   })
   ganttObject.attachEvent('onTaskMultiSelect', function (id, state, e) {
     if (state) {
-      setTimeout(() => {
-        if (ganttObject.getTask(id) !== undefined) {
-          vueThis.selectedTasks.push(ganttObject.getTask(id))
-        }
+      let index = vueThis.selectedTasks.findIndex((i) => {
+        return i.id === id
       })
+      // setTimeout(() => {
+      if (index == -1) {
+        vueThis.selectedTasks.push(ganttObject.getTask(id))
+      }
+      // })
     } else {
       const index = vueThis.selectedTasks.findIndex((i) => {
         return i.id === id
       })
-      if (index !== undefined) {
+      if (index !== -1) {
         vueThis.selectedTasks.splice(index, 1)
       }
     }
