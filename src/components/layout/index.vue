@@ -1,10 +1,15 @@
 <template>
   <div class="layout">
     <sidebar :style="{ width: sidebarState.width }"></sidebar>
-    <section class="section" :style="{ width: `calc(100% - ${sidebarState.width})` }">
+    <section class="section" :style="{ width: `calc(100% - ${isMobile ? sidebarState.sidebarMinWidth : 0})` }">
       <headers></headers>
+      <!-- <div v-if="isMobile" class="slide-bar-mobile"
+        @click="slideSidebar">
+        <div class="slider p8"
+            :class="{ 'icon-youzhedie1': !this.sidebarState.isOpen, 'icon-zuozhedie1': this.sidebarState.isOpen }"></div>
+      </div> -->
       <div class="main-content">
-        <tag-tabs></tag-tabs>
+        <tag-tabs v-if="!isMobile"></tag-tabs>
         <app-main class="main-wrapper" id="mainWrapper"></app-main>
       </div>
     </section>
@@ -28,12 +33,47 @@ export default {
     appMain
   },
   computed: {
+    isMobile() {
+      return this.$store.getters.isMobile
+    },
     ...mapGetters(['sidebarState'])
+  },
+  methods: {
+    slideSidebar () {
+      // if (this.isMobile) {
+      //   this.$store.dispatch('hideSidebar', !this.sidebarState.isHidden)
+      // }
+      this.$store.dispatch('collapseSidebar', !this.sidebarState.isOpen)
+    }
   }
 }
 </script>
 
 <style lang="scss">
+.slide-bar-mobile {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 35px;
+  height: 35px;
+  display: inherit;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.3rem;
+  border-right: 1px solid $base-line-color;
+  .slider {
+    transition: all 0.3s ease 0s;
+    color: white;
+    font-size: $font-size-medium;
+    &.collapsed {
+      transform: rotateZ(90deg);
+    }
+  }
+  border-radius: 50%;
+  z-index: 99999999;
+  background: #3491FA;
+}
 .main {
   background: #fafafa;
 }

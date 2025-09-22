@@ -4,7 +4,7 @@
     <!-- :style="{ 'background-color': theme, 'margin-bottom': '1px' }"> -->
     <!-- <span class="sysName">{{ systemName }}</span> -->
     <div class="slide-bar"
-         v-if="!this.sidebarState.isHidden"
+         v-if="!this.sidebarState.isHidden || isMobile"
          @click="slideSidebar">
       <!-- v-show="$route.path !== '/dash'" -->
       <div class="slider p8"
@@ -17,7 +17,7 @@
 
     <div class="settings">
       <ul>
-        <li v-if="adminUserIdArr.indexOf($store.state.user.userId) === -1">
+        <li v-if="adminUserIdArr.indexOf($store.state.user.userId) === -1 && !isMobile">
           <span>
             <!-- <i class="p8 icon-work-home" @click="$router.push({name:'Dashboard'})"> -->
             <el-badge v-if="messageCount > 0"
@@ -41,7 +41,7 @@
                        @visibleMsgClose="visibleMsgClose"></information>
         </li>
         <!-- $route.path !== '/dash' && -->
-        <li v-if="adminUserIdArr.indexOf($store.state.user.userId) === -1">
+        <li v-if="adminUserIdArr.indexOf($store.state.user.userId) === -1 && !isMobile">
           <span>
             <!-- <i class="p8 icon-work-home" @click="$router.push({name:'Dashboard'})"> -->
             <el-tooltip content="工作首页">
@@ -86,7 +86,7 @@
           </span>
         </li>
         <!-- $route.path !== '/dash' &&  -->
-        <li v-show="adminUserIdArr.indexOf($store.state.user.userId) === -1">
+        <li v-show="adminUserIdArr.indexOf($store.state.user.userId) === -1 &&!isMobile">
           <span @click="visibleDownloadDrawer = true">
             <el-tooltip content="我的下载">
               <i class="p8 icon-download-document-manage"></i>
@@ -103,7 +103,7 @@
         <li>
           <el-dropdown size="small">
             <span>
-              <span class="name">{{ dayTime }}好！{{ userName }}</span>
+              <span v-if="!isMobile" class="name">{{ dayTime }}好！{{ userName }}</span>
               <i class="el-icon-arrow-down"
                  style="margin: 0 5px"></i>
             </span>
@@ -274,6 +274,9 @@ export default {
     }
   },
   computed: {
+    isMobile() {
+      return this.$store.getters.isMobile
+    },
     ...mapGetters(['approvalTotalMsg', 'messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl']),
   },
   mounted () {
@@ -406,6 +409,9 @@ export default {
     //   })
     // },
     slideSidebar () {
+      if (this.isMobile) {
+        this.$store.dispatch('hideSidebar', !this.sidebarState.isHidden)
+      }
       this.$store.dispatch('collapseSidebar', !this.sidebarState.isOpen)
     },
     settingPersonal () {
@@ -678,5 +684,21 @@ div.header_userInfo {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+@media (max-width: 768px) {
+  .avatar {
+    width: 3.5rem !important;
+    height: 3.5rem !important;
+    border-radius: 3.5rem !important;
+    line-height: 3.5rem !important;
+  }
+  .settings {
+    ::v-deep .el-badge__content {
+      width: 2rem !important;
+      height: 2rem !important;
+      line-height: 2rem !important;
+      border-radius: 50% !important;
+    }
+  }
 }
 </style>

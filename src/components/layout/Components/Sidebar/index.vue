@@ -28,15 +28,17 @@
         <template v-for="item in asyncRouter">
           <template v-if="!item.hidden && item.children">
             <!-- no children -->
-            <template v-if="item.children[0].path === 'dash' || item.children[0].path === 'Dashboard'">
+            <template v-if="!isMobile && (item.children[0].path === 'dash' || item.children[0].path === 'Dashboard')">
               <el-menu-item :index="item.path + '/' + item.children[0].path"
                             :key="item.name">
-                <i v-if="!sidebarState.isOpen"
-                   class="p8 menuIcon"
-                   :class="item.children[0].meta.icon"></i>
-                <i v-else
-                   class="p8 menuIcon"
-                   :class="item.children[0].meta.icon"></i>
+                <template v-if="!isMobile">
+                  <i v-if="!sidebarState.isOpen"
+                    class="p8 menuIcon"
+                    :class="item.children[0].meta.icon"></i>
+                  <i v-else
+                    class="p8 menuIcon"
+                    :class="item.children[0].meta.icon"></i>
+                </template>
                 <span slot="title">{{ item.children[0].meta.title }}</span>
               </el-menu-item>
             </template>
@@ -44,12 +46,14 @@
             <template v-else-if="!item.path && item.redirect && item.children[0].path == item.redirect">
               <el-menu-item :index="item.children[0].path"
                             :key="item.name">
-                <i v-if="!sidebarState.isOpen"
-                   class="p8 menuIcon"
-                   :class="item.children[0].meta.icon"></i>
-                <i v-else
-                   class="p8 menuIcon"
-                   :class="item.children[0].meta.icon"></i>
+                <template v-if="!isMobile">
+                  <i v-if="!sidebarState.isOpen"
+                    class="p8 menuIcon"
+                    :class="item.children[0].meta.icon"></i>
+                  <i v-else
+                    class="p8 menuIcon"
+                    :class="item.children[0].meta.icon"></i>
+                </template>
                 <span slot="title">{{ item.children[0].meta.title }}</span>
               </el-menu-item>
             </template>
@@ -60,9 +64,11 @@
                         class="custom-submenu">
               <template slot="title">
                 <div @mouseenter="handleMouseEnter(item)">
-                  <i v-if="item.meta && item.meta.icon"
-                     class="p8 menuIcon"
-                     :class="item.meta.icon"></i>
+                  <template v-if="!isMobile">
+                    <i v-if="item.meta && item.meta.icon"
+                      class="p8 menuIcon"
+                      :class="item.meta.icon"></i>
+                  </template>
                   <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
                 </div>
               </template>
@@ -79,12 +85,16 @@
                       <el-tooltip placement="right"
                                   :disabled="child.meta.title.length < 8"
                                   :content="child.meta.title">
+                        <span v-if="isMobile">{{ child.meta.title }}</span>
                         <div id="item"
+                             v-else
                              @mouseenter="handleMouseEnter(child)"
                              @mouseleave="onIconMouseLeave">
-                          <i v-if="child.meta && child.meta.icon"
-                             class="p8 menuIcon"
-                             :class="child.meta.icon"></i>
+                            <template v-if="!isMobile">
+                              <i v-if="child.meta && child.meta.icon"
+                                class="p8 menuIcon"
+                                :class="child.meta.icon"></i>
+                            </template>
                           <span v-if="child.meta && child.meta.title">
                             <span :style="{width: hoveredMenuItem == child.path ? 'calc(100% - 30px)' : '100%'}">{{ child.meta.title }}</span>
                             <i style="margin:0;width:16px;"
@@ -206,6 +216,9 @@ export default {
     }
   },
   computed: {
+    isMobile() {
+      return this.$store.getters.isMobile
+    },
       defaultActive(){
         if(this.$route.matched && this.$route.matched.length > 2){
           return this.$route.meta.parentPath
@@ -630,5 +643,51 @@ $menu-collapse-text-color: #303133;
 }
 .menuIcon{
   font-size: 22px !important;
+}
+@media (max-width: 768px) {
+  .sidebar {
+    .login-logo {
+      display: none;
+    }
+    .sysName{
+      font-size: 12px;
+    }
+    .el-menu-item {
+      min-width: 110px !important;
+      padding:0 !important;
+      padding-left:5px !important;
+      span, i {
+        font-size: 12px;
+      }
+    }
+    width: 110px !important;
+    .el-submenu__title {
+      padding: 0 !important;
+      padding-left: 5px !important;
+      span, i {
+        font-size: 12px;
+      }
+      .el-submenu__icon-arrow {
+        right: 5px;
+        font-size: 12px !important;
+      }
+    }
+    .cumtom-submenu-menu {
+      .el-menu-item {
+        min-width: 110px !important;
+        padding: 0 !important;
+        padding-left: 11px !important;
+        span, i {
+          font-size: 12px;
+        }
+      }
+    }
+    .vertical-menu:not(.el-menu--collapse) {
+      width: 110px;
+    }
+    .ps__rail-y {
+      width: 5px;
+    }
+  }
 }
 </style>
