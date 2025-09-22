@@ -204,4 +204,11 @@ export default {
     height: 0px;
   }
 }
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .taskTabs ::v-deep .el-tab-pane {
+    height: 100%;
+    overflow: auto;
+    margin-bottom: 50px;
+  }
+}
 </style>

@@ -31,7 +31,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .pane-wrap {
-  height: 100%;
+  // height: 100%;
   .pane-title {
     position: relative;
     height: 40px;
@@ -42,6 +42,8 @@ export default {
     color: #333333;
     font-weight: 600;
   }
+}
+@media screen and (min-width: 800px) and (max-width: 1920px) {
   .pane-info {
     height: calc(100% - 30px);
     overflow-y: auto;

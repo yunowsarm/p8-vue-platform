@@ -69,7 +69,7 @@
       </template>
     </form-list>
     <common-dialog :title="title"
-                   width="60%"
+                   :width="dialogWidth"
                    v-if="isdemandTable"
                    :visible="isdemandTable"
                    :show-handle-btn="false"
@@ -163,6 +163,7 @@ export default {
           title: '阶段名称',
           dataIndex: 'stageName',
           sortable: false,
+          minWidth: '200px',
           align: 'center',
           headerAlign: 'center'
         },
@@ -204,16 +205,23 @@ export default {
           dataIndex: 'contractName',
           sortable: false,
           align: 'center',
+          minWidth: '150px',
           headerAlign: 'center'
         }
       ],
       tableParamDemand: {
         taskId: ''
       },
+      dialogWidth: '60%',
       defaultList: ['createTime', 'createBy', 'changeCount', 'updateTime', 'updateBy', 'achievements', 'proportion'],
     }
   },
   mounted () {
+    if (window.innerWidth > 600) {
+      this.dialogWidth = '60%'
+    } else {
+      this.dialogWidth = '90%'
+    }
     this.initFormData()
     let _this = this
     this.$bus.$on('refresh', function () {
@@ -717,9 +725,9 @@ $red-color: #f80012;
     }
   }
 
-  & ::v-deep .el-form-item--small.el-form-item {
-    margin-bottom: 6px;
-  }
+  // & ::v-deep .el-form-item--small.el-form-item {
+  //   margin-bottom: 6px;
+  // }
 
   & ::v-deep .el-form-item__blank {
     .el-form-item__label {
@@ -731,5 +739,6 @@ $red-color: #f80012;
 .iconStyle {
   display: flex;
   flex-direction: row;
+  cursor: pointer;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <el-tabs class="taskTabs"
-           style="height: 88%;"
+           style="height: 400px;"
            @tab-click="tabsClick">
     <el-tab-pane label="前后置">
       <common-table ref="table"

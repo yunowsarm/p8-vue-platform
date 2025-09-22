@@ -69,7 +69,11 @@ export default {
     }
   },
   mounted () {
-
+    if (window.innerWidth < 600) {
+      this.tableHeight = document.documentElement.clientHeight * 0.5 - 400 + 'px'
+    } else {
+      this.tableHeight = document.documentElement.clientHeight * 0.5 - 50 + 'px'
+    }
   },
   methods: {
 
