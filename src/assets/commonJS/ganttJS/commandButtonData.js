@@ -1439,8 +1439,9 @@ export const CommandButtonData = [
       api['planGanttManager.excelProjectTemplate']({ planInfoId: planInfoId, dicType: 'ACTIVITY_TYPE' }, { responseType: 'blob' })
         .then((data) => {
           const date = new Date()
-          // eslint-disable-next-line camelcase
-          const file_name = `project导出模板`
+          const file_name = `${vueThis.thirdMenuParam.NAME}-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}_${String(date.getHours()).padStart(2, '0')}h${String(
+            date.getMinutes()
+          ).padStart(2, '0')}m${String(date.getSeconds()).padStart(2, '0')}s`
           // eslint-disable-next-line camelcase
           const file_type = 'mpp'
           const blob = new Blob([data.data], { type: 'application/octet-stream' })
