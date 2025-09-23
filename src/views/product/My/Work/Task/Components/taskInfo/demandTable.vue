@@ -1,5 +1,5 @@
 <template>
-  <table-render code="requirementsGatheringList"
+  <table-render code="requirementsList"
                 :report-param="reportParam">
   </table-render>
 </template>
