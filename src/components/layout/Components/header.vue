@@ -4,7 +4,7 @@
     <!-- :style="{ 'background-color': theme, 'margin-bottom': '1px' }"> -->
     <!-- <span class="sysName">{{ systemName }}</span> -->
     <div class="slide-bar"
-         v-if="!this.sidebarState.isHidden || isMobile"
+         v-if="!sidebarState.isHidden || isMobile"
          @click="slideSidebar">
       <!-- v-show="$route.path !== '/dash'" -->
       <div class="slider p8"
