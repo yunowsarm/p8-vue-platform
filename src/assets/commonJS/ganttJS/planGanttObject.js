@@ -376,6 +376,9 @@ export function planGantt (ganttName, vueThis) {
                   console.error(error, 'error')
                 })
               break
+            case 'budget':
+              vueThis.openBudget()
+              break
             case 'start_date':
             case 'end_date':
             case 'autoScheduling':
@@ -903,6 +906,17 @@ export function getGanttColumns (ganttObject, vueThis) {
         // } else {
         return task.autoScheduling === '1' ? '自动' : '手动'
         // }
+      }
+    },
+    {
+      name: 'budget',
+      label: '预算' + (checkEdit() ? canEditIcon : ''),
+      align: 'center',
+      width: 100,
+      resize: true,
+      editor:true,
+      template: function(task) {
+        return task.budgetInfo || 0
       }
     },
     {

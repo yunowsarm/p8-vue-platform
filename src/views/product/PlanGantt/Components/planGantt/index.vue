@@ -232,6 +232,14 @@
                       :columnConfigs="columnConfigs"
                       :output-request="excelImportData"></import-excel>
       </el-drawer>
+      <el-drawer :title='selectTaskName'
+                 :append-to-body="true"
+                 :wrapper-closable="false"
+                 :destroy-on-close="true"
+                 @closed="budgetVisible = false"
+                 :visible.sync="budgetVisible">
+        <budget :task-id="selectTaskId" @save-success='saveBudget'></budget>
+      </el-drawer>
       <el-drawer :title="importProjectTitle"
                  :append-to-body="true"
                  size="50%"
@@ -531,6 +539,7 @@ import ImportProject from '../importProject'
 import { mapGetters } from 'vuex'
 import MonitorTimeManger from '../monitorTimeManager'
 import ResourceSelect from '../resourceSelect'
+import Budget from '../budget'
 // import ClassificationSelection from '../ClassificationSelection'
 import OutPutView from '../outPutView'
 import Notice from '../notice'
@@ -672,6 +681,7 @@ export default {
     ActivityImport,
     MonitorTimeManger,
     ResourceSelect,
+    Budget,
     OutPutView,
     ImportExcel,
     ImportProject,
@@ -788,6 +798,7 @@ export default {
       // SDMlinkVisible: false,
       innerVisible: false,
       importExcel: false,
+      budgetVisible:false,
       resourceRelation: false,
       resourceTitle: '资源关联',
       importProjectTitle: 'Project文件导入',
@@ -1115,6 +1126,13 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
+    openBudget(){
+      this.budgetVisible = true
+    },
+    saveBudget(){
+      this.budgetVisible = false
+      this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
+    },
     startDateOptions () {
       return {
         disabledDate: (time) => {
