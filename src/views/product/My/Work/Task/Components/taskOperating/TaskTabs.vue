@@ -1,36 +1,31 @@
 <template>
-  <el-tabs class="progressTaskTabs scrollable-tabs"
-           ref="tabsContainer"
-           v-if="taskTabs.length"
-           v-model="tabsActiveName"
-           @tab-click="tabsClick">
-    <el-tab-pane v-for="item in taskTabs"
-                 :key="item.name"
-                 :label="item.label"
-                 :name="item.name">
-      <div class="tab-content-wrapper"
-           :class="{ 'is-maximized': maximizedTabs[item.name] }">
+  <el-tabs class="progressTaskTabs scrollable-tabs" ref="tabsContainer" v-if="taskTabs.length" v-model="tabsActiveName" @tab-click="tabsClick">
+    <el-tab-pane v-for="item in taskTabs" :key="item.name" :label="item.label" :name="item.name">
+      <div class="tab-content-wrapper" :class="{ 'is-maximized': maximizedTabs[item.name] }">
         <!-- 最大化/最小化按钮 -->
-        <div class="tab-actions"
-             v-if="!viewVisible">
-          <i :class="maximizedTabs[item.name] ? 'p8 icon-exit-fullscreen' : 'p8 icon-full-screen'"
-             @click="toggleMaximize(item.name)"></i>
+        <div class="tab-actions" v-if="!viewVisible">
+          <i :class="maximizedTabs[item.name] ? 'p8 icon-exit-fullscreen' : 'p8 icon-full-screen'" @click="toggleMaximize(item.name)"></i>
         </div>
         <!-- 进度反馈 -->
         <template v-if="item.name === 'progess'">
           <div style="height: 25px;"></div>
-          <progess v-if="progessType !== 'progessTable' && taskFinish !== null"
-                   ref="progess"
-                   :taskFinish="taskFinish"
-                   :tabsName="tabsName"
-                   :durationDay="durationDay"
-                   :approve="approve"
-                   :exceedType="exceedType"
-                   :checkBusinessForm="checkBusinessForm"
-                   @dialogOk="dialogOk"
-                   @dialogClose="dialogClose"></progess>
-          <progess-table v-else
-                         ref="progessTable"></progess-table>
+          <progess
+            v-if="progessType !== 'progessTable' && taskFinish !== null"
+            ref="progess"
+            :taskFinish="taskFinish"
+            :tabsName="tabsName"
+            :durationDay="durationDay"
+            :approve="approve"
+            :exceedType="exceedType"
+            :checkBusinessForm="checkBusinessForm"
+            @dialogOk="dialogOk"
+            @dialogClose="dialogClose"
+          ></progess>
+          <progess-table v-else ref="progessTable"></progess-table>
+        </template>
+        <!-- 实际收支 -->
+        <template v-if="item.name === 'budgetExecution'">
+          <budget-execution :task-id="getPlanInfo().TASKID" :is-leaf='getPlanInfo().ISLEAF === 0' :approveType="progessType !== 'progessTable'"></budget-execution>
         </template>
         <!-- 工作统筹 -->
         <template v-if="item.name === 'workCoordination' && tabsActiveName == item.name">
@@ -40,54 +35,41 @@
         <!-- 未完成原因 -->
         <template v-if="item.name === 'unfinishedCause'">
           <!-- <span slot="label">{{ item.label }}</span> -->
-          <div style="height: 25px;"></div>
-          <deviate ref="deviate"
-                   :taskFinish="taskFinish"
-                   :tabsName="tabsName"></deviate>
+          <div style="height: 25px"></div>
+          <deviate ref="deviate" :taskFinish="taskFinish" :tabsName="tabsName"></deviate>
         </template>
         <!-- 业务表单 -->
         <template v-if="item.formType === 'businessForm'">
-          <FormRender v-if="item.editMode === '单数据'"
-                      :ref="item.name"
-                      :item="item"
-                      :approveType="progessType !==  'progessTable'"
-                      :isApprove="approveType"
-                      :taskId="getPlanInfo().TASKID"
-                      :PREDECESSORSNUMBER="getPlanInfo().PREDECESSORSNUMBER"
-                      :key="item.name + tabsName"></FormRender>
-          <multiple-form-table v-else-if="item.editMode === '多数据'"
-                               :ref="item.name"
-                               :key="item.name + tabsName"
-                               :taskId="getPlanInfo().TASKID"
-                               :PREDECESSORSNUMBER="getPlanInfo().PREDECESSORSNUMBER"
-                               :approveType="progessType !== 'progessTable'"
-                               :isApprove="approveType"
-                               :item="item"></multiple-form-table>
+          <FormRender
+            v-if="item.editMode === '单数据'"
+            :ref="item.name"
+            :item="item"
+            :approveType="progessType !== 'progessTable'"
+            :isApprove="approveType"
+            :taskId="getPlanInfo().TASKID"
+            :PREDECESSORSNUMBER="getPlanInfo().PREDECESSORSNUMBER"
+            :key="item.name + tabsName"
+          ></FormRender>
+          <multiple-form-table
+            v-else-if="item.editMode === '多数据'"
+            :ref="item.name"
+            :key="item.name + tabsName"
+            :taskId="getPlanInfo().TASKID"
+            :PREDECESSORSNUMBER="getPlanInfo().PREDECESSORSNUMBER"
+            :approveType="progessType !== 'progessTable'"
+            :isApprove="approveType"
+            :item="item"
+          ></multiple-form-table>
         </template>
         <!-- 自定义表单 -->
         <template v-else-if="item.formType === 'customForm'">
-          <component v-if="item.editMode === '单数据'"
-                     :ref="item.name"
-                     :key="item.name + tabsName"
-                     :is="componentUrl(item.formUrl)"></component>
-          <custom-form-table v-else-if="item.editMode === '多数据'"
-                             :item="item"
-                             :key="item.name + tabsName"
-                             :ref="item.name"
-                             :approveType="progessType !==  'progessTable'"></custom-form-table>
+          <component v-if="item.editMode === '单数据'" :ref="item.name" :key="item.name + tabsName" :is="componentUrl(item.formUrl)"></component>
+          <custom-form-table v-else-if="item.editMode === '多数据'" :item="item" :key="item.name + tabsName" :ref="item.name" :approveType="progessType !== 'progessTable'"></custom-form-table>
         </template>
         <!-- 模板表单 -->
         <template v-else-if="item.formType === 'templateForm'">
-          <iframeForm v-if="item.editMode === '单数据'"
-                      :ref="item.name"
-                      :key="item.name + tabsName"
-                      :item="item"
-                      :approveType="progessType !==  'progessTable'"></iframeForm>
-          <template-form-table v-else-if="item.editMode === '多数据'"
-                               :item="item"
-                               :key="item.name + tabsName"
-                               :ref="item.name"
-                               :approveType="progessType !==  'progessTable'"></template-form-table>
+          <iframeForm v-if="item.editMode === '单数据'" :ref="item.name" :key="item.name + tabsName" :item="item" :approveType="progessType !== 'progessTable'"></iframeForm>
+          <template-form-table v-else-if="item.editMode === '多数据'" :item="item" :key="item.name + tabsName" :ref="item.name" :approveType="progessType !== 'progessTable'"></template-form-table>
         </template>
       </div>
     </el-tab-pane>
@@ -98,6 +80,7 @@ import moment from 'moment'
 import { Tabs, TabPane } from 'p8-components-ui'
 import Progess from './Progess'
 import ProgessTable from './ProgessTable'
+import BudgetExecution from './BudgetExecution'
 import Deviate from './Deviate'
 import WorkCoordination from './WorkCoordination'
 import multipleFormTable from './components/multipleFormTable'
@@ -121,7 +104,8 @@ export default {
     customFormTable,
     templateFormTable,
     FormRender,
-    iframeForm
+    iframeForm,
+    BudgetExecution
   },
   props: {
     // 是否审批页面
@@ -133,7 +117,7 @@ export default {
       type: Boolean
     }
   },
-  data () {
+  data() {
     return {
       value: '',
       maximizedTabs: {}, // 记录每个标签页的最大化状态
@@ -141,14 +125,11 @@ export default {
       formViewId: '',
       taskTabs: [],
       taskTabsProgess: [
-        { label: '进度反馈', name: 'progess' }
+        { label: '进度反馈', name: 'progess' },
+        { label: '实际收支', name: 'budgetExecution' }
       ],
-      taskTabsWork: [
-        { label: '工作统筹', name: 'workCoordination' }
-      ],
-      taskTabsUnfinished: [
-        { label: '未完成原因', name: 'unfinishedCause' }
-      ],
+      taskTabsWork: [{ label: '工作统筹', name: 'workCoordination' }],
+      taskTabsUnfinished: [{ label: '未完成原因', name: 'unfinishedCause' }],
       tabsActiveName: '',
       durationDay: false,
       exceedType: false,
@@ -161,13 +142,13 @@ export default {
     }
   },
   computed: {
-    token () {
+    token() {
       return this.$store.getters.token
     }
   },
-  async created () {
+  async created() {
     this.taskbusinessForm = await this.getTaskForm()
-    this.taskbusinessForm = this.taskbusinessForm.map(el => {
+    this.taskbusinessForm = this.taskbusinessForm.map((el) => {
       return {
         formType: el.formType,
         label: el.formName,
@@ -227,7 +208,7 @@ export default {
       taskTabs = this.taskTabsWork
     }
     this.tabsActiveName = tabsActiveName
-    let index = taskTabs.findIndex(item => item.name === 'progess')
+    let index = taskTabs.findIndex((item) => item.name === 'progess')
     if (index !== -1) {
       taskTabs.splice(index + 1, 0, ...this.taskbusinessForm)
     }
@@ -238,7 +219,7 @@ export default {
       this.hideScrollbar()
     })
   },
-  mounted () {
+  mounted() {
     if (this.getPlanInfo().MANAGERSTATUS === '6409' || this.getPlanInfo().MANAGERSTATUS === '6406') {
       this.viewVisible = true
     }
@@ -246,54 +227,35 @@ export default {
       this.viewVisible = true
     }
   },
-  beforeDestroy () {
+  beforeDestroy() {
     this.removeScrollHandler()
   },
   methods: {
-    getIframeSrc (item) {
+    getIframeSrc(item) {
       return `${this.$sysConfig.API_DEFAULT_CONFIG.jmreportUrl}/view/${item.formId}?token=${this.token}&actOrTaskFormId=${item.name}`
     },
-    componentUrl (componentPath) {
+    componentUrl(componentPath) {
       const path = componentPath.startsWith('/') ? componentPath.slice(1) : componentPath
       return defineComponent(require(`@/views/${path}.vue`).default)
     },
-    initScrollHandler () {
+    initScrollHandler() {
       const tabsEl = this.$refs.tabsContainer.$el
       this.scrollContainer = tabsEl.querySelector('.el-tabs__nav-scroll')
       if (this.scrollContainer) {
-        this.scrollContainer.addEventListener(
-          'wheel',
-          this.handleWheel,
-          { passive: false }
-        )
+        this.scrollContainer.addEventListener('wheel', this.handleWheel, { passive: false })
         // 添加鼠标移入移出监听
-        this.scrollContainer.addEventListener(
-          'mouseenter',
-          this.hideScrollbar
-        )
-        this.scrollContainer.addEventListener(
-          'mouseleave',
-          this.hideScrollbar
-        )
+        this.scrollContainer.addEventListener('mouseenter', this.hideScrollbar)
+        this.scrollContainer.addEventListener('mouseleave', this.hideScrollbar)
       }
     },
-    removeScrollHandler () {
+    removeScrollHandler() {
       if (this.scrollContainer) {
-        this.scrollContainer.removeEventListener(
-          'wheel',
-          this.handleWheel
-        )
-        this.scrollContainer.removeEventListener(
-          'mouseenter',
-          this.hideScrollbar
-        )
-        this.scrollContainer.removeEventListener(
-          'mouseleave',
-          this.hideScrollbar
-        )
+        this.scrollContainer.removeEventListener('wheel', this.handleWheel)
+        this.scrollContainer.removeEventListener('mouseenter', this.hideScrollbar)
+        this.scrollContainer.removeEventListener('mouseleave', this.hideScrollbar)
       }
     },
-    handleWheel (event) {
+    handleWheel(event) {
       if (event.shiftKey) {
         event.preventDefault()
         const delta = Math.sign(event.deltaY)
@@ -301,23 +263,23 @@ export default {
         this.scrollContainer.scrollLeft += delta * 60
       }
     },
-    hideScrollbar () {
+    hideScrollbar() {
       // 强制隐藏滚动条
       if (this.scrollContainer) {
         this.scrollContainer.style.overflow = 'hidden'
       }
     },
-    toggleMaximize (tabName) {
+    toggleMaximize(tabName) {
       this.$set(this.maximizedTabs, tabName, !this.maximizedTabs[tabName])
     },
-    async getTaskForm () {
+    async getTaskForm() {
       let api = 'planGanttManager.taskFormInfo'
       let params = { taskId: this.getPlanInfo().TASKID }
       let result = this.$api[api](params)
       return result
     },
 
-    async getTaskFinish () {
+    async getTaskFinish() {
       await this.$api['PlanGanttSetting.getSchedulingBasicConfig']().then((res) => {
         let taskFinish = res.taskFinish && res.taskFinish.content ? res.taskFinish.content : ''
         if (taskFinish === '手动') {
@@ -327,25 +289,25 @@ export default {
         }
       })
     },
-    tabsClick (val) {
+    tabsClick(val) {
       this.tabsName = val.name
     },
     // 切换页面不继续弹出超期提示框
-    dialogOk (val) {
+    dialogOk(val) {
       this.durationDay = val
       this.exceedType = val
     },
-    dialogClose () {
+    dialogClose() {
       if (this.getPlanInfo().MANAGERSTATUS === '6406') {
         this.progessType = 'progessTable'
         this.viewVisible = true
       }
     },
-    checkBusinessForm () {
+    checkBusinessForm() {
       let that = this
       let flag = true
       let formName = []
-      this.taskbusinessForm.forEach(el => {
+      this.taskbusinessForm.forEach((el) => {
         if (el.isRequired == '是' && that.$refs[el.name]) {
           if (!that.$refs[el.name][0].checkBusinessForm()) {
             formName.push(el.label)

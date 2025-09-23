@@ -194,6 +194,12 @@
                            :gantt-name="ganttName"
                            :formWidth="formWidth"></linked-collection>
       </template>
+<!--   预算执行（实际收支）   -->
+      <template #budgetExecution>
+        <budget-execution ref='budgetExecution' :task-id="taskId">
+
+        </budget-execution>
+      </template>
     </anchor>
   </div>
 </template>
@@ -235,6 +241,8 @@ import OutputViewTask from '@/views/Framework/Message/components/TaskDetail/Outp
 import getOutPutViewTask from '@/views/Framework/Message/components/TaskDetail/GetOutputView.vue' // 已提交的输出物
 // 导入特别说明组件
 import SpecialViewTask from '@/views/Framework/Message/components/TaskDetail/SpecialView.vue' // 特别说明
+// 导入预算执行
+import BudgetExecution from '@/views/product/My/Work/Task/Components/taskOperating/BudgetExecution.vue'
 export default {
   name: 'PlanAttribute',
   props: ['taskId', 'wholeDescribeId', 'ganttName', 'status', 'planInfoId', 'attReadOnly', 'createPage', 'currentRoute', 'viewType', 'defaultPercent', 'viewWidth', 'type', 'changeId'],
@@ -264,7 +272,8 @@ export default {
     inputViewTask,
     DependenceViewTask,
     getOutPutViewTask,
-    SpecialViewTask
+    SpecialViewTask,
+    BudgetExecution
   },
   computed: {
     formWidth () {
@@ -414,7 +423,8 @@ export default {
         { label: '业务表单', value: 'businessForm', icon: 'el-icon-s-order' },
         { label: '关联需求', value: 'demandKey', icon: 'p8 icon-a-xuqiu1' },
         { label: '关联收款', value: 'linkedCollection', icon: 'p8 icon-output-process-manage' },
-        { label: '关联付款', value: 'linkedPament', icon: 'p8 icon-output-process-manage' }
+        { label: '关联付款', value: 'linkedPament', icon: 'p8 icon-output-process-manage' },
+        { label: '实际收支', value: 'budgetExecution', icon: '' }
       ],
       windowWidth: window.innerWidth
     }
@@ -458,5 +468,8 @@ export default {
     height: 30px;
     line-height: 30px;
   }
+}
+::v-deep .main-table{
+  height: 300px !important;
 }
 </style>
