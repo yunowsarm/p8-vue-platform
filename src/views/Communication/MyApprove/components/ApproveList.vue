@@ -403,16 +403,16 @@ export default {
       }
     },
     triggerSelect (item, index) {
+      console.log(item,index)
+      this.currentIndex = index
       this.$emit('select', item, index)
-      setTimeout(() =>{
-        this.currentIndex = index
-      },1000)
     },
     saveNotice () {
       this.$api['PersonalProcessApproval.saveNoticeMsg']({ id: null }).then((res) => { })
     },
     messageLoad (data, current) {
-      if (data && current && current === 1 && !this.$store.getters.isMobile) {
+      if(this.$store.getters.isMobile) return
+      if (data && current && current === 1) {
         this.currentIndex = 0
       }
     }
