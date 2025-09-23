@@ -1,13 +1,12 @@
 <template>
   <div class="content">
-    <table-render code="PLAN_WARNING"
-                  :west-tree-param="reportParam"
-                  :report-param="reportParam"></table-render>
+    <table-render code="PLAN_WARNING" :west-tree-param="reportParam" :report-param="reportParam"></table-render>
   </div>
 </template>
 <script>
 import TableRender from '@/views/Framework/ComponentsMananger/Grid/Components/tableRender.vue'
 import { P8ListLayout as ListLayout } from 'p8-components-ui'
+
 export default {
   name: 'PlanWarning',
   props: {
@@ -18,12 +17,23 @@ export default {
       }
     }
   },
-  data () {
+  created() {
+    console.log(this.$route, 'this.$route,PlanWarning,BudgetWarning')
+  },
+  data() {
     return {
       record: null,
       reportParam: {
-        PLAN_INFO_ID: this.thirdMenuParam.ID
+        PLAN_INFO_ID: this.thirdMenuParam.ID,
+        warnType: this.getWarnType(this.$route)
       }
+    }
+  },
+  methods: {
+    getWarnType(route) {
+      if (route.name === 'PlanWarning') return 'plan'
+      if (route.name === 'BudgetWarning') return 'budget'
+      return ''
     }
   },
   components: {

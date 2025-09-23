@@ -148,7 +148,7 @@ import { P8ListLayout as ListLayout, P8Drawer as CommonDrawer } from 'p8-compone
 import FormRender from '@/views/Framework/ComponentsMananger/Form/Components/Components/edit.vue'
 
 export default {
-  name: 'PlanWarning',
+  name: 'BudgetWarning',
   props: {
     thirdMenuParam: {
       type: Object,
@@ -164,12 +164,12 @@ export default {
       formTitle: '',
       selectedData: [],
       formViewId: '',
-      codeForm: 'planWaeningBasicForm',
+      codeForm: 'budgetWaeningBasicForm',
       comp: this,
       record: null,
       permissionVo: {
         resourceId: '',
-        router: 'planWarningSettings'
+        router: 'budgetWarningSettings'
       },
       sqlParam: {
         type: {
@@ -180,7 +180,7 @@ export default {
         warnType: {
           mode: '=',
           relation: 'and',
-          value: 'plan'
+          value: 'budget'
         }
       },
       toolbarWritingDisplay: '0',
@@ -228,7 +228,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$api['formGenerator.formCallDataRemove']({
-          desformCode: 'planWaeningBasicForm',
+          desformCode: 'budgetWaeningBasicForm',
           dataIds: [this.selectedData[0].ID],
         }).then((res) => {
           this.$message({
@@ -251,7 +251,7 @@ export default {
     },
     // 强制同步
     forceSynchronization () {
-      this.$confirm('该操作会重置所有计划的计划预警规则，即自动创建的会被删除，并且根据当前配置创建新的。该操作不会删除和修改【手动】创建的，请确认是否继续?', '提示', {
+      this.$confirm('该操作会重置所有预算的预算预警规则，即自动创建的会被删除，并且根据当前配置创建新的。该操作不会删除和修改【手动】创建的，请确认是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

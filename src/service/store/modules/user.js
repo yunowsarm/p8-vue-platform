@@ -24,6 +24,7 @@ const user = {
     ganttRightButtons: [], // gantt右键菜单
     ganttIsGroup: [], // gantt右键菜单
     autoScheduling: '',
+    carryOutBudgetControl: '', // 任务执行时是否预算控制 是：'1';  否：'0'
     userInfo: {}, // 用于JT智能表单的系统级参数
     sysVars: {
       // 用于智能表单的系统级参数
@@ -106,6 +107,8 @@ const user = {
         if (res) {
           state.doneSign = res.doneSign ? res.doneSign.content : ''
           state.displayType = res.displayType ? res.displayType.content : ''
+          state.carryOutBudgetControl = res?.carryOutBudgetControl?.content ?? '0'
+
           if (!state.ganttButtonMode) {
             state.ganttButtonMode = res.defaultMode.content
           }
