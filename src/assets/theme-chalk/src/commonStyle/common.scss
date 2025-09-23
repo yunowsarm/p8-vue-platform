@@ -410,3 +410,9 @@ body {
 .el-table__header {
   font-size: 13px;
 }
+@media screen and (min-width: 300px) and (max-width: 600px){
+  .el-notification {
+    width: 230px !important;
+    max-width: 230px !important;
+  }
+}
