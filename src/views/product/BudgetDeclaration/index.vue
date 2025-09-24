@@ -319,10 +319,6 @@ export default {
   padding: 0 6px !important;
 }
 
-::v-deep .panination {
-  display: none;
-}
-
 ::v-deep .vxe-number-input {
   width: 95% !important;
 }
@@ -343,5 +339,8 @@ export default {
   right: 0;
   z-index: 2000;
   background-color: rgba(0, 0, 0, 0.5);
+}
+::v-deep .panination {
+  display: none !important;
 }
 </style>
