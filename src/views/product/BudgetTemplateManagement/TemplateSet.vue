@@ -155,7 +155,9 @@ export default {
       if (!row.formula) return false
       const used = row.formula.match(/[a-zA-Z0-9_]\w*/g) || []
       const available = this.elementsFilter().map((item) => item.value)
-      return used.some((item) => !available.includes(item))
+      return used
+        .filter(item => isNaN(item))
+        .some((item) => !available.includes(item))
     },
     getFormulaParams() {
       const params = {
@@ -402,7 +404,7 @@ export default {
 }
 
 .normal-layout {
-  height: calc(100% - 50px);
+  height: calc(100% - 50px) !important;
   margin: 0;
 }
 
