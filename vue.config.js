@@ -6,7 +6,7 @@ const { defineConfig } = require('@vue/cli-service')
 const SplitChunksPlugin = require('webpack').optimize.SplitChunksPlugin
 let version = require('./package.json')['version']
 version = 'V' + version
-const TerserPlugin = require('terser-webpack-plugin')
+// const TerserPlugin = require('terser-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 module.exports = defineConfig({
   runtimeCompiler: true,
@@ -61,7 +61,7 @@ module.exports = defineConfig({
           compress: {
             drop_console: true,
             drop_debugger: true,
-            pure_funcs: ['console.log', 'console.info', 'console.warn', 'console.error', 'debugger'],
+            pure_funcs: ['console.log', 'console.info', 'console.warn', 'debugger'],
             pure_getters: true,
             unsafe: true,
             unsafe_comps: true,
