@@ -63,7 +63,7 @@ export default {
           title: '科目名称',
           dataIndex: 'NAME',
           sortable: false,
-          align: 'center',
+          align: 'left',
           headerAlign: 'center',
           treeNode: true
         },
@@ -95,7 +95,7 @@ export default {
           title: '科目名称',
           dataIndex: 'name',
           sortable: false,
-          align: 'center',
+          align: 'left',
           headerAlign: 'center',
           treeNode: true,
           scopedSlots: { customRender: 'custom' }
@@ -349,34 +349,43 @@ export default {
   <div style="height: 100%">
     <normal-layout layoutCode="BudgetTemplateEditor" :split-default-left-width="50" :header-visible="false" :split-layout="true">
       <template #west>
-        <vxe-table
-          ref="subjectTable"
-          :pagination="false"
-          :columns="budgetSubjectColumns"
-          :noApiTableData="budgetSubjectData"
-          :tableConfig="tableConfig"
-          :treeConfig="treeConfig"
-          :checkboxConfig="checkboxConfig"
-          @selection-change="selectionChange"
-        ></vxe-table>
+        <div class='title'>
+          <i class='p8 icon-tuzhuang' style='margin-right: 6px'></i>
+          预算科目库</div>
+        <div class='table-area'>
+          <vxe-table
+            class='table-area'
+            ref="subjectTable"
+            :pagination="false"
+            :columns="budgetSubjectColumns"
+            :noApiTableData="budgetSubjectData"
+            :tableConfig="tableConfig"
+            :treeConfig="treeConfig"
+            :checkboxConfig="checkboxConfig"
+            @selection-change="selectionChange"
+          ></vxe-table>
+        </div>
       </template>
       <template #center>
-        <vxe-table ref="templateTable" :pagination="false" :columns="budgetTemplateColumns" :noApiTableData="budgetTemplateData" :tableConfig="tableConfig" :treeConfig="templateTreeConfig">
-          <template #name="{ scope }">
-            <el-tooltip placement="top" content="公式无法计算，请添加依赖项或修改公式">
-              <i v-if="isWarn(scope.row)" class="warning-icon el-icon-warning"></i>
-            </el-tooltip>
-            <span>{{ scope.row.name }}</span>
-          </template>
-          <template #operation="{ scope }">
-            <el-button type="text" @click="setFormula(scope.row)">
-              <i class="p8 icon-jisuanqi"></i>
-            </el-button>
-            <el-button type="text" @click="removeSubject(scope.row, 'subjectBaseid')">
-              <i class="p8 icon-shanchu"></i>
-            </el-button>
-          </template>
-        </vxe-table>
+        <div class='title'> <i class='p8 icon-zongzhuang' style='margin-right: 6px'></i>预算模板</div>
+        <div class='table-area'>
+          <vxe-table ref="templateTable" :pagination="false" :columns="budgetTemplateColumns" :noApiTableData="budgetTemplateData.filter(item => item.subjectBasePid)" :tableConfig="tableConfig" :treeConfig="templateTreeConfig">
+            <template #name="{ scope }">
+              <el-tooltip placement="top" content="公式无法计算，请添加依赖项或修改公式">
+                <i v-if="isWarn(scope.row)" class="warning-icon el-icon-warning"></i>
+              </el-tooltip>
+              <span>{{ scope.row.name }}</span>
+            </template>
+            <template #operation="{ scope }">
+              <el-button type="text" @click="setFormula(scope.row)">
+                <i class="p8 icon-jisuanqi"></i>
+              </el-button>
+              <el-button type="text" @click="removeSubject(scope.row, 'subjectBaseid')">
+                <i class="p8 icon-shanchu"></i>
+              </el-button>
+            </template>
+          </vxe-table>
+        </div>
       </template>
     </normal-layout>
     <div class="button-area">
@@ -406,9 +415,25 @@ export default {
 .normal-layout {
   height: calc(100% - 50px) !important;
   margin: 0;
+  padding-left: 0;
 }
-
+.title{
+  height: 40px;
+  line-height: 40px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0 8px;
+  background-color: #f5f7fa;
+  color: #333333;
+  font-weight: 600;
+}
+.table-area{
+  height: calc(100% - 40px);
+}
+::v-deep .normal-layout .normal-main .normal-center{
+  padding-left: 0;
+}
 ::v-deep .panination {
-  display: none;
+  display: none !important;
 }
 </style>
