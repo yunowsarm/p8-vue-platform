@@ -123,7 +123,7 @@ export default {
       ],
       budgetTemplateData: [],
       deletedSubject: [],
-      currentRow:{}
+      currentRow: {}
     }
   },
   created() {},
@@ -155,9 +155,7 @@ export default {
       if (!row.formula) return false
       const used = row.formula.match(/[a-zA-Z0-9_]\w*/g) || []
       const available = this.elementsFilter().map((item) => item.value)
-      return used
-        .filter(item => isNaN(item))
-        .some((item) => !available.includes(item))
+      return used.filter((item) => isNaN(item)).some((item) => !available.includes(item))
     },
     getFormulaParams() {
       const params = {
@@ -194,7 +192,7 @@ export default {
         sqlId: 'cc3a158823b4304ab01b24710733081b',
         reportParam: {},
         sqlParam: {
-          formType:{
+          formType: {
             mode: '=',
             relation: 'and',
             value: 'template'
@@ -327,6 +325,12 @@ export default {
       // console.log(this.budgetTemplateData)
     },
     save() {
+      const isSave = this.budgetTemplateData.some((item) => this.isWarn(item))
+      if (isSave) {
+        this.$message.error('科目公式缺少依赖项，请检查')
+        return
+      }
+
       const params = {
         id: this.row[0].ID,
         detailRequests: [...this.budgetTemplateData, ...this.deletedSubject]
@@ -349,12 +353,13 @@ export default {
   <div style="height: 100%">
     <normal-layout layoutCode="BudgetTemplateEditor" :split-default-left-width="50" :header-visible="false" :split-layout="true">
       <template #west>
-        <div class='title'>
-          <i class='p8 icon-tuzhuang' style='margin-right: 6px'></i>
-          预算科目库</div>
-        <div class='table-area'>
+        <div class="title">
+          <i class="p8 icon-tuzhuang" style="margin-right: 6px"></i>
+          预算科目库
+        </div>
+        <div class="table-area">
           <vxe-table
-            class='table-area'
+            class="table-area"
             ref="subjectTable"
             :pagination="false"
             :columns="budgetSubjectColumns"
@@ -367,9 +372,16 @@ export default {
         </div>
       </template>
       <template #center>
-        <div class='title'> <i class='p8 icon-zongzhuang' style='margin-right: 6px'></i>预算模板</div>
-        <div class='table-area'>
-          <vxe-table ref="templateTable" :pagination="false" :columns="budgetTemplateColumns" :noApiTableData="budgetTemplateData.filter(item => item.subjectBasePid)" :tableConfig="tableConfig" :treeConfig="templateTreeConfig">
+        <div class="title"><i class="p8 icon-zongzhuang" style="margin-right: 6px"></i>预算模板</div>
+        <div class="table-area">
+          <vxe-table
+            ref="templateTable"
+            :pagination="false"
+            :columns="budgetTemplateColumns"
+            :noApiTableData="budgetTemplateData.filter((item) => item.subjectBasePid)"
+            :tableConfig="tableConfig"
+            :treeConfig="templateTreeConfig"
+          >
             <template #name="{ scope }">
               <el-tooltip placement="top" content="公式无法计算，请添加依赖项或修改公式">
                 <i v-if="isWarn(scope.row)" class="warning-icon el-icon-warning"></i>
@@ -417,7 +429,8 @@ export default {
   margin: 0;
   padding-left: 0;
 }
-.title{
+
+.title {
   height: 40px;
   line-height: 40px;
   -webkit-box-sizing: border-box;
@@ -427,12 +440,15 @@ export default {
   color: #333333;
   font-weight: 600;
 }
-.table-area{
+
+.table-area {
   height: calc(100% - 40px);
 }
-::v-deep .normal-layout .normal-main .normal-center{
+
+::v-deep .normal-layout .normal-main .normal-center {
   padding-left: 0;
 }
+
 ::v-deep .panination {
   display: none !important;
 }
