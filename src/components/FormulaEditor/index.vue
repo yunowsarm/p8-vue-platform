@@ -473,6 +473,7 @@ export default {
     .attributes-grid {
       height: calc(100% - 60px);
       display: grid;
+      grid-auto-rows: min-content;
       grid-template-columns: repeat(12, 1fr);
       gap: 8px;
       padding: 12px;
