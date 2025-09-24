@@ -159,8 +159,8 @@ module.exports = defineConfig({
     optimization: {
       splitChunks: {
         chunks: 'all',
-        minSize: 1000000, // 提高最小分割体积至20KB，避免过小 chunk
-        maxSize: 10000000, // 尝试分割大于250KB的 chunk
+        minSize: 500000, // 提高最小分割体积至20KB，避免过小 chunk
+        maxSize: 1000000, // 尝试分割大于250KB的 chunk
         minChunks: 1,
         maxAsyncRequests: 20, // 适当控制异步请求数
         maxInitialRequests: 10, // 适当控制初始请求数
@@ -169,7 +169,7 @@ module.exports = defineConfig({
         cacheGroups: {
           // 1. 核心Vue生态单独分包（变化极少）
           vueCore: {
-            name: 'chunk-vue-core',
+            name: 'vue-core',
             test: /[\\/]node_modules[\\/](vue|vue-router|vuex|@vue)[\\/]/,
             priority: 100,
             chunks: 'all',
@@ -179,7 +179,7 @@ module.exports = defineConfig({
 
           // 2. Element UI单独分包
           elementUI: {
-            name: 'chunk-element-ui',
+            name: 'element-ui',
             test: /[\\/]node_modules[\\/]element-ui[\\/]/,
             priority: 90,
             chunks: 'all',
@@ -188,7 +188,7 @@ module.exports = defineConfig({
 
           // 3. ECharts相关单独分包（通常体积较大）
           echarts: {
-            name: 'chunk-echarts',
+            name: 'echarts',
             test: /[\\/]node_modules[\\/](echarts|echarts-gl|echarts-liquidfill)[\\/]/,
             priority: 80,
             chunks: 'all'
@@ -196,29 +196,44 @@ module.exports = defineConfig({
 
           // 4. 其他较大的第三方库单独分包
           largeVendors: {
-            name: 'chunk-large-vendors',
-            test: /[\\/]node_modules[\\/](monaco-editor|vxe-table|tinymce|video\.js|xlsx|@antv|p8-components-ui|p8-dhtmlx-gantt|p8-lowcode)[\\/]/,
+            name: 'large-vendors',
+            test: /[\\/]node_modules[\\/](monaco-editor|vxe-table|tinymce|video\.js|xlsx|@antv)[\\/]/,
             priority: 70,
             chunks: 'all'
           },
 
           // 5. 工具库单独分包
           utils: {
-            name: 'chunk-utils',
-            test: /[\\/]node_modules[\\/](lodash|moment|pinyin|brace)[\\/]/,
+            name: 'utils',
+            test: /[\\/]node_modules[\\/](lodash|moment|pinyin-pro|brace)[\\/]/,
             priority: 60,
             chunks: 'all'
           },
-
-          // 6. 剩余的node_modules包
+          componentsUI: {
+            name: 'p8-components-ui',
+            test: /[\\/]node_modules[\\/](p8-components-ui|p8-dhtmlx-gantt|p8-lowcode)[\\/]/,
+            priority: 10,
+            chunks: 'all'
+          },
+          dhtmlxGantt: {
+            name: 'p8-dhtmlx-gantt',
+            test: /[\\/]node_modules[\\/](p8-dhtmlx-gantt)[\\/]/,
+            priority: 10,
+            chunks: 'all'
+          },
+          lowcode: {
+            name: 'p8-lowcode',
+            test: /[\\/]node_modules[\\/](p8-lowcode)[\\/]/,
+            priority: 10,
+            chunks: 'all'
+          },
           vendors: {
-            name: 'chunk-vendors',
+            name: 'vendors',
             test: /[\\/]node_modules[\\/]/,
             priority: 50,
             chunks: 'all',
             reuseExistingChunk: true
           },
-
           // 7. 业务公共代码
           common: {
             name: 'chunk-common',
