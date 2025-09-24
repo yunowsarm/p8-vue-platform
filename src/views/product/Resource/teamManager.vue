@@ -343,6 +343,7 @@ import SelectApproveUserBeforehand from '@/views/Framework/BusinessActivity/Proc
 import { nextApproveUserBeforehand } from '@/assets/commonJS/BusinessActivity/nextApproveUserBeforehand'
 import DialogUserTaskStatistics from './Components/UserTaskStatistics'
 import AutoGeneration from './Components/AiGeneratedDialog'
+import { pinyin } from 'pinyin-pro'
 // import pinyin from 'pinyin'
 
 export default {
@@ -722,15 +723,20 @@ export default {
       let realName = params.realName ? params.realName.toLowerCase() : null
       let deptName = params.deptName ? params.deptName : null
 
-      const matchByRealName = async (item, keyword) => {
+      const matchByRealName = (item, keyword) => {
         if (!item.realName) return false
         const name = item.realName
-        const pinyinModule = await import('pinyin')
-        const pinyin = pinyinModule.default || pinyinModule
-        const pyArr = pinyin(name, { style: pinyin.STYLE_NORMAL }).flat()
-        const fullPinyin = pyArr.join('').toLowerCase()       // zhangsan
-        const initials = pyArr.map(p => p[0]).join('').toLowerCase() // zs
-
+        const fullPinyin = pinyin(name,{
+          toneType: 'none',
+          type:'string',
+          separator:''
+        }).toLowerCase()
+        const initials = pinyin(name,{
+          pattern:'first',
+          toneType: 'none',
+          type:'string',
+          separator:''
+        }).toLowerCase()
         return (
           name.includes(keyword) ||
           fullPinyin.includes(keyword) ||

@@ -12,7 +12,7 @@ import Datepicker from '@/assets/commonJS/originalComponents/datePicker'
 import { P8TreeSelect, DatePicker, Select } from 'p8-components-ui'
 import { generateTreeThree, generateTree } from '@/utils/generateTree'
 import { calculateRemainingDays } from '@/utils/common'
-// import pinyin from 'pinyin'
+import { pinyin } from 'pinyin-pro'
 
 /**
  * @Description 计划时间限制策略
@@ -866,8 +866,8 @@ GanttObject.performAction = function (actions, ganttObject) {
  */
 GanttObject.getTaskEditable = function (ganttObject, state, vueThis) {
   // 前置判断 planEditLock
-  if (vueThis.planEditLock === '0') return true
-  if (vueThis.planEditLock === '1') return false
+  if (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose') return true
+  if (vueThis.planEditLock === '1' && vueThis.createPage !== 'decompose') return false
   // 点击列名
   const colName = state.columnName
   // 当前任务
@@ -999,7 +999,7 @@ GanttObject.endDateEditor = function (ganttObject) {
       const html = "<div style='width:140px'><input type='date' " + minAttr + maxAttr + " name='" + column.name + "'></div>"
       placeholder.innerHTML = html
     },
-    hide: function () { },
+    hide: function () {},
     set_value: function (value, id, column, node) {
       if (value && value.getFullYear) {
         this.get_input(node).value = dateToStr(ganttObject.date.add(value, -1, 'day'))
@@ -1164,9 +1164,9 @@ GanttObject.customDateEditor = function (ganttObject) {
                 ],
                 disabledDate: (time) => {
                   if (minValue) {
-                    return time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000;
+                    return time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000
                   }
-                  return false;
+                  return false
                   // if (minValue && maxValue) {
                   //   return new Date(maxValue).getTime() < time.getTime() || time.getTime() < new Date(minValue).getTime() - 24 * 60 * 60 * 1000
                   // }
@@ -1288,6 +1288,7 @@ GanttObject.customEndDateEditor = function (ganttObject) {
         name +
         "'></div></div></div>"
       placeholder.innerHTML = html
+
       function validateDate(date) {
         const vueThis = store.getters.vueThis
         if (vueThis.createPage !== 'decompose') {
@@ -1348,7 +1349,6 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                       if (validateDate(date)) {
                         picker.$emit('pick', date)
                       } else {
-
                       }
                     }
                   },
@@ -1360,7 +1360,6 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                       if (validateDate(date)) {
                         picker.$emit('pick', date)
                       } else {
-
                       }
                     }
                   },
@@ -1372,7 +1371,6 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                       if (validateDate(date)) {
                         picker.$emit('pick', date)
                       } else {
-
                       }
                     }
                   },
@@ -1384,7 +1382,6 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                       if (validateDate(date)) {
                         picker.$emit('pick', date)
                       } else {
-
                       }
                     }
                   },
@@ -1401,7 +1398,6 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                       if (validateDate(date)) {
                         picker.$emit('pick', date)
                       } else {
-
                       }
                     }
                   },
@@ -1418,7 +1414,6 @@ GanttObject.customEndDateEditor = function (ganttObject) {
                       if (validateDate(date)) {
                         picker.$emit('pick', date)
                       } else {
-
                       }
                     }
                   }
@@ -1553,7 +1548,7 @@ GanttObject.treeDataEditor = function (ganttObject, editorConfig, editorConfig1)
             config: editorConfig1
           }
         },
-        created() { },
+        created() {},
         mounted() {
           this.$api[this.config.optionUrl.api](this.config.optionUrl.params).then((res) => {
             if (this.config.useTreeFormat) {
@@ -1600,7 +1595,7 @@ GanttObject.treeDataEditor = function (ganttObject, editorConfig, editorConfig1)
     get_input: function (node) {
       return node.querySelector('input')
     },
-    focus: function (node) { }
+    focus: function (node) {}
   }
 }
 GanttObject.treeDataEditorExtra = function (ganttObject, editorConfig) {
@@ -1626,7 +1621,7 @@ GanttObject.treeDataEditorExtra = function (ganttObject, editorConfig) {
             filter: { multiple: config.editorConfig.multiple }
           }
         },
-        created() { },
+        created() {},
         mounted() {
           this.$api[this.config.optionUrl.api](this.config.optionUrl.params).then((res) => {
             if (this.config.useTreeFormat) {
@@ -1672,7 +1667,7 @@ GanttObject.treeDataEditorExtra = function (ganttObject, editorConfig) {
     get_input: function (node) {
       return node.querySelector('input')
     },
-    focus: function (node) { }
+    focus: function (node) {}
   }
 }
 // 带清空按钮的下拉框
@@ -1685,7 +1680,8 @@ GanttObject.selectCanClear = function (ganttObject) {
       let html =
         "<div style='width:100%'><input id='gantt_clearSelect_" +
         name +
-        "' name='" + name +
+        "' name='" +
+        name +
         "' type='text' style='display:none'><div style='line-height: 40px;'><div class='gantt_clearSelect_" +
         name +
         "'></div></div></div>"
@@ -1751,7 +1747,7 @@ GanttObject.selectCanClear = function (ganttObject) {
           mounted() {
             this.$nextTick(() => {
               setTimeout(() => {
-                this.$refs.elSelect.$el.querySelector('.el-input__inner').click();
+                this.$refs.elSelect.$el.querySelector('.el-input__inner').click()
               }, 200)
             })
           },
@@ -1768,7 +1764,7 @@ GanttObject.selectCanClear = function (ganttObject) {
             },
             handlerBlur(e) {
               setTimeout(() => {
-                ganttObject.ext.inlineEditors.save();
+                ganttObject.ext.inlineEditors.save()
               }, 200)
             }
           },
@@ -1812,7 +1808,6 @@ GanttObject.selectCanClear = function (ganttObject) {
       // if (input.focus) {
       //   input.focus()
       // }
-
       // if (input.select) {
       //   input.select()
       // }
@@ -1828,34 +1823,34 @@ GanttObject.selectCanClear = function (ganttObject) {
 GanttObject.editors = function (ganttObject, formatter, linksFormatter) {
   ganttObject.config.editor_types.custom_text = {
     show: function (id, column, config, placeholder) {
-      const html = "<div style='width:100%'><input type='text' style='width:100%'></div>";
-      placeholder.innerHTML = html;
+      const html = "<div style='width:100%'><input type='text' style='width:100%'></div>"
+      placeholder.innerHTML = html
     },
-    hide: function () { },
+    hide: function () {},
     set_value: function (value, id, column, node) {
-      this.get_input(node).value = value || "";
+      this.get_input(node).value = value || ''
     },
     get_value: function (id, column, node) {
-      return this.get_input(node).value;
+      return this.get_input(node).value
     },
     is_changed: function (value, id, column, node) {
-      return this.get_input(node).value !== value;
+      return this.get_input(node).value !== value
     },
     is_valid: function (value, id, column, node) {
-      return true;
+      return true
     },
     get_input: function (node) {
-      return node.querySelector("input");
+      return node.querySelector('input')
     },
     focus: function (node) {
-      const input = this.get_input(node);
-      if (!input) return;
-      if (input.focus) input.focus();
-      if (input.value === "新任务") {
-        input.select();
+      const input = this.get_input(node)
+      if (!input) return
+      if (input.focus) input.focus()
+      if (input.value === '新任务') {
+        input.select()
       }
     }
-  };
+  }
   return {
     text: {
       type: 'custom_text',
@@ -2158,21 +2153,21 @@ GanttObject.changeUnMoveTask = function (vueThis, ganttObject) {
  */
 GanttObject.onTaskTimeChange = function (ganttObject) {
   // 任务更新后触发
-  ganttObject.attachEvent("onAfterTaskUpdate", function (id, task) {
+  ganttObject.attachEvent('onAfterTaskUpdate', function (id, task) {
     // 防止递归调用
-    if (task._updating) return;
+    if (task._updating) return
 
-    task._updating = true;
+    task._updating = true
     try {
       // 同步更新预计时间
-      task.forecastBeginDate = moment(task.start_date).format('YYYY-MM-DD');
-      task.forecastEndDate = moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD');
-      ganttObject.updateTask(id);
-      ganttObject.render();
+      task.forecastBeginDate = moment(task.start_date).format('YYYY-MM-DD')
+      task.forecastEndDate = moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD')
+      ganttObject.updateTask(id)
+      ganttObject.render()
     } finally {
-      delete task._updating;
+      delete task._updating
     }
-  });
+  })
 }
 
 /**
@@ -2315,27 +2310,20 @@ function searchFilter(parent, searchForm, ganttObject) {
 
     const userName = searchForm.userName // 责任人模糊查询
     let userNameCheck = true
-    const matchByRealName = async (item, keyword) => {
-      if (!item) return false
-      const name = item
-      const pinyinModule = await import('pinyin')
-      const pinyin = pinyinModule.default || pinyinModule
-      const pyArr = pinyin(name, { style: pinyin.STYLE_NORMAL }).flat()
-      const fullPinyin = pyArr.join('').toLowerCase()       // zhangsan
-      const initials = pyArr.map(p => p[0]).join('').toLowerCase() // zs
-
-      return (
-        name.includes(keyword) ||
-        fullPinyin.includes(keyword) ||
-        initials.includes(keyword)
-      )
-    }
-    if (userName && (!resource || (resource && !resource.name) || (resource && resource.name && !matchByRealName(resource.name,userName)))) {
+    const fullPinyin = resource?.name ? pinyin(resource?.name,{
+      toneType: 'none',
+      type:'string',
+      separator:''
+    }).toLowerCase() : '' // zhangsan
+    const initials = resource?.name ? pinyin(resource?.name,{
+      pattern:'first',
+      toneType: 'none',
+      type:'string',
+      separator:''
+    }).toLowerCase() : ''
+    if (userName && (!resource || (resource && !resource.name) || (resource && resource.name && resource.name.indexOf(userName) === -1 && !fullPinyin.includes(userName) && !initials.includes(userName)))) {
       userNameCheck = false
     }
-    // if (userName && (!resource || (resource && !resource.name) || (resource && resource.name && resource.name.indexOf(userName) === -1))) {
-    //   userNameCheck = false
-    // }
     const ownerIds = searchForm.ownerIds // 责任人
     let userIdCheck = true
     if (searchForm.isInput) {
@@ -2383,20 +2371,20 @@ function searchFilter(parent, searchForm, ganttObject) {
     // }
     const startDaterRange = searchForm.start_date // 任务开始时间
     let startDateCheck = true
-    if(startDaterRange && Array.isArray(startDaterRange) && startDaterRange.length === 2){
-      const [start,end] = startDaterRange
+    if (startDaterRange && Array.isArray(startDaterRange) && startDaterRange.length === 2) {
+      const [start, end] = startDaterRange
       const taskStart = new Date(moment(task.start_date).format('YYYY-MM-DD')).getTime()
-      if(taskStart < new Date(start).getTime() || taskStart > new Date(end).getTime()){
+      if (taskStart < new Date(start).getTime() || taskStart > new Date(end).getTime()) {
         startDateCheck = false
       }
     }
 
     const endDateRange = searchForm.end_date // 任务完成时间
     let endDateCheck = true
-    if(endDateRange && Array.isArray(endDateRange) && endDateRange.length === 2){
-      const [start,end] = endDateRange
+    if (endDateRange && Array.isArray(endDateRange) && endDateRange.length === 2) {
+      const [start, end] = endDateRange
       const taskEnd = new Date(moment(task.end_date).subtract(1, 'days').format('YYYY-MM-DD')).getTime()
-      if(taskEnd < new Date(start).getTime() || taskEnd > new Date(end).getTime()){
+      if (taskEnd < new Date(start).getTime() || taskEnd > new Date(end).getTime()) {
         endDateCheck = false
       }
     }
@@ -3145,7 +3133,6 @@ GanttObject.publicObject = {
     // 当用户改变任务的开始日期时，任务持续时间将保持不变，整个任务将重新安排到指定的时间。
     // 当用户更改任务的结束日期时，任务持续时间将保持不变，并且整个任务将重新安排在指定时间结束。
 
-
     // gantt.config.inline_editors_date_processing = "keepDates";
     // 它有以下作用：
     // 当用户更改任务的开始日期时，任务结束日期将保持不变，任务持续时间将更新以反映更改。
@@ -3622,7 +3609,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
         settingExtra[settingItem.name] = {
           index: initIndex,
           hide: settingItem.hide,
-          colWidth: settingItem.colWidth,
+          colWidth: settingItem.colWidth
         }
       }
       const initColumn = initColumns.filter((initItem) => initItem.name === settingItem.name)
@@ -3939,7 +3926,7 @@ GanttObject.searchColumnsDataInit = function (vueThis, ganttObject) {
             // 当vueThis[datePickerKey] 为true 但 childEle 为false 说明当前列被拖拽了, 拖拽结束,表头部分又被重写, 此时 自定义组件整体元素丢失
           } else {
             vueThis[datePickerKey] = new Datepicker(`.${datePickerKey}`, {
-              range:true,
+              range: true,
               customClassName: 'gantt_custom_datepicker', // 自定义类名 (可根据此类名手动更改组件的样式)
               value: vueThis.searchForm[name] || '',
               onChange: function ({ value }) {
@@ -4052,7 +4039,7 @@ GanttObject.calculateParentForecastDate = function (ganttObject, task) {
           })
         }
       })
-      .catch(() => { })
+      .catch(() => {})
   }
 }
 
