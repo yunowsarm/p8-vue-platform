@@ -142,7 +142,8 @@ export default {
     save() {
       const params = {
         taskId: this.currentTask.id,
-        declarationRequests:this.subjectList
+        declarationRequests:this.subjectList,
+        isBudgetManage: true
       }
       this.$api['planGanttManager.saveDeclaration'](params).then((res) => {
         console.log(res)
