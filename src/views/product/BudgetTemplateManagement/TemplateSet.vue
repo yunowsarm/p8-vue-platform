@@ -144,6 +144,9 @@ export default {
       return this.$api['budgetTemplateManagement.queryDetails']({ id: this.row[0].ID }).then((res) => {
         if (res) {
           this.budgetTemplateData = res
+          this.$nextTick(() => {
+            this.$refs.templateTable.$refs.table.setAllTreeExpand(true)
+          })
           res.forEach((item) => {
             const node = this.budgetSubjectData.find((n) => n.ID === item.subjectBaseid)
             if (node) {

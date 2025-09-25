@@ -180,6 +180,7 @@ export default {
           <vxe-table
             border
             keep-source
+            height='100%'
             ref="table"
             align="center"
             :data="subjectList"
