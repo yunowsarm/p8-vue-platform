@@ -8,11 +8,20 @@ export default {
     row: {
       type: Array,
       default: () => []
+    },
+    customParams: {
+      type: Object,
+      default: () => {}
+    },
+    currEntityId:{
+      type: String,
+      default: ''
     }
   },
   data() {
     return {
       projectInfo: null,
+      changeId: '',
       tableData: [],
       tableConfig: {
         showOverflowTooltip: true
@@ -29,7 +38,7 @@ export default {
         mode: 'cell',
         showStatus: true,
         beforeEditMethod: ({ row, column }) => {
-          return (row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula
+          return (row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && !this.currEntityId
         }
       },
       formConf: { closeForm: false },
@@ -63,19 +72,27 @@ export default {
     // 查询详情
     queryDetails() {
       let params = {
-        wholeId: this.projectInfo.ID
+        wholeId: this.projectInfo?.ID ?? ''
       }
-      if(this.row?.length > 1){
-        params.id = row[0].id
+      if (this.row?.length > 0 && this.customParams.title === '修改') {
+        params.id = this.row[0].ID
+      }else if(this.currEntityId){
+        params.id = this.currEntityId
       }
       this.$api['budgetManagement.queryDetails'](params).then((res) => {
         if (res) {
-          this.tableData = res.map((item) => {
-            return {
-              ...item,
-              amount: item.amountOld
-            }
-          })
+          this.changeId = res.id || null
+          if(params.id){
+            this.tableData = res.changeDtls
+          }else{
+            this.tableData = res.changeDtls.map((item) => {
+              return {
+                ...item,
+                amount: item.amountOld
+              }
+            })
+          }
+          this.formData.changeReason = res.describes || ''
         }
       })
     },
@@ -84,6 +101,13 @@ export default {
         res.forEach((item) => {
           const node = this.tableData.find((n) => n.subjectBaseid === item.subjectBaseid)
           node.amount = item.amount
+          if (node.amountOld < node.amount) {
+            node.type = '调增'
+          } else if (node.amountOld > node.amount) {
+            node.type = '调减'
+          } else {
+            node.type = ''
+          }
         })
       })
     },
@@ -94,6 +118,9 @@ export default {
             wholeId: this.projectInfo.ID,
             changeDetailRequests: this.tableData,
             describes: this.formData.changeReason
+          }
+          if (this.changeId) {
+            params.id = this.changeId
           }
           this.$api['budgetManagement.saveDetails'](params).then((res) => {
             console.log(res)
@@ -130,15 +157,19 @@ export default {
             showNegativeStatus: true
           }"
         ></vxe-column>
-        <vxe-column field="code" title="变更类型"></vxe-column>
+        <vxe-column field="type" title="变更类型">
+          <template #default="{ row }">
+            <span>{{ row.type }}</span>
+          </template>
+        </vxe-column>
       </vxe-table>
     </div>
     <el-form ref="form" class="form-area" :model="formData" :rules="rules" label-width="100px">
       <el-form-item label="变更原因：" prop="changeReason">
-        <el-input v-model="formData.changeReason" type="textarea" :rows="4" resize="none"></el-input>
+        <el-input v-model="formData.changeReason" type="textarea" :rows="4" resize="none" :readonly='!!currEntityId'></el-input>
       </el-form-item>
     </el-form>
-    <div class="button-area">
+    <div v-if='!currEntityId' class="button-area">
       <el-button type="primary" @click="save">保存</el-button>
     </div>
   </div>

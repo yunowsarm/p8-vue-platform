@@ -17,6 +17,10 @@ export default {
       default: () => {
         return {}
       }
+    },
+    currEntityId:{
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -116,18 +120,16 @@ export default {
     },
     isEdit(){
       const editStatus = ['编制中','发布驳回']
-      return editStatus.includes(this.thirdMenuParam.BUDGETSTATUSNAME)
+      return editStatus.includes(this.thirdMenuParam.BUDGETSTATUSNAME) && this.parentRoute === 'BudgetManagement'
     }
   },
   created() {
-    console.log(this.parentRoute,'父路由名称')
-    console.log(this.thirdMenuParam,'三级菜单参数')
+    console.log(this.currEntityId,'currEntityId')
     if (this.thirdMenuParam) {
       this.projectId = this.thirdMenuParam.ID
       this.budgetState = this.thirdMenuParam.BUDGETSTATUSNAME
     }
-    if (this.projectId) {
-      this.getTemplateList()
+    if (this.projectId || this.currEntityId) {
       this.getWholeSumBudget()
     }
   },
@@ -165,10 +167,13 @@ export default {
       })
     },
     getWholeSumBudget() {
-      this.$api['budgetManagement.getWholeSumBudget']({ wholeId: this.projectId }).then((res) => {
+      this.$api['budgetManagement.getWholeSumBudget']({ wholeId: this.projectId || this.currEntityId }).then((res) => {
         if (res) {
           this.tableData = res.data.filter((item) => item.subjectBasePid)
           this.type = res.type
+          if(this.type === 'template'){
+            this.getTemplateList()
+          }
         }
       })
     },
@@ -284,7 +289,7 @@ export default {
             <span :style='{color:getColor(row)}'>{{row.wbsAmount}}</span>
           </template>
         </vxe-column>
-        <vxe-column v-if="parentRoute !== 'BudgetManagement'" field="wbsAmount" title="执行率"></vxe-column>
+        <vxe-column v-if="parentRoute === 'BudgetAnalysis'" field="wbsAmount" title="执行率"></vxe-column>
       </vxe-table>
     </div>
     <div v-if="parentRoute === 'BudgetManagement'" class="button-area">
