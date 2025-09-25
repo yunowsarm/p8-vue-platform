@@ -67,7 +67,8 @@ export default {
         }
       },
       currentTask: null,
-      planManageStatus:null
+      planManageStatus:null,
+      submitLoading:false
     }
   },
   computed:{
@@ -80,7 +81,7 @@ export default {
     }
   },
   created() {
-    if(this.parentRoute === 'BudgetAnalysis'){
+    if(this.parentRoute !== 'BudgetManagement'){
       this.taskColumns.push({
         title: '实际执行合计',
         dataIndex: 'actualBudgetInfo',
@@ -140,6 +141,7 @@ export default {
       })
     },
     save() {
+      this.submitLoading = true
       const params = {
         taskId: this.currentTask.id,
         declarationRequests:this.subjectList,
@@ -153,6 +155,7 @@ export default {
         }else{
           this.$message.error(res.resultMsg)
         }
+        this.submitLoading = false
       })
     }
   }
@@ -173,24 +176,24 @@ export default {
         ></common-table>
       </template>
       <template #center>
-        <vxe-table
-          class="main-table"
-          border
-          keep-source
-          ref="table"
-          align="center"
-          :data="subjectList"
-          :tableConfig="tableConfig"
-          :tree-config="treeConfig"
-          :edit-config="editConfig"
-          @edit-closed="editClosed"
-        >
-          <vxe-column type="seq" title="序号" width="50"></vxe-column>
-          <vxe-column field="name" title="科目名称" tree-node align="left" header-align="center"></vxe-column>
-          <vxe-column
-            field="amount"
-            title="预算金额"
-            :edit-render="{
+        <div class="main-table">
+          <vxe-table
+            border
+            keep-source
+            ref="table"
+            align="center"
+            :data="subjectList"
+            :tableConfig="tableConfig"
+            :tree-config="treeConfig"
+            :edit-config="editConfig"
+            @edit-closed="editClosed"
+          >
+            <vxe-column type="seq" title="序号" width="50"></vxe-column>
+            <vxe-column field="name" title="科目名称" tree-node align="left" header-align="center"></vxe-column>
+            <vxe-column
+              field="amount"
+              title="预算金额"
+              :edit-render="{
               name: 'VxeNumberInput',
               immediate: true,
               showNegativeStatus: true,
@@ -198,12 +201,13 @@ export default {
 
               }
             }"
-            class-name="amount-cell"
-            style="padding: 0 6px"
-          ></vxe-column>
-          <vxe-column v-if="parentRoute === 'BudgetAnalysis'" field="actualAmount" title="实际金额"></vxe-column>
-        </vxe-table>
-        <div v-if="parentRoute !== 'BudgetAnalysis'" class="button-area">
+              class-name="amount-cell"
+              style="padding: 0 6px"
+            ></vxe-column>
+            <vxe-column v-if="parentRoute !== 'BudgetManagement'" field="actualAmount" title="实际金额"></vxe-column>
+          </vxe-table>
+        </div>
+        <div v-if="parentRoute === 'BudgetManagement'" class="button-area">
           <el-button type="primary" :loading="submitLoading" @click="save">保存</el-button>
         </div>
       </template>
