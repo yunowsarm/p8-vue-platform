@@ -21,7 +21,7 @@
                                 @change-command-button="changeCommandButton"></command-button-bar>
           </div>
           <div class="bottom"
-               :class="expandBottom">
+               :style="{height: expandBottom}">
             <plan-gantt ref="planGantt"
                         :plan-info-id="planInfoId"
                         :whole-describe-id="wholeDescribeId"
@@ -243,8 +243,8 @@ export default {
             this.commandButtonBarHeight = this.advance ? '145px' : '40px'
             this.expandBottom = 'calc(100% - 148px)'
           } else {
-            this.commandButtonBarHeight = '130px'
-            this.expandBottom = 'calc(100% - 130px)'
+            this.commandButtonBarHeight = '125px'
+            this.expandBottom = 'calc(100% - 120px)'
           }
         }
         if (this.ganttButtonMode == 'double') {
@@ -300,22 +300,22 @@ export default {
         return true
       } else return myGantt.getGlobalTaskIndex(this.selectTaskId) === 0 && (this.createPage === 'planChange' || this.createPage === 'compile');
     },
-    expandBottom () {
-      if (this.ganttButtonMode == 'tabs' && this.advance) {
-        return 'tabs'
-      }
-      if (this.ganttButtonMode == 'tabs' && !this.advance) {
-        return 'hiddenTabs'
-      }
-      if (this.ganttButtonMode == 'double') {
-        return 'double'
-      }
-      if (this.ganttButtonMode == 'single') {
-        return 'single'
-      }
-      return ''
-    },
-    ...mapGetters(['ganttButtonMode', 'ganttRightButtons', 'userSettingAll'])
+    // expandBottom () {
+    //   if (this.ganttButtonMode == 'tabs' && this.advance) {
+    //     return 'tabs'
+    //   }
+    //   if (this.ganttButtonMode == 'tabs' && !this.advance) {
+    //     return 'hiddenTabs'
+    //   }
+    //   if (this.ganttButtonMode == 'double') {
+    //     return 'double'
+    //   }
+    //   if (this.ganttButtonMode == 'single') {
+    //     return 'single'
+    //   }
+    //   return ''
+    // },
+    ...mapGetters(['ganttButtonMode', 'ganttRightButtons', 'userSettingAll', 'ganttIsGroup'])
   },
   methods: {
     switchTask (task) {

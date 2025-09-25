@@ -356,7 +356,7 @@ export default {
     //   }
     //   return ''
     // },
-    ...mapGetters(['ganttButtonMode', 'ganttRightButtons', 'userSettingAll'])
+    ...mapGetters(['ganttButtonMode', 'ganttRightButtons', 'userSettingAll', 'ganttIsGroup'])
   },
   created () {
     this.firstEntry = true

@@ -1195,6 +1195,7 @@ export default {
           type: requestOtherParams.type,
           value: JSON.stringify({
             type: updateValues.type,
+            isGroup: updateValues.isGroup,
             rightBtns: updateValues.rightBtns
           })
         }
