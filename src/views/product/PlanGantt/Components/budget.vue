@@ -1,5 +1,6 @@
 <script>
 import { VxeColumn, VxeTable } from 'vxe-table'
+import _cloneDeep from 'lodash/cloneDeep'
 
 export default {
   name: 'budget',
@@ -17,6 +18,7 @@ export default {
     return {
       mode:'',
       tableData: [],
+      analysisData:[],
       tableConfig: {
         showOverflowTooltip: true
       },
@@ -50,23 +52,44 @@ export default {
       handler(val){
         if(val === 'pool'){
           this.getPoolInfo(val)
+        }else{
+          this.tableData = _cloneDeep(this.analysisData)
+          this.$nextTick(() => {
+            this.$refs.table.setAllTreeExpand(true)
+          })
         }
       },
       immediate:true
-    },
+    }
   },
   methods:{
     queryDeclaration(id){
       this.$api['planGanttManager.queryDeclaration']({taskId: id, type:'plan'}).then(res => {
-        this.tableData = res.filter(item => item.subjectBasePid)
+        this.tableData = res.filter(item => item.subjectBasePid).map(item => {
+          return {
+            ...item,
+            amount: item.amount ?? 0
+          }
+        })
         this.mode = this.tableData[0].type || 'pool'
+        if(this.mode === 'analysis'){
+          this.analysisData = _cloneDeep(this.tableData)
+        }else{
+          const arr = res.map(item => {
+            return {
+              ...item,
+              amount: 0
+            }
+          })
+          this.analysisData = _cloneDeep(arr)
+        }
       })
     },
     getPoolInfo(){
       this.$api['planGanttManager.getPoolInfoByTaskId']({taskId: this.taskId}).then(res => {
         res.forEach(item => {
           const node = this.tableData.find(n => n.subjectBaseid === item.subjectBaseid)
-          node.amount = item.amount
+          node.amount = item.amount ?? 0
         })
       })
     },
@@ -112,32 +135,34 @@ export default {
         <el-radio-button label="analysis">分解模式</el-radio-button>
       </el-radio-group>
     </div>
-    <vxe-table
-      class="main-table"
-      border
-      keep-source
-      ref="table"
-      align="center"
-      :data="tableData"
-      :tableConfig="tableConfig"
-      :tree-config="treeConfig"
-      :edit-config="editConfig"
-      @edit-closed="editClosed"
-    >
-      <vxe-column type="seq" title="序号" width="50"></vxe-column>
-      <vxe-column field="name" title="科目名称" tree-node align="left" header-align="center"></vxe-column>
-      <vxe-column
-        field="amount"
-        title="金额"
-        :edit-render="{
+    <div class="main-table">
+      <vxe-table
+        border
+        height='100%'
+        keep-source
+        ref="table"
+        align="center"
+        :data="tableData"
+        :tableConfig="tableConfig"
+        :tree-config="treeConfig"
+        :edit-config="editConfig"
+        @edit-closed="editClosed"
+      >
+        <vxe-column type="seq" title="序号" width="50"></vxe-column>
+        <vxe-column field="name" title="科目名称" tree-node align="left" header-align="center"></vxe-column>
+        <vxe-column
+          field="amount"
+          title="金额"
+          :edit-render="{
           name: 'VxeNumberInput',
           immediate: true,
           showNegativeStatus: true
         }"
-        class-name="amount-cell"
-        style="padding: 0 6px"
-      ></vxe-column>
-    </vxe-table>
+          class-name="amount-cell"
+          style="padding: 0 6px"
+        ></vxe-column>
+      </vxe-table>
+    </div>
     <div class="button-area">
       <el-button type="primary" @click="save">保存</el-button>
     </div>
