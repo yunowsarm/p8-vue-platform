@@ -284,7 +284,8 @@ export default {
           class-name="amount-cell"
           style="padding: 0 6px"
         ></vxe-column>
-        <vxe-column field="wbsAmount" title="WBS预算汇总金额">
+        <vxe-column v-if="parentRoute === 'BudgetAnalysis'" field="actualAmount" title="实际金额"></vxe-column>
+        <vxe-column v-else field="wbsAmount" title="WBS预算汇总金额">
           <template #default='{row}'>
             <span :style='{color:getColor(row)}'>{{row.wbsAmount}}</span>
           </template>
