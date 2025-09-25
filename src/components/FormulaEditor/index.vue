@@ -34,17 +34,19 @@
           </div>
         </div>
       </div>
-      <div class='manual-section'>
+      <div class="manual-section">
         <div class="section-title">手动输入固定数值</div>
-        <el-input v-model='manualValue' placeholder='请输入数值' type='number' @keyup.enter.native='handleManualInput' style='padding-left: 10px;width: 80%'></el-input>
+        <el-input v-model="manualValue" placeholder="请输入数值" type="number" @keyup.enter.native="handleManualInput" style="padding-left: 10px; width: 80%"></el-input>
       </div>
       <!-- 属性区域 -->
       <div class="attributes-section">
         <div class="section-title">属性</div>
         <div class="attributes-grid">
-          <div v-for="item in elements" :key="item.value" class="attribute-btn" draggable @click="handleAttributeClick(item)" @dragstart="handleDragStart($event, item, 'attribute')">
-            {{ item.label }}
-          </div>
+          <el-tooltip :content="item.label" v-for="item in elements" :key="item.value" placement="top">
+            <div class="attribute-btn" draggable @click="handleAttributeClick(item)" @dragstart="handleDragStart($event, item, 'attribute')">
+              {{ item.label }}
+            </div>
+          </el-tooltip>
         </div>
       </div>
     </div>
@@ -85,7 +87,7 @@ export default {
   },
   data() {
     return {
-      manualValue:'',
+      manualValue: '',
       formulaTags: [] // 存储公式标签
     }
   },
@@ -148,8 +150,8 @@ export default {
       this.formulaTags.push(newTag)
       this.updateFormulaText()
     },
-    handleManualInput(){
-      if(this.manualValue.trim() === '') return
+    handleManualInput() {
+      if (this.manualValue.trim() === '') return
       const newTag = {
         id: this.generateId(),
         type: 'number',
@@ -235,7 +237,7 @@ export default {
       const formulaText = this.generateFormulaText()
       const result = validateFormula(formulaText)
       this.$emit('validate', result.isValid)
-      if(!result.isValid){
+      if (!result.isValid) {
         this.$message[result.isValid ? 'success' : 'error'](result.message)
       }
       // this.$message[result.isValid ? 'success' : 'error'](result.message)
@@ -458,12 +460,15 @@ export default {
     .attributes-section {
       // border-bottom: 1px solid #dcdfe6;
       height: calc((100% - 36px) * 0.2);
+
       &.manual-section {
-        height: calc((100% - 36px) * 0.15)
+        height: calc((100% - 36px) * 0.15);
       }
+
       &.attributes-section {
-        height: calc((100% - 36px) * 0.65)
+        height: calc((100% - 36px) * 0.65);
       }
+
       &:last-child {
         border-bottom: none;
       }
@@ -478,6 +483,7 @@ export default {
       gap: 8px;
       padding: 12px;
       overflow: auto;
+
       &.attributes-grid {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -494,6 +500,9 @@ export default {
       transition: all 0.3s;
       color: #606266;
       text-align: center;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
 
       &:active {
         cursor: grabbing;
@@ -513,6 +522,7 @@ export default {
 ::v-deep(.el-icon-delete) {
   font-size: 12px;
 }
+
 ::v-deep(.el-button + .el-button) {
   margin-left: 2px;
 }
