@@ -118,7 +118,7 @@ export default {
     <div v-if="approveType" class="button-area" style="text-align: start">
       <el-button type="primary">导入</el-button>
     </div>
-    <div class="main-table">
+    <div :class="$route.name ==='TaskExecution'? 'main-table': 'main-table-approve'">
       <vxe-table
         ref="table"
         height="100%"
@@ -183,6 +183,9 @@ export default {
 
 .main-table {
   height: calc(100% - 106px);
+}
+.main-table-approve{
+  height: 100%;
 }
 
 .common-upload {
