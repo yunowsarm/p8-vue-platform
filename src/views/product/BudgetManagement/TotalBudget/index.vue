@@ -253,7 +253,7 @@ export default {
 
 <template>
   <div style="height: 100%">
-    <div :class="parentRoute !== 'BudgetAnalysis' ? 'main-table' : 'main-table-analysis'">
+    <div :class="parentRoute === 'BudgetAnalysis' ? 'main-table-analysis' : 'main-table'">
       <vxe-table
         border
         height='100%'
@@ -284,10 +284,10 @@ export default {
             <span :style='{color:getColor(row)}'>{{row.wbsAmount}}</span>
           </template>
         </vxe-column>
-        <vxe-column v-if="parentRoute === 'BudgetAnalysis'" field="wbsAmount" title="执行率"></vxe-column>
+        <vxe-column v-if="parentRoute !== 'BudgetManagement'" field="wbsAmount" title="执行率"></vxe-column>
       </vxe-table>
     </div>
-    <div v-if="parentRoute !== 'BudgetAnalysis'" class="button-area">
+    <div v-if="parentRoute === 'BudgetManagement'" class="button-area">
       <el-button v-if="type === 'template' && isEdit" @click="openTemplateList">载入模板</el-button>
       <el-button v-if="(type === 'template' || type === 'tasks') && isEdit " @click="useWbsAmount">使用汇总金额</el-button>
       <el-button v-if="isEdit" type="primary" :loading="submitLoading" @click="save">保存</el-button>
@@ -335,7 +335,7 @@ export default {
 }
 
 ::v-deep .panination {
-  display: none;
+  display: none !important;
 }
 
 ::v-deep .vxe-number-input {
