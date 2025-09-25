@@ -32,13 +32,15 @@ export default {
         transform: true,
         rowField: 'ID',
         parentField: 'PARENT_ID',
-        expandAll: true
+        expandAll: true,
+        reserve: true
       },
       templateTreeConfig: {
         transform: true,
         rowField: 'subjectBaseid',
         parentField: 'subjectBasePid',
-        expandAll: true
+        expandAll: true,
+        reserve: true
       },
       checkboxConfig: {
         checkFiled: 'ID',
