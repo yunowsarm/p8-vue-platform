@@ -1,7 +1,7 @@
 <script>
 import { P8NormalLayoutV1 as NormalLayout, P8Table as CommonTable } from 'p8-components-ui'
 import { VxeColumn, VxeTable } from 'vxe-table'
-import { generateTree } from "@/utils/generateTree";
+import { generateTree } from '@/utils/generateTree'
 
 export default {
   name: 'index',
@@ -60,28 +60,28 @@ export default {
         beforeEditMethod: ({ row, column }) => {
           if (this.isView) return false
           if (column.field === 'amount') {
-            return (row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && (!['6630'].includes(this.planManageStatus))
+            return (row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && !['6630'].includes(this.planManageStatus)
           } else {
             return !!row.subjectBasePid
           }
         }
       },
       currentTask: null,
-      planManageStatus:null,
-      submitLoading:false
+      planManageStatus: null,
+      submitLoading: false
     }
   },
-  computed:{
-    parentRoute(){
+  computed: {
+    parentRoute() {
       const matched = this.$route.matched
-      if(matched.length > 1){
+      if (matched.length > 1) {
         return matched[matched.length - 2].name
       }
       return null
     }
   },
   created() {
-    if(this.parentRoute !== 'BudgetManagement'){
+    if (this.parentRoute !== 'BudgetManagement') {
       this.taskColumns.push({
         title: '实际执行合计',
         dataIndex: 'actualBudgetInfo',
@@ -89,7 +89,7 @@ export default {
         headerAlign: 'center'
       })
     }
-    console.log(this.thirdMenuParam,'三级菜单参数')
+    console.log(this.thirdMenuParam, '三级菜单参数')
     if (this.thirdMenuParam) {
       this.projectId = this.thirdMenuParam.ID
       this.getTasksInfoByWholeId()
@@ -99,18 +99,17 @@ export default {
     // 获取wbs预算
     getTasksInfoByWholeId(id) {
       this.$api['budgetManagement.getTasksInfoByWholeId']({ wholeId: this.projectId }).then((res) => {
-        this.taskList = generateTree(res,'parentId')
+        this.taskList = generateTree(res, 'parentId')
         this.$nextTick(() => {
-          if(id){
-            const node = res.find(item => item.id === id)
+          if (id) {
+            const node = res.find((item) => item.id === id)
             this.$refs.taskTable.$refs.table.setCurrentRow(node)
             this.queryDeclaration(id)
-          }else{
+          } else {
             this.currentTask = this.taskList[0]
             this.$refs.taskTable.$refs.table.setCurrentRow(this.taskList[0])
             this.queryDeclaration(this.taskList[0].id)
           }
-
         })
       })
     },
@@ -120,7 +119,7 @@ export default {
       return ''
     },
     queryDeclaration(id) {
-      this.$api['planGanttManager.queryDeclaration']({ taskId: id, type:'budget' }).then((res) => {
+      this.$api['planGanttManager.queryDeclaration']({ taskId: id, type: 'budget' }).then((res) => {
         this.subjectList = res.filter((item) => item.subjectBasePid)
         this.planManageStatus = this.subjectList[0].planManageStatus
         this.$nextTick(() => {
@@ -133,9 +132,9 @@ export default {
       this.queryDeclaration(row.id)
     },
     editClosed() {
-      this.$api['budgetDeclaration.dataCalculation']({declarationRequests:this.subjectList}).then(res => {
-        res.forEach(item => {
-          const node = this.subjectList.find(n => n.subjectBaseid === item.subjectBaseid)
+      this.$api['budgetDeclaration.dataCalculation']({ declarationRequests: this.subjectList }).then((res) => {
+        res.forEach((item) => {
+          const node = this.subjectList.find((n) => n.subjectBaseid === item.subjectBaseid)
           node.amount = item.amount
         })
       })
@@ -144,15 +143,15 @@ export default {
       this.submitLoading = true
       const params = {
         taskId: this.currentTask.id,
-        declarationRequests:this.subjectList,
+        declarationRequests: this.subjectList,
         isBudgetManage: true
       }
       this.$api['planGanttManager.saveDeclaration'](params).then((res) => {
         console.log(res)
-        if(res.result){
-          this.$message.success("保存成功")
+        if (res.result) {
+          this.$message.success('保存成功')
           this.getTasksInfoByWholeId(this.currentTask?.id ?? '')
-        }else{
+        } else {
           this.$message.error(res.resultMsg)
         }
         this.submitLoading = false
@@ -166,21 +165,14 @@ export default {
   <div>
     <normal-layout layoutCode="wbsBudget" :split-default-left-width="30" :header-visible="false" :split-layout="true">
       <template #west>
-        <common-table
-          ref="taskTable"
-          :pagination="false"
-          :noApiTableData='taskList'
-          :tableConfig="taskTableConfig"
-          :columns="taskColumns"
-          @row-click="rowClick"
-        ></common-table>
+        <common-table ref="taskTable" :pagination="false" :noApiTableData="taskList" :tableConfig="taskTableConfig" :columns="taskColumns" @row-click="rowClick"></common-table>
       </template>
       <template #center>
         <div class="main-table">
           <vxe-table
             border
             keep-source
-            height='100%'
+            height="100%"
             ref="table"
             align="center"
             :data="subjectList"
@@ -195,13 +187,13 @@ export default {
               field="amount"
               title="预算金额"
               :edit-render="{
-              name: 'VxeNumberInput',
-              immediate: true,
-              showNegativeStatus: true,
-              props:{
-
-              }
-            }"
+                name: 'VxeNumberInput',
+                immediate: true,
+                showNegativeStatus: true,
+                props: {
+                  min: 0
+                }
+              }"
               class-name="amount-cell"
               style="padding: 0 6px"
             ></vxe-column>
@@ -225,13 +217,16 @@ export default {
   height: calc(100% - 50px);
   margin: 0;
   padding: 0;
+
   ::v-deep .normal-main .normal-center {
     padding: 0;
   }
 }
+
 .main-table {
   height: calc(100% - 50px);
 }
+
 .button-area {
   text-align: end;
   padding: 8px;

@@ -13,7 +13,7 @@ export default {
       type: Object,
       default: () => {}
     },
-    currEntityId:{
+    currEntityId: {
       type: String,
       default: ''
     }
@@ -76,15 +76,15 @@ export default {
       }
       if (this.row?.length > 0 && this.customParams.title === '修改') {
         params.id = this.row[0].ID
-      }else if(this.currEntityId){
+      } else if (this.currEntityId) {
         params.id = this.currEntityId
       }
       this.$api['budgetManagement.queryDetails'](params).then((res) => {
         if (res) {
           this.changeId = res.id || null
-          if(params.id){
+          if (params.id) {
             this.tableData = res.changeDtls
-          }else{
+          } else {
             this.tableData = res.changeDtls.map((item) => {
               return {
                 ...item,
@@ -154,7 +154,10 @@ export default {
           :edit-render="{
             name: 'VxeInput',
             immediate: true,
-            showNegativeStatus: true
+            showNegativeStatus: true,
+            props: {
+              min: 0
+            }
           }"
         ></vxe-column>
         <vxe-column field="type" title="变更类型">
@@ -166,10 +169,10 @@ export default {
     </div>
     <el-form ref="form" class="form-area" :model="formData" :rules="rules" label-width="100px">
       <el-form-item label="变更原因：" prop="changeReason">
-        <el-input v-model="formData.changeReason" type="textarea" :rows="4" resize="none" :readonly='!!currEntityId'></el-input>
+        <el-input v-model="formData.changeReason" type="textarea" :rows="4" resize="none" :readonly="!!currEntityId"></el-input>
       </el-form-item>
     </el-form>
-    <div v-if='!currEntityId' class="button-area">
+    <div v-if="!currEntityId" class="button-area">
       <el-button type="primary" @click="save">保存</el-button>
     </div>
   </div>

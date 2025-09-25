@@ -156,7 +156,10 @@ export default {
           :edit-render="{
           name: 'VxeNumberInput',
           immediate: true,
-          showNegativeStatus: true
+          showNegativeStatus: true,
+          props:{
+            min: 0
+          }
         }"
           class-name="amount-cell"
           style="padding: 0 6px"
