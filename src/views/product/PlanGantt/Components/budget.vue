@@ -52,7 +52,9 @@ export default {
       handler(val){
         if(val === 'pool'){
           this.getPoolInfo(val)
+          this.editConfig.showStatus = false
         }else{
+          this.editConfig.showStatus = true
           this.tableData = _cloneDeep(this.analysisData)
           this.$nextTick(() => {
             this.$refs.table.setAllTreeExpand(true)
