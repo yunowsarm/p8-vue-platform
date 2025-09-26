@@ -500,10 +500,11 @@ export default {
       transition: all 0.3s;
       color: #606266;
       text-align: center;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-
+      &.attribute-btn{
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
       &:active {
         cursor: grabbing;
       }
