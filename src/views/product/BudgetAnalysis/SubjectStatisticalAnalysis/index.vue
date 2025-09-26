@@ -51,6 +51,7 @@ export default {
 .subject-statistical-analysis{
   height: 100%;
   width: 100%;
+  overflow: auto;
 }
 .analysis-item{
   box-shadow: 0px 0px 4px #a3a3a3;
