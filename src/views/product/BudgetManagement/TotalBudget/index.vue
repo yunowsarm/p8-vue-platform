@@ -133,10 +133,19 @@ export default {
     }
   },
   methods: {
-    getColor(row){
+    getWbsColor(row){
       const wbsAmount = row.wbsAmount ?? 0
       const amount = row.amount ?? 0
       if(wbsAmount > amount){
+        return '#F56C6C'
+      }else{
+        return '#67C23A'
+      }
+    },
+    getActualColor(row){
+      const actualColor = row.actualColor ?? 0
+      const amount = row.amount ?? 0
+      if(actualColor > amount){
         return '#F56C6C'
       }else{
         return '#67C23A'
@@ -287,10 +296,14 @@ export default {
           class-name="amount-cell"
           style="padding: 0 6px"
         ></vxe-column>
-        <vxe-column v-if="parentRoute === 'BudgetAnalysis'" field="actualAmount" title="实际金额"></vxe-column>
+        <vxe-column v-if="parentRoute === 'BudgetAnalysis'" field="actualAmount" title="实际金额">
+          <template #default='{row}'>
+            <span :style='{color:getActualColor(row)}'>{{row.actualAmount}}</span>
+          </template>
+        </vxe-column>
         <vxe-column v-else field="wbsAmount" title="WBS预算汇总金额">
           <template #default='{row}'>
-            <span :style='{color:getColor(row)}'>{{row.wbsAmount}}</span>
+            <span :style='{color:getWbsColor(row)}'>{{row.wbsAmount}}</span>
           </template>
         </vxe-column>
         <vxe-column v-if="parentRoute === 'BudgetAnalysis'" field="wbsAmount" title="执行率"></vxe-column>

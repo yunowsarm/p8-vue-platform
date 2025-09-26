@@ -127,6 +127,15 @@ export default {
         })
       })
     },
+    getActualColor(row){
+      const actualColor = row.actualColor ?? 0
+      const amount = row.amount ?? 0
+      if(actualColor > amount){
+        return '#F56C6C'
+      }else{
+        return '#67C23A'
+      }
+    },
     rowClick(row) {
       this.currentTask = row
       this.queryDeclaration(row.id)
@@ -197,7 +206,11 @@ export default {
               class-name="amount-cell"
               style="padding: 0 6px"
             ></vxe-column>
-            <vxe-column v-if="parentRoute !== 'BudgetManagement'" field="actualAmount" title="实际金额"></vxe-column>
+            <vxe-column v-if="parentRoute !== 'BudgetManagement'" field="actualAmount" title="实际金额">
+              <template #default='{row}'>
+                <span :style='{color:getActualColor(row)}'>{{row.actualAmount}}</span>
+              </template>
+            </vxe-column>
           </vxe-table>
         </div>
         <div v-if="parentRoute === 'BudgetManagement'" class="button-area">
