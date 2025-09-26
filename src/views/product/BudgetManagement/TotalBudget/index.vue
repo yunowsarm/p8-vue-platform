@@ -124,7 +124,6 @@ export default {
     }
   },
   created() {
-    console.log(this.currEntityId,'currEntityId')
     if (this.thirdMenuParam) {
       this.projectId = this.thirdMenuParam.ID
       this.budgetState = this.thirdMenuParam.BUDGETSTATUSNAME
@@ -243,6 +242,7 @@ export default {
       this.$api['budgetDeclaration.saveDeclaration'](params).then((res) => {
         if (res) {
           this.$message.success('保存成功！')
+          this.type = 'whole'
         } else {
           this.$message.error('保存失败！')
         }
@@ -296,9 +296,9 @@ export default {
         <vxe-column v-if="parentRoute === 'BudgetAnalysis'" field="wbsAmount" title="执行率"></vxe-column>
       </vxe-table>
     </div>
-    <div v-if="parentRoute === 'BudgetManagement'" class="button-area">
+    <div v-if="isEdit" class="button-area">
       <el-button v-if="type === 'template' && isEdit" @click="openTemplateList">载入模板</el-button>
-      <el-button v-if="(type === 'template' || type === 'tasks') && isEdit " @click="useWbsAmount">使用汇总金额</el-button>
+      <el-button v-if="isEdit " @click="useWbsAmount">使用汇总金额</el-button>
       <el-button v-if="isEdit" type="primary" :loading="submitLoading" @click="save">保存</el-button>
     </div>
     <common-dialog title="选择模板" :visible="visible" @handle-cancel="handleCancel" @handle-ok="handleOk" width="65%" @close="handleCancel" :dialogHeight="600">
