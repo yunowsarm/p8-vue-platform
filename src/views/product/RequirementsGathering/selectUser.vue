@@ -147,7 +147,7 @@ export default {
           align: 'center'
         }],
       treeApi: 'userManager.deptTree',
-      tableApi: 'userManager.list',
+      tableApi: 'userManager.listData',
       userName: '',
       queryParam: {
         departmentId: '1',
