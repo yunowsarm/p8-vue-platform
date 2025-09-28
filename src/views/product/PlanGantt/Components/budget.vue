@@ -154,7 +154,7 @@ export default {
         <vxe-column field="name" title="科目名称" tree-node align="left" header-align="center"></vxe-column>
         <vxe-column
           field="amount"
-          title="金额"
+          title="预算金额"
           :edit-render="{
           name: 'VxeNumberInput',
           immediate: true,
