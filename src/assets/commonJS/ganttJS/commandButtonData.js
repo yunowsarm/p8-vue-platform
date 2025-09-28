@@ -634,6 +634,7 @@ export const CommandButtonData = [
     },
     isDisableFun: function (btn, ganttName, tasks) {
       const checks = [
+        () => isCompile(ganttName, tasks),
         () => isReadOnly(ganttName, tasks),
         () => isHasTask(ganttName, tasks),
         () => isSuspensionOrProhibition(ganttName, tasks),
@@ -791,7 +792,7 @@ export const CommandButtonData = [
       vueThis.taskList = thisGantt.serialize().data
     },
     isDisableFun: function (btn, ganttName, tasks) {
-      const checks = [() => isHasTask(ganttName, tasks), () => isHasDeliveredTask(ganttName, tasks), () => isApprovalCompleted(ganttName, tasks), () => isReadOnly(ganttName, tasks)]
+      const checks = [() => isCompile(ganttName, tasks), () => isHasTask(ganttName, tasks), () => isHasDeliveredTask(ganttName, tasks), () => isApprovalCompleted(ganttName, tasks), () => isReadOnly(ganttName, tasks)]
       const res = isDisable(checks)
       store.dispatch('setButtonMsg', { id: this.id, msg: res.disable ? res.message : '' })
       return res.disable
