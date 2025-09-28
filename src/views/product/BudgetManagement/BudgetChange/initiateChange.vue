@@ -5,9 +5,9 @@ export default {
   name: 'initiateChange',
   components: { VxeColumn },
   props: {
-    projectInfo:{
+    projectInfo: {
       type: Object,
-      default: () => {}
+      default: () => { }
     },
     row: {
       type: Array,
@@ -15,14 +15,14 @@ export default {
     },
     customParams: {
       type: Object,
-      default: () => {}
+      default: () => { }
     },
     currEntityId: {
       type: String,
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       projectInfo: null,
       changeId: '',
@@ -60,12 +60,12 @@ export default {
       }
     }
   },
-  created() {
+  created () {
     this.queryDetails()
   },
   methods: {
     // 查询详情
-    queryDetails() {
+    queryDetails () {
       let params = {
         wholeId: this.projectInfo?.ID ?? ''
       }
@@ -91,7 +91,7 @@ export default {
         }
       })
     },
-    editClosed() {
+    editClosed () {
       this.$api['budgetDeclaration.dataCalculation']({ declarationRequests: this.tableData }).then((res) => {
         res.forEach((item) => {
           const node = this.tableData.find((n) => n.subjectBaseid === item.subjectBaseid)
@@ -106,11 +106,11 @@ export default {
         })
       })
     },
-    save() {
+    save () {
       this.$refs.form.validate((valid) => {
         if (valid) {
           const params = {
-            wholeId: this.projectInfo.ID,
+            wholeId: this.projectInfo?.ID ?? null,
             changeDetailRequests: this.tableData,
             describes: this.formData.changeReason
           }
@@ -139,37 +139,63 @@ export default {
   <div class="main-area">
     <div class='content'>
       <div class="main-table">
-        <vxe-table border height="100%" keep-source ref="table" align="center" :data="tableData" :tableConfig="tableConfig" :tree-config="treeConfig" :edit-config="editConfig" @edit-closed="editClosed">
-          <vxe-column type="seq" title="序号" width="50"></vxe-column>
-          <vxe-column field="name" title="科目名称" tree-node align="left" header-align="center"></vxe-column>
-          <vxe-column field="amountOld" title="原预算金额"></vxe-column>
-          <vxe-column
-            field="amount"
-            title="变更预算金额"
-            :edit-render="{
+        <vxe-table border
+                   height="100%"
+                   keep-source
+                   ref="table"
+                   align="center"
+                   :data="tableData"
+                   :tableConfig="tableConfig"
+                   :tree-config="treeConfig"
+                   :edit-config="editConfig"
+                   @edit-closed="editClosed">
+          <vxe-column type="seq"
+                      title="序号"
+                      width="50"></vxe-column>
+          <vxe-column field="name"
+                      title="科目名称"
+                      tree-node
+                      align="left"
+                      header-align="center"></vxe-column>
+          <vxe-column field="amountOld"
+                      title="原预算金额"></vxe-column>
+          <vxe-column field="amount"
+                      title="变更预算金额"
+                      :edit-render="{
             name: 'VxeInput',
             immediate: true,
             showNegativeStatus: true,
             props: {
               min: 0
             }
-          }"
-          ></vxe-column>
-          <vxe-column field="type" title="变更类型">
+          }"></vxe-column>
+          <vxe-column field="type"
+                      title="变更类型">
             <template #default="{ row }">
               <span>{{ row.type }}</span>
             </template>
           </vxe-column>
         </vxe-table>
       </div>
-      <el-form ref="form" class="form-area" :model="formData" :rules="rules" label-width="100px">
-        <el-form-item label="变更原因：" prop="changeReason">
-          <el-input v-model="formData.changeReason" type="textarea" :autosize='{minRows:4,maxRows:6}' resize="none" :readonly="!!currEntityId"></el-input>
+      <el-form ref="form"
+               class="form-area"
+               :model="formData"
+               :rules="rules"
+               label-width="100px">
+        <el-form-item label="变更原因："
+                      prop="changeReason">
+          <el-input v-model="formData.changeReason"
+                    type="textarea"
+                    :autosize='{minRows:4,maxRows:6}'
+                    resize="none"
+                    :readonly="!!currEntityId"></el-input>
         </el-form-item>
       </el-form>
     </div>
-    <div v-if="!currEntityId" class="button-area">
-      <el-button type="primary" @click="save">保存</el-button>
+    <div v-if="!currEntityId"
+         class="button-area">
+      <el-button type="primary"
+                 @click="save">保存</el-button>
     </div>
   </div>
 </template>
@@ -182,7 +208,7 @@ export default {
   display: flex;
   flex-direction: column;
 }
-.content{
+.content {
   height: calc(100% - 50px);
   display: flex;
   flex-direction: column;

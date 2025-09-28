@@ -364,7 +364,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
         align: 'center',
         min_width: 200,
         resize: true,
-        template: function(task) {
+        template: function (task) {
           return task.budgetInfo || 0
         }
       },
@@ -843,6 +843,16 @@ export function getAnalysisGantt(ganttName, vueThis) {
         resize: true,
         template: function (task) {
           return formatter.format(task.duration)
+        }
+      },
+      {
+        name: 'budget',
+        label: '预算',
+        align: 'center',
+        min_width: 200,
+        resize: true,
+        template: function (task) {
+          return task.budgetInfo || 0
         }
       },
       {

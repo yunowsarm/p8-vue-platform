@@ -18,16 +18,16 @@ export default {
         return {}
       }
     },
-    currEntityId:{
+    currEntityId: {
       type: String,
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       projectId: null,
-      type:'',
-      budgetState:'',
+      type: '',
+      budgetState: '',
       tableData: [],
       tableConfig: {
         showOverflowTooltip: true
@@ -110,20 +110,20 @@ export default {
       submitLoading: false
     }
   },
-  computed:{
-    parentRoute(){
+  computed: {
+    parentRoute () {
       const matched = this.$route.matched
-      if(matched.length > 1){
+      if (matched.length > 1) {
         return matched[matched.length - 2].name
       }
       return null
     },
-    isEdit(){
-      const editStatus = ['编制中','发布驳回']
+    isEdit () {
+      const editStatus = ['编制中', '发布驳回']
       return editStatus.includes(this.thirdMenuParam.BUDGETSTATUSNAME) && this.parentRoute === 'BudgetManagement'
     }
   },
-  created() {
+  created () {
     if (this.thirdMenuParam) {
       this.projectId = this.thirdMenuParam.ID
       this.budgetState = this.thirdMenuParam.BUDGETSTATUSNAME
@@ -133,31 +133,31 @@ export default {
     }
   },
   methods: {
-    getWbsColor(row){
+    getWbsColor (row) {
       const wbsAmount = row.wbsAmount ?? 0
       const amount = row.amount ?? 0
-      if(wbsAmount > amount){
+      if (wbsAmount > amount) {
         return '#F56C6C'
-      }else{
+      } else {
         return '#67C23A'
       }
     },
-    getActualColor(row){
+    getActualColor (row) {
       const actualColor = row.actualColor ?? 0
       const amount = row.amount ?? 0
-      if(actualColor > amount){
+      if (actualColor > amount) {
         return '#F56C6C'
-      }else{
+      } else {
         return '#67C23A'
       }
     },
     // 获取模板列表
-    getTemplateList() {
+    getTemplateList () {
       const params = {
         sqlId: 'd3ee87ce9c54ea5269a240b42b6f1ceb',
         reportParam: {},
         sqlParam: {
-          formType:{
+          formType: {
             mode: '=',
             relation: 'and',
             value: 'whole'
@@ -174,19 +174,19 @@ export default {
         }
       })
     },
-    getWholeSumBudget() {
+    getWholeSumBudget () {
       this.$api['budgetManagement.getWholeSumBudget']({ wholeId: this.projectId || this.currEntityId }).then((res) => {
         if (res) {
           this.tableData = res.data.filter((item) => item.subjectBasePid)
           this.type = res.type
-          if(this.type === 'template'){
+          if (this.type === 'template') {
             this.getTemplateList()
           }
         }
       })
     },
     // 获取模板详情（科目）
-    getTemplateDetail(id) {
+    getTemplateDetail (id) {
       this.$api['budgetTemplateManagement.queryDetails']({ id: id }).then((res) => {
         if (res) {
           this.subjectList = res
@@ -196,7 +196,7 @@ export default {
         }
       })
     },
-    async openTemplateList() {
+    async openTemplateList () {
       const node = this.templateList[0]
       this.getTemplateDetail(node.ID)
       this.visible = true
@@ -204,15 +204,15 @@ export default {
         this.$refs.templateTable.$refs.table.setCurrentRow(node)
       })
     },
-    useWbsAmount(){
+    useWbsAmount () {
       this.tableData.forEach((item) => {
         item.amount = item.wbsAmount
       })
     },
-    handleCancel() {
+    handleCancel () {
       this.visible = false
     },
-    handleOk() {
+    handleOk () {
       this.tableData = this.subjectList
         .map((item) => {
           return {
@@ -228,10 +228,10 @@ export default {
         this.$refs.table.setAllTreeExpand(true)
       })
     },
-    rowClick(row) {
+    rowClick (row) {
       this.getTemplateDetail(row.ID)
     },
-    editClosed() {
+    editClosed () {
       this.$api['budgetDeclaration.dataCalculation']({ declarationRequests: this.tableData }).then((res) => {
         res.forEach((item) => {
           const node = this.tableData.find((n) => n.subjectBaseid === item.subjectBaseid)
@@ -239,10 +239,10 @@ export default {
         })
       })
     },
-    close() {
+    close () {
       this.$emit('close')
     },
-    save() {
+    save () {
       this.submitLoading = true
       const params = {
         wholeId: this.projectId,
@@ -268,24 +268,27 @@ export default {
 <template>
   <div style="height: 100%">
     <div :class="parentRoute === 'BudgetManagement' ? 'main-table' : 'main-table-analysis'">
-      <vxe-table
-        border
-        height='100%'
-        keep-source
-        ref="table"
-        align="center"
-        :data="tableData"
-        :tableConfig="tableConfig"
-        :tree-config="treeConfig"
-        :edit-config="editConfig"
-        @edit-closed="editClosed"
-      >
-        <vxe-column type="seq" title="序号" width="50"></vxe-column>
-        <vxe-column field="name" title="科目名称" tree-node align="left" header-align="center"></vxe-column>
-        <vxe-column
-          field="amount"
-          title="预算金额"
-          :edit-render="{
+      <vxe-table border
+                 height='100%'
+                 keep-source
+                 ref="table"
+                 align="center"
+                 :data="tableData"
+                 :tableConfig="tableConfig"
+                 :tree-config="treeConfig"
+                 :edit-config="editConfig"
+                 @edit-closed="editClosed">
+        <vxe-column type="seq"
+                    title="序号"
+                    width="50"></vxe-column>
+        <vxe-column field="name"
+                    title="科目名称"
+                    tree-node
+                    align="left"
+                    header-align="center"></vxe-column>
+        <vxe-column field="amount"
+                    title="预算金额"
+                    :edit-render="{
           name: 'VxeNumberInput',
           immediate: true,
           showNegativeStatus: true,
@@ -293,47 +296,70 @@ export default {
             min: 0
           }
         }"
-          class-name="amount-cell"
-          style="padding: 0 6px"
-        ></vxe-column>
-        <vxe-column v-if="parentRoute === 'BudgetAnalysis'" field="actualAmount" title="实际金额">
+                    class-name="amount-cell"
+                    style="padding: 0 6px"></vxe-column>
+        <vxe-column v-if="parentRoute === 'BudgetAnalysis'"
+                    field="actualAmount"
+                    title="实际金额">
           <template #default='{row}'>
             <span :style='{color:getActualColor(row)}'>{{row.actualAmount}}</span>
           </template>
         </vxe-column>
-        <vxe-column v-else field="wbsAmount" title="WBS预算汇总金额">
+        <vxe-column v-else
+                    field="wbsAmount"
+                    title="WBS预算汇总金额">
           <template #default='{row}'>
             <span :style='{color:getWbsColor(row)}'>{{row.wbsAmount}}</span>
           </template>
         </vxe-column>
-        <vxe-column v-if="parentRoute === 'BudgetAnalysis'" field="controlRate" title="执行率">
+        <vxe-column v-if="parentRoute === 'BudgetAnalysis'"
+                    field="controlRate"
+                    title="执行率">
           <template #default='{row}'>
-            <span>{{row.controlRate ?? 0 + '%'}}</span>
+            <span>{{`${row.controlRate ?? 0}%`}}</span>
           </template>
         </vxe-column>
       </vxe-table>
     </div>
-    <div v-if="isEdit" class="button-area">
-      <el-button v-if="type === 'template' && isEdit" @click="openTemplateList">载入模板</el-button>
-      <el-button v-if="isEdit " @click="useWbsAmount">使用汇总金额</el-button>
-      <el-button v-if="isEdit" type="primary" :loading="submitLoading" @click="save">保存</el-button>
+    <div v-if="isEdit"
+         class="button-area">
+      <el-button v-if="type === 'template' && isEdit"
+                 @click="openTemplateList">载入模板</el-button>
+      <el-button v-if="isEdit "
+                 @click="useWbsAmount">使用汇总金额</el-button>
+      <el-button v-if="isEdit"
+                 type="primary"
+                 :loading="submitLoading"
+                 @click="save">保存</el-button>
     </div>
-    <common-dialog title="选择模板" :visible="visible" @handle-cancel="handleCancel" @handle-ok="handleOk" width="65%" @close="handleCancel" :dialogHeight="600">
+    <common-dialog title="选择模板"
+                   :visible="visible"
+                   @handle-cancel="handleCancel"
+                   @handle-ok="handleOk"
+                   width="65%"
+                   @close="handleCancel"
+                   :dialogHeight="600">
       <template #dialog>
-        <normal-layout layoutCode="selectBudgetTemplate" :split-default-left-width="30" :header-visible="false" :split-layout="true">
+        <normal-layout layoutCode="selectBudgetTemplate"
+                       :split-default-left-width="30"
+                       :header-visible="false"
+                       :split-layout="true">
           <template #west>
-            <p8-vxe-table
-              ref="templateTable"
-              :pagination="false"
-              :columns="templateColumns"
-              :noApiTableData="templateList"
-              :tableConfig="tableConfig"
-              :row-config="rowConfig"
-              @row-click="rowClick"
-            ></p8-vxe-table>
+            <p8-vxe-table ref="templateTable"
+                          :pagination="false"
+                          :columns="templateColumns"
+                          :noApiTableData="templateList"
+                          :tableConfig="tableConfig"
+                          :row-config="rowConfig"
+                          @row-click="rowClick"></p8-vxe-table>
           </template>
           <template #center>
-            <p8-vxe-table ref="subjectTable" :pagination="false" :columns="subjectColumns" :noApiTableData="subjectList" :tableConfig="tableConfig" :tree-config="treeConfig"></p8-vxe-table>
+            <p8-vxe-table ref="subjectTable"
+                          :pagination="false"
+                          :columns="subjectColumns"
+                          :noApiTableData="subjectList"
+                          :tableConfig="tableConfig"
+                          :tree-config="treeConfig"></p8-vxe-table>
           </template>
         </normal-layout>
       </template>
@@ -353,7 +379,7 @@ export default {
   height: calc(100% - 50px) !important;
 }
 .main-table-analysis {
-  height: 100%
+  height: 100%;
 }
 
 .amount-cell {
