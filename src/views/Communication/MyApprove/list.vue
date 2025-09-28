@@ -122,25 +122,25 @@ export default {
       userUnReadMessageCountApi: 'userMessage.userUnReadMessageCount',
       layoutConfig: {
         left: {
-          xs: 5,
-          sm: 5,
-          md: 5,
-          lg: 5,
-          xl: 5
+          xs: 0,
+          sm: 0,
+          md: 0,
+          lg: 0,
+          xl: 0
         },
         center: {
-          xs: 6,
-          sm: 6,
-          md: 6,
-          lg: 6,
-          xl: 6
+          xs: 8,
+          sm: 8,
+          md: 8,
+          lg: 8,
+          xl: 8
         },
         right: {
-          xs: 13,
-          sm: 13,
-          md: 13,
-          lg: 13,
-          xl: 13
+          xs: 16,
+          sm: 16,
+          md: 16,
+          lg: 16,
+          xl: 16
         }
       },
       searchParams: {
@@ -181,15 +181,16 @@ export default {
         const tab_4 = res.find(item => item.id === 'APPROVE_TYPE_01_02')
         const tabs = [tab_1,tab_2,tab_3,tab_4]
         this.mobileCatalogData = tabs.map((item) => {
-            return {
-              label: `${item.cmeaning}(${this.catalogCount(item.id).num})`,
-              name: item.cminorcode
-            }
-          })
+          return {
+            label: `${item.cmeaning}(${this.catalogCount(item.id).num})`,
+            name: item.cminorcode
+          }
+        })
       })
     },
     refreshList() {
       this.userCatalogCount()
+      this.dateTime = new Date().getTime()
     },
     approved(taskId) {
       this.approvedTaskId = taskId
@@ -338,14 +339,15 @@ export default {
   }
 }
 .customNlcr {
-  height: calc(100% - 66px);
-  margin: 14px;
-  .search-wrapper {
+  margin: 0;
+  height: 100%;
+  box-shadow: 0px 0px 4px #a3a3a3;
+
+  ::v-deep .search-wrapper {
     float: left;
+    right: 0;
   }
-  ::v-deep .splitBtn {
-    z-index: 1;
-  }
+
   ::v-deep .icon-youzhedie {
     left: -4px !important;
   }
