@@ -22,10 +22,8 @@ import 'p8-lowcode/lib/P8LowCode.css'
 import P8ParamFunc from '@/utils/paramsEncapsulation.js'
 import hljs from 'highlight.js'
 import hljsVuePlugin from '@highlightjs/vue-plugin'
-
 // 引入你需要的语言和样式
 import 'highlight.js/styles/monokai.css' // 选择你喜欢的主题样式
-
 // 注册插件
 Vue.use(hljsVuePlugin, { hljs })
 Vue.use(VxeUI)
@@ -57,10 +55,10 @@ Number.prototype.toFixedNoRound = function (decimals) {
   const factor = Math.pow(10, decimals)
   return Math.floor(this * factor) / factor
 }
-const loadingElement = document.getElementById('app-loading')
-if (loadingElement) {
-  loadingElement.style.display = 'none'
-}
+window.addEventListener('resize', () => {
+  store.dispatch('updateIsMobile')
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

@@ -36,6 +36,12 @@ export default {
       immediate: true
     }
   },
+  updated () {
+    const loadingElement = document.getElementById('app-loading')
+    if (loadingElement) {
+      loadingElement.style.display = 'none'
+    }
+  },
   mounted () {
     window.socketType = null
     // window.addEventListener('beforeunload', this.handlerBeforeUnload)
@@ -86,7 +92,7 @@ export default {
                 })
                 notification.onclick = function () {
                   const URL = window.location.protocol + '//' + window.location.host + '/#/myMessageView'
-                  console.log(URL,'-----URL==我的消息');
+                  console.log(URL, '-----URL==我的消息');
                   window.open(URL, '_blank')
                 }
               }
@@ -103,7 +109,7 @@ export default {
                 })
                 notification.onclick = function () {
                   const URL = window.location.protocol + '//' + window.location.host + '/#/myApproveView'
-                  console.log(URL,'====URL--我的审批');
+                  console.log(URL, '====URL--我的审批');
                   window.open(URL, '_blank')
                 }
               }
