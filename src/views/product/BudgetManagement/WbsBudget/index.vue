@@ -128,9 +128,9 @@ export default {
       })
     },
     getActualColor(row){
-      const actualColor = row.actualColor ?? 0
+      const actualAmount = row.actualAmount ?? 0
       const amount = row.amount ?? 0
-      if(actualColor > amount){
+      if(actualAmount > amount){
         return '#F56C6C'
       }else{
         return '#67C23A'
