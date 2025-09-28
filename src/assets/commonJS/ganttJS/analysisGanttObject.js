@@ -359,6 +359,16 @@ export function getAnalysisGantt(ganttName, vueThis) {
         }
       },
       {
+        name: 'budget',
+        label: '预算',
+        align: 'center',
+        min_width: 200,
+        resize: true,
+        template: function(task) {
+          return task.budgetInfo || 0
+        }
+      },
+      {
         name: 'forecastBeginDate',
         label: '预计开始时间',
         align: 'center',
