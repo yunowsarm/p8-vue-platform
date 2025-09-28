@@ -130,9 +130,9 @@ export default {
 
 <template>
   <div class="main-area">
-    <div v-if="approveType" class="button-area" style="text-align: start">
-      <el-button type="primary">导入</el-button>
-    </div>
+<!--    <div v-if="approveType" class="button-area" style="text-align: start">-->
+<!--      <el-button type="primary">导入</el-button>-->
+<!--    </div>-->
     <div :class="$route.name ==='TaskExecution'? 'main-table': 'main-table-approve'">
       <vxe-table
         ref="table"
