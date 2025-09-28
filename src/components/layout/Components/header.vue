@@ -4,6 +4,7 @@
     <!-- :style="{ 'background-color': theme, 'margin-bottom': '1px' }"> -->
     <!-- <span class="sysName">{{ systemName }}</span> -->
     <div class="slide-bar"
+         id="slideBar"
          v-if="!sidebarState.isHidden || isMobile"
          @click="slideSidebar">
       <!-- v-show="$route.path !== '/dash'" -->
@@ -172,6 +173,7 @@
     <common-drawer v-if="visibleMsgDrawer"
                    :visible="visibleMsgDrawer"
                    title="我的消息"
+                   class="my_process"
                    @close="visibleMsgDrawer = false"
                    direction="ttb"
                    size="100%">
@@ -280,6 +282,19 @@ export default {
     ...mapGetters(['approvalTotalMsg', 'messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl']),
   },
   mounted () {
+    // if (this.isMobile) {
+    //   let slideBar = document.getElementById('slideBar')
+    //   console.log(slideBar,'-=-=slideBar');
+    //   if (slideBar) {
+    //     if (!this.sidebarState.isHidden) {
+    //       slideBar.style.position = 'relative'
+    //       slideBar.style.left = '110px'
+    //     } else {
+    //       slideBar.style.position = 'static'
+    //       slideBar.style.left = '0px'
+    //     }
+    //   }
+    // }
     const this_ = this
     this_.getAuthorizationInfo()
     this.getSystemAbout()
@@ -687,18 +702,25 @@ div.header_userInfo {
 }
 @media (max-width: 768px) {
   .avatar {
-    width: 3.5rem !important;
-    height: 3.5rem !important;
-    border-radius: 3.5rem !important;
-    line-height: 3.5rem !important;
+    width: 35px !important;
+    height: 35px !important;
+    border-radius: 35px !important;
+    line-height: 35px !important;
   }
   .settings {
     ::v-deep .el-badge__content {
-      width: 2rem !important;
-      height: 2rem !important;
-      line-height: 2rem !important;
+      width: 20px !important;
+      height: 20px !important;
+      line-height: 20px !important;
       border-radius: 50% !important;
+      padding: 0 !important;
     }
   }
+  .slide-bar {
+    height: 50px !important;
+  }
+}
+.my_process {
+  z-index: 8888;
 }
 </style>
