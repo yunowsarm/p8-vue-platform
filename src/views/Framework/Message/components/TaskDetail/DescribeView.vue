@@ -246,7 +246,7 @@ export default {
                :exist-default-btn="false">
       <!-- 使用模板插槽自定义字段显示 -->
       <template #name>
-        <span style="color: blue; text-decoration: underline;"
+        <span style="color: blue; text-decoration: underline;cursor: pointer;"
               @click="openView">{{ formData['name'] }} </span>
       </template>
       <template #startDate>

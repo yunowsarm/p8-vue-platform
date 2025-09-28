@@ -1,6 +1,7 @@
 <template>
   <div>
-    <form-list ref="form"
+    <form-list v-if="taskId"
+               ref="form"
                :dataSource="dataSource"
                :form="formData"
                :existDefaultBtn="false"
@@ -51,6 +52,11 @@
         </div>
       </template>
     </form-list>
+    <template v-else>
+      <div class="no-info">
+        <span>暂无信息</span>
+      </div>
+    </template>
   </div>
 </template>
 <script>
@@ -449,5 +455,11 @@ $red-color: #f80012;
       font-weight: bolder;
     }
   }
+}
+.no-info {
+  height: 40px;
+  line-height: 40px;
+  border-bottom: 1px solid #efefef;
+  text-align: center;
 }
 </style>

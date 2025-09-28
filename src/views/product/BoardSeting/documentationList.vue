@@ -18,7 +18,7 @@ export default {
     drillParam: {
       type: Object
     },
-    reportParam:{
+    reportParam: {
       type: Object,
       default: () => {
         return {}
@@ -34,7 +34,7 @@ export default {
     }
   },
   computed: {
-    computedReportParam() {
+    computedReportParam () {
       return {
         ...this.reportParam,
         outPutType: this.drillParam?.outPutType?.valeue || null
@@ -53,7 +53,7 @@ export default {
         .then((backJson) => {
           const link = document.createElement('a')
           link.href = window.URL.createObjectURL(new Blob([backJson.data]))
-          link.download = row.FILE_NAME
+          link.download = item.FILE_NAME
           document.body.appendChild(link)
 
           link.click()

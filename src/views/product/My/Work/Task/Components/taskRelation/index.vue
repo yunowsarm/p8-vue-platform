@@ -1,18 +1,37 @@
 <template>
   <pane-view paneTitle="关联任务"
+             style="height: 100%"
              icon="p8 icon-guanlianrenwu">
     <template #paneTitle>
-      <div class="pane-title-right"
-           @click="arrowClickHandle">
+      <div v-if="!$store.getters.isMobile"
+           class="pane-title-right"
+           @click="rightClickHandle">
         <i class="p8 icon-youshoujin"
            style="color: #79bcfa;"></i>
       </div>
+      <div v-else
+           class="pane-title-right">
+        <div v-show="isShow"
+             class="pane-title-right"
+             @click="arrowClickHandle">
+          <i class="p8 icon-zuoshoujin"
+             style="color: #79bcfa;"></i>
+        </div>
+        <div v-show="!isShow"
+             class="pane-title-right"
+             @click="rightClickHandle">
+          <i class="p8 icon-youshoujin"
+             style="color: #79bcfa;"></i>
+        </div>
+      </div>
     </template>
     <template #paneInfo>
-      <div class="process">
+      <div v-show="isShow"
+           class="process">
         <front-to-back @rowClick="rowClick"></front-to-back>
       </div>
-      <div class="tabs-taskinfo">
+      <div v-show="isShow"
+           class="tabs-taskinfo">
         <tabs-task :key="dateTime"
                    :taskId="taskId"></tabs-task>
       </div>
@@ -34,7 +53,8 @@ export default {
   data () {
     return {
       taskId: '',
-      dateTime: null
+      dateTime: null,
+      isShow: true
     }
   },
   methods: {
@@ -43,7 +63,14 @@ export default {
       this.dateTime = new Date().getTime()
     },
     arrowClickHandle () {
-      this.$bus.$emit('split-pane-right')
+      this.isShow = false
+    },
+    rightClickHandle () {
+      if (window.innerWidth > 600) {
+        this.$bus.$emit('split-pane-right')
+      } else {
+        this.isShow = true
+      }
     }
   }
 }
@@ -64,5 +91,13 @@ export default {
 .knowledge {
   height: 30%;
   box-sizing: border-box;
+}
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .process {
+    height: 100%;
+  }
+  .tabs-taskinfo {
+    height: 100%;
+  }
 }
 </style>

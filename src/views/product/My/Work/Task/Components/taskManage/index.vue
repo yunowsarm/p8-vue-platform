@@ -2,10 +2,26 @@
   <pane-view paneTitle="管理要素"
              icon="p8 icon-guanliyaosu">
     <template #paneTitle>
-      <div></div>
+      <!-- <div> -->
+      <div v-if="$store.getters.isMobile"
+           v-show="isShow"
+           class="pane-title-right"
+           @click="arrowClickHandle">
+        <i class="p8 icon-zuoshoujin"
+           style="color: #79bcfa;"></i>
+      </div>
+      <div v-if="$store.getters.isMobile"
+           v-show="!isShow"
+           class="pane-title-right"
+           @click="rightClickHandle">
+        <i class="p8 icon-youshoujin"
+           style="color: #79bcfa;"></i>
+      </div>
+      <!-- </div> -->
     </template>
     <template #paneInfo>
-      <div class="task-manage-con">
+      <div v-show="isShow"
+           class="task-manage-con">
         <list-view :btnType="btnType"
                    :approveType="approveType"
                    :thirdMenuParam="thirdMenuParam"></list-view>
@@ -39,12 +55,28 @@ export default {
     }
   },
   data () {
-    return {}
+    return {
+      isShow: true
+    }
   },
   mounted () {
 
   },
-  methods: {}
+  methods: {
+    arrowClickHandle () {
+      this.isShow = false
+      this.$emit('onClick', this.isShow)
+    },
+    rightClickHandle () {
+      this.isShow = true
+      this.$emit('onClick', this.isShow)
+    }
+  }
 }
 </script>
-
+<style lang="scss" scoped>
+.pane-title-right {
+  float: right;
+  font-size: 16px;
+}
+</style>

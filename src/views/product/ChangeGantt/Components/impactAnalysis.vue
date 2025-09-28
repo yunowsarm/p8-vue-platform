@@ -11,7 +11,7 @@
                           @change-command-button="changeCommandButton"></command-button-bar>
     </div>
     <div class="bottom"
-         :class="expandBottom">
+         :style="{height: expandBottom}">
       <div class="myGantt"
            ref="myGantt"
            style="width: 100%; height: calc(100% - 40px) !important"></div>
@@ -281,21 +281,21 @@ export default {
         return this.ganttButtonMode === 'tabs' ? tabsRow : this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
       }
     },
-    expandBottom () {
-      if (this.ganttButtonMode == 'tabs' && this.advance) {
-        return 'tabs'
-      }
-      if (this.ganttButtonMode == 'tabs' && !this.advance) {
-        return 'hiddenTabs'
-      }
-      if (this.ganttButtonMode == 'double') {
-        return 'double'
-      }
-      if (this.ganttButtonMode == 'single') {
-        return 'single'
-      }
-      return ''
-    },
+    // expandBottom () {
+    //   if (this.ganttButtonMode == 'tabs' && this.advance) {
+    //     return 'tabs'
+    //   }
+    //   if (this.ganttButtonMode == 'tabs' && !this.advance) {
+    //     return 'hiddenTabs'
+    //   }
+    //   if (this.ganttButtonMode == 'double') {
+    //     return 'double'
+    //   }
+    //   if (this.ganttButtonMode == 'single') {
+    //     return 'single'
+    //   }
+    //   return ''
+    // },
     ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
   },
   methods: {

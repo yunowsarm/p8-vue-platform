@@ -6,7 +6,7 @@
  */
 import store from '@/plugins/store'
 import { MessageBox, Notification } from 'p8-components-ui'
-let version = require("../../../package.json")["version"];
+let version = require('../../../package.json')['version']
 /**
  *
  *
@@ -14,7 +14,7 @@ let version = require("../../../package.json")["version"];
  * @param {*} config
  * @returns
  */
-export function axiosRequestSucessFunc (config) {
+export function axiosRequestSucessFunc(config) {
   // dosth before request
   // config.headers['Content-type'] = 'application/x-www-form-urlencoded'
   config.headers['Version'] = version
@@ -32,7 +32,7 @@ export function axiosRequestSucessFunc (config) {
  * @param {*} error
  * @returns
  */
-export function axiosRequestFailFunc (error) {
+export function axiosRequestFailFunc(error) {
   return Promise.reject(error)
 }
 /**
@@ -42,7 +42,7 @@ export function axiosRequestFailFunc (error) {
  * @param {*} response
  * @returns
  */
-export function axiosResponseSucessFunc (response) {
+export function axiosResponseSucessFunc(response) {
   /**
    * response 基本格式如下
    * {
@@ -73,7 +73,7 @@ export function axiosResponseSucessFunc (response) {
       // 参数有误
       do: function (message, data) {
         statusManage.NotificationMessage(message)
-        return Promise.reject(data).catch(() => { })
+        return Promise.reject(data).catch(() => {})
       }
     },
     401: {
@@ -84,6 +84,10 @@ export function axiosResponseSucessFunc (response) {
         if (message === '用户名或密码错误') {
           statusManage.NotificationMessage(message)
         } else if (message === '授权信息无效，请重新授权!') {
+          const loadingElement = document.getElementById('app-loading')
+          if (loadingElement) {
+            loadingElement.style.display = 'none'
+          }
           MessageBox.alert(message, '提示', {
             confirmButtonText: '确定',
             type: 'warning',
@@ -94,21 +98,21 @@ export function axiosResponseSucessFunc (response) {
         } else {
           statusManage.reload()
         }
-        return Promise.reject(data).catch(() => { })
+        return Promise.reject(data).catch(() => {})
       }
     },
     404: {
       // 接口不存在
       do: function (message, data) {
         statusManage.NotificationMessage(message)
-        return Promise.reject(data).catch(() => { })
+        return Promise.reject(data).catch(() => {})
       }
     },
     405: {
       // 权限不足
       do: function (message, data) {
         statusManage.NotificationMessage(message)
-        return Promise.reject(data).catch(() => { })
+        return Promise.reject(data).catch(() => {})
       }
     },
     500: {
@@ -122,7 +126,7 @@ export function axiosResponseSucessFunc (response) {
         } else {
           statusManage.NotificationMessage(message)
         }
-        return Promise.reject(data).catch(() => { })
+        return Promise.reject(data).catch(() => {})
       }
     }
   }
@@ -144,7 +148,7 @@ export function axiosResponseSucessFunc (response) {
             // 执行
             statusManage[status].do(responseHead.message, response.data)
           } else {
-            Promise.reject(response.data).catch(() => { })
+            Promise.reject(response.data).catch(() => {})
           }
         }
       } else {
@@ -156,7 +160,7 @@ export function axiosResponseSucessFunc (response) {
   }
 }
 
-export function axiosResponseFailFunc (error) {
+export function axiosResponseFailFunc(error) {
   // 捕获请求超时异常，并给出提示
   // const errorStr = error.message
   // if (errorStr.indexOf('timeout' > -1)) {

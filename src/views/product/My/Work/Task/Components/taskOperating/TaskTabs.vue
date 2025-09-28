@@ -18,6 +18,7 @@
         </div>
         <!-- 进度反馈 -->
         <template v-if="item.name === 'progess'">
+          <div style="height: 25px;"></div>
           <progess v-if="progessType !== 'progessTable' && taskFinish !== null"
                    ref="progess"
                    :taskFinish="taskFinish"
@@ -411,10 +412,6 @@ export default {
   }
 }
 
-.progressTaskTabs.el-tabs {
-  height: 100%;
-}
-
 .progressTaskTabs ::v-deep .el-tabs__header {
   margin: 0;
 }
@@ -430,7 +427,7 @@ export default {
 
 .progressTaskTabs ::v-deep .el-tabs__content {
   // padding: 0 10px;
-  height: calc(100% - 30px) !important;
+  height: calc(100% - 35px) !important;
   overflow: auto;
 }
 
@@ -440,5 +437,15 @@ export default {
 
 .el-tabs--border-card {
   border: 0;
+}
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .progressTaskTabs ::v-deep .el-tabs__content {
+    height: calc(100% - 40px) !important;
+    overflow: hidden;
+  }
+  .progressTaskTabs.el-tabs {
+    height: calc(100% + 95px);
+    position: relative;
+  }
 }
 </style>

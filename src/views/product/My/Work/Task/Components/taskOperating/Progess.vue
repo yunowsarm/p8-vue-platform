@@ -1,5 +1,6 @@
 <template>
   <form-table ref="formtable"
+              class="form-style"
               :formData="formData"
               :formType="formType"
               :leafChildrenIsFinished="leafChildrenIsFinished"
@@ -21,7 +22,7 @@
     <template #dialog-con>
       <el-dialog v-if="dialogVisible"
                  title="请填写未完成原因"
-                 width="50%"
+                 :width="dialogWidth"
                  :visible="dialogVisible"
                  :modal="false"
                  :before-close="dialogCancel">
@@ -123,6 +124,7 @@ export default {
       }
     ]
     return {
+      dialogWidth: '50%',
       btnTitle: '提交进度',
       leafChildrenIsFinished: false,
       isHaveParentTaskParentId: false,
@@ -198,6 +200,11 @@ export default {
     }
   },
   created () {
+    if (window.innerWidth > 600) {
+      this.dialogWidth = '50%'
+    } else {
+      this.dialogWidth = '90%'
+    }
     if (this.getPlanInfo().pageType === 'view') {
       if (this.taskFinish) {
         //false 已超期
@@ -575,7 +582,7 @@ export default {
   }
 }
 ::v-deep .el-dialog__body {
-  height: 20px;
+  height: 40px;
 }
 .dialog-content {
   margin-left: 25px;

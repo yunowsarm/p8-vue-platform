@@ -803,6 +803,7 @@ export default {
       mouseX: '',
       mouseY: '',
       copyTasks: {}, // 复制任务id载体
+      copyTaskType: false, // 复制任务id载体
       copyTaskIds: [], // 复制任务id载体
       taskClassifyDatas: [],
       monitorPointDatas: [],

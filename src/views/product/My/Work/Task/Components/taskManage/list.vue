@@ -86,13 +86,15 @@
                   <div v-for="citem in outputIoData"
                        :key="citem.aorId"
                        class="list-con-item">
-                    <div class="list-con-item__content request">
+                    <div v-if="!$store.getters.isMobile"
+                         class="list-con-item__content request">
                       <el-tooltip placement="top"
                                   :content="citem.aorName">
                         <span>{{citem.aorName}}</span>
                       </el-tooltip>
                     </div>
-                    <div class="list-con-item__content remark">
+                    <div v-if="!$store.getters.isMobile"
+                         class="list-con-item__content remark">
                       <el-tooltip placement="top"
                                   :content="citem.aorDetail">
                         <span>{{citem.aorDetail}}</span>
@@ -228,13 +230,7 @@ export default {
       { name: '输出', id: 'output', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'output' }] },
       { name: '特别说明', id: 'varsion', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'varsion' }] }
     ]
-    const header = [
-      { name: '要素分类', id: 'classify' },
-      { name: '名称/说明/描述', id: 'request' },
-      { name: '附加说明/备注', id: 'remark' },
-      { name: '交付物/模板/文档', id: 'file' },
-      { name: '操作', id: 'operation' }
-    ]
+
     return {
       comp: this,
       nullity: 0,
@@ -248,7 +244,7 @@ export default {
 
       steps,
       selectStepsId: steps[0].id,
-      header,
+      header: [],
       scrollSetting: {
         suppressScrollY: false
       },
@@ -268,6 +264,21 @@ export default {
     // if (this.getPlanInfo().STATUS === '6070' || this.getPlanInfo().STATUS === '6090' || this.getPlanInfo().pageType === 'view') {
     //   this.steps[2].btns = []
     // }
+    if (window.innerWidth > 600) {
+      this.header = [
+        { name: '要素分类', id: 'classify' },
+        { name: '名称/说明/描述', id: 'request' },
+        { name: '附加说明/备注', id: 'remark' },
+        { name: '交付物/模板/文档', id: 'file' },
+        { name: '操作', id: 'operation' }
+      ]
+    } else {
+      this.header = [
+        { name: '要素分类', id: 'classify' },
+        { name: '名称/说明/描述', id: 'request' },
+        { name: '操作', id: 'operation' }
+      ]
+    }
     if (this.approveType) {
       this.steps = [
         { name: '任务描述', id: 'activityDesc', btns: [{ title: '查看', eventHandle: 'detailsSettings' }] },

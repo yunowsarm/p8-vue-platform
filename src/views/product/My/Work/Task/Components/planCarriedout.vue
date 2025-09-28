@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div class="hidden-content"
+    <div v-if="!$store.getters.isMobile"
+         class="hidden-content"
          @click="open">
       <el-badge v-if="messageCount > 0"
                 :value="messageCount"
@@ -17,7 +18,7 @@
                        @visibleMsgClose="visibleMsgClose"></communication-msg>
     <left-center-right-layout :percentLeft="25"
                               :percentRight="65"
-                              v-if="isRouterShow">
+                              v-if="isRouterShow && innerWidth > 600">
       <template #left>
         <div class="task-info-con">
           <!-- 任务详情信息 -->
@@ -43,6 +44,18 @@
         </div>
       </template>
     </left-center-right-layout>
+    <div v-else
+         style="height: 100%; overflow: auto;">
+      <!-- 任务详情信息 -->
+      <task-info-view :allStatus="thirdMenuParamTemp.allStatus"></task-info-view>
+      <!-- 管理要素 -->
+      <task-manage-view :thirdMenuParam="thirdMenuParam"
+                        @onClick="onClick"></task-manage-view>
+      <!-- 进度反馈-未完成原因 -->
+      <task-tabs-view v-show="isShow"></task-tabs-view>
+      <!-- 关联任务 -->
+      <task-relation-view></task-relation-view>
+    </div>
   </div>
 </template>
 <script>
@@ -88,12 +101,14 @@ export default {
   },
   data () {
     return {
+      innerWidth: window.innerWidth,
       isRouterShow: false,
       secretLevel: '机密',
       thirdMenuParamTemp: this.thirdMenuParam,
       drawerSize: '30%',
       isVisibleCommunicationDrawer: false,
-      messageCount: 0
+      messageCount: 0,
+      isShow: true
     }
   },
   computed: {
@@ -110,6 +125,9 @@ export default {
     })
   },
   methods: {
+    onClick (isShow) {
+      this.isShow = isShow
+    },
     getMsgTotal () {
       let that = this
       this.$api['documentManagement.getWebsocketGroupAll']({ entityId: this.thirdMenuParam.WHOLEDESCRIBEID }).then(res => {
@@ -211,5 +229,11 @@ div.task-info-related-con {
   margin-top: 5px;
   text-align: center;
   font-size: 23px;
+}
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .hidden-content {
+    top: 80%;
+    z-index: 999999;
+  }
 }
 </style>

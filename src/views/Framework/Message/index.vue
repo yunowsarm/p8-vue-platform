@@ -1,10 +1,8 @@
 <template>
-  <nlcr-Layout :header-visible="false"
-               :normal-layout="layoutConfig"
-               class="customNlcr"
-               :platformVisible="true"
-               :left-use-perfect-scrollbar="false">
-    <template #left>
+  <normal-Layout :header-visible="false"
+                 v-if="!$store.getters.isMobile"
+                 layoutCode='MESSAGE'>
+    <template #west>
       <div style="padding: 10px">
         <search-form-list search-width="90%"
                           search-contain-width="90%"
@@ -23,26 +21,57 @@
       </div>
     </template>
     <template #center>
-      <message-list :search-params="searchParams"
-                    ref="messagList"
-                    @select="selectMessage"
-                    @refreshCount="userCatalogCount"
-                    @toggleStatus="toggleStatus"
-                    :removed-msg="deletedMsg"></message-list>
+      <nlcr-Layout :header-visible="false"
+                   :normal-layout="layoutConfig"
+                   class="customNlcr"
+                   :platformVisible="true"
+                   :left-use-perfect-scrollbar="false">
+        <template #center>
+          <message-list :search-params="searchParams"
+                        ref="messagList"
+                        @select="selectMessage"
+                        @refreshCount="userCatalogCount"
+                        @toggleStatus="toggleStatus"
+                        :removed-msg="deletedMsg"></message-list>
+        </template>
+        <template #right>
+          <message-view v-if="currentMessage != null"
+                        :message-data="currentMessage"
+                        @onToggleStatus="toggleStatus"
+                        @onDeleteMsg="deleteMsg"></message-view>
+          <span v-else
+                class="span-bg"></span>
+        </template>
+      </nlcr-Layout>
     </template>
-    <template #right>
-      <message-view v-if="currentMessage != null"
-                    :message-data="currentMessage"
-                    @onToggleStatus="toggleStatus"
-                    @onDeleteMsg="deleteMsg"></message-view>
-      <span v-else
-            class="span-bg"></span>
-    </template>
-  </nlcr-Layout>
+  </normal-Layout>
+  <div v-else
+       style="height: calc(100% - 50px);">
+    <message-list :search-params="searchParams"
+                  ref="messagList"
+                  @select="selectMessage"
+                  @refreshCount="userCatalogCount"
+                  @toggleStatus="toggleStatus"
+                  :removed-msg="deletedMsg"></message-list>
+    <common-drawer title="详情"
+                   v-if="visibleView"
+                   :visible="visibleView"
+                   size="100%"
+                   @close="onEditClose">
+      <template #drawer>
+        <message-view v-if="currentMessage != null"
+                      :message-data="currentMessage"
+                      @onToggleStatus="toggleStatus"
+                      @onDeleteMsg="deleteMsg"></message-view>
+        <span v-else
+              class="span-bg"></span>
+      </template>
+    </common-drawer>
+  </div>
 </template>
 
 <script>
-import { P8NlcrLayout as nlcrLayout, P8Search as SearchFormList } from 'p8-components-ui'
+import { P8NormalLayoutV1 as NormalLayout, P8NlcrLayout as nlcrLayout, P8Search as SearchFormList, P8Drawer as CommonDrawer } from 'p8-components-ui'
 
 import MessageCatalog from './components/MessageCatalog'
 import MessageList from './components/MessageList'
@@ -51,11 +80,13 @@ import MessageView from './components/MessageView'
 export default {
   name: 'IndexVue',
   components: {
+    'normal-Layout': NormalLayout,
     'nlcr-Layout': nlcrLayout,
     'search-form-list': SearchFormList,
     'message-catalog': MessageCatalog,
     'message-list': MessageList,
-    'message-view': MessageView
+    'message-view': MessageView,
+    CommonDrawer
   },
   data () {
     return {
@@ -65,25 +96,25 @@ export default {
       userUnReadMessageCountApi: 'userMessage.userUnReadMessageCount',
       layoutConfig: {
         left: {
-          xs: 8,
-          sm: 6,
-          md: 4,
-          lg: 4,
-          xl: 4
+          xs: 0,
+          sm: 0,
+          md: 0,
+          lg: 0,
+          xl: 0
         },
         center: {
-          xs: 8,
+          xs: 10,
           sm: 8,
-          md: 6,
-          lg: 6,
-          xl: 6
+          md: 7,
+          lg: 7,
+          xl: 7
         },
         right: {
-          xs: 8,
-          sm: 10,
-          md: 14,
-          lg: 14,
-          xl: 14
+          xs: 14,
+          sm: 16,
+          md: 17,
+          lg: 17,
+          xl: 17
         }
       },
       searchConfig: [
@@ -119,7 +150,8 @@ export default {
       deletedMsg: null,
       msgCatalogCount: [],
       unReadTotal: 0,
-      selectNodeId: '18' // 我的消息-消息树：默认选中'消息类型'，id为'18'
+      selectNodeId: '18', // 我的消息-消息树：默认选中'消息类型'，id为'18'
+      visibleView: false
     }
   },
   mounted () {
@@ -127,23 +159,24 @@ export default {
     // this.userUnReadMessageCount()
   },
   methods: {
+    onEditClose () {
+      // this.$refs.messagList.currentIndex = null
+      this.visibleView = false
+    },
     search (queryParam) {
       let searchDate = {}
       if (queryParam.datetimeRange) {
         searchDate = { sendBeginTime: queryParam.datetimeRange[0], sendEndTime: queryParam.datetimeRange[1] }
       }
 
-
-
       let catalogCountParams = { ...queryParam, ...searchDate }
       this.userCatalogCount(catalogCountParams)
 
       this.searchParams = { msgCatalog: this.searchParams.msgCatalog, ...catalogCountParams }
-
     },
     reSet () { },
     selectMessage (messageData) {
-
+      this.visibleView = true
       this.currentMessage = null
       this.currentMessage = messageData
     },
@@ -163,7 +196,7 @@ export default {
     //     }
     //   })
     // },
-    toggleStatus (msgId,status) {
+    toggleStatus (msgId, status) {
       let msgIdArray = [msgId]
       let _this = this
       this.$api[this.toggleMsgStatusApi]({ idList: msgIdArray, msgStatus: status }).then((res) => {
@@ -196,9 +229,11 @@ export default {
   overflow: auto;
   box-sizing: border-box;
 }
+
 .list-div {
   height: calc(100% - 40px);
 }
+
 .span-bg {
   width: 100%;
   height: 85%;
@@ -209,12 +244,24 @@ export default {
   background-position: center;
   /* margin-top: 25px; */
 }
-.customNlcr{
-  height: calc(100% - 66px);
+.normal-layout {
   box-shadow: 0px 0px 4px #a3a3a3;
-  .search-wrapper{
-    float: left;
+  margin: 10px;
+  height: calc(100% - 20px);
+  ::v-deep .normal-main .normal-center {
+    padding: 0;
   }
+}
+.customNlcr {
+  margin: 0;
+  height: 100%;
+  box-shadow: 0px 0px 4px #a3a3a3;
+
+  ::v-deep .search-wrapper {
+    float: left;
+    right: 0;
+  }
+
   ::v-deep .icon-youzhedie {
     left: -4px !important;
   }

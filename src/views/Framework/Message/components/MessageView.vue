@@ -245,4 +245,21 @@ $paddingLeft: 10px;
     }
   }
 }
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .contentBody {
+    padding: 0 !important;
+  }
+  .custom-tabs {
+    height: calc(100% - 110px) !important;
+  }
+  .messageContent {
+    width: 100%;
+  }
+  ::v-deep .anchorCustom {
+    margin-left: 2px !important;
+  }
+  ::v-deep .el-tabs--border-card > .el-tabs__content {
+    padding: 25px 15px !important;
+  }
+}
 </style>

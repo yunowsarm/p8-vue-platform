@@ -2,7 +2,7 @@
   <left-center-right-layout :percentLeft="35"
                             :percentRight="60"
                             :type="true"
-                            v-if="isRouterShow">
+                            v-if="isRouterShow && innerWidth> 600">
     <template #left>
       <div class="task-info-con">
         <!-- 任务详情信息 -->
@@ -13,7 +13,8 @@
       <div class="task-operating-con">
         <div class="task-manage-table">
           <!-- 管理要素 -->
-          <task-manage-view :approveType="true" :btnType="btnType"></task-manage-view>
+          <task-manage-view :approveType="true"
+                            :btnType="btnType"></task-manage-view>
         </div>
         <div class="task-tabs-con">
           <!-- 进度反馈-未完成原因 -->
@@ -29,6 +30,18 @@
       </div>
     </template>
   </left-center-right-layout>
+  <div v-else
+       style="height: 100%; overflow: auto;">
+    <!-- 任务详情信息 -->
+    <task-info-view :allStatus="thirdMenuParamTemp.allStatus"></task-info-view>
+    <!-- 管理要素 -->
+    <task-manage-view :thirdMenuParam="thirdMenuParam"
+                      @onClick="onClick"></task-manage-view>
+    <!-- 进度反馈-未完成原因 -->
+    <task-tabs-view v-show="isShow"></task-tabs-view>
+    <!-- 关联任务 -->
+    <task-relation-view></task-relation-view>
+  </div>
 </template>
 <script>
 import LeftCenterRightLayout from './layout/LeftCenterRight'
@@ -64,19 +77,24 @@ export default {
   },
   data () {
     return {
+      innerWidth: window.innerWidth,
       isRouterShow: false,
       secretLevel: '机密',
       taskId: this.businessKey ? this.businessKey : this.reportParam.TASK_ID || this.reportParam.ID,
       thirdMenuParamTemp: {
         pageType: this.pageType,
         TASKID: this.businessKey ? this.businessKey : this.reportParam.TASK_ID || this.reportParam.ID
-      }
+      },
+      isShow: true
     }
   },
   mounted () {
     this.reload()
   },
   methods: {
+    onClick (isShow) {
+      this.isShow = isShow
+    },
     reload () {
       getTaskStatusInfo({ currentStatus: 'all' }).then(data => {
         this.thirdMenuParamTemp.allStatus = data
@@ -129,5 +147,11 @@ div.task-operating-con {
 div.task-info-related-con {
   height: 100%;
   background-color: #ffffff;
+}
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .hidden-content {
+    top: 80%;
+    z-index: 999999;
+  }
 }
 </style>

@@ -31,7 +31,7 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="未完成原因">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
                        class="view">{{ formData.deviationCauses }}
@@ -46,7 +46,7 @@
                             placeholder="请输入未完成原因"></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="偏离影响">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
                        class="view">{{ formData.deviationImpact }}
@@ -63,7 +63,7 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="进展情况">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
                        class="view">{{ formData.deviationProgress }}
@@ -78,7 +78,7 @@
                             placeholder="请输入进展情况"></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="解决方案">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
                        class="view">{{ formData.solutions }}
@@ -98,7 +98,7 @@
           <div v-if="(formType.constType === 'Change') || (formType.constType === 'Progress' && formType.overdueChange)"
                class="change">
             <el-row>
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="变更原因分类">
                   <el-select v-model="formData.changeCauseClassify"
                              size="medium"
@@ -113,7 +113,7 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="12"
+              <el-col :span="colLayout"
                       v-if="!(formType.constType === 'Progress' && formType.overdueChange)">
                 <el-form-item label="变更起止日期"
                               label-width="100px">
@@ -127,7 +127,7 @@
                   </el-date-picker>
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="变更原因">
                   <el-input v-model="formData.reason"
                             type="textarea"
@@ -163,7 +163,7 @@
               </el-col>
             </el-row>
             <el-row v-if="exceedType && !approve">
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="未完成原因"
                               prop="deviationCauses">
                   <div v-if="!taskFinishType && this.getPlanInfo().pageType === 'view'"
@@ -176,7 +176,7 @@
                             placeholder="请输入未完成原因"></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="偏离影响">
                   <div v-if="!taskFinishType && this.getPlanInfo().pageType === 'view'"
                        class="view">{{ formData.deviationImpact }}
@@ -190,7 +190,7 @@
               </el-col>
             </el-row>
             <el-row v-if="exceedType && !approve">
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="进展情况">
                   <div v-if="!taskFinishType && this.getPlanInfo().pageType === 'view'"
                        class="view">{{ formData.deviationProgress }}
@@ -202,7 +202,7 @@
                             placeholder="请输入进展情况"></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="解决方案">
                   <div v-if="!taskFinishType && this.getPlanInfo().pageType === 'view'"
                        class="view">{{ formData.solutions }}
@@ -224,31 +224,31 @@
               </el-col>
             </el-row>
             <el-row v-if="approve">
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="未完成原因">
                   <div class="view">{{ formData.deviationCauses }}</div>
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="偏离影响">
                   <div class="view">{{ formData.deviationImpact }}</div>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row v-if="approve">
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="进展情况">
                   <div class="view">{{ formData.deviationProgress }}</div>
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="解决方案">
                   <div class="view">{{ formData.solutions }}</div>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="10">
+              <el-col :span="colSpan">
                 <el-form-item class="formitem-progress"
                               label="完成度"
                               prop="progress">
@@ -264,12 +264,13 @@
                   </template>
                   <el-slider style="width: 100%;"
                              v-model="formData.progress"
+                             :show-tooltip="false"
                              :disabled="!!this.getPlanInfo().pageType || disabledProgress"
                              @input="progressChange">
                   </el-slider>
                 </el-form-item>
               </el-col>
-              <el-col :span="4"
+              <el-col :span="colProgress"
                       v-if="!this.getPlanInfo().pageType">
                 <el-form-item label-width="30px">
                   <el-input-number size="mini"
@@ -284,7 +285,7 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="预计开始时间">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
                        class="view">{{ formData.forecastBeginDate }}
@@ -301,7 +302,7 @@
                   </el-date-picker>
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="colLayout">
                 <el-form-item label="预计完成时间">
                   <div v-if="this.getPlanInfo().pageType === 'view'"
                        class="view">{{ formData.forecastEndDate }}
@@ -320,7 +321,7 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="12"
+              <el-col :span="colLayout"
                       v-if="formData.progress > 0">
                 <el-form-item label="实际开始日期"
                               prop="realBeginDate">
@@ -338,7 +339,7 @@
                   </el-date-picker>
                 </el-form-item>
               </el-col>
-              <el-col :span="12"
+              <el-col :span="colLayout"
                       v-if="formData.progress === 100">
                 <el-form-item label="实际完成日期"
                               prop="realEndDate">
@@ -553,6 +554,9 @@ export default {
   },
   data () {
     return {
+      colLayout: '12',
+      colSpan: '12',
+      colProgress: '12',
       taskFinishType: true,
       AUTOMATIC: false,
       selectUserBeforehandDataSource: [],
@@ -612,6 +616,15 @@ export default {
     }
   },
   async created () {
+    if (window.innerWidth > 600) {
+      this.colLayout = '12'
+      this.colSpan = '12'
+      this.colProgress = '4'
+    } else {
+      this.colLayout = '24'
+      this.colSpan = '14'
+      this.colProgress = '10'
+    }
     this.releaseMenuParams.id = this.getPlanInfo().TASKID
     if (this.getPlanInfo().ISLEAF > 0) {
       this.getPlanInfo().pageType = 'view'
@@ -902,7 +915,7 @@ export default {
 }
 
 div.form-table-wrap {
-  height: 100%;
+  height: calc(100% - 40px);
   position: relative;
 
   div.form-table-con {
@@ -913,7 +926,7 @@ div.form-table-wrap {
     .change {
       margin-top: 10px;
       padding: 8px 10px 0;
-      background-color: #fcfbfe;
+      // background-color: #fcfbfe;
       border-radius: 6px;
     }
 
@@ -965,5 +978,26 @@ div.form-table-wrap {
 
 .collapseBtn {
   margin-left: 85%;
+}
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .collapseBtn {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+  }
+  .submit {
+    position: fixed;
+    bottom: 0px;
+    padding: 8px;
+    display: flex;
+    z-index: 99999;
+    background: #f5f7fa;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+  div.form-table-wrap {
+    height: calc(100% - 25px) !important;
+  }
 }
 </style>

@@ -367,6 +367,13 @@ export function getChangeGantt(ganttName, vueThis) {
           task.unDescribes = '0'
         }
         let result = ''
+        let rowHeight = ganttObject.config.row_height
+        if (task.outputResult > 0) {
+          result = `<i class='el-icon-star-on' style='color: #4bcafe;font-size: 23px;float: left;line-height: ${rowHeight}px;' title='有提交物的'></i>`
+        }
+        if (task.outputAsk > 0) {
+          result = `<i class='el-icon-star-on' style='color: #faa010;font-size: 23px;font-size: 23px;float: left;line-height: ${rowHeight}px;' title='有输出要求的'></i>`
+        }
         if (task.hasBusinessForm == 'true') {
           result = result + `<i class='el-icon-s-order' title='该任务包含业务表单' style='color: #f59000; float: left; position:relative; top:16px; font-size: 16px;'></i>`
         }

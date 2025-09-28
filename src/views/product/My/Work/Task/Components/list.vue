@@ -1,8 +1,10 @@
 <template>
   <normal-layout :header-visible="false"
+                 :normal-layout="layout"
                  :split-layout="true">
     <template #west>
-      <common-tree :default-expanded-keys="defaultExpandedKeys"
+      <common-tree v-if="!isMobile"
+                   :default-expanded-keys="defaultExpandedKeys"
                    :default-expand-all="false"
                    :init-emit-select="false"
                    node-key="ID"
@@ -12,6 +14,13 @@
                    @select="onSelect"></common-tree>
     </template>
     <template #center>
+      <div v-if="isMobile">
+        <div style="background: #ffffff">
+          <span style="font-weight: bold;font-size: 14px;">筛选：</span>
+          <tree-select :data="treeData"
+                       @change="onSelect"></tree-select>
+        </div>
+      </div>
       <div class="show-type"><span style="font-weight: bold;font-size: 14px;">展示方式
           <el-tooltip effect="dark"
                       popper-class="testtooltip"
@@ -229,6 +238,21 @@
     margin-left: 0px;
   }
 }
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .show-type {
+    width: 300px;
+    position: static;
+  }
+  .el-select-tree {
+    width: 60% !important;
+  }
+  .el-input {
+    width: 50% !important;
+  }
+  .isMobile ::v-deep .splitter-paneR {
+    height: 86%;
+  }
+}
 </style>
 <script>
 import { Input, Button } from 'element-ui'
@@ -240,7 +264,8 @@ import {
   P8Tree as CommonTree,
   P8Dialog as CommonDialog,
   P8Table as CommonTable,
-  P8Button as CommonButton
+  P8Button as CommonButton,
+  P8TreeSelect as TreeSelect
 } from 'p8-components-ui'
 import { calculateRemainingDays, selectGenerateTree } from '@/utils/common'
 import frontToBack from './frontToBack'
@@ -257,6 +282,22 @@ export default {
   },
   data () {
     return {
+      layout: {
+        west: {
+          xs: 11,
+          sm: 10,
+          md: 10,
+          lg: 9,
+          xl: 9
+        },
+        center: {
+          xs: 13,
+          sm: 14,
+          md: 14,
+          lg: 15,
+          xl: 15
+        }
+      },
       dateTime: null,
       dialogHeight: document.documentElement.clientHeight * 0.6,
       queryParam: {},
@@ -339,9 +380,13 @@ export default {
     ProcessApprovalView,
     MenuLayout,
     frontToBack,
-    CommunicationMsg
+    CommunicationMsg,
+    TreeSelect
   },
   computed: {
+    isMobile () {
+      return this.$store.getters.isMobile
+    },
     thirdMenuData () {
       const currentPath = this.$route.path
       const rootRouter = this.$store.state.routers.addRouters
@@ -372,6 +417,24 @@ export default {
   },
   created () {
     const that = this
+    if (this.isMobile) {
+      this.layout = {
+        west: {
+          xs: 0,
+          sm: 0,
+          md: 0,
+          lg: 0,
+          xl: 0
+        },
+        center: {
+          xs: 24,
+          sm: 24,
+          md: 24,
+          lg: 24,
+          xl: 24
+        }
+      }
+    }
     getMonitorData({ monitorId: [] }).then((res) => {
       that.monitorpointDataArray = res
     })

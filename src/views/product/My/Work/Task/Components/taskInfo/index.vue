@@ -2,14 +2,22 @@
   <pane-view paneTitle="任务详细信息"
              icon="p8 icon-renwuxiangxixinxi">
     <template #paneTitle>
-      <div class="pane-title-right"
+      <div v-show="isShow"
+           class="pane-title-right"
            @click="arrowClickHandle">
         <i class="p8 icon-zuoshoujin"
            style="color: #79bcfa;"></i>
       </div>
+      <div v-show="!isShow"
+           class="pane-title-right"
+           @click="rightClickHandle">
+        <i class="p8 icon-youshoujin"
+           style="color: #79bcfa;"></i>
+      </div>
     </template>
     <template #paneInfo>
-      <task-pane-view :dataSource="dataSource"
+      <task-pane-view v-show="isShow"
+                      :dataSource="dataSource"
                       :isShow="true"
                       :api="taskApi"
                       :allStatus="allStatus"
@@ -131,7 +139,8 @@ export default {
     return {
       dataSource,
       taskApi: 'taskManager.taskInfo',
-      taskApiParams: {}
+      taskApiParams: {},
+      isShow: true
     }
   },
   mounted () {
@@ -139,7 +148,14 @@ export default {
   },
   methods: {
     arrowClickHandle () {
-      this.$bus.$emit('split-pane-left')
+      if (window.innerWidth < 600) {
+        this.isShow = false
+      } else {
+        this.$bus.$emit('split-pane-left')
+      }
+    },
+    rightClickHandle () {
+      this.isShow = true
     }
   }
 }

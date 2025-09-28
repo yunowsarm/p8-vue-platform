@@ -511,6 +511,7 @@ export default {
                         el.realName = ''
                         el.source = 'MY_EX_BASE_INFO'
                         vueThis.copyTasks.tasks.push(el)
+                        vueThis.copyTaskType = true
                       }
                     })
                   })
