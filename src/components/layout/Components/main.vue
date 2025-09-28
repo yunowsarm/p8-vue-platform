@@ -41,7 +41,7 @@ export default {
   width: 100%;
   height: 100%;
   padding: 0;
-  min-width: 800px;
+  // min-width: 800px;
   overflow: hidden;
   background: $base-white-color;
 
@@ -84,6 +84,11 @@ export default {
   .fade-transform-leave-to {
     opacity: 0;
     transform: translateX(20px);
+  }
+}
+@media (max-width: 768px) {
+  .main {
+    min-width: 200px;
   }
 }
 </style>

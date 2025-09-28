@@ -162,6 +162,9 @@ const platform = {
         } else {
           state.sidebarState.width = plateformVariables.sidebarMinWidth
         }
+        if (window.innerWidth <= 768) {
+          state.sidebarState.width = plateformVariables.sidebarMinWidth
+        }
       }
       Cookie.set(SIDEBAR_OPEN_KEY, sidebarStatus, 64)
     },
