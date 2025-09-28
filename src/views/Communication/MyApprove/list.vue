@@ -161,7 +161,7 @@ export default {
     }
   },
   mounted() {
-    this.loadCatalog()
+
     this.userCatalogCount()
     // this.userUnReadMessageCount()
   },
@@ -174,21 +174,28 @@ export default {
     loadCatalog() {
       this.$api['processApproval.getCatalog']({ dicType: 'APPROVE_TYPE' }).then((res) => {
         this.catalogData = res
-        let ids = ['APPROVE_TYPE_01_01', 'APPROVE_TYPE_01_02', 'APPROVE_TYPE_02_01', 'APPROVE_TYPE_02_02']
-        this.mobileCatalogData = res
-          .filter((item) => ids.includes(item.id))
-          .map((item) => {
+        let ids = ['APPROVE_TYPE_02_01', 'APPROVE_TYPE_02_02', 'APPROVE_TYPE_01_01', 'APPROVE_TYPE_01_02']
+        const tab_1 = res.find(item => item.id === 'APPROVE_TYPE_02_01')
+        const tab_2 = res.find(item => item.id === 'APPROVE_TYPE_02_02')
+        const tab_3 = res.find(item => item.id === 'APPROVE_TYPE_01_01')
+        const tab_4 = res.find(item => item.id === 'APPROVE_TYPE_01_01')
+        const tabs = [tab_1,tab_2,tab_3,tab_4]
+        this.mobileCatalogData = tabs.map((item) => {
             return {
-              label: item.cmeaning,
+              label: `${item.cmeaning}(${this.catalogCount(item.id).num})`,
               name: item.cminorcode
             }
           })
       })
     },
     refreshList() {
+      if(this.isMobile){
+        this.closeApproveView()
+      }
       this.userCatalogCount()
     },
     approved(taskId) {
+      console.log(taskId,'taskId')
       this.approvedTaskId = taskId
       this.$refs.approveList.refreshList()
       this.userCatalogCount()
@@ -234,6 +241,9 @@ export default {
         this.viewVisible = true
       }
     },
+    closeApproveView(){
+      this.viewVisible = false
+    },
     tabClick(nodeData) {
       console.log(nodeData, 'nodeData')
       this.queryMsgList({
@@ -255,6 +265,7 @@ export default {
       // const params = queryParam != null ? queryParam : this.searchParams
       this.$api[this.userCatalogCountApi]().then((res) => {
         this.msgCatalogCount = res
+        this.loadCatalog()
       })
     },
     // userUnReadMessageCount (queryParam) {
@@ -278,6 +289,17 @@ export default {
         //
         //
       })
+    },
+    catalogCount (catalogId) {
+      console.log(this.msgCatalogCount,'msgCatalogCount2')
+      let countObj
+      if (catalogId === '') {
+        countObj = { noread: this.unReadTotal }
+      } else {
+        countObj = this.msgCatalogCount.find((value) => value.value === catalogId)
+      }
+      const o = { ...{ read: 0, noread: 0, num: 0 }, ...countObj }
+      return o
     }
   }
 }
@@ -307,6 +329,7 @@ export default {
 .drawer_approval {
   box-shadow: 0px 0px 4px #a3a3a3;
 }
+
 .normal-layout {
   box-shadow: 0px 0px 4px #a3a3a3;
   margin: 10px;
@@ -333,5 +356,32 @@ export default {
 }
 ::v-deep .el-tabs--border-card > .el-tabs__content {
   padding: 0;
+}
+
+@media (max-width: 600px) {
+  ::v-deep #tab-APPROVE_TYPE_02_01,
+  ::v-deep #tab-APPROVE_TYPE_02_02{
+    background: #69F456;
+    color: #272e3b;
+    //background: rgba(0,150,136,0.15);
+    //color: #009688;
+  }
+  ::v-deep #tab-APPROVE_TYPE_02_01.is-active,
+  ::v-deep #tab-APPROVE_TYPE_02_02.is-active{
+    background: #ffffff;
+    color: #272e3b;
+  }
+  ::v-deep #tab-APPROVE_TYPE_01_01,
+  ::v-deep #tab-APPROVE_TYPE_01_02{
+    background: #E7F551;
+    color: #272e3b;
+    //background: rgba(233,152,0,0.15);
+    //color: #ff9800;
+  }
+  ::v-deep #tab-APPROVE_TYPE_01_01.is-active,
+  ::v-deep #tab-APPROVE_TYPE_01_02.is-active{
+    background: #ffffff;
+    color: #272e3b;
+  }
 }
 </style>
