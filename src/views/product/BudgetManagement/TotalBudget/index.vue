@@ -267,7 +267,7 @@ export default {
 
 <template>
   <div style="height: 100%">
-    <div :class="parentRoute === 'BudgetAnalysis' ? 'main-table-analysis' : 'main-table'">
+    <div :class="parentRoute === 'BudgetManagement' ? 'main-table' : 'main-table-analysis'">
       <vxe-table
         border
         height='100%'
@@ -306,7 +306,11 @@ export default {
             <span :style='{color:getWbsColor(row)}'>{{row.wbsAmount}}</span>
           </template>
         </vxe-column>
-        <vxe-column v-if="parentRoute === 'BudgetAnalysis'" field="wbsAmount" title="执行率"></vxe-column>
+        <vxe-column v-if="parentRoute === 'BudgetAnalysis'" field="controlRate" title="执行率">
+          <template #default='{row}'>
+            <span>{{row.controlRate + '%'}}</span>
+          </template>
+        </vxe-column>
       </vxe-table>
     </div>
     <div v-if="isEdit" class="button-area">
