@@ -55,6 +55,11 @@ Number.prototype.toFixedNoRound = function (decimals) {
   const factor = Math.pow(10, decimals)
   return Math.floor(this * factor) / factor
 }
+const loadingElement = document.getElementById('app-loading')
+if (loadingElement) {
+  loadingElement.style.display = 'none'
+}
+
 window.addEventListener('resize', () => {
   store.dispatch('updateIsMobile')
 })

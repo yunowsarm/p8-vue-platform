@@ -138,7 +138,7 @@ export default {
   },
   data () {
     return {
-      tabsHeight: document.documentElement.clientHeight - 380 + 'px',
+      tabsHeight: document.documentElement.clientHeight - 346 + 'px',
       historyHeight: document.documentElement.clientHeight - 400,
       saveApi: 'PersonalProcessApproval.saveResult',
       formComp: '',
@@ -589,7 +589,7 @@ export default {
             this.$refs.form.handleSubmit(e)
             // let count = this.$store.getters.approvalTotalMsg
             // this.$store.dispatch('setApprovalMessageCount', --count)
-            this.$emit('userCatalogCount')
+            // this.$emit('userCatalogCount')
           })
           .catch(() => { })
       }
@@ -861,6 +861,9 @@ $paddingLeft: 10px;
   height: calc(100% - 69px);
 }
 ::v-deep .main_content {
+  height: 100% !important;
+}
+::v-deep .main-table{
   height: 100% !important;
 }
 </style>

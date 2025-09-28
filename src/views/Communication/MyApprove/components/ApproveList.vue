@@ -403,6 +403,7 @@ export default {
       }
     },
     triggerSelect (item, index) {
+      console.log(item,index)
       this.currentIndex = index
       this.$emit('select', item, index)
     },
@@ -410,6 +411,7 @@ export default {
       this.$api['PersonalProcessApproval.saveNoticeMsg']({ id: null }).then((res) => { })
     },
     messageLoad (data, current) {
+      if(this.$store.getters.isMobile) return
       if (data && current && current === 1) {
         this.currentIndex = 0
       }

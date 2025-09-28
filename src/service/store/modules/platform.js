@@ -115,9 +115,12 @@ const getCSSString = (url) => {
     xhr.send()
   })
 }
-
+const checkIsMobile = () => {
+  return window.innerWidth <= 768
+}
 const platform = {
   state: {
+    isMobile: checkIsMobile(),
     sidebarState: {
       isHidden: SIDEBAR_HIDDEN_STATE === 'true',
       isOpen: SIDEBAR_OPEN_STATE === 'true', // 边栏折叠状态
@@ -150,6 +153,9 @@ const platform = {
   },
 
   mutations: {
+    SET_ISMOBILE(state, val) {
+      state.isMobile = val
+    },
     // 设置侧边栏折叠
     SET_COLLAPSE_SIDEBAR(state, sidebarStatus) {
       state.sidebarState.isOpen = sidebarStatus
@@ -247,6 +253,9 @@ const platform = {
   },
 
   actions: {
+    updateIsMobile({ commit }) {
+      commit('SET_ISMOBILE', checkIsMobile())
+    },
     collapseSidebar({ commit }, sidebarStatus) {
       commit('SET_COLLAPSE_SIDEBAR', sidebarStatus)
     },

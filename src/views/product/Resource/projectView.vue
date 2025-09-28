@@ -154,7 +154,7 @@
           </el-button> -->
               <el-button size="mini"
                          :loading="submitLoading"
-                         @click="$emit('close')">关 闭
+                         @click="close">关 闭
               </el-button>
             </p>
           </div>
@@ -193,6 +193,11 @@
                        :west-tree-param="provideParams.searchParams">
         </P8TableRender>
       </el-tab-pane>
+      <el-tab-pane label="预算">
+        <budget :configParmars="{
+          id:this.id || ''
+        }" isView @close='close'></budget>
+      </el-tab-pane>
     </el-tabs>
     <div v-if="viewVisible"
          class="viewVisible">
@@ -218,6 +223,7 @@ import DialogSelectMember from './Components/DialogSelectMember'
 import DialogTabsRoles from './Components/DialogTabsRoles'
 import DialogUserTask from './Components/DialogUserTask'
 import demandTable from '@/views/product/ProjectInitiation/demandTable'
+import budget from '@/views/product/BudgetDeclaration'
 import _ from 'lodash'
 import moment from 'moment'
 
@@ -422,6 +428,7 @@ export default {
     }
   },
   created () {
+    console.log(this.configParmars,'22222222222222')
     if (this.row && this.row.length) {
       this.id = this.row[0].ID ? this.row[0].ID : this.row[0].id
       this.reportParam.project_id = this.row[0].ID ? this.row[0].ID : this.row[0].id
@@ -448,6 +455,9 @@ export default {
     }
   },
   methods: {
+    close(){
+      this.$emit('close')
+    },
     // getProjectTeamRoleUsersNum (rolesItem) {
     //   return '(' + rolesItem.projectTeamRoleUsers.length + ')'
     // },
@@ -1053,7 +1063,8 @@ export default {
     'el-link': Link,
     CommonFileView,
     CommonUpload,
-    demandTable
+    demandTable,
+    budget
   }
 }
 </script>
@@ -1347,9 +1358,9 @@ export default {
     display: none;
   }
 }
-::v-deep .vxe-table--body-wrapper {
-  height: 480px !important;
-}
+//::v-deep .vxe-table--body-wrapper {
+//  height: 480px !important;
+//}
 ::v-deep .common-table .panination {
   position: relative !important;
 }

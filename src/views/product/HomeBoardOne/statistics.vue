@@ -23,6 +23,7 @@ import { P8Dialog as CommonDialog } from 'p8-components-ui'
 import ProcessApprovalIndex from '@/views/Communication/MyApprove/list.vue'
 import Message from '@/views/Framework/Message'
 import MineToDo from './components/MineToDo.vue'
+import MineQuestion from './components/MineQuestion.vue'
 import MyTask from '@/views/product/My/Work/Task/index.vue'
 
 export default {
@@ -32,7 +33,8 @@ export default {
     Message,
     ProcessApprovalIndex,
     MineToDo,
-    MyTask
+    MyTask,
+    MineQuestion
   },
   data() {
     return {
@@ -71,6 +73,13 @@ export default {
           count: 0,
           comp: 'MyTask',
           dialogName: '我的任务'
+        },
+        {
+          title: '待处理问题',
+          icon: 'el-icon-date',
+          count: 0,
+          comp: 'MineQuestion',
+          dialogName: '我的问题'
         }
       ]
     }
@@ -126,7 +135,7 @@ export default {
 
   .statistics-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     height: 100%;
   }

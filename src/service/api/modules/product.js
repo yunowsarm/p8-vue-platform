@@ -516,6 +516,28 @@ export const repositoryApi = {
   ],
   planGanttManager: [
     {
+      name: 'queryDeclaration',
+      method: 'POST',
+      path: '/product/pm/subject/taskBudget/queryDeclaration',
+      mockPath: '/product/pm/subject/taskBudget/queryDeclaration',
+      desc: '项目管理->计划管理-> 获取预算模板（科目列表）'
+    },
+
+    {
+      name: 'getPoolInfoByTaskId',
+      method: 'POST',
+      path: '/product/pm/subject/taskBudget/getPoolInfoByTaskId',
+      mockPath: '/product/pm/subject/taskBudget/getPoolInfoByTaskId',
+      desc: '项目管理->计划管理-> 预算汇总'
+    },
+    {
+      name: 'saveDeclaration',
+      method: 'POST',
+      path: '/product/pm/subject/taskBudget/saveDeclaration',
+      mockPath: '/product/pm/subject/taskBudget/saveDeclaration',
+      desc: '项目管理->计划管理-> 保存预算'
+    },
+    {
       name: 'reminder',
       method: 'POST',
       path: '/reminder/save',
@@ -2117,6 +2139,24 @@ export const repositoryApi = {
       desc: '应用检测指引'
     }
   ],
+  // 项目检测方案
+  projectIndicatorsPlan:[
+    {
+      name: 'saveProjectIndicator',
+      method: 'POST',
+      path: '/projectIndicatorsPlan/saveProjectIndicator',
+      mockPath: '/projectIndicatorsPlan/saveProjectIndicator',
+      desc: '解析计划文档保存'
+    },
+    {
+      name: 'exportWord',
+      method: 'POST',
+      path: '/projectIndicatorsPlan/exportWord',
+      mockPath: '/projectIndicatorsPlan/exportWord',
+      desc: '导出为方案'
+    }
+  ],
+  // 模板管理
   templateManagement: [
     {
       name: 'getTemplateAllList',
@@ -2328,6 +2368,126 @@ export const repositoryApi = {
       path: '/contractNodeTaskChange/delNodeRelatedTaskChange',
       mockPath: '/contractNodeTaskChange/delNodeRelatedTaskChange',
       desc: '取消关联节点 '
+    }
+  ],
+  // 预算科目库
+  budgetSubjectLibrary:[
+    {
+      name: 'updateChildren',
+      method: 'POST',
+      path: '/product/pm/subject/updateChildren',
+      mockPath: '/product/pm/subject/updateChildren',
+      desc: '同步子科目类型'
+    },
+    {
+      name: 'updateStatus',
+      method: 'POST',
+      path: '/product/pm/subject/updateStatus',
+      mockPath: '/product/pm/subject/updateStatus',
+      desc: '启用、禁用'
+    },
+
+  ],
+  // 预算模板
+  budgetTemplateManagement:[
+    {
+      name: 'saveCheck',
+      method: 'POST',
+      path: '/product/pm/subject/template/saveCheck',
+      mockPath: '/product/pm/subject/template/saveCheck',
+      desc: '校验默认模板'
+    },
+    {
+      name: 'saveDetails',
+      method: 'POST',
+      path: '/product/pm/subject/template/saveDetails',
+      mockPath: '/product/pm/subject/template/saveDetails',
+      desc: '保存子表（科目）'
+    },
+    {
+      name: 'queryDetails',
+      method: 'POST',
+      path: '/product/pm/subject/template/queryDetails',
+      mockPath: '/product/pm/subject/template/queryDetails',
+      desc: '查询子表（科目）'
+    },
+    {
+      name: 'updateStatus',
+      method: 'POST',
+      path: '/product/pm/subject/template/updateStatus',
+      mockPath: '/product/pm/subject/template/updateStatus',
+      desc: '启用、禁用'
+    },
+
+  ],
+  // 预算申报
+  budgetDeclaration:[
+    {
+      name: 'queryDeclaration',
+      method: 'POST',
+      path: '/product/pm/subject/declaration/queryDeclaration',
+      mockPath: '/product/pm/subject/declaration/queryDeclaration',
+      desc: '预算申报查询'
+    },
+    {
+      name: 'dataCalculation',
+      method: 'POST',
+      path: '/product/pm/subject/declaration/dataCalculation',
+      mockPath: '/product/pm/subject/declaration/dataCalculation',
+      desc: '预算申报计算'
+    },
+    {
+      name: 'saveDeclaration',
+      method: 'POST',
+      path: '/product/pm/subject/declaration/saveDeclaration',
+      mockPath: '/product/pm/subject/declaration/saveDeclaration',
+      desc: '预算申报保存'
+    }
+  ],
+  // 预算管理
+  budgetManagement:[
+    {
+      name: 'getTasksInfoByWholeId',
+      method: 'POST',
+      path: '/product/pm/subject/taskBudget/getTasksInfoByWholeId',
+      mockPath: '/product/pm/subject/taskBudget/getTasksInfoByWholeId',
+      desc: '获取指定任务汇总信息'
+    },
+    {
+      name: 'saveDetails',
+      method: 'POST',
+      path: '/product/pm/subject/budgetChange/saveDetails',
+      mockPath: '/product/pm/subject/budgetChange/saveDetails',
+      desc: '预算变更保存'
+    },
+    {
+      name: 'queryDetails',
+      method: 'POST',
+      path: '/product/pm/subject/budgetChange/queryDetails',
+      mockPath: '/product/pm/subject/budgetChange/queryDetails',
+      desc: '获取发起变更详情'
+    },
+    {
+      name: 'versionComparison',
+      method: 'POST',
+      path: '/product/pm/subject/budgetChange/versionComparison',
+      mockPath: '/product/pm/subject/budgetChange/versionComparison',
+      desc: '变更版本比较'
+    },
+    {
+      name: 'changeDeleted',
+      method: 'POST',
+      path: '/product/pm/subject/budgetChange/deleted',
+      mockPath: '/product/pm/subject/budgetChange/deleted',
+      desc: '变更记录删除'
+    },
+
+    {
+      name: 'getWholeSumBudget',
+      method: 'POST',
+      path: '/product/pm/subject/taskBudget/getWholeSumBudget',
+      mockPath: '/product/pm/subject/taskBudget/getWholeSumBudget',
+      desc: '获取项目总预算'
     }
   ]
 }

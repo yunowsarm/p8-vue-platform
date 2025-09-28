@@ -37,6 +37,10 @@ export default {
       type: Object,
       default: () => { }
     },
+    catalogData:{
+      type: Array,
+      default: () => []
+    },
     msgCount: {
       type: Array,
       default: () => []
@@ -56,7 +60,7 @@ export default {
   data () {
     return {
       messageCatalogApi: 'processApproval.getCatalog',
-      catalogData: [],
+      // catalogData: [],
       treeCfg: {
         indent: 48,
         'highlight-current': true,
@@ -109,15 +113,15 @@ export default {
     this.$nextTick(() => {
       this.$refs.tree.$refs.tree.setCurrentKey(this.searchParams.msgCatalog);
     });
-    this.loadCatalog()
+    // this.loadCatalog()
   },
   methods: {
-    loadCatalog (queryParam) {
-      const _this = this
-      this.$api[this.messageCatalogApi]({ dicType: 'APPROVE_TYPE' }).then((res) => {
-        _this.catalogData = res
-      })
-    },
+    // loadCatalog (queryParam) {
+    //   const _this = this
+    //   this.$api[this.messageCatalogApi]({ dicType: 'APPROVE_TYPE' }).then((res) => {
+    //     _this.catalogData = res
+    //   })
+    // },
 
     selectNode (nodeData) {
       let ids = ['APPROVE_TYPE_01_01', 'APPROVE_TYPE_01_02', 'APPROVE_TYPE_02_01', 'APPROVE_TYPE_02_02']
