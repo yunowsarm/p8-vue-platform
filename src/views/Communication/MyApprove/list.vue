@@ -189,13 +189,9 @@ export default {
       })
     },
     refreshList() {
-      if(this.isMobile){
-        this.closeApproveView()
-      }
       this.userCatalogCount()
     },
     approved(taskId) {
-      console.log(taskId,'taskId')
       this.approvedTaskId = taskId
       this.$refs.approveList.refreshList()
       this.userCatalogCount()

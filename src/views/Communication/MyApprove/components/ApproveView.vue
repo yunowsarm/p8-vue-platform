@@ -138,7 +138,7 @@ export default {
   },
   data () {
     return {
-      tabsHeight: document.documentElement.clientHeight - 344 + 'px',
+      tabsHeight: document.documentElement.clientHeight - 346 + 'px',
       historyHeight: document.documentElement.clientHeight - 400,
       saveApi: 'PersonalProcessApproval.saveResult',
       formComp: '',
