@@ -333,15 +333,18 @@ export default {
         this.mergeParams.msgStatus = ''
       }
       this.activeTabs = val.name
+      if (window.innerWidth < 600) {
+        this.currentIndex = null
+      }
     },
     triggerSelect (item, index) {
       if (index && index == this.currentIndex) {
         return
       }
-      this.currentIndex = index
       this.$emit('select', item, index)
       this.$emit('toggleStatus', item.id, '1505')
       setTimeout(() => {
+        this.currentIndex = index
         this.myMessageGroup()
       }, 1000)
     },
@@ -360,7 +363,9 @@ export default {
     },
     messageLoad (data, current) {
       if (data && current && current === 1) {
-        this.currentIndex = 0
+        if (window.innerWidth > 600) {
+          this.currentIndex = 0
+        }
       }
     },
     hasHtmlTag (str) {
@@ -376,6 +381,9 @@ export default {
     refresh () {
       this.flag = true
       this.timeKey = new Date().getTime()
+      if (window.innerWidth < 600) {
+        this.currentIndex = null
+      }
     },
     getIdsSendApi (message, api, status) {
       let list = this.$refs.infList.infiniteList.filter(el => el.ischeck)
@@ -490,5 +498,13 @@ $icon-span-width: 20px;
 }
 ::v-deep .msg-content img {
   display: none;
+}
+::v-deep .el-message-box__wrapper .el-message-box {
+  width: 320px !important;
+}
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  ::v-deep .el-message-box {
+    width: 320px !important;
+  }
 }
 </style>
