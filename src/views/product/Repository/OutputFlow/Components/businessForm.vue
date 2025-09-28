@@ -355,6 +355,7 @@ export default {
         let params = {activityInfoId: val}
         this.$api[api](params).then(res => {
           this.editTableData = res
+          this.$refs.editTable.tableData = this.editTableData
         })
       },
     }
@@ -381,6 +382,7 @@ export default {
     }
     this.$api[api](params).then(res => {
       this.editTableData = res
+      this.$refs.editTable.tableData = this.editTableData
     })
   },
   methods: {
