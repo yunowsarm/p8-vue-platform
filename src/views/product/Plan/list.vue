@@ -1,8 +1,10 @@
 <template>
   <normal-layout :header-visible="false"
+                 :normal-layout="layout"
                  :split-layout="true">
     <template #west>
-      <common-tree :default-expanded-keys="defaultExpandedKeys"
+      <common-tree v-if="!isMobile"
+                   :default-expanded-keys="defaultExpandedKeys"
                    :default-expand-all="false"
                    node-key="ID"
                    :data="treeData"
@@ -11,6 +13,13 @@
                    @select="onSelect"></common-tree>
     </template>
     <template #center>
+      <div v-if="isMobile">
+        <div style="padding: 10px; background: #ffffff">
+          <span>筛选：</span>
+          <tree-select :data="treeData"
+                       @change="onSelect"></tree-select>
+        </div>
+      </div>
       <P8TableRender :key='tableKey'
                      ref="tableRender"
                      class="planLayout"
@@ -66,12 +75,18 @@
 </style>
 <script>
 import { Input, Button } from 'element-ui'
-import { P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Dialog as CommonDialog, P8Table as CommonTable, P8Button as CommonButton } from 'p8-components-ui'
+import {
+  P8NormalLayoutV1 as NormalLayout, P8Tree as CommonTree, P8Dialog as CommonDialog, P8Table as CommonTable, P8Button as CommonButton,
+  P8TreeSelect as TreeSelect
+} from 'p8-components-ui'
 import { selectGenerateTree } from '@/utils/common.js'
 
 export default {
   name: 'ProcessManagement',
   computed: {
+    isMobile () {
+      return this.$store.getters.isMobile
+    },
     componentUrl () {
       if (this.asyncComponents) {
         if (this.asyncComponents.indexOf('?') !== -1) {
@@ -102,6 +117,22 @@ export default {
   },
   data () {
     return {
+      layout: {
+        west: {
+          xs: 11,
+          sm: 10,
+          md: 10,
+          lg: 9,
+          xl: 9
+        },
+        center: {
+          xs: 13,
+          sm: 14,
+          md: 14,
+          lg: 15,
+          xl: 15
+        }
+      },
       tableKey: Date.now(),
       dialogHeight: document.documentElement.clientHeight * 0.6,
       queryParam: {},
@@ -134,9 +165,28 @@ export default {
     CommonTree,
     CommonDialog,
     CommonTable,
-    CommonButton
+    CommonButton,
+    TreeSelect
   },
   created () {
+    if (this.isMobile) {
+      this.layout = {
+        west: {
+          xs: 0,
+          sm: 0,
+          md: 0,
+          lg: 0,
+          xl: 0
+        },
+        center: {
+          xs: 24,
+          sm: 24,
+          md: 24,
+          lg: 24,
+          xl: 24
+        }
+      }
+    }
     this.init()
     this.getIconData()
   },
