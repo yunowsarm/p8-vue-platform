@@ -912,7 +912,7 @@ export function getGanttColumns (ganttObject, vueThis) {
       name: 'budget',
       label: '预算' + (checkEdit() ? canEditIcon : ''),
       align: 'center',
-      width: 100,
+      min_width: 200,
       resize: true,
       editor:true,
       template: function(task) {
