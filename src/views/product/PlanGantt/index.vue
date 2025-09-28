@@ -23,6 +23,7 @@
           <div class="bottom"
                :style="{height: expandBottom}">
             <plan-gantt ref="planGantt"
+                        :isView='isView'
                         :plan-info-id="planInfoId"
                         :whole-describe-id="wholeDescribeId"
                         :plan-info-status="planInfoStatus"
@@ -245,6 +246,10 @@ export default {
       default: function () {
         return {}
       }
+    },
+    isView:{
+      type: Boolean,
+      default: false
     }
   },
   watch: {

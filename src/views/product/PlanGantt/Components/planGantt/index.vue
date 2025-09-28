@@ -590,6 +590,10 @@ let myGantt
 export default {
   name: 'PlanGantt',
   props: {
+    isView:{
+      type: Boolean,
+      default: false
+    },
     thirdMenuParam: {
       type: Object,
       default: () => { }
@@ -1697,18 +1701,21 @@ export default {
               if (res.projectStatus === '2205') {
                 myGantt.config.readonly = true
               }
-              if (res.monitorLock && res.monitorLock['1020'] !== undefined) {
-                vueThis.planEditLock = res.monitorLock['1020'] // 直接使用1020的值: -1(默认)、0(解锁)、1(加锁)
-                myGantt.config.readonly = res.monitorLock['1020'] === '1'
-                if (res.monitorLock['1020'] === '1') {
-                  myGantt.config.readonlyReason = '计划编辑锁定时不允许此操作'
+              if(vueThis.isView){
+                vueThis.planEditLock = '1'
+              }else{
+                if (res.monitorLock && res.monitorLock['1020'] !== undefined) {
+                  vueThis.planEditLock = res.monitorLock['1020'] // 直接使用1020的值: -1(默认)、0(解锁)、1(加锁)
+                  myGantt.config.readonly = res.monitorLock['1020'] === '1'
+                  if (res.monitorLock['1020'] === '1') {
+                    myGantt.config.readonlyReason = '计划编辑锁定时不允许此操作'
+                  }
+                } else {
+                  vueThis.planEditLock = '-1'// 无锁定数据时设为默认状态
+                  myGantt.config.readonly = false
+                  myGantt.config.readonlyReason = ''
                 }
-              } else {
-                vueThis.planEditLock = '-1'// 无锁定数据时设为默认状态
-                myGantt.config.readonly = false
-                myGantt.config.readonlyReason = ''
               }
-
               if (res.trainingModeList) {
                 const trainingModeListArr = []
                 res.trainingModeList.map((item) => {

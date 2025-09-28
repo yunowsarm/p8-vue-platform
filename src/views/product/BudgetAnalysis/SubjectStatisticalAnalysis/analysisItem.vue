@@ -245,7 +245,7 @@ export default {
     </div>
     <common-dialog :title="plan.NAME || ''" width="90%" :dialog-config="dialogConfig" :showHandleBtn="false" :visible="visible" :dialog-height="600" @close="handleCancel">
       <template #dialog>
-        <plan-gantt v-if='visible' :thirdMenuParam='plan'></plan-gantt>
+        <plan-gantt v-if='visible' :thirdMenuParam='plan' :isView='true'></plan-gantt>
       </template>
     </common-dialog>
   </div>
