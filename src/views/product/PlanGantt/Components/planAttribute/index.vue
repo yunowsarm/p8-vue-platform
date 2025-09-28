@@ -196,9 +196,11 @@
       </template>
 <!--   预算执行（实际收支）   -->
       <template #budgetExecution>
-        <budget-execution ref='budgetExecution' :task-id="taskId">
+        <div style='height: 400px'>
+          <budget-execution ref='budgetExecution' :task-id="taskId">
 
-        </budget-execution>
+          </budget-execution>
+        </div>
       </template>
     </anchor>
   </div>
