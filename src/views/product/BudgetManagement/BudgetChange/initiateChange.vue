@@ -5,6 +5,10 @@ export default {
   name: 'initiateChange',
   components: { VxeColumn },
   props: {
+    projectInfo:{
+      type: Object,
+      default: () => {}
+    },
     row: {
       type: Array,
       default: () => []
@@ -57,15 +61,6 @@ export default {
     }
   },
   created() {
-    // 获取三级菜单参数
-    let parent = this.$parent
-    while (parent) {
-      if (parent.thirdMenuParam && Object.keys(parent.thirdMenuParam).length > 0) {
-        this.projectInfo = parent.thirdMenuParam
-        break
-      }
-      parent = parent.$parent
-    }
     this.queryDetails()
   },
   methods: {
@@ -123,7 +118,6 @@ export default {
             params.id = this.changeId
           }
           this.$api['budgetManagement.saveDetails'](params).then((res) => {
-            console.log(res)
             if (res) {
               this.$message.success('保存成功')
               this.$emit('save-success')
@@ -143,15 +137,16 @@ export default {
 
 <template>
   <div class="main-area">
-    <div class="main-table">
-      <vxe-table border height="100%" keep-source ref="table" align="center" :data="tableData" :tableConfig="tableConfig" :tree-config="treeConfig" :edit-config="editConfig" @edit-closed="editClosed">
-        <vxe-column type="seq" title="序号" width="50"></vxe-column>
-        <vxe-column field="name" title="科目名称" tree-node align="left" header-align="center"></vxe-column>
-        <vxe-column field="amountOld" title="原预算金额"></vxe-column>
-        <vxe-column
-          field="amount"
-          title="变更预算金额"
-          :edit-render="{
+    <div class='content'>
+      <div class="main-table">
+        <vxe-table border height="100%" keep-source ref="table" align="center" :data="tableData" :tableConfig="tableConfig" :tree-config="treeConfig" :edit-config="editConfig" @edit-closed="editClosed">
+          <vxe-column type="seq" title="序号" width="50"></vxe-column>
+          <vxe-column field="name" title="科目名称" tree-node align="left" header-align="center"></vxe-column>
+          <vxe-column field="amountOld" title="原预算金额"></vxe-column>
+          <vxe-column
+            field="amount"
+            title="变更预算金额"
+            :edit-render="{
             name: 'VxeInput',
             immediate: true,
             showNegativeStatus: true,
@@ -159,19 +154,20 @@ export default {
               min: 0
             }
           }"
-        ></vxe-column>
-        <vxe-column field="type" title="变更类型">
-          <template #default="{ row }">
-            <span>{{ row.type }}</span>
-          </template>
-        </vxe-column>
-      </vxe-table>
+          ></vxe-column>
+          <vxe-column field="type" title="变更类型">
+            <template #default="{ row }">
+              <span>{{ row.type }}</span>
+            </template>
+          </vxe-column>
+        </vxe-table>
+      </div>
+      <el-form ref="form" class="form-area" :model="formData" :rules="rules" label-width="100px">
+        <el-form-item label="变更原因：" prop="changeReason">
+          <el-input v-model="formData.changeReason" type="textarea" :autosize='{minRows:4,maxRows:6}' resize="none" :readonly="!!currEntityId"></el-input>
+        </el-form-item>
+      </el-form>
     </div>
-    <el-form ref="form" class="form-area" :model="formData" :rules="rules" label-width="100px">
-      <el-form-item label="变更原因：" prop="changeReason">
-        <el-input v-model="formData.changeReason" type="textarea" :rows="4" resize="none" :readonly="!!currEntityId"></el-input>
-      </el-form-item>
-    </el-form>
     <div v-if="!currEntityId" class="button-area">
       <el-button type="primary" @click="save">保存</el-button>
     </div>
@@ -186,13 +182,18 @@ export default {
   display: flex;
   flex-direction: column;
 }
-
+.content{
+  height: calc(100% - 50px);
+  display: flex;
+  flex-direction: column;
+}
 .main-table {
+  height: 75%;
   margin: 12px;
-  flex: 1;
 }
 
 .form-area {
+  flex: 1;
   margin: 12px;
 }
 
