@@ -1358,9 +1358,9 @@ export default {
     display: none;
   }
 }
-::v-deep .vxe-table--body-wrapper {
-  height: 480px !important;
-}
+//::v-deep .vxe-table--body-wrapper {
+//  height: 480px !important;
+//}
 ::v-deep .common-table .panination {
   position: relative !important;
 }
