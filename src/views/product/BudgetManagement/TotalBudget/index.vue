@@ -308,7 +308,7 @@ export default {
         </vxe-column>
         <vxe-column v-if="parentRoute === 'BudgetAnalysis'" field="controlRate" title="执行率">
           <template #default='{row}'>
-            <span>{{row.controlRate + '%'}}</span>
+            <span>{{row.controlRate ?? 0 + '%'}}</span>
           </template>
         </vxe-column>
       </vxe-table>
