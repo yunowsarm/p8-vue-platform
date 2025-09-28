@@ -13,7 +13,7 @@
                ref="loginLogo"></div>
         </div>
         <div class="sysName">
-          <span v-if="sidebarState.width == '180px'"
+          <span v-if="sidebarState.width == '180px' || isMobile"
                 v-html="systemName"></span>
         </div>
       </div>
@@ -33,11 +33,11 @@
                             :key="item.name">
                 <template v-if="!isMobile">
                   <i v-if="!sidebarState.isOpen"
-                    class="p8 menuIcon"
-                    :class="item.children[0].meta.icon"></i>
+                     class="p8 menuIcon"
+                     :class="item.children[0].meta.icon"></i>
                   <i v-else
-                    class="p8 menuIcon"
-                    :class="item.children[0].meta.icon"></i>
+                     class="p8 menuIcon"
+                     :class="item.children[0].meta.icon"></i>
                 </template>
                 <span slot="title">{{ item.children[0].meta.title }}</span>
               </el-menu-item>
@@ -48,11 +48,11 @@
                             :key="item.name">
                 <template v-if="!isMobile">
                   <i v-if="!sidebarState.isOpen"
-                    class="p8 menuIcon"
-                    :class="item.children[0].meta.icon"></i>
+                     class="p8 menuIcon"
+                     :class="item.children[0].meta.icon"></i>
                   <i v-else
-                    class="p8 menuIcon"
-                    :class="item.children[0].meta.icon"></i>
+                     class="p8 menuIcon"
+                     :class="item.children[0].meta.icon"></i>
                 </template>
                 <span slot="title">{{ item.children[0].meta.title }}</span>
               </el-menu-item>
@@ -61,13 +61,14 @@
             <el-submenu v-else
                         :index="item.meta.title || item.path"
                         :key="item.name"
+                        @click="clearSidebar"
                         class="custom-submenu">
               <template slot="title">
                 <div @mouseenter="handleMouseEnter(item)">
                   <template v-if="!isMobile">
                     <i v-if="item.meta && item.meta.icon"
-                      class="p8 menuIcon"
-                      :class="item.meta.icon"></i>
+                       class="p8 menuIcon"
+                       :class="item.meta.icon"></i>
                   </template>
                   <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
                 </div>
@@ -81,6 +82,7 @@
                         <template v-else> -->
                     <el-menu-item :index="child.path"
                                   :disabled="!!child.isDisabled"
+                                  @click="clearSidebar"
                                   :key="child.name">
                       <el-tooltip placement="right"
                                   :disabled="child.meta.title.length < 8"
@@ -90,11 +92,11 @@
                              v-else
                              @mouseenter="handleMouseEnter(child)"
                              @mouseleave="onIconMouseLeave">
-                            <template v-if="!isMobile">
-                              <i v-if="child.meta && child.meta.icon"
-                                class="p8 menuIcon"
-                                :class="child.meta.icon"></i>
-                            </template>
+                          <template v-if="!isMobile">
+                            <i v-if="child.meta && child.meta.icon"
+                               class="p8 menuIcon"
+                               :class="child.meta.icon"></i>
+                          </template>
                           <span v-if="child.meta && child.meta.title">
                             <span :style="{width: hoveredMenuItem == child.path ? 'calc(100% - 30px)' : '100%'}">{{ child.meta.title }}</span>
                             <i style="margin:0;width:16px;"
@@ -221,11 +223,11 @@ export default {
     },
       defaultActive(){
         if(this.$route.matched && this.$route.matched.length > 2){
-          return this.$route.meta.parentPath
+        return this.$route.meta.parentPath
         }else{
-          return this.$route.path
-        }
-      },
+        return this.$route.path
+      }
+    },
     ...mapGetters(['asyncRouter', 'sidebarState', 'systemTheme', 'theme', 'imageUrl', 'systemName', 'systemColor']),
     // 这里必须根据条件结合ElementUI的sidebar来调整颜色,保证自定义主题和sidebar的内置颜色一致.
     systemThemeColor: function () {
@@ -456,6 +458,12 @@ export default {
         }
         this.hideOptions();
       })
+    },
+    clearSidebar () {
+      if (this.isMobile) {
+        this.$store.dispatch('hideSidebar', true)
+        this.$store.dispatch('collapseSidebar', !this.sidebarState.isOpen)
+      }
     }
   },
   components: {
@@ -646,6 +654,10 @@ $menu-collapse-text-color: #303133;
 }
 @media (max-width: 768px) {
   .sidebar {
+    position: fixed;
+    z-index: 200;
+    top: 0;
+    bottom: 0;
     .login-logo {
       display: none;
     }
