@@ -4,9 +4,9 @@
 const webpack = require('webpack')
 const { defineConfig } = require('@vue/cli-service')
 const SplitChunksPlugin = require('webpack').optimize.SplitChunksPlugin
-let version = require('./package.json')['version']
+let version = require('./package.json').version
 version = 'V' + version
-// const TerserPlugin = require('terser-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 module.exports = defineConfig({
   runtimeCompiler: true,
@@ -29,96 +29,9 @@ module.exports = defineConfig({
           deleteOriginalAssets: false // 不删除原始文件
         }
       ])
-      // config.optimization.minimizer('terser').use(TerserPlugin, [
-      //   {
-      //     terserOptions: {
-      //       compress: {
-      //         drop_console: true,
-      //         drop_debugger: true,
-      //         pure_funcs: ['console.log', 'console.info', 'console.warn'],
-      //         pure_getters: true,
-      //         unused: true,
-      //         collapse_vars: true
-      //       },
-      //       mangle: {
-      //         properties: false,
-      //         keep_fnames: false,
-      //         keep_classnames: false,
-      //         toplevel: false
-      //       },
-      //       format: {
-      //         comments: false, // 移除注释
-      //         beautify: false
-      //       }
-      //     },
-      //     extractComments: false, // 不将注释提取到单独的文件中
-      //     parallel: true
-      //   }
-      // ])
-      // 更激进的Terser配置
-      config.optimization.minimizer('terser').tap((args) => {
-        args[0].terserOptions = {
-          compress: {
-            drop_console: true,
-            drop_debugger: true,
-            pure_funcs: ['console.log', 'console.info', 'console.warn', 'debugger'],
-            pure_getters: true,
-            unsafe: true,
-            unsafe_comps: true,
-            unsafe_math: true,
-            unsafe_methods: true,
-            unsafe_proto: true,
-            unsafe_regexp: true,
-            unsafe_undefined: true,
-            unused: true,
-            collapse_vars: true,
-            reduce_vars: true,
-            booleans: true,
-            loops: true
-          },
-          mangle: {
-            toplevel: true, // 顶级变量名混淆
-            keep_fnames: false,
-            keep_classnames: false
-          },
-          output: {
-            comments: false,
-            beautify: false
-          }
-        }
-        return args
-      })
-
-      // // 添加Brotli压缩（比gzip效果更好）
-      // config.plugin('compression').use(CompressionPlugin, [
-      //   {
-      //     algorithm: 'brotliCompress',
-      //     test: /\.(js|css|html|svg)$/,
-      //     threshold: 10240,
-      //     minRatio: 0.8,
-      //     compressionOptions: { level: 11 }
-      //   }
-      // ])
     }
-    // config.output.filename(`js/[name].[hash:8].${version}.js`).end()
-    // config.output.chunkFilename(`js/[name].[hash:8].${version}.js`).end()
-    // 在你的 chainWebpack 中修改
-    config.output.filename(`js/[name].[contenthash:8].${version}.js`).end()
-    config.output.chunkFilename(`js/[name].[contenthash:8].${version}.js`).end()
-    // 生产环境特定优化
-    // if (process.env.NODE_ENV === 'production') {
-    //   // 启用预加载和预获取优化
-    //   config.plugin('preload').use(require('@vue/preload-webpack-plugin'), [
-    //     {
-    //       rel: 'preload',
-    //       include: 'initial',
-    //       fileBlacklist: [/\.map$/, /hot-update\.js$/]
-    //     }
-    //   ])
-
-    //   // 压缩CSS
-    //   config.optimization.minimize(true)
-    // }
+    config.output.filename(`js/[name].[hash:8].${version}.js`).end()
+    config.output.chunkFilename(`js/[name].[hash:8].${version}.js`).end()
   },
   configureWebpack: {
     devtool: process.env.NODE_ENV === 'development' ? 'source-map' : undefined,
@@ -159,104 +72,60 @@ module.exports = defineConfig({
     optimization: {
       splitChunks: {
         chunks: 'all',
-        minSize: 500000, // 提高最小分割体积至20KB，避免过小 chunk
-        maxSize: 1000000, // 尝试分割大于250KB的 chunk
-        minChunks: 1,
-        maxAsyncRequests: 20, // 适当控制异步请求数
-        maxInitialRequests: 10, // 适当控制初始请求数
+        minSize: 10000,
+        // maxSize: 0,
+        minChunks: 2,
+        maxAsyncRequests: 30,
+        maxInitialRequests: 30,
         automaticNameDelimiter: '~',
-        hidePathInfo: true,
         cacheGroups: {
-          // 1. 核心Vue生态单独分包（变化极少）
-          vueCore: {
-            name: 'vue-core',
-            test: /[\\/]node_modules[\\/](vue|vue-router|vuex|@vue)[\\/]/,
-            priority: 100,
-            chunks: 'all',
-            enforce: true,
-            reuseExistingChunk: true
-          },
-
-          // 2. Element UI单独分包
-          elementUI: {
-            name: 'element-ui',
-            test: /[\\/]node_modules[\\/]element-ui[\\/]/,
-            priority: 90,
-            chunks: 'all',
-            enforce: true
-          },
-
-          // 3. ECharts相关单独分包（通常体积较大）
-          echarts: {
-            name: 'echarts',
-            test: /[\\/]node_modules[\\/](echarts|echarts-gl|echarts-liquidfill)[\\/]/,
-            priority: 80,
-            chunks: 'all'
-          },
-
-          // 4. 其他较大的第三方库单独分包
-          largeVendors: {
-            name: 'large-vendors',
-            test: /[\\/]node_modules[\\/](monaco-editor|vxe-table|tinymce|video\.js|xlsx|@antv)[\\/]/,
-            priority: 70,
-            chunks: 'all'
-          },
-
-          // 5. 工具库单独分包
-          utils: {
-            name: 'utils',
-            test: /[\\/]node_modules[\\/](lodash|moment|pinyin-pro|brace)[\\/]/,
-            priority: 60,
-            chunks: 'all'
-          },
-          componentsUI: {
-            name: 'p8-components-ui',
-            test: /[\\/]node_modules[\\/](p8-components-ui|p8-dhtmlx-gantt|p8-lowcode)[\\/]/,
-            priority: 10,
-            chunks: 'all'
-          },
-          dhtmlxGantt: {
-            name: 'p8-dhtmlx-gantt',
-            test: /[\\/]node_modules[\\/](p8-dhtmlx-gantt)[\\/]/,
-            priority: 10,
-            chunks: 'all'
-          },
-          lowcode: {
-            name: 'p8-lowcode',
-            test: /[\\/]node_modules[\\/](p8-lowcode)[\\/]/,
-            priority: 10,
-            chunks: 'all'
-          },
-          vendors: {
-            name: 'vendors',
+          defaultVendors: {
             test: /[\\/]node_modules[\\/]/,
-            priority: 50,
-            chunks: 'all',
+            priority: -10,
             reuseExistingChunk: true
           },
-          // 7. 业务公共代码
-          common: {
-            name: 'chunk-common',
+          default: {
             minChunks: 2,
-            priority: 20,
-            chunks: 'initial',
+            priority: -20,
             reuseExistingChunk: true
           }
         }
       },
-      // 将 webpack 的运行时代码提取为单独 chunk，利于缓存:cite[4]:cite[7]
-      runtimeChunk: {
-        name: (entrypoint) => `runtime-${entrypoint.name}`
-      }
+      minimize: process.env.NODE_ENV === 'production',
+      minimizer: [
+        new TerserPlugin({
+          terserOptions: {
+            compress: {
+              drop_console: true,
+              drop_debugger: true,
+              pure_funcs: ['console.log', 'console.info', 'console.warn', 'console.error'],
+              pure_getters: true,
+              unused: true,
+              collapse_vars: true
+            },
+            mangle: {
+              properties: false,
+              keep_fnames: false,
+              keep_classnames: false,
+              toplevel: true
+            },
+            output: {
+              comments: false, // 移除注释
+              beautify: true
+            }
+          },
+          extractComments: false, // 不将注释提取到单独的文件中
+          parallel: true
+        })
+      ]
     },
     plugins: [new SplitChunksPlugin(), new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn|en/)]
   },
   pluginOptions: {
-    // webpackBundleAnalyzer: {
-    //   analyzerMode: process.env.NODE_ENV === 'production' ? 'server' : 'disabled',
-    //   openAnalyzer: false,
-    //   generateStateFile: true
-    // }
+    webpackBundleAnalyzer: {
+      analyzerMode: 'disabled',
+      openAnalyzer: false
+    }
   },
   css: {
     loaderOptions: {
