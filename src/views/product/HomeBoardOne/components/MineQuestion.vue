@@ -27,7 +27,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div style='height: 100%'>
     <P8TableRender
       ref="tableRender"
       code="problemManagement"
