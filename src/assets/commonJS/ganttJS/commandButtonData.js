@@ -3266,16 +3266,16 @@ function createTaskByDatas(ganttObject, datas, parentId, pos, taskName, msg, dpO
             ganttObject.addTask(task, parentId, indexNo++)
             break
         }
-        let filteredData = ganttObject.serialize() // 获取当前显示的所有任务数据
-        let filteredTasks = []
-        filteredData.data.forEach((item) => {
-          // if (ganttObject.isTaskVisible(item.id)) {
-          filteredTasks.push(item.id)
-          // }
-        })
+        // let filteredData = ganttObject.serialize() // 获取当前显示的所有任务数据
+        // let filteredTasks = []
+        // filteredData.data.forEach((item) => {
+        //   // if (ganttObject.isTaskVisible(item.id)) {
+        //   filteredTasks.push(item.id)
+        //   // }
+        // })
         setTimeout(() => {
           // ganttObject.unselectTask()
-          if (filteredTasks && filteredTasks.indexOf(task.id) === -1) {
+          if (!Object.values(vueThis.searchForm).every((value) => value === '')) {
             if (isTaskInViewport(parentId, ganttObject)) {
             } else {
               ganttObject.showTask(parentId)
@@ -4477,7 +4477,7 @@ function batchOwnerCheck(ganttName) {
 
       // 判断任务状态是否有效
       if (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) === -1 && indexNo !== 0) {
-        if (vueThis.planEditLock === '0') return false
+        if (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose') return false
         result = {
           value: false,
           reason: '已完成、提交审批任务不可操作责任人'
