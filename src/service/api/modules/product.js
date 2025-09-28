@@ -2474,6 +2474,13 @@ export const repositoryApi = {
       mockPath: '/product/pm/subject/budgetChange/versionComparison',
       desc: '变更版本比较'
     },
+    {
+      name: 'changeDeleted',
+      method: 'POST',
+      path: '/product/pm/subject/budgetChange/deleted',
+      mockPath: '/product/pm/subject/budgetChange/deleted',
+      desc: '变更记录删除'
+    },
 
     {
       name: 'getWholeSumBudget',
