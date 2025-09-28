@@ -189,7 +189,7 @@ export default {
       selectedRow: null,
       selectedRows: [],
       reserveSelection: true,
-      tableApi: "userManager.list",
+      tableApi: "userManager.listData",
       columns: [
         {
           title: "",

@@ -401,6 +401,13 @@ export const system = {
   ],
   userManager: [
     {
+      name: 'listData',
+      method: 'POST',
+      path: '/framework/system/User/listData',
+      mockPath: '/framework/system/User/listData',
+      desc: '获取人员列表数据，不涉及密级'
+    },
+    {
       name: 'dicData',
       method: 'POST',
       path: '/framework/system/BpDictionary/getDic',
