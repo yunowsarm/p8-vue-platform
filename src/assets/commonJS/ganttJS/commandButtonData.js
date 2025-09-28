@@ -3631,141 +3631,210 @@ function pasteTask(ganttObject, tasks, vueThis, type, dpObj) {
       const selIndexNo = ganttObject.getTaskIndex(selId) + 1 // 分支indexNo
       const planInfoId = vueThis.planInfoId
       const selectTaskIds = ganttObject.getSelectedTasks()
-      if (selectTaskIds.length === 1) {
-        let selectTaskParentId = ganttObject.getTask(selectTaskIds[0]).parent
-        copyTasks.tasks = []
-        let parentId
-        let defaultTaskId
-        copyTaskIds.forEach((id) => {
-          if (ganttObject.hasChild(id)) {
-            defaultTaskId = id
+      if (vueThis.copyTaskType) {
+        // 我的经验库复制
+        api['planGanttManager.pasteTasks']({
+          pasteData: copyTasks,
+          parentId: parentTask.id,
+          selectTaskId: selId,
+          type: type,
+          planInfoId: planInfoId,
+          createPage: vueThis.createPage
+        })
+          .then(function (res) {
+            if (res) {
+              // 刷新样式
+              if (res.styles) {
+                store.dispatch('setTaskStyles', res.styles)
+              }
+              // 刷新资源
+              if (res.resources) {
+                ganttObject.$resourcesStore.parse(res.resources)
+              }
+              let managerStatus = ''
+              if (vueThis.thirdMenuParam.EXECUTESTATE === '1000' || vueThis.thirdMenuParam.MANAGESTATUS === '6609') {
+                managerStatus = '6401'
+              }
+              if (vueThis.thirdMenuParam.EXECUTESTATE === '1070' || vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
+                managerStatus = '6403'
+              }
+              if (vueThis.thirdMenuParam.EXECUTESTATE === '1010') {
+                managerStatus = '6402'
+              }
+              if (res.tasks) {
+                res.tasks.forEach((el) => {
+                  el.managerStatus = managerStatus
+                  el.dutyDeptName = ''
+                  el.realName = ''
+                  el.owner_id = ''
+                })
+                createTaskByDatas(ganttObject, res.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
+                vueThis.taskCount = ganttObject.getTaskCount()
+                vueThis.copyTaskType = false
+              }
+            } else {
+              vueThis.$message({
+                message: '复制的任务已被删除，请重新复制任务后粘贴!',
+                type: 'error'
+              })
+            }
+          })
+          .catch((err) => {
+            console.error(err, 'err')
+            vueThis.$message({
+              message: '复制的任务已被删除，请重新复制任务后粘贴!',
+              type: 'error'
+            })
+          })
+      } else {
+        if (selectTaskIds.length === 1) {
+          let selectTaskParentId = ganttObject.getTask(selectTaskIds[0]).parent
+          copyTasks.tasks = []
+          let parentId
+          let defaultTaskId
+          copyTaskIds.forEach((id) => {
+            if (ganttObject.hasChild(id)) {
+              defaultTaskId = id
 
-            function checkRow(id, parent) {
-              let parent_task = JSON.parse(JSON.stringify(ganttObject.getTask(id)))
-              parent_task.defaultId = id
-              parent_task.parent = parent
-              parent_task.planInfoId = vueThis.planInfoId
-              parent_task.id = get32NumberUid()
-              parentId = parent_task.id
+              function checkRow(id, parent) {
+                let parent_task = JSON.parse(JSON.stringify(ganttObject.getTask(id)))
+                parent_task.defaultId = id
+                parent_task.parent = parent
+                parent_task.planInfoId = vueThis.planInfoId
+                parent_task.id = get32NumberUid()
+                parentId = parent_task.id
+                let falg = true
+                copyTasks.tasks.forEach((item) => {
+                  if (item.defaultId === parent_task.defaultId) {
+                    falg = false
+                  }
+                })
+                if (falg) {
+                  copyTasks.tasks.push(parent_task)
+                }
+                ganttObject.eachTask(function (item) {
+                  let task = JSON.parse(JSON.stringify(item))
+                  if (ganttObject.hasChild(task.id)) {
+                    defaultTaskId = task.id
+                    checkRow(task.id, parentId)
+                  } else {
+                    task.defaultId = item.id
+                    task.parent = parentId
+                    task.planInfoId = vueThis.planInfoId
+                    task.id = get32NumberUid()
+
+                    let falg = true
+                    copyTasks.tasks.forEach((item) => {
+                      if (item.defaultId === task.defaultId) {
+                        falg = false
+                      }
+                    })
+                    if (falg) {
+                      copyTasks.tasks.push(task)
+                    }
+                  }
+                }, defaultTaskId)
+              }
+
+              checkRow(id, selectTaskParentId)
+            } else {
+              // 子级
+              let task = JSON.parse(JSON.stringify(ganttObject.getTask(id)))
+              task.defaultId = id
+              task.parent = selectTaskParentId
+              task.planInfoId = vueThis.planInfoId
+              task.id = get32NumberUid()
               let falg = true
               copyTasks.tasks.forEach((item) => {
-                if (item.defaultId === parent_task.defaultId) {
+                if (item.defaultId === task.defaultId) {
                   falg = false
                 }
               })
               if (falg) {
-                copyTasks.tasks.push(parent_task)
+                copyTasks.tasks.push(task)
               }
-              ganttObject.eachTask(function (item) {
-                let task = JSON.parse(JSON.stringify(item))
-                if (ganttObject.hasChild(task.id)) {
-                  defaultTaskId = task.id
-                  checkRow(task.id, parentId)
-                } else {
-                  task.defaultId = item.id
-                  task.parent = parentId
-                  task.planInfoId = vueThis.planInfoId
-                  task.id = get32NumberUid()
-
-                  let falg = true
-                  copyTasks.tasks.forEach((item) => {
-                    if (item.defaultId === task.defaultId) {
-                      falg = false
-                    }
-                  })
-                  if (falg) {
-                    copyTasks.tasks.push(task)
-                  }
-                }
-              }, defaultTaskId)
-            }
-
-            checkRow(id, selectTaskParentId)
-          } else {
-            // 子级
-            let task = JSON.parse(JSON.stringify(ganttObject.getTask(id)))
-            task.defaultId = id
-            task.parent = selectTaskParentId
-            task.planInfoId = vueThis.planInfoId
-            task.id = get32NumberUid()
-            let falg = true
-            copyTasks.tasks.forEach((item) => {
-              if (item.defaultId === task.defaultId) {
-                falg = false
-              }
-            })
-            if (falg) {
-              copyTasks.tasks.push(task)
-            }
-          }
-        })
-      }
-      let managerStatus = ''
-      if (vueThis.thirdMenuParam.EXECUTESTATE === '1000' || vueThis.thirdMenuParam.MANAGESTATUS === '6609') {
-        managerStatus = '6401'
-      }
-      if (vueThis.thirdMenuParam.EXECUTESTATE === '1070' || vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
-        managerStatus = '6403'
-      }
-      if (vueThis.thirdMenuParam.EXECUTESTATE === '1010') {
-        managerStatus = '6402'
-      }
-      copyTasks.tasks.forEach((el, index) => {
-        el.managerStatus = managerStatus
-        el.status = 6020
-        el.dutyDeptName = ''
-        el.realName = ''
-        ;(el.owner_id = ''), (el.start_date = moment(el.start_date).format('YYYY-MM-DD')), (el.end_date = moment(el.end_date).format('YYYY-MM-DD')), (el.indexNo = null)
-      })
-      createTaskByDatas(ganttObject, copyTasks.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
-      vueThis.copyTasks.tasks = []
-      vueThis.taskCount = ganttObject.getTaskCount()
-      if (copyTasks.activityInfos) {
-        copyTasks.activityInfos.forEach((item) => {
-          copyTasks.tasks.forEach((el) => {
-            if (item.taskId === el.defaultId) {
-              item.taskId = el.id
             }
           })
+        }
+        let managerStatus = ''
+        if (vueThis.thirdMenuParam.EXECUTESTATE === '1000' || vueThis.thirdMenuParam.MANAGESTATUS === '6609') {
+          managerStatus = '6401'
+        }
+        if (vueThis.thirdMenuParam.EXECUTESTATE === '1070' || vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
+          managerStatus = '6403'
+        }
+        if (vueThis.thirdMenuParam.EXECUTESTATE === '1010') {
+          managerStatus = '6402'
+        }
+        copyTasks.tasks.forEach((el, index) => {
+          el.managerStatus = managerStatus
+          el.status = 6020
+          el.weatherControl = '0'
+          el.dutyDeptName = ''
+          el.realName = ''
+          ;(el.owner_id = ''), (el.start_date = moment(el.start_date).format('YYYY-MM-DD')), (el.end_date = moment(el.end_date).format('YYYY-MM-DD')), (el.indexNo = null)
         })
-      }
-      api['planGanttManager.pasteTasks']({
-        pasteData: copyTasks,
-        parentId: selId,
-        selectTaskId: selId,
-        type: type,
-        planInfoId: planInfoId,
-        createPage: vueThis.createPage
-      })
-        .then(function (res) {
-          if (res) {
-            // 刷新样式
-            if (res.styles) {
-              store.dispatch('setTaskStyles', res.styles)
+        createTaskByDatas(ganttObject, copyTasks.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
+        vueThis.copyTasks.tasks = []
+        vueThis.taskCount = ganttObject.getTaskCount()
+        if (copyTasks.activityInfos) {
+          copyTasks.activityInfos.forEach((item) => {
+            copyTasks.tasks.forEach((el) => {
+              if (item.taskId === el.defaultId) {
+                item.taskId = el.id
+              }
+            })
+          })
+        }
+        api['planGanttManager.pasteTasks']({
+          pasteData: copyTasks,
+          parentId: selId,
+          selectTaskId: selId,
+          type: type,
+          planInfoId: planInfoId,
+          createPage: vueThis.createPage
+        })
+          .then(function (res) {
+            if (res) {
+              // 刷新样式
+              if (res.styles) {
+                store.dispatch('setTaskStyles', res.styles)
+              }
+              // 刷新资源
+              if (res.resources) {
+                ganttObject.$resourcesStore.parse(res.resources)
+              }
+              // let managerStatus = ''
+              // if (vueThis.thirdMenuParam.MANAGESTATUS === '6609' || vueThis.thirdMenuParam.EXECUTESTATE === '1000') {
+              //   managerStatus = '6401'
+              // } if (vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
+              //   managerStatus = '6403'
+              // } else {
+              //   managerStatus = '6402'
+              // }
+              // if (res.tasks) {
+              //   res.tasks.forEach(el => {
+              //     el.managerStatus = managerStatus
+              //     el.dutyDeptName = ''
+              //     el.realName = ''
+              //     el.owner_id = ''
+              //   })
+              //   createTaskByDatas(ganttObject, res.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
+              //   vueThis.taskCount = ganttObject.getTaskCount()
+              // }
+            } else {
+              vueThis.$message({
+                message: '复制的任务已被删除，请重新复制任务后粘贴!',
+                type: 'error'
+              })
+              ganttObject.undo()
+              copyTasks.tasks.forEach((item) => {
+                ganttObject.deleteTask(item.id)
+              })
             }
-            // 刷新资源
-            if (res.resources) {
-              ganttObject.$resourcesStore.parse(res.resources)
-            }
-            // let managerStatus = ''
-            // if (vueThis.thirdMenuParam.MANAGESTATUS === '6609' || vueThis.thirdMenuParam.EXECUTESTATE === '1000') {
-            //   managerStatus = '6401'
-            // } if (vueThis.thirdMenuParam.MANAGESTATUS === '6630') {
-            //   managerStatus = '6403'
-            // } else {
-            //   managerStatus = '6402'
-            // }
-            // if (res.tasks) {
-            //   res.tasks.forEach(el => {
-            //     el.managerStatus = managerStatus
-            //     el.dutyDeptName = ''
-            //     el.realName = ''
-            //     el.owner_id = ''
-            //   })
-            //   createTaskByDatas(ganttObject, res.tasks, parentTask.id, 'paste', null, '任务粘贴成功！', dpObj, selIndexNo)
-            //   vueThis.taskCount = ganttObject.getTaskCount()
-            // }
-          } else {
+          })
+          .catch((err) => {
+            console.error(err, 'err')
             vueThis.$message({
               message: '复制的任务已被删除，请重新复制任务后粘贴!',
               type: 'error'
@@ -3774,19 +3843,8 @@ function pasteTask(ganttObject, tasks, vueThis, type, dpObj) {
             copyTasks.tasks.forEach((item) => {
               ganttObject.deleteTask(item.id)
             })
-          }
-        })
-        .catch((err) => {
-          console.error(err, 'err')
-          vueThis.$message({
-            message: '复制的任务已被删除，请重新复制任务后粘贴!',
-            type: 'error'
           })
-          ganttObject.undo()
-          copyTasks.tasks.forEach((item) => {
-            ganttObject.deleteTask(item.id)
-          })
-        })
+      }
     }
   }
 }
