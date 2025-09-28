@@ -178,7 +178,7 @@ export default {
         const tab_1 = res.find(item => item.id === 'APPROVE_TYPE_02_01')
         const tab_2 = res.find(item => item.id === 'APPROVE_TYPE_02_02')
         const tab_3 = res.find(item => item.id === 'APPROVE_TYPE_01_01')
-        const tab_4 = res.find(item => item.id === 'APPROVE_TYPE_01_01')
+        const tab_4 = res.find(item => item.id === 'APPROVE_TYPE_01_02')
         const tabs = [tab_1,tab_2,tab_3,tab_4]
         this.mobileCatalogData = tabs.map((item) => {
             return {
