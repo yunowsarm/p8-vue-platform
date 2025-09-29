@@ -1410,6 +1410,157 @@ export const system = {
       params: {},
       desc: '数据字典管理-启用'
     }
+  ],
+  integratedManagement: [
+    {
+      name: 'thirdPartyExecuteByServer',
+      method: 'POST',
+      path: '/thirdparty/server/thirdPartyExecute',
+      mockPath: '/thirdparty/server/thirdPartyExecute',
+      desc: '内置服务端通用调用接口'
+    },
+    {
+      name: 'thirdPartyExecuteByClient',
+      method: 'POST',
+      path: '/thirdparty/client/thirdPartyExecute',
+      mockPath: '/thirdparty/client/thirdPartyExecute',
+      desc: '内置客户端通用调用接口'
+    },
+    {
+      name: 'serviceRetryList',
+      method: 'POST',
+      path: '/interface/serviceRetryList',
+      mockPath: '/interface/serviceRetryList',
+      desc: '查看第三方接口异常'
+    },
+    {
+      name: 'doServiceRetry',
+      method: 'POST',
+      path: '/interface/doServiceRetry',
+      mockPath: '/interface/doServiceRetry',
+      desc: '异常监控-服务重试'
+    },
+    {
+      name: 'describe',
+      method: 'POST',
+      path: '/interface/describe',
+      mockPath: '/interface/describe',
+      desc: '接口说明'
+    },
+    {
+      name: 'getEnable',
+      method: 'POST',
+      path: '/interface/getEnable',
+      mockPath: '/interface/getEnable',
+      desc: '启用/禁用'
+    },
+    {
+      name: 'getAuthType',
+      method: 'POST',
+      path: '/interface/getAuthType',
+      mockPath: '/interface/getAuthType',
+      desc: '获取认证类型'
+    },
+    {
+      name: 'getThirdUser',
+      method: 'POST',
+      path: '/interface/getThirdUser',
+      mockPath: '/interface/getThirdUser',
+      desc: '授权用户列表'
+    },
+    {
+      name: 'getTools',
+      method: 'POST',
+      path: '/interface/getTools',
+      mockPath: '/interface/getTools',
+      desc: '工具列表'
+    },
+    {
+      name: 'getCustomises',
+      method: 'POST',
+      path: '/interface/getCustomises',
+      mockPath: '/interface/getCustomises',
+      desc: '获取自定义处理器'
+    },
+    {
+      name: 'getCommandParam',
+      method: 'POST',
+      path: '/interface/getCommandParam',
+      mockPath: '/interface/getCommandParam',
+      desc: '查看执行链参数'
+    },
+    {
+      name: 'serverSave',
+      method: 'POST',
+      path: '/thirdparty/server/save',
+      mockPath: '/thirdparty/server/save',
+      desc: '服务端保存'
+    },
+    {
+      name: 'serverList',
+      method: 'POST',
+      path: '/thirdparty/server/dataList',
+      mockPath: '/thirdparty/server/dataList',
+      desc: '服务端列表'
+    },
+    {
+      name: 'serverData',
+      method: 'POST',
+      path: '/thirdparty/server/data',
+      mockPath: '/thirdparty/server/data',
+      desc: '服务端详情'
+    },
+    {
+      name: 'serverDelete',
+      method: 'POST',
+      path: '/thirdparty/server/delete',
+      mockPath: '/thirdparty/server/delete',
+      desc: '服务端删除'
+    },
+
+    {
+      name: 'serverDebug',
+      method: 'POST',
+      path: '/thirdparty/server/debug',
+      mockPath: '/thirdparty/server/debug',
+      desc: '服务端调试'
+    },
+    {
+      name: 'clientSave',
+      method: 'POST',
+      path: '/thirdparty/client/save',
+      mockPath: '/thirdparty/client/save',
+      desc: '客户端保存'
+    },
+    {
+      name: 'clientList',
+      method: 'POST',
+      path: '/thirdparty/client/dataList',
+      mockPath: '/thirdparty/client/dataList',
+      desc: '客户端列表'
+    },
+    {
+      name: 'clientData',
+      method: 'POST',
+      path: '/thirdparty/client/data',
+      mockPath: '/thirdparty/client/data',
+      desc: '客户端详情'
+    },
+    {
+      name: 'clientDelete',
+      method: 'POST',
+      path: '/thirdparty/client/delete',
+      mockPath: '/thirdparty/client/delete',
+      desc: '客户端删除'
+    },
+
+    {
+      name: 'clientDebug',
+      method: 'POST',
+      path: '/thirdparty/client/debug',
+      mockPath: '/thirdparty/client/debug',
+      desc: '客户端调试'
+    }
   ]
 }
 
