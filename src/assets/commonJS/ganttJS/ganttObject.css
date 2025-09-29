@@ -174,10 +174,10 @@
   cursor: pointer;
 }
 
-.el-popper {
-  width: auto;
-  max-width: 30%;
-}
+/*.el-popper {*/
+/*  width: auto;*/
+/*  max-width: 30%;*/
+/*}*/
 
 .el-notification {
   width: auto;
