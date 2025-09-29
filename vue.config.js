@@ -6,7 +6,7 @@ const { defineConfig } = require('@vue/cli-service')
 const SplitChunksPlugin = require('webpack').optimize.SplitChunksPlugin
 let version = require('./package.json')['version']
 version = 'V' + version
-// const TerserPlugin = require('terser-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 module.exports = defineConfig({
   runtimeCompiler: true,
@@ -29,76 +29,32 @@ module.exports = defineConfig({
           deleteOriginalAssets: false // 不删除原始文件
         }
       ])
-      // config.optimization.minimizer('terser').use(TerserPlugin, [
-      //   {
-      //     terserOptions: {
-      //       compress: {
-      //         drop_console: true,
-      //         drop_debugger: true,
-      //         pure_funcs: ['console.log', 'console.info', 'console.warn'],
-      //         pure_getters: true,
-      //         unused: true,
-      //         collapse_vars: true
-      //       },
-      //       mangle: {
-      //         properties: false,
-      //         keep_fnames: false,
-      //         keep_classnames: false,
-      //         toplevel: false
-      //       },
-      //       format: {
-      //         comments: false, // 移除注释
-      //         beautify: false
-      //       }
-      //     },
-      //     extractComments: false, // 不将注释提取到单独的文件中
-      //     parallel: true
-      //   }
-      // ])
-      // 更激进的Terser配置
-      config.optimization.minimizer('terser').tap((args) => {
-        args[0].terserOptions = {
-          compress: {
-            drop_console: true,
-            drop_debugger: true,
-            pure_funcs: ['console.log', 'console.info', 'console.warn', 'debugger'],
-            pure_getters: true,
-            unsafe: true,
-            unsafe_comps: true,
-            unsafe_math: true,
-            unsafe_methods: true,
-            unsafe_proto: true,
-            unsafe_regexp: true,
-            unsafe_undefined: true,
-            unused: true,
-            collapse_vars: true,
-            reduce_vars: true,
-            booleans: true,
-            loops: true
+      config.optimization.minimizer('terser').use(TerserPlugin, [
+        {
+          terserOptions: {
+            compress: {
+              drop_console: true,
+              drop_debugger: true,
+              pure_funcs: ['console.log', 'console.info', 'console.warn'],
+              pure_getters: true,
+              unused: true,
+              collapse_vars: true
+            },
+            mangle: {
+              properties: false,
+              keep_fnames: false,
+              keep_classnames: false,
+              toplevel: false
+            },
+            format: {
+              comments: false, // 移除注释
+              beautify: false
+            }
           },
-          mangle: {
-            toplevel: true, // 顶级变量名混淆
-            keep_fnames: false,
-            keep_classnames: false
-          },
-          output: {
-            comments: false,
-            beautify: false
-          }
+          extractComments: false, // 不将注释提取到单独的文件中
+          parallel: true
         }
-        return args
-      })
-
-      // // 添加Brotli压缩（比gzip效果更好）
-      // config.plugin('compression').use(CompressionPlugin, [
-      //   {
-      //     algorithm: 'brotliCompress',
-      //     test: /\.(js|css|html|svg)$/,
-      //     threshold: 10240,
-      //     minRatio: 0.8,
-      //     compressionOptions: { level: 11 }
-      //   }
-      // ])
+      ])
     }
     // config.output.filename(`js/[name].[hash:8].${version}.js`).end()
     // config.output.chunkFilename(`js/[name].[hash:8].${version}.js`).end()
