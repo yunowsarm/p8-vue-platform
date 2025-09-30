@@ -274,7 +274,7 @@ export default {
           this.$store
             .dispatch('userLogin', params)
             .then((res) => {
-              if (res === false) {
+              if (res && res.type === 'maintenance') {
                 this.$router.push('/Maintain')
               } else if (res && res.type === 'updatePassword') {
                 this.$prompt('请输入新密码', '提示', {
@@ -393,7 +393,7 @@ export default {
           this.$store
             .dispatch('userLogin', { ...this.loginForm })
             .then((res) => {
-              if (res === false) {
+              if (res && res.type === 'maintenance') {
                 this.$router.push('/Maintain')
               } else {
                 this.$router.push('/dash')

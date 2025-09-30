@@ -175,6 +175,8 @@ const user = {
               reject()
             } else if (res.type === 'updatePassword') {
               resolve(res)
+            } else if (res.type === 'maintenance'){
+              resolve(res)
             } else {
               commit('SET_TOKEN', res.token)
               resolve(res)
