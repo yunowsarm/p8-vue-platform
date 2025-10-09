@@ -18,7 +18,7 @@ const suspendIcon = '<i class="element_icon el-icon-error" style="color:#ff0000;
  * @author fukai
  * @date 2020/5/22 12:00
  */
-export function planGantt (ganttName, vueThis) {
+export function planGantt(ganttName, vueThis) {
   // 获取gantt对象
   const ganttObject = GanttObject.getGanttObject(ganttName)
   // 单元格键盘导航
@@ -126,7 +126,7 @@ export function planGantt (ganttName, vueThis) {
                       vueThis.fullscreen = false
                     }
                   })
-                  .catch(() => { })
+                  .catch(() => {})
               }
               return { action: 'ok' }
             } else if (res === 'false') {
@@ -178,7 +178,7 @@ export function planGantt (ganttName, vueThis) {
           // vueThis.initGantt()
         })
       },
-      update: function (data, id) { },
+      update: function (data, id) {},
       delete: function (id) {
         return new ganttObject.Promise((resolve, reject) => {
           api['planGanttManager.removePlanGanttLink']({ id: id })
@@ -201,7 +201,7 @@ export function planGantt (ganttName, vueThis) {
     }
   })
   // 事件绑定
-  Gantt.setControlTime = function setControlTime (monitorId, monitorName, taskId) {
+  Gantt.setControlTime = function setControlTime(monitorId, monitorName, taskId) {
     const task = ganttObject.getTask(taskId)
     const monitorLockMap = vueThis.monitorLockMap
     // 加锁逻辑控制
@@ -214,7 +214,7 @@ export function planGantt (ganttName, vueThis) {
     }
   }
   // 表头查询值绑定
-  Gantt.searchColumnsChange = function searchColumnsChange (name, value, searchType, eleInstance) {
+  Gantt.searchColumnsChange = function searchColumnsChange(name, value, searchType, eleInstance) {
     const customComp = ['select', 'date', 'input']
     if (customComp.indexOf(searchType) < 0) {
       document.getElementById(name + searchType).setAttribute('value', value)
@@ -240,7 +240,7 @@ export function planGantt (ganttName, vueThis) {
     vueThis.searchIds = []
     ganttObject.render()
   }
-  Gantt.taskProgressDetails = function taskProgressDetails (taskId) {
+  Gantt.taskProgressDetails = function taskProgressDetails(taskId) {
     if (vueThis.createPage === 'compile' || vueThis.createPage === 'decompose') {
       vueThis.reminderList.forEach((el) => {
         if (el.id === taskId) {
@@ -444,7 +444,7 @@ export function planGantt (ganttName, vueThis) {
   ganttObject.attachEvent('onBeforeTaskMultiSelect', function (id, state, e) {
     if (state) {
       if (!multipleState) {
-        vueThis.selectedTasks = []
+        // vueThis.selectedTasks = []
       }
       return true
     }
@@ -468,16 +468,9 @@ export function planGantt (ganttName, vueThis) {
   // 监听任务选中
   ganttObject.attachEvent('onTaskMultiSelect', function (id, state, e) {
     if (state) {
-      setTimeout(() => {
-        vueThis.selectedTasks.push(ganttObject.getTask(id))
-      })
+      vueThis.selectedTasks.push(ganttObject.getTask(id))
     } else {
-      const index = vueThis.selectedTasks.findIndex((i) => {
-        return i.id === id
-      })
-      if (index !== undefined) {
-        vueThis.selectedTasks.splice(index, 1)
-      }
+      vueThis.selectedTasks.splice(vueThis.selectedTasks.indexOf(ganttObject.getTask(id)), 1)
     }
   })
   // 右键菜单
@@ -543,7 +536,7 @@ export function planGantt (ganttName, vueThis) {
  * @param vueThis
  * @returns {({template: template, name: string, width: number, resize: boolean, label: string, align: string}|{template: template, name: string, width: number, resize: boolean, label: string, align: string}|{template: (function(*=): string), name: string, resize: boolean, label: string, align: string, min_width: number}|{template: (function(*): string), name: string, width: number, resize: boolean, label: string, align: string}|{template: (function(*=): string), name: string, resize: boolean, label: string, align: string, min_width: number})[]}
  */
-export function getGanttColumns (ganttObject, vueThis) {
+export function getGanttColumns(ganttObject, vueThis) {
   ganttObject.serverList('yesOron', [
     { key: '1', label: '是' },
     { key: '0', label: '否' }
@@ -600,7 +593,7 @@ export function getGanttColumns (ganttObject, vueThis) {
   // 加载编辑器
   const editors = GanttObject.editors(ganttObject, formatter, linksFormatter)
 
-  function checkEdit () {
+  function checkEdit() {
     if (vueThis.pageName === 'planMonitor') {
       return false
     } else {
@@ -914,8 +907,8 @@ export function getGanttColumns (ganttObject, vueThis) {
       align: 'center',
       min_width: 200,
       resize: true,
-      editor:true,
-      template: function(task) {
+      editor: true,
+      template: function (task) {
         return task.budgetInfo || 0
       }
     },
@@ -1202,4 +1195,4 @@ export function getGanttColumns (ganttObject, vueThis) {
   ]
 }
 
-export function planMonitorAdd (ganttObject, vueThis) { }
+export function planMonitorAdd(ganttObject, vueThis) {}
