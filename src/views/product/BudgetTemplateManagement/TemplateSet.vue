@@ -395,7 +395,7 @@ export default {
             </template>
             <template #operation="{ scope }">
               <el-button type="text" @click="setFormula(scope.row)">
-                <i class="p8 icon-jisuanqi"></i>
+                <i class="icon-jisuanqi_o p8"></i>
               </el-button>
               <el-button type="text" @click="removeSubject(scope.row, 'subjectBaseid')">
                 <i class="p8 icon-shanchu"></i>
