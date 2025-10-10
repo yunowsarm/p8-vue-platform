@@ -231,7 +231,11 @@ export default {
     rowClick (row) {
       this.getTemplateDetail(row.ID)
     },
-    editClosed () {
+    editActivated({row}){
+      this.oldAmount = row.amount
+    },
+    editClosed ({row}) {
+      if(row.amount === this.oldAmount) return
       this.$api['budgetDeclaration.dataCalculation']({ declarationRequests: this.tableData }).then((res) => {
         res.forEach((item) => {
           const node = this.tableData.find((n) => n.subjectBaseid === item.subjectBaseid)
@@ -277,6 +281,7 @@ export default {
                  :tableConfig="tableConfig"
                  :tree-config="treeConfig"
                  :edit-config="editConfig"
+                 @edit-activated='editActivated'
                  @edit-closed="editClosed">
         <vxe-column type="seq"
                     title="序号"

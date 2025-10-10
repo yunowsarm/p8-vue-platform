@@ -140,7 +140,11 @@ export default {
       this.currentTask = row
       this.queryDeclaration(row.id)
     },
-    editClosed() {
+    editActivated({row}){
+      this.oldAmount = row.amount
+    },
+    editClosed({row}){
+      if(row.amount === this.oldAmount) return
       this.$api['budgetDeclaration.dataCalculation']({ declarationRequests: this.subjectList }).then((res) => {
         res.forEach((item) => {
           const node = this.subjectList.find((n) => n.subjectBaseid === item.subjectBaseid)
@@ -188,6 +192,7 @@ export default {
             :tableConfig="tableConfig"
             :tree-config="treeConfig"
             :edit-config="editConfig"
+            @edit-activated='editActivated'
             @edit-closed="editClosed"
           >
             <vxe-column type="seq" title="序号" width="50"></vxe-column>

@@ -113,7 +113,8 @@ export default {
       subjectList: [],
       visible: false,
       submitLoading:false,
-      viewVisible: false
+      viewVisible: false,
+      oldAmount:null
     }
   },
   async created() {
@@ -209,7 +210,11 @@ export default {
     rowClick(row) {
       this.getTemplateDetail(row.ID)
     },
-    editClosed(){
+    editActivated({row}){
+      this.oldAmount = row.amount
+    },
+    editClosed({row}){
+      if(row.amount === this.oldAmount) return
       this.$api['budgetDeclaration.dataCalculation']({declarationRequests:this.tableData}).then(res => {
         res.forEach(item => {
           const node = this.tableData.find(n => n.subjectBaseid === item.subjectBaseid)
@@ -245,7 +250,7 @@ export default {
 <template>
   <div style="height: 100%">
     <div style='height: calc(100% - 50px)'>
-      <vxe-table class="main-table" height='100%' border keep-source ref="table" align="center" :data="tableData" :tableConfig="tableConfig" :tree-config="treeConfig" :edit-config="editConfig" @edit-closed='editClosed'>
+      <vxe-table class="main-table" height='100%' border keep-source ref="table" align="center" :data="tableData" :tableConfig="tableConfig" :tree-config="treeConfig" :edit-config="editConfig" @edit-activated='editActivated' @edit-closed='editClosed'>
         <vxe-column type="seq" title="序号" width="50"></vxe-column>
         <vxe-column field="name" title="科目名称" tree-node align="left" header-align="center"></vxe-column>
         <vxe-column field="code" title="科目编号"></vxe-column>

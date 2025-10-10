@@ -58,7 +58,11 @@ export default {
         this.tableData = res.filter((item) => item.subjectBasePid)
       })
     },
-    editClosed({ row }) {
+    editActivated({row}){
+      this.oldAmount = row.actualAmount
+    },
+    editClosed({row}){
+      if(row.actualAmount === this.oldAmount) return
       if (this.carryOutBudgetControl === '1' && Number(row.actualAmount > row.amount)) {
         this.$set(row, 'actualAmount', row.amount)
         this.$message.error('实际金额不可超出预算金额')
@@ -145,6 +149,7 @@ export default {
         :tree-config="treeConfig"
         :edit-config="editConfig"
         :cell-class-name="cellClassName"
+        @edit-activated='editActivated'
         @edit-closed="editClosed"
       >
         <vxe-column type="seq" title="序号" width="50"></vxe-column>
