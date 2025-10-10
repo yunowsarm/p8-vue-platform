@@ -167,11 +167,13 @@ export default {
           <vxe-column field="amount"
                       title="变更预算金额"
                       :edit-render="{
-            name: 'VxeInput',
+            name: 'VxeNumberInput',
             immediate: true,
             showNegativeStatus: true,
             props: {
-              min: 0
+              min: 0,
+              type: 'amount',
+              digits: 6
             }
           }"></vxe-column>
           <vxe-column field="type"

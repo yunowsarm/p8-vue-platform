@@ -16,9 +16,9 @@ export default {
   },
   data() {
     return {
-      mode:'',
+      mode: '',
       tableData: [],
-      analysisData:[],
+      analysisData: [],
       tableConfig: {
         showOverflowTooltip: true
       },
@@ -34,26 +34,26 @@ export default {
         mode: 'cell',
         showStatus: true,
         beforeEditMethod: ({ row, column }) => {
-          return (row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && this.mode === 'analysis';
+          return (row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && this.mode === 'analysis'
         }
-      },
+      }
     }
   },
-  watch:{
-    taskId:{
-      handler(val){
-        if(val){
+  watch: {
+    taskId: {
+      handler(val) {
+        if (val) {
           this.queryDeclaration(val)
         }
       },
-      immediate:true
+      immediate: true
     },
-    mode:{
-      handler(val){
-        if(val === 'pool'){
+    mode: {
+      handler(val) {
+        if (val === 'pool') {
           this.getPoolInfo(val)
           this.editConfig.showStatus = false
-        }else{
+        } else {
           this.editConfig.showStatus = true
           this.tableData = _cloneDeep(this.analysisData)
           this.$nextTick(() => {
@@ -61,23 +61,25 @@ export default {
           })
         }
       },
-      immediate:true
+      immediate: true
     }
   },
-  methods:{
-    queryDeclaration(id){
-      this.$api['planGanttManager.queryDeclaration']({taskId: id, type:'plan'}).then(res => {
-        this.tableData = res.filter(item => item.subjectBasePid).map(item => {
-          return {
-            ...item,
-            amount: item.amount ?? 0
-          }
-        })
+  methods: {
+    queryDeclaration(id) {
+      this.$api['planGanttManager.queryDeclaration']({ taskId: id, type: 'plan' }).then((res) => {
+        this.tableData = res
+          .filter((item) => item.subjectBasePid)
+          .map((item) => {
+            return {
+              ...item,
+              amount: item.amount ?? 0
+            }
+          })
         this.mode = this.tableData[0].type || 'pool'
-        if(this.mode === 'analysis'){
+        if (this.mode === 'analysis') {
           this.analysisData = _cloneDeep(this.tableData)
-        }else{
-          const arr = res.map(item => {
+        } else {
+          const arr = res.map((item) => {
             return {
               ...item,
               amount: 0
@@ -87,42 +89,42 @@ export default {
         }
       })
     },
-    getPoolInfo(){
-      this.$api['planGanttManager.getPoolInfoByTaskId']({taskId: this.taskId}).then(res => {
-        res.forEach(item => {
-          const node = this.tableData.find(n => n.subjectBaseid === item.subjectBaseid)
+    getPoolInfo() {
+      this.$api['planGanttManager.getPoolInfoByTaskId']({ taskId: this.taskId }).then((res) => {
+        res.forEach((item) => {
+          const node = this.tableData.find((n) => n.subjectBaseid === item.subjectBaseid)
           node.amount = item.amount ?? 0
         })
       })
     },
-    save(){
+    save() {
       const params = {
         taskId: this.taskId,
         type: this.mode,
-        declarationRequests:this.tableData
+        declarationRequests: this.tableData
       }
-      this.$api['planGanttManager.saveDeclaration'](params).then(res => {
+      this.$api['planGanttManager.saveDeclaration'](params).then((res) => {
         console.log(res)
-        if(res.result){
-          this.$message.success("保存成功")
-          this.$emit("save-success")
-        }else{
+        if (res.result) {
+          this.$message.success('保存成功')
+          this.$emit('save-success')
+        } else {
           this.$message.error(res.resultMsg)
         }
       })
     },
-    editActivated({row}){
+    editActivated({ row }) {
       this.oldAmount = row.amount
     },
-    editClosed({row}){
-      if(row.amount === this.oldAmount) return
-      this.$api['budgetDeclaration.dataCalculation']({declarationRequests:this.tableData}).then(res => {
-        res.forEach(item => {
-          const node = this.tableData.find(n => n.subjectBaseid === item.subjectBaseid)
+    editClosed({ row }) {
+      if (row.amount === this.oldAmount) return
+      this.$api['budgetDeclaration.dataCalculation']({ declarationRequests: this.tableData }).then((res) => {
+        res.forEach((item) => {
+          const node = this.tableData.find((n) => n.subjectBaseid === item.subjectBaseid)
           node.amount = item.amount
         })
       })
-    },
+    }
   }
 }
 </script>
@@ -131,7 +133,7 @@ export default {
   <div style="height: 100%">
     <div class="mode-area">
       <label class="label">
-        <span style='margin-right: 4px'>预算编制模式</span>
+        <span style="margin-right: 4px">预算编制模式</span>
         <el-tooltip placement="top" content="汇总模式将通过子任务预算合计生成父任务预算；分解模式将先设置父任务预算，子任务预算基于父任务预算进行分解。">
           <i class="p8 icon-help-tips" />
         </el-tooltip>
@@ -144,7 +146,7 @@ export default {
     <div class="main-table">
       <vxe-table
         border
-        height='100%'
+        height="100%"
         keep-source
         ref="table"
         align="center"
@@ -152,7 +154,7 @@ export default {
         :tableConfig="tableConfig"
         :tree-config="treeConfig"
         :edit-config="editConfig"
-        @edit-activated='editActivated'
+        @edit-activated="editActivated"
         @edit-closed="editClosed"
       >
         <vxe-column type="seq" title="序号" width="50"></vxe-column>
@@ -161,13 +163,15 @@ export default {
           field="amount"
           title="预算金额"
           :edit-render="{
-          name: 'VxeNumberInput',
-          immediate: true,
-          showNegativeStatus: true,
-          props:{
-            min: 0
-          }
-        }"
+            name: 'VxeNumberInput',
+            immediate: true,
+            showNegativeStatus: true,
+            props: {
+              min: 0,
+              type: 'amount',
+              digits: 6
+            }
+          }"
           class-name="amount-cell"
           style="padding: 0 6px"
         ></vxe-column>
@@ -182,10 +186,12 @@ export default {
 <style scoped lang="scss">
 .mode-area {
   padding: 10px;
+
   .label {
     margin-right: 12px;
   }
 }
+
 .button-area {
   border-top: 1px solid #e1e1e1;
   text-align: end;

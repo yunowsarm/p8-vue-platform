@@ -58,11 +58,11 @@ export default {
         this.tableData = res.filter((item) => item.subjectBasePid)
       })
     },
-    editActivated({row}){
+    editActivated({ row }) {
       this.oldAmount = row.actualAmount
     },
-    editClosed({row}){
-      if(row.actualAmount === this.oldAmount) return
+    editClosed({ row }) {
+      if (row.actualAmount === this.oldAmount) return
       if (this.carryOutBudgetControl === '1' && Number(row.actualAmount > row.amount)) {
         this.$set(row, 'actualAmount', row.amount)
         this.$message.error('实际金额不可超出预算金额')
@@ -97,19 +97,20 @@ export default {
         this.$refs.table.setAllTreeExpand(true)
       })
     },
-    downloadFile(row){
+    downloadFile(row) {
       const item = row.attachments[0]
       if (item.id) {
-        this.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' }).then(backJson => {
-          let link = document.createElement('a')
-          link.href = window.URL.createObjectURL(new Blob([backJson.data]))
-          link.download = item.fileName
-          document.body.appendChild(link)
-          link.click()
-          window.URL.revokeObjectURL(link.href)
-          document.body.removeChild(link)
-        }).finally(() => {
-        })
+        this.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' })
+          .then((backJson) => {
+            let link = document.createElement('a')
+            link.href = window.URL.createObjectURL(new Blob([backJson.data]))
+            link.download = item.fileName
+            document.body.appendChild(link)
+            link.click()
+            window.URL.revokeObjectURL(link.href)
+            document.body.removeChild(link)
+          })
+          .finally(() => {})
       }
     },
     save() {
@@ -134,10 +135,10 @@ export default {
 
 <template>
   <div class="main-area">
-<!--    <div v-if="approveType" class="button-area" style="text-align: start">-->
-<!--      <el-button type="primary">导入</el-button>-->
-<!--    </div>-->
-    <div :class="$route.name ==='TaskExecution'? 'main-table': 'main-table-approve'">
+    <!--    <div v-if="approveType" class="button-area" style="text-align: start">-->
+    <!--      <el-button type="primary">导入</el-button>-->
+    <!--    </div>-->
+    <div :class="$route.name === 'TaskExecution' ? 'main-table' : 'main-table-approve'">
       <vxe-table
         ref="table"
         height="100%"
@@ -149,7 +150,7 @@ export default {
         :tree-config="treeConfig"
         :edit-config="editConfig"
         :cell-class-name="cellClassName"
-        @edit-activated='editActivated'
+        @edit-activated="editActivated"
         @edit-closed="editClosed"
       >
         <vxe-column type="seq" title="序号" width="50"></vxe-column>
@@ -163,7 +164,9 @@ export default {
             immediate: true,
             showNegativeStatus: true,
             props: {
-              min: 0
+              min: 0,
+              type: 'amount',
+              digits: 6
             }
           }"
           class-name="amount-cell"
@@ -177,7 +180,7 @@ export default {
               </div>
             </common-upload>
             <div v-else class="row-file">
-              <span :class="!approveType ? 'file-name' : ''" @click='downloadFile(row)'>{{ row?.attachments ? row?.attachments[0]?.fileName : '' }}</span>
+              <span :class="!approveType ? 'file-name' : ''" @click="downloadFile(row)">{{ row?.attachments ? row?.attachments[0]?.fileName : '' }}</span>
               <i v-if="approveType" class="el-icon-close" @click="deleteFile(row)"></i>
             </div>
           </template>
@@ -204,7 +207,8 @@ export default {
 .main-table {
   height: calc(100% - 106px);
 }
-.main-table-approve{
+
+.main-table-approve {
   height: 100%;
 }
 
@@ -233,16 +237,19 @@ export default {
     opacity: 1;
   }
 }
-.file-name{
+
+.file-name {
   cursor: pointer;
   color: #409eff;
   text-decoration: none;
   transition: all 0.2s;
 }
-.file-name:hover{
+
+.file-name:hover {
   color: #66b1ff;
   text-decoration: underline;
 }
+
 ::v-deep .cell-red {
   color: #f56c6c;
 }

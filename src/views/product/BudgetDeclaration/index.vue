@@ -262,7 +262,9 @@ export default {
           immediate: true,
           showNegativeStatus: true,
           props:{
-            min: 0
+            min: 0,
+            type:'amount',
+            digits: 6
           }
         }"
           class-name="amount-cell"
