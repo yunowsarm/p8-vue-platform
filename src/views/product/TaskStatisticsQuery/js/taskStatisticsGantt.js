@@ -753,6 +753,16 @@ function getGanttColumns (ganttObject, vueThis) {
       }
     },
     {
+      name: 'budget',
+      label: '预算',
+      align: 'center',
+      min_width: 200,
+      resize: true,
+      template: function (task) {
+        return task.budgetInfo || 0
+      }
+    },
+    {
       name: 'progress',
       label: '完成度',
       align: 'center',
