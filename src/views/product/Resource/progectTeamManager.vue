@@ -33,6 +33,7 @@
           <div class="left_bottom_content">
             <div class="role-con">
               <el-button type="plan"
+                         v-if="$route.name !=='projectMonitor'"
                          style="margin: 5px; width: 90%"
                          @click="addRolesHandle"><i class="el-icon-plus"></i> 新建角色类别
               </el-button>
@@ -579,7 +580,11 @@ export default {
     }
   },
   mounted () {
-    console.log(this.row, 'rowrowrowrowrowrowrowrowrowrowrowrowrowrow');
+    if (this.$route.name === 'projectMonitor') {
+      this.uploadView = true
+      this.group_add_role = false
+      this.group_add_member = false
+    }
     if (this.row[0] && this.row[0].WHOLE_ID) {
       this.id = this.row[0].WHOLE_ID
     }

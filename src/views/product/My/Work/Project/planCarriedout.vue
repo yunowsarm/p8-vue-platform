@@ -25,7 +25,7 @@
                        @planEdit="planEdit"
                        :pagination="false"
                        :record=row[0]
-                       code="myProjectPlanList">
+                       :code="tableCode">
           <template #status="{ scope }">
             <el-tooltip effect="dark"
                         :content="getIconTitle(scope.row)"
@@ -60,11 +60,15 @@
         <ChangeGantt :key="dateTime"
                      v-if="type === 2"
                      :thirdMenuParam="thirdMenuParam"
-                     pageType=true></ChangeGantt>
+                     :pageType=pageType></ChangeGantt>
         <PlanWarning :key="dateTime"
                      v-if="type === 3"
                      :thirdMenuParam="thirdMenuParam"
-                     pageType=true></PlanWarning>
+                     :pageType=pageType></PlanWarning>
+        <MonitoringGantt :key="dateTime"
+                         v-if="type === 4"
+                         :thirdMenuParam="thirdMenuParam"
+                         :pageType=pageType></MonitoringGantt>
       </div>
     </template>
   </left-center-right-layout>
@@ -76,6 +80,7 @@ import PlanGantt from '@/views/product/PlanGantt/index.vue'
 import kanbanView from '@/views/Framework/System/KanbanDesign/kanbanView.vue'
 import ChangeGantt from '@/views/product/ChangeGantt/index.vue'
 import PlanWarning from '@/views/product/PlanWarning/index.vue'
+import MonitoringGantt from '@/views/product/MonitoringGantt/index.vue'
 import FormRender from '@/views/Framework/ComponentsMananger/Form/Components/Components/edit.vue'
 
 export default {
@@ -101,13 +106,30 @@ export default {
         code: 'ProjectOverview'
       },
       toolbarTextDisplay: this.$store.getters.baseConfig.toolbarTextDisplay,
-      dateTime: ''
+      dateTime: '',
+      pageType: true
     }
   },
   computed: {
   },
   mounted () {
+    if (this.$route.name === 'projectMonitor') {
+      this.tableCode = 'myProjectPlanMonitrorList'
+      this.pageType = false
+    } else {
+      this.tableCode = 'myProjectPlanList'
+    }
     this.getIconData()
+    // this.$nextTick(() => {
+    //   console.log(this.$refs.tableRender, '11111111111111111111');
+    //   if (this.$refs.tableRender.$refs.xTable.tableData.length > 0) {
+    //     this.thirdMenuParam = this.$refs.tableRender.$refs.xTable.tableData[0]
+    //     this.type = '0'
+    //     this.paneTitle = '计划编制'
+    //     console.log("🚀 ~ this.$nextTick ~ this.thirdMenuParam:", this.thirdMenuParam)
+    //     this.dateTime = new Date().getTime()
+    //   }
+    // })
   },
   methods: {
     planEdit (val) {
@@ -128,6 +150,9 @@ export default {
       }
       if (val === 3) {
         this.paneTitle = '计划预警'
+      }
+      if (val === 4) {
+        this.paneTitle = '计划监控'
       }
       this.dateTime = new Date().getTime()
     },
@@ -204,8 +229,13 @@ export default {
     thirdMenuClick (record) {
       this.$refs.tableRender.$refs.xTable.$refs.table.clearCheckboxRow()
       if (this.type === null) {
-        this.type = 0
-        this.paneTitle = '计划编制'
+        if (this.$route.name === 'projectMonitor') {
+          this.type = 4
+          this.paneTitle = '计划监控'
+        } else {
+          this.type = 0
+          this.paneTitle = '计划编制'
+        }
       }
       this.$refs.tableRender.$refs.xTable.$refs.table.setCheckboxRow(record, true)
       this.thirdMenuParam = record
@@ -220,7 +250,8 @@ export default {
     kanbanView,
     ChangeGantt,
     PlanWarning,
-    FormRender
+    FormRender,
+    MonitoringGantt
   }
 }
 </script>
