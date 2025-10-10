@@ -23,6 +23,7 @@
         <P8TableRender ref="tableRender"
                        buttonMoreLen=2
                        @planEdit="planEdit"
+                       :pagination="false"
                        :record=row[0]
                        code="myProjectPlanList">
           <template #status="{ scope }">
@@ -33,7 +34,7 @@
               <span v-html="getIcon(scope.row)"></span>
             </el-tooltip>
           </template>
-          <template #planName="{ scope }">
+          <template #name="{ scope }">
             <div class="underline"
                  @click="thirdMenuClick(scope.row)">{{ scope.row.NAME }}</div>
           </template>
@@ -54,6 +55,7 @@
                    :thirdMenuParam="thirdMenuParam"></PlanGantt>
         <kanban-view :key="dateTime"
                      v-if="type === 1"
+                     :thirdMenuParam="thirdMenuParam"
                      :kanbanConfig='kanbanConfig'></kanban-view>
         <ChangeGantt :key="dateTime"
                      v-if="type === 2"
@@ -109,6 +111,10 @@ export default {
   },
   methods: {
     planEdit (val) {
+      if (this.$refs.tableRender.selectRecords.length > 1) {
+        return this.$message.warning('只能选择一条数据')
+      }
+
       this.thirdMenuParam = this.$refs.tableRender.selectRecords[0]
       this.type = val
       if (val === 0) {
@@ -196,29 +202,15 @@ export default {
       return str
     },
     thirdMenuClick (record) {
-      // let item = {}
-      // const currentPath = this.$route.path
-      // const rootRouter = this.$store.state.routers.addRouters
-      // let thirdMenu = []
-      // if (rootRouter && rootRouter.length > 0) {
-      //   rootRouter.map(function (item, index) {
-      //     if (item.children && item.children.length > 0) {
-      //       item.children.map(function (subItem, idx) {
-      //         if (subItem.path === currentPath) {
-      //           thirdMenu = subItem
-      //         }
-      //       })
-      //     }
-      //   })
-      // }
-      // if (thirdMenu.children) {
-      //   thirdMenu.children.forEach((el) => {
-      //     if (el.meta.title == '计划编制') {
-      //       item = el
-      //     }
-      //   })
-      // }
-      // this.$refs.tableRender.thirdMenuClick(record, item)
+      this.$refs.tableRender.$refs.xTable.$refs.table.clearCheckboxRow()
+      if (this.type === null) {
+        this.type = 0
+        this.paneTitle = '计划编制'
+      }
+      this.$refs.tableRender.$refs.xTable.$refs.table.setCheckboxRow(record, true)
+      this.thirdMenuParam = record
+      this.$refs.tableRender.selectRecords = [record]
+      this.dateTime = new Date().getTime()
     },
   },
   components: {

@@ -39,24 +39,24 @@ export default {
       })
     }
 
-    window.addEventListener('resize', this.fit)
+    // window.addEventListener('resize', this.fit)
   },
   updated () {
-    this.fit()
+    // this.fit()
   },
   beforeDestroy () {
-    window.removeEventListener('resize', this.fit)
+    // window.removeEventListener('resize', this.fit)
   },
   methods: {
-    fit () {
-      const amount = this.$refs.amount
-      const amountContent = this.$refs['amount-content']
-      if (!amount || !amountContent) return
-      amountContent.style.transform = "scale(1)"
-      const scale = amount.offsetWidth / amountContent.scrollWidth
-      amountContent.style.transform = `scale(${scale})`
-      amountContent.style.transformOrigin = "center center"
-    }
+    // fit () {
+    //   const amount = this.$refs.amount
+    //   const amountContent = this.$refs['amount-content']
+    //   if (!amount || !amountContent) return
+    //   amountContent.style.transform = "scale(1)"
+    //   const scale = amount.offsetWidth / amountContent.scrollWidth
+    //   amountContent.style.transform = `scale(${scale})`
+    //   amountContent.style.transformOrigin = "center center"
+    // }
   }
 }
 </script>
