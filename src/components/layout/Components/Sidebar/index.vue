@@ -100,7 +100,7 @@
                           <span v-if="child.meta && child.meta.title">
                             <span :style="{width: hoveredMenuItem == child.path ? 'calc(100% - 30px)' : '100%'}">{{ child.meta.title }}</span>
                             <i style="margin:0;width:16px;"
-                               v-if="$route.path == child.path && hoveredMenuItem == child.path"
+                               v-if="showIcon(child)"
                                class="el-icon-question"
                                @mouseenter="showOptions($event, child)">
                             </i>
@@ -464,6 +464,20 @@ export default {
         this.$store.dispatch('hideSidebar', true)
         this.$store.dispatch('collapseSidebar', !this.sidebarState.isOpen)
       }
+    },
+    showIcon (child) {
+      let flag = false
+      if (this.$route.path == child.path) {
+        flag = true
+      }
+      if (child.children && child.children.length) {
+        child.children.forEach(el => {
+          if (el.path == this.$route.path) {
+            flag = true
+          }
+        })
+      }
+      return flag && this.hoveredMenuItem == child.path
     }
   },
   components: {
