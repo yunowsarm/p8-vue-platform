@@ -665,6 +665,13 @@ export const repositoryApi = {
       desc: '项目管理->计划管理->计划编辑 -> 任务更新'
     },
     {
+      name: 'updateTask',
+      method: 'POST',
+      path: '/product/pm/plan/updateTask',
+      mockPath: '/product/pm/plan/updateTask',
+      desc: '项目管理->计划管理->计划编辑 -> 批量任务更新'
+    },
+    {
       name: 'createPlanGanttLink',
       method: 'POST',
       path: '/product/pm/plan/createPlanGanttLink',

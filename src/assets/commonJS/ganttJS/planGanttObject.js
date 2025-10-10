@@ -381,6 +381,7 @@ export function planGantt(ganttName, vueThis) {
               break
             case 'start_date':
             case 'end_date':
+            // case 'name':
             case 'autoScheduling':
               // 如果是编辑锁定状态,直接返回false
               if (vueThis.planEditLock === '1') {
@@ -444,7 +445,7 @@ export function planGantt(ganttName, vueThis) {
   ganttObject.attachEvent('onBeforeTaskMultiSelect', function (id, state, e) {
     if (state) {
       if (!multipleState) {
-        // vueThis.selectedTasks = []
+        vueThis.selectedTasks = []
       }
       return true
     }
@@ -468,9 +469,16 @@ export function planGantt(ganttName, vueThis) {
   // 监听任务选中
   ganttObject.attachEvent('onTaskMultiSelect', function (id, state, e) {
     if (state) {
+      // setTimeout(() => {
       vueThis.selectedTasks.push(ganttObject.getTask(id))
+      // })
     } else {
-      vueThis.selectedTasks.splice(vueThis.selectedTasks.indexOf(ganttObject.getTask(id)), 1)
+      const index = vueThis.selectedTasks.findIndex((i) => {
+        return i.id === id
+      })
+      if (index !== undefined) {
+        vueThis.selectedTasks.splice(index, 1)
+      }
     }
   })
   // 右键菜单
@@ -717,19 +725,28 @@ export function getGanttColumns(ganttObject, vueThis) {
             taskStyles += 'text-decoration: line-through underline;'
           }
           if (ganttObject.hasChild(task.id)) {
-            result = result + '<div class="text_overflow" style="display: inline-block;' + (taskStyles || '') + 'font-weight:bold;" title="' + (task.name || '') + '">' + (task.name || '') + '</div>'
+            result =
+              result +
+              '<div data-column-name="name" class="text_overflow" style="display: inline-block;' +
+              (taskStyles || '') +
+              'font-weight:bold;" title="' +
+              (task.name || '') +
+              '">' +
+              (task.name || '') +
+              '</div>'
           } else {
-            result = result + '<div class="text_overflow" style="display: inline-block;' + (taskStyles || '') + '" title="' + (task.name || '') + '">' + (task.name || '') + '</div>'
+            result =
+              result + '<div data-column-name="name" class="text_overflow" style="display: inline-block;' + (taskStyles || '') + '" title="' + (task.name || '') + '">' + (task.name || '') + '</div>'
           }
         } else {
           if (ganttObject.hasChild(task.id)) {
-            result = result + '<div class="text_overflow" style="display: inline-block;font-weight:bold;" title="' + (task.name || '') + '">' + (task.name || '') + '</div>'
+            result = result + '<div data-column-name="name" class="text_overflow" style="display: inline-block;font-weight:bold;" title="' + (task.name || '') + '">' + (task.name || '') + '</div>'
           } else {
             let icon = ''
             if (task.hasBusinessForm == 'true') {
               icon = `<i class='el-icon-s-order' title='该任务包含业务表单' style='color: #f59000; float: left; font-size: 16px; line-height: ${rowHeight}px;'></i>`
             }
-            result = icon + `<div title='${task.name}'>${task.name}</div>` || ''
+            result = icon + `<div data-column-name="name" title='${task.name}'>${task.name}</div>` || ''
           }
         }
         if (task.unDescribes === '1') result = `<i class='p8 icon-tishi' title='存在任务描述' style='color: #0ab847; float: left'></i>` + result
