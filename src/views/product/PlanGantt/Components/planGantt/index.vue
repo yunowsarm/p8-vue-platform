@@ -1994,7 +1994,11 @@ export default {
         createPage: "compile",
         planGanttRequestList: tasks
       }).then(res => {
-
+        if (!res) {
+          myGantt.undo()
+        }
+      }).catch((err) => {
+        myGantt.undo()
       })
     },
     // ClassificationSelect(ownerId, row) {
