@@ -238,7 +238,8 @@
                  :destroy-on-close="true"
                  @closed="budgetVisible = false"
                  :visible.sync="budgetVisible">
-        <budget :task-id="selectTaskId" @save-success='saveBudget'></budget>
+        <budget :task-id="selectTaskId"
+                @save-success='saveBudget'></budget>
       </el-drawer>
       <el-drawer :title="importProjectTitle"
                  :append-to-body="true"
@@ -590,7 +591,7 @@ let myGantt
 export default {
   name: 'PlanGantt',
   props: {
-    isView:{
+    isView: {
       type: Boolean,
       default: false
     },
@@ -802,7 +803,7 @@ export default {
       // SDMlinkVisible: false,
       innerVisible: false,
       importExcel: false,
-      budgetVisible:false,
+      budgetVisible: false,
       resourceRelation: false,
       resourceTitle: '资源关联',
       importProjectTitle: 'Project文件导入',
@@ -938,6 +939,12 @@ export default {
       ganttRowEditVisible: false,
       formData: {},
       rowEditDataSource: [
+        // {
+        //   type: 'text',
+        //   fieldName: 'name',
+        //   placeholder: '请输入任务名称',
+        //   labelText: '任务名称'
+        // },
         {
           type: 'datetime', // 控件类型
           labelText: '计划开始时间', // 控件显示的文本
@@ -991,7 +998,7 @@ export default {
         this.selectTaskId = ''
         this.selectTaskName = ''
       }
-      this.selectTaskCount = newVal.length
+      this.selectTaskCount = myGantt.getSelectedTasks().length
       this.callParentSelectTasks()
     },
     planInfoId: function (newVal, oldVal) {
@@ -1130,10 +1137,10 @@ export default {
     ...mapGetters(['taskStyles', 'ganttRightButtons', 'userSettingAll', 'monitorBtnsByApi'])
   },
   methods: {
-    openBudget(){
+    openBudget () {
       this.budgetVisible = true
     },
-    saveBudget(){
+    saveBudget () {
       this.budgetVisible = false
       this.loadGanttData(this.planInfoId, this.taskId, this.createPage)
     },
@@ -1701,9 +1708,9 @@ export default {
               if (res.projectStatus === '2205') {
                 myGantt.config.readonly = true
               }
-              if(vueThis.isView){
+              if (vueThis.isView) {
                 vueThis.planEditLock = '1'
-              }else{
+              } else {
                 if (res.monitorLock && res.monitorLock['1020'] !== undefined) {
                   vueThis.planEditLock = res.monitorLock['1020'] // 直接使用1020的值: -1(默认)、0(解锁)、1(加锁)
                   myGantt.config.readonly = res.monitorLock['1020'] === '1'
@@ -1809,7 +1816,9 @@ export default {
       this.$nextTick(() => {
         const task = myGantt.getTask(this.selectTaskId)
         if (this.isRefuls) {
-          this.$emit('switch-task', task)
+          if (task) {
+            this.$emit('switch-task', task)
+          }
         }
         this.$emit('select-task', this.selectedTasks, this.ganttName)
         if (this.pageType !== 'history') {
@@ -1934,6 +1943,7 @@ export default {
       this.outPutViewVisible = false
     },
     resourceSelected (ownerId, row, type) {
+      console.log(ownerId, "🚀 ~ resourceSelected ~ type:", type)
       const that = this
       if (that.selectedTasks && that.selectedTasks.length > 0) {
         if (!row.departureTime) {
@@ -1955,12 +1965,37 @@ export default {
               }
               myGantt.getTask(task.id).owner_type = type
               myGantt.getTask(task.id).updateType = ''
-              myGantt.updateTask(task.id)
+              if (that.selectedTasks.length === 1) {
+                myGantt.updateTask(task.id)
+              }
             })
           })
+          if (that.selectedTasks.length > 1) {
+            let result = that.chunkArray(that.selectedTasks, 200)
+            result.forEach(item => {
+              that.updateTask(item)
+            })
+          }
         }
       }
       this.resourceSelectVisible = false
+    },
+    updateTask (selectedTasks) {
+      let tasks = JSON.parse(JSON.stringify(selectedTasks))
+      tasks.forEach(task => {
+        if (task.start_date) {
+          task.start_date = moment(task.start_date).format('YYYY-MM-DD')
+        }
+        if (task.end_date) {
+          task.end_date = moment(task.end_date).format('YYYY-MM-DD')
+        }
+      })
+      this.$api['planGanttManager.updateTask']({
+        createPage: "compile",
+        planGanttRequestList: tasks
+      }).then(res => {
+
+      })
     },
     // ClassificationSelect(ownerId, row) {
     //   const that = this
@@ -1972,6 +2007,13 @@ export default {
     //   })
     //   this.ClassificationSelectVisible = false
     // },
+    chunkArray (array, size) {
+      const result = []
+      for (let i = 0; i < array.length; i += size) {
+        result.push(array.slice(i, i + size))
+      }
+      return result
+    },
     resourceSelectclosed () {
       this.resourceSelectVisible = false
     },
