@@ -178,11 +178,25 @@ export default {
           this.elements = res.map((item) => {
             return {
               label: item.LABEL,
-              value: item.VALUE
+              value: item.VALUE,
+              tip: this.getLabelPath(res,item.VALUE)
             }
           })
         }
       })
+    },
+    getLabelPath(list,value){
+      const map = {}
+      list.forEach(item => {
+        map[item.VALUE] = item
+      })
+      const pathLabels = []
+      let current = map[value]
+      while (current){
+        pathLabels.unshift(current.LABEL)
+        current = map[current.PID]
+      }
+      return pathLabels.join('-')
     },
     elementsFilter() {
       console.log(this.elements)
