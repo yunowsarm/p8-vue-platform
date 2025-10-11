@@ -242,6 +242,16 @@ export default {
           this.$refs.table.setAllTreeExpand(true)
         })
       })
+    },
+    cellClassName({ row, column }) {
+      if(this.isView) return
+      const classes = []
+      if (column.property === 'amount') {
+        if(!((row.ISLEAF === '是' || row.isleaf === '是'|| row.isLeaf === '是') && !row.formula)){
+          classes.push('disabled-cell')
+        }
+      }
+      return classes.join(' ')
     }
   }
 }
@@ -250,7 +260,7 @@ export default {
 <template>
   <div style="height: 100%">
     <div style='height: calc(100% - 50px)'>
-      <vxe-table class="main-table" height='100%' border keep-source ref="table" align="center" :data="tableData" :tableConfig="tableConfig" :tree-config="treeConfig" :edit-config="editConfig" @edit-activated='editActivated' @edit-closed='editClosed'>
+      <vxe-table class="main-table" height='100%' border keep-source ref="table" align="center" :data="tableData" :tableConfig="tableConfig" :tree-config="treeConfig" :edit-config="editConfig" :cell-class-name="cellClassName" @edit-activated='editActivated' @edit-closed='editClosed'>
         <vxe-column type="seq" title="序号" width="50"></vxe-column>
         <vxe-column field="name" title="科目名称" tree-node align="left" header-align="center"></vxe-column>
         <vxe-column field="code" title="科目编号"></vxe-column>
@@ -352,5 +362,8 @@ export default {
 }
 ::v-deep .panination {
   display: none !important;
+}
+::v-deep .disabled-cell{
+  background: #f5f5f5;
 }
 </style>

@@ -75,14 +75,18 @@ export default {
       })
     },
     cellClassName({ row, column }) {
+      if (!this.approveType) return
+      const classes = []
       if (column.property === 'actualAmount') {
+        if(!((row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && this.isLeaf)){
+          classes.push('disabled-cell')
+        }
         const amount = row.amount ?? 0
         const actualAmount = row.actualAmount ?? 0
         console.log(actualAmount > amount)
-        return actualAmount > amount ? 'cell-red' : 'cell-green'
-      } else {
-        return ''
+        classes.push(actualAmount > amount ? 'cell-red' : 'cell-green')
       }
+      return classes.join(' ')
       // console.log(row.)
     },
     uploadFile(file, row) {
@@ -256,5 +260,8 @@ export default {
 
 ::v-deep .cell-green {
   color: #67c23a;
+}
+::v-deep .disabled-cell{
+  background: #f5f5f5;
 }
 </style>

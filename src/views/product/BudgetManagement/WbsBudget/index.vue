@@ -62,7 +62,7 @@ export default {
         mode: 'cell',
         showStatus: true,
         beforeEditMethod: ({ row, column }) => {
-          if (this.isView) return false
+          if (!this.isEdit) return false
           if (column.field === 'amount') {
             return (row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && !['6630'].includes(this.planManageStatus)
           } else {
@@ -87,6 +87,10 @@ export default {
         return matched[matched.length - 2].name
       }
       return null
+    },
+    isEdit () {
+      const editStatus = ['编制中', '发布驳回']
+      return editStatus.includes(this.thirdMenuParam?.BUDGETSTATUSNAME) && this.parentRoute !== 'BudgetAnalysis'
     }
   },
   created() {
@@ -178,6 +182,16 @@ export default {
         }
         this.submitLoading = false
       })
+    },
+    cellClassName({ row, column }) {
+      if(!this.isEdit) return
+      const classes = []
+      if (column.property === 'amount') {
+        if(!((row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && !['6630'].includes(this.planManageStatus))){
+          classes.push('disabled-cell')
+        }
+      }
+      return classes.join(' ')
     }
   }
 }
@@ -201,6 +215,7 @@ export default {
             :tableConfig="tableConfig"
             :tree-config="treeConfig"
             :edit-config="editConfig"
+            :cell-class-name="cellClassName"
             @edit-activated="editActivated"
             @edit-closed="editClosed"
           >
@@ -259,5 +274,8 @@ export default {
 .button-area {
   text-align: end;
   padding: 8px;
+}
+::v-deep .disabled-cell{
+  background: #f5f5f5;
 }
 </style>

@@ -134,6 +134,16 @@ export default {
           return false
         }
       })
+    },
+    cellClassName({ row, column }) {
+      if(this.currEntityId) return
+      const classes = []
+      if (column.property === 'amount') {
+        if(!((row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && !this.currEntityId)){
+          classes.push('disabled-cell')
+        }
+      }
+      return classes.join(' ')
     }
   }
 }
@@ -152,6 +162,7 @@ export default {
                    :tableConfig="tableConfig"
                    :tree-config="treeConfig"
                    :edit-config="editConfig"
+                   :cell-class-name="cellClassName"
                    @edit-activated='editActivated'
                    @edit-closed="editClosed">
           <vxe-column type="seq"
@@ -234,5 +245,8 @@ export default {
   border-top: 1px solid #e1e1e1;
   text-align: end;
   padding: 8px;
+}
+::v-deep .disabled-cell{
+  background: #f5f5f5;
 }
 </style>

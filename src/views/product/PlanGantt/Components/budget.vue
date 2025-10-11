@@ -124,6 +124,15 @@ export default {
           node.amount = item.amount
         })
       })
+    },
+    cellClassName({ row, column }) {
+      const classes = []
+      if (column.property === 'amount') {
+        if(!((row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && this.mode === 'analysis')){
+          classes.push('disabled-cell')
+        }
+      }
+      return classes.join(' ')
     }
   }
 }
@@ -154,6 +163,7 @@ export default {
         :tableConfig="tableConfig"
         :tree-config="treeConfig"
         :edit-config="editConfig"
+        :cell-class-name="cellClassName"
         @edit-activated="editActivated"
         @edit-closed="editClosed"
       >
@@ -208,5 +218,8 @@ export default {
 
 ::v-deep .vxe-number-input {
   width: 95% !important;
+}
+::v-deep .disabled-cell{
+  background: #f5f5f5;
 }
 </style>
