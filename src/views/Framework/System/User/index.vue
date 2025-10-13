@@ -105,6 +105,12 @@ const columns = [
     align: 'center'
   },
   {
+    title: '最后一次登录',
+    dataIndex: 'lastLoginTime',
+    width: '200',
+    align: 'center'
+  },
+  {
     title: '操作',
     fixed: 'right',
     dataIndex: 'operation',
