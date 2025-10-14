@@ -4,7 +4,8 @@
        ref="themeImage"
        :style="{ width: sidebarState.width, 'background-image': 'url(' + imageUrl + ')', 'background-size': backgroundSize, 'background-repeat': backgroundRepeat, 'background-position': backgroundPosition }"
        v-show="!sidebarState.isHidden">
-    <VuePerfectScrollbar :settings="scrollOptions"
+    <VuePerfectScrollbar style="height: calc(100% - 20px);"
+                         :settings="scrollOptions"
                          :style="{ 'background-color': objColor.themeColor }">
       <div class="border-name">
         <div v-if="showLogo"
@@ -218,13 +219,13 @@ export default {
     }
   },
   computed: {
-    isMobile() {
+    isMobile () {
       return this.$store.getters.isMobile
     },
-      defaultActive(){
-        if(this.$route.matched && this.$route.matched.length > 2){
+    defaultActive () {
+      if (this.$route.matched && this.$route.matched.length > 2) {
         return this.$route.meta.parentPath
-        }else{
+      } else {
         return this.$route.path
       }
     },
@@ -663,7 +664,7 @@ $menu-collapse-text-color: #303133;
 .icon-caozuoshouce {
   color: #2a78d8;
 }
-.menuIcon{
+.menuIcon {
   font-size: 22px !important;
 }
 @media (max-width: 768px) {
@@ -675,14 +676,15 @@ $menu-collapse-text-color: #303133;
     .login-logo {
       display: none;
     }
-    .sysName{
+    .sysName {
       font-size: 12px;
     }
     .el-menu-item {
       min-width: 110px !important;
-      padding:0 !important;
-      padding-left:5px !important;
-      span, i {
+      padding: 0 !important;
+      padding-left: 5px !important;
+      span,
+      i {
         font-size: 12px;
       }
     }
@@ -690,7 +692,8 @@ $menu-collapse-text-color: #303133;
     .el-submenu__title {
       padding: 0 !important;
       padding-left: 5px !important;
-      span, i {
+      span,
+      i {
         font-size: 12px;
       }
       .el-submenu__icon-arrow {
@@ -703,7 +706,8 @@ $menu-collapse-text-color: #303133;
         min-width: 110px !important;
         padding: 0 !important;
         padding-left: 11px !important;
-        span, i {
+        span,
+        i {
           font-size: 12px;
         }
       }
