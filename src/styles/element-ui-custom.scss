@@ -41,3 +41,11 @@
 .el-picker-panel__body{
   background: #ffffff;
 }
+
+.el-message{
+  z-index: 9999 !important;
+}
+
+.el-message-box__wrapper{
+  z-index: 9999 !important;
+}
