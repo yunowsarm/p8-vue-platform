@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%; width: 100%">
-    <div v-if="isMobile">
+    <div v-if="isMobile" class='approve-content-mobile'>
       <common-tabs
         class="custom-common-tabs"
         :active-tabs="activeTabs"
@@ -8,19 +8,21 @@
         :tabs-data="mobileCatalogData"
         :tabs-config="{ stretch: true }"
         height="auto"
-        style="height: 100%"
         @tab-click="tabClick"
       >
       </common-tabs>
-      <approve-list
-        :search-params="searchParams"
-        @select="select"
-        @refreshList="refreshList"
-        :key="renderTime"
-        :distinguish-ids="distinguishIds"
-        :charge-ids="chargeIds"
-        ref="approveList"
-      ></approve-list>
+      <div class='approve-list-mobile'>
+        <approve-list
+          class='approve-list'
+          :search-params="searchParams"
+          @select="select"
+          @refreshList="refreshList"
+          :key="renderTime"
+          :distinguish-ids="distinguishIds"
+          :charge-ids="chargeIds"
+          ref="approveList"
+        ></approve-list>
+      </div>
       <common-drawer v-if="viewVisible" :title="viewTitle" :visible="viewVisible" placement="top" size="100%" @close="closeView">
         <template #drawer>
           <!-- 待处理 -->
@@ -380,6 +382,31 @@ export default {
   ::v-deep #tab-APPROVE_TYPE_01_02.is-active{
     background: #ffffff;
     color: #272e3b;
+  }
+}
+.approve-content-mobile{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  .approve-list-mobile{
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    ::v-deep .ps-container{
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+        overscroll-behavior: contain;
+    }
+    //.approve-list{
+    //  flex:1;
+    //  overflow-y: auto;
+    //  -webkit-overflow-scrolling: touch;
+    //  touch-action: pan-y;
+    //  overscroll-behavior: contain;
+    //}
   }
 }
 </style>
