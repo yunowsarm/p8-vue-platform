@@ -12,6 +12,7 @@
           <div class="top"
                :style="{ height: commandButtonBarHeight }">
             <command-button-bar ref="commandBottonBar"
+                                :key="dateTime"
                                 :panel-data="btnData"
                                 :selected-tasks="selectedTasks"
                                 :gantt-name="ganttName"
@@ -237,7 +238,8 @@ export default {
       advance: true,
       commandButtonBarHeight: this.ganttButtonMode === 'tabs' ? (this.advance ? '145px' : '40px') : this.ganttButtonMode === 'double' ? '72px' : '58px',
       expandBottom: 'calc(100% - 138px)',
-      isDisplay: true
+      isDisplay: true,
+      dateTime: ''
     }
   },
   props: {
@@ -247,7 +249,7 @@ export default {
         return {}
       }
     },
-    isView:{
+    isView: {
       type: Boolean,
       default: false
     }
@@ -491,6 +493,7 @@ export default {
       this.$store.getters.vueThis.pageType = 'switch'
       this.firstEntry = true
       this.$refs.commandBottonBar.showArrow = false
+      this.dateTime = new Date().getTime()
     },
     showDetail (selectTask, ganttName, viewType, switchType,) {
       this.selectTaskId = selectTask.id
