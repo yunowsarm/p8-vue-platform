@@ -131,6 +131,7 @@ export default {
 div.task-info-con {
   height: 100%;
   background-color: #ffffff;
+  overflow: auto;
 }
 div.task-operating-con {
   height: 100%;

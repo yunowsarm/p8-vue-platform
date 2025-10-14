@@ -4,8 +4,7 @@
        ref="themeImage"
        :style="{ width: sidebarState.width, 'background-image': 'url(' + imageUrl + ')', 'background-size': backgroundSize, 'background-repeat': backgroundRepeat, 'background-position': backgroundPosition }"
        v-show="!sidebarState.isHidden">
-    <VuePerfectScrollbar style="height: calc(100% - 20px);"
-                         :settings="scrollOptions"
+    <VuePerfectScrollbar :settings="scrollOptions"
                          :style="{ 'background-color': objColor.themeColor }">
       <div class="border-name">
         <div v-if="showLogo"
@@ -118,7 +117,8 @@
         </template>
       </el-menu>
     </VuePerfectScrollbar>
-    <span class="sidebar-version">
+    <span class="sidebar-version"
+          :style="{ 'background-color': objColor.themeColor }">
       <el-popover placement="top-start"
                   width="200"
                   trigger="hover">
@@ -553,6 +553,7 @@ $menu-collapse-text-color: #303133;
   // sidebar menu css override
   .vertical-menu:not(.el-menu--collapse) {
     width: $base-sidebar-width;
+    height: 92%;
   }
 
   .el-menu--collapse {
@@ -649,9 +650,7 @@ $menu-collapse-text-color: #303133;
   background-size: contain;
 }
 .sidebar-version {
-  position: absolute;
-  bottom: 5px;
-  left: 5px;
+  text-align: center;
   color: #797676;
   font-size: 10px;
 }
