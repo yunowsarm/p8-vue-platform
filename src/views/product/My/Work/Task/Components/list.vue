@@ -95,11 +95,11 @@
         </template>
         <template #PREDECESSORSNUMBER="{scope}">
           <span class="underline"
-                @click="frontToBackClick('前置任务查看', scope)">{{ scope.row.PREDECESSORSNUMBER }}</span>
+                @click="frontToBackClick('前置任务查看', scope)">{{ scope.row.PREDECESSORSNUMBER || 0 }}</span>
         </template>
         <template #POSTTASKNUMBER="{scope}">
           <span class="underline"
-                @click="frontToBackClick('后置任务查看', scope)">{{ scope.row.POSTTASKNUMBER }}</span>
+                @click="frontToBackClick('后置任务查看', scope)">{{ scope.row.POSTTASKNUMBER || 0 }}</span>
         </template>
         <template #MONITORPOINTARRAY="{ scope }">
           <span v-html="getIcon(scope.row)"></span>
