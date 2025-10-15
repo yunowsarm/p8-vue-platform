@@ -789,7 +789,9 @@ export default {
         })
         this.$emit('progress-change', maxSpeedNum)
       } else {
-        this.formData.forecastEndDate = this.getPlanInfo().FORECASTENDDATE
+        if (!this.formData.forecastEndDate) {
+          this.formData.forecastEndDate = this.getPlanInfo().FORECASTENDDATE
+        }
         this.$emit('progress-change', val)
       }
       if (!this.formData.realBeginDate) {
