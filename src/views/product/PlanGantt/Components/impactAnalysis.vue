@@ -337,23 +337,23 @@ export default {
               }
               return obj
             })
-            let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
+            // let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
             // 处理拓展字段已有的数据
-            vueThis.extendMap = res.extendMap || {}
-            initData.forEach(task => {
-              task.open = task.expand
-              extraList.forEach(item => {
-                task['kz' + item.id] = ''
-              })
-              if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
-                if (vueThis.extendMap[task.id]) {
-                  let extendData = vueThis.extendMap[task.id]
-                  extendData.forEach((item) => {
-                    task['kz' + item.customItem1] = item.fieldValue ? item.fieldValue : ''
-                  })
-                }
-              }
-            })
+            // vueThis.extendMap = res.extendMap || {}
+            // initData.forEach(task => {
+            //   task.open = task.expand
+            //   extraList.forEach(item => {
+            //     task[item.filedName] = ''
+            //   })
+            //   if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
+            //     if (vueThis.extendMap[task.id]) {
+            //       let extendData = vueThis.extendMap[task.id]
+            //       extendData.forEach((item) => {
+            //         task['kz' + item.customItem1] = item.fieldValue ? item.fieldValue : ''
+            //       })
+            //     }
+            //   }
+            // })
             const datas = {
               tasks: initData,
               links: res.links

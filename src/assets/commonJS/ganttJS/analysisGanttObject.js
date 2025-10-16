@@ -406,7 +406,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
             let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
             if (typeList.includes(item.filedType)) {
               tempColumns.push({
-                name: 'kz' + item.id,
+                name: item.filedName,
                 label: `${item.name}`,
                 align: 'center',
                 resize: true,
@@ -414,10 +414,10 @@ export function getAnalysisGantt(ganttName, vueThis) {
                 min_width: 120,
                 template: function (task) {
                   let result = []
-                  if (task['kz' + item.id]) {
+                  if (task[item.filedName]) {
                     let list = vueThis.extraMap[item.selectCode]
                     if (list && list.length) {
-                      let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
+                      let taskList = task[item.filedName] ? task[item.filedName].split(',') : []
                       list.forEach((el) => {
                         taskList.forEach((item) => {
                           if (el.value == item) {
@@ -432,7 +432,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
               })
             } else {
               tempColumns.push({
-                name: 'kz' + item.id,
+                name: item.filedName,
                 label: `${item.name}`,
                 align: 'center',
                 resize: true,
@@ -894,7 +894,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
             let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
             if (typeList.includes(item.filedType)) {
               tempColumns.push({
-                name: 'kz' + item.id,
+                name: item.filedName,
                 label: `${item.name}`,
                 align: 'center',
                 resize: true,
@@ -902,10 +902,10 @@ export function getAnalysisGantt(ganttName, vueThis) {
                 min_width: 120,
                 template: function (task) {
                   let result = []
-                  if (task['kz' + item.id]) {
+                  if (task[item.filedName]) {
                     let list = vueThis.extraMap[item.selectCode]
                     if (list && list.length) {
-                      let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
+                      let taskList = task[item.filedName] ? task[item.filedName].split(',') : []
                       list.forEach((el) => {
                         taskList.forEach((item) => {
                           if (el.value == item) {
@@ -920,7 +920,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
               })
             } else {
               tempColumns.push({
-                name: 'kz' + item.id,
+                name: item.filedName,
                 label: `${item.name}`,
                 align: 'center',
                 resize: true,

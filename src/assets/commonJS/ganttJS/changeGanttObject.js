@@ -812,7 +812,7 @@ function synchronizationColumns(vueThis, ganttObject) {
           let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
           if (typeList.includes(item.filedType)) {
             tempColumns.push({
-              name: 'kz' + item.id,
+              name: item.filedName,
               label: `<div class='gantt_search'>${item.name}</div><div class='gantt_search gantt_blank'></div>`,
               align: 'center',
               resize: true,
@@ -820,10 +820,10 @@ function synchronizationColumns(vueThis, ganttObject) {
               min_width: 120,
               template: function (task) {
                 let result = []
-                if (task['kz' + item.id]) {
+                if (task[item.filedName]) {
                   let list = vueThis.extraMap[item.selectCode]
                   if (list && list.length) {
-                    let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
+                    let taskList = task[item.filedName] ? task[item.filedName].split(',') : []
                     list.forEach((el) => {
                       taskList.forEach((item) => {
                         if (el.value == item) {
@@ -838,7 +838,7 @@ function synchronizationColumns(vueThis, ganttObject) {
             })
           } else {
             tempColumns.push({
-              name: 'kz' + item.id,
+              name: item.filedName,
               label: `<div class="gantt_search">${item.name}</div><div class="gantt_search gantt_blank"></div>`,
               align: 'center',
               resize: true,
@@ -846,7 +846,7 @@ function synchronizationColumns(vueThis, ganttObject) {
               min_width: 120,
               indexNo: item.indexNo,
               template: function (task) {
-                let result = task['kz' + item.id] ? task['kz' + item.id] : ''
+                let result = task[item.filedName] ? task[item.filedName] : ''
                 return `<div class='text_overflow' title='${result}'>${result}</div>`
               }
             })

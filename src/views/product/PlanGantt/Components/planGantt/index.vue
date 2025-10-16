@@ -1660,7 +1660,6 @@ export default {
       const vueThis = this
 
       return new Promise((resolve, reject) => {
-        console.log(66666666666);
         vueThis.$api['planGanttManager.loadPlanGanttData']({
           planInfoId: planInfoId,
           dicType: 'ACTIVITY_TYPE',
@@ -1675,34 +1674,34 @@ export default {
               let taskList = res.tasks
               vueThis.fullscreenLoading = false
               // 先给task赋值拓展字段
-              let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
-              let extraStr = extraList.map((extra) => extra.filedName)
-              taskList.forEach((task) => {
-                task.open = task.expand
-                // 解决gantt图鼠标悬浮任务名
-                task.text = task.name
-                extraStr.forEach((key) => {
-                  task[key] = ''
-                })
-                if (vueThis.$route.name == 'Planning' && !task.parent) {
-                  task.autoScheduling = '2'
-                }
-              })
-              // 处理拓展字段已有的数据
-              vueThis.extendMap = res.extendMap || {}
-              taskList.forEach((task) => {
-                extraList.forEach((item) => {
-                  task['kz' + item.id] = ''
-                })
-                if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
-                  if (vueThis.extendMap[task.id]) {
-                    let extendData = vueThis.extendMap[task.id]
-                    extendData.forEach((item) => {
-                      task['kz' + item.customItem1] = item.fieldValue ? item.fieldValue : ''
-                    })
-                  }
-                }
-              })
+              // let extraList = vueThis.columnSettings.filter((item) => item.attributeType === '1')
+              // let extraStr = extraList.map((extra) => extra.filedName)
+              // taskList.forEach((task) => {
+              //   task.open = task.expand
+              //   // 解决gantt图鼠标悬浮任务名
+              //   task.text = task.name
+              //   extraStr.forEach((key) => {
+              //     task[key] = ''
+              //   })
+              //   if (vueThis.$route.name == 'Planning' && !task.parent) {
+              //     task.autoScheduling = '2'
+              //   }
+              // })
+              // // 处理拓展字段已有的数据
+              // vueThis.extendMap = res.extendMap || {}
+              // taskList.forEach((task) => {
+              //   extraList.forEach((item) => {
+              //     task[item.filedName] = ''
+              //   })
+              //   if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
+              //     if (vueThis.extendMap[task.id]) {
+              //       let extendData = vueThis.extendMap[task.id]
+              //       extendData.forEach((item) => {
+              //         task['kz' + item.customItem1] = item.fieldValue ? item.fieldValue : ''
+              //       })
+              //     }
+              //   }
+              // })
               // 初始化数据
               const datas = {
                 tasks: taskList,
@@ -1751,6 +1750,7 @@ export default {
               vueThis.managerStatusMap = res.managerStatusMap
               vueThis.taskStatusMap = res.taskStatusMap
               vueThis.$store.dispatch('setTaskStyles', res.taskStyle)
+              console.log(datas)
               myGantt.parse(datas)
               vueThis.taskCount = myGantt.getTaskCount()
 
