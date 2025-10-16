@@ -24,7 +24,9 @@ export default {
     }
   },
   created () {
-    this.$api['relevanceContract.contractRecievedByYear']().then(res => {
+    this.$api['relevanceContract.contractRecievedByYear']({
+      wholeDescribeId: ""
+    }).then(res => {
       if (res.length > 0) {
         this.income = res[0].current_year_received
         this.expense = res[0].current_year_receivable
