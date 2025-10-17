@@ -64,12 +64,13 @@ export default {
 <style lang='scss' scoped>
 .left,
 .right {
-  width: 49%;
+  width: 43%;
   height: 100%;
   display: inline-block;
   vertical-align: top;
 }
 .left {
+  width: 55%;
   border-right: 1px solid rgb(225, 225, 225);
 }
 </style>

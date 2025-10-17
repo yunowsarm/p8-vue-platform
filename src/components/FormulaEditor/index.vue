@@ -42,7 +42,7 @@
       <div class="attributes-section">
         <div class="section-title">属性</div>
         <div class="attributes-grid">
-          <el-tooltip :content="item.label" v-for="item in elements" :key="item.value" placement="top">
+          <el-tooltip :disabled='!item.tip' :content="item.tip" v-for="item in elements" :key="item.value" placement="top">
             <div class="attribute-btn" draggable @click="handleAttributeClick(item)" @dragstart="handleDragStart($event, item, 'attribute')">
               {{ item.label }}
             </div>

@@ -58,6 +58,7 @@ export default {
     .main-router {
       background: #fcfcfc;
       border-radius: 5px;
+      height: calc(100% - 28px) !important;
       // height: 100%;
       // overflow: auto;
       // height: 1000px;

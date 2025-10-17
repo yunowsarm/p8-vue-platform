@@ -3508,6 +3508,7 @@ function removePlanGanttData(ganttObject, dp, ganttName, vueThis, selectedTaskId
           message: '任务删除成功',
           type: 'success'
         })
+        vueThis.loadGanttData(vueThis.planInfoId, vueThis.taskId, vueThis.createPage)
       } else if (res === 'false') {
         vueThis.$message({
           message: '任务删除失败！',

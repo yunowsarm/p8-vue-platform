@@ -560,9 +560,9 @@ export default {
       let normalStatus = this.planInfoParams.STATUS
       let status = ''
       if (progress === 0) {
-        if (normalStatus === '6020') {
+        // if (normalStatus === '6020' || normalStatus === '6050') {
           status = '6020'
-        }
+        // }
       } else {
         status = '6050' // 6500
       }

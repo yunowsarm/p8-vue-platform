@@ -12,6 +12,10 @@ export default {
     VxeColumn
   },
   props: {
+    currentRoute: {
+      type: String,
+      default: ''
+    },
     thirdMenuParam: {
       type: Object,
       default: () => {
@@ -58,7 +62,7 @@ export default {
         mode: 'cell',
         showStatus: true,
         beforeEditMethod: ({ row, column }) => {
-          if (this.isView) return false
+          if (!this.isEdit) return false
           if (column.field === 'amount') {
             return (row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && !['6630'].includes(this.planManageStatus)
           } else {
@@ -73,11 +77,20 @@ export default {
   },
   computed: {
     parentRoute() {
+      if (this.currentRoute === 'myProject') {
+        return 'BudgetManagement'
+      } else if (this.currentRoute === 'projectMonitor') {
+        return 'BudgetAnalysis'
+      }
       const matched = this.$route.matched
       if (matched.length > 1) {
         return matched[matched.length - 2].name
       }
       return null
+    },
+    isEdit () {
+      const editStatus = ['编制中', '发布驳回']
+      return editStatus.includes(this.thirdMenuParam?.BUDGETSTATUSNAME) && this.parentRoute !== 'BudgetAnalysis'
     }
   },
   created() {
@@ -127,12 +140,12 @@ export default {
         })
       })
     },
-    getActualColor(row){
+    getActualColor(row) {
       const actualAmount = row.actualAmount ?? 0
       const amount = row.amount ?? 0
-      if(actualAmount > amount){
+      if (actualAmount > amount) {
         return '#F56C6C'
-      }else{
+      } else {
         return '#67C23A'
       }
     },
@@ -140,7 +153,11 @@ export default {
       this.currentTask = row
       this.queryDeclaration(row.id)
     },
-    editClosed() {
+    editActivated({ row }) {
+      this.oldAmount = row.amount
+    },
+    editClosed({ row }) {
+      if (row.amount === this.oldAmount) return
       this.$api['budgetDeclaration.dataCalculation']({ declarationRequests: this.subjectList }).then((res) => {
         res.forEach((item) => {
           const node = this.subjectList.find((n) => n.subjectBaseid === item.subjectBaseid)
@@ -165,13 +182,23 @@ export default {
         }
         this.submitLoading = false
       })
+    },
+    cellClassName({ row, column }) {
+      if(!this.isEdit) return
+      const classes = []
+      if (column.property === 'amount') {
+        if(!((row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && !['6630'].includes(this.planManageStatus))){
+          classes.push('disabled-cell')
+        }
+      }
+      return classes.join(' ')
     }
   }
 }
 </script>
 
 <template>
-  <div>
+  <div style="height: 100%">
     <normal-layout layoutCode="wbsBudget" :split-default-left-width="30" :header-visible="false" :split-layout="true">
       <template #west>
         <common-table ref="taskTable" :pagination="false" :noApiTableData="taskList" :tableConfig="taskTableConfig" :columns="taskColumns" @row-click="rowClick"></common-table>
@@ -188,6 +215,8 @@ export default {
             :tableConfig="tableConfig"
             :tree-config="treeConfig"
             :edit-config="editConfig"
+            :cell-class-name="cellClassName"
+            @edit-activated="editActivated"
             @edit-closed="editClosed"
           >
             <vxe-column type="seq" title="序号" width="50"></vxe-column>
@@ -200,15 +229,17 @@ export default {
                 immediate: true,
                 showNegativeStatus: true,
                 props: {
-                  min: 0
+                  min: 0,
+                  type: 'amount',
+                  digits: 6
                 }
               }"
               class-name="amount-cell"
               style="padding: 0 6px"
             ></vxe-column>
             <vxe-column v-if="parentRoute !== 'BudgetManagement'" field="actualAmount" title="实际金额">
-              <template #default='{row}'>
-                <span :style='{color:getActualColor(row)}'>{{row.actualAmount}}</span>
+              <template #default="{ row }">
+                <span :style="{ color: getActualColor(row) }">{{ row.actualAmount }}</span>
               </template>
             </vxe-column>
           </vxe-table>
@@ -243,5 +274,8 @@ export default {
 .button-area {
   text-align: end;
   padding: 8px;
+}
+::v-deep .disabled-cell{
+  background: #f5f5f5;
 }
 </style>

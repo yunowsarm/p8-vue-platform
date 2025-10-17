@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "45717565",
+      "name": "计算器_o",
+      "font_class": "jisuanqi_o",
+      "unicode": "e990",
+      "unicode_decimal": 59792
+    },
+    {
+      "icon_id": "43874395",
+      "name": "未完成节点数",
+      "font_class": "weiwanchengjiedianshu",
+      "unicode": "e98e",
+      "unicode_decimal": 59790
+    },
+    {
+      "icon_id": "43874010",
+      "name": "完成结点数",
+      "font_class": "wanchengjiedianshu",
+      "unicode": "e98f",
+      "unicode_decimal": 59791
+    },
+    {
+      "icon_id": "43874013",
+      "name": "完成率",
+      "font_class": "wanchengshuai",
+      "unicode": "e98c",
+      "unicode_decimal": 59788
+    },
+    {
+      "icon_id": "43874012",
+      "name": "工作节点数",
+      "font_class": "gongzuojiedianshu",
+      "unicode": "e98d",
+      "unicode_decimal": 59789
+    },
+    {
       "icon_id": "41196126",
       "name": "操作手册",
       "font_class": "caozuoshouce",

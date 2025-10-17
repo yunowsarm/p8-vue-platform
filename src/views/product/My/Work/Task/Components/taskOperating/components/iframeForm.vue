@@ -15,6 +15,7 @@ export default {
   },
   data(){
     return {
+      show:false,
       formViewId:''
     }
   },
@@ -44,6 +45,11 @@ export default {
   created () {
     this.getInfo()
   },
+  mounted() {
+    setTimeout(() => {
+      this.show = true
+    },200)
+  },
   methods:{
     checkBusinessForm () {
       if (this.formViewId) {
@@ -68,13 +74,9 @@ export default {
 </script>
 
 <template>
-  <div style="height: 100%;position: relative;">
-    <iframe ref="iframeForm"
-            :src="iframeSrc"
-            style="margin-top: 36px; height: 100%;width: 100%;border: none"></iframe>
+  <div style="height: 100%; position: relative">
+    <iframe v-if='show' ref="iframeForm" :src="iframeSrc" style="margin-top: 36px; height: 100%; width: 100%; border: none"></iframe>
   </div>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

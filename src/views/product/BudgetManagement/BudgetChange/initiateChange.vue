@@ -91,7 +91,11 @@ export default {
         }
       })
     },
-    editClosed () {
+    editActivated({row}){
+      this.oldAmount = row.amount
+    },
+    editClosed({row}){
+      if(row.amount === this.oldAmount) return
       this.$api['budgetDeclaration.dataCalculation']({ declarationRequests: this.tableData }).then((res) => {
         res.forEach((item) => {
           const node = this.tableData.find((n) => n.subjectBaseid === item.subjectBaseid)
@@ -130,6 +134,16 @@ export default {
           return false
         }
       })
+    },
+    cellClassName({ row, column }) {
+      if(this.currEntityId) return
+      const classes = []
+      if (column.property === 'amount') {
+        if(!((row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && !this.currEntityId)){
+          classes.push('disabled-cell')
+        }
+      }
+      return classes.join(' ')
     }
   }
 }
@@ -148,6 +162,8 @@ export default {
                    :tableConfig="tableConfig"
                    :tree-config="treeConfig"
                    :edit-config="editConfig"
+                   :cell-class-name="cellClassName"
+                   @edit-activated='editActivated'
                    @edit-closed="editClosed">
           <vxe-column type="seq"
                       title="序号"
@@ -162,11 +178,13 @@ export default {
           <vxe-column field="amount"
                       title="变更预算金额"
                       :edit-render="{
-            name: 'VxeInput',
+            name: 'VxeNumberInput',
             immediate: true,
             showNegativeStatus: true,
             props: {
-              min: 0
+              min: 0,
+              type: 'amount',
+              digits: 6
             }
           }"></vxe-column>
           <vxe-column field="type"
@@ -227,5 +245,8 @@ export default {
   border-top: 1px solid #e1e1e1;
   text-align: end;
   padding: 8px;
+}
+::v-deep .disabled-cell{
+  background: #f5f5f5;
 }
 </style>

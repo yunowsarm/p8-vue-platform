@@ -39,7 +39,7 @@
           <deviate ref="deviate" :taskFinish="taskFinish" :tabsName="tabsName"></deviate>
         </template>
         <!-- 业务表单 -->
-        <template v-if="item.formType === 'businessForm'">
+        <template v-if="item.formType === 'businessForm' && tabsActiveName === item.name">
           <FormRender
             v-if="item.editMode === '单数据'"
             :ref="item.name"
@@ -62,12 +62,12 @@
           ></multiple-form-table>
         </template>
         <!-- 自定义表单 -->
-        <template v-else-if="item.formType === 'customForm'">
+        <template v-else-if="item.formType === 'customForm' && tabsActiveName === item.name">
           <component v-if="item.editMode === '单数据'" :ref="item.name" :key="item.name + tabsName" :is="componentUrl(item.formUrl)"></component>
           <custom-form-table v-else-if="item.editMode === '多数据'" :item="item" :key="item.name + tabsName" :ref="item.name" :approveType="progessType !== 'progessTable'"></custom-form-table>
         </template>
         <!-- 模板表单 -->
-        <template v-else-if="item.formType === 'templateForm'">
+        <template v-else-if="item.formType === 'templateForm' && tabsActiveName === item.name">
           <iframeForm v-if="item.editMode === '单数据'" :ref="item.name" :key="item.name + tabsName" :item="item" :approveType="progessType !== 'progessTable'"></iframeForm>
           <template-form-table v-else-if="item.editMode === '多数据'" :item="item" :key="item.name + tabsName" :ref="item.name" :approveType="progessType !== 'progessTable'"></template-form-table>
         </template>

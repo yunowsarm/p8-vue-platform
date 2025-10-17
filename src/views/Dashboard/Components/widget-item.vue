@@ -150,7 +150,7 @@ export default {
   // text-align: center;
 }
 .smartwidget ::v-deep .widget-body {
-  position: unset;
+  position: unset !important;
 }
 .iconStyle {
   font-size: 16px;

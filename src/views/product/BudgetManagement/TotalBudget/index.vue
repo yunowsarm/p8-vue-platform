@@ -231,7 +231,11 @@ export default {
     rowClick (row) {
       this.getTemplateDetail(row.ID)
     },
-    editClosed () {
+    editActivated({row}){
+      this.oldAmount = row.amount
+    },
+    editClosed ({row}) {
+      if(row.amount === this.oldAmount) return
       this.$api['budgetDeclaration.dataCalculation']({ declarationRequests: this.tableData }).then((res) => {
         res.forEach((item) => {
           const node = this.tableData.find((n) => n.subjectBaseid === item.subjectBaseid)
@@ -260,6 +264,16 @@ export default {
           this.$refs.table.setAllTreeExpand(true)
         })
       })
+    },
+    cellClassName({ row, column }) {
+      if(!this.isEdit) return
+      const classes = []
+      if (column.property === 'amount') {
+        if(!((row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && this.isEdit)){
+          classes.push('disabled-cell')
+        }
+      }
+      return classes.join(' ')
     }
   }
 }
@@ -277,6 +291,8 @@ export default {
                  :tableConfig="tableConfig"
                  :tree-config="treeConfig"
                  :edit-config="editConfig"
+                 :cell-class-name="cellClassName"
+                 @edit-activated='editActivated'
                  @edit-closed="editClosed">
         <vxe-column type="seq"
                     title="序号"
@@ -293,7 +309,9 @@ export default {
           immediate: true,
           showNegativeStatus: true,
           props:{
-            min: 0
+            min: 0,
+            type:'amount',
+            digits: 6
           }
         }"
                     class-name="amount-cell"
@@ -401,5 +419,8 @@ export default {
 .normal-layout {
   height: calc(100% - 50px);
   margin: 0;
+}
+::v-deep .disabled-cell{
+  background: #f5f5f5;
 }
 </style>
