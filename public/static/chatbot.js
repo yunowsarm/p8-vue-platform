@@ -1,7 +1,7 @@
 // 定义变量
 const chatbotConfig = {
   token: 'vNRLj5VlioSNM7Ar',
-  baseUrl: 'http://192.168.0.18'
+  baseUrl: CONFIG.aiUrl
 }
 
 let isChatbotLoaded = false
