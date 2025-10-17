@@ -352,8 +352,8 @@ export function planGantt(ganttName, vueThis) {
               // 检查是否允许编辑责任人
               const canEdit =
                 vueThis.createPage === 'decompose'
-                  ? vueThis.planEditLock === '0' || batchOwnerCheck(ganttName)
-                  : (vueThis.planEditLock === '0' && ganttObject.getGlobalTaskIndex(id) !== 0) || (task.managerStatus !== '6404' && batchOwnerCheck(ganttName))
+                  ? (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose') || batchOwnerCheck(ganttName)
+                  : (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose' && ganttObject.getGlobalTaskIndex(id) !== 0) || (task.managerStatus !== '6404' && batchOwnerCheck(ganttName))
 
               if (!canEdit) {
                 return false
@@ -362,7 +362,6 @@ export function planGantt(ganttName, vueThis) {
               // 设置任务ID
               vueThis.startTaskId = id
               vueThis.endTaskId = id
-
               // 加载资源数据
               vueThis.$api['planGanttManager.loadPlanGanttResourceData']({
                 planInfoId: vueThis.planInfoId
@@ -390,8 +389,8 @@ export function planGantt(ganttName, vueThis) {
               // 检查是否允许编辑责任人
               const rowStartEdit =
                 vueThis.createPage === 'decompose'
-                  ? vueThis.planEditLock === '0' || batchOwnerCheck(ganttName)
-                  : (vueThis.planEditLock === '0' && ganttObject.getGlobalTaskIndex(id) !== 0) || (task.managerStatus !== '6404' && batchOwnerCheck(ganttName))
+                  ? (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose') || batchOwnerCheck(ganttName)
+                  : (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose' && ganttObject.getGlobalTaskIndex(id) !== 0) || (task.managerStatus !== '6404' && batchOwnerCheck(ganttName))
 
               if (!rowStartEdit) {
                 return false
@@ -473,12 +472,7 @@ export function planGantt(ganttName, vueThis) {
       vueThis.selectedTasks.push(ganttObject.getTask(id))
       // })
     } else {
-      const index = vueThis.selectedTasks.findIndex((i) => {
-        return i.id === id
-      })
-      if (index !== undefined) {
-        vueThis.selectedTasks.splice(index, 1)
-      }
+      vueThis.selectedTasks.splice(vueThis.selectedTasks.indexOf(ganttObject.getTask(id)), 1)
     }
   })
   // 右键菜单
