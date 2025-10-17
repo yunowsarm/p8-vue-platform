@@ -238,7 +238,7 @@
     margin-left: 0px;
   }
 }
-@media screen and (min-width: 300px) and (max-width: 600px) {
+@media screen and (min-width: 300px) and (max-width: 1100px) {
   .show-type {
     width: 300px;
     position: static;
