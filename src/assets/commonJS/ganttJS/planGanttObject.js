@@ -380,7 +380,7 @@ export function planGantt(ganttName, vueThis) {
               break
             case 'start_date':
             case 'end_date':
-            // case 'name':
+            case 'name':
             case 'autoScheduling':
               // 如果是编辑锁定状态,直接返回false
               if (vueThis.planEditLock === '1') {

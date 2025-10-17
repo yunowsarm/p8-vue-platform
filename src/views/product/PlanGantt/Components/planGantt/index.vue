@@ -939,12 +939,12 @@ export default {
       ganttRowEditVisible: false,
       formData: {},
       rowEditDataSource: [
-        // {
-        //   type: 'text',
-        //   fieldName: 'name',
-        //   placeholder: '请输入任务名称',
-        //   labelText: '任务名称'
-        // },
+        {
+          type: 'text',
+          fieldName: 'name',
+          placeholder: '请输入任务名称',
+          labelText: '任务名称'
+        },
         {
           type: 'datetime', // 控件类型
           labelText: '计划开始时间', // 控件显示的文本
@@ -1196,6 +1196,9 @@ export default {
             }
             if (params.autoScheduling) {
               myGantt.getTask(task.id).autoScheduling = params.autoScheduling
+            }
+            if (params.name) {
+              myGantt.getTask(task.id).name = params.name
             }
             myGantt.updateTask(task.id)
           })
