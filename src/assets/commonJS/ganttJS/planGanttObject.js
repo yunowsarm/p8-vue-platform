@@ -444,7 +444,7 @@ export function planGantt(ganttName, vueThis) {
   ganttObject.attachEvent('onBeforeTaskMultiSelect', function (id, state, e) {
     if (state) {
       if (!multipleState) {
-        // vueThis.selectedTasks = []
+        vueThis.selectedTasks = []
       }
       return true
     }
@@ -472,7 +472,12 @@ export function planGantt(ganttName, vueThis) {
       vueThis.selectedTasks.push(ganttObject.getTask(id))
       // })
     } else {
-      vueThis.selectedTasks.splice(vueThis.selectedTasks.indexOf(ganttObject.getTask(id)), 1)
+      const index = vueThis.selectedTasks.findIndex((i) => {
+        return i.id === id
+      })
+      if (index !== undefined) {
+        vueThis.selectedTasks.splice(index, 1)
+      }
     }
   })
   // 右键菜单
