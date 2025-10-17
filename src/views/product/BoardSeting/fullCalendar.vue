@@ -110,6 +110,7 @@ export default {
                 taskId: info.event.id,
                 thirdMenuParam: {
                   MANAGERSTATUS: info.event.extendedProps.managerStatus,
+                  STATUS: info.event.extendedProps.status,
                   EXECUTESTATE: '1070',
                   TASKID: info.event.id,
                   currentRoute: '/MyTask/MyTask/latest',
@@ -169,7 +170,8 @@ export default {
           hasWarning: item.IS_APPROACHING_DATE === '1',
           isLeaf: item.ISLEAF,
           planInfoId: item.PLANINFIID,
-          managerStatus: item.MANAGERSTATUS
+          managerStatus: item.MANAGERSTATUS,
+          status: item.STATUS
         }
       })
       this.dateTime = new Date().getTime()
