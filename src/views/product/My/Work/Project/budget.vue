@@ -29,7 +29,7 @@ export default {
   },
   computed:{
     isMonitor(){
-      return this.$route.name === 'projectMonitor'
+      return this.$route.name !== 'myProject'
     }
   },
   // watch:{
@@ -46,6 +46,7 @@ export default {
   //   }
   // },
   created() {
+    console.log(this.isMonitor,'isMonitor')
     // 获取三级菜单参数
     let parent = this.$parent
     while (parent) {
@@ -81,7 +82,7 @@ export default {
         <BudgetChange v-if="activeName === 'budgetChange'" specialRoteName='BudgetChange' :thirdMenuParam="thirdMenuParam"></BudgetChange>
       </el-tab-pane>
       <el-tab-pane label="预算预警" name="budgetWarning">
-        <BudgetWarning v-if="activeName === 'budgetWarning'" specialRoteName='BudgetChange' :thirdMenuParam="thirdMenuParam"></BudgetWarning>
+        <BudgetWarning v-if="activeName === 'budgetWarning'" specialRoteName='BudgetWarning' :thirdMenuParam="thirdMenuParam"></BudgetWarning>
       </el-tab-pane>
     </el-tabs>
     <el-tabs v-else v-model="activeName" @tab-click='handleClick'>
