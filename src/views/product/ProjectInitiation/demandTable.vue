@@ -248,6 +248,9 @@ export default {
   created () {
     if (this.row && this.row.length) {
       this.id = this.row[0].ID ? this.row[0].ID : this.row[0].id
+      if (this.row[0].WHOLE_ID) {
+        this.id = this.row[0].WHOLE_ID
+      }
     } else {
       if (this.businessKey) {
         this.id = this.businessKey
