@@ -1,5 +1,6 @@
 <template>
   <normal-layout class="todoLayout"
+                 layoutCode='TODO_LIST'
                  :splitDefaultLeftWidth="30"
                  :headerVisible="false">
     <template #west>

@@ -8,6 +8,7 @@
                  :dialog-height="450">
     <template #dialog>
       <normal-layout v-if="visible"
+                     layoutCode='MY_EXPERIENCE_BASE'
                      :header-visible="false"
                      :split-default-left-width="26">
         <template #north> </template>

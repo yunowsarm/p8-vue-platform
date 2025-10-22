@@ -1,6 +1,7 @@
 <template>
   <normal-layout :normalLayout="normalLayout"
                  :header-visible="false"
+                 layoutCode='ROLE_CLASSIFY'
                  :splitDefaultLeftWidth="22">
     <template #west>
       <div style="text-align:center;padding:0 15px;padding-right: 30px;">

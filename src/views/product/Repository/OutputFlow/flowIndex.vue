@@ -21,6 +21,7 @@
                         @remove-task="removeTask">
           </activityTree>
           <normal-layout v-if='showRight'
+                         layoutCode='FLOW_MANAGER'
                          :headerVisible="false"
                          :splitDefaultLeftWidth="50"
                          :normalLayout="normalLayout">
