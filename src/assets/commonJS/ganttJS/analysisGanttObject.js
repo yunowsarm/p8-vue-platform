@@ -410,7 +410,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
                 label: `${item.name}`,
                 align: 'center',
                 resize: true,
-                hide: item.isEnable == '0',
+                hide: true,
                 min_width: 120,
                 template: function (task) {
                   let result = []
@@ -436,7 +436,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
                 label: `${item.name}`,
                 align: 'center',
                 resize: true,
-                hide: item.isEnable == '0',
+                hide: true,
                 min_width: 120,
                 indexNo: item.indexNo
               })
@@ -898,7 +898,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
                 label: `${item.name}`,
                 align: 'center',
                 resize: true,
-                hide: item.isEnable == '0',
+                hide: true,
                 min_width: 120,
                 template: function (task) {
                   let result = []
@@ -924,7 +924,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
                 label: `${item.name}`,
                 align: 'center',
                 resize: true,
-                hide: item.isEnable == '0',
+                hide: true,
                 min_width: 120
               })
             }

@@ -816,7 +816,7 @@ function synchronizationColumns(vueThis, ganttObject) {
               label: `<div class='gantt_search'>${item.name}</div><div class='gantt_search gantt_blank'></div>`,
               align: 'center',
               resize: true,
-              hide: item.isEnable == '0',
+              hide: true,
               min_width: 120,
               template: function (task) {
                 let result = []
@@ -842,7 +842,7 @@ function synchronizationColumns(vueThis, ganttObject) {
               label: `<div class="gantt_search">${item.name}</div><div class="gantt_search gantt_blank"></div>`,
               align: 'center',
               resize: true,
-              hide: item.isEnable == '0',
+              hide: true,
               min_width: 120,
               indexNo: item.indexNo,
               template: function (task) {

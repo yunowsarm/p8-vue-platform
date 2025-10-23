@@ -3727,7 +3727,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
           label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
           align: 'center',
           resize: true,
-          hide: item.isEnable == '0',
+          hide: true,
           min_width: 120,
           editor: checkEdit() ? { type: editType, map_to: item.filedName } : null,
           template: function (task) {
@@ -3798,7 +3798,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
               label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
               align: 'center',
               resize: true,
-              hide: item.isEnable == '0',
+              hide: true,
               min_width: 120,
               editor: checkEdit() ? getEditors(editType, item, item.filedType) : null,
               template: function (task) {
@@ -3825,7 +3825,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
               label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
               align: 'center',
               resize: true,
-              hide: item.isEnable == '0',
+              hide: true,
               min_width: 120,
               editor: checkEdit() ? getEditors(editType, item, item.filedType) : null,
               template: function (task) {

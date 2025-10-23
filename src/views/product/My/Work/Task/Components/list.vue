@@ -1,7 +1,5 @@
 <template>
-  <normal-layout :header-visible="false"
-                 :normal-layout="layout"
-                 :split-layout="true">
+  <normal-layout :header-visible="false" :normal-layout="layout" :split-layout="true">
     <template #west>
       <common-tree :default-expanded-keys="defaultExpandedKeys"
                    :default-expand-all="false"
@@ -64,8 +62,6 @@
       </div>
       <P8TableRender ref="tableRender"
                      :key="dateTime"
-                     class="MyTaskList"
-                     :dynamic-columns="dynamicColumns"
                      searchContainWidth="380px"
                      searchWidth="380px"
                      :code="componentsConfig.code"
@@ -74,9 +70,7 @@
                      :reportParam="sqlParam"
                      @refresh="init()">
         <template #NAME="{ scope, thirdMenuData }">
-          <span v-if="scope.row.USERID === userId"
-                class="underline"
-                @click="drillCol(scope, thirdMenuData)">{{ scope.row.NAME }} </span>
+          <span v-if="scope.row.USERID === userId" class="underline" @click="drillCol(scope, thirdMenuData)">{{ scope.row.NAME }} </span>
           <span v-else>{{ scope.row.NAME }}</span>
         </template>
         <template v-if="!isFromDashboard"
@@ -96,15 +90,15 @@
             </el-dropdown>
           </div>
         </template>
-        <template #PROGRESS="{scope}">
+        <template #PROGRESS="{ scope }">
           <span v-if="scope.row.DATATYPE === 'task'">{{ getProgress(scope.row.PROGRESS) }}</span>
         </template>
-        <template #INDEXNO="{scope}">
+        <template #INDEXNO="{ scope }">
           <span v-if="scope.row.DATATYPE === 'task'">{{ scope.row.INDEXNO }}</span>
           <span v-else
                 style="display: -webkit-inline-box">{{ scope.row.INDEXNO }}</span>
         </template>
-        <template #DAYSREMAINING="{scope}">
+        <template #DAYSREMAINING="{ scope }">
           <div v-html="overdueTextFun(scope.row)"></div>
         </template>
         <template #PREDECESSORSNUMBER="{ scope }">
@@ -121,30 +115,21 @@
       </P8TableRender>
     </template>
     <template #drawer-panel>
-      <common-drawer size="100%"
-                     v-if="visible"
-                     :visible="visible"
-                     direction="ttb"
-                     :projectLevel="projectLevel"
-                     :drawerConfig="menuDrawerConfig"
-                     @close="closeLayout">
+      <common-drawer size="100%" v-if="visible" :visible="visible" direction="ttb" :projectLevel="projectLevel" :drawerConfig="menuDrawerConfig" @close="closeLayout">
         <template #drawer>
-          <menu-layout :third-menu-param="thirdMenuParam"
-                       :default-menu="defaultMenu"></menu-layout>
+          <menu-layout :third-menu-param="thirdMenuParam" :default-menu="defaultMenu"></menu-layout>
         </template>
       </common-drawer>
-      <common-drawer title="查看流程图"
-                     :visible="visibleModelPicture"
-                     :show-handle-btn="false"
-                     size="50%"
-                     @close="onModelPictureClose">
+      <common-drawer title="查看流程图" :visible="visibleModelPicture" :show-handle-btn="false" size="50%" @close="onModelPictureClose">
         <template #drawer>
-          <process-approval-view v-inherited-father-height
-                                 :isSmartForm="true"
-                                 :business-obj="{
+          <process-approval-view
+            v-inherited-father-height
+            :isSmartForm="true"
+            :business-obj="{
               businessId: modelId,
               processDefinitionKey: processDefinationTwoKey
-            }">
+            }"
+          >
           </process-approval-view>
         </template>
       </common-drawer>
@@ -301,18 +286,19 @@ import {
 } from 'p8-components-ui'
 import { calculateRemainingDays, selectGenerateTree } from '@/utils/common'
 import frontToBack from './frontToBack'
-import CommunicationMsg from '@/components/information/index.vue';
+import CommunicationMsg from '@/components/information/index.vue'
 import { mapGetters } from 'vuex'
 import { getSession, setSession } from '@/service/expands/session'
 import { getMonitorData, getBudgetData } from '@/components/workLayout/Components/projectProgress/Components/layoutData'
+
 export default {
   name: 'ButtonNavigationView',
-  provide () {
+  provide() {
     return {
       provideParams: this.provideParams
     }
   },
-  data () {
+  data() {
     return {
       layout: {
         west: {
@@ -362,7 +348,7 @@ export default {
       isChildren: false,
       btnDisable: false,
       sqlParam: {},
-      filterThirdMenu: "MyTask",
+      filterThirdMenu: 'MyTask',
       treeConfig: {
         'current-node-key': ''
       },
@@ -418,10 +404,10 @@ export default {
     TreeSelect
   },
   computed: {
-    isMobile () {
+    isMobile() {
       return this.$store.getters.isMobile
     },
-    thirdMenuData () {
+    thirdMenuData() {
       const currentPath = this.$route.path
       const rootRouter = this.$store.state.routers.addRouters
       let thirdMenu = []
@@ -439,7 +425,7 @@ export default {
       let children = thirdMenu.children
       let tempChildren = []
       if (this.filterThirdMenu && children && children.length) {
-        children.map(item => {
+        children.map((item) => {
           if (this.filterThirdMenu.indexOf(item.name) === -1) {
             tempChildren.push(item)
           }
@@ -449,7 +435,7 @@ export default {
     },
     ...mapGetters(['userId'])
   },
-  created () {
+  created() {
     const that = this
     if (this.isMobile) {
       this.layout = {
@@ -522,32 +508,32 @@ export default {
   },
   watch: {
     $route: {
-      handler (val) {
+      handler(val) {
         this.init()
       }
     }
   },
-  mounted () {
+  mounted() {
     // this.$nextTick(() => {
     //     console.log(this.$refs.tableRender.$refs,'=====')
     // })
   },
   methods: {
-    closeLayout () {
+    closeLayout() {
       this.visible = false
       // 使用完后清除，避免影响其他窗口
       sessionStorage.removeItem('stateInfo')
     },
-    showViewChange (val) {
+    showViewChange(val) {
       let tableParam = this.$refs.tableRender.$refs.xTable.params.sqlParam
       let sqlParam = {
         isChildren: '',
         showView: '',
         tabsName: this.tabsName
-      };
+      }
       for (let key in sqlParam) {
         if (tableParam[key] && tableParam[key].value !== undefined) {
-          sqlParam[key] = tableParam[key].value;  // 将值赋给 sqlParam
+          sqlParam[key] = tableParam[key].value // 将值赋给 sqlParam
         }
       }
       if (val !== 'showView001') {
@@ -560,16 +546,16 @@ export default {
       sqlParam.showView = val
       this.provideParams.searchParams = { ...this.provideParams.searchParams, ...sqlParam }
     },
-    childrenClick (val) {
+    childrenClick(val) {
       let tableParam = this.$refs.tableRender.$refs.xTable.params.sqlParam
       let sqlParam = {
         isChildren: '',
         showView: '',
         tabsName: this.tabsName
-      };
+      }
       for (let key in sqlParam) {
         if (tableParam[key] && tableParam[key].value !== undefined) {
-          sqlParam[key] = tableParam[key].value;  // 将值赋给 sqlParam
+          sqlParam[key] = tableParam[key].value // 将值赋给 sqlParam
         }
       }
       if (val) {
@@ -579,54 +565,56 @@ export default {
       }
       this.provideParams.searchParams = { ...this.provideParams.searchParams, ...sqlParam }
     },
-    getProgress (val) {
+    getProgress(val) {
       return Math.round(val * 100) + '%'
     },
-    frontToBackClick (val, scope) {
+    frontToBackClick(val, scope) {
       this.title = val
       this.columnType = scope.column.property
       this.taskId = scope.row.TASKID
       this.visibleFrontToBack = true
     },
-    close () {
+    close() {
       this.visibleFrontToBack = false
     },
-    viewTaskApprove (rowInfo) {
+    viewTaskApprove(rowInfo) {
       this.modelId = rowInfo.ID
       this.visibleModelPicture = true
     },
-    onModelPictureClose () {
+    onModelPictureClose() {
       this.visibleModelPicture = false
     },
-    withdrawTaskApprove (rowInfo) {
+    withdrawTaskApprove(rowInfo) {
       let taskId = rowInfo.TASKID
       const url = 'taskManager.withdrawTaskApprove'
       const _this = this
-      _this.$confirm('是否要撤回审批', '提示', {
-        confirmButtonText: '撤回',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        _this.$api[url]({ businessId: taskId, businessKey: 'taskFinishApprove' }).then(res => {
-          _this.$message({
-            type: 'success',
-            message: '审批已撤回'
-          })
-          // 注释之后页面撤回审批后才可刷新
-          // Vue.nextTick(function () {
-          _this.dateTime = new Date().getTime()
-          // })
+      _this
+        .$confirm('是否要撤回审批', '提示', {
+          confirmButtonText: '撤回',
+          cancelButtonText: '取消',
+          type: 'warning'
         })
-      })
+        .then(() => {
+          _this.$api[url]({ businessId: taskId, businessKey: 'taskFinishApprove' }).then((res) => {
+            _this.$message({
+              type: 'success',
+              message: '审批已撤回'
+            })
+            // 注释之后页面撤回审批后才可刷新
+            // Vue.nextTick(function () {
+            _this.dateTime = new Date().getTime()
+            // })
+          })
+        })
     },
-    async handleMenuBeforClose (done) {
+    async handleMenuBeforClose(done) {
       this.$router.push({ path: this.currentRouterPath })
       this.visible = false
       // this.dateTime = new Date().getTime()
       // this.$refs.tableRender.formCloseRefresh()
     },
     // 点击项目/计划列钻取进入三级菜单-计划编制页面
-    drillCol (scope, thirdMenuData) {
+    drillCol(scope, thirdMenuData) {
       // 保存状态到 sessionStorage
       const stateInfo = {
         taskInfo: {
@@ -674,7 +662,7 @@ export default {
       }
     },
 
-    created () {
+    created() {
       // 从 sessionStorage 恢复状态
       const stateInfo = sessionStorage.getItem('stateInfo')
       if (stateInfo) {
@@ -714,10 +702,22 @@ export default {
       this.currentRouterPath = this.$route.path
     },
     // 超期/剩余天数调用公共方法
-    overdueTextFun (row) {
+    overdueTextFun(row) {
       return calculateRemainingDays(row).text
     },
-    async init () {
+    async init() {
+      const extendColumn = await this.$api['taskManager.getTaskExtendColumnData']()
+      console.log(extendColumn,'extendColumn')
+      this.dynamicColumns = extendColumn.map(item => {
+        return {
+          align: 'center',
+          dataIndex: item.id,
+          headerAlign: 'center',
+          title: item.name,
+          minWidth: 140,
+          isDynamic:true
+        }
+      })
       const that = this
       const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
       const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
@@ -769,25 +769,24 @@ export default {
           // this.onSelect(this.treeData[0])
         })
       } else {
-        this.handleNodeClick(this.treeData);
+        this.handleNodeClick(this.treeData)
       }
     },
     // 选中节点
-    handleNodeClick (data) {
+    handleNodeClick(data) {
       if (data[0].children && data[0].children.length > 0) {
         this.handleNodeClick(data[0].children)
       } else {
         this.$nextTick(() => {
           this.$refs.commonTree.$refs.tree.setCurrentKey(data[0].ID)
           this.onSelect(data[0])
-
         })
       }
     },
-    getFirstChild (data) {
+    getFirstChild(data) {
       let result = ''
 
-      function filterData (treeData) {
+      function filterData(treeData) {
         if (treeData[0].children && treeData[0].children.length) {
           filterData(treeData[0].children)
         } else {
@@ -798,7 +797,7 @@ export default {
       filterData(data)
       return result
     },
-    handleCancel () {
+    handleCancel() {
       this.$emit('close')
     },
     changeTree (id, data) {
@@ -807,15 +806,15 @@ export default {
     onSelect (obj) {
       setSession('MyWorkTreeNode', obj.id || obj.ID)
       // 判断节点是否真的发生变化
-      const currentNodeId = obj.id || obj.ID;
-      const previousNodeId = this.previousSelectedNode?.id || this.previousSelectedNode?.ID;
+      const currentNodeId = obj.id || obj.ID
+      const previousNodeId = this.previousSelectedNode?.id || this.previousSelectedNode?.ID
 
       if (currentNodeId === previousNodeId) {
-        return;
+        return
       }
 
       // 更新previousSelectedNode
-      this.previousSelectedNode = obj;
+      this.previousSelectedNode = obj
 
       // 原有的onSelect逻辑
       if (obj.id ?? obj.ID == '0') {
@@ -859,10 +858,10 @@ export default {
             isChildren: '',
             showView: '',
             tabsName: this.tabsName
-          };
+          }
           for (let key in sqlParam) {
             if (tableParam[key] && tableParam[key].value !== undefined) {
-              sqlParam[key] = tableParam[key].value;  // 将值赋给 sqlParam
+              sqlParam[key] = tableParam[key].value // 将值赋给 sqlParam
             }
           }
         } else {
@@ -870,7 +869,7 @@ export default {
             isChildren: 'false',
             showView: 'showView003',
             tabsName: this.tabsName
-          };
+          }
         }
         this.provideParams.searchParams = { ...this.provideParams.searchParams, ...sqlParam }
         this.sqlParam = { ...this.sqlParam, ...sqlParam }
@@ -905,13 +904,13 @@ export default {
         this.provideParams.searchParams.isThisMonthTask = this.isThisMonthTask
       }
     },
-    getParamsList (obj, fileName) {
+    getParamsList(obj, fileName) {
       let list = []
 
-      function getEndList (item) {
+      function getEndList(item) {
         list.push(item[fileName])
         if (item.children && item.children.length) {
-          item.children.forEach(el => {
+          item.children.forEach((el) => {
             getEndList(el)
           })
         }
@@ -920,7 +919,7 @@ export default {
       getEndList(obj)
       return list
     },
-    getParams (node) {
+    getParams(node) {
       const { parentId, parmarsMap } = node
       let arr = []
       if (parmarsMap) return parmarsMap
@@ -946,7 +945,7 @@ export default {
       }
       return arr
     },
-    async getTreeData (treeSettingsParmars) {
+    async getTreeData(treeSettingsParmars) {
       let data
       const res = await this.$api['desLayout.execute']({ id: treeSettingsParmars.reportSqlId })
       const config = {
@@ -982,11 +981,11 @@ export default {
       return data
     },
     // 获取默认展开数据key
-    getDefaultExpandedKeys (level, treeList) {
+    getDefaultExpandedKeys(level, treeList) {
       const arr = []
       let count = 0
 
-      function getData (data) {
+      function getData(data) {
         count++
         if (count > level) {
           return
@@ -1002,10 +1001,10 @@ export default {
       getData(treeList)
       return arr
     },
-    menuClickEvent (record, item) {
+    menuClickEvent(record, item) {
       this.$refs.tableRender.thirdMenuClick(record, item)
     },
-    thirdMenuClick (record) {
+    thirdMenuClick(record) {
       let item = {}
       const currentPath = this.$route.path
       const rootRouter = this.$store.state.routers.addRouters
@@ -1022,7 +1021,7 @@ export default {
         })
       }
       if (thirdMenu.children) {
-        thirdMenu.children.forEach(el => {
+        thirdMenu.children.forEach((el) => {
           if (el.meta.title == '计划编制') {
             item = el
           }
@@ -1030,33 +1029,33 @@ export default {
       }
       this.$refs.tableRender.thirdMenuClick(record, item)
     },
-    async getIconData () {
+    async getIconData() {
       // 管理状态
       let manageStatus = await this.$api['dictionaryManagement.list']({ dicType: 'PLAN_MANAGE_STATUS' })
       // 执行状态
       let executeState = await this.$api['dictionaryManagement.list']({ dicType: 'EXECUTE_STATE' })
       this.manageStatus = {}
       this.executeState = {}
-      manageStatus.forEach(el => {
+      manageStatus.forEach((el) => {
         this.manageStatus[el.id] = { icon: el.icon, color: el.color, meaning: el.meaning }
       })
-      executeState.forEach(el => {
+      executeState.forEach((el) => {
         this.executeState[el.id] = { icon: el.icon, color: el.color, meaning: el.meaning }
       })
     },
-    getIcon (row) {
+    getIcon(row) {
       let str = ''
       let el = []
       if (row.MONITORPOINTARRAY) {
         if (row.MONITORPOINTARRAY.includes(',')) {
           let monitorPoints = row.MONITORPOINTARRAY.split(',')
-          monitorPoints.forEach(item => {
+          monitorPoints.forEach((item) => {
             el.push(this.monitorpointDataArray[item])
           })
         } else {
           el.push(this.monitorpointDataArray[row.MONITORPOINTARRAY])
         }
-        el.forEach(item => {
+        el.forEach((item) => {
           if (item.id === '1018' && row.ICONCOMMOND) {
             let count = null
             if (row.ICONCOMMOND.indexOf(',') !== -1) {
