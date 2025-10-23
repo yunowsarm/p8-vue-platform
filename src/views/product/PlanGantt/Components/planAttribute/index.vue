@@ -12,9 +12,11 @@
       <template #describeKey>
         <!-- 任务描述组件 -->
         <describe-view-task v-if="type"
+                            :key='taskId'
                             :task-id="taskId"></describe-view-task>
         <div v-else>
           <describe-edit v-if="isChangeGantt"
+                         :key='taskId'
                          @closeLoading="closeLoading"
                          @saveSuccess="saveCallback"
                          :task-id="taskId"
@@ -25,6 +27,7 @@
                          :plan-info-id="planInfoId"
                          :formWidth="formWidth"></describe-edit>
           <describe-view v-if="!isChangeGantt"
+                         :key='taskId'
                          @closeLoading="closeLoading"
                          :task-id="taskId"
                          :gantt-name="ganttName"
@@ -36,15 +39,18 @@
 
         <!-- 任务标识组件 -->
         <monitor-view-task v-if="type"
+                           :key='taskId'
                            :task-id="taskId"></monitor-view-task>
         <div v-else>
           <monitor-edit v-if="isView"
+                        :key='taskId'
                         @saveSuccess="saveCallback"
                         @refreshData="refreshData"
                         :task-id="taskId"
                         :gantt-name="ganttName"
                         :formWidth="formWidth"></monitor-edit>
           <monitor-view v-if="!isView"
+                        :key='taskId'
                         :task-id="taskId"
                         :gantt-name="ganttName"
                         :formWidth="formWidth"></monitor-view>
@@ -54,14 +60,17 @@
 
         <!-- 前置任务组件 -->
         <dependence-view-task v-if="type"
+                              :key='taskId'
                               :task-id="taskId"></dependence-view-task>
         <div v-else>
           <dependence-edit v-if="isView"
+                           :key='taskId'
                            @saveSuccess="saveCallback"
                            :task-id="taskId"
                            :gantt-name="ganttName"
                            :formWidth="formWidth"></dependence-edit>
           <dependence-view v-if="!isView"
+                           :key='taskId'
                            :task-id="taskId"
                            :gantt-name="ganttName"
                            :formWidth="formWidth"></dependence-view>
@@ -71,14 +80,17 @@
 
         <!-- 输入要求组件 -->
         <input-view-task v-if="type"
+                         :key='taskId'
                          :task-id="taskId"></input-view-task>
         <div v-else>
           <input-edit v-if="isView"
+                      :key='taskId'
                       @saveSuccess="saveCallback"
                       :task-id="taskId"
                       :gantt-name="ganttName"
                       :formWidth="formWidth"></input-edit>
           <input-view v-if="!isView"
+                      :key='taskId'
                       :task-id="taskId"
                       :gantt-name="ganttName"
                       :formWidth="formWidth"></input-view>
@@ -87,6 +99,7 @@
       <template #outputKey>
         <!-- 输出要求和已提交输出物的标签页 -->
         <el-tabs v-if="type"
+                 :key='taskId'
                  v-model="activeOutput"
                  type="border-card">
           <el-tab-pane label="输出要求"
@@ -103,6 +116,7 @@
           </el-tab-pane>
         </el-tabs>
         <el-tabs v-else
+                 :key='taskId'
                  v-model="activeOutput"
                  type="border-card">
           <el-tab-pane label="输出要求"
@@ -137,14 +151,17 @@
 
         <!-- 特别说明组件 -->
         <special-view-task v-if="type"
+                           :key='taskId'
                            :task-id="taskId"></special-view-task>
         <div v-else>
           <special-edit v-if="isView"
+                        :key='taskId'
                         @saveSuccess="saveCallback"
                         :task-id="taskId"
                         :gantt-name="ganttName"
                         :formWidth="formWidth"></special-edit>
           <special-view v-if="!isView"
+                        :key='taskId'
                         :task-id="taskId"
                         :gantt-name="ganttName"
                         :formWidth="formWidth"></special-view>
@@ -153,30 +170,35 @@
       <template #businessForm>
         <businessForm v-if="isChangeView"
                       :task-id="taskId"
+                      :key='taskId'
                       :wholeDescribeId="wholeDescribeId"
                       :gantt-name="ganttName"
                       @refreshData="refreshData"
                       :formWidth="formWidth"></businessForm>
         <businessFormView v-if="!isChangeView"
                           :task-id="taskId"
+                          :key='taskId'
                           :gantt-name="ganttName"
                           :formWidth="formWidth"></businessFormView>
       </template>
       <template #demandKey>
         <relevance-edit v-if="isChangeView"
                         :task-id="taskId"
+                        :key='taskId'
                         :wholeDescribeId="wholeDescribeId"
                         :gantt-name="ganttName"
                         @refreshData="refreshData"
                         :formWidth="formWidth"></relevance-edit>
         <relevance-list v-if="!isChangeView"
                         :task-id="taskId"
+                        :key='taskId'
                         :gantt-name="ganttName"
                         :formWidth="formWidth"></relevance-list>
       </template>
       <template #linkedCollection>
         <linked-collection ref="linkedCollection"
                            :task-id="taskId"
+                           :key='taskId'
                            :isChangeView="isChangeGantt"
                            :wholeDescribeId="wholeDescribeId"
                            title="关联收款合同"
@@ -187,6 +209,7 @@
       <template #linkedPament>
         <linked-collection ref="linkedPament"
                            :task-id="taskId"
+                           :key='taskId'
                            :change-id="changeId"
                            :isChangeView="isChangeGantt"
                            :wholeDescribeId="wholeDescribeId"
@@ -197,7 +220,7 @@
 <!--   预算执行（实际收支）   -->
       <template #budgetExecution>
         <div style='height: 400px'>
-          <budget-execution ref='budgetExecution' :task-id="taskId">
+          <budget-execution :key='taskId' ref='budgetExecution' :task-id="taskId">
 
           </budget-execution>
         </div>
@@ -408,6 +431,7 @@ export default {
   },
   data () {
     return {
+      defaultActive:0,
       headerVisible: false,
       isView: true,
       loading: true,
@@ -432,6 +456,10 @@ export default {
     }
   },
   methods: {
+    getDefaultActive(active){
+      this.defaultActive = active
+      console.log(this.defaultActive,'this.defaultActive')
+    },
     closeLoading () {
       this.loading = false
     },
