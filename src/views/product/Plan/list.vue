@@ -17,7 +17,7 @@
         <div style="padding: 10px; background: #ffffff">
           <span>筛选：</span>
           <tree-select :data="treeData"
-                       @change="onSelect"></tree-select>
+                       @change="changeTree"></tree-select>
         </div>
       </div>
       <P8TableRender :key='tableKey'
@@ -310,6 +310,9 @@ export default {
     },
     handleCancel () {
       this.$emit('close')
+    },
+    changeTree(id,data){
+      this.onSelect(data)
     },
     onSelect (obj) {
       if (obj.id == '0') {

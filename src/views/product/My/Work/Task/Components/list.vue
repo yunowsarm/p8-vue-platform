@@ -16,9 +16,8 @@
     <template #center>
       <div v-if="isMobile">
         <div style="background: #ffffff">
-          <span style="font-weight: bold;font-size: 14px;">筛选：</span>
-          <tree-select :data="treeData"
-                       @change="onSelect"></tree-select>
+          <span style="font-weight: bold; font-size: 14px">筛选：</span>
+          <tree-select :data="treeData" @change="changeTree"></tree-select>
         </div>
       </div>
       <div class="show-type"><span style="font-weight: bold;font-size: 14px;">展示方式
@@ -246,7 +245,7 @@
     margin-top: 5px;
     position: relative;
     z-index: 9999;
-    
+
     left: 0px;
   }
   .el-select-tree {
@@ -772,7 +771,10 @@ export default {
     handleCancel () {
       this.$emit('close')
     },
-    onSelect (obj) {
+    changeTree(id,data){
+      this.onSelect(data)
+    },
+    onSelect(obj) {
       setSession('MyWorkTreeNode', obj.id || obj.ID)
       // 判断节点是否真的发生变化
       const currentNodeId = obj.id || obj.ID;
