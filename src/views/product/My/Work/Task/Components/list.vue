@@ -17,7 +17,7 @@
       <div v-if="isMobile">
         <div style="background: #ffffff">
           <span style="font-weight: bold; font-size: 14px">筛选：</span>
-          <tree-select :data="treeData" @change="changeTree"></tree-select>
+          <tree-select v-model='treeValue' :data="treeData" @change="changeTree"></tree-select>
         </div>
       </div>
       <div class="show-type"><span style="font-weight: bold;font-size: 14px;">展示方式
@@ -303,6 +303,8 @@ export default {
           xl: 15
         }
       },
+      treeValue:'',
+      dynamicColumns: [],
       dateTime: null,
       dialogHeight: document.documentElement.clientHeight * 0.6,
       queryParam: {},
@@ -731,6 +733,7 @@ export default {
         this.$refs.commonTree.$refs.tree.setCurrentKey(MyWorkTreeNode, true)
         return
       }
+      this.treeValue = this.treeData[0].ID
       // defaultCheckeNode 0 根节点       1 第一个子节点
       if (treeSettingsParmars.defaultCheckeNode && treeSettingsParmars.defaultCheckeNode === '0') {
         this.treeConfig['current-node-key'] = this.treeData[0].ID

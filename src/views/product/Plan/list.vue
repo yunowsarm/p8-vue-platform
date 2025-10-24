@@ -17,6 +17,7 @@
         <div style="padding: 10px; background: #ffffff">
           <span>筛选：</span>
           <tree-select :data="treeData"
+                       v-model='treeValue'
                        @change="changeTree"></tree-select>
         </div>
       </div>
@@ -138,6 +139,7 @@ export default {
           xl: 15
         }
       },
+      treeValue:'',
       tableKey: Date.now(),
       dialogHeight: document.documentElement.clientHeight * 0.6,
       queryParam: {},
@@ -272,6 +274,7 @@ export default {
         this.asyncComponents = defaultComponents.url ? defaultComponents.url : ''
         this.componentsConfig = defaultComponents
       }
+      this.treeValue = this.treeData[0].ID
       // defaultCheckeNode 0 根节点       1 第一个子节点
       if (treeSettingsParmars.defaultCheckeNode && treeSettingsParmars.defaultCheckeNode === '0') {
         this.treeConfig['current-node-key'] = this.treeData[0].ID
