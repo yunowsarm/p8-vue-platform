@@ -31,7 +31,7 @@
             <template v-if="!isMobile && (item.children[0].path === 'dash' || item.children[0].path === 'Dashboard')">
               <el-menu-item :index="item.path + '/' + item.children[0].path"
                             :key="item.name">
-                <template v-if="!isMobile">
+                <template>
                   <i v-if="!sidebarState.isOpen"
                      class="p8 menuIcon"
                      :class="item.children[0].meta.icon"></i>
@@ -46,7 +46,7 @@
             <template v-else-if="!item.path && item.redirect && item.children[0].path == item.redirect">
               <el-menu-item :index="item.children[0].path"
                             :key="item.name">
-                <template v-if="!isMobile">
+                <template>
                   <i v-if="!sidebarState.isOpen"
                      class="p8 menuIcon"
                      :class="item.children[0].meta.icon"></i>
@@ -65,7 +65,7 @@
                         class="custom-submenu">
               <template slot="title">
                 <div @mouseenter="handleMouseEnter(item)">
-                  <template v-if="!isMobile">
+                  <template>
                     <i v-if="item.meta && item.meta.icon"
                        class="p8 menuIcon"
                        :class="item.meta.icon"></i>
@@ -87,12 +87,11 @@
                       <el-tooltip placement="right"
                                   :disabled="child.meta.title.length < 8"
                                   :content="child.meta.title">
-                        <span v-if="isMobile">{{ child.meta.title }}</span>
+<!--                        <span v-if="isMobile">{{ child.meta.title }}</span>-->
                         <div id="item"
-                             v-else
                              @mouseenter="handleMouseEnter(child)"
                              @mouseleave="onIconMouseLeave">
-                          <template v-if="!isMobile">
+                          <template>
                             <i v-if="child.meta && child.meta.icon"
                                class="p8 menuIcon"
                                :class="child.meta.icon"></i>
@@ -667,6 +666,9 @@ $menu-collapse-text-color: #303133;
   font-size: 22px !important;
 }
 @media (max-width: 768px) {
+  .menuIcon {
+    font-size: 16px !important;
+  }
   .sidebar {
     position: fixed;
     z-index: 200;
@@ -679,7 +681,7 @@ $menu-collapse-text-color: #303133;
       font-size: 12px;
     }
     .el-menu-item {
-      min-width: 110px !important;
+      min-width: 130px !important;
       padding: 0 !important;
       padding-left: 5px !important;
       span,
@@ -687,7 +689,7 @@ $menu-collapse-text-color: #303133;
         font-size: 12px;
       }
     }
-    width: 110px !important;
+    width: 130px !important;
     .el-submenu__title {
       padding: 0 !important;
       padding-left: 5px !important;
@@ -702,7 +704,7 @@ $menu-collapse-text-color: #303133;
     }
     .cumtom-submenu-menu {
       .el-menu-item {
-        min-width: 110px !important;
+        min-width: 130px !important;
         padding: 0 !important;
         padding-left: 11px !important;
         span,
@@ -712,7 +714,7 @@ $menu-collapse-text-color: #303133;
       }
     }
     .vertical-menu:not(.el-menu--collapse) {
-      width: 110px;
+      width: 130px;
     }
     .ps__rail-y {
       width: 5px;
