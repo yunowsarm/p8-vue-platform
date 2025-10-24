@@ -44,11 +44,13 @@
           <el-radio label="showView002">计划分组</el-radio>
           <el-radio label="showView003">列表</el-radio>
         </el-radio-group>
-        <span class="is-children">仅展示叶子节点：</span>
-        <el-switch v-model="isChildren" active-color="#13ce66" inactive-color="#cccccc" :disabled="btnDisable" @change="childrenClick"></el-switch>
+        <span v-if="!isMobile"  class="is-children">仅展示叶子节点：</span>
+        <el-switch v-if="!isMobile" v-model="isChildren" active-color="#13ce66" inactive-color="#cccccc" :disabled="btnDisable" @change="childrenClick"></el-switch>
       </div>
-      <P8TableRender ref="tableRender"
+      <P8TableRender
+        ref="tableRender"
         :key="dateTime"
+        class="MyTaskList"
         searchContainWidth="380px"
         searchWidth="380px"
         :code="componentsConfig.code"
@@ -206,11 +208,13 @@
   right: 50px;
   z-index: 9999;
 }
+
 .is-children {
   margin-left: 30px;
   font-weight: bold;
   font-size: 14px;
 }
+
 // .el-radio {
 //   margin-right: 5px !important;
 // }
@@ -237,6 +241,16 @@
   .is-children {
     margin-left: 0px;
   }
+  .MyTaskSelect {
+    width: 150px;
+  }
+  .MyTaskList {
+    position: relative;
+    top: -20px;
+  }
+  .MyTaskList ::v-deep .normal-main {
+    height: calc(100% - 45px);
+  }
 }
 
 @media screen and (min-width: 300px) and (max-width: 600px) {
@@ -244,8 +258,8 @@
     width: 300px;
     margin-top: 5px;
     position: relative;
-    z-index: 9999;
-
+    z-index: 9;
+    
     left: 0px;
   }
   .el-select-tree {
