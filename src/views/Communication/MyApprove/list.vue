@@ -270,8 +270,60 @@ export default {
   ::v-deep .icon-youzhedie {
     left: -4px !important;
   }
-  ::v-deep .p8{
-    display: none;
+}
+::v-deep .el-tabs--border-card > .el-tabs__content {
+  padding: 0;
+}
+
+@media (max-width: 600px) {
+  ::v-deep #tab-APPROVE_TYPE_02_01,
+  ::v-deep #tab-APPROVE_TYPE_02_02{
+    //background: #69F456;
+    //color: #272e3b;
+    background: rgba(202, 235, 215, 0.4);
+    color: #009688;
+  }
+  ::v-deep #tab-APPROVE_TYPE_02_01.is-active,
+  ::v-deep #tab-APPROVE_TYPE_02_02.is-active{
+    background: #ffffff;
+    color: #272e3b;
+  }
+  ::v-deep #tab-APPROVE_TYPE_01_01,
+  ::v-deep #tab-APPROVE_TYPE_01_02{
+    //background: #E7F551;
+    //color: #272e3b;
+    background: rgba(249, 223, 174, 0.4);
+    color: #ff9800;
+  }
+  ::v-deep #tab-APPROVE_TYPE_01_01.is-active,
+  ::v-deep #tab-APPROVE_TYPE_01_02.is-active{
+    background: #ffffff;
+    color: #272e3b;
+  }
+}
+.approve-content-mobile{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  .approve-list-mobile{
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    ::v-deep .ps-container{
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+        overscroll-behavior: contain;
+    }
+    //.approve-list{
+    //  flex:1;
+    //  overflow-y: auto;
+    //  -webkit-overflow-scrolling: touch;
+    //  touch-action: pan-y;
+    //  overscroll-behavior: contain;
+    //}
   }
 }
 </style>

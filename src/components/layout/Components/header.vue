@@ -76,7 +76,7 @@
                       :value="approvalTotalMsg"
                       :max="99"
                       class="itemNum">
-              <el-tooltip content="我的审批">
+              <el-tooltip :disabled='isMobile' content="我的审批">
                 <i class="p8 icon-approval"></i>
               </el-tooltip>
             </el-badge>
