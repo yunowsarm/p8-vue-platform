@@ -71,27 +71,35 @@ export default {
           title: '审批结果',
           dataIndex: 'yesOrNo',
           sortable: false,
-          width: '100px',
+          width: '80px',
           align: 'center'
         },
         {
           title: '审批人',
           dataIndex: 'approveUser',
           sortable: false,
-          width: '100px',
+          width: '70px',
           align: 'center'
         },
         {
           title: '审批节点',
           dataIndex: 'processTaskName',
           sortable: false,
+          width: '120px',
           align: 'center'
         },
         {
           title: '审批时间',
           dataIndex: 'approvalTime',
           sortable: false,
-          width: '190px',
+          width: '160px',
+          align: 'center'
+        },
+        {
+          title: '标识',
+          dataIndex: 'processInstanceMark',
+          sortable: false,
+          width: '160px',
           align: 'center'
         }
       ]
@@ -108,7 +116,10 @@ export default {
     }
   },
   mounted () {
-
+    if(this.isMobile){
+      const opinionColumn = this.columns.find(item => item.dataIndex === 'opinion')
+      opinionColumn.width = '300px'
+    }
     this.queryParam.processInstId = this.processInstId
     this.queryParam.businessKey = this.businessKey
     let that = this
@@ -116,7 +127,11 @@ export default {
       that.getPages()
     })
   },
-  computed: {},
+  computed: {
+    isMobile() {
+      return this.$store.getters.isMobile
+    }
+  },
   watch: {
     processInstId: {
       handler: function (newV, oldV) {
