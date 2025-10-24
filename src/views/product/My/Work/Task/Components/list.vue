@@ -33,30 +33,31 @@
             <i class="p8 icon-help-tips"
                style="font-size: 14px;"></i>
           </el-tooltip>
-          ：</span>
-        <el-radio-group v-model="showView"
-                        @input="showViewChange">
+          ：</span
+        >
+        <el-select v-if="isMobile" @change="showViewChange" v-model="showView" class="MyTaskSelect">
+          <el-option value="showView001" label="父子结构"></el-option>
+          <el-option value="showView002" label="计划分组"></el-option>
+          <el-option value="showView003" label="列表"></el-option>
+        </el-select>
+        <el-radio-group v-else v-model="showView" @input="showViewChange">
           <el-radio label="showView001">父子结构</el-radio>
           <el-radio label="showView002">计划分组</el-radio>
           <el-radio label="showView003">列表</el-radio>
         </el-radio-group>
         <span class="is-children">仅展示叶子节点：</span>
-        <el-switch v-model="isChildren"
-                   active-color="#13ce66"
-                   inactive-color="#cccccc"
-                   :disabled="btnDisable"
-                   @change="childrenClick">
-        </el-switch>
+        <el-switch v-model="isChildren" active-color="#13ce66" inactive-color="#cccccc" :disabled="btnDisable" @change="childrenClick"></el-switch>
       </div>
       <P8TableRender ref="tableRender"
-                     :key="dateTime"
-                     searchContainWidth="380px"
-                     searchWidth="380px"
-                     :code="componentsConfig.code"
-                     :permission-vo="componentsConfig.permissionVo"
-                     :west-tree-param="provideParams.searchParams"
-                     :reportParam="sqlParam"
-                     @refresh="init()">
+        :key="dateTime"
+        searchContainWidth="380px"
+        searchWidth="380px"
+        :code="componentsConfig.code"
+        :permission-vo="componentsConfig.permissionVo"
+        :west-tree-param="provideParams.searchParams"
+        :reportParam="sqlParam"
+        @refresh="init()"
+      >
         <template #NAME="{ scope, thirdMenuData }">
           <span v-if="scope.row.USERID === userId"
                 class="underline"
@@ -232,16 +233,21 @@
   .show-type {
     display: flex;
     flex-wrap: wrap;
-    width: 350px;
+    width: 500px;
   }
   .is-children {
     margin-left: 0px;
   }
 }
-@media screen and (min-width: 300px) and (max-width: 1100px) {
+
+@media screen and (min-width: 300px) and (max-width: 600px) {
   .show-type {
-    width: 500px;
-    position: static;
+    width: 300px;
+    margin-top: 5px;
+    position: relative;
+    z-index: 9999;
+    
+    left: 0px;
   }
   .el-select-tree {
     width: 60% !important;

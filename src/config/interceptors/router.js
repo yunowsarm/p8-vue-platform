@@ -45,6 +45,10 @@ export function routerBeforeEachFunc(to, from, next) {
             if (whiteList.indexOf(to.path) !== -1) {
               next(to.path)
             } else if (!reg.test(to.path) || to.path === '/') {
+              if (window.innerWidth <= 1000) {
+                next({name:'MyTask',replace: true})
+                return
+              }
               // 如果是根路径或不匹配homepage路径，则根据用户类型跳转
               next({
                 name:

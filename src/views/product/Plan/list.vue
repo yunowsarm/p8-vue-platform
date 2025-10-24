@@ -72,6 +72,11 @@
 ::v-deep .icon-zuozhedie {
   z-index: 1 !important;
 }
+@media screen and (max-width: 1440px) {
+  .planLayout {
+    height: calc(100% - 50px) !important;
+  }
+}
 </style>
 <script>
 import { Input, Button } from 'element-ui'
