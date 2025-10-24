@@ -28,8 +28,9 @@
         <template v-for="item in asyncRouter">
           <template v-if="!item.hidden && item.children">
             <!-- no children -->
-            <template v-if="!isMobile && (item.children[0].path === 'dash' || item.children[0].path === 'Dashboard')">
+            <template v-if="(item.children[0].path === 'dash' || item.children[0].path === 'Dashboard')">
               <el-menu-item :index="item.path + '/' + item.children[0].path"
+                            @click="clearSidebar"
                             :key="item.name">
                 <template>
                   <i v-if="!sidebarState.isOpen"

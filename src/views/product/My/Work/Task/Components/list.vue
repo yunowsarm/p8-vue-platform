@@ -222,7 +222,7 @@
 //   font-size: 14px !important;
 //   padding-left: 0px !important;
 // }
-@media screen and (max-width: 1440px) {
+@media screen and (max-width: 1100px) {
   .el-radio {
     margin-right: 10px !important;
   }

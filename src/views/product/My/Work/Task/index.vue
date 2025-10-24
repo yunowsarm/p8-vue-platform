@@ -9,6 +9,7 @@
       <el-tabs v-else
                v-model="activeName"
                :type="tabsParmar.type"
+               class="elTabsStyle"
                :tab-position="tabsParmar.tabPosition"
                :stretch="tabsParmar.stretch"
                @tab-click="tabClick">
@@ -309,6 +310,19 @@
   padding: 0 20px !important;
   height: unset;
   box-sizing: border-box;
+}
+@media screen and (max-width: 1100px) {
+  .elTabsStyle ::v-deep {
+    .splitter-paneL, .splitter-pane-resizer{
+      display: none;
+    }
+    .normalCenterFullHeight{
+      padding: 0;
+    }
+    .el-pagination__sizes {
+      margin: 0;
+    }
+  }
 }
 </style>
 <script>
