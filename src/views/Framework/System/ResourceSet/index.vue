@@ -1,5 +1,5 @@
 <template>
-  <P8ResourceSet v-bind="$attrs" v-on="$listeners" />
+  <P8ResourceSet />
 </template>
 <script>
 export default {
