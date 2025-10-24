@@ -227,7 +227,7 @@
     padding-left: 10px !important;
   }
   ::v-deep .normal-layout .normal-header {
-    height: 70px !important;
+    height: 45px !important;
   }
   .show-type {
     display: flex;
@@ -240,7 +240,7 @@
 }
 @media screen and (min-width: 300px) and (max-width: 1100px) {
   .show-type {
-    width: 300px;
+    width: 500px;
     position: static;
   }
   .el-select-tree {

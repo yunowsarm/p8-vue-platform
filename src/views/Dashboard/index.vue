@@ -135,9 +135,8 @@ export default {
       this.visible = false
       if (deepWidget.homePageId) {
         this.$api['kanbanView.getAllNoPage']({ id: deepWidget.homePageId }).then(res => {
-          if (deepWidget.homePageVersion && res[0] && res[0].dataVersion && res[0].dataVersion !== deepWidget.homePageVersion) {
+          if ((deepWidget.homePageVersion || deepWidget.homePageVersion == 0 ) && res[0] && (res[0].dataVersion || res[0].dataVersion == 0) && res[0].dataVersion !== deepWidget.homePageVersion) {
             this.editableTabs[index].visible = true
-
             this.timeKey = new Date().getTime()
             this.editableTabs[index].changeWidget = res[0].widgets.map(el => JSON.parse(el.layout))
             this.editableTabs[index].changeHomePageVersion = res[0].dataVersion
