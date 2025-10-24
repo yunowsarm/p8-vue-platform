@@ -12,6 +12,8 @@
                   :table-refresh="tableRefresh"
                   :flex="tableFlex"
                   :customPageSizes="[15, 30, 50, 100]"
+                  :paginationLayout="paginationLayout"
+                  class="tableStyle"
                   :pagination="true">
       <template #opinion="{ scope }">
         <div class="opinion">
@@ -101,7 +103,8 @@ export default {
       queryParam: {
         processInstId: '',
         businessKey: ''
-      }
+      },
+      paginationLayout: ''
     }
   },
   mounted () {
@@ -122,6 +125,13 @@ export default {
         // this.$refs.table.queryList()
         this.getPages()
       }
+    }
+  },
+  created () {
+    if (this.$store.getters.isMobile) {
+      this.paginationLayout = "prev, pager, next, sizes, total"
+    } else {
+      this.paginationLayout = "prev, pager, next, sizes, total, jumper"
     }
   },
   methods: {
@@ -171,5 +181,10 @@ export default {
 .opinion {
   height: auto;
   white-space: pre-line;
+}
+@media screen and (max-width: 1440px) {
+  .tableStyle ::v-deep .bottom-flex{
+    display: none;
+  }
 }
 </style>
