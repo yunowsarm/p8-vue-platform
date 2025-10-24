@@ -338,6 +338,9 @@ export default {
       }
     },
     triggerSelect (item, index) {
+      if (this.$refs.infList.infiniteList.length === 0) {
+        return
+      }
       if (index && index == this.currentIndex) {
         return
       }

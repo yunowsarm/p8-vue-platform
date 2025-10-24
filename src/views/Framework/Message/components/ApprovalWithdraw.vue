@@ -1,7 +1,7 @@
 <script>
 export default {
   name: 'ApprovalWithdraw',
-  provide() {
+  provide () {
     return {
       disabled: true
     }
@@ -9,12 +9,12 @@ export default {
   props: {
     selectedApproval: {
       type: Object,
-      default: () => {}
+      default: () => { }
     }
   },
-  data() {
+  data () {
     return {
-      tabsHeight: document.documentElement.clientHeight - 380 + 'px',
+      tabsHeight: document.documentElement.clientHeight - 80 + 'px',
       searchParams: {
         msgCatalog: 'APPROVE_TYPE_02_01',
         assigneeUserId: this.$store.state.user.userInfo.id
@@ -29,12 +29,12 @@ export default {
     }
   },
   computed: {
-    componentLoader() {
+    componentLoader () {
       const comp = this.formComp
 
       return () => import('@/views/' + comp)
     },
-    componentUrl() {
+    componentUrl () {
       if (this.asyncComponents) {
         return () => import(`@/views/${this.asyncComponents}.vue`)
       }
@@ -52,11 +52,11 @@ export default {
       }
     }
   },
-  created() {
+  created () {
     // this.loadFormKey()
   },
   methods: {
-    loadFormKey() {
+    loadFormKey () {
       const this_ = this
       console.log(this_.taskId)
       this.$api['PersonalProcessApproval.getApproveContentViewUrl']({ taskId: this.taskId }).then((res) => {
@@ -106,37 +106,34 @@ export default {
 </script>
 
 <template>
-  <div style="height: 100%; width: 100%">
-    <component
-      ref="approveContent"
-      class="approveComponent"
-      :style="{ height: tabsHeight }"
-      :is="componentUrl"
-      :searchParams="searchParams"
-      v-if="componentsParams"
-      :code="componentsParams.code"
-      :data-view-id="componentsParams.dataViewId"
-      :record="{ desformCode: componentsParams.codeForm }"
-      :permission-vo="componentsParams.permissionVo"
-      :layout-config="componentsParams"
-      v-bind="formCompProp"
-      :disabled="true"
-      :kanban-config="componentsParams"
-    />
-    <component
-      ref="approveContent"
-      :style="{ height: tabsHeight }"
-      :disabled="true"
-      :searchParams="searchParams"
-      :selected-approval="{
+  <div class='Approval-withdraw'
+       style="height: 100%; width: 100%">
+    <component ref="approveContent"
+               class="approveComponent"
+               :style="{ height: tabsHeight }"
+               :is="componentUrl"
+               :searchParams="searchParams"
+               v-if="componentsParams"
+               :code="componentsParams.code"
+               :data-view-id="componentsParams.dataViewId"
+               :record="{ desformCode: componentsParams.codeForm }"
+               :permission-vo="componentsParams.permissionVo"
+               :layout-config="componentsParams"
+               v-bind="formCompProp"
+               :disabled="true"
+               :kanban-config="componentsParams" />
+    <component ref="approveContent"
+               :style="{ height: tabsHeight }"
+               :disabled="true"
+               :searchParams="searchParams"
+               :selected-approval="{
         businessKey: this.currEntityId,
         processTaskId: this.taskId
       }"
-      :curr-entity-id="currEntityId"
-      v-else-if="formComp != null && formComp != ''"
-      :is="componentLoader"
-      v-bind="formCompProp"
-    />
+               :curr-entity-id="currEntityId"
+               v-else-if="formComp != null && formComp != ''"
+               :is="componentLoader"
+               v-bind="formCompProp" />
   </div>
 </template>
 

@@ -1,6 +1,7 @@
 <template>
   <div style="height: 100%">
-    <div class="couerDivClass"
+    <div v-if="!isMobile"
+         class="couerDivClass"
          id="couerDiv">
       <P8SplitPane :class="splitPaneDisable ? 'disable_split_pane' : ''"
                    className="split_pane"
@@ -305,6 +306,9 @@ export default {
     }
   },
   computed: {
+    isMobile () {
+      return this.$store.getters.isMobile
+    },
     splitPaneDisable () {
       const myGantt = GanttObject.getGanttObject(this.ganttName)
       if (!this.selectTaskId) {
@@ -403,6 +407,9 @@ export default {
     this.debouncedSetRenderKey = debounce(this.setRenderKey, 300);
   },
   mounted () {
+    if (this.isMobile) {
+      return this.$message.warning('暂不支持，请前往PC端查看')
+    }
     if (this.thirdMenuParam.createPage === 'decompose' || this.thirdMenuParam.route === '/MyTask/MyTask/latest') {
       this.planInfoId = this.thirdMenuParam.PLANINFOID
       // this.secretGrade = this.thirdMenuParam.SECRETGRADE || ''

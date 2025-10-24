@@ -10,9 +10,9 @@ export default {
     NormalLayout,
     CommonTree
   },
-  data() {
+  data () {
     return {
-      treeConfig:{
+      treeConfig: {
         'current-node-key': ''
       },
       renderKey: new Date().getTime(),
@@ -24,7 +24,7 @@ export default {
       },
       treeData: [], // 树形数据
       defaultExpandedKeys: [], // 默认展开的节点
-      projectId:''
+      projectId: ''
     }
   },
   // activated() {
@@ -32,12 +32,20 @@ export default {
   //   // this.renderKey = new Date().getTime()
   //   this.$refs.ganttList.$refs.planGantt.refreshGanttData()
   // },
-  created() {
+  computed: {
+    isMobile () {
+      return this.$store.getters.isMobile
+    }
+  },
+  created () {
+    if (this.isMobile) {
+      return this.$message.warning('暂不支持，请前往PC端查看')
+    }
     this.getTreeData(this.treeSettingsParams)
   },
   methods: {
     // 获取树形数据
-    async getTreeData(treeSettingsParams) {
+    async getTreeData (treeSettingsParams) {
       const res = await this.$api['desLayout.execute']({ id: treeSettingsParams.reportSqlId })
       const config = {
         labelCol: treeSettingsParams.optionLabelCol,
@@ -63,10 +71,10 @@ export default {
     //   })
     // },
     // 树形数据选中事件
-    onSelect(data,node) {
-      if(!!node && node.level === 1) {
+    onSelect (data, node) {
+      if (!!node && node.level === 1) {
         this.projectId = ''
-      }else{
+      } else {
         this.projectId = data.ID
       }
       this.renderKey = new Date().getTime()
@@ -76,18 +84,28 @@ export default {
 </script>
 
 <template>
-  <normal-layout :header-visible="false" :split-layout="true">
+  <normal-layout v-if="!isMobile"
+                 :header-visible="false"
+                 :split-layout="true">
     <template #west>
-      <common-tree node-key="ID" :tree-config='treeConfig' :default-expanded-keys="defaultExpandedKeys" :default-expand-all="false" :data="treeData" ref="commonTree" @select="onSelect"></common-tree>
+      <common-tree node-key="ID"
+                   :tree-config='treeConfig'
+                   :default-expanded-keys="defaultExpandedKeys"
+                   :default-expand-all="false"
+                   :data="treeData"
+                   ref="commonTree"
+                   @select="onSelect"></common-tree>
     </template>
     <template #center>
-      <list :key='renderKey' ref='ganttList' :project-id="projectId"></list>
+      <list :key='renderKey'
+            ref='ganttList'
+            :project-id="projectId"></list>
     </template>
   </normal-layout>
 </template>
 
 <style scoped lang="scss">
-::v-deep .icon-zuozhedie{
+::v-deep .icon-zuozhedie {
   z-index: 1 !important;
 }
 </style>

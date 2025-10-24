@@ -1,5 +1,6 @@
 <template>
-  <div style="height: 100%">
+  <div v-if="!isMobile"
+       style="height: 100%">
     <div class="couerDivClass"
          id="couerDiv">
       <P8SplitPane :class="splitPaneDisable ? 'disable_split_pane' : ''"
@@ -196,6 +197,9 @@ export default {
     }
   },
   computed: {
+    isMobile () {
+      return this.$store.getters.isMobile
+    },
     splitPaneDisable () {
       const myGantt = GanttObject.getGanttObject(this.ganttName)
       const task = myGantt.getTask(this.selectTaskId)
@@ -220,6 +224,9 @@ export default {
     this.firstEntry = true
   },
   mounted () {
+    if (this.isMobile) {
+      return this.$message.warning('暂不支持，请前往PC端查看')
+    }
     this.viewWidth = document.querySelector('#couerDiv').clientWidth
   },
   methods: {

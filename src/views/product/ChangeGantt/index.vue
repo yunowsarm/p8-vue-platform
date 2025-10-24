@@ -1,5 +1,6 @@
 <template>
-  <div class="couerDivClass"
+  <div v-if="!isMobile"
+       class="couerDivClass"
        id="couerDiv">
     <div class="bottom"
          style="height: 100%">
@@ -8,6 +9,12 @@
           <common-button :select-records="selectRecord"
                          buttonType="primary"
                          :comp="comp"></common-button>
+          <el-button v-if="pageType"
+                     :disabled="thirdMenuParam.EXECUTESTATE === '1000'
+          || thirdMenuParam.EXECUTESTATE === '1090'
+          || thirdMenuParam.EXECUTESTATE === '1010'"
+                     type="primary"
+                     @click="releaseChange">发起变更</el-button>
           <search-form-list ref="search"
                             :data-source="searchData"
                             :addFuzzySearch="true"
@@ -373,7 +380,15 @@ export default {
       menuStateObj: []
     }
   },
+  computed: {
+    isMobile () {
+      return this.$store.getters.isMobile
+    }
+  },
   mounted () {
+    if (this.isMobile) {
+      return this.$message.warning('暂不支持，请前往PC端查看')
+    }
     if (this.thirdMenuParam.createPage === 'decompose' || this.thirdMenuParam.route === '/MyTask/MyTask/latest') {
       this.projectCategory = this.thirdMenuParam.projectCategory
       this.secretLevel = this.thirdMenuParam.SECRETGRADE

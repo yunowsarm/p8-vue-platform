@@ -17,7 +17,8 @@
           </template>
         </form-list>
       </div>
-      <el-button type="primary"
+      <el-button v-if="!isMobile"
+                 type="primary"
                  size="mini"
                  @click="approveViewDetail">{{ '查看计划详情' }}</el-button>
       <ApproveViewDetail v-if="isApproveViewDetailView"
@@ -186,6 +187,11 @@ export default {
     },
     deep: true,
     immediate: true
+  },
+  computed: {
+    isMobile () {
+      return this.$store.getters.isMobile
+    }
   },
   methods: {
     rendered () {

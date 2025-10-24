@@ -1,23 +1,25 @@
 <template>
   <div style="height: 100%">
     <div class="couerDivClass">
-      <div class="top" :style="{ height: changeInfoHeight }">
+      <div class="top"
+           :style="{ height: changeInfoHeight }">
         <form-render page-type="view"
-                       ref="formRender"
-                       :data-view-id="businessKey"
-                       :record="{ desformCode: desformCode }"></form-render>
+                     ref="formRender"
+                     :data-view-id="businessKey"
+                     :record="{ desformCode: desformCode }"></form-render>
       </div>
-      <el-button type="primary" size="mini" @click="approveViewDetail">{{ '查看计划详情' }}</el-button>
-      <ApproveViewDetail
-        v-if="isApproveViewDetailView"
-        :plan-info-id="businessKey"
-        :create-page="createPage"
-        :read-only-visible="readOnlyVisible"
-        :approve-content-view="approveContentView"
-        :is-view="isApproveViewDetailView"
-        :wholeDescribeId="wholeDescribeId"
-        @close="closeApproveViewDetail"
-      ></ApproveViewDetail>
+      <el-button v-if="!isMobile"
+                 type="primary"
+                 size="mini"
+                 @click="approveViewDetail">{{ '查看计划详情' }}</el-button>
+      <ApproveViewDetail v-if="isApproveViewDetailView"
+                         :plan-info-id="businessKey"
+                         :create-page="createPage"
+                         :read-only-visible="readOnlyVisible"
+                         :approve-content-view="approveContentView"
+                         :is-view="isApproveViewDetailView"
+                         :wholeDescribeId="wholeDescribeId"
+                         @close="closeApproveViewDetail"></ApproveViewDetail>
     </div>
   </div>
 </template>
@@ -79,7 +81,7 @@ export default {
       default: null
     }
   },
-  data() {
+  data () {
     return {
       title: '计划变更提交',
       readOnlyVisible: true,
@@ -102,30 +104,35 @@ export default {
       wholeDescribeId: ''
     }
   },
+  computed: {
+    isMobile () {
+      return this.$store.getters.isMobile
+    }
+  },
   watch: {
     deep: true,
     immediate: true
   },
   methods: {
-    rendered() {
+    rendered () {
       const that = this
       if (that.approveContentView.changeId) {
       }
     },
-    selectChange() {
+    selectChange () {
     },
-    approveViewDetail() {
-      let that= this
+    approveViewDetail () {
+      let that = this
       that.wholeDescribeId = that.$refs.formRender.$children[0] && that.$refs.formRender.$children[0].modifyRes.primary ? that.$refs.formRender.$children[0].modifyRes.primary.table.WHOLE_DESCRIBE_ID : ''
       this.isApproveViewDetailView = true
     },
-    closeApproveViewDetail() {
+    closeApproveViewDetail () {
       this.isApproveViewDetailView = false
       const vueThis = this.$store.getters.previousThis
       this.$store.commit('SET_VUE_THIS', vueThis)
     }
   },
-  mounted() {
+  mounted () {
   }
 }
 </script>
