@@ -58,12 +58,12 @@
                       :value="messageNum"
                       :max="99"
                       class="itemNum">
-              <el-tooltip content="我的消息">
+              <el-tooltip :disabled='isMobile' content="我的消息">
                 <i class="p8 icon-message"></i>
               </el-tooltip>
             </el-badge>
 
-            <el-tooltip content="我的消息"
+            <el-tooltip :disabled='isMobile' content="我的消息"
                         v-else>
               <i class="p8 icon-message"></i>
             </el-tooltip>
@@ -80,7 +80,7 @@
                 <i class="p8 icon-approval"></i>
               </el-tooltip>
             </el-badge>
-            <el-tooltip content="我的审批"
+            <el-tooltip :disabled='isMobile' content="我的审批"
                         v-else>
               <i class="p8 icon-approval"></i>
             </el-tooltip>
