@@ -3,7 +3,7 @@ import store from '@/plugins/store'
 import { getToken } from '@/service/expands/auth'
 import { log } from 'vxe-pc-ui'
 import { getSession } from '@/service/expands/session'
-const whiteList = ['/login', '/Maintain', '/loginNew', '/QRCodeScanner', '/myMessageView', '/myApproveView', '/MyTask/MyTask/latest']
+const whiteList = ['/login', '/Maintain', '/loginNew', '/QRCodeScanner', '/myMessageView', '/myApproveView', '/MyTask/MyTask/latest', 'Dashboard/index']
 const adminUserIdArr = ['SYS_USER001', 'SYS_USER009', 'SYS_USER012', 'SYS_USER010', 'SYS_USER000'] // 五元id
 
 export function routerBeforeEachFunc(to, from, next) {
@@ -47,6 +47,7 @@ export function routerBeforeEachFunc(to, from, next) {
             } else if (!reg.test(to.path) || to.path === '/') {
               if (window.innerWidth <= 1000) {
                 next({name:'MyTask',replace: true})
+                store.dispatch('hideSidebar', true)
                 return
               }
               // 如果是根路径或不匹配homepage路径，则根据用户类型跳转
