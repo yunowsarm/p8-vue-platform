@@ -59,7 +59,6 @@ export default {
   },
   data () {
     return {
-      messageCatalogApi: 'processApproval.getCatalog',
       // catalogData: [],
       treeCfg: {
         indent: 48,
@@ -116,13 +115,6 @@ export default {
     // this.loadCatalog()
   },
   methods: {
-    // loadCatalog (queryParam) {
-    //   const _this = this
-    //   this.$api[this.messageCatalogApi]({ dicType: 'APPROVE_TYPE' }).then((res) => {
-    //     _this.catalogData = res
-    //   })
-    // },
-
     selectNode (nodeData) {
       let ids = ['APPROVE_TYPE_01_01', 'APPROVE_TYPE_01_02', 'APPROVE_TYPE_02_01', 'APPROVE_TYPE_02_02']
       if (ids.includes(nodeData.id)) {

@@ -114,7 +114,29 @@ export default {
     // this.userUnReadMessageCount()
   },
   methods: {
-    refreshList () {
+    closeView(){
+      console.log(this.$refs.approveList)
+      this.$refs.approveList.currentIndex = null
+      this.viewVisible = false
+    },
+    loadCatalog() {
+      this.$api['userMessage.catalog']({ dicType: 'APPROVE_TYPE' }).then((res) => {
+        this.catalogData = res
+        let ids = ['APPROVE_TYPE_02_01', 'APPROVE_TYPE_02_02', 'APPROVE_TYPE_01_01', 'APPROVE_TYPE_01_02']
+        const tab_1 = res.find(item => item.id === 'APPROVE_TYPE_02_01')
+        const tab_2 = res.find(item => item.id === 'APPROVE_TYPE_02_02')
+        const tab_3 = res.find(item => item.id === 'APPROVE_TYPE_01_01')
+        const tab_4 = res.find(item => item.id === 'APPROVE_TYPE_01_02')
+        const tabs = [tab_1,tab_2,tab_3,tab_4]
+        this.mobileCatalogData = tabs.map((item) => {
+            return {
+              label: `${item.cmeaning}(${this.catalogCount(item.id).num})`,
+              name: item.cminorcode
+            }
+          })
+      })
+    },
+    refreshList() {
       this.userCatalogCount()
       this.dateTime = new Date().getTime()
     },
@@ -248,8 +270,60 @@ export default {
   ::v-deep .icon-youzhedie {
     left: -4px !important;
   }
-  ::v-deep .p8{
-    display: none;
+}
+::v-deep .el-tabs--border-card > .el-tabs__content {
+  padding: 0;
+}
+
+@media (max-width: 600px) {
+  ::v-deep #tab-APPROVE_TYPE_02_01,
+  ::v-deep #tab-APPROVE_TYPE_02_02{
+    //background: #69F456;
+    //color: #272e3b;
+    background: rgba(202, 235, 215, 0.4);
+    color: #009688;
+  }
+  ::v-deep #tab-APPROVE_TYPE_02_01.is-active,
+  ::v-deep #tab-APPROVE_TYPE_02_02.is-active{
+    background: #ffffff;
+    color: #272e3b;
+  }
+  ::v-deep #tab-APPROVE_TYPE_01_01,
+  ::v-deep #tab-APPROVE_TYPE_01_02{
+    //background: #E7F551;
+    //color: #272e3b;
+    background: rgba(249, 223, 174, 0.4);
+    color: #ff9800;
+  }
+  ::v-deep #tab-APPROVE_TYPE_01_01.is-active,
+  ::v-deep #tab-APPROVE_TYPE_01_02.is-active{
+    background: #ffffff;
+    color: #272e3b;
+  }
+}
+.approve-content-mobile{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  .approve-list-mobile{
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    ::v-deep .ps-container{
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+        overscroll-behavior: contain;
+    }
+    //.approve-list{
+    //  flex:1;
+    //  overflow-y: auto;
+    //  -webkit-overflow-scrolling: touch;
+    //  touch-action: pan-y;
+    //  overscroll-behavior: contain;
+    //}
   }
 }
 </style>

@@ -12,21 +12,21 @@
                             @search="search"
                             @re-set="reSet"></search-form-list>
           <div class="btn_list">
-            <el-tooltip content="刷新">
+            <el-tooltip :disabled='isMobile' content="刷新">
               <el-button type="primary"
                          size="mini"
                          @click="refreshList"
                          icon="el-icon-refresh-right"></el-button>
             </el-tooltip>
 
-            <el-tooltip content="时间正序">
+            <el-tooltip :disabled='isMobile' content="时间正序">
               <el-button type="primary"
                          size="mini"
                          @click="ascendingTime"
                          icon="el-icon-caret-bottom"></el-button>
             </el-tooltip>
 
-            <el-tooltip content="时间倒序">
+            <el-tooltip :disabled='isMobile' content="时间倒序">
               <el-button type="primary"
                          size="mini"
                          @click="descendingOrderTime"
@@ -36,7 +36,7 @@
         </div>
         <div class="tagsSearch"
              :key="tabEenderTime">
-          <el-tooltip v-for="item in visibleTags"
+          <el-tooltip :disabled='isMobile' v-for="item in visibleTags"
                       :key="item.id"
                       :open-delay="300"
                       :content="item.name"
@@ -92,6 +92,7 @@
                          v-if="item.approveInfoConfig[el] && item.approveInfoConfig[el].label">
                       {{ item.approveInfoConfig[el].label }}：
                       <el-tooltip v-if="item.approveInfoConfig[el].value && item.approveInfoConfig[el].value.length > 10"
+                                  :disabled='isMobile'
                                   effect="dark"
                                   :content="item.approveInfoConfig[el].value"
                                   placement="left">
@@ -217,6 +218,9 @@ export default {
     }
   },
   computed: {
+    isMobile() {
+      return this.$store.getters.isMobile
+    },
     statusIcon () {
       return function (status) {
         let icon = ''
@@ -411,7 +415,7 @@ export default {
       this.$api['PersonalProcessApproval.saveNoticeMsg']({ id: null }).then((res) => { })
     },
     messageLoad (data, current) {
-      if(this.$store.getters.isMobile) return
+      if(this.isMobile) return
       if (data && current && current === 1) {
         this.currentIndex = 0
       }

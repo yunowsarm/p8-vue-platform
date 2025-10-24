@@ -49,3 +49,8 @@
 .el-message-box__wrapper{
   z-index: 9999 !important;
 }
+@media (max-width: 600px) {
+  .el-message-box{
+    width: 90vw !important;
+  }
+}
