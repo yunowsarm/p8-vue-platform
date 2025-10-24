@@ -114,7 +114,29 @@ export default {
     // this.userUnReadMessageCount()
   },
   methods: {
-    refreshList () {
+    closeView(){
+      console.log(this.$refs.approveList)
+      this.$refs.approveList.currentIndex = null
+      this.viewVisible = false
+    },
+    loadCatalog() {
+      this.$api['userMessage.catalog']({ dicType: 'APPROVE_TYPE' }).then((res) => {
+        this.catalogData = res
+        let ids = ['APPROVE_TYPE_02_01', 'APPROVE_TYPE_02_02', 'APPROVE_TYPE_01_01', 'APPROVE_TYPE_01_02']
+        const tab_1 = res.find(item => item.id === 'APPROVE_TYPE_02_01')
+        const tab_2 = res.find(item => item.id === 'APPROVE_TYPE_02_02')
+        const tab_3 = res.find(item => item.id === 'APPROVE_TYPE_01_01')
+        const tab_4 = res.find(item => item.id === 'APPROVE_TYPE_01_02')
+        const tabs = [tab_1,tab_2,tab_3,tab_4]
+        this.mobileCatalogData = tabs.map((item) => {
+            return {
+              label: `${item.cmeaning}(${this.catalogCount(item.id).num})`,
+              name: item.cminorcode
+            }
+          })
+      })
+    },
+    refreshList() {
       this.userCatalogCount()
       this.dateTime = new Date().getTime()
     },
