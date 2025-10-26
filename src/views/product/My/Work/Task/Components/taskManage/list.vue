@@ -376,16 +376,37 @@ export default {
     downloadOutputRequsetFile(item) {
       if (item.attId) {
         this.$api['SystemSettings.getFileUrl']({ attachmentId: item.attId }, { responseType: 'blob' })
-          .then(async (backJson) => {
+          .then((backJson) => {
             if (this.$isMobile) {
-              const base64Data = await this.$blobToBase64(backJson.data)
-              window.App.saveFile({
-                base64: base64Data,
-                name: file.fileName
-              })
+              if(window.plus){
+                // 申请文件系统（PRIVATE_DOC: 应用私有文档目录）
+                plus.io.requestFileSystem(plus.io.PRIVATE_DOC, (fs) => {
+                  // 创建或覆盖同名文件
+                  fs.root.getFile(item.fileName, { create: true }, (fileEntry) => {
+                    fileEntry.createWriter((writer) => {
+                      writer.onwrite = () => {
+                        plus.nativeUI.toast('文件已保存：' + fileEntry.fullPath)
+
+                        // 打开文件（系统原生应用）
+                        plus.runtime.openFile(fileEntry.toLocalURL(), {}, (e) => {
+                          plus.nativeUI.toast('无法打开该文件：' + e.message)
+                        })
+                      }
+
+                      writer.onerror = (e) => {
+                        plus.nativeUI.toast('文件写入失败：' + e.message)
+                      }
+
+                      writer.write(new Blob([backJson.data])) // 写入 blob 数据
+                    })
+                  })
+                }, (e) => {
+                  plus.nativeUI.toast('文件系统访问失败：' + e.message)
+                })
+              }else{
+                this.$message.warning('当前环境不支持下载')
+              }
             } else {
-              const base64Data = await this.$blobToBase64(backJson.data)
-              console.log(base64Data)
               let link = document.createElement('a')
               link.href = window.URL.createObjectURL(new Blob([backJson.data]))
               link.download = item.attFileName
