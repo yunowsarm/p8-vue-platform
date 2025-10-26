@@ -374,26 +374,59 @@ export default {
       }
     },
     downloadOutputRequsetFile(item) {
-      if(this.$isMobile){
-        if(window.plus){
-          alert('当前包含plus API')
-        }else{
-          alert('当前环境不支持plus API，无法进行下载操作')
-        }
-      }
+      console.log(item)
       if (item.attId) {
         this.$api['SystemSettings.getFileUrl']({ attachmentId: item.attId }, { responseType: 'blob' })
-          .then(async (backJson) => {
-            let link = document.createElement('a')
-            link.href = window.URL.createObjectURL(new Blob([backJson.data],{type:backJson.data.type}))
-            link.download = item.attFileName
-            document.body.appendChild(link)
-            link.click()
-            window.URL.revokeObjectURL(link.href)
-            document.body.removeChild(link)
+          .then((backJson) => {
+            if (window.plus) {
+              const blob = new Blob([backJson.data], { type: backJson.data.type })
+              console.log(blob)
+              this.saveBlobFile(blob, item.attFileName)
+            } else {
+              let link = document.createElement('a')
+              link.href = window.URL.createObjectURL(new Blob([backJson.data], { type: backJson.data.type }))
+              link.download = item.attFileName
+              document.body.appendChild(link)
+              link.click()
+              window.URL.revokeObjectURL(link.href)
+              document.body.removeChild(link)
+            }
           })
           .finally(() => {})
       }
+    },
+    saveBlobFile(blob, fileName) {
+      plus.io.resolveLocalFileSystemURL(
+        '_downloads/',
+        function (entry) {
+          entry.getFile(
+            fileName,
+            { create: true },
+            function (fileEntry) {
+              fileEntry.createWriter(function (writer) {
+                writer.onwriteend = function () {
+                  console.log('文件保存成功：' + fileEntry.fullPath)
+                  alert('下载完成')
+                  plus.nativeUI.toast('下载完成')
+                }
+                writer.onerror = function (e) {
+                  alert('写入失败')
+                  console.error('写入失败：' + e.message)
+                }
+                writer.write(blob)
+              })
+            },
+            function (e) {
+              alert('创建文件失败')
+              console.error('创建文件失败：' + e.message)
+            }
+          )
+        },
+        function (e) {
+          alert('获取下载目录失败')
+          console.error('获取下载目录失败：' + e.message)
+        }
+      )
     }
   }
 }
