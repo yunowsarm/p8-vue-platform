@@ -26,9 +26,9 @@
                 <template v-if="activityDescData && activityDescData.length">
                   <div v-for="(citem, cindex) in activityDescData" :key="cindex" class="list-con-item">
                     <div class="list-con-item__content request">
-                      <el-tooltip placement="top-start">
+                      <el-tooltip :disabled="$isMobile" placement="top-start">
                         <div slot="content" class="custom-tooltip" v-html="citem.description"></div>
-                        <san>{{ citem.descriptionDisplay }}</san>
+                        <span>{{ citem.descriptionDisplay }}</span>
                       </el-tooltip>
                     </div>
                     <div class="list-con-item__content remark"></div>
@@ -45,13 +45,13 @@
                 <template v-if="inputRequestData && inputRequestData.length">
                   <div v-for="citem in inputRequestData" :key="citem.attId" class="list-con-item">
                     <div class="list-con-item__content request">
-                      <el-tooltip placement="top" :content="citem.descriptionStr">
+                      <el-tooltip :disabled="$isMobile" placement="top" :content="citem.descriptionStr">
                         <span>{{ citem.descriptionStr }}</span>
                       </el-tooltip>
                     </div>
                     <div class="list-con-item__content remark">{{ citem.aorDetail || '' }}</div>
                     <div class="list-con-item__content file" @click="downloadOutputRequsetFile(citem)">
-                      <el-tooltip placement="top" :content="citem.attFileName">
+                      <el-tooltip :disabled="$isMobile" placement="top" :content="citem.attFileName">
                         <span>{{ citem.attFileName }}</span>
                       </el-tooltip>
                     </div>
@@ -67,17 +67,17 @@
                 <template v-if="outputIoData && outputIoData.length">
                   <div v-for="citem in outputIoData" :key="citem.aorId" class="list-con-item">
                     <div v-if="!$store.getters.isMobile" class="list-con-item__content request">
-                      <el-tooltip placement="top" :content="citem.aorName">
+                      <el-tooltip :disabled="$isMobile" placement="top" :content="citem.aorName">
                         <span>{{ citem.aorName }}</span>
                       </el-tooltip>
                     </div>
                     <div v-if="!$store.getters.isMobile" class="list-con-item__content remark">
-                      <el-tooltip placement="top" :content="citem.aorDetail">
+                      <el-tooltip :disabled="$isMobile" placement="top" :content="citem.aorDetail">
                         <span>{{ citem.aorDetail }}</span>
                       </el-tooltip>
                     </div>
                     <div class="list-con-item__content file" @click="downloadOutputRequsetFile(citem)">
-                      <el-tooltip placement="top" :content="citem.attFileName">
+                      <el-tooltip :disabled="$isMobile" placement="top" :content="citem.attFileName">
                         <span style="color: blue; text-decoration: underline">{{ citem.attFileName }}</span>
                       </el-tooltip>
                     </div>
@@ -93,7 +93,7 @@
                 <template v-if="specialVersionData && specialVersionData.length">
                   <div v-for="citem in specialVersionData" :key="citem.aorId" class="list-con-item">
                     <div class="list-con-item__content request">
-                      <el-tooltip placement="top" :content="citem.aoDescribes">
+                      <el-tooltip :disabled="$isMobile" placement="top" :content="citem.aoDescribes">
                         <span>{{ citem.aoDescribes }}</span>
                       </el-tooltip>
                     </div>
@@ -374,48 +374,23 @@ export default {
       }
     },
     downloadOutputRequsetFile(item) {
+      if(this.$isMobile){
+        if(window.plus){
+          alert('当前包含plus API')
+        }else{
+          alert('当前环境不支持plus API，无法进行下载操作')
+        }
+      }
       if (item.attId) {
         this.$api['SystemSettings.getFileUrl']({ attachmentId: item.attId }, { responseType: 'blob' })
-          .then((backJson) => {
-            if (this.$isMobile) {
-              if(window.plus){
-                // 申请文件系统（PRIVATE_DOC: 应用私有文档目录）
-                plus.io.requestFileSystem(plus.io.PRIVATE_DOC, (fs) => {
-                  // 创建或覆盖同名文件
-                  fs.root.getFile(item.fileName, { create: true }, (fileEntry) => {
-                    fileEntry.createWriter((writer) => {
-                      writer.onwrite = () => {
-                        plus.nativeUI.toast('文件已保存：' + fileEntry.fullPath)
-
-                        // 打开文件（系统原生应用）
-                        plus.runtime.openFile(fileEntry.toLocalURL(), {}, (e) => {
-                          plus.nativeUI.toast('无法打开该文件：' + e.message)
-                        })
-                      }
-
-                      writer.onerror = (e) => {
-                        plus.nativeUI.toast('文件写入失败：' + e.message)
-                      }
-
-                      writer.write(new Blob([backJson.data])) // 写入 blob 数据
-                    })
-                  })
-                }, (e) => {
-                  plus.nativeUI.toast('文件系统访问失败：' + e.message)
-                })
-              }else{
-                this.$message.warning('当前环境不支持下载')
-              }
-            } else {
-              let link = document.createElement('a')
-              link.href = window.URL.createObjectURL(new Blob([backJson.data]))
-              link.download = item.attFileName
-              document.body.appendChild(link)
-
-              link.click()
-              window.URL.revokeObjectURL(link.href)
-              document.body.removeChild(link)
-            }
+          .then(async (backJson) => {
+            let link = document.createElement('a')
+            link.href = window.URL.createObjectURL(new Blob([backJson.data],{type:backJson.data.type}))
+            link.download = item.attFileName
+            document.body.appendChild(link)
+            link.click()
+            window.URL.revokeObjectURL(link.href)
+            document.body.removeChild(link)
           })
           .finally(() => {})
       }
