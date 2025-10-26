@@ -2,46 +2,33 @@
   <div class="ele-steps-wrap">
     <div class="ele-steps-content">
       <div class="content-header">
-        <span v-for="item in header"
-              :key="item.id"
-              :class="'header ' + item.id">{{item.name}}</span>
+        <span v-for="item in header" :key="item.id" :class="'header ' + item.id">{{ item.name }}</span>
       </div>
-      <VuePerfectScrollbar ref="scrollarea"
-                           class="scroll-area"
-                           :settings="scrollSetting"
-                           @ps-scroll-y="psScrollYHandle"
-                           @ps-scroll-up="psScrollUpHandle"
-                           @ps-scroll-down="psScrollDownHandle"
-                           @ps-y-reach-end="psScrollEndHandle">
-        <div v-for="(item,index) in steps"
-             :key="item.id"
-             :id="`stepsBody${index}`"
-             :ref="item.id"
-             class="content-list-wrap"
-             :class="{'activeAni':item.id === selectStepsId}">
+      <VuePerfectScrollbar
+        ref="scrollarea"
+        class="scroll-area"
+        :settings="scrollSetting"
+        @ps-scroll-y="psScrollYHandle"
+        @ps-scroll-up="psScrollUpHandle"
+        @ps-scroll-down="psScrollDownHandle"
+        @ps-y-reach-end="psScrollEndHandle"
+      >
+        <div v-for="(item, index) in steps" :key="item.id" :id="`stepsBody${index}`" :ref="item.id" class="content-list-wrap" :class="{ activeAni: item.id === selectStepsId }">
           <div class="content-list-cont">
             <div class="classify">
-              <span style="width:65px"
-                    v-if="item.id === 'activityDesc'">任务描述</span>
-              <span style="width:65px"
-                    v-if="item.id === 'putin'">输入</span>
-              <span style="width:65px"
-                    v-if="item.id === 'output'">输出</span>
-              <span style="width:65px"
-                    v-if="item.id === 'varsion'">特别说明</span>
+              <span style="width: 65px" v-if="item.id === 'activityDesc'">任务描述</span>
+              <span style="width: 65px" v-if="item.id === 'putin'">输入</span>
+              <span style="width: 65px" v-if="item.id === 'output'">输出</span>
+              <span style="width: 65px" v-if="item.id === 'varsion'">特别说明</span>
             </div>
             <div class="list-con">
               <template v-if="item.id === 'activityDesc'">
                 <template v-if="activityDescData && activityDescData.length">
-                  <div v-for="(citem,cindex) in activityDescData"
-                       :key="cindex"
-                       class="list-con-item">
+                  <div v-for="(citem, cindex) in activityDescData" :key="cindex" class="list-con-item">
                     <div class="list-con-item__content request">
                       <el-tooltip placement="top-start">
-                        <div slot="content"
-                             class="custom-tooltip"
-                             v-html="citem.description"></div>
-                        <san>{{citem.descriptionDisplay}}</san>
+                        <div slot="content" class="custom-tooltip" v-html="citem.description"></div>
+                        <san>{{ citem.descriptionDisplay }}</san>
                       </el-tooltip>
                     </div>
                     <div class="list-con-item__content remark"></div>
@@ -56,21 +43,16 @@
               </template>
               <template v-if="item.id === 'putin'">
                 <template v-if="inputRequestData && inputRequestData.length">
-                  <div v-for="citem in inputRequestData"
-                       :key="citem.attId"
-                       class="list-con-item">
+                  <div v-for="citem in inputRequestData" :key="citem.attId" class="list-con-item">
                     <div class="list-con-item__content request">
-                      <el-tooltip placement="top"
-                                  :content="citem.descriptionStr">
-                        <span>{{citem.descriptionStr}}</span>
+                      <el-tooltip placement="top" :content="citem.descriptionStr">
+                        <span>{{ citem.descriptionStr }}</span>
                       </el-tooltip>
                     </div>
-                    <div class="list-con-item__content remark">{{citem.aorDetail || ''}}</div>
-                    <div class="list-con-item__content file"
-                         @click="downloadOutputRequsetFile(citem)">
-                      <el-tooltip placement="top"
-                                  :content="citem.attFileName">
-                        <span>{{citem.attFileName}}</span>
+                    <div class="list-con-item__content remark">{{ citem.aorDetail || '' }}</div>
+                    <div class="list-con-item__content file" @click="downloadOutputRequsetFile(citem)">
+                      <el-tooltip placement="top" :content="citem.attFileName">
+                        <span>{{ citem.attFileName }}</span>
                       </el-tooltip>
                     </div>
                   </div>
@@ -83,28 +65,20 @@
               </template>
               <template v-if="item.id === 'output'">
                 <template v-if="outputIoData && outputIoData.length">
-                  <div v-for="citem in outputIoData"
-                       :key="citem.aorId"
-                       class="list-con-item">
-                    <div v-if="!$store.getters.isMobile"
-                         class="list-con-item__content request">
-                      <el-tooltip placement="top"
-                                  :content="citem.aorName">
-                        <span>{{citem.aorName}}</span>
+                  <div v-for="citem in outputIoData" :key="citem.aorId" class="list-con-item">
+                    <div v-if="!$store.getters.isMobile" class="list-con-item__content request">
+                      <el-tooltip placement="top" :content="citem.aorName">
+                        <span>{{ citem.aorName }}</span>
                       </el-tooltip>
                     </div>
-                    <div v-if="!$store.getters.isMobile"
-                         class="list-con-item__content remark">
-                      <el-tooltip placement="top"
-                                  :content="citem.aorDetail">
-                        <span>{{citem.aorDetail}}</span>
+                    <div v-if="!$store.getters.isMobile" class="list-con-item__content remark">
+                      <el-tooltip placement="top" :content="citem.aorDetail">
+                        <span>{{ citem.aorDetail }}</span>
                       </el-tooltip>
                     </div>
-                    <div class="list-con-item__content file"
-                         @click="downloadOutputRequsetFile(citem)">
-                      <el-tooltip placement="top"
-                                  :content="citem.attFileName">
-                        <span style="color: blue; text-decoration: underline;">{{citem.attFileName}}</span>
+                    <div class="list-con-item__content file" @click="downloadOutputRequsetFile(citem)">
+                      <el-tooltip placement="top" :content="citem.attFileName">
+                        <span style="color: blue; text-decoration: underline">{{ citem.attFileName }}</span>
                       </el-tooltip>
                     </div>
                   </div>
@@ -117,22 +91,16 @@
               </template>
               <template v-if="item.id === 'varsion'">
                 <template v-if="specialVersionData && specialVersionData.length">
-                  <div v-for="citem in specialVersionData"
-                       :key="citem.aorId"
-                       class="list-con-item">
+                  <div v-for="citem in specialVersionData" :key="citem.aorId" class="list-con-item">
                     <div class="list-con-item__content request">
-                      <el-tooltip placement="top"
-                                  :content="citem.aoDescribes">
-                        <span>{{citem.aoDescribes}}</span>
+                      <el-tooltip placement="top" :content="citem.aoDescribes">
+                        <span>{{ citem.aoDescribes }}</span>
                       </el-tooltip>
                     </div>
-                    <div class="list-con-item__content remark">{{citem.aorDetail}}</div>
-                    <div v-if="citem.attFileName"
-                         class="list-con-item__content file"
-                         @click="downloadOutputRequsetFile(citem)">
-                      <i class="el-icon-link"
-                         style="font-size: 14px"></i>
-                      <span>{{citem.attFileName}}</span>
+                    <div class="list-con-item__content remark">{{ citem.aorDetail }}</div>
+                    <div v-if="citem.attFileName" class="list-con-item__content file" @click="downloadOutputRequsetFile(citem)">
+                      <i class="el-icon-link" style="font-size: 14px"></i>
+                      <span>{{ citem.attFileName }}</span>
                     </div>
                   </div>
                 </template>
@@ -144,39 +112,22 @@
               </template>
             </div>
             <div class="operation">
-              <button-group :buttonGroup="item.btns"
-                            :stepsRow="item"
-                            :nullity='nullity'
-                            :btnType='btnType'
-                            :approveType="approveType"
-                            :comp="comp"></button-group>
+              <button-group :buttonGroup="item.btns" :stepsRow="item" :nullity="nullity" :btnType="btnType" :approveType="approveType" :comp="comp"></button-group>
             </div>
           </div>
         </div>
       </VuePerfectScrollbar>
     </div>
-    <common-drawer size="50%"
-                   class="manager-drawer"
-                   :title="drawerTitle"
-                   :visible="drawerVisible"
-                   :drawerConfig="drawerConfig"
-                   @close="onDrawerClose">
+    <common-drawer size="50%" class="manager-drawer" :title="drawerTitle" :visible="drawerVisible" :drawerConfig="drawerConfig" @close="onDrawerClose">
       <template #drawer>
         <template v-if="drawerViewVisible === 'activityDesc'">
-          <activity-desc-edit-view :activityDescData="activityDescData"
-                                   @editSaveOK="editSaveOK"></activity-desc-edit-view>
+          <activity-desc-edit-view :activityDescData="activityDescData" @editSaveOK="editSaveOK"></activity-desc-edit-view>
         </template>
         <template v-if="drawerViewVisible === 'putin'">
-          <input-io-view :inputIoData="inputIoData"
-                         :inputRequest="inputRequestData"
-                         @editSaveOK="editSaveOK"></input-io-view>
+          <input-io-view :inputIoData="inputIoData" :inputRequest="inputRequestData" @editSaveOK="editSaveOK"></input-io-view>
         </template>
         <template v-if="drawerViewVisible === 'output'">
-          <output-edit-view :taskId="getPlanInfo().TASKID"
-                            :thirdMenuParam="thirdMenuParam"
-                            :approveType="approveType"
-                            :outputRequest="outputRequestData"
-                            @editSaveOK="editSaveOK"></output-edit-view>
+          <output-edit-view :taskId="getPlanInfo().TASKID" :thirdMenuParam="thirdMenuParam" :approveType="approveType" :outputRequest="outputRequestData" @editSaveOK="editSaveOK"></output-edit-view>
         </template>
         <template v-if="drawerViewVisible === 'varsion'">
           <version-view :versionData="specialVersionData"></version-view>
@@ -221,9 +172,9 @@ export default {
     approveType: {
       type: Boolean,
       default: false
-    },
+    }
   },
-  data () {
+  data() {
     const steps = [
       { name: '任务描述', id: 'activityDesc', btns: [{ title: '查看', eventHandle: 'detailsSettings' }] },
       { name: '输入', id: 'putin', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'putin' }] },
@@ -260,7 +211,7 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     // if (this.getPlanInfo().STATUS === '6070' || this.getPlanInfo().STATUS === '6090' || this.getPlanInfo().pageType === 'view') {
     //   this.steps[2].btns = []
     // }
@@ -296,12 +247,12 @@ export default {
     }
     this.initData()
   },
-  created () {
+  created() {
     let nullity = this.getPlanInfo().NULLITY
     this.nullity = nullity
   },
   methods: {
-    initData () {
+    initData() {
       const _this = this
       const taskId = _this.getPlanInfo().TASKID
       // 输出
@@ -323,51 +274,58 @@ export default {
         _this.$api[inputApi]({ taskId }),
         _this.$api[descApi]({ taskId }),
         _this.$api[versionApi]({ taskId })
-      ]).then(values => {
-        _this.outputRequestData = values[0]
-        _this.outputIoData = values[1]
-        _this.inputRequestData = values[2]
-        _this.inputIoData = values[3]
-        _this.activityDescData = values[4]
-        if (_this.activityDescData) {
-          _this.activityDescData.forEach(item => {
-            if (item.description) {
-              function stripHtmlTags (html) {
-                return html.replace(/<\/?[^>]+(>|$)/g, "");  // 使用正则去除 HTML 标签
+      ])
+        .then((values) => {
+          _this.outputRequestData = values[0]
+          _this.outputIoData = values[1]
+          _this.inputRequestData = values[2]
+          _this.inputIoData = values[3]
+          _this.activityDescData = values[4]
+          if (_this.activityDescData) {
+            _this.activityDescData.forEach((item) => {
+              if (item.description) {
+                function stripHtmlTags(html) {
+                  return html.replace(/<\/?[^>]+(>|$)/g, '') // 使用正则去除 HTML 标签
+                }
+
+                var plainText = stripHtmlTags(item.description)
+
+                function decodeHtmlEntities(text) {
+                  var textarea = document.createElement('textarea')
+                  textarea.innerHTML = text
+                  return textarea.value
+                }
+
+                var decodedStr = decodeHtmlEntities(plainText)
+                item.descriptionDisplay = decodedStr
               }
-              var plainText = stripHtmlTags(item.description);
-              function decodeHtmlEntities (text) {
-                var textarea = document.createElement('textarea');
-                textarea.innerHTML = text;
-                return textarea.value;
-              }
-              var decodedStr = decodeHtmlEntities(plainText);
-              item.descriptionDisplay = decodedStr
-            }
-          })
-        }
-        _this.specialVersionData = values[5]
-      }).catch(err => {
-        console.error('error-all', err)
-      })
+            })
+          }
+          _this.specialVersionData = values[5]
+        })
+        .catch((err) => {
+          console.error('error-all', err)
+        })
     },
-    getActivityDesc () { // 获取活动描述
+    getActivityDesc() {
+      // 获取活动描述
       const _this = this
       const api = 'taskManager.getActivityDescription'
       const taskId = _this.getPlanInfo().TASKID
-      this.$api[api]({ taskId }).then(res => {
+      this.$api[api]({ taskId }).then((res) => {
         _this.activityDescData = res
       })
     },
-    getOutputIo () { // 获取输出物
+    getOutputIo() {
+      // 获取输出物
       const _this = this
       const api = 'taskManager.getOutputIo'
       const taskId = _this.getPlanInfo().TASKID
-      this.$api[api]({ taskId }).then(res => {
+      this.$api[api]({ taskId }).then((res) => {
         _this.outputIoData = res
       })
     },
-    stepsSliderClickHandle (item, index) {
+    stepsSliderClickHandle(item, index) {
       if (item.id === this.selectStepsId) {
         return false
       }
@@ -382,31 +340,31 @@ export default {
       }
       _this.$refs.scrollarea.$el.scrollTop = scrollTotal
     },
-    psScrollYHandle () {
+    psScrollYHandle() {
       // this.selectStepsId = ''
     },
-    psScrollUpHandle (e) {
-    },
-    psScrollDownHandle (e) {
-    },
-    psScrollEndHandle (e) {
-    },
-    detailsSettings (button, stepsItem) { // 查看
+    psScrollUpHandle(e) {},
+    psScrollDownHandle(e) {},
+    psScrollEndHandle(e) {},
+    detailsSettings(button, stepsItem) {
+      // 查看
       this.drawerTitle = stepsItem.name
       this.drawerVisible = true
       this.drawerViewVisible = stepsItem.id
     },
-    modifyMenu (button, stepsItem) { // 编辑
+    modifyMenu(button, stepsItem) {
+      // 编辑
       this.drawerTitle = stepsItem.name
       this.drawerVisible = true
       this.drawerViewVisible = stepsItem.id
     },
-    onDrawerClose () {
+    onDrawerClose() {
       this.drawerTitle = ''
       this.drawerVisible = false
       this.drawerViewVisible = false
     },
-    editSaveOK (type) { // 输出-抽屉form组件保存后回调
+    editSaveOK(type) {
+      // 输出-抽屉form组件保存后回调
       this.onDrawerClose()
       if (type === 'activityDesc') {
         this.getActivityDesc()
@@ -415,19 +373,30 @@ export default {
         this.getOutputIo()
       }
     },
-    downloadOutputRequsetFile (item) {
+    downloadOutputRequsetFile(item) {
       if (item.attId) {
-        this.$api['SystemSettings.getFileUrl']({ attachmentId: item.attId }, { responseType: 'blob' }).then(backJson => {
-          let link = document.createElement('a')
-          link.href = window.URL.createObjectURL(new Blob([backJson.data]))
-          link.download = item.attFileName
-          document.body.appendChild(link)
+        this.$api['SystemSettings.getFileUrl']({ attachmentId: item.attId }, { responseType: 'blob' })
+          .then(async (backJson) => {
+            if (this.$isMobile) {
+              const base64Data = await this.$blobToBase64(backJson.data)
+              window.App.saveFile({
+                base64: base64Data,
+                name: file.fileName
+              })
+            } else {
+              const base64Data = await this.$blobToBase64(backJson.data)
+              console.log(base64Data)
+              let link = document.createElement('a')
+              link.href = window.URL.createObjectURL(new Blob([backJson.data]))
+              link.download = item.attFileName
+              document.body.appendChild(link)
 
-          link.click()
-          window.URL.revokeObjectURL(link.href)
-          document.body.removeChild(link)
-        }).finally(() => {
-        })
+              link.click()
+              window.URL.revokeObjectURL(link.href)
+              document.body.removeChild(link)
+            }
+          })
+          .finally(() => {})
       }
     }
   }
@@ -458,6 +427,7 @@ $blue-color: #1b8af9;
       top: 50%;
       transform: translateY(-50%);
       width: 100%;
+
       li {
         position: relative;
         width: 40%;
@@ -467,13 +437,16 @@ $blue-color: #1b8af9;
         background: #e3f2fd;
         cursor: pointer;
         text-align: center;
+
         &.active {
           background: #1565c0;
           color: #ffffff;
+
           &::after {
             border-color: transparent transparent transparent #1565c0;
           }
         }
+
         &::after {
           content: '';
           border-width: 14px;
@@ -487,9 +460,11 @@ $blue-color: #1b8af9;
       }
     }
   }
+
   .ele-steps-content {
     height: 100%;
     overflow: hidden;
+
     .content-header {
       height: $fixedHeaderHeight;
       display: flex;
@@ -498,6 +473,7 @@ $blue-color: #1b8af9;
       border-bottom: $borderBottomLine;
       font-weight: bolder;
       color: #606266;
+
       span.header {
         line-height: $fixedHeaderHeight;
         flex: 1.5;
@@ -507,28 +483,35 @@ $blue-color: #1b8af9;
         padding: 0 4px;
         box-sizing: border-box;
       }
+
       span.header.file {
         flex: 1;
       }
+
       span.header.classify,
       span.header.operation {
         flex: 0 0 $fixedWidth;
         text-align: center;
       }
     }
+
     .scroll-area {
       height: calc(100% - #{$fixedHeaderHeight});
+
       .content-list-wrap.activeAni {
         animation: activeAni 1s ease;
       }
+
       @keyframes activeAni {
         to {
           background-color: #e7f3ff;
         }
       }
+
       .content-list-cont {
         display: flex;
         box-sizing: border-box;
+
         div.classify,
         div.operation {
           color: #606266;
@@ -554,6 +537,7 @@ $blue-color: #1b8af9;
             height: 40px;
             box-sizing: border-box;
             border-bottom: $borderBottomLine;
+
             div.list-con-item__content {
               flex: 1.5;
               box-sizing: border-box;
@@ -561,6 +545,7 @@ $blue-color: #1b8af9;
               text-overflow: ellipsis;
               overflow: hidden;
               white-space: nowrap;
+
               &.file {
                 flex: 1;
                 cursor: pointer;
@@ -568,6 +553,7 @@ $blue-color: #1b8af9;
             }
           }
         }
+
         div.no-info {
           height: 40px;
           line-height: 40px;
@@ -578,6 +564,7 @@ $blue-color: #1b8af9;
     }
   }
 }
+
 // 同时修改header部分的样式以保持一致
 .content-header {
   span.header.classify,
@@ -588,9 +575,11 @@ $blue-color: #1b8af9;
     min-width: $fixedWidth; // 添加：确保最小宽度
   }
 }
+
 ::v-deep .manager-drawer .el-drawer__header {
   padding: 11px;
 }
+
 .custom-tooltip {
   max-width: 600px;
   max-height: 600px;

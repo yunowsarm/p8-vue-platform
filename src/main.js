@@ -51,6 +51,15 @@ Vue.component('v-contextmenu-item', ContextmenuItem)
 
 Vue.prototype.$echarts = echarts
 Vue.prototype.$P8ParamFunc = P8ParamFunc
+Vue.prototype.$isMobile = store.getters.isMobile
+Vue.prototype.$blobToBase64 = (blob) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onloadend = () => resolve(reader.result)
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  })
+}
 Number.prototype.toFixedNoRound = function (decimals) {
   const factor = Math.pow(10, decimals)
   return Math.floor(this * factor) / factor
