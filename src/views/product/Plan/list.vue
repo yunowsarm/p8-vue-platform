@@ -76,6 +76,17 @@
 @media screen and (max-width: 1440px) {
   .planLayout {
     height: calc(100% - 50px) !important;
+    ::v-deep .normal-header{
+      padding: 10px 8px 0 0;
+    }
+    ::v-deep .mobileButton {
+      white-space: nowrap;
+      overflow: auto;
+      .el-button--small{
+        padding: 5px 7px;
+        margin-right: 3px;
+      }
+    }
   }
 }
 </style>

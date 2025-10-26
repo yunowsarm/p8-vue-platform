@@ -242,10 +242,11 @@
     margin-left: 0px;
   }
   .MyTaskSelect {
-    width: 150px;
+    width: 110px;
   }
   .MyTaskList {
     position: relative;
+    height: calc(100% - 10px);
     top: -20px;
   }
   .MyTaskList ::v-deep .normal-main {
