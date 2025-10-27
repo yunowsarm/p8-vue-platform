@@ -81,8 +81,8 @@
                      size="100%"
                      @close="isVisiblePDFdrawer = false">
         <template #drawer>
-          <PDFpreview v-if="isVisiblePDFdrawer"
-                      :record="record"></PDFpreview>
+          <mdPreview v-if="isVisiblePDFdrawer"
+                     :record="record"></mdPreview>
         </template>
       </common-drawer>
     </template>
@@ -97,6 +97,7 @@ import {
   P8Search as SearchFormList,
 } from 'p8-components-ui'
 import videoViewing from './components/videoPlayer.vue'
+import mdPreview from '@/views/Framework/System/guiDe/components/mdPreview.vue'
 import PDFpreview from './components/PDFpreview.vue'
 export default {
   name: 'myNetworkDisk',
@@ -106,7 +107,8 @@ export default {
     CommonDrawer,
     SearchFormList,
     videoViewing,
-    PDFpreview
+    PDFpreview,
+    mdPreview
   },
   props: {
   },
@@ -237,15 +239,15 @@ export default {
       })
     },
     openManual (row) {
-      let that = this
-      this.$api['SystemSettings.selectResourcesByMenuId']({ menuId: row.id }).then(res => {
-        this.record = res
-        if ((res.mTitle && res.mTitle.length) || res.mURL) {
-          this.isVisiblePDFdrawer = true
-        } else {
-          that.$message.warning('当前菜单暂无操作手册')
-        }
-      })
+      // let that = this
+      // this.$api['SystemSettings.selectResourcesByMenuId']({ menuId: row.id }).then(res => {
+      this.record = row
+      //   if ((res.mTitle && res.mTitle.length) || res.mURL) {
+      this.isVisiblePDFdrawer = true
+      //   } else {
+      //     that.$message.warning('当前菜单暂无操作手册')
+      //   }
+      // })
     }
   }
 }
