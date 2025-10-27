@@ -78,7 +78,6 @@ import { getGreetingTime } from '@/utils/common'
 import { setSession, removeSession } from '@/service/expands/session'
 import GLOBAL_CONST from '@/config/const'
 import { API_DEFAULT_CONFIG, CA_LOGIN, PLATFORM_PREFIX_NAME } from '@/config/settings'
-import Cookie from 'vue-cookie'
 const TOKEN_KEY = GLOBAL_CONST.token.tokenKey
 
 function getRequest () {
@@ -107,7 +106,7 @@ export default {
         userAccount: '',
         userPassword: ''
       },
-      keepLoggedIn: false, // 是否记住登录状态，默认不记住
+      keepLoggedIn: true, // 是否记住登录状态，默认不记住
       loginRules: {
         userAccount: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
         userPassword: [{ required: true, message: '请输入密码', trigger: 'blur' }]
@@ -274,7 +273,6 @@ export default {
           this.$store
             .dispatch('userLogin', params)
             .then((res) => {
-              Cookie.set(TOKEN_KEY, res.token, 7)
               if (res && res.type === 'maintenance') {
                 this.$router.push('/Maintain')
               } else if (res && res.type === 'updatePassword') {
