@@ -44,6 +44,21 @@ export default {
   },
   mounted () {
     window.socketType = null
+    document.addEventListener('plusready', function () {
+      var webview = plus.webview.currentWebview();
+      plus.key.addEventListener('backbutton', function () {
+        webview.canBack(function (e) {
+          if (e.canBack) {
+            webview.back(); // 如果有上一页，则返回
+          } else {
+            // 确认后关闭应用
+            if (confirm("确定要退出应用吗？")) {
+              webview.close(); // 关闭当前Webview，通常可达到退出应用的效果 [citation:5]
+            }
+          }
+        });
+      });
+    });
     // window.addEventListener('beforeunload', this.handlerBeforeUnload)
   },
   methods: {
