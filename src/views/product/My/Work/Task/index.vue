@@ -311,7 +311,7 @@
   height: unset;
   box-sizing: border-box;
 }
-@media screen and (max-width: 1100px) {
+@media screen and (max-width: 1000px) {
   .elTabsStyle ::v-deep {
     .splitter-paneL, .splitter-pane-resizer{
       display: none;
