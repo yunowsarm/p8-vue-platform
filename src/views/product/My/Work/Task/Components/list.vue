@@ -236,7 +236,7 @@
   .show-type {
     display: flex;
     flex-wrap: wrap;
-    width: 500px;
+    width: 300px;
   }
   .is-children {
     margin-left: 0px;
@@ -256,7 +256,7 @@
 
 @media screen and (min-width: 300px) and (max-width: 600px) {
   .show-type {
-    width: 300px;
+    width: 210px;
     margin-top: 5px;
     position: relative;
     z-index: 9;
