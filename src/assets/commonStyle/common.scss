@@ -62,10 +62,6 @@ $font-size-mini: 12px;
 body {
   padding-right: 0 !important;
 }
-.scroll-area {
-  touch-action: pan-x !important;
-  -webkit-overflow-scrolling: touch !important;
-}
 @mixin flexCenter {
   align-items: center;
   justify-content: center;
