@@ -17,7 +17,9 @@
       <div v-if="isMobile">
         <div style="background: #ffffff">
           <span style="font-weight: bold; font-size: 14px">筛选：</span>
-          <tree-select v-model='treeValue' :data="treeData" @change="changeTree"></tree-select>
+          <tree-select v-model='treeValue'
+                       :data="treeData"
+                       @change="changeTree"></tree-select>
         </div>
       </div>
       <div class="show-type"><span style="font-weight: bold;font-size: 14px;">展示方式
@@ -32,33 +34,44 @@
             <i class="p8 icon-help-tips"
                style="font-size: 14px;"></i>
           </el-tooltip>
-          ：</span
-        >
-        <el-select v-if="isMobile" @change="showViewChange" v-model="showView" class="MyTaskSelect">
-          <el-option value="showView001" label="父子结构"></el-option>
-          <el-option value="showView002" label="计划分组"></el-option>
-          <el-option value="showView003" label="列表"></el-option>
+          ：</span>
+        <el-select v-if="isMobile"
+                   @change="showViewChange"
+                   v-model="showView"
+                   class="MyTaskSelect">
+          <el-option value="showView001"
+                     label="父子结构"></el-option>
+          <el-option value="showView002"
+                     label="计划分组"></el-option>
+          <el-option value="showView003"
+                     label="列表"></el-option>
         </el-select>
-        <el-radio-group v-else v-model="showView" @input="showViewChange">
+        <el-radio-group v-else
+                        v-model="showView"
+                        @input="showViewChange">
           <el-radio label="showView001">父子结构</el-radio>
           <el-radio label="showView002">计划分组</el-radio>
           <el-radio label="showView003">列表</el-radio>
         </el-radio-group>
-        <span v-if="!isMobile"  class="is-children">仅展示叶子节点：</span>
-        <el-switch v-if="!isMobile" v-model="isChildren" active-color="#13ce66" inactive-color="#cccccc" :disabled="btnDisable" @change="childrenClick"></el-switch>
+        <span v-if="!isMobile"
+              class="is-children">仅展示叶子节点：</span>
+        <el-switch v-if="!isMobile"
+                   v-model="isChildren"
+                   active-color="#13ce66"
+                   inactive-color="#cccccc"
+                   :disabled="btnDisable"
+                   @change="childrenClick"></el-switch>
       </div>
-      <P8TableRender
-        ref="tableRender"
-        :key="dateTime"
-        class="MyTaskList"
-        searchContainWidth="380px"
-        searchWidth="380px"
-        :code="componentsConfig.code"
-        :permission-vo="componentsConfig.permissionVo"
-        :west-tree-param="provideParams.searchParams"
-        :reportParam="sqlParam"
-        @refresh="init()"
-      >
+      <P8TableRender ref="tableRender"
+                     :key="dateTime"
+                     class="MyTaskList"
+                     searchContainWidth="380px"
+                     searchWidth="380px"
+                     :code="componentsConfig.code"
+                     :permission-vo="componentsConfig.permissionVo"
+                     :west-tree-param="provideParams.searchParams"
+                     :reportParam="sqlParam"
+                     @refresh="init()">
         <template #NAME="{ scope, thirdMenuData }">
           <span v-if="scope.row.USERID === userId"
                 class="underline"
@@ -222,7 +235,7 @@
 //   font-size: 14px !important;
 //   padding-left: 0px !important;
 // }
-@media screen and (max-width: 1100px) {
+@media screen and (max-width: 1000px) {
   .el-radio {
     margin-right: 10px !important;
   }
@@ -236,7 +249,7 @@
   .show-type {
     display: flex;
     flex-wrap: wrap;
-    width: 500px;
+    width: 300px;
   }
   .is-children {
     margin-left: 0px;
@@ -256,11 +269,11 @@
 
 @media screen and (min-width: 300px) and (max-width: 600px) {
   .show-type {
-    width: 300px;
+    width: 210px;
     margin-top: 5px;
     position: relative;
     z-index: 9;
-    
+
     left: 0px;
   }
   .el-select-tree {
@@ -318,7 +331,7 @@ export default {
           xl: 15
         }
       },
-      treeValue:'',
+      treeValue: '',
       dynamicColumns: [],
       dateTime: null,
       dialogHeight: document.documentElement.clientHeight * 0.6,
@@ -789,10 +802,10 @@ export default {
     handleCancel () {
       this.$emit('close')
     },
-    changeTree(id,data){
+    changeTree (id, data) {
       this.onSelect(data)
     },
-    onSelect(obj) {
+    onSelect (obj) {
       setSession('MyWorkTreeNode', obj.id || obj.ID)
       // 判断节点是否真的发生变化
       const currentNodeId = obj.id || obj.ID;

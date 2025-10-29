@@ -89,12 +89,10 @@ export default {
           }
         })
         socket.on('getApproveNum', (data) => {
-          this.createMessage()
           // let count = this.$store.getters.approvalTotalMsg
           this.$store.dispatch('setApprovalMessageCount', data)
         })
         socket.on('getMessageNum', (data) => {
-          this.createMessage()
           let count = this.$store.getters.messageNum
           this.$store.commit('SET_MESSAGENUM', ++count)
         })
@@ -212,26 +210,31 @@ export default {
       });
     },
     createMessage () {
-      console.log('✅ plus 已准备就绪')
-      const options = {
-        title: '提示',
-        content: '有新消息通知，请打开系统查看',
-        payload: { type: 'download', fileId: '123' }
-      }
-      // 创建本地消息
-      plus.push.createMessage(options.content, options.payload, {
-        title: options.title
-      })
-      console.log('📩 已发送本地通知')
-      // 添加点击监听（通知栏点击进入 App）
-      plus.push.addEventListener('click', (msg) => {
-        console.log('📬 通知被点击：', msg)
-        const payload = msg.payload
-        if (payload?.type === 'download') {
-          // 跳转或执行逻辑
-          this.$router.push({ name: 'MyTask' })
+      if (window.innerWidth < 800) {
+        // console.log('✅ plus 已准备就绪')
+        // alert('✅ plus 已准备就绪')
+        const options = {
+          title: '提示',
+          content: '有新消息通知，请打开系统查看',
+          payload: { type: 'download', fileId: '123' }
         }
-      })
+        // 创建本地消息
+        plus.push.createMessage(options.content, options.payload, {
+          title: options.title
+        })
+        // alert('📩 已发送本地通知')
+        // console.log('📩 已发送本地通知')
+        // 添加点击监听（通知栏点击进入 App）
+        plus.push.addEventListener('click', (msg) => {
+          // alert('📬 通知被点击：', msg)
+          // console.log('📬 通知被点击：', msg)
+          const payload = msg.payload
+          if (payload?.type === 'download') {
+            // 跳转或执行逻辑
+            this.$router.push({ name: 'MyTask' })
+          }
+        })
+      }
     },
     getJson () {
       axios

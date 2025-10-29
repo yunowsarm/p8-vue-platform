@@ -330,20 +330,4 @@
 .vxe-footer--row td.vxe-footer--column  .vxe-cell{
   padding: 0 10px !important;
 }
-@media screen and (max-width: 1100px) {
-  .common-table {
-    .bottom-flex {
-      display: none;
-    }
-    .vxe-table--body-wrapper {
-      overflow: auto !important;
-      -webkit-overflow-scrolling: touch !important;
-      touch-action: pan-x !important;
-      position: static !important;
-    }
-    .slotScope {
-      height: auto;
-    }
-  }
-}
 
