@@ -2,7 +2,12 @@
   <main class="main"
         id="contentMain">
     <!-- custom scroll bar for main area -->
-    <VuePerfectScrollbar class="scroll-area"
+    <transition v-if="isMobile" name="fade-transform">
+      <keep-alive :include="cachedViews">
+        <router-view class="main-router" />
+      </keep-alive>
+    </transition>
+    <VuePerfectScrollbar v-else class="scroll-area"
                          :settings="scrollOptions">
       <transition name="fade-transform">
         <keep-alive :include="cachedViews">
@@ -27,6 +32,9 @@ export default {
     }
   },
   computed: {
+    isMobile() {
+      return this.$store.getters.isMobile
+    },
     ...mapGetters(['cachedViews'])
   },
   components: {
