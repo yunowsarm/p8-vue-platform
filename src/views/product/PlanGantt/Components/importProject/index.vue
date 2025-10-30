@@ -238,20 +238,7 @@ export default {
     downloadOutputRequsetFile (item) {
       // 输出要求-文件下载
       if (item.attId) {
-        this.$api['SystemSettings.getTemplateFileUrl']({ attachmentId: item.path }, { responseType: 'blob' })
-          .then((backJson) => {
-            const link = document.createElement('a')
-            link.href = window.URL.createObjectURL(new Blob([backJson.data]))
-            link.download = item.attFilePath
-            document.body.appendChild(link)
-
-            link.click()
-            window.URL.revokeObjectURL(link.href)
-            document.body.removeChild(link)
-          })
-          .finally(() => {
-            // this.search.exportLoading = false
-          })
+        this.$download(item.path,item.attFilePath,'template')
       }
     }
   }

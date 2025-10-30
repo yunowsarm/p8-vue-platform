@@ -24,6 +24,7 @@ import hljs from 'highlight.js'
 import hljsVuePlugin from '@highlightjs/vue-plugin'
 // 引入你需要的语言和样式
 import 'highlight.js/styles/monokai.css' // 选择你喜欢的主题样式
+import {download} from '@/utils/download'
 // 注册插件
 Vue.use(hljsVuePlugin, { hljs })
 Vue.use(VxeUI)
@@ -48,18 +49,10 @@ Vue.component('v-contextmenu-item', ContextmenuItem)
 // 全局注册CustomView--CustomView
 
 // Vue.component('custom-view', CustomView)
-
+Vue.prototype.$download = download
 Vue.prototype.$echarts = echarts
 Vue.prototype.$P8ParamFunc = P8ParamFunc
 Vue.prototype.$isMobile = store.getters.isMobile
-Vue.prototype.$blobToBase64 = (blob) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onloadend = () => resolve(reader.result)
-    reader.onerror = reject
-    reader.readAsDataURL(blob)
-  })
-}
 Number.prototype.toFixedNoRound = function (decimals) {
   const factor = Math.pow(10, decimals)
   return Math.floor(this * factor) / factor
