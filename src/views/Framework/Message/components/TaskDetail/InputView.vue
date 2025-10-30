@@ -136,19 +136,7 @@ export default {
      */
     downloadOutputRequsetFile(file) {
       if (file && file.id) {
-        this.$api['SystemSettings.getFileUrl']({ attachmentId: file.id }, { responseType: 'blob' })
-          .then((backJson) => {
-            const link = document.createElement('a')
-            link.href = window.URL.createObjectURL(new Blob([backJson.data]))
-            link.download = encodeURIComponent(file.attFilePath)
-            document.body.appendChild(link)
-            link.click()
-            window.URL.revokeObjectURL(link.href)
-            document.body.removeChild(link)
-          })
-          .catch((error) => {
-            console.error('Error downloading file:', error)
-          })
+        this.$download(file.id, encodeURIComponent(file.attFilePath))
       }
     }
   }

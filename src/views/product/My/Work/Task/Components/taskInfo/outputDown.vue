@@ -27,21 +27,8 @@ export default {
   methods: {
     fileDownLoad (row) {
         // 输出要求-文件下载
-        if (row.IO_ID) {
-            this.$api['documentManagement.download']({ attachmentId: row.IO_ID }, { responseType: 'blob' })
-            .then((backJson) => {
-                const link = document.createElement('a')
-                link.href = window.URL.createObjectURL(new Blob([backJson.data]))
-                link.download = row.FILE_NAME
-                document.body.appendChild(link)
-
-                link.click()
-                window.URL.revokeObjectURL(link.href)
-                document.body.removeChild(link)
-            })
-            .finally(() => {
-                // this.search.exportLoading = false
-            })
+      if (row.IO_ID) {
+          this.$download(row.IO_ID,row.FILE_NAME)
         }
     }
   }
