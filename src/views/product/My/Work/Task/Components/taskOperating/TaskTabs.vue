@@ -1,7 +1,6 @@
 <template>
-  <el-tabs class="progressTaskTabs scrollable-tabs"
+  <el-tabs class="progressTaskTabs scrollable-tabs progessHeight"
            ref="tabsContainer"
-           :style="{height: progessHeight}"
            v-if="taskTabs.length"
            v-model="tabsActiveName"
            @tab-click="tabsClick">
@@ -163,8 +162,7 @@ export default {
       taskFinish: null,
       taskbusinessForm: [],
       scrollContainer: null,
-      viewVisible: false,
-      progessHeight: '550px'
+      viewVisible: false
     }
   },
   computed: {
@@ -322,7 +320,9 @@ export default {
     dialogOk (val) {
       this.durationDay = val
       this.exceedType = val
-      this.progessHeight = '800px'
+      // if (window.innerWidth < 600) {
+      //   this.progessHeight = '800px'
+      // }
     },
     dialogClose () {
       if (this.getPlanInfo().MANAGERSTATUS === '6406') {
@@ -432,9 +432,8 @@ export default {
     height: calc(100% - 40px) !important;
     overflow: hidden;
   }
-  // .progressTaskTabs.el-tabs {
-  //   height: calc(100% + 95px);
-  //   position: relative;
-  // }
+  .progessHeight {
+    height: 800px !important;
+  }
 }
 </style>
