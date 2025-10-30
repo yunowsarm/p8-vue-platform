@@ -25,6 +25,7 @@ const user = {
     ganttIsGroup: [], // gantt右键菜单
     autoScheduling: '',
     carryOutBudgetControl: '', // 任务执行时是否预算控制 是：'1';  否：'0'
+    demandOptions: '',
     userInfo: {}, // 用于JT智能表单的系统级参数
     sysVars: {
       // 用于智能表单的系统级参数
@@ -108,6 +109,7 @@ const user = {
           state.doneSign = res.doneSign ? res.doneSign.content : ''
           state.displayType = res.displayType ? res.displayType.content : ''
           state.carryOutBudgetControl = res?.carryOutBudgetControl?.content ?? '0'
+          state.demandOptions = res?.demandOptions?.content ?? '0'
 
           if (!state.ganttButtonMode) {
             state.ganttButtonMode = res.defaultMode.content
@@ -175,7 +177,7 @@ const user = {
               reject()
             } else if (res.type === 'updatePassword') {
               resolve(res)
-            } else if (res.type === 'maintenance'){
+            } else if (res.type === 'maintenance') {
               resolve(res)
             } else {
               commit('SET_TOKEN', res.token)

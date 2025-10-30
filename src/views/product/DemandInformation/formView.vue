@@ -3,17 +3,60 @@
     <div class="content">
       <div style="width: 50%">
         <div class="title">{{ formData.sourceChannel }}</div>
-        <form-render class="formRender" :data-view-id="dataViewId" :record="{ desformCode: codeForm }" :prop-param="propParam" page-type="view" v-bind="$attrs"></form-render>
+        <form-render class="formRender"
+                     :data-view-id="dataViewId"
+                     :record="{ desformCode: codeForm }"
+                     :prop-param="propParam"
+                     page-type="view"
+                     v-bind="$attrs"></form-render>
       </div>
       <div style="width: 50%">
         <div class="title">市场需求信息表</div>
-        <form-list :key="formKey" ref="formInfo2" class="formList" label-width="150px" :data-source="dataSourceInfo" :exist-default-btn="false" :form="formData"> </form-list>
-        <div class="title">预审意见</div>
-        <form-list :key="formKey" ref="formInfo3" class="formList" label-width="150px" :data-source="dataSourceOpinion" :exist-default-btn="false" :form="formData"> </form-list>
-        <div class="title">需求信息描述</div>
-        <form-list :key="formKey" ref="formInfo4" class="formList" label-width="150px" :data-source="dataSourceInfoTwo" :exist-default-btn="false" :form="formData"> </form-list>
+        <form-list v-if="demandOptions !== '1'"
+                   :key="formKey"
+                   ref="formInfo2"
+                   class="formList"
+                   label-width="150px"
+                   :data-source="dataSourceInfo"
+                   :exist-default-btn="false"
+                   :form="formData"> </form-list>
+        <form-list v-if="demandOptions === '1'"
+                   ref="formInfo6"
+                   class="formList"
+                   :key="formKey"
+                   label-width="80px"
+                   :data-source="dataSourceDemandView"
+                   :exist-default-btn="false"
+                   :form="formData">
+        </form-list>
+        <div v-if="demandOptions !== '1'"
+             class="title">预审意见</div>
+        <form-list v-if="demandOptions !== '1'"
+                   :key="formKey"
+                   ref="formInfo3"
+                   class="formList"
+                   label-width="150px"
+                   :data-source="dataSourceOpinion"
+                   :exist-default-btn="false"
+                   :form="formData"> </form-list>
+        <div v-if="demandOptions !== '1'"
+             class="title">需求信息描述</div>
+        <form-list v-if="demandOptions !== '1'"
+                   :key="formKey"
+                   ref="formInfo4"
+                   class="formList"
+                   label-width="150px"
+                   :data-source="dataSourceInfoTwo"
+                   :exist-default-btn="false"
+                   :form="formData"> </form-list>
         <div class="title">分析意见</div>
-        <form-list :key="formKey" ref="formInfo5" class="formList" label-width="150px" :data-source="dataSourceAnalyse" :exist-default-btn="false" :form="formData"> </form-list>
+        <form-list :key="formKey"
+                   ref="formInfo5"
+                   class="formList"
+                   label-width="150px"
+                   :data-source="dataSourceAnalyse"
+                   :exist-default-btn="false"
+                   :form="formData"> </form-list>
       </div>
     </div>
   </div>
@@ -33,8 +76,9 @@ export default {
       type: Array
     }
   },
-  data() {
+  data () {
     return {
+      demandOptions: this.row[0].CURRENT_SETTING || '0',
       formKey: new Date().getTime(),
       formType: this.type,
       saveType: false,
@@ -46,6 +90,30 @@ export default {
         uploadFiles: [],
         processingTeam: []
       },
+      dataSourceDemandView: [
+        {
+          type: 'view',
+          labelText: '处理结果',
+          fieldName: 'processingResults',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'view',
+          labelText: '备注',
+          fieldName: 'remark',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'uploadView', // 控件类型
+          labelText: '附件', // 控件显示的文本
+          fieldName: 'uploadFiles',
+          colLayout: 'singleCol',
+          uploadConfig: {
+            // drag: true// 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
+          },
+          listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+        }
+      ],
       dataSourceInfo: [
         {
           type: 'view',
@@ -87,7 +155,7 @@ export default {
           labelText: '客户群',
           fieldName: 'customerGroup',
           colLayout: 'singleCol',
-          tip:''
+          tip: ''
         },
         {
           type: 'view',
@@ -257,10 +325,10 @@ export default {
       ]
     }
   },
-  created() {
+  created () {
     this.getFiledInfo()
   },
-  mounted() {
+  mounted () {
     this.formData.sourceChannel = this.sourceChannel
 
     // 区分不同审批节点展示不同表单
@@ -280,8 +348,8 @@ export default {
     this.viewForm()
   },
   methods: {
-    getFiledInfo(){
-      this.$api['demandManagement.getFiledInfo']({fieldCode:''}).then((res) => {
+    getFiledInfo () {
+      this.$api['demandManagement.getFiledInfo']({ fieldCode: '' }).then((res) => {
         if (res && res.length > 0) {
           const dataSources = [
             this.dataSourceInfo,
@@ -304,7 +372,7 @@ export default {
         }
       })
     },
-    viewForm() {
+    viewForm () {
       this.$api['demandManagement.viewRequirement']({
         id: this.row[0].ID ? this.row[0].ID : this.row[0].id
       }).then((res) => {

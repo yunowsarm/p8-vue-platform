@@ -12,8 +12,10 @@
       </div>
       <div v-if="formType === '1'"
            style="width: 50%;">
-        <div class="title">市场需求信息表</div>
-        <form-list ref="formInfo2"
+        <div v-if="demandOptions !== '1'"
+             class="title">市场需求信息表</div>
+        <form-list v-if="demandOptions !== '1'"
+                   ref="formInfo2"
                    :key="formKey"
                    class="formList"
                    label-width="150px"
@@ -23,7 +25,8 @@
                    :form="formData">
         </form-list>
         <div class="title">预审意见</div>
-        <form-list ref="formInfo3"
+        <form-list v-if="demandOptions !== '1'"
+                   ref="formInfo3"
                    class="formList"
                    :key="formKey"
                    :disabled='disabled'
@@ -43,11 +46,22 @@
             </div>
           </template>
         </form-list>
+        <form-list v-if="demandOptions === '1'"
+                   ref="formInfo6"
+                   class="formList"
+                   :key="formKey"
+                   label-width="80px"
+                   :data-source="dataSource5"
+                   :exist-default-btn="false"
+                   :form="formData">
+        </form-list>
       </div>
       <div v-else
            style="width: 50%;">
-        <div class="title">需求信息描述</div>
-        <form-list ref="formInfo4"
+        <div v-if="demandOptions !== '1'"
+             class="title">需求信息描述</div>
+        <form-list v-if="demandOptions !== '1'"
+                   ref="formInfo4"
                    :key="formKey"
                    class="formList"
                    label-width="150px"
@@ -118,7 +132,7 @@ export default {
     FormRender
   },
   props: {
-    disabled:{
+    disabled: {
       type: Boolean,
       default: false
     },
@@ -142,6 +156,11 @@ export default {
       type: Object
     }
   },
+  computed: {
+    demandOptions () {
+      return this.$store.getters.demandOptions
+    }
+  },
   data () {
     return {
       formKey: new Date().getTime(),
@@ -154,7 +173,9 @@ export default {
       formData: {
         uploadFiles: [],
         processingTeam: [],
-        processingTeamDisplay: ''
+        processingTeamDisplay: '',
+        processingResults: '',
+        remark: ''
       },
       dataSourceInfo: [
         {
@@ -946,11 +967,71 @@ export default {
           ]
         }
       ],
+
       dataSource: [],
       dataSource2: [],
       dataSource3: [],
       dataSource4: [],
+      dataSource5: [],
       selectedRows: [],
+      dataSourceDemand: [
+        {
+          type: 'textarea',
+          labelText: '处理结果',
+          fieldName: 'processingResults',
+          colLayout: 'singleCol',
+          placeholder: '请输入处理结果',
+          maxlength: 250,
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ]
+        },
+        {
+          type: 'textarea',
+          labelText: '备注',
+          fieldName: 'remark',
+          colLayout: 'singleCol',
+          placeholder: '请输入备注',
+          maxlength: 250
+        },
+        {
+          type: 'upload', // 控件类型
+          labelText: '附件', // 控件显示的文本
+          fieldName: 'uploadFiles',
+          colLayout: 'singleCol',
+          uploadConfig: {
+            // drag: true// 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
+          },
+          listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+        }
+      ],
+      dataSourceDemandView: [
+        {
+          type: 'view',
+          labelText: '处理结果',
+          fieldName: 'processingResults',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'view',
+          labelText: '备注',
+          fieldName: 'remark',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'uploadView', // 控件类型
+          labelText: '附件', // 控件显示的文本
+          fieldName: 'uploadFiles',
+          colLayout: 'singleCol',
+          uploadConfig: {
+            // drag: true// 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
+          },
+          listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+        }
+      ],
       isRadioSelect: true
     }
   },
@@ -964,9 +1045,11 @@ export default {
       if (!this.selectedApproval.yesOrNo && this.searchParams.msgCatalog == "APPROVE_TYPE_02_01") {
         this.dataSource = this.dataSourceInfo
         this.dataSource2 = this.dataSourceOpinion
+        this.dataSource5 = this.dataSourceDemand
       } else {
         this.dataSource = this.dataSourceInfoView
         this.dataSource2 = this.dataSourceOpinionView
+        this.dataSource5 = this.dataSourceDemandView
       }
     } else {
       if (!this.selectedApproval.yesOrNo && this.searchParams.msgCatalog == "APPROVE_TYPE_02_01") {
@@ -1021,6 +1104,11 @@ export default {
       }).then((res) => {
         if (res) {
           // debugger
+          if (res.processingResults) {
+            this.formData.processingResults = res.processingResults
+            this.formData.remark = res.remark
+            this.formData.uploadFiles = res.uploadFiles
+          }
           if (this.formType === '1') {
             if (res.requirementAnalyst) {
               this.formData = res
@@ -1110,35 +1198,53 @@ export default {
       this.visible = false
     },
     handleSubmit (val) {
+      this.formData.currentSetting = this.demandOptions
       if (this.formType === '1') {
         if (val !== '驳回') {
-          this.$refs.formInfo2.validate().then((queryParams) => { })
-          this.$refs.formInfo3.validate().then((queryParams) => { })
+          if (this.demandOptions === '0') {
+            this.$refs.formInfo2.validate().then((queryParams) => { })
+            this.$refs.formInfo3.validate().then((queryParams) => { })
+          } else {
+            this.$refs.formInfo6.validate().then((queryParams) => { })
+          }
         }
-        if (this.formData.demandSuggestionsArr.length > 1) {
-          this.formData.demandSuggestions = this.formData.demandSuggestionsArr.join(',')
-        } else {
-          this.formData.demandSuggestions = this.formData.demandSuggestionsArr[0]
+        if (this.formData.demandSuggestionsArr) {
+          if (this.formData.demandSuggestionsArr.length > 1) {
+            this.formData.demandSuggestions = this.formData.demandSuggestionsArr.join(',')
+          } else {
+            this.formData.demandSuggestions = this.formData.demandSuggestionsArr[0]
+          }
         }
 
-        if
-          (
-          !this.formData.demandName ||
-          !this.formData.demandSuggestions ||
-          !this.formData.urgentNeed ||
-          !this.formData.demandBackground ||
-          !this.formData.demandUrgency ||
-          !this.formData.demandDescribe ||
-          !this.formData.requirementAnalyst ||
-          !this.formData.requirementTime) {
-          return false
+        if (this.demandOptions === '0') {
+          if
+            (
+            !this.formData.demandName ||
+            !this.formData.demandSuggestions ||
+            !this.formData.urgentNeed ||
+            !this.formData.demandBackground ||
+            !this.formData.demandUrgency ||
+            !this.formData.demandDescribe ||
+            !this.formData.requirementAnalyst ||
+            !this.formData.requirementTime) {
+            return false
+          } else {
+            this.formData.id = this.businessKey
+            this.saveType = true
+          }
         } else {
-          this.formData.id = this.businessKey
-          this.saveType = true
+          if (!this.formData.processingResults) {
+            return false
+          } else {
+            this.formData.id = this.businessKey
+            this.saveType = true
+          }
         }
       } else {
         if (val !== '驳回') {
-          this.$refs.formInfo4.validate().then((queryParams) => { })
+          if (this.demandOptions === '0') {
+            this.$refs.formInfo4.validate().then((queryParams) => { })
+          }
           this.$refs.formInfo5.validate().then((queryParams) => { })
         }
         if
