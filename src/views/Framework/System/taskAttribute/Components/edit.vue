@@ -353,6 +353,24 @@ export default {
     customValidate(saveParmars) {
       const that = this
       let flag = false
+      // 判断字段名称列是否有重复项
+      let duplicates = []
+      if (saveParmars.attributeExtensionList && saveParmars.attributeExtensionList.length) {
+        let fileNameMap = {}
+        saveParmars.attributeExtensionList.forEach((el) => {
+          if (el.filedName) {
+            if (fileNameMap[el.filedName]) {
+              duplicates.push(el.filedName)
+            } else {
+              fileNameMap[el.filedName] = true
+            }
+          }
+        })
+      }
+      if (duplicates.length > 0) {
+        this.$message({type: 'warning', message: '字段名称列有重复项，请修改后再保存。'})
+        return
+      }
       saveParmars.propertiesList.forEach((el, index) => {
         if (el.attributeType == '1') {
           let item = saveParmars.attributeExtensionList.filter((res) => res.id == el.id)
