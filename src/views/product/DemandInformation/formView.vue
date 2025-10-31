@@ -54,7 +54,7 @@
                    ref="formInfo5"
                    class="formList"
                    label-width="150px"
-                   :data-source="dataSourceAnalyse"
+                   :data-source="dataSource"
                    :exist-default-btn="false"
                    :form="formData"> </form-list>
       </div>
@@ -90,6 +90,7 @@ export default {
         uploadFiles: [],
         processingTeam: []
       },
+      dataSource: [],
       dataSourceDemandView: [
         {
           type: 'view',
@@ -322,6 +323,14 @@ export default {
           fieldName: 'processingConclusionDisplay',
           colLayout: 'doubleCol'
         }
+      ],
+      dataSourceConclusion: [
+        {
+          type: 'view',
+          labelText: '需求处理结论',
+          fieldName: 'processingConclusionDisplay',
+          colLayout: 'singleCol'
+        }
       ]
     }
   },
@@ -345,6 +354,11 @@ export default {
     //     this.dataSource = this.dataSourceAnalyse
     //   }
     // }
+    if (this.demandOptions !== '1') {
+      this.dataSource = this.dataSourceAnalyse
+    } else {
+      this.dataSource = this.dataSourceConclusion
+    }
     this.viewForm()
   },
   methods: {

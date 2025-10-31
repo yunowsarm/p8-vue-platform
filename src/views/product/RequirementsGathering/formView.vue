@@ -967,7 +967,34 @@ export default {
           ]
         }
       ],
-
+      dataSourceConclusion: [
+        {
+          type: 'select',
+          labelText: '需求处理结论',
+          fieldName: 'processingConclusion',
+          placeholder: '下拉选择你要的',
+          colLayout: 'singleCol',
+          optionUrl: {
+            api: 'thirdPartInterface.getDic',
+            params: { dicType: 'HANDLING_SUGGESTIONS' }
+          },
+          options: [],
+          rules: [
+            {
+              required: true,
+              message: '必选'
+            }
+          ]
+        }
+      ],
+      dataSourceConclusionView: [
+        {
+          type: 'view',
+          labelText: '需求处理结论',
+          fieldName: 'processingConclusionDisplay',
+          colLayout: 'singleCol'
+        }
+      ],
       dataSource: [],
       dataSource2: [],
       dataSource3: [],
@@ -1054,10 +1081,18 @@ export default {
     } else {
       if (!this.selectedApproval.yesOrNo && this.searchParams.msgCatalog == "APPROVE_TYPE_02_01") {
         this.dataSource3 = this.dataSourceInfoTwo
-        this.dataSource4 = this.dataSourceAnalyse
+        if (this.demandOptions !== '1') {
+          this.dataSource4 = this.dataSourceAnalyse
+        } else {
+          this.dataSource4 = this.dataSourceConclusion
+        }
       } else {
         this.dataSource3 = this.dataSourceInfoTwoView
-        this.dataSource4 = this.dataSourceAnalyseView
+        if (this.demandOptions !== '1') {
+          this.dataSource4 = this.dataSourceAnalyseView
+        } else {
+          this.dataSource4 = this.dataSourceConclusionView
+        }
       }
     }
     this.viewForm()
@@ -1247,19 +1282,28 @@ export default {
           }
           this.$refs.formInfo5.validate().then((queryParams) => { })
         }
-        if
-          (
-          !this.formData.priority ||
-          !this.formData.demandLevel ||
-          !this.formData.preliminaryVerification ||
-          !this.formData.timeWindow ||
-          !this.formData.handlingSuggestions ||
-          !this.formData.processingConclusion ||
-          !this.formData.processingTeam) {
-          return false
+        if (this.demandOptions === '0') {
+          if
+            (
+            !this.formData.priority ||
+            !this.formData.demandLevel ||
+            !this.formData.preliminaryVerification ||
+            !this.formData.timeWindow ||
+            !this.formData.handlingSuggestions ||
+            !this.formData.processingConclusion ||
+            !this.formData.processingTeam) {
+            return false
+          } else {
+            this.formData.demandId = this.businessKey
+            this.saveType = true
+          }
         } else {
-          this.formData.demandId = this.businessKey
-          this.saveType = true
+          if (!this.formData.processingConclusion) {
+            return false
+          } else {
+            this.formData.demandId = this.businessKey
+            this.saveType = true
+          }
         }
       }
       this.formData.type = this.formType
