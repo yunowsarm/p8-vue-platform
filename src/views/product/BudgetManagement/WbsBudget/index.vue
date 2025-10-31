@@ -254,7 +254,7 @@ export default {
 
 <style scoped lang="scss">
 ::v-deep .panination {
-  display: none;
+  display: none !important;
 }
 
 .normal-layout {

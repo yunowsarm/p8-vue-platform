@@ -124,6 +124,9 @@ const project = {
                   reBuildBaseConfig[item.key] = item.value
                 })
               }
+              if(reBuildBaseConfig.systemName){
+                document.title = reBuildBaseConfig.systemName
+              }
               if (store.state.user.userSettingAll.theme ?.length) {
                 let themeObj = store.state.user.userSettingAll.theme[0].value
                 store.dispatch('setImage', themeObj.imageUrl)
