@@ -700,7 +700,7 @@ div.header_userInfo {
   justify-content: center;
   align-items: center;
 }
-@media (max-width: 768px) {
+@media (max-width: 1100px) {
   .avatar {
     width: 35px !important;
     height: 35px !important;
