@@ -3174,7 +3174,7 @@ function createTaskByDatas(ganttObject, datas, parentId, pos, taskName, msg, dpO
   let extraTask = {}
   if (extraList && extraList.length) {
     extraList.forEach((el) => {
-      extraTask['kz' + el.id] = ''
+      extraTask[el.filedName] = ''
     })
   }
   ganttObject.unselectTask()
