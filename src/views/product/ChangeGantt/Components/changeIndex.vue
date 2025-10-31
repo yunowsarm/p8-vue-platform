@@ -277,11 +277,11 @@ export default {
         let isGroup = val.PlanButton ? val.PlanButton[0].value.isGroup : this.ganttIsGroup
         if (this.ganttButtonMode == 'tabs') {
           if (isGroup === '1') {
-            this.commandButtonBarHeight = this.advance ? '145px' : '40px'
-            this.expandBottom = 'calc(100% - 148px)'
+            this.commandButtonBarHeight = this.advance ? '160px' : '40px'
+            this.expandBottom = 'calc(100% - 160px)'
           } else {
-            this.commandButtonBarHeight = '130px'
-            this.expandBottom = 'calc(100% - 130px)'
+            this.commandButtonBarHeight = '160px'
+            this.expandBottom = 'calc(100% - 160px)'
           }
         }
         if (this.ganttButtonMode == 'double') {
