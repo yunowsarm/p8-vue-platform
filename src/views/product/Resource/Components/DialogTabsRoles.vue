@@ -84,9 +84,16 @@ export default {
     },
     dialogRolesOk () {
       this.fullscreen = false
-      if (this.activeNameRender === 'experience') {
 
-        this.$emit('exp-roles-close', this.experienceTeamSelect)
+      if (this.activeNameRender === 'experience') {
+        const experienceTeamSelect = this.experienceTeamSelect.map(item => {
+          return {
+            ...item,
+            id: null
+          }
+        })
+        console.log(experienceTeamSelect,'experienceTeamSelect');
+        this.$emit('exp-roles-close', experienceTeamSelect)
       } else {
         // 载入
         let teamList = this.standardTeamInfo.data
@@ -95,9 +102,15 @@ export default {
           arr = arr.concat(el.roles)
         })
         let emitInfo = {
-          data: arr,
+          data: arr.map(item => {
+            return {
+              ...item,
+              id: null
+            }
+          }),
           kTeamId: this.standardTeamInfo.kTeamId
         }
+        console.log(emitInfo,'emitInfo');
         this.$emit('standard-roles-close', emitInfo)
       }
     },

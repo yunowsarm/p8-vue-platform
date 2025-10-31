@@ -277,10 +277,10 @@ export function setLockTaskProperties (ganttObject, vueThis) {
     return ganttObject.attachEvent('onParse', function () {
       vueThis.dependentDatas = []
       // 使用计划的状态去禁用gant列表
-      const planManagementStatus = vueThis?.planManagementStatus;
+      const planManagementStatus = vueThis.thirdMenuParam.MANAGESTATUS;
       if (planManagementStatus && planManagementStatus == '6620') {
         ganttObject.config.readonly = true
-        ganttObject.config.readonlyReason = '计划发布审批，不可编辑'
+        ganttObject.config.readonlyReason = '计划发布审批时，不可编辑'
       }
       // 获取gannt操作限制策略
       const taskStatusLockMap = store.getters.taskStatusLockMap
