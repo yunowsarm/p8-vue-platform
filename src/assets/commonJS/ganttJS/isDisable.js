@@ -26,7 +26,7 @@ export function isNewChild(ganttName, tasks) {
   const task = tasks[0]
   if (['6405', '6406', '6409'].includes(task.managerStatus)) {
     const vueThis = store.getters.vueThis
-    if (vueThis.planEditLock === '0') return false
+    if (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose') return false
     return createDisableResponse(`任务为${statusName[task.managerStatus]},不可操作`)
   } else if (task.planType) {
     return createDisableResponse(`当前任务标识是仅叶子节点可用，无法在此创建下级`)
@@ -43,7 +43,7 @@ export function isNewSibling(ganttName, tasks) {
   const parentTask = ganttObject.getTask(parentId)
   if (['6405', '6409'].includes(parentTask.managerStatus)) {
     const vueThis = store.getters.vueThis
-    if (vueThis.planEditLock === '0') return false
+    if (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose') return false
     return createDisableResponse(`父任务为${statusName[parentTask.managerStatus]},不可操作`)
   } else {
     return false
@@ -63,7 +63,7 @@ export function isChangeGantt(ganttName, tasks) {
 export function isCompile(ganttName, tasks) {
   const vueThis = store.getters.vueThis
   const createPage = vueThis.createPage
-  if (vueThis.planEditLock === '1') {
+  if (vueThis.planEditLock === '1' && vueThis.createPage !== 'decompose') {
     return createDisableResponse(`计划编辑锁定时不允许此操作`)
   } else {
     return false
@@ -107,7 +107,7 @@ export function taskStateAndReadonly(ganttName, tasks) {
 // 选中任务中包含已下发任务
 export function isHasDeliveredTask(ganttName, tasks) {
   const vueThis = store.getters.vueThis
-  if (vueThis.planEditLock === '0') return false
+  if (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose') return false
   if (tasks.some((task) => task.managerStatus === '6404' && ganttName !== 'changeGantt')) {
     return createDisableResponse(`任务已下发时不允许此操作`)
   }
@@ -459,7 +459,6 @@ export function isNotStart(ganttName, tasks) {
 }
 // 判断选中的任务是否只变更记录
 export function isChangeHistory(ganttName, tasks) {
-  console.log('🚀 ~ isChangeHistory ~ tasks:', tasks)
   if (tasks && tasks.length === 1 && !tasks[0].changeCount) {
     return createDisableResponse(`无变更记录`)
   }
@@ -533,7 +532,7 @@ function isDisableFunCheck(ganttName, tasks, checkType) {
   } else {
     result.msg = 'gantt加载错误'
   }
-  if (vueThis.planEditLock === '0') {
+  if (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose') {
     result.value = true
     result.msg = ''
   }
@@ -580,7 +579,7 @@ function checkHasProductTask(tasks) {
  */
 function checkHasApproveTask(ganttName, tasks) {
   const vueThis = store.getters.vueThis
-  if (vueThis.planEditLock === '0') return false
+  if (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose') return false
   let result = false
   if (ganttName) {
     const ganttObject = GanttObject.getGanttObject(ganttName)
@@ -672,7 +671,7 @@ function canIndentCheck(ganttName) {
           }
         } else if (editManagerStatus && editManagerStatus.indexOf(task.managerStatus) == -1) {
           const vueThis = store.getters.vueThis
-          if (vueThis.planEditLock === '0') return false
+          if (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose') return false
           result = {
             value: false,
             msg: `${statusName[task.managerStatus]}不允许操作`
@@ -689,7 +688,7 @@ function canIndentCheck(ganttName) {
           }
           if (editManagerStatus && editManagerStatus.indexOf(preTask.managerStatus) === -1) {
             const vueThis = store.getters.vueThis
-            if (vueThis.planEditLock === '0') return false
+            if (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose') return false
             result = {
               value: false,
               msg: `上一个同级节点为${statusName[preTask.managerStatus]}，不可操作`
@@ -871,7 +870,7 @@ function canDeleteCheck(ganttName, tasks, vueThis) {
         }
         if (editManagerStatus && editManagerStatus.indexOf(selTask.managerStatus) === -1 && indexNo !== 0) {
           const vueThis = store.getters.vueThis
-          if (vueThis.planEditLock === '0') return false
+          if (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose') return false
           result = {
             value: false,
             msg: `所选任务状态为${statusName[selTask.managerStatus]}时,不可删除`
@@ -897,7 +896,7 @@ function canDeleteCheck(ganttName, tasks, vueThis) {
           }
           if (chiManagerStatus && chiManagerStatus.indexOf(task.managerStatus) === -1 && indexNo !== 0) {
             const vueThis = store.getters.vueThis
-            if (vueThis.planEditLock === '0') return false
+            if (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose') return false
             result = {
               value: false,
               msg: `所选任务状态为${statusName[selTask.managerStatus]}时,不可删除`

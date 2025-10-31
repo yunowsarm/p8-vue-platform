@@ -5,15 +5,17 @@
       <div class="content-box"
            v-for="(item, index) in radioOptions"
            :key="index"
-           @click="handleAdhibitionClick(item)">
+           @click="handleAdhibitionClick(item)"
+           @dblclick="handleDbClick(item)">
         <div :class="{ active: item.isActive }"
              class="activeStyle">
           <div>
-<!--            <el-image style="width: 60px; height: 60px"-->
-<!--                      :src="item.imgUrl"-->
-<!--                      fit="cover"></el-image>-->
+            <!--            <el-image style="width: 60px; height: 60px"-->
+            <!--                      :src="item.imgUrl"-->
+            <!--                      fit="cover"></el-image>-->
             <i :class="item.icon"
-               class="p8 iconfont" :style="{ color: theme }"></i>
+               class="p8 iconfont"
+               :style="{ color: theme }"></i>
 
           </div>
           <span class="nav-text"
@@ -152,10 +154,12 @@ export default {
       propParam: {}, // 将参数传至表单
       formTitle: '',
       formVisible: false,
-      dataTime: new Date().getTime()
+      dataTime: new Date().getTime(),
+      clickTimeout: null, // 定时器ID
+      isDoub: false
     }
   },
-  computed:{
+  computed: {
     theme () {
       return this.$store.getters.theme
     }
@@ -181,31 +185,76 @@ export default {
         this.formVisible = true
       }
     },
+    handleDbClick (row) {
+      this.isDoub = true
+      if (this.codeForm === '') {
+        row.isActive = !row.isActive
+        // 处理单选逻辑：只允许一个项处于激活状态
+        this.radioOptions.forEach(item => {
+          if (row.id !== item.id) {
+            item.isActive = false; // 其他项取消激活
+          }
+        });
+        // 更新表单数据和参数
+        this.updateFormData(row);
+
+        // 更新选中行的 ID 列表
+        this.updateAppIds(row);
+        window.selsecRow = undefined
+        clearTimeout(this.clickTimeout)
+      } else {
+        this.codeForm = ''
+        row.isActive = true
+        // 处理单选逻辑：只允许一个项处于激活状态
+        this.radioOptions.forEach(item => {
+          if (row.id !== item.id) {
+            item.isActive = false; // 其他项取消激活
+          }
+        });
+        // 更新表单数据和参数
+        this.updateFormData(row);
+
+        // 更新选中行的 ID 列表
+        this.updateAppIds(row);
+      }
+      setTimeout(() => {
+        this.formVisible = true
+        this.isDoub = false
+      }, 300)
+    },
     handleClose () {
       window.selsecRow = undefined
       this.$emit('close')
     },
     handleAdhibitionClick (row) {
-      // 切换当前行激活状态
-      row.isActive = !row.isActive;
+      if (this.isDoub) {
+        this.isDoub = false
+        return
+      }
+      this.clickTimeout = setTimeout(() => {
+        if (!this.isDoub) {
+          // 切换当前行激活状态
+          row.isActive = !row.isActive;
 
-      // 处理单选逻辑：只允许一个项处于激活状态
-      this.radioOptions.forEach(item => {
-        if (row.id !== item.id) {
-          item.isActive = false; // 其他项取消激活
+          // 处理单选逻辑：只允许一个项处于激活状态
+          this.radioOptions.forEach(item => {
+            if (row.id !== item.id) {
+              item.isActive = false; // 其他项取消激活
+            }
+          });
+
+          // 更新表单数据和参数
+          this.updateFormData(row);
+
+          // 更新选中行的 ID 列表
+          this.updateAppIds(row);
+
+          // 更新时间戳
+          this.dataTime = Date.now();
         }
-      });
-
-      // 更新表单数据和参数
-      this.updateFormData(row);
-
-      // 更新选中行的 ID 列表
-      this.updateAppIds(row);
-
-      // 更新时间戳
-      this.dataTime = Date.now();
+        this.clickTimeout = null
+      }, 300)
     },
-
     updateFormData (row) {
       if (row.isActive) {
         // 如果当前行是激活状态，更新相关表单数据
@@ -304,7 +353,7 @@ export default {
   right: 0px;
   border-top-right-radius: 8px;
 }
-.iconfont{
+.iconfont {
   font-size: 54px;
 }
 </style>
