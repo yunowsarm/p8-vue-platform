@@ -45,6 +45,8 @@ export default {
   mounted () {
     window.socketType = null
     document.addEventListener('plusready', function () {
+      const info = plus.push.getClientInfo()
+      plus.storage.setItem('clientInfo',JSON.stringify(info))
       var webview = plus.webview.currentWebview();
       plus.key.addEventListener('backbutton', function () {
         webview.canBack(function (e) {
