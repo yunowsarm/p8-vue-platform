@@ -1,32 +1,37 @@
 <template>
-  <div style="height: 100%">
-    <FullCalendar :key="dateTime" class="calendarLayout" :options="calendarOptions" />
-    <common-dialog
-      v-if="visibleDrawerOther"
-      :title="drawerTitle"
-      :visible="visibleDrawerOther"
-      :dialog-config="dialogConfig"
-      :show-handle-btn="false"
-      :dialog-height="dialogHeight"
-      :width="dialogWidth"
-      @close="onEditResourcesCloseOther"
-    >
+  <div style="height: 100%;">
+    <FullCalendar :key="dateTime"
+                  class="calendarLayout"
+                  :options="calendarOptions" />
+    <common-dialog v-if="visibleDrawerOther"
+                   :title="drawerTitle"
+                   :visible="visibleDrawerOther"
+                   :dialog-config="dialogConfig"
+                   :show-handle-btn="false"
+                   :dialog-height="dialogHeight"
+                   :width="dialogWidth"
+                   @close="onEditResourcesCloseOther">
       <template #dialog>
-        <P8TableRender ref="tableRender" class="planLayout" :code="tableCode" :report-param="reportParam" :west-tree-param="provideParams.searchParams"> </P8TableRender>
+        <P8TableRender ref="tableRender"
+                       class="planLayout"
+                       :code="tableCode"
+                       :reportParam="reportParam"
+                       :west-tree-param="provideParams.searchParams">
+        </P8TableRender>
       </template>
     </common-dialog>
-    <common-dialog
-      v-if="visibleDrawerTodo"
-      title="待办事项执行"
-      :visible="visibleDrawerTodo"
-      :dialog-config="dialogConfig"
-      :show-handle-btn="false"
-      :dialog-height="dialogHeight"
-      :width="dialogWidth"
-      @close="onEditResourcesCloseTodo"
-    >
+    <common-dialog v-if="visibleDrawerTodo"
+                   title="待办事项执行"
+                   :visible="visibleDrawerTodo"
+                   :dialog-config="dialogConfig"
+                   :show-handle-btn="false"
+                   :dialog-height="dialogHeight"
+                   :width="dialogWidth"
+                   @close="onEditResourcesCloseTodo">
       <template #dialog>
-        <TodoList ref="todoList" :row="row" @close="onEditResourcesCloseTodo"></TodoList>
+        <TodoList ref="todoList"
+                  :row="row"
+                  @close="onEditResourcesCloseTodo"></TodoList>
       </template>
     </common-dialog>
   </div>
@@ -39,7 +44,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
-import zhCnLocale from '@fullcalendar/core/locales/zh-cn' // 引入中文语言包
+import zhCnLocale from '@fullcalendar/core/locales/zh-cn'; // 引入中文语言包
 import { P8Dialog as CommonDialog } from 'p8-components-ui'
 import TodoList from '@/views/Framework/System/TodoList/index'
 export default {
@@ -48,8 +53,9 @@ export default {
     CommonDialog,
     TodoList
   },
-  props: {},
-  data() {
+  props: {
+  },
+  data () {
     return {
       tableCode: 'calendarDrilldownList',
       reportParam: {},
@@ -83,43 +89,43 @@ export default {
             {
               date: new Date(Date.now() - 86400000).toISOString().split('T')[0]
             }
-          ]
-          const currentDate = arg.date.toISOString().split('T')[0]
-          const warningInfo = warningDates.find((item) => item.date === currentDate)
+          ];
+          const currentDate = arg.date.toISOString().split('T')[0];
+          const warningInfo = warningDates.find(item => item.date === currentDate);
           if (warningInfo && this.hasWarning) {
-            const warningIcon = document.createElement('div')
-            warningIcon.className = 'cell-warning-icon'
+            const warningIcon = document.createElement('div');
+            warningIcon.className = 'cell-warning-icon';
             warningIcon.onclick = (e) => {
-              e.stopPropagation()
-              this.visibleDrawerOther = true
-            }
-            arg.el.appendChild(warningIcon)
+              e.stopPropagation();
+              this.visibleDrawerOther = true;
+            };
+            arg.el.appendChild(warningIcon);
           }
         },
         // 确保事件可以被点击
         eventClick: (info) => {
           // 事件点击处理
-          console.log('Event clicked:', info)
+          console.log('Event clicked:', info);
           if (info.event._def.extendedProps.type === 'task') {
             let pageType = ''
             if (info.event.extendedProps.isLeaf > 0) {
               pageType = 'view'
             }
             const stateInfo = {
-              taskInfo: {
-                taskId: info.event.id,
-                thirdMenuParam: {
-                  MANAGERSTATUS: info.event.extendedProps.managerStatus,
-                  STATUS: info.event.extendedProps.status,
-                  EXECUTESTATE: '1070',
-                  TASKID: info.event.id,
-                  currentRoute: '/MyTask/MyTask/latest',
-                  createPage: 'decompose',
-                  currentPage: 'normal',
-                  pageType: pageType,
-                  planInfoId: info.event.extendedProps.planInfoId
+              "taskInfo": {
+                "taskId": info.event.id,
+                "thirdMenuParam": {
+                  "MANAGERSTATUS": info.event.extendedProps.managerStatus,
+                  "STATUS": info.event.extendedProps.status,
+                  "EXECUTESTATE": "1070",
+                  "TASKID": info.event.id,
+                  "currentRoute": "/MyTask/MyTask/latest",
+                  "createPage": "decompose",
+                  "currentPage": "normal",
+                  "pageType": pageType,
+                  "planInfoId": info.event.extendedProps.planInfoId
                 }
-              }
+              },
             }
             // 如果是从其他页面打开新窗口，将状态存储到 sessionStorage
             sessionStorage.setItem('stateInfo', JSON.stringify(stateInfo))
@@ -131,33 +137,33 @@ export default {
             this.row = [{ ID: info.event.id }]
             this.visibleDrawerTodo = true
           }
-        }
+        },
         // dateClick: this.handleDateClick
       }
     }
   },
-  created() {
-    const params = {
+  created () {
+    var params = {
       sqlParam: {
         dates: {}
       },
       sqlId: '2b3f2b344eba03760830572e2d6b5932',
-      reportId: '845d5812c0b54742a99b53c05e04acee',
-      reportParam: {},
-      router: '',
-      code: '',
-      permissionVo: {
-        router: '',
-        resourceId: ''
+      "reportId": "845d5812c0b54742a99b53c05e04acee",
+      "reportParam": {},
+      "router": "",
+      "code": "",
+      "permissionVo": {
+        "router": "",
+        "resourceId": ""
       },
-      page: {
-        current: 1,
-        size: -1,
-        orders: []
+      "page": {
+        "current": 1,
+        "size": -1,
+        "orders": []
       }
     }
-    this.$api['formGenerator.tableApply'](params).then((res) => {
-      this.calendarOptions.events = res.records.map((item) => {
+    this.$api['formGenerator.tableApply'](params).then(res => {
+      this.calendarOptions.events = res.records.map(item => {
         if (item.IS_APPROACHING_DATE === '1') {
           this.hasWarning = true
         }
@@ -167,27 +173,27 @@ export default {
           end: item.PLAN_END_DATE,
           id: item.TASK_ID,
           type: item.TYPE,
-          hasWarning: item.IS_APPROACHING_DATE === '1',
+          hasWarning: item.IS_APPROACHING_DATE === '1' ? true : false,
           isLeaf: item.ISLEAF,
           planInfoId: item.PLANINFIID,
           managerStatus: item.MANAGERSTATUS,
-          status: item.STATUS
+          status: item.STATUS,
         }
       })
       this.dateTime = new Date().getTime()
     })
   },
   methods: {
-    handleDateClick(val) {
+    handleDateClick (val) {
       this.reportParam = val.dateStr
       this.visibleDrawerOther = true
     },
-    onEditResourcesCloseOther() {
+    onEditResourcesCloseOther () {
       this.visibleDrawerOther = false
     },
-    onEditResourcesCloseTodo() {
+    onEditResourcesCloseTodo () {
       this.visibleDrawerTodo = false
-    }
+    },
   }
 }
 </script>
