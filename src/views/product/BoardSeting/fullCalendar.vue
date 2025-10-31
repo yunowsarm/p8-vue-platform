@@ -198,7 +198,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .calendarLayout {
   width: 100% !important;
   height: 100%;
