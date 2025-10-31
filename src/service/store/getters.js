@@ -35,7 +35,8 @@ const getters = {
   ganttIsGroup: (state) => state.user.ganttIsGroup, // gantt右键菜单配置
   autoScheduling: (state) => state.user.autoScheduling, // 排程类型
   carryOutBudgetControl: (state) => state.user.carryOutBudgetControl, // 任务执行时是否预算控制
-  demandOptions: (state) => state.user.demandOptions, // 任务执行时是否预算控制
+  demandOptions: (state) => state.user.demandOptions, //
+  taskFinish: (state) => state.user.taskFinish, //
   // 路由
   addRouters: (state) => state.routers.addRouters,
   asyncRouter: (state) => state.routers.router,
