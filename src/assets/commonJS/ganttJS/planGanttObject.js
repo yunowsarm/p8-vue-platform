@@ -396,7 +396,7 @@ export function planGantt(ganttName, vueThis) {
                 return false
               }
               if (ganttObject.getSelectedTasks().length > 1) {
-                ganttObject.config.readonly = true
+                // ganttObject.config.readonly = true
                 vueThis.ganttRowEditVisible = true
               }
               break
