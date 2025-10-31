@@ -49,20 +49,7 @@ export default {
   },
   methods: {
     drillCol (item) {
-      this.$api['documentManagement.download']({ attachmentId: item.IO_ID }, { responseType: 'blob' })
-        .then((backJson) => {
-          const link = document.createElement('a')
-          link.href = window.URL.createObjectURL(new Blob([backJson.data]))
-          link.download = item.FILE_NAME
-          document.body.appendChild(link)
-
-          link.click()
-          window.URL.revokeObjectURL(link.href)
-          document.body.removeChild(link)
-        })
-        .finally(() => {
-          // this.search.exportLoading = false
-        })
+      this.$download(item.IO_ID,item.FILE_NAME)
     }
   },
 }

@@ -300,30 +300,7 @@ export default {
     downloadOutputRequsetFile(item) {
       // 输出要求-文件下载
       if (item.attId) {
-        this.$api['SystemSettings.getTemplateFileUrl']({ attachmentId: item.path }, { responseType: 'blob' })
-          .then((backJson) => {
-            const link = document.createElement('a')
-            link.href = window.URL.createObjectURL(new Blob([backJson.data]))
-            link.download = item.attFilePath
-            document.body.appendChild(link)
-            // link.click()
-            // window.URL.revokeObjectURL(link.href)
-            // document.body.removeChild(link)
-            if (document.createEvent) {
-              // 主流浏览器
-              const e = document.createEvent('MouseEvent')
-              e.initEvent('click', false, false)
-              link.dispatchEvent(e)
-            }
-            setTimeout(function () {
-              // 兼容Firefox/4 bug#https://stackoverflow.com/questions/30694453/blob-createobjecturl-download-not-working-in-firefox-but-works-when-debugging#
-              window.URL.revokeObjectURL(link.href)
-              document.body.removeChild(link)
-            }, 100)
-          })
-          .finally(() => {
-            // this.search.exportLoading = false
-          })
+        this.$download(item.path,item.attFilePath,'template')
       }
     }
   }

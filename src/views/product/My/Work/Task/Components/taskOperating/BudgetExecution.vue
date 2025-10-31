@@ -104,17 +104,7 @@ export default {
     downloadFile(row) {
       const item = row.attachments[0]
       if (item.id) {
-        this.$api['SystemSettings.getFileUrl']({ attachmentId: item.id }, { responseType: 'blob' })
-          .then((backJson) => {
-            let link = document.createElement('a')
-            link.href = window.URL.createObjectURL(new Blob([backJson.data]))
-            link.download = item.fileName
-            document.body.appendChild(link)
-            link.click()
-            window.URL.revokeObjectURL(link.href)
-            document.body.removeChild(link)
-          })
-          .finally(() => {})
+        this.$download(item.id, item.fileName)
       }
     },
     save() {

@@ -83,36 +83,12 @@ export default {
     downloadInputRequsetFile (item) {
       // 输出要求-文件下载
       if (item.attId) {
-        this.$api['SystemSettings.getFileUrl']({ attachmentId: item.attId }, { responseType: 'blob' })
-          .then((backJson) => {
-            const link = document.createElement('a')
-            link.href = window.URL.createObjectURL(new Blob([backJson.data]))
-            link.download = item.attFileName
-            document.body.appendChild(link)
-
-            link.click()
-            window.URL.revokeObjectURL(link.href)
-            document.body.removeChild(link)
-          })
-          .finally(() => {
-            // this.search.exportLoading = false
-          })
+        this.$download(item.attId, item.attFileName)
       }
     },
     downloadOutputRequsetFile (item) {
       if (item.attId) {
-        this.$api['SystemSettings.getFileUrl']({ attachmentId: item.attId }, { responseType: 'blob' }).then(backJson => {
-          let link = document.createElement('a')
-          link.href = window.URL.createObjectURL(new Blob([backJson.data]))
-          link.download = item.attFileName
-          document.body.appendChild(link)
-
-          link.click()
-          window.URL.revokeObjectURL(link.href)
-          document.body.removeChild(link)
-        }).finally(() => {
-          // this.search.exportLoading = false
-        })
+        this.$download(item.attId, item.attFileName)
       }
     },
     confidentialiteLabel (item) {

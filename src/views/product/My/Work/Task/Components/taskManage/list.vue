@@ -373,27 +373,8 @@ export default {
         this.getOutputIo()
       }
     },
-    downloadOutputRequsetFile(item) {
-      console.log(item)
-      if (item.attId) {
-        this.$api['SystemSettings.getFileUrl']({ attachmentId: item.attId }, { responseType: 'blob' })
-          .then((backJson) => {
-            if (window.plus) {
-              const blob = new Blob([backJson.data], { type: backJson.data.type })
-              console.log(blob)
-              this.saveBlobFile(blob, item.attFileName)
-            } else {
-              let link = document.createElement('a')
-              link.href = window.URL.createObjectURL(new Blob([backJson.data], { type: backJson.data.type }))
-              link.download = item.attFileName
-              document.body.appendChild(link)
-              link.click()
-              window.URL.revokeObjectURL(link.href)
-              document.body.removeChild(link)
-            }
-          })
-          .finally(() => {})
-      }
+    downloadOutputRequsetFile (item) {
+      this.$download(item.attId,item.attFileName)
     },
     saveBlobFile(blob, fileName) {
       plus.io.resolveLocalFileSystemURL(

@@ -852,6 +852,9 @@ export default {
        * 4. 或该任务的子任务全部完成并且该任务的父任务的父id为空
        * 5. 责任令状态为已发布，计划非已发布
        */
+      if (this.getPlanInfo().ISLEAF > 0 && this.$store.getters.taskFinish === '自动') {
+        return true
+      }
       if (this.getPlanInfo().pageType === 'view') {
         return false
       }
