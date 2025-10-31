@@ -3275,19 +3275,20 @@ function createTaskByDatas(ganttObject, datas, parentId, pos, taskName, msg, dpO
         //   // }
         // })
         setTimeout(() => {
-          // ganttObject.unselectTask()
-          if (!Object.values(vueThis.searchForm).every((value) => value === '')) {
-            if (isTaskInViewport(parentId, ganttObject)) {
+          if (vueThis.selectedTasks.length === 0) {
+            if (!Object.values(vueThis.searchForm).every((value) => value === '')) {
+              if (isTaskInViewport(parentId, ganttObject)) {
+              } else {
+                ganttObject.showTask(parentId)
+              }
+              ganttObject.selectTask(parentId)
             } else {
-              ganttObject.showTask(parentId)
+              if (isTaskInViewport(item.id, ganttObject)) {
+              } else {
+                ganttObject.showTask(item.id)
+              }
+              ganttObject.selectTask(item.id)
             }
-            ganttObject.selectTask(parentId)
-          } else {
-            if (isTaskInViewport(item.id, ganttObject)) {
-            } else {
-              ganttObject.showTask(item.id)
-            }
-            ganttObject.selectTask(item.id)
           }
           let ganttDatas = vueThis.$store.getters.ganttDatas
           ganttDatas.tasks = []

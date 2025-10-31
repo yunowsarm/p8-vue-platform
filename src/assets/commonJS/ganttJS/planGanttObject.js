@@ -444,7 +444,11 @@ export function planGantt(ganttName, vueThis) {
   ganttObject.attachEvent('onBeforeTaskMultiSelect', function (id, state, e) {
     if (state) {
       if (!multipleState) {
-        // vueThis.selectedTasks = []
+        if (vueThis.selectedTasks.length > 0) {
+          if (vueThis.selectedTasks[0].id === id) {
+            vueThis.selectedTasks = []
+          }
+        }
       }
       return true
     }
