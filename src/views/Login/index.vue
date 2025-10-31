@@ -98,7 +98,6 @@ export default {
   name: 'Login',
   data () {
     return {
-      clientInfo:null,
       innerWidth: window.innerWidth,
       loading: false,
       systemLogo: '../../assets/image/login/logo.png',
@@ -172,9 +171,6 @@ export default {
   created () {
   },
   mounted () {
-    if (window.plus) {
-      this.clientInfo = plus.push.getClientInfo()
-    }
     // 确保页面先渲染
     setTimeout(() => {
       this.themeArray.forEach(item => {
@@ -274,9 +270,12 @@ export default {
             userAccount: nameEncryption,
             userPassword: passwordEncryption
           }
-          if (this.clientInfo) {
-            params.clientInfo = this.clientInfo
-            params.clientId = this.clientInfo.clientId
+          if(window.plus){
+            const clientInfo = JSON.parse(plus.storage.getItem('clientInfo'))
+            if (clientInfo) {
+              params.clientInfo = clientInfo
+              params.clientId = clientInfo.clientid
+            }
           }
           this.$store
             .dispatch('userLogin', params)
