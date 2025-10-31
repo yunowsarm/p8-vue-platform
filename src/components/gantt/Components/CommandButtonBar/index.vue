@@ -24,8 +24,10 @@
                      :plan-info-id="planInfoId"
                      :task-id="taskId"
                      :row-num="rowNum"></component>
-          <div style="height: 100%;width: 1px;background: #cccccc;"></div>
-          <div style="min-width: 200px;width: 200px;display: flex;flex-wrap: wrap;height: 90px;">
+          <div v-if="panel.panelName === '查询'"
+               style="height: 100%;width: 1px;background: #cccccc;"></div>
+          <div v-if="panel.panelName === '查询'"
+               style="min-width: 200px;width: 200px;display: flex;flex-wrap: wrap;height: 90px;">
             <div v-for="(config, index) in datas"
                  :key="index">
               <command-button v-if="config.position.indexOf('top') > -1"
@@ -306,6 +308,8 @@ export default {
     }
   },
   mounted () {
+    console.log(this.panelData, '111111111111111111111111111');
+
     if (!this.needArrow) {
       // this.showArrow = false
     }
@@ -544,7 +548,7 @@ export default {
   }
 
   .group-search {
-    height: 100px;
+    height: 90px;
     width: 100%;
     display: flex;
     flex-direction: row;

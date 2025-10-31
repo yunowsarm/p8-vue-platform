@@ -712,10 +712,10 @@ export function getGanttColumns(ganttObject, vueThis) {
           tips += '子任务存在绩效比例分配异常\n'
         }
         let rowHeight = ganttObject.config.row_height
-        if (task.outputResult > 0) {
+        if (Number(task.outputResult) > 0) {
           result = `<i class='el-icon-star-on' style='color: #4bcafe;font-size: 23px;float: left;line-height: ${rowHeight}px;' title='有提交物的'></i>`
         }
-        if (task.outputAsk > 0) {
+        if (Number(task.outputAsk) > 0) {
           result = `<i class='el-icon-star-on' style='color: #faa010;font-size: 23px;font-size: 23px;float: left;line-height: ${rowHeight}px;' title='有输出要求的'></i>`
         }
         if (task.hasBusinessForm == 'true') {

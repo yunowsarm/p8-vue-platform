@@ -668,7 +668,7 @@ $menu-collapse-text-color: #303133;
 .menuIcon {
   font-size: 22px !important;
 }
-@media (max-width: 768px) {
+@media (max-width: 1100px) {
   .menuIcon {
     font-size: 16px !important;
   }

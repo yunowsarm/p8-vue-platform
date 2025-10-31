@@ -95,7 +95,7 @@ export default {
     transform: translateX(20px);
   }
 }
-@media (max-width: 768px) {
+@media (max-width: 1100px) {
   .main {
     min-width: 200px;
   }

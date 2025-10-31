@@ -278,8 +278,8 @@ export default {
             this.commandButtonBarHeight = this.advance ? '145px' : '40px'
             this.expandBottom = 'calc(100% - 148px)'
           } else {
-            this.commandButtonBarHeight = '130px'
-            this.expandBottom = 'calc(100% - 130px)'
+            this.commandButtonBarHeight = '138px'
+            this.expandBottom = 'calc(100% - 138px)'
           }
         }
         if (this.ganttButtonMode == 'double') {
