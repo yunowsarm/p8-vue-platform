@@ -77,7 +77,7 @@ export default {
           right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
         },
         events: [],
-        dayMaxEvents: 6, // 每天最多显示3个事件，超过则显示"+更多"
+        dayMaxEvents: 5, // 每天最多显示3个事件，超过则显示"+更多"
         dayCellDidMount: (arg) => {
           const warningDates = [
             {
@@ -192,7 +192,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .calendarLayout {
   width: 100% !important;
   height: 100%;
@@ -203,7 +203,7 @@ export default {
   cursor: pointer;
 }
 .fc .fc-daygrid-day-frame {
-  height: 80px !important;
+  height: 150px !important;
 }
 .repeating-event {
   background-color: #3788d8;
@@ -274,5 +274,11 @@ export default {
   padding: 20px;
   text-align: center;
   color: #666;
+}
+.normal-layout {
+  height: 100% !important;
+}
+::v-deep .fc-theme-standard .fc-popover {
+  left: 5px !important;
 }
 </style>
