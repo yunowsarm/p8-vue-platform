@@ -106,7 +106,7 @@ export default {
         userAccount: '',
         userPassword: ''
       },
-      keepLoggedIn: true, // 是否记住登录状态，默认不记住
+      keepLoggedIn: false, // 是否记住登录状态，默认不记住
       loginRules: {
         userAccount: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
         userPassword: [{ required: true, message: '请输入密码', trigger: 'blur' }]
@@ -169,6 +169,9 @@ export default {
     ...mapGetters(['userName', 'systemName'])
   },
   created () {
+    if (this.innerWidth < 600) {
+      this.keepLoggedIn = true
+    }
   },
   mounted () {
     // 确保页面先渲染
@@ -270,7 +273,7 @@ export default {
             userAccount: nameEncryption,
             userPassword: passwordEncryption
           }
-          if(window.plus){
+          if (window.plus) {
             const clientInfo = JSON.parse(plus.storage.getItem('clientInfo'))
             if (clientInfo) {
               params.clientInfo = clientInfo
