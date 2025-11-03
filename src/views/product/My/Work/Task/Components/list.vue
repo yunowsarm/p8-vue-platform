@@ -3,13 +3,12 @@
                  :normal-layout="layout"
                  :split-layout="true">
     <template #west>
-      <common-tree v-if="!isMobile"
-                   :default-expanded-keys="defaultExpandedKeys"
+      <common-tree :default-expanded-keys="defaultExpandedKeys"
                    :default-expand-all="false"
                    :init-emit-select="false"
                    node-key="ID"
                    :data="treeData"
-                   :tree-config='treeConfig'
+                   :tree-config="treeConfig"
                    ref="commonTree"
                    @select="onSelect"></common-tree>
     </template>
@@ -17,10 +16,13 @@
       <div v-if="isMobile">
         <div style="background: #ffffff">
           <span style="font-weight: bold; font-size: 14px">筛选：</span>
-          <tree-select v-model='treeValue' :data="treeData" @change="changeTree"></tree-select>
+          <tree-select v-model='treeValue'
+                       :data="treeData"
+                       @change="changeTree"></tree-select>
         </div>
       </div>
-      <div class="show-type"><span style="font-weight: bold;font-size: 14px;">展示方式
+      <div class="show-type">
+        <span style="font-weight: bold; font-size: 14px">展示方式
           <el-tooltip effect="dark"
                       popper-class="testtooltip"
                       placement="top">
@@ -30,42 +32,54 @@
               <p>列表：平铺计划，默认排除已完成的任务</p>
             </div>
             <i class="p8 icon-help-tips"
-               style="font-size: 14px;"></i>
+               style="font-size: 14px"></i>
           </el-tooltip>
-          ：</span
-        >
-        <el-select v-if="isMobile" @change="showViewChange" v-model="showView" class="MyTaskSelect">
-          <el-option value="showView001" label="父子结构"></el-option>
-          <el-option value="showView002" label="计划分组"></el-option>
-          <el-option value="showView003" label="列表"></el-option>
+          ：</span>
+        <el-select v-if="isMobile"
+                   @change="showViewChange"
+                   v-model="showView"
+                   class="MyTaskSelect">
+          <el-option value="showView001"
+                     label="父子结构"></el-option>
+          <el-option value="showView002"
+                     label="计划分组"></el-option>
+          <el-option value="showView003"
+                     label="列表"></el-option>
         </el-select>
-        <el-radio-group v-else v-model="showView" @input="showViewChange">
+        <el-radio-group v-else
+                        v-model="showView"
+                        @input="showViewChange">
           <el-radio label="showView001">父子结构</el-radio>
           <el-radio label="showView002">计划分组</el-radio>
           <el-radio label="showView003">列表</el-radio>
         </el-radio-group>
-        <span v-if="!isMobile"  class="is-children">仅展示叶子节点：</span>
-        <el-switch v-if="!isMobile" v-model="isChildren" active-color="#13ce66" inactive-color="#cccccc" :disabled="btnDisable" @change="childrenClick"></el-switch>
+        <span v-if="!isMobile"
+              class="is-children">仅展示叶子节点：</span>
+        <el-switch v-if="!isMobile"
+                   v-model="isChildren"
+                   active-color="#13ce66"
+                   inactive-color="#cccccc"
+                   :disabled="btnDisable"
+                   @change="childrenClick"></el-switch>
       </div>
-      <P8TableRender
-        ref="tableRender"
-        :key="dateTime"
-        class="MyTaskList"
-        searchContainWidth="380px"
-        searchWidth="380px"
-        :code="componentsConfig.code"
-        :permission-vo="componentsConfig.permissionVo"
-        :west-tree-param="provideParams.searchParams"
-        :reportParam="sqlParam"
-        @refresh="init()"
-      >
+      <P8TableRender ref="tableRender"
+                     :key="dateTime"
+                     class="MyTaskList"
+                     :dynamic-columns="dynamicColumns"
+                     searchContainWidth="380px"
+                     searchWidth="380px"
+                     :code="componentsConfig.code"
+                     :permission-vo="componentsConfig.permissionVo"
+                     :west-tree-param="provideParams.searchParams"
+                     :reportParam="sqlParam"
+                     @refresh="init()">
         <template #NAME="{ scope, thirdMenuData }">
           <span v-if="scope.row.USERID === userId"
                 class="underline"
                 @click="drillCol(scope, thirdMenuData)">{{ scope.row.NAME }} </span>
           <span v-else>{{ scope.row.NAME }}</span>
         </template>
-        <template v-if='!isFromDashboard'
+        <template v-if="!isFromDashboard"
                   #MENU="{ scope }">
           <div v-if="scope.row.USERID === userId">
             <el-dropdown :hide-on-click="false">
@@ -75,10 +89,8 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-for="(item, index) in thirdMenuData"
                                   :key="index">
-                  <div @click="menuClickEvent(scope.row, item)">
-                    <i :class="item.meta.icon ? item.meta.icon : 'el-icon-setting'"
-                       style="font-size:12px;"></i> {{ item.meta.title }}
-                  </div>
+                  <div @click="menuClickEvent(scope.row, item)"><i :class="item.meta.icon ? item.meta.icon : 'el-icon-setting'"
+                       style="font-size: 12px"></i> {{ item.meta.title }}</div>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -90,16 +102,16 @@
         <template #INDEXNO="{scope}">
           <span v-if="scope.row.DATATYPE === 'task'">{{ scope.row.INDEXNO }}</span>
           <span v-else
-                style="display: -webkit-inline-box;">{{ scope.row.INDEXNO }}</span>
+                style="display: -webkit-inline-box">{{ scope.row.INDEXNO }}</span>
         </template>
         <template #DAYSREMAINING="{scope}">
           <div v-html="overdueTextFun(scope.row)"></div>
         </template>
-        <template #PREDECESSORSNUMBER="{scope}">
+        <template #PREDECESSORSNUMBER="{ scope }">
           <span class="underline"
                 @click="frontToBackClick('前置任务查看', scope)">{{ scope.row.PREDECESSORSNUMBER || 0 }}</span>
         </template>
-        <template #POSTTASKNUMBER="{scope}">
+        <template #POSTTASKNUMBER="{ scope }">
           <span class="underline"
                 @click="frontToBackClick('后置任务查看', scope)">{{ scope.row.POSTTASKNUMBER || 0 }}</span>
         </template>
@@ -141,7 +153,7 @@
                      :columnType="columnType"
                      :taskId="taskId"
                      :visible="visibleFrontToBack"
-                     @close='close'></front-to-back>
+                     @close="close"></front-to-back>
     </template>
   </normal-layout>
 </template>
@@ -222,7 +234,7 @@
 //   font-size: 14px !important;
 //   padding-left: 0px !important;
 // }
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 600px) {
   .el-radio {
     margin-right: 10px !important;
   }
@@ -260,7 +272,7 @@
     margin-top: 5px;
     position: relative;
     z-index: 9;
-    
+
     left: 0px;
   }
   .el-select-tree {
@@ -318,7 +330,7 @@ export default {
           xl: 15
         }
       },
-      treeValue:'',
+      treeValue: '',
       dynamicColumns: [],
       dateTime: null,
       dialogHeight: document.documentElement.clientHeight * 0.6,
@@ -789,10 +801,10 @@ export default {
     handleCancel () {
       this.$emit('close')
     },
-    changeTree(id,data){
+    changeTree (id, data) {
       this.onSelect(data)
     },
-    onSelect(obj) {
+    onSelect (obj) {
       setSession('MyWorkTreeNode', obj.id || obj.ID)
       // 判断节点是否真的发生变化
       const currentNodeId = obj.id || obj.ID;

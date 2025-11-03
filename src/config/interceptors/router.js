@@ -45,11 +45,15 @@ export function routerBeforeEachFunc(to, from, next) {
             if (whiteList.indexOf(to.path) !== -1) {
               next(to.path)
             } else if (!reg.test(to.path) || to.path === '/') {
-              if (window.innerWidth <= 1000) {
-                next({name:'MyTask',replace: true})
+              let userAgent = navigator.userAgent.toLowerCase()
+              if (/iphone|ipod|android|ipad|windows phone/.test(userAgent)) {
+                next({ name: 'MyTask', replace: true })
                 store.dispatch('hideSidebar', true)
                 store.dispatch('collapseSidebar', false)
                 return
+              } else {
+                store.dispatch('hideSidebar', false)
+                store.dispatch('collapseSidebar', true)
               }
               // 如果是根路径或不匹配homepage路径，则根据用户类型跳转
               next({

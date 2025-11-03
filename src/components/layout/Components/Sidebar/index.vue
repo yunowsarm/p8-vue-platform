@@ -88,7 +88,7 @@
                       <el-tooltip placement="right"
                                   :disabled="child.meta.title.length < 8"
                                   :content="child.meta.title">
-<!--                        <span v-if="isMobile">{{ child.meta.title }}</span>-->
+                        <!--                        <span v-if="isMobile">{{ child.meta.title }}</span>-->
                         <div id="item"
                              @mouseenter="handleMouseEnter(child)"
                              @mouseleave="onIconMouseLeave">
@@ -666,7 +666,7 @@ $menu-collapse-text-color: #303133;
 .menuIcon {
   font-size: 22px !important;
 }
-@media (max-width: 1100px) {
+@media (max-width: 600px) {
   .menuIcon {
     font-size: 16px !important;
   }

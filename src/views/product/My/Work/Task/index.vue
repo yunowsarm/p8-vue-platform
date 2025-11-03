@@ -311,12 +311,13 @@
   height: unset;
   box-sizing: border-box;
 }
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 600px) {
   .elTabsStyle ::v-deep {
-    .splitter-paneL, .splitter-pane-resizer{
+    .splitter-paneL,
+    .splitter-pane-resizer {
       display: none;
     }
-    .normalCenterFullHeight{
+    .normalCenterFullHeight {
       padding: 0;
     }
     .el-pagination__sizes {
@@ -397,7 +398,7 @@ export default {
     removeSession('MyWorkTreeNode')
     this.init()
   },
-  beforeDestroy(){
+  beforeDestroy () {
     removeSession('MyWorkTreeNode')
   },
   methods: {
