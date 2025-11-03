@@ -25,7 +25,7 @@ export function download (id, name, type) {
       (download, status) => {
         plus.nativeUI.closeWaiting()
         if (status === 200) {
-          plus.io.resolveLocalFileSystemURL(d.filename,entry => {
+          plus.io.resolveLocalFileSystemURL(download.filename,entry => {
             const friendlyPath = getFriendlyPath(entry.fullPath)
             plus.nativeUI.alert(
               `文件已下载成功：\n保存位置：${friendlyPath}。`,
