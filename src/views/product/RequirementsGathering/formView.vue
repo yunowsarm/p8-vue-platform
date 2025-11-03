@@ -1017,7 +1017,7 @@ export default {
       dataSourceConclusionView: [
         {
           type: 'view',
-          labelText: '需求处理结论',
+          labelText: '确认结果',
           fieldName: 'processingConclusionDisplay',
           colLayout: 'singleCol'
         }
