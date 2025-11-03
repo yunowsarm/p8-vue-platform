@@ -80,6 +80,7 @@
   </left-center-right-layout>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import LeftCenterRightLayout from '@/views/product/My/Work/Task/Components/layout/LeftCenterRight'
 import PaneView from '@/views/product/My/Work/Task/Components/layout/Pane/index.vue'
 import PlanGantt from '@/views/product/PlanGantt/index.vue'
@@ -119,6 +120,16 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['userSettingAll'])
+  },
+  watch: {
+    userSettingAll: {
+      handler (val) {
+        this.tableKey = Date.now()
+      },
+      deep: true,
+      immediate: true
+    }
   },
   created () {
     this.sqlParam.wholeDescribeId = this.row[0].WHOLE_ID
@@ -140,32 +151,25 @@ export default {
     },
     getTableSetting () {
       let tableSettingaAll = this.$store.state.user.userSettingAll.Table ? this.$store.state.user.userSettingAll.Table : null
-      console.log("🚀11111111111111111111", tableSettingaAll)
       if (tableSettingaAll) {
-        let keyNew = this.$route.path + '.' + 'formGenerator.tableApply' + '.' + this.componentsConfig.code
+        let keyNew = this.$route.path + '.' + 'formGenerator.tableApply' + '.myProjectPlanList'
         let key = this.$route.path + '.' + 'formGenerator.tableApply'
         // 需要兼容旧数据
         let currTableSetting = tableSettingaAll.filter((item) => item.key === keyNew)
         if (!(currTableSetting && currTableSetting.length)) {
           currTableSetting = tableSettingaAll.filter((item) => item.key === key)
         }
-        console.log("22222222222222222222222", currTableSetting)
         if (currTableSetting && currTableSetting.length) {
           let columnsSetting = currTableSetting[0].value.columns
-          console.log("🚀 33333333333333333333333", columnsSetting)
           const toolbarTextDisplayIndex = columnsSetting.findIndex((item) => 'toolbarTextDisplay' in item)
-          console.log("🚀4444444444444444444444444444", toolbarTextDisplayIndex)
           if (toolbarTextDisplayIndex > -1 && columnsSetting[toolbarTextDisplayIndex].toolbarTextDisplay) {
             this.toolbarTextDisplay = columnsSetting[toolbarTextDisplayIndex].toolbarTextDisplay
-            console.log("🚀55555555555555555555555 :", this.toolbarTextDisplay)
           } else {
             this.toolbarTextDisplay = this.$store.getters.baseConfig.toolbarTextDisplay
-            console.log("66666666666666666666666 :", this.toolbarTextDisplay)
           }
         }
       } else {
         this.toolbarTextDisplay = this.$store.getters.baseConfig.toolbarTextDisplay
-        console.log(this.toolbarTextDisplay, '777777777777777777777777777777');
       }
     },
     planEdit (val) {
