@@ -124,8 +124,11 @@ const project = {
                   reBuildBaseConfig[item.key] = item.value
                 })
               }
-              if(reBuildBaseConfig.systemName){
-                document.title = reBuildBaseConfig.systemName
+              if (reBuildBaseConfig.systemName) {
+                const div = document.createElement('div')
+                div.innerHTML = reBuildBaseConfig.systemName
+                document.title = div.textContent || div.innerText || 'P8V3.0-PLATFORM'
+                store.dispatch('setSystemName', reBuildBaseConfig.systemName)
               }
               if (store.state.user.userSettingAll.theme ?.length) {
                 let themeObj = store.state.user.userSettingAll.theme[0].value
