@@ -11,7 +11,10 @@
                      v-bind="$attrs"></form-render>
       </div>
       <div style="width: 50%">
-        <div class="title">市场需求信息表</div>
+        <div v-if="demandOptions !== '1'"
+             class="title">市场需求信息表</div>
+        <div v-else
+             class="title">预审意见</div>
         <form-list v-if="demandOptions !== '1'"
                    :key="formKey"
                    ref="formInfo2"
@@ -49,7 +52,10 @@
                    :data-source="dataSourceInfoTwo"
                    :exist-default-btn="false"
                    :form="formData"> </form-list>
-        <div class="title">分析意见</div>
+        <div v-if="demandOptions !== '1'"
+             class="title">分析意见</div>
+        <div v-else
+             class="title">需求响应确认</div>
         <form-list :key="formKey"
                    ref="formInfo5"
                    class="formList"

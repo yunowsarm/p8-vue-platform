@@ -43,18 +43,18 @@ const updateStorageShortcutMenu = (token, shortcuts) => {
   }
 }
 const rgbaToHex = (rgba) => {
-  const result = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
-  if(!result) return  rgba;
-  const r = parseInt(result[1]).toString(16).padStart(2,'0')
-  const g = parseInt(result[2]).toString(16).padStart(2,'0')
-  const b = parseInt(result[3]).toString(16).padStart(2,'0')
-  return `#${r}${g}${b}`.toUpperCase();
+  const result = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i)
+  if (!result) return rgba
+  const r = parseInt(result[1]).toString(16).padStart(2, '0')
+  const g = parseInt(result[2]).toString(16).padStart(2, '0')
+  const b = parseInt(result[3]).toString(16).padStart(2, '0')
+  return `#${r}${g}${b}`.toUpperCase()
 }
 const getRGBOpacityColor = (color, opacity = 0.1) => {
-  const red = parseInt(color.slice(1, 3), 16);
-  const green = parseInt(color.slice(3, 5), 16);
-  const blue = parseInt(color.slice(5, 7), 16);
-  return `rgba(${red}, ${green}, ${blue}, ${opacity})`;
+  const red = parseInt(color.slice(1, 3), 16)
+  const green = parseInt(color.slice(3, 5), 16)
+  const blue = parseInt(color.slice(5, 7), 16)
+  return `rgba(${red}, ${green}, ${blue}, ${opacity})`
 }
 const getRGBcolor = (color, inGamut) => {
   let red = parseInt(color.slice(0, 2), 16)
@@ -116,7 +116,12 @@ const getCSSString = (url) => {
   })
 }
 const checkIsMobile = () => {
-  return window.innerWidth <= 768
+  let userAgent = navigator.userAgent.toLowerCase()
+  if (/iphone|ipod|android|ipad|windows phone/.test(userAgent)) {
+    return true
+  } else {
+    return false
+  }
 }
 const platform = {
   state: {
@@ -128,18 +133,18 @@ const platform = {
     },
     // systemTheme: Cookie.get(SYSTEM_THEME_KEY) || 'chalk',
     theme: Cookie.get(SYSTEM_THEME_RGBA_KEY) || themeVariables.theme,
-     systemColor: {
+    systemColor: {
       tableBgColor: '#ffffff',
       tableHeaderBgColor: '#f9f9f9',
-       tableStripeColor: '#f9f9f9',
-       tableRowHoverBgColor: '#f0f8ff',
-       tableBorderColor: '#ebeef5',
-       tableTextColor: '#292b2e',
-       tableHeaderTextColor: '#292b2e',
+      tableStripeColor: '#f9f9f9',
+      tableRowHoverBgColor: '#f0f8ff',
+      tableBorderColor: '#ebeef5',
+      tableTextColor: '#292b2e',
+      tableHeaderTextColor: '#292b2e',
       bgTheme: '#C70019',
       imgType: 1,
       imgNum: 0.7
-     },
+    },
     shortcutMenu: [], // 自定义菜单项,由用户自定义出的菜单项
     systemName: Cookie.get('P8V3.0-PLATFORM') || '',
     headerHeight: plateformVariables.headerHeight, // 头部(header)高度
@@ -168,7 +173,8 @@ const platform = {
         } else {
           state.sidebarState.width = plateformVariables.sidebarMinWidth
         }
-        if (window.innerWidth <= 768) {
+        let userAgent = navigator.userAgent.toLowerCase()
+        if (/iphone|ipod|android|ipad|windows phone/.test(userAgent)) {
           state.sidebarState.width = plateformVariables.sidebarMinWidth
         }
       }
@@ -281,7 +287,7 @@ const platform = {
       commit('DRAGED_SHORTCUTS', items)
     },
     async setTheme({ commit, state }, { theme, handler = false }) {
-      if(typeof theme === 'string' && theme.startsWith('rgba')){
+      if (typeof theme === 'string' && theme.startsWith('rgba')) {
         theme = rgbaToHex(theme)
       }
       //  防止多次提交相同颜色
@@ -365,22 +371,22 @@ const platform = {
 }
 // 计算颜色亮度
 function getLuminance(color) {
-  const rgb = color.match(/\w\w/g).map(x => parseInt(x, 16)); // 将颜色值转为 RGB 数值
-  const [r, g, b] = rgb.map(val => val / 255);  // 归一化 RGB 值
+  const rgb = color.match(/\w\w/g).map((x) => parseInt(x, 16)) // 将颜色值转为 RGB 数值
+  const [r, g, b] = rgb.map((val) => val / 255) // 归一化 RGB 值
 
   // 使用公式计算亮度
-  const [rLuminance, gLuminance, bLuminance] = [r, g, b].map(val => {
-    return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
-  });
+  const [rLuminance, gLuminance, bLuminance] = [r, g, b].map((val) => {
+    return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4)
+  })
 
   // 计算总亮度
-  return rLuminance * 0.2126 + gLuminance * 0.7152 + bLuminance * 0.0722;
+  return rLuminance * 0.2126 + gLuminance * 0.7152 + bLuminance * 0.0722
 }
 
 // 获取反差色（如果亮度较低，返回白色，否则返回黑色）
 function getContrastColor(color) {
-  const luminance = getLuminance(color);
-  return luminance < 0.5 ? '#FFFFFF' : '#000000';
+  const luminance = getLuminance(color)
+  return luminance < 0.5 ? '#FFFFFF' : '#000000'
 }
 
 export default platform

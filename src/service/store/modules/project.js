@@ -8,7 +8,7 @@ const project = {
   state: {
     buttonLimit: [], // table行上按钮权限，置灰/隐藏/悬浮提示
     dicConfig: {}, // 系统项目状态、计划状态、任务状态集合
-    baseConfig: {}, // 系统基础配置项，例如系统名称\logo等
+    baseConfig: {} // 系统基础配置项，例如系统名称\logo等
     // systemSecretConfig: [] // 系统密级
   },
 
@@ -21,7 +21,7 @@ const project = {
     },
     SET_BASECONFIG(state, data) {
       state.baseConfig = data
-    },
+    }
     // SET_SECRET(state, data) {
     //   state.systemSecretConfig = data
     // }
@@ -124,10 +124,13 @@ const project = {
                   reBuildBaseConfig[item.key] = item.value
                 })
               }
-              if(reBuildBaseConfig.systemName){
-                document.title = reBuildBaseConfig.systemName
+              if (reBuildBaseConfig.systemName) {
+                const div = document.createElement('div')
+                div.innerHTML = reBuildBaseConfig.systemName
+                document.title = div.textContent || div.innerText || 'P8V3.0-PLATFORM'
+                store.dispatch('setSystemName', reBuildBaseConfig.systemName)
               }
-              if (store.state.user.userSettingAll.theme ?.length) {
+              if (store.state.user.userSettingAll.theme?.length) {
                 let themeObj = store.state.user.userSettingAll.theme[0].value
                 store.dispatch('setImage', themeObj.imageUrl)
                 let theme = themeObj.theme
@@ -135,33 +138,32 @@ const project = {
                 store.dispatch('setSystemColor', themeObj)
               } else {
                 if (reBuildBaseConfig.systemThemeType && reBuildBaseConfig.systemThemeArray) {
-                let systemThemeArray = JSON.parse(reBuildBaseConfig.systemThemeArray)
-                let themeArray = []
-                if (reBuildBaseConfig.systemThemeType === 'systemThemeType1') {
-                  themeArray = systemThemeArray[0]
-                }
-                if (reBuildBaseConfig.systemThemeType === 'systemThemeType2') {
-                  themeArray = systemThemeArray[1]
-                }
-                if (reBuildBaseConfig.systemThemeType === 'systemThemeType3') {
-                  themeArray = systemThemeArray[2]
-                }
-                themeArray.forEach(item => {
-
-                  switch (item.key) {
-                    case 'imageUrl':
-                      store.dispatch('setImage', item.url)
-                      break;
-                    case 'bgTheme':
-                      let theme = item.value
-                      store.dispatch('setTheme', { theme, handler: true })
-                      break;
-                    default:
-                      store.dispatch('setSystemColor', { [item.key]: item.value })
-                      break;
+                  let systemThemeArray = JSON.parse(reBuildBaseConfig.systemThemeArray)
+                  let themeArray = []
+                  if (reBuildBaseConfig.systemThemeType === 'systemThemeType1') {
+                    themeArray = systemThemeArray[0]
                   }
-                })
-              }
+                  if (reBuildBaseConfig.systemThemeType === 'systemThemeType2') {
+                    themeArray = systemThemeArray[1]
+                  }
+                  if (reBuildBaseConfig.systemThemeType === 'systemThemeType3') {
+                    themeArray = systemThemeArray[2]
+                  }
+                  themeArray.forEach((item) => {
+                    switch (item.key) {
+                      case 'imageUrl':
+                        store.dispatch('setImage', item.url)
+                        break
+                      case 'bgTheme':
+                        let theme = item.value
+                        store.dispatch('setTheme', { theme, handler: true })
+                        break
+                      default:
+                        store.dispatch('setSystemColor', { [item.key]: item.value })
+                        break
+                    }
+                  })
+                }
               }
               commit('SET_DICCONFIG', reBuildDicStatus)
               commit('SET_BASECONFIG', reBuildBaseConfig)
