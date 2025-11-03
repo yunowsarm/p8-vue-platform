@@ -69,11 +69,14 @@
                    :exist-default-btn="false"
                    :form="formData">
         </form-list>
-        <div class="title">分析意见</div>
+        <div v-if="demandOptions !== '1'"
+             class="title">分析意见</div>
+        <div v-else
+             class="title">需求响应确认</div>
         <form-list ref="formInfo5"
                    :key="formKey"
                    class="formList"
-                   label-width="150px"
+                   label-width="140px"
                    :data-source="dataSource4"
                    :exist-default-btn="false"
                    :form="formData">
@@ -558,7 +561,8 @@ export default {
           labelText: '需求处理结论',
           fieldName: 'processingConclusion',
           placeholder: '下拉选择你要的',
-          colLayout: 'doubleCol',
+          colLayout: 'singleCol',
+          tip: '接纳：采纳本次需求，状态为已接纳；拒绝：退回需求，状态为已拒绝；挂起：退回需求，状态为已挂起；退回：退回需求，状态为已退回；',
           optionUrl: {
             api: 'thirdPartInterface.getDic',
             params: { dicType: 'HANDLING_SUGGESTIONS' }
@@ -969,11 +973,34 @@ export default {
       ],
       dataSourceConclusion: [
         {
+          type: 'view',
+          labelText: '处理结果',
+          fieldName: 'processingResults',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'view',
+          labelText: '备注',
+          fieldName: 'remark',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'uploadView', // 控件类型
+          labelText: '附件', // 控件显示的文本
+          fieldName: 'uploadFiles',
+          colLayout: 'singleCol',
+          uploadConfig: {
+            // drag: true// 上传附件按钮形式：单击或拖动到某区域上传设置为'drag:true'，单击按钮上传不做设置
+          },
+          listType: 'text' // 带密级的上传附件为'secret'，不带密级的listType分为'text'、'picture'、'picture-card'
+        },
+        {
           type: 'select',
-          labelText: '需求处理结论',
+          labelText: '确认结果',
           fieldName: 'processingConclusion',
           placeholder: '下拉选择你要的',
           colLayout: 'singleCol',
+          tip: '接纳：采纳本次需求，状态为已接纳；拒绝：退回需求，状态为已拒绝；挂起：退回需求，状态为已挂起；退回：退回需求，状态为已退回；',
           optionUrl: {
             api: 'thirdPartInterface.getDic',
             params: { dicType: 'HANDLING_SUGGESTIONS' }
