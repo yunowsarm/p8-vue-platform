@@ -84,7 +84,7 @@ export default {
   },
   data () {
     return {
-      demandOptions: this.row[0].CURRENT_SETTING || '0',
+      demandOptions: this.row[0].CURRENT_SETTING || this.row[0].currentSetting || '0',
       formKey: new Date().getTime(),
       formType: this.type,
       saveType: false,
@@ -333,7 +333,7 @@ export default {
       dataSourceConclusion: [
         {
           type: 'view',
-          labelText: '需求处理结论',
+          labelText: '确认结果',
           fieldName: 'processingConclusionDisplay',
           colLayout: 'singleCol'
         }
