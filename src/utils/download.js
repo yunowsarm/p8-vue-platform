@@ -10,17 +10,35 @@ export function download (id, name, type) {
       url = `${downloadUrl}?attachmentId=${id}`
     }
     const savePath = `_downloads/${name}`
+    function getFriendlyPath(fullPath){
+      if(!fullPath) return ''
+      const index = fullPath.indexOf('Android/data/')
+      if(index >= 0){
+        return fullPath.substring(index)
+      }
+      return fullPath.substring(fullPath.lastIndexOf('/') + 1)
+    }
+    plus.nativeUI.showWaiting('正在下载...')
     const dtask = plus.downloader.createDownload(
       url,
       { filename: savePath },
       (download, status) => {
+        plus.nativeUI.closeWaiting()
         if (status === 200) {
-          plus.nativeUI.toast('文件下载完成')
-          plus.runtime.openFile(download.filename, {}, (err) => {
-            plus.nativeUI.alert('无法打开文件：' + err.message)
+          plus.io.resolveLocalFileSystemURL(d.filename,entry => {
+            const friendlyPath = getFriendlyPath(entry.fullPath)
+            plus.nativeUI.alert(
+              `文件已下载成功：\n保存位置：${friendlyPath}。`,
+              () => {
+                plus.runtime.openFile(entry.fullPath, {}, (err) => {
+                  plus.nativeUI.toast('无法打开,请手动到下载目录查看')
+                })
+              },
+              '下载完成'
+            )
           })
         } else {
-          plus.nativeUI.toast('下载失败，请稍后重试')
+          plus.nativeUI.toast('下载失败，请检查网络或地址')
         }
       }
     )
