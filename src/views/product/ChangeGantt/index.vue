@@ -387,7 +387,12 @@ export default {
   },
   mounted () {
     if (this.isMobile) {
-      return this.$message.warning('暂不支持，请前往PC端查看')
+      return this.$message({
+        message: '暂不支持，请前往PC端查看',
+        offset: 100,
+        duration: 3000,
+        type: 'warning'
+      })
     }
     if (this.thirdMenuParam.createPage === 'decompose' || this.thirdMenuParam.route === '/MyTask/MyTask/latest') {
       this.projectCategory = this.thirdMenuParam.projectCategory
