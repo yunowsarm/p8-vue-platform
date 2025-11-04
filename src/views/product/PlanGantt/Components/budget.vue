@@ -12,6 +12,10 @@ export default {
     taskId: {
       type: String,
       default: ''
+    },
+    view:{
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -34,7 +38,7 @@ export default {
         mode: 'cell',
         showStatus: true,
         beforeEditMethod: ({ row, column }) => {
-          return (row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && this.mode === 'analysis'
+          return (row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && this.mode === 'analysis' && !this.view
         }
       }
     }
@@ -97,19 +101,32 @@ export default {
         })
       })
     },
-    save() {
+    save(e,forceSave = false) {
       const params = {
+        forceSave: !!forceSave,
         taskId: this.taskId,
         type: this.mode,
         declarationRequests: this.tableData
       }
       this.$api['planGanttManager.saveDeclaration'](params).then((res) => {
-        console.log(res)
-        if (res.result) {
+        if (!res.result) {
+          const obj = JSON.parse(res.resultMsg)
+          const items = obj.interact.split(';')
+          const html = `
+            <div style='max-height: 150px;overflow: auto;padding-right: 4px'>
+            ${items.map((item,index) => `<div style="margin:4px 0">${item}</div>`).join('')}
+            </div>
+            <span>可前往预算管理进行预算变更</span>
+          `
+          this.$confirm(html,'预算金额超出项目预算，是否继续保存？',{
+            type: 'warning',
+            dangerouslyUseHTMLString: true,
+          }).then(() => {
+           this.save(e,true)
+          }).catch(() => {})
+        } else {
           this.$message.success('保存成功')
           this.$emit('save-success')
-        } else {
-          this.$message.error(res.resultMsg)
         }
       })
     },
@@ -147,7 +164,7 @@ export default {
           <i class="p8 icon-help-tips" />
         </el-tooltip>
       </label>
-      <el-radio-group v-model="mode">
+      <el-radio-group v-model="mode" :disabled='view'>
         <el-radio-button label="pool">汇总模式</el-radio-button>
         <el-radio-button label="analysis">分解模式</el-radio-button>
       </el-radio-group>
@@ -169,6 +186,8 @@ export default {
       >
         <vxe-column type="seq" title="序号" width="50"></vxe-column>
         <vxe-column field="name" title="科目名称" tree-node align="left" header-align="center"></vxe-column>
+        <vxe-column field="wholeBudgetAmount" title="项目预算"></vxe-column>
+        <vxe-column field="surplusBudgetAmount" title="剩余预算"></vxe-column>
         <vxe-column
           field="amount"
           title="预算金额"

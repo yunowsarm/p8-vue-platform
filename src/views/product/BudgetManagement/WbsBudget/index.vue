@@ -178,7 +178,7 @@ export default {
           this.$message.success('保存成功')
           this.getTasksInfoByWholeId(this.currentTask?.id ?? '')
         } else {
-          this.$message.error(res.resultMsg)
+          this.$message.error(JSON.parse(res.resultMsg).ordinary)
         }
         this.submitLoading = false
       })
