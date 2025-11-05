@@ -211,7 +211,7 @@
   .normal-layout {
     // box-shadow: 4px 4px 8px #bfbdbd54;
     margin: 0 14px;
-    height: calc(100% - 45px);
+    height: calc(100% - 45px) !important;
     padding: 0;
   }
 
