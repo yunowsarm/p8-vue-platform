@@ -27,3 +27,18 @@
     }
   }
 }
+@media screen and (max-width: 1100px) {
+  .normal-header {
+    .el-input,.el-select {
+      width: 130px !important;
+    }
+  }
+  .normal-main {
+    .splitter-paneL {
+      width: 0% !important;
+    }
+    .splitter-paneR {
+      width: 100% !important;
+    }
+  }
+}
