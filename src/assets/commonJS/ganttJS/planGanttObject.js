@@ -444,6 +444,7 @@ export function planGantt(ganttName, vueThis) {
   ganttObject.attachEvent('onBeforeTaskMultiSelect', function (id, state, e) {
     if (state) {
       if (!multipleState) {
+        ganttObject.unselectTask()
         if (vueThis.selectedTasks.length > 0) {
           if (vueThis.selectedTasks[0].id === id) {
             vueThis.selectedTasks = []
@@ -472,6 +473,7 @@ export function planGantt(ganttName, vueThis) {
   // 监听任务选中
   ganttObject.attachEvent('onTaskMultiSelect', function (id, state, e) {
     if (state) {
+      console.log('2222222222222222222')
       // setTimeout(() => {
       vueThis.selectedTasks.push(ganttObject.getTask(id))
       // })
