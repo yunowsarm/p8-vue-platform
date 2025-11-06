@@ -465,7 +465,7 @@ export default {
     endDateOptions () {
       const _this = this
       const isDateDisabled = (date) => {
-        if(_this.$route.path !== '/TaskDecomposition') {
+        if (_this.$route.path !== '/TaskDecomposition') {
           return true
         }
         // 使用moment处理日期
@@ -495,7 +495,7 @@ export default {
         shortcuts: [
           {
             text: '今天',
-            onClick(picker) {
+            onClick (picker) {
               const date = new Date()
               if (isDateDisabled(date)) {
                 picker.$emit('pick', date)
@@ -504,7 +504,7 @@ export default {
           },
           {
             text: '昨天',
-            onClick(picker) {
+            onClick (picker) {
               const date = new Date()
               date.setTime(date.getTime() - 3600 * 1000 * 24)
               if (isDateDisabled(date)) {
@@ -514,7 +514,7 @@ export default {
           },
           {
             text: '明天',
-            onClick(picker) {
+            onClick (picker) {
               const date = new Date()
               date.setTime(date.getTime() + 3600 * 1000 * 24)
               if (isDateDisabled(date)) {
@@ -524,7 +524,7 @@ export default {
           },
           {
             text: '一周前',
-            onClick(picker) {
+            onClick (picker) {
               const date = new Date()
               date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
               if (isDateDisabled(date)) {
@@ -534,7 +534,7 @@ export default {
           },
           {
             text: '一周后',
-            onClick(picker) {
+            onClick (picker) {
               const date = new Date()
               date.setTime(date.getTime() + 3600 * 1000 * 24 * 7)
               if (isDateDisabled(date)) {
@@ -544,7 +544,7 @@ export default {
           },
           {
             text: '一个月前',
-            onClick(picker) {
+            onClick (picker) {
               const date = new Date()
               const currentDay = date.getDate()
               date.setMonth(date.getMonth() - 1)
@@ -558,7 +558,7 @@ export default {
           },
           {
             text: '一个月后',
-            onClick(picker) {
+            onClick (picker) {
               const date = new Date()
               const currentDay = date.getDate()
               date.setMonth(date.getMonth() + 1)
@@ -758,7 +758,9 @@ export default {
                   check = true
                 }
               } else {
-                task[key] = that.formData[key]
+                if (task[key]) {
+                  task[key] = that.formData[key]
+                }
                 if (key === 'duration' || key === 'start_date' || key === 'predecessors') {
                   check = true
                 }

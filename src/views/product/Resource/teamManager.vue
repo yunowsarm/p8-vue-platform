@@ -2245,5 +2245,8 @@ export default {
     width: 100%;
     margin-left: 0px;
   }
+  .submit {
+    margin-right: 0px !important;
+  }
 }
 </style>

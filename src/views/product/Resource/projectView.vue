@@ -1372,7 +1372,7 @@ export default {
   .custom_content_wrap {
     display: flex;
     flex-direction: column;
-    height: 100% !important;
+    height: calc(100% - 50px) !important;
     overflow: auto;
     .left_content {
       width: 100%;

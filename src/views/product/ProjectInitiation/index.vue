@@ -33,7 +33,11 @@
 }
 .tabsNavigation ::v-deep .list-main {
   height: 100% !important;
-  width: 95% !important;
+}
+@media screen and (max-width: 600px) {
+  .tabsNavigation ::v-deep .list-main {
+    width: 95% !important;
+  }
 }
 </style>
 <script>

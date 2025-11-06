@@ -123,7 +123,7 @@
                 <i class="p8 icon-personal-setting"></i>
                 个性化设置
               </el-dropdown-item>
-              <el-dropdown-item @click.native="dialogVisible = true">
+              <el-dropdown-item @click.native="dialogOpen">
                 <i class="icon-size el-icon-info"></i>
                 关于
               </el-dropdown-item>
@@ -450,6 +450,9 @@ export default {
         }
       })
     },
+    dialogOpen () {
+      this.dialogVisible = true
+    },
     logout () {
       this.$confirm('是否要退出系统?', '提醒', {
         lockScroll: false,
@@ -731,6 +734,12 @@ div.header_userInfo {
   }
   .slide-bar {
     height: 50px !important;
+  }
+  ::v-deep .el-dialog {
+    margin-top: 6vh !important;
+  }
+  .el-dialog__wrapper {
+    z-index: 9999 !important;
   }
 }
 .my_process {
