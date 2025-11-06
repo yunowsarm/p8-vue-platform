@@ -1,5 +1,5 @@
 <template>
-  <div class="personal-setting">
+  <div class="personal-setting" style="height: 100% !important;">
     <section style="overflow: auto"
              :style="{ height: maxHeight }">
       <div class="setting-block">
@@ -25,7 +25,8 @@
         <div class="settings">
           <background-image @changeSystemImage="changeSystemImage" />
           <div v-if="imageUrl" style="margin-left: 20px;">
-            背景图展示方式：<el-button-group v-model="imgType"
+            <div class="bg">
+              背景图展示方式：<el-button-group v-model="imgType"
                              style="padding: 10px;">
               <el-button v-for="(btn, index) in buttonConfigs"
                          :key="index"
@@ -34,13 +35,16 @@
                 {{ btn.label }}
               </el-button>
             </el-button-group>
-            背景图透明度：<el-input-number :precision="1"
+            </div>
+            <div class="bgimage">
+              背景图透明度：<el-input-number :precision="1"
                              v-model="imgNum"
                              :step="0.1"
                              :min="0"
                              :max="1"
                              style="width: 10%;"
                              @change="getColor"></el-input-number>
+            </div>
           </div>
         </div>
         <div style="height: 35px;">
@@ -303,6 +307,15 @@ export default {
           padding: 5px 5px 0 5px;
           color: darken($base-gray-color, 5%);
           border-top: 1px solid darken($base-light-color, 5%);
+        }
+        .bgimage {
+          display: inline-block;
+          .el-input-number {
+            width: 150px !important;
+          }
+        }
+        .bg {
+          display: inline-block;
         }
       }
     }

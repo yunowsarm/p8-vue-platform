@@ -73,4 +73,13 @@ export default {
   width: 55%;
   border-right: 1px solid rgb(225, 225, 225);
 }
+@media screen and (max-width: 1100px) {
+  .bottom-flex{
+    display: none;
+  }
+  .left, .right {
+    width: 100%;
+    height: auto;
+  }
+}
 </style>
