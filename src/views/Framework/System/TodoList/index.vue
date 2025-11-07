@@ -277,4 +277,11 @@ export default {
 .formRight ::v-deep .formBtn {
   left: 3px;
 }
+@media screen and (max-width: 1100px) {
+  .todoLayout {
+    .splitter-paneL, .splitter-pane-resizer, .splitBtn {
+      display: none;
+    }
+  }
+}
 </style>

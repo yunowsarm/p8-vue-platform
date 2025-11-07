@@ -112,7 +112,8 @@ export default {
       this.$refs.passwordForm.resetFields()
       // this.$router.push('/dash')
       // 避免不必要的bug
-      location.reload()
+      // location.reload()
+      this.$emit('close')
     }
   },
   components: {
