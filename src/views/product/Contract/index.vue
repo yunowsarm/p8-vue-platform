@@ -73,8 +73,18 @@ export default {
           item.attConfidentialite = item.confidentialite
         });
       }
-      this.$refs.form.submitForm(saveParams, this.saveApi)
-      this.$emit('close')
+      this.$api[this.saveApi](saveParams).then(res => {
+        if (!res.result) {
+          this.$notify({
+            title: '提示',
+            dangerouslyUseHTMLString: true,
+            message: `<strong>${res.resultMsg}</strong>`
+          })
+        } else {
+          this.$message.success('导入成功')
+          this.$emit('close')
+        }
+      })
     }
   }
 }
