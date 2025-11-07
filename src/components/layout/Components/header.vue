@@ -102,7 +102,7 @@
           </span>
         </li> -->
         <li>
-          <el-dropdown size="small">
+          <el-dropdown size="small" :trigger="isMobile ? 'click' : 'hover'">
             <span>
               <span v-if="!isMobile" class="name">{{ dayTime }}好！{{ userName }}</span>
               <i class="el-icon-arrow-down"
@@ -234,6 +234,16 @@
         </p>
       </div>
     </el-dialog>
+    <common-drawer v-if="modifyPasswordVisible"
+                   :visible="modifyPasswordVisible"
+                   title=""
+                   @close="modifyPasswordVisible = false"
+                   direction="ttb"
+                   size="100%">
+      <template #drawer>
+        <modifyPassWord @close="modifyPasswordVisible = false"></modifyPassWord>
+      </template>
+    </common-drawer>
   </header>
 </template>
 
@@ -250,7 +260,7 @@ import Message from '@/views/Framework/Message'
 import Information from '@/components/information/index.vue'
 import packageJson from '../../../../package.json'
 import myNetworkDisk from './myNetworkDisk'
-
+import modifyPassWord from '@/components/layout/Components/ModifyPassword/index'
 export default {
   name: 'Headers',
   data () {
@@ -272,7 +282,8 @@ export default {
       regardsObj: {},
       adminUserIdArr: ['SYS_USER001', 'SYS_USER009', 'SYS_USER012', 'SYS_USER010', 'SYS_USER000'], // 五元id
       AuthorizationInfoList: [],
-      packageJson
+      packageJson,
+      modifyPasswordVisible: false
     }
   },
   computed: {
@@ -436,7 +447,8 @@ export default {
       const that = this
       this.$api['SystemSettings.checkBaseConfig']().then((res) => {
         if (res) {
-          that.$router.replace({ path: '/modify-password' })
+          // that.$router.replace({ path: '/modify-password' })
+          that.modifyPasswordVisible = true
         } else {
           that.$message({ type: 'error', message: '当前用户信息是从外部系统集成获取,此功能已禁用' })
         }
@@ -486,7 +498,8 @@ export default {
     message: Message,
     'el-tooltip': Tooltip,
     Information,
-    myNetworkDisk
+    myNetworkDisk,
+    modifyPassWord
   }
 }
 </script>
