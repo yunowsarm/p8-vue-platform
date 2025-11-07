@@ -91,51 +91,102 @@
               <!-- 任务行 - 预估 -->
               <div v-if="item.title === '预估'"
                    class="timeline-rows">
-                <div v-for="(task, index) in estimateTasks"
-                     :key="'estimate-' + index"
-                     class="timeline-row">
-                  <div class="task-bar-container">
-                    <div v-if="index / 2 !== 1 && index !== 0"
-                         class="task-bar estimate-bar flex-pos"
-                         :style="{
+                <div style="height:65px;overflow: auto;">
+                  <div v-for="(task, index) in estimateTasks"
+                       :key="'estimate-' + index"
+                       class="timeline-row">
+                    <div class="task-bar-container">
+                      <div v-if="index / 2 !== 1 && index !== 0"
+                           class="task-bar estimate-bar flex-pos"
+                           :style="{
     left: `${task.startPercent}%`,
     width: `${task.endPercent - task.startPercent}%`
   }">
-                      {{ task.name }}
+                        {{ task.name }}
+                      </div>
+                      <div v-else
+                           class="task-bar estimate-bar"
+                           :style="{
+    left: `${task.startPercent}%`,
+    width: `${task.endPercent - task.startPercent}%`
+  }">
+                        {{ task.name }}
+                      </div>
                     </div>
-                    <div v-else
-                         class="task-bar estimate-bar"
-                         :style="{
+                  </div>
+                </div>
+                <div style="margin-top: 5px; height:65px;overflow: auto;">
+                  <div v-for="(task, index) in forecastEstimate"
+                       :key="'estimate-' + index"
+                       class="timeline-row">
+                    <div class="task-bar-container">
+                      <div v-if="index / 2 !== 1 && index !== 0"
+                           class="task-bar estimate-bar flex-pos"
+                           :style="{
     left: `${task.startPercent}%`,
     width: `${task.endPercent - task.startPercent}%`
   }">
-                      {{ task.name }}
+                        <span>{{ task.name }}(里程碑)</span>
+                      </div>
+                      <div v-else
+                           class="task-bar estimate-bar"
+                           :style="{
+    left: `${task.startPercent}%`,
+    width: `${task.endPercent - task.startPercent}%`
+  }">
+                        <span> {{ task.name }}(里程碑)</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div v-if="item.title === '基线'"
                    class="timeline-rows">
-                <!-- 任务行 - 基线 -->
-                <div v-for="(task, index) in baselineTasks"
-                     :key="'baseline-' + index"
-                     class="timeline-row-bottom">
-                  <div class="task-bar-container">
-                    <div v-if="index / 2 !== 1 && index !== 0"
-                         class="task-bar baseline-bar flex-pos"
-                         :style="{
+                <div style="height:65px;overflow: auto;">
+                  <div v-for="(task, index) in baselineTasks"
+                       :key="'baseline-' + index"
+                       class="timeline-row-bottom">
+                    <div class="task-bar-container">
+                      <div v-if="index / 2 !== 1 && index !== 0"
+                           class="task-bar baseline-bar flex-pos"
+                           :style="{
     left: `${task.startPercent}%`,
     width: `${task.endPercent - task.startPercent}%`
   }">
-                      {{ task.name }}
+                        {{ task.name }}
+                      </div>
+                      <div v-else
+                           class="task-bar baseline-bar"
+                           :style="{
+    left: `${task.startPercent}%`,
+    width: `${task.endPercent - task.startPercent}%`
+  }">
+                        {{ task.name }}
+                      </div>
                     </div>
-                    <div v-else
-                         class="task-bar baseline-bar"
-                         :style="{
+                  </div>
+                </div>
+                <div style="margin-top: 5px; height:65px;overflow: auto;">
+                  <div v-for="(task, index) in baselineEstimate"
+                       :key="'baseline-' + index"
+                       class="timeline-row-bottom">
+                    <div class="task-bar-container">
+                      <div v-if="index / 2 !== 1 && index !== 0"
+                           class="task-bar baseline-bar flex-pos"
+                           :style="{
     left: `${task.startPercent}%`,
     width: `${task.endPercent - task.startPercent}%`
   }">
-                      {{ task.name }}
+                        <span>{{ task.name }}(里程碑)</span>
+                      </div>
+                      <div v-else
+                           class="task-bar baseline-bar"
+                           :style="{
+    left: `${task.startPercent}%`,
+    width: `${task.endPercent - task.startPercent}%`
+  }">
+                        <span>{{ task.name }}(里程碑)</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -198,20 +249,11 @@ export default {
       // months: ['2025-01', '2025-04', '2025-07', '2025-10', '2026-01', '2026-04'],
 
       // 预估任务数据（百分比基于整个时间轴）
-      estimateTasks: [
-        // { name: '需求分析', startPercent: 10, endPercent: 30 },
-        // { name: '系统统计', startPercent: 25, endPercent: 50 },
-        // { name: '开发实现', startPercent: 45, endPercent: 80 },
-        // { name: '测试验证', startPercent: 70, endPercent: 100 }
-      ],
-
+      estimateTasks: [],
+      forecastEstimate: [],
       // 基线任务数据
-      baselineTasks: [
-        // { name: '项目启动', startPercent: 0, endPercent: 20 },
-        // { name: '需求确认', startPercent: 20, endPercent: 45 },
-        // { name: '系统开发', startPercent: 45, endPercent: 70 },
-        // { name: '验收测试', startPercent: 70, endPercent: 100 }
-      ]
+      baselineTasks: [],
+      baselineEstimate: []
     }
   },
   computed: {
@@ -259,7 +301,9 @@ export default {
     },
     getPlanProgress (planInfoId) {
       this.estimateTasks = []
+      this.forecastEstimate = []
       this.baselineTasks = []
+      this.baselineEstimate = []
       this.$api['planInfoManager.loadPlanProgressSituation']({ planInfoId: planInfoId })
         .then((res) => {
           this.data[0].list = res.forecast
@@ -269,33 +313,70 @@ export default {
             obj.name = item.name
             if (index === 0) {
               obj.startPercent = 0
-              obj.endPercent = this.getDate(item.beginDate, item.endDate)
             } else {
               obj.startPercent = this.getDate(res.forecast[index - 1].beginDate, item.beginDate) + this.estimateTasks[index - 1].startPercent
-              obj.endPercent = this.getDate(item.beginDate, item.endDate)
               // obj.startPercent = this.getDate(res.forecast[index - 1].beginDate, item.beginDate) + this.estimateTasks[index - 1].startPercent
               // obj.endPercent = this.getDate(item.beginDate, item.endDate) + this.estimateTasks[index - 1].endPercent
             }
+            if (this.getDate(item.beginDate, item.endDate) < 12) {
+              obj.endPercent = 12
+            } else {
+              obj.endPercent = this.getDate(item.beginDate, item.endDate)
+            }
             this.estimateTasks.push(obj)
+          })
+          res['forecast-estimate'].forEach((item, index) => {
+            let obj = {}
+            obj.name = item.name
+            if (index === 0) {
+              obj.startPercent = 0
+            } else {
+              obj.startPercent = this.getDate(res.forecast[index - 1].beginDate, item.beginDate) + this.estimateTasks[index - 1].startPercent
+              // obj.startPercent = this.getDate(res.forecast[index - 1].beginDate, item.beginDate) + this.estimateTasks[index - 1].startPercent
+              // obj.endPercent = this.getDate(item.beginDate, item.endDate) + this.estimateTasks[index - 1].endPercent
+            }
+            if (this.getDate(item.beginDate, item.endDate) < 12) {
+              obj.endPercent = 12
+            } else {
+              obj.endPercent = this.getDate(item.beginDate, item.endDate)
+            }
+            this.forecastEstimate.push(obj)
           })
           res.baseline.forEach((item, index) => {
             let obj = {}
             obj.name = item.name
             if (index === 0) {
               obj.startPercent = 0
-              obj.endPercent = this.getDate(item.beginDate, item.endDate)
             } else {
               obj.startPercent = this.getDate(res.baseline[index - 1].beginDate, item.beginDate)
-
-
-              obj.endPercent = this.getDate(item.beginDate, item.endDate)
               // obj.startPercent = this.getDate(res.baseline[index - 1].beginDate, item.beginDate) + this.baselineTasks[index - 1].startPercent
               // obj.endPercent = this.getDate(item.beginDate, item.endDate) + this.baselineTasks[index - 1].endPercent
             }
+            if (this.getDate(item.beginDate, item.endDate) < 12) {
+              obj.endPercent = 12
+            } else {
+              obj.endPercent = this.getDate(item.beginDate, item.endDate)
+            }
             this.baselineTasks.push(obj)
           })
+          res['baseline-estimate'].forEach((item, index) => {
+            let obj = {}
+            obj.name = item.name
+            if (index === 0) {
+              obj.startPercent = 0
+            } else {
+              obj.startPercent = this.getDate(res.baseline[index - 1].beginDate, item.beginDate)
+              // obj.startPercent = this.getDate(res.baseline[index - 1].beginDate, item.beginDate) + this.baselineTasks[index - 1].startPercent
+              // obj.endPercent = this.getDate(item.beginDate, item.endDate) + this.baselineTasks[index - 1].endPercent
+            }
+            if (this.getDate(item.beginDate, item.endDate) < 12) {
+              obj.endPercent = 12
+            } else {
+              obj.endPercent = this.getDate(item.beginDate, item.endDate)
+            }
+            this.baselineEstimate.push(obj)
+          })
         })
-      console.log("🚀 ~ .then ~ this.data:", this.data)
         .catch((err) => {
           console.log(err, 'err')
         })
@@ -317,12 +398,13 @@ export default {
 .plan-progress {
   height: 90%;
   box-sizing: border-box;
-  padding: 20px 80px;
+  padding: 50px 20px 10px 80px;
 }
 .progress-item {
   width: 100%;
+  height: 200px;
   display: flex;
-  padding: 30px 0 0; // 调整上下间距
+  // padding: 30px 0 0; // 调整上下间距
   flex-direction: column;
 }
 
@@ -337,7 +419,7 @@ export default {
   overflow-x: overlay;
   overflow-y: hidden; // 新增垂直方向溢出隐藏
   box-sizing: border-box;
-  height: 130px;
+  height: 210px;
 
   // 调整时间轴实际高度
   .timeline {
@@ -382,8 +464,8 @@ export default {
       position: absolute;
       left: 0; // 修改圆点位置
       top: 0;
-      width: 12px;
-      height: 12px;
+      width: 15px;
+      height: 15px;
       background: $theme-color;
       border-radius: 50%;
     }
@@ -428,7 +510,7 @@ export default {
   left: 90px;
 }
 .timeline-container {
-  width: 90%;
+  width: 100%;
   // margin: 20px auto;
   // padding: 20px;
   // background-color: #fff;
@@ -512,20 +594,28 @@ export default {
 
 .timeline-rows {
   position: relative;
-  // height: 400px;
+  display: flex;
+  flex-direction: column;
+  height: 130px;
+  overflow: auto;
 }
 
 .timeline-row {
-  height: 40px;
+  height: 20px;
   width: 100%;
-  position: absolute;
+  // position: absolute; // 是否重叠
+}
+.timeline-row2 {
+  height: 20px;
+  width: 100%;
+  // position: absolute; // 是否重叠
 }
 .timeline-row-bottom {
-  height: 40px;
+  height: 20px;
   width: 100%;
 }
 .flex-pos {
-  margin-top: 10px;
+  // margin-top: 10px;
 }
 .task-name {
   width: 150px;
@@ -537,7 +627,7 @@ export default {
 
 .task-bar-container {
   flex: 1;
-  height: 40px;
+  height: 18px;
   position: relative;
   overflow: auto;
   overflow-y: hidden;
@@ -546,8 +636,8 @@ export default {
 .task-bar {
   position: absolute;
   height: 18px;
-  top: 50%;
-  transform: translateY(-50%);
+  // top: 50%;
+  // transform: translateY(-50%);
   border-radius: 30px;
   text-align: left;
 }
