@@ -78,7 +78,7 @@ export default {
           this.$notify({
             title: '提示',
             dangerouslyUseHTMLString: true,
-            message: `<strong>${res.resultMsg}</strong>`
+            message: res.resultMsg
           })
         } else {
           this.$message.success('导入成功')

@@ -758,9 +758,7 @@ export default {
                   check = true
                 }
               } else {
-                if (task[key]) {
-                  task[key] = that.formData[key]
-                }
+                task[key] = that.formData[key]
                 if (key === 'duration' || key === 'start_date' || key === 'predecessors') {
                   check = true
                 }
