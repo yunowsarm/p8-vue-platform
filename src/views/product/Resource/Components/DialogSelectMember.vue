@@ -11,7 +11,8 @@
                  @close="dialogMemberCancel"
                  @isfullscreen="isfullscreen">
     <template #dialog>
-      <normal-layout :normalLayout="normalLayout"
+      <normal-layout v-if="!isMobile"
+                     :normalLayout="normalLayout"
                      class="userSelect">
         <template #north>
           <div class="search-con">
@@ -81,6 +82,60 @@
           <!-- </div> -->
         </template>
       </normal-layout>
+      <div v-else>
+        <div class="search-con"
+             style="flex-direction: column;padding: 5px;">
+          <div class="date-range-con"
+               :style="{width: 'calc(100% - 31px)'}">
+            负荷分析时段:
+            <el-date-picker :style="{width: 'calc(100% - 100px)'}"
+                            :editable="false"
+                            class="date-range"
+                            v-model="utilizationTimeRange"
+                            unlink-panels
+                            size="mini"
+                            type="daterange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            value-format="yyyy-MM-dd"
+                            clearable></el-date-picker>
+          </div>
+          <div class="input-con"
+               style="display: flex;margin-left: 0px;"
+               :style="{width: 'calc(100% - 31px)'}">
+            人员姓名:
+            <el-input :style="{width: 'calc(77% - 70px)'}"
+                      class="input-name"
+                      placeholder="请输入人员姓名进行搜索"
+                      clearable
+                      v-model="realName"
+                      size="mini"></el-input>
+            <div class="search-btn">
+              <el-button icon="search"
+                         size="mini"
+                         style="margin-left: 10px;"
+                         type="primary"
+                         @click="search">搜索</el-button>
+            </div>
+          </div>
+        </div>
+        <common-table ref="table"
+                      v-if="visible"
+                      :key="dateTime"
+                      :tableSetting="false"
+                      :style="{height: customHeight + 'px'}"
+                      :columns="columns"
+                      :params="queryParam"
+                      :api="tableApi"
+                      @row-click="handleTableRowClick"
+                      @selection-change="handleTableSelectionChange"
+                      @row-dblclick="rowDblclick">
+          <template #idleDaysCount="{ scope }">
+            <idle-days :row="scope.row"></idle-days>
+          </template>
+        </common-table>
+      </div>
     </template>
   </common-dialog>
 </template>
@@ -236,6 +291,9 @@ export default {
     this.$refs.table.searchData()
   },
   computed: {
+    isMobile () {
+      return this.$store.getters.isMobile
+    },
     treeConfig () {
       return { 'current-node-key': this.queryParam.deptId }
     }
