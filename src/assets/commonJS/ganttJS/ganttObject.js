@@ -2162,7 +2162,7 @@ GanttObject.onTaskTimeChange = function (ganttObject) {
       // 同步更新预计时间
       task.forecastBeginDate = moment(task.start_date).format('YYYY-MM-DD')
       task.forecastEndDate = moment(ganttObject.date.add(task.end_date, -1, 'day')).format('YYYY-MM-DD')
-      ganttObject.updateTask(id)
+      // ganttObject.updateTask(id)
       ganttObject.render()
     } finally {
       delete task._updating
@@ -2310,18 +2310,25 @@ function searchFilter(parent, searchForm, ganttObject) {
 
     const userName = searchForm.userName // 责任人模糊查询
     let userNameCheck = true
-    const fullPinyin = resource?.name ? pinyin(resource?.name,{
-      toneType: 'none',
-      type:'string',
-      separator:''
-    }).toLowerCase() : '' // zhangsan
-    const initials = resource?.name ? pinyin(resource?.name,{
-      pattern:'first',
-      toneType: 'none',
-      type:'string',
-      separator:''
-    }).toLowerCase() : ''
-    if (userName && (!resource || (resource && !resource.name) || (resource && resource.name && resource.name.indexOf(userName) === -1 && !fullPinyin.includes(userName) && !initials.includes(userName)))) {
+    const fullPinyin = resource?.name
+      ? pinyin(resource?.name, {
+          toneType: 'none',
+          type: 'string',
+          separator: ''
+        }).toLowerCase()
+      : '' // zhangsan
+    const initials = resource?.name
+      ? pinyin(resource?.name, {
+          pattern: 'first',
+          toneType: 'none',
+          type: 'string',
+          separator: ''
+        }).toLowerCase()
+      : ''
+    if (
+      userName &&
+      (!resource || (resource && !resource.name) || (resource && resource.name && resource.name.indexOf(userName) === -1 && !fullPinyin.includes(userName) && !initials.includes(userName)))
+    ) {
       userNameCheck = false
     }
     const ownerIds = searchForm.ownerIds // 责任人
@@ -3210,7 +3217,7 @@ GanttObject.updateTaskNew = function (ganttObject, taskId, vueThis) {
       task.type = 'task'
     }
     updateforecastDate(task, ganttObject)
-    ganttObject.updateTask(taskId)
+    // ganttObject.updateTask(taskId)
     ganttObject.autoSchedule(taskId)
     if (task.parent) {
       const parentId = task.parent
