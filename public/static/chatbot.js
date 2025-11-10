@@ -62,8 +62,8 @@ function loadChatbot() {
       bottom: 60px !important;
     }
     #dify-chatbot-bubble-window {
-      width: 30rem !important;
-      height: 40rem !important;
+      width: 50rem !important;
+      height: 60rem !important;
     }
     .disable-pointer-events {
       pointer-events: none;
