@@ -1,5 +1,5 @@
 <template>
-  <div class="statistics-container">
+  <div class="statistics-container" ref='container'>
     <div class="statistics-grid">
       <div class="statistics-item" v-for="(item, index) in statisticsItems" :key="index" @click="handleItemClick(item)">
         <div class="item-title">{{ item.title }}</div>
@@ -136,22 +136,23 @@ export default {
   .statistics-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 0.8vw;
     height: 100%;
   }
 
   .statistics-item {
     display: flex;
     flex-direction: column;
-    padding: 10px;
-    border-radius: 4px;
+    //padding: 1vw;
+    border-radius: 0.5vw;
     transition: all 0.3s;
+    justify-content: center;
 
     .item-title {
-      font-size: 16px;
+      font-size: clamp(12px,1vw,18px);
       font-weight: bold;
       color: #333;
-      margin-bottom: 5px;
+      margin-bottom: 0.5vw;
       text-align: start;
     }
 
@@ -159,16 +160,16 @@ export default {
       cursor: pointer;
       display: flex;
       align-items: center;
-      margin-top: 8px;
+      //margin-top: 0.8vw;
 
       .item-icon {
-        font-size: 40px;
+        font-size: clamp(24px,2vw,40px);
         color: #409eff;
-        margin-right: 15px;
+        margin-right: 1vw;
       }
 
       .item-count {
-        font-size: 24px;
+        font-size: clamp(16px,1.5vw,28px);
         color: #409eff;
         font-weight: bold;
       }
