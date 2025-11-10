@@ -13,7 +13,9 @@
         <template #paneL>
           <div class="top"
                :style="{ height: commandButtonBarHeight }">
-            <command-button-bar :panel-data="thirdMenuParam.specialPlan && thirdMenuParam.specialPlan.includes('SPECIAL_PLAN') ? thematicBarData : barData"
+            <command-button-bar ref="commandBottonBar"
+                                :key="dateTime"
+                                :panel-data="thirdMenuParam.specialPlan && thirdMenuParam.specialPlan.includes('SPECIAL_PLAN') ? thematicBarData : barData"
                                 :selected-tasks="selectedTasks"
                                 :gantt-name="ganttName"
                                 :plan-info-id="planInfoId"
@@ -377,6 +379,8 @@ export default {
       this.defaultPercent = 100
       this.$store.getters.vueThis.pageType = 'switch'
       this.firstEntry = true
+      this.$refs.commandBottonBar.showArrow = false
+      this.dateTime = new Date().getTime()
     },
     showDetail (selectTask, ganttName, viewType, switchType) {
       this.selectTaskId = selectTask.id
@@ -408,6 +412,7 @@ export default {
         this.defaultPercent = this.defaultPercent > 70 ? 70 : this.defaultPercent
         this.firstEntry = false
       }
+      this.$refs.commandBottonBar.showArrow = true
     },
     paneSizeChange (val) {
       this.defaultPercent = val

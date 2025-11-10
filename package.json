@@ -9,7 +9,7 @@
     "lint": "vue-cli-service lint",
     "lint:fix": "vue-cli-service lint --fix",
     "privateInstall": "npm --registry http://192.168.0.191:8888/repository/npm-group/ install -f",
-    "updateP8": "npm --registry http://192.168.0.191:8888/repository/npm-group/ i p8-lowcode@0.0.76-beta p8-components-ui@4.1.35 p8-dhtmlx-gantt@7.0.12 p8-gojs p8-vue-smart-widget",
+    "updateP8": "npm --registry http://192.168.0.191:8888/repository/npm-group/ i p8-lowcode@0.0.75-beta p8-components-ui@4.1.32 p8-dhtmlx-gantt@7.0.12 p8-gojs p8-vue-smart-widget",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -42,10 +42,10 @@
     "moment": "^2.25.3",
     "net": "^1.0.2",
     "operation-tree-node": "^1.0.5",
-    "p8-components-ui": "^4.1.35",
+    "p8-components-ui": "^4.1.36",
     "p8-dhtmlx-gantt": "^7.0.12",
     "p8-gojs": "^2.1.11",
-    "p8-lowcode": "0.0.76-beta",
+    "p8-lowcode": "0.0.75-beta",
     "p8-vue-smart-widget": "^0.6.1",
     "progressbar.js": "^1.1.0",
     "socket.io-client": "^4.7.5",
