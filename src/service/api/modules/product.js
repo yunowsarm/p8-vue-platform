@@ -139,6 +139,13 @@ export const repositoryApi = {
   ],
   taskManager: [
     {
+      name: 'getTaskExtendColumnData',
+      method: 'POST',
+      path: '/product/my/work/task/getTaskExtendColumnData',
+      mockPath: '/product/my/work/task/getTaskExtendColumnData',
+      desc: '我的任务列表-获取动态列'
+    },
+    {
       name: 'updateTaskDistribution',
       method: 'POST',
       path: '/product/pm/plan/updateTaskDistribution',

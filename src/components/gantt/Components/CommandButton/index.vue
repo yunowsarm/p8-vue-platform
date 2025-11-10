@@ -1,101 +1,61 @@
 <template>
-  <div class="c-button"
-       :class="buttonDynamicClass">
+  <div class="c-button" :class="buttonDynamicClass">
     <!-- 层级按钮 -->
     <template v-if="cbutton.id === 'hierarchy-filter'">
-      <el-tooltip :content="isDisable(cbutton) ? getButtonMsg(cbutton) : cbutton.title"
-                  placement="top"
-                  :disabled="!isDisable(cbutton) && ganttButtonMode === 'tabs'"
-                  :offset="-15"
-                  :enterable="false"
-                  effect="dark">
-        <el-select v-model="level"
-                   :placeholder="cbutton.title"
-                   class="c-select"
-                   size="mini"
-                   style="width: 70px"
-                   @change="cbutton.clickFun(level, ganttName)"
-                   :clearable="true">
-          <el-option v-for="(item, index) in vueThis.deep"
-                     :key="item"
-                     :label="index + 1"
-                     :value="index + 1"> </el-option>
+      <el-tooltip
+        :content="isDisable(cbutton) ? getButtonMsg(cbutton) : cbutton.title"
+        placement="top"
+        :disabled="!isDisable(cbutton) && ganttButtonMode === 'tabs'"
+        :offset="-15"
+        :enterable="false"
+        effect="dark"
+      >
+        <el-select v-model="level" :placeholder="cbutton.title" class="c-select" size="mini" style="width: 70px" @change="cbutton.clickFun(level, ganttName)" :clearable="true">
+          <el-option v-for="(item, index) in vueThis.deep" :key="item" :label="index + 1" :value="index + 1"></el-option>
         </el-select>
       </el-tooltip>
     </template>
     <template v-else-if="cbutton.type && cbutton.type === 'select' && cbutton.userDefault && cbutton.userDefault === 'true'">
-      <el-tooltip :content="isDisable(cbutton) ? getButtonMsg(cbutton) : cbutton.title"
-                  placement="top"
-                  :disabled="!isDisable(cbutton) && ganttButtonMode === 'tabs'"
-                  :offset="-15"
-                  :enterable="false"
-                  effect="dark">
-        <el-select v-model="scheduling"
-                   :placeholder="cbutton.title"
-                   class="c-select"
-                   size="mini"
-                   style="width: 125px"
-                   @change="cbutton.clickFun(scheduling, ganttName, currentRecords)">
-          <el-option v-for="(item, index) in cbutton.options"
-                     :key="item.value"
-                     :label="item.label"
-                     :value="item.value"
-                     :disabled="selectDisable(cbutton)"> </el-option>
+      <el-tooltip
+        :content="isDisable(cbutton) ? getButtonMsg(cbutton) : cbutton.title"
+        placement="top"
+        :disabled="!isDisable(cbutton) && ganttButtonMode === 'tabs'"
+        :offset="-15"
+        :enterable="false"
+        effect="dark"
+      >
+        <el-select v-model="scheduling" :placeholder="cbutton.title" class="c-select" size="mini" style="width: 125px" @change="cbutton.clickFun(scheduling, ganttName, currentRecords)">
+          <el-option v-for="(item, index) in cbutton.options" :key="item.value" :label="item.label" :value="item.value" :disabled="selectDisable(cbutton)"></el-option>
         </el-select>
       </el-tooltip>
     </template>
     <template v-else>
-      <div @mouseenter="detectionState(cbutton)"
-           v-loading="iconStateLoading"
-           element-loading-spinner="el-icon-loading"
-           class="loading-but">
-        <el-tooltip placement="top"
-                    :disabled="!isDisable(cbutton) && ganttButtonMode === 'tabs'"
-                    :enterable="false"
-                    effect="dark"
-                    transition=" ">
-          <div slot="content">{{ isDisable(cbutton) ? getButtonMsg(cbutton) : cbutton.title }}</div>
-          <span @mouseleave="styleMouseleave(cbutton)"
-                ref="span">
-            <el-button type="text"
-                       :disabled="isDisable(cbutton)"
-                       @click="btnClick(cbutton)">
-              <div v-if="size === 'mini' && !cbutton.icon.startsWith('p8')"
-                   class="style-div-color"
-                   :style="colorDynamicStyle(cbutton)"></div>
-              <div v-else>
-                <i :class="cbutton.icon"
-                   :style="iconDynamicClass(!isDisable(cbutton) ? cbutton.color : null,cbutton.id)"></i>
-                <span class="button-title"
-                      v-if="size !== 'mini'"
-                      v-show="ganttButtonMode === 'tabs'"
-                      :style="!isDisable(cbutton) ? { color: cbutton.color || '' } : {}">{{ cbutton.title }}</span>
+      <div @mouseenter="detectionState(cbutton)" v-loading="iconStateLoading" element-loading-spinner="el-icon-loading" class="loading-but">
+        <el-tooltip placement="top" :disabled="!isDisable(cbutton) && ganttButtonMode === 'tabs' && noDynamicColumns(cbutton)" :enterable="false" effect="dark" transition=" ">
+          <div slot="content">
+            {{ isDisable(cbutton) ? getButtonMsg(cbutton) : !noDynamicColumns(cbutton) ? '有新增的动态列' : cbutton.title }}
+          </div>
+          <span @mouseleave="styleMouseleave(cbutton)" ref="span">
+            <el-button type="text" :disabled="isDisable(cbutton)" @click="btnClick(cbutton)">
+              <div v-if="size === 'mini' && !cbutton.icon.startsWith('p8')" class="style-div-color" :style="colorDynamicStyle(cbutton)">
+                <span v-if="!noDynamicColumns(cbutton)" class="dot-mini"></span>
+              </div>
+              <div v-else style="position: relative">
+                <span v-if="!noDynamicColumns(cbutton)" class="dot"></span>
+                <i :class="cbutton.icon" :style="iconDynamicClass(!isDisable(cbutton) ? cbutton.color : null, cbutton.id)"></i>
+                <span class="button-title" v-if="size !== 'mini'" v-show="ganttButtonMode === 'tabs'" :style="!isDisable(cbutton) ? { color: cbutton.color || '' } : {}">{{ cbutton.title }}</span>
               </div>
             </el-button>
           </span>
         </el-tooltip>
-        <el-dropdown v-if="cbutton.children && cbutton.children.length && size != 'mini'"
-                     :disabled='dropdownDisable(cbutton)'>
-          <i class="el-icon-caret-bottom"
-             @mouseleave="styleMouseleave(cbutton)"
-             :class="{ disabled: dropVisible }"></i>
+        <el-dropdown v-if="cbutton.children && cbutton.children.length && size != 'mini'" :disabled="dropdownDisable(cbutton)">
+          <i class="el-icon-caret-bottom" @mouseleave="styleMouseleave(cbutton)" :class="{ disabled: dropVisible }"></i>
           <el-dropdown-menu slot="dropdown">
-            <div v-for="(btnChild, index) in cbutton.children"
-                 :key="btnChild.title"
-                 class="c_btn_dropmenu"
-                 :class="{ isdisable: isDisable(btnChild) }">
-              <el-tooltip :content="isDisable(btnChild) ? getButtonMsg(btnChild) : btnChild.title"
-                          placement="top"
-                          :disabled="!isDisable(btnChild)"
-                          :offset="-15"
-                          :enterable="false"
-                          effect="dark">
+            <div v-for="(btnChild, index) in cbutton.children" :key="btnChild.title" class="c_btn_dropmenu" :class="{ isdisable: isDisable(btnChild) }">
+              <el-tooltip :content="isDisable(btnChild) ? getButtonMsg(btnChild) : btnChild.title" placement="top" :disabled="!isDisable(btnChild)" :offset="-15" :enterable="false" effect="dark">
                 <div>
-                  <el-dropdown-item @click.native="btnClick(btnChild)"
-                                    :disabled="isDisable(btnChild)">
-                    <el-button v-if="btnChild.id !== 'createByNum'"
-                               type="text"
-                               :disabled="isDisable(btnChild)">
+                  <el-dropdown-item @click.native="btnClick(btnChild)" :disabled="isDisable(btnChild)">
+                    <el-button v-if="btnChild.id !== 'createByNum'" type="text" :disabled="isDisable(btnChild)">
                       <i :class="btnChild.icon"></i>
                       {{ btnChild.title }}
                     </el-button>
@@ -113,6 +73,8 @@
 <script>
 import { DropdownMenu, DropdownItem, Button, Dropdown, Select, Option, Tooltip } from 'p8-components-ui'
 import { mapGetters } from 'vuex'
+import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
+
 const changeGanttWhiteList = [
   'create-children',
   'create-children-two',
@@ -179,19 +141,19 @@ export default {
   computed: {
     isDisable () {
       return (btn) => {
-        if(this.isTaskType && this.vueThis.createPage !== 'decompose' && this.vueThis.planEditLock === '1'){
+        if (this.isTaskType && this.vueThis.createPage !== 'decompose' && this.vueThis.planEditLock === '1') {
           this.$store.dispatch('setButtonMsg', { id: btn.id, msg: '计划编辑锁定时不允许此操作' })
           return true
         }
         // 判断是否禁用
-        let result = this.checkButtonDisable(btn);
+        let result = this.checkButtonDisable(btn)
 
         if (!result) {
-          this.dropVisible = false;
+          this.dropVisible = false
         }
 
-        return result;
-      };
+        return result
+      }
     },
     selectDisable () {
       return function (btn) {
@@ -263,17 +225,24 @@ export default {
       }
       // 判断颜色
       if (color) {
-        iconStyle += ` color: ${color};`;
+        iconStyle += ` color: ${color};`
       }
       return iconStyle
     },
     dropdownDisable (btn) {
       for (let btnChild of btn.children) {
         if (!this.isDisable(btnChild)) {
-          return false;
+          return false
         }
       }
-      return true;
+      return true
+    },
+    noDynamicColumns (btn) {
+      const ganttObject = GanttObject.getGanttObject(this.ganttName)
+      const extraColumnKeys = this.vueThis.columnSettings.filter((item) => item.attributeType === '1').map((item) => item.filedName)
+      const extraColumns = ganttObject.config.columns.filter(item => extraColumnKeys.includes(item.name))
+      const dynamicColumns = extraColumns.some(item => item.hide === true)
+      return !(btn.id === 'grid-setting' && dynamicColumns)
     },
     // 获取禁用提示语
     getButtonMsg (btn) {
@@ -285,29 +254,29 @@ export default {
     },
     // 处理按钮禁用逻辑
     checkButtonDisable (btn) {
-      let result;
+      let result
       if (this.ganttName === 'changeGantt' && this.classifyData) {
-        let disableResult = true;
+        let disableResult = true
 
         // 判断按钮是否在任务列表中
-        this.classifyData.forEach(item => {
+        this.classifyData.forEach((item) => {
           if (btn.title === item.title) {
             if (this.currentRecords.length > 0) {
-              const record = this.currentRecords[0];
+              const record = this.currentRecords[0]
               if (record.parent && ['6403', '6404', '6407', '6408'].includes(record.managerStatus)) {
-                disableResult = false;
+                disableResult = false
               }
             }
           }
-        });
+        })
 
         if (!disableResult) {
-          return false;
+          return false
         }
 
         // 更新msg
-        this.updateButtonMsg(btn);
-        return true;
+        this.updateButtonMsg(btn)
+        return true
       }
       // 审批页面不可操作（详细信息按钮除外）
       if (this.ganttName === 'analysisGantt' && btn.id !== 'detail-info') {
@@ -320,12 +289,12 @@ export default {
       }
       // 执行btn的isDisableFun逻辑
       if (!btn.isDisableFun(btn, this.ganttName, this.currentRecords)) {
-        result = this.isDisableFun(btn, this.ganttName, this.currentRecords);
+        result = this.isDisableFun(btn, this.ganttName, this.currentRecords)
       } else {
-        result = btn.isDisableFun(btn, this.ganttName, this.currentRecords);
+        result = btn.isDisableFun(btn, this.ganttName, this.currentRecords)
       }
 
-      return result;
+      return result
     },
 
     // 更新按钮的msg
@@ -340,9 +309,9 @@ export default {
         6407: '审批驳回',
         6408: '审批撤销',
         6409: '审批完成'
-      };
+      }
       if (this.currentRecords.length > 0) {
-        const status = this.currentRecords[0].managerStatus;
+        const status = this.currentRecords[0].managerStatus
         this.$store.dispatch('setButtonMsg', { id: btn.id, msg: `任务为${statusName[status]}，不可操作` })
       } else {
         this.$store.dispatch('setButtonMsg', { id: btn.id, msg: '请选择任务' })
@@ -411,31 +380,46 @@ export default {
           console.error(error)
         })
     },
-    btnOver () {
+    btnOver() {
       this.isBtnOver = true
     },
-    btnOut () {
+    btnOut() {
       this.isBtnOver = false
     },
-    expandOver () {
+    expandOver() {
       this.isExpandOver = true
     },
-    expandOut () {
+    expandOut() {
       this.isExpandOver = false
     },
-    isDisableFun (btn, ganttName, tasks) {
+    isDisableFun(btn, ganttName, tasks) {
       const result = false
       // 额外的处理逻辑
       return result
     }
   },
-  beforeDestroy () {
+  beforeDestroy() {
     this.$bus.$off('ganttOnFullscreen')
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff3b30;
+}
+
+dot-mini {
+  width: 6px;
+  height: 6px;
+}
+
 .c-button {
   display: block;
 
@@ -484,8 +468,7 @@ export default {
 
   .el-button.is-disabled,
   .el-button.is-disabled:hover,
-  .el-button.is-disabled:focus {
-    color: #a0afc5;
+  .el-button.is-disabled:focus { color: #a0afc5;
   }
 }
 
@@ -498,6 +481,7 @@ export default {
 .style-div-color {
   width: 12px;
   height: 12px;
+  position: relative;
   // border: 1px solid #ccc;
 }
 

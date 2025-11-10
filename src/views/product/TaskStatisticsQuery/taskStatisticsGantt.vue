@@ -916,27 +916,27 @@ export default {
               // 解决gantt图鼠标悬浮任务名
               task.text = task.name
               extraStr.forEach((key) => {
-                task[key] = ''
+                task[key] = task[key] ? task[key] : ''
               })
               if (vueThis.$route.name == 'Planning' && !task.parent) {
                 task.autoScheduling = '2'
               }
             })
             // 处理拓展字段已有的数据
-            vueThis.extendMap = res.extendMap || {}
-            taskList.forEach((task) => {
-              extraList.forEach((item) => {
-                task['kz' + item.id] = ''
-              })
-              if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
-                if (vueThis.extendMap[task.id]) {
-                  let extendData = vueThis.extendMap[task.id]
-                  extendData.forEach((item) => {
-                    task['kz' + item.customItem1] = item.fieldValue ? item.fieldValue : ''
-                  })
-                }
-              }
-            })
+            // vueThis.extendMap = res.extendMap || {}
+            // taskList.forEach((task) => {
+            //   extraList.forEach((item) => {
+            //     task[item.filedName] = ''
+            //   })
+            //   if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
+            //     if (vueThis.extendMap[task.id]) {
+            //       let extendData = vueThis.extendMap[task.id]
+            //       extendData.forEach((item) => {
+            //         task['kz' + item.customItem1] = item.fieldValue ? item.fieldValue : ''
+            //       })
+            //     }
+            //   }
+            // })
             // 初始化数据
             const datas = {
               tasks: taskList,
@@ -1087,6 +1087,7 @@ export default {
     callParentSelectTasks () {
       this.$nextTick(() => {
         const task = myGantt.getTask(this.selectTaskId)
+        console.log(task)
         this.planInfoId = task.planInfoId
         this.$emit('switch-task', task)
         this.$emit('select-task', this.selectedTasks, this.ganttName)

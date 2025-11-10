@@ -1007,20 +1007,20 @@ export default {
               }
             })
             // 处理拓展字段已有的数据
-            vueThis.extendMap = res.extendMap || {}
-            taskList.forEach((task) => {
-              extraList.forEach((item) => {
-                task['kz' + item.id] = ''
-              })
-              if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
-                if (vueThis.extendMap[task.id]) {
-                  let extendData = vueThis.extendMap[task.id]
-                  extendData.forEach((item) => {
-                    task['kz' + item.customItem1] = item.fieldValue ? item.fieldValue : ''
-                  })
-                }
-              }
-            })
+            // vueThis.extendMap = res.extendMap || {}
+            // taskList.forEach((task) => {
+            //   extraList.forEach((item) => {
+            //     task[item.filedName] = ''
+            //   })
+            //   if (vueThis.extendMap && Object.keys(vueThis.extendMap).length > 0) {
+            //     if (vueThis.extendMap[task.id]) {
+            //       let extendData = vueThis.extendMap[task.id]
+            //       extendData.forEach((item) => {
+            //         task['kz' + item.customItem1] = item.fieldValue ? item.fieldValue : ''
+            //       })
+            //     }
+            //   }
+            // })
             // 初始化数据
             const datas = {
               tasks: taskList,
