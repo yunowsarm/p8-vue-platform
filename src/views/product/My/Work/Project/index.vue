@@ -97,12 +97,12 @@
                        class="timeline-row">
                     <div class="task-bar-container">
                       <div v-if="index / 2 !== 1 && index !== 0"
-                           class="task-bar estimate-bar flex-pos"
+                           class="task-bar estimate-bar"
                            :style="{
     left: `${task.startPercent}%`,
     width: `${task.endPercent - task.startPercent}%`
   }">
-                        {{ task.name }}
+                        {{ task.name }}33
                       </div>
                       <div v-else
                            class="task-bar estimate-bar"
@@ -110,7 +110,7 @@
     left: `${task.startPercent}%`,
     width: `${task.endPercent - task.startPercent}%`
   }">
-                        {{ task.name }}
+                        {{ task.name }}44
                       </div>
                     </div>
                   </div>
@@ -309,8 +309,7 @@ export default {
           this.data[0].list = res.forecast
           this.data[1].list = res.baseline
           res.forecast.forEach((item, index) => {
-            let obj = {}
-            obj.name = item.name
+            let obj = item
             if (index === 0) {
               obj.startPercent = 0
             } else {
@@ -326,8 +325,7 @@ export default {
             this.estimateTasks.push(obj)
           })
           res['forecast-estimate'].forEach((item, index) => {
-            let obj = {}
-            obj.name = item.name
+            let obj = item
             if (index === 0) {
               obj.startPercent = 0
             } else {
@@ -343,8 +341,7 @@ export default {
             this.forecastEstimate.push(obj)
           })
           res.baseline.forEach((item, index) => {
-            let obj = {}
-            obj.name = item.name
+            let obj = item
             if (index === 0) {
               obj.startPercent = 0
             } else {
@@ -360,8 +357,7 @@ export default {
             this.baselineTasks.push(obj)
           })
           res['baseline-estimate'].forEach((item, index) => {
-            let obj = {}
-            obj.name = item.name
+            let obj = item
             if (index === 0) {
               obj.startPercent = 0
             } else {
