@@ -1,5 +1,7 @@
 <template>
-  <normal-layout :header-visible="false" :normal-layout="layout" :split-layout="true">
+  <normal-layout :header-visible="false"
+                 :normal-layout="layout"
+                 :split-layout="true">
     <template #west>
       <common-tree :default-expanded-keys="defaultExpandedKeys"
                    :default-expand-all="false"
@@ -70,7 +72,9 @@
                      :reportParam="sqlParam"
                      @refresh="init()">
         <template #NAME="{ scope, thirdMenuData }">
-          <span v-if="scope.row.USERID === userId" class="underline" @click="drillCol(scope, thirdMenuData)">{{ scope.row.NAME }} </span>
+          <span v-if="scope.row.USERID === userId"
+                class="underline"
+                @click="drillCol(scope, thirdMenuData)">{{ scope.row.NAME }} </span>
           <span v-else>{{ scope.row.NAME }}</span>
         </template>
         <template v-if="!isFromDashboard"
@@ -115,21 +119,30 @@
       </P8TableRender>
     </template>
     <template #drawer-panel>
-      <common-drawer size="100%" v-if="visible" :visible="visible" direction="ttb" :projectLevel="projectLevel" :drawerConfig="menuDrawerConfig" @close="closeLayout">
+      <common-drawer size="100%"
+                     v-if="visible"
+                     :visible="visible"
+                     direction="ttb"
+                     :projectLevel="projectLevel"
+                     :drawerConfig="menuDrawerConfig"
+                     @close="closeLayout">
         <template #drawer>
-          <menu-layout :third-menu-param="thirdMenuParam" :default-menu="defaultMenu"></menu-layout>
+          <menu-layout :third-menu-param="thirdMenuParam"
+                       :default-menu="defaultMenu"></menu-layout>
         </template>
       </common-drawer>
-      <common-drawer title="查看流程图" :visible="visibleModelPicture" :show-handle-btn="false" size="50%" @close="onModelPictureClose">
+      <common-drawer title="查看流程图"
+                     :visible="visibleModelPicture"
+                     :show-handle-btn="false"
+                     size="50%"
+                     @close="onModelPictureClose">
         <template #drawer>
-          <process-approval-view
-            v-inherited-father-height
-            :isSmartForm="true"
-            :business-obj="{
+          <process-approval-view v-inherited-father-height
+                                 :isSmartForm="true"
+                                 :business-obj="{
               businessId: modelId,
               processDefinitionKey: processDefinationTwoKey
-            }"
-          >
+            }">
           </process-approval-view>
         </template>
       </common-drawer>
@@ -293,12 +306,12 @@ import { getMonitorData, getBudgetData } from '@/components/workLayout/Component
 
 export default {
   name: 'ButtonNavigationView',
-  provide() {
+  provide () {
     return {
       provideParams: this.provideParams
     }
   },
-  data() {
+  data () {
     return {
       layout: {
         west: {
@@ -404,10 +417,10 @@ export default {
     TreeSelect
   },
   computed: {
-    isMobile() {
+    isMobile () {
       return this.$store.getters.isMobile
     },
-    thirdMenuData() {
+    thirdMenuData () {
       const currentPath = this.$route.path
       const rootRouter = this.$store.state.routers.addRouters
       let thirdMenu = []
@@ -435,7 +448,7 @@ export default {
     },
     ...mapGetters(['userId'])
   },
-  created() {
+  created () {
     const that = this
     if (this.isMobile) {
       this.layout = {
@@ -508,23 +521,23 @@ export default {
   },
   watch: {
     $route: {
-      handler(val) {
+      handler (val) {
         this.init()
       }
     }
   },
-  mounted() {
+  mounted () {
     // this.$nextTick(() => {
     //     console.log(this.$refs.tableRender.$refs,'=====')
     // })
   },
   methods: {
-    closeLayout() {
+    closeLayout () {
       this.visible = false
       // 使用完后清除，避免影响其他窗口
       sessionStorage.removeItem('stateInfo')
     },
-    showViewChange(val) {
+    showViewChange (val) {
       let tableParam = this.$refs.tableRender.$refs.xTable.params.sqlParam
       let sqlParam = {
         isChildren: '',
@@ -546,7 +559,7 @@ export default {
       sqlParam.showView = val
       this.provideParams.searchParams = { ...this.provideParams.searchParams, ...sqlParam }
     },
-    childrenClick(val) {
+    childrenClick (val) {
       let tableParam = this.$refs.tableRender.$refs.xTable.params.sqlParam
       let sqlParam = {
         isChildren: '',
@@ -565,26 +578,26 @@ export default {
       }
       this.provideParams.searchParams = { ...this.provideParams.searchParams, ...sqlParam }
     },
-    getProgress(val) {
+    getProgress (val) {
       return Math.round(val * 100) + '%'
     },
-    frontToBackClick(val, scope) {
+    frontToBackClick (val, scope) {
       this.title = val
       this.columnType = scope.column.property
       this.taskId = scope.row.TASKID
       this.visibleFrontToBack = true
     },
-    close() {
+    close () {
       this.visibleFrontToBack = false
     },
-    viewTaskApprove(rowInfo) {
+    viewTaskApprove (rowInfo) {
       this.modelId = rowInfo.ID
       this.visibleModelPicture = true
     },
-    onModelPictureClose() {
+    onModelPictureClose () {
       this.visibleModelPicture = false
     },
-    withdrawTaskApprove(rowInfo) {
+    withdrawTaskApprove (rowInfo) {
       let taskId = rowInfo.TASKID
       const url = 'taskManager.withdrawTaskApprove'
       const _this = this
@@ -607,14 +620,14 @@ export default {
           })
         })
     },
-    async handleMenuBeforClose(done) {
+    async handleMenuBeforClose (done) {
       this.$router.push({ path: this.currentRouterPath })
       this.visible = false
       // this.dateTime = new Date().getTime()
       // this.$refs.tableRender.formCloseRefresh()
     },
     // 点击项目/计划列钻取进入三级菜单-计划编制页面
-    drillCol(scope, thirdMenuData) {
+    drillCol (scope, thirdMenuData) {
       // 保存状态到 sessionStorage
       const stateInfo = {
         taskInfo: {
@@ -662,7 +675,7 @@ export default {
       }
     },
 
-    created() {
+    created () {
       // 从 sessionStorage 恢复状态
       const stateInfo = sessionStorage.getItem('stateInfo')
       if (stateInfo) {
@@ -702,22 +715,22 @@ export default {
       this.currentRouterPath = this.$route.path
     },
     // 超期/剩余天数调用公共方法
-    overdueTextFun(row) {
+    overdueTextFun (row) {
       return calculateRemainingDays(row).text
     },
-    async init() {
-      const extendColumn = await this.$api['taskManager.getTaskExtendColumnData']()
-      console.log(extendColumn,'extendColumn')
-      this.dynamicColumns = extendColumn.map(item => {
-        return {
-          align: 'center',
-          dataIndex: item.id,
-          headerAlign: 'center',
-          title: item.name,
-          minWidth: 140,
-          isDynamic:true
-        }
-      })
+    async init () {
+      // const extendColumn = await this.$api['taskManager.getTaskExtendColumnData']()
+      // console.log(extendColumn,'extendColumn')
+      // this.dynamicColumns = extendColumn.map(item => {
+      //   return {
+      //     align: 'center',
+      //     dataIndex: item.id,
+      //     headerAlign: 'center',
+      //     title: item.name,
+      //     minWidth: 140,
+      //     isDynamic:true
+      //   }
+      // })
       const that = this
       const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
       const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
@@ -773,7 +786,7 @@ export default {
       }
     },
     // 选中节点
-    handleNodeClick(data) {
+    handleNodeClick (data) {
       if (data[0].children && data[0].children.length > 0) {
         this.handleNodeClick(data[0].children)
       } else {
@@ -783,10 +796,10 @@ export default {
         })
       }
     },
-    getFirstChild(data) {
+    getFirstChild (data) {
       let result = ''
 
-      function filterData(treeData) {
+      function filterData (treeData) {
         if (treeData[0].children && treeData[0].children.length) {
           filterData(treeData[0].children)
         } else {
@@ -797,7 +810,7 @@ export default {
       filterData(data)
       return result
     },
-    handleCancel() {
+    handleCancel () {
       this.$emit('close')
     },
     changeTree (id, data) {
@@ -904,10 +917,10 @@ export default {
         this.provideParams.searchParams.isThisMonthTask = this.isThisMonthTask
       }
     },
-    getParamsList(obj, fileName) {
+    getParamsList (obj, fileName) {
       let list = []
 
-      function getEndList(item) {
+      function getEndList (item) {
         list.push(item[fileName])
         if (item.children && item.children.length) {
           item.children.forEach((el) => {
@@ -919,7 +932,7 @@ export default {
       getEndList(obj)
       return list
     },
-    getParams(node) {
+    getParams (node) {
       const { parentId, parmarsMap } = node
       let arr = []
       if (parmarsMap) return parmarsMap
@@ -945,7 +958,7 @@ export default {
       }
       return arr
     },
-    async getTreeData(treeSettingsParmars) {
+    async getTreeData (treeSettingsParmars) {
       let data
       const res = await this.$api['desLayout.execute']({ id: treeSettingsParmars.reportSqlId })
       const config = {
@@ -981,11 +994,11 @@ export default {
       return data
     },
     // 获取默认展开数据key
-    getDefaultExpandedKeys(level, treeList) {
+    getDefaultExpandedKeys (level, treeList) {
       const arr = []
       let count = 0
 
-      function getData(data) {
+      function getData (data) {
         count++
         if (count > level) {
           return
@@ -1001,10 +1014,10 @@ export default {
       getData(treeList)
       return arr
     },
-    menuClickEvent(record, item) {
+    menuClickEvent (record, item) {
       this.$refs.tableRender.thirdMenuClick(record, item)
     },
-    thirdMenuClick(record) {
+    thirdMenuClick (record) {
       let item = {}
       const currentPath = this.$route.path
       const rootRouter = this.$store.state.routers.addRouters
@@ -1029,7 +1042,7 @@ export default {
       }
       this.$refs.tableRender.thirdMenuClick(record, item)
     },
-    async getIconData() {
+    async getIconData () {
       // 管理状态
       let manageStatus = await this.$api['dictionaryManagement.list']({ dicType: 'PLAN_MANAGE_STATUS' })
       // 执行状态
@@ -1043,7 +1056,7 @@ export default {
         this.executeState[el.id] = { icon: el.icon, color: el.color, meaning: el.meaning }
       })
     },
-    getIcon(row) {
+    getIcon (row) {
       let str = ''
       let el = []
       if (row.MONITORPOINTARRAY) {
