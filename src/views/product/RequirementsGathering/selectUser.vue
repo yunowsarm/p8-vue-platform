@@ -11,7 +11,8 @@
                  @close="dialogMemberCancel"
                  @isfullscreen="isfullscreen">
     <template #dialog>
-      <normal-layout :normalLayout="normalLayout"
+      <normal-layout v-if="!isMobile"
+                     :normalLayout="normalLayout"
                      class="userSelect">
         <template #north>
           <div class="search-con">
@@ -62,12 +63,53 @@
           <!-- </div> -->
         </template>
       </normal-layout>
+      <div v-else>
+        <div class="search-con">
+          <div :style="{width: 'calc(50% - 31px)'}">
+            <span style="font-size: 14px">筛选：</span>
+            <tree-select v-model='treeValue'
+                         :style="{width: 'calc(100% - 42px)'}"
+                         :data="treeData"
+                         size="mini"
+                         @change="changeTree"></tree-select>
+          </div>
+          <div class="input-con"
+               :style="{width: 'calc(50% - 31px)'}">
+            姓名:
+            <el-input :style="{width: 'calc(100% - 42px)'}"
+                      class="input-name"
+                      placeholder="请输入人员姓名进行搜索"
+                      clearable
+                      v-model="userName"
+                      size="mini"></el-input>
+          </div>
+          <div class="search-btn">
+            <el-button icon="search"
+                       size="mini"
+                       type="primary"
+                       @click="search">搜索</el-button>
+          </div>
+        </div>
+        <common-table ref="table"
+                      v-if="visible"
+                      :tableSetting="false"
+                      :refreshShow="false"
+                      :style="{height: customHeight + 'px'}"
+                      :columns="columns"
+                      :disabled-check-all="true"
+                      :params="queryParam"
+                      :api="tableApi"
+                      :isRadioSelect="isRadioSelect"
+                      @selection-change="handleTableSelectionChange"
+                      @requested-table-data="requestedTableData">
+        </common-table>
+      </div>
     </template>
   </common-dialog>
 </template>
 <script>
-import { P8NormalLayout as NormalLayout, P8Dialog as CommonDialog, P8Tree as CommonTree, P8Table as CommonTable, Input, DatePicker } from 'p8-components-ui'
-
+import { P8TreeSelect as TreeSelect, P8NormalLayout as NormalLayout, P8Dialog as CommonDialog, P8Tree as CommonTree, P8Table as CommonTable, Input, DatePicker } from 'p8-components-ui'
+import { generateTreeTwo } from '@/utils/generateTree'
 import moment from 'moment'
 export default {
   name: 'DialogSelectMember',
@@ -96,8 +138,15 @@ export default {
       default: ''
     }
   },
+  computed: {
+    isMobile () {
+      return this.$store.getters.isMobile
+    }
+  },
   data () {
     return {
+      treeValue: '',
+      treeData: [],
       visible: false,
       normalLayout: {
         west: {
@@ -178,6 +227,12 @@ export default {
     }
   },
   created () {
+    if (this.isMobile) {
+      this.$api[this.treeApi]().then(res => {
+        this.treeValue = res[0].value
+        this.treeData = generateTreeTwo(res, 'pId')
+      })
+    }
   },
   mounted () {
     this._initTableSize()
@@ -188,6 +243,9 @@ export default {
     window.removeEventListener('resize', this._initTableSize)
   },
   methods: {
+    changeTree (id, data) {
+      this.onSelect(data)
+    },
     // 默认选中页面已选的责任人
     requestedTableData (data) {
       const _this = this
@@ -277,7 +335,8 @@ export default {
     CommonTree,
     CommonTable,
     'el-input': Input,
-    'el-date-picker': DatePicker
+    'el-date-picker': DatePicker,
+    TreeSelect
   }
 }
 </script>
@@ -327,5 +386,17 @@ export default {
       padding: 0;
     }
   }
+}
+@media screen and (max-width: 600px) {
+  .search-con {
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
+  }
+  // .el-dialog__body {
+  //   height: 500px !important;
+  // }
+  // .common-table.flex-table {
+  //   height: 400px !important;
+  // }
 }
 </style>

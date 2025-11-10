@@ -728,7 +728,7 @@ export default {
     downloadOutputRequsetFile (item) {
       // 输出要求-文件下载
       if (item.id) {
-        this.$download(item.id,item.fileName)
+        this.$download(item.id, item.fileName)
       }
     },
     formDataChange (formSub) {
@@ -845,12 +845,12 @@ $paddingLeft: 10px;
   box-sizing: border-box;
 }
 ::v-deep .el-tabs--top .el-tabs__content {
-  height: calc(100% - 69px);
+  height: calc(100% - 40px);
 }
 ::v-deep .main_content {
   height: 100% !important;
 }
-::v-deep .main-table{
+::v-deep .main-table {
   height: 100% !important;
 }
 </style>

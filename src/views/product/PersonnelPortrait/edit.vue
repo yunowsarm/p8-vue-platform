@@ -19,7 +19,7 @@
                        src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png"
                        alt="">
                 </div>
-                <div style="float: left; width: 70%; margin-left: 30px;">
+                <div style="float: left; width: 70%; margin-left: 50px;">
                   <el-descriptions class="margin-top"
                                    :column="2">
                     <el-descriptions-item label="姓名">{{ formData.REAL_NAME }}</el-descriptions-item>
@@ -36,7 +36,8 @@
       </el-row>
     </div>
     <!-- 图表 -->
-    <div class="chartBox">
+    <div v-if="!isMobile"
+         class="chartBox">
       <el-row>
         <el-col :span="12">
           <el-card shadow="always"
@@ -94,6 +95,60 @@
         </el-col>
       </el-row>
     </div>
+    <div v-else>
+      <el-row>
+        <el-col :span="24">
+          <el-card shadow="always"
+                   class="box-card">
+            <div class="chart-box">
+              <div style="text-align: center;font-size: 16px; font-weight: 700;color: #999;">项目类别统计</div>
+              <userTaskPieChart chartId="userTaskPieChart1"
+                                :rowData="rowData"
+                                type="projectCategory"></userTaskPieChart>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-card shadow="always"
+                   class="box-card">
+            <div class="chart-box">
+              <userTaskRadarChart chartId="userTaskRadarChart"
+                                  :rowData="rowData"
+                                  :btnType="btnType"></userTaskRadarChart>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-card shadow="always"
+                   class="box-card">
+            <div class="chart-box">
+              <div style="text-align: center;font-size: 16px; font-weight: 700;color: #999;">任务类别统计</div>
+              <userTaskPieChart chartId="userTaskPieChart3"
+                                type="TaskCategory"
+                                :rowData="rowData"
+                                :btnType="btnType"></userTaskPieChart>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-card shadow="always"
+                   class="box-card">
+            <div class="chart-box">
+              <div style="text-align: center;font-size: 16px; font-weight: 700;color: #999;">任务标识统计</div>
+              <userTaskPieChart chartId="userTaskPieChart4"
+                                :rowData="rowData"
+                                type="taskId"></userTaskPieChart>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 
@@ -123,6 +178,11 @@ export default {
         GENDER: '',
         count: 0
       }
+    }
+  },
+  computed: {
+    isMobile () {
+      return this.$store.getters.isMobile
     }
   },
   mounted () {

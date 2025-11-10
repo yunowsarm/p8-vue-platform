@@ -1,8 +1,8 @@
 <!--整体管理-团队管理-->
 <template>
-  <div style="height: calc(100% - 50px); background-color: #f3f5f885">
+  <div class="team-manager-wrap">
     <div style="height: 100%"
-         class="team-manager-wrap">
+         v-if="innerWidth > 600">
       <div class="custom_content_wrap">
         <div class="left_content">
           <div class="teamFile">
@@ -108,25 +108,6 @@
                   </template>
                   <template #operation="{ scope }">
                     <template v-if="!scope.row.departureTime">
-                      <!-- <template v-if="scope.row.taskCount">
-                      <el-popconfirm title="确认要将该人退出项目组吗?"
-                                     confirmButtonText="确认"
-                                     cancelButtonText="取消"
-                                     @onConfirm="deleteUserHandle(scope, scope.$index)">
-                        <el-button slot="reference"
-                                   size="mini"
-                                   type="text"
-                                   v-if="group_add_member">删除
-                        </el-button>
-                      </el-popconfirm>
-                    </template>
-                    <template v-else>
-                      <el-button v-if="group_add_member"
-                                 size="mini"
-                                 type="text"
-                                 @click="deleteUserHandle(scope, scope.$index)">删除
-                      </el-button>
-                    </template> -->
                     </template>
                   </template>
                   <template #flagHeader="{ scope }">
@@ -164,46 +145,158 @@
                            @getFormComp="getMemberFormComp"></member-upload> -->
         </div>
       </div>
-      <div class="bottom-con">
-        <!-- <p class="operation"
-           v-if="group_add_role">
-            <el-button size="mini"
-                        @click="loadStandardTeamHandle">载入标准团队
-            </el-button>
-        </p> -->
-        <p class="submit"
-           v-if="group_add_role || group_add_member">
-          <!-- <el-button size="mini"
-                     type="primary"
-                     :loading="submitLoading"
-                     @click="submit">保 存
-          </el-button> -->
-          <el-button size="mini"
-                     :loading="submitLoading"
-                     @click="$emit('close')">关 闭</el-button>
-        </p>
-      </div>
-      <dialog-tabs-roles :visibleDialogRoles="visibleDialogRoles"
-                         :activeName="dialogRolesActiveName"
-                         :id="id"
-                         @exp-roles-close="expRolesCloseHandle"
-                         @standard-roles-close="standardRolesCloseHandle"></dialog-tabs-roles>
-      <dialog-select-member v-if="visibleDialogMember"
-                            :visibleDislogMember="visibleDialogMember"
-                            :loginFlag="loginFlag"
-                            :selectRoleId="selectRoleId"
-                            :loadingUserDeptStrategy="loadingUserDeptStrategy"
-                            @member-close="memberCloseHandle"
-                            :existsData="tableData"></dialog-select-member>
-      <dialog-user-task-statistics v-if="visibleUserTaskStatistics"
-                                   :dialogVisible="visibleUserTaskStatistics"
-                                   :table-config="userTaskStatisticsConfig"
-                                   @close="closeDialogUserTask()"></dialog-user-task-statistics>
-      <dialog-user-task v-if="visibleDialogUserTask"
-                        :dialogVisible="visibleDialogUserTask"
-                        :table-config="userTaskConfig"
-                        @close="closeDialogUserTask()"></dialog-user-task>
     </div>
+    <div v-else>
+      <div class="left_content">
+        <div class="teamFile">
+          <span style="font-size: 14px; padding: 0 10px; font-weight: bold">人员任命文件：</span>
+          <common-file-view :uploadFiles="namedFiles"
+                            filesLayout="row"></common-file-view>
+        </div>
+        <div class="left_bottom_content">
+          <div class="role-con">
+            <vue-perfect-scrollbar class="role-list">
+              <li style="padding-left: 26px; color: #323232; font-size: 12px"
+                  :class="[{ active: rolesSelectedIndex === -1 }]"
+                  @click="refreshHandle">
+                所有人员<span>({{ getTotalCount }})</span>
+              </li>
+              <li :class="[{ active: index === rolesSelectedIndex }, { 'fixed-role': item.roleType === 'fixed' }]"
+                  v-for="(item, index) in rolesData"
+                  :key="item.id"
+                  @click="rolesHandle(item, index)">
+                <el-tooltip v-if="item.roleType === 'fixed'"
+                            :content="item.klTeamsRoleClassifyName"
+                            placement="bottom">
+                  <i class="el-icon-s-custom"
+                     style="cursor: pointer"></i>
+                </el-tooltip>
+                <i v-else
+                   class="el-icon-s-custom"></i>
+                <edit-input :textValue="item.name || item.roleName"
+                            :record="item"
+                            :iconShow="false"
+                            @delete="deleteRolesHandle(index, item)"
+                            @onChange="changeRolesHandle"></edit-input>
+              </li>
+            </vue-perfect-scrollbar>
+          </div>
+          <div class="table-con">
+            <div class="add-member">
+              <div>
+              </div>
+              <search-form-list style="top: 2px"
+                                ref="search"
+                                search-width="60%"
+                                search-contain-width="100%"
+                                label-width="50px"
+                                :resetAfterToSearch="false"
+                                :dataSource="dataSource"
+                                :addFuzzySearch="true"
+                                @search="search"
+                                @re-set="reset"></search-form-list>
+            </div>
+            <div class="common-table-member">
+              <common-table ref="table"
+                            class="tableMember"
+                            style="height: 500px"
+                            :columns="columns"
+                            :params="params"
+                            :pagination="false"
+                            @cell-click="cellDblclick"
+                            :tableSetting="false"
+                            :noApiTableData="tableData">
+                <template #realName="{ scope }">
+                  <div class="real-name">
+                    <template>
+                      <el-link @click.stop="opentDialogUserTaskStatistics(scope.row)">{{ scope.row.realName }}<i class="el-icon-view el-icon--right"></i></el-link>
+                    </template>
+                  </div>
+                </template>
+                <template #taskCount="{ scope }">
+                  <div class="task-count">
+                    <template v-if="scope.row.taskCount">
+                      <el-link @click.stop="opentDialogUserTask(scope.row)">{{ scope.row.taskCount }}<i class="el-icon-view el-icon--right"></i></el-link>
+                    </template>
+                    <template v-else>
+                      <span>{{ scope.row.taskCount }}</span>
+                    </template>
+                  </div>
+                </template>
+                <template #userState="{ scope }">
+                  <div class="userState">
+                    <span v-if="scope.row.entryTime && !scope.row.departureTime"
+                          class="state-working">团队中</span>
+                    <span v-if="scope.row.entryTime && scope.row.departureTime && scope.row.waitout"
+                          class="state-waitout">待退出</span>
+                    <span v-if="scope.row.entryTime && scope.row.departureTime && !scope.row.waitout"
+                          class="state-out">已退出</span>
+                  </div>
+                </template>
+                <template #operation="{ scope }">
+                  <template v-if="!scope.row.departureTime">
+                  </template>
+                </template>
+                <template #flagHeader="{ scope }">
+                  <span>{{ scope.column.label }}</span><i class="el-icon-edit"></i>
+                </template>
+                <template #flag="{ scope }">
+                  <el-select v-model="scope.row.flag"
+                             size="mini"
+                             :key="scope.row.id"
+                             v-if="scope.row.editRow && group_add_member"
+                             placeholder="请选择"
+                             style="width: 90%"
+                             @blur="
+                        () => {
+                          quoteUpdate(scope.row)
+                        }
+                      ">
+                    <el-option v-for="item in options"
+                               :key="item.value"
+                               @click.native="handleSetFlagName(scope.row, item)"
+                               :label="item.label"
+                               :value="item.value"></el-option>
+                  </el-select>
+                  <span v-else>{{ scope.row.flagName }}</span>
+                </template>
+              </common-table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="right-con">
+        <project-form-view :id="id"></project-form-view>
+      </div>
+    </div>
+    <div class="bottom-con">
+      <p class="submit"
+         v-if="group_add_role || group_add_member">
+        <el-button size="mini"
+                   :loading="submitLoading"
+                   @click="$emit('close')">关 闭</el-button>
+      </p>
+    </div>
+    <dialog-tabs-roles :visibleDialogRoles="visibleDialogRoles"
+                       :activeName="dialogRolesActiveName"
+                       :id="id"
+                       @exp-roles-close="expRolesCloseHandle"
+                       @standard-roles-close="standardRolesCloseHandle"></dialog-tabs-roles>
+    <dialog-select-member v-if="visibleDialogMember"
+                          :visibleDislogMember="visibleDialogMember"
+                          :loginFlag="loginFlag"
+                          :selectRoleId="selectRoleId"
+                          :loadingUserDeptStrategy="loadingUserDeptStrategy"
+                          @member-close="memberCloseHandle"
+                          :existsData="tableData"></dialog-select-member>
+    <dialog-user-task-statistics v-if="visibleUserTaskStatistics"
+                                 :dialogVisible="visibleUserTaskStatistics"
+                                 :table-config="userTaskStatisticsConfig"
+                                 @close="closeDialogUserTask()"></dialog-user-task-statistics>
+    <dialog-user-task v-if="visibleDialogUserTask"
+                      :dialogVisible="visibleDialogUserTask"
+                      :table-config="userTaskConfig"
+                      @close="closeDialogUserTask()"></dialog-user-task>
     <div v-if="viewVisible"
          class="viewVisible"></div>
   </div>
@@ -436,7 +529,8 @@ export default {
       options: [],
       memberFormComp: null,
       uploadView: false,
-      searchParam: null
+      searchParam: null,
+      innerWidth: window.innerWidth
     }
   },
   computed: {
@@ -1133,6 +1227,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.team-manager-wrap {
+  height: calc(100% - 50px);
+  background-color: #f3f5f885;
+}
 .custom_content_wrap {
   display: flex;
   height: 100%;
@@ -1432,6 +1530,189 @@ export default {
 
   ::v-deep i {
     display: none;
+  }
+}
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .team-manager-wrap {
+    height: 100%;
+    overflow: auto;
+  }
+  .role-con {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    background-color: white;
+    overflow-y: hidden;
+    margin: 0 2px 0 0;
+
+    button {
+      border: 1px solid #1890ff;
+      color: #1890ff;
+    }
+
+    .add-role {
+      box-sizing: border-box;
+      width: 100%;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px dashed $base-light-color;
+
+      &.not-edit {
+        background: #ffffff;
+        font-size: 14px;
+        color: #323232;
+      }
+
+      button {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+        border: none;
+        color: $base-light-color;
+      }
+    }
+
+    .refresh {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: calc(100% - 10px);
+      height: 50px;
+      box-sizing: border-box;
+      padding-right: 10px;
+      text-align: right;
+      line-height: 50px;
+      font-size: 24px;
+      background-color: #ffffff;
+
+      .el-icon-refresh {
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .role-list {
+      height: calc(100% - 38px);
+      padding: 5px 15px;
+      // border-bottom: 1px dashed #cccccc;
+      background-color: #ffffff;
+      box-sizing: border-box;
+
+      li {
+        position: relative;
+        display: flex;
+        align-items: center;
+        height: 40px;
+        border-bottom: 1px solid #cccccc;
+        color: #323232;
+        box-sizing: border-box;
+        padding: 0 6px;
+
+        &.active {
+          font-weight: bolder;
+          color: $theme-color !important;
+
+          ::v-deep span {
+            font-weight: bolder;
+            color: $theme-color !important;
+          }
+        }
+
+        &.active::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          border-left: 3px solid $theme-color;
+        }
+
+        i {
+          font-size: 18px;
+        }
+      }
+
+      .fixed-role {
+        i {
+          color: #ec808d;
+        }
+      }
+    }
+  }
+
+  .table-con {
+    height: 100%;
+    width: 100%;
+    background: #fff;
+    padding: 0 10px 8px;
+    box-sizing: border-box;
+
+    .add-member {
+      height: 50px;
+      line-height: 50px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      button {
+        border: 1px solid #1890ff;
+        // color: #1890ff;
+      }
+    }
+
+    .common-table-member {
+      height: calc(100% - 50px);
+
+      ::v-deep .el-table::before {
+        top: 0;
+        bottom: auto;
+      }
+
+      ::v-deep .el-table::after {
+        background: transparent;
+      }
+    }
+
+    .userState {
+      .state-working,
+      .state-waitout,
+      .state-out {
+        position: relative;
+        padding-left: 10px;
+        z-index: 1 !important;
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+        }
+      }
+
+      .state-working::before {
+        background-color: #0e77d1;
+      }
+
+      .state-waitout::before {
+        background-color: #999999;
+      }
+
+      .state-out::before {
+        background-color: #f04134;
+      }
+    }
+  }
+  .right-con {
+    width: 100%;
+    margin-left: 0px;
   }
 }
 </style>

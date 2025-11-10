@@ -473,7 +473,6 @@ export function planGantt(ganttName, vueThis) {
   // 监听任务选中
   ganttObject.attachEvent('onTaskMultiSelect', function (id, state, e) {
     if (state) {
-      console.log('2222222222222222222')
       // setTimeout(() => {
       vueThis.selectedTasks.push(ganttObject.getTask(id))
       // })

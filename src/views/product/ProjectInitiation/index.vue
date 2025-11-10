@@ -33,6 +33,7 @@
 }
 .tabsNavigation ::v-deep .list-main {
   height: 100% !important;
+  width: 95% !important;
 }
 </style>
 <script>
@@ -71,7 +72,7 @@ export default {
     TabsNavigationPreview,
     ListLayout
   },
-  created () {},
+  created () { },
   methods: {
     tabClick (tabs) {
       if (this.row.length === 0 || (this.customParams && this.customParams.isEdit === false)) {

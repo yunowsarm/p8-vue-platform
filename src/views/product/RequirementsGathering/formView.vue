@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="content">
-      <div style="width: 50%;">
+      <div class="content-box">
         <div class="title">{{ sourceChannel }}</div>
         <form-render class="formRender"
                      :data-view-id="dataViewId"
@@ -11,7 +11,7 @@
                      v-bind="$attrs"></form-render>
       </div>
       <div v-if="formType === '1'"
-           style="width: 50%;">
+           class="content-box">
         <div v-if="demandOptions !== '1'"
              class="title">市场需求信息表</div>
         <form-list v-if="demandOptions !== '1'"
@@ -57,7 +57,7 @@
         </form-list>
       </div>
       <div v-else
-           style="width: 50%;">
+           class="content-box">
         <div v-if="demandOptions !== '1'"
              class="title">需求信息描述</div>
         <form-list v-if="demandOptions !== '1'"
@@ -1381,6 +1381,9 @@ export default {
   position: relative;
   height: 100%;
 }
+.content-box {
+  width: 50%;
+}
 .formRender {
   height: 100%;
   overflow-y: auto;
@@ -1397,5 +1400,18 @@ export default {
   position: absolute;
   bottom: 5px;
   right: 30px;
+}
+
+@media screen and (max-width: 600px) {
+  .content {
+    display: flex;
+    flex-direction: column;
+  }
+  .content-box {
+    width: 100%;
+  }
+  .formList {
+    height: auto !important;
+  }
 }
 </style>

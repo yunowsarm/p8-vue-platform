@@ -58,12 +58,14 @@
                       :value="messageNum"
                       :max="99"
                       class="itemNum">
-              <el-tooltip :disabled='isMobile' content="我的消息">
+              <el-tooltip :disabled='isMobile'
+                          content="我的消息">
                 <i class="p8 icon-message"></i>
               </el-tooltip>
             </el-badge>
 
-            <el-tooltip :disabled='isMobile' content="我的消息"
+            <el-tooltip :disabled='isMobile'
+                        content="我的消息"
                         v-else>
               <i class="p8 icon-message"></i>
             </el-tooltip>
@@ -76,11 +78,13 @@
                       :value="approvalTotalMsg"
                       :max="99"
                       class="itemNum">
-              <el-tooltip :disabled='isMobile' content="我的审批">
+              <el-tooltip :disabled='isMobile'
+                          content="我的审批">
                 <i class="p8 icon-approval"></i>
               </el-tooltip>
             </el-badge>
-            <el-tooltip :disabled='isMobile' content="我的审批"
+            <el-tooltip :disabled='isMobile'
+                        content="我的审批"
                         v-else>
               <i class="p8 icon-approval"></i>
             </el-tooltip>
@@ -102,9 +106,10 @@
           </span>
         </li> -->
         <li>
-          <el-dropdown size="small" :trigger="isMobile ? 'click' : 'hover'">
+          <el-dropdown size="small">
             <span>
-              <span v-if="!isMobile" class="name">{{ dayTime }}好！{{ userName }}</span>
+              <span v-if="!isMobile"
+                    class="name">{{ dayTime }}好！{{ userName }}</span>
               <i class="el-icon-arrow-down"
                  style="margin: 0 5px"></i>
             </span>
@@ -204,7 +209,7 @@
     <el-dialog title="关于"
                v-if="dialogVisible"
                :visible.sync="dialogVisible"
-               width="618px"
+               :width="dialogWidth"
                :before-close="beforeClose">
       <div class="regards-box">
         <p><span class="regards-font">系统名称:&nbsp;&nbsp;&nbsp;</span><span v-html="systemName"></span></p>
@@ -234,16 +239,6 @@
         </p>
       </div>
     </el-dialog>
-    <common-drawer v-if="modifyPasswordVisible"
-                   :visible="modifyPasswordVisible"
-                   title=""
-                   @close="modifyPasswordVisible = false"
-                   direction="ttb"
-                   size="100%">
-      <template #drawer>
-        <modifyPassWord @close="modifyPasswordVisible = false"></modifyPassWord>
-      </template>
-    </common-drawer>
   </header>
 </template>
 
@@ -260,7 +255,8 @@ import Message from '@/views/Framework/Message'
 import Information from '@/components/information/index.vue'
 import packageJson from '../../../../package.json'
 import myNetworkDisk from './myNetworkDisk'
-import modifyPassWord from '@/components/layout/Components/ModifyPassword/index'
+import { getSession } from '@/service/expands/session'
+import { absolute } from '@antv/x6/lib/registry/port-layout/absolute'
 export default {
   name: 'Headers',
   data () {
@@ -283,29 +279,30 @@ export default {
       adminUserIdArr: ['SYS_USER001', 'SYS_USER009', 'SYS_USER012', 'SYS_USER010', 'SYS_USER000'], // 五元id
       AuthorizationInfoList: [],
       packageJson,
-      modifyPasswordVisible: false
+      dialogWidth: '618px'
     }
   },
   computed: {
-    isMobile() {
+    isMobile () {
       return this.$store.getters.isMobile
     },
     ...mapGetters(['approvalTotalMsg', 'messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl']),
   },
   mounted () {
-    // if (this.isMobile) {
-    //   let slideBar = document.getElementById('slideBar')
-    //   console.log(slideBar,'-=-=slideBar');
-    //   if (slideBar) {
-    //     if (!this.sidebarState.isHidden) {
-    //       slideBar.style.position = 'relative'
-    //       slideBar.style.left = '110px'
-    //     } else {
-    //       slideBar.style.position = 'static'
-    //       slideBar.style.left = '0px'
-    //     }
-    //   }
-    // }
+    if (this.isMobile) {
+      this.dialogWidth = '330px'
+      // let slideBar = document.getElementById('slideBar')
+      // console.log(slideBar,'-=-=slideBar');
+      // if (slideBar) {
+      //   if (!this.sidebarState.isHidden) {
+      //     slideBar.style.position = 'relative'
+      //     slideBar.style.left = '110px'
+      //   } else {
+      //     slideBar.style.position = 'static'
+      //     slideBar.style.left = '0px'
+      //   }
+      // }
+    }
     const this_ = this
     this_.getAuthorizationInfo()
     this.getSystemAbout()
@@ -447,8 +444,7 @@ export default {
       const that = this
       this.$api['SystemSettings.checkBaseConfig']().then((res) => {
         if (res) {
-          // that.$router.replace({ path: '/modify-password' })
-          that.modifyPasswordVisible = true
+          that.$router.replace({ path: '/modify-password' })
         } else {
           that.$message({ type: 'error', message: '当前用户信息是从外部系统集成获取,此功能已禁用' })
         }
@@ -463,7 +459,12 @@ export default {
       })
         .then(() => {
           this.$store.dispatch('userLogout').then(() => {
-            location.reload()
+            // location.reload()
+            if (getSession('SET_LOGIN_NEW') === 'loginNew') {
+              this.$router.replace({ path: '/loginNew' })
+            } else {
+              this.$router.replace({ path: '/login' })
+            }
           })
         })
         .catch(() => { })
@@ -498,8 +499,7 @@ export default {
     message: Message,
     'el-tooltip': Tooltip,
     Information,
-    myNetworkDisk,
-    modifyPassWord
+    myNetworkDisk
   }
 }
 </script>

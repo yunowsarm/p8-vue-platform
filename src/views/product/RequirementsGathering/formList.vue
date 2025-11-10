@@ -356,4 +356,9 @@ export default {
 .iconfont {
   font-size: 54px;
 }
+@media screen and (max-width: 600px) {
+  .content-box {
+    width: 33% !important;
+  }
+}
 </style>
