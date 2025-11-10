@@ -185,7 +185,7 @@ export function taskDescribesEditCheck(newObj, oldObj, vueThis, taskId, ganttObj
   let changeDate = false
   let hasEdit = false
   let checkChange = false
-  let NewcheckKeys = vueThis.columnSettings.filter((el) => el.attributeType == '1').map((item) => 'kz' + item.id)
+  let NewcheckKeys = vueThis.columnSettings.filter((el) => el.attributeType == '1').map((item) => item.filedName)
   let newCheckKeys = [...checkKeys, ...NewcheckKeys]
   newCheckKeys.forEach(function (key) {
     if (key === 'start_date' || key === 'end_date' || key === 'duration' || key === 'autoScheduling') {
@@ -424,7 +424,7 @@ export function otherEditCheck(oldObj, newObj, ganttObject, vueThis, taskId, typ
   }
   // 发生变动
   console.log(editO, 'editOeditOeditOeditOeditO');
-  
+
   if (editO) {
     if (!task.infoType) {
     task.infoType = 'update'

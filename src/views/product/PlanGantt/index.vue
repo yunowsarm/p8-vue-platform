@@ -59,7 +59,7 @@
                            @templateMounted="templateMounted" />
 
           <plan-attribute v-if="defaultPercent < 99 && pageType !== 'history'"
-                          :key="renderKey"
+                          ref='planAttribute'
                           @save-success="detailDrawerClosed"
                           :create-page="createPage"
                           :task-id="selectTaskId"
@@ -404,7 +404,7 @@ export default {
   beforeMount () { },
   created () {
     this.firstEntry = true
-    this.debouncedSetRenderKey = debounce(this.setRenderKey, 300);
+    // this.debouncedSetRenderKey = debounce(this.setRenderKey, 300);
   },
   mounted () {
     if (this.isMobile) {
@@ -457,7 +457,7 @@ export default {
       // let myGantt = GanttObject.getGanttObject(this.ganttName)
       // myGantt.updateTask(task.id);
       this.selectTaskId = task.id
-      this.debouncedSetRenderKey(); // 使用防抖函数
+      // this.debouncedSetRenderKey(); // 使用防抖函数
     },
     openLocation () {
       this.dialogVisible = true
@@ -576,7 +576,7 @@ export default {
   },
   beforeDestroy () {
     window.myWebSocket.emit('quitPlanGantGroup', this.msg)
-    this.debouncedSetRenderKey.cancel();
+    // this.debouncedSetRenderKey.cancel();
   }
 }
 </script>

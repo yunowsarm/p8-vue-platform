@@ -836,14 +836,14 @@ export default {
                 saveParams[item.filedName] = moment(saveParams[item.filedName]).format('YYYY-MM-DD')
               }
               if (item.filedType == 'selectMultiple' || item.filedType == 'treeMultiple') {
-                saveParams['kz' + item.id] = saveParams['kz' + item.id].join(',')
+                saveParams[item.filedName] = saveParams[item.filedName].join(',')
               }
               const obj = {
                 projectTasksId: that.taskId,
                 id: this.extraIds[item.filedName] || '',
                 fieldName: item.filedName,
                 fieldType: item.filedType,
-                fieldValue: saveParams['kz' + item.id],
+                fieldValue: saveParams[item.filedName],
                 customItem1: item.id,
                 indexNo: item.indexNo // 排序号
               }

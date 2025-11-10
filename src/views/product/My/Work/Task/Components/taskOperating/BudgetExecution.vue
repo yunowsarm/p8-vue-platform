@@ -119,7 +119,7 @@ export default {
           this.$message.success('保存成功')
           this.$emit('save-success')
         } else {
-          this.$message.error(res.resultMsg)
+          this.$message.error(JSON.parse(res.resultMsg).ordinary)
         }
       })
     }

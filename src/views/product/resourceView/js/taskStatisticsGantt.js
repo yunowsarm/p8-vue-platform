@@ -178,7 +178,7 @@ function synchronizationColumns (vueThis, ganttObject) {
   // 系统设置，拓展属性
   const extraColumns = vueThis.columnSettings.filter((item) => item.attributeType === '1')
   const hideColumnKeys = hideColumns.map((item) => item.filedName)
-  const extraColumnKeys = extraColumns.map((item) => 'kz' + item.id)
+  const extraColumnKeys = extraColumns.map((item) => item.filedName)
   // 获取gantt列配置信息
   const ganttSetting = GanttObject.getGanttSettingGrid(vueThis.ganttName, vueThis.createPage)
   let lineHeight = ganttSetting && ganttSetting.value && ganttSetting.value.lineHeight ? ganttSetting.value.lineHeight : vueThis.$store.getters.baseConfig.tableRowHeight
@@ -254,23 +254,23 @@ function synchronizationColumns (vueThis, ganttObject) {
         default:
           break
       }
-      if (settingExtra['kz' + item.id]) {
+      if (settingExtra[item.filedName]) {
         let initItem = {}
         let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
         if (typeList.includes(item.filedType)) {
           initItem = {
-            name: 'kz' + item.id,
+            name: item.filedName,
             label: `<div class='gantt_search'>${item.name}</div><div class='gantt_search gantt_blank'></div>`,
             align: 'center',
             resize: true,
-            hide: settingExtra['kz' + item.id].hide,
+            hide: settingExtra[item.filedName].hide,
             min_width: 120,
             template: function (task) {
               let result = []
-              if (task['kz' + item.id]) {
+              if (task[item.filedName]) {
                 let list = vueThis.extraMap[item.selectCode]
                 if (list && list.length) {
-                  let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
+                  let taskList = task[item.filedName] ? task[item.filedName].split(',') : []
                   list.forEach((el) => {
                     taskList.forEach((item) => {
                       if (el.value == item) {
@@ -285,28 +285,28 @@ function synchronizationColumns (vueThis, ganttObject) {
           }
         } else {
           initItem = {
-            name: 'kz' + item.id,
+            name: item.filedName,
             label: `<div class='gantt_search'>${item.name}</div><div class='gantt_search gantt_blank'></div>`,
             align: 'center',
             resize: true,
-            hide: settingExtra['kz' + item.id].hide,
+            hide: settingExtra[item.filedName].hide,
             min_width: 120,
             template: function (task) {
-              return `<div class='text_overflow'>${task['kz' + item.id]}</div>`
+              return `<div class='text_overflow'>${task[item.filedName]}</div>`
             }
           }
         }
-        tempColumns.splice(settingExtra['kz' + item.id].index, 1, initItem)
+        tempColumns.splice(settingExtra[item.filedName].index, 1, initItem)
       } else {
         tempColumns.push({
-          name: 'kz' + item.id,
+          name: item.filedName,
           label: `<div class='gantt_search'>${item.name}</div><div class='gantt_search gantt_blank'></div>`,
           align: 'center',
           resize: true,
           hide: item.isEnable == '0',
           min_width: 120,
           template: function (task) {
-            return `<div class='text_overflow'>${task['kz' + item.id]}</div>`
+            return `<div class='text_overflow'>${task[item.filedName]}</div>`
           }
         })
       }
@@ -360,7 +360,7 @@ function synchronizationColumns (vueThis, ganttObject) {
           let typeList = ['selectSingle', 'selectMultiple', 'treeSingle', 'treeMultiple']
           if (typeList.includes(item.filedType)) {
             tempColumns.push({
-              name: 'kz' + item.id,
+              name: item.filedName,
               label: `<div class='gantt_search'>${item.name}</div><div class='gantt_search gantt_blank'></div>`,
               align: 'center',
               resize: true,
@@ -370,10 +370,10 @@ function synchronizationColumns (vueThis, ganttObject) {
               template: function (task) {
                 if (task.planInfoId) {
                   let result = []
-                  if (task['kz' + item.id]) {
+                  if (task[item.filedName]) {
                     let list = vueThis.extraMap[item.selectCode]
                     if (list && list.length) {
-                      let taskList = task['kz' + item.id] ? task['kz' + item.id].split(',') : []
+                      let taskList = task[item.filedName] ? task[item.filedName].split(',') : []
                       list.forEach((el) => {
                         taskList.forEach((item) => {
                           if (el.value == item) {
@@ -391,7 +391,7 @@ function synchronizationColumns (vueThis, ganttObject) {
             })
           } else {
             tempColumns.push({
-              name: 'kz' + item.id,
+              name: item.filedName,
               label: `<div class='gantt_search'>${item.name}</div><div class='gantt_search gantt_blank'></div>`,
               align: 'center',
               resize: true,
@@ -400,7 +400,7 @@ function synchronizationColumns (vueThis, ganttObject) {
 
               template: function (task) {
                 if (task.planInfoId) {
-                return `<div class='text_overflow'>${task['kz' + item.id]}</div>`
+                return `<div class='text_overflow'>${task[item.filedName]}</div>`
               } else {
                 return `<div class='text_overflow'></div>`
               }
