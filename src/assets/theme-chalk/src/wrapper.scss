@@ -355,8 +355,12 @@
   }
   .flex-header .vxe-header--column .vxe-cell--wrapper {
     height: 104px !important;
+    text-align: center;
   }
   .flex-header .searchHeight {
     position: absolute;
     bottom: 3px;
+  }
+  .vxe-table  .vxe-cell--wrapper {
+    text-align: center;
   }
