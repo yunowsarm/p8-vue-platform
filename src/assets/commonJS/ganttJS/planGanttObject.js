@@ -48,6 +48,7 @@ export function planGantt(ganttName, vueThis) {
         })
       },
       update: function (data, id) {
+        console.log(data)
         const task = ganttObject.getTask(id)
         if (data.name.length > 1000) {
           data.name = data.name.substring(0, 1000) // 截取前2000个字符
@@ -73,10 +74,10 @@ export function planGantt(ganttName, vueThis) {
             })
           extraList.forEach((item) => {
             let fieldValue = ''
-            if (item.filedType === 'datepicker' && data['kz' + item.id] !== '') {
-              fieldValue = moment(data['kz' + item.id]).format('YYYY-MM-DD')
+            if (item.filedType === 'datepicker' && data[item.filedName] !== '') {
+              fieldValue = moment(data[item.filedName]).format('YYYY-MM-DD')
             } else {
-              fieldValue = data['kz' + item.id]
+              fieldValue = data[item.filedName]
             }
             const obj = {
               id: extraIds[item.filedName] || '',
@@ -444,6 +445,14 @@ export function planGantt(ganttName, vueThis) {
   ganttObject.attachEvent('onBeforeTaskMultiSelect', function (id, state, e) {
     if (state) {
       if (!multipleState) {
+        let tasks = ganttObject.getSelectedTasks()
+        let taskId = ganttObject.getSelectedId()
+        tasks.forEach((item) => {
+          if (item !== taskId) {
+            ganttObject.unselectTask(item)
+          }
+        })
+        ganttObject.unselectTask()
         if (vueThis.selectedTasks.length > 0) {
           if (vueThis.selectedTasks[0].id === id) {
             vueThis.selectedTasks = []

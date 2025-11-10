@@ -1,46 +1,85 @@
 <template>
-  <normal-layout :headerVisible="false">
+  <normal-layout v-if="innerWidth > 600"
+                 :headerVisible="false">
     <template #west>
       <div class="">
-          <div class="standard-team-table-left" :class="{'small-table': true}" :style="{height: flexHeight }">
-            <el-table ref="table"
-              height="100%"
-              :data="tableData"
-              header-row-class-name="headerRowClass"
-              row-class-name="rowClass"
-              highlight-current-row
-              @current-change="handleCurrentChange"
-              row-key="id">
-              <el-table-column
-                prop="name"
-                label="标准团队"
-                align="center">
-              </el-table-column>
-            </el-table>
-          </div>
+        <div class="standard-team-table-left"
+             :class="{'small-table': true}"
+             :style="{height: flexHeight }">
+          <el-table ref="table"
+                    height="100%"
+                    :data="tableData"
+                    header-row-class-name="headerRowClass"
+                    row-class-name="rowClass"
+                    highlight-current-row
+                    @current-change="handleCurrentChange"
+                    row-key="id">
+            <el-table-column prop="name"
+                             label="标准团队"
+                             align="center">
+            </el-table-column>
+          </el-table>
+        </div>
       </div>
     </template>
     <template #center>
       <div class="">
-          <div :class="{'small-table': true}" :style="{height: flexHeight }">
-            <el-table ref="table1"
-              height="100%"
-              :data="tableData1"
-              header-row-class-name="headerRowClass"
-              row-class-name="rowClass"
-              default-expand-all
-              :tree-props="{children: 'roles', hasChildren: 'hasChildren'}"
-              row-key="id">
-              <el-table-column
-                prop="name"
-                label="角色名称"
-                header-align="center">
-              </el-table-column>
-            </el-table>
-          </div>
+        <div :class="{'small-table': true}"
+             :style="{height: flexHeight }">
+          <el-table ref="table1"
+                    height="100%"
+                    :data="tableData1"
+                    header-row-class-name="headerRowClass"
+                    row-class-name="rowClass"
+                    default-expand-all
+                    :tree-props="{children: 'roles', hasChildren: 'hasChildren'}"
+                    row-key="id">
+            <el-table-column prop="name"
+                             label="角色名称"
+                             header-align="center">
+            </el-table-column>
+          </el-table>
+        </div>
       </div>
     </template>
   </normal-layout>
+  <div v-else
+       class="noraml-box">
+    <div class="standard-team-table-left"
+         :class="{'small-table': true}"
+         :style="{height: flexHeight, width: '40%' }">
+      <el-table ref="table"
+                height="100%"
+                :data="tableData"
+                header-row-class-name="headerRowClass"
+                row-class-name="rowClass"
+                highlight-current-row
+                @current-change="handleCurrentChange"
+                row-key="id">
+        <el-table-column prop="name"
+                         label="标准团队"
+                         align="center">
+        </el-table-column>
+      </el-table>
+    </div>
+    <div style="border: 1px #cccccc solid;"></div>
+    <div :class="{'small-table': true}"
+         :style="{height: flexHeight, width: '60%' }">
+      <el-table ref="table1"
+                height="100%"
+                :data="tableData1"
+                header-row-class-name="headerRowClass"
+                row-class-name="rowClass"
+                default-expand-all
+                :tree-props="{children: 'roles', hasChildren: 'hasChildren'}"
+                row-key="id">
+        <el-table-column prop="name"
+                         label="角色名称"
+                         header-align="center">
+        </el-table-column>
+      </el-table>
+    </div>
+  </div>
 </template>
 <script>
 import { P8NormalLayout as NormalLayout } from 'p8-components-ui'
@@ -141,25 +180,31 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-  .headerRowClass {
-    color: #333;
-    font-size: 14px;
-  }
-  .rowClass td {
-    border-bottom: none;
-    padding-left: 10px;
-  }
+<style lang="scss" scoped>
+.headerRowClass {
+  color: #333;
+  font-size: 14px;
+}
+.rowClass td {
+  border-bottom: none;
+  padding-left: 10px;
+}
 
-  .standard-team-table-left {
-    .el-table__body tr.current-row > td {
-      background-color: transparent;
-      color: $base-light-color;
-      font-weight: bolder;
-    }
-    .el-table__body tr:hover td {
-      background-color: transparent !important;
-      color: $base-light-color;
-    }
+.standard-team-table-left {
+  .el-table__body tr.current-row > td {
+    background-color: transparent;
+    color: $base-light-color;
+    font-weight: bolder;
   }
+  .el-table__body tr:hover td {
+    background-color: transparent !important;
+    color: $base-light-color;
+  }
+}
+.noraml-box {
+  display: flex !important;
+  flex-direction: row;
+  width: 100% !important;
+  overflow: auto;
+}
 </style>

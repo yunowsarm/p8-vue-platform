@@ -58,12 +58,14 @@
                       :value="messageNum"
                       :max="99"
                       class="itemNum">
-              <el-tooltip :disabled='isMobile' content="我的消息">
+              <el-tooltip :disabled='isMobile'
+                          content="我的消息">
                 <i class="p8 icon-message"></i>
               </el-tooltip>
             </el-badge>
 
-            <el-tooltip :disabled='isMobile' content="我的消息"
+            <el-tooltip :disabled='isMobile'
+                        content="我的消息"
                         v-else>
               <i class="p8 icon-message"></i>
             </el-tooltip>
@@ -76,11 +78,13 @@
                       :value="approvalTotalMsg"
                       :max="99"
                       class="itemNum">
-              <el-tooltip :disabled='isMobile' content="我的审批">
+              <el-tooltip :disabled='isMobile'
+                          content="我的审批">
                 <i class="p8 icon-approval"></i>
               </el-tooltip>
             </el-badge>
-            <el-tooltip :disabled='isMobile' content="我的审批"
+            <el-tooltip :disabled='isMobile'
+                        content="我的审批"
                         v-else>
               <i class="p8 icon-approval"></i>
             </el-tooltip>
@@ -104,7 +108,8 @@
         <li>
           <el-dropdown size="small">
             <span>
-              <span v-if="!isMobile" class="name">{{ dayTime }}好！{{ userName }}</span>
+              <span v-if="!isMobile"
+                    class="name">{{ dayTime }}好！{{ userName }}</span>
               <i class="el-icon-arrow-down"
                  style="margin: 0 5px"></i>
             </span>
@@ -118,7 +123,7 @@
                 <i class="p8 icon-personal-setting"></i>
                 个性化设置
               </el-dropdown-item>
-              <el-dropdown-item @click.native="dialogVisible = true">
+              <el-dropdown-item @click.native="dialogOpen">
                 <i class="icon-size el-icon-info"></i>
                 关于
               </el-dropdown-item>
@@ -204,7 +209,7 @@
     <el-dialog title="关于"
                v-if="dialogVisible"
                :visible.sync="dialogVisible"
-               width="618px"
+               :width="dialogWidth"
                :before-close="beforeClose">
       <div class="regards-box">
         <p><span class="regards-font">系统名称:&nbsp;&nbsp;&nbsp;</span><span v-html="systemName"></span></p>
@@ -250,7 +255,8 @@ import Message from '@/views/Framework/Message'
 import Information from '@/components/information/index.vue'
 import packageJson from '../../../../package.json'
 import myNetworkDisk from './myNetworkDisk'
-
+import { getSession } from '@/service/expands/session'
+import { absolute } from '@antv/x6/lib/registry/port-layout/absolute'
 export default {
   name: 'Headers',
   data () {
@@ -272,29 +278,31 @@ export default {
       regardsObj: {},
       adminUserIdArr: ['SYS_USER001', 'SYS_USER009', 'SYS_USER012', 'SYS_USER010', 'SYS_USER000'], // 五元id
       AuthorizationInfoList: [],
-      packageJson
+      packageJson,
+      dialogWidth: '618px'
     }
   },
   computed: {
-    isMobile() {
+    isMobile () {
       return this.$store.getters.isMobile
     },
     ...mapGetters(['approvalTotalMsg', 'messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl']),
   },
   mounted () {
-    // if (this.isMobile) {
-    //   let slideBar = document.getElementById('slideBar')
-    //   console.log(slideBar,'-=-=slideBar');
-    //   if (slideBar) {
-    //     if (!this.sidebarState.isHidden) {
-    //       slideBar.style.position = 'relative'
-    //       slideBar.style.left = '110px'
-    //     } else {
-    //       slideBar.style.position = 'static'
-    //       slideBar.style.left = '0px'
-    //     }
-    //   }
-    // }
+    if (this.isMobile) {
+      this.dialogWidth = '330px'
+      // let slideBar = document.getElementById('slideBar')
+      // console.log(slideBar,'-=-=slideBar');
+      // if (slideBar) {
+      //   if (!this.sidebarState.isHidden) {
+      //     slideBar.style.position = 'relative'
+      //     slideBar.style.left = '110px'
+      //   } else {
+      //     slideBar.style.position = 'static'
+      //     slideBar.style.left = '0px'
+      //   }
+      // }
+    }
     const this_ = this
     this_.getAuthorizationInfo()
     this.getSystemAbout()
@@ -442,6 +450,9 @@ export default {
         }
       })
     },
+    dialogOpen () {
+      this.dialogVisible = true
+    },
     logout () {
       this.$confirm('是否要退出系统?', '提醒', {
         lockScroll: false,
@@ -451,7 +462,12 @@ export default {
       })
         .then(() => {
           this.$store.dispatch('userLogout').then(() => {
-            location.reload()
+            // location.reload()
+            if (getSession('SET_LOGIN_NEW') === 'loginNew') {
+              this.$router.replace({ path: '/loginNew' })
+            } else {
+              this.$router.replace({ path: '/login' })
+            }
           })
         })
         .catch(() => { })
@@ -718,6 +734,12 @@ div.header_userInfo {
   }
   .slide-bar {
     height: 50px !important;
+  }
+  ::v-deep .el-dialog {
+    margin-top: 6vh !important;
+  }
+  .el-dialog__wrapper {
+    z-index: 9999 !important;
   }
 }
 .my_process {

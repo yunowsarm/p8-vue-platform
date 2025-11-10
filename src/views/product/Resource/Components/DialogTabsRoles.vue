@@ -18,13 +18,13 @@
         <el-tabs v-model="activeNameRender"
                  type="card"
                  @tab-click="handleTabsClick">
-          <el-tab-pane label="我的经验团队"
+          <!-- <el-tab-pane label="我的经验团队"
                        name="experience">
             <experience-team id="normal-layout"
                              v-bind="$attrs"
                              @experience-table-select="experienceSelect"
                              :fullscreen="fullscreen"></experience-team>
-          </el-tab-pane>
+          </el-tab-pane> -->
           <el-tab-pane label="标准团队"
                        name="standard">
             <standard-team :tableRefresh="tableRefresh"
@@ -63,7 +63,7 @@ export default {
       standardTeamInfo: {},
       dialogHeight: 300,
       fullscreen: false,
-      activeNameRender: 'experience'
+      activeNameRender: 'standard'
     }
   },
   mounted () {
@@ -92,7 +92,7 @@ export default {
             id: null
           }
         })
-        console.log(experienceTeamSelect,'experienceTeamSelect');
+        console.log(experienceTeamSelect, 'experienceTeamSelect');
         this.$emit('exp-roles-close', experienceTeamSelect)
       } else {
         // 载入
@@ -110,7 +110,7 @@ export default {
           }),
           kTeamId: this.standardTeamInfo.kTeamId
         }
-        console.log(emitInfo,'emitInfo');
+        console.log(emitInfo, 'emitInfo');
         this.$emit('standard-roles-close', emitInfo)
       }
     },

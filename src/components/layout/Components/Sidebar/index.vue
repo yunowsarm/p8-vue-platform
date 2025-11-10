@@ -330,6 +330,10 @@ export default {
             if (item.id) {
               this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
                 item.filePath = window.URL.createObjectURL(new Blob([res.data]))
+                let iconLink = document.querySelector("link[rel='icon']")
+                if (iconLink) {
+                  iconLink.href = item.filePath
+                }
                 that.showLogo = true
                 that.$nextTick(() => {
                   that.$refs.loginLogo.style.backgroundImage = `url(${item.filePath})`

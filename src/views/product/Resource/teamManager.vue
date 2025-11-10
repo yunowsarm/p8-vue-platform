@@ -1,9 +1,9 @@
 <!--整体管理-团队管理-->
 <template>
-  <div style="height: calc(100% - 50px); background-color: #f3f5f885">
-    <div style="height: 100%"
-         class="team-manager-wrap">
-      <div class="custom_content_wrap">
+  <div class="team-manager-wrap">
+    <div style="height: 100%">
+      <div v-if="innerWidth > 600"
+           class="custom_content_wrap">
         <div class="left_content">
           <div class="teamFile">
             <span style="font-size: 14px; padding: 0 20px; font-weight: bold">人员任命文件：</span>
@@ -108,16 +108,14 @@
                   <template #realName="{ scope }">
                     <div class="real-name">
                       <template>
-                        <el-link @click.stop="opentDialogUserTaskStatistics(scope.row)">{{ scope.row.realName }}<i
-                          class="el-icon-view el-icon--right"></i></el-link>
+                        <el-link @click.stop="opentDialogUserTaskStatistics(scope.row)">{{ scope.row.realName }}<i class="el-icon-view el-icon--right"></i></el-link>
                       </template>
                     </div>
                   </template>
                   <template #taskCount="{ scope }">
                     <div class="task-count">
                       <template v-if="scope.row.taskCount">
-                        <el-link @click.stop="opentDialogUserTask(scope.row)">{{ scope.row.taskCount }}<i
-                          class="el-icon-view el-icon--right"></i></el-link>
+                        <el-link @click.stop="opentDialogUserTask(scope.row)">{{ scope.row.taskCount }}<i class="el-icon-view el-icon--right"></i></el-link>
                       </template>
                       <template v-else>
                         <span>{{ scope.row.taskCount }}</span>
@@ -242,6 +240,243 @@
                            @getFormComp="getMemberFormComp"></member-upload> -->
         </div>
       </div>
+      <div v-else>
+        <div class="left_content">
+          <div class="teamFile">
+            <span style="font-size: 14px; padding: 0 20px; font-weight: bold">人员任命文件：</span>
+            <common-upload ref="commonupload"
+                           v-if="!uploadView"
+                           :files="namedFiles"
+                           :toolbarWritingDisplay="toolbarWritingDisplay"
+                           :uploadConfig="{ limit: 1, multiple: false }"
+                           @upload="
+                (file) => {
+                  uploadFile(file)
+                }
+              "
+                           @remove="
+                (file) => {
+                  removedFile(file)
+                }
+              ">
+            </common-upload>
+            <common-file-view :uploadFiles="namedFiles"
+                              filesLayout="row"></common-file-view>
+            <i v-if="namedFiles.length"
+               class="el-icon-close"
+               style="cursor: pointer"
+               @click="namedFiles = []"></i>
+          </div>
+          <div class="left_bottom_content1">
+            <div class="role-con">
+              <el-button type="plan"
+                         style="margin: 5px; width: 90%"
+                         @click="addRolesHandle"><i class="el-icon-plus"></i> 新建角色类别
+              </el-button>
+              <vue-perfect-scrollbar class="role-list">
+                <li style="padding-left: 26px; color: #323232; font-size: 12px"
+                    :class="[{ active: rolesSelectedIndex === -1 }]"
+                    @click="refreshHandle">
+                  所有人员<span>({{ getTotalCount }})</span>
+                </li>
+                <li :class="[{ active: index === rolesSelectedIndex }, { 'fixed-role': item.roleType === 'fixed' }]"
+                    v-for="(item, index) in roleList"
+                    :key="item.name"
+                    @click="rolesHandle(item, index)">
+                  <el-tooltip v-if="item.roleType === 'fixed'"
+                              :content="item.klTeamsRoleClassifyName"
+                              placement="bottom">
+                    <i class="el-icon-s-custom"
+                       style="cursor: pointer"></i>
+                  </el-tooltip>
+                  <i v-else
+                     class="el-icon-s-custom"></i>
+                  <edit-input :textValue="item.name || item.roleName"
+                              :record="item"
+                              :rolesData="rolesData"
+                              :iconShow="item.roleType === 'general' && group_add_role"
+                              @delete="deleteRolesHandle(index, item)"
+                              @onChange="changeRolesHandle"></edit-input>
+                  <!-- {{getProjectTeamRoleUsersNum(item)}}
+                <span style="color: red"
+                      v-if="isShowRole(item)">*</span> -->
+                </li>
+              </vue-perfect-scrollbar>
+            </div>
+            <div class="table-con">
+              <div class="add-member">
+                <el-button v-if="group_add_member && toolbarWritingDisplay === '0'"
+                           type="plan"
+                           @click="addMemberHandle">添加人员
+                </el-button>
+                <el-tooltip v-if="group_add_member && toolbarWritingDisplay === '1'"
+                            placement="top"
+                            content="添加人员">
+                  <el-button type="primary"
+                             icon="el-icon-plus"
+                             @click="addMemberHandle"></el-button>
+                </el-tooltip>
+                <el-button v-if="group_add_member && toolbarWritingDisplay === '2'"
+                           type="primary"
+                           icon="el-icon-plus"
+                           @click="addMemberHandle">添加人员
+                </el-button>
+                <!-- <el-button type="plan"
+                           @click="refreshHandle">查看全部成员
+                </el-button> -->
+                <search-form-list style="top: 3px"
+                                  ref="search"
+                                  search-width="60%"
+                                  search-contain-width="100%"
+                                  label-width="50px"
+                                  :resetAfterToSearch="false"
+                                  :dataSource="dataSource"
+                                  :addFuzzySearch="true"
+                                  @search="search"
+                                  @re-set="reset"></search-form-list>
+              </div>
+              <div class="common-table-member">
+                <common-table ref="table"
+                              class="tableMember"
+                              style="height: 500px"
+                              :columns="columns"
+                              :params="params"
+                              :pagination="false"
+                              @cell-click="cellDblclick"
+                              :tableSetting="false"
+                              :noApiTableData="filterTableData(tableData)">
+                  <template #realName="{ scope }">
+                    <div class="real-name">
+                      <template>
+                        <el-link @click.stop="opentDialogUserTaskStatistics(scope.row)">{{ scope.row.realName }}<i class="el-icon-view el-icon--right"></i></el-link>
+                      </template>
+                    </div>
+                  </template>
+                  <template #taskCount="{ scope }">
+                    <div class="task-count">
+                      <template v-if="scope.row.taskCount">
+                        <el-link @click.stop="opentDialogUserTask(scope.row)">{{ scope.row.taskCount }}<i class="el-icon-view el-icon--right"></i></el-link>
+                      </template>
+                      <template v-else>
+                        <span>{{ scope.row.taskCount }}</span>
+                      </template>
+                    </div>
+                  </template>
+                  <template #userState="{ scope }">
+                    <div class="userState">
+                      <span v-if="scope.row.entryTime && !scope.row.departureTime"
+                            class="state-working">团队中</span>
+                      <span v-if="scope.row.entryTime && scope.row.departureTime && scope.row.waitout"
+                            class="state-waitout">待退出</span>
+                      <span v-if="scope.row.entryTime && scope.row.departureTime && !scope.row.waitout"
+                            class="state-out">已退出</span>
+                    </div>
+                  </template>
+                  <template #operation="{ scope }">
+                    <template v-if="!scope.row.departureTime">
+                      <template v-if="scope.row.taskCount">
+
+                        <div v-if="toolbarWritingDisplay === '0'">
+                          <el-popconfirm title="确认要将该人退出项目组吗?"
+                                         confirmButtonText="确认"
+                                         cancelButtonText="取消"
+                                         @confirm="deleteUserHandle(scope, scope.$index)">
+                            <el-button slot="reference"
+                                       size="mini"
+                                       v-if="group_add_member"
+                                       type="text">删除
+                            </el-button>
+                          </el-popconfirm>
+                        </div>
+                        <el-tooltip placement="top"
+                                    v-if="toolbarWritingDisplay === '1'"
+                                    content="删除">
+                          <el-popconfirm title="确认要将该人退出项目组吗?"
+                                         confirmButtonText="确认"
+                                         cancelButtonText="取消"
+                                         @confirm="deleteUserHandle(scope, scope.$index)">
+                            <el-button slot="reference"
+                                       size="mini"
+                                       type="text"
+                                       v-if="group_add_member"
+                                       icon="p8 icon-shanchu"></el-button>
+                          </el-popconfirm>
+                        </el-tooltip>
+                        <div v-if="toolbarWritingDisplay === '2'">
+                          <el-popconfirm title="确认要将该人退出项目组吗?"
+                                         confirmButtonText="确认"
+                                         cancelButtonText="取消"
+                                         @confirm="deleteUserHandle(scope, scope.$index)">
+                            <el-button slot="reference"
+                                       size="mini"
+                                       v-if="group_add_member"
+                                       icon="p8 icon-shanchu"
+                                       type="text">删除
+                            </el-button>
+                          </el-popconfirm>
+                        </div>
+                      </template>
+                      <template v-else>
+                        <div v-if="toolbarWritingDisplay === '0'">
+                          <el-button size="mini"
+                                     type="text"
+                                     v-if="group_add_member"
+                                     @click="deleteUserHandle(scope, scope.$index)">删除
+                          </el-button>
+                        </div>
+                        <el-tooltip placement="top"
+                                    v-if="toolbarWritingDisplay === '1'"
+                                    content="删除">
+                          <el-button type="text"
+                                     v-if="group_add_member"
+                                     icon="p8 icon-shanchu"
+                                     @click="deleteUserHandle(scope, scope.$index)"></el-button>
+                        </el-tooltip>
+                        <div v-if="toolbarWritingDisplay === '2'">
+                          <el-button size="mini"
+                                     type="text"
+                                     icon="p8 icon-shanchu"
+                                     v-if="group_add_member"
+                                     @click="deleteUserHandle(scope, scope.$index)">删除
+                          </el-button>
+                        </div>
+                      </template>
+                    </template>
+                  </template>
+                  <template #flagHeader="{ scope }">
+                    <span>{{ scope.column.label }}</span><i class="el-icon-edit"></i>
+                  </template>
+                  <template #flag="{ scope }">
+                    <el-select v-model="scope.row.flag"
+                               size="mini"
+                               :key="scope.row.id"
+                               v-if="scope.row.editRow && group_add_member"
+                               placeholder="请选择"
+                               style="width: 90%"
+                               @blur="
+                        () => {
+                          quoteUpdate(scope.row)
+                        }
+                      ">
+                      <el-option v-for="item in options"
+                                 :key="item.value"
+                                 @click.native="handleSetFlagName(scope.row, item)"
+                                 :label="item.label"
+                                 :value="item.value">
+                      </el-option>
+                    </el-select>
+                    <span v-else>{{ scope.row.flagName }}</span>
+                  </template>
+                </common-table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="right-con">
+          <project-form-view :id="id"
+                             ref="projectFormView"></project-form-view>
+        </div>
+      </div>
       <div class="bottom-con">
         <P v-if="aiAssistant"
            class="ai-generated-team">
@@ -362,7 +597,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     const columns = [
       {
         title: '角色',
@@ -563,14 +798,15 @@ export default {
       selectUserBeforehandDataSource: [],
       dateTime: '',
       searchParam: null,
-      toolbarWritingDisplay: '0'
+      toolbarWritingDisplay: '0',
+      innerWidth: window.innerWidth
     }
   },
   computed: {
-    roleList() {
+    roleList () {
       return this.rolesData.filter(item => !item.isDeleted)
     },
-    getTotalCount() {
+    getTotalCount () {
       let count = 0
       this.roleList.forEach((el) => {
         if (el.projectTeamRoleUsers && el.projectTeamRoleUsers.length) {
@@ -581,7 +817,7 @@ export default {
       return count
     }
   },
-  created() {
+  created () {
     if (this.row && this.row.length) {
       this.id = this.row[0].ID
     } else {
@@ -595,7 +831,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     if (this.$store.getters.baseConfig.toolbarWritingDisplay) {
       this.toolbarWritingDisplay = this.$store.getters.baseConfig.toolbarWritingDisplay
     } else {
@@ -606,7 +842,7 @@ export default {
     }
   },
   methods: {
-    refreshAiData: async function(data) {
+    refreshAiData: async function (data) {
       // 获取现有角色名称集合（过滤掉已删除的角色）
       const existingRoleNames = new Set(this.generalRoles.filter(role => !role.isDeleted).map(role => role.name))
       const duplicateRoles = []
@@ -644,10 +880,10 @@ export default {
 
     },
     // 关闭AI生成
-    closeAutoGeneration() {
+    closeAutoGeneration () {
       this.autoGenerationVisible = false
     },
-    filterTableData(data) {
+    filterTableData (data) {
       if (this.row.length > 0) {
         const projectStatus = this.row[0].STATUS
         if (projectStatus === '2202') {
@@ -665,7 +901,7 @@ export default {
     //   return '(' + rolesItem.projectTeamRoleUsers.length + ')'
     // },
     // 双击打开行内
-    cellDblclick(row, column, cell, event) {
+    cellDblclick (row, column, cell, event) {
       if (column.property === 'flag') {
         let params = { dicType: '0' }
         if (row.userRoleId !== 'SYS_ROLE004' && row.userRoleId !== 'SYS_ROLE008') {
@@ -691,16 +927,16 @@ export default {
       }
     },
     // 行内修改
-    quoteUpdate(row) {
+    quoteUpdate (row) {
       // this.$set(row, 'editRow', false)
     },
-    handleSetFlagName(row, item) {
+    handleSetFlagName (row, item) {
       this.$set(row, 'flagName', item.label)
       this.$set(row, 'editRow', false)
     },
-    initButton() {
+    initButton () {
       let _this = this
-      _this.groupType.forEach(function(data) {
+      _this.groupType.forEach(function (data) {
         // if (data.id === _this.thirdMenuParam.group_type) {
         //   _this.groupTypeData = data
         // }
@@ -711,11 +947,11 @@ export default {
         _this.loadingUserDeptStrategy = _this.groupTypeData.is_loading_userDept
       }
     },
-    getMemberFormComp(formComp) {
+    getMemberFormComp (formComp) {
       // 获取人员命名文件 form表单组件, 用于校验附件密级是否选择
       this.memberFormComp = formComp
     },
-    search(params, searchBoxParam) {
+    search (params, searchBoxParam) {
       console.log(params, '-=-=params')
       this.reset()
       this.searchParam = params
@@ -726,16 +962,16 @@ export default {
       const matchByRealName = (item, keyword) => {
         if (!item.realName) return false
         const name = item.realName
-        const fullPinyin = pinyin(name,{
+        const fullPinyin = pinyin(name, {
           toneType: 'none',
-          type:'string',
-          separator:''
+          type: 'string',
+          separator: ''
         }).toLowerCase()
-        const initials = pinyin(name,{
-          pattern:'first',
+        const initials = pinyin(name, {
+          pattern: 'first',
           toneType: 'none',
-          type:'string',
-          separator:''
+          type: 'string',
+          separator: ''
         }).toLowerCase()
         return (
           name.includes(keyword) ||
@@ -761,7 +997,7 @@ export default {
       }
     },
 
-    reset() {
+    reset () {
       this.searchParam = null
       if (this.rolesSelectedIndex > -1) {
         this.tableData = this.rolesData[this.rolesSelectedIndex].projectTeamRoleUsers
@@ -773,7 +1009,7 @@ export default {
         this.tableData = tableData
       }
     },
-    getTeamInfo() {
+    getTeamInfo () {
       this.$api['teamManager.get']({
         wholeDescribeId: this.id
       }).then((res) => {
@@ -781,29 +1017,29 @@ export default {
           this.klTeamsId = res.klTeamsId
           this.namedFiles = res.uploadFiles ? res.uploadFiles : []
           res.fixedRoles &&
-          res.fixedRoles.forEach((item) => {
-            item.roleType = 'fixed'
-            if (item.projectTeamRoleUsers && item.projectTeamRoleUsers.length) {
-              item.projectTeamRoleUsers.forEach((citem) => {
-                citem.entryTime = citem.entryTime ? moment(citem.entryTime).format('YYYY-MM-DD HH:mm:ss') : ''
-                citem.departureTime = citem.departureTime ? moment(citem.departureTime).format('YYYY-MM-DD HH:mm:ss') : ''
-              })
-            } else {
-              item.projectTeamRoleUsers = []
-            }
-          })
+            res.fixedRoles.forEach((item) => {
+              item.roleType = 'fixed'
+              if (item.projectTeamRoleUsers && item.projectTeamRoleUsers.length) {
+                item.projectTeamRoleUsers.forEach((citem) => {
+                  citem.entryTime = citem.entryTime ? moment(citem.entryTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                  citem.departureTime = citem.departureTime ? moment(citem.departureTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                })
+              } else {
+                item.projectTeamRoleUsers = []
+              }
+            })
           res.generalRoles &&
-          res.generalRoles.forEach((item) => {
-            item.roleType = 'general'
-            if (item.projectTeamRoleUsers && item.projectTeamRoleUsers.length) {
-              item.projectTeamRoleUsers.forEach((citem) => {
-                citem.entryTime = citem.entryTime ? moment(citem.entryTime).format('YYYY-MM-DD HH:mm:ss') : ''
-                citem.departureTime = citem.departureTime ? moment(citem.departureTime).format('YYYY-MM-DD HH:mm:ss') : ''
-              })
-            } else {
-              item.projectTeamRoleUsers = []
-            }
-          })
+            res.generalRoles.forEach((item) => {
+              item.roleType = 'general'
+              if (item.projectTeamRoleUsers && item.projectTeamRoleUsers.length) {
+                item.projectTeamRoleUsers.forEach((citem) => {
+                  citem.entryTime = citem.entryTime ? moment(citem.entryTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                  citem.departureTime = citem.departureTime ? moment(citem.departureTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                })
+              } else {
+                item.projectTeamRoleUsers = []
+              }
+            })
           this.fixedRoles = res.fixedRoles || []
           this.generalRoles = res.generalRoles || []
           this.rolesData = [...this.fixedRoles, ...this.generalRoles]
@@ -840,15 +1076,15 @@ export default {
           }
           this.teamsId = this.team && this.team.teamsId ? this.team.teamsId : ''
           res.uploadFiles &&
-          res.uploadFiles.length &&
-          res.uploadFiles.forEach(function(data) {
-            let name = data.fileName
-            data.name = name
-          })
+            res.uploadFiles.length &&
+            res.uploadFiles.forEach(function (data) {
+              let name = data.fileName
+              data.name = name
+            })
         }
       })
     },
-    rolesHandle(item, index) {
+    rolesHandle (item, index) {
       // 角色列表点击切换
       if (this.rolesSelectedIndex === index) {
         return
@@ -886,7 +1122,7 @@ export default {
       })
       // this.dateTime = new Date().getTime()
     },
-    addRolesHandle() {
+    addRolesHandle () {
       let count = 1
       let name = '角色名称' + count
       while (this.rolesData.some(role => role.name === name)) {
@@ -911,7 +1147,7 @@ export default {
     },
     // 自动生成不重复的角色名称
 
-    refreshHandle() {
+    refreshHandle () {
       /**
        * 刷新: 1. 清空角色选中; 2. 人员列表展示所有角色下的人员 3. 对应人员列表添加角色信息
        */
@@ -942,10 +1178,10 @@ export default {
         this.search(this.searchParam)
       }
     },
-    changeRolesHandle(text, record) {
+    changeRolesHandle (text, record) {
       record.name = text
     },
-    deleteRolesHandle(index, item) {
+    deleteRolesHandle (index, item) {
       // 检查该角色下的人员状态
       const roleUsers = this.originalTableData.filter(user => user.userRoleId === item.id)
       const allUsersLeft = roleUsers.length === 0 || roleUsers.every(user => user.departureTime && !user.waitout)
@@ -1003,12 +1239,12 @@ export default {
         this.isDelete = true
       })
     },
-    tableDeleteMemberHandle(row, index) {
+    tableDeleteMemberHandle (row, index) {
       if ((row.entryTime && row.departureTime) || (!row.entryTime && !row.departureTime)) {
         this.tableData.splice(index, 1)
       }
     },
-    deleteUserHandle(scope, index) {
+    deleteUserHandle (scope, index) {
       if (!scope.row.id) {
         this.tableData.splice(index, 1)
       }
@@ -1047,7 +1283,7 @@ export default {
 
       this.isDelete = true
     },
-    addMemberHandle() {
+    addMemberHandle () {
       // 添加人员
       if ((this.fixedRoles && this.fixedRoles.length > 0) || (this.generalRoles && this.generalRoles.length > 0)) {
         if (this.rolesSelectedIndex > -1) {
@@ -1065,22 +1301,22 @@ export default {
         })
       }
     },
-    copyRoleHandle() {
+    copyRoleHandle () {
       // 从历史项目复制
       this.visibleDialogRoles = true
     },
-    expRolesCloseHandle(experienceTeamSelectValue) {
+    expRolesCloseHandle (experienceTeamSelectValue) {
       // (我的经验团队)从历史项目复制-面板关闭
       this.visibleDialogRoles = false
       if (experienceTeamSelectValue.length > 0) {
         this.loadRolesCommonHandle(experienceTeamSelectValue)
       }
     },
-    loadStandardTeamHandle() {
+    loadStandardTeamHandle () {
       // 载入标准团队
       this.visibleDialogRoles = true
     },
-    standardRolesCloseHandle(info) {
+    standardRolesCloseHandle (info) {
       // (标准团队)载入标准团队-面板关闭
       this.visibleDialogRoles = false
       if (info && info.kTeamId) {
@@ -1088,7 +1324,7 @@ export default {
         this.loadRolesCommonHandle(info.data)
       }
     },
-    loadRolesCommonHandle(data) {
+    loadRolesCommonHandle (data) {
       let tempArr = []
       let roleName = []
       data.forEach((item) => {
@@ -1125,7 +1361,7 @@ export default {
       }
       this.rolesData.push(...tempArr)
       this.rolesData = _.uniqWith(this.rolesData, _.isEqual)
-      this.rolesData.sort(function(a, b) {
+      this.rolesData.sort(function (a, b) {
         return b.isFixed - a.isFixed
       })
       if (roleName && roleName.length) {
@@ -1140,7 +1376,7 @@ export default {
         this.$message({ type: 'success', message: '载入成功' })
       }
     },
-    memberCloseHandle(tableSelectValue) {
+    memberCloseHandle (tableSelectValue) {
       // 添加人员-面板关闭
       this.visibleDialogMember = false
       if (tableSelectValue.length > 0) {
@@ -1168,7 +1404,7 @@ export default {
         this.isAddUser = true
       }
     },
-    opentDialogUserTask(row) {
+    opentDialogUserTask (row) {
       this.userTaskConfig.sqlParam = {
         roleId: {
           mode: '=',
@@ -1198,7 +1434,7 @@ export default {
       }
       this.visibleDialogUserTask = true
     },
-    opentDialogUserTaskStatistics(row) {
+    opentDialogUserTaskStatistics (row) {
       this.userTaskStatisticsConfig.sqlParam = {
         projectId: {
           mode: '=',
@@ -1219,13 +1455,13 @@ export default {
       // this.userTaskTableParams.wholeDescribeId = this.thirdMenuParam.id || ''
       this.visibleUserTaskStatistics = true
     },
-    closeDialogUserTask(row) {
+    closeDialogUserTask (row) {
       this.userTaskConfig.sqlParam = null
       this.userTaskStatisticsConfig.sqlParam = null
       this.visibleDialogUserTask = false
       this.visibleUserTaskStatistics = false
     },
-    userTaskCustomSearch(searchParam, _table) {
+    userTaskCustomSearch (searchParam, _table) {
       /**
        * 人员列表-承担任务总数-任务明细列表搜索
        */
@@ -1235,7 +1471,7 @@ export default {
       }
       this.userTaskTableParams = { ...this.userTaskTableParams, ...searchParam }
     },
-    userTaskCustomReset() {
+    userTaskCustomReset () {
       /**
        * 人员列表-承担任务总数-任务明细列表搜索重置
        */
@@ -1249,7 +1485,7 @@ export default {
       })
       this.userTaskTableParams.currentUserId = currentUserId
     },
-    submitVerifyHandle() {
+    submitVerifyHandle () {
       let result = true
       let roleNotNullMsg = []
       this.fixedRoles.filter(role => !role.isDeleted).forEach((fixedItem) => {
@@ -1276,7 +1512,7 @@ export default {
       }
       return result
     },
-    async saveAndRelease() {
+    async saveAndRelease () {
       this.releaseFlag = false
       await this.submit()
       if (this.releaseFlag) {
@@ -1284,7 +1520,7 @@ export default {
       }
       this.submitLoading = false
     },
-    async submit() {
+    async submit () {
       try {
         const params = await this.submitParamsHandle()
         const verifyResult = this.submitVerifyHandle()
@@ -1310,7 +1546,7 @@ export default {
         return false // 明确返回false
       }
     },
-    submitParamsHandle() {
+    submitParamsHandle () {
       return new Promise((resolve, reject) => {
         let params = {
           id: '',
@@ -1395,20 +1631,20 @@ export default {
         resolve(params)
       })
     },
-    changeCheak() {
+    changeCheak () {
       let result = false
       if (this.isAddMember || this.isAddUser || this.isDelete) {
         result = true
       }
       return result
     },
-    uploadFile(file, field) {
+    uploadFile (file, field) {
       this.namedFiles.push(file)
     },
-    removedFile(file, field) {
+    removedFile (file, field) {
       this.namedFiles = []
     },
-    nextApproveUserBeforehand(processDefinationTwoKey) {
+    nextApproveUserBeforehand (processDefinationTwoKey) {
       const that = this
       nextApproveUserBeforehand.initDataSource(processDefinationTwoKey, this).then((res1) => {
         if (res1 === true) {
@@ -1463,7 +1699,7 @@ export default {
       })
       console.log(this.releaseMenuParams.beforehandParams)
       this.$api['baseData.commitApprove'](this.releaseMenuParams)
-        .then(function(res) {
+        .then(function (res) {
           if (res.result && res.result === 'false') {
             that.$message({
               type: 'error',
@@ -1477,12 +1713,12 @@ export default {
             that.$emit('close')
           }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.error(error)
         })
       that.isSelectApproveUserBeforehandView = false
     },
-    closeSelectApproveUserBeforehand() {
+    closeSelectApproveUserBeforehand () {
       this.isSelectApproveUserBeforehandView = false
     }
     // isShowRole (row) {
@@ -1514,6 +1750,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.team-manager-wrap {
+  height: calc(100% - 50px);
+  background-color: #f3f5f885;
+}
 .custom_content_wrap {
   display: flex;
   height: 100%;
@@ -1822,5 +2062,191 @@ export default {
 
 .autoGeneration ::v-deep .el-dialog__body {
   padding: 0 !important;
+}
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .team-manager-wrap {
+    height: 100%;
+    overflow: auto;
+  }
+  .role-con {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    background-color: white;
+    overflow-y: hidden;
+    margin: 0 2px 0 0;
+
+    button {
+      border: 1px solid #1890ff;
+      color: #1890ff;
+    }
+
+    .add-role {
+      box-sizing: border-box;
+      width: 100%;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px dashed $base-light-color;
+
+      &.not-edit {
+        background: #ffffff;
+        font-size: 14px;
+        color: #323232;
+      }
+
+      button {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+        border: none;
+        color: $base-light-color;
+      }
+    }
+
+    .refresh {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: calc(100% - 10px);
+      height: 50px;
+      box-sizing: border-box;
+      padding-right: 10px;
+      text-align: right;
+      line-height: 50px;
+      font-size: 24px;
+      background-color: #ffffff;
+
+      .el-icon-refresh {
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .role-list {
+      height: calc(100% - 38px);
+      padding: 5px 15px;
+      // border-bottom: 1px dashed #cccccc;
+      background-color: #ffffff;
+      box-sizing: border-box;
+
+      li {
+        position: relative;
+        display: flex;
+        align-items: center;
+        height: 40px;
+        border-bottom: 1px solid #cccccc;
+        color: #323232;
+        box-sizing: border-box;
+        padding: 0 6px;
+
+        &.active {
+          font-weight: bolder;
+          color: $theme-color !important;
+
+          ::v-deep span {
+            font-weight: bolder;
+            color: $theme-color !important;
+          }
+        }
+
+        &.active::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          border-left: 3px solid $theme-color;
+        }
+
+        i {
+          font-size: 18px;
+        }
+      }
+
+      .fixed-role {
+        i {
+          color: #ec808d;
+        }
+      }
+    }
+  }
+
+  .table-con {
+    height: 100%;
+    width: 100%;
+    background: #fff;
+    padding: 0 10px 8px;
+    box-sizing: border-box;
+
+    .add-member {
+      height: 50px;
+      line-height: 50px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      button {
+        border: 1px solid #1890ff;
+        // color: #1890ff;
+      }
+    }
+
+    .common-table-member {
+      height: calc(100% - 50px);
+
+      ::v-deep .el-table::before {
+        top: 0;
+        bottom: auto;
+      }
+
+      ::v-deep .el-table::after {
+        background: transparent;
+      }
+    }
+
+    .userState {
+      .state-working,
+      .state-waitout,
+      .state-out {
+        position: relative;
+        padding-left: 10px;
+        z-index: 1 !important;
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+        }
+      }
+
+      .state-working::before {
+        background-color: #0e77d1;
+      }
+
+      .state-waitout::before {
+        background-color: #999999;
+      }
+
+      .state-out::before {
+        background-color: #f04134;
+      }
+    }
+  }
+  .right-con {
+    width: 100%;
+    margin-left: 0px;
+  }
+  .submit {
+    margin-right: 0px !important;
+  }
 }
 </style>

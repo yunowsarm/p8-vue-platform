@@ -91,8 +91,9 @@ export default {
   mounted () {
     this.$api['documentManagement.selectNotice']({ id: this.row ? this.row[0].ID : this.businessKey }).then(res => {
       if (res) {
-        if (res.notificationScope === 0) {
+        if (res.notificationScope === '0') {
           res.notificationScope = '所有成员'
+          res.noticeList = []
         } else {
           res.notificationScope = '自定义成员'
         }

@@ -34,6 +34,11 @@
 .tabsNavigation ::v-deep .list-main {
   height: 100% !important;
 }
+@media screen and (max-width: 600px) {
+  .tabsNavigation ::v-deep .list-main {
+    width: 95% !important;
+  }
+}
 </style>
 <script>
 import TabsNavigationPreview from '@/views/Framework/ComponentsMananger/Layout/Components/TabsNavigation/V1.0/view/index'
@@ -71,7 +76,7 @@ export default {
     TabsNavigationPreview,
     ListLayout
   },
-  created () {},
+  created () { },
   methods: {
     tabClick (tabs) {
       if (this.row.length === 0 || (this.customParams && this.customParams.isEdit === false)) {

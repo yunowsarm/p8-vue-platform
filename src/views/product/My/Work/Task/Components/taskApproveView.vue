@@ -36,10 +36,14 @@
     <!-- 任务详情信息 -->
     <task-info-view :allStatus="thirdMenuParamTemp.allStatus"></task-info-view>
     <!-- 管理要素 -->
-    <task-manage-view :thirdMenuParam="thirdMenuParam"
+    <task-manage-view :approveType="true"
+                      :btnType="btnType"
                       @onClick="onClick"></task-manage-view>
     <!-- 进度反馈-未完成原因 -->
-    <task-tabs-view v-show="isShow"></task-tabs-view>
+    <task-tabs-view v-show="isShow"
+                    :approveType="true"
+                    :btnType="btnType"
+                    :key="dateTime"></task-tabs-view>
     <!-- 关联任务 -->
     <task-relation-view></task-relation-view>
   </div>
@@ -86,23 +90,25 @@ export default {
         pageType: this.pageType,
         TASKID: this.businessKey ? this.businessKey : this.reportParam.TASK_ID || this.reportParam.ID
       },
-      isShow: true
+      isShow: true,
+      dateTime: ''
     }
   },
-  mounted () {
-    this.reload()
+  async created () {
+    await this.reload()
   },
   methods: {
     onClick (isShow) {
       this.isShow = isShow
     },
-    reload () {
+    async reload () {
       getTaskStatusInfo({ currentStatus: 'all' }).then(data => {
         this.thirdMenuParamTemp.allStatus = data
       })
-      this.$api['taskManager.getTaskByIdByCapitalization']({ taskId: this.taskId }).then(res => {
+      await this.$api['taskManager.getTaskByIdByCapitalization']({ taskId: this.taskId }).then(res => {
         if (res) {
           this.thirdMenuParamTemp = { ...res, ...this.thirdMenuParamTemp }
+          this.dateTime = new Date().getTime()
           this.isRouterShow = true
         }
       })

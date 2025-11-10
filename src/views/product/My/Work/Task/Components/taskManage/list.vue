@@ -2,32 +2,46 @@
   <div class="ele-steps-wrap">
     <div class="ele-steps-content">
       <div class="content-header">
-        <span v-for="item in header" :key="item.id" :class="'header ' + item.id">{{ item.name }}</span>
+        <span v-for="item in header"
+              :key="item.id"
+              :class="'header ' + item.id">{{ item.name }}</span>
       </div>
-      <VuePerfectScrollbar
-        ref="scrollarea"
-        class="scroll-area"
-        :settings="scrollSetting"
-        @ps-scroll-y="psScrollYHandle"
-        @ps-scroll-up="psScrollUpHandle"
-        @ps-scroll-down="psScrollDownHandle"
-        @ps-y-reach-end="psScrollEndHandle"
-      >
-        <div v-for="(item, index) in steps" :key="item.id" :id="`stepsBody${index}`" :ref="item.id" class="content-list-wrap" :class="{ activeAni: item.id === selectStepsId }">
+      <VuePerfectScrollbar ref="scrollarea"
+                           class="scroll-area"
+                           :settings="scrollSetting"
+                           @ps-scroll-y="psScrollYHandle"
+                           @ps-scroll-up="psScrollUpHandle"
+                           @ps-scroll-down="psScrollDownHandle"
+                           @ps-y-reach-end="psScrollEndHandle">
+        <div v-for="(item, index) in steps"
+             :key="item.id"
+             :id="`stepsBody${index}`"
+             :ref="item.id"
+             class="content-list-wrap"
+             :class="{ activeAni: item.id === selectStepsId }">
           <div class="content-list-cont">
             <div class="classify">
-              <span style="width: 65px" v-if="item.id === 'activityDesc'">任务描述</span>
-              <span style="width: 65px" v-if="item.id === 'putin'">输入</span>
-              <span style="width: 65px" v-if="item.id === 'output'">输出</span>
-              <span style="width: 65px" v-if="item.id === 'varsion'">特别说明</span>
+              <span style="width: 65px"
+                    v-if="item.id === 'activityDesc'">任务描述</span>
+              <span style="width: 65px"
+                    v-if="item.id === 'putin'">输入</span>
+              <span style="width: 65px"
+                    v-if="item.id === 'output'">输出</span>
+              <span style="width: 65px"
+                    v-if="item.id === 'varsion'">特别说明</span>
             </div>
             <div class="list-con">
               <template v-if="item.id === 'activityDesc'">
                 <template v-if="activityDescData && activityDescData.length">
-                  <div v-for="(citem, cindex) in activityDescData" :key="cindex" class="list-con-item">
+                  <div v-for="(citem, cindex) in activityDescData"
+                       :key="cindex"
+                       class="list-con-item">
                     <div class="list-con-item__content request">
-                      <el-tooltip :disabled="$isMobile" placement="top-start">
-                        <div slot="content" class="custom-tooltip" v-html="citem.description"></div>
+                      <el-tooltip :disabled="$isMobile"
+                                  placement="top-start">
+                        <div slot="content"
+                             class="custom-tooltip"
+                             v-html="citem.description"></div>
                         <span>{{ citem.descriptionDisplay }}</span>
                       </el-tooltip>
                     </div>
@@ -43,15 +57,22 @@
               </template>
               <template v-if="item.id === 'putin'">
                 <template v-if="inputRequestData && inputRequestData.length">
-                  <div v-for="citem in inputRequestData" :key="citem.attId" class="list-con-item">
+                  <div v-for="citem in inputRequestData"
+                       :key="citem.attId"
+                       class="list-con-item">
                     <div class="list-con-item__content request">
-                      <el-tooltip :disabled="$isMobile" placement="top" :content="citem.descriptionStr">
+                      <el-tooltip :disabled="$isMobile"
+                                  placement="top"
+                                  :content="citem.descriptionStr">
                         <span>{{ citem.descriptionStr }}</span>
                       </el-tooltip>
                     </div>
                     <div class="list-con-item__content remark">{{ citem.aorDetail || '' }}</div>
-                    <div class="list-con-item__content file" @click="downloadOutputRequsetFile(citem)">
-                      <el-tooltip :disabled="$isMobile" placement="top" :content="citem.attFileName">
+                    <div class="list-con-item__content file"
+                         @click="downloadOutputRequsetFile(citem)">
+                      <el-tooltip :disabled="$isMobile"
+                                  placement="top"
+                                  :content="citem.attFileName">
                         <span>{{ citem.attFileName }}</span>
                       </el-tooltip>
                     </div>
@@ -65,19 +86,30 @@
               </template>
               <template v-if="item.id === 'output'">
                 <template v-if="outputIoData && outputIoData.length">
-                  <div v-for="citem in outputIoData" :key="citem.aorId" class="list-con-item">
-                    <div v-if="!$store.getters.isMobile" class="list-con-item__content request">
-                      <el-tooltip :disabled="$isMobile" placement="top" :content="citem.aorName">
+                  <div v-for="citem in outputIoData"
+                       :key="citem.aorId"
+                       class="list-con-item">
+                    <div v-if="!$store.getters.isMobile"
+                         class="list-con-item__content request">
+                      <el-tooltip :disabled="$isMobile"
+                                  placement="top"
+                                  :content="citem.aorName">
                         <span>{{ citem.aorName }}</span>
                       </el-tooltip>
                     </div>
-                    <div v-if="!$store.getters.isMobile" class="list-con-item__content remark">
-                      <el-tooltip :disabled="$isMobile" placement="top" :content="citem.aorDetail">
+                    <div v-if="!$store.getters.isMobile"
+                         class="list-con-item__content remark">
+                      <el-tooltip :disabled="$isMobile"
+                                  placement="top"
+                                  :content="citem.aorDetail">
                         <span>{{ citem.aorDetail }}</span>
                       </el-tooltip>
                     </div>
-                    <div class="list-con-item__content file" @click="downloadOutputRequsetFile(citem)">
-                      <el-tooltip :disabled="$isMobile" placement="top" :content="citem.attFileName">
+                    <div class="list-con-item__content file"
+                         @click="downloadOutputRequsetFile(citem)">
+                      <el-tooltip :disabled="$isMobile"
+                                  placement="top"
+                                  :content="citem.attFileName">
                         <span style="color: blue; text-decoration: underline">{{ citem.attFileName }}</span>
                       </el-tooltip>
                     </div>
@@ -91,15 +123,22 @@
               </template>
               <template v-if="item.id === 'varsion'">
                 <template v-if="specialVersionData && specialVersionData.length">
-                  <div v-for="citem in specialVersionData" :key="citem.aorId" class="list-con-item">
+                  <div v-for="citem in specialVersionData"
+                       :key="citem.aorId"
+                       class="list-con-item">
                     <div class="list-con-item__content request">
-                      <el-tooltip :disabled="$isMobile" placement="top" :content="citem.aoDescribes">
+                      <el-tooltip :disabled="$isMobile"
+                                  placement="top"
+                                  :content="citem.aoDescribes">
                         <span>{{ citem.aoDescribes }}</span>
                       </el-tooltip>
                     </div>
                     <div class="list-con-item__content remark">{{ citem.aorDetail }}</div>
-                    <div v-if="citem.attFileName" class="list-con-item__content file" @click="downloadOutputRequsetFile(citem)">
-                      <i class="el-icon-link" style="font-size: 14px"></i>
+                    <div v-if="citem.attFileName"
+                         class="list-con-item__content file"
+                         @click="downloadOutputRequsetFile(citem)">
+                      <i class="el-icon-link"
+                         style="font-size: 14px"></i>
                       <span>{{ citem.attFileName }}</span>
                     </div>
                   </div>
@@ -112,22 +151,39 @@
               </template>
             </div>
             <div class="operation">
-              <button-group :buttonGroup="item.btns" :stepsRow="item" :nullity="nullity" :btnType="btnType" :approveType="approveType" :comp="comp"></button-group>
+              <button-group :buttonGroup="item.btns"
+                            :stepsRow="item"
+                            :nullity="nullity"
+                            :btnType="btnType"
+                            :approveType="approveType"
+                            :comp="comp"></button-group>
             </div>
           </div>
         </div>
       </VuePerfectScrollbar>
     </div>
-    <common-drawer size="50%" class="manager-drawer" :title="drawerTitle" :visible="drawerVisible" :drawerConfig="drawerConfig" @close="onDrawerClose">
+    <common-drawer size="50%"
+                   class="manager-drawer"
+                   :title="drawerTitle"
+                   :visible="drawerVisible"
+                   :drawerConfig="drawerConfig"
+                   @close="onDrawerClose">
       <template #drawer>
         <template v-if="drawerViewVisible === 'activityDesc'">
-          <activity-desc-edit-view :activityDescData="activityDescData" @editSaveOK="editSaveOK"></activity-desc-edit-view>
+          <activity-desc-edit-view :activityDescData="activityDescData"
+                                   @editSaveOK="editSaveOK"></activity-desc-edit-view>
         </template>
         <template v-if="drawerViewVisible === 'putin'">
-          <input-io-view :inputIoData="inputIoData" :inputRequest="inputRequestData" @editSaveOK="editSaveOK"></input-io-view>
+          <input-io-view :inputIoData="inputIoData"
+                         :inputRequest="inputRequestData"
+                         @editSaveOK="editSaveOK"></input-io-view>
         </template>
         <template v-if="drawerViewVisible === 'output'">
-          <output-edit-view :taskId="getPlanInfo().TASKID" :thirdMenuParam="thirdMenuParam" :approveType="approveType" :outputRequest="outputRequestData" @editSaveOK="editSaveOK"></output-edit-view>
+          <output-edit-view :taskId="getPlanInfo().TASKID"
+                            :thirdMenuParam="thirdMenuParam"
+                            :approveType="approveType"
+                            :outputRequest="outputRequestData"
+                            @editSaveOK="editSaveOK"></output-edit-view>
         </template>
         <template v-if="drawerViewVisible === 'varsion'">
           <version-view :versionData="specialVersionData"></version-view>
@@ -174,7 +230,7 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     const steps = [
       { name: '任务描述', id: 'activityDesc', btns: [{ title: '查看', eventHandle: 'detailsSettings' }] },
       { name: '输入', id: 'putin', btns: [{ title: '查看', eventHandle: 'detailsSettings', type: 'putin' }] },
@@ -211,7 +267,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     // if (this.getPlanInfo().STATUS === '6070' || this.getPlanInfo().STATUS === '6090' || this.getPlanInfo().pageType === 'view') {
     //   this.steps[2].btns = []
     // }
@@ -247,12 +303,12 @@ export default {
     }
     this.initData()
   },
-  created() {
+  created () {
     let nullity = this.getPlanInfo().NULLITY
     this.nullity = nullity
   },
   methods: {
-    initData() {
+    initData () {
       const _this = this
       const taskId = _this.getPlanInfo().TASKID
       // 输出
@@ -284,13 +340,13 @@ export default {
           if (_this.activityDescData) {
             _this.activityDescData.forEach((item) => {
               if (item.description) {
-                function stripHtmlTags(html) {
+                function stripHtmlTags (html) {
                   return html.replace(/<\/?[^>]+(>|$)/g, '') // 使用正则去除 HTML 标签
                 }
 
                 var plainText = stripHtmlTags(item.description)
 
-                function decodeHtmlEntities(text) {
+                function decodeHtmlEntities (text) {
                   var textarea = document.createElement('textarea')
                   textarea.innerHTML = text
                   return textarea.value
@@ -307,7 +363,7 @@ export default {
           console.error('error-all', err)
         })
     },
-    getActivityDesc() {
+    getActivityDesc () {
       // 获取活动描述
       const _this = this
       const api = 'taskManager.getActivityDescription'
@@ -316,7 +372,7 @@ export default {
         _this.activityDescData = res
       })
     },
-    getOutputIo() {
+    getOutputIo () {
       // 获取输出物
       const _this = this
       const api = 'taskManager.getOutputIo'
@@ -325,7 +381,7 @@ export default {
         _this.outputIoData = res
       })
     },
-    stepsSliderClickHandle(item, index) {
+    stepsSliderClickHandle (item, index) {
       if (item.id === this.selectStepsId) {
         return false
       }
@@ -340,30 +396,30 @@ export default {
       }
       _this.$refs.scrollarea.$el.scrollTop = scrollTotal
     },
-    psScrollYHandle() {
+    psScrollYHandle () {
       // this.selectStepsId = ''
     },
-    psScrollUpHandle(e) {},
-    psScrollDownHandle(e) {},
-    psScrollEndHandle(e) {},
-    detailsSettings(button, stepsItem) {
+    psScrollUpHandle (e) { },
+    psScrollDownHandle (e) { },
+    psScrollEndHandle (e) { },
+    detailsSettings (button, stepsItem) {
       // 查看
       this.drawerTitle = stepsItem.name
       this.drawerVisible = true
       this.drawerViewVisible = stepsItem.id
     },
-    modifyMenu(button, stepsItem) {
+    modifyMenu (button, stepsItem) {
       // 编辑
       this.drawerTitle = stepsItem.name
       this.drawerVisible = true
       this.drawerViewVisible = stepsItem.id
     },
-    onDrawerClose() {
+    onDrawerClose () {
       this.drawerTitle = ''
       this.drawerVisible = false
       this.drawerViewVisible = false
     },
-    editSaveOK(type) {
+    editSaveOK (type) {
       // 输出-抽屉form组件保存后回调
       this.onDrawerClose()
       if (type === 'activityDesc') {
@@ -374,9 +430,9 @@ export default {
       }
     },
     downloadOutputRequsetFile (item) {
-      this.$download(item.attId,item.attFileName)
+      this.$download(item.attId, item.attFileName)
     },
-    saveBlobFile(blob, fileName) {
+    saveBlobFile (blob, fileName) {
       plus.io.resolveLocalFileSystemURL(
         '_downloads/',
         function (entry) {
@@ -594,5 +650,11 @@ $blue-color: #1b8af9;
   max-width: 600px;
   max-height: 600px;
   overflow: auto;
+}
+@media (max-width: 600px) {
+  div.no-info {
+    font-size: 10px;
+    width: 120px;
+  }
 }
 </style>

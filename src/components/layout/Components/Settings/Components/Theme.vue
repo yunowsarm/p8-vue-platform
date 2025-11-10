@@ -122,4 +122,15 @@ export default {
     justify-content: center;
   }
 }
+@media screen and (max-width: 1100px) {
+  .select-theme {
+    display: block;
+    ul {
+      display: block;
+      li {
+        display: inline-block;
+      }
+    }
+  }
+}
 </style>

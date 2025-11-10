@@ -59,7 +59,7 @@
                            @templateMounted="templateMounted" />
 
           <plan-attribute v-if="defaultPercent < 99 && pageType !== 'history'"
-                          :key="renderKey"
+                          ref='planAttribute'
                           @save-success="detailDrawerClosed"
                           :create-page="createPage"
                           :task-id="selectTaskId"
@@ -127,9 +127,9 @@
   // z-index: 2050 !important;
   .top {
     .card-container {
-      ::v-deep .taskGroupContain {
-        min-width: 800px;
-      }
+      // ::v-deep .taskGroupContain {
+      //   min-width: 800px;
+      // }
       ::v-deep .el-tabs__nav-wrap {
         width: calc(100% - 80px);
       }
@@ -404,11 +404,16 @@ export default {
   beforeMount () { },
   created () {
     this.firstEntry = true
-    this.debouncedSetRenderKey = debounce(this.setRenderKey, 300);
+    // this.debouncedSetRenderKey = debounce(this.setRenderKey, 300);
   },
   mounted () {
     if (this.isMobile) {
-      return this.$message.warning('暂不支持，请前往PC端查看')
+      return this.$message({
+        message: '暂不支持，请前往PC端查看',
+        offset: 100,
+        duration: 3000,
+        type: 'warning'
+      })
     }
     if (this.thirdMenuParam.createPage === 'decompose' || this.thirdMenuParam.route === '/MyTask/MyTask/latest') {
       this.planInfoId = this.thirdMenuParam.PLANINFOID
@@ -452,7 +457,7 @@ export default {
       // let myGantt = GanttObject.getGanttObject(this.ganttName)
       // myGantt.updateTask(task.id);
       this.selectTaskId = task.id
-      this.debouncedSetRenderKey(); // 使用防抖函数
+      // this.debouncedSetRenderKey(); // 使用防抖函数
     },
     openLocation () {
       this.dialogVisible = true
@@ -571,7 +576,7 @@ export default {
   },
   beforeDestroy () {
     window.myWebSocket.emit('quitPlanGantGroup', this.msg)
-    this.debouncedSetRenderKey.cancel();
+    // this.debouncedSetRenderKey.cancel();
   }
 }
 </script>

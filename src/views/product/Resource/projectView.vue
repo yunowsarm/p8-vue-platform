@@ -73,6 +73,9 @@
                     </div>
                     <search-form-list style="top: 2px"
                                       ref="search"
+                                      search-width="90%"
+                                      search-contain-width="100%"
+                                      label-width="40px"
                                       :resetAfterToSearch="false"
                                       :dataSource="dataSource"
                                       :addFuzzySearch="true"
@@ -196,7 +199,9 @@
       <el-tab-pane label="预算">
         <budget :configParmars="{
           id:this.id || ''
-        }" isView @close='close'></budget>
+        }"
+                isView
+                @close='close'></budget>
       </el-tab-pane>
     </el-tabs>
     <div v-if="viewVisible"
@@ -428,7 +433,6 @@ export default {
     }
   },
   created () {
-    console.log(this.configParmars,'22222222222222')
     if (this.row && this.row.length) {
       this.id = this.row[0].ID ? this.row[0].ID : this.row[0].id
       this.reportParam.project_id = this.row[0].ID ? this.row[0].ID : this.row[0].id
@@ -455,7 +459,7 @@ export default {
     }
   },
   methods: {
-    close(){
+    close () {
       this.$emit('close')
     },
     // getProjectTeamRoleUsersNum (rolesItem) {
@@ -1075,7 +1079,8 @@ export default {
 }
 .custom_content_wrap {
   display: flex;
-  height: calc(100% - 40px);
+  // height: calc(100% - 40px);
+  height: 100%;
   // padding: 16px;
   box-sizing: border-box;
   .left_content {
@@ -1111,10 +1116,6 @@ export default {
 .normal-nlcr-layout.custom-normal-layout {
   margin: 0;
   height: 90% !important;
-}
-
-.menuLayout.el-container .el-main > div > div {
-  // height: 90%;
 }
 
 /**调整 左中右布局样式 */
@@ -1366,5 +1367,20 @@ export default {
 }
 .normal-layout {
   height: 100% !important;
+}
+@media screen and (max-width: 600px) {
+  .custom_content_wrap {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 50px) !important;
+    overflow: auto;
+    .left_content {
+      width: 100%;
+      margin-left: 0;
+    }
+  }
+  .right-con {
+    width: 100%;
+  }
 }
 </style>
