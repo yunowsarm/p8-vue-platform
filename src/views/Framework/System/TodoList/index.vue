@@ -279,7 +279,9 @@ export default {
 }
 @media screen and (max-width: 1100px) {
   .todoLayout {
-    .splitter-paneL, .splitter-pane-resizer, .splitBtn {
+    .splitter-paneL,
+    .splitter-pane-resizer,
+    .splitBtn {
       display: none;
     }
   }
