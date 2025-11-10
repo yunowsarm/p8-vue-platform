@@ -70,6 +70,7 @@
                           :status="status"
                           :defaultPercent="defaultPercent"
                           @refreshData="refreshData"
+                          @saveBudget='saveBudget'
                           :plan-info-id="planInfoId"></plan-attribute>
         </template>
       </P8SplitPane>
@@ -448,6 +449,9 @@ export default {
     window.myWebSocket.emit('enterPlanGantGroup', this.msg)
   },
   methods: {
+    saveBudget(){
+      this.$refs.planGantt.saveBudget()
+    },
     deleteTaskCallback () {
       this.selectTaskId = ''
       this.closeClick()
