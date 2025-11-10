@@ -1,29 +1,54 @@
 <template>
   <div class="form">
-    <P8Form ref="form" :comp="comp" label-width="120px" :exist-default-btn="false" :exist-custom-btn="true" :data-source="dataSource" :api="saveApi" @saved="saved" :form="formData">
+    <P8Form ref="form"
+            :comp="comp"
+            label-width="120px"
+            :existDefaultBtn="false"
+            :existCustomBtn='true'
+            :data-source="dataSource"
+            :api="saveApi"
+            @saved="saved"
+            :form="formData">
       <template #notice>
         <div :style="{ height: setUserHeight, overflowY: 'auto' }">
           <el-main>
             <ul class="userList">
               <li>
-                <el-button class="selectedBtn" type="link" size="small" icon="user-add" :disabled="formData.notificationScope === '0'" @click="showModal">选择人员</el-button>
+                <el-button class="selectedBtn"
+                           type="link"
+                           size="small"
+                           icon="user-add"
+                           :disabled="formData.notificationScope === '0'"
+                           @click="showModal">选择人员</el-button>
               </li>
-              <li v-for="item in selectedData.userList" :key="item.id">
-                <span>{{ item.realName }} [ {{ item.departmentName }} ]</span>
-                <i class="el-icon-circle-close" @click="deleteUser(item.id)"></i>
+              <li v-for="item in selectedData.userList"
+                  :key="item.id">
+                <span>{{ item.realName }} [ {{ item.departmentName || item.deptName }} ]</span>
+                <i class="el-icon-circle-close"
+                   @click="deleteUser(item.id)"></i>
               </li>
             </ul>
           </el-main>
-          <select-user v-if="visible" :visible="visible" @close-dialog="closeModal" :disabled-row="formData.noticeList" :tree-options="treeOptions"></select-user>
+          <select-user v-if="visible"
+                       :visible="visible"
+                       @close-dialog="closeModal"
+                       :disabled-row="formData.noticeList"
+                       :treeOptions="treeOptions"></select-user>
         </div>
       </template>
       <template #message>
-        <P8Tinymce v-model="formData.content" :editor-config="{ height: '400px' }" />
+        <P8Tinymce v-model="formData.content"
+                   :key="dateTime"
+                   :editorConfig="{height: '400px'}" />
       </template>
       <template #customBtn>
-        <el-button size="mini" @click="cancel">取 消</el-button>
-        <el-button type="primary" size="mini" @click="handleSubmit">确 定</el-button>
+        <el-button size="mini"
+                   @click="cancel">取 消</el-button>
+        <el-button type="primary"
+                   size="mini"
+                   @click="handleSubmit">确 定</el-button>
       </template>
+
     </P8Form>
   </div>
 </template>
@@ -51,18 +76,19 @@ export default {
     //   default: ''
     // }
   },
-  data() {
+  data () {
     return {
+      dateTime: new Date().getTime(),
       treeOptions: {
-        treeApi: 'userManager.deptTree',
+        treeApi: "userManager.deptTree",
         treeParam: {},
         disabledRow: [],
         defaultExpandAll: true,
         defaultExpandedKeys: [],
         treeConfig: {
-          'expand-on-click-node': false,
-          'check-on-click-node': true
-        }
+          "expand-on-click-node": false,
+          "check-on-click-node": true,
+        },
       },
       setUserHeight: 200 + 'px',
       comp: this,
@@ -132,30 +158,29 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     if (this.row) {
-      this.$api['documentManagement.selectNotice']({ id: this.row[0].ID }).then((res) => {
+      this.$api['documentManagement.selectNotice']({ id: this.row[0].ID }).then(res => {
         if (res) {
-          if (res.notificationScope === 0) {
-            res.notificationScope = '所有成员'
-          } else {
-            res.notificationScope = '自定义成员'
+          if (res.notificationScope === '1') {
+            this.selectedData.userList = res.noticeList
           }
           this.formData = res
+          this.dateTime = new Date().getTime()
         }
       })
     }
   },
   methods: {
-    showModal() {
+    showModal () {
       this.visible = true
     },
-    closeModal(selectedRows) {
+    closeModal (selectedRows) {
       this.visible = false
       this.selectedData.userList.push(...selectedRows)
       this.formData.noticeList = selectedRows
     },
-    deleteUser(id) {
+    deleteUser (id) {
       this.formData.noticeList.splice(
         this.formData.noticeList.findIndex((v) => v === id),
         1
@@ -165,15 +190,15 @@ export default {
         1
       )
     },
-    saved(params) {
+    saved (params) {
       if (params) {
         this.$emit('close')
       }
     },
-    handleSubmit(e) {
+    handleSubmit (e) {
       this.$refs.form.handleSubmit(e)
     },
-    cancel() {
+    cancel () {
       this.$emit('close')
     }
   }

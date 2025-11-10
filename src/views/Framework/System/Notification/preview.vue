@@ -1,8 +1,15 @@
 <template>
   <div class="form">
-    <P8Form ref="form" :comp="comp" label-width="120px" :exist-default-btn="false" :data-source="dataSource" :form="formData">
+    <P8Form ref="form"
+            :comp="comp"
+            label-width="120px"
+            :existDefaultBtn="false"
+            :data-source="dataSource"
+            :form="formData">
       <template #message>
-        <div class="contentBody border-bottom" v-if="hasHtmlTag(formData.content)" v-html="formData.content"></div>
+        <div class="contentBody border-bottom"
+             v-if="hasHtmlTag(formData.content)"
+             v-html="formData.content"></div>
       </template>
     </P8Form>
   </div>
@@ -19,7 +26,7 @@ export default {
       type: Array
     }
   },
-  data() {
+  data () {
     return {
       setUserHeight: 200 + 'px',
       comp: this,
@@ -41,25 +48,18 @@ export default {
       visible: false
     }
   },
-  mounted() {
-    this.$api['documentManagement.selectNotice']({ id: this.row[0].ID }).then((res) => {
+  mounted () {
+    this.$api['documentManagement.selectNotice']({ id: this.row[0].ID }).then(res => {
       if (res) {
-        if (res.notificationScope) {
-          if (res.notificationScope === '0') {
-            res.notificationScope = '所有成员'
-          } else {
-            res.notificationScope = '自定义成员'
-          }
-        }
         this.formData = res
       }
     })
   },
   methods: {
-    hasHtmlTag(str) {
+    hasHtmlTag (str) {
       return /<[^>]*>/i.test(str)
     },
-    cancel() {
+    cancel () {
       this.$emit('close')
     }
   }
@@ -69,6 +69,8 @@ export default {
 <style scoped lang="scss">
 .form {
   height: 100%;
+  margin: 20px 100px;
+  text-align: center;
 }
 .quill_editor {
   height: 400px;
