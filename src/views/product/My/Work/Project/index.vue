@@ -102,7 +102,7 @@
     left: `${task.startPercent}%`,
     width: `${task.endPercent - task.startPercent}%`
   }">
-                        {{ task.name }}33
+                        {{ task.name }}
                       </div>
                       <div v-else
                            class="task-bar estimate-bar"
@@ -110,7 +110,7 @@
     left: `${task.startPercent}%`,
     width: `${task.endPercent - task.startPercent}%`
   }">
-                        {{ task.name }}44
+                        {{ task.name }}
                       </div>
                     </div>
                   </div>
