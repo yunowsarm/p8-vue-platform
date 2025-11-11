@@ -172,6 +172,11 @@
   opacity: 0;
   pointer-events: none;
 }
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .chapter-list {
+    width: 100px !important; /* 固定目录宽度 */
+  }
+}
 </style>
 <script>
 import VueMarkdown from 'vue-markdown'
