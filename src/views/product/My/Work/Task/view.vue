@@ -329,7 +329,7 @@
 <script>
 import { Input, Button } from 'element-ui'
 import { P8Dialog as CommonDialog, P8ListLayout as ListLayout, P8MenuLayout as MenuLayout } from 'p8-components-ui'
-import List from './Components/myList'
+import List from './Components/list'
 import { removeSession } from '@/service/expands/session'
 export default {
   name: 'TabsNavigationPreview',
