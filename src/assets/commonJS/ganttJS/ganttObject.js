@@ -3309,7 +3309,9 @@ GanttObject.updateTaskNew = function (ganttObject, taskId, vueThis) {
           parTasksIds.forEach((t) => {
             const parT = ganttObject.getTask(t)
             updateforecastDate(parT, ganttObject)
-            ganttObject.updateTask(t)
+            setTimeout(() => {
+              ganttObject.updateTask(t)
+            }, 1000)
           })
         }
       }
