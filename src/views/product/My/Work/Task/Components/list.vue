@@ -740,18 +740,18 @@ export default {
       return calculateRemainingDays(row).text
     },
     async init () {
-      // const extendColumn = await this.$api['taskManager.getTaskExtendColumnData']()
-      // console.log(extendColumn,'extendColumn')
-      // this.dynamicColumns = extendColumn.map(item => {
-      //   return {
-      //     align: 'center',
-      //     dataIndex: item.id,
-      //     headerAlign: 'center',
-      //     title: item.name,
-      //     minWidth: 140,
-      //     isDynamic:true
-      //   }
-      // })
+      const extendColumn = await this.$api['taskManager.getTaskExtendColumnData']()
+      console.log(extendColumn, 'extendColumn')
+      this.dynamicColumns = extendColumn.map(item => {
+        return {
+          align: 'center',
+          dataIndex: item.id,
+          headerAlign: 'center',
+          title: item.name,
+          minWidth: 140,
+          isDynamic: true
+        }
+      })
       const that = this
       const code = this.layoutConfig.layoutCode ? this.layoutConfig.layoutCode : this.$route.meta.code
       const version = this.layoutConfig.layoutVersion ? this.layoutConfig.layoutVersion : this.$route.meta.version
