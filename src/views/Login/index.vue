@@ -21,8 +21,7 @@
     <div class="loginContent">
       <div class="login-block">
         <div class="login-contain">
-          <span v-if="innerWidth > 600"
-                class="login-logo"
+          <span class="login-logo"
                 ref="loginLogo"></span>
           <h4 class="login-sysName"
               v-html="system_name"></h4>
