@@ -115,6 +115,10 @@
                  style="margin: 0 5px"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-if='isMobile' @click.native="switchService">
+                <i class="p8 icon-shuaxin"></i>
+                切换服务
+              </el-dropdown-item>
               <el-dropdown-item @click.native="modifyPassword">
                 <i class="p8 icon-modify-password"></i>
                 修改密码
@@ -363,6 +367,13 @@ export default {
     // }
   },
   methods: {
+    switchService(){
+      if(window.plus){
+        plus.storage.removeItem('current_app_service')
+        const w = plus.webview.create('www/config.html','config')
+        w.show()
+      }
+    },
     closeMyApproval () {
       this.visibleProcessDrawer = false
       const vueThis = this.$store.getters.previousThis

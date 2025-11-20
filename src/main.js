@@ -67,12 +67,28 @@ window.addEventListener('resize', () => {
 })
 
 /* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  store,
-  router,
-  components: {
-    App
-  },
-  template: '<App/>'
-})
+function initVue(){
+  new Vue({
+    el: '#app',
+    store,
+    router,
+    components: {
+      App
+    },
+    template: '<App/>'
+  })
+}
+
+if(store.getters.isMobile){
+  document.addEventListener('plusready', function () {
+    const currentAppService = plus.storage.getItem('current_app_service')
+    if(currentAppService){
+      store.commit('SET_TOKEN',JSON.parse(currentAppService).token)
+    }
+    initVue()
+  });
+}else{
+  initVue()
+}
+
+

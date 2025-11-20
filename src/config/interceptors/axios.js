@@ -92,6 +92,14 @@ export function axiosResponseSucessFunc(response) {
             confirmButtonText: '确定',
             type: 'warning',
             callback: (action) => {
+              if(window.plus){
+                const currentAppService = plus.storage.getItem('current_app_service')
+                if(currentAppService){
+                  const service = JSON.parse(currentAppService)
+                  service.token = null
+                  plus.storage.setItem('current_app_service',JSON.stringify(service))
+                }
+              }
               statusManage.reload()
             }
           })

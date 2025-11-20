@@ -28,6 +28,22 @@ export function routerBeforeEachFunc(to, from, next) {
       if (!store.getters.roles) {
         // TODO 还没有权限部分 获取权限列表
         store.dispatch('getUserInfo').then((res) => {
+
+          if(window.plus){
+            const currentAppUrl = plus.storage.getItem('app_url')
+            const currentAppService = {
+              key: store.getters.userId + '_' + currentAppUrl,
+              userName: store.getters.userName,
+              token: store.getters.token,
+              systemName: store.getters.systemName,
+              serviceUrl:currentAppUrl
+            }
+            plus.storage.setItem('current_app_service',JSON.stringify(currentAppService))
+            let serviceHistory = JSON.parse(plus.storage.getItem('app_service_history') || '[]')
+            serviceHistory = serviceHistory.filter(item => item.key !== currentAppService.key)
+            serviceHistory.unshift(currentAppService)
+            plus.storage.setItem('app_service_history',JSON.stringify(serviceHistory))
+          }
           // 保存用户信息到sessionStorage，供新窗口使用
           window.sessionStorage.setItem('userInfo', JSON.stringify(res))
           // 根据获取到的用户权限来构建动态路由表,或者做其他事情;

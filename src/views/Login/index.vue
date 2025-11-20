@@ -61,10 +61,6 @@
                            :loading="isLoginning"
                            @click="login('loginForm')">登录</el-button>
               </el-form-item>
-              <el-form-item v-if='isMobile'>
-                <el-button type='text'
-                           @click="switchService()">切换服务</el-button>
-              </el-form-item>
             </template>
           </el-form>
         </div>
@@ -169,7 +165,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userName', 'systemName','isMobile'])
+    ...mapGetters(['userName', 'systemName'])
   },
   created () {
     if (this.innerWidth < 600) {
@@ -206,9 +202,6 @@ export default {
     }, 1000)
   },
   methods: {
-    switchService(){
-      this.$store.dispatch('switchService')
-    },
     getSystemAbout () {
       this.$api['projectTeamSetting.getSystemAbout']().then(res => {
         if (res) {
@@ -216,7 +209,7 @@ export default {
         }
       })
     },
-    autoLogin () {
+    autoLogin() {
       if (getRequest().token) {
         // url携带参数redirect，login?redirect=login&token=
         // ca信息登录
@@ -255,7 +248,7 @@ export default {
         })
       }
     },
-    login (formName) {
+    login(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.isLoginning = true
@@ -279,7 +272,7 @@ export default {
             userAccount: nameEncryption,
             userPassword: passwordEncryption
           }
-          if(window.plus){
+          if (window.plus) {
             const clientInfo = JSON.parse(plus.storage.getItem('clientInfo'))
             if (clientInfo) {
               params.clientInfo = clientInfo
@@ -345,11 +338,11 @@ export default {
         }
       })
     },
-    resetForm (formName) {
+    resetForm(formName) {
       this.$refs[formName].resetFields()
     },
     // 校验系统是否维护模式  CA校验
-    loginCheckCA () {
+    loginCheckCA() {
       let uploadFileJson = []
       // eslint-disable-next-line no-unused-vars
       let userLoginSign = true
@@ -375,7 +368,7 @@ export default {
             const that = this
             res.systemBackground.map((item) => {
               if (item.id) {
-                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
+                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function(res) {
                   item.filePath = window.URL.createObjectURL(new Blob([res.data]))
                   that.$nextTick(() => {
                     that.$refs.loginWrapper.style.backgroundImage = `url(${item.filePath})`
@@ -390,7 +383,7 @@ export default {
             const that = this
             uploadFileJson.map((item) => {
               if (item.id) {
-                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
+                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function(res) {
                   item.filePath = window.URL.createObjectURL(new Blob([res.data]))
                   that.$nextTick(() => {
                     that.$refs.loginLogo.style.backgroundImage = `url(${item.filePath})`
@@ -431,7 +424,7 @@ export default {
       })
     },
     // 密码框登录
-    loginCheck () {
+    loginCheck() {
       this.$api['SystemSettings.getLoginSetting']().then((res) => {
         if (res) {
           res.settings.forEach((a) => {
@@ -451,7 +444,7 @@ export default {
             const that = this
             res.systemBackground.map((item) => {
               if (item.id) {
-                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
+                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function(res) {
                   item.filePath = window.URL.createObjectURL(new Blob([res.data]))
                   that.$nextTick(() => {
                     that.$refs.loginWrapper.style.backgroundImage = `url(${item.filePath})`
@@ -466,7 +459,7 @@ export default {
             const that = this
             uploadFileJson.map((item) => {
               if (item.id) {
-                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
+                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function(res) {
                   item.filePath = window.URL.createObjectURL(new Blob([res.data]))
                   that.$nextTick(() => {
                     that.$refs.loginLogo.style.backgroundImage = `url(${item.filePath})`
@@ -486,7 +479,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 $login-bg-color: #112c79;
 //$login-primary-color: #102B78;
 $login-primary-color: $base-light-color;
@@ -494,6 +487,7 @@ $login-primary--login-color: #306cf7;
 .p8 {
   color: $theme-color;
 }
+
 .main ::v-deep {
   position: fixed;
   top: 0;
@@ -506,6 +500,7 @@ $login-primary--login-color: #306cf7;
   align-items: center;
   justify-content: flex-start;
   background-size: 100%;
+
   .login-version {
     position: absolute;
     bottom: 5px;
@@ -513,6 +508,7 @@ $login-primary--login-color: #306cf7;
     font-size: 15px;
     color: #cccccc;
   }
+
   .login-wrapper {
     // position: absolute;
     height: 100%;
@@ -524,12 +520,14 @@ $login-primary--login-color: #306cf7;
     background-image: url(../../assets/image/login/new_login_bic.png);
     // opacity: 1;
   }
+
   .loginContent {
     width: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
   }
+
   .login-block {
     // position: absolute;
     // top: 0%;
@@ -549,6 +547,7 @@ $login-primary--login-color: #306cf7;
       flex-direction: column;
       justify-content: space-around;
       position: relative;
+
       .login-logo {
         width: 150px;
         height: 96px;
@@ -572,11 +571,14 @@ $login-primary--login-color: #306cf7;
       .loginForm {
         margin: 0 auto;
         width: 86%;
+
         .el-loading-spinner {
           margin-top: 30px;
+
           i {
             font-size: 70px;
           }
+
           .el-loading-text {
             font-size: 16px;
           }
@@ -620,6 +622,7 @@ $login-primary--login-color: #306cf7;
         line-height: 36px;
         border-radius: 4px;
       }
+
       .el-form-item--small.el-form-item {
         margin-bottom: 18px;
 
@@ -628,6 +631,7 @@ $login-primary--login-color: #306cf7;
           margin-bottom: 10px;
         }
       }
+
       @media screen and (max-width: 1024px) {
         .el-input--small .el-input__inner {
           height: 30px;
@@ -685,12 +689,14 @@ $login-primary--login-color: #306cf7;
 
       .login-contain {
         position: relative;
+
         .login-version {
           position: absolute;
           top: 80px;
           right: -50px;
           font-size: 15px;
         }
+
         .login-logo {
           width: 100px;
           height: 64px;
@@ -735,12 +741,14 @@ $login-primary--login-color: #306cf7;
 
       .login-contain {
         position: relative;
+
         .login-version {
           position: absolute;
           top: 80px;
           right: -50px;
           font-size: 15px;
         }
+
         .login-logo {
           width: 120px;
           height: 76px;
@@ -784,12 +792,14 @@ $login-primary--login-color: #306cf7;
 
       .login-contain {
         position: relative;
+
         .login-version {
           position: absolute;
           top: 130px;
           right: -50px;
           font-size: 15px;
         }
+
         .login-logo {
           width: 140px;
           height: 90px;
