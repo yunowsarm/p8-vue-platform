@@ -186,7 +186,7 @@ export default {
       let that = this
       let id = ''
       if (this.row.length > 0) {
-        id = that.row[0].ID
+        id = that.row[0].ID ? that.row[0].ID : this.row[0].WHOLE_ID
       } else {
         id = this.configParmars.id
       }
@@ -231,7 +231,7 @@ export default {
       let that = this
       let id = ''
       if (this.row.length > 0) {
-        id = that.row[0].ID
+        id = that.row[0].ID ? that.row[0].ID : this.row[0].WHOLE_ID
       } else {
         id = this.configParmars.id
       }

@@ -91,7 +91,7 @@
               <!-- 任务行 - 预估 -->
               <div v-if="item.title === '预估'"
                    class="timeline-rows">
-                <div style="height:65px;overflow: auto;">
+                <div style="height:100%;">
                   <div v-for="(task, index) in estimateTasks"
                        :key="'estimate-' + index"
                        class="timeline-row">
@@ -115,7 +115,7 @@
                     </div>
                   </div>
                 </div>
-                <div style="margin-top: 5px; height:65px;overflow: auto;">
+                <!-- <div style="margin-top: 5px; height:65px;">
                   <div v-for="(task, index) in forecastEstimate"
                        :key="'estimate-' + index"
                        class="timeline-row">
@@ -138,11 +138,11 @@
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> -->
               </div>
               <div v-if="item.title === '基线'"
                    class="timeline-rows">
-                <div style="height:65px;overflow: auto;">
+                <div style="height:100%;">
                   <div v-for="(task, index) in baselineTasks"
                        :key="'baseline-' + index"
                        class="timeline-row-bottom">
@@ -166,7 +166,7 @@
                     </div>
                   </div>
                 </div>
-                <div style="margin-top: 5px; height:65px;overflow: auto;">
+                <!-- <div style="margin-top: 5px; height:65px;">
                   <div v-for="(task, index) in baselineEstimate"
                        :key="'baseline-' + index"
                        class="timeline-row-bottom">
@@ -189,7 +189,7 @@
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
@@ -277,22 +277,22 @@ export default {
 
   },
   mounted () {
-    this.$nextTick(() => {
-      const wrappers = this.$refs.timelineWrapper;
-      if (wrappers) {
-        wrappers.forEach(wrapper => {
-          wrapper.addEventListener('wheel', this.handleWheel, { passive: false });
-        });
-      }
-    });
+    // this.$nextTick(() => {
+    //   const wrappers = this.$refs.timelineWrapper;
+    //   if (wrappers) {
+    //     wrappers.forEach(wrapper => {
+    //       wrapper.addEventListener('wheel', this.handleWheel, { passive: false });
+    //     });
+    //   }
+    // });
   },
   beforeDestroy () {
-    const wrappers = this.$refs.timelineWrapper;
-    if (wrappers) {
-      wrappers.forEach(wrapper => {
-        wrapper.removeEventListener('wheel', this.handleWheel);
-      });
-    }
+    // const wrappers = this.$refs.timelineWrapper;
+    // if (wrappers) {
+    //   wrappers.forEach(wrapper => {
+    //     wrapper.removeEventListener('wheel', this.handleWheel);
+    //   });
+    // }
   },
   methods: {
     btnClick (val) {
@@ -326,6 +326,7 @@ export default {
           })
           res['forecast-estimate'].forEach((item, index) => {
             let obj = item
+            obj.name = obj.name + '(里程碑)'
             if (index === 0) {
               obj.startPercent = 0
             } else {
@@ -338,7 +339,7 @@ export default {
             } else {
               obj.endPercent = this.getDate(item.beginDate, item.endDate)
             }
-            this.forecastEstimate.push(obj)
+            this.estimateTasks.push(obj)
           })
           res.baseline.forEach((item, index) => {
             let obj = item
@@ -358,6 +359,7 @@ export default {
           })
           res['baseline-estimate'].forEach((item, index) => {
             let obj = item
+            obj.name = obj.name + '(里程碑)'
             if (index === 0) {
               obj.startPercent = 0
             } else {
@@ -370,7 +372,7 @@ export default {
             } else {
               obj.endPercent = this.getDate(item.beginDate, item.endDate)
             }
-            this.baselineEstimate.push(obj)
+            this.baselineTasks.push(obj)
           })
         })
         .catch((err) => {
@@ -413,7 +415,7 @@ export default {
   width: 100%;
   flex: 1;
   overflow-x: overlay;
-  overflow-y: hidden; // 新增垂直方向溢出隐藏
+  overflow-y: overlay; // 新增垂直方向溢出隐藏
   box-sizing: border-box;
   height: 210px;
 
@@ -422,19 +424,19 @@ export default {
     height: 80px; // 确保实际内容高度不超过容器
   }
 
-  &::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-    display: none;
-    background: transparent;
-  }
+  // &::-webkit-scrollbar {
+  //   width: 6px;
+  //   height: 6px;
+  //   display: none;
+  //   background: transparent;
+  // }
 
-  &:hover {
-    overflow-x: auto;
-    &::-webkit-scrollbar {
-      display: block;
-    }
-  }
+  // &:hover {
+  //   overflow-x: auto;
+  //   &::-webkit-scrollbar {
+  //     display: block;
+  //   }
+  // }
 }
 
 .timeline {
@@ -593,7 +595,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 130px;
-  overflow: auto;
+  // overflow: auto;
 }
 
 .timeline-row {
@@ -625,8 +627,8 @@ export default {
   flex: 1;
   height: 18px;
   position: relative;
-  overflow: auto;
-  overflow-y: hidden;
+  // overflow: auto;
+  // overflow-y: hidden;
 }
 
 .task-bar {
