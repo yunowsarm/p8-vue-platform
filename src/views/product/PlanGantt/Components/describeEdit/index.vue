@@ -334,7 +334,6 @@ export default {
     ...mapGetters(['vueThis', 'taskStatusLockMap', 'planStatusLockMap'])
   },
   mounted () {
-    console.log(111111111);
     const ganttObject = GanttObject.getGanttObject(this.ganttName)
     const task = ganttObject.getTask(this.taskId)
     this.$api['planGanttManager.getGanttExtendAttr']({ taskId: task.id }).then((res) => {
@@ -343,17 +342,17 @@ export default {
         res.taskExtendList.forEach((item) => {
           if (item.fieldType == 'datepicker') {
             let date = moment(item.fieldValue)
-            if (this.formData['kz' + item.customItem1]) {
+            if (this.formData[item.fieldName]) {
               return
             }
             this.$set(this.formData, item.fieldName, date.isValid() ? moment(date).format('YYYY-MM-DD') : '')
           } else {
-            if (this.formData['kz' + item.customItem1]) {
+            if (this.formData[item.fieldName]) {
               return
             }
-            this.$set(this.formData, 'kz' + item.customItem1, item.fieldValue)
+            this.$set(this.formData, item.fieldName, item.fieldValue)
           }
-          this.$set(this.extraIds, 'kz' + item.customItem1, item.id)
+          this.$set(this.extraIds, item.fieldName, item.id)
         })
       }
     })
@@ -365,13 +364,13 @@ export default {
     this.extraKeys = []
     this.extraMultipleKeys = []
     this.extraList.forEach((extra) => {
-      this.extraKeys.push('kz' + extra.id)
+      this.extraKeys.push(extra.filedName)
       if (extra.filedType == 'treeSingle' || extra.filedType == 'treeMultiple') {
         let multiple = extra.filedType == 'treeSingle' ? false : true
         this.dataSource.push({
           labelText: extra.name,
           type: this.ganttName === 'planGantt' || this.ganttName === 'changeGantt' ? 'treeSelect' : 'view',
-          fieldName: 'kz' + extra.id,
+          fieldName: extra.filedName,
           placeholder: `请选择${extra.name}`,
           colLayout: 'doubleCol',
           defaultExpandAll: true,
@@ -390,7 +389,7 @@ export default {
         this.dataSource.push({
           labelText: extra.name,
           type: this.ganttName === 'planGantt' || this.ganttName === 'changeGantt' ? multiple : 'view',
-          fieldName: 'kz' + extra.id,
+          fieldName: extra.filedName,
           placeholder: `请选择${extra.name}`,
           colLayout: 'doubleCol',
           optionUrl: {
@@ -402,13 +401,13 @@ export default {
         this.dataSource.push({
           labelText: extra.name,
           type: this.ganttName === 'planGantt' || this.ganttName === 'changeGantt' ? extra.filedType : 'view',
-          fieldName: 'kz' + extra.id,
+          fieldName: extra.filedName,
           placeholder: `请输入${extra.name}`,
           colLayout: 'doubleCol'
         })
       }
       if (extra.filedType.includes('Multiple')) {
-        this.extraMultipleKeys.push('kz' + extra.id)
+        this.extraMultipleKeys.push(extra.filedName)
       }
     })
     // 处理默认属性
@@ -443,7 +442,6 @@ export default {
   },
   methods: {
     rendered () {
-      console.log('rednser-----editttttttt')
       if (this.taskId && this.taskId !== '') {
         this.getDescribeData(this.taskId)
       }
@@ -688,9 +686,9 @@ export default {
       if (NewcheckKeys && NewcheckKeys.length) {
         NewcheckKeys.forEach((el) => {
           if (el.filedType == 'selectMultiple' || el.filedType == 'treeMultiple') {
-            that.formData['kz' + el.id] = task['kz' + el.id] ? task['kz' + el.id].split(',') : []
+            that.formData[el.fieldName] = task[el.fieldName] ? task[el.fieldName].split(',') : []
           } else {
-            that.formData['kz' + el.id] = task['kz' + el.id]
+            that.formData[el.fieldName] = task[el.fieldName]
           }
         })
       }
@@ -821,6 +819,7 @@ export default {
               }
               extraData.push(obj)
             })
+            console.log(extraData,'extraData')
             // 保存
             this.$api['planGanttManager.saveGanttExtendAttr']({ taskId: that.taskId, taskExtendRequests: extraData })
             that.$refs.form.submitForm(saveParams, that.saveApi)

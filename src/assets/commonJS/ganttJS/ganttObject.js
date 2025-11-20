@@ -3688,6 +3688,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
             resize: true,
             hide: settingExtra[item.filedName].hide,
             min_width: 120,
+            width: 120,
             editor: checkEdit() ? getEditors(editType, item, item.filedType) : null,
             template: function (task) {
               let result = []
@@ -3715,6 +3716,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
             resize: true,
             hide: settingExtra[item.filedName].hide,
             min_width: 120,
+            width: 120,
             editor: checkEdit() ? { type: editType, map_to: item.filedName } : null,
             template: function (task) {
               let result = task[item.filedName] ? task[item.filedName] : ''
@@ -3729,13 +3731,15 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
         }
         tempColumns.splice(settingExtra[item.filedName].index, 1, initItem)
       } else {
-        tempColumns.push({
+        const index = vueThis.columnSettings.findIndex(column => column.filedName === item.filedName)
+        tempColumns.splice(index,0,{
           name: item.filedName,
           label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
           align: 'center',
           resize: true,
-          hide: true,
+          hide: false,
           min_width: 120,
+          width: 120,
           editor: checkEdit() ? { type: editType, map_to: item.filedName } : null,
           template: function (task) {
             let result = task[item.filedName] ? task[item.filedName] : ''
@@ -3805,8 +3809,9 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
               label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
               align: 'center',
               resize: true,
-              hide: true,
+              hide: false,
               min_width: 120,
+              width: 120,
               editor: checkEdit() ? getEditors(editType, item, item.filedType) : null,
               template: function (task) {
                 let result = []
@@ -3832,8 +3837,9 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
               label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
               align: 'center',
               resize: true,
-              hide: true,
+              hide: false,
               min_width: 120,
+              width: 120,
               editor: checkEdit() ? getEditors(editType, item, item.filedType) : null,
               template: function (task) {
                 let result = task[item.filedName] ? task[item.filedName] : ''
