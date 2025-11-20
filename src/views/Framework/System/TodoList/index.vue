@@ -285,5 +285,11 @@ export default {
       display: none;
     }
   }
+  .normal-layout .normal-main .normal-center {
+    padding-left: 0px;
+  }
+  .normal-layout .normal-main .normalCenterFullHeight {
+    height: calc(100% - 50px);
+  }
 }
 </style>

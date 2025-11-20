@@ -213,8 +213,12 @@
                :width="dialogWidth"
                :before-close="beforeClose">
       <div class="regards-box">
-        <p><span class="regards-font">系统名称:&nbsp;&nbsp;&nbsp;</span><span v-html="systemName"></span></p>
-        <p><span class="regards-font">系统版本:&nbsp;&nbsp;&nbsp;</span>
+        <div style="display: flex;">
+          <div class="regards-font">系统名称:</div>
+          <div v-html="systemName"></div>
+        </div>
+        <div style="display: flex;">
+          <div class="regards-font">系统版本:</div>
           <el-popover placement="top-start"
                       width="230"
                       trigger="hover">
@@ -226,14 +230,17 @@
               p8-vue-smart-widget@{{ packageJson.dependencies['p8-vue-smart-widget'] }}<br />
               p8-gojs@{{ packageJson.dependencies['p8-gojs'] }}<br />
             </p>
-            <span slot="reference">{{ regardsObj.systemVersion }}</span>
+            <div slot="reference">{{ regardsObj.systemVersion }}</div>
           </el-popover>
-        </p>
+        </div>
         <p><span class="regards-font">官网地址:&nbsp;&nbsp;&nbsp;</span><el-button type="text"
                      style="font-size: 15px;"
                      @click="openRZ">www.xardmu.com</el-button></p>
         <p><span class="regards-font">授权终止日期:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.authorizedExpires }}</span></p>
-        <p><span class="regards-font">特征码:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.cpuSerialCode }}</span></p>
+        <div style="display: flex;">
+          <div class="regards-font">特征码:</div>
+          <div>{{ regardsObj.cpuSerialCode }}</div>
+        </div>
         <p v-for="(el,index) in AuthorizationInfoList"
            :key="index">
           <span class="regards-font">{{el.name}}&nbsp;&nbsp;</span><span>{{el.message}}</span>
@@ -722,6 +729,7 @@ div.header_userInfo {
 }
 .regards-font {
   font-weight: bold;
+  width: 80px;
 }
 .icon-size {
   font-size: 16px;
@@ -759,5 +767,10 @@ div.header_userInfo {
 }
 .my_process {
   z-index: 8888;
+}
+@media screen and (max-width: 600px) {
+  .regards-box {
+    padding: 0;
+  }
 }
 </style>

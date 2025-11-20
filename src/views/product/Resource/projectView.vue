@@ -1382,5 +1382,17 @@ export default {
   .right-con {
     width: 100%;
   }
+  .left_bottom_content {
+    flex-direction: column;
+  }
+  .role-con {
+    width: 100%;
+  }
+  .table-con {
+    width: 100%;
+    .common-table-member {
+      height: 400px;
+    }
+  }
 }
 </style>

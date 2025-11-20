@@ -66,8 +66,8 @@
                      :key="dateTime"
                      class="MyTaskList"
                      :dynamic-columns="dynamicColumns"
-                     searchContainWidth="300px"
-                     searchWidth="300px"
+                     searchContainWidth="340px"
+                     searchWidth="50%"
                      :code="componentsConfig.code"
                      :permission-vo="componentsConfig.permissionVo"
                      :west-tree-param="provideParams.searchParams"
@@ -252,11 +252,26 @@
 .is-children {
   margin-left: 0px;
 }
-@media screen and (max-width: 1100px) {
-  ::v-deep .normal-header {
-    .el-input {
-      width: 130px !important;
-    }
+@media screen and (max-width: 1900px) {
+  // ::v-deep .normal-header {
+  //   .el-input {
+  //     width: 130px !important;
+  //   }
+  // }
+  .show-type {
+    display: flex;
+    flex-wrap: wrap;
+    width: 250px;
+    top: 0px;
+    left: 5px;
+  }
+  .el-radio-group {
+    display: flex;
+    flex-direction: column;
+  }
+  ::v-deep .search-wrapper .search-contain {
+    position: absolute;
+    left: -100px !important;
   }
 }
 @media screen and (max-width: 600px) {
@@ -438,6 +453,9 @@ export default {
   computed: {
     isMobile () {
       return this.$store.getters.isMobile
+    },
+    innerWidth () {
+      return window.innerWidth
     },
     thirdMenuData () {
       const currentPath = this.$route.path
