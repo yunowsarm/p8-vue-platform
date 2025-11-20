@@ -50,6 +50,8 @@ export function planGantt(ganttName, vueThis) {
       update: function (data, id) {
         console.log(data)
         const task = ganttObject.getTask(id)
+        task.forecastBeginDate = GanttObject.dateToStr(task.start_date, '%Y-%m-%d', ganttObject)
+        task.forecastEndDate = GanttObject.dateToStr(ganttObject.date.add(task.end_date, -1, 'day'), '%Y-%m-%d', ganttObject)
         if (data.name.length > 1000) {
           data.name = data.name.substring(0, 1000) // 截取前2000个字符
           task.name = data.name
