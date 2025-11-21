@@ -92,6 +92,28 @@ export function planGantt(ganttName, vueThis) {
           // 保存
           api['planGanttManager.saveGanttExtendAttr']({ taskId: task.id, taskExtendRequests: extraData })
         }
+        function updateTaskIndex(data){
+          const oldTaskList = vueThis.oldTaskList
+          const parent = data.parent
+          const affected = new Set()
+          if(parent && ganttObject.isTaskExists(parent)){
+            ganttObject.eachTask((child) => affected.add(child.id), parent)
+          }
+          const newTaskList = Array.from(affected).map((id) => {
+            const t = ganttObject.getTask(id)
+            return {
+              id: t.id,
+              indexNo: ganttObject.getGlobalTaskIndex(id)
+            }
+          })
+          const updateTaskList = newTaskList.filter(newItem => {
+            const oldItem = oldTaskList.find(item => item.id === newItem.id)
+            return oldItem && oldItem.indexNo !== newItem.indexNo
+          })
+          api['planGanttManager.updateTaskIndex']({planGanttRequestList:updateTaskList}).then(res => {
+            console.log(res,'res')
+          })
+        }
         api['planGanttManager.updatePlanGanttData']({
           // pId: secretGrade,
           // id: task.secretGrade,
@@ -109,6 +131,9 @@ export function planGantt(ganttName, vueThis) {
               ganttObject.eachTask((task) => {
                 ganttDatas.tasks.push(task)
               })
+              if(data.updateType === 'drag'){
+                updateTaskIndex(data)
+              }
               vueThis.$store.dispatch('setGanttDatas', ganttDatas)
               if (vueThis.fullscreen && task.parent) {
                 api['planGanttManager.getSameTaskIndex']({
