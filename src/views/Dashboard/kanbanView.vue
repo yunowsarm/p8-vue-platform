@@ -6,7 +6,7 @@
     <template v-for="(item,index) in renderKanbanData"
               #[`slot${index}`]>
     </template>
-  </common-tabs> -->
+</common-tabs> -->
   <normal-layout class="normalLayout"
                  :header-visible="headerVisible && searchFormConfig.length > 0"
                  :normal-layout="normalLayout">
@@ -182,7 +182,14 @@ export default {
 
   beforeMount () { },
 
-  mounted () { },
+  mounted () {
+    if (this.$isMobile) {
+      this.widget.forEach((item) => {
+        item.layout.h = 8,
+          item.layout.w = 12
+      })
+    }
+  },
 
   methods: {
     reload () {
@@ -229,15 +236,18 @@ export default {
 <style lang="scss" scoped>
 .custom-tabs.el-tabs--top {
   padding: 0 !important;
+
   ::v-deep .el-tabs__content {
     padding: 0;
   }
 }
+
 .normalLayout {
-  ::v-deep .splitter-pane-resizer{
+  ::v-deep .splitter-pane-resizer {
     display: none;
   }
 }
+
 // .vxeScroll ::v-deep .grid-table-render .vxe-table--body-wrapper {
 //   overscroll-behavior: contain;
 //   pointer-events: none;

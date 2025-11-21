@@ -360,5 +360,13 @@ export default {
   .content-box {
     width: 33% !important;
   }
+  .activeStyle {
+    border: 0;
+    padding: 0;
+    text-align: center;
+  }
+  .iconfont {
+    font-size: 40px;
+  }
 }
 </style>

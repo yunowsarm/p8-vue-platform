@@ -81,8 +81,8 @@
                      size="100%"
                      @close="isVisiblePDFdrawer = false">
         <template #drawer>
-          <mdPreview v-if="isVisiblePDFdrawer"
-                     :record="record"></mdPreview>
+          <PDFpreview v-if="isVisiblePDFdrawer"
+                      :record="record"></PDFpreview>
         </template>
       </common-drawer>
     </template>
@@ -97,7 +97,6 @@ import {
   P8Search as SearchFormList,
 } from 'p8-components-ui'
 import videoViewing from './components/videoPlayer.vue'
-import mdPreview from '@/views/Framework/System/guiDe/components/mdPreview.vue'
 import PDFpreview from './components/PDFpreview.vue'
 export default {
   name: 'myNetworkDisk',
@@ -107,8 +106,7 @@ export default {
     CommonDrawer,
     SearchFormList,
     videoViewing,
-    PDFpreview,
-    mdPreview
+    PDFpreview
   },
   props: {
   },
@@ -239,22 +237,22 @@ export default {
       })
     },
     openManual (row) {
-      // let that = this
-      // this.$api['SystemSettings.selectResourcesByMenuId']({ menuId: row.id }).then(res => {
-      this.record = row
-      //   if ((res.mTitle && res.mTitle.length) || res.mURL) {
-      this.isVisiblePDFdrawer = true
-      //   } else {
-      //     that.$message.warning('当前菜单暂无操作手册')
-      //   }
-      // })
+      let that = this
+      this.$api['SystemSettings.selectResourcesByMenuId']({ menuId: row.id }).then(res => {
+        this.record = res
+        if ((res.mTitle && res.mTitle.length) || res.mURL) {
+          this.isVisiblePDFdrawer = true
+        } else {
+          that.$message.warning('当前菜单暂无操作手册')
+        }
+      })
     }
   }
 }
 </script>
 <style lang="scss" scoped>
 .listLayout {
-  min-width: 500px;
+  min-width: 300px;
   padding: 0;
   margin: 0;
   height: 100%;
@@ -271,6 +269,14 @@ export default {
   width: 350px !important;
   ::v-deep .search-contain {
     width: 350px !important;
+  }
+}
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .searchList {
+    width: 200px !important;
+    ::v-deep .search-contain {
+      width: 200px !important;
+    }
   }
 }
 </style>

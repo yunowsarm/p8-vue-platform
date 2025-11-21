@@ -12,6 +12,10 @@ export default {
     VxeColumn
   },
   props: {
+    currentRoute: {
+      type: String,
+      default: ''
+    },
     thirdMenuParam: {
       type: Object,
       default: () => {
@@ -112,6 +116,11 @@ export default {
   },
   computed: {
     parentRoute () {
+      if (this.currentRoute === 'myProject') {
+        return 'BudgetManagement'
+      } else if (this.currentRoute === 'projectMonitor') {
+        return 'BudgetAnalysis'
+      }
       const matched = this.$route.matched
       if (matched.length > 1) {
         return matched[matched.length - 2].name
@@ -120,13 +129,15 @@ export default {
     },
     isEdit () {
       const editStatus = ['编制中', '发布驳回']
-      return editStatus.includes(this.thirdMenuParam.BUDGETSTATUSNAME) && this.parentRoute === 'BudgetManagement'
+      return editStatus.includes(this.thirdMenuParam?.BUDGETSTATUSNAME) && this.parentRoute !== 'BudgetAnalysis'
     }
   },
   created () {
+    console.log(this.currentRoute, 'this.currentRoute')
+    console.log(this.thirdMenuParam, 'this.thirdMenuParam')
     if (this.thirdMenuParam) {
-      this.projectId = this.thirdMenuParam.ID
-      this.budgetState = this.thirdMenuParam.BUDGETSTATUSNAME
+      this.projectId = this.thirdMenuParam.ID || this.thirdMenuParam.WHOLEID
+      this.budgetState = this.thirdMenuParam?.BUDGETSTATUSNAME
     }
     if (this.projectId || this.currEntityId) {
       this.getWholeSumBudget()
@@ -231,11 +242,11 @@ export default {
     rowClick (row) {
       this.getTemplateDetail(row.ID)
     },
-    editActivated({row}){
+    editActivated ({ row }) {
       this.oldAmount = row.amount
     },
-    editClosed ({row}) {
-      if(row.amount === this.oldAmount) return
+    editClosed ({ row }) {
+      if (row.amount === this.oldAmount) return
       this.$api['budgetDeclaration.dataCalculation']({ declarationRequests: this.tableData }).then((res) => {
         res.forEach((item) => {
           const node = this.tableData.find((n) => n.subjectBaseid === item.subjectBaseid)
@@ -265,11 +276,11 @@ export default {
         })
       })
     },
-    cellClassName({ row, column }) {
-      if(!this.isEdit) return
+    cellClassName ({ row, column }) {
+      if (!this.isEdit) return
       const classes = []
       if (column.property === 'amount') {
-        if(!((row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && this.isEdit)){
+        if (!((row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && this.isEdit)) {
           classes.push('disabled-cell')
         }
       }
@@ -281,7 +292,7 @@ export default {
 
 <template>
   <div style="height: 100%">
-    <div :class="parentRoute === 'BudgetManagement' ? 'main-table' : 'main-table-analysis'">
+    <div :class="parentRoute !== 'BudgetAnalysis' ? 'main-table' : 'main-table-analysis'">
       <vxe-table border
                  height='100%'
                  keep-source
@@ -420,7 +431,7 @@ export default {
   height: calc(100% - 50px);
   margin: 0;
 }
-::v-deep .disabled-cell{
+::v-deep .disabled-cell {
   background: #f5f5f5;
 }
 </style>

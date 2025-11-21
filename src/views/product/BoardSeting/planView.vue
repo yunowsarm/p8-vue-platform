@@ -24,7 +24,7 @@
 <script>
 import { P8Dialog as CommonDialog } from 'p8-components-ui'
 // import taskList from './taskList.vue'
-import taskList from '@/views/product/My/Work/Task/index.vue'
+import taskList from '@/views/product/My/Work/Task/view.vue'
 export default {
   name: 'userTaskPieChart',
   props: {

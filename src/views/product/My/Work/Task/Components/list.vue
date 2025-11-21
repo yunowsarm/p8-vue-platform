@@ -66,8 +66,8 @@
                      :key="dateTime"
                      class="MyTaskList"
                      :dynamic-columns="dynamicColumns"
-                     searchContainWidth="380px"
-                     searchWidth="380px"
+                     searchContainWidth="340px"
+                     searchWidth="50%"
                      :code="componentsConfig.code"
                      :permission-vo="componentsConfig.permissionVo"
                      :west-tree-param="provideParams.searchParams"
@@ -252,11 +252,26 @@
 .is-children {
   margin-left: 0px;
 }
-@media screen and (max-width: 1100px) {
-  ::v-deep .normal-header {
-    .el-input {
-      width: 130px !important;
-    }
+@media screen and (max-width: 1900px) {
+  // ::v-deep .normal-header {
+  //   .el-input {
+  //     width: 130px !important;
+  //   }
+  // }
+  .show-type {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    width: 250px !important;
+    top: 0px !important;
+    left: 5px !important;
+  }
+  .el-radio-group {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  ::v-deep .search-wrapper .search-contain {
+    position: absolute !important;
+    left: -100px !important;
   }
 }
 @media screen and (max-width: 600px) {
@@ -439,6 +454,9 @@ export default {
     isMobile () {
       return this.$store.getters.isMobile
     },
+    innerWidth () {
+      return window.innerWidth
+    },
     thirdMenuData () {
       const currentPath = this.$route.path
       const rootRouter = this.$store.state.routers.addRouters
@@ -499,6 +517,8 @@ export default {
       this.westTreeParam.isThisMonthTask = '1'
     }
     if (this.isThisMonthTask) {
+      this.isChildren = true
+      this.westTreeParam.isChildren = 'true'
       this.westTreeParam.isThisMonthTask = this.isThisMonthTask
     }
     this.provideParams.searchParams = this.westTreeParam
@@ -741,7 +761,7 @@ export default {
     },
     async init () {
       // const extendColumn = await this.$api['taskManager.getTaskExtendColumnData']()
-      // console.log(extendColumn,'extendColumn')
+      // console.log(extendColumn, 'extendColumn')
       // this.dynamicColumns = extendColumn.map(item => {
       //   return {
       //     align: 'center',
@@ -749,7 +769,7 @@ export default {
       //     headerAlign: 'center',
       //     title: item.name,
       //     minWidth: 140,
-      //     isDynamic:true
+      //     isDynamic: true
       //   }
       // })
       const that = this

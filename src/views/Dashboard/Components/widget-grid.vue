@@ -40,6 +40,8 @@
           <list-layout>
             <template #north>
               <search-form-list ref="searchWidget"
+                                search-width="90%"
+                                search-contain-width="90%"
                                 :data-source="searchWidgetData"
                                 :addFuzzySearch="true"
                                 @search="searchWidget"
@@ -168,6 +170,8 @@
           <list-layout>
             <template #north>
               <search-form-list ref="searchTemplate"
+                                search-width="90%"
+                                search-contain-width="90%"
                                 :data-source="searchTemplateData"
                                 :addFuzzySearch="true"
                                 @search="searchTemplate"
@@ -783,7 +787,7 @@ export default {
               w: width,
               h: height,
               minW: minWidth,
-              minH:minHigh,
+              minH: minHigh,
               i: maxSolt + index + 1
             },
             component: item,
@@ -922,5 +926,8 @@ export default {
     left: 50%;
     transform: translate(-50%, -50%); /* 垂直和水平居中 */
   }
+}
+::v-deep .search-wrapper .search-contain {
+  height: 200px;
 }
 </style>
