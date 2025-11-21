@@ -64,8 +64,6 @@
       </div>
       <P8TableRender ref="tableRender"
                      :key="dateTime"
-                     class="MyTaskList"
-                     :dynamic-columns="dynamicColumns"
                      searchContainWidth="380px"
                      searchWidth="380px"
                      :code="componentsConfig.code"
@@ -234,29 +232,24 @@
 //   font-size: 14px !important;
 //   padding-left: 0px !important;
 // }
-.el-radio {
-  margin-right: 10px !important;
-}
-::v-deep .el-radio__label {
-  font-size: 14px !important;
-  padding-left: 10px !important;
-}
-::v-deep .normal-layout .normal-header {
-  height: 70px !important;
-}
-.show-type {
-  display: flex;
-  flex-wrap: wrap;
-  width: 350px;
-}
-.is-children {
-  margin-left: 0px;
-}
-@media screen and (max-width: 1100px) {
-  ::v-deep .normal-header {
-    .el-input {
-      width: 130px !important;
-    }
+@media screen and (max-width: 1440px) {
+  .el-radio {
+    margin-right: 10px !important;
+  }
+  ::v-deep .el-radio__label {
+    font-size: 14px !important;
+    padding-left: 10px !important;
+  }
+  ::v-deep .normal-layout .normal-header {
+    height: 70px !important;
+  }
+  .show-type {
+    display: flex;
+    flex-wrap: wrap;
+    width: 350px;
+  }
+  .is-children {
+    margin-left: 0px;
   }
 }
 @media screen and (max-width: 600px) {
@@ -281,6 +274,13 @@
   }
   .MyTaskList ::v-deep .normal-main {
     height: calc(100% - 45px) !important;
+  }
+}
+@media screen and (max-width: 1100px) {
+  ::v-deep .normal-header {
+    .el-input {
+      width: 100% !important;
+    }
   }
 }
 @media screen and (min-width: 300px) and (max-width: 600px) {
@@ -324,7 +324,7 @@ import { getSession, setSession } from '@/service/expands/session'
 import { getMonitorData, getBudgetData } from '@/components/workLayout/Components/projectProgress/Components/layoutData'
 
 export default {
-  name: 'ButtonNavigationView',
+  name: 'ButtonNavigationList',
   provide () {
     return {
       provideParams: this.provideParams
@@ -494,11 +494,11 @@ export default {
     this.westTreeParam.isChildren = 'false'
     this.westTreeParam.status = this.status
     if (this.isFromDashboard) {
-      this.isChildren = true
-      this.westTreeParam.isChildren = 'true'
       this.westTreeParam.isThisMonthTask = '1'
     }
     if (this.isThisMonthTask) {
+      this.isChildren = true
+      this.westTreeParam.isChildren = 'true'
       this.westTreeParam.isThisMonthTask = this.isThisMonthTask
     }
     this.provideParams.searchParams = this.westTreeParam

@@ -529,7 +529,13 @@ export const repositoryApi = {
       mockPath: '/product/pm/subject/taskBudget/queryDeclaration',
       desc: '项目管理->计划管理-> 获取预算模板（科目列表）'
     },
-
+    {
+      name: 'updateTaskIndex',
+      method: 'POST',
+      path: '/product/pm/plan/updateTaskIndex',
+      mockPath: '/product/pm/plan/updateTaskIndex',
+      desc: '项目管理->计划管理-> 更新gantt列表排序'
+    },
     {
       name: 'getPoolInfoByTaskId',
       method: 'POST',

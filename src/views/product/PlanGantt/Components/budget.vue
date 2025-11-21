@@ -206,7 +206,7 @@ export default {
         ></vxe-column>
       </vxe-table>
     </div>
-    <div class="button-area">
+    <div v-if='!view' class="button-area">
       <el-button type="primary" @click="save">保存</el-button>
     </div>
   </div>

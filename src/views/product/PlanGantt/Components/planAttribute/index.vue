@@ -220,7 +220,7 @@
       <!--   预算填报   -->
       <template #budget>
         <div>
-          <budget :key='taskId' ref='budget' :task-id="taskId" :view='!isChangeView'>
+          <budget :key='taskId' ref='budget' :task-id="taskId" :view='!isChangeView' @save-success='saveBudget'>
           </budget>
         </div>
       </template>
@@ -467,6 +467,9 @@ export default {
     }
   },
   methods: {
+    saveBudget(){
+      this.$emit('saveBudget')
+    },
     getDefaultActive(active){
       this.defaultActive = active
       console.log(this.defaultActive,'this.defaultActive')
