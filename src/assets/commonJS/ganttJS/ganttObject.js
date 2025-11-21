@@ -743,11 +743,40 @@ const cascadeAction = {
  * @date 2020/5/8 19:05
  */
 GanttObject.getActions = function (ganttObject) {
+  // 收集升降级后受影响的任务列表
+  function collectAffectedTasks(taskId, oldParentId, newParentId) {
+    const gantt = ganttObject
+    const affected = new Set()
+    affected.add(taskId)
+    gantt.eachTask((child) => affected.add(child.id), taskId)
+    if (oldParentId && gantt.isTaskExists(oldParentId)) {
+      affected.add(oldParentId)
+      gantt.eachTask((child) => affected.add(child.id), oldParentId)
+    }
+    if (newParentId && gantt.isTaskExists(newParentId)) {
+      affected.add(newParentId)
+      gantt.eachTask((child) => affected.add(child.id), newParentId)
+    }
+    const affectedTasks = Array.from(affected).map((id) => {
+      const t = gantt.getTask(id)
+      return {
+        id: t.id,
+        indexNo: gantt.getGlobalTaskIndex(id)
+      }
+    })
+    // affectedTasks.forEach(task => {
+    //   ganttObject.updateTask(task.id)
+    // })
+    api['planGanttManager.updateTaskIndex']({planGanttRequestList:affectedTasks}).then(res => {
+      console.log(res,'res')
+    })
+  }
+
   return {
     undo: function () {
       ganttObject.ext.undo.undo()
     },
-    indentAction: function indent(taskId) {
+    indentAction: async function indent(taskId) {
       const task = ganttObject.getTask(taskId)
       let prevId = ganttObject.getPrevSibling(taskId)
       while (ganttObject.isSelectedTask(prevId)) {
@@ -757,6 +786,7 @@ GanttObject.getActions = function (ganttObject) {
       }
       if (prevId) {
         const newParent = ganttObject.getTask(prevId)
+        const oldParentId = task.parent
         ganttObject.moveTask(taskId, ganttObject.getChildren(newParent.id).length, newParent.id)
         if (newParent.autoScheduling === '1' && !ganttObject.hasChild(prevId)) {
           newParent.type = 'project'
@@ -769,19 +799,22 @@ GanttObject.getActions = function (ganttObject) {
           newParent.end_date = task.end_date
         }
         updateforecastDate(newParent, ganttObject)
-        ganttObject.updateTask(taskId)
-        ganttObject.updateTask(newParent.id)
+
+        await ganttObject.updateTask(taskId)
+        await ganttObject.updateTask(newParent.id)
+        collectAffectedTasks(taskId, oldParentId, newParent.id)
         return taskId
       }
       return null
     },
-    outdentAction: function outdent(taskId, initialIndexes, initialSiblings) {
+    outdentAction: async function outdent(taskId, initialIndexes, initialSiblings) {
       const curTask = ganttObject.getTask(taskId)
       const oldParent = ganttObject.getTask(curTask.parent)
       const oldParenrPar = oldParent.parent
       ganttObject.ext.undo.saveState(taskId, 'task')
       if (ganttObject.isTaskExists(oldParent.id) && oldParent.id !== ganttObject.config.root_id && oldParenrPar !== ganttObject.config.root_id) {
         // 升级不能升到和根平级
+        const oldParentId = oldParent.id
         let index = ganttObject.getTaskIndex(oldParent.id) + 1
         const prevSibling = initialSiblings[taskId].first
         if (ganttObject.isSelectedTask(prevSibling)) {
@@ -794,12 +827,13 @@ GanttObject.getActions = function (ganttObject) {
         // 添加更新类型
         oldParent.updateType = 'outdent'
         curTask.updateType = 'outdent'
-        ganttObject.updateTask(taskId)
+        await ganttObject.updateTask(taskId)
         // 旧父排程为自动时进度计算
         if (oldParent.autoScheduling === '1') {
           oldParent.progress = GanttObject.calculateProgress(oldParent, ganttObject)
         }
-        ganttObject.updateTask(oldParent.id)
+        await ganttObject.updateTask(oldParent.id)
+        collectAffectedTasks(taskId, oldParentId, curTask.parent)
         return taskId
       }
       return null
@@ -2086,12 +2120,12 @@ GanttObject.updateScheduling = function (ganttObject, vueThis) {
     }
   })
 }
-
 /**
  * @Description 任务不可拖动限制
  * @author fukai
  * @date 2020/5/14 10:30
  */
+
 GanttObject.unMoveTask = function (vueThis, ganttObject) {
   return ganttObject.attachEvent('onBeforeRowDragEnd', function (id, parent, tindex) {
     const task = ganttObject.getTask(id)
@@ -2105,6 +2139,18 @@ GanttObject.unMoveTask = function (vueThis, ganttObject) {
       GanttObject.showMessage(vueThis, '根节点不可拖动！', 'warning')
       return false
     } else {
+      const affected = new Set()
+      if(parent && ganttObject.isTaskExists(parent)){
+        ganttObject.eachTask((child) => affected.add(child.id), parent)
+      }
+      vueThis.oldTaskList = Array.from(affected).map((id) => {
+        const t = ganttObject.getTask(id)
+        return {
+          id: t.id,
+          name: t.name,
+          indexNo: ganttObject.getGlobalTaskIndex(id)
+        }
+      })
       ganttObject.getTask(id).updateType = 'drag'
       // vueThis.fullscreen = true
       // vueThis.fullscreenLoading = vueThis.$loading({
@@ -3688,6 +3734,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
             resize: true,
             hide: settingExtra[item.filedName].hide,
             min_width: 120,
+            width: 120,
             editor: checkEdit() ? getEditors(editType, item, item.filedType) : null,
             template: function (task) {
               let result = []
@@ -3715,6 +3762,7 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
             resize: true,
             hide: settingExtra[item.filedName].hide,
             min_width: 120,
+            width: 120,
             editor: checkEdit() ? { type: editType, map_to: item.filedName } : null,
             template: function (task) {
               let result = task[item.filedName] ? task[item.filedName] : ''
@@ -3729,13 +3777,15 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
         }
         tempColumns.splice(settingExtra[item.filedName].index, 1, initItem)
       } else {
-        tempColumns.push({
+        const index = vueThis.columnSettings.findIndex(column => column.filedName === item.filedName)
+        tempColumns.splice(index,0,{
           name: item.filedName,
           label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
           align: 'center',
           resize: true,
-          hide: true,
+          hide: false,
           min_width: 120,
+          width: 120,
           editor: checkEdit() ? { type: editType, map_to: item.filedName } : null,
           template: function (task) {
             let result = task[item.filedName] ? task[item.filedName] : ''
@@ -3805,8 +3855,9 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
               label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
               align: 'center',
               resize: true,
-              hide: true,
+              hide: false,
               min_width: 120,
+              width: 120,
               editor: checkEdit() ? getEditors(editType, item, item.filedType) : null,
               template: function (task) {
                 let result = []
@@ -3832,8 +3883,9 @@ GanttObject.synchronizationColumns = function (vueThis, ganttObject) {
               label: `<div class='gantt_search'>${item.name}${checkEdit() ? '<i class="el-icon-edit-outline" style="color:#ff0000;"></i>' : ''}</div><div class='gantt_search gantt_blank'></div>`,
               align: 'center',
               resize: true,
-              hide: true,
+              hide: false,
               min_width: 120,
+              width: 120,
               editor: checkEdit() ? getEditors(editType, item, item.filedType) : null,
               template: function (task) {
                 let result = task[item.filedName] ? task[item.filedName] : ''
