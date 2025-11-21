@@ -2113,7 +2113,9 @@ GanttObject.updateScheduling = function (ganttObject, vueThis) {
           parTasksIds.forEach((t) => {
             const parT = ganttObject.getTask(t)
             updateforecastDate(parT, ganttObject)
-            ganttObject.updateTask(t)
+            setTimeout(() => {
+              ganttObject.updateTask(t)
+            }, 1000)
           })
         }
       }
@@ -3309,9 +3311,7 @@ GanttObject.updateTaskNew = function (ganttObject, taskId, vueThis) {
           parTasksIds.forEach((t) => {
             const parT = ganttObject.getTask(t)
             updateforecastDate(parT, ganttObject)
-            setTimeout(() => {
-              ganttObject.updateTask(t)
-            }, 1000)
+            ganttObject.updateTask(t)
           })
         }
       }
