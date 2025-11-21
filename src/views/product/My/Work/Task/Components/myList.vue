@@ -497,6 +497,8 @@ export default {
       this.westTreeParam.isThisMonthTask = '1'
     }
     if (this.isThisMonthTask) {
+      this.isChildren = true
+      this.westTreeParam.isChildren = 'true'
       this.westTreeParam.isThisMonthTask = this.isThisMonthTask
     }
     this.provideParams.searchParams = this.westTreeParam
