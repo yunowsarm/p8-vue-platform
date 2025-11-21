@@ -112,7 +112,7 @@ import customFormTable from './components/customFormTable.vue'
 import templateFormTable from './components/templateFormTable.vue'
 import FormRender from './components/formRender.vue'
 import iframeForm from './components/iframeForm.vue'
-import { defineAsyncComponent, defineComponent } from 'vue'
+// import { defineAsyncComponent, defineComponent } from 'vue'
 
 export default {
   name: 'TaskTabsView',
@@ -260,7 +260,8 @@ export default {
     },
     componentUrl (componentPath) {
       const path = componentPath.startsWith('/') ? componentPath.slice(1) : componentPath
-      return defineComponent(require(`@/views/${path}.vue`).default)
+      // return defineComponent(require(`@/views/${path}.vue`).default)
+      return () => import(`@/views/${path}.vue`)
     },
     initScrollHandler () {
       const tabsEl = this.$refs.tabsContainer.$el
