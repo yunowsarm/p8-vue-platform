@@ -477,6 +477,8 @@ export default {
     this.westTreeParam.isChildren = 'false'
     this.westTreeParam.status = this.status
     if (this.isFromDashboard) {
+      this.isChildren = true
+      this.westTreeParam.isChildren = 'true'
       this.westTreeParam.isThisMonthTask = '1'
     }
     if (this.isThisMonthTask) {
