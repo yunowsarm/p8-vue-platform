@@ -64,6 +64,8 @@
       </div>
       <P8TableRender ref="tableRender"
                      :key="dateTime"
+                     class="MyTaskList"
+                     :dynamic-columns="dynamicColumns"
                      searchContainWidth="300px"
                      searchWidth="300px"
                      :code="componentsConfig.code"
