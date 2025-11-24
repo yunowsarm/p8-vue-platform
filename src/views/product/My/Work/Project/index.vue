@@ -5,7 +5,7 @@
                      style="padding: 10px;">
       <el-button v-for="(btn, index) in btnList"
                  :key="index"
-                 :type="btnType === btn.name ? 'primary' : ''"
+                 :type="btnType === btn.id ? 'primary' : ''"
                  @click="btnClick(btn)">
         {{ btn.name }}
       </el-button>
@@ -268,7 +268,7 @@ export default {
       wholeDescribeId: wholeDescribeId
     }).then(res => {
       if (res) {
-        that.btnType = res[0].name
+        that.btnType = res[0].id
         that.btnList = res
         that.getPlanProgress(res[0].id)
 
@@ -296,7 +296,7 @@ export default {
   },
   methods: {
     btnClick (val) {
-      this.btnType = val.name
+      this.btnType = val.id
       this.getPlanProgress(val.id)
     },
     getPlanProgress (planInfoId) {
