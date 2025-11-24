@@ -43,6 +43,7 @@ export default {
     }
   },
   mounted () {
+    this.$store.dispatch('getAuthorizationInfo')
     window.socketType = null
     document.addEventListener('plusready', function () {
       const info = plus.push.getClientInfo()

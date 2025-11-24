@@ -5,14 +5,15 @@
          ref="loginWrapper">
       <span class="login-version">
         <el-popover placement="top-start"
-                    width="150"
+                    width="220"
                     trigger="hover">
           <p>
-            西安融智软件有限公司<br />
-            www.xardmu.com<br />
-            029-87607380<br />
-            特征码：{{regardsObj.cpuSerialCode}}<br />
+            特征码：{{regardsObj.cpuSerialCode}}
           </p>
+           <p v-for="(el,index) in authorizationInfo"
+              :key="index">
+          <span class="regards-font">{{el.name}}&nbsp;&nbsp;</span><span>{{el.message}}</span>
+        </p>
           <span slot="reference">{{ regardsObj.systemVersion }}</span>
         </el-popover>
       </span>
@@ -166,7 +167,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userName', 'systemName'])
+    ...mapGetters(['userName', 'systemName','authorizationInfo'])
   },
   created () {
     if (this.innerWidth < 600) {

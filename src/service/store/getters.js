@@ -1,5 +1,6 @@
 const getters = {
   // 平台
+  authorizationInfo:(state) => state.platform.authorizationInfo,
   isMobile: (state) => state.platform.isMobile,
   systemTheme: (state) => state.platform.systemTheme,
   theme: (state) => state.platform.theme,
