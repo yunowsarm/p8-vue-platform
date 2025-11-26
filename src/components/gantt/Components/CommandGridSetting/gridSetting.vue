@@ -244,7 +244,9 @@ export default {
         key: _this.ganttName + '-' + _this.createPage,
         type: _this.type
       }).then(res => {
-        _this.$store.commit('SET_SETTING_ALL', {})
+        let userSettingAll = _this.$store.state.user.userSettingAll
+        delete userSettingAll.Gantt
+        _this.$store.commit('SET_SETTING_ALL', userSettingAll)
         _this.$emit('save-setting')
       })
       this.$api['planChange.reloadGantColumn']({
