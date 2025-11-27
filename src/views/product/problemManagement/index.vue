@@ -50,7 +50,7 @@ export default {
       codeForm: 'issueDistribution',
       selectRows: [],
       reportParam: {
-        LINKED_ITEM_WHOLE: this.row[0].WHOLE_ID
+        LINKED_ITEM_WHOLE: this.row[0] ? this.row[0].WHOLE_ID : null
       }
     }
   },
@@ -60,6 +60,7 @@ export default {
       this.selectRows = []
     },
     sendProblem (rows) {
+      console.log("🚀 ~ sendProblem ~ rows11111111111111111:", rows)
       this.selectRows = rows
       if (rows && rows.length) {
         this.dialogVisible = true
