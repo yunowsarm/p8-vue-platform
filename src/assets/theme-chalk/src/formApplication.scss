@@ -45,6 +45,30 @@
         }
       }
     }
+    .p8-upload__text-file-item{
+      display: flex;
+      align-items: center;
+      width: 50%;
+      .file-name{
+        flex: 1;
+        cursor: pointer;
+        color: #606266;
+        font-size: 14px;
+        margin: 0 10px;
+        &:hover {
+          color: #3491FA;
+        }
+      }
+      .file-icon{
+        color: #61ee69;
+      }
+      .file-remove{
+        cursor: pointer;
+        &:hover {
+          color: #f56c6c;
+        }
+      }
+    }
   }
   .masterSlaveTableHeight {
     // min-height: 400px;
