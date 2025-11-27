@@ -352,4 +352,8 @@ div.task-operating-con {
 ::v-deep .group-search {
   height: 110px !important;
 }
+::v-deep .el-button-group {
+  display: inline-block;
+  vertical-align: bottom !important;
+}
 </style>

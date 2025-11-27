@@ -54,6 +54,16 @@
     }
   }
 }
-.el-menu.el-menu--horizontal::-webkit-scrollbar {
-  display: none;
+
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .el-menu.el-menu--horizontal{
+    border-bottom:solid 1px #e6e6e6;
+    overflow-y: hidden;
+    overflow-x: auto;
+    display: flex;
+    width: 90%;
+  }
+  .el-menu.el-menu--horizontal::-webkit-scrollbar {
+    display: none;
+  }
 }

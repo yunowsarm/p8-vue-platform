@@ -44,7 +44,7 @@ export default {
     window.addEventListener('resize', this.fit)
   },
   updated () {
-    this.fit()
+    // this.fit()
   },
   beforeDestroy () {
     window.removeEventListener('resize', this.fit)
