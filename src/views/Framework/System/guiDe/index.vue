@@ -252,7 +252,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .listLayout {
-  min-width: 500px;
+  min-width: 300px;
   padding: 0;
   margin: 0;
   height: 100%;
@@ -269,6 +269,14 @@ export default {
   width: 350px !important;
   ::v-deep .search-contain {
     width: 350px !important;
+  }
+}
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .searchList {
+    width: 200px !important;
+    ::v-deep .search-contain {
+      width: 200px !important;
+    }
   }
 }
 </style>

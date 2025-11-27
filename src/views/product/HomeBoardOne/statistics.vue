@@ -1,18 +1,34 @@
 <template>
-  <div class="statistics-container" ref='container'>
+  <div class="statistics-container"
+       ref='container'>
     <div class="statistics-grid">
-      <div class="statistics-item" v-for="(item, index) in statisticsItems" :key="index" @click="handleItemClick(item)">
+      <div class="statistics-item"
+           v-for="(item, index) in statisticsItems"
+           :key="index"
+           @click="handleItemClick(item)">
         <div class="item-title">{{ item.title }}</div>
         <div class="item-info">
-          <i :class="item.icon" class="item-icon"></i>
-          <div class="item-count" :class="{'redText': item.count > 0}">{{ item.count }}</div>
+          <i :class="item.icon"
+             class="item-icon"></i>
+          <div class="item-count"
+               :class="{'redText': item.count > 0}">{{ item.count }}</div>
         </div>
       </div>
     </div>
-    <CommonDialog v-if="visibleMsgDialog" :visible="visibleMsgDialog" :title="dialogName" width="90%" :dialog-height="750" top="5vh" :show-handle-btn="false" @close="visibleMsgDialog = false">
+    <CommonDialog v-if="visibleMsgDialog"
+                  :visible="visibleMsgDialog"
+                  :title="dialogName"
+                  width="90%"
+                  :dialog-height="750"
+                  top="5vh"
+                  :show-handle-btn="false"
+                  @close="visibleMsgDialog = false">
       <template #dialog>
-        <MyTask v-if="comp === 'MyTask'" :layout-config="layoutConfig" :isFromDashboard='true'></MyTask>
-        <component v-else :is="comp"></component>
+        <MyTask v-if="comp === 'MyTask'"
+                :layout-config="layoutConfig"
+                :isFromDashboard='true'></MyTask>
+        <component v-else
+                   :is="comp"></component>
       </template>
     </CommonDialog>
   </div>
@@ -24,7 +40,7 @@ import ProcessApprovalIndex from '@/views/Communication/MyApprove/list.vue'
 import Message from '@/views/Framework/Message'
 import MineToDo from './components/MineToDo.vue'
 import MineQuestion from './components/MineQuestion.vue'
-import MyTask from '@/views/product/My/Work/Task/index.vue'
+import MyTask from '@/views/product/My/Work/Task/view.vue'
 
 export default {
   name: 'Statistics',
@@ -36,7 +52,7 @@ export default {
     MyTask,
     MineQuestion
   },
-  data() {
+  data () {
     return {
       layoutConfig: {
         layoutCode: 'MyTask',
@@ -84,11 +100,11 @@ export default {
       ]
     }
   },
-  created() {
+  created () {
     this.getHomeBoardData()
   },
   methods: {
-    getHomeBoardData() {
+    getHomeBoardData () {
       this.$api['formGenerator.tableApply']({
         sqlParam: {},
         reportId: 'ffd55ca4c4674613c623a6d217d1d2f8',
@@ -115,7 +131,7 @@ export default {
         }
       })
     },
-    handleItemClick(item) {
+    handleItemClick (item) {
       this.dialogName = item.dialogName
       this.comp = item.comp
       this.visibleMsgDialog = true
@@ -149,7 +165,7 @@ export default {
     justify-content: center;
 
     .item-title {
-      font-size: clamp(12px,1vw,18px);
+      font-size: clamp(12px, 1vw, 18px);
       font-weight: bold;
       color: #333;
       margin-bottom: 0.5vw;
@@ -163,17 +179,17 @@ export default {
       //margin-top: 0.8vw;
 
       .item-icon {
-        font-size: clamp(24px,2vw,40px);
+        font-size: clamp(24px, 2vw, 40px);
         color: #409eff;
         margin-right: 1vw;
       }
 
       .item-count {
-        font-size: clamp(16px,1.5vw,28px);
+        font-size: clamp(16px, 1.5vw, 28px);
         color: #409eff;
         font-weight: bold;
       }
-      .redText{
+      .redText {
         color: #f56c6c;
       }
     }

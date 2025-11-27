@@ -1,5 +1,6 @@
 <template>
-  <normal-layout :normalLayout="normalLayout"
+  <normal-layout v-if="!$isMobile"
+                 :normalLayout="normalLayout"
                  :header-visible="false"
                  layoutCode='ROLE_CLASSIFY'
                  :splitDefaultLeftWidth="22">

@@ -12,6 +12,10 @@ export default {
     VxeColumn
   },
   props: {
+    currentRoute: {
+      type: String,
+      default: ''
+    },
     thirdMenuParam: {
       type: Object,
       default: () => {
@@ -112,6 +116,11 @@ export default {
   },
   computed: {
     parentRoute () {
+      if (this.currentRoute === 'myProject') {
+        return 'BudgetManagement'
+      } else if (this.currentRoute === 'projectMonitor') {
+        return 'BudgetAnalysis'
+      }
       const matched = this.$route.matched
       if (matched.length > 1) {
         return matched[matched.length - 2].name
@@ -124,6 +133,8 @@ export default {
     }
   },
   created () {
+    console.log(this.currentRoute, 'this.currentRoute')
+    console.log(this.thirdMenuParam, 'this.thirdMenuParam')
     if (this.thirdMenuParam) {
       this.projectId = this.thirdMenuParam.ID
       this.budgetState = this.thirdMenuParam.BUDGETSTATUSNAME
@@ -231,11 +242,11 @@ export default {
     rowClick (row) {
       this.getTemplateDetail(row.ID)
     },
-    editActivated({row}){
+    editActivated ({ row }) {
       this.oldAmount = row.amount
     },
-    editClosed ({row}) {
-      if(row.amount === this.oldAmount) return
+    editClosed ({ row }) {
+      if (row.amount === this.oldAmount) return
       this.$api['budgetDeclaration.dataCalculation']({ declarationRequests: this.tableData }).then((res) => {
         res.forEach((item) => {
           const node = this.tableData.find((n) => n.subjectBaseid === item.subjectBaseid)
@@ -265,11 +276,11 @@ export default {
         })
       })
     },
-    cellClassName({ row, column }) {
-      if(!this.isEdit) return
+    cellClassName ({ row, column }) {
+      if (!this.isEdit) return
       const classes = []
       if (column.property === 'amount') {
-        if(!((row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && this.isEdit)){
+        if (!((row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && this.isEdit)) {
           classes.push('disabled-cell')
         }
       }
@@ -358,7 +369,8 @@ export default {
                    @close="handleCancel"
                    :dialogHeight="600">
       <template #dialog>
-        <normal-layout layoutCode="selectBudgetTemplate"
+        <normal-layout v-if="!$isMobile"
+                       layoutCode="selectBudgetTemplate"
                        :split-default-left-width="30"
                        :header-visible="false"
                        :split-layout="true">
@@ -380,6 +392,21 @@ export default {
                           :tree-config="treeConfig"></p8-vxe-table>
           </template>
         </normal-layout>
+        <div v-else>
+          <p8-vxe-table ref="templateTable"
+                        :pagination="false"
+                        :columns="templateColumns"
+                        :noApiTableData="templateList"
+                        :tableConfig="tableConfig"
+                        :row-config="rowConfig"
+                        @row-click="rowClick"></p8-vxe-table>
+          <p8-vxe-table ref="subjectTable"
+                        :pagination="false"
+                        :columns="subjectColumns"
+                        :noApiTableData="subjectList"
+                        :tableConfig="tableConfig"
+                        :tree-config="treeConfig"></p8-vxe-table>
+        </div>
       </template>
     </common-dialog>
   </div>
@@ -420,7 +447,7 @@ export default {
   height: calc(100% - 50px);
   margin: 0;
 }
-::v-deep .disabled-cell{
+::v-deep .disabled-cell {
   background: #f5f5f5;
 }
 </style>

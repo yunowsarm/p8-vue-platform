@@ -91,11 +91,11 @@ export default {
         }
       })
     },
-    editActivated({row}){
+    editActivated ({ row }) {
       this.oldAmount = row.amount
     },
-    editClosed({row}){
-      if(row.amount === this.oldAmount) return
+    editClosed ({ row }) {
+      if (row.amount === this.oldAmount) return
       this.$api['budgetDeclaration.dataCalculation']({ declarationRequests: this.tableData }).then((res) => {
         res.forEach((item) => {
           const node = this.tableData.find((n) => n.subjectBaseid === item.subjectBaseid)
@@ -135,11 +135,11 @@ export default {
         }
       })
     },
-    cellClassName({ row, column }) {
-      if(this.currEntityId) return
+    cellClassName ({ row, column }) {
+      if (this.currEntityId) return
       const classes = []
       if (column.property === 'amount') {
-        if(!((row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && !this.currEntityId)){
+        if (!((row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && !this.currEntityId)) {
           classes.push('disabled-cell')
         }
       }
@@ -170,13 +170,16 @@ export default {
                       width="50"></vxe-column>
           <vxe-column field="name"
                       title="科目名称"
+                      min-width="150px"
                       tree-node
                       align="left"
                       header-align="center"></vxe-column>
           <vxe-column field="amountOld"
+                      min-width="150px"
                       title="原预算金额"></vxe-column>
           <vxe-column field="amount"
                       title="变更预算金额"
+                      min-width="150px"
                       :edit-render="{
             name: 'VxeNumberInput',
             immediate: true,
@@ -188,6 +191,7 @@ export default {
             }
           }"></vxe-column>
           <vxe-column field="type"
+                      min-width="150px"
                       title="变更类型">
             <template #default="{ row }">
               <span>{{ row.type }}</span>
@@ -230,6 +234,7 @@ export default {
   height: calc(100% - 50px);
   display: flex;
   flex-direction: column;
+  overflow: auto;
 }
 .main-table {
   height: 75%;
@@ -246,7 +251,7 @@ export default {
   text-align: end;
   padding: 8px;
 }
-::v-deep .disabled-cell{
+::v-deep .disabled-cell {
   background: #f5f5f5;
 }
 </style>
