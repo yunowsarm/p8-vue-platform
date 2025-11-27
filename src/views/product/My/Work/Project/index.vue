@@ -1,0 +1,505 @@
+<template>
+  <div style="height: 100%;">
+    <el-button-group v-if="btnList.length > 0"
+                     v-model="btnType"
+                     style="padding: 10px;">
+      <el-button v-for="(btn, index) in btnList"
+                 :key="index"
+                 :type="btnType === btn.name ? 'primary' : ''"
+                 @click="btnClick(btn)">
+        {{ btn.name }}
+      </el-button>
+    </el-button-group>
+    <div class="plan-progress">
+      <!-- 时间轴刻度 -->
+      <!-- <div class="timeline-axis">
+        <div v-for="(month, index) in months"
+             :key="index"
+             class="axis-tick"
+             :style="{ left: `${(index / (months.length - 1)) * 100}%` }">
+          <span class="tick-label">{{ month }}</span>
+          <div class="tick-line"></div>
+        </div>
+      </div> -->
+      <div class="progress-item"
+           v-for="(item, index) in data"
+           :key="index">
+        <div style="display: flex;">
+          <div class="title">{{ item.title }}</div>
+          <div class="timeline-wrapper"
+               ref="timelineWrapper">
+            <div class="timeline">
+              <div class="timeline-item"
+                   v-for="(timelineItem, timelineIndex) in item.list"
+                   :key="timelineIndex">
+                <div class="timeline-item-tail"
+                     v-if="timelineIndex !== item.list.length - 1"
+                     :style="{ backgroundColor: item.title === '预估' ? '#4285f4' : '#61cdb4' }"></div>
+                <div class="progress-line"
+                     v-if="timelineIndex !== item.list.length - 1 && timelineItem.status === '6050'"
+                     :style="{ width: `${timelineItem.progress * 100}%`, backgroundColor: '#4285f4' }"></div>
+                <div class="timeline-item-node"
+                     :style="{ backgroundColor: item.title === '预估' ? '#4285f4' : '#61cdb4' }"></div>
+                <div class="timeline-item-content">
+                  <div class="timeline-item-name"
+                       :title="timelineItem.name">
+                    {{ timelineItem.name }}
+                  </div>
+                  <div class="timeline-item-date">
+                    {{ timelineItem.beginDate }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="timeline-container">
+
+              <!-- 任务行 - 预估 -->
+              <div v-if="item.title === '预估'"
+                   class="timeline-rows">
+                <div v-for="(task, index) in estimateTasks"
+                     :key="'estimate-' + index"
+                     class="timeline-row">
+                  <div class="task-bar-container">
+                    <div v-if="index / 2 !== 1 && index !== 0"
+                         class="task-bar estimate-bar flex-pos"
+                         :style="{
+    left: `${task.startPercent}%`,
+    width: `${task.endPercent - task.startPercent}%`
+  }">
+                      {{ task.name }}
+                    </div>
+                    <div v-else
+                         class="task-bar estimate-bar"
+                         :style="{
+    left: `${task.startPercent}%`,
+    width: `${task.endPercent - task.startPercent}%`
+  }">
+                      {{ task.name }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-if="item.title === '基线'"
+                   class="timeline-rows">
+                <!-- 任务行 - 基线 -->
+                <div v-for="(task, index) in baselineTasks"
+                     :key="'baseline-' + index"
+                     class="timeline-row-bottom">
+                  <div class="task-bar-container">
+                    <div v-if="index / 2 !== 1 && index !== 0"
+                         class="task-bar baseline-bar flex-pos"
+                         :style="{
+    left: `${task.startPercent}%`,
+    width: `${task.endPercent - task.startPercent}%`
+  }">
+                      {{ task.name }}
+                    </div>
+                    <div v-else
+                         class="task-bar baseline-bar"
+                         :style="{
+    left: `${task.startPercent}%`,
+    width: `${task.endPercent - task.startPercent}%`
+  }">
+                      {{ task.name }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- 图例 -->
+    <div class="timeline-legend">
+      <div class="legend-item">
+        <div class="legend-color estimate-color"></div>
+        <span class="legend-text">预估</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color baseline-color"></div>
+        <span class="legend-text">基线</span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'PlanProgress',
+  inject: ['provideParams'],
+  props: {
+    row: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    }
+  },
+  data () {
+    return {
+      data: [
+        {
+          title: '预估',
+          list: []
+        },
+        {
+          title: '基线',
+          list: []
+        }
+      ],
+      btnList: [],
+      btnType: '',
+      // 时间轴月份
+      // months: ['2025-01', '2025-04', '2025-07', '2025-10', '2026-01', '2026-04'],
+
+      // 预估任务数据（百分比基于整个时间轴）
+      estimateTasks: [
+        // { name: '需求分析', startPercent: 10, endPercent: 30 },
+        // { name: '系统统计', startPercent: 25, endPercent: 50 },
+        // { name: '开发实现', startPercent: 45, endPercent: 80 },
+        // { name: '测试验证', startPercent: 70, endPercent: 100 }
+      ],
+
+      // 基线任务数据
+      baselineTasks: [
+        // { name: '项目启动', startPercent: 0, endPercent: 20 },
+        // { name: '需求确认', startPercent: 20, endPercent: 45 },
+        // { name: '系统开发', startPercent: 45, endPercent: 70 },
+        // { name: '验收测试', startPercent: 70, endPercent: 100 }
+      ]
+    }
+  },
+  computed: {
+  },
+  async created () {
+    this.$watch('provideParams.searchParams', (val) => { }, {
+      deep: true
+    })
+    let that = this
+    let wholeDescribeId = this.row[0].WHOLE_ID
+    await this.$api['planInfoManager.selectPlanByWholeId']({
+      wholeDescribeId: wholeDescribeId
+    }).then(res => {
+      if (res) {
+        that.btnType = res[0].name
+        that.btnList = res
+        that.getPlanProgress(res[0].id)
+
+      }
+    })
+
+  },
+  mounted () {
+    this.$nextTick(() => {
+      const wrappers = this.$refs.timelineWrapper;
+      if (wrappers) {
+        wrappers.forEach(wrapper => {
+          wrapper.addEventListener('wheel', this.handleWheel, { passive: false });
+        });
+      }
+    });
+  },
+  beforeDestroy () {
+    const wrappers = this.$refs.timelineWrapper;
+    if (wrappers) {
+      wrappers.forEach(wrapper => {
+        wrapper.removeEventListener('wheel', this.handleWheel);
+      });
+    }
+  },
+  methods: {
+    btnClick (val) {
+      console.log("🚀 ~ btnClick ~ val:", val)
+      this.btnType = val.name
+      this.getPlanProgress(val.id)
+
+    },
+    getPlanProgress (planInfoId) {
+      this.estimateTasks = []
+      this.baselineTasks = []
+      this.$api['planInfoManager.loadPlanProgressSituation']({ planInfoId: planInfoId })
+        .then((res) => {
+          this.data[0].list = res.forecast
+          this.data[1].list = res.baseline
+          res.forecast.forEach((item, index) => {
+            let obj = {}
+            obj.name = item.name
+            if (index === 0) {
+              obj.startPercent = 0
+              obj.endPercent = this.getDate(item.beginDate, item.endDate)
+            } else {
+              obj.startPercent = this.getDate(res.forecast[index - 1].beginDate, item.beginDate) + this.estimateTasks[index - 1].startPercent
+              obj.endPercent = this.getDate(item.beginDate, item.endDate)
+              // obj.startPercent = this.getDate(res.forecast[index - 1].beginDate, item.beginDate) + this.estimateTasks[index - 1].startPercent
+              // obj.endPercent = this.getDate(item.beginDate, item.endDate) + this.estimateTasks[index - 1].endPercent
+            }
+            this.estimateTasks.push(obj)
+          })
+          res.baseline.forEach((item, index) => {
+            let obj = {}
+            obj.name = item.name
+            if (index === 0) {
+              obj.startPercent = 0
+              obj.endPercent = this.getDate(item.beginDate, item.endDate)
+            } else {
+              obj.startPercent = this.getDate(res.baseline[index - 1].beginDate, item.beginDate)
+
+
+              obj.endPercent = this.getDate(item.beginDate, item.endDate)
+              // obj.startPercent = this.getDate(res.baseline[index - 1].beginDate, item.beginDate) + this.baselineTasks[index - 1].startPercent
+              // obj.endPercent = this.getDate(item.beginDate, item.endDate) + this.baselineTasks[index - 1].endPercent
+            }
+            this.baselineTasks.push(obj)
+          })
+        })
+        .catch((err) => {
+          console.log(err, 'err')
+        })
+    },
+    getDate (start, end) {
+      const timeDiff = new Date(end).getTime() - new Date(start).getTime()
+      return Math.floor(timeDiff / (1000 * 60 * 60 * 24))
+    },
+    handleWheel (e) {
+      e.preventDefault();
+      const wrapper = e.currentTarget;
+      wrapper.scrollLeft += e.deltaY;
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.plan-progress {
+  height: 90%;
+  box-sizing: border-box;
+  padding: 20px 80px;
+}
+.progress-item {
+  width: 100%;
+  display: flex;
+  padding: 30px 0 0; // 调整上下间距
+  flex-direction: column;
+}
+
+.title {
+  font-size: 24px;
+  margin-right: 20px; // 增加标题右侧间距
+  font-weight: bold;
+  padding-top: 8px; // 标题垂直对齐
+}
+.timeline-wrapper {
+  width: 100%;
+  flex: 1;
+  overflow-x: overlay;
+  overflow-y: hidden; // 新增垂直方向溢出隐藏
+  box-sizing: border-box;
+  height: 130px;
+
+  // 调整时间轴实际高度
+  .timeline {
+    height: 80px; // 确保实际内容高度不超过容器
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    display: none;
+    background: transparent;
+  }
+
+  &:hover {
+    overflow-x: auto;
+    &::-webkit-scrollbar {
+      display: block;
+    }
+  }
+}
+
+.timeline {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  min-width: fit-content;
+  height: 100px; // 增加时间轴整体高度
+
+  .timeline-item {
+    margin-top: 12px;
+    position: relative;
+    width: 250px;
+    min-width: 250px;
+
+    &:last-child {
+      width: auto;
+      min-width: auto;
+    }
+    // 移除了 padding: 0 15px;
+
+    .timeline-item-node {
+      position: absolute;
+      left: 0; // 修改圆点位置
+      top: 0;
+      width: 12px;
+      height: 12px;
+      background: $theme-color;
+      border-radius: 50%;
+    }
+
+    .timeline-item-tail {
+      position: absolute;
+      top: 5px;
+      left: 12px; // 修改连接线起始位置
+      height: 2px;
+      width: calc(100% - 12px); // 调整连接线宽度
+      background-color: $theme-color-opacity;
+    }
+
+    .timeline-item-content {
+      width: 100%;
+      white-space: nowrap;
+      margin-top: 20px;
+      text-align: start;
+      font-size: 14px;
+      line-height: 20px;
+      padding-right: 20px;
+
+      .timeline-item-name {
+        margin-bottom: 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+.el-button-group {
+  position: absolute;
+  left: 90px;
+}
+.timeline-container {
+  width: 90%;
+  // margin: 20px auto;
+  // padding: 20px;
+  // background-color: #fff;
+  // border-radius: 8px;
+  // box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-title {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.timeline-legend {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+  gap: 30px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+}
+
+.estimate-color {
+  background-color: #4285f4; /* 蓝色 */
+}
+
+.baseline-color {
+  background-color: #61cdb4; /* 红色 */
+}
+
+.legend-text {
+  color: #555;
+  font-size: 14px;
+}
+
+.timeline-axis {
+  position: relative;
+  height: 30px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+}
+
+.axis-tick {
+  position: absolute;
+  bottom: 0;
+  transform: translateX(-50%);
+}
+
+.tick-label {
+  position: absolute;
+  bottom: -25px;
+  font-size: 12px;
+  color: #666;
+  transform: translateX(-50%);
+}
+
+.tick-line {
+  height: 8px;
+  width: 1px;
+  background-color: #ddd;
+  margin-left: 50%;
+}
+
+.timeline-rows {
+  position: relative;
+  // height: 400px;
+}
+
+.timeline-row {
+  height: 40px;
+  width: 100%;
+  position: absolute;
+}
+.timeline-row-bottom {
+  height: 40px;
+  width: 100%;
+}
+.flex-pos {
+  margin-top: 10px;
+}
+.task-name {
+  width: 150px;
+  font-size: 14px;
+  color: #333;
+  padding-right: 10px;
+  text-align: right;
+}
+
+.task-bar-container {
+  flex: 1;
+  height: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.task-bar {
+  position: absolute;
+  height: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 30px;
+  text-align: left;
+}
+
+.estimate-bar {
+  background-color: #4285f4;
+  opacity: 0.8;
+}
+
+.baseline-bar {
+  background-color: #61cdb4;
+  opacity: 0.8;
+}
+</style>

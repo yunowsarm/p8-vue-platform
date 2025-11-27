@@ -223,6 +223,10 @@ export default {
     processDefinitionKey: {
       type: String,
       default: 'planChangeApprove'
+    },
+    pageType: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

@@ -1,0 +1,279 @@
+<template>
+  <left-center-right-layout :percentLeft="25"
+                            :percentRight="100">
+    <template #left>
+      <div class="task-info-con">
+        <pane-view paneTitle="项目计划列表"
+                   icon="p8 icon-renwuxiangxixinxi">
+          <template #paneTitle>
+            <div v-show="isShow"
+                 class="pane-title-right"
+                 @click="arrowClickHandle">
+              <i class="p8 icon-zuoshoujin"
+                 style="color: #79bcfa;"></i>
+            </div>
+            <div v-show="!isShow"
+                 class="pane-title-right"
+                 @click="rightClickHandle">
+              <i class="p8 icon-youshoujin"
+                 style="color: #79bcfa;"></i>
+            </div>
+          </template>
+        </pane-view>
+        <P8TableRender ref="tableRender"
+                       buttonMoreLen=2
+                       @planEdit="planEdit"
+                       :record=row[0]
+                       code="myProjectPlanList">
+          <template #status="{ scope }">
+            <el-tooltip effect="dark"
+                        :content="getIconTitle(scope.row)"
+                        :disabled="toolbarTextDisplay === '1'"
+                        placement="top">
+              <span v-html="getIcon(scope.row)"></span>
+            </el-tooltip>
+          </template>
+          <template #planName="{ scope }">
+            <div class="underline"
+                 @click="thirdMenuClick(scope.row)">{{ scope.row.NAME }}</div>
+          </template>
+        </P8TableRender>
+      </div>
+    </template>
+    <template #center>
+      <div class="task-operating-con">
+        <pane-view :paneTitle="paneTitle"
+                   icon="p8 icon-renwuxiangxixinxi">
+          <template #paneTitle>
+          </template>
+          <template #paneInfo>
+          </template>
+        </pane-view>
+        <PlanGantt :key="dateTime"
+                   v-if="type === 0"
+                   :thirdMenuParam="thirdMenuParam"></PlanGantt>
+        <kanban-view :key="dateTime"
+                     v-if="type === 1"
+                     :kanbanConfig='kanbanConfig'></kanban-view>
+        <ChangeGantt :key="dateTime"
+                     v-if="type === 2"
+                     :thirdMenuParam="thirdMenuParam"
+                     pageType=true></ChangeGantt>
+        <PlanWarning :key="dateTime"
+                     v-if="type === 3"
+                     :thirdMenuParam="thirdMenuParam"
+                     pageType=true></PlanWarning>
+      </div>
+    </template>
+  </left-center-right-layout>
+</template>
+<script>
+import LeftCenterRightLayout from '@/views/product/My/Work/Task/Components/layout/LeftCenterRight'
+import PaneView from '@/views/product/My/Work/Task/Components/layout/Pane/index.vue'
+import PlanGantt from '@/views/product/PlanGantt/index.vue'
+import kanbanView from '@/views/Framework/System/KanbanDesign/kanbanView.vue'
+import ChangeGantt from '@/views/product/ChangeGantt/index.vue'
+import PlanWarning from '@/views/product/PlanWarning/index.vue'
+import FormRender from '@/views/Framework/ComponentsMananger/Form/Components/Components/edit.vue'
+
+export default {
+  name: 'planExecute',
+  props: {
+    row: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    }
+  },
+  data () {
+    return {
+      type: null,
+      paneTitle: '暂无数据',
+      thirdMenuParam: {},
+      isShow: true,
+      manageStatus: {},
+      executeState: {},
+      kanbanConfig: {
+        id: 'e4b81011d70e484ed9ec68bcb92252b3',
+        code: 'ProjectOverview'
+      },
+      toolbarTextDisplay: this.$store.getters.baseConfig.toolbarTextDisplay,
+      dateTime: ''
+    }
+  },
+  computed: {
+  },
+  mounted () {
+    this.getIconData()
+  },
+  methods: {
+    planEdit (val) {
+      this.thirdMenuParam = this.$refs.tableRender.selectRecords[0]
+      this.type = val
+      if (val === 0) {
+        this.paneTitle = '计划编制'
+      }
+      if (val === 1) {
+        this.paneTitle = '计划概况'
+      }
+      if (val === 2) {
+        this.paneTitle = '计划变更'
+      }
+      if (val === 3) {
+        this.paneTitle = '计划预警'
+      }
+      this.dateTime = new Date().getTime()
+    },
+    arrowClickHandle () {
+      this.$bus.$emit('split-pane-left')
+    },
+    rightClickHandle () {
+      this.isShow = true
+    },
+    async getIconData () {
+      // 管理状态
+      let manageStatus = await this.$api['dictionaryManagement.list']({ dicType: 'PLAN_MANAGE_STATUS' })
+      // 执行状态
+      let executeState = await this.$api['dictionaryManagement.list']({ dicType: 'EXECUTE_STATE' })
+      this.manageStatus = {}
+      this.executeState = {}
+      manageStatus.forEach((el) => {
+        this.manageStatus[el.id] = { icon: el.icon, color: el.color, meaning: el.meaning }
+      })
+      executeState.forEach((el) => {
+        this.executeState[el.id] = { icon: el.icon, color: el.color, meaning: el.meaning }
+      })
+    },
+    getIconTitle (row) {
+      let str = ''
+      let el = this.manageStatus[row.MANAGESTATUS]
+      if (row.MANAGESTATUS && el && el.icon) {
+        str = el.meaning
+      } else {
+        let item = this.executeState[row.EXECUTESTATE]
+        if (item && item.icon) {
+          str = item.meaning
+        }
+      }
+      return str
+    },
+    getIcon (row) {
+      let str = ''
+      let el = this.manageStatus[row.MANAGESTATUS]
+      let toolbarTextDisplay = this.toolbarTextDisplay
+      if (toolbarTextDisplay === '0') {
+        toolbarTextDisplay = false
+      } else {
+        toolbarTextDisplay = true
+      }
+      if (row.MANAGESTATUS && el && el.icon) {
+        if (toolbarTextDisplay) {
+          let color = JSON.parse(JSON.stringify(el.color))
+          let arr = color.match(/[\d.]+/g).map(Number)
+          let bgColor = arr.slice(0, -1).concat(0.2).toString()
+          str = `<div style='display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; background: rgba(${bgColor});width: -webkit-fill-available;justify-content: center;'>
+            <span style='color: ${el.color}; font-weight: 500;'>${el.meaning}</span>
+          </div>`
+        } else {
+          str = `<i class='${el.icon}' style='color: ${el.color};'></i>`
+        }
+      } else {
+        let item = this.executeState[row.EXECUTESTATE]
+        if (item && item.icon) {
+          if (toolbarTextDisplay) {
+            let color = JSON.parse(JSON.stringify(item.color))
+            let arr = color.match(/[\d.]+/g).map(Number)
+            let bgColor = arr.slice(0, -1).concat(0.2).toString()
+            str = `<div style='display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; background: rgba(${bgColor});width: -webkit-fill-available;justify-content: center;'>
+            <span style='color: ${item.color}; font-weight: 500;'>${item.meaning}</span>
+          </div>`
+          } else {
+            str = `<i class='${item.icon}' style='color: ${item.color};'></i>`
+          }
+        }
+      }
+      return str
+    },
+    thirdMenuClick (record) {
+      // let item = {}
+      // const currentPath = this.$route.path
+      // const rootRouter = this.$store.state.routers.addRouters
+      // let thirdMenu = []
+      // if (rootRouter && rootRouter.length > 0) {
+      //   rootRouter.map(function (item, index) {
+      //     if (item.children && item.children.length > 0) {
+      //       item.children.map(function (subItem, idx) {
+      //         if (subItem.path === currentPath) {
+      //           thirdMenu = subItem
+      //         }
+      //       })
+      //     }
+      //   })
+      // }
+      // if (thirdMenu.children) {
+      //   thirdMenu.children.forEach((el) => {
+      //     if (el.meta.title == '计划编制') {
+      //       item = el
+      //     }
+      //   })
+      // }
+      // this.$refs.tableRender.thirdMenuClick(record, item)
+    },
+  },
+  components: {
+    LeftCenterRightLayout,
+    PaneView,
+    PlanGantt,
+    kanbanView,
+    ChangeGantt,
+    PlanWarning,
+    FormRender
+  }
+}
+</script>
+<style lang="scss" scoped>
+.msg-box {
+  position: absolute;
+  right: 37px;
+  z-index: 99999;
+  top: 7px;
+  font-size: 20px;
+}
+.secret_level {
+  position: absolute;
+  right: 20px;
+  top: 12px;
+  z-index: 9;
+  font-weight: bolder;
+  // top: 50%;
+  // transform: translateY(-50%);
+  color: red;
+  font-size: larger;
+}
+div.task-info-con {
+  height: 100%;
+  background-color: #ffffff;
+}
+div.task-operating-con {
+  height: 100%;
+  div.task-manage-table {
+    width: 100%;
+    height: 38%;
+    background-color: #ffffff;
+  }
+  div.task-tabs-con {
+    height: 62%;
+    background-color: #ffffff;
+  }
+}
+.pane-title-right {
+  float: right;
+  font-size: 16px;
+}
+.tabsViewLayout ::v-deep .list-main .normal-header {
+  display: contents !important;
+  padding-top: 8px;
+  z-index: 9999;
+}
+</style>
