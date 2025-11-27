@@ -560,6 +560,7 @@ export default {
 .legend-text {
   color: #555;
   font-size: 14px;
+  z-index: 1 !important;
 }
 
 .timeline-axis {

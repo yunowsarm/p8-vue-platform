@@ -4,7 +4,8 @@
       <div class="title">项目总进度</div>
       <div class="amount"
            ref="amount">
-        <div ref="amount-content">
+        <div ref="amount-content"
+             style="font-size: 50px;">
           <span class="income">{{ finishRate }}</span>
         </div>
       </div>
@@ -23,12 +24,13 @@ export default {
       }
     }
   },
+
   data () {
     return {
       finishRate: 0
     }
   },
-  mounted () {
+  created () {
     let wholeDescribeId = ''
     if (this.row) {
       wholeDescribeId = this.row[0].WHOLE_ID
@@ -38,25 +40,24 @@ export default {
         }
       })
     }
-
-    // window.addEventListener('resize', this.fit)
+    window.addEventListener('resize', this.fit)
   },
   updated () {
     // this.fit()
   },
   beforeDestroy () {
-    // window.removeEventListener('resize', this.fit)
+    window.removeEventListener('resize', this.fit)
   },
   methods: {
-    // fit () {
-    //   const amount = this.$refs.amount
-    //   const amountContent = this.$refs['amount-content']
-    //   if (!amount || !amountContent) return
-    //   amountContent.style.transform = "scale(1)"
-    //   const scale = amount.offsetWidth / amountContent.scrollWidth
-    //   amountContent.style.transform = `scale(${scale})`
-    //   amountContent.style.transformOrigin = "center center"
-    // }
+    fit () {
+      const amount = this.$refs.amount
+      const amountContent = this.$refs['amount-content']
+      if (!amount || !amountContent) return
+      amountContent.style.transform = "scale(1)"
+      const scale = amount.offsetWidth / amountContent.scrollWidth
+      amountContent.style.transform = `scale(${scale})`
+      amountContent.style.transformOrigin = "center center"
+    }
   }
 }
 </script>
@@ -99,7 +100,6 @@ export default {
         text-align: end;
         width: 48%;
         color: #67c23a;
-        font-size: 70px;
       }
 
       .separator {

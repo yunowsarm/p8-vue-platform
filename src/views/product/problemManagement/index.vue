@@ -3,6 +3,9 @@
     <template #center>
       <P8TableRender ref="tableRender"
                      code="problemManagement"
+                     specialRoteName='problem_management'
+                     :west-tree-param="reportParam"
+                     :report-param="reportParam"
                      @sendProblem="sendProblem"></P8TableRender>
     </template>
     <template #drawer-panel>
@@ -28,6 +31,14 @@ import { P8ListLayout as ListLayout, P8Button as CommonButton, P8Table as Common
 
 export default {
   name: 'problemManagement',
+  props: {
+    row: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    }
+  },
   data () {
 
     return {
@@ -37,7 +48,10 @@ export default {
       record: {},
       propParam: {},
       codeForm: 'issueDistribution',
-      selectRows: []
+      selectRows: [],
+      reportParam: {
+        LINKED_ITEM_WHOLE: this.row[0].WHOLE_ID
+      }
     }
   },
   methods: {

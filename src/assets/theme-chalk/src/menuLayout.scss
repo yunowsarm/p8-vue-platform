@@ -24,7 +24,6 @@
     }
   }
 }
-
 .el-menu-demo.el-menu--horizontal {
   border-bottom: $base-line-color;
 
@@ -54,4 +53,7 @@
       border-bottom: 2px solid $theme-color !important;
     }
   }
+}
+.el-menu.el-menu--horizontal::-webkit-scrollbar {
+  display: none;
 }

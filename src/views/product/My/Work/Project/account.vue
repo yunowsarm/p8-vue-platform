@@ -4,7 +4,8 @@
       <div class="title">已付/应付</div>
       <div class="amount"
            ref="amount">
-        <div ref="amount-content">
+        <div ref="amount-content"
+             style="font-size: 50px;">
           <span class="income">{{ formatNumber(income) }}</span>
           <span class="separator">/</span>
           <span class="expense">{{ formatNumber(expense) }}</span>
