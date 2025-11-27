@@ -47,21 +47,34 @@
     background-color: $button-disabled-background-color !important;
     border-color: $button-disabled-border-color !important;
   }
+  .el-button-group {
+    .el-button {
 
-}
+      &:first-child {
+        z-index:2;
+        border-right-color: rgba(225, 225, 225, 0.5) !important;
+      }
 
-.el-button-group {
-  .el-button {
-
-    &:first-child {
-      z-index:2;
-      border-right-color: rgba(225, 225, 225, 0.5);
+      &:not(:first-child):not(:last-child) {
+        z-index:2;
+        border-left-color: rgba(225, 225, 225, 0.5) !important;
+        border-right-color: rgba(225, 225, 225, 0.5) !important;
+      }
     }
+    .el-button--primary {
 
-    &:not(:first-child):not(:last-child) {
-      z-index:2;
-      border-left-color: rgba(225, 225, 225, 0.5) !important;
-      border-right-color: rgba(225, 225, 225, 0.5) !important;
+      &:first-child {
+        z-index:2;
+        border-right-color: rgba(225, 225, 225, 0.5) !important;
+      }
+
+      &:not(:first-child):not(:last-child) {
+        z-index:2;
+        border-left-color: rgba(225, 225, 225, 0.5) !important;
+        border-right-color: rgba(225, 225, 225, 0.5) !important;
+      }
     }
   }
 }
+
+
