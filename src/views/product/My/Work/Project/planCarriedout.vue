@@ -21,11 +21,16 @@
           </template>
         </pane-view>
         <P8TableRender ref="tableRender"
+                       :key='tableKey'
                        buttonMoreLen=2
                        @planEdit="planEdit"
                        :pagination="false"
                        :record=row[0]
-                       :code="tableCode">
+                       style="height: calc(100% - 35px) !important;"
+                       :west-tree-param="sqlParam"
+                       :reportParam="sqlParam"
+                       :code="tableCode"
+                       @refresh-data="refreshTable">
           <template #status="{ scope }">
             <el-tooltip effect="dark"
                         :content="getIconTitle(scope.row)"
@@ -51,6 +56,7 @@
           </template>
         </pane-view>
         <PlanGantt :key="dateTime"
+                   style="height: calc(100% - 42px) !important;"
                    v-if="type === 0"
                    :thirdMenuParam="thirdMenuParam"></PlanGantt>
         <kanban-view :key="dateTime"
@@ -99,6 +105,7 @@ export default {
       paneTitle: '暂无数据',
       thirdMenuParam: {},
       isShow: true,
+      sqlParam: {},
       manageStatus: {},
       executeState: {},
       kanbanConfig: {
@@ -107,12 +114,14 @@ export default {
       },
       toolbarTextDisplay: this.$store.getters.baseConfig.toolbarTextDisplay,
       dateTime: '',
+      tableKey: Date.now(),
       pageType: true
     }
   },
   computed: {
   },
-  mounted () {
+  created () {
+    this.sqlParam.wholeDescribeId = this.row[0].WHOLE_ID
     if (this.$route.name === 'projectMonitor') {
       this.tableCode = 'myProjectPlanMonitrorList'
       this.pageType = false
@@ -120,23 +129,49 @@ export default {
       this.tableCode = 'myProjectPlanList'
     }
     this.getIconData()
-    // this.$nextTick(() => {
-    //   console.log(this.$refs.tableRender, '11111111111111111111');
-    //   if (this.$refs.tableRender.$refs.xTable.tableData.length > 0) {
-    //     this.thirdMenuParam = this.$refs.tableRender.$refs.xTable.tableData[0]
-    //     this.type = '0'
-    //     this.paneTitle = '计划编制'
-    //     console.log("🚀 ~ this.$nextTick ~ this.thirdMenuParam:", this.thirdMenuParam)
-    //     this.dateTime = new Date().getTime()
-    //   }
-    // })
+    setTimeout(() => {
+      let record = this.$refs.tableRender.$refs.xTable.tableData[0]
+      this.thirdMenuClick(record)
+    }, 1000)
   },
   methods: {
+    refreshTable () {
+      this.getTableSetting()
+    },
+    getTableSetting () {
+      let tableSettingaAll = this.$store.state.user.userSettingAll.Table ? this.$store.state.user.userSettingAll.Table : null
+      console.log("🚀11111111111111111111", tableSettingaAll)
+      if (tableSettingaAll) {
+        let keyNew = this.$route.path + '.' + 'formGenerator.tableApply' + '.' + this.componentsConfig.code
+        let key = this.$route.path + '.' + 'formGenerator.tableApply'
+        // 需要兼容旧数据
+        let currTableSetting = tableSettingaAll.filter((item) => item.key === keyNew)
+        if (!(currTableSetting && currTableSetting.length)) {
+          currTableSetting = tableSettingaAll.filter((item) => item.key === key)
+        }
+        console.log("22222222222222222222222", currTableSetting)
+        if (currTableSetting && currTableSetting.length) {
+          let columnsSetting = currTableSetting[0].value.columns
+          console.log("🚀 33333333333333333333333", columnsSetting)
+          const toolbarTextDisplayIndex = columnsSetting.findIndex((item) => 'toolbarTextDisplay' in item)
+          console.log("🚀4444444444444444444444444444", toolbarTextDisplayIndex)
+          if (toolbarTextDisplayIndex > -1 && columnsSetting[toolbarTextDisplayIndex].toolbarTextDisplay) {
+            this.toolbarTextDisplay = columnsSetting[toolbarTextDisplayIndex].toolbarTextDisplay
+            console.log("🚀55555555555555555555555 :", this.toolbarTextDisplay)
+          } else {
+            this.toolbarTextDisplay = this.$store.getters.baseConfig.toolbarTextDisplay
+            console.log("66666666666666666666666 :", this.toolbarTextDisplay)
+          }
+        }
+      } else {
+        this.toolbarTextDisplay = this.$store.getters.baseConfig.toolbarTextDisplay
+        console.log(this.toolbarTextDisplay, '777777777777777777777777777777');
+      }
+    },
     planEdit (val) {
       if (this.$refs.tableRender.selectRecords.length > 1) {
         return this.$message.warning('只能选择一条数据')
       }
-
       this.thirdMenuParam = this.$refs.tableRender.selectRecords[0]
       this.type = val
       if (val === 0) {
@@ -193,6 +228,7 @@ export default {
       let str = ''
       let el = this.manageStatus[row.MANAGESTATUS]
       let toolbarTextDisplay = this.toolbarTextDisplay
+      console.log("wwwwwwwwwwwwwwwwwwwwwwwwww:", toolbarTextDisplay)
       if (toolbarTextDisplay === '0') {
         toolbarTextDisplay = false
       } else {
@@ -227,6 +263,7 @@ export default {
       return str
     },
     thirdMenuClick (record) {
+      console.log("🚀 ~ 111111111111111111111111 ~ record:", record)
       this.$refs.tableRender.$refs.xTable.$refs.table.clearCheckboxRow()
       if (this.type === null) {
         if (this.$route.name === 'projectMonitor') {
@@ -238,8 +275,8 @@ export default {
         }
       }
       this.$refs.tableRender.$refs.xTable.$refs.table.setCheckboxRow(record, true)
-      this.thirdMenuParam = record
       this.$refs.tableRender.selectRecords = [record]
+      this.thirdMenuParam = this.$refs.tableRender.selectRecords[0]
       this.dateTime = new Date().getTime()
     },
   },
@@ -298,5 +335,17 @@ div.task-operating-con {
   display: contents !important;
   padding-top: 8px;
   z-index: 9999;
+}
+// ::v-deep .couerDivClass .top .card-container {
+//   height: 130px !important;
+// }
+::v-deep .el-tabs--top .el-tabs__content {
+  height: calc(100% + 44px) !important;
+}
+::v-deep .card-container .el-tab-pane {
+  overflow: hidden !important;
+}
+::v-deep .group-search {
+  height: 110px !important;
 }
 </style>

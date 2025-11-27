@@ -6,6 +6,7 @@
                @click="add">添加预警</el-button>
     <table-render code="PLAN_WARNING"
                   :west-tree-param="reportParam"
+                  style="height: calc(100% - 35px) !important;"
                   :report-param="reportParam"></table-render>
     <common-dialog v-if="warningGrule"
                    :visible="warningGrule"

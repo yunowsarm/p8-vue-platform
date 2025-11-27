@@ -25,21 +25,56 @@
            v-for="(item, index) in data"
            :key="index">
         <div style="display: flex;">
-          <div class="title">{{ item.title }}</div>
+          <div style="display: flex;margin-right: 20px;">
+            <div v-if="item.title === '预估'"
+                 style="margin-top: 15px;margin-right: 5px;"
+                 class="legend-color estimate-color"></div>
+            <div v-if="item.title === '基线'"
+                 style="margin-top: 15px;margin-right: 5px;"
+                 class="legend-color baseline-color"></div>
+            <div class="title">{{ item.title }}</div>
+            <div style="margin-top: 15px;">
+              <el-tooltip effect="dark"
+                          popper-class="testtooltip"
+                          placement="top">
+                <div slot="content">
+                  <p>计划进度情况：分为基线和预计两部分，两部分形成对比。</p>
+                  <p>基线：计划发布后要存储基线版本，此处是使用该版本中一级计划节点进行展示的，下方为时间轴，标注一级计划任务名称及完成时间。</p>
+                  <p>预估：以当前计划任务数据展示图形，具体逻辑为：数据展示一级节点计划及其名称，已完成的节点预估时间使用实际完成时间标注，其他状态节点预估时间计算方法为：max（前置任务预估完成时间，当前时间）+（1-完成进度百分比）* 工期。</p>
+                </div>
+                <i class="el-icon-question"></i>
+              </el-tooltip>
+            </div>
+          </div>
           <div class="timeline-wrapper"
                ref="timelineWrapper">
             <div class="timeline">
               <div class="timeline-item"
                    v-for="(timelineItem, timelineIndex) in item.list"
                    :key="timelineIndex">
-                <div class="timeline-item-tail"
-                     v-if="timelineIndex !== item.list.length - 1"
-                     :style="{ backgroundColor: item.title === '预估' ? '#4285f4' : '#61cdb4' }"></div>
-                <div class="progress-line"
-                     v-if="timelineIndex !== item.list.length - 1 && timelineItem.status === '6050'"
-                     :style="{ width: `${timelineItem.progress * 100}%`, backgroundColor: '#4285f4' }"></div>
-                <div class="timeline-item-node"
-                     :style="{ backgroundColor: item.title === '预估' ? '#4285f4' : '#61cdb4' }"></div>
+                <div v-if="timelineItem.status === '6070'">
+                  <div class="timeline-item-tail"
+                       v-if="timelineIndex !== item.list.length - 1"
+                       :style="{ backgroundColor: item.title === '预估' ? '#4285f4' : '#61cdb4' }"></div>
+                  <div class="progress-line"
+                       v-if="timelineIndex !== item.list.length - 1 && timelineItem.status === '6050'"
+                       :style="{ width: `${timelineItem.progress * 100}%`, backgroundColor: '#4285f4' }"></div>
+                  <div class="timeline-item-node"
+                       :style="{ backgroundColor: item.title === '预估' ? '#4285f4' : '#61cdb4' }"></div>
+                </div>
+                <div v-else>
+                  <div class="timeline-item-tail"
+                       v-if="timelineIndex !== item.list.length - 1"
+                       :style="{ backgroundColor: item.title === '预估' ? '#4285f4' : '#61cdb4' }"></div>
+                  <div class="progress-line"
+                       v-if="timelineIndex !== item.list.length - 1 && timelineItem.status === '6050'"
+                       :style="{ width: `${timelineItem.progress * 100}%`, backgroundColor: '#4285f4' }"></div>
+                  <div v-if="item.title === '预估'"
+                       class="timeline-item-plan"></div>
+                  <div v-else
+                       class="timeline-item-node"
+                       :style="{ backgroundColor: item.title === '预估' ? '#4285f4' : '#61cdb4' }"></div>
+                </div>
                 <div class="timeline-item-content">
                   <div class="timeline-item-name"
                        :title="timelineItem.name">
@@ -115,11 +150,19 @@
     <div class="timeline-legend">
       <div class="legend-item">
         <div class="legend-color estimate-color"></div>
-        <span class="legend-text">预估</span>
+        <span class="legend-text">预估时间轴</span>
       </div>
       <div class="legend-item">
         <div class="legend-color baseline-color"></div>
-        <span class="legend-text">基线</span>
+        <span class="legend-text">基线时间轴</span>
+      </div>
+      <div class="legend-item">
+        <div class="plan-color estimate-plan"></div>
+        <span class="legend-text">计划阶段节点</span>
+      </div>
+      <div class="legend-item">
+        <div class="plan-color estimate-color"></div>
+        <span class="legend-text">已完成阶段阶段</span>
       </div>
     </div>
   </div>
@@ -211,10 +254,8 @@ export default {
   },
   methods: {
     btnClick (val) {
-      console.log("🚀 ~ btnClick ~ val:", val)
       this.btnType = val.name
       this.getPlanProgress(val.id)
-
     },
     getPlanProgress (planInfoId) {
       this.estimateTasks = []
@@ -254,6 +295,7 @@ export default {
             this.baselineTasks.push(obj)
           })
         })
+      console.log("🚀 ~ .then ~ this.data:", this.data)
         .catch((err) => {
           console.log(err, 'err')
         })
@@ -286,7 +328,6 @@ export default {
 
 .title {
   font-size: 24px;
-  margin-right: 20px; // 增加标题右侧间距
   font-weight: bold;
   padding-top: 8px; // 标题垂直对齐
 }
@@ -346,13 +387,22 @@ export default {
       background: $theme-color;
       border-radius: 50%;
     }
+    .timeline-item-plan {
+      position: absolute;
+      left: 0; // 修改圆点位置
+      top: 0;
+      width: 12px;
+      height: 12px;
+      border: 1px $theme-color solid;
+      border-radius: 10px;
+    }
 
     .timeline-item-tail {
       position: absolute;
       top: 5px;
-      left: 12px; // 修改连接线起始位置
+      left: 13px;
       height: 2px;
-      width: calc(100% - 12px); // 调整连接线宽度
+      width: calc(100% - 14px);
       background-color: $theme-color-opacity;
     }
 
@@ -406,11 +456,19 @@ export default {
 }
 
 .legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 10px;
+}
+.plan-color {
   width: 16px;
   height: 16px;
-  border-radius: 3px;
+  border-radius: 10px;
 }
 
+.estimate-plan {
+  border: 1px #4285f4 solid;
+}
 .estimate-color {
   background-color: #4285f4; /* 蓝色 */
 }
@@ -481,7 +539,8 @@ export default {
   flex: 1;
   height: 40px;
   position: relative;
-  overflow: hidden;
+  overflow: auto;
+  overflow-y: hidden;
 }
 
 .task-bar {

@@ -31,9 +31,9 @@
     height: 100%;
   }
 }
-.tabsNavigation ::v-deep .list-main {
-  height: calc(100% - 50px) !important;
-}
+// .tabsNavigation ::v-deep .list-main {
+//   height: calc(100% - 75px) !important;
+// }
 </style>
 <script>
 import TabsNavigationPreview from '@/views/Framework/ComponentsMananger/Layout/Components/TabsNavigation/V1.0/view/index'

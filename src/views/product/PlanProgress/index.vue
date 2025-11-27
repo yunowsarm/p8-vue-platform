@@ -1,19 +1,40 @@
 <template>
   <div class="plan-progress">
-    <div class="progress-item" v-for="(item, index) in data" :key="index">
-      <div class="title">{{ item.title }}</div>
-      <div class="timeline-wrapper" ref="timelineWrapper">
+    <div class="progress-item"
+         v-for="(item, index) in data"
+         :key="index">
+      <div style="display: flex;margin-right: 20px;">
+        <div class="title">{{ item.title }}</div>
+        <div style="margin-top: 15px;">
+          <el-tooltip effect="dark"
+                      popper-class="testtooltip"
+                      placement="top">
+            <div slot="content">
+              <p>计划进度情况：分为基线和预计两部分，两部分形成对比。</p>
+              <p>基线：计划发布后要存储基线版本，此处是使用该版本中一级计划节点进行展示的，下方为时间轴，标注一级计划任务名称及完成时间。</p>
+              <p>预估：以当前计划任务数据展示图形，具体逻辑为：数据展示一级节点计划及其名称，已完成的节点预估时间使用实际完成时间标注，其他状态节点预估时间计算方法为：max（前置任务预估完成时间，当前时间）+（1-完成进度百分比）* 工期。</p>
+            </div>
+            <i class="el-icon-question"></i>
+          </el-tooltip>
+        </div>
+      </div>
+      <div class="timeline-wrapper"
+           ref="timelineWrapper">
         <div class="timeline">
-          <div
-            class="timeline-item"
-            v-for="(timelineItem, timelineIndex) in item.list"
-            :key="timelineIndex"
-          >
-            <div class="timeline-item-tail" v-if="timelineIndex !== item.list.length - 1" :style="{ backgroundColor: timelineItem.status === '6070' ? '#1a73e8' : '#90caf9' }"></div>
-            <div class="progress-line" v-if="timelineIndex !== item.list.length - 1 && timelineItem.status === '6050'" :style="{ width: `${timelineItem.progress * 100}%`, backgroundColor: '#1a73e8' }"></div>
-            <div class="timeline-item-node" :style="{ backgroundColor: timelineItem.status === 'completed' || timelineItem.status !== '6020' ? '#1a73e8' : '#90caf9' }"></div>
+          <div class="timeline-item"
+               v-for="(timelineItem, timelineIndex) in item.list"
+               :key="timelineIndex">
+            <div class="timeline-item-tail"
+                 v-if="timelineIndex !== item.list.length - 1"
+                 :style="{ backgroundColor: timelineItem.status === '6070' ? '#1a73e8' : '#90caf9' }"></div>
+            <div class="progress-line"
+                 v-if="timelineIndex !== item.list.length - 1 && timelineItem.status === '6050'"
+                 :style="{ width: `${timelineItem.progress * 100}%`, backgroundColor: '#1a73e8' }"></div>
+            <div class="timeline-item-node"
+                 :style="{ backgroundColor: timelineItem.status === 'completed' || timelineItem.status !== '6020' ? '#1a73e8' : '#90caf9' }"></div>
             <div class="timeline-item-content">
-              <div class="timeline-item-name" :title="timelineItem.name">
+              <div class="timeline-item-name"
+                   :title="timelineItem.name">
                 {{ timelineItem.name }}
               </div>
               <div class="timeline-item-date">
@@ -39,7 +60,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       data: [
         {
@@ -54,17 +75,17 @@ export default {
     }
   },
   computed: {
-    planInfoId() {
+    planInfoId () {
       return this.thirdMenuParam.ID
     }
   },
-  created() {
-    this.$watch('provideParams.searchParams', (val) => {}, {
+  created () {
+    this.$watch('provideParams.searchParams', (val) => { }, {
       deep: true
     })
     this.getPlanProgress()
   },
-  mounted() {
+  mounted () {
     this.$nextTick(() => {
       const wrappers = this.$refs.timelineWrapper;
       if (wrappers) {
@@ -74,7 +95,7 @@ export default {
       }
     });
   },
-  beforeDestroy() {
+  beforeDestroy () {
     const wrappers = this.$refs.timelineWrapper;
     if (wrappers) {
       wrappers.forEach(wrapper => {
@@ -83,7 +104,7 @@ export default {
     }
   },
   methods: {
-    getPlanProgress() {
+    getPlanProgress () {
       this.$api['planGanttManager.loadTaskProgressSituation']({ planInfoId: this.planInfoId })
         .then((res) => {
           this.data[0].list = res.forecast
@@ -93,7 +114,7 @@ export default {
           console.log(err, 'err')
         })
     },
-    handleWheel(e) {
+    handleWheel (e) {
       e.preventDefault();
       const wrapper = e.currentTarget;
       wrapper.scrollLeft += e.deltaY;
@@ -111,13 +132,12 @@ export default {
   .progress-item {
     width: 100%;
     display: flex;
-    padding: 30px 0;  // 调整上下间距
+    padding: 30px 0; // 调整上下间距
 
     .title {
       font-size: 24px;
-      margin-right: 20px;  // 增加标题右侧间距
       font-weight: bold;
-      padding-top: 8px;    // 标题垂直对齐
+      padding-top: 8px; // 标题垂直对齐
     }
   }
 }
@@ -156,7 +176,7 @@ export default {
   flex: 1;
   display: flex;
   min-width: fit-content;
-  height: 100px;      // 增加时间轴整体高度
+  height: 100px; // 增加时间轴整体高度
 
   .timeline-item {
     margin-top: 12px;
@@ -172,7 +192,7 @@ export default {
 
     .timeline-item-node {
       position: absolute;
-      left: 0;        // 修改圆点位置
+      left: 0; // 修改圆点位置
       top: 0;
       width: 12px;
       height: 12px;
@@ -183,9 +203,9 @@ export default {
     .timeline-item-tail {
       position: absolute;
       top: 5px;
-      left: 12px;     // 修改连接线起始位置
+      left: 12px; // 修改连接线起始位置
       height: 2px;
-      width: calc(100% - 12px);  // 调整连接线宽度
+      width: calc(100% - 12px); // 调整连接线宽度
       background-color: $theme-color-opacity;
     }
 

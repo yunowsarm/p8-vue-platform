@@ -7,8 +7,7 @@
     <i v-if="hasSettings"
        class="el-icon-setting"
        @click.stop="showButtonBarSetting"></i>
-    <el-tabs type="card"
-             v-if="advance">
+    <el-tabs v-if="advance">
       <el-tab-pane v-for="(panel, index) in panelData"
                    :label="panel.panelName"
                    :key="index + 1"
@@ -25,7 +24,7 @@
                      :task-id="taskId"
                      :row-num="rowNum"></component>
           <div v-if="panel.panelName === '查询'"
-               style="height: 100%;width: 1px;background: #cccccc;"></div>
+               style="height: 90%;width: 1px;background: #cccccc;"></div>
           <div v-if="panel.panelName === '查询'"
                style="min-width: 200px;width: 200px;display: flex;flex-wrap: wrap;height: 90px;">
             <div v-for="(config, index) in datas"
@@ -308,8 +307,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.panelData, '111111111111111111111111111');
-
     if (!this.needArrow) {
       // this.showArrow = false
     }
