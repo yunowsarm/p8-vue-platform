@@ -10,6 +10,10 @@ export default {
     CommonDialog
   },
   props: {
+    specialRoteName:{
+      type: String,
+      default: null
+    },
     thirdMenuParam: {
       type: Object,
       default: () => {
@@ -18,6 +22,7 @@ export default {
     }
   },
   created() {
+    console.log(this.specialRoteName,'specialRoteName')
     console.log(this.thirdMenuParam, 'thirdMenuParam')
   },
   data() {
@@ -52,7 +57,7 @@ export default {
 
 <template>
   <div style="height: 100%">
-    <P8TableRender ref="tableRender" code="wholeBudgetChangeTable" :reportParam="reportParam" @change='openInitiateChange'></P8TableRender>
+    <P8TableRender :specialRoteName='specialRoteName ?? $route.name' ref="tableRender" code="wholeBudgetChangeTable" :reportParam="reportParam" @change='openInitiateChange'></P8TableRender>
     <common-dialog v-if="visible" :visible="visible" title="预算变更" :show-handle-btn="false" :dialog-height="dialogHeight" @close="visible = false">
       <template #dialog>
         <initiate-change :project-info="thirdMenuParam" @save-success="omponentRefresh"

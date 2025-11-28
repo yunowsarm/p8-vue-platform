@@ -12,7 +12,7 @@ export default {
     VxeColumn
   },
   props: {
-    currentRoute: {
+    currentRoute:{
       type: String,
       default: ''
     },
@@ -116,9 +116,9 @@ export default {
   },
   computed: {
     parentRoute () {
-      if (this.currentRoute === 'myProject') {
+      if(this.currentRoute === 'myProject'){
         return 'BudgetManagement'
-      } else if (this.currentRoute === 'projectMonitor') {
+      }else if(this.currentRoute === 'projectMonitor'){
         return 'BudgetAnalysis'
       }
       const matched = this.$route.matched
@@ -133,8 +133,8 @@ export default {
     }
   },
   created () {
-    console.log(this.currentRoute, 'this.currentRoute')
-    console.log(this.thirdMenuParam, 'this.thirdMenuParam')
+    console.log(this.currentRoute,'this.currentRoute')
+    console.log(this.thirdMenuParam,'this.thirdMenuParam')
     if (this.thirdMenuParam) {
       this.projectId = this.thirdMenuParam.ID || this.thirdMenuParam.WHOLEID
       this.budgetState = this.thirdMenuParam?.BUDGETSTATUSNAME
@@ -242,11 +242,7 @@ export default {
     rowClick (row) {
       this.getTemplateDetail(row.ID)
     },
-    editActivated ({ row }) {
-      this.oldAmount = row.amount
-    },
-    editClosed ({ row }) {
-      if (row.amount === this.oldAmount) return
+    editClosed () {
       this.$api['budgetDeclaration.dataCalculation']({ declarationRequests: this.tableData }).then((res) => {
         res.forEach((item) => {
           const node = this.tableData.find((n) => n.subjectBaseid === item.subjectBaseid)
@@ -275,16 +271,6 @@ export default {
           this.$refs.table.setAllTreeExpand(true)
         })
       })
-    },
-    cellClassName ({ row, column }) {
-      if (!this.isEdit) return
-      const classes = []
-      if (column.property === 'amount') {
-        if (!((row.ISLEAF === '是' || row.isleaf === '是' || row.isLeaf === '是') && !row.formula && this.isEdit)) {
-          classes.push('disabled-cell')
-        }
-      }
-      return classes.join(' ')
     }
   }
 }
@@ -302,8 +288,6 @@ export default {
                  :tableConfig="tableConfig"
                  :tree-config="treeConfig"
                  :edit-config="editConfig"
-                 :cell-class-name="cellClassName"
-                 @edit-activated='editActivated'
                  @edit-closed="editClosed">
         <vxe-column type="seq"
                     title="序号"
@@ -320,9 +304,7 @@ export default {
           immediate: true,
           showNegativeStatus: true,
           props:{
-            min: 0,
-            type:'amount',
-            digits: 6
+            min: 0
           }
         }"
                     class-name="amount-cell"
@@ -369,8 +351,7 @@ export default {
                    @close="handleCancel"
                    :dialogHeight="600">
       <template #dialog>
-        <normal-layout v-if="!$isMobile"
-                       layoutCode="selectBudgetTemplate"
+        <normal-layout layoutCode="selectBudgetTemplate"
                        :split-default-left-width="30"
                        :header-visible="false"
                        :split-layout="true">
@@ -392,21 +373,6 @@ export default {
                           :tree-config="treeConfig"></p8-vxe-table>
           </template>
         </normal-layout>
-        <div v-else>
-          <p8-vxe-table ref="templateTable"
-                        :pagination="false"
-                        :columns="templateColumns"
-                        :noApiTableData="templateList"
-                        :tableConfig="tableConfig"
-                        :row-config="rowConfig"
-                        @row-click="rowClick"></p8-vxe-table>
-          <p8-vxe-table ref="subjectTable"
-                        :pagination="false"
-                        :columns="subjectColumns"
-                        :noApiTableData="subjectList"
-                        :tableConfig="tableConfig"
-                        :tree-config="treeConfig"></p8-vxe-table>
-        </div>
       </template>
     </common-dialog>
   </div>
@@ -446,8 +412,5 @@ export default {
 .normal-layout {
   height: calc(100% - 50px);
   margin: 0;
-}
-::v-deep .disabled-cell {
-  background: #f5f5f5;
 }
 </style>

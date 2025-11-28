@@ -33,7 +33,7 @@ export default {
       dataSource: [
         {
           type: 'upload', // 控件类型
-          labelText: '合同导入文件',
+          labelText: '合同附件',
           fieldName: 'uploadFileJson',
           colLayout: 'singleCol',
           uploadConfig: {
@@ -73,18 +73,8 @@ export default {
           item.attConfidentialite = item.confidentialite
         });
       }
-      this.$api[this.saveApi](saveParams).then(res => {
-        if (!res.result) {
-          this.$notify({
-            title: '提示',
-            dangerouslyUseHTMLString: true,
-            message: res.resultMsg
-          })
-        } else {
-          this.$message.success('导入成功')
-          this.$emit('close')
-        }
-      })
+      this.$refs.form.submitForm(saveParams, this.saveApi)
+      this.$emit('close')
     }
   }
 }

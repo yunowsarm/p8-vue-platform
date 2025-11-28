@@ -21,7 +21,7 @@ export default {
   created() {
     console.log(this.thirdMenuParam,'三级菜单参数')
     if (this.thirdMenuParam) {
-      this.projectId = this.thirdMenuParam.ID
+      this.projectId = this.thirdMenuParam.ID || this.thirdMenuParam.WHOLEID
     }
     if (this.projectId) {
       this.queryDeclaration()

@@ -130,6 +130,9 @@ export default {
       } else {
         this.$refs.widget.$el.style.zIndex = null
       }
+      if(this.widget.component.functionalCategory === '3'){
+        this.handleRefresh()
+      }
     }
   }
 }
