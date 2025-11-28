@@ -750,6 +750,11 @@ div.header_userInfo {
   justify-content: center;
   align-items: center;
 }
+.el-dialog__wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 @media (max-width: 1100px) {
   .avatar {
     width: 35px !important;
@@ -773,6 +778,9 @@ div.header_userInfo {
     margin-top: 6vh !important;
   }
   .el-dialog__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     z-index: 9999 !important;
   }
 }
