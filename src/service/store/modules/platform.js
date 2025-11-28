@@ -1,4 +1,5 @@
 import Cookie from 'vue-cookie'
+import api from '@/plugins/api'
 import { setLocalStorage, getLocalStorage } from '@/service/expands/session'
 import { Message } from 'p8-components-ui'
 import GLOBAL_CONST from '@/config/const'
@@ -125,6 +126,7 @@ const checkIsMobile = () => {
 }
 const platform = {
   state: {
+    authorizationInfo:[],
     isMobile: checkIsMobile(),
     sidebarState: {
       isHidden: SIDEBAR_HIDDEN_STATE === 'true',
@@ -269,10 +271,28 @@ const platform = {
         state.systemColor[key] = data[key]
       })
       Cookie.set('systemColor', JSON.stringify(state.systemColor))
+    },
+    SET_AUTHORIZATION_INFO(state,data){
+      state.authorizationInfo = data
     }
   },
 
   actions: {
+    getAuthorizationInfo({ commit }) {
+      return new Promise((resolve, reject) => {
+        api['user.getAuthorizationInfo']()
+          .then((res) => {
+            if (res) {
+              commit('SET_AUTHORIZATION_INFO', res)
+              resolve(res)
+            }
+          })
+          .catch((err) => {
+            reject(err)
+          })
+      })
+    },
+
     updateIsMobile({ commit }) {
       commit('SET_ISMOBILE', checkIsMobile())
     },
