@@ -171,6 +171,12 @@ export default {
     if (this.innerWidth < 600) {
       this.keepLoggedIn = true
     }
+    const currentAppService = plus.storage.getItem('current_app_service')
+    if(currentAppService){
+      const service = JSON.parse(currentAppService)
+      this.loginForm.userAccount = service.name
+      this.loginForm.userPassword = service.password
+    }
   },
   mounted () {
     // 确保页面先渲染
@@ -273,6 +279,8 @@ export default {
             userPassword: passwordEncryption
           }
           if (window.plus) {
+            plus.storage.setItem('name',name)
+            plus.storage.setItem('password',password)
             const clientInfo = JSON.parse(plus.storage.getItem('clientInfo'))
             if (clientInfo) {
               params.clientInfo = clientInfo
