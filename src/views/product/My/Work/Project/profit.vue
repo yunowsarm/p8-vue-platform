@@ -17,7 +17,7 @@
 
 <script>
 export default {
-  name: 'Account',
+  name: 'Profit',
   props: {
     row: {
       type: Array,
@@ -39,7 +39,7 @@ export default {
       sqlId: '5ba90869914958ae5213506f023862b9',
       reportParam: {},
       sqlParam: {
-        wholeId:{
+        wholeId: {
           mode: '=',
           relation: 'and',
           value: wholeDescribeId
@@ -50,22 +50,22 @@ export default {
         resourceId: ''
       }
     }
-    return this.$api['kanbanComponent.getViewData'](params).then((res) => {
+    this.$api['kanbanComponent.getViewData'](params).then((res) => {
       if (res) {
-            this.income = res[0].A_PROFIT
-            this.expense = res[0].PROFIT
+        this.income = res[0].A_PROFIT ? res[0].A_PROFIT : 0
+        this.expense = res[0].PROFIT ? res[0].PROFIT : 0
       }
     })
     window.addEventListener('resize', this.fit)
   },
-  updated () {
-    // this.fit()
+  updated() {
+    this.fit()
   },
-  beforeDestroy () {
+  beforeDestroy() {
     window.removeEventListener('resize', this.fit)
   },
   methods: {
-    fit () {
+    fit() {
       const amount = this.$refs.amount
       const amountContent = this.$refs['amount-content']
       if (!amount || !amountContent) return
@@ -74,7 +74,7 @@ export default {
       amountContent.style.transform = `scale(${scale})`
       amountContent.style.transformOrigin = "center center"
     },
-    formatNumber (num) {
+    formatNumber(num) {
       return num.toLocaleString('en-US', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
@@ -84,7 +84,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 .income-container {
   height: 100%;
   background-color: #fff;
