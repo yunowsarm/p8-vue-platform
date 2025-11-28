@@ -102,7 +102,10 @@
     left: `${task.startPercent}%`,
     width: `${task.endPercent - task.startPercent}%`
   }">
-                        {{ task.name }}
+                        <div class="timeline-item-name"
+                             :title="task.name">
+                          {{ task.name }}
+                        </div>
                       </div>
                       <div v-else
                            class="task-bar estimate-bar"
@@ -110,7 +113,10 @@
     left: `${task.startPercent}%`,
     width: `${task.endPercent - task.startPercent}%`
   }">
-                        {{ task.name }}
+                        <div class="timeline-item-name"
+                             :title="task.name">
+                          {{ task.name }}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -153,7 +159,10 @@
     left: `${task.startPercent}%`,
     width: `${task.endPercent - task.startPercent}%`
   }">
-                        {{ task.name }}
+                        <div class="timeline-item-name"
+                             :title="task.name">
+                          {{ task.name }}
+                        </div>
                       </div>
                       <div v-else
                            class="task-bar baseline-bar"
@@ -161,7 +170,10 @@
     left: `${task.startPercent}%`,
     width: `${task.endPercent - task.startPercent}%`
   }">
-                        {{ task.name }}
+                        <div class="timeline-item-name"
+                             :title="task.name">
+                          {{ task.name }}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -502,6 +514,11 @@ export default {
       }
     }
   }
+}
+.timeline-item-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .el-button-group {
   position: absolute;

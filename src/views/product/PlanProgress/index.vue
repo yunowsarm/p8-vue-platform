@@ -59,7 +59,10 @@
 left: `${task.startPercent}%`,
 width: `${task.endPercent - task.startPercent}%`
 }">
-                    {{ task.name }}
+                    <div class="timeline-item-name"
+                         :title="task.name">
+                      {{ task.name }}
+                    </div>
                   </div>
                   <div v-else
                        class="task-bar estimate-bar"
@@ -67,7 +70,10 @@ width: `${task.endPercent - task.startPercent}%`
 left: `${task.startPercent}%`,
 width: `${task.endPercent - task.startPercent}%`
 }">
-                    {{ task.name }}
+                    <div class="timeline-item-name"
+                         :title="task.name">
+                      {{ task.name }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -86,7 +92,10 @@ width: `${task.endPercent - task.startPercent}%`
 left: `${task.startPercent}%`,
 width: `${task.endPercent - task.startPercent}%`
 }">
-                    {{ task.name }}
+                    <div class="timeline-item-name"
+                         :title="task.name">
+                      {{ task.name }}
+                    </div>
                   </div>
                   <div v-else
                        class="task-bar baseline-bar"
@@ -94,7 +103,10 @@ width: `${task.endPercent - task.startPercent}%`
 left: `${task.startPercent}%`,
 width: `${task.endPercent - task.startPercent}%`
 }">
-                    {{ task.name }}
+                    <div class="timeline-item-name"
+                         :title="task.name">
+                      {{ task.name }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -180,7 +192,7 @@ export default {
           if (res['forecast-estimate'].length > 0) {
             res['forecast-estimate'].forEach((item, index) => {
               let obj = item
-              // obj.name = obj.name + '(里程碑)'
+              obj.name = obj.name + '(里程碑)'
               if (index === 0) {
                 obj.startPercent = 0
               } else {
@@ -489,6 +501,11 @@ export default {
 .baseline-bar {
   background-color: #61cdb4;
   opacity: 0.8;
+}
+.timeline-item-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
 
