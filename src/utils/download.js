@@ -9,7 +9,7 @@ export function download(id, name, type) {
     if (type === 'template') {
       url = `${downloadTemplateUrl}?attachmentId=${id}`
     } else if ('export') {
-      url = `${exportUrl}?isMobile=true&key=${id}&authorization=${getToken()}`
+      url = `${exportUrl}?isMobile=true&key=${id}&Authorization=${getToken()}`
     } else {
       url = `${downloadUrl}?attachmentId=${id}`
     }
