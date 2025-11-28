@@ -1,6 +1,7 @@
 <template>
   <div class="content">
     <table-render code="PLAN_WARNING"
+                  :specialRoteName='specialRoteName ?? $route.name'
                   :west-tree-param="reportParam"
                   :report-param="reportParam"></table-render>
   </div>
@@ -11,6 +12,10 @@ import { P8ListLayout as ListLayout } from 'p8-components-ui'
 export default {
   name: 'PlanWarning',
   props: {
+    specialRoteName:{
+      type: String,
+      default: null
+    },
     thirdMenuParam: {
       type: Object,
       default: function () {
@@ -22,7 +27,7 @@ export default {
     return {
       record: null,
       reportParam: {
-        PLAN_INFO_ID: this.thirdMenuParam.ID,
+        PLAN_INFO_ID: this.thirdMenuParam.ID || this.thirdMenuParam.WHOLEID,
         warnType: 'budget'
       }
     }
