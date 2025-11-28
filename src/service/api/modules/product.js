@@ -2306,6 +2306,13 @@ export const repositoryApi = {
   ],
   relevanceContract: [
     {
+      name: 'selectAllCgtableProjectByProjectId',
+      method: 'POST',
+      path: '/projectcontract/selectAllCgtableProjectByProjectId',
+      mockPath: '/projectcontract/selectAllCgtableProjectByProjectId',
+      desc: '关联查询'
+    },
+    {
       name: 'contractRelatedProjected',
       method: 'POST',
       path: '/projectcontract/contractRelatedProjected',
@@ -2423,6 +2430,20 @@ export const repositoryApi = {
       path: '/contractNodeTaskChange/delNodeRelatedTaskChange',
       mockPath: '/contractNodeTaskChange/delNodeRelatedTaskChange',
       desc: '取消关联节点 '
+    },
+    {
+      name: 'contractImport',
+      method: 'POST',
+      path: '/contractNodeTask/contractImport',
+      mockPath: '/contractNodeTask/contractImport',
+      desc: '合同导入 '
+    },
+    {
+      name: 'contractExport',
+      method: 'POST',
+      path: '/contractNodeTask/contractExport',
+      mockPath: '/contractNodeTask/contractExport',
+      desc: '合同导出 '
     }
   ],
   // 预算科目库
