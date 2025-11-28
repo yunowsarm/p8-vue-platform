@@ -5,15 +5,14 @@
          ref="loginWrapper">
       <span class="login-version">
         <el-popover placement="top-start"
-                    width="220"
+                    width="150"
                     trigger="hover">
           <p>
-            特征码：{{regardsObj.cpuSerialCode}}
+            西安融智软件有限公司<br />
+            www.xardmu.com<br />
+            029-87607380<br />
+            特征码：{{regardsObj.cpuSerialCode}}<br />
           </p>
-           <p v-for="(el,index) in authorizationInfo"
-              :key="index">
-          <span class="regards-font">{{el.name}}&nbsp;&nbsp;</span><span>{{el.message}}</span>
-        </p>
           <span slot="reference">{{ regardsObj.systemVersion }}</span>
         </el-popover>
       </span>
@@ -61,6 +60,10 @@
                 <el-button class="login-button"
                            :loading="isLoginning"
                            @click="login('loginForm')">登录</el-button>
+              </el-form-item>
+              <el-form-item v-if='isMobile'>
+                <el-button type='text'
+                           @click="switchService()">切换服务</el-button>
               </el-form-item>
             </template>
           </el-form>
@@ -166,7 +169,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userName', 'systemName','authorizationInfo'])
+    ...mapGetters(['userName', 'systemName','isMobile'])
   },
   created () {
     if (this.innerWidth < 600) {
@@ -203,6 +206,9 @@ export default {
     }, 1000)
   },
   methods: {
+    switchService(){
+      this.$store.dispatch('switchService')
+    },
     getSystemAbout () {
       this.$api['projectTeamSetting.getSystemAbout']().then(res => {
         if (res) {
@@ -273,7 +279,7 @@ export default {
             userAccount: nameEncryption,
             userPassword: passwordEncryption
           }
-          if (window.plus) {
+          if(window.plus){
             const clientInfo = JSON.parse(plus.storage.getItem('clientInfo'))
             if (clientInfo) {
               params.clientInfo = clientInfo
@@ -462,10 +468,6 @@ export default {
               if (item.id) {
                 this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
                   item.filePath = window.URL.createObjectURL(new Blob([res.data]))
-                  let iconLink = document.querySelector("link[rel='icon']")
-                  if (iconLink) {
-                    iconLink.href = item.filePath
-                  }
                   that.$nextTick(() => {
                     that.$refs.loginLogo.style.backgroundImage = `url(${item.filePath})`
                     that.$refs.loginLogo.style.backgroundRepeat = `no-repeat`

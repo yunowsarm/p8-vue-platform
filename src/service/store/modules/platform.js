@@ -1,7 +1,7 @@
 import Cookie from 'vue-cookie'
-import api from '@/plugins/api'
 import { setLocalStorage, getLocalStorage } from '@/service/expands/session'
-import { Message } from 'p8-components-ui'
+import { Message, MessageBox } from 'p8-components-ui'
+import axios from 'axios'
 import GLOBAL_CONST from '@/config/const'
 //
 import themeVariables from '@/styles/theme.module.scss'
@@ -126,7 +126,6 @@ const checkIsMobile = () => {
 }
 const platform = {
   state: {
-    authorizationInfo:[],
     isMobile: checkIsMobile(),
     sidebarState: {
       isHidden: SIDEBAR_HIDDEN_STATE === 'true',
@@ -156,6 +155,20 @@ const platform = {
     // ctrlKeyState: false // 判断是否全局按了ctrl按键
     // todo 配置低代码表单的title的新建、修改、删除在前还是在后
     formTitlePosition: 'left',
+    echartsTabs: [
+      {
+        label: '饼图',
+        value: 'pie'
+      },
+      {
+        label: '柱状图',
+        value: 'bar'
+      },
+      {
+        label: '折线图',
+        value: 'line'
+      }
+    ],
     imageId: ''
   },
 
@@ -257,28 +270,68 @@ const platform = {
         state.systemColor[key] = data[key]
       })
       Cookie.set('systemColor', JSON.stringify(state.systemColor))
-    },
-    SET_AUTHORIZATION_INFO(state,data){
-      state.authorizationInfo = data
     }
   },
 
   actions: {
-    getAuthorizationInfo({ commit }) {
-      return new Promise((resolve, reject) => {
-        api['user.getAuthorizationInfo']()
-          .then((res) => {
-            if (res) {
-              commit('SET_AUTHORIZATION_INFO', res)
-              resolve(res)
-            }
-          })
-          .catch((err) => {
-            reject(err)
-          })
+    switchService() {
+      const currentUrl = plus.storage.getItem('app_url') || 'https://ws.xardmu.com:9009'
+      // const currentUrl = 'http://192.168.0.198:3001'
+      MessageBox.prompt('请输入服务地址，例如：https://ws.xardmu.com:9009', '切换服务地址', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputValue: currentUrl,
+        inputValidator: (value) => {
+          if (!value.trim()) {
+            return '输入不能为空'
+          }
+          try {
+            new URL(value.trim())
+            return true
+          } catch (err) {
+            return '输入的URL无效'
+          }
+        },
+        inputErrorMessage: '输入有误',
+        distinguishCancelAndClose: true,
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            const parsed = new URL(instance.inputValue.trim())
+            const baseUrl = `${parsed.protocol}//${parsed.hostname}${parsed.port ? ':' + parsed.port : ''}`
+            console.log(baseUrl)
+            axios
+              .post(`${baseUrl}/framework/system/SystemSettings/getSystemAbout`)
+              .then((res) => {
+                if (res && res.status === 200) {
+                  plus.storage.setItem('app_url', baseUrl)
+                  done()
+                  Message({
+                    message: '切换服务成功，准备重启应用',
+                    type: 'success'
+                  })
+                  setTimeout(() => {
+                    plus.runtime.restart()
+                  },800)
+                } else {
+                  Message({
+                    message: '切换失败，请检查服务地址是否启用！',
+                    type: 'error'
+                  })
+                }
+              })
+              .catch((err) => {
+                console.error(err)
+                Message({
+                  message: '切换失败，请检查服务地址是否启用！',
+                  type: 'error'
+                })
+              })
+          } else {
+            done()
+          }
+        }
       })
     },
-
     updateIsMobile({ commit }) {
       commit('SET_ISMOBILE', checkIsMobile())
     },
