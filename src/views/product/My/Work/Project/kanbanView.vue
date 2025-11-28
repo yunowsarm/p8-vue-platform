@@ -1,5 +1,6 @@
 <template>
   <kanban-view :kanbanConfig='kanbanConfig'
+               :thirdMenuParam="reportParam"
                :row="row"></kanban-view>
 </template>
 
@@ -23,6 +24,9 @@ export default {
         id: 'ff9956cad8447699886c361c6f2a424d',
         code: 'projectOverivew'
       },
+      reportParam: {
+        wholeId: this.row[0].WHOLE_ID
+      }
     }
   }
 }

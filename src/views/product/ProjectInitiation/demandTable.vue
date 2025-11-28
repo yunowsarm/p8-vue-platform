@@ -247,6 +247,11 @@ export default {
   },
   created () {
     if (this.row && this.row.length) {
+      if (this.row[0].C_MEANING === '已保存' || this.row[0].C_MEANING === '发布驳回') {
+        this.demandFalg = true
+      } else {
+        this.demandFalg = false
+      }
       this.id = this.row[0].ID ? this.row[0].ID : this.row[0].id
       if (this.row[0].WHOLE_ID) {
         this.id = this.row[0].WHOLE_ID
@@ -302,7 +307,7 @@ export default {
       let id = ''
       let that = this
       if (this.row.length > 0) {
-        id = that.row[0].ID
+        id = this.row[0].ID || this.row[0].id || this.row[0].WHOLE_ID
       } else {
         id = this.configParmars.id
       }
