@@ -370,7 +370,7 @@ export default {
     switchService(){
       if(window.plus){
         plus.storage.removeItem('current_app_service')
-        const w = plus.webview.create('www/config.html','config')
+        const w = plus.webview.create('_www/config.html','config')
         w.show()
       }
     },
