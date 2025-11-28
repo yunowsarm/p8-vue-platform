@@ -37,14 +37,14 @@ export default {
     let wholeDescribeId = this.row[0].WHOLE_ID
     this.$api['planInfoManager.contractRecievedByYear']({ wholeDescribeId: wholeDescribeId }).then(res => {
       if (res) {
-        this.income = res[0].current_year_received
-        this.expense = res[0].current_year_receivable
+        this.income = res[0].current_year_received ? res[0].current_year_received : 0
+        this.expense = res[0].current_year_receivable ? res[0].current_year_receivable : 0
       }
     })
     window.addEventListener('resize', this.fit)
   },
   updated () {
-    // this.fit()
+    this.fit()
   },
   beforeDestroy () {
     window.removeEventListener('resize', this.fit)
