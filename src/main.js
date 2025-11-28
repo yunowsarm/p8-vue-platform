@@ -81,10 +81,10 @@ function initVue(){
 
 if(store.getters.isMobile){
   document.addEventListener('plusready', function () {
-    const currentAppService = plus.storage.getItem('current_app_service')
-    if(currentAppService){
-      store.commit('SET_TOKEN',JSON.parse(currentAppService).token)
-    }
+    // const currentAppService = plus.storage.getItem('current_app_service')
+    // if(currentAppService){
+    //   store.commit('SET_TOKEN',JSON.parse(currentAppService).token)
+    // }
     initVue()
   });
 }else{
