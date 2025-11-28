@@ -357,6 +357,16 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  ::v-deep .common-upload {
+    flex-direction: row;
+    .el-progress--line {
+      width: 200px;
+      height: 20px;
+      position: relative;
+      top: 8px;
+      left: 5px;
+    }
+  }
 }
 .time {
   font-size: 13px;

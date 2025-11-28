@@ -86,8 +86,8 @@ function removeChatbot() {
 // 启动拖动
 function startDrag(event) {
   isDragging = true
-  event.preventDefault(); // 阻止默认行为
-  document.body.classList.add('no-selection'); // 添加禁用选择样式
+  event.preventDefault() // 阻止默认行为
+  document.body.classList.add('no-selection') // 添加禁用选择样式
   // 阻止默认的单击事件
   offsetX = event.clientX - document.getElementById('dify-chatbot-bubble-button').offsetLeft
   offsetY = event.clientY - document.getElementById('dify-chatbot-bubble-button').offsetTop
@@ -141,7 +141,7 @@ window.addEventListener('resize', function () {
 // 停止拖动
 function stopDrag() {
   isDragging = false
-  document.body.classList.remove('no-selection');
+  document.body.classList.remove('no-selection')
   // 启用点击事件
   document.getElementById('dify-chatbot-bubble-button').classList.remove('disable-pointer-events')
 }

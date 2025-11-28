@@ -85,6 +85,29 @@ module.exports = defineConfig({
       type: 'filesystem',
       allowCollectingMemory: true
     },
+    module: {
+      rules: [
+        {
+          test: /\.md$/,
+          use: [
+            {
+              loader: 'html-loader'
+            },
+            {
+              loader: 'markdown-loader',
+              options: {
+                preset: 'default',
+                typographer: false,
+                quotes: false,
+                html: true,
+                breaks: true,
+                linkify: false
+              }
+            }
+          ]
+        }
+      ]
+    },
     // 以下第三方包，不会被打入组件包，但是要求使用组件的项目必须包含这些依赖
     externals:
       process.env.ENV === 'packaging'

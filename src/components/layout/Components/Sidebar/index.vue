@@ -174,8 +174,8 @@
                    size="100%"
                    @close="isVisiblePDFdrawer = false">
       <template #drawer>
-        <PDFpreview v-if="isVisiblePDFdrawer"
-                    :record="record"></PDFpreview>
+        <mdPreview v-if="isVisiblePDFdrawer"
+                   :record="record"></mdPreview>
       </template>
     </common-drawer>
   </div>
@@ -185,7 +185,7 @@
 <script>
 import { Menu, Submenu, MenuItem, Tooltip, P8Drawer as CommonDrawer, } from 'p8-components-ui'
 import videoViewing from '@/views/Framework/System/guiDe/components/videoPlayer.vue'
-import PDFpreview from '@/views/Framework/System/guiDe/components/PDFpreview.vue'
+import mdPreview from '@/views/Framework/System/guiDe/components/mdPreview.vue'
 import { mapGetters } from 'vuex'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 // import SidebarMenuItem from './SidebarMenuItem'
@@ -278,6 +278,8 @@ export default {
     },
   },
   mounted () {
+    console.log(this.$store.getters.isMobile, 'this.$store.getters.isMobile');
+
     if (this.$store.state.user.userId === 'SYS_USER000') {
       this.isShow = true
     }
@@ -445,23 +447,23 @@ export default {
     },
     async handleOptionClick (option, item) {
       let that = this
-      this.$api['SystemSettings.selectResourcesByMenuId']({ menuId: item.meta.id }).then(res => {
-        this.record = res
-        if (option === 'manual') {
-          if ((res.mTitle && res.mTitle.length) || res.mURL) {
-            that.isVisiblePDFdrawer = true
-          } else {
-            that.$message.warning('当前菜单暂无操作手册')
-          }
-        } else if (option === 'video') {
-          if ((res.vTitle && res.vTitle.length) || res.vURL) {
-            that.isVisibleHistoryDrawer = true
-          } else {
-            that.$message.warning('当前菜单暂无视频资源')
-          }
-        }
-        this.hideOptions();
-      })
+      // this.$api['SystemSettings.selectResourcesByMenuId']({ menuId: item.meta.id }).then(res => {
+      this.record = item
+      if (option === 'manual') {
+        // if ((res.mTitle && res.mTitle.length) || res.mURL) {
+        that.isVisiblePDFdrawer = true
+        // } else {
+        //   that.$message.warning('当前菜单暂无操作手册')
+        // }
+      } else if (option === 'video') {
+        // if ((res.vTitle && res.vTitle.length) || res.vURL) {
+        that.isVisibleHistoryDrawer = true
+        // } else {
+        //   that.$message.warning('当前菜单暂无视频资源')
+        // }
+      }
+      this.hideOptions();
+      // })
     },
     clearSidebar () {
       if (this.isMobile) {
@@ -492,8 +494,8 @@ export default {
     'el-menu-item': MenuItem,
     'el-tooltip': Tooltip,
     videoViewing,
-    PDFpreview,
-    CommonDrawer
+    CommonDrawer,
+    mdPreview
   }
 }
 </script>

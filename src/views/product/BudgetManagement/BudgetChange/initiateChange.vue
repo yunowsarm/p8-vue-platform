@@ -67,7 +67,7 @@ export default {
     // 查询详情
     queryDetails () {
       let params = {
-        wholeId: this.projectInfo?.ID ?? ''
+        wholeId: (this.projectInfo?.ID || this.projectInfo?.WHOLEID) ?? ''
       }
       if (this.row?.length > 0 && this.customParams.title === '修改') {
         params.id = this.row[0].ID
