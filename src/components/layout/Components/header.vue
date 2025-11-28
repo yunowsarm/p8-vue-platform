@@ -369,6 +369,7 @@ export default {
   methods: {
     switchService(){
       if(window.plus){
+        this.$store.dispatch('userLogout')
         plus.storage.removeItem('current_app_service')
         const w = plus.webview.create('www/config.html','config')
         w.show()
