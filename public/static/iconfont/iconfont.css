@@ -1,8 +1,8 @@
 @font-face {
   font-family: "p8"; /* Project id 4084759 */
-  src: url('iconfont.woff2?t=1759976419297') format('woff2'),
-       url('iconfont.woff?t=1759976419297') format('woff'),
-       url('iconfont.ttf?t=1759976419297') format('truetype');
+  src: url('iconfont.woff2?t=1764208440685') format('woff2'),
+       url('iconfont.woff?t=1764208440685') format('woff'),
+       url('iconfont.ttf?t=1764208440685') format('truetype');
 }
 
 .p8 {
@@ -11,6 +11,38 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-shipinwenjian:before {
+  content: "\e998";
+}
+
+.icon-yasuotongyong:before {
+  content: "\e997";
+}
+
+.icon-Textwenjian:before {
+  content: "\e996";
+}
+
+.icon-file_gif:before {
+  content: "\e994";
+}
+
+.icon-tupian1:before {
+  content: "\e995";
+}
+
+.icon-bg-pdf:before {
+  content: "\e993";
+}
+
+.icon-wenjian_excel:before {
+  content: "\e991";
+}
+
+.icon-bg-word:before {
+  content: "\e992";
 }
 
 .icon-jisuanqi_o:before {

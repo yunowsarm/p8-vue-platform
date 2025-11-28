@@ -170,13 +170,16 @@ export default {
                       width="50"></vxe-column>
           <vxe-column field="name"
                       title="科目名称"
+                      min-width="150px"
                       tree-node
                       align="left"
                       header-align="center"></vxe-column>
           <vxe-column field="amountOld"
+                      min-width="150px"
                       title="原预算金额"></vxe-column>
           <vxe-column field="amount"
                       title="变更预算金额"
+                      min-width="150px"
                       :edit-render="{
             name: 'VxeNumberInput',
             immediate: true,
@@ -188,6 +191,7 @@ export default {
             }
           }"></vxe-column>
           <vxe-column field="type"
+                      min-width="150px"
                       title="变更类型">
             <template #default="{ row }">
               <span>{{ row.type }}</span>
@@ -230,6 +234,7 @@ export default {
   height: calc(100% - 50px);
   display: flex;
   flex-direction: column;
+  overflow: auto;
 }
 .main-table {
   height: 75%;

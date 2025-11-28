@@ -115,11 +115,6 @@
                  style="margin: 0 5px"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-if='isMobile'
-                                @click.native="switchService">
-                <i class="p8 icon-shuaxin"></i>
-                切换服务
-              </el-dropdown-item>
               <el-dropdown-item @click.native="modifyPassword">
                 <i class="p8 icon-modify-password"></i>
                 修改密码
@@ -238,15 +233,15 @@
             <div slot="reference">{{ regardsObj.systemVersion }}</div>
           </el-popover>
         </div>
-        <p><span class="regards-font">官网地址:&nbsp;&nbsp;&nbsp;</span><el-button type="text"
-                     style="font-size: 15px;"
-                     @click="openRZ">www.xardmu.com</el-button></p>
+<!--        <p><span class="regards-font">官网地址:&nbsp;&nbsp;&nbsp;</span><el-button type="text"-->
+<!--                     style="font-size: 15px;"-->
+<!--                     @click="openRZ">www.xardmu.com</el-button></p>-->
         <p><span class="regards-font">授权终止日期:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.authorizedExpires }}</span></p>
         <div style="display: flex;">
           <div class="regards-font">特征码:</div>
           <div>{{ regardsObj.cpuSerialCode }}</div>
         </div>
-        <p v-for="(el,index) in AuthorizationInfoList"
+        <p v-for="(el,index) in authorizationInfo"
            :key="index">
           <span class="regards-font">{{el.name}}&nbsp;&nbsp;</span><span>{{el.message}}</span>
         </p>
@@ -301,7 +296,7 @@ export default {
       dialogVisible: false,
       regardsObj: {},
       adminUserIdArr: ['SYS_USER001', 'SYS_USER009', 'SYS_USER012', 'SYS_USER010', 'SYS_USER000'], // 五元id
-      AuthorizationInfoList: [],
+      // AuthorizationInfoList: [],
       packageJson,
       dialogWidth: '618px',
       modifyPasswordVisible: false
@@ -311,7 +306,7 @@ export default {
     isMobile () {
       return this.$store.getters.isMobile
     },
-    ...mapGetters(['approvalTotalMsg', 'messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl']),
+    ...mapGetters(['approvalTotalMsg', 'messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl','authorizationInfo']),
   },
   mounted () {
     if (this.isMobile) {
@@ -329,7 +324,7 @@ export default {
       // }
     }
     const this_ = this
-    this_.getAuthorizationInfo()
+    // this_.getAuthorizationInfo()
     this.getSystemAbout()
 
     this.dayTime = getGreetingTime()
@@ -368,23 +363,16 @@ export default {
     // }
   },
   methods: {
-    switchService () {
-      if (window.plus) {
-        plus.storage.removeItem('current_app_service')
-        const w = plus.webview.create('www/config.html', 'config')
-        w.show()
-      }
-    },
     closeMyApproval () {
       this.visibleProcessDrawer = false
       const vueThis = this.$store.getters.previousThis
       this.$store.commit('SET_VUE_THIS', vueThis)
     },
-    getAuthorizationInfo () {
-      this.$api['user.getAuthorizationInfo']({}).then(res => {
-        this.AuthorizationInfoList = res
-      })
-    },
+    // getAuthorizationInfo () {
+    //   this.$api['user.getAuthorizationInfo']({}).then(res => {
+    //     this.AuthorizationInfoList = res
+    //   })
+    // },
     openRZ () {
       window.open('https://www.xardmu.com/')
     },

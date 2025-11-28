@@ -6,6 +6,62 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "46198445",
+      "name": "视频文件",
+      "font_class": "shipinwenjian",
+      "unicode": "e998",
+      "unicode_decimal": 59800
+    },
+    {
+      "icon_id": "46198631",
+      "name": "压缩通用",
+      "font_class": "yasuotongyong",
+      "unicode": "e997",
+      "unicode_decimal": 59799
+    },
+    {
+      "icon_id": "46198261",
+      "name": "Text文件",
+      "font_class": "Textwenjian",
+      "unicode": "e996",
+      "unicode_decimal": 59798
+    },
+    {
+      "icon_id": "46198249",
+      "name": "file_gif",
+      "font_class": "file_gif",
+      "unicode": "e994",
+      "unicode_decimal": 59796
+    },
+    {
+      "icon_id": "46198242",
+      "name": "图片",
+      "font_class": "tupian1",
+      "unicode": "e995",
+      "unicode_decimal": 59797
+    },
+    {
+      "icon_id": "46198208",
+      "name": "bg-pdf",
+      "font_class": "bg-pdf",
+      "unicode": "e993",
+      "unicode_decimal": 59795
+    },
+    {
+      "icon_id": "46198207",
+      "name": "文件_excel",
+      "font_class": "wenjian_excel",
+      "unicode": "e991",
+      "unicode_decimal": 59793
+    },
+    {
+      "icon_id": "46198197",
+      "name": "bg-word",
+      "font_class": "bg-word",
+      "unicode": "e992",
+      "unicode_decimal": 59794
+    },
+    {
       "icon_id": "45717565",
       "name": "计算器_o",
       "font_class": "jisuanqi_o",

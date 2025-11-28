@@ -120,19 +120,15 @@
     <span class="sidebar-version"
           :style="{ 'background-color': objColor.themeColor }">
       <el-popover placement="top-start"
-                  width="200"
+                  width="220"
                   trigger="hover">
-        <p>
-          西安融智软件有限公司<br />
-          www.xardmu.com<br />
-          029-87607380<br />
-          <span v-if="isShow">
-            授权方：{{ regardsObj.authorizedName }}<br />
-            <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;授权类型：{{ regardsObj.authorizationType }}<br /> -->
-            <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;安装截止日期：{{ regardsObj.bindExpires }}<br /> -->
-            授权终止日期：{{ regardsObj.authorizedExpires }}<br />
-            授权用户数：{{ regardsObj.userLimit }}<br />
-            授权登录人数：{{ regardsObj.loginLimit }}<br />
+        <span v-if="isShow">
+            <p>授权方：{{ regardsObj.authorizedName }}</p>
+          <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;授权类型：{{ regardsObj.authorizationType }}<br /> -->
+          <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;安装截止日期：{{ regardsObj.bindExpires }}<br /> -->
+            <p>授权终止日期：{{ regardsObj.authorizedExpires }}</p>
+            <p>授权用户数：{{ regardsObj.userLimit }}</p>
+            <p>授权登录人数：{{ regardsObj.loginLimit }}</p>
             <el-popover placement="top-start"
                         width="230"
                         trigger="hover">
@@ -148,11 +144,14 @@
             </el-popover><br />
           </span>
           <span v-else>
-            授权终止日期：{{ regardsObj.authorizedExpires }}<br />
+            <p>授权终止日期：{{ regardsObj.authorizedExpires }}</p>
           </span>
           <span>
-            特征码：{{ regardsObj.cpuSerialCode }}<br />
+            <p>特征码：{{ regardsObj.cpuSerialCode }}</p>
           </span>
+         <p v-for="(el,index) in authorizationInfo"
+            :key="index">
+          <span class="regards-font">{{el.name}}&nbsp;&nbsp;</span><span>{{el.message}}</span>
         </p>
         <span slot="reference">{{ regardsObj.systemVersion }}</span>
       </el-popover>
@@ -229,7 +228,7 @@ export default {
         return this.$route.path
       }
     },
-    ...mapGetters(['asyncRouter', 'sidebarState', 'systemTheme', 'theme', 'imageUrl', 'systemName', 'systemColor']),
+    ...mapGetters(['asyncRouter', 'sidebarState', 'systemTheme', 'theme', 'imageUrl', 'systemName', 'systemColor','authorizationInfo']),
     // 这里必须根据条件结合ElementUI的sidebar来调整颜色,保证自定义主题和sidebar的内置颜色一致.
     systemThemeColor: function () {
       switch (this.systemTheme) {

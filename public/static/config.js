@@ -14,6 +14,7 @@ const CONFIG = {
   devBaseUrl: 'http://192.168.0.200:9092',
   // jmreportUrl:'http://192.168.0.142:9092/jmreport',
   aiUrl: 'http://192.168.0.18',
+  exportUrl: defaultServiceAddr + '/framework/report/applyFile',
   downloadUrl: defaultServiceAddr + '/attachment/downloadFile',
   downloadTemplateUrl: defaultServiceAddr + '/attachment/downloadTemplateFile',
   jmreportUrl: defaultServiceAddr + '/jmreport',

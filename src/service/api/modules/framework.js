@@ -2066,6 +2066,13 @@ export const formGeneratorApi = {
       desc: '报表管理-报表应用'
     },
     {
+      name: 'downloadPrepate',
+      method: 'POST',
+      path: '/framework/report/downloadPrepate',
+      mockPath: '/framework/report/downloadPrepate',
+      desc: '报表管理-报表应用导出'
+    },
+    {
       name: 'tableColumnsInfo',
       method: 'POST',
       path: '/framework/report/reportItem',

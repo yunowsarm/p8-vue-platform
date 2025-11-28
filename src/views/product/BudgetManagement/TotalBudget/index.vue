@@ -369,7 +369,8 @@ export default {
                    @close="handleCancel"
                    :dialogHeight="600">
       <template #dialog>
-        <normal-layout layoutCode="selectBudgetTemplate"
+        <normal-layout v-if="!$isMobile"
+                       layoutCode="selectBudgetTemplate"
                        :split-default-left-width="30"
                        :header-visible="false"
                        :split-layout="true">
@@ -391,6 +392,21 @@ export default {
                           :tree-config="treeConfig"></p8-vxe-table>
           </template>
         </normal-layout>
+        <div v-else>
+          <p8-vxe-table ref="templateTable"
+                        :pagination="false"
+                        :columns="templateColumns"
+                        :noApiTableData="templateList"
+                        :tableConfig="tableConfig"
+                        :row-config="rowConfig"
+                        @row-click="rowClick"></p8-vxe-table>
+          <p8-vxe-table ref="subjectTable"
+                        :pagination="false"
+                        :columns="subjectColumns"
+                        :noApiTableData="subjectList"
+                        :tableConfig="tableConfig"
+                        :tree-config="treeConfig"></p8-vxe-table>
+        </div>
       </template>
     </common-dialog>
   </div>

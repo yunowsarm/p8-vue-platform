@@ -3,7 +3,7 @@ import { P8Dialog as CommonDialog } from 'p8-components-ui'
 import PlanGantt from '@/views/product/PlanGantt/index.vue'
 export default {
   name: 'analysisItem',
-  components:{
+  components: {
     CommonDialog,
     PlanGantt
   },
@@ -21,7 +21,7 @@ export default {
       require: true
     }
   },
-  data() {
+  data () {
     return {
       budgetData: [],
       actualData: [],
@@ -30,26 +30,26 @@ export default {
       dialogConfig: {
         modal: false
       },
-      visible:false,
+      visible: false,
     }
   },
   watch: {
-    id() {
+    id () {
       this.loadAll()
     }
   },
-  mounted() {
+  mounted () {
     this.loadAll()
   },
   methods: {
-    handleCancel(){
+    handleCancel () {
       this.visible = false
     },
-    loadAll() {
+    loadAll () {
       this.getBudgetAndActual()
       this.getBarData()
     },
-    getBudgetAndActual() {
+    getBudgetAndActual () {
       const params = {
         sqlId: 'fff20dd8fb714157e9805abb9fa07937',
         reportParam: {},
@@ -92,7 +92,7 @@ export default {
         }
       })
     },
-    getBarData() {
+    getBarData () {
       const params = {
         sqlId: 'b358526a1ff13c49f9af39157b8ebbc4',
         reportParam: {},
@@ -123,7 +123,7 @@ export default {
         }
       })
     },
-    renderBudgetPie() {
+    renderBudgetPie () {
       const chart = this.$echarts.init(this.$refs.budgetPie)
       console.log(chart, '渲染各项目预算金额分析')
       chart.setOption({
@@ -150,7 +150,7 @@ export default {
         ]
       })
     },
-    renderActualPie() {
+    renderActualPie () {
       const chart = this.$echarts.init(this.$refs.actualPie)
       console.log(chart, '渲染各项目实际执行金额分析')
       chart.setOption({
@@ -174,7 +174,7 @@ export default {
         ]
       })
     },
-    renderBarChart() {
+    renderBarChart () {
       const chart = this.$echarts.init(this.$refs.barChart)
       console.log(chart, '渲染各项目实际执行金额分析')
       chart.setOption({
@@ -239,13 +239,24 @@ export default {
   <div class="analysis-area">
     <h2 class="title">{{ title }}</h2>
     <div class="charts-row">
-      <div ref="budgetPie" class="chart"></div>
-      <div ref="actualPie" class="chart"></div>
-      <div ref="barChart" class="chart wide"></div>
+      <div ref="budgetPie"
+           class="chart"></div>
+      <div ref="actualPie"
+           class="chart"></div>
+      <div ref="barChart"
+           class="chart wide"></div>
     </div>
-    <common-dialog :title="plan.NAME || ''" width="90%" :dialog-config="dialogConfig" :showHandleBtn="false" :visible="visible" :dialog-height="600" @close="handleCancel">
+    <common-dialog :title="plan.NAME || ''"
+                   width="90%"
+                   :dialog-config="dialogConfig"
+                   :showHandleBtn="false"
+                   :visible="visible"
+                   :dialog-height="600"
+                   @close="handleCancel">
       <template #dialog>
-        <plan-gantt v-if='visible' :thirdMenuParam='plan' :isView='true'></plan-gantt>
+        <plan-gantt v-if='visible'
+                    :thirdMenuParam='plan'
+                    :isView='true'></plan-gantt>
       </template>
     </common-dialog>
   </div>
@@ -275,5 +286,15 @@ export default {
 }
 ::v-deep .el-dialog__body {
   padding: 0 !important;
+}
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .charts-row {
+    display: flex;
+    flex-direction: column !important;
+
+    .chart {
+      width: 100% !important;
+    }
+  }
 }
 </style>

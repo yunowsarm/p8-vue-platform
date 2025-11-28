@@ -5,9 +5,11 @@
   background-color: $theme-color !important;
   border-color: $theme-color !important;
 }
+
 .el-button--primary.is-plain {
   color: $button-disabled-color !important;
 }
+
 .commonButton {
   .el-button--primary {
     // background-color: $base-light-color;
@@ -16,7 +18,7 @@
 
   .el-dropdown {
     .el-button--small {
-      padding: 7px 6px;
+      padding: 9px;
     }
   }
 
@@ -45,23 +47,34 @@
     background-color: $button-disabled-background-color !important;
     border-color: $button-disabled-border-color !important;
   }
-  .el-button-group{
-    .el-button{
-      position: relative;
-      &:not(:last-child){
-        &::after{
-          box-sizing: border-box;
-          content: '';
-          position: absolute;
-          top: 0;
-          right: 0;
-          width: 1px;
-          height: 100%;
-          background: rgba(225,225,225,0.5);
-          border-top: 1px solid $theme-color;
-          border-bottom: 1px solid $theme-color;
-        }
+  .el-button-group {
+    .el-button {
+
+      &:first-child {
+        z-index:2;
+        border-right-color: rgba(225, 225, 225, 0.5) !important;
+      }
+
+      &:not(:first-child):not(:last-child) {
+        z-index:2;
+        border-left-color: rgba(225, 225, 225, 0.5) !important;
+        border-right-color: rgba(225, 225, 225, 0.5) !important;
+      }
+    }
+    .el-button--primary {
+
+      &:first-child {
+        z-index:2;
+        border-right-color: rgba(225, 225, 225, 0.5) !important;
+      }
+
+      &:not(:first-child):not(:last-child) {
+        z-index:2;
+        border-left-color: rgba(225, 225, 225, 0.5) !important;
+        border-right-color: rgba(225, 225, 225, 0.5) !important;
       }
     }
   }
 }
+
+

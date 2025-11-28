@@ -519,6 +519,41 @@ export const repositoryApi = {
       path: '/product/pm/planManager/getPlanInfo',
       mockPath: '/product/pm/planManager/getPlanInfo',
       desc: '项目管理->计划管理->获取计划详情'
+    },
+    {
+      name: 'selectProjectProgress',
+      method: 'POST',
+      path: '/framework/project/selectProjectProgress',
+      mockPath: '/framework/project/selectProjectProgress',
+      desc: '项目管理->查询项目进度'
+    },
+    {
+      name: 'contractRecievedByYear',
+      method: 'POST',
+      path: '/contractNodeTask/contractRecievedByYear',
+      mockPath: '/contractNodeTask/contractRecievedByYear',
+      desc: '项目管理->查询本年应收/已收'
+    },
+    {
+      name: 'contractPayedByYear',
+      method: 'POST',
+      path: '/contractNodeTask/contractPayedByYear',
+      mockPath: '/contractNodeTask/contractPayedByYear',
+      desc: '项目管理->查询本年应付/已付'
+    },
+    {
+      name: 'selectPlanByWholeId',
+      method: 'POST',
+      path: '/product/pm/planManager/selectPlanByWholeId',
+      mockPath: '/product/pm/planManager/selectPlanByWholeId',
+      desc: '项目管理->查询项目下计划列表'
+    },
+    {
+      name: 'loadPlanProgressSituation',
+      method: 'POST',
+      path: '/product/pm/plan/loadPlanProgressSituation',
+      mockPath: '/product/pm/plan/loadPlanProgressSituation',
+      desc: '项目管理->查询项目下计划列表'
     }
   ],
   planGanttManager: [
@@ -2160,7 +2195,7 @@ export const repositoryApi = {
     }
   ],
   // 项目检测方案
-  projectIndicatorsPlan:[
+  projectIndicatorsPlan: [
     {
       name: 'saveProjectIndicator',
       method: 'POST',
@@ -2391,7 +2426,7 @@ export const repositoryApi = {
     }
   ],
   // 预算科目库
-  budgetSubjectLibrary:[
+  budgetSubjectLibrary: [
     {
       name: 'updateChildren',
       method: 'POST',
@@ -2405,11 +2440,10 @@ export const repositoryApi = {
       path: '/product/pm/subject/updateStatus',
       mockPath: '/product/pm/subject/updateStatus',
       desc: '启用、禁用'
-    },
-
+    }
   ],
   // 预算模板
-  budgetTemplateManagement:[
+  budgetTemplateManagement: [
     {
       name: 'saveCheck',
       method: 'POST',
@@ -2437,11 +2471,10 @@ export const repositoryApi = {
       path: '/product/pm/subject/template/updateStatus',
       mockPath: '/product/pm/subject/template/updateStatus',
       desc: '启用、禁用'
-    },
-
+    }
   ],
   // 预算申报
-  budgetDeclaration:[
+  budgetDeclaration: [
     {
       name: 'queryDeclaration',
       method: 'POST',
@@ -2465,7 +2498,7 @@ export const repositoryApi = {
     }
   ],
   // 预算管理
-  budgetManagement:[
+  budgetManagement: [
     {
       name: 'getTasksInfoByWholeId',
       method: 'POST',

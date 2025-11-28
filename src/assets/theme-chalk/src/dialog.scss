@@ -3,6 +3,11 @@
 // @import "mixins/mixins";
 
 // element ui dialog样式覆盖
+.el-dialog__wrapper.dragDialog{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .el-dialog {
   -moz-box-shadow: 0 1px 10px rgba(0, 0, 0, 0.3);
   -webkit-box-shadow: 0 1px 10px rgba(0, 0, 0, 0.3);
@@ -30,7 +35,7 @@
 }
 
 .el-dialog {
-  margin-top: 10vh;
+  margin: 0 !important;
   .title {
     font-size: 14px;
   }

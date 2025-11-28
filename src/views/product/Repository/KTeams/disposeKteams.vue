@@ -57,11 +57,9 @@
                           operationColumnName="操作"
                           @save-param-data="saveParamData">
             <template #name="{ scope, data }">
-              <div style="display: flex; flex-direction: row;justify-content: center;align-items: center;">
-                <span style="color: red;margin-right: 5px;">*</span><el-input v-model="scope.row.name"
-                          @blur="saveParamData(data)"
-                          placeholder="请输入"></el-input>
-              </div>
+              <el-input v-model="scope.row.name"
+                        @blur="saveParamData(data)"
+                        placeholder="请输入"></el-input>
             </template>
             <template #sysRole="{ scope, data }">
               <el-select v-model="scope.row.sysRole"
@@ -111,8 +109,8 @@
     </template>
   </normal-layout>
   <div v-else
-       style="width: 100%; height: 100%; display: flex; overflow: auto;">
-    <div style="text-align:center;padding:0 15px;padding-right: 30px;">
+       style="width: 100%; height: 100%; display: flex; overflow: auto;flex-direction: column;">
+    <div style="text-align:center;padding:0 15px;padding-right: 30px;height: 25%;overflow: auto;">
       <el-button type="primary"
                  plain
                  style="margin: 5px;width:100%;"
@@ -137,7 +135,7 @@
         </li>
       </ul>
     </div>
-    <div style="position:relative;height:100%;">
+    <div style="position:relative;height:75%;">
       <form-list ref="form"
                  :key="dateTime"
                  style="height: 270px;overflow:hidden;"
@@ -367,8 +365,7 @@ export default {
       selectRow: {},
       rolesSelectData: [],
       record: {},
-      dateTime: '',
-      falg: true
+      dateTime: ''
     }
   },
   created () {
@@ -398,9 +395,6 @@ export default {
       })
     },
     customValidate (saveParams) {
-      if (!this.falg) {
-        return this.$message.error('团队角色名称必填')
-      }
       saveParams.roles = this.editableData
       saveParams.klTeamsId = this.record.ID
       this.$api[this.saveApi](saveParams).then(res => {
@@ -417,7 +411,6 @@ export default {
       // this.rendered()
     },
     saveParamData (data, changeFlag, scope) {
-      this.falg = true
       let that = this
       if (changeFlag === 'indexNo') {
         sortByOrderNum(data, scope.$index, scope.row[changeFlag])
@@ -435,11 +428,7 @@ export default {
         })
       }
       this.editableData = data
-      data.forEach((item, index) => {
-        if (!item.name) {
-          this.falg = false
-        }
-      });
+
     },
     openRight (item, index) {
       this.dateTime = new Date().getTime()
