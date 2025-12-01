@@ -140,10 +140,6 @@ export default {
       this.tableCode = 'myProjectPlanList'
     }
     this.getIconData()
-    setTimeout(() => {
-      let record = this.$refs.tableRender.$refs.xTable.tableData[0]
-      this.thirdMenuClick(record)
-    }, 1000)
   },
   methods: {
     refreshTable () {
@@ -171,6 +167,12 @@ export default {
       } else {
         this.toolbarTextDisplay = this.$store.getters.baseConfig.toolbarTextDisplay
       }
+      setTimeout(() => {
+        if (this.$refs.tableRender.$refs.xTable.tableData) {
+          let record = this.$refs.tableRender.$refs.xTable.tableData[0]
+          this.thirdMenuClick(record)
+        }
+      }, 1000)
     },
     planEdit (val) {
       if (this.$refs.tableRender.selectRecords.length > 1) {
@@ -232,7 +234,6 @@ export default {
       let str = ''
       let el = this.manageStatus[row.MANAGESTATUS]
       let toolbarTextDisplay = this.toolbarTextDisplay
-      console.log("wwwwwwwwwwwwwwwwwwwwwwwwww:", toolbarTextDisplay)
       if (toolbarTextDisplay === '0') {
         toolbarTextDisplay = false
       } else {
@@ -267,7 +268,6 @@ export default {
       return str
     },
     thirdMenuClick (record) {
-      console.log("🚀 ~ 111111111111111111111111 ~ record:", record)
       this.$refs.tableRender.$refs.xTable.$refs.table.clearCheckboxRow()
       if (this.type === null) {
         if (this.$route.name === 'projectMonitor') {
