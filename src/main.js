@@ -24,7 +24,7 @@ import hljs from 'highlight.js'
 import hljsVuePlugin from '@highlightjs/vue-plugin'
 // 引入你需要的语言和样式
 import 'highlight.js/styles/monokai.css' // 选择你喜欢的主题样式
-import {download} from '@/utils/download'
+import { download } from '@/utils/download'
 // 注册插件
 Vue.use(hljsVuePlugin, { hljs })
 Vue.use(VxeUI)
@@ -67,7 +67,7 @@ window.addEventListener('resize', () => {
 })
 
 /* eslint-disable no-new */
-function initVue(){
+function initVue() {
   new Vue({
     el: '#app',
     store,
@@ -79,16 +79,14 @@ function initVue(){
   })
 }
 
-if(store.getters.isMobile){
+if (store.getters.isMobile) {
   document.addEventListener('plusready', function () {
-    // const currentAppService = plus.storage.getItem('current_app_service')
-    // if(currentAppService){
-    //   store.commit('SET_TOKEN',JSON.parse(currentAppService).token)
-    // }
+    const currentAppService = plus.storage.getItem('current_app_service')
+    if (currentAppService) {
+      store.commit('SET_TOKEN', JSON.parse(currentAppService).token)
+    }
     initVue()
-  });
-}else{
+  })
+} else {
   initVue()
 }
-
-
