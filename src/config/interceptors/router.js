@@ -30,9 +30,13 @@ export function routerBeforeEachFunc(to, from, next) {
         store.dispatch('getUserInfo').then((res) => {
 
           if(window.plus){
+            const name = plus.storage.getItem('name')
+            const password = plus.storage.getItem('password')
             const currentAppUrl = plus.storage.getItem('app_url')
             const currentAppService = {
               key: store.getters.userId + '_' + currentAppUrl,
+              name:name,
+              password:password,
               userName: store.getters.userName,
               token: store.getters.token,
               systemName: store.getters.systemName,
