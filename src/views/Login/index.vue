@@ -171,11 +171,13 @@ export default {
     if (this.innerWidth < 600) {
       this.keepLoggedIn = true
     }
-    const currentAppService = plus.storage.getItem('current_app_service')
-    if(currentAppService){
-      const service = JSON.parse(currentAppService)
-      this.loginForm.userAccount = service.name
-      this.loginForm.userPassword = service.password
+    if(window.plus){
+      const currentAppService = plus.storage.getItem('current_app_service')
+      if(currentAppService){
+        const service = JSON.parse(currentAppService)
+        this.loginForm.userAccount = service.name
+        this.loginForm.userPassword = service.password
+      }
     }
   },
   mounted () {
