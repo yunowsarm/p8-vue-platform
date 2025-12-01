@@ -92,6 +92,9 @@ export default {
       <el-tab-pane label="WBS预算分析" name="wbsBudget">
         <WbsBudget :current-route='$route.name' v-if="activeName === 'wbsBudget'" :thirdMenuParam="thirdMenuParam"></WbsBudget>
       </el-tab-pane>
+      <el-tab-pane label="预算变更记录" name="budgetChange">
+        <BudgetChange v-if="activeName === 'budgetChange'" specialRoteName='BudgetChange' :thirdMenuParam="thirdMenuParam"></BudgetChange>
+      </el-tab-pane>
       <el-tab-pane label="科目统计分析" name="SubjectStatisticalAnalysis">
        <SubjectStatisticalAnalysis v-if="activeName === 'SubjectStatisticalAnalysis'" :thirdMenuParam="thirdMenuParam"></SubjectStatisticalAnalysis>
       </el-tab-pane>
