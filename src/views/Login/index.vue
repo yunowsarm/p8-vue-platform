@@ -171,14 +171,6 @@ export default {
     if (this.innerWidth < 600) {
       this.keepLoggedIn = true
     }
-    if(window.plus){
-      const currentAppService = plus.storage.getItem('current_app_service')
-      if(currentAppService){
-        const service = JSON.parse(currentAppService)
-        this.loginForm.userAccount = service.name
-        this.loginForm.userPassword = service.password
-      }
-    }
   },
   mounted () {
     // 确保页面先渲染
@@ -217,7 +209,7 @@ export default {
         }
       })
     },
-    autoLogin() {
+    autoLogin () {
       if (getRequest().token) {
         // url携带参数redirect，login?redirect=login&token=
         // ca信息登录
@@ -256,7 +248,7 @@ export default {
         })
       }
     },
-    login(formName) {
+    login (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.isLoginning = true
@@ -281,8 +273,6 @@ export default {
             userPassword: passwordEncryption
           }
           if (window.plus) {
-            plus.storage.setItem('name',name)
-            plus.storage.setItem('password',password)
             const clientInfo = JSON.parse(plus.storage.getItem('clientInfo'))
             if (clientInfo) {
               params.clientInfo = clientInfo
@@ -348,11 +338,11 @@ export default {
         }
       })
     },
-    resetForm(formName) {
+    resetForm (formName) {
       this.$refs[formName].resetFields()
     },
     // 校验系统是否维护模式  CA校验
-    loginCheckCA() {
+    loginCheckCA () {
       let uploadFileJson = []
       // eslint-disable-next-line no-unused-vars
       let userLoginSign = true
@@ -378,7 +368,7 @@ export default {
             const that = this
             res.systemBackground.map((item) => {
               if (item.id) {
-                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function(res) {
+                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
                   item.filePath = window.URL.createObjectURL(new Blob([res.data]))
                   that.$nextTick(() => {
                     that.$refs.loginWrapper.style.backgroundImage = `url(${item.filePath})`
@@ -393,7 +383,7 @@ export default {
             const that = this
             uploadFileJson.map((item) => {
               if (item.id) {
-                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function(res) {
+                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
                   item.filePath = window.URL.createObjectURL(new Blob([res.data]))
                   that.$nextTick(() => {
                     that.$refs.loginLogo.style.backgroundImage = `url(${item.filePath})`
@@ -434,7 +424,7 @@ export default {
       })
     },
     // 密码框登录
-    loginCheck() {
+    loginCheck () {
       this.$api['SystemSettings.getLoginSetting']().then((res) => {
         if (res) {
           res.settings.forEach((a) => {
@@ -454,7 +444,7 @@ export default {
             const that = this
             res.systemBackground.map((item) => {
               if (item.id) {
-                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function(res) {
+                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
                   item.filePath = window.URL.createObjectURL(new Blob([res.data]))
                   that.$nextTick(() => {
                     that.$refs.loginWrapper.style.backgroundImage = `url(${item.filePath})`
@@ -469,7 +459,7 @@ export default {
             const that = this
             uploadFileJson.map((item) => {
               if (item.id) {
-                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function(res) {
+                this.$api['SystemSettings.downloadLoginLogo']({ attachmentId: item.id }, { responseType: 'blob' }).then(function (res) {
                   item.filePath = window.URL.createObjectURL(new Blob([res.data]))
                   that.$nextTick(() => {
                     that.$refs.loginLogo.style.backgroundImage = `url(${item.filePath})`

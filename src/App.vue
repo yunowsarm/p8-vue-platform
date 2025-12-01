@@ -45,9 +45,9 @@ export default {
   mounted () {
     this.$store.dispatch('getAuthorizationInfo')
     window.socketType = null
-    document.addEventListener('plusready', function () {
+    if (window.plus) {
       const info = plus.push.getClientInfo()
-      plus.storage.setItem('clientInfo',JSON.stringify(info))
+      plus.storage.setItem('clientInfo', JSON.stringify(info))
       var webview = plus.webview.currentWebview();
       plus.key.addEventListener('backbutton', function () {
         webview.canBack(function (e) {
@@ -61,7 +61,7 @@ export default {
           }
         });
       });
-    });
+    }
     // window.addEventListener('beforeunload', this.handlerBeforeUnload)
   },
   methods: {
