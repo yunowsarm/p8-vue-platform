@@ -9,7 +9,7 @@ import { io } from 'socket.io-client'
 
 export default {
   name: 'App',
-  data () {
+  data() {
     return {
       user: this.$store.state.user,
       conunt: 0
@@ -20,7 +20,7 @@ export default {
   },
   watch: {
     token: {
-      handler (val) {
+      handler(val) {
         if (val) {
           this.getJson()
         }
@@ -28,7 +28,7 @@ export default {
       immediate: true
     },
     userInfo: {
-      handler (val) {
+      handler(val) {
         if (val.id) {
           this.initWebSocket(val.id, val.realName)
         }
@@ -36,32 +36,32 @@ export default {
       immediate: true
     }
   },
-  updated () {
+  updated() {
     const loadingElement = document.getElementById('app-loading')
     if (loadingElement) {
       loadingElement.style.display = 'none'
     }
   },
-  mounted () {
+  mounted() {
     this.$store.dispatch('getAuthorizationInfo')
     window.socketType = null
-    document.addEventListener('plusready', function () {
+    if (window.plus) {
       const info = plus.push.getClientInfo()
-      plus.storage.setItem('clientInfo',JSON.stringify(info))
-      var webview = plus.webview.currentWebview();
+      plus.storage.setItem('clientInfo', JSON.stringify(info))
+      var webview = plus.webview.currentWebview()
       plus.key.addEventListener('backbutton', function () {
         webview.canBack(function (e) {
           if (e.canBack) {
-            webview.back(); // 如果有上一页，则返回
+            webview.back() // 如果有上一页，则返回
           } else {
             // 确认后关闭应用
-            if (confirm("确定要退出应用吗？")) {
-              webview.close(); // 关闭当前Webview，通常可达到退出应用的效果 [citation:5]
+            if (confirm('确定要退出应用吗？')) {
+              webview.close() // 关闭当前Webview，通常可达到退出应用的效果 [citation:5]
             }
           }
-        });
-      });
-    });
+        })
+      })
+    }
     // window.addEventListener('beforeunload', this.handlerBeforeUnload)
   },
   methods: {
@@ -72,7 +72,7 @@ export default {
     //     window.myWebSocket.off('getApproveContent')
     //   }
     // },
-    initWebSocket (id, name) {
+    initWebSocket(id, name) {
       let that = this
       // 判断页面有没有存在websocket连接
       if (window.WebSocket) {
@@ -100,17 +100,17 @@ export default {
           this.$store.commit('SET_MESSAGENUM', ++count)
         })
         socket.on('getMessageContent', (data) => {
-          console.log(window.isSecureContext, '我的消息---window.isSecureContext');
+          console.log(window.isSecureContext, '我的消息---window.isSecureContext')
           let res = JSON.parse(data)
-          if ("Notification" in window) {
+          if ('Notification' in window) {
             Notification.requestPermission().then(function (permission) {
-              if (permission === "granted") {
-                var notification = new Notification("新消息到达", {
+              if (permission === 'granted') {
+                var notification = new Notification('新消息到达', {
                   body: res.msgNote
                 })
                 notification.onclick = function () {
                   const URL = window.location.protocol + '//' + window.location.host + '/#/myMessageView'
-                  console.log(URL, '-----URL==我的消息');
+                  console.log(URL, '-----URL==我的消息')
                   window.open(URL, '_blank')
                 }
               }
@@ -118,16 +118,16 @@ export default {
           }
         })
         socket.on('getApproveContent', (data) => {
-          console.log(window.isSecureContext, '我的审批---window.isSecureContext');
-          if ("Notification" in window) {
+          console.log(window.isSecureContext, '我的审批---window.isSecureContext')
+          if ('Notification' in window) {
             Notification.requestPermission().then(function (permission) {
-              if (permission === "granted") {
-                var notification = new Notification("新消息到达", {
+              if (permission === 'granted') {
+                var notification = new Notification('新消息到达', {
                   body: data
                 })
                 notification.onclick = function () {
                   const URL = window.location.protocol + '//' + window.location.host + '/#/myApproveView'
-                  console.log(URL, '====URL--我的审批');
+                  console.log(URL, '====URL--我的审批')
                   window.open(URL, '_blank')
                 }
               }
@@ -144,10 +144,10 @@ export default {
         window.myWebSocket.on('updateConfig', (res) => {
           this.$alert('系统全局配置参数已修改，请刷新页面', '提示', {
             confirmButtonText: '确定',
-            callback: action => {
+            callback: (action) => {
               window.location.reload()
             }
-          });
+          })
         })
         // 连接失败时自动重新连接
         window.myWebSocket.on('reconnect_failed', () => {
@@ -177,40 +177,40 @@ export default {
           //   showClose: true
           // })
           window.myWebSocket.connect()
-        });
+        })
       }
     },
-    message () {
+    message() {
       // 设置初始标题
-      var originalTitle = document.title;
+      var originalTitle = document.title
 
       // 闪烁标题的定时器
       var blinkInterval = setInterval(function () {
-        document.title = (document.title === originalTitle) ? "新消息到达,请注意查收!" : originalTitle;
-      }, 1000);
+        document.title = document.title === originalTitle ? '新消息到达,请注意查收!' : originalTitle
+      }, 1000)
 
       // 播放声音提示
       // var audio = new Audio('./msg.mp3');
       // audio.play();
 
       // 显示通知
-      if ("Notification" in window) {
+      if ('Notification' in window) {
         Notification.requestPermission().then(function (permission) {
-          if (permission === "granted") {
-            var notification = new Notification("新沟通消息到达", {
-              body: "请注意查收！"
-            });
+          if (permission === 'granted') {
+            var notification = new Notification('新沟通消息到达', {
+              body: '请注意查收！'
+            })
           }
-        });
+        })
       }
 
       // 在用户关闭或切换页面时停止所有定时器，并将标题恢复为原始标题
       window.addEventListener('focus', function () {
-        clearInterval(blinkInterval);
-        document.title = originalTitle;
-      });
+        clearInterval(blinkInterval)
+        document.title = originalTitle
+      })
     },
-    getJson () {
+    getJson() {
       axios
         .get('/static/iconfont/iconfont.json', {
           headers: { Authorization: this.token }
@@ -229,7 +229,7 @@ export default {
         })
     }
   },
-  beforeDestroy () {
+  beforeDestroy() {
     window.myWebSocket.off('messageevent')
     window.myWebSocket.off('privateMessage')
     window.myWebSocket.off('reconnect_failed')
@@ -238,7 +238,6 @@ export default {
     window.myWebSocket.off('getApproveContent')
     window.myWebSocket.close()
     // window.removeEventListener('beforeunload', this.handlerBeforeUnload)
-
   }
 }
 </script>

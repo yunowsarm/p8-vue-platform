@@ -1,16 +1,10 @@
 <template>
-  <main class="main"
-        id="contentMain">
+  <main class="main" id="contentMain">
     <!-- custom scroll bar for main area -->
-    <transition v-if="isMobile"
-                name="fade-transform">
-      <keep-alive :include="cachedViews">
-        <router-view class="main-router" />
-      </keep-alive>
-    </transition>
-    <VuePerfectScrollbar v-else
-                         class="scroll-area"
-                         :settings="scrollOptions">
+    <keep-alive v-if="isMobile" :include="cachedViews">
+      <router-view class="main-router" />
+    </keep-alive>
+    <VuePerfectScrollbar v-else class="scroll-area" :settings="scrollOptions">
       <transition name="fade-transform">
         <keep-alive :include="cachedViews">
           <router-view class="main-router" />
@@ -26,7 +20,7 @@ import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 
 export default {
   name: 'Main',
-  data () {
+  data() {
     return {
       scrollOptions: {
         // maxScrollbarLength: 500
@@ -34,7 +28,7 @@ export default {
     }
   },
   computed: {
-    isMobile () {
+    isMobile() {
       return this.$store.getters.isMobile
     },
     ...mapGetters(['cachedViews'])
@@ -61,10 +55,12 @@ export default {
     position: relative;
     // padding:10px;
     box-sizing: border-box;
+
     ::v-deep > .normal-layout.grid-table-render {
       margin: 14px;
       height: calc(100% - 28px);
     }
+
     .main-router {
       background: #fcfcfc;
       border-radius: 5px;
@@ -74,13 +70,16 @@ export default {
       // height: 1000px;
     }
   }
+
   .fade-transform-enter-form {
     opacity: 0;
     transform: translateX(-20px);
   }
+
   .fade-transform-enter-active {
     transition: all 0.5s ease;
   }
+
   .fade-transform-enter-to {
     opacity: 1;
     transform: translateX(0);
@@ -89,14 +88,17 @@ export default {
   .fade-transform-leave-form {
     opacity: 1;
   }
+
   .fade-transform-leave-active {
     transition: all 0.5s ease;
   }
+
   .fade-transform-leave-to {
     opacity: 0;
     transform: translateX(20px);
   }
 }
+
 @media (max-width: 600px) {
   .main {
     min-width: 200px;
