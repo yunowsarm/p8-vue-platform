@@ -573,6 +573,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 ::v-deep .el-dialog__wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: absolute !important;
   background-color: rgba(0, 0, 0, 0.1);
   .custom-dialog-class {
