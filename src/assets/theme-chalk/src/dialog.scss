@@ -3,6 +3,11 @@
 // @import "mixins/mixins";
 
 // element ui dialog样式覆盖
+.el-dialog__wrapper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .el-dialog__wrapper.dragDialog{
   display: flex;
   justify-content: center;
