@@ -19,6 +19,7 @@
                   :visible="visibleMsgDialog"
                   :title="dialogName"
                   width="90%"
+                  :dialog-height="!$isMobile ? 750 : null"
                   top="5vh"
                   :show-handle-btn="false"
                   @close="visibleMsgDialog = false">
