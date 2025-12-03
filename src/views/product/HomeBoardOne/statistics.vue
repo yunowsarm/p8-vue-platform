@@ -19,7 +19,6 @@
                   :visible="visibleMsgDialog"
                   :title="dialogName"
                   width="90%"
-                  :dialog-height="750"
                   top="5vh"
                   :show-handle-btn="false"
                   @close="visibleMsgDialog = false">
@@ -206,6 +205,17 @@ export default {
   .customNlcr {
     height: 100% !important;
     margin: 0 !important;
+  }
+}
+@media (max-width: 600px) {
+  .item-icon{
+    font-size: clamp(32px, 5vw, 48px) !important;
+  }
+  .item-title{
+    font-size: clamp(12px, 5vw, 18px) !important;
+  }
+  .item-count{
+    font-size: clamp(16px, 6vw, 28px) !important;
   }
 }
 </style>
