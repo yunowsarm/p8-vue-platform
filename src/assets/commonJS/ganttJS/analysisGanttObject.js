@@ -410,7 +410,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
                 label: `${item.name}`,
                 align: 'center',
                 resize: true,
-                hide: true,
+                hide: false,
                 min_width: 120,
                 template: function (task) {
                   let result = []
@@ -436,7 +436,7 @@ export function getAnalysisGantt(ganttName, vueThis) {
                 label: `${item.name}`,
                 align: 'center',
                 resize: true,
-                hide: true,
+                hide: false,
                 min_width: 120,
                 indexNo: item.indexNo
               })

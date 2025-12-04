@@ -500,7 +500,7 @@ export function getChangeGantt(ganttName, vueThis) {
       align: 'center',
       min_width: 200,
       resize: true,
-      template: function(task) {
+      template: function (task) {
         return task.budgetInfo || 0
       }
     },
@@ -816,7 +816,7 @@ function synchronizationColumns(vueThis, ganttObject) {
               label: `<div class='gantt_search'>${item.name}</div><div class='gantt_search gantt_blank'></div>`,
               align: 'center',
               resize: true,
-              hide: true,
+              hide: false,
               min_width: 120,
               template: function (task) {
                 let result = []
@@ -842,7 +842,7 @@ function synchronizationColumns(vueThis, ganttObject) {
               label: `<div class="gantt_search">${item.name}</div><div class="gantt_search gantt_blank"></div>`,
               align: 'center',
               resize: true,
-              hide: true,
+              hide: false,
               min_width: 120,
               indexNo: item.indexNo,
               template: function (task) {
