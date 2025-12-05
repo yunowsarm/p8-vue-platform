@@ -1,34 +1,37 @@
 <template>
-  <div class="statistics-container"
-       ref='container'>
+  <div class="statistics-container" ref="container">
     <div class="statistics-grid">
-      <div class="statistics-item"
-           v-for="(item, index) in statisticsItems"
-           :key="index"
-           @click="handleItemClick(item)">
-        <div class="item-title">{{ item.title }}</div>
-        <div class="item-info">
-          <i :class="item.icon"
-             class="item-icon"></i>
-          <div class="item-count"
-               :class="{'redText': item.count > 0}">{{ item.count }}</div>
+      <div class="statistics-item" v-for="(item, index) in statisticsItems" :key="index" @click="handleItemClick(item)">
+        <div v-if="!$isMobile">
+          <div class="item-title">{{ item.title }}</div>
+          <div class="item-info">
+            <i :class="item.icon" class="item-icon"></i>
+            <div class="item-count" :class="{ redText: item.count > 0 }">{{ item.count }}</div>
+          </div>
+        </div>
+        <div v-else style="display: flex; flex-direction: column; justify-content: center; align-items: center">
+          <div class="item-info">
+            <el-badge :value="item.count" type="danger" :hidden="!item.count">
+              <i :class="item.icon" class="item-icon"></i>
+            </el-badge>
+          </div>
+          <div class="item-title">{{ item.title }}</div>
         </div>
       </div>
     </div>
-    <CommonDialog v-if="visibleMsgDialog"
-                  :visible="visibleMsgDialog"
-                  :title="dialogName"
-                  width="90%"
-                  :dialog-height="!$isMobile ? 750 : null"
-                  top="5vh"
-                  :show-handle-btn="false"
-                  @close="visibleMsgDialog = false">
+    <CommonDialog
+      v-if="visibleMsgDialog"
+      :visible="visibleMsgDialog"
+      :title="dialogName"
+      width="90%"
+      :dialog-height="!$isMobile ? 750 : null"
+      top="5vh"
+      :show-handle-btn="false"
+      @close="visibleMsgDialog = false"
+    >
       <template #dialog>
-        <MyTask v-if="comp === 'MyTask'"
-                :layout-config="layoutConfig"
-                :isFromDashboard='true'></MyTask>
-        <component v-else
-                   :is="comp"></component>
+        <MyTask v-if="comp === 'MyTask'" :layout-config="layoutConfig" :isFromDashboard="true"></MyTask>
+        <component v-else :is="comp"></component>
       </template>
     </CommonDialog>
   </div>
@@ -52,7 +55,7 @@ export default {
     MyTask,
     MineQuestion
   },
-  data () {
+  data() {
     return {
       layoutConfig: {
         layoutCode: 'MyTask',
@@ -100,11 +103,11 @@ export default {
       ]
     }
   },
-  created () {
+  created() {
     this.getHomeBoardData()
   },
   methods: {
-    getHomeBoardData () {
+    getHomeBoardData() {
       this.$api['formGenerator.tableApply']({
         sqlParam: {},
         reportId: 'ffd55ca4c4674613c623a6d217d1d2f8',
@@ -131,7 +134,7 @@ export default {
         }
       })
     },
-    handleItemClick (item) {
+    handleItemClick(item) {
       this.dialogName = item.dialogName
       this.comp = item.comp
       this.visibleMsgDialog = true
@@ -189,6 +192,7 @@ export default {
         color: #409eff;
         font-weight: bold;
       }
+
       .redText {
         color: #f56c6c;
       }
@@ -208,15 +212,66 @@ export default {
     margin: 0 !important;
   }
 }
+
 @media (max-width: 600px) {
-  .item-icon{
-    font-size: clamp(32px, 5vw, 48px) !important;
-  }
-  .item-title{
-    font-size: clamp(12px, 5vw, 18px) !important;
-  }
-  .item-count{
-    font-size: clamp(16px, 6vw, 28px) !important;
+  .statistics-container {
+    .statistics-grid {
+      //width: calc(100% - 28px);
+      overflow: hidden;
+      //margin: 0 8px;
+      //padding: 0 6px;
+      display: flex;
+      flex-wrap: wrap;
+      border-radius: 4px;
+      gap: 0;
+    }
+
+    .statistics-item {
+      //margin: 6px 0;
+      width: 25%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      .item-title {
+        font-size: clamp(12px, 1vw, 18px);
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.5vw;
+        text-align: start;
+      }
+
+      .item-info {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+
+        .item-icon {
+          color: #409eff;
+          margin: 0;
+          margin-bottom: 10px;
+
+          font-size: 30px;
+          -webkit-user-select: none;
+          user-select: none;
+        }
+
+        .item-count {
+          font-size: clamp(16px, 1.5vw, 28px);
+          color: #409eff;
+          font-weight: bold;
+        }
+
+        //.redText {
+        //  color: #f56c6c;
+        //}
+      }
+    }
   }
 }
 </style>
