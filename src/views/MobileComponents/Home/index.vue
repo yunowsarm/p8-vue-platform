@@ -11,8 +11,8 @@ export default {
     return {
       menu: [],
       kanbanConfig: {
-        id: '31136a0a4ea74d13abc9e56f5f97e42b',
-        code: 'builtHomepage'
+        id: 'e05c9f3a0cbd91407eb674e809a8e4b8',
+        code: 'builtHomepageMobile'
       }
     }
   },
@@ -39,7 +39,18 @@ export default {
       }
     },
     go(menu) {
-      this.$router.push({ name: menu.name })
+      let menuList = []
+      this.addRouters.forEach((item) => {
+        if (item.children) {
+          menuList = menuList.concat(item.children)
+        }
+      })
+      if(menuList.some(item => item.name === menu.name)){
+        this.$router.push({ name: menu.name })
+      }else{
+        this.$message.error('权限不足，请联系管理员')
+        return false
+      }
     },
     goMoreMenu() {
       this.$router.push({ name: 'more' })

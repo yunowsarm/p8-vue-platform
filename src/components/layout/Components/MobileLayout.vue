@@ -23,6 +23,9 @@ export default {
       return !this.tabs.some(tab => tab.path === currentPath)
     }
   },
+  created() {
+    this.approvalTotal()
+  },
   watch: {
     messageNum: {
       handler(val) {
@@ -38,6 +41,11 @@ export default {
     }
   },
   methods: {
+    approvalTotal () {
+      this.$api['PersonalProcessApproval.approvalPendingTotal']().then((res) => {
+        this.$store.dispatch('setApprovalMessageCount', res)
+      })
+    },
     goBack() {
       this.$router.go(-1)
     },
@@ -51,7 +59,7 @@ export default {
 <template>
   <div class="mobile-layout">
     <div class="mobile-header">
-      <div v-if='showBackButton' class="header-left" @click="goBack">
+      <div v-if="showBackButton" class="header-left" @click="goBack">
         <i class="el-icon-arrow-left"></i>
       </div>
       <div class="header-title">{{ $route.meta.title || '默认标题' }}</div>
@@ -142,5 +150,8 @@ export default {
   .tab-item.active {
     color: #409eff;
   }
+}
+::v-deep .main-router {
+  height: 100% !important;
 }
 </style>
