@@ -1,18 +1,23 @@
 <template>
-  <div class="layout">
-    <sidebar :style="{ width: sidebarState.width }"></sidebar>
-    <section class="section" :style="{ width: `calc(100% - ${isMobile ? sidebarState.sidebarMinWidth : 0})` }">
-      <headers></headers>
-      <!-- <div v-if="isMobile" class="slide-bar-mobile"
-        @click="slideSidebar">
-        <div class="slider p8"
-            :class="{ 'icon-youzhedie1': !this.sidebarState.isOpen, 'icon-zuozhedie1': this.sidebarState.isOpen }"></div>
-      </div> -->
-      <div class="main-content">
-        <tag-tabs v-if="!isMobile"></tag-tabs>
-        <app-main class="main-wrapper" id="mainWrapper"></app-main>
-      </div>
-    </section>
+  <div style='height: 100%;width: 100%'>
+    <div class="layout" v-if='!isMobile'>
+      <sidebar :style="{ width: sidebarState.width }"></sidebar>
+      <section class="section" :style="{ width: `calc(100% - ${isMobile ? sidebarState.sidebarMinWidth : 0})` }">
+        <headers></headers>
+        <!-- <div v-if="isMobile" class="slide-bar-mobile"
+          @click="slideSidebar">
+          <div class="slider p8"
+              :class="{ 'icon-youzhedie1': !this.sidebarState.isOpen, 'icon-zuozhedie1': this.sidebarState.isOpen }"></div>
+        </div> -->
+        <div class="main-content">
+          <tag-tabs v-if="!isMobile"></tag-tabs>
+          <app-main class="main-wrapper" id="mainWrapper"></app-main>
+        </div>
+      </section>
+    </div>
+    <div class='mobile-layout' v-else>
+      <mobile-layout></mobile-layout>
+    </div>
   </div>
 </template>
 
@@ -21,6 +26,7 @@ import headers from './Components/header'
 import sidebar from './Components/Sidebar'
 import tagTabs from './Components/tagTabs'
 import appMain from './Components/main'
+import MobileLayout from './Components/MobileLayout.vue'
 
 import { mapGetters } from 'vuex'
 
@@ -30,7 +36,8 @@ export default {
     headers,
     sidebar,
     tagTabs,
-    appMain
+    appMain,
+    MobileLayout
   },
   computed: {
     isMobile() {

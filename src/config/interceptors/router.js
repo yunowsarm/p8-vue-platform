@@ -67,7 +67,7 @@ export function routerBeforeEachFunc(to, from, next) {
             } else if (!reg.test(to.path) || to.path === '/') {
               let userAgent = navigator.userAgent.toLowerCase()
               if (/iphone|ipod|android|ipad|windows phone/.test(userAgent)) {
-                next({ name: 'MyTask', replace: true })
+                next({ name: 'home', replace: true })
                 store.dispatch('hideSidebar', true)
                 store.dispatch('collapseSidebar', false)
                 return

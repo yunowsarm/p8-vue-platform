@@ -115,7 +115,8 @@
                  style="margin: 0 5px"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-if='isMobile' @click.native="switchService">
+              <el-dropdown-item v-if='isMobile'
+                                @click.native="switchService">
                 <i class="p8 icon-shuaxin"></i>
                 切换服务
               </el-dropdown-item>
@@ -237,9 +238,9 @@
             <div slot="reference">{{ regardsObj.systemVersion }}</div>
           </el-popover>
         </div>
-<!--        <p><span class="regards-font">官网地址:&nbsp;&nbsp;&nbsp;</span><el-button type="text"-->
-<!--                     style="font-size: 15px;"-->
-<!--                     @click="openRZ">www.xardmu.com</el-button></p>-->
+        <!--        <p><span class="regards-font">官网地址:&nbsp;&nbsp;&nbsp;</span><el-button type="text"-->
+        <!--                     style="font-size: 15px;"-->
+        <!--                     @click="openRZ">www.xardmu.com</el-button></p>-->
         <p><span class="regards-font">授权终止日期:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.authorizedExpires }}</span></p>
         <div style="display: flex;">
           <div class="regards-font">特征码:</div>
@@ -310,7 +311,7 @@ export default {
     isMobile () {
       return this.$store.getters.isMobile
     },
-    ...mapGetters(['approvalTotalMsg', 'messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl','authorizationInfo']),
+    ...mapGetters(['approvalTotalMsg', 'messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl', 'authorizationInfo']),
   },
   mounted () {
     if (this.isMobile) {
@@ -367,9 +368,9 @@ export default {
     // }
   },
   methods: {
-    switchService(){
-      if(window.plus){
-        this.$store.dispatch('userLogout')
+    switchService () {
+      if (window.plus) {
+        // this.$store.dispatch('userLogout')
         plus.storage.removeItem('current_app_service')
         const w = plus.webview.create('_www/config.html','config')
         w.show()

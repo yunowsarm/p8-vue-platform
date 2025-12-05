@@ -385,15 +385,15 @@ export default {
                 myGantt.showTask(vueThis.taskId)
               }, 1000)
             }
-            if (res.changeTaskExtList && Object.keys(res.changeTaskExtList) && Object.keys(res.changeTaskExtList).length) {
-              Object.keys(res.changeTaskExtList).forEach(item => {
-                let task = myGantt.getTask(item)
-                res.changeTaskExtList[item].forEach(ref => {
-                  task['kz' + ref.customItem1] = ref.fieldValue
-                })
-                myGantt.updateTask(task.id)
-              })
-            }
+            // if (res.changeTaskExtList && Object.keys(res.changeTaskExtList) && Object.keys(res.changeTaskExtList).length) {
+            //   Object.keys(res.changeTaskExtList).forEach(item => {
+            //     let task = myGantt.getTask(item)
+            //     res.changeTaskExtList[item].forEach(ref => {
+            //       task['kz' + ref.customItem1] = ref.fieldValue
+            //     })
+            //     myGantt.updateTask(task.id)
+            //   })
+            // }
           }
         })
         .catch(function (error) {

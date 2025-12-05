@@ -41,6 +41,42 @@ export const constantRouterMap = [
         name: 'Dashboard',
         component: _import_('Dashboard/index'),
         meta: { title: '主页', icon: 'icon-base-data-manage', noCache: false }
+      },
+      {
+        path: '/home',
+        name:'home',
+        component: _import_('MobileComponents/Home/index'),
+        meta:{title:'主页'}
+      },
+      {
+        path: '/more',
+        name:'more',
+        component: _import_('MobileComponents/Home/moreMenu'),
+        meta:{title:'更多服务'}
+      },
+      {
+        path: '/message',
+        name:'message',
+        component: _import_('Framework/Message/index'),
+        meta:{title:'我的消息'}
+      },
+      {
+        path: '/approval',
+        name:'approval',
+        component: _import_('Communication/MyApprove/list'),
+        meta:{title:'我的审批'}
+      },
+      {
+        path: '/mine',
+        name:'mine',
+        component: _import_('MobileComponents/Mine/index'),
+        meta:{title:'个人中心'}
+      },
+      {
+        path: '/about',
+        name:'about',
+        component: _import_('MobileComponents/Mine/about'),
+        meta:{title:'关于'}
       }
     ]
   },
