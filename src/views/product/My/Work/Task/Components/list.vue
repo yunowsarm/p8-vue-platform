@@ -62,7 +62,8 @@
                    :disabled="btnDisable"
                    @change="childrenClick"></el-switch>
       </div>
-      <P8TableRender ref="tableRender"
+      <P8TableRender v-if="componentsConfig.code"
+                     ref="tableRender"
                      :key="dateTime"
                      class="MyTaskList"
                      :dynamic-columns="dynamicColumns"
