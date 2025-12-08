@@ -122,9 +122,14 @@ export default {
 ::v-deep .vue-grid-layout {
   background: #eff3f7;
 }
+
 @media screen and (max-width: 1100px) {
   ::v-deep .normal-layout .normal-main .normalCenterFullHeight {
     height: 100% !important;
+  }
+  ::v-deep .kanban_normal {
+    margin: 0 !important;
+    padding: 0 !important;
   }
 }
 </style>
