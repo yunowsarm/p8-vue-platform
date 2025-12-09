@@ -438,7 +438,10 @@ export function getAnalysisGantt(ganttName, vueThis) {
                 resize: true,
                 hide: false,
                 min_width: 120,
-                indexNo: item.indexNo
+                indexNo: item.indexNo,
+                template: function (task) {
+                  return task[item.filedName] ?? ''
+                }
               })
             }
           }
@@ -1012,7 +1015,6 @@ export function getAnalysisGantt(ganttName, vueThis) {
       ganttObject.config.columns = initColumns
     }
   }
-
   // 创建资源载体
   ganttObject.$resourcesStore = GanttObject.createDatastore(ganttObject)
   // 封装资源数据 名称[部门]-角色
