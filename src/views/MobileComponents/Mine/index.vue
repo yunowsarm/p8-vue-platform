@@ -5,7 +5,14 @@
       <div class="avatar">{{ userName.slice(-1) }}</div>
       <div class="info">
         <div class="name">{{ userName }}</div>
-        <div class="dept">{{ userInfo.parentDept }} - {{ userInfo.departmentName }}</div>
+        <div class="dept"><span class="title" style="float: left; width: 46px">部门：</span> {{ userInfo.departmentName }}</div>
+        <div class="role">
+          <span class="title" style="float: left; width: 46px">角色：</span>
+          <span class="content" v-for="item in userInfo.userRoles" :key="item.roleId">
+            {{ item.roleName.trim() }}
+            <span style="margin-left: 1px">;</span>
+          </span>
+        </div>
       </div>
     </div>
 
@@ -124,8 +131,12 @@ export default {
   font-size: 18px;
   font-weight: 600;
 }
-
 .dept {
+  color: #999;
+  margin-top: 6px;
+}
+
+.role {
   color: #999;
   margin-top: 6px;
 }
