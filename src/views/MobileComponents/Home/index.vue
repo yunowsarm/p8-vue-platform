@@ -95,6 +95,7 @@ export default {
   flex-wrap: wrap;
   border-radius: 4px;
   background: #ffffff;
+  padding-bottom: 10px;
 
   .menu-item {
     margin: 6px 0;

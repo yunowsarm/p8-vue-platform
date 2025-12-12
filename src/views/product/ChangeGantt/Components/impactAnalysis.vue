@@ -229,6 +229,40 @@ export default {
         }
       },
       immediate: true
+    },
+    userSettingAll: {
+      handler (val) {
+        let isGroup = val.PlanButton ? val.PlanButton[0].value.isGroup : this.ganttIsGroup
+        if (this.ganttButtonMode == 'tabs') {
+          if (isGroup === '1') {
+            this.commandButtonBarHeight = this.advance ? '160px' : '40px'
+            this.expandBottom = 'calc(100% - 160px)'
+          } else {
+            this.commandButtonBarHeight = '160px'
+            this.expandBottom = 'calc(100% - 160px)'
+          }
+        }
+        if (this.ganttButtonMode == 'double') {
+          if (isGroup === '1') {
+            this.commandButtonBarHeight = '72px'
+            this.expandBottom = 'calc(100% - 72px)'
+          } else {
+            this.commandButtonBarHeight = '54px'
+            this.expandBottom = 'calc(100% - 55px)'
+          }
+        }
+        if (this.ganttButtonMode == 'single') {
+          if (isGroup === '1') {
+            this.commandButtonBarHeight = '58px'
+            this.expandBottom = 'calc(100% - 55px)'
+          } else {
+            this.commandButtonBarHeight = '40px'
+            this.expandBottom = 'calc(100% - 40px)'
+          }
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted () {
@@ -296,7 +330,7 @@ export default {
     //   }
     //   return ''
     // },
-    ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
+    ...mapGetters(['ganttButtonMode', 'ganttRightButtons', 'userSettingAll'])
   },
   methods: {
     async initGantt (planInfoId, changeRecordId) {
@@ -366,6 +400,7 @@ export default {
             //     }
             //   }
             // })
+
             const datas = {
               tasks: initData,
               links: res.links
@@ -385,15 +420,16 @@ export default {
                 myGantt.showTask(vueThis.taskId)
               }, 1000)
             }
-            // if (res.changeTaskExtList && Object.keys(res.changeTaskExtList) && Object.keys(res.changeTaskExtList).length) {
-            //   Object.keys(res.changeTaskExtList).forEach(item => {
-            //     let task = myGantt.getTask(item)
-            //     res.changeTaskExtList[item].forEach(ref => {
-            //       task['kz' + ref.customItem1] = ref.fieldValue
-            //     })
-            //     myGantt.updateTask(task.id)
-            //   })
-            // }
+
+            if (res.changeTaskExtList && Object.keys(res.changeTaskExtList) && Object.keys(res.changeTaskExtList).length) {
+              Object.keys(res.changeTaskExtList).forEach(item => {
+                let task = myGantt.getTask(item)
+                res.changeTaskExtList[item].forEach(ref => {
+                  task[ref.fieldName] = ref.fieldValue
+                })
+                myGantt.updateTask(task.id)
+              })
+            }
           }
         })
         .catch(function (error) {

@@ -59,11 +59,31 @@ export default {
       this.dialogVisible = false
       this.selectRows = []
     },
-    sendProblem (rows) {
-      console.log("🚀 ~ sendProblem ~ rows11111111111111111:", rows)
+    sendProblem (rows, type) {
       this.selectRows = rows
       if (rows && rows.length) {
-        this.dialogVisible = true
+        if (type) {
+          this.$confirm('是否要取消派发？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          })
+            .then(() => {
+              let ids = this.selectRows.map(el => el.ID)
+              this.$api['qualityIssues.issueDistribution']({
+                ids: ids,
+                type: type
+              }).then(res => {
+                if (res) {
+                  this.$message({ type: 'success', message: '取消成功!' })
+                  this.$refs.tableRender.CloseAndRefresh()
+                }
+              })
+            })
+            .catch((e) => { })
+        } else {
+          this.dialogVisible = true
+        }
       } else {
         this.$message({ type: 'warning', message: '请选择数据' })
       }

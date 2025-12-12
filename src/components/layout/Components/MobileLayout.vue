@@ -59,11 +59,11 @@ export default {
 <template>
   <div class="mobile-layout">
     <div class="mobile-header">
-      <div v-if="showBackButton" class="header-left" @click="goBack">
+      <div v-show="showBackButton" class="header-left" @click="goBack">
         <i class="el-icon-arrow-left"></i>
       </div>
       <div class="header-title">{{ $route.meta.title || '默认标题' }}</div>
-      <div class="header-right"></div>
+<!--      <div class="header-right"></div>-->
     </div>
     <app-main class="app-main"></app-main>
     <div class="tab-bar">
@@ -86,6 +86,7 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   .mobile-header {
+    position: relative;
     height: 44px;
     display: flex;
     justify-content: space-between;
@@ -96,13 +97,12 @@ export default {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
     .header-left {
-      width: 30px;
-      height: 30px;
+      position: absolute;
+      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 20px;
-      cursor: pointer;
     }
 
     .header-title {

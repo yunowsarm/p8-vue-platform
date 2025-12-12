@@ -282,6 +282,7 @@ export default {
       this.$refs.tableRender.selectRecords = [record]
       this.thirdMenuParam = this.$refs.tableRender.selectRecords[0]
       this.dateTime = new Date().getTime()
+      this.$refs.tableRender.buttonKey = new Date().getTime()
     },
   },
   components: {
