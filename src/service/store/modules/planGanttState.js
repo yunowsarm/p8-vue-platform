@@ -15,9 +15,13 @@ const planGanttState = {
       versionGantt2: {}
     },
     monitorBtnsByApi: [],
-    ganttDatas: []
+    ganttDatas: [],
+    classifyData:[]
   },
   mutations: {
+    SET_CLASSIFYDATA(state,data){
+      state.classifyData = data
+    },
     SET_BUTTONMSG (state, data) {
       state.buttonMsg[data.id] = data.msg
     },

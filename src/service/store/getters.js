@@ -47,6 +47,7 @@ const getters = {
   cachedViews: (state) => state.views.cachedViews,
   visitedViews: (state) => state.views.visitedViews,
   // planGantt页面任务样式
+  classifyData:(state) => state.planGanttState.classifyData,
   taskStyles: (state) => state.planGanttState.taskStyles,
   vueThis: (state) => state.planGanttState.vueThis,
   ganttDatas: (state) => state.planGanttState.ganttDatas,
