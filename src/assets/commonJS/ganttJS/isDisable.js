@@ -13,6 +13,7 @@ const statusName = {
   6408: '审批撤销',
   6409: '审批完成'
 }
+
 // 公共函数，用于返回禁用状态和提示信息
 function createDisableResponse(message) {
   return {
@@ -23,13 +24,18 @@ function createDisableResponse(message) {
 
 // 判断是否能新建下级
 export function isNewChild(ganttName, tasks) {
+  const vueThis = store.getters.vueThis
   const task = tasks[0]
   if (['6405', '6406', '6409'].includes(task.managerStatus)) {
-    const vueThis = store.getters.vueThis
     if (vueThis.planEditLock === '0' && vueThis.createPage !== 'decompose') return false
     return createDisableResponse(`任务为${statusName[task.managerStatus]},不可操作`)
   } else if (task.planType) {
-    return createDisableResponse(`当前任务标识是仅叶子节点可用，无法在此创建下级`)
+    const classify = store.getters.classifyData.find((item) => item.id === task.planType)
+    if (classify.editMark === '1') {
+      return createDisableResponse(`当前任务标识是仅叶子节点可用，无法在此创建下级`)
+    } else {
+      return false
+    }
   } else {
     return false
   }
@@ -120,6 +126,7 @@ export function isWeave(ganttName, tasks) {
     return false
   }
 }
+
 // 判断任务状态是否为审批完成
 export function isApprovalCompleted(ganttName, tasks) {
   if (tasks.some((task) => task.managerStatus === '6409')) {
@@ -137,6 +144,7 @@ export function isReadOnly(ganttName, tasks) {
     return false
   }
 }
+
 // 判断选中任务是非根节点
 export function isNoRoot(ganttName, tasks) {
   if (checkContentRoot(ganttName, tasks)) {
@@ -184,6 +192,7 @@ export function isHasProductTask(ganttName, tasks) {
     return false
   }
 }
+
 // 判断是否包含审批中的任务
 export function isHasApproveTask(ganttName, tasks) {
   if (checkHasApproveTask(ganttName, tasks)) {
@@ -212,6 +221,7 @@ export function isSingleTask(ganttName, tasks) {
     return createDisableResponse(`多选时不允许此操作`)
   }
 }
+
 // 选中任务不符合删除条件
 export function isAllowDelete(ganttName, tasks) {
   const vueThis = store.getters.vueThis
@@ -223,6 +233,7 @@ export function isAllowDelete(ganttName, tasks) {
     return createDisableResponse(canDeleteCheckRes.msg)
   }
 }
+
 // 选中任务的状态为审批驳回或者审批撤销并且任务包含根节点
 export function isApprovalReject(ganttName, tasks) {
   if (tasks[0].managerStatus === '6407' || tasks[0].managerStatus === '6408') {
@@ -371,6 +382,7 @@ export function isGridView(ganttName, tasks) {
   }
   return createDisableResponse(`当前已是`)
 }
+
 // 判断当前视图类型是否为gantt
 export function isGanttView(ganttName, tasks) {
   const vueThis = store.getters.vueThis
@@ -379,6 +391,7 @@ export function isGanttView(ganttName, tasks) {
   }
   return createDisableResponse(`当前已是`)
 }
+
 // 判断当前视图类型是否为resource
 export function isResourceView(ganttName, tasks) {
   const vueThis = store.getters.vueThis
@@ -457,12 +470,14 @@ export function isNotStart(ganttName, tasks) {
     }
   }
 }
+
 // 判断选中的任务是否只变更记录
 export function isChangeHistory(ganttName, tasks) {
   if (tasks && tasks.length === 1 && !tasks[0].changeCount) {
     return createDisableResponse(`无变更记录`)
   }
 }
+
 /**
  * 公共函数
  */
