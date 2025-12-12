@@ -22,7 +22,6 @@
         </pane-view>
         <P8TableRender ref="tableRender"
                        :key='tableKey'
-                       buttonMoreLen=2
                        @planEdit="planEdit"
                        :pagination="false"
                        :record=row[0]
