@@ -114,8 +114,9 @@ export default {
       dicType = 'ACTIVITY_TYPE'
     }
     this.$api['planGanttManager.loadTaskClassifyData']({ dicType })
-      .then(function (res) {
+      .then( (res) => {
         if (res) {
+          that.$store.commit("SET_CLASSIFYDATA",res)
           that.classifyData = generateTree(res, 'parentId', res[0].parentId)
           // 添加取消按钮
           const cancelSelClassify = {
