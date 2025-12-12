@@ -955,29 +955,29 @@ export default {
                 myGantt.selectTask(vueThis.selectedId)
               }, 1000)
             }
-            // if (res.changeTaskExtList && Object.keys(res.changeTaskExtList) && Object.keys(res.changeTaskExtList).length) {
-            //   const extraData = []
-            //   Object.keys(res.changeTaskExtList).forEach((item) => {
-            //     let task = myGantt.getTask(item)
-            //     res.changeTaskExtList[item].forEach((ref) => {
+            if (res.changeTaskExtList && Object.keys(res.changeTaskExtList) && Object.keys(res.changeTaskExtList).length) {
+              const extraData = []
+              Object.keys(res.changeTaskExtList).forEach((item) => {
+                let task = myGantt.getTask(item)
+                res.changeTaskExtList[item].forEach((ref) => {
 
-            //       task['kz' + ref.customItem1] = ref.fieldValue ? ref.fieldValue : ''
+                  task[ref.fieldName] = ref.fieldValue ? ref.fieldValue : ''
 
-            //       const obj = {
-            //         projectTasksId: item,
-            //         customItem1: ref.customItem1,
-            //         id: ref.id,
-            //         fieldName: ref.fieldName,
-            //         fieldType: ref.filedType,
-            //         fieldValue: ref.fieldValue,
-            //         indexNo: ref.indexNo // 排序号
-            //       }
-            //       extraData.push(obj)
-            //     })
-            //     myGantt.updateTask(task.id)
-            //   })
-            //   vueThis.taskExtendRequests = vueThis.taskExtendRequests.concat(extraData)
-            // }
+                  const obj = {
+                    projectTasksId: item,
+                    customItem1: ref.customItem1,
+                    id: ref.id,
+                    fieldName: ref.fieldName,
+                    fieldType: ref.filedType,
+                    fieldValue: ref.fieldValue,
+                    indexNo: ref.indexNo // 排序号
+                  }
+                  extraData.push(obj)
+                })
+                myGantt.updateTask(task.id)
+              })
+              vueThis.taskExtendRequests = vueThis.taskExtendRequests.concat(extraData)
+            }
           }
         })
         .catch(function (error) {
