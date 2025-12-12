@@ -169,7 +169,9 @@ export default {
       setTimeout(() => {
         if (this.$refs.tableRender.$refs.xTable.tableData) {
           let record = this.$refs.tableRender.$refs.xTable.tableData[0]
-          this.thirdMenuClick(record)
+          if (record) {
+            this.thirdMenuClick(record)
+          }
         }
       }, 1000)
     },
