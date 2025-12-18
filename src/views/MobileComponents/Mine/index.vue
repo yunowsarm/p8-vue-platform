@@ -142,6 +142,7 @@ export default {
 }
 
 .info {
+  flex: 1;
   margin-left: 15px;
 }
 
