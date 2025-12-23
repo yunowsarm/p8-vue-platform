@@ -47,7 +47,13 @@ export function download(id, name, type) {
     dtask.start()
   } else {
     const api = Vue.prototype.$api
-    api['documentManagement.download']({ attachmentId: id }, { responseType: 'blob' })
+    let apiUrl
+    if(type === 'template'){
+      apiUrl = 'SystemSettings.getTemplateFileUrl'
+    }else{
+      apiUrl = 'documentManagement.download'
+    }
+    api[apiUrl]({ attachmentId: id }, { responseType: 'blob' })
       .then((backJson) => {
         const link = document.createElement('a')
         link.href = window.URL.createObjectURL(new Blob([backJson.data]))
