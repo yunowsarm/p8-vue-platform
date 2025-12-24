@@ -76,5 +76,14 @@
     }
   }
 }
+@media (max-width: 1100px) {
+  .el-dropdown-menu .el-button--small {
+    padding: 5px 7px !important;
+    margin:0 3px;
+    i {
+      font-size: 12px;
+    }
+  }
+}
 
 

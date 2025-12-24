@@ -17,7 +17,7 @@
                      :splitDefaultLeftWidth="35"
                      v-bind="normalLayoutConfig">
         <template #north>
-          <el-input placeholder="请输入人员姓名进行搜索"
+          <el-input placeholder="请输入姓名搜索"
                     size="mini"
                     clearable
                     v-model="userParam.userName"
@@ -29,7 +29,7 @@
                      style="width: 35%"
                      collapse-tags
                      clearable
-                     placeholder="请选择角色进行搜索">
+                     placeholder="请选择角色搜索">
             <el-option v-for="item in roleIds"
                        :key="item.value"
                        :label="item.label"
@@ -367,4 +367,15 @@ export default {
 ::v-deep .el-input__validateIcon {
   display: none !important;
 }
+@media (max-width: 1100px) {
+  .dialogSelectUser {
+    ::v-deep .el-dialog__body {
+      padding: 5px;
+      .normal-header {
+        padding: 5px 5px 0 5px;
+      }
+    }
+  }
+}
+
 </style>
