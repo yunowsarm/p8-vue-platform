@@ -2,7 +2,7 @@
   <div style='height: 100%;width: 100%'>
     <div class="layout" v-if='!isMobile'>
       <sidebar :style="{ width: sidebarState.width }"></sidebar>
-      <section class="section" :style="{ width: `calc(100% - ${isMobile ? sidebarState.sidebarMinWidth : 0})` }">
+      <section class="section" :style="{ width: `calc(100% - ${sidebarState.width})` }">
         <headers></headers>
         <!-- <div v-if="isMobile" class="slide-bar-mobile"
           @click="slideSidebar">
