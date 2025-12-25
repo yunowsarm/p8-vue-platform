@@ -84,6 +84,24 @@
       font-size: 12px;
     }
   }
+  .mobileButton {
+    white-space: nowrap;
+    height: 27px;
+    overflow: auto;
+    .el-button--small{
+      padding: 5px 7px;
+      margin-right: 3px;
+    }
+    .el-dropdown {
+      vertical-align: bottom;
+      button {
+        padding: 5px 7px !important;
+      }
+      i {
+        font-size: 12px !important;
+      }
+    }
+  }
 }
 
 

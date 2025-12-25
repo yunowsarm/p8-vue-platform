@@ -103,7 +103,7 @@ export default {
     let timer = setInterval(() => {
       if (this.$refs.tableRender && this.$refs.tableRender.$refs.xTable) {
         const parentElement = this.$refs.tableRender.$el
-        const mh = parentElement.offsetHeight - 100
+        const mh = parentElement.offsetHeight - 150
         const rowHeight = this.$refs.tableRender.$refs.xTable.tableRowHeight
         const visibleRows = Math.floor(mh / rowHeight);
         this.$refs.tableRender.$refs.xTable.page.size = visibleRows
