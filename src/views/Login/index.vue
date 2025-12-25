@@ -20,8 +20,10 @@
     <div class="loginContent">
       <div class="login-block">
         <div class="login-contain">
-          <span class="login-logo"
-                ref="loginLogo"></span>
+          <div class='login-logo-box'>
+             <span class="login-logo"
+                   ref="loginLogo"></span>
+          </div>
           <h4 class="login-sysName"
               v-html="system_name"></h4>
           <el-form class="loginForm"
@@ -852,6 +854,28 @@ $login-primary--login-color: #306cf7;
       background-size: cover !important;
       background-image: url(../../assets/image/login/loginNew.png);
       background-color: #0060ff !important;
+      .login-block{
+        width: 100%;
+        border-radius: 38px;
+        .login-logo-box{
+          background-color: #ffffff;
+          border-radius: 38px;
+          z-index: 1;
+          padding-top: 30px;
+        }
+        .login-logo{
+          width: 100%;
+          margin: 0;
+        }
+        .loginForm{
+          width: 100% !important;
+          padding: 50px 80px;
+          box-sizing: border-box;
+          z-index:1;
+          margin: 0 !important;
+          background: #ffffff;
+        }
+      }
     }
     .loginForm {
       // position: absolute !important;
