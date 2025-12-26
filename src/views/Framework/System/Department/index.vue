@@ -3,15 +3,34 @@
     <template #north>
       <common-button :comp="comp"
                      button-type="primary"></common-button>
+      <search-form-list ref="search"
+                        label-width="100px"
+                        :data-source="searchData"
+                        :addFuzzySearch="true"
+                        @search="search"
+                        @re-set="reSet"></search-form-list>
     </template>
     <template #center>
-      <common-table ref="table"
+      <!-- <common-table ref="table"
                     :comp="comp"
+                    :table-border="false"
                     :columns="columns"
                     :table-config="tableConfig"
                     :table-refresh="tableRefresh"
                     :pagination="false"
-                    :api="tableApi"></common-table>
+                    :api="tableApi">
+      </common-table> -->
+      <vxe-table ref="table"
+                 :comp="comp"
+                 :columns="columns"
+                 :customHeight="customHeight"
+                 :table-config="tableConfig"
+                 :row-config="{ isHover: true }"
+                 :params="queryParam"
+                 :pagination="false"
+                 :api="tableApi"
+                 :tree-config="treeConfig">
+      </vxe-table>
     </template>
     <template #drawer-panel>
       <common-drawer :title="drawerTitle"
@@ -45,7 +64,7 @@
 </template>
 
 <script>
-import { P8ListLayout as ListLayout, P8Button as CommonButton, P8Table as CommonTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
+import { P8Search as SearchFormList, P8ListLayout as ListLayout, P8Button as CommonButton, P8VxeTable as VxeTable, P8Drawer as CommonDrawer } from 'p8-components-ui'
 
 import departmentEditView from './edit'
 import departmentView from './view'
@@ -55,12 +74,44 @@ export default {
   name: 'DepartmentIndex',
   data () {
     return {
+      customHeight: document.documentElement.clientHeight - 160,
+      queryParam: {},
+      treeConfig: {
+        transform: true,
+        expandAll: true,
+        rowField: 'id',
+        parentField: 'parentId'
+      },
+      searchData: [
+        {
+          type: 'text',
+          labelText: '部门名称',
+          fieldName: 'name',
+          placeholder: '请输入部门名称',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'text',
+          labelText: '部门简称',
+          fieldName: 'deptAbbreviation',
+          placeholder: '请输入部门简称',
+          colLayout: 'singleCol'
+        },
+        {
+          type: 'text',
+          labelText: '部门编码',
+          fieldName: 'no',
+          placeholder: '请输入部门编码',
+          colLayout: 'singleCol'
+        }
+      ],
       columns: [
         {
-          title: '部门全称',
+          title: '部门名称',
           minWidth: 300,
           dataIndex: 'name',
-          headerAlign: 'left'
+          headerAlign: 'left',
+          treeNode: true,
         },
         {
           title: '部门简称',
@@ -69,7 +120,7 @@ export default {
           headerAlign: 'left'
         },
         {
-          title: '部门编号',
+          title: '部门编码',
           width: 150,
           dataIndex: 'no',
           headerAlign: 'left'
@@ -83,10 +134,11 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: '160',
+          width: 160,
           dataIndex: 'operation',
           scopedSlots: { customRender: 'operation' },
-          align: 'center'
+          align: 'center',
+          headerAlign: 'left'
         }
       ],
       tableApi: 'departmentManger.list',
@@ -103,6 +155,18 @@ export default {
     }
   },
   methods: {
+    reSet () {
+      const this_ = this
+      Object.keys(this_.queryParam).forEach((key) => {
+        this_.queryParam[key] = null
+      })
+      Vue.nextTick(function () {
+        this_.$refs.table.searchData()
+      })
+    },
+    search (searchData) {
+      this.queryParam = searchData
+    },
     createDepartment () {
       this.drawerTitle = '新建部门'
       this.drawerVisible = true
@@ -163,12 +227,12 @@ export default {
       })
         .then(() => {
           that.$api['departmentManger.remove']({ id: record.id }).then((res) => {
-
+            that.$message({ type: 'success', message: '删除成功' })
             that.$refs.table.searchData()
           })
         })
         .catch(() => {
-
+          that.$message({ message: '删除失败！', type: 'error' })
         })
     },
     moveUser (record) {
@@ -201,11 +265,12 @@ export default {
   components: {
     ListLayout,
     CommonButton,
-    CommonTable,
+    VxeTable,
     CommonDrawer,
     departmentEditView,
     departmentMoveUserView,
-    departmentView
+    departmentView,
+    SearchFormList
   }
 }
 </script>
