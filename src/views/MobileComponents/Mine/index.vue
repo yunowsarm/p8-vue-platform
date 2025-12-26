@@ -5,10 +5,14 @@
       <div class="avatar">{{ userName.slice(-1) }}</div>
       <div class="info">
         <div class="name">{{ userName }}</div>
-        <div class="dept"><span class="title" style="float: left; width: 46px">部门：</span> {{ userInfo.departmentName }}</div>
+        <div class="dept"><span class="title"
+                style="float: left; width: 46px">部门：</span> {{ userInfo.departmentName }}</div>
         <div class="role">
-          <span class="title" style="float: left; width: 46px">角色：</span>
-          <span class="content" v-for="item in userInfo.userRoles" :key="item.roleId">
+          <span class="title"
+                style="float: left; width: 46px">角色：</span>
+          <span class="content"
+                v-for="item in userInfo.userRoles"
+                :key="item.roleId">
             {{ item.roleName.trim() }}
             <span style="margin-left: 1px">;</span>
           </span>
@@ -18,15 +22,29 @@
 
     <!-- 分组：系统操作 -->
     <div class="menu-list">
-      <cell title="切换服务" icon="el-icon-s-operation" @click="switchServer" />
-      <cell title="修改密码" icon="el-icon-lock" @click="changePassword" />
-      <cell title="关于系统" icon="el-icon-info" @click="openAbout" />
+      <cell title="切换服务"
+            icon="el-icon-s-operation"
+            @click="switchServer" />
+      <cell title="修改密码"
+            icon="el-icon-lock"
+            @click="changePassword" />
+      <cell title="关于系统"
+            icon="el-icon-info"
+            @click="openAbout" />
 
       <div class="split"></div>
 
-      <cell title="退出登录" icon="p8 icon-logout" @click="logout" is-danger />
+      <cell title="退出登录"
+            icon="p8 icon-logout"
+            @click="logout"
+            is-danger />
     </div>
-    <common-drawer v-if="modifyPasswordVisible" :visible="modifyPasswordVisible" title="" @close="modifyPasswordVisible = false" direction="ttb" size="100%">
+    <common-drawer v-if="modifyPasswordVisible"
+                   :visible="modifyPasswordVisible"
+                   title=""
+                   @close="modifyPasswordVisible = false"
+                   direction="ttb"
+                   size="100%">
       <template #drawer>
         <modifyPassWord @close="modifyPasswordVisible = false"></modifyPassWord>
       </template>
@@ -42,28 +60,28 @@ import modifyPassWord from '@/components/layout/Components/ModifyPassword/index'
 
 export default {
   components: { cell, CommonDrawer, modifyPassWord },
-  data() {
+  data () {
     return {
       modifyPasswordVisible: false
     }
   },
   computed: {
-    userName() {
+    userName () {
       return this.$store.getters.userName
     },
-    userInfo() {
+    userInfo () {
       return this.$store.getters.userInfo
     }
   },
   methods: {
-    switchServer() {
+    switchServer () {
       if (window.plus) {
         plus.storage.removeItem('current_app_service')
         const w = plus.webview.create('_www/config.html', 'config')
         w.show()
       }
     },
-    changePassword() {
+    changePassword () {
       const that = this
       this.$api['SystemSettings.checkBaseConfig']().then((res) => {
         if (res) {
@@ -74,10 +92,10 @@ export default {
         }
       })
     },
-    openAbout() {
+    openAbout () {
       this.$router.push('/about')
     },
-    logout() {
+    logout () {
       this.$confirm('是否要退出系统?', '提醒', {
         lockScroll: false,
         confirmButtonText: '确定',
@@ -94,7 +112,7 @@ export default {
             }
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     }
   }
 }
@@ -144,5 +162,8 @@ export default {
 .split {
   height: 12px;
   background: #f6f7f9;
+}
+::v-deep .el-dialog__close {
+  margin-top: 20px !important;
 }
 </style>
