@@ -6,7 +6,7 @@ export default {
   components: {
     appMain
   },
-  data() {
+  data () {
     return {
       tabs: [
         { title: '主页', path: '/home', icon: 'el-icon-house', badge: '' },
@@ -18,23 +18,23 @@ export default {
   },
   computed: {
     ...mapGetters(['messageNum', 'approvalTotalMsg']),
-    showBackButton(){
+    showBackButton () {
       const currentPath = this.$route.path
       return !this.tabs.some(tab => tab.path === currentPath)
     }
   },
-  created() {
+  created () {
     this.approvalTotal()
   },
   watch: {
     messageNum: {
-      handler(val) {
+      handler (val) {
         this.tabs[1].badge = val
       },
       immediate: true
     },
     approvalTotalMsg: {
-      handler(val) {
+      handler (val) {
         this.tabs[2].badge = val
       },
       immediate: true
@@ -46,10 +46,10 @@ export default {
         this.$store.dispatch('setApprovalMessageCount', res)
       })
     },
-    goBack() {
+    goBack () {
       this.$router.go(-1)
     },
-    go(path) {
+    go (path) {
       this.$router.replace(path)
     }
   }
@@ -59,18 +59,26 @@ export default {
 <template>
   <div class="mobile-layout">
     <div class="mobile-header">
-      <div v-show="showBackButton" class="header-left" @click="goBack">
+      <div v-show="showBackButton"
+           class="header-left top-text"
+           @click="goBack">
         <i class="el-icon-arrow-left"></i>
       </div>
-      <div class="header-title">{{ $route.meta.title || '默认标题' }}</div>
-<!--      <div class="header-right"></div>-->
+      <div class="header-title top-text">{{ $route.meta.title || '默认标题' }}</div>
+      <!--      <div class="header-right"></div>-->
     </div>
     <app-main class="app-main"></app-main>
     <div class="tab-bar">
-      <div v-for="item in tabs" :key="item.path" class="tab-item" :class="{ active: $route.path === item.path }" @click="go(item.path)">
-        <el-badge :value="item.badge" :hidden="!item.badge || item.badge <= 0">
+      <div v-for="item in tabs"
+           :key="item.path"
+           class="tab-item"
+           :class="{ active: $route.path === item.path }"
+           @click="go(item.path)">
+        <el-badge :value="item.badge"
+                  :hidden="!item.badge || item.badge <= 0">
           <div class="icon-box">
-            <i class="tab-icon" :class="item.icon"></i>
+            <i class="tab-icon"
+               :class="item.icon"></i>
           </div>
         </el-badge>
         <span>{{ item.title }}</span>
@@ -87,7 +95,7 @@ export default {
   justify-content: space-between;
   .mobile-header {
     position: relative;
-    height: 44px;
+    height: 70px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -95,7 +103,9 @@ export default {
     background-color: #fff;
     border-bottom: 1px solid #eee;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-
+    .top-text {
+      margin-top: 15px;
+    }
     .header-left {
       position: absolute;
       height: 100%;
