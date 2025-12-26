@@ -185,8 +185,8 @@ export default {
   mounted () {
     if (this.$isMobile) {
       this.widget.forEach((item) => {
-        item.layout.h = 8,
-          item.layout.w = 12
+        item.layout.h = item.layout.h
+        item.layout.w = 12
       })
     }
   },

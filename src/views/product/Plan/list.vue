@@ -18,6 +18,7 @@
           <span>筛选：</span>
           <tree-select :data="treeData"
                        v-model='treeValue'
+                       :defaultExpandAll="true"
                        @change="changeTree"></tree-select>
         </div>
       </div>
@@ -73,7 +74,7 @@
 ::v-deep .icon-zuozhedie {
   z-index: 1 !important;
 }
-@media screen and (max-width: 1440px) {
+@media screen and (max-width: 1100px) {
   .planLayout {
     height: calc(100% - 50px) !important;
     ::v-deep .normal-header{
