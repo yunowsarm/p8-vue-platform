@@ -225,7 +225,7 @@
       </div>
       <div class="legend-item">
         <div class="plan-color estimate-color"></div>
-        <span class="legend-text">已完成阶段阶段</span>
+        <span class="legend-text">已完成阶段节点</span>
       </div>
     </div>
   </div>
