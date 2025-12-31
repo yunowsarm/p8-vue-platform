@@ -525,6 +525,7 @@ export default {
       height: 75px;
       padding: 0px 12px;
       box-sizing: border-box;
+      display: flex;
     }
 
     .group-title {
