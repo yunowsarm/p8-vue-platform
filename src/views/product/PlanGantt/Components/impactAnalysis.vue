@@ -11,7 +11,7 @@
                           @change-command-button="changeCommandButton"></command-button-bar>
     </div>
     <div class="bottom"
-         :class="expandBottom">
+         :style="{height: expandBottom}">
       <div class="myGantt"
            ref="myGantt"
            style="width: 100%; height: calc(100% - 40px) !important"></div>
@@ -221,6 +221,40 @@ export default {
         }
       },
       immediate: true
+    },
+    userSettingAll: {
+      handler (val) {
+        let isGroup = val.PlanButton ? val.PlanButton[0].value.isGroup : this.ganttIsGroup
+        if (this.ganttButtonMode == 'tabs') {
+          if (isGroup === '1') {
+            this.commandButtonBarHeight = this.advance ? '160px' : '40px'
+            this.expandBottom = 'calc(100% - 160px)'
+          } else {
+            this.commandButtonBarHeight = '160px'
+            this.expandBottom = 'calc(100% - 160px)'
+          }
+        }
+        if (this.ganttButtonMode == 'double') {
+          if (isGroup === '1') {
+            this.commandButtonBarHeight = '72px'
+            this.expandBottom = 'calc(100% - 72px)'
+          } else {
+            this.commandButtonBarHeight = '54px'
+            this.expandBottom = 'calc(100% - 55px)'
+          }
+        }
+        if (this.ganttButtonMode == 'single') {
+          if (isGroup === '1') {
+            this.commandButtonBarHeight = '58px'
+            this.expandBottom = 'calc(100% - 55px)'
+          } else {
+            this.commandButtonBarHeight = '40px'
+            this.expandBottom = 'calc(100% - 40px)'
+          }
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted () {
@@ -273,22 +307,22 @@ export default {
         return this.ganttButtonMode === 'tabs' ? tabsRow : this.ganttButtonMode === 'double' ? CommandButtonBarDataDoubleRow : CommandButtonBarDataSingleRow
       }
     },
-    expandBottom () {
-      if (this.ganttButtonMode == 'tabs' && this.advance) {
-        return 'tabs'
-      }
-      if (this.ganttButtonMode == 'tabs' && !this.advance) {
-        return 'hiddenTabs'
-      }
-      if (this.ganttButtonMode == 'double') {
-        return 'double'
-      }
-      if (this.ganttButtonMode == 'single') {
-        return 'single'
-      }
-      return ''
-    },
-    ...mapGetters(['ganttButtonMode', 'ganttRightButtons'])
+    // expandBottom () {
+    //   if (this.ganttButtonMode == 'tabs' && this.advance) {
+    //     return 'tabs'
+    //   }
+    //   if (this.ganttButtonMode == 'tabs' && !this.advance) {
+    //     return 'hiddenTabs'
+    //   }
+    //   if (this.ganttButtonMode == 'double') {
+    //     return 'double'
+    //   }
+    //   if (this.ganttButtonMode == 'single') {
+    //     return 'single'
+    //   }
+    //   return ''
+    // },
+    ...mapGetters(['ganttButtonMode', 'ganttRightButtons', 'userSettingAll'])
   },
   methods: {
     async initGantt (planInfoId, changeRecordId) {

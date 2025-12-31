@@ -235,7 +235,6 @@ export default {
               that.$set(that.formData, '1020', item.lockStatus)
             }
           })
-          that.formData.content = that.monitorPoints[0].content
           that.showMonitorPoints &&
             that.showMonitorPoints.length &&
             (that.dataSource = that.dataSource.filter((item) => {

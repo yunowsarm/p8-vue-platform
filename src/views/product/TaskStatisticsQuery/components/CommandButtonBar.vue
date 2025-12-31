@@ -159,8 +159,8 @@ export default {
     CommandStatistic
   },
   props: {
-    needArrow:{
-      type:Boolean,
+    needArrow: {
+      type: Boolean,
       default: true
     },
     planInfoId: {
@@ -191,7 +191,7 @@ export default {
       type: Boolean,
       default: true
     },
-    buttonMode:{
+    buttonMode: {
       type: String,
       default: null
     }
@@ -265,7 +265,7 @@ export default {
   },
   data () {
     return {
-      ganttButtonMode:'single',
+      ganttButtonMode: 'single',
       buttonDatas: CommandButtonData,
       advance: true,
       scrollArea: '', // 内容滚动盒子
@@ -277,7 +277,7 @@ export default {
     }
   },
   mounted () {
-    if(!this.needArrow){
+    if (!this.needArrow) {
       this.showArrow = false
     }
     this.$nextTick(() => {
@@ -309,7 +309,7 @@ export default {
       }, 500);
     },
     resizeShowArrow () {
-      if(this.needArrow){
+      if (this.needArrow) {
         if (this.scrollContent[0] && this.scrollContent[0].scrollWidth === this.scrollContent[0].offsetWidth) {
           this.showArrow = false
         } else {
@@ -319,7 +319,7 @@ export default {
     },
     // 鼠标悬浮事件控制左右切换按钮是否出现
     tabHover () {
-      if(this.needArrow){
+      if (this.needArrow) {
         if (this.scrollContent[0].scrollWidth === this.scrollContent[0].offsetWidth) {
           this.showArrow = false
         } else {
@@ -498,6 +498,7 @@ export default {
       height: 75px;
       padding: 0px 12px;
       box-sizing: border-box;
+      display: flex;
     }
 
     .group-title {
