@@ -246,8 +246,11 @@ export default {
                :exist-default-btn="false">
       <!-- 使用模板插槽自定义字段显示 -->
       <template #name>
-        <span style="color: blue; text-decoration: underline;cursor: pointer;"
+        <span v-if="formData.dutyId === $store.getters.userId"
+              style="color: blue; text-decoration: underline;cursor: pointer;"
               @click="openView">{{ formData['name'] }} </span>
+        <div class="view"
+             v-else>{{ formData['name'] }}</div>
       </template>
       <template #startDate>
         <span style="color: red">{{ formatDate(formData['planBeginDate']) }} </span>

@@ -9,7 +9,7 @@ import { io } from 'socket.io-client'
 
 export default {
   name: 'App',
-  data() {
+  data () {
     return {
       user: this.$store.state.user,
       conunt: 0
@@ -20,7 +20,7 @@ export default {
   },
   watch: {
     token: {
-      handler(val) {
+      handler (val) {
         if (val) {
           this.getJson()
         }
@@ -28,7 +28,7 @@ export default {
       immediate: true
     },
     userInfo: {
-      handler(val) {
+      handler (val) {
         if (val.id) {
           this.initWebSocket(val.id, val.realName)
         }
@@ -36,16 +36,17 @@ export default {
       immediate: true
     }
   },
-  updated() {
+  updated () {
     const loadingElement = document.getElementById('app-loading')
     if (loadingElement) {
       loadingElement.style.display = 'none'
     }
   },
-  mounted() {
+  mounted () {
     this.$store.dispatch('getAuthorizationInfo')
     window.socketType = null
     if (window.plus) {
+      plus.navigator.setStatusBarBackground('#ffffff')
       const info = plus.push.getClientInfo()
       plus.storage.setItem('clientInfo', JSON.stringify(info))
       var webview = plus.webview.currentWebview()
@@ -72,7 +73,7 @@ export default {
     //     window.myWebSocket.off('getApproveContent')
     //   }
     // },
-    initWebSocket(id, name) {
+    initWebSocket (id, name) {
       let that = this
       // 判断页面有没有存在websocket连接
       if (window.WebSocket) {
@@ -180,7 +181,7 @@ export default {
         })
       }
     },
-    message() {
+    message () {
       // 设置初始标题
       var originalTitle = document.title
 
@@ -210,7 +211,7 @@ export default {
         document.title = originalTitle
       })
     },
-    getJson() {
+    getJson () {
       axios
         .get('/static/iconfont/iconfont.json', {
           headers: { Authorization: this.token }
@@ -229,7 +230,7 @@ export default {
         })
     }
   },
-  beforeDestroy() {
+  beforeDestroy () {
     window.myWebSocket.off('messageevent')
     window.myWebSocket.off('privateMessage')
     window.myWebSocket.off('reconnect_failed')

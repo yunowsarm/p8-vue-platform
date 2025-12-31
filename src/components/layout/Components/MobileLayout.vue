@@ -24,6 +24,7 @@ export default {
     }
   },
   created () {
+    this.$store.dispatch('getMessageNum')
     this.approvalTotal()
   },
   watch: {
