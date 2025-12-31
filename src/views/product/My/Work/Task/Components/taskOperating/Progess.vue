@@ -431,30 +431,35 @@ export default {
       })
     },
     setMessage (formData) {
-      formData.planName = this.getPlanInfo().PLANNAME
-      formData.name = this.getPlanInfo().NAME
-      formData.taskId = this.getPlanInfo().taskId
-      if (this.tabsName === 'progess') {
-        formData.type = '1'
-        let params = {
-          itemCreateTime: moment().format('YYYY-MM-DD HH:mm:ss'),
-          sendUser: this.$store.state.user.userId,
-          sendUserName: this.$store.state.user.userName,
-          content: '',
-          entityId: this.getPlanInfo().WHOLEDESCRIBEID,
-          entityType: 'project',
-          taskRequest: formData,
-        };
-        if (window.myWebSocket) {
-          window.myWebSocket.emit('taskCommitByData', params)
-        }
-        if (formData.deviationType) {
-          formData.type = '2'
-          params.taskRequest = formData
+      console.error(this.getPlanInfo(), 'getPlanInfogetPlanInfogetPlanInfo');
+      if (this.getPlanInfo().TASKID) {
+        formData.planName = this.getPlanInfo().PLANNAME
+        formData.name = this.getPlanInfo().NAME
+        formData.taskId = this.getPlanInfo().TASKID
+        if (this.tabsName === 'progess') {
+          formData.type = '1'
+          let params = {
+            itemCreateTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+            sendUser: this.$store.state.user.userId,
+            sendUserName: this.$store.state.user.userName,
+            content: '',
+            entityId: this.getPlanInfo().WHOLEDESCRIBEID,
+            entityType: 'project',
+            taskRequest: formData,
+          };
           if (window.myWebSocket) {
             window.myWebSocket.emit('taskCommitByData', params)
           }
-        };
+          if (formData.deviationType) {
+            formData.type = '2'
+            params.taskRequest = formData
+            if (window.myWebSocket) {
+              window.myWebSocket.emit('taskCommitByData', params)
+            }
+          };
+        }
+      } else {
+        this.$message.warning('没有获取到任务id，请刷新后重新提交')
       }
       // if (this.tabsName === 'unfinishedCause') {
       //   this.formData.type = '2'
@@ -561,7 +566,7 @@ export default {
       let status = ''
       if (progress === 0) {
         // if (normalStatus === '6020' || normalStatus === '6050') {
-          status = '6020'
+        status = '6020'
         // }
       } else {
         status = '6050' // 6500
