@@ -67,8 +67,12 @@
                 </div>
               </template>
             </div>
+            <span class="group-title"
+                  v-if="((userSettingAll.PlanButton && userSettingAll.PlanButton[0].value.isGroup === '1') || ganttIsGroup === '1') && group.groupName ==='编辑'">
+              {{ group.groupName }}
+            </span>
             <div class="group-title"
-                 v-if="(userSettingAll.PlanButton && userSettingAll.PlanButton[0].value.isGroup === '1') || ganttIsGroup === '1'">
+                 v-if="((userSettingAll.PlanButton && userSettingAll.PlanButton[0].value.isGroup === '1') || ganttIsGroup === '1') && group.groupName !=='编辑'">
               {{ group.groupName }}
             </div>
           </div>
@@ -224,9 +228,7 @@ export default {
     buttonData () {
       const that = this
       return function (btnConfig) {
-        console.log("🚀 ~ btnConfig:", btnConfig)
         const btnData = that.buttonDatas.filter((btn) => btn.id === btnConfig.buttonId)
-        console.log("🚀 ~ btnData:", btnData[0])
         return btnData[0]
       }
     },
@@ -262,7 +264,6 @@ export default {
             }
           }
         })
-        console.log("🚀 ~ configArray:", configArray)
         return configArray
       }
     }
@@ -525,9 +526,7 @@ export default {
       height: 75px;
       padding: 0px 12px;
       box-sizing: border-box;
-      display: flex;
     }
-
     .group-title {
       height: 20px;
       color: #6d6d6d;
@@ -546,7 +545,7 @@ export default {
   }
 
   .group-search {
-    height: 90px;
+    height: 100px !important;
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -566,6 +565,8 @@ export default {
     min-width: 40px;
     .group-container {
       height: 68px;
+      display: flex;
+      flex-direction: column;
 
       .group-icon {
         height: 48px;
@@ -603,7 +604,8 @@ export default {
     .group-container {
       height: 48px;
       padding: 4px 12px;
-
+      display: flex;
+      flex-direction: column;
       .group-icon {
         height: 28px;
       }
