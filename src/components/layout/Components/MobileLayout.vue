@@ -28,6 +28,10 @@ export default {
     this.approvalTotal()
   },
   watch: {
+    $route () {
+      this.$store.dispatch('getMessageNum')
+      this.approvalTotal()
+    },
     messageNum: {
       handler (val) {
         this.tabs[1].badge = val
