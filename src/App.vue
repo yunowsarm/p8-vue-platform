@@ -82,6 +82,7 @@ export default {
         // 填写本地IP地址 此处的 :9101端口号 要与后端配置的一致！
         // 线上使用，直接获取浏览器地址
         const URL = defaultSocketServiceAddr + '?sendUserName=' + name + '&sendUser=' + id + '&authorization=' + this.token
+        console.log(URL, 'socket连接地址')
         const socket = io(URL, { autoConnect: true, transports: ['websocket'] }) // 连接到服务器
         window.myWebSocket = socket
         window.myWebSocket.connect()

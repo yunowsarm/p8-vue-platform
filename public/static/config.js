@@ -3,17 +3,19 @@
 const defaultServiceAddr = window.location.origin
 // socket连接地址
 const socketPort = '8888'
-const defaultSocketServiceAddr = window.location.protocol + '//' + window.location.hostname + ':' + socketPort
-// const defaultSocketServiceAddr ='http://192.168.0.225:8888'
+// const defaultSocketServiceAddr = window.location.protocol + '//' + window.location.hostname + ':' + socketPort
+const defaultSocketServiceAddr ='http://192.168.31.145:8888'
+// const defaultSocketServiceAddr ='http://222.185.238.28:8888'
 // eslint-disable-next-line no-unused-vars
 const CONFIG = {
   // devBaseUrl: 'http://192.168.0.101:9099', // 第一次执行参考以上备注
   // devBaseUrl: 'http://192.168.0.146:9091', // 第一次执行参考以上备注
   // devBaseUrl: defaultServiceAddr, // 第一次执行参考以上备注
   // devBaseUrl: 'http://192.168.0.225:9995', // 第一次执行参考以上备注
-  devBaseUrl: 'http://192.168.0.200:9092',
+  // devBaseUrl: 'http://222.185.238.28:9092',
+  devBaseUrl: 'http://192.168.31.145:9092',
   // jmreportUrl:'http://192.168.0.142:9092/jmreport',
-  aiUrl: 'http://192.168.0.18',
+  // aiUrl: 'http://192.168.0.18',
   exportUrl: defaultServiceAddr + '/framework/report/applyFile',
   downloadUrl: defaultServiceAddr + '/attachment/downloadFile',
   downloadTemplateUrl: defaultServiceAddr + '/attachment/downloadTemplateFile',
@@ -30,4 +32,4 @@ const loginCa = false
 // eslint-disable-next-line no-unused-vars
 const CHECK_PRODUCTION_ERROR_TIP = false
 // 聊天机器人
-const aiAssistant = true
+const aiAssistant = false

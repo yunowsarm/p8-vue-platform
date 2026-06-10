@@ -3,8 +3,398 @@
  * Namespace: User
  */
 
+import { path } from '@antv/x6/lib/registry/marker/path'
+import { method } from 'lodash'
+
 export const repositoryApi = {
+  houseData: [
+    {
+      name: 'building',
+      method: 'GET',
+      path: '/framework/report/get',
+      mockPath: '/framework/report/get',
+      desc: '楼栋信息表'
+    }
+  ],
   baseData: [
+    {
+      name: 'exportCarUse',
+      method: 'POST',
+      path: '/jt/car/export',
+      mockPath: '/jt/car/export',
+      desc: '导出车辆使用情况'
+    },
+    {
+      name: 'getPurchaseCode',
+      method: 'POST',
+      path: '/jt/asset/purchase/getCode',
+      mockPath: '/jt/asset/purchase/getCode',
+      desc: '生成采购编号'
+    },
+    {
+      name: 'getPurchaseDetails',
+      method: 'POST',
+      path: '/jt/asset/purchase/getList',
+      mockPath: '/jt/asset/purchase/getList',
+      desc: '查询采购详情'
+    },
+    {
+      name: 'getStorehouseDetails',
+      method: 'POST',
+      path: '/jt/asset/storehouse/getList',
+      mockPath: '/jt/asset/storehouse/getList',
+      desc: '查询库存详情'
+    },
+    {
+      name: 'fileStatusEdit',
+      method: 'POST',
+      path: '/jt/archive/updateStatus',
+      mockPath: '/jt/archive/updateStatus',
+      desc: '档案状态更新'
+    },
+    {
+      name: 'updateMileage',
+      method: 'POST',
+      path: '/jt/car/updateMileage',
+      mockPath: '/jt/car/updateMileage',
+      desc: '用车里程更新'
+    },
+    {
+      name: 'purchaseGetById',
+      method: 'POST',
+      path: '/jt/asset/purchase/getById',
+      mockPath: '/jt/asset/purchase/getById',
+      desc: '根据采购单id查询子表详情'
+    },
+    {
+      name: 'insertList',
+      method: 'POST',
+      path: '/jt/asset/insertList',
+      mockPath: '/jt/asset/insertList',
+      desc: '资产采购入库'
+    },
+    {
+      name: 'purchasegetInfo',
+      method: 'POST',
+      path: '/jt/asset/purchase/getInfo',
+      mockPath: '/jt/asset/purchase/getInfo',
+      desc: '资产采购资产基础信息查询'
+    },
+    {
+      name: 'sunchangeStatus',
+      method: 'POST',
+      path: '/jt/sun/changeStatus',
+      mockPath: '/jt/sun/changeStatus',
+      desc: '太阳能表启用/停用'
+    },
+    {
+      name: 'electricitychangeStatus',
+      method: 'POST',
+      path: '/jt/electricity/changeStatus',
+      mockPath: '/jt/electricity/changeStatus',
+      desc: '电表启用/停用'
+    },
+    {
+      name: 'waterchangeStatus',
+      method: 'POST',
+      path: '/jt/water/changeStatus',
+      mockPath: '/jt/water/changeStatus',
+      desc: '水表启用/停用'
+    },
+    {
+      name: 'SunMeterexport',
+      method: 'POST',
+      path: '/jt/sun/export',
+      mockPath: '/jt/sun/export',
+      desc: '太阳能表汇总导出'
+    },
+    {
+      name: 'CheckSunMeterCode',
+      method: 'POST',
+      path: '/jt/sun/checkCode',
+      mockPath: '/jt/sun/checkCode',
+      desc: '太阳能表编号重复检查'
+    },
+    {
+      name: 'CheckWaterMeterCode',
+      method: 'POST',
+      path: '/jt/water/checkCode',
+      mockPath: '/jt/water/checkCode',
+      desc: '水表编号重复检查'
+    },
+    {
+      name: 'CheckElectricityCode',
+      method: 'POST',
+      path: '/jt/electricity/checkCode',
+      mockPath: '/jt/electricity/checkCode',
+      desc: '电表编号重复检查'
+    },
+    {
+      name: 'importsunMeter',
+      method: 'POST',
+      path: '/jt/sun/importMeter',
+      mockPath: '/jt/sun/importMeter',
+      desc: '太阳能表基础信息导入'
+    },
+    {
+      name: 'importwaterMeter',
+      method: 'POST',
+      path: '/jt/water/importMeter',
+      mockPath: '/jt/water/importMeter',
+      desc: '水表基础信息导入'
+    },
+    {
+      name: 'insertsunMeter',
+      method: 'POST',
+      path: '/jt/sun/insertMeter',
+      mockPath: '/jt/sun/insertMeter',
+      desc: '太阳能表基础信息新建'
+    },
+    {
+      name: 'insertwaterMeter',
+      method: 'POST',
+      path: '/jt/water/insertMeter',
+      mockPath: '/jt/water/insertMeter',
+      desc: '水表基础信息新建'
+    },
+    {
+      name: 'insertMeter',
+      method: 'POST',
+      path: '/jt/electricity/insertMeter',
+      mockPath: '/jt/electricity/insertMeter',
+      desc: '电表基础信息新建'
+    },
+    {
+      name: 'electricitysearch',
+      method: 'POST',
+      path: '/jt/electricity/search',
+      mockPath: '/jt/electricity/search',
+      desc: '电表数据查询'
+    },
+    {
+      name: 'waterMeterList',
+      method: 'POST',
+      path: '/framework/report/apply',
+      mockPath: '/framework/report/apply',
+      desc: '水表列表查询'
+    },
+    {
+      name: 'readWaterSearch',
+      method: 'POST',
+      path: '/jt/water/search',
+      mockPath: '/jt/water/search',
+      desc: '抄水表数据查询'
+    },
+    {
+      name: 'editWaterReading',
+      method: 'POST',
+      path: '/jt/water/save',
+      mockPath: '/jt/water/save',
+      desc: '新建抄水表'
+    },
+    {
+      name: 'waterImport',
+      method: 'POST',
+      path: '/jt/water/export',
+      mockPath: '/jt/water/export',
+      desc: '抄水表汇总导出'
+    },
+    {
+      name: 'sunsaveList',
+      method: 'POST',
+      path: '/jt/sun/saveList',
+      mockPath: '/jt/sun/saveList',
+      desc: '新建抄太阳能表汇总月份'
+    },
+    {
+      name: 'watersaveList',
+      method: 'POST',
+      path: '/jt/water/saveList',
+      mockPath: '/jt/water/saveList',
+      desc: '新建抄水表汇总月份'
+    },
+    {
+      name: 'electricitysaveList',
+      method: 'POST',
+      path: '/jt/electricity/saveList',
+      mockPath: '/jt/electricity/saveList',
+      desc: '新建抄电表汇总月份'
+    },
+    {
+      name: 'electricityselectOne',
+      method: 'POST',
+      path: '/jt/electricity/selectOne',
+      mockPath: '/jt/electricity/selectOne',
+      desc: '抄电表获取上月示数'
+    },
+    {
+      name: 'meterListSearch',
+      method: 'POST',
+      path: '/framework/report/apply',
+      mockPath: '/framework/report/apply',
+      desc: '电表/配电房列表查询'
+    },
+    {
+      name: 'editElectricity',
+      method: 'POST',
+      path: '/jt/electricity/save',
+      mockPath: '/jt/electricity/save',
+      desc: '新建抄电表'
+    },
+    {
+      name: 'electricityimport',
+      method: 'POST',
+      path: '/jt/electricity/import',
+      mockPath: '/jt/electricity/import',
+      desc: '电表数据导入'
+    },
+    {
+      name: 'electricityExport',
+      method: 'POST',
+      path: '/jt/electricity/export',
+      mockPath: '/jt/electricity/export',
+      desc: '抄电表数据导出'
+    },
+    {
+      name: 'importMeter',
+      method: 'POST',
+      path: '/jt/electricity/importMeter',
+      mockPath: '/jt/electricity/importMeter',
+      desc: '电表基础信息导入'
+    },
+    {
+      name: 'inspectinsert',
+      method: 'POST',
+      path: '/jt/inspect/insert',
+      mockPath: '/jt/inspect/insert',
+      desc: '巡查记录新建提交'
+    },
+    {
+      name: 'assetinput',
+      method: 'POST',
+      path: '/jt/asset/input',
+      mockPath: '/jt/asset/input',
+      desc: '资产入库'
+    },
+    {
+      name: 'saveFloorData',
+      method: 'POST',
+      path: '/jt/grid/save',
+      mockPath: '/jt/grid/save',
+      desc: '保存楼层'
+    },
+    {
+      name: 'BuildingData',
+      method: 'POST',
+      path: '/framework/selection/getSelectionData',
+      mockPath: '/framework/selection/getSelectionData',
+      desc: '获取楼栋区域楼层'
+    },
+    {
+      name: 'getFormData',
+      method: 'POST',
+      path: '/framework/cgForm/getFormData',
+      mockPath: '/framework/cgForm/getFormData',
+      desc: '获取表单信息'
+    },
+    {
+      name: 'EnterpriseName',
+      method: 'POST',
+      path: '/framework/report/apply',
+      mockPath: '/framework/report/apply',
+      desc: '获取企业名称'
+    },
+    {
+      name: 'getTemplateNew',
+      method: 'POST',
+      path: '/jt/contract/getTemplateNew',
+      mockPath: '/jt/contract/getTemplateNew',
+      desc: '修改获取已有合同模版'
+    },
+    {
+      name: 'getTemplate',
+      method: 'POST',
+      path: '/jt/contract/getTemplate',
+      mockPath: '/jt/contract/getTemplate',
+      desc: '新建获取初始合同模版'
+    },
+    {
+      name: 'buildTemplate',
+      method: 'POST',
+      path: '/jt/contract/buildTemplate',
+      mockPath: '/jt/contract/buildTemplate',
+      desc: '修改合同模版'
+    },
+    {
+      name: 'CheckCode',
+      method: 'POST',
+      path: '/jt/contract/checkCode',
+      mockPath: '/jt/contract/checkCode',
+      desc: '合同编号重复检查'
+    },
+    {
+      name: 'CheckName',
+      method: 'POST',
+      path: '/enterprise/checkName',
+      mockPath: '/enterprise/checkName',
+      desc: '企业全称重复检查'
+    },
+    {
+      name: 'compareTemplate',
+      method: 'POST',
+      path: '/jt/contract/compareTemplate',
+      mockPath: '/jt/contract/compareTemplate',
+      desc: '合同对比'
+    },
+    {
+      name: 'rentinsert',
+      method: 'POST',
+      path: '/jt/rent/insert',
+      mockPath: '/jt/rent/insert',
+      desc: '新建应收租金'
+    },
+    {
+      name: 'downloadTemplate',
+      method: 'POST',
+      path: '/jt/contract/downloadTemplate',
+      mockPath: '/jt/contract/downloadTemplate',
+      desc: '打印租赁合同'
+    },
+    {
+      name: 'gridgetArea',
+      method: 'POST',
+      path: '/jt/grid/getArea',
+      mockPath: '/jt/grid/getArea',
+      desc: '获取柱网面积'
+    },
+    {
+      name: 'gridinsert',
+      method: 'POST',
+      path: '/jt/grid/insert',
+      mockPath: '/jt/grid/insert',
+      desc: '提交柱网信息'
+    },
+    {
+      name: 'gridimport',
+      method: 'POST',
+      path: '/jt/grid/import',
+      mockPath: '/jt/grid/import',
+      desc: '柱网导入'
+    },
+    {
+      name: 'griddownload',
+      method: 'POST',
+      path: '/jt/grid/download',
+      mockPath: '/jt/grid/download',
+      desc: '柱网下载'
+    },
+    {
+      name: 'zwUpdateStatus',
+      method: 'POST',
+      path: '/jt/grid/updateStatus',
+      mockPath: '/jt/grid/updateStatus',
+      desc: '柱网状态更改'
+    },
     {
       name: 'modifyApproveUser',
       method: 'POST',
@@ -2289,6 +2679,13 @@ export const repositoryApi = {
     }
   ],
   enterpriseDirectory: [
+    {
+      name: 'changeStatus',
+      method: 'POST',
+      path: '/enterprise/changeStatus',
+      mockPath: '/enterprise/changeStatus',
+      desc: '入驻和退租'
+    },
     {
       name: 'changeEnterpriseStatus',
       method: 'POST',

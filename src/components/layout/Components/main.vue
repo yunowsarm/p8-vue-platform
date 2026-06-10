@@ -2,12 +2,12 @@
   <main class="main" id="contentMain">
     <!-- custom scroll bar for main area -->
     <keep-alive v-if="isMobile" :include="cachedViews">
-      <router-view class="main-router" />
+      <router-view class="main-router" :class="{ 'main-router--no-bg': noRouterBg }" />
     </keep-alive>
     <VuePerfectScrollbar v-else class="scroll-area" :settings="scrollOptions">
       <transition name="fade-transform">
         <keep-alive :include="cachedViews">
-          <router-view class="main-router" />
+          <router-view class="main-router" :class="{ 'main-router--no-bg': noRouterBg }" />
         </keep-alive>
       </transition>
     </VuePerfectScrollbar>
@@ -30,6 +30,9 @@ export default {
   computed: {
     isMobile() {
       return this.$store.getters.isMobile
+    },
+    noRouterBg () {
+      return this.$route.meta.noRouterBg || /dashbord/i.test(this.$route.path)
     },
     ...mapGetters(['cachedViews'])
   },
@@ -68,6 +71,10 @@ export default {
       // height: 100%;
       // overflow: auto;
       // height: 1000px;
+    }
+
+    .main-router--no-bg {
+      background: transparent;
     }
   }
 

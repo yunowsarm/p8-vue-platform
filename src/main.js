@@ -25,6 +25,7 @@ import hljsVuePlugin from '@highlightjs/vue-plugin'
 // 引入你需要的语言和样式
 import 'highlight.js/styles/monokai.css' // 选择你喜欢的主题样式
 import { download } from '@/utils/download'
+import axios from 'axios'
 // 注册插件
 Vue.use(hljsVuePlugin, { hljs })
 Vue.use(VxeUI)
@@ -62,6 +63,9 @@ if (loadingElement) {
   loadingElement.style.display = 'none'
 }
 
+Vue.prototype.$axios = axios
+axios.defaults.withCredentials = true
+axios.defaults.baseURL = ''
 window.addEventListener('resize', () => {
   store.dispatch('updateIsMobile')
 })
@@ -79,14 +83,14 @@ function initVue() {
   })
 }
 
-if (store.getters.isMobile) {
-  document.addEventListener('plusready', function () {
-    const currentAppService = plus.storage.getItem('current_app_service')
-    if (currentAppService) {
-      store.commit('SET_TOKEN', JSON.parse(currentAppService).token)
-    }
+// if (store.getters.isMobile) {
+//   document.addEventListener('plusready', function () {
+//     const currentAppService = plus.storage.getItem('current_app_service')
+//     if (currentAppService) {
+//       store.commit('SET_TOKEN', JSON.parse(currentAppService).token)
+//     }
     initVue()
-  })
-} else {
-  initVue()
-}
+//   })
+// } else {
+//   initVue()
+// }
