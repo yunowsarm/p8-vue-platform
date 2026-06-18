@@ -22,19 +22,19 @@
 
     <!-- 第二行：趋势图表 -->
     <el-row :gutter="16" class="chart-row">
-      <el-col :span="8">
+      <el-col :xs="24" :sm="24" :md="8" :span="8">
         <div class="chart-card">
           <div class="chart-title">1. 园区企业数</div>
           <div ref="chartEnterprise" class="chart-body"></div>
         </div>
       </el-col>
-      <el-col :span="8">
+      <el-col :xs="24" :sm="24" :md="8" :span="8">
         <div class="chart-card">
           <div class="chart-title">2. 每个企业面积变化情况 (Top 10)</div>
           <div ref="chartArea" class="chart-body"></div>
         </div>
       </el-col>
-      <el-col :span="8">
+      <el-col :xs="24" :sm="24" :md="8" :span="8">
         <div class="chart-card">
           <div class="chart-title chart-title-flex">
             <span>3. 每个企业的员工 访客 车辆进出 变化情况</span>
@@ -50,25 +50,31 @@
 
     <!-- 第三行 -->
     <el-row :gutter="16" class="chart-row">
-      <el-col :span="8">
+      <el-col :xs="24" :sm="24" :md="8" :span="8">
         <div class="chart-card">
           <div class="chart-title">4. 用水 / 用电数变化</div>
           <div ref="chartEnergy" class="chart-body"></div>
         </div>
       </el-col>
-      <el-col :span="8">
-        <div class="chart-card">
+      <el-col :xs="24" :sm="24" :md="8" :span="8">
+        <div class="chart-card chart-card--donut">
           <div class="chart-title">5. 招商引资 / 企业状态发展情况</div>
-          <div class="donut-row">
-            <div ref="chartInvestment" class="donut-chart"></div>
-            <div ref="chartEnterpriseStatus" class="donut-chart"></div>
+          <div class="donut-row" :class="{ 'donut-row--mobile': isMobile }">
+            <div class="donut-block">
+              <div v-if="isMobile" class="donut-block-title">招商引资 (本年)</div>
+              <div ref="chartInvestment" class="donut-chart"></div>
+            </div>
+            <div class="donut-block">
+              <div v-if="isMobile" class="donut-block-title">企业状态分布</div>
+              <div ref="chartEnterpriseStatus" class="donut-chart"></div>
+            </div>
           </div>
         </div>
       </el-col>
-      <el-col :span="8">
-        <div class="chart-card">
+      <el-col :xs="24" :sm="24" :md="8" :span="8">
+        <div class="chart-card chart-card--stat">
           <div class="chart-title">6. 安全 / 消防 / 环保 / 政策 / 统计数据</div>
-          <div class="chart-card-body">
+          <div class="chart-card-body" :class="{ 'chart-card-body--mobile': isMobile }">
           <div class="safety-boxes">
             <div v-for="item in safetyList" :key="item.label" class="safety-box" :style="{ borderColor: item.color }">
               <div class="safety-label">{{ item.label }}</div>
@@ -94,13 +100,13 @@
 
     <!-- 第四行：综合趋势 -->
     <el-row :gutter="16" class="chart-row">
-      <el-col :span="14">
+      <el-col :xs="24" :sm="24" :md="14" :span="14">
         <div class="chart-card">
           <div class="chart-title">园区综合趋势概览</div>
           <div ref="chartOverview" class="chart-body"></div>
         </div>
       </el-col>
-      <el-col :span="10">
+      <el-col :xs="24" :sm="24" :md="10" :span="10">
         <div class="chart-card">
           <div class="chart-title">企业成长趋势 (按企业状态)</div>
           <div ref="chartGrowth" class="chart-body"></div>
@@ -112,7 +118,6 @@
 
 <script>
 const MONTHS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-const X_AXIS_LABEL = { interval: 0, fontSize: 10 }
 const LINE_COLORS = ['#409EFF', '#67C23A', '#E6A23C', '#F56C6C', '#9B59B6', '#1ABC9C', '#3498DB', '#E74C3C', '#2ECC71', '#F39C12']
 
 export default {
@@ -144,9 +149,22 @@ export default {
       ]
     }
   },
+  computed: {
+    isMobile() {
+      return this.$store.getters.isMobile
+    },
+    xAxisLabel() {
+      return this.isMobile
+        ? { interval: 1, fontSize: 9, rotate: 40 }
+        : { interval: 0, fontSize: 10 }
+    }
+  },
   mounted() {
     this.$nextTick(() => {
       this.initAllCharts()
+      if (this.isMobile) {
+        setTimeout(this.handleResize, 300)
+      }
     })
     window.addEventListener('resize', this.handleResize)
   },
@@ -180,7 +198,58 @@ export default {
       this.initGrowthChart()
     },
     baseGrid() {
-      return { left: 50, right: 20, top: 20, bottom: 30 }
+      return this.isMobile
+        ? { left: 36, right: 10, top: 20, bottom: 28 }
+        : { left: 50, right: 20, top: 20, bottom: 30 }
+    },
+    pieLegendConfig() {
+      return this.isMobile
+        ? {
+          type: 'scroll',
+          orient: 'horizontal',
+          bottom: 2,
+          left: 'center',
+          width: '90%',
+          icon: 'circle',
+          itemWidth: 6,
+          itemHeight: 6,
+          itemGap: 6,
+          textStyle: { fontSize: 9 }
+        }
+        : { orient: 'vertical', right: 0, top: 'middle', icon: 'circle', itemWidth: 8, textStyle: { fontSize: 10 } }
+    },
+    pieCenter() {
+      return this.isMobile ? ['50%', '40%'] : ['35%', '55%']
+    },
+    pieRadius() {
+      return this.isMobile ? ['36%', '50%'] : ['45%', '65%']
+    },
+    pieTitleConfig(text) {
+      if (this.isMobile) return undefined
+      return { text, left: 'center', top: 0, textStyle: { fontSize: 12, fontWeight: 'normal', color: '#606266' } }
+    },
+    getPieChartOption(title, centerFormatter, data, unit = '') {
+      const tooltipFormatter = unit ? `{b}: {c}${unit} ({d}%)` : '{b}: {c} ({d}%)'
+      return {
+        title: this.pieTitleConfig(title),
+        tooltip: { trigger: 'item', formatter: tooltipFormatter },
+        legend: this.pieLegendConfig(),
+        series: [
+          {
+            type: 'pie',
+            radius: this.pieRadius(),
+            center: this.pieCenter(),
+            label: {
+              show: true,
+              position: 'center',
+              formatter: centerFormatter,
+              fontSize: this.isMobile ? 10 : 12,
+              lineHeight: this.isMobile ? 14 : 18
+            },
+            data
+          }
+        ]
+      }
     },
     initEnterpriseChart() {
       const chart = this.initChart('chartEnterprise')
@@ -188,7 +257,7 @@ export default {
       chart.setOption({
         tooltip: { trigger: 'axis' },
         grid: this.baseGrid(),
-        xAxis: { type: 'category', data: MONTHS, boundaryGap: false, axisLabel: X_AXIS_LABEL },
+        xAxis: { type: 'category', data: MONTHS, boundaryGap: false, axisLabel: this.xAxisLabel },
         yAxis: { type: 'value', min: 220, max: 350 },
         series: [
           {
@@ -242,8 +311,8 @@ export default {
           itemHeight: 8,
           textStyle: { fontSize: 10 }
         },
-        grid: { left: 50, right: 20, top: 48, bottom: 30 },
-        xAxis: { type: 'category', data: MONTHS, boundaryGap: false, axisLabel: X_AXIS_LABEL },
+        grid: { ...this.baseGrid(), top: this.isMobile ? 56 : 48 },
+        xAxis: { type: 'category', data: MONTHS, boundaryGap: false, axisLabel: this.xAxisLabel },
         yAxis: { type: 'value', name: 'm²' },
         series
       })
@@ -254,8 +323,8 @@ export default {
       chart.setOption({
         tooltip: { trigger: 'axis' },
         legend: { data: ['员工进出', '访客进出', '车辆进出'], top: 0, textStyle: { fontSize: 11 } },
-        grid: { left: 50, right: 20, top: 48, bottom: 30 },
-        xAxis: { type: 'category', data: MONTHS, boundaryGap: false, axisLabel: X_AXIS_LABEL },
+        grid: { ...this.baseGrid(), top: this.isMobile ? 56 : 48 },
+        xAxis: { type: 'category', data: MONTHS, boundaryGap: false, axisLabel: this.xAxisLabel },
         yAxis: { type: 'value' },
         series: [
           {
@@ -297,8 +366,12 @@ export default {
       chart.setOption({
         tooltip: { trigger: 'axis' },
         legend: { data: ['用电量 (kWh)', '用水量 (吨)'], top: 0 },
-        grid: { left: 50, right: 50, top: 48, bottom: 30 },
-        xAxis: { type: 'category', data: MONTHS, axisLabel: X_AXIS_LABEL },
+        grid: {
+          ...this.baseGrid(),
+          right: this.isMobile ? 36 : 50,
+          top: this.isMobile ? 56 : 48
+        },
+        xAxis: { type: 'category', data: MONTHS, axisLabel: this.xAxisLabel },
         yAxis: [
           { type: 'value', name: 'kWh', position: 'left' },
           { type: 'value', name: '吨', position: 'right' }
@@ -327,48 +400,22 @@ export default {
     initInvestmentChart() {
       const chart = this.initChart('chartInvestment')
       if (!chart) return
-      chart.setOption({
-        title: { text: '招商引资 (本年)', left: 'center', top: 0, textStyle: { fontSize: 12, fontWeight: 'normal', color: '#606266' } },
-        tooltip: { trigger: 'item', formatter: '{b}: {c}个 ({d}%)' },
-        legend: { orient: 'vertical', right: 0, top: 'middle', icon: 'circle', itemWidth: 8, textStyle: { fontSize: 10 } },
-        series: [
-          {
-            type: 'pie',
-            radius: ['45%', '65%'],
-            center: ['35%', '55%'],
-            label: { show: true, position: 'center', formatter: '签约项目\n48个', fontSize: 12, lineHeight: 18 },
-            data: [
-              { value: 18, name: '已签约', itemStyle: { color: '#409EFF' } },
-              { value: 16, name: '在谈中', itemStyle: { color: '#67C23A' } },
-              { value: 10, name: '意向洽谈', itemStyle: { color: '#E6A23C' } },
-              { value: 4, name: '其他', itemStyle: { color: '#909399' } }
-            ]
-          }
-        ]
-      })
+      chart.setOption(this.getPieChartOption('招商引资 (本年)', '签约项目\n48个', [
+        { value: 18, name: '已签约', itemStyle: { color: '#409EFF' } },
+        { value: 16, name: '在谈中', itemStyle: { color: '#67C23A' } },
+        { value: 10, name: '意向洽谈', itemStyle: { color: '#E6A23C' } },
+        { value: 4, name: '其他', itemStyle: { color: '#909399' } }
+      ], '个'))
     },
     initEnterpriseStatusChart() {
       const chart = this.initChart('chartEnterpriseStatus')
       if (!chart) return
-      chart.setOption({
-        title: { text: '企业状态分布', left: 'center', top: 0, textStyle: { fontSize: 12, fontWeight: 'normal', color: '#606266' } },
-        tooltip: { trigger: 'item', formatter: '{b}: {c}家 ({d}%)' },
-        legend: { orient: 'vertical', right: 0, top: 'middle', icon: 'circle', itemWidth: 8, textStyle: { fontSize: 10 } },
-        series: [
-          {
-            type: 'pie',
-            radius: ['45%', '65%'],
-            center: ['35%', '55%'],
-            label: { show: true, position: 'center', formatter: '企业总数\n328家', fontSize: 12, lineHeight: 18 },
-            data: [
-              { value: 238, name: '正常经营', itemStyle: { color: '#409EFF' } },
-              { value: 56, name: '稳步发展', itemStyle: { color: '#67C23A' } },
-              { value: 24, name: '困难预警', itemStyle: { color: '#E6A23C' } },
-              { value: 10, name: '停业/注销', itemStyle: { color: '#F56C6C' } }
-            ]
-          }
-        ]
-      })
+      chart.setOption(this.getPieChartOption('企业状态分布', '企业总数\n328家', [
+        { value: 238, name: '正常经营', itemStyle: { color: '#409EFF' } },
+        { value: 56, name: '稳步发展', itemStyle: { color: '#67C23A' } },
+        { value: 24, name: '困难预警', itemStyle: { color: '#E6A23C' } },
+        { value: 10, name: '停业/注销', itemStyle: { color: '#F56C6C' } }
+      ], '家'))
     },
     initOverviewChart() {
       const chart = this.initChart('chartOverview')
@@ -381,8 +428,13 @@ export default {
           type: 'scroll',
           textStyle: { fontSize: 11 }
         },
-        grid: { left: 55, right: 55, top: 48, bottom: 30 },
-        xAxis: { type: 'category', data: MONTHS, boundaryGap: false, axisLabel: X_AXIS_LABEL },
+        grid: {
+          left: this.isMobile ? 40 : 55,
+          right: this.isMobile ? 40 : 55,
+          top: this.isMobile ? 56 : 48,
+          bottom: 30
+        },
+        xAxis: { type: 'category', data: MONTHS, boundaryGap: false, axisLabel: this.xAxisLabel },
         yAxis: [
           { type: 'value', name: '数量', position: 'left' },
           { type: 'value', name: '用量', position: 'right' }
@@ -407,8 +459,8 @@ export default {
           top: 0,
           textStyle: { fontSize: 11 }
         },
-        grid: { left: 50, right: 20, top: 48, bottom: 30 },
-        xAxis: { type: 'category', data: MONTHS, axisLabel: X_AXIS_LABEL },
+        grid: { ...this.baseGrid(), top: this.isMobile ? 56 : 48 },
+        xAxis: { type: 'category', data: MONTHS, axisLabel: this.xAxisLabel },
         yAxis: { type: 'value', name: '家' },
         series: [
           { name: '正常经营', type: 'bar', stack: 'total', barMaxWidth: 22, data: [175, 182, 188, 195, 200, 205, 210, 215, 220, 225, 232, 238], itemStyle: { color: '#409EFF' } },
@@ -557,25 +609,66 @@ export default {
 }
 
 .chart-body,
-.chart-card-body,
 .donut-row {
   height: 260px;
   flex-shrink: 0;
 }
 
-.donut-row {
-  display: flex;
-
-  .donut-chart {
-    flex: 1;
-    height: 100%;
-  }
-}
-
 .chart-card-body {
+  height: 260px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.donut-row {
+  display: flex;
+
+  .donut-block {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .donut-chart {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+  }
+}
+
+.donut-row--mobile {
+  height: auto;
+  flex-direction: column;
+  gap: 12px;
+
+  .donut-block {
+    background: #fafafa;
+    border-radius: 4px;
+    padding: 8px 8px 4px;
+  }
+
+  .donut-block-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #606266;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .donut-chart {
+    flex: none;
+    height: 200px;
+  }
+}
+
+.chart-card-body--mobile {
+  height: auto;
+  flex-shrink: 1;
+  justify-content: flex-start;
+  gap: 12px;
 }
 
 .safety-boxes {
@@ -658,6 +751,138 @@ export default {
 @media (max-width: 1200px) {
   .kpi-row {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .data-statistics {
+    height: 100%;
+    padding: 10px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .kpi-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .kpi-card {
+    padding: 10px 8px;
+
+    .kpi-icon {
+      width: 32px;
+      height: 32px;
+
+      i {
+        font-size: 16px;
+      }
+    }
+
+    .kpi-value {
+      font-size: 15px;
+    }
+  }
+
+  .chart-row {
+    margin-bottom: 12px;
+
+    ::v-deep > .el-col {
+      margin-bottom: 12px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .chart-card {
+    padding: 12px;
+  }
+
+  .chart-title {
+    min-height: auto;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .chart-title-flex {
+    flex-direction: column;
+    align-items: stretch;
+    min-height: auto;
+    gap: 6px;
+
+    span {
+      font-size: 12px;
+    }
+  }
+
+  .enterprise-select {
+    width: 100%;
+  }
+
+  .chart-body {
+    height: 220px;
+  }
+
+  .chart-card-body,
+  .chart-card-body--mobile {
+    height: auto;
+  }
+
+  .donut-row:not(.donut-row--mobile) {
+    flex-direction: column;
+    height: auto;
+
+    .donut-chart {
+      height: 200px;
+    }
+  }
+
+  .donut-row--mobile .donut-chart {
+    height: 200px;
+  }
+
+  .chart-card--stat {
+    .safety-boxes {
+      grid-template-columns: repeat(2, 1fr);
+      margin-bottom: 0;
+    }
+
+    .stat-overview {
+      padding-top: 8px;
+    }
+
+    .overview-item {
+      padding: 8px;
+    }
+
+    .overview-label {
+      font-size: 10px;
+      line-height: 1.3;
+    }
+
+    .overview-compare {
+      font-size: 9px;
+      line-height: 1.3;
+      word-break: break-all;
+    }
+  }
+
+  .safety-box .safety-value {
+    font-size: 16px;
+  }
+
+  .overview-value {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 375px) {
+  .kpi-row {
+    grid-template-columns: 1fr;
   }
 }
 </style>
