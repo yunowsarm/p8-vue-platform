@@ -1,14 +1,14 @@
 @charset "UTF-8";
-@import "./commonStyle/common";
+@import './commonStyle/common';
 // @import "mixins/mixins";
 
 // element ui dialog样式覆盖
-.el-dialog__wrapper{
+.el-dialog__wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.el-dialog__wrapper.dragDialog{
+.el-dialog__wrapper.dragDialog {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -165,7 +165,7 @@
         overflow: auto;
         // padding: 20px 25px 20px;
         background: $base-white-color;
-        .normal-layout{
+        .normal-layout {
           height: 100%;
           margin-bottom: -30px;
         }
@@ -220,7 +220,7 @@
       .dialogBody {
         height: calc(100% - 50px) !important;
         max-height: none !important;
-        .normal-layout{
+        .normal-layout {
           height: 100%;
         }
         &.hiddenDialogFooter {

@@ -1,7 +1,7 @@
 @charset "UTF-8";
-@import "./commonStyle/common";
+@import './commonStyle/common';
 // @import "mixins/mixins";
-@import "./commonStyle/ie";
+@import './commonStyle/ie';
 
 @if $lte11 {
   @include partial;
@@ -131,14 +131,15 @@
     }
   }
 }
-.el-radio-button, .el-radio-button__inner {
+.el-radio-button,
+.el-radio-button__inner {
   min-width: 70px !important;
 }
 .pop_left {
   position: absolute;
   left: -12px;
 }
-.el-tooltip__popper{
+.el-tooltip__popper {
   max-width: 500px !important;
 }
 ::v-deep .el-form-item__content > .view {
