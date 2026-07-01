@@ -1,4 +1,5 @@
 $process-dialog-height: 320px;
+$process-dialog-height-tall: 400px;
 
 // 流程审批弹窗固定高度
 .el-dialog__wrapper.dragDialog:has(.process-approve-dialog) {
@@ -17,6 +18,22 @@ $process-dialog-height: 320px;
   }
 }
 
+.el-dialog__wrapper.dragDialog:has(.process-approve-dialog--tall) {
+  --height: #{$process-dialog-height-tall} !important;
+
+  ::v-deep .el-dialog.dragDialog {
+    --height: #{$process-dialog-height-tall} !important;
+  }
+
+  ::v-deep .el-dialog__body {
+    height: #{$process-dialog-height-tall} !important;
+
+    .dialogBody {
+      height: calc(#{$process-dialog-height-tall} - 50px);
+    }
+  }
+}
+
 .process-approve-dialog {
   min-height: calc(#{$process-dialog-height} - 90px);
   height: 100%;
@@ -28,5 +45,13 @@ $process-dialog-height: 320px;
 
   &__loading {
     min-height: calc(#{$process-dialog-height} - 90px);
+  }
+
+  &--tall {
+    min-height: calc(#{$process-dialog-height-tall} - 90px);
+
+    .process-approve-dialog__loading {
+      min-height: calc(#{$process-dialog-height-tall} - 90px);
+    }
   }
 }
