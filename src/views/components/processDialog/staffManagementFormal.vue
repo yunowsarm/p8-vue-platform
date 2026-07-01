@@ -1,3 +1,4 @@
+<!-- 员工转正 -->
 <template>
   <div class="process-approve-dialog">
     <form-list
@@ -23,6 +24,7 @@
 <script>
 import { P8Form as FormList } from 'p8-components-ui'
 import processApproveMixin from './tools/processApproveMixin'
+import { buildStaffApproveInfoConfig } from './tools/staffApproveInfo'
 
 export default {
   name: 'StaffManagementFormal',
@@ -31,6 +33,11 @@ export default {
   data () {
     return {
       processDefinitionKey: 'personFormal'
+    }
+  },
+  methods: {
+    getDefaultApproveInfoConfig () {
+      return buildStaffApproveInfoConfig(this.row)
     }
   }
 }

@@ -1,3 +1,4 @@
+<!-- 费用报销 -->
 <template>
   <div class="process-approve-dialog">
     <form-list
@@ -31,6 +32,21 @@ export default {
   data () {
     return {
       processDefinitionKey: 'workReimburse'
+    }
+  },
+  methods: {
+    getDefaultApproveInfoConfig () {
+      const config = {}
+      this.row.forEach(item => {
+        if (!item.ID) return
+        config[item.ID] = {
+          filed1: { label: '申请人', value: item.PERSONNAME || '' },
+          filed2: { label: '申请人部门', value: item.APPLICANT_DEPT || '' },
+          filed3: { label: '申请人岗位', value: item.APPLICANT_JOB || '' },
+          filed4: { label: '合计金额', value: item.AMOUNT ?? '' }
+        }
+      })
+      return config
     }
   }
 }

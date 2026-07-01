@@ -1,4 +1,4 @@
-<!-- 文件借阅 -->
+<!-- 采购报销 -->
 <template>
   <div class="process-approve-dialog">
     <form-list
@@ -26,12 +26,12 @@ import { P8Form as FormList } from 'p8-components-ui'
 import processApproveMixin from './tools/processApproveMixin'
 
 export default {
-  name: 'FileBorrowingProcess',
+  name: 'PurchaseReimbursementProcess',
   components: { FormList },
   mixins: [processApproveMixin],
   data () {
     return {
-      processDefinitionKey: 'fileApply'
+      processDefinitionKey: 'purchaseReimbursement'
     }
   },
   methods: {
@@ -40,9 +40,10 @@ export default {
       this.row.forEach(item => {
         if (!item.ID) return
         config[item.ID] = {
-          filed1: { label: '档案名称', value: item.ARCHIVENAME || '' },
-          filed2: { label: '借阅人', value: item.BORROWNAME || '' },
-          filed3: { label: '借阅日期', value: item.FORMATDATE1 || '' }
+          filed1: { label: '申请部门', value: item.DEPARTMENT || '' },
+          filed2: { label: '申请人', value: item.PERSONNAME || '' },
+          filed3: { label: '用途分类', value: item.USECLASSIFICATION || '' },
+          filed4: { label: '紧急程度', value: item.URGENCYLEVEL || '' }
         }
       })
       return config

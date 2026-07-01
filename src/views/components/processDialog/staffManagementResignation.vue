@@ -1,3 +1,4 @@
+<!-- 员工离职 -->
 <template>
   <div class="process-approve-dialog">
     <form-list
@@ -23,6 +24,7 @@
 <script>
 import { P8Form as FormList } from 'p8-components-ui'
 import processApproveMixin from './tools/processApproveMixin'
+import { buildStaffApproveInfoConfig } from './tools/staffApproveInfo'
 
 export default {
   name: 'StaffManagementResignation',
@@ -31,6 +33,11 @@ export default {
   data () {
     return {
       processDefinitionKey: 'personResignation'
+    }
+  },
+  methods: {
+    getDefaultApproveInfoConfig () {
+      return buildStaffApproveInfoConfig(this.row)
     }
   }
 }

@@ -1,3 +1,4 @@
+<!-- 资产采购 -->
 <template>
   <div class="process-approve-dialog process-approve-dialog--tall">
     <form-list
@@ -40,8 +41,9 @@ export default {
         if (!item.ID) return
         config[item.ID] = {
           filed1: { label: '申请部门', value: item.DEPARTMENT || '' },
-          filed2: { label: '用途分类', value: item.USECLASSIFICATION || '' },
-          filed3: { label: '申请人', value: item.PERSONNAME || '' }
+          filed2: { label: '申请人', value: item.PERSONNAME || '' },
+          filed3: { label: '用途分类', value: item.USECLASSIFICATION || '' },
+          filed4: { label: '紧急程度', value: item.URGENCYLEVEL || '' }
         }
       })
       return config
