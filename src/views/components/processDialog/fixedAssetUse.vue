@@ -1,4 +1,4 @@
-<!-- 员工转正 -->
+<!-- 资产领用-固定资产 -->
 <template>
   <div class="process-approve-dialog">
     <form-list
@@ -26,12 +26,12 @@ import { P8Form as FormList } from 'p8-components-ui'
 import processApproveMixin from './tools/processApproveMixin'
 
 export default {
-  name: 'StaffManagementFormal',
+  name: 'FixedAssetUseProcess',
   components: { FormList },
   mixins: [processApproveMixin],
   data () {
     return {
-      processDefinitionKey: 'personFormal'
+      processDefinitionKey: 'fixedAssetUse'
     }
   },
   methods: {
@@ -40,10 +40,9 @@ export default {
       this.row.forEach(item => {
         if (!item.ID) return
         config[item.ID] = {
-          filed1: { label: '员工姓名', value: item.NAME || '' },
-          filed2: { label: '部门名称', value: item.DEPTNAME || '' },
-          filed3: { label: '岗位名称', value: item.JOBNAME || '' },
-          filed4: { label: '联系电话', value: item.PHONE || '' }
+          filed1: { label: '资产名称', value: item.ASSETNAME || '' },
+          filed2: { label: '领用人', value: item.USERNAME || '' },
+          filed3: { label: '联系电话', value: item.PHONE || '' }
         }
       })
       return config

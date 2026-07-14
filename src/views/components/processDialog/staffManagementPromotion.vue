@@ -1,4 +1,4 @@
-<!-- 员工转正 -->
+<!-- 员工升职 -->
 <template>
   <div class="process-approve-dialog">
     <form-list
@@ -26,12 +26,12 @@ import { P8Form as FormList } from 'p8-components-ui'
 import processApproveMixin from './tools/processApproveMixin'
 
 export default {
-  name: 'StaffManagementFormal',
+  name: 'StaffManagementPromotion',
   components: { FormList },
   mixins: [processApproveMixin],
   data () {
     return {
-      processDefinitionKey: 'personFormal'
+      processDefinitionKey: 'personPromotion'
     }
   },
   methods: {

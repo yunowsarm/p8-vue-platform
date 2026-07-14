@@ -1,4 +1,4 @@
-<!-- 员工转正 -->
+<!-- 用车申请 -->
 <template>
   <div class="process-approve-dialog">
     <form-list
@@ -11,13 +11,7 @@
       @custom-validate="handleSubmit"
       @saved="handleClose"
     />
-    <div
-      v-else
-      v-loading="loading"
-      class="process-approve-dialog__loading"
-      element-loading-text="加载中..."
-      element-loading-spinner="el-icon-loading"
-    />
+    <div v-else v-loading="loading" class="process-approve-dialog__loading" element-loading-text="加载中..." element-loading-spinner="el-icon-loading" />
   </div>
 </template>
 
@@ -26,24 +20,24 @@ import { P8Form as FormList } from 'p8-components-ui'
 import processApproveMixin from './tools/processApproveMixin'
 
 export default {
-  name: 'StaffManagementFormal',
+  name: 'CarRequestProcess',
   components: { FormList },
   mixins: [processApproveMixin],
-  data () {
+  data() {
     return {
-      processDefinitionKey: 'personFormal'
+      processDefinitionKey: 'carRequest'
     }
   },
   methods: {
-    getDefaultApproveInfoConfig () {
+    getDefaultApproveInfoConfig() {
       const config = {}
-      this.row.forEach(item => {
+      this.row.forEach((item) => {
         if (!item.ID) return
         config[item.ID] = {
-          filed1: { label: '员工姓名', value: item.NAME || '' },
-          filed2: { label: '部门名称', value: item.DEPTNAME || '' },
-          filed3: { label: '岗位名称', value: item.JOBNAME || '' },
-          filed4: { label: '联系电话', value: item.PHONE || '' }
+          filed1: { label: '申请人', value: item.APPLICANT || '' },
+          filed2: { label: '申请部门', value: item.APPLICANT_DEPT || '' },
+          filed3: { label: '目的地', value: item.DESTINATION || '' },
+          filed4: { label: '用车事由', value: item.REASON || '' }
         }
       })
       return config

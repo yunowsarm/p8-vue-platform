@@ -25,6 +25,13 @@ export const repositoryApi = {
       desc: '导出车辆使用情况'
     },
     {
+      name: 'exportStorehouse',
+      method: 'POST',
+      path: '/jt/asset/storehouse/export',
+      mockPath: '/jt/asset/storehouse/export',
+      desc: '库存导出'
+    },
+    {
       name: 'getPurchaseCode',
       method: 'POST',
       path: '/jt/asset/purchase/getCode',
