@@ -1,5 +1,4 @@
 .DS_Store
-node_modules
 /dist
 .history
 .yalc
@@ -23,3 +22,4 @@ package-lock.json
 *.njsproj
 *.sln
 *.sw*
+node_modules
