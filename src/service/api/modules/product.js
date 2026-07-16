@@ -25,6 +25,27 @@ export const repositoryApi = {
       desc: '导出车辆使用情况'
     },
     {
+      name: 'searchByName',
+      method: 'POST',
+      path: '/jt/role/searchByName',
+      mockPath: '/jt/role/searchByName',
+      desc: '获取角色名字'
+    },
+    {
+      name: 'getType',
+      method: 'POST',
+      path: '/jt/asset/storehouse/getType',
+      mockPath: '/jt/asset/storehouse/getType',
+      desc: '获取资产类型'
+    },
+    {
+      name: 'exportApplicant',
+      method: 'POST',
+      path: '/jt/car/exportApplicant',
+      mockPath: '/jt/car/exportApplicant',
+      desc: '派车导出'
+    },
+    {
       name: 'exportStorehouse',
       method: 'POST',
       path: '/jt/asset/storehouse/export',

@@ -28,12 +28,12 @@ Vue.use(BeautiContext)
 Vue.use(loadCurrentTheme, { store })
 
 // 系统错误捕获
-const errorHandler = (error, vm, info) => {
-  console.error(`${error.toString()}`)
-}
+// const errorHandler = (error, vm, info) => {
+//   console.error(`${error.toString()}`)
+// }
 
-Vue.config.errorHandler = errorHandler
-Vue.prototype.$throw = (error) => errorHandler(error, this)
+// Vue.config.errorHandler = errorHandler
+// Vue.prototype.$throw = (error) => errorHandler(error, this)
 
 // 为对象创建代理，该代理可以拦截和重新定义该对象的基本操作
 function apiProxy(obj) {
