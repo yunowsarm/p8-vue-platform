@@ -18,6 +18,20 @@ export const repositoryApi = {
   ],
   baseData: [
     {
+      name: 'getReimburseList',
+      method: 'POST',
+      path: '/jt/expense/search',
+      mockPath: '/jt/expense/search',
+      desc: '查询报销明细'
+    },
+    {
+      name: 'exportReimburseExcel',
+      method: 'POST',
+      path: '/jt/expense/export',
+      mockPath: '/jt/expense/export',
+      desc: '报销导出'
+    },
+    {
       name: 'exportCarUse',
       method: 'POST',
       path: '/jt/car/export',
