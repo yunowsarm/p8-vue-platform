@@ -31,7 +31,7 @@ export default {
     isMobile() {
       return this.$store.getters.isMobile
     },
-    noRouterBg () {
+    noRouterBg() {
       return this.$route.meta.noRouterBg || /dashbord/i.test(this.$route.path)
     },
     ...mapGetters(['cachedViews'])
@@ -67,10 +67,8 @@ export default {
     .main-router {
       background: #fcfcfc;
       border-radius: 5px;
-      height: calc(100% - 28px) !important;
-      // height: 100%;
-      // overflow: auto;
-      // height: 1000px;
+      min-height: calc(100% - 28px);
+      height: auto !important;
     }
 
     .main-router--no-bg {

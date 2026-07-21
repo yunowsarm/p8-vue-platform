@@ -25,6 +25,7 @@ import hljsVuePlugin from '@highlightjs/vue-plugin'
 // 引入你需要的语言和样式
 import 'highlight.js/styles/monokai.css' // 选择你喜欢的主题样式
 import { download } from '@/utils/download'
+import { installOverlayScrollLock } from '@/utils/overlayScrollLock'
 import axios from 'axios'
 // 注册插件
 Vue.use(hljsVuePlugin, { hljs })
@@ -70,6 +71,8 @@ window.addEventListener('resize', () => {
   store.dispatch('updateIsMobile')
 })
 
+installOverlayScrollLock()
+
 /* eslint-disable no-new */
 function initVue() {
   new Vue({
@@ -89,7 +92,7 @@ function initVue() {
 //     if (currentAppService) {
 //       store.commit('SET_TOKEN', JSON.parse(currentAppService).token)
 //     }
-    initVue()
+initVue()
 //   })
 // } else {
 //   initVue()
