@@ -10,7 +10,7 @@
       </div>
       <div class="header-actions">
         <el-button size="small" icon="el-icon-setting" @click="ruleDialog = true">泄漏规则</el-button><el-button size="small" icon="el-icon-coin" @click="quotaDialog = true">用水定额</el-button
-        ><el-button type="primary" size="small" icon="el-icon-warning-outline" @click="activeTab = 'leaks'">泄漏处置台</el-button>
+        ><el-button type="primary" size="small" icon="el-icon-warning-outline" @click="openWorkspace('leaks')">泄漏处置台</el-button>
       </div>
     </header>
 
@@ -25,7 +25,9 @@
       </article>
     </section>
 
-    <section class="dashboard-grid water-dashboard">
+    <iot-workspace-nav v-model="activeTab" :items="workspaceNav" aria-label="给排水能耗业务工作区" @change="handleWorkspaceChange" />
+
+    <section v-show="activeTab === 'overview'" ref="overviewWorkspace" class="dashboard-grid water-dashboard" tabindex="-1">
       <article class="surface">
         <div class="surface-head">
           <div>
@@ -35,7 +37,17 @@
           <span :class="['balance-badge', dataSet.balance.rate > 4 ? 'warning' : '']">差额 {{ dataSet.balance.rate }}%</span>
         </div>
         <div class="surface-body">
+          <div class="balance-result balance-result--top">
+            <div>
+              <span>分表合计</span><strong>{{ dataSet.balance.metered }} m³</strong>
+            </div>
+            <i class="el-icon-minus"></i>
+            <div>
+              <span>未计量 / 差额</span><strong class="warning-text">{{ dataSet.balance.difference }} m³</strong>
+            </div>
+          </div>
           <div class="balance-flow">
+            <div ref="balanceTreeChart" class="balance-tree-chart"></div>
             <div class="balance-source">
               <i class="el-icon-water-cup"></i><strong>{{ dataSet.balance.input }}</strong
               ><span>总进水 m³</span>
@@ -46,15 +58,6 @@
                 <span>{{ item.name }}</span
                 ><strong>{{ item.value }} m³</strong><small>{{ item.rate }}%</small>
               </div>
-            </div>
-          </div>
-          <div class="balance-result">
-            <div>
-              <span>分表合计</span><strong>{{ dataSet.balance.metered }} m³</strong>
-            </div>
-            <i class="el-icon-minus"></i>
-            <div>
-              <span>未计量 / 差额</span><strong class="warning-text">{{ dataSet.balance.difference }} m³</strong>
             </div>
           </div>
         </div>
@@ -79,17 +82,18 @@
           </div>
         </div>
         <div class="surface-body">
-          <div ref="pumpChart" class="chart mini-chart"></div>
-          <div class="pump-highlight">
+          <div class="pump-highlight pump-highlight--top">
             <div><span>综合泵效</span><strong>76.0%</strong></div>
             <div><span>综合单耗</span><strong>0.364 kWh/m³</strong></div>
           </div>
+          <div ref="pumpChart" class="chart mini-chart"></div>
         </div>
       </article>
     </section>
 
-    <section class="surface management-card">
-      <el-tabs v-model="activeTab">
+    <section v-show="activeTab !== 'overview'" ref="detailWorkspace" class="surface management-card workspace-detail" tabindex="-1">
+      <iot-workspace-header :item="currentWorkspace" updated-at="10:52:20" @back="openWorkspace('overview')" />
+      <el-tabs v-model="activeTab" class="workspace-tabs">
         <el-tab-pane name="meters"
           ><span slot="label" class="tab-label"
             ><i class="el-icon-odometer"></i>分级水表 <b class="tab-count">{{ dataSet.meters.length }}</b></span
@@ -335,18 +339,22 @@
 </template>
 
 <script>
+import IotWorkspaceHeader from '../components/IotWorkspaceHeader.vue'
+import IotWorkspaceNav from '../components/IotWorkspaceNav.vue'
 import { waterEnergy } from '../mock/energyMockData'
 
 export default {
   name: 'SmartIOTWaterEnergy',
+  components: { IotWorkspaceHeader, IotWorkspaceNav },
   data() {
     return {
       dataSet: waterEnergy,
-      activeTab: 'meters',
+      activeTab: 'overview',
       keyword: '',
       meterLevel: '',
       meterPage: 1,
       pumpDate: '2026-07-20',
+      balanceTreeChart: null,
       flowChart: null,
       pumpChart: null,
       ruleDialog: false,
@@ -362,6 +370,18 @@ export default {
     }
   },
   computed: {
+    workspaceNav() {
+      return [
+        { key: 'overview', title: '用水总览', description: '平衡、流量与泵效', detail: '查看园区水量平衡、瞬时流量、夜间阈值和泵组效率。', icon: 'el-icon-data-analysis', count: null },
+        { key: 'meters', title: '分级水表', description: '流量、方向与原始值', detail: '按园区、楼栋、楼层、租户和用途查看分级水计量。', icon: 'el-icon-odometer', count: this.dataSet.meters.length },
+        { key: 'leaks', title: '泄漏处置', description: '研判、工单与关阀', detail: '处置夜间异常、持续小流量、突增、倒流和长时间补水事件。', icon: 'el-icon-warning-outline', count: this.dataSet.leaks.length, danger: this.dataSet.leaks.some((item) => item.status !== '已确认') },
+        { key: 'pumps', title: '泵组效率', description: '流量、功率与单耗', detail: '比较泵组流量、功率、每立方米输水电耗和运行效率。', icon: 'el-icon-cpu', count: this.dataSet.pumps.length },
+        { key: 'quota', title: '定额预算', description: '预测、对标与预警', detail: '管理用水定额、费用预算、月末预测和同类对象对标。', icon: 'el-icon-coin', count: this.dataSet.quotas.length }
+      ]
+    },
+    currentWorkspace() {
+      return this.workspaceNav.find((item) => item.key === this.activeTab) || this.workspaceNav[0]
+    },
     meterLevels() {
       return [...new Set(this.dataSet.meters.map((item) => item.level))]
     },
@@ -399,10 +419,23 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.resizeCharts)
+    if (this.balanceTreeChart) this.balanceTreeChart.dispose()
     if (this.flowChart) this.flowChart.dispose()
     if (this.pumpChart) this.pumpChart.dispose()
   },
   methods: {
+    openWorkspace(view) {
+      if (!this.workspaceNav.some((item) => item.key === view)) return
+      this.activeTab = view
+      this.handleWorkspaceChange()
+    },
+    handleWorkspaceChange() {
+      this.$nextTick(() => {
+        const content = this.activeTab === 'overview' ? this.$refs.overviewWorkspace : this.$refs.detailWorkspace
+        if (content && typeof content.focus === 'function') content.focus({ preventScroll: true })
+        if (this.activeTab === 'overview') this.resizeCharts()
+      })
+    },
     statusClass(status) {
       if (/离线|紧急|禁止|异常/.test(status)) return 'danger'
       if (/小流量|补水|偏低|待|预警|分析/.test(status)) return 'warning'
@@ -459,19 +492,103 @@ export default {
     },
     initCharts() {
       if (!this.$echarts) return
+      this.balanceTreeChart = this.$echarts.init(this.$refs.balanceTreeChart)
       this.flowChart = this.$echarts.init(this.$refs.flowChart)
       this.pumpChart = this.$echarts.init(this.$refs.pumpChart)
       this.renderCharts()
     },
     renderCharts() {
+      const balance = this.dataSet.balance
+      this.balanceTreeChart.setOption({
+        color: ['#2488e8', '#31b889', '#ed9d26', '#18a5bd'],
+        textStyle: { fontSize: 13 },
+        tooltip: {
+          trigger: 'item',
+          formatter: (params) => {
+            const data = params.data || {}
+            return `${data.name}<br/>水量：${data.value || 0} m³${data.rate ? `<br/>占比：${data.rate}%` : ''}`
+          },
+          textStyle: { fontSize: 13 }
+        },
+        series: [
+          {
+            type: 'tree',
+            data: [
+              {
+                name: '总进水',
+                value: balance.input,
+                children: balance.branches.map((item) => ({
+                  name: item.name,
+                  value: item.value,
+                  rate: item.rate
+                }))
+              }
+            ],
+            orient: 'LR',
+            top: 16,
+            left: 44,
+            right: 58,
+            bottom: 16,
+            symbol: 'roundRect',
+            symbolSize: [62, 34],
+            edgeShape: 'polyline',
+            expandAndCollapse: false,
+            initialTreeDepth: 2,
+            lineStyle: {
+              color: '#b9d9f6',
+              width: 2,
+              curveness: 0.05
+            },
+            itemStyle: {
+              color: '#eaf4ff',
+              borderColor: '#4b9bec',
+              borderWidth: 2
+            },
+            label: {
+              position: 'inside',
+              color: '#1f3a5c',
+              fontSize: 11,
+              fontWeight: 700,
+              lineHeight: 14,
+              formatter: (params) => {
+                const data = params.data || {}
+                return `${data.name}\n${data.value || 0} m³`
+              }
+            },
+            leaves: {
+              itemStyle: {
+                color: '#f6fbff',
+                borderColor: '#88b8e9',
+                borderWidth: 1
+              },
+              label: {
+                position: 'inside',
+                color: '#344159',
+                fontSize: 10,
+                fontWeight: 600,
+                lineHeight: 13,
+                formatter: (params) => {
+                  const data = params.data || {}
+                  return `${data.name}\n${data.value} m³`
+                }
+              }
+            },
+            emphasis: {
+              focus: 'descendant',
+              itemStyle: { borderColor: '#1677d2' }
+            }
+          }
+        ]
+      })
       const c = this.dataSet.flowCurve
       this.flowChart.setOption({
         color: ['#2587e8', '#9ba9bc', '#ed9d26'],
-        tooltip: { trigger: 'axis' },
-        legend: { top: 0, data: ['今日流量', '昨日流量', '预警阈值'] },
-        grid: { left: 50, right: 18, top: 42, bottom: 28 },
-        xAxis: { type: 'category', boundaryGap: false, data: c.hours },
-        yAxis: { type: 'value', name: 'm³/h', splitLine: { lineStyle: { color: '#edf1f6' } } },
+        textStyle: { fontSize: 13 },
+        tooltip: { trigger: 'axis', textStyle: { fontSize: 13 } },
+        legend: { top: 0, textStyle: { fontSize: 12 }, data: ['今日流量', '昨日流量', '预警阈值'] },
+        grid: { left: 58, right: 22, top: 46, bottom: 32 },
+        xAxis: { type: 'category', boundaryGap: false, data: c.hours, axisLabel: { fontSize: 12 } },
+        yAxis: { type: 'value', name: 'm³/h', axisLabel: { fontSize: 12 }, nameTextStyle: { fontSize: 12 }, splitLine: { lineStyle: { color: '#edf1f6' } } },
         series: [
           {
             name: '今日流量',
@@ -489,10 +606,11 @@ export default {
       const pumps = this.dataSet.pumps.filter((item) => typeof item.efficiency === 'number')
       this.pumpChart.setOption({
         color: ['#31b889'],
-        tooltip: { trigger: 'axis' },
-        grid: { left: 76, right: 24, top: 12, bottom: 24 },
-        xAxis: { type: 'value', max: 100, splitLine: { lineStyle: { color: '#edf1f6' } } },
-        yAxis: { type: 'category', data: pumps.map((item) => item.name), axisLabel: { fontSize: 10 } },
+        textStyle: { fontSize: 13 },
+        tooltip: { trigger: 'axis', textStyle: { fontSize: 13 } },
+        grid: { left: 96, right: 34, top: 18, bottom: 30 },
+        xAxis: { type: 'value', max: 100, axisLabel: { fontSize: 12 }, splitLine: { lineStyle: { color: '#edf1f6' } } },
+        yAxis: { type: 'category', data: pumps.map((item) => item.name), axisLabel: { fontSize: 12 } },
         series: [
           {
             type: 'bar',
@@ -503,6 +621,7 @@ export default {
       })
     },
     resizeCharts() {
+      if (this.balanceTreeChart) this.balanceTreeChart.resize()
       if (this.flowChart) this.flowChart.resize()
       if (this.pumpChart) this.pumpChart.resize()
     }
@@ -513,7 +632,7 @@ export default {
 <style lang="scss" scoped>
 @import './energyCommon.scss';
 .water-dashboard {
-  grid-template-columns: minmax(300px, 1fr) minmax(420px, 1.45fr) minmax(280px, 0.92fr);
+  grid-template-columns: minmax(300px, 0.82fr) minmax(500px, 1.58fr) minmax(340px, 1.05fr);
 }
 .balance-badge {
   padding: 4px 8px;
@@ -529,7 +648,19 @@ export default {
 .balance-flow {
   display: flex;
   align-items: center;
-  height: 222px;
+  justify-content: center;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-height: 240px;
+  padding: 8px 0 4px;
+}
+.balance-tree-chart {
+  width: 100%;
+  height: clamp(310px, 44vh, 450px);
+  min-height: 310px;
+}
+.balance-flow > :not(.balance-tree-chart) {
+  display: none;
 }
 .balance-source {
   flex: 0 0 105px;
@@ -554,12 +685,18 @@ export default {
   font-size: 10px;
 }
 .balance-line {
-  flex: 0 0 26px;
+  flex: 0 0 32px;
   height: 3px;
   background: #88b8e9;
 }
 .balance-branches {
+  display: flex;
+  align-self: stretch;
+  flex-direction: column;
   flex: 1;
+  justify-content: space-around;
+  max-width: 185px;
+  padding: 6px 0;
 }
 .balance-branch {
   position: relative;
@@ -567,7 +704,6 @@ export default {
   grid-template-columns: 1fr auto 35px;
   gap: 5px;
   align-items: center;
-  margin: 7px 0;
   padding: 7px 8px;
   color: #526078;
   background: #f5f9fd;
@@ -590,6 +726,9 @@ export default {
   padding: 10px;
   background: #f8fafc;
   border-radius: 5px;
+}
+.balance-result--top {
+  margin-bottom: 12px;
 }
 .balance-result div {
   flex: 1;
@@ -617,7 +756,9 @@ export default {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
-  margin-top: 8px;
+}
+.pump-highlight--top {
+  margin-bottom: 12px;
 }
 .pump-highlight div {
   padding: 9px;

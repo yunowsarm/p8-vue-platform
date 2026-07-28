@@ -27,7 +27,9 @@
       </article>
     </section>
 
-    <section class="operations-grid">
+    <iot-workspace-nav v-model="managementTab" :items="workspaceNav" aria-label="智能巡更业务工作区" @change="handleWorkspaceChange" />
+
+    <section v-if="managementTab === 'overview'" ref="workspaceContent" class="operations-grid" tabindex="-1">
       <article class="surface route-board">
         <div class="surface-head">
           <div>
@@ -139,8 +141,9 @@
       </aside>
     </section>
 
-    <section ref="managementCard" class="surface management-card">
-      <el-tabs v-model="managementTab">
+    <section v-else ref="workspaceContent" class="surface management-card workspace-detail" tabindex="-1">
+      <iot-workspace-header :item="currentWorkspace" updated-at="22:28:35" @back="openWorkspace('overview')" />
+      <el-tabs v-model="managementTab" class="workspace-tabs">
         <el-tab-pane name="plans">
           <span slot="label"><i class="el-icon-date"></i> 巡更计划 <b class="tab-count">{{ plans.length }}</b></span>
           <div class="table-toolbar">
@@ -408,6 +411,8 @@
 </template>
 
 <script>
+import IotWorkspaceHeader from '../components/IotWorkspaceHeader.vue'
+import IotWorkspaceNav from '../components/IotWorkspaceNav.vue'
 import { patrol } from '../mock/iotMockData'
 
 const PatrolPagination = {
@@ -438,7 +443,7 @@ const PatrolPagination = {
 
 export default {
   name: 'SmartIOTPatrol',
-  components: { PatrolPagination },
+  components: { IotWorkspaceHeader, IotWorkspaceNav, PatrolPagination },
   data() {
     return {
       kpis: patrol.kpis,
@@ -453,7 +458,7 @@ export default {
       selectedTaskId: patrol.tasks[0].id,
       selectedRouteId: patrol.tasks[0].routeId,
       selectedPoint: null,
-      managementTab: 'plans',
+      managementTab: 'overview',
       planKeyword: '',
       planStatus: '',
       recordKeyword: '',
@@ -498,6 +503,18 @@ export default {
     }
   },
   computed: {
+    workspaceNav() {
+      return [
+        { key: 'overview', title: '执行总览', description: '路线、人员与进度', detail: '查看今日巡更路线、执行人员、实时点位、签到进度和可信校验。', icon: 'el-icon-data-analysis', count: null },
+        { key: 'plans', title: '巡更计划', description: '路线、班次与人员', detail: '配置巡更路线、点位、班次、人员、时间窗口和检查要求。', icon: 'el-icon-date', count: this.plans.length },
+        { key: 'records', title: '签到记录', description: '终端、位置与校验', detail: '核对二维码、NFC、蓝牙和定位签到记录及防代扫校验结果。', icon: 'el-icon-circle-check', count: this.records.length },
+        { key: 'alarms', title: '异常告警', description: '识别、升级与关闭', detail: '处置漏巡、迟巡、提前巡、越序巡和异常停留告警。', icon: 'el-icon-warning-outline', count: this.activeAlarmCount, danger: this.activeAlarmCount > 0 },
+        { key: 'issues', title: '问题工单', description: '上报、派单与闭环', detail: '跟踪巡更现场问题、图片视频凭证、安保维修工单和闭环状态。', icon: 'el-icon-tickets', count: this.issues.length }
+      ]
+    },
+    currentWorkspace() {
+      return this.workspaceNav.find((item) => item.key === this.managementTab) || this.workspaceNav[0]
+    },
     activeTasks() {
       return this.tasks.filter((item) => item.status !== '已完成')
     },
@@ -563,6 +580,17 @@ export default {
     issueStatus() { this.pagination.issues.page = 1 }
   },
   methods: {
+    openWorkspace(view) {
+      if (!this.workspaceNav.some((item) => item.key === view)) return
+      this.managementTab = view
+      this.handleWorkspaceChange()
+    },
+    handleWorkspaceChange() {
+      this.$nextTick(() => {
+        const content = this.$refs.workspaceContent
+        if (content && typeof content.focus === 'function') content.focus({ preventScroll: true })
+      })
+    },
     paginate(list, type) {
       const state = this.pagination[type]
       const start = (state.page - 1) * state.size
@@ -757,7 +785,7 @@ export default {
       }
       this.pagination.plans.page = 1
       this.planDialogVisible = false
-      this.managementTab = 'plans'
+      this.openWorkspace('plans')
       this.$message.success('巡更计划已保存，任务将按时间窗口自动生成')
     },
     showPlanRoute(row) {
@@ -765,8 +793,7 @@ export default {
       this.selectedPoint = null
       const task = this.tasks.find((item) => item.routeId === row.routeId)
       if (task) this.selectedTaskId = task.id
-      const scroller = this.$refs.managementCard && this.$refs.managementCard.closest('.ps-container')
-      if (scroller) scroller.scrollTop = 0
+      this.openWorkspace('overview')
     },
     saveSignConfig() {
       if (!this.signConfig.methods.length) {
@@ -802,7 +829,7 @@ export default {
       if (this.issueForm.createWorkOrder) row.traces.push({ time: '22:31', action: '生成工单', user: '系统', remark: row.workOrder + ' 已生成，等待派发' })
       this.issues.unshift(row)
       this.pagination.issues.page = 1
-      this.managementTab = 'issues'
+      this.openWorkspace('issues')
       this.issueReportVisible = false
       this.$message.success(this.issueForm.createWorkOrder ? '问题已上报并生成处置工单' : '现场问题已保存')
     },
@@ -856,6 +883,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../components/iotWorkspacePage.scss';
 .patrol-page {
   --primary: #2468f2;
   --primary-soft: #edf4ff;
@@ -899,44 +927,46 @@ button { font-family: inherit; }
 .surface-subtitle { display: block; margin-top: 3px; color: #92a0b2; font-size: 11px; }
 .compact-head { min-height: 58px; }
 
-.operations-grid { display: grid; grid-template-columns: minmax(760px, 1fr) 305px; gap: 12px; margin-bottom: 12px; }
-.route-head-meta { display: flex; align-items: center; gap: 13px; color: #7c899b; font-size: 10px; }
-.dot { display: inline-block; width: 7px; height: 7px; margin-right: 5px; border-radius: 50%; }
+.operations-grid { display: grid; grid-template-columns: minmax(760px, 1fr) 305px; height: var(--iot-overview-height); align-items: stretch; gap: 12px; margin-bottom: 12px; }
+.patrol-page .operations-grid .surface-subtitle { font-size: 13px !important; line-height: 20px !important; }
+.route-head-meta { display: flex; align-items: center; gap: 14px; color: #6f7e92; font-size: 12px; line-height: 20px; }
+.dot { display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; }
 .dot.online { background: #19aa76; }
 .dot.offline { background: #98a3b2; }
-.route-workbench { display: grid; grid-template-columns: 215px minmax(540px, 1fr); height: 440px; }
-.task-rail { padding: 12px 9px; overflow-y: auto; background: #fbfcfe; border-right: 1px solid var(--line); }
-.rail-title { display: flex; align-items: center; justify-content: space-between; padding: 0 7px 9px; color: #69778d; font-size: 11px; }
-.rail-title span { display: inline-flex; min-width: 19px; height: 19px; align-items: center; justify-content: center; color: #326dc9; background: #eaf2ff; border-radius: 10px; }
-.task-card { display: block; width: 100%; margin-bottom: 8px; padding: 10px; color: #607087; text-align: left; background: #fff; border: 1px solid #e7ebf1; border-radius: 7px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; }
+.route-board { display: flex; min-height: 0; flex-direction: column; }
+.route-workbench { display: grid; grid-template-columns: 235px minmax(520px, 1fr); min-height: 0; flex: 1 1 auto; }
+.task-rail { padding: 14px 11px; overflow-y: auto; background: #fbfcfe; border-right: 1px solid var(--line); }
+.patrol-page .rail-title { display: flex; align-items: center; justify-content: space-between; padding: 0 7px 11px; color: #607087; font-size: 13px !important; line-height: 20px; }
+.rail-title span { display: inline-flex; min-width: 22px; height: 22px; align-items: center; justify-content: center; color: #326dc9; background: #eaf2ff; border-radius: 11px; font-size: 12px; }
+.task-card { display: block; width: 100%; margin-bottom: 10px; padding: 12px; color: #607087; text-align: left; background: #fff; border: 1px solid #e7ebf1; border-radius: 7px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; }
 .task-card:hover, .task-card.active { border-color: #b9cef3; box-shadow: 0 3px 10px rgba(51, 91, 153, 0.08); }
 .task-card.active { background: #f7faff; }
 .task-card.abnormal { border-left: 3px solid #eda137; }
-.task-card-top { display: flex; align-items: center; gap: 8px; }
-.person-avatar { display: flex; flex: 0 0 29px; width: 29px; height: 29px; align-items: center; justify-content: center; color: #fff; background: #3275df; border-radius: 7px; font-size: 12px; }
+.task-card-top { display: flex; align-items: center; gap: 10px; }
+.person-avatar { display: flex; flex: 0 0 34px; width: 34px; height: 34px; align-items: center; justify-content: center; color: #fff; background: #3275df; border-radius: 8px; font-size: 14px; }
 .task-card.abnormal .person-avatar { background: #e79b2a; }
 .task-name { min-width: 0; flex: 1; }
 .task-name b, .task-name small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.task-name b { color: #334159; font-size: 11px; }
-.task-name small { margin-top: 3px; color: #929eae; font-size: 9px; }
-.task-card-top > i { color: #a1abb9; font-size: 10px; }
-.task-progress { height: 4px; margin-top: 10px; overflow: hidden; background: #e8edf3; border-radius: 2px; }
-.task-progress i { display: block; height: 4px; background: #2f78e5; border-radius: 2px; }
+.task-name b { color: #334159; font-size: 13px; line-height: 20px; }
+.patrol-page .task-name small { margin-top: 3px; color: #8794a6; font-size: 12px !important; line-height: 18px !important; }
+.task-card-top > i { color: #a1abb9; font-size: 12px; }
+.task-progress { height: 6px; margin-top: 11px; overflow: hidden; background: #e8edf3; border-radius: 3px; }
+.task-progress i { display: block; height: 6px; background: #2f78e5; border-radius: 3px; }
 .task-card.abnormal .task-progress i { background: #e59b2a; }
-.task-card-meta { display: flex; justify-content: space-between; margin-top: 4px; color: #8c98a9; font-size: 9px; }
-.task-current { margin-top: 8px; padding: 6px 7px; overflow: hidden; color: #64748a; background: #f3f6f9; border-radius: 4px; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
-.task-current i { margin-right: 4px; color: #2f77df; }
+.patrol-page .task-card-meta { display: flex; justify-content: space-between; margin-top: 6px; color: #7d899b; font-size: 12px !important; line-height: 18px; }
+.patrol-page .task-current { margin-top: 9px; padding: 7px 8px; overflow: hidden; color: #5e6f86; background: #f3f6f9; border-radius: 4px; font-size: 12px !important; line-height: 18px; text-overflow: ellipsis; white-space: nowrap; }
+.task-current i { margin-right: 5px; color: #2f77df; }
 
 .route-map { position: relative; overflow: hidden; background: #eef3ee; }
 .map-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(75, 111, 92, 0.055) 1px, transparent 1px), linear-gradient(90deg, rgba(75, 111, 92, 0.055) 1px, transparent 1px); background-size: 24px 24px; }
-.map-building { position: absolute; z-index: 1; display: flex; align-items: center; justify-content: center; color: #718078; background: linear-gradient(145deg, #d8e0db, #cbd5ce); border: 1px solid rgba(90, 112, 98, 0.13); border-radius: 4px; box-shadow: 5px 6px 0 rgba(88, 111, 96, 0.08); font-size: 10px; }
-.map-building i { margin-right: 5px; }
+.map-building { position: absolute; z-index: 1; display: flex; align-items: center; justify-content: center; color: #68776f; background: linear-gradient(145deg, #d8e0db, #cbd5ce); border: 1px solid rgba(90, 112, 98, 0.13); border-radius: 4px; box-shadow: 5px 6px 0 rgba(88, 111, 96, 0.08); font-size: 12px; line-height: 20px; }
+.map-building i { margin-right: 6px; }
 .building-a { left: 27%; top: 28%; width: 21%; height: 21%; }
 .building-b { left: 54%; top: 27%; width: 23%; height: 22%; }
 .building-c { left: 31%; top: 61%; width: 21%; height: 17%; }
 .building-d { left: 59%; top: 60%; width: 20%; height: 18%; }
-.route-point { position: absolute; z-index: 6; display: flex; width: 27px; height: 27px; align-items: center; justify-content: center; color: #fff; background: #99a6b7; border: 3px solid rgba(255, 255, 255, 0.95); border-radius: 50%; box-shadow: 0 2px 7px rgba(45, 63, 83, 0.25); transform: translate(-50%, -50%); cursor: pointer; }
-.route-point span { font-size: 9px; font-weight: 600; }
+.route-point { position: absolute; z-index: 6; display: flex; width: 32px; height: 32px; align-items: center; justify-content: center; color: #fff; background: #99a6b7; border: 3px solid rgba(255, 255, 255, 0.95); border-radius: 50%; box-shadow: 0 2px 7px rgba(45, 63, 83, 0.25); transform: translate(-50%, -50%); cursor: pointer; }
+.route-point span { font-size: 11px; font-weight: 600; }
 .route-point.completed { background: #1aaa75; }
 .route-point.current { background: #2e75df; box-shadow: 0 0 0 6px rgba(46, 117, 223, 0.17), 0 2px 7px rgba(45, 63, 83, 0.25); }
 .route-point.abnormal { background: #ed5757; }
@@ -949,50 +979,50 @@ button { font-family: inherit; }
 .point-title > span.current { background: #2e75df; }
 .point-title > span.abnormal { background: #ed5757; }
 .point-title b, .point-title small { display: block; }
-.point-title b { color: #34435a; font-size: 12px; }
-.point-title small { margin-top: 2px; color: #96a1b1; font-size: 9px; }
+.point-title b { color: #34435a; font-size: 14px; line-height: 21px; }
+.patrol-page .point-title small { margin-top: 2px; color: #8b98a9; font-size: 12px !important; line-height: 18px !important; }
 .point-info { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 12px; }
-.point-info span { color: #97a2b1; font-size: 9px; }
-.point-info b { display: block; margin-top: 3px; color: #46556b; font-size: 10px; }
-.route-map-title { position: absolute; z-index: 5; left: 13px; top: 12px; padding: 7px 10px; background: rgba(255, 255, 255, 0.9); border-radius: 5px; }
+.point-info span { color: #8794a5; font-size: 12px; line-height: 18px; }
+.point-info b { display: block; margin-top: 3px; color: #46556b; font-size: 13px; line-height: 20px; }
+.route-map-title { position: absolute; z-index: 5; left: 14px; top: 13px; padding: 9px 12px; background: rgba(255, 255, 255, 0.92); border-radius: 5px; }
 .route-map-title b, .route-map-title span { display: block; }
-.route-map-title b { color: #34435a; font-size: 11px; }
-.route-map-title span { margin-top: 2px; color: #8794a5; font-size: 9px; }
-.map-legend { position: absolute; z-index: 5; left: 13px; bottom: 10px; display: flex; gap: 12px; padding: 5px 8px; color: #778597; background: rgba(255, 255, 255, 0.86); border-radius: 4px; font-size: 9px; }
-.point-legend { display: inline-block; width: 7px; height: 7px; margin-right: 4px; border-radius: 50%; }
+.route-map-title b { color: #34435a; font-size: 14px; line-height: 21px; }
+.route-map-title span { margin-top: 3px; color: #78879a; font-size: 12px; line-height: 18px; }
+.patrol-page .map-legend { position: absolute; z-index: 5; left: 14px; bottom: 11px; display: flex; gap: 14px; padding: 7px 10px; color: #68778a; background: rgba(255, 255, 255, 0.9); border-radius: 4px; font-size: 12px !important; line-height: 18px; }
+.point-legend { display: inline-block; width: 8px; height: 8px; margin-right: 5px; border-radius: 50%; }
 .point-legend.completed { background: #1aaa75; }
 .point-legend.current { background: #2e75df; }
 .point-legend.pending { background: #98a3b2; }
 .point-legend.abnormal { background: #ed5757; }
 
-.execution-panel { min-width: 0; overflow: hidden; }
-.executor-card { display: flex; align-items: center; gap: 10px; padding: 16px; border-bottom: 1px solid var(--line); }
-.executor-avatar { display: flex; flex: 0 0 42px; width: 42px; height: 42px; align-items: center; justify-content: center; color: #fff; background: linear-gradient(135deg, #2e77e1, #52a4ed); border-radius: 10px; font-size: 16px; }
+.execution-panel { display: flex; min-width: 0; min-height: 0; flex-direction: column; overflow-y: auto; }
+.executor-card { display: flex; align-items: center; gap: 12px; padding: 17px 15px; border-bottom: 1px solid var(--line); }
+.executor-avatar { display: flex; flex: 0 0 46px; width: 46px; height: 46px; align-items: center; justify-content: center; color: #fff; background: linear-gradient(135deg, #2e77e1, #52a4ed); border-radius: 10px; font-size: 17px; }
 .executor-info { min-width: 0; flex: 1; }
 .executor-info b, .executor-info span, .executor-info small { display: block; }
-.executor-info b { color: #2f3e55; font-size: 14px; }
-.executor-info span { margin-top: 3px; color: #8c98aa; font-size: 10px; }
-.executor-info small { margin-top: 6px; color: #1a9b6a; font-size: 9px; }
+.executor-info b { color: #2f3e55; font-size: 16px; line-height: 23px; }
+.executor-info span { margin-top: 3px; color: #7f8da0; font-size: 12px; line-height: 18px; }
+.patrol-page .executor-info small { margin-top: 6px; color: #1a8f64; font-size: 12px !important; line-height: 18px !important; }
 .executor-info small i { display: inline-block; width: 6px; height: 6px; margin-right: 4px; background: #1aab75; border-radius: 50%; }
 .execution-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin: 0 15px; overflow: hidden; background: #e9edf2; border: 1px solid #e9edf2; border-radius: 5px; }
-.execution-grid span { padding: 9px; background: #fafbfc; }
+.execution-grid span { padding: 11px 10px; background: #fafbfc; }
 .execution-grid small, .execution-grid b { display: block; }
-.execution-grid small { margin-bottom: 4px; color: #929ead; font-size: 9px; }
-.execution-grid b { color: #44536a; font-size: 10px; }
-.point-flow { margin: 14px 15px 0; padding: 11px; background: #f7f9fc; border-radius: 6px; }
-.flow-item { display: flex; align-items: center; gap: 9px; }
-.flow-item > i { display: flex; width: 25px; height: 25px; align-items: center; justify-content: center; color: #fff; background: #2f78e5; border-radius: 6px; }
+.patrol-page .execution-grid small { margin-bottom: 4px; color: #8491a3; font-size: 12px !important; line-height: 18px !important; }
+.execution-grid b { color: #3d4d64; font-size: 13px; line-height: 20px; }
+.point-flow { margin: 15px 15px 0; padding: 12px; background: #f7f9fc; border-radius: 6px; }
+.flow-item { display: flex; align-items: center; gap: 10px; }
+.flow-item > i { display: flex; width: 30px; height: 30px; align-items: center; justify-content: center; color: #fff; background: #2f78e5; border-radius: 7px; }
 .flow-item.next > i { color: #69778b; background: #e8edf3; }
 .flow-item span small, .flow-item span b { display: block; }
-.flow-item span small { color: #96a1b0; font-size: 9px; }
-.flow-item span b { margin-top: 2px; color: #3f4e65; font-size: 10px; }
-.flow-line { display: flex; width: 25px; height: 18px; flex-direction: column; align-items: center; justify-content: space-around; }
+.patrol-page .flow-item span small { color: #8794a5; font-size: 12px !important; line-height: 18px !important; }
+.flow-item span b { margin-top: 2px; color: #3f4e65; font-size: 13px; line-height: 20px; }
+.flow-line { display: flex; width: 30px; height: 20px; flex-direction: column; align-items: center; justify-content: space-around; }
 .flow-line i { width: 3px; height: 3px; background: #aeb8c5; border-radius: 50%; }
-.trust-checks { margin: 13px 15px 0; padding: 10px; background: #edf9f4; border: 1px solid #d6eee4; border-radius: 6px; }
-.checks-title { margin-bottom: 7px; color: #40705e; font-size: 10px; font-weight: 600; }
-.trust-checks span { display: inline-block; width: 49%; margin: 3px 0; color: #628474; font-size: 9px; }
-.trust-checks i { margin-right: 4px; color: #1aaa75; }
-.execution-actions { display: flex; justify-content: flex-end; gap: 7px; padding: 15px; }
+.trust-checks { margin: 14px 15px 0; padding: 12px; background: #edf9f4; border: 1px solid #d6eee4; border-radius: 6px; }
+.checks-title { margin-bottom: 8px; color: #356854; font-size: 13px; line-height: 20px; font-weight: 600; }
+.trust-checks span { display: inline-block; width: 49%; margin: 4px 0; color: #557a69; font-size: 12px; line-height: 18px; }
+.trust-checks i { margin-right: 5px; color: #1aaa75; }
+.execution-actions { display: flex; justify-content: flex-end; gap: 7px; margin-top: auto; padding: 15px; }
 
 .management-card { padding: 0 16px 14px; overflow: hidden; }
 .table-toolbar { display: flex; min-height: 49px; align-items: center; justify-content: space-between; gap: 12px; }
@@ -1170,8 +1200,8 @@ button { font-family: inherit; }
 }
 
 @media (max-width: 1120px) {
-  .operations-grid { grid-template-columns: 1fr; }
-  .route-workbench { grid-template-columns: 200px minmax(500px, 1fr); }
+  .operations-grid { grid-template-columns: 1fr; height: auto; }
+  .route-workbench { grid-template-columns: 200px minmax(500px, 1fr); height: clamp(430px, 55vh, 580px); height: clamp(430px, 55dvh, 580px); flex: none; }
   .route-builder-layout { grid-template-columns: minmax(0, 1fr) 310px; }
 }
 

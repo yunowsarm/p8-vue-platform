@@ -1,0 +1,136 @@
+.fire-maintenance-page,
+.patrol-page,
+.perimeter-page,
+.passage-page,
+.energy-page,
+.iot-page {
+  --iot-font-caption: 11px;
+  --iot-font-secondary: 12px;
+  --iot-font-body: 13px;
+  --iot-font-title: 15px;
+  --iot-font-page-title: 24px;
+  font-size: var(--iot-font-body);
+  line-height: 1.5;
+}
+
+.fire-maintenance-page,
+.patrol-page,
+.perimeter-page,
+.passage-page,
+.energy-page,
+.iot-page {
+  .page-header h2 {
+    font-size: var(--iot-font-page-title) !important;
+    line-height: 34px !important;
+  }
+
+  .page-header p,
+  .page-subtitle {
+    font-size: var(--iot-font-body) !important;
+    line-height: 20px !important;
+  }
+
+  .surface-title,
+  .surface-head h3,
+  .panel-title {
+    font-size: var(--iot-font-title) !important;
+    line-height: 22px !important;
+  }
+
+  .kpi-label,
+  .kpi-title,
+  .item-name {
+    font-size: var(--iot-font-body) !important;
+  }
+
+  .kpi-sub,
+  .surface-subtitle,
+  .surface-head p,
+  .toolbar-note,
+  .head-note,
+  .muted,
+  .item-meta {
+    font-size: var(--iot-font-secondary) !important;
+    line-height: 18px !important;
+  }
+
+  .surface-meta,
+  .map-legend,
+  .rail-title,
+  .summary-title,
+  .task-card-meta,
+  .task-current,
+  .alarm-time,
+  .zone-info {
+    font-size: var(--iot-font-secondary) !important;
+  }
+
+  .status-pill,
+  .level-pill,
+  .method-pill,
+  .tab-count,
+  .reminder-status,
+  .date-box,
+  .mini-tag {
+    font-size: var(--iot-font-caption) !important;
+  }
+
+  small {
+    font-size: var(--iot-font-caption) !important;
+    line-height: 1.45 !important;
+  }
+
+  button:not(.el-button) {
+    font-size: var(--iot-font-secondary);
+  }
+
+  ::v-deep .el-table {
+    font-size: var(--iot-font-body);
+  }
+
+  ::v-deep .el-table th {
+    font-size: var(--iot-font-body);
+  }
+
+  ::v-deep .el-table th,
+  ::v-deep .el-table td {
+    padding-top: 9px;
+    padding-bottom: 9px;
+  }
+
+  ::v-deep .el-input__inner,
+  ::v-deep .el-textarea__inner,
+  ::v-deep .el-form-item__label,
+  ::v-deep .el-radio__label,
+  ::v-deep .el-checkbox__label,
+  ::v-deep .el-button--small,
+  ::v-deep .el-button--mini,
+  ::v-deep .el-tag {
+    font-size: var(--iot-font-body);
+  }
+
+  ::v-deep .el-pagination,
+  ::v-deep .el-pagination button,
+  ::v-deep .el-pager li {
+    font-size: var(--iot-font-body);
+  }
+
+  ::v-deep .el-input__inner {
+    min-height: 34px;
+  }
+}
+
+@media (max-width: 760px) {
+  .fire-maintenance-page,
+  .patrol-page,
+  .perimeter-page,
+  .passage-page,
+  .energy-page,
+  .iot-page {
+    --iot-font-caption: 11px;
+    --iot-font-secondary: 12px;
+    --iot-font-body: 13px;
+    --iot-font-title: 15px;
+    --iot-font-page-title: 22px;
+  }
+}

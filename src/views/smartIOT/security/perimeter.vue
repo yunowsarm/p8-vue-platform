@@ -26,7 +26,9 @@
       </article>
     </section>
 
-    <section class="situation-grid">
+    <iot-workspace-nav v-model="managementTab" :items="workspaceNav" aria-label="智能周界业务工作区" @change="handleWorkspaceChange" />
+
+    <section v-if="managementTab === 'overview'" ref="workspaceContent" class="situation-grid" tabindex="-1">
       <article class="surface map-card">
         <div class="surface-head map-head">
           <div>
@@ -160,7 +162,7 @@
             <div class="surface-title"><i class="el-icon-bell"></i> 实时告警</div>
             <span class="surface-subtitle">{{ liveAlarms.length }} 条处理中</span>
           </div>
-          <el-button type="text" @click="viewAllAlarms">查看全部</el-button>
+          <el-button type="text" @click="openWorkspace('alarms')">进入告警处置 <i class="el-icon-arrow-right"></i></el-button>
         </div>
         <div class="alarm-list">
           <button
@@ -191,8 +193,9 @@
       </aside>
     </section>
 
-    <section ref="managementCard" class="surface management-card">
-      <el-tabs v-model="managementTab">
+    <section v-else ref="workspaceContent" class="surface management-card workspace-detail" tabindex="-1">
+      <iot-workspace-header :item="currentWorkspace" updated-at="10:28:35" @back="openWorkspace('overview')" />
+      <el-tabs v-model="managementTab" class="workspace-tabs">
         <el-tab-pane name="alarms">
           <span slot="label"><i class="el-icon-tickets"></i> 告警处置台账 <b class="tab-count">{{ alarms.length }}</b></span>
           <div class="table-toolbar">
@@ -486,10 +489,13 @@
 </template>
 
 <script>
+import IotWorkspaceHeader from '../components/IotWorkspaceHeader.vue'
+import IotWorkspaceNav from '../components/IotWorkspaceNav.vue'
 import { perimeter } from '../mock/iotMockData'
 
 export default {
   name: 'SmartIOTPerimeter',
+  components: { IotWorkspaceHeader, IotWorkspaceNav },
   data() {
     return {
       kpis: perimeter.kpis,
@@ -502,7 +508,7 @@ export default {
       activeZoneId: 'all',
       mapLayers: ['设备', '告警'],
       selectedDevice: null,
-      managementTab: 'alarms',
+      managementTab: 'overview',
       alarmDrawerVisible: false,
       currentAlarm: null,
       alarmQuery: { keyword: '', type: '', status: '' },
@@ -547,6 +553,17 @@ export default {
     }
   },
   computed: {
+    workspaceNav() {
+      return [
+        { key: 'overview', title: '周界总览', description: '防区、设备与告警', detail: '查看围墙、围栏、出入口、防区设备状态和实时告警位置。', icon: 'el-icon-data-analysis', count: null },
+        { key: 'alarms', title: '告警处置', description: '确认、派单与复核', detail: '集中处置越界、攀爬、翻越、入侵、徘徊和设备异常告警。', icon: 'el-icon-warning-outline', count: this.liveAlarms.length, danger: this.liveAlarms.length > 0 },
+        { key: 'rules', title: '检测规则', description: '区域、目标与联动', detail: '配置生效防区、时段、目标类型、停留时间、灵敏度和联动设备。', icon: 'el-icon-setting', count: this.rules.length },
+        { key: 'health', title: '设备健康', description: '在线、故障与巡检', detail: '监测摄像机、雷达、红外和声光设备的在线及健康状态。', icon: 'el-icon-cpu', count: this.abnormalDevices.length, danger: this.abnormalDevices.length > 0 }
+      ]
+    },
+    currentWorkspace() {
+      return this.workspaceNav.find((item) => item.key === this.managementTab) || this.workspaceNav[0]
+    },
     filteredMapDevices() {
       if (this.activeZoneId === 'all') return this.devices
       return this.devices.filter((item) => item.zoneId === this.activeZoneId)
@@ -591,6 +608,17 @@ export default {
     }
   },
   methods: {
+    openWorkspace(view) {
+      if (!this.workspaceNav.some((item) => item.key === view)) return
+      this.managementTab = view
+      this.handleWorkspaceChange()
+    },
+    handleWorkspaceChange() {
+      this.$nextTick(() => {
+        const content = this.$refs.workspaceContent
+        if (content && typeof content.focus === 'function') content.focus({ preventScroll: true })
+      })
+    },
     zoneStateClass(zone) {
       if (!zone.armed) return 'disarmed'
       if (zone.status === '设备故障') return 'fault'
@@ -634,21 +662,8 @@ export default {
       this.$message.success('周界设备状态与告警位置已同步')
     },
     viewAllAlarms() {
-      this.managementTab = 'alarms'
       this.alarmQuery = { keyword: '', type: '', status: '' }
-      this.$nextTick(() => {
-        const target = this.$refs.managementCard
-        if (!target) return
-        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        const behavior = reduceMotion ? 'auto' : 'smooth'
-        const scrollContainer = target.closest && target.closest('.ps-container')
-        if (scrollContainer) {
-          const targetTop = scrollContainer.scrollTop + target.getBoundingClientRect().top - scrollContainer.getBoundingClientRect().top - 8
-          scrollContainer.scrollTop = targetTop
-          return
-        }
-        if (target.scrollIntoView) target.scrollIntoView({ behavior, block: 'start' })
-      })
+      this.openWorkspace('alarms')
     },
     openAlarm(alarm) {
       this.currentAlarm = alarm
@@ -795,7 +810,7 @@ export default {
         this.rules.unshift(row)
       }
       this.ruleDialogVisible = false
-      this.managementTab = 'rules'
+      this.openWorkspace('rules')
       this.$message.success('检测规则已保存并下发至对应前端设备')
     },
     saveDefensePlan() {
@@ -828,6 +843,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../components/iotWorkspacePage.scss';
 .perimeter-page {
   --primary: #2468f2;
   --primary-soft: #edf4ff;
@@ -987,6 +1003,8 @@ button {
 .situation-grid {
   display: grid;
   grid-template-columns: minmax(760px, 1fr) 315px;
+  height: var(--iot-overview-height);
+  align-items: stretch;
   gap: 12px;
   margin-bottom: 12px;
 }
@@ -1028,8 +1046,10 @@ button {
 .map-workbench {
   display: grid;
   grid-template-columns: 188px minmax(560px, 1fr);
-  height: 430px;
+  min-height: 0;
+  flex: 1 1 auto;
 }
+.map-card { display: flex; min-height: 0; flex-direction: column; }
 
 .zone-rail {
   padding: 10px 8px;
@@ -1321,15 +1341,16 @@ button {
 .legend-right { margin-left: auto; color: #94a1b1; }
 .legend-right i { margin-right: 4px; color: #1aaa75; }
 
-.alarm-stream { min-width: 0; overflow: hidden; }
-.alarm-head .el-button { padding: 0; }
-.alarm-list { height: 426px; padding: 9px; overflow-y: auto; box-sizing: border-box; }
+.alarm-stream { display: flex; min-width: 0; min-height: 0; flex-direction: column; overflow: hidden; }
+.alarm-head .el-button { padding: 0; font-size: 13px; }
+.alarm-list { min-height: 0; flex: 1 1 auto; padding: 11px; overflow-y: auto; box-sizing: border-box; }
 .alarm-item {
   position: relative;
   display: block;
   width: 100%;
-  margin-bottom: 8px;
-  padding: 11px 11px 9px 14px;
+  min-height: 112px;
+  margin-bottom: 10px;
+  padding: 13px 12px 11px 16px;
   color: #526178;
   text-align: left;
   background: #fbfcfe;
@@ -1338,24 +1359,25 @@ button {
   cursor: pointer;
 }
 
-.alarm-item::before { position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px; background: #e95656; border-radius: 0 3px 3px 0; content: ''; }
+.alarm-item::before { position: absolute; left: 0; top: 13px; bottom: 13px; width: 3px; background: #e95656; border-radius: 0 3px 3px 0; content: ''; }
 .alarm-item:hover { background: #f7faff; border-color: #cbdaf5; }
 .alarm-item.level-major::before { background: #ef9f28; }
 .alarm-item.level-normal::before { background: #2e7aec; }
 .alarm-item.level-fault::before { background: #8a96a7; }
 .alarm-item-top, .alarm-meta { display: flex; align-items: center; justify-content: space-between; }
-.alarm-type { color: #26364d; font-size: 13px; font-weight: 600; }
-.alarm-type i { margin-right: 5px; color: #ea5050; }
+.alarm-type { color: #26364d; font-size: 14px; font-weight: 600; line-height: 22px; }
+.alarm-type i { margin-right: 6px; color: #ea5050; }
 .alarm-item.level-major .alarm-type i { color: #e99122; }
-.alarm-time { color: #9ba6b6; font-size: 10px; }
-.alarm-zone { margin: 8px 0 7px; color: #65748a; font-size: 11px; }
-.alarm-zone i { margin-right: 4px; color: #8290a3; }
-.alarm-meta { color: #94a0b1; font-size: 10px; }
-.alarm-response { margin-top: 8px; padding-top: 7px; color: #6b7890; border-top: 1px dashed #e5eaf0; font-size: 10px; }
-.alarm-response i { margin-right: 5px; }
+.alarm-time { color: #8997aa; font-size: 12px !important; line-height: 20px; font-variant-numeric: tabular-nums; }
+.alarm-zone { margin: 9px 0 8px; color: #5f6f86; font-size: 13px; line-height: 20px; }
+.alarm-zone i { margin-right: 5px; color: #8290a3; }
+.alarm-meta { color: #7f8ca0; font-size: 12px; line-height: 22px; }
+::v-deep .alarm-meta .el-tag { height: 24px; padding: 0 8px; font-size: 12px; line-height: 22px; }
+.alarm-response { margin-top: 9px; padding-top: 8px; color: #66758c; border-top: 1px dashed #e5eaf0; font-size: 12px; line-height: 19px; }
+.alarm-response i { margin-right: 6px; }
 .alarm-response.overdue { color: #e34848; }
-.alarm-stream-foot { display: flex; min-height: 39px; align-items: center; padding: 0 12px; color: #8c98aa; background: #fafbfd; border-top: 1px solid var(--line); font-size: 10px; }
-.alarm-stream-foot i { margin-right: 5px; color: var(--primary); }
+.alarm-stream-foot { display: flex; min-height: 44px; align-items: center; padding: 0 12px; color: #7f8da1; background: #fafbfd; border-top: 1px solid var(--line); font-size: 12px; line-height: 18px; }
+.alarm-stream-foot i { margin-right: 6px; color: var(--primary); }
 
 .management-card { padding: 0 16px 14px; overflow: hidden; }
 .table-toolbar { display: flex; min-height: 48px; align-items: center; justify-content: space-between; gap: 12px; }
@@ -1457,9 +1479,9 @@ button {
 }
 
 @media (max-width: 1120px) {
-  .situation-grid { grid-template-columns: 1fr; }
-  .alarm-list { height: 300px; }
-  .map-workbench { grid-template-columns: 175px minmax(520px, 1fr); }
+  .situation-grid { grid-template-columns: 1fr; height: auto; }
+  .alarm-list { height: clamp(300px, 38vh, 420px); height: clamp(300px, 38dvh, 420px); flex: none; }
+  .map-workbench { grid-template-columns: 175px minmax(520px, 1fr); height: clamp(430px, 55vh, 580px); height: clamp(430px, 55dvh, 580px); flex: none; }
 }
 
 @media (max-width: 760px) {

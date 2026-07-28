@@ -1,9 +1,13 @@
+@import '../components/iotTypography.scss';
+
 .passage-page {
   --primary: #2468f2;
   --primary-soft: #edf4ff;
   --text: #1d2a3b;
   --muted: #7c899b;
   --line: #e8edf4;
+  --iot-overview-height: clamp(430px, calc(100vh - 430px), 720px);
+  --iot-overview-height: clamp(430px, calc(100dvh - 430px), 720px);
   min-height: 100%;
   padding: 18px;
   color: var(--text);
@@ -216,6 +220,18 @@
   margin-top: 12px;
   padding: 0 14px 14px;
   overflow: hidden;
+}
+.management-card.workspace-detail {
+  margin-top: 0;
+}
+.workspace-detail > .iot-workspace-header {
+  margin: 0 -14px;
+}
+.workspace-tabs::v-deep .el-tabs__header {
+  display: none;
+}
+.workspace-tabs::v-deep .el-tabs__content {
+  overflow: visible;
 }
 .table-toolbar {
   display: flex;
@@ -465,6 +481,13 @@
 @media (max-width: 1450px) {
   .kpi-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1451px) {
+  .passage-page {
+    --iot-overview-height: clamp(460px, calc(100vh - 330px), 720px);
+    --iot-overview-height: clamp(460px, calc(100dvh - 330px), 720px);
   }
 }
 

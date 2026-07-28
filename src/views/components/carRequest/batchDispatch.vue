@@ -87,8 +87,9 @@
         </div>
 
         <div class="form-actions">
-          <el-button type="primary" @click="submitDispatch">提交批量派车</el-button>
+          <el-button type="primary" :disabled="!isMethodConsistent" @click="submitDispatch">提交批量派车</el-button>
           <el-button @click="resetForm">重置</el-button>
+          <p v-if="!isMethodConsistent" class="method-tip">用车方式不一致，无法批量派车</p>
         </div>
       </div>
     </template>
@@ -142,6 +143,13 @@ export default {
           ITEM_CREATE_TIME: item.ITEM_CREATE_TIME || ''
         }
       })
+    },
+    // 所有申请单用车方式一致时才允许提交
+    isMethodConsistent() {
+      const list = this.filteredRow
+      if (!list.length) return true
+      const firstMethod = list[0].METHOD
+      return list.every((item) => item.METHOD === firstMethod)
     }
   },
   data() {
@@ -505,6 +513,12 @@ export default {
   .el-button {
     margin: 0 10px;
     min-width: 120px;
+  }
+
+  .method-tip {
+    margin: 10px 0 0;
+    color: #f56c6c;
+    font-size: 13px;
   }
 }
 

@@ -29,7 +29,9 @@
       </article>
     </section>
 
-    <section class="visitor-overview">
+    <iot-workspace-nav v-model="managementTab" :items="workspaceNav" aria-label="智能访客业务工作区" @change="handleWorkspaceChange" />
+
+    <section v-if="managementTab === 'overview'" ref="workspaceContent" class="visitor-overview" tabindex="-1">
       <article class="surface visitor-board">
         <div class="surface-head">
           <div>
@@ -37,7 +39,9 @@
             <span class="surface-subtitle">预约、审批、核验、在园与离场数据由各通行设备实时回传</span>
           </div>
           <div class="surface-meta">
-            <span><i class="dot online"></i>联动正常 45</span><span><i class="dot warning"></i>待审批 9</span><el-button size="mini" icon="el-icon-refresh" @click="refreshVisitor">刷新</el-button>
+            <span><i class="dot online"></i>联动正常 45</span><span><i class="dot warning"></i>待审批 {{ pendingReservations.length }}</span
+            ><span class="sync-time">更新 {{ lastSyncTime }}</span
+            ><el-button size="mini" icon="el-icon-refresh" :loading="refreshing" :disabled="refreshing" @click="refreshVisitor">刷新</el-button>
           </div>
         </div>
         <div class="process-flow">
@@ -63,7 +67,10 @@
             </div>
           </div>
           <aside class="inpark-preview">
-            <div class="preview-head"><b>当前在园访客</b><el-button type="text" size="mini" @click="managementTab = 'inpark'">查看全部</el-button></div>
+            <div class="preview-head">
+              <b>当前在园访客</b
+              ><el-button type="text" size="mini" aria-label="进入当前在园访客管理" @click="openWorkspace('inpark')">进入在园管理 <i class="el-icon-arrow-right"></i></el-button>
+            </div>
             <button v-for="item in inPark.slice(0, 4)" :key="item.id" type="button" @click="openInPark(item)">
               <span class="visitor-avatar">{{ visitorInitial(item.visitor) }}</span
               ><span class="visitor-info"
@@ -82,7 +89,7 @@
             <div class="surface-title"><i class="el-icon-s-check"></i> 待办与异常提醒</div>
             <span class="surface-subtitle">{{ pendingCount }} 项需要处理</span>
           </div>
-          <el-button type="text" size="mini" @click="managementTab = 'reservations'">全部预约</el-button>
+          <el-button type="text" size="mini" aria-label="进入访客预约审批工作区" @click="openWorkspace('reservations')">进入预约审批 <i class="el-icon-arrow-right"></i></el-button>
         </div>
         <div class="approval-list">
           <button v-for="item in pendingReservations.slice(0, 3)" :key="item.id" type="button" class="approval-item" @click="openReservationDetail(item)">
@@ -105,8 +112,9 @@
       </aside>
     </section>
 
-    <section class="surface management-card">
-      <el-tabs v-model="managementTab">
+    <section v-else ref="workspaceContent" class="surface management-card workspace-detail" tabindex="-1">
+      <iot-workspace-header :item="currentWorkspace" :updated-at="lastSyncTime" :show-back="false" @back="openWorkspace('overview')" />
+      <el-tabs v-model="managementTab" class="workspace-tabs">
         <el-tab-pane name="reservations"
           ><span slot="label"
             ><i class="el-icon-date"></i> 访客预约 <b class="tab-count">{{ reservations.length }}</b></span
@@ -422,7 +430,7 @@
       ><span slot="footer"><el-button @click="policyDialogVisible = false">取消</el-button><el-button type="primary" @click="savePolicy">保存数据策略</el-button></span></el-dialog
     >
 
-    <el-drawer title="访客预约详情" :visible.sync="reservationDrawerVisible" size="520px" custom-class="passage-detail-drawer" append-to-body
+    <el-drawer title="访客预约详情" :visible.sync="reservationDrawerVisible" size="520px" custom-class="passage-detail-drawer visitor-detail-drawer" append-to-body
       ><div v-if="currentReservation" class="drawer-layout">
         <div class="drawer-scroll">
           <div class="visitor-hero">
@@ -483,7 +491,7 @@
       </div></el-drawer
     >
 
-    <el-drawer title="访客异常详情与处置" :visible.sync="alertDrawerVisible" size="500px" custom-class="passage-detail-drawer" append-to-body
+    <el-drawer title="访客异常详情与处置" :visible.sync="alertDrawerVisible" size="500px" custom-class="passage-detail-drawer visitor-detail-drawer" append-to-body
       ><div v-if="currentAlert" class="drawer-layout">
         <div class="drawer-scroll">
           <div class="alert-hero" :class="{ critical: currentAlert.level === '紧急' }">
@@ -533,10 +541,13 @@
 </template>
 
 <script>
+import IotWorkspaceHeader from '../components/IotWorkspaceHeader.vue'
+import IotWorkspaceNav from '../components/IotWorkspaceNav.vue'
 import { visitor } from '../mock/passageMockData'
 
 export default {
   name: 'SmartIOTVisitor',
+  components: { IotWorkspaceHeader, IotWorkspaceNav },
   data() {
     return {
       kpis: visitor.kpis,
@@ -553,7 +564,10 @@ export default {
         { name: '物流区', count: 5, note: '送货 3 / 外协 2', className: 'zone-d', icon: 'el-icon-box' },
         { name: '公共区域', count: 2, note: '前台核验中', className: 'zone-e', icon: 'el-icon-place' }
       ],
-      managementTab: 'reservations',
+      managementTab: 'overview',
+      refreshing: false,
+      refreshTimer: null,
+      lastSyncTime: '10:48:06',
       reservationKeyword: '',
       reservationType: '',
       reservationStatus: '',
@@ -588,6 +602,18 @@ export default {
     }
   },
   computed: {
+    workspaceNav() {
+      return [
+        { key: 'overview', title: '业务总览', description: '到访态势与待办', detail: '查看今日到访流转、园区分布以及需要优先处理的任务。', icon: 'el-icon-data-analysis', count: null },
+        { key: 'reservations', title: '预约审批', description: '申请、核验与发证', detail: '集中处理访客预约、被访人审批、临时凭证发放和预约取消。', icon: 'el-icon-date', count: this.reservations.length },
+        { key: 'inpark', title: '在园管理', description: '位置、超时与离场', detail: '查看当前在园访客、最近通行位置、应离场时间以及凭证状态。', icon: 'el-icon-user', count: this.inPark.length },
+        { key: 'alerts', title: '异常处置', description: '核验、升级与关闭', detail: '统一处置未审批到访、重复凭证、超范围通行和超时未离场事件。', icon: 'el-icon-warning-outline', count: this.activeAlertCount },
+        { key: 'linkage', title: '权限联动', description: '停车、门禁与梯控', detail: '核对停车、门禁和梯控权限的下发、回收及异常重试状态。', icon: 'el-icon-connection', count: this.linkages.length }
+      ]
+    },
+    currentWorkspace() {
+      return this.workspaceNav.find((item) => item.key === this.managementTab) || this.workspaceNav[0]
+    },
     pendingReservations() {
       return this.reservations.filter((item) => item.status === '待审批')
     },
@@ -655,7 +681,21 @@ export default {
       this.pagination.alerts.page = 1
     }
   },
+  beforeDestroy() {
+    if (this.refreshTimer) clearTimeout(this.refreshTimer)
+  },
   methods: {
+    openWorkspace(view) {
+      if (!this.workspaceNav.some((item) => item.key === view)) return
+      this.managementTab = view
+      this.handleWorkspaceChange()
+    },
+    handleWorkspaceChange() {
+      this.$nextTick(() => {
+        const content = this.$refs.workspaceContent
+        if (content && typeof content.focus === 'function') content.focus({ preventScroll: true })
+      })
+    },
     paginate(list, type) {
       const state = this.pagination[type]
       return list.slice((state.page - 1) * state.size, state.page * state.size)
@@ -683,7 +723,15 @@ export default {
       return map[status] || 'info'
     },
     refreshVisitor() {
-      this.$message.success('访客预约、通行设备和在园清单已同步')
+      if (this.refreshing) return
+      this.refreshing = true
+      this.refreshTimer = setTimeout(() => {
+        const date = new Date()
+        this.lastSyncTime = [date.getHours(), date.getMinutes(), date.getSeconds()].map((item) => String(item).padStart(2, '0')).join(':')
+        this.refreshing = false
+        this.refreshTimer = null
+        this.$message.success('访客预约、通行设备和在园清单已同步')
+      }, 600)
     },
     resetReservationForm() {
       this.reservationForm = {
@@ -744,7 +792,7 @@ export default {
       })
       this.pagination.reservations.page = 1
       this.reservationDialogVisible = false
-      this.managementTab = 'reservations'
+      this.openWorkspace('reservations')
       this.$message.success('访客预约已提交被访人审批')
     },
     openGroupVisit() {
@@ -778,7 +826,7 @@ export default {
         privacy: '待名单确认'
       })
       this.groupDialogVisible = false
-      this.managementTab = 'reservations'
+      this.openWorkspace('reservations')
       this.$message.success('团体访问申请已提交，等待名单核验和审批')
     },
     openReservationDetail(row) {
@@ -898,16 +946,34 @@ export default {
 
 <style lang="scss" scoped>
 @import './passageCommon.scss';
+.sync-time {
+  color: #919cac;
+}
 .visitor-overview {
   display: grid;
   grid-template-columns: minmax(720px, 1fr) 335px;
+  height: var(--iot-overview-height);
+  align-items: stretch;
   gap: 12px;
+  margin-bottom: 18px;
+}
+.visitor-board {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+}
+.visitor-overview .surface-title {
+  font-size: 16px;
+}
+.visitor-overview .surface-subtitle,
+.visitor-overview .surface-meta {
+  font-size: 12px;
 }
 .process-flow {
   display: flex;
   align-items: flex-start;
   justify-content: space-around;
-  padding: 16px 20px 12px;
+  padding: 14px 20px 11px;
   border-bottom: 1px solid #edf0f4;
 }
 .process-step {
@@ -931,16 +997,16 @@ export default {
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--step-color) 25%, transparent);
 }
 .process-node i {
-  font-size: 12px;
+  font-size: 13px;
 }
 .process-node b {
   margin-top: 2px;
-  font-size: 15px;
+  font-size: 16px;
 }
 .process-step > span {
   margin-top: 6px;
   color: #5d6c80;
-  font-size: 9px;
+  font-size: 11px;
 }
 .flow-arrow {
   position: absolute;
@@ -952,7 +1018,8 @@ export default {
 .visitor-live-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 310px;
-  min-height: 330px;
+  min-height: 0;
+  flex: 1 1 auto;
 }
 .visitor-map {
   position: relative;
@@ -998,6 +1065,7 @@ export default {
 .visitor-zone i {
   margin-bottom: 3px;
   color: #5b776a;
+  font-size: 9px;
 }
 .visitor-zone b {
   font-size: 9px;
@@ -1009,11 +1077,12 @@ export default {
   background: #1aa273;
   border-radius: 9px;
   font-size: 9px;
+  font-weight: 600;
 }
 .visitor-zone small {
   margin-top: 4px;
   color: #839189;
-  font-size: 7px;
+  font-size: 9px;
 }
 .zone-a {
   left: 8%;
@@ -1059,7 +1128,7 @@ export default {
   color: #778598;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 4px;
-  font-size: 8px;
+  font-size: 12px;
 }
 .map-legend i {
   display: inline-block;
@@ -1087,15 +1156,18 @@ export default {
 }
 .preview-head b {
   color: #3c4b61;
-  font-size: 10px;
+  font-size: 14px;
+}
+.preview-head ::v-deep .el-button {
+  font-size: 13px;
 }
 .inpark-preview > button {
   display: flex;
   width: 100%;
-  min-height: 59px;
+  min-height: 76px;
   align-items: center;
-  gap: 8px;
-  padding: 7px 3px;
+  gap: 10px;
+  padding: 9px 4px;
   color: inherit;
   text-align: left;
   background: transparent;
@@ -1108,15 +1180,16 @@ export default {
 }
 .visitor-avatar {
   display: flex;
-  width: 30px;
-  height: 30px;
+  width: 38px;
+  height: 38px;
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
   color: #fff;
   background: #3478e1;
   border-radius: 7px;
-  font-size: 11px;
+  font-size: 15px;
+  font-weight: 600;
 }
 .visitor-info {
   min-width: 0;
@@ -1132,17 +1205,17 @@ export default {
 }
 .visitor-info b {
   color: #3f4e64;
-  font-size: 10px;
+  font-size: 14px;
 }
 .visitor-info small {
-  margin-top: 2px;
+  margin-top: 3px;
   color: #8794a5;
-  font-size: 8px;
+  font-size: 12px;
 }
 .visitor-info em {
-  margin-top: 3px;
+  margin-top: 4px;
   color: #9aa4b2;
-  font-size: 8px;
+  font-size: 11px;
   font-style: normal;
 }
 .visitor-info em i {
@@ -1150,18 +1223,24 @@ export default {
   color: #3c7ede;
 }
 .approval-panel {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
   overflow: hidden;
 }
 .approval-list {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
   padding: 6px 9px 2px;
 }
 .approval-item {
   display: flex;
   width: 100%;
-  min-height: 59px;
+  min-height: 78px;
   align-items: center;
-  gap: 8px;
-  padding: 7px 4px;
+  gap: 10px;
+  padding: 9px 5px;
   color: inherit;
   text-align: left;
   background: transparent;
@@ -1174,14 +1253,15 @@ export default {
 }
 .approval-icon {
   display: flex;
-  width: 29px;
-  height: 29px;
+  width: 38px;
+  height: 38px;
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
   color: #3378dd;
   background: #edf4ff;
   border-radius: 6px;
+  font-size: 15px;
 }
 .approval-item.alert .approval-icon {
   color: #df4d4d;
@@ -1201,31 +1281,41 @@ export default {
 }
 .approval-item b {
   color: #3f4e64;
-  font-size: 10px;
+  font-size: 14px;
 }
 .approval-item small {
-  margin-top: 2px;
+  margin-top: 3px;
   color: #7f8c9e;
-  font-size: 8px;
+  font-size: 12px;
 }
 .approval-item em {
-  margin-top: 3px;
+  margin-top: 4px;
   color: #9aa5b3;
-  font-size: 8px;
+  font-size: 11px;
   font-style: normal;
 }
+.inpark-preview ::v-deep .el-tag,
+.approval-panel ::v-deep .el-tag {
+  font-size: 12px;
+}
 .approval-footer {
-  margin: 5px 10px 10px;
-  padding: 8px;
+  margin: 2px 10px 10px;
+  padding: 9px 10px;
   color: #80612d;
   background: #fff8ec;
   border-radius: 4px;
-  font-size: 8px;
+  font-size: 12px;
+  line-height: 1.45;
 }
 .approval-footer i {
   margin-right: 4px;
   color: #df8d22;
 }
+.visitor-page .visitor-overview .visitor-info small,
+.visitor-page .visitor-overview .approval-item small {
+  font-size: 12px;
+}
+
 .evacuation-summary {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -1452,6 +1542,12 @@ export default {
 @media (max-width: 1250px) {
   .visitor-overview {
     grid-template-columns: 1fr;
+    height: auto;
+  }
+  .visitor-live-layout {
+    min-height: clamp(380px, 52vh, 560px);
+    min-height: clamp(380px, 52dvh, 560px);
+    flex: none;
   }
 }
 @media (max-width: 760px) {
@@ -1465,6 +1561,7 @@ export default {
   }
   .visitor-live-layout {
     display: block;
+    min-height: 0;
   }
   .visitor-map {
     height: 380px;
@@ -1495,6 +1592,117 @@ export default {
   min-height: 0;
   flex: 1 1 auto;
   overflow: hidden;
+}
+.visitor-detail-drawer .el-drawer__header {
+  color: #233248;
+  font-size: 16px;
+}
+.visitor-detail-drawer .alert-hero h3 {
+  font-size: 18px;
+  line-height: 24px;
+}
+.visitor-detail-drawer .visitor-hero .el-tag,
+.visitor-detail-drawer .alert-hero .el-tag {
+  display: inline-flex;
+  width: auto;
+  min-width: 58px;
+  height: 28px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1;
+  box-sizing: border-box;
+}
+.visitor-detail-drawer .visitor-hero h3 {
+  font-size: 18px;
+  line-height: 24px;
+}
+.visitor-detail-drawer .visitor-hero small,
+.visitor-detail-drawer .visitor-hero p {
+  font-size: 12px;
+  line-height: 18px;
+}
+.visitor-detail-drawer .alert-hero small,
+.visitor-detail-drawer .alert-hero p {
+  font-size: 12px;
+  line-height: 18px;
+}
+.visitor-detail-drawer .scope-tags {
+  gap: 8px;
+}
+.visitor-detail-drawer .scope-tags span {
+  padding: 5px 9px;
+  font-size: 12px;
+}
+.visitor-detail-drawer .credential-card {
+  padding: 14px;
+}
+.visitor-detail-drawer .credential-card b {
+  font-size: 13px;
+}
+.visitor-detail-drawer .credential-card span {
+  font-size: 12px;
+  line-height: 18px;
+}
+.visitor-detail-drawer .credential-card small {
+  font-size: 11px;
+  line-height: 16px;
+}
+.visitor-detail-drawer .linkage-summary > span {
+  padding: 11px;
+}
+.visitor-detail-drawer .linkage-summary b {
+  font-size: 12px;
+}
+.visitor-detail-drawer .linkage-summary small {
+  font-size: 11px;
+  line-height: 16px;
+}
+.visitor-detail-drawer .detail-info-grid > span {
+  padding: 12px;
+}
+.visitor-detail-drawer .detail-info-grid small {
+  font-size: 12px;
+}
+.visitor-detail-drawer .detail-info-grid b {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 18px;
+}
+.visitor-detail-drawer .alert-detail {
+  padding: 13px;
+}
+.visitor-detail-drawer .alert-detail b {
+  font-size: 13px;
+}
+.visitor-detail-drawer .alert-detail p {
+  font-size: 12px;
+  line-height: 20px;
+}
+.visitor-detail-drawer .detail-section h4 {
+  font-size: 14px;
+}
+.visitor-detail-drawer .el-timeline-item__timestamp {
+  font-size: 12px;
+}
+.visitor-detail-drawer .trace-card {
+  padding: 11px 13px;
+}
+.visitor-detail-drawer .trace-card b {
+  font-size: 13px;
+}
+.visitor-detail-drawer .trace-card span {
+  font-size: 11px;
+}
+.visitor-detail-drawer .trace-card p {
+  font-size: 12px;
+  line-height: 20px;
+}
+.visitor-detail-drawer .drawer-actions .el-button {
+  font-size: 13px;
 }
 .passage-config-dialog .el-dialog__body {
   max-height: calc(90vh - 125px);

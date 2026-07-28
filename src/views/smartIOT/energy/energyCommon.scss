@@ -1,4 +1,8 @@
+@import '../components/iotTypography.scss';
+
 .energy-page {
+  --iot-overview-height: clamp(430px, calc(100vh - 430px), 720px);
+  --iot-overview-height: clamp(430px, calc(100dvh - 430px), 720px);
   min-height: 100%;
   padding: 16px;
   color: #172033;
@@ -77,8 +81,8 @@
 
   .kpi-card {
     position: relative;
-    min-height: 92px;
-    padding: 14px 14px 12px 52px;
+    min-height: 98px;
+    padding: 16px 16px 14px 56px;
     overflow: hidden;
     background: #fff;
     border: 1px solid #e7ecf3;
@@ -88,13 +92,13 @@
 
   .kpi-icon {
     position: absolute;
-    top: 17px;
-    left: 13px;
+    top: 18px;
+    left: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     color: #2e7bf0;
     background: #edf4ff;
     border-radius: 8px;
@@ -152,8 +156,8 @@
 
   .dashboard-grid {
     display: grid;
-    grid-template-columns: minmax(250px, 0.82fr) minmax(380px, 1.55fr) minmax(280px, 1fr);
-    gap: 12px;
+    grid-template-columns: minmax(280px, 0.8fr) minmax(460px, 1.58fr) minmax(320px, 1.02fr);
+    gap: 14px;
     margin-bottom: 12px;
   }
 
@@ -169,8 +173,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 48px;
-    padding: 10px 14px;
+    min-height: 56px;
+    padding: 11px 16px;
     border-bottom: 1px solid #edf1f6;
   }
 
@@ -195,20 +199,23 @@
   }
 
   .surface-body {
-    padding: 12px 14px;
+    padding: 14px 16px;
   }
 
   .chart {
     width: 100%;
-    height: 286px;
+    height: clamp(260px, 34vh, 360px);
+    height: clamp(260px, 34dvh, 360px);
   }
 
   .mini-chart {
-    height: 220px;
+    height: clamp(220px, 27vh, 300px);
+    height: clamp(220px, 27dvh, 300px);
   }
 
   .selector-list {
-    height: 286px;
+    height: clamp(260px, 34vh, 360px);
+    height: clamp(260px, 34dvh, 360px);
     overflow: auto;
   }
 
@@ -217,9 +224,9 @@
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    min-height: 51px;
-    margin-bottom: 7px;
-    padding: 8px 10px;
+    min-height: 60px;
+    margin-bottom: 9px;
+    padding: 10px 12px;
     cursor: pointer;
     background: #f8fafc;
     border: 1px solid transparent;
@@ -310,6 +317,22 @@
       height: 47px;
       line-height: 47px;
     }
+  }
+
+  .management-card.workspace-detail {
+    margin-top: 0;
+  }
+
+  .workspace-detail > .iot-workspace-header {
+    margin: 0 -14px;
+  }
+
+  .workspace-tabs::v-deep .el-tabs__header {
+    display: none;
+  }
+
+  .workspace-tabs::v-deep .el-tabs__content {
+    overflow: visible;
   }
 
   .tab-label {
@@ -593,6 +616,39 @@
     }
     .dashboard-grid > :last-child {
       grid-column: 1 / -1;
+    }
+  }
+}
+
+@media (min-width: 1281px) {
+  .energy-page {
+    --iot-overview-height: clamp(460px, calc(100vh - 330px), 720px);
+    --iot-overview-height: clamp(460px, calc(100dvh - 330px), 720px);
+
+    .dashboard-grid {
+      min-height: var(--iot-overview-height);
+      align-items: stretch;
+    }
+
+    .dashboard-grid > .surface {
+      display: flex;
+      min-height: 0;
+      flex-direction: column;
+    }
+
+    .dashboard-grid > .surface > .surface-body {
+      display: flex;
+      min-height: 0;
+      flex: 1 1 auto;
+      flex-direction: column;
+    }
+
+    .dashboard-grid .chart,
+    .dashboard-grid .selector-list,
+    .dashboard-grid .area-list {
+      min-height: 286px;
+      flex: 1 1 auto;
+      height: auto;
     }
   }
 }

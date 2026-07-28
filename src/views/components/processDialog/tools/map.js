@@ -20,6 +20,7 @@ export const STOREHOUSE_PROCESS_KEYS = [
   'assetTransfer',
   'assetScrap',
   'assetCirculate',
+  'assetCirculate1',
   'assetInventory',
   'assetUse'
 ]

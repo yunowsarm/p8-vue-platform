@@ -172,6 +172,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../components/iotTypography.scss';
+
 .iot-page {
   padding: 16px;
   background: #f5f7fa;

@@ -230,13 +230,12 @@ export default {
         const labels = this.searchForm.projectId.map(v => this.getLabelByValue(v, this.projectOptions))
         parts.push(`项目：${labels.join('、')}`)
       }
-      if (this.searchForm.classification && this.searchForm.classification.length) {
-        const labels = this.searchForm.classification.map(v => this.getCategoryNodeLabel(v, this.categoryOptions))
-        parts.push(`分类：${labels.join('、')}`)
+      // 直接用已选节点的名称，避免树递归查找漏掉后面的分类
+      if (this.selectedCategoryNodes.length) {
+        parts.push(`分类：${this.selectedCategoryNodes.map(n => n.cmeaning).join('、')}`)
       }
-      if (this.searchForm.dept && this.searchForm.dept.length) {
-        const labels = this.searchForm.dept.map(v => this.getDeptNodeLabel(v, this.deptOptions))
-        parts.push(`部门：${labels.join('、')}`)
+      if (this.selectedDeptNodes.length) {
+        parts.push(`部门：${this.selectedDeptNodes.map(n => n.NAME).join('、')}`)
       }
       if (this.searchForm.dateRange && this.searchForm.dateRange.length === 2) {
         parts.push(`${this.searchForm.dateRange[0]} ~ ${this.searchForm.dateRange[1]}`)
@@ -376,7 +375,7 @@ export default {
     },
     loadProjectOptions () {
       const params = {
-        id: 'ce57441d00c68a499d78fabc4cbcaceb'
+        id: 'ddafa31f1948ef419e014cd0e134a89c'
       }
       this.$api['carRequest.platSelectApi'](params).then(res => {
         this.projectOptions = res.data || []
@@ -415,6 +414,7 @@ export default {
       })
     },
     // ===== 部门树形选择 =====
+    // 下拉框/树用 ID 绑定；查询参数在 buildSearchParams 里转成 NAME
     handleDeptTreeCheck (checkedNode, checkedState) {
       // 只取叶子节点（没有 children 的节点）
       const leafNodes = (checkedState.checkedNodes || []).filter(
@@ -428,7 +428,7 @@ export default {
         item => item.ID !== removedId
       )
       this.searchForm.dept = this.selectedDeptNodes.map(item => item.ID)
-      // 同步 tree 的选中状态
+      // 同步 tree 的选中状态（node-key 是 ID）
       const tree = this.$refs.deptTree
       if (tree) {
         tree.setCheckedKeys(this.searchForm.dept)
@@ -450,8 +450,10 @@ export default {
       const { projectId, classification, dept, dateRange } = this.searchForm
       const params = {}
 
-      // 部门，多选，传数组（没有选择时传空数组）
-      params.dept = dept && dept.length ? dept : []
+      // 部门：页面用 ID 绑定，查询只传 NAME
+      params.dept = (dept && dept.length)
+        ? this.selectedDeptNodes.map(item => item.NAME)
+        : []
       // 费用分类id，多选，传数组（没有选择时传空数组）
       params.classification = classification && classification.length ? classification : []
       // 项目id，多选，传数组（没有选择时传空数组）
@@ -535,20 +537,21 @@ export default {
         if (node.id === id) return node.cmeaning
         if (node.children && node.children.length) {
           const found = this.getCategoryNodeLabel(id, node.children)
-          if (found) return found
+          // 未找到时子调用返回 null，不能当成命中，否则会提前退出导致回显 id
+          if (found != null) return found
         }
       }
-      return id
+      return null
     },
     getDeptNodeLabel (id, nodes) {
       for (const node of nodes) {
         if (node.ID === id) return node.NAME
         if (node.children && node.children.length) {
           const found = this.getDeptNodeLabel(id, node.children)
-          if (found) return found
+          if (found != null) return found
         }
       }
-      return id
+      return null
     },
     getStatusType (status) {
       switch (status) {

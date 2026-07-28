@@ -1,0 +1,33 @@
+@import './iotTypography.scss';
+
+.fire-maintenance-page,
+.patrol-page,
+.perimeter-page {
+  --iot-overview-height: clamp(430px, calc(100vh - 430px), 720px);
+  --iot-overview-height: clamp(430px, calc(100dvh - 430px), 720px);
+}
+
+.workspace-detail {
+  margin-top: 0;
+}
+
+.workspace-detail > .iot-workspace-header {
+  margin: 0 -16px;
+}
+
+.workspace-tabs::v-deep .el-tabs__header {
+  display: none;
+}
+
+.workspace-tabs::v-deep .el-tabs__content {
+  overflow: visible;
+}
+
+@media (min-width: 1451px) {
+  .fire-maintenance-page,
+  .patrol-page,
+  .perimeter-page {
+    --iot-overview-height: clamp(460px, calc(100vh - 330px), 720px);
+    --iot-overview-height: clamp(460px, calc(100dvh - 330px), 720px);
+  }
+}

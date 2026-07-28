@@ -26,7 +26,9 @@
       </article>
     </section>
 
-    <section class="dashboard-grid">
+    <iot-workspace-nav v-model="activeTab" :items="workspaceNav" aria-label="配电能耗业务工作区" @change="handleWorkspaceChange" />
+
+    <section v-show="activeTab === 'overview'" ref="overviewWorkspace" class="dashboard-grid" tabindex="-1">
       <article class="surface">
         <div class="surface-head">
           <div>
@@ -39,6 +41,14 @@
           <el-breadcrumb separator-class="el-icon-arrow-right" class="meter-breadcrumb">
             <el-breadcrumb-item v-for="node in breadcrumbs" :key="node.id">{{ node.name }}</el-breadcrumb-item>
           </el-breadcrumb>
+          <div class="summary-strip summary-strip--top">
+            <div class="summary-box">
+              <span>当前节点电量</span><strong>{{ formatNumber(currentNode.kwh) }} kWh</strong>
+            </div>
+            <div class="summary-box">
+              <span>当前实时功率</span><strong>{{ currentNode.power }} kW</strong>
+            </div>
+          </div>
           <div class="selector-list">
             <div v-for="node in currentChildren" :key="node.id" tabindex="0" class="selector-item" @click="drillNode(node)" @keyup.enter="drillNode(node)">
               <div>
@@ -49,22 +59,14 @@
             </div>
             <div v-if="!currentChildren.length" class="empty-note">已到计量末级，可在下方查看对应表计原始数据</div>
           </div>
-          <div class="summary-strip">
-            <div class="summary-box">
-              <span>当前节点电量</span><strong>{{ formatNumber(currentNode.kwh) }} kWh</strong>
-            </div>
-            <div class="summary-box">
-              <span>当前实时功率</span><strong>{{ currentNode.power }} kW</strong>
-            </div>
-          </div>
         </div>
       </article>
 
       <article class="surface">
         <div class="surface-head">
           <div>
-            <div class="surface-title"><i class="el-icon-data-line"></i>24小时负荷曲线</div>
-            <div class="surface-subtitle">最大需量 2,450 kW · 合同需量 2,800 kW</div>
+            <div class="surface-title"><i class="el-icon-data-line"></i>{{ curveTitle }}</div>
+            <div class="surface-subtitle">{{ curveSubtitle }}</div>
           </div>
           <el-radio-group v-model="curveRange" size="mini">
             <el-radio-button label="日"></el-radio-button>
@@ -82,8 +84,7 @@
           </div>
         </div>
         <div class="surface-body">
-          <div ref="flowChart" class="chart mini-chart"></div>
-          <div class="transformer-grid">
+          <div class="transformer-grid transformer-grid--top">
             <div v-for="item in dataSet.transformers" :key="item.name" class="transformer-card">
               <div class="transformer-top">
                 <strong>{{ item.name }}</strong
@@ -93,12 +94,14 @@
               <div class="transformer-meta">损耗 {{ item.loss }}% · 不平衡 {{ item.imbalance }}%</div>
             </div>
           </div>
+          <div ref="flowChart" class="chart mini-chart"></div>
         </div>
       </article>
     </section>
 
-    <section class="surface management-card">
-      <el-tabs v-model="activeTab">
+    <section v-show="activeTab !== 'overview'" ref="detailWorkspace" class="surface management-card workspace-detail" tabindex="-1">
+      <iot-workspace-header :item="currentWorkspace" updated-at="10:52:18" @back="openWorkspace('overview')" />
+      <el-tabs v-model="activeTab" class="workspace-tabs">
         <el-tab-pane name="meters">
           <span slot="label" class="tab-label"
             ><i class="el-icon-odometer"></i>分级表计 <b class="tab-count">{{ dataSet.meters.length }}</b></span
@@ -373,16 +376,19 @@
 </template>
 
 <script>
+import IotWorkspaceHeader from '../components/IotWorkspaceHeader.vue'
+import IotWorkspaceNav from '../components/IotWorkspaceNav.vue'
 import { powerEnergy } from '../mock/energyMockData'
 
 export default {
   name: 'SmartIOTPowerEnergy',
+  components: { IotWorkspaceHeader, IotWorkspaceNav },
   data() {
     return {
       dataSet: powerEnergy,
       currentNodeId: 'PARK',
       curveRange: '日',
-      activeTab: 'meters',
+      activeTab: 'overview',
       meterKeyword: '',
       meterLevel: '',
       meterStatus: '',
@@ -406,11 +412,36 @@ export default {
     }
   },
   computed: {
+    workspaceNav() {
+      return [
+        { key: 'overview', title: '用电总览', description: '流向、负荷与需量', detail: '查看分级计量、24小时负荷、最大需量和变压器运行态势。', icon: 'el-icon-data-analysis', count: null },
+        { key: 'meters', title: '分级表计', description: '回路、表计与原始值', detail: '按园区、楼栋、租户、变压器和馈线下钻并追溯原始数据。', icon: 'el-icon-odometer', count: this.dataSet.meters.length },
+        { key: 'anomalies', title: '异常用能', description: '分析、派单与归档', detail: '集中研判损耗、不平衡、低功率因数、负荷突变和表计离线。', icon: 'el-icon-warning-outline', count: this.dataSet.anomalies.length, danger: this.dataSet.anomalies.some((item) => item.status !== '已归档') },
+        { key: 'quota', title: '定额预算', description: '预测、对标与预警', detail: '按面积、人数、产值或运行时长管理定额、预算和同类对标。', icon: 'el-icon-coin', count: this.dataSet.quotas.length },
+        { key: 'reports', title: '用能报表', description: '周期报表与追溯', detail: '生成日、月、季、年用电及费用报表并追溯表计原始数据。', icon: 'el-icon-document', count: this.dataSet.reports.length }
+      ]
+    },
+    currentWorkspace() {
+      return this.workspaceNav.find((item) => item.key === this.activeTab) || this.workspaceNav[0]
+    },
     currentNode() {
       return this.dataSet.hierarchy.find((item) => item.id === this.currentNodeId) || this.dataSet.hierarchy[0]
     },
     currentChildren() {
       return this.dataSet.hierarchy.filter((item) => item.parentId === this.currentNodeId)
+    },
+    curveTitle() {
+      return this.curveRange === '日' ? '24小时负荷曲线' : '7月逐日用电量'
+    },
+    monthActualTotal() {
+      return this.dataSet.monthlyLoadCurve.current.reduce((total, value) => total + (typeof value === 'number' ? value : 0), 0)
+    },
+    monthForecastTotal() {
+      return this.dataSet.monthlyLoadCurve.forecast.reduce((total, value) => total + value, 0)
+    },
+    curveSubtitle() {
+      if (this.curveRange === '日') return '最大需量 2,450 kW · 合同需量 2,800 kW'
+      return `截至 07-20 累计 ${this.formatNumber(this.monthActualTotal)} kWh · 月末预测 ${this.formatNumber(this.monthForecastTotal)} kWh`
     },
     breadcrumbs() {
       const result = []
@@ -472,6 +503,18 @@ export default {
     if (this.flowChart) this.flowChart.dispose()
   },
   methods: {
+    openWorkspace(view) {
+      if (!this.workspaceNav.some((item) => item.key === view)) return
+      this.activeTab = view
+      this.handleWorkspaceChange()
+    },
+    handleWorkspaceChange() {
+      this.$nextTick(() => {
+        const content = this.activeTab === 'overview' ? this.$refs.overviewWorkspace : this.$refs.detailWorkspace
+        if (content && typeof content.focus === 'function') content.focus({ preventScroll: true })
+        if (this.activeTab === 'overview') this.resizeCharts()
+      })
+    },
     formatNumber(value) {
       return Number(value || 0).toLocaleString('zh-CN')
     },
@@ -510,7 +553,7 @@ export default {
     },
     createReport() {
       this.reportDialog = false
-      this.activeTab = 'reports'
+      this.openWorkspace('reports')
       this.$message.success('报表生成任务已完成，可在报表台账预览')
     },
     simulateExport() {
@@ -535,49 +578,66 @@ export default {
     },
     renderLoadChart() {
       if (!this.loadChart) return
-      const source = this.dataSet.loadCurve
-      const ratio = this.curveRange === '月' ? 24 : 1
-      const scale = (list) => list.map((item) => Math.round(item * ratio))
+      const isMonth = this.curveRange === '月'
+      const source = isMonth ? this.dataSet.monthlyLoadCurve : this.dataSet.loadCurve
+      const categories = isMonth ? source.days : source.hours
+      const current = isMonth ? source.current : source.today
+      const comparison = isMonth ? source.previous : source.yesterday
+      const forecast = source.forecast
+      const seriesNames = isMonth ? ['本月用电', '上月同期', '预测用电'] : ['本期负荷', '同期负荷', '预测负荷']
       this.loadChart.setOption({
         color: ['#2f80ed', '#9aa8bc', '#31b889'],
-        tooltip: { trigger: 'axis' },
-        legend: { top: 0, data: ['本期负荷', '同期负荷', '预测负荷'] },
-        grid: { left: 50, right: 18, top: 42, bottom: 28 },
-        xAxis: { type: 'category', boundaryGap: false, data: source.hours, axisLine: { lineStyle: { color: '#cfd7e3' } } },
-        yAxis: { type: 'value', name: this.curveRange === '日' ? 'kW' : 'kWh', splitLine: { lineStyle: { color: '#edf1f6' } } },
+        textStyle: { fontSize: 13 },
+        tooltip: { trigger: 'axis', textStyle: { fontSize: 13 } },
+        legend: { top: 0, textStyle: { fontSize: 12 }, data: seriesNames },
+        grid: { left: 58, right: 22, top: 46, bottom: 32 },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: categories,
+          axisLabel: {
+            fontSize: 12,
+            interval: isMonth ? 4 : 0,
+            formatter: isMonth ? '{value}日' : '{value}'
+          },
+          axisLine: { lineStyle: { color: '#cfd7e3' } }
+        },
+        yAxis: { type: 'value', name: isMonth ? 'kWh' : 'kW', axisLabel: { fontSize: 12 }, nameTextStyle: { fontSize: 12 }, splitLine: { lineStyle: { color: '#edf1f6' } } },
         series: [
           {
-            name: '本期负荷',
+            name: seriesNames[0],
             type: 'line',
             smooth: true,
             symbol: 'none',
-            data: scale(source.today),
+            connectNulls: false,
+            data: current,
             areaStyle: { color: 'rgba(47,128,237,.10)' },
-            markPoint: { data: [{ type: 'max', name: '最大值' }] }
+            markPoint: { data: [{ type: 'max', name: isMonth ? '最高日' : '最大值' }] }
           },
-          { name: '同期负荷', type: 'line', smooth: true, symbol: 'none', lineStyle: { type: 'dashed' }, data: scale(source.yesterday) },
-          { name: '预测负荷', type: 'line', smooth: true, symbol: 'none', data: scale(source.forecast) }
+          { name: seriesNames[1], type: 'line', smooth: true, symbol: 'none', lineStyle: { type: 'dashed' }, data: comparison },
+          { name: seriesNames[2], type: 'line', smooth: true, symbol: 'none', data: forecast }
         ]
-      })
+      }, true)
     },
     renderFlowChart() {
       if (!this.flowChart) return
       this.flowChart.setOption({
-        tooltip: { trigger: 'item', triggerOn: 'mousemove' },
+        textStyle: { fontSize: 13 },
+        tooltip: { trigger: 'item', triggerOn: 'mousemove', textStyle: { fontSize: 13 } },
         series: [
           {
             type: 'sankey',
-            left: 4,
-            right: 8,
-            top: 8,
-            bottom: 8,
-            nodeWidth: 9,
-            nodeGap: 8,
+            left: 8,
+            right: 86,
+            top: 12,
+            bottom: 12,
+            nodeWidth: 10,
+            nodeGap: 10,
             draggable: false,
             emphasis: { focus: 'adjacency' },
             data: this.dataSet.flow.nodes,
             links: this.dataSet.flow.links,
-            label: { fontSize: 10, color: '#526078' },
+            label: { fontSize: 12, color: '#526078', distance: 6 },
             lineStyle: { color: 'gradient', opacity: 0.35 }
           }
         ]
@@ -603,10 +663,16 @@ export default {
   font-size: 10px;
   font-weight: 400;
 }
+.summary-strip--top {
+  margin: 0 0 12px;
+}
 .transformer-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
+}
+.transformer-grid--top {
+  margin-bottom: 12px;
 }
 .transformer-card {
   padding: 9px;

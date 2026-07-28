@@ -26,7 +26,9 @@
       </article>
     </section>
 
-    <section class="overview-grid">
+    <iot-workspace-nav v-model="activeTab" :items="workspaceNav" aria-label="消防设备维保业务工作区" @change="handleWorkspaceChange" />
+
+    <section v-if="activeTab === 'overview'" ref="workspaceContent" class="overview-grid" tabindex="-1">
       <article class="surface category-panel">
         <div class="surface-head">
           <div>
@@ -52,7 +54,7 @@
             <h3><i class="el-icon-data-line"></i>本月维保进度</h3>
             <p>计划 32 次，已完成 26 次</p>
           </div>
-          <el-button type="text" size="mini" @click="activeTab = 'plans'">查看计划</el-button>
+          <el-button type="text" size="mini" @click="openWorkspace('plans')">进入计划管理 <i class="el-icon-arrow-right"></i></el-button>
         </div>
         <div class="progress-layout">
           <div class="progress-ring">
@@ -83,7 +85,7 @@
             <h3><i class="el-icon-alarm-clock"></i>近期维保提醒</h3>
             <p>按到期紧急程度自动排序</p>
           </div>
-          <el-button type="text" size="mini" @click="activeTab = 'reminders'">查看全部</el-button>
+          <el-button type="text" size="mini" @click="openWorkspace('reminders')">进入提醒管理 <i class="el-icon-arrow-right"></i></el-button>
         </div>
         <div class="reminder-list">
           <button v-for="item in dataSet.reminders.slice(0, 5)" :key="item.id" type="button" class="reminder-item" @click="openReminder(item)">
@@ -101,8 +103,9 @@
       </article>
     </section>
 
-    <section class="surface ledger-card">
-      <el-tabs v-model="activeTab">
+    <section v-else ref="workspaceContent" class="surface ledger-card workspace-detail" tabindex="-1">
+      <iot-workspace-header :item="currentWorkspace" updated-at="10:42:14" @back="openWorkspace('overview')" />
+      <el-tabs v-model="activeTab" class="workspace-tabs">
         <el-tab-pane name="devices">
           <span slot="label" class="tab-label"
             ><i class="el-icon-cpu"></i>设备台账 <b>{{ devices.length }}</b></span
@@ -531,10 +534,13 @@
 </template>
 
 <script>
+import IotWorkspaceHeader from '../components/IotWorkspaceHeader.vue'
+import IotWorkspaceNav from '../components/IotWorkspaceNav.vue'
 import { fireMaintenance } from '../mock/fireMaintenanceMockData'
 
 export default {
   name: 'SmartIOTFireAlarm',
+  components: { IotWorkspaceHeader, IotWorkspaceNav },
   data() {
     return {
       dataSet: fireMaintenance,
@@ -542,7 +548,7 @@ export default {
       plans: JSON.parse(JSON.stringify(fireMaintenance.plans)),
       records: JSON.parse(JSON.stringify(fireMaintenance.records)),
       reminders: JSON.parse(JSON.stringify(fireMaintenance.reminders)),
-      activeTab: 'devices',
+      activeTab: 'overview',
       deviceKeyword: '',
       deviceCategory: '',
       deviceStatus: '',
@@ -603,6 +609,18 @@ export default {
     }
   },
   computed: {
+    workspaceNav() {
+      return [
+        { key: 'overview', title: '维保总览', description: '分类、进度与到期', detail: '查看消防设备分类、本月维保进度和近期到期提醒。', icon: 'el-icon-data-analysis', count: null },
+        { key: 'devices', title: '设备台账', description: '档案、位置与周期', detail: '管理消防设备编码、安装位置、责任人、维保周期和设备状态。', icon: 'el-icon-cpu', count: this.devices.length },
+        { key: 'plans', title: '维保计划', description: '范围、频次与执行', detail: '编排设备维保范围、计划日期、执行单位、负责人和提醒周期。', icon: 'el-icon-date', count: this.plans.length },
+        { key: 'records', title: '维保记录', description: '检查、凭证与结论', detail: '登记检查项目、现场图片视频、维保结果、费用和下次维保日期。', icon: 'el-icon-document-checked', count: this.records.length },
+        { key: 'reminders', title: '到期提醒', description: '即将到期与逾期', detail: '集中处理即将到期、今日到期和已经逾期的消防设备维保任务。', icon: 'el-icon-alarm-clock', count: this.reminders.length, danger: this.reminders.some((item) => item.overdueDays >= 0) }
+      ]
+    },
+    currentWorkspace() {
+      return this.workspaceNav.find((item) => item.key === this.activeTab) || this.workspaceNav[0]
+    },
     categories() {
       return this.dataSet.categories.map((item) => item.name)
     },
@@ -703,6 +721,17 @@ export default {
     this.resetRecordForm()
   },
   methods: {
+    openWorkspace(view) {
+      if (!this.workspaceNav.some((item) => item.key === view)) return
+      this.activeTab = view
+      this.handleWorkspaceChange()
+    },
+    handleWorkspaceChange() {
+      this.$nextTick(() => {
+        const content = this.$refs.workspaceContent
+        if (content && typeof content.focus === 'function') content.focus({ preventScroll: true })
+      })
+    },
     statusClass(status) {
       if (/逾期|故障/.test(status)) return 'danger'
       if (/即将|今日|执行中/.test(status)) return 'warning'
@@ -863,7 +892,7 @@ export default {
           this.$set(this.plans, index, payload)
         } else this.plans.unshift(payload)
         this.planDialog = false
-        this.activeTab = 'plans'
+        this.openWorkspace('plans')
         this.$message.success('维保计划已保存，相关设备任务已生成')
       })
     },
@@ -910,7 +939,7 @@ export default {
         device.status = this.recordForm.result === '合格' ? '正常' : '故障待修'
         this.reminders = this.reminders.filter((item) => item.deviceId !== device.id)
         this.recordDialog = false
-        this.activeTab = 'records'
+        this.openWorkspace('records')
         this.$message.success('维保记录已提交，设备下次维保日期已更新')
       })
     },
@@ -926,6 +955,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../components/iotWorkspacePage.scss';
+
+.fire-maintenance-page {
+  --iot-overview-height: clamp(500px, calc(100vh - 400px), 580px);
+  --iot-overview-height: clamp(500px, calc(100dvh - 400px), 580px);
+}
 .fire-maintenance-page {
   --primary: #2f78d7;
   --green: #20a77a;
@@ -1061,9 +1096,16 @@ export default {
 }
 .overview-grid {
   display: grid;
-  grid-template-columns: minmax(300px, 1fr) minmax(310px, 1fr) minmax(390px, 1.25fr);
+  grid-template-columns: minmax(320px, 1.05fr) minmax(340px, 1fr) minmax(430px, 1.3fr);
+  min-height: var(--iot-overview-height);
+  align-items: stretch;
   gap: 12px;
   margin-bottom: 12px;
+}
+.overview-grid > .surface {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
 }
 .surface {
   min-width: 0;
@@ -1074,7 +1116,7 @@ export default {
 }
 .surface-head {
   display: flex;
-  min-height: 52px;
+  min-height: 58px;
   align-items: center;
   justify-content: space-between;
   padding: 9px 14px;
@@ -1102,10 +1144,15 @@ export default {
   font-size: 10px;
 }
 .category-list {
-  padding: 12px 14px;
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 16px 16px 18px;
 }
 .category-row {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .category-row:last-child {
   margin-bottom: 0;
@@ -1114,28 +1161,31 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   color: #5c6a7f;
-  font-size: 10px;
+  font-size: 13px;
+  line-height: 20px;
 }
 .category-meta span {
   display: flex;
   align-items: center;
 }
 .category-meta i {
-  width: 7px;
-  height: 7px;
-  margin-right: 6px;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
   border-radius: 2px;
 }
 .category-meta b {
   color: #34445c;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
 }
 .category-progress {
-  height: 6px;
+  height: 8px;
   overflow: hidden;
   background: #edf1f5;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 .category-progress i {
   display: block;
@@ -1144,24 +1194,30 @@ export default {
 }
 .progress-layout {
   display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
   align-items: center;
-  gap: 24px;
-  padding: 16px 20px 11px;
+  justify-content: center;
+  flex-direction: column;
+  gap: 26px;
+  padding: 24px 22px 16px;
 }
 .progress-ring {
+  position: relative;
   display: flex;
-  width: 120px;
-  height: 120px;
-  flex: 0 0 120px;
+  width: 200px;
+  height: 200px;
+  flex: 0 0 200px;
   align-items: center;
   justify-content: center;
   background: conic-gradient(#2f78d7 0 81.3%, #e8eef6 81.3% 100%);
   border-radius: 50%;
+  box-shadow: 0 12px 28px rgba(47, 120, 215, 0.13);
 }
 .progress-ring::before {
   position: absolute;
-  width: 92px;
-  height: 92px;
+  width: 154px;
+  height: 154px;
   background: #fff;
   border-radius: 50%;
   content: '';
@@ -1177,39 +1233,55 @@ export default {
 }
 .progress-ring strong {
   color: #254267;
-  font-size: 23px;
+  font-size: 34px;
+  line-height: 42px;
+  font-variant-numeric: tabular-nums;
 }
 .progress-ring span {
-  margin-top: 2px;
+  margin-top: 4px;
   color: #8b97a9;
-  font-size: 9px;
+  font-size: 12px;
+  line-height: 18px;
 }
 .progress-stats {
-  flex: 1;
+  display: grid;
+  width: 100%;
+  order: -1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .progress-stats > div {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin: 9px 0;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0;
+  padding: 0 8px;
   color: #68768a;
-  font-size: 10px;
+  font-size: 13px;
+  line-height: 20px;
+  border-right: 1px solid #edf1f6;
+}
+.progress-stats > div:last-child {
+  border-right: 0;
 }
 .progress-stats strong {
   color: #2a3d58;
-  font-size: 17px;
+  font-size: 22px;
+  line-height: 28px;
+  font-variant-numeric: tabular-nums;
 }
 .progress-stats small {
-  margin-left: 3px;
+  margin-left: 4px;
   color: #8a96a8;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 400;
 }
 .dot {
   display: inline-block;
-  width: 7px;
-  height: 7px;
-  margin-right: 6px;
+  width: 8px;
+  height: 8px;
+  margin-right: 7px;
   border-radius: 50%;
 }
 .dot.completed {
@@ -1225,31 +1297,36 @@ export default {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   margin: 0 14px 12px;
-  padding: 9px;
+  padding: 12px 9px;
   background: #f7f9fc;
   border-radius: 5px;
 }
 .month-summary span {
   color: #8a96a8;
   text-align: center;
-  font-size: 9px;
+  font-size: 12px;
+  line-height: 18px;
 }
 .month-summary b {
   display: block;
-  margin-top: 3px;
+  margin-top: 4px;
   color: #3f5067;
-  font-size: 11px;
+  font-size: 14px;
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
 }
 .reminder-list {
-  padding: 8px 10px;
+  min-height: 0;
+  flex: 1 1 auto;
+  padding: 10px 14px 14px;
 }
 .reminder-item {
   display: flex;
   width: 100%;
-  min-height: 45px;
+  min-height: 58px;
   align-items: center;
-  gap: 9px;
-  padding: 5px 4px;
+  gap: 12px;
+  padding: 10px 6px;
   color: inherit;
   text-align: left;
   background: transparent;
@@ -1267,9 +1344,9 @@ export default {
 }
 .date-box {
   display: flex;
-  width: 39px;
-  height: 34px;
-  flex: 0 0 39px;
+  width: 46px;
+  height: 42px;
+  flex: 0 0 46px;
   align-items: center;
   justify-content: center;
   flex-direction: column;
@@ -1278,12 +1355,14 @@ export default {
 }
 .date-box b {
   color: #486078;
-  font-size: 13px;
-  line-height: 14px;
+  font-size: 16px;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
 }
 .date-box small {
   color: #8e99a9;
-  font-size: 8px;
+  font-size: 11px !important;
+  line-height: 15px !important;
 }
 .date-box.overdue {
   background: #ffebed;
@@ -1316,25 +1395,35 @@ export default {
 }
 .reminder-info b {
   color: #35455c;
-  font-size: 10px;
+  font-size: 13px;
+  line-height: 20px;
 }
 .reminder-info small {
-  margin-top: 3px;
+  margin-top: 4px;
   color: #929dae;
-  font-size: 8px;
+  font-size: 12px !important;
+  line-height: 18px !important;
 }
-.reminder-status {
+.fire-maintenance-page .reminder-status {
   flex: 0 0 auto;
-  font-size: 9px;
+  padding: 3px 8px;
+  font-size: 12px !important;
+  line-height: 18px;
+  background: #fff7f7;
+  border-radius: 10px;
 }
 .reminder-status.danger {
   color: #d94750;
 }
 .reminder-status.warning {
   color: #db891f;
+  background: #fff8ec;
 }
 .ledger-card {
   padding: 0 14px 12px;
+}
+.ledger-card.workspace-detail > .iot-workspace-header {
+  margin: 0 -14px;
 }
 ::v-deep .ledger-card .el-tabs__header {
   margin-bottom: 12px;
@@ -1943,6 +2032,24 @@ export default {
     gap: 0 12px;
   }
 }
+@media (min-width: 1281px) {
+  .category-list {
+    display: grid;
+    grid-template-rows: repeat(6, minmax(58px, 1fr));
+    justify-content: stretch;
+  }
+  .category-row {
+    align-self: center;
+    margin-bottom: 0;
+  }
+  .reminder-list {
+    display: grid;
+    grid-template-rows: repeat(5, minmax(64px, 1fr));
+  }
+  .reminder-item {
+    min-height: 0;
+  }
+}
 @media (max-width: 900px) {
   .fire-maintenance-page {
     padding: 12px;
@@ -1955,6 +2062,7 @@ export default {
   }
   .overview-grid {
     grid-template-columns: 1fr;
+    min-height: 0;
   }
   .reminder-panel {
     grid-column: auto;

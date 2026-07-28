@@ -29,7 +29,9 @@
       </article>
     </section>
 
-    <section class="access-overview">
+    <iot-workspace-nav v-model="managementTab" :items="workspaceNav" aria-label="智能门禁业务工作区" @change="handleWorkspaceChange" />
+
+    <section v-if="managementTab === 'overview'" ref="workspaceContent" class="access-overview" tabindex="-1">
       <article class="surface door-board">
         <div class="surface-head">
           <div>
@@ -96,7 +98,7 @@
               </div>
               <div class="door-pop-actions">
                 <el-button size="mini" @click="openDoorOperation(selectedDoor, '远程开门')">远程开门</el-button
-                ><el-button type="primary" size="mini" @click="managementTab = 'events'">查看事件</el-button>
+                ><el-button type="primary" size="mini" @click="openWorkspace('events')">进入事件处置</el-button>
               </div>
             </div>
             <div class="map-legend">
@@ -128,8 +130,9 @@
       </aside>
     </section>
 
-    <section class="surface management-card">
-      <el-tabs v-model="managementTab">
+    <section v-else ref="workspaceContent" class="surface management-card workspace-detail" tabindex="-1">
+      <iot-workspace-header :item="currentWorkspace" updated-at="10:42:20" :show-back="false" @back="openWorkspace('overview')" />
+      <el-tabs v-model="managementTab" class="workspace-tabs">
         <el-tab-pane name="events"
           ><span slot="label"
             ><i class="el-icon-data-line"></i> 通行与异常事件 <b class="tab-count danger">{{ abnormalCount }}</b></span
@@ -381,7 +384,7 @@
       ><span slot="footer"><el-button @click="emergencyDialogVisible = false">取消</el-button><el-button type="danger" @click="requestEmergency">提交紧急开门审批</el-button></span></el-dialog
     >
 
-    <el-drawer title="门禁事件详情与处置" :visible.sync="eventDrawerVisible" size="520px" custom-class="passage-detail-drawer" append-to-body
+    <el-drawer title="门禁事件详情与处置" :visible.sync="eventDrawerVisible" size="520px" custom-class="passage-detail-drawer access-detail-drawer" append-to-body
       ><div v-if="currentEvent" class="drawer-layout">
         <div class="drawer-scroll">
           <div class="event-hero" :class="{ abnormal: currentEvent.abnormal }">
@@ -437,10 +440,13 @@
 </template>
 
 <script>
+import IotWorkspaceHeader from '../components/IotWorkspaceHeader.vue'
+import IotWorkspaceNav from '../components/IotWorkspaceNav.vue'
 import { accessControl } from '../mock/passageMockData'
 
 export default {
   name: 'SmartIOTAccessControl',
+  components: { IotWorkspaceHeader, IotWorkspaceNav },
   data() {
     return {
       kpis: accessControl.kpis,
@@ -454,7 +460,7 @@ export default {
       selectedGroupId: accessControl.doorGroups[0].id,
       selectedDoorId: '',
       streamOnlyAbnormal: false,
-      managementTab: 'events',
+      managementTab: 'overview',
       onlyAbnormal: false,
       eventKeyword: '',
       eventResult: '',
@@ -486,6 +492,18 @@ export default {
     }
   },
   computed: {
+    workspaceNav() {
+      return [
+        { key: 'overview', title: '门禁总览', description: '门区、控制器与事件', detail: '查看门点在线状态、门磁模式、控制器状态和实时认证事件。', icon: 'el-icon-data-analysis', count: null },
+        { key: 'events', title: '事件处置', description: '认证、异常与视频', detail: '集中核验非法认证、强行开门和门长时间未关等异常事件。', icon: 'el-icon-warning-outline', count: this.abnormalCount, danger: this.abnormalCount > 0 },
+        { key: 'permissions', title: '权限管理', description: '人员、门区与时段', detail: '管理人员和组织的认证方式、门区、星期、时段及有效期。', icon: 'el-icon-key', count: this.permissions.length },
+        { key: 'sync', title: '下发任务', description: '成功、失败与待同步', detail: '查看控制器权限下发进度、失败原因和离线待同步任务。', icon: 'el-icon-refresh', count: this.syncTasks.length },
+        { key: 'audit', title: '操作审计', description: '远程开门与应急', detail: '追溯远程开门、临时常开、紧急开门及批量权限调整。', icon: 'el-icon-document', count: this.audits.length }
+      ]
+    },
+    currentWorkspace() {
+      return this.workspaceNav.find((item) => item.key === this.managementTab) || this.workspaceNav[0]
+    },
     selectedGroup() {
       return this.doorGroups.find((item) => item.id === this.selectedGroupId) || this.doorGroups[0]
     },
@@ -535,6 +553,17 @@ export default {
     }
   },
   methods: {
+    openWorkspace(view) {
+      if (!this.workspaceNav.some((item) => item.key === view)) return
+      this.managementTab = view
+      this.handleWorkspaceChange()
+    },
+    handleWorkspaceChange() {
+      this.$nextTick(() => {
+        const content = this.$refs.workspaceContent
+        if (content && typeof content.focus === 'function') content.focus({ preventScroll: true })
+      })
+    },
     paginate(list, type) {
       const state = this.pagination[type]
       return list.slice((state.page - 1) * state.size, state.page * state.size)
@@ -643,7 +672,7 @@ export default {
         operator: '当前管理员'
       })
       this.permissionDialogVisible = false
-      this.managementTab = 'sync'
+      this.openWorkspace('sync')
       this.$message.success('通行权限已保存并进入控制器下发队列')
     },
     batchSync() {
@@ -652,7 +681,7 @@ export default {
         .forEach((item) => {
           item.result = item.result === '失败' ? '离线待同步' : item.result
         })
-      this.managementTab = 'sync'
+      this.openWorkspace('sync')
       this.$message.success('未完成权限已重新进入同步队列')
     },
     retrySync(row) {
@@ -684,7 +713,7 @@ export default {
       const door = this.doors.find((item) => item.id === this.operationForm.doorId)
       if (door) door.mode = this.operationForm.action === '临时常开' ? '常开' : this.operationForm.action === '远程锁定' ? '锁定' : door.mode
       this.operationDialogVisible = false
-      this.managementTab = 'audit'
+      this.openWorkspace('audit')
       this.$message.success(this.operationForm.action + '已执行并写入审计')
     },
     saveOfflinePolicy() {
@@ -722,12 +751,21 @@ export default {
 .access-overview {
   display: grid;
   grid-template-columns: minmax(710px, 1fr) 330px;
+  height: var(--iot-overview-height);
+  align-items: stretch;
   gap: 12px;
+  margin-bottom: 18px;
+}
+.door-board {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
 }
 .door-workbench {
   display: grid;
-  grid-template-columns: 190px minmax(0, 1fr);
-  min-height: 410px;
+  grid-template-columns: 204px minmax(0, 1fr);
+  min-height: 0;
+  flex: 1 1 auto;
 }
 .group-rail {
   padding: 8px;
@@ -740,7 +778,7 @@ export default {
   justify-content: space-between;
   padding: 6px 7px 8px;
   color: #8591a2;
-  font-size: 9px;
+  font-size: 12px;
 }
 .rail-title span {
   padding: 2px 6px;
@@ -750,11 +788,11 @@ export default {
 .group-rail > button {
   display: flex;
   width: 100%;
-  min-height: 50px;
+  min-height: 58px;
   align-items: center;
-  gap: 7px;
+  gap: 9px;
   margin-bottom: 4px;
-  padding: 7px;
+  padding: 9px 8px;
   color: #68788d;
   text-align: left;
   background: transparent;
@@ -784,23 +822,25 @@ export default {
 }
 .group-rail b {
   color: #435269;
-  font-size: 10px;
+  font-size: 13px;
+  line-height: 1.35;
 }
 .group-rail small {
   margin-top: 4px;
   color: #939ead;
-  font-size: 8px;
+  font-size: 11px;
+  line-height: 1.35;
 }
 .group-rail em {
   display: flex;
-  width: 17px;
-  height: 17px;
+  width: 20px;
+  height: 20px;
   align-items: center;
   justify-content: center;
   color: #d84b4b;
   background: #fff0f0;
   border-radius: 50%;
-  font-size: 8px;
+  font-size: 11px;
   font-style: normal;
 }
 .door-map {
@@ -1028,18 +1068,35 @@ export default {
   background: #e34e4e;
 }
 .event-stream {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
   overflow: hidden;
 }
+.event-stream .surface-title {
+  font-size: 15px;
+  line-height: 1.35;
+}
+.event-stream .surface-subtitle {
+  font-size: 12px;
+  line-height: 1.4;
+}
+.event-stream :deep(.el-checkbox__label) {
+  font-size: 12px;
+}
 .stream-list {
-  padding: 6px 9px;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 8px 11px;
 }
 .stream-list > button {
   display: flex;
   width: 100%;
-  min-height: 51px;
+  min-height: 64px;
   align-items: center;
-  gap: 8px;
-  padding: 6px 4px;
+  gap: 10px;
+  padding: 9px 5px;
   color: inherit;
   text-align: left;
   background: transparent;
@@ -1055,13 +1112,14 @@ export default {
 }
 .event-icon {
   display: flex;
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   align-items: center;
   justify-content: center;
   color: #1aa273;
   background: #eaf8f3;
-  border-radius: 6px;
+  border-radius: 8px;
+  font-size: 14px;
 }
 .abnormal .event-icon {
   color: #df4e4e;
@@ -1081,26 +1139,33 @@ export default {
 }
 .event-main b {
   color: #405067;
-  font-size: 10px;
+  font-size: 13px;
+  line-height: 1.35;
 }
 .event-main small {
-  margin-top: 2px;
+  margin-top: 3px;
   color: #778598;
-  font-size: 8px;
+  font-size: 11px;
+  line-height: 1.35;
 }
 .event-main em {
-  margin-top: 2px;
+  margin-top: 3px;
   color: #a1aab7;
-  font-size: 8px;
+  font-size: 11px;
+  line-height: 1.35;
   font-style: normal;
+}
+.event-stream :deep(.el-tag) {
+  font-size: 12px;
 }
 .stream-footer {
   margin: 2px 10px 10px;
-  padding: 8px;
+  padding: 9px 10px;
   color: #5d789b;
   background: #f0f5fb;
   border-radius: 4px;
-  font-size: 8px;
+  font-size: 12px;
+  line-height: 1.45;
 }
 .stream-footer i {
   margin-right: 4px;
@@ -1210,11 +1275,18 @@ export default {
 @media (max-width: 1220px) {
   .access-overview {
     grid-template-columns: 1fr;
+    height: auto;
+  }
+  .door-workbench {
+    min-height: clamp(410px, 54vh, 580px);
+    min-height: clamp(410px, 54dvh, 580px);
+    flex: none;
   }
 }
 @media (max-width: 760px) {
   .door-workbench {
     display: block;
+    min-height: 0;
   }
   .group-rail {
     display: flex;
@@ -1245,6 +1317,69 @@ export default {
   min-height: 0;
   flex: 1 1 auto;
   overflow: hidden;
+}
+.access-detail-drawer .el-drawer__header {
+  font-size: 16px;
+}
+.access-detail-drawer .event-hero h3 {
+  font-size: 18px;
+  line-height: 24px;
+}
+.access-detail-drawer .event-hero small,
+.access-detail-drawer .event-hero p {
+  font-size: 12px;
+  line-height: 18px;
+}
+.access-detail-drawer .event-hero > .el-tag {
+  display: inline-flex;
+  width: auto;
+  min-width: 58px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 0 10px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  box-sizing: border-box;
+}
+.access-detail-drawer .access-evidence span {
+  font-size: 12px;
+  line-height: 18px;
+}
+.access-detail-drawer .access-evidence b {
+  font-size: 11px;
+  line-height: 16px;
+}
+.access-detail-drawer .detail-info-grid small {
+  font-size: 12px;
+  line-height: 18px;
+}
+.access-detail-drawer .detail-info-grid b {
+  font-size: 13px;
+  line-height: 20px;
+}
+.access-detail-drawer .detail-section h4 {
+  font-size: 14px;
+}
+.access-detail-drawer .el-timeline-item__timestamp {
+  font-size: 12px;
+}
+.access-detail-drawer .trace-card b {
+  font-size: 13px;
+}
+.access-detail-drawer .trace-card span {
+  font-size: 11px;
+}
+.access-detail-drawer .trace-card p,
+.access-detail-drawer .normal-record {
+  font-size: 12px;
+  line-height: 18px;
+}
+.access-detail-drawer .drawer-actions .el-button {
+  font-size: 13px;
 }
 .passage-config-dialog .el-dialog__body {
   max-height: calc(90vh - 125px);

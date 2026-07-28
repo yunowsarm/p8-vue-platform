@@ -11,7 +11,7 @@
       <div class="header-actions">
         <el-button size="small" icon="el-icon-set-up" @click="openStrategy()">策略配置</el-button>
         <el-button size="small" icon="el-icon-thumb" @click="openManual">人工现场控制</el-button>
-        <el-button type="primary" size="small" icon="el-icon-data-analysis" @click="activeTab = 'savings'">节能分析</el-button>
+        <el-button type="primary" size="small" icon="el-icon-data-analysis" @click="openWorkspace('savings')">节能分析</el-button>
       </div>
     </header>
 
@@ -26,7 +26,9 @@
       </article>
     </section>
 
-    <section class="dashboard-grid lighting-dashboard">
+    <iot-workspace-nav v-model="activeTab" :items="workspaceNav" aria-label="照明能耗业务工作区" @change="handleWorkspaceChange" />
+
+    <section v-show="activeTab === 'overview'" ref="overviewWorkspace" class="dashboard-grid lighting-dashboard" tabindex="-1">
       <article class="surface">
         <div class="surface-head">
           <div>
@@ -35,6 +37,14 @@
           </div>
         </div>
         <div class="surface-body">
+          <div class="summary-strip summary-strip--top">
+            <div class="summary-box">
+              <span>当前分区策略</span><strong>{{ selectedAreaInfo.strategy }}</strong>
+            </div>
+            <div class="summary-box">
+              <span>单位能耗</span><strong>{{ selectedAreaInfo.density }} kWh/㎡</strong>
+            </div>
+          </div>
           <div class="selector-list area-list">
             <div
               v-for="item in dataSet.areas"
@@ -49,14 +59,6 @@
                 <div class="item-meta">开启 {{ item.on }}/{{ item.circuits }} · 调光 {{ item.dimming }}%</div>
               </div>
               <div class="metric-value">{{ item.kwh }}<small> kWh</small></div>
-            </div>
-          </div>
-          <div class="summary-strip">
-            <div class="summary-box">
-              <span>当前分区策略</span><strong>{{ selectedAreaInfo.strategy }}</strong>
-            </div>
-            <div class="summary-box">
-              <span>单位能耗</span><strong>{{ selectedAreaInfo.density }} kWh/㎡</strong>
             </div>
           </div>
         </div>
@@ -81,18 +83,19 @@
           </div>
         </div>
         <div class="surface-body">
-          <div ref="savingChart" class="chart mini-chart"></div>
-          <div class="saving-summary">
+          <div class="saving-summary saving-summary--top">
             <div><span>本月节电量</span><strong>4,720 kWh</strong></div>
             <div><span>节省费用</span><strong>3.55 万元</strong></div>
             <div><span>综合节电率</span><strong>17.1%</strong></div>
           </div>
+          <div ref="savingChart" class="chart mini-chart"></div>
         </div>
       </article>
     </section>
 
-    <section class="surface management-card">
-      <el-tabs v-model="activeTab">
+    <section v-show="activeTab !== 'overview'" ref="detailWorkspace" class="surface management-card workspace-detail" tabindex="-1">
+      <iot-workspace-header :item="currentWorkspace" updated-at="10:52:19" @back="openWorkspace('overview')" />
+      <el-tabs v-model="activeTab" class="workspace-tabs">
         <el-tab-pane name="circuits">
           <span slot="label" class="tab-label"
             ><i class="el-icon-switch-button"></i>回路与表计 <b class="tab-count">{{ dataSet.circuits.length }}</b></span
@@ -312,14 +315,17 @@
 </template>
 
 <script>
+import IotWorkspaceHeader from '../components/IotWorkspaceHeader.vue'
+import IotWorkspaceNav from '../components/IotWorkspaceNav.vue'
 import { lightingEnergy } from '../mock/energyMockData'
 
 export default {
   name: 'SmartIOTLightingEnergy',
+  components: { IotWorkspaceHeader, IotWorkspaceNav },
   data() {
     return {
       dataSet: lightingEnergy,
-      activeTab: 'circuits',
+      activeTab: 'overview',
       selectedArea: '',
       keyword: '',
       circuitPage: 1,
@@ -335,6 +341,18 @@ export default {
     }
   },
   computed: {
+    workspaceNav() {
+      return [
+        { key: 'overview', title: '照明总览', description: '分区、功率与环境', detail: '查看分区运行、照明功率、人员存在、照度和策略节能趋势。', icon: 'el-icon-data-analysis', count: null },
+        { key: 'circuits', title: '回路表计', description: '开关、调光与时长', detail: '管理照明回路、配电箱、开关状态、调光比例和运行时长。', icon: 'el-icon-switch-button', count: this.dataSet.circuits.length },
+        { key: 'anomalies', title: '异常照明', description: '识别、派单与关闭', detail: '处置非使用时段亮灯、无人长亮、能耗突增和状态电量不一致。', icon: 'el-icon-warning-outline', count: this.dataSet.anomalies.length, danger: this.dataSet.anomalies.some((item) => item.status !== '已关闭') },
+        { key: 'savings', title: '策略节能', description: '配置、基线与效果', detail: '管理分区、定时、调光和人感策略，并比较实施前后节能效果。', icon: 'el-icon-sunny', count: this.dataSet.strategies.length },
+        { key: 'audits', title: '控制审计', description: '人工覆盖与优先级', detail: '追溯人工控制、策略覆盖、消防保护拒绝和自动恢复记录。', icon: 'el-icon-document-checked', count: this.dataSet.audits.length }
+      ]
+    },
+    currentWorkspace() {
+      return this.workspaceNav.find((item) => item.key === this.activeTab) || this.workspaceNav[0]
+    },
     selectedAreaInfo() {
       return this.dataSet.areas.find((item) => item.name === this.selectedArea) || this.dataSet.areas[0]
     },
@@ -373,6 +391,18 @@ export default {
     if (this.savingChart) this.savingChart.dispose()
   },
   methods: {
+    openWorkspace(view) {
+      if (!this.workspaceNav.some((item) => item.key === view)) return
+      this.activeTab = view
+      this.handleWorkspaceChange()
+    },
+    handleWorkspaceChange() {
+      this.$nextTick(() => {
+        const content = this.activeTab === 'overview' ? this.$refs.overviewWorkspace : this.$refs.detailWorkspace
+        if (content && typeof content.focus === 'function') content.focus({ preventScroll: true })
+        if (this.activeTab === 'overview') this.resizeCharts()
+      })
+    },
     statusClass(status) {
       if (/异常|拒绝|不一致/.test(status)) return 'danger'
       if (/长亮|突增|待|覆盖|非使用/.test(status)) return 'warning'
@@ -415,7 +445,7 @@ export default {
     submitManual() {
       if (!this.manualForm.circuit || !this.manualForm.reason) return this.$message.warning('请选择回路并填写控制原因')
       this.manualDialog = false
-      this.activeTab = 'audits'
+      this.openWorkspace('audits')
       this.$message.success('人工控制已下发，到期后自动恢复策略')
     },
     createWorkOrder() {
@@ -437,13 +467,14 @@ export default {
       const curve = this.dataSet.loadCurve
       this.lightingChart.setOption({
         color: ['#2f80ed', '#aab5c5', '#31b889'],
-        tooltip: { trigger: 'axis' },
-        legend: { top: 0, data: ['实际功率', '基线功率', '人员存在'] },
-        grid: { left: 48, right: 46, top: 42, bottom: 28 },
-        xAxis: { type: 'category', boundaryGap: false, data: curve.hours },
+        textStyle: { fontSize: 13 },
+        tooltip: { trigger: 'axis', textStyle: { fontSize: 13 } },
+        legend: { top: 0, textStyle: { fontSize: 12 }, data: ['实际功率', '基线功率', '人员存在'] },
+        grid: { left: 56, right: 52, top: 46, bottom: 32 },
+        xAxis: { type: 'category', boundaryGap: false, data: curve.hours, axisLabel: { fontSize: 12 } },
         yAxis: [
-          { type: 'value', name: 'kW', splitLine: { lineStyle: { color: '#edf1f6' } } },
-          { type: 'value', name: '%', max: 100, splitLine: { show: false } }
+          { type: 'value', name: 'kW', axisLabel: { fontSize: 12 }, nameTextStyle: { fontSize: 12 }, splitLine: { lineStyle: { color: '#edf1f6' } } },
+          { type: 'value', name: '%', max: 100, axisLabel: { fontSize: 12 }, nameTextStyle: { fontSize: 12 }, splitLine: { show: false } }
         ],
         series: [
           { name: '实际功率', type: 'line', smooth: true, symbol: 'none', areaStyle: { color: 'rgba(47,128,237,.1)' }, data: curve.actual },
@@ -453,11 +484,12 @@ export default {
       })
       this.savingChart.setOption({
         color: ['#b8c8dc', '#35b78b'],
-        tooltip: { trigger: 'axis' },
-        legend: { top: 0, data: ['实施前', '实施后'] },
-        grid: { left: 48, right: 12, top: 42, bottom: 48 },
-        xAxis: { type: 'category', data: this.dataSet.savings.map((item) => item.strategy), axisLabel: { interval: 0, rotate: 18, fontSize: 10 } },
-        yAxis: { type: 'value', splitLine: { lineStyle: { color: '#edf1f6' } } },
+        textStyle: { fontSize: 13 },
+        tooltip: { trigger: 'axis', textStyle: { fontSize: 13 } },
+        legend: { top: 0, textStyle: { fontSize: 12 }, data: ['实施前', '实施后'] },
+        grid: { left: 58, right: 18, top: 46, bottom: 54 },
+        xAxis: { type: 'category', data: this.dataSet.savings.map((item) => item.strategy), axisLabel: { interval: 0, rotate: 18, fontSize: 12 } },
+        yAxis: { type: 'value', axisLabel: { fontSize: 12 }, splitLine: { lineStyle: { color: '#edf1f6' } } },
         series: [
           { name: '实施前', type: 'bar', barMaxWidth: 20, data: this.dataSet.savings.map((item) => item.before) },
           { name: '实施后', type: 'bar', barMaxWidth: 20, data: this.dataSet.savings.map((item) => item.after) }
@@ -475,15 +507,19 @@ export default {
 <style lang="scss" scoped>
 @import './energyCommon.scss';
 .lighting-dashboard {
-  grid-template-columns: minmax(260px, 0.92fr) minmax(420px, 1.5fr) minmax(300px, 1fr);
+  grid-template-columns: minmax(300px, 0.82fr) minmax(500px, 1.58fr) minmax(340px, 1.05fr);
 }
 .area-list {
-  height: 286px;
+  height: clamp(260px, 34vh, 360px);
+  height: clamp(260px, 34dvh, 360px);
 }
 .metric-value small {
   color: #8a96a9;
   font-size: 10px;
   font-weight: 400;
+}
+.summary-strip--top {
+  margin: 0 0 12px;
 }
 .chart-legend-note {
   color: #dda032;
@@ -493,10 +529,12 @@ export default {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
-  margin-top: 8px;
+}
+.saving-summary--top {
+  margin-bottom: 12px;
 }
 .saving-summary div {
-  padding: 8px;
+  padding: 10px;
   background: #f7fafc;
   border-radius: 5px;
 }
@@ -506,12 +544,12 @@ export default {
 }
 .saving-summary span {
   color: #909bae;
-  font-size: 10px;
+  font-size: 12px;
 }
 .saving-summary strong {
   margin-top: 4px;
   color: #26405e;
-  font-size: 12px;
+  font-size: 15px;
 }
 .savings-cards {
   display: grid;

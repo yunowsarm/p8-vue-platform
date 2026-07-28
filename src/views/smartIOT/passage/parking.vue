@@ -29,7 +29,9 @@
       </article>
     </section>
 
-    <section class="parking-overview">
+    <iot-workspace-nav v-model="managementTab" :items="workspaceNav" aria-label="智慧停车业务工作区" @change="handleWorkspaceChange" />
+
+    <section v-if="managementTab === 'overview'" ref="workspaceContent" class="parking-overview" tabindex="-1">
       <article class="surface zone-board">
         <div class="surface-head">
           <div>
@@ -43,11 +45,11 @@
         <div class="zone-layout">
           <div class="zone-grid">
             <button
-              v-for="zone in zones"
+              v-for="zone in pagedZones"
               :key="zone.id"
               type="button"
               class="zone-card"
-              :class="{ active: selectedZoneId === zone.id, warning: zone.status === '紧张' }"
+              :class="{ active: selectedZoneId === zone.id, warning: zone.violations || zone.status === '紧张' }"
               @click="selectedZoneId = zone.id"
             >
               <div class="zone-card-head">
@@ -65,6 +67,14 @@
                 ><span>周转 {{ zone.turnover }}</span>
               </div>
             </button>
+          </div>
+          <div v-if="zonePageCount > 1" class="zone-pagination">
+            <span>共 {{ zones.length }} 个分区</span>
+            <div>
+              <button type="button" :disabled="zonePagination.page === 1" @click="changeZonePage(zonePagination.page - 1)"><i class="el-icon-arrow-left"></i></button>
+              <button v-for="page in zonePageCount" :key="page" type="button" :class="{ active: zonePagination.page === page }" @click="changeZonePage(page)">{{ page }}</button>
+              <button type="button" :disabled="zonePagination.page === zonePageCount" @click="changeZonePage(zonePagination.page + 1)"><i class="el-icon-arrow-right"></i></button>
+            </div>
           </div>
           <aside v-if="selectedZone" class="zone-detail">
             <div class="zone-detail-title">
@@ -101,7 +111,7 @@
             <div class="surface-title"><i class="el-icon-sort"></i> 出入口实时通行</div>
             <span class="surface-subtitle">近 10 分钟通行 {{ entrances.length }} 辆</span>
           </div>
-          <el-button type="text" size="mini" @click="managementTab = 'audit'">查看审计</el-button>
+          <el-button type="text" size="mini" @click="openWorkspace('audit')">进入通行审计 <i class="el-icon-arrow-right"></i></el-button>
         </div>
         <div class="entrance-list">
           <button v-for="item in entrances.slice(0, 5)" :key="item.id" type="button" class="entrance-item" @click="showEntrance(item)">
@@ -136,8 +146,9 @@
       </aside>
     </section>
 
-    <section class="surface management-card">
-      <el-tabs v-model="managementTab">
+    <section v-else ref="workspaceContent" class="surface management-card workspace-detail" tabindex="-1">
+      <iot-workspace-header :item="currentWorkspace" updated-at="10:42:20" :show-back="false" @back="openWorkspace('overview')" />
+      <el-tabs v-model="managementTab" class="workspace-tabs">
         <el-tab-pane name="violations"
           ><span slot="label"
             ><i class="el-icon-warning-outline"></i> 违停事件 <b class="tab-count danger">{{ activeViolationCount }}</b></span
@@ -411,7 +422,7 @@
       <span slot="footer"><el-button @click="reconcileDialogVisible = false">取消</el-button><el-button type="primary" @click="saveReconciliation">保存对账口径</el-button></span>
     </el-dialog>
 
-    <el-drawer title="违停事件详情与处置" :visible.sync="violationDrawerVisible" size="520px" custom-class="passage-detail-drawer" append-to-body>
+    <el-drawer title="违停事件详情与处置" :visible.sync="violationDrawerVisible" size="520px" custom-class="passage-detail-drawer parking-detail-drawer" append-to-body>
       <div v-if="currentViolation" class="drawer-layout">
         <div class="drawer-scroll">
           <div class="violation-hero" :class="levelClass(currentViolation.level)">
@@ -472,14 +483,21 @@
 </template>
 
 <script>
+import IotWorkspaceHeader from '../components/IotWorkspaceHeader.vue'
+import IotWorkspaceNav from '../components/IotWorkspaceNav.vue'
 import { parking } from '../mock/passageMockData'
 
 export default {
   name: 'SmartIOTParking',
+  components: { IotWorkspaceHeader, IotWorkspaceNav },
   data() {
     return {
       kpis: parking.kpis,
-      zones: JSON.parse(JSON.stringify(parking.zones)),
+      zones: JSON.parse(JSON.stringify(parking.zones)).concat([
+        { id: 'PK-E1', name: '东侧临停车区', total: 56, free: 18, occupied: 38, reserved: 5, violations: 0, turnover: 4.2, status: '正常' },
+        { id: 'PK-M1', name: '摩托车停车区', total: 72, free: 28, occupied: 44, reserved: 0, violations: 0, turnover: 5.8, status: '正常' },
+        { id: 'PK-S1', name: '施工车辆区', total: 34, free: 9, occupied: 25, reserved: 7, violations: 1, turnover: 3.9, status: '绱у紶' }
+      ]),
       entrances: JSON.parse(JSON.stringify(parking.entrances)),
       devices: JSON.parse(JSON.stringify(parking.devices)),
       violations: JSON.parse(JSON.stringify(parking.violations)),
@@ -490,7 +508,7 @@ export default {
       emergency: JSON.parse(JSON.stringify(parking.emergency)),
       reconciliation: JSON.parse(JSON.stringify(parking.reconciliation)),
       selectedZoneId: parking.zones[0].id,
-      managementTab: 'violations',
+      managementTab: 'overview',
       violationKeyword: '',
       violationType: '',
       violationStatus: '',
@@ -500,6 +518,7 @@ export default {
       paymentKeyword: '',
       reconcileStatus: '',
       pagination: { violations: { page: 1, size: 5 }, vehicles: { page: 1, size: 5 }, finance: { page: 1, size: 5 } },
+      zonePagination: { page: 1, size: 8 },
       ruleDialogVisible: false,
       vehicleDialogVisible: false,
       manualDialogVisible: false,
@@ -517,8 +536,27 @@ export default {
     }
   },
   computed: {
+    workspaceNav() {
+      return [
+        { key: 'overview', title: '停车总览', description: '车位与出入口态势', detail: '查看车位余量、分区占用、出入口通行和设备在线情况。', icon: 'el-icon-data-analysis', count: null },
+        { key: 'violations', title: '违停处置', description: '识别、派单与关闭', detail: '集中处置违停事件、语音提醒、巡查派发和处置工单。', icon: 'el-icon-warning-outline', count: this.activeViolationCount, danger: this.activeViolationCount > 0 },
+        { key: 'vehicles', title: '车辆权限', description: '名单、区域与有效期', detail: '管理固定车、访客车、施工车和黑白名单通行权限。', icon: 'el-icon-truck', count: this.vehicles.length },
+        { key: 'finance', title: '收费对账', description: '订单、退款与发票', detail: '核对停车订单、优惠、支付、退款及财务对账状态。', icon: 'el-icon-bank-card', count: this.payments.length },
+        { key: 'audit', title: '操作审计', description: '抬杆、改牌与应急', detail: '追溯人工抬杆、车牌修正和应急策略等高风险操作。', icon: 'el-icon-document', count: this.audits.length }
+      ]
+    },
+    currentWorkspace() {
+      return this.workspaceNav.find((item) => item.key === this.managementTab) || this.workspaceNav[0]
+    },
     selectedZone() {
       return this.zones.find((item) => item.id === this.selectedZoneId) || this.zones[0]
+    },
+    zonePageCount() {
+      return Math.max(1, Math.ceil(this.zones.length / this.zonePagination.size))
+    },
+    pagedZones() {
+      const start = (this.zonePagination.page - 1) * this.zonePagination.size
+      return this.zones.slice(start, start + this.zonePagination.size)
     },
     onlineDeviceCount() {
       return this.devices.filter((item) => item.status === '在线').length
@@ -583,8 +621,27 @@ export default {
     }
   },
   methods: {
+    openWorkspace(view) {
+      if (!this.workspaceNav.some((item) => item.key === view)) return
+      this.managementTab = view
+      this.handleWorkspaceChange()
+    },
+    handleWorkspaceChange() {
+      this.$nextTick(() => {
+        const content = this.$refs.workspaceContent
+        if (content && typeof content.focus === 'function') content.focus({ preventScroll: true })
+      })
+    },
     occupancy(zone) {
       return Math.round((zone.occupied / zone.total) * 100)
+    },
+    changeZonePage(page) {
+      const nextPage = Math.min(Math.max(page, 1), this.zonePageCount)
+      this.zonePagination.page = nextPage
+      const firstZone = this.pagedZones[0]
+      if (firstZone && !this.pagedZones.some((item) => item.id === this.selectedZoneId)) {
+        this.selectedZoneId = firstZone.id
+      }
     },
     paginate(list, type) {
       const state = this.pagination[type]
@@ -657,7 +714,7 @@ export default {
       if (index > -1) this.$set(this.vehicles, index, row)
       else this.vehicles.unshift(row)
       this.vehicleDialogVisible = false
-      this.managementTab = 'vehicles'
+      this.openWorkspace('vehicles')
       this.$message.success('车辆权限已保存并进入设备下发队列')
     },
     openManualPassage() {
@@ -680,7 +737,7 @@ export default {
         result: '已执行'
       })
       this.manualDialogVisible = false
-      this.managementTab = 'audit'
+      this.openWorkspace('audit')
       this.$message.success(this.manualForm.action + '已执行，审计记录不可删除')
     },
     saveEmergency() {
@@ -743,21 +800,86 @@ export default {
 .parking-overview {
   display: grid;
   grid-template-columns: minmax(680px, 1fr) 330px;
+  height: var(--iot-overview-height);
+  align-items: stretch;
   gap: 12px;
+  margin-bottom: 18px;
+}
+.zone-board {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
 }
 .zone-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 205px;
-  min-height: 380px;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 .zone-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(210px, 1fr));
-  gap: 9px;
-  padding: 12px;
+  min-height: 0;
+  align-content: start;
+  grid-column: 1;
+  grid-row: 1;
+  grid-auto-rows: minmax(96px, auto);
+  grid-template-columns: repeat(2, minmax(230px, 1fr));
+  gap: 10px 12px;
+  overflow: hidden;
+  padding: 14px;
+}
+.zone-pagination {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 14px 14px;
+  padding: 8px 10px;
+  color: #5d789b;
+  background: linear-gradient(180deg, rgba(245, 249, 255, 0.72), #f5f9ff);
+  border: 1px solid #dbe7f7;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+.zone-pagination > span {
+  color: #6d7d91;
+}
+.zone-pagination > div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.zone-pagination button {
+  display: inline-flex;
+  min-width: 26px;
+  height: 26px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 7px;
+  color: #5d789b;
+  background: #fff;
+  border: 1px solid #dce6f2;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.zone-pagination button.active {
+  color: #fff;
+  background: #3478e1;
+  border-color: #3478e1;
+}
+.zone-pagination button:disabled {
+  color: #b6c0cc;
+  background: #eef2f7;
+  cursor: not-allowed;
 }
 .zone-card {
-  padding: 11px;
+  min-height: 96px;
+  padding: 11px 13px;
   color: inherit;
   text-align: left;
   background: #fafbfc;
@@ -773,7 +895,7 @@ export default {
   box-shadow: 0 2px 8px rgba(49, 98, 169, 0.08);
 }
 .zone-card.warning {
-  border-left: 3px solid #e99a2d;
+  border-left: 4px solid #e99a2d;
 }
 .zone-card-head,
 .zone-card-meta,
@@ -784,7 +906,7 @@ export default {
 }
 .zone-card-head > span {
   color: #44536a;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
 }
 .zone-card-head > span i {
@@ -793,17 +915,17 @@ export default {
 }
 .zone-card-head > b {
   color: #1aa273;
-  font-size: 19px;
+  font-size: 22px;
 }
 .zone-card-head > b small {
   margin-left: 3px;
   color: #8d99a8;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 400;
 }
 .occupancy-track {
-  height: 5px;
-  margin: 10px 0 5px;
+  height: 6px;
+  margin: 10px 0 7px;
   overflow: hidden;
   background: #e8edf3;
   border-radius: 3px;
@@ -820,10 +942,10 @@ export default {
 .zone-card-meta,
 .zone-card-foot {
   color: #8a96a6;
-  font-size: 8px;
+  font-size: 10px;
 }
 .zone-card-foot {
-  margin-top: 8px;
+  margin-top: 7px;
   padding-top: 7px;
   border-top: 1px dashed #e5e9ef;
 }
@@ -832,9 +954,12 @@ export default {
 }
 .zone-detail {
   display: flex;
+  grid-column: 2;
+  grid-row: 1 / span 2;
   align-items: center;
   flex-direction: column;
-  padding: 16px 13px;
+  justify-content: flex-start;
+  padding: 18px 16px;
   background: #f8fafc;
   border-left: 1px solid #edf0f4;
 }
@@ -846,8 +971,8 @@ export default {
 }
 .zone-detail-title > span {
   display: flex;
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   align-items: center;
   justify-content: center;
   color: #fff;
@@ -860,17 +985,17 @@ export default {
 }
 .zone-detail-title b {
   color: #38475c;
-  font-size: 11px;
+  font-size: 13px;
 }
 .zone-detail-title small {
   margin-top: 3px;
   color: #919cab;
-  font-size: 8px;
+  font-size: 10px;
 }
 .zone-ring {
   display: flex;
-  width: 112px;
-  height: 112px;
+  width: 128px;
+  height: 128px;
   align-items: center;
   justify-content: center;
   margin: 19px 0;
@@ -879,8 +1004,8 @@ export default {
 }
 .zone-ring::before {
   position: absolute;
-  width: 88px;
-  height: 88px;
+  width: 98px;
+  height: 98px;
   background: #f8fafc;
   border-radius: 50%;
   content: '';
@@ -896,22 +1021,22 @@ export default {
 }
 .zone-ring b {
   color: #314158;
-  font-size: 21px;
+  font-size: 24px;
 }
 .zone-ring span {
   margin-top: 2px;
   color: #8c98a7;
-  font-size: 9px;
+  font-size: 11px;
 }
 .zone-detail-grid {
   display: grid;
   width: 100%;
   grid-template-columns: 1fr 1fr;
-  gap: 7px;
-  margin-bottom: 15px;
+  gap: 9px;
+  margin-bottom: 16px;
 }
 .zone-detail-grid span {
-  padding: 7px;
+  padding: 9px;
   background: #fff;
   border: 1px solid #e8edf2;
   border-radius: 4px;
@@ -922,12 +1047,12 @@ export default {
 }
 .zone-detail-grid small {
   color: #929dab;
-  font-size: 8px;
+  font-size: 10px;
 }
 .zone-detail-grid b {
   margin-top: 3px;
   color: #44536a;
-  font-size: 11px;
+  font-size: 13px;
 }
 .zone-detail-grid b.green {
   color: #1b9f6d;
@@ -936,17 +1061,33 @@ export default {
   color: #df4d4d;
 }
 .entrance-panel {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
   overflow: hidden;
 }
+.entrance-panel .surface-title {
+  font-size: 15px;
+}
+.entrance-panel .surface-subtitle {
+  font-size: 12px;
+}
+.entrance-panel ::v-deep .el-button--text {
+  font-size: 12px;
+}
 .entrance-list {
-  padding: 6px 10px 3px;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 8px 12px 4px;
 }
 .entrance-item {
   display: flex;
   width: 100%;
   align-items: center;
-  gap: 8px;
-  padding: 8px 4px;
+  gap: 10px;
+  min-height: 62px;
+  padding: 10px 5px;
   color: inherit;
   text-align: left;
   background: transparent;
@@ -959,13 +1100,15 @@ export default {
 }
 .direction-icon {
   display: flex;
-  width: 27px;
-  height: 27px;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
   color: #1aa273;
   background: #eaf8f3;
   border-radius: 6px;
+  font-size: 14px;
 }
 .direction-icon.out {
   color: #3478e1;
@@ -983,20 +1126,20 @@ export default {
 }
 .entrance-main b {
   color: #3c4b61;
-  font-size: 10px;
+  font-size: 13px;
 }
 .entrance-main small,
 .entrance-result small {
   margin-top: 3px;
   color: #929ead;
-  font-size: 8px;
+  font-size: 11px;
 }
 .entrance-result {
   text-align: right;
 }
 .entrance-result b {
   color: #1a9d6c;
-  font-size: 9px;
+  font-size: 12px;
 }
 .entrance-result b.warning {
   color: #d3821d;
@@ -1005,8 +1148,8 @@ export default {
   color: #df4b4b;
 }
 .device-summary {
-  margin: 8px 10px 10px;
-  padding: 10px;
+  margin: 10px 12px 12px;
+  padding: 12px;
   background: #f7f9fc;
   border-radius: 6px;
 }
@@ -1015,24 +1158,25 @@ export default {
   align-items: center;
   justify-content: space-between;
   color: #425168;
-  font-size: 10px;
+  font-size: 13px;
 }
 .summary-title span {
   color: #8794a6;
-  font-size: 8px;
+  font-size: 11px;
 }
 .device-chips {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 5px;
-  margin-top: 8px;
+  gap: 7px;
+  margin-top: 10px;
 }
 .device-chips button {
   display: flex;
   min-width: 0;
   align-items: center;
-  gap: 5px;
-  padding: 5px 6px;
+  gap: 7px;
+  min-height: 32px;
+  padding: 7px 8px;
   color: #688075;
   text-align: left;
   background: #fff;
@@ -1047,7 +1191,7 @@ export default {
 }
 .device-chips span {
   overflow: hidden;
-  font-size: 8px;
+  font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1140,11 +1284,18 @@ export default {
 @media (max-width: 1220px) {
   .parking-overview {
     grid-template-columns: 1fr;
+    height: auto;
+  }
+  .zone-layout {
+    min-height: clamp(380px, 52vh, 560px);
+    min-height: clamp(380px, 52dvh, 560px);
+    flex: none;
   }
 }
 @media (max-width: 760px) {
   .zone-layout {
     display: block;
+    min-height: 0;
   }
   .zone-grid {
     grid-template-columns: 1fr;
@@ -1172,6 +1323,80 @@ export default {
   min-height: 0;
   flex: 1 1 auto;
   overflow: hidden;
+}
+.parking-detail-drawer .el-drawer__header {
+  color: #233248;
+  font-size: 16px;
+}
+.parking-detail-drawer .violation-hero h3 {
+  font-size: 18px;
+  line-height: 24px;
+}
+.parking-detail-drawer .violation-hero small,
+.parking-detail-drawer .violation-hero p {
+  font-size: 12px;
+  line-height: 18px;
+}
+.parking-detail-drawer .violation-hero > .el-tag {
+  display: inline-flex;
+  width: auto;
+  min-width: 58px;
+  height: 28px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  box-sizing: border-box;
+}
+.parking-detail-drawer .evidence-preview span {
+  font-size: 12px;
+  line-height: 18px;
+}
+.parking-detail-drawer .evidence-preview b {
+  font-size: 11px;
+  line-height: 16px;
+}
+.parking-detail-drawer .detail-info-grid > span {
+  padding: 12px;
+}
+.parking-detail-drawer .detail-info-grid small {
+  font-size: 12px;
+  line-height: 18px;
+}
+.parking-detail-drawer .detail-info-grid b {
+  font-size: 13px;
+  line-height: 20px;
+}
+.parking-detail-drawer .response-box {
+  padding: 11px 12px;
+  font-size: 12px;
+  line-height: 18px;
+}
+.parking-detail-drawer .detail-section h4 {
+  font-size: 14px;
+}
+.parking-detail-drawer .el-timeline-item__timestamp {
+  font-size: 12px;
+}
+.parking-detail-drawer .trace-card {
+  padding: 11px 13px;
+}
+.parking-detail-drawer .trace-card b {
+  font-size: 13px;
+}
+.parking-detail-drawer .trace-card span {
+  font-size: 11px;
+}
+.parking-detail-drawer .trace-card p {
+  font-size: 12px;
+  line-height: 20px;
+}
+.parking-detail-drawer .drawer-actions .el-button {
+  font-size: 13px;
 }
 .passage-config-dialog .el-dialog__body {
   max-height: calc(90vh - 125px);
