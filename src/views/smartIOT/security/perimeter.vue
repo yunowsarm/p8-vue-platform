@@ -845,6 +845,8 @@ export default {
 <style lang="scss" scoped>
 @import '../components/iotWorkspacePage.scss';
 .perimeter-page {
+  --iot-overview-height: clamp(470px, calc(100vh - 400px), 540px);
+  --iot-overview-height: clamp(470px, calc(100dvh - 400px), 540px);
   --primary: #2468f2;
   --primary-soft: #edf4ff;
   --text: #1d2a3b;
