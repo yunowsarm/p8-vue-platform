@@ -353,13 +353,14 @@
     font-size: 11px;
   }
 
-  .toolbar {
-    justify-content: space-between;
-    align-items: center;
-    min-height: 40px;
-    margin-bottom: 10px;
-    gap: 12px;
-  }
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 49px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 
   .toolbar-note {
     display: inline-flex;
@@ -373,11 +374,11 @@
 
   .toolbar-left,
   .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     min-height: 32px;
-  }
-
-  .toolbar-left {
-    margin-top: 4px;
+    flex-wrap: wrap;
   }
 
   ::v-deep .toolbar .el-input__inner {

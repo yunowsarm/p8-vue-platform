@@ -1459,8 +1459,7 @@ export default {
 .toolbar {
   display: flex;
   justify-content: space-between;
-  min-height: 36px;
-  margin-bottom: 10px;
+  min-height: 49px;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
@@ -1472,9 +1471,6 @@ export default {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-}
-.toolbar-left {
-  margin-top: 4px;
 }
 .toolbar-note {
   display: inline-flex;
