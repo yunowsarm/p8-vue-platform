@@ -1,15 +1,15 @@
 <template>
   <div class="iot-workspace-header">
     <div class="workspace-context">
-      <el-button v-if="showBack" size="small" icon="el-icon-back" @click="$emit('back')">返回总览</el-button>
-      <span v-if="showBack" class="workspace-divider"></span>
+      <!-- <el-button v-if="showBack" size="small" icon="el-icon-back" @click="$emit('back')">返回总览</el-button> -->
+      <!-- <span v-if="showBack" class="workspace-divider"></span> -->
       <div>
         <b>{{ item.title }}</b>
         <small>{{ item.detail }}</small>
       </div>
     </div>
     <div class="workspace-meta">
-      <span v-if="item.count !== null && item.count !== undefined"><i :class="item.icon"></i>{{ item.count }} {{ countLabel }}</span>
+      <!-- <span v-if="item.count !== null && item.count !== undefined"><i :class="item.icon"></i>{{ item.count }} {{ countLabel }}</span> -->
       <span v-if="updatedAt"><i class="el-icon-time"></i>更新 {{ updatedAt }}</span>
       <slot name="actions"></slot>
     </div>

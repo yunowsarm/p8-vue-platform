@@ -8,11 +8,6 @@
         </div>
         <p>统一管理消防设备台账、维保计划、执行登记、现场凭证和到期提醒</p>
       </div>
-      <div class="header-actions">
-        <el-button size="small" icon="el-icon-plus" @click="openDeviceDialog()">新增设备</el-button>
-        <el-button size="small" icon="el-icon-date" @click="openPlanDialog()">新建维保计划</el-button>
-        <el-button type="primary" size="small" icon="el-icon-edit-outline" @click="openRecordDialog()">新增维保登记</el-button>
-      </div>
     </header>
 
     <section class="kpi-grid">
@@ -228,9 +223,10 @@
           <span slot="label" class="tab-label"
             ><i class="el-icon-alarm-clock"></i>到期提醒 <b class="danger-count">{{ reminders.length }}</b></span
           >
-          <div class="reminder-tip">
-            <i class="el-icon-bell"></i>
-            <div><b>维保到期提醒规则</b><span>默认提前 7 天提醒责任人；到期未登记自动转为逾期，并每日提醒至完成登记。</span></div>
+          <div class="toolbar">
+            <div class="toolbar-left">
+              <el-input v-model.trim="reminderKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="设备编号 / 设备名称 / 类型 / 位置 / 责任人 / 计划" style="width: 300px"></el-input>
+            </div>
             <el-button size="small" @click="reminderRuleDialog = true">提醒规则</el-button>
           </div>
           <el-table :data="pagedReminders" size="small" stripe>
@@ -246,7 +242,7 @@
               ><template slot-scope="scope"><el-button type="primary" plain size="mini" @click="openReminder(scope.row)">立即登记</el-button></template></el-table-column
             >
           </el-table>
-          <div class="pagination-row"><el-pagination :current-page.sync="reminderPage" :page-size="6" layout="total, prev, pager, next" :total="reminders.length"></el-pagination></div>
+          <div class="pagination-row"><el-pagination :current-page.sync="reminderPage" :page-size="6" layout="total, prev, pager, next" :total="filteredReminders.length"></el-pagination></div>
         </el-tab-pane>
       </el-tabs>
     </section>
@@ -560,6 +556,7 @@ export default {
       recordResult: '',
       recordDate: '',
       recordPage: 1,
+      reminderKeyword: '',
       reminderPage: 1,
       deviceDialog: false,
       planDialog: false,
@@ -666,7 +663,12 @@ export default {
     },
     pagedReminders() {
       const start = (this.reminderPage - 1) * 6
-      return this.reminders.slice(start, start + 6)
+      return this.filteredReminders.slice(start, start + 6)
+    },
+    filteredReminders() {
+      const keyword = this.reminderKeyword.toLowerCase()
+      if (!keyword) return this.reminders
+      return this.reminders.filter((item) => [item.deviceId, item.device, item.category, item.location, item.owner, item.plan, item.status, item.dueDate].join(' ').toLowerCase().includes(keyword))
     },
     recordDevice() {
       return this.devices.find((item) => item.id === this.recordForm.deviceId) || null
@@ -713,6 +715,9 @@ export default {
     },
     recordDate() {
       this.recordPage = 1
+    },
+    reminderKeyword() {
+      this.reminderPage = 1
     }
   },
   created() {
@@ -1012,7 +1017,6 @@ export default {
   border-radius: 12px;
   font-size: 11px;
 }
-.header-actions,
 .toolbar,
 .toolbar-left,
 .toolbar-right {
@@ -1025,7 +1029,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 10px;
-  margin-bottom: 12px;
+  margin-top: 12px;
 }
 .kpi-card {
   position: relative;
@@ -1453,15 +1457,52 @@ export default {
   background: #ffedef;
 }
 .toolbar {
+  display: flex;
   justify-content: space-between;
+  min-height: 36px;
   margin-bottom: 10px;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.toolbar-left,
+.toolbar-right {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.toolbar-left {
+  margin-top: 4px;
 }
 .toolbar-note {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  gap: 4px;
   color: #8995a7;
   font-size: 10px;
+  line-height: 18px;
 }
 .toolbar-note i {
   color: #3c81d9;
+}
+::v-deep .toolbar .el-input__inner {
+  height: 32px;
+  line-height: 32px;
+}
+::v-deep .toolbar .el-button--small {
+  display: inline-flex;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+::v-deep .toolbar .el-button--small span {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
 }
 .pagination-row {
   display: flex;

@@ -232,10 +232,18 @@
             ><i class="el-icon-refresh"></i> 权限下发与回收 <b class="tab-count">{{ syncTasks.length }}</b></span
           >
           <div class="table-toolbar">
-            <div class="toolbar-note"><i class="el-icon-connection"></i>入职、调岗、离职、挂失和黑名单流程均显示设备反馈状态</div>
+            <div class="toolbar-left">
+              <el-input
+                v-model.trim="syncKeyword"
+                size="small"
+                clearable
+                prefix-icon="el-icon-search"
+                placeholder="搜索任务编号 / 变更类型 / 人员 / 权限变更 / 结果 / 来源"
+              />
+            </div>
             <el-button size="small" icon="el-icon-refresh" @click="batchSync">重试未完成任务</el-button>
           </div>
-          <el-table :data="syncTasks" size="small"
+          <el-table :data="filteredSyncTasks" size="small"
             ><el-table-column prop="id" label="任务编号" width="130" /><el-table-column prop="type" label="变更类型" width="85" /><el-table-column
               prop="person"
               label="人员"
@@ -261,10 +269,18 @@
             ><i class="el-icon-document-checked"></i> 高风险操作审计 <b class="tab-count">{{ audits.length }}</b></span
           >
           <div class="table-toolbar">
-            <div class="toolbar-note"><i class="el-icon-lock"></i>远程开门、常开、紧急开门和批量权限调整均需专门权限与完整审计</div>
+            <div class="toolbar-left">
+              <el-input
+                v-model.trim="auditKeyword"
+                size="small"
+                clearable
+                prefix-icon="el-icon-search"
+                placeholder="搜索审计编号 / 操作类型 / 对象 / 操作人 / 原因 / 结果"
+              />
+            </div>
             <el-button size="small" icon="el-icon-unlock" @click="openDoorOperation(selectedDoor || doors[0], '远程开门')">发起远程操作</el-button>
           </div>
-          <el-table :data="audits" size="small"
+          <el-table :data="filteredAudits" size="small"
             ><el-table-column prop="id" label="审计编号" width="130" /><el-table-column prop="time" label="操作时间" min-width="150" /><el-table-column
               prop="action"
               label="操作类型"
@@ -466,6 +482,8 @@ export default {
       eventResult: '',
       permissionKeyword: '',
       permissionSync: '',
+      syncKeyword: '',
+      auditKeyword: '',
       pagination: { events: { page: 1, size: 5 }, permissions: { page: 1, size: 5 } },
       permissionDialogVisible: false,
       operationDialogVisible: false,
@@ -527,6 +545,20 @@ export default {
     filteredPermissions() {
       const key = this.permissionKeyword.toLowerCase()
       return this.permissions.filter((item) => (!key || [item.person, item.org, item.doors].join(' ').toLowerCase().indexOf(key) > -1) && (!this.permissionSync || item.sync === this.permissionSync))
+    },
+    filteredSyncTasks() {
+      const key = this.syncKeyword.toLowerCase()
+      if (!key) return this.syncTasks
+      return this.syncTasks.filter((item) => {
+        return [item.id, item.type, item.person, item.change, item.controllers, item.createdAt, item.progress, item.result, item.operator].join(' ').toLowerCase().indexOf(key) > -1
+      })
+    },
+    filteredAudits() {
+      const key = this.auditKeyword.toLowerCase()
+      if (!key) return this.audits
+      return this.audits.filter((item) => {
+        return [item.id, item.time, item.action, item.target, item.operator, item.reason, item.approval, item.result].join(' ').toLowerCase().indexOf(key) > -1
+      })
     },
     pagedEvents() {
       return this.paginate(this.filteredEvents, 'events')

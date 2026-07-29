@@ -12,7 +12,6 @@
         <el-button size="small" icon="el-icon-guide" @click="openRouteBuilder()">路线管理</el-button>
         <el-button size="small" icon="el-icon-lock" @click="signDialogVisible = true">签到校验配置</el-button>
         <el-button size="small" icon="el-icon-top-right" @click="escalationDialogVisible = true">异常升级规则</el-button>
-        <el-button type="primary" size="small" icon="el-icon-plus" @click="openPlan()">新建巡更计划</el-button>
       </div>
     </header>
 
@@ -355,7 +354,14 @@
         <el-table-column prop="type" label="异常类型" width="95" />
         <el-table-column prop="threshold" label="触发条件" min-width="145" />
         <el-table-column label="首次通知" width="125"><template slot-scope="{ row }"><el-select v-model="row.firstTarget" size="mini"><el-option v-for="item in escalationTargets" :key="item" :label="item" :value="item" /></el-select></template></el-table-column>
-        <el-table-column label="升级等待" width="125"><template slot-scope="{ row }"><el-input-number v-model="row.secondDelay" :min="1" :max="60" size="mini" /><small>分钟</small></template></el-table-column>
+        <el-table-column label="升级等待" width="145">
+          <template slot-scope="{ row }">
+            <div class="delay-cell">
+              <el-input-number v-model="row.secondDelay" :min="1" :max="60" size="mini" controls-position="right" />
+              <small>分钟</small>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column label="升级对象" width="130"><template slot-scope="{ row }"><el-select v-model="row.secondTarget" size="mini"><el-option v-for="item in escalationTargets" :key="item" :label="item" :value="item" /></el-select></template></el-table-column>
         <el-table-column label="启用" width="65"><template slot-scope="{ row }"><el-switch v-model="row.enabled" /></template></el-table-column>
       </el-table>
@@ -1025,12 +1031,12 @@ button { font-family: inherit; }
 .execution-actions { display: flex; justify-content: flex-end; gap: 7px; margin-top: auto; padding: 15px; }
 
 .management-card { padding: 0 16px 14px; overflow: hidden; }
-.table-toolbar { display: flex; min-height: 49px; align-items: center; justify-content: space-between; gap: 12px; }
-.filter-group { display: flex; align-items: center; gap: 8px; }
+.table-toolbar { display: flex; min-height: 49px; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.filter-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 32px; }
 .filter-group .el-input { width: 220px; }
 .filter-group .el-select { width: 125px; }
-.toolbar-note { color: #8794a6; font-size: 10px; }
-.toolbar-note i { margin-right: 4px; color: #1aa273; }
+.toolbar-note { display: inline-flex; min-height: 32px; align-items: center; gap: 4px; color: #8794a6; font-size: 10px; line-height: 18px; }
+.toolbar-note i { color: #1aa273; }
 .tab-count { display: inline-block; min-width: 17px; height: 17px; margin-left: 3px; color: #65738a; line-height: 17px; text-align: center; background: #edf0f5; border-radius: 9px; font-size: 10px; }
 .danger-count { color: #d74747; background: #fff0f0; }
 .mini-tag { margin: 1px 3px 1px 0; }
@@ -1122,6 +1128,25 @@ button { font-family: inherit; }
 .sign-method-card small { margin-top: 3px; color: #8d99aa; font-size: 8px; }
 .sign-form { padding: 12px 0 2px; border-top: 1px solid #edf0f4; }
 .rule-table small { margin-left: 3px; color: #8996a7; font-size: 8px; }
+.delay-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.delay-cell .el-input-number {
+  width: 78px;
+}
+.delay-cell small {
+  margin-left: 0;
+  font-size: 11px;
+  line-height: 28px;
+}
+::v-deep .delay-cell .el-input-number--mini .el-input__inner {
+  padding-left: 8px;
+  padding-right: 30px;
+  text-align: left;
+}
 
 .record-result { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding: 12px; background: #f7faf8; border-radius: 6px; }
 .record-result > span { display: flex; width: 36px; height: 36px; align-items: center; justify-content: center; color: #fff; background: #1aaa75; border-radius: 8px; font-size: 18px; }

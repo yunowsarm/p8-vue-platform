@@ -131,8 +131,19 @@
           ><span slot="label" class="tab-label"
             ><i class="el-icon-warning-outline"></i>异常照明 <b class="tab-count">{{ dataSet.anomalies.length }}</b></span
           >
-          <div class="warning-note">综合电量、开关状态、工作日历、日出日落、人员存在和照度，识别非使用时段亮灯、无人长亮及状态电量不一致。</div>
-          <el-table :data="dataSet.anomalies" size="small" stripe
+          <div class="toolbar">
+            <div class="toolbar-left">
+              <el-input
+                v-model.trim="anomalyKeyword"
+                size="small"
+                clearable
+                prefix-icon="el-icon-search"
+                placeholder="搜索事件编号 / 异常类型 / 位置 / 判断依据 / 状态"
+                style="width: 340px"
+              ></el-input>
+            </div>
+          </div>
+          <el-table :data="filteredAnomalies" size="small" stripe
             ><el-table-column prop="id" label="事件编号" width="135"></el-table-column
             ><el-table-column label="级别" width="80"
               ><template slot-scope="scope"
@@ -152,10 +163,19 @@
             ><i class="el-icon-data-analysis"></i>策略与节能效果 <b class="tab-count">{{ dataSet.strategies.length }}</b></span
           >
           <div class="toolbar">
-            <div class="toolbar-note">对比分区、定时、调光、人感策略实施前后的用电与费用</div>
+            <div class="toolbar-left">
+              <el-input
+                v-model.trim="strategyKeyword"
+                size="small"
+                clearable
+                prefix-icon="el-icon-search"
+                placeholder="搜索策略名称 / 区域 / 日历 / 时段 / 条件 / 状态"
+                style="width: 340px"
+              ></el-input>
+            </div>
             <el-button type="primary" size="small" @click="openStrategy()">新增策略</el-button>
           </div>
-          <el-table :data="dataSet.strategies" size="small" stripe
+          <el-table :data="filteredStrategies" size="small" stripe
             ><el-table-column prop="name" label="策略名称" min-width="160"></el-table-column
             ><el-table-column label="执行区域" min-width="175"
               ><template slot-scope="scope">{{ scope.row.areas.join('、') }}</template></el-table-column
@@ -183,8 +203,19 @@
           ><span slot="label" class="tab-label"
             ><i class="el-icon-document-checked"></i>控制审计 <b class="tab-count">{{ dataSet.audits.length }}</b></span
           >
-          <div class="warning-note">优先级：消防及现场硬件控制 ＞ 经审批的人工覆盖 ＞ 自动节能策略。所有覆盖、拒绝与恢复动作均不可删除。</div>
-          <el-table :data="dataSet.audits" size="small" stripe
+          <div class="toolbar">
+            <div class="toolbar-left">
+              <el-input
+                v-model.trim="auditKeyword"
+                size="small"
+                clearable
+                prefix-icon="el-icon-search"
+                placeholder="搜索时间 / 动作 / 控制对象 / 操作人 / 原因 / 优先级 / 结果"
+                style="width: 360px"
+              ></el-input>
+            </div>
+          </div>
+          <el-table :data="filteredAudits" size="small" stripe
             ><el-table-column prop="time" label="时间" width="165"></el-table-column><el-table-column prop="action" label="动作" width="120"></el-table-column
             ><el-table-column prop="target" label="控制对象" min-width="160"></el-table-column><el-table-column prop="operator" label="操作人" width="110"></el-table-column
             ><el-table-column prop="reason" label="原因" min-width="180"></el-table-column><el-table-column prop="priority" label="优先级" width="130"></el-table-column
@@ -328,6 +359,9 @@ export default {
       activeTab: 'overview',
       selectedArea: '',
       keyword: '',
+      anomalyKeyword: '',
+      strategyKeyword: '',
+      auditKeyword: '',
       circuitPage: 1,
       lightingChart: null,
       savingChart: null,
@@ -371,6 +405,25 @@ export default {
     pagedCircuits() {
       const start = (this.circuitPage - 1) * 5
       return this.filteredCircuits.slice(start, start + 5)
+    },
+    filteredAnomalies() {
+      const key = this.anomalyKeyword.toLowerCase()
+      if (!key) return this.dataSet.anomalies
+      return this.dataSet.anomalies.filter((item) => [item.id, item.level, item.type, item.area, item.detail, item.time, item.status].join(' ').toLowerCase().includes(key))
+    },
+    filteredStrategies() {
+      const key = this.strategyKeyword.toLowerCase()
+      if (!key) return this.dataSet.strategies
+      return this.dataSet.strategies.filter((item) => {
+        return [item.name, item.areas.join(' '), item.calendar, item.time, item.condition, item.dimming, item.savingRate, item.status].join(' ').toLowerCase().includes(key)
+      })
+    },
+    filteredAudits() {
+      const key = this.auditKeyword.toLowerCase()
+      if (!key) return this.dataSet.audits
+      return this.dataSet.audits.filter((item) => {
+        return [item.time, item.action, item.target, item.operator, item.reason, item.priority, item.expires, item.result].join(' ').toLowerCase().includes(key)
+      })
     }
   },
   watch: {

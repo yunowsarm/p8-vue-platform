@@ -239,11 +239,16 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
 }
-.filter-group {
+.filter-group,
+.toolbar-left,
+.toolbar-right {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-height: 32px;
+  flex-wrap: wrap;
 }
 .filter-group .el-input {
   width: 220px;
@@ -252,12 +257,32 @@
   width: 130px;
 }
 .toolbar-note {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  gap: 4px;
   color: #8794a6;
   font-size: 10px;
+  line-height: 18px;
 }
 .toolbar-note i {
-  margin-right: 4px;
   color: #1aa273;
+}
+::v-deep .table-toolbar .el-input__inner {
+  height: 32px;
+  line-height: 32px;
+}
+::v-deep .table-toolbar .el-button--small {
+  display: inline-flex;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+::v-deep .table-toolbar .el-button--small span {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
 }
 .tab-count {
   display: inline-flex;
@@ -509,7 +534,7 @@
     flex-wrap: wrap;
   }
   .table-toolbar {
-    align-items: flex-start;
+    align-items: center;
     flex-direction: column;
     padding: 10px 0;
   }

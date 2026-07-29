@@ -259,10 +259,18 @@
             ><i class="el-icon-connection"></i> 权限联动 <b class="tab-count">{{ linkages.length }}</b></span
           >
           <div class="table-toolbar">
-            <div class="toolbar-note"><i class="el-icon-lock"></i>仅开放审批通过的车辆、门区与楼层，到期、取消或离场自动回收</div>
+            <div class="toolbar-left">
+              <el-input
+                v-model.trim="linkageKeyword"
+                size="small"
+                clearable
+                prefix-icon="el-icon-search"
+                placeholder="搜索预约编号 / 访客 / 停车权限 / 门禁权限 / 梯控权限 / 状态"
+              />
+            </div>
             <el-button size="small" icon="el-icon-refresh" @click="retryLinkage">重试异常联动</el-button>
           </div>
-          <el-table :data="linkages" size="small"
+          <el-table :data="filteredLinkages" size="small"
             ><el-table-column prop="reservation" label="预约编号" min-width="140" /><el-table-column prop="visitor" label="访客" min-width="105" /><el-table-column
               prop="parking"
               label="停车权限"
@@ -576,6 +584,7 @@ export default {
       alertKeyword: '',
       alertType: '',
       alertStatus: '',
+      linkageKeyword: '',
       pagination: { reservations: { page: 1, size: 5 }, inpark: { page: 1, size: 5 }, alerts: { page: 1, size: 5 } },
       reservationDialogVisible: false,
       groupDialogVisible: false,
@@ -644,6 +653,13 @@ export default {
           (!this.alertType || item.type === this.alertType) &&
           (!this.alertStatus || item.status === this.alertStatus)
       )
+    },
+    filteredLinkages() {
+      const key = this.linkageKeyword.toLowerCase()
+      if (!key) return this.linkages
+      return this.linkages.filter((item) => {
+        return [item.reservation, item.visitor, item.parking, item.access, item.elevator, item.credential, item.valid, item.status].join(' ').toLowerCase().indexOf(key) > -1
+      })
     },
     pagedReservations() {
       return this.paginate(this.filteredReservations, 'reservations')

@@ -11,7 +11,6 @@
       <div class="header-actions">
         <el-button size="small" icon="el-icon-guide" @click="strategyDialogVisible = true">误报治理</el-button>
         <el-button size="small" icon="el-icon-unlock" @click="defenseDialogVisible = true">布撤防计划</el-button>
-        <el-button type="primary" size="small" icon="el-icon-plus" @click="openRule()">新增检测规则</el-button>
       </div>
     </header>
 
@@ -247,7 +246,14 @@
         <el-tab-pane name="rules">
           <span slot="label"><i class="el-icon-set-up"></i> 检测规则 <b class="tab-count">{{ rules.length }}</b></span>
           <div class="table-toolbar">
-            <div class="toolbar-note primary-note"><i class="el-icon-info"></i> 每条规则可独立设置区域、时段、目标、停留时间和灵敏度</div>
+            <el-input
+              v-model.trim="ruleQuery"
+              class="table-search"
+              size="small"
+              clearable
+              prefix-icon="el-icon-search"
+              placeholder="搜索规则名称 / 防区 / 行为 / 目标 / 来源"
+            />
             <el-button type="primary" size="small" icon="el-icon-plus" @click="openRule()">新增规则</el-button>
           </div>
           <el-table :data="paginatedRules" size="small" class="data-table" max-height="360">
@@ -280,7 +286,7 @@
               :current-page="pagination.rules.page"
               :page-size="pagination.rules.size"
               :page-sizes="pageSizeOptions"
-              :total="rules.length"
+              :total="filteredRules.length"
               layout="total, sizes, prev, pager, next, jumper"
               @current-change="pagination.rules.page = $event"
               @size-change="changePageSize('rules', $event)"
@@ -291,11 +297,14 @@
         <el-tab-pane name="health">
           <span slot="label"><i class="el-icon-first-aid-kit"></i> 设备健康 <b class="tab-count danger-count">{{ abnormalDevices.length }}</b></span>
           <div class="table-toolbar">
-            <div class="health-summary">
-              <span><i class="summary-dot offline"></i>离线 1</span>
-              <span><i class="summary-dot fault"></i>故障 2</span>
-              <span><i class="summary-dot warning"></i>质量异常 1</span>
-            </div>
+            <el-input
+              v-model.trim="deviceQuery"
+              class="health-search"
+              size="small"
+              clearable
+              prefix-icon="el-icon-search"
+              placeholder="搜索设备编号 / 名称 / 防区 / 类型"
+            />
             <el-button size="small" icon="el-icon-refresh" @click="runDeviceCheck">立即巡检</el-button>
           </div>
           <el-table :data="paginatedDevices" size="small" class="data-table" max-height="360">
@@ -321,7 +330,7 @@
               :current-page="pagination.devices.page"
               :page-size="pagination.devices.size"
               :page-sizes="pageSizeOptions"
-              :total="devices.length"
+              :total="filteredDevices.length"
               layout="total, sizes, prev, pager, next, jumper"
               @current-change="pagination.devices.page = $event"
               @size-change="changePageSize('devices', $event)"
@@ -419,7 +428,23 @@
         <el-form-item label="目标类型"><el-checkbox-group v-model="ruleForm.targets"><el-checkbox label="人">人</el-checkbox><el-checkbox label="车辆">车辆</el-checkbox><el-checkbox label="非机动车">非机动车</el-checkbox></el-checkbox-group></el-form-item>
         <el-row :gutter="16">
           <el-col :span="12"><el-form-item label="生效模式"><el-radio-group v-model="ruleForm.periodMode"><el-radio-button label="全天">全天</el-radio-button><el-radio-button label="自定义">自定义</el-radio-button></el-radio-group></el-form-item></el-col>
-          <el-col :span="12"><el-form-item v-if="ruleForm.periodMode === '自定义'" label="生效时段"><el-time-picker v-model="ruleForm.timeRange" is-range range-separator="至" start-placeholder="开始" end-placeholder="结束" value-format="HH:mm" format="HH:mm" /></el-form-item></el-col>
+          <el-col :span="12">
+            <el-form-item v-if="ruleForm.periodMode === '自定义'" label="生效时段" class="time-range-form-item">
+              <div class="compact-time-range">
+                <el-time-select
+                  v-model="ruleForm.timeRange[0]"
+                  placeholder="开始"
+                  :picker-options="{ start: '00:00', step: '00:30', end: '23:30' }"
+                />
+                <span class="time-range-separator">至</span>
+                <el-time-select
+                  v-model="ruleForm.timeRange[1]"
+                  placeholder="结束"
+                  :picker-options="{ start: '00:00', step: '00:30', end: '23:30' }"
+                />
+              </div>
+            </el-form-item>
+          </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="12"><el-form-item label="停留/持续"><el-input-number v-model="ruleForm.duration" :min="1" :max="600" controls-position="right" /><span class="form-unit">秒</span></el-form-item></el-col>
@@ -512,6 +537,8 @@ export default {
       alarmDrawerVisible: false,
       currentAlarm: null,
       alarmQuery: { keyword: '', type: '', status: '' },
+      ruleQuery: '',
+      deviceQuery: '',
       alarmTypes: ['越界', '攀爬', '翻越', '区域入侵', '长时间徘徊', '设备离线', '设备遮挡', '设备拆动', '通信故障'],
       alarmStatuses: ['待确认', '处置中', '派单中', '待复核', '复核通过', '误报', '已关闭'],
       sourceOptions: ['视频', '雷达', '红外', '视频+雷达', '雷达+红外', '视频+雷达+红外'],
@@ -589,11 +616,32 @@ export default {
     },
     paginatedRules() {
       const start = (this.pagination.rules.page - 1) * this.pagination.rules.size
-      return this.rules.slice(start, start + this.pagination.rules.size)
+      return this.filteredRules.slice(start, start + this.pagination.rules.size)
+    },
+    filteredRules() {
+      const keyword = this.ruleQuery.toLowerCase()
+      if (!keyword) return this.rules
+      return this.rules.filter((item) => {
+        return [
+          item.name,
+          item.zones.join(' '),
+          item.events.join(' '),
+          item.targets.join(' '),
+          item.period,
+          item.duration,
+          item.source,
+          item.status
+        ].join(' ').toLowerCase().indexOf(keyword) > -1
+      })
+    },
+    filteredDevices() {
+      const keyword = this.deviceQuery.toLowerCase()
+      if (!keyword) return this.devices
+      return this.devices.filter((item) => [item.id, item.name, item.type, item.zone, item.status, item.health].join(' ').toLowerCase().indexOf(keyword) > -1)
     },
     paginatedDevices() {
       const start = (this.pagination.devices.page - 1) * this.pagination.devices.size
-      return this.devices.slice(start, start + this.pagination.devices.size)
+      return this.filteredDevices.slice(start, start + this.pagination.devices.size)
     },
     abnormalDevices() {
       return this.devices.filter((item) => item.status !== '在线' || item.health !== '正常')
@@ -605,6 +653,12 @@ export default {
       handler() {
         this.pagination.alarms.page = 1
       }
+    },
+    ruleQuery() {
+      this.pagination.rules.page = 1
+    },
+    deviceQuery() {
+      this.pagination.devices.page = 1
     }
   },
   methods: {
@@ -845,8 +899,6 @@ export default {
 <style lang="scss" scoped>
 @import '../components/iotWorkspacePage.scss';
 .perimeter-page {
-  --iot-overview-height: clamp(470px, calc(100vh - 400px), 540px);
-  --iot-overview-height: clamp(470px, calc(100dvh - 400px), 540px);
   --primary: #2468f2;
   --primary-soft: #edf4ff;
   --text: #1d2a3b;
@@ -1382,16 +1434,21 @@ button {
 .alarm-stream-foot i { margin-right: 6px; color: var(--primary); }
 
 .management-card { padding: 0 16px 14px; overflow: hidden; }
-.table-toolbar { display: flex; min-height: 48px; align-items: center; justify-content: space-between; gap: 12px; }
+.table-toolbar { display: flex; min-height: 48px; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .table-pagination { display: flex; min-height: 50px; align-items: center; justify-content: flex-end; padding-top: 8px; overflow-x: auto; box-sizing: border-box; }
-.filter-group { display: flex; gap: 8px; }
+.filter-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 32px; }
 .filter-group .el-input { width: 230px; }
 .filter-group .el-select { width: 130px; }
-.toolbar-note { color: #8794a6; font-size: 11px; }
-.toolbar-note i { margin-right: 5px; color: #1aaa75; }
+.toolbar-note { display: inline-flex; min-height: 32px; align-items: center; gap: 5px; color: #8794a6; font-size: 11px; line-height: 18px; }
+.toolbar-note i { color: #1aaa75; }
 .primary-note { color: #66758b; }
 .primary-note i { color: var(--primary); }
 .health-summary { display: flex; gap: 18px; color: #65748a; font-size: 12px; }
+.table-search,
+.health-search {
+  width: 300px;
+  max-width: 100%;
+}
 .tab-count { display: inline-block; min-width: 17px; height: 17px; margin-left: 3px; color: #65738a; line-height: 17px; text-align: center; background: #edf0f5; border-radius: 9px; font-size: 10px; }
 .danger-count { color: #d74747; background: #fff0f0; }
 .mini-tag { margin: 1px 3px 1px 0; }
@@ -1415,6 +1472,28 @@ button {
 .warning-intro > i { color: #df8a1f; }
 .warning-intro b { color: #8c5b1c; }
 .config-form .el-select, .config-form .el-date-editor--datetimerange, .config-form .el-time-editor { width: 100%; }
+.config-form .time-range-form-item { margin-bottom: 18px; }
+.compact-time-range {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 22px minmax(0, 1fr);
+  gap: 6px;
+  width: 100%;
+  align-items: center;
+}
+.compact-time-range .el-date-editor.el-input,
+.compact-time-range .el-input {
+  width: 100%;
+}
+.compact-time-range .el-input__inner {
+  padding-right: 24px;
+  padding-left: 28px;
+}
+.time-range-separator {
+  color: #7b8798;
+  font-size: 12px;
+  text-align: center;
+  line-height: 32px;
+}
 .config-form .el-checkbox.is-bordered { margin: 0 6px 5px 0; }
 .form-unit { margin-left: 7px; color: #8e9aac; font-size: 11px; }
 

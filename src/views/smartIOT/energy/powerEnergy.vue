@@ -143,8 +143,19 @@
           <span slot="label" class="tab-label"
             ><i class="el-icon-warning-outline"></i>异常用能 <b class="tab-count">{{ dataSet.anomalies.length }}</b></span
           >
-          <div class="warning-note">覆盖线路损耗、三相不平衡、功率因数偏低、负荷突变、长期零值、计量倒退与表计离线；所有处置保留分析轨迹。</div>
-          <el-table :data="dataSet.anomalies" size="small" stripe>
+          <div class="toolbar">
+            <div class="toolbar-left">
+              <el-input
+                v-model.trim="anomalyKeyword"
+                size="small"
+                clearable
+                prefix-icon="el-icon-search"
+                placeholder="搜索事件编号 / 异常类型 / 关联表计 / 异常说明 / 处理人 / 状态"
+                style="width: 360px"
+              ></el-input>
+            </div>
+          </div>
+          <el-table :data="filteredAnomalies" size="small" stripe>
             <el-table-column prop="id" label="事件编号" width="132"></el-table-column>
             <el-table-column label="级别" width="80"
               ><template slot-scope="scope"
@@ -172,10 +183,19 @@
             ><i class="el-icon-coin"></i>定额预算与对标 <b class="tab-count">{{ dataSet.quotas.length }}</b></span
           >
           <div class="toolbar">
-            <div class="toolbar-note">支持按面积、人数、产值或运行时长计算单位能耗</div>
+            <div class="toolbar-left">
+              <el-input
+                v-model.trim="quotaKeyword"
+                size="small"
+                clearable
+                prefix-icon="el-icon-search"
+                placeholder="搜索考核对象 / 对标维度 / 月度定额 / 预算 / 状态"
+                style="width: 340px"
+              ></el-input>
+            </div>
             <el-button type="primary" size="small" @click="openQuotaDialog">新增定额</el-button>
           </div>
-          <el-table :data="dataSet.quotas" size="small" stripe>
+          <el-table :data="filteredQuotas" size="small" stripe>
             <el-table-column prop="object" label="考核对象" min-width="145"></el-table-column>
             <el-table-column prop="dimension" label="对标维度" width="100"></el-table-column>
             <el-table-column prop="quota" label="月度定额" width="105"></el-table-column>
@@ -211,10 +231,19 @@
             ><i class="el-icon-document"></i>用能报表 <b class="tab-count">{{ dataSet.reports.length }}</b></span
           >
           <div class="toolbar">
-            <div class="toolbar-note">日、月、季、年报表均可追溯到表计原始采集值</div>
+            <div class="toolbar-left">
+              <el-input
+                v-model.trim="reportKeyword"
+                size="small"
+                clearable
+                prefix-icon="el-icon-search"
+                placeholder="搜索报表编号 / 周期 / 统计范围 / 状态"
+                style="width: 320px"
+              ></el-input>
+            </div>
             <el-button type="primary" size="small" @click="reportDialog = true">生成报表</el-button>
           </div>
-          <el-table :data="dataSet.reports" size="small" stripe>
+          <el-table :data="filteredReports" size="small" stripe>
             <el-table-column prop="id" label="报表编号" width="135"></el-table-column>
             <el-table-column prop="period" label="周期" width="75"></el-table-column>
             <el-table-column prop="range" label="统计范围" min-width="145"></el-table-column>
@@ -393,6 +422,9 @@ export default {
       meterLevel: '',
       meterStatus: '',
       meterPage: 1,
+      anomalyKeyword: '',
+      quotaKeyword: '',
+      reportKeyword: '',
       loadChart: null,
       flowChart: null,
       ruleDialog: false,
@@ -468,6 +500,27 @@ export default {
     pagedMeters() {
       const start = (this.meterPage - 1) * 5
       return this.filteredMeters.slice(start, start + 5)
+    },
+    filteredAnomalies() {
+      const keyword = this.anomalyKeyword.toLowerCase()
+      if (!keyword) return this.dataSet.anomalies
+      return this.dataSet.anomalies.filter((item) => {
+        return [item.id, item.level, item.type, item.meter, item.detail, item.time, item.assignee, item.status].join(' ').toLowerCase().includes(keyword)
+      })
+    },
+    filteredQuotas() {
+      const keyword = this.quotaKeyword.toLowerCase()
+      if (!keyword) return this.dataSet.quotas
+      return this.dataSet.quotas.filter((item) => {
+        return [item.object, item.dimension, item.quota, item.progress, item.budget, item.spent, item.forecast, item.status].join(' ').toLowerCase().includes(keyword)
+      })
+    },
+    filteredReports() {
+      const keyword = this.reportKeyword.toLowerCase()
+      if (!keyword) return this.dataSet.reports
+      return this.dataSet.reports.filter((item) => {
+        return [item.id, item.period, item.range, item.energy, item.cost, item.peakRate, item.anomaly, item.saving, item.status].join(' ').toLowerCase().includes(keyword)
+      })
     },
     rawSamples() {
       if (!this.drawerRecord || this.drawerMode !== 'meter') return []

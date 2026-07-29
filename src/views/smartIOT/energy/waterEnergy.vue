@@ -128,8 +128,19 @@
           ><span slot="label" class="tab-label"
             ><i class="el-icon-warning-outline"></i>泄漏告警 <b class="tab-count">{{ dataSet.leaks.length }}</b></span
           >
-          <div class="warning-note"><b>闭环原则：</b>严重泄漏自动生成设备工单；任何关阀动作均须人工确认。涉及消防、应急或重要生产用水时，系统禁止远程关阀，只允许现场核查与派单。</div>
-          <el-table :data="dataSet.leaks" size="small" stripe
+          <div class="toolbar">
+            <div class="toolbar-left">
+              <el-input
+                v-model.trim="leakKeyword"
+                size="small"
+                clearable
+                prefix-icon="el-icon-search"
+                placeholder="搜索事件编号 / 研判类型 / 位置 / 工单 / 供水保护 / 状态"
+                style="width: 360px"
+              ></el-input>
+            </div>
+          </div>
+          <el-table :data="filteredLeaks" size="small" stripe
             ><el-table-column prop="id" label="事件编号" width="137"></el-table-column
             ><el-table-column label="级别" width="80"
               ><template slot-scope="scope"
@@ -154,10 +165,19 @@
             ><i class="el-icon-cpu"></i>泵组效率 <b class="tab-count">{{ dataSet.pumps.length }}</b></span
           >
           <div class="toolbar">
-            <div class="toolbar-note">同步水表、电表与泵控运行数据，计算每立方米输水电耗并按时段比较</div>
+            <div class="toolbar-left">
+              <el-input
+                v-model.trim="pumpKeyword"
+                size="small"
+                clearable
+                prefix-icon="el-icon-search"
+                placeholder="搜索泵组编号 / 泵组名称 / 泵房 / 运行时段 / 状态"
+                style="width: 340px"
+              ></el-input>
+            </div>
             <el-date-picker v-model="pumpDate" type="date" size="small" value-format="yyyy-MM-dd"></el-date-picker>
           </div>
-          <el-table :data="dataSet.pumps" size="small" stripe
+          <el-table :data="filteredPumps" size="small" stripe
             ><el-table-column prop="id" label="泵组编号" width="100"></el-table-column><el-table-column prop="name" label="泵组名称" min-width="145"></el-table-column
             ><el-table-column prop="area" label="泵房" width="110"></el-table-column><el-table-column prop="flow" label="流量(m³/h)" width="105"></el-table-column
             ><el-table-column prop="power" label="功率(kW)" width="95"></el-table-column><el-table-column prop="energyPerM3" label="单耗(kWh/m³)" width="118"></el-table-column
@@ -184,10 +204,19 @@
             ><i class="el-icon-coin"></i>定额预算 <b class="tab-count">{{ dataSet.quotas.length }}</b></span
           >
           <div class="toolbar">
-            <div class="toolbar-note">按面积、人数或产值进行用水对标，自动预测月末执行结果</div>
+            <div class="toolbar-left">
+              <el-input
+                v-model.trim="quotaKeyword"
+                size="small"
+                clearable
+                prefix-icon="el-icon-search"
+                placeholder="搜索考核对象 / 对标维度 / 定额 / 实际用量 / 预算 / 状态"
+                style="width: 360px"
+              ></el-input>
+            </div>
             <el-button type="primary" size="small" @click="quotaDialog = true">新增定额</el-button>
           </div>
-          <el-table :data="dataSet.quotas" size="small" stripe
+          <el-table :data="filteredQuotas" size="small" stripe
             ><el-table-column prop="object" label="考核对象" min-width="145"></el-table-column><el-table-column prop="dimension" label="对标维度" width="95"></el-table-column
             ><el-table-column prop="quota" label="月度定额(m³)" width="120"></el-table-column><el-table-column prop="actual" label="实际用量(m³)" width="120"></el-table-column
             ><el-table-column label="执行进度" min-width="170"
@@ -351,6 +380,9 @@ export default {
       dataSet: waterEnergy,
       activeTab: 'overview',
       keyword: '',
+      leakKeyword: '',
+      pumpKeyword: '',
+      quotaKeyword: '',
       meterLevel: '',
       meterPage: 1,
       pumpDate: '2026-07-20',
@@ -394,6 +426,28 @@ export default {
     pagedMeters() {
       const start = (this.meterPage - 1) * 5
       return this.filteredMeters.slice(start, start + 5)
+    },
+    filteredLeaks() {
+      const key = this.leakKeyword.toLowerCase()
+      if (!key) return this.dataSet.leaks
+      return this.dataSet.leaks.filter((item) => {
+        const protection = item.protectedSupply ? '禁止关阀' : '可申请'
+        return [item.id, item.level, item.type, item.area, item.duration, item.estimate, item.workOrder, protection, item.status].join(' ').toLowerCase().includes(key)
+      })
+    },
+    filteredPumps() {
+      const key = this.pumpKeyword.toLowerCase()
+      if (!key) return this.dataSet.pumps
+      return this.dataSet.pumps.filter((item) => {
+        return [item.id, item.name, item.area, item.flow, item.power, item.energyPerM3, item.runtime, item.efficiency, item.period, item.status].join(' ').toLowerCase().includes(key)
+      })
+    },
+    filteredQuotas() {
+      const key = this.quotaKeyword.toLowerCase()
+      if (!key) return this.dataSet.quotas
+      return this.dataSet.quotas.filter((item) => {
+        return [item.object, item.dimension, item.quota, item.actual, item.progress, item.budget, item.spent, item.forecast, item.status].join(' ').toLowerCase().includes(key)
+      })
     },
     rawSamples() {
       if (!this.drawerRecord || this.drawerMode !== 'meter') return []

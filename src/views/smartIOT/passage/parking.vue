@@ -284,10 +284,18 @@
             ><i class="el-icon-document-checked"></i> 人工处置审计 <b class="tab-count">{{ audits.length }}</b></span
           >
           <div class="table-toolbar">
-            <div class="toolbar-note"><i class="el-icon-lock"></i>人工改牌、抬杆、离线放行及设备故障均不可无记录删除</div>
+            <div class="toolbar-left">
+              <el-input
+                v-model.trim="auditKeyword"
+                size="small"
+                clearable
+                prefix-icon="el-icon-search"
+                placeholder="搜索审计编号 / 操作类型 / 对象 / 操作人 / 原因 / 结果"
+              />
+            </div>
             <el-button size="small" icon="el-icon-unlock" @click="openManualPassage">新增人工处置</el-button>
           </div>
-          <el-table :data="audits" size="small"
+          <el-table :data="filteredAudits" size="small"
             ><el-table-column prop="id" label="审计编号" width="110" /><el-table-column prop="time" label="操作时间" min-width="150" /><el-table-column
               prop="action"
               label="操作类型"
@@ -516,6 +524,7 @@ export default {
       vehicleType: '',
       vehicleList: '',
       paymentKeyword: '',
+      auditKeyword: '',
       reconcileStatus: '',
       pagination: { violations: { page: 1, size: 5 }, vehicles: { page: 1, size: 5 }, finance: { page: 1, size: 5 } },
       zonePagination: { page: 1, size: 8 },
@@ -583,6 +592,13 @@ export default {
     filteredPayments() {
       const key = this.paymentKeyword.toLowerCase()
       return this.payments.filter((item) => (!key || [item.id, item.plate].join(' ').toLowerCase().indexOf(key) > -1) && (!this.reconcileStatus || item.reconcile === this.reconcileStatus))
+    },
+    filteredAudits() {
+      const key = this.auditKeyword.toLowerCase()
+      if (!key) return this.audits
+      return this.audits.filter((item) => {
+        return [item.id, item.time, item.action, item.target, item.operator, item.reason, item.approval, item.result].join(' ').toLowerCase().indexOf(key) > -1
+      })
     },
     pagedViolations() {
       return this.paginate(this.filteredViolations, 'violations')
