@@ -828,7 +828,7 @@ export default {
 }
 .zone-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 260px;
+  grid-template-columns: minmax(0, 3fr) minmax(320px, 2fr);
   grid-template-rows: minmax(0, 1fr) auto;
   min-height: 0;
   flex: 1 1 auto;
@@ -969,18 +969,20 @@ export default {
   color: #df4c4c;
 }
 .zone-detail {
-  display: flex;
+  display: grid;
   grid-column: 2;
   grid-row: 1 / span 2;
+  grid-template-columns: minmax(128px, 0.85fr) minmax(150px, 1.15fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
   align-items: center;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 18px 16px;
+  gap: 18px 16px;
+  padding: 20px;
   background: #f8fafc;
   border-left: 1px solid #edf0f4;
 }
 .zone-detail-title {
   display: flex;
+  grid-column: 1 / -1;
   width: 100%;
   align-items: center;
   gap: 8px;
@@ -1010,11 +1012,14 @@ export default {
 }
 .zone-ring {
   display: flex;
+  grid-column: 1;
+  grid-row: 2;
   width: 128px;
   height: 128px;
   align-items: center;
   justify-content: center;
-  margin: 19px 0;
+  justify-self: center;
+  margin: 0;
   background: conic-gradient(#3478e1 var(--rate), #e8edf3 0);
   border-radius: 50%;
 }
@@ -1046,10 +1051,12 @@ export default {
 }
 .zone-detail-grid {
   display: grid;
+  grid-column: 2;
+  grid-row: 2;
   width: 100%;
   grid-template-columns: 1fr 1fr;
   gap: 9px;
-  margin-bottom: 16px;
+  margin: 0;
 }
 .zone-detail-grid span {
   padding: 9px;
@@ -1075,6 +1082,12 @@ export default {
 }
 .zone-detail-grid b.red {
   color: #df4d4d;
+}
+.zone-detail > .el-button {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  min-width: 142px;
+  justify-self: center;
 }
 .entrance-panel {
   display: flex;

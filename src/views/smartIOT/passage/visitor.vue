@@ -11,8 +11,7 @@
       <div class="header-actions">
         <el-button size="small" icon="el-icon-lock" @click="policyDialogVisible = true">数据与隐私策略</el-button
         ><el-button size="small" icon="el-icon-user-solid" @click="evacuationDialogVisible = true">在园疏散清单</el-button
-        ><el-button size="small" icon="el-icon-suitcase" @click="openGroupVisit">团体 / 外协登记</el-button
-        ><el-button type="primary" size="small" icon="el-icon-plus" @click="openReservation()">新建访客预约</el-button>
+        ><el-button size="small" icon="el-icon-suitcase" @click="openGroupVisit">团体 / 外协登记</el-button>
       </div>
     </header>
 
@@ -35,22 +34,13 @@
       <article class="surface visitor-board">
         <div class="surface-head">
           <div>
-            <div class="surface-title"><i class="el-icon-data-analysis"></i> 今日到访态势</div>
-            <span class="surface-subtitle">预约、审批、核验、在园与离场数据由各通行设备实时回传</span>
+            <div class="surface-title"><i class="el-icon-data-analysis"></i> 在园访客态势</div>
+            <span class="surface-subtitle">按园区位置展示当前在园访客，停车、门禁与梯控状态实时联动</span>
           </div>
           <div class="surface-meta">
             <span><i class="dot online"></i>联动正常 45</span><span><i class="dot warning"></i>待审批 {{ pendingReservations.length }}</span
             ><span class="sync-time">更新 {{ lastSyncTime }}</span
             ><el-button size="mini" icon="el-icon-refresh" :loading="refreshing" :disabled="refreshing" @click="refreshVisitor">刷新</el-button>
-          </div>
-        </div>
-        <div class="process-flow">
-          <div v-for="(item, index) in process" :key="item.key" class="process-step">
-            <div class="process-node" :style="{ '--step-color': item.color }">
-              <i :class="processIcon(item.key)"></i><b>{{ item.value }}</b>
-            </div>
-            <span>{{ item.name }}</span
-            ><i v-if="index < process.length - 1" class="el-icon-arrow-right flow-arrow"></i>
           </div>
         </div>
         <div class="visitor-live-layout">
@@ -199,7 +189,7 @@
               ><template slot-scope="{ row }"
                 ><el-tag :type="inParkTag(row.status)" size="mini">{{ row.status }}</el-tag></template
               ></el-table-column
-            ><el-table-column label="操作" width="105" fixed="right"
+            ><el-table-column label="操作" fixed="right"
               ><template slot-scope="{ row }"
                 ><el-button type="text" size="mini" @click="openInPark(row)">详情</el-button><el-button type="text" size="mini" @click="confirmLeave(row)">确认离场</el-button></template
               ></el-table-column
@@ -559,7 +549,6 @@ export default {
   data() {
     return {
       kpis: visitor.kpis,
-      process: visitor.process,
       reservations: JSON.parse(JSON.stringify(visitor.reservations)),
       inPark: JSON.parse(JSON.stringify(visitor.inPark)),
       alerts: JSON.parse(JSON.stringify(visitor.alerts)),
@@ -719,10 +708,6 @@ export default {
     changePageSize(type, size) {
       this.pagination[type].size = size
       this.pagination[type].page = 1
-    },
-    processIcon(key) {
-      const map = { reserved: 'el-icon-date', approved: 'el-icon-s-check', arrived: 'el-icon-place', inPark: 'el-icon-user', left: 'el-icon-circle-check' }
-      return map[key] || 'el-icon-more'
     },
     visitorInitial(name) {
       return name ? name.replace(/（.*$/, '').slice(0, 1) : '访'
@@ -984,52 +969,6 @@ export default {
 .visitor-overview .surface-subtitle,
 .visitor-overview .surface-meta {
   font-size: 12px;
-}
-.process-flow {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-around;
-  padding: 14px 20px 11px;
-  border-bottom: 1px solid #edf0f4;
-}
-.process-step {
-  position: relative;
-  display: flex;
-  min-width: 100px;
-  align-items: center;
-  flex-direction: column;
-}
-.process-node {
-  display: flex;
-  width: 54px;
-  height: 54px;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  color: #fff;
-  background: var(--step-color);
-  border: 5px solid #fff;
-  border-radius: 50%;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--step-color) 25%, transparent);
-}
-.process-node i {
-  font-size: 13px;
-}
-.process-node b {
-  margin-top: 2px;
-  font-size: 16px;
-}
-.process-step > span {
-  margin-top: 6px;
-  color: #5d6c80;
-  font-size: 11px;
-}
-.flow-arrow {
-  position: absolute;
-  left: calc(50% + 40px);
-  top: 20px;
-  color: #b3bdc8;
-  font-size: 18px;
 }
 .visitor-live-layout {
   display: grid;
@@ -1567,14 +1506,6 @@ export default {
   }
 }
 @media (max-width: 760px) {
-  .process-flow {
-    overflow-x: auto;
-    justify-content: flex-start;
-    gap: 35px;
-  }
-  .process-step {
-    min-width: 80px;
-  }
   .visitor-live-layout {
     display: block;
     min-height: 0;
