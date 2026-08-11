@@ -7,7 +7,7 @@ export const fireMaintenance = {
     { title: '30天内到期', value: 12, unit: '台', sub: '7 日内到期 5 台', icon: 'el-icon-date', type: 'orange' },
     { title: '已逾期', value: 4, unit: '台', sub: '最长逾期 12 天', icon: 'el-icon-warning-outline', type: 'red' },
     { title: '本月已维保', value: 26, unit: '次', sub: '计划完成率 81.3%', icon: 'el-icon-finished', type: 'cyan' },
-    { title: '故障待修', value: 3, unit: '台', sub: '均已生成维修任务', icon: 'el-icon-tools', type: 'purple' }
+    { title: '故障待修', value: 3, unit: '台', sub: '均已生成维修任务', icon: 'el-icon-setting', type: 'purple' }
   ],
   categories: [
     { name: '火灾探测器', total: 68, maintained: 58, color: '#2f80ed' },

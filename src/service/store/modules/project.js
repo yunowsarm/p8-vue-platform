@@ -1,11 +1,14 @@
 import api from '@/plugins/api'
 import store from '@/plugins/store'
+
+const buttonAuthRequests = {}
 /**
  * User STORE
  */
 
 const project = {
   state: {
+    buttonAuth: {},
     buttonLimit: [], // table行上按钮权限，置灰/隐藏/悬浮提示
     dicConfig: {}, // 系统项目状态、计划状态、任务状态集合
     baseConfig: {} // 系统基础配置项，例如系统名称\logo等
@@ -13,6 +16,13 @@ const project = {
   },
 
   mutations: {
+    SET_BUTTON_AUTH(state, { key, buttons }) {
+      state.buttonAuth = { ...state.buttonAuth, [key]: buttons }
+    },
+    RESET_BUTTON_AUTH(state) {
+      state.buttonAuth = {}
+      Object.keys(buttonAuthRequests).forEach((key) => delete buttonAuthRequests[key])
+    },
     SET_BUTTONLIMIT(state, data) {
       state.buttonLimit = data
     },
@@ -28,6 +38,26 @@ const project = {
   },
 
   actions: {
+    getButtonAuth({ commit, state, rootState }, { resourceName, parentUuid = '', permissionVo = {} }) {
+      const key = JSON.stringify({ userId: rootState.user.userId, resourceName, parentUuid, permissionVo })
+      if (Object.prototype.hasOwnProperty.call(state.buttonAuth, key)) {
+        return Promise.resolve(state.buttonAuth[key])
+      }
+      if (buttonAuthRequests[key]) return buttonAuthRequests[key]
+
+      buttonAuthRequests[key] = api['button.info']({ resourceName, parentUuid, permissionVo }).then((res) => {
+        const buttons = Array.isArray(res) ? res : []
+        commit('SET_BUTTON_AUTH', { key, buttons })
+        return buttons
+      }).then((buttons) => {
+        delete buttonAuthRequests[key]
+        return buttons
+      }, (err) => {
+        delete buttonAuthRequests[key]
+        return Promise.reject(err)
+      })
+      return buttonAuthRequests[key]
+    },
     /**
      * 获取用户信息
      * 返回当前用户的基础信息

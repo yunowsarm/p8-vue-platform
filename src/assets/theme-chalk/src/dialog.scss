@@ -246,3 +246,17 @@
     }
   }
 }
+
+.el-dialog .el-input.is-disabled .el-input__inner,
+.el-dialog .el-input__inner:disabled {
+  color: #606266 !important;
+  -webkit-text-fill-color: #606266;
+  opacity: 0.9;
+}
+
+.el-dialog .el-textarea.is-disabled .el-textarea__inner,
+.el-dialog .el-textarea__inner:disabled {
+  color: #606266 !important;
+  -webkit-text-fill-color: #606266;
+  opacity: 0.9;
+}

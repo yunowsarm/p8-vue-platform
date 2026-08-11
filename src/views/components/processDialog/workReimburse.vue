@@ -1,4 +1,4 @@
-<!-- 费用报销 -->
+<!-- 常规报销 -->
 <template>
   <div class="process-approve-dialog">
     <form-list

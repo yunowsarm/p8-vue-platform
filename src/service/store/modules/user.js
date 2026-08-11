@@ -218,6 +218,7 @@ const user = {
             commit('REMOVE_ALL_VISITED')
             // 重置权限路由表, 该mutation 访问 store/asyncRouter.js
             commit('RESET_ROUTERS')
+            commit('RESET_BUTTON_AUTH')
             //
             resolve()
           })

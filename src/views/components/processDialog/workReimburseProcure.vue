@@ -1,4 +1,4 @@
-<!-- 资产采购-采购报销 -->
+<!-- 费用报销-采购 -->
 <template>
   <div class="process-approve-dialog">
     <form-list
@@ -26,12 +26,12 @@ import { P8Form as FormList } from 'p8-components-ui'
 import processApproveMixin from './tools/processApproveMixin'
 
 export default {
-  name: 'PurchaseReimbursementProcess',
+  name: 'WorkReimburseProcureProcess',
   components: { FormList },
   mixins: [processApproveMixin],
   data () {
     return {
-      processDefinitionKey: 'purchaseReimbursement'
+      processDefinitionKey: 'workReimburseProcure'
     }
   },
   methods: {
@@ -40,10 +40,8 @@ export default {
       this.row.forEach(item => {
         if (!item.ID) return
         config[item.ID] = {
-          filed1: { label: '申请部门', value: item.DEPARTMENT || '' },
-          filed2: { label: '申请人', value: item.PERSONNAME || '' },
-          filed3: { label: '用途分类', value: item.USECLASSIFICATION || '' },
-          filed4: { label: '紧急程度', value: item.URGENCYLEVEL || '' }
+          filed1: { label: '报销类型', value: item.REIMBURSEMENT_TYPE || '' },
+          filed2: { label: '申请人', value: item.PERSONNAME || '' }
         }
       })
       return config

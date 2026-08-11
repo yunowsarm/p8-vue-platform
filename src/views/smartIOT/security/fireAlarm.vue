@@ -1030,6 +1030,7 @@ export default {
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 10px;
   margin-top: 12px;
+  margin-bottom: 12px;
 }
 .kpi-card {
   position: relative;
@@ -1512,7 +1513,6 @@ export default {
   align-items: center;
   padding: 0 8px;
   border-radius: 11px;
-  font-size: 9px;
   white-space: nowrap;
 }
 .status-pill.success,
@@ -1810,6 +1810,11 @@ export default {
   padding: 17px 20px;
   border-bottom: 1px solid #e8edf3;
 }
+::v-deep .maintenance-drawer .el-drawer__title {
+  color: #293b55;
+  font-size: 16px;
+  font-weight: 600;
+}
 ::v-deep .maintenance-drawer .el-drawer__body {
   display: flex;
   min-height: 0;
@@ -1830,6 +1835,10 @@ export default {
   padding: 12px 20px;
   background: #fff;
   border-top: 1px solid #e8edf3;
+}
+::v-deep .maintenance-drawer .drawer-actions .el-button {
+  min-width: 68px;
+  font-size: 12px;
 }
 .drawer-hero {
   display: flex;
@@ -1863,7 +1872,7 @@ export default {
 .drawer-hero h3 {
   overflow: hidden;
   color: #293b55;
-  font-size: 14px;
+  font-size: 16px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1871,7 +1880,7 @@ export default {
   margin-top: 4px;
   color: #8c98a9;
   font-family: Consolas, monospace;
-  font-size: 9px;
+  font-size: 11px;
 }
 .detail-grid {
   display: grid;
@@ -1880,8 +1889,8 @@ export default {
   border-left: 1px solid #e6ebf2;
 }
 .detail-grid > div {
-  min-height: 62px;
-  padding: 9px 11px;
+  min-height: 68px;
+  padding: 10px 12px;
   border-right: 1px solid #e6ebf2;
   border-bottom: 1px solid #e6ebf2;
 }
@@ -1891,23 +1900,24 @@ export default {
 }
 .detail-grid span {
   color: #98a2b2;
-  font-size: 9px;
+  font-size: 11px;
 }
 .detail-grid b {
-  margin-top: 5px;
+  margin-top: 6px;
   color: #3e4f67;
-  font-size: 10px;
-  line-height: 16px;
+  font-size: 12px;
+  line-height: 18px;
 }
 .drawer-section-title {
-  margin: 17px 0 10px;
+  margin: 19px 0 10px;
   color: #34455e;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
 }
 .drawer-section-title small {
   margin-left: 4px;
   color: #8d99aa;
+  font-size: 11px;
   font-weight: 400;
 }
 .history-list button {
@@ -1951,18 +1961,18 @@ export default {
 }
 .history-list b {
   color: #3a4b64;
-  font-size: 10px;
+  font-size: 12px;
 }
 .history-list small {
   margin-top: 3px;
   color: #929dac;
-  font-size: 8px;
+  font-size: 10px;
 }
 .history-list em {
   margin-top: 4px;
   overflow: hidden;
   color: #778497;
-  font-size: 9px;
+  font-size: 10px;
   font-style: normal;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1976,7 +1986,7 @@ export default {
   color: #99a3b2;
   text-align: center;
   background: #f8fafc;
-  font-size: 10px;
+  font-size: 11px;
 }
 .detail-description {
   margin: 0;
@@ -1984,8 +1994,8 @@ export default {
   color: #56667c;
   background: #f7f9fc;
   border-radius: 5px;
-  font-size: 10px;
-  line-height: 18px;
+  font-size: 12px;
+  line-height: 20px;
 }
 .detail-description.warning {
   color: #a65f12;
@@ -1998,8 +2008,8 @@ export default {
 }
 .drawer-evidence span {
   display: flex;
-  min-width: 115px;
-  height: 52px;
+  min-width: 132px;
+  height: 56px;
   align-items: center;
   justify-content: center;
   gap: 5px;
@@ -2007,7 +2017,7 @@ export default {
   background: #f2f7fd;
   border: 1px solid #dce9f8;
   border-radius: 5px;
-  font-size: 8px;
+  font-size: 11px;
 }
 .drawer-evidence span i {
   color: #337dd5;
@@ -2037,7 +2047,7 @@ export default {
   width: 38px;
   flex: 0 0 38px;
   color: #8f9aaa;
-  font-size: 8px;
+  font-size: 10px;
 }
 .trace-item b,
 .trace-item small {
@@ -2045,13 +2055,13 @@ export default {
 }
 .trace-item b {
   color: #3b4d65;
-  font-size: 10px;
+  font-size: 12px;
 }
 .trace-item small {
   margin-top: 3px;
   color: #7f8b9c;
-  font-size: 8px;
-  line-height: 14px;
+  font-size: 10px;
+  line-height: 16px;
 }
 @media (max-width: 1280px) {
   .kpi-grid {

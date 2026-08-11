@@ -67,7 +67,7 @@ export default {
     .main-router {
       background: #fcfcfc;
       border-radius: 5px;
-      min-height: calc(100% - 28px);
+      // min-height: calc(100% - 28px);
     }
 
     .main-router--no-bg {
