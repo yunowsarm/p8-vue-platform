@@ -9,7 +9,7 @@
             {{ item.value }}
             <em>条</em>
           </b>
-          <p>{{ item.note }}</p>
+          <p v-if="config.showSummaryNote !== false">{{ item.note }}</p>
         </div>
       </article>
     </section>
@@ -17,7 +17,7 @@
     <section v-loading="loading" class="application-surface">
       <div class="list-toolbar">
         <el-input v-model.trim="keyword" clearable size="small" prefix-icon="el-icon-search" :placeholder="'搜索编号、企业名称、' + config.primaryLabel" @input="resetPage" @clear="resetPage" />
-        <el-select v-model="typeFilter" clearable size="small" :placeholder="'全部' + config.primaryLabel" @change="resetPage" @clear="resetPage">
+        <el-select v-if="primaryOptions.length" v-model="typeFilter" clearable size="small" :placeholder="'全部' + config.primaryLabel" @change="resetPage" @clear="resetPage">
           <el-option v-for="item in primaryOptions" :key="item" :label="item" :value="item" />
         </el-select>
         <el-select v-model="statusFilter" clearable size="small" placeholder="全部状态" @change="resetPage" @clear="resetPage">
@@ -54,7 +54,7 @@
           <div class="record-title">
             <span>
               <i :class="config.icon"></i>
-              {{ item[config.primaryKey] }}
+              {{ config.cardTitleText || item[config.cardTitleKey || config.primaryKey] }}
             </span>
             <time>{{ item[config.timeKey] }}</time>
           </div>
@@ -64,13 +64,13 @@
               <i class="el-icon-office-building"></i>
               {{ companyLabel(item.companyId) }}
             </span>
-            <span v-if="item.contactName">
+            <span v-if="item[config.contactNameKey || 'contactName']">
               <i class="el-icon-user"></i>
-              {{ item.contactName }}
+              {{ item[config.contactNameKey || 'contactName'] }}
             </span>
-            <span v-if="item.contactPhone">
+            <span v-if="item[config.contactPhoneKey || 'contactPhone']">
               <i class="el-icon-phone-outline"></i>
-              {{ item.contactPhone }}
+              {{ item[config.contactPhoneKey || 'contactPhone'] }}
             </span>
           </div>
           <div class="record-foot">
@@ -86,7 +86,7 @@
           </div>
         </article>
       </div>
-      <el-empty v-else description="暂无符合筛选条件的数据">
+      <el-empty v-else class="empty-state" description="暂无符合筛选条件的数据">
         <!-- <el-button type="primary" size="small" @click="openCreate">新增{{ config.title }}</el-button> -->
       </el-empty>
       <div v-if="paginationTotal" class="pagination-row">
@@ -256,7 +256,7 @@ export default {
       return field && field.options ? field.options : []
     },
     statusOptions() {
-      return ['待受理', '待审核', '处理中', '已完成', '已通过', '已关闭']
+      return this.config.statusOptions || ['待受理', '待审核', '处理中', '已完成', '已通过', '已关闭']
     },
     filteredRecords() {
       const keyword = this.keyword.toLowerCase()
@@ -269,7 +269,7 @@ export default {
                 .includes(keyword)
             )) &&
           (!this.typeFilter || item[this.config.primaryKey] === this.typeFilter) &&
-          (!this.statusFilter || item.status === this.statusFilter)
+          (!this.statusFilter || this.statusText(item.status) === this.statusFilter)
       )
     },
     pagedRecords() {
@@ -281,13 +281,14 @@ export default {
       return this.usingMock ? this.filteredRecords.length : this.total
     },
     summaryCards() {
-      const count = (status) => this.records.filter((item) => status.indexOf(item.status) > -1).length
-      return [
+      const count = (statuses) => this.records.filter((item) => statuses.indexOf(this.statusText(item.status)) > -1).length
+      const definitions = this.config.summaryDefinitions || [
         { title: `全部${this.config.title}`, value: this.records.length, note: '服务事项统一归集', icon: 'el-icon-document', color: 'blue' },
-        { title: '待受理', value: count(['待受理', '待审核']), note: '等待专员审核确认', icon: 'el-icon-time', color: 'orange' },
-        { title: '处理中', value: count(['处理中']), note: '服务专员持续跟进', icon: 'el-icon-s-operation', color: 'cyan' },
-        { title: '本月完成', value: count(['已完成', '已通过']), note: '已完成服务反馈', icon: 'el-icon-circle-check', color: 'green' }
+        { title: '待受理', statuses: ['待受理', '待审核'], note: '等待专员审核确认', icon: 'el-icon-time', color: 'orange' },
+        { title: '处理中', statuses: ['处理中'], note: '服务专员持续跟进', icon: 'el-icon-s-operation', color: 'cyan' },
+        { title: '本月完成', statuses: ['已完成', '已通过'], note: '已完成服务反馈', icon: 'el-icon-circle-check', color: 'green' }
       ]
+      return definitions.map((item) => Object.assign({}, item, { value: item.all ? this.records.length : item.value !== undefined ? item.value : count(item.statuses || []) }))
     },
     rules() {
       const rules = {}
@@ -306,7 +307,13 @@ export default {
   },
   methods: {
     apiKey(action) {
-      const namespaces = { DR: 'tobDataReport', SR: 'tobServiceRequest', MP: 'tobMediaPromotion', QR: 'tobQualificationCert', RC: 'tobResourceConnection' }
+      const namespaces = {
+        DR: 'tobDataReport', SR: 'tobServiceRequest', MP: 'tobMediaPromotion', QR: 'tobQualificationCert', RC: 'tobResourceConnection',
+        NA: 'tobPublicNotice', PA: 'tobEventActivity', OC: 'tobOnlineConsult', BP: 'tobEnterprisePolicy', DD: 'tobResourceDownload',
+        SC: 'tobSafetyArticle', PN: 'tobParkNews', EN: 'tobCompanyNews',
+        BO: 'tobBusinessOpportunity', CD: 'tobCompanyDemand', IA: 'tobIndustryAssociation', SM: 'tobStartupMentor',
+        SO: 'tobServiceOrg', MR: 'tobMeetingRoomBook', FR: 'tobFacilityRental'
+      }
       return `${this.config.apiNamespace || namespaces[this.config.idPrefix]}.${action}`
     },
     unwrap(response) {
@@ -366,7 +373,7 @@ export default {
       this.loadRecords()
     },
     statusType(status) {
-      return { 待受理: 'warning', 待审核: 'warning', 处理中: '', 已完成: 'success', 已通过: 'success', 已关闭: 'info' }[status] || 'info'
+      return { 待受理: 'warning', 待审核: 'warning', 待回复: 'warning', 处理中: '', 已完成: 'success', 已通过: 'success', 已回复: 'success', 已发布: 'success', 正常: 'success', 已拒绝: 'danger', 已关闭: 'info', 已下线: 'info', 已取消: 'info', 停用: 'info', 草稿: 'info' }[status] || 'info'
     },
     statusText(status) {
       if (status === 0 || status === '0') return this.config.defaultStatus || '待受理'
@@ -572,10 +579,13 @@ export default {
   font-size: 12px;
 }
 .application-surface {
+  display: flex;
+  min-height: clamp(660px, calc(100vh - 250px), 760px);
   border: 1px solid #e5ebf2;
   border-radius: 10px;
   background: #fff;
   box-shadow: 0 4px 14px rgba(44, 69, 101, 0.035);
+  flex-direction: column;
 }
 .list-toolbar {
   display: flex;
@@ -599,6 +609,15 @@ export default {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   padding: 2px 20px 18px;
+}
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+  padding: 24px 20px 48px;
+  box-sizing: border-box;
+  flex: 1 1 auto;
 }
 .record-card {
   display: flex;
@@ -733,18 +752,17 @@ export default {
   color: #f56c6c;
 }
 .pagination-row {
-  position: sticky;
-  bottom: 0;
-  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
+  margin-top: auto;
   padding: 12px 20px 16px;
   border-top: 1px solid #eef2f6;
   background: #fff;
   color: #8996a6;
   font-size: 12px;
+  flex: 0 0 auto;
 }
 .field-full {
   width: 100%;
@@ -755,6 +773,9 @@ export default {
   }
 }
 @media (max-width: 760px) {
+  .application-surface {
+    min-height: 440px;
+  }
   .application-board {
     height: 100%;
     min-height: 0;
