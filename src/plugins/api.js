@@ -45,7 +45,9 @@ class ApiCounstructor {
         value(outerParams, outerOptions) {
           // 如果没传入参数 则传递默认参数
           // const data = _isEmpty(outerParams) ? params : _assign(params, outerParams) // assign合并对象, 会修改源对象(params)的值, 页面同一个api多次请求(传递参数不同)可能导致参数混乱问题
-          const data = _isEmpty(outerParams) ? params : { ...params, ...outerParams }
+          // FormData 不能通过对象展开合并，否则二进制字段会丢失并变成空对象。
+          const isFormData = typeof FormData !== 'undefined' && outerParams instanceof FormData
+          const data = isFormData ? outerParams : _isEmpty(outerParams) ? params : { ...params, ...outerParams }
           // 开启debug时打印一些提示信息
           // isDebug && console.info(`调用业务接口名称:${apiNamespace}, 类型:${method}, 地址:${url}, 描述:${desc}`)
           //
