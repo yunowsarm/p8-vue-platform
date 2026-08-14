@@ -1,4 +1,4 @@
-<!-- 周报 -->
+<!-- 领导周报 -->
 <template>
   <div class="process-approve-dialog">
     <form-list
@@ -26,12 +26,12 @@ import { P8Form as FormList } from 'p8-components-ui'
 import processApproveMixin from './tools/processApproveMixin'
 
 export default {
-  name: 'WeekReportProcess',
+  name: 'LeaderWeekReportProcess',
   components: { FormList },
   mixins: [processApproveMixin],
   data () {
     return {
-      processDefinitionKey: 'weekReport'
+      processDefinitionKey: 'leaderWeekReport'
     }
   },
   methods: {

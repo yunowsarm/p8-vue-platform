@@ -41,9 +41,8 @@ export default {
         if (!item.ID) return
         config[item.ID] = {
           filed1: { label: '部门', value: item.DEPT || '' },
-          filed2: { label: '岗位', value: item.JOB || '' },
-          filed3: { label: '填报人', value: item.REALNAME || '' },
-          filed4: { label: '填报时间', value: item.DATEFORMAT || '' }
+          filed2: { label: '填报人', value: item.REALNAME || '' },
+          filed3: { label: '填报时间', value: item.DATEFORMAT || '' }
         }
       })
       return config
