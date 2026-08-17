@@ -21,7 +21,7 @@
           <el-option v-for="item in repairTypes" :key="item" :label="item" :value="item" />
         </el-select>
         <el-select v-model="statusFilter" clearable size="small" placeholder="全部状态" @change="reload">
-          <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
+          <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
         <div class="toolbar-actions">
           <el-button v-if="selectedIds.length" type="danger" plain size="small" @click="removeSelected">批量删除（{{ selectedIds.length }}）</el-button>
@@ -128,7 +128,7 @@
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12">
-            <el-form-item label="状态"><el-input :value="form.status || '待处理'" disabled /></el-form-item>
+            <el-form-item label="状态"><el-input :value="statusText(form)" disabled /></el-form-item>
           </el-col>
         </el-row>
       </el-form>
@@ -212,7 +212,7 @@ export default {
       selectedRecord: null,
       form: {},
       repairTypes: ['水电维修', '门窗维修', '空调维修', '网络维修', '设备维修', '公共设施', '其他'],
-      statusOptions: ['待处理', '已受理', '处理中', '已完成', '已关闭'],
+      statusOptions: [{ label: '待处理', value: 0 }, { label: '处理中', value: 1 }, { label: '已完成', value: 2 }],
       rules: {
         type: [{ required: true, message: '请选择报修类型', trigger: 'change' }],
         location: [{ required: true, message: '请输入报修地点', trigger: 'blur' }],
@@ -225,9 +225,9 @@ export default {
   computed: {
     summaryCards() {
       const list = this.records
-      const waiting = list.filter((item) => ['待处理', '等待处理', ''].includes(this.statusText(item))).length
-      const processing = list.filter((item) => ['已受理', '处理中'].includes(this.statusText(item))).length
-      const complete = list.filter((item) => ['已完成', '已关闭'].includes(this.statusText(item))).length
+      const waiting = list.filter((item) => this.statusValue(item.status) === 0).length
+      const processing = list.filter((item) => this.statusValue(item.status) === 1).length
+      const complete = list.filter((item) => this.statusValue(item.status) === 2).length
       return [
         { title: '报修申请', value: this.total, note: '当前查询条件下的记录', icon: 'el-icon-document', color: 'blue' },
         { title: '待处理', value: waiting, note: '等待物业人员处理', icon: 'el-icon-time', color: 'orange' },
@@ -250,21 +250,16 @@ export default {
     },
     timelineSteps() {
       return [
-        { title: '已提交', note: '报修申请已登记' },
-        { title: '已受理', note: '等待物业人员安排处理' },
-        { title: '处理中', note: '处理过程持续留痕' },
-        { title: '已办结', note: '报修处理完成' }
+        { title: '待处理', note: '报修申请已登记' },
+        { title: '处理中', note: '物业人员正在处理' },
+        { title: '已完成', note: '报修处理完成' }
       ]
     },
     progressIndex() {
-      const status = this.statusText(this.selectedRecord || {})
-      if (['已完成', '已关闭'].includes(status)) return 3
-      if (status === '处理中') return 2
-      if (status === '已受理') return 1
-      return 0
+      return this.statusValue(this.selectedRecord && this.selectedRecord.status)
     },
     detailUploadFiles() {
-      return this.normalizeUploadFiles(this.selectedRecord && this.selectedRecord.uploadFiles)
+      return this.componentUploadFiles(this.selectedRecord)
     },
   },
   created() {
@@ -274,15 +269,15 @@ export default {
   methods: {
     unwrap(response) {
       // 报修记录自身也有 result 字段（可能为 null），不能将其误识别为接口包装。
-      if (response && response.result !== undefined && response.result !== null) return response.result
-      if (response && response.data && response.data.result !== undefined && response.data.result !== null) return response.data.result
+      if (response && !response.id && response.result !== undefined && response.result !== null) return response.result
+      if (response && response.data && !response.data.id && response.data.result !== undefined && response.data.result !== null) return response.data.result
       return response && response.data !== undefined ? response.data : response
     },
     async loadRecords() {
       if (!this.$api || !this.$api['reportRepair.list']) return
       this.loading = true
       try {
-        const params = { pageNo: this.currentPage, pageSize: this.pageSize, keyword: this.keyword || undefined, type: this.typeFilter || undefined, status: this.statusFilter || undefined }
+        const params = { pageNo: this.currentPage, pageSize: this.pageSize, keyword: this.keyword || undefined, type: this.typeFilter || undefined, status: this.statusFilter === '' ? undefined : this.statusFilter }
         const result = this.unwrap(await this.$api['reportRepair.list'](params)) || {}
         this.records = Array.isArray(result.records) ? result.records : Array.isArray(result.list) ? result.list : Array.isArray(result) ? result : []
         this.total = Number(result.total || this.records.length)
@@ -298,22 +293,28 @@ export default {
       this.loadRecords()
     },
     emptyForm() {
-      return { type: '', description: '', location: '', contactName: '', contactPhone: '', status: '待处理', uploadFiles: [], delFile: [] }
+      return { type: '', description: '', location: '', contactName: '', contactPhone: '', status: 0, uploadFiles: [], delFile: [] }
     },
     repairCode(item) {
       return (item && (item.code || item.id)) || '-'
     },
+    statusValue(status) {
+      if (status === undefined || status === null || status === '') return 0
+      if (status === 0 || status === '0' || status === '待处理' || status === '等待处理') return 0
+      if (status === 1 || status === '1' || status === '处理中' || status === '已受理') return 1
+      return 2
+    },
     statusText(item) {
-      return (item && item.status) || '待处理'
+      return ['待处理', '处理中', '已完成'][this.statusValue(item && item.status)]
     },
     displayTime(item) {
       return (item && (item.repairTime || item.createTime || item.itemCreateTime || item.updateTime || item.itemUpdateTime)) || '-'
     },
     statusType(status) {
-      return { 待处理: 'warning', 等待处理: 'warning', 已受理: 'warning', 处理中: '', 已完成: 'success', 已关闭: 'info' }[status] || 'info'
+      return { 待处理: 'warning', 处理中: '', 已完成: 'success' }[status] || 'info'
     },
     statusHint(status) {
-      return { 待处理: '等待物业人员处理', 等待处理: '等待物业人员处理', 已受理: '已安排处理人员', 处理中: '正在持续跟进', 已完成: '处理结果已留痕', 已关闭: '工单已关闭' }[status] || '状态待更新'
+      return { 待处理: '等待物业人员处理', 处理中: '正在持续跟进', 已完成: '处理结果已留痕' }[status] || '状态待更新'
     },
     currentUserId() {
       try {
@@ -341,9 +342,9 @@ export default {
           detail = this.unwrap(await this.$api['reportRepair.queryById']({ id: record.id })) || record
         } catch (error) {}
       }
-      const uploadFiles = this.normalizeUploadFiles(detail.uploadFiles)
+      const uploadFiles = this.componentUploadFiles(detail)
       this.form = Object.assign(this.emptyForm(), detail, {
-        status: this.statusText(detail),
+        status: this.statusValue(detail.status),
         uploadFiles,
         delFile: []
       })
@@ -441,6 +442,19 @@ export default {
           uid: file.uid || file.filePath || `repair-image-${index}`
         })
       })
+    },
+    componentUploadFiles(record) {
+      const filePaths = this.filePathList(record && record.file1)
+      if (!filePaths.length) return []
+      return this.normalizeUploadFiles(record && record.uploadFiles)
+        .filter((file) => filePaths.includes(file.filePath))
+    },
+    filePathList(value) {
+      if (!value) return []
+      return String(value)
+        .split(/[,，]/)
+        .map((filePath) => filePath.trim())
+        .filter(Boolean)
     },
     async handleImageChange(file, fileList) {
       const raw = file.raw
