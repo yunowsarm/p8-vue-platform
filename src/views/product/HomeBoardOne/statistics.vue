@@ -79,27 +79,27 @@ export default {
           comp: 'Message',
           dialogName: '我的消息'
         },
-        {
-          title: '待办事项',
-          icon: 'el-icon-s-order',
-          count: 0,
-          comp: 'MineToDo',
-          dialogName: '我的待办'
-        },
-        {
-          title: '本月任务',
-          icon: 'el-icon-date',
-          count: 0,
-          comp: 'MyTask',
-          dialogName: '我的任务'
-        },
-        {
-          title: '待处理问题',
-          icon: 'el-icon-date',
-          count: 0,
-          comp: 'MineQuestion',
-          dialogName: '我的问题'
-        }
+        // {
+        //   title: '待办事项',
+        //   icon: 'el-icon-s-order',
+        //   count: 0,
+        //   comp: 'MineToDo',
+        //   dialogName: '我的待办'
+        // },
+        // {
+        //   title: '本月任务',
+        //   icon: 'el-icon-date',
+        //   count: 0,
+        //   comp: 'MyTask',
+        //   dialogName: '我的任务'
+        // },
+        // {
+        //   title: '待处理问题',
+        //   icon: 'el-icon-date',
+        //   count: 0,
+        //   comp: 'MineQuestion',
+        //   dialogName: '我的问题'
+        // }
       ]
     }
   },
