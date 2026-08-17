@@ -9,7 +9,8 @@
         <div class="kpi-content">
           <div class="kpi-title">{{ item.title }}</div>
           <div class="kpi-value">
-            {{ item.value }}<span class="kpi-unit">{{ item.unit }}</span>
+            {{ item.value }}
+            <span class="kpi-unit">{{ item.unit }}</span>
           </div>
           <div class="kpi-compare">
             环比
@@ -19,6 +20,20 @@
         </div>
       </div>
     </div>
+
+    <!-- 待处理内容区域，后续可按同一结构扩展更多待办通知 -->
+    <section v-loading="pendingContentLoading" class="pending-content" aria-label="待处理内容">
+      <div v-if="hasVisiblePendingTasks" class="notice-card-row">
+        <button v-auth="'pending_property_repair_requests'" type="button" class="notice-card notice-card--warning" aria-label="查看待处理物业报修" @click="goToPropertyRepairHandle">
+          <div class="notice-card__label">待处理物业报修</div>
+          <div class="notice-card__value">
+            {{ pendingRepairCount }}
+            <span>起</span>
+          </div>
+        </button>
+      </div>
+      <el-empty v-else :image-size="48" description="暂无待处理任务" />
+    </section>
 
     <!-- 第二行：趋势图表 -->
     <el-row :gutter="16" class="chart-row">
@@ -75,24 +90,25 @@
         <div class="chart-card chart-card--stat">
           <div class="chart-title">6. 安全 / 消防 / 环保 / 政策 / 统计数据</div>
           <div class="chart-card-body" :class="{ 'chart-card-body--mobile': isMobile }">
-          <div class="safety-boxes">
-            <div v-for="item in safetyList" :key="item.label" class="safety-box" :style="{ borderColor: item.color }">
-              <div class="safety-label">{{ item.label }}</div>
-              <div class="safety-value" :style="{ color: item.color }">
-                {{ item.value }}<span class="safety-unit">{{ item.unit }}</span>
+            <div class="safety-boxes">
+              <div v-for="item in safetyList" :key="item.label" class="safety-box" :style="{ borderColor: item.color }">
+                <div class="safety-label">{{ item.label }}</div>
+                <div class="safety-value" :style="{ color: item.color }">
+                  {{ item.value }}
+                  <span class="safety-unit">{{ item.unit }}</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="stat-overview">
-            <div class="stat-overview-title">统计概览</div>
-            <div class="stat-overview-grid">
-              <div v-for="item in overviewList" :key="item.label" class="overview-item">
-                <div class="overview-label">{{ item.label }}</div>
-                <div class="overview-value">{{ item.value }}</div>
-                <div class="overview-compare up">{{ item.compare }}</div>
+            <div class="stat-overview">
+              <div class="stat-overview-title">统计概览</div>
+              <div class="stat-overview-grid">
+                <div v-for="item in overviewList" :key="item.label" class="overview-item">
+                  <div class="overview-label">{{ item.label }}</div>
+                  <div class="overview-value">{{ item.value }}</div>
+                  <div class="overview-compare up">{{ item.compare }}</div>
+                </div>
               </div>
             </div>
-          </div>
           </div>
         </div>
       </el-col>
@@ -126,6 +142,10 @@ export default {
     return {
       selectedEnterprise: 'all',
       charts: {},
+      repairLoading: false,
+      pendingRepairTotal: 0,
+      pendingTaskAuthLoading: true,
+      canViewPendingPropertyRepair: false,
       kpiList: [
         { title: '园区企业总数', value: '328', unit: '家', changeValue: '12 家', changeRate: '+3.80%', icon: 'el-icon-office-building', iconBg: 'rgba(64,158,255,0.12)' },
         { title: '园区总面积', value: '3,560,000', unit: 'm²', changeValue: '20,000 m²', changeRate: '+0.56%', icon: 'el-icon-map-location', iconBg: 'rgba(64,158,255,0.12)' },
@@ -153,13 +173,22 @@ export default {
     isMobile() {
       return this.$store.getters.isMobile
     },
+    pendingRepairCount() {
+      return this.pendingRepairTotal
+    },
+    pendingContentLoading() {
+      return this.repairLoading || this.pendingTaskAuthLoading
+    },
+    hasVisiblePendingTasks() {
+      return this.canViewPendingPropertyRepair && this.pendingRepairCount > 0
+    },
     xAxisLabel() {
-      return this.isMobile
-        ? { interval: 1, fontSize: 9, rotate: 40 }
-        : { interval: 0, fontSize: 10 }
+      return this.isMobile ? { interval: 1, fontSize: 9, rotate: 40 } : { interval: 0, fontSize: 10 }
     }
   },
   mounted() {
+    this.loadPendingTaskAuth()
+    this.loadPendingRepairs()
     this.$nextTick(() => {
       this.initAllCharts()
       if (this.isMobile) {
@@ -175,6 +204,49 @@ export default {
     })
   },
   methods: {
+    async loadPendingTaskAuth() {
+      const resourceName = (this.$route && this.$route.name) || this.$options.name
+      if (!resourceName) {
+        this.pendingTaskAuthLoading = false
+        return
+      }
+      try {
+        const buttons = await this.$store.dispatch('getButtonAuth', {
+          resourceName,
+          parentUuid: '',
+          permissionVo: { router: resourceName, resourceId: '' }
+        })
+        this.canViewPendingPropertyRepair = Array.isArray(buttons) && buttons.some((button) => {
+          return button && button.name === 'pending_property_repair_requests' && button.enable !== '0' && button.isAccredit !== 0 && button.isAccredit !== '0'
+        })
+      } catch (error) {
+        this.canViewPendingPropertyRepair = false
+      } finally {
+        this.pendingTaskAuthLoading = false
+      }
+    },
+    goToPropertyRepairHandle() {
+      this.$router.push('/propertyRepairHandle')
+    },
+    unwrap(response) {
+      if (response && !response.id && response.result !== undefined && response.result !== null) return response.result
+      if (response && response.data && !response.data.id && response.data.result !== undefined && response.data.result !== null) return response.data.result
+      return response && response.data !== undefined ? response.data : response
+    },
+    async loadPendingRepairs() {
+      if (!this.$api || !this.$api['reportRepair.searchStatus']) return
+      this.repairLoading = true
+      try {
+        const result = this.unwrap(await this.$api['reportRepair.searchStatus']()) || {}
+        const records = Array.isArray(result.records) ? result.records : Array.isArray(result.list) ? result.list : Array.isArray(result) ? result : []
+        const total = typeof result === 'number' || typeof result === 'string' ? result : result.total || result.count || records.length
+        this.pendingRepairTotal = Number(total) || 0
+      } catch (error) {
+        this.pendingRepairTotal = 0
+      } finally {
+        this.repairLoading = false
+      }
+    },
     handleResize() {
       Object.values(this.charts).forEach((chart) => {
         if (chart) chart.resize()
@@ -198,24 +270,22 @@ export default {
       this.initGrowthChart()
     },
     baseGrid() {
-      return this.isMobile
-        ? { left: 36, right: 10, top: 20, bottom: 28 }
-        : { left: 50, right: 20, top: 20, bottom: 30 }
+      return this.isMobile ? { left: 36, right: 10, top: 20, bottom: 28 } : { left: 50, right: 20, top: 20, bottom: 30 }
     },
     pieLegendConfig() {
       return this.isMobile
         ? {
-          type: 'scroll',
-          orient: 'horizontal',
-          bottom: 2,
-          left: 'center',
-          width: '90%',
-          icon: 'circle',
-          itemWidth: 6,
-          itemHeight: 6,
-          itemGap: 6,
-          textStyle: { fontSize: 9 }
-        }
+            type: 'scroll',
+            orient: 'horizontal',
+            bottom: 2,
+            left: 'center',
+            width: '90%',
+            icon: 'circle',
+            itemWidth: 6,
+            itemHeight: 6,
+            itemGap: 6,
+            textStyle: { fontSize: 9 }
+          }
         : { orient: 'vertical', right: 0, top: 'middle', icon: 'circle', itemWidth: 8, textStyle: { fontSize: 10 } }
     },
     pieCenter() {
@@ -400,22 +470,36 @@ export default {
     initInvestmentChart() {
       const chart = this.initChart('chartInvestment')
       if (!chart) return
-      chart.setOption(this.getPieChartOption('招商引资 (本年)', '签约项目\n48个', [
-        { value: 18, name: '已签约', itemStyle: { color: '#409EFF' } },
-        { value: 16, name: '在谈中', itemStyle: { color: '#67C23A' } },
-        { value: 10, name: '意向洽谈', itemStyle: { color: '#E6A23C' } },
-        { value: 4, name: '其他', itemStyle: { color: '#909399' } }
-      ], '个'))
+      chart.setOption(
+        this.getPieChartOption(
+          '招商引资 (本年)',
+          '签约项目\n48个',
+          [
+            { value: 18, name: '已签约', itemStyle: { color: '#409EFF' } },
+            { value: 16, name: '在谈中', itemStyle: { color: '#67C23A' } },
+            { value: 10, name: '意向洽谈', itemStyle: { color: '#E6A23C' } },
+            { value: 4, name: '其他', itemStyle: { color: '#909399' } }
+          ],
+          '个'
+        )
+      )
     },
     initEnterpriseStatusChart() {
       const chart = this.initChart('chartEnterpriseStatus')
       if (!chart) return
-      chart.setOption(this.getPieChartOption('企业状态分布', '企业总数\n328家', [
-        { value: 238, name: '正常经营', itemStyle: { color: '#409EFF' } },
-        { value: 56, name: '稳步发展', itemStyle: { color: '#67C23A' } },
-        { value: 24, name: '困难预警', itemStyle: { color: '#E6A23C' } },
-        { value: 10, name: '停业/注销', itemStyle: { color: '#F56C6C' } }
-      ], '家'))
+      chart.setOption(
+        this.getPieChartOption(
+          '企业状态分布',
+          '企业总数\n328家',
+          [
+            { value: 238, name: '正常经营', itemStyle: { color: '#409EFF' } },
+            { value: 56, name: '稳步发展', itemStyle: { color: '#67C23A' } },
+            { value: 24, name: '困难预警', itemStyle: { color: '#E6A23C' } },
+            { value: 10, name: '停业/注销', itemStyle: { color: '#F56C6C' } }
+          ],
+          '家'
+        )
+      )
     },
     initOverviewChart() {
       const chart = this.initChart('chartOverview')
@@ -441,11 +525,48 @@ export default {
         ],
         series: [
           { name: '企业数', type: 'line', smooth: true, data: [250, 258, 268, 278, 288, 298, 305, 310, 315, 320, 324, 328], lineStyle: { color: '#409EFF' }, itemStyle: { color: '#409EFF' } },
-          { name: '员工数', type: 'line', smooth: true, data: [22000, 23000, 23800, 24500, 25200, 25800, 26200, 26800, 27200, 27800, 28200, 28560], lineStyle: { color: '#9B59B6' }, itemStyle: { color: '#9B59B6' } },
-          { name: '访客数', type: 'line', smooth: true, data: [38000, 40000, 42000, 45000, 48000, 50000, 52000, 53000, 54000, 55000, 55800, 56320], lineStyle: { color: '#67C23A' }, itemStyle: { color: '#67C23A' } },
-          { name: '车辆数', type: 'line', smooth: true, data: [12000, 13000, 14000, 15000, 15800, 16500, 17000, 17500, 18000, 18300, 18600, 18753], lineStyle: { color: '#E6A23C' }, itemStyle: { color: '#E6A23C' } },
-          { name: '用电量', type: 'line', smooth: true, yAxisIndex: 1, data: [980000, 1000000, 1020000, 1050000, 1080000, 1100000, 1120000, 1150000, 1180000, 1200000, 1225000, 1245630], lineStyle: { color: '#F39C12' }, itemStyle: { color: '#F39C12' } },
-          { name: '用水量', type: 'line', smooth: true, yAxisIndex: 1, data: [9000, 9200, 9500, 9800, 10000, 10200, 10500, 10800, 11000, 11200, 11800, 12560], lineStyle: { color: '#1ABC9C' }, itemStyle: { color: '#1ABC9C' } }
+          {
+            name: '员工数',
+            type: 'line',
+            smooth: true,
+            data: [22000, 23000, 23800, 24500, 25200, 25800, 26200, 26800, 27200, 27800, 28200, 28560],
+            lineStyle: { color: '#9B59B6' },
+            itemStyle: { color: '#9B59B6' }
+          },
+          {
+            name: '访客数',
+            type: 'line',
+            smooth: true,
+            data: [38000, 40000, 42000, 45000, 48000, 50000, 52000, 53000, 54000, 55000, 55800, 56320],
+            lineStyle: { color: '#67C23A' },
+            itemStyle: { color: '#67C23A' }
+          },
+          {
+            name: '车辆数',
+            type: 'line',
+            smooth: true,
+            data: [12000, 13000, 14000, 15000, 15800, 16500, 17000, 17500, 18000, 18300, 18600, 18753],
+            lineStyle: { color: '#E6A23C' },
+            itemStyle: { color: '#E6A23C' }
+          },
+          {
+            name: '用电量',
+            type: 'line',
+            smooth: true,
+            yAxisIndex: 1,
+            data: [980000, 1000000, 1020000, 1050000, 1080000, 1100000, 1120000, 1150000, 1180000, 1200000, 1225000, 1245630],
+            lineStyle: { color: '#F39C12' },
+            itemStyle: { color: '#F39C12' }
+          },
+          {
+            name: '用水量',
+            type: 'line',
+            smooth: true,
+            yAxisIndex: 1,
+            data: [9000, 9200, 9500, 9800, 10000, 10200, 10500, 10800, 11000, 11200, 11800, 12560],
+            lineStyle: { color: '#1ABC9C' },
+            itemStyle: { color: '#1ABC9C' }
+          }
         ]
       })
     },
@@ -480,6 +601,65 @@ export default {
   background: #f0f2f5;
   min-height: 100%;
   box-sizing: border-box;
+}
+
+.pending-content {
+  margin-bottom: 16px;
+}
+
+.pending-content__title {
+  margin-bottom: 10px;
+  color: #303133;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.notice-card-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+}
+
+.notice-card {
+  width: 100%;
+  min-height: 76px;
+  padding: 12px;
+  font: inherit;
+  text-align: center;
+  background: #fff;
+  border: 1px solid;
+  border-radius: 5px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:focus-visible {
+    outline: 2px solid #409eff;
+    outline-offset: 2px;
+  }
+}
+
+.notice-card--warning {
+  border-color: #e6a23c;
+}
+
+.notice-card__label {
+  margin-bottom: 6px;
+  color: #606266;
+  font-size: 13px;
+}
+
+.notice-card__value {
+  color: #e6a23c;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+
+  span {
+    margin-left: 2px;
+    font-size: 12px;
+    font-weight: normal;
+  }
 }
 
 .kpi-row {
@@ -761,6 +941,33 @@ export default {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+  }
+
+  .pending-content {
+    margin-bottom: 12px;
+  }
+
+  .pending-content__title {
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+
+  .notice-card-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .notice-card {
+    min-height: 70px;
+    padding: 10px 8px;
+  }
+
+  .notice-card__label {
+    font-size: 12px;
+  }
+
+  .notice-card__value {
+    font-size: 21px;
   }
 
   .kpi-row {
