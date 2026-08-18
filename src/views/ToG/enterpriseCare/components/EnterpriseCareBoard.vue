@@ -61,7 +61,6 @@
               <div class="card-actions">
                 <el-button type="text" @click="openDetail(record)">
                   查看详情
-                  <i class="el-icon-arrow-right"></i>
                 </el-button>
                 <el-button v-if="canAdvance(record)" type="text" @click="openHandle(record)">{{ advanceLabel(record) }}</el-button>
                 <el-button type="text" @click="openEdit(record)">编辑</el-button>
@@ -224,6 +223,13 @@ export default {
     this.loadEnterprises()
   },
   methods: {
+    currentUserId() {
+      try {
+        return JSON.parse(window.sessionStorage.getItem('userInfo') || '{}').id || ''
+      } catch (error) {
+        return ''
+      }
+    },
     unwrap(response) {
       return response && response.data && response.data.data !== undefined ? response.data.data : response
     },
@@ -325,7 +331,8 @@ export default {
       if (!valid) return
       this.submitting = true
       try {
-        await this.api(this.editingId ? 'edit' : 'add')(this.form)
+        const payload = Object.assign({}, this.form, this.editingId ? { updateBy: this.currentUserId(), itemUpdateTime: this.now() } : { createBy: this.currentUserId(), itemCreateTime: this.now() })
+        await this.api(this.editingId ? 'edit' : 'add')(payload)
         this.$message.success(this.editingId ? '修改成功' : '申请已提交')
         this.formVisible = false
         this.loadRecords()
@@ -353,7 +360,7 @@ export default {
       const nextStatus = this.statusValue(this.handleRecord) === '待受理' ? '办理中' : '已办结'
       this.submitting = true
       try {
-        const payload = Object.assign({}, this.handleRecord, this.handleForm, { status: nextStatus })
+        const payload = Object.assign({}, this.handleRecord, this.handleForm, { status: nextStatus, updateBy: this.currentUserId(), itemUpdateTime: this.now() })
         await this.api('edit')(payload)
         this.$message.success(nextStatus === '办理中' ? '已受理并派单' : '服务已办结')
         this.handleVisible = false
@@ -478,7 +485,6 @@ function statusValue(record) {
   align-items: center;
   gap: 10px;
   padding: 12px 14px;
-  border-bottom: 1px solid #e2e8f0;
 }
 .toolbar .el-input {
   width: 340px;

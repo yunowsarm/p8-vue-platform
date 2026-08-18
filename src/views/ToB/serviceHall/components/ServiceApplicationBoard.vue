@@ -306,6 +306,13 @@ export default {
     this.loadEnterprises()
   },
   methods: {
+    currentUserId() {
+      try {
+        return JSON.parse(window.sessionStorage.getItem('userInfo') || '{}').id || ''
+      } catch (error) {
+        return ''
+      }
+    },
     apiKey(action) {
       const namespaces = {
         DR: 'tobDataReport', SR: 'tobServiceRequest', MP: 'tobMediaPromotion', QR: 'tobQualificationCert', RC: 'tobResourceConnection',
@@ -408,6 +415,7 @@ export default {
       const payload = Object.assign({}, this.form)
       if (!payload.status) payload.status = this.config.defaultStatus || '待受理'
       if (this.editingId) payload.id = this.editingId
+      Object.assign(payload, this.editingId ? { updateBy: this.currentUserId(), itemUpdateTime: now() } : { createBy: this.currentUserId(), itemCreateTime: now() })
       try {
         if (this.usingMock || !this.$api || !this.$api[this.apiKey(this.editingId ? 'edit' : 'add')]) {
           this.saveMockRecord(payload)
@@ -467,7 +475,7 @@ export default {
               this.records = this.records.filter((item) => String(item.id) !== String(target.id))
               this.total = this.records.length
             } else {
-              await this.$api[this.apiKey('delete')]({}, { params: { id: target.id } })
+              await this.$api[this.apiKey('delete')]({ id: target.id })
               await this.loadRecords()
             }
             this.detailVisible = false
@@ -488,7 +496,7 @@ export default {
               this.records = this.records.filter((item) => !ids.includes(item.id))
               this.total = this.records.length
             } else {
-              await Promise.all(ids.map((id) => this.$api[this.apiKey('delete')]({}, { params: { id } })))
+              await Promise.all(ids.map((id) => this.$api[this.apiKey('delete')]({ id })))
               await this.loadRecords()
             }
             this.selectedIds = []

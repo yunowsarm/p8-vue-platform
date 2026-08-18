@@ -230,6 +230,18 @@ export default {
     this.loadRecords()
   },
   methods: {
+    currentUserId() {
+      try {
+        return JSON.parse(window.sessionStorage.getItem('userInfo') || '{}').id || ''
+      } catch (error) {
+        return ''
+      }
+    },
+    now() {
+      const date = new Date()
+      const pad = (value) => String(value).padStart(2, '0')
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+    },
     apiKey(action) {
       return `${this.config.apiNamespace}.${action}`
     },
@@ -296,7 +308,7 @@ export default {
       if (!valid) return
       this.submitting = true
       try {
-        const payload = Object.assign({}, this.form, this.editingId ? { id: this.editingId } : {})
+        const payload = Object.assign({}, this.form, this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: this.now() } : { createBy: this.currentUserId(), itemCreateTime: this.now() })
         await this.$api[this.apiKey(this.editingId ? 'edit' : 'add')](payload)
         this.$message.success(this.editingId ? '已保存' : '已提交')
         this.formVisible = false
@@ -338,7 +350,7 @@ export default {
       if (!next) return
       try {
         await this.$confirm(`确认将该记录推进至“${next}”？`, '流程确认', { type: 'warning' })
-        await this.$api[this.apiKey('edit')](Object.assign({}, item, { [this.config.statusKey]: next }))
+        await this.$api[this.apiKey('edit')](Object.assign({}, item, { [this.config.statusKey]: next, updateBy: this.currentUserId(), itemUpdateTime: this.now() }))
         this.$message.success(`已推进至${next}`)
         this.detailVisible = false
         this.loadRecords()
@@ -349,7 +361,7 @@ export default {
     async removeRecord(item) {
       try {
         await this.$confirm('确认删除该记录？', '删除确认', { type: 'warning' })
-        await this.$api[this.apiKey('delete')]({}, { params: { id: item.id } })
+        await this.$api[this.apiKey('delete')]({ id: item.id })
         this.$message.success('已删除')
         this.loadRecords()
       } catch (error) {
@@ -460,7 +472,6 @@ export default {
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  border-bottom: 1px solid #e8edf3;
   box-sizing: border-box;
 }
 .list-toolbar .el-input {

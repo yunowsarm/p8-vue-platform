@@ -11,11 +11,11 @@ const config = {
   timeKey: 'publishTime',
   defaultStatus: '已发布',
   metaFields: [
-    { key: 'policyId', label: '关联政策', source: 'policy', icon: 'el-icon-reading' },
+    { key: 'policyId', label: '关联政策', source: 'policySubscribe', icon: 'el-icon-reading' },
     { key: 'publisherId', label: '发布人', icon: 'el-icon-user' }
   ],
   fields: [
-    { key: 'policyId', label: '关联政策', source: 'policy' },
+    { key: 'policyId', label: '关联政策', source: 'policySubscribe' },
     { key: 'title', label: '解读标题' },
     { key: 'publisherId', label: '发布人ID' },
     { key: 'publishTime', label: '发布时间', type: 'datetime' },

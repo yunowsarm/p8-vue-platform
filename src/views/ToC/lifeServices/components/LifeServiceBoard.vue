@@ -270,6 +270,18 @@ export default {
     this.loadRecords()
   },
   methods: {
+    currentUserId() {
+      try {
+        return JSON.parse(window.sessionStorage.getItem('userInfo') || '{}').id || ''
+      } catch (error) {
+        return ''
+      }
+    },
+    now() {
+      const date = new Date()
+      const pad = (value) => String(value).padStart(2, '0')
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+    },
     apiKey(action) {
       return `${this.config.apiNamespace}.${action}`
     },
@@ -353,7 +365,7 @@ export default {
       const valid = await new Promise((resolve) => this.$refs.lifeServiceForm.validate(resolve))
       if (!valid) return
       this.submitting = true
-      const payload = Object.assign({}, this.form, this.editingId ? { id: this.editingId } : {})
+      const payload = Object.assign({}, this.form, this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: this.now() } : { createBy: this.currentUserId(), itemCreateTime: this.now() })
       try {
         await this.$api[this.apiKey(this.editingId ? 'edit' : 'add')](payload)
         this.$message.success(this.editingId ? '已更新' : '已提交')
@@ -368,7 +380,7 @@ export default {
     async removeRecord(item) {
       try {
         await this.$confirm('确认删除该条记录吗？', '删除确认', { type: 'warning' })
-        await this.$api[this.apiKey('delete')]({}, { params: { id: item.id } })
+        await this.$api[this.apiKey('delete')]({ id: item.id })
         this.$message.success('已删除')
         this.loadRecords()
       } catch (error) {
@@ -484,7 +496,6 @@ export default {
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid #edf1f6;
   box-sizing: border-box;
 }
 .list-toolbar .el-input {
@@ -926,4 +937,3 @@ export default {
   .life-service-board .pagination-row { justify-content: center; padding: 12px; }
 }
 </style>
-

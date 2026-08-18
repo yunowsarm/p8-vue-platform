@@ -14,11 +14,11 @@ const config = {
   statusOptions: ['待发送', '发送中', '已完成'],
   advanceLabels: ['开始推送', '确认发送完成'],
   metaFields: [
-    { key: 'policyId', label: '关联政策', source: 'policy', icon: 'el-icon-reading' },
+    { key: 'policyId', label: '关联政策', source: 'policySubscribe', icon: 'el-icon-reading' },
     { key: 'pushUserId', label: '推送人', icon: 'el-icon-user' }
   ],
   fields: [
-    { key: 'policyId', label: '推送政策', source: 'policy' },
+    { key: 'policyId', label: '推送政策', source: 'policySubscribe' },
     {
       key: 'pushTarget',
       label: '推送对象',

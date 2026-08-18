@@ -289,6 +289,13 @@ export default {
     this.loadRecords()
   },
   methods: {
+    currentUserId() {
+      try {
+        return JSON.parse(window.sessionStorage.getItem('userInfo') || '{}').id || ''
+      } catch (error) {
+        return ''
+      }
+    },
     apiKey(action) {
       return `${this.config.apiNamespace}.${action}`
     },
@@ -381,7 +388,7 @@ export default {
       const valid = await new Promise((resolve) => this.$refs.paymentForm.validate(resolve))
       if (!valid) return
       this.submitting = true
-      const payload = Object.assign({}, this.form, this.editingId ? { id: this.editingId } : {})
+      const payload = Object.assign({}, this.form, this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: now() } : { createBy: this.currentUserId(), itemCreateTime: now() })
       try {
         await this.$api[this.apiKey(this.editingId ? 'edit' : 'add')](payload)
         this.$message.success(this.editingId ? '订单已更新' : '订单已创建')
@@ -394,7 +401,7 @@ export default {
       }
     },
     async updateStatus(item, status) {
-      const payload = Object.assign({}, item, { status, payTime: status === '支付成功' ? now() : item.payTime })
+      const payload = Object.assign({}, item, { status, payTime: status === '支付成功' ? now() : item.payTime, updateBy: this.currentUserId(), itemUpdateTime: now() })
       try {
         await this.$api[this.apiKey('edit')](payload)
         this.$message.success(status === '支付成功' ? '支付成功' : '订单已取消')
@@ -417,7 +424,7 @@ export default {
     async removeRecord(item) {
       try {
         await this.$confirm('确认删除该订单记录？', '删除确认', { type: 'warning' })
-        await this.$api[this.apiKey('delete')]({}, { params: { id: item.id } })
+        await this.$api[this.apiKey('delete')]({ id: item.id })
         this.$message.success('已删除')
         this.loadRecords()
       } catch (error) {
@@ -530,7 +537,6 @@ export default {
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid #edf1f6;
   box-sizing: border-box;
 }
 .list-toolbar .el-input {

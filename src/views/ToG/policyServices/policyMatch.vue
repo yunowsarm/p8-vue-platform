@@ -15,11 +15,11 @@ const config = {
   statusOptions: ['已匹配', '已推荐', '已转申报'],
   advanceLabels: ['推荐给企业', '转项目申报'],
   metaFields: [
-    { key: 'policyId', label: '匹配政策', source: 'policy', icon: 'el-icon-reading' },
+    { key: 'policyId', label: '匹配政策', source: 'policySubscribe', icon: 'el-icon-reading' },
     { key: 'matchDegree', label: '匹配度', type: 'number', suffix: '%', icon: 'el-icon-data-line' }
   ],
   fields: [
-    { key: 'policyId', label: '匹配政策', source: 'policy' },
+    { key: 'policyId', label: '匹配政策', source: 'policySubscribe' },
     { key: 'companyId', label: '匹配企业', source: 'enterprise' },
     { key: 'matchDegree', label: '匹配度', type: 'number', min: 0, max: 100, suffix: '%' },
     { key: 'matchTime', label: '匹配时间', type: 'datetime' }

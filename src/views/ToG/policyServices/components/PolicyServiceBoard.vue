@@ -55,7 +55,6 @@
               <div class="card-actions">
                 <el-button type="text" @click="openDetail(record)">
                   查看详情
-                  <i class="el-icon-arrow-right"></i>
                 </el-button>
                 <el-button v-if="canAdvance(record)" type="text" @click="advanceStatus(record)">{{ advanceLabel(record) }}</el-button>
                 <el-button type="text" @click="openEdit(record)">编辑</el-button>
@@ -88,6 +87,9 @@
             </el-select>
             <el-select v-else-if="field.source === 'policy'" v-model="form[field.key]" filterable clearable placeholder="请选择政策" :loading="policyLoading">
               <el-option v-for="option in policyOptions" :key="option.id" :label="option.label" :value="option.id" />
+            </el-select>
+            <el-select v-else-if="field.source === 'policySubscribe'" v-model="form[field.key]" filterable clearable placeholder="请选择订阅政策" :loading="policySubscribeLoading">
+              <el-option v-for="option in policySubscribeOptions" :key="option.id" :label="option.label" :value="option.id" />
             </el-select>
             <el-select v-else-if="field.type === 'select'" v-model="form[field.key]" clearable :multiple="field.multiple" :collapse-tags="field.multiple" :placeholder="`请选择${field.label}`">
               <el-option v-for="option in field.options" :key="option.value" :label="option.label" :value="option.value" />
@@ -151,7 +153,7 @@
       <div class="drawer-footer">
         <el-button @click="detailVisible = false">关闭</el-button>
         <el-button v-if="canTransfer(detailRecord)" type="primary" @click="openTransfer">转项目申报</el-button>
-        <el-button v-if="canAdvance(detailRecord)" type="primary" @click="advanceStatus(detailRecord)">{{ advanceLabel(detailRecord) }}</el-button>
+        <el-button v-if="detailRecord && canAdvance(detailRecord)" type="primary" @click="advanceStatus(detailRecord)">{{ advanceLabel(detailRecord) }}</el-button>
       </div>
     </el-drawer>
 
@@ -213,6 +215,8 @@ export default {
       detailRecord: null,
       enterpriseOptions: [],
       policyOptions: [],
+      policySubscribeLoading: false,
+      policySubscribeOptions: [],
       transferVisible: false,
       transferForm: { projectName: '', contactName: '', contactPhone: '' }
     }
@@ -250,8 +254,16 @@ export default {
     this.loadRecords()
     this.loadEnterprises()
     this.loadPolicies()
+    this.loadPolicySubscribes()
   },
   methods: {
+    currentUserId() {
+      try {
+        return JSON.parse(window.sessionStorage.getItem('userInfo') || '{}').id || ''
+      } catch (error) {
+        return ''
+      }
+    },
     unwrap(response) {
       return response && response.data && response.data.data !== undefined ? response.data.data : response
     },
@@ -319,6 +331,18 @@ export default {
         this.policyLoading = false
       }
     },
+    async loadPolicySubscribes() {
+      const request = this.$api && this.$api['togPolicySubscribe.list']
+      if (!request) return
+      this.policySubscribeLoading = true
+      try {
+        const list = this.recordsFrom(this.unwrap(await request({ pageNo: 1, pageSize: 200 })))
+        this.policySubscribeOptions = list.map((item) => ({ id: item.id, label: item.policyTypes || item.userId || item.id }))
+      } catch (error) {
+      } finally {
+        this.policySubscribeLoading = false
+      }
+    },
     displayId(record) {
       return record.id || record.dataId || record.orderNo || '未编号'
     },
@@ -333,7 +357,7 @@ export default {
       return key && record[key] ? record[key] : record.itemCreateTime || '-'
     },
     statusValue(record) {
-      return this.config.statusKey ? record[this.config.statusKey] || this.config.defaultStatus || '待处理' : this.config.defaultStatus || '已登记'
+      return this.config.statusKey ? (record && record[this.config.statusKey]) || this.config.defaultStatus || '待处理' : this.config.defaultStatus || '已登记'
     },
     statusType(status) {
       return statusTone[status] || 'info'
@@ -350,6 +374,10 @@ export default {
       }
       if (field && field.source === 'policy') {
         const found = this.policyOptions.find((option) => option.id === value)
+        return found ? found.label : value
+      }
+      if (field && field.source === 'policySubscribe') {
+        const found = this.policySubscribeOptions.find((option) => option.id === value)
         return found ? found.label : value
       }
       const option = field && field.options && field.options.find((item) => item.value === value)
@@ -377,6 +405,7 @@ export default {
     openEdit(record) {
       this.editingId = record.id
       this.form = Object.assign(this.blankForm(), record)
+      if (this.config.namespace === 'togPolicySubscribe' && typeof this.form.policyTypes === 'string') this.form.policyTypes = this.form.policyTypes ? this.form.policyTypes.split(',') : []
       this.formVisible = true
       this.$nextTick(() => this.$refs.policyForm && this.$refs.policyForm.clearValidate())
     },
@@ -399,7 +428,9 @@ export default {
       if (!request) return
       this.submitting = true
       try {
-        await request(this.form)
+        const payload = Object.assign({}, this.form, this.editingId ? { updateBy: this.currentUserId(), itemUpdateTime: this.now() } : { createBy: this.currentUserId(), itemCreateTime: this.now() })
+        if (this.config.namespace === 'togPolicySubscribe' && Array.isArray(payload.policyTypes)) payload.policyTypes = payload.policyTypes.join(',')
+        await request(payload)
         this.$message.success(this.editingId ? '修改成功' : '提交成功')
         this.formVisible = false
         this.loadRecords()
@@ -411,7 +442,7 @@ export default {
       }
     },
     canAdvance(record) {
-      if (!this.config.statusKey) return false
+      if (!record || !this.config.statusKey) return false
       const index = this.statusIndex(record)
       const finalIndex = this.config.projectTransfer ? this.config.statusOptions.length - 2 : this.config.statusOptions.length - 1
       return index < finalIndex
@@ -424,7 +455,7 @@ export default {
       const next = this.config.statusOptions[this.statusIndex(record) + 1]
       if (!next) return
       try {
-        await this.api('edit')(Object.assign({}, record, { [this.config.statusKey]: next }))
+        await this.api('edit')(Object.assign({}, record, { [this.config.statusKey]: next, updateBy: this.currentUserId(), itemUpdateTime: this.now() }))
         this.$message.success(`已更新为${next}`)
         if (this.detailRecord && this.detailRecord.id === record.id) this.detailRecord = Object.assign({}, record, { [this.config.statusKey]: next })
         this.loadRecords()
@@ -472,9 +503,11 @@ export default {
           applyTime: this.now(),
           contactName: this.transferForm.contactName,
           contactPhone: this.transferForm.contactPhone,
-          approveStatus: '待受理'
+          approveStatus: '待受理',
+          createBy: this.currentUserId(),
+          itemCreateTime: this.now()
         })
-        await this.api('edit')(Object.assign({}, this.detailRecord, { status: '已转申报' }))
+        await this.api('edit')(Object.assign({}, this.detailRecord, { status: '已转申报', updateBy: this.currentUserId(), itemUpdateTime: this.now() }))
         this.detailRecord = Object.assign({}, this.detailRecord, { status: '已转申报' })
         this.transferVisible = false
         this.$message.success('项目申报已生成')
@@ -572,7 +605,6 @@ export default {
   min-height: 62px;
   padding: 12px 14px;
   gap: 10px;
-  border-bottom: 1px solid #e2e8f0;
 }
 .toolbar .el-input {
   width: 300px;
@@ -590,6 +622,7 @@ export default {
 }
 .policy-card-grid {
   display: grid;
+  width: 100%;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   align-content: start;
@@ -1035,6 +1068,7 @@ export default {
   width: 160px;
 }
 .policy-service-board .cards-stage {
+  display: flex;
   min-height: 0;
   padding: 2px 20px 18px;
 }
