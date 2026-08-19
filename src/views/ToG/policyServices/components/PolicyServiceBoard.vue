@@ -53,9 +53,7 @@
             <div class="card-footer" @click.stop>
               <span class="flow-hint">{{ flowHint(record) }}</span>
               <div class="card-actions">
-                <el-button type="text" @click="openDetail(record)">
-                  查看详情
-                </el-button>
+                <el-button type="text" @click="openDetail(record)">查看详情</el-button>
                 <el-button v-if="canAdvance(record)" type="text" @click="advanceStatus(record)">{{ advanceLabel(record) }}</el-button>
                 <el-button type="text" @click="openEdit(record)">编辑</el-button>
                 <el-button type="text" class="danger-action" @click="remove(record)">删除</el-button>
