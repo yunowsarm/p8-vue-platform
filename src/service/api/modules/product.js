@@ -567,6 +567,13 @@ export const repositoryApi = {
       path: '/framework/reportSQL/sqlParam',
       mockPath: '/framework/reportSQL/sqlParam',
       desc: '首页->主页看板->获取统计数据'
+    },
+    {
+      name: 'getRentWarnings',
+      method: 'GET',
+      path: '/jt/warn/search',
+      mockPath: '/jt/warn/search',
+      desc: '首页->合同及租金预警'
     }
   ],
   taskManager: [

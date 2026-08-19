@@ -108,19 +108,13 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="故障附件">
-              <el-upload
-                ref="imageUpload"
-                action="#"
-                name="thefile"
-                :auto-upload="false"
-                :file-list="form.uploadFiles"
-                :limit="9"
-                :on-change="handleImageChange"
-                :on-remove="handleImageRemove"
-              >
+              <el-upload ref="imageUpload" action="#" name="thefile" :auto-upload="false" :file-list="form.uploadFiles" :limit="9" :on-change="handleImageChange" :on-remove="handleImageRemove">
                 <el-button size="small" type="primary">选择文件</el-button>
                 <div slot="file" slot-scope="{ file }" class="upload-file-item">
-                  <span :class="['upload-file-name', { 'file-download-link': file.id }]" @click="file.id && handleImageDownload(file)"><i class="el-icon-picture-outline"></i>{{ file.name || file.fileName }}</span>
+                  <span :class="['upload-file-name', { 'file-download-link': file.id }]" @click="file.id && handleImageDownload(file)">
+                    <i class="el-icon-picture-outline"></i>
+                    {{ file.name || file.fileName }}
+                  </span>
                   <el-button class="remove-upload-file" type="text" icon="el-icon-delete" title="删除文件" @click="removeUploadFile(file)"></el-button>
                 </div>
               </el-upload>
@@ -164,7 +158,10 @@
             <h4>故障附件</h4>
             <div v-if="detailUploadFiles.length" class="detail-files">
               <div v-for="file in detailUploadFiles" :key="file.uid || file.id || file.filePath || file.fileName" class="detail-file-item">
-                <span :class="{ 'file-download-link': file.id }" @click="file.id && handleImageDownload(file)"><i class="el-icon-picture-outline"></i>{{ file.name || file.fileName || '图片附件' }}</span>
+                <span :class="{ 'file-download-link': file.id }" @click="file.id && handleImageDownload(file)">
+                  <i class="el-icon-picture-outline"></i>
+                  {{ file.name || file.fileName || '图片附件' }}
+                </span>
               </div>
             </div>
             <p v-else>未上传图片</p>
@@ -212,7 +209,11 @@ export default {
       selectedRecord: null,
       form: {},
       repairTypes: ['水电维修', '门窗维修', '空调维修', '网络维修', '设备维修', '公共设施', '其他'],
-      statusOptions: [{ label: '待处理', value: 0 }, { label: '处理中', value: 1 }, { label: '已完成', value: 2 }],
+      statusOptions: [
+        { label: '待处理', value: 0 },
+        { label: '处理中', value: 1 },
+        { label: '已完成', value: 2 }
+      ],
       rules: {
         type: [{ required: true, message: '请选择报修类型', trigger: 'change' }],
         location: [{ required: true, message: '请输入报修地点', trigger: 'blur' }],
@@ -260,7 +261,7 @@ export default {
     },
     detailUploadFiles() {
       return this.componentUploadFiles(this.selectedRecord)
-    },
+    }
   },
   created() {
     this.form = this.emptyForm()
@@ -277,7 +278,14 @@ export default {
       if (!this.$api || !this.$api['reportRepair.list']) return
       this.loading = true
       try {
-        const params = { pageNo: this.currentPage, pageSize: this.pageSize, keyword: this.keyword || undefined, type: this.typeFilter || undefined, status: this.statusFilter === '' ? undefined : this.statusFilter }
+        const params = {
+          pageNo: this.currentPage,
+          pageSize: this.pageSize,
+          keyword: this.keyword || undefined,
+          type: this.typeFilter || undefined,
+          status: this.statusFilter === '' ? undefined : this.statusFilter,
+          type: 0 //查看自己
+        }
         const result = this.unwrap(await this.$api['reportRepair.list'](params)) || {}
         this.records = Array.isArray(result.records) ? result.records : Array.isArray(result.list) ? result.list : Array.isArray(result) ? result : []
         this.total = Number(result.total || this.records.length)
@@ -370,9 +378,7 @@ export default {
         const uploadFiles = this.normalizeUploadFiles(this.form.uploadFiles).map((file) => this.cleanUploadFile(file))
         const now = this.formatDateTime(new Date())
         const userId = this.currentUserId()
-        const auditFields = this.editingId
-          ? { updateBy: userId, itemUpdateTime: now }
-          : { createBy: userId, itemCreateTime: now }
+        const auditFields = this.editingId ? { updateBy: userId, itemUpdateTime: now } : { createBy: userId, itemCreateTime: now }
         const payload = Object.assign({}, this.form, { fileType: 0, uploadFiles }, auditFields, this.editingId ? { id: this.editingId } : {})
         await this.$api[`reportRepair.${action}`](payload)
         this.$message.success(this.editingId ? '修改成功' : '物业报修已提交')
@@ -446,8 +452,7 @@ export default {
     componentUploadFiles(record) {
       const filePaths = this.filePathList(record && record.file1)
       if (!filePaths.length) return []
-      return this.normalizeUploadFiles(record && record.uploadFiles)
-        .filter((file) => filePaths.includes(file.filePath))
+      return this.normalizeUploadFiles(record && record.uploadFiles).filter((file) => filePaths.includes(file.filePath))
     },
     filePathList(value) {
       if (!value) return []
@@ -541,8 +546,8 @@ export default {
       // /attachment/upload 固定返回 { head, data: [附件信息] }；
       // axios 拦截器会将该响应解包为 data 数组。
       const files = Array.isArray(response) ? response : response && response.data
-      return Array.isArray(files) ? (files[0] || {}) : {}
-    },
+      return Array.isArray(files) ? files[0] || {} : {}
+    }
   }
 }
 </script>

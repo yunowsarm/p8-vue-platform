@@ -197,7 +197,7 @@
       </el-form>
       <span slot="footer">
         <el-button @click="completeVisible = false">取消</el-button>
-        <el-button :type="completeForm.editing ? 'primary' : 'success'" :loading="saving" @click="completeRepair">{{ completeSubmitText }}</el-button>
+        <el-button :type="success" :loading="saving" @click="completeRepair">{{ completeSubmitText }}</el-button>
       </span>
     </el-dialog>
   </main>
@@ -300,7 +300,8 @@ export default {
               pageSize: this.pageSize,
               keyword: this.keyword || undefined,
               type: this.typeFilter || undefined,
-              status: this.statusFilter === '' ? undefined : this.statusFilter
+              status: this.statusFilter === '' ? undefined : this.statusFilter,
+              type: 1 //查看全部
             })
           ) || {}
         this.records = Array.isArray(result.records) ? result.records : Array.isArray(result.list) ? result.list : Array.isArray(result) ? result : []
@@ -429,7 +430,7 @@ export default {
           const uploadFiles = this.completeForm.uploadFiles.filter((file) => file.filePath).map((file) => this.cleanUploadFile(file))
           this.updateRepair(
             this.completeForm.id,
-            { status: 2, RESULT: this.completeForm.handleResult, completeTime: this.formatDateTime(new Date()), file2: uploadFiles.map((file) => file.filePath).join(','), uploadFiles },
+            { status: 2, result: this.completeForm.handleResult, completeTime: this.formatDateTime(new Date()), file2: uploadFiles.map((file) => file.filePath).join(','), uploadFiles },
             this.completeForm.editing ? '处理结果已修改' : '工单已办结',
             () => {
               this.completeVisible = false
