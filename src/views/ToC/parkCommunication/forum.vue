@@ -1,122 +1,40 @@
 <template>
   <main class="park-forum">
-    <section class="forum-nav" aria-label="帖子操作">
-      <div class="sort-tabs" role="tablist" aria-label="帖子排序方式">
-        <button v-for="item in sortTabs" :key="item.key" type="button" :class="{ active: activeSort === item.key }" role="tab" :aria-selected="activeSort === item.key" @click="setSort(item.key)">
-          {{ item.label }}
-        </button>
-      </div>
-      <div class="forum-toolbar">
-        <el-input
-          v-model.trim="keyword"
-          clearable
-          size="small"
-          prefix-icon="el-icon-search"
-          placeholder="搜索帖子、版块或关键词"
-          aria-label="搜索园区论坛"
-          @clear="searchTopics"
-          @keyup.enter.native="searchTopics" />
-        <el-button size="small" icon="el-icon-search" @click="searchTopics">搜索</el-button>
-      </div>
-      <el-button class="publish-topic-button" type="primary" size="small" icon="el-icon-edit" @click="openPublish">发布帖子</el-button>
-    </section>
+    <forum-navigation :active-sort="activeSort" :keyword.sync="keyword" :sort-tabs="sortTabs" @set-sort="setSort" @search="searchTopics" @publish="openPublish" />
 
     <section class="forum-layout">
-      <aside class="board-panel" aria-label="论坛版块">
-        <div class="panel-title">
-          <h2>浏览版块</h2>
-        </div>
-        <button type="button" class="board-item" :class="{ active: activeCategory === 'all' }" @click="selectCategory('all')">
-          <i class="el-icon-collection"></i>
-          <span>全部动态</span>
-          <b>{{ topicTotal }}</b>
-        </button>
-        <button v-for="category in categories" :key="category.id" type="button" class="board-item" :class="{ active: activeCategory === category.id }" @click="selectCategory(category.id)">
-          <img v-if="isImageIcon(category.icon)" class="category-image" :src="category.icon" :alt="category.name" />
-          <i v-else :class="categoryIcon(category)" :style="{ color: category.color }"></i>
-          <span>{{ category.name }}</span>
-        </button>
-        <div class="panel-rule">
-          <i class="el-icon-warning-outline"></i>
-          <p>请勿发布广告、隐私信息或不实内容。</p>
-        </div>
-      </aside>
+      <forum-category-panel
+        :active-category="activeCategory"
+        :categories="categories"
+        :topic-total="topicTotal"
+        :category-icon="categoryIcon"
+        :is-image-icon="isImageIcon"
+        @select-category="selectCategory" />
 
       <div class="topic-column">
-      <section v-loading="topicsLoading || myTopicsLoading" class="topic-panel" aria-live="polite">
-        <!-- <div class="topic-head">
-          <div>
-            <h2>{{ activeCategoryName }}</h2>
-            <p>{{ activeCategory === 'all' ? '园区里的新鲜事，都在这里发生' : '当前版块的讨论内容' }}</p>
-          </div>
-          <span>{{ topicResultCount }} 个结果</span>
-        </div> -->
-        <div v-if="filteredTopics.length" class="topic-list">
-          <article v-for="topic in filteredTopics" :key="topic.id" class="topic-card" tabindex="0" role="button" @click="openTopic(topic)" @keydown.enter="openTopic(topic)">
-            <div class="topic-card-main">
-              <div class="topic-topline">
-                <span v-if="topic.isTop" class="top-mark">置顶</span>
-                <span class="category-tag" :style="{ color: categoryById(topic.categoryId).color, backgroundColor: categoryById(topic.categoryId).softColor }">
-                  {{ categoryById(topic.categoryId).name }}
-                </span>
-                <time>{{ formatDateTime(topic.createdAt) }}</time>
-              </div>
-              <h3>{{ topic.title }}</h3>
-              <p>{{ topic.content }}</p>
-              <div class="topic-author">
-                <span class="avatar" :style="{ background: topic.avatarColor }">{{ authorName(topic).slice(0, 1) }}</span>
-                <span>{{ authorName(topic) }}</span>
-              </div>
-            </div>
-            <div class="topic-actions" @click.stop>
-              <button type="button" :class="{ active: topic.liked }" :aria-label="'点赞 ' + topic.title" @click="toggleLike(topic)">
-                <svg class="like-heart-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3 4.7 13A5.1 5.1 0 0 1 12 5.8 5.1 5.1 0 0 1 19.3 13L12 20.3Z" /></svg>
-                {{ topic.likeCount }}
-              </button>
-              <button type="button" aria-label="查看评论" @click="openTopic(topic)">
-                <i class="el-icon-chat-dot-round"></i>
-                {{ topic.replyCount }}
-              </button>
-              <button type="button" :class="{ active: topic.favorited }" :aria-label="'收藏 ' + topic.title" @click="toggleFavorite(topic)">
-                <i class="el-icon-star-off"></i>
-                {{ topic.favorited ? '已收藏' : '收藏' }}
-              </button>
-              <span>
-                <i class="el-icon-view"></i>
-                {{ topic.viewCount }}
-              </span>
-              <template v-if="isOwnTopic(topic)">
-                <button type="button" class="topic-manage-button topic-manage-start danger" :aria-label="'删除 ' + topic.title" @click="deleteTopic(topic)">
-                  <i class="el-icon-delete"></i>
-                  删除
-                </button>
-              </template>
-            </div>
-          </article>
+        <forum-topic-list
+          :topics="filteredTopics"
+          :loading="topicsLoading || myTopicsLoading"
+          :author-name="authorName"
+          :category-by-id="categoryById"
+          :format-date-time="formatDateTime"
+          :is-own-topic="isOwnTopic"
+          @open-topic="openTopic"
+          @toggle-like="toggleLike"
+          @toggle-favorite="toggleFavorite"
+          @delete-topic="deleteTopic"
+          @reset-filters="resetFilters" />
+        <div ref="loadMoreTrigger" class="load-more" aria-live="polite">
+          <span v-if="loadingMore">
+            <i class="el-icon-loading"></i>
+            正在加载更多内容
+          </span>
+          <span v-else-if="hasMoreTopics">向下滚动加载更多</span>
+          <span v-else-if="filteredTopics.length">已经到底了</span>
         </div>
-        <el-empty v-else description="没有找到相关帖子" :image-size="92"><el-button size="small" type="primary" @click="resetFilters">查看全部帖子</el-button></el-empty>
-      </section>
-      <div ref="loadMoreTrigger" class="load-more" aria-live="polite">
-        <span v-if="loadingMore"><i class="el-icon-loading"></i> 正在加载更多内容</span>
-        <span v-else-if="hasMoreTopics">向下滚动加载更多</span>
-        <span v-else-if="filteredTopics.length">已经到底了</span>
-      </div>
       </div>
 
-      <aside class="discover-panel" aria-label="论坛推荐">
-        <section class="side-section">
-          <div class="panel-title">
-            <h2>热门讨论</h2>
-            <i class="el-icon-top"></i>
-          </div>
-          <button v-for="(topic, index) in hotTopics" :key="topic.id" type="button" class="rank-item" @click="openTopic(topic)">
-            <b :class="{ highlight: index < 3 }">0{{ index + 1 }}</b>
-            <span>{{ topic.title }}</span>
-            <em>{{ topic.replyCount }}</em>
-          </button>
-          <el-empty v-if="!hotTopics.length" description="暂无讨论" :image-size="54" />
-        </section>
-      </aside>
+      <forum-hot-topics :topics="hotTopics" @open-topic="openTopic" />
     </section>
 
     <el-dialog title="发布新帖子" :visible.sync="publishVisible" width="620px" append-to-body :close-on-click-modal="false" custom-class="forum-dialog" @closed="resetPublishForm">
@@ -155,11 +73,21 @@
         <section class="detail-content">
           <p>{{ selectedTopic.content }}</p>
           <div class="detail-actions">
-            <button type="button" class="detail-action-button like-action" :class="{ active: selectedTopic.liked }" :aria-label="selectedTopic.liked ? '取消点赞' : '点赞'" @click="toggleLike(selectedTopic)">
+            <button
+              type="button"
+              class="detail-action-button like-action"
+              :class="{ active: selectedTopic.liked }"
+              :aria-label="selectedTopic.liked ? '取消点赞' : '点赞'"
+              @click="toggleLike(selectedTopic)">
               <svg class="like-heart-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3 4.7 13A5.1 5.1 0 0 1 12 5.8 5.1 5.1 0 0 1 19.3 13L12 20.3Z" /></svg>
               {{ selectedTopic.liked ? '已点赞' : '点赞' }} {{ selectedTopic.likeCount }}
             </button>
-            <button type="button" class="detail-action-button favorite-action" :class="{ active: selectedTopic.favorited }" :aria-label="selectedTopic.favorited ? '取消收藏' : '收藏'" @click="toggleFavorite(selectedTopic)">
+            <button
+              type="button"
+              class="detail-action-button favorite-action"
+              :class="{ active: selectedTopic.favorited }"
+              :aria-label="selectedTopic.favorited ? '取消收藏' : '收藏'"
+              @click="toggleFavorite(selectedTopic)">
               <i :class="selectedTopic.favorited ? 'el-icon-star-on' : 'el-icon-star-off'"></i>
               {{ selectedTopic.favorited ? '已收藏' : '收藏' }}
             </button>
@@ -184,18 +112,27 @@
                   <time>{{ formatDateTime(reply.createdAt) }}</time>
                 </div>
                 <p>{{ reply.content }}</p>
-                <button type="button" class="reply-button" :aria-label="'回复 ' + authorName(reply)" @click="startReply(reply)"><i class="el-icon-chat-dot-round"></i> 回复</button>
+                <button type="button" class="reply-button" :aria-label="'回复 ' + authorName(reply)" @click="startReply(reply)">
+                  <i class="el-icon-chat-dot-round"></i>
+                  回复
+                </button>
               </div>
             </article>
           </div>
           <el-empty v-else v-loading="repliesLoading" description="还没有回复，来抢沙发吧" :image-size="70" />
           <div ref="replyLoadTrigger" class="reply-load-more" aria-live="polite">
-            <span v-if="replyLoadingMore"><i class="el-icon-loading"></i> 正在加载更多回复</span>
+            <span v-if="replyLoadingMore">
+              <i class="el-icon-loading"></i>
+              正在加载更多回复
+            </span>
             <span v-else-if="hasMoreReplies">向下滚动加载更多回复</span>
             <span v-else-if="replyTree.length">已加载全部回复</span>
           </div>
           <div class="reply-editor">
-            <div v-if="replyTarget" class="reply-target"><span>回复 {{ authorName(replyTarget) }}</span><button type="button" @click="cancelReply">取消回复</button></div>
+            <div v-if="replyTarget" class="reply-target">
+              <span>回复 {{ authorName(replyTarget) }}</span>
+              <button type="button" @click="cancelReply">取消回复</button>
+            </div>
             <el-input ref="replyInput" v-model.trim="replyContent" type="textarea" :rows="3" maxlength="300" show-word-limit :placeholder="replyPlaceholder" />
             <el-button type="primary" size="small" :loading="replying" :disabled="!replyContent" @click="submitReply">发布回复</el-button>
           </div>
@@ -206,6 +143,11 @@
 </template>
 
 <script>
+import ForumNavigation from './components/ForumNavigation.vue'
+import ForumCategoryPanel from './components/ForumCategoryPanel.vue'
+import ForumTopicList from './components/ForumTopicList.vue'
+import ForumHotTopics from './components/ForumHotTopics.vue'
+
 const CATEGORY_PALETTE = [
   { color: '#3674d9', softColor: '#eaf2ff', icon: 'el-icon-office-building' },
   { color: '#0f9a76', softColor: '#e7f8f1', icon: 'el-icon-service' },
@@ -218,6 +160,12 @@ const AVATAR_COLORS = ['#4979ca', '#b16c46', '#6d8d67', '#986ab7', '#5788a3', '#
 
 export default {
   name: 'ParkForum',
+  components: {
+    ForumNavigation,
+    ForumCategoryPanel,
+    ForumTopicList,
+    ForumHotTopics
+  },
   data() {
     return {
       categories: [],
@@ -263,10 +211,6 @@ export default {
     }
   },
   computed: {
-    activeCategoryName() {
-      if (this.activeSort === 'myTopics') return '我的帖子'
-      return this.activeCategory === 'all' ? '全部动态' : this.categoryById(this.activeCategory).name
-    },
     filteredTopics() {
       const keyword = this.appliedKeyword.toLowerCase()
       const source = this.activeSort === 'myTopics' ? this.myTopics : this.activeSort === 'favorites' ? this.favoriteTopics : this.topics
@@ -279,9 +223,6 @@ export default {
         if (this.activeSort === 'hot') return b.replyCount + b.likeCount - (a.replyCount + a.likeCount)
         return Number(b.isTop) - Number(a.isTop) || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       })
-    },
-    topicResultCount() {
-      return this.appliedKeyword || this.activeSort === 'favorites' || this.activeSort === 'myTopics' ? this.filteredTopics.length : this.topicTotal
     },
     hasMoreTopics() {
       return (this.activeSort === 'latest' || this.activeSort === 'hot') && this.topics.length < this.topicTotal
@@ -488,9 +429,12 @@ export default {
     },
     initLoadMoreObserver() {
       if (!window.IntersectionObserver) return
-      this.loadMoreObserver = new window.IntersectionObserver((entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) this.loadMoreTopics()
-      }, { rootMargin: '0px 0px 160px' })
+      this.loadMoreObserver = new window.IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) this.loadMoreTopics()
+        },
+        { rootMargin: '0px 0px 160px' }
+      )
       this.observeLoadMoreTrigger()
     },
     observeLoadMoreTrigger() {
@@ -505,9 +449,12 @@ export default {
     },
     initReplyLoadObserver() {
       if (!window.IntersectionObserver) return
-      this.replyLoadObserver = new window.IntersectionObserver((entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) this.loadMoreReplies()
-      }, { rootMargin: '0px 0px 120px' })
+      this.replyLoadObserver = new window.IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) this.loadMoreReplies()
+        },
+        { rootMargin: '0px 0px 120px' }
+      )
       this.observeReplyLoadTrigger()
     },
     observeReplyLoadTrigger() {
@@ -680,13 +627,16 @@ export default {
       if (!options) return
       this.replying = true
       try {
-        await this.$api['forum.replyCreate']({
-          topicId: this.selectedTopic.id,
-          content: this.replyContent,
-          parentId: this.replyTarget ? this.replyTarget.id : 0,
-          replyToUserId: this.replyTarget ? this.replyTarget.userId : 0,
-          userName: this.currentUserName()
-        }, options)
+        await this.$api['forum.replyCreate'](
+          {
+            topicId: this.selectedTopic.id,
+            content: this.replyContent,
+            parentId: this.replyTarget ? this.replyTarget.id : 0,
+            replyToUserId: this.replyTarget ? this.replyTarget.userId : 0,
+            userName: this.currentUserName()
+          },
+          options
+        )
         this.replyContent = ''
         this.replyTarget = null
         this.replyPage = 1
@@ -717,57 +667,6 @@ export default {
   background: #f6f8fb;
   color: #303133;
 }
-.forum-nav {
-  min-height: 58px;
-  padding: 0 16px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(360px, 480px) minmax(0, 1fr);
-  align-items: center;
-  border: 1px solid #ebeef5;
-  border-radius: 8px;
-  background: #fff;
-}
-.sort-tabs {
-  height: 58px;
-  display: flex;
-  gap: 20px;
-}
-.sort-tabs button {
-  position: relative;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #606266;
-  font-size: 14px;
-  cursor: pointer;
-}
-.sort-tabs button.active {
-  color: #409eff;
-  font-weight: 600;
-}
-.sort-tabs button.active:after {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 3px;
-  border-radius: 3px 3px 0 0;
-  background: #409eff;
-  content: '';
-}
-.forum-toolbar {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.forum-toolbar .el-input {
-  min-width: 0;
-  flex: 1;
-}
-.publish-topic-button {
-  justify-self: end;
-}
 .forum-layout {
   max-width: 1500px;
   margin: 12px auto 0;
@@ -779,138 +678,6 @@ export default {
 .topic-column {
   min-width: 0;
 }
-.board-panel,
-.topic-panel,
-.discover-panel {
-  min-width: 0;
-  border: 1px solid #ebeef5;
-  border-radius: 8px;
-  background: #fff;
-}
-.board-panel,
-.discover-panel {
-  padding: 14px 10px;
-}
-.panel-title {
-  margin: 0 6px 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.panel-title h2 {
-  margin: 0;
-  font-size: 15px;
-}
-.panel-title span,
-.panel-title i {
-  color: #909399;
-  font-size: 13px;
-}
-.board-item {
-  width: 100%;
-  min-height: 44px;
-  padding: 0 10px;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  border: 0;
-  border-radius: 4px;
-  background: transparent;
-  color: #606266;
-  text-align: left;
-  cursor: pointer;
-}
-.board-item:hover,
-.board-item.active {
-  background: #ecf5ff;
-  color: #409eff;
-}
-.board-item > i,
-.category-image {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-  text-align: center;
-  font-size: 17px;
-}
-.board-item span {
-  flex: 1;
-  font-size: 13px;
-}
-.board-item b {
-  color: #909399;
-  font-size: 12px;
-  font-weight: 400;
-}
-.panel-rule {
-  margin: 16px 4px 0;
-  padding: 12px;
-  display: flex;
-  gap: 7px;
-  border-radius: 8px;
-  background: #f5f7fa;
-  color: #909399;
-  font-size: 12px;
-  line-height: 19px;
-}
-.panel-rule i {
-  margin-top: 2px;
-  color: #d1963c;
-}
-.panel-rule p {
-  margin: 0;
-}
-.topic-panel {
-  overflow: hidden;
-}
-.topic-head {
-  min-height: 70px;
-  padding: 0 22px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #ebeef5;
-}
-.topic-head h2 {
-  margin: 0;
-  font-size: 17px;
-}
-.topic-head p {
-  margin: 5px 0 0;
-  color: #909399;
-  font-size: 12px;
-}
-.topic-head > span {
-  color: #909399;
-  font-size: 12px;
-}
-.topic-list {
-  padding: 0 20px;
-}
-.topic-card {
-  position: relative;
-  padding: 20px 0 15px;
-  border-bottom: 1px solid #ebeef5;
-  cursor: pointer;
-  outline: none;
-}
-.topic-card:last-child {
-  border-bottom: 0;
-}
-.topic-card:focus-visible {
-  outline: 2px solid #409eff;
-  outline-offset: -2px;
-}
-.topic-card:focus-visible h3,
-.topic-card:hover h3 {
-  color: #409eff;
-}
-.topic-topline {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-.top-mark,
 .category-tag {
   min-height: 20px;
   padding: 0 7px;
@@ -923,30 +690,6 @@ export default {
 .top-mark {
   background: #fff0ed;
   color: #d95a47;
-}
-.topic-topline time {
-  color: #9aa7b9;
-  font-size: 12px;
-}
-.topic-card h3 {
-  margin: 9px 0 7px;
-  overflow: hidden;
-  color: #303133;
-  font-size: 16px;
-  line-height: 22px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  transition: color 0.2s;
-}
-.topic-card-main > p {
-  display: -webkit-box;
-  margin: 0;
-  overflow: hidden;
-  color: #606266;
-  font-size: 13px;
-  line-height: 20px;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
 }
 .topic-author {
   margin-top: 12px;
@@ -974,44 +717,6 @@ export default {
   border-radius: 50%;
   background: #bbc5d2;
 }
-.topic-actions {
-  margin-top: 12px;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-.topic-actions button,
-.topic-actions span {
-  min-height: 30px;
-  padding: 0 2px;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  border: 0;
-  background: transparent;
-  color: #99a5b5;
-  font-size: 12px;
-}
-.topic-actions button {
-  cursor: pointer;
-}
-.topic-actions .topic-manage-button {
-  min-height: 30px;
-}
-.topic-actions .topic-manage-start {
-  margin-left: auto;
-}
-.topic-actions .danger,
-.topic-actions .danger:hover {
-  color: #f56c6c;
-}
-.topic-actions button:hover,
-.topic-actions button.active {
-  color: #409eff;
-}
-.topic-actions i {
-  font-size: 15px;
-}
 .like-heart-icon {
   width: 15px;
   height: 15px;
@@ -1021,7 +726,6 @@ export default {
   stroke-linejoin: round;
   stroke-width: 1.8;
 }
-.topic-actions button.active .like-heart-icon,
 .detail-actions button.active .like-heart-icon {
   fill: currentColor;
 }
@@ -1036,46 +740,6 @@ export default {
 }
 .load-more .el-icon-loading {
   margin-right: 6px;
-  color: #409eff;
-}
-.side-section + .side-section {
-  margin-top: 22px;
-}
-.rank-item {
-  width: 100%;
-  min-height: 44px;
-  padding: 0 5px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 0;
-  background: transparent;
-  color: #4e6078;
-  text-align: left;
-  cursor: pointer;
-}
-.rank-item b {
-  width: 20px;
-  color: #a7b1bf;
-  font-size: 12px;
-  font-style: italic;
-}
-.rank-item b.highlight {
-  color: #e17a45;
-}
-.rank-item span {
-  flex: 1;
-  overflow: hidden;
-  font-size: 12px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.rank-item em {
-  color: #a0acbc;
-  font-size: 11px;
-  font-style: normal;
-}
-.rank-item:hover span {
   color: #409eff;
 }
 .active-board {
@@ -1332,95 +996,17 @@ button:focus-visible {
   }
 }
 @media (max-width: 1180px) {
-  .forum-nav {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 10px;
-    padding: 10px 16px;
-  }
-  .forum-toolbar {
-    grid-row: 2;
-    grid-column: 1/-1;
-  }
   .forum-layout {
     grid-template-columns: 190px minmax(0, 1fr);
-  }
-  .discover-panel {
-    display: none;
   }
 }
 @media (max-width: 760px) {
   .park-forum {
     padding: 10px;
   }
-  .forum-nav {
-    min-height: 0;
-    padding: 8px 12px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .sort-tabs {
-    width: 100%;
-    height: 36px;
-    gap: 17px;
-    overflow-x: auto;
-  }
-  .sort-tabs button {
-    min-width: 44px;
-    white-space: nowrap;
-  }
-  .forum-toolbar {
-    width: 100%;
-    order: 3;
-  }
-  .publish-topic-button {
-    order: 2;
-  }
   .forum-layout {
     margin-top: 10px;
     display: block;
-  }
-  .board-panel {
-    margin-bottom: 10px;
-    padding: 10px;
-    display: flex;
-    gap: 7px;
-    overflow-x: auto;
-  }
-  .board-panel .panel-title,
-  .panel-rule {
-    display: none;
-  }
-  .board-item {
-    width: auto;
-    min-width: max-content;
-    border: 1px solid #e6ebf4;
-    background: #fff;
-  }
-  .board-item b {
-    display: none;
-  }
-  .topic-head {
-    min-height: 58px;
-    padding: 0 14px;
-  }
-  .topic-head p {
-    display: none;
-  }
-  .topic-list {
-    padding: 0 14px;
-  }
-  .topic-card {
-    padding: 16px 0 12px;
-  }
-  .topic-card h3 {
-    font-size: 15px;
-  }
-  .topic-actions {
-    gap: 14px;
-  }
-  .topic-actions span:last-child {
-    margin-left: auto;
   }
   .detail-header {
     padding: 36px 20px 18px;

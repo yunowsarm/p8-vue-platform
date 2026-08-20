@@ -49,17 +49,17 @@
           </div>
           <p class="card-content">{{ item[config.contentKey] || '暂无描述' }}</p>
           <dl class="card-meta">
-            <template v-for="field in cardFields">
-              <dt :key="field.key + '-label'">{{ field.label }}</dt>
-              <dd :key="field.key + '-value'">{{ formatValue(item[field.key]) }}</dd>
-            </template>
+            <div v-for="field in cardFields" :key="field.key" class="card-meta-item">
+              <dt>{{ field.label }}</dt>
+              <dd>{{ formatValue(item[field.key]) }}</dd>
+            </div>
           </dl>
           <div class="card-foot">
             <span v-if="config.counterFields" class="record-counts">
-              <template v-for="field in config.counterFields">
-                <i :key="field.key" :class="field.icon"></i>
-                <b :key="field.key + '-value'">{{ item[field.key] || 0 }}</b>
-              </template>
+              <span v-for="field in config.counterFields" :key="field.key" class="record-count-item">
+                <i :class="field.icon"></i>
+                <b>{{ item[field.key] || 0 }}</b>
+              </span>
             </span>
             <div class="card-actions">
               <el-button type="text" size="mini" @click.stop="openDetail(item)">查看详情</el-button>
@@ -714,6 +714,9 @@ export default {
   border-top: 1px solid #edf1f6;
   border-bottom: 1px solid #edf1f6;
   font-size: 13px;
+}
+.card-meta-item {
+  display: contents;
 }
 .card-meta dt {
   color: #9aa8bb;
