@@ -1,36 +1,20 @@
 <template>
   <main class="communication-board">
-    <section class="board-statistics" :class="{ 'board-statistics--compact': config.hasStatus === false }" aria-label="信息统计">
+    <section class="board-statistics board-statistics--compact" aria-label="信息统计">
       <article class="stat-card stat-card--primary">
         <span class="stat-icon"><i class="el-icon-document"></i></span>
         <div>
-          <small>记录总数</small>
-          <b>{{ paginationTotal }}</b>
-          <em>当前查询结果</em>
-        </div>
-      </article>
-      <article v-if="config.hasStatus !== false" class="stat-card stat-card--warning">
-        <span class="stat-icon"><i class="el-icon-time"></i></span>
-        <div>
-          <small>待处理</small>
-          <b>{{ pendingCount }}</b>
-          <em>当前页记录</em>
-        </div>
-      </article>
-      <article v-if="config.hasStatus !== false" class="stat-card stat-card--success">
-        <span class="stat-icon"><i class="el-icon-circle-check"></i></span>
-        <div>
-          <small>已处理</small>
-          <b>{{ handledCount }}</b>
-          <em>当前页记录</em>
+          <small>全部记录</small>
+          <b>{{ allRecordsTotal }}</b>
+          <em>所有发布记录</em>
         </div>
       </article>
       <article class="stat-card stat-card--info">
-        <span class="stat-icon"><img :src="lostFoundIcon" alt="" /></span>
+        <span class="stat-icon"><i class="el-icon-user-solid"></i></span>
         <div>
-          <small>{{ config.title }}</small>
-          <b>{{ pagedRecords.length }}</b>
-          <em>当前页展示</em>
+          <small>我发布的</small>
+          <b>{{ myRecordsTotal }}</b>
+          <em>当前账号发布</em>
         </div>
       </article>
     </section>
@@ -199,6 +183,8 @@ export default {
       currentPage: 1,
       pageSize: 6,
       total: 0,
+      allRecordsTotal: 0,
+      myRecordsTotal: 0,
       records: [],
       loading: false,
       submitting: false,
@@ -278,6 +264,7 @@ export default {
   },
   created() {
     this.loadRecords()
+    this.loadStatistics()
   },
   methods: {
     currentUserId() {
@@ -393,6 +380,21 @@ export default {
         this.loading = false
       }
     },
+    async loadStatistics() {
+      const query = { pageNo: 1, pageSize: 1 }
+      try {
+        const [allResult, mineResult] = await Promise.all([
+          this.$api[this.apiKey('list')](query),
+          this.$api[this.apiKey('list')](Object.assign({}, query, { createBy: this.currentUserId() }))
+        ])
+        this.allRecordsTotal = this.totalFrom(this.unwrap(allResult))
+        this.myRecordsTotal = this.totalFrom(this.unwrap(mineResult))
+      } catch (error) {
+        const records = this.config.records || []
+        this.allRecordsTotal = records.length
+        this.myRecordsTotal = records.filter((item) => this.canManageRecord(item)).length
+      }
+    },
     emptyForm() {
       const form = {}
       this.fields.forEach((field) => {
@@ -457,6 +459,7 @@ export default {
         this.$message.success(this.editingId ? '已更新' : '已提交')
         this.formVisible = false
         this.loadRecords()
+        this.loadStatistics()
       } catch (error) {
         this.$message.error(this.errorMessage(error))
       } finally {
@@ -473,6 +476,7 @@ export default {
         await this.$api[this.apiKey('delete')]({ id: item.id })
         this.$message.success('已删除')
         this.loadRecords()
+        this.loadStatistics()
       } catch (error) {
         if (error !== 'cancel') this.$message.error(this.errorMessage(error, '删除失败，请稍后重试'))
       }
