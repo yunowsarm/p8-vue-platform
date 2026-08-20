@@ -89,7 +89,7 @@
             </span>
             <div class="card-actions">
               <el-button type="text" size="mini" @click.stop="openDetail(item)">查看详情</el-button>
-              <el-button v-if="canManageRecord(item)" type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
+              <el-button v-if="canEditRecord(item)" type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
               <el-button v-if="canManageRecord(item)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
             </div>
           </div>
@@ -160,6 +160,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="formVisible = false">取消</el-button>
+        <el-button v-if="canMarkCarpooled" type="success" :loading="submitting" @click="markCarpooled">标记为已拼车</el-button>
         <el-button type="primary" :loading="submitting" @click="submitForm">{{ editingId ? '保存' : '提交' }}</el-button>
       </span>
     </el-dialog>
@@ -286,6 +287,9 @@ export default {
     },
     handledCount() {
       return this.pagedRecords.filter((item) => !this.isPendingStatus(item.status, item)).length
+    },
+    canMarkCarpooled() {
+      return Boolean(this.editingId && this.statusText(this.form.status, this.form) === '待拼车')
     }
   },
   created() {
@@ -323,6 +327,9 @@ export default {
       const currentUserId = this.currentUserId()
       const creatorId = this.creatorId(item)
       return Boolean(currentUserId && creatorId && String(currentUserId) === String(creatorId))
+    },
+    canEditRecord(item) {
+      return this.canManageRecord(item) && !['已拼车', '已出发'].includes(this.statusText(item.status, item))
     },
     typeIcon(type) {
       return type === '找乘客' ? this.findPassengerIcon : this.findCarIcon
@@ -380,7 +387,7 @@ export default {
       return ['待审核', '待认领', '待拼车'].includes(this.statusText(value, item))
     },
     statusType(status) {
-      if (['正常', '已发布', '已满员', '已出发'].includes(status)) return 'success'
+      if (['正常', '已发布', '已拼车', '已满员', '已出发'].includes(status)) return 'success'
       if (['待审核', '待认领', '待拼车'].includes(status)) return 'warning'
       if (['已关闭', '已下线', '已取消'].includes(status)) return 'info'
       return 'danger'
@@ -445,11 +452,20 @@ export default {
         this.$message.warning('仅发布人可以编辑该记录')
         return
       }
+      if (!this.canEditRecord(item)) {
+        this.$message.warning('已拼车或已出发的记录不可编辑')
+        return
+      }
       this.editingId = item.id
       this.form = Object.assign(this.emptyForm(), item, { status: this.statusText(item.status, item) })
       this.formVisible = true
     },
-    async submitForm() {
+    async markCarpooled() {
+      if (!this.canMarkCarpooled) return
+      this.form.status = '已拼车'
+      await this.submitForm('已标记为已拼车')
+    },
+    async submitForm(successMessage) {
       const valid = await new Promise((resolve) => this.$refs.communicationForm.validate(resolve))
       if (!valid) return
       this.submitting = true
@@ -475,7 +491,7 @@ export default {
       payload.status = this.statusText(payload.status, payload)
       try {
         await this.$api[this.apiKey(this.editingId ? 'edit' : 'add')](payload)
-        this.$message.success(this.editingId ? '已更新' : '已提交')
+        this.$message.success(successMessage || (this.editingId ? '已更新' : '已提交'))
         this.formVisible = false
         this.loadRecords()
       } catch (error) {

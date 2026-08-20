@@ -19,7 +19,7 @@ export default {
         currentUserNameKey: 'userName',
         filterKey: 'type',
         defaultStatus: '待拼车',
-        statusOptions: ['待拼车', '已出发'],
+        statusOptions: ['待拼车', '已拼车', '已出发'],
         fields: [
           { key: 'userId', label: '发布人编号', required: true, hidden: true },
           { key: 'type', label: '类型', options: ['找车', '找乘客'], required: true },

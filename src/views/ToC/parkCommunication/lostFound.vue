@@ -9,12 +9,12 @@ export default {
       config: {
         title: '失物招领',
         apiNamespace: 'tocLostFound',
-        icon: 'el-icon-goods',
         primaryLabel: '物品标题',
         primaryKey: 'title',
         contentKey: 'content',
         contentLabel: '物品说明',
         timeKey: 'publishTime',
+        currentUserIdKey: 'userId',
         filterKey: 'type',
         showMineFilter: true,
         canAdvanceStatus: true,
@@ -24,12 +24,13 @@ export default {
           寻物启事: ['寻找中', '已找到']
         },
         fields: [
-          { key: 'userId', label: '发布人', required: true },
+          { key: 'userId', label: '发布人编号', required: true, hidden: true },
+          { key: 'userName', label: '发布人', hidden: true, responseOnly: true },
           { key: 'type', label: '类型', options: ['失物招领', '寻物启事'], required: true },
           { key: 'title', label: '标题', required: true },
           { key: 'content', label: '内容', type: 'textarea', required: true },
           { key: 'contact', label: '联系方式', required: true },
-          { key: 'publishTime', label: '发布时间', type: 'datetime', required: true }
+          { key: 'publishTime', label: '发布时间', type: 'datetime', required: true, hidden: true, autoNow: true }
         ]
       }
     }

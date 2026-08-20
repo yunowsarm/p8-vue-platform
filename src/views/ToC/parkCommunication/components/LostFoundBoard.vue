@@ -26,7 +26,7 @@
         </div>
       </article>
       <article class="stat-card stat-card--info">
-        <span class="stat-icon"><i :class="config.icon"></i></span>
+        <span class="stat-icon"><img :src="lostFoundIcon" alt="" /></span>
         <div>
           <small>{{ config.title }}</small>
           <b>{{ pagedRecords.length }}</b>
@@ -59,7 +59,7 @@
             <el-tag v-if="config.hasStatus !== false" :type="statusType(statusText(item.status, item))" size="small" effect="light">{{ statusText(item.status, item) }}</el-tag>
           </div>
           <div class="card-title">
-            <i :class="config.icon"></i>
+            <img class="card-type-icon" :src="typeIcon(item.type)" :alt="typeIconAlt(item.type)" />
             <b>{{ item[config.primaryKey] || '-' }}</b>
             <time v-if="item[config.timeKey]">{{ item[config.timeKey] }}</time>
           </div>
@@ -80,7 +80,7 @@
             <div class="card-actions">
               <el-button type="text" size="mini" @click.stop="openDetail(item)">查看详情</el-button>
               <el-button v-if="canAdvanceStatus(item)" type="text" size="mini" @click.stop="advanceStatus(item)">推进至{{ nextStatus(item) }}</el-button>
-              <el-button v-if="canManageRecord(item)" type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
+              <el-button v-if="canEditRecord(item)" type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
               <el-button v-if="canManageRecord(item)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
             </div>
           </div>
@@ -105,7 +105,7 @@
         <el-row :gutter="28">
           <el-col v-for="field in normalFields" :key="field.key" :xs="24" :sm="12">
             <el-form-item :label="field.label" :prop="field.key">
-              <el-select v-if="field.options" v-model="form[field.key]" clearable filterable :placeholder="'请选择' + field.label" class="field-full" @change="handleFormFieldChange(field.key)">
+              <el-select v-if="field.options" v-model="form[field.key]" clearable filterable :disabled="editingId && field.key === config.filterKey" :placeholder="'请选择' + field.label" class="field-full" @change="handleFormFieldChange(field.key)">
                 <el-option v-for="option in field.options" :key="option" :label="option" :value="option" />
               </el-select>
               <el-date-picker
@@ -159,7 +159,7 @@
       <div v-if="selectedRecord" class="drawer-layout">
         <div class="drawer-scroll">
           <div class="detail-hero">
-            <span class="hero-icon"><i :class="config.icon"></i></span>
+            <span class="hero-icon"><img :src="typeIcon(selectedRecord.type)" :alt="typeIconAlt(selectedRecord.type)" /></span>
             <div>
               <small>{{ selectedRecord.id }}</small>
               <h3>{{ selectedRecord[config.primaryKey] || '-' }}</h3>
@@ -184,6 +184,9 @@
 </template>
 
 <script>
+const lostFoundIcon = require('@/assets/image/parkCommunication/lost-found.svg')
+const lostNoticeIcon = require('@/assets/image/parkCommunication/lost-notice.svg')
+
 export default {
   name: 'LostFoundBoard',
   props: { config: { type: Object, required: true } },
@@ -204,7 +207,9 @@ export default {
       detailVisible: false,
       editingId: '',
       selectedRecord: null,
-      form: {}
+      form: {},
+      lostFoundIcon,
+      lostNoticeIcon
     }
   },
   computed: {
@@ -212,10 +217,10 @@ export default {
       return this.config.fields || []
     },
     normalFields() {
-      return this.fields.filter((field) => field.type !== 'textarea')
+      return this.fields.filter((field) => !field.hidden && field.type !== 'textarea')
     },
     textFields() {
-      return this.fields.filter((field) => field.type === 'textarea')
+      return this.fields.filter((field) => !field.hidden && field.type === 'textarea')
     },
     typeOptions() {
       const field = this.fields.find((field) => field.key === this.config.filterKey)
@@ -229,7 +234,7 @@ export default {
       return this.fields.filter((field) => ![this.config.primaryKey, this.config.contentKey, this.config.timeKey, 'status', 'userId'].includes(field.key)).slice(0, 3)
     },
     detailFields() {
-      return this.fields.filter((field) => field.key !== this.config.contentKey)
+      return this.fields.filter((field) => ![this.config.contentKey, 'userId'].includes(field.key))
     },
     rules() {
       const rules = {}
@@ -282,6 +287,12 @@ export default {
         return ''
       }
     },
+    typeIcon(type) {
+      return type === '寻物启事' ? this.lostNoticeIcon : this.lostFoundIcon
+    },
+    typeIconAlt(type) {
+      return type === '寻物启事' ? '寻物启事' : '失物招领'
+    },
     creatorId(item) {
       if (!item) return ''
       return item[this.config.creatorKey || 'createBy'] || item.createBy || item.userId || ''
@@ -290,6 +301,9 @@ export default {
       const currentUserId = this.currentUserId()
       const creatorId = this.creatorId(item)
       return Boolean(currentUserId && creatorId && String(currentUserId) === String(creatorId))
+    },
+    canEditRecord(item) {
+      return this.canManageRecord(item) && !['已认领', '已找到'].includes(this.statusText(item.status, item))
     },
     now() {
       const date = new Date()
@@ -305,11 +319,13 @@ export default {
       if (response.data && response.data.head && response.data.data !== undefined) return response.data.data
       return response
     },
+    normalizeRecord(record) {
+      if (!record) return record
+      return Object.assign({}, record, { userName: record.userName || record.createByName || '' })
+    },
     recordsFrom(data) {
-      if (Array.isArray(data)) return data
-      if (Array.isArray(data && data.records)) return data.records
-      if (Array.isArray(data && data.list)) return data.list
-      return []
+      const records = Array.isArray(data) ? data : Array.isArray(data && data.records) ? data.records : Array.isArray(data && data.list) ? data.list : []
+      return records.map((record) => this.normalizeRecord(record))
     },
     totalFrom(data) {
       return Number(data && (data.total || data.count || data.totalCount)) || 0
@@ -382,6 +398,10 @@ export default {
       this.fields.forEach((field) => {
         form[field.key] = ''
       })
+      this.fields.filter((field) => field.autoNow).forEach((field) => {
+        form[field.key] = this.now()
+      })
+      if (this.config.currentUserIdKey) form[this.config.currentUserIdKey] = this.currentUserId()
       if (this.config.hasStatus !== false) form.status = this.defaultStatusFor(form)
       return form
     },
@@ -400,6 +420,10 @@ export default {
         this.$message.warning('仅创建人可以编辑该记录')
         return
       }
+      if (!this.canEditRecord(item)) {
+        this.$message.warning('已认领或已找到的记录不可编辑')
+        return
+      }
       this.editingId = item.id
       this.form = Object.assign(this.emptyForm(), item, { status: this.statusText(item.status, item) })
       this.formVisible = true
@@ -412,11 +436,22 @@ export default {
       const valid = await new Promise((resolve) => this.$refs.communicationForm.validate(resolve))
       if (!valid) return
       this.submitting = true
+      const currentUser = {}
+      if (this.config.currentUserIdKey) currentUser[this.config.currentUserIdKey] = this.currentUserId()
       const payload = Object.assign(
         {},
         this.form,
+        currentUser,
         this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: this.now() } : { createBy: this.currentUserId(), itemCreateTime: this.now() }
       )
+      if (!this.editingId) {
+        this.fields.filter((field) => field.autoNow).forEach((field) => {
+          payload[field.key] = this.now()
+        })
+      }
+      this.fields.filter((field) => field.responseOnly).forEach((field) => {
+        delete payload[field.key]
+      })
       try {
         await this.$api[this.apiKey(this.editingId ? 'edit' : 'add')](payload)
         this.$message.success(this.editingId ? '已更新' : '已提交')
@@ -466,7 +501,7 @@ export default {
       this.detailVisible = true
       try {
         const result = this.unwrap(await this.$api[this.apiKey('queryById')]({ id: item.id }))
-        if (result) this.selectedRecord = Object.assign({}, item, result)
+        if (result) this.selectedRecord = this.normalizeRecord(Object.assign({}, item, result))
       } catch (error) {}
     }
   }
@@ -509,6 +544,11 @@ export default {
   justify-content: center;
   border-radius: 8px;
   font-size: 18px;
+}
+.stat-icon img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
 }
 .stat-card div {
   min-width: 0;
@@ -622,6 +662,13 @@ export default {
 .card-title i {
   margin-right: 7px;
   color: #409eff;
+}
+.card-type-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  margin-right: 7px;
+  object-fit: contain;
 }
 .card-title {
   display: flex;
@@ -768,6 +815,12 @@ export default {
   border-radius: 8px;
   color: #fff;
   font-size: 20px;
+}
+.hero-icon img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 .detail-hero h3 {
   max-width: 290px;
