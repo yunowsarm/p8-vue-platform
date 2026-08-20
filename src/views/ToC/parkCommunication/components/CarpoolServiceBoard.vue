@@ -26,7 +26,7 @@
         </div>
       </article>
       <article class="stat-card stat-card--info">
-        <span class="stat-icon"><i :class="config.icon"></i></span>
+        <span class="stat-icon"><img :src="findCarIcon" alt="" /></span>
         <div>
           <small>{{ config.title }}</small>
           <b>{{ pagedRecords.length }}</b>
@@ -43,7 +43,7 @@
         <el-select v-if="config.hasStatus !== false" v-model="statusFilter" clearable size="small" placeholder="全部状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
         </el-select>
-        <el-checkbox v-if="config.showMineFilter" v-model="onlyMine" class="mine-filter" @change="resetPage">只看我发布的</el-checkbox>
+        <el-checkbox v-model="onlyMine" class="mine-filter" @change="resetPage">只看我发布的</el-checkbox>
         <div class="toolbar-actions">
           <el-button type="primary" size="small" icon="el-icon-plus" @click="openCreate">新建{{ config.title }}</el-button>
         </div>
@@ -58,28 +58,37 @@
             </span>
             <el-tag v-if="config.hasStatus !== false" :type="statusType(statusText(item.status, item))" size="small" effect="light">{{ statusText(item.status, item) }}</el-tag>
           </div>
-          <div class="card-title">
-            <i :class="config.icon"></i>
-            <b>{{ item[config.primaryKey] || '-' }}</b>
-            <time v-if="item[config.timeKey]">{{ item[config.timeKey] }}</time>
+          <div class="card-route" aria-label="行程路线">
+            <div class="route-point">
+              <small>起点</small>
+              <b>{{ formatValue(item.startPoint) }}</b>
+            </div>
+            <i class="el-icon-right route-arrow" aria-hidden="true"></i>
+            <div class="route-point">
+              <small>终点</small>
+              <b>{{ formatValue(item.endPoint) }}</b>
+            </div>
           </div>
-          <p class="card-content">{{ item[config.contentKey] || '暂无描述' }}</p>
-          <dl class="card-meta">
-            <template v-for="field in cardFields">
-              <dt :key="field.key + '-label'">{{ field.label }}</dt>
-              <dd :key="field.key + '-value'">{{ formatValue(item[field.key]) }}</dd>
-            </template>
+          <dl class="card-meta card-meta--carpool">
+            <dt>拼车类型</dt>
+            <dd class="carpool-type">
+              <img class="card-type-icon" :src="typeIcon(item.type)" alt="" />
+              {{ formatValue(item.type) }}
+            </dd>
+            <dt>出发时间</dt>
+            <dd>{{ formatValue(item.time) }}</dd>
+            <dt>联系方式</dt>
+            <dd>{{ formatValue(item.contact) }}</dd>
           </dl>
           <div class="card-foot">
             <span v-if="config.counterFields" class="record-counts">
-              <template v-for="field in config.counterFields">
-                <i :key="field.key" :class="field.icon"></i>
-                <b :key="field.key + '-value'">{{ item[field.key] || 0 }}</b>
-              </template>
+              <span v-for="field in config.counterFields" :key="field.key" class="record-count-item">
+                <i :class="field.icon"></i>
+                <b>{{ item[field.key] || 0 }}</b>
+              </span>
             </span>
             <div class="card-actions">
               <el-button type="text" size="mini" @click.stop="openDetail(item)">查看详情</el-button>
-              <el-button v-if="canAdvanceStatus(item)" type="text" size="mini" @click.stop="advanceStatus(item)">推进至{{ nextStatus(item) }}</el-button>
               <el-button v-if="canManageRecord(item)" type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
               <el-button v-if="canManageRecord(item)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
             </div>
@@ -101,11 +110,11 @@
       :close-on-click-modal="false"
       custom-class="communication-form-dialog"
       @closed="resetForm">
-      <el-form ref="communicationForm" :model="form" :rules="rules" label-width="92px" @submit.native.prevent>
+      <el-form ref="communicationForm" :model="form" :rules="rules" :validate-on-rule-change="false" label-width="92px" @submit.native.prevent>
         <el-row :gutter="28">
           <el-col v-for="field in normalFields" :key="field.key" :xs="24" :sm="12">
             <el-form-item :label="field.label" :prop="field.key">
-              <el-select v-if="field.options" v-model="form[field.key]" clearable filterable :placeholder="'请选择' + field.label" class="field-full" @change="handleFormFieldChange(field.key)">
+              <el-select v-if="field.options" v-model="form[field.key]" clearable filterable :placeholder="'请选择' + field.label" class="field-full">
                 <el-option v-for="option in field.options" :key="option" :label="option" :value="option" />
               </el-select>
               <el-date-picker
@@ -127,7 +136,7 @@
               <el-input-number
                 v-else-if="field.type === 'number' || field.type === 'amount'"
                 v-model="form[field.key]"
-                :min="0"
+                :min="field.min === undefined ? 0 : field.min"
                 :precision="field.type === 'amount' ? 2 : 0"
                 controls-position="right"
                 class="field-full" />
@@ -159,7 +168,7 @@
       <div v-if="selectedRecord" class="drawer-layout">
         <div class="drawer-scroll">
           <div class="detail-hero">
-            <span class="hero-icon"><i :class="config.icon"></i></span>
+            <span class="hero-icon"><img :src="typeIcon(selectedRecord.type)" :alt="typeIconAlt(selectedRecord.type)" /></span>
             <div>
               <small>{{ selectedRecord.id }}</small>
               <h3>{{ selectedRecord[config.primaryKey] || '-' }}</h3>
@@ -167,10 +176,12 @@
             <el-tag v-if="config.hasStatus !== false" :type="statusType(statusText(selectedRecord.status, selectedRecord))">{{ statusText(selectedRecord.status, selectedRecord) }}</el-tag>
           </div>
           <div class="detail-grid">
-            <span v-for="field in detailFields" :key="field.key">
-              <small>{{ field.label }}</small>
-              <b>{{ formatValue(selectedRecord[field.key]) }}</b>
-            </span>
+            <template v-for="field in detailFields">
+              <span v-if="isFieldVisible(field, selectedRecord)" :key="field.key">
+                <small>{{ field.label }}</small>
+                <b>{{ formatValue(selectedRecord[field.key]) }}</b>
+              </span>
+            </template>
           </div>
           <section v-if="selectedRecord[config.contentKey]" class="detail-section">
             <h4>{{ config.contentLabel || '内容' }}</h4>
@@ -184,8 +195,11 @@
 </template>
 
 <script>
+const findCarIcon = require('@/assets/image/parkCommunication/find-car.svg')
+const findPassengerIcon = require('@/assets/image/parkCommunication/find-passenger.svg')
+
 export default {
-  name: 'LostFoundBoard',
+  name: 'CarpoolServiceBoard',
   props: { config: { type: Object, required: true } },
   data() {
     return {
@@ -204,7 +218,11 @@ export default {
       detailVisible: false,
       editingId: '',
       selectedRecord: null,
-      form: {}
+      form: {},
+      clock: Date.now(),
+      departureTimer: null,
+      findCarIcon,
+      findPassengerIcon
     }
   },
   computed: {
@@ -212,17 +230,16 @@ export default {
       return this.config.fields || []
     },
     normalFields() {
-      return this.fields.filter((field) => field.type !== 'textarea')
+      return this.fields.filter((field) => this.isFieldVisible(field, this.form) && field.type !== 'textarea')
     },
     textFields() {
-      return this.fields.filter((field) => field.type === 'textarea')
+      return this.fields.filter((field) => this.isFieldVisible(field, this.form) && field.type === 'textarea')
     },
     typeOptions() {
       const field = this.fields.find((field) => field.key === this.config.filterKey)
       return field && field.options ? field.options : []
     },
     statusOptions() {
-      if (this.config.typeStatusOptions) return this.statusOptionsForType(this.typeFilter)
       return this.config.statusOptions || ['正常', '待审核', '已发布', '已关闭', '已下线']
     },
     cardFields() {
@@ -234,7 +251,7 @@ export default {
     rules() {
       const rules = {}
       this.fields
-        .filter((field) => field.required)
+        .filter((field) => field.required && this.matchesFieldCondition(field, this.form))
         .forEach((field) => {
           rules[field.key] = [{ required: true, message: `请填写${field.label}`, trigger: field.options ? 'change' : 'blur' }]
         })
@@ -273,6 +290,14 @@ export default {
   },
   created() {
     this.loadRecords()
+    if (this.config.departureTimeKey) {
+      this.departureTimer = window.setInterval(() => {
+        this.clock = Date.now()
+      }, 60000)
+    }
+  },
+  beforeDestroy() {
+    if (this.departureTimer) window.clearInterval(this.departureTimer)
   },
   methods: {
     currentUserId() {
@@ -282,14 +307,28 @@ export default {
         return ''
       }
     },
+    currentUserName() {
+      try {
+        const userInfo = JSON.parse(window.sessionStorage.getItem('userInfo') || '{}')
+        return userInfo.userName || userInfo.username || userInfo.name || ''
+      } catch (error) {
+        return ''
+      }
+    },
     creatorId(item) {
       if (!item) return ''
-      return item[this.config.creatorKey || 'createBy'] || item.createBy || item.userId || ''
+      return item.userId || item.createBy || ''
     },
     canManageRecord(item) {
       const currentUserId = this.currentUserId()
       const creatorId = this.creatorId(item)
       return Boolean(currentUserId && creatorId && String(currentUserId) === String(creatorId))
+    },
+    typeIcon(type) {
+      return type === '找乘客' ? this.findPassengerIcon : this.findCarIcon
+    },
+    typeIconAlt(type) {
+      return type === '找乘客' ? '找乘客' : '找车'
     },
     now() {
       const date = new Date()
@@ -314,36 +353,36 @@ export default {
     totalFrom(data) {
       return Number(data && (data.total || data.count || data.totalCount)) || 0
     },
-    statusOptionsForType(type) {
-      const statusByType = this.config.typeStatusOptions
-      if (!statusByType) return this.config.statusOptions || []
-      if (type && statusByType[type]) return statusByType[type]
-      return [...new Set(Object.keys(statusByType).reduce((options, key) => options.concat(statusByType[key]), []))]
+    matchesFieldCondition(field, values) {
+      if (!field.showWhen) return true
+      return Object.keys(field.showWhen).every((key) => {
+        const expected = field.showWhen[key]
+        const actual = values && values[key]
+        return Array.isArray(expected) ? expected.includes(actual) : actual === expected
+      })
     },
-    defaultStatusFor(record) {
-      const options = this.statusOptionsForType(record && record[this.config.filterKey])
-      return options[0] || this.config.defaultStatus || '正常'
+    isFieldVisible(field, values) {
+      return !field.hidden && this.matchesFieldCondition(field, values)
     },
-    statusText(value, record) {
-      if (value === undefined || value === null || value === '' || value === '0') return this.defaultStatusFor(record)
+    hasDeparted(value) {
+      if (!value) return false
+      const timestamp = new Date(String(value).replace(/-/g, '/')).getTime()
+      return !Number.isNaN(timestamp) && timestamp <= this.clock
+    },
+    statusText(value, item) {
+      const status = value === undefined || value === null || value === '' || value === '0' ? this.config.defaultStatus || '正常' : value
       const map = { 1: '待审核', 2: '已发布', 3: '已关闭', 4: '已下线' }
-      return map[value] || value
+      const resolvedStatus = map[status] || status
+      if (resolvedStatus !== '已取消' && this.config.departureTimeKey && item && this.hasDeparted(item[this.config.departureTimeKey])) return '已出发'
+      return resolvedStatus
     },
-    isPendingStatus(value, record) {
-      return ['待审核', '待认领', '寻找中', '待拼车'].includes(this.statusText(value, record))
-    },
-    nextStatus(item) {
-      const options = this.statusOptionsForType(item && item[this.config.filterKey])
-      const index = options.indexOf(this.statusText(item && item.status, item))
-      return index >= 0 ? options[index + 1] || '' : ''
-    },
-    canAdvanceStatus(item) {
-      return Boolean(this.config.canAdvanceStatus && this.canManageRecord(item) && this.nextStatus(item))
+    isPendingStatus(value, item) {
+      return ['待审核', '待认领', '待拼车'].includes(this.statusText(value, item))
     },
     statusType(status) {
-      if (['正常', '已发布', '已认领', '已找到'].includes(status)) return 'success'
-      if (['待审核', '待认领', '寻找中', '待拼车'].includes(status)) return 'warning'
-      if (['已关闭', '已下线'].includes(status)) return 'info'
+      if (['正常', '已发布', '已满员', '已出发'].includes(status)) return 'success'
+      if (['待审核', '待认领', '待拼车'].includes(status)) return 'warning'
+      if (['已关闭', '已下线', '已取消'].includes(status)) return 'info'
       return 'danger'
     },
     formatValue(value) {
@@ -351,7 +390,6 @@ export default {
     },
     resetPage() {
       this.currentPage = 1
-      if (this.statusFilter && !this.statusOptions.includes(this.statusFilter)) this.statusFilter = ''
       if (!this.usingMock) this.loadRecords()
     },
     async loadRecords() {
@@ -382,7 +420,14 @@ export default {
       this.fields.forEach((field) => {
         form[field.key] = ''
       })
-      if (this.config.hasStatus !== false) form.status = this.defaultStatusFor(form)
+      this.fields
+        .filter((field) => field.autoNow)
+        .forEach((field) => {
+          form[field.key] = this.now()
+        })
+      if (this.config.currentUserIdKey) form[this.config.currentUserIdKey] = this.currentUserId()
+      if (this.config.currentUserNameKey) form[this.config.currentUserNameKey] = this.currentUserName()
+      if (this.config.hasStatus !== false) form.status = this.config.defaultStatus || '正常'
       return form
     },
     resetForm() {
@@ -397,26 +442,37 @@ export default {
     },
     openEdit(item) {
       if (!this.canManageRecord(item)) {
-        this.$message.warning('仅创建人可以编辑该记录')
+        this.$message.warning('仅发布人可以编辑该记录')
         return
       }
       this.editingId = item.id
       this.form = Object.assign(this.emptyForm(), item, { status: this.statusText(item.status, item) })
       this.formVisible = true
     },
-    handleFormFieldChange(key) {
-      if (key !== this.config.filterKey || this.config.hasStatus === false) return
-      this.form.status = this.defaultStatusFor(this.form)
-    },
     async submitForm() {
       const valid = await new Promise((resolve) => this.$refs.communicationForm.validate(resolve))
       if (!valid) return
       this.submitting = true
+      const currentUser = {}
+      if (this.config.currentUserIdKey) currentUser[this.config.currentUserIdKey] = this.currentUserId()
+      if (this.config.currentUserNameKey) currentUser[this.config.currentUserNameKey] = this.currentUserName()
       const payload = Object.assign(
         {},
         this.form,
+        currentUser,
         this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: this.now() } : { createBy: this.currentUserId(), itemCreateTime: this.now() }
       )
+      if (!this.editingId) {
+        this.fields
+          .filter((field) => field.autoNow)
+          .forEach((field) => {
+            payload[field.key] = this.now()
+          })
+      }
+      this.fields.forEach((field) => {
+        if (!this.matchesFieldCondition(field, payload)) delete payload[field.key]
+      })
+      payload.status = this.statusText(payload.status, payload)
       try {
         await this.$api[this.apiKey(this.editingId ? 'edit' : 'add')](payload)
         this.$message.success(this.editingId ? '已更新' : '已提交')
@@ -430,7 +486,7 @@ export default {
     },
     async removeRecord(item) {
       if (!this.canManageRecord(item)) {
-        this.$message.warning('仅创建人可以删除该记录')
+        this.$message.warning('仅发布人可以删除该记录')
         return
       }
       try {
@@ -440,21 +496,6 @@ export default {
         this.loadRecords()
       } catch (error) {
         if (error !== 'cancel') this.$message.error(this.errorMessage(error, '删除失败，请稍后重试'))
-      }
-    },
-    async advanceStatus(item) {
-      if (!this.canAdvanceStatus(item)) {
-        this.$message.warning('仅创建人可以推进状态')
-        return
-      }
-      const next = this.nextStatus(item)
-      try {
-        await this.$confirm(`确认将状态推进至“${next}”？`, '状态推进确认', { type: 'warning' })
-        await this.$api[this.apiKey('edit')](Object.assign({}, item, { status: next, updateBy: this.currentUserId(), itemUpdateTime: this.now() }))
-        this.$message.success(`状态已更新为“${next}”`)
-        this.loadRecords()
-      } catch (error) {
-        if (error !== 'cancel') this.$message.error(this.errorMessage(error, '状态推进失败，请稍后重试'))
       }
     },
     errorMessage(error, fallback = '操作失败，请稍后重试') {
@@ -509,6 +550,11 @@ export default {
   justify-content: center;
   border-radius: 8px;
   font-size: 18px;
+}
+.stat-icon img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
 }
 .stat-card div {
   min-width: 0;
@@ -623,6 +669,46 @@ export default {
   margin-right: 7px;
   color: #409eff;
 }
+.card-type-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  margin-right: 7px;
+  object-fit: contain;
+}
+.card-route {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 26px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #f5f9ff;
+}
+.route-point {
+  min-width: 0;
+}
+.route-point small {
+  display: block;
+  margin-bottom: 5px;
+  color: #8b9ab0;
+  font-size: 12px;
+}
+.route-point b {
+  display: block;
+  overflow: hidden;
+  color: #29486e;
+  font-size: 15px;
+  line-height: 21px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.route-arrow {
+  color: #5b9cf1;
+  font-size: 18px;
+  text-align: center;
+}
 .card-title {
   display: flex;
   align-items: center;
@@ -674,6 +760,19 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.card-meta--carpool {
+  margin-top: 14px;
+}
+.card-meta--carpool dd {
+  display: flex;
+  align-items: center;
+}
+.card-meta--carpool .card-type-icon {
+  width: 16px;
+  height: 16px;
+  flex-basis: 16px;
+  margin-right: 6px;
+}
 .card-foot {
   justify-content: space-between;
   gap: 12px;
@@ -686,6 +785,11 @@ export default {
   gap: 5px;
   color: #8b9ab0;
   font-size: 12px;
+}
+.record-count-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 .record-counts i {
   margin-left: 6px;
@@ -768,6 +872,12 @@ export default {
   border-radius: 8px;
   color: #fff;
   font-size: 20px;
+}
+.hero-icon img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 .detail-hero h3 {
   max-width: 290px;
