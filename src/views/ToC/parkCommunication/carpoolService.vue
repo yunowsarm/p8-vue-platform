@@ -30,7 +30,7 @@ export default {
           { key: 'seats', label: '座位数', type: 'number', min: 1, required: true, showWhen: { type: '找乘客' } },
           { key: 'passengerCount', label: '拼车人数', type: 'number', min: 1, required: true, showWhen: { type: '找车' } },
           { key: 'contact', label: '联系方式', required: true },
-          { key: 'publishTime', label: '发布时间', type: 'datetime', required: true }
+          { key: 'publishTime', label: '发布时间', type: 'datetime', required: true, hidden: true, autoNow: true }
         ]
       }
     }

@@ -18,7 +18,9 @@ const forumModule = {
     { name: 'repliesPage', method: 'GET', path: '/forum/replies/topic/{topicId}', mockPath: '/forum/replies/topic/{topicId}', desc: '帖子回复分页查询' },
     { name: 'replyCreate', method: 'POST', path: '/forum/replies', mockPath: '/forum/replies', desc: '发布帖子回复' },
     { name: 'replyDelete', method: 'POST', path: '/forum/replies/delete/{id}', mockPath: '/forum/replies/delete/{id}', desc: '删除帖子回复' },
-    { name: 'actionToggle', method: 'POST', path: '/forum/user-actions/toggle', mockPath: '/forum/user-actions/toggle', desc: '切换帖子互动状态' }
+    { name: 'actionToggle', method: 'POST', path: '/forum/user-actions/toggle', mockPath: '/forum/user-actions/toggle', desc: '切换帖子互动状态' },
+    { name: 'myFavorites', method: 'GET', path: '/forum/user-actions/my-favorites', mockPath: '/forum/user-actions/my-favorites', desc: '查询我的收藏帖子' },
+    { name: 'myPosts', method: 'GET', path: '/forum/user-actions/my-posts', mockPath: '/forum/user-actions/my-posts', desc: '查询我的发布帖子' }
   ]
 }
 

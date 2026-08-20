@@ -101,7 +101,7 @@
       :close-on-click-modal="false"
       custom-class="communication-form-dialog"
       @closed="resetForm">
-      <el-form ref="communicationForm" :model="form" :rules="rules" label-width="92px" @submit.native.prevent>
+      <el-form ref="communicationForm" :model="form" :rules="rules" :validate-on-rule-change="false" label-width="92px" @submit.native.prevent>
         <el-row :gutter="28">
           <el-col v-for="field in normalFields" :key="field.key" :xs="24" :sm="12">
             <el-form-item :label="field.label" :prop="field.key">
@@ -383,6 +383,9 @@ export default {
       this.fields.forEach((field) => {
         form[field.key] = ''
       })
+      this.fields.filter((field) => field.autoNow).forEach((field) => {
+        form[field.key] = this.now()
+      })
       if (this.config.currentUserIdKey) form[this.config.currentUserIdKey] = this.currentUserId()
       if (this.config.currentUserNameKey) form[this.config.currentUserNameKey] = this.currentUserName()
       if (this.config.hasStatus !== false) form.status = this.config.defaultStatus || '正常'
@@ -411,6 +414,11 @@ export default {
       if (this.config.currentUserIdKey) currentUser[this.config.currentUserIdKey] = this.currentUserId()
       if (this.config.currentUserNameKey) currentUser[this.config.currentUserNameKey] = this.currentUserName()
       const payload = Object.assign({}, this.form, currentUser, this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: this.now() } : { createBy: this.currentUserId(), itemCreateTime: this.now() })
+      if (!this.editingId) {
+        this.fields.filter((field) => field.autoNow).forEach((field) => {
+          payload[field.key] = this.now()
+        })
+      }
       this.fields.forEach((field) => {
         if (!this.matchesFieldCondition(field, payload)) delete payload[field.key]
       })

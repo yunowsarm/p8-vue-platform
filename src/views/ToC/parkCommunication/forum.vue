@@ -42,6 +42,7 @@
         </div>
       </aside>
 
+      <div class="topic-column">
       <section v-loading="topicsLoading || myTopicsLoading" class="topic-panel" aria-live="polite">
         <!-- <div class="topic-head">
           <div>
@@ -80,30 +81,27 @@
                 <i class="el-icon-star-off"></i>
                 {{ topic.favorited ? '已收藏' : '收藏' }}
               </button>
-              <template v-if="isOwnTopic(topic)">
-                <button type="button" class="topic-manage-button" :aria-label="'编辑 ' + topic.title" @click="openEdit(topic)">
-                  <i class="el-icon-edit-outline"></i>
-                  编辑
-                </button>
-                <button type="button" class="topic-manage-button danger" :aria-label="'删除 ' + topic.title" @click="deleteTopic(topic)">
-                  <i class="el-icon-delete"></i>
-                  删除
-                </button>
-              </template>
               <span>
                 <i class="el-icon-view"></i>
                 {{ topic.viewCount }}
               </span>
+              <template v-if="isOwnTopic(topic)">
+                <button type="button" class="topic-manage-button topic-manage-start danger" :aria-label="'删除 ' + topic.title" @click="deleteTopic(topic)">
+                  <i class="el-icon-delete"></i>
+                  删除
+                </button>
+              </template>
             </div>
           </article>
         </div>
         <el-empty v-else description="没有找到相关帖子" :image-size="92"><el-button size="small" type="primary" @click="resetFilters">查看全部帖子</el-button></el-empty>
-        <div ref="loadMoreTrigger" class="load-more" aria-live="polite">
-          <span v-if="loadingMore"><i class="el-icon-loading"></i> 正在加载更多内容</span>
-          <span v-else-if="hasMoreTopics">向下滚动加载更多</span>
-          <span v-else-if="filteredTopics.length">已经到底了</span>
-        </div>
       </section>
+      <div ref="loadMoreTrigger" class="load-more" aria-live="polite">
+        <span v-if="loadingMore"><i class="el-icon-loading"></i> 正在加载更多内容</span>
+        <span v-else-if="hasMoreTopics">向下滚动加载更多</span>
+        <span v-else-if="filteredTopics.length">已经到底了</span>
+      </div>
+      </div>
 
       <aside class="discover-panel" aria-label="论坛推荐">
         <section class="side-section">
@@ -157,12 +155,12 @@
         <section class="detail-content">
           <p>{{ selectedTopic.content }}</p>
           <div class="detail-actions">
-            <button type="button" :class="{ active: selectedTopic.liked }" @click="toggleLike(selectedTopic)">
+            <button type="button" class="detail-action-button like-action" :class="{ active: selectedTopic.liked }" :aria-label="selectedTopic.liked ? '取消点赞' : '点赞'" @click="toggleLike(selectedTopic)">
               <svg class="like-heart-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3 4.7 13A5.1 5.1 0 0 1 12 5.8 5.1 5.1 0 0 1 19.3 13L12 20.3Z" /></svg>
               {{ selectedTopic.liked ? '已点赞' : '点赞' }} {{ selectedTopic.likeCount }}
             </button>
-            <button type="button" :class="{ active: selectedTopic.favorited }" @click="toggleFavorite(selectedTopic)">
-              <i class="el-icon-star-off"></i>
+            <button type="button" class="detail-action-button favorite-action" :class="{ active: selectedTopic.favorited }" :aria-label="selectedTopic.favorited ? '取消收藏' : '收藏'" @click="toggleFavorite(selectedTopic)">
+              <i :class="selectedTopic.favorited ? 'el-icon-star-on' : 'el-icon-star-off'"></i>
               {{ selectedTopic.favorited ? '已收藏' : '收藏' }}
             </button>
             <span>
@@ -182,7 +180,7 @@
               <div>
                 <div class="reply-meta">
                   <b>{{ authorName(reply) }}</b>
-                  <span v-if="reply.replyToUserId" class="reply-to">回复 {{ replyToUserName(reply) }}</span>
+                  <span v-if="hasReplyTarget(reply)" class="reply-to">回复 {{ replyToUserName(reply) }}</span>
                   <time>{{ formatDateTime(reply.createdAt) }}</time>
                 </div>
                 <p>{{ reply.content }}</p>
@@ -191,6 +189,11 @@
             </article>
           </div>
           <el-empty v-else v-loading="repliesLoading" description="还没有回复，来抢沙发吧" :image-size="70" />
+          <div ref="replyLoadTrigger" class="reply-load-more" aria-live="polite">
+            <span v-if="replyLoadingMore"><i class="el-icon-loading"></i> 正在加载更多回复</span>
+            <span v-else-if="hasMoreReplies">向下滚动加载更多回复</span>
+            <span v-else-if="replyTree.length">已加载全部回复</span>
+          </div>
           <div class="reply-editor">
             <div v-if="replyTarget" class="reply-target"><span>回复 {{ authorName(replyTarget) }}</span><button type="button" @click="cancelReply">取消回复</button></div>
             <el-input ref="replyInput" v-model.trim="replyContent" type="textarea" :rows="3" maxlength="300" show-word-limit :placeholder="replyPlaceholder" />
@@ -220,6 +223,7 @@ export default {
       categories: [],
       topics: [],
       myTopics: [],
+      favoriteTopics: [],
       keyword: '',
       appliedKeyword: '',
       activeCategory: 'all',
@@ -231,7 +235,11 @@ export default {
       loadingMore: false,
       myTopicsLoading: false,
       repliesLoading: false,
+      replyLoadingMore: false,
       replying: false,
+      replyPage: 1,
+      replyPageSize: 20,
+      replyTotal: 0,
       selectedTopic: null,
       detailVisible: false,
       publishVisible: false,
@@ -261,11 +269,11 @@ export default {
     },
     filteredTopics() {
       const keyword = this.appliedKeyword.toLowerCase()
-      const source = this.activeSort === 'myTopics' ? this.myTopics : this.topics
+      const source = this.activeSort === 'myTopics' ? this.myTopics : this.activeSort === 'favorites' ? this.favoriteTopics : this.topics
       const list = source.filter((topic) => {
         const text = `${topic.title || ''}${topic.content || ''}${this.authorName(topic)}${this.categoryById(topic.categoryId).name}`.toLowerCase()
         const matchedCategory = this.activeCategory === 'all' || String(topic.categoryId) === String(this.activeCategory)
-        return (!keyword || text.includes(keyword)) && matchedCategory && (this.activeSort !== 'favorites' || topic.favorited)
+        return (!keyword || text.includes(keyword)) && matchedCategory
       })
       return list.slice().sort((a, b) => {
         if (this.activeSort === 'hot') return b.replyCount + b.likeCount - (a.replyCount + a.likeCount)
@@ -276,7 +284,10 @@ export default {
       return this.appliedKeyword || this.activeSort === 'favorites' || this.activeSort === 'myTopics' ? this.filteredTopics.length : this.topicTotal
     },
     hasMoreTopics() {
-      return this.activeSort !== 'myTopics' && this.topics.length < this.topicTotal
+      return (this.activeSort === 'latest' || this.activeSort === 'hot') && this.topics.length < this.topicTotal
+    },
+    hasMoreReplies() {
+      return Boolean(this.selectedTopic) && this.selectedTopic.replies.length < this.replyTotal
     },
     hotTopics() {
       return this.topics
@@ -313,9 +324,11 @@ export default {
   },
   mounted() {
     this.initLoadMoreObserver()
+    this.initReplyLoadObserver()
   },
   beforeDestroy() {
     if (this.loadMoreObserver) this.loadMoreObserver.disconnect()
+    if (this.replyLoadObserver) this.replyLoadObserver.disconnect()
   },
   methods: {
     async loadForum() {
@@ -336,8 +349,9 @@ export default {
       else this.topicsLoading = true
       try {
         const params = { page: this.currentPage, size: this.pageSize }
+        const options = this.userRequestOptions() || {}
         if (this.activeCategory !== 'all') params.categoryId = this.activeCategory
-        const response = await this.$api['forum.topicsPage'](params)
+        const response = await this.$api['forum.topicsPage'](params, options)
         const page = response && response.records ? response : { records: [], total: 0 }
         const records = (page.records || []).map((item) => this.normalizeTopic(item))
         this.topics = append ? this.topics.concat(records) : records
@@ -355,24 +369,28 @@ export default {
       }
     },
     async loadMyTopics() {
-      const userId = this.currentUserId()
-      if (!userId) {
-        this.myTopics = []
-        this.requireUserOptions()
+      await this.loadUserTopics('myPosts', 'myTopics', '我的帖子加载失败')
+    },
+    async loadFavoriteTopics() {
+      await this.loadUserTopics('myFavorites', 'favoriteTopics', '我的收藏加载失败', true)
+    },
+    async loadUserTopics(apiName, targetKey, errorMessage, forceFavorited = false) {
+      const options = this.requireUserOptions()
+      if (!options) {
+        this[targetKey] = []
         return
       }
       this.myTopicsLoading = true
       try {
-        const firstPage = await this.$api['forum.topicsPage']({ page: 1, size: 100 })
-        const pages = Math.max(1, Number(firstPage && firstPage.pages) || 1)
-        const requests = []
-        for (let page = 2; page <= pages; page += 1) requests.push(this.$api['forum.topicsPage']({ page, size: 100 }))
-        const results = await Promise.all(requests)
-        const records = (firstPage && firstPage.records ? firstPage.records : []).concat(...results.map((item) => (item && item.records) || []))
-        this.myTopics = records.filter((topic) => String(topic.userId) === String(userId)).map((topic) => this.normalizeTopic(topic))
+        const response = await this.$api[`forum.${apiName}`]({ page: 1, size: 100 }, options)
+        const records = Array.isArray(response) ? response : (response && response.records) || []
+        this[targetKey] = records.map((topic) => {
+          const normalized = this.normalizeTopic(topic)
+          return forceFavorited ? Object.assign(normalized, { favorited: true }) : normalized
+        })
       } catch (error) {
-        this.myTopics = []
-        this.showRequestError(error, '我的帖子加载失败')
+        this[targetKey] = []
+        this.showRequestError(error, errorMessage)
       } finally {
         this.myTopicsLoading = false
       }
@@ -381,13 +399,15 @@ export default {
       const palette = CATEGORY_PALETTE[index % CATEGORY_PALETTE.length]
       return Object.assign({}, item, { id: item.id, name: item.name || '未命名版块', icon: item.icon || palette.icon, color: palette.color, softColor: palette.softColor })
     },
-    normalizeTopic(item) {
+    normalizeTopic(item, fallbackTopic) {
+      const hasLiked = Object.prototype.hasOwnProperty.call(item, 'hasLiked')
+      const hasFavorited = Object.prototype.hasOwnProperty.call(item, 'hasFavorited')
       return Object.assign({}, item, {
         likeCount: Number(item.likeCount || 0),
         replyCount: Number(item.replyCount || 0),
         viewCount: Number(item.viewCount || 0),
-        liked: Boolean(this.likedTopicIds[item.id]),
-        favorited: Boolean(this.favoritedTopicIds[item.id]),
+        liked: hasLiked ? this.toBoolean(item.hasLiked) : fallbackTopic ? fallbackTopic.liked : Boolean(this.likedTopicIds[item.id]),
+        favorited: hasFavorited ? this.toBoolean(item.hasFavorited) : fallbackTopic ? fallbackTopic.favorited : Boolean(this.favoritedTopicIds[item.id]),
         avatarColor: this.avatarColor(item.userId),
         replies: []
       })
@@ -407,6 +427,9 @@ export default {
     avatarColor(userId) {
       const index = Math.abs(Number(userId) || 0) % AVATAR_COLORS.length
       return AVATAR_COLORS[index]
+    },
+    toBoolean(value) {
+      return value === true || value === 1 || value === '1' || value === 'true'
     },
     authorName(item) {
       if (item && item.userName) return item.userName
@@ -447,6 +470,7 @@ export default {
     setSort(key) {
       this.activeSort = key
       if (key === 'myTopics') this.loadMyTopics()
+      if (key === 'favorites') this.loadFavoriteTopics()
     },
     selectCategory(categoryId) {
       if (this.activeCategory === categoryId) return
@@ -454,7 +478,7 @@ export default {
       this.currentPage = 1
       this.appliedKeyword = ''
       this.keyword = ''
-      if (this.activeSort === 'myTopics') return
+      if (this.activeSort === 'myTopics' || this.activeSort === 'favorites') return
       this.loadTopics()
     },
     loadMoreTopics() {
@@ -473,6 +497,23 @@ export default {
       if (!this.loadMoreObserver || !this.$refs.loadMoreTrigger) return
       this.loadMoreObserver.disconnect()
       this.loadMoreObserver.observe(this.$refs.loadMoreTrigger)
+    },
+    loadMoreReplies() {
+      if (!this.hasMoreReplies || this.repliesLoading || this.replyLoadingMore || !this.selectedTopic) return
+      this.replyPage += 1
+      this.loadReplies(this.selectedTopic.id, true)
+    },
+    initReplyLoadObserver() {
+      if (!window.IntersectionObserver) return
+      this.replyLoadObserver = new window.IntersectionObserver((entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) this.loadMoreReplies()
+      }, { rootMargin: '0px 0px 120px' })
+      this.observeReplyLoadTrigger()
+    },
+    observeReplyLoadTrigger() {
+      if (!this.replyLoadObserver || !this.$refs.replyLoadTrigger) return
+      this.replyLoadObserver.disconnect()
+      this.replyLoadObserver.observe(this.$refs.replyLoadTrigger)
     },
     resetFilters() {
       this.keyword = ''
@@ -523,10 +564,12 @@ export default {
       this.detailVisible = true
       this.replyContent = ''
       this.replyTarget = null
+      this.replyPage = 1
+      this.replyTotal = 0
       this.repliesLoading = true
       try {
-        const detail = await this.$api['forum.topicDetail']({ id: topic.id })
-        this.selectedTopic = Object.assign(this.normalizeTopic(detail || topic), { replies: [] })
+        const detail = await this.$api['forum.topicDetail']({ id: topic.id }, this.userRequestOptions() || {})
+        this.selectedTopic = Object.assign(this.normalizeTopic(detail || topic, topic), { replies: [] })
         this.syncTopic(this.selectedTopic)
         await this.loadReplies(this.selectedTopic.id)
       } catch (error) {
@@ -536,18 +579,37 @@ export default {
         this.repliesLoading = false
       }
     },
-    async loadReplies(topicId) {
-      const response = await this.$api['forum.repliesPage']({ topicId, page: 1, size: 100 })
-      const page = response && response.records ? response : { records: [] }
-      if (this.selectedTopic && String(this.selectedTopic.id) === String(topicId)) this.selectedTopic.replies = (page.records || []).map((item) => this.normalizeReply(item))
+    async loadReplies(topicId, append = false) {
+      if (append) this.replyLoadingMore = true
+      else this.repliesLoading = true
+      try {
+        const response = await this.$api['forum.repliesPage']({ topicId, page: this.replyPage, size: this.replyPageSize })
+        const page = response && response.records ? response : { records: [], total: 0 }
+        if (this.selectedTopic && String(this.selectedTopic.id) === String(topicId)) {
+          const records = (page.records || []).map((item) => this.normalizeReply(item))
+          this.selectedTopic.replies = append ? this.selectedTopic.replies.concat(records) : records
+          this.replyTotal = Number(page.total || 0)
+        }
+      } catch (error) {
+        this.showRequestError(error, '回复列表加载失败')
+      } finally {
+        if (append) this.replyLoadingMore = false
+        else this.repliesLoading = false
+        this.$nextTick(() => this.observeReplyLoadTrigger())
+      }
     },
     replyIndentStyle(depth) {
       return depth ? { marginLeft: `${Math.min(depth, 3) * 24}px` } : {}
     },
     replyToUserName(reply) {
-      if (!reply || !reply.replyToUserId || !this.selectedTopic) return ''
+      if (!this.hasReplyTarget(reply) || !this.selectedTopic) return ''
       const target = this.selectedTopic.replies.find((item) => String(item.userId) === String(reply.replyToUserId))
       return target ? this.authorName(target) : `用户${reply.replyToUserId}`
+    },
+    hasReplyTarget(reply) {
+      if (!reply || reply.replyToUserId === null || reply.replyToUserId === undefined) return false
+      const userId = String(reply.replyToUserId).trim()
+      return userId !== '' && userId !== '0'
     },
     startReply(reply) {
       this.replyTarget = reply
@@ -557,8 +619,12 @@ export default {
       this.replyTarget = null
     },
     syncTopic(topic) {
-      const index = this.topics.findIndex((item) => String(item.id) === String(topic.id))
-      if (index !== -1) this.$set(this.topics, index, Object.assign({}, this.topics[index], topic))
+      ;['topics', 'myTopics', 'favoriteTopics'].forEach((key) => {
+        const index = this[key].findIndex((item) => String(item.id) === String(topic.id))
+        if (index !== -1) this.$set(this[key], index, Object.assign({}, this[key][index], topic))
+      })
+      if (!topic.favorited) this.favoriteTopics = this.favoriteTopics.filter((item) => String(item.id) !== String(topic.id))
+      else if (!this.favoriteTopics.some((item) => String(item.id) === String(topic.id))) this.favoriteTopics.unshift(Object.assign({}, topic))
     },
     async toggleLike(topic) {
       const options = this.requireUserOptions()
@@ -590,9 +656,6 @@ export default {
       const userId = this.currentUserId()
       return Boolean(userId) && topic && String(topic.userId) === String(userId)
     },
-    openEdit() {
-      this.$message.warning('编辑接口尚未提供，暂不能保存修改')
-    },
     async deleteTopic(topic) {
       if (!this.isOwnTopic(topic)) return
       const options = this.requireUserOptions()
@@ -602,8 +665,9 @@ export default {
         await this.$api['forum.topicDelete']({ id: topic.id }, options)
         this.topics = this.topics.filter((item) => String(item.id) !== String(topic.id))
         this.myTopics = this.myTopics.filter((item) => String(item.id) !== String(topic.id))
+        this.favoriteTopics = this.favoriteTopics.filter((item) => String(item.id) !== String(topic.id))
         if (this.selectedTopic && String(this.selectedTopic.id) === String(topic.id)) this.detailVisible = false
-        if (this.activeSort !== 'myTopics') await this.loadTopics()
+        if (this.activeSort === 'latest' || this.activeSort === 'hot') await this.loadTopics()
         this.$message.success('帖子已删除')
       } catch (error) {
         if (error === 'cancel' || error === 'close') return
@@ -620,13 +684,15 @@ export default {
           topicId: this.selectedTopic.id,
           content: this.replyContent,
           parentId: this.replyTarget ? this.replyTarget.id : 0,
-          replyToUserId: this.replyTarget ? this.replyTarget.userId : 0
+          replyToUserId: this.replyTarget ? this.replyTarget.userId : 0,
+          userName: this.currentUserName()
         }, options)
         this.replyContent = ''
         this.replyTarget = null
+        this.replyPage = 1
         await this.loadReplies(this.selectedTopic.id)
-        const detail = await this.$api['forum.topicDetail']({ id: this.selectedTopic.id })
-        this.selectedTopic = Object.assign(this.normalizeTopic(detail), { replies: this.selectedTopic.replies })
+        const detail = await this.$api['forum.topicDetail']({ id: this.selectedTopic.id }, this.userRequestOptions() || {})
+        this.selectedTopic = Object.assign(this.normalizeTopic(detail, this.selectedTopic), { replies: this.selectedTopic.replies })
         this.syncTopic(this.selectedTopic)
         this.$message.success('回复已发布')
       } catch (error) {
@@ -709,6 +775,9 @@ export default {
   grid-template-columns: 210px minmax(0, 1fr) 258px;
   gap: 12px;
   align-items: start;
+}
+.topic-column {
+  min-width: 0;
 }
 .board-panel,
 .topic-panel,
@@ -929,6 +998,9 @@ export default {
 .topic-actions .topic-manage-button {
   min-height: 30px;
 }
+.topic-actions .topic-manage-start {
+  margin-left: auto;
+}
 .topic-actions .danger,
 .topic-actions .danger:hover {
   color: #f56c6c;
@@ -954,7 +1026,8 @@ export default {
   fill: currentColor;
 }
 .load-more {
-  min-height: 48px;
+  min-height: 32px;
+  /* margin-top: 8px; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1097,19 +1170,40 @@ export default {
   gap: 10px;
   border-top: 1px solid #edf1f6;
 }
-.detail-actions button {
-  min-height: 44px;
-  padding: 0 11px;
-  border: 1px solid #e4eaf2;
-  border-radius: 5px;
-  background: #fff;
-  color: #728198;
+.detail-actions .detail-action-button {
+  min-height: 36px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #edf1f6;
+  border-radius: 18px;
+  background: #f7f9fc;
+  color: #718198;
+  font-size: 13px;
   cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
 }
-.detail-actions button.active {
+.detail-actions .detail-action-button:hover {
   border-color: #b3d8ff;
   background: #ecf5ff;
   color: #409eff;
+}
+.detail-actions .detail-action-button:active {
+  transform: scale(0.97);
+}
+.detail-actions .like-action.active {
+  border-color: #b3d8ff;
+  background: #ecf5ff;
+  color: #409eff;
+}
+.detail-actions .favorite-action.active {
+  border-color: #f5d6a7;
+  background: #fff7e8;
+  color: #d58a1c;
+}
+.detail-actions .detail-action-button i {
+  font-size: 15px;
 }
 .detail-actions span {
   margin-left: auto;
@@ -1181,6 +1275,18 @@ export default {
 .reply-button:hover {
   color: #409eff;
 }
+.reply-load-more {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #909399;
+  font-size: 12px;
+}
+.reply-load-more .el-icon-loading {
+  margin-right: 6px;
+  color: #409eff;
+}
 .reply-editor {
   margin-top: 18px;
 }
@@ -1219,6 +1325,11 @@ export default {
 button:focus-visible {
   outline: 2px solid #409eff;
   outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .detail-actions .detail-action-button {
+    transition: none;
+  }
 }
 @media (max-width: 1180px) {
   .forum-nav {
