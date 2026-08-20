@@ -1,9 +1,9 @@
-<template><communication-board :config="config" /></template>
+<template><lost-found-board :config="config" /></template>
 <script>
-import CommunicationBoard from './components/CommunicationBoard.vue'
+import LostFoundBoard from './components/LostFoundBoard.vue'
 export default {
   name: 'LostFound',
-  components: { CommunicationBoard },
+  components: { LostFoundBoard },
   data() {
     return {
       config: {
@@ -16,10 +16,15 @@ export default {
         contentLabel: '物品说明',
         timeKey: 'publishTime',
         filterKey: 'type',
-        defaultStatus: '待认领',
-        statusOptions: ['待认领', '已认领', '已关闭'],
+        showMineFilter: true,
+        canAdvanceStatus: true,
+        // 状态随发布类型变化：失物招领等待失主认领，寻物启事等待失主确认已找到。
+        typeStatusOptions: {
+          失物招领: ['待认领', '已认领'],
+          寻物启事: ['寻找中', '已找到']
+        },
         fields: [
-          { key: 'userId', label: '发布人编号', required: true },
+          { key: 'userId', label: '发布人', required: true },
           { key: 'type', label: '类型', options: ['失物招领', '寻物启事'], required: true },
           { key: 'title', label: '标题', required: true },
           { key: 'content', label: '内容', type: 'textarea', required: true },

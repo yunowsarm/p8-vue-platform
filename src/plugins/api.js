@@ -48,10 +48,20 @@ class ApiCounstructor {
           // FormData 不能通过对象展开合并，否则二进制字段会丢失并变成空对象。
           const isFormData = typeof FormData !== 'undefined' && outerParams instanceof FormData
           const data = isFormData ? outerParams : _isEmpty(outerParams) ? params : { ...params, ...outerParams }
+          // 支持接口定义中的 /resource/{id} 路径参数，并避免将已替换的参数重复发送到 query/body 中。
+          const requestParams = data && typeof data === 'object' && !isFormData ? { ...data } : data
+          const requestUrl = url.replace(/\{([^}]+)\}/g, (placeholder, key) => {
+            if (requestParams && Object.prototype.hasOwnProperty.call(requestParams, key)) {
+              const value = requestParams[key]
+              delete requestParams[key]
+              return encodeURIComponent(value)
+            }
+            return placeholder
+          })
           // 开启debug时打印一些提示信息
           // isDebug && console.info(`调用业务接口名称:${apiNamespace}, 类型:${method}, 地址:${url}, 描述:${desc}`)
           //
-          return axios(axiosParamBuilder(_assign({ url, method, desc }, outerOptions), data)).catch((error) => {
+          return axios(axiosParamBuilder(_assign({ url: requestUrl, method, desc }, outerOptions), requestParams)).catch((error) => {
             if (error.code === 'ECONNABORTED') {
               console.error('请求超时，数据未保存或同步，请稍后重试')
               Message.warning('请求超时，数据未保存或同步，请稍后重试')

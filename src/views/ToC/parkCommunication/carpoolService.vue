@@ -15,16 +15,20 @@ export default {
         contentKey: 'contact',
         contentLabel: '联系方式',
         timeKey: 'publishTime',
+        departureTimeKey: 'time',
+        currentUserIdKey: 'userId',
+        currentUserNameKey: 'userName',
         filterKey: 'type',
         defaultStatus: '待拼车',
         statusOptions: ['待拼车', '已满员', '已出发', '已取消'],
         fields: [
-          { key: 'userId', label: '发布人编号', required: true },
+          { key: 'userId', label: '发布人编号', required: true, hidden: true },
           { key: 'type', label: '类型', options: ['找车', '找乘客'], required: true },
           { key: 'startPoint', label: '起点', required: true },
           { key: 'endPoint', label: '终点', required: true },
           { key: 'time', label: '出发时间', type: 'datetime', required: true },
-          { key: 'seats', label: '座位数', required: true },
+          { key: 'seats', label: '座位数', type: 'number', min: 1, required: true, showWhen: { type: '找乘客' } },
+          { key: 'passengerCount', label: '拼车人数', type: 'number', min: 1, required: true, showWhen: { type: '找车' } },
           { key: 'contact', label: '联系方式', required: true },
           { key: 'publishTime', label: '发布时间', type: 'datetime', required: true }
         ]

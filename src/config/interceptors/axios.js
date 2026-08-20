@@ -145,6 +145,10 @@ export function axiosResponseSucessFunc(response) {
       if (contentType.includes('application/json')) {
         const responseData = response.data
         const responseHead = responseData.head
+        // 兼容论坛等新接口直接返回业务 JSON 的格式；旧接口仍按 head/data 包装处理。
+        if (!responseHead) {
+          return responseData
+        }
         // response success and response data
         if (responseHead && responseHead.success === 'true') {
           return responseData.data
@@ -155,9 +159,9 @@ export function axiosResponseSucessFunc(response) {
           if (statusManage[status]) {
             // 执行
             statusManage[status].do(responseHead.message, response.data)
-          } else {
-            Promise.reject(response.data).catch(() => {})
           }
+          // 保留业务失败态给调用方处理，不能吞掉后继续执行成功逻辑。
+          return Promise.reject(responseData)
         }
       } else {
         return response

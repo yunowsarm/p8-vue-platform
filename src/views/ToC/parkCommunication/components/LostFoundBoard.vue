@@ -43,6 +43,7 @@
         <el-select v-if="config.hasStatus !== false" v-model="statusFilter" clearable size="small" placeholder="全部状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
         </el-select>
+        <el-checkbox v-if="config.showMineFilter" v-model="onlyMine" class="mine-filter" @change="resetPage">只看我发布的</el-checkbox>
         <div class="toolbar-actions">
           <el-button type="primary" size="small" icon="el-icon-plus" @click="openCreate">新建{{ config.title }}</el-button>
         </div>
@@ -65,10 +66,8 @@
           <p class="card-content">{{ item[config.contentKey] || '暂无描述' }}</p>
           <dl class="card-meta">
             <template v-for="field in cardFields">
-              <template v-if="isFieldVisible(field, item)">
-                <dt :key="field.key + '-label'">{{ field.label }}</dt>
-                <dd :key="field.key + '-value'">{{ formatValue(item[field.key]) }}</dd>
-              </template>
+              <dt :key="field.key + '-label'">{{ field.label }}</dt>
+              <dd :key="field.key + '-value'">{{ formatValue(item[field.key]) }}</dd>
             </template>
           </dl>
           <div class="card-foot">
@@ -80,8 +79,9 @@
             </span>
             <div class="card-actions">
               <el-button type="text" size="mini" @click.stop="openDetail(item)">查看详情</el-button>
-              <el-button type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
-              <el-button type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
+              <el-button v-if="canAdvanceStatus(item)" type="text" size="mini" @click.stop="advanceStatus(item)">推进至{{ nextStatus(item) }}</el-button>
+              <el-button v-if="canManageRecord(item)" type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
+              <el-button v-if="canManageRecord(item)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
             </div>
           </div>
         </article>
@@ -105,7 +105,7 @@
         <el-row :gutter="28">
           <el-col v-for="field in normalFields" :key="field.key" :xs="24" :sm="12">
             <el-form-item :label="field.label" :prop="field.key">
-              <el-select v-if="field.options" v-model="form[field.key]" clearable filterable :placeholder="'请选择' + field.label" class="field-full">
+              <el-select v-if="field.options" v-model="form[field.key]" clearable filterable :placeholder="'请选择' + field.label" class="field-full" @change="handleFormFieldChange(field.key)">
                 <el-option v-for="option in field.options" :key="option" :label="option" :value="option" />
               </el-select>
               <el-date-picker
@@ -127,7 +127,7 @@
               <el-input-number
                 v-else-if="field.type === 'number' || field.type === 'amount'"
                 v-model="form[field.key]"
-                :min="field.min === undefined ? 0 : field.min"
+                :min="0"
                 :precision="field.type === 'amount' ? 2 : 0"
                 controls-position="right"
                 class="field-full" />
@@ -167,12 +167,10 @@
             <el-tag v-if="config.hasStatus !== false" :type="statusType(statusText(selectedRecord.status, selectedRecord))">{{ statusText(selectedRecord.status, selectedRecord) }}</el-tag>
           </div>
           <div class="detail-grid">
-            <template v-for="field in detailFields">
-              <span v-if="isFieldVisible(field, selectedRecord)" :key="field.key">
-                <small>{{ field.label }}</small>
-                <b>{{ formatValue(selectedRecord[field.key]) }}</b>
-              </span>
-            </template>
+            <span v-for="field in detailFields" :key="field.key">
+              <small>{{ field.label }}</small>
+              <b>{{ formatValue(selectedRecord[field.key]) }}</b>
+            </span>
           </div>
           <section v-if="selectedRecord[config.contentKey]" class="detail-section">
             <h4>{{ config.contentLabel || '内容' }}</h4>
@@ -187,13 +185,14 @@
 
 <script>
 export default {
-  name: 'CommunicationBoard',
+  name: 'LostFoundBoard',
   props: { config: { type: Object, required: true } },
   data() {
     return {
       keyword: '',
       typeFilter: '',
       statusFilter: '',
+      onlyMine: false,
       currentPage: 1,
       pageSize: 6,
       total: 0,
@@ -205,9 +204,7 @@ export default {
       detailVisible: false,
       editingId: '',
       selectedRecord: null,
-      form: {},
-      clock: Date.now(),
-      departureTimer: null
+      form: {}
     }
   },
   computed: {
@@ -215,16 +212,17 @@ export default {
       return this.config.fields || []
     },
     normalFields() {
-      return this.fields.filter((field) => this.isFieldVisible(field, this.form) && field.type !== 'textarea')
+      return this.fields.filter((field) => field.type !== 'textarea')
     },
     textFields() {
-      return this.fields.filter((field) => this.isFieldVisible(field, this.form) && field.type === 'textarea')
+      return this.fields.filter((field) => field.type === 'textarea')
     },
     typeOptions() {
       const field = this.fields.find((field) => field.key === this.config.filterKey)
       return field && field.options ? field.options : []
     },
     statusOptions() {
+      if (this.config.typeStatusOptions) return this.statusOptionsForType(this.typeFilter)
       return this.config.statusOptions || ['正常', '待审核', '已发布', '已关闭', '已下线']
     },
     cardFields() {
@@ -236,7 +234,7 @@ export default {
     rules() {
       const rules = {}
       this.fields
-        .filter((field) => field.required && this.matchesFieldCondition(field, this.form))
+        .filter((field) => field.required)
         .forEach((field) => {
           rules[field.key] = [{ required: true, message: `请填写${field.label}`, trigger: field.options ? 'change' : 'blur' }]
         })
@@ -254,7 +252,8 @@ export default {
           )
         const matchesType = !this.typeFilter || item[this.config.filterKey] === this.typeFilter
         const matchesStatus = !this.statusFilter || this.statusText(item.status, item) === this.statusFilter
-        return matchesKeyword && matchesType && matchesStatus
+        const matchesMine = !this.onlyMine || this.canManageRecord(item)
+        return matchesKeyword && matchesType && matchesStatus && matchesMine
       })
     },
     paginationTotal() {
@@ -274,14 +273,6 @@ export default {
   },
   created() {
     this.loadRecords()
-    if (this.config.departureTimeKey) {
-      this.departureTimer = window.setInterval(() => {
-        this.clock = Date.now()
-      }, 60000)
-    }
-  },
-  beforeDestroy() {
-    if (this.departureTimer) window.clearInterval(this.departureTimer)
   },
   methods: {
     currentUserId() {
@@ -291,13 +282,14 @@ export default {
         return ''
       }
     },
-    currentUserName() {
-      try {
-        const userInfo = JSON.parse(window.sessionStorage.getItem('userInfo') || '{}')
-        return userInfo.userName || userInfo.username || userInfo.name || ''
-      } catch (error) {
-        return ''
-      }
+    creatorId(item) {
+      if (!item) return ''
+      return item[this.config.creatorKey || 'createBy'] || item.createBy || item.userId || ''
+    },
+    canManageRecord(item) {
+      const currentUserId = this.currentUserId()
+      const creatorId = this.creatorId(item)
+      return Boolean(currentUserId && creatorId && String(currentUserId) === String(creatorId))
     },
     now() {
       const date = new Date()
@@ -322,36 +314,36 @@ export default {
     totalFrom(data) {
       return Number(data && (data.total || data.count || data.totalCount)) || 0
     },
-    matchesFieldCondition(field, values) {
-      if (!field.showWhen) return true
-      return Object.keys(field.showWhen).every((key) => {
-        const expected = field.showWhen[key]
-        const actual = values && values[key]
-        return Array.isArray(expected) ? expected.includes(actual) : actual === expected
-      })
+    statusOptionsForType(type) {
+      const statusByType = this.config.typeStatusOptions
+      if (!statusByType) return this.config.statusOptions || []
+      if (type && statusByType[type]) return statusByType[type]
+      return [...new Set(Object.keys(statusByType).reduce((options, key) => options.concat(statusByType[key]), []))]
     },
-    isFieldVisible(field, values) {
-      return !field.hidden && this.matchesFieldCondition(field, values)
+    defaultStatusFor(record) {
+      const options = this.statusOptionsForType(record && record[this.config.filterKey])
+      return options[0] || this.config.defaultStatus || '正常'
     },
-    hasDeparted(value) {
-      if (!value) return false
-      const timestamp = new Date(String(value).replace(/-/g, '/')).getTime()
-      return !Number.isNaN(timestamp) && timestamp <= this.clock
-    },
-    statusText(value, item) {
-      const status = value === undefined || value === null || value === '' || value === '0' ? this.config.defaultStatus || '正常' : value
+    statusText(value, record) {
+      if (value === undefined || value === null || value === '' || value === '0') return this.defaultStatusFor(record)
       const map = { 1: '待审核', 2: '已发布', 3: '已关闭', 4: '已下线' }
-      const resolvedStatus = map[status] || status
-      if (resolvedStatus !== '已取消' && this.config.departureTimeKey && item && this.hasDeparted(item[this.config.departureTimeKey])) return '已出发'
-      return resolvedStatus
+      return map[value] || value
     },
-    isPendingStatus(value, item) {
-      return ['待审核', '待认领', '待拼车'].includes(this.statusText(value, item))
+    isPendingStatus(value, record) {
+      return ['待审核', '待认领', '寻找中', '待拼车'].includes(this.statusText(value, record))
+    },
+    nextStatus(item) {
+      const options = this.statusOptionsForType(item && item[this.config.filterKey])
+      const index = options.indexOf(this.statusText(item && item.status, item))
+      return index >= 0 ? options[index + 1] || '' : ''
+    },
+    canAdvanceStatus(item) {
+      return Boolean(this.config.canAdvanceStatus && this.canManageRecord(item) && this.nextStatus(item))
     },
     statusType(status) {
-      if (['正常', '已发布', '已满员', '已出发'].includes(status)) return 'success'
-      if (['待审核', '待认领', '待拼车'].includes(status)) return 'warning'
-      if (['已关闭', '已下线', '已取消'].includes(status)) return 'info'
+      if (['正常', '已发布', '已认领', '已找到'].includes(status)) return 'success'
+      if (['待审核', '待认领', '寻找中', '待拼车'].includes(status)) return 'warning'
+      if (['已关闭', '已下线'].includes(status)) return 'info'
       return 'danger'
     },
     formatValue(value) {
@@ -359,13 +351,20 @@ export default {
     },
     resetPage() {
       this.currentPage = 1
+      if (this.statusFilter && !this.statusOptions.includes(this.statusFilter)) this.statusFilter = ''
       if (!this.usingMock) this.loadRecords()
     },
     async loadRecords() {
       this.loading = true
       try {
         const result = this.unwrap(
-          await this.$api[this.apiKey('list')]({ pageNo: this.currentPage, pageSize: this.pageSize, keyword: this.keyword || undefined, status: this.statusFilter || undefined })
+          await this.$api[this.apiKey('list')]({
+            pageNo: this.currentPage,
+            pageSize: this.pageSize,
+            keyword: this.keyword || undefined,
+            status: this.statusFilter || undefined,
+            createBy: this.onlyMine ? this.currentUserId() : undefined
+          })
         )
         this.records = this.recordsFrom(result)
         this.total = this.totalFrom(result)
@@ -383,9 +382,7 @@ export default {
       this.fields.forEach((field) => {
         form[field.key] = ''
       })
-      if (this.config.currentUserIdKey) form[this.config.currentUserIdKey] = this.currentUserId()
-      if (this.config.currentUserNameKey) form[this.config.currentUserNameKey] = this.currentUserName()
-      if (this.config.hasStatus !== false) form.status = this.config.defaultStatus || '正常'
+      if (this.config.hasStatus !== false) form.status = this.defaultStatusFor(form)
       return form
     },
     resetForm() {
@@ -399,22 +396,27 @@ export default {
       this.formVisible = true
     },
     openEdit(item) {
+      if (!this.canManageRecord(item)) {
+        this.$message.warning('仅创建人可以编辑该记录')
+        return
+      }
       this.editingId = item.id
       this.form = Object.assign(this.emptyForm(), item, { status: this.statusText(item.status, item) })
       this.formVisible = true
+    },
+    handleFormFieldChange(key) {
+      if (key !== this.config.filterKey || this.config.hasStatus === false) return
+      this.form.status = this.defaultStatusFor(this.form)
     },
     async submitForm() {
       const valid = await new Promise((resolve) => this.$refs.communicationForm.validate(resolve))
       if (!valid) return
       this.submitting = true
-      const currentUser = {}
-      if (this.config.currentUserIdKey) currentUser[this.config.currentUserIdKey] = this.currentUserId()
-      if (this.config.currentUserNameKey) currentUser[this.config.currentUserNameKey] = this.currentUserName()
-      const payload = Object.assign({}, this.form, currentUser, this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: this.now() } : { createBy: this.currentUserId(), itemCreateTime: this.now() })
-      this.fields.forEach((field) => {
-        if (!this.matchesFieldCondition(field, payload)) delete payload[field.key]
-      })
-      payload.status = this.statusText(payload.status, payload)
+      const payload = Object.assign(
+        {},
+        this.form,
+        this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: this.now() } : { createBy: this.currentUserId(), itemCreateTime: this.now() }
+      )
       try {
         await this.$api[this.apiKey(this.editingId ? 'edit' : 'add')](payload)
         this.$message.success(this.editingId ? '已更新' : '已提交')
@@ -427,6 +429,10 @@ export default {
       }
     },
     async removeRecord(item) {
+      if (!this.canManageRecord(item)) {
+        this.$message.warning('仅创建人可以删除该记录')
+        return
+      }
       try {
         await this.$confirm('确认删除该条记录？', '删除确认', { type: 'warning' })
         await this.$api[this.apiKey('delete')]({ id: item.id })
@@ -434,6 +440,21 @@ export default {
         this.loadRecords()
       } catch (error) {
         if (error !== 'cancel') this.$message.error(this.errorMessage(error, '删除失败，请稍后重试'))
+      }
+    },
+    async advanceStatus(item) {
+      if (!this.canAdvanceStatus(item)) {
+        this.$message.warning('仅创建人可以推进状态')
+        return
+      }
+      const next = this.nextStatus(item)
+      try {
+        await this.$confirm(`确认将状态推进至“${next}”？`, '状态推进确认', { type: 'warning' })
+        await this.$api[this.apiKey('edit')](Object.assign({}, item, { status: next, updateBy: this.currentUserId(), itemUpdateTime: this.now() }))
+        this.$message.success(`状态已更新为“${next}”`)
+        this.loadRecords()
+      } catch (error) {
+        if (error !== 'cancel') this.$message.error(this.errorMessage(error, '状态推进失败，请稍后重试'))
       }
     },
     errorMessage(error, fallback = '操作失败，请稍后重试') {
@@ -906,18 +927,67 @@ export default {
   .detail-grid span:last-child {
     border-bottom: 0;
   }
-  ::v-deep .communication-detail-drawer { width: 100% !important; max-width: 100% !important; }
-  ::v-deep .communication-detail-drawer .el-drawer__body { display: flex; min-height: 0; flex: 1 1 auto; overflow: hidden; }
-  .drawer-layout { min-height: 0; height: 100%; width: 100%; }
-  .drawer-scroll { min-height: 0; padding: 14px; -webkit-overflow-scrolling: touch; }
-  .drawer-actions { padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); }
-  ::v-deep .communication-form-dialog { width: 100% !important; min-width: 0; height: 100dvh; margin: 0 !important; display: flex; flex-direction: column; border-radius: 0; }
-  ::v-deep .communication-form-dialog .el-dialog__body { min-height: 0; flex: 1 1 auto; overflow-y: auto; padding: 18px 16px; -webkit-overflow-scrolling: touch; }
-  ::v-deep .communication-form-dialog .el-dialog__footer { flex: 0 0 auto; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); }
-  ::v-deep .communication-form-dialog .dialog-footer { display: flex; gap: 10px; }
-  ::v-deep .communication-form-dialog .dialog-footer .el-button { flex: 1; margin: 0; min-height: 42px; }
+  ::v-deep .communication-detail-drawer {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  ::v-deep .communication-detail-drawer .el-drawer__body {
+    display: flex;
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+  .drawer-layout {
+    min-height: 0;
+    height: 100%;
+    width: 100%;
+  }
+  .drawer-scroll {
+    min-height: 0;
+    padding: 14px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .drawer-actions {
+    padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+  }
+  ::v-deep .communication-form-dialog {
+    width: 100% !important;
+    min-width: 0;
+    height: 100dvh;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0;
+  }
+  ::v-deep .communication-form-dialog .el-dialog__body {
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 18px 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+  ::v-deep .communication-form-dialog .el-dialog__footer {
+    flex: 0 0 auto;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  }
+  ::v-deep .communication-form-dialog .dialog-footer {
+    display: flex;
+    gap: 10px;
+  }
+  ::v-deep .communication-form-dialog .dialog-footer .el-button {
+    flex: 1;
+    margin: 0;
+    min-height: 42px;
+  }
 }
-@media (max-width: 420px) { .list-toolbar { grid-template-columns: minmax(0, 1fr); }.list-toolbar .el-select { grid-column: 1 / -1; } }
+@media (max-width: 420px) {
+  .list-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .list-toolbar .el-select {
+    grid-column: 1 / -1;
+  }
+}
 /* 仅本看板在移动端承载页面滚动，避免改动后台配置页的全局路由高度。 */
 @media (max-width: 760px) {
   .communication-board {
@@ -933,28 +1003,106 @@ export default {
 </style>
 <style scoped>
 /* 与办事大厅看板保持一致的列表基线 */
-.communication-board { min-height: 100%; padding: 12px; box-sizing: border-box; background: #f6f8fb; }
-.communication-board .board-statistics { gap: 12px; margin-bottom: 12px; }
-.communication-board .stat-card { min-height: 94px; padding: 16px 18px; border-color: #e5ebf2; border-radius: 10px; box-shadow: none; }
-.communication-surface { min-height: clamp(660px, calc(100vh - 250px), 760px); border-color: #e5ebf2; border-radius: 10px; box-shadow: 0 4px 14px rgba(15, 23, 42, .035); }
-.communication-board .list-toolbar { min-height: 64px; padding: 14px 20px; gap: 10px; }
-.communication-board .list-toolbar .el-input { width: 300px; }
-.communication-board .list-toolbar .el-select { width: 160px; }
-.communication-grid { gap: 14px; padding: 2px 20px 18px; }
-.communication-card { min-height: 252px; padding: 16px; border-color: #e6ecf3; border-radius: 10px; }
-.communication-card:hover { border-color: #a9caf7; }
-.communication-board .empty-state { min-height: 260px; padding: 24px 20px 48px; box-sizing: border-box; }
-.communication-board .pagination-row { min-height: 0; margin-top: auto; padding: 12px 20px 16px; }
+.communication-board {
+  min-height: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  background: #f6f8fb;
+}
+.communication-board .board-statistics {
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.communication-board .stat-card {
+  min-height: 94px;
+  padding: 16px 18px;
+  border-color: #e5ebf2;
+  border-radius: 10px;
+  box-shadow: none;
+}
+.communication-surface {
+  min-height: clamp(660px, calc(100vh - 250px), 760px);
+  border-color: #e5ebf2;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.035);
+}
+.communication-board .list-toolbar {
+  min-height: 64px;
+  padding: 14px 20px;
+  gap: 10px;
+}
+.communication-board .list-toolbar .el-input {
+  width: 300px;
+}
+.communication-board .list-toolbar .el-select {
+  width: 160px;
+}
+.communication-grid {
+  gap: 14px;
+  padding: 2px 20px 18px;
+}
+.communication-card {
+  min-height: 252px;
+  padding: 16px;
+  border-color: #e6ecf3;
+  border-radius: 10px;
+}
+.communication-card:hover {
+  border-color: #a9caf7;
+}
+.communication-board .empty-state {
+  min-height: 260px;
+  padding: 24px 20px 48px;
+  box-sizing: border-box;
+}
+.communication-board .pagination-row {
+  min-height: 0;
+  margin-top: auto;
+  padding: 12px 20px 16px;
+}
 @media (max-width: 760px) {
-  .communication-board { height: 100% !important; min-height: 0; padding: 14px 12px calc(24px + env(safe-area-inset-bottom)); overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; touch-action: pan-y; }
-  .communication-board .board-statistics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .communication-board .stat-card { min-height: 82px; padding: 12px; }
-  .communication-surface { min-height: 440px; }
-  .communication-board .list-toolbar { padding: 12px; }
-  .communication-board .list-toolbar .el-input { width: 100%; }
-  .communication-board .list-toolbar .el-select { width: calc(50% - 5px); }
-  .communication-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 2px 12px 14px; }
-  .communication-card { min-height: 238px; }
-  .communication-board .pagination-row { justify-content: center; padding: 12px; }
+  .communication-board {
+    height: 100% !important;
+    min-height: 0;
+    padding: 14px 12px calc(24px + env(safe-area-inset-bottom));
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
+  }
+  .communication-board .board-statistics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .communication-board .stat-card {
+    min-height: 82px;
+    padding: 12px;
+  }
+  .communication-surface {
+    min-height: 440px;
+  }
+  .communication-board .list-toolbar {
+    padding: 12px;
+  }
+  .communication-board .list-toolbar .el-input {
+    width: 100%;
+  }
+  .communication-board .list-toolbar .el-select {
+    width: calc(50% - 5px);
+  }
+  .communication-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 2px 12px 14px;
+  }
+  .communication-card {
+    min-height: 238px;
+  }
+  .communication-board .pagination-row {
+    justify-content: center;
+    padding: 12px;
+  }
 }
 </style>
+
