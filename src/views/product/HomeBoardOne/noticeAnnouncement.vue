@@ -13,7 +13,10 @@
         <button v-for="notice in notices" :key="notice.id" type="button" class="notice-item" :aria-label="`查看公告：${notice.title || '未命名公告'}`" @click="openDetail(notice)">
           <span class="notice-item__title" :title="notice.title">{{ notice.title || '未命名公告' }}</span>
           <span class="notice-item__meta">
-            <span>{{ notice.sceneType || '园区公告' }}</span>
+            <span class="notice-scene">
+              <img v-if="sceneIcon(notice)" :src="sceneIcon(notice)" alt="" />
+              {{ notice.sceneType || '园区公告' }}
+            </span>
             <span>{{ publisherName(notice) }}</span>
             <time>{{ formatDateTime(notice.publishTime) }}</time>
           </span>
@@ -25,18 +28,49 @@
     <el-drawer title="通知公告详情" :visible.sync="detailVisible" size="500px" append-to-body custom-class="home-notice-detail">
       <article v-if="selectedNotice" class="notice-detail">
         <div class="notice-detail__meta">
-          <span>{{ selectedNotice.sceneType || '园区公告' }}</span>
+          <span class="notice-scene">
+            <img v-if="sceneIcon(selectedNotice)" :src="sceneIcon(selectedNotice)" alt="" />
+            {{ selectedNotice.sceneType || '园区公告' }}
+          </span>
           <span>{{ publisherName(selectedNotice) }}</span>
           <time>{{ formatDateTime(selectedNotice.publishTime) }}</time>
         </div>
         <h3>{{ selectedNotice.title || '未命名公告' }}</h3>
         <p>{{ selectedNotice.content || '暂无公告内容' }}</p>
+        <section v-if="detailUploadFiles.length" class="notice-attachments">
+          <h4>附件</h4>
+          <div class="notice-attachments__list">
+            <button
+              v-for="file in detailUploadFiles"
+              :key="file.uid || file.id || file.filePath || file.fileName"
+              type="button"
+              :disabled="!file.id"
+              :class="{ 'is-downloadable': file.id }"
+              @click="downloadUploadFile(file)">
+              <i class="el-icon-document"></i>
+              <span>{{ file.name || file.fileName }}</span>
+            </button>
+          </div>
+        </section>
       </article>
     </el-drawer>
   </section>
 </template>
 
 <script>
+import activityNoticeIcon from '@/assets/image/publicNotice/activity-notice.svg'
+import enterpriseNewsIcon from '@/assets/image/publicNotice/enterprise-news.svg'
+import parkNewsIcon from '@/assets/image/publicNotice/park-news.svg'
+import safetyReminderIcon from '@/assets/image/publicNotice/safety-reminder.svg'
+
+const sceneIcons = {
+  园区动态: parkNewsIcon,
+  园区通用: parkNewsIcon,
+  企业动态: enterpriseNewsIcon,
+  安全提醒: safetyReminderIcon,
+  活动通知: activityNoticeIcon
+}
+
 export default {
   name: 'HomeNoticeAnnouncement',
   data() {
@@ -49,6 +83,11 @@ export default {
   },
   created() {
     this.loadNotices()
+  },
+  computed: {
+    detailUploadFiles() {
+      return this.selectedNotice ? this.normalizeUploadFiles(this.selectedNotice.uploadFiles) : []
+    }
   },
   methods: {
     unwrap(response) {
@@ -85,6 +124,41 @@ export default {
     },
     publisherName(notice) {
       return (notice && notice.createByName) || '园区'
+    },
+    sceneIcon(notice) {
+      return (notice && sceneIcons[notice.sceneType]) || ''
+    },
+    normalizeUploadFiles(value) {
+      let files = value
+      if (typeof files === 'string') {
+        try {
+          files = JSON.parse(files)
+        } catch (error) {
+          files = []
+        }
+      }
+      if (!Array.isArray(files)) files = files ? [files] : []
+      return files.filter(Boolean).map((item, index) => {
+        const file = typeof item === 'string' ? { fileName: item, filePath: item } : item
+        return Object.assign({}, file, {
+          name: file.name || file.fileName || `附件${index + 1}`,
+          uid: file.uid || file.id || file.filePath || `home-notice-file-${index}`
+        })
+      })
+    },
+    async downloadUploadFile(file) {
+      if (!file.id || !this.$api || !this.$api['attachment.download']) return
+      try {
+        const response = await this.$api['attachment.download']({ attachmentId: file.id }, { responseType: 'blob' })
+        const url = URL.createObjectURL(new Blob([response.data], { type: file.fileType || 'application/octet-stream' }))
+        const link = document.createElement('a')
+        link.href = url
+        link.download = file.name || file.fileName || '附件'
+        link.click()
+        URL.revokeObjectURL(url)
+      } catch (error) {
+        this.$message.error('附件下载失败，请稍后重试')
+      }
     },
     formatDateTime(value) {
       return value ? String(value).replace('T', ' ').slice(0, 16) : '-'
@@ -193,6 +267,19 @@ export default {
   min-width: 0;
 }
 
+.notice-scene {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.notice-scene img {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  object-fit: contain;
+}
+
 .notice-detail {
   padding: 4px 20px 20px;
 }
@@ -214,6 +301,58 @@ export default {
   font-size: 14px;
   line-height: 24px;
   white-space: pre-wrap;
+}
+
+.notice-attachments {
+  margin-top: 24px;
+}
+
+.notice-attachments h4 {
+  margin: 0 0 10px;
+  color: #303133;
+  font-size: 14px;
+}
+
+.notice-attachments__list {
+  overflow: hidden;
+  border: 1px solid #ebeef5;
+  border-radius: 6px;
+}
+
+.notice-attachments__list button {
+  width: 100%;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 0;
+  border-bottom: 1px solid #f0f2f5;
+  background: #fff;
+  color: #606266;
+  font-size: 13px;
+  text-align: left;
+}
+
+.notice-attachments__list button:last-child {
+  border-bottom: 0;
+}
+
+.notice-attachments__list button span {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notice-attachments__list button.is-downloadable {
+  cursor: pointer;
+  color: #409eff;
+}
+
+.notice-attachments__list button:disabled {
+  cursor: default;
 }
 
 @media (max-width: 768px) {

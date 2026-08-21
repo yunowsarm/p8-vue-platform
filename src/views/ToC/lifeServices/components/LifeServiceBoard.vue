@@ -58,7 +58,8 @@
             <el-tag v-if="config.hasStatus !== false" :type="statusType(statusText(item.status))" size="small" effect="light">{{ statusText(item.status) }}</el-tag>
           </div>
           <div class="card-title">
-            <i :class="config.icon"></i>
+            <img v-if="sceneIcon(item)" class="notice-scene-icon" :src="sceneIcon(item)" :alt="item[config.sceneTypeIconKey]" />
+            <i v-else :class="config.icon"></i>
             <b>{{ item[config.primaryKey] || '-' }}</b>
             <time v-if="item[config.timeKey]">{{ item[config.timeKey] }}</time>
           </div>
@@ -137,6 +138,29 @@
               <el-input v-model.trim="form[field.key]" type="textarea" :rows="field.key === config.contentKey ? 6 : 4" :maxlength="500" show-word-limit :placeholder="'请输入' + field.label" />
             </el-form-item>
           </el-col>
+          <el-col v-if="config.uploadField" :span="24">
+            <el-form-item :label="config.uploadLabel || '附件'" :prop="config.uploadField">
+              <el-upload
+                ref="lifeServiceUpload"
+                action="#"
+                name="thefile"
+                :auto-upload="false"
+                :file-list="uploadFileList"
+                :limit="config.uploadLimit || 9"
+                :on-change="handleUploadChange"
+                :on-remove="handleUploadRemove">
+                <el-button size="small" type="primary" icon="el-icon-upload2">上传附件</el-button>
+                <div slot="file" slot-scope="{ file }" class="upload-file-item">
+                  <span class="upload-file-name">
+                    <i class="el-icon-document"></i>
+                    {{ file.name || file.fileName }}
+                  </span>
+                  <el-button class="remove-upload-file" type="text" icon="el-icon-delete" title="删除附件" @click="removeUploadFile(file)" />
+                </div>
+              </el-upload>
+              <p v-if="config.uploadTip" class="upload-tip">{{ config.uploadTip }}</p>
+            </el-form-item>
+          </el-col>
           <el-col v-if="config.hasStatus !== false" :xs="24" :sm="12">
             <el-form-item label="状态">
               <div class="readonly-status">
@@ -157,7 +181,10 @@
       <div v-if="selectedRecord" class="drawer-layout">
         <div class="drawer-scroll">
           <div class="detail-hero">
-            <span class="hero-icon"><i :class="config.icon"></i></span>
+            <span class="hero-icon">
+              <img v-if="sceneIcon(selectedRecord)" class="notice-scene-icon notice-scene-icon--hero" :src="sceneIcon(selectedRecord)" :alt="selectedRecord[config.sceneTypeIconKey]" />
+              <i v-else :class="config.icon"></i>
+            </span>
             <div>
               <small>{{ selectedRecord.id }}</small>
               <h3>{{ selectedRecord[config.primaryKey] || '-' }}</h3>
@@ -174,6 +201,17 @@
             <h4>{{ config.contentLabel || '内容' }}</h4>
             <p>{{ selectedRecord[config.contentKey] }}</p>
           </section>
+          <section v-if="detailUploadFiles.length" class="detail-section">
+            <h4>{{ config.uploadLabel || '附件' }}</h4>
+            <div class="detail-files">
+              <div v-for="file in detailUploadFiles" :key="file.uid || file.id || file.filePath || file.fileName" class="detail-file-item">
+                <span :class="{ 'file-download-link': file.id }" @click="file.id && downloadUploadFile(file)">
+                  <i class="el-icon-document"></i>
+                  {{ file.name || file.fileName }}
+                </span>
+              </div>
+            </div>
+          </section>
         </div>
         <div class="drawer-actions"><el-button @click="detailVisible = false">关闭</el-button></div>
       </div>
@@ -182,6 +220,19 @@
 </template>
 
 <script>
+import activityNoticeIcon from '@/assets/image/publicNotice/activity-notice.svg'
+import enterpriseNewsIcon from '@/assets/image/publicNotice/enterprise-news.svg'
+import parkNewsIcon from '@/assets/image/publicNotice/park-news.svg'
+import safetyReminderIcon from '@/assets/image/publicNotice/safety-reminder.svg'
+
+const sceneIcons = {
+  园区动态: parkNewsIcon,
+  园区通用: parkNewsIcon,
+  企业动态: enterpriseNewsIcon,
+  安全提醒: safetyReminderIcon,
+  活动通知: activityNoticeIcon
+}
+
 export default {
   name: 'LifeServiceBoard',
   props: { config: { type: Object, required: true } },
@@ -226,6 +277,16 @@ export default {
     },
     detailFields() {
       return this.fields.filter((field) => field.key !== this.config.contentKey)
+    },
+    uploadFileList() {
+      if (!this.config.uploadField) return []
+      const files = this.form[this.config.uploadField]
+      return Array.isArray(files) ? files : []
+    },
+    detailUploadFiles() {
+      if (!this.config.uploadField || !this.selectedRecord) return []
+      const responseField = this.config.uploadResponseField || this.config.uploadField
+      return this.normalizeUploadFiles(this.selectedRecord[responseField])
     },
     rules() {
       const rules = {}
@@ -330,6 +391,10 @@ export default {
       if (key === (this.config.publisherNameKey || 'publisherName')) return value || '园区'
       return this.formatValue(value)
     },
+    sceneIcon(item) {
+      const key = this.config.sceneTypeIconKey
+      return key && item ? sceneIcons[item[key]] || '' : ''
+    },
     resetPage() {
       this.currentPage = 1
       if (!this.usingMock) this.loadRecords()
@@ -363,6 +428,7 @@ export default {
       this.fields.forEach((field) => {
         form[field.key] = ''
       })
+      if (this.config.uploadField) form[this.config.uploadField] = []
       if (this.config.hasStatus !== false) form.status = this.config.defaultStatus || '正常'
       return form
     },
@@ -377,10 +443,24 @@ export default {
       this.form = this.emptyForm()
       this.formVisible = true
     },
-    openEdit(item) {
+    async openEdit(item) {
       if (this.config.readOnly) return
-      this.editingId = item.id
-      this.form = Object.assign(this.emptyForm(), item, { status: this.statusText(item.status) })
+      let record = item
+      const detailApi = this.$api && this.$api[this.apiKey('queryById')]
+      if (detailApi) {
+        try {
+          const result = this.unwrap(await detailApi({ id: item.id }))
+          if (result) record = Object.assign({}, item, result)
+        } catch (error) {
+          // 详情查询失败时，仍可用列表数据编辑基础字段。
+        }
+      }
+      this.editingId = record.id
+      this.form = Object.assign(this.emptyForm(), record, { status: this.statusText(record.status) })
+      if (this.config.uploadField) {
+        const responseField = this.config.uploadResponseField || this.config.uploadField
+        this.form[this.config.uploadField] = this.normalizeUploadFiles(record[responseField])
+      }
       this.formVisible = true
     },
     async submitForm() {
@@ -394,6 +474,9 @@ export default {
         createMetadata[this.config.publishTimeKey || 'publishTime'] = this.now()
       }
       const payload = Object.assign({}, this.form, this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: this.now() } : createMetadata)
+      if (this.config.uploadField) {
+        payload[this.config.uploadField] = this.normalizeUploadFiles(payload[this.config.uploadField]).map((file) => this.cleanUploadFile(file))
+      }
       try {
         await this.$api[this.apiKey(this.editingId ? 'edit' : 'add')](payload)
         this.$message.success(this.editingId ? '已更新' : '已提交')
@@ -419,6 +502,110 @@ export default {
     errorMessage(error, fallback = '操作失败，请稍后重试') {
       const payload = error && ((error.response && error.response.data) || error.data || error)
       return (payload && payload.head && payload.head.message) || (payload && payload.message) || fallback
+    },
+    normalizeUploadFiles(value) {
+      let files = value
+      if (typeof files === 'string') {
+        try {
+          files = JSON.parse(files)
+        } catch (error) {
+          files = []
+        }
+      }
+      if (!Array.isArray(files)) files = files ? [files] : []
+      return files.filter(Boolean).map((item, index) => {
+        const file = typeof item === 'string' ? { fileName: item, filePath: item } : item
+        return Object.assign({}, file, {
+          name: file.name || file.fileName || `附件${index + 1}`,
+          status: file.status || (file.filePath || file.id ? 'success' : 'ready'),
+          uid: file.uid || file.id || file.filePath || `notice-file-${index}`
+        })
+      })
+    },
+    async handleUploadChange(file, fileList) {
+      const raw = file.raw
+      if (!raw || file.filePath || file.id) return
+      if (raw.size > 10 * 1024 * 1024) {
+        this.$message.error('单个附件不能超过 10MB')
+        this.$set(
+          this.form,
+          this.config.uploadField,
+          fileList.filter((item) => item.uid !== file.uid)
+        )
+        this.$nextTick(() => this.$refs.lifeServiceUpload && this.$refs.lifeServiceUpload.handleRemove(file))
+        return
+      }
+      if (!this.$api || !this.$api['attachment.upload']) {
+        this.$message.error('未找到附件上传接口')
+        this.$refs.lifeServiceUpload && this.$refs.lifeServiceUpload.handleRemove(file)
+        this.$set(
+          this.form,
+          this.config.uploadField,
+          fileList.filter((item) => item.uid !== file.uid)
+        )
+        return
+      }
+      file.status = 'uploading'
+      try {
+        const formData = new FormData()
+        formData.append('thefile', raw)
+        const uploadFile = this.getUploadResult(await this.$api['attachment.upload'](formData))
+        if (!uploadFile.filePath && !uploadFile.id) throw new Error('附件上传未返回文件信息')
+        Object.assign(file, {
+          fileName: uploadFile.fileName || file.name,
+          filePath: uploadFile.filePath,
+          name: uploadFile.fileName || file.name,
+          fileType: uploadFile.fileType || raw.type || '',
+          status: 'success',
+          url: uploadFile.url || uploadFile.fileUrl || ''
+        })
+        this.$set(this.form, this.config.uploadField, fileList)
+      } catch (error) {
+        this.$message.error('附件上传失败，请重试')
+        this.$refs.lifeServiceUpload && this.$refs.lifeServiceUpload.handleRemove(file)
+        this.$set(
+          this.form,
+          this.config.uploadField,
+          fileList.filter((item) => item.uid !== file.uid)
+        )
+      }
+    },
+    handleUploadRemove(file, fileList) {
+      this.$set(this.form, this.config.uploadField, fileList)
+    },
+    removeUploadFile(file) {
+      if (this.$refs.lifeServiceUpload) this.$refs.lifeServiceUpload.handleRemove(file)
+    },
+    cleanUploadFile(file) {
+      const uploadFile = Object.assign({}, file)
+      delete uploadFile.id
+      delete uploadFile.raw
+      delete uploadFile.status
+      delete uploadFile.uid
+      delete uploadFile.percentage
+      if (uploadFile.filePath) {
+        const paths = String(uploadFile.filePath).split('/').filter(Boolean)
+        uploadFile.filePath = paths.length ? paths[paths.length - 1] : uploadFile.filePath
+      }
+      return uploadFile
+    },
+    getUploadResult(response) {
+      const data = Array.isArray(response) ? response : response && response.data
+      return Array.isArray(data) ? data[0] || {} : data || {}
+    },
+    async downloadUploadFile(file) {
+      if (!file.id || !this.$api || !this.$api['attachment.download']) return
+      try {
+        const response = await this.$api['attachment.download']({ attachmentId: file.id }, { responseType: 'blob' })
+        const url = URL.createObjectURL(new Blob([response.data], { type: file.fileType || 'application/octet-stream' }))
+        const link = document.createElement('a')
+        link.href = url
+        link.download = file.name || file.fileName || '附件'
+        link.click()
+        URL.revokeObjectURL(url)
+      } catch (error) {
+        this.$message.error('附件下载失败，请稍后重试')
+      }
     },
     async openDetail(item) {
       this.selectedRecord = item
@@ -582,6 +769,13 @@ export default {
   margin-right: 7px;
   color: #409eff;
 }
+.notice-scene-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  margin-right: 7px;
+  object-fit: contain;
+}
 .card-title {
   display: flex;
   align-items: center;
@@ -687,6 +881,36 @@ export default {
 .field-full {
   width: 100%;
 }
+.upload-file-item,
+.detail-file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #50617a;
+}
+.upload-file-name,
+.detail-file-item span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.upload-file-name i,
+.detail-file-item i {
+  margin-right: 6px;
+  color: #5b9cf1;
+}
+.remove-upload-file {
+  flex: 0 0 auto;
+  color: #f56c6c;
+}
+.upload-tip {
+  margin: 8px 0 0;
+  color: #93a2b7;
+  font-size: 12px;
+  line-height: 18px;
+}
 .readonly-status {
   height: 40px;
   display: flex;
@@ -723,10 +947,17 @@ export default {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #2f86ed;
+  border: 1px solid #d3e3f7;
   border-radius: 8px;
-  color: #fff;
+  background: #fff;
+  color: #2f86ed;
   font-size: 20px;
+  box-sizing: border-box;
+}
+.notice-scene-icon--hero {
+  width: 26px;
+  height: 26px;
+  margin: 0;
 }
 .detail-hero h3 {
   max-width: 290px;
@@ -791,6 +1022,22 @@ export default {
   white-space: pre-wrap;
   background: #f8fafc;
   border-radius: 6px;
+}
+.detail-files {
+  padding: 4px 14px;
+  border-radius: 6px;
+  background: #f8fafc;
+}
+.detail-file-item {
+  min-height: 38px;
+  border-bottom: 1px solid #e8eef6;
+}
+.detail-file-item:last-child {
+  border-bottom: 0;
+}
+.file-download-link {
+  cursor: pointer;
+  color: #2f86ed;
 }
 .drawer-actions {
   flex: 0 0 auto;

@@ -23,6 +23,12 @@ export default {
         contentLabel: '公告内容',
         timeKey: 'publishTime',
         filterKey: 'sceneType',
+        sceneTypeIconKey: 'sceneType',
+        uploadField: 'uploadFiles',
+        uploadResponseField: 'uploadFiles',
+        uploadLabel: '附件',
+        uploadLimit: 9,
+        uploadTip: '单个附件不超过 10MB，最多上传 9 个。',
         fields: [
           { key: 'title', label: '标题' },
           { key: 'sceneType', label: '场景类型', options: ['园区通用', '企业动态', '安全提醒', '活动通知'] },
