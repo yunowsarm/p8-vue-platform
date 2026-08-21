@@ -3,39 +3,14 @@
 <script>
 //通知公告管理
 import LifeServiceBoard from '../ToC/lifeServices/components/LifeServiceBoard.vue'
+import { createPublicNoticeConfig } from '../ToC/lifeServices/components/publicNoticeConfig'
 
 export default {
   name: 'ToOPublicNotice',
   components: { LifeServiceBoard },
   data() {
     return {
-      config: {
-        title: '通知公告',
-        apiNamespace: 'tobPublicNotice',
-        autoPublisher: true,
-        publisherNameKey: 'createByName',
-        hasStatus: false,
-        icon: 'el-icon-bell',
-        primaryLabel: '公告标题',
-        primaryKey: 'title',
-        contentKey: 'content',
-        contentLabel: '公告内容',
-        timeKey: 'publishTime',
-        filterKey: 'sceneType',
-        sceneTypeIconKey: 'sceneType',
-        uploadField: 'uploadFiles',
-        uploadResponseField: 'uploadFiles',
-        uploadLabel: '附件',
-        uploadLimit: 9,
-        uploadTip: '单个附件不超过 10MB，最多上传 9 个。',
-        fields: [
-          { key: 'title', label: '标题', required: true },
-          { key: 'sceneType', label: '场景类型', options: ['园区动态', '企业动态', '安全提醒', '活动通知'], required: true },
-          { key: 'content', label: '内容', type: 'textarea', required: true },
-          { key: 'createByName', label: '发布人', hideInForm: true },
-          { key: 'publishTime', label: '发布时间', type: 'datetime', hideInForm: true }
-        ]
-      }
+      config: createPublicNoticeConfig({ apiNamespace: 'tobPublicNotice', readOnly: false })
     }
   }
 }

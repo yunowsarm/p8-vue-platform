@@ -503,7 +503,12 @@ export default {
 .bus-card:focus {
   border-color: #a9caf7;
 }
-.bus-card__head,
+.bus-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
 .bus-card__foot {
   display: flex;
   align-items: center;
