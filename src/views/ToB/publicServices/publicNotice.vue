@@ -1,17 +1,18 @@
-<template><LifeServiceBoard :config="config" /></template>
+<template>
+  <LifeServiceBoard :config="config" />
+</template>
+
 <script>
-import LifeServiceBoard from './components/LifeServiceBoard.vue'
+import LifeServiceBoard from '../../ToC/lifeServices/components/LifeServiceBoard.vue'
+
 export default {
-  name: 'ToCPublicNotice',
+  name: 'ToBPublicNotice',
   components: { LifeServiceBoard },
-  props: {
-    apiNamespace: { type: String, default: 'tocPublicNotice' }
-  },
   data() {
     return {
       config: {
         title: '通知公告',
-        apiNamespace: this.apiNamespace,
+        apiNamespace: 'tobPublicNotice',
         readOnly: true,
         publisherNameKey: 'createByName',
         hasStatus: false,

@@ -44,7 +44,7 @@
           <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
         </el-select>
         <div class="toolbar-actions">
-          <el-button type="primary" size="small" icon="el-icon-plus" @click="openCreate">新建{{ config.title }}</el-button>
+          <el-button v-if="!config.readOnly" type="primary" size="small" icon="el-icon-plus" @click="openCreate">新建{{ config.title }}</el-button>
         </div>
       </div>
 
@@ -66,7 +66,7 @@
           <dl class="card-meta">
             <template v-for="field in cardFields">
               <dt :key="field.key + '-label'">{{ field.label }}</dt>
-              <dd :key="field.key + '-value'">{{ formatValue(item[field.key]) }}</dd>
+              <dd :key="field.key + '-value'">{{ formatFieldValue(item[field.key], field.key) }}</dd>
             </template>
           </dl>
           <div class="card-foot">
@@ -78,8 +78,8 @@
             </span>
             <div class="card-actions">
               <el-button type="text" size="mini" @click.stop="openDetail(item)">查看详情</el-button>
-              <el-button type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
-              <el-button type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
+              <el-button v-if="!config.readOnly" type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
+              <el-button v-if="!config.readOnly" type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
             </div>
           </div>
         </article>
@@ -167,7 +167,7 @@
           <div class="detail-grid">
             <span v-for="field in detailFields" :key="field.key">
               <small>{{ field.label }}</small>
-              <b>{{ formatValue(selectedRecord[field.key]) }}</b>
+              <b>{{ formatFieldValue(selectedRecord[field.key], field.key) }}</b>
             </span>
           </div>
           <section v-if="selectedRecord[config.contentKey]" class="detail-section">
@@ -209,10 +209,10 @@ export default {
       return this.config.fields || []
     },
     normalFields() {
-      return this.fields.filter((field) => field.type !== 'textarea')
+      return this.fields.filter((field) => field.type !== 'textarea' && !field.hideInForm)
     },
     textFields() {
-      return this.fields.filter((field) => field.type === 'textarea')
+      return this.fields.filter((field) => field.type === 'textarea' && !field.hideInForm)
     },
     typeOptions() {
       const field = this.fields.find((field) => field.key === this.config.filterKey)
@@ -271,11 +271,20 @@ export default {
   },
   methods: {
     currentUserId() {
+      return this.currentUser().id || ''
+    },
+    currentUser() {
+      const storeUser = this.$store && this.$store.getters && this.$store.getters.userInfo
+      if (storeUser && storeUser.id) return storeUser
       try {
-        return JSON.parse(window.sessionStorage.getItem('userInfo') || '{}').id || ''
+        return JSON.parse(window.sessionStorage.getItem('userInfo') || '{}')
       } catch (error) {
-        return ''
+        return {}
       }
+    },
+    currentUserName() {
+      const user = this.currentUser()
+      return user.createByName || ''
     },
     now() {
       const date = new Date()
@@ -317,6 +326,10 @@ export default {
     formatValue(value) {
       return value === undefined || value === null || value === '' ? '-' : value
     },
+    formatFieldValue(value, key) {
+      if (key === (this.config.publisherNameKey || 'publisherName')) return value || '园区'
+      return this.formatValue(value)
+    },
     resetPage() {
       this.currentPage = 1
       if (!this.usingMock) this.loadRecords()
@@ -324,14 +337,21 @@ export default {
     async loadRecords() {
       this.loading = true
       try {
+        const listApi = this.$api && this.$api[this.apiKey('list')]
+        if (!listApi) throw new Error(`未配置${this.apiKey('list')}接口`)
         const result = this.unwrap(
-          await this.$api[this.apiKey('list')]({ pageNo: this.currentPage, pageSize: this.pageSize, keyword: this.keyword || undefined, status: this.statusFilter || undefined })
+          await listApi({
+            pageNo: this.currentPage,
+            pageSize: this.pageSize,
+            keyword: this.keyword || undefined,
+            status: this.config.hasStatus === false ? undefined : this.statusFilter || undefined
+          })
         )
         this.records = this.recordsFrom(result)
         this.total = this.totalFrom(result)
         this.usingMock = false
       } catch (error) {
-        this.records = this.config.records || []
+        this.records = (this.config && this.config.records) || []
         this.total = this.records.length
         this.usingMock = true
       } finally {
@@ -352,20 +372,28 @@ export default {
       this.$nextTick(() => this.$refs.lifeServiceForm && this.$refs.lifeServiceForm.clearValidate())
     },
     openCreate() {
+      if (this.config.readOnly) return
       this.editingId = ''
       this.form = this.emptyForm()
       this.formVisible = true
     },
     openEdit(item) {
+      if (this.config.readOnly) return
       this.editingId = item.id
       this.form = Object.assign(this.emptyForm(), item, { status: this.statusText(item.status) })
       this.formVisible = true
     },
     async submitForm() {
+      if (this.config.readOnly) return
       const valid = await new Promise((resolve) => this.$refs.lifeServiceForm.validate(resolve))
       if (!valid) return
       this.submitting = true
-      const payload = Object.assign({}, this.form, this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: this.now() } : { createBy: this.currentUserId(), itemCreateTime: this.now() })
+      const createMetadata = { createBy: this.currentUserId(), itemCreateTime: this.now() }
+      if (this.config.autoPublisher) {
+        createMetadata[this.config.publisherNameKey || 'publisherName'] = this.currentUserName()
+        createMetadata[this.config.publishTimeKey || 'publishTime'] = this.now()
+      }
+      const payload = Object.assign({}, this.form, this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: this.now() } : createMetadata)
       try {
         await this.$api[this.apiKey(this.editingId ? 'edit' : 'add')](payload)
         this.$message.success(this.editingId ? '已更新' : '已提交')
@@ -378,6 +406,7 @@ export default {
       }
     },
     async removeRecord(item) {
+      if (this.config.readOnly) return
       try {
         await this.$confirm('确认删除该条记录吗？', '删除确认', { type: 'warning' })
         await this.$api[this.apiKey('delete')]({ id: item.id })
@@ -867,9 +896,19 @@ export default {
     flex: 1 1 auto;
     overflow: hidden;
   }
-  .drawer-layout { min-height: 0; height: 100%; width: 100%; }
-  .drawer-scroll { min-height: 0; padding: 14px; -webkit-overflow-scrolling: touch; }
-  .drawer-actions { padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); }
+  .drawer-layout {
+    min-height: 0;
+    height: 100%;
+    width: 100%;
+  }
+  .drawer-scroll {
+    min-height: 0;
+    padding: 14px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .drawer-actions {
+    padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+  }
   ::v-deep .life-service-form-dialog {
     width: 100% !important;
     min-width: 0;
@@ -890,12 +929,23 @@ export default {
     flex: 0 0 auto;
     padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
   }
-  ::v-deep .life-service-form-dialog .dialog-footer { display: flex; gap: 10px; }
-  ::v-deep .life-service-form-dialog .dialog-footer .el-button { flex: 1; margin: 0; min-height: 42px; }
+  ::v-deep .life-service-form-dialog .dialog-footer {
+    display: flex;
+    gap: 10px;
+  }
+  ::v-deep .life-service-form-dialog .dialog-footer .el-button {
+    flex: 1;
+    margin: 0;
+    min-height: 42px;
+  }
 }
 @media (max-width: 420px) {
-  .list-toolbar { grid-template-columns: minmax(0, 1fr); }
-  .list-toolbar .el-select { grid-column: 1 / -1; }
+  .list-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .list-toolbar .el-select {
+    grid-column: 1 / -1;
+  }
 }
 /* 仅本看板在移动端承载页面滚动，避免改动后台配置页的全局路由高度。 */
 @media (max-width: 760px) {
@@ -912,28 +962,105 @@ export default {
 </style>
 <style scoped>
 /* 与办事大厅看板保持一致的列表基线 */
-.life-service-board { min-height: 100%; padding: 12px; box-sizing: border-box; background: #f6f8fb; }
-.life-service-board .board-statistics { gap: 12px; margin-bottom: 12px; }
-.life-service-board .stat-card { min-height: 94px; padding: 16px 18px; border-color: #e5ebf2; border-radius: 10px; box-shadow: none; }
-.life-service-surface { min-height: clamp(660px, calc(100vh - 250px), 760px); border-color: #e5ebf2; border-radius: 10px; box-shadow: 0 4px 14px rgba(15, 23, 42, .035); }
-.life-service-board .list-toolbar { min-height: 64px; padding: 14px 20px; gap: 10px; }
-.life-service-board .list-toolbar .el-input { width: 300px; }
-.life-service-board .list-toolbar .el-select { width: 160px; }
-.life-service-grid { gap: 14px; padding: 2px 20px 18px; }
-.life-service-card { min-height: 252px; padding: 16px; border-color: #e6ecf3; border-radius: 10px; }
-.life-service-card:hover { border-color: #a9caf7; }
-.life-service-board .empty-state { min-height: 260px; padding: 24px 20px 48px; box-sizing: border-box; }
-.life-service-board .pagination-row { min-height: 0; margin-top: auto; padding: 12px 20px 16px; }
+.life-service-board {
+  min-height: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  background: #f6f8fb;
+}
+.life-service-board .board-statistics {
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.life-service-board .stat-card {
+  min-height: 94px;
+  padding: 16px 18px;
+  border-color: #e5ebf2;
+  border-radius: 10px;
+  box-shadow: none;
+}
+.life-service-surface {
+  min-height: clamp(660px, calc(100vh - 250px), 760px);
+  border-color: #e5ebf2;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.035);
+}
+.life-service-board .list-toolbar {
+  min-height: 64px;
+  padding: 14px 20px;
+  gap: 10px;
+}
+.life-service-board .list-toolbar .el-input {
+  width: 300px;
+}
+.life-service-board .list-toolbar .el-select {
+  width: 160px;
+}
+.life-service-grid {
+  gap: 14px;
+  padding: 2px 20px 18px;
+}
+.life-service-card {
+  min-height: 252px;
+  padding: 16px;
+  border-color: #e6ecf3;
+  border-radius: 10px;
+}
+.life-service-card:hover {
+  border-color: #a9caf7;
+}
+.life-service-board .empty-state {
+  min-height: 260px;
+  padding: 24px 20px 48px;
+  box-sizing: border-box;
+}
+.life-service-board .pagination-row {
+  min-height: 0;
+  margin-top: auto;
+  padding: 12px 20px 16px;
+}
 @media (max-width: 760px) {
-  .life-service-board { height: 100% !important; min-height: 0; padding: 14px 12px calc(24px + env(safe-area-inset-bottom)); overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; touch-action: pan-y; }
-  .life-service-board .board-statistics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .life-service-board .stat-card { min-height: 82px; padding: 12px; }
-  .life-service-surface { min-height: 440px; }
-  .life-service-board .list-toolbar { padding: 12px; }
-  .life-service-board .list-toolbar .el-input { width: 100%; }
-  .life-service-board .list-toolbar .el-select { width: calc(50% - 5px); }
-  .life-service-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 2px 12px 14px; }
-  .life-service-card { min-height: 238px; }
-  .life-service-board .pagination-row { justify-content: center; padding: 12px; }
+  .life-service-board {
+    height: 100% !important;
+    min-height: 0;
+    padding: 14px 12px calc(24px + env(safe-area-inset-bottom));
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
+  }
+  .life-service-board .board-statistics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .life-service-board .stat-card {
+    min-height: 82px;
+    padding: 12px;
+  }
+  .life-service-surface {
+    min-height: 440px;
+  }
+  .life-service-board .list-toolbar {
+    padding: 12px;
+  }
+  .life-service-board .list-toolbar .el-input {
+    width: 100%;
+  }
+  .life-service-board .list-toolbar .el-select {
+    width: calc(50% - 5px);
+  }
+  .life-service-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 2px 12px 14px;
+  }
+  .life-service-card {
+    min-height: 238px;
+  }
+  .life-service-board .pagination-row {
+    justify-content: center;
+    padding: 12px;
+  }
 }
 </style>

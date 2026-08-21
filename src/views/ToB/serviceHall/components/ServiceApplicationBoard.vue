@@ -1,6 +1,6 @@
 <template>
   <main class="application-board">
-    <section class="summary-grid">
+    <section :class="['summary-grid', { 'summary-grid--two-columns': config.summaryColumns === 2 }]">
       <article v-for="item in summaryCards" :key="item.title" class="summary-card">
         <span class="summary-icon" :class="item.color"><i :class="item.icon"></i></span>
         <div>
@@ -20,12 +20,12 @@
         <el-select v-if="primaryOptions.length" v-model="typeFilter" clearable size="small" :placeholder="'全部' + config.primaryLabel" @change="resetPage" @clear="resetPage">
           <el-option v-for="item in primaryOptions" :key="item" :label="item" :value="item" />
         </el-select>
-        <el-select v-model="statusFilter" clearable size="small" placeholder="全部状态" @change="resetPage" @clear="resetPage">
+        <el-select v-if="config.hasStatus !== false" v-model="statusFilter" clearable size="small" placeholder="全部状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
         </el-select>
         <div class="toolbar-actions">
-          <el-button v-if="selectedIds.length" type="danger" plain size="small" @click="removeSelected">批量删除（{{ selectedIds.length }}）</el-button>
-          <el-button type="primary" size="small" icon="el-icon-plus" @click="openCreate">新增{{ config.title }}</el-button>
+          <el-button v-if="!config.readOnly && selectedIds.length" type="danger" plain size="small" @click="removeSelected">批量删除（{{ selectedIds.length }}）</el-button>
+          <el-button v-if="!config.readOnly" type="primary" size="small" icon="el-icon-plus" @click="openCreate">新增{{ config.title }}</el-button>
         </div>
       </div>
 
@@ -45,8 +45,8 @@
               {{ item.id }}
             </span>
             <div class="record-status">
-              <el-tag :type="statusType(statusText(item.status))" size="small" effect="light">{{ statusText(item.status) }}</el-tag>
-              <el-checkbox v-model="selectedIds" :label="item.id" @click.stop @click.native.stop @mousedown.native.stop @keydown.stop @keydown.native.stop>
+              <el-tag v-if="config.hasStatus !== false" :type="statusType(statusText(item.status))" size="small" effect="light">{{ statusText(item.status) }}</el-tag>
+              <el-checkbox v-if="!config.readOnly" v-model="selectedIds" :label="item.id" @click.stop @click.native.stop @mousedown.native.stop @keydown.stop @keydown.native.stop>
                 <span class="selection-label">选择</span>
               </el-checkbox>
             </div>
@@ -60,18 +60,26 @@
           </div>
           <p class="record-content">{{ item[config.contentKey] }}</p>
           <div class="record-info">
-            <span>
-              <i class="el-icon-office-building"></i>
-              {{ companyLabel(item.companyId) }}
-            </span>
-            <span v-if="item[config.contactNameKey || 'contactName']">
-              <i class="el-icon-user"></i>
-              {{ item[config.contactNameKey || 'contactName'] }}
-            </span>
-            <span v-if="item[config.contactPhoneKey || 'contactPhone']">
-              <i class="el-icon-phone-outline"></i>
-              {{ item[config.contactPhoneKey || 'contactPhone'] }}
-            </span>
+            <template v-if="config.cardMetaFields">
+              <span v-for="field in config.cardMetaFields" :key="field.key">
+                <i :class="field.icon || 'el-icon-document'" />
+                {{ formatFieldValue(item[field.key], field.key) }}
+              </span>
+            </template>
+            <template v-else>
+              <span>
+                <i class="el-icon-office-building"></i>
+                {{ companyLabel(item.companyId) }}
+              </span>
+              <span v-if="item[config.contactNameKey || 'contactName']">
+                <i class="el-icon-user"></i>
+                {{ item[config.contactNameKey || 'contactName'] }}
+              </span>
+              <span v-if="item[config.contactPhoneKey || 'contactPhone']">
+                <i class="el-icon-phone-outline"></i>
+                {{ item[config.contactPhoneKey || 'contactPhone'] }}
+              </span>
+            </template>
           </div>
           <div class="record-foot">
             <span v-if="item.remark" class="remark">
@@ -80,8 +88,8 @@
             </span>
             <div class="record-actions">
               <el-button type="text" size="mini" @click.stop="openDetail(item)">查看详情</el-button>
-              <el-button type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
-              <el-button type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
+              <el-button v-if="!config.readOnly" type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
+              <el-button v-if="!config.readOnly" type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
             </div>
           </div>
         </article>
@@ -128,7 +136,7 @@
                 :placeholder="'请填写' + field.label" />
             </el-form-item>
           </el-col>
-          <el-col :xs="24" :sm="12" :lg="8">
+          <el-col v-if="config.hasStatus !== false" :xs="24" :sm="12" :lg="8">
             <el-form-item label="状态">
               <div class="readonly-status">
                 <i class="el-icon-time"></i>
@@ -151,15 +159,15 @@
             <span class="hero-icon"><i :class="config.icon"></i></span>
             <div>
               <small>{{ selectedRecord.id }}</small>
-              <h3>{{ selectedRecord[config.primaryKey] }}</h3>
-              <p>{{ companyLabel(selectedRecord.companyId) }}</p>
+              <h3>{{ selectedRecord[config.detailTitleKey || config.cardTitleKey || config.primaryKey] || '-' }}</h3>
+              <p v-if="!config.hideCompany">{{ companyLabel(selectedRecord.companyId) }}</p>
             </div>
-            <el-tag :type="statusType(selectedRecord.status)">{{ selectedRecord.status }}</el-tag>
+            <el-tag v-if="config.hasStatus !== false" :type="statusType(selectedRecord.status)">{{ selectedRecord.status }}</el-tag>
           </div>
           <div class="detail-grid">
             <span v-for="field in detailFields" :key="field.key">
               <small>{{ field.label }}</small>
-              <b>{{ selectedRecord[field.key] || '-' }}</b>
+              <b>{{ formatFieldValue(selectedRecord[field.key], field.key) }}</b>
             </span>
           </div>
           <section v-for="field in supplementalTextFields" :key="field.key" class="detail-section">
@@ -174,7 +182,7 @@
             <h4>备注</h4>
             <p>{{ selectedRecord.remark }}</p>
           </section>
-          <section class="detail-section">
+          <section v-if="!config.hideProgress" class="detail-section">
             <h4>处理进度</h4>
             <div class="timeline">
               <div class="timeline-item done">
@@ -269,7 +277,7 @@ export default {
                 .includes(keyword)
             )) &&
           (!this.typeFilter || item[this.config.primaryKey] === this.typeFilter) &&
-          (!this.statusFilter || this.statusText(item.status) === this.statusFilter)
+          (this.config.hasStatus === false || !this.statusFilter || this.statusText(item.status) === this.statusFilter)
       )
     },
     pagedRecords() {
@@ -288,7 +296,7 @@ export default {
         { title: '处理中', statuses: ['处理中'], note: '服务专员持续跟进', icon: 'el-icon-s-operation', color: 'cyan' },
         { title: '本月完成', statuses: ['已完成', '已通过'], note: '已完成服务反馈', icon: 'el-icon-circle-check', color: 'green' }
       ]
-      return definitions.map((item) => Object.assign({}, item, { value: item.all ? this.records.length : item.value !== undefined ? item.value : count(item.statuses || []) }))
+      return definitions.map((item) => Object.assign({}, item, { value: item.all ? this.records.length : item.page ? this.pagedRecords.length : item.value !== undefined ? item.value : count(item.statuses || []) }))
     },
     rules() {
       const rules = {}
@@ -349,6 +357,10 @@ export default {
       const enterprise = this.enterpriseOptions.find((item) => String(item.id) === String(companyId))
       return enterprise ? enterprise.label : companyId || '-'
     },
+    formatFieldValue(value, key) {
+      if (key === (this.config.publisherNameKey || 'publisherName')) return value || '园区'
+      return value === undefined || value === null || value === '' ? '-' : value
+    },
     useMockRecords() {
       this.records = (this.config.records || []).map((item) => Object.assign({}, item))
       this.total = this.records.length
@@ -364,7 +376,7 @@ export default {
         const params = { pageNo: this.currentPage, pageSize: this.pageSize }
         if (this.keyword) params.keyword = this.keyword
         if (this.typeFilter) params[this.config.primaryKey] = this.typeFilter
-        if (this.statusFilter) params.status = this.statusFilter
+        if (this.config.hasStatus !== false && this.statusFilter) params.status = this.statusFilter
         const result = this.unwrap(await this.$api[this.apiKey('list')](params)) || {}
         this.records = Array.isArray(result.records) ? result.records : Array.isArray(result) ? result : []
         this.total = Number(result.total || this.records.length)
@@ -394,6 +406,7 @@ export default {
       return form
     },
     openCreate() {
+      if (this.config.readOnly) return
       this.editingId = ''
       this.form = this.emptyForm()
       this.createVisible = true
@@ -411,9 +424,10 @@ export default {
       })
     },
     async saveRecord() {
+      if (this.config.readOnly) return
       this.submitting = true
       const payload = Object.assign({}, this.form)
-      if (!payload.status) payload.status = this.config.defaultStatus || '待受理'
+      if (this.config.hasStatus !== false && !payload.status) payload.status = this.config.defaultStatus || '待受理'
       if (this.editingId) payload.id = this.editingId
       Object.assign(payload, this.editingId ? { updateBy: this.currentUserId(), itemUpdateTime: now() } : { createBy: this.currentUserId(), itemCreateTime: now() })
       try {
@@ -456,6 +470,7 @@ export default {
       }
     },
     openEdit(record) {
+      if (this.config.readOnly) return
       const target = record || this.selectedRecord
       if (!target) return
       this.selectedRecord = target
@@ -466,6 +481,7 @@ export default {
       this.$nextTick(() => this.$refs.applicationForm && this.$refs.applicationForm.clearValidate())
     },
     removeRecord(record) {
+      if (this.config.readOnly) return
       const target = record || this.selectedRecord
       if (!target) return
       this.$confirm('删除后不可恢复，是否继续？', '确认删除', { type: 'warning' })
@@ -487,6 +503,7 @@ export default {
         .catch(() => {})
     },
     removeSelected() {
+      if (this.config.readOnly) return
       const ids = this.selectedIds.slice()
       if (!ids.length) return
       this.$confirm(`确定删除已选的 ${ids.length} 条记录吗？删除后不可恢复。`, '确认批量删除', { type: 'warning' })
@@ -524,6 +541,9 @@ export default {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
   margin-bottom: 18px;
+}
+.summary-grid--two-columns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .summary-card {
   display: flex;

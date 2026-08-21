@@ -107,7 +107,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="故障附件">
+            <el-form-item label="附件">
               <el-upload ref="imageUpload" action="#" name="thefile" :auto-upload="false" :file-list="form.uploadFiles" :limit="9" :on-change="handleImageChange" :on-remove="handleImageRemove">
                 <el-button size="small" type="primary">选择文件</el-button>
                 <div slot="file" slot-scope="{ file }" class="upload-file-item">
@@ -155,7 +155,7 @@
             <p>{{ selectedRecord.description || '暂无描述' }}</p>
           </section>
           <section class="detail-section">
-            <h4>故障附件</h4>
+            <h4>附件</h4>
             <div v-if="detailUploadFiles.length" class="detail-files">
               <div v-for="file in detailUploadFiles" :key="file.uid || file.id || file.filePath || file.fileName" class="detail-file-item">
                 <span :class="{ 'file-download-link': file.id }" @click="file.id && handleImageDownload(file)">
