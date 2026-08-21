@@ -507,7 +507,7 @@ export default {
 .bus-card__foot {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 8px;
 }
 .record-id {
