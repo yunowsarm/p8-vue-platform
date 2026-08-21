@@ -18,6 +18,11 @@ export default {
         filterKey: 'type',
         showMineFilter: true,
         canAdvanceStatus: true,
+        uploadField: 'uploadFiles',
+        uploadResponseField: 'uploadFiles',
+        uploadLabel: '附件',
+        uploadLimit: 9,
+        uploadTip: '单个附件不超过 10MB，最多上传 9 个。',
         // 状态随发布类型变化：失物招领等待失主认领，寻物启事等待失主确认已找到。
         typeStatusOptions: {
           失物招领: ['待认领', '已认领'],

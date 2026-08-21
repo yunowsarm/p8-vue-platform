@@ -152,7 +152,7 @@
                 <el-button size="small" type="primary" icon="el-icon-upload2">上传附件</el-button>
                 <div slot="file" slot-scope="{ file }" class="upload-file-item">
                   <span class="upload-file-name">
-                    <i class="el-icon-document"></i>
+                    <img class="file-type-icon" :src="fileIcon(file)" alt="" />
                     {{ file.name || file.fileName }}
                   </span>
                   <el-button class="remove-upload-file" type="text" icon="el-icon-delete" title="删除附件" @click="removeUploadFile(file)" />
@@ -206,7 +206,7 @@
             <div class="detail-files">
               <div v-for="file in detailUploadFiles" :key="file.uid || file.id || file.filePath || file.fileName" class="detail-file-item">
                 <span :class="{ 'file-download-link': file.id }" @click="file.id && downloadUploadFile(file)">
-                  <i class="el-icon-document"></i>
+                  <img class="file-type-icon" :src="fileIcon(file)" alt="" />
                   {{ file.name || file.fileName }}
                 </span>
               </div>
@@ -224,6 +224,7 @@ import activityNoticeIcon from '@/assets/image/publicNotice/activity-notice.svg'
 import enterpriseNewsIcon from '@/assets/image/publicNotice/enterprise-news.svg'
 import parkNewsIcon from '@/assets/image/publicNotice/park-news.svg'
 import safetyReminderIcon from '@/assets/image/publicNotice/safety-reminder.svg'
+import { getFileTypeIcon } from '@/utils/fileTypeIcon'
 
 const sceneIcons = {
   园区动态: parkNewsIcon,
@@ -394,6 +395,9 @@ export default {
     sceneIcon(item) {
       const key = this.config.sceneTypeIconKey
       return key && item ? sceneIcons[item[key]] || '' : ''
+    },
+    fileIcon(file) {
+      return getFileTypeIcon(file)
     },
     resetPage() {
       this.currentPage = 1
@@ -896,10 +900,12 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.upload-file-name i,
-.detail-file-item i {
+.file-type-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
   margin-right: 6px;
-  color: #5b9cf1;
+  object-fit: contain;
 }
 .remove-upload-file {
   flex: 0 0 auto;

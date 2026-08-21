@@ -47,7 +47,7 @@
               :disabled="!file.id"
               :class="{ 'is-downloadable': file.id }"
               @click="downloadUploadFile(file)">
-              <i class="el-icon-document"></i>
+              <img class="file-type-icon" :src="fileIcon(file)" alt="" />
               <span>{{ file.name || file.fileName }}</span>
             </button>
           </div>
@@ -62,6 +62,7 @@ import activityNoticeIcon from '@/assets/image/publicNotice/activity-notice.svg'
 import enterpriseNewsIcon from '@/assets/image/publicNotice/enterprise-news.svg'
 import parkNewsIcon from '@/assets/image/publicNotice/park-news.svg'
 import safetyReminderIcon from '@/assets/image/publicNotice/safety-reminder.svg'
+import { getFileTypeIcon } from '@/utils/fileTypeIcon'
 
 const sceneIcons = {
   园区动态: parkNewsIcon,
@@ -127,6 +128,9 @@ export default {
     },
     sceneIcon(notice) {
       return (notice && sceneIcons[notice.sceneType]) || ''
+    },
+    fileIcon(file) {
+      return getFileTypeIcon(file)
     },
     normalizeUploadFiles(value) {
       let files = value
@@ -344,6 +348,13 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.notice-attachments__list .file-type-icon {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  object-fit: contain;
 }
 
 .notice-attachments__list button.is-downloadable {

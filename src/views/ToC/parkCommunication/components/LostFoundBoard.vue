@@ -89,7 +89,15 @@
         <el-row :gutter="28">
           <el-col v-for="field in normalFields" :key="field.key" :xs="24" :sm="12">
             <el-form-item :label="field.label" :prop="field.key">
-              <el-select v-if="field.options" v-model="form[field.key]" clearable filterable :disabled="editingId && field.key === config.filterKey" :placeholder="'请选择' + field.label" class="field-full" @change="handleFormFieldChange(field.key)">
+              <el-select
+                v-if="field.options"
+                v-model="form[field.key]"
+                clearable
+                filterable
+                :disabled="Boolean(editingId) && field.key === config.filterKey"
+                :placeholder="'请选择' + field.label"
+                class="field-full"
+                @change="handleFormFieldChange(field.key)">
                 <el-option v-for="option in field.options" :key="option" :label="option" :value="option" />
               </el-select>
               <el-date-picker
@@ -121,6 +129,29 @@
           <el-col v-for="field in textFields" :key="field.key" :span="24">
             <el-form-item :label="field.label" :prop="field.key">
               <el-input v-model.trim="form[field.key]" type="textarea" :rows="field.key === config.contentKey ? 6 : 4" :maxlength="500" show-word-limit :placeholder="'请输入' + field.label" />
+            </el-form-item>
+          </el-col>
+          <el-col v-if="config.uploadField" :span="24">
+            <el-form-item :label="config.uploadLabel || '附件'" :prop="config.uploadField">
+              <el-upload
+                ref="lostFoundUpload"
+                action="#"
+                name="thefile"
+                :auto-upload="false"
+                :file-list="uploadFileList"
+                :limit="config.uploadLimit || 9"
+                :on-change="handleUploadChange"
+                :on-remove="handleUploadRemove">
+                <el-button size="small" type="primary" icon="el-icon-upload2">上传附件</el-button>
+                <div slot="file" slot-scope="{ file }" class="upload-file-item">
+                  <span class="upload-file-name">
+                    <img class="file-type-icon" :src="fileIcon(file)" alt="" />
+                    {{ file.name || file.fileName }}
+                  </span>
+                  <el-button class="remove-upload-file" type="text" icon="el-icon-delete" title="删除附件" @click="removeUploadFile(file)" />
+                </div>
+              </el-upload>
+              <p v-if="config.uploadTip" class="upload-tip">{{ config.uploadTip }}</p>
             </el-form-item>
           </el-col>
           <el-col v-if="config.hasStatus !== false" :xs="24" :sm="12">
@@ -160,6 +191,17 @@
             <h4>{{ config.contentLabel || '内容' }}</h4>
             <p>{{ selectedRecord[config.contentKey] }}</p>
           </section>
+          <section v-if="detailUploadFiles.length" class="detail-section">
+            <h4>{{ config.uploadLabel || '附件' }}</h4>
+            <div class="detail-files">
+              <div v-for="file in detailUploadFiles" :key="file.uid || file.id || file.filePath || file.fileName" class="detail-file-item">
+                <span :class="{ 'file-download-link': file.id }" @click="file.id && downloadUploadFile(file)">
+                  <img class="file-type-icon" :src="fileIcon(file)" alt="" />
+                  {{ file.name || file.fileName }}
+                </span>
+              </div>
+            </div>
+          </section>
         </div>
         <div class="drawer-actions"><el-button @click="detailVisible = false">关闭</el-button></div>
       </div>
@@ -168,6 +210,8 @@
 </template>
 
 <script>
+import { getFileTypeIcon } from '@/utils/fileTypeIcon'
+
 const lostFoundIcon = require('@/assets/image/parkCommunication/lost-found.svg')
 const lostNoticeIcon = require('@/assets/image/parkCommunication/lost-notice.svg')
 
@@ -221,6 +265,16 @@ export default {
     },
     detailFields() {
       return this.fields.filter((field) => ![this.config.contentKey, 'userId'].includes(field.key))
+    },
+    uploadFileList() {
+      if (!this.config.uploadField) return []
+      const files = this.form[this.config.uploadField]
+      return Array.isArray(files) ? files : []
+    },
+    detailUploadFiles() {
+      if (!this.config.uploadField || !this.selectedRecord) return []
+      const responseField = this.config.uploadResponseField || this.config.uploadField
+      return this.normalizeUploadFiles(this.selectedRecord[responseField])
     },
     rules() {
       const rules = {}
@@ -279,6 +333,9 @@ export default {
     },
     typeIconAlt(type) {
       return type === '寻物启事' ? '寻物启事' : '失物招领'
+    },
+    fileIcon(file) {
+      return getFileTypeIcon(file)
     },
     creatorId(item) {
       if (!item) return ''
@@ -383,10 +440,7 @@ export default {
     async loadStatistics() {
       const query = { pageNo: 1, pageSize: 1 }
       try {
-        const [allResult, mineResult] = await Promise.all([
-          this.$api[this.apiKey('list')](query),
-          this.$api[this.apiKey('list')](Object.assign({}, query, { createBy: this.currentUserId() }))
-        ])
+        const [allResult, mineResult] = await Promise.all([this.$api[this.apiKey('list')](query), this.$api[this.apiKey('list')](Object.assign({}, query, { createBy: this.currentUserId() }))])
         this.allRecordsTotal = this.totalFrom(this.unwrap(allResult))
         this.myRecordsTotal = this.totalFrom(this.unwrap(mineResult))
       } catch (error) {
@@ -400,9 +454,12 @@ export default {
       this.fields.forEach((field) => {
         form[field.key] = ''
       })
-      this.fields.filter((field) => field.autoNow).forEach((field) => {
-        form[field.key] = this.now()
-      })
+      this.fields
+        .filter((field) => field.autoNow)
+        .forEach((field) => {
+          form[field.key] = this.now()
+        })
+      if (this.config.uploadField) form[this.config.uploadField] = []
       if (this.config.currentUserIdKey) form[this.config.currentUserIdKey] = this.currentUserId()
       if (this.config.hasStatus !== false) form.status = this.defaultStatusFor(form)
       return form
@@ -417,7 +474,7 @@ export default {
       this.form = this.emptyForm()
       this.formVisible = true
     },
-    openEdit(item) {
+    async openEdit(item) {
       if (!this.canManageRecord(item)) {
         this.$message.warning('仅创建人可以编辑该记录')
         return
@@ -426,8 +483,22 @@ export default {
         this.$message.warning('已认领或已找到的记录不可编辑')
         return
       }
-      this.editingId = item.id
-      this.form = Object.assign(this.emptyForm(), item, { status: this.statusText(item.status, item) })
+      let record = item
+      const detailApi = this.$api && this.$api[this.apiKey('queryById')]
+      if (detailApi) {
+        try {
+          const result = this.unwrap(await detailApi({ id: item.id }))
+          if (result) record = this.normalizeRecord(Object.assign({}, item, result))
+        } catch (error) {
+          // 详情查询失败时，仍可用列表数据编辑基础字段。
+        }
+      }
+      this.editingId = record.id
+      this.form = Object.assign(this.emptyForm(), record, { status: this.statusText(record.status, record) })
+      if (this.config.uploadField) {
+        const responseField = this.config.uploadResponseField || this.config.uploadField
+        this.form[this.config.uploadField] = this.normalizeUploadFiles(record[responseField])
+      }
       this.formVisible = true
     },
     handleFormFieldChange(key) {
@@ -447,13 +518,20 @@ export default {
         this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: this.now() } : { createBy: this.currentUserId(), itemCreateTime: this.now() }
       )
       if (!this.editingId) {
-        this.fields.filter((field) => field.autoNow).forEach((field) => {
-          payload[field.key] = this.now()
-        })
+        this.fields
+          .filter((field) => field.autoNow)
+          .forEach((field) => {
+            payload[field.key] = this.now()
+          })
       }
-      this.fields.filter((field) => field.responseOnly).forEach((field) => {
-        delete payload[field.key]
-      })
+      this.fields
+        .filter((field) => field.responseOnly)
+        .forEach((field) => {
+          delete payload[field.key]
+        })
+      if (this.config.uploadField) {
+        payload[this.config.uploadField] = this.normalizeUploadFiles(payload[this.config.uploadField]).map((file) => this.cleanUploadFile(file))
+      }
       try {
         await this.$api[this.apiKey(this.editingId ? 'edit' : 'add')](payload)
         this.$message.success(this.editingId ? '已更新' : '已提交')
@@ -499,6 +577,110 @@ export default {
     errorMessage(error, fallback = '操作失败，请稍后重试') {
       const payload = error && ((error.response && error.response.data) || error.data || error)
       return (payload && payload.head && payload.head.message) || (payload && payload.message) || fallback
+    },
+    normalizeUploadFiles(value) {
+      let files = value
+      if (typeof files === 'string') {
+        try {
+          files = JSON.parse(files)
+        } catch (error) {
+          files = []
+        }
+      }
+      if (!Array.isArray(files)) files = files ? [files] : []
+      return files.filter(Boolean).map((item, index) => {
+        const file = typeof item === 'string' ? { fileName: item, filePath: item } : item
+        return Object.assign({}, file, {
+          name: file.name || file.fileName || `附件${index + 1}`,
+          status: file.status || (file.filePath || file.id ? 'success' : 'ready'),
+          uid: file.uid || file.id || file.filePath || `lost-found-file-${index}`
+        })
+      })
+    },
+    async handleUploadChange(file, fileList) {
+      const raw = file.raw
+      if (!raw || file.filePath || file.id) return
+      if (raw.size > 10 * 1024 * 1024) {
+        this.$message.error('单个附件不能超过 10MB')
+        this.$set(
+          this.form,
+          this.config.uploadField,
+          fileList.filter((item) => item.uid !== file.uid)
+        )
+        this.$nextTick(() => this.$refs.lostFoundUpload && this.$refs.lostFoundUpload.handleRemove(file))
+        return
+      }
+      if (!this.$api || !this.$api['attachment.upload']) {
+        this.$message.error('未找到附件上传接口')
+        this.$refs.lostFoundUpload && this.$refs.lostFoundUpload.handleRemove(file)
+        this.$set(
+          this.form,
+          this.config.uploadField,
+          fileList.filter((item) => item.uid !== file.uid)
+        )
+        return
+      }
+      file.status = 'uploading'
+      try {
+        const formData = new FormData()
+        formData.append('thefile', raw)
+        const uploadFile = this.getUploadResult(await this.$api['attachment.upload'](formData))
+        if (!uploadFile.filePath && !uploadFile.id) throw new Error('附件上传未返回文件信息')
+        Object.assign(file, {
+          fileName: uploadFile.fileName || file.name,
+          filePath: uploadFile.filePath,
+          name: uploadFile.fileName || file.name,
+          fileType: uploadFile.fileType || raw.type || '',
+          status: 'success',
+          url: uploadFile.url || uploadFile.fileUrl || ''
+        })
+        this.$set(this.form, this.config.uploadField, fileList)
+      } catch (error) {
+        this.$message.error('附件上传失败，请重试')
+        this.$refs.lostFoundUpload && this.$refs.lostFoundUpload.handleRemove(file)
+        this.$set(
+          this.form,
+          this.config.uploadField,
+          fileList.filter((item) => item.uid !== file.uid)
+        )
+      }
+    },
+    handleUploadRemove(file, fileList) {
+      this.$set(this.form, this.config.uploadField, fileList)
+    },
+    removeUploadFile(file) {
+      if (this.$refs.lostFoundUpload) this.$refs.lostFoundUpload.handleRemove(file)
+    },
+    cleanUploadFile(file) {
+      const uploadFile = Object.assign({}, file)
+      delete uploadFile.id
+      delete uploadFile.raw
+      delete uploadFile.status
+      delete uploadFile.uid
+      delete uploadFile.percentage
+      if (uploadFile.filePath) {
+        const paths = String(uploadFile.filePath).split('/').filter(Boolean)
+        uploadFile.filePath = paths.length ? paths[paths.length - 1] : uploadFile.filePath
+      }
+      return uploadFile
+    },
+    getUploadResult(response) {
+      const data = Array.isArray(response) ? response : response && response.data
+      return Array.isArray(data) ? data[0] || {} : data || {}
+    },
+    async downloadUploadFile(file) {
+      if (!file.id || !this.$api || !this.$api['attachment.download']) return
+      try {
+        const response = await this.$api['attachment.download']({ attachmentId: file.id }, { responseType: 'blob' })
+        const url = URL.createObjectURL(new Blob([response.data], { type: file.fileType || 'application/octet-stream' }))
+        const link = document.createElement('a')
+        link.href = url
+        link.download = file.name || file.fileName || '附件'
+        link.click()
+        URL.revokeObjectURL(url)
+      } catch (error) {
+        this.$message.error('附件下载失败，请稍后重试')
+      }
     },
     async openDetail(item) {
       this.selectedRecord = item
@@ -782,6 +964,38 @@ export default {
 .field-full {
   width: 100%;
 }
+.upload-file-item,
+.detail-file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #50617a;
+}
+.upload-file-name,
+.detail-file-item span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.file-type-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  margin-right: 6px;
+  object-fit: contain;
+}
+.remove-upload-file {
+  flex: 0 0 auto;
+  color: #f56c6c;
+}
+.upload-tip {
+  margin: 8px 0 0;
+  color: #93a2b7;
+  font-size: 12px;
+  line-height: 18px;
+}
 .readonly-status {
   height: 40px;
   display: flex;
@@ -892,6 +1106,22 @@ export default {
   white-space: pre-wrap;
   background: #f8fafc;
   border-radius: 6px;
+}
+.detail-files {
+  padding: 4px 14px;
+  border-radius: 6px;
+  background: #f8fafc;
+}
+.detail-file-item {
+  min-height: 38px;
+  border-bottom: 1px solid #e8eef6;
+}
+.detail-file-item:last-child {
+  border-bottom: 0;
+}
+.file-download-link {
+  cursor: pointer;
+  color: #2f86ed;
 }
 .drawer-actions {
   flex: 0 0 auto;
