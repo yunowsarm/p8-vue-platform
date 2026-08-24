@@ -24,8 +24,8 @@
           <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
         </el-select>
         <div class="toolbar-actions">
-          <el-button v-if="!config.readOnly && selectedIds.length" type="danger" plain size="small" @click="removeSelected">批量删除（{{ selectedIds.length }}）</el-button>
-          <el-button v-if="!config.readOnly" type="primary" size="small" icon="el-icon-plus" @click="openCreate">新增{{ config.title }}</el-button>
+          <el-button v-if="canDelete && selectedIds.length" type="danger" plain size="small" @click="removeSelected">批量删除（{{ selectedIds.length }}）</el-button>
+          <el-button v-if="canCreate" type="primary" size="small" icon="el-icon-plus" @click="openCreate">新增{{ config.title }}</el-button>
         </div>
       </div>
 
@@ -46,7 +46,7 @@
             </span>
             <div class="record-status">
               <el-tag v-if="config.hasStatus !== false" :type="statusType(statusText(item.status))" size="small" effect="light">{{ statusText(item.status) }}</el-tag>
-              <el-checkbox v-if="!config.readOnly" v-model="selectedIds" :label="item.id" @click.stop @click.native.stop @mousedown.native.stop @keydown.stop @keydown.native.stop>
+              <el-checkbox v-if="canDelete" v-model="selectedIds" :label="item.id" @click.stop @click.native.stop @mousedown.native.stop @keydown.stop @keydown.native.stop>
                 <span class="selection-label">选择</span>
               </el-checkbox>
             </div>
@@ -88,8 +88,8 @@
             </span>
             <div class="record-actions">
               <el-button type="text" size="mini" @click.stop="openDetail(item)">查看详情</el-button>
-              <el-button v-if="!config.readOnly" type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
-              <el-button v-if="!config.readOnly" type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
+              <el-button v-if="canEditRecord(item)" type="text" size="mini" @click.stop="openEdit(item)">{{ config.editActionLabel || '编辑' }}</el-button>
+              <el-button v-if="canDelete" type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
             </div>
           </div>
         </article>
@@ -103,8 +103,8 @@
       </div>
     </section>
 
-    <el-dialog :title="'新建' + config.title" :visible.sync="createVisible" top="4vh" append-to-body :close-on-click-modal="false" custom-class="application-create-dialog" @closed="resetForm">
-      <el-form ref="applicationForm" :model="form" :rules="rules" label-width="88px" @submit.native.prevent>
+    <el-dialog :title="dialogTitle" :visible.sync="createVisible" top="4vh" append-to-body :close-on-click-modal="false" custom-class="application-create-dialog" @closed="resetForm">
+      <el-form ref="applicationForm" :model="form" :rules="rules" :label-width="config.formLabelWidth || '88px'" @submit.native.prevent>
         <el-row :gutter="32">
           <el-col v-for="field in normalFields" :key="field.key" :xs="24" :sm="12" :lg="field.wide ? 24 : 8">
             <el-form-item :label="field.label" :prop="field.key">
@@ -140,7 +140,7 @@
             <el-form-item label="状态">
               <div class="readonly-status">
                 <i class="el-icon-time"></i>
-                <span>{{ config.defaultStatus || '待受理' }}</span>
+                <span>{{ form.status || config.defaultStatus || '待受理' }}</span>
               </div>
             </el-form-item>
           </el-col>
@@ -192,11 +192,11 @@
                   <small>{{ selectedRecord[config.timeKey] }} · 系统已记录{{ config.title }}</small>
                 </div>
               </div>
-              <div class="timeline-item" :class="{ done: selectedRecord.status !== '待受理' && selectedRecord.status !== '待审核' }">
+              <div class="timeline-item" :class="{ done: !isPendingStatus(selectedRecord.status) }">
                 <span></span>
                 <div>
                   <b>业务受理</b>
-                  <small>{{ selectedRecord.status === '待受理' || selectedRecord.status === '待审核' ? '等待专员审核或受理' : '正在跟进处理' }}</small>
+                  <small>{{ isPendingStatus(selectedRecord.status) ? config.pendingStatusNote || '等待专员审核或受理' : '正在跟进处理' }}</small>
                 </div>
               </div>
             </div>
@@ -248,16 +248,17 @@ export default {
       return this.config.fields || []
     },
     normalFields() {
-      return this.fields.filter((item) => item.type !== 'textarea')
+      return this.fields.filter((item) => item.type !== 'textarea' && this.isFormFieldVisible(item))
     },
     textFields() {
-      return this.fields.filter((item) => item.type === 'textarea')
+      return this.fields.filter((item) => item.type === 'textarea' && this.isFormFieldVisible(item))
     },
     detailFields() {
-      return this.fields.filter((item) => item.type !== 'textarea' && item.key !== 'remark').slice(0, 6)
+      const limit = this.config.detailFieldLimit || 6
+      return this.fields.filter((item) => item.type !== 'textarea' && item.key !== 'remark').slice(0, limit)
     },
     supplementalTextFields() {
-      return this.textFields.filter((item) => item.key !== this.config.contentKey && item.key !== 'remark')
+      return this.fields.filter((item) => item.type === 'textarea' && item.key !== this.config.contentKey && item.key !== 'remark')
     },
     primaryOptions() {
       const field = this.fields.find((item) => item.key === this.config.primaryKey)
@@ -265,6 +266,19 @@ export default {
     },
     statusOptions() {
       return this.config.statusOptions || ['待受理', '待审核', '处理中', '已完成', '已通过', '已关闭']
+    },
+    canCreate() {
+      return !this.config.readOnly && this.config.allowCreate !== false
+    },
+    canEdit() {
+      return !this.config.readOnly && this.config.allowEdit !== false
+    },
+    canDelete() {
+      return !this.config.readOnly && this.config.allowDelete !== false
+    },
+    dialogTitle() {
+      if (!this.editingId) return `新建${this.config.title}`
+      return `${this.config.editActionLabel || '编辑'}${this.config.itemName || this.config.title}`
     },
     filteredRecords() {
       const keyword = this.keyword.toLowerCase()
@@ -301,7 +315,7 @@ export default {
     rules() {
       const rules = {}
       this.fields
-        .filter((item) => item.required)
+        .filter((item) => item.required && this.isFormFieldVisible(item))
         .forEach((item) => {
           const isSelect = item.type === 'select' || item.key === 'companyId'
           rules[item.key] = [{ required: true, message: `请${isSelect ? '选择' : '填写'}${item.label}`, trigger: isSelect ? 'change' : 'blur' }]
@@ -314,12 +328,39 @@ export default {
     this.loadEnterprises()
   },
   methods: {
-    currentUserId() {
+    isFormFieldVisible(field) {
+      if (field.hideInForm) return false
+      return this.config.replyMode ? !field.hideInReplyForm : !field.hideInCreateForm
+    },
+    canEditRecord(record) {
+      if (!this.canEdit) return false
+      if (!this.config.replyMode) return true
+      return this.statusText(record && record.status) !== (this.config.replyStatus || '已回复')
+    },
+    applyAutomaticValues(form, fieldValues) {
+      const result = Object.assign({}, form)
+      Object.keys(fieldValues || {}).forEach((key) => {
+        const valueType = fieldValues[key]
+        if (valueType === 'currentUserName') result[key] = this.currentUserName()
+        if (valueType === 'now') result[key] = now()
+      })
+      return result
+    },
+    currentUser() {
+      const storeUser = this.$store && this.$store.getters && this.$store.getters.userInfo
+      if (storeUser) return storeUser
       try {
-        return JSON.parse(window.sessionStorage.getItem('userInfo') || '{}').id || ''
+        return JSON.parse(window.sessionStorage.getItem('userInfo') || '{}')
       } catch (error) {
-        return ''
+        return {}
       }
+    },
+    currentUserId() {
+      return this.currentUser().id || ''
+    },
+    currentUserName() {
+      const user = this.currentUser()
+      return user.createByName || user.realName || user.userName || user.username || user.name || user.nickName || this.currentUserId() || ''
     },
     apiKey(action) {
       const namespaces = {
@@ -398,15 +439,18 @@ export default {
       if (status === 0 || status === '0') return this.config.defaultStatus || '待受理'
       return status || this.config.defaultStatus || '待受理'
     },
+    isPendingStatus(status) {
+      return (this.config.pendingStatuses || ['待受理', '待审核']).includes(this.statusText(status))
+    },
     emptyForm() {
       const form = {}
       this.fields.forEach((item) => {
         form[item.key] = item.key === this.config.timeKey ? now() : ''
       })
-      return form
+      return this.applyAutomaticValues(form, this.config.autoFormFields)
     },
     openCreate() {
-      if (this.config.readOnly) return
+      if (!this.canCreate) return
       this.editingId = ''
       this.form = this.emptyForm()
       this.createVisible = true
@@ -427,6 +471,7 @@ export default {
       if (this.config.readOnly) return
       this.submitting = true
       const payload = Object.assign({}, this.form)
+      if (this.config.replyMode) payload.status = this.config.replyStatus || '已回复'
       if (this.config.hasStatus !== false && !payload.status) payload.status = this.config.defaultStatus || '待受理'
       if (this.editingId) payload.id = this.editingId
       Object.assign(payload, this.editingId ? { updateBy: this.currentUserId(), itemUpdateTime: now() } : { createBy: this.currentUserId(), itemCreateTime: now() })
@@ -436,7 +481,7 @@ export default {
         } else {
           await this.$api[this.apiKey(this.editingId ? 'edit' : 'add')](payload)
         }
-        this.$message.success(this.editingId ? '修改成功' : `${this.config.title}已提交`)
+        this.$message.success(this.editingId ? (this.config.replyMode ? '回复成功' : '修改成功') : `${this.config.title}已提交`)
         this.createVisible = false
         this.currentPage = 1
         if (!this.usingMock) await this.loadRecords()
@@ -470,18 +515,18 @@ export default {
       }
     },
     openEdit(record) {
-      if (this.config.readOnly) return
+      if (!this.canEditRecord(record)) return
       const target = record || this.selectedRecord
       if (!target) return
       this.selectedRecord = target
       this.editingId = target.id
-      this.form = Object.assign(this.emptyForm(), target)
+      this.form = this.applyAutomaticValues(Object.assign(this.emptyForm(), target), this.config.replyAutoFormFields)
       this.detailVisible = false
       this.createVisible = true
       this.$nextTick(() => this.$refs.applicationForm && this.$refs.applicationForm.clearValidate())
     },
     removeRecord(record) {
-      if (this.config.readOnly) return
+      if (!this.canDelete) return
       const target = record || this.selectedRecord
       if (!target) return
       this.$confirm('删除后不可恢复，是否继续？', '确认删除', { type: 'warning' })
@@ -503,7 +548,7 @@ export default {
         .catch(() => {})
     },
     removeSelected() {
-      if (this.config.readOnly) return
+      if (!this.canDelete) return
       const ids = this.selectedIds.slice()
       if (!ids.length) return
       this.$confirm(`确定删除已选的 ${ids.length} 条记录吗？删除后不可恢复。`, '确认批量删除', { type: 'warning' })

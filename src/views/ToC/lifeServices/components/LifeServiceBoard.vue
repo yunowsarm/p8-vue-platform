@@ -1,15 +1,31 @@
 ﻿<template>
   <main class="life-service-board">
-    <section class="board-statistics" :class="{ 'board-statistics--compact': config.hasStatus === false }" aria-label="信息统计">
+    <section class="board-statistics" :class="{ 'board-statistics--compact': config.hasStatus === false && !hasExpiryStatistics, 'board-statistics--three': hasExpiryStatistics }" aria-label="信息统计">
       <article class="stat-card stat-card--primary">
         <span class="stat-icon"><i class="el-icon-document"></i></span>
         <div>
-          <small>记录总数</small>
+          <small>{{ config.totalLabel || '记录总数' }}</small>
           <b>{{ paginationTotal }}</b>
           <em>当前查询结果</em>
         </div>
       </article>
-      <article v-if="config.hasStatus !== false" class="stat-card stat-card--warning">
+      <article v-if="hasExpiryStatistics" class="stat-card stat-card--success">
+        <span class="stat-icon"><i class="el-icon-circle-check"></i></span>
+        <div>
+          <small>进行中问卷</small>
+          <b>{{ activeCount }}</b>
+          <em>当前页问卷</em>
+        </div>
+      </article>
+      <article v-if="hasExpiryStatistics" class="stat-card stat-card--warning">
+        <span class="stat-icon"><i class="el-icon-warning-outline"></i></span>
+        <div>
+          <small>已过期问卷</small>
+          <b>{{ expiredCount }}</b>
+          <em>当前页问卷</em>
+        </div>
+      </article>
+      <article v-if="!hasExpiryStatistics && config.hasStatus !== false" class="stat-card stat-card--warning">
         <span class="stat-icon"><i class="el-icon-time"></i></span>
         <div>
           <small>待处理</small>
@@ -17,7 +33,7 @@
           <em>当前页记录</em>
         </div>
       </article>
-      <article v-if="config.hasStatus !== false" class="stat-card stat-card--success">
+      <article v-if="!hasExpiryStatistics && config.hasStatus !== false" class="stat-card stat-card--success">
         <span class="stat-icon"><i class="el-icon-circle-check"></i></span>
         <div>
           <small>已处理</small>
@@ -25,7 +41,7 @@
           <em>当前页记录</em>
         </div>
       </article>
-      <article class="stat-card stat-card--info">
+      <article v-if="!hasExpiryStatistics" class="stat-card stat-card--info">
         <span class="stat-icon"><i :class="config.icon"></i></span>
         <div>
           <small>{{ config.title }}</small>
@@ -61,7 +77,7 @@
             <img v-if="sceneIcon(item)" class="notice-scene-icon" :src="sceneIcon(item)" :alt="item[config.sceneTypeIconKey]" />
             <i v-else :class="config.icon"></i>
             <b>{{ item[config.primaryKey] || '-' }}</b>
-            <time v-if="item[config.timeKey]">{{ item[config.timeKey] }}</time>
+            <time v-if="config.showPrimaryTime !== false && item[config.timeKey]">{{ item[config.timeKey] }}</time>
           </div>
           <p class="card-content">{{ item[config.contentKey] || '暂无描述' }}</p>
           <dl class="card-meta">
@@ -274,7 +290,9 @@ export default {
       return this.config.statusOptions || ['正常', '待审核', '已发布', '已关闭', '已下线']
     },
     cardFields() {
-      return this.fields.filter((field) => ![this.config.primaryKey, this.config.contentKey, this.config.timeKey, 'status', 'userId'].includes(field.key)).slice(0, 3)
+      const excludedKeys = [this.config.primaryKey, this.config.contentKey, 'status', 'userId']
+      if (this.config.showPrimaryTime !== false) excludedKeys.push(this.config.timeKey)
+      return this.fields.filter((field) => !excludedKeys.includes(field.key)).slice(0, 3)
     },
     detailFields() {
       return this.fields.filter((field) => field.key !== this.config.contentKey)
@@ -326,6 +344,15 @@ export default {
     },
     handledCount() {
       return this.pagedRecords.filter((item) => !this.isPendingStatus(item.status)).length
+    },
+    hasExpiryStatistics() {
+      return Boolean(this.config.expiryTimeKey)
+    },
+    activeCount() {
+      return this.pagedRecords.filter((item) => !this.isExpired(item)).length
+    },
+    expiredCount() {
+      return this.pagedRecords.filter((item) => this.isExpired(item)).length
     }
   },
   created() {
@@ -378,6 +405,12 @@ export default {
     },
     isPendingStatus(value) {
       return ['待审核', '待确认', '待处理'].includes(this.statusText(value))
+    },
+    isExpired(item) {
+      const value = item && item[this.config.expiryTimeKey]
+      if (!value) return false
+      const time = new Date(String(value).replace(/-/g, '/')).getTime()
+      return !Number.isNaN(time) && time < Date.now()
     },
     statusType(status) {
       if (['正常', '已发布'].includes(status)) return 'success'
@@ -638,6 +671,9 @@ export default {
 }
 .board-statistics--compact {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.board-statistics--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .stat-card {
   min-height: 94px;
