@@ -14,6 +14,7 @@ export default {
         title: '建议投诉',
         icon: 'el-icon-chat-dot-round',
         idPrefix: 'SC',
+        apiNamespace: 'feedbackComplaint',
         primaryKey: 'type',
         primaryLabel: '类型',
         timeKey: 'submitTime',

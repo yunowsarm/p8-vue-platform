@@ -10,6 +10,7 @@ const createModule = (namespace, path, desc) => ({
 
 export const tobServiceHallApi = Object.assign(
   {},
+  createModule('feedbackComplaint', '/czwj/tob/feedbackComplaint', '建议投诉'),
   createModule('tobDataReport', '/czwj/tob/dataReport', '数据上报'),
   createModule('tobMediaPromotion', '/czwj/tob/mediaPromotion', '媒体宣传'),
   createModule('tobQualificationCert', '/czwj/tob/qualificationCert', '资质认定'),

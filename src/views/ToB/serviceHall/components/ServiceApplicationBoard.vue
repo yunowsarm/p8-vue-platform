@@ -1,6 +1,6 @@
 <template>
   <main class="application-board">
-    <section :class="['summary-grid', { 'summary-grid--two-columns': config.summaryColumns === 2 }]">
+    <section v-if="config.showSummary !== false" :class="['summary-grid', { 'summary-grid--two-columns': config.summaryColumns === 2 }]">
       <article v-for="item in summaryCards" :key="item.title" class="summary-card">
         <span class="summary-icon" :class="item.color"><i :class="item.icon"></i></span>
         <div>
@@ -88,6 +88,7 @@
             </span>
             <div class="record-actions">
               <el-button type="text" size="mini" @click.stop="openDetail(item)">查看详情</el-button>
+              <el-button v-if="canChangeStatus" type="text" size="mini" @click.stop="openStatusDialog(item)">修改状态</el-button>
               <el-button v-if="canEditRecord(item)" type="text" size="mini" @click.stop="openEdit(item)">{{ config.editActionLabel || '编辑' }}</el-button>
               <el-button v-if="canDelete" type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
             </div>
@@ -161,6 +162,20 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="createVisible = false">取消</el-button>
         <el-button type="primary" :loading="submitting" @click="submitForm">提交</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog title="修改状态" :visible.sync="statusVisible" width="420px" append-to-body :close-on-click-modal="false" @closed="resetStatusDialog">
+      <el-form :model="statusForm" label-width="82px" @submit.native.prevent>
+        <el-form-item label="状态">
+          <el-select v-model="statusForm.status" class="field-full" placeholder="请选择状态">
+            <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="statusVisible = false">取消</el-button>
+        <el-button type="primary" :loading="statusSubmitting" @click="saveStatus">保存</el-button>
       </span>
     </el-dialog>
 
@@ -248,14 +263,18 @@ export default {
       currentPage: 1,
       pageSize: 6,
       createVisible: false,
+      statusVisible: false,
       detailVisible: false,
       submitting: false,
+      statusSubmitting: false,
       detailLoading: false,
       loading: false,
       usingMock: false,
       editingId: '',
       total: 0,
       selectedRecord: null,
+      statusTarget: null,
+      statusForm: { status: '' },
       selectedIds: [],
       records: [],
       enterpriseOptions: [],
@@ -305,6 +324,9 @@ export default {
     },
     canDelete() {
       return !this.config.readOnly && this.config.allowDelete !== false
+    },
+    canChangeStatus() {
+      return !this.config.readOnly && this.config.allowStatusChange === true && this.config.hasStatus !== false
     },
     dialogTitle() {
       if (!this.editingId) return `新建${this.config.title}`
@@ -444,7 +466,7 @@ export default {
       }
       this.loading = true
       try {
-        const params = { pageNo: this.currentPage, pageSize: this.pageSize }
+        const params = Object.assign({}, this.config.listParams || {}, { pageNo: this.currentPage, pageSize: this.pageSize })
         if (this.keyword) params.keyword = this.keyword
         if (this.typeFilter) params[this.config.primaryKey] = this.typeFilter
         if (this.config.hasStatus !== false && this.statusFilter) params.status = this.statusFilter
@@ -492,6 +514,11 @@ export default {
       this.submitting = false
       this.editingId = ''
     },
+    resetStatusDialog() {
+      this.statusTarget = null
+      this.statusForm = { status: '' }
+      this.statusSubmitting = false
+    },
     submitForm() {
       this.$refs.applicationForm.validate((valid) => {
         if (!valid) return
@@ -523,6 +550,37 @@ export default {
         this.$message.error('提交失败，请稍后重试')
       } finally {
         this.submitting = false
+      }
+    },
+    openStatusDialog(record) {
+      if (!this.canChangeStatus || !record) return
+      this.statusTarget = record
+      this.statusForm = { status: this.statusText(record.status) }
+      this.statusVisible = true
+    },
+    async saveStatus() {
+      if (!this.statusTarget || !this.statusForm.status) return
+      this.statusSubmitting = true
+      const payload = Object.assign({}, this.statusTarget, {
+        status: this.statusForm.status,
+        updateBy: this.currentUserId(),
+        itemUpdateTime: now()
+      })
+      try {
+        if (this.usingMock || !this.$api || !this.$api[this.apiKey('edit')]) {
+          const index = this.records.findIndex((item) => String(item.id) === String(this.statusTarget.id))
+          if (index > -1) this.$set(this.records, index, Object.assign({}, this.records[index], payload))
+        } else {
+          await this.$api[this.apiKey('edit')](payload)
+          await this.loadRecords()
+        }
+        if (this.selectedRecord && String(this.selectedRecord.id) === String(this.statusTarget.id)) this.selectedRecord = Object.assign({}, this.selectedRecord, payload)
+        this.$message.success('状态已更新')
+        this.statusVisible = false
+      } catch (error) {
+        this.$message.error('状态更新失败，请稍后重试')
+      } finally {
+        this.statusSubmitting = false
       }
     },
     saveMockRecord(payload) {
