@@ -136,6 +136,18 @@
                 :placeholder="'请填写' + field.label" />
             </el-form-item>
           </el-col>
+          <el-col v-if="config.uploadField" :span="24">
+            <el-form-item :label="config.uploadLabel || '附件'" :prop="config.uploadField">
+              <el-upload ref="applicationUpload" action="#" name="thefile" :auto-upload="false" :file-list="uploadFileList" :limit="config.uploadLimit || 9" :on-change="handleUploadChange" :on-remove="handleUploadRemove">
+                <el-button size="small" type="primary" icon="el-icon-upload2">上传附件</el-button>
+                <div slot="file" slot-scope="{ file }" class="upload-file-item">
+                  <span class="upload-file-name"><i class="el-icon-document"></i>{{ file.name || file.fileName }}</span>
+                  <el-button class="remove-upload-file" type="text" icon="el-icon-delete" title="删除附件" @click="removeUploadFile(file)" />
+                </div>
+              </el-upload>
+              <p v-if="config.uploadTip" class="upload-tip">{{ config.uploadTip }}</p>
+            </el-form-item>
+          </el-col>
           <el-col v-if="config.hasStatus !== false" :xs="24" :sm="12" :lg="8">
             <el-form-item label="状态">
               <div class="readonly-status">
@@ -177,6 +189,14 @@
           <section class="detail-section">
             <h4>{{ config.contentLabel }}</h4>
             <p>{{ selectedRecord[config.contentKey] }}</p>
+          </section>
+          <section v-if="detailUploadFiles.length" class="detail-section">
+            <h4>{{ config.uploadLabel || '附件' }}</h4>
+            <div class="detail-files">
+              <div v-for="file in detailUploadFiles" :key="file.uid || file.id || file.filePath || file.fileName" class="detail-file-item">
+                <el-button type="text" class="file-download-link" @click="downloadUploadFile(file)"><i class="el-icon-document"></i>{{ file.name || file.fileName }}</el-button>
+              </div>
+            </div>
           </section>
           <section v-if="selectedRecord.remark" class="detail-section">
             <h4>备注</h4>
@@ -259,6 +279,16 @@ export default {
     },
     supplementalTextFields() {
       return this.fields.filter((item) => item.type === 'textarea' && item.key !== this.config.contentKey && item.key !== 'remark')
+    },
+    uploadFileList() {
+      if (!this.config.uploadField) return []
+      const files = this.form[this.config.uploadField]
+      return Array.isArray(files) ? files : []
+    },
+    detailUploadFiles() {
+      if (!this.config.uploadField || !this.selectedRecord) return []
+      const responseField = this.config.uploadResponseField || this.config.uploadField
+      return this.normalizeUploadFiles(this.selectedRecord[responseField])
     },
     primaryOptions() {
       const field = this.fields.find((item) => item.key === this.config.primaryKey)
@@ -447,6 +477,7 @@ export default {
       this.fields.forEach((item) => {
         form[item.key] = item.key === this.config.timeKey ? now() : ''
       })
+      if (this.config.uploadField) form[this.config.uploadField] = []
       return this.applyAutomaticValues(form, this.config.autoFormFields)
     },
     openCreate() {
@@ -471,6 +502,9 @@ export default {
       if (this.config.readOnly) return
       this.submitting = true
       const payload = Object.assign({}, this.form)
+      if (this.config.uploadField) {
+        payload[this.config.uploadField] = this.normalizeUploadFiles(payload[this.config.uploadField]).map((file) => this.cleanUploadFile(file))
+      }
       if (this.config.replyMode) payload.status = this.config.replyStatus || '已回复'
       if (this.config.hasStatus !== false && !payload.status) payload.status = this.config.defaultStatus || '待受理'
       if (this.editingId) payload.id = this.editingId
@@ -503,24 +537,36 @@ export default {
     async openDetail(item) {
       this.selectedRecord = item
       this.detailVisible = true
-      if (this.usingMock || !this.$api || !this.$api[this.apiKey('queryById')]) return
+      if (!this.$api || !this.$api[this.apiKey('queryById')]) return
       this.detailLoading = true
       try {
         const result = this.unwrap(await this.$api[this.apiKey('queryById')]({ id: item.id }))
-        if (result) this.selectedRecord = result
+        if (result) this.selectedRecord = Object.assign({}, item, result)
       } catch (error) {
         // 保留卡片中的数据，详情仍可查看。
       } finally {
         this.detailLoading = false
       }
     },
-    openEdit(record) {
+    async openEdit(record) {
       if (!this.canEditRecord(record)) return
-      const target = record || this.selectedRecord
+      let target = record || this.selectedRecord
       if (!target) return
+      if (this.config.loadDetailBeforeEdit && this.$api && this.$api[this.apiKey('queryById')]) {
+        try {
+          const result = this.unwrap(await this.$api[this.apiKey('queryById')]({ id: target.id }))
+          if (result) target = Object.assign({}, target, result)
+        } catch (error) {
+          this.$message.warning('资料详情加载失败，已展示基础信息')
+        }
+      }
       this.selectedRecord = target
       this.editingId = target.id
       this.form = this.applyAutomaticValues(Object.assign(this.emptyForm(), target), this.config.replyAutoFormFields)
+      if (this.config.uploadField) {
+        const responseField = this.config.uploadResponseField || this.config.uploadField
+        this.$set(this.form, this.config.uploadField, this.normalizeUploadFiles(target[responseField]))
+      }
       this.detailVisible = false
       this.createVisible = true
       this.$nextTick(() => this.$refs.applicationForm && this.$refs.applicationForm.clearValidate())
@@ -568,6 +614,106 @@ export default {
           }
         })
         .catch(() => {})
+    },
+    normalizeUploadFiles(value) {
+      let files = value
+      if (typeof files === 'string') {
+        try {
+          files = JSON.parse(files)
+        } catch (error) {
+          files = []
+        }
+      }
+      if (!Array.isArray(files)) files = files ? [files] : []
+      return files.filter(Boolean).map((item, index) => {
+        const file = typeof item === 'string' ? { fileName: item, filePath: item } : item
+        return Object.assign({}, file, {
+          name: file.name || file.fileName || `附件${index + 1}`,
+          status: file.status || (file.filePath || file.id ? 'success' : 'ready'),
+          uid: file.uid || file.id || file.filePath || `application-file-${index}`
+        })
+      })
+    },
+    async handleUploadChange(file, fileList) {
+      const raw = file.raw
+      if (!raw || file.filePath || file.id) return
+      if (raw.size > 10 * 1024 * 1024) {
+        this.$message.error('单个附件不能超过 10MB')
+        this.$set(this.form, this.config.uploadField, fileList.filter((item) => item.uid !== file.uid))
+        this.$nextTick(() => this.$refs.applicationUpload && this.$refs.applicationUpload.handleRemove(file))
+        return
+      }
+      if (!this.$api || !this.$api['attachment.upload']) {
+        this.$message.error('未找到附件上传接口')
+        this.$refs.applicationUpload && this.$refs.applicationUpload.handleRemove(file)
+        this.$set(this.form, this.config.uploadField, fileList.filter((item) => item.uid !== file.uid))
+        return
+      }
+      file.status = 'uploading'
+      try {
+        const formData = new FormData()
+        formData.append('thefile', raw)
+        const uploadFile = this.getUploadResult(await this.$api['attachment.upload'](formData))
+        if (!uploadFile.filePath && !uploadFile.id) throw new Error('附件上传未返回文件信息')
+        Object.assign(file, {
+          fileName: uploadFile.fileName || file.name,
+          filePath: uploadFile.filePath,
+          name: uploadFile.fileName || file.name,
+          fileType: uploadFile.fileType || raw.type || '',
+          status: 'success',
+          url: uploadFile.url || uploadFile.fileUrl || ''
+        })
+        if (this.config.fileNameField && !this.form[this.config.fileNameField]) this.$set(this.form, this.config.fileNameField, file.fileName)
+        this.$set(this.form, this.config.uploadField, fileList)
+      } catch (error) {
+        this.$message.error('附件上传失败，请重试')
+        this.$refs.applicationUpload && this.$refs.applicationUpload.handleRemove(file)
+        this.$set(this.form, this.config.uploadField, fileList.filter((item) => item.uid !== file.uid))
+      }
+    },
+    handleUploadRemove(file, fileList) {
+      this.$set(this.form, this.config.uploadField, fileList)
+    },
+    removeUploadFile(file) {
+      if (this.$refs.applicationUpload) this.$refs.applicationUpload.handleRemove(file)
+    },
+    cleanUploadFile(file) {
+      const uploadFile = Object.assign({}, file)
+      delete uploadFile.id
+      delete uploadFile.raw
+      delete uploadFile.status
+      delete uploadFile.uid
+      delete uploadFile.percentage
+      if (uploadFile.filePath) {
+        const paths = String(uploadFile.filePath).split('/').filter(Boolean)
+        uploadFile.filePath = paths.length ? paths[paths.length - 1] : uploadFile.filePath
+      }
+      return uploadFile
+    },
+    getUploadResult(response) {
+      const data = Array.isArray(response) ? response : response && response.data
+      return Array.isArray(data) ? data[0] || {} : data || {}
+    },
+    async downloadUploadFile(file) {
+      if (file.url) {
+        window.open(file.url, '_blank', 'noopener,noreferrer')
+        return
+      }
+      if (!file.id || !this.$api || !this.$api['attachment.download']) {
+        this.$message.warning('该附件暂不支持下载')
+        return
+      }
+      try {
+        const response = await this.$api['attachment.download']({ attachmentId: file.id }, { responseType: 'blob' })
+        const url = URL.createObjectURL(new Blob([response.data], { type: file.fileType || 'application/octet-stream' }))
+        const link = document.createElement('a')
+        link.href = url
+        link.download = file.name || file.fileName || '附件'
+        link.click()
+        URL.revokeObjectURL(url)
+      } catch (error) {
+        this.$message.error('附件下载失败，请稍后重试')
+      }
     }
   }
 }
@@ -839,6 +985,51 @@ export default {
 }
 .field-full {
   width: 100%;
+}
+.upload-file-item,
+.detail-file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 34px;
+}
+.upload-file-name,
+.file-download-link {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  color: #52708f;
+  font-size: 13px;
+}
+.upload-file-name i,
+.file-download-link i {
+  margin-right: 6px;
+  color: #3c8df2;
+}
+.remove-upload-file {
+  flex: 0 0 auto;
+  color: #f56c6c;
+}
+.upload-tip {
+  margin: 8px 0 0;
+  color: #90a0b4;
+  font-size: 12px;
+}
+.detail-files {
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: #f7f9fc;
+}
+.detail-file-item + .detail-file-item {
+  border-top: 1px solid #e8edf3;
+}
+.file-download-link {
+  max-width: 100%;
+  padding: 7px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 @media (max-width: 1200px) {
   .record-grid {
