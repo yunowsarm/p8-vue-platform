@@ -1,19 +1,8 @@
-<template>
-  <public-service-board :config="config" />
-</template>
+<!-- ToB 资料下载路由入口：以查看模式加载公共服务共享页面。 -->
+<template><document-download-page mode="viewer" /></template>
 
 <script>
-import PublicServiceBoard from './components/PublicServiceBoard'
-import { createDocumentDownloadConfig } from './components/documentDownloadConfig'
+import DocumentDownloadPage from '@/features/public-services/document-download/DocumentDownloadPage'
 
-export default {
-  name: 'DocumentDownload',
-  components: { PublicServiceBoard },
-  data() {
-    return {
-      // 企业端只可查阅资料，不提供新增、编辑或删除入口。
-      config: createDocumentDownloadConfig({ readOnly: true })
-    }
-  }
-}
+export default { name: 'DocumentDownload', components: { DocumentDownloadPage } }
 </script>

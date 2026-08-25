@@ -1,6 +1,7 @@
+<!-- ToC 园区活动路由页面：使用通用内容组件展示园区活动。 -->
 <template><LifeServiceBoard :config="config" /></template>
 <script>
-import LifeServiceBoard from './components/LifeServiceBoard.vue'
+import LifeServiceBoard from '@/components/business/ContentBoard'
 export default {
   name: 'ToCEventActivity',
   components: { LifeServiceBoard },

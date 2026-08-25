@@ -1,19 +1,8 @@
-<template>
-  <public-service-board :config="config" />
-</template>
+<!-- 管理端资料下载路由入口：以管理模式加载资料维护共享页面。 -->
+<template><document-download-page mode="admin" /></template>
 
 <script>
-import PublicServiceBoard from '../ToB/publicServices/components/PublicServiceBoard'
-import { createDocumentDownloadConfig } from '../ToB/publicServices/components/documentDownloadConfig'
+import DocumentDownloadPage from '@/features/public-services/document-download/DocumentDownloadPage'
 
-export default {
-  name: 'ToODocumentDownload',
-  components: { PublicServiceBoard },
-  data() {
-    return {
-      // 管理端保留新增、编辑、删除及批量删除操作。
-      config: createDocumentDownloadConfig({ readOnly: false })
-    }
-  }
-}
+export default { name: 'ToODocumentDownload', components: { DocumentDownloadPage } }
 </script>

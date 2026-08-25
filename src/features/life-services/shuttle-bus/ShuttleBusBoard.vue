@@ -1,3 +1,4 @@
+<!-- 园区班车共享业务组件：同时供个人端查看和管理端维护班车线路。 -->
 <template>
   <main class="shuttle-bus-board">
     <section class="bus-statistics" aria-label="班车运营统计">
@@ -208,7 +209,6 @@ export default {
       return this.filteredRecords.slice(start, start + this.pageSize)
     },
     operatingCount() {
-      this.clock
       return this.records.filter((item) => this.isOperating(item)).length
     },
     restingCount() {

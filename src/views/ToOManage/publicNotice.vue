@@ -1,17 +1,8 @@
-<template><LifeServiceBoard :config="config" /></template>
+<!-- 管理端通知公告路由入口：加载可新增、编辑和删除公告的共享页面。 -->
+<template><public-notice-page mode="admin" api-namespace="tobPublicNotice" /></template>
 
 <script>
-//通知公告管理
-import LifeServiceBoard from '../ToC/lifeServices/components/LifeServiceBoard.vue'
-import { createPublicNoticeConfig } from '../ToC/lifeServices/components/publicNoticeConfig'
+import PublicNoticePage from '@/features/public-services/public-notice/PublicNoticePage'
 
-export default {
-  name: 'ToOPublicNotice',
-  components: { LifeServiceBoard },
-  data() {
-    return {
-      config: createPublicNoticeConfig({ apiNamespace: 'tobPublicNotice', readOnly: false })
-    }
-  }
-}
+export default { name: 'ToOPublicNotice', components: { PublicNoticePage } }
 </script>

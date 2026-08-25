@@ -1,6 +1,7 @@
+<!-- ToC 汽车保险路由页面：使用通用内容组件展示保险产品信息。 -->
 <template><LifeServiceBoard :config="config" /></template>
 <script>
-import LifeServiceBoard from './components/LifeServiceBoard.vue'
+import LifeServiceBoard from '@/components/business/ContentBoard'
 export default {
   name: 'ToCCarInsurance',
   components: { LifeServiceBoard },

@@ -1,6 +1,7 @@
+<!-- ToC 租车服务路由页面：使用通用内容组件展示车辆租赁服务。 -->
 <template><LifeServiceBoard :config="config" /></template>
 <script>
-import LifeServiceBoard from './components/LifeServiceBoard.vue'
+import LifeServiceBoard from '@/components/business/ContentBoard'
 export default {
   name: 'ToCCarRental',
   components: { LifeServiceBoard },

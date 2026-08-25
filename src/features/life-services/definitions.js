@@ -1,3 +1,4 @@
+// 生活服务业务定义：集中声明人才、门票和问卷的字段、状态及 API 命名空间。
 const attachmentConfig = {
   uploadField: 'uploadFiles',
   uploadResponseField: 'uploadFiles',

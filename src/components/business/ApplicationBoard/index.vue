@@ -1,6 +1,7 @@
+<!-- 通用申请业务组件：根据业务配置和操作策略渲染列表、表单、详情及状态流转。 -->
 <template>
   <main class="application-board">
-    <section class="summary-grid">
+    <section v-if="config.showSummary !== false" :class="['summary-grid', { 'summary-grid--two-columns': config.summaryColumns === 2 }]">
       <article v-for="item in summaryCards" :key="item.title" class="summary-card">
         <span class="summary-icon" :class="item.color"><i :class="item.icon"></i></span>
         <div>
@@ -18,11 +19,14 @@
       <div class="list-toolbar">
         <el-input v-model.trim="keyword" clearable size="small" prefix-icon="el-icon-search" :placeholder="'搜索编号、企业名称、' + config.primaryLabel" @input="resetPage" @clear="resetPage" />
         <el-select v-if="primaryOptions.length" v-model="typeFilter" clearable size="small" :placeholder="'全部' + config.primaryLabel" @change="resetPage" @clear="resetPage">
-          <el-option v-for="item in primaryOptions" :key="item" :label="item" :value="item" />
+          <el-option v-for="item in primaryOptions" :key="optionValue(item)" :label="optionLabel(item)" :value="optionValue(item)" />
         </el-select>
-        <div v-if="!config.readOnly" class="toolbar-actions">
-          <el-button v-if="selectedIds.length" type="danger" plain size="small" @click="removeSelected">批量删除（{{ selectedIds.length }}）</el-button>
-          <el-button type="primary" size="small" icon="el-icon-plus" @click="openCreate">新增{{ config.title }}</el-button>
+        <el-select v-if="config.hasStatus !== false" v-model="statusFilter" clearable size="small" placeholder="全部状态" @change="resetPage" @clear="resetPage">
+          <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
+        </el-select>
+        <div class="toolbar-actions">
+          <el-button v-if="canDelete && selectedIds.length" type="danger" plain size="small" @click="removeSelected">批量删除（{{ selectedIds.length }}）</el-button>
+          <el-button v-if="canCreate" type="primary" size="small" icon="el-icon-plus" @click="openCreate">新增{{ config.title }}</el-button>
         </div>
       </div>
 
@@ -42,7 +46,8 @@
               {{ item.id }}
             </span>
             <div class="record-status">
-              <el-checkbox v-if="!config.readOnly" v-model="selectedIds" :label="item.id" @click.stop @click.native.stop @mousedown.native.stop @keydown.stop @keydown.native.stop>
+              <el-tag v-if="config.hasStatus !== false" :type="statusType(statusText(item.status))" size="small" effect="light">{{ statusText(item.status) }}</el-tag>
+              <el-checkbox v-if="canDeleteRecord(item)" v-model="selectedIds" :label="item.id" @click.stop @click.native.stop @mousedown.native.stop @keydown.stop @keydown.native.stop>
                 <span class="selection-label">选择</span>
               </el-checkbox>
             </div>
@@ -50,24 +55,32 @@
           <div class="record-title">
             <span>
               <i :class="config.icon"></i>
-              {{ config.cardTitleText || item[config.cardTitleKey || config.primaryKey] }}
+              {{ config.cardTitleText || formatFieldValue(item[config.cardTitleKey || config.primaryKey], config.cardTitleKey || config.primaryKey) }}
             </span>
             <time>{{ item[config.timeKey] }}</time>
           </div>
           <p class="record-content">{{ item[config.contentKey] }}</p>
           <div class="record-info">
-            <span>
-              <i class="el-icon-office-building"></i>
-              {{ companyLabel(item.companyId) }}
-            </span>
-            <span v-if="item[config.contactNameKey || 'contactName']">
-              <i class="el-icon-user"></i>
-              {{ item[config.contactNameKey || 'contactName'] }}
-            </span>
-            <span v-if="item[config.contactPhoneKey || 'contactPhone']">
-              <i class="el-icon-phone-outline"></i>
-              {{ item[config.contactPhoneKey || 'contactPhone'] }}
-            </span>
+            <template v-if="config.cardMetaFields">
+              <span v-for="field in config.cardMetaFields" :key="field.key">
+                <i :class="field.icon || 'el-icon-document'" />
+                {{ formatFieldValue(item[field.key], field.key) }}
+              </span>
+            </template>
+            <template v-else>
+              <span>
+                <i class="el-icon-office-building"></i>
+                {{ companyLabel(item.companyId) }}
+              </span>
+              <span v-if="item[config.contactNameKey || 'contactName']">
+                <i class="el-icon-user"></i>
+                {{ item[config.contactNameKey || 'contactName'] }}
+              </span>
+              <span v-if="item[config.contactPhoneKey || 'contactPhone']">
+                <i class="el-icon-phone-outline"></i>
+                {{ item[config.contactPhoneKey || 'contactPhone'] }}
+              </span>
+            </template>
           </div>
           <div class="record-foot">
             <span v-if="item.remark" class="remark">
@@ -76,10 +89,9 @@
             </span>
             <div class="record-actions">
               <el-button type="text" size="mini" @click.stop="openDetail(item)">查看详情</el-button>
-              <template v-if="!config.readOnly">
-                <el-button type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
-                <el-button type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
-              </template>
+              <el-button v-if="canChangeRecordStatus(item)" type="text" size="mini" @click.stop="openStatusDialog(item)">{{ statusActionText(item) }}</el-button>
+              <el-button v-if="canEditRecord(item)" type="text" size="mini" @click.stop="openEdit(item)">{{ config.editActionLabel || '编辑' }}</el-button>
+              <el-button v-if="canDeleteRecord(item)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
             </div>
           </div>
         </article>
@@ -93,8 +105,8 @@
       </div>
     </section>
 
-    <el-dialog :title="'新建' + config.title" :visible.sync="createVisible" top="4vh" append-to-body :close-on-click-modal="false" custom-class="application-create-dialog" @closed="resetForm">
-      <el-form ref="applicationForm" :model="form" :rules="rules" label-width="88px" @submit.native.prevent>
+    <el-dialog :title="dialogTitle" :visible.sync="createVisible" top="4vh" append-to-body :close-on-click-modal="false" custom-class="application-create-dialog" @closed="resetForm">
+      <el-form ref="applicationForm" :model="form" :rules="rules" :label-width="config.formLabelWidth || '88px'" @submit.native.prevent>
         <el-row :gutter="32">
           <el-col v-for="field in normalFields" :key="field.key" :xs="24" :sm="12" :lg="field.wide ? 24 : 8">
             <el-form-item :label="field.label" :prop="field.key">
@@ -102,7 +114,7 @@
                 <el-option v-for="enterprise in enterpriseOptions" :key="enterprise.id" :label="enterprise.label" :value="enterprise.id" />
               </el-select>
               <el-select v-else-if="field.options" v-model="form[field.key]" clearable filterable :placeholder="'请选择' + field.label" class="field-full">
-                <el-option v-for="option in field.options" :key="option" :label="option" :value="option" />
+                <el-option v-for="option in field.options" :key="optionValue(option)" :label="optionLabel(option)" :value="optionValue(option)" />
               </el-select>
               <el-date-picker
                 v-else-if="field.type === 'datetime'"
@@ -112,6 +124,7 @@
                 format="yyyy-MM-dd HH:mm"
                 :placeholder="'请选择' + field.label"
                 class="field-full" />
+              <el-input-number v-else-if="field.type === 'number'" v-model="form[field.key]" :min="field.min" :max="field.max" :step="field.step || 1" controls-position="right" class="field-full" />
               <el-input v-else v-model.trim="form[field.key]" :placeholder="'请输入' + field.label" maxlength="80" />
             </el-form-item>
           </el-col>
@@ -127,23 +140,34 @@
             </el-form-item>
           </el-col>
           <el-col v-if="config.uploadField" :span="24">
-            <el-form-item :label="config.uploadLabel || '上传文件'" :prop="config.uploadField">
+            <el-form-item :label="config.uploadLabel || '附件'" :prop="config.uploadField">
               <el-upload
                 ref="applicationUpload"
                 action="#"
                 name="thefile"
                 :auto-upload="false"
                 :file-list="uploadFileList"
-                :limit="config.uploadLimit || 1"
+                :limit="config.uploadLimit || 9"
                 :on-change="handleUploadChange"
                 :on-remove="handleUploadRemove">
-                <el-button size="small" type="primary" icon="el-icon-upload2">上传文件</el-button>
+                <el-button size="small" type="primary" icon="el-icon-upload2">上传附件</el-button>
                 <div slot="file" slot-scope="{ file }" class="upload-file-item">
-                  <span class="upload-file-name"><i class="el-icon-document"></i>{{ file.name || file.fileName }}</span>
-                  <el-button class="remove-upload-file" type="text" icon="el-icon-delete" title="删除文件" @click="removeUploadFile(file)"></el-button>
+                  <span class="upload-file-name">
+                    <i class="el-icon-document"></i>
+                    {{ file.name || file.fileName }}
+                  </span>
+                  <el-button class="remove-upload-file" type="text" icon="el-icon-delete" title="删除附件" @click="removeUploadFile(file)" />
                 </div>
               </el-upload>
               <p v-if="config.uploadTip" class="upload-tip">{{ config.uploadTip }}</p>
+            </el-form-item>
+          </el-col>
+          <el-col v-if="config.hasStatus !== false" :xs="24" :sm="12" :lg="8">
+            <el-form-item label="状态">
+              <div class="readonly-status">
+                <i class="el-icon-time"></i>
+                <span>{{ form.status || config.defaultStatus || '待受理' }}</span>
+              </div>
             </el-form-item>
           </el-col>
         </el-row>
@@ -154,21 +178,45 @@
       </span>
     </el-dialog>
 
+    <el-dialog :title="statusDialogTitle" :visible.sync="statusVisible" width="420px" append-to-body :close-on-click-modal="false" @closed="resetStatusDialog">
+      <el-form :model="statusForm" label-width="82px" @submit.native.prevent>
+        <el-form-item label="下一步状态">
+          <el-select v-model="statusForm.status" class="field-full" placeholder="请选择下一步状态">
+            <el-option v-for="status in availableStatusOptions" :key="status" :label="status" :value="status" />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="config.processRemarkField" :label="config.processRemarkLabel || '处理意见'">
+          <el-input
+            v-model.trim="statusForm[config.processRemarkField]"
+            type="textarea"
+            :rows="3"
+            maxlength="300"
+            show-word-limit
+            :placeholder="'请填写' + (config.processRemarkLabel || '处理意见')" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="statusVisible = false">取消</el-button>
+        <el-button type="primary" :loading="statusSubmitting" @click="saveStatus">确认更新</el-button>
+      </span>
+    </el-dialog>
+
     <el-drawer :title="config.title + '详情'" :visible.sync="detailVisible" size="500px" append-to-body :modal-append-to-body="true" :lock-scroll="true" custom-class="application-detail-drawer">
       <div v-if="selectedRecord" class="drawer-layout">
         <div class="drawer-scroll">
           <div class="detail-hero">
-            <span class="hero-icon"><i :class="config.icon"></i></span>
+            <span :class="['hero-icon', config.detailHeroClass]"><i :class="config.icon"></i></span>
             <div>
               <small>{{ selectedRecord.id }}</small>
-              <h3>{{ selectedRecord[config.primaryKey] }}</h3>
-              <p>{{ companyLabel(selectedRecord.companyId) }}</p>
+              <h3>{{ formatFieldValue(selectedRecord[config.detailTitleKey || config.cardTitleKey || config.primaryKey], config.detailTitleKey || config.cardTitleKey || config.primaryKey) }}</h3>
+              <p v-if="!config.hideCompany">{{ companyLabel(selectedRecord.companyId) }}</p>
             </div>
+            <el-tag v-if="config.hasStatus !== false" :type="statusType(statusText(selectedRecord.status))">{{ statusText(selectedRecord.status) }}</el-tag>
           </div>
           <div class="detail-grid">
             <span v-for="field in detailFields" :key="field.key">
               <small>{{ field.label }}</small>
-              <b>{{ selectedRecord[field.key] || '-' }}</b>
+              <b>{{ formatFieldValue(selectedRecord[field.key], field.key) }}</b>
             </span>
           </div>
           <section v-for="field in supplementalTextFields" :key="field.key" class="detail-section">
@@ -179,15 +227,30 @@
             <h4>{{ config.contentLabel }}</h4>
             <p>{{ selectedRecord[config.contentKey] }}</p>
           </section>
+          <section v-if="detailUploadFiles.length" class="detail-section">
+            <h4>{{ config.uploadLabel || '附件' }}</h4>
+            <div class="detail-files">
+              <div v-for="file in detailUploadFiles" :key="file.uid || file.id || file.filePath || file.fileName" class="detail-file-item">
+                <el-button type="text" class="file-download-link" @click="downloadUploadFile(file)">
+                  <i class="el-icon-document"></i>
+                  {{ file.name || file.fileName }}
+                </el-button>
+              </div>
+            </div>
+          </section>
           <section v-if="selectedRecord.remark" class="detail-section">
             <h4>备注</h4>
             <p>{{ selectedRecord.remark }}</p>
           </section>
-          <section v-if="detailUploadFiles.length" class="detail-section">
-            <h4>{{ config.uploadLabel || '上传文件' }}</h4>
-            <div class="detail-files">
-              <div v-for="file in detailUploadFiles" :key="file.uid || file.id || file.filePath || file.fileName" class="detail-file-item">
-                <span :class="{ 'file-download-link': file.id }" @click="file.id && downloadUploadFile(file)"><i class="el-icon-document"></i>{{ file.name || file.fileName }}</span>
+          <section v-if="!config.hideProgress" class="detail-section">
+            <h4>处理进度</h4>
+            <div class="timeline">
+              <div v-for="step in progressSteps" :key="step.key" :class="['timeline-item', { done: step.done }]">
+                <span></span>
+                <div>
+                  <b>{{ step.title }}</b>
+                  <small>{{ step.note }}</small>
+                </div>
               </div>
             </div>
           </section>
@@ -201,6 +264,8 @@
 </template>
 
 <script>
+import { canPerformAction, hasAction } from '@/utils/actionPolicy'
+
 const now = () => {
   const date = new Date()
   const pad = (value) => String(value).padStart(2, '0')
@@ -208,8 +273,11 @@ const now = () => {
 }
 
 export default {
-  name: 'DataReportBoard',
-  props: { config: { type: Object, required: true } },
+  name: 'ServiceApplicationBoard',
+  props: {
+    config: { type: Object, required: true },
+    policy: { type: Object, default: () => ({ actions: {} }) }
+  },
   data() {
     return {
       keyword: '',
@@ -218,14 +286,18 @@ export default {
       currentPage: 1,
       pageSize: 6,
       createVisible: false,
+      statusVisible: false,
       detailVisible: false,
       submitting: false,
+      statusSubmitting: false,
       detailLoading: false,
       loading: false,
       usingMock: false,
       editingId: '',
       total: 0,
       selectedRecord: null,
+      statusTarget: null,
+      statusForm: { status: '' },
       selectedIds: [],
       records: [],
       enterpriseOptions: [],
@@ -238,16 +310,19 @@ export default {
       return this.config.fields || []
     },
     normalFields() {
-      return this.fields.filter((item) => item.type !== 'textarea')
+      return this.fields.filter((item) => item.type !== 'textarea' && this.isFormFieldVisible(item))
     },
     textFields() {
-      return this.fields.filter((item) => item.type === 'textarea')
+      return this.fields.filter((item) => item.type === 'textarea' && this.isFormFieldVisible(item))
     },
     detailFields() {
-      return this.fields.filter((item) => item.type !== 'textarea' && item.key !== 'remark').slice(0, 6)
+      if (this.config.detailFieldsResolver && this.selectedRecord) return this.config.detailFieldsResolver(this.selectedRecord, this.fields)
+      const limit = this.config.detailFieldLimit || 6
+      return this.fields.filter((item) => item.type !== 'textarea' && item.key !== 'remark').slice(0, limit)
     },
     supplementalTextFields() {
-      return this.textFields.filter((item) => item.key !== this.config.contentKey && item.key !== 'remark')
+      if (this.config.supplementalTextFieldsResolver && this.selectedRecord) return this.config.supplementalTextFieldsResolver(this.selectedRecord, this.fields)
+      return this.fields.filter((item) => item.type === 'textarea' && item.key !== this.config.contentKey && item.key !== 'remark')
     },
     uploadFileList() {
       if (!this.config.uploadField) return []
@@ -259,12 +334,62 @@ export default {
       const responseField = this.config.uploadResponseField || this.config.uploadField
       return this.normalizeUploadFiles(this.selectedRecord[responseField])
     },
+    progressSteps() {
+      const record = this.selectedRecord || {}
+      const status = this.statusText(record.status)
+      const pending = this.isPendingStatus(status)
+      const processing = status === '处理中'
+      const completed = !pending && !processing
+      const updateTime = record.itemUpdateTime || record.updateTime || record[`${this.config.timeKey}UpdateTime`] || record[this.config.timeKey] || '-'
+      return [
+        { key: 'submitted', title: '已提交', note: `${record[this.config.timeKey] || '-'} · 系统已记录${this.config.title}`, done: true },
+        {
+          key: 'accepted',
+          title: pending ? '业务受理' : processing ? '处理中' : '已受理',
+          note: pending ? this.config.pendingStatusNote || '等待专员审核或受理' : processing ? '专员正在跟进处理' : `事项已受理，当前状态：${status}`,
+          done: !pending
+        },
+        {
+          key: 'result',
+          title: completed ? status : '处理结果',
+          note: completed ? `${updateTime} · 状态已更新为“${status}”` : '处理完成后将展示最终处理状态',
+          done: completed
+        }
+      ]
+    },
     primaryOptions() {
+      if (this.config.primaryOptions) return this.config.primaryOptions
       const field = this.fields.find((item) => item.key === this.config.primaryKey)
       return field && field.options ? field.options : []
     },
     statusOptions() {
       return this.config.statusOptions || ['待受理', '待审核', '处理中', '已完成', '已通过', '已关闭']
+    },
+    canCreate() {
+      const fallback = !this.config.readOnly && this.config.allowCreate !== false
+      return canPerformAction(this.policy, 'create', this.actionContext(), fallback)
+    },
+    canEdit() {
+      const fallback = !this.config.readOnly && this.config.allowEdit !== false
+      return hasAction(this.policy, 'edit', fallback)
+    },
+    canDelete() {
+      const fallback = !this.config.readOnly && this.config.allowDelete !== false
+      return hasAction(this.policy, 'delete', fallback)
+    },
+    canChangeStatus() {
+      const fallback = !this.config.readOnly && this.config.allowStatusChange === true && this.config.hasStatus !== false
+      return hasAction(this.policy, 'changeStatus', fallback)
+    },
+    availableStatusOptions() {
+      return this.nextStatusOptions(this.statusTarget)
+    },
+    statusDialogTitle() {
+      return this.config.statusDialogTitle || '更新处理进度'
+    },
+    dialogTitle() {
+      if (!this.editingId) return `新建${this.config.title}`
+      return `${this.config.editActionLabel || '编辑'}${this.config.itemName || this.config.title}`
     },
     filteredRecords() {
       const keyword = this.keyword.toLowerCase()
@@ -277,7 +402,7 @@ export default {
                 .includes(keyword)
             )) &&
           (!this.typeFilter || item[this.config.primaryKey] === this.typeFilter) &&
-          (!this.statusFilter || this.statusText(item.status) === this.statusFilter)
+          (this.config.hasStatus === false || !this.statusFilter || this.statusText(item.status) === this.statusFilter)
       )
     },
     pagedRecords() {
@@ -296,20 +421,19 @@ export default {
         { title: '处理中', statuses: ['处理中'], note: '服务专员持续跟进', icon: 'el-icon-s-operation', color: 'cyan' },
         { title: '本月完成', statuses: ['已完成', '已通过'], note: '已完成服务反馈', icon: 'el-icon-circle-check', color: 'green' }
       ]
-      return definitions.map((item) => Object.assign({}, item, {
-        value: item.all
-          ? this.records.length
-          : item.value !== undefined
-            ? item.value
-            : item.category
-              ? this.records.filter((record) => record[this.config.primaryKey] === item.category).length
-              : count(item.statuses || [])
-      }))
+      return definitions.map((item) => {
+        let value = item.value
+        if (item.all) value = this.records.length
+        else if (item.page) value = this.pagedRecords.length
+        else if (item.category !== undefined) value = this.records.filter((record) => record[this.config.primaryKey] === item.category).length
+        else if (value === undefined) value = count(item.statuses || [])
+        return Object.assign({}, item, { value })
+      })
     },
     rules() {
       const rules = {}
       this.fields
-        .filter((item) => item.required)
+        .filter((item) => item.required && this.isFormFieldVisible(item))
         .forEach((item) => {
           const isSelect = item.type === 'select' || item.key === 'companyId'
           rules[item.key] = [{ required: true, message: `请${isSelect ? '选择' : '填写'}${item.label}`, trigger: isSelect ? 'change' : 'blur' }]
@@ -322,27 +446,106 @@ export default {
     this.loadEnterprises()
   },
   methods: {
-    currentUserId() {
+    actionContext(record) {
+      return { record, user: this.currentUser(), config: this.config }
+    },
+    canPerform(action, record, fallback) {
+      return canPerformAction(this.policy, action, this.actionContext(record), fallback)
+    },
+    matchesFieldCondition(condition, values) {
+      if (!condition) return true
+      if (typeof condition === 'function') return Boolean(condition(values || {}))
+      return Object.keys(condition).every((key) => {
+        const expected = condition[key]
+        const actual = values && values[key]
+        return Array.isArray(expected) ? expected.includes(actual) : actual === expected
+      })
+    },
+    isFormFieldVisible(field) {
+      if (field.hideInForm) return false
+      if (!this.matchesFieldCondition(field.showWhen, this.form)) return false
+      return this.config.replyMode ? !field.hideInReplyForm : !field.hideInCreateForm
+    },
+    canEditRecord(record) {
+      if (!this.canPerform('edit', record, this.canEdit)) return false
+      if (Array.isArray(this.config.editableStatuses)) return this.config.editableStatuses.includes(this.statusText(record && record.status))
+      if (!this.config.replyMode) return true
+      return this.statusText(record && record.status) !== (this.config.replyStatus || '已回复')
+    },
+    canDeleteRecord(record) {
+      return this.canPerform('delete', record, this.canDelete)
+    },
+    nextStatusOptions(record) {
+      if (!record) return []
+      const currentStatus = this.statusText(record.status)
+      const transitions = this.config.statusTransitions || {}
+      const nextStatuses = transitions[currentStatus]
+      if (Object.keys(transitions).length) return Array.isArray(nextStatuses) ? nextStatuses : []
+      return this.statusOptions.filter((status) => status !== currentStatus)
+    },
+    canChangeRecordStatus(record) {
+      return this.canPerform('changeStatus', record, this.canChangeStatus) && this.nextStatusOptions(record).length > 0
+    },
+    applyAutomaticValues(form, fieldValues) {
+      const result = Object.assign({}, form)
+      Object.keys(fieldValues || {}).forEach((key) => {
+        const valueType = fieldValues[key]
+        if (valueType === 'currentUserName') result[key] = this.currentUserName()
+        if (valueType === 'now') result[key] = now()
+      })
+      return result
+    },
+    currentUser() {
+      const storeUser = this.$store && this.$store.getters && this.$store.getters.userInfo
+      if (storeUser) return storeUser
       try {
-        return JSON.parse(window.sessionStorage.getItem('userInfo') || '{}').id || ''
+        return JSON.parse(window.sessionStorage.getItem('userInfo') || '{}')
       } catch (error) {
-        return ''
+        return {}
       }
+    },
+    currentUserId() {
+      const user = this.currentUser()
+      return user.id || user.userId || user.userCode || ''
+    },
+    currentUserName() {
+      const user = this.currentUser()
+      return user.createByName || user.realName || user.userName || user.username || user.name || user.nickName || this.currentUserId() || ''
     },
     apiKey(action) {
       const namespaces = {
-        DR: 'tobDataReport', SR: 'tobServiceRequest', MP: 'tobMediaPromotion', QR: 'tobQualificationCert', RC: 'tobResourceConnection',
-        NA: 'tobPublicNotice', PA: 'tobEventActivity', OC: 'tobOnlineConsult', BP: 'tobEnterprisePolicy', DD: 'tobResourceDownload',
-        SC: 'tobSafetyArticle', PN: 'tobParkNews', EN: 'tobCompanyNews',
-        BO: 'tobBusinessOpportunity', CD: 'tobCompanyDemand', IA: 'tobIndustryAssociation', SM: 'tobStartupMentor',
-        SO: 'tobServiceOrg', MR: 'tobMeetingRoomBook', FR: 'tobFacilityRental'
+        DR: 'tobDataReport',
+        SR: 'tobServiceRequest',
+        MP: 'tobMediaPromotion',
+        QR: 'tobQualificationCert',
+        RC: 'tobResourceConnection',
+        NA: 'tobPublicNotice',
+        PA: 'tobEventActivity',
+        OC: 'tobOnlineConsult',
+        BP: 'tobEnterprisePolicy',
+        DD: 'tobResourceDownload',
+        SC: 'tobSafetyArticle',
+        PN: 'tobParkNews',
+        EN: 'tobCompanyNews',
+        BO: 'tobBusinessOpportunity',
+        CD: 'tobCompanyDemand',
+        IA: 'tobIndustryAssociation',
+        SM: 'tobStartupMentor',
+        SO: 'tobServiceOrg',
+        MR: 'tobMeetingRoomBook',
+        FR: 'tobFacilityRental'
       }
       return `${this.config.apiNamespace || namespaces[this.config.idPrefix]}.${action}`
     },
     unwrap(response) {
+      if (response && response.data && response.data.head && response.data.data !== undefined) return response.data.data
       if (response && response.result !== undefined) return response.result
       if (response && response.data && response.data.result !== undefined) return response.data.result
       return response && response.data !== undefined ? response.data : response
+    },
+    normalizeRecord(record) {
+      const normalized = Object.assign({}, record || {})
+      return typeof this.config.normalizeRecord === 'function' ? this.config.normalizeRecord(normalized) : normalized
     },
     async loadEnterprises() {
       if (!this.$api || !this.$api['enterprise.getEnterprise']) return
@@ -365,8 +568,20 @@ export default {
       const enterprise = this.enterpriseOptions.find((item) => String(item.id) === String(companyId))
       return enterprise ? enterprise.label : companyId || '-'
     },
+    formatFieldValue(value, key) {
+      if (key === (this.config.publisherNameKey || 'publisherName')) return value || '园区'
+      const valueMap = (this.config.valueLabelMaps || {})[key] || {}
+      if (Object.prototype.hasOwnProperty.call(valueMap, value)) return valueMap[value]
+      return value === undefined || value === null || value === '' ? '-' : value
+    },
+    optionLabel(option) {
+      return option && typeof option === 'object' ? option.label : option
+    },
+    optionValue(option) {
+      return option && typeof option === 'object' ? option.value : option
+    },
     useMockRecords() {
-      this.records = (this.config.records || []).map((item) => Object.assign({}, item))
+      this.records = (this.config.records || []).map((item) => this.normalizeRecord(item))
       this.total = this.records.length
       this.usingMock = true
     },
@@ -377,12 +592,13 @@ export default {
       }
       this.loading = true
       try {
-        const params = Object.assign({ pageNo: this.currentPage, pageSize: this.pageSize }, this.config.listParams || {})
+        const params = Object.assign({}, this.config.listParams || {}, { pageNo: this.currentPage, pageSize: this.pageSize })
         if (this.keyword) params.keyword = this.keyword
         if (this.typeFilter) params[this.config.primaryKey] = this.typeFilter
-        if (this.statusFilter) params.status = this.statusFilter
+        if (this.config.hasStatus !== false && this.statusFilter) params.status = this.listStatusValue(this.statusFilter)
         const result = this.unwrap(await this.$api[this.apiKey('list')](params)) || {}
-        this.records = Array.isArray(result.records) ? result.records : Array.isArray(result) ? result : []
+        const records = Array.isArray(result.records) ? result.records : Array.isArray(result.list) ? result.list : Array.isArray(result.rows) ? result.rows : Array.isArray(result) ? result : []
+        this.records = records.map((item) => this.normalizeRecord(item))
         this.total = Number(result.total || this.records.length)
         this.usingMock = false
       } catch (error) {
@@ -396,21 +612,57 @@ export default {
       this.loadRecords()
     },
     statusType(status) {
-      return { 待受理: 'warning', 待审核: 'warning', 待回复: 'warning', 处理中: '', 已完成: 'success', 已通过: 'success', 已回复: 'success', 已发布: 'success', 正常: 'success', 已拒绝: 'danger', 已关闭: 'info', 已下线: 'info', 已取消: 'info', 停用: 'info', 草稿: 'info' }[status] || 'info'
+      return (
+        {
+          待受理: 'warning',
+          待审核: 'warning',
+          待回复: 'warning',
+          待处理: 'warning',
+          处理中: '',
+          已完成: 'success',
+          已通过: 'success',
+          已回复: 'success',
+          已发布: 'success',
+          正常: 'success',
+          已拒绝: 'danger',
+          已驳回: 'danger',
+          已关闭: 'info',
+          已下线: 'info',
+          已取消: 'info',
+          停用: 'info',
+          草稿: 'info'
+        }[status] || 'info'
+      )
     },
     statusText(status) {
+      const statusMap = this.config.statusMap || {}
+      if (Object.prototype.hasOwnProperty.call(statusMap, status)) return statusMap[status]
       if (status === 0 || status === '0') return this.config.defaultStatus || '待受理'
       return status || this.config.defaultStatus || '待受理'
+    },
+    statusValue(status) {
+      return (this.config.statusValueMap || {})[status] || status
+    },
+    listStatusValue(status) {
+      return (this.config.listStatusValueMap || this.config.statusValueMap || {})[status] || status
+    },
+    statusActionText(record) {
+      if (this.config.statusActionLabelResolver) return this.config.statusActionLabelResolver(record, this.statusText(record && record.status))
+      return this.config.statusActionLabel || '更新进度'
+    },
+    isPendingStatus(status) {
+      return (this.config.pendingStatuses || ['待受理', '待审核']).includes(this.statusText(status))
     },
     emptyForm() {
       const form = {}
       this.fields.forEach((item) => {
-        form[item.key] = item.key === this.config.timeKey ? now() : ''
+        form[item.key] = item.defaultValue !== undefined ? item.defaultValue : item.key === this.config.timeKey ? now() : ''
       })
       if (this.config.uploadField) form[this.config.uploadField] = []
-      return form
+      return this.applyAutomaticValues(Object.assign(form, this.config.defaultForm || {}), this.config.autoFormFields)
     },
     openCreate() {
+      if (!this.canCreate) return
       this.editingId = ''
       this.form = this.emptyForm()
       this.createVisible = true
@@ -421,6 +673,11 @@ export default {
       this.submitting = false
       this.editingId = ''
     },
+    resetStatusDialog() {
+      this.statusTarget = null
+      this.statusForm = { status: '' }
+      this.statusSubmitting = false
+    },
     submitForm() {
       this.$refs.applicationForm.validate((valid) => {
         if (!valid) return
@@ -428,22 +685,27 @@ export default {
       })
     },
     async saveRecord() {
+      const action = this.editingId ? 'edit' : 'create'
+      const actionRecord = this.editingId ? Object.assign({}, this.selectedRecord || {}, this.form) : this.form
+      if (!this.canPerform(action, actionRecord, this.editingId ? this.canEdit : this.canCreate)) return
       this.submitting = true
-      const payload = Object.assign({}, this.form)
+      let payload = Object.assign({}, this.form)
+      this.fields.filter((field) => field.showWhen && !this.matchesFieldCondition(field.showWhen, this.form)).forEach((field) => delete payload[field.key])
       if (this.config.uploadField) {
         payload[this.config.uploadField] = this.normalizeUploadFiles(payload[this.config.uploadField]).map((file) => this.cleanUploadFile(file))
       }
-      if (this.config.uploadField) delete payload.file1
-      if (!payload.status) payload.status = this.config.defaultStatus || '待受理'
+      if (this.config.replyMode) payload.status = this.config.replyStatus || '已回复'
+      if (this.config.hasStatus !== false && !payload.status) payload.status = this.config.defaultStatus || '待受理'
       if (this.editingId) payload.id = this.editingId
       Object.assign(payload, this.editingId ? { updateBy: this.currentUserId(), itemUpdateTime: now() } : { createBy: this.currentUserId(), itemCreateTime: now() })
+      if (typeof this.config.payloadTransform === 'function') payload = this.config.payloadTransform(payload, { editing: Boolean(this.editingId), form: this.form })
       try {
         if (this.usingMock || !this.$api || !this.$api[this.apiKey(this.editingId ? 'edit' : 'add')]) {
           this.saveMockRecord(payload)
         } else {
           await this.$api[this.apiKey(this.editingId ? 'edit' : 'add')](payload)
         }
-        this.$message.success(this.editingId ? '修改成功' : `${this.config.title}已提交`)
+        this.$message.success(this.editingId ? (this.config.replyMode ? '回复成功' : '修改成功') : `${this.config.title}已提交`)
         this.createVisible = false
         this.currentPage = 1
         if (!this.usingMock) await this.loadRecords()
@@ -451,6 +713,41 @@ export default {
         this.$message.error('提交失败，请稍后重试')
       } finally {
         this.submitting = false
+      }
+    },
+    openStatusDialog(record) {
+      if (!record || !this.canChangeRecordStatus(record)) return
+      const options = this.nextStatusOptions(record)
+      if (!options.length) return
+      this.statusTarget = record
+      this.statusForm = { status: options[0] }
+      if (this.config.processRemarkField) this.$set(this.statusForm, this.config.processRemarkField, record[this.config.processRemarkField] || record.remark || '')
+      this.statusVisible = true
+    },
+    async saveStatus() {
+      if (!this.statusTarget || !this.statusForm.status) return
+      this.statusSubmitting = true
+      const payload = Object.assign({}, this.statusTarget, {
+        status: this.statusValue(this.statusForm.status),
+        updateBy: this.currentUserId(),
+        itemUpdateTime: now()
+      })
+      if (this.config.processRemarkField) payload[this.config.processRemarkField] = this.statusForm[this.config.processRemarkField] || ''
+      try {
+        if (this.usingMock || !this.$api || !this.$api[this.apiKey('edit')]) {
+          const index = this.records.findIndex((item) => String(item.id) === String(this.statusTarget.id))
+          if (index > -1) this.$set(this.records, index, Object.assign({}, this.records[index], payload))
+        } else {
+          await this.$api[this.apiKey('edit')](payload)
+          await this.loadRecords()
+        }
+        if (this.selectedRecord && String(this.selectedRecord.id) === String(this.statusTarget.id)) this.selectedRecord = Object.assign({}, this.selectedRecord, payload)
+        this.$message.success('状态已更新')
+        this.statusVisible = false
+      } catch (error) {
+        this.$message.error('状态更新失败，请稍后重试')
+      } finally {
+        this.statusSubmitting = false
       }
     },
     saveMockRecord(payload) {
@@ -463,13 +760,13 @@ export default {
       this.total = this.records.length
     },
     async openDetail(item) {
-      this.selectedRecord = item
+      this.selectedRecord = this.normalizeRecord(item)
       this.detailVisible = true
-      if (this.usingMock || !this.$api || !this.$api[this.apiKey('queryById')]) return
+      if (!this.$api || !this.$api[this.apiKey('queryById')]) return
       this.detailLoading = true
       try {
         const result = this.unwrap(await this.$api[this.apiKey('queryById')]({ id: item.id }))
-        if (result) this.selectedRecord = result
+        if (result) this.selectedRecord = this.normalizeRecord(Object.assign({}, item, result))
       } catch (error) {
         // 保留卡片中的数据，详情仍可查看。
       } finally {
@@ -477,26 +774,75 @@ export default {
       }
     },
     async openEdit(record) {
+      if (!this.canEditRecord(record)) return
       let target = record || this.selectedRecord
       if (!target) return
-      if (!this.usingMock && this.$api && this.$api[this.apiKey('queryById')]) {
+      if (this.config.loadDetailBeforeEdit && this.$api && this.$api[this.apiKey('queryById')]) {
         try {
-          target = this.unwrap(await this.$api[this.apiKey('queryById')]({ id: target.id })) || target
+          const result = this.unwrap(await this.$api[this.apiKey('queryById')]({ id: target.id }))
+          if (result) target = Object.assign({}, target, result)
         } catch (error) {
-          // 查询详情失败时，仍允许使用列表中的记录编辑。
+          this.$message.warning('资料详情加载失败，已展示基础信息')
         }
       }
+      target = this.normalizeRecord(target)
       this.selectedRecord = target
       this.editingId = target.id
-      const form = Object.assign(this.emptyForm(), target)
+      const formRecord = typeof this.config.formFromRecord === 'function' ? this.config.formFromRecord(target) : target
+      this.form = this.applyAutomaticValues(Object.assign(this.emptyForm(), formRecord), this.config.replyAutoFormFields)
       if (this.config.uploadField) {
         const responseField = this.config.uploadResponseField || this.config.uploadField
-        form[this.config.uploadField] = this.normalizeUploadFiles(target[responseField])
+        this.$set(this.form, this.config.uploadField, this.normalizeUploadFiles(target[responseField]))
       }
-      this.form = form
       this.detailVisible = false
       this.createVisible = true
       this.$nextTick(() => this.$refs.applicationForm && this.$refs.applicationForm.clearValidate())
+    },
+    removeRecord(record) {
+      const target = record || this.selectedRecord
+      if (!target || !this.canDeleteRecord(target)) return
+      this.$confirm('删除后不可恢复，是否继续？', '确认删除', { type: 'warning' })
+        .then(async () => {
+          try {
+            if (this.usingMock || !this.$api || !this.$api[this.apiKey('delete')]) {
+              this.records = this.records.filter((item) => String(item.id) !== String(target.id))
+              this.total = this.records.length
+            } else {
+              await this.$api[this.apiKey('delete')]({ id: target.id })
+              await this.loadRecords()
+            }
+            this.detailVisible = false
+            this.$message.success('删除成功')
+          } catch (error) {
+            this.$message.error('删除失败，请稍后重试')
+          }
+        })
+        .catch(() => {})
+    },
+    removeSelected() {
+      if (!this.canDelete) return
+      const ids = this.selectedIds.filter((id) => {
+        const record = this.records.find((item) => String(item.id) === String(id))
+        return record && this.canDeleteRecord(record)
+      })
+      if (!ids.length) return
+      this.$confirm(`确定删除已选的 ${ids.length} 条记录吗？删除后不可恢复。`, '确认批量删除', { type: 'warning' })
+        .then(async () => {
+          try {
+            if (this.usingMock || !this.$api || !this.$api[this.apiKey('delete')]) {
+              this.records = this.records.filter((item) => !ids.includes(item.id))
+              this.total = this.records.length
+            } else {
+              await Promise.all(ids.map((id) => this.$api[this.apiKey('delete')]({ id })))
+              await this.loadRecords()
+            }
+            this.selectedIds = []
+            this.$message.success('批量删除成功')
+          } catch (error) {
+            this.$message.error('批量删除失败，请稍后重试')
+          }
+        })
+        .catch(() => {})
     },
     normalizeUploadFiles(value) {
       let files = value
@@ -510,8 +856,12 @@ export default {
       if (!Array.isArray(files)) files = files ? [files] : []
       return files.filter(Boolean).map((item, index) => {
         const file = typeof item === 'string' ? { fileName: item, filePath: item } : item
+        const fallbackName = String(file.filePath || file.url || file.fileUrl || '')
+          .split('?')[0]
+          .split('/')
+          .pop()
         return Object.assign({}, file, {
-          name: file.name || file.fileName || `附件${index + 1}`,
+          name: file.name || file.originalName || file.originalFileName || file.fileName || fallbackName || '未命名附件',
           status: file.status || (file.filePath || file.id ? 'success' : 'ready'),
           uid: file.uid || file.id || file.filePath || `application-file-${index}`
         })
@@ -521,38 +871,50 @@ export default {
       const raw = file.raw
       if (!raw || file.filePath || file.id) return
       if (raw.size > 10 * 1024 * 1024) {
-        this.$message.error('单个文件不能超过 10MB')
-        const validFiles = fileList.filter((item) => item.uid !== file.uid)
-        this.$set(this.form, this.config.uploadField, validFiles)
+        this.$message.error('单个附件不能超过 10MB')
+        this.$set(
+          this.form,
+          this.config.uploadField,
+          fileList.filter((item) => item.uid !== file.uid)
+        )
         this.$nextTick(() => this.$refs.applicationUpload && this.$refs.applicationUpload.handleRemove(file))
         return
       }
       if (!this.$api || !this.$api['attachment.upload']) {
         this.$message.error('未找到附件上传接口')
         this.$refs.applicationUpload && this.$refs.applicationUpload.handleRemove(file)
-        this.$set(this.form, this.config.uploadField, fileList.filter((item) => item.uid !== file.uid))
+        this.$set(
+          this.form,
+          this.config.uploadField,
+          fileList.filter((item) => item.uid !== file.uid)
+        )
         return
       }
       file.status = 'uploading'
       try {
         const formData = new FormData()
         formData.append('thefile', raw)
-        const response = await this.$api['attachment.upload'](formData)
-        const uploadFile = this.getUploadResult(response)
+        const uploadFile = this.getUploadResult(await this.$api['attachment.upload'](formData))
         if (!uploadFile.filePath && !uploadFile.id) throw new Error('附件上传未返回文件信息')
+        const originalName = file.name || raw.name || uploadFile.originalName || uploadFile.originalFileName || uploadFile.fileName
         Object.assign(file, {
-          fileName: uploadFile.fileName || file.name,
+          fileName: originalName,
           filePath: uploadFile.filePath,
-          name: uploadFile.fileName || file.name,
+          name: originalName,
           fileType: uploadFile.fileType || raw.type || '',
           status: 'success',
           url: uploadFile.url || uploadFile.fileUrl || ''
         })
+        if (this.config.fileNameField && !this.form[this.config.fileNameField]) this.$set(this.form, this.config.fileNameField, file.fileName)
         this.$set(this.form, this.config.uploadField, fileList)
       } catch (error) {
-        this.$message.error('文件上传失败，请重试')
+        this.$message.error('附件上传失败，请重试')
         this.$refs.applicationUpload && this.$refs.applicationUpload.handleRemove(file)
-        this.$set(this.form, this.config.uploadField, fileList.filter((item) => item.uid !== file.uid))
+        this.$set(
+          this.form,
+          this.config.uploadField,
+          fileList.filter((item) => item.uid !== file.uid)
+        )
       }
     },
     handleUploadRemove(file, fileList) {
@@ -579,7 +941,14 @@ export default {
       return Array.isArray(data) ? data[0] || {} : data || {}
     },
     async downloadUploadFile(file) {
-      if (!file.id || !this.$api || !this.$api['attachment.download']) return
+      if (file.url) {
+        window.open(file.url, '_blank', 'noopener,noreferrer')
+        return
+      }
+      if (!file.id || !this.$api || !this.$api['attachment.download']) {
+        this.$message.warning('该附件暂不支持下载')
+        return
+      }
       try {
         const response = await this.$api['attachment.download']({ attachmentId: file.id }, { responseType: 'blob' })
         const url = URL.createObjectURL(new Blob([response.data], { type: file.fileType || 'application/octet-stream' }))
@@ -589,50 +958,8 @@ export default {
         link.click()
         URL.revokeObjectURL(url)
       } catch (error) {
-        this.$message.error('文件下载失败，请稍后重试')
+        this.$message.error('附件下载失败，请稍后重试')
       }
-    },
-    removeRecord(record) {
-      const target = record || this.selectedRecord
-      if (!target) return
-      this.$confirm('删除后不可恢复，是否继续？', '确认删除', { type: 'warning' })
-        .then(async () => {
-          try {
-            if (this.usingMock || !this.$api || !this.$api[this.apiKey('delete')]) {
-              this.records = this.records.filter((item) => String(item.id) !== String(target.id))
-              this.total = this.records.length
-            } else {
-              await this.$api[this.apiKey('delete')]({ id: target.id })
-              await this.loadRecords()
-            }
-            this.detailVisible = false
-            this.$message.success('删除成功')
-          } catch (error) {
-            this.$message.error('删除失败，请稍后重试')
-          }
-        })
-        .catch(() => {})
-    },
-    removeSelected() {
-      const ids = this.selectedIds.slice()
-      if (!ids.length) return
-      this.$confirm(`确定删除已选的 ${ids.length} 条记录吗？删除后不可恢复。`, '确认批量删除', { type: 'warning' })
-        .then(async () => {
-          try {
-            if (this.usingMock || !this.$api || !this.$api[this.apiKey('delete')]) {
-              this.records = this.records.filter((item) => !ids.includes(item.id))
-              this.total = this.records.length
-            } else {
-              await Promise.all(ids.map((id) => this.$api[this.apiKey('delete')]({ id })))
-              await this.loadRecords()
-            }
-            this.selectedIds = []
-            this.$message.success('批量删除成功')
-          } catch (error) {
-            this.$message.error('批量删除失败，请稍后重试')
-          }
-        })
-        .catch(() => {})
     }
   }
 }
@@ -651,6 +978,9 @@ export default {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
   margin-bottom: 18px;
+}
+.summary-grid--two-columns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .summary-card {
   display: flex;
@@ -902,39 +1232,50 @@ export default {
 .field-full {
   width: 100%;
 }
-.upload-tip {
-  margin: 8px 0 0;
-  color: #98a4b3;
-  font-size: 12px;
-  line-height: 1.5;
-}
-.upload-file-item {
+.upload-file-item,
+.detail-file-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  min-height: 28px;
   gap: 12px;
+  min-height: 34px;
 }
-.upload-file-name {
-  overflow: hidden;
+.upload-file-name,
+.file-download-link {
+  display: inline-flex;
   min-width: 0;
-  flex: 1;
-  color: #556a84;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  align-items: center;
+  color: #52708f;
+  font-size: 13px;
 }
-.upload-file-name i {
+.upload-file-name i,
+.file-download-link i {
   margin-right: 6px;
-  color: #5d9cec;
+  color: #3c8df2;
 }
 .remove-upload-file {
-  margin-left: auto;
-  padding: 4px;
-  color: #a1afbf;
-}
-.remove-upload-file:hover {
+  flex: 0 0 auto;
   color: #f56c6c;
+}
+.upload-tip {
+  margin: 8px 0 0;
+  color: #90a0b4;
+  font-size: 12px;
+}
+.detail-files {
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: #f7f9fc;
+}
+.detail-file-item + .detail-file-item {
+  border-top: 1px solid #e8edf3;
+}
+.file-download-link {
+  max-width: 100%;
+  padding: 7px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 @media (max-width: 1200px) {
   .record-grid {
@@ -1186,38 +1527,6 @@ export default {
   font-size: 13px;
   line-height: 1.7;
   white-space: pre-line;
-}
-.detail-files {
-  border: 1px solid #e5ebf2;
-  border-radius: 7px;
-}
-.detail-file-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 40px;
-  padding: 0 12px;
-  gap: 12px;
-  color: #556a84;
-  font-size: 13px;
-}
-.detail-file-item span {
-  overflow: hidden;
-  min-width: 0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.file-download-link {
-  color: #2f7cdf;
-  cursor: pointer;
-}
-.file-download-link:hover {
-  color: #1c65bd;
-  text-decoration: underline;
-}
-.detail-file-item i {
-  margin-right: 6px;
-  color: #5d9cec;
 }
 .timeline {
   padding: 2px 0 0;

@@ -1,27 +1,8 @@
-<template><public-service-board :config="config" /></template>
+<!-- ToB 在线咨询路由入口：以用户模式加载在线咨询共享页面。 -->
+<template><online-consultation-page mode="user" /></template>
+
 <script>
-import PublicServiceBoard from './components/PublicServiceBoard'
-import { createOnlineConsultationConfig } from './components/onlineConsultationConfig'
+import OnlineConsultationPage from '@/features/public-services/online-consultation/OnlineConsultationPage'
 
-export default {
-  name: 'OnlineConsultation',
-  components: { PublicServiceBoard },
-  data() {
-    return {
-      config: createOnlineConsultationConfig()
-    }
-  }
-}
+export default { name: 'OnlineConsultation', components: { OnlineConsultationPage } }
 </script>
-
-<style lang="scss">
-/* 抽屉会挂载到 body，使用全局选择器确保详情头图标样式生效。 */
-.application-detail-drawer .hero-icon.online-consultation-detail-icon {
-  background: #2f7cdf !important;
-  color: #fff !important;
-}
-
-.application-detail-drawer .hero-icon.online-consultation-detail-icon > i {
-  color: inherit;
-}
-</style>

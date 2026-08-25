@@ -1,15 +1,8 @@
-<template><LifeServiceBoard :config="config" /></template>
-<script>
-import LifeServiceBoard from './components/LifeServiceBoard.vue'
-import { createUserSurveyConfig } from './components/lifeServiceConfigs'
+<!-- ToC 调查问卷路由入口：以用户模式加载生活服务共享页面。 -->
+<template><life-service-page feature="userSurvey" mode="user" /></template>
 
-export default {
-  name: 'ToCUserSurvey',
-  components: { LifeServiceBoard },
-  data() {
-    return {
-      config: createUserSurveyConfig({ readOnly: true })
-    }
-  }
-}
+<script>
+import LifeServicePage from '@/features/life-services/LifeServicePage'
+
+export default { name: 'ToCUserSurvey', components: { LifeServicePage } }
 </script>

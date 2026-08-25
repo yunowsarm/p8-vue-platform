@@ -1,14 +1,8 @@
-<template><LifeServiceBoard :config="config" /></template>
+<!-- 管理端调查问卷路由入口：以管理模式加载生活服务共享页面。 -->
+<template><life-service-page feature="userSurvey" mode="admin" /></template>
 
 <script>
-import LifeServiceBoard from '../ToC/lifeServices/components/LifeServiceBoard.vue'
-import { createUserSurveyConfig } from '../ToC/lifeServices/components/lifeServiceConfigs'
+import LifeServicePage from '@/features/life-services/LifeServicePage'
 
-export default {
-  name: 'ToOUserSurvey',
-  components: { LifeServiceBoard },
-  data() {
-    return { config: createUserSurveyConfig() }
-  }
-}
+export default { name: 'ToOUserSurvey', components: { LifeServicePage } }
 </script>

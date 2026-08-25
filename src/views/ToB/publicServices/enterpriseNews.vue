@@ -1,6 +1,7 @@
+<!-- ToB 企业动态路由页面：使用公共服务组件展示和维护企业动态。 -->
 <template><public-service-board :config="config" /></template>
 <script>
-import PublicServiceBoard from './components/PublicServiceBoard'
+import PublicServiceBoard from '@/components/business/ApplicationBoard/PublicServiceBoard'
 export default {
   name: 'EnterpriseNews',
   components: { PublicServiceBoard },

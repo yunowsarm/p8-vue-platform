@@ -1,3 +1,4 @@
+// 资料下载业务定义：集中声明资料分类、附件字段和页面展示配置。
 const DOCUMENT_CATEGORY_OPTIONS = Object.freeze(['办事指南', '表单模板', '园区手册', '宣传资料', '其他'])
 
 const createFields = () => [

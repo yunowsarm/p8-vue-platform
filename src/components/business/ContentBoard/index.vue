@@ -1,6 +1,10 @@
-﻿<template>
+﻿<!-- 通用内容业务组件：统一承载公告、生活服务等内容的列表、表单和详情交互。 -->
+<template>
   <main class="life-service-board">
-    <section class="board-statistics" :class="{ 'board-statistics--compact': config.hasStatus === false && !hasExpiryStatistics, 'board-statistics--three': hasExpiryStatistics }" aria-label="信息统计">
+    <section
+      class="board-statistics"
+      :class="{ 'board-statistics--compact': config.hasStatus === false && !hasExpiryStatistics, 'board-statistics--three': hasExpiryStatistics }"
+      aria-label="信息统计">
       <article class="stat-card stat-card--primary">
         <span class="stat-icon"><i class="el-icon-document"></i></span>
         <div>
@@ -60,7 +64,7 @@
           <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
         </el-select>
         <div class="toolbar-actions">
-          <el-button v-if="!config.readOnly" type="primary" size="small" icon="el-icon-plus" @click="openCreate">新建{{ config.title }}</el-button>
+          <el-button v-if="canCreate" type="primary" size="small" icon="el-icon-plus" @click="openCreate">新建{{ config.title }}</el-button>
         </div>
       </div>
 
@@ -95,8 +99,8 @@
             </span>
             <div class="card-actions">
               <el-button type="text" size="mini" @click.stop="openDetail(item)">查看详情</el-button>
-              <el-button v-if="!config.readOnly" type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
-              <el-button v-if="!config.readOnly" type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
+              <el-button v-if="canPerform('edit', item, canEdit)" type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
+              <el-button v-if="canPerform('delete', item, canDelete)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
             </div>
           </div>
         </article>
@@ -241,6 +245,7 @@ import enterpriseNewsIcon from '@/assets/image/publicNotice/enterprise-news.svg'
 import parkNewsIcon from '@/assets/image/publicNotice/park-news.svg'
 import safetyReminderIcon from '@/assets/image/publicNotice/safety-reminder.svg'
 import { getFileTypeIcon } from '@/utils/fileTypeIcon'
+import { canPerformAction, hasAction } from '@/utils/actionPolicy'
 
 const sceneIcons = {
   园区动态: parkNewsIcon,
@@ -252,7 +257,10 @@ const sceneIcons = {
 
 export default {
   name: 'LifeServiceBoard',
-  props: { config: { type: Object, required: true } },
+  props: {
+    config: { type: Object, required: true },
+    policy: { type: Object, default: () => ({ actions: {} }) }
+  },
   data() {
     return {
       keyword: '',
@@ -353,12 +361,27 @@ export default {
     },
     expiredCount() {
       return this.pagedRecords.filter((item) => this.isExpired(item)).length
+    },
+    canCreate() {
+      return canPerformAction(this.policy, 'create', this.actionContext(), !this.config.readOnly)
+    },
+    canEdit() {
+      return hasAction(this.policy, 'edit', !this.config.readOnly)
+    },
+    canDelete() {
+      return hasAction(this.policy, 'delete', !this.config.readOnly)
     }
   },
   created() {
     this.loadRecords()
   },
   methods: {
+    actionContext(record) {
+      return { record, user: this.currentUser(), config: this.config }
+    },
+    canPerform(action, record, fallback) {
+      return canPerformAction(this.policy, action, this.actionContext(record), fallback)
+    },
     currentUserId() {
       return this.currentUser().id || ''
     },
@@ -475,13 +498,13 @@ export default {
       this.$nextTick(() => this.$refs.lifeServiceForm && this.$refs.lifeServiceForm.clearValidate())
     },
     openCreate() {
-      if (this.config.readOnly) return
+      if (!this.canCreate) return
       this.editingId = ''
       this.form = this.emptyForm()
       this.formVisible = true
     },
     async openEdit(item) {
-      if (this.config.readOnly) return
+      if (!this.canPerform('edit', item, this.canEdit)) return
       let record = item
       const detailApi = this.$api && this.$api[this.apiKey('queryById')]
       if (detailApi) {
@@ -501,7 +524,8 @@ export default {
       this.formVisible = true
     },
     async submitForm() {
-      if (this.config.readOnly) return
+      const action = this.editingId ? 'edit' : 'create'
+      if (!this.canPerform(action, this.editingId ? Object.assign({}, this.selectedRecord || {}, this.form) : this.form, this.editingId ? this.canEdit : this.canCreate)) return
       const valid = await new Promise((resolve) => this.$refs.lifeServiceForm.validate(resolve))
       if (!valid) return
       this.submitting = true
@@ -526,7 +550,7 @@ export default {
       }
     },
     async removeRecord(item) {
-      if (this.config.readOnly) return
+      if (!this.canPerform('delete', item, this.canDelete)) return
       try {
         await this.$confirm('确认删除该条记录吗？', '删除确认', { type: 'warning' })
         await this.$api[this.apiKey('delete')]({ id: item.id })

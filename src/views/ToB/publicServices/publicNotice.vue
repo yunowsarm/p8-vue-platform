@@ -1,18 +1,8 @@
-<template>
-  <LifeServiceBoard :config="config" />
-</template>
+<!-- ToB 通知公告路由入口：以查看模式加载通知公告共享页面。 -->
+<template><public-notice-page mode="viewer" api-namespace="tobPublicNotice" /></template>
 
 <script>
-import LifeServiceBoard from '../../ToC/lifeServices/components/LifeServiceBoard.vue'
-import { createPublicNoticeConfig } from '../../ToC/lifeServices/components/publicNoticeConfig'
+import PublicNoticePage from '@/features/public-services/public-notice/PublicNoticePage'
 
-export default {
-  name: 'ToBPublicNotice',
-  components: { LifeServiceBoard },
-  data() {
-    return {
-      config: createPublicNoticeConfig({ apiNamespace: 'tobPublicNotice' })
-    }
-  }
-}
+export default { name: 'ToBPublicNotice', components: { PublicNoticePage } }
 </script>

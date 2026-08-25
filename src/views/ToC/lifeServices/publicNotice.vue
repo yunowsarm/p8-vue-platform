@@ -1,18 +1,12 @@
-<template><LifeServiceBoard :config="config" /></template>
+<!-- ToC 通知公告路由入口：以查看模式加载指定 API 命名空间的公告页面。 -->
+<template><public-notice-page mode="viewer" :api-namespace="apiNamespace" /></template>
+
 <script>
-import LifeServiceBoard from './components/LifeServiceBoard.vue'
-import { createPublicNoticeConfig } from './components/publicNoticeConfig'
+import PublicNoticePage from '@/features/public-services/public-notice/PublicNoticePage'
 
 export default {
   name: 'ToCPublicNotice',
-  components: { LifeServiceBoard },
-  props: {
-    apiNamespace: { type: String, default: 'tocPublicNotice' }
-  },
-  data() {
-    return {
-      config: createPublicNoticeConfig({ apiNamespace: this.apiNamespace })
-    }
-  }
+  components: { PublicNoticePage },
+  props: { apiNamespace: { type: String, default: 'tocPublicNotice' } }
 }
 </script>

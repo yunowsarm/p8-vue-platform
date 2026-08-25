@@ -1,3 +1,4 @@
+// 在线咨询业务定义：集中声明咨询、回复字段及用户端和管理端共用配置。
 const consultationFields = [
   { key: 'userName', label: '咨询人', hideInForm: true },
   { key: 'phone', label: '联系电话', required: true, hideInReplyForm: true },

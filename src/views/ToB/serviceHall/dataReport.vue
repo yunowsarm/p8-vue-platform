@@ -1,44 +1,8 @@
-<template><data-report-board :config="config" /></template>
+<!-- ToB 数据上报路由入口：以用户模式复用服务大厅共享申请页面。 -->
+<template><service-application-page feature="dataReport" mode="user" /></template>
 
 <script>
-import DataReportBoard from './components/DataReportBoard'
+import ServiceApplicationPage from '@/features/service-hall/ServiceApplicationPage'
 
-export default {
-  name: 'DataReport',
-  components: { DataReportBoard },
-  data() {
-    return {
-      config: {
-        title: '数据上报',
-        icon: 'el-icon-upload2',
-        idPrefix: 'DR',
-        listParams: { type: 0 },
-        primaryKey: 'reportType',
-        primaryLabel: '上传分类',
-        timeKey: 'reportTime',
-        contentKey: 'reportContent',
-        contentLabel: '上报内容',
-        defaultStatus: '待受理',
-        uploadField: 'uploadFiles',
-        uploadResponseField: 'uploadFiles',
-        uploadLabel: '上传文件',
-        uploadLimit: 9,
-        uploadTip: '单个文件不超过 10MB，最多上传 9 个。',
-        summaryDefinitions: [
-          { title: '全部数据上报', all: true, note: '企业数据统一归集', icon: 'el-icon-document', color: 'blue' },
-          { title: '知识产权', category: '知识产权', note: '知识产权相关材料', icon: 'el-icon-collection', color: 'orange' },
-          { title: '财务数据', category: '财务数据', note: '企业财务相关材料', icon: 'el-icon-money', color: 'cyan' },
-          { title: '员工数据', category: '员工数据', note: '企业员工相关材料', icon: 'el-icon-user', color: 'green' }
-        ],
-        fields: [
-          { key: 'companyId', label: '企业 ID', required: true },
-          { key: 'reportType', label: '上传分类', required: true, options: ['知识产权', '财务数据', '员工数据'] },
-          { key: 'reportTime', label: '上报时间', type: 'datetime', required: true },
-          { key: 'reportContent', label: '上报内容', type: 'textarea', required: true }
-        ],
-        records: []
-      }
-    }
-  }
-}
+export default { name: 'DataReport', components: { ServiceApplicationPage } }
 </script>

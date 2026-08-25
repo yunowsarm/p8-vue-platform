@@ -1,3 +1,4 @@
+// 通知公告业务定义：集中声明公告场景、字段和多端 API 配置。
 export const NOTICE_SCENE_TYPE_OPTIONS = Object.freeze(['园区动态', '企业动态', '安全提醒', '活动通知'])
 
 const createFields = (editable) => [

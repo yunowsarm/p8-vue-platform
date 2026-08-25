@@ -1,15 +1,8 @@
-<template><LifeServiceBoard :config="config" /></template>
-<script>
-import LifeServiceBoard from './components/LifeServiceBoard.vue'
-import { createTalentServiceConfig } from './components/lifeServiceConfigs'
+<!-- ToC 人才服务路由入口：以用户模式加载生活服务共享页面。 -->
+<template><life-service-page feature="talentService" mode="user" /></template>
 
-export default {
-  name: 'ToCTalentService',
-  components: { LifeServiceBoard },
-  data() {
-    return {
-      config: createTalentServiceConfig({ readOnly: true })
-    }
-  }
-}
+<script>
+import LifeServicePage from '@/features/life-services/LifeServicePage'
+
+export default { name: 'ToCTalentService', components: { LifeServicePage } }
 </script>

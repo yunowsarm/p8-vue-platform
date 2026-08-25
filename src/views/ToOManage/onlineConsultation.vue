@@ -1,14 +1,8 @@
-<template><public-service-board :config="config" /></template>
+<!-- 管理端在线咨询路由入口：以管理模式加载咨询回复共享页面。 -->
+<template><online-consultation-page mode="admin" /></template>
 
 <script>
-import PublicServiceBoard from '../ToB/publicServices/components/PublicServiceBoard'
-import { createOnlineConsultationConfig } from '../ToB/publicServices/components/onlineConsultationConfig'
+import OnlineConsultationPage from '@/features/public-services/online-consultation/OnlineConsultationPage'
 
-export default {
-  name: 'ToOOnlineConsultation',
-  components: { PublicServiceBoard },
-  data() {
-    return { config: createOnlineConsultationConfig({ replyMode: true }) }
-  }
-}
+export default { name: 'ToOOnlineConsultation', components: { OnlineConsultationPage } }
 </script>
