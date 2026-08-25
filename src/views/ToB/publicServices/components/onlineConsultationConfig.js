@@ -13,6 +13,7 @@ export const createOnlineConsultationConfig = ({ replyMode = false } = {}) => ({
   title: '在线咨询',
   itemName: '咨询',
   icon: 'el-icon-service',
+  detailHeroClass: 'online-consultation-detail-icon',
   description: '提交园区服务咨询，由专员受理、回复并形成可追踪的服务记录。',
   idPrefix: 'OC',
   apiNamespace: 'tobOnlineConsult',

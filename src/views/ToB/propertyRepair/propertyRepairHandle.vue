@@ -32,7 +32,14 @@
             <span class="order-code">{{ repairCode(row) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="type" label="报修类型" min-width="120" />
+        <el-table-column label="报修类型" min-width="140">
+          <template slot-scope="{ row }">
+            <span class="repair-type-cell">
+              <img :src="repairTypeIcon(row.type)" alt="" />
+              {{ row.type || '物业报修' }}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="location" label="报修地点" min-width="160" show-overflow-tooltip />
         <el-table-column label="联系人" min-width="150">
           <template slot-scope="{ row }">
@@ -72,7 +79,7 @@
       <div v-if="selectedRecord" class="drawer-layout">
         <div class="drawer-scroll">
           <div class="detail-hero">
-            <span><i class="el-icon-s-tools"></i></span>
+            <span class="detail-type-icon"><img :src="repairTypeIcon(selectedRecord.type)" alt="" /></span>
             <div class="detail-hero-content">
               <small class="detail-code">
                 <i class="el-icon-document"></i>
@@ -96,24 +103,24 @@
             <p>{{ selectedRecord.description || '暂无描述' }}</p>
           </section>
           <section class="detail-section">
-            <h4>报修附件</h4>
+            <h4>处理前附件</h4>
             <div v-if="componentFiles.length" class="file-list">
               <button v-for="file in componentFiles" :key="file.id || file.filePath" type="button" class="file-link" :disabled="!file.id" @click="downloadFile(file)">
                 <i class="el-icon-paperclip"></i>
                 {{ file.fileName || file.name || '附件' }}
               </button>
             </div>
-            <p v-else>未上传附件</p>
+            <p v-else>暂无附件</p>
           </section>
           <section class="detail-section">
-            <h4>处理结果附件</h4>
+            <h4>处理后附件</h4>
             <div v-if="resultFiles.length" class="file-list">
               <button v-for="file in resultFiles" :key="file.id || file.filePath" type="button" class="file-link" :disabled="!file.id" @click="downloadFile(file)">
                 <i class="el-icon-paperclip"></i>
                 {{ file.fileName || file.name || '附件' }}
               </button>
             </div>
-            <p v-else>未上传处理附件</p>
+            <p v-else>暂无附件</p>
           </section>
           <section class="detail-section">
             <h4>处理信息</h4>
@@ -204,6 +211,8 @@
 </template>
 
 <script>
+import repairTypeIcon from './repairTypeIcons'
+
 export default {
   name: 'PropertyRepairHandle',
   data() {
@@ -283,6 +292,7 @@ export default {
     this.loadRecords()
   },
   methods: {
+    repairTypeIcon,
     unwrap(response) {
       // 工单实体本身有 result（处理结果）字段；带 id 时必须保留整个实体。
       if (response && !response.id && response.result !== undefined && response.result !== null) return response.result
@@ -529,9 +539,16 @@ export default {
         .split(/[,，]/)
         .map((item) => item.trim())
         .filter(Boolean)
-      const files = record && record.uploadFiles
+      let files = record && record.uploadFiles
+      if (typeof files === 'string') {
+        try {
+          files = JSON.parse(files)
+        } catch (error) {
+          files = []
+        }
+      }
       if (!Array.isArray(files)) return []
-      return paths.length ? files.filter((file) => paths.includes(file.filePath)) : []
+      return paths.length ? this.normalizeUploadFiles(files).filter((file) => paths.includes(file.filePath)) : []
     },
     async downloadFile(file) {
       if (!file.id || !this.$api || !this.$api['attachment.download']) return
@@ -732,9 +749,24 @@ export default {
   width: 44px;
   height: 44px;
   border-radius: 11px;
-  background: #0f766e;
-  color: #fff;
-  font-size: 18px;
+  background: #fff;
+}
+.detail-type-icon img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+.repair-type-cell {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  gap: 6px;
+}
+.repair-type-cell img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex: 0 0 auto;
 }
 .detail-hero-content {
   min-width: 0;

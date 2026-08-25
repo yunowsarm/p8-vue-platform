@@ -45,7 +45,7 @@
           </div>
           <div class="card-title">
             <strong>
-              <i class="el-icon-s-tools"></i>
+              <img class="repair-type-icon" :src="repairTypeIcon(item.type)" alt="" />
               {{ item.type || '物业报修' }}
             </strong>
             <time>{{ displayTime(item) }}</time>
@@ -136,7 +136,7 @@
       <div v-if="selectedRecord" class="drawer-layout">
         <div class="drawer-scroll">
           <div class="detail-hero">
-            <span><i class="el-icon-s-tools"></i></span>
+            <span class="detail-type-icon"><img :src="repairTypeIcon(selectedRecord.type)" alt="" /></span>
             <div>
               <small>{{ repairCode(selectedRecord) }}</small>
               <h3>{{ selectedRecord.type || '物业报修' }}</h3>
@@ -155,16 +155,28 @@
             <p>{{ selectedRecord.description || '暂无描述' }}</p>
           </section>
           <section class="detail-section">
-            <h4>附件</h4>
-            <div v-if="detailUploadFiles.length" class="detail-files">
-              <div v-for="file in detailUploadFiles" :key="file.uid || file.id || file.filePath || file.fileName" class="detail-file-item">
+            <h4>处理前附件</h4>
+            <div v-if="detailBeforeFiles.length" class="detail-files">
+              <div v-for="file in detailBeforeFiles" :key="file.uid || file.id || file.filePath || file.fileName" class="detail-file-item">
                 <span :class="{ 'file-download-link': file.id }" @click="file.id && handleImageDownload(file)">
                   <i class="el-icon-picture-outline"></i>
-                  {{ file.name || file.fileName || '图片附件' }}
+                  {{ file.name || file.fileName || '附件' }}
                 </span>
               </div>
             </div>
-            <p v-else>未上传图片</p>
+            <p v-else>暂无附件</p>
+          </section>
+          <section class="detail-section">
+            <h4>处理后附件</h4>
+            <div v-if="detailAfterFiles.length" class="detail-files">
+              <div v-for="file in detailAfterFiles" :key="file.uid || file.id || file.filePath || file.fileName" class="detail-file-item">
+                <span :class="{ 'file-download-link': file.id }" @click="file.id && handleImageDownload(file)">
+                  <i class="el-icon-picture-outline"></i>
+                  {{ file.name || file.fileName || '附件' }}
+                </span>
+              </div>
+            </div>
+            <p v-else>暂无附件</p>
           </section>
           <section class="detail-section">
             <h4>处理进度</h4>
@@ -189,6 +201,8 @@
 </template>
 
 <script>
+import repairTypeIcon from './repairTypeIcons'
+
 export default {
   name: 'PropertyRepair',
   data() {
@@ -259,8 +273,11 @@ export default {
     progressIndex() {
       return this.statusValue(this.selectedRecord && this.selectedRecord.status)
     },
-    detailUploadFiles() {
-      return this.componentUploadFiles(this.selectedRecord)
+    detailBeforeFiles() {
+      return this.filesForRecord(this.selectedRecord, 'file1')
+    },
+    detailAfterFiles() {
+      return this.filesForRecord(this.selectedRecord, 'file2')
     }
   },
   created() {
@@ -268,6 +285,7 @@ export default {
     this.loadRecords()
   },
   methods: {
+    repairTypeIcon,
     unwrap(response) {
       // 报修记录自身也有 result 字段（可能为 null），不能将其误识别为接口包装。
       if (response && !response.id && response.result !== undefined && response.result !== null) return response.result
@@ -450,7 +468,10 @@ export default {
       })
     },
     componentUploadFiles(record) {
-      const filePaths = this.filePathList(record && record.file1)
+      return this.filesForRecord(record, 'file1')
+    },
+    filesForRecord(record, pathField) {
+      const filePaths = this.filePathList(record && record[pathField])
       if (!filePaths.length) return []
       return this.normalizeUploadFiles(record && record.uploadFiles).filter((file) => filePaths.includes(file.filePath))
     },
@@ -690,10 +711,21 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.repair-code i,
-.card-title i {
+.repair-code i {
   margin-right: 4px;
   color: #2e7cdf;
+}
+.card-title strong {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+.repair-type-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+  object-fit: contain;
+  flex: 0 0 auto;
 }
 .card-status {
   display: flex;
@@ -935,8 +967,12 @@ export default {
   width: 38px;
   height: 38px;
   border-radius: 9px;
-  background: #2f7cdf;
-  color: #fff;
+  background: #fff;
+}
+.detail-type-icon img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 .detail-hero > div {
   min-width: 0;

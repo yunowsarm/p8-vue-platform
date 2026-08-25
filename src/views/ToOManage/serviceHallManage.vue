@@ -24,6 +24,16 @@ const managementOptions = {
   showSummary: false
 }
 
+const serviceStatusTransitions = {
+  待受理: ['处理中', '已关闭'],
+  处理中: ['已完成', '已关闭']
+}
+
+const reviewStatusTransitions = {
+  待审核: ['处理中', '已拒绝', '已关闭'],
+  处理中: ['已通过', '已拒绝', '已关闭']
+}
+
 const createConfig = (config) => Object.assign({}, managementOptions, config)
 
 export default {
@@ -49,16 +59,22 @@ export default {
             timeKey: 'submitTime',
             contentKey: 'content',
             contentLabel: '内容',
-            defaultStatus: '待受理',
-            statusOptions: ['待受理', '处理中', '已完成', '已关闭'],
+            defaultStatus: '待回复',
+            pendingStatuses: ['待回复', '待受理'],
+            statusOptions: ['待回复', '已回复'],
+            allowStatusChange: false,
+            allowEdit: true,
+            replyMode: true,
+            replyStatus: '已回复',
+            editActionLabel: '回复',
             fields: [
-              { key: 'companyId', label: '企业', required: true },
-              { key: 'contactName', label: '联系人', required: true },
-              { key: 'contactPhone', label: '联系电话', required: true },
-              { key: 'type', label: '类型', type: 'select', required: true, options: ['建议', '投诉'] },
-              { key: 'submitTime', label: '提交时间', type: 'datetime', required: true },
-              { key: 'content', label: '内容', type: 'textarea', required: true },
-              { key: 'reply', label: '回复内容', type: 'textarea' }
+              { key: 'companyId', label: '企业', required: true, hideInReplyForm: true },
+              { key: 'contactName', label: '联系人', required: true, hideInReplyForm: true },
+              { key: 'contactPhone', label: '联系电话', required: true, hideInReplyForm: true },
+              { key: 'type', label: '类型', type: 'select', required: true, options: ['建议', '投诉'], hideInReplyForm: true },
+              { key: 'submitTime', label: '提交时间', type: 'datetime', required: true, hideInReplyForm: true },
+              { key: 'content', label: '内容', type: 'textarea', required: true, hideInReplyForm: true },
+              { key: 'reply', label: '回复内容', type: 'textarea', required: true }
             ]
           })
         },
@@ -78,6 +94,7 @@ export default {
             contentLabel: '需求内容',
             defaultStatus: '待受理',
             statusOptions: ['待受理', '处理中', '已完成', '已关闭'],
+            statusTransitions: serviceStatusTransitions,
             fields: [
               { key: 'companyId', label: '企业 ID', required: true },
               { key: 'requestType', label: '需求类型', required: true, options: ['政务服务咨询', '企业运营服务', '人才与招聘服务', '政策申报服务', '场地与设施服务', '其他服务'] },
@@ -106,6 +123,7 @@ export default {
             contentLabel: '上报内容',
             defaultStatus: '待受理',
             statusOptions: ['待受理', '处理中', '已完成', '已关闭'],
+            statusTransitions: serviceStatusTransitions,
             fields: [
               { key: 'companyId', label: '企业 ID', required: true },
               { key: 'reportType', label: '上传分类', required: true, options: ['知识产权', '财务数据', '员工数据'] },
@@ -130,6 +148,7 @@ export default {
             contentLabel: '宣传内容',
             defaultStatus: '待审核',
             statusOptions: ['待审核', '处理中', '已通过', '已拒绝', '已关闭'],
+            statusTransitions: reviewStatusTransitions,
             fields: [
               { key: 'companyId', label: '企业 ID', required: true },
               { key: 'promotionChannel', label: '宣传渠道', required: true, options: ['园区公众号', '园区官网', '媒体专栏', '线下活动'] },
@@ -156,6 +175,7 @@ export default {
             contentLabel: '申请原因',
             defaultStatus: '待审核',
             statusOptions: ['待审核', '处理中', '已通过', '已拒绝', '已关闭'],
+            statusTransitions: reviewStatusTransitions,
             fields: [
               { key: 'companyId', label: '企业 ID', required: true },
               { key: 'qualificationType', label: '资质类型', required: true, options: ['高新技术企业', '专精特新企业', '科技型中小企业', '创新型中小企业'] },
@@ -182,6 +202,7 @@ export default {
             contentLabel: '对接内容',
             defaultStatus: '待受理',
             statusOptions: ['待受理', '处理中', '已完成', '已关闭'],
+            statusTransitions: serviceStatusTransitions,
             fields: [
               { key: 'companyId', label: '企业 ID', required: true },
               { key: 'resourceType', label: '资源类型', required: true, options: ['技术资源', '人才资源', '金融资源', '市场资源', '场地资源'] },

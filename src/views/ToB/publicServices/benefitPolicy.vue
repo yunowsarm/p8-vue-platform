@@ -27,7 +27,7 @@
         </el-input>
       </div>
 
-      <div v-if="records.length" class="policy-grid" role="tabpanel">
+      <div v-loading="loading" v-if="records.length" class="policy-grid" role="tabpanel">
         <article v-for="item in records" :key="item.id" class="policy-card">
           <button type="button" class="policy-card__button" :aria-label="`打开政策：${item.title}`" @click="openPolicy(item)">
             <div class="card-heading">
@@ -212,6 +212,11 @@ const MOCK_RECORDS = {
   ]
 }
 
+const POLICY_API_PATHS = {
+  policy: '/gov-policy/zhengce/qiye/trssearch/search/all',
+  unscramble: '/gov-policy/zhengce/qiye/trssearch/search/unscramble'
+}
+
 export default {
   name: 'BenefitPolicy',
   data() {
@@ -220,24 +225,17 @@ export default {
       searchWord: '',
       currentPage: 1,
       pageSize: 10,
+      loading: false,
+      records: [],
+      total: 0,
       tabs: [
         { key: 'policy', label: '惠企政策', icon: 'el-icon-document' },
         { key: 'unscramble', label: '政策解读', icon: 'el-icon-reading' }
       ]
     }
   },
-  computed: {
-    filteredRecords() {
-      const keyword = this.searchWord.toLowerCase()
-      return MOCK_RECORDS[this.activeTab].filter((item) => !keyword || `${item.title}${item.docAbstract}${item.publishDept}`.toLowerCase().includes(keyword))
-    },
-    records() {
-      const start = (this.currentPage - 1) * this.pageSize
-      return this.filteredRecords.slice(start, start + this.pageSize)
-    },
-    total() {
-      return this.filteredRecords.length
-    }
+  created() {
+    this.loadRecords()
   },
   methods: {
     changeTab(tab) {
@@ -245,12 +243,67 @@ export default {
       this.activeTab = tab
       this.searchWord = ''
       this.currentPage = 1
+      this.loadRecords()
     },
     search() {
       this.currentPage = 1
+      this.loadRecords()
     },
     changePage(page) {
       this.currentPage = page
+      this.loadRecords()
+    },
+    requestPayload() {
+      return {
+        dbname: '',
+        currpage: this.currentPage,
+        pagesize: this.pageSize,
+        searchWord: this.searchWord,
+        searchField: 'title',
+        searchSort: 'time',
+        docType: this.activeTab === 'policy' ? '1' : '2',
+        publishDept: '',
+        hqType: '',
+        enterpriseType: '',
+        enterpriseScale: '',
+        lifeCycle: 0
+      }
+    },
+    normalizeRecords(records) {
+      return (Array.isArray(records) ? records : []).map((item, index) =>
+        Object.assign({}, item, {
+          id: item.id || `${item.url || item.title || 'policy'}-${this.currentPage}-${index}`,
+          docAbstract: item.docAbstract || item.content || '暂无摘要'
+        })
+      )
+    },
+    loadMockRecords() {
+      const keyword = this.searchWord.toLowerCase()
+      const filtered = MOCK_RECORDS[this.activeTab].filter((item) => !keyword || `${item.title}${item.docAbstract}${item.publishDept}`.toLowerCase().includes(keyword))
+      const start = (this.currentPage - 1) * this.pageSize
+      this.records = this.normalizeRecords(filtered.slice(start, start + this.pageSize))
+      this.total = filtered.length
+    },
+    async loadRecords() {
+      const request = this.$axios
+      if (!request) {
+        this.loadMockRecords()
+        return
+      }
+      this.loading = true
+      try {
+        const response = await request.post(POLICY_API_PATHS[this.activeTab], this.requestPayload())
+        const result = response && response.data !== undefined ? response.data : response
+        if (!result || Number(result.code) !== 0) throw new Error('政策接口返回异常')
+        const data = result.data || {}
+        this.records = this.normalizeRecords(data.list)
+        this.total = Number(data.totalRecords || this.records.length)
+      } catch (error) {
+        this.loadMockRecords()
+        this.$message.warning('政策服务暂不可用，已展示模拟数据')
+      } finally {
+        this.loading = false
+      }
     },
     openPolicy(item) {
       if (item.url) window.open(item.url, '_blank', 'noopener,noreferrer')

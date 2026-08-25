@@ -16,6 +16,21 @@ module.exports = defineConfig({
   devServer: {
     client: {
       overlay: false
+    },
+    proxy: {
+      // 中国政府网未开放浏览器跨域访问，开发环境通过同源代理转发。
+      '/gov-policy': {
+        target: 'https://www.gov.cn',
+        changeOrigin: true,
+        secure: true,
+        pathRewrite: { '^/gov-policy': '' },
+        onProxyReq(proxyReq) {
+          // 不向第三方站点透传平台登录态及内部版本信息。
+          proxyReq.removeHeader('authorization')
+          proxyReq.removeHeader('cookie')
+          proxyReq.removeHeader('version')
+        }
+      }
     }
   },
   chainWebpack(config) {

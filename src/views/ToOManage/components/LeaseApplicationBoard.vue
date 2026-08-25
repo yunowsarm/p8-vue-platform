@@ -203,7 +203,7 @@
       <div v-if="selectedRecord" class="drawer-layout">
         <div class="drawer-scroll">
           <div class="detail-hero">
-            <span :class="['hero-icon', config.detailHeroClass]"><i :class="config.icon"></i></span>
+            <span class="hero-icon"><i :class="config.icon"></i></span>
             <div>
               <small>{{ selectedRecord.id }}</small>
               <h3>{{ formatFieldValue(selectedRecord[config.detailTitleKey || config.cardTitleKey || config.primaryKey], config.detailTitleKey || config.cardTitleKey || config.primaryKey) }}</h3>
@@ -269,7 +269,7 @@ const now = () => {
 }
 
 export default {
-  name: 'ServiceApplicationBoard',
+  name: 'LeaseApplicationBoard',
   props: { config: { type: Object, required: true } },
   data() {
     return {

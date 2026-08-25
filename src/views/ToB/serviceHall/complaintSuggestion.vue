@@ -20,7 +20,7 @@ export default {
         timeKey: 'submitTime',
         contentKey: 'content',
         contentLabel: '内容',
-        defaultStatus: '待受理',
+        defaultStatus: '待回复',
         fields: [
           { key: 'companyId', label: '企业', required: true },
           { key: 'contactName', label: '联系人', required: true },
@@ -28,7 +28,7 @@ export default {
           { key: 'type', label: '类型', type: 'select', required: true, options: ['建议', '投诉'] },
           { key: 'submitTime', label: '提交时间', type: 'datetime', required: true },
           { key: 'content', label: '内容', type: 'textarea', required: true },
-          { key: 'reply', label: '回复内容', type: 'textarea' }
+          { key: 'reply', label: '回复内容', type: 'textarea', hideInCreateForm: true }
         ],
         records: []
       }
