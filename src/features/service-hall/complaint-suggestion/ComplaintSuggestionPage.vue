@@ -1,4 +1,4 @@
-<!-- 建议投诉业务组件：独立维护投诉建议的页面结构、字段定义、回复规则和接口命名空间。 -->
+<!-- 诉求反馈业务组件：独立维护建议、投诉和服务需求的页面结构、回复规则及接口命名空间。 -->
 <template>
   <main class="record-feature-page">
     <header class="record-feature-hero">
@@ -9,7 +9,7 @@
           <p>{{ resource.description }}</p>
         </div>
       </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增建议投诉</el-button>
+      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增诉求</el-button>
     </header>
 
     <section v-loading="loading" class="record-feature-surface">
@@ -57,7 +57,7 @@
           </div>
         </article>
       </div>
-      <el-empty v-else class="record-feature-empty" description="暂无建议投诉记录" />
+      <el-empty v-else class="record-feature-empty" description="暂无诉求反馈记录" />
       <div v-if="paginationTotal" class="record-feature-pagination">
         <span>共 {{ paginationTotal }} 条</span>
         <el-pagination background :current-page.sync="currentPage" :page-size="pageSize" :total="paginationTotal" layout="prev, pager, next" @current-change="loadRecords" />
@@ -83,7 +83,7 @@
       </span>
     </el-dialog>
 
-    <el-drawer title="建议投诉详情" :visible.sync="detailVisible" size="520px" append-to-body>
+    <el-drawer title="诉求反馈详情" :visible.sync="detailVisible" size="520px" append-to-body>
       <div v-if="selectedRecord" v-loading="detailLoading" class="record-feature-detail">
         <div class="record-feature-detail__hero">
           <i :class="resource.icon"></i>
@@ -119,38 +119,53 @@
 import BusinessRecordField from '@/components/business/record-fields/BusinessRecordField'
 import recordManager from '@/features/_shared/record-management/recordManager'
 
+const currentTime = () => {
+  const date = new Date()
+  const pad = (value) => String(value).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+}
+
 export default {
   name: 'ComplaintSuggestionPage',
   components: { BusinessRecordField },
   mixins: [recordManager],
   props: { mode: { type: String, default: 'user' } },
+  data() {
+    return { readUpdatingIds: [] }
+  },
   computed: {
     resource() {
       return {
-        title: '建议投诉',
-        itemName: '建议投诉',
-        description: this.mode === 'admin' ? '受理并回复企业提交的建议和投诉。' : '提交园区服务建议或投诉，并查看回复进度。',
+        title: '诉求反馈',
+        itemName: '诉求反馈',
+        description: this.mode === 'admin' ? '受理并回复企业提交的建议、投诉和服务需求。' : '提交园区服务建议、投诉或服务需求，并查看回复进度。',
         icon: 'el-icon-chat-dot-round',
         idPrefix: 'SC',
         apiNamespace: 'feedbackComplaint',
+        listParams: { order: this.mode === 'admin' ? 1 : 0 },
         primaryKey: 'type',
         timeKey: 'submitTime',
         contentKey: 'content',
         contentLabel: '内容',
         cardFields: [
           { key: 'contactName', label: '联系人' },
-          { key: 'submitTime', label: '提交时间' }
+          { key: 'submitTime', label: '提交时间' },
+          { key: 'createByName', label: '企业名称' }
         ],
         defaultStatus: '待回复',
-        statusOptions: ['待回复', '已回复'],
+        statusMap: { null: '待回复', 0: '待回复', 1: '已阅', 2: '已回复' },
+        statusValueMap: { 待回复: 0, 已阅: 1, 已回复: 2 },
+        listStatusValueMap: { 待回复: 0, 已阅: 1, 已回复: 2 },
+        statusOptions: ['待回复', '已阅', '已回复'],
         replyMode: this.mode === 'admin',
         replyStatus: '已回复',
+        payloadTransform: (payload) => Object.assign({}, payload, { status: { 待回复: 0, 已阅: 1, 已回复: 2 }[payload.status] ?? payload.status }),
         editActionLabel: this.mode === 'admin' ? '回复' : '编辑',
         fields: [
-          { key: 'companyId', label: '企业', required: true, hideInReplyForm: true },
+          // { key: 'companyId', label: '企业', required: true, hideInReplyForm: true },
           { key: 'contactName', label: '联系人', required: true, hideInReplyForm: true },
           { key: 'contactPhone', label: '联系电话', required: true, hideInReplyForm: true },
-          { key: 'type', label: '类型', required: true, options: ['建议', '投诉'], hideInReplyForm: true },
+          { key: 'type', label: '类型', required: true, options: ['建议', '投诉', '服务需求'], hideInReplyForm: true },
           { key: 'submitTime', label: '提交时间', type: 'datetime', required: true, hideInReplyForm: true },
           { key: 'content', label: '内容', type: 'textarea', required: true, hideInReplyForm: true, wide: true },
           { key: 'reply', label: '回复内容', type: 'textarea', required: true, hideInCreateForm: true, hideInDetail: true, wide: true }
@@ -161,6 +176,44 @@ export default {
       if (this.mode === 'admin') return { create: false, edit: true, delete: true, changeStatus: false }
       if (this.mode === 'readonly') return { create: false, edit: false, delete: false, changeStatus: false }
       return { create: true, edit: true, delete: true, changeStatus: false }
+    }
+  },
+  methods: {
+    statusType(status) {
+      return { 待回复: 'warning', 已阅: 'info', 已回复: 'success' }[status] || 'info'
+    },
+    async openDetail(record) {
+      if (!record) return
+      this.selectedRecord = this.normalizeRecord(record)
+      this.detailVisible = true
+      const detailApi = this.api('queryById')
+      if (detailApi) {
+        this.detailLoading = true
+        try {
+          const result = this.unwrap(await detailApi({ id: record.id }))
+          if (result) this.selectedRecord = this.normalizeRecord(Object.assign({}, record, result))
+        } catch (error) {
+          // 详情接口异常时保留列表基础信息，侧边栏仍然保持打开。
+        } finally {
+          this.detailLoading = false
+        }
+      }
+      if (this.mode === 'admin' && this.statusText(this.selectedRecord.status) === '待回复') await this.markAsRead(this.selectedRecord)
+    },
+    async markAsRead(record) {
+      if (!record || this.readUpdatingIds.includes(record.id)) return
+      const editApi = this.api('edit')
+      if (!editApi) return
+      this.readUpdatingIds.push(record.id)
+      try {
+        await editApi(Object.assign({}, record, { status: 1, updateBy: this.currentUserId(), itemUpdateTime: currentTime() }))
+        this.records = this.records.map((item) => (String(item.id) === String(record.id) ? Object.assign({}, item, { status: 1 }) : item))
+        if (this.selectedRecord && String(this.selectedRecord.id) === String(record.id)) this.selectedRecord = Object.assign({}, this.selectedRecord, { status: 1 })
+      } catch (error) {
+        this.$message.error('查阅状态更新失败，请稍后重试')
+      } finally {
+        this.readUpdatingIds = this.readUpdatingIds.filter((id) => id !== record.id)
+      }
     }
   }
 }

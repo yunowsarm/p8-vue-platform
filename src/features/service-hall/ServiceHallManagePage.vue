@@ -1,4 +1,4 @@
-<!-- 服务大厅管理聚合页：只负责切换六个独立业务组件，不承载具体业务字段和操作规则。 -->
+<!-- 服务大厅管理聚合页：切换五个独立业务组件，服务需求统一归入诉求反馈。 -->
 <template>
   <main class="service-hall-manage">
     <section class="manage-surface">
@@ -21,11 +21,9 @@ import DataReportPage from './data-report/DataReportPage'
 import MediaPromotionPage from './media-promotion/MediaPromotionPage'
 import QualificationRecognitionPage from './qualification-recognition/QualificationRecognitionPage'
 import ResourceConnectionPage from './resource-connection/ResourceConnectionPage'
-import ServiceRequestPage from './service-request/ServiceRequestPage'
 
 const SERVICE_TABS = [
-  { name: 'complaint-suggestion', label: '建议投诉', icon: 'el-icon-chat-dot-round', component: ComplaintSuggestionPage },
-  { name: 'service-request', label: '服务需求', icon: 'el-icon-service', component: ServiceRequestPage },
+  { name: 'complaint-suggestion', label: '诉求反馈', icon: 'el-icon-chat-dot-round', component: ComplaintSuggestionPage },
   { name: 'data-report', label: '数据上报', icon: 'el-icon-upload2', component: DataReportPage },
   { name: 'media-promotion', label: '媒体宣传', icon: 'el-icon-picture-outline', component: MediaPromotionPage },
   { name: 'qualification-recognition', label: '资质认定', icon: 'el-icon-medal', component: QualificationRecognitionPage },
