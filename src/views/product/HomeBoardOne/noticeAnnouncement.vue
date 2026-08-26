@@ -1,4 +1,4 @@
-<!-- 首页通知公告组件：展示公告列表、详情内容以及按文件类型区分的附件下载链接。 -->
+<!-- 首页通知公告组件：按配置范围展示公告列表、详情内容以及附件下载链接，默认加载对内公告。 -->
 <template>
   <section class="notice-announcement" aria-label="通知公告">
     <header class="notice-announcement__header">
@@ -77,6 +77,9 @@ const sceneIcons = {
 
 export default {
   name: 'HomeNoticeAnnouncement',
+  props: {
+    noticeType: { type: Number, default: 0 }
+  },
   data() {
     return {
       loading: false,
@@ -107,7 +110,7 @@ export default {
       if (!this.$api || !this.$api['tobPublicNotice.list']) return
       this.loading = true
       try {
-        const result = this.unwrap(await this.$api['tobPublicNotice.list']({ pageNo: 1, pageSize: 5 }))
+        const result = this.unwrap(await this.$api['tobPublicNotice.list']({ pageNo: 1, pageSize: 5, type: this.noticeType }))
         this.notices = this.recordsFrom(result).slice(0, 5)
       } catch (error) {
         this.notices = []

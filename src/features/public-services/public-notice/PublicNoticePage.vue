@@ -1,4 +1,4 @@
-<!-- 通知公告业务组件：独立维护公告展示、附件、发布表单和管理端操作权限。 -->
+<!-- 通知公告业务组件：根据入口配置加载指定范围公告，并维护展示、附件、发布表单和管理权限。 -->
 <template>
   <main class="record-feature-page">
     <header class="record-feature-hero">
@@ -130,13 +130,17 @@ import BusinessAttachmentField from '@/components/business/record-fields/Busines
 import BusinessRecordField from '@/components/business/record-fields/BusinessRecordField'
 import recordManager from '@/features/_shared/record-management/recordManager'
 import { getFileTypeIcon } from '@/utils/fileTypeIcon'
-import { NOTICE_SCENE_TYPE_OPTIONS } from './definition'
+import { NOTICE_SCENE_TYPE_OPTIONS, NOTICE_VISIBILITY_OPTIONS } from './definition'
 
 export default {
   name: 'PublicNoticePage',
   components: { BusinessAttachmentField, BusinessRecordField },
   mixins: [recordManager],
-  props: { mode: { type: String, default: 'viewer' }, apiNamespace: { type: String, required: true } },
+  props: {
+    mode: { type: String, default: 'viewer' },
+    apiNamespace: { type: String, required: true },
+    noticeType: { type: Number, default: null }
+  },
   computed: {
     resource() {
       return {
@@ -145,6 +149,7 @@ export default {
         icon: 'el-icon-bell',
         idPrefix: 'NO',
         apiNamespace: this.apiNamespace,
+        listParams: this.noticeType === null ? {} : { type: this.noticeType },
         primaryKey: 'title',
         filterKey: 'sceneType',
         timeKey: 'publishTime',
@@ -157,6 +162,7 @@ export default {
         fields: [
           { key: 'title', label: '公告标题', required: true, wide: true },
           { key: 'sceneType', label: '公告场景', required: true, options: NOTICE_SCENE_TYPE_OPTIONS },
+          { key: 'status', label: '可见范围', required: true, defaultValue: 0, options: NOTICE_VISIBILITY_OPTIONS },
           { key: 'createByName', label: '发布人', hideInForm: true },
           { key: 'publishTime', label: '发布时间', type: 'datetime', hideInForm: true },
           { key: 'content', label: '公告内容', type: 'textarea', required: true, wide: true }
