@@ -133,36 +133,21 @@ import { getFileTypeIcon } from '@/utils/fileTypeIcon'
 import { NOTICE_SCENE_TYPE_OPTIONS, NOTICE_VISIBILITY_OPTIONS } from './definition'
 
 const normalizeNoticeFiles = (value) => {
-  let files = value
-  if (typeof files === 'string') {
-    try {
-      files = JSON.parse(files)
-    } catch (error) {
-      files = [files]
-    }
-  }
-  if (!Array.isArray(files)) files = files ? [files] : []
-  return files.filter(Boolean).map((item, index) => {
-    const file = typeof item === 'string' ? { filePath: item } : Object.assign({}, item)
-    const filePath = file.filePath || file.fileUrl || file.url || ''
-    const name = file.name || file.fileName || file.originalFileName || file.originalName || file.attachmentName || file.attFileName || filePath.split(/[\\/]/).pop() || `附件${index + 1}`
-    return Object.assign({}, file, {
-      name,
-      fileName: file.fileName || name,
-      uid: file.uid || file.attachmentId || file.id || file.fileId || `notice-file-${index}`,
-      url: file.url || file.fileUrl || file.filePath || '',
+  if (!Array.isArray(value)) return []
+  return value.map((file, index) =>
+    Object.assign({}, file, {
+      name: file.name || file.fileName,
+      uid: file.uid || file.attachmentId || file.id || `notice-file-${index}`,
       status: file.status || 'success'
     })
-  })
+  )
 }
 
 const normalizeNoticeRecord = (record) => {
   const normalized = Object.assign({}, record)
   const status = Number(normalized.status)
-  const fileCandidates = [normalized.uploadFiles, normalized.attachmentList, normalized.attachments, normalized.files, normalized.fileList]
-  const files = fileCandidates.find((value) => (Array.isArray(value) ? value.length : Boolean(value))) || normalized.uploadFiles
   normalized.status = [0, 1].includes(status) ? status : 0
-  normalized.uploadFiles = normalizeNoticeFiles(files)
+  normalized.uploadFiles = normalizeNoticeFiles(normalized.uploadFiles)
   return normalized
 }
 
