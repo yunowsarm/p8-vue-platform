@@ -13,10 +13,34 @@ const typeFieldKeys = Object.freeze({
   expand: ['currentArea', 'expansionArea', 'expectedStartDate', 'intendedLocation']
 })
 
+const normalizeLeaseFiles = (value) => {
+  let files = value
+  if (typeof files === 'string') {
+    try {
+      files = JSON.parse(files)
+    } catch (error) {
+      files = [files]
+    }
+  }
+  if (!Array.isArray(files)) files = files ? [files] : []
+  return files.filter(Boolean).map((item, index) => {
+    const file = typeof item === 'string' ? { filePath: item } : Object.assign({}, item)
+    const filePath = file.filePath || file.fileUrl || file.url || ''
+    const name = file.name || file.fileName || file.originalFileName || file.originalName || file.attachmentName || file.attFileName || filePath.split(/[\\/]/).pop() || `附件${index + 1}`
+    return Object.assign({}, file, {
+      name,
+      fileName: file.fileName || name,
+      uid: file.uid || file.attachmentId || file.id || file.fileId || `lease-file-${index}`,
+      url: file.url || file.fileUrl || file.filePath || ''
+    })
+  })
+}
+
 const normalizeLeaseRecord = (record) => {
   const normalized = Object.assign({}, record)
   normalized.applyType = typeValueMap[normalized.applyType] || normalized.applyType
   normalized.applyReason = normalized.applyReason || normalized.vacateReason || normalized.expansionPurposeReason || ''
+  normalized.uploadFiles = normalizeLeaseFiles(normalized.uploadFiles)
   return normalized
 }
 
@@ -56,15 +80,15 @@ const leaseDefinition = Object.freeze({
   hideCompany: true,
   showSummary: false,
   loadDetailBeforeEdit: true,
-  defaultStatus: '待处理',
-  statusMap: { null: '待处理', 0: '待处理', 1: '已完成', 2: '已驳回', 3: '处理中' },
-  statusValueMap: { 待处理: '0', 处理中: '3', 已完成: '1', 已驳回: '2' },
-  listStatusValueMap: { 待处理: '0', 处理中: '3', 已完成: '1', 已驳回: '2' },
-  pendingStatuses: ['待处理'],
-  statusOptions: ['待处理', '处理中', '已完成', '已驳回'],
-  statusTransitions: { 待处理: ['处理中'], 处理中: ['已完成', '已驳回'] },
+  defaultStatus: '待查阅',
+  statusMap: { null: '待查阅', 0: '待查阅', 1: '已查阅' },
+  statusValueMap: { 待查阅: '0', 已查阅: '1' },
+  listStatusValueMap: { 待查阅: '0', 已查阅: '1' },
+  pendingStatuses: ['待查阅'],
+  statusOptions: ['待查阅', '已查阅'],
+  statusTransitions: { 待查阅: ['已查阅'], 已查阅: [] },
   statusDialogTitle: '处理租赁申请',
-  statusActionLabelResolver: (record, status) => (status === '处理中' ? '完成处理' : '开始处理'),
+  statusActionLabel: '标记已查阅',
   processRemarkField: 'remark',
   processRemarkLabel: '处理意见',
   cardMetaFields: [

@@ -64,7 +64,7 @@
     </section>
 
     <el-dialog :title="formDialogTitle" :visible.sync="formVisible" top="3vh" append-to-body :close-on-click-modal="false" custom-class="record-feature-form" @closed="resetForm">
-      <el-form ref="recordForm" :model="form" :rules="rules" label-width="112px" @submit.native.prevent>
+      <el-form ref="recordForm" :model="form" :rules="rules" :validate-on-rule-change="false" label-width="112px" @submit.native.prevent>
         <div class="record-feature-form-grid">
           <business-record-field
             v-for="field in formFields"
@@ -121,19 +121,20 @@
           </div>
         </section>
         <section v-if="selectedRecord.remark" class="record-feature-detail__section">
-          <h4>处理意见</h4>
+          <h4>补充说明</h4>
           <p>{{ selectedRecord.remark }}</p>
         </section>
-        <div v-if="canChangeRecordStatus(selectedRecord) || canEditRecord(selectedRecord)" class="record-feature-card__actions">
+        <!-- <div v-if="canChangeRecordStatus(selectedRecord) || canEditRecord(selectedRecord) || canDeleteRecord(selectedRecord)" class="record-feature-card__actions">
           <div>
             <el-button v-if="canChangeRecordStatus(selectedRecord)" @click="openStatusDialog(selectedRecord)">{{ statusActionText(selectedRecord) }}</el-button>
             <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">编辑</el-button>
+            <el-button v-if="canDeleteRecord(selectedRecord)" type="danger" plain @click="removeRecord(selectedRecord)">删除</el-button>
           </div>
-        </div>
+        </div> -->
       </div>
     </el-drawer>
 
-    <el-dialog title="处理租赁申请" :visible.sync="statusVisible" width="430px" append-to-body :close-on-click-modal="false">
+    <!-- <el-dialog title="处理租赁申请" :visible.sync="statusVisible" width="430px" append-to-body :close-on-click-modal="false">
       <el-form :model="statusForm" label-width="86px">
         <el-form-item label="下一状态">
           <el-select v-model="statusForm.status" class="record-feature-full"><el-option v-for="status in availableStatusOptions" :key="status" :label="status" :value="status" /></el-select>
@@ -144,7 +145,7 @@
         <el-button @click="statusVisible = false">取消</el-button>
         <el-button type="primary" :loading="statusSubmitting" @click="saveStatus">确认处理</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
   </main>
 </template>
 
@@ -170,6 +171,9 @@ export default {
     }
   },
   methods: {
+    statusType(status) {
+      return status === '已查阅' ? 'success' : 'info'
+    },
     fileIcon(file) {
       return getFileTypeIcon(file)
     }
