@@ -29,7 +29,8 @@
           <el-option label="互动最多" value="hot" />
         </el-select>
         <div class="filter-actions">
-          <el-button size="small" icon="el-icon-refresh" @click="resetFilters">重置</el-button>
+          <el-button size="small" icon="el-icon-refresh-left" @click="resetFilters">重置</el-button>
+          <el-button size="small" icon="el-icon-refresh" :loading="loading" @click="refreshTopics">刷新</el-button>
           <el-button size="small" type="primary" icon="el-icon-search" @click="search">查询</el-button>
         </div>
       </div>
@@ -220,11 +221,25 @@ export default {
       ]
     }
   },
+  watch: {
+    '$route.query.status'(status) {
+      if (!this.applyRouteStatus(status)) return
+      this.search()
+    }
+  },
   created() {
+    this.applyRouteStatus(this.$route.query.status)
     this.loadCategories()
     this.loadTopics()
   },
   methods: {
+    applyRouteStatus(status) {
+      if (status === undefined || status === null || status === '') return false
+      const normalizedStatus = Number(status)
+      if (![0, 1, 2, 3].includes(normalizedStatus) || this.filters.status === normalizedStatus) return false
+      this.filters.status = normalizedStatus
+      return true
+    },
     unwrap(response) {
       if (response && response.data !== undefined) return response.data
       if (response && response.result !== undefined && !response.records) return response.result
@@ -251,13 +266,18 @@ export default {
         const result = this.unwrap(await this.$api['forum.topicsPage'](params)) || {}
         this.topics = Array.isArray(result) ? result : result.records || result.list || []
         this.total = Number(result.total || this.topics.length)
+        return true
       } catch (error) {
         this.topics = []
         this.total = 0
         this.$message.error('帖子列表加载失败，请稍后重试')
+        return false
       } finally {
         this.loading = false
       }
+    },
+    async refreshTopics() {
+      if (await this.loadTopics()) this.$message.success('刷新成功')
     },
     search() {
       this.currentPage = 1

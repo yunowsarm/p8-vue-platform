@@ -1,7 +1,15 @@
 <!-- 园区话题页面：维护板块浏览、帖子发布、详情互动及当前板块的发布默认值。 -->
 <template>
   <main class="park-forum">
-    <forum-navigation :active-sort="activeSort" :keyword.sync="keyword" :sort-tabs="sortTabs" @set-sort="setSort" @search="searchTopics" @publish="openPublish" />
+    <forum-navigation
+      :active-sort="activeSort"
+      :keyword.sync="keyword"
+      :sort-tabs="sortTabs"
+      :refreshing="topicsLoading || myTopicsLoading"
+      @set-sort="setSort"
+      @search="searchTopics"
+      @refresh="refreshTopics"
+      @publish="openPublish" />
 
     <section class="forum-layout">
       <forum-category-panel
@@ -302,12 +310,14 @@ export default {
         const records = (page.records || []).map((item) => this.normalizeTopic(item))
         this.topics = append ? this.topics.concat(records) : records
         this.topicTotal = Number(page.total || 0)
+        return true
       } catch (error) {
         if (!append) {
           this.topics = []
           this.topicTotal = 0
         }
         this.showRequestError(error, '帖子列表加载失败')
+        return false
       } finally {
         if (append) this.loadingMore = false
         else this.topicsLoading = false
@@ -315,16 +325,16 @@ export default {
       }
     },
     async loadMyTopics() {
-      await this.loadUserTopics('myPosts', 'myTopics', '我的帖子加载失败')
+      return this.loadUserTopics('myPosts', 'myTopics', '我的帖子加载失败')
     },
     async loadFavoriteTopics() {
-      await this.loadUserTopics('myFavorites', 'favoriteTopics', '我的收藏加载失败', true)
+      return this.loadUserTopics('myFavorites', 'favoriteTopics', '我的收藏加载失败', true)
     },
     async loadUserTopics(apiName, targetKey, errorMessage, forceFavorited = false) {
       const options = this.requireUserOptions()
       if (!options) {
         this[targetKey] = []
-        return
+        return false
       }
       this.myTopicsLoading = true
       try {
@@ -334,9 +344,11 @@ export default {
           const normalized = this.normalizeTopic(topic)
           return forceFavorited ? Object.assign(normalized, { favorited: true }) : normalized
         })
+        return true
       } catch (error) {
         this[targetKey] = []
         this.showRequestError(error, errorMessage)
+        return false
       } finally {
         this.myTopicsLoading = false
       }
@@ -486,6 +498,19 @@ export default {
     },
     searchTopics() {
       this.appliedKeyword = this.keyword
+    },
+    async refreshTopics() {
+      if (this.topicsLoading || this.myTopicsLoading) return
+      if (this.activeSort === 'myTopics') {
+        if (await this.loadMyTopics()) this.$message.success('刷新成功')
+        return
+      }
+      if (this.activeSort === 'favorites') {
+        if (await this.loadFavoriteTopics()) this.$message.success('刷新成功')
+        return
+      }
+      this.currentPage = 1
+      if (await this.loadTopics()) this.$message.success('刷新成功')
     },
     openPublish() {
       if (!this.categories.length) {
