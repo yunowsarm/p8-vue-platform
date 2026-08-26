@@ -6,6 +6,7 @@ const forumModule = {
     { name: 'categories', method: 'GET', path: '/forum/categories/list', mockPath: '/forum/categories/list', desc: '论坛版块列表' },
     { name: 'topicsPage', method: 'GET', path: '/forum/topics/page', mockPath: '/forum/topics/page', desc: '论坛帖子分页查询' },
     { name: 'topicCreate', method: 'POST', path: '/forum/topics', mockPath: '/forum/topics', desc: '发布论坛帖子' },
+    { name: 'topicEdit', method: 'POST', path: '/forum/topics/edit', mockPath: '/forum/topics/edit', desc: '编辑论坛帖子审核状态' },
     { name: 'topicDetail', method: 'GET', path: '/forum/topics/{id}', mockPath: '/forum/topics/{id}', desc: '论坛帖子详情' },
     { name: 'topicDelete', method: 'POST', path: '/forum/topics/delete/{id}', mockPath: '/forum/topics/delete/{id}', desc: '删除论坛帖子' },
     { name: 'repliesPage', method: 'GET', path: '/forum/replies/topic/{topicId}', mockPath: '/forum/replies/topic/{topicId}', desc: '帖子回复分页查询' },

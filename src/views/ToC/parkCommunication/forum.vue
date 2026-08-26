@@ -1,3 +1,4 @@
+<!-- 园区话题页面：维护板块浏览、帖子发布、详情互动及当前板块的发布默认值。 -->
 <template>
   <main class="park-forum">
     <forum-navigation :active-sort="activeSort" :keyword.sync="keyword" :sort-tabs="sortTabs" @set-sort="setSort" @search="searchTopics" @publish="openPublish" />
@@ -19,6 +20,8 @@
           :category-by-id="categoryById"
           :format-date-time="formatDateTime"
           :is-own-topic="isOwnTopic"
+          :is-review-restricted="isReviewRestrictedTopic"
+          :show-review-status="activeSort === 'myTopics'"
           @open-topic="openTopic"
           @toggle-like="toggleLike"
           @toggle-favorite="toggleFavorite"
@@ -62,6 +65,7 @@
           <span class="category-tag" :style="{ color: categoryById(selectedTopic.categoryId).color, backgroundColor: categoryById(selectedTopic.categoryId).softColor }">
             {{ categoryById(selectedTopic.categoryId).name }}
           </span>
+          <el-tag v-if="activeSort === 'myTopics'" size="small" :type="reviewStatusType(selectedTopic.status)">{{ reviewStatusText(selectedTopic.status) }}</el-tag>
           <h2>{{ selectedTopic.title }}</h2>
           <div class="topic-author">
             <span class="avatar" :style="{ background: selectedTopic.avatarColor }">{{ authorName(selectedTopic).slice(0, 1) }}</span>
@@ -72,7 +76,7 @@
         </header>
         <section class="detail-content">
           <p>{{ selectedTopic.content }}</p>
-          <div class="detail-actions">
+          <div v-if="!isReviewRestrictedTopic(selectedTopic)" class="detail-actions">
             <button
               type="button"
               class="detail-action-button like-action"
@@ -97,7 +101,7 @@
             </span>
           </div>
         </section>
-        <section class="reply-section">
+        <section v-if="!isReviewRestrictedTopic(selectedTopic)" class="reply-section">
           <h3>
             全部回复
             <span>{{ selectedTopic.replyCount }}</span>
@@ -192,6 +196,7 @@ export default {
       detailVisible: false,
       publishVisible: false,
       publishing: false,
+      publicIpAddress: '',
       replyContent: '',
       replyTarget: null,
       likedTopicIds: {},
@@ -289,7 +294,7 @@ export default {
       if (append) this.loadingMore = true
       else this.topicsLoading = true
       try {
-        const params = { page: this.currentPage, size: this.pageSize }
+        const params = { page: this.currentPage, size: this.pageSize, status: 1 }
         const options = this.userRequestOptions() || {}
         if (this.activeCategory !== 'all') params.categoryId = this.activeCategory
         const response = await this.$api['forum.topicsPage'](params, options)
@@ -371,6 +376,15 @@ export default {
     },
     toBoolean(value) {
       return value === true || value === 1 || value === '1' || value === 'true'
+    },
+    reviewStatusText(status) {
+      return { 0: '未审核', 1: '已审核', 2: '审核不通过' }[Number(status)] || '审核状态未知'
+    },
+    reviewStatusType(status) {
+      return { 0: 'warning', 1: 'success', 2: 'danger' }[Number(status)] || 'info'
+    },
+    isReviewRestrictedTopic(topic) {
+      return this.activeSort === 'myTopics' && Boolean(topic) && [0, 2].includes(Number(topic.status))
     },
     authorName(item) {
       if (item && item.userName) return item.userName
@@ -478,7 +492,10 @@ export default {
         this.$message.warning('版块加载中，请稍后再试')
         return
       }
+      const selectedCategory = this.categories.find((category) => String(category.id) === String(this.activeCategory))
+      this.publishForm = { categoryId: selectedCategory ? selectedCategory.id : '', title: '', content: '' }
       this.publishVisible = true
+      this.$nextTick(() => this.$refs.publishForm && this.$refs.publishForm.clearValidate())
     },
     resetPublishForm() {
       this.publishForm = { categoryId: '', title: '', content: '' }
@@ -490,7 +507,12 @@ export default {
       if (!valid || !options) return
       this.publishing = true
       try {
-        const response = await this.$api['forum.topicCreate'](Object.assign({}, this.publishForm, { userName: this.currentUserName() }), options)
+        const ipAddress = await this.resolvePublicIp()
+        if (!ipAddress) {
+          this.$message.error('公网 IP 获取失败，请检查网络后重试')
+          return
+        }
+        const response = await this.$api['forum.topicCreate'](Object.assign({}, this.publishForm, { userName: this.currentUserName(), status: 0, ipAddress }), options)
         const responseHead = response && response.head
         if ((response && String(response.success).toLowerCase() === 'false') || (responseHead && String(responseHead.success).toLowerCase() === 'false')) {
           this.$message.error((responseHead && responseHead.message) || response.message || '帖子发布失败，请修改后重试')
@@ -500,11 +522,27 @@ export default {
         this.activeCategory = 'all'
         this.currentPage = 1
         await this.loadTopics()
-        this.$message.success('帖子已发布')
+        this.$message.success('帖子已发布,请等待审核')
       } catch (error) {
         // this.showRequestError(error, '帖子发布失败')
       } finally {
         this.publishing = false
+      }
+    },
+    async resolvePublicIp() {
+      if (this.publicIpAddress) return this.publicIpAddress
+      const controller = window.AbortController ? new window.AbortController() : null
+      const timer = window.setTimeout(() => controller && controller.abort(), 5000)
+      try {
+        const response = await window.fetch('https://api.ipify.org?format=json', controller ? { signal: controller.signal } : {})
+        if (!response.ok) return ''
+        const result = await response.json()
+        this.publicIpAddress = String((result && result.ip) || '').trim()
+        return this.publicIpAddress
+      } catch (error) {
+        return ''
+      } finally {
+        window.clearTimeout(timer)
       }
     },
     async openTopic(topic) {
@@ -513,6 +551,11 @@ export default {
       this.replyTarget = null
       this.replyPage = 1
       this.replyTotal = 0
+      if (this.isReviewRestrictedTopic(topic)) {
+        this.repliesLoading = false
+        this.selectedTopic = Object.assign(this.normalizeTopic(topic), { replies: [] })
+        return
+      }
       this.repliesLoading = true
       try {
         const detail = await this.$api['forum.topicDetail']({ id: topic.id }, this.userRequestOptions() || {})
@@ -574,6 +617,7 @@ export default {
       else if (!this.favoriteTopics.some((item) => String(item.id) === String(topic.id))) this.favoriteTopics.unshift(Object.assign({}, topic))
     },
     async toggleLike(topic) {
+      if (this.isReviewRestrictedTopic(topic)) return
       const options = this.requireUserOptions()
       if (!options) return
       try {
@@ -587,6 +631,7 @@ export default {
       }
     },
     async toggleFavorite(topic) {
+      if (this.isReviewRestrictedTopic(topic)) return
       const options = this.requireUserOptions()
       if (!options) return
       try {
@@ -622,7 +667,7 @@ export default {
       }
     },
     async submitReply() {
-      if (!this.replyContent || !this.selectedTopic) return
+      if (!this.replyContent || !this.selectedTopic || this.isReviewRestrictedTopic(this.selectedTopic)) return
       const options = this.requireUserOptions()
       if (!options) return
       this.replying = true

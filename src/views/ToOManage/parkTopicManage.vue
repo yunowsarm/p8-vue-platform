@@ -18,6 +18,12 @@
         <el-select v-model="filters.categoryId" clearable size="small" placeholder="全部版块" @change="search">
           <el-option v-for="category in categories" :key="category.id" :label="category.name" :value="category.id" />
         </el-select>
+        <el-select v-model="filters.status" size="small" @change="search">
+          <el-option label="全部审核状态" :value="3" />
+          <el-option label="未审核" :value="0" />
+          <el-option label="已审核" :value="1" />
+          <el-option label="审核不通过" :value="2" />
+        </el-select>
         <el-select v-model="filters.sort" size="small" @change="search">
           <el-option label="最新发布" value="latest" />
           <el-option label="互动最多" value="hot" />
@@ -37,7 +43,12 @@
         </el-table-column>
         <el-table-column label="版块" min-width="120">
           <template slot-scope="{ row }">
-            <el-tag size="small" effect="plain">{{ categoryName(row.categoryId) }}</el-tag>
+            <el-tag size="small" :style="categoryTagStyle(row.categoryId)">{{ categoryName(row.categoryId) }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="审核状态" min-width="118">
+          <template slot-scope="{ row }">
+            <el-tag size="small" :type="reviewStatusType(row.status)">{{ reviewStatusText(row.status) }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="发布人" min-width="130">
@@ -69,9 +80,10 @@
         <el-table-column label="发布时间" min-width="160">
           <template slot-scope="{ row }">{{ formatDateTime(row.createdAt) }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="142" fixed="right">
+        <el-table-column label="操作" width="184" fixed="right">
           <template slot-scope="{ row }">
             <el-button type="text" size="mini" @click="openDetail(row)">详情</el-button>
+            <el-button v-if="isPendingReview(row)" type="text" size="mini" @click="openAudit(row)">审核</el-button>
             <el-button type="text" size="mini" class="delete-action" @click="deleteTopic(row)">删除</el-button>
           </template>
         </el-table-column>
@@ -87,7 +99,10 @@
     <el-drawer title="帖子详情" :visible.sync="detailVisible" size="560px" append-to-body custom-class="topic-manage-drawer">
       <article v-if="selectedTopic" class="detail-content">
         <div class="detail-topline">
-          <el-tag size="small" effect="plain">{{ categoryName(selectedTopic.categoryId) }}</el-tag>
+          <div>
+            <el-tag size="small" :style="categoryTagStyle(selectedTopic.categoryId)">{{ categoryName(selectedTopic.categoryId) }}</el-tag>
+            <el-tag size="small" :type="reviewStatusType(selectedTopic.status)">{{ reviewStatusText(selectedTopic.status) }}</el-tag>
+          </div>
           <time>{{ formatDateTime(selectedTopic.createdAt) }}</time>
         </div>
         <h3>{{ topicTitle(selectedTopic) }}</h3>
@@ -111,14 +126,70 @@
           </span>
         </div>
         <div class="detail-actions">
+          <el-button v-if="isPendingReview(selectedTopic)" type="primary" @click="openAudit(selectedTopic)">审核帖子</el-button>
           <el-button type="danger" :loading="deletingId === selectedTopic.id" @click="deleteTopic(selectedTopic)">删除该帖子</el-button>
         </div>
       </article>
     </el-drawer>
+
+    <el-dialog title="审核帖子" :visible.sync="auditVisible" width="620px" top="4vh" append-to-body :close-on-click-modal="false" @closed="resetAudit">
+      <article v-if="auditTarget" class="audit-preview">
+        <div class="audit-preview__topline">
+          <div>
+            <el-tag size="small" :style="categoryTagStyle(auditTarget.categoryId)">{{ categoryName(auditTarget.categoryId) }}</el-tag>
+            <el-tag size="small" :type="reviewStatusType(auditTarget.status)">{{ reviewStatusText(auditTarget.status) }}</el-tag>
+          </div>
+          <span>{{ auditTarget.id }}</span>
+        </div>
+        <dl class="audit-preview__meta">
+          <div>
+            <dt>发布人</dt>
+            <dd>{{ authorName(auditTarget) }}</dd>
+          </div>
+          <div>
+            <dt>发布时间</dt>
+            <dd>{{ formatDateTime(auditTarget.createdAt) }}</dd>
+          </div>
+          <div>
+            <dt>公网 IP</dt>
+            <dd>{{ auditTarget.ipAddress || '-' }}</dd>
+          </div>
+          <div>
+            <dt>互动数据</dt>
+            <dd>{{ numberValue(auditTarget.viewCount) }} 浏览 · {{ numberValue(auditTarget.replyCount) }} 回复 · {{ numberValue(auditTarget.likeCount) }} 点赞</dd>
+          </div>
+        </dl>
+        <section class="audit-preview__content">
+          <h3>{{ topicTitle(auditTarget) }}</h3>
+          <p>{{ auditTarget.content || '暂无正文' }}</p>
+        </section>
+      </article>
+      <el-form class="audit-form" label-width="86px" @submit.native.prevent>
+        <el-form-item label="审核结果" required>
+          <el-radio-group v-model="auditStatus">
+            <el-radio :label="1">通过</el-radio>
+            <el-radio :label="2">不通过</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button @click="auditVisible = false">取消</el-button>
+        <el-button type="primary" :loading="auditing" :disabled="!auditTarget" @click="submitAudit">确认审核</el-button>
+      </span>
+    </el-dialog>
   </main>
 </template>
 
 <script>
+const CATEGORY_PALETTE = [
+  { color: '#3674d9', softColor: '#eaf2ff' },
+  { color: '#0f9a76', softColor: '#e7f8f1' },
+  { color: '#e46d32', softColor: '#fff0e8' },
+  { color: '#7a5bd7', softColor: '#f1edff' },
+  { color: '#197eae', softColor: '#e6f5fb' },
+  { color: '#bb7a18', softColor: '#fff6df' }
+]
+
 export default {
   name: 'ParkTopicManage',
   data() {
@@ -132,7 +203,11 @@ export default {
       deletingId: '',
       detailVisible: false,
       selectedTopic: null,
-      filters: { keyword: '', categoryId: '', sort: 'latest' }
+      auditVisible: false,
+      auditing: false,
+      auditTarget: null,
+      auditStatus: '',
+      filters: { keyword: '', categoryId: '', status: 3, sort: 'latest' }
     }
   },
   computed: {
@@ -159,7 +234,8 @@ export default {
       if (!this.$api || !this.$api['forum.categories']) return
       try {
         const result = this.unwrap(await this.$api['forum.categories']())
-        this.categories = Array.isArray(result) ? result : (result && (result.records || result.list)) || []
+        const categories = Array.isArray(result) ? result : (result && (result.records || result.list)) || []
+        this.categories = categories.map((item, index) => Object.assign({}, item, CATEGORY_PALETTE[index % CATEGORY_PALETTE.length]))
       } catch (error) {
         this.categories = []
       }
@@ -171,6 +247,7 @@ export default {
         const params = { page: this.currentPage, size: this.pageSize, sort: this.filters.sort }
         if (this.filters.keyword) params.keyword = this.filters.keyword
         if (this.filters.categoryId !== '') params.categoryId = this.filters.categoryId
+        params.status = this.filters.status
         const result = this.unwrap(await this.$api['forum.topicsPage'](params)) || {}
         this.topics = Array.isArray(result) ? result : result.records || result.list || []
         this.total = Number(result.total || this.topics.length)
@@ -187,12 +264,18 @@ export default {
       this.loadTopics()
     },
     resetFilters() {
-      this.filters = { keyword: '', categoryId: '', sort: 'latest' }
+      this.filters = { keyword: '', categoryId: '', status: 3, sort: 'latest' }
       this.search()
     },
     categoryName(id) {
-      const category = this.categories.find((item) => String(item.id) === String(id))
-      return (category && category.name) || '未分类'
+      return this.categoryById(id).name
+    },
+    categoryById(id) {
+      return this.categories.find((item) => String(item.id) === String(id)) || { name: '未分类', color: '#909399', softColor: '#f4f4f5' }
+    },
+    categoryTagStyle(id) {
+      const category = this.categoryById(id)
+      return { color: category.color, backgroundColor: category.softColor, borderColor: category.softColor }
     },
     authorName(topic) {
       return (topic && (topic.userName || topic.publisherName || topic.nickName)) || (topic && topic.userId ? `用户${topic.userId}` : '园区用户')
@@ -205,6 +288,15 @@ export default {
     },
     numberValue(value) {
       return Math.max(0, Number(value) || 0)
+    },
+    reviewStatusText(status) {
+      return { 0: '未审核', 1: '已审核', 2: '审核不通过' }[Number(status)] || '审核状态未知'
+    },
+    reviewStatusType(status) {
+      return { 0: 'warning', 1: 'success', 2: 'danger' }[Number(status)] || 'info'
+    },
+    isPendingReview(topic) {
+      return Boolean(topic) && Number(topic.status) === 0
     },
     currentUserId() {
       const storeId = this.$store && this.$store.getters && this.$store.getters.userId
@@ -228,6 +320,42 @@ export default {
         if (detail) this.selectedTopic = Object.assign({}, topic, detail)
       } catch (error) {
         this.$message.warning('帖子详情加载失败，已展示列表信息')
+      }
+    },
+    openAudit(topic) {
+      if (!topic || !topic.id || !this.isPendingReview(topic)) return
+      this.auditTarget = Object.assign({}, topic)
+      this.auditStatus = ''
+      this.auditVisible = true
+    },
+    resetAudit() {
+      this.auditTarget = null
+      this.auditStatus = ''
+      this.auditing = false
+    },
+    async submitAudit() {
+      if (!this.auditTarget || ![1, 2].includes(Number(this.auditStatus))) {
+        this.$message.warning('请选择审核结果')
+        return
+      }
+      const editApi = this.$api && this.$api['forum.topicEdit']
+      if (!editApi) {
+        this.$message.error('帖子编辑接口暂不可用')
+        return
+      }
+      this.auditing = true
+      try {
+        const status = Number(this.auditStatus)
+        await editApi({ id: this.auditTarget.id, status }, this.userRequestOptions() || {})
+        this.topics = this.topics.map((item) => (String(item.id) === String(this.auditTarget.id) ? Object.assign({}, item, { status }) : item))
+        if (this.selectedTopic && String(this.selectedTopic.id) === String(this.auditTarget.id)) this.selectedTopic = Object.assign({}, this.selectedTopic, { status })
+        this.auditVisible = false
+        this.$message.success(status === 1 ? '帖子审核已通过' : '帖子审核不通过')
+      } catch (error) {
+        const message = error && (error.message || (error.head && error.head.message))
+        this.$message.error(message || '帖子审核失败，请稍后重试')
+      } finally {
+        this.auditing = false
       }
     },
     async deleteTopic(topic) {
@@ -463,6 +591,12 @@ export default {
   color: #909399;
   font-size: 12px;
 }
+.detail-topline > div,
+.audit-preview__topline > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .detail-content h3 {
   margin: 18px 0 10px;
   color: #303133;
@@ -497,6 +631,62 @@ export default {
 }
 .detail-actions .el-button {
   margin: 0;
+}
+.audit-preview {
+  min-height: 240px;
+}
+.audit-preview__topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #909399;
+  font-size: 12px;
+}
+.audit-preview__meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
+  margin: 16px 0;
+}
+.audit-preview__meta > div {
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid #edf1f5;
+  border-radius: 6px;
+}
+.audit-preview__meta dt {
+  margin-bottom: 4px;
+  color: #909399;
+  font-size: 12px;
+}
+.audit-preview__meta dd {
+  margin: 0;
+  color: #4d5a6b;
+  font-size: 13px;
+  word-break: break-word;
+}
+.audit-preview__content {
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+.audit-preview__content h3 {
+  margin: 0 0 10px;
+  color: #303133;
+  font-size: 17px;
+  line-height: 25px;
+}
+.audit-preview__content p {
+  margin: 0;
+  color: #4d5a6b;
+  font-size: 14px;
+  line-height: 24px;
+  white-space: pre-wrap;
+}
+.audit-form {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #edf1f5;
 }
 @media (max-width: 1024px) {
   .metric-grid {
@@ -566,6 +756,12 @@ export default {
   ::v-deep .topic-manage-drawer {
     width: 100% !important;
     max-width: 100% !important;
+  }
+  ::v-deep .el-dialog {
+    width: calc(100% - 24px) !important;
+  }
+  .audit-preview__meta {
+    grid-template-columns: 1fr;
   }
 }
 </style>
