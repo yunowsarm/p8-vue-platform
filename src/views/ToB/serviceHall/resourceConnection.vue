@@ -1,8 +1,8 @@
-<!-- ToB 资源对接路由入口：以用户模式复用服务大厅共享申请页面。 -->
-<template><service-application-page feature="resourceConnection" mode="user" /></template>
+<!-- ToB 资源对接路由入口：只装配资源对接独立业务组件。 -->
+<template><resource-connection-page mode="user" /></template>
 
 <script>
-import ServiceApplicationPage from '@/features/service-hall/ServiceApplicationPage'
+import ResourceConnectionPage from '@/features/service-hall/resource-connection/ResourceConnectionPage'
 
-export default { name: 'ResourceConnection', components: { ServiceApplicationPage } }
+export default { name: 'ResourceConnection', components: { ResourceConnectionPage } }
 </script>

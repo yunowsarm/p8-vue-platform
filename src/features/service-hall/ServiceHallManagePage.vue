@@ -1,40 +1,43 @@
-<!-- 服务大厅管理聚合页：以标签页复用六类申请定义和管理端操作策略。 -->
+<!-- 服务大厅管理聚合页：只负责切换六个独立业务组件，不承载具体业务字段和操作规则。 -->
 <template>
   <main class="service-hall-manage">
     <section class="manage-surface">
       <el-tabs v-model="activeTab" class="service-tabs" stretch>
         <el-tab-pane v-for="item in tabs" :key="item.name" :name="item.name">
           <span slot="label">
-            <i :class="item.config.icon" aria-hidden="true"></i>
+            <i :class="item.icon" aria-hidden="true"></i>
             {{ item.label }}
           </span>
         </el-tab-pane>
       </el-tabs>
-      <application-board :key="activeItem.name" :config="activeItem.config" :policy="activeItem.policy" />
+      <component :is="activeItem.component" :key="activeItem.name" mode="admin" />
     </section>
   </main>
 </template>
 
 <script>
-import ApplicationBoard from '@/components/business/ApplicationBoard'
-import { getServiceHallConfig, SERVICE_HALL_TABS } from './definitions'
-import { getServiceHallPolicy } from './policies'
+import ComplaintSuggestionPage from './complaint-suggestion/ComplaintSuggestionPage'
+import DataReportPage from './data-report/DataReportPage'
+import MediaPromotionPage from './media-promotion/MediaPromotionPage'
+import QualificationRecognitionPage from './qualification-recognition/QualificationRecognitionPage'
+import ResourceConnectionPage from './resource-connection/ResourceConnectionPage'
+import ServiceRequestPage from './service-request/ServiceRequestPage'
+
+const SERVICE_TABS = [
+  { name: 'complaint-suggestion', label: '建议投诉', icon: 'el-icon-chat-dot-round', component: ComplaintSuggestionPage },
+  { name: 'service-request', label: '服务需求', icon: 'el-icon-service', component: ServiceRequestPage },
+  { name: 'data-report', label: '数据上报', icon: 'el-icon-upload2', component: DataReportPage },
+  { name: 'media-promotion', label: '媒体宣传', icon: 'el-icon-picture-outline', component: MediaPromotionPage },
+  { name: 'qualification-recognition', label: '资质认定', icon: 'el-icon-medal', component: QualificationRecognitionPage },
+  { name: 'resource-connection', label: '资源对接', icon: 'el-icon-connection', component: ResourceConnectionPage }
+]
 
 export default {
   name: 'ServiceHallManagePage',
-  components: { ApplicationBoard },
   data() {
-    return { activeTab: SERVICE_HALL_TABS[0].name }
+    return { activeTab: SERVICE_TABS[0].name, tabs: SERVICE_TABS }
   },
   computed: {
-    tabs() {
-      return SERVICE_HALL_TABS.map((item) =>
-        Object.assign({}, item, {
-          config: getServiceHallConfig(item.feature, 'admin'),
-          policy: getServiceHallPolicy(item.feature, 'admin')
-        })
-      )
-    },
     activeItem() {
       return this.tabs.find((item) => item.name === this.activeTab) || this.tabs[0]
     }

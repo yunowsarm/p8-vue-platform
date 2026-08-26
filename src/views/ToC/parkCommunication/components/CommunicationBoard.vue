@@ -1,3 +1,4 @@
+<!-- 园区交流业务组件：负责交流信息发布、筛选、详情展示和状态管理。 -->
 <template>
   <main class="communication-board">
     <section class="board-statistics" :class="{ 'board-statistics--compact': config.hasStatus === false }" aria-label="信息统计">
@@ -64,10 +65,12 @@
           </div>
           <p class="card-content">{{ item[config.contentKey] || '暂无描述' }}</p>
           <dl class="card-meta">
-            <div v-for="field in cardFields" v-if="isFieldVisible(field, item)" :key="field.key" class="card-meta-item">
-              <dt>{{ field.label }}</dt>
-              <dd>{{ formatValue(item[field.key]) }}</dd>
-            </div>
+            <template v-for="field in cardFields">
+              <div v-if="isFieldVisible(field, item)" :key="field.key" class="card-meta-item">
+                <dt>{{ field.label }}</dt>
+                <dd>{{ formatValue(item[field.key]) }}</dd>
+              </div>
+            </template>
           </dl>
           <div class="card-foot">
             <span v-if="config.counterFields" class="record-counts">
@@ -177,7 +180,6 @@
             <p>{{ selectedRecord[config.contentKey] }}</p>
           </section>
         </div>
-        <div class="drawer-actions"><el-button @click="detailVisible = false">关闭</el-button></div>
       </div>
     </el-drawer>
   </main>
@@ -381,9 +383,11 @@ export default {
       this.fields.forEach((field) => {
         form[field.key] = ''
       })
-      this.fields.filter((field) => field.autoNow).forEach((field) => {
-        form[field.key] = this.now()
-      })
+      this.fields
+        .filter((field) => field.autoNow)
+        .forEach((field) => {
+          form[field.key] = this.now()
+        })
       if (this.config.currentUserIdKey) form[this.config.currentUserIdKey] = this.currentUserId()
       if (this.config.currentUserNameKey) form[this.config.currentUserNameKey] = this.currentUserName()
       if (this.config.hasStatus !== false) form.status = this.config.defaultStatus || '正常'
@@ -411,11 +415,18 @@ export default {
       const currentUser = {}
       if (this.config.currentUserIdKey) currentUser[this.config.currentUserIdKey] = this.currentUserId()
       if (this.config.currentUserNameKey) currentUser[this.config.currentUserNameKey] = this.currentUserName()
-      const payload = Object.assign({}, this.form, currentUser, this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: this.now() } : { createBy: this.currentUserId(), itemCreateTime: this.now() })
+      const payload = Object.assign(
+        {},
+        this.form,
+        currentUser,
+        this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: this.now() } : { createBy: this.currentUserId(), itemCreateTime: this.now() }
+      )
       if (!this.editingId) {
-        this.fields.filter((field) => field.autoNow).forEach((field) => {
-          payload[field.key] = this.now()
-        })
+        this.fields
+          .filter((field) => field.autoNow)
+          .forEach((field) => {
+            payload[field.key] = this.now()
+          })
       }
       this.fields.forEach((field) => {
         if (!this.matchesFieldCondition(field, payload)) delete payload[field.key]
@@ -821,12 +832,6 @@ export default {
   background: #f8fafc;
   border-radius: 6px;
 }
-.drawer-actions {
-  flex: 0 0 auto;
-  padding: 12px 16px;
-  text-align: right;
-  border-top: 1px solid #e8edf3;
-}
 @media (max-width: 1100px) {
   .communication-grid {
     grid-template-columns: repeat(2, minmax(260px, 1fr));
@@ -915,18 +920,64 @@ export default {
   .detail-grid span:last-child {
     border-bottom: 0;
   }
-  ::v-deep .communication-detail-drawer { width: 100% !important; max-width: 100% !important; }
-  ::v-deep .communication-detail-drawer .el-drawer__body { display: flex; min-height: 0; flex: 1 1 auto; overflow: hidden; }
-  .drawer-layout { min-height: 0; height: 100%; width: 100%; }
-  .drawer-scroll { min-height: 0; padding: 14px; -webkit-overflow-scrolling: touch; }
-  .drawer-actions { padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); }
-  ::v-deep .communication-form-dialog { width: 100% !important; min-width: 0; height: 100dvh; margin: 0 !important; display: flex; flex-direction: column; border-radius: 0; }
-  ::v-deep .communication-form-dialog .el-dialog__body { min-height: 0; flex: 1 1 auto; overflow-y: auto; padding: 18px 16px; -webkit-overflow-scrolling: touch; }
-  ::v-deep .communication-form-dialog .el-dialog__footer { flex: 0 0 auto; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); }
-  ::v-deep .communication-form-dialog .dialog-footer { display: flex; gap: 10px; }
-  ::v-deep .communication-form-dialog .dialog-footer .el-button { flex: 1; margin: 0; min-height: 42px; }
+  ::v-deep .communication-detail-drawer {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  ::v-deep .communication-detail-drawer .el-drawer__body {
+    display: flex;
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+  .drawer-layout {
+    min-height: 0;
+    height: 100%;
+    width: 100%;
+  }
+  .drawer-scroll {
+    min-height: 0;
+    padding: 14px;
+    -webkit-overflow-scrolling: touch;
+  }
+  ::v-deep .communication-form-dialog {
+    width: 100% !important;
+    min-width: 0;
+    height: 100dvh;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0;
+  }
+  ::v-deep .communication-form-dialog .el-dialog__body {
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 18px 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+  ::v-deep .communication-form-dialog .el-dialog__footer {
+    flex: 0 0 auto;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  }
+  ::v-deep .communication-form-dialog .dialog-footer {
+    display: flex;
+    gap: 10px;
+  }
+  ::v-deep .communication-form-dialog .dialog-footer .el-button {
+    flex: 1;
+    margin: 0;
+    min-height: 42px;
+  }
 }
-@media (max-width: 420px) { .list-toolbar { grid-template-columns: minmax(0, 1fr); }.list-toolbar .el-select { grid-column: 1 / -1; } }
+@media (max-width: 420px) {
+  .list-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .list-toolbar .el-select {
+    grid-column: 1 / -1;
+  }
+}
 /* 仅本看板在移动端承载页面滚动，避免改动后台配置页的全局路由高度。 */
 @media (max-width: 760px) {
   .communication-board {
@@ -942,28 +993,105 @@ export default {
 </style>
 <style scoped>
 /* 与办事大厅看板保持一致的列表基线 */
-.communication-board { min-height: 100%; padding: 12px; box-sizing: border-box; background: #f6f8fb; }
-.communication-board .board-statistics { gap: 12px; margin-bottom: 12px; }
-.communication-board .stat-card { min-height: 94px; padding: 16px 18px; border-color: #e5ebf2; border-radius: 10px; box-shadow: none; }
-.communication-surface { min-height: clamp(660px, calc(100vh - 250px), 760px); border-color: #e5ebf2; border-radius: 10px; box-shadow: 0 4px 14px rgba(15, 23, 42, .035); }
-.communication-board .list-toolbar { min-height: 64px; padding: 14px 20px; gap: 10px; }
-.communication-board .list-toolbar .el-input { width: 300px; }
-.communication-board .list-toolbar .el-select { width: 160px; }
-.communication-grid { gap: 14px; padding: 2px 20px 18px; }
-.communication-card { min-height: 252px; padding: 16px; border-color: #e6ecf3; border-radius: 10px; }
-.communication-card:hover { border-color: #a9caf7; }
-.communication-board .empty-state { min-height: 260px; padding: 24px 20px 48px; box-sizing: border-box; }
-.communication-board .pagination-row { min-height: 0; margin-top: auto; padding: 12px 20px 16px; }
+.communication-board {
+  min-height: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  background: #f6f8fb;
+}
+.communication-board .board-statistics {
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.communication-board .stat-card {
+  min-height: 94px;
+  padding: 16px 18px;
+  border-color: #e5ebf2;
+  border-radius: 10px;
+  box-shadow: none;
+}
+.communication-surface {
+  min-height: clamp(660px, calc(100vh - 250px), 760px);
+  border-color: #e5ebf2;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.035);
+}
+.communication-board .list-toolbar {
+  min-height: 64px;
+  padding: 14px 20px;
+  gap: 10px;
+}
+.communication-board .list-toolbar .el-input {
+  width: 300px;
+}
+.communication-board .list-toolbar .el-select {
+  width: 160px;
+}
+.communication-grid {
+  gap: 14px;
+  padding: 2px 20px 18px;
+}
+.communication-card {
+  min-height: 252px;
+  padding: 16px;
+  border-color: #e6ecf3;
+  border-radius: 10px;
+}
+.communication-card:hover {
+  border-color: #a9caf7;
+}
+.communication-board .empty-state {
+  min-height: 260px;
+  padding: 24px 20px 48px;
+  box-sizing: border-box;
+}
+.communication-board .pagination-row {
+  min-height: 0;
+  margin-top: auto;
+  padding: 12px 20px 16px;
+}
 @media (max-width: 760px) {
-  .communication-board { height: 100% !important; min-height: 0; padding: 14px 12px calc(24px + env(safe-area-inset-bottom)); overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; touch-action: pan-y; }
-  .communication-board .board-statistics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .communication-board .stat-card { min-height: 82px; padding: 12px; }
-  .communication-surface { min-height: 440px; }
-  .communication-board .list-toolbar { padding: 12px; }
-  .communication-board .list-toolbar .el-input { width: 100%; }
-  .communication-board .list-toolbar .el-select { width: calc(50% - 5px); }
-  .communication-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 2px 12px 14px; }
-  .communication-card { min-height: 238px; }
-  .communication-board .pagination-row { justify-content: center; padding: 12px; }
+  .communication-board {
+    height: 100% !important;
+    min-height: 0;
+    padding: 14px 12px calc(24px + env(safe-area-inset-bottom));
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
+  }
+  .communication-board .board-statistics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .communication-board .stat-card {
+    min-height: 82px;
+    padding: 12px;
+  }
+  .communication-surface {
+    min-height: 440px;
+  }
+  .communication-board .list-toolbar {
+    padding: 12px;
+  }
+  .communication-board .list-toolbar .el-input {
+    width: 100%;
+  }
+  .communication-board .list-toolbar .el-select {
+    width: calc(50% - 5px);
+  }
+  .communication-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 2px 12px 14px;
+  }
+  .communication-card {
+    min-height: 238px;
+  }
+  .communication-board .pagination-row {
+    justify-content: center;
+    padding: 12px;
+  }
 }
 </style>

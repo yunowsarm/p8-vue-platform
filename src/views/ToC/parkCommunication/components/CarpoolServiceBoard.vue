@@ -1,3 +1,4 @@
+<!-- 园区拼车业务组件：负责拼车信息发布、筛选、详情展示和状态管理。 -->
 <template>
   <main class="communication-board">
     <section class="board-statistics board-statistics--compact" aria-label="信息统计">
@@ -173,7 +174,6 @@
             <p>{{ selectedRecord[config.contentKey] }}</p>
           </section>
         </div>
-        <div class="drawer-actions"><el-button @click="detailVisible = false">关闭</el-button></div>
       </div>
     </el-drawer>
   </main>
@@ -412,10 +412,7 @@ export default {
     async loadStatistics() {
       const query = { pageNo: 1, pageSize: 1 }
       try {
-        const [allResult, mineResult] = await Promise.all([
-          this.$api[this.apiKey('list')](query),
-          this.$api[this.apiKey('list')](Object.assign({}, query, { createBy: this.currentUserId() }))
-        ])
+        const [allResult, mineResult] = await Promise.all([this.$api[this.apiKey('list')](query), this.$api[this.apiKey('list')](Object.assign({}, query, { createBy: this.currentUserId() }))])
         this.allRecordsTotal = this.totalFrom(this.unwrap(allResult))
         this.myRecordsTotal = this.totalFrom(this.unwrap(mineResult))
       } catch (error) {
@@ -963,12 +960,6 @@ export default {
   background: #f8fafc;
   border-radius: 6px;
 }
-.drawer-actions {
-  flex: 0 0 auto;
-  padding: 12px 16px;
-  text-align: right;
-  border-top: 1px solid #e8edf3;
-}
 @media (max-width: 1100px) {
   .communication-grid {
     grid-template-columns: repeat(2, minmax(260px, 1fr));
@@ -1076,9 +1067,6 @@ export default {
     min-height: 0;
     padding: 14px;
     -webkit-overflow-scrolling: touch;
-  }
-  .drawer-actions {
-    padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
   }
   ::v-deep .communication-form-dialog {
     width: 100% !important;

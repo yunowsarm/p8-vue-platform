@@ -1,3 +1,4 @@
+<!-- ToB 惠企政策独立业务页面：展示政策与解读列表，接口地址统一由 API 模块声明。 -->
 <template>
   <main class="benefit-policy-page">
     <section class="policy-panel">
@@ -212,11 +213,6 @@ const MOCK_RECORDS = {
   ]
 }
 
-const POLICY_API_PATHS = {
-  policy: '/gov-policy/zhengce/qiye/trssearch/search/all',
-  unscramble: '/gov-policy/zhengce/qiye/trssearch/search/unscramble'
-}
-
 export default {
   name: 'BenefitPolicy',
   data() {
@@ -277,6 +273,11 @@ export default {
         })
       )
     },
+    normalizePolicyResponse(response) {
+      if (response && response.code !== undefined) return response
+      if (response && response.data && response.data.code !== undefined) return response.data
+      return response
+    },
     loadMockRecords() {
       const keyword = this.searchWord.toLowerCase()
       const filtered = MOCK_RECORDS[this.activeTab].filter((item) => !keyword || `${item.title}${item.docAbstract}${item.publishDept}`.toLowerCase().includes(keyword))
@@ -285,22 +286,23 @@ export default {
       this.total = filtered.length
     },
     async loadRecords() {
-      const request = this.$axios
+      const action = this.activeTab === 'policy' ? 'policyList' : 'interpretationList'
+      const request = this.$api && this.$api[`tobBenefitPolicySearch.${action}`]
       if (!request) {
         this.loadMockRecords()
         return
       }
       this.loading = true
       try {
-        const response = await request.post(POLICY_API_PATHS[this.activeTab], this.requestPayload())
-        const result = response && response.data !== undefined ? response.data : response
+        const result = this.normalizePolicyResponse(await request(this.requestPayload()))
         if (!result || Number(result.code) !== 0) throw new Error('政策接口返回异常')
         const data = result.data || {}
         this.records = this.normalizeRecords(data.list)
         this.total = Number(data.totalRecords || this.records.length)
       } catch (error) {
-        this.loadMockRecords()
-        this.$message.warning('政策服务暂不可用，已展示模拟数据')
+        this.records = []
+        this.total = 0
+        this.$message.error('政府政策服务加载失败，请稍后重试')
       } finally {
         this.loading = false
       }

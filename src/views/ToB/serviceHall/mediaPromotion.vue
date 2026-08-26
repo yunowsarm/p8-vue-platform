@@ -1,8 +1,8 @@
-<!-- ToB 媒体宣传路由入口：以用户模式复用服务大厅共享申请页面。 -->
-<template><service-application-page feature="mediaPromotion" mode="user" /></template>
+<!-- ToB 媒体宣传路由入口：只装配媒体宣传独立业务组件。 -->
+<template><media-promotion-page mode="user" /></template>
 
 <script>
-import ServiceApplicationPage from '@/features/service-hall/ServiceApplicationPage'
+import MediaPromotionPage from '@/features/service-hall/media-promotion/MediaPromotionPage'
 
-export default { name: 'MediaPromotion', components: { ServiceApplicationPage } }
+export default { name: 'MediaPromotion', components: { MediaPromotionPage } }
 </script>

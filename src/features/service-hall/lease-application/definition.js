@@ -79,7 +79,7 @@ const leaseDefinition = Object.freeze({
   fields: [
     { key: 'applyType', label: '申请类型', required: true, options: LEASE_APPLICATION_TYPES },
     { key: 'companyName', label: '企业名称', required: true },
-    { key: 'contractNo', label: '租赁合同编号', required: true },
+    // { key: 'contractNo', label: '租赁合同编号', required: true },
     { key: 'currentLocation', label: '现租赁位置', required: true },
     { key: 'contactPerson', label: '联系人', required: true },
     { key: 'contactPhone', label: '联系电话', required: true },

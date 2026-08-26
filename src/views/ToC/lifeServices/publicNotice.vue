@@ -1,4 +1,4 @@
-<!-- ToC 通知公告路由入口：以查看模式加载指定 API 命名空间的公告页面。 -->
+<!-- ToC 通知公告路由入口：以查看模式装配通知公告独立业务组件。 -->
 <template><public-notice-page mode="viewer" :api-namespace="apiNamespace" /></template>
 
 <script>

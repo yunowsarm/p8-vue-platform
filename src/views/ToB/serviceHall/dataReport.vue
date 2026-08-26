@@ -1,8 +1,8 @@
-<!-- ToB 数据上报路由入口：以用户模式复用服务大厅共享申请页面。 -->
-<template><service-application-page feature="dataReport" mode="user" /></template>
+<!-- ToB 数据上报路由入口：只装配数据上报独立业务组件。 -->
+<template><data-report-page mode="user" /></template>
 
 <script>
-import ServiceApplicationPage from '@/features/service-hall/ServiceApplicationPage'
+import DataReportPage from '@/features/service-hall/data-report/DataReportPage'
 
-export default { name: 'DataReport', components: { ServiceApplicationPage } }
+export default { name: 'DataReport', components: { DataReportPage } }
 </script>

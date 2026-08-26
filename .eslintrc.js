@@ -1,13 +1,14 @@
+// 项目 ESLint 配置：统一代码风格并限制 ToB、ToC 与管理端之间的跨目录引用。
 // https://eslint.org/docs/user-guide/configuring
 
 module.exports = {
   root: true,
   parserOptions: {
-    parser: '@babel/eslint-parser'
+    parser: '@babel/eslint-parser',
     requireConfigFile: false
   },
   env: {
-    browser: true,
+    browser: true
   },
   extends: [
     // https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
@@ -20,9 +21,7 @@ module.exports = {
     '@vue/prettier'
   ],
   // required to lint *.vue files
-  plugins: [
-    'vue'
-  ],
+  plugins: ['vue'],
   // add your custom rules here
   rules: {
     // allow async-await
@@ -31,14 +30,37 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-case-declarations': 'off',
-    'prettier/prettier': ['error', {
-      'trailingComma': 'none',
-      'tabWidth': 2,
-      'semi': false,
-      'singleQuote': true,
-      'semicolons': false,
-      'bracketLine': true,
-      'printWidth': 200
-    }]
-  }
+    'prettier/prettier': [
+      'error',
+      {
+        trailingComma: 'none',
+        tabWidth: 2,
+        semi: false,
+        singleQuote: true,
+        semicolons: false,
+        bracketLine: true,
+        printWidth: 200
+      }
+    ]
+  },
+  overrides: [
+    {
+      files: ['src/views/ToB/**/*.{js,vue}'],
+      rules: {
+        'no-restricted-imports': ['error', { patterns: ['@/views/ToC/**', '@/views/ToOManage/**'] }]
+      }
+    },
+    {
+      files: ['src/views/ToC/**/*.{js,vue}'],
+      rules: {
+        'no-restricted-imports': ['error', { patterns: ['@/views/ToB/**', '@/views/ToOManage/**'] }]
+      }
+    },
+    {
+      files: ['src/views/ToOManage/**/*.{js,vue}'],
+      rules: {
+        'no-restricted-imports': ['error', { patterns: ['@/views/ToB/**', '@/views/ToC/**'] }]
+      }
+    }
+  ]
 }

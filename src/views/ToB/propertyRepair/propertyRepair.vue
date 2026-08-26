@@ -1,3 +1,4 @@
+<!-- 物业报修业务页面：负责报修申请、进度查询、详情展示与附件下载。 -->
 <template>
   <main class="property-repair-page">
     <section class="repair-summary">
@@ -111,7 +112,17 @@
               <el-upload ref="imageUpload" action="#" name="thefile" :auto-upload="false" :file-list="form.uploadFiles" :limit="9" :on-change="handleImageChange" :on-remove="handleImageRemove">
                 <el-button size="small" type="primary">选择文件</el-button>
                 <div slot="file" slot-scope="{ file }" class="upload-file-item">
-                  <span :class="['upload-file-name', { 'file-download-link': file.id }]" @click="file.id && handleImageDownload(file)">
+                  <button
+                    v-if="file.id"
+                    type="button"
+                    class="attachment-download-link"
+                    :title="file.name || file.fileName || '附件'"
+                    :aria-label="`下载附件：${file.name || file.fileName || '附件'}`"
+                    @click="handleImageDownload(file)">
+                    <img class="attachment-file-icon" :src="fileIcon(file)" alt="" aria-hidden="true" />
+                    <span class="attachment-download-label">{{ file.name || file.fileName || '附件' }}</span>
+                  </button>
+                  <span v-else class="upload-file-name">
                     <i class="el-icon-picture-outline"></i>
                     {{ file.name || file.fileName }}
                   </span>
@@ -158,10 +169,16 @@
             <h4>处理前附件</h4>
             <div v-if="detailBeforeFiles.length" class="detail-files">
               <div v-for="file in detailBeforeFiles" :key="file.uid || file.id || file.filePath || file.fileName" class="detail-file-item">
-                <span :class="{ 'file-download-link': file.id }" @click="file.id && handleImageDownload(file)">
-                  <i class="el-icon-picture-outline"></i>
-                  {{ file.name || file.fileName || '附件' }}
-                </span>
+                <button
+                  type="button"
+                  class="attachment-download-link"
+                  :disabled="!file.id"
+                  :title="file.name || file.fileName || '附件'"
+                  :aria-label="`下载附件：${file.name || file.fileName || '附件'}`"
+                  @click="handleImageDownload(file)">
+                  <img class="attachment-file-icon" :src="fileIcon(file)" alt="" aria-hidden="true" />
+                  <span class="attachment-download-label">{{ file.name || file.fileName || '附件' }}</span>
+                </button>
               </div>
             </div>
             <p v-else>暂无附件</p>
@@ -170,10 +187,16 @@
             <h4>处理后附件</h4>
             <div v-if="detailAfterFiles.length" class="detail-files">
               <div v-for="file in detailAfterFiles" :key="file.uid || file.id || file.filePath || file.fileName" class="detail-file-item">
-                <span :class="{ 'file-download-link': file.id }" @click="file.id && handleImageDownload(file)">
-                  <i class="el-icon-picture-outline"></i>
-                  {{ file.name || file.fileName || '附件' }}
-                </span>
+                <button
+                  type="button"
+                  class="attachment-download-link"
+                  :disabled="!file.id"
+                  :title="file.name || file.fileName || '附件'"
+                  :aria-label="`下载附件：${file.name || file.fileName || '附件'}`"
+                  @click="handleImageDownload(file)">
+                  <img class="attachment-file-icon" :src="fileIcon(file)" alt="" aria-hidden="true" />
+                  <span class="attachment-download-label">{{ file.name || file.fileName || '附件' }}</span>
+                </button>
               </div>
             </div>
             <p v-else>暂无附件</p>
@@ -192,7 +215,6 @@
           </section>
         </div>
         <div class="drawer-actions">
-          <el-button @click="detailVisible = false">关闭</el-button>
           <el-button type="primary" @click="openEdit(selectedRecord)">编辑</el-button>
         </div>
       </div>
@@ -201,6 +223,7 @@
 </template>
 
 <script>
+import { getFileTypeIcon } from '@/utils/fileTypeIcon'
 import repairTypeIcon from './repairTypeIcons'
 
 export default {
@@ -286,6 +309,9 @@ export default {
   },
   methods: {
     repairTypeIcon,
+    fileIcon(file) {
+      return getFileTypeIcon(file)
+    },
     unwrap(response) {
       // 报修记录自身也有 result 字段（可能为 null），不能将其误识别为接口包装。
       if (response && !response.id && response.result !== undefined && response.result !== null) return response.result
@@ -300,9 +326,8 @@ export default {
           pageNo: this.currentPage,
           pageSize: this.pageSize,
           keyword: this.keyword || undefined,
-          type: this.typeFilter || undefined,
           status: this.statusFilter === '' ? undefined : this.statusFilter,
-          type: 0 //查看自己
+          type: 0 // 查看自己
         }
         const result = this.unwrap(await this.$api['reportRepair.list'](params)) || {}
         this.records = Array.isArray(result.records) ? result.records : Array.isArray(result.list) ? result.list : Array.isArray(result) ? result : []
@@ -843,13 +868,66 @@ export default {
   margin-right: 6px;
   color: #5d9cec;
 }
-.file-download-link {
-  color: #2f7cdf;
+.attachment-download-link {
+  appearance: none;
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 24px;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  box-shadow: none;
+  color: #3387ee;
   cursor: pointer;
+  font: inherit;
+  line-height: 22px;
+  text-align: left;
+  transition: color 180ms ease;
 }
-.file-download-link:hover {
-  color: #1c65bd;
+.attachment-file-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  object-fit: contain;
+}
+.attachment-download-link:hover,
+.attachment-download-link:focus {
+  background: transparent;
+  box-shadow: none;
+  color: #2678dc;
   text-decoration: underline;
+  text-underline-offset: 3px;
+  transform: none;
+}
+.attachment-download-link:focus:not(:focus-visible) {
+  outline: none;
+}
+.attachment-download-link:focus-visible {
+  outline: 2px solid #3387ee;
+  outline-offset: 3px;
+}
+.attachment-download-link:disabled,
+.attachment-download-link:disabled:hover,
+.attachment-download-link:disabled:focus {
+  background: transparent;
+  box-shadow: none;
+  color: #9aa9bc;
+  cursor: not-allowed;
+  opacity: 0.55;
+  text-decoration: none;
+  transform: none;
+}
+.attachment-download-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 @media (max-width: 1200px) {
   .repair-grid {
@@ -857,6 +935,9 @@ export default {
   }
 }
 @media (max-width: 760px) {
+  .attachment-download-link {
+    min-height: 44px;
+  }
   .property-repair-page {
     height: 100%;
     min-height: 0;

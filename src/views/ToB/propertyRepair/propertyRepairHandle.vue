@@ -1,3 +1,4 @@
+<!-- 物业报修处理页面：负责工单受理、派单、处理记录与附件下载。 -->
 <template>
   <main class="repair-handle-page">
     <section class="handle-summary">
@@ -105,9 +106,17 @@
           <section class="detail-section">
             <h4>处理前附件</h4>
             <div v-if="componentFiles.length" class="file-list">
-              <button v-for="file in componentFiles" :key="file.id || file.filePath" type="button" class="file-link" :disabled="!file.id" @click="downloadFile(file)">
-                <i class="el-icon-paperclip"></i>
-                {{ file.fileName || file.name || '附件' }}
+              <button
+                v-for="file in componentFiles"
+                :key="file.id || file.filePath"
+                type="button"
+                class="attachment-download-link"
+                :disabled="!file.id"
+                :title="file.fileName || file.name || '附件'"
+                :aria-label="`下载附件：${file.fileName || file.name || '附件'}`"
+                @click="downloadFile(file)">
+                <img class="attachment-file-icon" :src="fileIcon(file)" alt="" aria-hidden="true" />
+                <span class="attachment-download-label">{{ file.fileName || file.name || '附件' }}</span>
               </button>
             </div>
             <p v-else>暂无附件</p>
@@ -115,9 +124,17 @@
           <section class="detail-section">
             <h4>处理后附件</h4>
             <div v-if="resultFiles.length" class="file-list">
-              <button v-for="file in resultFiles" :key="file.id || file.filePath" type="button" class="file-link" :disabled="!file.id" @click="downloadFile(file)">
-                <i class="el-icon-paperclip"></i>
-                {{ file.fileName || file.name || '附件' }}
+              <button
+                v-for="file in resultFiles"
+                :key="file.id || file.filePath"
+                type="button"
+                class="attachment-download-link"
+                :disabled="!file.id"
+                :title="file.fileName || file.name || '附件'"
+                :aria-label="`下载附件：${file.fileName || file.name || '附件'}`"
+                @click="downloadFile(file)">
+                <img class="attachment-file-icon" :src="fileIcon(file)" alt="" aria-hidden="true" />
+                <span class="attachment-download-label">{{ file.fileName || file.name || '附件' }}</span>
               </button>
             </div>
             <p v-else>暂无附件</p>
@@ -152,8 +169,7 @@
             </div>
           </section>
         </div>
-        <div class="drawer-actions">
-          <el-button @click="detailVisible = false">关闭</el-button>
+        <div v-if="[0, 1, 2].includes(statusValue(selectedRecord.status))" class="drawer-actions">
           <el-button v-if="statusValue(selectedRecord.status) === 0" type="primary" @click="openAssign(selectedRecord)">指派并开始处理</el-button>
           <el-button v-if="statusValue(selectedRecord.status) === 1" type="primary" @click="openComplete(selectedRecord)">完成处理</el-button>
           <el-button v-if="statusValue(selectedRecord.status) === 2" type="primary" @click="openComplete(selectedRecord, true)">修改处理结果</el-button>
@@ -211,6 +227,7 @@
 </template>
 
 <script>
+import { getFileTypeIcon } from '@/utils/fileTypeIcon'
 import repairTypeIcon from './repairTypeIcons'
 
 export default {
@@ -293,6 +310,9 @@ export default {
   },
   methods: {
     repairTypeIcon,
+    fileIcon(file) {
+      return getFileTypeIcon(file)
+    },
     unwrap(response) {
       // 工单实体本身有 result（处理结果）字段；带 id 时必须保留整个实体。
       if (response && !response.id && response.result !== undefined && response.result !== null) return response.result
@@ -309,9 +329,8 @@ export default {
               pageNo: this.currentPage,
               pageSize: this.pageSize,
               keyword: this.keyword || undefined,
-              type: this.typeFilter || undefined,
               status: this.statusFilter === '' ? undefined : this.statusFilter,
-              type: 1 //查看全部
+              type: 1 // 查看全部
             })
           ) || {}
         this.records = Array.isArray(result.records) ? result.records : Array.isArray(result.list) ? result.list : Array.isArray(result) ? result : []
@@ -880,34 +899,74 @@ export default {
   font-size: 12px;
 }
 .file-list {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
   border: 1px solid #dce9e8;
   border-radius: 7px;
 }
-.file-link {
-  display: block;
-  width: 100%;
-  min-height: 40px;
-  padding: 0 12px;
+.attachment-download-link {
+  appearance: none;
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 24px;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
   border: 0;
-  border-bottom: 1px solid #edf3f2;
-  background: #fff;
-  color: #177b73;
-  text-align: left;
+  border-radius: 2px;
+  background: transparent;
+  box-shadow: none;
+  color: #3387ee;
   cursor: pointer;
+  font: inherit;
+  line-height: 22px;
+  text-align: left;
+  transition: color 180ms ease;
 }
-.file-link:last-child {
-  border-bottom: 0;
+.attachment-file-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  object-fit: contain;
 }
-.file-link:disabled {
-  color: #7b8d8b;
-  cursor: default;
-}
-.file-link:not(:disabled):hover {
-  background: #f1faf8;
+.attachment-download-link:hover,
+.attachment-download-link:focus {
+  background: transparent;
+  box-shadow: none;
+  color: #2678dc;
   text-decoration: underline;
+  text-underline-offset: 3px;
+  transform: none;
 }
-.file-link i {
-  margin-right: 6px;
+.attachment-download-link:focus:not(:focus-visible) {
+  outline: none;
+}
+.attachment-download-link:focus-visible {
+  outline: 2px solid #3387ee;
+  outline-offset: 3px;
+}
+.attachment-download-link:disabled,
+.attachment-download-link:disabled:hover,
+.attachment-download-link:disabled:focus {
+  background: transparent;
+  box-shadow: none;
+  color: #9aa9bc;
+  cursor: not-allowed;
+  opacity: 0.55;
+  text-decoration: none;
+  transform: none;
+}
+.attachment-download-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .process-timeline {
   padding: 7px 0 0;
@@ -967,6 +1026,9 @@ export default {
   }
 }
 @media (max-width: 600px) {
+  .attachment-download-link {
+    min-height: 44px;
+  }
   .repair-handle-page {
     height: 100%;
     padding: 14px 12px 24px;

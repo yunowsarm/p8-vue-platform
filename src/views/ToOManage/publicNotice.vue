@@ -1,4 +1,4 @@
-<!-- 管理端通知公告路由入口：加载可新增、编辑和删除公告的共享页面。 -->
+<!-- 管理端通知公告路由入口：以管理模式装配通知公告独立业务组件。 -->
 <template><public-notice-page mode="admin" api-namespace="tobPublicNotice" /></template>
 
 <script>

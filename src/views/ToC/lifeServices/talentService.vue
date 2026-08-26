@@ -1,8 +1,6 @@
-<!-- ToC 人才服务路由入口：以用户模式加载生活服务共享页面。 -->
-<template><life-service-page feature="talentService" mode="user" /></template>
-
+<!-- ToC 人才服务路由入口：以用户模式装配人才服务独立业务组件。 -->
+<template><talent-service-page mode="user" /></template>
 <script>
-import LifeServicePage from '@/features/life-services/LifeServicePage'
-
-export default { name: 'ToCTalentService', components: { LifeServicePage } }
+import TalentServicePage from '@/features/life-services/talent-service/TalentServicePage'
+export default { name: 'ToCTalentService', components: { TalentServicePage } }
 </script>

@@ -1,10 +1,14 @@
+<!-- 消防设备维保页面：负责设备档案、维保记录、详情操作与提醒配置。 -->
 <template>
   <div class="fire-maintenance-page">
     <header class="page-header">
       <div>
         <div class="title-row">
           <h2>消防设备维保登记</h2>
-          <span class="scope-badge"><i class="el-icon-document-checked"></i>当前仅管理维保业务</span>
+          <span class="scope-badge">
+            <i class="el-icon-document-checked"></i>
+            当前仅管理维保业务
+          </span>
         </div>
         <p>统一管理消防设备台账、维保计划、执行登记、现场凭证和到期提醒</p>
       </div>
@@ -15,7 +19,8 @@
         <i :class="[item.icon, 'kpi-icon', item.type]"></i>
         <div class="kpi-label">{{ item.title }}</div>
         <div class="kpi-number">
-          {{ item.value }}<small>{{ item.unit }}</small>
+          {{ item.value }}
+          <small>{{ item.unit }}</small>
         </div>
         <div class="kpi-sub">{{ item.sub }}</div>
       </article>
@@ -27,7 +32,10 @@
       <article class="surface category-panel">
         <div class="surface-head">
           <div>
-            <h3><i class="el-icon-pie-chart"></i>设备分类与本年维保</h3>
+            <h3>
+              <i class="el-icon-pie-chart"></i>
+              设备分类与本年维保
+            </h3>
             <p>按设备类型统计计划覆盖情况</p>
           </div>
           <span class="head-note">共 6 类</span>
@@ -35,8 +43,11 @@
         <div class="category-list">
           <div v-for="item in dataSet.categories" :key="item.name" class="category-row">
             <div class="category-meta">
-              <span><i :style="{ background: item.color }"></i>{{ item.name }}</span
-              ><b>{{ item.maintained }}/{{ item.total }}</b>
+              <span>
+                <i :style="{ background: item.color }"></i>
+                {{ item.name }}
+              </span>
+              <b>{{ item.maintained }}/{{ item.total }}</b>
             </div>
             <div class="category-progress"><i :style="{ width: Math.round((item.maintained / item.total) * 100) + '%', background: item.color }"></i></div>
           </div>
@@ -46,52 +57,97 @@
       <article class="surface progress-panel">
         <div class="surface-head">
           <div>
-            <h3><i class="el-icon-data-line"></i>本月维保进度</h3>
+            <h3>
+              <i class="el-icon-data-line"></i>
+              本月维保进度
+            </h3>
             <p>计划 32 次，已完成 26 次</p>
           </div>
-          <el-button type="text" size="mini" @click="openWorkspace('plans')">进入计划管理 <i class="el-icon-arrow-right"></i></el-button>
+          <el-button type="text" size="mini" @click="openWorkspace('plans')">
+            进入计划管理
+            <i class="el-icon-arrow-right"></i>
+          </el-button>
         </div>
         <div class="progress-layout">
           <div class="progress-ring">
-            <div><strong>81.3%</strong><span>本月完成率</span></div>
+            <div>
+              <strong>81.3%</strong>
+              <span>本月完成率</span>
+            </div>
           </div>
           <div class="progress-stats">
             <div>
-              <span><i class="dot completed"></i>已完成</span><strong>26<small>次</small></strong>
+              <span>
+                <i class="dot completed"></i>
+                已完成
+              </span>
+              <strong>
+                26
+                <small>次</small>
+              </strong>
             </div>
             <div>
-              <span><i class="dot pending"></i>待执行</span><strong>6<small>次</small></strong>
+              <span>
+                <i class="dot pending"></i>
+                待执行
+              </span>
+              <strong>
+                6
+                <small>次</small>
+              </strong>
             </div>
             <div>
-              <span><i class="dot overdue"></i>其中逾期</span><strong>4<small>次</small></strong>
+              <span>
+                <i class="dot overdue"></i>
+                其中逾期
+              </span>
+              <strong>
+                4
+                <small>次</small>
+              </strong>
             </div>
           </div>
         </div>
         <div class="month-summary">
-          <span>内部维保 <b>21 次</b></span
-          ><span>外委维保 <b>5 次</b></span
-          ><span>一次合格率 <b>92.3%</b></span>
+          <span>
+            内部维保
+            <b>21 次</b>
+          </span>
+          <span>
+            外委维保
+            <b>5 次</b>
+          </span>
+          <span>
+            一次合格率
+            <b>92.3%</b>
+          </span>
         </div>
       </article>
 
       <article class="surface reminder-panel">
         <div class="surface-head">
           <div>
-            <h3><i class="el-icon-alarm-clock"></i>近期维保提醒</h3>
+            <h3>
+              <i class="el-icon-alarm-clock"></i>
+              近期维保提醒
+            </h3>
             <p>按到期紧急程度自动排序</p>
           </div>
-          <el-button type="text" size="mini" @click="openWorkspace('reminders')">进入提醒管理 <i class="el-icon-arrow-right"></i></el-button>
+          <el-button type="text" size="mini" @click="openWorkspace('reminders')">
+            进入提醒管理
+            <i class="el-icon-arrow-right"></i>
+          </el-button>
         </div>
         <div class="reminder-list">
           <button v-for="item in dataSet.reminders.slice(0, 5)" :key="item.id" type="button" class="reminder-item" @click="openReminder(item)">
-            <span :class="['date-box', item.overdueDays > 0 ? 'overdue' : item.overdueDays === 0 ? 'today' : 'upcoming']"
-              ><b>{{ item.dueDate.slice(8) }}</b
-              ><small>07月</small></span
-            >
-            <span class="reminder-info"
-              ><b>{{ item.device }}</b
-              ><small>{{ item.location }}</small></span
-            >
+            <span :class="['date-box', item.overdueDays > 0 ? 'overdue' : item.overdueDays === 0 ? 'today' : 'upcoming']">
+              <b>{{ item.dueDate.slice(8) }}</b>
+              <small>07月</small>
+            </span>
+            <span class="reminder-info">
+              <b>{{ item.device }}</b>
+              <small>{{ item.location }}</small>
+            </span>
             <span :class="['reminder-status', item.overdueDays >= 0 ? 'danger' : 'warning']">{{ item.status }}</span>
           </button>
         </div>
@@ -102,145 +158,185 @@
       <iot-workspace-header :item="currentWorkspace" updated-at="10:42:14" @back="openWorkspace('overview')" />
       <el-tabs v-model="activeTab" class="workspace-tabs">
         <el-tab-pane name="devices">
-          <span slot="label" class="tab-label"
-            ><i class="el-icon-cpu"></i>设备台账 <b>{{ devices.length }}</b></span
-          >
+          <span slot="label" class="tab-label">
+            <i class="el-icon-cpu"></i>
+            设备台账
+            <b>{{ devices.length }}</b>
+          </span>
           <div class="toolbar">
             <div class="toolbar-left">
               <el-input v-model.trim="deviceKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="设备编号 / 名称 / 位置" style="width: 230px"></el-input>
-              <el-select v-model="deviceCategory" size="small" clearable placeholder="设备类型" style="width: 150px"
-                ><el-option v-for="item in categories" :key="item" :label="item" :value="item"></el-option
-              ></el-select>
-              <el-select v-model="deviceStatus" size="small" clearable placeholder="维保状态" style="width: 130px"
-                ><el-option v-for="item in deviceStatuses" :key="item" :label="item" :value="item"></el-option
-              ></el-select>
+              <el-select v-model="deviceCategory" size="small" clearable placeholder="设备类型" style="width: 150px">
+                <el-option v-for="item in categories" :key="item" :label="item" :value="item"></el-option>
+              </el-select>
+              <el-select v-model="deviceStatus" size="small" clearable placeholder="维保状态" style="width: 130px">
+                <el-option v-for="item in deviceStatuses" :key="item" :label="item" :value="item"></el-option>
+              </el-select>
             </div>
             <div class="toolbar-right">
-              <span class="toolbar-note"><i class="el-icon-info"></i> 点击设备行可查看完整维保履历</span
-              ><el-button type="primary" size="small" icon="el-icon-plus" @click="openDeviceDialog()">新增设备</el-button>
+              <span class="toolbar-note">
+                <i class="el-icon-info"></i>
+                点击设备行可查看完整维保履历
+              </span>
+              <el-button type="primary" size="small" icon="el-icon-plus" @click="openDeviceDialog()">新增设备</el-button>
             </div>
           </div>
           <el-table :data="pagedDevices" size="small" stripe @row-click="openDeviceDetail">
             <el-table-column prop="id" label="设备编号" width="118"></el-table-column>
             <el-table-column prop="name" label="设备名称" min-width="180"></el-table-column>
             <el-table-column prop="category" label="设备类型" width="125"></el-table-column>
-            <el-table-column label="安装位置" min-width="190"
-              ><template slot-scope="scope">{{ scope.row.building }} / {{ scope.row.floor }} / {{ scope.row.location }}</template></el-table-column
-            >
-            <el-table-column prop="cycle" label="周期" width="78"
-              ><template slot-scope="scope">{{ scope.row.cycle }}个月</template></el-table-column
-            >
+            <el-table-column label="安装位置" min-width="190">
+              <template slot-scope="scope">{{ scope.row.building }} / {{ scope.row.floor }} / {{ scope.row.location }}</template>
+            </el-table-column>
+            <el-table-column prop="cycle" label="周期" width="78">
+              <template slot-scope="scope">{{ scope.row.cycle }}个月</template>
+            </el-table-column>
             <el-table-column prop="lastDate" label="上次维保" width="105"></el-table-column>
             <el-table-column prop="nextDate" label="下次维保" width="105"></el-table-column>
             <el-table-column prop="owner" label="责任人" width="82"></el-table-column>
-            <el-table-column label="状态" width="105"
-              ><template slot-scope="scope"
-                ><span :class="['status-pill', statusClass(scope.row.status)]">{{ scope.row.status }}</span></template
-              ></el-table-column
-            >
-            <el-table-column label="操作" width="145" fixed="right"
-              ><template slot-scope="scope"
-                ><el-button type="text" size="mini" @click.stop="openRecordDialog(scope.row)">登记维保</el-button
-                ><el-button type="text" size="mini" @click.stop="openDeviceDialog(scope.row)">编辑</el-button></template
-              ></el-table-column
-            >
+            <el-table-column label="状态" width="105">
+              <template slot-scope="scope">
+                <span :class="['status-pill', statusClass(scope.row.status)]">{{ scope.row.status }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="145" fixed="right">
+              <template slot-scope="scope">
+                <el-button type="text" size="mini" @click.stop="openRecordDialog(scope.row)">登记维保</el-button>
+                <el-button type="text" size="mini" @click.stop="openDeviceDialog(scope.row)">编辑</el-button>
+              </template>
+            </el-table-column>
           </el-table>
           <div class="pagination-row"><el-pagination :current-page.sync="devicePage" :page-size="6" layout="total, prev, pager, next" :total="filteredDevices.length"></el-pagination></div>
         </el-tab-pane>
 
         <el-tab-pane name="plans">
-          <span slot="label" class="tab-label"
-            ><i class="el-icon-date"></i>维保计划 <b>{{ plans.length }}</b></span
-          >
+          <span slot="label" class="tab-label">
+            <i class="el-icon-date"></i>
+            维保计划
+            <b>{{ plans.length }}</b>
+          </span>
           <div class="toolbar">
             <div class="toolbar-left">
-              <el-input v-model.trim="planKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="计划编号 / 名称 / 范围" style="width: 240px"></el-input
-              ><el-select v-model="planStatus" size="small" clearable placeholder="计划状态" style="width: 130px"
-                ><el-option v-for="item in ['待执行', '执行中', '已完成']" :key="item" :label="item" :value="item"></el-option
-              ></el-select>
+              <el-input v-model.trim="planKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="计划编号 / 名称 / 范围" style="width: 240px"></el-input>
+              <el-select v-model="planStatus" size="small" clearable placeholder="计划状态" style="width: 130px">
+                <el-option v-for="item in ['待执行', '执行中', '已完成']" :key="item" :label="item" :value="item"></el-option>
+              </el-select>
             </div>
             <el-button type="primary" size="small" icon="el-icon-plus" @click="openPlanDialog()">新建计划</el-button>
           </div>
           <el-table :data="pagedPlans" size="small" stripe>
-            <el-table-column prop="id" label="计划编号" width="125"></el-table-column><el-table-column prop="name" label="计划名称" min-width="190"></el-table-column
-            ><el-table-column prop="scope" label="维保范围" min-width="220"></el-table-column><el-table-column prop="frequency" label="频次" width="88"></el-table-column
-            ><el-table-column prop="plannedDate" label="计划日期" width="105"></el-table-column
-            ><el-table-column label="完成进度" width="170"
-              ><template slot-scope="scope"
-                ><div class="table-progress">
-                  <el-progress :percentage="planProgress(scope.row)" :show-text="false" :stroke-width="7"></el-progress><span>{{ scope.row.completed }}/{{ scope.row.devices }}</span>
-                </div></template
-              ></el-table-column
-            ><el-table-column prop="serviceType" label="维保方式" width="95"></el-table-column><el-table-column prop="owner" label="负责人" width="82"></el-table-column
-            ><el-table-column label="状态" width="90"
-              ><template slot-scope="scope"
-                ><span :class="['status-pill', statusClass(scope.row.status)]">{{ scope.row.status }}</span></template
-              ></el-table-column
-            ><el-table-column label="操作" width="145" fixed="right"
-              ><template slot-scope="scope"
-                ><el-button type="text" size="mini" @click="executePlan(scope.row)">执行登记</el-button><el-button type="text" size="mini" @click="openPlanDialog(scope.row)">编辑</el-button></template
-              ></el-table-column
-            >
+            <el-table-column prop="id" label="计划编号" width="125"></el-table-column>
+            <el-table-column prop="name" label="计划名称" min-width="190"></el-table-column>
+            <el-table-column prop="scope" label="维保范围" min-width="220"></el-table-column>
+            <el-table-column prop="frequency" label="频次" width="88"></el-table-column>
+            <el-table-column prop="plannedDate" label="计划日期" width="105"></el-table-column>
+            <el-table-column label="完成进度" width="170">
+              <template slot-scope="scope">
+                <div class="table-progress">
+                  <el-progress :percentage="planProgress(scope.row)" :show-text="false" :stroke-width="7"></el-progress>
+                  <span>{{ scope.row.completed }}/{{ scope.row.devices }}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="serviceType" label="维保方式" width="95"></el-table-column>
+            <el-table-column prop="owner" label="负责人" width="82"></el-table-column>
+            <el-table-column label="状态" width="90">
+              <template slot-scope="scope">
+                <span :class="['status-pill', statusClass(scope.row.status)]">{{ scope.row.status }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="145" fixed="right">
+              <template slot-scope="scope">
+                <el-button type="text" size="mini" @click="executePlan(scope.row)">执行登记</el-button>
+                <el-button type="text" size="mini" @click="openPlanDialog(scope.row)">编辑</el-button>
+              </template>
+            </el-table-column>
           </el-table>
           <div class="pagination-row"><el-pagination :current-page.sync="planPage" :page-size="6" layout="total, prev, pager, next" :total="filteredPlans.length"></el-pagination></div>
         </el-tab-pane>
 
         <el-tab-pane name="records">
-          <span slot="label" class="tab-label"
-            ><i class="el-icon-document-checked"></i>维保记录 <b>{{ records.length }}</b></span
-          >
+          <span slot="label" class="tab-label">
+            <i class="el-icon-document-checked"></i>
+            维保记录
+            <b>{{ records.length }}</b>
+          </span>
           <div class="toolbar">
             <div class="toolbar-left">
-              <el-input v-model.trim="recordKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="记录编号 / 设备 / 执行人" style="width: 240px"></el-input
-              ><el-select v-model="recordResult" size="small" clearable placeholder="维保结果" style="width: 130px"
-                ><el-option v-for="item in ['合格', '需维修', '不合格']" :key="item" :label="item" :value="item"></el-option></el-select
-              ><el-date-picker v-model="recordDate" type="date" size="small" value-format="yyyy-MM-dd" placeholder="维保日期" style="width: 150px"></el-date-picker>
+              <el-input v-model.trim="recordKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="记录编号 / 设备 / 执行人" style="width: 240px"></el-input>
+              <el-select v-model="recordResult" size="small" clearable placeholder="维保结果" style="width: 130px">
+                <el-option v-for="item in ['合格', '需维修', '不合格']" :key="item" :label="item" :value="item"></el-option>
+              </el-select>
+              <el-date-picker v-model="recordDate" type="date" size="small" value-format="yyyy-MM-dd" placeholder="维保日期" style="width: 150px"></el-date-picker>
             </div>
             <el-button type="primary" size="small" icon="el-icon-edit-outline" @click="openRecordDialog()">新增登记</el-button>
           </div>
           <el-table :data="pagedRecords" size="small" stripe @row-click="openRecordDetail">
-            <el-table-column prop="id" label="记录编号" width="140"></el-table-column><el-table-column prop="device" label="设备名称" min-width="180"></el-table-column
-            ><el-table-column prop="category" label="设备类型" width="120"></el-table-column><el-table-column prop="date" label="维保时间" width="145"></el-table-column
-            ><el-table-column prop="type" label="维保类型" width="95"></el-table-column><el-table-column prop="executor" label="执行人" width="90"></el-table-column
-            ><el-table-column prop="company" label="执行单位" min-width="145"></el-table-column
-            ><el-table-column label="结果" width="88"
-              ><template slot-scope="scope"
-                ><span :class="['result-pill', resultClass(scope.row.result)]">{{ scope.row.result }}</span></template
-              ></el-table-column
-            ><el-table-column label="现场凭证" width="90"
-              ><template slot-scope="scope"
-                ><span class="evidence-link"><i class="el-icon-picture-outline"></i>{{ scope.row.photos.length }}项</span></template
-              ></el-table-column
-            ><el-table-column prop="nextDate" label="下次维保" width="110"></el-table-column
-            ><el-table-column label="操作" width="70" fixed="right"
-              ><template slot-scope="scope"><el-button type="text" size="mini" @click.stop="openRecordDetail(scope.row)">详情</el-button></template></el-table-column
-            >
+            <el-table-column prop="id" label="记录编号" width="140"></el-table-column>
+            <el-table-column prop="device" label="设备名称" min-width="180"></el-table-column>
+            <el-table-column prop="category" label="设备类型" width="120"></el-table-column>
+            <el-table-column prop="date" label="维保时间" width="145"></el-table-column>
+            <el-table-column prop="type" label="维保类型" width="95"></el-table-column>
+            <el-table-column prop="executor" label="执行人" width="90"></el-table-column>
+            <el-table-column prop="company" label="执行单位" min-width="145"></el-table-column>
+            <el-table-column label="结果" width="88">
+              <template slot-scope="scope">
+                <span :class="['result-pill', resultClass(scope.row.result)]">{{ scope.row.result }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="现场凭证" width="90">
+              <template slot-scope="scope">
+                <span class="evidence-link">
+                  <i class="el-icon-picture-outline"></i>
+                  {{ scope.row.photos.length }}项
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="nextDate" label="下次维保" width="110"></el-table-column>
+            <el-table-column label="操作" width="70" fixed="right">
+              <template slot-scope="scope"><el-button type="text" size="mini" @click.stop="openRecordDetail(scope.row)">详情</el-button></template>
+            </el-table-column>
           </el-table>
           <div class="pagination-row"><el-pagination :current-page.sync="recordPage" :page-size="6" layout="total, prev, pager, next" :total="filteredRecords.length"></el-pagination></div>
         </el-tab-pane>
 
         <el-tab-pane name="reminders">
-          <span slot="label" class="tab-label"
-            ><i class="el-icon-alarm-clock"></i>到期提醒 <b class="danger-count">{{ reminders.length }}</b></span
-          >
+          <span slot="label" class="tab-label">
+            <i class="el-icon-alarm-clock"></i>
+            到期提醒
+            <b class="danger-count">{{ reminders.length }}</b>
+          </span>
           <div class="toolbar">
             <div class="toolbar-left">
-              <el-input v-model.trim="reminderKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="设备编号 / 设备名称 / 类型 / 位置 / 责任人 / 计划" style="width: 300px"></el-input>
+              <el-input
+                v-model.trim="reminderKeyword"
+                size="small"
+                clearable
+                prefix-icon="el-icon-search"
+                placeholder="设备编号 / 设备名称 / 类型 / 位置 / 责任人 / 计划"
+                style="width: 300px"></el-input>
             </div>
             <el-button size="small" @click="reminderRuleDialog = true">提醒规则</el-button>
           </div>
           <el-table :data="pagedReminders" size="small" stripe>
-            <el-table-column label="紧急程度" width="100"
-              ><template slot-scope="scope"
-                ><span :class="['urgency-mark', scope.row.overdueDays > 0 ? 'danger' : scope.row.overdueDays === 0 ? 'today' : 'warning']"><i></i>{{ scope.row.status }}</span></template
-              ></el-table-column
-            ><el-table-column prop="deviceId" label="设备编号" width="118"></el-table-column><el-table-column prop="device" label="设备名称" min-width="180"></el-table-column
-            ><el-table-column prop="category" label="设备类型" width="120"></el-table-column><el-table-column prop="location" label="安装位置" min-width="220"></el-table-column
-            ><el-table-column prop="dueDate" label="到期日期" width="105"></el-table-column><el-table-column prop="owner" label="责任人" width="85"></el-table-column
-            ><el-table-column prop="plan" label="关联计划" min-width="190"></el-table-column
-            ><el-table-column label="操作" width="100" fixed="right"
-              ><template slot-scope="scope"><el-button type="primary" plain size="mini" @click="openReminder(scope.row)">立即登记</el-button></template></el-table-column
-            >
+            <el-table-column label="紧急程度" width="100">
+              <template slot-scope="scope">
+                <span :class="['urgency-mark', scope.row.overdueDays > 0 ? 'danger' : scope.row.overdueDays === 0 ? 'today' : 'warning']">
+                  <i></i>
+                  {{ scope.row.status }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="deviceId" label="设备编号" width="118"></el-table-column>
+            <el-table-column prop="device" label="设备名称" min-width="180"></el-table-column>
+            <el-table-column prop="category" label="设备类型" width="120"></el-table-column>
+            <el-table-column prop="location" label="安装位置" min-width="220"></el-table-column>
+            <el-table-column prop="dueDate" label="到期日期" width="105"></el-table-column>
+            <el-table-column prop="owner" label="责任人" width="85"></el-table-column>
+            <el-table-column prop="plan" label="关联计划" min-width="190"></el-table-column>
+            <el-table-column label="操作" width="100" fixed="right">
+              <template slot-scope="scope"><el-button type="primary" plain size="mini" @click="openReminder(scope.row)">立即登记</el-button></template>
+            </el-table-column>
           </el-table>
           <div class="pagination-row"><el-pagination :current-page.sync="reminderPage" :page-size="6" layout="total, prev, pager, next" :total="filteredReminders.length"></el-pagination></div>
         </el-tab-pane>
@@ -248,183 +344,269 @@
     </section>
 
     <el-dialog :title="deviceForm.editingId ? '编辑消防设备' : '新增消防设备'" :visible.sync="deviceDialog" width="720px" custom-class="maintenance-dialog">
-      <div class="dialog-intro"><i class="el-icon-info"></i>建立设备基础档案后，系统将按维保周期自动计算到期时间并生成提醒。</div>
+      <div class="dialog-intro">
+        <i class="el-icon-info"></i>
+        建立设备基础档案后，系统将按维保周期自动计算到期时间并生成提醒。
+      </div>
       <el-form ref="deviceForm" :model="deviceForm" :rules="deviceRules" label-width="105px" size="small">
         <div class="form-section-title">基础信息</div>
-        <el-row :gutter="16"
-          ><el-col :span="12"
-            ><el-form-item label="设备编号" prop="id"><el-input v-model.trim="deviceForm.id" :disabled="!!deviceForm.editingId"></el-input></el-form-item></el-col
-          ><el-col :span="12"
-            ><el-form-item label="设备类型" prop="category"
-              ><el-select v-model="deviceForm.category" style="width: 100%"
-                ><el-option v-for="item in categories" :key="item" :label="item" :value="item"></el-option></el-select></el-form-item></el-col
-        ></el-row>
+        <el-row :gutter="16">
+          <el-col :span="12">
+            <el-form-item label="设备编号" prop="id"><el-input v-model.trim="deviceForm.id" :disabled="!!deviceForm.editingId"></el-input></el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="设备类型" prop="category">
+              <el-select v-model="deviceForm.category" style="width: 100%"><el-option v-for="item in categories" :key="item" :label="item" :value="item"></el-option></el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="设备名称" prop="name"><el-input v-model.trim="deviceForm.name"></el-input></el-form-item>
-        <el-row :gutter="16"
-          ><el-col :span="12"
-            ><el-form-item label="品牌"><el-input v-model.trim="deviceForm.brand"></el-input></el-form-item></el-col
-          ><el-col :span="12"
-            ><el-form-item label="规格型号"><el-input v-model.trim="deviceForm.model"></el-input></el-form-item></el-col
-        ></el-row>
+        <el-row :gutter="16">
+          <el-col :span="12">
+            <el-form-item label="品牌"><el-input v-model.trim="deviceForm.brand"></el-input></el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="规格型号"><el-input v-model.trim="deviceForm.model"></el-input></el-form-item>
+          </el-col>
+        </el-row>
         <div class="form-section-title">安装与责任信息</div>
-        <el-row :gutter="16"
-          ><el-col :span="8"
-            ><el-form-item label="建筑" prop="building"
-              ><el-select v-model="deviceForm.building" style="width: 100%"><el-option v-for="item in buildings" :key="item" :label="item" :value="item"></el-option></el-select></el-form-item></el-col
-          ><el-col :span="6"
-            ><el-form-item label="楼层"><el-input v-model.trim="deviceForm.floor"></el-input></el-form-item></el-col
-          ><el-col :span="10"
-            ><el-form-item label="具体位置" prop="location"><el-input v-model.trim="deviceForm.location"></el-input></el-form-item></el-col
-        ></el-row>
-        <el-row :gutter="16"
-          ><el-col :span="12"
-            ><el-form-item label="责任部门"><el-input v-model.trim="deviceForm.department"></el-input></el-form-item></el-col
-          ><el-col :span="12"
-            ><el-form-item label="责任人" prop="owner"><el-input v-model.trim="deviceForm.owner"></el-input></el-form-item></el-col
-        ></el-row>
+        <el-row :gutter="16">
+          <el-col :span="8">
+            <el-form-item label="建筑" prop="building">
+              <el-select v-model="deviceForm.building" style="width: 100%"><el-option v-for="item in buildings" :key="item" :label="item" :value="item"></el-option></el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="楼层"><el-input v-model.trim="deviceForm.floor"></el-input></el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="具体位置" prop="location"><el-input v-model.trim="deviceForm.location"></el-input></el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="16">
+          <el-col :span="12">
+            <el-form-item label="责任部门"><el-input v-model.trim="deviceForm.department"></el-input></el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="责任人" prop="owner"><el-input v-model.trim="deviceForm.owner"></el-input></el-form-item>
+          </el-col>
+        </el-row>
         <div class="form-section-title">维保周期</div>
-        <el-row :gutter="16"
-          ><el-col :span="8"
-            ><el-form-item label="安装日期"><el-date-picker v-model="deviceForm.installDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"></el-date-picker></el-form-item></el-col
-          ><el-col :span="8"
-            ><el-form-item label="维保周期" prop="cycle"
-              ><el-select v-model="deviceForm.cycle" style="width: 100%"
-                ><el-option v-for="item in [1, 3, 6, 12]" :key="item" :label="item + '个月'" :value="item"></el-option></el-select></el-form-item></el-col
-          ><el-col :span="8"
-            ><el-form-item label="下次维保" prop="nextDate"
-              ><el-date-picker v-model="deviceForm.nextDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"></el-date-picker></el-form-item></el-col
-        ></el-row>
+        <el-row :gutter="16">
+          <el-col :span="8">
+            <el-form-item label="安装日期"><el-date-picker v-model="deviceForm.installDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"></el-date-picker></el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="维保周期" prop="cycle">
+              <el-select v-model="deviceForm.cycle" style="width: 100%"><el-option v-for="item in [1, 3, 6, 12]" :key="item" :label="item + '个月'" :value="item"></el-option></el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="下次维保" prop="nextDate"><el-date-picker v-model="deviceForm.nextDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"></el-date-picker></el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
-      <span slot="footer"><el-button @click="deviceDialog = false">取消</el-button><el-button type="primary" @click="saveDevice">保存设备档案</el-button></span>
+      <span slot="footer">
+        <el-button @click="deviceDialog = false">取消</el-button>
+        <el-button type="primary" @click="saveDevice">保存设备档案</el-button>
+      </span>
     </el-dialog>
 
     <el-dialog :title="planForm.editingId ? '编辑维保计划' : '新建维保计划'" :visible.sync="planDialog" width="720px" custom-class="maintenance-dialog">
-      <div class="dialog-intro"><i class="el-icon-date"></i>计划保存后按设备范围生成待办；责任人将在设定的提前天数收到到期提醒。</div>
+      <div class="dialog-intro">
+        <i class="el-icon-date"></i>
+        计划保存后按设备范围生成待办；责任人将在设定的提前天数收到到期提醒。
+      </div>
       <el-form ref="planForm" :model="planForm" :rules="planRules" label-width="105px" size="small">
         <el-form-item label="计划名称" prop="name"><el-input v-model.trim="planForm.name"></el-input></el-form-item>
-        <el-row :gutter="16"
-          ><el-col :span="12"
-            ><el-form-item label="建筑范围" prop="building"
-              ><el-select v-model="planForm.building" multiple collapse-tags style="width: 100%"
-                ><el-option v-for="item in buildings" :key="item" :label="item" :value="item"></el-option></el-select></el-form-item></el-col
-          ><el-col :span="12"
-            ><el-form-item label="设备类型" prop="categories"
-              ><el-select v-model="planForm.categories" multiple collapse-tags style="width: 100%"
-                ><el-option v-for="item in categories" :key="item" :label="item" :value="item"></el-option></el-select></el-form-item></el-col
-        ></el-row>
-        <el-row :gutter="16"
-          ><el-col :span="8"
-            ><el-form-item label="执行频次"
-              ><el-select v-model="planForm.frequency" style="width: 100%"
-                ><el-option v-for="item in ['每月', '每3个月', '每6个月', '每年']" :key="item" :label="item" :value="item"></el-option></el-select></el-form-item></el-col
-          ><el-col :span="8"
-            ><el-form-item label="计划日期" prop="plannedDate"
-              ><el-date-picker v-model="planForm.plannedDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"></el-date-picker></el-form-item></el-col
-          ><el-col :span="8"
-            ><el-form-item label="提前提醒"><el-input-number v-model="planForm.advanceDays" :min="1" :max="30" style="width: 100%"></el-input-number></el-form-item></el-col
-        ></el-row>
-        <el-row :gutter="16"
-          ><el-col :span="10"
-            ><el-form-item label="维保方式"
-              ><el-radio-group v-model="planForm.serviceType"><el-radio label="内部维保"></el-radio><el-radio label="外委维保"></el-radio></el-radio-group></el-form-item></el-col
-          ><el-col :span="14"
-            ><el-form-item label="负责人" prop="owner"><el-input v-model.trim="planForm.owner"></el-input></el-form-item></el-col
-        ></el-row>
-        <el-form-item v-if="planForm.serviceType === '外委维保'" label="维保单位" prop="vendor"
-          ><el-input v-model.trim="planForm.vendor" placeholder="填写具备相应资质的维保单位"></el-input
-        ></el-form-item>
-        <el-form-item label="检查模板"
-          ><div class="template-preview">
-            <span v-for="item in planChecklist" :key="item"><i class="el-icon-check"></i>{{ item }}</span
-            ><small v-if="!planChecklist.length">选择设备类型后自动带出检查项目</small>
-          </div></el-form-item
-        >
+        <el-row :gutter="16">
+          <el-col :span="12">
+            <el-form-item label="建筑范围" prop="building">
+              <el-select v-model="planForm.building" multiple collapse-tags style="width: 100%"><el-option v-for="item in buildings" :key="item" :label="item" :value="item"></el-option></el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="设备类型" prop="categories">
+              <el-select v-model="planForm.categories" multiple collapse-tags style="width: 100%"><el-option v-for="item in categories" :key="item" :label="item" :value="item"></el-option></el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="16">
+          <el-col :span="8">
+            <el-form-item label="执行频次">
+              <el-select v-model="planForm.frequency" style="width: 100%">
+                <el-option v-for="item in ['每月', '每3个月', '每6个月', '每年']" :key="item" :label="item" :value="item"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="计划日期" prop="plannedDate"><el-date-picker v-model="planForm.plannedDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"></el-date-picker></el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="提前提醒"><el-input-number v-model="planForm.advanceDays" :min="1" :max="30" style="width: 100%"></el-input-number></el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="16">
+          <el-col :span="10">
+            <el-form-item label="维保方式">
+              <el-radio-group v-model="planForm.serviceType">
+                <el-radio label="内部维保"></el-radio>
+                <el-radio label="外委维保"></el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="14">
+            <el-form-item label="负责人" prop="owner"><el-input v-model.trim="planForm.owner"></el-input></el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item v-if="planForm.serviceType === '外委维保'" label="维保单位" prop="vendor">
+          <el-input v-model.trim="planForm.vendor" placeholder="填写具备相应资质的维保单位"></el-input>
+        </el-form-item>
+        <el-form-item label="检查模板">
+          <div class="template-preview">
+            <span v-for="item in planChecklist" :key="item">
+              <i class="el-icon-check"></i>
+              {{ item }}
+            </span>
+            <small v-if="!planChecklist.length">选择设备类型后自动带出检查项目</small>
+          </div>
+        </el-form-item>
       </el-form>
-      <span slot="footer"><el-button @click="planDialog = false">取消</el-button><el-button type="primary" @click="savePlan">保存并生成维保任务</el-button></span>
+      <span slot="footer">
+        <el-button @click="planDialog = false">取消</el-button>
+        <el-button type="primary" @click="savePlan">保存并生成维保任务</el-button>
+      </span>
     </el-dialog>
 
     <el-dialog title="消防设备维保执行登记" :visible.sync="recordDialog" width="780px" custom-class="maintenance-dialog record-dialog" :close-on-click-modal="false">
-      <div class="dialog-intro"><i class="el-icon-edit-outline"></i>维保记录提交后不可直接删除；如需更正，应通过补充记录保留修改原因和人员。</div>
+      <div class="dialog-intro">
+        <i class="el-icon-edit-outline"></i>
+        维保记录提交后不可直接删除；如需更正，应通过补充记录保留修改原因和人员。
+      </div>
       <el-form ref="recordForm" :model="recordForm" :rules="recordRules" label-width="105px" size="small">
         <div class="form-section-title">执行对象</div>
-        <el-row :gutter="16"
-          ><el-col :span="14"
-            ><el-form-item label="消防设备" prop="deviceId"
-              ><el-select v-model="recordForm.deviceId" filterable style="width: 100%" @change="onRecordDeviceChange"
-                ><el-option v-for="item in devices" :key="item.id" :label="item.name + '（' + item.id + '）'" :value="item.id"></el-option></el-select></el-form-item></el-col
-          ><el-col :span="10"
-            ><el-form-item label="维保类型"
-              ><el-select v-model="recordForm.type" style="width: 100%"
-                ><el-option v-for="item in ['定期维保', '功能测试', '试运行', '故障检查', '逾期补检']" :key="item" :label="item" :value="item"></el-option></el-select></el-form-item></el-col
-        ></el-row>
+        <el-row :gutter="16">
+          <el-col :span="14">
+            <el-form-item label="消防设备" prop="deviceId">
+              <el-select v-model="recordForm.deviceId" filterable style="width: 100%" @change="onRecordDeviceChange">
+                <el-option v-for="item in devices" :key="item.id" :label="item.name + '（' + item.id + '）'" :value="item.id"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="维保类型">
+              <el-select v-model="recordForm.type" style="width: 100%">
+                <el-option v-for="item in ['定期维保', '功能测试', '试运行', '故障检查', '逾期补检']" :key="item" :label="item" :value="item"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <div v-if="recordDevice" class="device-summary">
-          <span
-            ><small>设备类型</small><b>{{ recordDevice.category }}</b></span
-          ><span
-            ><small>安装位置</small><b>{{ recordDevice.building }} / {{ recordDevice.floor }} / {{ recordDevice.location }}</b></span
-          ><span
-            ><small>当前状态</small><b>{{ recordDevice.status }}</b></span
-          >
+          <span>
+            <small>设备类型</small>
+            <b>{{ recordDevice.category }}</b>
+          </span>
+          <span>
+            <small>安装位置</small>
+            <b>{{ recordDevice.building }} / {{ recordDevice.floor }} / {{ recordDevice.location }}</b>
+          </span>
+          <span>
+            <small>当前状态</small>
+            <b>{{ recordDevice.status }}</b>
+          </span>
         </div>
-        <el-row :gutter="16"
-          ><el-col :span="8"
-            ><el-form-item label="维保时间" prop="date"
-              ><el-date-picker v-model="recordForm.date" type="datetime" value-format="yyyy-MM-dd HH:mm" style="width: 100%"></el-date-picker></el-form-item></el-col
-          ><el-col :span="8"
-            ><el-form-item label="执行人" prop="executor"><el-input v-model.trim="recordForm.executor"></el-input></el-form-item></el-col
-          ><el-col :span="8"
-            ><el-form-item label="执行单位" prop="company"><el-input v-model.trim="recordForm.company"></el-input></el-form-item></el-col
-        ></el-row>
+        <el-row :gutter="16">
+          <el-col :span="8">
+            <el-form-item label="维保时间" prop="date"><el-date-picker v-model="recordForm.date" type="datetime" value-format="yyyy-MM-dd HH:mm" style="width: 100%"></el-date-picker></el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="执行人" prop="executor"><el-input v-model.trim="recordForm.executor"></el-input></el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="执行单位" prop="company"><el-input v-model.trim="recordForm.company"></el-input></el-form-item>
+          </el-col>
+        </el-row>
         <div class="form-section-title">检查项目</div>
         <div v-if="recordChecklist.length" class="checklist-grid">
           <el-checkbox v-for="item in recordChecklist" :key="item" v-model="recordForm.checkedItems" :label="item" border>{{ item }}</el-checkbox>
         </div>
         <div v-else class="checklist-empty">请先选择消防设备</div>
         <div class="form-section-title">维保结论与凭证</div>
-        <el-row :gutter="16"
-          ><el-col :span="10"
-            ><el-form-item label="维保结果" prop="result"
-              ><el-radio-group v-model="recordForm.result"
-                ><el-radio label="合格"></el-radio><el-radio label="需维修"></el-radio><el-radio label="不合格"></el-radio></el-radio-group></el-form-item></el-col
-          ><el-col :span="14"
-            ><el-form-item label="下次维保" prop="nextDate"
-              ><el-date-picker v-model="recordForm.nextDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"></el-date-picker></el-form-item></el-col
-        ></el-row>
-        <el-form-item label="问题说明"
-          ><el-input v-model.trim="recordForm.issue" type="textarea" :rows="2" :placeholder="recordForm.result === '合格' ? '可填写现场调整情况' : '请填写缺陷、影响和后续处理要求'"></el-input
-        ></el-form-item>
-        <el-row :gutter="16"
-          ><el-col :span="12"
-            ><el-form-item label="更换部件"><el-input v-model.trim="recordForm.parts"></el-input></el-form-item></el-col
-          ><el-col :span="12"
-            ><el-form-item label="维保费用"><el-input-number v-model="recordForm.cost" :min="0" :precision="2" style="width: 100%"></el-input-number></el-form-item></el-col
-        ></el-row>
-        <el-form-item label="现场凭证" required
-          ><div class="evidence-uploader">
-            <button type="button" @click="addEvidence"><i class="el-icon-plus"></i><span>添加图片或视频</span></button
-            ><span v-for="(item, index) in recordForm.photos" :key="item" class="evidence-chip"
-              ><i :class="item.indexOf('视频') > -1 ? 'el-icon-video-camera' : 'el-icon-picture-outline'"></i>{{ item
-              }}<button type="button" aria-label="移除凭证" @click="recordForm.photos.splice(index, 1)"><i class="el-icon-close"></i></button
-            ></span>
+        <el-row :gutter="16">
+          <el-col :span="10">
+            <el-form-item label="维保结果" prop="result">
+              <el-radio-group v-model="recordForm.result">
+                <el-radio label="合格"></el-radio>
+                <el-radio label="需维修"></el-radio>
+                <el-radio label="不合格"></el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="14">
+            <el-form-item label="下次维保" prop="nextDate"><el-date-picker v-model="recordForm.nextDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"></el-date-picker></el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="问题说明">
+          <el-input v-model.trim="recordForm.issue" type="textarea" :rows="2" :placeholder="recordForm.result === '合格' ? '可填写现场调整情况' : '请填写缺陷、影响和后续处理要求'"></el-input>
+        </el-form-item>
+        <el-row :gutter="16">
+          <el-col :span="12">
+            <el-form-item label="更换部件"><el-input v-model.trim="recordForm.parts"></el-input></el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="维保费用"><el-input-number v-model="recordForm.cost" :min="0" :precision="2" style="width: 100%"></el-input-number></el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="现场凭证" required>
+          <div class="evidence-uploader">
+            <button type="button" @click="addEvidence">
+              <i class="el-icon-plus"></i>
+              <span>添加图片或视频</span>
+            </button>
+            <span v-for="(item, index) in recordForm.photos" :key="item" class="evidence-chip">
+              <i :class="item.indexOf('视频') > -1 ? 'el-icon-video-camera' : 'el-icon-picture-outline'"></i>
+              {{ item }}
+              <button type="button" aria-label="移除凭证" @click="recordForm.photos.splice(index, 1)"><i class="el-icon-close"></i></button>
+            </span>
           </div>
-          <div class="form-help">仿真环境使用文件占位；正式系统应上传原图、拍摄时间和定位信息。</div></el-form-item
-        >
+          <div class="form-help">仿真环境使用文件占位；正式系统应上传原图、拍摄时间和定位信息。</div>
+        </el-form-item>
       </el-form>
-      <span slot="footer"><el-button @click="recordDialog = false">取消</el-button><el-button type="primary" @click="saveRecord">提交维保记录</el-button></span>
+      <span slot="footer">
+        <el-button @click="recordDialog = false">取消</el-button>
+        <el-button type="primary" @click="saveRecord">提交维保记录</el-button>
+      </span>
     </el-dialog>
 
     <el-dialog title="到期提醒规则" :visible.sync="reminderRuleDialog" width="560px" custom-class="maintenance-dialog">
-      <el-form :model="reminderRule" label-width="115px" size="small"
-        ><el-form-item label="默认提前提醒"><el-input-number v-model="reminderRule.advanceDays" :min="1" :max="30"></el-input-number><span class="form-unit">天</span></el-form-item
-        ><el-form-item label="提醒对象"
-          ><el-checkbox-group v-model="reminderRule.receivers"
-            ><el-checkbox label="设备责任人"></el-checkbox><el-checkbox label="部门负责人"></el-checkbox><el-checkbox label="消防管理员"></el-checkbox></el-checkbox-group></el-form-item
-        ><el-form-item label="提醒方式"
-          ><el-checkbox-group v-model="reminderRule.channels"
-            ><el-checkbox label="系统消息"></el-checkbox><el-checkbox label="移动端"></el-checkbox><el-checkbox label="短信"></el-checkbox></el-checkbox-group></el-form-item
-        ><el-form-item label="逾期升级"><el-switch v-model="reminderRule.escalate"></el-switch><span class="form-help inline">逾期超过3天升级至园区工程负责人</span></el-form-item></el-form
-      >
-      <span slot="footer"><el-button @click="reminderRuleDialog = false">取消</el-button><el-button type="primary" @click="saveReminderRule">保存规则</el-button></span>
+      <el-form :model="reminderRule" label-width="115px" size="small">
+        <el-form-item label="默认提前提醒">
+          <el-input-number v-model="reminderRule.advanceDays" :min="1" :max="30"></el-input-number>
+          <span class="form-unit">天</span>
+        </el-form-item>
+        <el-form-item label="提醒对象">
+          <el-checkbox-group v-model="reminderRule.receivers">
+            <el-checkbox label="设备责任人"></el-checkbox>
+            <el-checkbox label="部门负责人"></el-checkbox>
+            <el-checkbox label="消防管理员"></el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item label="提醒方式">
+          <el-checkbox-group v-model="reminderRule.channels">
+            <el-checkbox label="系统消息"></el-checkbox>
+            <el-checkbox label="移动端"></el-checkbox>
+            <el-checkbox label="短信"></el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item label="逾期升级">
+          <el-switch v-model="reminderRule.escalate"></el-switch>
+          <span class="form-help inline">逾期超过3天升级至园区工程负责人</span>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button @click="reminderRuleDialog = false">取消</el-button>
+        <el-button type="primary" @click="saveReminderRule">保存规则</el-button>
+      </span>
     </el-dialog>
 
     <el-drawer :title="drawerMode === 'device' ? '消防设备维保档案' : '维保记录详情'" :visible.sync="drawerVisible" size="500px" custom-class="maintenance-drawer">
@@ -435,48 +617,58 @@
             <h3>{{ drawerMode === 'device' ? currentRecord.name : currentRecord.device }}</h3>
             <p>{{ currentRecord.id }}</p>
           </div>
-          <span :class="['status-pill', drawerMode === 'device' ? statusClass(currentRecord.status) : resultClass(currentRecord.result)]">{{
-            drawerMode === 'device' ? currentRecord.status : currentRecord.result
-          }}</span>
+          <span :class="['status-pill', drawerMode === 'device' ? statusClass(currentRecord.status) : resultClass(currentRecord.result)]">
+            {{ drawerMode === 'device' ? currentRecord.status : currentRecord.result }}
+          </span>
         </div>
         <template v-if="drawerMode === 'device'">
           <div class="detail-grid">
             <div>
-              <span>设备类型</span><b>{{ currentRecord.category }}</b>
+              <span>设备类型</span>
+              <b>{{ currentRecord.category }}</b>
             </div>
             <div>
-              <span>品牌型号</span><b>{{ currentRecord.brand }} / {{ currentRecord.model }}</b>
+              <span>品牌型号</span>
+              <b>{{ currentRecord.brand }} / {{ currentRecord.model }}</b>
             </div>
             <div>
-              <span>安装位置</span><b>{{ currentRecord.building }} / {{ currentRecord.floor }} / {{ currentRecord.location }}</b>
+              <span>安装位置</span>
+              <b>{{ currentRecord.building }} / {{ currentRecord.floor }} / {{ currentRecord.location }}</b>
             </div>
             <div>
-              <span>责任单位</span><b>{{ currentRecord.department }} / {{ currentRecord.owner }}</b>
+              <span>责任单位</span>
+              <b>{{ currentRecord.department }} / {{ currentRecord.owner }}</b>
             </div>
             <div>
-              <span>维保周期</span><b>{{ currentRecord.cycle }}个月</b>
+              <span>维保周期</span>
+              <b>{{ currentRecord.cycle }}个月</b>
             </div>
             <div>
-              <span>下次维保</span><b>{{ currentRecord.nextDate }}</b>
+              <span>下次维保</span>
+              <b>{{ currentRecord.nextDate }}</b>
             </div>
             <div>
-              <span>设备二维码</span><b>{{ currentRecord.qrCode }}</b>
+              <span>设备二维码</span>
+              <b>{{ currentRecord.qrCode }}</b>
             </div>
             <div>
-              <span>安装日期</span><b>{{ currentRecord.installDate }}</b>
+              <span>安装日期</span>
+              <b>{{ currentRecord.installDate }}</b>
             </div>
           </div>
           <div class="drawer-section-title">
-            历次维保记录 <small>{{ deviceHistory.length }} 条</small>
+            历次维保记录
+            <small>{{ deviceHistory.length }} 条</small>
           </div>
           <div v-if="deviceHistory.length" class="history-list">
             <button v-for="item in deviceHistory" :key="item.id" type="button" @click="openRecordDetail(item)">
-              <i :class="['history-mark', resultClass(item.result)]"></i
-              ><span
-                ><b>{{ item.type }} · {{ item.result }}</b
-                ><small>{{ item.date }} · {{ item.executor }}</small
-                ><em>{{ item.content }}</em></span
-              ><i class="el-icon-arrow-right"></i>
+              <i :class="['history-mark', resultClass(item.result)]"></i>
+              <span>
+                <b>{{ item.type }} · {{ item.result }}</b>
+                <small>{{ item.date }} · {{ item.executor }}</small>
+                <em>{{ item.content }}</em>
+              </span>
+              <i class="el-icon-arrow-right"></i>
             </button>
           </div>
           <div v-else class="empty-history">暂无维保记录</div>
@@ -484,22 +676,28 @@
         <template v-else>
           <div class="detail-grid">
             <div>
-              <span>维保类型</span><b>{{ currentRecord.type }}</b>
+              <span>维保类型</span>
+              <b>{{ currentRecord.type }}</b>
             </div>
             <div>
-              <span>维保时间</span><b>{{ currentRecord.date }}</b>
+              <span>维保时间</span>
+              <b>{{ currentRecord.date }}</b>
             </div>
             <div>
-              <span>执行人员</span><b>{{ currentRecord.executor }}</b>
+              <span>执行人员</span>
+              <b>{{ currentRecord.executor }}</b>
             </div>
             <div>
-              <span>执行单位</span><b>{{ currentRecord.company }}</b>
+              <span>执行单位</span>
+              <b>{{ currentRecord.company }}</b>
             </div>
             <div>
-              <span>维保费用</span><b>{{ currentRecord.cost }} 元</b>
+              <span>维保费用</span>
+              <b>{{ currentRecord.cost }} 元</b>
             </div>
             <div>
-              <span>下次维保</span><b>{{ currentRecord.nextDate }}</b>
+              <span>下次维保</span>
+              <b>{{ currentRecord.nextDate }}</b>
             </div>
           </div>
           <div class="drawer-section-title">维保内容</div>
@@ -508,22 +706,25 @@
           <p :class="['detail-description', currentRecord.issue !== '无' ? 'warning' : '']">{{ currentRecord.issue }}</p>
           <div class="drawer-section-title">现场凭证</div>
           <div class="drawer-evidence">
-            <span v-for="item in currentRecord.photos" :key="item"><i :class="item.indexOf('视频') > -1 ? 'el-icon-video-camera' : 'el-icon-picture-outline'"></i>{{ item }}</span>
+            <span v-for="item in currentRecord.photos" :key="item">
+              <i :class="item.indexOf('视频') > -1 ? 'el-icon-video-camera' : 'el-icon-picture-outline'"></i>
+              {{ item }}
+            </span>
           </div>
           <div class="drawer-section-title">登记留痕</div>
           <div v-for="(trace, index) in currentRecord.traces" :key="index" class="trace-item">
             <span>{{ trace.time }}</span>
             <div>
-              <b>{{ trace.action }}</b
-              ><small>{{ trace.user }} · {{ trace.remark }}</small>
+              <b>{{ trace.action }}</b>
+              <small>{{ trace.user }} · {{ trace.remark }}</small>
             </div>
           </div>
         </template>
       </div>
       <div v-if="currentRecord" class="drawer-actions">
-        <el-button size="small" @click="drawerVisible = false">关闭</el-button><el-button v-if="drawerMode === 'device'" size="small" @click="openDeviceDialog(currentRecord)">编辑设备</el-button
-        ><el-button v-if="drawerMode === 'device'" type="primary" size="small" @click="openRecordFromDrawer">登记维保</el-button
-        ><el-button v-else type="primary" size="small" @click="simulatePrint">打印维保单</el-button>
+        <el-button v-if="drawerMode === 'device'" size="small" @click="openDeviceDialog(currentRecord)">编辑设备</el-button>
+        <el-button v-if="drawerMode === 'device'" type="primary" size="small" @click="openRecordFromDrawer">登记维保</el-button>
+        <el-button v-else type="primary" size="small" @click="simulatePrint">打印维保单</el-button>
       </div>
     </el-drawer>
   </div>
@@ -611,8 +812,23 @@ export default {
         { key: 'overview', title: '维保总览', description: '分类、进度与到期', detail: '查看消防设备分类、本月维保进度和近期到期提醒。', icon: 'el-icon-data-analysis', count: null },
         { key: 'devices', title: '设备台账', description: '档案、位置与周期', detail: '管理消防设备编码、安装位置、责任人、维保周期和设备状态。', icon: 'el-icon-cpu', count: this.devices.length },
         { key: 'plans', title: '维保计划', description: '范围、频次与执行', detail: '编排设备维保范围、计划日期、执行单位、负责人和提醒周期。', icon: 'el-icon-date', count: this.plans.length },
-        { key: 'records', title: '维保记录', description: '检查、凭证与结论', detail: '登记检查项目、现场图片视频、维保结果、费用和下次维保日期。', icon: 'el-icon-document-checked', count: this.records.length },
-        { key: 'reminders', title: '到期提醒', description: '即将到期与逾期', detail: '集中处理即将到期、今日到期和已经逾期的消防设备维保任务。', icon: 'el-icon-alarm-clock', count: this.reminders.length, danger: this.reminders.some((item) => item.overdueDays >= 0) }
+        {
+          key: 'records',
+          title: '维保记录',
+          description: '检查、凭证与结论',
+          detail: '登记检查项目、现场图片视频、维保结果、费用和下次维保日期。',
+          icon: 'el-icon-document-checked',
+          count: this.records.length
+        },
+        {
+          key: 'reminders',
+          title: '到期提醒',
+          description: '即将到期与逾期',
+          detail: '集中处理即将到期、今日到期和已经逾期的消防设备维保任务。',
+          icon: 'el-icon-alarm-clock',
+          count: this.reminders.length,
+          danger: this.reminders.some((item) => item.overdueDays >= 0)
+        }
       ]
     },
     currentWorkspace() {

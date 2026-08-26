@@ -1,3 +1,4 @@
+<!-- 企业关怀服务业务组件：负责服务申请、详情流转与办理操作。 -->
 <template>
   <main class="enterprise-care-board">
     <section class="metric-grid" aria-label="惠企服务状态统计">
@@ -59,9 +60,7 @@
             <div class="card-footer" @click.stop>
               <span class="handler-text">{{ record.handlerId ? `处理人：${record.handlerId}` : '尚未指派处理人' }}</span>
               <div class="card-actions">
-                <el-button type="text" @click="openDetail(record)">
-                  查看详情
-                </el-button>
+                <el-button type="text" @click="openDetail(record)">查看详情</el-button>
                 <el-button v-if="canAdvance(record)" type="text" @click="openHandle(record)">{{ advanceLabel(record) }}</el-button>
                 <el-button type="text" @click="openEdit(record)">编辑</el-button>
                 <el-button type="text" class="danger-action" @click="remove(record)">删除</el-button>
@@ -138,8 +137,7 @@
           <el-steps :active="statusIndex(detailRecord) + 1" finish-status="success" align-center><el-step v-for="status in config.statusOptions" :key="status" :title="status" /></el-steps>
         </section>
       </div>
-      <div class="drawer-footer">
-        <el-button @click="detailVisible = false">关闭</el-button>
+      <div v-if="detailRecord && canAdvance(detailRecord)" class="drawer-footer">
         <el-button v-if="canAdvance(detailRecord)" type="primary" @click="openHandle(detailRecord)">{{ advanceLabel(detailRecord) }}</el-button>
       </div>
     </el-drawer>

@@ -1,14 +1,11 @@
-<!-- 公共数据上报路由入口：以只读模式复用服务大厅的数据上报页面。 -->
-<template><service-application-page feature="dataReport" mode="readonly" :config-overrides="configOverrides" /></template>
+<!-- 公共数据上报路由入口：以只读模式装配数据上报独立业务组件。 -->
+<template><data-report-page mode="readonly" title="数据上报查看" :list-type="1" /></template>
 
 <script>
-import ServiceApplicationPage from '@/features/service-hall/ServiceApplicationPage'
+import DataReportPage from '@/features/service-hall/data-report/DataReportPage'
 
 export default {
   name: 'DataReportView',
-  components: { ServiceApplicationPage },
-  data() {
-    return { configOverrides: { title: '数据上报查看', listParams: { type: 1 } } }
-  }
+  components: { DataReportPage }
 }
 </script>

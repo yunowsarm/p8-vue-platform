@@ -1,3 +1,4 @@
+<!-- 智慧能源电力页面：负责用能监测、异常处置、详情分析与数据导出。 -->
 <template>
   <div class="energy-page power-energy-page">
     <header class="page-header">
@@ -20,7 +21,8 @@
         <i :class="[item.icon, 'kpi-icon', item.type]"></i>
         <div class="kpi-label">{{ item.title }}</div>
         <div class="kpi-number">
-          {{ item.value }}<span class="kpi-unit">{{ item.unit }}</span>
+          {{ item.value }}
+          <span class="kpi-unit">{{ item.unit }}</span>
         </div>
         <div class="kpi-sub">{{ item.sub }}</div>
       </article>
@@ -32,7 +34,10 @@
       <article class="surface">
         <div class="surface-head">
           <div>
-            <div class="surface-title"><i class="el-icon-office-building"></i>分级计量下钻</div>
+            <div class="surface-title">
+              <i class="el-icon-office-building"></i>
+              分级计量下钻
+            </div>
             <div class="surface-subtitle">园区 → 变压器 → 楼栋 → 表计</div>
           </div>
           <el-button v-if="breadcrumbs.length > 1" type="text" size="mini" @click="goUp">返回上级</el-button>
@@ -43,19 +48,27 @@
           </el-breadcrumb>
           <div class="summary-strip summary-strip--top">
             <div class="summary-box">
-              <span>当前节点电量</span><strong>{{ formatNumber(currentNode.kwh) }} kWh</strong>
+              <span>当前节点电量</span>
+              <strong>{{ formatNumber(currentNode.kwh) }} kWh</strong>
             </div>
             <div class="summary-box">
-              <span>当前实时功率</span><strong>{{ currentNode.power }} kW</strong>
+              <span>当前实时功率</span>
+              <strong>{{ currentNode.power }} kW</strong>
             </div>
           </div>
           <div class="selector-list">
             <div v-for="node in currentChildren" :key="node.id" tabindex="0" class="selector-item" @click="drillNode(node)" @keyup.enter="drillNode(node)">
               <div>
-                <div class="item-name"><span :class="['status-dot', node.status === '正常' ? '' : 'warning']"></span>{{ node.name }}</div>
+                <div class="item-name">
+                  <span :class="['status-dot', node.status === '正常' ? '' : 'warning']"></span>
+                  {{ node.name }}
+                </div>
                 <div class="item-meta">{{ node.level }} · {{ node.status }} · {{ node.power }} kW</div>
               </div>
-              <div class="metric-value">{{ formatNumber(node.kwh) }}<small> kWh</small></div>
+              <div class="metric-value">
+                {{ formatNumber(node.kwh) }}
+                <small>kWh</small>
+              </div>
             </div>
             <div v-if="!currentChildren.length" class="empty-note">已到计量末级，可在下方查看对应表计原始数据</div>
           </div>
@@ -65,7 +78,10 @@
       <article class="surface">
         <div class="surface-head">
           <div>
-            <div class="surface-title"><i class="el-icon-data-line"></i>{{ curveTitle }}</div>
+            <div class="surface-title">
+              <i class="el-icon-data-line"></i>
+              {{ curveTitle }}
+            </div>
             <div class="surface-subtitle">{{ curveSubtitle }}</div>
           </div>
           <el-radio-group v-model="curveRange" size="mini">
@@ -79,7 +95,10 @@
       <article class="surface">
         <div class="surface-head">
           <div>
-            <div class="surface-title"><i class="el-icon-share"></i>用电流向与变压器</div>
+            <div class="surface-title">
+              <i class="el-icon-share"></i>
+              用电流向与变压器
+            </div>
             <div class="surface-subtitle">流向单位 kWh，点击节点可辅助定位</div>
           </div>
         </div>
@@ -87,8 +106,8 @@
           <div class="transformer-grid transformer-grid--top">
             <div v-for="item in dataSet.transformers" :key="item.name" class="transformer-card">
               <div class="transformer-top">
-                <strong>{{ item.name }}</strong
-                ><span :class="['status-dot', item.status === '正常' ? '' : 'warning']"></span>
+                <strong>{{ item.name }}</strong>
+                <span :class="['status-dot', item.status === '正常' ? '' : 'warning']"></span>
               </div>
               <el-progress :percentage="item.load" :stroke-width="7" :color="item.load > 70 ? '#f0a12b' : '#2f80ed'"></el-progress>
               <div class="transformer-meta">损耗 {{ item.loss }}% · 不平衡 {{ item.imbalance }}%</div>
@@ -103,9 +122,11 @@
       <iot-workspace-header :item="currentWorkspace" updated-at="10:52:18" @back="openWorkspace('overview')" />
       <el-tabs v-model="activeTab" class="workspace-tabs">
         <el-tab-pane name="meters">
-          <span slot="label" class="tab-label"
-            ><i class="el-icon-odometer"></i>分级表计 <b class="tab-count">{{ dataSet.meters.length }}</b></span
-          >
+          <span slot="label" class="tab-label">
+            <i class="el-icon-odometer"></i>
+            分级表计
+            <b class="tab-count">{{ dataSet.meters.length }}</b>
+          </span>
           <div class="toolbar">
             <div class="toolbar-left">
               <el-input v-model.trim="meterKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="表计 / 楼栋 / 租户" style="width: 220px"></el-input>
@@ -116,7 +137,10 @@
                 <el-option v-for="item in meterStatuses" :key="item" :label="item" :value="item"></el-option>
               </el-select>
             </div>
-            <div class="toolbar-note"><i class="el-icon-time"></i> 最近采集 2026-07-20 10:52:18</div>
+            <div class="toolbar-note">
+              <i class="el-icon-time"></i>
+              最近采集 2026-07-20 10:52:18
+            </div>
           </div>
           <el-table :data="pagedMeters" size="small" stripe @row-click="openMeter">
             <el-table-column prop="id" label="表计编号" width="110"></el-table-column>
@@ -128,9 +152,9 @@
             <el-table-column prop="power" label="功率(kW)" width="90"></el-table-column>
             <el-table-column prop="pf" label="功率因数" width="88"></el-table-column>
             <el-table-column label="状态" width="118">
-              <template slot-scope="scope"
-                ><span :class="['status-pill', statusClass(scope.row.status)]">{{ scope.row.status }}</span></template
-              >
+              <template slot-scope="scope">
+                <span :class="['status-pill', statusClass(scope.row.status)]">{{ scope.row.status }}</span>
+              </template>
             </el-table-column>
             <el-table-column label="操作" width="86" fixed="right">
               <template slot-scope="scope"><el-button type="text" size="mini" @click.stop="openMeter(scope.row)">下钻 / 追溯</el-button></template>
@@ -140,9 +164,11 @@
         </el-tab-pane>
 
         <el-tab-pane name="anomalies">
-          <span slot="label" class="tab-label"
-            ><i class="el-icon-warning-outline"></i>异常用能 <b class="tab-count">{{ dataSet.anomalies.length }}</b></span
-          >
+          <span slot="label" class="tab-label">
+            <i class="el-icon-warning-outline"></i>
+            异常用能
+            <b class="tab-count">{{ dataSet.anomalies.length }}</b>
+          </span>
           <div class="toolbar">
             <div class="toolbar-left">
               <el-input
@@ -151,47 +177,41 @@
                 clearable
                 prefix-icon="el-icon-search"
                 placeholder="搜索事件编号 / 异常类型 / 关联表计 / 异常说明 / 处理人 / 状态"
-                style="width: 360px"
-              ></el-input>
+                style="width: 360px"></el-input>
             </div>
           </div>
           <el-table :data="filteredAnomalies" size="small" stripe>
             <el-table-column prop="id" label="事件编号" width="132"></el-table-column>
-            <el-table-column label="级别" width="80"
-              ><template slot-scope="scope"
-                ><span :class="['level-pill', scope.row.level === '紧急' ? 'danger' : scope.row.level === '关注' ? 'info' : '']">{{ scope.row.level }}</span></template
-              ></el-table-column
-            >
+            <el-table-column label="级别" width="80">
+              <template slot-scope="scope">
+                <span :class="['level-pill', scope.row.level === '紧急' ? 'danger' : scope.row.level === '关注' ? 'info' : '']">{{ scope.row.level }}</span>
+              </template>
+            </el-table-column>
             <el-table-column prop="type" label="异常类型" width="135"></el-table-column>
             <el-table-column prop="meter" label="关联表计" width="105"></el-table-column>
             <el-table-column prop="detail" label="异常说明" min-width="240" show-overflow-tooltip></el-table-column>
             <el-table-column prop="time" label="发生时间" width="165"></el-table-column>
             <el-table-column prop="assignee" label="处理人" width="105"></el-table-column>
-            <el-table-column label="状态" width="92"
-              ><template slot-scope="scope"
-                ><span :class="['status-pill', statusClass(scope.row.status)]">{{ scope.row.status }}</span></template
-              ></el-table-column
-            >
-            <el-table-column label="操作" width="70" fixed="right"
-              ><template slot-scope="scope"><el-button type="text" size="mini" @click="openAnomaly(scope.row)">处置</el-button></template></el-table-column
-            >
+            <el-table-column label="状态" width="92">
+              <template slot-scope="scope">
+                <span :class="['status-pill', statusClass(scope.row.status)]">{{ scope.row.status }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="70" fixed="right">
+              <template slot-scope="scope"><el-button type="text" size="mini" @click="openAnomaly(scope.row)">处置</el-button></template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
 
         <el-tab-pane name="quota">
-          <span slot="label" class="tab-label"
-            ><i class="el-icon-coin"></i>定额预算与对标 <b class="tab-count">{{ dataSet.quotas.length }}</b></span
-          >
+          <span slot="label" class="tab-label">
+            <i class="el-icon-coin"></i>
+            定额预算与对标
+            <b class="tab-count">{{ dataSet.quotas.length }}</b>
+          </span>
           <div class="toolbar">
             <div class="toolbar-left">
-              <el-input
-                v-model.trim="quotaKeyword"
-                size="small"
-                clearable
-                prefix-icon="el-icon-search"
-                placeholder="搜索考核对象 / 对标维度 / 月度定额 / 预算 / 状态"
-                style="width: 340px"
-              ></el-input>
+              <el-input v-model.trim="quotaKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="搜索考核对象 / 对标维度 / 月度定额 / 预算 / 状态" style="width: 340px"></el-input>
             </div>
             <el-button type="primary" size="small" @click="openQuotaDialog">新增定额</el-button>
           </div>
@@ -199,47 +219,42 @@
             <el-table-column prop="object" label="考核对象" min-width="145"></el-table-column>
             <el-table-column prop="dimension" label="对标维度" width="100"></el-table-column>
             <el-table-column prop="quota" label="月度定额" width="105"></el-table-column>
-            <el-table-column label="执行进度" min-width="160"
-              ><template slot-scope="scope"
-                ><div class="progress-cell">
-                  <el-progress :percentage="scope.row.progress" :show-text="false" :stroke-width="7" :color="scope.row.progress >= 80 ? '#f0a12b' : '#2f80ed'"></el-progress
-                  ><span>{{ scope.row.progress }}%</span>
-                </div></template
-              ></el-table-column
-            >
-            <el-table-column label="预算 / 已用(万元)" width="145"
-              ><template slot-scope="scope">{{ scope.row.budget }} / {{ scope.row.spent }}</template></el-table-column
-            >
+            <el-table-column label="执行进度" min-width="160">
+              <template slot-scope="scope">
+                <div class="progress-cell">
+                  <el-progress :percentage="scope.row.progress" :show-text="false" :stroke-width="7" :color="scope.row.progress >= 80 ? '#f0a12b' : '#2f80ed'"></el-progress>
+                  <span>{{ scope.row.progress }}%</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="预算 / 已用(万元)" width="145">
+              <template slot-scope="scope">{{ scope.row.budget }} / {{ scope.row.spent }}</template>
+            </el-table-column>
             <el-table-column prop="forecast" label="月末预测(万元)" width="125"></el-table-column>
-            <el-table-column label="状态" width="105"
-              ><template slot-scope="scope"
-                ><span :class="['status-pill', statusClass(scope.row.status)]">{{ scope.row.status }}</span></template
-              ></el-table-column
-            >
+            <el-table-column label="状态" width="105">
+              <template slot-scope="scope">
+                <span :class="['status-pill', statusClass(scope.row.status)]">{{ scope.row.status }}</span>
+              </template>
+            </el-table-column>
           </el-table>
           <div class="benchmark-list">
             <div v-for="item in dataSet.benchmarks" :key="item.name" class="benchmark-item">
-              <strong>{{ item.name }}</strong
-              ><span>{{ item.value }} {{ item.unit }}</span
-              ><small>同类均值 {{ item.average }} · 排名 {{ item.rank }}</small>
+              <strong>{{ item.name }}</strong>
+              <span>{{ item.value }} {{ item.unit }}</span>
+              <small>同类均值 {{ item.average }} · 排名 {{ item.rank }}</small>
             </div>
           </div>
         </el-tab-pane>
 
         <el-tab-pane name="reports">
-          <span slot="label" class="tab-label"
-            ><i class="el-icon-document"></i>用能报表 <b class="tab-count">{{ dataSet.reports.length }}</b></span
-          >
+          <span slot="label" class="tab-label">
+            <i class="el-icon-document"></i>
+            用能报表
+            <b class="tab-count">{{ dataSet.reports.length }}</b>
+          </span>
           <div class="toolbar">
             <div class="toolbar-left">
-              <el-input
-                v-model.trim="reportKeyword"
-                size="small"
-                clearable
-                prefix-icon="el-icon-search"
-                placeholder="搜索报表编号 / 周期 / 统计范围 / 状态"
-                style="width: 320px"
-              ></el-input>
+              <el-input v-model.trim="reportKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="搜索报表编号 / 周期 / 统计范围 / 状态" style="width: 320px"></el-input>
             </div>
             <el-button type="primary" size="small" @click="reportDialog = true">生成报表</el-button>
           </div>
@@ -253,11 +268,12 @@
             <el-table-column prop="anomaly" label="异常数" width="80"></el-table-column>
             <el-table-column prop="saving" label="节能量(kWh)" width="115"></el-table-column>
             <el-table-column prop="status" label="状态" width="100"></el-table-column>
-            <el-table-column label="操作" width="130"
-              ><template
-                ><el-button type="text" size="mini" @click="simulateExport">预览</el-button><el-button type="text" size="mini" @click="simulateExport">导出</el-button></template
-              ></el-table-column
-            >
+            <el-table-column label="操作" width="130">
+              <template>
+                <el-button type="text" size="mini" @click="simulateExport">预览</el-button>
+                <el-button type="text" size="mini" @click="simulateExport">导出</el-button>
+              </template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
       </el-tabs>
@@ -265,68 +281,103 @@
 
     <el-dialog title="异常分析规则" :visible.sync="ruleDialog" width="680px" custom-class="energy-config-dialog">
       <div class="dialog-intro">规则按表计实时数据执行，达到阈值和持续时间后生成事件；原始点位值与规则版本一并存档。</div>
-      <div class="rule-row rule-head"><b>异常类型</b><b>阈值</b><b>持续(分钟)</b><b>级别</b><b>启用</b></div>
+      <div class="rule-row rule-head">
+        <b>异常类型</b>
+        <b>阈值</b>
+        <b>持续(分钟)</b>
+        <b>级别</b>
+        <b>启用</b>
+      </div>
       <div v-for="rule in ruleForm" :key="rule.type" class="rule-row">
         <span>{{ rule.type }}</span>
         <el-input v-model="rule.threshold" size="small"></el-input>
         <el-input-number v-model="rule.duration" :min="0" :controls="false" size="small" style="width: 100%"></el-input-number>
-        <el-select v-model="rule.level" size="small"
-          ><el-option label="紧急" value="紧急"></el-option><el-option label="一般" value="一般"></el-option><el-option label="关注" value="关注"></el-option
-        ></el-select>
+        <el-select v-model="rule.level" size="small">
+          <el-option label="紧急" value="紧急"></el-option>
+          <el-option label="一般" value="一般"></el-option>
+          <el-option label="关注" value="关注"></el-option>
+        </el-select>
         <el-switch v-model="rule.enabled"></el-switch>
       </div>
-      <span slot="footer"><el-button @click="ruleDialog = false">取消</el-button><el-button type="primary" @click="saveRules">保存并生效</el-button></span>
+      <span slot="footer">
+        <el-button @click="ruleDialog = false">取消</el-button>
+        <el-button type="primary" @click="saveRules">保存并生效</el-button>
+      </span>
     </el-dialog>
 
     <el-dialog title="用电定额与费用预算" :visible.sync="quotaDialog" width="620px" custom-class="energy-config-dialog">
       <div class="dialog-intro">选择核算对象和对标维度，系统将结合历史负荷自动计算月末预测并提前触发预算预警。</div>
       <el-form :model="quotaForm" label-width="105px" size="small">
         <el-form-item label="核算对象"><el-cascader v-model="quotaForm.object" :options="quotaOptions" style="width: 100%"></el-cascader></el-form-item>
-        <el-row :gutter="14"
-          ><el-col :span="12"
-            ><el-form-item label="对标维度"
-              ><el-select v-model="quotaForm.dimension" style="width: 100%"
-                ><el-option v-for="item in ['面积', '人数', '产值', '运行时长']" :key="item" :label="item" :value="item"></el-option></el-select></el-form-item></el-col
-          ><el-col :span="12"
-            ><el-form-item label="统计周期"
-              ><el-select v-model="quotaForm.period" style="width: 100%"
-                ><el-option label="月度" value="月度"></el-option><el-option label="季度" value="季度"></el-option><el-option label="年度" value="年度"></el-option></el-select></el-form-item></el-col
-        ></el-row>
-        <el-row :gutter="14"
-          ><el-col :span="12"
-            ><el-form-item label="能耗定额"
-              ><el-input v-model="quotaForm.quota"><template slot="append">kWh</template></el-input></el-form-item
-            ></el-col
-          ><el-col :span="12"
-            ><el-form-item label="费用预算"
-              ><el-input v-model="quotaForm.budget"><template slot="append">万元</template></el-input></el-form-item
-            ></el-col
-          ></el-row
-        >
+        <el-row :gutter="14">
+          <el-col :span="12">
+            <el-form-item label="对标维度">
+              <el-select v-model="quotaForm.dimension" style="width: 100%">
+                <el-option v-for="item in ['面积', '人数', '产值', '运行时长']" :key="item" :label="item" :value="item"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="统计周期">
+              <el-select v-model="quotaForm.period" style="width: 100%">
+                <el-option label="月度" value="月度"></el-option>
+                <el-option label="季度" value="季度"></el-option>
+                <el-option label="年度" value="年度"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="14">
+          <el-col :span="12">
+            <el-form-item label="能耗定额">
+              <el-input v-model="quotaForm.quota"><template slot="append">kWh</template></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="费用预算">
+              <el-input v-model="quotaForm.budget"><template slot="append">万元</template></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="预警阈值"><el-slider v-model="quotaForm.warning" :marks="{ 80: '80%', 90: '90%', 100: '100%' }"></el-slider></el-form-item>
       </el-form>
-      <span slot="footer"><el-button @click="quotaDialog = false">取消</el-button><el-button type="primary" @click="saveQuota">保存定额</el-button></span>
+      <span slot="footer">
+        <el-button @click="quotaDialog = false">取消</el-button>
+        <el-button type="primary" @click="saveQuota">保存定额</el-button>
+      </span>
     </el-dialog>
 
     <el-dialog title="生成用电与费用报表" :visible.sync="reportDialog" width="560px" custom-class="energy-config-dialog">
       <el-form :model="reportForm" label-width="95px" size="small">
-        <el-form-item label="报表周期"
-          ><el-radio-group v-model="reportForm.period"
-            ><el-radio-button label="日"></el-radio-button><el-radio-button label="月"></el-radio-button><el-radio-button label="季"></el-radio-button
-            ><el-radio-button label="年"></el-radio-button></el-radio-group
-        ></el-form-item>
+        <el-form-item label="报表周期">
+          <el-radio-group v-model="reportForm.period">
+            <el-radio-button label="日"></el-radio-button>
+            <el-radio-button label="月"></el-radio-button>
+            <el-radio-button label="季"></el-radio-button>
+            <el-radio-button label="年"></el-radio-button>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="统计时间"><el-date-picker v-model="reportForm.date" type="date" value-format="yyyy-MM-dd" style="width: 100%"></el-date-picker></el-form-item>
-        <el-form-item label="统计对象"
-          ><el-select v-model="reportForm.scope" style="width: 100%"
-            ><el-option label="全园区" value="全园区"></el-option><el-option label="按楼栋分项" value="按楼栋分项"></el-option><el-option label="按租户分项" value="按租户分项"></el-option></el-select
-        ></el-form-item>
-        <el-form-item label="报表内容"
-          ><el-checkbox-group v-model="reportForm.contents"
-            ><el-checkbox label="分项占比"></el-checkbox><el-checkbox label="异常用能"></el-checkbox><el-checkbox label="节能效果"></el-checkbox
-            ><el-checkbox label="原始数据索引"></el-checkbox></el-checkbox-group
-        ></el-form-item>
+        <el-form-item label="统计对象">
+          <el-select v-model="reportForm.scope" style="width: 100%">
+            <el-option label="全园区" value="全园区"></el-option>
+            <el-option label="按楼栋分项" value="按楼栋分项"></el-option>
+            <el-option label="按租户分项" value="按租户分项"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="报表内容">
+          <el-checkbox-group v-model="reportForm.contents">
+            <el-checkbox label="分项占比"></el-checkbox>
+            <el-checkbox label="异常用能"></el-checkbox>
+            <el-checkbox label="节能效果"></el-checkbox>
+            <el-checkbox label="原始数据索引"></el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
       </el-form>
-      <span slot="footer"><el-button @click="reportDialog = false">取消</el-button><el-button type="primary" @click="createReport">生成报表</el-button></span>
+      <span slot="footer">
+        <el-button @click="reportDialog = false">取消</el-button>
+        <el-button type="primary" @click="createReport">生成报表</el-button>
+      </span>
     </el-dialog>
 
     <el-drawer :title="drawerMode === 'meter' ? '表计详情与原始数据' : '异常分析与处置'" :visible.sync="drawerVisible" size="480px" custom-class="energy-detail-drawer">
@@ -338,49 +389,62 @@
         <template v-if="drawerMode === 'meter'">
           <div class="detail-grid">
             <div class="detail-cell">
-              <span>电压</span><strong>{{ drawerRecord.voltage }}</strong>
+              <span>电压</span>
+              <strong>{{ drawerRecord.voltage }}</strong>
             </div>
             <div class="detail-cell">
-              <span>电流</span><strong>{{ drawerRecord.current }}</strong>
+              <span>电流</span>
+              <strong>{{ drawerRecord.current }}</strong>
             </div>
             <div class="detail-cell">
-              <span>实时功率</span><strong>{{ drawerRecord.power }} kW</strong>
+              <span>实时功率</span>
+              <strong>{{ drawerRecord.power }} kW</strong>
             </div>
             <div class="detail-cell">
-              <span>最大需量</span><strong>{{ drawerRecord.demand }} kW</strong>
+              <span>最大需量</span>
+              <strong>{{ drawerRecord.demand }} kW</strong>
             </div>
             <div class="detail-cell">
-              <span>功率因数</span><strong>{{ drawerRecord.pf }}</strong>
+              <span>功率因数</span>
+              <strong>{{ drawerRecord.pf }}</strong>
             </div>
             <div class="detail-cell">
-              <span>采集状态</span><strong>{{ drawerRecord.status }}</strong>
+              <span>采集状态</span>
+              <strong>{{ drawerRecord.status }}</strong>
             </div>
             <div class="detail-cell">
-              <span>峰段电量</span><strong>{{ drawerRecord.peak }} kWh</strong>
+              <span>峰段电量</span>
+              <strong>{{ drawerRecord.peak }} kWh</strong>
             </div>
             <div class="detail-cell">
-              <span>平 / 谷电量</span><strong>{{ drawerRecord.flat }} / {{ drawerRecord.valley }} kWh</strong>
+              <span>平 / 谷电量</span>
+              <strong>{{ drawerRecord.flat }} / {{ drawerRecord.valley }} kWh</strong>
             </div>
           </div>
           <div class="drawer-section-title">原始数据追溯</div>
-          <el-table :data="rawSamples" size="mini" border
-            ><el-table-column prop="time" label="采集时间"></el-table-column><el-table-column prop="value" label="功率(kW)"></el-table-column
-            ><el-table-column prop="quality" label="质量码"></el-table-column
-          ></el-table>
+          <el-table :data="rawSamples" size="mini" border>
+            <el-table-column prop="time" label="采集时间"></el-table-column>
+            <el-table-column prop="value" label="功率(kW)"></el-table-column>
+            <el-table-column prop="quality" label="质量码"></el-table-column>
+          </el-table>
         </template>
         <template v-else>
           <div class="detail-grid">
             <div class="detail-cell">
-              <span>关联表计</span><strong>{{ drawerRecord.meter }}</strong>
+              <span>关联表计</span>
+              <strong>{{ drawerRecord.meter }}</strong>
             </div>
             <div class="detail-cell">
-              <span>告警级别</span><strong>{{ drawerRecord.level }}</strong>
+              <span>告警级别</span>
+              <strong>{{ drawerRecord.level }}</strong>
             </div>
             <div class="detail-cell">
-              <span>当前状态</span><strong>{{ drawerRecord.status }}</strong>
+              <span>当前状态</span>
+              <strong>{{ drawerRecord.status }}</strong>
             </div>
             <div class="detail-cell">
-              <span>处置人</span><strong>{{ drawerRecord.assignee }}</strong>
+              <span>处置人</span>
+              <strong>{{ drawerRecord.assignee }}</strong>
             </div>
           </div>
           <div class="drawer-section-title">分析结论</div>
@@ -394,10 +458,10 @@
         </template>
       </div>
       <div v-if="drawerRecord" class="drawer-actions">
-        <el-button size="small" @click="drawerVisible = false">关闭</el-button>
-        <template v-if="drawerMode === 'anomaly'"
-          ><el-button size="small" @click="assignAnomaly">派发核查</el-button><el-button type="primary" size="small" @click="confirmAnomaly">确认并归档</el-button></template
-        >
+        <template v-if="drawerMode === 'anomaly'">
+          <el-button size="small" @click="assignAnomaly">派发核查</el-button>
+          <el-button type="primary" size="small" @click="confirmAnomaly">确认并归档</el-button>
+        </template>
         <el-button v-else type="primary" size="small" @click="simulateExport">导出原始数据</el-button>
       </div>
     </el-drawer>
@@ -447,10 +511,32 @@ export default {
     workspaceNav() {
       return [
         { key: 'overview', title: '用电总览', description: '流向、负荷与需量', detail: '查看分级计量、24小时负荷、最大需量和变压器运行态势。', icon: 'el-icon-data-analysis', count: null },
-        { key: 'meters', title: '分级表计', description: '回路、表计与原始值', detail: '按园区、楼栋、租户、变压器和馈线下钻并追溯原始数据。', icon: 'el-icon-odometer', count: this.dataSet.meters.length },
-        { key: 'anomalies', title: '异常用能', description: '分析、派单与归档', detail: '集中研判损耗、不平衡、低功率因数、负荷突变和表计离线。', icon: 'el-icon-warning-outline', count: this.dataSet.anomalies.length, danger: this.dataSet.anomalies.some((item) => item.status !== '已归档') },
+        {
+          key: 'meters',
+          title: '分级表计',
+          description: '回路、表计与原始值',
+          detail: '按园区、楼栋、租户、变压器和馈线下钻并追溯原始数据。',
+          icon: 'el-icon-odometer',
+          count: this.dataSet.meters.length
+        },
+        {
+          key: 'anomalies',
+          title: '异常用能',
+          description: '分析、派单与归档',
+          detail: '集中研判损耗、不平衡、低功率因数、负荷突变和表计离线。',
+          icon: 'el-icon-warning-outline',
+          count: this.dataSet.anomalies.length,
+          danger: this.dataSet.anomalies.some((item) => item.status !== '已归档')
+        },
         { key: 'quota', title: '定额预算', description: '预测、对标与预警', detail: '按面积、人数、产值或运行时长管理定额、预算和同类对标。', icon: 'el-icon-coin', count: this.dataSet.quotas.length },
-        { key: 'reports', title: '用能报表', description: '周期报表与追溯', detail: '生成日、月、季、年用电及费用报表并追溯表计原始数据。', icon: 'el-icon-document', count: this.dataSet.reports.length }
+        {
+          key: 'reports',
+          title: '用能报表',
+          description: '周期报表与追溯',
+          detail: '生成日、月、季、年用电及费用报表并追溯表计原始数据。',
+          icon: 'el-icon-document',
+          count: this.dataSet.reports.length
+        }
       ]
     },
     currentWorkspace() {
@@ -638,39 +724,42 @@ export default {
       const comparison = isMonth ? source.previous : source.yesterday
       const forecast = source.forecast
       const seriesNames = isMonth ? ['本月用电', '上月同期', '预测用电'] : ['本期负荷', '同期负荷', '预测负荷']
-      this.loadChart.setOption({
-        color: ['#2f80ed', '#9aa8bc', '#31b889'],
-        textStyle: { fontSize: 13 },
-        tooltip: { trigger: 'axis', textStyle: { fontSize: 13 } },
-        legend: { top: 0, textStyle: { fontSize: 12 }, data: seriesNames },
-        grid: { left: 58, right: 22, top: 46, bottom: 32 },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: categories,
-          axisLabel: {
-            fontSize: 12,
-            interval: isMonth ? 4 : 0,
-            formatter: isMonth ? '{value}日' : '{value}'
+      this.loadChart.setOption(
+        {
+          color: ['#2f80ed', '#9aa8bc', '#31b889'],
+          textStyle: { fontSize: 13 },
+          tooltip: { trigger: 'axis', textStyle: { fontSize: 13 } },
+          legend: { top: 0, textStyle: { fontSize: 12 }, data: seriesNames },
+          grid: { left: 58, right: 22, top: 46, bottom: 32 },
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: categories,
+            axisLabel: {
+              fontSize: 12,
+              interval: isMonth ? 4 : 0,
+              formatter: isMonth ? '{value}日' : '{value}'
+            },
+            axisLine: { lineStyle: { color: '#cfd7e3' } }
           },
-          axisLine: { lineStyle: { color: '#cfd7e3' } }
+          yAxis: { type: 'value', name: isMonth ? 'kWh' : 'kW', axisLabel: { fontSize: 12 }, nameTextStyle: { fontSize: 12 }, splitLine: { lineStyle: { color: '#edf1f6' } } },
+          series: [
+            {
+              name: seriesNames[0],
+              type: 'line',
+              smooth: true,
+              symbol: 'none',
+              connectNulls: false,
+              data: current,
+              areaStyle: { color: 'rgba(47,128,237,.10)' },
+              markPoint: { data: [{ type: 'max', name: isMonth ? '最高日' : '最大值' }] }
+            },
+            { name: seriesNames[1], type: 'line', smooth: true, symbol: 'none', lineStyle: { type: 'dashed' }, data: comparison },
+            { name: seriesNames[2], type: 'line', smooth: true, symbol: 'none', data: forecast }
+          ]
         },
-        yAxis: { type: 'value', name: isMonth ? 'kWh' : 'kW', axisLabel: { fontSize: 12 }, nameTextStyle: { fontSize: 12 }, splitLine: { lineStyle: { color: '#edf1f6' } } },
-        series: [
-          {
-            name: seriesNames[0],
-            type: 'line',
-            smooth: true,
-            symbol: 'none',
-            connectNulls: false,
-            data: current,
-            areaStyle: { color: 'rgba(47,128,237,.10)' },
-            markPoint: { data: [{ type: 'max', name: isMonth ? '最高日' : '最大值' }] }
-          },
-          { name: seriesNames[1], type: 'line', smooth: true, symbol: 'none', lineStyle: { type: 'dashed' }, data: comparison },
-          { name: seriesNames[2], type: 'line', smooth: true, symbol: 'none', data: forecast }
-        ]
-      }, true)
+        true
+      )
     },
     renderFlowChart() {
       if (!this.flowChart) return

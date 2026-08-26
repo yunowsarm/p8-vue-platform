@@ -1,8 +1,6 @@
-<!-- ToC 旅行门票路由入口：以用户模式加载生活服务共享页面。 -->
-<template><life-service-page feature="travelTicket" mode="user" /></template>
-
+<!-- ToC 旅行门票路由入口：以用户模式装配旅行门票独立业务组件。 -->
+<template><travel-ticket-page mode="user" /></template>
 <script>
-import LifeServicePage from '@/features/life-services/LifeServicePage'
-
-export default { name: 'ToCTravelTicket', components: { LifeServicePage } }
+import TravelTicketPage from '@/features/life-services/travel-ticket/TravelTicketPage'
+export default { name: 'ToCTravelTicket', components: { TravelTicketPage } }
 </script>

@@ -1,4 +1,4 @@
-<!-- ToB 通知公告路由入口：以查看模式加载通知公告共享页面。 -->
+<!-- ToB 通知公告路由入口：以查看模式装配通知公告独立业务组件。 -->
 <template><public-notice-page mode="viewer" api-namespace="tobPublicNotice" /></template>
 
 <script>

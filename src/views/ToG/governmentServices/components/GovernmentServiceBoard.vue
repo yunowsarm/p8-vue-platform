@@ -1,3 +1,4 @@
+<!-- 政务服务业务组件：负责事项申请、详情展示与流程推进。 -->
 <template>
   <main class="government-service-board">
     <section class="government-statistics" aria-label="政务服务统计">
@@ -163,8 +164,7 @@
             </span>
           </div>
         </div>
-        <div class="drawer-actions">
-          <el-button @click="detailVisible = false">关闭</el-button>
+        <div v-if="nextStatus(selectedRecord)" class="drawer-actions">
           <el-button v-if="nextStatus(selectedRecord)" type="primary" @click="advance(selectedRecord)">推进至{{ nextStatus(selectedRecord) }}</el-button>
         </div>
       </div>
@@ -308,7 +308,11 @@ export default {
       if (!valid) return
       this.submitting = true
       try {
-        const payload = Object.assign({}, this.form, this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: this.now() } : { createBy: this.currentUserId(), itemCreateTime: this.now() })
+        const payload = Object.assign(
+          {},
+          this.form,
+          this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: this.now() } : { createBy: this.currentUserId(), itemCreateTime: this.now() }
+        )
         await this.$api[this.apiKey(this.editingId ? 'edit' : 'add')](payload)
         this.$message.success(this.editingId ? '已保存' : '已提交')
         this.formVisible = false

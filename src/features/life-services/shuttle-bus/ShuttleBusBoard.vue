@@ -34,7 +34,16 @@
         <div class="toolbar-actions"><el-button v-if="!readOnly" type="primary" size="small" icon="el-icon-plus" @click="openCreate">新增班车</el-button></div>
       </div>
       <div v-if="pagedRecords.length" class="bus-grid">
-        <article v-for="item in pagedRecords" :key="item.id" class="bus-card" tabindex="0" role="button" @click="openDetail(item)" @keydown.enter="openDetail(item)">
+        <article
+          v-for="item in pagedRecords"
+          :key="item.id"
+          class="bus-card"
+          role="button"
+          tabindex="0"
+          :aria-label="`查看${item.lineName || '班车线路'}详情`"
+          @click="openDetail(item)"
+          @keydown.enter.self="openDetail(item)"
+          @keydown.space.self.prevent="openDetail(item)">
           <div class="bus-card__head">
             <span class="record-id">
               <i class="el-icon-truck"></i>
@@ -60,9 +69,8 @@
             <dt>发车间隔</dt>
             <dd>{{ intervalText(item.interval) }}</dd>
           </dl>
-          <div class="bus-card__foot">
-            <el-button type="text" size="mini" @click.stop="openDetail(item)">查看详情</el-button>
-            <span v-if="!readOnly">
+          <div v-if="!readOnly" class="bus-card__foot">
+            <span>
               <el-button type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
               <el-button type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
             </span>
@@ -164,7 +172,6 @@
             </span>
           </div>
         </div>
-        <div class="drawer-actions"><el-button @click="detailVisible = false">关闭</el-button></div>
       </div>
     </el-drawer>
   </main>
@@ -499,9 +506,13 @@ export default {
   outline: none;
   transition: border-color 0.2s ease;
 }
-.bus-card:hover,
-.bus-card:focus {
+.bus-card:hover {
   border-color: #a9caf7;
+}
+.bus-card:focus-visible {
+  border-color: #a9caf7;
+  outline: 3px solid rgba(47, 124, 223, 0.32);
+  outline-offset: 2px;
 }
 .bus-card__head {
   display: flex;
@@ -700,11 +711,6 @@ export default {
   color: #40536f;
   font-size: 14px;
   word-break: break-all;
-}
-.drawer-actions {
-  padding: 12px 16px;
-  border-top: 1px solid #e8edf3;
-  text-align: right;
 }
 @media (max-width: 1100px) {
   .bus-grid {

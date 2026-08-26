@@ -1,4 +1,4 @@
-<!-- 管理端租赁申请路由入口：以管理模式加载租赁申请共享页面。 -->
+<!-- 管理端租赁申请路由入口：以管理模式装配租赁申请独立业务组件。 -->
 <template>
   <lease-application-page mode="admin" />
 </template>

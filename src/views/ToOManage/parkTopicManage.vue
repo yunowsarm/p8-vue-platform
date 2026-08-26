@@ -1,3 +1,4 @@
+<!-- 园区话题管理页面：负责帖子筛选、详情审核、统计与删除管理。 -->
 <template>
   <main class="park-topic-manage">
     <section class="metric-grid" aria-label="帖子统计">
@@ -110,7 +111,6 @@
           </span>
         </div>
         <div class="detail-actions">
-          <el-button @click="detailVisible = false">关闭</el-button>
           <el-button type="danger" :loading="deletingId === selectedTopic.id" @click="deleteTopic(selectedTopic)">删除该帖子</el-button>
         </div>
       </article>

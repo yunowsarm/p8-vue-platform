@@ -1,3 +1,4 @@
+<!-- 园区失物招领业务组件：负责信息发布、列表筛选、详情查看与附件下载。 -->
 <template>
   <main class="communication-board">
     <section class="board-statistics board-statistics--compact" aria-label="信息统计">
@@ -195,15 +196,20 @@
             <h4>{{ config.uploadLabel || '附件' }}</h4>
             <div class="detail-files">
               <div v-for="file in detailUploadFiles" :key="file.uid || file.id || file.filePath || file.fileName" class="detail-file-item">
-                <span :class="{ 'file-download-link': file.id }" @click="file.id && downloadUploadFile(file)">
-                  <img class="file-type-icon" :src="fileIcon(file)" alt="" />
-                  {{ file.name || file.fileName }}
-                </span>
+                <button
+                  type="button"
+                  class="attachment-download-link"
+                  :disabled="!file.id"
+                  :title="file.name || file.fileName || '附件'"
+                  :aria-label="`下载附件：${file.name || file.fileName || '附件'}`"
+                  @click="downloadUploadFile(file)">
+                  <img class="file-type-icon" :src="fileIcon(file)" alt="" aria-hidden="true" />
+                  <span class="attachment-download-label">{{ file.name || file.fileName || '附件' }}</span>
+                </button>
               </div>
             </div>
           </section>
         </div>
-        <div class="drawer-actions"><el-button @click="detailVisible = false">关闭</el-button></div>
       </div>
     </el-drawer>
   </main>
@@ -1119,15 +1125,60 @@ export default {
 .detail-file-item:last-child {
   border-bottom: 0;
 }
-.file-download-link {
+.attachment-download-link {
+  appearance: none;
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 24px;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  box-shadow: none;
+  color: #3387ee;
   cursor: pointer;
-  color: #2f86ed;
+  font: inherit;
+  line-height: 22px;
+  text-align: left;
+  transition: color 180ms ease;
 }
-.drawer-actions {
-  flex: 0 0 auto;
-  padding: 12px 16px;
-  text-align: right;
-  border-top: 1px solid #e8edf3;
+.attachment-download-link:hover,
+.attachment-download-link:focus {
+  background: transparent;
+  box-shadow: none;
+  color: #2678dc;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transform: none;
+}
+.attachment-download-link:focus:not(:focus-visible) {
+  outline: none;
+}
+.attachment-download-link:focus-visible {
+  outline: 2px solid #3387ee;
+  outline-offset: 3px;
+}
+.attachment-download-link:disabled,
+.attachment-download-link:disabled:hover,
+.attachment-download-link:disabled:focus {
+  background: transparent;
+  box-shadow: none;
+  color: #9aa9bc;
+  cursor: not-allowed;
+  opacity: 0.55;
+  text-decoration: none;
+  transform: none;
+}
+.attachment-download-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 @media (max-width: 1100px) {
   .communication-grid {
@@ -1135,6 +1186,9 @@ export default {
   }
 }
 @media (max-width: 760px) {
+  .attachment-download-link {
+    min-height: 44px;
+  }
   .communication-board {
     min-height: 100dvh;
     height: auto;
@@ -1236,9 +1290,6 @@ export default {
     min-height: 0;
     padding: 14px;
     -webkit-overflow-scrolling: touch;
-  }
-  .drawer-actions {
-    padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
   }
   ::v-deep .communication-form-dialog {
     width: 100% !important;

@@ -1,3 +1,4 @@
+<!-- 首页通知公告组件：展示公告列表、详情内容以及按文件类型区分的附件下载链接。 -->
 <template>
   <section class="notice-announcement" aria-label="通知公告">
     <header class="notice-announcement__header">
@@ -44,11 +45,13 @@
               v-for="file in detailUploadFiles"
               :key="file.uid || file.id || file.filePath || file.fileName"
               type="button"
+              class="notice-attachment-link"
               :disabled="!file.id"
-              :class="{ 'is-downloadable': file.id }"
+              :title="file.name || file.fileName || '附件'"
+              :aria-label="`下载附件：${file.name || file.fileName || '附件'}`"
               @click="downloadUploadFile(file)">
-              <img class="file-type-icon" :src="fileIcon(file)" alt="" />
-              <span>{{ file.name || file.fileName }}</span>
+              <img class="file-type-icon" :src="fileIcon(file)" alt="" aria-hidden="true" />
+              <span>{{ file.name || file.fileName || '附件' }}</span>
             </button>
           </div>
         </section>
@@ -318,31 +321,68 @@ export default {
 }
 
 .notice-attachments__list {
-  overflow: hidden;
-  border: 1px solid #ebeef5;
-  border-radius: 6px;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.notice-attachments__list button {
-  width: 100%;
-  min-height: 38px;
+.notice-attachment-link {
+  appearance: none;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 10px;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 24px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
   border: 0;
-  border-bottom: 1px solid #f0f2f5;
-  background: #fff;
-  color: #606266;
+  border-radius: 2px;
+  background: transparent;
+  box-shadow: none;
+  color: #3387ee;
+  cursor: pointer;
+  font: inherit;
   font-size: 13px;
+  line-height: 22px;
   text-align: left;
+  transition: color 180ms ease;
 }
 
-.notice-attachments__list button:last-child {
-  border-bottom: 0;
+.notice-attachment-link:hover,
+.notice-attachment-link:focus {
+  background: transparent;
+  box-shadow: none;
+  color: #2678dc;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transform: none;
 }
 
-.notice-attachments__list button span {
+.notice-attachment-link:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.notice-attachment-link:focus-visible {
+  outline: 2px solid #3387ee;
+  outline-offset: 3px;
+}
+
+.notice-attachment-link:disabled,
+.notice-attachment-link:disabled:hover,
+.notice-attachment-link:disabled:focus {
+  background: transparent;
+  box-shadow: none;
+  color: #9aa9bc;
+  cursor: not-allowed;
+  opacity: 0.55;
+  text-decoration: none;
+  transform: none;
+}
+
+.notice-attachment-link span {
   min-width: 0;
   flex: 1;
   overflow: hidden;
@@ -350,20 +390,11 @@ export default {
   white-space: nowrap;
 }
 
-.notice-attachments__list .file-type-icon {
-  width: 17px;
-  height: 17px;
-  flex: 0 0 17px;
+.notice-attachment-link .file-type-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
   object-fit: contain;
-}
-
-.notice-attachments__list button.is-downloadable {
-  cursor: pointer;
-  color: #409eff;
-}
-
-.notice-attachments__list button:disabled {
-  cursor: default;
 }
 
 @media (max-width: 768px) {
@@ -372,6 +403,10 @@ export default {
   }
 
   .notice-item {
+    min-height: 44px;
+  }
+
+  .notice-attachment-link {
     min-height: 44px;
   }
 

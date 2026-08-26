@@ -1,4 +1,4 @@
-<!-- ToC 园区班车路由入口：以只读模式加载班车共享业务组件。 -->
+<!-- ToC 园区班车路由入口：以只读模式装配园区班车独立业务组件。 -->
 <template><ShuttleBusBoard read-only /></template>
 
 <script>

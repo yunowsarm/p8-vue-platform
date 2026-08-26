@@ -1,3 +1,4 @@
+<!-- 政策服务业务组件：负责政策申请、详情展示、状态推进与项目转报。 -->
 <template>
   <main class="policy-service-board">
     <section class="metric-grid" aria-label="当前业务统计">
@@ -148,8 +149,7 @@
           </el-steps>
         </div>
       </div>
-      <div class="drawer-footer">
-        <el-button @click="detailVisible = false">关闭</el-button>
+      <div v-if="detailRecord && (canTransfer(detailRecord) || canAdvance(detailRecord))" class="drawer-footer">
         <el-button v-if="canTransfer(detailRecord)" type="primary" @click="openTransfer">转项目申报</el-button>
         <el-button v-if="detailRecord && canAdvance(detailRecord)" type="primary" @click="advanceStatus(detailRecord)">{{ advanceLabel(detailRecord) }}</el-button>
       </div>

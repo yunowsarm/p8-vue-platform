@@ -1,3 +1,4 @@
+<!-- 在线缴费订单业务组件：负责订单查询、支付状态、详情展示与支付操作。 -->
 <template>
   <main class="payment-order-board">
     <section class="board-statistics" aria-label="订单统计">
@@ -182,8 +183,7 @@
             </div>
           </section>
         </div>
-        <div class="drawer-actions">
-          <el-button @click="detailVisible = false">关闭</el-button>
+        <div v-if="isPending(selectedRecord)" class="drawer-actions">
           <el-button v-if="isPending(selectedRecord)" type="primary" @click="payRecord(selectedRecord)">去支付</el-button>
         </div>
       </div>
@@ -388,7 +388,11 @@ export default {
       const valid = await new Promise((resolve) => this.$refs.paymentForm.validate(resolve))
       if (!valid) return
       this.submitting = true
-      const payload = Object.assign({}, this.form, this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: now() } : { createBy: this.currentUserId(), itemCreateTime: now() })
+      const payload = Object.assign(
+        {},
+        this.form,
+        this.editingId ? { id: this.editingId, updateBy: this.currentUserId(), itemUpdateTime: now() } : { createBy: this.currentUserId(), itemCreateTime: now() }
+      )
       try {
         await this.$api[this.apiKey(this.editingId ? 'edit' : 'add')](payload)
         this.$message.success(this.editingId ? '订单已更新' : '订单已创建')
@@ -911,18 +915,67 @@ export default {
   .detail-grid span:last-child {
     border-bottom: 0;
   }
-  ::v-deep .payment-detail-drawer { width: 100% !important; max-width: 100% !important; }
-  ::v-deep .payment-detail-drawer .el-drawer__body { display: flex; min-height: 0; flex: 1 1 auto; overflow: hidden; }
-  .drawer-layout { min-height: 0; height: 100%; width: 100%; }
-  .drawer-scroll { min-height: 0; padding: 14px; -webkit-overflow-scrolling: touch; }
-  .drawer-actions { padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); }
-  ::v-deep .payment-form-dialog { width: 100% !important; min-width: 0; height: 100dvh; margin: 0 !important; display: flex; flex-direction: column; border-radius: 0; }
-  ::v-deep .payment-form-dialog .el-dialog__body { min-height: 0; flex: 1 1 auto; overflow-y: auto; padding: 18px 16px; -webkit-overflow-scrolling: touch; }
-  ::v-deep .payment-form-dialog .el-dialog__footer { flex: 0 0 auto; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); }
-  ::v-deep .payment-form-dialog .dialog-footer { display: flex; gap: 10px; }
-  ::v-deep .payment-form-dialog .dialog-footer .el-button { flex: 1; margin: 0; min-height: 42px; }
+  ::v-deep .payment-detail-drawer {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  ::v-deep .payment-detail-drawer .el-drawer__body {
+    display: flex;
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+  .drawer-layout {
+    min-height: 0;
+    height: 100%;
+    width: 100%;
+  }
+  .drawer-scroll {
+    min-height: 0;
+    padding: 14px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .drawer-actions {
+    padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+  }
+  ::v-deep .payment-form-dialog {
+    width: 100% !important;
+    min-width: 0;
+    height: 100dvh;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0;
+  }
+  ::v-deep .payment-form-dialog .el-dialog__body {
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 18px 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+  ::v-deep .payment-form-dialog .el-dialog__footer {
+    flex: 0 0 auto;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  }
+  ::v-deep .payment-form-dialog .dialog-footer {
+    display: flex;
+    gap: 10px;
+  }
+  ::v-deep .payment-form-dialog .dialog-footer .el-button {
+    flex: 1;
+    margin: 0;
+    min-height: 42px;
+  }
 }
-@media (max-width: 420px) { .list-toolbar { grid-template-columns: minmax(0, 1fr); }.list-toolbar .el-select { grid-column: 1 / -1; } }
+@media (max-width: 420px) {
+  .list-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .list-toolbar .el-select {
+    grid-column: 1 / -1;
+  }
+}
 /* 仅本看板在移动端承载页面滚动，避免改动后台配置页的全局路由高度。 */
 @media (max-width: 760px) {
   .payment-order-board {
@@ -938,28 +991,105 @@ export default {
 </style>
 <style scoped>
 /* 与办事大厅看板保持一致的列表基线 */
-.payment-order-board { min-height: 100%; padding: 12px; box-sizing: border-box; background: #f6f8fb; }
-.payment-order-board .board-statistics { gap: 12px; margin-bottom: 12px; }
-.payment-order-board .stat-card { min-height: 94px; padding: 16px 18px; border-color: #e5ebf2; border-radius: 10px; box-shadow: none; }
-.payment-surface { min-height: clamp(660px, calc(100vh - 250px), 760px); border-color: #e5ebf2; border-radius: 10px; box-shadow: 0 4px 14px rgba(15, 23, 42, .035); }
-.payment-order-board .list-toolbar { min-height: 64px; padding: 14px 20px; gap: 10px; }
-.payment-order-board .list-toolbar .el-input { width: 300px; }
-.payment-order-board .list-toolbar .el-select { width: 160px; }
-.payment-grid { gap: 14px; padding: 2px 20px 18px; }
-.payment-card { min-height: 252px; padding: 16px; border-color: #e6ecf3; border-radius: 10px; }
-.payment-card:hover { border-color: #a9caf7; }
-.payment-order-board .empty-state { min-height: 260px; padding: 24px 20px 48px; box-sizing: border-box; }
-.payment-order-board .pagination-row { min-height: 0; margin-top: auto; padding: 12px 20px 16px; }
+.payment-order-board {
+  min-height: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  background: #f6f8fb;
+}
+.payment-order-board .board-statistics {
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.payment-order-board .stat-card {
+  min-height: 94px;
+  padding: 16px 18px;
+  border-color: #e5ebf2;
+  border-radius: 10px;
+  box-shadow: none;
+}
+.payment-surface {
+  min-height: clamp(660px, calc(100vh - 250px), 760px);
+  border-color: #e5ebf2;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.035);
+}
+.payment-order-board .list-toolbar {
+  min-height: 64px;
+  padding: 14px 20px;
+  gap: 10px;
+}
+.payment-order-board .list-toolbar .el-input {
+  width: 300px;
+}
+.payment-order-board .list-toolbar .el-select {
+  width: 160px;
+}
+.payment-grid {
+  gap: 14px;
+  padding: 2px 20px 18px;
+}
+.payment-card {
+  min-height: 252px;
+  padding: 16px;
+  border-color: #e6ecf3;
+  border-radius: 10px;
+}
+.payment-card:hover {
+  border-color: #a9caf7;
+}
+.payment-order-board .empty-state {
+  min-height: 260px;
+  padding: 24px 20px 48px;
+  box-sizing: border-box;
+}
+.payment-order-board .pagination-row {
+  min-height: 0;
+  margin-top: auto;
+  padding: 12px 20px 16px;
+}
 @media (max-width: 760px) {
-  .payment-order-board { height: 100% !important; min-height: 0; padding: 14px 12px calc(24px + env(safe-area-inset-bottom)); overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; touch-action: pan-y; }
-  .payment-order-board .board-statistics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .payment-order-board .stat-card { min-height: 82px; padding: 12px; }
-  .payment-surface { min-height: 440px; }
-  .payment-order-board .list-toolbar { padding: 12px; }
-  .payment-order-board .list-toolbar .el-input { width: 100%; }
-  .payment-order-board .list-toolbar .el-select { width: calc(50% - 5px); }
-  .payment-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 2px 12px 14px; }
-  .payment-card { min-height: 238px; }
-  .payment-order-board .pagination-row { justify-content: center; padding: 12px; }
+  .payment-order-board {
+    height: 100% !important;
+    min-height: 0;
+    padding: 14px 12px calc(24px + env(safe-area-inset-bottom));
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
+  }
+  .payment-order-board .board-statistics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .payment-order-board .stat-card {
+    min-height: 82px;
+    padding: 12px;
+  }
+  .payment-surface {
+    min-height: 440px;
+  }
+  .payment-order-board .list-toolbar {
+    padding: 12px;
+  }
+  .payment-order-board .list-toolbar .el-input {
+    width: 100%;
+  }
+  .payment-order-board .list-toolbar .el-select {
+    width: calc(50% - 5px);
+  }
+  .payment-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 2px 12px 14px;
+  }
+  .payment-card {
+    min-height: 238px;
+  }
+  .payment-order-board .pagination-row {
+    justify-content: center;
+    padding: 12px;
+  }
 }
 </style>

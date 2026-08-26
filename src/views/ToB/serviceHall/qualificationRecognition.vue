@@ -1,8 +1,8 @@
-<!-- ToB 资质认定路由入口：以用户模式复用服务大厅共享申请页面。 -->
-<template><service-application-page feature="qualificationRecognition" mode="user" /></template>
+<!-- ToB 资质认定路由入口：只装配资质认定独立业务组件。 -->
+<template><qualification-recognition-page mode="user" /></template>
 
 <script>
-import ServiceApplicationPage from '@/features/service-hall/ServiceApplicationPage'
+import QualificationRecognitionPage from '@/features/service-hall/qualification-recognition/QualificationRecognitionPage'
 
-export default { name: 'QualificationRecognition', components: { ServiceApplicationPage } }
+export default { name: 'QualificationRecognition', components: { QualificationRecognitionPage } }
 </script>

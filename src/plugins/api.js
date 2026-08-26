@@ -37,9 +37,11 @@ class ApiCounstructor {
 
   buildApiWidthNamespace({ namespace, apis, devBaseUrl, prodBaseUrl, isDevMode, isDebug, sep }) {
     apis.forEach((api) => {
-      const { name, method, path, mockPath, params, desc } = api
+      const { name, method, path, mockPath, params, desc, sameOrigin = false } = api
       const apiNamespace = `${namespace}${sep}${name}`
-      const url = isDevMode ? `${devBaseUrl}${mockPath}` : `${prodBaseUrl}${path}`
+      const requestPath = isDevMode ? mockPath || path : path
+      // 第三方代理接口保留同源相对地址，由开发服务器或部署层反向代理转发。
+      const url = sameOrigin ? requestPath : `${isDevMode ? devBaseUrl : prodBaseUrl}${requestPath}`
 
       Object.defineProperty(this.api, apiNamespace, {
         value(outerParams, outerOptions) {
@@ -83,4 +85,4 @@ function axiosParamBuilder(options, data) {
   return options
 }
 
-export default new ApiCounstructor({ apis: apis, ...API_DEFAULT_CONFIG })['api']
+export default new ApiCounstructor({ apis: apis, ...API_DEFAULT_CONFIG }).api

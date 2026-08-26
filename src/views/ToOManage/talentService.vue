@@ -1,8 +1,6 @@
-<!-- 管理端人才服务路由入口：以管理模式加载生活服务共享页面。 -->
-<template><life-service-page feature="talentService" mode="admin" /></template>
-
+<!-- 管理端人才服务路由入口：以管理模式装配人才服务独立业务组件。 -->
+<template><talent-service-page mode="admin" /></template>
 <script>
-import LifeServicePage from '@/features/life-services/LifeServicePage'
-
-export default { name: 'ToOTalentService', components: { LifeServicePage } }
+import TalentServicePage from '@/features/life-services/talent-service/TalentServicePage'
+export default { name: 'ToOTalentService', components: { TalentServicePage } }
 </script>
