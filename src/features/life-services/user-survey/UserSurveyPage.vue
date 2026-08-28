@@ -17,6 +17,13 @@
         <el-table-column prop="title" label="问卷标题" min-width="250" show-overflow-tooltip />
         <el-table-column prop="startTime" label="开始时间" width="180" />
         <el-table-column prop="endTime" label="结束时间" width="180" />
+        <el-table-column label="状态" width="100" align="center">
+          <template slot-scope="scope">
+            <el-tag :type="surveyStatus(scope.row) === 1 ? 'success' : 'info'" size="small" effect="plain">
+              {{ surveyStatusText(scope.row) }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="description" label="问卷说明" min-width="220" show-overflow-tooltip />
         <el-table-column label="操作" width="180" fixed="right">
           <template slot-scope="scope">
@@ -69,6 +76,10 @@
             <small>结束时间</small>
             <b>{{ selectedRecord.endTime || '-' }}</b>
           </div>
+          <div class="record-feature-detail__item">
+            <small>状态</small>
+            <b>{{ surveyStatusText(selectedRecord) }}</b>
+          </div>
         </div>
         <section class="record-feature-detail__section">
           <h4>问卷说明</h4>
@@ -118,6 +129,7 @@ export default {
         timeKey: 'startTime',
         contentKey: 'description',
         hasStatus: false,
+        payloadTransform: (payload) => Object.assign({}, payload, { status: this.surveyStatus(payload) }),
         uploadField: 'uploadFiles',
         uploadResponseField: 'uploadFiles',
         fields: [
@@ -133,6 +145,14 @@ export default {
     }
   },
   methods: {
+    surveyStatus(record) {
+      const endTime = new Date(String((record && record.endTime) || '').replace(/-/g, '/')).getTime()
+      if (Number.isFinite(endTime)) return endTime < Date.now() ? 0 : 1
+      return Number(record && record.status) === 0 ? 0 : 1
+    },
+    surveyStatusText(record) {
+      return this.surveyStatus(record) === 1 ? '进行中' : '已结束'
+    },
     fileIcon(file) {
       return getFileTypeIcon(file)
     }

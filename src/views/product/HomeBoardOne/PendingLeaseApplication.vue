@@ -5,16 +5,16 @@
       <div>
         <i class="el-icon-office-building" />
         <span>租赁申请待办</span>
-        <el-badge :value="pendingRecords.length" :hidden="!pendingRecords.length" type="danger" />
+        <el-badge :value="pendingTotal" :hidden="!pendingTotal" type="danger" />
       </div>
     </header>
     <div class="status-columns">
       <section v-for="column in statusColumns" :key="column.key" class="status-column">
         <div class="column-title">
           <span>{{ column.label }}</span>
-          <el-badge :value="column.records.length" :hidden="!column.records.length" :type="column.badgeType" />
+          <el-badge :value="column.total" :hidden="!column.total" :type="column.badgeType" />
         </div>
-        <div v-if="column.records.length" class="lease-list">
+        <div v-if="column.records.length" class="lease-list" @scroll.passive="handleListScroll($event, column)">
           <article
             v-for="item in column.records"
             :key="item.id"
@@ -32,7 +32,16 @@
             </div>
             <el-tag :type="column.tagType" size="mini">{{ column.label }}</el-tag>
           </article>
+          <p v-if="column.loading" class="list-feedback">
+            <i class="el-icon-loading" />
+            加载中...
+          </p>
+          <p v-else-if="column.finished && column.records.length > column.pageSize" class="list-feedback">已加载全部</p>
         </div>
+        <p v-else-if="column.loading" class="column-empty">
+          <i class="el-icon-loading" />
+          加载中...
+        </p>
         <p v-else class="column-empty">暂无{{ column.label }}申请</p>
       </section>
     </div>
@@ -91,6 +100,10 @@ export default {
     return {
       pendingRecords: [],
       readRecords: [],
+      statusPagination: {
+        0: { pageNo: 1, pageSize: 5, total: 0, loading: false, finished: false },
+        1: { pageNo: 1, pageSize: 5, total: 0, loading: false, finished: false }
+      },
       updatingIds: [],
       detailVisible: false,
       detailLoading: false,
@@ -100,9 +113,12 @@ export default {
   computed: {
     statusColumns() {
       return [
-        { key: 'pending', label: '待查阅', records: this.pendingRecords, tagType: 'info', badgeType: 'info' },
-        { key: 'read', label: '已查阅', records: this.readRecords, tagType: 'success', badgeType: 'success' }
+        { key: 'pending', status: 0, label: '待查阅', records: this.pendingRecords, tagType: 'info', badgeType: 'info', ...this.statusPagination[0] },
+        { key: 'read', status: 1, label: '已查阅', records: this.readRecords, tagType: 'success', badgeType: 'success', ...this.statusPagination[1] }
       ]
+    },
+    pendingTotal() {
+      return this.statusPagination[0].total
     },
     detailFields() {
       const commonFields = [
@@ -143,19 +159,59 @@ export default {
     async loadRecords() {
       try {
         if (!this.$api || !this.$api['tobLeaseApplication.list']) throw new Error('API unavailable')
-        const [pending, read] = await Promise.all([this.queryByStatus(0), this.queryByStatus(1)])
-        this.pendingRecords = pending
-        this.readRecords = read
+        await Promise.all([this.loadStatusRecords(0, true), this.loadStatusRecords(1, true)])
       } catch (error) {
         const records = this.mockRecords()
         this.pendingRecords = records.filter((item) => this.statusMatches(item.status, 0))
         this.readRecords = records.filter((item) => this.statusMatches(item.status, 1))
+        this.resetPaginationFromRecords(0, this.pendingRecords)
+        this.resetPaginationFromRecords(1, this.readRecords)
       }
     },
-    async queryByStatus(status) {
-      const result = this.unwrapResponse(await this.$api['tobLeaseApplication.list']({ pageNo: 1, pageSize: 3, type: 1, status }))
+    async queryByStatus(status, pageNo, pageSize) {
+      const result = this.unwrapResponse(await this.$api['tobLeaseApplication.list']({ pageNo, pageSize, type: 1, status }))
       const list = (result && (result.records || result.list || result.rows)) || result || []
-      return (Array.isArray(list) ? list : []).filter((item) => this.statusMatches(item.status, status)).slice(0, 3)
+      const records = (Array.isArray(list) ? list : []).filter((item) => this.statusMatches(item.status, status))
+      const totalValue = result && (result.total ?? result.count ?? result.totalCount)
+      return { records, total: totalValue === undefined || totalValue === null ? null : Number(totalValue) }
+    },
+    async loadStatusRecords(status, reset = false) {
+      const pagination = this.statusPagination[status]
+      if (pagination.loading || (!reset && pagination.finished)) return
+      if (reset) Object.assign(pagination, { pageNo: 1, total: 0, finished: false })
+      pagination.loading = true
+      try {
+        const result = await this.queryByStatus(status, pagination.pageNo, pagination.pageSize)
+        const currentRecords = reset ? [] : status === 0 ? this.pendingRecords : this.readRecords
+        const records = this.mergeRecords(currentRecords, result.records)
+        if (status === 0) this.pendingRecords = records
+        else this.readRecords = records
+        pagination.total = result.total === null || Number.isNaN(result.total) ? records.length : result.total
+        pagination.finished = result.total === null || Number.isNaN(result.total) ? result.records.length < pagination.pageSize : records.length >= result.total
+        if (!pagination.finished && result.records.length) pagination.pageNo += 1
+      } finally {
+        pagination.loading = false
+      }
+    },
+    async loadMore(status) {
+      try {
+        await this.loadStatusRecords(status)
+      } catch (error) {
+        this.$message.error('租赁申请加载失败，请稍后重试')
+      }
+    },
+    handleListScroll(event, column) {
+      const target = event.currentTarget
+      if (!target || column.loading || column.finished) return
+      if (target.scrollTop + target.clientHeight >= target.scrollHeight - 24) this.loadMore(column.status)
+    },
+    mergeRecords(currentRecords, nextRecords) {
+      const recordMap = new Map(currentRecords.map((item) => [String(item.id), item]))
+      nextRecords.forEach((item) => recordMap.set(String(item.id), item))
+      return Array.from(recordMap.values())
+    },
+    resetPaginationFromRecords(status, records) {
+      Object.assign(this.statusPagination[status], { pageNo: 1, total: records.length, loading: false, finished: true })
     },
     mockRecords() {
       return [
@@ -201,10 +257,8 @@ export default {
       this.updatingIds.push(item.id)
       try {
         await editApi(this.readPayload(item))
-        const readRecord = Object.assign({}, item, { status: 1 })
-        this.pendingRecords = this.pendingRecords.filter((record) => String(record.id) !== String(item.id))
-        this.readRecords = [readRecord].concat(this.readRecords.filter((record) => String(record.id) !== String(item.id))).slice(0, 3)
         if (this.selectedRecord && String(this.selectedRecord.id) === String(item.id)) this.selectedRecord = Object.assign({}, this.selectedRecord, { status: 1 })
+        await this.loadRecords()
       } catch (error) {
         this.$message.error('查阅状态更新失败，请稍后重试')
       } finally {
@@ -338,6 +392,25 @@ header i {
 }
 .lease-list {
   margin-top: 4px;
+  max-height: 270px;
+  padding-right: 4px;
+  overflow-y: auto;
+  scrollbar-color: #cbd6e3 transparent;
+  scrollbar-width: thin;
+}
+.lease-list::-webkit-scrollbar {
+  width: 5px;
+}
+.lease-list::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: #cbd6e3;
+}
+.list-feedback {
+  margin: 8px 0 2px;
+  color: #96a4b5;
+  font-size: 11px;
+  line-height: 22px;
+  text-align: center;
 }
 .status-columns {
   display: grid;

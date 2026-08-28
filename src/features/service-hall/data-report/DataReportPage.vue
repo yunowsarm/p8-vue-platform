@@ -17,7 +17,7 @@
         <el-select v-model="typeFilter" clearable placeholder="全部上报分类" @change="resetPage" @clear="resetPage">
           <el-option v-for="option in primaryOptions" :key="optionValue(option)" :label="optionLabel(option)" :value="optionValue(option)" />
         </el-select>
-        <el-select v-model="statusFilter" clearable placeholder="全部状态" @change="resetPage" @clear="resetPage">
+        <el-select v-if="listStatus === null" v-model="statusFilter" clearable placeholder="全部状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
       </div>
@@ -155,18 +155,20 @@ export default {
   props: {
     mode: { type: String, default: 'user' },
     title: { type: String, default: '数据上报' },
-    listType: { type: Number, default: 0 }
+    listType: { type: Number, default: 0 },
+    listStatus: { type: [Number, String], default: null }
   },
   computed: {
     resource() {
       return {
         title: this.title,
         itemName: '数据上报',
-        description: this.mode === 'admin' ? '查收企业上报数据、核对附件并维护办理进度。' : '按知识产权、财务或员工分类上报企业资料。',
+        description:
+          this.mode === 'admin' ? '查收企业上报数据、核对附件并维护办理进度。' : this.mode === 'readonly' ? '查看企业已通过审核的数据上报及附件。' : '按知识产权、财务或员工分类上报企业资料。',
         icon: 'el-icon-upload2',
         idPrefix: 'DR',
         apiNamespace: 'tobDataReport',
-        listParams: { type: this.mode === 'admin' ? 1 : this.listType },
+        listParams: Object.assign({ type: this.mode === 'admin' ? 1 : this.listType }, this.listStatus === null ? {} : { status: this.listStatus }),
         primaryKey: 'reportType',
         timeKey: 'reportTime',
         autoFormFields: { companyId: 'currentUserName', reportTime: 'now' },

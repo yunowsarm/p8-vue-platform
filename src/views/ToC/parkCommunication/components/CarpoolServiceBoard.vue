@@ -13,9 +13,9 @@
       <article class="stat-card stat-card--info">
         <span class="stat-icon"><i class="el-icon-user-solid"></i></span>
         <div>
-          <small>我发布的</small>
-          <b>{{ myRecordsTotal }}</b>
-          <em>当前账号发布</em>
+          <small>{{ config.managementMode ? '本页记录' : '我发布的' }}</small>
+          <b>{{ config.managementMode ? pagedRecords.length : myRecordsTotal }}</b>
+          <em>{{ config.managementMode ? '当前页面展示' : '当前账号发布' }}</em>
         </div>
       </article>
     </section>
@@ -28,9 +28,9 @@
         <el-select v-if="config.hasStatus !== false" v-model="statusFilter" clearable size="small" placeholder="全部状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
         </el-select>
-        <el-checkbox v-model="onlyMine" class="mine-filter" @change="resetPage">只看我发布的</el-checkbox>
+        <el-checkbox v-if="!config.managementMode" v-model="onlyMine" class="mine-filter" @change="resetPage">只看我发布的</el-checkbox>
         <div class="toolbar-actions">
-          <el-button type="primary" size="small" icon="el-icon-plus" @click="openCreate">新建{{ config.title }}</el-button>
+          <el-button v-if="!config.managementMode" type="primary" size="small" icon="el-icon-plus" @click="openCreate">新建{{ config.title }}</el-button>
         </div>
       </div>
 
@@ -311,11 +311,13 @@ export default {
       return item.userId || item.createBy || ''
     },
     canManageRecord(item) {
+      if (this.config.managementMode) return true
       const currentUserId = this.currentUserId()
       const creatorId = this.creatorId(item)
       return Boolean(currentUserId && creatorId && String(currentUserId) === String(creatorId))
     },
     canEditRecord(item) {
+      if (this.config.managementMode) return false
       return this.canManageRecord(item) && !['已拼车', '已出发'].includes(this.statusText(item.status, item))
     },
     typeIcon(type) {

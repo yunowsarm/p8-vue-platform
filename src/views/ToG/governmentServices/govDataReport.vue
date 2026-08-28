@@ -1,31 +1,11 @@
-<template><GovernmentServiceBoard :config="config" /></template>
+<!-- 政府端数据上报只读入口：复用办事大厅数据上报页面，仅查看已通过的上报记录。 -->
+<template><data-report-page mode="readonly" title="数据上报统计" :list-type="1" :list-status="2" /></template>
+
 <script>
-import GovernmentServiceBoard from './components/GovernmentServiceBoard.vue'
+import DataReportPage from '@/features/service-hall/data-report/DataReportPage'
+
 export default {
   name: 'GovDataReport',
-  components: { GovernmentServiceBoard },
-  data() {
-    return {
-      config: {
-        title: '数据上报统计',
-        apiNamespace: 'togGovDataReport',
-        icon: 'el-icon-data-analysis',
-        primaryLabel: '上报类型',
-        primaryKey: 'reportType',
-        typeLabel: '上报类型',
-        typeOptions: ['经营数据', '就业数据', '产值数据', '安全数据', '其他数据'],
-        timeKey: 'reportTime',
-        statusKey: 'status',
-        statusOptions: ['待校验', '待审核', '审核中', '已归档'],
-        flow: ['填报提交', '数据校验', '审核确认', '归档'],
-        fields: [
-          { key: 'companyId', label: '企业ID', required: true },
-          { key: 'reportType', label: '上报类型', options: ['经营数据', '就业数据', '产值数据', '安全数据', '其他数据'], required: true },
-          { key: 'reportTime', label: '上报时间', type: 'datetime', required: true },
-          { key: 'reportContent', label: '上报内容', type: 'textarea', required: true }
-        ]
-      }
-    }
-  }
+  components: { DataReportPage }
 }
 </script>
