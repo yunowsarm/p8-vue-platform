@@ -226,7 +226,7 @@ export default {
       }
     },
     goToPropertyRepairHandle() {
-      this.$router.push('/propertyRepairHandle')
+      this.$router.push('/propertyRepairHand')
     },
     unwrap(response) {
       if (response && !response.id && response.result !== undefined && response.result !== null) return response.result
