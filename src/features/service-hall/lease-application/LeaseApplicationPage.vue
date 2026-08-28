@@ -34,7 +34,9 @@
           @keydown.space.self.prevent="openDetail(record)">
           <div class="record-feature-card__head">
             <span class="record-feature-card__id">
-              <i class="el-icon-office-building"></i>
+              <span :class="['lease-type-icon', `lease-type-icon--${leaseTypeKey(record.applyType)}`]" aria-hidden="true">
+                {{ leaseTypeMark(record.applyType) }}
+              </span>
               {{ record.id }}
             </span>
             <el-tag :type="statusType(statusText(record.status))" size="small">{{ statusText(record.status) }}</el-tag>
@@ -49,7 +51,6 @@
           </dl>
           <div v-if="hasRecordActions(record)" class="record-feature-card__actions">
             <div class="record-feature-card__actions-right">
-              <el-button v-if="canChangeRecordStatus(record)" type="text" size="mini" @click.stop="openStatusDialog(record)">{{ statusActionText(record) }}</el-button>
               <el-button v-if="canEditRecord(record)" type="text" size="mini" @click.stop="openEdit(record)">编辑</el-button>
               <el-button v-if="canDeleteRecord(record)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(record)">删除</el-button>
             </div>
@@ -86,7 +87,9 @@
     <el-drawer title="租赁申请详情" :visible.sync="detailVisible" size="560px" append-to-body>
       <div v-if="selectedRecord" v-loading="detailLoading" class="record-feature-detail">
         <div class="record-feature-detail__hero">
-          <i :class="resource.icon"></i>
+          <span :class="['lease-type-icon', 'lease-type-icon--detail', `lease-type-icon--${leaseTypeKey(selectedRecord.applyType)}`]" aria-hidden="true">
+            {{ leaseTypeMark(selectedRecord.applyType) }}
+          </span>
           <div>
             <small>{{ selectedRecord.id }}</small>
             <h3>{{ recordTitle(selectedRecord) }}</h3>
@@ -102,6 +105,10 @@
         <section class="record-feature-detail__section">
           <h4>申请原因</h4>
           <p>{{ selectedRecord.applyReason || '-' }}</p>
+        </section>
+        <section v-if="selectedRecord.remark" class="record-feature-detail__section">
+          <h4>补充说明</h4>
+          <p>{{ selectedRecord.remark }}</p>
         </section>
         <section v-if="detailFiles.length" class="record-feature-detail__section">
           <h4>申请附件</h4>
@@ -120,32 +127,8 @@
             </button>
           </div>
         </section>
-        <section v-if="selectedRecord.remark" class="record-feature-detail__section">
-          <h4>补充说明</h4>
-          <p>{{ selectedRecord.remark }}</p>
-        </section>
-        <!-- <div v-if="canChangeRecordStatus(selectedRecord) || canEditRecord(selectedRecord) || canDeleteRecord(selectedRecord)" class="record-feature-card__actions">
-          <div>
-            <el-button v-if="canChangeRecordStatus(selectedRecord)" @click="openStatusDialog(selectedRecord)">{{ statusActionText(selectedRecord) }}</el-button>
-            <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">编辑</el-button>
-            <el-button v-if="canDeleteRecord(selectedRecord)" type="danger" plain @click="removeRecord(selectedRecord)">删除</el-button>
-          </div>
-        </div> -->
       </div>
     </el-drawer>
-
-    <!-- <el-dialog title="处理租赁申请" :visible.sync="statusVisible" width="430px" append-to-body :close-on-click-modal="false">
-      <el-form :model="statusForm" label-width="86px">
-        <el-form-item label="下一状态">
-          <el-select v-model="statusForm.status" class="record-feature-full"><el-option v-for="status in availableStatusOptions" :key="status" :label="status" :value="status" /></el-select>
-        </el-form-item>
-        <el-form-item label="处理意见"><el-input v-model.trim="statusForm.remark" type="textarea" :rows="3" maxlength="300" show-word-limit /></el-form-item>
-      </el-form>
-      <span slot="footer">
-        <el-button @click="statusVisible = false">取消</el-button>
-        <el-button type="primary" :loading="statusSubmitting" @click="saveStatus">确认处理</el-button>
-      </span>
-    </el-dialog> -->
   </main>
 </template>
 
@@ -171,6 +154,12 @@ export default {
     }
   },
   methods: {
+    leaseTypeKey(type) {
+      return { renew: 'renew', vacate: 'vacate', expand: 'expand', 续租申请: 'renew', 退租申请: 'vacate', 扩租申请: 'expand' }[type] || 'default'
+    },
+    leaseTypeMark(type) {
+      return { renew: '续', vacate: '退', expand: '扩', 续租申请: '续', 退租申请: '退', 扩租申请: '扩' }[type] || '租'
+    },
     statusType(status) {
       return status === '已查阅' ? 'success' : 'info'
     },
@@ -182,3 +171,45 @@ export default {
 </script>
 
 <style lang="scss" src="../../_shared/record-management/record-feature-page.scss"></style>
+
+<style lang="scss" scoped>
+.lease-type-icon {
+  display: inline-flex;
+  width: 26px;
+  height: 26px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 26px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: #f4f7fb;
+  color: #60758f;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.lease-type-icon--renew {
+  background: #eef6ff;
+  color: #2878d0;
+}
+
+.lease-type-icon--vacate {
+  background: #fff6eb;
+  color: #c66a10;
+}
+
+.lease-type-icon--expand {
+  background: #edf9f7;
+  color: #198577;
+}
+
+.lease-type-icon--detail {
+  width: 44px;
+  height: 44px;
+  flex-basis: 44px;
+  border-width: 2px;
+  font-size: 18px;
+}
+</style>

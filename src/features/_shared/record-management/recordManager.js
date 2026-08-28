@@ -23,6 +23,7 @@ export default {
       submitting: false,
       detailLoading: false,
       statusSubmitting: false,
+      statusLoading: false,
       formVisible: false,
       detailVisible: false,
       statusVisible: false,
@@ -109,12 +110,20 @@ export default {
       const responseField = this.resource.uploadResponseField || this.resource.uploadField
       return this.normalizeUploadFiles(this.selectedRecord[responseField])
     },
+    auditFiles() {
+      if (!this.statusTarget || !this.resource || !this.resource.uploadField) return []
+      const responseField = this.resource.uploadResponseField || this.resource.uploadField
+      return this.normalizeUploadFiles(this.statusTarget[responseField])
+    },
     formDialogTitle() {
       if (!this.editingId) return `新增${this.resource.itemName || this.resource.title}`
       return `${this.resource.editActionLabel || '编辑'}${this.resource.itemName || this.resource.title}`
     },
     availableStatusOptions() {
       return this.nextStatusOptions(this.statusTarget)
+    },
+    isResubmitting() {
+      return Boolean(this.editingId && this.isResubmitRecord(this.selectedRecord))
     }
   },
   created() {
@@ -221,7 +230,7 @@ export default {
         const params = Object.assign({}, this.resource.listParams || {}, { pageNo: this.currentPage, pageSize: this.pageSize })
         if (this.keyword) params.keyword = this.keyword
         if (this.typeFilter) params[this.resource.filterKey || this.resource.primaryKey] = this.typeFilter
-        if (this.hasStatus && this.statusFilter) params.status = this.statusValue(this.statusFilter, true)
+        if (this.hasStatus && this.statusFilter) params[this.statusField()] = this.statusValue(this.statusFilter, true)
         const result = this.unwrap(await listApi(params)) || {}
         this.records = this.recordsFrom(result).map((record) => this.normalizeRecord(record))
         this.total = Number(result.total || result.count || result.totalCount || this.records.length)
@@ -290,10 +299,22 @@ export default {
         try {
           list = JSON.parse(list)
         } catch (error) {
-          list = []
+          list = [list]
         }
       }
-      return (Array.isArray(list) ? list : []).map((file) => (typeof file === 'string' ? { name: file.split('/').pop(), url: file } : Object.assign({}, file)))
+      if (!Array.isArray(list)) list = list ? [list] : []
+      return list.filter(Boolean).map((item, index) => {
+        const file = typeof item === 'string' ? { filePath: item } : Object.assign({}, item)
+        const filePath = file.filePath || file.fileUrl || file.url || ''
+        const name = file.name || file.fileName || file.originalFileName || file.originalName || file.attachmentName || file.attFileName || filePath.split(/[\\/]/).pop() || `附件${index + 1}`
+        return Object.assign({}, file, {
+          name,
+          fileName: file.fileName || name,
+          uid: file.uid || file.attachmentId || file.id || file.fileId || `record-file-${index}`,
+          status: file.status || 'success',
+          url: file.url || file.fileUrl || file.filePath || ''
+        })
+      })
     },
     cleanUploadFile(file) {
       const attachmentId = this.attachmentId(file)
@@ -310,22 +331,41 @@ export default {
       return result
     },
     async saveRecord() {
-      const action = this.editingId ? 'edit' : 'create'
+      const editing = Boolean(this.editingId)
+      const action = editing ? 'edit' : 'create'
       if (!this.canPerform(action, Object.assign({}, this.selectedRecord || {}, this.form))) return
       this.submitting = true
+      const resubmitting = this.isResubmitting
       let payload = Object.assign({}, this.form)
       this.fields.filter((field) => field.showWhen && !this.matchesCondition(field.showWhen, this.form)).forEach((field) => delete payload[field.key])
       if (this.resource.uploadField) payload[this.resource.uploadField] = this.normalizeUploadFiles(payload[this.resource.uploadField]).map(this.cleanUploadFile)
       if (this.resource.replyMode) payload.status = this.resource.replyStatus || '已回复'
-      if (this.hasStatus && !payload.status) payload.status = this.statusValue(this.resource.defaultStatus || '待受理')
-      if (this.editingId) payload.id = this.editingId
-      Object.assign(payload, this.editingId ? { updateBy: this.currentUserId(), itemUpdateTime: now() } : { createBy: this.currentUserId(), itemCreateTime: now() })
-      if (typeof this.resource.payloadTransform === 'function') payload = this.resource.payloadTransform(payload, { editing: Boolean(this.editingId), form: this.form })
-      const saveApi = this.api(this.editingId ? 'edit' : 'add')
+      const statusField = this.statusField()
+      if (this.hasStatus && (payload[statusField] === undefined || payload[statusField] === null || payload[statusField] === '')) {
+        let nextStatus = this.resource.defaultStatus || '待受理'
+        if (this.editingId && this.selectedRecord) {
+          const currentStatus = this.statusText(this.recordStatus(this.selectedRecord))
+          const resubmitStatuses = this.resource.resubmitStatuses || []
+          nextStatus = resubmitStatuses.includes(currentStatus) ? this.resource.resubmitStatus || this.resource.defaultStatus || '待审核' : this.recordStatus(this.selectedRecord) || nextStatus
+        }
+        payload[statusField] = this.statusValue(nextStatus)
+      }
+      if (statusField !== 'status') delete payload.status
+      if (editing) payload.id = this.editingId
+      Object.assign(payload, editing ? { updateBy: this.currentUserId(), itemUpdateTime: now() } : { createBy: this.currentUserId(), itemCreateTime: now() })
+      if (typeof this.resource.payloadTransform === 'function') payload = this.resource.payloadTransform(payload, { editing, form: this.form })
+      if (editing && this.resource.uploadField && hasOwn(payload, this.resource.uploadField)) {
+        payload[this.resource.uploadField] = this.normalizeUploadFiles(payload[this.resource.uploadField]).map((file) => this.cleanStatusUploadFile(file))
+      }
+      if (resubmitting) {
+        payload[statusField] = this.statusValue(this.resource.resubmitStatus || this.resource.defaultStatus || '待审核')
+        if (statusField !== 'status') delete payload.status
+      }
+      const saveApi = this.api(editing ? 'edit' : 'add')
       try {
         if (this.usingMock || !saveApi) this.saveMockRecord(payload)
         else await saveApi(payload)
-        this.$message.success(this.editingId ? (this.resource.replyMode ? '回复成功' : '修改成功') : `${this.resource.itemName || this.resource.title}已提交`)
+        this.$message.success(resubmitting ? '重新提交成功' : this.editingId ? (this.resource.replyMode ? '回复成功' : '修改成功') : `${this.resource.itemName || this.resource.title}已提交`)
         this.formVisible = false
         this.currentPage = 1
         if (!this.usingMock) await this.loadRecords()
@@ -358,28 +398,49 @@ export default {
       } finally {
         this.detailLoading = false
       }
+      try {
+        await this.markReviewingOnDetail()
+      } catch (error) {
+        this.$message.warning('详情已打开，但状态更新为审核中失败，请稍后重试')
+      }
     },
     async openEdit(record) {
       if (!this.canEditRecord(record)) return
       let target = record || this.selectedRecord
       if (!target) return
       const detailApi = this.api('queryById')
-      if (this.resource.loadDetailBeforeEdit && detailApi) {
+      const needsDetail = this.resource.loadDetailBeforeEdit || Boolean(this.resource.uploadField)
+      if (needsDetail && !detailApi && !this.usingMock) {
+        this.$message.error('未找到详情接口，无法安全加载编辑数据')
+        return
+      }
+      if (needsDetail && detailApi) {
         try {
           const result = this.unwrap(await detailApi({ id: target.id }))
+          if (!result && this.resource.uploadField) throw new Error('missing detail data')
           if (result) target = Object.assign({}, target, result)
         } catch (error) {
+          if (this.resource.uploadField) {
+            this.$message.error('详情加载失败，无法安全加载附件，请重试')
+            return
+          }
           this.$message.warning('详情加载失败，已展示基础信息')
         }
       }
       target = this.normalizeRecord(target)
+      if (!this.canEditRecord(target)) {
+        this.$message.warning('当前状态不允许编辑')
+        return
+      }
       this.selectedRecord = target
       this.editingId = target.id
       const formRecord = typeof this.resource.formFromRecord === 'function' ? this.resource.formFromRecord(target) : target
       this.form = this.applyAutomaticValues(Object.assign(this.emptyForm(), formRecord), this.resource.replyAutoFormFields)
       if (this.resource.uploadField) {
         const responseField = this.resource.uploadResponseField || this.resource.uploadField
-        this.$set(this.form, this.resource.uploadField, this.normalizeUploadFiles(target[responseField]))
+        let uploadFiles = this.normalizeUploadFiles(target[responseField])
+        if (typeof this.resource.editUploadFilesTransform === 'function') uploadFiles = this.resource.editUploadFilesTransform(uploadFiles)
+        this.$set(this.form, this.resource.uploadField, uploadFiles)
       }
       this.detailVisible = false
       this.formVisible = true
@@ -406,23 +467,44 @@ export default {
     },
     nextStatusOptions(record) {
       if (!record) return []
-      const currentStatus = this.statusText(record.status)
+      const currentStatus = this.statusText(this.recordStatus(record))
       const transitions = this.resource.statusTransitions || {}
       if (Object.keys(transitions).length) return Array.isArray(transitions[currentStatus]) ? transitions[currentStatus] : []
       return this.statusOptions.filter((status) => status !== currentStatus)
     },
-    openStatusDialog(record) {
+    async openStatusDialog(record) {
       if (!this.canChangeRecordStatus(record)) return
-      const options = this.nextStatusOptions(record)
-      this.statusTarget = record
-      this.statusForm = { status: options[0] || '', remark: record.remark || '' }
       this.statusVisible = true
+      this.statusLoading = true
+      let target = this.normalizeRecord(record)
+      try {
+        if (this.resource.loadDetailBeforeStatus) {
+          const detailApi = this.api('queryById')
+          if (detailApi) {
+            const result = this.unwrap(await detailApi({ id: record.id }))
+            if (result) target = this.normalizeRecord(Object.assign({}, record, result))
+          }
+        }
+      } catch (error) {
+        this.$message.warning('详情加载失败，已展示列表中的基础信息')
+      }
+      try {
+        if (this.resource.markReviewingOnStatusOpen) target = await this.markRecordReviewing(target)
+      } catch (error) {
+        this.statusVisible = false
+        this.$message.error('状态更新为审核中失败，请稍后重试')
+        return
+      } finally {
+        this.statusLoading = false
+      }
+      this.statusTarget = target
+      const options = this.nextStatusOptions(target)
+      this.statusForm = { status: options[0] || '', remark: target.remark || '' }
     },
     async saveStatus() {
       if (!this.statusTarget || !this.statusForm.status) return
       this.statusSubmitting = true
-      const payload = Object.assign({}, this.statusTarget, {
-        status: this.statusValue(this.statusForm.status),
+      const payload = this.prepareStatusPayload(this.statusTarget, this.statusForm.status, {
         remark: this.statusForm.remark,
         updateBy: this.currentUserId(),
         itemUpdateTime: now()
@@ -454,11 +536,59 @@ export default {
       const map = forList ? this.resource.listStatusValueMap || this.resource.statusValueMap || {} : this.resource.statusValueMap || {}
       return hasOwn(map, status) ? map[status] : status
     },
+    statusField() {
+      return this.resource.statusField || 'status'
+    },
+    recordStatus(record) {
+      return record && record[this.statusField()]
+    },
+    isResubmitRecord(record) {
+      if (!record) return false
+      return (this.resource.resubmitStatuses || []).includes(this.statusText(this.recordStatus(record)))
+    },
+    cleanStatusUploadFile(file) {
+      const cleaned = this.cleanUploadFile(file)
+      delete cleaned.id
+      const stripPrefix = (value) => (value ? String(value).replace(/^.*[\\/]/, '') : value)
+      cleaned.filePath = stripPrefix(cleaned.filePath)
+      cleaned.url = stripPrefix(cleaned.url)
+      return cleaned
+    },
+    prepareStatusPayload(record, status, extra = {}) {
+      const statusField = this.statusField()
+      const payload = Object.assign({}, record, extra)
+      payload[statusField] = this.statusValue(status)
+      if (statusField !== 'status') delete payload.status
+      if (this.resource.uploadField) {
+        const responseField = this.resource.uploadResponseField || this.resource.uploadField
+        if (hasOwn(payload, responseField)) payload[this.resource.uploadField] = this.normalizeUploadFiles(payload[responseField]).map((file) => this.cleanStatusUploadFile(file))
+      }
+      return payload
+    },
+    async markRecordReviewing(record) {
+      if (!record || !this.canPerform('changeStatus', record)) return record
+      const pendingStatus = this.resource.reviewPendingStatus || '待审核'
+      const reviewingStatus = this.resource.reviewingStatus || '审核中'
+      if (this.statusText(this.recordStatus(record)) !== pendingStatus) return record
+      const editApi = this.api('edit')
+      const statusField = this.statusField()
+      const payload = this.prepareStatusPayload(record, reviewingStatus, { updateBy: this.currentUserId(), itemUpdateTime: now() })
+      if (!this.usingMock && editApi) await editApi(payload)
+      const updated = this.normalizeRecord(Object.assign({}, record, { [statusField]: payload[statusField], status: payload[statusField] }))
+      const index = this.records.findIndex((item) => String(item.id) === String(updated.id))
+      if (index > -1) this.$set(this.records, index, Object.assign({}, this.records[index], { [statusField]: payload[statusField], status: payload[statusField] }))
+      return updated
+    },
+    async markReviewingOnDetail() {
+      if (!this.selectedRecord || !this.resource.markReviewingOnDetail || !this.canPerform('changeStatus', this.selectedRecord)) return
+      this.selectedRecord = await this.markRecordReviewing(this.selectedRecord)
+    },
     statusType(status) {
       return (
         {
           待受理: 'warning',
           待审核: 'warning',
+          审核中: 'primary',
           待回复: 'warning',
           待处理: 'warning',
           处理中: '',
@@ -534,7 +664,7 @@ export default {
       }
     },
     statusActionText(record) {
-      const status = this.statusText(record && record.status)
+      const status = this.statusText(this.recordStatus(record))
       return typeof this.resource.statusActionLabelResolver === 'function' ? this.resource.statusActionLabelResolver(record, status) : this.resource.statusActionLabel || '更新进度'
     }
   }

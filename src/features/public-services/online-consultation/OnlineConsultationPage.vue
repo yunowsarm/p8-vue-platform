@@ -25,7 +25,7 @@
           class="record-feature-card"
           role="button"
           tabindex="0"
-          :aria-label="`查看${recordTitle(record)}详情`"
+          :aria-label="`查看咨询 ${record.id} 详情`"
           @click="openDetail(record)"
           @keydown.enter.self="openDetail(record)"
           @keydown.space.self.prevent="openDetail(record)">
@@ -36,16 +36,30 @@
             </span>
             <el-tag :type="statusType(statusText(record.status))" size="small">{{ statusText(record.status) }}</el-tag>
           </div>
-          <h3>在线咨询</h3>
-          <p class="record-feature-card__description">{{ record.content || '-' }}</p>
-          <dl>
-            <dt>咨询人</dt>
-            <dd>{{ record.userName || '-' }}</dd>
-            <dt>咨询时间</dt>
-            <dd>{{ record.consultTime || '-' }}</dd>
-            <dt>联系电话</dt>
-            <dd>{{ record.phone || '-' }}</dd>
-          </dl>
+          <h3 class="online-consultation-card__question" :title="record.content || '暂无咨询内容'">{{ record.content || '暂无咨询内容' }}</h3>
+          <div class="online-consultation-card__meta">
+            <div class="online-consultation-card__meta-item">
+              <small>
+                <i class="el-icon-user" aria-hidden="true"></i>
+                咨询人
+              </small>
+              <span :title="record.userName || '-'">{{ record.userName || '-' }}</span>
+            </div>
+            <div class="online-consultation-card__meta-item">
+              <small>
+                <i class="el-icon-time" aria-hidden="true"></i>
+                咨询时间
+              </small>
+              <span :title="record.consultTime || '-'">{{ record.consultTime || '-' }}</span>
+            </div>
+            <div class="online-consultation-card__meta-item">
+              <small>
+                <i class="el-icon-phone-outline" aria-hidden="true"></i>
+                联系电话
+              </small>
+              <span :title="record.phone || '-'">{{ record.phone || '-' }}</span>
+            </div>
+          </div>
           <div v-if="hasRecordActions(record)" class="record-feature-card__actions">
             <div class="record-feature-card__actions-right">
               <el-button v-if="canEditRecord(record)" type="text" size="mini" @click.stop="openEdit(record)">{{ resource.editActionLabel }}</el-button>
@@ -114,9 +128,6 @@
           <h4>回复内容</h4>
           <p>{{ selectedRecord.replyContent }}</p>
         </section>
-        <div v-if="canEditRecord(selectedRecord)" class="record-feature-card__actions">
-          <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">{{ resource.editActionLabel }}</el-button>
-        </div>
       </div>
     </el-drawer>
   </main>
@@ -141,7 +152,6 @@ export default {
         idPrefix: 'OC',
         apiNamespace: 'tobOnlineConsult',
         primaryKey: 'id',
-        cardTitleText: '在线咨询',
         timeKey: 'consultTime',
         contentKey: 'content',
         defaultStatus: '待回复',
@@ -171,3 +181,69 @@ export default {
 </script>
 
 <style lang="scss" src="../../_shared/record-management/record-feature-page.scss"></style>
+
+<style lang="scss" scoped>
+.record-feature-card .online-consultation-card__question {
+  display: -webkit-box;
+  min-height: 72px;
+  margin: 18px 0 16px;
+  overflow: hidden;
+  color: #22324a;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  word-break: break-word;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.online-consultation-card__meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid #edf1f6;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.online-consultation-card__meta-item {
+  min-width: 0;
+
+  small,
+  span {
+    display: block;
+  }
+
+  small {
+    margin-bottom: 5px;
+    color: #8a98aa;
+    font-size: 12px;
+    line-height: 1.4;
+
+    i {
+      width: 16px;
+      margin-right: 4px;
+      color: #7c91ad;
+      text-align: center;
+    }
+  }
+
+  span {
+    overflow: hidden;
+    color: #44546a;
+    font-size: 13px;
+    line-height: 1.5;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 760px) {
+  .online-consultation-card__meta {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+</style>

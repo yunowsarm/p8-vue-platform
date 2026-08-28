@@ -66,6 +66,18 @@
 
     <el-dialog :title="formDialogTitle" :visible.sync="formVisible" top="5vh" append-to-body :close-on-click-modal="false" custom-class="record-feature-form" @closed="resetForm">
       <el-form ref="recordForm" :model="form" :rules="rules" label-width="90px" @submit.native.prevent>
+        <template v-if="resource.replyMode">
+          <div class="record-audit-summary">
+            <div v-for="field in replyDetailFields" :key="field.key" class="record-audit-summary__item" :class="{ 'record-audit-summary__item--wide': field.wide }">
+              <span>{{ field.label }}</span>
+              <strong>{{ field.key === 'status' ? statusText(form.status) : formatValue(form[field.key], field.key) }}</strong>
+            </div>
+          </div>
+          <div class="record-audit-content">
+            <span>诉求内容</span>
+            <strong>{{ form.content || '-' }}</strong>
+          </div>
+        </template>
         <div class="record-feature-form-grid">
           <business-record-field
             v-for="field in formFields"
@@ -107,9 +119,6 @@
           <h4>回复内容</h4>
           <p>{{ selectedRecord.reply }}</p>
         </section>
-        <div v-if="canEditRecord(selectedRecord)" class="record-feature-card__actions">
-          <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">{{ resource.editActionLabel || '编辑' }}</el-button>
-        </div>
       </div>
     </el-drawer>
   </main>
@@ -145,30 +154,37 @@ export default {
         listParams: { order: this.mode === 'admin' ? 1 : 0 },
         primaryKey: 'type',
         timeKey: 'submitTime',
+        autoFormFields: { submitTime: 'now' },
         contentKey: 'content',
         contentLabel: '内容',
+        loadDetailBeforeEdit: true,
         cardFields: [
           { key: 'contactName', label: '联系人' },
           { key: 'submitTime', label: '提交时间' },
           { key: 'createByName', label: '企业名称' }
         ],
-        defaultStatus: '待回复',
-        statusMap: { null: '待回复', 0: '待回复', 1: '已阅', 2: '已回复' },
-        statusValueMap: { 待回复: 0, 已阅: 1, 已回复: 2 },
-        listStatusValueMap: { 待回复: 0, 已阅: 1, 已回复: 2 },
-        statusOptions: ['待回复', '已阅', '已回复'],
+        defaultStatus: '待查阅',
+        statusMap: { null: '待查阅', 0: '待查阅', 1: '已查阅', 2: '已回复' },
+        statusValueMap: { 待查阅: 0, 已查阅: 1, 已回复: 2 },
+        listStatusValueMap: { 待查阅: 0, 已查阅: 1, 已回复: 2 },
+        statusOptions: ['待查阅', '已查阅', '已回复'],
         replyMode: this.mode === 'admin',
         replyStatus: '已回复',
-        payloadTransform: (payload) => Object.assign({}, payload, { status: { 待回复: 0, 已阅: 1, 已回复: 2 }[payload.status] ?? payload.status }),
+        editableStatuses: this.mode === 'user' ? ['待查阅', '已查阅'] : undefined,
+        payloadTransform: (payload) => {
+          const transformed = Object.assign({}, payload, { status: { 待查阅: 0, 已查阅: 1, 已回复: 2 }[payload.status] ?? payload.status })
+          if (this.mode !== 'admin') delete transformed.reply
+          return transformed
+        },
         editActionLabel: this.mode === 'admin' ? '回复' : '编辑',
         fields: [
           // { key: 'companyId', label: '企业', required: true, hideInReplyForm: true },
           { key: 'contactName', label: '联系人', required: true, hideInReplyForm: true },
           { key: 'contactPhone', label: '联系电话', required: true, hideInReplyForm: true },
           { key: 'type', label: '类型', required: true, options: ['建议', '投诉', '服务需求'], hideInReplyForm: true },
-          { key: 'submitTime', label: '提交时间', type: 'datetime', required: true, hideInReplyForm: true },
+          { key: 'submitTime', label: '提交时间', type: 'datetime', hideInForm: true },
           { key: 'content', label: '内容', type: 'textarea', required: true, hideInReplyForm: true, wide: true },
-          { key: 'reply', label: '回复内容', type: 'textarea', required: true, hideInCreateForm: true, hideInDetail: true, wide: true }
+          { key: 'reply', label: '回复内容', type: 'textarea', required: true, hideInCreateForm: true, hideInEditForm: true, hideInDetail: true, wide: true }
         ]
       }
     },
@@ -176,11 +192,22 @@ export default {
       if (this.mode === 'admin') return { create: false, edit: true, delete: true, changeStatus: false }
       if (this.mode === 'readonly') return { create: false, edit: false, delete: false, changeStatus: false }
       return { create: true, edit: true, delete: true, changeStatus: false }
+    },
+    replyDetailFields() {
+      return [
+        { key: 'id', label: '诉求编号', wide: true },
+        { key: 'createByName', label: '企业名称' },
+        { key: 'type', label: '诉求类型' },
+        { key: 'contactName', label: '联系人' },
+        { key: 'contactPhone', label: '联系电话' },
+        { key: 'submitTime', label: '提交时间' },
+        { key: 'status', label: '当前状态' }
+      ]
     }
   },
   methods: {
     statusType(status) {
-      return { 待回复: 'warning', 已阅: 'info', 已回复: 'success' }[status] || 'info'
+      return { 待查阅: 'warning', 已查阅: 'info', 已回复: 'success' }[status] || 'info'
     },
     async openDetail(record) {
       if (!record) return
@@ -198,7 +225,7 @@ export default {
           this.detailLoading = false
         }
       }
-      if (this.mode === 'admin' && this.statusText(this.selectedRecord.status) === '待回复') await this.markAsRead(this.selectedRecord)
+      if (this.mode === 'admin' && this.statusText(this.selectedRecord.status) === '待查阅') await this.markAsRead(this.selectedRecord)
     },
     async markAsRead(record) {
       if (!record || this.readUpdatingIds.includes(record.id)) return

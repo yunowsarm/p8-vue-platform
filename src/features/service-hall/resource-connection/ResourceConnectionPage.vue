@@ -49,7 +49,7 @@
           </dl>
           <div v-if="hasRecordActions(record)" class="record-feature-card__actions">
             <div class="record-feature-card__actions-right">
-              <el-button v-if="canChangeRecordStatus(record)" type="text" size="mini" @click.stop="openStatusDialog(record)">更新进度</el-button>
+              <el-button v-if="canChangeRecordStatus(record)" type="text" size="mini" @click.stop="openStatusDialog(record)">审核</el-button>
               <el-button v-if="canEditRecord(record)" type="text" size="mini" @click.stop="openEdit(record)">编辑</el-button>
               <el-button v-if="canDeleteRecord(record)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(record)">删除</el-button>
             </div>
@@ -78,7 +78,7 @@
       </el-form>
       <span slot="footer">
         <el-button @click="formVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitting" @click="submitForm">提交申请</el-button>
+        <el-button type="primary" :loading="submitting" @click="submitForm">{{ isResubmitting ? '重新提交' : '提交申请' }}</el-button>
       </span>
     </el-dialog>
 
@@ -106,37 +106,35 @@
           <h4>资源描述</h4>
           <p>{{ selectedRecord.resourceDesc }}</p>
         </section>
-        <div v-if="canChangeRecordStatus(selectedRecord) || canEditRecord(selectedRecord)" class="record-feature-card__actions">
-          <div>
-            <el-button v-if="canChangeRecordStatus(selectedRecord)" @click="openStatusDialog(selectedRecord)">更新进度</el-button>
-            <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">编辑</el-button>
-          </div>
-        </div>
       </div>
     </el-drawer>
 
-    <el-dialog title="更新资源对接进度" :visible.sync="statusVisible" width="430px" append-to-body :close-on-click-modal="false">
-      <el-form :model="statusForm" label-width="86px">
-        <el-form-item label="下一状态">
-          <el-select v-model="statusForm.status" class="record-feature-full"><el-option v-for="status in availableStatusOptions" :key="status" :label="status" :value="status" /></el-select>
-        </el-form-item>
-        <el-form-item label="处理备注"><el-input v-model.trim="statusForm.remark" type="textarea" :rows="3" maxlength="300" show-word-limit /></el-form-item>
-      </el-form>
-      <span slot="footer">
-        <el-button @click="statusVisible = false">取消</el-button>
-        <el-button type="primary" :loading="statusSubmitting" @click="saveStatus">确认更新</el-button>
-      </span>
-    </el-dialog>
+    <record-audit-dialog
+      v-model="statusVisible"
+      title="审核资源对接申请"
+      :loading="statusLoading"
+      :submitting="statusSubmitting"
+      :record="statusTarget"
+      :fields="resource.fields"
+      :files="auditFiles"
+      :content-key="resource.contentKey"
+      :status-options="availableStatusOptions"
+      :status-labels="resource.statusOptionLabels"
+      :status.sync="statusForm.status"
+      :formatter="formatValue"
+      @download="downloadAttachment"
+      @confirm="saveStatus" />
   </main>
 </template>
 
 <script>
 import BusinessRecordField from '@/components/business/record-fields/BusinessRecordField'
+import RecordAuditDialog from '@/features/_shared/record-management/RecordAuditDialog'
 import recordManager from '@/features/_shared/record-management/recordManager'
 
 export default {
   name: 'ResourceConnectionPage',
-  components: { BusinessRecordField },
+  components: { BusinessRecordField, RecordAuditDialog },
   mixins: [recordManager],
   props: { mode: { type: String, default: 'user' } },
   computed: {
@@ -151,14 +149,27 @@ export default {
         primaryKey: 'resourceType',
         timeKey: 'applyTime',
         contentKey: 'connectContent',
-        defaultStatus: '待受理',
-        statusOptions: ['待受理', '处理中', '已完成', '已关闭'],
-        statusTransitions: { 待受理: ['处理中', '已关闭'], 处理中: ['已完成', '已关闭'] },
+        autoFormFields: { companyId: 'currentUserName', applyTime: 'now' },
+        loadDetailBeforeEdit: true,
+        defaultStatus: '待审核',
+        statusMap: { 0: '待审核', 1: '审核中', 2: '已通过', 3: '已驳回' },
+        statusValueMap: { 待审核: 0, 审核中: 1, 已通过: 2, 已驳回: 3 },
+        listStatusValueMap: { 待审核: 0, 审核中: 1, 已通过: 2, 已驳回: 3 },
+        statusOptions: ['待审核', '审核中', '已通过', '已驳回'],
+        statusTransitions: { 待审核: ['已通过', '已驳回'], 审核中: ['已通过', '已驳回'] },
+        statusOptionLabels: { 已通过: '通过', 已驳回: '驳回' },
+        editableStatuses: this.mode === 'user' ? ['待审核', '已驳回'] : undefined,
+        resubmitStatuses: ['已驳回'],
+        resubmitStatus: '待审核',
+        markReviewingOnDetail: true,
+        markReviewingOnStatusOpen: true,
+        loadDetailBeforeStatus: true,
+        statusActionLabel: '审核',
         fields: [
-          { key: 'companyId', label: '企业', required: true },
+          { key: 'companyId', label: '企业', hideInForm: true },
           { key: 'resourceType', label: '资源类型', required: true, options: ['技术资源', '人才资源', '金融资源', '市场资源', '场地资源'] },
           { key: 'connectTarget', label: '对接目标', required: true },
-          { key: 'applyTime', label: '申请时间', type: 'datetime', required: true },
+          { key: 'applyTime', label: '申请时间', type: 'datetime', hideInForm: true },
           { key: 'contactName', label: '联系人', required: true },
           { key: 'contactPhone', label: '联系电话', required: true },
           { key: 'resourceDesc', label: '资源描述', type: 'textarea', required: true, wide: true, hideInDetail: true },

@@ -31,10 +31,13 @@
           @keydown.space.self.prevent="openDetail(record)">
           <div class="record-feature-card__head">
             <span class="record-feature-card__id">
-              <i class="el-icon-bell"></i>
+              <img class="record-feature-card__scene-icon" :src="sceneIcon(record)" alt="" aria-hidden="true" />
               {{ record.id }}
             </span>
-            <el-tag size="small" type="primary">{{ record.sceneType || '通知公告' }}</el-tag>
+            <div class="record-feature-card__tags">
+              <el-tag v-if="mode === 'admin'" size="small" :type="visibilityTagType(record)">{{ visibilityLabel(record) }}</el-tag>
+              <el-tag size="small" type="primary">{{ record.sceneType || '通知公告' }}</el-tag>
+            </div>
           </div>
           <h3>{{ record.title }}</h3>
           <p class="record-feature-card__description">{{ record.content || '-' }}</p>
@@ -80,7 +83,7 @@
     <el-drawer title="通知公告详情" :visible.sync="detailVisible" size="540px" append-to-body>
       <div v-if="selectedRecord" v-loading="detailLoading" class="record-feature-detail">
         <div class="record-feature-detail__hero">
-          <i class="el-icon-bell"></i>
+          <img class="record-feature-detail__scene-icon" :src="sceneIcon(selectedRecord)" alt="" aria-hidden="true" />
           <div>
             <small>{{ selectedRecord.sceneType || '通知公告' }}</small>
             <h3>{{ selectedRecord.title }}</h3>
@@ -117,9 +120,9 @@
             </button>
           </div>
         </section>
-        <div v-if="canEditRecord(selectedRecord)" class="record-feature-card__actions">
+        <!-- <div v-if="canEditRecord(selectedRecord)" class="record-feature-card__actions">
           <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">编辑公告</el-button>
-        </div>
+        </div> -->
       </div>
     </el-drawer>
   </main>
@@ -130,17 +133,30 @@ import BusinessAttachmentField from '@/components/business/record-fields/Busines
 import BusinessRecordField from '@/components/business/record-fields/BusinessRecordField'
 import recordManager from '@/features/_shared/record-management/recordManager'
 import { getFileTypeIcon } from '@/utils/fileTypeIcon'
-import { NOTICE_SCENE_TYPE_OPTIONS, NOTICE_VISIBILITY_OPTIONS } from './definition'
+import { getNoticeSceneIcon, NOTICE_SCENE_TYPE_OPTIONS, NOTICE_VISIBILITY_OPTIONS } from './definition'
 
 const normalizeNoticeFiles = (value) => {
-  if (!Array.isArray(value)) return []
-  return value.map((file, index) =>
-    Object.assign({}, file, {
-      name: file.name || file.fileName,
-      uid: file.uid || file.attachmentId || file.id || `notice-file-${index}`,
-      status: file.status || 'success'
+  let files = value
+  if (typeof files === 'string') {
+    try {
+      files = JSON.parse(files)
+    } catch (error) {
+      files = [files]
+    }
+  }
+  if (!Array.isArray(files)) files = files ? [files] : []
+  return files.filter(Boolean).map((item, index) => {
+    const file = typeof item === 'string' ? { filePath: item } : Object.assign({}, item)
+    const filePath = file.filePath || file.fileUrl || file.url || ''
+    const name = file.name || file.fileName || file.originalFileName || file.originalName || filePath.split(/[\\/]/).pop() || `附件${index + 1}`
+    return Object.assign({}, file, {
+      name,
+      fileName: file.fileName || name,
+      uid: file.uid || file.attachmentId || file.id || file.fileId || `notice-file-${index}`,
+      status: file.status || 'success',
+      url: file.url || file.fileUrl || file.filePath || ''
     })
-  )
+  })
 }
 
 const normalizeNoticeRecord = (record) => {
@@ -149,6 +165,21 @@ const normalizeNoticeRecord = (record) => {
   normalized.status = [0, 1].includes(status) ? status : 0
   normalized.uploadFiles = normalizeNoticeFiles(normalized.uploadFiles)
   return normalized
+}
+
+const cleanNoticeUploadPath = (value) => (value ? value.replace(/^.*[\\/]/, '') : value)
+
+const cleanNoticeUploadFile = (file) => {
+  const normalized = Object.assign({}, file)
+  delete normalized.id
+  normalized.filePath = cleanNoticeUploadPath(normalized.filePath)
+  normalized.url = cleanNoticeUploadPath(normalized.url)
+  return normalized
+}
+
+const transformNoticePayload = (payload, { editing }) => {
+  if (editing && Array.isArray(payload.uploadFiles)) payload.uploadFiles = payload.uploadFiles.map(cleanNoticeUploadFile)
+  return payload
 }
 
 export default {
@@ -176,8 +207,10 @@ export default {
         hasStatus: false,
         uploadField: 'uploadFiles',
         uploadResponseField: 'uploadFiles',
+        editUploadFilesTransform: (files) => files.map(cleanNoticeUploadFile),
         loadDetailBeforeEdit: true,
         normalizeRecord: normalizeNoticeRecord,
+        payloadTransform: transformNoticePayload,
         autoFormFields: { createByName: 'currentUserName', publishTime: 'now' },
         primaryOptions: NOTICE_SCENE_TYPE_OPTIONS,
         fields: [
@@ -195,6 +228,19 @@ export default {
     }
   },
   methods: {
+    sceneIcon(record) {
+      return getNoticeSceneIcon(record && record.sceneType)
+    },
+    visibilityLabel(record) {
+      return Number(record && record.status) === 1 ? '对外' : '对内'
+    },
+    visibilityTagType(record) {
+      return Number(record && record.status) === 1 ? 'success' : 'info'
+    },
+    cleanUploadFile(file) {
+      const normalized = recordManager.methods.cleanUploadFile.call(this, file)
+      return this.editingId ? cleanNoticeUploadFile(normalized) : normalized
+    },
     fileIcon(file) {
       return getFileTypeIcon(file)
     }

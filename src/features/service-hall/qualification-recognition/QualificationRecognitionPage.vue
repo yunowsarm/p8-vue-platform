@@ -49,7 +49,7 @@
           </dl>
           <div v-if="hasRecordActions(record)" class="record-feature-card__actions">
             <div class="record-feature-card__actions-right">
-              <el-button v-if="canChangeRecordStatus(record)" type="text" size="mini" @click.stop="openStatusDialog(record)">审核处理</el-button>
+              <el-button v-if="canChangeRecordStatus(record)" type="text" size="mini" @click.stop="openStatusDialog(record)">审核</el-button>
               <el-button v-if="canEditRecord(record)" type="text" size="mini" @click.stop="openEdit(record)">编辑</el-button>
               <el-button v-if="canDeleteRecord(record)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(record)">删除</el-button>
             </div>
@@ -74,11 +74,12 @@
             :enterprise-options="enterpriseOptions"
             :enterprise-loading="enterpriseLoading"
             :class="{ 'record-feature-field--wide': field.wide || field.type === 'textarea' }" />
+          <business-attachment-field v-model="form.uploadFiles" class="record-feature-attachment" label="申请附件" :limit="9" tip="单个附件不超过 10MB，最多上传 9 个。" />
         </div>
       </el-form>
       <span slot="footer">
         <el-button @click="formVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitting" @click="submitForm">提交申请</el-button>
+        <el-button type="primary" :loading="submitting" @click="submitForm">{{ isResubmitting ? '重新提交' : '提交申请' }}</el-button>
       </span>
     </el-dialog>
 
@@ -102,37 +103,101 @@
           <h4>申请原因</h4>
           <p>{{ selectedRecord.applyReason || '-' }}</p>
         </section>
-        <div v-if="canChangeRecordStatus(selectedRecord) || canEditRecord(selectedRecord)" class="record-feature-card__actions">
-          <div>
-            <el-button v-if="canChangeRecordStatus(selectedRecord)" @click="openStatusDialog(selectedRecord)">审核处理</el-button>
-            <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">编辑</el-button>
+        <section v-if="detailFiles.length" class="record-feature-detail__section">
+          <h4>申请附件</h4>
+          <div class="record-feature-files">
+            <button
+              v-for="file in detailFiles"
+              :key="file.id || file.attachmentId || file.uid || file.url || file.name"
+              type="button"
+              class="record-feature-file-link"
+              :disabled="!attachmentId(file)"
+              :title="file.fileName || file.name || '附件'"
+              :aria-label="`下载附件：${file.fileName || file.name || '附件'}`"
+              @click="downloadAttachment(file)">
+              <img class="record-feature-file-icon" :src="fileIcon(file)" alt="" aria-hidden="true" />
+              <span class="record-feature-file-name">{{ file.fileName || file.name || '附件' }}</span>
+            </button>
           </div>
-        </div>
+        </section>
       </div>
     </el-drawer>
 
-    <el-dialog title="审核资质认定申请" :visible.sync="statusVisible" width="430px" append-to-body :close-on-click-modal="false">
-      <el-form :model="statusForm" label-width="86px">
-        <el-form-item label="审核结果">
-          <el-select v-model="statusForm.status" class="record-feature-full"><el-option v-for="status in availableStatusOptions" :key="status" :label="status" :value="status" /></el-select>
-        </el-form-item>
-        <el-form-item label="审核意见"><el-input v-model.trim="statusForm.remark" type="textarea" :rows="3" maxlength="300" show-word-limit /></el-form-item>
-      </el-form>
-      <span slot="footer">
-        <el-button @click="statusVisible = false">取消</el-button>
-        <el-button type="primary" :loading="statusSubmitting" @click="saveStatus">确认</el-button>
-      </span>
-    </el-dialog>
+    <record-audit-dialog
+      v-model="statusVisible"
+      title="审核资质认定申请"
+      :loading="statusLoading"
+      :submitting="statusSubmitting"
+      :record="statusTarget"
+      :fields="resource.fields"
+      :files="auditFiles"
+      :content-key="resource.contentKey"
+      :status-options="availableStatusOptions"
+      :status-labels="resource.statusOptionLabels"
+      :status.sync="statusForm.status"
+      :formatter="formatValue"
+      @download="downloadAttachment"
+      @confirm="saveStatus" />
   </main>
 </template>
 
 <script>
+import BusinessAttachmentField from '@/components/business/record-fields/BusinessAttachmentField'
 import BusinessRecordField from '@/components/business/record-fields/BusinessRecordField'
+import RecordAuditDialog from '@/features/_shared/record-management/RecordAuditDialog'
 import recordManager from '@/features/_shared/record-management/recordManager'
+import { getFileTypeIcon } from '@/utils/fileTypeIcon'
+
+const normalizeQualificationFiles = (value) => {
+  let files = value
+  if (typeof files === 'string') {
+    try {
+      files = JSON.parse(files)
+    } catch (error) {
+      files = [files]
+    }
+  }
+  if (!Array.isArray(files)) files = files ? [files] : []
+  return files.filter(Boolean).map((item, index) => {
+    const file = typeof item === 'string' ? { filePath: item } : Object.assign({}, item)
+    const filePath = file.filePath || file.fileUrl || file.url || ''
+    const fallbackName = `附件${index + 1}`
+    const name = file.name || file.fileName || file.originalFileName || file.originalName || filePath.split(/[\\/]/).pop() || fallbackName
+    return Object.assign({}, file, {
+      name,
+      fileName: file.fileName || name,
+      uid: file.uid || file.attachmentId || file.id || file.fileId || `qualification-file-${index}`,
+      status: file.status || 'success',
+      url: file.url || file.fileUrl || file.filePath || ''
+    })
+  })
+}
+
+const normalizeQualificationRecord = (record) => {
+  const normalized = Object.assign({}, record)
+  normalized.status = normalized.approveStatus === undefined || normalized.approveStatus === null ? normalized.status : normalized.approveStatus
+  normalized.uploadFiles = normalizeQualificationFiles(normalized.uploadFiles)
+  return normalized
+}
+
+const cleanQualificationUploadPath = (value) => (value ? value.replace(/^.*[\\/]/, '') : value)
+
+const cleanQualificationUploadFile = (file) => {
+  const normalized = Object.assign({}, file)
+  delete normalized.id
+  normalized.filePath = cleanQualificationUploadPath(normalized.filePath)
+  normalized.url = cleanQualificationUploadPath(normalized.url)
+  return normalized
+}
+
+const transformQualificationPayload = (payload, { editing }) => {
+  if (editing && Array.isArray(payload.uploadFiles)) payload.uploadFiles = payload.uploadFiles.map(cleanQualificationUploadFile)
+  return payload
+}
 
 export default {
   name: 'QualificationRecognitionPage',
-  components: { BusinessRecordField },
+  components: { BusinessAttachmentField, BusinessRecordField, RecordAuditDialog },
   mixins: [recordManager],
   props: { mode: { type: String, default: 'user' } },
   computed: {
@@ -147,16 +212,35 @@ export default {
         primaryKey: 'qualificationType',
         timeKey: 'applyTime',
         contentKey: 'applyReason',
+        uploadField: 'uploadFiles',
+        uploadResponseField: 'uploadFiles',
+        loadDetailBeforeEdit: true,
+        normalizeRecord: normalizeQualificationRecord,
+        editUploadFilesTransform: (files) => files.map(cleanQualificationUploadFile),
+        payloadTransform: transformQualificationPayload,
+        autoFormFields: { companyId: 'currentUserName', applyTime: 'now' },
+        statusField: 'approveStatus',
         defaultStatus: '待审核',
-        statusOptions: ['待审核', '处理中', '已通过', '已拒绝', '已关闭'],
-        statusTransitions: { 待审核: ['处理中', '已拒绝', '已关闭'], 处理中: ['已通过', '已拒绝', '已关闭'] },
+        statusMap: { 0: '待审核', 1: '审核中', 2: '已通过', 3: '已驳回' },
+        statusValueMap: { 待审核: 0, 审核中: 1, 已通过: 2, 已驳回: 3 },
+        listStatusValueMap: { 待审核: 0, 审核中: 1, 已通过: 2, 已驳回: 3 },
+        statusOptions: ['待审核', '审核中', '已通过', '已驳回'],
+        statusTransitions: { 待审核: ['已通过', '已驳回'], 审核中: ['已通过', '已驳回'] },
+        statusOptionLabels: { 已通过: '通过', 已驳回: '驳回' },
+        editableStatuses: this.mode === 'user' ? ['待审核', '已驳回'] : undefined,
+        resubmitStatuses: ['已驳回'],
+        resubmitStatus: '待审核',
+        markReviewingOnDetail: true,
+        markReviewingOnStatusOpen: true,
+        loadDetailBeforeStatus: true,
+        statusActionLabel: '审核',
         fields: [
-          { key: 'companyId', label: '企业', required: true },
+          { key: 'companyId', label: '企业', hideInForm: true },
           { key: 'qualificationType', label: '资质类型', required: true, options: ['高新技术企业', '专精特新企业', '科技型中小企业', '创新型中小企业'] },
-          { key: 'applyTime', label: '申请时间', type: 'datetime', required: true },
+          { key: 'applyTime', label: '申请时间', type: 'datetime', hideInForm: true },
           { key: 'contactName', label: '联系人', required: true },
           { key: 'contactPhone', label: '联系电话', required: true },
-          { key: 'applyReason', label: '申请原因', type: 'textarea', required: true, wide: true }
+          { key: 'applyReason', label: '申请原因', type: 'textarea', required: true, wide: true, maxlength: 1000 }
         ]
       }
     },
@@ -164,6 +248,15 @@ export default {
       if (this.mode === 'admin') return { create: false, edit: false, delete: true, changeStatus: true }
       if (this.mode === 'readonly') return { create: false, edit: false, delete: false, changeStatus: false }
       return { create: true, edit: true, delete: true, changeStatus: false }
+    }
+  },
+  methods: {
+    cleanUploadFile(file) {
+      const normalized = recordManager.methods.cleanUploadFile.call(this, file)
+      return this.editingId ? cleanQualificationUploadFile(normalized) : normalized
+    },
+    fileIcon(file) {
+      return getFileTypeIcon(file)
     }
   }
 }

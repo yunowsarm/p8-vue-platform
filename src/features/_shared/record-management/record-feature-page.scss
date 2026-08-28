@@ -145,8 +145,120 @@
 }
 
 .record-feature-card__id {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: #8a98aa;
   font-size: 12px;
+}
+
+.record-feature-card__scene-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  object-fit: contain;
+}
+
+.record-feature-card__tags {
+  display: flex;
+  align-items: center;
+}
+
+.record-feature-card__tags .el-tag + .el-tag {
+  margin-left: 6px;
+}
+
+.record-audit-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.record-audit-summary__item {
+  min-width: 0;
+  padding: 13px 15px;
+  border: 1px solid #e7edf5;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.record-audit-summary__item--wide {
+  grid-column: 1 / -1;
+}
+
+.record-audit-summary__item span,
+.record-audit-summary__item strong {
+  display: block;
+}
+
+.record-audit-summary__item span {
+  margin-bottom: 6px;
+  color: #7b899c;
+  font-size: 12px;
+}
+
+.record-audit-summary__item strong {
+  color: #27364d;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.record-audit-content {
+  margin: -8px 0 22px;
+  padding: 13px 15px;
+  border: 1px solid #e7edf5;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.record-audit-content span,
+.record-audit-content strong {
+  display: block;
+}
+
+.record-audit-content span {
+  margin-bottom: 6px;
+  color: #7b899c;
+  font-size: 12px;
+}
+
+.record-audit-content strong {
+  color: #27364d;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.record-audit-files {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin: -8px 0 22px;
+  padding: 13px 15px;
+  border: 1px solid #e7edf5;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.record-audit-files__label {
+  color: #7b899c;
+  font-size: 12px;
+}
+
+.record-audit-files .record-feature-file-link {
+  max-width: 100%;
+}
+
+.record-audit-form {
+  padding-top: 18px;
+  border-top: 1px solid #edf1f6;
 }
 
 .record-feature-card h3 {
@@ -283,6 +395,18 @@
   color: #fff;
   font-size: 22px;
   background: #2f7cdf;
+}
+
+.record-feature-detail__scene-icon {
+  width: 44px;
+  height: 44px;
+  padding: 8px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 3px 12px rgba(47, 124, 223, 0.12);
+  flex: 0 0 44px;
+  object-fit: contain;
 }
 
 .record-feature-detail__hero div {
@@ -453,8 +577,13 @@
 
   .record-feature-grid,
   .record-feature-form-grid,
-  .record-feature-detail__grid {
+  .record-feature-detail__grid,
+  .record-audit-summary {
     grid-template-columns: 1fr;
+  }
+
+  .record-audit-summary__item--wide {
+    grid-column: auto;
   }
 
   .record-feature-grid {

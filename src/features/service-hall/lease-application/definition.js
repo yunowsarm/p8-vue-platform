@@ -44,8 +44,19 @@ const normalizeLeaseRecord = (record) => {
   return normalized
 }
 
-const transformLeasePayload = (payload) => {
+const cleanLeaseUploadPath = (value) => (value ? value.replace(/^.*[\\/]/, '') : value)
+
+const cleanLeaseUploadFile = (file) => {
+  const normalized = Object.assign({}, file)
+  delete normalized.id
+  normalized.filePath = cleanLeaseUploadPath(normalized.filePath)
+  normalized.url = cleanLeaseUploadPath(normalized.url)
+  return normalized
+}
+
+const transformLeasePayload = (payload, { editing } = {}) => {
   const transformed = Object.assign({}, payload)
+  if (editing && Array.isArray(transformed.uploadFiles)) transformed.uploadFiles = transformed.uploadFiles.map(cleanLeaseUploadFile)
   if (transformed.applyType === 'vacate') transformed.vacateReason = transformed.applyReason
   if (transformed.applyType === 'expand') transformed.expansionPurposeReason = transformed.applyReason
   return transformed
@@ -68,10 +79,12 @@ const leaseDefinition = Object.freeze({
   primaryOptions: LEASE_APPLICATION_TYPES,
   valueLabelMaps: { applyType: { renew: '续租申请', vacate: '退租申请', expand: '扩租申请' } },
   timeKey: 'applyDate',
+  autoFormFields: { applyDate: 'now' },
   contentKey: 'applyReason',
   contentLabel: '申请原因',
   uploadField: 'uploadFiles',
   uploadResponseField: 'uploadFiles',
+  editUploadFilesTransform: (files) => files.map(cleanLeaseUploadFile),
   uploadLabel: '附件',
   uploadLimit: 9,
   uploadTip: '单个附件不超过 10MB，最多上传 9 个。',
@@ -82,13 +95,14 @@ const leaseDefinition = Object.freeze({
   loadDetailBeforeEdit: true,
   defaultStatus: '待查阅',
   statusMap: { null: '待查阅', 0: '待查阅', 1: '已查阅' },
-  statusValueMap: { 待查阅: '0', 已查阅: '1' },
-  listStatusValueMap: { 待查阅: '0', 已查阅: '1' },
+  statusValueMap: { 待查阅: 0, 已查阅: 1 },
+  listStatusValueMap: { 待查阅: 0, 已查阅: 1 },
   pendingStatuses: ['待查阅'],
   statusOptions: ['待查阅', '已查阅'],
   statusTransitions: { 待查阅: ['已查阅'], 已查阅: [] },
-  statusDialogTitle: '处理租赁申请',
-  statusActionLabel: '标记已查阅',
+  markReviewingOnDetail: true,
+  reviewPendingStatus: '待查阅',
+  reviewingStatus: '已查阅',
   processRemarkField: 'remark',
   processRemarkLabel: '处理意见',
   cardMetaFields: [
@@ -107,7 +121,7 @@ const leaseDefinition = Object.freeze({
     { key: 'currentLocation', label: '现租赁位置', required: true },
     { key: 'contactPerson', label: '联系人', required: true },
     { key: 'contactPhone', label: '联系电话', required: true },
-    { key: 'applyDate', label: '申请日期', type: 'datetime', required: true },
+    { key: 'applyDate', label: '申请日期', type: 'datetime', hideInForm: true },
     { key: 'currentExpireDate', label: '当前到期日', type: 'datetime', required: true, showWhen: { applyType: 'renew' } },
     { key: 'renewalPeriodMonths', label: '续租期限（月）', required: true, options: [12, 24, 36], showWhen: { applyType: 'renew' } },
     { key: 'renewalStartDate', label: '续租起始日', type: 'datetime', required: true, showWhen: { applyType: 'renew' } },

@@ -108,12 +108,6 @@
           <h4>备注</h4>
           <p>{{ selectedRecord.remark }}</p>
         </section>
-        <div v-if="canChangeRecordStatus(selectedRecord) || canEditRecord(selectedRecord)" class="record-feature-card__actions">
-          <div>
-            <el-button v-if="canChangeRecordStatus(selectedRecord)" @click="openStatusDialog(selectedRecord)">更新进度</el-button>
-            <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">编辑</el-button>
-          </div>
-        </div>
       </div>
     </el-drawer>
 

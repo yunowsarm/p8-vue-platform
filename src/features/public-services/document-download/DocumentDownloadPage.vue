@@ -61,7 +61,7 @@
 
     <el-dialog :title="formDialogTitle" :visible.sync="formVisible" top="4vh" append-to-body :close-on-click-modal="false" custom-class="record-feature-form" @closed="resetForm">
       <el-form ref="recordForm" :model="form" :rules="rules" label-width="90px" @submit.native.prevent>
-        <div class="record-feature-form-grid">
+        <div class="record-feature-form-grid document-download-form-grid">
           <business-record-field
             v-for="field in formFields"
             :key="field.key"
@@ -155,3 +155,15 @@ export default {
 </script>
 
 <style lang="scss" src="../../_shared/record-management/record-feature-page.scss"></style>
+
+<style lang="scss" scoped>
+.document-download-form-grid {
+  grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+}
+
+@media (max-width: 760px) {
+  .document-download-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+</style>

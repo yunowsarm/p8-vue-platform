@@ -69,7 +69,6 @@
           <div class="card-foot">
             <span>{{ statusHint(statusText(item)) }}</span>
             <div>
-              <el-button type="text" size="mini" @click.stop="openDetail(item)">查看详情</el-button>
               <el-button type="text" size="mini" @click.stop="openEdit(item)">编辑</el-button>
               <el-button type="text" size="mini" class="danger-action" @click.stop="removeRecord(item)">删除</el-button>
             </div>
@@ -153,7 +152,7 @@
               <h3>{{ selectedRecord.type || '物业报修' }}</h3>
               <p>{{ displayTime(selectedRecord) }}</p>
             </div>
-            <el-tag :type="statusType(statusText(selectedRecord))">{{ statusText(selectedRecord) }}</el-tag>
+            <el-tag :type="statusType(statusText(selectedRecord))" size="small">{{ statusText(selectedRecord) }}</el-tag>
           </div>
           <div class="detail-grid">
             <span v-for="field in detailFields" :key="field.key">
@@ -214,9 +213,9 @@
             </div>
           </section>
         </div>
-        <div class="drawer-actions">
+        <!-- <div class="drawer-actions">
           <el-button type="primary" @click="openEdit(selectedRecord)">编辑</el-button>
-        </div>
+        </div> -->
       </div>
     </el-drawer>
   </main>

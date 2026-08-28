@@ -61,13 +61,24 @@
 </template>
 
 <script>
-import { getNoticeSceneIcon } from '@/features/public-services/public-notice/definition'
+import activityNoticeIcon from '@/assets/image/publicNotice/activity-notice.svg'
+import enterpriseNewsIcon from '@/assets/image/publicNotice/enterprise-news.svg'
+import parkNewsIcon from '@/assets/image/publicNotice/park-news.svg'
+import safetyReminderIcon from '@/assets/image/publicNotice/safety-reminder.svg'
 import { getFileTypeIcon } from '@/utils/fileTypeIcon'
+
+const sceneIcons = {
+  园区动态: parkNewsIcon,
+  园区通用: parkNewsIcon,
+  企业动态: enterpriseNewsIcon,
+  安全提醒: safetyReminderIcon,
+  活动通知: activityNoticeIcon
+}
 
 export default {
   name: 'HomeNoticeAnnouncement',
   props: {
-    noticeType: { type: Number, default: 0 }
+    noticeType: { type: Number, default: 1 }
   },
   data() {
     return {
@@ -129,7 +140,7 @@ export default {
       return (notice && notice.createByName) || '园区'
     },
     sceneIcon(notice) {
-      return getNoticeSceneIcon(notice && notice.sceneType)
+      return (notice && sceneIcons[notice.sceneType]) || ''
     },
     fileIcon(file) {
       return getFileTypeIcon(file)

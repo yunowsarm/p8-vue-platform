@@ -2,7 +2,7 @@
 const DOCUMENT_CATEGORY_OPTIONS = Object.freeze(['办事指南', '表单模板', '园区手册', '宣传资料', '其他'])
 
 const createFields = () => [
-  { key: 'title', label: '资料标题', required: true, wide: true },
+  { key: 'title', label: '资料标题', required: true },
   { key: 'type', label: '资料分类', required: true, options: DOCUMENT_CATEGORY_OPTIONS },
   { key: 'itemCreateTime', label: '创建时间', type: 'datetime', required: true, hideInCreateForm: true },
   { key: 'description', label: '资料描述', type: 'textarea', required: true }

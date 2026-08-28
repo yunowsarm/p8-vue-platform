@@ -102,12 +102,6 @@
           <h4>宣传内容</h4>
           <p>{{ selectedRecord.promotionContent || '-' }}</p>
         </section>
-        <div v-if="canChangeRecordStatus(selectedRecord) || canEditRecord(selectedRecord)" class="record-feature-card__actions">
-          <div>
-            <el-button v-if="canChangeRecordStatus(selectedRecord)" @click="openStatusDialog(selectedRecord)">审核处理</el-button>
-            <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">编辑</el-button>
-          </div>
-        </div>
       </div>
     </el-drawer>
 
