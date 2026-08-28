@@ -6,7 +6,7 @@
         <span class="record-feature-hero__icon"><i class="el-icon-user-solid"></i></span>
         <div>
           <h2>创业导师</h2>
-          <p>维护园区创业导师档案与辅导专长。</p>
+          <p>{{ mode === 'admin' ? '维护园区创业导师档案与辅导专长。' : '查看园区创业导师档案与辅导专长。' }}</p>
         </div>
       </div>
       <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增导师</el-button>
@@ -83,9 +83,6 @@
           <h4>导师介绍</h4>
           <p>{{ selectedRecord.introduction || '-' }}</p>
         </section>
-        <div v-if="canEditRecord(selectedRecord)" class="record-feature-card__actions">
-          <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">编辑导师</el-button>
-        </div>
       </div>
     </el-drawer>
   </main>
@@ -97,6 +94,7 @@ export default {
   name: 'StartupMentorPage',
   components: { BusinessRecordField },
   mixins: [recordManager],
+  props: { mode: { type: String, default: 'user' } },
   computed: {
     resource() {
       return {
@@ -121,7 +119,7 @@ export default {
       }
     },
     permissions() {
-      return { create: true, edit: true, delete: true, changeStatus: false }
+      return this.mode === 'admin' ? { create: true, edit: true, delete: true, changeStatus: false } : { create: false, edit: false, delete: false, changeStatus: false }
     }
   }
 }

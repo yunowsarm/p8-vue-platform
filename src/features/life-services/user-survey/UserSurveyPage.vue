@@ -6,7 +6,7 @@
         <span class="record-feature-hero__icon"><i class="el-icon-document-checked"></i></span>
         <div>
           <h2>调查问卷</h2>
-          <p>{{ mode === 'admin' ? '创建和维护园区调查问卷及附件。' : '查看、创建和维护园区调查问卷。' }}</p>
+          <p>{{ mode === 'admin' ? '创建和维护园区调查问卷及附件。' : '查看园区调查问卷及附件。' }}</p>
         </div>
       </div>
       <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增问卷</el-button>
@@ -91,9 +91,6 @@
             </button>
           </div>
         </section>
-        <div v-if="canEditRecord(selectedRecord)" class="record-feature-card__actions">
-          <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">编辑问卷</el-button>
-        </div>
       </div>
     </el-drawer>
   </main>
@@ -132,7 +129,7 @@ export default {
       }
     },
     permissions() {
-      return this.mode === 'readonly' ? { create: false, edit: false, delete: false } : { create: true, edit: true, delete: true, changeStatus: false }
+      return this.mode === 'admin' ? { create: true, edit: true, delete: true, changeStatus: false } : { create: false, edit: false, delete: false, changeStatus: false }
     }
   },
   methods: {

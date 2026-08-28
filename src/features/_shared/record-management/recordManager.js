@@ -354,6 +354,10 @@ export default {
       if (editing) payload.id = this.editingId
       Object.assign(payload, editing ? { updateBy: this.currentUserId(), itemUpdateTime: now() } : { createBy: this.currentUserId(), itemCreateTime: now() })
       if (typeof this.resource.payloadTransform === 'function') payload = this.resource.payloadTransform(payload, { editing, form: this.form })
+      if (!editing) {
+        if (!payload.createBy) payload.createBy = this.currentUserId()
+        if (!payload.itemCreateTime) payload.itemCreateTime = now()
+      }
       if (editing && this.resource.uploadField && hasOwn(payload, this.resource.uploadField)) {
         payload[this.resource.uploadField] = this.normalizeUploadFiles(payload[this.resource.uploadField]).map((file) => this.cleanStatusUploadFile(file))
       }
@@ -365,7 +369,14 @@ export default {
       try {
         if (this.usingMock || !saveApi) this.saveMockRecord(payload)
         else await saveApi(payload)
-        this.$message.success(resubmitting ? '重新提交成功' : this.editingId ? (this.resource.replyMode ? '回复成功' : '修改成功') : `${this.resource.itemName || this.resource.title}已提交`)
+        const successMessage = resubmitting
+          ? '重新提交成功'
+          : this.editingId
+          ? this.resource.replyMode
+            ? '回复成功'
+            : '修改成功'
+          : this.resource.createSuccessMessage || `${this.resource.itemName || this.resource.title}已提交`
+        this.$message.success(successMessage)
         this.formVisible = false
         this.currentPage = 1
         if (!this.usingMock) await this.loadRecords()
@@ -589,11 +600,14 @@ export default {
           待受理: 'warning',
           待审核: 'warning',
           审核中: 'primary',
+          待确认: 'warning',
+          确认中: 'primary',
           待回复: 'warning',
           待处理: 'warning',
           处理中: '',
           已完成: 'success',
           已通过: 'success',
+          已预定: 'success',
           已回复: 'success',
           已发布: 'success',
           正常: 'success',
@@ -604,6 +618,7 @@ export default {
           已关闭: 'info',
           已下线: 'info',
           已暂停: 'info',
+          已过期: 'info',
           已截止: 'info',
           售罄: 'info'
         }[status] || 'info'

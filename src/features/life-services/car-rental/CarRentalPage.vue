@@ -6,7 +6,7 @@
         <span class="record-feature-hero__icon"><i class="el-icon-truck"></i></span>
         <div>
           <h2>租车服务</h2>
-          <p>查看和维护园区可租车辆、车型与日租价格。</p>
+          <p>{{ mode === 'admin' ? '维护园区可租车辆、车型与日租价格。' : '查看园区可租车辆、车型与日租价格。' }}</p>
         </div>
       </div>
       <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增车辆</el-button>
@@ -46,9 +46,19 @@
         <el-pagination background :current-page.sync="currentPage" :page-size="pageSize" :total="paginationTotal" layout="prev, pager, next" @current-change="loadRecords" />
       </div>
     </section>
-    <el-dialog :title="formDialogTitle" :visible.sync="formVisible" append-to-body :close-on-click-modal="false" custom-class="record-feature-form" @closed="resetForm">
-      <el-form ref="recordForm" :model="form" :rules="rules" label-width="110px">
-        <div class="record-feature-form-grid"><business-record-field v-for="field in formFields" :key="field.key" v-model="form[field.key]" :field="field" /></div>
+    <el-dialog
+      :title="formDialogTitle"
+      :visible.sync="formVisible"
+      width="880px"
+      top="12vh"
+      append-to-body
+      :close-on-click-modal="false"
+      custom-class="record-feature-form car-rental-form"
+      @closed="resetForm">
+      <el-form ref="recordForm" :model="form" :rules="rules" label-position="top" @submit.native.prevent>
+        <div class="record-feature-form-grid car-rental-form-grid">
+          <business-record-field v-for="field in formFields" :key="field.key" v-model="form[field.key]" :field="field" />
+        </div>
       </el-form>
       <span slot="footer">
         <el-button @click="formVisible = false">取消</el-button>
@@ -75,9 +85,6 @@
             <b>¥ {{ selectedRecord.rentPrice || '-' }}</b>
           </div>
         </div>
-        <div v-if="canEditRecord(selectedRecord)" class="record-feature-card__actions">
-          <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">编辑车辆</el-button>
-        </div>
       </div>
     </el-drawer>
   </main>
@@ -90,6 +97,7 @@ export default {
   name: 'CarRentalPage',
   components: { BusinessRecordField },
   mixins: [recordManager],
+  props: { mode: { type: String, default: 'user' } },
   computed: {
     resource() {
       return {
@@ -107,14 +115,43 @@ export default {
         fields: [
           { key: 'carType', label: '车型', options: CAR_TYPES, required: true },
           { key: 'plateNo', label: '车牌号', required: true },
-          { key: 'rentPrice', label: '租金（元/天）', type: 'amount', required: true }
+          { key: 'rentPrice', label: '日租金（元/天）', type: 'amount', required: true }
         ]
       }
     },
     permissions() {
-      return { create: true, edit: true, delete: true, changeStatus: false }
+      return this.mode === 'admin' ? { create: true, edit: true, delete: true, changeStatus: false } : { create: false, edit: false, delete: false, changeStatus: false }
     }
   }
 }
 </script>
 <style lang="scss" src="../../_shared/record-management/record-feature-page.scss"></style>
+
+<style lang="scss">
+.car-rental-form .car-rental-form-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 20px;
+}
+
+.car-rental-form .el-dialog__body {
+  padding-top: 22px;
+  padding-bottom: 12px;
+}
+
+.car-rental-form .el-form-item__label {
+  padding-bottom: 8px;
+  color: #44546a;
+  line-height: 20px;
+}
+
+@media (max-width: 760px) {
+  .car-rental-form .car-rental-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .car-rental-form {
+    width: calc(100% - 24px) !important;
+    margin: 6vh auto 0 !important;
+  }
+}
+</style>

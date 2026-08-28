@@ -6,7 +6,7 @@
         <span class="record-feature-hero__icon"><i class="el-icon-setting"></i></span>
         <div>
           <h2>设施设备租赁</h2>
-          <p>提交会议、展示、办公和活动设施的租赁申请。</p>
+          <p>{{ mode === 'admin' ? '审核企业提交的设施设备租赁申请。' : '提交会议、展示、办公和活动设施的租赁申请。' }}</p>
         </div>
       </div>
       <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增租赁</el-button>
@@ -38,8 +38,9 @@
           <template slot-scope="scope">
             <div class="record-feature-table__actions">
               <el-button type="text" size="mini" @click.stop="openDetail(scope.row)">详情</el-button>
-              <el-button v-if="canEditRecord(scope.row)" type="text" size="mini" @click.stop="openEdit(scope.row)">编辑</el-button>
-              <el-button v-if="canDeleteRecord(scope.row)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(scope.row)">取消</el-button>
+              <el-button v-if="canChangeRecordStatus(scope.row)" type="text" size="mini" @click.stop="openStatusDialog(scope.row)">审核</el-button>
+              <el-button v-if="canEditRecord(scope.row)" type="text" size="mini" @click.stop="openEdit(scope.row)">{{ isResubmitRecord(scope.row) ? '重新提交' : '编辑' }}</el-button>
+              <el-button v-if="canDeleteRecord(scope.row)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(scope.row)">删除</el-button>
             </div>
           </template>
         </el-table-column>
@@ -65,7 +66,7 @@
       </el-form>
       <span slot="footer">
         <el-button @click="formVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitting" @click="submitForm">提交租赁</el-button>
+        <el-button type="primary" :loading="submitting" @click="submitForm">{{ isResubmitting ? '重新提交' : '提交租赁' }}</el-button>
       </span>
     </el-dialog>
     <el-drawer title="设施租赁详情" :visible.sync="detailVisible" size="540px" append-to-body>
@@ -88,36 +89,63 @@
           <h4>租赁用途</h4>
           <p>{{ selectedRecord.leasePurpose || '-' }}</p>
         </section>
-        <div v-if="canEditRecord(selectedRecord)" class="record-feature-card__actions">
-          <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">编辑租赁</el-button>
-        </div>
       </div>
     </el-drawer>
+
+    <record-audit-dialog
+      v-model="statusVisible"
+      title="审核设施设备租赁"
+      :loading="statusLoading"
+      :submitting="statusSubmitting"
+      :record="statusTarget"
+      :fields="resource.fields"
+      :content-key="resource.contentKey"
+      :status-options="availableStatusOptions"
+      :status-labels="resource.statusOptionLabels"
+      :status.sync="statusForm.status"
+      :formatter="formatValue"
+      @confirm="saveStatus" />
   </main>
 </template>
 <script>
 import BusinessRecordField from '@/components/business/record-fields/BusinessRecordField'
+import RecordAuditDialog from '@/features/_shared/record-management/RecordAuditDialog'
 import recordManager from '@/features/_shared/record-management/recordManager'
 export default {
   name: 'FacilityRentalPage',
-  components: { BusinessRecordField },
+  components: { BusinessRecordField, RecordAuditDialog },
   mixins: [recordManager],
+  props: { mode: { type: String, default: 'user' } },
   computed: {
     resource() {
+      const adminMode = this.mode === 'admin'
       return {
         title: '设施设备租赁',
         itemName: '租赁',
         icon: 'el-icon-setting',
         idPrefix: 'FR',
         apiNamespace: 'tobFacilityRental',
+        listParams: adminMode ? {} : { createBy: this.currentUserId() },
         primaryKey: 'facilityType',
         cardTitleKey: 'facilityType',
         timeKey: 'leaseStart',
         contentKey: 'leasePurpose',
+        autoFormFields: { companyId: 'currentUserName' },
         defaultStatus: '待审核',
-        statusOptions: ['待审核', '已通过', '已拒绝', '已取消'],
+        statusMap: { 0: '待审核', 1: '审核中', 2: '已通过', 3: '已驳回' },
+        statusValueMap: { 待审核: 0, 审核中: 1, 已通过: 2, 已驳回: 3 },
+        listStatusValueMap: { 待审核: 0, 审核中: 1, 已通过: 2, 已驳回: 3 },
+        statusOptions: ['待审核', '审核中', '已通过', '已驳回'],
+        statusTransitions: { 待审核: ['已通过', '已驳回'], 审核中: ['已通过', '已驳回'] },
+        statusOptionLabels: { 已通过: '通过', 已驳回: '驳回' },
+        editableStatuses: ['待审核', '已驳回'],
+        resubmitStatuses: ['已驳回'],
+        resubmitStatus: '待审核',
+        markReviewingOnDetail: adminMode,
+        markReviewingOnStatusOpen: adminMode,
+        loadDetailBeforeStatus: true,
         fields: [
-          { key: 'companyId', label: '企业', required: true },
+          { key: 'companyId', label: '企业', hideInForm: true },
           { key: 'facilityType', label: '设备类型', required: true, options: ['会议设备', '展示设备', '办公设备', '活动设施', '其他'] },
           { key: 'leaseStart', label: '租赁开始日期', type: 'datetime', required: true },
           { key: 'leaseEnd', label: '租赁结束日期', type: 'datetime', required: true },
@@ -128,7 +156,18 @@ export default {
       }
     },
     permissions() {
-      return { create: true, edit: true, delete: true, changeStatus: false }
+      if (this.mode === 'admin') return { create: false, edit: false, delete: true, changeStatus: true }
+      return {
+        create: true,
+        edit: ({ record }) => this.isOwnRecord(record),
+        delete: false,
+        changeStatus: false
+      }
+    }
+  },
+  methods: {
+    isOwnRecord(record) {
+      return Boolean(record && String(record.createBy || '') === String(this.currentUserId()))
     }
   }
 }

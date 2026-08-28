@@ -6,7 +6,7 @@
         <span class="record-feature-hero__icon"><i class="el-icon-picture-outline-round"></i></span>
         <div>
           <h2>旅行门票</h2>
-          <p>{{ mode === 'admin' ? '维护景点票种、价格和销售状态。' : '查看和维护园区旅行门票信息。' }}</p>
+          <p>{{ mode === 'admin' ? '维护景点票种、价格和销售状态。' : '查看园区旅行门票信息。' }}</p>
         </div>
       </div>
       <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增门票</el-button>
@@ -87,9 +87,6 @@
           <h4>门票说明</h4>
           <p>{{ selectedRecord.description || '-' }}</p>
         </section>
-        <div v-if="canEditRecord(selectedRecord)" class="record-feature-card__actions">
-          <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">编辑门票</el-button>
-        </div>
       </div>
     </el-drawer>
   </main>
@@ -128,7 +125,7 @@ export default {
       }
     },
     permissions() {
-      return this.mode === 'readonly' ? { create: false, edit: false, delete: false } : { create: true, edit: true, delete: true, changeStatus: false }
+      return this.mode === 'admin' ? { create: true, edit: true, delete: true, changeStatus: false } : { create: false, edit: false, delete: false, changeStatus: false }
     }
   }
 }
