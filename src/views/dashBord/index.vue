@@ -216,9 +216,11 @@ export default {
           parentUuid: '',
           permissionVo: { router: resourceName, resourceId: '' }
         })
-        this.canViewPendingPropertyRepair = Array.isArray(buttons) && buttons.some((button) => {
-          return button && button.name === 'pending_property_repair_requests' && button.enable !== '0' && button.isAccredit !== 0 && button.isAccredit !== '0'
-        })
+        this.canViewPendingPropertyRepair =
+          Array.isArray(buttons) &&
+          buttons.some((button) => {
+            return button && button.name === 'pending_property_repair_requests' && button.enable !== '0' && button.isAccredit !== 0 && button.isAccredit !== '0'
+          })
       } catch (error) {
         this.canViewPendingPropertyRepair = false
       } finally {
