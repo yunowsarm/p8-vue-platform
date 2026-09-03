@@ -16,43 +16,43 @@
     <div class="table-con">
       <div class="table-wrapper">
         <el-table class="summary-table" :data="tableData" :style="{ width: '100%', '--summary-row-height': `${rowHeight}px` }" :stripe="true" :loading="loading" border :height="tableHeight">
-          <el-table-column prop="roomName" label="所属配电房" fixed="left" width="100" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="meterCode" label="电表编号" fixed="left" width="124" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="meterLocation" label="安装位置" width="112" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="magnification" label="倍率" width="60" align="right"></el-table-column>
-          <el-table-column label="尖">
-            <el-table-column prop="readingSharp1" label="上月示数" width="76" align="right"></el-table-column>
-            <el-table-column prop="readingSharp" label="本月示数" width="76" align="right"></el-table-column>
-            <el-table-column prop="readingSharp2" label="表用量" width="76" align="right"></el-table-column>
-            <el-table-column prop="readingSharp3" label="实用度数" width="76" align="right"></el-table-column>
+          <el-table-column prop="roomName" label="所属配电房" fixed="left" width="100" align="center" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="meterCode" label="电表编号" fixed="left" width="124" align="center" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="meterLocation" label="安装位置" width="112" align="center" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="magnification" label="倍率" width="60" align="center"></el-table-column>
+          <el-table-column label="尖" align="center">
+            <el-table-column prop="readingSharp1" label="上月示数" width="76" align="center"></el-table-column>
+            <el-table-column prop="readingSharp" label="本月示数" width="76" align="center"></el-table-column>
+            <el-table-column prop="readingSharp2" label="表用量" width="76" align="center"></el-table-column>
+            <el-table-column prop="readingSharp3" label="实用度数" width="76" align="center"></el-table-column>
           </el-table-column>
-          <el-table-column label="峰">
-            <el-table-column prop="readingPeak1" label="上月示数" width="76" align="right"></el-table-column>
-            <el-table-column prop="readingPeak" label="本月示数" width="76" align="right"></el-table-column>
-            <el-table-column prop="readingPeak2" label="表用量" width="76" align="right"></el-table-column>
-            <el-table-column prop="readingPeak3" label="实用度数" width="76" align="right"></el-table-column>
+          <el-table-column label="峰" align="center">
+            <el-table-column prop="readingPeak1" label="上月示数" width="76" align="center"></el-table-column>
+            <el-table-column prop="readingPeak" label="本月示数" width="76" align="center"></el-table-column>
+            <el-table-column prop="readingPeak2" label="表用量" width="76" align="center"></el-table-column>
+            <el-table-column prop="readingPeak3" label="实用度数" width="76" align="center"></el-table-column>
           </el-table-column>
-          <el-table-column label="平">
-            <el-table-column prop="readingFlat1" label="上月示数" width="76" align="right"></el-table-column>
-            <el-table-column prop="readingFlat" label="本月示数" width="76" align="right"></el-table-column>
-            <el-table-column prop="readingFlat2" label="表用量" width="76" align="right"></el-table-column>
-            <el-table-column prop="readingFlat3" label="实用度数" width="76" align="right"></el-table-column>
+          <el-table-column label="平" align="center">
+            <el-table-column prop="readingFlat1" label="上月示数" width="76" align="center"></el-table-column>
+            <el-table-column prop="readingFlat" label="本月示数" width="76" align="center"></el-table-column>
+            <el-table-column prop="readingFlat2" label="表用量" width="76" align="center"></el-table-column>
+            <el-table-column prop="readingFlat3" label="实用度数" width="76" align="center"></el-table-column>
           </el-table-column>
-          <el-table-column label="谷">
-            <el-table-column prop="readingValley1" label="上月示数" width="76" align="right"></el-table-column>
-            <el-table-column prop="readingValley" label="本月示数" width="76" align="right"></el-table-column>
-            <el-table-column prop="readingValley2" label="表用量" width="76" align="right"></el-table-column>
-            <el-table-column prop="readingValley3" label="实用度数" width="76" align="right"></el-table-column>
+          <el-table-column label="谷" align="center">
+            <el-table-column prop="readingValley1" label="上月示数" width="76" align="center"></el-table-column>
+            <el-table-column prop="readingValley" label="本月示数" width="76" align="center"></el-table-column>
+            <el-table-column prop="readingValley2" label="表用量" width="76" align="center"></el-table-column>
+            <el-table-column prop="readingValley3" label="实用度数" width="76" align="center"></el-table-column>
           </el-table-column>
-          <el-table-column label="总">
-            <el-table-column prop="readingTotal1" label="上月示数" width="76" align="right"></el-table-column>
-            <el-table-column prop="readingTotal" label="本月示数" width="76" align="right"></el-table-column>
-            <el-table-column prop="readingTotal2" label="表用量" width="76" align="right"></el-table-column>
-            <el-table-column prop="readingTotal3" label="实用度数" width="76" align="right"></el-table-column>
+          <el-table-column label="总" align="center">
+            <el-table-column prop="readingTotal1" label="上月示数" width="76" align="center"></el-table-column>
+            <el-table-column prop="readingTotal" label="本月示数" width="76" align="center"></el-table-column>
+            <el-table-column prop="readingTotal2" label="表用量" width="76" align="center"></el-table-column>
+            <el-table-column prop="readingTotal3" label="实用度数" width="76" align="center"></el-table-column>
           </el-table-column>
-          <el-table-column prop="kva" label="KVA" width="65" align="right"></el-table-column>
-          <el-table-column prop="kvaTotal" label="KVA总数" width="82" align="right"></el-table-column>
-          <el-table-column prop="remark" label="抄表备注" fixed="right" width="110" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="kva" label="KVA" width="65" align="center"></el-table-column>
+          <el-table-column prop="kvaTotal" label="KVA总数" width="82" align="center"></el-table-column>
+          <el-table-column prop="remark" label="抄表备注" fixed="right" width="110" align="center" show-overflow-tooltip></el-table-column>
         </el-table>
         <div class="pagination-wrap">
           <el-pagination :current-page="currentPage" :page-size="pageSize" :total="total" @current-change="handleCurrentChange" layout="total, prev, pager, next, jumper"></el-pagination>
@@ -400,6 +400,7 @@ export default {
 ::v-deep .summary-table td {
   height: var(--summary-row-height, 44px);
   padding: 0;
+  vertical-align: middle;
 }
 
 .pagination-wrap {
