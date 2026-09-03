@@ -21,20 +21,6 @@
       </div>
     </div>
 
-    <!-- 待处理内容区域，后续可按同一结构扩展更多待办通知 -->
-    <section v-loading="pendingContentLoading" class="pending-content" aria-label="待处理内容">
-      <div v-if="hasVisiblePendingTasks" class="notice-card-row">
-        <button v-auth="'pending_property_repair_requests'" type="button" class="notice-card notice-card--warning" aria-label="查看待处理物业报修" @click="goToPropertyRepairHandle">
-          <div class="notice-card__label">待处理物业报修</div>
-          <div class="notice-card__value">
-            {{ pendingRepairCount }}
-            <span>起</span>
-          </div>
-        </button>
-      </div>
-      <el-empty v-else :image-size="48" description="暂无待处理任务" />
-    </section>
-
     <!-- 第二行：趋势图表 -->
     <el-row :gutter="16" class="chart-row">
       <el-col :xs="24" :sm="24" :md="8" :span="8">
