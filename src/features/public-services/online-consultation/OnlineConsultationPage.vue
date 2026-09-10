@@ -1,24 +1,62 @@
 <!-- 在线咨询业务组件：独立维护用户提问、管理端回复以及咨询详情展示。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
+  <main class="record-feature-page" :class="{ 'record-feature-page--compact': compact, 'record-feature-page--read-only': readOnly }">
+    <header v-if="!compact || !readOnly" class="record-feature-hero" :class="{ 'record-feature-hero--compact': compact }">
+      <div v-if="!compact" class="record-feature-hero__title">
         <span class="record-feature-hero__icon"><i class="el-icon-service"></i></span>
         <div>
-          <h2>在线咨询</h2>
-          <p>{{ mode === 'admin' ? '查看并回复用户提交的园区服务咨询。' : '提交园区服务问题，并随时查看专员回复。' }}</p>
+          <h2>{{ pageTitle }}</h2>
+          <p>{{ consultationDescription }}</p>
         </div>
       </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">发起咨询</el-button>
+      <el-button v-if="canCreate && !readOnly" type="primary" icon="el-icon-plus" @click="openCreate">{{ createActionLabel }}</el-button>
     </header>
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
-        <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索咨询编号、咨询人或内容" @input="resetPage" @clear="resetPage" />
-        <el-select v-model="statusFilter" clearable placeholder="全部状态" @change="resetPage" @clear="resetPage">
+        <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" :placeholder="searchPlaceholder" @input="resetPage" @clear="resetPage" />
+        <el-select v-if="!compact" v-model="statusFilter" clearable placeholder="全部状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
       </div>
-      <div v-if="pagedRecords.length" class="record-feature-grid">
+      <el-table v-if="compact && pagedRecords.length" :data="pagedRecords" stripe class="record-feature-table record-feature-table--compact" @row-click="openDetail">
+        <el-table-column prop="enterprise" label="企业名称" min-width="160" show-overflow-tooltip />
+        <el-table-column prop="contactName" label="联系人" min-width="120" show-overflow-tooltip />
+        <el-table-column prop="contactPhone" label="联系电话" min-width="140" show-overflow-tooltip />
+        <el-table-column prop="referrerName" label="推荐人" min-width="120" show-overflow-tooltip />
+        <el-table-column label="所属行业" min-width="110" show-overflow-tooltip>
+          <template slot-scope="scope">{{ formatValue(scope.row.industry, 'industry') }}</template>
+        </el-table-column>
+        <el-table-column label="团队规模" min-width="110" show-overflow-tooltip>
+          <template slot-scope="scope">{{ formatValue(scope.row.teamSize, 'teamSize') }}</template>
+        </el-table-column>
+        <el-table-column label="意向空间" min-width="110" show-overflow-tooltip>
+          <template slot-scope="scope">{{ formatValue(scope.row.intendedSpace, 'intendedSpace') }}</template>
+        </el-table-column>
+        <el-table-column label="需求面积" min-width="110" show-overflow-tooltip>
+          <template slot-scope="scope">{{ formatValue(scope.row.requiredArea, 'requiredArea') }}</template>
+        </el-table-column>
+        <el-table-column label="计划入住时间" width="170">
+          <template slot-scope="scope">{{ formatDateOnly(scope.row.checkinTime) }}</template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="提交时间" width="170" />
+        <el-table-column v-if="allowConfirm" label="确认状态" width="110">
+          <template slot-scope="scope">
+            <el-tag :type="isConfirmed(scope.row) ? 'success' : 'warning'" size="mini">{{ isConfirmed(scope.row) ? '已确认' : '待确认' }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column v-if="allowConfirm" label="操作" width="120" fixed="right">
+          <template slot-scope="scope">
+            <div class="record-feature-table__actions">
+              <el-button type="text" size="mini" :loading="confirmingId === scope.row.id" :disabled="isConfirmed(scope.row)" @click.stop="confirmRecord(scope.row)">
+                {{ isConfirmed(scope.row) ? '已确认' : '标记为确认' }}
+              </el-button>
+              <el-button v-if="!readOnly && canEditRecord(scope.row)" type="text" size="mini" @click.stop="openEdit(scope.row)">{{ resource.editActionLabel }}</el-button>
+              <el-button v-if="!readOnly && canDeleteRecord(scope.row)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(scope.row)">删除</el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div v-else-if="pagedRecords.length" class="record-feature-grid">
         <article
           v-for="record in pagedRecords"
           :key="record.id"
@@ -68,7 +106,7 @@
           </div>
         </article>
       </div>
-      <el-empty v-else class="record-feature-empty" description="暂无在线咨询记录" />
+      <el-empty v-else class="record-feature-empty" :description="`暂无${pageTitle}记录`" />
       <div v-if="paginationTotal" class="record-feature-pagination">
         <span>共 {{ paginationTotal }} 条</span>
         <el-pagination background :current-page.sync="currentPage" :page-size="pageSize" :total="paginationTotal" layout="prev, pager, next" @current-change="loadRecords" />
@@ -92,17 +130,23 @@
       </span>
     </el-dialog>
 
-    <el-drawer title="在线咨询详情" :visible.sync="detailVisible" size="540px" append-to-body>
+    <el-drawer :title="`${pageTitle}详情`" :visible.sync="detailVisible" size="540px" append-to-body>
       <div v-if="selectedRecord" v-loading="detailLoading" class="record-feature-detail">
         <div class="record-feature-detail__hero">
           <i class="el-icon-service"></i>
           <div>
             <small>{{ selectedRecord.id }}</small>
-            <h3>{{ selectedRecord.userName || '在线咨询' }}</h3>
+            <h3>{{ compact ? selectedRecord.enterprise || pageTitle : selectedRecord.userName || '在线咨询' }}</h3>
           </div>
-          <el-tag :type="statusType(statusText(selectedRecord.status))">{{ statusText(selectedRecord.status) }}</el-tag>
+          <el-tag v-if="!compact" :type="statusType(statusText(selectedRecord.status))">{{ statusText(selectedRecord.status) }}</el-tag>
         </div>
-        <div class="record-feature-detail__grid">
+        <div v-if="compact" class="record-feature-detail__grid">
+          <div v-for="field in compactDetailFields" :key="field.key" class="record-feature-detail__item">
+            <small>{{ field.label }}</small>
+            <b>{{ formatCompactDetailValue(selectedRecord[field.key], field.key) }}</b>
+          </div>
+        </div>
+        <div v-else class="record-feature-detail__grid">
           <div class="record-feature-detail__item">
             <small>咨询人</small>
             <b>{{ selectedRecord.userName || '-' }}</b>
@@ -120,11 +164,11 @@
             <b>{{ selectedRecord.replyUserName || '-' }}</b>
           </div>
         </div>
-        <section class="record-feature-detail__section">
+        <section v-if="!compact" class="record-feature-detail__section">
           <h4>咨询内容</h4>
           <p>{{ selectedRecord.content || '-' }}</p>
         </section>
-        <section v-if="selectedRecord.replyContent" class="record-feature-detail__section">
+        <section v-if="!compact && selectedRecord.replyContent" class="record-feature-detail__section">
           <h4>回复内容</h4>
           <p>{{ selectedRecord.replyContent }}</p>
         </section>
@@ -141,20 +185,59 @@ export default {
   name: 'OnlineConsultationPage',
   components: { BusinessRecordField },
   mixins: [recordManager],
-  props: { mode: { type: String, default: 'user' } },
+  props: {
+    mode: { type: String, default: 'user' },
+    apiNamespace: { type: String, default: 'tobOnlineConsult' },
+    pageTitle: { type: String, default: '在线咨询' },
+    pageDescription: { type: String, default: '' },
+    createActionLabel: { type: String, default: '发起咨询' },
+    compact: { type: Boolean, default: false },
+    readOnly: { type: Boolean, default: false },
+    searchPlaceholder: { type: String, default: '搜索咨询编号、咨询人或内容' },
+    allowConfirm: { type: Boolean, default: false },
+    confirmStatus: { type: [String, Number], default: 1 }
+  },
+  data() {
+    return { confirmingId: '' }
+  },
   computed: {
+    consultationDescription() {
+      if (this.pageDescription) return this.pageDescription
+      return this.mode === 'admin' ? '查看并回复用户提交的园区服务咨询。' : '提交园区服务问题，并随时查看专员回复。'
+    },
+    compactDetailFields() {
+      return [
+        { key: 'contactName', label: '联系人' },
+        { key: 'contactPhone', label: '联系电话' },
+        { key: 'industry', label: '所属行业' },
+        { key: 'teamSize', label: '团队规模' },
+        { key: 'intendedSpace', label: '意向空间' },
+        { key: 'requiredArea', label: '需求面积' },
+        { key: 'checkinTime', label: '计划入住时间' },
+        { key: 'other', label: '其他需求' },
+        { key: 'referrer', label: '推荐人' },
+        { key: 'referrerName', label: '推荐人姓名' },
+        { key: 'createTime', label: '提交时间' }
+      ]
+    },
     resource() {
       const replyMode = this.mode === 'admin'
       return {
-        title: '在线咨询',
+        title: this.pageTitle,
         itemName: '咨询',
         icon: 'el-icon-service',
         idPrefix: 'OC',
-        apiNamespace: 'tobOnlineConsult',
+        apiNamespace: this.apiNamespace,
         primaryKey: 'id',
         timeKey: 'consultTime',
         contentKey: 'content',
         defaultStatus: '待回复',
+        valueLabelMaps: {
+          industry: { 1: '智能制造', 2: '医疗科技', 3: '数字经济', 4: '互联网', 5: '新材料', 6: '其他' },
+          teamSize: { 1: '20 人以内', 2: '20–50 人', 3: '51–100 人', 4: '100 人以上' },
+          intendedSpace: { 1: '独立办公室', 2: '研发办公', 3: '企业总部', 4: '轻型生产', 5: '配套商业' },
+          requiredArea: { 1: '100㎡以内', 2: '100–200㎡', 3: '201–500㎡以内', 4: '500–1,000㎡', 5: '1,000㎡以上' }
+        },
         replyMode,
         replyStatus: '已回复',
         editActionLabel: replyMode ? '回复' : '编辑',
@@ -174,7 +257,35 @@ export default {
       }
     },
     permissions() {
+      if (this.readOnly) return { create: false, edit: false, delete: false, changeStatus: false }
       return this.mode === 'admin' ? { create: false, edit: true, delete: true, changeStatus: false } : { create: true, edit: true, delete: true, changeStatus: false }
+    }
+  },
+  methods: {
+    formatDateOnly(value) {
+      return value ? String(value).slice(0, 10) : '-'
+    },
+    formatCompactDetailValue(value, key) {
+      return key === 'checkinTime' ? this.formatDateOnly(value) : this.formatValue(value, key)
+    },
+    isConfirmed(record) {
+      return String(record && record.status) === String(this.confirmStatus) || ['已确认', '确认'].includes(record && record.status)
+    },
+    async confirmRecord(record) {
+      if (!record || this.isConfirmed(record) || this.confirmingId) return
+      try {
+        await this.$confirm('确认后将无法撤销，是否继续？', '二次确认', { type: 'warning' })
+        const editApi = this.api('edit')
+        if (!editApi) throw new Error('missing edit api')
+        this.confirmingId = record.id
+        await editApi({ id: record.id, status: this.confirmStatus })
+        this.$message.success('已标记为确认')
+        await this.loadRecords()
+      } catch (error) {
+        if (error !== 'cancel' && error !== 'close') this.$message.error('标记确认失败，请稍后重试')
+      } finally {
+        this.confirmingId = ''
+      }
     }
   }
 }

@@ -1,15 +1,10 @@
 <template>
-  <header class="header"
-          :height="headerHeight">
+  <header class="header" :height="headerHeight">
     <!-- :style="{ 'background-color': theme, 'margin-bottom': '1px' }"> -->
     <!-- <span class="sysName">{{ systemName }}</span> -->
-    <div class="slide-bar"
-         id="slideBar"
-         v-if="!sidebarState.isHidden || isMobile"
-         @click="slideSidebar">
+    <div class="slide-bar" id="slideBar" v-if="!sidebarState.isHidden || isMobile" @click="slideSidebar">
       <!-- v-show="$route.path !== '/dash'" -->
-      <div class="slider p8"
-           :class="{ 'icon-youzhedie1': !this.sidebarState.isOpen, 'icon-zuozhedie1': this.sidebarState.isOpen }"></div>
+      <div class="slider p8" :class="{ 'icon-youzhedie1': !this.sidebarState.isOpen, 'icon-zuozhedie1': this.sidebarState.isOpen }"></div>
     </div>
     <div class="center">
       <header-shortcut />
@@ -21,52 +16,36 @@
         <li v-if="adminUserIdArr.indexOf($store.state.user.userId) === -1 && !isMobile">
           <span>
             <!-- <i class="p8 icon-work-home" @click="$router.push({name:'Dashboard'})"> -->
-            <el-badge v-if="messageCount > 0"
-                      :value="messageCount"
-                      :max="99"
-                      class="itemNum">
+            <el-badge v-if="messageCount > 0" :value="messageCount" :max="99" class="itemNum">
               <el-tooltip content="沟通消息">
-                <i class="p8 icon-shejigoutong"
-                   @click="informationDrawer = true"></i>
+                <i class="p8 icon-shejigoutong" @click="informationDrawer = true"></i>
               </el-tooltip>
             </el-badge>
-            <el-tooltip v-else
-                        content="沟通消息">
-              <i class="p8 icon-shejigoutong"
-                 @click="informationDrawer = true"></i>
+            <el-tooltip v-else content="沟通消息">
+              <i class="p8 icon-shejigoutong" @click="informationDrawer = true"></i>
             </el-tooltip>
           </span>
-          <information v-if="informationDrawer"
-                       ref="information"
-                       :visibleMsgDrawer="informationDrawer"
-                       @visibleMsgClose="visibleMsgClose"></information>
+          <information v-if="informationDrawer" ref="information" :visible-msg-drawer="informationDrawer" @visibleMsgClose="visibleMsgClose"></information>
         </li>
         <!-- $route.path !== '/dash' && -->
         <li v-if="adminUserIdArr.indexOf($store.state.user.userId) === -1 && !isMobile">
           <span>
             <!-- <i class="p8 icon-work-home" @click="$router.push({name:'Dashboard'})"> -->
             <el-tooltip content="工作首页">
-              <i class="el-icon-s-home"
-                 @click="$router.push({ name: 'Dashboard' })"></i>
+              <i class="el-icon-s-home" @click="$router.push({ name: 'Dashboard' })"></i>
             </el-tooltip>
           </span>
         </li>
         <!-- $route.path !== '/dash' && -->
         <li v-show="adminUserIdArr.indexOf($store.state.user.userId) === -1">
           <span @click="visibleMsgDrawer = true">
-            <el-badge v-if="messageNum > 0"
-                      :value="messageNum"
-                      :max="99"
-                      class="itemNum">
-              <el-tooltip :disabled='isMobile'
-                          content="我的消息">
+            <el-badge v-if="messageNum > 0" :value="messageNum" :max="99" class="itemNum">
+              <el-tooltip :disabled="isMobile" content="我的消息">
                 <i class="p8 icon-message"></i>
               </el-tooltip>
             </el-badge>
 
-            <el-tooltip :disabled='isMobile'
-                        content="我的消息"
-                        v-else>
+            <el-tooltip :disabled="isMobile" content="我的消息" v-else>
               <i class="p8 icon-message"></i>
             </el-tooltip>
           </span>
@@ -74,24 +53,18 @@
         <!-- $route.path !== '/dash' &&  -->
         <li v-show="adminUserIdArr.indexOf($store.state.user.userId) === -1">
           <span @click="visibleProcessDrawer = true">
-            <el-badge v-if="approvalTotalMsg > 0"
-                      :value="approvalTotalMsg"
-                      :max="99"
-                      class="itemNum">
-              <el-tooltip :disabled='isMobile'
-                          content="我的审批">
+            <el-badge v-if="approvalTotalMsg > 0" :value="approvalTotalMsg" :max="99" class="itemNum">
+              <el-tooltip :disabled="isMobile" content="我的审批">
                 <i class="p8 icon-approval"></i>
               </el-tooltip>
             </el-badge>
-            <el-tooltip :disabled='isMobile'
-                        content="我的审批"
-                        v-else>
+            <el-tooltip :disabled="isMobile" content="我的审批" v-else>
               <i class="p8 icon-approval"></i>
             </el-tooltip>
           </span>
         </li>
         <!-- $route.path !== '/dash' &&  -->
-        <li v-show="adminUserIdArr.indexOf($store.state.user.userId) === -1 &&!isMobile">
+        <li v-show="adminUserIdArr.indexOf($store.state.user.userId) === -1 && !isMobile">
           <span @click="visibleDownloadDrawer = true">
             <el-tooltip content="我的下载">
               <i class="p8 icon-download-document-manage"></i>
@@ -106,17 +79,13 @@
           </span>
         </li> -->
         <li>
-          <el-dropdown size="small"
-                       :trigger="isMobile ? 'click' : 'hover'">
+          <el-dropdown size="small" :trigger="isMobile ? 'click' : 'hover'">
             <span>
-              <span v-if="!isMobile"
-                    class="name">{{ dayTime }}好！{{ userName }}</span>
-              <i class="el-icon-arrow-down"
-                 style="margin: 0 5px"></i>
+              <span v-if="!isMobile" class="name">{{ dayTime }}好！{{ userName }}</span>
+              <i class="el-icon-arrow-down" style="margin: 0 5px"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-if='isMobile'
-                                @click.native="switchService">
+              <el-dropdown-item v-if="isMobile" @click.native="switchService">
                 <i class="p8 icon-shuaxin"></i>
                 切换服务
               </el-dropdown-item>
@@ -128,6 +97,10 @@
               <el-dropdown-item @click.native="settingPersonal">
                 <i class="p8 icon-personal-setting"></i>
                 个性化设置
+              </el-dropdown-item>
+              <el-dropdown-item @click.native="copyPromotionLink">
+                <i class="el-icon-share"></i>
+                推广链接
               </el-dropdown-item>
               <el-dropdown-item @click.native="dialogOpen">
                 <i class="icon-size el-icon-info"></i>
@@ -146,21 +119,15 @@
       <el-dropdown size="small">
         <span class="avatar">{{ userName.slice(-1) }}</span>
         <el-dropdown-menu slot="dropdown">
-          <div class="header_userInfo"
-               v-if="userInfo.departmentName">
-            <span class="title"
-                  style="float: left; width: 46px">部门：</span>
-            <span class="content"
-                  v-if="userInfo.parentDept">{{ userInfo.parentDept }}-</span>
+          <div class="header_userInfo" v-if="userInfo.departmentName">
+            <span class="title" style="float: left; width: 46px">部门：</span>
+            <span class="content" v-if="userInfo.parentDept">{{ userInfo.parentDept }}-</span>
             <span class="content">{{ userInfo.departmentName }}</span>
           </div>
           <div class="header_userInfo">
-            <span class="title"
-                  style="float: left; width: 46px">角色：</span>
+            <span class="title" style="float: left; width: 46px">角色：</span>
             <div style="float: left; width: 114px">
-              <span class="content"
-                    v-for="item in userInfo.userRoles"
-                    :key="item.roleId">
+              <span class="content" v-for="item in userInfo.userRoles" :key="item.roleId">
                 {{ item.roleName.trim() }}
                 <span style="margin-left: 1px">;</span>
               </span>
@@ -169,71 +136,48 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <common-drawer v-if="visibleProcessDrawer"
-                   :visible="visibleProcessDrawer"
-                   title="我的审批"
-                   class="my_process"
-                   @close="closeMyApproval"
-                   direction="ttb"
-                   size="100%">
+    <common-drawer v-if="visibleProcessDrawer" :visible="visibleProcessDrawer" title="我的审批" class="my_process" @close="closeMyApproval" direction="ttb" size="100%">
       <template #drawer>
-        <process-approval class="drawer_approval"
-                          @approved="approved"></process-approval>
+        <process-approval class="drawer_approval" @approved="approved"></process-approval>
       </template>
     </common-drawer>
-    <common-drawer v-if="visibleMsgDrawer"
-                   :visible="visibleMsgDrawer"
-                   title="我的消息"
-                   class="my_process"
-                   @close="visibleMsgDrawer = false"
-                   direction="ttb"
-                   size="100%">
+    <common-drawer v-if="visibleMsgDrawer" :visible="visibleMsgDrawer" title="我的消息" class="my_process" @close="visibleMsgDrawer = false" direction="ttb" size="100%">
       <template #drawer>
         <message ref="message"></message>
       </template>
     </common-drawer>
-    <common-drawer v-if="visibleDownloadDrawer"
-                   :visible="visibleDownloadDrawer"
-                   title="我的下载"
-                   @close="visibleDownloadDrawer = false"
-                   direction="ttb"
-                   size="100%">
+    <common-drawer v-if="visibleDownloadDrawer" :visible="visibleDownloadDrawer" title="我的下载" @close="visibleDownloadDrawer = false" direction="ttb" size="100%">
       <template #drawer>
         <DocumentManagement view-type="card"></DocumentManagement>
       </template>
     </common-drawer>
-    <common-drawer v-if="visibleDownloadDrawer1"
-                   :visible="visibleDownloadDrawer1"
-                   title="文件中心"
-                   @close="visibleDownloadDrawer1 = false"
-                   direction="ttb"
-                   size="100%">
+    <common-drawer v-if="visibleDownloadDrawer1" :visible="visibleDownloadDrawer1" title="文件中心" @close="visibleDownloadDrawer1 = false" direction="ttb" size="100%">
       <template #drawer>
         <myNetworkDisk view-type="card"></myNetworkDisk>
       </template>
     </common-drawer>
-    <el-dialog title="关于"
-               v-if="dialogVisible"
-               :visible.sync="dialogVisible"
-               :width="dialogWidth"
-               :before-close="beforeClose">
+    <el-dialog title="关于" v-if="dialogVisible" :visible.sync="dialogVisible" :width="dialogWidth" :before-close="beforeClose">
       <div class="regards-box">
-        <div style="display: flex;">
+        <div style="display: flex">
           <div class="regards-font">系统名称:</div>
           <div v-html="systemName"></div>
         </div>
-        <div style="display: flex;">
+        <div style="display: flex">
           <div class="regards-font">系统版本:</div>
-          <el-popover placement="top-start"
-                      width="230"
-                      trigger="hover">
+          <el-popover placement="top-start" width="230" trigger="hover">
             <p>
-              p8-framework-suit@{{ regardsObj.p8Version }}<br />
-              p8-lowcode@^{{ packageJson.dependencies['p8-lowcode'] }}<br />
-              p8-components-ui@{{ packageJson.dependencies['p8-components-ui'] }}<br />
-              p8-dhtmlx-gantt@{{ packageJson.dependencies['p8-dhtmlx-gantt'] }}<br />
-              p8-vue-smart-widget@{{ packageJson.dependencies['p8-vue-smart-widget'] }}<br />
-              p8-gojs@{{ packageJson.dependencies['p8-gojs'] }}<br />
+              p8-framework-suit@{{ regardsObj.p8Version }}
+              <br />
+              p8-lowcode@^{{ packageJson.dependencies['p8-lowcode'] }}
+              <br />
+              p8-components-ui@{{ packageJson.dependencies['p8-components-ui'] }}
+              <br />
+              p8-dhtmlx-gantt@{{ packageJson.dependencies['p8-dhtmlx-gantt'] }}
+              <br />
+              p8-vue-smart-widget@{{ packageJson.dependencies['p8-vue-smart-widget'] }}
+              <br />
+              p8-gojs@{{ packageJson.dependencies['p8-gojs'] }}
+              <br />
             </p>
             <div slot="reference">{{ regardsObj.systemVersion }}</div>
           </el-popover>
@@ -241,23 +185,21 @@
         <!--        <p><span class="regards-font">官网地址:&nbsp;&nbsp;&nbsp;</span><el-button type="text"-->
         <!--                     style="font-size: 15px;"-->
         <!--                     @click="openRZ">www.xardmu.com</el-button></p>-->
-        <p><span class="regards-font">授权终止日期:&nbsp;&nbsp;&nbsp;</span><span>{{ regardsObj.authorizedExpires }}</span></p>
-        <div style="display: flex;">
+        <p>
+          <span class="regards-font">授权终止日期:&nbsp;&nbsp;&nbsp;</span>
+          <span>{{ regardsObj.authorizedExpires }}</span>
+        </p>
+        <div style="display: flex">
           <div class="regards-font">特征码:</div>
           <div>{{ regardsObj.cpuSerialCode }}</div>
         </div>
-        <p v-for="(el,index) in authorizationInfo"
-           :key="index">
-          <span class="regards-font">{{el.name}}&nbsp;&nbsp;</span><span>{{el.message}}</span>
+        <p v-for="(el, index) in authorizationInfo" :key="index">
+          <span class="regards-font">{{ el.name }}&nbsp;&nbsp;</span>
+          <span>{{ el.message }}</span>
         </p>
       </div>
     </el-dialog>
-    <common-drawer v-if="modifyPasswordVisible"
-                   :visible="modifyPasswordVisible"
-                   title=""
-                   @close="modifyPasswordVisible = false"
-                   direction="ttb"
-                   size="100%">
+    <common-drawer v-if="modifyPasswordVisible" :visible="modifyPasswordVisible" title="" @close="modifyPasswordVisible = false" direction="ttb" size="100%">
       <template #drawer>
         <modifyPassWord @close="modifyPasswordVisible = false"></modifyPassWord>
       </template>
@@ -283,7 +225,7 @@ import modifyPassWord from '@/components/layout/Components/ModifyPassword/index'
 import { absolute } from '@antv/x6/lib/registry/port-layout/absolute'
 export default {
   name: 'Headers',
-  data () {
+  data() {
     return {
       dayTime: '',
       commonDialog: null,
@@ -308,12 +250,12 @@ export default {
     }
   },
   computed: {
-    isMobile () {
+    isMobile() {
       return this.$store.getters.isMobile
     },
-    ...mapGetters(['approvalTotalMsg', 'messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl', 'authorizationInfo']),
+    ...mapGetters(['approvalTotalMsg', 'messageCount', 'token', 'userName', 'avatar', 'headerHeight', 'sidebarState', 'userInfo', 'messageNum', 'systemName', 'theme', 'imageUrl', 'authorizationInfo'])
   },
-  mounted () {
+  mounted() {
     if (this.isMobile) {
       this.dialogWidth = '330px'
       // let slideBar = document.getElementById('slideBar')
@@ -357,7 +299,6 @@ export default {
     //   let color = this.fromHex(this.theme)
     //   if (this.imageUrl) {
     //     this.$set(this.objColor, 'themeColor', 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + 0.6 + ')')
-
     //   } else {
     //     this.$set(this.objColor, 'themeColor', this.theme)
     //   }
@@ -368,15 +309,15 @@ export default {
     // }
   },
   methods: {
-    switchService () {
+    switchService() {
       if (window.plus) {
         // this.$store.dispatch('userLogout')
         plus.storage.removeItem('current_app_service')
-        const w = plus.webview.create('_www/config.html','config')
+        const w = plus.webview.create('_www/config.html', 'config')
         w.show()
       }
     },
-    closeMyApproval () {
+    closeMyApproval() {
       this.visibleProcessDrawer = false
       const vueThis = this.$store.getters.previousThis
       this.$store.commit('SET_VUE_THIS', vueThis)
@@ -386,34 +327,34 @@ export default {
     //     this.AuthorizationInfoList = res
     //   })
     // },
-    openRZ () {
+    openRZ() {
       window.open('https://www.xardmu.com/')
     },
-    beforeClose () {
+    beforeClose() {
       this.dialogVisible = false
     },
-    getSystemAbout () {
-      this.$api['projectTeamSetting.getSystemAbout']().then(res => {
+    getSystemAbout() {
+      this.$api['projectTeamSetting.getSystemAbout']().then((res) => {
         if (res) {
           this.regardsObj = res
         }
       })
     },
-    visibleMsgClose () {
+    visibleMsgClose() {
       this.informationDrawer = false
       // this.getMsgTotal()
     },
-    approvalTotal () {
-      let that = this
+    approvalTotal() {
+      const that = this
       this.$api['PersonalProcessApproval.approvalPendingTotal']().then((res) => {
         that.$store.dispatch('setApprovalMessageCount', res)
       })
     },
-    getMsgTotal () {
-      this.$api['documentManagement.getWebsocketGroupAll']({ entityName: this.projectName }).then(res => {
+    getMsgTotal() {
+      this.$api['documentManagement.getWebsocketGroupAll']({ entityName: this.projectName }).then((res) => {
         if (res.length > 0) {
           let count = 0
-          res.forEach(item => {
+          res.forEach((item) => {
             count = count + item.messageCount
           })
           this.unreadMessageCount = count
@@ -421,7 +362,7 @@ export default {
         }
       })
     },
-    approvalMsg () {
+    approvalMsg() {
       const that = this
       this.$api['PersonalProcessApproval.findMessageInfo']({ id: null }).then((res) => {
         if (res) {
@@ -431,14 +372,14 @@ export default {
             message: '您有新的' + msg + '！',
             type: 'success',
             position: 'bottom-right',
-            onClick () {
+            onClick() {
               that.visibleProcessDrawer = true
             }
           })
         }
       })
     },
-    noticeMsg () {
+    noticeMsg() {
       const that = this
       this.$api['PersonalProcessApproval.checkNoticeMsg']({ id: null }).then((res) => {
         if (res) {
@@ -448,14 +389,14 @@ export default {
             message: '您有新的' + msg + '！',
             type: 'success',
             position: 'bottom-right',
-            onClick () {
+            onClick() {
               that.visibleMsgDrawer = true
             }
           })
         }
       })
     },
-    approved () {
+    approved() {
       this.approvalTotal()
       this.$emit('approved')
     },
@@ -464,16 +405,41 @@ export default {
     //     this.$store.dispatch('setMessageCount', res)
     //   })
     // },
-    slideSidebar () {
+    slideSidebar() {
       if (this.isMobile) {
         this.$store.dispatch('hideSidebar', !this.sidebarState.isHidden)
       }
       this.$store.dispatch('collapseSidebar', !this.sidebarState.isOpen)
     },
-    settingPersonal () {
+    settingPersonal() {
       this.$router.push({ name: 'PersonalSettings' })
     },
-    modifyPassword () {
+    async copyPromotionLink() {
+      const promotionLink = `${window.location.origin}/?referrer=${encodeURIComponent(this.$store.state.user.userId)}`
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(promotionLink)
+        } else {
+          const input = document.createElement('textarea')
+          input.value = promotionLink
+          input.setAttribute('readonly', '')
+          input.style.position = 'fixed'
+          input.style.opacity = '0'
+          document.body.appendChild(input)
+          input.select()
+          const copied = document.execCommand('copy')
+          document.body.removeChild(input)
+          if (!copied) {
+            throw new Error('Copy command failed')
+          }
+        }
+        this.$message({ type: 'success', message: '推广链接已复制到剪贴板' })
+      } catch (error) {
+        this.$message({ type: 'error', message: '推广链接复制失败，请手动复制' })
+      }
+    },
+    modifyPassword() {
       const that = this
       this.$api['SystemSettings.checkBaseConfig']().then((res) => {
         if (res) {
@@ -484,10 +450,10 @@ export default {
         }
       })
     },
-    dialogOpen () {
+    dialogOpen() {
       this.dialogVisible = true
     },
-    logout () {
+    logout() {
       this.$confirm('是否要退出系统?', '提醒', {
         lockScroll: false,
         confirmButtonText: '确定',
@@ -504,9 +470,9 @@ export default {
             }
           })
         })
-        .catch(() => { })
+        .catch(() => {})
     },
-    fromHex (color) {
+    fromHex(color) {
       const t = {}
       const bits = color.length == 4 ? 4 : 8 // 假设是shorthand。 #fff, 那么bits为4位, 每一位代表的个属性, 其他的为8位 每两位代表一个属性 #ffffff00
       const mask = (1 << bits) - 1 // 表示字节占位符。 向左移4位或8位，var a = (1 << 4 ) - 1 -> 10000 - 1,  a.toString(2); // 1111。或者 8位的 1111 1111
