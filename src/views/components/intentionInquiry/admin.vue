@@ -1,4 +1,4 @@
-<!-- 意向咨询页面入口：复用咨询 CRUD 交互，并接入接待登记接口。 -->
+<!-- 意向咨询管理端入口：查看全部记录并支持分配。 -->
 <template>
   <online-consultation-page
     class="intention-inquiry-page"
@@ -6,16 +6,18 @@
     page-title="意向咨询"
     page-description="登记来访企业或个人的意向咨询信息，并跟进专员回复。"
     search-placeholder="搜索企业、联系人或联系电话"
+    :list-params="{ viewType: 0 }"
+    :show-create="false"
     compact
     read-only
-    allow-confirm />
+    allocation-enabled />
 </template>
 
 <script>
 import OnlineConsultationPage from '@/features/public-services/online-consultation/OnlineConsultationPage'
 
 export default {
-  name: 'IntentionInquiry',
+  name: 'IntentionInquiryAdmin',
   components: { OnlineConsultationPage }
 }
 </script>

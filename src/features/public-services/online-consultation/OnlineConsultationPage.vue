@@ -1,7 +1,7 @@
 <!-- 在线咨询业务组件：独立维护用户提问、管理端回复以及咨询详情展示。 -->
 <template>
-  <main class="record-feature-page" :class="{ 'record-feature-page--compact': compact, 'record-feature-page--read-only': readOnly }">
-    <header v-if="!compact || !readOnly" class="record-feature-hero" :class="{ 'record-feature-hero--compact': compact }">
+  <main class="record-feature-page" :class="{ 'record-feature-page--compact': compact, 'record-feature-page--read-only': readOnly || !showCreate }">
+    <header v-if="!compact || (!readOnly && showCreate)" class="record-feature-hero" :class="{ 'record-feature-hero--compact': compact }">
       <div v-if="!compact" class="record-feature-hero__title">
         <span class="record-feature-hero__icon"><i class="el-icon-service"></i></span>
         <div>
@@ -9,7 +9,7 @@
           <p>{{ consultationDescription }}</p>
         </div>
       </div>
-      <el-button v-if="canCreate && !readOnly" type="primary" icon="el-icon-plus" @click="openCreate">{{ createActionLabel }}</el-button>
+      <el-button v-if="showCreate && canCreate && !readOnly" type="primary" icon="el-icon-plus" @click="openCreate">{{ createActionLabel }}</el-button>
     </header>
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
@@ -39,15 +39,23 @@
           <template slot-scope="scope">{{ formatDateOnly(scope.row.checkinTime) }}</template>
         </el-table-column>
         <el-table-column prop="createTime" label="提交时间" width="170" />
-        <el-table-column v-if="allowConfirm" label="确认状态" width="110">
+        <el-table-column v-if="allocationEnabled" label="分配状态" width="110">
+          <template slot-scope="scope">
+            <el-tag :type="isAllocated(scope.row) ? 'success' : 'warning'" size="mini">{{ isAllocated(scope.row) ? '已分配' : '待分配' }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column v-else-if="allowConfirm" label="确认状态" width="110">
           <template slot-scope="scope">
             <el-tag :type="isConfirmed(scope.row) ? 'success' : 'warning'" size="mini">{{ isConfirmed(scope.row) ? '已确认' : '待确认' }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="allowConfirm" label="操作" width="120" fixed="right">
+        <el-table-column v-if="allocationEnabled || allowConfirm" label="操作" width="120" fixed="right">
           <template slot-scope="scope">
             <div class="record-feature-table__actions">
-              <el-button type="text" size="mini" :loading="confirmingId === scope.row.id" :disabled="isConfirmed(scope.row)" @click.stop="confirmRecord(scope.row)">
+              <el-button v-if="allocationEnabled" type="text" size="mini" :loading="allocatingId === scope.row.id" @click.stop="openAllocation(scope.row)">
+                {{ isAllocated(scope.row) ? '重新分配' : '分配' }}
+              </el-button>
+              <el-button v-else type="text" size="mini" :loading="confirmingId === scope.row.id" :disabled="isConfirmed(scope.row)" @click.stop="confirmRecord(scope.row)">
                 {{ isConfirmed(scope.row) ? '已确认' : '标记为确认' }}
               </el-button>
               <el-button v-if="!readOnly && canEditRecord(scope.row)" type="text" size="mini" @click.stop="openEdit(scope.row)">{{ resource.editActionLabel }}</el-button>
@@ -174,6 +182,27 @@
         </section>
       </div>
     </el-drawer>
+
+    <el-dialog
+      :title="allocationRecord && isAllocated(allocationRecord) ? '重新分配' : '分配'"
+      :visible.sync="allocationVisible"
+      width="900px"
+      top="8vh"
+      append-to-body
+      :close-on-click-modal="false"
+      @closed="resetAllocation">
+      <el-form label-width="80px">
+        <el-form-item label="分配人员">
+          <el-select v-model="allocationUserId" filterable placeholder="请选择分配人员" :loading="allocationUsersLoading" style="width: 100%">
+            <el-option v-for="user in allocationUsers" :key="allocationUserIdOf(user)" :label="allocationUserLabel(user)" :value="allocationUserIdOf(user)" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button @click="allocationVisible = false">取消</el-button>
+        <el-button type="primary" :loading="allocatingId !== ''" :disabled="!allocationUserId" @click="submitAllocation">确认</el-button>
+      </span>
+    </el-dialog>
   </main>
 </template>
 
@@ -191,14 +220,25 @@ export default {
     pageTitle: { type: String, default: '在线咨询' },
     pageDescription: { type: String, default: '' },
     createActionLabel: { type: String, default: '发起咨询' },
+    showCreate: { type: Boolean, default: true },
     compact: { type: Boolean, default: false },
     readOnly: { type: Boolean, default: false },
     searchPlaceholder: { type: String, default: '搜索咨询编号、咨询人或内容' },
+    listParams: { type: Object, default: () => ({}) },
     allowConfirm: { type: Boolean, default: false },
+    allocationEnabled: { type: Boolean, default: false },
     confirmStatus: { type: [String, Number], default: 1 }
   },
   data() {
-    return { confirmingId: '' }
+    return {
+      confirmingId: '',
+      allocatingId: '',
+      allocationVisible: false,
+      allocationRecord: null,
+      allocationUserId: '',
+      allocationUsers: [],
+      allocationUsersLoading: false
+    }
   },
   computed: {
     consultationDescription() {
@@ -215,8 +255,7 @@ export default {
         { key: 'requiredArea', label: '需求面积' },
         { key: 'checkinTime', label: '计划入住时间' },
         { key: 'other', label: '其他需求' },
-        { key: 'referrer', label: '推荐人' },
-        { key: 'referrerName', label: '推荐人姓名' },
+        { key: 'referrerName', label: '推荐人' },
         { key: 'createTime', label: '提交时间' }
       ]
     },
@@ -228,10 +267,13 @@ export default {
         icon: 'el-icon-service',
         idPrefix: 'OC',
         apiNamespace: this.apiNamespace,
+        listParams: this.listParams,
+        preserveListFields: this.compact ? ['referrerName'] : [],
         primaryKey: 'id',
         timeKey: 'consultTime',
         contentKey: 'content',
-        defaultStatus: '待回复',
+        defaultStatus: this.allocationEnabled ? 0 : '待回复',
+        statusMap: this.allocationEnabled ? { 0: '待分配', 1: '已分配' } : {},
         valueLabelMaps: {
           industry: { 1: '智能制造', 2: '医疗科技', 3: '数字经济', 4: '互联网', 5: '新材料', 6: '其他' },
           teamSize: { 1: '20 人以内', 2: '20–50 人', 3: '51–100 人', 4: '100 人以上' },
@@ -243,7 +285,7 @@ export default {
         editActionLabel: replyMode ? '回复' : '编辑',
         autoFormFields: replyMode ? {} : { userName: 'currentUserName' },
         replyAutoFormFields: replyMode ? { replyUserName: 'currentUserName', replyTime: 'now' } : {},
-        statusOptions: ['待回复', '处理中', '已回复', '已关闭'],
+        statusOptions: this.allocationEnabled ? ['待分配', '已分配'] : ['待回复', '处理中', '已回复', '已关闭'],
         fields: [
           { key: 'userName', label: '咨询人', hideInForm: true },
           { key: 'phone', label: '联系电话', required: true, hideInReplyForm: true },
@@ -270,6 +312,61 @@ export default {
     },
     isConfirmed(record) {
       return String(record && record.status) === String(this.confirmStatus) || ['已确认', '确认'].includes(record && record.status)
+    },
+    isAllocated(record) {
+      return Number(record && record.status) === 1
+    },
+    async openAllocation(record) {
+      this.allocationRecord = record
+      this.allocationUserId = ''
+      this.allocationUsers = []
+      this.allocationVisible = true
+      const userListApi = this.api('getUserList')
+      if (!userListApi) return
+      this.allocationUsersLoading = true
+      try {
+        const result = this.unwrap(await userListApi())
+        this.allocationUsers = this.allocationUsersFrom(result)
+      } catch (error) {
+        this.$message.error('人员列表加载失败，请稍后重试')
+      } finally {
+        this.allocationUsersLoading = false
+      }
+    },
+    resetAllocation() {
+      this.allocationRecord = null
+      this.allocationUserId = ''
+      this.allocationUsers = []
+      this.allocatingId = ''
+    },
+    allocationUsersFrom(result) {
+      if (Array.isArray(result)) return result
+      return result && (result.records || result.list || result.rows || result.userList || result.data) ? result.records || result.list || result.rows || result.userList || result.data : []
+    },
+    allocationUserIdOf(user) {
+      return user && (user.id || user.userId)
+    },
+    allocationUserLabel(user) {
+      return (user && (user.realName || user.userName || user.nickName || user.name)) || this.allocationUserIdOf(user)
+    },
+    async submitAllocation() {
+      const record = this.allocationRecord
+      const userId = this.allocationUserId
+      const allocationApi = this.api('allocation')
+      const editApi = this.api('edit')
+      if (!record || !userId || !allocationApi || !editApi) return
+      this.allocatingId = record.id
+      try {
+        await allocationApi({ id: record.id, userId })
+        await editApi({ id: record.id, status: 1 })
+        this.$message.success(this.isAllocated(record) ? '重新分配成功' : '分配成功')
+        this.allocationVisible = false
+        await this.loadRecords()
+      } catch (error) {
+        this.$message.error(this.isAllocated(record) ? '重新分配失败，请稍后重试' : '分配失败，请稍后重试')
+      } finally {
+        this.allocatingId = ''
+      }
     },
     async confirmRecord(record) {
       if (!record || this.isConfirmed(record) || this.confirmingId) return

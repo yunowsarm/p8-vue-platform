@@ -403,7 +403,13 @@ export default {
       this.detailLoading = true
       try {
         const result = this.unwrap(await detailApi({ id: record.id }))
-        if (result) this.selectedRecord = this.normalizeRecord(Object.assign({}, record, result))
+        if (result) {
+          const mergedRecord = Object.assign({}, record, result)
+          ;(this.resource.preserveListFields || []).forEach((key) => {
+            if (hasOwn(record, key)) mergedRecord[key] = record[key]
+          })
+          this.selectedRecord = this.normalizeRecord(mergedRecord)
+        }
       } catch (error) {
         // 保留列表中的基础数据，详情抽屉仍然可以打开。
       } finally {
