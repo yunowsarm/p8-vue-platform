@@ -71,7 +71,9 @@
         <el-table-column prop="contactName" label="联系人" min-width="120" show-overflow-tooltip />
         <el-table-column prop="contactPhone" label="联系电话" min-width="140" show-overflow-tooltip />
         <el-table-column label="渠道来源" min-width="160" show-overflow-tooltip>
-          <template slot-scope="scope">{{ channelSourceLabel(scope.row) }}</template>
+          <template slot-scope="scope">
+            <el-tag size="mini" effect="plain" class="lead-summary-tag" :class="channelSourceTagClass(scope.row)">{{ channelSourceLabel(scope.row) }}</el-tag>
+          </template>
         </el-table-column>
         <el-table-column label="所属行业" min-width="110" show-overflow-tooltip>
           <template slot-scope="scope">{{ formatValue(scope.row.industry, 'industry') }}</template>
@@ -92,13 +94,19 @@
           <template slot-scope="scope">{{ formatDateTime(scope.row.createTime) }}</template>
         </el-table-column>
         <el-table-column label="跟踪次数" min-width="100" align="center">
-          <template slot-scope="scope">{{ followUpRecords(scope.row).length }}</template>
+          <template slot-scope="scope">
+            <el-tag size="mini" type="info" effect="plain" :class="{ 'lead-empty-tag': !followUpRecords(scope.row).length }">{{ followUpRecords(scope.row).length }} 次</el-tag>
+          </template>
         </el-table-column>
         <el-table-column label="客户等级" min-width="110" align="center">
-          <template slot-scope="scope">{{ customerLevelLabel(scope.row) }}</template>
+          <template slot-scope="scope">
+            <el-tag size="mini" effect="plain" class="lead-summary-tag" :class="customerLevelTagClass(scope.row)">{{ customerLevelLabel(scope.row) }}</el-tag>
+          </template>
         </el-table-column>
         <el-table-column label="跟踪进度" min-width="140" show-overflow-tooltip>
-          <template slot-scope="scope">{{ trackingProgressLabel(scope.row) }}</template>
+          <template slot-scope="scope">
+            <el-tag size="mini" effect="plain" class="lead-status-tag" :class="trackingProgressTagClass(scope.row)">{{ trackingProgressLabel(scope.row) }}</el-tag>
+          </template>
         </el-table-column>
         <el-table-column v-if="allocationEnabled" label="分配状态" width="110">
           <template slot-scope="scope">
@@ -708,6 +716,32 @@ export default {
         return currentTime >= latestTime ? current : latest
       }, null)
     },
+    followUpFormFromRecord(record) {
+      const form = this.emptyFollowUpForm()
+      const latestRecord = this.latestFollowUpRecord(record)
+      if (latestRecord) return Object.assign(form, this.followUpBasicValues(latestRecord))
+      return Object.assign(form, {
+        contactPerson: (record && record.contactName) || '',
+        intentLevel: 'E',
+        leadStatus: 'INITIAL_CONTACT',
+        expectedMoveInDate: this.followUpDateValue(record && record.checkinTime),
+        industry: record && record.industry ? this.formatValue(record.industry, 'industry') : ''
+      })
+    },
+    followUpBasicValues(record) {
+      const fieldNames = ['followUpMethod', 'contactPerson', 'contactTitle', 'intentLevel', 'leadStatus', 'expectedArea', 'preferredLocation', 'budget', 'industry', 'openIssues']
+      const values = fieldNames.reduce((result, key) => {
+        if (record && record[key] !== undefined && record[key] !== null && record[key] !== '') result[key] = record[key]
+        return result
+      }, {})
+      values.expectedMoveInDate = this.followUpDateValue(record && record.expectedMoveInDate)
+      return values
+    },
+    followUpDateValue(value) {
+      if (!value) return ''
+      const formatted = this.formatDateTime(value)
+      return formatted && formatted !== '-' ? formatted.slice(0, 10) : ''
+    },
     followUpRecordTimestamp(record) {
       const value = record && (record.followUpTime || record.createTime || record.updateTime)
       const timestamp = value ? Date.parse(String(value).replace(' ', 'T')) : NaN
@@ -725,11 +759,35 @@ export default {
       const latestRecord = this.latestFollowUpRecord(record)
       return latestRecord ? this.leadStatusLabel(latestRecord.leadStatus) : '-'
     },
+    trackingProgressTagClass(record) {
+      const latestRecord = this.latestFollowUpRecord(record)
+      return this.leadStatusTagClass(latestRecord && latestRecord.leadStatus)
+    },
+    customerLevelTagClass(record) {
+      const latestRecord = this.latestFollowUpRecord(record)
+      const level = String((latestRecord && latestRecord.intentLevel) || '')
+        .charAt(0)
+        .toUpperCase()
+      return `lead-summary-tag--level-${['A', 'B', 'C', 'D', 'E', 'F'].includes(level) ? level.toLowerCase() : 'empty'}`
+    },
     channelSourceLabel(record) {
       if (record && record.referrer) return `客户转介绍：${record.referrerName || '-'}`
       const source = record && (record.channelSource || record.source || record.channel)
       const option = this.channelSourceOptions.find((item) => item.value === source)
       return (option && option.label) || source || '-'
+    },
+    channelSourceTagClass(record) {
+      if (record && record.referrer) return 'lead-summary-tag--referral'
+      const source = record && (record.channelSource || record.source || record.channel)
+      const classMap = {
+        ONLINE_INQUIRY: 'lead-summary-tag--online',
+        MARKETING_EVENT: 'lead-summary-tag--event',
+        OUTBOUND_VISIT: 'lead-summary-tag--visit',
+        PARTNER_REFERRAL: 'lead-summary-tag--partner',
+        PARK_OPERATION: 'lead-summary-tag--operation',
+        OTHER: 'lead-summary-tag--other'
+      }
+      return classMap[source] || 'lead-summary-tag--other'
     },
     leadStatusTagClass(value) {
       const classMap = {
@@ -740,7 +798,7 @@ export default {
         CONTRACT_SIGNED: 'lead-status-tag--signed',
         ON_HOLD: 'lead-status-tag--hold'
       }
-      return classMap[value] || 'lead-status-tag--initial'
+      return classMap[value] || 'lead-status-tag--empty'
     },
     leadStatusCount(record, status) {
       return this.followUpRecords(record).filter((item) => item && item.leadStatus === status).length
@@ -764,7 +822,7 @@ export default {
     },
     openFollowUp(record) {
       this.followUpRecord = record
-      this.followUpForm = this.emptyFollowUpForm()
+      this.followUpForm = this.followUpFormFromRecord(record)
       this.followUpVisible = true
       this.$nextTick(() => this.$refs.followUpForm && this.$refs.followUpForm.clearValidate())
     },
@@ -1171,8 +1229,98 @@ export default {
   word-break: break-word;
 }
 
+.lead-summary-tag {
+  max-width: 100%;
+  border: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  white-space: nowrap;
+
+  &.lead-summary-tag--referral {
+    color: #7e22ce;
+    border-color: #e9d5ff;
+    background: #faf5ff;
+  }
+
+  &.lead-summary-tag--online {
+    color: #2563eb;
+    border-color: #bfdbfe;
+    background: #eff6ff;
+  }
+
+  &.lead-summary-tag--event {
+    color: #c2410c;
+    border-color: #fed7aa;
+    background: #fff7ed;
+  }
+
+  &.lead-summary-tag--visit {
+    color: #0f766e;
+    border-color: #99f6e4;
+    background: #f0fdfa;
+  }
+
+  &.lead-summary-tag--partner {
+    color: #0369a1;
+    border-color: #bae6fd;
+    background: #f0f9ff;
+  }
+
+  &.lead-summary-tag--operation,
+  &.lead-summary-tag--other,
+  &.lead-summary-tag--level-empty {
+    color: #64748b;
+    border-color: #cbd5e1;
+    background: #f1f5f9;
+  }
+
+  &.lead-summary-tag--level-a {
+    color: #b91c1c;
+    border-color: #fecaca;
+    background: #fef2f2;
+  }
+
+  &.lead-summary-tag--level-b {
+    color: #c2410c;
+    border-color: #fed7aa;
+    background: #fff7ed;
+  }
+
+  &.lead-summary-tag--level-c {
+    color: #a16207;
+    border-color: #fde68a;
+    background: #fefce8;
+  }
+
+  &.lead-summary-tag--level-d {
+    color: #0f766e;
+    border-color: #99f6e4;
+    background: #f0fdfa;
+  }
+
+  &.lead-summary-tag--level-e {
+    color: #2563eb;
+    border-color: #bfdbfe;
+    background: #eff6ff;
+  }
+
+  &.lead-summary-tag--level-f {
+    color: #64748b;
+    border-color: #cbd5e1;
+    background: #f8fafc;
+  }
+}
+
 .lead-status-tag {
+  border: 0;
   font-weight: 500;
+
+  &.lead-status-tag--empty {
+    color: #64748b;
+    border-color: #cbd5e1;
+    background: #f1f5f9;
+  }
 
   &.lead-status-tag--initial {
     color: #2563eb;
@@ -1209,6 +1357,12 @@ export default {
     border-color: #cbd5e1;
     background: #f8fafc;
   }
+}
+
+.lead-empty-tag {
+  color: #64748b !important;
+  border: 0 !important;
+  background: #f1f5f9 !important;
 }
 
 .lead-allocation-history__summary {
