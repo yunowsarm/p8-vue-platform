@@ -19,6 +19,54 @@
         </el-select>
       </div>
       <el-table v-if="compact && pagedRecords.length" :data="pagedRecords" stripe class="record-feature-table record-feature-table--compact" @row-click="openDetail">
+        <el-table-column v-if="followUpEnabled" type="expand" width="48">
+          <template slot-scope="scope">
+            <div class="lead-follow-up-history" @click.stop>
+              <div class="lead-follow-up-history__summary">
+                <div class="lead-follow-up-history__title">
+                  <i class="el-icon-document" />
+                  <span>跟进记录</span>
+                  <b>{{ followUpRecords(scope.row).length }}</b>
+                </div>
+                <span v-if="followUpRecords(scope.row).length">提交后记录不可修改</span>
+              </div>
+              <el-empty v-if="!followUpRecords(scope.row).length" description="暂无跟进记录" :image-size="44" />
+              <el-table v-else :data="followUpRecords(scope.row)" size="mini" class="lead-follow-up-history__table">
+                <el-table-column label="线索状态" min-width="140">
+                  <template slot-scope="recordScope">
+                    <el-tag size="mini" type="primary">
+                      {{ leadStatusLabel(recordScope.row.leadStatus) }}
+                      <span v-if="leadStatusCount(scope.row, recordScope.row.leadStatus) > 1">（第{{ leadStatusOccurrence(scope.row, recordScope.row.leadStatus, recordScope.$index) }}次）</span>
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column label="跟进时间" width="170">
+                  <template slot-scope="recordScope">{{ formatDateTime(recordScope.row.followUpTime || recordScope.row.createTime) }}</template>
+                </el-table-column>
+                <el-table-column prop="communicationSummary" label="沟通纪要" min-width="260" show-overflow-tooltip />
+                <el-table-column label="跟进方式" width="110">
+                  <template slot-scope="recordScope">{{ followUpMethodLabel(recordScope.row.followUpMethod) }}</template>
+                </el-table-column>
+                <el-table-column label="意向度" min-width="360">
+                  <template slot-scope="recordScope">
+                    <span class="lead-follow-up-history__intent">{{ intentLevelLabel(recordScope.row.intentLevel) }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="沟通对象" min-width="150" show-overflow-tooltip>
+                  <template slot-scope="recordScope">{{ recordScope.row.contactPerson || '-' }}{{ recordScope.row.contactTitle ? ` · ${recordScope.row.contactTitle}` : '' }}</template>
+                </el-table-column>
+                <el-table-column label="下次跟进" width="170">
+                  <template slot-scope="recordScope">{{ formatDateTime(recordScope.row.nextFollowUpTime) }}</template>
+                </el-table-column>
+                <el-table-column label="操作" width="90">
+                  <template slot-scope="recordScope">
+                    <el-button v-if="recordScope.row.id" type="text" size="mini" @click.stop="openFollowUpDetail(recordScope.row)">查看详情</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="enterprise" label="企业名称" min-width="160" show-overflow-tooltip />
         <el-table-column prop="contactName" label="联系人" min-width="120" show-overflow-tooltip />
         <el-table-column prop="contactPhone" label="联系电话" min-width="140" show-overflow-tooltip />
@@ -36,9 +84,11 @@
           <template slot-scope="scope">{{ formatValue(scope.row.requiredArea, 'requiredArea') }}</template>
         </el-table-column>
         <el-table-column label="计划入住时间" width="170">
-          <template slot-scope="scope">{{ formatDateOnly(scope.row.checkinTime) }}</template>
+          <template slot-scope="scope">{{ formatDateTime(scope.row.checkinTime) }}</template>
         </el-table-column>
-        <el-table-column prop="createTime" label="提交时间" width="170" />
+        <el-table-column label="提交时间" width="170">
+          <template slot-scope="scope">{{ formatDateTime(scope.row.createTime) }}</template>
+        </el-table-column>
         <el-table-column v-if="allocationEnabled" label="分配状态" width="110">
           <template slot-scope="scope">
             <el-tag :type="isAllocated(scope.row) ? 'success' : 'warning'" size="mini">{{ isAllocated(scope.row) ? '已分配' : '待分配' }}</el-tag>
@@ -50,7 +100,7 @@
             <el-tag :type="isConfirmed(scope.row) ? 'success' : 'warning'" size="mini">{{ isConfirmed(scope.row) ? '已确认' : '待确认' }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="allocationEnabled || allowConfirm" label="操作" width="120" fixed="right">
+        <el-table-column v-if="allocationEnabled || allowConfirm || followUpEnabled" label="操作" :width="followUpEnabled ? 180 : 120">
           <template slot-scope="scope">
             <div class="record-feature-table__actions">
               <el-button v-if="allocationEnabled" type="text" size="mini" :loading="allocatingId === scope.row.id" @click.stop="openAllocation(scope.row)">
@@ -59,6 +109,7 @@
               <el-button v-else type="text" size="mini" :loading="confirmingId === scope.row.id" :disabled="isConfirmed(scope.row)" @click.stop="confirmRecord(scope.row)">
                 {{ isConfirmed(scope.row) ? '已确认' : '标记为确认' }}
               </el-button>
+              <el-button v-if="followUpEnabled" type="text" size="mini" @click.stop="openFollowUp(scope.row)">跟进</el-button>
               <el-button v-if="!readOnly && canEditRecord(scope.row)" type="text" size="mini" @click.stop="openEdit(scope.row)">{{ resource.editActionLabel }}</el-button>
               <el-button v-if="!readOnly && canDeleteRecord(scope.row)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(scope.row)">删除</el-button>
             </div>
@@ -204,16 +255,92 @@
         <el-button type="primary" :loading="allocatingId !== ''" :disabled="!allocationUserId" @click="submitAllocation">确认</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog title="线索跟进" :visible.sync="followUpVisible" width="760px" top="5vh" append-to-body :close-on-click-modal="false" @closed="resetFollowUp">
+      <el-form ref="followUpForm" :model="followUpForm" :rules="followUpRules" label-width="112px" @submit.native.prevent>
+        <div class="lead-follow-up-form">
+          <el-form-item label="跟进方式" prop="followUpMethod">
+            <el-select v-model="followUpForm.followUpMethod" placeholder="请选择跟进方式" style="width: 100%">
+              <el-option v-for="item in followUpMethodOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="此次跟进时间" prop="followUpTime">
+            <el-date-picker v-model="followUpForm.followUpTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="请选择此次跟进时间" style="width: 100%" />
+          </el-form-item>
+          <el-form-item label="沟通对象" prop="contactPerson">
+            <el-input v-model.trim="followUpForm.contactPerson" placeholder="请输入沟通对象姓名" />
+          </el-form-item>
+          <el-form-item label="沟通对象职务">
+            <el-input v-model.trim="followUpForm.contactTitle" placeholder="选填" />
+          </el-form-item>
+          <el-form-item label="意向度" prop="intentLevel">
+            <el-select v-model="followUpForm.intentLevel" placeholder="请选择意向度" style="width: 100%">
+              <el-option v-for="item in intentLevelOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="线索状态" prop="leadStatus">
+            <el-select v-model="followUpForm.leadStatus" placeholder="请选择更新后的线索状态" style="width: 100%">
+              <el-option v-for="item in leadStatusOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="下次跟进时间" prop="nextFollowUpTime">
+            <el-date-picker v-model="followUpForm.nextFollowUpTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="暂缓跟进时必填" style="width: 100%" />
+          </el-form-item>
+          <el-form-item label="沟通纪要" prop="communicationSummary" class="lead-follow-up-form__wide">
+            <el-input v-model.trim="followUpForm.communicationSummary" type="textarea" :rows="4" placeholder="请输入本次跟进的沟通纪要" />
+          </el-form-item>
+          <el-form-item label="下次跟进事项" class="lead-follow-up-form__wide">
+            <el-input v-model.trim="followUpForm.nextFollowUpTask" type="textarea" :rows="2" placeholder="建议填写后续待办事项" />
+          </el-form-item>
+          <el-form-item label="意向面积（㎡）">
+            <el-input v-model="followUpForm.expectedArea" type="number" min="0" placeholder="选填" />
+          </el-form-item>
+          <el-form-item label="意向区域/楼栋">
+            <el-input v-model.trim="followUpForm.preferredLocation" placeholder="选填" />
+          </el-form-item>
+          <el-form-item label="预算/租金">
+            <el-input v-model="followUpForm.budget" type="number" min="0" placeholder="选填" />
+          </el-form-item>
+          <el-form-item label="拟入驻时间">
+            <el-date-picker v-model="followUpForm.expectedMoveInDate" type="date" value-format="yyyy-MM-dd" placeholder="选填" style="width: 100%" />
+          </el-form-item>
+          <el-form-item label="行业类型">
+            <el-input v-model.trim="followUpForm.industry" placeholder="选填" />
+          </el-form-item>
+          <business-attachment-field v-model="followUpForm.attachmentFiles" class="lead-follow-up-form__wide" label="附件" :limit="9" />
+          <el-form-item label="遗留问题" class="lead-follow-up-form__wide">
+            <el-input v-model.trim="followUpForm.openIssues" type="textarea" :rows="2" placeholder="选填" />
+          </el-form-item>
+          <el-form-item label="需支持事项" class="lead-follow-up-form__wide">
+            <el-input v-model.trim="followUpForm.supportNeeded" type="textarea" :rows="2" placeholder="选填" />
+          </el-form-item>
+        </div>
+      </el-form>
+      <span slot="footer">
+        <el-button @click="followUpVisible = false">取消</el-button>
+        <el-button type="primary" :loading="followUpSubmitting" @click="submitFollowUp">提交</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog title="跟进记录详情" :visible.sync="followUpDetailVisible" width="620px" append-to-body>
+      <div v-if="followUpDetail" v-loading="followUpDetailLoading" class="lead-follow-up-detail">
+        <div v-for="field in followUpDetailFields" :key="field.key" class="lead-follow-up-detail__item">
+          <small>{{ field.label }}</small>
+          <b>{{ followUpDetailValue(field.key) }}</b>
+        </div>
+      </div>
+    </el-dialog>
   </main>
 </template>
 
 <script>
+import BusinessAttachmentField from '@/components/business/record-fields/BusinessAttachmentField'
 import BusinessRecordField from '@/components/business/record-fields/BusinessRecordField'
 import recordManager from '@/features/_shared/record-management/recordManager'
 
 export default {
   name: 'OnlineConsultationPage',
-  components: { BusinessRecordField },
+  components: { BusinessAttachmentField, BusinessRecordField },
   mixins: [recordManager],
   props: {
     mode: { type: String, default: 'user' },
@@ -228,6 +355,7 @@ export default {
     listParams: { type: Object, default: () => ({}) },
     allowConfirm: { type: Boolean, default: false },
     allocationEnabled: { type: Boolean, default: false },
+    followUpEnabled: { type: Boolean, default: false },
     confirmStatus: { type: [String, Number], default: 1 }
   },
   data() {
@@ -238,7 +366,14 @@ export default {
       allocationRecord: null,
       allocationUserId: '',
       allocationUsers: [],
-      allocationUsersLoading: false
+      allocationUsersLoading: false,
+      followUpVisible: false,
+      followUpSubmitting: false,
+      followUpRecord: null,
+      followUpForm: this.emptyFollowUpForm(),
+      followUpDetailVisible: false,
+      followUpDetailLoading: false,
+      followUpDetail: null
     }
   },
   computed: {
@@ -258,6 +393,67 @@ export default {
         { key: 'other', label: '其他需求' },
         { key: 'referrerName', label: '推荐人' },
         { key: 'createTime', label: '提交时间' }
+      ]
+    },
+    followUpMethodOptions() {
+      return [
+        { value: 'PHONE', label: '电话' },
+        { value: 'WECHAT', label: '微信' },
+        { value: 'EMAIL', label: '邮件' },
+        { value: 'OFFSITE_VISIT', label: '外出拜访' },
+        { value: 'ONSITE_RECEPTION', label: '现场接待' },
+        { value: 'VIDEO_CALL', label: '视频沟通' },
+        { value: 'TRADE_SHOW', label: '展会' }
+      ]
+    },
+    intentLevelOptions() {
+      return [
+        { value: 'A', label: 'A（1 个工作日）— 最高优先级，需高频推进并触发分级督办' },
+        { value: 'B', label: 'B（2 个工作日）— 重点客户，保持较高跟进频率' },
+        { value: 'C', label: 'C（7 个工作日）— 持续培育并关注需求变化' },
+        { value: 'D', label: 'D（30 个工作日）— 中长期培育客户' },
+        { value: 'E', label: 'E（180 个工作日）— 初始或低成熟度客户，新线索默认等级' },
+        { value: 'F', label: 'F（不按普通周期提醒）— 已放弃客户，重新分配后恢复' }
+      ]
+    },
+    leadStatusOptions() {
+      return [
+        { value: 'INITIAL_CONTACT', label: '初步接触' },
+        { value: 'INTENT_CONFIRMED', label: '意向确认' },
+        { value: 'VISIT_OR_PROPOSAL', label: '考察/洽谈中' },
+        { value: 'NEGOTIATION', label: '谈判阶段' },
+        { value: 'CONTRACT_SIGNED', label: '签约落地' },
+        { value: 'ON_HOLD', label: '暂缓跟进' }
+      ]
+    },
+    followUpRules() {
+      return {
+        followUpMethod: [{ required: true, message: '请选择跟进方式', trigger: 'change' }],
+        followUpTime: [{ required: true, message: '请选择此次跟进时间', trigger: 'change' }],
+        contactPerson: [{ required: true, message: '请输入沟通对象姓名', trigger: 'blur' }],
+        communicationSummary: [{ required: true, message: '请输入沟通纪要', trigger: 'blur' }],
+        intentLevel: [{ required: true, message: '请选择意向度', trigger: 'change' }],
+        leadStatus: [{ required: true, message: '请选择线索状态', trigger: 'change' }]
+      }
+    },
+    followUpDetailFields() {
+      return [
+        { key: 'followUpMethod', label: '跟进方式' },
+        { key: 'followUpTime', label: '此次跟进时间' },
+        { key: 'contactPerson', label: '沟通对象' },
+        { key: 'contactTitle', label: '沟通对象职务' },
+        { key: 'communicationSummary', label: '沟通纪要' },
+        { key: 'intentLevel', label: '意向度' },
+        { key: 'leadStatus', label: '线索状态' },
+        { key: 'nextFollowUpTime', label: '下次跟进时间' },
+        { key: 'nextFollowUpTask', label: '下次跟进事项' },
+        { key: 'expectedArea', label: '意向面积（㎡）' },
+        { key: 'preferredLocation', label: '意向区域/楼栋' },
+        { key: 'budget', label: '预算/租金' },
+        { key: 'expectedMoveInDate', label: '拟入驻时间' },
+        { key: 'industry', label: '行业类型' },
+        { key: 'openIssues', label: '遗留问题' },
+        { key: 'supportNeeded', label: '需支持事项' }
       ]
     },
     resource() {
@@ -305,11 +501,154 @@ export default {
     }
   },
   methods: {
-    formatDateOnly(value) {
-      return value ? String(value).slice(0, 10) : '-'
+    formatDateTime(value) {
+      if (!value) return '-'
+      const raw = String(value)
+      const parts = raw.split('T')
+      let formatted = parts.length > 1 ? parts[0] + ' ' + parts.slice(1).join('T') : raw
+      if (/^\d{4}-\d{2}-\d{2}$/.test(formatted)) formatted += ' 00:00:00'
+      if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(formatted)) formatted += ':00'
+      return formatted.slice(0, 19)
     },
     formatCompactDetailValue(value, key) {
-      return key === 'checkinTime' ? this.formatDateOnly(value) : this.formatValue(value, key)
+      return ['checkinTime', 'createTime'].includes(key) ? this.formatDateTime(value) : this.formatValue(value, key)
+    },
+    emptyFollowUpForm() {
+      return {
+        followUpMethod: '',
+        followUpTime: '',
+        contactPerson: '',
+        contactTitle: '',
+        communicationSummary: '',
+        intentLevel: 'E',
+        leadStatus: '',
+        nextFollowUpTime: '',
+        nextFollowUpTask: '',
+        expectedArea: '',
+        preferredLocation: '',
+        budget: '',
+        expectedMoveInDate: '',
+        industry: '',
+        attachmentFiles: [],
+        openIssues: '',
+        supportNeeded: ''
+      }
+    },
+    followUpRecords(record) {
+      return Array.isArray(record && record.records) ? record.records : []
+    },
+    leadStatusCount(record, status) {
+      return this.followUpRecords(record).filter((item) => item && item.leadStatus === status).length
+    },
+    leadStatusOccurrence(record, status, index) {
+      return this.followUpRecords(record)
+        .slice(0, index + 1)
+        .filter((item) => item && item.leadStatus === status).length
+    },
+    followUpMethodLabel(value) {
+      const option = this.followUpMethodOptions.find((item) => item.value === value)
+      return (option && option.label) || value || '-'
+    },
+    intentLevelLabel(value) {
+      const option = this.intentLevelOptions.find((item) => item.value === value)
+      return (option && option.label) || value || '-'
+    },
+    leadStatusLabel(value) {
+      const option = this.leadStatusOptions.find((item) => item.value === value)
+      return (option && option.label) || value || '-'
+    },
+    openFollowUp(record) {
+      this.followUpRecord = record
+      this.followUpForm = this.emptyFollowUpForm()
+      this.followUpVisible = true
+      this.$nextTick(() => this.$refs.followUpForm && this.$refs.followUpForm.clearValidate())
+    },
+    resetFollowUp() {
+      this.followUpRecord = null
+      this.followUpForm = this.emptyFollowUpForm()
+      this.followUpSubmitting = false
+    },
+    optionalNumber(value) {
+      if (value === '' || value === null || value === undefined) return undefined
+      const number = Number(value)
+      return Number.isNaN(number) ? undefined : number
+    },
+    followUpPayload() {
+      const form = this.followUpForm
+      const payload = {
+        parentId: this.followUpRecord.id,
+        followUpMethod: form.followUpMethod,
+        followUpTime: form.followUpTime ? this.formatDateTime(form.followUpTime) : undefined,
+        createdBy: this.currentUserId(),
+        contactPerson: form.contactPerson,
+        contactTitle: form.contactTitle || undefined,
+        communicationSummary: form.communicationSummary,
+        intentLevel: form.intentLevel,
+        leadStatus: form.leadStatus,
+        nextFollowUpTime: form.nextFollowUpTime ? this.formatDateTime(form.nextFollowUpTime) : undefined,
+        nextFollowUpTask: form.nextFollowUpTask || undefined,
+        expectedArea: this.optionalNumber(form.expectedArea),
+        preferredLocation: form.preferredLocation || undefined,
+        budget: this.optionalNumber(form.budget),
+        expectedMoveInDate: form.expectedMoveInDate ? this.formatDateTime(form.expectedMoveInDate) : undefined,
+        industry: form.industry || undefined,
+        attachmentIds: form.attachmentFiles.map((file) => file.attachmentId || file.id || file.fileId).filter(Boolean),
+        openIssues: form.openIssues || undefined,
+        supportNeeded: form.supportNeeded || undefined
+      }
+      return Object.keys(payload).reduce((result, key) => {
+        if (payload[key] !== undefined) result[key] = payload[key]
+        return result
+      }, {})
+    },
+    submitFollowUp() {
+      this.$refs.followUpForm.validate(async (valid) => {
+        if (!valid || this.followUpSubmitting) return
+        if (this.followUpForm.leadStatus === 'ON_HOLD' && !this.followUpForm.nextFollowUpTime) {
+          this.$message.warning('暂缓跟进时必须填写下次跟进时间')
+          return
+        }
+        try {
+          await this.$confirm('提交后不可修改、不可删除，请仔细核对后提交。', '二次确认', { type: 'warning' })
+          const addRecordApi = this.api('addRecord')
+          if (!addRecordApi || !this.followUpRecord) throw new Error('missing add record api')
+          this.followUpSubmitting = true
+          await addRecordApi(this.followUpPayload())
+          this.$message.success('跟进记录提交成功')
+          this.followUpVisible = false
+          await this.loadRecords()
+        } catch (error) {
+          if (error !== 'cancel' && error !== 'close') this.$message.error('跟进记录提交失败，请稍后重试')
+        } finally {
+          this.followUpSubmitting = false
+        }
+      })
+    },
+    async openFollowUpDetail(record) {
+      this.followUpDetail = record
+      this.followUpDetailVisible = true
+      const detailApi = this.api('queryRecordById')
+      if (!detailApi || !record || !record.id) return
+      this.followUpDetailLoading = true
+      try {
+        const detail = this.unwrap(await detailApi({ id: record.id }))
+        if (detail) this.followUpDetail = Object.assign({}, record, detail)
+      } catch (error) {
+        this.$message.error('跟进记录详情加载失败')
+      } finally {
+        this.followUpDetailLoading = false
+      }
+    },
+    followUpDetailValue(key) {
+      if (!this.followUpDetail) return '-'
+      if (key === 'followUpMethod') return this.followUpMethodLabel(this.followUpDetail[key])
+      if (key === 'followUpTime') return this.formatDateTime(this.followUpDetail[key])
+      if (key === 'intentLevel') return this.intentLevelLabel(this.followUpDetail[key])
+      if (key === 'leadStatus') return this.leadStatusLabel(this.followUpDetail[key])
+      if (key === 'nextFollowUpTime') return this.formatDateTime(this.followUpDetail[key])
+      if (key === 'expectedMoveInDate') return this.formatDateTime(this.followUpDetail[key])
+      const value = this.followUpDetail[key]
+      return value === undefined || value === null || value === '' ? '-' : value
     },
     isConfirmed(record) {
       return String(record && record.status) === String(this.confirmStatus) || ['已确认', '确认'].includes(record && record.status)
@@ -449,10 +788,146 @@ export default {
   }
 }
 
+.record-feature-table--compact {
+  ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > .el-table__row.hover-row > td.el-table__cell,
+  ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > .el-table__row:hover > td.el-table__cell {
+    background-color: #fff !important;
+  }
+
+  ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > .el-table__row--striped.hover-row > td.el-table__cell,
+  ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > .el-table__row--striped:hover > td.el-table__cell {
+    background-color: #fafafa !important;
+  }
+
+  ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > tr > td.el-table__expanded-cell,
+  ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > tr:hover > td.el-table__expanded-cell {
+    background-color: #f7f9fc !important;
+  }
+}
+
+.lead-follow-up-history {
+  padding: 14px 18px 18px;
+  background: #f7f9fc;
+}
+
+.lead-follow-up-history__summary,
+.lead-follow-up-history__title {
+  display: flex;
+  align-items: center;
+}
+
+.lead-follow-up-history__summary {
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #8a98aa;
+  font-size: 12px;
+}
+
+.lead-follow-up-history__title {
+  gap: 7px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+
+  i {
+    color: #409eff;
+    font-size: 16px;
+  }
+
+  b {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+    background: #e8f3ff;
+    color: #409eff;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: center;
+  }
+}
+
+.lead-follow-up-history__table {
+  border: 1px solid #e4ebf3;
+  border-radius: 4px;
+
+  ::v-deep .el-table__body td.el-table__cell,
+  ::v-deep .el-table__body tr.hover-row > td.el-table__cell,
+  ::v-deep .el-table__body tr:hover > td.el-table__cell {
+    background-color: #fff !important;
+    transition: none;
+  }
+}
+
+.lead-follow-up-history__intent {
+  display: block;
+  color: #526176;
+  font-size: 12px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.lead-follow-up-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+}
+
+.lead-follow-up-form__wide {
+  grid-column: 1 / -1;
+}
+
+.lead-follow-up-detail {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.lead-follow-up-detail__item {
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid #edf1f6;
+  border-radius: 4px;
+  background: #f8fafc;
+
+  small,
+  b {
+    display: block;
+  }
+
+  small {
+    margin-bottom: 5px;
+    color: #7d8998;
+    font-size: 12px;
+  }
+
+  b {
+    color: #334155;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+}
+
 @media (max-width: 760px) {
   .online-consultation-card__meta {
     grid-template-columns: 1fr;
     gap: 10px;
+  }
+
+  .lead-follow-up-form,
+  .lead-follow-up-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .lead-follow-up-history {
+    padding: 12px;
+  }
+
+  .lead-follow-up-history__summary > span {
+    display: none;
   }
 }
 </style>

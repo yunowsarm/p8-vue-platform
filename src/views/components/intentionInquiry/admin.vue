@@ -1,16 +1,17 @@
-<!-- 意向咨询管理端入口：查看全部记录并支持分配。 -->
+<!-- 线索管理端入口：查看全部线索、分配负责人并记录跟进。 -->
 <template>
   <online-consultation-page
     class="intention-inquiry-page"
     api-namespace="reception"
-    page-title="意向咨询"
-    page-description="登记来访企业或个人的意向咨询信息，并跟进专员回复。"
+    page-title="线索管理"
+    page-description="管理园区线索、分配负责人并记录跟进情况。"
     search-placeholder="搜索企业、联系人或联系电话"
     :list-params="{ viewType: 0 }"
     :show-create="false"
     compact
     read-only
-    allocation-enabled />
+    allocation-enabled
+    follow-up-enabled />
 </template>
 
 <script>
