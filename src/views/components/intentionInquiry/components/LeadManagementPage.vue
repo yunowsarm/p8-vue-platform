@@ -22,14 +22,14 @@
         <el-table-column v-if="followUpEnabled" type="expand" width="48">
           <template slot-scope="scope">
             <div class="lead-follow-up-history" @click.stop>
-              <div class="lead-follow-up-history__summary">
+              <!-- <div class="lead-follow-up-history__summary">
                 <div class="lead-follow-up-history__title">
                   <i class="el-icon-document" />
                   <span>跟进记录</span>
                   <b>{{ followUpRecords(scope.row).length }}</b>
                 </div>
                 <span v-if="followUpRecords(scope.row).length">提交后记录不可修改</span>
-              </div>
+              </div> -->
               <el-empty v-if="!followUpRecords(scope.row).length" description="暂无跟进记录" :image-size="44" />
               <el-table v-else :data="followUpRecords(scope.row)" size="mini" class="lead-follow-up-history__table">
                 <el-table-column label="线索状态" min-width="140">
@@ -100,7 +100,7 @@
             <el-tag :type="isConfirmed(scope.row) ? 'success' : 'warning'" size="mini">{{ isConfirmed(scope.row) ? '已确认' : '待确认' }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="allocationEnabled || allowConfirm || followUpEnabled" label="操作" :width="allocationEnabled ? 250 : followUpEnabled ? 180 : 120">
+        <el-table-column v-if="allocationEnabled || allowConfirm || followUpEnabled" label="操作" :width="allocationEnabled ? 250 : followUpEnabled ? 180 : 120" fixed="right">
           <template slot-scope="scope">
             <div class="record-feature-table__actions">
               <el-button v-if="allocationEnabled" type="text" size="mini" :loading="allocatingId === scope.row.id" @click.stop="openAllocation(scope.row)">
@@ -269,15 +269,15 @@
           </div>
           <el-tag size="small" type="info">共 {{ allocationHistory.length }} 条记录</el-tag>
         </div>
-        <el-table v-if="allocationHistory.length" :data="allocationHistory" size="mini" border class="lead-allocation-history__table">
-          <el-table-column type="index" label="序号" width="64" align="center" />
+        <el-table v-if="allocationHistory.length" :data="pagedAllocationHistory" size="mini" border class="lead-allocation-history__table">
+          <el-table-column type="index" :index="allocationHistoryRowIndex" label="序号" width="64" align="center" />
           <!-- <el-table-column label="原负责人" min-width="130" show-overflow-tooltip>
             <template slot-scope="scope">{{ allocationHistoryPreviousAssignee(scope.row) }}</template>
           </el-table-column> -->
           <el-table-column label="分配给" min-width="130" show-overflow-tooltip>
             <template slot-scope="scope">
               <span>{{ allocationHistoryAssignee(scope.row) }}</span>
-              <el-tag v-if="isFirstAllocation(scope.$index)" class="lead-allocation-history__first-tag" size="mini" type="success">首次分配</el-tag>
+              <el-tag v-if="isFirstAllocation(allocationHistoryGlobalIndex(scope.$index))" class="lead-allocation-history__first-tag" size="mini" type="success">首次分配</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="重新分配理由" min-width="180" show-overflow-tooltip>
@@ -290,6 +290,16 @@
             <template slot-scope="scope">{{ allocationHistoryTime(scope.row) }}</template>
           </el-table-column>
         </el-table>
+        <div v-if="allocationHistory.length > allocationHistoryPageSize" class="lead-allocation-history__pagination">
+          <el-pagination
+            small
+            background
+            :current-page="allocationHistoryPage"
+            :page-size="allocationHistoryPageSize"
+            :total="allocationHistory.length"
+            layout="prev, pager, next"
+            @current-change="handleAllocationHistoryPageChange" />
+        </div>
         <el-empty v-else-if="!allocationHistoryLoading" description="暂无分配历史" :image-size="72" />
       </div>
     </el-dialog>
@@ -412,6 +422,8 @@ export default {
       allocationHistoryLoading: false,
       allocationHistoryRecord: null,
       allocationHistory: [],
+      allocationHistoryPage: 1,
+      allocationHistoryPageSize: 10,
       followUpVisible: false,
       followUpSubmitting: false,
       followUpRecord: null,
@@ -431,6 +443,10 @@ export default {
         userId: [{ required: true, message: '请选择分配人员', trigger: 'change' }],
         reason: [{ required: true, message: '请填写重新分配理由', trigger: 'blur' }]
       }
+    },
+    pagedAllocationHistory() {
+      const start = (this.allocationHistoryPage - 1) * this.allocationHistoryPageSize
+      return this.allocationHistory.slice(start, start + this.allocationHistoryPageSize)
     },
     compactDetailFields() {
       return [
@@ -827,6 +843,7 @@ export default {
     async openAllocationHistory(record) {
       this.allocationHistoryRecord = record
       this.allocationHistory = []
+      this.allocationHistoryPage = 1
       this.allocationHistoryVisible = true
       const historyApi = this.api('queryHistoryByParentId')
       if (!historyApi) {
@@ -846,6 +863,7 @@ export default {
     resetAllocationHistory() {
       this.allocationHistoryRecord = null
       this.allocationHistory = []
+      this.allocationHistoryPage = 1
       this.allocationHistoryLoading = false
     },
     allocationHistoryFrom(result) {
@@ -867,6 +885,15 @@ export default {
     },
     allocationHistoryTime(record) {
       return this.formatDateTime(record.allocationTime || record.createTime || record.createdTime || record.updateTime)
+    },
+    allocationHistoryRowIndex(index) {
+      return this.allocationHistoryGlobalIndex(index) + 1
+    },
+    allocationHistoryGlobalIndex(index) {
+      return (this.allocationHistoryPage - 1) * this.allocationHistoryPageSize + index
+    },
+    handleAllocationHistoryPageChange(page) {
+      this.allocationHistoryPage = page
     },
     isFirstAllocation(index) {
       if (!this.allocationHistory.length) return false
@@ -1007,12 +1034,14 @@ export default {
 
   ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > tr > td.el-table__expanded-cell,
   ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > tr:hover > td.el-table__expanded-cell {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
     background-color: #f7f9fc !important;
   }
 }
 
 .lead-follow-up-history {
-  padding: 14px 18px 18px;
+  padding: 14px 18px 10px;
   background: #f7f9fc;
 }
 
@@ -1115,6 +1144,12 @@ export default {
   width: 100%;
 }
 
+.lead-allocation-history__pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
 .lead-allocation-history__first-tag {
   margin-left: 8px;
   vertical-align: middle;
@@ -1175,7 +1210,7 @@ export default {
   }
 
   .lead-follow-up-history {
-    padding: 12px;
+    padding: 10px 12px 8px;
   }
 
   .lead-follow-up-history__summary > span {
@@ -1211,6 +1246,7 @@ export default {
   height: calc(100vh - 140px);
   min-height: 600px;
   padding: 8px 10px 10px;
+  overflow: auto;
   border: 0;
   border-radius: 0 0 4px 4px;
   box-shadow: none;
@@ -1232,6 +1268,7 @@ export default {
 }
 
 .intention-inquiry-page .record-feature-table--compact {
+  flex: 0 0 auto;
   border: 1px solid #e8edef;
 }
 
