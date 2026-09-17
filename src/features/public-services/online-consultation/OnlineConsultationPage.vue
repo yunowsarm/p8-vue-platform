@@ -44,6 +44,7 @@
             <el-tag :type="isAllocated(scope.row) ? 'success' : 'warning'" size="mini">{{ isAllocated(scope.row) ? '已分配' : '待分配' }}</el-tag>
           </template>
         </el-table-column>
+        <el-table-column v-if="allocationEnabled" prop="responsiblePersonName" label="分配人" min-width="120" show-overflow-tooltip />
         <el-table-column v-else-if="allowConfirm" label="确认状态" width="110">
           <template slot-scope="scope">
             <el-tag :type="isConfirmed(scope.row) ? 'success' : 'warning'" size="mini">{{ isConfirmed(scope.row) ? '已确认' : '待确认' }}</el-tag>
@@ -318,7 +319,7 @@ export default {
     },
     async openAllocation(record) {
       this.allocationRecord = record
-      this.allocationUserId = ''
+      this.allocationUserId = record.responsiblePerson || ''
       this.allocationUsers = []
       this.allocationVisible = true
       const userListApi = this.api('getUserList')

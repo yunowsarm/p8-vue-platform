@@ -415,7 +415,7 @@ export default {
       this.$router.push({ name: 'PersonalSettings' })
     },
     async copyPromotionLink() {
-      const promotionLink = `${window.location.origin}/?referrer=${encodeURIComponent(this.$store.state.user.userId)}`
+      const promotionLink = `http://119.45.15.111:9091/?referrer=${encodeURIComponent(this.$store.state.user.userId)}`
 
       try {
         if (navigator.clipboard && window.isSecureContext) {

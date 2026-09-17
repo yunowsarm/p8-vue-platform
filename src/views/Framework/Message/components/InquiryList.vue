@@ -46,7 +46,11 @@ export default {
         { key: 'teamSize', label: '团队规模', value: this.formatValue(detail.teamSize, 'teamSize') },
         { key: 'intendedSpace', label: '意向空间', value: this.formatValue(detail.intendedSpace, 'intendedSpace') },
         { key: 'requiredArea', label: '需求面积', value: this.formatValue(detail.requiredArea, 'requiredArea') },
-        { key: 'checkinTime', label: '计划入住时间', value: detail.checkinTime || '-' },
+        {
+          key: 'checkinTime',
+          label: '计划入住时间',
+          value: detail.checkinTime ? (detail.checkinTime.length >= 10 ? detail.checkinTime.slice(0, 10) : detail.checkinTime) : '-'
+        },
         { key: 'referrerName', label: '推荐人', value: this.referrerName || '-' },
         { key: 'createTime', label: '提交时间', value: detail.createTime || '-' },
         { key: 'status', label: '状态', value: this.formatValue(detail.status, 'status') },
