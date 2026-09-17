@@ -1351,7 +1351,7 @@ export default {
 }
 
 .intention-inquiry-page .record-feature-surface {
-  height: calc(100vh - 140px);
+  height: calc(100vh - 148px);
   min-height: 600px;
   padding: 8px 10px 10px;
   overflow: auto;
@@ -1361,7 +1361,7 @@ export default {
 }
 
 .intention-inquiry-page.record-feature-page--read-only .record-feature-surface {
-  height: calc(100vh - 92px);
+  height: calc(100vh - 100px);
   border-radius: 4px;
 }
 
