@@ -1,6 +1,6 @@
 <!-- 线索管理普通端入口：仅查询当前用户负责的线索。 -->
 <template>
-  <online-consultation-page
+  <lead-management-page
     class="intention-inquiry-page"
     mode="user"
     api-namespace="reception"
@@ -14,10 +14,10 @@
 </template>
 
 <script>
-import OnlineConsultationPage from '@/features/public-services/online-consultation/OnlineConsultationPage'
+import LeadManagementPage from './components/LeadManagementPage'
 
 export default {
   name: 'IntentionInquiryUser',
-  components: { OnlineConsultationPage }
+  components: { LeadManagementPage }
 }
 </script>
