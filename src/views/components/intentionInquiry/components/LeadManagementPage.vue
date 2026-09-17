@@ -34,7 +34,7 @@
               <el-table v-else :data="followUpRecords(scope.row)" size="mini" class="lead-follow-up-history__table">
                 <el-table-column label="线索状态" min-width="140">
                   <template slot-scope="recordScope">
-                    <el-tag size="mini" type="primary">
+                    <el-tag size="mini" class="lead-status-tag" :class="leadStatusTagClass(recordScope.row.leadStatus)">
                       {{ leadStatusLabel(recordScope.row.leadStatus) }}
                       <span v-if="leadStatusCount(scope.row, recordScope.row.leadStatus) > 1">（第{{ leadStatusOccurrence(scope.row, recordScope.row.leadStatus, recordScope.$index) }}次）</span>
                     </el-tag>
@@ -70,7 +70,9 @@
         <el-table-column prop="enterprise" label="企业名称" min-width="160" show-overflow-tooltip />
         <el-table-column prop="contactName" label="联系人" min-width="120" show-overflow-tooltip />
         <el-table-column prop="contactPhone" label="联系电话" min-width="140" show-overflow-tooltip />
-        <el-table-column prop="referrerName" label="推荐人" min-width="120" show-overflow-tooltip />
+        <el-table-column label="渠道来源" min-width="160" show-overflow-tooltip>
+          <template slot-scope="scope">{{ channelSourceLabel(scope.row) }}</template>
+        </el-table-column>
         <el-table-column label="所属行业" min-width="110" show-overflow-tooltip>
           <template slot-scope="scope">{{ formatValue(scope.row.industry, 'industry') }}</template>
         </el-table-column>
@@ -89,6 +91,15 @@
         <el-table-column label="提交时间" width="170">
           <template slot-scope="scope">{{ formatDateTime(scope.row.createTime) }}</template>
         </el-table-column>
+        <el-table-column label="跟踪次数" min-width="100" align="center">
+          <template slot-scope="scope">{{ followUpRecords(scope.row).length }}</template>
+        </el-table-column>
+        <el-table-column label="客户等级" min-width="110" align="center">
+          <template slot-scope="scope">{{ customerLevelLabel(scope.row) }}</template>
+        </el-table-column>
+        <el-table-column label="跟踪进度" min-width="140" show-overflow-tooltip>
+          <template slot-scope="scope">{{ trackingProgressLabel(scope.row) }}</template>
+        </el-table-column>
         <el-table-column v-if="allocationEnabled" label="分配状态" width="110">
           <template slot-scope="scope">
             <el-tag :type="isAllocated(scope.row) ? 'success' : 'warning'" size="mini">{{ isAllocated(scope.row) ? '已分配' : '待分配' }}</el-tag>
@@ -100,7 +111,7 @@
             <el-tag :type="isConfirmed(scope.row) ? 'success' : 'warning'" size="mini">{{ isConfirmed(scope.row) ? '已确认' : '待确认' }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="allocationEnabled || allowConfirm || followUpEnabled" label="操作" :width="allocationEnabled ? 250 : followUpEnabled ? 180 : 120" fixed="right">
+        <el-table-column v-if="allocationEnabled || allowConfirm || followUpEnabled" label="操作" :width="allocationEnabled ? 250 : followUpEnabled ? 180 : 120">
           <template slot-scope="scope">
             <div class="record-feature-table__actions">
               <el-button v-if="allocationEnabled" type="text" size="mini" :loading="allocatingId === scope.row.id" @click.stop="openAllocation(scope.row)">
@@ -300,7 +311,7 @@
             layout="prev, pager, next"
             @current-change="handleAllocationHistoryPageChange" />
         </div>
-        <el-empty v-else-if="!allocationHistoryLoading" description="暂无分配历史" :image-size="72" />
+        <el-empty v-if="!allocationHistoryLoading && !allocationHistory.length" description="暂无分配历史" :image-size="72" />
       </div>
     </el-dialog>
 
@@ -370,14 +381,14 @@
       </span>
     </el-dialog>
 
-    <el-dialog title="跟进记录详情" :visible.sync="followUpDetailVisible" width="620px" append-to-body>
+    <el-drawer title="跟进记录详情" :visible.sync="followUpDetailVisible" direction="rtl" size="560px" append-to-body>
       <div v-if="followUpDetail" v-loading="followUpDetailLoading" class="lead-follow-up-detail">
         <div v-for="field in followUpDetailFields" :key="field.key" class="lead-follow-up-detail__item">
           <small>{{ field.label }}</small>
           <b>{{ followUpDetailValue(field.key) }}</b>
         </div>
       </div>
-    </el-dialog>
+    </el-drawer>
   </main>
 </template>
 
@@ -458,7 +469,7 @@ export default {
         { key: 'requiredArea', label: '需求面积' },
         { key: 'checkinTime', label: '计划入住时间' },
         { key: 'other', label: '其他需求' },
-        { key: 'referrerName', label: '推荐人' },
+        { key: 'channelSource', label: '渠道来源' },
         { key: 'createTime', label: '提交时间' }
       ]
     },
@@ -471,6 +482,16 @@ export default {
         { value: 'ONSITE_RECEPTION', label: '现场接待' },
         { value: 'VIDEO_CALL', label: '视频沟通' },
         { value: 'TRADE_SHOW', label: '展会' }
+      ]
+    },
+    channelSourceOptions() {
+      return [
+        { value: 'ONLINE_INQUIRY', label: '线上咨询' },
+        { value: 'MARKETING_EVENT', label: '市场活动/展会' },
+        { value: 'OUTBOUND_VISIT', label: '招商拜访' },
+        { value: 'PARTNER_REFERRAL', label: '合作伙伴推荐' },
+        { value: 'PARK_OPERATION', label: '园区运营转交' },
+        { value: 'OTHER', label: '其他渠道' }
       ]
     },
     intentLevelOptions() {
@@ -578,8 +599,13 @@ export default {
           ]
         },
         { key: 'checkinTime', label: '计划入住时间', type: 'datetime', required: true },
-        { key: 'other', label: '其他需求', type: 'textarea', rows: 3, wide: true },
-        { key: 'referrer', label: '推荐人', hideInForm: true }
+        {
+          key: 'channelSource',
+          label: '渠道来源',
+          required: true,
+          options: this.channelSourceOptions
+        },
+        { key: 'other', label: '其他需求', type: 'textarea', rows: 3, wide: true }
       ]
       return {
         title: this.pageTitle,
@@ -589,7 +615,7 @@ export default {
         idPrefix: 'OC',
         apiNamespace: this.apiNamespace,
         listParams: this.listParams,
-        preserveListFields: this.compact ? ['referrerName'] : [],
+        preserveListFields: this.compact ? ['referrerName', 'channelSource'] : [],
         primaryKey: 'id',
         timeKey: 'consultTime',
         contentKey: 'content',
@@ -604,12 +630,12 @@ export default {
         replyMode,
         replyStatus: '已回复',
         editActionLabel: replyMode ? '回复' : '编辑',
-        defaultForm: this.compact ? { referrer: this.currentUserId() } : {},
+        defaultForm: this.compact ? { channelSource: 'ONLINE_INQUIRY' } : {},
         autoFormFields: this.compact || replyMode ? {} : { userName: 'currentUserName' },
         replyAutoFormFields: replyMode ? { replyUserName: 'currentUserName', replyTime: 'now' } : {},
         payloadTransform: this.compact
           ? (payload) => {
-              const mainTableFields = ['enterprise', 'contactName', 'contactPhone', 'industry', 'teamSize', 'intendedSpace', 'requiredArea', 'checkinTime', 'other', 'referrer', 'status']
+              const mainTableFields = ['enterprise', 'contactName', 'contactPhone', 'industry', 'teamSize', 'intendedSpace', 'requiredArea', 'checkinTime', 'other', 'channelSource', 'status']
               return mainTableFields.reduce((result, key) => {
                 if (payload[key] !== undefined && payload[key] !== '') result[key] = payload[key]
                 return result
@@ -673,6 +699,48 @@ export default {
     },
     followUpRecords(record) {
       return Array.isArray(record && record.records) ? record.records : []
+    },
+    latestFollowUpRecord(record) {
+      return this.followUpRecords(record).reduce((latest, current) => {
+        if (!latest) return current
+        const latestTime = this.followUpRecordTimestamp(latest)
+        const currentTime = this.followUpRecordTimestamp(current)
+        return currentTime >= latestTime ? current : latest
+      }, null)
+    },
+    followUpRecordTimestamp(record) {
+      const value = record && (record.followUpTime || record.createTime || record.updateTime)
+      const timestamp = value ? Date.parse(String(value).replace(' ', 'T')) : NaN
+      return Number.isNaN(timestamp) ? 0 : timestamp
+    },
+    customerLevelLabel(record) {
+      const latestRecord = this.latestFollowUpRecord(record)
+      const value = latestRecord && latestRecord.intentLevel
+      const level = String(value || '')
+        .charAt(0)
+        .toUpperCase()
+      return ['A', 'B', 'C', 'D', 'E', 'F'].includes(level) ? `${level}级` : '-'
+    },
+    trackingProgressLabel(record) {
+      const latestRecord = this.latestFollowUpRecord(record)
+      return latestRecord ? this.leadStatusLabel(latestRecord.leadStatus) : '-'
+    },
+    channelSourceLabel(record) {
+      if (record && record.referrer) return `客户转介绍：${record.referrerName || '-'}`
+      const source = record && (record.channelSource || record.source || record.channel)
+      const option = this.channelSourceOptions.find((item) => item.value === source)
+      return (option && option.label) || source || '-'
+    },
+    leadStatusTagClass(value) {
+      const classMap = {
+        INITIAL_CONTACT: 'lead-status-tag--initial',
+        INTENT_CONFIRMED: 'lead-status-tag--confirmed',
+        VISIT_OR_PROPOSAL: 'lead-status-tag--visit',
+        NEGOTIATION: 'lead-status-tag--negotiation',
+        CONTRACT_SIGNED: 'lead-status-tag--signed',
+        ON_HOLD: 'lead-status-tag--hold'
+      }
+      return classMap[value] || 'lead-status-tag--initial'
     },
     leadStatusCount(record, status) {
       return this.followUpRecords(record).filter((item) => item && item.leadStatus === status).length
@@ -1103,6 +1171,46 @@ export default {
   word-break: break-word;
 }
 
+.lead-status-tag {
+  font-weight: 500;
+
+  &.lead-status-tag--initial {
+    color: #2563eb;
+    border-color: #bfdbfe;
+    background: #eff6ff;
+  }
+
+  &.lead-status-tag--confirmed {
+    color: #0f766e;
+    border-color: #99f6e4;
+    background: #f0fdfa;
+  }
+
+  &.lead-status-tag--visit {
+    color: #c2410c;
+    border-color: #fed7aa;
+    background: #fff7ed;
+  }
+
+  &.lead-status-tag--negotiation {
+    color: #7e22ce;
+    border-color: #e9d5ff;
+    background: #faf5ff;
+  }
+
+  &.lead-status-tag--signed {
+    color: #15803d;
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+  }
+
+  &.lead-status-tag--hold {
+    color: #64748b;
+    border-color: #cbd5e1;
+    background: #f8fafc;
+  }
+}
+
 .lead-allocation-history__summary {
   display: flex;
   align-items: center;
@@ -1269,7 +1377,12 @@ export default {
 
 .intention-inquiry-page .record-feature-table--compact {
   flex: 0 0 auto;
-  border: 1px solid #e8edef;
+  border: 0;
+  border-top: 1px solid #e8edef;
+}
+
+.intention-inquiry-page .record-feature-table--compact::before {
+  display: none;
 }
 
 .intention-inquiry-page .record-feature-table--compact th {
