@@ -108,6 +108,7 @@
           <template slot-scope="scope">
             <div class="record-feature-table__actions">
               <el-button type="text" size="mini" @click.stop="openDetail(scope.row)">查看</el-button>
+              <el-button v-if="isAdmin" type="text" size="mini" @click.stop="openEdit(scope.row)">修改</el-button>
               <el-button v-if="isAdmin" class="lead-allocation-action" type="text" size="mini" :loading="allocatingId === scope.row.id" @click.stop="openAllocation(scope.row)">
                 {{ isAllocated(scope.row) ? '重新分配' : '分配' }}
               </el-button>
@@ -134,7 +135,7 @@
     </section>
 
     <el-dialog :title="formDialogTitle" :visible.sync="formVisible" top="5vh" append-to-body :close-on-click-modal="false" custom-class="record-feature-form" @closed="resetForm">
-      <el-form ref="recordForm" :model="form" :rules="rules" label-width="124px" @submit.native.prevent>
+      <el-form ref="recordForm" :model="form" :rules="rules" :validate-on-rule-change="false" label-width="124px" @submit.native.prevent>
         <div class="record-feature-form-grid">
           <business-record-field
             v-for="field in formFields"
@@ -146,7 +147,7 @@
       </el-form>
       <span slot="footer">
         <el-button @click="formVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitting" @click="submitForm">创建线索</el-button>
+        <el-button type="primary" :loading="submitting" @click="submitForm">{{ editingId ? '保存修改' : '创建线索' }}</el-button>
       </span>
     </el-dialog>
 
@@ -159,9 +160,9 @@
           </div>
         </div>
         <div class="record-feature-detail__grid">
-          <div v-for="field in compactDetailFields" :key="field.key" class="record-feature-detail__item">
+          <div v-for="field in compactDetailFields" :key="field.key" class="record-feature-detail__item" :class="{ 'record-feature-detail__item--wide': field.key === 'other' }">
             <small>{{ field.label }}</small>
-            <b>{{ formatCompactDetailValue(selectedRecord[field.key], field.key) }}</b>
+            <b>{{ field.key === 'channelSource' ? channelSourceLabel(selectedRecord) : formatCompactDetailValue(selectedRecord[field.key], field.key) }}</b>
           </div>
         </div>
       </div>
@@ -472,9 +473,9 @@ export default {
         { key: 'intendedSpace', label: '意向空间' },
         { key: 'requiredArea', label: '需求面积' },
         { key: 'checkinTime', label: '计划入住时间' },
-        { key: 'other', label: '其他需求' },
         { key: 'channelSource', label: '渠道来源' },
-        { key: 'createTime', label: '提交时间' }
+        { key: 'createTime', label: '提交时间' },
+        { key: 'other', label: '其他需求' }
       ]
     },
     followUpMethodOptions() {
@@ -495,8 +496,12 @@ export default {
         { value: 'OUTBOUND_VISIT', label: '招商拜访' },
         { value: 'PARTNER_REFERRAL', label: '合作伙伴推荐' },
         { value: 'PARK_OPERATION', label: '园区运营转交' },
+        { value: 'CUSTOMER_REFERRAL', label: '客户转介绍', hidden: true },
         { value: 'OTHER', label: '其他渠道' }
       ]
+    },
+    selectableChannelSourceOptions() {
+      return this.channelSourceOptions.filter((item) => !item.hidden)
     },
     intentLevelOptions() {
       return [
@@ -606,12 +611,8 @@ export default {
           ]
         },
         { key: 'checkinTime', label: '计划入住时间', type: 'datetime', required: true },
-        {
-          key: 'channelSource',
-          label: '渠道来源',
-          required: true,
-          options: this.channelSourceOptions
-        },
+        { key: 'sourceType', label: '渠道来源', required: true, options: this.selectableChannelSourceOptions },
+        { key: 'channelSource', label: '具体来源', required: true, showWhen: { sourceType: 'OTHER' }, maxlength: 100 },
         { key: 'other', label: '其他需求', type: 'textarea', rows: 3, wide: true }
       ]
       return {
@@ -622,7 +623,7 @@ export default {
         idPrefix: 'LEAD',
         apiNamespace: 'reception',
         listParams: this.listParams,
-        preserveListFields: ['referrerName', 'channelSource'],
+        preserveListFields: ['referrerName', 'sourceType', 'channelSource'],
         primaryKey: 'id',
         defaultStatus: 0,
         statusMap: { 0: '待分配', 1: '已分配' },
@@ -632,9 +633,38 @@ export default {
           intendedSpace: { 1: '独立办公室', 2: '研发办公', 3: '企业总部', 4: '轻型生产', 5: '配套商业' },
           requiredArea: { 1: '100㎡以内', 2: '100–200㎡', 3: '201–500㎡以内', 4: '500–1,000㎡', 5: '1,000㎡以上' }
         },
-        defaultForm: { channelSource: 'ONLINE_INQUIRY' },
+        defaultForm: { sourceType: 'ONLINE_INQUIRY' },
+        formFromRecord: (record) => {
+          const form = Object.assign({}, record)
+          leadFields.forEach((field) => {
+            if (!field.options || form[field.key] === undefined || form[field.key] === null || form[field.key] === '') return
+            const option = field.options.find((item) => String(item.value) === String(form[field.key]))
+            if (option) form[field.key] = option.value
+          })
+          if (!form.sourceType) {
+            const legacySource = this.selectableChannelSourceOptions.find((item) => String(item.value) === String(form.channelSource))
+            if (legacySource) {
+              form.sourceType = legacySource.value
+              form.channelSource = ''
+            }
+          }
+          return form
+        },
         payloadTransform: (payload) => {
-          const mainTableFields = ['enterprise', 'contactName', 'contactPhone', 'industry', 'teamSize', 'intendedSpace', 'requiredArea', 'checkinTime', 'other', 'channelSource', 'status']
+          const mainTableFields = [
+            'enterprise',
+            'contactName',
+            'contactPhone',
+            'industry',
+            'teamSize',
+            'intendedSpace',
+            'requiredArea',
+            'checkinTime',
+            'other',
+            'sourceType',
+            'channelSource',
+            'status'
+          ]
           return mainTableFields.reduce((result, key) => {
             if (payload[key] !== undefined && payload[key] !== '') result[key] = payload[key]
             return result
@@ -645,7 +675,7 @@ export default {
       }
     },
     permissions() {
-      return { create: this.isAdmin, edit: false, delete: false, changeStatus: false }
+      return { create: this.isAdmin, edit: this.isAdmin, delete: false, changeStatus: false }
     }
   },
   methods: {
@@ -835,19 +865,27 @@ export default {
     },
     channelSourceLabel(record) {
       if (record && record.referrer) return `客户转介绍：${record.referrerName || '-'}`
-      const source = record && (record.channelSource || record.source || record.channel)
-      const option = this.channelSourceOptions.find((item) => item.value === source)
-      return (option && option.label) || source || '-'
+      const sourceType = record && record.sourceType
+      const channelSource = record && record.channelSource
+      if (sourceType) {
+        const option = this.channelSourceOptions.find((item) => item.value === sourceType)
+        const sourceLabel = (option && option.label) || sourceType
+        return channelSource ? `${sourceLabel}：${channelSource}` : sourceLabel
+      }
+      const legacySource = record && (channelSource || record.source || record.channel)
+      const legacyOption = this.channelSourceOptions.find((item) => item.value === legacySource)
+      return (legacyOption && legacyOption.label) || legacySource || '-'
     },
     channelSourceTagClass(record) {
       if (record && record.referrer) return 'lead-summary-tag--referral'
-      const source = record && (record.channelSource || record.source || record.channel)
+      const source = record && (record.sourceType || record.channelSource || record.source || record.channel)
       const classMap = {
         ONLINE_INQUIRY: 'lead-summary-tag--online',
         MARKETING_EVENT: 'lead-summary-tag--event',
         OUTBOUND_VISIT: 'lead-summary-tag--visit',
         PARTNER_REFERRAL: 'lead-summary-tag--partner',
         PARK_OPERATION: 'lead-summary-tag--operation',
+        CUSTOMER_REFERRAL: 'lead-summary-tag--referral',
         OTHER: 'lead-summary-tag--other'
       }
       return classMap[source] || 'lead-summary-tag--other'
@@ -1214,6 +1252,10 @@ export default {
 <style lang="scss" src="../../../../features/_shared/record-management/record-feature-page.scss"></style>
 
 <style lang="scss" scoped>
+.record-feature-detail__item--wide {
+  grid-column: 1 / -1;
+}
+
 .record-feature-table--compact {
   ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > .el-table__row.hover-row > td.el-table__cell,
   ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > .el-table__row:hover > td.el-table__cell {
