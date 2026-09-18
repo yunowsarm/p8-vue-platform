@@ -152,8 +152,7 @@
 
     <el-drawer title="线索详情" :visible.sync="detailVisible" size="540px" append-to-body>
       <div v-if="selectedRecord" v-loading="detailLoading" class="record-feature-detail">
-        <div class="record-feature-detail__hero">
-          <i class="el-icon-service"></i>
+        <div class="record-feature-detail__hero" style="margin-top: 20px">
           <div>
             <small>{{ selectedRecord.id }}</small>
             <h3>{{ selectedRecord.enterprise || '线索详情' }}</h3>
@@ -302,14 +301,60 @@
       </span>
     </el-dialog>
 
-    <el-drawer title="跟进记录详情" :visible.sync="followUpDetailVisible" direction="rtl" size="560px" append-to-body>
+    <el-drawer title="跟进记录详情" :visible.sync="followUpDetailVisible" direction="rtl" size="560px" append-to-body custom-class="lead-follow-up-detail-drawer">
       <div v-if="followUpDetail" v-loading="followUpDetailLoading" class="lead-follow-up-detail">
-        <div v-for="field in followUpDetailFields" :key="field.key" class="lead-follow-up-detail__item">
-          <small>{{ field.label }}</small>
-          <b>{{ followUpDetailValue(field.key) }}</b>
-        </div>
-        <div v-if="followUpDetailUploadFiles().length" class="lead-follow-up-detail__item lead-follow-up-detail__attachments">
-          <small>附件</small>
+        <header class="lead-follow-up-detail__hero">
+          <div>
+            <small>本次跟进</small>
+            <h3>{{ followUpDetailValue('followUpTime') }}</h3>
+          </div>
+          <div class="lead-follow-up-detail__tags">
+            <el-tag size="small" class="lead-status-tag" :class="leadStatusTagClass(followUpDetail.leadStatus)">{{ followUpDetailValue('leadStatus') }}</el-tag>
+            <el-tag size="small" class="lead-intent-tag">{{ followUpDetailValue('intentLevel') }}</el-tag>
+          </div>
+        </header>
+
+        <section class="lead-follow-up-detail__section lead-follow-up-detail__summary">
+          <h4>沟通纪要</h4>
+          <p>{{ followUpDetailValue('communicationSummary') }}</p>
+        </section>
+
+        <section class="lead-follow-up-detail__section">
+          <h4>跟进信息</h4>
+          <div class="lead-follow-up-detail__grid">
+            <div v-for="field in followUpDetailBasicFields" :key="field.key" class="lead-follow-up-detail__item">
+              <small>{{ field.label }}</small>
+              <b>{{ followUpDetailValue(field.key) }}</b>
+            </div>
+          </div>
+        </section>
+
+        <section v-if="hasFollowUpDetailValues(followUpDetailRequirementFields)" class="lead-follow-up-detail__section">
+          <h4>需求信息</h4>
+          <div class="lead-follow-up-detail__grid">
+            <div
+              v-for="field in followUpDetailRequirementFields"
+              :key="field.key"
+              class="lead-follow-up-detail__item"
+              :class="{ 'lead-follow-up-detail__item--empty': !hasFollowUpDetailValue(field.key) }">
+              <small>{{ field.label }}</small>
+              <b>{{ followUpDetailValue(field.key) }}</b>
+            </div>
+          </div>
+        </section>
+
+        <section v-if="hasFollowUpDetailValues(followUpDetailOtherFields)" class="lead-follow-up-detail__section">
+          <h4>其他信息</h4>
+          <div class="lead-follow-up-detail__grid">
+            <div v-for="field in followUpDetailOtherFields" :key="field.key" class="lead-follow-up-detail__item lead-follow-up-detail__item--wide">
+              <small>{{ field.label }}</small>
+              <b>{{ followUpDetailValue(field.key) }}</b>
+            </div>
+          </div>
+        </section>
+
+        <section v-if="followUpDetailUploadFiles().length" class="lead-follow-up-detail__section lead-follow-up-detail__attachments">
+          <h4>附件</h4>
           <div class="lead-follow-up-detail__file-list">
             <el-button
               v-for="(file, index) in followUpDetailUploadFiles()"
@@ -321,7 +366,7 @@
               {{ file.name || file.fileName || `附件${index + 1}` }}
             </el-button>
           </div>
-        </div>
+        </section>
       </div>
     </el-drawer>
   </main>
@@ -483,22 +528,26 @@ export default {
         leadStatus: [{ required: true, message: '请选择线索状态', trigger: 'change' }]
       }
     },
-    followUpDetailFields() {
+    followUpDetailBasicFields() {
       return [
         { key: 'followUpMethod', label: '跟进方式' },
-        { key: 'followUpTime', label: '此次跟进时间' },
         { key: 'contactPerson', label: '沟通对象' },
         { key: 'contactTitle', label: '沟通对象职务' },
-        { key: 'communicationSummary', label: '沟通纪要' },
-        { key: 'intentLevel', label: '意向度' },
-        { key: 'leadStatus', label: '线索状态' },
         { key: 'nextFollowUpTime', label: '下次跟进时间' },
-        { key: 'nextFollowUpTask', label: '下次跟进事项' },
+        { key: 'nextFollowUpTask', label: '下次跟进事项' }
+      ]
+    },
+    followUpDetailRequirementFields() {
+      return [
         { key: 'expectedArea', label: '意向面积（㎡）' },
         { key: 'preferredLocation', label: '意向区域/楼栋' },
         { key: 'budget', label: '预算/租金' },
         { key: 'expectedMoveInDate', label: '拟入驻时间' },
-        { key: 'industry', label: '行业类型' },
+        { key: 'industry', label: '行业类型' }
+      ]
+    },
+    followUpDetailOtherFields() {
+      return [
         { key: 'openIssues', label: '遗留问题' },
         { key: 'supportNeeded', label: '需支持事项' }
       ]
@@ -694,7 +743,9 @@ export default {
       return formatted === '-' ? '-' : formatted.slice(0, 10)
     },
     formatCompactDetailValue(value, key) {
-      return ['checkinTime', 'createTime'].includes(key) ? this.formatDateTime(value) : this.formatValue(value, key)
+      if (key === 'checkinTime') return this.formatDate(value)
+      if (key === 'createTime') return this.formatDateTime(value)
+      return this.formatValue(value, key)
     },
     emptyFollowUpForm() {
       return {
@@ -940,9 +991,17 @@ export default {
       if (key === 'intentLevel') return this.intentLevelLabel(this.followUpDetail[key])
       if (key === 'leadStatus') return this.leadStatusLabel(this.followUpDetail[key])
       if (key === 'nextFollowUpTime') return this.formatDateTime(this.followUpDetail[key])
-      if (key === 'expectedMoveInDate') return this.formatDateTime(this.followUpDetail[key])
+      if (key === 'expectedMoveInDate') return this.formatDate(this.followUpDetail[key])
       const value = this.followUpDetail[key]
       return value === undefined || value === null || value === '' ? '-' : value
+    },
+    hasFollowUpDetailValue(key) {
+      if (!this.followUpDetail) return false
+      const value = this.followUpDetail[key]
+      return value !== undefined && value !== null && value !== ''
+    },
+    hasFollowUpDetailValues(fields) {
+      return fields.some((field) => this.hasFollowUpDetailValue(field.key))
     },
     followUpDetailUploadFiles() {
       if (!this.followUpDetail) return []
@@ -1440,16 +1499,102 @@ export default {
 }
 
 .lead-follow-up-detail {
+  display: flex;
+  min-height: 100%;
+  padding: 20px;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+  background: #f6f8fb;
+}
+
+.lead-follow-up-detail__hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #e6edf4;
+  border-radius: 8px;
+  background: #fff;
+
+  small {
+    display: block;
+    margin-bottom: 6px;
+    color: #7d8998;
+    font-size: 12px;
+  }
+
+  h3 {
+    margin: 0;
+    color: #26364b;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+}
+
+.lead-follow-up-detail__tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.lead-intent-tag {
+  border: 0;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.lead-follow-up-detail__section {
+  padding: 16px;
+  border: 1px solid #e6edf4;
+  border-radius: 8px;
+  background: #fff;
+
+  h4 {
+    display: flex;
+    align-items: center;
+    margin: 0 0 12px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+
+    &::before {
+      width: 3px;
+      height: 14px;
+      margin-right: 8px;
+      border-radius: 2px;
+      background: #409eff;
+      content: '';
+    }
+  }
+}
+
+.lead-follow-up-detail__summary p {
+  margin: 0;
+  padding: 12px;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.lead-follow-up-detail__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 10px;
 }
 
 .lead-follow-up-detail__item {
   min-width: 0;
-  padding: 10px 12px;
+  padding: 11px 12px;
   border: 1px solid #edf1f6;
-  border-radius: 4px;
+  border-radius: 6px;
   background: #f8fafc;
 
   small,
@@ -1472,18 +1617,29 @@ export default {
   }
 }
 
-.lead-follow-up-detail__attachments {
+.lead-follow-up-detail__item--wide {
   grid-column: 1 / -1;
+}
+
+.lead-follow-up-detail__item--empty {
+  opacity: 0.58;
+}
+
+.lead-follow-up-detail__attachments {
+  padding-bottom: 12px;
 }
 
 .lead-follow-up-detail__file-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 12px;
+  gap: 8px;
 
   .el-button {
     max-width: 100%;
     margin: 0;
+    padding: 7px 10px;
+    border-radius: 4px;
+    background: #f0f7ff;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1504,8 +1660,21 @@ export default {
 
 @media (max-width: 760px) {
   .lead-follow-up-form,
-  .lead-follow-up-detail {
+  .lead-follow-up-detail__grid {
     grid-template-columns: 1fr;
+  }
+
+  .lead-follow-up-detail {
+    padding: 14px;
+  }
+
+  .lead-follow-up-detail__hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .lead-follow-up-detail__tags {
+    justify-content: flex-start;
   }
 
   .lead-follow-up-history {
@@ -1519,6 +1688,22 @@ export default {
 </style>
 
 <style lang="scss">
+.lead-follow-up-detail-drawer {
+  .el-drawer__header {
+    margin-bottom: 0;
+    padding: 18px 20px;
+    border-bottom: 1px solid #e6edf4;
+    color: #27384d;
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  .el-drawer__body {
+    overflow-y: auto;
+    background: #f6f8fb;
+  }
+}
+
 .intention-inquiry-page.record-feature-page {
   padding: 12px;
   background: #f3f5f7;
