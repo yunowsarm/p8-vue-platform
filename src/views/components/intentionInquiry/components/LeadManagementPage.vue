@@ -18,7 +18,7 @@
           <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
       </div>
-      <el-table v-if="compact && pagedRecords.length" ref="leadTable" :data="pagedRecords" stripe class="record-feature-table record-feature-table--compact" @row-click="openDetail">
+      <el-table v-if="compact && pagedRecords.length" ref="leadTable" :data="pagedRecords" stripe class="record-feature-table record-feature-table--compact" @row-click="toggleLeadFollowUpExpansion">
         <el-table-column v-if="followUpEnabled" type="expand" width="48">
           <template slot-scope="scope">
             <div class="lead-follow-up-history" @click.stop>
@@ -122,6 +122,7 @@
         <el-table-column v-if="allocationEnabled || allowConfirm || followUpEnabled" label="操作" :width="allocationEnabled ? 250 : followUpEnabled ? 180 : 120">
           <template slot-scope="scope">
             <div class="record-feature-table__actions">
+              <el-button type="text" size="mini" @click.stop="openDetail(scope.row)">查看</el-button>
               <el-button v-if="allocationEnabled" class="lead-allocation-action" type="text" size="mini" :loading="allocatingId === scope.row.id" @click.stop="openAllocation(scope.row)">
                 {{ isAllocated(scope.row) ? '重新分配' : '分配' }}
               </el-button>
@@ -776,6 +777,12 @@ export default {
         this._leadTableScrollFrame = null
         this.setLeadTableScrollLeft(this._leadTablePendingScrollLeft)
       })
+    },
+    toggleLeadFollowUpExpansion(row, column, event) {
+      if (!this.followUpEnabled) return
+      if (event && event.target && event.target.closest('.el-table__expand-icon')) return
+      const table = this.$refs.leadTable
+      if (table) table.toggleRowExpansion(row)
     },
     moveLeadTableScrollFromTrack(event) {
       const track = this.$refs.leadTableScrollbar
