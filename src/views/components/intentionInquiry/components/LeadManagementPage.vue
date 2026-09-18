@@ -88,7 +88,7 @@
           <template slot-scope="scope">{{ formatValue(scope.row.requiredArea, 'requiredArea') }}</template>
         </el-table-column>
         <el-table-column label="计划入住时间" width="170">
-          <template slot-scope="scope">{{ formatDateTime(scope.row.checkinTime) }}</template>
+          <template slot-scope="scope">{{ formatDate(scope.row.checkinTime) }}</template>
         </el-table-column>
         <el-table-column label="提交时间" width="170">
           <template slot-scope="scope">{{ formatDateTime(scope.row.createTime) }}</template>
@@ -720,6 +720,10 @@ export default {
       if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(formatted)) formatted += ':00'
       return formatted.slice(0, 19)
     },
+    formatDate(value) {
+      const formatted = this.formatDateTime(value)
+      return formatted === '-' ? '-' : formatted.slice(0, 10)
+    },
     formatCompactDetailValue(value, key) {
       return ['checkinTime', 'createTime'].includes(key) ? this.formatDateTime(value) : this.formatValue(value, key)
     },
@@ -1159,8 +1163,11 @@ export default {
         const allocationApi = this.api('allocation')
         const editApi = this.api('edit')
         if (!allocationApi || !editApi) return
-        const payload = { id: record.id, userId }
-        if (reassigning) payload.reason = this.allocationForm.reason.trim()
+        const payload = {
+          id: record.id,
+          userId,
+          reason: reassigning ? this.allocationForm.reason.trim() : ''
+        }
         this.allocatingId = record.id
         try {
           await allocationApi(payload)
