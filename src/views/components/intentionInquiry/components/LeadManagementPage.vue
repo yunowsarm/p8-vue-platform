@@ -191,8 +191,8 @@
         </article>
       </div>
       <el-empty v-else class="record-feature-empty" :description="`暂无${pageTitle}记录`" />
-      <div v-if="compact && leadTableScrollbarVisible" ref="leadTableScrollbar" class="lead-table-horizontal-scrollbar" @scroll="syncLeadTableScrollFromScrollbar">
-        <div class="lead-table-horizontal-scrollbar__content" :style="{ width: `${leadTableScrollWidth}px` }"></div>
+      <div v-if="compact && leadTableScrollbarVisible" ref="leadTableScrollbar" class="lead-table-horizontal-scrollbar" @mousedown="moveLeadTableScrollFromTrack">
+        <span class="lead-table-horizontal-scrollbar__thumb" :style="leadTableScrollbarThumbStyle" @mousedown.stop.prevent="startLeadTableScrollbarDrag"></span>
       </div>
       <div v-if="paginationTotal" class="record-feature-pagination">
         <span>共 {{ paginationTotal }} 条</span>
@@ -472,7 +472,9 @@ export default {
       followUpDetailLoading: false,
       followUpDetail: null,
       leadTableScrollbarVisible: false,
-      leadTableScrollWidth: 0
+      leadTableScrollWidth: 0,
+      leadTableViewportWidth: 0,
+      leadTableScrollLeft: 0
     }
   },
   watch: {
@@ -490,11 +492,26 @@ export default {
   beforeDestroy() {
     window.removeEventListener('resize', this.scheduleLeadTableScrollbar)
     if (this._leadTableBodyWrapper && this._leadTableScrollHandler) this._leadTableBodyWrapper.removeEventListener('scroll', this._leadTableScrollHandler)
+    if (this._leadTableScrollFrame != null) window.cancelAnimationFrame(this._leadTableScrollFrame)
+    this.stopLeadTableScrollbarDrag()
   },
   computed: {
     consultationDescription() {
       if (this.pageDescription) return this.pageDescription
       return this.mode === 'admin' ? '查看并回复用户提交的园区服务咨询。' : '提交园区服务问题，并随时查看专员回复。'
+    },
+    leadTableScrollbarThumbWidth() {
+      if (!this.leadTableViewportWidth || !this.leadTableScrollWidth) return 0
+      return Math.min(this.leadTableViewportWidth, Math.max(48, Math.round((this.leadTableViewportWidth * this.leadTableViewportWidth) / this.leadTableScrollWidth)))
+    },
+    leadTableScrollbarThumbStyle() {
+      const maxScroll = Math.max(0, this.leadTableScrollWidth - this.leadTableViewportWidth)
+      const maxTravel = Math.max(0, this.leadTableViewportWidth - this.leadTableScrollbarThumbWidth)
+      const left = maxScroll && maxTravel ? (this.leadTableScrollLeft / maxScroll) * maxTravel : 0
+      return {
+        width: `${this.leadTableScrollbarThumbWidth}px`,
+        transform: `translateX(${left}px)`
+      }
     },
     allocationRules() {
       return {
@@ -711,6 +728,75 @@ export default {
     }
   },
   methods: {
+    scheduleLeadTableScrollbar() {
+      this.$nextTick(() => this.bindLeadTableScrollbar())
+    },
+    bindLeadTableScrollbar() {
+      const table = this.$refs.leadTable
+      const bodyWrapper = table && table.$el && table.$el.querySelector('.el-table__body-wrapper')
+      if (!bodyWrapper) {
+        this.leadTableScrollbarVisible = false
+        return
+      }
+      if (this._leadTableBodyWrapper !== bodyWrapper) {
+        if (this._leadTableBodyWrapper && this._leadTableScrollHandler) this._leadTableBodyWrapper.removeEventListener('scroll', this._leadTableScrollHandler)
+        this._leadTableBodyWrapper = bodyWrapper
+        this._leadTableScrollHandler = this.syncLeadTableScrollFromTable
+        bodyWrapper.addEventListener('scroll', this._leadTableScrollHandler)
+      }
+      const bodyTable = bodyWrapper.querySelector('.el-table__body')
+      this.leadTableScrollWidth = Math.max(bodyWrapper.scrollWidth, bodyTable ? bodyTable.scrollWidth : 0)
+      this.leadTableViewportWidth = bodyWrapper.clientWidth
+      this.leadTableScrollLeft = bodyWrapper.scrollLeft
+      this.leadTableScrollbarVisible = this.leadTableScrollWidth > this.leadTableViewportWidth
+    },
+    syncLeadTableScrollFromTable() {
+      if (this._leadTableBodyWrapper) this.leadTableScrollLeft = this._leadTableBodyWrapper.scrollLeft
+    },
+    setLeadTableScrollLeft(value) {
+      const maxScroll = Math.max(0, this.leadTableScrollWidth - this.leadTableViewportWidth)
+      const scrollLeft = Math.max(0, Math.min(maxScroll, value))
+      if (this._leadTableBodyWrapper) this._leadTableBodyWrapper.scrollLeft = scrollLeft
+      this.leadTableScrollLeft = scrollLeft
+    },
+    queueLeadTableScrollLeft(value) {
+      this._leadTablePendingScrollLeft = value
+      if (this._leadTableScrollFrame != null) return
+      this._leadTableScrollFrame = window.requestAnimationFrame(() => {
+        this._leadTableScrollFrame = null
+        this.setLeadTableScrollLeft(this._leadTablePendingScrollLeft)
+      })
+    },
+    moveLeadTableScrollFromTrack(event) {
+      const track = this.$refs.leadTableScrollbar
+      if (!track) return
+      const maxScroll = Math.max(0, this.leadTableScrollWidth - this.leadTableViewportWidth)
+      const maxTravel = Math.max(0, this.leadTableViewportWidth - this.leadTableScrollbarThumbWidth)
+      if (!maxScroll || !maxTravel) return
+      const rect = track.getBoundingClientRect()
+      const thumbLeft = Math.max(0, Math.min(maxTravel, event.clientX - rect.left - this.leadTableScrollbarThumbWidth / 2))
+      this.queueLeadTableScrollLeft((thumbLeft / maxTravel) * maxScroll)
+    },
+    startLeadTableScrollbarDrag(event) {
+      this._leadTableScrollbarDrag = { startX: event.clientX, startScrollLeft: this.leadTableScrollLeft }
+      this._leadTableScrollbarDragMoveHandler = this._leadTableScrollbarDragMoveHandler || this.moveLeadTableScrollbarDrag
+      this._leadTableScrollbarDragEndHandler = this._leadTableScrollbarDragEndHandler || this.stopLeadTableScrollbarDrag
+      document.addEventListener('mousemove', this._leadTableScrollbarDragMoveHandler)
+      document.addEventListener('mouseup', this._leadTableScrollbarDragEndHandler)
+    },
+    moveLeadTableScrollbarDrag(event) {
+      if (!this._leadTableScrollbarDrag) return
+      const maxScroll = Math.max(0, this.leadTableScrollWidth - this.leadTableViewportWidth)
+      const maxTravel = Math.max(0, this.leadTableViewportWidth - this.leadTableScrollbarThumbWidth)
+      if (!maxScroll || !maxTravel) return
+      const delta = event.clientX - this._leadTableScrollbarDrag.startX
+      this.queueLeadTableScrollLeft(this._leadTableScrollbarDrag.startScrollLeft + (delta / maxTravel) * maxScroll)
+    },
+    stopLeadTableScrollbarDrag() {
+      this._leadTableScrollbarDrag = null
+      if (this._leadTableScrollbarDragMoveHandler) document.removeEventListener('mousemove', this._leadTableScrollbarDragMoveHandler)
+      if (this._leadTableScrollbarDragEndHandler) document.removeEventListener('mouseup', this._leadTableScrollbarDragEndHandler)
+    },
     formatDateTime(value) {
       if (!value) return '-'
       const raw = String(value)
@@ -1701,6 +1787,52 @@ export default {
 
 .intention-inquiry-page .record-feature-table--compact .el-table__row {
   cursor: pointer;
+}
+
+.intention-inquiry-page .record-feature-table--compact .el-table__body-wrapper {
+  overflow-x: hidden !important;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.intention-inquiry-page .record-feature-table--compact .el-table__body-wrapper::-webkit-scrollbar {
+  height: 0;
+}
+
+.lead-table-horizontal-scrollbar {
+  position: sticky;
+  bottom: 42px;
+  z-index: 6;
+  flex: 0 0 8px;
+  align-self: stretch;
+  height: 8px;
+  margin-top: auto;
+  border-radius: 8px;
+  background: #f4f6f8;
+  box-shadow: 0 -2px 8px rgba(36, 52, 71, 0.08);
+  cursor: pointer;
+}
+
+.lead-table-horizontal-scrollbar__thumb {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #aeb6c2;
+  cursor: pointer;
+  transition: background-color 0.16s ease;
+
+  &:hover {
+    background: #8f9aa9;
+  }
+
+  &:active {
+    cursor: grabbing;
+    background: #778496;
+  }
+}
+
+.lead-table-horizontal-scrollbar + .record-feature-pagination {
+  margin-top: 0;
 }
 
 .intention-inquiry-page .record-feature-pagination {
