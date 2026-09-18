@@ -18,7 +18,7 @@
           <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
       </div>
-      <el-table v-if="compact && pagedRecords.length" :data="pagedRecords" stripe class="record-feature-table record-feature-table--compact" @row-click="openDetail">
+      <el-table v-if="compact && pagedRecords.length" ref="leadTable" :data="pagedRecords" stripe class="record-feature-table record-feature-table--compact" @row-click="openDetail">
         <el-table-column v-if="followUpEnabled" type="expand" width="48">
           <template slot-scope="scope">
             <div class="lead-follow-up-history" @click.stop>
@@ -31,7 +31,7 @@
                 <span v-if="followUpRecords(scope.row).length">提交后记录不可修改</span>
               </div> -->
               <el-empty v-if="!followUpRecords(scope.row).length" description="暂无跟进记录" :image-size="44" />
-              <el-table v-else :data="followUpRecords(scope.row)" size="mini" class="lead-follow-up-history__table">
+              <el-table v-else :data="followUpRecords(scope.row)" size="mini" class="lead-follow-up-history__table" @row-click="openFollowUpDetail">
                 <el-table-column label="线索状态" min-width="140">
                   <template slot-scope="recordScope">
                     <el-tag size="mini" class="lead-status-tag" :class="leadStatusTagClass(recordScope.row.leadStatus)">
@@ -122,14 +122,18 @@
         <el-table-column v-if="allocationEnabled || allowConfirm || followUpEnabled" label="操作" :width="allocationEnabled ? 250 : followUpEnabled ? 180 : 120">
           <template slot-scope="scope">
             <div class="record-feature-table__actions">
-              <el-button v-if="allocationEnabled" type="text" size="mini" :loading="allocatingId === scope.row.id" @click.stop="openAllocation(scope.row)">
+              <el-button v-if="allocationEnabled" class="lead-allocation-action" type="text" size="mini" :loading="allocatingId === scope.row.id" @click.stop="openAllocation(scope.row)">
                 {{ isAllocated(scope.row) ? '重新分配' : '分配' }}
               </el-button>
               <el-button v-if="allocationEnabled" type="text" size="mini" @click.stop="openAllocationHistory(scope.row)">分配历史</el-button>
               <el-button v-else type="text" size="mini" :loading="confirmingId === scope.row.id" :disabled="isConfirmed(scope.row)" @click.stop="confirmRecord(scope.row)">
                 {{ isConfirmed(scope.row) ? '已确认' : '标记为确认' }}
               </el-button>
-              <el-button v-if="followUpEnabled" type="text" size="mini" @click.stop="openFollowUp(scope.row)">跟进</el-button>
+              <el-tooltip v-if="followUpEnabled" :disabled="isAllocated(scope.row)" content="请先分配负责人" placement="top">
+                <span :class="{ 'lead-follow-up-action--after-allocation': allocationEnabled }">
+                  <el-button type="text" size="mini" :disabled="!isAllocated(scope.row)" @click.stop="openFollowUp(scope.row)">跟进</el-button>
+                </span>
+              </el-tooltip>
               <el-button v-if="!readOnly && canEditRecord(scope.row)" type="text" size="mini" @click.stop="openEdit(scope.row)">{{ resource.editActionLabel }}</el-button>
               <el-button v-if="!readOnly && canDeleteRecord(scope.row)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(scope.row)">删除</el-button>
             </div>
@@ -187,6 +191,9 @@
         </article>
       </div>
       <el-empty v-else class="record-feature-empty" :description="`暂无${pageTitle}记录`" />
+      <div v-if="compact && leadTableScrollbarVisible" ref="leadTableScrollbar" class="lead-table-horizontal-scrollbar" @scroll="syncLeadTableScrollFromScrollbar">
+        <div class="lead-table-horizontal-scrollbar__content" :style="{ width: `${leadTableScrollWidth}px` }"></div>
+      </div>
       <div v-if="paginationTotal" class="record-feature-pagination">
         <span>共 {{ paginationTotal }} 条</span>
         <el-pagination background :current-page.sync="currentPage" :page-size="pageSize" :total="paginationTotal" layout="prev, pager, next" @current-change="loadRecords" />
@@ -395,6 +402,20 @@
           <small>{{ field.label }}</small>
           <b>{{ followUpDetailValue(field.key) }}</b>
         </div>
+        <div v-if="followUpDetailUploadFiles().length" class="lead-follow-up-detail__item lead-follow-up-detail__attachments">
+          <small>附件</small>
+          <div class="lead-follow-up-detail__file-list">
+            <el-button
+              v-for="(file, index) in followUpDetailUploadFiles()"
+              :key="`${file.id || file.filePath || file.name}-${index}`"
+              type="text"
+              size="small"
+              icon="el-icon-download"
+              @click="downloadFollowUpAttachment(file)">
+              {{ file.name || file.fileName || `附件${index + 1}` }}
+            </el-button>
+          </div>
+        </div>
       </div>
     </el-drawer>
   </main>
@@ -449,8 +470,26 @@ export default {
       followUpForm: this.emptyFollowUpForm(),
       followUpDetailVisible: false,
       followUpDetailLoading: false,
-      followUpDetail: null
+      followUpDetail: null,
+      leadTableScrollbarVisible: false,
+      leadTableScrollWidth: 0
     }
+  },
+  watch: {
+    records() {
+      this.scheduleLeadTableScrollbar()
+    },
+    currentPage() {
+      this.scheduleLeadTableScrollbar()
+    }
+  },
+  mounted() {
+    this.$nextTick(this.scheduleLeadTableScrollbar)
+    window.addEventListener('resize', this.scheduleLeadTableScrollbar)
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.scheduleLeadTableScrollbar)
+    if (this._leadTableBodyWrapper && this._leadTableScrollHandler) this._leadTableBodyWrapper.removeEventListener('scroll', this._leadTableScrollHandler)
   },
   computed: {
     consultationDescription() {
@@ -836,6 +875,24 @@ export default {
       const number = Number(value)
       return Number.isNaN(number) ? undefined : number
     },
+    followUpUploadFiles() {
+      return (this.followUpForm.attachmentFiles || [])
+        .map((file) => {
+          const fileName = file.fileName || file.name || ''
+          const filePath = file.filePath || file.url || file.fileUrl || ''
+          const id = file.id || file.attachmentId || file.fileId
+          if (!id && !filePath) return null
+          return {
+            name: file.name || fileName,
+            fileName,
+            filePath,
+            fileType: file.fileType || (file.raw && file.raw.type) || '',
+            url: file.url || file.fileUrl || filePath,
+            id
+          }
+        })
+        .filter(Boolean)
+    },
     followUpPayload() {
       const form = this.followUpForm
       const payload = {
@@ -855,7 +912,7 @@ export default {
         budget: this.optionalNumber(form.budget),
         expectedMoveInDate: form.expectedMoveInDate ? this.formatDateTime(form.expectedMoveInDate) : undefined,
         industry: form.industry || undefined,
-        attachmentIds: form.attachmentFiles.map((file) => file.attachmentId || file.id || file.fileId).filter(Boolean),
+        uploadFiles: this.followUpUploadFiles(),
         openIssues: form.openIssues || undefined,
         supportNeeded: form.supportNeeded || undefined
       }
@@ -888,10 +945,11 @@ export default {
       })
     },
     async openFollowUpDetail(record) {
+      if (!record || !record.id) return
       this.followUpDetail = record
       this.followUpDetailVisible = true
       const detailApi = this.api('queryRecordById')
-      if (!detailApi || !record || !record.id) return
+      if (!detailApi) return
       this.followUpDetailLoading = true
       try {
         const detail = this.unwrap(await detailApi({ id: record.id }))
@@ -912,6 +970,56 @@ export default {
       if (key === 'expectedMoveInDate') return this.formatDateTime(this.followUpDetail[key])
       const value = this.followUpDetail[key]
       return value === undefined || value === null || value === '' ? '-' : value
+    },
+    followUpDetailUploadFiles() {
+      if (!this.followUpDetail) return []
+      let files = this.followUpDetail.uploadFiles || this.followUpDetail.attachmentFiles || []
+      if (typeof files === 'string') {
+        try {
+          files = JSON.parse(files)
+        } catch (error) {
+          files = []
+        }
+      }
+      if (!Array.isArray(files)) files = files ? [files] : []
+      return files.filter(Boolean).map((file, index) => {
+        if (typeof file === 'string') return { name: `附件${index + 1}`, filePath: file, url: file }
+        const filePath = file.filePath || file.fileUrl || file.url || ''
+        return Object.assign({}, file, {
+          id: file.id || file.attachmentId || file.fileId,
+          name: file.name || file.fileName || file.originalName || filePath.split(/[\\/]/).pop() || `附件${index + 1}`,
+          filePath,
+          url: file.url || file.fileUrl || filePath
+        })
+      })
+    },
+    async downloadFollowUpAttachment(file) {
+      const attachmentId = file && (file.id || file.attachmentId || file.fileId)
+      if (!attachmentId) {
+        this.$message.warning('该附件缺少附件 ID，暂时无法下载')
+        return
+      }
+      const downloadApi = this.$api && this.$api['attachment.download']
+      if (!downloadApi) {
+        this.$message.error('未找到附件下载接口')
+        return
+      }
+      try {
+        const response = await downloadApi({ attachmentId }, { responseType: 'blob' })
+        const responseData = response && response.data !== undefined ? response.data : response
+        const blob = responseData instanceof Blob ? responseData : new Blob([responseData], { type: file.fileType || 'application/octet-stream' })
+        const objectUrl = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = objectUrl
+        link.download = file.fileName || file.name || '附件'
+        link.style.display = 'none'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(objectUrl)
+      } catch (error) {
+        this.$message.error('附件下载失败，请稍后重试')
+      }
     },
     isConfirmed(record) {
       return String(record && record.status) === String(this.confirmStatus) || ['已确认', '确认'].includes(record && record.status)
@@ -1213,6 +1321,10 @@ export default {
   border: 1px solid #e4ebf3;
   border-radius: 4px;
 
+  ::v-deep .el-table__body tr {
+    cursor: pointer;
+  }
+
   ::v-deep .el-table__body td.el-table__cell,
   ::v-deep .el-table__body tr.hover-row > td.el-table__cell,
   ::v-deep .el-table__body tr:hover > td.el-table__cell {
@@ -1458,6 +1570,36 @@ export default {
     line-height: 1.5;
     word-break: break-word;
   }
+}
+
+.lead-follow-up-detail__attachments {
+  grid-column: 1 / -1;
+}
+
+.lead-follow-up-detail__file-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+
+  .el-button {
+    max-width: 100%;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.lead-allocation-action {
+  width: 48px;
+  padding-right: 0;
+  padding-left: 0;
+  white-space: nowrap;
+}
+
+.lead-follow-up-action--after-allocation {
+  display: inline-block;
+  margin-left: 8px;
 }
 
 @media (max-width: 760px) {
