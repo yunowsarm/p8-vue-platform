@@ -1,11 +1,9 @@
 <!-- 线索管理业务组件：独立维护分配、跟进及历史记录，避免侵入公共在线咨询组件。 -->
 <template>
   <main class="record-feature-page record-feature-page--compact">
-    <header v-if="canCreate" class="record-feature-hero record-feature-hero--compact">
-      <el-button type="primary" icon="el-icon-plus" @click="openCreate">新建线索</el-button>
-    </header>
     <section ref="leadSurface" v-loading="loading" class="record-feature-surface">
       <div ref="leadToolbar" class="record-feature-toolbar">
+        <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新建线索</el-button>
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索企业、联系人或联系电话" @input="resetPage" @clear="resetPage" />
       </div>
       <el-table
@@ -73,7 +71,7 @@
             <el-tag size="mini" effect="plain" class="lead-summary-tag" :class="channelSourceTagClass(scope.row)">{{ channelSourceLabel(scope.row) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="所属行业" min-width="110" show-overflow-tooltip>
+        <!-- <el-table-column label="所属行业" min-width="110" show-overflow-tooltip>
           <template slot-scope="scope">{{ formatValue(scope.row.industry, 'industry') }}</template>
         </el-table-column>
         <el-table-column label="团队规模" min-width="110" show-overflow-tooltip>
@@ -90,7 +88,7 @@
         </el-table-column>
         <el-table-column label="提交时间" width="170">
           <template slot-scope="scope">{{ formatDateTime(scope.row.createTime) }}</template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="跟踪次数" min-width="100" align="center">
           <template slot-scope="scope">
             <el-tag size="mini" type="info" effect="plain" :class="{ 'lead-empty-tag': !followUpRecords(scope.row).length }">{{ followUpRecords(scope.row).length }} 次</el-tag>
@@ -1801,30 +1799,13 @@ export default {
   background: #f3f5f7;
 }
 
-.intention-inquiry-page .record-feature-hero--compact {
-  min-height: 42px;
-  padding: 0 10px;
-  margin: 0;
-  border: 0;
-  border-radius: 4px 4px 0 0;
-  box-shadow: none;
-  background: #fff;
-}
-
-.intention-inquiry-page .record-feature-hero--compact .el-button--primary {
-  padding: 8px 15px;
-  border-color: #2399ce;
-  border-radius: 3px;
-  background: #2399ce;
-}
-
 .intention-inquiry-page .record-feature-surface {
-  height: calc(100vh - 148px);
+  height: calc(100vh - 106px);
   min-height: 600px;
   padding: 8px 10px 0;
   overflow: auto;
   border: 0;
-  border-radius: 0 0 4px 4px;
+  border-radius: 4px;
   box-shadow: none;
 }
 
@@ -1834,13 +1815,21 @@ export default {
 }
 
 .intention-inquiry-page .record-feature-toolbar {
-  justify-content: flex-end;
+  display: flex;
+  justify-content: space-between;
   min-height: 32px;
   margin-bottom: 6px;
 }
 
+.lead-table-toolbar__actions {
+  flex: 0 0 auto;
+}
+
 .intention-inquiry-page .record-feature-toolbar > .el-input {
-  width: min(360px, 100%);
+  flex: 0 1 360px;
+  width: 360px;
+  max-width: 100%;
+  margin-left: auto;
 }
 
 .intention-inquiry-page .record-feature-table--compact {
