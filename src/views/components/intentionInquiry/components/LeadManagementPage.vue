@@ -210,6 +210,7 @@
             <template slot-scope="scope">
               <span>{{ allocationHistoryAssignee(scope.row) }}</span>
               <el-tag v-if="isFirstAllocation(allocationHistoryGlobalIndex(scope.$index))" class="lead-allocation-history__first-tag" size="mini" type="success">首次分配</el-tag>
+              <el-tag v-if="isLatestAllocation(allocationHistoryGlobalIndex(scope.$index))" class="lead-allocation-history__latest-tag" size="mini" type="primary">最新</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="重新分配理由" min-width="180" show-overflow-tooltip>
@@ -610,7 +611,7 @@ export default {
             { value: 5, label: '1,000㎡以上' }
           ]
         },
-        { key: 'checkinTime', label: '计划入住时间', type: 'datetime', required: true },
+        { key: 'checkinTime', label: '计划入住时间', type: 'date', required: true },
         { key: 'sourceType', label: '渠道来源', required: true, options: this.selectableChannelSourceOptions },
         { key: 'channelSource', label: '具体来源', required: true, showWhen: { sourceType: 'OTHER' }, maxlength: 100 },
         { key: 'other', label: '其他需求', type: 'textarea', rows: 3, wide: true }
@@ -648,6 +649,7 @@ export default {
               form.channelSource = ''
             }
           }
+          if (form.checkinTime) form.checkinTime = this.formatDate(form.checkinTime)
           return form
         },
         payloadTransform: (payload) => {
@@ -666,7 +668,9 @@ export default {
             'status'
           ]
           return mainTableFields.reduce((result, key) => {
-            if (payload[key] !== undefined && payload[key] !== '') result[key] = payload[key]
+            if (payload[key] !== undefined && payload[key] !== '') {
+              result[key] = key === 'checkinTime' ? `${this.formatDate(payload[key])} 00:00:00` : payload[key]
+            }
             return result
           }, {})
         },
@@ -1212,6 +1216,22 @@ export default {
       })
       return index === (hasValidTime ? firstIndex : 0)
     },
+    isLatestAllocation(index) {
+      if (!this.allocationHistory.length) return false
+      let latestIndex = this.allocationHistory.length - 1
+      let latestTime = -Infinity
+      let hasValidTime = false
+      this.allocationHistory.forEach((record, recordIndex) => {
+        const rawTime = record.allocationTime || record.createTime || record.createdTime || record.updateTime
+        const timestamp = rawTime ? Date.parse(String(rawTime).replace(' ', 'T')) : NaN
+        if (!Number.isNaN(timestamp) && timestamp > latestTime) {
+          latestTime = timestamp
+          latestIndex = recordIndex
+          hasValidTime = true
+        }
+      })
+      return index === (hasValidTime ? latestIndex : this.allocationHistory.length - 1)
+    },
     submitAllocation() {
       const record = this.allocationRecord
       if (!record || this.allocatingId) return
@@ -1525,7 +1545,8 @@ export default {
   margin-top: 14px;
 }
 
-.lead-allocation-history__first-tag {
+.lead-allocation-history__first-tag,
+.lead-allocation-history__latest-tag {
   margin-left: 8px;
   vertical-align: middle;
 }
