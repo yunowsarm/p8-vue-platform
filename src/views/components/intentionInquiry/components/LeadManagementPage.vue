@@ -4,11 +4,19 @@
     <header v-if="canCreate" class="record-feature-hero record-feature-hero--compact">
       <el-button type="primary" icon="el-icon-plus" @click="openCreate">新建线索</el-button>
     </header>
-    <section v-loading="loading" class="record-feature-surface">
-      <div class="record-feature-toolbar">
+    <section ref="leadSurface" v-loading="loading" class="record-feature-surface">
+      <div ref="leadToolbar" class="record-feature-toolbar">
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索企业、联系人或联系电话" @input="resetPage" @clear="resetPage" />
       </div>
-      <el-table v-if="pagedRecords.length" ref="leadTable" :data="pagedRecords" stripe class="record-feature-table record-feature-table--compact" @row-click="toggleLeadFollowUpExpansion">
+      <el-table
+        v-if="pagedRecords.length"
+        ref="leadTable"
+        :data="pagedRecords"
+        :height="leadTableHeight || null"
+        :style="{ '--lead-table-row-height': `${leadTableRowHeight}px` }"
+        stripe
+        class="record-feature-table record-feature-table--compact"
+        @row-click="toggleLeadFollowUpExpansion">
         <el-table-column type="expand" width="48">
           <template slot-scope="scope">
             <div class="lead-follow-up-history" @click.stop>
@@ -98,12 +106,12 @@
             <el-tag size="mini" effect="plain" class="lead-status-tag" :class="trackingProgressTagClass(scope.row)">{{ trackingProgressLabel(scope.row) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="isAdmin" label="分配状态" width="110">
+        <el-table-column label="分配状态" width="110">
           <template slot-scope="scope">
             <el-tag :type="isAllocated(scope.row) ? 'success' : 'warning'" size="mini">{{ isAllocated(scope.row) ? '已分配' : '待分配' }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="isAdmin" prop="responsiblePersonName" label="分配人" min-width="120" show-overflow-tooltip />
+        <el-table-column prop="responsiblePersonName" label="分配人" min-width="120" show-overflow-tooltip />
         <el-table-column label="操作" :width="isAdmin ? 250 : 160">
           <template slot-scope="scope">
             <div class="record-feature-table__actions">
@@ -114,7 +122,7 @@
               </el-button>
               <el-button v-if="isAdmin" type="text" size="mini" @click.stop="openAllocationHistory(scope.row)">分配历史</el-button>
               <el-tooltip :disabled="isAllocated(scope.row)" content="请先分配负责人" placement="top">
-                <span :class="{ 'lead-follow-up-action--after-allocation': isAdmin }">
+                <span class="lead-follow-up-action">
                   <el-button type="text" size="mini" :disabled="!isAllocated(scope.row)" @click.stop="openFollowUp(scope.row)">跟进</el-button>
                 </span>
               </el-tooltip>
@@ -123,7 +131,7 @@
         </el-table-column>
       </el-table>
       <el-empty v-else class="record-feature-empty" description="暂无线索记录" />
-      <footer v-if="paginationTotal" class="lead-table-footer">
+      <footer v-if="paginationTotal" ref="leadTableFooter" class="lead-table-footer">
         <div v-if="leadTableScrollbarVisible" ref="leadTableScrollbar" class="lead-table-horizontal-scrollbar" @mousedown="moveLeadTableScrollFromTrack">
           <span class="lead-table-horizontal-scrollbar__thumb" :style="leadTableScrollbarThumbStyle" @mousedown.stop.prevent="startLeadTableScrollbarDrag"></span>
         </div>
@@ -415,7 +423,9 @@ export default {
       leadTableScrollWidth: 0,
       leadTableViewportWidth: 0,
       leadTableScrollbarTrackWidth: 0,
-      leadTableScrollLeft: 0
+      leadTableScrollLeft: 0,
+      leadTableHeight: 0,
+      leadTableRowHeight: 40
     }
   },
   watch: {
@@ -619,6 +629,7 @@ export default {
       return {
         title: '线索管理',
         itemName: '线索',
+        pageSize: 10,
         createSuccessMessage: '线索创建成功',
         icon: 'el-icon-service',
         idPrefix: 'LEAD',
@@ -679,12 +690,30 @@ export default {
       }
     },
     permissions() {
-      return { create: this.isAdmin, edit: this.isAdmin, delete: false, changeStatus: false }
+      return { create: true, edit: true, delete: false, changeStatus: false }
     }
   },
   methods: {
     scheduleLeadTableScrollbar() {
-      this.$nextTick(() => this.bindLeadTableScrollbar())
+      this.$nextTick(() => {
+        this.updateLeadTableLayout()
+        this.$nextTick(() => this.bindLeadTableScrollbar())
+      })
+    },
+    updateLeadTableLayout() {
+      const surface = this.$refs.leadSurface
+      const toolbar = this.$refs.leadToolbar
+      const footer = this.$refs.leadTableFooter
+      if (!surface || !toolbar || !footer) return
+
+      const surfaceStyle = window.getComputedStyle(surface)
+      const verticalPadding = Number.parseFloat(surfaceStyle.paddingTop) + Number.parseFloat(surfaceStyle.paddingBottom)
+      const toolbarMargin = Number.parseFloat(window.getComputedStyle(toolbar).marginBottom)
+      const availableHeight = surface.clientHeight - verticalPadding - toolbar.offsetHeight - toolbarMargin - footer.offsetHeight
+      const headerHeight = 48
+
+      this.leadTableHeight = Math.max(headerHeight + this.pageSize * 40, Math.floor(availableHeight))
+      this.leadTableRowHeight = Math.max(40, Math.floor((this.leadTableHeight - headerHeight) / this.pageSize))
     },
     bindLeadTableScrollbar() {
       const table = this.$refs.leadTable
@@ -1716,7 +1745,7 @@ export default {
   white-space: nowrap;
 }
 
-.lead-follow-up-action--after-allocation {
+.lead-follow-up-action {
   display: inline-block;
   margin-left: 8px;
 }
@@ -1831,8 +1860,8 @@ export default {
   background: #f4f8f9;
 }
 
-.intention-inquiry-page .record-feature-table--compact td {
-  height: 48px;
+.intention-inquiry-page .record-feature-table--compact .el-table__body > tbody > .el-table__row > td {
+  height: var(--lead-table-row-height, 40px);
 }
 
 .intention-inquiry-page .record-feature-table--compact .el-table__row {
