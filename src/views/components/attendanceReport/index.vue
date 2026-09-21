@@ -1,19 +1,11 @@
 <template>
   <section class="attendance-report">
-    <header class="page-header">
-      <div>
-        <h2>考勤报表</h2>
-        <p>查看成员打卡明细、排班时间及异常情况</p>
-      </div>
-      <el-button icon="el-icon-download" :disabled="!filteredRecords.length" @click="handleExport">导出当前数据</el-button>
-    </header>
-
     <el-card class="filter-card" shadow="never">
       <el-form :inline="true" :model="filters" class="filter-form" @submit.native.prevent>
         <el-form-item label="日期范围">
           <el-date-picker v-model="filters.dateRange" type="daterange" value-format="yyyy-MM-dd" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="false" />
         </el-form-item>
-        <el-form-item label="成员">
+        <el-form-item label="表内搜索">
           <el-input v-model.trim="filters.keyword" clearable placeholder="姓名或 UserID" @keyup.enter.native="handleSearch" />
         </el-form-item>
         <el-form-item label="考勤状态">
@@ -26,34 +18,10 @@
           <el-button @click="handleReset">重置</el-button>
         </el-form-item>
       </el-form>
-      <p v-if="!apiConfigured" class="api-hint">
-        <i class="el-icon-info" />
-        当前为页面预览数据；后端接口路径尚未配置，接入时只需填写本文件中的
-        <code>ATTENDANCE_REPORT_API</code>
-        。
-      </p>
     </el-card>
 
-    <div class="summary-grid" aria-label="考勤汇总">
-      <div v-for="item in summaryCards" :key="item.key" class="summary-card" :class="item.key">
-        <span class="summary-label">{{ item.label }}</span>
-        <strong>{{ item.value }}</strong>
-        <span class="summary-unit">条</span>
-      </div>
-    </div>
-
     <el-card class="table-card" shadow="never">
-      <div slot="header" class="table-heading">
-        <div>
-          <span class="table-title">打卡明细</span>
-          <span class="table-count">共 {{ filteredRecords.length }} 条</span>
-        </div>
-        <el-tooltip content="数据字段兼容企业微信 checkindata 返回结构" placement="top">
-          <i class="el-icon-question help-icon" aria-label="字段说明" />
-        </el-tooltip>
-      </div>
-
-      <el-table v-loading="loading" :data="pagedRecords" border stripe row-key="record_id" empty-text="暂无符合条件的打卡记录" :default-sort="{ prop: 'checkin_time', order: 'descending' }">
+      <el-table v-loading="loading" :data="pagedRecords" border stripe row-key="record_id" empty-text="暂无符合条件的月度考勤数据">
         <el-table-column label="成员" min-width="160">
           <template slot-scope="scope">
             <div class="member-cell">
@@ -62,48 +30,103 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="groupname" label="考勤组" min-width="130" show-overflow-tooltip />
-        <el-table-column prop="checkin_type" label="打卡类型" width="100">
-          <template slot-scope="scope">{{ checkinTypeText(scope.row.checkin_type) }}</template>
-        </el-table-column>
-        <el-table-column prop="checkin_time" label="实际打卡时间" min-width="165" sortable>
-          <template slot-scope="scope">{{ formatTime(scope.row.checkin_time) }}</template>
-        </el-table-column>
-        <el-table-column prop="sch_checkin_time" label="应打卡时间" min-width="165">
-          <template slot-scope="scope">{{ formatTime(scope.row.sch_checkin_time) }}</template>
-        </el-table-column>
-        <el-table-column prop="exception_type" label="考勤结果" width="105">
+        <el-table-column prop="departments" label="部门" min-width="230" show-overflow-tooltip />
+        <el-table-column prop="groupname" label="考勤组" min-width="150" show-overflow-tooltip />
+        <el-table-column label="正常 / 应出勤" width="125" align="center">
           <template slot-scope="scope">
-            <el-tag size="mini" :type="exceptionTagType(scope.row.exception_type)">{{ exceptionText(scope.row.exception_type) }}</el-tag>
+            <span class="attendance-days">
+              <strong>{{ scope.row.regular_days }}</strong>
+              / {{ scope.row.work_days }} 天
+            </span>
           </template>
         </el-table-column>
-        <el-table-column label="打卡地点" min-width="220" show-overflow-tooltip>
+        <el-table-column prop="except_days" label="异常天数" width="90" align="center">
           <template slot-scope="scope">
-            <span>{{ locationText(scope.row) }}</span>
+            <el-tag size="mini" :type="scope.row.except_days ? 'warning' : 'success'">{{ scope.row.except_days }} 天</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="备注" min-width="150" show-overflow-tooltip>
-          <template slot-scope="scope">{{ scope.row.notes || '—' }}</template>
-        </el-table-column>
-        <el-table-column type="expand" width="52">
+        <el-table-column label="实际 / 标准工时" min-width="180" align="center">
           <template slot-scope="scope">
-            <div class="record-detail">
-              <span>
-                <b>考勤组 ID：</b>
-                {{ scope.row.groupid || '—' }}
-              </span>
-              <span>
-                <b>排班 ID：</b>
-                {{ scope.row.schedule_id || '—' }}
-              </span>
-              <span>
-                <b>Wi-Fi：</b>
-                {{ scope.row.wifiname || '—' }}
-              </span>
-              <span>
-                <b>媒体附件：</b>
-                {{ mediaCount(scope.row) }} 个
-              </span>
+            <div class="work-hours">
+              <span>{{ formatDuration(scope.row.regular_work_sec) }} / {{ formatDuration(scope.row.standard_work_sec) }}</span>
+              <small :class="workHourDifference(scope.row).type">{{ workHourDifference(scope.row).text }}</small>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="异常情况" min-width="210">
+          <template slot-scope="scope">
+            <span v-if="!scope.row.exception_infos.length" class="empty-value">无异常</span>
+            <el-tag v-for="item in scope.row.exception_infos" v-else :key="item.exception" size="mini" type="warning" class="exception-tag">
+              {{ exceptionText(item.exception) }} {{ item.count }} 次
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="假勤 / 补卡" min-width="180" show-overflow-tooltip>
+          <template slot-scope="scope">{{ specialItemText(scope.row.sp_items) }}</template>
+        </el-table-column>
+        <el-table-column type="expand" label="明细" width="72">
+          <template slot-scope="scope">
+            <div class="attendance-detail">
+              <div class="attendance-equation">
+                <span>
+                  应出勤
+                  <strong>{{ scope.row.work_days }}</strong>
+                  天
+                </span>
+                <i>=</i>
+                <span>
+                  正常出勤
+                  <strong>{{ scope.row.regular_days }}</strong>
+                  天
+                </span>
+                <i>+</i>
+                <span>
+                  异常
+                  <strong class="warning-text">{{ scope.row.except_days }}</strong>
+                  天
+                </span>
+                <span class="rest-days">
+                  休息日
+                  <strong>{{ scope.row.rest_days }}</strong>
+                  天
+                </span>
+              </div>
+
+              <div class="detail-columns">
+                <section class="detail-section">
+                  <h4>异常明细</h4>
+                  <p v-if="!scope.row.exception_infos.length" class="empty-value">本月无考勤异常</p>
+                  <div v-for="item in scope.row.exception_infos" v-else :key="item.exception" class="detail-item">
+                    <strong>{{ exceptionText(item.exception) }}</strong>
+                    <span>{{ item.count }} 次</span>
+                    <span v-if="shouldShowExceptionDuration(item)">累计 {{ formatDuration(item.duration) }}</span>
+                  </div>
+                </section>
+
+                <section class="detail-section">
+                  <h4>假勤及补卡</h4>
+                  <p v-if="!activeSpecialItems(scope.row.sp_items).length" class="empty-value">本月无请假、补卡、出差或外出</p>
+                  <div v-for="item in activeSpecialItems(scope.row.sp_items)" v-else :key="`${item.type}-${item.vacation_id}`" class="detail-item">
+                    <strong>{{ item.name }}</strong>
+                    <span>{{ specialItemValue(item) }}</span>
+                  </div>
+                </section>
+
+                <section class="detail-section">
+                  <h4>加班情况</h4>
+                  <p v-if="!overworkItems(scope.row).length" class="empty-value">本月无加班记录</p>
+                  <div v-for="item in overworkItems(scope.row)" v-else :key="item.label" class="detail-item">
+                    <strong>{{ item.label }}</strong>
+                    <span>{{ item.value }}</span>
+                  </div>
+                </section>
+              </div>
+
+              <div class="detail-meta">
+                <span>考勤类型：{{ recordTypeText(scope.row.record_type) }}</span>
+                <span>员工 ID：{{ scope.row.userid || '—' }}</span>
+                <span>考勤组 ID：{{ scope.row.groupid || '—' }}</span>
+              </div>
             </div>
           </template>
         </el-table-column>
@@ -124,32 +147,25 @@
 </template>
 
 <script>
-import axios from '@/plugins/axios'
-
-// 企业微信月度考勤数据查询接口
-const ATTENDANCE_REPORT_API = '/api/qywechat/checkin/monthdata'
-
 const exceptionOptions = [
-  { value: 'normal', label: '正常' },
-  { value: 'late', label: '迟到' },
-  { value: 'early', label: '早退' },
-  { value: 'missingcard', label: '缺卡' },
-  { value: 'outside_loc', label: '外勤打卡' },
-  { value: 'not_signed_in', label: '未打卡' }
+  { value: 'normal', label: '无异常' },
+  { value: 'exception', label: '存在异常' }
 ]
+
+// 后端联调阶段使用的企业微信成员 UserID。
+const TEST_USER_IDS = ['100124', '100003', '000235', '100100', '000190', '000072', 'LN0013', '000266', '100144', '000013', '100161']
 
 export default {
   name: 'AttendanceReport',
   data() {
     return {
       loading: false,
-      apiConfigured: Boolean(ATTENDANCE_REPORT_API),
       filters: {
         dateRange: this.currentMonthRange(),
         keyword: '',
         exceptionType: ''
       },
-      records: this.createPreviewRecords(),
+      records: [],
       pagination: {
         page: 1,
         size: 10
@@ -160,10 +176,7 @@ export default {
   computed: {
     filteredRecords() {
       const keyword = this.filters.keyword.toLowerCase()
-      const dateRange = this.filters.dateRange || []
       return this.records.filter((item) => {
-        const date = this.formatTime(item.checkin_time, 'date')
-        const matchesDate = !dateRange.length || (date >= dateRange[0] && date <= dateRange[1])
         const matchesKeyword =
           !keyword ||
           [item.user_name, item.userid].some((value) =>
@@ -171,22 +184,18 @@ export default {
               .toLowerCase()
               .includes(keyword)
           )
-        const matchesException = !this.filters.exceptionType || item.exception_type === this.filters.exceptionType
-        return matchesDate && matchesKeyword && matchesException
+        const hasException = Number(item.except_days || 0) > 0 || item.exception_infos.length > 0
+        const matchesException = !this.filters.exceptionType || (this.filters.exceptionType === 'exception' ? hasException : !hasException)
+        return matchesKeyword && matchesException
       })
     },
     pagedRecords() {
       const start = (this.pagination.page - 1) * this.pagination.size
       return this.filteredRecords.slice(start, start + this.pagination.size)
-    },
-    summaryCards() {
-      return [
-        { key: 'total', label: '打卡总数', value: this.filteredRecords.length },
-        { key: 'normal', label: '正常打卡', value: this.filteredRecords.filter((item) => item.exception_type === 'normal').length },
-        { key: 'warning', label: '异常打卡', value: this.filteredRecords.filter((item) => !['normal', 'outside_loc'].includes(item.exception_type)).length },
-        { key: 'outside', label: '外勤打卡', value: this.filteredRecords.filter((item) => item.exception_type === 'outside_loc').length }
-      ]
     }
+  },
+  mounted() {
+    this.handleSearch()
   },
   methods: {
     currentMonthRange() {
@@ -302,27 +311,53 @@ export default {
     },
     async handleSearch() {
       this.pagination.page = 1
-      if (!ATTENDANCE_REPORT_API) {
-        return
-      }
       this.loading = true
       try {
-        const response = await axios.post(ATTENDANCE_REPORT_API, {
-          startdate: this.filters.dateRange[0],
-          enddate: this.filters.dateRange[1],
-          userid: this.filters.keyword || undefined
+        const response = await this.$api['qywechatCheckin.monthData']({
+          useridlist: TEST_USER_IDS,
+          starttime: this.toUnixTimestamp(this.filters.dateRange[0]),
+          endtime: this.toUnixTimestamp(this.filters.dateRange[1])
         })
+        if (response && response.errcode !== undefined && response.errcode !== 0) throw new Error(response.errmsg || '接口返回失败')
         this.records = this.normalizeRecords(response)
       } catch (error) {
-        this.$message.error('考勤数据加载失败，请稍后重试')
+        this.$message.error((error && error.message) || '考勤数据加载失败，请稍后重试')
       } finally {
         this.loading = false
       }
     },
     normalizeRecords(response) {
       const payload = response && response.data ? response.data : response
-      const records = payload.checkindata || (payload.data && payload.data.checkindata) || []
-      return Array.isArray(records) ? records : []
+      const records = payload.datas || (payload.data && payload.data.datas) || []
+      if (!Array.isArray(records)) return []
+      return records.map((item, index) => {
+        const baseInfo = item.base_info || {}
+        const summaryInfo = item.summary_info || {}
+        const overworkInfo = item.overwork_info || {}
+        const exceptionInfos = Array.isArray(item.exception_infos) ? item.exception_infos.filter((value) => Number(value.count || 0) > 0 || Number(value.duration || 0) > 0) : []
+        return {
+          record_id: baseInfo.acctid || index,
+          record_type: baseInfo.record_type,
+          user_name: baseInfo.name || baseInfo.name_ex || baseInfo.acctid,
+          userid: baseInfo.acctid || '',
+          departments: baseInfo.departs_name || '—',
+          groupid: (baseInfo.rule_info || {}).groupid,
+          groupname: (baseInfo.rule_info || {}).groupname || '—',
+          work_days: summaryInfo.work_days || 0,
+          regular_days: summaryInfo.regular_days || 0,
+          rest_days: summaryInfo.rest_days || 0,
+          except_days: summaryInfo.except_days || 0,
+          regular_work_sec: summaryInfo.regular_work_sec || 0,
+          standard_work_sec: summaryInfo.standard_work_sec || 0,
+          exception_infos: exceptionInfos,
+          exception_duration: exceptionInfos.reduce((total, value) => total + Number(value.duration || 0), 0),
+          sp_items: Array.isArray(item.sp_items) ? item.sp_items : [],
+          overwork_info: overworkInfo
+        }
+      })
+    },
+    toUnixTimestamp(dateString) {
+      return Math.floor(new Date(`${dateString}T00:00:00`).getTime() / 1000)
     },
     handleReset() {
       this.filters = { dateRange: this.currentMonthRange(), keyword: '', exceptionType: '' }
@@ -331,32 +366,61 @@ export default {
     handlePageSizeChange() {
       this.pagination.page = 1
     },
-    checkinTypeText(value) {
-      const map = { 上午上班: '上班', 下午下班: '下班' }
-      return map[value] || value || '—'
-    },
     exceptionText(value) {
-      return (this.exceptionOptions.find((item) => item.value === value) || {}).label || value || '—'
+      const labels = { 1: '迟到', 2: '早退', 3: '缺卡', 4: '旷工', 5: '地点异常', 6: '设备异常' }
+      return labels[value] || `其他异常（类型 ${value}）`
     },
-    exceptionTagType(value) {
-      const map = { normal: 'success', late: 'warning', early: 'warning', missingcard: 'danger', not_signed_in: 'danger', outside_loc: 'info' }
-      return map[value] || 'info'
+    shouldShowExceptionDuration(item) {
+      return [1, 2, 4].includes(Number(item.exception)) && Number(item.duration || 0) > 0
     },
-    formatTime(timestamp, mode) {
-      if (!timestamp) return '—'
-      const date = new Date(Number(timestamp) * 1000)
-      const format = (value) => String(value).padStart(2, '0')
-      const day = `${date.getFullYear()}-${format(date.getMonth() + 1)}-${format(date.getDate())}`
-      return mode === 'date' ? day : `${day} ${format(date.getHours())}:${format(date.getMinutes())}`
+    recordTypeText(value) {
+      const labels = { 1: '固定上下班', 2: '外出', 3: '按班次上下班', 4: '自由签到', 5: '加班', 7: '无规则' }
+      return labels[value] || `其他类型（${value || '—'}）`
     },
-    locationText(record) {
-      return [record.location_title, record.location_detail].filter(Boolean).join(' · ') || '—'
+    formatDuration(seconds) {
+      const totalMinutes = Math.floor(Number(seconds || 0) / 60)
+      const hours = Math.floor(totalMinutes / 60)
+      const minutes = totalMinutes % 60
+      return minutes ? `${hours}小时${minutes}分` : `${hours}小时`
     },
-    mediaCount(record) {
-      return (record.mediaids || record.imgs || []).length
+    workHourDifference(record) {
+      const difference = Number(record.regular_work_sec || 0) - Number(record.standard_work_sec || 0)
+      if (difference === 0) return { text: '达到标准', type: 'normal' }
+      return difference > 0 ? { text: `多 ${this.formatDuration(difference)}`, type: 'surplus' } : { text: `少 ${this.formatDuration(Math.abs(difference))}`, type: 'shortage' }
     },
-    handleExport() {
-      this.$message.info('导出功能待后端接口提供后接入')
+    activeSpecialItems(items) {
+      return (items || []).filter((item) => Number(item.count || 0) > 0 || Number(item.duration || 0) > 0)
+    },
+    specialItemText(items) {
+      const values = this.activeSpecialItems(items).map((item) => this.formatSpecialItem(item))
+      return values.length ? values.join('、') : '—'
+    },
+    formatSpecialItem(item) {
+      return `${item.name} ${this.specialItemValue(item)}`
+    },
+    specialItemValue(item) {
+      if ([2, 15, 100].includes(Number(item.type))) return `${item.count}次`
+      const divisor = Number(item.time_type) === 0 ? 86400 : 3600
+      const unit = Number(item.time_type) === 0 ? '天' : '小时'
+      const amount = Number(item.duration || 0) / divisor
+      return amount ? `${Number(amount.toFixed(2))}${unit}` : `${item.count}次`
+    },
+    overworkItems(record) {
+      const info = record.overwork_info || {}
+      const definitions = [
+        { label: '工作日加班', total: 'workday_over_sec', vacation: 'workdays_over_as_vacation', money: 'workdays_over_as_money' },
+        { label: '休息日加班', total: 'restdays_over_sec', vacation: 'restdays_over_as_vacation', money: 'restdays_over_as_money' },
+        { label: '节假日加班', total: 'holidays_over_sec', vacation: 'holidays_over_as_vacation', money: 'holidays_over_as_money' }
+      ]
+      return definitions
+        .filter((item) => Number(info[item.total] || 0) > 0 || Number(info[item.vacation] || 0) > 0 || Number(info[item.money] || 0) > 0)
+        .map((item) => {
+          const details = []
+          if (Number(info[item.total] || 0) > 0) details.push(`共 ${this.formatDuration(info[item.total])}`)
+          if (Number(info[item.vacation] || 0) > 0) details.push(`转调休 ${this.formatDuration(info[item.vacation])}`)
+          if (Number(info[item.money] || 0) > 0) details.push(`计加班费 ${this.formatDuration(info[item.money])}`)
+          return { label: item.label, value: details.join('，') }
+        })
     }
   }
 }
@@ -364,33 +428,10 @@ export default {
 
 <style lang="scss" scoped>
 .attendance-report {
+  box-sizing: border-box;
   min-height: 100%;
   padding: 20px;
   background: #f5f7fa;
-}
-
-.page-header,
-.table-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.page-header {
-  margin-bottom: 16px;
-
-  h2 {
-    margin: 0 0 6px;
-    color: #303133;
-    font-size: 20px;
-    font-weight: 600;
-  }
-
-  p {
-    margin: 0;
-    color: #909399;
-    font-size: 13px;
-  }
 }
 
 .filter-card,
@@ -410,90 +451,6 @@ export default {
   }
 }
 
-.api-hint {
-  margin: 14px 0 0;
-  color: #909399;
-  font-size: 12px;
-
-  i {
-    color: #409eff;
-  }
-
-  code {
-    padding: 1px 4px;
-    color: #606266;
-    background: #f4f4f5;
-    border-radius: 2px;
-  }
-}
-
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.summary-card {
-  position: relative;
-  padding: 18px 20px;
-  overflow: hidden;
-  background: #fff;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 6%);
-
-  &::before {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    content: '';
-    background: #409eff;
-  }
-
-  &.normal::before {
-    background: #67c23a;
-  }
-
-  &.warning::before {
-    background: #e6a23c;
-  }
-
-  &.outside::before {
-    background: #909399;
-  }
-}
-
-.summary-label,
-.summary-unit {
-  color: #909399;
-  font-size: 13px;
-}
-
-.summary-card strong {
-  margin: 0 6px 0 10px;
-  color: #303133;
-  font-size: 26px;
-  font-weight: 600;
-}
-
-.table-title {
-  color: #303133;
-  font-weight: 600;
-}
-
-.table-count {
-  margin-left: 8px;
-  color: #909399;
-  font-size: 12px;
-}
-
-.help-icon {
-  color: #909399;
-  cursor: help;
-}
-
 .member-cell {
   display: flex;
   flex-direction: column;
@@ -509,13 +466,122 @@ export default {
   font-size: 12px;
 }
 
-.record-detail {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px 24px;
-  padding: 8px 18px;
+.attendance-days strong {
+  color: #303133;
+  font-size: 15px;
+}
+
+.work-hours {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  small {
+    font-size: 12px;
+
+    &.normal,
+    &.surplus {
+      color: #67c23a;
+    }
+
+    &.shortage {
+      color: #e6a23c;
+    }
+  }
+}
+
+.exception-tag {
+  margin: 2px 4px 2px 0;
+}
+
+.empty-value {
+  margin: 0;
+  color: #909399;
+}
+
+.attendance-detail {
+  padding: 4px 20px 2px;
   color: #606266;
+}
+
+.attendance-equation {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 0 14px;
+  border-bottom: 1px solid #ebeef5;
+
+  strong {
+    color: #303133;
+    font-size: 16px;
+  }
+
+  i {
+    color: #c0c4cc;
+    font-style: normal;
+  }
+
+  .warning-text {
+    color: #e6a23c;
+  }
+
+  .rest-days {
+    margin-left: auto;
+    padding-left: 14px;
+    border-left: 1px solid #ebeef5;
+  }
+}
+
+.detail-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  padding: 16px 0;
+}
+
+.detail-section {
+  min-height: 76px;
+  padding: 0 20px;
+  border-right: 1px solid #ebeef5;
+
+  &:first-child {
+    padding-left: 0;
+  }
+
+  &:last-child {
+    padding-right: 0;
+    border-right: 0;
+  }
+
+  h4 {
+    margin: 0 0 10px;
+    color: #303133;
+    font-size: 13px;
+    font-weight: 600;
+  }
+}
+
+.detail-item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-bottom: 8px;
   font-size: 13px;
+
+  strong {
+    min-width: 64px;
+    color: #606266;
+    font-weight: 500;
+  }
+}
+
+.detail-meta {
+  display: flex;
+  gap: 24px;
+  padding-top: 10px;
+  color: #909399;
+  font-size: 12px;
+  border-top: 1px solid #ebeef5;
 }
 
 .pagination {
@@ -524,25 +590,9 @@ export default {
   margin-top: 18px;
 }
 
-@media screen and (max-width: 960px) {
-  .summary-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 @media screen and (max-width: 640px) {
   .attendance-report {
     padding: 12px;
-  }
-
-  .page-header {
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .summary-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
   }
 
   .filter-form .el-input,
@@ -550,8 +600,33 @@ export default {
     width: 100%;
   }
 
-  .record-detail {
+  .detail-columns {
     grid-template-columns: 1fr;
+  }
+
+  .detail-section {
+    min-height: 0;
+    padding: 12px 0;
+    border-right: 0;
+    border-bottom: 1px solid #ebeef5;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  .attendance-equation,
+  .detail-meta {
+    flex-wrap: wrap;
+    gap: 8px 14px;
+  }
+
+  .attendance-equation .rest-days {
+    width: 100%;
+    margin-left: 0;
+    padding: 8px 0 0;
+    border-top: 1px dashed #ebeef5;
+    border-left: 0;
   }
 }
 </style>
