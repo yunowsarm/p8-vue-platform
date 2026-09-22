@@ -867,7 +867,8 @@ export default {
       return formatted && formatted !== '-' ? formatted.slice(0, 10) : ''
     },
     followUpRecordTimestamp(record) {
-      const value = record && (record.followUpTime || record.createTime || record.updateTime)
+      // “最新状态”按子表记录的创建先后判定；跟进时间可补录历史日期，不能作为排序依据。
+      const value = record && (record.createdAt || record.followUpTime)
       const timestamp = value ? Date.parse(String(value).replace(' ', 'T')) : NaN
       return Number.isNaN(timestamp) ? 0 : timestamp
     },
