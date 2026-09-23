@@ -109,7 +109,8 @@
             <el-tag :type="isAllocated(scope.row) ? 'success' : 'warning'" size="mini">{{ isAllocated(scope.row) ? '已分配' : '待分配' }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="responsiblePersonName" label="分配人" min-width="120" show-overflow-tooltip />
+        <el-table-column v-if="isUser" prop="referrerName" label="分配人" min-width="120" show-overflow-tooltip />
+        <el-table-column v-if="isAdmin" prop="responsiblePersonName" label="负责人" min-width="120" show-overflow-tooltip />
         <el-table-column label="操作" :width="isAdmin ? 250 : 160">
           <template slot-scope="scope">
             <div class="record-feature-table__actions">
@@ -666,6 +667,7 @@ export default {
         },
         payloadTransform: (payload) => {
           const mainTableFields = [
+            'id',
             'enterprise',
             'contactName',
             'contactPhone',
@@ -899,7 +901,7 @@ export default {
       return `lead-summary-tag--level-${['A', 'B', 'C', 'D', 'E', 'F'].includes(level) ? level.toLowerCase() : 'empty'}`
     },
     channelSourceLabel(record) {
-      if (record && record.referrer) return `客户转介绍：${record.referrerName || '-'}`
+      // if (record && record.referrer) return `客户转介绍：${record.referrerName || '-'}`
       const sourceType = record && record.sourceType
       const channelSource = record && record.channelSource
       if (sourceType) {
