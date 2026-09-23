@@ -907,6 +907,7 @@ export default {
       if (sourceType) {
         const option = this.channelSourceOptions.find((item) => item.value === sourceType)
         const sourceLabel = (option && option.label) || sourceType
+        if (sourceType === 'CUSTOMER_REFERRAL') return `${this.channelSourceOptions.find((item) => item.value === 'CUSTOMER_REFERRAL').label}：${record.referrerName || '-'}`
         return channelSource ? `${sourceLabel}：${channelSource}` : sourceLabel
       }
       const legacySource = record && (channelSource || record.source || record.channel)
@@ -914,7 +915,6 @@ export default {
       return (legacyOption && legacyOption.label) || legacySource || '-'
     },
     channelSourceTagClass(record) {
-      if (record && record.referrer) return 'lead-summary-tag--referral'
       const source = record && (record.sourceType || record.channelSource || record.source || record.channel)
       const classMap = {
         ONLINE_INQUIRY: 'lead-summary-tag--online',
