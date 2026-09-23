@@ -624,7 +624,13 @@ export default {
           ]
         },
         { key: 'checkinTime', label: '计划入住时间', type: 'date', required: true },
-        { key: 'sourceType', label: '渠道来源', required: true, options: this.selectableChannelSourceOptions },
+        {
+          key: 'sourceType',
+          label: '渠道来源',
+          required: true,
+          options: this.editingId ? this.channelSourceOptions : this.selectableChannelSourceOptions,
+          disabled: Boolean(this.editingId && this.form.sourceType === 'CUSTOMER_REFERRAL')
+        },
         { key: 'channelSource', label: '具体来源', required: true, showWhen: { sourceType: 'OTHER' }, maxlength: 100 },
         { key: 'other', label: '其他需求', type: 'textarea', rows: 3, wide: true }
       ]
@@ -652,7 +658,7 @@ export default {
           const form = Object.assign({}, record)
           leadFields.forEach((field) => {
             if (!field.options || form[field.key] === undefined || form[field.key] === null || form[field.key] === '') return
-            const option = field.options.find((item) => String(item.value) === String(form[field.key]))
+            const option = field.options.find((item) => String(item.value) === String(form[field.key]) || String(item.label) === String(form[field.key]))
             if (option) form[field.key] = option.value
           })
           if (!form.sourceType) {

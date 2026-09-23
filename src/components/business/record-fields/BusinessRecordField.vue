@@ -5,7 +5,7 @@
       <el-option v-for="enterprise in enterpriseOptions" :key="enterprise.id" :label="enterprise.label" :value="enterprise.id" />
     </el-select>
 
-    <el-select v-else-if="field.options" :value="value" clearable filterable :placeholder="'请选择' + field.label" class="record-field-full" @input="$emit('input', $event)">
+    <el-select v-else-if="field.options" :value="value" clearable filterable :disabled="field.disabled" :placeholder="'请选择' + field.label" class="record-field-full" @input="$emit('input', $event)">
       <el-option v-for="option in field.options" :key="optionValue(option)" :label="optionLabel(option)" :value="optionValue(option)" />
     </el-select>
 
