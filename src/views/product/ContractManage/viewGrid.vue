@@ -95,6 +95,7 @@ export default {
         // 期望 res.primary.uploadFiles 为数组，优先使用第一个图片文件
         this.selections = JSON.parse(res.primary.table.PARAMS) || []
         const files = (res && res.primary.uploadFiles) ? res.primary.uploadFiles : []
+        console.log('获取的 uploadFiles:', files)
         if (files.length > 0) {
           const file = files[0]
           // 如果有文件 id，则使用 SystemSettings.getFileUrl 获取二进制流

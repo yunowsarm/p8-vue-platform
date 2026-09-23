@@ -275,5 +275,5 @@ export const constantRouterMap = [
     component: _import_('Communication/MyApprove/list'),
     hidden: true,
     meta: { title: 'test', icon: 'icon-task-statistics-query' },
-  }
+  },
 ]

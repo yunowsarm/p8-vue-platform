@@ -42,9 +42,9 @@ export const yqRequestApi = {
     {
       name: 'deleteParkApi',
       method: 'POST',
-      path: '/jt/park/delete',
-      mockPath: '/jt/park/delete',
-      desc: '删除园区接口'
+      path: '/jt/park/delete?id={id}',
+      mockPath: '/jt/park/delete?id={id}',
+      desc: '删除园区接口，参数 id 通过 query 拼接到 URL 末尾'
     },
     {
       name: 'queryParkByIdApi',
@@ -81,5 +81,40 @@ export const yqRequestApi = {
       mockPath: '/framework/system/BpDictionary/getDicList',
       desc: '查询数据字典接口2'
     },
+    {
+      name: 'getBuildingListApi',
+      method: 'GET',
+      path: '/jt/building/list',
+      mockPath: '/jt/building/list',
+      desc: '查询楼栋列表'
+    },
+    {
+      name: 'getRegionListApi',
+      method: 'GET',
+      path: '/jt/region/list',
+      mockPath: '/jt/region/list',
+      desc: '查询区域列表'
+    },
+    {
+      name: 'getFloorListApi',
+      method: 'GET',
+      path: '/jt/floor/list',
+      mockPath: '/jt/floor/list',
+      desc: '查询楼层列表'
+    },
+    {
+      name: 'getRoomListApi',
+      method: 'GET',
+      path: '/jt/room/list',
+      mockPath: '/jt/room/list',
+      desc: '查询房间列表'
+    },
+    {
+      name: 'editFloorStatusApi',
+      method: 'POST',
+      path: '/jt/floor/editStatus',
+      mockPath: '/jt/floor/editStatus',
+      desc: '修改楼层租赁状态列表'
+    }
   ]
 }
