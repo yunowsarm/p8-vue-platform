@@ -119,7 +119,7 @@
                 {{ isAllocated(scope.row) ? '重新分配' : '分配' }}
               </el-button>
               <el-button v-if="isAdmin" type="text" size="mini" @click.stop="openAllocationHistory(scope.row)">分配历史</el-button>
-              <el-tooltip :disabled="isAllocated(scope.row)" content="请先分配负责人" placement="top">
+              <el-tooltip v-if="isUser" :disabled="isAllocated(scope.row)" content="请先分配负责人" placement="top">
                 <span class="lead-follow-up-action">
                   <el-button type="text" size="mini" :disabled="!isAllocated(scope.row)" @click.stop="openFollowUp(scope.row)">跟进</el-button>
                 </span>
@@ -447,6 +447,9 @@ export default {
   computed: {
     isAdmin() {
       return this.mode === 'admin'
+    },
+    isUser() {
+      return this.mode === 'user'
     },
     leadTableScrollbarThumbWidth() {
       if (!this.leadTableViewportWidth || !this.leadTableScrollWidth) return 0
