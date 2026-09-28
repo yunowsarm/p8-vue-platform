@@ -115,6 +115,13 @@ export const yqRequestApi = {
       path: '/jt/floor/editStatus',
       mockPath: '/jt/floor/editStatus',
       desc: '修改楼层租赁状态列表'
+    },
+    {
+      name: 'getContractDetailsApi',
+      method: 'GET',
+      path: '/jt/contract/queryById',
+      mockPath: '/jt/contract/queryById',
+      desc: '查询合同详情'
     }
   ]
 }

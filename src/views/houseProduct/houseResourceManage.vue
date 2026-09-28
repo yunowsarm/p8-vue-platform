@@ -86,6 +86,9 @@
             </el-descriptions-item>
             <el-descriptions-item label="租金标准">{{ currentRoom.priceStandard || '-' }}</el-descriptions-item>
             <el-descriptions-item label="入驻企业">{{ currentRoom.tenant || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="关联合同编号">
+              {{ currentRoom.contractInfo && currentRoom.contractInfo.length ? currentRoom.contractInfo.map((item) => item.contractNo || item.contractCode || item.code || item.CODE || item.contractId).join('、') : '-' }}
+            </el-descriptions-item>
           </el-descriptions>
         </div>
         <div class="house-resource-manage__detail-attachment">
@@ -144,7 +147,8 @@ export default {
       attachmentSelections: [],
       attachmentImage: null,
       attachmentPreviewVisible: false,
-      statusUpdating: false
+      statusUpdating: false,
+      contractLoading: false
     }
   },
   computed: {
@@ -259,13 +263,16 @@ export default {
       }
     },
     normalizeFloor(item) {
+      const params = this.parseFloorParams(item.params || item.PARAMS)
       return {
         id: item.id || item.ID || item.floorId || item.FLOORID,
         floorNo: item.floorNo || item.code || item.location || item.floorName || item.FLOORNO || item.FLOORNAME || '-',
         status: this.normalizeResourceStatus(item.status !== undefined && item.status !== null ? item.status : item.STATUS),
         height: item.height || item.HEIGHT || '',
         weight: item.weight || item.WEIGHT || '',
-        elevator: item.elevator || item.ELEVATOR || ''
+        elevator: item.elevator || item.ELEVATOR || '',
+        params,
+        contractInfo: this.getUniqueContractInfo(params)
       }
     },
     normalizeRoom(item) {
@@ -281,12 +288,41 @@ export default {
         height: item.height || item.HEIGHT || '',
         weight: item.weight || item.WEIGHT || '',
         elevator: item.elevator || item.ELEVATOR || '',
+        contractId: item.contractId || item.CONTRACTID || '',
+        contractInfo: this.getContractInfo(item.contractId || item.CONTRACTID),
         status: this.normalizeResourceStatus(
           item.status !== undefined && item.status !== null ? item.status : item.roomStatus !== undefined && item.roomStatus !== null ? item.roomStatus : item.STATUS
         ),
         priceStandard: item.priceStandard || item.PRICESTANDARD || '',
         tenant: item.tenant || item.enterpriseName || item.TENANT || ''
       }
+    },
+    parseFloorParams(params) {
+      if (!params) return []
+      if (Array.isArray(params)) return params
+      try {
+        const parsed = JSON.parse(params)
+        return Array.isArray(parsed) ? parsed : []
+      } catch (error) {
+        return []
+      }
+    },
+    getContractInfo(contractId) {
+      if (Array.isArray(contractId)) return contractId.filter(Boolean).map((item) => (typeof item === 'object' ? item : { contractId: item }))
+      if (!contractId) return []
+      return [{ contractId }]
+    },
+    getUniqueContractInfo(params) {
+      const contracts = new Map()
+      params.filter((param) => param && (param.contractId || param.CONTRACTID)).forEach((param) => {
+        const contractId = param.contractId || param.CONTRACTID
+        const companyName = param.name || param.ENTERPRISE_FULLNAME || ''
+        const key = `${companyName}::${contractId}`
+        if (!contracts.has(key)) {
+          contracts.set(key, { ...param, contractId })
+        }
+      })
+      return Array.from(contracts.values())
     },
     normalizeResourceStatus(status) {
       if (String(status) === '1') return 'signed'
@@ -314,7 +350,8 @@ export default {
                 floorNo: floor.floorNo,
                 height: floor.height,
                 weight: floor.weight,
-                elevator: floor.elevator
+                elevator: floor.elevator,
+                contractInfo: this.getContractInfo(roomItem.contractId || roomItem.CONTRACTID)
               })
             )
             return floor
@@ -407,6 +444,7 @@ export default {
       console.log('房源方块信息', room)
       this.currentRoom = room
       this.roomDetailVisible = true
+      this.loadContractDetails(room.contractInfo)
       this.loadAttachmentImage(room.id)
     },
     handleEmptyRoomClick(floor) {
@@ -419,6 +457,7 @@ export default {
         height: floor.height,
         weight: floor.weight,
         elevator: floor.elevator,
+        contractInfo: floor.contractInfo || [],
         status: floor.status || 'idle',
         priceStandard: '',
         tenant: ''
@@ -426,7 +465,49 @@ export default {
       console.log('空房源方块信息', emptyRoom)
       this.currentRoom = emptyRoom
       this.roomDetailVisible = true
+      this.loadContractDetails(emptyRoom.contractInfo)
       this.loadAttachmentImage(floor.id)
+    },
+    loadContractDetails(contractInfo) {
+      const contractIds = (contractInfo || []).map((item) => item.contractId).filter(Boolean)
+      if (!contractIds.length || !this.$api['yqRequestApi.getContractDetailsApi']) return
+
+      this.contractLoading = true
+      this.$api['yqRequestApi.getContractDetailsApi'](
+        { id: contractIds },
+        {
+          paramsSerializer: (params) => {
+            const ids = Array.isArray(params.id) ? params.id : [params.id]
+            return ids.map((id) => `id=${encodeURIComponent(id)}`).join('&')
+          }
+        }
+      )
+        .then((response) => {
+          const data = response && response.data ? response.data : response
+          const details = Array.isArray(data) ? data : data && (data.records || data.list || data.data || (data.id ? [data] : []))
+          if (!Array.isArray(details) || !this.currentRoom) return
+
+          const detailMap = new Map()
+          details.forEach((detail) => {
+            const id = detail && (detail.id || detail.ID || detail.contractId || detail.CONTRACTID)
+            if (id) detailMap.set(String(id), detail)
+          })
+          this.currentRoom.contractInfo = contractInfo.map((item) => {
+            const detail = detailMap.get(String(item.contractId))
+            if (!detail) return item
+            return {
+              ...item,
+              ...detail,
+              contractNo: detail.contractNo || detail.contractCode || detail.code || detail.CODE || detail.CONTRACTCODE || detail.CONTRACTNO
+            }
+          })
+        })
+        .catch((error) => {
+          console.error('合同详情加载失败', error)
+        })
+        .finally(() => {
+          this.contractLoading = false
+        })
     },
     loadAttachmentImage(id) {
       this.clearAttachmentImage()
@@ -500,7 +581,38 @@ export default {
           context.fillStyle = color
           context.fill()
         }
+        this.drawAttachmentSelectionName(context, selection)
       })
+    },
+    drawAttachmentSelectionName(context, selection) {
+      const name = selection.name || selection.ENTERPRISE_FULLNAME
+      if (!name) return
+
+      let x
+      let y
+      if (selection.type === 'rectangle') {
+        x = (selection.startX + selection.endX) / 2
+        y = (selection.startY + selection.endY) / 2
+      } else if (selection.type === 'polygon' && selection.bounds) {
+        x = (selection.bounds.minX + selection.bounds.maxX) / 2
+        y = (selection.bounds.minY + selection.bounds.maxY) / 2
+      } else if (selection.type === 'circle') {
+        x = selection.centerX
+        y = selection.centerY
+      } else {
+        return
+      }
+
+      context.save()
+      context.font = 'bold 14px Arial'
+      context.textAlign = 'center'
+      context.textBaseline = 'middle'
+      context.lineWidth = 3
+      context.strokeStyle = 'rgba(0, 0, 0, 0.7)'
+      context.fillStyle = '#ffffff'
+      context.strokeText(name, x, y)
+      context.fillText(name, x, y)
+      context.restore()
     },
     openAttachmentPreview() {
       if (!this.attachmentImage) return

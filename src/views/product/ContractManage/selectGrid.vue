@@ -77,7 +77,7 @@
             <div class="selection-header">
               <div class="selection-title">
                 <span class="selection-type" :class="getTypeClass(selection.type)">{{ getTypeName(selection.type) }}</span>
-                <span class="selection-index">柱网 {{ index + 1 }}</span>
+                <span class="selection-index">{{ selection.name || selection.ENTERPRISE_FULLNAME || rowData[0].ENTERPRISE_FULLNAME }}</span>
               </div>
               <div class="selection-actions">
                 <!-- <button @click="zoomToSelection(selection)" class="action-btn" title="放大查看">
@@ -554,6 +554,7 @@ export default {
             )
             break
         }
+        this.drawSelectionName(selection)
       })
       }
       
@@ -689,6 +690,37 @@ export default {
       
       this.ctx.restore()
     },
+
+    drawSelectionName(selection) {
+      const name = selection.name || selection.ENTERPRISE_FULLNAME || this.rowData[0].ENTERPRISE_FULLNAME
+      if (!name) return
+
+      let x
+      let y
+      if (selection.type === 'rectangle') {
+        x = (selection.startX + selection.endX) / 2
+        y = (selection.startY + selection.endY) / 2
+      } else if (selection.type === 'polygon') {
+        x = (selection.bounds.minX + selection.bounds.maxX) / 2
+        y = (selection.bounds.minY + selection.bounds.maxY) / 2
+      } else if (selection.type === 'circle') {
+        x = selection.centerX
+        y = selection.centerY
+      } else {
+        return
+      }
+
+      this.ctx.save()
+      this.ctx.font = 'bold 14px Arial'
+      this.ctx.textAlign = 'center'
+      this.ctx.textBaseline = 'middle'
+      this.ctx.lineWidth = 3
+      this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)'
+      this.ctx.fillStyle = '#ffffff'
+      this.ctx.strokeText(name, x, y)
+      this.ctx.fillText(name, x, y)
+      this.ctx.restore()
+    },
     
     // 从半透明颜色中提取不透明边框颜色
     getStrokeColor(rgbaColor) {
@@ -801,7 +833,9 @@ export default {
           height: Math.abs(this.currentY - this.startY),
           color: this.regionColors.rectangle,
           createdAt: Date.now(),
-          contractId: this.rowData[0].ID
+          contractId: this.rowData[0].ID,
+          name: this.rowData[0].ENTERPRISE_FULLNAME,
+          ENTERPRISE_FULLNAME: this.rowData[0].ENTERPRISE_FULLNAME
         }
         this.selections.push(selection)
       }
@@ -833,7 +867,9 @@ export default {
           bounds: bounds,
           color: this.regionColors.polygon,
           createdAt: Date.now(),
-          contractId: this.rowData[0].ID
+          contractId: this.rowData[0].ID,
+          name: this.rowData[0].ENTERPRISE_FULLNAME,
+          ENTERPRISE_FULLNAME: this.rowData[0].ENTERPRISE_FULLNAME
         }
         
         this.selections.push(selection)
@@ -885,7 +921,9 @@ export default {
           diameter: this.circleRadius * 2,
           color: this.regionColors.circle,
           createdAt: Date.now(),
-          contractId: this.rowData[0].ID
+          contractId: this.rowData[0].ID,
+          name: this.rowData[0].ENTERPRISE_FULLNAME,
+          ENTERPRISE_FULLNAME: this.rowData[0].ENTERPRISE_FULLNAME
         }
         
         this.selections.push(selection)
