@@ -63,7 +63,14 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="enterprise" label="企业名称" min-width="160" show-overflow-tooltip />
+        <el-table-column label="企业名称" min-width="160" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <div class="lead-enterprise-cell">
+              <span>{{ scope.row.enterprise || '-' }}</span>
+              <el-tag v-if="isInvalidLead(scope.row)" type="danger" size="mini" effect="plain">无效线索</el-tag>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="contactName" label="联系人" min-width="120" show-overflow-tooltip />
         <el-table-column prop="contactPhone" label="联系电话" min-width="140" show-overflow-tooltip />
         <el-table-column label="渠道来源" min-width="160" show-overflow-tooltip>
@@ -111,7 +118,7 @@
         </el-table-column>
         <el-table-column v-if="isUser" prop="referrerName" label="分配人" min-width="120" show-overflow-tooltip />
         <el-table-column v-if="isAdmin" prop="responsiblePersonName" label="负责人" min-width="120" show-overflow-tooltip />
-        <el-table-column label="操作" :width="isAdmin ? 250 : 160">
+        <el-table-column label="操作" :width="isAdmin ? 250 : enableInvalidLeadApplication ? 260 : 160">
           <template slot-scope="scope">
             <div class="record-feature-table__actions">
               <el-button type="text" size="mini" @click.stop="openDetail(scope.row)">查看</el-button>
@@ -123,6 +130,15 @@
               <el-tooltip v-if="isUser" :disabled="isAllocated(scope.row)" content="请先分配负责人" placement="top">
                 <span class="lead-follow-up-action">
                   <el-button type="text" size="mini" :disabled="!isAllocated(scope.row)" @click.stop="openFollowUp(scope.row)">跟进</el-button>
+                </span>
+              </el-tooltip>
+              <el-tooltip
+                v-if="isUser && enableInvalidLeadApplication"
+                :disabled="!isInvalidLeadApplicationDisabled(scope.row)"
+                :content="invalidLeadApplicationDisabledMessage(scope.row)"
+                placement="top">
+                <span class="lead-invalid-application-action">
+                  <el-button type="text" size="mini" :disabled="isInvalidLeadApplicationDisabled(scope.row)" @click.stop="$emit('invalid-lead-application', scope.row)">无效线索申请</el-button>
                 </span>
               </el-tooltip>
             </div>
@@ -392,7 +408,8 @@ export default {
   mixins: [recordManager],
   props: {
     mode: { type: String, default: 'user' },
-    listParams: { type: Object, default: () => ({}) }
+    listParams: { type: Object, default: () => ({}) },
+    enableInvalidLeadApplication: { type: Boolean, default: false }
   },
   data() {
     return {
@@ -1137,6 +1154,20 @@ export default {
     isAllocated(record) {
       return Number(record && record.status) === 1
     },
+    isInvalidLeadApplicationDisabled(record) {
+      const approveStatus = record && (record.approve_status !== undefined ? record.approve_status : record.approveStatus)
+      return ['1', '2'].includes(String(approveStatus))
+    },
+    isInvalidLead(record) {
+      const approveStatus = record && (record.approveStatus !== undefined ? record.approveStatus : record.approve_status)
+      return String(approveStatus) === '2'
+    },
+    invalidLeadApplicationDisabledMessage(record) {
+      const approveStatus = record && (record.approve_status !== undefined ? record.approve_status : record.approveStatus)
+      if (String(approveStatus) === '1') return '无效线索申请正在审批中'
+      if (String(approveStatus) === '2') return '无效线索申请已通过，不可重复提交'
+      return ''
+    },
     async openAllocation(record) {
       this.allocationRecord = record
       this.allocationForm = {
@@ -1758,6 +1789,18 @@ export default {
 .lead-follow-up-action {
   display: inline-block;
   margin-left: 8px;
+}
+
+.lead-enterprise-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.lead-invalid-application-action {
+  display: inline-block;
+  margin-left: 12px;
 }
 
 @media (max-width: 760px) {
