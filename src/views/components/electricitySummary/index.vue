@@ -11,11 +11,11 @@
           end-placeholder="结束月份"
           :clearable="false"
           class="month-range" />
-        <el-select v-model="query.roomIds" multiple collapse-tags filterable placeholder="选择配电房" class="room-select" @change="handleRoomChange">
+        <!-- <el-select v-model="query.roomIds" multiple collapse-tags filterable placeholder="选择配电房" class="room-select" @change="handleRoomChange">
           <el-option v-for="room in roomList" :key="room.ID" :label="room.NAME" :value="room.ID" />
         </el-select>
         <span class="condition-separator">或</span>
-        <el-input v-model.trim="query.code" clearable placeholder="请输入电表编号" class="code-input" @input="handleCodeInput" @keyup.enter.native="search" />
+        <el-input v-model.trim="query.code" clearable placeholder="请输入电表编号" class="code-input" @input="handleCodeInput" @keyup.enter.native="search" /> -->
         <el-button type="primary" :loading="loading" @click="search">查询</el-button>
       </div>
     </div>
@@ -44,7 +44,7 @@
               </el-select>
             </div>
             <div v-if="hasTrendData" ref="trendChart" class="trend-chart"></div>
-            <div v-else class="chart-empty">当前观察对象暂无实用电量</div>
+            <div v-else class="chart-empty">暂无实用电量</div>
           </div>
 
           <div class="panel detail-panel">
@@ -54,7 +54,18 @@
                 <p>{{ detailRows.length }} 条记录</p>
               </div>
             </div>
-            <vxe-table :data="detailRows" :loading="false" size="mini" stripe border height="320" show-overflow="tooltip" :scroll-y="{ enabled: true, gt: 20, oSize: 5 }" empty-text="暂无明细">
+            <vxe-table
+              :data="detailRows"
+              :loading="false"
+              size="mini"
+              stripe
+              border
+              height="320"
+              align="center"
+              header-align="center"
+              show-overflow="tooltip"
+              :scroll-y="{ enabled: true, gt: 20, oSize: 5 }"
+              empty-text="暂无明细">
               <vxe-column field="month" title="月份" width="92" fixed="left" :formatter="formatMonthCell"></vxe-column>
               <vxe-column field="roomName" title="配电房" min-width="105"></vxe-column>
               <vxe-column field="meterCode" title="电表编号" min-width="105"></vxe-column>
@@ -69,12 +80,11 @@
             <div class="panel__head">
               <div>
                 <h3>尖峰平谷构成</h3>
-                <p>当前观察对象在查询月份范围内的实用度数</p>
               </div>
               <span>度</span>
             </div>
             <div v-if="hasTouData" ref="touChart" class="bottom-chart"></div>
-            <div v-else class="chart-empty">当前观察对象暂无尖峰平谷数据</div>
+            <div v-else class="chart-empty">当前暂无尖峰平谷数据</div>
           </div>
           <div class="panel">
             <div class="panel__head">
@@ -85,7 +95,7 @@
               <span>度</span>
             </div>
             <div v-if="hasComparisonData" ref="comparisonChart" class="bottom-chart"></div>
-            <div v-else class="chart-empty">当前观察对象暂无实用电量</div>
+            <div v-else class="chart-empty">当前暂无实用电量</div>
           </div>
         </div>
       </template>
