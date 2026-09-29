@@ -214,6 +214,13 @@ export const repositoryApi = {
       desc: '电表数据查询'
     },
     {
+      name: 'searchByMonth',
+      method: 'POST',
+      path: '/jt/electricity/searchByMonth',
+      mockPath: '/jt/electricity/searchByMonth',
+      desc: '按月份范围查询电表数据'
+    },
+    {
       name: 'waterMeterList',
       method: 'POST',
       path: '/framework/report/apply',
