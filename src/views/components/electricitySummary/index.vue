@@ -41,7 +41,7 @@
                 <el-radio-button label="room">按配电房</el-radio-button>
                 <el-radio-button label="meter">按电表</el-radio-button>
               </el-radio-group>
-              <el-select v-model="selectedEntityKeys" multiple collapse-tags filterable size="mini" placeholder="请选择配电房或输入电表编号" class="trend-entity-select">
+              <el-select v-model="selectedEntityKeys" multiple collapse-tags filterable reserve-keyword size="mini" placeholder="请选择配电房或输入电表编号" class="trend-entity-select">
                 <el-option v-for="item in entityOptions" :key="item.key" :label="item.label" :value="item.key" />
               </el-select>
             </div>
