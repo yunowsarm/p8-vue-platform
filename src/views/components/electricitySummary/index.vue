@@ -29,8 +29,10 @@
           <div class="panel trend-panel">
             <div class="panel__head">
               <div>
-                <h3>实用电量趋势</h3>
-                <p>{{ dimension === 'room' ? '配电房按总表统计' : '电表按编号统计' }}</p>
+                <h3>
+                  实用电量趋势
+                  <span style="font-size: 12px; color: gray">({{ dimension === 'room' ? '配电房按总表统计' : '电表按编号统计' }})</span>
+                </h3>
               </div>
               <span>度 / 月</span>
             </div>
@@ -39,7 +41,7 @@
                 <el-radio-button label="room">按配电房</el-radio-button>
                 <el-radio-button label="meter">按电表</el-radio-button>
               </el-radio-group>
-              <el-select v-model="selectedEntityKeys" multiple collapse-tags filterable size="mini" placeholder="选择要查看的对象" class="trend-entity-select">
+              <el-select v-model="selectedEntityKeys" multiple collapse-tags filterable size="mini" placeholder="请选择配电房或输入电表编号" class="trend-entity-select">
                 <el-option v-for="item in entityOptions" :key="item.key" :label="item.label" :value="item.key" />
               </el-select>
             </div>
@@ -50,31 +52,35 @@
           <div class="panel detail-panel">
             <div class="panel__head">
               <div>
-                <h3>当前选择明细</h3>
-                <p>{{ detailRows.length }} 条记录</p>
+                <h3>
+                  当前选择明细
+                  <span style="font-size: 12px; color: gray">({{ detailRows.length }} 条记录)</span>
+                </h3>
               </div>
             </div>
-            <vxe-table
-              :data="detailRows"
-              :loading="false"
-              size="mini"
-              stripe
-              border
-              height="320"
-              align="center"
-              header-align="center"
-              show-overflow="tooltip"
-              :scroll-y="{ enabled: true, gt: 20, oSize: 5 }"
-              empty-text="暂无明细">
-              <vxe-column field="month" title="月份" width="92" fixed="left" :formatter="formatMonthCell"></vxe-column>
-              <vxe-column field="roomName" title="配电房" min-width="105"></vxe-column>
-              <vxe-column field="meterCode" title="电表编号" min-width="105"></vxe-column>
-              <vxe-column field="meterLocation" title="安装位置" min-width="100"></vxe-column>
-              <vxe-column field="magnification" title="倍率" width="70" align="right" :formatter="formatNumberCell"></vxe-column>
-              <vxe-column field="readingTotal3" title="实用度数" min-width="95" align="right" :formatter="formatNumberCell"></vxe-column>
-              <vxe-column field="kva" title="KVA" width="75" align="right" :formatter="formatNumberCell"></vxe-column>
-              <vxe-column field="kvaTotal" title="KVA总数" width="90" align="right" :formatter="formatNumberCell"></vxe-column>
-            </vxe-table>
+            <div class="detail-table-wrap">
+              <vxe-table
+                :data="detailRows"
+                :loading="false"
+                size="mini"
+                stripe
+                border
+                height="100%"
+                align="center"
+                header-align="center"
+                show-overflow="tooltip"
+                :scroll-y="{ enabled: true, gt: 20, oSize: 5 }"
+                empty-text="暂无明细">
+                <vxe-column field="month" title="月份" width="92" fixed="left" :formatter="formatMonthCell"></vxe-column>
+                <vxe-column field="roomName" title="配电房" min-width="105"></vxe-column>
+                <vxe-column field="meterCode" title="电表编号" min-width="105"></vxe-column>
+                <vxe-column field="meterLocation" title="安装位置" min-width="100"></vxe-column>
+                <vxe-column field="magnification" title="倍率" width="70" align="right" :formatter="formatNumberCell"></vxe-column>
+                <vxe-column field="readingTotal3" title="实用度数" min-width="95" align="right" :formatter="formatNumberCell"></vxe-column>
+                <vxe-column field="kva" title="KVA" width="75" align="right" :formatter="formatNumberCell"></vxe-column>
+                <vxe-column field="kvaTotal" title="KVA总数" width="90" align="right" :formatter="formatNumberCell"></vxe-column>
+              </vxe-table>
+            </div>
           </div>
           <div class="panel">
             <div class="panel__head">
@@ -89,8 +95,7 @@
           <div class="panel">
             <div class="panel__head">
               <div>
-                <h3>对象用电量对比</h3>
-                <p>查询月份范围内累计实用度数</p>
+                <h3>用电量对比</h3>
               </div>
               <span>度</span>
             </div>
@@ -137,6 +142,24 @@ function roomKey(row) {
 
 function meterKey(row) {
   return String(row.meterId || `${roomKey(row)}:${row.meterCode || ''}`)
+}
+
+function roomAnalysisRows(rows) {
+  const rowsByMonth = rows.reduce((result, row) => {
+    const month = rowMonth(row)
+    if (!result[month]) result[month] = []
+    result[month].push(row)
+    return result
+  }, Object.create(null))
+  return Object.keys(rowsByMonth).reduce((result, month) => {
+    const monthRows = rowsByMonth[month]
+    const exactTotalRows = monthRows.filter((row) => String(row.meterLocation || '').trim() === '总表')
+    if (exactTotalRows.length) return result.concat(exactTotalRows)
+    const namedTotalRows = monthRows.filter((row) => String(row.meterLocation || '').includes('总表'))
+    if (namedTotalRows.length) return result.concat(namedTotalRows)
+    const meterCount = new Set(monthRows.map((row) => meterKey(row))).size
+    return meterCount === 1 ? result.concat(monthRows) : result
+  }, [])
 }
 
 export default {
@@ -191,7 +214,7 @@ export default {
       })
       Object.keys(buckets).forEach((key) => {
         const bucket = buckets[key]
-        const analysisRows = this.dimension === 'room' && !this.appliedQuery.code ? bucket.rawRows.filter((row) => row.meterLocation === '总表') : bucket.rawRows
+        const analysisRows = this.dimension === 'room' && !this.appliedQuery.code ? roomAnalysisRows(bucket.rawRows) : bucket.rawRows
         let hasActual = false
         let actualTotal = 0
         analysisRows.forEach((row) => {
@@ -249,7 +272,10 @@ export default {
       }))
     },
     hasTouData() {
-      return this.touSeries.some((series) => series.data.some((value) => value > 0))
+      return this.selectedEntityKeys.some((key) => {
+        const bucket = this.entityBuckets[key]
+        return bucket && touPeriods.some((period) => Object.prototype.hasOwnProperty.call(bucket.tou, period.field))
+      })
     },
     comparisonData() {
       return this.selectedEntityKeys.map((key) => ({ name: this.entityLabel(key), value: this.entityBuckets[key] ? this.entityBuckets[key].actualTotal : null })).filter((item) => item.value !== null)
@@ -483,6 +509,7 @@ export default {
   min-height: 0;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   overflow: hidden;
   background: #f5f7fa;
   color: #27364a;
@@ -491,11 +518,12 @@ export default {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  margin: 14px 14px 0;
-  padding: 14px 18px;
+  justify-content: flex-start;
+  margin: 8px 10px 0;
+  padding: 7px 12px;
   background: #fff;
   border: 1px solid #e7ebf1;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 h3,
 p {
@@ -512,8 +540,9 @@ h3 {
 .query-form {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   width: 100%;
 }
 .month-range {
@@ -532,8 +561,8 @@ h3 {
 .content {
   flex: 1;
   min-height: 0;
-  overflow: auto;
-  padding: 14px;
+  overflow: hidden;
+  padding: 8px 10px 23px;
 }
 .empty-wrap {
   min-height: 360px;
@@ -550,14 +579,15 @@ h3 {
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-rows: 400px;
-  gap: 12px;
-  margin-bottom: 10px;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  height: 100%;
+  gap: 8px;
 }
 .panel {
   min-width: 0;
-  height: 400px;
-  padding: 16px;
+  min-height: 0;
+  height: auto;
+  padding: 12px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -595,6 +625,11 @@ h3 {
 .detail-panel ::v-deep .vxe-table {
   font-size: 12px;
 }
+.detail-table-wrap {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
 .trend-controls {
   display: flex;
   align-items: center;
@@ -615,8 +650,17 @@ h3 {
   .query-form {
     justify-content: flex-start;
   }
+  .content {
+    overflow: auto;
+  }
   .dashboard-grid {
     grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-rows: 360px;
+    height: auto;
+  }
+  .panel {
+    height: 360px;
   }
 }
 @media (max-width: 700px) {
