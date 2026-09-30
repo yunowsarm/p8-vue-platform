@@ -127,9 +127,9 @@
                 {{ isAllocated(scope.row) ? '重新分配' : '分配' }}
               </el-button>
               <el-button v-if="isAdmin" type="text" size="mini" @click.stop="openAllocationHistory(scope.row)">分配历史</el-button>
-              <el-tooltip v-if="isUser" :disabled="isAllocated(scope.row)" content="请先分配负责人" placement="top">
+              <el-tooltip v-if="isUser" :disabled="!isFollowUpDisabled(scope.row)" :content="followUpDisabledMessage(scope.row)" placement="top">
                 <span class="lead-follow-up-action">
-                  <el-button type="text" size="mini" :disabled="!isAllocated(scope.row)" @click.stop="openFollowUp(scope.row)">跟进</el-button>
+                  <el-button type="text" size="mini" :disabled="isFollowUpDisabled(scope.row)" @click.stop="openFollowUp(scope.row)">跟进</el-button>
                 </span>
               </el-tooltip>
               <el-tooltip
@@ -1152,7 +1152,8 @@ export default {
       }
     },
     isAllocated(record) {
-      return Number(record && record.status) === 1
+      if (!record) return false
+      return Boolean(record.responsiblePerson || record.responsiblePersonId || record.responsibleUserId) || Number(record.status) === 1
     },
     isInvalidLeadApplicationDisabled(record) {
       const approveStatus = record && (record.approve_status !== undefined ? record.approve_status : record.approveStatus)
@@ -1161,6 +1162,14 @@ export default {
     isInvalidLead(record) {
       const approveStatus = record && (record.approveStatus !== undefined ? record.approveStatus : record.approve_status)
       return String(approveStatus) === '2'
+    },
+    isFollowUpDisabled(record) {
+      return !this.isAllocated(record) || this.isInvalidLead(record)
+    },
+    followUpDisabledMessage(record) {
+      if (this.isInvalidLead(record)) return '无效线索不可继续跟进'
+      if (!this.isAllocated(record)) return '请先分配负责人'
+      return ''
     },
     invalidLeadApplicationDisabledMessage(record) {
       const approveStatus = record && (record.approve_status !== undefined ? record.approve_status : record.approveStatus)
