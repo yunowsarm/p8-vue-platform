@@ -50,13 +50,31 @@ function differs(a, b) {
   return Math.abs(a - b) > Math.max(0.1, Math.abs(b) * 0.001)
 }
 
-export function analyze(rows, query, selectedRooms) {
+export function analysisRoomOptions(rows, roomList, query) {
+  const rooms = new Map()
+  const ids = new Set((query.roomIds || []).map(String))
+  roomList.forEach((room) => {
+    const key = String(room.ID ?? room.id)
+    if (!query.code && (!ids.size || ids.has(key))) rooms.set(key, { key, name: room.NAME || room.name || room.roomName || key })
+  })
+  rows.forEach((row) => {
+    const match = [...rooms.values()].find((room) => room.key === roomKey(row) || room.name === row.roomName)
+    if (!match) rooms.set(roomKey(row), { key: roomKey(row), name: row.roomName || '未标注配电房' })
+  })
+  return [...rooms.values()]
+}
+
+export function analyze(rows, query, selectedRooms, roomOptions = []) {
   const months = monthRange(query.dateStart, query.dateEnd)
   const selected = new Set(selectedRooms)
-  const scope = rows.filter((row) => selected.has(roomKey(row)) && months.includes(String(row.month || '').slice(0, 7)))
-  const groups = new Map()
+  const keyFor = (row) => {
+    const match = roomOptions.find((room) => room.key === roomKey(row)) || roomOptions.find((room) => room.name === row.roomName)
+    return match ? match.key : roomKey(row)
+  }
+  const scope = rows.filter((row) => selected.has(keyFor(row)) && months.includes(String(row.month || '').slice(0, 7)))
+  const groups = new Map(selectedRooms.map((key) => [key, []]))
   scope.forEach((row) => {
-    const key = roomKey(row)
+    const key = keyFor(row)
     if (!groups.has(key)) groups.set(key, [])
     groups.get(key).push(row)
   })
@@ -85,10 +103,10 @@ export function analyze(rows, query, selectedRooms) {
     else if (actual < 0) add(row, '负用电量', '总实用度数为负，请核对冲抵、换表或填报情况')
     if (current !== null && previous !== null) {
       if (current < previous) add(row, '示数倒退', '本月示数小于上月示数，请核对换表或回零情况')
-      if (usage !== null && differs(current - previous, usage)) add(row, '表用量不一致', `示数差 ${current - previous}，表用量 ${usage}`)
+      if (usage !== null && differs(current - previous, usage)) add(row, '表用量不一致', `示数差 ${(current - previous).toFixed(2)}，表用量 ${usage.toFixed(2)}`)
     }
     if (usage !== null && multiplier !== null && actual !== null && differs(usage * multiplier, actual)) {
-      add(row, '倍率计算不一致', `表用量×倍率 ${usage * multiplier}，实用度数 ${actual}`)
+      add(row, '倍率计算不一致', `表用量×倍率 ${(usage * multiplier).toFixed(2)}，实用度数 ${actual.toFixed(2)}`)
     }
     const tou = periods.map((period) => numeric(row[period.field]))
     if (
@@ -103,24 +121,49 @@ export function analyze(rows, query, selectedRooms) {
     }
   })
   const roomStats = []
-  const statisticalRows = []
   groups.forEach((roomRows, key) => {
     const totals = query.code ? roomRows : roomAnalysisRows(roomRows)
-    statisticalRows.push(...totals)
     const byMonth = new Map()
+    const completeMonths = new Set()
     months.forEach((month) => {
       const monthRows = totals.filter((row) => String(row.month || '').slice(0, 7) === month)
-      // Incomplete total meters make the room total unknown rather than a partial sum.
       const values = monthRows.map((row) => (duplicates.has(recordKey(row)) ? null : numeric(row.readingTotal3)))
-      byMonth.set(month, values.length && values.every((value) => value !== null) ? values.reduce((sum, value) => sum + value, 0) : null)
+      // Match the data view: sum available selected meters, retaining missing-data status.
+      const knownValues = values.filter((value) => value !== null)
+      byMonth.set(month, knownValues.length ? knownValues.reduce((sum, value) => sum + value, 0) : null)
+      if (values.length && values.every((value) => value !== null)) completeMonths.add(month)
     })
     const available = [...byMonth.values()].filter((value) => value !== null)
-    roomStats.push({ key, name: roomRows[0].roomName || '未标注配电房', value: available.length ? available.reduce((a, b) => a + b, 0) : null, validMonths: available.length, byMonth })
+    const known = totals
+      .filter((row) => !duplicates.has(recordKey(row)))
+      .map((row) => numeric(row.readingTotal3))
+      .filter((value) => value !== null)
+    const room = roomOptions.find((item) => item.key === key)
+    const status = !roomRows.length
+      ? '查询范围无记录'
+      : !totals.length
+      ? '无总表且有多块电表，无法确定总量'
+      : !available.length
+      ? '统计电表数据缺失或重复'
+      : completeMonths.size < months.length
+      ? '部分月份或电表数据不完整'
+      : '数据完整'
+    roomStats.push({
+      key,
+      name: room ? room.name : roomRows[0]?.roomName || key,
+      value: available.length ? available.reduce((a, b) => a + b, 0) : null,
+      knownValue: known.length ? known.reduce((a, b) => a + b, 0) : null,
+      statisticMeters: [...new Set(totals.map((row) => `${row.meterCode || '未编号'} / ${row.meterLocation || '未标注位置'}`))].join('；'),
+      status,
+      validMonths: available.length,
+      completeMonths,
+      byMonth
+    })
   })
   const monthly = months.map((month, index) => {
     const available = roomStats.filter((room) => room.byMonth.get(month) !== null)
     const value = available.length ? available.reduce((sum, room) => sum + room.byMonth.get(month), 0) : null
-    const comparable = index ? roomStats.filter((room) => room.byMonth.get(month) !== null && room.byMonth.get(months[index - 1]) !== null) : []
+    const comparable = index ? roomStats.filter((room) => room.completeMonths.has(month) && room.completeMonths.has(months[index - 1])) : []
     const previous = comparable.reduce((sum, room) => sum + room.byMonth.get(months[index - 1]), 0)
     const current = comparable.reduce((sum, room) => sum + room.byMonth.get(month), 0)
     return {
@@ -134,17 +177,39 @@ export function analyze(rows, query, selectedRooms) {
   })
   const total = monthly.reduce((sum, item) => sum + (item.value === null ? 0 : item.value), 0)
   const validMonths = monthly.filter((item) => item.value !== null)
-  const roomRanking = roomStats.filter((item) => item.value !== null).sort((a, b) => b.value - a.value)
+  const roomRanking = roomStats.sort((a, b) => (a.value === null ? (b.value === null ? 0 : 1) : b.value === null ? -1 : b.value - a.value))
   const meterGroups = new Map()
   scope.forEach((row) => {
     const key = meterKey(row)
     const value = duplicates.has(recordKey(row)) ? null : numeric(row.readingTotal3)
-    if (!meterGroups.has(key)) meterGroups.set(key, { name: `${row.roomName || ''} / ${row.meterCode || '未编号'} / ${row.meterLocation || '未标注位置'}`, value: null })
-    if (value !== null) meterGroups.get(key).value = (meterGroups.get(key).value || 0) + value
+    if (!meterGroups.has(key)) meterGroups.set(key, { name: `${row.roomName || ''} / ${row.meterCode || '未编号'} / ${row.meterLocation || '未标注位置'}`, value: null, validMonths: 0 })
+    if (value !== null) {
+      meterGroups.get(key).value = (meterGroups.get(key).value || 0) + value
+      meterGroups.get(key).validMonths++
+    }
   })
-  // Only complete nonnegative time-of-use rows can form a meaningful percentage.
-  const completeTou = statisticalRows.filter((row) => !duplicates.has(recordKey(row)) && periods.every((period) => numeric(row[period.field]) !== null && numeric(row[period.field]) >= 0))
-  const tou = periods.map((period) => ({ ...period, value: completeTou.reduce((sum, row) => sum + numeric(row[period.field]), 0) }))
+  const hasTou = (row) => !duplicates.has(recordKey(row)) && periods.some((period) => numeric(row[period.field]) !== null && numeric(row[period.field]) >= 0)
+  const touRows = []
+  let touFallbackGroups = 0
+  groups.forEach((roomRows) => {
+    months.forEach((month) => {
+      const monthRows = roomRows.filter((row) => String(row.month || '').slice(0, 7) === month)
+      const totals = (query.code ? monthRows : roomAnalysisRows(monthRows)).filter(hasTou)
+      if (totals.length) touRows.push(...totals)
+      else {
+        const fallback = monthRows.filter(hasTou)
+        if (fallback.length) {
+          touFallbackGroups++
+          touRows.push(...fallback)
+        }
+      }
+    })
+  })
+  // Missing periods remain unknown; shares describe only the available readings.
+  const tou = periods.map((period) => {
+    const values = touRows.map((row) => numeric(row[period.field])).filter((value) => value !== null && value >= 0)
+    return { ...period, value: values.reduce((sum, value) => sum + value, 0), records: values.length }
+  })
   const touTotal = tou.reduce((sum, item) => sum + item.value, 0)
   const filled = scope.filter((row) => numeric(row.readingTotal3) !== null).length
   const covered = monthly.reduce((sum, item) => sum + item.coverage, 0)
@@ -165,8 +230,9 @@ export function analyze(rows, query, selectedRooms) {
     affectedMeters: affected.size,
     tou,
     touTotal,
-    touRecords: completeTou.length,
-    statisticalRecords: statisticalRows.length,
+    touRecords: touRows.length,
+    touCompleteRecords: touRows.filter((row) => periods.every((period) => numeric(row[period.field]) !== null && numeric(row[period.field]) >= 0)).length,
+    touFallbackGroups,
     unresolvedRooms: roomStats.filter((item) => item.value === null).map((item) => item.name)
   }
 }

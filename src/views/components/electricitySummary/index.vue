@@ -34,7 +34,8 @@
     </div>
     <div class="content" v-loading="loading">
       <keep-alive>
-        <component :is="activeView === 'data' ? 'ElectricityDataView' : 'ElectricityAnalysis'" :rows="rows" :applied-query="appliedQuery" :loading="loading" />
+        <electricity-data-view v-if="activeView === 'data'" :rows="rows" :applied-query="appliedQuery" :loading="loading" />
+        <electricity-analysis v-else :rows="rows" :room-list="roomList" :applied-query="appliedQuery" :loading="loading" />
       </keep-alive>
     </div>
   </div>
