@@ -74,6 +74,13 @@ export const repositoryApi = {
       desc: '生成采购编号'
     },
     {
+      name: 'getReimburseCode',
+      method: 'POST',
+      path: '/jt/expense/getCode',
+      mockPath: '/jt/expense/getCode',
+      desc: '生成报销单编号'
+    },
+    {
       name: 'getPurchaseDetails',
       method: 'POST',
       path: '/jt/asset/purchase/getList',
