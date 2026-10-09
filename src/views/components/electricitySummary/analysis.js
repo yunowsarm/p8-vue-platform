@@ -125,6 +125,7 @@ export function analyze(rows, query, selectedRooms, roomOptions = []) {
     const totals = query.code ? roomRows : roomAnalysisRows(roomRows)
     const byMonth = new Map()
     const completeMonths = new Set()
+    const predictionHistory = []
     months.forEach((month) => {
       const monthRows = totals.filter((row) => String(row.month || '').slice(0, 7) === month)
       const values = monthRows.map((row) => (duplicates.has(recordKey(row)) ? null : numeric(row.readingTotal3)))
@@ -132,6 +133,12 @@ export function analyze(rows, query, selectedRooms, roomOptions = []) {
       const knownValues = values.filter((value) => value !== null)
       byMonth.set(month, knownValues.length ? knownValues.reduce((sum, value) => sum + value, 0) : null)
       if (values.length && values.every((value) => value !== null)) completeMonths.add(month)
+      predictionHistory.push({
+        month,
+        value: byMonth.get(month),
+        complete: completeMonths.has(month) && values.every((value) => value >= 0),
+        signature: [...new Set(monthRows.map(meterKey))].sort().join('|')
+      })
     })
     const available = [...byMonth.values()].filter((value) => value !== null)
     const known = totals
@@ -157,6 +164,7 @@ export function analyze(rows, query, selectedRooms, roomOptions = []) {
       status,
       validMonths: available.length,
       completeMonths,
+      predictionHistory,
       byMonth
     })
   })

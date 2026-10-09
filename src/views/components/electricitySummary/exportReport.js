@@ -12,7 +12,7 @@ function table(headers, rows) {
   }</tbody></table>`
 }
 
-export function buildReportHtml({ report, query, roomNames, findings, charts, scopeNote, autoPrint = false }) {
+export function buildReportHtml({ report, query, roomNames, findings, charts, scopeNote, forecasts = [], autoPrint = false }) {
   const percent = (value) => (value === null || value === undefined ? '—' : `${number(value)}%`)
   const rankings = (items, rooms = false) =>
     items.map((item, index) => {
@@ -21,6 +21,15 @@ export function buildReportHtml({ report, query, roomNames, findings, charts, sc
     })
   const title = `用电分析报告 ${query.dateStart} 至 ${query.dateEnd}`
   const sections = charts.map((chart) => `<section class="chart-section"><h2>${escapeHtml(chart.title)}</h2><img src="${chart.image}" alt="${escapeHtml(chart.title)}" /></section>`).join('')
+  const predictions = forecasts.length
+    ? `<h2>企业用电预测与运营活跃度（各配电房独立）</h2><p class="muted">仅使用已结束月份、连续完整且统计电表一致的数据。活跃度指数以近三月日均为 100。用电代理无法直接证明营收、盈利、停产或经营风险；需结合订单、产量、开工率。区间为历史误差参考，不是概率保证。</p>${table(
+        ['配电房 / 企业', '用电活跃度趋势', '训练截至', '连续完整月', '预测模型', '回测误差', '参考可靠度', '活跃度指数'],
+        forecasts.map((item) => [item.name, item.activity, item.asOf || '—', item.history.length, item.model, percent(item.wape), item.reliability, number(item.index)])
+      )}${table(
+        ['配电房 / 企业', '预测月份', '预测电量', '参考下界', '参考上界'],
+        forecasts.flatMap((item) => item.future.map((month) => [item.name, month.month, number(month.value), number(month.lower), number(month.upper)]))
+      )}${forecasts.map((item) => `<p class="muted">${escapeHtml(item.name)}：${escapeHtml(item.reasons.join('；') || '按所选模型推算，实际运营需结合业务数据核对。')}</p>`).join('')}`
+    : ''
   return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(title)}</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#27364a;font:14px/1.6 Arial,"Microsoft YaHei",sans-serif}main{max-width:1100px;margin:24px auto;padding:28px;background:#fff}h1{font-size:24px;margin:0 0 8px}h2{font-size:17px;margin:22px 0 10px}p{margin:6px 0}.muted{color:#6b7b90;font-size:12px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.metrics div{padding:14px;background:#edf4ff;border-radius:8px}.metrics strong{display:block;font-size:20px}.findings{padding:14px;background:#f5f8fc}.charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.chart-section{min-width:0;break-inside:avoid}.chart-section img{width:100%;height:auto}table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px;table-layout:fixed}th,td{padding:7px;border:1px solid #dfe5ee;text-align:center;overflow-wrap:anywhere}th{background:#f3f6fb}thead{display:table-header-group}tr{break-inside:avoid}.actions{display:flex;justify-content:flex-end;gap:10px;margin-bottom:16px}button{padding:8px 16px;color:#fff;background:#409eff;border:0;border-radius:5px;cursor:pointer}
@@ -31,6 +40,7 @@ export function buildReportHtml({ report, query, roomNames, findings, charts, sc
     report.completeness
   )}</strong></div><div>统计覆盖率<strong>${percent(report.coverage)}</strong></div></div>
 <h2>分析结论</h2><div class="findings">${findings.map((text) => `<p>${escapeHtml(text)}</p>`).join('')}</div>
+${predictions}
 <div class="charts">${sections}</div>
 <h2>尖峰平谷明细（已知时段数据）</h2><p class="muted">${report.touRecords} 条有分时数据记录，其中 ${report.touCompleteRecords} 条四时段完整；${
     report.touFallbackGroups
