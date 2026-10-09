@@ -67,7 +67,14 @@
           <template slot-scope="scope">
             <div class="lead-enterprise-cell">
               <span>{{ scope.row.enterprise || '-' }}</span>
-              <el-tag v-if="isInvalidLead(scope.row)" type="danger" size="mini" effect="plain">无效线索</el-tag>
+              <div class="lead-enterprise-cell__tags">
+                <el-tag v-if="isInvalidLead(scope.row)" type="danger" size="mini" effect="plain">无效线索</el-tag>
+                <el-tag v-else-if="hasLatestLeadStatus(scope.row, 'CONTRACT_SIGNED')" size="mini" class="lead-enterprise-badge lead-enterprise-badge--signed">已签约</el-tag>
+                <template v-else>
+                  <el-tag v-if="isCustomerLevel(scope.row, 'A')" size="mini" class="lead-enterprise-badge lead-enterprise-badge--priority">最高优先级客户</el-tag>
+                  <el-tag v-if="isCustomerLevel(scope.row, 'B')" size="mini" class="lead-enterprise-badge lead-enterprise-badge--key">重点客户</el-tag>
+                </template>
+              </div>
             </div>
           </template>
         </el-table-column>
@@ -922,6 +929,18 @@ export default {
         .charAt(0)
         .toUpperCase()
       return `lead-summary-tag--level-${['A', 'B', 'C', 'D', 'E', 'F'].includes(level) ? level.toLowerCase() : 'empty'}`
+    },
+    isCustomerLevel(record, level) {
+      const latestRecord = this.latestFollowUpRecord(record)
+      return (
+        String((latestRecord && latestRecord.intentLevel) || '')
+          .charAt(0)
+          .toUpperCase() === level
+      )
+    },
+    hasLatestLeadStatus(record, status) {
+      const latestRecord = this.latestFollowUpRecord(record)
+      return Boolean(latestRecord && latestRecord.leadStatus === status)
     },
     channelSourceLabel(record) {
       // if (record && record.referrer) return `客户转介绍：${record.referrerName || '-'}`
@@ -1805,6 +1824,33 @@ export default {
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
+}
+
+.lead-enterprise-cell__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.lead-enterprise-badge {
+  border: 0;
+  font-weight: 500;
+
+  &.lead-enterprise-badge--priority {
+    color: #b91c1c;
+    background: #fef2f2;
+  }
+
+  &.lead-enterprise-badge--key {
+    color: #c2410c;
+    background: #fff7ed;
+  }
+
+  &.lead-enterprise-badge--signed {
+    color: #15803d;
+    background: #f0fdf4;
+  }
 }
 
 .lead-invalid-application-action {
