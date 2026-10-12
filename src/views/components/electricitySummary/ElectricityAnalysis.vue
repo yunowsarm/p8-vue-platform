@@ -60,6 +60,7 @@
       <p class="scope-note">
         {{ scopeNote }}
       </p>
+      <electricity-forecast ref="forecast" :forecasts="forecasts" :horizon="forecastHorizon" @horizon-change="forecastHorizon = $event" />
       <div class="charts-grid">
         <section class="chart-panel">
           <div class="panel-heading">
@@ -154,12 +155,23 @@
 import * as echarts from 'echarts'
 import { analyze, analysisRoomOptions } from './analysis'
 import { buildReportHtml } from './exportReport'
+import { forecastRoom } from './forecast'
+import ElectricityForecast from './ElectricityForecast.vue'
 
 export default {
   name: 'ElectricityAnalysis',
+  components: { ElectricityForecast },
   props: { rows: { type: Array, default: () => [] }, roomList: { type: Array, default: () => [] }, appliedQuery: { type: Object, required: true }, loading: Boolean },
   data() {
-    return { selectedRooms: [], rankingMode: 'room', detailTab: 'quality', charts: {}, frame: null }
+    return {
+      selectedRooms: [],
+      rankingMode: 'room',
+      detailTab: 'quality',
+      charts: {},
+      frame: null,
+      forecastHorizon: 3,
+      currentMonth: new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit' }).format(new Date())
+    }
   },
   computed: {
     roomOptions() {
@@ -167,6 +179,9 @@ export default {
     },
     report() {
       return analyze(this.rows, this.appliedQuery, this.selectedRooms, this.roomOptions)
+    },
+    forecasts() {
+      return this.report.roomRanking.map((room) => forecastRoom(room, { horizon: this.forecastHorizon, currentMonth: this.currentMonth }))
     },
     rankingData() {
       return this.rankingMode === 'room' ? this.report.roomRanking : this.report.meterRanking
@@ -237,8 +252,11 @@ export default {
         const charts = Object.keys(titles)
           .filter((name) => this.charts[name])
           .map((name) => ({ title: titles[name], image: this.charts[name].getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#fff' }) }))
+        const forecastChart = this.$refs.forecast && this.$refs.forecast.exportChart()
+        if (forecastChart) charts.unshift(forecastChart)
         const html = buildReportHtml({
           report: this.report,
+          forecasts: this.forecasts,
           query: this.appliedQuery,
           roomNames: this.roomOptions.filter((room) => this.selectedRooms.includes(room.key)).map((room) => room.name),
           findings: this.findings,

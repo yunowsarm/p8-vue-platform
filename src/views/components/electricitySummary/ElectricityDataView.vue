@@ -24,8 +24,17 @@
               <el-option v-for="item in entityOptions" :key="item.key" :label="item.label" :value="item.key" />
             </el-select>
           </div>
+          <div class="trend-prediction-tools">
+            <span>{{ showForecast ? '实线：实际用电 · 虚线：预测用电' : '仅显示实际用电' }}</span>
+            <el-switch v-model="showForecast" active-text="预测用电" />
+            <el-select v-if="showForecast" v-model="forecastHorizon" size="mini" class="forecast-horizon">
+              <el-option label="预测 3 个月" :value="3" />
+              <el-option label="预测 6 个月" :value="6" />
+            </el-select>
+          </div>
           <div v-if="hasTrendData" ref="trendChart" class="trend-chart"></div>
           <div v-else class="chart-empty">暂无实用电量</div>
+          <p v-if="showForecast && forecastNote" class="data-note">{{ forecastNote }}</p>
         </div>
 
         <div class="panel detail-panel">
@@ -89,6 +98,7 @@
 <script>
 import * as echarts from 'echarts'
 import { roomAnalysisRows } from './analysis'
+import { forecastRoom } from './forecast'
 
 const touPeriods = [
   { name: '尖', field: 'readingSharp3', color: '#e56863' },
@@ -99,7 +109,7 @@ const touPeriods = [
 const chartColors = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc']
 
 function numberValue(value) {
-  if (value === null || value === undefined || value === '') return null
+  if (value === null || value === undefined || String(value).trim() === '') return null
   const result = Number(value)
   return Number.isFinite(result) ? result : null
 }
@@ -126,6 +136,10 @@ export default {
   data() {
     return {
       dimension: 'room',
+      showForecast: true,
+      forecastHorizon: 3,
+      currentMonth: new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit' }).format(new Date()),
+      trendLegendSelection: {},
       selectedEntityKeys: [],
       chartFrame: null,
       resizeFrame: null,
@@ -186,19 +200,82 @@ export default {
     detailRows() {
       return this.selectedRows
     },
+    entityForecasts() {
+      if (!this.showForecast) return []
+      return this.selectedEntityKeys.map((key) => {
+        const bucket = this.entityBuckets[key]
+        const rawRows = bucket ? bucket.rawRows : []
+        const source = this.dimension === 'room' && !this.appliedQuery.code ? roomAnalysisRows(rawRows) : rawRows
+        const grouped = new Map()
+        source.forEach((row) => {
+          const month = rowMonth(row)
+          if (!grouped.has(month)) grouped.set(month, [])
+          grouped.get(month).push(row)
+        })
+        const predictionHistory = this.months.map((month) => {
+          const rows = grouped.get(month) || []
+          const signatures = rows.map(meterKey)
+          const unique = new Set(signatures)
+          const values = rows.map((row) => numberValue(row.readingTotal3))
+          const valid = values.filter((value) => value !== null)
+          return {
+            month,
+            value: valid.length ? valid.reduce((sum, value) => sum + value, 0) : null,
+            complete: rows.length > 0 && unique.size === rows.length && values.every((value) => value !== null && value >= 0),
+            signature: [...unique].sort().join('|')
+          }
+        })
+        return forecastRoom({ key, name: this.entityLabel(key), predictionHistory }, { horizon: this.forecastHorizon, currentMonth: this.currentMonth })
+      })
+    },
+    trendMonths() {
+      return [...new Set([...this.months, ...this.entityForecasts.flatMap((item) => item.future.map((month) => month.month))])].sort()
+    },
+    forecastNote() {
+      const unavailable = this.entityForecasts.filter((item) => !item.ready)
+      const stale = this.entityForecasts.filter((item) => item.ready && item.asOf < this.currentMonth && item.activity === '数据滞后，待核对')
+      if (this.entityForecasts.length === 1) {
+        const item = this.entityForecasts[0]
+        if (!item.ready) return item.reasons[0]
+        return `预测从 ${item.asOf} 后开始 · ${item.model} · 参考可靠度 ${item.reliability}${stale.length ? '；历史数据滞后，请更新查询数据。' : ''}`
+      }
+      return this.entityForecasts.length
+        ? `已生成 ${this.entityForecasts.length - unavailable.length} 个对象的预测${unavailable.length ? `；${unavailable.length} 个因历史不足或数据不完整暂不预测` : ''}${
+            stale.length ? `；${stale.length} 个为历史区间预测，请更新查询数据` : ''
+          }。`
+        : ''
+    },
     trendSeries() {
-      return this.selectedEntityKeys.map((key, index) => ({
+      const actual = this.selectedEntityKeys.map((key, index) => ({
         name: this.entityLabel(key),
         type: 'line',
         smooth: true,
         connectNulls: false,
         symbolSize: 7,
         itemStyle: { color: chartColors[index % chartColors.length] },
-        data: this.months.map((month) => {
+        data: this.trendMonths.map((month) => {
           const bucket = this.entityBuckets[key]
           return bucket && Object.prototype.hasOwnProperty.call(bucket.byMonth, month) ? bucket.byMonth[month] : null
         })
       }))
+      const predicted = this.entityForecasts
+        .filter((item) => item.ready)
+        .map((item) => {
+          const values = new Map(item.future.map((month) => [month.month, month.value]))
+          values.set(item.asOf, item.history[item.history.length - 1].value)
+          return {
+            name: `${item.name}（预测）`,
+            type: 'line',
+            smooth: false,
+            connectNulls: false,
+            symbol: 'emptyCircle',
+            symbolSize: 7,
+            lineStyle: { type: 'dashed' },
+            itemStyle: { color: chartColors[this.selectedEntityKeys.indexOf(item.key) % chartColors.length] },
+            data: this.trendMonths.map((month) => (values.has(month) ? values.get(month) : null))
+          }
+        })
+      return [...actual, ...predicted]
     },
     hasTrendData() {
       return this.trendSeries.some((series) => series.data.some((value) => value !== null))
@@ -236,6 +313,12 @@ export default {
       this.scheduleCharts()
     },
     selectedEntityKeys() {
+      this.scheduleCharts()
+    },
+    showForecast() {
+      this.scheduleCharts()
+    },
+    forecastHorizon() {
       this.scheduleCharts()
     }
   },
@@ -286,11 +369,13 @@ export default {
       })
     },
     resetEntitySelection() {
+      this.trendLegendSelection = {}
       this.dimension = this.appliedQuery.code ? 'meter' : 'room'
       this.setDefaultEntitySelection()
       this.scheduleCharts()
     },
     handleDimensionChange() {
+      this.trendLegendSelection = {}
       this.setDefaultEntitySelection()
     },
     setDefaultEntitySelection() {
@@ -325,6 +410,19 @@ export default {
       if (!this.charts[name]) this.charts[name] = echarts.init(element)
       return this.charts[name]
     },
+    syncTrendLegend({ name, selected }) {
+      const key = this.selectedEntityKeys.find((item) => name === this.entityLabel(item) || name === `${this.entityLabel(item)}（预测）`)
+      if (key === undefined) return
+      const actual = this.entityLabel(key)
+      const prediction = `${actual}（预测）`
+      const visible = selected[name] !== false
+      this.trendLegendSelection = { ...selected, [actual]: visible, [prediction]: visible }
+      const chart = this.charts.trend
+      const counterpart = name === actual ? prediction : actual
+      if (chart && this.trendSeries.some((series) => series.name === counterpart)) {
+        chart.dispatchAction({ type: visible ? 'legendSelect' : 'legendUnSelect', name: counterpart }, { silent: true })
+      }
+    },
     drawCharts() {
       const trend = this.getChart('trend', this.$refs.trendChart)
       if (trend) {
@@ -332,14 +430,16 @@ export default {
           {
             animation: false,
             tooltip: { trigger: 'item', valueFormatter: (value) => (value === null || value === undefined ? '暂无数据' : `${this.displayNumber(value)} 度`) },
-            legend: { type: 'scroll', top: 0 },
+            legend: { type: 'scroll', top: 0, selected: this.trendLegendSelection },
             grid: { left: 62, right: 24, top: 48, bottom: 40 },
-            xAxis: { type: 'category', boundaryGap: false, data: this.months, axisTick: { show: false } },
+            xAxis: { type: 'category', boundaryGap: false, data: this.trendMonths, axisTick: { show: false } },
             yAxis: { type: 'value', min: 0, splitLine: { lineStyle: { color: '#edf1f6' } }, axisLabel: { formatter: (value) => this.displayNumber(value) } },
             series: this.trendSeries
           },
           true
         )
+        trend.off('legendselectchanged', this.syncTrendLegend)
+        trend.on('legendselectchanged', this.syncTrendLegend)
       }
       const tou = this.getChart('tou', this.$refs.touChart)
       if (tou) {
@@ -480,6 +580,21 @@ h3 {
 .trend-entity-select {
   flex: 1;
   min-width: 0;
+}
+.trend-prediction-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.trend-prediction-tools > span {
+  flex: 1;
+  color: #8b97a7;
+  font-size: 11px;
+}
+.forecast-horizon {
+  width: 115px;
 }
 .data-note {
   margin: 4px 2px;
