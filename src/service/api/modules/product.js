@@ -70,7 +70,7 @@ export const repositoryApi = {
       name: 'getPurchaseCode',
       method: 'POST',
       path: '/jt/asset/purchase/getCode',
-      mockPath: '/jt/asset/purchase/getCode',
+      mockPath: '',
       desc: '生成采购编号'
     },
     {
