@@ -3,8 +3,8 @@
  * Namespace: User
  */
 
-import { path } from '@antv/x6/lib/registry/marker/path'
-import { method } from 'lodash'
+// import { path } from '@antv/x6/lib/registry/marker/path'
+// import { method } from 'lodash'
 
 export const repositoryApi = {
   houseData: [
@@ -17,6 +17,13 @@ export const repositoryApi = {
     }
   ],
   baseData: [
+    {
+      name: 'getUser',
+      method: 'GET',
+      path: '/jt/expense/getUser',
+      mockPath: '/jt/expense/getUser',
+      desc: '根据姓名获取申请人'
+    },
     {
       name: 'getReimburseList',
       method: 'POST',
